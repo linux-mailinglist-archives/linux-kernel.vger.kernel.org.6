@@ -1,166 +1,191 @@
-Return-Path: <linux-kernel+bounces-541953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29007A4C3C4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:47:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4EBBA4C3CA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:47:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 874B2170E24
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:47:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDB681711E9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:47:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64A5D212FA7;
-	Mon,  3 Mar 2025 14:46:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B54B213E6D;
+	Mon,  3 Mar 2025 14:47:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="iPeLLtCh"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="hDZyA60H"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A85B012FF69;
-	Mon,  3 Mar 2025 14:46:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46521F473A
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 14:47:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741013217; cv=none; b=eds85E/Zf3fJC32xxUjamYhaPaCfraHOrK/sLlLeN/XhQ0+vAq1tBceVBvtq+cDP5KxdPj1pIDjKAe8vyv/QD0N/EV3q1aAIM7sBlHbury7hvUD1xWAGMVHpQ4x2ZrVBGQKn52m+WBRvqKYh/kKjZHNorQeShsGl6YILv7na3Oo=
+	t=1741013246; cv=none; b=JDJeiNRW7kIESp07nyYte5x94psAmZGKfOGY2f7tCX/5opeUWr3MtlE7RZW39qZW/J1nybxhuABDE3QWN60Z17chInsbswD22SDb/qtbuNX0ilICLwA7LRP0pwn4n637DiJQ+aryVy7jv9JjvZBx9qfag+EY1Q9Ef7cCADxBdZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741013217; c=relaxed/simple;
-	bh=uOkNJShwAnnQjzv5uTkb6RbGAT1W+BW1BZGlsBZodTQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Subject:Cc:From:
-	 References:In-Reply-To; b=A+KIKzdhoj3QbqEADSljTLiUBh59nq2uWA8H7V5VRgNni+YjNfU0YEVMa2LDP8om9nAntbQiwdxRt1HsW+Kn8R3oYnhcBaiLSfPRrTkCpfUU7xY4LM+6MBkTUL81yqcfLEj3fPwQAi1CH8JsoRrGiix6tYSacJUs+QwQuqdZOzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=iPeLLtCh; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 53A77441B6;
-	Mon,  3 Mar 2025 14:46:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1741013214;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zDbYOoICs0kyLksCA3nSrPEKG2UdDgw1p8IdLbEdbwc=;
-	b=iPeLLtChV/otssqNfOVqg/51Ax+8DPi61GCdSSCQbbagWxWJzYEBg3l40sx0HR8vL/FcjN
-	YPIEIj6U1vkI4upDHidgNQ8e9Km2WBlAReRsXPJxC6DxRxONNNmoAjW2I8Nj6LwQeuTNOC
-	Wp7lHluAeJ1lNWyGcUxejLyptqDRAs0cf6rFgciBihlwxe93sVob+FFtyJKPLOQ03LmlMT
-	KYqihn5tiLeSwsYURXSt8/wjPhVCWBBFSAtZ3uiGZDGFeDKhl9lH91V5qHQBHpwEazfZiT
-	JLeeuw63SVObqVR4c3RoHvK63HYEZuxBeTemjsouNPpS75JnLjMVgF3p2R7DCA==
+	s=arc-20240116; t=1741013246; c=relaxed/simple;
+	bh=YK3vQOatiZKte940Yh6vGjcxz6PX8lovXmywTS7ON9c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YkFv5jQGSBt3y4IHlD7p9NBmfTqSVeSZkyyxSglAA3cY3YlOgzl83asHjZ2NegGFvxMhXFLe9YZffCuTSNAXi5ZCrc3tTPEj6ZiyAluPnsKSz5cnWK06HCLPGTwMaSpvEb319mAddvnDtloQjJwgxlRI2ELeVrVlk8V8N1rGnMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=hDZyA60H; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5e55ec94962so1299876a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 06:47:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=openvpn.net; s=google; t=1741013243; x=1741618043; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=UjbM+V8Y3WsTK62memOwRHcpDks/OOOXgm2wXjSL9fA=;
+        b=hDZyA60HVlnotgdjMdInMw8DCjEbKcBazu95V9LJz7AQycTHQQovUJHDY175AvXJ+H
+         b4UZaKVzUEEmwUNZRAgXZykQgOCSfiM2wYHFWTTbOcYQbWu9ukbWSXipDQdiC4nBf6lX
+         Xqi56tCp8fcL+kTM7hTzIGykVZt00J8/PjTJbpM2+u3qd02oXN1Ua9ewKDqjN+vjvwyQ
+         5j6+PW4ju81yd1HgMd0NHF/0Nv5SttQaY5FDAekCj92UTx+CJbq6PwsHsxI1BiN2/50+
+         s/hv2rFfP6vcDqFiKsURqbmOZlJFjpWEjGiUwB9wogI7frly84aFTHMKo8O+Pq7wxKSs
+         wWtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741013243; x=1741618043;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UjbM+V8Y3WsTK62memOwRHcpDks/OOOXgm2wXjSL9fA=;
+        b=H0OXG1dGL8S7RmWnlPL5DA3YkFoWdLsOC/R8GO1PGFNxyjjDuZnA//eRbG7kdUR0b/
+         vmVhZuYBkY8GBv47UZoHENiNUA8g/OB4C0J9PW19/ooHnqTd5dn4DT+NXe4ovySZYgz0
+         qP/0+02qf5YdIZQQJhgerQAsMV7ZU2/e5qAR4QJtsFk9K9NwqQAX3NEiP4iHZYhixhCV
+         0ReZap476ol4CNebdB2ke9RIKR1SH7dPz0DOeAtXstBuuesQL6PgMucBjgBgxcgsRTs4
+         VJrnhlWy8dHqVIKlEEDUiM3kSsBAK4GHgzUdyyQ5GYuySi1/Zdf01UK0ZUBMn/KV4Qk3
+         uHbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVW2uCT9PSnZAUrP6ZpXwtPT3fNkn/7b2d7+WpjXhcGdNnz2R9sq9/0d3wU3f7yyFu7VYcl49m2cZt3Y4c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxopzMyN1H1cLFn5BPbZv93eYmX6isDpB8esAqasI45QJJisblL
+	Y+6QmjAmUrZMK/RMnBRZgjhIdeQnzelbkyh+2diW8nQ41PohGVCL7HgVInij3GA=
+X-Gm-Gg: ASbGncuOB+XYyZYcDp1vnqwzmbPcs56YHRFt6SWe8LZNj0CdR5jNxWwFw31MJBo4kMg
+	zIqv/ipVN8a0bLJ1yThZIo+grYPfr03NYFeeMXwTqXtsbfj5et+qo7LjHO705bXRqc+RHlIUsEU
+	hK00ohcvljOqokXqEX17mf8cpmy2v3k3kvEe8hl89YYNK6wd4eDR/oLJUgSWYLnADV7eUsQ854d
+	OlxYhzBNfhwxuQudafU5Mb6UIGP4vYC1/ZuaXrXBcvkH7EmomypaUj/dh2WpSpay6OmS/kD+ZK0
+	PCChjqmzWRK32ZvWYoUpDyWq0YfXjqWr4nhJ4nOVAVKjpgcC19f5VqoqUnkcaARZCxbVFF1kfaN
+	bNDfZheE=
+X-Google-Smtp-Source: AGHT+IHnsFe6vMwt658Orcv6r4zc6wGaqIvSA7uQHKo5p/cRGfjOeudZncUeFojjjSO1eyVXVb2uMA==
+X-Received: by 2002:a05:6402:5c8:b0:5df:6de2:1e38 with SMTP id 4fb4d7f45d1cf-5e4d6b0ca3dmr14243645a12.17.1741013242803;
+        Mon, 03 Mar 2025 06:47:22 -0800 (PST)
+Received: from ?IPV6:2001:67c:2fbc:1:4d41:ca07:21a5:f110? ([2001:67c:2fbc:1:4d41:ca07:21a5:f110])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e4c3b4a81asm6850258a12.9.2025.03.03.06.47.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Mar 2025 06:47:22 -0800 (PST)
+Message-ID: <26dbc569-4566-4f6c-9294-5129befbc6ff@openvpn.net>
+Date: Mon, 3 Mar 2025 15:47:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 03 Mar 2025 15:46:52 +0100
-Message-Id: <D86POCANGF07.3HE2LVK396FGX@bootlin.com>
-To: "Shawn Guo" <shawnguo2@yeah.net>
-Subject: Re: [PATCH v2 2/3] ARM: dts: imx6ul: Add Variscite VAR-SOM-MX6UL
- SoM support
-Cc: "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Shawn Guo"
- <shawnguo@kernel.org>, "Sascha Hauer" <s.hauer@pengutronix.de>,
- "Pengutronix Kernel Team" <kernel@pengutronix.de>, "Fabio Estevam"
- <festevam@gmail.com>, "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>
-From: "Antonin Godard" <antonin.godard@bootlin.com>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250127-varsom6ul-concerto-dts-v2-0-4dac29256989@bootlin.com>
- <20250127-varsom6ul-concerto-dts-v2-2-4dac29256989@bootlin.com>
- <Z7njGg4Hhc4wcZHU@dragon>
-In-Reply-To: <Z7njGg4Hhc4wcZHU@dragon>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelleegtdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepggfgtgffkffvufevhffofhgjsehtqhertdertdejnecuhfhrohhmpedftehnthhonhhinhcuifhouggrrhgufdcuoegrnhhtohhnihhnrdhgohgurghrugessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepjedtteejveetjedtgfektddvvdduueevffetieejteegfeeitdekjeeufeduheejnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemjegthegtmeeirgguvgemjeelgeekmeegtdehleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemjegthegtmeeirgguvgemjeelgeekmeegtdehledphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomheprghnthhonhhinhdrghhouggrrhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedufedprhgtphhtthhopehshhgrfihnghhuohdvseihvggrhhdrnhgvthdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgp
- dhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehshhgrfihnghhuoheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshdrhhgruhgvrhesphgvnhhguhhtrhhonhhigidruggvpdhrtghpthhtohepkhgvrhhnvghlsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopehfvghsthgvvhgrmhesghhmrghilhdrtghomh
-X-GND-Sasl: antonin.godard@bootlin.com
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v20 09/25] ovpn: implement basic RX path (UDP)
+To: Sabrina Dubroca <sd@queasysnail.net>
+Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Donald Hunter <donald.hunter@gmail.com>, Shuah Khan <shuah@kernel.org>,
+ ryazanov.s.a@gmail.com, Andrew Lunn <andrew+netdev@lunn.ch>,
+ Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>
+References: <20250227-b4-ovpn-v20-0-93f363310834@openvpn.net>
+ <20250227-b4-ovpn-v20-9-93f363310834@openvpn.net> <Z8HVZm_eQwNR_r1A@hog>
+Content-Language: en-US
+From: Antonio Quartulli <antonio@openvpn.net>
+Autocrypt: addr=antonio@openvpn.net; keydata=
+ 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
+Organization: OpenVPN Inc.
+In-Reply-To: <Z8HVZm_eQwNR_r1A@hog>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Shawn,
-
-On Sat Feb 22, 2025 at 3:45 PM CET, Shawn Guo wrote:
-[...]
->> +	reg_gpio_dvfs: reg-gpio-dvfs {
->> +		compatible =3D "regulator-gpio";
->> +		regulator-min-microvolt =3D <1300000>;
->> +		regulator-max-microvolt =3D <1400000>;
->> +		regulator-name =3D "gpio_dvfs";
->> +		regulator-type =3D "voltage";
->> +		gpios =3D <&gpio4 13 GPIO_ACTIVE_HIGH>;
->
-> Don't we need 'enable-active-high'?
-
-I am not specifying 'enable-gpios' but 'gpios' here so from my understandin=
-g of
-gpio-regulator.yaml and examples from other device trees I don't think so.
-
->> +		states =3D <1300000 0x1 1400000 0x0>;
->> +	};
+On 28/02/2025 16:25, Sabrina Dubroca wrote:
+> (I'm still reviewing how everything fits together, but one small thing
+> here:)
+> 
+> 2025-02-27, 02:21:34 +0100, Antonio Quartulli wrote:
+>> +static void ovpn_udp_close(struct sock *sk, long timeout)
+>> +{
+>> +	struct ovpn_socket *sock;
+>> +	struct ovpn_priv *ovpn;
 >> +
->> +	rmii_ref_clk: rmii-ref-clk-grp {
->
-> What does "-grp" in node name mean?
-
-A mistake on my side, I will rename the label to "rmii-ref-clk".
-
->> +		compatible =3D "fixed-clock";
->> +		clock-output-names =3D "rmii-ref";
->> +	};
->> +};
+>> +	rcu_read_lock();
+>> +	sock = rcu_dereference_sk_user_data(sk);
+>> +	if (!sock || !sock->ovpn) {
+>> +		rcu_read_unlock();
+>> +		return;
+>> +	}
+>> +	ovpn = sock->ovpn;
+>> +	rcu_read_unlock();
 >> +
->> +&cpu0 {
->> +	dc-supply =3D <&reg_gpio_dvfs>;
->> +};
+>> +	if (ovpn->mode == OVPN_MODE_P2P)
+>> +		ovpn_peer_release_p2p(ovpn, sk,
+>> +				      OVPN_DEL_PEER_REASON_TRANSPORT_DISCONNECT);
+>> +	sock->udp_prot->close(sk, timeout);
+>> +}
 >> +
->> +&clks {
->> +	assigned-clocks =3D <&clks IMX6UL_CLK_PLL4_AUDIO_DIV>;
->> +	assigned-clock-rates =3D <786432000>;
->> +};
->> +
->> +&fec1 {
->> +	pinctrl-names =3D "default";
->> +	pinctrl-0 =3D <&pinctrl_enet1>, <&pinctrl_enet1_gpio>, <&pinctrl_enet1=
-_mdio>;
->> +	phy-mode =3D "rmii";
->> +	phy-reset-gpios =3D <&gpio5 0 GPIO_ACTIVE_LOW>;
->> +	phy-reset-duration =3D <100>;
->> +	phy-handle =3D <&ethphy0>;
->> +	status =3D "okay";
->> +
->> +	mdio {
->> +		#address-cells =3D <1>;
->> +		#size-cells =3D <0>;
->> +
->> +		ethphy0: ethernet-phy@1 {
->> +			compatible =3D "ethernet-phy-ieee802.3-c22";
->> +			micrel,rmii-reference-clock-select-25-mhz =3D <1>;
->> +			micrel,led-mode =3D <1>;
->> +			clocks =3D <&rmii_ref_clk>;
->> +			clock-names =3D "rmii-ref";
->> +			reg =3D <1>;
->
-> We generally sort properties like:
->
->   - compatible
->   - reg
->   - generic ones
->   - vendor prefixed ones
->
-> So in this case, we will get:
->
-> 	compatible =3D "ethernet-phy-ieee802.3-c22";
-> 	reg =3D <1>;
-> 	clocks =3D <&rmii_ref_clk>;
-> 	clock-names =3D "rmii-ref";
-> 	micrel,rmii-reference-clock-select-25-mhz =3D <1>;
-> 	micrel,led-mode =3D <1>;
+>> +static void ovpn_udp_build_protos(struct proto *new_prot,
+>> +				  const struct proto *orig_prot)
+>> +{
+>> +	memcpy(new_prot, orig_prot, sizeof(*new_prot));
+>> +	new_prot->close = ovpn_udp_close;
+>> +}
+> 
+> Could you set ->encap_destroy in udp_tunnel_sock_cfg, instead of
+> making up your own struct proto? It should allow to do basically the
+> same thing, but with less code in ovpn:
+> 
+> ->close = udp_lib_close -> sk_common_release -> sk_prot->destroy = udp_destroy_sock -> encap_destroy
 
-Thanks for clarifying that! I will revise this for the next version.
+Oh, this is very nice.
+I'll give it a go and stick to encap_destroy if no issue arise.
 
-Antonin
+Cheers,
 
---=20
-Antonin Godard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> 
+> 
+
+-- 
+Antonio Quartulli
+OpenVPN Inc.
+
 
