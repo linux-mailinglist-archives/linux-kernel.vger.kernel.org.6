@@ -1,93 +1,61 @@
-Return-Path: <linux-kernel+bounces-541659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 385E6A4BFAB
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:00:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 578BFA4BFD2
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:06:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4C031667E5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:00:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07C693A6703
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:00:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC6BE20E330;
-	Mon,  3 Mar 2025 12:00:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F33920E333;
+	Mon,  3 Mar 2025 12:00:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aGOeW4Tm"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FG/iMPId"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8FB11CAA71;
-	Mon,  3 Mar 2025 12:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC34D1FAC4F
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 12:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741003233; cv=none; b=Jd8ZRE137h4mbN0sHnIaOxpHts+QwjrmuroMzxtNB+a30mDmeiFr9OThiPHL5d4E8HZmlSjdTLk1w71IsJ3M+gzuGm+9f0TpsEAzmyxV2989Nz/FLR1Ij88WQOcb4YkiInQ36XZGlYQMn3/H4Xshg6wmfgJvJBvNTpKKPPb5aAA=
+	t=1741003233; cv=none; b=twFtz5d0nCXyazl6dQZ4+PW/5A9e6nDaSnISCSJ/efIgU9XCwmH//6saAnrtiF4+ERTAurl94JBQiKzbKoTY9nVk135Ijdjn/kMoDjxB71X3iPy7TGyLOIlzHfFjFAdoWwGbDJHj4315kM6DwMGayEauemTNTwT8d2GA23PdHcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741003233; c=relaxed/simple;
-	bh=VFeoSGzVzp2v1XgvCh7gFDPeObOphuG8s93CmdXo9RY=;
+	bh=4vnIdIC3/tXXBoqJqE/x9dY1Cli4pumikDQThNCvf3U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mJ5sUpzcUUm7mtP9WgzV2eKRTcC+st5pjxGn+Y+bufJc7QqQn6gU6sx9KHft+Ty3FbBON8caezwLtfIR2MwmvCIGHHs1SthlBQzNCC0fisikEL/hGYtyAIA6haeGwXLOdISA9aNmYDwnPBiORhR6vbmiAIUSIc61ioZQLWZ/Exo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aGOeW4Tm; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741003232; x=1772539232;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=VFeoSGzVzp2v1XgvCh7gFDPeObOphuG8s93CmdXo9RY=;
-  b=aGOeW4TmMjSQ7vIHU+tMK5I8R9Sv/enGvAliS/EcJqJ+bcpJfDw5IOY/
-   MR4VHWMHUVNRicmaw/IbwBY6oFkPoE6xXZme1J+quTyxWchhQwPHFaTEe
-   q2lYRg8gxYIrwITwZoQSH6nPpREZClGECbqzwnInAlYVjYz6SP/nNtxl/
-   LJkLZKofcQLW08Xl9ftSVm40Zn9naMUGUSMDu/dpcuFwCRU9x2hbIa802
-   30PJZXwmeTWEIsj+PUHhf8Dj6uEDUav/JgGCwgKTgIiFi4bmI5ZDO2aK7
-   ry/I9hZMuuFxuYl4F9BpG5IOLAYD7vzBMR+1oVjT+pkziJNDdPgr0K9Uf
-   A==;
-X-CSE-ConnectionGUID: 7TPp13B7RGi4+4/24wUZwA==
-X-CSE-MsgGUID: QU23Y/8RRmivgc9kWkx2mA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="67244982"
-X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="67244982"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 04:00:30 -0800
-X-CSE-ConnectionGUID: wKAJU+r/To2Xz12sBSBZQA==
-X-CSE-MsgGUID: iTim9FfQTmKv3dVha2I1OA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="117841138"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 04:00:25 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tp4T7-0000000GnzB-2gTb;
-	Mon, 03 Mar 2025 14:00:21 +0200
-Date: Mon, 3 Mar 2025 14:00:21 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Daniel Scally <djrscally@gmail.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Claudiu Manoil <claudiu.manoil@nxp.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v5 02/10] property: Add functions to count named child
- nodes
-Message-ID: <Z8WZ1dXN7GLBYKvb@smile.fi.intel.com>
-References: <cover.1740993491.git.mazziesaccount@gmail.com>
- <5e35f44db2b4ed43f75c4c53fd0576df9ad24ab2.1740993491.git.mazziesaccount@gmail.com>
- <Z8WXdf8lnivYKiks@kuha.fi.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=o/wuCFe3S0cPHcT7pPrWc1YZw6auxRdA1kGtNh24RIqipziadBRULMwcDRQONwGj9/bBPVs6ERUrsnxbLXjGUUFTaW2M8CF6Zflxg7bdrCMYax0vkA0q5OTqK96vbbwGt4PnZSBm8tMSCA+k6o1a1hJnHfUpkvBu1xru7LpP6MM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FG/iMPId; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=1nf4vuB++QQrN1aNpb661Gdb8G27vcqCTg2OPjJYzl0=; b=FG/iMPId7dhtXZyawOqhqru92M
+	Vg+E53IUMK3wFUYDjTkzvUIpbcJzat5ADGWA8Sc2bNE8wuwVgBjOVY1rzhhX0WfSDda+nkhVTAUNo
+	7u7jEJtiB3FbRQVzlQ+58tHa8kY73jiiFbPgcf5Xco/e5xpqTZRpRlC3Tw40K9MdZxyWOvobGi8zB
+	q5U80jyUKntcKcOME40rfTgIZyir25P8FlLLYbl0X7t5ykbnVOw1xTQcenZSiP+mlWfCLhx8qyzNt
+	yZKTEguZxzti0YVXpm84A6QY98pxaqzV42M+M6L3hTQWlLzxjfpeKCGiGJw1NwBdlKNTO0l4A6qa/
+	QJSJ8tnA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tp4T8-0000000BadK-1qGj;
+	Mon, 03 Mar 2025 12:00:22 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 84B4230049D; Mon,  3 Mar 2025 13:00:21 +0100 (CET)
+Date: Mon, 3 Mar 2025 13:00:21 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Xuewen Yan <xuewen.yan@unisoc.com>
+Cc: vincent.guittot@linaro.org, mingo@redhat.com, juri.lelli@redhat.com,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
+	ke.wang@unisoc.com, di.shen@unisoc.com, xuewen.yan94@gmail.com
+Subject: Re: [RFC PATCH V2 0/3] sched/fair: Fix nr-running vs delayed-dequeue
+Message-ID: <20250303120021.GA11590@noisy.programming.kicks-ass.net>
+References: <20250303105241.17251-1-xuewen.yan@unisoc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,43 +64,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z8WXdf8lnivYKiks@kuha.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20250303105241.17251-1-xuewen.yan@unisoc.com>
 
-On Mon, Mar 03, 2025 at 01:50:13PM +0200, Heikki Krogerus wrote:
-
-...
-
-> > +unsigned int device_get_child_node_count_named(const struct device *dev,
-> > +					       const char *name)
-> > +{
-> > +	const struct fwnode_handle *fwnode = dev_fwnode(dev);
-> > +
-> > +	if (!fwnode)
-> > +		return -EINVAL;
-> > +
-> > +	if (IS_ERR(fwnode))
-> > +		return PTR_ERR(fwnode);
-> > +
-> > +	return fwnode_get_child_node_count_named(fwnode, name);
-> > +}
-> > +EXPORT_SYMBOL_GPL(device_get_child_node_count_named);
+On Mon, Mar 03, 2025 at 06:52:38PM +0800, Xuewen Yan wrote:
+> Delayed dequeued feature keeps a sleeping sched_entitiy enqueued until its
+> lag has elapsed. As a result, it stays also visible in rq->nr_running.
+> However, sometimes when using nr-running, we should not consider
+> sched-delayed tasks.
+> This serie fixes those by adding a helper function which return the
+> number of sched-delayed tasks. And when we should get the real runnable
+> tasks, we sub the nr-delayed tasks.
 > 
-> Sorry if I missed something in the v4 thread, but why not do all the
-> checks in fwnode_get_child_node_count_named(), and make this an inline
-> function?
 
-+1, or drop the checks and make it return 0 depending on the follow up use cases.
-
->         static inline unsigned int
->         device_get_child_node_count_named(const struct device *dev, const char *name)
->         {
->                 return fwnode_get_child_node_count_named(dev_fwnode(fwnode), name);
->         }
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Is there an actual performance improvement? Because when a runqueue
+looses competition, delayed tasks very quickly dissipate.
 
