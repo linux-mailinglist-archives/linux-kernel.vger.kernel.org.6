@@ -1,148 +1,126 @@
-Return-Path: <linux-kernel+bounces-542237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66BEBA4C782
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:39:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 493D4A4C745
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:33:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E50C3AD731
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:34:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA8753ABB20
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6276023958C;
-	Mon,  3 Mar 2025 16:30:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45264216E1D;
+	Mon,  3 Mar 2025 16:29:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jMxruLLA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AsBcs+Yv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4EC238D3A;
-	Mon,  3 Mar 2025 16:30:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90B02215789;
+	Mon,  3 Mar 2025 16:29:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741019429; cv=none; b=D8kjkv0iYvWRB7+hx/0l8zMGfWpK0xhRTGD3soYNjqN6qDpkFxW2sYrxBquiliAF6DAO14ll/STIs0HDEuOwd98ByCwbkj/+w9x889VoLm4anUN5KsDD+2p9/6K2RChX/gHgxFNN7hyXEpObl5rQvMzrlf6AlX4FKCae1YDKEjw=
+	t=1741019398; cv=none; b=qHyMat+lx0MlNru8Zf0BYgTJrvy7V6Oa1PUmShnpW8W69wLetk8q9YM0wb3pr++UlX/bkwKck9iOba6XCNrqRRbAaEKrqERZNfSQm0icqvYYwqz4nBFtTPkOf7jpIYhqc4eDEdFAmxjI4jwbFJBT4k8Y4pMwBl2f4KMcgS5U5Vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741019429; c=relaxed/simple;
-	bh=VO4PNxXKaKhQhc8WyvjllaRN4o+RXV2Z6WojniXYwY4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HFMI9NtFAOuGYCckRrrUkZatuvhGOcW5GELSTtHaEhdZzVNQjnUr4detUpCKHyVRSLZSq86kje8PxoXQauP3bMZ+NsolZYUnHr1vMdATAzpJCrD7i5u+P9rYsQ7bLPoaITSwbSfSNxx0ZqPBY6JVu4kbos4sOCRAv1yuD4Gu73c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jMxruLLA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43FD8C4CEE6;
-	Mon,  3 Mar 2025 16:30:27 +0000 (UTC)
+	s=arc-20240116; t=1741019398; c=relaxed/simple;
+	bh=hfkj99KGappDMmEncM9OKBX88k+6ubsMEvtGHpVAh24=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kJfnfJZK001sOr04KSfu73xHpcK0YK2pmz9FPx/zfO4kSeYevUKfQi5hCc8E4t0FNzsX5KXHFEqhKpeLVHfVcMzHBeGL5uPiC8WLBTMbtH4LQV1DPSAIet3KX5b6Lb4Xv4yC/dFBllpn4lzs4NLqFSOjnC8VWMcTIP/q1/ntNCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AsBcs+Yv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1AAEC4CEE6;
+	Mon,  3 Mar 2025 16:29:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741019429;
-	bh=VO4PNxXKaKhQhc8WyvjllaRN4o+RXV2Z6WojniXYwY4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=jMxruLLAzDKnwWuDlNzB5pcWPrmqSqhUBWFIKEDrnrtzMa2CpB7QstjVzp7jckw8I
-	 /tbIrLRYFeX1JtjGfh+OCDTmrhrYsn/ZV3Wvlkt7iDxHl2iKIRQrmfDTf69MbysbQS
-	 ZL619hGx/QjHPIRgBGerct529D39hPNILU/mUW+Siw7GHhs9YAwuH0KCXGMif51BRm
-	 nR8V4/BmVrPVbSlUGqwmH5ULf9BRiYV/qWN/noDe0ZtUibrm8/rSKN/A+z8kGqzBwF
-	 rc48C6H35xdOKpf17+wo/hCB0R5jsUU+xLKaR8yzS7HCd8CdMYKg+F4DWovaL/wx3U
-	 UYH4eYWDO3+jg==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Keith Busch <kbusch@kernel.org>,
-	Mike Christie <michael.christie@oracle.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Sasha Levin <sashal@kernel.org>,
-	seanjc@google.com,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org,
-	mst@redhat.com,
-	jasowang@redhat.com,
-	kvm@vger.kernel.org,
-	virtualization@lists.linux.dev,
-	netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.13 17/17] vhost: return task creation error instead of NULL
-Date: Mon,  3 Mar 2025 11:29:49 -0500
-Message-Id: <20250303162951.3763346-17-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250303162951.3763346-1-sashal@kernel.org>
-References: <20250303162951.3763346-1-sashal@kernel.org>
+	s=k20201202; t=1741019398;
+	bh=hfkj99KGappDMmEncM9OKBX88k+6ubsMEvtGHpVAh24=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AsBcs+Yv8Y4r2VZqv8lwPXuIXX05s/8lkVJXoxuPK8suCAdv5KMF+VdQ/I7KmsWm3
+	 72Gf63UKosyabd2JR0srkyUv0gw14z7wdBmSERT3VGUb/3PvdGmfSNrjBZIr3bLypg
+	 d2G96kCukO4DfrttUHG97qDFjAZmrkGbk5lmQOsGpJmaiU56SYjE7fJYlqfuBmGUWY
+	 Tr3mojmhrX0wgyW1eoJ1wVKiar7GzjDZG0R3U3Z5ULnavJRR8GnKh0NV2vbq0I5ufm
+	 fwgpX9B3N3wVeAcRiywoYBKDeAcw0N/eRCDsw/SDaqqV70vl2hSrupQ8aIfXIQynD6
+	 H5NaKIIxdqVJw==
+Date: Mon, 3 Mar 2025 16:29:53 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Inochi Amaoto <inochiama@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, sophgo@lists.linux.dev,
+	Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: interrupt-controller: Add Sophgo SG2044
+ MSI controller
+Message-ID: <20250303-woozy-pluck-c04b13342401@spud>
+References: <20250303111648.1337543-1-inochiama@gmail.com>
+ <20250303111648.1337543-2-inochiama@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.13.5
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="dO6efuNDhgDYYCLt"
+Content-Disposition: inline
+In-Reply-To: <20250303111648.1337543-2-inochiama@gmail.com>
 
-From: Keith Busch <kbusch@kernel.org>
 
-[ Upstream commit cb380909ae3b1ebf14d6a455a4f92d7916d790cb ]
+--dO6efuNDhgDYYCLt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Lets callers distinguish why the vhost task creation failed. No one
-currently cares why it failed, so no real runtime change from this
-patch, but that will not be the case for long.
+On Mon, Mar 03, 2025 at 07:16:46PM +0800, Inochi Amaoto wrote:
+> Like SG2042, SG2044 uses a similar msi controller to provide MSI
+> interrupt for PCIe controllers.
 
-Signed-off-by: Keith Busch <kbusch@kernel.org>
-Message-ID: <20250227230631.303431-2-kbusch@meta.com>
-Reviewed-by: Mike Christie <michael.christie@oracle.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/x86/kvm/mmu/mmu.c | 2 +-
- drivers/vhost/vhost.c  | 2 +-
- kernel/vhost_task.c    | 4 ++--
- 3 files changed, 4 insertions(+), 4 deletions(-)
+In the future, could you mention the way in which they differ?
+"similar" could mean 99% the same but incompatible, or 90% the same but
+capable of using a fallback?
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index e102505735a7b..0e6bf24093f75 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -7435,7 +7435,7 @@ static void kvm_mmu_start_lpage_recovery(struct once *once)
- 				      kvm_nx_huge_page_recovery_worker_kill,
- 				      kvm, "kvm-nx-lpage-recovery");
- 
--	if (!nx_thread)
-+	if (IS_ERR(nx_thread))
- 		return;
- 
- 	vhost_task_start(nx_thread);
-diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index 9ac25d08f473e..63612faeab727 100644
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -666,7 +666,7 @@ static struct vhost_worker *vhost_worker_create(struct vhost_dev *dev)
- 
- 	vtsk = vhost_task_create(vhost_run_work_list, vhost_worker_killed,
- 				 worker, name);
--	if (!vtsk)
-+	if (IS_ERR(vtsk))
- 		goto free_worker;
- 
- 	mutex_init(&worker->mutex);
-diff --git a/kernel/vhost_task.c b/kernel/vhost_task.c
-index 8800f5acc0071..2ef2e1b800916 100644
---- a/kernel/vhost_task.c
-+++ b/kernel/vhost_task.c
-@@ -133,7 +133,7 @@ struct vhost_task *vhost_task_create(bool (*fn)(void *),
- 
- 	vtsk = kzalloc(sizeof(*vtsk), GFP_KERNEL);
- 	if (!vtsk)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
- 	init_completion(&vtsk->exited);
- 	mutex_init(&vtsk->exit_mutex);
- 	vtsk->data = arg;
-@@ -145,7 +145,7 @@ struct vhost_task *vhost_task_create(bool (*fn)(void *),
- 	tsk = copy_process(NULL, 0, NUMA_NO_NODE, &args);
- 	if (IS_ERR(tsk)) {
- 		kfree(vtsk);
--		return NULL;
-+		return ERR_PTR(PTR_ERR(tsk));
- 	}
- 
- 	vtsk->task = tsk;
--- 
-2.39.5
+>=20
+> Add support for the SG2044 msi controller
+>=20
+> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+> ---
+>  .../bindings/interrupt-controller/sophgo,sg2042-msi.yaml      | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/sophg=
+o,sg2042-msi.yaml b/Documentation/devicetree/bindings/interrupt-controller/=
+sophgo,sg2042-msi.yaml
+> index e1ffd55fa7bf..f6b8b1d92f79 100644
+> --- a/Documentation/devicetree/bindings/interrupt-controller/sophgo,sg204=
+2-msi.yaml
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/sophgo,sg204=
+2-msi.yaml
+> @@ -18,7 +18,9 @@ allOf:
+> =20
+>  properties:
+>    compatible:
+> -    const: sophgo,sg2042-msi
+> +    enum:
+> +      - sophgo,sg2042-msi
+> +      - sophgo,sg2044-msi
+> =20
+>    reg:
+>      items:
+> --=20
+> 2.48.1
+>=20
 
+--dO6efuNDhgDYYCLt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ8XZAQAKCRB4tDGHoIJi
+0u8AAPwIgZNbZPvjU5OIngWO0eEFHEluL1AAnaKVQ0LYpdwwfAEA+5Ax4/LF2luS
++Z0b0hXAU2eo0WQlC2NjayPbAt3ndQs=
+=U5Rv
+-----END PGP SIGNATURE-----
+
+--dO6efuNDhgDYYCLt--
 
