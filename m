@@ -1,222 +1,149 @@
-Return-Path: <linux-kernel+bounces-542107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74703A4C5B4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:52:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FA3AA4C5B5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:52:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA3E1188D60F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:51:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62BD616A0DF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:51:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1DB5214A7F;
-	Mon,  3 Mar 2025 15:51:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 660D5214A81;
+	Mon,  3 Mar 2025 15:51:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gcQJWyge"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UbjRlL3Q"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB238214A8D
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 15:51:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 084341F4166;
+	Mon,  3 Mar 2025 15:51:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741017075; cv=none; b=a8ExnWpojbM+xlp8LAEClaMId4xGUNhpxNeVNQAQKw3EGZt0y5vZbZJDHxbZH/bgA0fzWBF0Y6yxI446eRSHzvCt1T+dkdPGgnlz9k0v2YpvkLKlj+gdIdF38k9sQ7x8Nyad6o5b4zj5b0H3fSSxM6snC8kOFY4wq6qa/sogqIM=
+	t=1741017111; cv=none; b=e7GLtbnirjPqyDtaQP/VEqi221ZqHpSMKFUvWu8BgXCG5FmL6FwkyrKYFeTwN8RhYLx+ETio3HZtamjymZ3xQSvPa6qrABPkeYqAkus0mxgsEjgquF7KJ5/Fllep0U6Gfl5Nix8lGzLXqHrUW+1U7W+ImQQjpS8f9NPdyIuzuH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741017075; c=relaxed/simple;
-	bh=ZWEhpOBidKeV739TbxKmSwQPBROxU2amALqS0k+Joz8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XD2j4UL8QGH/CS9biVxq8Av6GwosNKEZdUQGE6VyVAyfGHTw4ZMwizs22TmZgRL5flVW2pUWCPvCpQvY3e3xN7B2IJlzRIIzq639MqqQDmEuQoAnFm2vrBR7agWpxGt4Go3fOF2hK6gYyAUBZmBtNhSJwgY+ovdxsdVv+sE+rOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gcQJWyge; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741017072;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K16nr7ubLrzOQPyiKBk0XrIZtdEZRIqjn6VX8zdTz0M=;
-	b=gcQJWyge0n8Z4Se2Gt6lANDEcDbDaZpEnv9tgTntCcZWP4g+vLkQflX6nVunpO78z46N3B
-	aZomaLJLrt+hK+8WozVZib8quzIYEiUJNkTUiPKDnyyMl6PXwFcdiTppj379auHmzhT18D
-	F9IbMbSeSPKQsHzJ+T2GvX9/I003xjY=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-169-d29aukDQM6yA3H24eY2puw-1; Mon, 03 Mar 2025 10:51:10 -0500
-X-MC-Unique: d29aukDQM6yA3H24eY2puw-1
-X-Mimecast-MFC-AGG-ID: d29aukDQM6yA3H24eY2puw_1741017069
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-abf597afe1fso242370366b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 07:51:10 -0800 (PST)
+	s=arc-20240116; t=1741017111; c=relaxed/simple;
+	bh=DwMUbenydy2FQEW7DlKyiMhaS8TJZxKKH1OKptuTw9Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XxsDupVr3llpSlSWqwNJTOIhlIzD9mOY0Ekfvny+oEBrM9pyFhm6n0Uq573Zl7i76sSKM7Bri1jXBbjrpRz6W7oaoHkUqqLIWKh2tDIQ98BsGtfENMWddicojTryYcAbE63I5NTJeo6OfnFFMXj6z2PFf89FqDOPcm8Ob9caayI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UbjRlL3Q; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4393dc02b78so29484695e9.3;
+        Mon, 03 Mar 2025 07:51:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741017108; x=1741621908; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dtryQxotpz8U5ArYfvfuETSf+fKZsakZSrz5Z30r0AU=;
+        b=UbjRlL3QVswzHVsnp6SbDg+IzEzsgrxGYkDcGqghI8PSKDHUWzjyJHIdfyMkfgzGTx
+         Rh7raibQcFIC+9gVeK/DH4GQxk55csBYNmoKGvdc5a8rWsY4DTec7U/ivH0JA06avoc1
+         BuV/AmJI7tvSBYGKSgOFoSpPEGtkNgJuqZ5+zITXCvpDQ2nGnUOBU3nuopv3gF0Obm0d
+         jMkeFbODmLbCz2KQC9I7gI82NSuAA3LS+1sEr8wVie8goB+s0Q40mqoQgU7G6eTdBcb3
+         KuCbaKhVTzT/rcj6oZYDHlTe4OD7G2gNGc2EJY8QL1nfr9smky3MNxpOQcgIswVOO0Fi
+         RLqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741017069; x=1741621869;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=K16nr7ubLrzOQPyiKBk0XrIZtdEZRIqjn6VX8zdTz0M=;
-        b=DQOQRKJY/qq0EOo/928768tmWK0a5jfQ2M+L8y0+aSbm5CSGX+konjPxzE+UCM/j1B
-         7bnKZqwow0Qny4WsVSCEZJK7GUtw4k38doJDE0ljDHzZkEWnv6yV+9Tm6UDYOMeYz+Nl
-         RrfHRtCh0YwsgU5bakXFWdr+T4ndv2dFxRsKtcexG30W4byzOUfaxBTBu2TJzgO+YsHY
-         LepcLPrlWxohQqxATXcqEslsaMpil5b948bY/C+x9uwZGHIFupFE3wm6k1m0yo02xZ2V
-         i33JUkjBfOrPBloAjzy/yBc2+zwvc2xpywCVNa6w6GKkyIq12OkiJZAwPoDlusfEuUyE
-         my/A==
-X-Forwarded-Encrypted: i=1; AJvYcCXbrj6x7K8MeZ3sNGZY0fwjDuPbN6/DQjNR91RRZANrKAdIfCnw54lajMfgrAj2DcL7pa6tgK+4tXMa9/c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0OO09pGcC0rcl/YadMfVPra9RszOqP8Cbmt0Aq0lmKTNpwZYR
-	YGEtq7sYN7hJIb6Ja1lcaNgdakun/8J+7/lqyILbViCKbIiIRRSYB8po8R+6+/WTOnk9OLiAz73
-	ckiOvKUi+q4hjdLtVJpt4yk1x5LaICYOaGkNv0ZI5/CsbUnYzIw+NC6tUZl88Hw==
-X-Gm-Gg: ASbGncsqeGKLJ7psMLcrYxKkI54uiLLTyErQj0p6//eSE8isgHTtjo11wkcIV2sdYZQ
-	3GVbaQERBv1zrvBGBfULg44v9hbjn+PZEaClhtUS9Hz6iqa/xuw++TUGfM2cmSsLF3RW3w+srmh
-	tP8ALdKT3BffXGH18p2o3ymNiwdTW2ciQmJbP90vpq7KNFl0ek6+WP3Hz5ZM6VPvQgga4SpKl/N
-	uJdz0ZYgosD5zz5URI0Rr01X/HDy6ACHj7keGvalUrskGplIbywTYN+eb/ixddMd7P+EyUyW0S0
-	M20TehjADn5Mb/td/7M=
-X-Received: by 2002:a17:907:9815:b0:abf:641a:5727 with SMTP id a640c23a62f3a-abf641a5b44mr659813966b.7.1741017069188;
-        Mon, 03 Mar 2025 07:51:09 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE+kTY6PYLlUbG/PtqauQPE6Rqw494YQYlUnD9gWRXe8F8l3Ob/E42U5ZFDWENdOI6Jz12+lg==
-X-Received: by 2002:a17:907:9815:b0:abf:641a:5727 with SMTP id a640c23a62f3a-abf641a5b44mr659811866b.7.1741017068795;
-        Mon, 03 Mar 2025 07:51:08 -0800 (PST)
-Received: from [10.40.98.122] ([78.108.130.194])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf56691042sm451143466b.99.2025.03.03.07.51.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Mar 2025 07:51:08 -0800 (PST)
-Message-ID: <07687805-5a56-40b6-b263-d9e319df0c19@redhat.com>
-Date: Mon, 3 Mar 2025 16:51:07 +0100
+        d=1e100.net; s=20230601; t=1741017108; x=1741621908;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dtryQxotpz8U5ArYfvfuETSf+fKZsakZSrz5Z30r0AU=;
+        b=Aj23z+Lqo7LUUkFaTDHnJdNZ36irOSCxp1i1OaLEgzNi4QHazQF2Ql5hc5mXCmlaRX
+         onBRllEFpBRxv7NpFKBp6v1ToKisCa47rvkenMKprMJmpDbDeYRCn7arO7hRIPdz265f
+         8cXC4/7Nb+WMsLPWx08K0j0yoFSpdTwN5mMJFmJOYi/14Yv/C40FZkZP/LLnvokkNkZ6
+         4jdYlpgAcWebbb/BugZ1mNZcpHIWZGoxzVxjNwf3/rWRm9Jz4uOGDJnQ6/Jb3Y34O/QD
+         yYpIwYmOSvbazrZtm/N7kVa7kSuWNrycEpPBRKPgDtavPmLscVJi9hpJ23llNMu6V8ZK
+         23VQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUV90F3+jWXtW4oRvHY7Z5bpcJUJORZ14wOzJJ1wL2D6ufUR8+AqsLA3/cYIdxFt2f2r4QBf5Gz@vger.kernel.org, AJvYcCUarvCrcV+wPotI5Ti6Nx+hiCjNEYWhMNASZ1jR6oqADoeGqdr0hEE6j6lMKjqzxtTuC/mAKjLjEPeJ9Cs=@vger.kernel.org, AJvYcCV2nK4V38nTl/5SozuPwh79izFPl+c6rD2/uJ2Ke/ydBbcbbs3Y+u35jftUaeZB7MeRjM35E81X1+uDUlE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNYDLOBSGc3nfU2tjmwO4E4Nwwgw4niV35Um/vn/eRBl8jNwLQ
+	9Ulg2pFPvtivVWYWOJzvFlH7akp9LFpEXf4LoupMO5LGrs0BQl+M
+X-Gm-Gg: ASbGncvo8DYYQ8B9JpLarxFwgVN8MmgW4Hf3cmsRDXAjzokTiPDGjIDvPUv5cLw/1Bu
+	C3fB3bd5V0RvbAsOHCtG9soIAI59wN06irVQk1id4pZYS8jl37Vj1BzNYIINSpjRjTihCSiQ0OG
+	EYsqu1GKGUR1gP3Cr53JBWBextlESkWiWRYt/i/MSqBcqYEPk68NMC2LgDrBQ4zVApGwVp33ckN
+	RPt5+XTLfAeT5X5D1rtupOpwff9+0S8SnjzJLHvn8A5eZEDoOFjAwKs4f9MB0zycrXbn572+yOp
+	0KVOdcWXy6yl8wMWtNKkDY0EuhqzkBimZvRwxHk7IVD+CC8Pd2wv0IFjJpkS5ckSZbKPqZTkE2T
+	GM0jpZdjm/fauzW0qNDRRA3/15VlzMH8=
+X-Google-Smtp-Source: AGHT+IGVA2kkwtzvyc7wmuOevfFku3iq8bCghvi0ovoAVjUJkQ+OukYLz0HXfZag+lj/EmUrcnnfBg==
+X-Received: by 2002:a5d:5c84:0:b0:390:f116:d23e with SMTP id ffacd0b85a97d-390f116d675mr6558402f8f.19.1741017108217;
+        Mon, 03 Mar 2025 07:51:48 -0800 (PST)
+Received: from orome (p200300e41f187700f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f18:7700:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e4847fe5sm14941073f8f.73.2025.03.03.07.51.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 07:51:47 -0800 (PST)
+Date: Mon, 3 Mar 2025 16:51:45 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Ma Ke <make24@iscas.ac.cn>
+Cc: jckuo@nvidia.com, vkoul@kernel.org, kishon@kernel.org, 
+	jonathanh@nvidia.com, linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, akpm@linux-foundation.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2 RESEND] phy: Fix error handling in tegra_xusb_port_init
+Message-ID: <lieqwndlwojiwh7ipqbhf45iv37k2e52yl5jsmpe4wifki3tby@qndkynn5qogf>
+References: <20250303072739.3874987-1-make24@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] media: uvcvideo: Rollback non processed entities
- on error
-To: Ricardo Ribalda <ribalda@chromium.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@kernel.org
-References: <20250224-uvc-data-backup-v2-0-de993ed9823b@chromium.org>
- <20250224-uvc-data-backup-v2-3-de993ed9823b@chromium.org>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20250224-uvc-data-backup-v2-3-de993ed9823b@chromium.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-Hi,
-
-On 24-Feb-25 11:34, Ricardo Ribalda wrote:
-> If we wail to commit an entity, we need to restore the
-> UVC_CTRL_DATA_BACKUP for the other uncommitted entities. Otherwise the
-> control cache and the device would be out of sync.
-> 
-> Cc: stable@kernel.org
-> Fixes: b4012002f3a3 ("[media] uvcvideo: Add support for control events")
-> Reported-by: Hans de Goede <hdegoede@redhat.com>
-> Closes: https://lore.kernel.org/linux-media/fe845e04-9fde-46ee-9763-a6f00867929a@redhat.com/
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-
-Thanks, patch looks good to me:
-
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-
-Regards,
-
-Hans
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="dogd6n2uv5zyr2bv"
+Content-Disposition: inline
+In-Reply-To: <20250303072739.3874987-1-make24@iscas.ac.cn>
 
 
+--dogd6n2uv5zyr2bv
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 RESEND] phy: Fix error handling in tegra_xusb_port_init
+MIME-Version: 1.0
 
-
+On Mon, Mar 03, 2025 at 03:27:39PM +0800, Ma Ke wrote:
+> If device_add() fails, do not use device_unregister() for error
+> handling. device_unregister() consists two functions: device_del() and
+> put_device(). device_unregister() should only be called after
+> device_add() succeeded because device_del() undoes what device_add()
+> does if successful. Change device_unregister() to put_device() call
+> before returning from the function.
+>=20
+> As comment of device_add() says, 'if device_add() succeeds, you should
+> call device_del() when you want to get rid of it. If device_add() has
+> not succeeded, use only put_device() to drop the reference count'.
+>=20
+> Found by code review.
+>=20
+> Cc: stable@vger.kernel.org
+> Fixes: 53d2a715c240 ("phy: Add Tegra XUSB pad controller support")
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 > ---
->  drivers/media/usb/uvc/uvc_ctrl.c | 32 ++++++++++++++++++++++----------
->  1 file changed, 22 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-> index 7d074686eef4..89b946151b16 100644
-> --- a/drivers/media/usb/uvc/uvc_ctrl.c
-> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-> @@ -1864,7 +1864,7 @@ static int uvc_ctrl_commit_entity(struct uvc_device *dev,
->  	unsigned int processed_ctrls = 0;
->  	struct uvc_control *ctrl;
->  	unsigned int i;
-> -	int ret;
-> +	int ret = 0;
->  
->  	if (entity == NULL)
->  		return 0;
-> @@ -1893,8 +1893,6 @@ static int uvc_ctrl_commit_entity(struct uvc_device *dev,
->  				dev->intfnum, ctrl->info.selector,
->  				uvc_ctrl_data(ctrl, UVC_CTRL_DATA_CURRENT),
->  				ctrl->info.size);
-> -		else
-> -			ret = 0;
->  
->  		if (!ret)
->  			processed_ctrls++;
-> @@ -1906,10 +1904,14 @@ static int uvc_ctrl_commit_entity(struct uvc_device *dev,
->  
->  		ctrl->dirty = 0;
->  
-> -		if (ret < 0) {
-> +		if (ret < 0 && !rollback) {
->  			if (err_ctrl)
->  				*err_ctrl = ctrl;
-> -			return ret;
-> +			/*
-> +			 * If we fail to set a control, we need to rollback
-> +			 * the next ones.
-> +			 */
-> +			rollback = 1;
->  		}
->  
->  		if (!rollback && handle &&
-> @@ -1917,6 +1919,9 @@ static int uvc_ctrl_commit_entity(struct uvc_device *dev,
->  			uvc_ctrl_set_handle(handle, ctrl, handle);
->  	}
->  
-> +	if (ret)
-> +		return ret;
-> +
->  	return processed_ctrls;
->  }
->  
-> @@ -1947,7 +1952,8 @@ int __uvc_ctrl_commit(struct uvc_fh *handle, int rollback,
->  	struct uvc_video_chain *chain = handle->chain;
->  	struct uvc_control *err_ctrl;
->  	struct uvc_entity *entity;
-> -	int ret = 0;
-> +	int ret_out = 0;
-> +	int ret;
->  
->  	/* Find the control. */
->  	list_for_each_entry(entity, &chain->entities, chain) {
-> @@ -1958,17 +1964,23 @@ int __uvc_ctrl_commit(struct uvc_fh *handle, int rollback,
->  				ctrls->error_idx =
->  					uvc_ctrl_find_ctrl_idx(entity, ctrls,
->  							       err_ctrl);
-> -			goto done;
-> +			/*
-> +			 * When we fail to commit an entity, we need to
-> +			 * restore the UVC_CTRL_DATA_BACKUP for all the
-> +			 * controls in the other entities, otherwise our cache
-> +			 * and the hardware will be out of sync.
-> +			 */
-> +			rollback = 1;
-> +
-> +			ret_out = ret;
->  		} else if (ret > 0 && !rollback) {
->  			uvc_ctrl_send_events(handle, entity,
->  					     ctrls->controls, ctrls->count);
->  		}
->  	}
->  
-> -	ret = 0;
-> -done:
->  	mutex_unlock(&chain->ctrl_mutex);
-> -	return ret;
-> +	return ret_out;
->  }
->  
->  int uvc_ctrl_get(struct uvc_video_chain *chain,
-> 
+> Changes in v2:
+> - modified the bug description as suggestions.
+> ---
+>  drivers/phy/tegra/xusb.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--dogd6n2uv5zyr2bv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmfF0BEACgkQ3SOs138+
+s6HeIBAAimqmNAdbUICiy7xT16w1yKGIbmD9HklsSfEO8yLwmRf0JsegiRpWqVbx
+nJCXDDAUnzaUXv3u58rwUdhEAXtdX3ENEt1RojEnjxGU2x45FclbR+57gE5jw67L
+01cjFcaaZT6mQK8Rwq38m2s287W+da7gEdcWlZe1PK63wL1bgqvEygtMMbZtS4yw
+IVXoDPCMv+IKLuW3EfrnUeUT+7lBrL73HuFhUlKRv3Nu5Kj6V7esx8K4bv9meaUl
++q/K84lkENYo5xEYnoSWFgwO+MZcF+MsuCIZsXWqBvXuFHtYJB1ce8siBrpq+Ggg
+ZeyP1loDD/4hyGTfwoX3XkiLdBXRX1yNXs1NK3MJjKg/SMjQ79QxVdMzWJ7vRIO9
+08t74Vt4CguKGHCeLgdwgHxSzgOhLSCKhjXBa4cphmDBlYGvARYd2X/WPjgbZyd5
+dSLsOrMvCtnEfW9gtKb0xEWuLX0eVBiKnYI/3ga8BmE2vQ8CbOyrczs5EwmVoVWf
+MyDtqVnJGxDEN+tIOOdN0FzY65If7kDCShc7GHln+6QLXHZlr1q7vmfomrhWCLXG
+2Gn2sE8gvnkshPo5LUFBrLVzIX6OoCnHKMgZXch4Oy0hm/8nncKDAiQZWJgnbq3i
+lfJsJGYOD4Htj1Aco035O+S95fnEwUyZwWOlTsHi7l/YIzpGkNQ=
+=CVRC
+-----END PGP SIGNATURE-----
+
+--dogd6n2uv5zyr2bv--
 
