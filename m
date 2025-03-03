@@ -1,100 +1,103 @@
-Return-Path: <linux-kernel+bounces-545252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF5AEA4EAD3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:12:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD92AA4E88A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:25:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B95E7188E23D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:07:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17243881C8A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DA0327C85B;
-	Tue,  4 Mar 2025 17:47:34 +0000 (UTC)
-Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3A8D296176;
+	Tue,  4 Mar 2025 16:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="otGi7m45"
+Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37B071D5141
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:47:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21377285401
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:30:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.117
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741110453; cv=pass; b=WQ/T9lsl3/1k0AjKPVpoQi1eX6EiljUmASqWeyKbSDvDYGFi9Qi4idat83KZdk39seYLMFyvhTgD2u/XztoTLofXtPDiZ3kp7Rk9uGcpTfMvBvLFPzA2NDIv4mN7aboi2VTyx0BzKilXxr8wpqZCRZN5w/uOeU2c4xelvtMF4y4=
+	t=1741105808; cv=fail; b=r2JvCzYA8HRmm5V0eplySNNN9xoKioXn9DjsZKHZynStbziGbRL32zqoaqXvXNz6lzRuHxgvdooEc+fwZRUEvAAzyN6UNrgsOlGbIjy/gK46GJ03C5QAf1gv0G1Ra/sulYwOJmQpe0DlIiJKk34TuqfccN0+1zjCOeMF3yBatoE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741110453; c=relaxed/simple;
-	bh=hnHH00LWmBKWv6Wtab7kQkUQiZNpaAeLHRDxXshMdX0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VTl6KfFDK/P9PDwxpZacjhHcluvvUXztG7ybnUJ/9GEWL8rDHhXXpbckg7DmGRAr3Q+ygDonbleB0+UgMX/S7upoNnRSX1iyBe08b7cjjMeGEdy19E7t5/ypZYzMnDPDpJy7zUUbgbG34lM2lhkw3nzNbbVoOWZQxUpoVDnOOpg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=cc.itu.edu.tr; arc=none smtp.client-ip=176.9.242.62; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=pass smtp.client-ip=160.75.25.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+	s=arc-20240116; t=1741105808; c=relaxed/simple;
+	bh=+aWd3NrvV3ubV1kXbgcpVzDvfJySegeddNL9Z/5L+QM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pitYCLFSx2NVqHIpv97BXClZ+EVTRGJC8bWiiT7lw+B9ZMGrrp2pawqHqcdwpUoH6pxv+0RgE5TQ3GP0SN9g2cvgGJHLRYZM2GvYnx1N2PfDpbXGrNIh2EndBfsgLZL+zmMotFiP8mKfh1uA6O5QysO0G+XXSgsJD2plvWNxu5Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=otGi7m45 reason="signature verification failed"; arc=none smtp.client-ip=10.30.226.201; arc=fail smtp.client-ip=160.75.25.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
-Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
+Received: from lesvatest1.cc.itu.edu.tr (unknown [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id 4D5E140D1EF9
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:47:30 +0300 (+03)
+	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id 4B88140D1F41
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:30:05 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
+Authentication-Results: lesvatest1.cc.itu.edu.tr;
+	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20201202 header.b=otGi7m45
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6hLG1gwVzG41q
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:42:30 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6h2964NnzG2jG
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:28:33 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 2361F42763; Tue,  4 Mar 2025 19:42:19 +0300 (+03)
-X-Envelope-From: <linux-kernel+bounces-541212-bozkiru=itu.edu.tr@vger.kernel.org>
-Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id EA922427A6
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:59:05 +0300 (+03)
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id 3C6632DCE0
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:59:04 +0300 (+03)
+	id E90B642736; Tue,  4 Mar 2025 19:28:21 +0300 (+03)
+Authentication-Results: lesva1.cc.itu.edu.tr;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=otGi7m45
+X-Envelope-From: <linux-kernel+bounces-541218-bozkiru=itu.edu.tr@vger.kernel.org>
+Authentication-Results: lesva2.cc.itu.edu.tr;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=otGi7m45
+Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
+	by le2 (Postfix) with ESMTP id D58DF42D9B
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:02:48 +0300 (+03)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by fgw1.itu.edu.tr (Postfix) with SMTP id 701873064C0C
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:02:48 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D94B17A530B
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 08:56:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 812E53ADC2B
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 09:02:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6883B1F03CB;
-	Mon,  3 Mar 2025 08:54:18 +0000 (UTC)
-Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADDDD1F03E8;
+	Mon,  3 Mar 2025 09:02:36 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14B622611;
-	Mon,  3 Mar 2025 08:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19F01DE3A4;
+	Mon,  3 Mar 2025 09:02:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740992056; cv=none; b=PgeyRoWLEUZshZjHHcARPhQ6vB7SlIiC6mOOS85bxCQt+Izd1FUv/m7bDy3322/Xp3iCikLeQ4Evn3tLqwFjtELR6+/ZvilP4vl1ZTastVbwCj8ou+r9hFtwDBTEw/FWlBmZ9XDO7axmMQet+f9XNS0ESO6guIqfZ58Ge7XRIkg=
+	t=1740992553; cv=none; b=Rp6B0D+hFisarjMKzcoOfObkkCEq05fMDm0XKegZWUHvyKmzlmBHfR/RptlzgDFfmCAJ6AK3J69gss4PkHX/wJ36fWVzy9NWQu9A1fROnKxBcTyxSzdQRI3POcZwW5/6X+aD/2I6U30KPg43uiQUgAMQuT7IR55SmGHyaUfoClU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740992056; c=relaxed/simple;
-	bh=hnHH00LWmBKWv6Wtab7kQkUQiZNpaAeLHRDxXshMdX0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GG43AspgSeeUVfHG368vKNUYLnK0Uuuc++CGjGqsHw85dek4IEUYYbr0AocCwUSw9XYd+nhVUyTLE60y3/YEikZ7doI3KGkBbTay7/C4ZAWyfh0Xx+Eo/MR3DSKf/r2jf0O8ksbzzfvTH1yrnMlCrIkI612Y5qQNap2gFVzHyVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 942A1100DA1D0;
-	Mon,  3 Mar 2025 09:54:06 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 6ABB5449B4B; Mon,  3 Mar 2025 09:54:06 +0100 (CET)
-Date: Mon, 3 Mar 2025 09:54:06 +0100
-From: Lukas Wunner <lukas@wunner.de>
-To: Feng Tang <feng.tang@linux.alibaba.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Liguang Zhang <zhangliguang@linux.alibaba.com>,
-	Guanghui Feng <guanghuifeng@linux.alibaba.com>, rafael@kernel.org,
-	Markus Elfring <Markus.Elfring@web.de>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	ilpo.jarvinen@linux.intel.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] PCI/portdrv: Only disable hotplug interrupts early
- when needed.
-Message-ID: <Z8VuLl8Os5BrsjrE@wunner.de>
-References: <20250303023630.78397-1-feng.tang@linux.alibaba.com>
+	s=arc-20240116; t=1740992553; c=relaxed/simple;
+	bh=UZAYbtb3BpEfZIxe1rXdNagKd6DUuOCETOtib79EdIQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rkqz69MPaL7yvIa8Ai9COzsiW030LhAUHAlD8xrKBTfK7PcfA5I9O2z6fN3YAEOBs74MUioQobgVA8QVie2h5IUs/MAJrXOsdwd+DD5zO+DFz8j2Kwa3o9yGTu8oB6pw4uL0kbQ9saq4ZQGUQtDvKRrZsk7vVspNQA+SNxNL2H0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=otGi7m45; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2AD6C4CED6;
+	Mon,  3 Mar 2025 09:02:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740992553;
+	bh=UZAYbtb3BpEfZIxe1rXdNagKd6DUuOCETOtib79EdIQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=otGi7m45B3/3ZMXej2fl5F3AaeEKlExdM9c3LdYZFiiBWIUjkYKsV0yhjfknilrXO
+	 ri5RTiaNSYFfUfHywsk2PFpQNitOAwJJ1H1gG5MyJw1vXgVebimFJd2x3sPybk522q
+	 5YGk25itOFPYF2MKONDn/i0GvugDIjtOU1ar9tC0z5zXyJHBbhB9IujF120l2WvXeU
+	 ZEkJkkQC5C99/KSZquXO5D0VUu6a/Z+DYc2RO1WOu88byqmBetQPOcYvRIPrM9bTKG
+	 SUxY4MFijfyUuRmlZlBq+Y6BD7WgJcsUn7Z0YQJct29a4ct1tGNQaHi95oVgf4OiM8
+	 G7ypgRlw0IYEw==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH] tracing: probe-events: Cleanup entry-arg storing code
+Date: Mon,  3 Mar 2025 18:02:29 +0900
+Message-ID: <174099254917.619976.17555764627143910556.stgit@devnote2>
+X-Mailer: git-send-email 2.43.0
+User-Agent: StGit/0.19
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -102,44 +105,174 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250303023630.78397-1-feng.tang@linux.alibaba.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6hLG1gwVzG41q
+X-ITU-Libra-ESVA-ID: 4Z6h2964NnzG2jG
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741715136.1995@QOZ8toCq4xFPlBmpYssnAw
+X-ITU-Libra-ESVA-Watermark: 1741710521.23177@JiOfK1Mdlj7pE1oV/LhkYA
 X-ITU-MailScanner-SpamCheck: not spam
 
-On Mon, Mar 03, 2025 at 10:36:30AM +0800, Feng Tang wrote:
-> There was problem reported by firmware developers that they received
-> two PCIe hotplug commands in very short intervals on an ARM server,
-> which doesn't comply with PCIe spec, and broke their state machine and
-> work flow. According to PCIe 6.1 spec, section 6.7.3.2, software needs
-> to wait at least 1 second for the command-complete event, before
-> resending the command or sending a new command.
-> 
-> In the failure case, the first PCIe hotplug command firmware received
-> is from get_port_device_capability(), which sends command to disable
-> PCIe hotplug interrupts without waiting for its completion, and the
-> second command comes from pcie_enable_notification() of pciehp driver,
-> which enables hotplug interrupts again.
-> 
-> One solution is to add the necessary delay after the first command [1],
-> while Lukas proposed an optimization that if the pciehp driver will be
-> loaded soon and handle the interrupts, then the hotplug and the wait
-> are not needed and can be saved, for every root port.
-> 
-> So fix it by only disabling the hotplug interrupts when pciehp driver
-> is not enabled.
-> 
-> [1]. https://lore.kernel.org/lkml/20250224034500.23024-1-feng.tang@linux.alibaba.com/t/#u
-> 
-> Fixes: 2bd50dd800b5 ("PCI: PCIe: Disable PCIe port services during port initialization")
-> Suggested-by: Lukas Wunner <lukas@wunner.de>
-> Signed-off-by: Feng Tang <feng.tang@linux.alibaba.com>
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-Reviewed-by: Lukas Wunner <lukas@wunner.de>
+Cleanup __store_entry_arg() so that it is easier to understand.
+The main complexity may come from combining the loops for finding
+stored-entry-arg and max-offset and appending new entry.
+
+This split those different loops into 3 parts, lookup the same
+entry-arg, find the max offset and append new entry.
+
+Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+---
+ kernel/trace/trace_probe.c |   85 +++++++++++++++++++++++---------------=
+------
+ 1 file changed, 44 insertions(+), 41 deletions(-)
+
+diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
+index 2eeecb6c95ee..b2261cab4b94 100644
+--- a/kernel/trace/trace_probe.c
++++ b/kernel/trace/trace_probe.c
+@@ -770,6 +770,26 @@ static int check_prepare_btf_string_fetch(char *type=
+name,
+=20
+ #ifdef CONFIG_HAVE_FUNCTION_ARG_ACCESS_API
+=20
++static void store_entry_arg_at(struct fetch_insn *code, int argnum, int =
+offset)
++{
++	code[0].op =3D FETCH_OP_ARG;
++	code[0].param =3D argnum;
++	code[1].op =3D FETCH_OP_ST_EDATA;
++	code[1].offset =3D offset;
++}
++
++static int get_entry_arg_max_offset(struct probe_entry_arg *earg)
++{
++	int i, max_offset =3D 0;
++
++	for (i =3D 0; i < earg->size - 1 && earg->code[i].op !=3D FETCH_OP_END;=
+ i++) {
++		if (earg->code[i].op =3D=3D FETCH_OP_ST_EDATA)
++			if (earg->code[i].offset > max_offset)
++				max_offset =3D earg->code[i].offset;
++	}
++	return max_offset;
++}
++
+ /*
+  * Add the entry code to store the 'argnum'th parameter and return the o=
+ffset
+  * in the entry data buffer where the data will be stored.
+@@ -777,7 +797,6 @@ static int check_prepare_btf_string_fetch(char *typen=
+ame,
+ static int __store_entry_arg(struct trace_probe *tp, int argnum)
+ {
+ 	struct probe_entry_arg *earg =3D tp->entry_arg;
+-	bool match =3D false;
+ 	int i, offset;
+=20
+ 	if (!earg) {
+@@ -795,6 +814,8 @@ static int __store_entry_arg(struct trace_probe *tp, =
+int argnum)
+ 		for (i =3D 0; i < earg->size; i++)
+ 			earg->code[i].op =3D FETCH_OP_END;
+ 		tp->entry_arg =3D earg;
++		store_entry_arg_at(earg->code, argnum, 0);
++		return 0;
+ 	}
+=20
+ 	/*
+@@ -806,40 +827,34 @@ static int __store_entry_arg(struct trace_probe *tp=
+, int argnum)
+ 	 * code array to find the FETCH_OP_ARG which already fetches the 'argnu=
+m'
+ 	 * parameter. If it doesn't match, update 'offset' to find the last
+ 	 * offset.
+-	 * If we find the FETCH_OP_END without matching FETCH_OP_ARG entry, we
+-	 * will save the entry with FETCH_OP_ARG and FETCH_OP_ST_EDATA, and
+-	 * return data offset so that caller can find the data offset in the en=
+try
+-	 * data buffer.
++	 * If we hit the FETCH_OP_END without matching FETCH_OP_ARG entry,
++	 * append the entry with FETCH_OP_ARG and FETCH_OP_ST_EDATA, and
++	 * return data offset so that caller can find the data offset in the
++	 * entry data buffer.
+ 	 */
+-	offset =3D 0;
+-	for (i =3D 0; i < earg->size - 1; i++) {
+-		switch (earg->code[i].op) {
+-		case FETCH_OP_END:
+-			earg->code[i].op =3D FETCH_OP_ARG;
+-			earg->code[i].param =3D argnum;
+-			earg->code[i + 1].op =3D FETCH_OP_ST_EDATA;
+-			earg->code[i + 1].offset =3D offset;
+-			return offset;
+-		case FETCH_OP_ARG:
+-			match =3D (earg->code[i].param =3D=3D argnum);
+-			break;
+-		case FETCH_OP_ST_EDATA:
+-			offset =3D earg->code[i].offset;
+-			if (match)
+-				return offset;
+-			offset +=3D sizeof(unsigned long);
+-			break;
+-		default:
+-			break;
+-		}
++
++	/* Search the offset for the sprcified argnum. */
++	for (i =3D 0; i < earg->size - 1 && earg->code[i].op !=3D FETCH_OP_END;=
+ i++) {
++		if (earg->code[i].op !=3D FETCH_OP_ARG || earg->code[i].param !=3D arg=
+num)
++			continue;
++
++		if (WARN_ON_ONCE(earg->code[i + 1].op !=3D FETCH_OP_ST_EDATA))
++			continue;
++
++		return earg->code[i + 1].offset;
+ 	}
+-	return -ENOSPC;
++	if (i >=3D earg->size - 1)
++		return -ENOSPC;
++
++	/* Not found, append new entry if possible. */
++	offset =3D get_entry_arg_max_offset(earg) + sizeof(unsigned long);
++	store_entry_arg_at(&earg->code[i], argnum, offset);
++	return offset;
+ }
+=20
+ int traceprobe_get_entry_data_size(struct trace_probe *tp)
+ {
+ 	struct probe_entry_arg *earg =3D tp->entry_arg;
+-	int i, size =3D 0;
+=20
+ 	if (!earg)
+ 		return 0;
+@@ -854,19 +869,7 @@ int traceprobe_get_entry_data_size(struct trace_prob=
+e *tp)
+ 	 * stored. Thus we need to find the last FETCH_OP_ST_EDATA in the
+ 	 * code array.
+ 	 */
+-	for (i =3D 0; i < earg->size; i++) {
+-		switch (earg->code[i].op) {
+-		case FETCH_OP_END:
+-			goto out;
+-		case FETCH_OP_ST_EDATA:
+-			size =3D earg->code[i].offset + sizeof(unsigned long);
+-			break;
+-		default:
+-			break;
+-		}
+-	}
+-out:
+-	return size;
++	return get_entry_arg_max_offset(earg) + sizeof(unsigned long);
+ }
+=20
+ void store_trace_entry_data(void *edata, struct trace_probe *tp, struct =
+pt_regs *regs)
+
 
 
