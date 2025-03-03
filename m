@@ -1,94 +1,118 @@
-Return-Path: <linux-kernel+bounces-544436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DBDAA4E125
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:37:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A67FCA4E113
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:35:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 624F319C0C32
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:33:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E86A189AFE8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6BE625DCE5;
-	Tue,  4 Mar 2025 14:31:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C650A251784;
+	Tue,  4 Mar 2025 14:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MdDML3sc"
+	dkim=pass (2048-bit key) header.d=crpt.ru header.i=@crpt.ru header.b="cVRnCZE2"
 Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7199925DB08
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:31:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11FBA2512C9
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:29:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741098693; cv=pass; b=kQwvmmcikO35+VSOz88Vsxc/NKzxDL4wKqwy5FTEF/16ywnShOgB83R5L6aHIGVaDWVovvMW3v8APc4sR0et0KB/5rdICDWYbsXFJPZN/zGOrDtrOFdpFHzYyO33WYlAQudRx1nSF3Y9JHrVJ8cR0eJmJ3AImyQ/CMzLM0qY0Oc=
+	t=1741098596; cv=pass; b=oBB3oZjQUHCn6kTGG3PYcoGXZFl6m5zHhEQfmYwiWn9y7f/IUTUxEivN74wJR1xLTXz/Odi1Zf0QRJV5pumkKrpySgqMwS8UcAWnXezMDG/z9R0VF4jBOHVPHFQYTk1Wv1z+SRq8UwKPEqBfnsT51Y1wIG95UHqZgTuHaXLFNhk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741098693; c=relaxed/simple;
-	bh=vOhkONJyWfbNZ+vuKycF4K3lBL5NoKgu121ldbo/HCA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NeGNemJA4lZoFMHoEaU2tJKHwWMszLgLDmCjjiXM99RD0Pdd1/9wsKTzsM6XNTAry6AswbhJQ5akxiVer/WnIWeU9H5lU8nOVr6h0eFcBRYU/LKwAEUQv2y5xYTi7WVMu9CIctCkeczjY7DBec6sXp2yiRvhHwysV36+IORPlQA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MdDML3sc; arc=none smtp.client-ip=10.30.226.201; arc=pass smtp.client-ip=160.75.25.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kernel.org
+	s=arc-20240116; t=1741098596; c=relaxed/simple;
+	bh=dlzlgK1uuPwJmnwi9znbAsJgAX3BfyutzQnKO6E48gM=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=f67VeakIQkAiRBO0VmyQCXYt+5yQxI2cquJ2YU9d6KSYLcTpsvNmSkkWXP8XZn8rcPOboHoSlDZgefWe3kfWhSuwYI19zzv5/emvc9mQO3EEkoCnI9impj13MbbdRo0hOkifNaHWFqEWWL1b3BKV1bDs59pj3HDBv3n2hosL0vs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crpt.ru; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=crpt.ru header.i=@crpt.ru header.b=cVRnCZE2; arc=none smtp.client-ip=91.236.205.1; dmarc=pass (p=quarantine dis=none) header.from=crpt.ru; spf=pass smtp.mailfrom=crpt.ru; arc=pass smtp.client-ip=160.75.25.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crpt.ru
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id BE70240D0B52
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:31:30 +0300 (+03)
+	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 55E8A40D570E
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:29:51 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dP41XwrzFwjk
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:29:44 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dMl18lpzFwkC
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:28:35 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 254E242732; Tue,  4 Mar 2025 17:29:42 +0300 (+03)
+	id 2E9224272D; Tue,  4 Mar 2025 17:28:31 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MdDML3sc
-X-Envelope-From: <linux-kernel+bounces-541111-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=crpt.ru header.i=@crpt.ru header.b=cVRnCZE2
+X-Envelope-From: <linux-kernel+bounces-541121-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MdDML3sc
+	dkim=pass (2048-bit key) header.d=crpt.ru header.i=@crpt.ru header.b=cVRnCZE2
 Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id 1713A424E9
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:54:48 +0300 (+03)
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id A926F2DCE5
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:54:47 +0300 (+03)
+	by le2 (Postfix) with ESMTP id 15A0142266
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:09:59 +0300 (+03)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by fgw2.itu.edu.tr (Postfix) with SMTP id B6A7F2DCED
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:09:58 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83B643B09CC
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 07:54:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D214316E3C3
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 08:09:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0B61EE7D6;
-	Mon,  3 Mar 2025 07:54:34 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F299B1EEA46;
+	Mon,  3 Mar 2025 08:09:40 +0000 (UTC)
+Received: from mail.crpt.ru (mail.crpt.ru [91.236.205.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960284C85;
-	Mon,  3 Mar 2025 07:54:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BBF813A3F7;
+	Mon,  3 Mar 2025 08:09:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.236.205.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740988471; cv=none; b=F6FHXBjHx10idc/bLm8G43f4xke1Y7ihy2u3vJDeSxWpNxT3JEKSPhzc0UcpdUHgNVoql2GL7g3eSwd04tMGH8u917BC355yICo6b05SewZ3+9b6gfAoGN8M8zSi03w9deRFnxqtNBcdq7SFjaQ/WAsulSesdznOURPNmE8IouY=
+	t=1740989378; cv=none; b=ebhlCpCPfQpfGzDxgSTyYtKUxTMM2UpTGNl3Z30US178+dsGLAAIkvu2eOLWxcu8HP6/3RecQdh19km/r9VRIILtojffhePjHEZxvtCOA6+ErstbJbmR1cSctKnu7CJ6tplDR26Z140TT6RLOO4puzpFQrq4M/ENjylh9pH8tkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740988471; c=relaxed/simple;
-	bh=vOhkONJyWfbNZ+vuKycF4K3lBL5NoKgu121ldbo/HCA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nvk4KUNg+XwJ7iWFqDi12o3VPynF1EeY0JbLqa6krOv6/zUHqMXdiPdFi3z6SyASRDoEHIcLO1gt5ORdv393naU5JL5/pWV3EX5tqsAFFJYVfy4QpA6DabS2ySt66WWzIzlHcQtmuPvhPYK4KwI0uFZAYZSHFaRIu3fG9SiNztU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MdDML3sc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA7BDC4CED6;
-	Mon,  3 Mar 2025 07:54:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740988471;
-	bh=vOhkONJyWfbNZ+vuKycF4K3lBL5NoKgu121ldbo/HCA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MdDML3scjcus143jtZmjir2fIgJ3pETQNcZ++JjwMMZYXCeKiq+vglTeALB4tGYJs
-	 V1W9dlanwv4Iq1m4XXLJ8sSp2OoB715AeA56NrD2Wv34Ndt0kETDTkWdHwqAkHBkYo
-	 cYM5zXbrJuEayjLmaycb+1APvgEuB8oeuFAO1TeLoHCFvS+GS42dUGJU6ppEwJwfze
-	 QV0uau3EdL6d4zavkVXGXE5Ba84BxOG/UlJX7rtTHPyftP5ZDvI/Yn/yEuDUnnW9Cb
-	 wPj6Q0jv7jW7R39Eg//NpVI9UGr9X66ISVj6uu9M8G+9ULBoqATCo8bxxLHKit6EVu
-	 vLRkjOIqRKseg==
-Message-ID: <fbd307ae-1dfa-497b-a597-d15b6baa30f4@kernel.org>
-Date: Mon, 3 Mar 2025 08:54:25 +0100
+	s=arc-20240116; t=1740989378; c=relaxed/simple;
+	bh=dlzlgK1uuPwJmnwi9znbAsJgAX3BfyutzQnKO6E48gM=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=SIFMNuRyKXtPel8BoEZWHTlIuvhtZiJMGDKfkt6lSsDSkFox6djV3uxbpcQYz9xfBh0RHGLHWBAaG9MqiG0jqWdqi1tOr7LyVIak6/cDHr3VgyKcQ8VFT2gU7eSYeJA5Xlt8rB1YrrZMzKvdd7nqm/rs5ERdC0SVITVqZg4YjzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crpt.ru; spf=pass smtp.mailfrom=crpt.ru; dkim=pass (2048-bit key) header.d=crpt.ru header.i=@crpt.ru header.b=cVRnCZE2; arc=none smtp.client-ip=91.236.205.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crpt.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crpt.ru
+Received: from mail.crpt.ru ([192.168.60.3])
+	by mail.crpt.ru  with ESMTP id 52388PGD020784-52388PGF020784
+	(version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=OK);
+	Mon, 3 Mar 2025 11:08:25 +0300
+Received: from EX1.crpt.local (192.168.60.3) by ex1.crpt.local (192.168.60.3)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Mon, 3 Mar
+ 2025 11:08:25 +0300
+Received: from EX1.crpt.local ([192.168.60.3]) by EX1.crpt.local
+ ([192.168.60.3]) with mapi id 15.01.2507.044; Mon, 3 Mar 2025 11:08:25 +0300
+From: =?koi8-r?B?98HUz9LP0MnOIOHOxNLFyg==?= <a.vatoropin@crpt.ru>
+To: Johannes Berg <johannes@sipsolutions.net>
+CC: =?koi8-r?B?98HUz9LP0MnOIOHOxNLFyg==?= <a.vatoropin@crpt.ru>, Jeff Johnson
+	<jjohnson@kernel.org>, Pradeep Kumar Chitrapu <quic_pradeepc@quicinc.com>,
+	Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>, Govindaraj Saminathan
+	<quic_gsamin@quicinc.com>, Bhagavathi Perumal S <bperumal@codeaurora.org>,
+	Rajkumar Manoharan <rmanohar@codeaurora.org>,
+	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+	"ath11k@lists.infradead.org" <ath11k@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>
+Subject: [PATCH] ath11k: fix overflow in tx stats calculation
+Thread-Topic: [PATCH] ath11k: fix overflow in tx stats calculation
+Thread-Index: AQHbjBNwlu6FEnv6mkuda429t7F2NQ==
+Date: Mon, 3 Mar 2025 08:08:25 +0000
+Message-ID: <20250303080819.48872-1-a.vatoropin@crpt.ru>
+Accept-Language: ru-RU, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-kse-serverinfo: EX1.crpt.local, 9
+x-kse-antivirus-interceptor-info: scan successful
+x-kse-antivirus-info: Clean, bases: 2/17/2025 9:52:00 AM
+x-kse-attachment-filter-triggered-rules: Clean
+x-kse-attachment-filter-triggered-filters: Clean
+x-kse-bulkmessagesfiltering-scan-result: protection disabled
+Content-Type: text/plain; charset="koi8-r"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -96,120 +120,84 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: power: supply: Document Maxim MAX8971
- charger
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250226093700.44726-1-clamor95@gmail.com>
- <20250226093700.44726-2-clamor95@gmail.com>
- <20250227-cherubic-mantis-from-betelgeuse-86f5ff@krzk-bin>
- <CAPVz0n0ygR=ygsvG2+z-zST7kmJ_P3nxf29tqdgHpRs_Nw6D5Q@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CAPVz0n0ygR=ygsvG2+z-zST7kmJ_P3nxf29tqdgHpRs_Nw6D5Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-FEAS-Client-IP: 192.168.60.3
+X-FE-Policy-ID: 2:4:0:SYSTEM
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; d=crpt.ru; s=crpt.ru; c=relaxed/relaxed;
+ h=from:to:cc:subject:date:message-id:content-type:mime-version;
+ bh=GXCR2/qllsmPA+9VDf1WpC/D25nO4d0B9V4QL8xXBpM=;
+ b=cVRnCZE2yRwZueFBHy4v+SikDM43pylMgfh911GYqPN0IIt3BSzNGN8ZlKb4vq/dq6CY2qpD4sfg
+	8kRyBybkjfO93Vpxt0HV5zMAGEIcdTOmls/gMqxjyK9DRaPFWd8FWIq+bAPIMDLC72Pq0ZafQrM/
+	xkJKWHQtjde+9Y/OdG/WYtLulJ6X7ojMB1n/zUWXkKLUcTvhw0XU4H6EdBz9kmGEvuV5vTpSZH0Y
+	/8kTPSblVtkLGX1AiybAcIR7naqN66Q8716J6HMQGkYdY7HPAzKtmKWHaS7Fy3/hb18+hHkhSGsA
+	qTQuNNn92yGO2ALB9srRBlcPXvw5W4B2bqxLzg==
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6dP41XwrzFwjk
+X-ITU-Libra-ESVA-ID: 4Z6dMl18lpzFwkC
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741703402.97317@X8kLhNAws/d+RZ5B8CfYMA
+X-ITU-Libra-ESVA-Watermark: 1741703335.58366@RiD0ddXmMRQEb/JOWWxM4A
 X-ITU-MailScanner-SpamCheck: not spam
 
-On 27/02/2025 11:55, Svyatoslav Ryhel wrote:
->>> +
+From: Andrey Vatoropin <a.vatoropin@crpt.ru>
 
-Please kindly trim the replies from unnecessary context. It makes it
-much easier to find new content.
+Size of variable peer_stats->succ_bytes equals four bytes.
+Size of variable peer_stats->retry_bytes equals four bytes.
 
->>> +  maxim,usb-in-current-limit-microamp:
->>> +    description:
->>> +      USB Input current limit
->>> +    minimum: 100000
->>> +    default: 500000
->>> +    maximum: 1500000
->>> +
->>> +  maxim,ac-in-current-limit-microamp:
->>> +    description:
->>> +      AC Input current limit
->>> +    minimum: 100000
->>> +    default: 500000
->>> +    maximum: 1500000
->>
->> Half of these properties as well are not suitable and duplicate existing
->> sysfs interface.
->>
-> 
-> All these properties allow configure the charger to suit the device on
-> which it is used. None of them are required but are a nice addition.
-> Why you are denying me an ability to fully utilize hardware I have and
-> tune it to the device? All those values represent hardware registers
-> which can be customized for the device, not for the end user to mess
-> with.
+The expression peer_stats->succ_bytes+peer_stats->retry_bytes is currently
+being evaluated using 32-bit arithmetic. So during the addition an
+overflow may occur.
 
-Because you put user-space choice or OS policy into the DT and DT is not
-for that.
+Since a value of type 'u64' is used to store the eventual he, it is
+necessary to perform the 64-bit arithmetic to avoid overflow during the
+multiplication.
 
-> 
->> And for remaining, still no battery.
->>
-> 
-> reference to power-supply IS included, hence the battery option is
-> there as well.
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
+      =20
+Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
+Signed-off-by: Andrey Vatoropin <a.vatoropin@crpt.ru>
+---
+ drivers/net/wireless/ath/ath11k/debugfs_sta.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-I don't see it being used at all and you explicitly duplicated
-properties which means that reference is redundant and should be dropped
-with such binding. So how did you solve my request to add reference
-which then you make redundant? Add reference and use it.
-
-Best regards,
-Krzysztof
+diff --git a/drivers/net/wireless/ath/ath11k/debugfs_sta.c b/drivers/net/wi=
+reless/ath/ath11k/debugfs_sta.c
+index f56a24b6c8da..982a7add6ea6 100644
+--- a/drivers/net/wireless/ath/ath11k/debugfs_sta.c
++++ b/drivers/net/wireless/ath/ath11k/debugfs_sta.c
+@@ -69,26 +69,26 @@ void ath11k_debugfs_sta_add_tx_stats(struct ath11k_sta =
+*arsta,
+=20
+ 		if (txrate->flags & RATE_INFO_FLAGS_HE_MCS) {
+ 			STATS_OP_FMT(AMPDU).he[0][mcs] +=3D
+-			peer_stats->succ_bytes + peer_stats->retry_bytes;
++			peer_stats->succ_bytes + (u64)peer_stats->retry_bytes;
+ 			STATS_OP_FMT(AMPDU).he[1][mcs] +=3D
+ 			peer_stats->succ_pkts + peer_stats->retry_pkts;
+ 		} else if (txrate->flags & RATE_INFO_FLAGS_MCS) {
+ 			STATS_OP_FMT(AMPDU).ht[0][mcs] +=3D
+-			peer_stats->succ_bytes + peer_stats->retry_bytes;
++			peer_stats->succ_bytes + (u64)peer_stats->retry_bytes;
+ 			STATS_OP_FMT(AMPDU).ht[1][mcs] +=3D
+ 			peer_stats->succ_pkts + peer_stats->retry_pkts;
+ 		} else {
+ 			STATS_OP_FMT(AMPDU).vht[0][mcs] +=3D
+-			peer_stats->succ_bytes + peer_stats->retry_bytes;
++			peer_stats->succ_bytes + (u64)peer_stats->retry_bytes;
+ 			STATS_OP_FMT(AMPDU).vht[1][mcs] +=3D
+ 			peer_stats->succ_pkts + peer_stats->retry_pkts;
+ 		}
+ 		STATS_OP_FMT(AMPDU).bw[0][bw] +=3D
+-			peer_stats->succ_bytes + peer_stats->retry_bytes;
++			peer_stats->succ_bytes + (u64)peer_stats->retry_bytes;
+ 		STATS_OP_FMT(AMPDU).nss[0][nss] +=3D
+-			peer_stats->succ_bytes + peer_stats->retry_bytes;
++			peer_stats->succ_bytes + (u64)peer_stats->retry_bytes;
+ 		STATS_OP_FMT(AMPDU).gi[0][gi] +=3D
+-			peer_stats->succ_bytes + peer_stats->retry_bytes;
++			peer_stats->succ_bytes + (u64)peer_stats->retry_bytes;
+ 		STATS_OP_FMT(AMPDU).bw[1][bw] +=3D
+ 			peer_stats->succ_pkts + peer_stats->retry_pkts;
+ 		STATS_OP_FMT(AMPDU).nss[1][nss] +=3D
+--=20
+2.43.0
 
 
