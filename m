@@ -1,112 +1,186 @@
-Return-Path: <linux-kernel+bounces-542543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64A1DA4CAF3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:26:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F0CCA4CAF6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:27:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19707174F90
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:26:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3298175606
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:26:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 986F322D7A7;
-	Mon,  3 Mar 2025 18:26:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2050322CBE2;
+	Mon,  3 Mar 2025 18:26:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="m1iAWyyw"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="IP9//ev5"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990CF218AB0
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 18:26:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46448223714;
+	Mon,  3 Mar 2025 18:26:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741026393; cv=none; b=tFMHBWmBGnOBH5qHz4JoRejMAWa9ZHSnhKIxcLd8wiYbv+4OIqYg4kZ93IyzZ7uKK5houKXB3Z99pwqEJsoaXQDAXesT6ii9krE+CxguUGZQpkZxUJaAyhvxVgSfCnrKDULkFHAbmQq+UG5ObVTuRkwZFtPa8hJcssQB2azfOWM=
+	t=1741026413; cv=none; b=FxCJadQBBMFpsefdIdBi26cDnyBmk3xFi98clh+59/pRLAmCWU3j/wHNW7WJ+rSDpqu/MovJKrk01cu8g9Dl7RSIcgze/rDjb7aSHSCMymG/y9l+OMzFqeSrGnZymkqmh/h7PjX0YO5uVxC2Cl6sdFcE0QHNZgM225zwYXk7JNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741026393; c=relaxed/simple;
-	bh=ZC4tlA2vNihT6P1/LNSQISGA8y015oz0KZ6dDXi8Fq0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Plj27c4RfFTee3uNh0Na+LSGblf+xn85sHFNUV5UMofLt++uN/Tx/ZAQgyx1QMrmDCgdxx9B840Bxo9Cd1naZ/weFRympTVrXnCX1AgDzyoOiZTNsikf10IxkH4pYo8Piel5Ume5yBmdyQUB+z+yRNLHlNsh++cAVcpD1LRtyWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=m1iAWyyw; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7c07b65efeeso436927285a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 10:26:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1741026390; x=1741631190; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8P3c1f/2WglsHSb31TjBEda9T69Y4xomID9q8JyMtZo=;
-        b=m1iAWyywqh1ACPnznrwC8TJkn35hCU6w7kmoXeyb51Zt3KA9OErvy1EcT6NqVXmHMM
-         wFlauBgxG5KSL+WjQS3ajUPl+ht29pDKD5le0ylfh+9PhWP34cMDs1XexJUlZ1ofZKvH
-         f8iWroKfzQ1eIrb7XiH7m3aLkn9TQ6mpy5zW22qY+J2pHaTgRXjUurhGwdmsYQIXth9p
-         RoTZjflB0npOZQ1JUqFMgUcSkIXN+R6fWP/B/p9laTJymoFzcsosCzoShUhsxcpo3qr8
-         KXNFA2tvX9IL8AhqxUfIeY0PuMJje1pOVKyr2byKgQmzsojLAiKXbV01Wnsl0bL+mcV4
-         3yUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741026390; x=1741631190;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8P3c1f/2WglsHSb31TjBEda9T69Y4xomID9q8JyMtZo=;
-        b=cfyWwzfNHtv4jSluNt9/gGf5cSTBXF6lh8BkqaPi9eLTKvDS6St5jq7+e5EWVUs2Jh
-         r2s8XqbP+c3iEf5y/R86GLu/X7gfiuaGaUXBcaNnacOGofaFpnO9Fd9L/OuiMmz2mmrf
-         xNwz1vCHZQcPb0syLfZUhAcKtdjzwP0xNO5fxkLh3ZZ7sIKD197oD0FXrUgGiFo0Rx0U
-         nF09VKhpchfgzVlqhINxBz2zDyQcPj0+0Xfg+rFA2sbIwhq/MUxIcUozrRZBiAgHdrxH
-         p0wVF5Z8RLgxCmo7Q8PqRjIUJfwRuqm7Y6KbNEMgRjfDMto5J8uiSn+zy2i+KU/KnwPU
-         ACaA==
-X-Forwarded-Encrypted: i=1; AJvYcCWg4J6jEN5GhsmxG/sUPdll6IH1G80lRkFSLSucXExmoK99ch1xDnI6KTxLUXgZwc5tM7Ba9bZwH2TlN3E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyY+rSiu+t8xYm9ycQEtM6i7P8zfviqzVzjCIvnfmgnMesc0/B
-	Fb/gS4WejuuladpSDGneagQzl9piAVkMecwVFugL6QtNWjr86d9TFqXYxzNCrI0=
-X-Gm-Gg: ASbGnctIcWTe6tMSZQYb3Uvcazio684FcVugn4AJQ7LglZVrbYNRaCOCCJqRK/adtM8
-	VpBUfcBpvgM2xwJ/84lz7CS7daGcKAZSKHxdLmQRPuAFLq1pc4zNpTosQ42hBkktor6aXeWD7Ml
-	2LNzYvI2uwQzibbmaXIrPcL064r5SD0zPhtYFr0V7THt8fMjoB7REjigtVsemoq1TuJjtfRhKIh
-	FjjeJL7bg7kDx7w9s5kb+EmFtoq+Uu8eLv3RwoJs/LVOSjwWcvAX3mTLlpUEwvLBhYpQyuNXfR0
-	m6QWcZjKvWQ9m9bFKoyXdD60XlNya2aexDPwG2RooduWIBnmiQt+6ZLmsc/VIQ5d72+bQWJSwUY
-	Gk4sgJHMMcbhAsTHz1w==
-X-Google-Smtp-Source: AGHT+IE66gglyyQ2xKgSQXIbdA8WBFQ6IzfR/o102BpGE3gMonp/Wrali1UCV/qGdLX6c68bqdZobQ==
-X-Received: by 2002:a05:6214:4113:b0:6e6:9c39:ae51 with SMTP id 6a1803df08f44-6e8a0d85f8dmr193980056d6.33.1741026390548;
-        Mon, 03 Mar 2025 10:26:30 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8c91fbf79sm16019446d6.33.2025.03.03.10.26.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 10:26:30 -0800 (PST)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1tpAUn-00000000qHb-2ItX;
-	Mon, 03 Mar 2025 14:26:29 -0400
-Date: Mon, 3 Mar 2025 14:26:29 -0400
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: "Dr. David Alan Gilbert" <linux@treblig.org>
-Cc: bryan-bt.tan@broadcom.com, vishnu.dasa@broadcom.com, leon@kernel.org,
-	bcm-kernel-feedback-list@broadcom.com, linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: Unwired pvrdma_modify_device ?
-Message-ID: <20250303182629.GV5011@ziepe.ca>
-References: <Z8TWF6coBUF3l_jk@gallifrey>
+	s=arc-20240116; t=1741026413; c=relaxed/simple;
+	bh=4RTGKwNcOSDFHQqdse/yG31XBpzBjwL24DNTVvcJeY8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XWUjHcb7ZMDUL/QWAd2KHmcWzPiK01E2/e2XsDvH6J2EDoLp77Ue1chvnQDm+hzHZtU+ukokfJxDWFYrDMFmITqozECxvQ2fUz0vdaF1G+VjMrPeifYDbWVhNE/yqmgIs2I4YWh8rOSvAS+ZUdPnnyrzVieWNhNm457xT8aXr4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=IP9//ev5; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 523IQfH32746417
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 3 Mar 2025 12:26:41 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1741026401;
+	bh=2OXcs9rd6LU272jx0hvJeNCeWilIYJbVsDhfgH7IVNQ=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=IP9//ev56TbGqMZ4D6UhiHjkB3UkqOwXIcxc/Lb7DUN08WlFG0BwY5JDQJ74taTO5
+	 PWMmHDzt2InU1W29kibhGNVQfSgkgj6JYZ6bxDb3RDYjmkbf4IBmGSGkAHxio2GU14
+	 BLc4drnHFmYwMbJiiapoI3/cLR7vT00hbjKI7tKY=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 523IQfbc003604
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 3 Mar 2025 12:26:41 -0600
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 3
+ Mar 2025 12:26:41 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 3 Mar 2025 12:26:41 -0600
+Received: from [10.249.135.49] ([10.249.135.49])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 523IQbTg121603;
+	Mon, 3 Mar 2025 12:26:38 -0600
+Message-ID: <13bd564d-84bc-4b97-9591-126eb51772fb@ti.com>
+Date: Mon, 3 Mar 2025 23:56:37 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8TWF6coBUF3l_jk@gallifrey>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] arm64: dts: ti: k3-am68-sk/k3-j721s2-mcu: Add
+ bootph-all property to enable Ethernet boot
+To: Vignesh Raghavendra <vigneshr@ti.com>, Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>, Tero
+ Kristo <kristo@kernel.org>,
+        Nishanth Menon <nm@ti.com>
+CC: <s-vadapalli@ti.com>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+References: <20250302153502.181832-1-c-vankar@ti.com>
+ <20250302153502.181832-2-c-vankar@ti.com>
+ <6b5839b3-84cb-42ee-8336-81ebf9b2e40d@ti.com>
+Content-Language: en-US
+From: "Vankar, Chintan" <c-vankar@ti.com>
+In-Reply-To: <6b5839b3-84cb-42ee-8336-81ebf9b2e40d@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Sun, Mar 02, 2025 at 10:05:11PM +0000, Dr. David Alan Gilbert wrote:
-> Hi,
->   I noticed that pvrdma_modify_device() in
->    drivers/infiniband/hw/vmw_pvrdma/pvrdma_verbs.c
-> isn't called anywhere; shouldn't it be wired up in pvrdma_dev_ops ?
+Hello Vignesh,
+
+On 3/3/2025 1:44 PM, Vignesh Raghavendra wrote:
 > 
-> (I've not got VMWare anywhere to try it on, and don't know the innards
-> of RDMA drivers; so can't really test it).
+> 
+> On 02/03/25 21:05, Chintan Vankar wrote:
+>> Ethernet boot requires CPSW nodes to be present starting from R5 SPL
+>> stage. Add bootph-all property to required nodes to enable Ethernet boot
+>> on AM68-SK and J721S2-EVM.
+>>
+>> Signed-off-by: Chintan Vankar <c-vankar@ti.com>
+>> ---
+>>
+>> Link to v1:
+>> https://lore.kernel.org/r/20250106123122.3531845-2-c-vankar@ti.com/
+>>
+>> Changes from v1 to v2:
+>> - No changes.
+>>
+>>   arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts | 3 +++
+>>   arch/arm64/boot/dts/ti/k3-j721s2-mcu-wakeup.dtsi | 4 ++++
+>>   2 files changed, 7 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts b/arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts
+>> index 11522b36e0ce..8e9101dd2152 100644
+>> --- a/arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts
+>> +++ b/arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts
+>> @@ -333,6 +333,7 @@ J721S2_WKUP_IOPAD(0x008, PIN_OUTPUT, 0) /* (E22) MCU_RGMII1_TD3 */
+>>   			J721S2_WKUP_IOPAD(0x018, PIN_OUTPUT, 0) /* (F21) MCU_RGMII1_TXC */
+>>   			J721S2_WKUP_IOPAD(0x000, PIN_OUTPUT, 0) /* (F22) MCU_RGMII1_TX_CTL */
+>>   		>;
+>> +		bootph-all;
+>>   	};
+>>   
+>>   	mcu_mdio_pins_default: mcu-mdio-default-pins {
+>> @@ -340,6 +341,7 @@ mcu_mdio_pins_default: mcu-mdio-default-pins {
+>>   			J721S2_WKUP_IOPAD(0x034, PIN_OUTPUT, 0) /* (A21) MCU_MDIO0_MDC */
+>>   			J721S2_WKUP_IOPAD(0x030, PIN_INPUT, 0) /* (A22) MCU_MDIO0_MDIO */
+>>   		>;
+>> +		bootph-all;
+>>   	};
+>>   
+>>   	mcu_mcan0_pins_default: mcu-mcan0-default-pins {
+>> @@ -615,6 +617,7 @@ &mcu_cpsw {
+>>   &davinci_mdio {
+>>   	phy0: ethernet-phy@0 {
+>>   		reg = <0>;
+>> +		bootph-all;
+>>   		ti,rx-internal-delay = <DP83867_RGMIIDCTL_2_00_NS>;
+>>   		ti,fifo-depth = <DP83867_PHYCR_FIFO_DEPTH_4_B_NIB>;
+>>   		ti,min-output-impedance;
+>> diff --git a/arch/arm64/boot/dts/ti/k3-j721s2-mcu-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-j721s2-mcu-wakeup.dtsi
+>> index bc31266126d0..29cd4b1ffbbf 100644
+>> --- a/arch/arm64/boot/dts/ti/k3-j721s2-mcu-wakeup.dtsi
+>> +++ b/arch/arm64/boot/dts/ti/k3-j721s2-mcu-wakeup.dtsi
+>> @@ -154,12 +154,14 @@ mcu_conf: bus@40f00000 {
+>>   		cpsw_mac_syscon: ethernet-mac-syscon@200 {
+>>   			compatible = "ti,am62p-cpsw-mac-efuse", "syscon";
+>>   			reg = <0x200 0x8>;
+>> +			bootph-all;
+>>   		};
+>>   
+>>   		phy_gmii_sel: phy@4040 {
+>>   			compatible = "ti,am654-phy-gmii-sel";
+>>   			reg = <0x4040 0x4>;
+>>   			#phy-cells = <1>;
+>> +			bootph-all;
+>>   		};
+>>   
+>>   	};
+>> @@ -538,6 +540,7 @@ mcu_cpsw: ethernet@46000000 {
+>>   		clocks = <&k3_clks 29 28>;
+>>   		clock-names = "fck";
+>>   		power-domains = <&k3_pds 29 TI_SCI_PD_EXCLUSIVE>;
+>> +		bootph-all;
+>>   
+> 
+> Since a child node has bootph-all, no need to put the same in the parent
+> hierarchy.
+> 
 
-Seems probably right
+Thank you for pointing this out, I will remove it from the parent node
+and post the next version.
 
-But at this point I'd just delete it unless pvrdma maintainers say
-otherwise in the next week
+Regards,
+Chintan.
 
-Jason
+>>   		dmas = <&mcu_udmap 0xf000>,
+>>   		       <&mcu_udmap 0xf001>,
+>> @@ -562,6 +565,7 @@ cpsw_port1: port@1 {
+>>   				label = "port1";
+>>   				ti,syscon-efuse = <&cpsw_mac_syscon 0x0>;
+>>   				phys = <&phy_gmii_sel 1>;
+>> +				bootph-all;
+>>   			};
+>>   		};
+>>   
+> 
+> 
 
