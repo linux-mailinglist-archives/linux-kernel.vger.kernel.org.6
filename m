@@ -1,128 +1,121 @@
-Return-Path: <linux-kernel+bounces-545020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BDBBA4E83A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:17:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A103A4EBB0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:32:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DC5A8C6DB8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:08:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DD241733D3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:27:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C1D129AB1A;
-	Tue,  4 Mar 2025 16:46:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 137FD23A992;
+	Tue,  4 Mar 2025 18:18:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l/UAcHqw"
-Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m4we2YJ8"
+Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5679B29AAEF
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:46:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA04F23956D
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:18:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741106795; cv=pass; b=A5xB9T2fb0BBTkRHnX132IJVrJZsucunjyyIW+6t4J5V3AG4IYRkv62LCu953gs57c///vc8dkB8nCN76NghKziXnfbFlBkOTxQCh7hOLs9SO3qqsv3apqbd3HKMLNR8xnyL3KOaXxz2+KLMsDkpdeiAHIM2dT09C7bweg++gOE=
+	t=1741112294; cv=pass; b=GrVse/ZypyYs8cYdtSXruiSFjjrlAsCJnFuGHeUDVjmISkf4Fi0eOjS3hv6ad1TeQMh5TQBM+5/t9HTztgjDX+Qt5PfABGZ0vhryYjqtjLY9PR8pbwiUh9tc/upPW/SqSrrGaQ5DqvJS7KP1gq1K6xcUPqKD9iXnvisD0P0c5nI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741106795; c=relaxed/simple;
-	bh=67zi3moPbtJ00/7I6KgI37WCfQcSyOl+ZoHddiamufc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RTkbk/qwQn10wYnFdFKcGKWCeFY4el4/0iCF74golYQoMs3ljS8XeEbFfT8llOApIabG1IAE76p/AbBjEdhED+KKUzGQNdm7br4qLg3nw4MtpCBKI/j/YA0FpcoLAsA1TpUSvqhCIooNZbkLKDtYH4E9wIOZI11rNx+p/ylN774=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l/UAcHqw; arc=none smtp.client-ip=209.85.208.179; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; arc=pass smtp.client-ip=160.75.25.116
+	s=arc-20240116; t=1741112294; c=relaxed/simple;
+	bh=dmWAA5A6KdZDZ5q6P5+UJ63tpLhJK4oP5t2qo+k2F0c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F2cHzRfbmsNe98j7koD68e5y71GL425DPJXjd+1Lide2IE1mhIVA3IqjXuzf1zK5iR9mYDKr6YrJjSG5fGrTBvxKQLshssMT9PPPZg97xYIVWy8X4xY+5z9K6Z4AtdfzDah4wMHO1ayGirQIJHPheTh96FIozx2i0+JsC523Res=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m4we2YJ8; arc=none smtp.client-ip=209.85.218.49; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; arc=pass smtp.client-ip=160.75.25.115
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id 9EA5E408B5F9
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:46:32 +0300 (+03)
+	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id E6C5940D0B71
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 21:18:10 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20230601 header.b=l/UAcHqw
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20230601 header.b=m4we2YJ8
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6hPC5TWHzG3nN
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:45:03 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6gyB1RNXzG2RH
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:25:06 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 1C01942744; Tue,  4 Mar 2025 19:44:46 +0300 (+03)
+	id 4497C42760; Tue,  4 Mar 2025 19:24:49 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l/UAcHqw
-X-Envelope-From: <linux-kernel+bounces-541679-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m4we2YJ8
+X-Envelope-From: <linux-kernel+bounces-541684-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l/UAcHqw
-Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id EE65841E20
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 15:14:03 +0300 (+03)
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id C55283063EFE
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 15:14:03 +0300 (+03)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m4we2YJ8
+Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
+	by le2 (Postfix) with ESMTP id D06E54269A
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 15:17:18 +0300 (+03)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by fgw2.itu.edu.tr (Postfix) with SMTP id 6457F2DCE1
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 15:17:18 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F9D81892655
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:14:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A371E3AA749
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:17:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0338820F088;
-	Mon,  3 Mar 2025 12:13:39 +0000 (UTC)
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729B320F09B;
+	Mon,  3 Mar 2025 12:17:02 +0000 (UTC)
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC4F20DD4E;
-	Mon,  3 Mar 2025 12:13:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4905C1E98E0;
+	Mon,  3 Mar 2025 12:16:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741004016; cv=none; b=Q2XTAr5drXtnNIpkpRk6s0Dl8b/eXMOf2+PM/JJHaCtZM9HFexQlQFUp1688n7dDS5429Jonpciv6eMjVcT6DkJ3aBDhGIlZyaaMYW6IgMGrdVJBM0CGM+ahaFDwT60lvUo8ggNxG2V7+sFVPBBlOYmKg2SBhwGebkQ9Bjb6uhY=
+	t=1741004219; cv=none; b=aXBOfUYtpW730HgXV97F0ET0LGbPhiZnq/KuarwjrwmwFLpU34VwXmyjQCwUsRZLu/niATOJEKYmOPcVjBEy9DHH8WRTv5IY77C/cUmlW86/Psx5wbKzUAsKAxZXg8sVPGFsgtQhWP3pFRwhtR1okkeEAq5rtGeOnygt6+275mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741004016; c=relaxed/simple;
-	bh=67zi3moPbtJ00/7I6KgI37WCfQcSyOl+ZoHddiamufc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Uvg11cMp7DKwd5ysjkCsVFD6lypUqMXP7oYGCepqfTMCDcj+O6n2lyvxxIr02K09BFVtc3qGoDko/0LnsAlQa/nylAJOYUw6xUYsHNs0VdSsfhGd0kYORO8e6rwBZ1UXjNWtnnRN/JJBPHJwPWXggsO8BpQ8XDD8nCwJ9lEYjkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l/UAcHqw; arc=none smtp.client-ip=209.85.208.179
+	s=arc-20240116; t=1741004219; c=relaxed/simple;
+	bh=dmWAA5A6KdZDZ5q6P5+UJ63tpLhJK4oP5t2qo+k2F0c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A7BHONeMlgfoRTavlgSUPnqpktSixSfSqp3DgVRkFJycHmY7ZXmpysXlTAbY1Wq3mwnNqUy+YsafU35bPY7yJbg3Nue5zsOgvYaZgOaWD/dLdYdXnOjflfojoSiyP5DOSkZ0v9LO8Ww8kd39emJQ5qEqjGGOUD34vTzuUifLO6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m4we2YJ8; arc=none smtp.client-ip=209.85.218.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30ba563a6d1so19299061fa.1;
-        Mon, 03 Mar 2025 04:13:34 -0800 (PST)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ac0cc83e9adso133241466b.0;
+        Mon, 03 Mar 2025 04:16:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741004013; x=1741608813; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4I10pqhpXBKjcK+lwxIKgzV5wGxXaBJXL3xG7GMPSLE=;
-        b=l/UAcHqwR/lD/xI9zlb9AX5ojh2Ti0kdrkOXAZriXC0+9AccFEvO0t0lGZxXPDFAb3
-         ftrux6HubrD2TDz+ECulNS6wG3oaLSX+VTC/R1mEcelm+695k2M2peXw/BlUUSmF7xED
-         /tJ141bpu8/dMqhgrwvewykHqYuCxd20UmMrTsJmoYovkUmhAWJpfYOrgmfNEs+gEmhr
-         1HE2JcBKY2zU0R2KqwVl9/solBwSneorHNzm8SvdZtN+LL1xGbu0zSO7ewOfBQPu28tZ
-         tjhG9xKsPoztMgb5KvLnZhkkWLZ0YvXGW6Itv+V5kgHG1Spi/9wudh9Jheke3mptMAcl
-         +pKQ==
+        d=gmail.com; s=20230601; t=1741004216; x=1741609016; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dmWAA5A6KdZDZ5q6P5+UJ63tpLhJK4oP5t2qo+k2F0c=;
+        b=m4we2YJ8Bxxenvp4BVM0dakxRhLiGfYv/UOCZdadEeggZEVZ4pxAnSWao6i2PG46ya
+         vt7f5kxAlq6rLNd8cSHzWR3Jp+C9HmD5CakO1NsSidkS6Pw8q5+9+pWS/2QwNHABJPn+
+         fMOcRleUHCg1DlxiFuP+C1Q8GAZJJqtzhrUXJYN6Z0204a5X1ay/jjOcEF2txIi4WkG8
+         faDJKw9CzsO4UWQhSYQqxZGs4+YGqJ2esN2F6ZWciDdVA7jgF9Y2kShEQ+UheEYPBOgE
+         6hTCCwKbdcrx5YWCZ+PY2nFPcc+BxsWJBQaBdcmJF5Mgk6OSEwqbAKQ23Co6TcUn3cC8
+         +14A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741004013; x=1741608813;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4I10pqhpXBKjcK+lwxIKgzV5wGxXaBJXL3xG7GMPSLE=;
-        b=V/ZLlhlbFuFHxwd0VvmrttGT6u/oVz/dO6Id0FuN2GyQo22v8OWOQ2kBY70l1ILvjZ
-         ZYnakxEGx9IXRj8TpSgBbLq3vzX/18c7dXyXbOKwT8Nl6+FMJfh884ucC6SUzEEcGCde
-         lphVWNXoduv7X+H86+H2+Z0mNRHdaM56zxnk3mX7+Yt2a0F19uWjmh+8dZnlgPzqyFNQ
-         SIFmypQHGUx7lH4EEVp2oPgwBoOQO7eQR6rFaFqNauOCqzDktU1Gzp+W4vsAeLWLO/2d
-         2hcAjfBdLmDqtbYtGvH7kjxaFs6+OMnDad2i9sv7FqagBOVRwWU7kD1q6aSdYQoE/W2i
-         3DWw==
-X-Forwarded-Encrypted: i=1; AJvYcCWMSdIM9D/KhmU3M64QviVGyjqxZAMdhq0KVOU5LPjrHcsiT+TdWVigFXxEdpTG8Edpk6skN0tf@vger.kernel.org, AJvYcCXQ6XGhBnfub9CP5KmFAIIBjyH+9ie9f2fZlnQcdGY72522wNyOQYN2I/7ZZP2UxTSWkekHrxwWaVbJv6uu@vger.kernel.org, AJvYcCXlUQpdWRULDjI0dL4BPHdATy7t98Uz0Xvlon3ve1aGixH4iZR8xIYrRlBP5sq/GLLFiqsxQppPKbsJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUKMdhOkZaeaAZKZRD1SBCdpRFUI3uqFImN1IL+SIOBihpc3Gx
-	4bu1rlPDjfHq0oqRU0Rt0dTNP9WGcyp0htwqOxstJsnZXByzylOr
-X-Gm-Gg: ASbGncssOikvky6xxZA65SMd62I7CbY27uEV2Ln4XBkvRGE9OkhvpbS9NIkwOYojUBE
-	mJc9iD/rwnYUCSp/sd5EjuENHOqlfrwI11lx7vqEmeSBw6T2bkM7QyUF/+MvW/ApiQK761Jd6FB
-	XCqC0BE/dzlAJi6LZduY1F1Wgfts/1q5/DEMQQHhpyuNrJMKJoOMdF0jMpZY/A5EaouMh4OBsVQ
-	5Js1bTFEeBW3X5oqmPinlpv4gwxcQPbtuwLUD3vkTV+bUukfJLy5Spl28INAXlRjSwakdW9JvIe
-	P+KY7iWv+SkYGxNsaXRg3kVXSFEqrgJBj/weouxvh6GPWmPXbjq5/j+ePQDyk55DtWFfZf6HBUu
-	kkbcJbjfcqrJwMpnzY1Ou
-X-Google-Smtp-Source: AGHT+IHgUTPP7a3wfBba3HmV4E8EIQMEL1aA+9ZOmIbLBKKMxMzPxezWgUWnkJNajqEM38nxec+/Vw==
-X-Received: by 2002:a05:6512:e8b:b0:546:1fd8:3876 with SMTP id 2adb3069b0e04-549432de15dmr6348652e87.14.1741004012425;
-        Mon, 03 Mar 2025 04:13:32 -0800 (PST)
-Received: from [192.168.42.63] (mobile-access-2e8451-125.dhcp.inet.fi. [46.132.81.125])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5495d12b85bsm583134e87.234.2025.03.03.04.13.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Mar 2025 04:13:31 -0800 (PST)
-Message-ID: <aacffceb-e9e8-412a-a624-568e6b10d586@gmail.com>
-Date: Mon, 3 Mar 2025 14:13:30 +0200
+        d=1e100.net; s=20230601; t=1741004216; x=1741609016;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dmWAA5A6KdZDZ5q6P5+UJ63tpLhJK4oP5t2qo+k2F0c=;
+        b=WzrKini5nywGL10xR0GZNfwtHUMHpthbmWuNUq83X3y6ixVI6QBsq+czBbSmJpuC+r
+         eZS2XNGB4O8nnLHZHF1112WuT2WNccAyI1BulI9VdKFOZb5lKARmE+N4Qbu1FD0rdOty
+         yX/qLf0d4KloNWzj9AbWtBjEMHhqYYkVatJJAsGD99a0ZAfstfGCtX0PaUPQuDoRr4ed
+         BrFINf5KMlBkiSyn3tjKtuKK+VNw1gHc8/LKftF0ESEFU7ejqTqqu6ID7lmcXpygErJE
+         fpIzqZMsPvR+NPuL8Q4Z8WMMp5vp9u8bxvpyRIzOE8Vo4L/aaCEM7cRKMFG2W6lAK/Rm
+         LVmw==
+X-Forwarded-Encrypted: i=1; AJvYcCUNpW6Oiy+Uzc3d7zIgTO1swH+pshVjiJ/2hlniqLjaqN8a/N/AX/cKK5fmL8vpk++T6RhOLS7mLWab@vger.kernel.org, AJvYcCUrM9PXtIz33sLwyNIm1ricnxbqMSnjCLiUFMWOXjfJHMv2ISY7Q7wSiGm3/QlYO7P4ej8XRsO32juTccYR@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMNdP4E97CD2JyZDBAYRZ/SkFA9kY2OZrmkwA03YCCanYDCA2m
+	sgU+p3Hr3rZMbt/TA2Wq66Lz90TsQQIL37uewD6pANORcX91z8G/sujeHmZCA46W/P7EQKKQgDS
+	AKSCipodkJlpBFXDoXGyk2uDZshI=
+X-Gm-Gg: ASbGncs2ZpW4oEQT0eLGW7ZMtOleRaDFu0QGmZRhC4k8v6eFWVRebWfainHBs5ZARR/
+	FPrfP52wWb/NA9gYWH7HZDbp+99Fr890AeyNFbNhGSKJ85yivLHsDwadNcEQVNGpat2Hn+D6MWB
+	TfM8tnxzWVsr3HXdX7hADkkfoKKHHFzqh9ukp/T1bclpfGaDkbHpBRoabhYA==
+X-Google-Smtp-Source: AGHT+IEWsg75v/hQusO92wYbok77xTnTZBB5fIXFZNML07kPJN+1v9SRSHAjW0zlT+EHg8Qt0iPZnwIWSqsWtbaE2Es=
+X-Received: by 2002:a17:906:9993:b0:abf:52e1:2617 with SMTP id
+ a640c23a62f3a-abf52e13b44mr681831766b.25.1741004216262; Mon, 03 Mar 2025
+ 04:16:56 -0800 (PST)
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -130,59 +123,43 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC net-next v5 10/10] net: gianfar: Use
- device_get_child_node_count_named()
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Rob Herring <robh@kernel.org>, Daniel Scally <djrscally@gmail.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
- Claudiu Manoil <claudiu.manoil@nxp.com>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, linux-acpi@vger.kernel.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-References: <cover.1740993491.git.mazziesaccount@gmail.com>
- <685cd1affabe50af45b767eeed9b9002d006b0fd.1740993491.git.mazziesaccount@gmail.com>
- <Z8WXqgxgFQC8b8vC@smile.fi.intel.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <Z8WXqgxgFQC8b8vC@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250228094732.54642-1-iansdannapel@gmail.com>
+ <20250228094732.54642-4-iansdannapel@gmail.com> <DS7PR12MB607055136A599EE9A1895414CDC92@DS7PR12MB6070.namprd12.prod.outlook.com>
+In-Reply-To: <DS7PR12MB607055136A599EE9A1895414CDC92@DS7PR12MB6070.namprd12.prod.outlook.com>
+From: Ian Dannapel <iansdannapel@gmail.com>
+Date: Mon, 3 Mar 2025 13:16:45 +0100
+X-Gm-Features: AQ5f1JqygE9vrhI-0VSmBZEWXAxe5mQktxDfRVX1U01SZtvfEewck3e2d6EJxis
+Message-ID: <CAKrir7iKLw6QUgywW1BM7JF2WK7m_fBEoOt1h7DS-+i7qH2ZKA@mail.gmail.com>
+Subject: Re: [v4 3/3] fpga-mgr: Add Efinix SPI programming driver
+To: "Manne, Nava kishore" <nava.kishore.manne@amd.com>
+Cc: "linux-fpga@vger.kernel.org" <linux-fpga@vger.kernel.org>, Moritz Fischer <mdf@kernel.org>, 
+	Wu Hao <hao.wu@intel.com>, Xu Yilun <yilun.xu@intel.com>, Tom Rix <trix@redhat.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	=?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, 
+	Aradhya Bhatia <a-bhatia1@ti.com>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6hPC5TWHzG3nN
+X-ITU-Libra-ESVA-ID: 4Z6gyB1RNXzG2RH
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741711510.45853@8J4vEl2hb1/ODpfehCZgGg
+X-ITU-Libra-ESVA-Watermark: 1741716963.76876@v+OShHtoW3TrK4Z4voTk8A
 X-ITU-MailScanner-SpamCheck: not spam
 
-On 03/03/2025 13:51, Andy Shevchenko wrote:
-> On Mon, Mar 03, 2025 at 01:34:49PM +0200, Matti Vaittinen wrote:
+Hi Navakishore, thanks for the review.
 
-> 
-> What about the second loop (in gfar_of_init)?
-> I mean perhaps we want to have fwnode_for_each_named_child_node()
-> and its device variant that may be also reused in the IIO code and here.
-> 
+On Mon, Mar 3, 2025 at 12:57=E2=80=AFPM Manne, Nava kishore
+<nava.kishore.manne@amd.com> wrote:
 
-I agree the fwnode_for_each_named_child_node() would be useful. I think 
-I said that already during the previous review rounds. There is plenty 
-of code which could be converted to use it.
+> > +MODULE_DESCRIPTION("Efinix FPGA SPI Programming Driver (Topaz/Titanium
+> > +untested)");
+>
+> If untested, it might be useful to mark them as experimental in Kconfig.
+Is a separate Kconfig for that preferred or maybe just a note in the
+help description?
 
-This, however, is far more than I am willing to do in the context of a 
-simple IIO driver addition. The "BD79124 ADC suupport" is already now 10 
-patches, 2 of which are directly related to it.
-
-I propose adding the for_each_named_child_node() as a separate series 
-with bunch of users appended. That's be plenty of beans to count for 
-those who like following the statistics :)
-
-Yours,
-	-- Matti
+Regards, Ian
 
 
