@@ -1,207 +1,109 @@
-Return-Path: <linux-kernel+bounces-542029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 635F6A4C4DE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:23:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 418A2A4C4D2
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:22:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93A687AA270
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:20:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 703B41888914
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:21:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7934C214A7A;
-	Mon,  3 Mar 2025 15:18:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50366214A98;
+	Mon,  3 Mar 2025 15:19:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JBrOnoY5"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=ashley.smith@collabora.com header.b="HYgyjVIf"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CBAF15855E;
-	Mon,  3 Mar 2025 15:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741015108; cv=none; b=Ow8O1j0TmdIzemuCglGpximQjtFXn1tR7DslCU2fH/JdSqcODW1Kx8CWSiippO0xXfrUZllcWkLcEbLQRj1h5rG3MGwqfUQCNUfdGp7b6jy6CAaGXppB1GXKHHNXMnNA77RGl5DzF8N3Y38t7/9CCfNIE+8GXB2IBU7s0+Gytp4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741015108; c=relaxed/simple;
-	bh=/HQqaOxmQjTOU9QyIQ+Q//w7j9/nF5iJlhcwlMTOh7I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q7ETcMWvHKbnU2Rrg3HolLDp/R4kAL9SuyJbEsR1mVUYtTVGnODZFM1kCgEtj1Q5Dv388oZ3kneokXeNA0LRuWj9PpjP7fb/x/9aozSbmr+3wWhRB3+0mFWQR9GHuVpftZMlOgqjiG8RRnOC2FQNTSmofH/SgKLloeyjvcVNpXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=JBrOnoY5; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 677F02D5;
-	Mon,  3 Mar 2025 16:16:54 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1741015014;
-	bh=/HQqaOxmQjTOU9QyIQ+Q//w7j9/nF5iJlhcwlMTOh7I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JBrOnoY5GYaBPQe4qz5oiKxOw6+UTrKCb1zwo+tA9DropmN9BLFW52zUkk+lWRJAt
-	 eDvlD0u2rtwsadsmQ77J2h99gPPC74po89DH8SSNPo4yJTtK4qma36M7dWRefY58mT
-	 HFdawMdP/ubdnz7+7Ui+ypUN4ytLr2BX6iReSB9I=
-Date: Mon, 3 Mar 2025 17:18:04 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] media: uvcvideo: Fix deferred probing error
-Message-ID: <20250303151804.GF32048@pendragon.ideasonboard.com>
-References: <20250129-uvc-eprobedefer-v1-1-643b2603c0d2@chromium.org>
- <20250223143617.GA27463@pendragon.ideasonboard.com>
- <CANiDSCupq4A=ctR=Kkp7VxB+gvw=Z8MdDZHDShVMMAzms0VUAg@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE1D19CCFA
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 15:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741015156; cv=pass; b=QOqSd2oYqyxG6g461/gM2hwDjQKkSG3r0LyUQcSh9bPsESCbxdV9T8KHRk2aqnPJkU6y1izlJoV9WJ90SYZp3hpAOl/CRE53fMkl96wl1I9vP1dBF00N/99toVn0l0znmyWWQRVkXvGmLinBYEnerVXMU0mM4YYicKlOFv/6ovA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741015156; c=relaxed/simple;
+	bh=l+s4d1Zp8kZdIu1ZGCtWDaymqlkV1H9cvStDVVDjIR4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hUlTjvPUQeOskZZhaHM2sud22J/4kO0GJcrDl9sbh46alJEiDZG8gwChMXoJYJ8r2fmnKTIrIIPQVNguYL0iwu4RY5wIrd7H364XF6x7dyH2EUhGqcBL8a47+fPFjsqejcl+INDwYIN6t0HL7USTQiXX+YHwfkBtdRBJFpAZ1yw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ashley.smith@collabora.com header.b=HYgyjVIf; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1741015137; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=kx2/9tpcRNxJv0M/M4WznHk0YsM7Xefav7qwpVYMD2mgfiqoUc2sktJF+puQ7priwZOrXaLpGMLG3rm8N1SSuoVl5pUiUgoVljvEsBiawJY6+ngGay5BvzHtBGZ087GtLw3uZDgVbjrariz3OPkzHyw7WKPjbpVz5Q4t1riIRNo=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1741015137; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=C/iTLLU7L7PZsGrUCbrk0/fCDtfiKSdFLTKlNGPrcDU=; 
+	b=Uon+SGgbyvYkjK4YtrKwyiMcSoLjd9RbernR8GL96sze9DmSX9StgrdZ5hc7yXNHydJqnYs/qr4lRJbdbQtILARgWHU2YUi8yppL6ER3snFsmLqwSBCIxv8bYXKE4pHeSgxm8GBds+Aaob1DJcq3Pyn1dL9htoV58cmSDQEJxHg=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=ashley.smith@collabora.com;
+	dmarc=pass header.from=<ashley.smith@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741015137;
+	s=zohomail; d=collabora.com; i=ashley.smith@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=C/iTLLU7L7PZsGrUCbrk0/fCDtfiKSdFLTKlNGPrcDU=;
+	b=HYgyjVIfrTaphGehpAzQSsCEahgJefY4+RnaS84lMkrOlwuV78IU4jyPsxlJR4Bu
+	y5fLNyfhdWJ3rKxgkl72wScWGxJtWd8o4/yJorgV/0T5bJ5lUZL3JC1QIheyDZQuAHe
+	JnI6ucD6q6xvct/dXHwqY5He6+FRsz60kHp/j/ko=
+Received: by mx.zohomail.com with SMTPS id 1741015134703693.1164829293207;
+	Mon, 3 Mar 2025 07:18:54 -0800 (PST)
+From: Ashley Smith <ashley.smith@collabora.com>
+To: Boris Brezillon <boris.brezillon@collabora.com>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Cc: kernel@collabora.com,
+	Ashley Smith <ashley.smith@collabora.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/panthor: Update CS_STATUS_ defines to correct values
+Date: Mon,  3 Mar 2025 15:18:37 +0000
+Message-ID: <20250303151840.3669656-1-ashley.smith@collabora.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CANiDSCupq4A=ctR=Kkp7VxB+gvw=Z8MdDZHDShVMMAzms0VUAg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Sun, Feb 23, 2025 at 08:32:24PM +0100, Ricardo Ribalda wrote:
-> On Sun, 23 Feb 2025 at 15:36, Laurent Pinchart wrote:
-> > On Wed, Jan 29, 2025 at 12:39:46PM +0000, Ricardo Ribalda wrote:
-> > > uvc_gpio_parse() can return -EPROBE_DEFER when the GPIOs it depends on
-> > > have not yet been probed. This return code should be propagated to the
-> > > caller of uvc_probe() to ensure that probing is retried when the required
-> > > GPIOs become available.
-> > >
-> > > Currently, this error code is incorrectly converted to -ENODEV,
-> > > causing some internal cameras to be ignored.
-> > >
-> > > This commit fixes this issue by propagating the -EPROBE_DEFER error.
-> > >
-> > > Cc: stable@vger.kernel.org
-> > > Fixes: 2886477ff987 ("media: uvcvideo: Implement UVC_EXT_GPIO_UNIT")
-> > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > > ---
-> > >  drivers/media/usb/uvc/uvc_driver.c | 9 ++++++---
-> > >  1 file changed, 6 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-> > > index a10d4f4d9f95..73a7f23b616c 100644
-> > > --- a/drivers/media/usb/uvc/uvc_driver.c
-> > > +++ b/drivers/media/usb/uvc/uvc_driver.c
-> > > @@ -2253,9 +2253,10 @@ static int uvc_probe(struct usb_interface *intf,
-> > >       }
-> > >
-> > >       /* Parse the associated GPIOs. */
-> > > -     if (uvc_gpio_parse(dev) < 0) {
-> > > +     ret = uvc_gpio_parse(dev);
-> > > +     if (ret < 0) {
-> > >               uvc_dbg(dev, PROBE, "Unable to parse UVC GPIOs\n");
-> > > -             goto error;
-> > > +             goto error_retcode;
-> > >       }
-> > >
-> > >       dev_info(&dev->udev->dev, "Found UVC %u.%02x device %s (%04x:%04x)\n",
-> > > @@ -2328,9 +2329,11 @@ static int uvc_probe(struct usb_interface *intf,
-> > >       return 0;
-> > >
-> > >  error:
-> > > +     ret = -ENODEV;
-> > > +error_retcode:
-> >
-> > This isn't very nice. Could we instead also propagate error codes from
-> > other locations in the uvc_probe() function ? If you want to minimize
-> > changes, you can initialize ret to -ENODEV, and turn the (ret < 0) check
-> > for uvc_gpio_parse() to a (ret) check.
-> 
-> Not very nice, but easy to backport to stables. What about a follow-up
-> change like this:
+Values for SC_STATUS_BLOCKED_REASON_ are documented at https://arm.pages.collabora.com/mali-docs/g610-odin-csf/register/CS_KERNEL_OUTPUT_BLOCK.htm#rp_CS_KERNEL_OUTPUT_BLOCK/CS_STATUS_BLOCKED_REASON
 
-How about the nicer fix for mainline, and a simpler to backport one for
-stable ? The main focus should be on mainline, not backports.
+This change updates the defines to the correct values.
 
-> index c93abe2367aa..8c67feca1688 100644
-> --- a/drivers/media/usb/uvc/uvc_driver.c
-> +++ b/drivers/media/usb/uvc/uvc_driver.c
-> @@ -2261,7 +2261,7 @@ static int uvc_probe(struct usb_interface *intf,
->         ret = uvc_gpio_parse(dev);
->         if (ret < 0) {
->                 uvc_dbg(dev, PROBE, "Unable to parse UVC GPIOs\n");
-> -               goto error_retcode;
-> +               goto error;
->         }
-> 
->         dev_info(&dev->udev->dev, "Found UVC %u.%02x device %s (%04x:%04x)\n",
-> @@ -2285,24 +2285,32 @@ static int uvc_probe(struct usb_interface *intf,
->         }
-> 
->         /* Register the V4L2 device. */
-> -       if (v4l2_device_register(&intf->dev, &dev->vdev) < 0)
-> +       ret = v4l2_device_register(&intf->dev, &dev->vdev);
-> +       if (ret < 0)
->                 goto error;
-> 
->         /* Scan the device for video chains. */
-> -       if (uvc_scan_device(dev) < 0)
-> +       if (uvc_scan_device(dev) < 0) {
-> +               ret = -ENODEV;
->                 goto error;
-> +       }
-> 
->         /* Initialize controls. */
-> -       if (uvc_ctrl_init_device(dev) < 0)
-> +       if (uvc_ctrl_init_device(dev) < 0) {
-> +               ret = -ENODEV;
->                 goto error;
-> +       }
-> 
->         /* Register video device nodes. */
-> -       if (uvc_register_chains(dev) < 0)
-> +       if (uvc_register_chains(dev) < 0) {
-> +               ret = -ENODEV;
->                 goto error;
-> +       }
-> 
->  #ifdef CONFIG_MEDIA_CONTROLLER
->         /* Register the media device node */
-> -       if (media_device_register(&dev->mdev) < 0)
-> +       ret = media_device_register(&dev->mdev);
-> +       if (ret < 0)
->                 goto error;
->  #endif
->         /* Save our data pointer in the interface data. */
-> @@ -2334,8 +2342,6 @@ static int uvc_probe(struct usb_interface *intf,
->         return 0;
-> 
->  error:
-> -       ret = -ENODEV;
-> -error_retcode:
->         uvc_unregister_video(dev);
->         kref_put(&dev->ref, uvc_delete);
->         return ret;
-> 
-> > >       uvc_unregister_video(dev);
-> > >       kref_put(&dev->ref, uvc_delete);
-> > > -     return -ENODEV;
-> > > +     return ret;
-> > >  }
-> > >
-> > >  static void uvc_disconnect(struct usb_interface *intf)
-> > >
-> > > ---
-> > > base-commit: c4b7779abc6633677e6edb79e2809f4f61fde157
-> > > change-id: 20250129-uvc-eprobedefer-b5ebb4db63cc
-> >
-> > --
-> > Regards,
-> >
-> > Laurent Pinchart
-> 
-> Let me know what do you think so I can send a v2 with the change
-> proposed by Doug.
-> 
-> Regards!
+Signed-off-by: Ashley Smith <ashley.smith@collabora.com>
+---
+ drivers/gpu/drm/panthor/panthor_fw.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/gpu/drm/panthor/panthor_fw.h b/drivers/gpu/drm/panthor/panthor_fw.h
+index 22448abde992..4d3c8b585dcb 100644
+--- a/drivers/gpu/drm/panthor/panthor_fw.h
++++ b/drivers/gpu/drm/panthor/panthor_fw.h
+@@ -102,9 +102,9 @@ struct panthor_fw_cs_output_iface {
+ #define CS_STATUS_BLOCKED_REASON_SB_WAIT	1
+ #define CS_STATUS_BLOCKED_REASON_PROGRESS_WAIT	2
+ #define CS_STATUS_BLOCKED_REASON_SYNC_WAIT	3
+-#define CS_STATUS_BLOCKED_REASON_DEFERRED	5
+-#define CS_STATUS_BLOCKED_REASON_RES		6
+-#define CS_STATUS_BLOCKED_REASON_FLUSH		7
++#define CS_STATUS_BLOCKED_REASON_DEFERRED	4
++#define CS_STATUS_BLOCKED_REASON_RES		5
++#define CS_STATUS_BLOCKED_REASON_FLUSH		6
+ #define CS_STATUS_BLOCKED_REASON_MASK		GENMASK(3, 0)
+ 	u32 status_blocked_reason;
+ 	u32 status_wait_sync_value_hi;
+
+base-commit: 16e57a72780931c3c70dbc928aeee4a0518075de
 -- 
-Regards,
+2.43.0
 
-Laurent Pinchart
 
