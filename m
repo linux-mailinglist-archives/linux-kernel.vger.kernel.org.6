@@ -1,115 +1,135 @@
-Return-Path: <linux-kernel+bounces-541311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5FF0A4BB31
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:50:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92F6EA4BB32
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:50:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC17E3B3C46
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:49:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44BB818944A7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:50:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F87B1F1527;
-	Mon,  3 Mar 2025 09:49:56 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81BD41D79A3
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 09:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 836F51F151C;
+	Mon,  3 Mar 2025 09:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RDhKJa8j"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 853F01F1300;
+	Mon,  3 Mar 2025 09:50:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740995396; cv=none; b=FJbBNiKIURkhBj3KImXNJX/2rW5/GjjDhs3nvaTa3NThaoFDSpppd4m7WIqIDCgfcr6mw236RQXQIWVxQfcu+dDTY5+wRCARG7fxo90v4O3eFS80ZeZxHpUZqSpNREC2lBnxiii2iv/E6kzuQ+IDp0zXcK+L5hn+mgXVegh01FY=
+	t=1740995408; cv=none; b=KB0K+VKeygY6Bq4wXxiXyPlET3k+uvubAPW66BZE8g5t8YOiSaQwO669Wg+NbT+/QXWOkcW1zVvjMhD+kR76LUBiyxv3Ulx9h3E8jBFtsJGFEzAvjTRcKegQfZygs4tQsSlq0rI9h/vbhzyRSwAAqjsCOFCr9Z0wftInSmX1OVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740995396; c=relaxed/simple;
-	bh=12B+oaAwpkcpy00bG61SDeYnN3Hz/xl/L+K2y+Yf8QA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a7olotJ8ItbxVlYMCbdu/yeEJ0XGzOBaQpCaonN/M3N6K55v+63inqFGCMTd2HN2MyMWS8CMQ18WucOm7kX2yfAZOhqqEBCbkYXjLmJWEOK1b0PRrt5y4/+i1uNEAUGvZFnqVbvTQ0JadHh0tPPWh7D//w1rCd+M1vZdL2g4N3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CF2CB113E;
-	Mon,  3 Mar 2025 01:50:07 -0800 (PST)
-Received: from e133081.arm.com (unknown [10.57.37.136])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 745A53F66E;
-	Mon,  3 Mar 2025 01:49:50 -0800 (PST)
-Date: Mon, 3 Mar 2025 09:49:47 +0000
-From: =?utf-8?Q?Miko=C5=82aj?= Lenczewski <miko.lenczewski@arm.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: ryan.roberts@arm.com, suzuki.poulose@arm.com,
-	yang@os.amperecomputing.com, catalin.marinas@arm.com,
-	will@kernel.org, joro@8bytes.org, jean-philippe@linaro.org,
-	mark.rutland@arm.com, joey.gouly@arm.com, oliver.upton@linux.dev,
-	james.morse@arm.com, broonie@kernel.org, maz@kernel.org,
-	akpm@linux-foundation.org, jgg@ziepe.ca, nicolinc@nvidia.com,
-	mshavit@google.com, jsnitsel@redhat.com, smostafa@google.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev
-Subject: Re: [PATCH v2 3/4] arm64/mm: Elide tlbi in contpte_convert() under
- BBML2
-Message-ID: <20250303094947.GB13345@e133081.arm.com>
-References: <20250228182403.6269-2-miko.lenczewski@arm.com>
- <20250228182403.6269-5-miko.lenczewski@arm.com>
- <f270bb5d-aa54-45d3-89ed-2b757ab3a4b0@redhat.com>
+	s=arc-20240116; t=1740995408; c=relaxed/simple;
+	bh=YrL7lBJ8oAc02s3z8Zojwlbn+Tin70LuBO8u1zjAZbA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=awP0LTy2II8gQQgN5j69SpDQRTYDpgUrMees7XVrjbg+/yKsG0PFM8PH0/ARxbU5zSaQXUWmy1yomw8oVdaHjkuWFpsiivRHjy9dqwX4RE/3arWhUuJqK47UOjMohwzMnX47/efg2QcnhNONwIMKIcaYnUuT/aVUHOkla7QFe7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RDhKJa8j; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D7178432F4;
+	Mon,  3 Mar 2025 09:49:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740995399;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qR5QgJotOCF1eFXi0LYVVo5+GDBF3gUo4Bkrohe5o4A=;
+	b=RDhKJa8jRUogPl7e/7nrf2DXZwQzqN+GAvd2OmlhxhcDUbUfVraMOgiSDZzX96MjPlKRFC
+	WnO5ic6DAqzZCvLOFV1AybLAJGA3Ovgkad+GichMFvwkVM8Fxa66C3T8VM+s82wl41rBDj
+	3fzLZDuo8CmNs0Q44TK+0uoOvDRaop/n5ibv1Zb5ZBnXEqGQrD9maeqMND7grIHREvOTan
+	oY9vQv84WiY0MzLx7QUu8lSx6uYdvuxCiwE/xtiJiyCugsJTmufW2yYPEtZ23lrrZqj60J
+	CkD1qOAz4Ib3NlnhN0fm29X7eROCYlQLA/doP5qA5LXW0sW9J1EjtTGyoWW7mw==
+Date: Mon, 3 Mar 2025 10:49:58 +0100
+From: Herve Codina <herve.codina@bootlin.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Rob Herring
+ <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, Bjorn Helgaas
+ <bhelgaas@google.com>, Lizhi Hou <lizhi.hou@amd.com>,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-pci@vger.kernel.org, Allan Nielsen <allan.nielsen@microchip.com>,
+ Horatiu Vultur <horatiu.vultur@microchip.com>, Steen Hegelund
+ <steen.hegelund@microchip.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v8 5/5] PCI: of: Create device-tree PCI host bridge node
+Message-ID: <20250303104958.459e72ed@bootlin.com>
+In-Reply-To: <20250228212157.GA70383@bhelgaas>
+References: <20250224141356.36325-6-herve.codina@bootlin.com>
+	<20250228212157.GA70383@bhelgaas>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <f270bb5d-aa54-45d3-89ed-2b757ab3a4b0@redhat.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelkeektdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthekredtredtjeenucfhrhhomhepjfgvrhhvvgcuvehoughinhgruceohhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeviefffeegiedtleelieeghfejleeuueevkeevteegffehledtkeegudeigffgvdenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudehpdhrtghpthhtohephhgvlhhgrggrsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghkrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsrghrrghvrghnrghksehgohhog
+ hhlvgdrtghomhdprhgtphhtthhopegshhgvlhhgrggrshesghhoohhglhgvrdgtohhmpdhrtghpthhtoheplhhiiihhihdrhhhouhesrghmugdrtghomh
+X-GND-Sasl: herve.codina@bootlin.com
 
-Hi David,
+Hi Bjorn,
 
-Thanks for taking the time to review.
+On Fri, 28 Feb 2025 15:21:57 -0600
+Bjorn Helgaas <helgaas@kernel.org> wrote:
 
-On Mon, Mar 03, 2025 at 10:17:12AM +0100, David Hildenbrand wrote:
-> On 28.02.25 19:24, Mikołaj Lenczewski wrote:
-> > If we support bbml2 without conflict aborts, we can avoid the final
-> > flush and have hardware manage the tlb entries for us. Avoiding flushes
-> > is a win.
+> On Mon, Feb 24, 2025 at 03:13:55PM +0100, Herve Codina wrote:
+> > PCI devices device-tree nodes can be already created. This was
+> > introduced by commit 407d1a51921e ("PCI: Create device tree node for
+> > bridge").
 > > 
-> > Signed-off-by: Mikołaj Lenczewski <miko.lenczewski@arm.com>
-> > Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
-> > ---
-> >   arch/arm64/mm/contpte.c | 3 ---
-> >   1 file changed, 3 deletions(-)
+> > In order to have device-tree nodes related to PCI devices attached on
+> > their PCI root bus (the PCI bus handled by the PCI host bridge), a PCI
+> > root bus device-tree node is needed. This root bus node will be used as
+> > the parent node of the first level devices scanned on the bus. On
+> > device-tree based systems, this PCI root bus device tree node is set to
+> > the node of the related PCI host bridge. The PCI host bridge node is
+> > available in the device-tree used to describe the hardware passed at
+> > boot.
 > > 
-> > diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
-> > index 145530f706a9..77ed03b30b72 100644
-> > --- a/arch/arm64/mm/contpte.c
-> > +++ b/arch/arm64/mm/contpte.c
-> > @@ -72,9 +72,6 @@ static void contpte_convert(struct mm_struct *mm, unsigned long addr,
-> >   		__flush_tlb_range(&vma, start_addr, addr, PAGE_SIZE, true, 3);
-> >   	__set_ptes(mm, start_addr, start_ptep, pte, CONT_PTES);
-> > -
-> > -	if (system_supports_bbml2_noabort())
-> > -		__flush_tlb_range(&vma, start_addr, addr, PAGE_SIZE, true, 3);
-> >   }
-> >   void __contpte_try_fold(struct mm_struct *mm, unsigned long addr,
+> > On non device-tree based system (such as ACPI), a device-tree node for
+> > the PCI host bridge or for the root bus does not exist. Indeed, the PCI
+> > host bridge is not described in a device-tree used at boot simply
+> > because no device-tree are passed at boot.
+> > 
+> > The device-tree PCI host bridge node creation needs to be done at
+> > runtime. This is done in the same way as for the creation of the PCI
+> > device nodes. I.e. node and properties are created based on computed
+> > information done by the PCI core. Also, as is done on device-tree based
+> > systems, this PCI host bridge node is used for the PCI root bus.
+> > 
+> > With this done, hardware available in a PCI device that doesn't follow
+> > the PCI model consisting in one PCI function handled by one driver can
+> > be described by a device-tree overlay loaded by the PCI device driver on
+> > non device-tree based systems. Those PCI devices provide a single PCI
+> > function that includes several functionalities that require different
+> > driver. The device-tree overlay describes in that case the internal
+> > devices and their relationships. It allows to load drivers needed by
+> > those different devices in order to have functionalities handled.  
 > 
-> What's the point of not squashing this into #2? :)
+> Since this adds host bridge nodes, does this patch specifically enable
+> device tree overlays for devices on the root bus?
 > 
-> If this split was requested during earlier review, at least seeing patch #2
-> on its own confused me.
+> Were we able to load DT overlays for devices deeper in the hierarchy
+> already, even without this patch?
+> 
 
-This split is a holdover from an earlier patchset, where it was still
-unknown whether the removal of the second flush was permitted with
-BBML2. Partly this was due to us being worried about conflict aborts
-after the removal, and partly this was because the "delay" is a separate
-optimisation that we could apply even if it turned out the final patch
-was not architecturally sound.
+This patch itself doesn't need any support for overlay.
 
-Now that we do not handle conflict aborts (preferring only systems that
-handle BBML2 without ever raising aborts), the first issue is not a
-problem. The reasoning behind the second patch is also a little bit
-outdated, but I can see the logical split between a tlbi reorder, and
-the removal of the tlbi. If this is truly redundant though, I would be
-happy to squash the two into a single patch.
+Yes, without this patch we can load overlay but only on a device-tree based
+system. This is done by the driver that needs an overlay to handle the PCI
+device. This patch is needed to load overlays in the same way on non
+device-tree based system i.e. on ACPI systems.
 
--- 
-Kind regards,
-Mikołaj Lenczewski
+Best regards,
+Hervé
 
