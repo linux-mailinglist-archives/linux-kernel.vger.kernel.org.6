@@ -1,67 +1,94 @@
-Return-Path: <linux-kernel+bounces-542454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4169CA4CA03
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:43:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED6AEA4C9FB
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:43:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BB95165E93
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:32:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4282D1774A6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 609361D79A3;
-	Mon,  3 Mar 2025 17:18:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A5302356B9;
+	Mon,  3 Mar 2025 17:19:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BsEv8Qry"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OHRGWsgJ"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCCA6223714;
-	Mon,  3 Mar 2025 17:18:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C73E81C84A0;
+	Mon,  3 Mar 2025 17:19:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741022314; cv=none; b=ZAYVBbE5LUzEp+tNgNR3eqVgpDiWiLo0XYbFvYqOLuHojdQ751AkkN+h5LORVrYmU22ebEoixAwmFR0f/Mnkt50G24u2f6Gzhc9JvXR5LWWmqKgk/RMi8gQ5pJgJ2BXMbylk8/ZPm3F9I6oPrP3NJ3epHuuwRljjvvUAos2ZXlE=
+	t=1741022387; cv=none; b=gfq//pgMTLqjvZbBsaw6zSTVh+a3T6g8itL5CPvmDjQnFVmGmDUEk7PwEpfQz703Wo4eVJj0RuRwj2aB4oKjZM4GIiGhpPCT9DbRb4ooEyQknl16upXwDXl0qA/5CHtkS8ldkuTQifJjSWUNxts0UWb4/zgzmHRU2APmr0IEgNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741022314; c=relaxed/simple;
-	bh=7GruPryj1ebXbmyCxe9ruKgfZnW01eyAO7E62PQT6Mk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kNwMBtSHFS9CbfoYAD7octnF7GjqrWn+xvWK/rvUnSpM3PlORH5phpTUed7AG0yfHo9AfIuw30HGrp2+408jSalJDFAi8RE1OG/Qy9o4a8VM1wU96mjAJ6Nags6fpbFZZx1mIW5KojGJR619vpOEdCOWEGr++NEcHmwj8LVOP+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BsEv8Qry; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F8E0C4CED6;
-	Mon,  3 Mar 2025 17:18:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741022314;
-	bh=7GruPryj1ebXbmyCxe9ruKgfZnW01eyAO7E62PQT6Mk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BsEv8Qry08DxrXqZoX3ldlf9ZuFDzoBW77dPNKiy8zN65VME6MUBqG3+kaRZdYMQ1
-	 kXfiuasQksolAMDwaUcNJ4VaIGCaVmvCkGEnrUUQCiw5JYatszcw5EvStB3CmzInTT
-	 t//E7p5sD8E5qLtB8yMyi5weSngZFhnFXhBmwIjv92Yii+E8oxff/uJv3PJS3fz94L
-	 XGS+Isc+wb9wte+jEHOn4XM9DJVjE7BmrgNwpI2gms+tXexqek2F80W+Vx6x7qHhIh
-	 YlaDtmUGejepy5BT8Qv2pjQt+0qy0eZ/xbsqEFKXNPbgFLsSmHpJtTZ2LcjbQasUE4
-	 ojLFNiExJy4AQ==
-Date: Mon, 3 Mar 2025 18:18:27 +0100
-From: Alexey Gladkov <legion@kernel.org>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Oleg Nesterov <oleg@redhat.com>,
-	"Sapkal, Swapnil" <swapnil.sapkal@amd.com>,
-	Manfred Spraul <manfred@colorfullife.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	WangYuli <wangyuli@uniontech.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>,
-	Neeraj.Upadhyay@amd.com
-Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still
- full
-Message-ID: <Z8XkY5WnynjBJPDn@example.org>
-References: <20250102140715.GA7091@redhat.com>
- <e813814e-7094-4673-bc69-731af065a0eb@amd.com>
- <20250224142329.GA19016@redhat.com>
- <20250225115736.GA18523@redhat.com>
- <Z8Wn0nTvevLRG_4m@example.org>
- <30d35796-4687-440e-845f-b015d52fa4f0@amd.com>
+	s=arc-20240116; t=1741022387; c=relaxed/simple;
+	bh=pcJq6VhwCjfaynCr86urxIunhUrIjpzsnVvjguFK+6A=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fWdWw+3j0zcUtRO8JnV8gwlA4B54/yNmRhqia1dIfRfUC5cGrjtkWHgnBuBMvL000IbWKbvRbvTFhlZPmu/ozCm7p+MDgOFGyVg7m2Lo8jvSL8leB+kKjx5NjQCRKkRFZ0pSSrn3gvPxgxl/DxmJJmQo4HHymi3KV45kG+PX0AA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OHRGWsgJ; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6dcd4f1aaccso79089916d6.2;
+        Mon, 03 Mar 2025 09:19:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741022385; x=1741627185; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LRLgSxdqlBvInXl2DZuy/8p0+JAmavEVWC8IUWE/7IY=;
+        b=OHRGWsgJz6902CqePRbBJMqqUunL55qU+AQ4z2l1ZiS5UHizMvxtAJQ/79ScAb8J6x
+         0OVs/3adYeQLgVWaPE9ZbAlBnBLKAqwxj06wxNyTXE3qP7kwMU3fpMeMKK8cVheFlARf
+         lDdwwg3vee0d7QMIeI9zvHFoFDytMKrU4hMT874TbWUSbWwKQQJOj95RdjgCetlzfmCu
+         j6kGXQTrWNdmhCbbVa1AuV8FyC5WZsm0YcbBiqAOEzlj7oEDH6Wqy/aiprXrFegJ4h1N
+         LduJc7D5qGVdetbdgMh7wdrn0DXhIP2HPl4lztDbr+77VyAkrX8FEFK3u115KuEfTgLx
+         uo1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741022385; x=1741627185;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LRLgSxdqlBvInXl2DZuy/8p0+JAmavEVWC8IUWE/7IY=;
+        b=cZ2ROyngppwt09wVz8OTSGfe03mWZyxRtwjd9DNazmWgtSaRmmxKotGqT5rrCDj5lT
+         MJ1ZqWJQ5Rxv0ast2MHf+7sDg8BXORGP0wVuN1mnvXvyVpcdfFTzXl1asPxAvbawuuN9
+         4U9Gm3Y+bGFVMEfc7hcoaXQakoKvQm7KFUQQ0ZNuukbl3GKv0owcuR5ANtJMTfY1j9IZ
+         cU9Y9SraMbrh3OiSTVGp3UcvwtN82MGQmQRBlw4qqBoDSKIrjXYohJOIw0vYEu4ktQke
+         GTG7hNNGo1pYEYAwrZ7uyps1vGVvHLbbov5k8rs3Hh5FSzsYvqt2b02vG4fqPwVXtU2i
+         VTGg==
+X-Forwarded-Encrypted: i=1; AJvYcCW8yQ9g7ARwpZxhrje3R1slYPThwtWVshw4ErOw5RcOdiqAfmBrNn4D6HPxVG0o8Ar07RddtDMnVBghfv/gW68Oyw==@vger.kernel.org, AJvYcCWdRZKjwEvDmksQn4j1688iaSya3YJYF6JiMkzdwixOdONy3vBt8jZEEnyViOPvkXi6Edgp+gvZ1Nk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAKV9s2/dWjEtWkeDTmIM4EOrV/JBa+KO0HSG9iiqX1pyu/TCN
+	2lkliEFGOKrcWN7jFAq0IYNoTovh0KyMTUuRUnHzqWUaz3+ZbTvL
+X-Gm-Gg: ASbGnct1hcC520Nl5HnjnI1aDT5nT2nIA1kER1xaURBnhD+LngcBlaStifxF7bpy6aI
+	0CAWuYJ3gxi+7XEGhQ0TGusaU7x40Z/hXOL1InzfJlY7gAP2GwrTysw5VhVtigvnmpN7E4DOmtq
+	QJjh6aR+SFJlG2ulv7prLHFxH50T4yarnp637dgFliaMEyg2dQYX5mruxVmrlZUW8nEMl3WXp5n
+	RRZlsbjWQybSJyvJii4EyH8CIvx24/lvXPR9UvZBb8wgzSzDsTMEAcbDafKpuer8P65/gTN22bD
+	34yn56TLSKgKxS1LFh62JEtx5X9R9P7MU0dPiGOM
+X-Google-Smtp-Source: AGHT+IG0zVy7lg60mYfgSImCsh74mBuzqU36VHUksDzxDuyNJ/s3ohxIrUrwvRq5twPzh4X1lLXSdA==
+X-Received: by 2002:ad4:5ec9:0:b0:6d4:c6d:17fe with SMTP id 6a1803df08f44-6e8a0d066f7mr250591406d6.25.1741022384595;
+        Mon, 03 Mar 2025 09:19:44 -0800 (PST)
+Received: from debian ([2607:fb90:8e63:c2b3:5405:c8bf:c1d1:41d5])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c378da08f2sm617957485a.81.2025.03.03.09.19.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 09:19:44 -0800 (PST)
+From: Fan Ni <nifan.cxl@gmail.com>
+X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
+Date: Mon, 3 Mar 2025 09:19:38 -0800
+To: Shradha Todi <shradha.t@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, manivannan.sadhasivam@linaro.org,
+	lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+	bhelgaas@google.com, jingoohan1@gmail.com,
+	Jonathan.Cameron@huawei.com, nifan.cxl@gmail.com,
+	a.manzanares@samsung.com, pankaj.dubey@samsung.com,
+	cassel@kernel.org, 18255117159@163.com, xueshuai@linux.alibaba.com,
+	renyu.zj@linux.alibaba.com, will@kernel.org, mark.rutland@arm.com
+Subject: Re: [PATCH v7 1/5] perf/dwc_pcie: Move common DWC struct definitions
+ to 'pcie-dwc.h'
+Message-ID: <Z8XkqnQir1CfilvM@debian>
+References: <20250221131548.59616-1-shradha.t@samsung.com>
+ <CGME20250221132024epcas5p13d6e617805e4ef0c081227b08119871b@epcas5p1.samsung.com>
+ <20250221131548.59616-2-shradha.t@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,85 +97,136 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <30d35796-4687-440e-845f-b015d52fa4f0@amd.com>
+In-Reply-To: <20250221131548.59616-2-shradha.t@samsung.com>
 
-On Mon, Mar 03, 2025 at 09:16:08PM +0530, K Prateek Nayak wrote:
-> Hello Legion,
+On Fri, Feb 21, 2025 at 06:45:44PM +0530, Shradha Todi wrote:
+> From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 > 
-> On 3/3/2025 6:30 PM, Alexey Gladkov wrote:
-> > On Tue, Feb 25, 2025 at 12:57:37PM +0100, Oleg Nesterov wrote:
-> >> On 02/24, Oleg Nesterov wrote:
-> >>>
-> >>> Just in case, did you use
-> >>>
-> >>> 	https://git.kernel.org/pub/scm/utils/rt-tests/rt-tests.git/tree/src/hackbench/hackbench.c
-> >>>
-> >>> ?
-> >>
-> >> Or did you use another version?
-> >>
-> >> Exactly what parameters did you use?
-> >>
-> >> If possible, please reproduce the hang again. How many threads/processes
-> >> sleeping in pipe_read() or pipe_write() do you see? (you can look at
-> >> /proc/$pid/stack).
-> >>
-> >> Please pick one sleeping writer, and do
-> >>
-> >> 	$ strace -p pidof_that_write
-> >>
-> >> this should wake this writer up. If a missed wakeup is the only problem,
-> >> hackbench should continue.
-> >>
-> >> The more info you can provide the better ;)
-> > 
-> > I was also able to reproduce the hackbench hang with the parameters
-> > mentioned earlier (threads and processes) on the kernel from master.
-> > 
+> Since these are common to all Desginware PCIe IPs, move them to a new
+> header 'pcie-dwc.h', so that other drivers like debugfs, perf and sysfs
+> could make use of them.
 > 
-> Thank you for reporting your observations!
-> 
-> If you are able to reproduce it reliably, could you please give the
-> below diff posted by Swapnil from the parallel thread [1] a try:
-> 
-> diff --git a/fs/pipe.c b/fs/pipe.c
-> index ce1af7592780..a1931c817822 100644
-> --- a/fs/pipe.c
-> +++ b/fs/pipe.c
-> @@ -417,9 +417,19 @@ static inline int is_packetized(struct file *file)
->   /* Done while waiting without holding the pipe lock - thus the READ_ONCE() */
->   static inline bool pipe_writable(const struct pipe_inode_info *pipe)
->   {
-> -    unsigned int head = READ_ONCE(pipe->head);
-> -    unsigned int tail = READ_ONCE(pipe->tail);
->       unsigned int max_usage = READ_ONCE(pipe->max_usage);
-> +    unsigned int head, tail;
-> +
-> +    tail = READ_ONCE(pipe->tail);
-> +    /*
-> +     * Since the unsigned arithmetic in this lockless preemptible context
-> +     * relies on the fact that the tail can never be ahead of head, read
-> +     * the head after the tail to ensure we've not missed any updates to
-> +     * the head. Reordering the reads can cause wraparounds and give the
-> +     * illusion that the pipe is full.
-> +     */
-> +    smp_rmb();
-> +    head = READ_ONCE(pipe->head);
->   
->       return !pipe_full(head, tail, max_usage) ||
->           !READ_ONCE(pipe->readers);
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Signed-off-by: Shradha Todi <shradha.t@samsung.com>
+
+Reviewed-by: Fan Ni <fan.ni@samsung.com>
+
 > ---
+>  MAINTAINERS                 |  1 +
+>  drivers/perf/dwc_pcie_pmu.c | 25 +++----------------------
+>  include/linux/pcie-dwc.h    | 34 ++++++++++++++++++++++++++++++++++
+>  3 files changed, 38 insertions(+), 22 deletions(-)
+>  create mode 100644 include/linux/pcie-dwc.h
 > 
-> We've been running hackbench for a while now with the above diff and we
-> haven't run into a hang yet. Sorry for the troubles and thank you again.
-
-No problem at all.
-
-Along with the patch above, I tried reproducing the problem for about 40
-minutes and no hangs found. Before that hackbench would hang within 5
-minutes or so.
-
--- 
-Rgrds, legion
-
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 3864d473f52f..6474a2d83de4 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -18167,6 +18167,7 @@ S:	Maintained
+>  F:	Documentation/devicetree/bindings/pci/snps,dw-pcie-ep.yaml
+>  F:	Documentation/devicetree/bindings/pci/snps,dw-pcie.yaml
+>  F:	drivers/pci/controller/dwc/*designware*
+> +F:	include/linux/pcie-dwc.h
+>  
+>  PCI DRIVER FOR TI DRA7XX/J721E
+>  M:	Vignesh Raghavendra <vigneshr@ti.com>
+> diff --git a/drivers/perf/dwc_pcie_pmu.c b/drivers/perf/dwc_pcie_pmu.c
+> index cccecae9823f..da30f2c2d674 100644
+> --- a/drivers/perf/dwc_pcie_pmu.c
+> +++ b/drivers/perf/dwc_pcie_pmu.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/errno.h>
+>  #include <linux/kernel.h>
+>  #include <linux/list.h>
+> +#include <linux/pcie-dwc.h>
+>  #include <linux/perf_event.h>
+>  #include <linux/pci.h>
+>  #include <linux/platform_device.h>
+> @@ -99,26 +100,6 @@ struct dwc_pcie_dev_info {
+>  	struct list_head dev_node;
+>  };
+>  
+> -struct dwc_pcie_pmu_vsec_id {
+> -	u16 vendor_id;
+> -	u16 vsec_id;
+> -	u8 vsec_rev;
+> -};
+> -
+> -/*
+> - * VSEC IDs are allocated by the vendor, so a given ID may mean different
+> - * things to different vendors.  See PCIe r6.0, sec 7.9.5.2.
+> - */
+> -static const struct dwc_pcie_pmu_vsec_id dwc_pcie_pmu_vsec_ids[] = {
+> -	{ .vendor_id = PCI_VENDOR_ID_ALIBABA,
+> -	  .vsec_id = 0x02, .vsec_rev = 0x4 },
+> -	{ .vendor_id = PCI_VENDOR_ID_AMPERE,
+> -	  .vsec_id = 0x02, .vsec_rev = 0x4 },
+> -	{ .vendor_id = PCI_VENDOR_ID_QCOM,
+> -	  .vsec_id = 0x02, .vsec_rev = 0x4 },
+> -	{} /* terminator */
+> -};
+> -
+>  static ssize_t cpumask_show(struct device *dev,
+>  					 struct device_attribute *attr,
+>  					 char *buf)
+> @@ -529,14 +510,14 @@ static void dwc_pcie_unregister_pmu(void *data)
+>  
+>  static u16 dwc_pcie_des_cap(struct pci_dev *pdev)
+>  {
+> -	const struct dwc_pcie_pmu_vsec_id *vid;
+> +	const struct dwc_pcie_vsec_id *vid;
+>  	u16 vsec;
+>  	u32 val;
+>  
+>  	if (!pci_is_pcie(pdev) || !(pci_pcie_type(pdev) == PCI_EXP_TYPE_ROOT_PORT))
+>  		return 0;
+>  
+> -	for (vid = dwc_pcie_pmu_vsec_ids; vid->vendor_id; vid++) {
+> +	for (vid = dwc_pcie_rasdes_vsec_ids; vid->vendor_id; vid++) {
+>  		vsec = pci_find_vsec_capability(pdev, vid->vendor_id,
+>  						vid->vsec_id);
+>  		if (vsec) {
+> diff --git a/include/linux/pcie-dwc.h b/include/linux/pcie-dwc.h
+> new file mode 100644
+> index 000000000000..40f3545731c8
+> --- /dev/null
+> +++ b/include/linux/pcie-dwc.h
+> @@ -0,0 +1,34 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (C) 2021-2023 Alibaba Inc.
+> + *
+> + * Copyright 2025 Linaro Ltd.
+> + * Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> + */
+> +
+> +#ifndef LINUX_PCIE_DWC_H
+> +#define LINUX_PCIE_DWC_H
+> +
+> +#include <linux/pci_ids.h>
+> +
+> +struct dwc_pcie_vsec_id {
+> +	u16 vendor_id;
+> +	u16 vsec_id;
+> +	u8 vsec_rev;
+> +};
+> +
+> +/*
+> + * VSEC IDs are allocated by the vendor, so a given ID may mean different
+> + * things to different vendors.  See PCIe r6.0, sec 7.9.5.2.
+> + */
+> +static const struct dwc_pcie_vsec_id dwc_pcie_rasdes_vsec_ids[] = {
+> +	{ .vendor_id = PCI_VENDOR_ID_ALIBABA,
+> +	  .vsec_id = 0x02, .vsec_rev = 0x4 },
+> +	{ .vendor_id = PCI_VENDOR_ID_AMPERE,
+> +	  .vsec_id = 0x02, .vsec_rev = 0x4 },
+> +	{ .vendor_id = PCI_VENDOR_ID_QCOM,
+> +	  .vsec_id = 0x02, .vsec_rev = 0x4 },
+> +	{} /* terminator */
+> +};
+> +
+> +#endif /* LINUX_PCIE_DWC_H */
+> -- 
+> 2.17.1
+> 
 
