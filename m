@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-541205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 859AAA4B9EE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:55:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 220B9A4B9F1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:55:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A78CD188F118
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:55:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2E991622DD
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:55:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 138CB1F1520;
-	Mon,  3 Mar 2025 08:51:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6730E1F17EB;
+	Mon,  3 Mar 2025 08:52:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MUEEaKhH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LY7nTfAJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EEBB1F151E
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 08:51:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 275801F1508
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 08:52:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740991904; cv=none; b=s+t4rBwbDuB/WPVt85V6S+m+FojOewUkJVHjQmnVLcyr+H6MbsV39zdIGh6wuNduLpy6jl8ZBmq8Kqq9oBSqJ1uhcYSTOuyF0jjJ4DLOSfKEweGLnLTaXB8YL9zq0W+DzRX3mv8RCql5vkfDYLfKqjzOtv4thwTlipNm3pDJOfU=
+	t=1740991931; cv=none; b=SHMmhV1lJzDXEltnlfZijRN7XTEARJpeU2bc58davYz2HYjFZRDm5UrHGylA2dGUJQyqPVXgE4QxryuN3Wl+ZlRxiyTQumpky1SxD2o1ua6iTIP8eHq/TO2t+XcTi/OW54GXg4urIbNIAdpPuSYhvLJWmWNw8tcbQ1diRAHJkCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740991904; c=relaxed/simple;
-	bh=K2F9EW+qiAEiFc0wnbOIq8DzI+iuGYeb0zxsjfA4rl0=;
+	s=arc-20240116; t=1740991931; c=relaxed/simple;
+	bh=ADaSFdz0OaQQDH4JkFJQ/We+kOUWVf10zyDiFzjjGag=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XJILvxXCcJ0pELYZ+h/JRQE11NRcS230t56HgjJvxbzwbvGzyFCrRvZVliyPb8vwzNrLQMlkFs6Hlr7piwSW5w1cp3/fvTAw0BdX3vheJr8NBFyMDuok2ZWRNeSK5i7cbUNm5i2deZ4BGZrN3LoDk0gS4SLs0DBvq2/BFE3KxQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MUEEaKhH; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=J3+44pHkDT8KJjdQrUFaMDNOJEei9bJT2xJSZVgmJoTfX5VD+9D0E2V3lAQ3G/fAHr5uUTH3uUgq3U0P5L6v7WdpDAH5bNB/F9UUG/6GEVHeATGQRXhhxZzzrmUd79FSWdHqB/FMA+2gnhNzynP6IOICCMdOiCB0Wh08NjUyIVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LY7nTfAJ; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740991899;
+	s=mimecast20190719; t=1740991929;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=PqwL+v3kSKyO1WWdOm3Dn4wn0YpaEHuXEacsy1CmEn4=;
-	b=MUEEaKhHroJTTeUp4KpAtO7naUHm8iEdVaV1kb7KmpWFAiy5a8jkMMipWqsR8y8eLMSPp4
-	dnrl21lc0/K2YOTKaSOBGn9zsA1kc9ocXtz5xe95YVTm0IVvFMv2MwtsCe+Cg53OMg8jXj
-	RwijkMT2v03xMyv/FWpaAgt37lFShcQ=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=AD0BhRUSKUKI9Ce/AzRts0lu/YIF74G3wU8/3/wY5qk=;
+	b=LY7nTfAJdPKpywQsTebzvcp8vf5vGssVWnv36aKNmt0aqGokmee3aXcoW36McPZ2A1qKNV
+	7n6P9k7Pt8VQqd3TOQkMVZPEPGoZ9/qPZ2WasPAvUR9JPqx/+64O8Ye+znlPaNJWA6Uibl
+	RJ2Zz0Vf/+8b+SxFy18DB6AGonJb6ZA=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-528-VA546TMQMj6KekOoIIhgNA-1; Mon, 03 Mar 2025 03:51:38 -0500
-X-MC-Unique: VA546TMQMj6KekOoIIhgNA-1
-X-Mimecast-MFC-AGG-ID: VA546TMQMj6KekOoIIhgNA_1740991896
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-390f000e962so851941f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 00:51:37 -0800 (PST)
+ us-mta-249-CJ4rv2EUMd64ITZbRNj-IA-1; Mon, 03 Mar 2025 03:52:06 -0500
+X-MC-Unique: CJ4rv2EUMd64ITZbRNj-IA-1
+X-Mimecast-MFC-AGG-ID: CJ4rv2EUMd64ITZbRNj-IA_1740991926
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-390e27150dbso3880646f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 00:52:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740991896; x=1741596696;
+        d=1e100.net; s=20230601; t=1740991925; x=1741596725;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=PqwL+v3kSKyO1WWdOm3Dn4wn0YpaEHuXEacsy1CmEn4=;
-        b=oChVHtL26OvS9qrjvljJrZldt64vp6Jz1zcpZr+vB4t5+9PfB0JpGEB1cYZrHAMEMT
-         NXjKzNG+UD7m0IJtZrPQdobkfI7x6bmeS0hJx2aAGQIn1WchGljz5SjaeJIjHE7tzfgr
-         hDTBGg8C0cdbQB8I+GIONVRFpHZr+GkYexv5pGqZ2HLxtsmgDD1uP+yWv+ID+hJAb6wD
-         +4VT6k645YcC6c/qE0jEWG5z02e3TG8Ok1FHmt7qzF9KB6q/noipl460vIcAnZKWHnhe
-         v71KoEQwdSYshC5cyjqeaJEXexb6zeZWj6kWkBMKM+JkDt8xII4sI8E3pQIbUEWfdO7f
-         m/MA==
-X-Forwarded-Encrypted: i=1; AJvYcCVc25svwb+S47p3fOR3nYCFXI/ntfMoHhydLlSg/5/uGj1PZ4EvXvD3ZIXbPfRaVxzc9Cw4zDLB4hIu1hk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxebEQsUp7eWITMai4/rWadHgwKpfor9f97Zlk47fg+K6F7AEce
-	MUQ0xvkL1LiZKHsWsBgXDirrSC6NhotHg4fTt5oCXP1y5J76vIm3RFUiabYSN5ztErKMQ8UkOX8
-	6WdI/XGMoUk9HpENZlNSfZVfhjjPrjPkdWSGfBi7DBqVEVIFuqy8BOxatWc+RFw==
-X-Gm-Gg: ASbGnctLjE9cHh6S5UKLkvL+JgxfDiBC89/AaEca25iyM49CxH2AT5i85xViGDrmxFa
-	r88D9yYCqVGhGmOzrcGPM8VG5GGtPdErUHrlR6Gw9QPNL4EzU7fT+g3sMl9wA1Rh4nXDLLOegXl
-	X4C46SzHe4Ys1uMsfI4hazpDhITem3D7D4Z+cOsMbu6TqzSXkPZgvyrsPMAg5Sw6oLR9JHvnn/+
-	30eV0FLBe+WJcSc+mOhW6eIM+dyuv8VpKoDex3tX4QM7ejjP9IfJZ/Sq9MOIdN5JIHfLiMRCbeR
-	Rq+H1iPlPIYAvUil6C3J5JhZUSetRTy7fI0J+qKLd/o9Ox+Q7jv8DFlxR2luuRlsY1/0p/BrmSu
-	rx1/skUu2N2QMI+qLT7oKDa8wZUO1puxE72rtFXLS+lk=
-X-Received: by 2002:a05:6000:1565:b0:391:9b2:f48d with SMTP id ffacd0b85a97d-39109b2f8ebmr2190202f8f.33.1740991896372;
-        Mon, 03 Mar 2025 00:51:36 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEiqrTykXg+NUm0kAtziKqLGECEKRMnAI63MS2I3V/WDMW5AEnsAxTN6b4wA0iNetJkZ/Gt5g==
-X-Received: by 2002:a05:6000:1565:b0:391:9b2:f48d with SMTP id ffacd0b85a97d-39109b2f8ebmr2190184f8f.33.1740991895948;
-        Mon, 03 Mar 2025 00:51:35 -0800 (PST)
+        bh=AD0BhRUSKUKI9Ce/AzRts0lu/YIF74G3wU8/3/wY5qk=;
+        b=O94hDcUZ69wek9J2Lzv51qqRz4UUgC7zaMePZ3G4g08r+3gDkZdTlpV2lZqQZGVO/v
+         VXCLvGoLvcT8S2eRnLHinUgAj6y7LWE7NO1wV9iKHrNntAaoWrHofKtRAFJrIJiz8v1B
+         9y39zrlZaP2gsFAJ0rwsdO58BfZG9KQ/d/SMcBK6jd79Er2ivRbsYbg2c+qr8pTB8UfZ
+         YsKLGcmB9ECZKlr3ScPAT9LyjGWJ+zaznCX8gCc+RERRS3pFYuIVUC47pXkzIRr7389C
+         joJ2SLwobQsySDLGG7NXA51+AK/LbEnDL3ZdNr8p4i7PnmewoSEZshpyptpsWvsOKV1T
+         s2Fw==
+X-Forwarded-Encrypted: i=1; AJvYcCVEV1ZivAW36Y7H2jRFIlWEfVO6JRaI4GU1jpec+kP6B88xsZEO5JEXDCHgbMJJnKBOc+vBUlkB1LLqGdM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywIfcYMd25Xp0v1D+2uNnJNml+trByne4PcvM9I9Rs8p8ajV6e
+	NZEStflaDhl7Iug3waP7lBD0s6vfwp6cYWJ/ME+O2jTZHe4av9qdcov1/gwcQa8MMTlG1idCgW8
+	QsB+v14NQYlgizvvnd0QXosYxfW/qP3krNJ+O4vsqKfMHDcmXICTo6QM9CzOZnA==
+X-Gm-Gg: ASbGnctBbIsfQrmUTrXv81GSMsMD3IIueRK/MBQIi73joIIBT2/oOLroKzR9wfKIAf3
+	pj5S/POghL2SaijuNhTK3HUTEtXF8YsGc6qOxkYi8yMGVX1R6cF95exNciRm57jpLCL43S/mMsT
+	RImt8YM4IdeZypmbeFuUEgbILGD9W1M1AYmH5yzk4Vv3VNpYx8oR+pbavPtI8nFsV6tneV9OuXz
+	WHvifYqMsL7k+RNaLstR+Ay/9lQPh55y7eGLr6bTLW4bE6hHNeB3rO85uSajo2jIUY4bY0pGYfE
+	JOdCorLEw9GrAEOUH2IAD0bhHWd+FuCchi94Cu6dNpjv6lw0K1AbxH8clyuHvJEYyAP+9p1Diak
+	UlDsQUEJ/wVEMcugMsDXxfM+bveuGbPWE9VEHn/xFHOk=
+X-Received: by 2002:a5d:6d89:0:b0:390:f88c:a689 with SMTP id ffacd0b85a97d-390f88cadabmr5755538f8f.47.1740991925672;
+        Mon, 03 Mar 2025 00:52:05 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF3sqppN55tl5C45qFk6psMYLYRvi/O7tktf2gORA/1QEyfox9eLasRdl1uBOhQIOjNr4hTpA==
+X-Received: by 2002:a5d:6d89:0:b0:390:f88c:a689 with SMTP id ffacd0b85a97d-390f88cadabmr5755517f8f.47.1740991925267;
+        Mon, 03 Mar 2025 00:52:05 -0800 (PST)
 Received: from ?IPV6:2003:cb:c734:9600:af27:4326:a216:2bfb? (p200300cbc7349600af274326a2162bfb.dip0.t-ipconnect.de. [2003:cb:c734:9600:af27:4326:a216:2bfb])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e4844a22sm13875701f8f.74.2025.03.03.00.51.34
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e485e13fsm13623429f8f.100.2025.03.03.00.52.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Mar 2025 00:51:35 -0800 (PST)
-Message-ID: <4af46304-cf25-4c4a-8e4a-3a566193ca62@redhat.com>
-Date: Mon, 3 Mar 2025 09:51:34 +0100
+        Mon, 03 Mar 2025 00:52:04 -0800 (PST)
+Message-ID: <0db13472-d056-4e41-a42c-f4ca60483176@redhat.com>
+Date: Mon, 3 Mar 2025 09:52:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,7 +89,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/4] sparc/mm: Disable preemption in lazy mmu mode
+Subject: Re: [PATCH v1 3/4] sparc/mm: Avoid calling
+ arch_enter/leave_lazy_mmu() in set_ptes
 To: Ryan Roberts <ryan.roberts@arm.com>,
  Andrew Morton <akpm@linux-foundation.org>,
  "David S. Miller" <davem@davemloft.net>,
@@ -103,7 +104,7 @@ To: Ryan Roberts <ryan.roberts@arm.com>,
 Cc: linux-mm@kvack.org, sparclinux@vger.kernel.org,
  xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
 References: <20250302145555.3236789-1-ryan.roberts@arm.com>
- <20250302145555.3236789-3-ryan.roberts@arm.com>
+ <20250302145555.3236789-4-ryan.roberts@arm.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -151,57 +152,57 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <20250302145555.3236789-3-ryan.roberts@arm.com>
+In-Reply-To: <20250302145555.3236789-4-ryan.roberts@arm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 02.03.25 15:55, Ryan Roberts wrote:
-> Since commit 38e0edb15bd0 ("mm/apply_to_range: call pte function with
-> lazy updates") it's been possible for arch_[enter|leave]_lazy_mmu_mode()
-> to be called without holding a page table lock (for the kernel mappings
-> case), and therefore it is possible that preemption may occur while in
-> the lazy mmu mode. The Sparc lazy mmu implementation is not robust to
-> preemption since it stores the lazy mode state in a per-cpu structure
-> and does not attempt to manage that state on task switch.
+> With commit 1a10a44dfc1d ("sparc64: implement the new page table range
+> API") set_ptes was added to the sparc architecture. The implementation
+> included calling arch_enter/leave_lazy_mmu() calls.
 > 
-> Powerpc had the same issue and fixed it by explicitly disabling
-> preemption in arch_enter_lazy_mmu_mode() and re-enabling in
-> arch_leave_lazy_mmu_mode(). See commit b9ef323ea168 ("powerpc/64s:
-> Disable preemption in hash lazy mmu mode").
+> The patch removes the usage of arch_enter/leave_lazy_mmu() since this
+> implies nesting of lazy mmu regions which is not supported. Without this
+> fix, lazy mmu mode is effectively disabled because we exit the mode
+> after the first set_ptes:
 > 
-> Given Sparc's lazy mmu mode is based on powerpc's, let's fix it in the
-> same way here.
+> remap_pte_range()
+>    -> arch_enter_lazy_mmu()
+>    -> set_ptes()
+>        -> arch_enter_lazy_mmu()
+>        -> arch_leave_lazy_mmu()
+>    -> arch_leave_lazy_mmu()
 > 
-> Fixes: 38e0edb15bd0 ("mm/apply_to_range: call pte function with lazy updates")
+> Powerpc suffered the same problem and fixed it in a corresponding way
+> with commit 47b8def9358c ("powerpc/mm: Avoid calling
+> arch_enter/leave_lazy_mmu() in set_ptes").
+> 
+> Fixes: 1a10a44dfc1d ("sparc64: implement the new page table range API")
 > Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 > ---
->   arch/sparc/mm/tlb.c | 5 ++++-
->   1 file changed, 4 insertions(+), 1 deletion(-)
+>   arch/sparc/include/asm/pgtable_64.h | 2 --
+>   1 file changed, 2 deletions(-)
 > 
-> diff --git a/arch/sparc/mm/tlb.c b/arch/sparc/mm/tlb.c
-> index 8648a50afe88..a35ddcca5e76 100644
-> --- a/arch/sparc/mm/tlb.c
-> +++ b/arch/sparc/mm/tlb.c
-> @@ -52,8 +52,10 @@ void flush_tlb_pending(void)
->   
->   void arch_enter_lazy_mmu_mode(void)
+> diff --git a/arch/sparc/include/asm/pgtable_64.h b/arch/sparc/include/asm/pgtable_64.h
+> index 2b7f358762c1..dc28f2c4eee3 100644
+> --- a/arch/sparc/include/asm/pgtable_64.h
+> +++ b/arch/sparc/include/asm/pgtable_64.h
+> @@ -936,7 +936,6 @@ static inline void __set_pte_at(struct mm_struct *mm, unsigned long addr,
+>   static inline void set_ptes(struct mm_struct *mm, unsigned long addr,
+>   		pte_t *ptep, pte_t pte, unsigned int nr)
 >   {
-> -	struct tlb_batch *tb = this_cpu_ptr(&tlb_batch);
-> +	struct tlb_batch *tb;
->   
-> +	preempt_disable();
-> +	tb = this_cpu_ptr(&tlb_batch);
->   	tb->active = 1;
+> -	arch_enter_lazy_mmu_mode();
+>   	for (;;) {
+>   		__set_pte_at(mm, addr, ptep, pte, 0);
+>   		if (--nr == 0)
+> @@ -945,7 +944,6 @@ static inline void set_ptes(struct mm_struct *mm, unsigned long addr,
+>   		pte_val(pte) += PAGE_SIZE;
+>   		addr += PAGE_SIZE;
+>   	}
+> -	arch_leave_lazy_mmu_mode();
 >   }
+>   #define set_ptes set_ptes
 >   
-> @@ -64,6 +66,7 @@ void arch_leave_lazy_mmu_mode(void)
->   	if (tb->tlb_nr)
->   		flush_tlb_pending();
->   	tb->active = 0;
-> +	preempt_enable();
->   }
->   
->   static void tlb_batch_add_one(struct mm_struct *mm, unsigned long vaddr,
 
 Acked-by: David Hildenbrand <david@redhat.com>
 
