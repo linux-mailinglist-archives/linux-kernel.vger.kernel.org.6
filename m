@@ -1,223 +1,219 @@
-Return-Path: <linux-kernel+bounces-544937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34ABAA4E7F2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:12:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28938A4EBE7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:37:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D90BB8E105E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:43:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13F3E1882713
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:33:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93D15292F9F;
-	Tue,  4 Mar 2025 16:22:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D96CF265CC4;
+	Tue,  4 Mar 2025 18:24:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="X2bY2xHa";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Tkiy+ZMG";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZTttCRHq";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ChoIAOY2"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QQbVVHDu"
 Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56B5F27FE6D
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:22:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A18C124C084
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.115
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741105337; cv=pass; b=nBVYx0O90DV1iAEoA9/YKFAkAT9QX7pJ3VL8n124LyLO1R0CqJ06rRMmRl2YeX6XuLO703E15ljPduy2LuvO91Le8zEIMRY79oXZHHulT38+dy26nCxMG2S1hs1AN5tHaAYqkCFxTA3C7twKO06ntkWxlVEibEcFeTQKILejdIA=
+	t=1741112684; cv=fail; b=dZ0+ek8QkP1bGn979pqDBVGVxTKIO1UxITXgLCZcRCqn3PAUYDBG0Gj2QNgaCkWTCjZ5iCjXY3IhOZRZ4XpG6xrqrAa0e8mtyElu7+YXQbigeKjHydUl3Uw2VRvcVmXZbhsp8HtFdTtstFpvRL9GyaepipoHwynxGOX4N4FWxz0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741105337; c=relaxed/simple;
-	bh=mwxaK4669S3GvHcRq4TyN7XjcNBKaAxeBjfvAWZvGvU=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Hu4Q12E4hgtQAm9GSlGhBIFiCr9i3eNzQW6bRuTW7u2QXE1r8LC5gNVySX/XlHOf3PAMLXXauVMCJZolehUYdceWKqDvRS81L4zuOF234WeEjRqdVdww+in+cAXXhy+C9HyX+SnnX+f8cotAgH4Og/psxk1bvobJv9AKw3wbza0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=X2bY2xHa; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Tkiy+ZMG; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZTttCRHq; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ChoIAOY2; arc=none smtp.client-ip=195.135.223.130; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=pass smtp.client-ip=160.75.25.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+	s=arc-20240116; t=1741112684; c=relaxed/simple;
+	bh=1DarwwdcHSgo8NBv1NWEBooWSWcuDdO8/nohsDYSTd8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=UC2dak3iUIdg5RLGwv7o4EVirrdxjLpmTQDip6eVt7BDnGwt/haCkWg3sloMVcY/zAfhRseA66tIleayHxv7yK/R1wYlIF+Oy50MjF0jwH8LBqQpXv/cta/03MBi4DSj86ZvfBN7dipW/uKFXrHwOPUK6swoQ0I265Cfnc6KuGc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=quicinc.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QQbVVHDu reason="signature verification failed"; arc=none smtp.client-ip=205.220.180.131; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; arc=fail smtp.client-ip=160.75.25.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 9487F40D4DD2
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:22:13 +0300 (+03)
+	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id BF9BC408B66A
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 21:24:40 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=pass (1024-bit key, unprotected) header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=X2bY2xHa;
-	dkim=pass header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=Tkiy+ZMG;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=ZTttCRHq;
-	dkim=neutral header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=ChoIAOY2
+	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=quicinc.com header.i=@quicinc.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=QQbVVHDu
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6gsH2PqfzG33C
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:20:51 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6fpF3MzPzG0kM
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:33:09 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id B9A92400C6; Tue,  4 Mar 2025 19:20:42 +0300 (+03)
+	id 5608E400C6; Tue,  4 Mar 2025 18:32:57 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=X2bY2xHa;
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Tkiy+ZMG;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZTttCRHq;
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ChoIAOY2
-X-Envelope-From: <linux-kernel+bounces-541716-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QQbVVHDu
+X-Envelope-From: <linux-kernel+bounces-541723-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=X2bY2xHa;
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Tkiy+ZMG;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZTttCRHq;
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ChoIAOY2
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QQbVVHDu
 Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id C9D2E41DCB
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 15:41:08 +0300 (+03)
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id 7E48C2DCDE
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 15:41:08 +0300 (+03)
+	by le2 (Postfix) with ESMTP id 7BF904221D
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 15:45:41 +0300 (+03)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by fgw2.itu.edu.tr (Postfix) with SMTP id BC5C42DCE0
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 15:45:40 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A26F41721E9
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:41:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36C1F7A3E55
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:44:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F87120F09F;
-	Mon,  3 Mar 2025 12:40:57 +0000 (UTC)
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0834A212FA1;
+	Mon,  3 Mar 2025 12:44:18 +0000 (UTC)
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 176CF1E5B78
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 12:40:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4957220FABB;
+	Mon,  3 Mar 2025 12:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741005654; cv=none; b=mGdtvO8g2aZEZlPvbaZei4Brt1iD0d1f9SEsoYSrD/4YQc2hXq0mSAkmI9hpTJYW1T3Jucll2vSg/r2UJigNRpnHWtn9RPFV4OHgPoRUe9Blf71pVr3153Xv1qtHTTbLF17dxYzgurCvNzdjvYQTb3k2t4x05GoHzUTh/E3PCSQ=
+	t=1741005854; cv=none; b=iAZuhgvSiZYj1tvHIuLMq4CE6VHIr7AMWpk9EHp71i+/4NfHxUigNXucQGXZWLPhBvn1+rjFsYfU3oWCtBL3Fo4DtfdJk9qqj22vJuQS7cJpzjEjGbqEZ9Gf1jZAtzkb3Sq6dIhnGU599tfnbvY3wIWncGhPA7aUAhO9Ia4UfD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741005654; c=relaxed/simple;
-	bh=mwxaK4669S3GvHcRq4TyN7XjcNBKaAxeBjfvAWZvGvU=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oePzK8eT7o5bLavrTjXc3Cv0c0pmFbMy3sXvHaRTRe/e2o8Rbgmy3RZ7fBB7AphhCrsemE9WIT89BzkraExgSCp61oXTkzZkPrhXoJBWMsYbsy5ZHn4wiF+OnYYi1w4VRNdz8fGK/Une6H5bdWGire7id1uj9yfF9/ly2Uzt784=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=X2bY2xHa; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Tkiy+ZMG; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZTttCRHq; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ChoIAOY2; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id ECFD021182;
-	Mon,  3 Mar 2025 12:40:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741005651; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LmIPuZjPI2XS9p2XhyzdtDrvchyUKON/ocNRWtdEE4g=;
-	b=X2bY2xHaHp3YDYuWzIom/EYZzyvfZ5s2G6Cxph6GUGM0+yIAlQXK8UC6El8Wp20UHTTPM9
-	p7qh+wIjAkC22bV8rDXiI6uATJoiaEI12N/iosXoxbqDcRw4Ql1plLBYer2Xipuu7o3Hm7
-	XDFXgVqd3sq9DJBdicFa2nb4/a3jHOY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741005651;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LmIPuZjPI2XS9p2XhyzdtDrvchyUKON/ocNRWtdEE4g=;
-	b=Tkiy+ZMGFQrD79qaF1iVv54csXc+EqlAX/AtuCtzLwP+VaYU+dKZLR31eL1DbRc3KUxFki
-	TRSu89Y7spVciRDQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=ZTttCRHq;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=ChoIAOY2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741005650; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LmIPuZjPI2XS9p2XhyzdtDrvchyUKON/ocNRWtdEE4g=;
-	b=ZTttCRHqnB6FDN91S/kzMvHah3d/sLBYe2bRZdzKPHlhbP5Yv5jwp2FLhra4JKmg7U9wJa
-	mWXQvcpToWhyZXRYunVrI5UzAwHu9/9Q9QoYfvekhpdedRFb4e8+riihK+s7qL3WLEEFHh
-	F83UtDtikn37qjJKl+I/nmXQGfxraW8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741005650;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LmIPuZjPI2XS9p2XhyzdtDrvchyUKON/ocNRWtdEE4g=;
-	b=ChoIAOY2h8408KaExQCSDVpmkk271GUtj+ajiU4eRyuBcwPf8YXSj38+yV6Y3YELlGiF/N
-	JT7eoQv7WkmgKMCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AD41213939;
-	Mon,  3 Mar 2025 12:40:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id UJu2KFKjxWdSSAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 03 Mar 2025 12:40:50 +0000
-Date: Mon, 03 Mar 2025 13:40:50 +0100
-Message-ID: <87o6yie17x.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Murad Masimov <m.masimov@mt-integration.ru>
-Cc: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	<linux-sound@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>
-Subject: Re: [PATCH] ALSA: usx2y: validate nrpacks module parameter on probe
-In-Reply-To: <20250303100413.835-1-m.masimov@mt-integration.ru>
-References: <20250303100413.835-1-m.masimov@mt-integration.ru>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1741005854; c=relaxed/simple;
+	bh=5Pz3E1OrB0yL84X+0ShTfpEPaw1Jt/X9ouBXYxIxOFc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=KcaaQdLKf3xrldVK0Yd9O6ehRGoo+e1NUalCvFwSqovm242HH2u0BOB0DI1qOFW+4TKN5KmRUJFAhCJn3Tolh8sSaz9phSryckAITH3Nht4dgFad4l0YdE0SyV+tJzk8ReEqkBtO81g+IWKnQ+MAl7FOEm6u0ehVjCnh7rONV8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QQbVVHDu; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 523APJ4i000940;
+	Mon, 3 Mar 2025 12:44:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=qcppdkim1; bh=ap+Is/pFfik
+	mdzgl/IVzBjkMnJpe+CGzhQU6WoEkJiM=; b=QQbVVHDuxVxfMJRO39yDOHtn23T
+	+6Q9gCrKGC0ASurjdovwdoqcJynDRsFvr/fJf6ieQg/SaAgYY/cX4Zmnyz7nuoNN
+	d+2p9iEO4Y7tAMtOIB2ng53nkcVDghPa1Sx1I0Gi5uvGKuu1Xii2Jv9n2pHMDN5J
+	thWdv5n31TJFNFj+tIDlHoRjQDaCMvwztj3sNMPKZjvPa/4PLXt/+U/KVNr47Q3y
+	k9wyEVnZuuASgX0vHdZG2ucCkNAx7H6pJuZkHZ/ZPWhuUj8p7REYsPMTdOD+bg0t
+	WDH2eSArWuRXwFvX4LLEhAWjdKKi6VeNyy42A5ndsct3liOnFXic01KCasg==
+Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 453tascy3h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Mar 2025 12:44:09 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 523Ci5iB015256;
+	Mon, 3 Mar 2025 12:44:05 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 453uakx56x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Mar 2025 12:44:05 +0000
+Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 523Ci5wt015251;
+	Mon, 3 Mar 2025 12:44:05 GMT
+Received: from hu-devc-hyd-u22-c.qualcomm.com ([10.213.97.252])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 523Ci5v3015250
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Mar 2025 12:44:05 +0000
+Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 4047106)
+	id 83A5253B; Mon,  3 Mar 2025 18:14:04 +0530 (+0530)
+From: Viken Dadhaniya <quic_vdadhani@quicinc.com>
+To: andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, gregkh@linuxfoundation.org, jirislaby@kernel.org,
+        broonie@kernel.or, andersson@kernel.org, konradybcio@kernel.org,
+        johan+linaro@kernel.org, dianders@chromium.org, agross@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-spi@vger.kernel.org
+Cc: quic_msavaliy@quicinc.com, quic_anupkulk@quicinc.com,
+        Viken Dadhaniya <quic_vdadhani@quicinc.com>
+Subject: [PATCH v3 4/9] spi: dt-bindings: document qcom,gsi-dma-allowed
+Date: Mon,  3 Mar 2025 18:13:44 +0530
+Message-Id: <20250303124349.3474185-5-quic_vdadhani@quicinc.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250303124349.3474185-1-quic_vdadhani@quicinc.com>
+References: <20250303124349.3474185-1-quic_vdadhani@quicinc.com>
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: ECFD021182
-X-Spam-Score: -3.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:dkim];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: aiwDP_jtpYWrqfwNxMPcl13ED4_nc1Zk
+X-Proofpoint-ORIG-GUID: aiwDP_jtpYWrqfwNxMPcl13ED4_nc1Zk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-03_07,2025-03-03_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=999 spamscore=0 phishscore=0 mlxscore=0 priorityscore=1501
+ bulkscore=0 lowpriorityscore=0 malwarescore=0 impostorscore=0 adultscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2503030098
+Content-Transfer-Encoding: quoted-printable
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6gsH2PqfzG33C
+X-ITU-Libra-ESVA-ID: 4Z6fpF3MzPzG0kM
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741710066.62434@KzW11T7BbNe7A+yQ6TIHew
+X-ITU-Libra-ESVA-Watermark: 1741717350.45881@m6Rwx0OmjuID8Nlb52BqHQ
 X-ITU-MailScanner-SpamCheck: not spam
 
-On Mon, 03 Mar 2025 11:04:13 +0100,
-Murad Masimov wrote:
-> 
-> The module parameter defines number of iso packets per one URB. User is
-> allowed to set any value to the parameter of type int, which can lead to
-> various kinds of weird and incorrect behavior like integer overflows,
-> truncations, etc. Number of packets should be a small non-negative number.
-> 
-> Since this parameter is read-only, its value can be validated on driver
-> probe.
-> 
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> Signed-off-by: Murad Masimov <m.masimov@mt-integration.ru>
+Data transfer mode is fixed by TrustZone (TZ), which currently restricts
+developers from modifying the transfer mode from the APPS side.
 
-Thanks, applied now.
+Document the 'qcom,gsi-dma-allowed' property to select the data transfer
+mode to GPI DMA (Generic Packet Interface). If not set, FIFO mode
+(PIO/CPU DMA) will be selected by default.
 
+Co-developed-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+Signed-off-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
+---
+v2 -> v3:
 
-Takashi
+- Drop the 'qcom,xfer-mode' property and add the 'qcom,gsi-dma-allowed' p=
+roperty.
+- Add a reference for the QUP peripheral shared YAML.
+- Update commit log.
+
+v2 Link: https://lore.kernel.org/linux-arm-msm/20250124105309.295769-4-qu=
+ic_vdadhani@quicinc.com/
+
+v1 -> v2:
+
+- Drop 'qcom,load-firmware' property and add 'firmware-name' property in
+  qup common driver.
+- Update commit log.
+
+v1 Link: https://lore.kernel.org/linux-kernel/20241204150326.1470749-3-qu=
+ic_vdadhani@quicinc.com/
+---
+---
+ Documentation/devicetree/bindings/spi/qcom,spi-geni-qcom.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/spi/qcom,spi-geni-qcom.yam=
+l b/Documentation/devicetree/bindings/spi/qcom,spi-geni-qcom.yaml
+index 2e20ca313ec1..012cb7aecb3d 100644
+--- a/Documentation/devicetree/bindings/spi/qcom,spi-geni-qcom.yaml
++++ b/Documentation/devicetree/bindings/spi/qcom,spi-geni-qcom.yaml
+@@ -25,6 +25,7 @@ description:
+=20
+ allOf:
+   - $ref: /schemas/spi/spi-controller.yaml#
++  - $ref: /schemas/soc/qcom/qcom,se-common-props.yaml#
+=20
+ properties:
+   compatible:
+@@ -63,6 +64,8 @@ properties:
+   power-domains:
+     maxItems: 1
+=20
++  qcom,gsi-dma-allowed: true
++
+   reg:
+     maxItems: 1
+=20
+--=20
+2.34.1
+
 
 
