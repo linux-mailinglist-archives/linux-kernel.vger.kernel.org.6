@@ -1,146 +1,125 @@
-Return-Path: <linux-kernel+bounces-545330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB103A4EC70
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:51:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BE28A4E85E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:20:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 990938A83B6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:28:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B7FB8819C9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:57:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0533527C179;
-	Tue,  4 Mar 2025 18:19:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910C6283C95;
+	Tue,  4 Mar 2025 16:35:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lo5jZC3i"
-Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="f4A84WM5"
+Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B32204F76
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:19:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7442A264A91
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:35:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.117
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741112393; cv=fail; b=qqRVaVxJIQnTbdd27R/XEBATqGmogBAvHFfoTWckhiqtECzQcvk5A1OY2R7cCYEzi9rB7/kGDDEL98F2NvjGjuBPXGXYWtJcKZu+or5cHivKw1N5pge1ypWPuayHHNrzGHjWX0YzcEoMLxXP4L7KtbH9W9x8f9+9/V8oTIh2jLs=
+	t=1741106138; cv=pass; b=nHWNNq2aqnRqPqvk/9GCUZIrXZy8NC6Ujy1p6dJaHYnlFLAXEKmnutD/Htry+oFVu4d6mV4jcD5JV//+Y+vFG9OSYOK+OzKVogUCyCENzsP13EBLBSzSHAyQNij33DdanZ4k1N5qaEMS+eYUYuQym87/BzPzxcYjZ1KfQwMz48E=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741112393; c=relaxed/simple;
-	bh=Rt6IBoABxDQpThwuLDJ7LT+BPXo6/5w3k81N1bqFKMg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GGkbbkEX2gE3FXdswxOLKO96RiF46xQBpmZ+gcChZZflxrlOJ9940K3SIfXmyCekyBE1k5e48BW/6wbqQnxWZJXtO2nteZNrZTM9CZ2t6Pty27tq3B28KYvwZd7vMdpX7g0WudZ69EvFURAZkK0SDO8TR56jlH28sK96YKcbFec=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lo5jZC3i reason="signature verification failed"; arc=none smtp.client-ip=209.85.218.49; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; arc=fail smtp.client-ip=160.75.25.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	s=arc-20240116; t=1741106138; c=relaxed/simple;
+	bh=cyZ+Grt5WsWeJ35wJ4Miw4zucqCOoTXmPw42CecotaE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tleGbooXyvpWQga6lejHpDS9OK1FA4SwohDmCvGRaf9c782junt02wv+5QXvo7Tlw9qr9gUNvZTfkZc/sngX81KoDmNqkW1oZqX68VLFthj63xcVbVrh33Ns1dPHO3ryjWbEFV6C+/KVWBIHiP2DZE339DPfbPlJpydwZP+v4Ig=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=f4A84WM5; arc=none smtp.client-ip=209.85.214.179; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; arc=pass smtp.client-ip=160.75.25.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id C732C408B653
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 21:19:49 +0300 (+03)
+	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id B7BE740D1F40
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:35:33 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6g794bpbzG1Vt
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:47:49 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6h936pLXzG3g7
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:34:31 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 431FA4274D; Tue,  4 Mar 2025 18:47:45 +0300 (+03)
+	id 9A83642722; Tue,  4 Mar 2025 19:34:14 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lo5jZC3i
-X-Envelope-From: <linux-kernel+bounces-541081-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=f4A84WM5
+X-Envelope-From: <linux-kernel+bounces-541082-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lo5jZC3i
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=f4A84WM5
 Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id 941F642B72
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:14:33 +0300 (+03)
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id 6B5B02DCE0
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:14:33 +0300 (+03)
+	by le2 (Postfix) with ESMTP id DDE1C41FB2
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:15:59 +0300 (+03)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by fgw2.itu.edu.tr (Postfix) with SMTP id 74D462DCE5
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:15:59 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC7F618906A8
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 07:14:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2628E3A8BAF
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 07:15:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA0941EA7CE;
-	Mon,  3 Mar 2025 07:14:16 +0000 (UTC)
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 424711EA7D7;
+	Mon,  3 Mar 2025 07:15:43 +0000 (UTC)
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D628152532
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 07:14:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE66D1E501C
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 07:15:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740986054; cv=none; b=KRV2/DMRuvRMOBkdsfWjTr72BJ2StqBOlJHiLHTS/E8YRWp3Xf0EBNfS7G988niBJNoYQiBKU88pB8pBAFzGTKEe5kkD3fAqDuQCUf+T7HFVrNTbG7Fqi8OHs8ltPSCG6Co17caVxKyDUPlB6PEfoqZW7BHi1Fc9cFJlONlLmE0=
+	t=1740986140; cv=none; b=UbnP8lXiaQbal6oVevUpUADIzn+VfpnWPHvmdOCVnmWZhIGKQlH2D8gZGwYBRcvHyDHqu0/9g5vOStcBO5fOg6iL8ck1ZEKXcO7wZV6sBgF13Zwmy7mWeHY2buU9xbgXzvLVQv+gOBYks7o07mEq/9LWCD1Wg2klKJlnbyMoNTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740986054; c=relaxed/simple;
-	bh=Hln+g5OCHrAMOq/+1aDVAlOsgByEM+bWM9zySDltuR4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MHYtVqA2LgE+n98yhdCz4a6qsOjVvQnaagXueQcIqqfsYbDHFydHgyPGrUWlpgM5E3/dMvyEV/mi7dF9IG4l2SFK9RxFvlFdsMKXy0c+Q8t/F8f+GUSr3hkrYS4ZsrvRgPLq9Qz8EWruCJgFAbEDhmueaMo10mhGpnYnosf9rqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lo5jZC3i; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-abec8b750ebso710486466b.0
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Mar 2025 23:14:11 -0800 (PST)
+	s=arc-20240116; t=1740986140; c=relaxed/simple;
+	bh=cyZ+Grt5WsWeJ35wJ4Miw4zucqCOoTXmPw42CecotaE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RRHG4qa/A2btEukAcWzbjJwg8W8Kuoy+iOpGKDgvIPrQPOvexp0JvX6PQ9NOi4wb+XpZdVNwFT7YEmXa8FprlkpYnsJ/280Fjl9f9KWQyMG0e75rigIsBwLOMuSYfr3NAxpVVbowAHhb2fI5CXJiYNwj8zH8qxq5j+TmQJBu93k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=f4A84WM5; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2239c066347so17245755ad.2
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Mar 2025 23:15:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740986050; x=1741590850; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=8RROaO6yARYWUmuYiLttBRg0vezrYJsF0zsoMASJ+Y0=;
-        b=lo5jZC3iAcg9TiASEN+02v8tjNCnIVO65YHcjQRfQveoHu178Vz4pycEF2VX+IMf1N
-         qVjKOMdtBeG1S5LjTzJrESdeRo8xG0RwJnTyUMV5NV3DfAMSh3hUdACUGlxF7uuqzvuV
-         q1Mtm38cTmfNA3U0vbvUKUONHRBoOI+RDB4J73PWf+7ikbFfIAZVliX3S3ZJh/uBpSfQ
-         csU6x/97ZIR9KzXPZ6JMwqWZjeT8NFz6VqvWxH2fplDnXAOIEVAtR3CtiAiscZUsdZ9n
-         zwSBDpFAFoxZ3XJYliPKS/+AjC0Fs1eROjFVnqa1BAmBdok7E+48ekfPKMlPham2XFXA
-         aRvw==
+        d=bytedance.com; s=google; t=1740986137; x=1741590937; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Z3xf7HJyOLISUqnBF4lpknQTsncyxq6apcdgU1Q2bwI=;
+        b=f4A84WM5UBmOEItKzAifDxDy7QSqQog+5OdOY7cDip+Ifi/SFUtojaXd3nv9N46OkR
+         obbn8XiDHfPwzOhP+v9F4yJio5kY6Fy6S6Dij4j9DhRO+gigEV2oQ1XDcdtvMOTvOPmE
+         WpuxN3y1/iFpfhe6FIe7LgfmoW5WjaSdqf2obCSIVsNV4KU9GPJlIYbIQ+dtrHsEz8Qj
+         obAsvIJ84Xaa/DfhJQP52pW8eNlzAzvKCu3ybiqdRykVPzSYIGvK4+hUWmRrrn+BPGQx
+         E1zuno2Ug6TvBtzOsf/XTEeGekcF2JdKNte3lMVXw8TZSOU37BEEcnrYWZ+wVCIGz6FH
+         p2wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740986050; x=1741590850;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8RROaO6yARYWUmuYiLttBRg0vezrYJsF0zsoMASJ+Y0=;
-        b=FjN6aqlc+dLJY3AFYj+gy6X+7xUXaKezIjE5lp/KxMGDQcbHcUDPeStmsPdzdC+1C5
-         r+/D9Jo5v20TEj5S3GZG3hcxev53jhFXEtjPKhyF+WD85j2CYIDyvLilMNUUZ6eCCUKR
-         AKgUGaFP/NOlJL3Z0cqBJf+gIMv9LNjhEszWcoLL8pSZ3Ew9Bh5lhch3nu2ptwIKg9nb
-         TORC3mADJ8LuVbk8g+n+M29IwnJh8QmWMqvln+mxjjP2Zofq+7NtmAJh5T2pOLxK7lZP
-         u5FpETOBOxdX5KaPVy4sSp/Omaf4z/PSfd8DwIw8qlujwuDU7Clbp4q26ptj0yfYb6EP
-         qt0g==
-X-Forwarded-Encrypted: i=1; AJvYcCXCivOsy5fmtnmsrBuj+R63gHuORVvBYIJWd1TsGMXEH7EYuDntmgoMpX4BOPkSfpdQ/nZFawscWUgKd+g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyA9Bid7zxr9dQq3Ywprnu5AxuHRemkXMgHXYJexGK5Hl2gIFc0
-	FsO0o4rM7re4ZI9Kx4XlC5932+ecDfL32hS1MEGt0jH5JAWyFyTo3QglI20/hyE=
-X-Gm-Gg: ASbGncuc9P/LGLam76AaY402qZSXKJWwKByWXBr346f5XG5rnOnl5UL1wf5THlT2ShX
-	+1zbu1mB+C0QJ4JYAvXaKDE/pa0/+U/UB7GjpW2BXZ72wZiu6UgnlJVOWHMoul6VThAt3bzdaTP
-	FsD2fXdBnoJV9SRO+nVdFbsQXdNprBWtYvjK0bhkZrYl3mOHCp8VZVc1uT8yblc3ecrIRkj0pc2
-	3W0jVjKaALE2kSKgSYfrKa7Pf+w5+1DX8crjmlXkiWlSZjhmCReciJmYzV2p67ah+kvrYPmLeg1
-	w9vIB031fWTtZtJJluY6BKUQwon4rNLT703BUXW9AWw57W0AmA==
-X-Google-Smtp-Source: AGHT+IEny668UimPZ3R6dx4axvviTs297S1IJ5VK/kkx2SxfpDGI4c5Rl/7By42IdqNYV74cMm4sFA==
-X-Received: by 2002:a17:907:980e:b0:ab7:b250:aaa with SMTP id a640c23a62f3a-abf2682f996mr1554838466b.54.1740986050266;
-        Sun, 02 Mar 2025 23:14:10 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ac1dd6fd870sm60633966b.70.2025.03.02.23.14.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Mar 2025 23:14:09 -0800 (PST)
-Date: Mon, 3 Mar 2025 10:14:06 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Markus Elfring <Markus.Elfring@web.de>, kernel-janitors@vger.kernel.org,
-	freedreno@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-arm-msm@vger.kernel.org,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Archit Taneja <architt@codeaurora.org>,
-	Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
-	Jeykumar Sankaran <jsanka@codeaurora.org>,
-	Jordan Crouse <jordan@cosmicpenguin.net>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-	Simona Vetter <simona@ffwll.ch>, Vinod Koul <vkoul@kernel.org>,
-	cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RESEND] drm/msm/dpu: Delete a variable initialisation
- before a null pointer check in two functions
-Message-ID: <29b32b0d-312d-4848-9e26-9e5e76e527a7@stanley.mountain>
-References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
- <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
- <13566308-9a80-e4aa-f64e-978c02b1406d@web.de>
- <54c30a69-71cf-4582-9086-50eb0d39f273@web.de>
- <k7un3bjavyt4ogscgc7jn7thfobegaguqqiy7gtypmq6vq7zox@l4bsevbsjrud>
+        d=1e100.net; s=20230601; t=1740986137; x=1741590937;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Z3xf7HJyOLISUqnBF4lpknQTsncyxq6apcdgU1Q2bwI=;
+        b=V6hTYAc13n2GGK2+V+SYXFc83ibjM/YRGmA85UVw/yGr+iafh+3DpguMAsi44Msrak
+         Rc8lm9ifmmy+sf3mGvgr1B6wy0DSn5kV6+sYKMFFiC6kWfir/ELsvw7O3ebFT4/plNiF
+         8VLsjaDXmihAF7lP1xahofPIborwDagJoeqfFyIPApmAfp7gKKu7/jyr7kWInzYCWJvz
+         tEHAGLO/EPMfvDII9FwTBJg5WgCxwX3vAHK37a5EMCQjkFnyssyH7780oACaE4iWtmgC
+         +La9TQjcG6evTdCAUkXIEZpfrIPEs3atLIXnyaE+ggB3rnlfr/JI56QmixhSfJXam/Lh
+         YjDA==
+X-Forwarded-Encrypted: i=1; AJvYcCXV3cRahDZLx9qw+XI6/hjlxWyx70R9mfe5cEgYOUph0I/3/IsNXrH29p57t2dLEKBH3UNpJLJ1eCWtAjo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHvdm1NGx4aZ13CwRnIA6mERBF2EhXuLaggrV/Auc1FC6cvuVo
+	nr2bUITGBfheIL8uAXqZVvRA5x9ihLF7WSS+9emZB+17rhn4T5FIKHgFHOXL8+s=
+X-Gm-Gg: ASbGncsJj56blywHiCfNcdRwIByWd/2pab06AUHQujSwG0fw+d8p0GhjeGLweBP+D0y
+	sSNkGjA5UjlQjqdO/ANFgkIpC0WSYzqF9MQQDsUVX43qcaMTZQL+SQl/71Lh/k5Jbg+7HBmMmp6
+	zUdUKTfBt8j8ZvcqQB1fbb0hY6oWdE4AeLfKH1k3g8dPgnVNU3VpqAxKa0VW0nOsqM5dIykEGcQ
+	pUIM6SFTykv4DIOsXjqSKPUAVnmwWEGgrNKYb5ERb5X69TPTg5el5kkUdu6DBARPQVMnn+czTlD
+	D3uEIf7EpqssocI08pKOapluzWZlNpps8uMQ5ZjOSnA7iJAev11JKMJVox4/FCOo0EVH1g==
+X-Google-Smtp-Source: AGHT+IFFzAQLESy+9XTrR371K4l9s8+Ug8zXVzf/oXiEIXCRNjxwSBTp4Oh3Iq6eaMxuwqzsZm0CFA==
+X-Received: by 2002:a17:902:f64a:b0:223:5645:8e1a with SMTP id d9443c01a7336-2236926727dmr181629675ad.51.1740986137075;
+        Sun, 02 Mar 2025 23:15:37 -0800 (PST)
+Received: from [10.68.122.90] ([203.208.167.148])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2235050ce10sm71093955ad.200.2025.03.02.23.15.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 02 Mar 2025 23:15:36 -0800 (PST)
+Message-ID: <4eb93ca8-7526-4709-b43e-2ed9e5583e3b@bytedance.com>
+Date: Mon, 3 Mar 2025 15:15:22 +0800
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -148,51 +127,76 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <k7un3bjavyt4ogscgc7jn7thfobegaguqqiy7gtypmq6vq7zox@l4bsevbsjrud>
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/6] riscv: pgtable: unconditionally use
+ tlb_remove_ptdesc()
+To: yunhui cui <cuiyunhui@bytedance.com>
+Cc: peterz@infradead.org, kevin.brodsky@arm.com, riel@surriel.com,
+ vishal.moola@gmail.com, david@redhat.com, jannh@google.com,
+ hughd@google.com, willy@infradead.org, yuzhao@google.com,
+ muchun.song@linux.dev, akpm@linux-foundation.org, will@kernel.org,
+ aneesh.kumar@kernel.org, npiggin@gmail.com, arnd@arndb.de,
+ dave.hansen@linux.intel.com, rppt@kernel.org, alexghiti@rivosinc.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+ loongarch@lists.linux.dev, linux-m68k@lists.linux-m68k.org,
+ linux-mips@vger.kernel.org, linux-openrisc@vger.kernel.org,
+ linux-sh@vger.kernel.org, linux-um@lists.infradead.org, x86@kernel.org,
+ linux-riscv@lists.infradead.org
+References: <cover.1740454179.git.zhengqi.arch@bytedance.com>
+ <9025595e895515515c95e48db54b29afa489c41d.1740454179.git.zhengqi.arch@bytedance.com>
+ <CAEEQ3wnvgX=Bq=oAQV6wfg5a7H2jiG7f8P6trbC9agJ8D6t4pA@mail.gmail.com>
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+In-Reply-To: <CAEEQ3wnvgX=Bq=oAQV6wfg5a7H2jiG7f8P6trbC9agJ8D6t4pA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6g794bpbzG1Vt
+X-ITU-Libra-ESVA-ID: 4Z6h936pLXzG3g7
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741717086.07689@kiHaQFjQ6js/833X2K7QBw
+X-ITU-Libra-ESVA-Watermark: 1741710888.16935@CYThBOqEaFkpcsMiU8DKzA
 X-ITU-MailScanner-SpamCheck: not spam
 
-On Mon, Mar 03, 2025 at 01:01:40AM +0200, Dmitry Baryshkov wrote:
-> On Sun, Mar 02, 2025 at 09:56:00PM +0100, Markus Elfring wrote:
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Tue, 11 Apr 2023 18:24:24 +0200
-> >=20
-> > The address of a data structure member was determined before
-> > a corresponding null pointer check in the implementation of
-> > the functions =E2=80=9Cdpu_hw_pp_enable_te=E2=80=9D and =E2=80=9Cdpu_=
-hw_pp_get_vsync_info=E2=80=9D.
-> >=20
-> > Thus avoid the risk for undefined behaviour by removing extra
-> > initialisations for the variable =E2=80=9Cc=E2=80=9D (also because it=
- was already
-> > reassigned with the same value behind this pointer check).
 
-There is no undefined behavior here.
 
-> >=20
-> > This issue was detected by using the Coccinelle software.
->=20
-> Please don't send resends and/or new iterations in response to your
-> previous patchsets. Otherwise they have a pretty high chance to be
-> ignored by the maintainers. Use a fresh git-send-email command to send
-> new patchset.
->=20
-> >=20
-> > Fixes: 25fdd5933e4c ("drm/msm: Add SDM845 DPU support")
+On 3/3/25 9:45 AM, yunhui cui wrote:
+> Hi Qi,
+> 
 
-Remove the Fixes tag.  This patch is fine as a clean up.
+[...]
 
-> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+>>
+>>
+> 
+> This set of patches mainly refactors the remove page table function
+> interfaces. The comment "riscv_ipi_for_rfence" has been removed, as it
+> was no longer needed, and this patch handles that.
+> 
+> Additionally, whether riscv_use_sbi_for_rfence is true or false, page
+> tables can now be released using RCU. This patch changes the previous
+> synchronous release logic (for !riscv_use_sbi_for_rfence) to an
+> RCU-based release.
+> 
+> So, Reviewed-by: Yunhui Cui <cuiyunhui@bytedance.com>
+> 
+> Based on qemu-system-riscv64, I tested this patch. The log is as follows:
+> ./gup_test
+> TAP version 13
+> 1..1
+> # GUP_FAST_BENCHMARK: Time: get:663365 put:117 us
+> # ok 1 ioctl status 0
+> # Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:0
 
-regards,
-dan carpenter
+Nice.
+
+> 
+> So, Tested-by: Yunhui Cui <cuiyunhui@bytedance.com>
+
+Thank you very much for your review and testing!
+
+> 
+> Thanks,
+> Yunhui
 
 
 
