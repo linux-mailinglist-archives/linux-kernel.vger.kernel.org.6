@@ -1,94 +1,109 @@
-Return-Path: <linux-kernel+bounces-541709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 413BDA4C069
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:33:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDCBDA4C06B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:33:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6254D171486
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:33:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D50DD1896BC0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:33:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0F8B1F0E34;
-	Mon,  3 Mar 2025 12:33:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qgad3ie1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE125661
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 12:33:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F4C1F2361;
+	Mon,  3 Mar 2025 12:33:33 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04F4A5661;
+	Mon,  3 Mar 2025 12:33:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741005199; cv=none; b=rQMYUEQFJWWBahKLv113CgonGGAMKVW7fhFebSJ1aas2QKmhd7QUwGO4d9Ixo6GRcagbSObLdSXAl/SgJfNbYDU0XOohMeHJHrTcg8JnfeP547AszIr0uaDxJFUAdUEzjtt3zL9fb/VYZNxHYsbhKlsDWebKxxLKwNbc6yVVCic=
+	t=1741005212; cv=none; b=uvYAQlUtNdHjEz+h1xWNMkxjMjT6LskuiKBKjXkYQpFRIYgy7E/H2z19F+YiIXnYLuikxBVck1UTgsv3dibgfgd+DhTLTR92FtexbHn4QViMt+GQfdWF9ifAJxAABCXAGbqdG0xA2C6AYtyVLbi3p+m78x2dbHKlhQ84bobOT0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741005199; c=relaxed/simple;
-	bh=x9SEbmFJPq62LJOYO+aRF/L+53QttHd8dBpeE2pMwrQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k78qJuFGNJ6yWPqauu8yMMytVFXWg+F1oHElJRZrrRjXPL66ucdTTsV8OY4TnEBoK0348kom8uqjOI9J4zvLIxGFiFPoM6T1ZIpG/kXXpPps0hTpbJv0mvsSWiZCd39TFllTyDtBybxl8uffSrak1cJAjjjnrbmZWLTPbIzEtYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qgad3ie1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E91FC4CED6;
-	Mon,  3 Mar 2025 12:33:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741005197;
-	bh=x9SEbmFJPq62LJOYO+aRF/L+53QttHd8dBpeE2pMwrQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qgad3ie1d+F48UWQikUiSMHknHCw/FUCVeasoQdNnbjUasylxuyoJHw0AiApXA0/e
-	 O8HxrPdpr4G2lTEuO8guMUDlLWJkPRkJ2vZYy7DGlqvN1Y1xWBYbeHnB7zZAFFVAK0
-	 /CyK3sC7AuC+nODDrXAKTJ5YDL2lKofIQKaeYITSOkJF5xeHgsPW2+gUz5zmfRcFmd
-	 ceJHe6y5iHGrKJEvcwqzJBo8CRgE3zjYjtFXHvfR0I65wa+hOVjtprh6m7zI5xkGYP
-	 6SlLeVysL95CyO9mBH29ZTqobIgDtGLva0/bSoUu1crRSHSZhmm0iRZg1MTIBQC98K
-	 VYJ9A4JSg4qfw==
-Date: Mon, 3 Mar 2025 13:33:12 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, hpa@zytor.com, xin3.li@intel.com,
-	krisman@collabora.com, x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86: Remove unused _TIF_SINGLESTEP
-Message-ID: <Z8WhiJizjKw_qEkY@gmail.com>
-References: <20241030012438.358269-1-ruanjinjie@huawei.com>
+	s=arc-20240116; t=1741005212; c=relaxed/simple;
+	bh=TFqvs3w3FSeuRo+f0d0WiU1fTK+fTyPEqzBF5damugE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VMM7iE7m3slKrhe/V7pKCEaKIoqAubcA0n+HW8fMEzLB17x6AizVSJCJv+rv+2wCil22XDn2UAcb8cBWt4MofbDBheNFpgjV11GV0pZRH1ZmRqWE1gdw8RE64U829V64qw/CgyW84Do8PpOoZolJg9Z8xspbwkcVMat8bYpD23Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 58026106F;
+	Mon,  3 Mar 2025 04:33:44 -0800 (PST)
+Received: from [10.1.26.155] (XHFQ2J9959.cambridge.arm.com [10.1.26.155])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E4DD33F673;
+	Mon,  3 Mar 2025 04:33:27 -0800 (PST)
+Message-ID: <8b218b95-f0e3-424c-815f-5131e3e54031@arm.com>
+Date: Mon, 3 Mar 2025 12:33:26 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241030012438.358269-1-ruanjinjie@huawei.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 4/4] Revert "x86/xen: allow nesting of same lazy mode"
+Content-Language: en-GB
+To: David Hildenbrand <david@redhat.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "David S. Miller" <davem@davemloft.net>,
+ Andreas Larsson <andreas@gaisler.com>, Juergen Gross <jgross@suse.com>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-mm@kvack.org, sparclinux@vger.kernel.org,
+ xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+References: <20250302145555.3236789-1-ryan.roberts@arm.com>
+ <20250302145555.3236789-5-ryan.roberts@arm.com>
+ <75031fe1-50d7-48d0-87bb-9c5c88f3b41c@redhat.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <75031fe1-50d7-48d0-87bb-9c5c88f3b41c@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-* Jinjie Ruan <ruanjinjie@huawei.com> wrote:
-
-> Since following commit, _TIF_SINGLESTEP is not used by x86 anymore,
-> remove it.
+On 03/03/2025 11:52, David Hildenbrand wrote:
+> On 02.03.25 15:55, Ryan Roberts wrote:
+>> Commit 49147beb0ccb ("x86/xen: allow nesting of same lazy mode") was
+>> added as a solution for a core-mm code change where
+>> arch_[enter|leave]_lazy_mmu_mode() started to be called in a nested
+>> manner; see commit bcc6cc832573 ("mm: add default definition of
+>> set_ptes()").
+>>
+>> However, now that we have fixed the API to avoid nesting, we no longer
+>> need this capability in the x86 implementation.
+>>
+>> Additionally, from code review, I don't believe the fix was ever robust
+>> in the case of preemption occurring while in the nested lazy mode. The
+>> implementation usually deals with preemption by calling
+>> arch_leave_lazy_mmu_mode() from xen_start_context_switch() for the
+>> outgoing task if we are in the lazy mmu mode. Then in
+>> xen_end_context_switch(), it restarts the lazy mode by calling
+>> arch_enter_lazy_mmu_mode() for an incoming task that was in the lazy
+>> mode when it was switched out. But arch_leave_lazy_mmu_mode() will only
+>> unwind a single level of nesting. If we are in the double nest, then
+>> it's not fully unwound and per-cpu variables are left in a bad state.
+>>
+>> So the correct solution is to remove the possibility of nesting from the
+>> higher level (which has now been done) and remove this x86-specific
+>> solution.
+>>
+>> Fixes: 49147beb0ccb ("x86/xen: allow nesting of same lazy mode")
 > 
-> Fixes: 6342adcaa683 ("entry: Ensure trap after single-step on system call return")
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> ---
->  arch/x86/include/asm/thread_info.h | 1 -
->  1 file changed, 1 deletion(-)
+> Does this patch here deserve this tag? IIUC, it's rather a cleanup now that it
+> was properly fixed elsewhere.
+
+Now that nesting is not possible, yes it is just a cleanup. But when nesting was
+possible, as far as I can tell it was buggy, as per my description. So it's a
+bug bug that won't ever trigger once the other fixes are applied. Happy to
+remove the Fixes and then not include it for stable for v2. That's probably
+simplest.
+
 > 
-> diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thread_info.h
-> index 12da7dfd5ef1..734db7221613 100644
-> --- a/arch/x86/include/asm/thread_info.h
-> +++ b/arch/x86/include/asm/thread_info.h
-> @@ -110,7 +110,6 @@ struct thread_info {
->  #define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
->  #define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
->  #define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
-> -#define _TIF_SINGLESTEP		(1 << TIF_SINGLESTEP)
->  #define _TIF_SSBD		(1 << TIF_SSBD)
->  #define _TIF_SPEC_IB		(1 << TIF_SPEC_IB)
->  #define _TIF_SPEC_L1D_FLUSH	(1 << TIF_SPEC_L1D_FLUSH)
+>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+> 
+> Acked-by: David Hildenbrand <david@redhat.com>
+> 
 
-While technically _TIF_SINGLESTEP is not used, TIF_SINGLESTEP is very 
-much used, and _TIF_SINGLESTEP is its canonical mask definition that we 
-construct for all the other TIF bits as well.
-
-Thanks,
-
-	Ingo
 
