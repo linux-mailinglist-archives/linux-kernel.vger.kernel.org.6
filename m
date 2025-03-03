@@ -1,136 +1,130 @@
-Return-Path: <linux-kernel+bounces-545211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3212A4EA6F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:04:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8440AA4EBB1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:32:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E95113B29F9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:56:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEF82174B94
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:27:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 250962BF12D;
-	Tue,  4 Mar 2025 17:36:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80B832900A0;
+	Tue,  4 Mar 2025 18:18:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hu07RUWZ"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jkFSxw9H"
 Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA74929C32C
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.115
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34F73253F38
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:18:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741109812; cv=fail; b=DRTQxudKRHPt6W4q+/fMbYlAIK0+paYcjJOAtwX/JpO27m8GvYa8wGc8q9s9xBGclmueKE3DFl9MHMAEibb4n9uOwVrsGGX74uZtBjID81tooB/CJhXftUr8PX/o6IYdUj71NfoP5pVKIBCf52PTTZBbwCPoFltYWOblttXJvtw=
+	t=1741112294; cv=pass; b=OXPv/d3tkldgAoZHwqyIt5Q2L73rz1Ry5fWSzLg9YVnl+Y/UxL6TWF6Kr6Qojro523LqaEs+mwGQjlDFompymCwjZNcr0U7XvmRLEv5QJDr322FxUzdV42jnaprxGqK1wALBANrqHhzHYTywBerSMz87iq+dOigc+75VW19LwLo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741109812; c=relaxed/simple;
-	bh=u/5ran7xFriBqgBmyf6tYp8QecD/xwC2RSvXFpRKY0w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OVQ+0Gwt7V2GrrESdmmc38aBPpWgKDhuHiRua2rcg1tYuT6sZ70ee2Tb9ClbpXvr7KP01A24CVcB9maSG09QlooUVm691gV9sWVWDlIYHsduRXlj/Kj95Wic+SE3sBiAVmw0EyucNze7+3q5LfAK35tZhPULvCD2fnzpZ3YGSxI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hu07RUWZ reason="signature verification failed"; arc=none smtp.client-ip=209.85.167.53; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; arc=fail smtp.client-ip=160.75.25.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1741112294; c=relaxed/simple;
+	bh=LdAb8B+A2aIRRqA7TGNbZE49m+hpZy1lkM63kR3qKqU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jlaCbFQ4SlZv2L88YMd8oekkcaw6hjxk58pDz3oqdJk83ca4q7sD1KKwCEBF9A6j2l5NALsMnyG1oeizH69/ngQvXYRHDBtm6+Gi9350ZV5Wj1ngwJozr2gkZ4qjKQ/fVCQMGe3ANM2uGDIgDkm6Va3BtOKgs4JdfpMpn2suOCY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jkFSxw9H; arc=none smtp.client-ip=198.175.65.19; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; arc=pass smtp.client-ip=160.75.25.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 3B87340D976B
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:36:49 +0300 (+03)
+	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 5FF6440D9772
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 21:18:11 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
+Authentication-Results: lesvatest1.cc.itu.edu.tr;
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=jkFSxw9H
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6hLm5Ts1zG3xn
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:42:56 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6fQK46mlzFyx3
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:15:53 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 24C4042748; Tue,  4 Mar 2025 19:42:42 +0300 (+03)
+	id 2491C42720; Tue,  4 Mar 2025 18:15:39 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hu07RUWZ
-X-Envelope-From: <linux-kernel+bounces-541693-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jkFSxw9H
+X-Envelope-From: <linux-kernel+bounces-541697-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hu07RUWZ
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jkFSxw9H
 Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id EB1B141ED2
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 15:22:50 +0300 (+03)
+	by le2 (Postfix) with ESMTP id 6094D41D89
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 15:23:47 +0300 (+03)
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id C2BCD3063EFE
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 15:22:50 +0300 (+03)
+	by fgw1.itu.edu.tr (Postfix) with SMTP id 37623305F789
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 15:23:47 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBC561893A53
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:22:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30D1C18902D8
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:23:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA8D2116F3;
-	Mon,  3 Mar 2025 12:22:12 +0000 (UTC)
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58DA210F59;
+	Mon,  3 Mar 2025 12:22:50 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5ECA20F091;
-	Mon,  3 Mar 2025 12:22:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5851CF96;
+	Mon,  3 Mar 2025 12:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741004529; cv=none; b=R1utBVoEgd+oVV21icNrP6j8HhX1Hvi8rH6k2pG+rIrUe8tkTXgIz+W87ELfbNIZPHGceaOhZRuq1cNOLKYwyOYw8okoI0TyPvNb7GesC4nhQSVgFuFhN4LdjyQcMIDw9ved2ddJulvaIlIz5mFTK+Pyhv8LINttuRUvYFT6m+Y=
+	t=1741004568; cv=none; b=RnXXvL5uMAfL5pEcsDh7P/N/GJDe/G+rE0KbhfHzNK+mFJUW3NIkNOsSXKu5n56rSR6Ozzxq40DmY2CZmn9Za/sDWfO+eY4XZS+LJ8jV3uPBj/1Iw2ArV5ncHNcvnjCibF+Pqkjs0NIWpaKogsmA9gwf1HLaR/KCisNhFDvjiN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741004529; c=relaxed/simple;
-	bh=5XGSBkroT3NyH15c6J98n/wt9cwzqENYoyXtkNF++dU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eeONe0NcGjeMb8208NLNidfYMxke8IreKMQnbVxl3MFmtP8shMeMeOg6mRmFZlKjvPy2BlrPdU6ZV7ahdbOgtNHQbbjNBIByT+fDIPxTA1mAcmFJZBIu76nfDmAjG4TRWbGjEj9HTAX840iLIXZXwkVQ/vftEKYlv1KZfF4TGzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hu07RUWZ; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5493b5bc6e8so5087178e87.2;
-        Mon, 03 Mar 2025 04:22:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741004526; x=1741609326; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mZmg489r6L6pRhlkbZ4niT48F2MsWO7ApxopBhoezJw=;
-        b=Hu07RUWZtAqkdAQSl4keRFYy0vjkj9XPifAsfXKIY/Kp5SdGXeS+uk7RldvKyOgJIf
-         CpPg6xGCL2o5V2hJcjRDP93eyxmJ6LYMUkDXt25220Jip6rcjIWW/tRsMsP+RY2c0sop
-         a8k0/AxgITPPKh8WODv0e4pB6L3ndCN3T3fTIps/G+oHLfqEzo588CA6dlJWoFZ/j9NU
-         56MRXRlGjEtgEQFvJf3YlP3wd5vWS4FvosI7OZ3u/Gwh+emAlo3HIQyS2YVv9b5yFuUh
-         Yj96iGFk24XJK7ymdLievxpZ7kazmJ3PPTWOlYvoJQc3VgFipKRv7C+zKvEwiPFoWjUo
-         RFUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741004526; x=1741609326;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mZmg489r6L6pRhlkbZ4niT48F2MsWO7ApxopBhoezJw=;
-        b=L3SZWyBEoePzMRtbz+xV980HD2ortnO73DakmWrGxgs6One6zHm5+C4tDrt0pPVp41
-         4U4MBN2Fd1JFJ8ZddnMjnJczLwWJbkrS4RmZL9FZM7C+ejpGMhM7whW5E8EXRjocZpx0
-         PkhVRXaVoZRjHLgtRVjIwHHIZxxBhW8ZeK0D8EBbpfZaI4NlhARIocDzjYuPCY5vLWLf
-         f0YslVPRxi1PKhABJZ2FNnMXeeW6NRkINBv8S6DUMutEV0Xb8KT9kfiFBrje1c0bVsBR
-         9IGDUh4P5AcSJ1hfDQOCayguD8xvwCkQWTl7zTVItbnx6YzwcmGRau0PDMk8NixOT6F3
-         xsgA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0S8LVAtVIL2mOeOEIRJjpVHG4YynR/rJly0/UOfEtAlE2ckttde5neEVbkCr3xdb2v9NAmCB0KLN5HSmB@vger.kernel.org, AJvYcCVvDlwr44JLJgiwRp9Lx0weIjOl5/dBG7nF3qpFog1RNjbd/XOSxQDbBQbHuX7JzxrX7VIQ6/f651T8@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8Abtysd/qgsBvp2JDOhRaO9oR0i3cijmK9LLGVx6oEcXgi+rK
-	Lv0N2ZkGzh6daUlZebUROgD5Q7/lcwP2lkKzAs9Qgl5SWkW7ei9j
-X-Gm-Gg: ASbGncsxo+030cKcDLKUTbNUsv6l4FgOfY0QYJ2ksmNhEoqaFTvsAtl4QJc/Z1a0rHj
-	9HI3mbyK8Mz4XfLfHUfx1+TCA1qo1dK7zm8OjavFbXhBOm40byY9ks0dZEpFawWDMcINhQmS0UV
-	TOg370L5eNEHLCFxk5g3JOit5CBEZlGC/0CrHUYQ4hJDyZRTlT0MJujMgCYgOs38U94j8XMvRo/
-	T4mTYNT9mHHoRmGUe06WEGHOZozr1J3TYQXLGcXA/iIMpQad16YbZv3mZzxSswBSiiKHnI/G/iB
-	MAzC5bssiAE6mbgyfQgKOikX6rSqCfTysVc=
-X-Google-Smtp-Source: AGHT+IGTBGYosGRDbEuVZA2KP4Ij2fiTOu2dMftCCG5C+UQWTRH5Drf67iHW/KYjICrPNIIWKVuJhg==
-X-Received: by 2002:a05:6512:398e:b0:545:d70:1d1c with SMTP id 2adb3069b0e04-5494c129ce8mr5205004e87.11.1741004525723;
-        Mon, 03 Mar 2025 04:22:05 -0800 (PST)
-Received: from xeon.. ([188.163.112.51])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30b868766desm13486611fa.100.2025.03.03.04.22.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 04:22:05 -0800 (PST)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Laxman Dewangan <ldewangan@nvidia.com>
-Cc: linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	s=arc-20240116; t=1741004568; c=relaxed/simple;
+	bh=LdAb8B+A2aIRRqA7TGNbZE49m+hpZy1lkM63kR3qKqU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GphP2pSUBTWl7OCHsx3+V/PgsyUiMT8pA/57i9R7eKIdkvaePTKketHptXVCWvRQoxFRXwbC7KA5nXqoJbMfKeWJBbq7thmdgYPPVfa1MRUklkdQAPoHRdDbFsjEAwd1D8rAxcOCz2zuF4s9jPmIgw/C3GQsWcwsdM2JxhWPKoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jkFSxw9H; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741004567; x=1772540567;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=LdAb8B+A2aIRRqA7TGNbZE49m+hpZy1lkM63kR3qKqU=;
+  b=jkFSxw9HrnQ/P+wJObFJiHCzZQanAcgTCvZmAjZx9XzskrTtf5oL1Z3Q
+   IhSWsSPp6VvlSruo1x5QwDL61VwdEaBLJsUsFNaKZyo0cuo75KcF8wtFI
+   WnxEc23mE9UsNcr5uTobKsRI8WafilU8mJM9EMQ/Q3mFRsgKvZFfwFH6q
+   YO5khWdo/8VF2j2wP4UKpttb1vd3M+RR4kxMTNqxiAohvvof2KAvhFjJd
+   iUfw8DZTVr06cjG1jvCufgp9C4vYj+StEN57qi6nZ28OqmkeHmWxOjk0T
+   DbNO1FhOysSIvEC2WY10hXqQLi+//c7nRv3UhR+cZoHq9FHVtdpymTMz0
+   g==;
+X-CSE-ConnectionGUID: GoY1AOpwTBGshJ0XtN7cwg==
+X-CSE-MsgGUID: SXKEPV6gQGGA/cQW+mvH1g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="41729753"
+X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
+   d="scan'208";a="41729753"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 04:22:47 -0800
+X-CSE-ConnectionGUID: JwvZv7yUQBawHs74UT+2Ag==
+X-CSE-MsgGUID: jeZ9L7JYReiks6Snb6yFyQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="123208067"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 04:22:45 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tp4oj-0000000GoKS-3Onw;
+	Mon, 03 Mar 2025 14:22:41 +0200
+Date: Mon, 3 Mar 2025 14:22:41 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Raag Jadav <raag.jadav@intel.com>
+Cc: lee@kernel.org, giometti@enneenne.com, gregkh@linuxfoundation.org,
+	raymond.tan@intel.com, linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 0/2] thermal: thermal-generic-adc: add temp sensor function
-Date: Mon,  3 Mar 2025 14:21:49 +0200
-Message-ID: <20250303122151.91557-1-clamor95@gmail.com>
-X-Mailer: git-send-email 2.43.0
+Subject: Re: [PATCH v2 1/5] mfd: intel_ehl_pse_gpio: Introduce Intel Elkhart
+ Lake PSE GPIO and TIO
+Message-ID: <Z8WfESNmu4MjEbcx@smile.fi.intel.com>
+References: <20250303044745.268964-1-raag.jadav@intel.com>
+ <20250303044745.268964-2-raag.jadav@intel.com>
+ <Z8VnSyH_DBuJpW2o@smile.fi.intel.com>
+ <Z8WU5NiIsu34Gz-Z@black.fi.intel.com>
+ <Z8WWXxTrd1e5V3qb@smile.fi.intel.com>
+ <Z8WdK7wkNnAerkCO@black.fi.intel.com>
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -138,38 +132,43 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8WdK7wkNnAerkCO@black.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6hLm5Ts1zG3xn
+X-ITU-Libra-ESVA-ID: 4Z6fQK46mlzFyx3
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741714501.80553@XiVqnViPJEH1Z8SdZ5r/2Q
+X-ITU-Libra-ESVA-Watermark: 1741716987.33145@NcQvbfAmCqG6sYH+t+V4Yg
 X-ITU-MailScanner-SpamCheck: not spam
 
-Add IIO sensor cell to thermal-generic-adc, which would benefit
-devices that use adc sensors to detect temperature and need a
-custom conversion table.
+On Mon, Mar 03, 2025 at 02:14:35PM +0200, Raag Jadav wrote:
+> On Mon, Mar 03, 2025 at 01:45:35PM +0200, Andy Shevchenko wrote:
+> > On Mon, Mar 03, 2025 at 01:39:16PM +0200, Raag Jadav wrote:
+> > > On Mon, Mar 03, 2025 at 10:24:43AM +0200, Andy Shevchenko wrote:
+> > > > On Mon, Mar 03, 2025 at 10:17:41AM +0530, Raag Jadav wrote:
 
----
-Changes on switching from v2 to v3:
-- rephrased commit headers
+...
 
-Changes on switching from v1 to v2:
-- documented #iio-channel-cells property
-- switched to IIO_CHAN_INFO_PROCESSED
----
+> > > > > +INTEL GPIO MFD DRIVER
+> > > > 
+> > > > This also needs to be more precise and follow the name. We have more Intel GPIO
+> > > > drivers, and MFD doesn't ring any bell about the platform or so. Are you going
+> > > > to support all of them (existing and comining)?
+> > > 
+> > > Not that it is planned as of now but I wouldn't mind :)
+> > 
+> > It sounds like solving the problem that even might never appear :-)
+> 
+> Right, somehow that sounds familiar :D
 
-Svyatoslav Ryhel (2):
-  dt-bindings: thermal: generic-adc: Add optional io-channel-cells
-    property
-  thermal: thermal-generic-adc: add temperature sensor channel
+So, can we rename the MAINTAINERS record as the result of our discussion?
 
- .../bindings/thermal/generic-adc-thermal.yaml |  4 ++
- drivers/thermal/thermal-generic-adc.c         | 54 ++++++++++++++++++-
- 2 files changed, 57 insertions(+), 1 deletion(-)
+-- 
+With Best Regards,
+Andy Shevchenko
 
---=20
-2.43.0
 
 
 
