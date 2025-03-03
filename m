@@ -1,176 +1,351 @@
-Return-Path: <linux-kernel+bounces-542620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8142AA4CBAB
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:12:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8188DA4CBB2
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:13:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93C047A6E12
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:11:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC9DB7A56D2
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:12:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A07A230BF1;
-	Mon,  3 Mar 2025 19:12:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56103230278;
+	Mon,  3 Mar 2025 19:13:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="BCFVJpif"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oQ8Yf6Qo";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TOgpXeQC"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D467D33F6;
-	Mon,  3 Mar 2025 19:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB35F33F6;
+	Mon,  3 Mar 2025 19:12:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741029125; cv=none; b=LNjqQ3yRczVQSPL5Tt6Y69jfeCJZijeR9VILJErPkeSmgJKg+aOixR5H7X7wjq/oELTNLbCfoxib9wNrvYqVYKRQggq+VDGxJ7tr78pOalIxGWG3o15Xo4viEDBGJ/qEIhHoXKHVjtodZyhIc0EYojTifw+HF11OTwSeBLiXQb0=
+	t=1741029179; cv=none; b=R56doCjG0Jo/qvB8X77YQ/6zTLO8voRGqoK+FCTo5SaxnGIdS5S/feKAbynP77ohn3WZg0NCLTt5aukcO7xMy/qWpyNZSFhRgRNV4gc19wvBtSCGUglLhDmR/cRsAVsiYchZhAUcBZ6he2aqFN9pAJhYB7RZiiMMMV8jEztJxhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741029125; c=relaxed/simple;
-	bh=HRBDb/01Aoz/Xbn/HWrMNCNs4hJQ+oaS+r2C1Bxu8ag=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gzACzu4bttGroADCgUlrS+B/F1xBxNvkqzR9jZ6muhTTnXmfFs95Aiy/J7l1xPjqlnZZRXWJlEvZreGEnPH1KnJZNmjhGNwAOWD/FAx2mE2Q6ZR46vrA1ue/cS5GQPZrh/qU4ATGA8kL901JSYZ5GwDfr2Z8T8HOoz0sLwE6DiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=BCFVJpif; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 523F53EF002272;
-	Mon, 3 Mar 2025 19:12:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=KkerPnmZLypqnbkqHWCG8ODSVofP4Dm6qZuF15VXw
-	wM=; b=BCFVJpif0WlvB3nW+oj9FIMUJYaC9bRP1TSJsrlGw8VqnZ1P2FAQEeEgs
-	+Nu+NRXs4pheNsTyQ9fVIr37FRtJvpHejtncuS5XDNY91XHSAZ2tcy7m9Bp9AupJ
-	X8DTd/RQGklxA3KaG1NPaE/PKjiybsmEkXHU1CbouP8uW+W+wU9RcQaimvJHTETJ
-	nLVMo5L9jtuwv6e+Bre7C+Goi8aXiLadJjSECbsLDTkPTa2Kq2I+btYUlDY60BKS
-	awWWaw6xFFsIZJ3qk3gV4aD9RvgmDii5Rupp1bbtUdBDpAr/S4wn8Qd2fiFkHEuX
-	OXb46BSJt9EYRqaCVZsQ/bOiLw06w==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 454xr4x6eh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Mar 2025 19:12:01 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 523G8lsD020845;
-	Mon, 3 Mar 2025 19:12:00 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 454djn9k6g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Mar 2025 19:12:00 +0000
-Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
-	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 523JBxi931326774
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 3 Mar 2025 19:11:59 GMT
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 95B3758052;
-	Mon,  3 Mar 2025 19:11:59 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C9B195805D;
-	Mon,  3 Mar 2025 19:11:58 +0000 (GMT)
-Received: from MacBookPro.ibm.com (unknown [9.61.240.87])
-	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  3 Mar 2025 19:11:58 +0000 (GMT)
-From: Rorie Reyes <rreyes@linux.ibm.com>
-To: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc: hca@linux.ibm.com, borntraeger@de.ibm.com, agordeev@linux.ibm.com,
-        gor@linux.ibm.com, pasic@linux.ibm.com, jjherne@linux.ibm.com,
-        alex.williamson@redhat.com, akrowiak@linux.ibm.com,
-        rreyes@linux.ibm.com
-Subject: [RFC PATCH v1] fixup! s390/vfio-ap: Notify userspace that guest's AP config changed when mdev removed
-Date: Mon,  3 Mar 2025 14:11:58 -0500
-Message-ID: <20250303191158.49317-1-rreyes@linux.ibm.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741029179; c=relaxed/simple;
+	bh=RhWzJ5cGJbTAX1qFTIhmvOmtt+Z6+41M5p+5ypQLIpc=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=V0+Oasb3uSXKDiuq0qkHzcCkdrFqYwYnmFHVcl8iKGrfvXGhHwhYOl8VGuxdIB2JIiFSttGlxKM+Dx59sYAugQJBJPJl4s65/iggf2TmurTX8UVfY23Zo6FhbTzbBGgGWafZhQO7S4qi6AVDTHIr7KbBQ36NSREALP+RaF+hCUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oQ8Yf6Qo; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TOgpXeQC; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 03 Mar 2025 19:12:54 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741029175;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zc5nI91PmVznub9umFDWK90R+1kvOUTypqlHvUTSjhc=;
+	b=oQ8Yf6Qobsn1Fb+ohK/gQp9UuBfBKJjaS+iS9W/g6Jz8GLGrZ/RStttvzXOeVLvIkAgWMS
+	4pqHm8yl4iKptXtGlxyFP3UzgSYHibtzdTdtlUaGMuR/1rVsCBgPbOZ8y6Bm4GlrGvEb0t
+	MQW2VRfUOL+6OQMRSlgWjTrLhH9g89rWmGEaVly9ys7MwFxGD7wmzW4Ke3ha16scZDpvFs
+	NLSGjJcFU6s7Sebm6VUXCelFQNeGmbh4XP7d1Uh38i+Mf//ifEZ3sUwkwHE6xQWzGXXdf9
+	gJA4RSiOLW1UMkwJUpj1VpPX8b/WLAGrNZBWcuiRM2DbEgCeosdsPeCuMxV2/Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741029175;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zc5nI91PmVznub9umFDWK90R+1kvOUTypqlHvUTSjhc=;
+	b=TOgpXeQCi0y20NkmE7cZmTJdqwvlaaHVoi4W3S5PP3RnPEUNgoVABtWfFfTk6VjTM3bfWh
+	7HDxEloqciXxIMDw==
+From:
+ tip-bot2 for Thomas =?utf-8?q?Wei=C3=9Fschuh?= <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/vdso] selftests: vDSO: vdso_standalone_test_x86: Switch
+ to nolibc
+Cc: thomas.weissschuh@linutronix.de, Thomas Gleixner <tglx@linutronix.de>,
+ Vincenzo Frascino <vincenzo.frascino@arm.com>,
+ Shuah Khan <skhan@linuxfoundation.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250226-parse_vdso-nolibc-v2-16-28e14e031ed8@linutronix.de>
+References: <20250226-parse_vdso-nolibc-v2-16-28e14e031ed8@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: mtees-123PRKTcihCHVDAVpovJQdXesc
-X-Proofpoint-ORIG-GUID: mtees-123PRKTcihCHVDAVpovJQdXesc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-03_09,2025-03-03_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- priorityscore=1501 lowpriorityscore=0 clxscore=1015 bulkscore=0
- adultscore=0 suspectscore=0 phishscore=0 spamscore=0 impostorscore=0
- malwarescore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2503030144
+Message-ID: <174102917410.14745.10743571529785587283.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-This patch is based on the s390/features branch
+The following commit has been merged into the timers/vdso branch of tip:
 
-The guest's AP configuration is cleared when the mdev is removed, so
-userspace must be notified that the AP configuration has changed. To this
-end, this patch:
+Commit-ID:     8770a9183fe18442c7cfbb56bb7e006462775a91
+Gitweb:        https://git.kernel.org/tip/8770a9183fe18442c7cfbb56bb7e0064627=
+75a91
+Author:        Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
+AuthorDate:    Wed, 26 Feb 2025 12:44:55 +01:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Mon, 03 Mar 2025 20:00:13 +01:00
 
-* Removes call to 'signal_guest_ap_cfg_changed()' function from the
-  'vfio_ap_mdev_unset_kvm()' function because it has no affect given it is
-  called after the mdev fd is closed.
+selftests: vDSO: vdso_standalone_test_x86: Switch to nolibc
 
-* Adds call to 'signal_guest_ap_cfg_changed()' function to the
-  'vfio_ap_mdev_request()' function to notify userspace that the guest's
-  AP configuration has changed before signaling the request to remove the
-  mdev.
+vdso_standalone_test_x86 provides its own ASM syscall wrappers and
+_start() implementation. The in-tree nolibc library already provides
+this functionality for multiple architectures. By making use of nolibc,
+the standalone testcase can be built from the exact same codebase as the
+non-standalone version.
 
-Minor change - Fixed an indentation issue in function
-'signal_guest_ap_cfg_changed()'
-
-Fixes: 2ba4410dd477 ("s390/vfio-ap: Signal eventfd when guest AP configuration is changed")
-Signed-off-by: Rorie Reyes <rreyes@linux.ibm.com>
+Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+Acked-by: Shuah Khan <skhan@linuxfoundation.org>
+Link: https://lore.kernel.org/all/20250226-parse_vdso-nolibc-v2-16-28e14e031e=
+d8@linutronix.de
 ---
- drivers/s390/crypto/vfio_ap_ops.c | 19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
+ tools/testing/selftests/vDSO/Makefile                   |   8 +-
+ tools/testing/selftests/vDSO/vdso_standalone_test_x86.c | 175 +------
+ 2 files changed, 39 insertions(+), 144 deletions(-)
 
-diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
-index 571f5dcb49c5..c1afac5ac555 100644
---- a/drivers/s390/crypto/vfio_ap_ops.c
-+++ b/drivers/s390/crypto/vfio_ap_ops.c
-@@ -652,8 +652,8 @@ static void vfio_ap_matrix_init(struct ap_config_info *info,
- 
- static void signal_guest_ap_cfg_changed(struct ap_matrix_mdev *matrix_mdev)
+diff --git a/tools/testing/selftests/vDSO/Makefile b/tools/testing/selftests/=
+vDSO/Makefile
+index bc8ca18..12a0614 100644
+--- a/tools/testing/selftests/vDSO/Makefile
++++ b/tools/testing/selftests/vDSO/Makefile
+@@ -22,13 +22,17 @@ include ../lib.mk
+=20
+ CFLAGS +=3D $(TOOLS_INCLUDES)
+=20
++CFLAGS_NOLIBC :=3D -nostdlib -nostdinc -ffreestanding -fno-asynchronous-unwi=
+nd-tables \
++		 -fno-stack-protector -include $(top_srcdir)/tools/include/nolibc/nolibc.h=
+ \
++		 -I$(top_srcdir)/tools/include/nolibc/ $(KHDR_INCLUDES)
++
+ $(OUTPUT)/vdso_test_gettimeofday: parse_vdso.c vdso_test_gettimeofday.c
+ $(OUTPUT)/vdso_test_getcpu: parse_vdso.c vdso_test_getcpu.c
+ $(OUTPUT)/vdso_test_abi: parse_vdso.c vdso_test_abi.c
+ $(OUTPUT)/vdso_test_clock_getres: vdso_test_clock_getres.c
+=20
+-$(OUTPUT)/vdso_standalone_test_x86: vdso_standalone_test_x86.c parse_vdso.c
+-$(OUTPUT)/vdso_standalone_test_x86: CFLAGS +=3D-nostdlib -fno-asynchronous-u=
+nwind-tables -fno-stack-protector
++$(OUTPUT)/vdso_standalone_test_x86: vdso_standalone_test_x86.c parse_vdso.c =
+| headers
++$(OUTPUT)/vdso_standalone_test_x86: CFLAGS:=3D$(CFLAGS_NOLIBC) $(CFLAGS)
+=20
+ $(OUTPUT)/vdso_test_correctness: vdso_test_correctness.c
+ $(OUTPUT)/vdso_test_correctness: LDFLAGS +=3D -ldl
+diff --git a/tools/testing/selftests/vDSO/vdso_standalone_test_x86.c b/tools/=
+testing/selftests/vDSO/vdso_standalone_test_x86.c
+index 500608f..9ce795b 100644
+--- a/tools/testing/selftests/vDSO/vdso_standalone_test_x86.c
++++ b/tools/testing/selftests/vDSO/vdso_standalone_test_x86.c
+@@ -1,167 +1,58 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+- * vdso_test.c: Sample code to test parse_vdso.c on x86
+- * Copyright (c) 2011-2014 Andy Lutomirski
++ * vdso_test_gettimeofday.c: Sample code to test parse_vdso.c and
++ *                           vDSO gettimeofday()
++ * Copyright (c) 2014 Andy Lutomirski
+  *
+- * You can amuse yourself by compiling with:
+- * gcc -std=3Dgnu99 -nostdlib
+- *     -Os -fno-asynchronous-unwind-tables -flto -lgcc_s
+- *      vdso_standalone_test_x86.c parse_vdso.c
+- * to generate a small binary.  On x86_64, you can omit -lgcc_s
+- * if you want the binary to be completely standalone.
++ * Compile with:
++ * gcc -std=3Dgnu99 vdso_test_gettimeofday.c parse_vdso_gettimeofday.c
++ *
++ * Tested on x86, 32-bit and 64-bit.  It may work on other architectures, to=
+o.
+  */
+=20
+-#include <sys/syscall.h>
++#include <stdio.h>
++#ifndef NOLIBC
++#include <sys/auxv.h>
+ #include <sys/time.h>
+-#include <unistd.h>
+-#include <stdint.h>
+-#include <linux/auxvec.h>
+-
+-#include "parse_vdso.h"
+-
+-/* We need some libc functions... */
+-int strcmp(const char *a, const char *b)
+-{
+-	/* This implementation is buggy: it never returns -1. */
+-	while (*a || *b) {
+-		if (*a !=3D *b)
+-			return 1;
+-		if (*a =3D=3D 0 || *b =3D=3D 0)
+-			return 1;
+-		a++;
+-		b++;
+-	}
+-
+-	return 0;
+-}
+-
+-/*
+- * The clang build needs this, although gcc does not.
+- * Stolen from lib/string.c.
+- */
+-void *memcpy(void *dest, const void *src, size_t count)
+-{
+-	char *tmp =3D dest;
+-	const char *s =3D src;
+-
+-	while (count--)
+-		*tmp++ =3D *s++;
+-	return dest;
+-}
+-
+-/* ...and two syscalls.  This is x86-specific. */
+-static inline long x86_syscall3(long nr, long a0, long a1, long a2)
+-{
+-	long ret;
+-#ifdef __x86_64__
+-	asm volatile ("syscall" : "=3Da" (ret) : "a" (nr),
+-		      "D" (a0), "S" (a1), "d" (a2) :
+-		      "cc", "memory", "rcx",
+-		      "r8", "r9", "r10", "r11" );
+-#else
+-	asm volatile ("int $0x80" : "=3Da" (ret) : "a" (nr),
+-		      "b" (a0), "c" (a1), "d" (a2) :
+-		      "cc", "memory" );
+ #endif
+-	return ret;
+-}
+-
+-static inline long linux_write(int fd, const void *data, size_t len)
+-{
+-	return x86_syscall3(__NR_write, fd, (long)data, (long)len);
+-}
+=20
+-static inline void linux_exit(int code)
+-{
+-	x86_syscall3(__NR_exit, code, 0, 0);
+-}
+-
+-void to_base10(char *lastdig, time_t n)
+-{
+-	while (n) {
+-		*lastdig =3D (n % 10) + '0';
+-		n /=3D 10;
+-		lastdig--;
+-	}
+-}
++#include "../kselftest.h"
++#include "parse_vdso.h"
++#include "vdso_config.h"
++#include "vdso_call.h"
+=20
+-unsigned long getauxval(const unsigned long *auxv, unsigned long type)
++int main(int argc, char **argv)
  {
--		if (matrix_mdev->cfg_chg_trigger)
--			eventfd_signal(matrix_mdev->cfg_chg_trigger);
-+	if (matrix_mdev->cfg_chg_trigger)
-+		eventfd_signal(matrix_mdev->cfg_chg_trigger);
- }
- 
- static void vfio_ap_mdev_update_guest_apcb(struct ap_matrix_mdev *matrix_mdev)
-@@ -1870,7 +1870,6 @@ static void vfio_ap_mdev_unset_kvm(struct ap_matrix_mdev *matrix_mdev)
- 		get_update_locks_for_kvm(kvm);
- 
- 		kvm_arch_crypto_clear_masks(kvm);
--		signal_guest_ap_cfg_changed(matrix_mdev);
- 		vfio_ap_mdev_reset_queues(matrix_mdev);
- 		kvm_put_kvm(kvm);
- 		matrix_mdev->kvm = NULL;
-@@ -2057,6 +2056,14 @@ static void vfio_ap_mdev_request(struct vfio_device *vdev, unsigned int count)
- 
- 	matrix_mdev = container_of(vdev, struct ap_matrix_mdev, vdev);
- 
-+	if (matrix_mdev->kvm) {
-+		get_update_locks_for_kvm(matrix_mdev->kvm);
-+		kvm_arch_crypto_clear_masks(matrix_mdev->kvm);
-+		signal_guest_ap_cfg_changed(matrix_mdev);
-+	} else {
-+		mutex_lock(&matrix_dev->mdevs_lock);
-+	}
-+
- 	if (matrix_mdev->req_trigger) {
- 		if (!(count % 10))
- 			dev_notice_ratelimited(dev,
-@@ -2068,6 +2075,12 @@ static void vfio_ap_mdev_request(struct vfio_device *vdev, unsigned int count)
- 		dev_notice(dev,
- 			   "No device request registered, blocked until released by user\n");
+-	unsigned long ret;
+-
+-	if (!auxv)
+-		return 0;
+-
+-	while (1) {
+-		if (!auxv[0] && !auxv[1]) {
+-			ret =3D 0;
+-			break;
+-		}
++	const char *version =3D versions[VDSO_VERSION];
++	const char **name =3D (const char **)&names[VDSO_NAMES];
+=20
+-		if (auxv[0] =3D=3D type) {
+-			ret =3D auxv[1];
+-			break;
+-		}
+-
+-		auxv +=3D 2;
++	unsigned long sysinfo_ehdr =3D getauxval(AT_SYSINFO_EHDR);
++	if (!sysinfo_ehdr) {
++		printf("AT_SYSINFO_EHDR is not present!\n");
++		return KSFT_SKIP;
  	}
-+
-+	if (matrix_mdev->kvm)
-+		release_update_locks_for_kvm(matrix_mdev->kvm);
-+	else
-+		mutex_unlock(&matrix_dev->mdevs_lock);
-+
+=20
+-	return ret;
+-}
+-
+-void c_main(void **stack)
+-{
+-	/* Parse the stack */
+-	long argc =3D (long)*stack;
+-	stack +=3D argc + 2;
+-
+-	/* Now we're pointing at the environment.  Skip it. */
+-	while(*stack)
+-		stack++;
+-	stack++;
+-
+-	/* Now we're pointing at auxv.  Initialize the vDSO parser. */
+-	vdso_init_from_sysinfo_ehdr(getauxval((unsigned long *)stack, AT_SYSINFO_EH=
+DR));
++	vdso_init_from_sysinfo_ehdr(getauxval(AT_SYSINFO_EHDR));
+=20
+ 	/* Find gettimeofday. */
+ 	typedef long (*gtod_t)(struct timeval *tv, struct timezone *tz);
+-	gtod_t gtod =3D (gtod_t)vdso_sym("LINUX_2.6", "__vdso_gettimeofday");
++	gtod_t gtod =3D (gtod_t)vdso_sym(version, name[0]);
+=20
+-	if (!gtod)
+-		linux_exit(1);
++	if (!gtod) {
++		printf("Could not find %s\n", name[0]);
++		return KSFT_SKIP;
++	}
+=20
+ 	struct timeval tv;
+-	long ret =3D gtod(&tv, 0);
++	long ret =3D VDSO_CALL(gtod, 2, &tv, 0);
+=20
+ 	if (ret =3D=3D 0) {
+-		char buf[] =3D "The time is                     .000000\n";
+-		to_base10(buf + 31, tv.tv_sec);
+-		to_base10(buf + 38, tv.tv_usec);
+-		linux_write(1, buf, sizeof(buf) - 1);
++		printf("The time is %lld.%06lld\n",
++		       (long long)tv.tv_sec, (long long)tv.tv_usec);
+ 	} else {
+-		linux_exit(ret);
++		printf("%s failed\n", name[0]);
++		return KSFT_FAIL;
+ 	}
+=20
+-	linux_exit(0);
++	return 0;
  }
- 
- static int vfio_ap_mdev_get_device_info(unsigned long arg)
--- 
-2.48.1
-
+-
+-/*
+- * This is the real entry point.  It passes the initial stack into
+- * the C entry point.
+- */
+-asm (
+-	".text\n"
+-	".global _start\n"
+-	".type _start,@function\n"
+-	"_start:\n\t"
+-#ifdef __x86_64__
+-	"mov %rsp,%rdi\n\t"
+-	"and $-16,%rsp\n\t"
+-	"sub $8,%rsp\n\t"
+-	"jmp c_main"
+-#else
+-	"push %esp\n\t"
+-	"call c_main\n\t"
+-	"int $3"
+-#endif
+-	);
 
