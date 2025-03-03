@@ -1,249 +1,184 @@
-Return-Path: <linux-kernel+bounces-541775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A09FDA4C168
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:13:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F134BA4C16B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:13:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 110B3188CA59
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:13:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19E2E16DBAB
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:13:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7734F211A38;
-	Mon,  3 Mar 2025 13:12:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83FCC1CAA71;
+	Mon,  3 Mar 2025 13:13:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="be79Ceip"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0fEsBOYk"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A9E31CAA71;
-	Mon,  3 Mar 2025 13:12:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0964E20C00D
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 13:13:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741007569; cv=none; b=X5Up04KHrq1fQTX/zkG9u76tQ6pWHL5mQtkEfYTDfaU5A+IoIjr1fL92nuiaBRcg3P1DstKfT9QwL4YHyrInFNx1Ur9KJU4zu1hEiDnf4k74XQ2Ey7IfURB9MVsZxETsUrqLlgtNcQQf1tbhzP4wyXYziNh/XJd66Qvi9+pZQpE=
+	t=1741007602; cv=none; b=ZlWNMX+y0oePDVfC27Tx9i04Ctxhh78pjhTQ6SQQzYiKNZ9KlcMtbImtRuiWGf9h0RQWz2W6OV51xT/HTvi/Sze1n2mrTR95iLoKPkiHLwtHw6F/cHwXj8fv/a9TyeXIVYJyEffwdyrrZnEwFwhwNFgWTVhF7GmxB9WzS84u6m8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741007569; c=relaxed/simple;
-	bh=rRzYE95dsqN15rv7okacsGJpSNtv6A5QyDSxOsXYKB0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qpHbVJ6WimfCaUwF0FcF5aNcX4+HKiJFzvZghx/W/O6nRgENd8z4tLoAEKrKW+1DdN8fEHugr+QjYWKOHow2rx9T9/F+nBMgO/eink+Xx3nLHWXztdbrXejDQkMqbx1lUSfgLxXIszERrm+MKiXGAsqXgsIbq/ZrIUhiSkjRVco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=be79Ceip; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 523A9uuO031419;
-	Mon, 3 Mar 2025 13:12:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/A5hTENiBu6HWH+Nll002NAkm5mg5aAMGPNhwCyq8Wg=; b=be79CeipphQnuti0
-	eEXAx7YntFPSRO4+IT7A83BccjaLdhFGYNLUS3AO2lwGlM0QrNZrO4p7eR1oVsop
-	TDWNCJwNmLRxbNn3B1mai8Sy88mvEdfn+wKGYcKQD5N51jE9+jD1512YqdXgyFfU
-	JxHGBIa2+vooUO079egA/rZCWwxrFE2nToxBc32NC4nzI6Ti4KIKWaguR+v24tUP
-	PheOyAd4SUV2haqVRgK2+iG1xwTZfMKCEDsG0Eqh4rl8K7ZFk3wJIHu3g7mFQovR
-	XOMVXaydVcoEy1iaQPsQ2S8R/vFs9a/G4cktu7RuzmJymfonl83f4tOPu7DJ95N3
-	jIwGtA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 453uh74q41-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Mar 2025 13:12:42 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 523DCgWI007733
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 3 Mar 2025 13:12:42 GMT
-Received: from [10.206.101.41] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 3 Mar 2025
- 05:12:39 -0800
-Message-ID: <ba1e7a20-2f68-15e0-bc4a-fe52bc4036cc@quicinc.com>
-Date: Mon, 3 Mar 2025 18:42:36 +0530
+	s=arc-20240116; t=1741007602; c=relaxed/simple;
+	bh=Uto82Mh3sOAP6a14MgLm1RyL/LEhHeHNE37C48rmrFE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UqgIXyIMtGb2lvN3h1+7qjZp9KBbo3BjXgvJEdbTm4RH67UP5fOo1jQ3XswMVLTKe4nLeR5S/k6ObfLedY6mPHOfR/hZN8b14ovvCRXCtiFrPkA0rLqiEx5ojBaNj4K/gBO+PXKxP7+DRca/+t5ByKhJElhwYD0XrdERR+ggOI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0fEsBOYk; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3910e101d0fso505799f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 05:13:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741007599; x=1741612399; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4aG+Vwr8bBVGY14HwfhSuMObmhpcIIei119+D2o/DNo=;
+        b=0fEsBOYkCTw1BzQucMBf/jDICVy3guTKUI8KU+O4pUOgUNzWgzTzzWBBcAxX3C1HbH
+         1k4AYVKc1A4fw/Ll+ETvdEdQ34Jxkvpg21CXO8h4ADgjJ8C9K/F1XJU7KVrJ24sGYIUG
+         rQSB8XsewdfLIBQM7vm9ilew/DAS9Nbmh4Bxfm+Tf44pqXUEa5VXIAlBIicLXUYbDxbp
+         8IrXEJgi6og6M0HQafUbtUt2Ca1nGqf6sPC0iOgbMLwc0LoLqAByoOsYs0EZrr9t49tO
+         ddeBkLRqxY8SlkwFNPaScdBpo/FIrFwmobM1dLtYDAl4FwQxGRC1Ep6oWiRLk8BU7O2l
+         i6mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741007599; x=1741612399;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4aG+Vwr8bBVGY14HwfhSuMObmhpcIIei119+D2o/DNo=;
+        b=OYuROJhoBNmorGqa6D0r5KToISaDRrzEJDzdm7DCKjpO0osznUankJHlnyz/5U37UX
+         DW16O46yg/4kIUiANxnop22j/lKvGEiYNTsJ3fI+DosRsA/KQ1CuTOOCYbJMEIdlTJHi
+         P3pn0PFTJ3w7pn85MiYlol3Z/b/lgdAEstptrk8CTJ5rs0WyU3X/p9eFlEoq6ehT/j0K
+         12ARWGHFbqrUAFWRavk/rlocCvn+ykro79Ete3pai2tbNQWX9ZudEfWyOeNbqzNAbALd
+         IpjhESasNjD5M2PNjWogMDmntadOeJdLIrnrTcuk/dYaY7mEz2hQ/HHeMbHy3m0I1NEQ
+         0SXA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5HAGvmrX+BGKCzr3/jFYHIYBeVz32H1DGw7fvs6eNbusLt+m9lJsP2BFTBpCIF2y2QkzBnpdcUOC+aIE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxndPbPCRZ0P6++GFjMct0TIk0OkGAsxMCXKkx10nFlI86fqJX0
+	Nek7SkB0Ug+Q7uZPNYrSl4Jh9fyF3MiGt3sv90KvGduvk/62Zeu6LcVK9IPyF5yQ39FkslxJukx
+	lhlaR4M4vwFMzaC0lWhNk3a6zs4bs29ro1+Mz
+X-Gm-Gg: ASbGncs1WIw4i72Kvo3OrgA7g6anSJ+Jaa0f7VYC9xhI8iL9as4mhx6MGWIrmTubHPZ
+	pzxsfJomgxWBmh8X48e9g0B3Qqna/liIjbvHWwJqxmQA9ulKGGHtzla/6jQYceDi4OJGMZ0sdUL
+	AgprMXMP7uTWzrLObi3gAddvMLpoZWph2sQpXjPupbG6mes+ONbWyjBNnZ
+X-Google-Smtp-Source: AGHT+IE2IaeBD9f/pD6r/8mI8mW0BTFlxQPSBn+pSqzeGMSocizM1zr/Gfb1GuajIkxQ63TEE079e9IJCjW3eVFxm0M=
+X-Received: by 2002:a05:6000:401f:b0:38f:4d40:358 with SMTP id
+ ffacd0b85a97d-390ec7ca984mr9945448f8f.9.1741007599225; Mon, 03 Mar 2025
+ 05:13:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v2 0/2] venus driver fixes to avoid possible OOB read
- access
-Content-Language: en-US
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Vedang Nagar
-	<quic_vnagar@quicinc.com>,
-        Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250215-venus-security-fixes-v2-0-cfc7e4b87168@quicinc.com>
- <c3b27e55-f627-417c-bb62-3189f248fb99@linaro.org>
- <7bf1aeaa-e1bd-412b-90fc-eda30b5f5b37@quicinc.com>
- <19109672-2856-457f-b1f6-305abc6c4434@linaro.org>
-From: Vikash Garodia <quic_vgarodia@quicinc.com>
-In-Reply-To: <19109672-2856-457f-b1f6-305abc6c4434@linaro.org>
+References: <20250224115007.2072043-1-abdiel.janulgue@gmail.com>
+ <20250224115007.2072043-3-abdiel.janulgue@gmail.com> <6dea7b6a-1534-47e7-94d2-d67417c3d4c1@proton.me>
+ <tnwDK3QN_Xr0Yoa3U8HVxS5OqjvxIhgmmO_ifTGJR_EtIzjoxawOHtnbOJ9yChsUWXyFPcU9beIdrgbpfGZI8w==@protonmail.internalid>
+ <3202F69F-397E-4BC4-8DD8-E2D4B0AB056F@collabora.com> <87bjuil15w.fsf@kernel.org>
+In-Reply-To: <87bjuil15w.fsf@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 3 Mar 2025 14:13:07 +0100
+X-Gm-Features: AQ5f1JqBfsK9p5NTbyKiOrBd4XG8qnGgG452abK96QmFlhPOGudZDk9CePtYnc4
+Message-ID: <CAH5fLgg5MuUu=TX8mMsPf5RcLhMLHSU4Vct=h8rFX6Z7HjPxeA@mail.gmail.com>
+Subject: Re: [PATCH v12 2/3] rust: add dma coherent allocator abstraction.
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Daniel Almeida <daniel.almeida@collabora.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Abdiel Janulgue <abdiel.janulgue@gmail.com>, dakr@kernel.org, robin.murphy@arm.com, 
+	rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Trevor Gross <tmgross@umich.edu>, Valentin Obst <kernel@valentinobst.de>, linux-kernel@vger.kernel.org, 
+	Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, airlied@redhat.com, 
+	iommu@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: IZoZLtLgfR3WMfodOcgW0ONGMJVU3Ybc
-X-Proofpoint-ORIG-GUID: IZoZLtLgfR3WMfodOcgW0ONGMJVU3Ybc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-03_07,2025-03-03_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
- lowpriorityscore=0 phishscore=0 impostorscore=0 clxscore=1015
- priorityscore=1501 adultscore=0 mlxscore=0 spamscore=0 malwarescore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2503030101
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Mar 3, 2025 at 2:00=E2=80=AFPM Andreas Hindborg <a.hindborg@kernel.=
+org> wrote:
+>
+> "Daniel Almeida" <daniel.almeida@collabora.com> writes:
+>
+> > Hi Benno,
+> >
+>
+> [...]
+>
+> >>> +    /// Writes data to the region starting from `offset`. `offset` i=
+s in units of `T`, not the
+> >>> +    /// number of bytes.
+> >>> +    ///
+> >>> +    /// # Examples
+> >>> +    ///
+> >>> +    /// ```
+> >>> +    /// # fn test(alloc: &mut kernel::dma::CoherentAllocation<u8>) -=
+> Result {
+> >>> +    /// let somedata: [u8; 4] =3D [0xf; 4];
+> >>> +    /// let buf: &[u8] =3D &somedata;
+> >>> +    /// alloc.write(buf, 0)?;
+> >>> +    /// # Ok::<(), Error>(()) }
+> >>> +    /// ```
+> >>> +    pub fn write(&self, src: &[T], offset: usize) -> Result {
+> >>> +        let end =3D offset.checked_add(src.len()).ok_or(EOVERFLOW)?;
+> >>> +        if end >=3D self.count {
+> >>> +            return Err(EINVAL);
+> >>> +        }
+> >>> +        // SAFETY:
+> >>> +        // - The pointer is valid due to type invariant on `Coherent=
+Allocation`
+> >>> +        // and we've just checked that the range and index is within=
+ bounds.
+> >>> +        // - `offset` can't overflow since it is smaller than `self.=
+count` and we've checked
+> >>> +        // that `self.count` won't overflow early in the constructor=
+.
+> >>> +        unsafe {
+> >>> +            core::ptr::copy_nonoverlapping(src.as_ptr(), self.cpu_ad=
+dr.add(offset), src.len())
+> >>
+> >> Why are there no concurrent write or read operations on `cpu_addr`?
+> >
+> > Sorry, can you rephrase this question?
+>
+> This write is suffering the same complications as discussed here [1].
+> There are multiple issues with this implementation.
+>
+> 1) `write` takes a shared reference and thus may be called concurrently.
+> There is no synchronization, so `copy_nonoverlapping` could be called
+> concurrently on the same address. The safety requirements for
+> `copy_nonoverlapping` state that the destination must be valid for
+> write. Alice claims in [1] that any memory area that experience data
+> races are not valid for writes. So the safety requirement of
+> `copy_nonoverlapping` is violated and this call is potential UB.
+>
+> 2) The destination of this write is DMA memory. It could be concurrently
+> modified by hardware, leading to the same issues as 1). Thus the
+> function cannot be safe if we cannot guarantee hardware will not write
+> to the region while this function is executing.
+>
+> Now, I don't think that these _should_ be issues, but according to our
+> Rust language experts they _are_.
+>
+> I really think that copying data through a raw pointer to or from a
+> place that experiences data races, should _not_ be UB if the data is not
+> interpreted in any way, other than moving it.
+>
+>
+> Best regards,
+> Andreas Hindborg
 
-On 3/2/2025 9:26 PM, Bryan O'Donoghue wrote:
-> On 02/03/2025 11:58, Vedang Nagar wrote:
->>>
->>> The basic question : what is the lifetime of the data from RX interrupt to
->>> consumption by another system agent, DSP, userspace, whatever ?
->> As mentioned in [1], With the regular firmware, after RX interrupt the data
->> can be considered as valid until next interrupt is raised, but with the rouge
->> firmware, data can get invalid during the second read and our intention is to
->> avoid out of bound access read because of such issues.
-> 
-> This is definitely the part I don't compute.
-> 
-> 1. RX interrupt
-> 2. Frame#0 Some amount of time data is always valid
-This is not correct. Its not the amount of time which determines the validity of
-the data, its the possibility of rogue firmware which, if incase, puts up the
-date in shared queue, would always be invalid, irrespective of time.
+We need to make progress on this series, and it's starting to get late
+in the cycle. I suggest we:
 
-> 3. RX interrupt - new data
-> 4. Frame#1 new data delivered into a buffer
-> 
-> Are you describing a case between RX interrupts 1-3 or a case after 1-4?
-> 
-> Why do we need to write code for rouge firmware anyway ?
-It is a way to prevent any possibility of OOB, similar to how any API does check
-for validity of any arguments passed to it, prior to processing.
-> 
-> And the real question - if the data can be invalidated in the 1-3 window above
-> when is the safe time to snapshot that data ?
-> 
-> We seem to have alot of submissions to deal with 'rouge' firmware without I
-> think properly describing the problem of the _expected_ data lifetime.
-> 
-> So
-> 
-> a) What is the expected data lifetime of an RX buffer between one
->    RX IRQ and the next ?
->    I hope the answer to this is - APSS owns the buffer.
->    This is BTW usually the case in these types of asymmetric setups
->    with a flag or some other kind of semaphore that indicates which
->    side of the data-exchange owns the buffer.
-> 
-> b) In this rouge - buggy - firmware case what is the scope of the
->    potential race condition ?
-> 
->    What I'd really like to know here is why we have to seemingly
->    memcpy() again and again in seemingly incongrous and not
->    immediately obvious places in the code.
-> 
->    Would we not be better advised to do a memcpy() of the entire
->    RX frame in the RX IRQ handler path if as you appear to me
->    suggesting - the firmware can "race" with the APSS
->    i.e. the data-buffer ownership flag either doesn't work
->    or isn't respected by one side in the data-exchange.
-> 
-> Can we please have a detailed description of the race condition here ?
-Below is the report which the reporter reported leading to OOB, let me know if
-you are unable to deduce the trail leading to OOB here.
+1. Delete as_slice, as_slice_mut, write, and skip_drop.
+2. Change field_read/field_write to use a volatile read/write.
 
-OOB read issue is in function event_seq_changed, please reference below code
-snippet:
+This will let us make progress now and sidestep this discussion. The
+deleted methods can happen in a follow-up.
 
-Buggy code snippet:
+Similarly for the dma mask methods, let's either drop them to a
+follow-up patch or just put them anywhere and move them later.
 
-static void event_seq_changed(struct venus_core *core, struct venus_inst *inst,
-        struct hfi_msg_event_notify_pkt *pkt)
-...
-num_properties_changed = pkt->event_data2; //num_properties_changed is from
-message and is not validated.
-...
-data_ptr = (u8 *)&pkt->ext_event_data[0];
-do {
- ptype = *((u32 *)data_ptr);
- switch (ptype) {
- case HFI_PROPERTY_PARAM_FRAME_SIZE:
-  data_ptr += sizeof(u32);
-  frame_sz = (struct hfi_framesize *)data_ptr;
-  event.width = frame_sz->width;
-...
- }
- num_properties_changed--;
-} while (num_properties_changed > 0);
-```
-There is no validation against `num_properties_changed = pkt->event_data2`, so
-OOB read occurs.
-> 
-> I don't doubt the new memcpy() makes sense to you but without this detailed
-> understanding of the underlying problem its virtually impossible to debate the
-> appropriate remediation - perhaps this patch you've submitted - or some other
-> solution.
-> 
-> Sorry to dig into my trench here but, way more detail is needed.
-> 
->> [1]: https://lore.kernel.org/lkml/4cfc1fe1-2fab-4256-9ce2-
->> b4a0aad1069e@linaro.org/T/#m5f1737b16e68f8b8fc1d75517356b6566d0ec619
->>>
->>> Why is it in this small specific window that the data can change but not
->>> later ? What is the mechanism the data can change and how do the changes you
->>> propose here address the data lifetime problem ?
->> Currently this issue has been discovered by external researchers at this
->> point, but if any such OOB issue is discovered at later point as well then we
->> shall fix them as well.
-> 
-> Right but, I'm looking for a detailed description of the problem.
-> 
-> Can you describe from RX interrupt again what the expected data lifetime of the
-> RX frame is, which I hope we agree is until the next RX interrupt associated
-> with a given buffer with an ownership flag shared between firmware and APSS -
-> and then under what circumstances that "software contract" is being violated.
-> 
->> Also, with rougue firmware we cannot fix the data lifetime problem in my
->> opinion, but atleast we can fix the out of bound issues.
->>>
->>> Without that context, I don't believe it is really possible to validate an
->>> additional memcpy() here and there in the code as fixing anything.
->> There is no additional memcpy() now in the v2 patch, but as part of the fix,
->> we are just trying to retain the length of the packet which was being read in
->> the first memcpy() to avoid the OOB read access.
-> 
-> I can't make a suggestion because - personally speaking I still don't quite
-> understand the data-race you are describing.
-Go through the reports from the reporter, it was quite evident in leading upto
-OOB case.
-Putting up the sequence for you to go over the interrupt handling and message
-queue parsing of the packets from firmware
-1.
-https://elixir.bootlin.com/linux/v6.14-rc4/source/drivers/media/platform/qcom/venus/hfi_venus.c#L1082
-2.
-https://elixir.bootlin.com/linux/v6.14-rc4/source/drivers/media/platform/qcom/venus/hfi_msgs.c#L816
-3. event handling (this particular case)
-https://elixir.bootlin.com/linux/v6.14-rc4/source/drivers/media/platform/qcom/venus/hfi_msgs.c#L658
-4.
-https://elixir.bootlin.com/linux/v6.14-rc4/source/drivers/media/platform/qcom/venus/hfi_msgs.c#L22
-
-the "struct hfi_msg_event_notify_pkt *pkt" pkt here is having the data read from
-shared queue.
-
-> 
-> I get that you say the firmware is breaking the contract but, without more
-> detail on _how_ it breaks that contract I don't think it's really possible to
-> validate your fix here, fixes anything.
-> 
-> ---
-> bod
-
-Regards,
-Vikash
+Alice
 
