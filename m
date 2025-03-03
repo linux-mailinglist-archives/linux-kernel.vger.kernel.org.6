@@ -1,440 +1,244 @@
-Return-Path: <linux-kernel+bounces-542740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3840FA4CD0F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 21:56:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82A42A4CD12
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 21:56:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 875493AC543
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:55:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AD473AB7AC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:56:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CF0823AE93;
-	Mon,  3 Mar 2025 20:55:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0F9230278;
+	Mon,  3 Mar 2025 20:56:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hKItLc4q"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a1ATg9Qu"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7534A23959E;
-	Mon,  3 Mar 2025 20:54:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9163B215041
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 20:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741035301; cv=none; b=Prwt+VwRxH8u1YAEbSxHPF82gdMjcivm+r8pQA+/9vEnh6fE1Wpa78fAbl3/Oz3AFADD5a9Fv6S0L8lwgOdsC67BKBoauKA7Az0ejTpbiMr/CSW1bgnyHqhen0V4DHFndWWSzD8QfkfHNk51RjL0m69wI1L7rLLJ2OobDwPIxr4=
+	t=1741035374; cv=none; b=BThXQ43b9JQnHSK3t8lyp8T5aF4nq224N2NrolwJVOkH+U8eflyGYM6ndfJr/k6nDX/Opk1VAbCfQusXUn/qZrU1eZVWDgDx+ck79OVYZD8h/tvrHmORjnDPl9xDRB+adot81Pb3uoUWZseXJRmddW0lR2v0sQWgpH30/1GiJdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741035301; c=relaxed/simple;
-	bh=PoeeTQAJjZ5RdKFBcSwIbKAekpRiUcC0+f84D/Pj5vE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TBgg/r3ddu/9GPoKfebnr4BNJ/swwDJEJKp1/pR9fuvZd45ecZN2tTjn2Bvq3Z/3VQhphwtJQIqjFs/dwGPMfX5aIi0yE0mIhYjTPe9anOEHdUYZDolNt7B8fgQzvegTpH44CRZKOHNVvInJh1T28Y/kQShvDjwlwQr8YqTwWLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hKItLc4q; arc=none smtp.client-ip=209.85.218.42
+	s=arc-20240116; t=1741035374; c=relaxed/simple;
+	bh=HD5NOqvB+JGq3p8zyxw67fGIB9cC5A6IPV4cnjsInF4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aSSTKMuqN9N27S1DxREH6JPvqa4wxvY3ZDK9epBZDJChZ64K0Z1tdTGNKI5WYdpyz11/8PtojLBPufTYDlT28ENmTcnI+4qbmjCp50KbK2VTzhc7PxiTVElRZxKXyUbK2mGknK4X9K0jWLOm6fSvXDL8MrN8S/MnorauDjONCbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a1ATg9Qu; arc=none smtp.client-ip=209.85.208.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-aaedd529ba1so562773866b.1;
-        Mon, 03 Mar 2025 12:54:59 -0800 (PST)
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30b83290b7bso56388001fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 12:56:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741035298; x=1741640098; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1pvaaqiA/SmRoJNAwsNTHeXGNX/6oeYrcqiqLNPnA9o=;
-        b=hKItLc4qhzDRvNIdWmi6+l/zj5GzZWpf+j+ViPXl5syOgtHW6zzqclB5kkgpvM+vJ/
-         9RGPs46moMF8Uf0fD4E2Ys+vs7lNc6XZa80pXcnZpnPqU5Gl6qwW0pQlpsxwcP3PHWi0
-         wTytKpKBGw9kVacjGgVHFMZlq++JPG3DqGbNzvJ6iF0QD54NtQsck2M9VrzmnMozwRWq
-         XzCJXH0tidTAGEtPaLwUM7iq+5TFbqBf7s6Nau54sEgr0Jdsj7CgpM4fF81pVPjVBX04
-         CiSANPYWru4GvS67hDt5WRwCgtroiYczkR/dGg85F3RhF3AzGr9dA0Uv88sHlS/+MMuA
-         rQew==
+        d=gmail.com; s=20230601; t=1741035370; x=1741640170; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Oj7uqsUmIrhhsBT8se1tKctYkmeydR6BflUuPJLQ5yU=;
+        b=a1ATg9QuvEOvAAHjsM8mTTJfStcAocgAlU0iHfmReUDVaFJKycmzUgHeC8pY30b4fx
+         CZCVVGwpJZOh1N+Qj0ql/MnJvrRFC8OIpJWCXruj+6h9BTV1qipHhHVS43LiD6YOMcME
+         zpBmefAsW1x/deqawsdnC5NWue5GBy3KkK5XxSqWvc/wMo17h46d17tQFBqf8ilUNps5
+         G5OYCFUuG6g7nsMx8rbqjsqa2rg2fDOFXsCCI4DlhO89igbMjFtXv4hEmDA076UtrBmF
+         afZX9eOp3qlYmHZoh7b1OeRkh3zNKFyUgBMUeoC9IGbB4s7wV0Gl04Zg+hm7igwuzyCP
+         mZxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741035298; x=1741640098;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1741035370; x=1741640170;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1pvaaqiA/SmRoJNAwsNTHeXGNX/6oeYrcqiqLNPnA9o=;
-        b=b9M6z8F+fy3+CppHxD1vCzOD+voVyT0FFiGjTrydTUiShS6McHWALQEtL/TLNDYhNx
-         N2w1HigOeJxcwni4RX5KsvXW5FYXc4DmFEG6Q28GPEANZrvUJZOazWnCd/wuNr7uDlPz
-         D/jSD0nEd4xElwslkhQyrIaNLHG8fJhqu5XgsuMN523p9PK5jaNwxrFXyz8ZG2zJUwjf
-         et3RgK3LfSlggKnNUc9CWDObzFuqfnLlC7rsalH12rJgHLyvjdbiI2AmY1Fh9NbtZzwU
-         RMD353fSR1e7D4g/bnQe8ILLMWiSJhZ3NVK8INygyamJhmHRWZfABZhuyzQuI4TP8rzj
-         4XiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU8tSfweYJ1GHKZ4QVWHnuAdP4wIR6BepoKfQr8fk04pTRiBg1JfR1kyxfK0hjxBKgdPfD9GgdBFhAq@vger.kernel.org, AJvYcCXv4xvveJCQiDkrcupd9oZ5vwqJkfvKpoTq003QMwygP61dx24irRMh2Szdg79U++MSqjlpudh36Z8OCBjc@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuoLb6HyjDGVsuoHx+93ocvF2gdD8yx7+Ph+4gumLSzlPkePoT
-	FosSifuKrkHyASy52VjUezcS4tfA+CJT7o7Yt1Q/AZh7/Hi6jfDe/gCGnQ==
-X-Gm-Gg: ASbGncsyAIRA6ZfC1S6U8J2ltU5ybCY/J1BYbyfpAH1F5oGAHO/vBKTrweX7yf00Ofl
-	v0AJiW6C8wqKG0PpXWFENp6GnTZVPY/4cFzf/0hE03MVg3+iNBozufxNy5XWcdPcrp1bWSb3PH0
-	f0+Q/F99WXGVPWXk9ZxJjc6nk0me+L4eCmBDz8ASjnmF8WhERkacPP7G+PjS+KXfTlc7130dAIP
-	H0CW6UdxQTiUy2cQnVMja/9l3uQqTWi7l1f2RPTQy/9DgVKoADymYe7YvDbH44OBBjXVrCS5IiT
-	WI5vg97P88iirBzpqEfnVkX8gbdGQ2/ebYPcWvYgFvzn5az5zOMS45y9qRqP83TSNy06V3B4WBa
-	oxAAHRXNy7JwTJ6Y=
-X-Google-Smtp-Source: AGHT+IGL2YA/WqHKHuyosoZ0FTICgI26SVWArz7fch8CvYRnNoLDjfA4RUT/Cs6K1TVfnuAovJQnFQ==
-X-Received: by 2002:a05:6402:274b:b0:5e4:d2c9:456c with SMTP id 4fb4d7f45d1cf-5e4d6b4c7c3mr40715184a12.22.1741035297448;
-        Mon, 03 Mar 2025 12:54:57 -0800 (PST)
-Received: from hex.my.domain (83.8.122.142.ipv4.supernova.orange.pl. [83.8.122.142])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf76063ab8sm266955566b.73.2025.03.03.12.54.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 12:54:57 -0800 (PST)
-From: Artur Weber <aweber.kernel@gmail.com>
-Date: Mon, 03 Mar 2025 21:54:51 +0100
-Subject: [PATCH v3 6/6] ARM: dts: bcm2166x: Add bcm2166x-pinctrl DTSI
+        bh=Oj7uqsUmIrhhsBT8se1tKctYkmeydR6BflUuPJLQ5yU=;
+        b=GRqYmQ65Crk7eqbwltamzforsJDzR3l9bE0N7BZvPmr4l39KeTlziPNSBqlJ3l9MmK
+         yNz/DbdzpXqXOd8EFmCYAsF/c6qr9lpX9PL4kAMIFHMSVfffNvrytDwuap+NZecZf1tk
+         IGYGHIUZU9+rhm338sA+llaxFT/bzfFhBuBMn1weSNiSF6MXUqzxy4tDuagxKhDi/Xaq
+         iXWk6qEtxVKxYvKqhzQwQYMtIZFgdJxiAzDHgMU+P5ug4ELyNY/NjtapL+yJ+YuwirVN
+         t2qltXj5RkLD8BAx9fEhI2bUgX9AJc/JK/xxmKwvfssN2rn90pKTlqRngzl82YR22gri
+         VtDA==
+X-Gm-Message-State: AOJu0Yz9Rtp6+lTlnR5EwhXqHLPH4tXvBMcYYbtuONJP3WyTtvDhtPNa
+	nUe01cdjMk9YjFCh41K7NzcSP8FmObtVw2CqouZLE0UkwfojuXlWiE0TJJahh/iZRID83+NWE0m
+	B88MNNaZuEhbnBcU3MD7MADVo4A==
+X-Gm-Gg: ASbGncudL4x2RYfp74+dlMT2eK7ATeYI7Qb1hWDH9ixLBFbH8Eb1dCnQYgaqOpWcZmF
+	DPS8o9gMdQSDCBVCHyJ6D68BrRGpuAA/mmZcT6g95xmOyA4v9GV0456QgFv0A6iNPdPmOuipDt3
+	YWsoTF15Yyo/c7YANtZSyf/K9aAjADvNjGpI6Zw8B2
+X-Google-Smtp-Source: AGHT+IG+G93f9ERwv16+hwMoPpYJSjRNaRiMdu3wxCZBO91+UmH472Xou7szPcKpxjm8U9/kx0Wo6LfPKVVQDdVVwXg=
+X-Received: by 2002:a2e:be1f:0:b0:30b:aabf:fc4 with SMTP id
+ 38308e7fff4ca-30baabf195fmr35519801fa.21.1741035370302; Mon, 03 Mar 2025
+ 12:56:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250303-bcm21664-pinctrl-v3-6-5f8b80e4ab51@gmail.com>
-References: <20250303-bcm21664-pinctrl-v3-0-5f8b80e4ab51@gmail.com>
-In-Reply-To: <20250303-bcm21664-pinctrl-v3-0-5f8b80e4ab51@gmail.com>
-To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- Stanislav Jakubek <stano.jakubek@gmail.com>, 
- ~postmarketos/upstreaming@lists.sr.ht, 
- Artur Weber <aweber.kernel@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741035289; l=7006;
- i=aweber.kernel@gmail.com; s=20231030; h=from:subject:message-id;
- bh=PoeeTQAJjZ5RdKFBcSwIbKAekpRiUcC0+f84D/Pj5vE=;
- b=lHUpV2T1pqdq8Pcb9K+DP254BYkt0/S/jSk0n0VTwrRBdmPVBfNHMbAxri/uC1tu3CHQI2caz
- c6viWOIlAi+BMpIX9XMVgs0a/SDMcc0/RT4lgaP9vMu3qC8toLDnBLR
-X-Developer-Key: i=aweber.kernel@gmail.com; a=ed25519;
- pk=RhDBfWbJEHqDibXbhNEBAnc9FMkyznGxX/hwfhL8bv8=
+References: <20250303165246.2175811-1-brgerst@gmail.com> <Z8YTYWs-DeDHal1Q@gmail.com>
+In-Reply-To: <Z8YTYWs-DeDHal1Q@gmail.com>
+From: Brian Gerst <brgerst@gmail.com>
+Date: Mon, 3 Mar 2025 15:55:57 -0500
+X-Gm-Features: AQ5f1JrX8DT97KptVi0vEFfZsh17jOkL8ThyQyjEpUtdWTsMIQvLVxUELHEv-6I
+Message-ID: <CAMzpN2iB4Gv0Fq1pNtk7bpa2z6eYwQGYXT0=p=_wWDBE9Uxa7w@mail.gmail.com>
+Subject: Re: [PATCH v3 00/11] Add a percpu subsection for cache hot data
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
+	"H . Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
+	Ard Biesheuvel <ardb@kernel.org>, Uros Bizjak <ubizjak@gmail.com>, 
+	Linus Torvalds <torvalds@linuxfoundation.org>, Andy Lutomirski <luto@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add common DTSI with common pin control configs for BCM21664/BCM23550
-and include it in bcm2166x-common.dtsi. The configs are kept in a
-separate DTSI to keep things cleaner (pin config definitions take up
-quite a lot of space).
+On Mon, Mar 3, 2025 at 3:39=E2=80=AFPM Ingo Molnar <mingo@kernel.org> wrote=
+:
+>
+>
+> * Brian Gerst <brgerst@gmail.com> wrote:
+>
+> > Add a new percpu subsection for data that is frequently accessed and
+> > exclusive to each processor.  This replaces the pcpu_hot struct on x86,
+> > and is available to all architectures and the core kernel.
+> >
+> > ffffffff834f5000 D __per_cpu_hot_start
+> > ffffffff834f5000 D hardirq_stack_ptr
+> > ffffffff834f5008 D __ref_stack_chk_guard
+> > ffffffff834f5008 D __stack_chk_guard
+> > ffffffff834f5010 D const_cpu_current_top_of_stack
+> > ffffffff834f5010 D cpu_current_top_of_stack
+> > ffffffff834f5018 D const_current_task
+> > ffffffff834f5018 D current_task
+> > ffffffff834f5020 D __x86_call_depth
+> > ffffffff834f5028 D this_cpu_off
+> > ffffffff834f5030 D __preempt_count
+> > ffffffff834f5034 D cpu_number
+> > ffffffff834f5038 D __softirq_pending
+> > ffffffff834f503a D hardirq_stack_inuse
+> > ffffffff834f503b D __per_cpu_hot_pad
+> > ffffffff834f5040 D __per_cpu_hot_end
+> >
+> > This applies to the tip/x86/asm branch.
+> >
+> > Changes in v3:
+> > - Fix typo of CACHE_HOT_DATA()
+> > - Move hardirq_stack_inuse to irq_64.c
+> > - Add __per_cpu_hot_pad to show the end of the actual data
+> >
+> > Brian Gerst (11):
+> >   percpu: Introduce percpu hot section
+> >   x86/percpu: Move pcpu_hot to percpu hot section
+> >   x86/preempt: Move preempt count to percpu hot section
+> >   x86/smp: Move cpu number to percpu hot section
+> >   x86/retbleed: Move call depth to percpu hot section
+> >   x86/softirq: Move softirq_pending to percpu hot section
+> >   x86/irq: Move irq stacks to percpu hot section
+> >   x86/percpu: Move top_of_stack to percpu hot section
+> >   x86/percpu: Move current_task to percpu hot section
+> >   x86/stackprotector: Move __stack_chk_guard to percpu hot section
+> >   x86/smp: Move this_cpu_off to percpu hot section
+>
+> >  31 files changed, 146 insertions(+), 111 deletions(-)
+>
+> Yeah, so the result is that on x86-64 allmodconfig we now get:
+>
+>   ld: percpu cache hot section too large
+>
+> See the relevant .tmp_vmlinux1.map below.
+>
+> Which is due to:
+>
+>    CONFIG_X86_INTERNODE_CACHE_SHIFT=3D12
+>
+> Increasing 'cache alignment' to 4096 bytes:
+>
+>         PERCPU_SECTION(INTERNODE_CACHE_BYTES)
+>
+> ... because of the vSMP muck:
+>
+>   config X86_INTERNODE_CACHE_SHIFT
+>         int
+>         default "12" if X86_VSMP
+>         default X86_L1_CACHE_SHIFT
+>
+> The workaround would be to use L1_CACHE_BYTES in, but I really dislike
+> what vSMP is doing here.
+>
+> Anyway, I applied the short-term fix to patch 02/11, but I'm not sure
+> it's the right fix.
+>
+> Thanks,
+>
+>         Ingo
+>
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D>
+>                 0xffffffff8664f000                . =3D ALIGN (0x1000)
+>                 0xffffffff8664f000                __per_cpu_hot_start =3D=
+ .
+>  *(SORT_BY_ALIGNMENT(.data..percpu..hot.*))
+>  .data..percpu..hot..hardirq_stack_ptr
+>                 0xffffffff8664f000        0x8 vmlinux.o
+>                 0xffffffff8664f000                hardirq_stack_ptr
+>  .data..percpu..hot..__stack_chk_guard
+>                 0xffffffff8664f008        0x8 vmlinux.o
+>                 0xffffffff8664f008                __stack_chk_guard
+>  .data..percpu..hot..cpu_current_top_of_stack
+>                 0xffffffff8664f010        0x8 vmlinux.o
+>                 0xffffffff8664f010                cpu_current_top_of_stac=
+k
+>  .data..percpu..hot..current_task
+>                 0xffffffff8664f018        0x8 vmlinux.o
+>                 0xffffffff8664f018                current_task
+>  .data..percpu..hot..__x86_call_depth
+>                 0xffffffff8664f020        0x8 vmlinux.o
+>                 0xffffffff8664f020                __x86_call_depth
+>  .data..percpu..hot..this_cpu_off
+>                 0xffffffff8664f028        0x8 vmlinux.o
+>                 0xffffffff8664f028                this_cpu_off
+>  .data..percpu..hot..__preempt_count
+>                 0xffffffff8664f030        0x4 vmlinux.o
+>                 0xffffffff8664f030                __preempt_count
+>  .data..percpu..hot..cpu_number
+>                 0xffffffff8664f034        0x4 vmlinux.o
+>                 0xffffffff8664f034                cpu_number
+>  .data..percpu..hot..__softirq_pending
+>                 0xffffffff8664f038        0x2 vmlinux.o
+>                 0xffffffff8664f038                __softirq_pending
+>  .data..percpu..hot..hardirq_stack_inuse
+>                 0xffffffff8664f03a        0x1 vmlinux.o
+>                 0xffffffff8664f03a                hardirq_stack_inuse
+>                 0xffffffff8664f03b                __per_cpu_hot_pad =3D .
+>                 0xffffffff86650000                . =3D ALIGN (0x1000)
+>  *fill*         0xffffffff8664f03b      0xfc5
+>                 0xffffffff86650000                __per_cpu_hot_end =3D .
+>  *(.data..percpu..read_mostly)
+>  .data..percpu..read_mostly
+>                 0xffffffff86650000      0xa30 vmlinux.o
+>
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D>
+>
+>  arch/x86/kernel/vmlinux.lds.S | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.=
+S
+> index 9ac6b42701fa..31f9102b107f 100644
+> --- a/arch/x86/kernel/vmlinux.lds.S
+> +++ b/arch/x86/kernel/vmlinux.lds.S
+> @@ -330,7 +330,7 @@ SECTIONS
+>                 EXIT_DATA
+>         }
+>
+> -       PERCPU_SECTION(INTERNODE_CACHE_BYTES)
+> +       PERCPU_SECTION(L1_CACHE_BYTES)
+>         ASSERT(__per_cpu_hot_end - __per_cpu_hot_start <=3D 64, "percpu c=
+ache hot section too large")
+>
+>         RUNTIME_CONST_VARIABLES
+>
 
-Currently contains pins for BSC buses and SD/MMC; more pins can be
-added in the future.
+That is probably the right call.  The initial percpu section is just
+used by the boot cpu early and as a template for the dynamically
+allocated percpu memory, which should account for the proper alignment
+for NUMA.
 
-Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
----
- arch/arm/boot/dts/broadcom/bcm2166x-common.dtsi  |   2 +
- arch/arm/boot/dts/broadcom/bcm2166x-pinctrl.dtsi | 297 +++++++++++++++++++++++
- 2 files changed, 299 insertions(+)
 
-diff --git a/arch/arm/boot/dts/broadcom/bcm2166x-common.dtsi b/arch/arm/boot/dts/broadcom/bcm2166x-common.dtsi
-index d4b412ac8b0343bd3773f50c59a20fa00a3923f8..f535212cb52fec0668abfc06e7268bead70d958a 100644
---- a/arch/arm/boot/dts/broadcom/bcm2166x-common.dtsi
-+++ b/arch/arm/boot/dts/broadcom/bcm2166x-common.dtsi
-@@ -337,3 +337,5 @@ master_ccu: master_ccu@3f001000 {
- 		};
- 	};
- };
-+
-+#include "bcm2166x-pinctrl.dtsi"
-diff --git a/arch/arm/boot/dts/broadcom/bcm2166x-pinctrl.dtsi b/arch/arm/boot/dts/broadcom/bcm2166x-pinctrl.dtsi
-new file mode 100644
-index 0000000000000000000000000000000000000000..51b8730c8feea501f2c5ca6a7bad8233ed708c82
---- /dev/null
-+++ b/arch/arm/boot/dts/broadcom/bcm2166x-pinctrl.dtsi
-@@ -0,0 +1,297 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+/*
-+ * Common pinmux configrations for BCM2166x (BCM21664/BCM23550).
-+ *
-+ * Copyright (C) 2025 Artur Weber <aweber.kernel@gmail.com>
-+ */
-+
-+&pinctrl {
-+	/* BSC1 */
-+	bsc1_pins: bsc1-pins {
-+		bsc1clk-grp0 {
-+			pins = "bsc1clk";
-+			function = "alt1"; /* BSC1CLK */
-+		};
-+
-+		bsc1dat-grp0 {
-+			pins = "bsc1dat";
-+			function = "alt1"; /* BSC1DAT */
-+		};
-+	};
-+
-+	/* BSC2 */
-+	bsc2_pins: bsc2-pins {
-+		bsc2clk-grp0 {
-+			pins = "gpio16";
-+			function = "alt2"; /* BSC2CLK */
-+		};
-+
-+		bsc2dat-grp0 {
-+			pins = "gpio17";
-+			function = "alt2"; /* BSC2DAT */
-+		};
-+	};
-+
-+	/* BSC3 */
-+	bsc3_pins: bsc3-pins {
-+		bsc3clk-grp0 {
-+			pins = "lcdscl";
-+			function = "alt1"; /* BSC3_CLK */
-+		};
-+
-+		bsc3dat-grp0 {
-+			pins = "lcdsda";
-+			function = "alt1"; /* BSC3_SDA */
-+		};
-+	};
-+
-+	/* BSC4 */
-+	bsc4_pins: bsc4-pins {
-+		bsc4clk-grp0 {
-+			pins = "lcdres";
-+			function = "alt1"; /* BSC4_CLK */
-+		};
-+
-+		bsc4dat-grp0 {
-+			pins = "lcdte";
-+			function = "alt1"; /* BSC4_SDA */
-+		};
-+	};
-+
-+	/* PMBSC */
-+	pmbsc_pins: pmbsc-pins {
-+		pmbscclk-grp0 {
-+			pins = "pmbscclk";
-+			function = "alt1"; /* PMBSCCLK */
-+		};
-+
-+		pmbscdat-grp0 {
-+			pins = "pmbscdat";
-+			function = "alt1"; /* PMBSCDAT */
-+		};
-+	};
-+
-+	/* SD */
-+	sd_width1_pins: sd-width1-pins {
-+		sdck-grp0 {
-+			pins = "sdck";
-+			function = "alt1"; /* SDCK */
-+			bias-disable;
-+		};
-+
-+		sdcmd-grp0 {
-+			pins = "sdcmd";
-+			function = "alt1"; /* SDCMD */
-+			bias-pull-up;
-+		};
-+
-+		sddat-grp0 {
-+			pins = "sddat0";
-+			function = "alt1"; /* SDDATx */
-+			bias-pull-up;
-+		};
-+	};
-+
-+	sd_width4_pins: sd-width4-pins {
-+		sdck-grp0 {
-+			pins = "sdck";
-+			function = "alt1"; /* SDCK */
-+			bias-disable;
-+		};
-+
-+		sdcmd-grp0 {
-+			pins = "sdcmd";
-+			function = "alt1"; /* SDCMD */
-+			bias-pull-up;
-+		};
-+
-+		sddat-grp0 {
-+			pins = "sddat0", "sddat1", "sddat2", "sddat3";
-+			function = "alt1"; /* SDDATx */
-+			bias-pull-up;
-+		};
-+	};
-+
-+	/* SD1 */
-+	sd1_width1_pins: sd1-width1-pins {
-+		sd1ck-grp0 {
-+			pins = "mmc1dat7";
-+			function = "alt6"; /* SD1CK */
-+			bias-disable;
-+		};
-+
-+		sd1cmd-grp0 {
-+			pins = "spi0txd";
-+			function = "alt2"; /* SD1CMD */
-+			bias-pull-up;
-+		};
-+
-+		sd1dat0-grp0 {
-+			pins = "mmc1dat5";
-+			function = "alt6"; /* SD1DAT0 */
-+			bias-pull-up;
-+		};
-+	};
-+
-+	sd1_width4_pins: sd1-width4-pins {
-+		sd1ck-grp0 {
-+			pins = "mmc1dat7";
-+			function = "alt6"; /* SD1CK */
-+			bias-disable;
-+		};
-+
-+		sd1cmd-grp0 {
-+			pins = "spi0txd";
-+			function = "alt2"; /* SD1CMD */
-+			bias-pull-up;
-+		};
-+
-+		sd1dat0-grp0 {
-+			pins = "mmc1dat5";
-+			function = "alt6"; /* SD1DAT0 */
-+			bias-pull-up;
-+		};
-+
-+		sd1dat1-grp0 {
-+			pins = "gpio93";
-+			function = "alt1"; /* SD1DAT1 */
-+			bias-pull-up;
-+		};
-+
-+		sd1dat2-grp0 {
-+			pins = "gpio94";
-+			function = "alt1"; /* SD1DAT2 */
-+			bias-pull-up;
-+		};
-+
-+		sd1dat3-grp0 {
-+			pins = "mmc1dat3";
-+			function = "alt6"; /* SD1DAT3 */
-+			bias-pull-up;
-+		};
-+	};
-+
-+	/* MMC0 */
-+	mmc0_width1_pins: mmc0-width1-pins {
-+		mmc0ck-grp0 {
-+			pins = "mmc0ck";
-+			function = "alt1"; /* MMC0CK */
-+			bias-disable;
-+		};
-+
-+		mmc0cmd-grp0 {
-+			pins = "mmc0cmd";
-+			function = "alt1"; /* MMC0CMD */
-+			bias-pull-up;
-+		};
-+
-+		mmc0dat-grp0 {
-+			pins = "mmc0dat0";
-+			function = "alt1"; /* MMC0DATx */
-+			bias-pull-up;
-+		};
-+	};
-+
-+	mmc0_width4_pins: mmc0-width4-pins {
-+		mmc0ck-grp0 {
-+			pins = "mmc0ck";
-+			function = "alt1"; /* MMC0CK */
-+			bias-disable;
-+		};
-+
-+		mmc0cmd-grp0 {
-+			pins = "mmc0cmd";
-+			function = "alt1"; /* MMC0CMD */
-+			bias-pull-up;
-+		};
-+
-+		mmc0dat-grp0 {
-+			pins = "mmc0dat0", "mmc0dat1", "mmc0dat2", "mmc0dat3";
-+			function = "alt1"; /* MMC0DATx */
-+			bias-pull-up;
-+		};
-+	};
-+
-+	mmc0_width8_pins: mmc0-width8-pins {
-+		mmc0ck-grp0 {
-+			pins = "mmc0ck";
-+			function = "alt1"; /* MMC0CK */
-+			bias-disable;
-+		};
-+
-+		mmc0cmd-grp0 {
-+			pins = "mmc0cmd";
-+			function = "alt1"; /* MMC0CMD */
-+			bias-pull-up;
-+		};
-+
-+		mmc0dat-grp0 {
-+			pins = "mmc0dat0", "mmc0dat1", "mmc0dat2", "mmc0dat3",
-+			       "mmc0dat4", "mmc0dat5", "mmc0dat6", "mmc0dat7";
-+			function = "alt1"; /* MMC0DATx */
-+			bias-pull-up;
-+		};
-+	};
-+
-+	/* MMC1 */
-+	mmc1_width1_pins: mmc1-width1-pins {
-+		mmc1ck-grp0 {
-+			pins = "mmc1ck";
-+			function = "alt1"; /* MMC1CK */
-+			bias-disable;
-+		};
-+
-+		mmc1cmd-grp0 {
-+			pins = "mmc1cmd";
-+			function = "alt1"; /* MMC1CMD */
-+			bias-pull-up;
-+		};
-+
-+		mmc1dat-grp0 {
-+			pins = "mmc1dat0";
-+			function = "alt1"; /* MMC1DATx */
-+			bias-pull-up;
-+		};
-+	};
-+
-+	mmc1_width4_pins: mmc1-width4-pins {
-+		mmc1ck-grp0 {
-+			pins = "mmc1ck";
-+			function = "alt1"; /* MMC1CK */
-+			bias-disable;
-+		};
-+
-+		mmc1cmd-grp0 {
-+			pins = "mmc1cmd";
-+			function = "alt1"; /* MMC1CMD */
-+			bias-pull-up;
-+		};
-+
-+		mmc1dat-grp0 {
-+			pins = "mmc1dat0", "mmc1dat1", "mmc1dat2", "mmc1dat3";
-+			function = "alt1"; /* MMC1DATx */
-+			bias-pull-up;
-+		};
-+	};
-+
-+	mmc1_width8_pins: mmc1-width8-pins {
-+		mmc1ck-grp0 {
-+			pins = "mmc1ck";
-+			function = "alt1"; /* MMC1CK */
-+			bias-disable;
-+		};
-+
-+		mmc1cmd-grp0 {
-+			pins = "mmc1cmd";
-+			function = "alt1"; /* MMC1CMD */
-+			bias-pull-up;
-+		};
-+
-+		mmc1dat-grp0 {
-+			pins = "mmc1dat0", "mmc1dat1", "mmc1dat2", "mmc1dat3",
-+			       "mmc1dat4", "mmc1dat5", "mmc1dat6", "mmc1dat7";
-+			function = "alt1"; /* MMC1DATx */
-+			bias-pull-up;
-+		};
-+	};
-+};
-
--- 
-2.48.1
-
+Brian Gerst
 
