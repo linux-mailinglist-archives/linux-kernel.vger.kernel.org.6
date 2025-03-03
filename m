@@ -1,147 +1,384 @@
-Return-Path: <linux-kernel+bounces-541669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C264A4BFD6
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:07:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AACCA4BFED
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:11:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 969D016BB44
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:07:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EC1B3A7742
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:07:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 303971F3B92;
-	Mon,  3 Mar 2025 12:07:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7AEF20E701;
+	Mon,  3 Mar 2025 12:07:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nU4LNlrO"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="w3Xdi3zI"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E656620D516
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 12:06:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A3920E313;
+	Mon,  3 Mar 2025 12:07:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741003621; cv=none; b=ETLkmiXSPmFZFe3U5BB9tfj20dAgMCEUKiVmZwpcUVs8sh8Y/t03SopILDU6hVySZcCTiRcNXhgSVBzfEB8uprW9HTq4uVXi8n/3zAcRE1gNVkxggfEHIFpn6k9VW9SARMGnoJ1g+AUOfsvQotZ8lThK2sbda9Y4/C0oKIoiqKo=
+	t=1741003650; cv=none; b=uK1oQV1tv8UlvNQZiBAtVxrvOsJYB0Qx0AubUHEySQh7MLK/2TmaRAHPvheflwNoPcYKszYGdvZyr8XGfn5NCnfefkEiv/C2DHKHlbNNvNL9rJd1Ijh6XwueKwW0H6j9YXBOmQQBFpAoQOnpmLopSv+EbjB3BGYXXZSv55vJGRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741003621; c=relaxed/simple;
-	bh=O9DZsoG7K/toKcDvfTgr90tTBVWhN5v0i0S8g2m2A7Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TH6iNU3UcuPNRf3SMdRcUT5CIEayfmNqAPHaESi2Tafvq671OdxlVA5anWvLPuGaM4OvUiGa5LPXRzLYdg4Tdhot7THkl8p6hl3cMabxQfB4jN7OKKVQPDK2t8OCo2gyyvwqSNBEcL5pRji41BMOBk4k/yhSvQePEXephx1hBzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nU4LNlrO; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6f47ed1f40dso32592167b3.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 04:06:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741003619; x=1741608419; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=B4ahxN8eq6WXL1rpKPL4dtpg5+dhmj045yIT8c+PiBc=;
-        b=nU4LNlrObyeSUskO33GdSG+9Rmy0+G2g0FShkx69zevcsVhtz0KQGHiekCaAFEXIII
-         Zp3nlmMu9t3O6yyX53JShdd4FIpGREoX3AxGIbpYqHIEj4Bq35Pi9B6evugqZ252WOxc
-         SgchtVAywHM5/H5RecX1KAnCVwrGlZjQXIs7GMNuRugY3MPhik60hUTFTMlx4rndInWo
-         tCVsv5TuL/er5luOpM0dF+1uPjoFcgHcDK9lXbDceOFc/nZaBSRvznIcxvSe/erewF28
-         1HEYWTRzggZ0ubnM8qkhz1W74aQ36+ibdCbYlFjQ1sxS1nEOuR/u7wvNw8A0LdBHrSwc
-         yKAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741003619; x=1741608419;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=B4ahxN8eq6WXL1rpKPL4dtpg5+dhmj045yIT8c+PiBc=;
-        b=qLVci+RJA/BzjZFGpMehMeEhcFQV64oqJRixctX+TwxZ3YBb7pTcJ6z4GSOqvdmdjI
-         zHDuz0Iozi3f2LRPR5dgVsYBWjUuRvNKQu83GCWwaJ1GLAEX1R3VzG8U2B4IaBV63XoB
-         HqPNe4SWQloDOIGRIj3HmcczhEE3tf3urYYSeBCakKTWiF2l8YA2Jrt1fBGzlC4tItWv
-         Ccr+BejyuNK8U9ru8SdhIciekJ7hA//zau/xfclnf13tDWDmOoXIDZbcosC8e3YMW416
-         sTnlVECW4ftSbrHyU6Kfs3RdCsVaL3SV0Eskay6lFBu5Q8eqFzgTEepP5EyMkl5pgAkf
-         lLeg==
-X-Forwarded-Encrypted: i=1; AJvYcCV1wRLds9lRQfj1T9ZkDUixHDntokfdg8eg7XBfirpu31hwbDERfYkgE8b51Jjw7oSDD/0dY6ScKkE0TVE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuFr8kzQXeSI/qSW5aZPvjld9EA5RSjRJpg48oTinKMv0NBB22
-	licjD7dw+LaZ818k4MLSh5/yK+Go4Sk/Wd/GmNpratysni1iti6hnkgEfkvsNaBYZARt4JpQOfP
-	QWD7x8v8lSnFxJQkZkBoOwYaULq1E4+LYurQWfg==
-X-Gm-Gg: ASbGncvPZG8EXNqyhJVPACmNmlfYtZmOUpFmKSPVPLZddT708Bptvh4ZYVHAcNjYThx
-	dmZ6PX40hMzN7th3WVvga+lcUy2+5jZlRzAvCORDErj+4jxvJI9KE2klixN6MuEBNhBpXKIClK6
-	QYn6FYNZZCG2Hm4HeVfYJ5T0mLXpY=
-X-Google-Smtp-Source: AGHT+IGsfLIlro46n48+LBTnO/N8JCstZtmfa+6qqdaLZ/mIIXy/ByieG0J8/rLqrWxa1gKNjy+h/CO4aYpxCvigVSY=
-X-Received: by 2002:a05:690c:7305:b0:6f9:7fe6:9d44 with SMTP id
- 00721157ae682-6fd4a020593mr155311317b3.4.1741003618774; Mon, 03 Mar 2025
- 04:06:58 -0800 (PST)
+	s=arc-20240116; t=1741003650; c=relaxed/simple;
+	bh=UyoKUj+VH4K8nWeOT9n9dJaI3v2+Js4FUWMxJLi8eFE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=P9/oW1c9qf4+JgEAQqdnR12bt2VHfTOFyyS8G93q/kRCIt1+H1YHxeXoucMQFmCdFslYLSyrxy0nQt9XciFiLCn32D66BYTf+0S01e2vc7iJ26jZD/Xv5lf6wwLC53KDu8kNLM5D2DYZxTpgDdoyE6zfLRm5WD2pZnRPStLTahE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=w3Xdi3zI; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 523C6n9E3264168
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 3 Mar 2025 06:06:49 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1741003609;
+	bh=s9FBSWCs4WAMxfZdOCBhk74gKexxCHisaEtZE/UwxC4=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=w3Xdi3zIVxMDVUvZ170MGhZYYYyGRLDorNz54ud0aHM5EyNYPiOn7UCyT/53bVY0D
+	 Nychc7edaG/8grFz2GVMZmU5wJxD270bvbF4TWKeW7NSI9WGF/l4QfiOUpLtfgcI/a
+	 hyD/nqgVbasqHAxo7I6HGMiDycM5UiUriFbNQ7lM=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 523C6ns0074714
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 3 Mar 2025 06:06:49 -0600
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 3
+ Mar 2025 06:06:48 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 3 Mar 2025 06:06:48 -0600
+Received: from [172.24.21.156] (lt9560gk3.dhcp.ti.com [172.24.21.156])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 523C6fWD049432;
+	Mon, 3 Mar 2025 06:06:42 -0600
+Message-ID: <21f21dfb-264b-4e01-9cb3-8d0133b5b31b@ti.com>
+Date: Mon, 3 Mar 2025 17:36:41 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <13709135.uLZWGnKmhe@rjwysocki.net>
-In-Reply-To: <13709135.uLZWGnKmhe@rjwysocki.net>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 3 Mar 2025 13:06:23 +0100
-X-Gm-Features: AQ5f1JrmlyWShQB4700csC-8hVyGyFUfHKFXi397g_iO-b7Ha4Ktk1dAB8l1pf0
-Message-ID: <CAPDyKFoWeZNqODb5VdXfTEhxRJ0azSQPWhM3WCJ+iUeJ3rYQHw@mail.gmail.com>
-Subject: Re: [PATCH v1 0/5] PM: sleep: Improvements of async suspend and
- resume of devices
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Alan Stern <stern@rowland.harvard.edu>, Johan Hovold <johan@kernel.org>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Saravana Kannan <saravanak@google.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [EXTERNAL] Re: [PATCH net-next v3 3/3] net: ti: icssg-prueth: Add
+ XDP support
+To: Dan Carpenter <dan.carpenter@linaro.org>
+CC: <rogerq@kernel.org>, <danishanwar@ti.com>, <pabeni@redhat.com>,
+        <kuba@kernel.org>, <edumazet@google.com>, <davem@davemloft.net>,
+        <andrew+netdev@lunn.ch>, <bpf@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <u.kleine-koenig@baylibre.com>,
+        <matthias.schiffer@ew.tq-group.com>, <schnelle@linux.ibm.com>,
+        <diogo.ivo@siemens.com>, <glaroque@baylibre.com>, <macro@orcam.me.uk>,
+        <john.fastabend@gmail.com>, <hawk@kernel.org>, <daniel@iogearbox.net>,
+        <ast@kernel.org>, <srk@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
+References: <20250224110102.1528552-1-m-malladi@ti.com>
+ <20250224110102.1528552-4-m-malladi@ti.com>
+ <d362a527-88cf-4cd5-a22f-7eeb938d4469@stanley.mountain>
+Content-Language: en-US
+From: "Malladi, Meghana" <m-malladi@ti.com>
+In-Reply-To: <d362a527-88cf-4cd5-a22f-7eeb938d4469@stanley.mountain>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Tue, 25 Feb 2025 at 17:46, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->
-> Hi Everyone,
->
-> Initially, this was an attempt to address the problems described by
-> Saravana related to spawning async work for any async device upfront
-> in the resume path:
->
-> https://lore.kernel.org/linux-pm/20241114220921.2529905-1-saravanak@google.com/
->
-> but then I realized that it could be extended to the suspend path and
-> used for speeding it up, which it really does.
->
-> Overall, the idea is that instead of starting an async work item for every
-> async device upfront, which is not very efficient because the majority of
-> those devices will not be able to make progress due to dependencies anyway,
-> the async handling is only started upfront for the devices that are likely
-> to be able to make progress.  That is, devices without parents in the resume
-> path and leaf devices (ie. devices without children or consumers) in the
-> suspend path (the underlying observation here is that devices without parents
-> are likely to have no suppliers too whereas devices without children that
-> have consumers are not unheard of).  This allows to reduce the amount of
-> processing that needs to be done to start with.
->
-> Then, after processing every device ("async" or "sync"), "async" processing
-> is started for some devices that have been "unblocked" by it, which are its
-> children in the resume path or its parent and its suppliers in the suspend
-> path.  This allows asynchronous handling to start as soon as it makes sense
-> without delaying the "async" devices unnecessarily.
->
-> Fortunately, the additional plumbing needed to implement this is not
-> particularly complicated.
 
-Thanks for the detailed description! Overall, the approach makes
-perfect sense to me too!
 
-I am certainly interested to hear Saravana's thoughts around this too.
+On 2/26/2025 4:19 PM, Dan Carpenter wrote:
+> On Mon, Feb 24, 2025 at 04: 31: 02PM +0530, Meghana Malladi wrote: > @@ 
+> -541,7 +558,153 @@ void emac_rx_timestamp(struct prueth_emac *emac, > 
+> ssh->hwtstamp = ns_to_ktime(ns); > } > > -static int 
+> emac_rx_packet(struct prueth_emac
+> ZjQcmQRYFpfptBannerStart
+> This message was sent from outside of Texas Instruments.
+> Do not click links or open attachments unless you recognize the source 
+> of this email and know the content is safe.
+> Report Suspicious
+> <https://us-phishalarm-ewt.proofpoint.com/EWT/v1/G3vK! 
+> uldgnXdPPE27auXFPdnpH8jx2nnu2fsVXLMVOyEVUH9IX54g6v7RJRENIKzAm7XCuLfioMeFBSH4bAdUdQTaEArV63odoRERqTN_5Pk$>
+> ZjQcmQRYFpfptBannerEnd
+> 
+> On Mon, Feb 24, 2025 at 04:31:02PM +0530, Meghana Malladi wrote:
+>> @@ -541,7 +558,153 @@ void emac_rx_timestamp(struct prueth_emac *emac,
+>>  	ssh->hwtstamp = ns_to_ktime(ns);
+>>  }
+>>  
+>> -static int emac_rx_packet(struct prueth_emac *emac, u32 flow_id)
+>> +/**
+>> + * emac_xmit_xdp_frame - transmits an XDP frame
+>> + * @emac: emac device
+>> + * @xdpf: data to transmit
+>> + * @page: page from page pool if already DMA mapped
+>> + * @q_idx: queue id
+>> + *
+>> + * Return: XDP state
+>> + */
+>> +int emac_xmit_xdp_frame(struct prueth_emac *emac,
+>> +			struct xdp_frame *xdpf,
+>> +			struct page *page,
+>> +			unsigned int q_idx)
+>> +{
+>> +	struct cppi5_host_desc_t *first_desc;
+>> +	struct net_device *ndev = emac->ndev;
+>> +	struct prueth_tx_chn *tx_chn;
+>> +	dma_addr_t desc_dma, buf_dma;
+>> +	struct prueth_swdata *swdata;
+>> +	u32 *epib;
+>> +	int ret;
+>> +
+>> +	void *data = xdpf->data;
+>> +	u32 pkt_len = xdpf->len;
+> 
+> Get rid of these variables?
+> 
 
->
-> The first two patches in the series are preparatory.
+Yeah ok
 
-For these two, feel free to add:
+>> +
+>> +	if (q_idx >= PRUETH_MAX_TX_QUEUES) {
+>> +		netdev_err(ndev, "xdp tx: invalid q_id %d\n", q_idx);
+>> +		return ICSSG_XDP_CONSUMED;	/* drop */
+>> +	}
+>> +
+>> +	tx_chn = &emac->tx_chns[q_idx];
+>> +
+>> +	first_desc = k3_cppi_desc_pool_alloc(tx_chn->desc_pool);
+>> +	if (!first_desc) {
+>> +		netdev_dbg(ndev, "xdp tx: failed to allocate descriptor\n");
+>> +		goto drop_free_descs;	/* drop */
+>> +	}
+>> +
+>> +	if (page) { /* already DMA mapped by page_pool */
+>> +		buf_dma = page_pool_get_dma_addr(page);
+>> +		buf_dma += xdpf->headroom + sizeof(struct xdp_frame);
+>> +	} else { /* Map the linear buffer */
+>> +		buf_dma = dma_map_single(tx_chn->dma_dev, data, pkt_len, DMA_TO_DEVICE);
+>> +		if (dma_mapping_error(tx_chn->dma_dev, buf_dma)) {
+>> +			netdev_err(ndev, "xdp tx: failed to map data buffer\n");
+>> +			goto drop_free_descs;	/* drop */
+>> +		}
+>> +	}
+>> +
+>> +	cppi5_hdesc_init(first_desc, CPPI5_INFO0_HDESC_EPIB_PRESENT,
+>> +			 PRUETH_NAV_PS_DATA_SIZE);
+>> +	cppi5_hdesc_set_pkttype(first_desc, 0);
+>> +	epib = first_desc->epib;
+>> +	epib[0] = 0;
+>> +	epib[1] = 0;
+>> +
+>> +	/* set dst tag to indicate internal qid at the firmware which is at
+>> +	 * bit8..bit15. bit0..bit7 indicates port num for directed
+>> +	 * packets in case of switch mode operation
+>> +	 */
+>> +	cppi5_desc_set_tags_ids(&first_desc->hdr, 0, (emac->port_id | (q_idx << 8)));
+>> +	k3_udma_glue_tx_dma_to_cppi5_addr(tx_chn->tx_chn, &buf_dma);
+>> +	cppi5_hdesc_attach_buf(first_desc, buf_dma, pkt_len, buf_dma, pkt_len);
+>> +	swdata = cppi5_hdesc_get_swdata(first_desc);
+>> +	if (page) {
+>> +		swdata->type = PRUETH_SWDATA_PAGE;
+>> +		swdata->data.page = page;
+>> +	} else {
+>> +		swdata->type = PRUETH_SWDATA_XDPF;
+>> +		swdata->data.xdpf = xdpf;
+>> +	}
+>> +
+>> +	cppi5_hdesc_set_pktlen(first_desc, pkt_len);
+>> +	desc_dma = k3_cppi_desc_pool_virt2dma(tx_chn->desc_pool, first_desc);
+>> +
+>> +	ret = k3_udma_glue_push_tx_chn(tx_chn->tx_chn, first_desc, desc_dma);
+>> +	if (ret) {
+>> +		netdev_err(ndev, "xdp tx: push failed: %d\n", ret);
+>> +		goto drop_free_descs;
+>> +	}
+>> +
+>> +	return ICSSG_XDP_TX;
+>> +
+>> +drop_free_descs:
+>> +	prueth_xmit_free(tx_chn, first_desc);
+>> +	return ICSSG_XDP_CONSUMED;
+>> +}
+>> +EXPORT_SYMBOL_GPL(emac_xmit_xdp_frame);
+>> +
+>> +/**
+>> + * emac_run_xdp - run an XDP program
+>> + * @emac: emac device
+>> + * @xdp: XDP buffer containing the frame
+>> + * @page: page with RX data if already DMA mapped
+>> + *
+>> + * Return: XDP state
+>> + */
+>> +static int emac_run_xdp(struct prueth_emac *emac, struct xdp_buff *xdp,
+>> +			struct page *page)
+>> +{
+>> +	struct net_device *ndev = emac->ndev;
+>> +	int err, result = ICSSG_XDP_PASS;
+>> +	struct bpf_prog *xdp_prog;
+>> +	struct xdp_frame *xdpf;
+>> +	int q_idx;
+>> +	u32 act;
+>> +
+>> +	xdp_prog = READ_ONCE(emac->xdp_prog);
+>> +	act = bpf_prog_run_xdp(xdp_prog, xdp);
+>> +	switch (act) {
+>> +	case XDP_PASS:
+>> +		break;
+>> +	case XDP_TX:
+>> +		/* Send packet to TX ring for immediate transmission */
+>> +		xdpf = xdp_convert_buff_to_frame(xdp);
+>> +		if (unlikely(!xdpf))
+> 
+> This is the second unlikely() macro which is added in this patchset.
+> The rule with likely/unlikely() is that it should only be added if it
+> likely makes a difference in benchmarking.  Quite often the compiler
+> is able to predict that valid pointers are more likely than NULL
+> pointers so often these types of annotations don't make any difference
+> at all to the compiled code.  But it depends on the compiler and the -O2
+> options.
+> 
 
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Do correct me if I am wrong, but from my understanding, XDP feature 
+depends alot of performance and benchmarking and having unlikely does 
+make a difference. Atleast in all the other drivers I see this being 
+used for XDP.
 
->
-> Patch [3/5] deals with the resume path for all device resume phases.
->
-> Patch [4/5] optimizes the "suspend" phase which has the most visible effect (on
-> the systems in my office the speedup is in the 100 ms range which is around 20%
-> of the total device resume time).
->
-> Patch [5/5] extend this to the "suspend late" and "suspend noirq" phases.
+>> +			goto drop;
+>> +
+>> +		q_idx = smp_processor_id() % emac->tx_ch_num;
+>> +		result = emac_xmit_xdp_frame(emac, xdpf, page, q_idx);
+>> +		if (result == ICSSG_XDP_CONSUMED)
+>> +			goto drop;
+>> +		break;
+>> +	case XDP_REDIRECT:
+>> +		err = xdp_do_redirect(emac->ndev, xdp, xdp_prog);
+>> +		if (err)
+>> +			goto drop;
+>> +		result = ICSSG_XDP_REDIR;
+>> +		break;
+>> +	default:
+>> +		bpf_warn_invalid_xdp_action(emac->ndev, xdp_prog, act);
+>> +		fallthrough;
+>> +	case XDP_ABORTED:
+>> +drop:
+>> +		trace_xdp_exception(emac->ndev, xdp_prog, act);
+>> +		fallthrough; /* handle aborts by dropping packet */
+>> +	case XDP_DROP:
+>> +		ndev->stats.tx_dropped++;
+>> +		result = ICSSG_XDP_CONSUMED;
+>> +		page_pool_recycle_direct(emac->rx_chns.pg_pool, page);
+>> +		break;
+>> +	}
+>> +
+>> +	return result;
+>> +}
+>> +
+>> +static int emac_rx_packet(struct prueth_emac *emac, u32 flow_id, int *xdp_state)
+> 
+> 
+> xdp_state should be a u32 because it's a bitfield.  Bitfields are never
+> signed.
 
-I will try to have a closer look at patch 3->5 later in the week.
+Ok I will update it.
 
-Kind regards
-Uffe
+> 
+>>  {
+>>  	struct prueth_rx_chn *rx_chn = &emac->rx_chns;
+>>  	u32 buf_dma_len, pkt_len, port_id = 0;
+>> @@ -552,10 +715,12 @@ static int emac_rx_packet(struct prueth_emac *emac, u32 flow_id)
+>>  	struct page *page, *new_page;
+>>  	struct page_pool *pool;
+>>  	struct sk_buff *skb;
+>> +	struct xdp_buff xdp;
+>>  	u32 *psdata;
+>>  	void *pa;
+>>  	int ret;
+>>  
+>> +	*xdp_state = 0;
+>>  	pool = rx_chn->pg_pool;
+>>  	ret = k3_udma_glue_pop_rx_chn(rx_chn->rx_chn, flow_id, &desc_dma);
+>>  	if (ret) {
+>> @@ -596,9 +761,21 @@ static int emac_rx_packet(struct prueth_emac *emac, u32 flow_id)
+>>  		goto requeue;
+>>  	}
+>>  
+>> -	/* prepare skb and send to n/w stack */
+>>  	pa = page_address(page);
+>> -	skb = napi_build_skb(pa, PAGE_SIZE);
+>> +	if (emac->xdp_prog) {
+>> +		xdp_init_buff(&xdp, PAGE_SIZE, &rx_chn->xdp_rxq);
+>> +		xdp_prepare_buff(&xdp, pa, PRUETH_HEADROOM, pkt_len, false);
+>> +
+>> +		*xdp_state = emac_run_xdp(emac, &xdp, page);
+>> +		if (*xdp_state == ICSSG_XDP_PASS)
+>> +			skb = xdp_build_skb_from_buff(&xdp);
+>> +		else
+>> +			goto requeue;
+>> +	} else {
+>> +		/* prepare skb and send to n/w stack */
+>> +		skb = napi_build_skb(pa, PAGE_SIZE);
+>> +	}
+>> +
+>>  	if (!skb) {
+>>  		ndev->stats.rx_dropped++;
+>>  		page_pool_recycle_direct(pool, page);
+>> @@ -861,13 +1038,23 @@ static void prueth_tx_cleanup(void *data, dma_addr_t desc_dma)
+>>  	struct prueth_tx_chn *tx_chn = data;
+>>  	struct cppi5_host_desc_t *desc_tx;
+>>  	struct prueth_swdata *swdata;
+>> +	struct xdp_frame *xdpf;
+>>  	struct sk_buff *skb;
+>>  
+>>  	desc_tx = k3_cppi_desc_pool_dma2virt(tx_chn->desc_pool, desc_dma);
+>>  	swdata = cppi5_hdesc_get_swdata(desc_tx);
+>> -	if (swdata->type == PRUETH_SWDATA_SKB) {
+>> +
+>> +	switch (swdata->type) {
+>> +	case PRUETH_SWDATA_SKB:
+>>  		skb = swdata->data.skb;
+>>  		dev_kfree_skb_any(skb);
+>> +		break;
+>> +	case PRUETH_SWDATA_XDPF:
+>> +		xdpf = swdata->data.xdpf;
+>> +		xdp_return_frame(xdpf);
+>> +		break;
+>> +	default:
+>> +		break;
+>>  	}
+>>  
+>>  	prueth_xmit_free(tx_chn, desc_tx);
+>> @@ -904,15 +1091,18 @@ int icssg_napi_rx_poll(struct napi_struct *napi_rx, int budget)
+>>  		PRUETH_RX_FLOW_DATA_SR1 : PRUETH_RX_FLOW_DATA;
+>>  	int flow = emac->is_sr1 ?
+>>  		PRUETH_MAX_RX_FLOWS_SR1 : PRUETH_MAX_RX_FLOWS;
+>> +	int xdp_state_or = 0;
+>>  	int num_rx = 0;
+>>  	int cur_budget;
+>> +	int xdp_state;
+> 
+> Both xdp_state_or and xdp_state should be u32 because they are bitfields.
+> 
+
+Ok I will update it.
+
+> regards,
+> dan carpenter
+> 
+>>  	int ret;
+>>  
+>>  	while (flow--) {
+>>  		cur_budget = budget - num_rx;
+>>  
+>>  		while (cur_budget--) {
+>> -			ret = emac_rx_packet(emac, flow);
+>> +			ret = emac_rx_packet(emac, flow, &xdp_state);
+>> +			xdp_state_or |= xdp_state;
+>>  			if (ret)
+>>  				break;
+>>  			num_rx++;
+> 
+
 
