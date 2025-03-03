@@ -1,80 +1,84 @@
-Return-Path: <linux-kernel+bounces-542170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB0C1A4C6A2
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:19:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AD79A4C677
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:15:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8EF17A9B9F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:13:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A653E3A70C6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:15:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34530235346;
-	Mon,  3 Mar 2025 16:09:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43FEC2356BD;
+	Mon,  3 Mar 2025 16:09:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fU2yHPpv"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UhZrV56Z"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317AC21B9C3;
-	Mon,  3 Mar 2025 16:09:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078C9237164
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 16:09:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741018168; cv=none; b=XJ0P+pfR08YVpHDoeIjSoGOFbGgzglfcOsp15CMC1MYHzKbiUM/MHOra7Fq9bV1eDtwDY8IE8aTOChpTK7em+D+0CVJJbmPqurdLF4HIzzXN1Ji4eVm8STU06M7EWkl88uHjt+x5UDxVkfV13PN21bWhxYgwu6rnggXLjrzNtAk=
+	t=1741018181; cv=none; b=q7SNDTYK+P2awTuoBa0z8cHtN71AFAInVMGilD6sFJ/5Zy13zZIhytgvi0dPXl2fMUEV5hlCeXe0yk8d0sTRLdxD0DZ19EIY6mKV0ua27IdPyjLizoYA2DJ77eVFZwSq//ibjfTxjtuE5oATyrV3QT6THBP2LphWMISjb0P4XPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741018168; c=relaxed/simple;
-	bh=Bbur522PKr26lQbrZOuRbC4ZeP7+GMbA+yItAhu0OzY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jb8cFzeAdrYFqFLO1QDeibyP+fToql5LDIvqdN4qaeEtrzE2la2clQc5l3U222fkaFVU3noc4DQDvYc+vWAj754EUJi/yOIhZ8msO9ESr/EOVbS7Cn0PLHTtxmAGmBSx1Rh/kEdOZAVPj4olMe8MUmt277dns+FRFE4+JFzZpK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fU2yHPpv; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741018167; x=1772554167;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Bbur522PKr26lQbrZOuRbC4ZeP7+GMbA+yItAhu0OzY=;
-  b=fU2yHPpvMk2JVU32C70zwaDT/0Wb9hzzp/VnQXxZklenSE2uzd5Tfypx
-   wfGUGnrZZ/2mfXd2HKanJwxuLMvwe9TlYngiTXYUs/7PgNf6lPO0XIj7b
-   bQGIAx0SOUCQ4Xe16fAjrRcoZiRs8IXY6AJ2SRKXC4lpUZzKTrdyCn94s
-   cg37+fUE6Bmrhn+zLFeV74xvABVc3OPp2k2nY+XZVaDfooAwzztgVtvve
-   KwAqAeOqWK4YqxlYHRaovrTNbuckxMFGzABn1ce9+Cjv5vWw/pdJbc6Zx
-   AvlYgEypf2cONScMxG5/49wYa3G/EqmrXe00RjYc9j+dQojcm7cH9STZ8
-   A==;
-X-CSE-ConnectionGUID: y7F99MkNRUGvuifpG3+02w==
-X-CSE-MsgGUID: Sq3p52W7SJKBKxaF41fi/g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="52878159"
-X-IronPort-AV: E=Sophos;i="6.13,330,1732608000"; 
-   d="scan'208";a="52878159"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 08:09:26 -0800
-X-CSE-ConnectionGUID: INAV7lvPQAGOgLyCQawUfg==
-X-CSE-MsgGUID: cN8iAshRSJiqrvq4nqT8vw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,330,1732608000"; 
-   d="scan'208";a="118065042"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 08:09:24 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tp8M5-0000000GrJe-45zn;
-	Mon, 03 Mar 2025 18:09:21 +0200
-Date: Mon, 3 Mar 2025 18:09:21 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Mika Westerberg <westeri@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Kent Gibson <warthog618@gmail.com>
-Subject: Re: [PATCH v1 3/3] gpiolib: Rename gpio_do_set_config() -->
- gpiod_do_set_config()
-Message-ID: <Z8XUMRAlR3H13zha@smile.fi.intel.com>
-References: <20250303160341.1322640-1-andriy.shevchenko@linux.intel.com>
- <20250303160341.1322640-4-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1741018181; c=relaxed/simple;
+	bh=d11H8566oYzwg5fq7spMzPlOUQsJH7TAfPQ2UxiBLLw=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K6DToZTqe4xBmg0ZqH44QOBFi4yyi6Jb2xMwbfZ9KLTOlIvYPUJfRmlBXLVdU7Fgr3cpyM7C/3iCICvx8EbEL+JN/lKmJO7LT56U/emYHyGtSqOaIoX0uMRz5114I+SKhkPQeV7e3/GMq0tXqj7VfU3A3FIEpLHfZb71jNbxzZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UhZrV56Z; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-30761be8fcfso49356951fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 08:09:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741018178; x=1741622978; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6IjgIQMjyLmH0kadGKdaiTf4ALagXCihpSuhgGvaARY=;
+        b=UhZrV56ZfIeRjB2wRBmVWHU/RaX+KdcLGvjEAYzuzrJd3u2JMdph+oqIweJZ/WvQw3
+         ZxHk5fni7B3dDr8ytAFCLui62z9i6pWoHA3t8jWXznc8etLRjD9iGmITwWCeoMLqNajw
+         JHfad6kFDkgSeQtosO4vf30nAN6MvXGubvt8Oc1quIwJPFbmqFESilT3R34eUEIOGn/B
+         IpIZIcv8LjPvaf0kE2vu69bysUX41inZlCAIrYqsdNRPqXIqB8B7hk7DjbgJHnQkkxNr
+         HRM4vg/9s4qJSw1deKl1Wl0bptpRx9wRIAgQmb5/sVdUJMKGE9wLjfDNHoRgtkV2g/gs
+         uIFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741018178; x=1741622978;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6IjgIQMjyLmH0kadGKdaiTf4ALagXCihpSuhgGvaARY=;
+        b=GE6RTo81Ra4XdTa0u0vZgZRwAjflUj8lIXNhlpNlB+bsiaxwVX0iyco04tTj/rjNV1
+         FSPV7ILYtrgWhirGl4ZvwNaPp8Ic6RKJziol8copkG2NfwaVVnOR73FCG3LLxVfDcLFX
+         H0xPYPFEJbXo7sjVwpDYpAOY9dBWqCRX/RqIYQyRrtXg1L+4ACz4Yf31Z8ZeeiNdgHsb
+         eHZ/4y9W9gluiQ4Op9XptW4zWAuNqk+AGi/B/flXdPJXBE/JrcFyQ/FkAxZ9UskaWyA5
+         /bQ+BY/myGk1ZhwCHYpD7D/lyhgcQJUR7fZurNn2nMbzTzyVZQAb6Q4vPCA0xFnw2vvY
+         vFjA==
+X-Forwarded-Encrypted: i=1; AJvYcCXtXwL31MaTHdxZV3tTxN03j5nzDycXFRu3hUI98eWRV6jLEG8QWmwe8tY2qAYCpdwOpxKF28ovpSJLTuk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkJwjL1nOqgWzXrVgWoOXcxgcVSh9Jbx0A7EvaEMlhrY4LO5QJ
+	UVtb6SCHTaARLocujVCloOMbTaLeb2hlXJjQbWR3cDjNnAnjHVT2
+X-Gm-Gg: ASbGncssR4fSgXnHeEE+MQQrrzB+QEoD2acm+btQdq+WMCkurHu0Me1XF8GedYYRCIp
+	oIHWjkOitpP4Nrgzb/LaAnTPffKwwsHTrtideYo5fz2tX9/XjOZBxFw27NF+6jlWqVCoQbaS37Z
+	GLnWgtZ5pNkHoft1RWxYBeszD1QgYfUYxSPbXBE6YU7Sljz0AczMY8Hz04sLcW+qVx/7DNemLna
+	ZPNe6wHaoG/kiql1sR1Q3/J3yfHNpZa57VvnJzquaQCigBQKf5+W7Ydcm4f9YifYUio3fJh+O+a
+	EL2oHAeOz8g=
+X-Google-Smtp-Source: AGHT+IHgc7Gl60rYTzinEYN7iW5O6cXP91XdcTk8Vu4+nkAW/mFzB+LhMve9YpX4q53LKkINULovYA==
+X-Received: by 2002:a05:651c:4cb:b0:309:1ee1:3512 with SMTP id 38308e7fff4ca-30b932f6e61mr57750541fa.26.1741018177893;
+        Mon, 03 Mar 2025 08:09:37 -0800 (PST)
+Received: from pc636 ([2001:9b1:d5a0:a500::800])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30b9db4e567sm9919121fa.38.2025.03.03.08.09.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 08:09:37 -0800 (PST)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Mon, 3 Mar 2025 17:09:35 +0100
+To: Liu Ye <liuye@kylinos.cn>
+Cc: akpm@linux-foundation.org, urezki@gmail.com, hch@infradead.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] Optimize __vmalloc_node_range_noprof function.
+Message-ID: <Z8XUP10G3cTJlbuw@pc636>
+References: <20250303094410.437985-1-liuye@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,20 +87,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250303160341.1322640-4-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20250303094410.437985-1-liuye@kylinos.cn>
 
-On Mon, Mar 03, 2025 at 06:00:34PM +0200, Andy Shevchenko wrote:
-> In order to reduce the 'gpio' namespace when operate over GPIO descriptor
-> rename gpio_do_set_config() to gpiod_do_set_config().
+On Mon, Mar 03, 2025 at 05:44:06PM +0800, Liu Ye wrote:
+> The use of variables real_size and real_align in function 
+> __vmalloc_node_range_noprof is unreadable. Optimize it in four patches.
+> 
+> Liu Ye (4):
+>   mm/vmalloc: Remove unnecessary size ALIGN in
+>     __vmalloc_node_range_noprof
+>   mm/vmalloc: Size should be used instead of real_size in
+>     __vmalloc_node_range_noprof
+>   mm/vmalloc: Remove the real_size variable to simplify the code in
+>     __vmalloc_node_range_noprof
+>   mm/vmalloc: Rename the variable real_align to original_align to
+>     prevent misunderstanding
+> 
+>  mm/vmalloc.c | 20 ++++++++------------
+>  1 file changed, 8 insertions(+), 12 deletions(-)
+> 
+> -- 
+Let me double check it. Quick question, this series does not
+introduce any functional change?
 
-This change was made against my custom tree and I forgot about that.
-I will wait for the overall response to this series and if okay I
-may issue the correct patch.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+--
+Uladzislau Rezki
 
