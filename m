@@ -1,110 +1,110 @@
-Return-Path: <linux-kernel+bounces-545051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96BC8A4E86F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:22:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C427A4E9DA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:50:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8450A19C461C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:16:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB6D9424549
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:45:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E7A627CB0E;
-	Tue,  4 Mar 2025 16:54:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4792C255252;
+	Tue,  4 Mar 2025 17:21:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HBXAYc6x";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BsJE+rCd"
-Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="U8h6FqKr";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tS2XBU9U"
+Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B97D253B75
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:54:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.115
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9641B207A19
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:21:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.116
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741107285; cv=fail; b=Tyq7ISNmp38ohgyDJawOLr4FP8QUB+9o7lvGRIY/gYiG7widlAHbBnw+75v/pNK9GCAAjDAaAYhLH13mxoFPtmePEH0h4b0ZGHkKnVPvmZSfbRJPMEIlajWusZMfJW4cBxlP+kGLJHNww1aceHiMBQP9uL8eUpQ0Z3q6zk0MKEw=
+	t=1741108914; cv=fail; b=hjYqe6c7B/p1HVMgs0Sgiaqh7YjqdfGxkIrZa1RKUg0l29wvtiv0ET6HXJYyFY69tMepUsdFy10zb9gH/IJa3mOmTx80Lwsf1XR2/CexjlaMsgLGe4pTB5EYZTKKJVU1nkRkBXmCesybAcf/QOMo7JyMJ5m9BzGT5sj5H99scOs=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741107285; c=relaxed/simple;
-	bh=iHnwshOOIRQl5a9YZzwzadUybrGlzaRXnmCronzq5w0=;
+	s=arc-20240116; t=1741108914; c=relaxed/simple;
+	bh=DnsR0pkC3RK+kn8nTyNA8yvpcpFlqIhFm5XHqaMGNl0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=cliji6+NcD4RMFukZArJ2xDQgum6m4hpT/y5aOd0oHNgMRWEUDkBZatH+XRkKKqAE7hGTb8dCnlJJE9comHdTYoAcEHEEcdDQvr+dsR07Jcr56D9AmjOHvFNsgeg6X7BOCPZhZ9zLTYZBiY/DjIVdBzZEF+2398hIdj7OfVRzT0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linutronix.de; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HBXAYc6x reason="signature verification failed"; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BsJE+rCd; arc=none smtp.client-ip=193.142.43.55; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; arc=fail smtp.client-ip=160.75.25.115
+	 In-Reply-To:To:Cc; b=GXk1ZIvdC2m9mqeVddtcE0GtYc5I0WkvvrpOE+mxMX9j05bIm9BPkjuW7byS9ZFjoD70opKNga5XCiLzs6pbuuenMf75V8zxQe7KMugEztN8JCRxA7LKpm8uSR4YKb4OWUsRI8J3FaJe7rS+3PZpw7/fiVhIlDFAEvKVE7rc1qw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linutronix.de; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=U8h6FqKr reason="signature verification failed"; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tS2XBU9U; arc=none smtp.client-ip=193.142.43.55; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; arc=fail smtp.client-ip=160.75.25.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
-Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
+Received: from lesvatest1.cc.itu.edu.tr (unknown [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 6568F40D9775
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:54:42 +0300 (+03)
+	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id C2DEF40D0B92
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:21:50 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6gt13y9szG2sr
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:21:29 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6fCy5pJtzFy5b
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:06:54 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 18FD242749; Tue,  4 Mar 2025 19:21:07 +0300 (+03)
+	id C103242743; Tue,  4 Mar 2025 18:06:38 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HBXAYc6x;
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BsJE+rCd
-X-Envelope-From: <linux-kernel+bounces-541529-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=U8h6FqKr;
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tS2XBU9U
+X-Envelope-From: <linux-kernel+bounces-541532-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HBXAYc6x;
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BsJE+rCd
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=U8h6FqKr;
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tS2XBU9U
 Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id CA52142607
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:21:32 +0300 (+03)
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id 5F37A3063EFC
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:21:32 +0300 (+03)
+	by le2 (Postfix) with ESMTP id 522CC420BC
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:19:33 +0300 (+03)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by fgw1.itu.edu.tr (Postfix) with SMTP id 05A3B305F789
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:19:32 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7974F3AB811
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:15:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFAE11685AC
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:16:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF151F8917;
-	Mon,  3 Mar 2025 11:11:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C05F1F4618;
+	Mon,  3 Mar 2025 11:11:21 +0000 (UTC)
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F38F1F1921;
-	Mon,  3 Mar 2025 11:11:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A706E1F461A;
+	Mon,  3 Mar 2025 11:11:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741000274; cv=none; b=Q7EanKjerWnAPVosR4BPgDvMkMsIWChs38yYvdacWB4Ic35WGcaACCl9zcr7i8gBFVmq36R768ivVp1DoNVZuYlRsrEvnOXJcKkqQTafkyyeuxOzPvVee1Y5jq5rpGTl7s0ZbN1HqSxuQGW1+oUog40XCToDR2eN5Ev7CKv2oyE=
+	t=1741000276; cv=none; b=SR292Wpg4z/IYofOly4dBxN3Vn+8rODZxp7nPOMmg+mI6uFl94ECZpbex2kg6/iIhNCslKI41n4kAQLK10SULCOJk/1Zpd78/CD8nCdDanMq7vEdSLTJaJLtFpCay9C6nHhseC5KX1dmjpjo/19kILMcs/nik9EUyZxxJ+7QMyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741000274; c=relaxed/simple;
-	bh=VdJynf/LX8Td1aTkjDVHlJTY8Y3Zg5hFlXQpxeLfjrg=;
+	s=arc-20240116; t=1741000276; c=relaxed/simple;
+	bh=dfn7qP0Q31T2FoiNWzhAe9RxMKPrVC1jd/7ud8KMI80=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Wp4p4Hs9mmaxTAPaEAHoea1UrH3ASxM6K7ozMPx73M/Ki342w6HFyDcRcppUR7wmvDIK70KtkTx+jQ53HCqzGppzl8vyQOADmJNCoHxyrIwUhZrH+9kEWp4LkyyUaCtIzVP7m5FQY+zDDOVnDweHvplFcs6llb6ApaZB3Q4GWyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HBXAYc6x; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BsJE+rCd; arc=none smtp.client-ip=193.142.43.55
+	 In-Reply-To:To:Cc; b=aZQgmfiVkcFhWB96g5CIt2CACz+RsYtWlsZFy27ZZUWUMOej/n5uKt6fyZu6P4dEg8LTCMRalTZV2MzZSngeRn//J1bhMZobTQbnkTbBvJyCh8IT7nfcvRFpLnZq85srAfUfYQkfHyYMLsQMHw5TYzLnzh8BG/sT8nEHU0iGtdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=U8h6FqKr; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tS2XBU9U; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741000270;
+	s=2020; t=1741000272;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=bCdwRb62VTrbR5xUivRBa4yVRFUw7ANF4zJUEJ52hKQ=;
-	b=HBXAYc6xl7KXGh/flCRILcVk+FA2fkf2y+XEkkT1eiInvI/WfegoID9q/3cIc6OHUqczQF
-	PQ49lZDS2Y/Fv2QRZ8112jLN7GiEnYGu/yh+XnDCfOB/9SGVDHAFD9V9jdStmPpM3ABntq
-	GsLYgwzT+9+c1Lw8VU9SftKkk2q/usKIBCN+bqSgFpqjRxL0YA2gkEorjyv4YN/5R1ZEkX
-	Qw6YbVEqPHHPDJGw3ayhJpxHlKzzXE1HIiT3eL9ovTtk0Jkt3bJqXZSGsFl1QBIij92k+7
-	mUZHjIT4lwCNeFK+4MY1FJAUL109K4ASHusMTysKX5yNBFMDuxvnmnQUgrufPA==
+	bh=jG2bn98M7V4f+hOWi1NHgDCW5X40AnWZfEe8oDNZp3Y=;
+	b=U8h6FqKr+M+oVHHmL+y3d5540HR+juwZWf8bEoV1jJlEMIqawkMEWU/iNUuzvRTkjmh+aI
+	iNmQQrZU/vZCq7kuNuEA6LbVXexXpwJWG29/ET8W+vpy65AqesarXKq33MKdAo38NezJ8K
+	laQ34Z4wxscjoXuoZaDQWQjQs1Y4N9L8MsaDJZWHQO2jvrKqf73cApG/RedcQcQV4MgGVP
+	NCVDII535xaeQQxbikXlcy5maeQUovIyYF0yOjvL2BPGetO1lGRrOu02HF8lr9ua8zDHEk
+	OvW3B/0DfjEWJUt31TCQ8nORZq86CAKfQD6EDsCDz1mCT76eC0YI4GpzoFTU6Q==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741000270;
+	s=2020e; t=1741000272;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=bCdwRb62VTrbR5xUivRBa4yVRFUw7ANF4zJUEJ52hKQ=;
-	b=BsJE+rCdiKDKT4eQUddPU2LUS6jWIEVrQpYFv2koHUfZ/lOXdy1hh77RadF1ejnQXTtr34
-	L5yNu905zFXDMuAQ==
-Date: Mon, 03 Mar 2025 12:11:06 +0100
-Subject: [PATCH 04/19] vdso/datapage: Define for vdso_data to make rework
- of vdso possible
+	bh=jG2bn98M7V4f+hOWi1NHgDCW5X40AnWZfEe8oDNZp3Y=;
+	b=tS2XBU9UfoHBU+e0pSmX9YE/vQIlfr9Y1Mqd3osc7/yyxfOn4vAeYE8q2gPW/4WtCWML8P
+	/W7Y8y52Q97MoEAw==
+Date: Mon, 03 Mar 2025 12:11:09 +0100
+Subject: [PATCH 07/19] vdso/gettimeofday: Prepare do_hres() for
+ introduction of struct vdso_clock
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -113,7 +113,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20250303-vdso-clock-v1-4-c1b5c69a166f@linutronix.de>
+Message-Id: <20250303-vdso-clock-v1-7-c1b5c69a166f@linutronix.de>
 References: <20250303-vdso-clock-v1-0-c1b5c69a166f@linutronix.de>
 In-Reply-To: <20250303-vdso-clock-v1-0-c1b5c69a166f@linutronix.de>
 To: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
@@ -135,28 +135,31 @@ Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
  linux-arch@vger.kernel.org, Nam Cao <namcao@linutronix.de>, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741000267; l=1096;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1741000267; l=4072;
  i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=0x93loxlpgWqAeU5hAZly4hP7dcYpQTwV/L9FcTK/DQ=;
- b=kgUrJ5kC5QvnFU2yA/1gFs7qZQK2tK6WILz/EsO+Lns9Hz6h0FnvKg0dzWfpJEOg1yXiisPne
- d9rskmxoF0LDOR4RMMR3hpSsg0OkwAHBZhyMnuEvNn5qZQzT76LSfSA
+ bh=zltz3UBFxKKFej6pHHfCaU7dwefjLrlFKPgV+biXvzU=;
+ b=0Wzsjfi+ab7PugcoS9LutaLWDTPWs3eh8GpYU1iA/VqEBa19aTOZQhdD0fr4DrT1eqnmu83Lv
+ 1Z9AaTUx8i/DW3/EXookZODwCkiMveFR1T613O4hgEbbRiN0SJpF9ho
 X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
  pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 Content-Transfer-Encoding: quoted-printable
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6gt13y9szG2sr
+X-ITU-Libra-ESVA-ID: 4Z6fCy5pJtzFy5b
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741711962.24717@Tu3M/U6kF2qva9LB88NLDg
+X-ITU-Libra-ESVA-Watermark: 1741713614.09915@g5sf8zwM6xgLnvlgE90NpQ
 X-ITU-MailScanner-SpamCheck: not spam
 
 From: Anna-Maria Behnsen <anna-maria@linutronix.de>
 
-PTP clocks could also be supported by the vdso to use the advantages of
-this implementation. Therefore the struct must be reworked. For a
-transition to the new structure of the vdso, add a define which maps
-vdso_clock to vdso_data. This will be removed when all users are updated
-step by step.
+To support multiple PTP clocks, the VDSO data structure needs to be
+reworked. All clock specific data will end up in struct vdso_clock and in
+struct vdso_time_data there will be array of it. By now, vdso_clock is
+simply a define which maps vdso_clock to vdso_time_data.
+
+Prepare for the rework of these structures by adding struct vdso_clock
+pointer argument to do_hres(), and replace the struct vdso_time_data
+pointer with the new pointer arugment whenever applicable.
 
 No functional change.
 
@@ -164,23 +167,96 @@ Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
 Signed-off-by: Nam Cao <namcao@linutronix.de>
 Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
 ---
- include/vdso/datapage.h | 2 ++
- 1 file changed, 2 insertions(+)
+ lib/vdso/gettimeofday.c | 33 +++++++++++++++++----------------
+ 1 file changed, 17 insertions(+), 16 deletions(-)
 
-diff --git a/include/vdso/datapage.h b/include/vdso/datapage.h
-index dfd98f969f151eca3c551c3e90f69af9ee8f22bb..1df22e8bb9b31153546b72b1e=
-8b8c8aeaed7d9e3 100644
---- a/include/vdso/datapage.h
-+++ b/include/vdso/datapage.h
-@@ -129,6 +129,8 @@ struct vdso_time_data {
- 	struct arch_vdso_time_data arch_data;
- } ____cacheline_aligned;
+diff --git a/lib/vdso/gettimeofday.c b/lib/vdso/gettimeofday.c
+index 59369a4e9f25f937eb8d9aed3201ebd340097a9d..15611ab650232f2e847b7de80=
+c7293c4fb7f84f2 100644
+--- a/lib/vdso/gettimeofday.c
++++ b/lib/vdso/gettimeofday.c
+@@ -139,10 +139,11 @@ static __always_inline int do_hres_timens(const str=
+uct vdso_time_data *vdns, clo
+ }
+ #endif
 =20
-+#define vdso_clock vdso_time_data
-+
- /**
-  * struct vdso_rng_data - vdso RNG state information
-  * @generation:	counter representing the number of RNG reseeds
+-static __always_inline int do_hres(const struct vdso_time_data *vd, cloc=
+kid_t clk,
+-				   struct __kernel_timespec *ts)
++static __always_inline
++int do_hres(const struct vdso_time_data *vd, const struct vdso_clock *vc=
+,
++	    clockid_t clk, struct __kernel_timespec *ts)
+ {
+-	const struct vdso_timestamp *vdso_ts =3D &vd->basetime[clk];
++	const struct vdso_timestamp *vdso_ts =3D &vc->basetime[clk];
+ 	u64 cycles, sec, ns;
+ 	u32 seq;
+=20
+@@ -154,31 +155,31 @@ static __always_inline int do_hres(const struct vds=
+o_time_data *vd, clockid_t cl
+ 		/*
+ 		 * Open coded function vdso_read_begin() to handle
+ 		 * VDSO_CLOCKMODE_TIMENS. Time namespace enabled tasks have a
+-		 * special VVAR page installed which has vd->seq set to 1 and
+-		 * vd->clock_mode set to VDSO_CLOCKMODE_TIMENS. For non time
++		 * special VVAR page installed which has vc->seq set to 1 and
++		 * vc->clock_mode set to VDSO_CLOCKMODE_TIMENS. For non time
+ 		 * namespace affected tasks this does not affect performance
+-		 * because if vd->seq is odd, i.e. a concurrent update is in
+-		 * progress the extra check for vd->clock_mode is just a few
+-		 * extra instructions while spin waiting for vd->seq to become
++		 * because if vc->seq is odd, i.e. a concurrent update is in
++		 * progress the extra check for vc->clock_mode is just a few
++		 * extra instructions while spin waiting for vc->seq to become
+ 		 * even again.
+ 		 */
+-		while (unlikely((seq =3D READ_ONCE(vd->seq)) & 1)) {
++		while (unlikely((seq =3D READ_ONCE(vc->seq)) & 1)) {
+ 			if (IS_ENABLED(CONFIG_TIME_NS) &&
+-			    vd->clock_mode =3D=3D VDSO_CLOCKMODE_TIMENS)
++			    vc->clock_mode =3D=3D VDSO_CLOCKMODE_TIMENS)
+ 				return do_hres_timens(vd, clk, ts);
+ 			cpu_relax();
+ 		}
+ 		smp_rmb();
+=20
+-		if (unlikely(!vdso_clocksource_ok(vd)))
++		if (unlikely(!vdso_clocksource_ok(vc)))
+ 			return -1;
+=20
+-		cycles =3D __arch_get_hw_counter(vd->clock_mode, vd);
++		cycles =3D __arch_get_hw_counter(vc->clock_mode, vd);
+ 		if (unlikely(!vdso_cycles_ok(cycles)))
+ 			return -1;
+-		ns =3D vdso_calc_ns(vd, cycles, vdso_ts->nsec);
++		ns =3D vdso_calc_ns(vc, cycles, vdso_ts->nsec);
+ 		sec =3D vdso_ts->sec;
+-	} while (unlikely(vdso_read_retry(vd, seq)));
++	} while (unlikely(vdso_read_retry(vc, seq)));
+=20
+ 	/*
+ 	 * Do this outside the loop: a race inside the loop could result
+@@ -278,7 +279,7 @@ __cvdso_clock_gettime_common(const struct vdso_time_d=
+ata *vd, clockid_t clock,
+ 	else
+ 		return -1;
+=20
+-	return do_hres(vc, clock, ts);
++	return do_hres(vd, vc, clock, ts);
+ }
+=20
+ static __maybe_unused int
+@@ -334,7 +335,7 @@ __cvdso_gettimeofday_data(const struct vdso_time_data=
+ *vd,
+ 	if (likely(tv !=3D NULL)) {
+ 		struct __kernel_timespec ts;
+=20
+-		if (do_hres(&vc[CS_HRES_COARSE], CLOCK_REALTIME, &ts))
++		if (do_hres(vd, &vc[CS_HRES_COARSE], CLOCK_REALTIME, &ts))
+ 			return gettimeofday_fallback(tv, tz);
+=20
+ 		tv->tv_sec =3D ts.tv_sec;
 
 --=20
 2.48.1
