@@ -1,166 +1,211 @@
-Return-Path: <linux-kernel+bounces-541597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32290A4BED1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:35:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C985A4BF13
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:42:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7918618853A8
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:35:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 959843A9820
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:36:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA19B1FC11E;
-	Mon,  3 Mar 2025 11:35:25 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 285C01FC11A
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 11:35:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C0A21FECD4;
+	Mon,  3 Mar 2025 11:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xg1//Uj7"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F3E1FECBF
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 11:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741001725; cv=none; b=vArCs+HXrgovhuUlgCHVYrIUjZXwnMh8j+tKjNi+wq5tnO3Vluhj2VZC156TQogD5DLN45wAzTuTvERa1aXUNaqFRLukJe4BF17HgksBhc6+2raWbmXyxZt0z8LEp5Wq54yro/B/rT//XwoMyz+uMUao0ajZ4mf9WNLpgvVuL38=
+	t=1741001793; cv=none; b=CfX8GjXDeB93ml6uTUFcR5HE8iQAKHPRWbJ6unkJpcIvXrH2tBwAyJor73Lo3OIEscBVy7m4xMUvLeKUoPNvUPO1+RZA2B8On+24fSjGhR2z2Bnm1sULkbWFqGVeaN/Hz+jJJuPtHDP0EU8VMdjW8l4Hzm1VthcGa+DVSlRze0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741001725; c=relaxed/simple;
-	bh=v8XqCusruxsmNE0u+56IKmxRCWDfbbAUHBEj0qBMdBA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BH0hrjF7s+m8AN8qa1XgJR+9pec0q3vzDYXbT6YOZu7rJTzUWSHmnYtGp99/aU94IbMCoSf1/Q3MU4YqulT7eIaj+BHdUBdXQvXXZNZJ6YnIxEVlY9XNoT7tK17RzoOqJLxBNcL9uJsjuG4g5MYKnTAzTXsXzojiflMf9THxhpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 654ED1063;
-	Mon,  3 Mar 2025 03:35:36 -0800 (PST)
-Received: from [10.57.37.67] (unknown [10.57.37.67])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 111383F673;
-	Mon,  3 Mar 2025 03:35:19 -0800 (PST)
-Message-ID: <2b6d5287-bdea-4ec3-a07f-986bd3c3b285@arm.com>
-Date: Mon, 3 Mar 2025 11:35:19 +0000
+	s=arc-20240116; t=1741001793; c=relaxed/simple;
+	bh=XaHolFBWoRAOTJGYNJcQzbTPSNUzRjVdWfk1b9YZ3Uc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NN75e7HMHWFWJM2aPhACe6T7v5jocF0xjq05hAPiDg6U+amJYQeAg9Mz5zE2q5nTdEtRzSh9cvjd7QcZ03+nKJCz+5i93ql1yPdC6xT5WLABJNQtZhtmIvMn/yVGY6y62Yq+B50xmkM5T2+RT1ma1AEfMOnyxcetiST/ziGX0aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Xg1//Uj7; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6fd66f404fbso11252007b3.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 03:36:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741001789; x=1741606589; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=UBUkHt3avEz8ZOzjIAytFNHnXfMupzHA8HDEzBBxn/4=;
+        b=Xg1//Uj7niWr7J30SfeUTn0faxZBXOcJH35+NQ4ZSM6z04EfayImx9T7OMSzXfYw7v
+         DaC8ZVl8OIUgs7dbXjCZocb1ppGapdFKgVaxnaljsaHE0OYePG959HtrUkh8sgvFcO7O
+         C3tfin8XRPibVUgisjdeYl7R3S19mi+nK8Ns9T4dVqgFKvJDSE6VdgW1Z/r+IzAzIj/Y
+         LVbaR6oEixJoJtKID+rr9YmFlO/EauWvWHWLQlkV4AqPUnUQCMGQ+5bSLsWwPBIZcxym
+         gN1DZTYm+x11k+qJWsaHyydxC/HSUYeHwb75STuP/IEYqYep8CBUTSSGckXs3TYKauVW
+         /jLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741001789; x=1741606589;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UBUkHt3avEz8ZOzjIAytFNHnXfMupzHA8HDEzBBxn/4=;
+        b=fsl0X9xh3aJujjkZA9ksaVM3RAHm1y4l4VwGZjH4gidWlYpVnnY/M+au/zWr0zKGn4
+         2vNqbhAXrg9wfmHiXr4c3krP3NrRWdbTHq7zpOqBGQ1nmxpmyUwW7fjdvY/6GtwDNkhN
+         yKFToX0XU4r1lB7iIKSmY/tum221vY3bNf1y2PXHkevDERQtB9klvOnjeFkSqnmvwNXD
+         pFPao6bJRma0Fzucta+sUGeoXYAp7GYo2YoVdOplj9OV0akfQ/XwhH38MYVAl+tsHjcC
+         VnnqC4PzNQmfP8E7mhzTzJwVSznw24i+N7bOU33A49xCM2JJTKUSZuQWyT8TznkeURpN
+         RfYA==
+X-Forwarded-Encrypted: i=1; AJvYcCWwZEc1Ngz/ZrgV6DUwsoFQwVtKlzYp8HXWZdj8NnE43C/TMUX7oJR9ScBBHe8WUNVRTsp+/Kmlm4BFdpA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWmjaRr9fR664Kar5QFDN44igJt0Dzxhq2cDRXxXXd/ZomwivT
+	C72aNt43hLAZ/ihMKY0om5kZfQJdhqE9TUO2+m46CZNfoCfiqFHqFw1J480gnNtI3s4Angx7Lp9
+	cykRruE6oKRyY2em84Sb2BaWfVHxp8SHVryGTGA==
+X-Gm-Gg: ASbGnctg1v38AQw2gl/2sxS/R3fFCsvC5ev/CZFCe9cMBDuaZEtBKSeE8dR0SMJ75PY
+	IPicfk2KXFJYmf6MaASw7K8i0yD5aTUyzzi56qK8QY+P5dKmStDc6gGgepzqJ3mYxrMarTUC6hi
+	kVbo9Rq54eXra5xeZOlVO23SGx0iA=
+X-Google-Smtp-Source: AGHT+IGbmdK13gwcTIYs/RwA8drBpUi9FLIvtkuILBcCZ+xDfdj9K62od7OaWkHcxdZCUCSfkQyJevgrhbgYFW/YreU=
+X-Received: by 2002:a05:690c:688e:b0:6ef:7036:3b57 with SMTP id
+ 00721157ae682-6fd4a141ce2mr148855737b3.28.1741001789654; Mon, 03 Mar 2025
+ 03:36:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/3] arm64: realm: Fix DMA address for devices
-Content-Language: en-GB
-To: linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: will@kernel.org, catalin.marinas@arm.com, maz@kernel.org,
- steven.price@arm.com, aneesh.kumar@kernel.org, gshan@redhat.com,
- robin.murphy@arm.com, linux-arm-kernel@lists.infradead.org,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>,
- Tom Lendacky <thomas.lendacky@amd.com>
-References: <20250227144150.1667735-1-suzuki.poulose@arm.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20250227144150.1667735-1-suzuki.poulose@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <12612706.O9o76ZdvQC@rjwysocki.net> <2978873.e9J7NaK4W3@rjwysocki.net>
+In-Reply-To: <2978873.e9J7NaK4W3@rjwysocki.net>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 3 Mar 2025 12:35:53 +0100
+X-Gm-Features: AQ5f1JrNehs-WHA4X5zdeXjF_NISUdLgzpPPWrjP6G-GK3iY6EpyJABxLIHp-1U
+Message-ID: <CAPDyKFpCcQGKoKB3ZNj+=aiftEduiUVKcWLfYZqGY3=MCCMcQw@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] PM: sleep: Avoid unnecessary checks in device_prepare_smart_suspend()
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Alan Stern <stern@rowland.harvard.edu>, Bjorn Helgaas <helgaas@kernel.org>, 
+	Linux PCI <linux-pci@vger.kernel.org>, Johan Hovold <johan@kernel.org>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Jon Hunter <jonathanh@nvidia.com>, 
+	Linux ACPI <linux-acpi@vger.kernel.org>, 
+	Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Marek,
+On Tue, 18 Feb 2025 at 21:20, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+>
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> Add an optimization (on top of previous changes) to avoid calling
+> pm_runtime_blocked(), which involves acquiring the device's PM spinlock,
+> for devices with no PM callbacks and runtime PM "blocked".
+>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-
-On 27/02/2025 14:41, Suzuki K Poulose wrote:
-> Linux can be run as a Confidential Guest in Arm CCA from Linux v6.13. The address
-> space (GPA or IPA) of a Realm VM is split into two halves, with private bottom
-> half and shared top half. In Linux we treat the "top" bit of the IPA space as
-> an attribute, to indicate whether it is shared or not (MSB == 1 implies shared).
-> Stage2 (GPA to PA) translations used by the CPU accesses, cover the full IPA space,
-> and are managed by RMM. The "top" bit as attribute is only a software construct.
-> 
-> At present any device passed through to a Realm is treated as untrusted and the
-> Realm uses bounce buffering for any DMA, using the "decrypted" (shared) DMA
-> buffers (i.e., IPA with top bit set). In Linux, we only send the "DMA" address
-> masking the "top" bit. In Arm CCA, SMMU for untrusted devices are managed by the
-> non-secure Host and thus it can be confusing for the host/device when an unmasked
-> address is provided. Given there could be other hypervisors than Linux/KVM
-> running Arm CCA guests, the Realm Guest must adhere to a single convention for
-> the DMA address. This gets further complicated when we add support for trusted
-> devices, which can DMA into the full Realm memory space, once accepted. Thus,
-> a DMA masked address (with "top" bit lost) will prevent a trusted device from
-> accessing a shared buffer.
-> 
-> To resolve this Arm has decided to standardise the DMA address used by the Realm
-> to include the full IPA address bits (including the "top" bit, which Linux uses
-> as an attribute). This implies, any DMA to a shared buffer must have the top bit
-> of the IPA space set.
-> 
-> There is already a provision to do this in phys_to_dma* and dma_to_phys(), but
-> that is specific to AMD SME and is quite the opposite of what we need for Arm CCA.
-> i.e., For Arm CCA we need to set the bit for "decrypted" DMA and clear the bit
-> for "encrypted".
-> 
-> This series converts the existing __sme_* helpers to a bit more generalised versions :
-> dma_addr_decrypted() and dma_encrypted(). Also, while converting a DMA address back
-> to CPU physical address requires clearing off any "encryption/decryption" bits.
-> I have named this "dma_addr_canonical()". (The other options are :
->    * dma_addr_clear_encryption - Well, not just for encryption, but we clear decryption
->      too, so not ideal.
->    * dma_addr_normal
->    * dma_addr_clear
->    * dma_addr_default
-> 
-> This also implies that the VMMs must take care to :
-> 
->   1. Create the S2-SMMU mappings for VFIO at the "unprotected" alias.
->   2. Always mask the "top" bit off any IPA it receives from the Realm for DMA.
->      KVM already does that today and no changes are required.
-> 
-> A kvmtool branch with the changes above is available here [1]. There are two
-> patches [2] & [3], that are really required on top of the Arm CCA support.
-> 
-> Ideally it would be good to get this backported to v6.13 stable kernel releases
-> to make sure that they are compliant with this change.
-> 
-
-Please could you take a look at this series and let us know your
-thoughts ? If you are happy with the changes, are you happy to pull
-this through the DMA MAP tree ? The relevant bits have been reviewed/
-acked by people (arm64 and AMD bits).
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
 Kind regards
-Suzuki
+Uffe
 
-
-> Changes since v2:
->   Link: https://lkml.kernel.org/r/20250219220751.1276854-1-suzuki.poulose@arm.com
->    - Collect Acks & Reviews for Patch 1
->    - Rename helpers
->    	dma_encrypted		=> dma_addr_encrypted
-> 	dma_decrypted		=> dma_addr_unencrypted
-> 	dma_clear_encryption	=> dma_addr_canonical
->    - For Arm CCA, use PROT_NS_SHARED, set/clear only the top IPA bit.
->    - Drop dma_addr_encrypted() helper for Arm CCA as it is a NOP
-> 
-> Changes since v1
->   Link: https://lkml.kernel.org/r/20250212171411.951874-1-suzuki.poulose@arm.com
->   - Follow Robin's suggestion to generalise the DMA address conversion helpers
->     to provide dma_{encrypte,decrypted,clear_encryption}. See PATCH 2 for more
->     details.
->   - Add a fix to the ordering of "__sme_clr" for dma_to_phys (PATCH 1)
-> 
-> [1] git@git.gitlab.arm.com:linux-arm/kvmtool-cca.git cca/guest-dma-alias/v1
-> [2] https://gitlab.arm.com/linux-arm/kvmtool-cca/-/commit/ea37a6eb968abe4c75be4a8a90808714657c2ef7
-> [3] https://gitlab.arm.com/linux-arm/kvmtool-cca/-/commit/8afd0d5e6a7ee444dd0c1565fe94ecd831054a29
-> 
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Jean-Philippe Brucker <jean-philippe@linaro.org>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Robin Murphy <robin.murphy@arm.com>
-> Cc: Steven Price <steven.price@arm.com>
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> Cc: Tom Lendacky <thomas.lendacky@amd.com>
-> Cc: Gavin Shan <gshan@redhat.com>
-> 
-> Suzuki K Poulose (3):
->    dma: Fix encryption bit clearing for dma_to_phys
->    dma: Introduce generic dma_addr_*crypted helpers
->    arm64: realm: Use aliased addresses for device DMA to shared buffers
-> 
->   arch/arm64/include/asm/mem_encrypt.h | 11 +++++++++++
->   include/linux/dma-direct.h           | 13 +++++++++----
->   include/linux/mem_encrypt.h          | 23 +++++++++++++++++++++++
->   3 files changed, 43 insertions(+), 4 deletions(-)
-> 
-
+> ---
+>  drivers/base/power/main.c    |   16 +++++++++-------
+>  drivers/base/power/runtime.c |    9 +++++++--
+>  include/linux/pm_runtime.h   |    4 ++--
+>  3 files changed, 18 insertions(+), 11 deletions(-)
+>
+> --- a/drivers/base/power/main.c
+> +++ b/drivers/base/power/main.c
+> @@ -1796,16 +1796,14 @@
+>
+>         /*
+>          * The "smart suspend" feature is enabled for devices whose drivers ask
+> -        * for it and for devices without PM callbacks unless runtime PM is
+> -        * disabled and enabling it is blocked for them.
+> +        * for it and for devices without PM callbacks.
+>          *
+>          * However, if "smart suspend" is not enabled for the device's parent
+>          * or any of its suppliers that take runtime PM into account, it cannot
+>          * be enabled for the device either.
+>          */
+> -       dev->power.smart_suspend = (dev->power.no_pm_callbacks ||
+> -               dev_pm_test_driver_flags(dev, DPM_FLAG_SMART_SUSPEND)) &&
+> -               !pm_runtime_blocked(dev);
+> +       dev->power.smart_suspend = dev->power.no_pm_callbacks ||
+> +               dev_pm_test_driver_flags(dev, DPM_FLAG_SMART_SUSPEND);
+>
+>         if (!dev_pm_smart_suspend(dev))
+>                 return;
+> @@ -1843,6 +1841,7 @@
+>  static int device_prepare(struct device *dev, pm_message_t state)
+>  {
+>         int (*callback)(struct device *) = NULL;
+> +       bool no_runtime_pm;
+>         int ret = 0;
+>
+>         /*
+> @@ -1858,7 +1857,7 @@
+>          * suspend-resume cycle is complete, so prepare to trigger a warning on
+>          * subsequent attempts to enable it.
+>          */
+> -       pm_runtime_block_if_disabled(dev);
+> +       no_runtime_pm = pm_runtime_block_if_disabled(dev);
+>
+>         if (dev->power.syscore)
+>                 return 0;
+> @@ -1893,7 +1892,10 @@
+>                 pm_runtime_put(dev);
+>                 return ret;
+>         }
+> -       device_prepare_smart_suspend(dev);
+> +       /* Do not enable "smart suspend" for devices without runtime PM. */
+> +       if (!no_runtime_pm)
+> +               device_prepare_smart_suspend(dev);
+> +
+>         /*
+>          * A positive return value from ->prepare() means "this device appears
+>          * to be runtime-suspended and its state is fine, so if it really is
+> --- a/drivers/base/power/runtime.c
+> +++ b/drivers/base/power/runtime.c
+> @@ -1460,14 +1460,19 @@
+>  }
+>  EXPORT_SYMBOL_GPL(pm_runtime_barrier);
+>
+> -void pm_runtime_block_if_disabled(struct device *dev)
+> +bool pm_runtime_block_if_disabled(struct device *dev)
+>  {
+> +       bool ret;
+> +
+>         spin_lock_irq(&dev->power.lock);
+>
+> -       if (dev->power.disable_depth && dev->power.last_status == RPM_INVALID)
+> +       ret = dev->power.disable_depth && dev->power.last_status == RPM_INVALID;
+> +       if (ret)
+>                 dev->power.last_status = RPM_BLOCKED;
+>
+>         spin_unlock_irq(&dev->power.lock);
+> +
+> +       return ret;
+>  }
+>
+>  void pm_runtime_unblock(struct device *dev)
+> --- a/include/linux/pm_runtime.h
+> +++ b/include/linux/pm_runtime.h
+> @@ -77,7 +77,7 @@
+>  extern int pm_schedule_suspend(struct device *dev, unsigned int delay);
+>  extern int __pm_runtime_set_status(struct device *dev, unsigned int status);
+>  extern int pm_runtime_barrier(struct device *dev);
+> -extern void pm_runtime_block_if_disabled(struct device *dev);
+> +extern bool pm_runtime_block_if_disabled(struct device *dev);
+>  extern void pm_runtime_unblock(struct device *dev);
+>  extern void pm_runtime_enable(struct device *dev);
+>  extern void __pm_runtime_disable(struct device *dev, bool check_resume);
+> @@ -274,7 +274,7 @@
+>  static inline int __pm_runtime_set_status(struct device *dev,
+>                                             unsigned int status) { return 0; }
+>  static inline int pm_runtime_barrier(struct device *dev) { return 0; }
+> -static inline void pm_runtime_block_if_disabled(struct device *dev) {}
+> +static inline bool pm_runtime_block_if_disabled(struct device *dev) { return true; }
+>  static inline void pm_runtime_unblock(struct device *dev) {}
+>  static inline void pm_runtime_enable(struct device *dev) {}
+>  static inline void __pm_runtime_disable(struct device *dev, bool c) {}
+>
+>
+>
 
