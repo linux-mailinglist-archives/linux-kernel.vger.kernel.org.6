@@ -1,147 +1,119 @@
-Return-Path: <linux-kernel+bounces-541463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B27C1A4BD3A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:01:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F286A4BD3F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:02:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF7BE3B75A7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:58:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CDD03A3BE5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:59:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFFAB1F2B99;
-	Mon,  3 Mar 2025 10:56:04 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7361F3BAA
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 10:56:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B01B1F4C82;
+	Mon,  3 Mar 2025 10:56:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="xCtcY2W1"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B0A71F37C3;
+	Mon,  3 Mar 2025 10:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740999364; cv=none; b=rqyAgrvbTeg+faAUqe3Mi2AUIPzGvd89ssWSfU8pSnjNHwnlz3BHYbshSxFmBVZY8ZfCo+LxT/ntOXYA8vlVw97I4i3ETD2sFe+GEUzVZl1XJQcIOU2K9zyoHsC3GzNxv8Ipu0eGOG2Qz6brb1BmC5D9SXdXTx3hPBMwRyskD80=
+	t=1740999378; cv=none; b=St9g6DQCXsRyXUoyLtI+yLyQSExIvO6m6/K5FTcX3EHMqIkB5scFAHBB2mfJVUVj262dnfa2e9Kf11rIq0WJaseKRBaFFE6wrwzL1OAtvnRDPaOhme8KT/GcmgLKCbKhOTIT4KE3PO0aVrQMKB9LzXx+dP8RmzGZ+h9/gPiS55s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740999364; c=relaxed/simple;
-	bh=FlxgyLo4pSK6DnDRMZ2Gy02rNuDZ9j7QbXDlKG6JUnk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LX/AcuF6FYKboydsv5s+PIS1MDyyGFP68/Lxap2YOxnreBSoQrjsmaC4j8Lf8s4XlbtgKq90VWTwCsZZEWyEJcXiVCU4yNwO7VW7J9LK7t4kIUqzMPvgqAHJKGzhJfp54j6f+fZ2tHLc8DKUnRlJGHzYitLkfg49iTB9B+kK7h4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 836CD113E;
-	Mon,  3 Mar 2025 02:56:16 -0800 (PST)
-Received: from e133081.arm.com (unknown [10.57.37.136])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 77DE73F673;
-	Mon,  3 Mar 2025 02:55:58 -0800 (PST)
-Date: Mon, 3 Mar 2025 10:55:47 +0000
-From: =?utf-8?Q?Miko=C5=82aj?= Lenczewski <miko.lenczewski@arm.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: ryan.roberts@arm.com, suzuki.poulose@arm.com,
-	yang@os.amperecomputing.com, catalin.marinas@arm.com,
-	will@kernel.org, joro@8bytes.org, jean-philippe@linaro.org,
-	mark.rutland@arm.com, joey.gouly@arm.com, oliver.upton@linux.dev,
-	james.morse@arm.com, broonie@kernel.org, maz@kernel.org,
-	akpm@linux-foundation.org, jgg@ziepe.ca, nicolinc@nvidia.com,
-	mshavit@google.com, jsnitsel@redhat.com, smostafa@google.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev
-Subject: Re: [PATCH v2 3/4] arm64/mm: Elide tlbi in contpte_convert() under
- BBML2
-Message-ID: <20250303105539.GA74129@e133081.arm.com>
-References: <20250228182403.6269-2-miko.lenczewski@arm.com>
- <20250228182403.6269-5-miko.lenczewski@arm.com>
- <f270bb5d-aa54-45d3-89ed-2b757ab3a4b0@redhat.com>
- <20250303094947.GB13345@e133081.arm.com>
- <7e987f17-ffcb-45e0-8588-2d569d90f776@redhat.com>
+	s=arc-20240116; t=1740999378; c=relaxed/simple;
+	bh=lBXrJLLzgvlev6TtlXIqmm8RMpCy7Hx/6Ebgcbn2DXM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oAgpDgqzfojt7T/qdwIU3t4Mb/hKtQyx9fET54Viu744SqCbSJxDWkkK4LRao0IPCFsajiKS3HZnt7LVtvxme8OGFFwU24aaFztrqCBDEshSZuQU7lEeXtCUoGFmBJHXv5cFI20eFATFQx5Q8zz3+YqN80vf/3IKoO7gqIL6Yd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=xCtcY2W1; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1740999351; x=1741604151; i=markus.elfring@web.de;
+	bh=27Xfm2szNcVPGdaV+AvjRGIZQra8NDa1xE51q3tnc0c=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=xCtcY2W15t/CLVk26dzklV2eCVer80egCefL/fUIV2wx4QdhRrg4oOQe3FRb6KcW
+	 LvU4QP442D+ZwsRfG1pIS47gCY1klL4dBJg51rBqrBwJTqUCguPE5+TyN5+g70Ls6
+	 22HFMGK6kUbaQ5LlEuxvIC2eNfpYDAoFTEIsjQKUkhXS+IxiHJUBJ3Ufycpq02RBh
+	 +87ZBZrM0h18zODGxZt9tbnXIUJZftq7H/pZ+HoTMch//N05tRjT15kMLU275nBbx
+	 GVNEwDV+VPOzax6mMpMo6e85bZZzI24bCT5EKekTF8o7O0LS/ioPLXnJvTgiukTO/
+	 FOc7bCukc8s3h9Nz9w==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.19]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N9431-1tAcNM0uCl-00xRN5; Mon, 03
+ Mar 2025 11:55:51 +0100
+Message-ID: <0193ac44-e858-4aff-a50f-dd95dbf3de5b@web.de>
+Date: Mon, 3 Mar 2025 11:55:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7e987f17-ffcb-45e0-8588-2d569d90f776@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: mtd: rawnand: tegra: Simplify maximum determination in
+ tegra_nand_setup_timing()
+To: Miquel Raynal <miquel.raynal@bootlin.com>, linux-tegra@vger.kernel.org,
+ linux-mtd@lists.infradead.org
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, Lucas Stach <dev@lynxeye.de>,
+ Richard Weinberger <richard@nod.at>, Stefan Agner <stefan@agner.ch>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Vignesh Raghavendra <vigneshr@ti.com>, LKML <linux-kernel@vger.kernel.org>,
+ kernel-janitors@vger.kernel.org, Qasim Ijaz <qasdev00@gmail.com>,
+ Natalie Vock <natalie.vock@gmx.de>
+References: <d564cafe-d45a-40b5-9a91-a2e2b97c80d6@web.de>
+ <87pliy9yyv.fsf@bootlin.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <87pliy9yyv.fsf@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:Wr8t/rf8kDyQbUAB23eYrBcTdp7zAiyaAsPFXa6sJC3K5UfvK8C
+ a7ievt+qpohXG+NyGGuCKYWMcDs16VuaRGzm3w+k9mjG4hjieQ9hgX/FgaHUpN/UlsDceeQ
+ anlOSPDmsx3S+mDKz1KD/4vXHjYr9r0huaRAEu7Cg4O8MIrZZeQDJ0I2WW6K9unNYYt5Zfi
+ 9QymYDu3N70lGrEb3oLIQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:lFy4vFRmfeU=;B/ycTgtncXwBkYgLSABhyNZnMAK
+ j/RlJzECcJzdvzsQz8yjBmntc7XWrQZ9sXZo2XZBu2ZBWxGPne/l8ebM/Qnv4zADLmlWdvVvA
+ RAYEmbDc4kXr0GAh16w6mSzg8SWrImH2vkAKQt7a0s0DxihRWxsJAnpzL18EEwj9BkL/EHERE
+ PpfXT3yzb46J8oeBXzqjUIu4GXaYBW1b5PoLcMKwRNTpk6bIrQWtl9iE2plsoJTRFpTLAPaI/
+ xXEaP0j/Z/1lFJbs7Ntffwg28B1k1A/5cIrxy1soEBdjYdMbywH/l+KdwVzVDAUK5c8qgTaSA
+ FAXo8SWk22al7EWl9Wp7QF2nK8ncTZ5OQdhgSGfJM3W5d7EtrcUYF+nb+eWv8Llul0a0Ky8co
+ j8ZWE7j11dddu/ip8e2Y8zRFjGPYz93a8RW9ZttfwO8Mpu89GI82d4xG4YXloX7kRdpV5N1BA
+ uv6+WhAlR/ros3YEPIlX14cdnuOlZH5Tu1QT1WFQ7a4AtqekLy1b5ism8fvIkh7UgZBavsSdY
+ FUqzjfqvZO1qLDw9VDToCW/U8njv31rfj4DFWEXKqRcztuDmXtjg6narK/9fkOhyUVAeoJ8hP
+ mCfG8P28nvnfFDq/JnPdhSC/G2HbedcZYU43onqwGYm4QQ1IiooQdI/jCBcRtCfCsCmInqkij
+ EDNp9D0qXcm9B1PqrckdjWN3A2UtnvMhVTnEcvSlV6jLV4KqMBCXyzCKZ8o6rBg6eGfNlQPtx
+ p1v//peu7N0y9p4RlWtbAjV+c5DY30oe/JhBTvJjGFlfwkr+n3gVzXBbkZQd/fnQos6C1bpoR
+ 4m9Zd83lnU7Sze9DapIQ8Gw64jNoVctGprwqbepXi0vnsM82KqoYt8Br+i4xekpO0pEuVk/1R
+ rTQyd3Ljhc+z19urihw1U6yatR40NuZwrf1VE5DdLq6Vd+5INPu4XFspbKIIlFFNA+bF8/VC4
+ zO1JS/Orir/w6zJLfqPYq43zjmR0eTV5Em3fO5q1uXC1TTGTtL240njSQJgkOxN6T+CUXS37n
+ ZyVGMf+OKFvEUDsO1lNFGQMqwt2R+Bj64C+3dz6Yk0OyPpvDm2d0lSEBr3hYSI49RXGrMBMhe
+ 52Yvqpssjyl6AniEfF582XkoCXAkE7VzBCdLuHteA5S0l/ApQhAyPxZ0znDPseMUJ2KwBu8wf
+ 8h1TR+iDoPIDBwhgFHx+o8O9yTlkIsoslczSzFe8TKUmlX9R0KMwjPXTSe8YFsgZPJf+MT0QQ
+ PjPKebE2xJHg/yModKyDn3KYOGHkE+w0zjvOY84Nga/RrZAfeTzByeiw5G+BRLGkgPvCOiBVG
+ 5Pt3mWoRo08d3YV2iGU/7FCAtxcgK6x6UGSaK+nTZEHRXzkRv+TFSvked46fQf1RqucU/9ayf
+ /xSqBkI6wRUL/k4mMYwf17O5cFJLHm/hbPTuxqXI93DFIyqaOTYQcKAmyuOdWngAl2xQ09brm
+ q8l+j+zCcM9F8CAMNMcpGw/85Ngk=
 
-On Mon, Mar 03, 2025 at 10:57:21AM +0100, David Hildenbrand wrote:
-> On 03.03.25 10:49, Mikołaj Lenczewski wrote:
-> > Hi David,
-> > 
-> > Thanks for taking the time to review.
-> > 
-> > On Mon, Mar 03, 2025 at 10:17:12AM +0100, David Hildenbrand wrote:
-> > > On 28.02.25 19:24, Mikołaj Lenczewski wrote:
-> > > > If we support bbml2 without conflict aborts, we can avoid the final
-> > > > flush and have hardware manage the tlb entries for us. Avoiding flushes
-> > > > is a win.
-> > > > 
-> > > > Signed-off-by: Mikołaj Lenczewski <miko.lenczewski@arm.com>
-> > > > Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
-> > > > ---
-> > > >    arch/arm64/mm/contpte.c | 3 ---
-> > > >    1 file changed, 3 deletions(-)
-> > > > 
-> > > > diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
-> > > > index 145530f706a9..77ed03b30b72 100644
-> > > > --- a/arch/arm64/mm/contpte.c
-> > > > +++ b/arch/arm64/mm/contpte.c
-> > > > @@ -72,9 +72,6 @@ static void contpte_convert(struct mm_struct *mm, unsigned long addr,
-> > > >    		__flush_tlb_range(&vma, start_addr, addr, PAGE_SIZE, true, 3);
-> > > >    	__set_ptes(mm, start_addr, start_ptep, pte, CONT_PTES);
-> > > > -
-> > > > -	if (system_supports_bbml2_noabort())
-> > > > -		__flush_tlb_range(&vma, start_addr, addr, PAGE_SIZE, true, 3);
-> > > >    }
-> > > >    void __contpte_try_fold(struct mm_struct *mm, unsigned long addr,
-> > > 
-> > > What's the point of not squashing this into #2? :)
-> > > 
-> > > If this split was requested during earlier review, at least seeing patch #2
-> > > on its own confused me.
-> > 
-> > This split is a holdover from an earlier patchset, where it was still
-> > unknown whether the removal of the second flush was permitted with
-> > BBML2. Partly this was due to us being worried about conflict aborts
-> > after the removal, and partly this was because the "delay" is a separate
-> > optimisation that we could apply even if it turned out the final patch
-> > was not architecturally sound.
-> > 
-> > Now that we do not handle conflict aborts (preferring only systems that
-> > handle BBML2 without ever raising aborts), the first issue is not a
-> > problem. The reasoning behind the second patch is also a little bit
-> > outdated, but I can see the logical split between a tlbi reorder, and
-> > the removal of the tlbi. If this is truly redundant though, I would be
-> > happy to squash the two into a single patch.
-> 
-> Thanks for the information.
-> 
-> Does patch #2 (reordering the tlbi) have any benefit on its own? I read
-> "other threads will not see an invalid pagetable entry", but I am not sure
-> that is correct. A concurrent HW page table walker would still find the
-> invalid PTE? It's just a matter of TLB state.
+> I am sorry, I do not see what gets simplified. max(max(a,b),max(c,d))
+> looks simpler than max3(a,b,max(c,d)).
 
-I think I understand what you mean. I agree that it is possible for a
-concurrent walk to see an invalid TLBI state, if it is on the same TLB
-that the repaint is happening on. For other TLBs, the flush has not yet
-propagated our invalidated PTEs (from `__ptep_get_and_clear()`) though?
-That invalidation will only be seen by other TLBs after the
-`__flush_tlb_range()`, so we should save a few faults because only
-"local" threads will ever see the invalid entry, as opposed to all
-threads that try to read our modified range? Or it is the case that I
-have misunderstood something basic here, or that I have misinterpreted
-what you have written?
+You would eventually like to express that a maximum should be determined
+from three (or even four?) values.
+https://elixir.bootlin.com/linux/v6.14-rc4/source/include/linux/minmax.h#L147
 
-> If there is no benefit in having patch #2 independently, I'd just squash
-> them. Reordering to then remove is more complicated than just removing it
-> IMHO.
-> 
-> -- 
-> Cheers,
-> 
-> David / dhildenb
-> 
 
--- 
-Kind regards,
-Mikołaj Lenczewski
+>                                        Does it bring something in terms
+> of optimization?
+Corresponding effects depend on various factors, don't they?
+
+Regards,
+Markus
 
