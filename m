@@ -1,167 +1,105 @@
-Return-Path: <linux-kernel+bounces-542488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79B44A4CA24
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:47:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 492AEA4CAA6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:03:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D1261895EA5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:42:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24D253A7FA6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:42:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7026F22F154;
-	Mon,  3 Mar 2025 17:36:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B38BB233127;
+	Mon,  3 Mar 2025 17:37:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JEN+x6vV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="j9pVBoNK"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05941F03FD;
-	Mon,  3 Mar 2025 17:36:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43F5D230BDC;
+	Mon,  3 Mar 2025 17:37:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741023405; cv=none; b=byE1XggSixOqp0zV3fPoSacl4nRelCPL/iyNRzVt+jP7V0xYewqhSQu+gctL8P9KUQO7CCX4C1bZc47Zlzc3Kx817vILAIv3tYZkem1kIKnM7DRXEHBaSBcFPGqaUoa8dzjQmehdNn5t3nwXdfnPAu9l5Y/0Ac/HoFUgqlcaL90=
+	t=1741023454; cv=none; b=AoztpDGGqqTKtgu4SEB6U9PaUGL1AOchIgKWtoVU/1clGrhgdPrXx2xejTsf+U0JFRzHm+th66GQogXzjb3O0rJaGNIs49e1ernGAo1nbzgJO9PavLKuBcCZ/EsMFzKYhZ9UtZB5nj3OXSmymqjwRg9T8a3Q9PUzXAwfBT6T31w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741023405; c=relaxed/simple;
-	bh=uweCvlyD1Kz0PfsbJ4rmLentL9Z/1N5rqM4K9ou/BOU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QXqIjvg/lhnYPfjcbNqDr3qcJg/sDYYS3Z0qsUOuxaqRZ5CySrswgS7j5HiE+cDZ/TZ1OVVbZrSPDfPgIbI4YTyR5pN++6lEThnlL7VxWs9p7q5Pwy3j9QLw4v7ArUc2bcqAfnNJE6CLIDkZch+hn+cDwLfXxlmeW1GKlZJqf64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JEN+x6vV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93AECC4CED6;
-	Mon,  3 Mar 2025 17:36:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741023405;
-	bh=uweCvlyD1Kz0PfsbJ4rmLentL9Z/1N5rqM4K9ou/BOU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JEN+x6vV2g4r/5LJGJAPjrbAb4/afVgw/tkKuWN0q2bTHAV+y7zexvepRP3gbShaW
-	 GjiSqqfbsm0D2OvFNTMrOuHuPYp6qzfARg0+7hWjwFL9z68urn0Wt0kKCf6w4SeFBp
-	 ge6uLzVHkmkIEZCPX9yA8K8NdXK+No17U8Q0yHbzUoP7IaBGXTEd1eP7hWpriVT71C
-	 cvbbbbdXd7pEJ//CIaUMbuPQ7eBEPxuAs7LACYdrcZl3hIdaoLGRJLzDydC2PeDqTF
-	 fQ81GMpHhOT8OHEqtGoHxMkN4q09E6g0WSfGh7ELRT46mkKWiPJ0fAWfiRTulO3KY5
-	 F9mTdQ0r/SoaA==
-Date: Mon, 3 Mar 2025 09:36:42 -0800
-From: Kees Cook <kees@kernel.org>
-To: Michael Kelley <mhklinux@outlook.com>
-Cc: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
-	Marco Elver <elver@google.com>,
-	Alexander Potapenko <glider@google.com>,
-	Tony Ambardar <tony.ambardar@gmail.com>,
-	Jan Hendrik Farr <kernel@jfarr.cc>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>
-Subject: Re: [PATCH v2] compiler.h: Introduce __must_be_noncstr()
-Message-ID: <202503030936.E7B8B4F3E@keescook>
-References: <20250228174130.it.875-kees@kernel.org>
- <SN6PR02MB4157CA61D04CD12D7CED5E1DD4CF2@SN6PR02MB4157.namprd02.prod.outlook.com>
+	s=arc-20240116; t=1741023454; c=relaxed/simple;
+	bh=bWBOhaMng64IoA/gra5KEY+BlnSAUyrCpjhL1Fodlu8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=atVivjIvvKcGqWTQDhb5MiIRNuGVJMqekncE70Pmm8Ycxr9etHnzRhq+M8X0t0x1bk12isj2KwPXmceBSO3ZdoBJjIvZkK0LIVdWna58JtncI92Ih4F+q0OTVbaCWu2CDQSSh+37F9V0u12qSAOr3UKCIm5V3FijupTkh/t3T0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=none smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=j9pVBoNK; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=yoseli.org
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 4F3F444404;
+	Mon,  3 Mar 2025 17:37:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yoseli.org; s=gm1;
+	t=1741023450;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u3H6pW4S8PPhnGfrKhhjaR9va9GYV3q8+SK+MUf2Y/Y=;
+	b=j9pVBoNKxtdzfOkTKq4db89Q/jQNSzArtAqfsxCepkh8Bc0mcT2dkl4TVqiWt8YhOsz4X9
+	9Lfq6HW46gzGqssTxxvsSfMLKsS+5LpuOvW+HQq7j2Cq119OJUk9ihxUcuPUxVkE4OC66l
+	L5WaPrfywJo1WkLGRcHurofCJhl/j7ZK+Ce7v1XqNUTOh5mhld7FmsQKULJK6tzIjfjj0p
+	VyQsRYw1yXgE3njNP5DKb65gqxUaXtENwQIqLWfdl4TDim4BTaeqJ7nns5OfVi8zUiRolY
+	segUlRxFxOKGROzAEhxzCXO8uWNmb0cOfFlS38if1lXviA4oeTleSuTGFwecJw==
+Message-ID: <7cd18e37-2d68-4825-bcc4-fc2ac6b9a461@yoseli.org>
+Date: Mon, 3 Mar 2025 18:37:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SN6PR02MB4157CA61D04CD12D7CED5E1DD4CF2@SN6PR02MB4157.namprd02.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] net: phy: dp83826: Add support for straps reading
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Catalin Popescu <catalin.popescu@leica-geosystems.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250303-dp83826-fixes-v1-0-6901a04f262d@yoseli.org>
+ <20250303-dp83826-fixes-v1-2-6901a04f262d@yoseli.org>
+ <fcc25495-5453-4b15-aece-b01bca3a00ba@lunn.ch>
+Content-Language: en-US
+From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+In-Reply-To: <fcc25495-5453-4b15-aece-b01bca3a00ba@lunn.ch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelleejgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeflvggrnhdqofhitghhvghlucfjrghuthgsohhishcuoehjvggrnhhmihgthhgvlhdrhhgruhhtsghoihhsseihohhsvghlihdrohhrgheqnecuggftrfgrthhtvghrnhepfeeiteeghedvgefggfffteehhefhteekfeehhfegueehteeuffeuieekgfffffetnecukfhppeeluddrudeihedrudeihedrudeljeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeluddrudeihedrudeihedrudeljedphhgvlhhopegludelvddrudeikedruddriegnpdhmrghilhhfrhhomhepjhgvrghnmhhitghhvghlrdhhrghuthgsohhisheshihoshgvlhhirdhorhhgpdhnsggprhgtphhtthhopedutddprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhgl
+ hgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtoheptggrthgrlhhinhdrphhophgvshgtuheslhgvihgtrgdqghgvohhshihsthgvmhhsrdgtohhm
+X-GND-Sasl: jeanmichel.hautbois@yoseli.org
 
-On Sat, Mar 01, 2025 at 05:46:24AM +0000, Michael Kelley wrote:
-> From: Kees Cook <kees@kernel.org> Sent: Friday, February 28, 2025 9:42 AM
-> > 
-> > In preparation for adding more type checking to the memtostr/strtomem*()
-> > helpers, introduce the ability to check for the "nonstring" attribute.
-> > This is the reverse of what was added to strscpy*() in commit 559048d156ff
-> > ("string: Check for "nonstring" attribute on strscpy() arguments").
-> > 
-> > Note that __annotated() must be explicitly tested for, as GCC added
-> > __builtin_has_attribute() after it added the "nonstring" attribute. Do
-> > so here to avoid the !__annotated() test triggering build failures
-> > when __builtin_has_attribute() was missing but __nonstring was defined.
-> > (I've opted to squash this fix into this patch so we don't end up with
-> > a possible bisection target that would leave the kernel unbuildable.)
-> > 
-> > Reported-by: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
-> > Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Reported-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-> > Reported-by: Michael Kelley <mhklinux@outlook.com>
-> > Closes: https://lore.kernel.org/all/adbe8dd1-a725-4811-ae7e-76fe770cf096@linux.vnet.ibm.com/ 
-> > Signed-off-by: Kees Cook <kees@kernel.org>
-> > ---
-> >  include/linux/compiler.h       | 18 +++++++++++++++++-
-> >  include/linux/compiler_types.h |  9 ++++++---
-> >  2 files changed, 23 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-> > index 200fd3c5bc70..d5201464c5e6 100644
-> > --- a/include/linux/compiler.h
-> > +++ b/include/linux/compiler.h
-> > @@ -206,9 +206,25 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
-> >  #define __must_be_byte_array(a)
-> > 	__BUILD_BUG_ON_ZERO_MSG(!__is_byte_array(a), \
-> >  							"must be byte array")
-> > 
-> > +/*
-> > + * If the "nonstring" attribute isn't available, we have to return true
-> > + * so the __must_*() checks pass when "nonstring" isn't supported.
-> > + */
-> > +#if __has_attribute(__nonstring__) && defined(__annotated)
-> > +#define __is_cstr(a)		(!__annotated(a, nonstring))
-> > +#define __is_noncstr(a)		(__annotated(a, nonstring))
-> > +#else
-> > +#define __is_cstr(a)		(true)
-> > +#define __is_noncstr(a)		(true)
-> > +#endif
-> > +
-> >  /* Require C Strings (i.e. NUL-terminated) lack the "nonstring" attribute. */
-> >  #define __must_be_cstr(p) \
-> > -	__BUILD_BUG_ON_ZERO_MSG(__annotated(p, nonstring), "must be cstr (NUL-
-> > terminated)")
-> > +	__BUILD_BUG_ON_ZERO_MSG(!__is_cstr(p), \
-> > +				"must be C-string (NUL-terminated)")
-> > +#define __must_be_noncstr(p) \
-> > +	__BUILD_BUG_ON_ZERO_MSG(!__is_noncstr(p), \
-> > +				"must be non-C-string (not NUL-terminated)")
-> > 
-> >  #endif /* __KERNEL__ */
-> > 
-> > diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-> > index 981cc3d7e3aa..f59393464ea7 100644
-> > --- a/include/linux/compiler_types.h
-> > +++ b/include/linux/compiler_types.h
-> > @@ -446,11 +446,14 @@ struct ftrace_likely_data {
-> >  #define __member_size(p)	__builtin_object_size(p, 1)
-> >  #endif
-> > 
-> > -/* Determine if an attribute has been applied to a variable. */
-> > +/*
-> > + * Determine if an attribute has been applied to a variable.
-> > + * Using __annotated needs to check for __annotated being available,
-> > + * or negative tests may fail when annotation cannot be checked. For
-> > + * example, see the definition of __is_cstr().
-> > + */
-> >  #if __has_builtin(__builtin_has_attribute)
-> >  #define __annotated(var, attr)	__builtin_has_attribute(var, attr)
-> > -#else
-> > -#define __annotated(var, attr)	(false)
-> >  #endif
-> > 
-> >  /*
-> > --
-> > 2.34.1
-> > 
+Hi Andrew,
+
+On 03/03/2025 18:20, Andrew Lunn wrote:
+> On Mon, Mar 03, 2025 at 06:05:52PM +0100, Jean-Michel Hautbois wrote:
+>> When the DP83826 is probed, read the straps, and apply the default
+>> settings expected. The MDI-X is not yet supported, but still read the
+>> strap.
 > 
-> Compile tested on x86 with gcc 9.4.0, and it resolves the compile
-> problem I was originally seeing with linux-next-20250226.
+> What about backwards compatibility? I expect this changes the
+> behaviour of the device, potentially introducing regressions?  Please
+> add an explanation of why this is safe.
+
+I am not certain it is safe. As far as I know that if straps are used on 
+the hardware, then it should be used, and if the behavior has to be 
+different, then userspace can change it (or any other way). Am I wrong ?
+
+How could we make is safer, though ? We somehow need to read those ?
+
+Thanks,
+JM
+
 > 
-> Tested-by: Michael Kelley <mhklinux@outlook.com>
+>      Andrew
+> 
+> ---
+> pw-bot: cr
 
-Great! Thanks for testing this. :)
-
--- 
-Kees Cook
 
