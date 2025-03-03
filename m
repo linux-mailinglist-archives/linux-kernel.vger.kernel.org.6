@@ -1,156 +1,185 @@
-Return-Path: <linux-kernel+bounces-542567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6298A4CB28
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:44:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA0DEA4CB2D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:45:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE894175828
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:44:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC7BB1896D8F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:45:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 385FB22DFB6;
-	Mon,  3 Mar 2025 18:44:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA6822D7AF;
+	Mon,  3 Mar 2025 18:45:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MtW73n4V"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kDamohvU"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939D3216E39;
-	Mon,  3 Mar 2025 18:44:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F5DB33F6;
+	Mon,  3 Mar 2025 18:45:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741027463; cv=none; b=bUpnP2OCa/LBHrubq4DAVwbVuwAmyQcT7PxA12tzpF4ouk8eQ2XmTDLbLVBbUtdi0c5urSNFXSOCgj4s6En3wHbRIT8vjZupnXX8gOkygCdqC4OwcKjMO4/bMuKGct7/KBGwMbBYBJjWjytrna8pZYMkTNe4sUESTXYoN3W4s8g=
+	t=1741027542; cv=none; b=OqWGXH5fHWQhNW9ToyMIGZ1x87Hw3Ad/BgUi28i7lYCBh9pCFomiG8NjW+nFfnXq1+pURw3gYyak7H4i8MjJR73yeC1yrix6rEV65FFJBIW6vpZDkqlf1vT/zYRxk+sXnnRUM6vUCXpFu45mSXUy9Y3h8yyGptxtMGbDJ+IhQKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741027463; c=relaxed/simple;
-	bh=5BSrm78ZdiZpd6d7RFmo04AXI1XgqE2bODxVuNYHABw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f8Yra/C1EthI/WNCxq7gpoJZBzaJAhqUdOli9I0evpP3KrN5F3Xz+kcn7d9AKFi0YJC57Kw4YNEH/MeLhiUkZEU6GmtDfeKGQbeW/wN7uJv2lp/z+O1QQL7R3av7KTgnvSycJ3xwhuzuqImshAaKiy+QN85sc9Z+0ZwKvD8zzx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MtW73n4V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D2D3C4CED6;
-	Mon,  3 Mar 2025 18:44:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741027463;
-	bh=5BSrm78ZdiZpd6d7RFmo04AXI1XgqE2bODxVuNYHABw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MtW73n4Vj+GsxA+mk7MCxqoWRKoRIvGlHPK6uh5KhGrUzxVybpwLq3d+c64EsgKhv
-	 ZobD32ctEGxCuutKNlIfWe0FTE+0w542eruf/QTiz6J4t/F/VbP/LgKYS9e32p450W
-	 o+ghU6v32K7qaofVjH9cIsGSoZITeiw9V14jyWs3xq8UzACPSANnpVvO6Uga7uhT9r
-	 3eg7zZ9sTiNEEHtlaneUSTmTBhi+W7iy3eMCuM7cZoueILx7gMg2j3Rp5Sz2xdady1
-	 rIgZJ1XayJ3DaX7ByXGrxQf4RH82LdpK5byozFg6rvycCjKYbP0GTPAPxDyZPnb4UZ
-	 W1dLjIgKS9k4w==
-Date: Mon, 3 Mar 2025 10:44:20 -0800
-From: Kees Cook <kees@kernel.org>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Peter Rosin <peda@axentia.se>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [RESEND PATCH] mux: Convert mux_control_ops to a flex array
- member in mux_chip
-Message-ID: <202503031040.223DEF2781@keescook>
-References: <20250302230220.245739-3-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1741027542; c=relaxed/simple;
+	bh=jPeQiH0toFpreUmRCsrOJDWxcH9+UAOD8mKxhx9L7NI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=fWsiY4vu9rMR4zyfbKMVEI4/KqslNh2x2cSJWGuiMqAvgE7BXmRj/XPSLmLmSnHUqKzCRf7yEBdl9M0RwXTPFD7feJkHlA1CTnNL2kBr6+sME0kNmEXSYSDQhm8IumCVgyPBf2FReCKm8TsWpHLVFPEJnv5kmFVbBvOxhWrh+uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kDamohvU; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 523A9uTL031419;
+	Mon, 3 Mar 2025 18:45:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	0M8tyQHt6d6xbwUpal9/euLBYrHVQcsnzzfrOgUrMxQ=; b=kDamohvUN6Neui0c
+	aEM6wgz266PC2pyTL+Em5tvUV4N1E+qRbXf3Oe4QEsCK9L5N7MJK77wvvJPiTd7x
+	eRaMReS28S7Epv1A5lpgBX9wiRBthpcBeMID2ishivikJb5OrZLSOahMLi2Fhn2p
+	0a25iUSzkFgrTGPOw+ALVWOw4Ki6z4EXs5HQXtyDpOgx18XJBU+zRx4pmgAeG3OQ
+	7zr9/Q17P37BK7MW5IJK/i8f7B+3S4UglSJLAL4HRFD4cRSNbs0Rgsr2abS3YCzX
+	UUrw2dDElW5/HwWs1vTmiX5UrHAIPSfXMZVEOIEKxVUPlI6YiJbtkWF4IY7TMKUn
+	Op2PwA==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 453uh75j68-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Mar 2025 18:45:20 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 523IjKAQ032645
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 3 Mar 2025 18:45:20 GMT
+Received: from [10.134.70.212] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 3 Mar 2025
+ 10:45:19 -0800
+Message-ID: <8c727bd6-94f1-4ee3-9bf3-793899038895@quicinc.com>
+Date: Mon, 3 Mar 2025 10:45:19 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250302230220.245739-3-thorsten.blum@linux.dev>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 03/14] drm/msm/dpu: switch RM to use crtc_id rather
+ than enc_id for allocation
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Rob Clark <robdclark@gmail.com>, <quic_abhinavk@quicinc.com>,
+        Sean Paul
+	<sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        "David
+ Airlie" <airlied@gmail.com>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Simona Vetter <simona@ffwll.ch>,
+        Simona Vetter <simona.vetter@ffwll.ch>, <quic_ebharadw@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        Rob Clark
+	<robdclark@chromium.org>,
+        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?=
+	<ville.syrjala@linux.intel.com>
+References: <20250214-concurrent-wb-v6-0-a44c293cf422@quicinc.com>
+ <20250214-concurrent-wb-v6-3-a44c293cf422@quicinc.com>
+ <se4b4kzp3vej4b6albecdc2t65ueiuba4kidutwvrv2rcfyjwr@e62fn225jwcr>
+From: Jessica Zhang <quic_jesszhan@quicinc.com>
+In-Reply-To: <se4b4kzp3vej4b6albecdc2t65ueiuba4kidutwvrv2rcfyjwr@e62fn225jwcr>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: ZtIcWKUeqjG7ejNoY5izMPVQai8eaOuE
+X-Proofpoint-ORIG-GUID: ZtIcWKUeqjG7ejNoY5izMPVQai8eaOuE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-03_09,2025-03-03_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
+ lowpriorityscore=0 phishscore=0 impostorscore=0 clxscore=1015
+ priorityscore=1501 adultscore=0 mlxscore=0 spamscore=0 malwarescore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2503030143
 
-On Mon, Mar 03, 2025 at 12:02:22AM +0100, Thorsten Blum wrote:
-> Convert mux_control_ops to a flexible array member at the end of the
-> mux_chip struct and add the __counted_by() compiler attribute to
-> improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
-> CONFIG_FORTIFY_SOURCE.
+
+
+On 2/27/2025 7:07 AM, Dmitry Baryshkov wrote:
+> On Fri, Feb 14, 2025 at 04:14:26PM -0800, Jessica Zhang wrote:
+>> From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>
+>> Up to now the driver has been using encoder to allocate hardware
+>> resources. Switch it to use CRTC id in preparation for the next step.
+>>
+>> Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+>> ---
+>> Changes in v6:
+>> - Drop duplicate cstate initialization code and unnecessary memset
+>> Changes in v5:
+>> - Reordered to prevent breaking CI and upon partial application
+>>
+>> Changes in v4 (due to rebase):
+>> - moved *_get_assigned_resources() changes for DSPP and LM from
+>>    encoder *_virt_atomic_mode_set() to *_assign_crtc_resources()
+>> ---
+>>   drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c    |  18 +--
+>>   drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c |  10 +-
+>>   drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h     |  12 +-
+>>   drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c      | 189 ++++++++++++++--------------
+>>   drivers/gpu/drm/msm/disp/dpu1/dpu_rm.h      |   7 +-
+>>   5 files changed, 110 insertions(+), 126 deletions(-)
 > 
-> Use struct_size() to calculate the number of bytes to allocate for a new
-> mux chip and to remove the following Coccinelle/coccicheck warning:
+> This commit breaks several tests in CI:
+> - sc7180-trogdor-kingoftown:
+>    - kms_cursor_crc@cursor-dpms
+>    - kms_pipe_crc_basic@disable-crc-after-crtc
+> - sc7180-trogdor-lazor-limozeen
+>    - kms_cursor_crc@cursor-dpms
+>    - kms_pipe_crc_basic@disable-crc-after-crtc
+
+Hey Dmitry,
+
+Thanks for catching this. Looks like this was exposed due to a recent 
+IGT uprev that included  dc2d7fb4f978 ("lib/igt_kms: move setting 
+DRM_CLIENT_CAP_WRITEBACK_CONNECTORS to kms_writeback").
+
+The issue itself is that when DPMS is toggled, it is possible for RM to 
+reserve new HW resources but skip the atomic_enable() due to the checks 
+here [1]. This means that the change in HW block reservation won't be 
+propagated to encoder if DPMS is set to off.
+
+I've posted a fix for this here [2].
+
+Thanks,
+
+Jessica Zhang
+
+[1] 
+https://elixir.bootlin.com/linux/v6.14-rc4/source/drivers/gpu/drm/drm_atomic_helper.c#L1502
+[2] https://patchwork.freedesktop.org/series/145735/
+
 > 
->   WARNING: Use struct_size
+> Corresponding pipeline is available at [1]
 > 
-> Use size_add() to safely add any extra bytes.
+> As I had to rebase your changes on top of msm-next, corresponding tree
+> is available at [2]. It might be possible that the regression is
+> introduced by my rebase.
 > 
-> Compile-tested only.
-
-I believe this will fail at runtime. Note that sizeof_priv follows the
-allocation, so at the very least, you'd need to update:
-
-static inline void *mux_chip_priv(struct mux_chip *mux_chip)
-{
-        return &mux_chip->mux[mux_chip->controllers];
-}
-
-to not use the mux array itself as a location reference because it will
-be seen as out of bounds.
-
-To deal with this, the location will need to be calculated using
-mux_chip as the base, not mux_chip->mux as the base. For example, see
-commit 838ae9f45c4e ("nouveau/gsp: Avoid addressing beyond end of rpc->entries")
-
--Kees
-
+> [1] https://gitlab.freedesktop.org/drm/msm/-/pipelines/1374165
 > 
-> Link: https://github.com/KSPP/linux/issues/83
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
->  drivers/mux/core.c         | 7 +++----
->  include/linux/mux/driver.h | 4 ++--
->  2 files changed, 5 insertions(+), 6 deletions(-)
+> [2] https://gitlab.freedesktop.org/lumag/msm/-/commits/msm-next-lumag-cwb
 > 
-> diff --git a/drivers/mux/core.c b/drivers/mux/core.c
-> index 02be4ba37257..a3840fe0995f 100644
-> --- a/drivers/mux/core.c
-> +++ b/drivers/mux/core.c
-> @@ -98,13 +98,12 @@ struct mux_chip *mux_chip_alloc(struct device *dev,
->  	if (WARN_ON(!dev || !controllers))
->  		return ERR_PTR(-EINVAL);
->  
-> -	mux_chip = kzalloc(sizeof(*mux_chip) +
-> -			   controllers * sizeof(*mux_chip->mux) +
-> -			   sizeof_priv, GFP_KERNEL);
-> +	mux_chip = kzalloc(size_add(struct_size(mux_chip, mux, controllers),
-> +				    sizeof_priv),
-> +			   GFP_KERNEL);
->  	if (!mux_chip)
->  		return ERR_PTR(-ENOMEM);
->  
-> -	mux_chip->mux = (struct mux_control *)(mux_chip + 1);
->  	mux_chip->dev.class = &mux_class;
->  	mux_chip->dev.type = &mux_type;
->  	mux_chip->dev.parent = dev;
-> diff --git a/include/linux/mux/driver.h b/include/linux/mux/driver.h
-> index 18824064f8c0..e58e59354e23 100644
-> --- a/include/linux/mux/driver.h
-> +++ b/include/linux/mux/driver.h
-> @@ -56,18 +56,18 @@ struct mux_control {
->  /**
->   * struct mux_chip -	Represents a chip holding mux controllers.
->   * @controllers:	Number of mux controllers handled by the chip.
-> - * @mux:		Array of mux controllers that are handled.
->   * @dev:		Device structure.
->   * @id:			Used to identify the device internally.
->   * @ops:		Mux controller operations.
-> + * @mux:		Array of mux controllers that are handled.
->   */
->  struct mux_chip {
->  	unsigned int controllers;
-> -	struct mux_control *mux;
->  	struct device dev;
->  	int id;
->  
->  	const struct mux_control_ops *ops;
-> +	struct mux_control mux[] __counted_by(controllers);
->  };
->  
->  #define to_mux_chip(x) container_of((x), struct mux_chip, dev)
 > -- 
-> 2.48.1
-> 
-> 
+> With best wishes
+> Dmitry
 
--- 
-Kees Cook
 
