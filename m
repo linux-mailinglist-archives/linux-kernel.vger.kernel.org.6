@@ -1,100 +1,86 @@
-Return-Path: <linux-kernel+bounces-541102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCFE4A4B87F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:47:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5FEFA4B881
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:48:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF66A3AFEE3
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E465C7A4AAE
 	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 07:47:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 084A71EB5FE;
-	Mon,  3 Mar 2025 07:47:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD18A1EBFF0;
+	Mon,  3 Mar 2025 07:48:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b="CYcVlL/P"
-Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q3y/umGI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 228441E9B1B
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 07:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.227
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 180281EB1B0;
+	Mon,  3 Mar 2025 07:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740988038; cv=none; b=iV7h2Vu+BuZRM4jft5wB2J6Ta7/0Kd9WwhlHKJPPxR3k/pMM4pZXZzeqGUkGXI8FkbLUxOr9mSITAhPr/1NcQXz4i8iHthM2p8EFyq7k3hmXkwlR0IHFFwfTrlR1KWWbJSg8HKArFYGsLTDpbBE6FYuNndmqJKHPr2J+gNOvGeA=
+	t=1740988086; cv=none; b=C/p02pgYnIRnBxjLZaEKpONrbkbueBjRpY+t6vtFxpBdeQvg8YH3uM/Lsdl7LpHwIC6avGZHJTYPCFzFIcuorBVzYi/0QS1swOn1k1AyBtte2cNgHlz6Pb7IEHDgajB6552FgyedeIvTwbOCKC8SgkC3kwzccKZZhVpPeV+VhWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740988038; c=relaxed/simple;
-	bh=dZjutVIqRkydhliHBlHKI06qmvIDPbtRY2hMGF3LUjc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XfUf2VQO2CXzcoZ2Rz/09WfIC+1Qq7POx1BGOe0vPZKnbYBhG9wHcpunH3r9pbLmAiBFyGyhgqpWtXsue0P8xDlhJWHOO9JcJM2YGTo7YEVi+gSej6FvwJ5DC1CZr9metFH7FzhP0zF1eqKf8jafWb2gD2Ho1wrsPqNRXnMsGdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b=CYcVlL/P; arc=none smtp.client-ip=185.136.64.227
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
-Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 20250303074707015f5e560fc291725f
-        for <linux-kernel@vger.kernel.org>;
-        Mon, 03 Mar 2025 08:47:07 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=alexander.sverdlin@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
- bh=zrUY1LdFYD+ZIm9007t+7YM/d7JBcqpKOI6aIegZ2eU=;
- b=CYcVlL/PjL68bJNlRASUCQFR3d/gIjvM8s4AWiorZd6ei35cbjWVNs6MczurZckPUN1Rcs
- iHZ5t/HOJYIxhnroa7iKaNK1OChsV3p0HcM/IK+AJlqz/Bh0kPTHIBJ69rCl3Fe5g7U4F2JF
- pIXIbZVy081/oEQpulGIusFY+b7+6j+EuKJfie3f2YKeQCiyaScowPbnyR6APxUWfNP7ES0z
- MQuc2WdhLii8ZsqxFztRSOL+PjlwH2s2r6+Pcf4FCquunpcwJydjFZ+MhpDWQD2yNesOcYzP
- ZTikariIq1dGzkrS1XGfgIM1tAB3A+rsx4vlwGVyua8NZ0jD3tVlUg0w==;
-From: "A. Sverdlin" <alexander.sverdlin@siemens.com>
-To: Roger Quadros <rogerq@kernel.org>,
-	netdev@vger.kernel.org
-Cc: Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Siddharth Vadapalli <s-vadapalli@ti.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	linux-omap@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andrew Lunn <andrew@lunn.ch>
-Subject: [PATCH net-next v2] net: ethernet: ti: cpsw_new: populate netdev of_node
-Date: Mon,  3 Mar 2025 08:46:57 +0100
-Message-ID: <20250303074703.1758297-1-alexander.sverdlin@siemens.com>
+	s=arc-20240116; t=1740988086; c=relaxed/simple;
+	bh=4gaI9687yuFdGWUMAt8g+lkT6YXzTDhCa31bc/t4MhQ=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=u0w2M51fwaexbVx7X29HCteZU3C3Hs/G/3JyQJgEIKOT2TLBN0NwJfDc/W+xk6f5k4Vt+8BxR4/CwKDPMRb8NPcZLnNjm+p5rl+w0S2lR16mvxhK91QAUe/tSLN9AMxIUPuw7eb0wvnOW9rfpAXj1z5DhWNLwH7nLGqGtudAKms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q3y/umGI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D400C4CED6;
+	Mon,  3 Mar 2025 07:48:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740988085;
+	bh=4gaI9687yuFdGWUMAt8g+lkT6YXzTDhCa31bc/t4MhQ=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=Q3y/umGI9QLdtcmAnvS8TC8XoNl9SbYnRJzDb0HMOz5VNQ0r96k5MMviUBA8NGJo6
+	 yaZNAgx7zT2zJwWUXB00VevFHUrIl37pqL2NLvAUAOdrA+99H8bGu9fn1basm04Jc2
+	 QQlDfWZyggLatMQTp0v+RZlqW285Ulckephxd5+CH437LKosj9xeZg8b4lHHK10kB8
+	 JmxslGQd4zK7UNc/P5u3UQEmNUGUVEfUSaJTtqsdT6mo/2Uu0s4pu8drMv7ugtoICh
+	 N73NibUGzyFVGPa4mkBO2M3zn2wggZXDUuxOBCavMyKbkeM0LSvw/gNuJCUFJTIj+o
+	 tXFjtqazLB3aA==
+Date: Mon, 3 Mar 2025 08:48:03 +0100 (CET)
+From: Jiri Kosina <jikos@kernel.org>
+To: Antheas Kapenekakis <lkml@antheas.dev>
+cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, 
+    dri-devel@lists.freedesktop.org, 
+    Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+    Maxime Ripard <mripard@kernel.org>, 
+    Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+    Simona Vetter <simona@ffwll.ch>, Benjamin Tissoires <bentiss@kernel.org>
+Subject: Re: [PATCH 4/5] HID: Add quirk to ignore the touchscreen battery on
+ OneXPlayer X1
+In-Reply-To: <20250222164321.181340-5-lkml@antheas.dev>
+Message-ID: <124553q7-8370-s74s-so88-079q2469orn9@xreary.bet>
+References: <20250222164321.181340-1-lkml@antheas.dev> <20250222164321.181340-5-lkml@antheas.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-456497:519-21489:flowmailer
+Content-Type: text/plain; charset=US-ASCII
 
-From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+On Sat, 22 Feb 2025, Antheas Kapenekakis wrote:
 
-So that of_find_net_device_by_node() can find CPSW ports and other DSA
-switches can be stacked downstream. Tested in conjunction with KSZ8873.
+> The X1 devices come with a pen-capable touchscreen, in which the HID
+> descriptor reports there is always a battery at 100% charge. Quirk it
+> to not report the battery status.
+> 
+> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
 
-Reviewed-by: Siddharth Vadapalli <s-vadapalli@ti.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
----
-Changelog:
-v2: cpsw-nuss (am6x or K3 naming) -> CPSW (am33x naming) in commit message
+Let me provide
 
- drivers/net/ethernet/ti/cpsw_new.c | 1 +
- 1 file changed, 1 insertion(+)
+	Acked-by: Jiri Kosina <jkosina@suse.com>
 
-diff --git a/drivers/net/ethernet/ti/cpsw_new.c b/drivers/net/ethernet/ti/cpsw_new.c
-index cec0a90659d94..66713bc931741 100644
---- a/drivers/net/ethernet/ti/cpsw_new.c
-+++ b/drivers/net/ethernet/ti/cpsw_new.c
-@@ -1418,6 +1418,7 @@ static int cpsw_create_ports(struct cpsw_common *cpsw)
- 		ndev->netdev_ops = &cpsw_netdev_ops;
- 		ndev->ethtool_ops = &cpsw_ethtool_ops;
- 		SET_NETDEV_DEV(ndev, dev);
-+		ndev->dev.of_node = slave_data->slave_node;
- 
- 		if (!napi_ndev) {
- 			/* CPSW Host port CPDMA interface is shared between
+so that this patch can be merged by the drm folks together with the rest 
+of the enablement series.
+
+Thanks,
+
 -- 
-2.48.1
+Jiri Kosina
+SUSE Labs
 
 
