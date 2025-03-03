@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-541778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5876A4C171
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:14:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49B04A4C175
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:14:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15CE6188DCDD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:14:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 498C0188E16A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:15:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8949A211A28;
-	Mon,  3 Mar 2025 13:14:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2D56212D66;
+	Mon,  3 Mar 2025 13:14:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l7rUk9Vq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TGmDv4Qy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E66FF211A05;
-	Mon,  3 Mar 2025 13:14:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 395BB212B0A;
+	Mon,  3 Mar 2025 13:14:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741007665; cv=none; b=MxFi5tbNc6+Nqf0/3gzzGaKTQyFChLHenRZqZSNQIgpkYuYRySKv9eDzBurCJFNoehJTqzN79fNDnJDvSst0Asax0UnVumcAmsmV32/E7GywXuW49K2Iqe6bmIE8O5kun7VDDeMty7UGbG5WoN0asn5f88mrHzEjipbQzZYSQJ4=
+	t=1741007666; cv=none; b=UwHZNnuuZe6vt7V45C8137vf4uxCWM/Tcu4n3W5Vu8C3aKZ2yfjsUbGVFccoCWJYIf2HzNlkgNCrFMV6iMM6qsjA8XfvTBjPivr3IhWTgPzkSBnXkoNMLaklXYpKul13ro9xFEnLV60sUJL7u94fA7yHr7xIVNh268uMT909ku4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741007665; c=relaxed/simple;
-	bh=TGTA1E6JEST7UBAQ+YC8/fElACd4pLq8wkDwFN71lKM=;
+	s=arc-20240116; t=1741007666; c=relaxed/simple;
+	bh=FiWSvzkRIMYnufn/6j3BHnlJOVYfPeryI4S3GXt0vAc=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=oxxvdcoj//mgL5KxgDZwUchRcVcXaMsth/9ExAoSVoOMKm+Gb0KuTQ58Q8xO3PX1mPUP0AzH2jf/skdi0FIYIeOrJlpbe1ALPUVgImSHQcJ9TffyYTdYiE9rhG41lBrXsqaDJjPQRRcJP2EnhkvCIt7ejP0uRQ3nfXnRNNHY/9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l7rUk9Vq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FA0CC4CED6;
-	Mon,  3 Mar 2025 13:14:24 +0000 (UTC)
+	 Message-Id:Subject; b=KgK2w1FEydzIwL04wsvM0N4lmt2qa0Zua2a/wUiRTgcWWoRXFLwOv//BRE3GNLa/wBc54ooG+FDVT7rm0sDoExzJb6Ss7EMhZDQal4eV4Y/NYfvW7E+4H6FHcvjb6KUHWsOccbyk4CvNHudC7dBMDH7pGGscEOGRZbvpDJNSS48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TGmDv4Qy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D98BBC4CEE9;
+	Mon,  3 Mar 2025 13:14:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741007664;
-	bh=TGTA1E6JEST7UBAQ+YC8/fElACd4pLq8wkDwFN71lKM=;
+	s=k20201202; t=1741007666;
+	bh=FiWSvzkRIMYnufn/6j3BHnlJOVYfPeryI4S3GXt0vAc=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=l7rUk9Vqb4qD1HM4/PUliRlzDZ/RglRb255OV3YvFjgAjHtG1ynRKc4hn9dAG0naP
-	 sL/paPEL/PrO3WDsLYOz9YTbIf0WCUf3B5pSf7Wl6jeyy9fcpoutAPhik25/K6Mz9F
-	 hWy1bndkV+srqMjL/OuwAgFQmPnSTzpysi3SbiNwgPqAiCtL92RpIj5tqglqZw17t3
-	 QYzhZxTZZYN1VdqfKTW1Xpyusy2wJMxxWD5JttC0dkfqFefBf1HmmutGxPKBDnv5U4
-	 IeintIVWIVPI3cyoe8hnmnK9rwsMnWu6lmJpaEtvtTiO/NfnYeeI32RbLJh662Qy7V
-	 Is9cRXcfqv/JA==
-Date: Mon, 03 Mar 2025 07:14:22 -0600
+	b=TGmDv4Qy0cdXTql42zoM9MZxyD+mzsNU84Gh2a9Bf7K6p/0qDRxKws68ZDFYHyWON
+	 334fbrKihCSvqDRJGspPw/djb7ne82q3xjesrA1HfHtPYKLh+uHq4AUBa+U1W21glj
+	 e5TM4yUFaV3LSXJYgJLVnlCHzktDkF5R2x2eLbVIgBHr6vJ8UMs4V2N3i/ZxSByZCr
+	 +LHt2BQ6LdRwXX+N7gEsTHfI4yVgFToA8SUQwczwR7qXqArTYC98YLw1nU+ks3qvP/
+	 KzNygSvESuVw7PKUv07+kfDwmhA+N5UwLVHM3xplqdt0imjVpHsVd3t2xOkMMa5xna
+	 hBrhbq/qTUfLA==
+Date: Mon, 03 Mar 2025 07:14:24 -0600
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,48 +50,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Dragan Simic <dsimic@manjaro.org>, Heiko Stuebner <heiko@sntech.de>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
- Ondrej Jirman <megi@xff.cz>, oren@taumoda.com
-To: Olivier Benjamin <olivier.benjamin@bootlin.com>
-In-Reply-To: <20250302-camera-v2-0-312b44b4a89c@bootlin.com>
-References: <20250302-camera-v2-0-312b44b4a89c@bootlin.com>
-Message-Id: <174100756342.1496432.13525001046589650436.robh@kernel.org>
-Subject: Re: [PATCH v2 0/2] Describe the cameras in the PinePhone Pro dts
+Cc: wim@linux-watchdog.org, krzk+dt@kernel.org, linux@roeck-us.net, 
+ nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, 
+ dmaengine@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, claudiu.beznea@tuxon.dev, vkoul@kernel.org, 
+ linux-watchdog@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ conor+dt@kernel.org
+To: Ryan.Wanner@microchip.com
+In-Reply-To: <cover.1740675317.git.Ryan.Wanner@microchip.com>
+References: <cover.1740675317.git.Ryan.Wanner@microchip.com>
+Message-Id: <174100756391.1496568.10334189756404294750.robh@kernel.org>
+Subject: Re: [PATCH v2 0/2] Add System Components for Microchip SAMA7D65
+ SoC
 
 
-On Sun, 02 Mar 2025 16:41:01 +0100, Olivier Benjamin wrote:
-> This series adds support for the Pine64 PinePhone Pro's rear and front
-> cameras in Device Tree.
-> This is based on some of Ondrej Jirman's patches hosted in his tree at
-> https://codeberg.org/megi/linux, but I have also fully reviewed and
-> re-written the code from the RK3399 datasheet, the PinePhone Pro
-> schematic, and the IMX258-0AQH5 software reference manual.
+On Fri, 28 Feb 2025 08:24:09 -0700, Ryan.Wanner@microchip.com wrote:
+> From: Ryan Wanner <Ryan.Wanner@microchip.com>
 > 
-> I have tested these changes on my PinePhone Pro and am able to take
-> photos from both cameras using libcamera's cam.
+> This patch set adds support for the following systems in the SAMA7D65
+> SoC:
+> - DMAs
+> - Chip ID
+> - Dual watchdog timer.
 > 
-> Signed-off-by: Olivier Benjamin <olivier.benjamin@bootlin.com>
-> ---
-> Changes in v2:
-> - Rebase on mainline
-> - Change patch subject to arm64: dts: rockchip
-> - Rename new regulators to fit preferred form for fixed regulators
-> - Link to v1: https://lore.kernel.org/r/20250228-camera-v1-0-c51869f94e97@bootlin.com
+> Changes v1 -> v2:
+> - Removed pathes that have been accepted and applied from v1 [1].
+> - Corrected missing newline in dt-binding.
+> - Corrected mismatch in watchdog dt node.
 > 
-> ---
-> Olivier Benjamin (2):
->       arm64: dts: rockchip: describe I2c Bus 1 and IMX258 world camera on PinePhone Pro
->       arm64: dts: rockchip: describe the OV8858 user camera on PinePhone Pro
+> 1) https://lore.kernel.org/linux-arm-kernel/09eafe54-c262-4db4-b11d-0644a1f90a14@tuxon.dev/
 > 
->  .../boot/dts/rockchip/rk3399-pinephone-pro.dts     | 138 +++++++++++++++++++++
->  1 file changed, 138 insertions(+)
-> ---
+> Ryan Wanner (2):
+>   dt-bindings: watchdog: sama5d4-wdt: Add sama7d65-wdt
+>   ARM: dts: microchip: sama7d65: Add watchdog for sama7d65
+> 
+>  .../devicetree/bindings/watchdog/atmel,sama5d4-wdt.yaml    | 4 ++++
+>  arch/arm/boot/dts/microchip/sama7d65.dtsi                  | 7 +++++++
+>  2 files changed, 11 insertions(+)
+> 
 > --
-> Olivier Benjamin <olivier.benjamin@bootlin.com>
+> 2.43.0
 > 
 > 
 > 
@@ -111,14 +109,13 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/rockchip/' for 20250302-camera-v2-0-312b44b4a89c@bootlin.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/microchip/' for cover.1740675317.git.Ryan.Wanner@microchip.com:
 
-arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dtb: camera@1a: port:endpoint: 'link-frequencies' is a required property
-	from schema $id: http://devicetree.org/schemas/media/i2c/sony,imx258.yaml#
-arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dtb: camera@1a: 'clock-names', 'lens-focus', 'orientation', 'rotation' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/media/i2c/sony,imx258.yaml#
-arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dtb: camera@36: 'orientation', 'rotation' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/media/i2c/ovti,ov8858.yaml#
+arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dtb: watchdog@e001d000: Unevaluated properties are not allowed ('clocks' was unexpected)
+	from schema $id: http://devicetree.org/schemas/watchdog/atmel,sama5d4-wdt.yaml#
+arch/arm/boot/dts/microchip/at91-dvk_som60.dtb: /ahb/apb/adc@f8018000: failed to match any schema with compatible: ['atmel,sama5d3-adc']
+arch/arm/boot/dts/microchip/at91sam9g25-gardena-smart-gateway.dtb: nand-controller: #address-cells: 1 was expected
+	from schema $id: http://devicetree.org/schemas/mtd/nand-controller.yaml#
 
 
 
