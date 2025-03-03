@@ -1,121 +1,82 @@
-Return-Path: <linux-kernel+bounces-544380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89C21A4E0B3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:24:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D3E68A4E16E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:43:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DAF13B670E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:17:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8500C3A439C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:36:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 383DF204F91;
-	Tue,  4 Mar 2025 14:18:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FT3uUVTP"
-Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556AD25FA1A;
+	Tue,  4 Mar 2025 14:34:13 +0000 (UTC)
+Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C1CF15383A
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B3E02627F5
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.117
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741097880; cv=pass; b=LoH1wR7AfhvE/d0DMXlxW70iLtROMPyaF/8yn7BqSGmcsJVim4Rg35KSBny1tLxBro8mfvvI4bT7c8k0VYNPfAgStI5lj+AK5M3Q1d6HVLN0ydUyIv59zZxCslDAqxDVnAaVOQ1LYK7o096WqrkqdUnPYjNtj9p8gIXzXhmLrtY=
+	t=1741098852; cv=pass; b=XyZsGMKZUaXE+4fy4RvFMtAlNV6vfHMuVQ1lLH/CcwCzUHVEZa+PosbEYP2mwMBdioZbR/IDuqvZWzv5e2B33G3d7eKMwv6MXG0F6as9F8OMB8/jdaAshfSEXXh1UsZ7g+rsVk8LrxPcBXl+ib66ixo7t+JpQowIilDKqe0ipwo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741097880; c=relaxed/simple;
-	bh=vaauKdgQ/xBP5Sjd+ekagRTM0cnkT9564ZcWHomNZAU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=blkefLyd6vG4DG6NKdjgr5Q7diNCyEuXbL6T5ymqJsY7BXk3S4q4qemHJRf9BUVKEGlMqYA2Ijfu+qBxYvcWnRorFCi/+IAQwNA+5uGNNgZ2GVPLn3hKH+5kVcLlpo80vtxXnl3JHVx2TK8uip4uePF2/z8kNnWDcvCLMlEbEEw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FT3uUVTP; arc=none smtp.client-ip=209.85.216.42; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; arc=pass smtp.client-ip=160.75.25.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1741098852; c=relaxed/simple;
+	bh=AoU4Z3QCQ2/qu0GeNzrhNZiZ91wW/kwe2RXf1SNdPPw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RDiMeVUdVB43m9sPVuV3yiI10CVq5sxgCJDXvmEpTf+ps7LlOmyjZLskcDvIr+ZSN2qSWt+pfAif38G8bvACBTuW2Y9BFXKu8GV6kBdeLO4TfqCK8K7Jfx6c38ox4jRE4PHXYK4XyEbJ4J+Sdo+fE4AFx5qef+qG9cLGD2UdPjg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=cc.itu.edu.tr; arc=none smtp.client-ip=217.140.110.172; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=pass smtp.client-ip=160.75.25.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id 3FD9840D0B87
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:17:56 +0300 (+03)
+	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id 9332140CF109
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:34:09 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
-Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20230601 header.b=FT3uUVTP
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6d5L1r7PzFwBX
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:16:06 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dSX2xJyzFwx8
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:32:44 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 2BB0A42769; Tue,  4 Mar 2025 17:15:51 +0300 (+03)
-Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FT3uUVTP
-X-Envelope-From: <linux-kernel+bounces-541319-bozkiru=itu.edu.tr@vger.kernel.org>
-Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FT3uUVTP
-Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id 01A8542FC1
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:58:21 +0300 (+03)
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id 5F07B2DCDE
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:58:21 +0300 (+03)
+	id B83C742727; Tue,  4 Mar 2025 17:32:37 +0300 (+03)
+X-Envelope-From: <linux-kernel+bounces-541334-bozkiru=itu.edu.tr@vger.kernel.org>
+Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
+	by le2 (Postfix) with ESMTP id 1BD3942239
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:05:27 +0300 (+03)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by fgw1.itu.edu.tr (Postfix) with SMTP id C5BB43064C15
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:05:26 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C0863B4493
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 09:56:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 283CC167653
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:05:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85EEC1F130B;
-	Mon,  3 Mar 2025 09:56:53 +0000 (UTC)
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2BE1F12F6;
-	Mon,  3 Mar 2025 09:56:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 530091F193C;
+	Mon,  3 Mar 2025 10:05:15 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E121EE7DF
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 10:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740995809; cv=none; b=IQwmMIACLkQkNvB10yHX9OY4U3HNnu9QgLKHYnKHmU2fQD9lwx54rATy0smWP+laXCKnHLZoXr/JvNQHJVX/0SmQeXgx19cDQySUKcSocEne6ybjbFJQXaFUg0sLxbuhUV2bQM44GRpvyxk7aOitnFviDXSp6J/6I7Nn9UE2EDs=
+	t=1740996313; cv=none; b=ovaee2DoIGaflmXgw3cOPqdp/17Wq5lbgluoDO+1uKTSLMmxopOjuxbH5rqikXM7w5h+2BsGgWQXtbHu2NJUYalkOC7QElkJ8NDKjKFoHKafZ7NojzCF/wJ7lv/gwBz2HYgg4l8LIuvP+uWyFm5pyNEOjf9Yxb+948ARWhZ4yP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740995809; c=relaxed/simple;
-	bh=vaauKdgQ/xBP5Sjd+ekagRTM0cnkT9564ZcWHomNZAU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bF0RDFxIpHdpLEkSU7Bzor/55RE1AUKFvJNuf0G1nGgOEbED1vyhKiF7cf1bpkpT/wRT3TYk6c02JJvkChRKTnmIvKw0GFeIJpkCOIeTKhusg3UZyo6QZiR7Lu4hvRWpufzYMliJ6xdjp6xnEfuPdovb++p143OrrTzteSmMbYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FT3uUVTP; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2ff187f027fso732976a91.1;
-        Mon, 03 Mar 2025 01:56:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740995806; x=1741600606; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XWd07D6pFSSlTwQImXpRLf8JSaFpJSpotQCtmwnI1O8=;
-        b=FT3uUVTPPepSgkWj1aVTWXQCyWdmtS0QymYOm02KfxLvowRoLGoKYzHzFT95Atj1Mc
-         nTNXA+Hl9ezJLnubbcbe0wtpDKfhCkBTSmeoduBOhoflds+cfyuOdLhYuOiaJQKdSTyH
-         Dv25I0pIhmwJrhOg4OKL1HTGCMWH8abLLp+E15Q6zeMCJqyl9qQ5ZMfBsqho02xPlV0B
-         RD8VLHS8if+3JmsXqx+JwpySfVUIkqeCqvON4y0+XMmJ3dYU5c9g8tpHqvinI3mcjwNk
-         OfQXAiGBWhgdkQ/DtquQQNRn1PAvIEIAfQmKJpEmOEXZXFE16P6NN52T8/88TYZP1avV
-         Q/Dw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740995806; x=1741600606;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XWd07D6pFSSlTwQImXpRLf8JSaFpJSpotQCtmwnI1O8=;
-        b=lmhG8wH6MNT79c9rAw0BfWy94PJMQ9Oj100htRlxfXcFJhTaJvFO168F1WpaCITltJ
-         XiGPY4llfz0MtF2f4xbRJ1YKfw06mLYdzu+RhetmugycwqxE1qc5g9zsI6g/irGu7yxV
-         RI8XmP1f/3sMrxyl5k1U3Mc29CorLiEO2h77JW5DpVZaFe+QDpyxZtogxREXYTQmGmTW
-         sjO+WE67PO8YRfXmnaHewPC0at2TvgOa6YvGVKBBz2DLpg4Nv+X8Br0xYQ3vujpzbReD
-         bcAUMdbtCSs2R5I8twYydNyNzsMd4OSP/89vmjAIMxnEkpQsMQH9wu8s+v7lGXf9rDVf
-         LRYA==
-X-Forwarded-Encrypted: i=1; AJvYcCW+ndhOQJYhw+FvjmGVXOTnrvDf8l8ER2sR86hTSMd0F9ZHNrHsS/vKcdM3mJgTj3Np00e/huIIDcjJyQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOHLXNLaXgqHqgGGR8XCZ/QqsMwq87xCkCLGGDevUkn4Kr0pMR
-	eU13q8t3dj4cz7t97GUGZcoj+1BLivtHk/+I5fp+GhYo+580p7qcAgDzqSd3DSjvSaf6d1OgLuB
-	hL91ct4ktMYn1UypVRiVA7WTXLIvMNGOnfNg=
-X-Gm-Gg: ASbGncvYDkSD7tsxTnp2Z5Y+UoptfZtfbMLgO5dn1idNELPO1IaunDL2sgqBc7QTEaH
-	oTwbIwvdCFAbJlH+8kX6ER3wyH4y36rp7SmF9foUcFMests3nsgAnyYJ4tCxIKIZi346m7uKk+h
-	mNgcQylpuo7lX3T1vwMhQLuEfY1g==
-X-Google-Smtp-Source: AGHT+IEIGVq/NZk6ndWbqLLtN3JumLWvzn/7rxT8lru/+JgeRqnyR+BSdC3a6d2o5WeoVkSyhRK2tsEkoia7e3kQwno=
-X-Received: by 2002:a17:90b:4b0d:b0:2e2:c2b0:d03e with SMTP id
- 98e67ed59e1d1-2feba5edb2emr18685076a91.5.1740995806361; Mon, 03 Mar 2025
- 01:56:46 -0800 (PST)
+	s=arc-20240116; t=1740996313; c=relaxed/simple;
+	bh=AoU4Z3QCQ2/qu0GeNzrhNZiZ91wW/kwe2RXf1SNdPPw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sGL6L1dmJC9DTj4JbrUYdRyzDnLKM+6miKLT3XW47yULJ7Hv6IL5D/j+vpWCbi4eLl5YQog96ICCb1Q1OAO5KsrC1ZSGM03k1+4UbZOUNGFkP4tKCQl7DLfE56CsKmB9CAWALtL9+zZJ1YmBL69wEYN/QJqMBuuJwIbU2s/knLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 87288113E;
+	Mon,  3 Mar 2025 02:05:25 -0800 (PST)
+Received: from [192.168.178.6] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B96123F66E;
+	Mon,  3 Mar 2025 02:05:10 -0800 (PST)
+Message-ID: <14a2aaac-05d5-4b2e-a8c1-617bb4411659@arm.com>
+Date: Mon, 3 Mar 2025 11:05:01 +0100
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -123,290 +84,148 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241202123351.86957-1-guille.rodriguez@gmail.com> <Z70UagY4hxDwUDHv@google.com>
-In-Reply-To: <Z70UagY4hxDwUDHv@google.com>
-From: Guillermo Rodriguez Garcia <guille.rodriguez@gmail.com>
-Date: Mon, 3 Mar 2025 10:56:35 +0100
-X-Gm-Features: AQ5f1JpRULr_d7hOptF-J_vi5pYdZoBChQKqNTeGXMyf-KRJy_AwNg324XxObME
-Message-ID: <CABDcavYXBrZMMj1gn7CzNbA4f-L4c+q555goU+U0KUEs-6rW+w@mail.gmail.com>
-Subject: Re: [PATCH 0/1] Input: evdev - fix wrong timestamp after SYN_DROPPED
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: BUG Report: Fork benchmark drop by 30% on aarch64
+To: Hagar Hemdan <hagarhem@amazon.com>
+Cc: abuehaze@amazon.com, wuchi.zero@gmail.com, linux-kernel@vger.kernel.org
+References: <20250205151026.13061-1-hagarhem@amazon.com>
+ <4a9cc5ab-c538-4427-8a7c-99cb317a283f@arm.com>
+ <20250207110754.GA10452@amazon.com>
+ <1ca758c7-b6ab-4880-9cc7-217093a30bbb@arm.com>
+ <20250210213155.GA649@amazon.com>
+ <4b48fd24-6cd5-474c-bed8-3faac096fd58@arm.com>
+ <20250211214019.GA15530@amazon.com>
+ <75503128-c898-4da7-ab99-55f4ef6e2add@arm.com>
+ <5f92761b-c7d4-4b96-9398-183a5bf7556a@arm.com>
+ <20250221064436.GA485@amazon.com>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Content-Language: en-US
+In-Reply-To: <20250221064436.GA485@amazon.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6d5L1r7PzFwBX
+X-ITU-Libra-ESVA-ID: 4Z6dSX2xJyzFwx8
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741702582.45738@XHmlZMdBmyhtG75EJsRIIA
+X-ITU-Libra-ESVA-Watermark: 1741703567.66059@X/3HFE622XNZXtWJHc0eIA
 X-ITU-MailScanner-SpamCheck: not spam
 
-Hi Dmitry,
+On 21/02/2025 07:44, Hagar Hemdan wrote:
+> On Mon, Feb 17, 2025 at 11:51:45PM +0100, Dietmar Eggemann wrote:
+>> On 13/02/2025 19:55, Dietmar Eggemann wrote:
+>>> On 11/02/2025 22:40, Hagar Hemdan wrote:
+>>>> On Tue, Feb 11, 2025 at 05:27:47PM +0100, Dietmar Eggemann wrote:
+>>>>> On 10/02/2025 22:31, Hagar Hemdan wrote:
+>>>>>> On Mon, Feb 10, 2025 at 11:38:51AM +0100, Dietmar Eggemann wrote:
+>>>>>>> On 07/02/2025 12:07, Hagar Hemdan wrote:
+>>>>>>>> On Fri, Feb 07, 2025 at 10:14:54AM +0100, Dietmar Eggemann wrote:
+>>>>>>>>> Hi Hagar,
+>>>>>>>>>
+>>>>>>>>> On 05/02/2025 16:10, Hagar Hemdan wrote:
 
-El mar, 25 feb 2025 a las 1:53, Dmitry Torokhov
-(<dmitry.torokhov@gmail.com>) escribi=C3=B3:
->
-> Hi Guillermo,
->
-> On Mon, Dec 02, 2024 at 01:33:50PM +0100, Guillermo Rodr=C3=ADguez wrote:
-> > Hi all,
-> >
-> > We are seeing an issue with gpio_keys where the first event after
-> > a SYN_DROPPED has the same timestamp as the SYN_DROPPED event itself.
-> > After some investigation it looks like this is an issue with evdev
-> > and not specific to gpio_keys.
-> >
-> > The issue was originally introduced in commit 3b51c44 ("Input: allow
-> > drivers specify timestamp for input events").
-> >
-> > This commit introduced input_set_timestamp and input_get_timestamp.
-> > The latter (despite the name) actually generates and stores a timestamp
-> > in dev->timestamp if the driver did not set one itself. This timestamp
-> > needs to be reset when events are flushed; otherwise the next event
-> > will use a stale timestamp. A partial fix was implemented in 4370b23
-> > ("Input: reset device timestamp on sync"), but this does not cover the
-> > case of SYN_DROPPED.
-> >
-> > If a SYN_DROPPED is generated (currently only done by evdev), the
-> > following happens:
-> >
-> > - evdev calls input_get_timestamp to generate a timestamp for the
-> >   SYN_DROPPED event.
-> > - input_get_timestamp generates a timestamp and stores it in
-> >   dev->timestamp
-> > - When the next real event is reported (in evdev_events), evdev
-> >   calls input_get_timestamp, which uses the timestamp already
-> >   stored in dev->timestamp, which corresponds to the SYN_DROPPED event
-> >
-> > How to fix:
-> >
-> > - When a SYN_DROPPED is generated, after calling input_get_timestamp,
-> >   the timestamp stored in dev->timestamp should be reset (same as is
-> >   currently done in input_handle_event). The attached patch does that.
->
-> So this happens after you change clock type of a client, right?
+[...]
 
-Yes.
+>> './Run -c 4 spawn' on AWS instance (m7gd.16xlarge) with v6.13, 'mem=16G
+>> maxcpus=4 nr_cpus=4' and Ubuntu '22.04.5 LTS':
+>>
+>> CFG_SCHED_AUTOGROUP | sched_ag_enabled | eff6c8ce8d4d | Fork (lps)
+>>
+>>    	y	             1		   y            21005 (27120 **)
+>> 	y		     0		   y            21059 (27012 **)
+>> 	n		     -		   y            21299
+>> 	y		     1		   n	        27745 *
+>> 	y		     0		   n	        27493 *
+>> 	n		     -		   n	        20928
+>>
+>> (*) So here the higher numbers are only achieved when
+>> 'sched_autogroup_exit_task() -> sched_move_task() ->
+>> sched_change_group() is called for the 'spawn' tasks.
+>>
+>> (**) When I apply the fix from
+>> https://lkml.kernel.org/r/4a9cc5ab-c538-4427-8a7c-99cb317a283f@arm.com.
+> Thanks!
+> Will you submit that fix upstream?
 
->
-> I do dot think having one client affecting timestamp for everyone is a
-> good idea.
+I will, I just had to understand in detail why this regression happens.
 
-Do you mean the timestamp of the SYN_DROPPED event itself?
-I am not sure if this is an issue. The timestamp of the SYN_DROPPED
-event is not particularly meaningful.
-A client that sees a SYN_DROPPED only knows that some events were
-dropped, but the timestamp of the SYN_DROPPED event itself does not
-carry any useful information -- it is not, for example, the timestamp
-of the event that was dropped (in fact you cannot even know how many
-events were dropped).
+Looks like the issue is rather related to 'sgs->group_util' in
+group_is_overloaded() and group_has_capacity(). If we don't
+'deqeue/detach + attach/enqueue' (1) the task in sched_move_task() then
+sgs->group_util is ~900 (you run 4 CPUs flat in a single MC sched domain
+so sgs->group_capacity = 1024 and this leads to group_is_overloaded()
+returning true and group_has_capacity() false much more often as if
+we would do (1).
 
-> Instead I think __evdev_queue_syn_dropped() should either:
->
-> - use "now" time for SYN_DROPPED generated when user requests clock
->   change or reads device's current state, or
->
-> - check if input device has timestamp set and use it or use "now". This
->   option is needed if we are concerned about timestamps potentially
->   going backwards if clock change happens in a middle of delivering
->   input packet.
+I.e. we have much more cases of 'group_is_overloaded' and
+'group_fully_busy' in WF_FORK wakeup sched_balance_find_dst_cpu() which
+then (a) returns much more often a CPU != smp_processor_id() (which
+isn't good for these extremely short running tasks (FORK + EXIT)) and
+also involves calling sched_balance_find_dst_group_cpu() unnecessary
+(since we deal with single CPU sched domains). 
 
-If you want to do it like this I would advise to just use "now".
+select_task_rq_fair(..., wake_flags = WF_FORK)
 
-CLOCK_MONOTONIC (and CLOCK_BOOTTIME) cannot go backwards by definition.
+  cpu = smp_processor_id()
 
-The wall clock (CLOCK_REALTIME) can go backwards but this is a
-"feature" and should not be "fixed". if client code wants to see wall
-clock timestamps then it should be prepared to see time going
-backwards, for example when the time is updated, or in the middle of
-DST changes.
+  new_cpu = sched_balance_find_dst_group(..., cpu, ...)
 
->
-> >
-> > (Perhaps the underlying problem is that it is not expected that a
-> > function called input_get_timestamp will have side effects. The
-> > commit history of input.c shows that this has actually caused a
-> > few issues since 3b51c44.)
->
-> Yes, maybe something like below will work better. It does not address
-> the keeping timestamp for SYN_DROPPED though.
+    do {
 
-Could be.
-But I can't help wondering whether 3b51c44 was a good idea.
-input_set_timestamp was supposed to "allow drivers to provide a more
-accurate timestamp" but I wonder if there was a real need for that --
-it did not seem to have in-tree users except for uinput and more
-recently wacom_wac.
+      update_sg_wakeup_stats()
 
-Anyway the original problem I reported is not related to the timestamp
-of the SYN_DROPPED event itself, but to the fact that this timestamp
-is then reused for the next "real" event after SYN_DROPPED. My patch
-clears the timestamp after the SYN_DROPPED is handled, in the same way
-it was already being done on flush, in input_handle_event (now moved
-to input_dispose_event).
+        sgs->group_type = group_classify()   
+							w/o patch 	w/ patch                   
+          if group_is_overloaded() (*)
+            return group_overloaded /* 6 */		457,141		394
 
-Thanks,
+          if !group_has_capacity() (**)
+            return group_fully_busy /* 1 */ 	  	816,629		714
 
-Guillermo
+          return group_has_spare    /* 0 */		1,158,890	3,157,472
 
->
-> Thanks.
->
-> --
-> Dmitry
->
->
-> diff --git a/drivers/input/input.c b/drivers/input/input.c
-> index 54d35c1a2a24..954c5104a1c1 100644
-> --- a/drivers/input/input.c
-> +++ b/drivers/input/input.c
-> @@ -61,6 +61,66 @@ static const unsigned int input_max_code[EV_CNT] =3D {
->         [EV_FF] =3D FF_MAX,
->  };
->
-> +/**
-> + * input_set_timestamp - set timestamp for input events
-> + * @dev: input device to set timestamp for
-> + * @timestamp: the time at which the event has occurred
-> + *   in CLOCK_MONOTONIC
-> + *
-> + * This function is intended to provide to the input system a more
-> + * accurate time of when an event actually occurred. The driver should
-> + * call this function as soon as a timestamp is acquired ensuring
-> + * clock conversions in input_set_timestamp are done correctly.
-> + *
-> + * The system entering suspend state between timestamp acquisition and
-> + * calling input_set_timestamp can result in inaccurate conversions.
-> + */
-> +void input_set_timestamp(struct input_dev *dev, ktime_t timestamp)
-> +{
-> +       dev->timestamp[INPUT_CLK_MONO] =3D timestamp;
-> +       dev->timestamp[INPUT_CLK_REAL] =3D ktime_mono_to_real(timestamp);
-> +       dev->timestamp[INPUT_CLK_BOOT] =3D ktime_mono_to_any(timestamp,
-> +                                                          TK_OFFS_BOOT);
-> +}
-> +EXPORT_SYMBOL(input_set_timestamp);
-> +
-> +/**
-> + * input_get_timestamp - get timestamp for input events
-> + * @dev: input device to get timestamp from
-> + *
-> + * A valid timestamp is a timestamp of non-zero value.
-> + */
-> +ktime_t *input_get_timestamp(struct input_dev *dev)
-> +{
-> +       bool have_timestamp;
-> +
-> +       /* TODO: remove setting of the timestamp in a few releases. */
-> +       have_timestamp =3D ktime_compare(dev->timestamp[INPUT_CLK_MONO],
-> +                                      ktime_set(0, 0));
-> +       if (WARN_ON_ONCE(!have_timestamp))
-> +               input_set_timestamp(dev, ktime_get());
-> +
-> +       return dev->timestamp;
-> +}
-> +EXPORT_SYMBOL(input_get_timestamp);
-> +
-> +static bool input_is_timestamp_set(struct input_dev *dev)
-> +{
-> +       return ktime_compare(dev->timestamp[INPUT_CLK_MONO], ktime_set(0,=
- 0));
-> +}
-> +
-> +/*
-> + * Reset timestamp for an input device so that next input event will get
-> + * a new one.
-> + *
-> + * Note we only need to reset the monolithic one as we use its presence =
-when
-> + * deciding whether to generate a synthetic timestamp.
-> + */
-> +static void input_reset_timestamp(struct input_dev *dev)
-> +{
-> +       dev->timestamp[INPUT_CLK_MONO] =3D ktime_set(0, 0);
-> +}
-> +
->  static inline int is_event_supported(unsigned int code,
->                                      unsigned long *bm, unsigned int max)
->  {
-> @@ -342,11 +402,9 @@ static void input_event_dispose(struct input_dev *de=
-v, int disposition,
->                 dev->num_vals =3D 0;
->                 /*
->                  * Reset the timestamp on flush so we won't end up
-> -                * with a stale one. Note we only need to reset the
-> -                * monolithic one as we use its presence when deciding
-> -                * whether to generate a synthetic timestamp.
-> +                * with a stale one in the next event packet.
->                  */
-> -               dev->timestamp[INPUT_CLK_MONO] =3D ktime_set(0, 0);
-> +               input_reset_timestamp(dev);
->         } else if (dev->num_vals >=3D dev->max_vals - 2) {
->                 dev->vals[dev->num_vals++] =3D input_value_sync;
->                 input_pass_values(dev, dev->vals, dev->num_vals);
-> @@ -366,6 +424,9 @@ void input_handle_event(struct input_dev *dev,
->                 if (type !=3D EV_SYN)
->                         add_input_randomness(type, code, value);
->
-> +               if (!input_is_timestamp_set(dev))
-> +                       input_set_timestamp(dev, ktime_get());
-> +
->                 input_event_dispose(dev, disposition, type, code, value);
->         }
->  }
-> @@ -2053,46 +2114,6 @@ void input_free_device(struct input_dev *dev)
->  }
->  EXPORT_SYMBOL(input_free_device);
->
-> -/**
-> - * input_set_timestamp - set timestamp for input events
-> - * @dev: input device to set timestamp for
-> - * @timestamp: the time at which the event has occurred
-> - *   in CLOCK_MONOTONIC
-> - *
-> - * This function is intended to provide to the input system a more
-> - * accurate time of when an event actually occurred. The driver should
-> - * call this function as soon as a timestamp is acquired ensuring
-> - * clock conversions in input_set_timestamp are done correctly.
-> - *
-> - * The system entering suspend state between timestamp acquisition and
-> - * calling input_set_timestamp can result in inaccurate conversions.
-> - */
-> -void input_set_timestamp(struct input_dev *dev, ktime_t timestamp)
-> -{
-> -       dev->timestamp[INPUT_CLK_MONO] =3D timestamp;
-> -       dev->timestamp[INPUT_CLK_REAL] =3D ktime_mono_to_real(timestamp);
-> -       dev->timestamp[INPUT_CLK_BOOT] =3D ktime_mono_to_any(timestamp,
-> -                                                          TK_OFFS_BOOT);
-> -}
-> -EXPORT_SYMBOL(input_set_timestamp);
-> -
-> -/**
-> - * input_get_timestamp - get timestamp for input events
-> - * @dev: input device to get timestamp from
-> - *
-> - * A valid timestamp is a timestamp of non-zero value.
-> - */
-> -ktime_t *input_get_timestamp(struct input_dev *dev)
-> -{
-> -       const ktime_t invalid_timestamp =3D ktime_set(0, 0);
-> -
-> -       if (!ktime_compare(dev->timestamp[INPUT_CLK_MONO], invalid_timest=
-amp))
-> -               input_set_timestamp(dev, ktime_get());
-> -
-> -       return dev->timestamp;
-> -}
-> -EXPORT_SYMBOL(input_get_timestamp);
-> -
->  /**
->   * input_set_capability - mark device as capable of a certain event
->   * @dev: device that is capable of emitting or accepting event
+    } while group 
+
+    if local_sgs.group_type > idlest_sgs.group_type	
+      return idlest					351,598		273
+
+    case group_has_spare:
+
+      if local_sgs.idle_cpus >= idlest_sgs.idle_cpus
+        return NULL 					156,760		788,462
 
 
+(*)
 
---=20
-Guillermo Rodriguez Garcia
-guille.rodriguez@gmail.com
+  if sgs->group_capacity * 100) <			
+		sgs->group_util * imbalance_pct		951,705		856
+    return true
+
+  sgs->group_util ~ 900 and sgs->group_capacity = 1024 (1 CPU per sched group)
+
+
+(**)
+
+ if sgs->group_capacity * 100 >
+		sgs->group_util * imbalance_pct
+   return true						1,087,555	3,163,152
+
+ return false						1,332,974	882
+
+
+(*) and (**) are for 'wakeup' and 'load-balance' so they don't
+match the only wakeup numbers above!
+
+In this test run I got 608,092 new wakeups w/o and 789,572 (~+ 30%)
+w/ the patch when running './Run -c 4 -i 1 spawn' on AWS instance
+(m7gd.16xlarge) with v6.13, 'mem=16G maxcpus=4 nr_cpus=4' and
+Ubuntu '22.04.5 LTS'
+
+> Do you think that this fix is the same as reverting commit eff6c8ce8d4d and
+> its follow up commit fa614b4feb5a? I mean what does commit eff6c8ce8d4d 
+> actually improve?
+
+There are occurrences in which 'group == tsk->sched_task_group' and
+'!(tsk->flags & PF_EXITING)' so there the early bail might help w/o
+the negative impact on sched benchmarks.
 
 
