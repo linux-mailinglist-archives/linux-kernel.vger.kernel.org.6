@@ -1,64 +1,85 @@
-Return-Path: <linux-kernel+bounces-540948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17546A4B6CC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 04:37:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D6CF4A4B6D1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 04:42:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C4383A67F5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 03:36:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B2873ABB28
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 03:42:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A74C41D63C5;
-	Mon,  3 Mar 2025 03:36:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F6F31D5CDE;
+	Mon,  3 Mar 2025 03:42:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JGFJdDX2"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EQ+Hr7iC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E42413AD38;
-	Mon,  3 Mar 2025 03:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D1F26F073
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 03:42:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740973014; cv=none; b=avA69XOYbruwWmbnMcW3t0ChMK4Ap2o6XlxDopkaSxDCCFO3J7/bhnwPaFxHGEbHjabHfWqzsIk12r6VyDvGtLlWaz3+Uk3dvT6wIhsB2IPoX1bK619HhyzXLL13D6CxILlaCShk80MLTpFe7KSda6K53nACbXkErBlN2oC5LgU=
+	t=1740973374; cv=none; b=fMxo+KUN0gE17IoWBlbIaRRH+3ogsAtOfZ+j0hCs3SxgBv1y3l9SKro/cuyVWvnBLHAjBJgPGPaQ6cpJC7plibw2nij3izWUxytouFOkKN5SovKzs3jwTkaxSe8jJwTuwOfrjUEmdt+6jUe0VIJj8lCUthHIJ7emiHItyJAsinY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740973014; c=relaxed/simple;
-	bh=YbOxaH+xAWHtqAVyGtst1vc6Yj0yhNJdcd7+v0mM7YI=;
+	s=arc-20240116; t=1740973374; c=relaxed/simple;
+	bh=38g/wttyi0OVix58IXmMb9keoqRC6204XM1tdy05KJs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V3moC121yUn/Bv/vTxngGrjvXJn/7RvlnH3A4kBPEhG8EMVrtTmxqKH2nvNB2lNMzES9IDmWhsK0bzHDTNhPgaZ5vHjfQ8Qy8Pk63deWBRzOXYckP8BfSOKmRVPMWaBo7VPU7v/8aUIqJO6l4XZM+wQ/ZYyx8jHdCX6oxIkqaTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JGFJdDX2; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740973013; x=1772509013;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=YbOxaH+xAWHtqAVyGtst1vc6Yj0yhNJdcd7+v0mM7YI=;
-  b=JGFJdDX2CFWdQFn3/wDGf+Dxf1CUDaWKQaH09WHeteypo+Ygka6OyeBK
-   PuH42zWjKcYQTBg9sY79cmBE9REYRWZ++wUMqn8bLooWWXlWriUet/6EV
-   bY+bmvZ1z2BDwZJI2kL9YkvcEhsFIzT8rpuHlU49m/5XVpiR0L64hTqPC
-   jKVhNbm2NAJWfDk6U3lpAMdWyRXtcj9PIuhSWRqCYS0kKbM1if3W1pX5s
-   CgJXWckjXnUoIoHQfZ2Mod2Os/KOiGu3q3+BC5ZVzGKPF1C8UjFnWEzOh
-   BUk6GMz8SOf14gUBSURXN6pc3KWYdKIcMvBfawBazKVnkTu+qm6uBkQy+
-   g==;
-X-CSE-ConnectionGUID: Oj0gr5TPTeKooH583Hx3ow==
-X-CSE-MsgGUID: UxFjiLCATieKFwBWfyTrnw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="64293297"
-X-IronPort-AV: E=Sophos;i="6.13,328,1732608000"; 
-   d="scan'208";a="64293297"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2025 19:36:52 -0800
-X-CSE-ConnectionGUID: dFAsw1enTJK6Dwh8yD3u7A==
-X-CSE-MsgGUID: BxI0pDgXSfOjBfw1Qvku+w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="148792149"
-Received: from lbogdanm-mobl3.ger.corp.intel.com (HELO [10.124.221.161]) ([10.124.221.161])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2025 19:36:50 -0800
-Message-ID: <8bb49ca2-6b27-4b05-9ad7-ed10cfa841d5@linux.intel.com>
-Date: Sun, 2 Mar 2025 19:36:49 -0800
+	 In-Reply-To:Content-Type; b=itauGEApPo7v1YK0LPpsx0fNZ96WD3rNm23zW13vcEV9bGwRJ+F/j2KUB5yq9SZyAMXBLf79PMKHqcJ5qKThS1jFibPFeJEFbaFyRXQZwZSyLgKkmWD8XkaWjWqPNHJr3IvSPGsvNHnVEJFL+MW+TxUEcV+BL9DaodGFsPWd9J4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EQ+Hr7iC; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740973370;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IEDc5a+qaJ461fEOorI0aPSdSVAqOPF0WWp/svcyhEc=;
+	b=EQ+Hr7iC0Y3AnvZAuO2P6LNNkDnQTJ7sxOupxIe9s52xwej0yO1QH8NF3iBsA3rdmskPwD
+	+Nw7LFJjvltDtRfhDPoaI9zGL9JDTGZOHre0h31Hd2HA0xCLDE/UCfhAGACiDq2whRL+qW
+	7eq+WGVM31l8CKLoAgup/TC9q3epnZE=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-124-iUlQxot2O_qh6UjMR5f25w-1; Sun, 02 Mar 2025 22:42:39 -0500
+X-MC-Unique: iUlQxot2O_qh6UjMR5f25w-1
+X-Mimecast-MFC-AGG-ID: iUlQxot2O_qh6UjMR5f25w_1740973358
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2fec3e38b60so4247049a91.0
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Mar 2025 19:42:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740973358; x=1741578158;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IEDc5a+qaJ461fEOorI0aPSdSVAqOPF0WWp/svcyhEc=;
+        b=hy7ZWg41UNuAhggqn5psouUdtQJURVJbUVqzVTfhu4COmCHdvS4cXWF7uPoD9k72tf
+         j4+bZ/wA8X0ksk89zNR3v7GwiEHwWZ1P7G0FzwVepvXj6rHnOm1/VuYPysBwqkn6xz9D
+         K88B4B0V3XkrRlb0aCVbVAMATJJr8hO/DNL1R3pXji1ppjOE8rWupJ6yD8AYtUY5GaHM
+         dlvIFnu7qTOQQtqJcjOZo0VID2PR+jQ7pMnN/JxXmonnct8SIgFbeaAVUa+t6MirFBfz
+         wdqPDue6s8BC2yqUuz0AOLiWHIpguwZ7uDNl4VJGABX2pS63xy9PcGkF8pdF2djJZrri
+         ytAg==
+X-Forwarded-Encrypted: i=1; AJvYcCVhyRgLuEFxiydXdZqFlyS5azCJM7eSjOCDMDKx4q7wXTK4NOqMO/D1k/I7FWWcK5ZE+ar8/8lg8j8lbcE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcwX0U5+oTkImcgzMOxOs2XGCx8qnMs244Tn0f1CUK/qY5KheJ
+	G2svqU+c3xQukM0KBulu31T5uIbK+o4E54HX+m/vlt7fNZRv8+qK62HC4uoS0AA5Mg0DlneGFvq
+	SbifIuyZcrwA517llJWdURVTKv4ojrJA1zpJQwgssgoD5g5GHiLBpzH6a2+T+sw==
+X-Gm-Gg: ASbGncvA0YtE/fGleyTcNr2us7+h4RwrxfcFOJDQSswyBq0Ri10XmlBEgnefQyBB5K7
+	it0ahy59RM5wgbDizwpoZ18PiKWAiYAT7KL6puqXzx7x55Pq85nX6N2XEW358XUvwSyhF45/8Gf
+	N+2HR7cFLx6WXooaIkBIKaE3Wmy265JehvFFWhywCO/+fVFWxCoFdGDlBQCapfHw1Po3qK9+Pyv
+	aTE9YLUI/gamDqRVJD0Qo++2jgrbUWIEVCLs/6kwD0txDuOhOSif2EHbs3QGm568AELu+24pnBX
+	iC2oe7yUhjjcLjOmdA==
+X-Received: by 2002:a05:6a20:1585:b0:1f0:e708:56e2 with SMTP id adf61e73a8af0-1f2f4cffa11mr18287086637.22.1740973358556;
+        Sun, 02 Mar 2025 19:42:38 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF5c7Qc3VVFcg30Esq5DIzJh6RfeW5P5eI8KFXRrs6oJHF3s/m+eXSunL5iyzYk2nV2q0PqZA==
+X-Received: by 2002:a05:6a20:1585:b0:1f0:e708:56e2 with SMTP id adf61e73a8af0-1f2f4cffa11mr18287060637.22.1740973358238;
+        Sun, 02 Mar 2025 19:42:38 -0800 (PST)
+Received: from [192.168.68.55] ([180.233.125.164])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7362e3b1c61sm4421335b3a.22.2025.03.02.19.42.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 02 Mar 2025 19:42:37 -0800 (PST)
+Message-ID: <8f08b96b-8219-4d51-8f46-bc367bbf2031@redhat.com>
+Date: Mon, 3 Mar 2025 13:42:29 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,176 +87,129 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/3] PCI/DPC: Run recovery on device that detected the
- error
-To: Shuai Xue <xueshuai@linux.alibaba.com>, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- bhelgaas@google.com, kbusch@kernel.org
-Cc: mahesh@linux.ibm.com, oohall@gmail.com, Jonathan.Cameron@huawei.com,
- terry.bowman@amd.com, tianruidong@linux.alibaba.com
-References: <20250217024218.1681-1-xueshuai@linux.alibaba.com>
- <20250217024218.1681-3-xueshuai@linux.alibaba.com>
+Subject: Re: [PATCH v7 05/45] arm64: RME: Add wrappers for RMI calls
+To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
+ kvmarm@lists.linux.dev
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
+ <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
+ Alexandru Elisei <alexandru.elisei@arm.com>,
+ Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
+ linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun
+ <alpergun@google.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
+References: <20250213161426.102987-1-steven.price@arm.com>
+ <20250213161426.102987-6-steven.price@arm.com>
 Content-Language: en-US
-From: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>
-In-Reply-To: <20250217024218.1681-3-xueshuai@linux.alibaba.com>
+From: Gavin Shan <gshan@redhat.com>
+In-Reply-To: <20250213161426.102987-6-steven.price@arm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-
-On 2/16/25 6:42 PM, Shuai Xue wrote:
-> The current implementation of pcie_do_recovery() assumes that the
-> recovery process is executed on the device that detected the error.
-> However, the DPC driver currently passes the error port that experienced
-> the DPC event to pcie_do_recovery().
->
-> Use the SOURCE ID register to correctly identify the device that
-> detected the error. When passing the error device, the
-> pcie_do_recovery() will find the upstream bridge and walk bridges
-> potentially AER affected. And subsequent patches will be able to
-> accurately access AER status of the error device.
->
-> Should not observe any functional changes.
->
-> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+On 2/14/25 2:13 AM, Steven Price wrote:
+> The wrappers make the call sites easier to read and deal with the
+> boiler plate of handling the error codes from the RMM.
+> 
+> Signed-off-by: Steven Price <steven.price@arm.com>
 > ---
+> Changes from v5:
+>   * Further improve comments
+> Changes from v4:
+>   * Improve comments
+> Changes from v2:
+>   * Make output arguments optional.
+>   * Mask RIPAS value rmi_rtt_read_entry()
+>   * Drop unused rmi_rtt_get_phys()
+> ---
+>   arch/arm64/include/asm/rmi_cmds.h | 508 ++++++++++++++++++++++++++++++
+>   1 file changed, 508 insertions(+)
+>   create mode 100644 arch/arm64/include/asm/rmi_cmds.h
+> 
 
-Looks good to me
+With the following nitpicks addressed:
 
-Reviewed-by: Kuppuswamy Sathyanarayanan 
-<sathyanarayanan.kuppuswamy@linux.intel.com>
+Reviewed-by: Gavin Shan <gshan@redhat.com>
 
->   drivers/pci/pci.h      |  2 +-
->   drivers/pci/pcie/dpc.c | 28 ++++++++++++++++++++++++----
->   drivers/pci/pcie/edr.c |  7 ++++---
->   3 files changed, 29 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> index 01e51db8d285..870d2fbd6ff2 100644
-> --- a/drivers/pci/pci.h
-> +++ b/drivers/pci/pci.h
-> @@ -572,7 +572,7 @@ struct rcec_ea {
->   void pci_save_dpc_state(struct pci_dev *dev);
->   void pci_restore_dpc_state(struct pci_dev *dev);
->   void pci_dpc_init(struct pci_dev *pdev);
-> -void dpc_process_error(struct pci_dev *pdev);
-> +struct pci_dev *dpc_process_error(struct pci_dev *pdev);
->   pci_ers_result_t dpc_reset_link(struct pci_dev *pdev);
->   bool pci_dpc_recovered(struct pci_dev *pdev);
->   unsigned int dpc_tlp_log_len(struct pci_dev *dev);
-> diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
-> index 1a54a0b657ae..ea3ea989afa7 100644
-> --- a/drivers/pci/pcie/dpc.c
-> +++ b/drivers/pci/pcie/dpc.c
-> @@ -253,10 +253,20 @@ static int dpc_get_aer_uncorrect_severity(struct pci_dev *dev,
->   	return 1;
->   }
->   
-> -void dpc_process_error(struct pci_dev *pdev)
-> +/**
-> + * dpc_process_error - handle the DPC error status
-> + * @pdev: the port that experienced the containment event
-> + *
-> + * Return the device that detected the error.
-> + *
-> + * NOTE: The device reference count is increased, the caller must decrement
-> + * the reference count by calling pci_dev_put().
+> diff --git a/arch/arm64/include/asm/rmi_cmds.h b/arch/arm64/include/asm/rmi_cmds.h
+> new file mode 100644
+> index 000000000000..043b7ff278ee
+> --- /dev/null
+> +++ b/arch/arm64/include/asm/rmi_cmds.h
+> @@ -0,0 +1,508 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (C) 2023 ARM Ltd.
 > + */
-> +struct pci_dev *dpc_process_error(struct pci_dev *pdev)
->   {
->   	u16 cap = pdev->dpc_cap, status, source, reason, ext_reason;
->   	struct aer_err_info info;
-> +	struct pci_dev *err_dev;
->   
->   	pci_read_config_word(pdev, cap + PCI_EXP_DPC_STATUS, &status);
->   	pci_read_config_word(pdev, cap + PCI_EXP_DPC_SOURCE_ID, &source);
-> @@ -279,6 +289,13 @@ void dpc_process_error(struct pci_dev *pdev)
->   		 "software trigger" :
->   		 "reserved error");
->   
-> +	if (reason == PCI_EXP_DPC_STATUS_TRIGGER_RSN_NFE ||
-> +	    reason == PCI_EXP_DPC_STATUS_TRIGGER_RSN_FE)
-> +		err_dev = pci_get_domain_bus_and_slot(pci_domain_nr(pdev->bus),
-> +					    PCI_BUS_NUM(source), source & 0xff);
-> +	else
-> +		err_dev = pci_dev_get(pdev);
 > +
->   	/* show RP PIO error detail information */
->   	if (pdev->dpc_rp_extensions &&
->   	    reason == PCI_EXP_DPC_STATUS_TRIGGER_RSN_IN_EXT &&
-> @@ -291,6 +308,8 @@ void dpc_process_error(struct pci_dev *pdev)
->   		pci_aer_clear_nonfatal_status(pdev);
->   		pci_aer_clear_fatal_status(pdev);
->   	}
+> +#ifndef __ASM_RMI_CMDS_H
+> +#define __ASM_RMI_CMDS_H
 > +
-> +	return err_dev;
->   }
->   
->   static void pci_clear_surpdn_errors(struct pci_dev *pdev)
-> @@ -346,7 +365,7 @@ static bool dpc_is_surprise_removal(struct pci_dev *pdev)
->   
->   static irqreturn_t dpc_handler(int irq, void *context)
->   {
-> -	struct pci_dev *err_port = context;
-> +	struct pci_dev *err_port = context, *err_dev;
->   
->   	/*
->   	 * According to PCIe r6.0 sec 6.7.6, errors are an expected side effect
-> @@ -357,10 +376,11 @@ static irqreturn_t dpc_handler(int irq, void *context)
->   		return IRQ_HANDLED;
->   	}
->   
-> -	dpc_process_error(err_port);
-> +	err_dev = dpc_process_error(err_port);
->   
->   	/* We configure DPC so it only triggers on ERR_FATAL */
-> -	pcie_do_recovery(err_port, pci_channel_io_frozen, dpc_reset_link);
-> +	pcie_do_recovery(err_dev, pci_channel_io_frozen, dpc_reset_link);
-> +	pci_dev_put(err_dev);
->   
->   	return IRQ_HANDLED;
->   }
-> diff --git a/drivers/pci/pcie/edr.c b/drivers/pci/pcie/edr.c
-> index 521fca2f40cb..088f3e188f54 100644
-> --- a/drivers/pci/pcie/edr.c
-> +++ b/drivers/pci/pcie/edr.c
-> @@ -150,7 +150,7 @@ static int acpi_send_edr_status(struct pci_dev *pdev, struct pci_dev *edev,
->   
->   static void edr_handle_event(acpi_handle handle, u32 event, void *data)
->   {
-> -	struct pci_dev *pdev = data, *err_port;
-> +	struct pci_dev *pdev = data, *err_port, *err_dev;
->   	pci_ers_result_t estate = PCI_ERS_RESULT_DISCONNECT;
->   	u16 status;
->   
-> @@ -190,7 +190,7 @@ static void edr_handle_event(acpi_handle handle, u32 event, void *data)
->   		goto send_ost;
->   	}
->   
-> -	dpc_process_error(err_port);
-> +	err_dev = dpc_process_error(err_port);
->   	pci_aer_raw_clear_status(err_port);
->   
->   	/*
-> @@ -198,7 +198,7 @@ static void edr_handle_event(acpi_handle handle, u32 event, void *data)
->   	 * or ERR_NONFATAL, since the link is already down, use the FATAL
->   	 * error recovery path for both cases.
->   	 */
-> -	estate = pcie_do_recovery(err_port, pci_channel_io_frozen, dpc_reset_link);
-> +	estate = pcie_do_recovery(err_dev, pci_channel_io_frozen, dpc_reset_link);
->   
->   send_ost:
->   
-> @@ -216,6 +216,7 @@ static void edr_handle_event(acpi_handle handle, u32 event, void *data)
->   	}
->   
->   	pci_dev_put(err_port);
-> +	pci_dev_put(err_dev);
->   }
->   
->   void pci_acpi_add_edr_notifier(struct pci_dev *pdev)
 
--- 
-Sathyanarayanan Kuppuswamy
-Linux Kernel Developer
+[...]
+
+> +
+> +/**
+> + * rmi_rec_aux_count() - Get number of auxiliary granules required
+> + * @rd: PA of the RD
+> + * @aux_count: Number of pages written to this pointer
+                   ^^^^^^^^^^^^^^^
+                   Number of granules
+> + *
+> + * A REC may require extra auxiliary pages to be delegated for the RMM to
+                                         ^^^^^
+                                         granules
+
+> + * store metadata (not visible to the normal world) in. This function provides
+> + * the number of pages that are required.
+                     ^^^^^
+                     granules
+> + *
+> + * Return: RMI return code
+> + */
+> +static inline int rmi_rec_aux_count(unsigned long rd, unsigned long *aux_count)
+> +{
+> +	struct arm_smccc_res res;
+> +
+> +	arm_smccc_1_1_invoke(SMC_RMI_REC_AUX_COUNT, rd, &res);
+> +
+> +	if (aux_count)
+> +		*aux_count = res.a1;
+> +	return res.a0;
+> +}
+> +
+> +/**
+> + * rmi_rec_create() - Create a REC
+> + * @rd: PA of the RD
+> + * @rec: PA of the target REC
+> + * @params_ptr: PA of REC parameters
+> + *
+> + * Create a REC using the parameters specified in the struct rec_params pointed
+> + * to by @params_ptr.
+> + *
+> + * Return: RMI return code
+> + */
+> +static inline int rmi_rec_create(unsigned long rd, unsigned long rec,
+> +				 unsigned long params_ptr)
+> +{
+> +	struct arm_smccc_res res;
+> +
+> +	arm_smccc_1_1_invoke(SMC_RMI_REC_CREATE, rd, rec, params_ptr, &res);
+> +
+> +	return res.a0;
+> +}
+> +
+
+'params_ptr' may be renamed to 'params'.
+
+
+[...]
+> +#endif /* __ASM_RMI_CMDS_H */
+
+Thanks,
+Gavin
 
 
