@@ -1,183 +1,105 @@
-Return-Path: <linux-kernel+bounces-541984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DF2EA4C42C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:05:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D92FA4C431
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:06:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A051188E502
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:06:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55FF13A9254
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:05:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55DB72144C2;
-	Mon,  3 Mar 2025 15:05:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C1AD21420A;
+	Mon,  3 Mar 2025 15:05:46 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76DAA156F5E;
-	Mon,  3 Mar 2025 15:05:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC169156F5E;
+	Mon,  3 Mar 2025 15:05:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741014336; cv=none; b=jPpMJgwnTHbMnmg/xyLaq/HtfPqy6Fu2CpEh7R7A1tWJN41FsC9S7F6K7/l5UndB7KDRQr4jvbQLZrw2KE2na6yhvLC9ZjynzFSb3Fy4R3GvB3ZVwIAybDWAfMjXhQYxZMReMvNYb3vnT9mk1SPMArm8Z0lxK5VJB+mW/b4MUg0=
+	t=1741014346; cv=none; b=QM7QRwRmUop+KymQfKEg9OdvsTzYdSyvTE220DYJUhM8MwEfnZ26lZHMGQvs5AjMCg4wso+VMHkuVb5CmuxfD1zI04GpBK2S6dk4/wSkDLWEQQMwDlRybePpSmrRSnZtvlYHzclKeNXEql5L75+4Rip1mZVidQ+PNne/4Vx+YzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741014336; c=relaxed/simple;
-	bh=1sFtJ7G8T2gULGkEX+wJ+5Cx5/yoOS5AhTqUPY1T+Bo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q+xtorC5cS2MDgfIbcLASFqyN2u3J4vISn/4wjtHQH2BdPOebZmV2m2cYF/ZGd3DnGW5Jft9r0dnDJ32rVUhUa7i9GWEoKLnmy5ioCzqh4wbAt3OL9fiZtLq4Lob3zLdTN9ScZfc4pcPxztfpYHASSw1W8dmtcFWIcOSgPKrD1M=
+	s=arc-20240116; t=1741014346; c=relaxed/simple;
+	bh=L5pWAKrCXOYUoIhvx6Wbj4qhfpX1Y/d5A9WddHMWFno=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jIExw0bsRTwcUinSaG+g+LXfgc6h1/7weVrBeJFvI2N7fCWIizb1Cy/LFguZ9HAJVinheoRM4/GALxFreM+oR5Mbwy10dCwA5FcKv05BFJI14U8l/6SBHNKz/sG6W3RG6w8S+IDiDBUOGz3hsCR1fB4NNxVUYxZ5Yn6CeQUaq5Q=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BE735106F;
-	Mon,  3 Mar 2025 07:05:47 -0800 (PST)
-Received: from [10.1.39.33] (e122027.cambridge.arm.com [10.1.39.33])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AE1793F5A1;
-	Mon,  3 Mar 2025 07:05:29 -0800 (PST)
-Message-ID: <59f84354-e890-48c8-ba06-87dda471f364@arm.com>
-Date: Mon, 3 Mar 2025 15:05:25 +0000
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 29B8D106F;
+	Mon,  3 Mar 2025 07:05:58 -0800 (PST)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 831693F5A1;
+	Mon,  3 Mar 2025 07:05:42 -0800 (PST)
+Date: Mon, 3 Mar 2025 15:05:39 +0000
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Huisong Li <lihuisong@huawei.com>,
+	Adam Young <admiyo@os.amperecomputing.com>,
+	Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org
+Subject: Re: [PATCH 12/14] hwmon: (xgene-hwmon) Simplify PCC shared memory
+ region handling
+Message-ID: <Z8XFQySIuyZvcsYH@bogus>
+References: <20250303-pcc_fixes_updates-v1-0-3b44f3d134b1@arm.com>
+ <20250303-pcc_fixes_updates-v1-12-3b44f3d134b1@arm.com>
+ <afb9a22f-7d21-42a2-a8dc-87537caad027@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 05/45] arm64: RME: Add wrappers for RMI calls
-To: Gavin Shan <gshan@redhat.com>, kvm@vger.kernel.org, kvmarm@lists.linux.dev
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun
- <alpergun@google.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
-References: <20250213161426.102987-1-steven.price@arm.com>
- <20250213161426.102987-6-steven.price@arm.com>
- <8f08b96b-8219-4d51-8f46-bc367bbf2031@redhat.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <8f08b96b-8219-4d51-8f46-bc367bbf2031@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <afb9a22f-7d21-42a2-a8dc-87537caad027@roeck-us.net>
 
-On 03/03/2025 03:42, Gavin Shan wrote:
-> On 2/14/25 2:13 AM, Steven Price wrote:
->> The wrappers make the call sites easier to read and deal with the
->> boiler plate of handling the error codes from the RMM.
->>
->> Signed-off-by: Steven Price <steven.price@arm.com>
->> ---
->> Changes from v5:
->>   * Further improve comments
->> Changes from v4:
->>   * Improve comments
->> Changes from v2:
->>   * Make output arguments optional.
->>   * Mask RIPAS value rmi_rtt_read_entry()
->>   * Drop unused rmi_rtt_get_phys()
->> ---
->>   arch/arm64/include/asm/rmi_cmds.h | 508 ++++++++++++++++++++++++++++++
->>   1 file changed, 508 insertions(+)
->>   create mode 100644 arch/arm64/include/asm/rmi_cmds.h
->>
+On Mon, Mar 03, 2025 at 05:55:57AM -0800, Guenter Roeck wrote:
+> On 3/3/25 02:51, Sudeep Holla wrote:
+> > The PCC driver now handles mapping and unmapping of shared memory
+> > areas as part of pcc_mbox_{request,free}_channel(). Without these before,
+> > this xgene hwmon driver did handling of those mappings like several
+> > other PCC mailbox client drivers.
+> > 
+> > There were redundant operations, leading to unnecessary code. Maintaining
+> > the consistency across these driver was harder due to scattered handling
+> > of shmem.
+> > 
+> > Just use the mapped shmem and remove all redundant operations from this
+> > driver.
+> > 
+> > Cc: Jean Delvare <jdelvare@suse.com>
+> > Cc: Guenter Roeck <linux@roeck-us.net>
+> > Cc: linux-hwmon@vger.kernel.org
+> > Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
 > 
-> With the following nitpicks addressed:
+> Acked-by: Guenter Roeck <linux@roeck-us.net>
 > 
-> Reviewed-by: Gavin Shan <gshan@redhat.com>
+> Note that I'll apply a fix this week which will cause a context conflict.
+> See below.
+>
 
-Thanks, there were a couple of other pages and params_ptr references
-that I've updated to granules and just 'params' too now. With hindsight
-conflating pages and granules in the earlier versions of this series was
-a big mistake ;)
+Sure, I was planning to repost these individually after the mailbox changes
+are merged. I am not sure if I can get some testing on this xgene platform
+as I am changing the mapping attributes which currently is different for
+different versions of firmware and both are incorrect in terms of ACPI spec.
 
-Steve
+In short, no rush. The idea of posting these is to show how duplicate code
+can be removed. I will post it independently sometime in the future.
 
->> diff --git a/arch/arm64/include/asm/rmi_cmds.h b/arch/arm64/include/
->> asm/rmi_cmds.h
->> new file mode 100644
->> index 000000000000..043b7ff278ee
->> --- /dev/null
->> +++ b/arch/arm64/include/asm/rmi_cmds.h
->> @@ -0,0 +1,508 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +/*
->> + * Copyright (C) 2023 ARM Ltd.
->> + */
->> +
->> +#ifndef __ASM_RMI_CMDS_H
->> +#define __ASM_RMI_CMDS_H
->> +
-> 
-> [...]
-> 
->> +
->> +/**
->> + * rmi_rec_aux_count() - Get number of auxiliary granules required
->> + * @rd: PA of the RD
->> + * @aux_count: Number of pages written to this pointer
->                   ^^^^^^^^^^^^^^^
->                   Number of granules
->> + *
->> + * A REC may require extra auxiliary pages to be delegated for the
->> RMM to
->                                         ^^^^^
->                                         granules
-> 
->> + * store metadata (not visible to the normal world) in. This function
->> provides
->> + * the number of pages that are required.
->                     ^^^^^
->                     granules
->> + *
->> + * Return: RMI return code
->> + */
->> +static inline int rmi_rec_aux_count(unsigned long rd, unsigned long
->> *aux_count)
->> +{
->> +    struct arm_smccc_res res;
->> +
->> +    arm_smccc_1_1_invoke(SMC_RMI_REC_AUX_COUNT, rd, &res);
->> +
->> +    if (aux_count)
->> +        *aux_count = res.a1;
->> +    return res.a0;
->> +}
->> +
->> +/**
->> + * rmi_rec_create() - Create a REC
->> + * @rd: PA of the RD
->> + * @rec: PA of the target REC
->> + * @params_ptr: PA of REC parameters
->> + *
->> + * Create a REC using the parameters specified in the struct
->> rec_params pointed
->> + * to by @params_ptr.
->> + *
->> + * Return: RMI return code
->> + */
->> +static inline int rmi_rec_create(unsigned long rd, unsigned long rec,
->> +                 unsigned long params_ptr)
->> +{
->> +    struct arm_smccc_res res;
->> +
->> +    arm_smccc_1_1_invoke(SMC_RMI_REC_CREATE, rd, rec, params_ptr, &res);
->> +
->> +    return res.a0;
->> +}
->> +
-> 
-> 'params_ptr' may be renamed to 'params'.
-> 
-> 
-> [...]
->> +#endif /* __ASM_RMI_CMDS_H */
-> 
-> Thanks,
-> Gavin
-> 
+>
+> This needed to be IS_ERR_OR_NULL() since devm_memremap() returns an ERR_PTR.
+>
 
+True. IIRC, there are few valid iomem related sparse warnings which I plan
+to fix and post it together once the PCC changes are merged.
+
+Thanks for the review.
+
+-- 
+Regards,
+Sudeep
 
