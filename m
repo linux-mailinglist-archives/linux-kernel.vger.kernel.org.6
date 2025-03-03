@@ -1,172 +1,90 @@
-Return-Path: <linux-kernel+bounces-544501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2138EA4E213
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:59:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 595A4A4E181
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:45:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E7E617E3F3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:50:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 714F23BACEE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:32:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FA4A274269;
-	Tue,  4 Mar 2025 14:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kdI1CMsm"
-Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13FC8207DF5;
+	Tue,  4 Mar 2025 14:30:21 +0000 (UTC)
+Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F2BC209F53
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:48:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.115
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12EB4211290
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:30:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.116
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741099709; cv=fail; b=Mxo0prLmH16QV1y9G9bmy59bjH31Ds4PvAa8zEgn2+iMV8JYKO3Vxlb2VRFSK+Q51ou+ecjlczbrmL3PzZSUCjDsSVm58Map/xKXUYzNBWrZteaX4MqKwYLqGDdDkS5qPki+RlfMxSpQmbvHl7fdZinJpHzA1vxnsNGGuiidH9c=
+	t=1741098620; cv=fail; b=NJpG1SHwGgpACVD+NKQy9lhYRhAWE5UXRpC6hFzIdO91ciDaogEswFGShXze6HoVAUpG5HfUOMwVs16wrnO0wCQR5kaF692G/bXUVQSkjvmJ1/broUdonjKLCe2rAmzON4hfm/1Sr1DO0x2cza2471cI266QeXcnnkOHi2RdjS8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741099709; c=relaxed/simple;
-	bh=AXnk7lLgH2/5lgOLQ215kKh4iSCtSaXd5JSjyKhdwI8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Hxy2vROfDCUtbBSJnHw72Yee0qDVqsLgI6oduXGFHJ7j8v9E7I3OEjRuIRtcbwK9uu+Nk2TXR7JmgCWb2zmHdy6ZxEjswGQy5kN6WezVvq3OBqWeo/H33nf5/U4FuWqZgS/ghI+jjLAeD66dMX85PO5rbdsBLL5tx8YP50XfjQQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kdI1CMsm reason="signature verification failed"; arc=none smtp.client-ip=209.85.216.67; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; arc=fail smtp.client-ip=160.75.25.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1741098620; c=relaxed/simple;
+	bh=8RXLXxd5WErFhtNI1U1XH6Y12wckRSVfpIeTmcbIwIc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HFExOyZzMqiWzrUkXcRBF37YvZ5kd/2vhd102hXdGzHmWv/pEt8+ahDOkaxaH7zkuQDsYJXojzoBo71HXbzU5/p6tl7qle0SsBC/ixZDTyxSEI2NfYcJtfW+4F8o6Dg6P/Q63+zpm1lPo2KU0bGZmcm0IQ4334Dn+aymKyAuY28=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=none smtp.mailfrom=cc.itu.edu.tr; arc=none smtp.client-ip=159.226.251.84; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=fail smtp.client-ip=160.75.25.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id DC50340CF642
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:48:24 +0300 (+03)
+	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id 475EC40F1CE8
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:30:17 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dcD2lY6zFxGK
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:39:24 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dMJ3Py1zFwTJ
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:28:12 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id B040141898; Tue,  4 Mar 2025 17:39:13 +0300 (+03)
-Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kdI1CMsm
-X-Envelope-From: <linux-kernel+bounces-541067-bozkiru=itu.edu.tr@vger.kernel.org>
-Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kdI1CMsm
+	id 030E842725; Tue,  4 Mar 2025 17:28:04 +0300 (+03)
+X-Envelope-From: <linux-kernel+bounces-541087-bozkiru=itu.edu.tr@vger.kernel.org>
 Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id 261D441A5E
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 09:57:20 +0300 (+03)
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id D897D3063EFE
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 09:57:19 +0300 (+03)
+	by le2 (Postfix) with ESMTP id 14B0B420E7
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:22:06 +0300 (+03)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by fgw1.itu.edu.tr (Postfix) with SMTP id 5920D3063EFE
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:22:05 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C02D16D61B
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 06:57:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A47FA7A63D3
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 07:21:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D6481EEA27;
-	Mon,  3 Mar 2025 06:56:10 +0000 (UTC)
-Received: from mail-pj1-f67.google.com (mail-pj1-f67.google.com [209.85.216.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2F4F1EA7E8;
+	Mon,  3 Mar 2025 07:21:49 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5679B1E990E;
-	Mon,  3 Mar 2025 06:56:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B21F12B93;
+	Mon,  3 Mar 2025 07:21:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740984966; cv=none; b=NNBNThPn3JgjuM5Oux+OCBivLr/QgTB9iFkzq4jMionXQQI5R8IPltKigR93EOussqQ3pU+PKXlCTO8rxTqsKkJmpZ26MxsvlkqfC63qs1W9F8Mkq2kMnvD97s17StJ27VYPjm/csftzjabYsxOeSEJRtyEbqeV+aM+pDj7R8Lc=
+	t=1740986508; cv=none; b=bZqstpOQXoybNzZPWA95/04gdxs8sG8juTXXQ9OpqhHs8fj2Zm9qITSqnm4mnoo4ZbWmrgfH4BiQjRCzO/RX+fMEZ4+4C3Nt5Jq8sb4RAc1wN8cQ7qvdhWgsASHy60hnbyzjB/YHFK7lOBKz7D6N5W1SCuU1GPwmlontRE1nCGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740984966; c=relaxed/simple;
-	bh=r1n1Uafjg9Tb7hAw9aZTOW4QZemIa+WVQ6XY0cn91Fo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=AVv+LB20bW0XqYva+Z2tkgWlXz6baMT8T8KyF6AMn6WIpUIjxB/zxzCA0I9RzaNJYty+vIEUe8E6bfJbTuyft+W6QeprXdicgw8qYW2V+n/EDDSEmYu+BbeAFp8ZRN4xd118oyvoU9UQQCdrFtKzxWeESmHTQwStLEdffAJrqUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kdI1CMsm; arc=none smtp.client-ip=209.85.216.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f67.google.com with SMTP id 98e67ed59e1d1-2feb1d7a68fso6904604a91.1;
-        Sun, 02 Mar 2025 22:56:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740984964; x=1741589764; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DMU16H6izdRqPTzQSvNq/kwALVMPh8dWr5JstZVUeSQ=;
-        b=kdI1CMsm+eYdqtJF2xiIN+YGJiENl+/zDMtKCNX1P85MHnzPtpWbQSvvIlYPY5bBUg
-         SbqZ+h5Yug+j8BbUJVdbztqpzLWAuzaFgby3KAx/mcXW2F8q3dKX+xwzI52fgdDpkJ8g
-         pLskVHUsKfE46pN3gjY+/SmUPeJbDyr9nt6zq0WQvYDiRvNYbzjhOGEoLZdj0xKX5vXL
-         rYYLlFFUEKMrsGimr0C6lw/WOAZGRwGPgsOw4or6jwdMDp6bqb5KUpcBfUEX142hKHsi
-         usFMs8rGt8SY01utQLtMfUufksmKsv+zk3SM9ca8IOC24cXgxDhKd8LO8WS7sETTPNlz
-         BtzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740984964; x=1741589764;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DMU16H6izdRqPTzQSvNq/kwALVMPh8dWr5JstZVUeSQ=;
-        b=Vu5fYokXqREgChPs43E4dXiX30rg428dRvFT6OpLA3AUp/jrChKrzr0bsmmQo0LUIF
-         TUuHL/bjJ5QbwPpNdqOp4WGLTe+XhcJ5D5eqzKpkizhkXTeQ4+X0gFKot2nnQ6GhUjNA
-         Ybee003/ikPQHtjCOfDKBTo9fAmV46br16+VMGGDIUxwUYIL4i7paKuC8RxEnTqUp62U
-         QBNj7fWdr12RNZ9a7xfegiYRLCkM+DnJ/tVBhqvo/l1a4q7e/vB4RABtq/oQlWV6bvnM
-         Ek4MBH1VuQCwr3+gk7M+H3jV7uMTubohBbiZLjWlGcrs64xzPNRicuarNxsYOeIzb2Zb
-         ZLgw==
-X-Forwarded-Encrypted: i=1; AJvYcCU+I6Yc8ND2d+iGz+a4ZbEKIHx0OUrOTOABULCaCG+avhzhwhRq4FJDshTdgRNMk4q7O4Nl/kjA@vger.kernel.org, AJvYcCVZgoPGvYXnbsEpi8iuXNPbUf8bepag0YcKQW32UCxYYY9ns4fdEnd4rpfHuOqsgIs7J+o=@vger.kernel.org, AJvYcCXn8CpcngO90mZua7c/hQY9O8KZFSOc0aKN6+DGQa/6Vx2V5HvADYc1gVNaluUGHIGMOyjYliD0bZC6kWz/@vger.kernel.org, AJvYcCXrG0NDnIekdLBqsQ86SixsfUiQneEDaPj4isj7DJGEdyMmMLpr4t7cUFLZpE85ZcmNqHXLeYI+YrlyBm0ibIf16fsx@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCqSpjFFAGonO4fO2qnWEt2OPtcHAw2qQ+iBSMdRjt+0Pa9OGF
-	ESbNcY4PTzk35yLpXO1NlWEhLnKPwoahcVRi158X4ijFw9eTl9OK
-X-Gm-Gg: ASbGncv+t/1KiLruVf39lWOSHJvJhF9ysrKbujCyJ7TVRngay56xrVFLzUPM/L9gQ+O
-	Ko1BuWsMJMrHRg0O6PPoqBfvJn/dWZENfgeZl1aHvSIuRRPoWfaWArf6wSXh+GCaqnTLt1cvsFs
-	8N7+LqpvZM8ZONPpwWz4ZRLqdsCjyV7f7yj6FJSGDzu+bChSJAGsyzjS9siQ2brIL55suRpQ+Q0
-	6PbtTKSHQLE04PqoDkNX7ugvxNhA6IB6LMqnGy2HcL7ISfcOdHW/MiG4fK/DxnNlSOXBJ5zN8oO
-	VvAzPesalGBC9uu/84aIktQpqB6AyT9I0bodaH0ZzKO59Z54wimKE9pQBUE40g==
-X-Google-Smtp-Source: AGHT+IGyBy5lAIgE9/BJFGPHKWL9IGQJbSt/AMZr+VvaZ6EhLBWcU/x/8umKGWf6iOEq1B7Odhyfkg==
-X-Received: by 2002:a17:90b:1845:b0:2ee:d193:f3d5 with SMTP id 98e67ed59e1d1-2febab2ecbfmr20898385a91.7.1740984964540;
-        Sun, 02 Mar 2025 22:56:04 -0800 (PST)
-Received: from localhost.localdomain ([43.129.244.20])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fea6769ad2sm8139575a91.11.2025.03.02.22.55.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Mar 2025 22:56:04 -0800 (PST)
-From: Menglong Dong <menglong8.dong@gmail.com>
-X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
-To: peterz@infradead.org,
-	rostedt@goodmis.org,
-	mark.rutland@arm.com,
-	alexei.starovoitov@gmail.com
-Cc: catalin.marinas@arm.com,
-	will@kernel.org,
-	mhiramat@kernel.org,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org,
-	hpa@zytor.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	jolsa@kernel.org,
-	davem@davemloft.net,
-	dsahern@kernel.org,
-	mathieu.desnoyers@efficios.com,
-	nathan@kernel.org,
-	nick.desaulniers+lkml@gmail.com,
-	morbo@google.com,
-	samitolvanen@google.com,
-	kees@kernel.org,
-	dongml2@chinatelecom.cn,
-	akpm@linux-foundation.org,
-	riel@surriel.com,
-	rppt@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1740986508; c=relaxed/simple;
+	bh=syPmBwmUMBo0QIBV7GdWdnT0SdfzyuqB5EAPVxcSIkY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=M1ABFjE+1i86e878x0HwMTNP1mDYnrEY3yuG8hJgj0Nz3YEHdabds3SxYYkv94zax5n570pehBzrbi0PT9MqIF59Um0GlTF/jGlhfDgn40HUJg3vtYUznm3b5Ci5jJbkIERpnMuJGTjfMuO9WM9rBUFwAe0Buw8z/ZpWrHM+ROc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-05 (Coremail) with SMTP id zQCowAD3_6NvWMVnHYCuEQ--.60251S2;
+	Mon, 03 Mar 2025 15:21:28 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: bhelgaas@google.com,
+	treding@nvidia.com,
+	arnd@arndb.de
+Cc: linux-pci@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	netdev@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [PATCH bpf-next v3 3/4] x86: implement per-function metadata storage for x86
-Date: Mon,  3 Mar 2025 14:53:44 +0800
-Message-Id: <20250303065345.229298-4-dongml2@chinatelecom.cn>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250303065345.229298-1-dongml2@chinatelecom.cn>
-References: <20250303065345.229298-1-dongml2@chinatelecom.cn>
+	akpm@linux-foundation.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH v2 RESEND] PCI: fix reference leak in pci_register_host_bridge()
+Date: Mon,  3 Mar 2025 15:21:17 +0800
+Message-Id: <20250303072117.3874694-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -174,191 +92,71 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-CM-TRANSID:zQCowAD3_6NvWMVnHYCuEQ--.60251S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7GF13GrWUGF4kuFy3ZF43Jrb_yoWkArXEgr
+	109Fy7Zr4rG3Zagr13ArnxZr10k3ZFgrWfGr48tFZ7ZayrXFZIg3ZxZFWYyr17Ca1DCr1U
+	J3WDXr4DCr1I9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbVkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
+	rcIFxwCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
+	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
+	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2Kf
+	nxnUUI43ZEXa7VUbsYFJUUUUU==
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 Content-Transfer-Encoding: quoted-printable
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6dcD2lY6zFxGK
+X-ITU-Libra-ESVA-ID: 4Z6dMJ3Py1zFwTJ
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741703974.89063@sOTK/hFMZbLk+DFxH91RyQ
+X-ITU-Libra-ESVA-Watermark: 1741703294.44754@rNfQ2HLcFD0ZW6tvr+RuSQ
 X-ITU-MailScanner-SpamCheck: not spam
 
-With CONFIG_CALL_PADDING enabled, there will be 16-bytes padding space
-before all the kernel functions. And some kernel features can use it,
-such as MITIGATION_CALL_DEPTH_TRACKING, CFI_CLANG, FINEIBT, etc.
+Once device_register() failed, we should call put_device() to
+decrement reference count for cleanup. Or it could cause memory leak.
 
-In my research, MITIGATION_CALL_DEPTH_TRACKING will consume the tail
-9-bytes in the function padding, CFI_CLANG will consume the head 5-bytes,
-and FINEIBT will consume all the 16 bytes if it is enabled. So there will
-be no space for us if MITIGATION_CALL_DEPTH_TRACKING and CFI_CLANG are
-both enabled, or FINEIBT is enabled.
+device_register() includes device_add(). As comment of device_add()
+says, 'if device_add() succeeds, you should call device_del() when you
+want to get rid of it. If device_add() has not succeeded, use only
+put_device() to drop the reference count'.
 
-In x86, we need 5-bytes to prepend a "mov %eax xxx" insn, which can hold
-a 4-bytes index. So we have following logic:
+Found by code review.
 
-1. use the head 5-bytes if CFI_CLANG is not enabled
-2. use the tail 5-bytes if MITIGATION_CALL_DEPTH_TRACKING and FINEIBT are
-   not enabled
-3. compile the kernel with FUNCTION_ALIGNMENT_32B otherwise
-
-In the third case, we make the kernel function 32 bytes aligned, and ther=
-e
-will be 32 bytes padding before the functions. According to my testing,
-the text size didn't increase on this case, which is weird.
-
-With 16-bytes padding:
-
--rwxr-xr-x 1 401190688  x86-dev/vmlinux*
--rw-r--r-- 1    251068  x86-dev/vmlinux.a
--rw-r--r-- 1 851892992  x86-dev/vmlinux.o
--rw-r--r-- 1  12395008  x86-dev/arch/x86/boot/bzImage
-
-With 32-bytes padding:
-
--rwxr-xr-x 1 401318128 x86-dev/vmlinux*
--rw-r--r-- 1    251154 x86-dev/vmlinux.a
--rw-r--r-- 1 853636704 x86-dev/vmlinux.o
--rw-r--r-- 1  12509696 x86-dev/arch/x86/boot/bzImage
-
-The way I tested should be right, and this is a good news for us. On the
-third case, the layout of the padding space will be like this if fineibt
-is enabled:
-
-__cfi_func:
-	mov	--	5	-- cfi, not used anymore
-	nop
-	nop
-	nop
-	mov	--	5	-- function metadata
-	nop
-	nop
-	nop
-	fineibt	--	16	-- fineibt
-func:
-	nopw	--	4
-	......
-
-I tested the fineibt with "cfi=3Dfineibt" cmdline, and it works well
-together with FUNCTION_METADATA enabled. And I also tested the
-performance of this function by setting metadata for all the kernel
-function, and it consumes 0.7s for 70k+ functions, not bad :/
-
-I can't find a machine that support IBT, so I didn't test the IBT. I'd
-appreciate it if someone can do this testing for me :/
-
-Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+Cc: stable@vger.kernel.org
+Fixes: 37d6a0a6f470 ("PCI: Add pci_register_host_bridge() interface")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 ---
-v3:
-- select FUNCTION_ALIGNMENT_32B on case3, instead of extra 5-bytes
+Changes in v2:
+- modified the patch description.
 ---
- arch/x86/Kconfig              | 18 ++++++++++++
- arch/x86/include/asm/ftrace.h | 54 +++++++++++++++++++++++++++++++++++
- 2 files changed, 72 insertions(+)
+ drivers/pci/probe.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index be2c311f5118..fe5a98401135 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -2509,6 +2509,24 @@ config PREFIX_SYMBOLS
- 	def_bool y
- 	depends on CALL_PADDING && !CFI_CLANG
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index 246744d8d268..7b1d7ce3a83e 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -1018,8 +1018,10 @@ static int pci_register_host_bridge(struct pci_hos=
+t_bridge *bridge)
+ 	name =3D dev_name(&bus->dev);
 =20
-+config FUNCTION_METADATA
-+	bool "Per-function metadata storage support"
-+	default y
-+	depends on CC_HAS_ENTRY_PADDING && OBJTOOL
-+	select CALL_PADDING
-+	select FUNCTION_ALIGNMENT_32B if ((CFI_CLANG && CALL_THUNKS) || FINEIBT=
-)
-+	help
-+	  Support per-function metadata storage for kernel functions, and
-+	  get the metadata of the function by its address with almost no
-+	  overhead.
-+
-+	  The index of the metadata will be stored in the function padding
-+	  and consumes 5-bytes. FUNCTION_ALIGNMENT_32B will be selected if
-+	  "(CFI_CLANG && CALL_THUNKS) || FINEIBT" to make sure there is
-+	  enough available padding space for this function. However, it
-+	  seems that the text size almost don't change, compare with
-+	  FUNCTION_ALIGNMENT_16B.
-+
- menuconfig CPU_MITIGATIONS
- 	bool "Mitigations for CPU vulnerabilities"
- 	default y
-diff --git a/arch/x86/include/asm/ftrace.h b/arch/x86/include/asm/ftrace.=
-h
-index f9cb4d07df58..d5cbb8e18fd7 100644
---- a/arch/x86/include/asm/ftrace.h
-+++ b/arch/x86/include/asm/ftrace.h
-@@ -4,6 +4,28 @@
+ 	err =3D device_register(&bus->dev);
+-	if (err)
++	if (err) {
++		put_device(&bus->dev);
+ 		goto unregister;
++	}
 =20
- #include <asm/ptrace.h>
+ 	pcibios_add_bus(bus);
 =20
-+#ifdef CONFIG_FUNCTION_METADATA
-+#if (defined(CONFIG_CFI_CLANG) && defined(CONFIG_CALL_THUNKS)) || (defin=
-ed(CONFIG_FINEIBT))
-+  /* the CONFIG_FUNCTION_PADDING_BYTES is 32 in this case, use the
-+   * range: [align + 8, align + 13].
-+   */
-+  #define KFUNC_MD_INSN_OFFSET		(CONFIG_FUNCTION_PADDING_BYTES - 8)
-+  #define KFUNC_MD_DATA_OFFSET		(CONFIG_FUNCTION_PADDING_BYTES - 9)
-+#else
-+  #ifdef CONFIG_CFI_CLANG
-+    /* use the space that CALL_THUNKS suppose to use */
-+    #define KFUNC_MD_INSN_OFFSET	(5)
-+    #define KFUNC_MD_DATA_OFFSET	(4)
-+  #else
-+    /* use the space that CFI_CLANG suppose to use */
-+    #define KFUNC_MD_INSN_OFFSET	(CONFIG_FUNCTION_PADDING_BYTES)
-+    #define KFUNC_MD_DATA_OFFSET	(CONFIG_FUNCTION_PADDING_BYTES - 1)
-+  #endif
-+#endif
-+
-+#define KFUNC_MD_INSN_SIZE		(5)
-+#endif
-+
- #ifdef CONFIG_FUNCTION_TRACER
- #ifndef CC_USING_FENTRY
- # error Compiler does not support fentry?
-@@ -168,4 +190,36 @@ static inline bool arch_trace_is_compat_syscall(stru=
-ct pt_regs *regs)
- #endif /* !COMPILE_OFFSETS */
- #endif /* !__ASSEMBLY__ */
-=20
-+#if !defined(__ASSEMBLY__) && defined(CONFIG_FUNCTION_METADATA)
-+#include <asm/text-patching.h>
-+
-+static inline bool kfunc_md_arch_exist(void *ip)
-+{
-+	return *(u8 *)(ip - KFUNC_MD_INSN_OFFSET) =3D=3D 0xB8;
-+}
-+
-+static inline void kfunc_md_arch_pretend(u8 *insn, u32 index)
-+{
-+	*insn =3D 0xB8;
-+	*(u32 *)(insn + 1) =3D index;
-+}
-+
-+static inline void kfunc_md_arch_nops(u8 *insn)
-+{
-+	*(insn++) =3D BYTES_NOP1;
-+	*(insn++) =3D BYTES_NOP1;
-+	*(insn++) =3D BYTES_NOP1;
-+	*(insn++) =3D BYTES_NOP1;
-+	*(insn++) =3D BYTES_NOP1;
-+}
-+
-+static inline int kfunc_md_arch_poke(void *ip, u8 *insn)
-+{
-+	text_poke(ip, insn, KFUNC_MD_INSN_SIZE);
-+	text_poke_sync();
-+	return 0;
-+}
-+
-+#endif
-+
- #endif /* _ASM_X86_FTRACE_H */
 --=20
-2.39.5
+2.25.1
 
 
 
