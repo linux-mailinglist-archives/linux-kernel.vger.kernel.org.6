@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-541623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7581A4BF3D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:48:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B9A5A4BF3E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:48:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66899188C5B4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:48:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3E4E7A3627
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:47:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E04C220DD47;
-	Mon,  3 Mar 2025 11:47:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9F2020E00C;
+	Mon,  3 Mar 2025 11:47:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="TgmgKYi9"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Kvg5Dv8q"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C7CB20CCFF
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 11:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A0020D500
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 11:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741002471; cv=none; b=RcpWyyAFcu3ODaHNV9/qCLjruwMfEYd9A77FAUr10NdtUXuiZjKfh0YnBb+v3MEEculK1ru22AnXKQq5XtJ6OMUAccIWmWd7S8CuJuS5/8dxO/ArmiVtu2IUZr8mgDS6hxeqGFmzvy8QvGmSl7UFVuwvHhCSOG5Jsrt4bPWEKlc=
+	t=1741002472; cv=none; b=WRxUVvAd2SwhnXQX8lVw+HomoDNkZJngiARk5M9djI1iHoeXRFX4GpdaPUH9Z7HdZ5dbXkA7aZtXGV++jcpUuJWnwpx/dgViCTNfH1sOTShXGvwWqsl4FL6sK+DmezJ1SQNV8AKbPUFv4D4tbGOFR0V4o4Qqx+atDzbn/Se2f00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741002471; c=relaxed/simple;
-	bh=y10CLHrz5q1cvvW/6hCv3R5E5E/v+RGlhugIUuM3XuU=;
+	s=arc-20240116; t=1741002472; c=relaxed/simple;
+	bh=f5oXDYngVLmmeCgw3m2NxlkPSjJDX6EDhYcIJAY4bHI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tOej00hAfgEtEMnU6xlfQZBOP2DNfaR6ZPURrQcq1U+uQKTq6q0paqA0H/7aw6w+nHS1rdMOd/eaUD1mO5lI53ilNnqFMNn3KvVK9+a/2vpIHzSU1PN/qukH9fUzdjg49cQ3UwHkMZ6kOslOg8Utr+Zi0WKGJ8hBzm6BGD+1V9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=TgmgKYi9; arc=none smtp.client-ip=209.85.221.48
+	 MIME-Version:Content-Type; b=hB5yZrwQv6Y/UTxz7wl2OSjMKJ9YewQTtXq1AA30MqmZx3KIS6ZzF4bGqS1dmQ/ijqKy5+cJPlkJ3xN2uFtszMRhlTt4ch7lsA5HIUHW3yuIBqGL7PSYDsCa2YUVc6Vf8IyQqG6lakiGtLKdxQ+aq+P6nr9Nl3yU3GPofYqjxuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Kvg5Dv8q; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-390e3b3d432so2944403f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 03:47:48 -0800 (PST)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43bc4b1603fso3792025e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 03:47:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1741002467; x=1741607267; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1741002469; x=1741607269; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wZWcsKY7qzjNS1Wm2Xh8944/cSh1cBOdNgKC7R7IPMQ=;
-        b=TgmgKYi9Ci33UhWc8RR0ukMzU9CMr39R1kvq85RsZ2GpPJaz0eTVezEj4bh7ys5MPR
-         pbW0NwwzlrsisGI6mqExgyFaDV2xcgG5FmYUxFSW2wVcVL+fTSBPT5P40Ph/ViQ2Yee2
-         8IJzIdgCsC4ndouDLDGkZoscs2SJD0W9VV80SHrH9UXnwCpMVaTfHkpc8HuSgi97NVuz
-         enkG3a53FFPOVTkhttbBvE7PZf6+jpvQGcLTUI2quanOm2wjAAI1dy0R5iUvHm/A+Cg7
-         kXFP6VMo6iT2EvCiGgQreVFBG9T4RpOPh2DzXnuO3HUne7zyi0kJm7b5hM6XlH8UTDIS
-         79CQ==
+        bh=7oStMvILYc+VcE0Bos6wZo8DhR0OCDR8DIF2cp2zAmw=;
+        b=Kvg5Dv8q27F+9fY4+9dvP9nw5dxD/T/cY1xeQpvnMGjlAq+1RCNalf+3aP1HYkxQEh
+         WXD2FrvxELzuGwye3gSljMkPK6xi8cfTLdWfNmWKDS2azpxpKRd7833kDc8cOyUe3u2z
+         zKEgL2KYqdHrqKAC5raBrIWNmAhQR2SV/Eiectu0Wjvf2xjwUViwPWMsptHGWPa2Md+V
+         ui+XdMwAwgC1WxVVNhijfF4Y909WTBbXXGsuFRLvtz6zVTrCmAm6SccUa+5h9y4IlNRa
+         MLz6lmX+HqIhAKgcgLs3v/DtSl3tKlMUpF3vjidw51ki3E105Li8HwNM9ptw9dsz5RkB
+         BtiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741002467; x=1741607267;
+        d=1e100.net; s=20230601; t=1741002469; x=1741607269;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wZWcsKY7qzjNS1Wm2Xh8944/cSh1cBOdNgKC7R7IPMQ=;
-        b=Qw5vOrE2XsvysrievqbdwkndyrFpb6prBCwl/cMNSb++DEYams03eCFgHVUsX0QtaE
-         PZ/NYSuVNAL9XOvSsBOK+ddkgLY3qsVftbk+3ZRwKhRB8eDaz/7IdEVgFKm9w3aLhLdT
-         LmaxK4plpPVHymeS/yUjU6EkKZSF3lAosyY5OB9S0SSrB6eLOUp0JqrJwhby5iY09K0e
-         o49qDi7R1j0xdsUbebfsv+muwfYqxBe1ALHoMoeyb517eVSUfFjE3hXhi7FthF6jac5e
-         0pBCKRk8Dkl46720ad13CotBRSGHQrBOIrmHn2zjphlQhGM9uOcyvTE0J0yhl5kmXjW2
-         /OZg==
-X-Forwarded-Encrypted: i=1; AJvYcCUGymIACt4MVjguFloxG3hte0Xiiw7fNJ2UE/ypNbrmO9Dalsjj4sSmRRBis3kUwmxHDjodRKeZFjVuOJM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxdxfj3n2LA1cZnz1MckMD/gJ6c2CDBj3Hlns8R23IC2nsF0xuF
-	pccxwbZZWWOCkCaHDbEkK29xeWldUH7AMTe0bssnnmMouoDJwtZxPwTjiKUM88s=
-X-Gm-Gg: ASbGncuI8ZW5XsyLIygq9yfdF7EF8CROtQr8ocxuwAWV0zZ5WGToLgAtErtUvvDicWP
-	IkVxZj/OUZO0B31YLiyTKILynKhDPIz/h1u/2deXfoeamuQmnZ++WriwWLE7r3UWHE+APEBjPvT
-	lofFtxVXydjcVZL2/KoGqp5fEwicFFEy3NCrRfc6/f8ssyPD7l2XHdre86CB3+X2h8NV0Sppnfk
-	Lz9lW6zlRMzNs2cGXh7ramLVNZlTXjsGQ0gv+40j68/UzHercctL4871+BgDvOr41+4Id7hM0ER
-	Drh+LH0/GMPbadqaz9UoQELJUMt9uN9E92fco1ahhjLHM+SRmAcgTWfqma+eUAHA7EhSiekiMWr
-	ReLacu/t9qee5ghbCCjHjt5QpXg==
-X-Google-Smtp-Source: AGHT+IGcoDodgmWp5+Ijtads7PMkR9LPBMeEvPtHwX7hSfwU3B7pWXGiyRfLkGUcWCvwHE+j4WYS+w==
-X-Received: by 2002:a05:6000:2b04:b0:390:df7f:c20a with SMTP id ffacd0b85a97d-390ec9c19a2mr8181322f8f.33.1741002467084;
-        Mon, 03 Mar 2025 03:47:47 -0800 (PST)
+        bh=7oStMvILYc+VcE0Bos6wZo8DhR0OCDR8DIF2cp2zAmw=;
+        b=Fb9SHuQ4bMes/wkRfchQTpBkg81Yh0uXlUJCVxk0c1EJ1sYwsVmouXilqj3MWVLc/s
+         Xkg+qt+rsfiJoDsHbwxi2lDUYKnkz34Lx8EfhXLZHJJJTQyUD0m6o8ih5jhNPOIIcbLy
+         f0pde2atCDhk82JjBqzTCUulC1w2jlYK5humTPGjard6Z3XQRQdzRf1CJm2SyTr8V+x/
+         H8LX7UiIZmyGWrYFGVHGQpzLJnspSaX55HOiNIBq7JOVlZlaLo1a3opl2Dg0PlbrzX3m
+         Elj6U1ZvEHn8Syi/3u4uxx8QAhbMmaqyP6iXeFdwTqZpNvv9jUANDNk1za11ch4DrdxZ
+         hUug==
+X-Forwarded-Encrypted: i=1; AJvYcCXTKg2TbceGMjfUSWLJKAS0535a4r6sE2GVAPu3W5b9ZH9MlrQCkEGYL1wv5XeBuhJrvbES2oH+p91tgmo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwH3lENXTtBOldphe1yvC+pLgPfEWXAuogMhsY+Qpk6CjV1R3x
+	j+Jkn6vSMU8cF/JqAHrGxuegprclLlIZ27K1Y/bwZMUjZG1xRSLbf2/8Eiwm2So=
+X-Gm-Gg: ASbGncvYFey2ZLnExuxrNnS5Helfy7a+eaekS4Fy2hneQvyJLk36v9+0JKXrejJN2o6
+	LBhWTbKcCEmRW0HpG66sUqriRqmttPUBRcptsEDuzVn4c05Dh/MyYOhCgvtpmGpmc7XjtBrOznp
+	Xsc5goJiflUkkNcDiAIuu64pqTk4xrHUUE1E7GqQVW8D2kzeNp7/rm1Bhd3n/FHB56oCMMS5oiH
+	rnvWmK627eFhvGvZ0zhFbfSnGnctrWF0fZk1y9RLqyoBa2dkMOyfSsl2uoMyec9s12lyE5/qxMH
+	H5l3DBaNX0eF9OIt2pSPnBh29BnGj0YjggXBLV8Qo5fR1AHYLA9T5g4owxHDN+vs/YAfArnxaKU
+	GIzI2neOVfLVpZPcV3LGMu/t66g==
+X-Google-Smtp-Source: AGHT+IELfVBNUZ3T62EMT1S63oZc8YXWbdY+myyuSZ9x2ZPWALyNI6M68yP4U9enUx3QzHfaeTngGA==
+X-Received: by 2002:a05:600c:5119:b0:439:a25b:e7d3 with SMTP id 5b1f17b1804b1-43ba67047c9mr107630935e9.14.1741002469168;
+        Mon, 03 Mar 2025 03:47:49 -0800 (PST)
 Received: from localhost (amontpellier-556-1-148-206.w109-210.abo.wanadoo.fr. [109.210.4.206])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba5870e7sm191186775e9.35.2025.03.03.03.47.46
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b73702bd0sm158648515e9.10.2025.03.03.03.47.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 03:47:46 -0800 (PST)
+        Mon, 03 Mar 2025 03:47:48 -0800 (PST)
 From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
 To: Jonathan Cameron <jic23@kernel.org>
 Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
@@ -84,9 +84,9 @@ Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
 	Nuno Sa <nuno.sa@analog.com>,
 	linux-iio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 4/8] iio: adc: ad7173: Fix comparison of channel configs
-Date: Mon,  3 Mar 2025 12:47:02 +0100
-Message-ID: <20250303114659.1672695-14-u.kleine-koenig@baylibre.com>
+Subject: [PATCH v4 5/8] iio: adc: ad4130: Adapt internal names to match official filter_type ABI
+Date: Mon,  3 Mar 2025 12:47:03 +0100
+Message-ID: <20250303114659.1672695-15-u.kleine-koenig@baylibre.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20250303114659.1672695-10-u.kleine-koenig@baylibre.com>
 References: <20250303114659.1672695-10-u.kleine-koenig@baylibre.com>
@@ -97,85 +97,281 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2867; i=u.kleine-koenig@baylibre.com; h=from:subject; bh=y10CLHrz5q1cvvW/6hCv3R5E5E/v+RGlhugIUuM3XuU=; b=kA0DAAoBj4D7WH0S/k4ByyZiAGfFlsKjoB/9Enx0XBp7O5uj/4SpG8Eo5mO3qMUnhEvhZcpxs IkBMwQAAQoAHRYhBD+BrGk6eh5Zia3+04+A+1h9Ev5OBQJnxZbCAAoJEI+A+1h9Ev5OeFoIAKNt I0HVB0FGhl6WXRj+K+a+jWQubV3oqNtlhol6jL3swaA1Yb+W8f1OsxHLqw3xmL3qnu3F7Zmnuvu 9cWdxMCHqU4cqoUdfzPw2Jg0MvJBSZ4QDLhWtkvrt0KGO2t4TcxrSmZ7XngGVFoh33KNhHo2alF gfRSoPv9iC/zgLS+JPalhzfB0VODl9U2UvcOqwUtRLW4eVeBynbngZXUAsQi87AO7qxJMOpVf77 U5fArLQ0XafUWhNs4Y3EugyOOrNqUrGHABVm0jvyPqvc0+CvQOjpP6HYL+3rLnmOvCXDE5EXxSK r5vjeptYied6fbL17oTgb2Hrx+F+f7tAcyGxGs8=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=10026; i=u.kleine-koenig@baylibre.com; h=from:subject; bh=f5oXDYngVLmmeCgw3m2NxlkPSjJDX6EDhYcIJAY4bHI=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBnxZbJmgat15ejTK0QQKh7YezB6CM5zXG9qgXEo EJXgAtDlCmJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZ8WWyQAKCRCPgPtYfRL+ TmOEB/40PrifRoyMnbRW15f0Kc5i2Lyj3lHgreXcSplrKQrQ2yQT8ugWqShJzKm3GrX8Ivmxuay /ROUnJccQp+uZrdP6UXQS4IttUfsMk/wET65liNBPSoQr//Mw0l5Do5jUJ2js0C+MssELsulZMO GmX7KoRlwPum8U2U232iA4nUBn7Ed5XHe140HYOsR2+xvZjC80dc+JGdceUW64U0MgXV34DLLWC K3fjzvFG+dyIBLiLUJOnJ2v5B9lchBTUyoZIER10Eufnf9Z7De+rIT0h+kzY2Z1gry51NVnsr+r 4q/SeYDF5v4+nubYhxlYB8zc3sjL5Gd4Wk4G/iDhUh0jOTDx
 X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 
-Checking the binary representation of two structs (of the same type)
-for equality doesn't have the same semantic as comparing all members for
-equality. The former might find a difference where the latter doesn't in
-the presence of padding or when ambiguous types like float or bool are
-involved. (Floats typically have different representations for single
-values, like -0.0 vs +0.0, or 0.5 * 2² vs 0.25 * 2³. The type bool has
-at least 8 bits and the raw values 1 and 2 (probably) both evaluate to
-true, but memcmp finds a difference.)
+Recently the interface to to select a filter was officially blessed to
+use "filter_type". Adapt the naming of several functions accordingly to
+make the new standard more present and so make the driver a better
+template for other drivers. Apart from the comment update this is just
+s/filter_mode/filter_type/.
 
-When searching for a channel that already has the configuration we need,
-the comparison by member is the one that is needed.
-
-Convert the comparison accordingly to compare the members one after
-another. Also add a static_assert guard to (somewhat) ensure that when
-struct ad7173_channel_config::config_props is expanded, the comparison
-is adapted, too.
-
-This issue is somewhat theoretic, but using memcmp() on a struct is a
-bad pattern that is worth fixing.
-
-Fixes: 76a1e6a42802 ("iio: adc: ad7173: add AD7173 driver")
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
 ---
- drivers/iio/adc/ad7173.c | 25 +++++++++++++++++++++----
- 1 file changed, 21 insertions(+), 4 deletions(-)
+ drivers/iio/adc/ad4130.c | 84 ++++++++++++++++++++--------------------
+ 1 file changed, 42 insertions(+), 42 deletions(-)
 
-diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
-index ca2b41b16cc9..2d90487c7f31 100644
---- a/drivers/iio/adc/ad7173.c
-+++ b/drivers/iio/adc/ad7173.c
-@@ -197,7 +197,11 @@ struct ad7173_channel_config {
- 	u8 cfg_slot;
- 	bool live;
+diff --git a/drivers/iio/adc/ad4130.c b/drivers/iio/adc/ad4130.c
+index 4ab1943c4697..3dbf1d89b671 100644
+--- a/drivers/iio/adc/ad4130.c
++++ b/drivers/iio/adc/ad4130.c
+@@ -203,7 +203,7 @@ enum ad4130_mode {
+ 	AD4130_MODE_IDLE = 0b0100,
+ };
  
--	/* Following fields are used to compare equality. */
-+	/*
-+	 * Following fields are used to compare equality. If you
-+	 * make adaptations in it, you most likely also have to adapt
-+	 * ad7173_find_live_config(), too.
-+	 */
- 	struct_group(config_props,
- 		bool bipolar;
- 		bool input_buf;
-@@ -568,15 +572,28 @@ static struct ad7173_channel_config *
- ad7173_find_live_config(struct ad7173_state *st, struct ad7173_channel_config *cfg)
+-enum ad4130_filter_mode {
++enum ad4130_filter_type {
+ 	AD4130_FILTER_SINC4,
+ 	AD4130_FILTER_SINC4_SINC1,
+ 	AD4130_FILTER_SINC3,
+@@ -234,7 +234,7 @@ struct ad4130_setup_info {
+ 	unsigned int			pga;
+ 	unsigned int			fs;
+ 	u32				ref_sel;
+-	enum ad4130_filter_mode		filter_mode;
++	enum ad4130_filter_type		filter_type;
+ 	bool				ref_bufp;
+ 	bool				ref_bufm;
+ };
+@@ -255,7 +255,7 @@ struct ad4130_chan_info {
+ };
+ 
+ struct ad4130_filter_config {
+-	enum ad4130_filter_mode		filter_mode;
++	enum ad4130_filter_type		filter_type;
+ 	unsigned int			odr_div;
+ 	unsigned int			fs_max;
+ 	enum iio_available_type		samp_freq_avail_type;
+@@ -341,9 +341,9 @@ static const unsigned int ad4130_burnout_current_na_tbl[AD4130_BURNOUT_MAX] = {
+ 	[AD4130_BURNOUT_4000NA] = 4000,
+ };
+ 
+-#define AD4130_VARIABLE_ODR_CONFIG(_filter_mode, _odr_div, _fs_max)	\
++#define AD4130_VARIABLE_ODR_CONFIG(_filter_type, _odr_div, _fs_max)	\
+ {									\
+-		.filter_mode = (_filter_mode),				\
++		.filter_type = (_filter_type),				\
+ 		.odr_div = (_odr_div),					\
+ 		.fs_max = (_fs_max),					\
+ 		.samp_freq_avail_type = IIO_AVAIL_RANGE,		\
+@@ -354,9 +354,9 @@ static const unsigned int ad4130_burnout_current_na_tbl[AD4130_BURNOUT_MAX] = {
+ 		},							\
+ }
+ 
+-#define AD4130_FIXED_ODR_CONFIG(_filter_mode, _odr_div)			\
++#define AD4130_FIXED_ODR_CONFIG(_filter_type, _odr_div)			\
+ {									\
+-		.filter_mode = (_filter_mode),				\
++		.filter_type = (_filter_type),				\
+ 		.odr_div = (_odr_div),					\
+ 		.fs_max = AD4130_FILTER_SELECT_MIN,			\
+ 		.samp_freq_avail_type = IIO_AVAIL_LIST,			\
+@@ -378,7 +378,7 @@ static const struct ad4130_filter_config ad4130_filter_configs[] = {
+ 	AD4130_FIXED_ODR_CONFIG(AD4130_FILTER_SINC3_PF4,      148),
+ };
+ 
+-static const char * const ad4130_filter_modes_str[] = {
++static const char * const ad4130_filter_types_str[] = {
+ 	[AD4130_FILTER_SINC4] = "sinc4",
+ 	[AD4130_FILTER_SINC4_SINC1] = "sinc4+sinc1",
+ 	[AD4130_FILTER_SINC3] = "sinc3",
+@@ -610,7 +610,7 @@ static bool ad4130_setup_info_eq(struct ad4130_setup_info *a,
+ 				     unsigned int pga;
+ 				     unsigned int fs;
+ 				     u32 ref_sel;
+-				     enum ad4130_filter_mode filter_mode;
++				     enum ad4130_filter_type filter_type;
+ 				     bool ref_bufp;
+ 				     bool ref_bufm;
+ 			     }));
+@@ -621,7 +621,7 @@ static bool ad4130_setup_info_eq(struct ad4130_setup_info *a,
+ 	    a->pga != b->pga ||
+ 	    a->fs != b->fs ||
+ 	    a->ref_sel != b->ref_sel ||
+-	    a->filter_mode != b->filter_mode ||
++	    a->filter_type != b->filter_type ||
+ 	    a->ref_bufp != b->ref_bufp ||
+ 	    a->ref_bufm != b->ref_bufm)
+ 		return false;
+@@ -728,7 +728,7 @@ static int ad4130_write_slot_setup(struct ad4130_state *st,
+ 	if (ret)
+ 		return ret;
+ 
+-	val = FIELD_PREP(AD4130_FILTER_MODE_MASK, setup_info->filter_mode) |
++	val = FIELD_PREP(AD4130_FILTER_MODE_MASK, setup_info->filter_type) |
+ 	      FIELD_PREP(AD4130_FILTER_SELECT_MASK, setup_info->fs);
+ 
+ 	ret = regmap_write(st->regmap, AD4130_FILTER_X_REG(slot), val);
+@@ -872,11 +872,11 @@ static int ad4130_set_channel_enable(struct ad4130_state *st,
+  * (used in ad4130_fs_to_freq)
+  */
+ 
+-static void ad4130_freq_to_fs(enum ad4130_filter_mode filter_mode,
++static void ad4130_freq_to_fs(enum ad4130_filter_type filter_type,
+ 			      int val, int val2, unsigned int *fs)
  {
- 	struct ad7173_channel_config *cfg_aux;
--	ptrdiff_t cmp_size;
- 	int i;
+ 	const struct ad4130_filter_config *filter_config =
+-		&ad4130_filter_configs[filter_mode];
++		&ad4130_filter_configs[filter_type];
+ 	u64 dividend, divisor;
+ 	int temp;
  
--	cmp_size = sizeof_field(struct ad7173_channel_config, config_props);
-+	/*
-+	 * This is just to make sure that the comparison is adapted after
-+	 * struct ad7173_channel_config was changed.
-+	 */
-+	static_assert(sizeof_field(struct ad7173_channel_config, config_props) ==
-+		      sizeof(struct {
-+				     bool bipolar;
-+				     bool input_buf;
-+				     u8 odr;
-+				     u8 ref_sel;
-+			     }));
-+
- 	for (i = 0; i < st->num_channels; i++) {
- 		cfg_aux = &st->channels[i].cfg;
+@@ -895,11 +895,11 @@ static void ad4130_freq_to_fs(enum ad4130_filter_mode filter_mode,
+ 	*fs = temp;
+ }
  
- 		if (cfg_aux->live &&
--		    !memcmp(&cfg->config_props, &cfg_aux->config_props, cmp_size))
-+		    cfg->bipolar == cfg_aux->bipolar &&
-+		    cfg->input_buf == cfg_aux->input_buf &&
-+		    cfg->odr == cfg_aux->odr &&
-+		    cfg->ref_sel == cfg_aux->ref_sel)
- 			return cfg_aux;
+-static void ad4130_fs_to_freq(enum ad4130_filter_mode filter_mode,
++static void ad4130_fs_to_freq(enum ad4130_filter_type filter_type,
+ 			      unsigned int fs, int *val, int *val2)
+ {
+ 	const struct ad4130_filter_config *filter_config =
+-		&ad4130_filter_configs[filter_mode];
++		&ad4130_filter_configs[filter_type];
+ 	unsigned int dividend, divisor;
+ 	u64 temp;
+ 
+@@ -911,7 +911,7 @@ static void ad4130_fs_to_freq(enum ad4130_filter_mode filter_mode,
+ 	*val = div_u64_rem(temp, NANO, val2);
+ }
+ 
+-static int ad4130_set_filter_mode(struct iio_dev *indio_dev,
++static int ad4130_set_filter_type(struct iio_dev *indio_dev,
+ 				  const struct iio_chan_spec *chan,
+ 				  unsigned int val)
+ {
+@@ -919,17 +919,17 @@ static int ad4130_set_filter_mode(struct iio_dev *indio_dev,
+ 	unsigned int channel = chan->scan_index;
+ 	struct ad4130_chan_info *chan_info = &st->chans_info[channel];
+ 	struct ad4130_setup_info *setup_info = &chan_info->setup;
+-	enum ad4130_filter_mode old_filter_mode;
++	enum ad4130_filter_type old_filter_type;
+ 	int freq_val, freq_val2;
+ 	unsigned int old_fs;
+ 	int ret = 0;
+ 
+ 	guard(mutex)(&st->lock);
+-	if (setup_info->filter_mode == val)
++	if (setup_info->filter_type == val)
+ 		return 0;
+ 
+ 	old_fs = setup_info->fs;
+-	old_filter_mode = setup_info->filter_mode;
++	old_filter_type = setup_info->filter_type;
+ 
+ 	/*
+ 	 * When switching between filter modes, try to match the ODR as
+@@ -937,55 +937,55 @@ static int ad4130_set_filter_mode(struct iio_dev *indio_dev,
+ 	 * using the old filter mode, then convert it back into FS using
+ 	 * the new filter mode.
+ 	 */
+-	ad4130_fs_to_freq(setup_info->filter_mode, setup_info->fs,
++	ad4130_fs_to_freq(setup_info->filter_type, setup_info->fs,
+ 			  &freq_val, &freq_val2);
+ 
+ 	ad4130_freq_to_fs(val, freq_val, freq_val2, &setup_info->fs);
+ 
+-	setup_info->filter_mode = val;
++	setup_info->filter_type = val;
+ 
+ 	ret = ad4130_write_channel_setup(st, channel, false);
+ 	if (ret) {
+ 		setup_info->fs = old_fs;
+-		setup_info->filter_mode = old_filter_mode;
++		setup_info->filter_type = old_filter_type;
+ 		return ret;
  	}
- 	return NULL;
+ 
+ 	return 0;
+ }
+ 
+-static int ad4130_get_filter_mode(struct iio_dev *indio_dev,
++static int ad4130_get_filter_type(struct iio_dev *indio_dev,
+ 				  const struct iio_chan_spec *chan)
+ {
+ 	struct ad4130_state *st = iio_priv(indio_dev);
+ 	unsigned int channel = chan->scan_index;
+ 	struct ad4130_setup_info *setup_info = &st->chans_info[channel].setup;
+-	enum ad4130_filter_mode filter_mode;
++	enum ad4130_filter_type filter_type;
+ 
+ 	guard(mutex)(&st->lock);
+-	filter_mode = setup_info->filter_mode;
++	filter_type = setup_info->filter_type;
+ 
+-	return filter_mode;
++	return filter_type;
+ }
+ 
+-static const struct iio_enum ad4130_filter_mode_enum = {
+-	.items = ad4130_filter_modes_str,
+-	.num_items = ARRAY_SIZE(ad4130_filter_modes_str),
+-	.set = ad4130_set_filter_mode,
+-	.get = ad4130_get_filter_mode,
++static const struct iio_enum ad4130_filter_type_enum = {
++	.items = ad4130_filter_types_str,
++	.num_items = ARRAY_SIZE(ad4130_filter_types_str),
++	.set = ad4130_set_filter_type,
++	.get = ad4130_get_filter_type,
+ };
+ 
+-static const struct iio_chan_spec_ext_info ad4130_filter_mode_ext_info[] = {
++static const struct iio_chan_spec_ext_info ad4130_ext_info[] = {
+ 	/*
+-	 * Intentional duplication of attributes to keep backwards compatibility
+-	 * while standardizing over the main IIO ABI for digital filtering.
++	 * `filter_type` is the standardized IIO ABI for digital filtering.
++	 * `filter_mode` is just kept for backwards compatibility.
+ 	 */
+-	IIO_ENUM("filter_mode", IIO_SEPARATE, &ad4130_filter_mode_enum),
++	IIO_ENUM("filter_mode", IIO_SEPARATE, &ad4130_filter_type_enum),
+ 	IIO_ENUM_AVAILABLE("filter_mode", IIO_SHARED_BY_TYPE,
+-			   &ad4130_filter_mode_enum),
+-	IIO_ENUM("filter_type", IIO_SEPARATE, &ad4130_filter_mode_enum),
++			   &ad4130_filter_type_enum),
++	IIO_ENUM("filter_type", IIO_SEPARATE, &ad4130_filter_type_enum),
+ 	IIO_ENUM_AVAILABLE("filter_type", IIO_SHARED_BY_TYPE,
+-			   &ad4130_filter_mode_enum),
++			   &ad4130_filter_type_enum),
+ 	{ }
+ };
+ 
+@@ -999,7 +999,7 @@ static const struct iio_chan_spec ad4130_channel_template = {
+ 			      BIT(IIO_CHAN_INFO_SAMP_FREQ),
+ 	.info_mask_separate_available = BIT(IIO_CHAN_INFO_SCALE) |
+ 					BIT(IIO_CHAN_INFO_SAMP_FREQ),
+-	.ext_info = ad4130_filter_mode_ext_info,
++	.ext_info = ad4130_ext_info,
+ 	.scan_type = {
+ 		.sign = 'u',
+ 		.endianness = IIO_BE,
+@@ -1049,7 +1049,7 @@ static int ad4130_set_channel_freq(struct ad4130_state *st,
+ 	guard(mutex)(&st->lock);
+ 	old_fs = setup_info->fs;
+ 
+-	ad4130_freq_to_fs(setup_info->filter_mode, val, val2, &fs);
++	ad4130_freq_to_fs(setup_info->filter_type, val, val2, &fs);
+ 
+ 	if (fs == setup_info->fs)
+ 		return 0;
+@@ -1141,7 +1141,7 @@ static int ad4130_read_raw(struct iio_dev *indio_dev,
+ 		return IIO_VAL_INT;
+ 	case IIO_CHAN_INFO_SAMP_FREQ: {
+ 		guard(mutex)(&st->lock);
+-		ad4130_fs_to_freq(setup_info->filter_mode, setup_info->fs,
++		ad4130_fs_to_freq(setup_info->filter_type, setup_info->fs,
+ 				  val, val2);
+ 
+ 		return IIO_VAL_INT_PLUS_NANO;
+@@ -1171,7 +1171,7 @@ static int ad4130_read_avail(struct iio_dev *indio_dev,
+ 		return IIO_AVAIL_LIST;
+ 	case IIO_CHAN_INFO_SAMP_FREQ:
+ 		scoped_guard(mutex, &st->lock) {
+-			filter_config = &ad4130_filter_configs[setup_info->filter_mode];
++			filter_config = &ad4130_filter_configs[setup_info->filter_type];
+ 		}
+ 
+ 		*vals = (int *)filter_config->samp_freq_avail;
 -- 
 2.47.1
 
