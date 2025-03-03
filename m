@@ -1,216 +1,342 @@
-Return-Path: <linux-kernel+bounces-541323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D276DA4BB7D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:59:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37D2EA4BB86
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:59:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F8F8188A45A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:59:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8DE91893E5A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:59:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1C021F1909;
-	Mon,  3 Mar 2025 09:58:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E7B91F153A;
+	Mon,  3 Mar 2025 09:59:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="uRvNzI5k"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="n9cqp1MP"
+Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188E51F12F6;
-	Mon,  3 Mar 2025 09:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C060D1EEA27;
+	Mon,  3 Mar 2025 09:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740995924; cv=none; b=lNgLuh/W2/gZ9SYfijBVkzdFReGes2LByVTlxkUlbewst44N0AEuc1VSXv6s/9CAYosJnNLQA2V3ZfB2vUb2kf9v9QHvZxuKEp5bQITcSs/sOw3pY3ACm6p7jChyfBOgeUvuQRHwP3MiktARssPiMZjNBrOBOUfF4Rf3CVu3kYI=
+	t=1740995952; cv=none; b=EGAClFiqdXyeZMXlYQAwJ8ORXf5eVihsjs0JpurRJ1QiPuN1QKHZgalU6tubqwu5pEfVhKGBoGp1Kyl0VaF5AI/9CA0DfOcYeJOWUmauePByz7KyYzFGoVaZtgL5H9e94/0ICrVOjmQjBkUZH53Ki0I9Gikcy0yiBLb2dK5329Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740995924; c=relaxed/simple;
-	bh=EVHnAT0Fj8UFfX1d1iKKikIPT6mE89O8IutiZ9wghW4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QUj/vg5+uC8w2Fn91lWY8nAANi9s5/p0vA6BasrRJYTVJh9cNJjpK4o3Q/uVUf+BS2SCJGk5I76o9mw8U3gNYILim2LVc4p/+zn5e5cxXfzs8orCTgVhwsiC7Wt0GTsPqNDwHB4FRXyb7TXrRr+6cq8Xz5e0WU9za6jyqXX54RI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=uRvNzI5k; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=vocGWq00dHieN/+oIHdRzKoBXygqv9MdZeGwUkedRe8=; b=uRvNzI5kU7RbApRJOXrYX2IOFF
-	5QfX0iCOo6Ens2pw8lKCUfsT18QpgBG3nwlYDqFwdxXv4hqE6jaEXDZG8HfvQxOXLEKsquGbP8NEE
-	OIB2Cgx3P68QPb8V73KpPrf2dsXurdE2IL/EIDuGzeBZzGWdJByIMa8+g5Z1cODYI5TUBw6hFZwC9
-	kaFBMnRyIrk7CkD+V6IwFdYPWRnpx28jtnOWXM9WYHhf2hIdfBc026F7qrR1feEzQMfL/s8S5mK3A
-	ZE5FrGOXdfv3BtB/Gj/8r7ls4V7bUSbI6eF1hOoelJKXwUS6BNNypgWBR1M5J9GGGgJrsCG6TPlBJ
-	a/95o4Pg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:45396)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tp2Z4-00008X-2c;
-	Mon, 03 Mar 2025 09:58:22 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tp2Yy-0003hC-1p;
-	Mon, 03 Mar 2025 09:58:16 +0000
-Date: Mon, 3 Mar 2025 09:58:16 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH 3/3] net: stmmac: Add DWMAC glue layer for Renesas GBETH
-Message-ID: <Z8V9OC_1llF3leZd@shell.armlinux.org.uk>
-References: <20250302181808.728734-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250302181808.728734-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <Z8SydsdDsZfdrdbE@shell.armlinux.org.uk>
- <CA+V-a8vCB7nP=tsv4UkOwODSs-9hiG-PxN6cpihfvwjq2itAHg@mail.gmail.com>
- <CA+V-a8un7Oy9NtfDUfs0DSwRVAFn52-vWj1Os=u_1dqijJhbMw@mail.gmail.com>
+	s=arc-20240116; t=1740995952; c=relaxed/simple;
+	bh=Dgx0WmiWWJVJFOYXROEjC9QhshtwPpwi2bA+QbGxJUk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ogOqapcEaVGKlY/UWUPPvIZvsi+/5lrt5wzEm4p143PEcQDDUXiaL1SdIFYMvKwDYdxqiW++2clcVQeByfMPhUcQDfVpkbc04crpaZHhgvHfyOxqegLSPB5rEYbCkM7Yex/IsrISQuiFKrgGN9TCUKXx7106xjbUsKPXolSJXqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=n9cqp1MP; arc=none smtp.client-ip=54.254.200.128
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1740995930;
+	bh=K/zA0N8M3Fo/mbM8RcyqXqLjJSa3rFqpG7w6gFb91fI=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version;
+	b=n9cqp1MP7doGEOtAP3WnWF0PYRuTEodYVpDiB67uy0MA84th6NqSPsUhwEpR76aYu
+	 r6rwkHoFJZ8oHrjR8Bq7ZE//z46oYHmD52+0WT8kM0+QpWT/G6IWeiN8ytOwTXVRxd
+	 UlKW8sG4pPv5IsCzeGxAk6oOpS/JD58GMiMtof7o=
+X-QQ-mid: bizesmtpip3t1740995922t7z61pl
+X-QQ-Originating-IP: LIg0Yy8e5VUzBgFCyAYWG60yUtxBWS+LuXYa5nhA61Y=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 03 Mar 2025 17:58:40 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 1883138028751320756
+From: raoxu <raoxu@uniontech.com>
+To: mathias.nyman@intel.com,
+	gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	wangyuli@uniontech.com,
+	zhanjun@uniontech.com,
+	Xu Rao <raoxu@uniontech.com>
+Subject: [PATCH] From: Xu Rao <raoxu@uniontech.com> Subject: [PATCH] usb: xhci: Add debugfs support for xHCI port bandwidth
+Date: Mon,  3 Mar 2025 17:58:37 +0800
+Message-Id: <20250303095837.16332-1-raoxu@uniontech.com>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+V-a8un7Oy9NtfDUfs0DSwRVAFn52-vWj1Os=u_1dqijJhbMw@mail.gmail.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz7a-0
+X-QQ-XMAILINFO: My+Y/kkztEN1lslsfqyxyrJQ7+gHxHLHtisbPtmvYATJzRQxZmsLagno
+	SIgJb1OKrwBLaU0R1UV3AHUo3YlmN+cWC3t9sLoPW2J8uCMgwL9/qxQ6Q+WjUaYz8W1NZT7
+	NXBvxCpo3yB/gypxdap220dUyoS5KlIUV9TMrLYrb0RnPPcOEKAptQ0N0p0ZsE7pzamlUbr
+	usyF5QqbJJlTXIhwaVHqdoNLBSNnBDbOWKRJi1B62+3lLksrqlAfqKKuMgdXpfzU6GYs3z2
+	K7cMPQV7BbMu4hssTlzV7nZOeFvzMSDYum8+Aro/n+ICif0hRghmN5ZrdOr0NqCzPJstXSx
+	3oE4EdRzRUcObgd9aFeiDXTTwSvKlSjhA2TTCu2UBRY8u4kFePH9QnUELGGfR8u4rJzsZhY
+	fV6dsLweTFYmHTw1u2wycrGdN+FQhJZAYmGfb1BjxL8Y8UyhVAC7U2Ez9G/Et2OjrfwNoyR
+	3gEqqjUyEPgZlVwcOxE7rMdvAfKtcThSQrR9AhlakXQ4VLLgm85RhLmxkVGkBCRTjf5Upzk
+	+m4dlbLAu4Hni5w5dQfuoO6h5VowEz0Etf/NHGdUATKrJKzEbZ+cfgqO8WUHjDd18uFe/Xr
+	xYunNk+LrCntbOi3WpKzMefsWmtlQcsvFFqEzDMh+UgxIb4wkVp5oC6rdhMu17ZPpfWu0Kx
+	KU3AHH2qkZhzr2eYvFhT70MXIfIH46exjJIR3ptEZA7dfsYGtH+KQT8xwoUh3HCPfeTK6oh
+	NDY91D6z6c3WgY3h/mWU3NOrfJE7WsgP/fc5kQmcesKuaFgZrJszaX0EKnaJB1K2QJFNn7+
+	6kz4fBMMBQhl9lpSxZJZbN4p/bFx5wMPmWpeLwzyuvzGOeLRXvZX/vrH6+HAll3JCiL4hPC
+	8+akPPLJYVm9axQrcJ5MofWN/giRz3aG59Vhe2pxC0zXIMkLhb0KEROsJLcH8uSb0Kvtawl
+	2FkpDCMURLfIRNq5puVLwxiX09bt4wIzK+wrFe1m9gQ/Wtx8Gfj4RmjEeBR7R8Y0F8025k2
+	hjxpp9ELj2UIhz/FEWMYM9+pB+KfM=
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+X-QQ-RECHKSPAM: 0
 
-On Mon, Mar 03, 2025 at 09:41:13AM +0000, Lad, Prabhakar wrote:
-> Hi Russell,
-> 
-> On Sun, Mar 2, 2025 at 9:20 PM Lad, Prabhakar
-> <prabhakar.csengg@gmail.com> wrote:
-> >
-> > Hi Russell,
-> >
-> > On Sun, Mar 2, 2025 at 7:33 PM Russell King (Oracle)
-> > <linux@armlinux.org.uk> wrote:
-> > >
-> > > On Sun, Mar 02, 2025 at 06:18:08PM +0000, Prabhakar wrote:
-> > > > +     gbeth->dev = dev;
-> > > > +     gbeth->regs = stmmac_res.addr;
-> > > > +     plat_dat->bsp_priv = gbeth;
-> > > > +     plat_dat->set_clk_tx_rate = stmmac_set_clk_tx_rate;
-> > >
-> > > Thanks for using that!
-> > >
-> > Yep, it shortens the glue driver further.
-> >
-> > > > +     plat_dat->flags |= STMMAC_FLAG_HWTSTAMP_CORRECT_LATENCY |
-> > > > +                        STMMAC_FLAG_EN_TX_LPI_CLOCKGATING |
-> > >
-> > > I would like to know what value tx_clk_stop is in
-> > > stmmac_mac_enable_tx_lpi() for your setup. Ideally, stmmac should
-> > > use the capability report from the PHY to decide whether the
-> > > transmit clock can be gated, but sadly we haven't had any support
-> > > in phylib/phylink for that until recently, and I haven't modified
-> > > stmmac to allow use of that. However, it would be good to gain
-> > > knowledge in this area.
-> > >
-> > tx_clk_stop =1,
-> >
-> > root@rzv2h-evk-alpha:~# ifconfig eth0 up
-> > [  587.830436] renesas-gbeth 15c30000.ethernet eth0: Register
-> > MEM_TYPE_PAGE_POOL RxQ-0
-> > [  587.838636] renesas-gbeth 15c30000.ethernet eth0: Register
-> > MEM_TYPE_PAGE_POOL RxQ-1
-> > [  587.846792] renesas-gbeth 15c30000.ethernet eth0: Register
-> > MEM_TYPE_PAGE_POOL RxQ-2
-> > [  587.854734] renesas-gbeth 15c30000.ethernet eth0: Register
-> > MEM_TYPE_PAGE_POOL RxQ-3
-> > [  587.926860] renesas-gbeth 15c30000.ethernet eth0: PHY [stmmac-0:00]
-> > driver [Microchip KSZ9131 Gigabit PHY] (irq=POLL)
-> > [  587.949380] dwmac4: Master AXI performs fixed burst length
-> > [  587.954910] renesas-gbeth 15c30000.ethernet eth0: No Safety
-> > Features support found
-> > [  587.962556] renesas-gbeth 15c30000.ethernet eth0: IEEE 1588-2008
-> > Advanced Timestamp supported
-> > [  587.971420] renesas-gbeth 15c30000.ethernet eth0: registered PTP clock
-> > [  587.978004] renesas-gbeth 15c30000.ethernet eth0: configuring for
-> > phy/rgmii-id link mode
-> > root@rzv2h-evk-alpha:~# [  591.070448] renesas-gbeth 15c30000.ethernet
-> > eth0: tx_clk_stop=1
-> > [  591.076590] renesas-gbeth 15c30000.ethernet eth0: Link is Up -
-> > 1Gbps/Full - flow control rx/tx
-> >
-> > With the below diff:
-> >
-> > diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> > b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> > index aec230353ac4..68f1954e6eea 100644
-> > --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> > +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> > @@ -1100,6 +1100,7 @@ static int stmmac_mac_enable_tx_lpi(struct
-> > phylink_config *config, u32 timer,
-> >         struct stmmac_priv *priv = netdev_priv(to_net_dev(config->dev));
-> >         int ret;
-> >
-> > +       netdev_err(priv->dev, "tx_clk_stop=%d\n", tx_clk_stop);
-> >         priv->tx_lpi_timer = timer;
-> >         priv->eee_active = true;
-> >
-> > > > +                        STMMAC_FLAG_RX_CLK_RUNS_IN_LPI |
-> > >
-> I got some feedback from the HW team, based on the feedback this flag
-> depends on the PHY device. I wonder if we should create a DT property
-> for this. Please share your thoughts.
+From: Xu Rao <raoxu@uniontech.com>
 
-Not sure exactly which flag you're referring to, because you first
-quote the code that you added to dump the _transmit_ clock stop,
-and then you named the _receive_ clock flag.
+In many projects, you need to obtain the available bandwidth of the
+xhci roothub port. Refer to xhci rev1_2 and use the TRB_GET_BW
+command to obtain it.
 
-I assume you're referring to STMMAC_FLAG_EN_TX_LPI_CLOCKGATING, which
-is currently used by the driver because it didn't know any better to
-check the capabilities of the PHY - and phylib didn't expose an
-interface to do that.
+hardware tested:
+03:00.3 USB controller: Advanced Micro Devices, Inc. [AMD] Raven USB 3.1
+(prog-if 30 [XHCI])
+Subsystem: Huawei Technologies Co., Ltd. Raven USB 3.1
+Flags: bus master, fast devsel, latency 0, IRQ 30
+Memory at c0300000 (64-bit, non-prefetchable) [size=1M]
+Capabilities: [48] Vendor Specific Information: Len=08 <?>
+Capabilities: [50] Power Management version 3
+Capabilities: [64] Express Endpoint, MSI 00
+Capabilities: [a0] MSI: Enable- Count=1/8 Maskable- 64bit+
+Capabilities: [c0] MSI-X: Enable+ Count=8 Masked-
+Kernel driver in use: xhci_hcd
 
-tx_clk_stop is basically the flag from the PHY indicating whether the
-MAC may be permitted to stop its transmit clock. Unfortunately, we
-can't just switch over to using that in stmmac because of it's dumb
-history as that may cause regressions. As we haven't used this flag
-from the PHY before, we have no idea whether it's reliable or not,
-and if it isn't reliable, then using it will cause regressions.
+test progress:
+1.cd /sys/kernel/debug/usb/xhci/0000:03:00.3
+cat port_bandwidth
+/sys/kernel/debug/usb/xhci/0000:03:00.3# cat port_bandwidth
+port[1] available bw: 79%.
+port[2] available bw: 79%.
+port[3] available bw: 79%.
+port[4] available bw: 79%.
+port[5] available bw: 90%.
+port[6] available bw: 90%.
+port[7] available bw: 90%.
+port[8] available bw: 90%.
+2.plug in usb video cammer open it
+cat port_bandwidth
+port[1] available bw: 39%.
+port[2] available bw: 39%.
+port[3] available bw: 39%.
+port[4] available bw: 39%.
+port[5] available bw: 90%.
+port[6] available bw: 90%.
+port[7] available bw: 90%.
+port[8] available bw: 90%.
 
-I think that the way forward would be to introduce yet another flag
-(maybe STMMAC_FLAG_LPI_TX_CLK_PHY_CAP) and:
+Signed-off-by: Xu Rao <raoxu@uniontech.com>
+---
+ drivers/usb/host/xhci-debugfs.c | 42 +++++++++++++++++++
+ drivers/usb/host/xhci-ring.c    | 14 +++++++
+ drivers/usb/host/xhci.c         | 74 +++++++++++++++++++++++++++++++++
+ drivers/usb/host/xhci.h         |  7 ++++
+ 4 files changed, 137 insertions(+)
 
-	if (priv->plat->flags & STMMAC_FLAG_LPI_TX_CLK_PHY_CAP)
-		priv->tx_lpi_clk_stop = tx_clk_stop;
-	else
-		priv->tx_lpi_clk_stop = priv->plat->flags &
-					STMMAC_FLAG_EN_TX_LPI_CLOCKGATING;
+diff --git a/drivers/usb/host/xhci-debugfs.c b/drivers/usb/host/xhci-debugfs.c
+index 1f5ef174abea..573b6c25f3af 100644
+--- a/drivers/usb/host/xhci-debugfs.c
++++ b/drivers/usb/host/xhci-debugfs.c
+@@ -631,6 +631,46 @@ static void xhci_debugfs_create_ports(struct xhci_hcd *xhci,
+ 	}
+ }
 
-and then where STMMAC_FLAG_EN_TX_LPI_CLOCKGATING is checked, that
-becomes:
++static int xhci_port_bw_show(struct seq_file *s, void *unused)
++{
++	struct xhci_hcd		*xhci = (struct xhci_hcd *)s->private;
++	unsigned int		num_ports;
++	unsigned int		i;
++	int			ret;
++	u8			bw_table[MAX_HC_PORTS] = {0};
++
++	num_ports = HCS_MAX_PORTS(xhci->hcs_params1);
++
++	/* get roothub port bandwidth */
++	ret = xhci_get_port_bandwidth(xhci, bw_table);
++	if (ret)
++		return ret;
++
++	/* print all roothub ports available bandwidth */
++	for (i = 1; i < num_ports+1; i++)
++		seq_printf(s, "port[%d] available bw: %d%%.\n", i, bw_table[i]);
++
++	return ret;
++}
++
++static int bw_open(struct inode *inode, struct file *file)
++{
++	return single_open(file, xhci_port_bw_show, inode->i_private);
++}
++
++static const struct file_operations bw_fops = {
++	.open			= bw_open,
++	.read			= seq_read,
++	.llseek			= seq_lseek,
++	.release		= single_release,
++};
++
++static void xhci_debugfs_create_bandwidth(struct xhci_hcd *xhci,
++					struct dentry *parent)
++{
++	debugfs_create_file("port_bandwidth", 0644, parent, xhci, &bw_fops);
++}
++
+ void xhci_debugfs_init(struct xhci_hcd *xhci)
+ {
+ 	struct device		*dev = xhci_to_hcd(xhci)->self.controller;
+@@ -681,6 +721,8 @@ void xhci_debugfs_init(struct xhci_hcd *xhci)
+ 	xhci->debugfs_slots = debugfs_create_dir("devices", xhci->debugfs_root);
 
-	ret = stmmac_set_lpi_mode(priv, priv->hw, STMMAC_LPI_TIMER,
-				  priv->tx_lpi_clk_stop,
-				  priv->tx_lpi_timer);
+ 	xhci_debugfs_create_ports(xhci, xhci->debugfs_root);
++
++	xhci_debugfs_create_bandwidth(xhci, xhci->debugfs_root);
+ }
 
-It's rather annoying to have to include a flag to say "use the 802.3
-standard behaviour" but given that we want to avoid regressions I don't
-see any other choice. It would've been nice to have had the driver
-using the PHY capability, but that horse has already bolted. We can now
-only try to encourage platform glue authors to try setting
-STMMAC_FLAG_LPI_TX_CLK_PHY_CAP with the above in place.
+ void xhci_debugfs_exit(struct xhci_hcd *xhci)
+diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+index 965bffce301e..af1cd4f8ace9 100644
+--- a/drivers/usb/host/xhci-ring.c
++++ b/drivers/usb/host/xhci-ring.c
+@@ -1867,6 +1867,8 @@ static void handle_cmd_completion(struct xhci_hcd *xhci,
+ 	case TRB_NEC_GET_FW:
+ 		xhci_handle_cmd_nec_get_fw(xhci, event);
+ 		break;
++	case TRB_GET_BW:
++		break;
+ 	default:
+ 		/* Skip over unknown commands on the event ring */
+ 		xhci_info(xhci, "INFO unknown command type %d\n", cmd_type);
+@@ -4414,6 +4416,18 @@ int xhci_queue_configure_endpoint(struct xhci_hcd *xhci,
+ 			command_must_succeed);
+ }
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
++/* Queue a get root hub port bandwidth command TRB */
++int xhci_queue_get_rh_port_bw(struct xhci_hcd *xhci,
++		struct xhci_command *cmd, dma_addr_t in_ctx_ptr,
++		u8 dev_speed, u32 slot_id, bool command_must_succeed)
++{
++	return queue_command(xhci, cmd, lower_32_bits(in_ctx_ptr),
++		upper_32_bits(in_ctx_ptr), 0,
++		TRB_TYPE(TRB_GET_BW) | DEV_SPEED_FOR_TRB(dev_speed) |
++		SLOT_ID_FOR_TRB(slot_id),
++		command_must_succeed);
++}
++
+ /* Queue an evaluate context command TRB */
+ int xhci_queue_evaluate_context(struct xhci_hcd *xhci, struct xhci_command *cmd,
+ 		dma_addr_t in_ctx_ptr, u32 slot_id, bool command_must_succeed)
+diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
+index 45653114ccd7..84092fe981e8 100644
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -3088,6 +3088,80 @@ void xhci_reset_bandwidth(struct usb_hcd *hcd, struct usb_device *udev)
+ }
+ EXPORT_SYMBOL_GPL(xhci_reset_bandwidth);
+
++/* Get the available bandwidth of the ports under the xhci roothub,
++ * including USB 2.0 port and USB 3.0 port.
++ */
++int xhci_get_port_bandwidth(struct xhci_hcd *xhci, u8 *bw_table)
++{
++	unsigned int		num_ports;
++	unsigned int		i;
++	struct xhci_command	*cmd;
++	dma_addr_t		dma_handle;
++	void			*dma_buf;
++	int			ret;
++	unsigned long		flags;
++	struct device		*dev  = xhci_to_hcd(xhci)->self.sysdev;
++
++	num_ports = HCS_MAX_PORTS(xhci->hcs_params1);
++
++	cmd = xhci_alloc_command(xhci, true, GFP_KERNEL);
++	if (!cmd)
++		return -ENOMEM;
++
++	dma_buf = dma_alloc_coherent(dev, xhci->page_size, &dma_handle,
++					GFP_KERNEL);
++	if (!dma_buf) {
++		xhci_free_command(xhci, cmd);
++		return -ENOMEM;
++	}
++
++	/* get xhci hub usb3 port bandwidth */
++	/* refer to xhci rev1_2 protocol 4.6.15*/
++	spin_unlock_irqrestore(&xhci->lock, flags);
++	ret = xhci_queue_get_rh_port_bw(xhci, cmd, dma_handle, USB_SPEED_SUPER,
++					0, false);
++	if (ret < 0) {
++		spin_unlock_irqrestore(&xhci->lock, flags);
++		goto out;
++	}
++	xhci_ring_cmd_db(xhci);
++	spin_unlock_irqrestore(&xhci->lock, flags);
++
++	wait_for_completion(cmd->completion);
++
++	/* refer to xhci rev1_2 protocol 6.2.6 , byte 0 is reserved */
++	for (i = 1; i < num_ports+1; i++) {
++		if (((u8 *)dma_buf)[i])
++			bw_table[i] = ((u8 *)dma_buf)[i];
++	}
++
++	/* get xhci hub usb2 port bandwidth */
++	/* refer to xhci rev1_2 protocol 4.6.15*/
++	spin_unlock_irqrestore(&xhci->lock, flags);
++	ret = xhci_queue_get_rh_port_bw(xhci, cmd, dma_handle, USB_SPEED_HIGH,
++					0, false);
++	if (ret < 0) {
++		spin_unlock_irqrestore(&xhci->lock, flags);
++		goto out;
++	}
++	xhci_ring_cmd_db(xhci);
++	spin_unlock_irqrestore(&xhci->lock, flags);
++
++	wait_for_completion(cmd->completion);
++
++	/* refer to xhci rev1_2 protocol 6.2.6 , byte 0 is reserved */
++	for (i = 1; i < num_ports+1; i++) {
++		if (((u8 *)dma_buf)[i])
++			bw_table[i] = ((u8 *)dma_buf)[i];
++	}
++
++out:
++	dma_free_coherent(dev, xhci->page_size, dma_buf, dma_handle);
++	xhci_free_command(xhci, cmd);
++
++	return ret;
++}
++
+ static void xhci_setup_input_ctx_for_config_ep(struct xhci_hcd *xhci,
+ 		struct xhci_container_ctx *in_ctx,
+ 		struct xhci_container_ctx *out_ctx,
+diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
+index 8c164340a2c3..a137097b0404 100644
+--- a/drivers/usb/host/xhci.h
++++ b/drivers/usb/host/xhci.h
+@@ -999,6 +999,9 @@ enum xhci_setup_dev {
+ /* bits 16:23 are the virtual function ID */
+ /* bits 24:31 are the slot ID */
+
++/* bits 19:16 are the dev speed */
++#define DEV_SPEED_FOR_TRB(p)    ((p) << 16)
++
+ /* Stop Endpoint TRB - ep_index to endpoint ID for this TRB */
+ #define SUSPEND_PORT_FOR_TRB(p)		(((p) & 1) << 23)
+ #define TRB_TO_SUSPEND_PORT(p)		(((p) & (1 << 23)) >> 23)
+@@ -1907,6 +1910,10 @@ int xhci_queue_isoc_tx_prepare(struct xhci_hcd *xhci, gfp_t mem_flags,
+ int xhci_queue_configure_endpoint(struct xhci_hcd *xhci,
+ 		struct xhci_command *cmd, dma_addr_t in_ctx_ptr, u32 slot_id,
+ 		bool command_must_succeed);
++int xhci_queue_get_rh_port_bw(struct xhci_hcd *xhci,
++		struct xhci_command *cmd, dma_addr_t in_ctx_ptr,
++		u8 dev_speed, u32 slot_id, bool command_must_succeed);
++int xhci_get_port_bandwidth(struct xhci_hcd *xhci, u8 *bw_table);
+ int xhci_queue_evaluate_context(struct xhci_hcd *xhci, struct xhci_command *cmd,
+ 		dma_addr_t in_ctx_ptr, u32 slot_id, bool command_must_succeed);
+ int xhci_queue_reset_ep(struct xhci_hcd *xhci, struct xhci_command *cmd,
+--
+2.43.4
+
 
