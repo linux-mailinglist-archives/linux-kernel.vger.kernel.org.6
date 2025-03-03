@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-541470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67159A4BD38
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:01:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 472CAA4BD43
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:02:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A68A5188A615
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:00:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5616E164A28
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEBFB1F4276;
-	Mon,  3 Mar 2025 10:59:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB401F4633;
+	Mon,  3 Mar 2025 10:59:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="CmhHd50D"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2055.outbound.protection.outlook.com [40.107.94.55])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="OadCObGA"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2065.outbound.protection.outlook.com [40.107.101.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD9501F417E;
-	Mon,  3 Mar 2025 10:59:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 376991F461F;
+	Mon,  3 Mar 2025 10:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.65
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740999577; cv=fail; b=mBd6eCxE0wI6LUFB4LN/N/uU5qo7PnprulnOwHwHaIRP41MnpR0swai9iFhIg5gA+9VO6e1jnVAp1vTHiN9Rhyh6U0vlGQ5AlbPM7D+WJfvfU5MGlKQcrgTSqQk8uYHIuoYNTF0NDoEDoI6lXEaNIEYq/+mJMBAG9OAqsv+7ITY=
+	t=1740999589; cv=fail; b=MeiZ7hluzx+G1SjoEuA/vQGiNWNhIEPDXhUJ34zo+X+A/TMGu0OU3eWRacD3wXWgT+dY5s+KPgP26MGqwlYEKOGFYUCb2IKqtNvz3pqi4uZPEKzQv1mK7/ugHkrxyOdkRP77g6IOmywTW7fjVjRt73NDDfpyvv/QkPTKWXZgJqc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740999577; c=relaxed/simple;
-	bh=PIKHWevZDSKouLGTCvfGJfjfIZtcySnJLKiJ8HTFqxE=;
+	s=arc-20240116; t=1740999589; c=relaxed/simple;
+	bh=/BgLzPf3NsR2HtXkQ/CIFgY5TOZuw7S8eG7lQnuR+Dg=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sr/BiHTZ4F9XXmazvDX5NduQ4KjWGMSh5KuggBSC1p7JOsWusUrSuRzRnox0Tcdp+t+SPzcTYgCusT2fkJLec/mGUC2wmiWCQSapzN3bbFV9qjL5J9S30D9zfaf0112uP1XpiE5DJlGpQfm3WaNyIZnL2MYGuva+geYJ+WhvXkA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=CmhHd50D; arc=fail smtp.client-ip=40.107.94.55
+	 MIME-Version:Content-Type; b=VXkXLVBjUuasf0zDLO/YYi4ch0sDd0E7UUKQUuEEOc0LmP8bKOdp/4PTar9n+dN1E8rbM08hut8PNgjfyKdxDIQmjflMLYtdW9aKjNmTb+YUxTTK6lL2Hi+0w2Hjk45S1f0q03rkZKTEru613rUTZoV600eBM9SoHj2VU8DgzQ8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=OadCObGA; arc=fail smtp.client-ip=40.107.101.65
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WDOGzgZhZZhf+AG7PVJgWnXmDCZghjefJkf9+vCOwBVq/PKfGwhdVbwd7WnVZlc5yGzRcjPT7p+AliE7MFJ65zFU0uLfK6sZXN1+My44FCHU4qihlP0nXzk86lv2rtZlWADLn00xdi4xUtvmj0Hlw/lwJ0rA/WLODSDvdvfc/q+chjWLLzQVzGkanYDPIWVTaLgLK2VpNndeJyr82tZHINy6k9Xtv1Lf2HS44jt65OomgsygNIWUGXu3osyvGSlHnXBFm1p86AbAVHLEAo3ZJTXTeJojf3hloIh54A26SJBjSLO4Xd6d0mz2OoyuMo9JW+FP5hnOFnZMlcNnJq5ZTg==
+ b=WDhLnt79nsd17lBoOIwZsmorJBZCjIocJITfg6LCqDRBK+LeiGNtE3iFcutQhTn2vSjNA2QJ6iRD3lbCVa+pTHdkXu/AAujhlZXR5kmMoKZ/eeWpCJaxOyWbM3QPDAgqLOlnrsgb1bT7DMrAE52Zo7TGltQBXTJAvzzZdZgjkKx3bZ6vDkCak4OX22x35x6gJlnljsQU6sV0ycOHm9ch7jS+X0e+GsiwynuOvxkoN4Yy3XULWOb6/WcNOyAYgHuwMGRonVF8Su+7gi+PEs7sYYdg5XdWU9V+ABYhwtNR+A/7N7TNCwo4GuTMh6eSFlG6FfjfKfOOy+BnKnDf3aYjrA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iqTThDyCbhumJVkijYZpjKt0/QLJeLUuLAM7Zyz1BNU=;
- b=mBb6UN5B/+1FRITJ+jVwOcPebFcXBXV+NgtOt7G5U/tC1Hnbk1DRdDMp/7raB/hwSju9rhZNBA+Lm0vsLqrA+ZMHlsZPuycmCA7VDv8eqojxu7GQDxuwt/YRPVbX/5y3U6WxC0EcnbOZ2h6TUP4VH6FkJ5IAr6oxE5L7WYZx/pWZyGY4ZcYZmVMYZ/qN2yX7gas7qsKc4zK4hKIxkbvDw6QfaZt0RoofcxgGyctNBlbQ6+Cn9q3PNr+W3yHwZ4wnps1G9sh7+KQnW95ogbSQB3rPaRlDpf2y6EqEY2xSy2W5b88MJeJSXC9nKM2xAhX2m0YQsRUZTYvNLcrhFzsVpA==
+ bh=rGV2tSPqZeCNDPcRLJTMB+34eX/08dEHILSjTXi8aP0=;
+ b=mmLaz4SGAfY+IjDOhI+NH2VkvI/in9qk87PE0dKHCx5lIJDdRPJyzOcMUBI7iWU9GQ6oM6yEKJEl/+2F/8sJeedDw8tpa5Y1rzjYsO5g768dq3e0L7gv5m5fvupmXFz3TQnIaB6rJM1TydQnbfYvA88DIWZz6sWV0Kf4KOXkC7/wcVvPfnV+cdSBH29YdKSy7ttlgFjgPUbOlyL0uuBhePARuKLo9s5MbBlCXUoTsRE5uuLCxKHtSiv4h7KcGylLlK00CWH7t5NcL4kYRP1T2qaPJdzNaZmw8caeGZMo9ZcEnvTDKlIvnhz9S79JNdQRvW6rD86ITctnTtJMUCwJgw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iqTThDyCbhumJVkijYZpjKt0/QLJeLUuLAM7Zyz1BNU=;
- b=CmhHd50D0fxPI53OM6Rg+7vcVtv/DCr8Thwe3HWgRJeJ752ZBEGK+EktExNst6iar2a1sBbYblGUe7Dv3q2w3OcsU+HWRT76CSSMcN5kQpq2/69zLVzcIkdokW3Dj9i/36mElQWSJVsWEx/o7B+0WKZ66LPGt/aazHMoONTfZ5E=
-Received: from SA9P223CA0016.NAMP223.PROD.OUTLOOK.COM (2603:10b6:806:26::21)
- by SA3PR12MB9228.namprd12.prod.outlook.com (2603:10b6:806:39c::5) with
+ bh=rGV2tSPqZeCNDPcRLJTMB+34eX/08dEHILSjTXi8aP0=;
+ b=OadCObGAAXShuJ6tNXixJYkYuRqCF5w9IELSQ0cw8WH1UVndHqNH37WHWYsHZnzFominH5eS/te7x0gLaQZvXhIaJudfux6INvFYkYwk8sUy6f8Hgq9HakH6771jgyboEEW626UbpMFFI/j38IjsoHL6lp/gG6FQuMOz7PsEslM=
+Received: from SN6PR08CA0022.namprd08.prod.outlook.com (2603:10b6:805:66::35)
+ by DS0PR12MB8200.namprd12.prod.outlook.com (2603:10b6:8:f5::16) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.25; Mon, 3 Mar
- 2025 10:59:33 +0000
-Received: from SN1PEPF00036F3F.namprd05.prod.outlook.com
- (2603:10b6:806:26:cafe::8) by SA9P223CA0016.outlook.office365.com
- (2603:10b6:806:26::21) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8489.28 via Frontend Transport; Mon,
- 3 Mar 2025 10:59:33 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.22; Mon, 3 Mar
+ 2025 10:59:37 +0000
+Received: from SN1PEPF00036F42.namprd05.prod.outlook.com
+ (2603:10b6:805:66:cafe::62) by SN6PR08CA0022.outlook.office365.com
+ (2603:10b6:805:66::35) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8489.29 via Frontend Transport; Mon,
+ 3 Mar 2025 10:59:37 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -62,22 +62,22 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SN1PEPF00036F3F.mail.protection.outlook.com (10.167.248.23) with Microsoft
+ SN1PEPF00036F42.mail.protection.outlook.com (10.167.248.26) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8511.15 via Frontend Transport; Mon, 3 Mar 2025 10:59:33 +0000
+ 15.20.8511.15 via Frontend Transport; Mon, 3 Mar 2025 10:59:36 +0000
 Received: from amd.amd.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 3 Mar
- 2025 04:59:29 -0600
+ 2025 04:59:33 -0600
 From: Akshay Gupta <akshay.gupta@amd.com>
 To: <linux-hwmon@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 CC: <linux@roeck-us.net>, <gregkh@linuxfoundation.org>, <arnd@arndb.de>,
 	<shyam-sundar.s-k@amd.com>, <gautham.shenoy@amd.com>,
 	<mario.limonciello@amd.com>, <naveenkrishna.chatradhi@amd.com>, Akshay Gupta
 	<akshay.gupta@amd.com>
-Subject: [PATCH v5 02/11] misc: amd-sbi: Move protocol functionality to core file
-Date: Mon, 3 Mar 2025 10:58:53 +0000
-Message-ID: <20250303105902.215009-3-akshay.gupta@amd.com>
+Subject: [PATCH v5 03/11] misc: amd-sbi: Move hwmon device sensor as separate entity
+Date: Mon, 3 Mar 2025 10:58:54 +0000
+Message-ID: <20250303105902.215009-4-akshay.gupta@amd.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250303105902.215009-1-akshay.gupta@amd.com>
 References: <20250303105902.215009-1-akshay.gupta@amd.com>
@@ -93,494 +93,360 @@ X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF00036F3F:EE_|SA3PR12MB9228:EE_
-X-MS-Office365-Filtering-Correlation-Id: c50a40ab-966d-47cf-4c2c-08dd5a427add
+X-MS-TrafficTypeDiagnostic: SN1PEPF00036F42:EE_|DS0PR12MB8200:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8af9e1fb-c101-4b0e-b259-08dd5a427d1c
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
+	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?27rrI9+VrPph6swUlH4B6VpGGlPoClBphkfG79gY3/V/38XSyalvZCeJn10d?=
- =?us-ascii?Q?tK77BV8fzCINS1qNRaYMvr1hb5nxZF7QcroVRCYm3bdbg9IzxqDDY9g9Crup?=
- =?us-ascii?Q?7CmnNzFltWaubOFFRZD33Rw4lClZ005ci0iPaJbIuSVlJ4UKNxMMpeltAp+P?=
- =?us-ascii?Q?GD/6AabKWlBnJjs8cUYIM7YQhj0YkPigI8SfjgfLG7OqLxWtzYEp0uXRb1+M?=
- =?us-ascii?Q?CwN5m1xnyqQi2m3nbCtpDt3QZAybzzuwyPguxZ3tfVcJwMH4Kzfd1+jNGagT?=
- =?us-ascii?Q?VBKHqZPXpNX4UnZfpn7+pPlMCArHZLn61KpGbBaN+vCYcdiPN63kXNpx/ibx?=
- =?us-ascii?Q?ChrVKiZBpTRLUtudzGujjWUDKuxW+jbFdZbZ6e3q7J2mffW8KMx1utCSEnQO?=
- =?us-ascii?Q?RAhBpYGcmZm6YawX+U9VldypwctlV48utVJ4WfsqPjWmdXxTlqU6eDVaGQbc?=
- =?us-ascii?Q?+cKjgQ6iV8CdUIszoC7t2PIWgTfZ6kw26dlZNIcNHbeNMgw7xPO1A/uHaudo?=
- =?us-ascii?Q?E8klNt0lUZsNgAaftqjtg4pWh19MMgFnLJDv20+iVmZ8l9KeUi/TLFuMyYJj?=
- =?us-ascii?Q?kowgb3oTJhKJnb59lSwReRm1+eMXfVj1nFi/+pNI7S7lQ/udbFzLYrYMZImH?=
- =?us-ascii?Q?Dhutoxx+ISSyUtGA2Mnl1kG9gPsBpruNQAiKC6Qho84Yq35Tgff55SdlNv19?=
- =?us-ascii?Q?jh6ScApFECXj6R9nZ/ZWKDNkIQqcoJykSYZWHuasXu4uvh6a7acpWIIIg7Jj?=
- =?us-ascii?Q?afYuxAkamanT9punvcQOgEBT2cBJONXM3ETbqcO2g45J5L0tTPl0b2znTeIY?=
- =?us-ascii?Q?CWMgj+kIYS5U/54QCZmdMIKQnsrSHG7hcmJLMQGmWHcIwuNCcos+o0wLDaZw?=
- =?us-ascii?Q?TWZSst2/EVCVxKG6X15Qu1YkqeDoo2HzjxEO9E5/iTZ3yNRXZ1PEpqnG0+mX?=
- =?us-ascii?Q?ZplqaM0u0qoJ/hVqUGRUu4o5M4WGw7BqwV0LNL47BUYehAPg8tGRH9aUCZQg?=
- =?us-ascii?Q?xGpRG9nf5Jsu6+cH7vc5+1hbiIyaf3qwLPxTGozUslvADN97oHJPpH2eu0YP?=
- =?us-ascii?Q?5jbvZSv6eCzy4lGNK+DLn/pTnBBx9UNbUe7oLedEbgkNsX4lpfPE4ucca5KG?=
- =?us-ascii?Q?VyWTmiUymPVzYTcV/JX6BZkNhXbs603FCF0HslB7XeBJOKzTDz/nO9Tz+ReQ?=
- =?us-ascii?Q?qu72igzh2Z10HFGou7T5Rpkr1iTXdV6+5aN6PT8yUA+qY1WnzNzxKhQ2IdcD?=
- =?us-ascii?Q?ifLeOJkDSnnRyM/3Q7GFlRGpTtvq2e/7FAKWKxFQBHcQqay/y5dVHwwyZQsT?=
- =?us-ascii?Q?Ee4FB3Wb9Yqjmk+EJ2ba3GfxaZphItfha8CGfWhlPRfIgCvs+72F2TKAAgXV?=
- =?us-ascii?Q?SRWs9UnQE9Ts1RpsRjA+ssRbLVNr3U4JcSI4sLt97LpkVRyJxuHBH9HTpK+M?=
- =?us-ascii?Q?mVWHlIJS9Z5nehKKfFspvzsIogDKDx9Rgdx6eUw0wfk1QEXicVhbTg=3D=3D?=
+	=?us-ascii?Q?OThM+7mF4HuChRuZMieFyVkoeYhTb6hkERvKhlJp1ZutBGyDqcM+JoeVUwiX?=
+ =?us-ascii?Q?QRGu0c3c0OadQP9qtooQ+NDmUeL4Vr8zqp6EtLofAmoQjfdV538nSE83QZPf?=
+ =?us-ascii?Q?NBw0JOLRUdih7gd5kmwqTAt6I7EOxiQoVmg6kMKZxS4cbhOOQBg8gbBQr9Ee?=
+ =?us-ascii?Q?OraV13WHDFkzlQniYLKrmC6IpwYHHDWTE+p7MSMtIAddyTqi2vxtzJrPpTBB?=
+ =?us-ascii?Q?YyWEDHhIqkHXalCGOb5fgm96WStpvByxjgEl9MwRToWYbcti6X/vQcpS5ujE?=
+ =?us-ascii?Q?Y+w9Eg6RQC2x66MzjMhnGswuMHr/WkBk5OPNcAmzEaHzOQnoSvUB73IeuFEy?=
+ =?us-ascii?Q?fhcLuVim7jf0ZVb0AEI2Eem+HfAtugrcqrQXJLZVlxzGmBxWGK++DKscZO5x?=
+ =?us-ascii?Q?nErX/MgX5HDpWB24ym7mj9lEmUXhjDpGNELDh2Au364hPVWVNArn2hXiROu9?=
+ =?us-ascii?Q?zi77lgGEWg9E7sgyxklgkPRt7PNftDn3GLnfAlRwb8dcAu3SImVY9K9ewiP4?=
+ =?us-ascii?Q?lbwlzFU0zq9R2Dn4cgfbvm6hVI5SIKfhddNzeNnjXdFlPkuwtWNzmSVrkdfu?=
+ =?us-ascii?Q?XxVl+BdcAubdzgCAhYfsyJ3EUVxIDtUdfbwdz1EUACs6VByXApJaqVI9kgqt?=
+ =?us-ascii?Q?m28dI694VFUPSU7ZdG6Tn2ws4D++YIaSVSWXUPFZE5BmH4PprnR7uR1dHsCA?=
+ =?us-ascii?Q?mWN5obNlJBVfnEiPjjc02caKlvo3H/gXaFRzoN0j6Ykd9m3BInc0KCeyU2MM?=
+ =?us-ascii?Q?WlWipwW1RZNg/s599yjOQonwtOo/23HY0vnB3ec75Ix88bHRQOTxMHgw9s9E?=
+ =?us-ascii?Q?GTfHgboDW1OvRpsaS+pdhi18XqgzfDcrmEmOP1yRGgHab68uKTGz26YuIfMu?=
+ =?us-ascii?Q?C3lilqoisowUw80PSk0Vj0AZItSWUyCP/C0hytwGRbvpyGdvD/8qNGD21NQ3?=
+ =?us-ascii?Q?2kJ9rH8EWO6Uq4ramfu42KiJv5Do4D642VsH+zIZSre/6Q05Erw9NUMqarPy?=
+ =?us-ascii?Q?hsD6lF/c7hmPFh2vvLOO4ZkEXg70iN4LHfWKnt01Dp6anVdpzV1s9WsmuI7Y?=
+ =?us-ascii?Q?f4DxhDipt686k1YIPDfGJr3rNQuMMFnhWLL7qOlzg9r9s1sMOZ08X+gA3P+/?=
+ =?us-ascii?Q?LjMYqjOfSH/0q8cGqXmQSnqNb61TDR4qGe7roWA98gkIj+Ypt8EJmlcqLW1K?=
+ =?us-ascii?Q?u7zRQDJk3x5el+50ljztkWY4YogwPbr2kBA8PrwlLRALgYax4vHmpeVe9qtl?=
+ =?us-ascii?Q?fuOyF26AdosTnhgQhcV1TEgW/ySOn+mZb9mrPhCBC09mrYyYQ9E2IqBhqmKF?=
+ =?us-ascii?Q?9pT1zsnVBh3KN6XZNtfQR2tdr1OdBpoeejxsMV6AHkIApLJb7qGbx6Iyqs8o?=
+ =?us-ascii?Q?PoV6BAD+z/T1Zbulv6i0fx9qn9tq5ktkRclw35bE0b23m/sBxH2wPOgxd4hC?=
+ =?us-ascii?Q?qZeEWQRtznfDlt0BKLCIoAwg/UbRS7cdkdQbtRcHbrxTTQicrLB7IlUZWL5X?=
+ =?us-ascii?Q?vgPE/CHj33qZ4WI=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2025 10:59:33.1361
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2025 10:59:36.8915
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c50a40ab-966d-47cf-4c2c-08dd5a427add
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8af9e1fb-c101-4b0e-b259-08dd5a427d1c
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF00036F3F.namprd05.prod.outlook.com
+	SN1PEPF00036F42.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB9228
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8200
 
-- This is done to utilize the protocol functionality into
-  other domains.
-- Increase the scalability of the module with different bus(i2c/i3c)
+- Move hwmon device sensor to misc as only power is reported through
+  hwmon sensor.
 
 Reviewed-by: Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>
 Signed-off-by: Akshay Gupta <akshay.gupta@amd.com>
 ---
-
 Changes since v4:
 New patch: Patch split from v4 patch 1/9
 - Update Copyright year to 2025
 
- drivers/misc/amd-sbi/Makefile               |   3 +-
- drivers/misc/amd-sbi/rmi-core.c             | 113 ++++++++++++++
- drivers/misc/amd-sbi/rmi-core.h             |  63 ++++++++
- drivers/misc/amd-sbi/{sbrmi.c => rmi-i2c.c} | 165 ++------------------
- 4 files changed, 187 insertions(+), 157 deletions(-)
- create mode 100644 drivers/misc/amd-sbi/rmi-core.c
- create mode 100644 drivers/misc/amd-sbi/rmi-core.h
- rename drivers/misc/amd-sbi/{sbrmi.c => rmi-i2c.c} (53%)
+ drivers/misc/amd-sbi/Makefile    |   2 +-
+ drivers/misc/amd-sbi/rmi-core.h  |   1 +
+ drivers/misc/amd-sbi/rmi-hwmon.c | 121 +++++++++++++++++++++++++++++++
+ drivers/misc/amd-sbi/rmi-i2c.c   | 105 +--------------------------
+ 4 files changed, 125 insertions(+), 104 deletions(-)
+ create mode 100644 drivers/misc/amd-sbi/rmi-hwmon.c
 
 diff --git a/drivers/misc/amd-sbi/Makefile b/drivers/misc/amd-sbi/Makefile
-index 304394bf5e59..7cd8e0a1aa5d 100644
+index 7cd8e0a1aa5d..eac90a7635de 100644
 --- a/drivers/misc/amd-sbi/Makefile
 +++ b/drivers/misc/amd-sbi/Makefile
-@@ -1,2 +1,3 @@
+@@ -1,3 +1,3 @@
  # SPDX-License-Identifier: GPL-2.0-only
--obj-$(CONFIG_AMD_SBRMI_I2C)	+= sbrmi.o
-+sbrmi-i2c-objs  		:= rmi-i2c.o rmi-core.o
-+obj-$(CONFIG_AMD_SBRMI_I2C)	+= sbrmi-i2c.o
-diff --git a/drivers/misc/amd-sbi/rmi-core.c b/drivers/misc/amd-sbi/rmi-core.c
+-sbrmi-i2c-objs  		:= rmi-i2c.o rmi-core.o
++sbrmi-i2c-objs  		:= rmi-i2c.o rmi-core.o rmi-hwmon.o
+ obj-$(CONFIG_AMD_SBRMI_I2C)	+= sbrmi-i2c.o
+diff --git a/drivers/misc/amd-sbi/rmi-core.h b/drivers/misc/amd-sbi/rmi-core.h
+index 8e30a43ec714..27165d3bb20f 100644
+--- a/drivers/misc/amd-sbi/rmi-core.h
++++ b/drivers/misc/amd-sbi/rmi-core.h
+@@ -60,4 +60,5 @@ struct sbrmi_mailbox_msg {
+ };
+ 
+ int rmi_mailbox_xfer(struct sbrmi_data *data, struct sbrmi_mailbox_msg *msg);
++int create_hwmon_sensor_device(struct device *dev, struct sbrmi_data *data);
+ #endif /*_SBRMI_CORE_H_*/
+diff --git a/drivers/misc/amd-sbi/rmi-hwmon.c b/drivers/misc/amd-sbi/rmi-hwmon.c
 new file mode 100644
-index 000000000000..74456756270c
+index 000000000000..720e800db1f0
 --- /dev/null
-+++ b/drivers/misc/amd-sbi/rmi-core.c
-@@ -0,0 +1,113 @@
++++ b/drivers/misc/amd-sbi/rmi-hwmon.c
+@@ -0,0 +1,121 @@
 +// SPDX-License-Identifier: GPL-2.0-or-later
 +/*
-+ * sbrmi-core.c - file defining SB-RMI protocols compliant
-+ *		  AMD SoC device.
++ * rmi-hwmon.c - hwmon sensor support for side band RMI
 + *
 + * Copyright (C) 2025 Advanced Micro Devices, Inc.
 + */
-+#include <linux/delay.h>
 +#include <linux/err.h>
-+#include <linux/i2c.h>
-+#include <linux/mutex.h>
++#include <linux/hwmon.h>
 +#include "rmi-core.h"
 +
-+/* Mask for Status Register bit[1] */
-+#define SW_ALERT_MASK	0x2
++/* Do not allow setting negative power limit */
++#define SBRMI_PWR_MIN  0
 +
-+/* Software Interrupt for triggering */
-+#define START_CMD	0x80
-+#define TRIGGER_MAILBOX	0x01
-+
-+int rmi_mailbox_xfer(struct sbrmi_data *data,
-+		     struct sbrmi_mailbox_msg *msg)
++static int sbrmi_read(struct device *dev, enum hwmon_sensor_types type,
++		      u32 attr, int channel, long *val)
 +{
-+	int i, ret, retry = 10;
-+	int sw_status;
-+	u8 byte;
++	struct sbrmi_data *data = dev_get_drvdata(dev);
++	struct sbrmi_mailbox_msg msg = { 0 };
++	int ret;
 +
-+	mutex_lock(&data->lock);
++	if (!data)
++		return -ENODEV;
 +
-+	/* Indicate firmware a command is to be serviced */
-+	ret = i2c_smbus_write_byte_data(data->client,
-+					SBRMI_INBNDMSG7, START_CMD);
-+	if (ret < 0)
-+		goto exit_unlock;
++	if (type != hwmon_power)
++		return -EINVAL;
 +
-+	/* Write the command to SBRMI::InBndMsg_inst0 */
-+	ret = i2c_smbus_write_byte_data(data->client,
-+					SBRMI_INBNDMSG0, msg->cmd);
-+	if (ret < 0)
-+		goto exit_unlock;
-+
-+	/*
-+	 * For both read and write the initiator (BMC) writes
-+	 * Command Data In[31:0] to SBRMI::InBndMsg_inst[4:1]
-+	 * SBRMI_x3C(MSB):SBRMI_x39(LSB)
-+	 */
-+	for (i = 0; i < 4; i++) {
-+		byte = (msg->data_in >> i * 8) & 0xff;
-+		ret = i2c_smbus_write_byte_data(data->client,
-+						SBRMI_INBNDMSG1 + i, byte);
-+		if (ret < 0)
-+			goto exit_unlock;
++	msg.read = true;
++	switch (attr) {
++	case hwmon_power_input:
++		msg.cmd = SBRMI_READ_PKG_PWR_CONSUMPTION;
++		ret = rmi_mailbox_xfer(data, &msg);
++		break;
++	case hwmon_power_cap:
++		msg.cmd = SBRMI_READ_PKG_PWR_LIMIT;
++		ret = rmi_mailbox_xfer(data, &msg);
++		break;
++	case hwmon_power_cap_max:
++		msg.data_out = data->pwr_limit_max;
++		ret = 0;
++		break;
++	default:
++		return -EINVAL;
 +	}
-+
-+	/*
-+	 * Write 0x01 to SBRMI::SoftwareInterrupt to notify firmware to
-+	 * perform the requested read or write command
-+	 */
-+	ret = i2c_smbus_write_byte_data(data->client,
-+					SBRMI_SW_INTERRUPT, TRIGGER_MAILBOX);
 +	if (ret < 0)
-+		goto exit_unlock;
-+
-+	/*
-+	 * Firmware will write SBRMI::Status[SwAlertSts]=1 to generate
-+	 * an ALERT (if enabled) to initiator (BMC) to indicate completion
-+	 * of the requested command
-+	 */
-+	do {
-+		sw_status = i2c_smbus_read_byte_data(data->client,
-+						     SBRMI_STATUS);
-+		if (sw_status < 0) {
-+			ret = sw_status;
-+			goto exit_unlock;
-+		}
-+		if (sw_status & SW_ALERT_MASK)
-+			break;
-+		usleep_range(50, 100);
-+	} while (retry--);
-+
-+	if (retry < 0) {
-+		dev_err(&data->client->dev,
-+			"Firmware fail to indicate command completion\n");
-+		ret = -EIO;
-+		goto exit_unlock;
-+	}
-+
-+	/*
-+	 * For a read operation, the initiator (BMC) reads the firmware
-+	 * response Command Data Out[31:0] from SBRMI::OutBndMsg_inst[4:1]
-+	 * {SBRMI_x34(MSB):SBRMI_x31(LSB)}.
-+	 */
-+	if (msg->read) {
-+		for (i = 0; i < 4; i++) {
-+			ret = i2c_smbus_read_byte_data(data->client,
-+						       SBRMI_OUTBNDMSG1 + i);
-+			if (ret < 0)
-+				goto exit_unlock;
-+			msg->data_out |= ret << i * 8;
-+		}
-+	}
-+
-+	/*
-+	 * BMC must write 1'b1 to SBRMI::Status[SwAlertSts] to clear the
-+	 * ALERT to initiator
-+	 */
-+	ret = i2c_smbus_write_byte_data(data->client, SBRMI_STATUS,
-+					sw_status | SW_ALERT_MASK);
-+
-+exit_unlock:
-+	mutex_unlock(&data->lock);
++		return ret;
++	/* hwmon power attributes are in microWatt */
++	*val = (long)msg.data_out * 1000;
 +	return ret;
 +}
-diff --git a/drivers/misc/amd-sbi/rmi-core.h b/drivers/misc/amd-sbi/rmi-core.h
-new file mode 100644
-index 000000000000..8e30a43ec714
---- /dev/null
-+++ b/drivers/misc/amd-sbi/rmi-core.h
-@@ -0,0 +1,63 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+/*
-+ * Copyright (C) 2025 Advanced Micro Devices, Inc.
-+ */
 +
-+#ifndef _SBRMI_CORE_H_
-+#define _SBRMI_CORE_H_
++static int sbrmi_write(struct device *dev, enum hwmon_sensor_types type,
++		       u32 attr, int channel, long val)
++{
++	struct sbrmi_data *data = dev_get_drvdata(dev);
++	struct sbrmi_mailbox_msg msg = { 0 };
 +
-+#include <linux/mutex.h>
-+#include <linux/i2c.h>
-+#include <linux/platform_device.h>
++	if (!data)
++		return -ENODEV;
 +
-+/* SB-RMI registers */
-+enum sbrmi_reg {
-+	SBRMI_CTRL		= 0x01,
-+	SBRMI_STATUS,
-+	SBRMI_OUTBNDMSG0	= 0x30,
-+	SBRMI_OUTBNDMSG1,
-+	SBRMI_OUTBNDMSG2,
-+	SBRMI_OUTBNDMSG3,
-+	SBRMI_OUTBNDMSG4,
-+	SBRMI_OUTBNDMSG5,
-+	SBRMI_OUTBNDMSG6,
-+	SBRMI_OUTBNDMSG7,
-+	SBRMI_INBNDMSG0,
-+	SBRMI_INBNDMSG1,
-+	SBRMI_INBNDMSG2,
-+	SBRMI_INBNDMSG3,
-+	SBRMI_INBNDMSG4,
-+	SBRMI_INBNDMSG5,
-+	SBRMI_INBNDMSG6,
-+	SBRMI_INBNDMSG7,
-+	SBRMI_SW_INTERRUPT,
++	if (type != hwmon_power && attr != hwmon_power_cap)
++		return -EINVAL;
++	/*
++	 * hwmon power attributes are in microWatt
++	 * mailbox read/write is in mWatt
++	 */
++	val /= 1000;
++
++	val = clamp_val(val, SBRMI_PWR_MIN, data->pwr_limit_max);
++
++	msg.cmd = SBRMI_WRITE_PKG_PWR_LIMIT;
++	msg.data_in = val;
++	msg.read = false;
++
++	return rmi_mailbox_xfer(data, &msg);
++}
++
++static umode_t sbrmi_is_visible(const void *data,
++				enum hwmon_sensor_types type,
++				u32 attr, int channel)
++{
++	switch (type) {
++	case hwmon_power:
++		switch (attr) {
++		case hwmon_power_input:
++		case hwmon_power_cap_max:
++			return 0444;
++		case hwmon_power_cap:
++			return 0644;
++		}
++		break;
++	default:
++		break;
++	}
++	return 0;
++}
++
++static const struct hwmon_channel_info * const sbrmi_info[] = {
++	HWMON_CHANNEL_INFO(power,
++			   HWMON_P_INPUT | HWMON_P_CAP | HWMON_P_CAP_MAX),
++	NULL
 +};
 +
-+/*
-+ * SB-RMI supports soft mailbox service request to MP1 (power management
-+ * firmware) through SBRMI inbound/outbound message registers.
-+ * SB-RMI message IDs
-+ */
-+enum sbrmi_msg_id {
-+	SBRMI_READ_PKG_PWR_CONSUMPTION = 0x1,
-+	SBRMI_WRITE_PKG_PWR_LIMIT,
-+	SBRMI_READ_PKG_PWR_LIMIT,
-+	SBRMI_READ_PKG_MAX_PWR_LIMIT,
++static const struct hwmon_ops sbrmi_hwmon_ops = {
++	.is_visible = sbrmi_is_visible,
++	.read = sbrmi_read,
++	.write = sbrmi_write,
 +};
 +
-+/* Each client has this additional data */
-+struct sbrmi_data {
-+	struct i2c_client *client;
-+	struct mutex lock;
-+	u32 pwr_limit_max;
++static const struct hwmon_chip_info sbrmi_chip_info = {
++	.ops = &sbrmi_hwmon_ops,
++	.info = sbrmi_info,
 +};
 +
-+struct sbrmi_mailbox_msg {
-+	u8 cmd;
-+	bool read;
-+	u32 data_in;
-+	u32 data_out;
-+};
++int create_hwmon_sensor_device(struct device *dev, struct sbrmi_data *data)
++{
++	struct device *hwmon_dev;
 +
-+int rmi_mailbox_xfer(struct sbrmi_data *data, struct sbrmi_mailbox_msg *msg);
-+#endif /*_SBRMI_CORE_H_*/
-diff --git a/drivers/misc/amd-sbi/sbrmi.c b/drivers/misc/amd-sbi/rmi-i2c.c
-similarity index 53%
-rename from drivers/misc/amd-sbi/sbrmi.c
-rename to drivers/misc/amd-sbi/rmi-i2c.c
-index d48d8e5460ff..914338a24246 100644
---- a/drivers/misc/amd-sbi/sbrmi.c
++	hwmon_dev = devm_hwmon_device_register_with_info(dev, "sbrmi", data,
++							 &sbrmi_chip_info, NULL);
++	return PTR_ERR_OR_ZERO(hwmon_dev);
++}
+diff --git a/drivers/misc/amd-sbi/rmi-i2c.c b/drivers/misc/amd-sbi/rmi-i2c.c
+index 914338a24246..9ad4c8093399 100644
+--- a/drivers/misc/amd-sbi/rmi-i2c.c
 +++ b/drivers/misc/amd-sbi/rmi-i2c.c
-@@ -1,9 +1,9 @@
- // SPDX-License-Identifier: GPL-2.0-or-later
- /*
-- * sbrmi.c - hwmon driver for a SB-RMI mailbox
-- *           compliant AMD SoC device.
-+ * rmi-i2c.c - Side band RMI over I2C support for AMD out
-+ *             of band management
-  *
-- * Copyright (C) 2020-2021 Advanced Micro Devices, Inc.
-+ * Copyright (C) 2024 Advanced Micro Devices, Inc.
-  */
+@@ -8,7 +8,6 @@
  
  #include <linux/delay.h>
-@@ -14,64 +14,10 @@
+ #include <linux/err.h>
+-#include <linux/hwmon.h>
+ #include <linux/i2c.h>
+ #include <linux/init.h>
  #include <linux/module.h>
- #include <linux/mutex.h>
+@@ -16,9 +15,6 @@
  #include <linux/of.h>
-+#include "rmi-core.h"
+ #include "rmi-core.h"
  
- /* Do not allow setting negative power limit */
- #define SBRMI_PWR_MIN	0
--/* Mask for Status Register bit[1] */
--#define SW_ALERT_MASK	0x2
+-/* Do not allow setting negative power limit */
+-#define SBRMI_PWR_MIN	0
 -
--/* Software Interrupt for triggering */
--#define START_CMD	0x80
--#define TRIGGER_MAILBOX	0x01
--
--/*
-- * SB-RMI supports soft mailbox service request to MP1 (power management
-- * firmware) through SBRMI inbound/outbound message registers.
-- * SB-RMI message IDs
-- */
--enum sbrmi_msg_id {
--	SBRMI_READ_PKG_PWR_CONSUMPTION = 0x1,
--	SBRMI_WRITE_PKG_PWR_LIMIT,
--	SBRMI_READ_PKG_PWR_LIMIT,
--	SBRMI_READ_PKG_MAX_PWR_LIMIT,
--};
--
--/* SB-RMI registers */
--enum sbrmi_reg {
--	SBRMI_CTRL		= 0x01,
--	SBRMI_STATUS,
--	SBRMI_OUTBNDMSG0	= 0x30,
--	SBRMI_OUTBNDMSG1,
--	SBRMI_OUTBNDMSG2,
--	SBRMI_OUTBNDMSG3,
--	SBRMI_OUTBNDMSG4,
--	SBRMI_OUTBNDMSG5,
--	SBRMI_OUTBNDMSG6,
--	SBRMI_OUTBNDMSG7,
--	SBRMI_INBNDMSG0,
--	SBRMI_INBNDMSG1,
--	SBRMI_INBNDMSG2,
--	SBRMI_INBNDMSG3,
--	SBRMI_INBNDMSG4,
--	SBRMI_INBNDMSG5,
--	SBRMI_INBNDMSG6,
--	SBRMI_INBNDMSG7,
--	SBRMI_SW_INTERRUPT,
--};
--
--/* Each client has this additional data */
--struct sbrmi_data {
--	struct i2c_client *client;
--	struct mutex lock;
--	u32 pwr_limit_max;
--};
--
--struct sbrmi_mailbox_msg {
--	u8 cmd;
--	bool read;
--	u32 data_in;
--	u32 data_out;
--};
- 
  static int sbrmi_enable_alert(struct i2c_client *client)
  {
-@@ -94,100 +40,6 @@ static int sbrmi_enable_alert(struct i2c_client *client)
+ 	int ctrl;
+@@ -40,100 +36,6 @@ static int sbrmi_enable_alert(struct i2c_client *client)
  	return 0;
  }
  
--static int rmi_mailbox_xfer(struct sbrmi_data *data,
--			    struct sbrmi_mailbox_msg *msg)
+-static int sbrmi_read(struct device *dev, enum hwmon_sensor_types type,
+-		      u32 attr, int channel, long *val)
 -{
--	int i, ret, retry = 10;
--	int sw_status;
--	u8 byte;
+-	struct sbrmi_data *data = dev_get_drvdata(dev);
+-	struct sbrmi_mailbox_msg msg = { 0 };
+-	int ret;
 -
--	mutex_lock(&data->lock);
+-	if (type != hwmon_power)
+-		return -EINVAL;
 -
--	/* Indicate firmware a command is to be serviced */
--	ret = i2c_smbus_write_byte_data(data->client,
--					SBRMI_INBNDMSG7, START_CMD);
--	if (ret < 0)
--		goto exit_unlock;
--
--	/* Write the command to SBRMI::InBndMsg_inst0 */
--	ret = i2c_smbus_write_byte_data(data->client,
--					SBRMI_INBNDMSG0, msg->cmd);
--	if (ret < 0)
--		goto exit_unlock;
--
--	/*
--	 * For both read and write the initiator (BMC) writes
--	 * Command Data In[31:0] to SBRMI::InBndMsg_inst[4:1]
--	 * SBRMI_x3C(MSB):SBRMI_x39(LSB)
--	 */
--	for (i = 0; i < 4; i++) {
--		byte = (msg->data_in >> i * 8) & 0xff;
--		ret = i2c_smbus_write_byte_data(data->client,
--						SBRMI_INBNDMSG1 + i, byte);
--		if (ret < 0)
--			goto exit_unlock;
+-	msg.read = true;
+-	switch (attr) {
+-	case hwmon_power_input:
+-		msg.cmd = SBRMI_READ_PKG_PWR_CONSUMPTION;
+-		ret = rmi_mailbox_xfer(data, &msg);
+-		break;
+-	case hwmon_power_cap:
+-		msg.cmd = SBRMI_READ_PKG_PWR_LIMIT;
+-		ret = rmi_mailbox_xfer(data, &msg);
+-		break;
+-	case hwmon_power_cap_max:
+-		msg.data_out = data->pwr_limit_max;
+-		ret = 0;
+-		break;
+-	default:
+-		return -EINVAL;
 -	}
--
--	/*
--	 * Write 0x01 to SBRMI::SoftwareInterrupt to notify firmware to
--	 * perform the requested read or write command
--	 */
--	ret = i2c_smbus_write_byte_data(data->client,
--					SBRMI_SW_INTERRUPT, TRIGGER_MAILBOX);
 -	if (ret < 0)
--		goto exit_unlock;
--
--	/*
--	 * Firmware will write SBRMI::Status[SwAlertSts]=1 to generate
--	 * an ALERT (if enabled) to initiator (BMC) to indicate completion
--	 * of the requested command
--	 */
--	do {
--		sw_status = i2c_smbus_read_byte_data(data->client,
--						     SBRMI_STATUS);
--		if (sw_status < 0) {
--			ret = sw_status;
--			goto exit_unlock;
--		}
--		if (sw_status & SW_ALERT_MASK)
--			break;
--		usleep_range(50, 100);
--	} while (retry--);
--
--	if (retry < 0) {
--		dev_err(&data->client->dev,
--			"Firmware fail to indicate command completion\n");
--		ret = -EIO;
--		goto exit_unlock;
--	}
--
--	/*
--	 * For a read operation, the initiator (BMC) reads the firmware
--	 * response Command Data Out[31:0] from SBRMI::OutBndMsg_inst[4:1]
--	 * {SBRMI_x34(MSB):SBRMI_x31(LSB)}.
--	 */
--	if (msg->read) {
--		for (i = 0; i < 4; i++) {
--			ret = i2c_smbus_read_byte_data(data->client,
--						       SBRMI_OUTBNDMSG1 + i);
--			if (ret < 0)
--				goto exit_unlock;
--			msg->data_out |= ret << i * 8;
--		}
--	}
--
--	/*
--	 * BMC must write 1'b1 to SBRMI::Status[SwAlertSts] to clear the
--	 * ALERT to initiator
--	 */
--	ret = i2c_smbus_write_byte_data(data->client, SBRMI_STATUS,
--					sw_status | SW_ALERT_MASK);
--
--exit_unlock:
--	mutex_unlock(&data->lock);
+-		return ret;
+-	/* hwmon power attributes are in microWatt */
+-	*val = (long)msg.data_out * 1000;
 -	return ret;
 -}
 -
- static int sbrmi_read(struct device *dev, enum hwmon_sensor_types type,
- 		      u32 attr, int channel, long *val)
+-static int sbrmi_write(struct device *dev, enum hwmon_sensor_types type,
+-		       u32 attr, int channel, long val)
+-{
+-	struct sbrmi_data *data = dev_get_drvdata(dev);
+-	struct sbrmi_mailbox_msg msg = { 0 };
+-
+-	if (type != hwmon_power && attr != hwmon_power_cap)
+-		return -EINVAL;
+-	/*
+-	 * hwmon power attributes are in microWatt
+-	 * mailbox read/write is in mWatt
+-	 */
+-	val /= 1000;
+-
+-	val = clamp_val(val, SBRMI_PWR_MIN, data->pwr_limit_max);
+-
+-	msg.cmd = SBRMI_WRITE_PKG_PWR_LIMIT;
+-	msg.data_in = val;
+-	msg.read = false;
+-
+-	return rmi_mailbox_xfer(data, &msg);
+-}
+-
+-static umode_t sbrmi_is_visible(const void *data,
+-				enum hwmon_sensor_types type,
+-				u32 attr, int channel)
+-{
+-	switch (type) {
+-	case hwmon_power:
+-		switch (attr) {
+-		case hwmon_power_input:
+-		case hwmon_power_cap_max:
+-			return 0444;
+-		case hwmon_power_cap:
+-			return 0644;
+-		}
+-		break;
+-	default:
+-		break;
+-	}
+-	return 0;
+-}
+-
+-static const struct hwmon_channel_info * const sbrmi_info[] = {
+-	HWMON_CHANNEL_INFO(power,
+-			   HWMON_P_INPUT | HWMON_P_CAP | HWMON_P_CAP_MAX),
+-	NULL
+-};
+-
+-static const struct hwmon_ops sbrmi_hwmon_ops = {
+-	.is_visible = sbrmi_is_visible,
+-	.read = sbrmi_read,
+-	.write = sbrmi_write,
+-};
+-
+-static const struct hwmon_chip_info sbrmi_chip_info = {
+-	.ops = &sbrmi_hwmon_ops,
+-	.info = sbrmi_info,
+-};
+-
+ static int sbrmi_get_max_pwr_limit(struct sbrmi_data *data)
  {
-@@ -297,7 +149,7 @@ static int sbrmi_get_max_pwr_limit(struct sbrmi_data *data)
- 	return ret;
- }
- 
--static int sbrmi_probe(struct i2c_client *client)
-+static int sbrmi_i2c_probe(struct i2c_client *client)
+ 	struct sbrmi_mailbox_msg msg = { 0 };
+@@ -152,7 +54,6 @@ static int sbrmi_get_max_pwr_limit(struct sbrmi_data *data)
+ static int sbrmi_i2c_probe(struct i2c_client *client)
  {
  	struct device *dev = &client->dev;
- 	struct device *hwmon_dev;
-@@ -328,7 +180,7 @@ static int sbrmi_probe(struct i2c_client *client)
+-	struct device *hwmon_dev;
+ 	struct sbrmi_data *data;
+ 	int ret;
+ 
+@@ -173,10 +74,8 @@ static int sbrmi_i2c_probe(struct i2c_client *client)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	hwmon_dev = devm_hwmon_device_register_with_info(dev, client->name, data,
+-							 &sbrmi_chip_info, NULL);
+-
+-	return PTR_ERR_OR_ZERO(hwmon_dev);
++	dev_set_drvdata(dev, data);
++	return create_hwmon_sensor_device(dev, data);
  }
  
  static const struct i2c_device_id sbrmi_id[] = {
--	{"sbrmi"},
-+	{"sbrmi-i2c"},
- 	{}
- };
- MODULE_DEVICE_TABLE(i2c, sbrmi_id);
-@@ -343,15 +195,16 @@ MODULE_DEVICE_TABLE(of, sbrmi_of_match);
- 
- static struct i2c_driver sbrmi_driver = {
- 	.driver = {
--		.name = "sbrmi",
-+		.name = "sbrmi-i2c",
- 		.of_match_table = of_match_ptr(sbrmi_of_match),
- 	},
--	.probe = sbrmi_probe,
-+	.probe = sbrmi_i2c_probe,
- 	.id_table = sbrmi_id,
- };
- 
- module_i2c_driver(sbrmi_driver);
- 
- MODULE_AUTHOR("Akshay Gupta <akshay.gupta@amd.com>");
-+MODULE_AUTHOR("Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>");
- MODULE_DESCRIPTION("Hwmon driver for AMD SB-RMI emulated sensor");
- MODULE_LICENSE("GPL");
 -- 
 2.25.1
 
