@@ -1,174 +1,97 @@
-Return-Path: <linux-kernel+bounces-542619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2F2AA4CBA9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:12:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 898BEA4CB8E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:06:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60BD73A6C56
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:11:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 968A3169CE7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:06:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9090E22CBE2;
-	Mon,  3 Mar 2025 19:11:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="h2M6cWJ+"
-Received: from sonic311-30.consmr.mail.ne1.yahoo.com (sonic311-30.consmr.mail.ne1.yahoo.com [66.163.188.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C6D22DFBE;
+	Mon,  3 Mar 2025 19:06:08 +0000 (UTC)
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 522B933F6
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 19:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.188.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C1D01DE2BF;
+	Mon,  3 Mar 2025 19:06:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741029117; cv=none; b=WOukm45+QaAYeWPk7ait+fk6PdKXo/plyUspZGc3Ium+3ZKPDIE+C1BvXkEzhvZQ8C8sI14fBkwsZN1GMXVTE0LS4T4JRIv09wqYnKH5l7xqvoF1dOySQzicmVNUT+ShfGXxX5xJGNsv3VRFmICzBC2sjEnmCgfa6OBV7ZOycfc=
+	t=1741028768; cv=none; b=kUYw1tXuLq7DorW6niS2gQbMMWWOhJhp+U9nnK3CQEoGiF010Ln5pE5MDMPQtvWfgSIChphkPAUQ6ZvQlySrIaCh4An67RkJmdMV0L8/bHhjdprn9MMdxhZXnzm4B4oB9LRwxruo0pKG1p8vZq20u3QXWbHp2rf3DnUfxofwUQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741029117; c=relaxed/simple;
-	bh=zttb/KBNS8YrkZTTRzEXOV2zM8d85NRFoEcHxhNsqPI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TFkcKhV8XllwlkH1EmljUBQMZ6BX2hq0w9+TkOOfIuUsNh9hC2XyEKf15l41NmjLvkZ6mV+NsK2XU1imyRHSSusACRLfTb+2RiXbwEy3EmCqf1x82hukpokc8B/eKMaISOU1UtcKRlIKL7+k39nffmZKOqj7N4ezN/pASAPBDSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=h2M6cWJ+; arc=none smtp.client-ip=66.163.188.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1741029115; bh=kxho3F4dy7xLzbeT4DOIL9QCojHaIl0A5BraM7FirZA=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=h2M6cWJ+Ycf2gc5mTu66HIEZwIwKqUR4LTa++oLXcviuHFfqYZ8a3yqumtRL4d1X+paMRw9or9zWjIvldOBgPbzyD18mLlEQkLB71f5od96GBH4y6BWh3Sj2Ym5lwZR2I6UMBAU+hpdJeQfsIkOU+WvJqs0Of/y7MeMPVnZWJvVhL2BBiyZ2ixqgH3ONBQ49VFaWtHFzcT202BHkcE93elOgcdEmmnxIU1zu6t/vhTjMH8MtU134jg1YYsvq0/9BZHnk7/7u7GCu9GuNPSGKFuNlTvpFK2CqklCdZrZUhbi4OlmQ29mXZUdCJpYmhT2xlIBMj2yDiNwcPRL4MwXPbg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1741029115; bh=Wn44DOLii1NmZiaSBp/MUYjBeOyLAEMtNrNRT0Wh+ZC=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=blzLX2MwCLpMIlYn0YpWf/PUZVVNijpLe3RdQovvMJ98FSEh5SV+uMpF+lF1rQQqNS8jAk8hs1nROpBlVq5jtcmYTWepCoC1AalxFa1FTyBh8st2K8Sfz2sHKivqhG6oKShqLcFxTNQWOPdYOTHZgd/k8+EFQrUqulIJ7WQnLMmOgLMOROL9CRQHMfnxoBETILra7VSIWvnYuo3kQX01i3nybF9stQm3zUbvC6aeh4q+GU42AKzJ9UT0pbMeRYzU6T/byjaJodgX2HYim2nJ/w6YJPieV806ya5MEtouISRvt0tJ0VqTJpAORKwOQcsyDnJ5Vv95eHl5ecC/iUuXDg==
-X-YMail-OSG: jxQi5PYVM1kjCffxcWEXtBaaD8eOjDPHNKGLO2go4aEn_ycpi6E.Y0dfQ.S.YMc
- q6pdyCDwv0K_8wef_nByeNMVwM5pD_sN3CSMc3qRrIULnZitvm3vaUadnWPu6bVr2ylsXEcsKr.c
- kPwT3x7Lr0N438.MiiQAVH160Hi6J7tb5M_YlYrkx9vamBwaK8Sjp3DidLkga2U77V8.fQNW8u4n
- zbY27gYWrvMpq_O6W8ocJ0dr2b0gWLt_TsHNw4h0JkQYUfFd8FBjiiJWem.qOE5123NBUA9LlRNr
- csIZtRl8lCPdpX6cTowG.LwX.ZsZyKMA0b5u4LKSTho.uefunP0yzd4K..wF3.ZRhOm8VrT4U4Ea
- rM8ZcO.nk9alqipQt4QQlBRIlLYRzE_CnKjspf7i60FvsLZpcMZUdiJLv5DNtxWlf4SugOGznBbb
- CuSRSjAPkQ.7.g6gaqidjtq6.WnpCyz8H7SmqClPiTJ9laTpvyHdWCmTJfIvXg4LTt658CiIaW3k
- 7glKvyyKDLLP7nNVrndcnI1MfYkiNW_5jV4DcKKTmYVVx661SvWgueDHSLGkYhAFFB0QCstQvTzh
- SdBsG07Obuf2EETA_.KgwDpSdnOvZgnkGciCDrEXNA8f1iekrdWB1xlyzAylytOz8hNFj1gmaWbn
- T7oWPOzEPd__cl8HikekBiYKjiO6A6DWu2nxeaUPg2dbKZeiPa59NLIBE04TTfC7iTV_2pnPOmqy
- bjJ6AFabBCtFWkfWvD1YFKJduagIUR_m55F_rF1BmoHMx3NWMyhQcBRUgxeWATtH4TZ0CqS9tY3j
- i8wIv_zqg.sjUm9bKTc3BF5oTDjoLo3AROmd13sGdO0v8xEG1tAgewkbC5maE2MW5AE11.3cNkVN
- lSxua5yWsKERUhH87Mgp_65Mt1pFQQtptHz2s9GTHCai_3mX.iTKgS7Ri6Xm9Sw0rr8dLdfXw9VZ
- TJh5HgYw_FRQotOHF9q.FNnPyNTOOoSw2y2GTVhyeS2nQP4DXbaRmRjG2oZeEJnqrrMlgu2jGZmv
- zBjKuqA47HegMRKfM0BnsB.ug00ATF.wA2iYfUbNAkJJJYJObO8jEJ8Nwl0H3.ck4Og5ZjjDXrnP
- m4__Zvgy1GVu2_iTrIVsxVehMFFF2jNbzdfy5upaXuQV3HYkthvz2JcbEBkTKKDI9WOhIUARif1h
- 1BxAD31zL.kClhGIqVB9rYhmUYevTU92KHrtHkqPmcqgeaeYtfm2wAlabWF46ICzUHcdO2eVsCyo
- K5LVgDsjA5fUvRVTVSNOoAR.dPlVwMXUo5jbEG6K6SXxLgLZvIiGvbnbLdbfIsdTcLYXRZd41rB8
- tnz.dECl31x7CvA1PO_ZW62rsw88kEaC7K3bFxqwKJi_VWuqF.4QCFuSoUBzhNx5E.neXMW6oBvZ
- Ylsu8g4Uw87PavLmxhmYFeJbegExm0rVHOpbQSHHcw1yVGYqLyp93VibYkErHzBOqiFHGpZU6twZ
- PryMK46tQp2HCY7vAX72tV_d_AcddTOzsSjV4WxoBm9FtQAfGVyTBmmhTi4Y.rNbIPg3KuEdqLOG
- uhWdpcp7323PikTR5IKx.d.BslA6A0Vxh_PkKZy6q7F0GVynqCDq6cmmAMyQ2LsPUe5a1NvIn7.B
- jEsKm5qJa14eLQ1ZlDUXr0CJo9Y_X.HHB_fgt4kvH6.QMsRRRdzNledkkQ1E0jTgJbxKX0jQtZNo
- _BrVm3KehfqDt2kxqAJ5p1uPN6ALJ_Kor9ayh8Sk9ngCXSMUPuRv5f0FSU9Y3mGvP95BIJFR84HC
- HffW9KLRatVWPmwOwO.zcap9rgUzxd8ppdKFe18wRloPjtTUTW4.YFwlJ7tqNKDPG6TTNmNtOOEo
- fiBGJKPKKTtBAa4QzZ91EcL7U1gUBm5J.KrUb1O6icWvzCujCsctwDg8FXKBOQ7lx9vGZoxpbd0I
- MW8cqKjWo6Nd7I_y9tlg.g9pe1P.Ujv_r6JhDRMtBFy46zb96VopS4q14Wy6o8zY6fxS3N3rmu.B
- 0yWtVHs9TinPKjn9Vma9ix_VI9dElJD0JQMruCNVINtixeyLr2t0ANBpmEILpJPpD0.b9PQVfeut
- 9XFxqrbU.l7ehL61q8Asjxqv0h9rfnxWejzRPJtWPt7Sd.zkMtSE9s8pGDfjOpME00twdSMp47F5
- UL008WKHvbBK3uvE81JUQLvdVBX9WQMf6wbdNsle3uwqg9sqU9KzdT8LKAXAegMg_e3GzyyVHiZU
- x6NEyjNYjZAYdnxanLrWhgvd1izkLscoMQv8pwd3SDX2BJf3uD6xvhHLMKwnsJRQ53zoABXrV3xj
- tr1hkGOnaygVe7gvnlq.5gw2j6Q--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 96345618-f8ec-442e-82bc-261f2ecd13a2
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Mon, 3 Mar 2025 19:11:55 +0000
-Received: by hermes--production-gq1-75cc957d6c-bs9kb (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID a55dafe6a07e9ebe5219b5cb6e8d4ed1;
-          Mon, 03 Mar 2025 18:51:38 +0000 (UTC)
-Message-ID: <cf588a4e-cfc2-45b1-8ed2-1a7587a2a0f0@schaufler-ca.com>
-Date: Mon, 3 Mar 2025 10:51:38 -0800
+	s=arc-20240116; t=1741028768; c=relaxed/simple;
+	bh=iOmw85wftgLbV8Q3XwDBHYU0f3saYkHNnTMo1GVclI4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CMpvQ2LicJULH0JfG/svipL2Z5y/w8Hdp3piIdtvJ92E7hGZggedDMaQ4JdNWYC+CEZoraDVj0AmPnVdZhuQ3Ef1o9EQINo74isHJOdDz0kZaplcRY8D6DAaHO7v2ihV6lH1kxkZiLArsEZtk2cc58of1JcnQQ2srhUqioKK4jU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2fe96dd93b4so8789571a91.0;
+        Mon, 03 Mar 2025 11:06:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741028765; x=1741633565;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OO+oKqq1i3+H6YrIBJhtiAMh8a9VnXmjBwa2/6eO574=;
+        b=UqqeBseaj24pwONYh6/nSQzREjaTV/7gK/CcWfXoUkNmRtAM1hH+Ke/rtDBH3D39y4
+         yktpWHWWQrJnzGzVjHQPgsz2E2jSEaDtUrZPeVJJkhdm2fHX3IArxZx9NLWHEoXzgcKo
+         AEfxH2HnSyo+cN6R0wtIq4VWt5voBESjy+/LhOzalRUW6m/abUJABDDD9b0f86swiJdB
+         gOq3qOL9YyDC5IT9Rkrv84hLd0ooZCQ83apXvuTo22n7t3CU349SGZx76ea+VZMweTfs
+         ZnfxzOeVB2Vj+CjxSLEdaG0/AFIX4FyZsZNVWNu+DfOJk7xX2yXwBUq7b+wOGnLDdFEd
+         ZeEg==
+X-Forwarded-Encrypted: i=1; AJvYcCX02iU+Eja+UnhTfga/r7IIZ3FU9du/DgE993xMdVE6U9wx189INzKZumI3lkUewYSIftw4IV0b//Hy@vger.kernel.org, AJvYcCXIbswARU4WA4rhui2ZCd8MVWSJ7FP9owIh5h5zXwkKYpa8SBvu2+b4Y45bjxiKSYZ609vhN7p5Qp5CI1Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIJPreERNvlsulqTIsweYdBDyxJXINHn0lWFSqz69HupwGA5Oo
+	TujJBCIU/eg6L1Q93K9CvVNKrBQmP2eIY+AKbo4nrBFVW6IW0goH+/xqGTU1mWU=
+X-Gm-Gg: ASbGncua4KaEL45dwG8l5I2+44PYzAg4yORTDPO+NGK9myPYt8gmLzl+pnl5wLUxu28
+	r8crY1N5auzYv/3keqFexNcpZf1Ee06XOJM9036QxJzZSu4q7ElJ1Vhdj529atY88wdfZwAYaJ6
+	go2pWSgDvC2ZKtDf6g+1t+0bIlauSJrLVxH97/ohCDAl4TTDUylNQmePHHBDVbtq0nQmbgQ2USo
+	FjPj6tPCph2x7q6LyHoNM2jqb/yjyUNpSFquFCC7yeKGLMqutypeaaitOSvbSyqiB8NVYSG7RC9
+	/qsIdNUKCsrVzrzgu0vW7OlOHn4gSbbTuQH4DHUrlQ8JO6eQvH+JymZf3Z+M1YGqRJUTnblaaP5
+	e804=
+X-Google-Smtp-Source: AGHT+IG1UTEiOK6wjf6OEfo+zkP6hlH60ekgttUhhGBO+YWRUHEkXCedVjCkeBPaOtiTz6r96SgfOw==
+X-Received: by 2002:a17:90a:f94d:b0:2ee:9661:eafb with SMTP id 98e67ed59e1d1-2ff33bbc468mr567792a91.12.1741028764963;
+        Mon, 03 Mar 2025 11:06:04 -0800 (PST)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2fe82840b64sm12686671a91.38.2025.03.03.11.06.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 11:06:04 -0800 (PST)
+Date: Tue, 4 Mar 2025 04:06:02 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Hans Zhang <18255117159@163.com>
+Cc: lpieralisi@kernel.org, manivannan.sadhasivam@linaro.org,
+	robh@kernel.org, bhelgaas@google.com, bwawrzyn@cisco.com,
+	cassel@kernel.org, wojciech.jasko-EXT@continental-corporation.com,
+	a-verma1@ti.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, rockswang7@gmail.com
+Subject: Re: [v4] PCI: cadence-ep: Fix the driver to send MSG TLP for INTx
+ without data payload
+Message-ID: <20250303190602.GB1466882@rocinante>
+References: <20250214165724.184599-1-18255117159@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] lsm: rust: mark SecurityCtx methods inline
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
- rust-for-linux@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
-References: <20250303-inline-securityctx-v1-1-fb7b9b641fdf@google.com>
- <a5262d73-2b11-4868-9c6b-1c6161808979@schaufler-ca.com>
- <CAH5fLggNnOv2rhtUeK38GVQ7EuuZkZMwOSVKSsMLFG5eS2i9Ng@mail.gmail.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAH5fLggNnOv2rhtUeK38GVQ7EuuZkZMwOSVKSsMLFG5eS2i9Ng@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.23040 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250214165724.184599-1-18255117159@163.com>
 
-On 3/3/2025 10:40 AM, Alice Ryhl wrote:
-> On Mon, Mar 3, 2025 at 6:07 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->> On 3/3/2025 7:29 AM, Alice Ryhl wrote:
->>> I'm seeing Binder generating calls to methods on SecurityCtx such as
->>> from_secid and drop without inlining. Since these methods are really
->>> simple wrappers around C functions, mark the methods to inline to avoid
->>> generating these useless small functions.
->>>
->>> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
->>> ---
->>>  rust/kernel/security.rs | 5 +++++
->>>  1 file changed, 5 insertions(+)
->>>
->>> diff --git a/rust/kernel/security.rs b/rust/kernel/security.rs
->>> index 25d2b1ac3833..243211050526 100644
->>> --- a/rust/kernel/security.rs
->>> +++ b/rust/kernel/security.rs
->>> @@ -23,6 +23,7 @@ pub struct SecurityCtx {
->>>
->>>  impl SecurityCtx {
->>>      /// Get the security context given its id.
->>> +    #[inline]
->>>      pub fn from_secid(secid: u32) -> Result<Self> {
->>>          // SAFETY: `struct lsm_context` can be initialized to all zeros.
->>>          let mut ctx: bindings::lsm_context = unsafe { core::mem::zeroed() };
->>> @@ -35,16 +36,19 @@ pub fn from_secid(secid: u32) -> Result<Self> {
->>>      }
->>>
->>>      /// Returns whether the security context is empty.
->>> +    #[inline]
->>>      pub fn is_empty(&self) -> bool {
->>>          self.ctx.len == 0
->>>      }
->>>
->>>      /// Returns the length of this security context.
->>> +    #[inline]
->>>      pub fn len(&self) -> usize {
->>>          self.ctx.len as usize
->>>      }
->>>
->>>      /// Returns the bytes for this security context.
->>> +    #[inline]
->>>      pub fn as_bytes(&self) -> &[u8] {
->>>          let ptr = self.ctx.context;
->>>          if ptr.is_null() {
->>> @@ -61,6 +65,7 @@ pub fn as_bytes(&self) -> &[u8] {
->>>  }
->>>
->>>  impl Drop for SecurityCtx {
->>> +    #[inline]
->>>      fn drop(&mut self) {
->>>          // SAFETY: By the invariant of `Self`, this frees a context that came from a successful
->>>          // call to `security_secid_to_secctx` and has not yet been destroyed by
->> I don't speak rust (well, yet?) so I can't talk about that, but this comment
->> has me concerned. Security contexts (secctx) are not destroyed, they are released.
->> While SELinux allocates and frees them, Smack maintains a list of contexts that
->> is never freed. A call to security_release_secctx() on SELinux "destroys" the
->> secctx, but for Smack does not.
-> It's just a comment on a call to security_release_secctx, I can reword
-> from "destroy" to "release".
+Hello,
 
-That would do nicely. Thank you.
+> Cadence reference manual cdn_pcie_gen4_hpa_axi_ips_ug_v1.04.pdf, section
+> 9.1.7.1 'AXI Subordinate to PCIe Address Translation' mentions that
+> axi_s_awaddr bits 16 when set, corresponds to MSG with data and when not
+> set, MSG without data.
 
->
-> Here's the full context:
->
-> // SAFETY: By the invariant of `Self`, this frees a context that came from a
-> // successful call to `security_secid_to_secctx` and has not yet been destroyed
-> // by `security_release_secctx`.
-> unsafe { bindings::security_release_secctx(&mut self.ctx) };
->
-> Alice
->
+Would it be possible to get the full name of the reference manual mentioned
+about?  I want to properly reference the full name, version, revision, etc.,
+like we do for other documentation of this type where possible.
+
+Thank you!
+
+	Krzysztof
 
