@@ -1,105 +1,283 @@
-Return-Path: <linux-kernel+bounces-541559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91A12A4BE7C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:28:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 736F6A4BE8D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:30:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DBE53ACA89
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:21:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF4063BAD80
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:21:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0782F1F4171;
-	Mon,  3 Mar 2025 11:18:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B44C41F3FE8;
+	Mon,  3 Mar 2025 11:19:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dDE5aWOV"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="jlXphypx"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84421F17E5
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 11:18:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF1E01F17E5;
+	Mon,  3 Mar 2025 11:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741000729; cv=none; b=EkYSkgN5POzuMlm+2s5i3uSHvm1sAFwHv+BqljFABQbS4VydY/jgSS3/8HbmHyEq41LxO00dXiqMI2XK1FQAyhpd7yr/Q4yzksQKUDRArhhdeHYNlRoitYm4bcuuNtHjb9AizlumkwXasSIQdjWljWBL958X5S0UnElGpIwqMmk=
+	t=1741000766; cv=none; b=RGWwP3Ij0rioSuylauBfWLN5R7bc03bHOHrHRYeF1NP2kF+gxDv+INEGmIAiCR3rGEfG8JEcQShA65oCXDPEyUoyBawkVcA/4nQaedJXMTOhXfjyHjqdNIKuxXO8K9ADbPE5gRhzvSNQp3fHE0CBkm02MmuhKxPLVZVvKHfzse4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741000729; c=relaxed/simple;
-	bh=tX6xycVlm0hqQ9h8iORXLZHUyLwbVdP+cXKqAOJS+II=;
+	s=arc-20240116; t=1741000766; c=relaxed/simple;
+	bh=wY1JDGsr4w7EVb29Z+PN4ZWHoWt/+wmUL/8nCGk4qnE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=olpIAXtMqTvvvZisEb3lWUxoCcg87y5Yd0ixKJy8D7YP1hk00aRlMAdSTmquDUmBHtw2utFEo8UxTL871PQYLpRcwOcwDPZHVy8J/6FqeSjVr7Id4Vf8JYRKTthGDdjf472505r9hKaNmSpgHCZVhyjQbHIWRdLIH6CuGwB4Kdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dDE5aWOV; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741000727; x=1772536727;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=tX6xycVlm0hqQ9h8iORXLZHUyLwbVdP+cXKqAOJS+II=;
-  b=dDE5aWOVK7PySZrusfImDRRPN4eDpGqSt34y7YEH0r+FnCWCSMuQLBPC
-   0fpEjhpVGZtdER83mpFRORb0G6kHQdORnuKQVr7TKkhWtCesyFCd2LnUd
-   x5OT3S7izW5dRhTZke8BdKHxQFV8TrrK4a+KWpjtAp9r05GUSq3WyObfy
-   1a0kQPnxUzqlXJ+hEHaDBcWxXD1Pl4oHfVBfFoR1IfsDzaglKR1GzteuW
-   o85R+6lC1kS8gvdBqPUgdWjyrKLSFuMxRAle+VDCaszmSGJCSze1nFZFH
-   XanDNvee5uVMgnVxvXF7okZUu9bkGNVwmF+7mh+2j9LrDXg68ZwBiFU51
-   w==;
-X-CSE-ConnectionGUID: owYxW47QRMebILrYE/p3Bg==
-X-CSE-MsgGUID: JOtlfLnHQBeEgel6pUKBGA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="45644550"
-X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="45644550"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 03:18:47 -0800
-X-CSE-ConnectionGUID: S5aCuh0sQ0q2PF8VTniF7g==
-X-CSE-MsgGUID: 0oCy3AfKT9+VTH5NApmTuA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="122978491"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa004.jf.intel.com with ESMTP; 03 Mar 2025 03:18:45 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id A550B125; Mon, 03 Mar 2025 13:18:42 +0200 (EET)
-Date: Mon, 3 Mar 2025 13:18:42 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Johannes Weiner <hannes@cmpxchg.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: kernel test robot <lkp@intel.com>,
-	Brendan Jackman <jackmanb@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Oscar Salvador <osalvador@suse.de>, llvm@lists.linux.dev,
-	oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/page_alloc: Add lockdep assertion for pageblock type
- change
-Message-ID: <Z8WQEpv7BNtDDoH3@black.fi.intel.com>
-References: <20250227-pageblock-lockdep-v1-1-3701efb331bb@google.com>
- <202503010129.rJvGqZN1-lkp@intel.com>
- <20250228182804.GB120597@cmpxchg.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YI8wGG4oyTJyhQS4mnmU2/Dlcdle5q+tKZdAfpZmTeSzBDPzmvJCIl0sCp1Zk12Rp8wg4UCdlafIMN9TJDU/1SpFTkeW6s9NKbCVmbUjwpamISMdEBhciED6C4Wq4w9fBLKJ9KEq9YUZpHBMfyMNUhSQV7fy1RFjvzNNzm5TBfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=jlXphypx; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=pNmUy0/SbO1mJMTByohCme5W5UOaVrI5mCX9RycYTCY=; b=jlXphypx+tFIa7QN6nmZyOHchy
+	mAL4FzNXqAx7NBd4kdGVHZF7nbcDi/32cz13sz0Fj9y1/1JM/3A/Y76+s7kFKn3mGfijIUupTU74Q
+	7zeNEGxo0ivgglhHYr/u2LibpbTUcHkmikL6bkI8o7tdVXrpmDkjuz1Lax0XLLmeKI/E9XRS1ZUdj
+	/Ci1QrCRh5Qp2rL6TItEj0fLU0FtSgMv/HXPfEGd4/bdsg2+c0e9GA24LNjWfF4v0YxAyyfBNvjOM
+	Dht70pkuWXppULK3LhsHptnbWfEkJtUnlAkcrbjK9tZ0DEhiNEovwD25XXFPRxUWevS3WVcgAbYUN
+	EEBdOUqQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:38926)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tp3pC-0000Ky-2H;
+	Mon, 03 Mar 2025 11:19:06 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tp3p7-0003kl-2o;
+	Mon, 03 Mar 2025 11:19:01 +0000
+Date: Mon, 3 Mar 2025 11:19:01 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 3/3] net: stmmac: Add DWMAC glue layer for Renesas GBETH
+Message-ID: <Z8WQJQo5kW9QV-wV@shell.armlinux.org.uk>
+References: <20250302181808.728734-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250302181808.728734-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <Z8SydsdDsZfdrdbE@shell.armlinux.org.uk>
+ <CA+V-a8vCB7nP=tsv4UkOwODSs-9hiG-PxN6cpihfvwjq2itAHg@mail.gmail.com>
+ <Z8TRQX2eaNzXOzV0@shell.armlinux.org.uk>
+ <CA+V-a8vykhxqP30iTwN6yrqDgT8YRVE_MadjiTFp653rHVqMNg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250228182804.GB120597@cmpxchg.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+V-a8vykhxqP30iTwN6yrqDgT8YRVE_MadjiTFp653rHVqMNg@mail.gmail.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Fri, Feb 28, 2025 at 01:28:04PM -0500, Johannes Weiner wrote:
-> On Sat, Mar 01, 2025 at 01:31:30AM +0800, kernel test robot wrote:
+On Sun, Mar 02, 2025 at 10:02:15PM +0000, Lad, Prabhakar wrote:
+> Hi Russell,
+> 
+> On Sun, Mar 2, 2025 at 9:44 PM Russell King (Oracle)
+> <linux@armlinux.org.uk> wrote:
+> >
+> > On Sun, Mar 02, 2025 at 09:20:49PM +0000, Lad, Prabhakar wrote:
+> > > Hi Russell,
+> > > > What is the reason for setting this flag? If it's because of suspend/
+> > > > resume failures, does my "net: stmmac: fix resume failures due to
+> > > > RX clock" series solve this for you without requiring this flag?
+> > > >
+> > > Ive set this flag based on the configuration supported by this IP.
+> > > Unfortunately the platform which I am working on doesn't support s2r
+> > > yet so I cannot test suspend/resume path yet. But I do see an issue
+> > > when I unload and load just the glue module the DMA reset fails.
+> >
+> > Thanks for that feedback - that's a scenario I hadn't considered.
+> >
+> > I was trying to avoid having to disable LPI RX clock-stop on suspend by
+> > ensuring that it was enabled at resume time. I think that's valid, but
+> > you've brought up another similar scenario:
+> >
+> > - device is brought up, configures RX clock stop
+> > - links with media, negotiates EEE
+> > - driver is unloaded, link doesn't go down, but due to no traffic goes
+> >   into idle, so RX clock is stopped
+> > - driver reloaded, RX clock still stopped, reset fails
+> >
+> > I would like to solve that so we can get the power savings from
+> > stopping the clock, but still have reset work when necessary.
+> >
+> I would be happy to test the patches ;)
+> 
+> > I'm guessing that the "DMA reset fails" refers to this path:
+> >
+> > stmmac_open() -> __stmmac_open() -> stmmac_hw_setup() ->
+> > stmmac_init_dma_engine() -> stmmac_reset() ?
+> >
+> Yes.
+> 
+> > In other words, when the device is being brought back up
+> > adminsitratively?
+> >
+> > What happens if you (replace $if):
+> >
+> > # ip li set dev $if down
+> > # ip li set dev $if up
+> >
+> > Does that also fail without STMMAC_FLAG_RX_CLK_RUNS_IN_LPI set?
+> >
+> Logs without STMMAC_FLAG_RX_CLK_RUNS_IN_LPI flag set:
+> --------------------------------------------------------------
+> root@rzv2h-evk-alpha:~# ip li set dev eth1 down
+> [   33.606549] renesas-gbeth 15c40000.ethernet eth1: Link is Down
+> root@rzv2h-evk-alpha:~#
+> root@rzv2h-evk-alpha:~# ip li set dev eth0 down
+> [   37.356992] renesas-gbeth 15c30000.ethernet eth0: Link is Down
+> root@rzv2h-evk-alpha:~#
+> root@rzv2h-evk-alpha:~# ip li set dev eth1 up
+> [   43.974803] renesas-gbeth 15c40000.ethernet eth1: Register
+> MEM_TYPE_PAGE_POOL RxQ-0
+> [   43.983189] renesas-gbeth 15c40000.ethernet eth1: Register
+> MEM_TYPE_PAGE_POOL RxQ-1
+> [   43.991155] renesas-gbeth 15c40000.ethernet eth1: Register
+> MEM_TYPE_PAGE_POOL RxQ-2
+> [   43.999128] renesas-gbeth 15c40000.ethernet eth1: Register
+> MEM_TYPE_PAGE_POOL RxQ-3
+> [   44.072079] renesas-gbeth 15c40000.ethernet eth1: PHY [stmmac-1:00]
+> driver [Microchip KSZ9131 Gigabit PHY] (irq=POLL)
+> [   44.094605] dwmac4: Master AXI performs fixed burst length
+> [   44.100138] renesas-gbeth 15c40000.ethernet eth1: No Safety
+> Features support found
+> [   44.107748] renesas-gbeth 15c40000.ethernet eth1: IEEE 1588-2008
+> Advanced Timestamp supported
+> [   44.116725] renesas-gbeth 15c40000.ethernet eth1: registered PTP clock
+> [   44.123352] renesas-gbeth 15c40000.ethernet eth1: configuring for
+> phy/rgmii-id link mode
+> root@rzv2h-evk-alpha:~#
+> root@rzv2h-evk-alpha:~# ip li set dev eth1[   47.207761] renesas-gbeth
+> 15c40000.ethernet eth1: Link is Up - 1Gbps/Full - flow control off
+> ^C
+> root@rzv2h-evk-alpha:~# ^C
+> root@rzv2h-evk-alpha:~# ip li set dev eth0 up
+> [   55.636722] renesas-gbeth 15c30000.ethernet eth0: Register
+> MEM_TYPE_PAGE_POOL RxQ-0
+> [   55.645139] renesas-gbeth 15c30000.ethernet eth0: Register
+> MEM_TYPE_PAGE_POOL RxQ-1
+> [   55.653111] renesas-gbeth 15c30000.ethernet eth0: Register
+> MEM_TYPE_PAGE_POOL RxQ-2
+> [   55.661073] renesas-gbeth 15c30000.ethernet eth0: Register
+> MEM_TYPE_PAGE_POOL RxQ-3
+> [   55.732087] renesas-gbeth 15c30000.ethernet eth0: PHY [stmmac-0:00]
+> driver [Microchip KSZ9131 Gigabit PHY] (irq=POLL)
+> [   55.754612] dwmac4: Master AXI performs fixed burst length
+> [   55.760143] renesas-gbeth 15c30000.ethernet eth0: No Safety
+> Features support found
+> [   55.767740] renesas-gbeth 15c30000.ethernet eth0: IEEE 1588-2008
+> Advanced Timestamp supported
+> [   55.776705] renesas-gbeth 15c30000.ethernet eth0: registered PTP clock
+> [   55.783333] renesas-gbeth 15c30000.ethernet eth0: configuring for
+> phy/rgmii-id link mode
+> root@rzv2h-evk-alpha:~#
+> root@rzv2h-evk-alpha:~# [   58.855844] renesas-gbeth 15c30000.ethernet
+> eth0: tx_clk_stop=1
+> [   58.861989] renesas-gbeth 15c30000.ethernet eth0: Link is Up -
+> 1Gbps/Full - flow control rx/tx
+> 
+> root@rzv2h-evk-alpha:~#
+> root@rzv2h-evk-alpha:~#
+> 
+> Logs with STMMAC_FLAG_RX_CLK_RUNS_IN_LPI flag set:
+> --------------------------------------------------------------
+> root@rzv2h-evk-alpha:~# ip li set dev eth1 down
+> [   30.053790] renesas-gbeth 15c40000.ethernet eth1: Link is Down
+> root@rzv2h-evk-alpha:~# ip li set dev eth0 down
+> [   35.366935] renesas-gbeth 15c30000.ethernet eth0: Link is Down
+> root@rzv2h-evk-alpha:~# ip li set dev eth1 up
+> [   40.448563] renesas-gbeth 15c40000.ethernet eth1: Register
+> MEM_TYPE_PAGE_POOL RxQ-0
+> [   40.456725] renesas-gbeth 15c40000.ethernet eth1: Register
+> MEM_TYPE_PAGE_POOL RxQ-1
+> [   40.464893] renesas-gbeth 15c40000.ethernet eth1: Register
+> MEM_TYPE_PAGE_POOL RxQ-2
+> [   40.472840] renesas-gbeth 15c40000.ethernet eth1: Register
+> MEM_TYPE_PAGE_POOL RxQ-3
+> [   40.543895] renesas-gbeth 15c40000.ethernet eth1: PHY [stmmac-1:00]
+> driver [Microchip KSZ9131 Gigabit PHY] (irq=POLL)
+> [   40.566419] dwmac4: Master AXI performs fixed burst length
+> [   40.571949] renesas-gbeth 15c40000.ethernet eth1: No Safety
+> Features support found
+> [   40.579550] renesas-gbeth 15c40000.ethernet eth1: IEEE 1588-2008
+> Advanced Timestamp supported
+> [   40.588505] renesas-gbeth 15c40000.ethernet eth1: registered PTP clock
+> [   40.595135] renesas-gbeth 15c40000.ethernet eth1: configuring for
+> phy/rgmii-id link mode
+> root@rzv2h-evk-alpha:~#
+> root@rzv2h-evk-alpha:~# [   43.687551] renesas-gbeth 15c40000.ethernet
+> eth1: Link is Up - 1Gbps/Full - flow control off
+> 
+> root@rzv2h-evk-alpha:~# ip li set dev eth0 up
+> [   49.644479] renesas-gbeth 15c30000.ethernet eth0: Register
+> MEM_TYPE_PAGE_POOL RxQ-0
+> [   49.652719] renesas-gbeth 15c30000.ethernet eth0: Register
+> MEM_TYPE_PAGE_POOL RxQ-1
+> [   49.660681] renesas-gbeth 15c30000.ethernet eth0: Register
+> MEM_TYPE_PAGE_POOL RxQ-2
+> [   49.669059] renesas-gbeth 15c30000.ethernet eth0: Register
+> MEM_TYPE_PAGE_POOL RxQ-3
+> [   49.740011] renesas-gbeth 15c30000.ethernet eth0: PHY [stmmac-0:00]
+> driver [Microchip KSZ9131 Gigabit PHY] (irq=POLL)
+> [   49.762518] dwmac4: Master AXI performs fixed burst length
+> [   49.768057] renesas-gbeth 15c30000.ethernet eth0: No Safety
+> Features support found
+> [   49.775655] renesas-gbeth 15c30000.ethernet eth0: IEEE 1588-2008
+> Advanced Timestamp supported
+> [   49.784609] renesas-gbeth 15c30000.ethernet eth0: registered PTP clock
+> [   49.791236] renesas-gbeth 15c30000.ethernet eth0: configuring for
+> phy/rgmii-id link mode
+> root@rzv2h-evk-alpha:~#
+> root@rzv2h-evk-alpha:~# [   52.871635] renesas-gbeth 15c30000.ethernet
+> eth0: tx_clk_stop=1
+> [   52.877777] renesas-gbeth 15c30000.ethernet eth0: Link is Up -
+> 1Gbps/Full - flow control rx/tx
 
-> The patch is missing a dummy in_mem_hotplug() in the
-> !CONFIG_MEMORY_HOTPLUG section of <linux/memory_hotplug.h>.
+I would like to get to the bottom of why this fails for module removal/
+insertion, but not for admistratively down/upping the interface.
 
-+1, I just stumbled over and this is not fixed in today's Linux Next. I'm
-wondering how this was missed during merge into Linux Next. Stephen?
+Removal of your module will unregister the netdev, and part of that
+work will bring the netdev administratively down. When re-inserting
+the module, that will trigger various userspace events, and it will
+be userspace bringing the network interface(s) back up. This should
+be no different from administratively down/upping the interface but
+it seems you get different behaviour.
+
+I'd like to understand why that is, because at the moment I'm wondering
+whether my patches that address the suspend/resume need further work
+before I send them - but in order to assess that, I need to work out
+why your issue only seems to occur in the module removal/insertion
+and not down/up as well as I'd expect.
+
+Please could you investigate this?
+
+Thanks.
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
