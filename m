@@ -1,245 +1,120 @@
-Return-Path: <linux-kernel+bounces-542787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49183A4CDB0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:50:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CBA1A4CDB2
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:52:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6510A172406
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 21:50:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5688A172522
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 21:52:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 268E61F098A;
-	Mon,  3 Mar 2025 21:50:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 709651F0E29;
+	Mon,  3 Mar 2025 21:52:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="MRgBN3Wx"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2041.outbound.protection.outlook.com [40.107.243.41])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lSqNzfik"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8621EE019;
-	Mon,  3 Mar 2025 21:50:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741038609; cv=fail; b=pItukRrvWBBG4vKhZasbdi/v51YGK/HGhLRNkDzn8IZgCF6J/Pf9IdzXR1TiyFhjz9WNnj5Ne4jj3L1U8Va841qCWpY8QgS5g5cBnTFIOglTZdYdsv9LGT8upl7uNqFD8SLZcfGo8EfJaun/O79iN1BxKoEnJMr4WJDvR2e8o3w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741038609; c=relaxed/simple;
-	bh=a5WM05NbaId5e4u1A7LCBj+olGTI2fXoYA9gqraTnXQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=HomM0ZpckaREsY8GNhAvPknR/SLQeIxAjBfJq8Gzo/fj1dKApc2WzsufIR24b7FmGELM8V2DwdyS3lnknxoxMFZz7upQVVXFp667YSWUAS7bhYdwVpTu5OYNBIWnnnkZK4vCZc5Wq+Af/qbipQM+H/x2U+f0kHvb7rt3bm6G4gc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=MRgBN3Wx; arc=fail smtp.client-ip=40.107.243.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ugGyputwS3PLZlvX2layQTqq5e6bfjADnwBjpSVDnt6TsI2rBVXtwvX0K6dq62BiGo+mAiuGyyznsYObESum+AfY2hU0/DSS1kaVumPoOeLCD5oYdgplc1jlFzmMON/hSYtHhB1WTZqflxeBN7+UOpf1Qf+TGrD30csYKH59gNh28lFQ+V8pZ4nqI1bdUcHNaBcpDLNDZIIcl3uBF+2gv2memkFXZypapav9XTn5urwC6oAhnJ4SAksWMeBkBBihSy9n+i5NiVvYYENyc8qTEA+hz7WZrU0Da9L9xntR+JgWo6dKw1FltkyEvAMb/LxNQg8eQfxDxLHinMlyk8Xwlg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=R92nYZ1LYQ9FoZg2MFqb2fYXIiDRvRBgWVA9PdKS+SQ=;
- b=NBGf9xgZee5Qb+qwiKgw6A7/hBCKIvnyMwJ3SPeOgKalHn7aTzLZu4UNt0pgqcSW6bdRaPkDLZ2dBVMX1fRXz0bq/3lomOH0rq6tKP9rR3mqUPMLwofNTaFZ4FiD5Jh+44TgV4OKGL8fmLtF0uMHd21IY6NGxX5sM8kYd+yTuDdF97KOt3XsDKhaEoSAM5+xYTXkq/nmhvaQWhUvwFZ1+sl7rCKF170p4nLSPgwxRZ8TD+SAiDjhTUV46DHYbVc3BEzGp7qswtDBHHxwBRvnIYzM6g8EiM8qzNmAWlvy8cXWO9fbfp+BILZ4gt2CdrZ9h7ujtcega7Mib5qY3ellRA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=R92nYZ1LYQ9FoZg2MFqb2fYXIiDRvRBgWVA9PdKS+SQ=;
- b=MRgBN3WxzAjvkGHvmbvNp5BDLeULTCS22TDoQCcvf1QpSuEYrCftv0GagMauI9oPT4J4YM0FBbzRJwb6O73stw716RekfwrRqN8HfmOkJlAgYaGZAo37/3IOfi+M8VMMNCDbSdTD4pBQ14gPLcmjCd+7SBamzDxm5jdbav7OaC8HmrF0u/iNkRhuCWndf1Rij/mWnUXp6zHa+sc7dAOrceuNj4ljKe+Ek793YQfQqJ43/jRupl2LuxLZ0GfauO1Y5SKuoCQArNxjZ+94rZrilscNyNmr1FHrG1hkMFD6GwCQl4dGhb4YSqQvbqJoj+WyphbsVBvbGe+B/sHcJiNwYg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by SN7PR12MB6689.namprd12.prod.outlook.com (2603:10b6:806:273::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Mon, 3 Mar
- 2025 21:50:04 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8489.025; Mon, 3 Mar 2025
- 21:50:03 +0000
-Date: Mon, 3 Mar 2025 17:50:02 -0400
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Alexandre Courbot <acourbot@nvidia.com>,
-	Dave Airlie <airlied@gmail.com>, Gary Guo <gary@garyguo.net>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	paulmck@kernel.org
-Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
- implementation
-Message-ID: <20250303215002.GF133783@nvidia.com>
-References: <Z8CCKl_yA74WjpQ1@Mac.home>
- <20250227161733.GH39591@nvidia.com>
- <Z8CY7fqbtbO4v1jv@Mac.home>
- <Z8ChnwPC0UwM8xBe@cassiopeiae>
- <20250227192321.GA67615@nvidia.com>
- <Z8DYNszfONdsKZsl@boqun-archlinux>
- <20250227220013.GQ39591@nvidia.com>
- <Z8Dp9dM1MxhzuvmR@pollux>
- <20250228185534.GH39591@nvidia.com>
- <Z8YEwrBJyLYL6sci@cassiopeiae>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8YEwrBJyLYL6sci@cassiopeiae>
-X-ClientProxiedBy: BL0PR02CA0053.namprd02.prod.outlook.com
- (2603:10b6:207:3d::30) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D6B1E5213;
+	Mon,  3 Mar 2025 21:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741038766; cv=none; b=ShkbStd3og/imRnrNotGcibAyGc/yUHpFo1aLVMgYeu6xrM9nDS6DZjjQln3R3IpfkfI7YKqRNTsdh86ldKeZF4eEXqC9Okgf6H1GkSuxU6RBPLN9agL8X/q9PR4wL5+6m7UnEloMvhUcrhKbnf7IoXvNtcPDZJQQ5rHpcRAkx0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741038766; c=relaxed/simple;
+	bh=5u8kfojZwKUUhSAm2BNerYZcjQOmKlfy3X+YC7zYZRY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lIMN321zYGShKhKmzyIj0MBiJMpjcHyjEh3Tj1eGL5n1rFA41Pw44ua7flR4297qG8OagesQ4Hl3HPR4mjAjjcoFlSmMD3Bq9n+tB0Sv10+AgIDeXXdBJZ3I5cSaUbKu2iBFTsFxCBSS4fWsvjfS041wYi7bNuyG/Cq7HLUVs28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lSqNzfik; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A622C4CED6;
+	Mon,  3 Mar 2025 21:52:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741038766;
+	bh=5u8kfojZwKUUhSAm2BNerYZcjQOmKlfy3X+YC7zYZRY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=lSqNzfikbpnoZYDMtA/etknEuUAqP9odrbb3O0I3M7EN/cz8fM3CkX3zyWZ7HTOgW
+	 2u/9pGOVduJ9CEgCEvbdFE+l+ZSvgZC9z0GD7KxqmDmrTI80MH1lHRuyrQk/9Ib91Y
+	 AoOiOQKQd3v48bMfODpnBrnv6S6WG46oyN/atlHR4oOoBh/vbhhIIW8UpfSXIMzzek
+	 RCkfLw+1yvxHC1yiaL6pMfSvb5P715rBp+n+8KEWoJRCHv33rWpdreywLFRmi8TT+t
+	 KbNuD9VlrBpe7YzKXCwnYxduER+FLqqQSz5k5gisdpTzhhUtY/wAkdLCeTnFnDh7Q0
+	 pjHEk3kgLGVog==
+From: Kees Cook <kees@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Kees Cook <kees@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	llvm@lists.linux.dev,
+	linux-kbuild@vger.kernel.org,
+	David Gow <davidgow@google.com>,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] kbuild: clang: Support building UM with SUBARCH=i386
+Date: Mon,  3 Mar 2025 13:52:41 -0800
+Message-Id: <20250303215240.work.379-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|SN7PR12MB6689:EE_
-X-MS-Office365-Filtering-Correlation-Id: f7282722-181e-4963-b7aa-08dd5a9d5a65
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?s/Kwu47WrWW/7BKVf5kB/p4p7Xy8uJAk0TQKlVw7zCwwOglizr7E3eu95tZh?=
- =?us-ascii?Q?e5iRvYrKGqpaWostfD8rZ6Ac1MZBcmB40OdP/iEBpiOllV4vVpTLq/Mhr2v9?=
- =?us-ascii?Q?o3MTqDJOyhLHMD0PWmKAumvhCWzskVuDB5AOjr3oYIp1P63Ce76bqPyYCB+p?=
- =?us-ascii?Q?JqkPktYshNk2c6q1R7sYodib38KTefRhdrbN0UoZZ3VGiwZJ47GulC8yz7PX?=
- =?us-ascii?Q?fBcatrj0Ooa9ikJmrt3dgS6E4HALilUXFcnBRPp1D2UWGlOfM0jskhGbebSC?=
- =?us-ascii?Q?p5YhTjCY8L3j/rD50cFGhObbWtTnxG3Rh4hKRXwjgWLyRbMohrV7BUjhueHI?=
- =?us-ascii?Q?5YRxPIEFhNJBGSxeY1Km1N4qfDsGfn9eHzSj57zZZmt/QMja8htUaxg9Rf2/?=
- =?us-ascii?Q?fyrFqFa4vQFdy6ZGQzMGtUPE8vUZzCU+v35Gf3wrt9/mvcVdJ+gmwdlQbNLP?=
- =?us-ascii?Q?rYanGWL9XXKax+WsaGc6DbYmiPFgqHhQ+InlMKQZwqakQCRxGYyjtWHjMJUO?=
- =?us-ascii?Q?RxQ29LFvfrAejTFKlodEMcPTJ00xNCX+gjo5NVODchKa4HwZBceHxXmldtr4?=
- =?us-ascii?Q?M7I83l2rlMVC3bvOIPzLqKLF3E6UB1lDzPWmYFfIPNuBuSoe5FY46rXssVAJ?=
- =?us-ascii?Q?kbXrdNqv7BFobq1uIdbBJd+x4iQjaudaXP69OR4YRnDFS9mX13VrYjxcyx9Z?=
- =?us-ascii?Q?EPFzzRVSSDvfnXwGkGr6bUeDqlvV8eH40PI/u5MAWbZPIOORKXGxeNhBE/gy?=
- =?us-ascii?Q?QQMpFp2DglQxR76OZR6qAwWlnkjjZXVDzxOCCOh8VGxHO9J5F353BfIzhwZH?=
- =?us-ascii?Q?B2nqtgYM2XC7BbeT7UsJmtAy+9FVqZEElbh763aDTZ8+EBJA0k014DvOko4T?=
- =?us-ascii?Q?gog2uLD9g0AA+wdCGrWdInQ3JcIKKwonnyQQ3EjAIJ3McEnOJUSqVxoM9+FF?=
- =?us-ascii?Q?mDd/lVNzKr2TlRzECi3aIK5OAJxLPBQC2K+dTirtL+KNw+oX3pML8pGep7dL?=
- =?us-ascii?Q?ZjwhD8peMAxP6zFxXllE/EkPZmhKMCdCcA92cjbawt/+FOT3mit9Z/mBma00?=
- =?us-ascii?Q?/6zJt4lCeiroP4BaeXfZxKGGMBHkwYfDA7UlLgr52Szk1gQZkn1dSWZ9PMsc?=
- =?us-ascii?Q?pX1UJlJJy9zWBw2ufy9B3NFlFRObQiMDcY+aAv9rzSgSL1+6WrwwGSNIACiu?=
- =?us-ascii?Q?RjjuNY8lT5War4fe/ikJJewB2zBNtKV2h5SNGY0Soq9Imk5GnAK+TVfgRxua?=
- =?us-ascii?Q?UZ49E/v50k4IWlbOiRMThPPXHdY4qAeHswZjlyk7yoX1M6sas5bPWOjj//uu?=
- =?us-ascii?Q?D/0VyEZsow5w58d6EPnUW3LIOibnIQcAIrb7klhlyVmWE4XrU8YfrxVj5bTi?=
- =?us-ascii?Q?VqgMKtmX+2BfyybANbBvooF1EYFD?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?bOI55/kA3rVTXxD8qvTGbrYgms8rXat2BeGXu37Jhp614KwYJrR8c39dJf3B?=
- =?us-ascii?Q?8/pMRaZDi2ypdlD/EfaH8h+MS6cus473S06QZIrMikVGE015WjFD7lHm7kAV?=
- =?us-ascii?Q?Kzd6+ZkBbVoX7Jx4x9mS8vAlH69a7HT+z/BvOV4+lTvF68RdbXIkweeXuio0?=
- =?us-ascii?Q?lUmmU90AekhGZinoldKF+pzaG8sgydHCI4RFuyIDPbhmFTyo0S/sld7ixP/B?=
- =?us-ascii?Q?5K1XKcc4H8r0PndUfP12Jrjkt4j+1MFYVLdmQWhFCU6u0KouejzdaWoXHXaF?=
- =?us-ascii?Q?SS1+ZTEyOH6gtRCkwzx6PMuykwzRRTNV+Thgrf4pUmjO6DPBJiKagUiX6M8f?=
- =?us-ascii?Q?OXJ5Spbbm21zjStDHvOYJSka/vhu/ytSxcI/1qUx2ywTQj+741bWqa1h6a2O?=
- =?us-ascii?Q?QClUeIheMKPHQ3sJVk3koSrYiyFaY95r7c5Ho/sE9Vqb/R8O9twsmwJsTT9S?=
- =?us-ascii?Q?+nOSMZynX+oM9mpqIQ1YSYwoOA7rex4f3gjnELYmAsGFPfm66vu8Ei+wAIL1?=
- =?us-ascii?Q?Qg43IxpPltU0IRHuzZVvvABJvrWN8K443VHVzX7vy8p8TAVHZtrxRQPeZ5w3?=
- =?us-ascii?Q?9IRNgnYJvyopPuHA2ZU2fli0GGLv+oMT93dUe1R21g1juTnUJuXGR0Uav0a6?=
- =?us-ascii?Q?X0xNghzvuTAfa5chRmG8tMwyGqs9SE6enh2w9WVsIsh6YQFY9TngoKRw8vSX?=
- =?us-ascii?Q?/08QBZJItIm0NsDUod823BsX/Pr9zR+HXCVN2eEVmRX/Bx+jbwZAey3sKS10?=
- =?us-ascii?Q?3blZPlrs9KT6ms/cvei30hbzcwkFh9C09aThfNPTXJe9mQRXKPQuyv+nF8n5?=
- =?us-ascii?Q?QUXpIJw5sI74mv1SRirIiGVVydbWWLs5ikq5n+8WixanzgSEkn+8viri7RFn?=
- =?us-ascii?Q?5WzyGxTorJHRdElgst1B7tTgzgk2/1+lS96/a6KnFStTka1nqSKxNnWFTr+j?=
- =?us-ascii?Q?ufVcG4uJZB+erfDBA2h9CKBSuzAqdjYpXyFsAa55x2BWd0wL+dLDZDMufYGh?=
- =?us-ascii?Q?CAcsG+23QiIXd1HmuRQCGu23XKAQieFM6E60b+06l2bn9FwM2/wEsB+d0ih5?=
- =?us-ascii?Q?HPWXH35+ltrVKJyOCl1BKuafZ+rBzX4SLLJNzo7aUh8i0rULnuqB/60B1dPN?=
- =?us-ascii?Q?1pYuTmeiLLZ9IXpleI6dbv2INGQSHHF0E1shJWD7E13++ZClpVTwiOu0VkRY?=
- =?us-ascii?Q?+9xyeimxQVYQ/v4nOtob9d1rBoK7osalLB6+WXHEOpvlsCil9doeerp+Mfaz?=
- =?us-ascii?Q?9/149Q3BnrxI8H5SIoYPbQjiyg9yUqWVjXtADEsrMZtIUM7QWOjSJnUz1eWj?=
- =?us-ascii?Q?KDgBE8FqJa1QP8rSfEr160Jm3QqSKj7zuHoqakJkvDjRzw11TkxTBy/GvKHu?=
- =?us-ascii?Q?uq98mzY3lXHHUH3/bX58PMUtiVD3BgJXo2Nf18O91dTFfAzE9drU9f472bqM?=
- =?us-ascii?Q?+Istv7mmIv1VWNoK9VepeEGINvKlRx/PmSd2kAkCuS6qntcNNDK4jnH3tGG5?=
- =?us-ascii?Q?7auPE2jIBj9hvhzQX6lY+CYvOF7jiXsexIGfMzUqGvHvaFDYTZ39UC2XL5V6?=
- =?us-ascii?Q?7fUlGAC6uKy3ILXfJdk=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f7282722-181e-4963-b7aa-08dd5a9d5a65
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2025 21:50:03.1489
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: x7+KnQwLQfhfE5iewKL3WGGII7LXIFUiB2gx30LN+RgjJAqS0e7QG5UFYGh2rdqf
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6689
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1751; i=kees@kernel.org; h=from:subject:message-id; bh=5u8kfojZwKUUhSAm2BNerYZcjQOmKlfy3X+YC7zYZRY=; b=owGbwMvMwCVmps19z/KJym7G02pJDOnHVFYGcmZcbd+5tO75XZ8Txdf6H6k+3nnxgvHn8Glfo o5NK3h/t6OUhUGMi0FWTJElyM49zsXjbXu4+1xFmDmsTCBDGLg4BWAiEdcYGWb7+fHoJH6buZ7h jtrvkr7EVOZbsx6u3Capetc31u/KxjRGhvtckmaL3E5/Ypio9d9wXrNrRbrgt38d4ZNDF8z7ovU 4nREA
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 03, 2025 at 08:36:34PM +0100, Danilo Krummrich wrote:
-> > > And yes, for *device resources* it is unsound if we do not ensure that the
-> > > device resource is actually dropped at device unbind.
-> > 
-> > Why not do a runtime validation then?
-> > 
-> > It would be easy to have an atomic counting how many devres objects
-> > are still alive.
-> 
-> (1) It would not be easy at all, if not impossible.
-> 
-> A Devres object doesn't know whether it's embedded in an Arc<Devres>, nor does
-> it know whether it is embedded in subsequent Arc containers, e.g.
-> Arc<Arc<Devres>>.
+The UM builds distinguish i386 from x86_64 via SUBARCH, but we don't
+support building i386 directly with Clang. To make SUBARCH work for
+i386 UM, we need to explicitly test for it.
 
-You aren't tracking that. If Rust has a problem, implement it in C:
+This lets me run i386 KUnit tests with Clang:
 
-  devm_rsgc_start(struct device *)
-  devm_rsgc_pci_iomap(struct device *,..)
-  devm_rsgc_pci_iounmap(struct device *,..)
-  devm_rsgc_fence(struct device *)
+$ ./tools/testing/kunit/kunit.py run \
+	--make_options LLVM=1 \
+	--make_options SUBARCH=i386
+...
 
-Surely that isn't a problem for bindings?
+Fixes: c7500c1b53bf ("um: Allow builds with Clang")
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+I could not find a cleaner way to do this without hardcoding a test
+for i386 UM. Does anyone see a more sane way to accomplish this? The
+comment above the CLANG_TARGET_FLAGS seems like it can't be done with
+UM's Makefile...
 
-> > Properly written drives never hit it. Buggy drivers will throw a
-> > warning and otherwise function safely.
-> 
-> Ignoring (1), I think that's exactly the opposite of what we want to achieve.
-> 
-> This would mean that the Rust abstraction does *not avoid* but *only detect* the
-> problem.
+Cc: Nathan Chancellor <nathan@kernel.org>
+Cc: Nick Desaulniers <ndesaulniers@google.com>
+Cc: Bill Wendling <morbo@google.com>
+Cc: Justin Stitt <justinstitt@google.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Nicolas Schier <nicolas@fjasle.eu>
+Cc: llvm@lists.linux.dev
+Cc: linux-kbuild@vger.kernel.org
+---
+ scripts/Makefile.clang | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-It is preventing memory leaks. We would like to prevent memory leaks
-in the kernel. Currently you can't even detect them, so this seems
-like an improvement.
+diff --git a/scripts/Makefile.clang b/scripts/Makefile.clang
+index 2435efae67f5..fa6f9a9be4ac 100644
+--- a/scripts/Makefile.clang
++++ b/scripts/Makefile.clang
+@@ -12,8 +12,12 @@ CLANG_TARGET_FLAGS_riscv	:= riscv64-linux-gnu
+ CLANG_TARGET_FLAGS_s390		:= s390x-linux-gnu
+ CLANG_TARGET_FLAGS_sparc	:= sparc64-linux-gnu
+ CLANG_TARGET_FLAGS_x86		:= x86_64-linux-gnu
++ifeq ($(SRCARCH):$(SUBARCH),um:i386)
++CLANG_TARGET_FLAGS		:= i386-linux-gnu
++else
+ CLANG_TARGET_FLAGS_um		:= $(CLANG_TARGET_FLAGS_$(SUBARCH))
+ CLANG_TARGET_FLAGS		:= $(CLANG_TARGET_FLAGS_$(SRCARCH))
++endif
+ 
+ ifeq ($(CLANG_TARGET_FLAGS),)
+ $(error add '--target=' option to scripts/Makefile.clang)
+-- 
+2.34.1
 
-I am using the practical kernel definition for "memory leak" of memory
-outliving remove() rather than the more philisophical rust version
-that memory is someday, eventually, freed.
-
-In an environment like the kernel the distinction is important and
-desirable.
-
-> The practical problem: Buggy drivers could (as you propose) stall the
-> corresponding task forever, never releasing the device resource. 
-
-Should't be never. Rust never leaks memory? It will eventually be
-unstuck when Rust frees the memory in the concurrent context that is
-holding it.
-
-> Not releasing the device resource may stall subsequent drivers
-> trying to probe the device, or, if the physical memory region has
-> been reassigned to another device, prevent another device from
-> probing. This is *not* what I would call "function safely".
-
-It didn't create a security problem.
-
-The driver could also write 
-
- while (true)
-    sleep(1)
-
-In the remove function and achieve all of the above bad things, should
-you try to statically prevent that too? I've written stuff like the
-above in drivers before, it is an easy way to make thing safe when
-working with FDs, so don't think nobody would do that.
-
-So I don't see alot of value in arguing you can close of 1 way to
-achieve something bad and still leave open all sorts of others. At
-least is more philisophical than I prefer to get.
-
-It is better to focus on usability, performance, and bug class
-detection, IMHO.
-
-Jason
 
