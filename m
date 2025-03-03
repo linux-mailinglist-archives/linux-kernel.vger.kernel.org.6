@@ -1,134 +1,96 @@
-Return-Path: <linux-kernel+bounces-544742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDBFDA4E453
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:53:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BA7BA4E2A0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:14:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 082747A5098
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:52:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31BA1179F54
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:09:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03B82296D6D;
-	Tue,  4 Mar 2025 15:37:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A10F27F4DA;
+	Tue,  4 Mar 2025 15:04:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SWblF8Di"
-Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b9wipAEJ"
+Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F7D3296D5D
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E54625F7A6
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.117
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741102666; cv=pass; b=fPz/3Sg17dHK7+ALVvmNlELqudTdjL/g3PzU0HKbScObZxTocUEAZlEkbGWplFqYGd13Y04FP5BjuIP//bQR02VXrjDb5ssBsoxG2GrEyjZ19kEdAAHAFdcK1NJYd5Z9/Ruyb5u9ppxk4P4LPG10Jr45rqcbmr2OCgBcFLP2xpU=
+	t=1741100641; cv=pass; b=Z4UpxPAohw6cpi7ZeWOZqyY1YX49htTcIZ5In02/OP+dHoINGO6n1CJ/dk71f4I/gBB78i99jnPoJam4kHbf431CDEMDxEntvGSpTuCZ7hrMkgOb2JvGWTYGFUIXW8ehlzWx1uR2rXAzLl8ZkDAxW3NYg9BiUkhYxygtkKofj2s=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741102666; c=relaxed/simple;
-	bh=AfwoLDxtt+un9QaIe0gjqSA+BcKTtkK/lo1w1S7u5uw=;
+	s=arc-20240116; t=1741100641; c=relaxed/simple;
+	bh=TenErg1GkLgbzWhephArmGE4BBJlcT1ZMrgwsm6zt8Q=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mDV4Q75lvAVCBGEg67nex4m0t8UgFHL237pBmM138yoBIzXoCp9t+N6owVeeMwCoq694UtSCJiCeo8A7g/TgHLnX97uAsEaLh5j9FcVaS+mgPoRJjFy/x/LRly29X7iwEckasw6T8dBENYh2rNsL0FR6okiCwKaC+zPex4OjVOs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SWblF8Di; arc=none smtp.client-ip=170.10.129.124; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; arc=pass smtp.client-ip=160.75.25.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+	 In-Reply-To:Content-Type; b=liOk0HdvXg8p03SaYIw+VmJyua/Vq7THhm9LQfuOnmnLVTNpMELAOrnMdHx60mcxPBLIkASoRX6t8vUA7kvmycW85XzzotGXG7ugjZHuomm1CaeM51wi5UHMqrlj23bUcvsXdWzExVolLy22bSdF2MefiNl7YfRZl43vlJA77p0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b9wipAEJ; arc=none smtp.client-ip=10.30.226.201; arc=pass smtp.client-ip=160.75.25.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id BAD6B40D91B3
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:37:42 +0300 (+03)
+	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id BA84A40D0479
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:03:58 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=SWblF8Di
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20201202 header.b=b9wipAEJ
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6fqj5vfWzG0mT
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:34:25 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6f6V0Jb7zFyJ1
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:02:10 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id B3FE142734; Tue,  4 Mar 2025 18:34:09 +0300 (+03)
+	id 45CDF42755; Tue,  4 Mar 2025 18:02:06 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SWblF8Di
-X-Envelope-From: <linux-kernel+bounces-541074-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b9wipAEJ
+X-Envelope-From: <linux-kernel+bounces-541080-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SWblF8Di
-Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id 7DE3C4227E
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:08:41 +0300 (+03)
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id 540DB2DCDE
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:08:41 +0300 (+03)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b9wipAEJ
+Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
+	by le2 (Postfix) with ESMTP id 4ADF142B40
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:13:57 +0300 (+03)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by fgw1.itu.edu.tr (Postfix) with SMTP id DC4B53064C0B
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:13:56 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FC9618912DE
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 07:08:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58B1E3A81B1
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 07:13:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 355861E9B3F;
-	Mon,  3 Mar 2025 07:08:23 +0000 (UTC)
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 688A81E9B3A;
+	Mon,  3 Mar 2025 07:13:44 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 520D31E5B72
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 07:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07E413D539;
+	Mon,  3 Mar 2025 07:13:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740985699; cv=none; b=nZQ3svMXYgqGTvG7OyBlAyuXq7kCgUfLuupwYe07IKXTS5hGh2D+DAxDNbSonanhaSBOEH2Wd1+g3nb+KwQRE6Jx/nZBBhi8vxGkHosbRUaIClu1T5xt0t6kch1S3EUnlM4TM44HjOYYVejsYmzYvFkdF24n6WhMj02EON+Izm8=
+	t=1740986021; cv=none; b=Qn2QWa9zK9DTiOKuogLcdaN7zlHCcd1W+4LmVz772ET+wS3SJLx8P56+I2vUg9xTXi+Zpmjk+qMU/Je8Hr2psN8squ3nR4jOQG4tCt1u2r+jvCgPm1mAamnsmHLLBuHP+9LuyTCRTycl1q5v82S4siDzn8Xfd0bPeyOV1h+vlqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740985699; c=relaxed/simple;
-	bh=AfwoLDxtt+un9QaIe0gjqSA+BcKTtkK/lo1w1S7u5uw=;
+	s=arc-20240116; t=1740986021; c=relaxed/simple;
+	bh=TenErg1GkLgbzWhephArmGE4BBJlcT1ZMrgwsm6zt8Q=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IZTyz9+IH/nfDmBaHvxUaPMCKROrmyK/TAPsVFfmd08nvyyNlymOkrH+i5U8OMragflz0679yweuL9BndVnnRzfx0L/fU1QrJ/q8OJqBwDz+DcscCQ4pcM9EYwhcRhEiRYpz9HMEPFTndR3wkHQD7jj1AE9OgGVnCiGreDRkuho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SWblF8Di; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740985696;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TAZt9bZkuhMK3xl5j9Jo0Thv7hZQ7De0iSCYDAJHnkY=;
-	b=SWblF8DifiHTUSRmx4KPYrItggb3vRJ1p3pnYojRvZvOD2RwgVSlw/fmGBLcGnjyY+7KlZ
-	1E+5/x6YZ/H31I14zZe28S/ICE7yT3nHDhtw0MUTfyrt5ttKrqm0IzYXOQMJeSYjh0I71r
-	LxXs32TtoN/w1d9k/FOJmaZQzJ/j1kQ=
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
- [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-367-sVQI12OaNQ-mnRji-wtesQ-1; Mon, 03 Mar 2025 02:08:15 -0500
-X-MC-Unique: sVQI12OaNQ-mnRji-wtesQ-1
-X-Mimecast-MFC-AGG-ID: sVQI12OaNQ-mnRji-wtesQ_1740985694
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-22379af38e0so33559775ad.2
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Mar 2025 23:08:14 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740985693; x=1741590493;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TAZt9bZkuhMK3xl5j9Jo0Thv7hZQ7De0iSCYDAJHnkY=;
-        b=Ejd7MORMYj5hk8+ENv4xlBylZVn4TSBnmTfF8hkjQ5GivO4XAaMuwC11ERI/018C8n
-         29X0PT3qdVhQn3IwlHu2BG+LqoQanSaf7dGzAaEF8xdkRcrf/mAm36Ud5gcIgVmktc0W
-         mNidLWpCdVjKn3eeEh+IefAvewc01ZWVnIX5M5on+vWt9vN1PT8JgrBZG+xPqPO+P1KA
-         qWUFE20+0IwAUlw+sN0+RfEntQTYWEy83HhOfiFmjlc/jdPkwnfLCEHdDu4y34QOFQyD
-         3sxgfwbL3A2OKUm82W2VuZzkICiBfA4odBP2YPCLc6uvVyO9t9qDJelMJMjZGsoXzgx0
-         NMmg==
-X-Forwarded-Encrypted: i=1; AJvYcCXcCv6Xn459OGEHOO2+bzCKHX+nUcpvhNtzD5EozuXCW/JWAchmmIchpLp5mzFarcMvOTng9+ofyaTVA08=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxs/eCimqj29eCKts2EyV0A5Je9Y8b2GXDAcfbzeDjQEl4UUpLG
-	e66Xmn1opQHKz/aE89agNBEVyD8UAUcLMjJBilCUxpDlVfuvxB/+37kEOIKcXG+E+VZ7XqrDMmQ
-	9o5PLCL8EB0FOSph+4OHPlAv4H8ule8Gz4C0828561DZcBvnM6QA+0IAVKnEHnyD6fAJLmA==
-X-Gm-Gg: ASbGnctpCRRJrbl8AO5XJOnFTL7TQQ5p3QeZz3VU0XaUS7sB8McF0FTF2iehSrAuAx5
-	i4HUiM35i69dAKPDWpARTXAAXorrRpERGyR9q/HXmpgddqxI348QZxt402QhV3Rgzh/RI5mVxj8
-	YCxpc8DigqtsfUuj14X9FwSeoRPYTUgbxwojv50/LybvQWnifP15AY18he5OZ1Viu70T1qVZZO0
-	r43NKi+kNb7gI90ixmKhg2iIflyU8zjDDU7oEm1nwSkBtg7czvYgrddu2gezAtrACWALpcGM8ns
-	Ja9haTBQQQFq7VbUUQ==
-X-Received: by 2002:a17:902:c951:b0:221:78a1:27fb with SMTP id d9443c01a7336-22368f72060mr189619905ad.11.1740985693567;
-        Sun, 02 Mar 2025 23:08:13 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFj6AXAjs67EIGwQMhzQQGbQbpNnv+WHLAlTElHzKGobUYvRKx1SI4QHA9TpJnCJTfgJ55bPw==
-X-Received: by 2002:a17:902:c951:b0:221:78a1:27fb with SMTP id d9443c01a7336-22368f72060mr189619505ad.11.1740985693207;
-        Sun, 02 Mar 2025 23:08:13 -0800 (PST)
-Received: from [192.168.68.55] ([180.233.125.164])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223504c5cd2sm71285075ad.143.2025.03.02.23.08.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 02 Mar 2025 23:08:12 -0800 (PST)
-Message-ID: <7639eca7-8fd8-491c-90bd-1be084fbd710@redhat.com>
-Date: Mon, 3 Mar 2025 17:08:04 +1000
+	 In-Reply-To:Content-Type; b=GQpg1xRBHnwGiAk4JLSuqV/NLX0up+7cl0VyJhI7aVoUFpbp7Wy/bdeoXxqSFiz3nccdgsDSpm3U4R5RphOIbFnkbgPxF4rYJ7i8wMV4XXhFUMTRg/x6G67svHrrLSD9Jh00tPbu7bbqsrGHqJK8xwaYUe/MK/kNrjGZ3FPb2ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b9wipAEJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BE1CC4CED6;
+	Mon,  3 Mar 2025 07:13:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740986021;
+	bh=TenErg1GkLgbzWhephArmGE4BBJlcT1ZMrgwsm6zt8Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=b9wipAEJA5/AZRHQ7XXoj08IcfniqgOD6JVJ0B5OFEBpkBbdZ//Ipgn2Jjt70yexX
+	 pLzSbmQVVoMstRV1Ne3DxE1d22Am9ZDZDeOm4pp3zmt2Iv8d4UjAbprwRjvuOtkirf
+	 rAYliN8axNzcorwvBMNvtsw+h2eru0Zzq332vkhx7sQuEjtWwBW/uTvf4u+EduD8aG
+	 m1loUQxGvBVevmb4KVLcWiCbjyq76x02FssBIWtyerzMaaX2uIEqA3xhnHlzYt1jYh
+	 +lciTkkyxj5bsU6aB4VuzJfi9D4UbA3SP3M8huLr74Mcd8N1inRrEyUTnGGjjkN2vV
+	 GuH/6LsPiH4Mw==
+Message-ID: <a9741e5a-72c7-4a03-92ef-f6f1236078d9@kernel.org>
+Date: Mon, 3 Mar 2025 08:13:36 +0100
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -137,133 +99,81 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 12/45] arm64: RME: Allocate/free RECs to match vCPUs
-To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
- kvmarm@lists.linux.dev
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun
- <alpergun@google.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
-References: <20250213161426.102987-1-steven.price@arm.com>
- <20250213161426.102987-13-steven.price@arm.com>
+Subject: Re: [PATCH] platform/x86: amd: Add ISP platform info
+To: "Nirujogi, Pratap" <Pratap.Nirujogi@amd.com>,
+ "hdegoede@redhat.com" <hdegoede@redhat.com>,
+ "ilpo.jarvinen@linux.intel.com" <ilpo.jarvinen@linux.intel.com>
+Cc: "platform-driver-x86@vger.kernel.org"
+ <platform-driver-x86@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "Chan, Benjamin (Koon Pan)" <Benjamin.Chan@amd.com>
+References: <20250228170238.3484860-1-pratap.nirujogi@amd.com>
+ <ac0a2d39-aecb-4f24-8198-906f660edb17@kernel.org>
+ <CY5PR12MB6429EE863D0ED9DC89EE86F0FEC92@CY5PR12MB6429.namprd12.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Gavin Shan <gshan@redhat.com>
-In-Reply-To: <20250213161426.102987-13-steven.price@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <CY5PR12MB6429EE863D0ED9DC89EE86F0FEC92@CY5PR12MB6429.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6fqj5vfWzG0mT
+X-ITU-Libra-ESVA-ID: 4Z6f6V0Jb7zFyJ1
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741707373.68972@c8h44LiOgKbecjfEu2bbgA
+X-ITU-Libra-ESVA-Watermark: 1741705346.03172@BsNx18o9R4yphokTnaaWaw
 X-ITU-MailScanner-SpamCheck: not spam
 
-On 2/14/25 2:13 AM, Steven Price wrote:
-> The RMM maintains a data structure known as the Realm Execution Context
-> (or REC). It is similar to struct kvm_vcpu and tracks the state of the
-> virtual CPUs. KVM must delegate memory and request the structures are
-> created when vCPUs are created, and suitably tear down on destruction.
+On 03/03/2025 06:17, Nirujogi, Pratap wrote:
+> [AMD Official Use Only - AMD Internal Distribution Only]
 > 
-> RECs must also be supplied with addition pages - auxiliary (or AUX)
-> granules - for storing the larger registers state (e.g. for SVE). The
-> number of AUX granules for a REC depends on the parameters with which
-> the Realm was created - the RMM makes this information available via the
-> RMI_REC_AUX_COUNT call performed after creating the Realm Descriptor (RD).
+> Hi Krzysztof,
 > 
-> Note that only some of register state for the REC can be set by KVM, the
-> rest is defined by the RMM (zeroed). The register state then cannot be
-> changed by KVM after the REC is created (except when the guest
-> explicitly requests this e.g. by performing a PSCI call). The RMM also
-> requires that the VMM creates RECs in ascending order of the MPIDR.
-> 
-> See Realm Management Monitor specification (DEN0137) for more information:
-> https://developer.arm.com/documentation/den0137/
-> 
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
-> Changes since v6:
->   * Avoid reporting the KVM_ARM_VCPU_REC feature if the guest isn't a
->     realm guest.
->   * Support host page size being larger than RMM's granule size when
->     allocating/freeing aux granules.
-> Changes since v5:
->   * Separate the concept of vcpu_is_rec() and
->     kvm_arm_vcpu_rec_finalized() by using the KVM_ARM_VCPU_REC feature as
->     the indication that the VCPU is a REC.
-> Changes since v2:
->   * Free rec->run earlier in kvm_destroy_realm() and adapt to previous patches.
-> ---
->   arch/arm64/include/asm/kvm_emulate.h |   7 ++
->   arch/arm64/include/asm/kvm_host.h    |   3 +
->   arch/arm64/include/asm/kvm_rme.h     |  18 +++
->   arch/arm64/kvm/arm.c                 |  13 +-
->   arch/arm64/kvm/reset.c               |  11 ++
->   arch/arm64/kvm/rme.c                 | 179 +++++++++++++++++++++++++++
->   6 files changed, 229 insertions(+), 2 deletions(-)
-> 
+> Thanks for reviewing this and other AMD patches. Updated the copyright header in V1, please review.
+Do not top post. This was v1.
 
-With the following one comment addressed:
-
-Reviewed-by: Gavin Shan <gshan@redhat.com>
-
-[...]
-
->   
->   /*
-> diff --git a/arch/arm64/include/asm/kvm_rme.h b/arch/arm64/include/asm/kvm_rme.h
-> index 698bb48a8ae1..5db377943db4 100644
-> --- a/arch/arm64/include/asm/kvm_rme.h
-> +++ b/arch/arm64/include/asm/kvm_rme.h
-> @@ -6,6 +6,7 @@
->   #ifndef __ASM_KVM_RME_H
->   #define __ASM_KVM_RME_H
->   
-> +#include <asm/rmi_smc.h>
->   #include <uapi/linux/kvm.h>
->   
->   /**
-> @@ -65,6 +66,21 @@ struct realm {
->   	unsigned int ia_bits;
->   };
->   
-> +/**
-> + * struct realm_rec - Additional per VCPU data for a Realm
-> + *
-> + * @mpidr: MPIDR (Multiprocessor Affinity Register) value to identify this VCPU
-> + * @rec_page: Kernel VA of the RMM's private page for this REC
-> + * @aux_pages: Additional pages private to the RMM for this REC
-> + * @run: Kernel VA of the RmiRecRun structure shared with the RMM
-> + */
-> +struct realm_rec {
-> +	unsigned long mpidr;
-> +	void *rec_page;
-> +	struct page *aux_pages[REC_PARAMS_AUX_GRANULES];
-> +	struct rec_run *run;
-> +};
-> +
-
-REC_PARAMS_AUX_GRANULES represents the maximal number of the auxiliary granules.
-Since the base page size is always larger than or equal to granule size (4KB).
-The capacity of array @aux_pages[] needs to be REC_PARAMS_AUX_GRANULES. Ideally,
-the array's size can be computed dynamically and it's allocated in kvm_create_rec().
-
-Alternatively, to keep the code simple, a comment is needed here to explain why
-the array's size has been set to REC_PARAMS_AUX_GRANULES.
-
-An relevant question: Do we plan to support differentiated sizes between page
-and granule? I had the assumption this feature will be supported in the future
-after the base model (equal page and granule size) gets merged first.
-
-Thanks,
-Gavin
-
+Best regards,
+Krzysztof
 
 
