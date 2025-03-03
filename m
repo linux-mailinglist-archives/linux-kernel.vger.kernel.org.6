@@ -1,123 +1,96 @@
-Return-Path: <linux-kernel+bounces-545280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E7C3A4EB1A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:19:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76198A4EA59
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:02:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 301C616F3F1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:15:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 365C717CCA0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:57:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0359327D761;
-	Tue,  4 Mar 2025 17:58:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62E9D27F4E6;
+	Tue,  4 Mar 2025 17:37:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yTbm9ITN";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MVrHjNYt"
+	dkim=temperror (0-bit key) header.d=aruba.it header.i=@aruba.it header.b="kAdmNOD0"
 Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26661FCF4F
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:58:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7409E260A3E
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:37:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.117
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741111096; cv=pass; b=WSO1fSaRZFCOx5KG7Q3aDUuS3dt+bzZaxKgYBMLPFCSBMPyIdHDllOl1QRm2iw4KbkilR45A8S09UwdGL5OcD43xELbnn0oCE6tSVvZta6054NdMpAGraDFS1FiP/tKEnzo7kHPVwaubrXKqBBJgYjPLfS3MMwcjSXvSOWXCMBU=
+	t=1741109839; cv=pass; b=kLqsA7vGMxFlSYoL7FhTww4T9b8PdXN59aP8iJnDTO2xdqb7E14L7rrG2U3oKEATFhNA9EmpP9VuNXSBfOawPy+YyfMLq4hg0RtgaWRTW3M0v8F50uX6IjiD7TMDbuZu/M6v9daZqU4XrQEF/5m8v1ceNwSAHdu2mFMEdhndkBc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741111096; c=relaxed/simple;
-	bh=yVaQgogHVfVgAJCLdmZvRLoWtKzJvI/zw0xzw+t5DZ4=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=Jd+oCAJR37dJLb8C5IYAyA1OJc1xK9O8A/bfBHVVFK1Np6G42ABasGbku6j16vDpnZwxRrysvCg1Pc4YBgSw3DIuIYwxivxOHkMV9iqI2OlBltiqdsGQVx/A2pCg8dyAGbW2cX8Yb25pyWLiWz5/VfBIMSp30LeB+TKona1jrcY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yTbm9ITN; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MVrHjNYt; arc=none smtp.client-ip=193.142.43.55; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; arc=pass smtp.client-ip=160.75.25.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+	s=arc-20240116; t=1741109839; c=relaxed/simple;
+	bh=bdghUzTzBlYu3WkVqq8yLPLahhT013JwLccfoK2GRVk=;
+	h=Message-ID:Date:MIME-Version:Subject:Cc:References:From:To:
+	 In-Reply-To:Content-Type; b=FbCVI+O69X8qEYiUxM5wyAuscTiujvMxBnhapWOOtW6eKu9Jbvm7jfaF0tYX7tV6pgC2g2I8wmZrtDQwqwpKh1rAQ001pgLcrT3B9QL6Eh1PjghNMRbLjmx8t0gGzVdLwH3Ww0rOBVp4uZPQJpKC+8eDKWqkZq0bPU3jQHtvDrc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=enneenne.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=temperror (0-bit key) header.d=aruba.it header.i=@aruba.it header.b=kAdmNOD0; arc=none smtp.client-ip=62.149.158.217; dmarc=pass (p=none dis=none) header.from=enneenne.com; spf=pass smtp.mailfrom=enneenne.com; arc=pass smtp.client-ip=160.75.25.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=enneenne.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
-Received: from lesvatest1.cc.itu.edu.tr (unknown [10.146.128.1])
+Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id 1015940D1F4E
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:58:13 +0300 (+03)
+	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id C148940CEC89
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:37:14 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
-Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=temperror header.d=linutronix.de header.i=@linutronix.de header.a=rsa-sha256 header.s=2020 header.b=yTbm9ITN;
-	dkim=pass header.d=linutronix.de header.i=@linutronix.de header.a=ed25519-sha256 header.s=2020e header.b=MVrHjNYt
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6hRY0RnjzG3mQ
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:47:05 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6fb84WZzzG01W
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:23:32 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id F100642737; Tue,  4 Mar 2025 19:46:50 +0300 (+03)
+	id 44D724273D; Tue,  4 Mar 2025 18:23:28 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yTbm9ITN;
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MVrHjNYt
-X-Envelope-From: <linux-kernel+bounces-541634-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=temperror (0-bit key) header.d=aruba.it header.i=@aruba.it header.b=kAdmNOD0
+X-Envelope-From: <linux-kernel+bounces-541653-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yTbm9ITN;
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MVrHjNYt
+	dkim=temperror (0-bit key) header.d=aruba.it header.i=@aruba.it header.b=kAdmNOD0
 Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id F1A4542735
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:52:44 +0300 (+03)
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id C96DD3063EFC
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:52:44 +0300 (+03)
+	by le2 (Postfix) with ESMTP id 6CCA842606
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:57:56 +0300 (+03)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by fgw1.itu.edu.tr (Postfix) with SMTP id 202F9305F789
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:57:56 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 275A9188D1E4
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:51:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F67A16787A
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:57:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6278D20CCC2;
-	Mon,  3 Mar 2025 11:51:17 +0000 (UTC)
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8F3F20DD7D;
+	Mon,  3 Mar 2025 11:57:10 +0000 (UTC)
+Received: from smtpcmd01-g.aruba.it (smtpcmd01-g.aruba.it [62.149.158.217])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E091FF5EB;
-	Mon,  3 Mar 2025 11:51:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18BC920D509
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 11:57:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.149.158.217
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741002674; cv=none; b=BUZdUFInSjdZQcgGUOQd2YRGBGKgUWOOVomMRjnFLF8rsadHvbgewjvlrSbQDicHYI6j+R+C9/karuUccgwuIJvmZ8VMKavIhUTIeGvpsM/0XlU1dEJZyx0mDAH2RQADHNLayIQuJ8Ro/11qPHjaTGcCuluDp53KaqpvmwVneUA=
+	t=1741003027; cv=none; b=qBFIoAHHyAzR1fYygawrNG5TEVV1Fdukrl+0auQKKdPmI899UPT2LJXHPfe2CrKRTUAcnmxMOMiz/OqyWY7bJGvSbXwUVAVZUJPLjgdD88vdpfVtXFCUc4tQYDZm2YzjS7VGirStiIiH6waZCZPWZO3+0dndK8cjQCGaxTyyhhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741002674; c=relaxed/simple;
-	bh=yVaQgogHVfVgAJCLdmZvRLoWtKzJvI/zw0xzw+t5DZ4=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=aJpvebyNiJY8ZriLoUB7imE0lM8u9raaT9VZjfkYfHfI/HuENArZW2TpWmZc/6+PGYOP2uIZ6XRMFNzMc0r4oxEX9WNd1YuEDuEsKkOO+iOQXrqmAo0TnUon/N57rgWha24Um2Z751CzYKbEAykQE2De/ABuQYNvgfOHi1lCxyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yTbm9ITN; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MVrHjNYt; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 03 Mar 2025 11:51:10 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741002671;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oR7C7cB+Rq7amZpDkkyqysh1+OEzoIXxnKJo7bN22Mc=;
-	b=yTbm9ITNJdHz9PuYf17lWUJye0s9uQG5AdXiovnDzNxLQ9DeEwNcVbtHd36zWsUvsLEqHf
-	qmPlcWTuV8XXBWiMQEXgMH2+nZswBqX9KzQt2A5sufuPt0Gz5F6g7y94lwk8juVXkcmf3E
-	pORHfNKuLnY8A/JRDAR28Qa+3OeUkuYD4Ppo4VkU/zUwCBfiT+3kKlhWtaMPYGEHfg0yuf
-	QvB0BnNtoMxUXf3oM6IjRxTqkL9pgICYu+Rfud2nnxj+4B4pS+dWaiXTfrIhYKiO6V6yyQ
-	/T6gQU1wdNZCJMpT4/xsARLE0fjZXBXm++xvnzIagbKgOmSPHfDFgkUe5J1WPw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741002671;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oR7C7cB+Rq7amZpDkkyqysh1+OEzoIXxnKJo7bN22Mc=;
-	b=MVrHjNYtJsAkig0GPjSHwUE56yLxrVbeOLlJzc+TaL3REsI98/6qymoHyNI0o2qCK++VDq
-	9nk3FRemGeCJ3pDQ==
-From: "tip-bot2 for Mirsad Todorovac" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cleanups] selftests/x86/syscall: Fix coccinelle WARNING
- recommending the use of ARRAY_SIZE()
-Cc: Mirsad Todorovac <mtodorovac69@gmail.com>, Ingo Molnar <mingo@kernel.org>,
- Muhammad Usama Anjum <usama.anjum@collabora.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20241101111523.1293193-2-mtodorovac69@gmail.com>
-References: <20241101111523.1293193-2-mtodorovac69@gmail.com>
+	s=arc-20240116; t=1741003027; c=relaxed/simple;
+	bh=bdghUzTzBlYu3WkVqq8yLPLahhT013JwLccfoK2GRVk=;
+	h=Message-ID:Date:MIME-Version:Subject:Cc:References:From:To:
+	 In-Reply-To:Content-Type; b=e8pVIxbQkl5Ns8i575yeVfkhXL2LQZdt+MQsgl12pnU4B6+bXlbKUib+qPeta+1rf39cFKp2hEhtGgbyiN/pOIZ9q3NjuK/haFIrTrPNKfhJPhbi4fnf1lIqlWgrB5/sl766Dvnxn08ydyrzF+on/B3IAoMEnBxzIOJRK8x/MqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com; spf=pass smtp.mailfrom=enneenne.com; dkim=temperror (0-bit key) header.d=aruba.it header.i=@aruba.it header.b=kAdmNOD0; arc=none smtp.client-ip=62.149.158.217
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enneenne.com
+Received: from [192.168.1.58] ([79.0.204.227])
+	by Aruba SMTP with ESMTPSA
+	id p4Mqt0FmRRBkHp4MqtLpYY; Mon, 03 Mar 2025 12:53:52 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
+	t=1741002832; bh=bdghUzTzBlYu3WkVqq8yLPLahhT013JwLccfoK2GRVk=;
+	h=Date:MIME-Version:Subject:From:To:Content-Type;
+	b=kAdmNOD0Xs74JP/X8nKy3Jo8EkKu6S2xNAWrnznOtS/P65bWHvSDNNE62ES5jkpg8
+	 B0AoPZFpT6D1RFhcNBotVO9i/ARyHB2WH4NK+viPYv7ZBH1lECLNb6DK8VMdKMFv4s
+	 DoA8OHlgf92MHXMvKd1R+sCSF40B5EARaYPNfJcscsvz+omAOC51TOBPnGQWWTrwDn
+	 0bNMvOO3FgUUHt7MdBrhBQZ7r2yIsH3ZKIK1lZTY/QWEYBEz0bKO9Urued26ycLMtE
+	 Cyw7nM9NSXMiZyGpyQMvC+EN6YI8rLS4fa0xup9cx3njdVj8kT4iNySc+9i6REpiPV
+	 2HOJiL+9WZMxQ==
+Message-ID: <2738fe1c-4dc7-4d8c-ac8a-f32e5b3277c3@enneenne.com>
+Date: Mon, 3 Mar 2025 12:53:52 +0100
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -125,65 +98,131 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174100267008.10177.10892664815604328750.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pps: fix poll support
+Content-Language: en-US
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Denis OSTERLAND-HEIM <denis.osterland@diehl.com>, stable@vger.kernel.org
+References: <561f4dfd4cbd416baee0fb39b5d55aa1@diehl.com>
+From: Rodolfo Giometti <giometti@enneenne.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Andrew Morton <akpm@linux-foundation.org>
+In-Reply-To: <561f4dfd4cbd416baee0fb39b5d55aa1@diehl.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4xfH3JdXCmmPetYrjaWeMfxxmA0d+9GF7ZCXYv9fGUqHdwqPGvbEEbow2sNGVh6IOrpuZ6i2sEaK+bARZV8pcW7ShcNkzj938iiCx3b3bXH1Ba00d8vlpa
+ SCjWS3/Dp00FmDJBYTvA4qcu/OHE227MfTMgBWB+hlxvt2j9P5Vh9DqL5Rf0SOMwrjUy995C1+AugVj/89tATnHwREf6O36oa9sk4CZz6zls5l9cCLLbqV49
+ +Ho8PFZERgxoq+1UxKel1BO62U7wswxhkkFfaoFXEoZCws90kZq5aMiqA+cJS3CA0rFHF98Wozyu8Ky+pGf6XBamKjjKbMdnFXc5vTMWTncV/+isbm4ayDNu
+ VwdxC3SM
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6hRY0RnjzG3mQ
+X-ITU-Libra-ESVA-ID: 4Z6fb84WZzzG01W
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741715801.76824@xGh3TNmzU8e8s8yN6WGXiw
+X-ITU-Libra-ESVA-Watermark: 1741714516.85925@NLpn43A1Xf6W/ItcchHvpg
 X-ITU-MailScanner-SpamCheck: not spam
 
-The following commit has been merged into the x86/cleanups branch of tip:
+On 03/03/25 09:02, Denis OSTERLAND-HEIM wrote:
+> [BUG]
+> A user space program that calls select/poll get always an immediate data
+> ready-to-read response. As a result the intended use to wait until next
+> data becomes ready does not work.
+> 
+> User space snippet:
+> 
+>      struct pollfd pollfd = {
+>        .fd = open("/dev/pps0", O_RDONLY),
+>        .events = POLLIN|POLLERR,
+>        .revents = 0 };
+>      while(1) {
+>        poll(&pollfd, 1, 2000/*ms*/); // returns immediate, but should wait
+>        if(revents & EPOLLIN) { // always true
+>          struct pps_fdata fdata;
+>          memset(&fdata, 0, sizeof(memdata));
+>          ioctl(PPS_FETCH, &fdata); // currently fetches data at max speed
+>        }
+>      }
+> 
+> [CAUSE]
+> pps_cdev_poll() returns unconditionally EPOLLIN.
+> 
+> [FIX]
+> Remember the last fetch event counter and compare this value in
+> pps_cdev_poll() with most recent event counter
+> and return 0 if they are equal.
+> 
+> Signed-off-by: Denis OSTERLAND-HEIM <denis.osterland@diehl.com>
+> Co-developed-by: Rodolfo Giometti <giometti@enneenne.com>
+> Signed-off-by: Rodolfo Giometti <giometti@enneenne.com>
 
-Commit-ID:     40fc7561013914ec08c200bb7a0805643a23e070
-Gitweb:        https://git.kernel.org/tip/40fc7561013914ec08c200bb7a0805643a23e070
-Author:        Mirsad Todorovac <mtodorovac69@gmail.com>
-AuthorDate:    Fri, 01 Nov 2024 12:15:23 +01:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Mon, 03 Mar 2025 12:38:49 +01:00
+Acked-by: Rodolfo Giometti <giometti@enneenne.com>
 
-selftests/x86/syscall: Fix coccinelle WARNING recommending the use of ARRAY_SIZE()
+If needed. :)
 
-Coccinelle gives WARNING recommending the use of ARRAY_SIZE() macro definition
-to improve the code readability:
+> Fixes: eae9d2ba0cfc ("LinuxPPS: core support")
+> CC: stable@vger.linux.org # 5.4+
+> ---
+>   drivers/pps/pps.c          | 11 +++++++++--
+>   include/linux/pps_kernel.h |  1 +
+>   2 files changed, 10 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pps/pps.c b/drivers/pps/pps.c
+> index 6a02245ea35f..9463232af8d2 100644
+> --- a/drivers/pps/pps.c
+> +++ b/drivers/pps/pps.c
+> @@ -41,6 +41,9 @@ static __poll_t pps_cdev_poll(struct file *file, poll_table *wait)
+>   
+>   	poll_wait(file, &pps->queue, wait);
+>   
+> +	if (pps->last_fetched_ev == pps->last_ev)
+> +		return 0;
+> +
+>   	return EPOLLIN | EPOLLRDNORM;
+>   }
+>   
+> @@ -186,9 +189,11 @@ static long pps_cdev_ioctl(struct file *file,
+>   		if (err)
+>   			return err;
+>   
+> -		/* Return the fetched timestamp */
+> +		/* Return the fetched timestamp and save last fetched event  */
+>   		spin_lock_irq(&pps->lock);
+>   
+> +		pps->last_fetched_ev = pps->last_ev;
+> +
+>   		fdata.info.assert_sequence = pps->assert_sequence;
+>   		fdata.info.clear_sequence = pps->clear_sequence;
+>   		fdata.info.assert_tu = pps->assert_tu;
+> @@ -272,9 +277,11 @@ static long pps_cdev_compat_ioctl(struct file *file,
+>   		if (err)
+>   			return err;
+>   
+> -		/* Return the fetched timestamp */
+> +		/* Return the fetched timestamp and save last fetched event  */
+>   		spin_lock_irq(&pps->lock);
+>   
+> +		pps->last_fetched_ev = pps->last_ev;
+> +
+>   		compat.info.assert_sequence = pps->assert_sequence;
+>   		compat.info.clear_sequence = pps->clear_sequence;
+>   		compat.info.current_mode = pps->current_mode;
+> diff --git a/include/linux/pps_kernel.h b/include/linux/pps_kernel.h
+> index c7abce28ed29..aab0aebb529e 100644
+> --- a/include/linux/pps_kernel.h
+> +++ b/include/linux/pps_kernel.h
+> @@ -52,6 +52,7 @@ struct pps_device {
+>   	int current_mode;			/* PPS mode at event time */
+>   
+>   	unsigned int last_ev;			/* last PPS event id */
+> +	unsigned int last_fetched_ev;		/* last fetched PPS event id */
+>   	wait_queue_head_t queue;		/* PPS event queue */
+>   
+>   	unsigned int id;			/* PPS source unique ID */
 
-  ./tools/testing/selftests/x86/syscall_numbering.c:316:35-36: WARNING: Use ARRAY_SIZE
+-- 
+GNU/Linux Solutions                  e-mail: giometti@enneenne.com
+Linux Device Driver                          giometti@linux.it
+Embedded Systems                     phone:  +39 349 2432127
+UNIX programming
 
-Fixes: 15c82d98a0f78 ("selftests/x86/syscall: Update and extend syscall_numbering_64")
-Signed-off-by: Mirsad Todorovac <mtodorovac69@gmail.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-Link: https://lore.kernel.org/r/20241101111523.1293193-2-mtodorovac69@gmail.com
----
- tools/testing/selftests/x86/syscall_numbering.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/x86/syscall_numbering.c b/tools/testing/selftests/x86/syscall_numbering.c
-index 9915917..41c42b7 100644
---- a/tools/testing/selftests/x86/syscall_numbering.c
-+++ b/tools/testing/selftests/x86/syscall_numbering.c
-@@ -25,6 +25,7 @@
- #include <sys/mman.h>
- 
- #include <linux/ptrace.h>
-+#include "../kselftest.h"
- 
- /* Common system call numbers */
- #define SYS_READ	  0
-@@ -313,7 +314,7 @@ static void test_syscall_numbering(void)
- 	 * The MSB is supposed to be ignored, so we loop over a few
- 	 * to test that out.
- 	 */
--	for (size_t i = 0; i < sizeof(msbs)/sizeof(msbs[0]); i++) {
-+	for (size_t i = 0; i < ARRAY_SIZE(msbs); i++) {
- 		int msb = msbs[i];
- 		run("Checking system calls with msb = %d (0x%x)\n",
- 		    msb, msb);
 
 
