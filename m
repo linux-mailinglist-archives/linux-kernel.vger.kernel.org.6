@@ -1,127 +1,152 @@
-Return-Path: <linux-kernel+bounces-542503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6934A4CA32
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:48:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 61C90A4CA33
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:49:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30FD37A2388
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:44:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B4AE7A4890
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:45:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AC5B20E706;
-	Mon,  3 Mar 2025 17:45:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C4DF215169;
+	Mon,  3 Mar 2025 17:46:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZUNleldD"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cS+ybbp5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 567BF78F40;
-	Mon,  3 Mar 2025 17:45:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B57A20E706;
+	Mon,  3 Mar 2025 17:46:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741023949; cv=none; b=OAsAWG/LYyVCnEFKzKGKRONz0eSmLwlxkweuPpwFOb6Dt6ZyAMxOSngqJqYZYFFb0vRJbXY4ffTkZXSP/7aEiDy7SNMFHz8Ltmm1irqjiCwVqa+8IPgE2XmX2ucSNKpOlOdPwrqOrrFmT/uohfOyxNxN89Yjd/Iyi0VK57bCmXA=
+	t=1741023968; cv=none; b=WkqM/nSdlnkcSlKnopNF/QCcnKN8zxDr3xVsqI45G1PhhjJE5GHwO+KZPmgofUoMFeMsdpAoCY1N5y6uMagjD67ZJP0fGKjdXqhtJBg+K6SN2wwDb4fABKUNfaa3SOcZryicnZFuA/aHFTlPE6b9l/UOSLgY3Pyt88PZCA2Av5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741023949; c=relaxed/simple;
-	bh=UGdiHxV+cCPPcY2up8NJvAoTrAjRKSFf2eL7CxVBjDI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Nzge0GiTTdCod+xl36ev2xHKfb89MuR7Q3g+E2X5GftpxlpVQgFMXebhmOAUSXSQM0+dVByVftCxLEzu+UrpfQcYsGNDbWmsq12n1I5Iq3kika3HHVKuUk7eD9LIK1Vc3N/r+bqpCSP99WY3QbtaUESnRQMa+yyZAXgAlkINB10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZUNleldD; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E72C84432F;
-	Mon,  3 Mar 2025 17:45:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1741023945;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xPpTerC4hLINRf1Gupo5oTIIFDAqKCP0hsRiaiP783g=;
-	b=ZUNleldDt2otWbBhV/st1ZKBAlw4HXcV0O5aPm0w6XjDXI0zSlX7j5lk0zXGPqU8pRm75D
-	X/NmpvIhAqp08+TOksq5Gy9iIUc8PSQ3IlDi3bF1rOrSUBaBuoCYfuZw9EQqJWwAEHCRZb
-	TRl8FtQWhuQ0wgyMQr8vVYmbOQ2QJiwKS2503RpKRrnKI5a4Q00i2mqONBrXFCiJ9sz0//
-	IKVyIAcJeh+kLbunUWZdZH5cQ5QRd8UHYVaxlyMAp2zRaCPXuVo32P6HwEoMfLn1vZfjFX
-	MF16m7EqA/fRw0WEZPGzTeFhXno5wNH6fska6ejdt++L7x8/2y4E6Xv5Y0bJAA==
-Date: Mon, 3 Mar 2025 18:45:43 +0100
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
- <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Heiner Kallweit <hkallweit1@gmail.com>, Parthiban
- Veerasooran <parthiban.veerasooran@microchip.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
- linux-arm-kernel@lists.infradead.org, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
- Florian Fainelli <f.fainelli@gmail.com>, Vladimir Oltean
- <vladimir.oltean@nxp.com>, Oleksij Rempel <o.rempel@pengutronix.de>, Simon
- Horman <horms@kernel.org>, Romain Gantois <romain.gantois@bootlin.com>,
- Piergiorgio Beruto <piergiorgio.beruto@gmail.com>
-Subject: Re: [PATCH net v2] net: ethtool: netlink: Allow NULL nlattrs when
- getting a phy_device
-Message-ID: <20250303184543.33f74191@kmaincent-XPS-13-7390>
-In-Reply-To: <20250301141114.97204-1-maxime.chevallier@bootlin.com>
-References: <20250301141114.97204-1-maxime.chevallier@bootlin.com>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741023968; c=relaxed/simple;
+	bh=LFg0cQbBhx1KCS4G96feguNswXa0ogQID7bdaU1QdTQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=DWb/OrKRu3AjB5fOj2gkBg2rY5EEYIexlfQG9c8EpZoHryF5uSfmQwR0P45L9PNvpWxSLUQU20o8KG4GxTt1gHDNghRfpn1ogSo3uncojPMFgKuKpZ2KfvcQ7LGc1Ux7qFhv/J9849CsDEnBPNbFmgmS8y0mUoEnXXuKCTK8YgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cS+ybbp5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0379C4CED6;
+	Mon,  3 Mar 2025 17:46:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741023968;
+	bh=LFg0cQbBhx1KCS4G96feguNswXa0ogQID7bdaU1QdTQ=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=cS+ybbp5AlugX98w36ZHqxBNZ2Myr1Hp6RQYyvPR0/IBWMFhxQzLZbks0OBEDkcfL
+	 ldhVShIMHgCpFsBy+Uonyn1shmmsTLV1NMB9UdQowyxf9D+OyruavDqdj2bg/QwsI/
+	 UadV3Ximi/eQYLIRP+k3ec+Xx01RtAeJxPlA3554KiQPG1/6QAjRyfDIiaUYl+3uqa
+	 0QnekGNJM86+s0IXEDeCViYlWt5sdMVPbPCDhpASBnlgfKj4uEnPxUlWLgRckE3guM
+	 xH6RoiEnjMRnl05QGY+jXCyvLb+ZmPMD0k6NuOuvKVU1CzMRFo+1lGgl4qKsr18FD4
+	 XkN7Z+pKKlCCA==
+Message-ID: <ac4f8b31-2a9b-4860-a72e-379806ee9f77@kernel.org>
+Date: Mon, 3 Mar 2025 18:46:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/4] dt-bindings: clock: thead: Add TH1520 VO clock
+ controller
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Michal Wilczynski <m.wilczynski@samsung.com>, mturquette@baylibre.com,
+ sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ drew@pdp7.com, guoren@kernel.org, wefu@redhat.com, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
+ jszhang@kernel.org, p.zabel@pengutronix.de, m.szyprowski@samsung.com
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+References: <20250303143629.400583-1-m.wilczynski@samsung.com>
+ <CGME20250303143635eucas1p1dbcd26d4906b962e07cbde7f5ef704bf@eucas1p1.samsung.com>
+ <20250303143629.400583-2-m.wilczynski@samsung.com>
+ <cf6aa8bf-d424-49f4-b6a6-b6b10fd8092f@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <cf6aa8bf-d424-49f4-b6a6-b6b10fd8092f@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelleejiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthhqredtredtjeenucfhrhhomhepmfhorhihucforghinhgtvghnthcuoehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefguddtfeevtddugeevgfevtdfgvdfhtdeuleetffefffffhffgteekvdefudeiieenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghlohepkhhmrghinhgtvghnthdqigfrufdqudefqdejfeeltddpmhgrihhlfhhrohhmpehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvuddprhgtphhtthhopehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepv
- gguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhmpdhrtghpthhtohepphgrrhhthhhisggrnhdrvhgvvghrrghsohhorhgrnhesmhhitghrohgthhhiphdrtghomh
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Transfer-Encoding: 7bit
 
-On Sat,  1 Mar 2025 15:11:13 +0100
-Maxime Chevallier <maxime.chevallier@bootlin.com> wrote:
+On 03/03/2025 18:41, Krzysztof Kozlowski wrote:
+> On 03/03/2025 15:36, Michal Wilczynski wrote:
+>> Add device tree bindings for the TH1520 Video Output (VO) subsystem
+>> clock controller. The VO sub-system manages clock gates for multimedia
+>> components including HDMI, MIPI, and GPU.
+>>
+>> Document the VIDEO_PLL requirements for the VO clock controller, which
+>> receives its input from the AP clock controller. The VIDEO_PLL is a
+>> Silicon Creations Sigma-Delta (integer) PLL typically running at 792 MHz
+>> with maximum FOUTVCO of 2376 MHz.
+>>
+>> Add a mandatory reset property for the TH1520 VO clock controller that
+>> handles the GPU clocks. This reset line controls the GPU CLKGEN reset,
+>> which is required for proper GPU clock operation.
+>>
+>> The reset property is only required for the "thead,th1520-clk-vo"
+>> compatible, as it specifically handles the GPU-related clocks.
+>>
+>> This binding complements the existing AP sub-system clock controller
+>> which manages CPU, DPU, GMAC and TEE PLLs.
+>>
+>> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+>> ---
+>>  .../bindings/clock/thead,th1520-clk-ap.yaml   | 33 ++++++++++++++++--
+>>  .../dt-bindings/clock/thead,th1520-clk-ap.h   | 34 +++++++++++++++++++
+>>  2 files changed, 64 insertions(+), 3 deletions(-)
+> 
+> 
+> Where is the changelog? Why is this v1? There was extensive discussion
+> for many versions, so does it mean all of it was ignored?
 
-> ethnl_req_get_phydev() is used to lookup a phy_device, in the case an
-> ethtool netlink command targets a specific phydev within a netdev's
-> topology.
->=20
-> It takes as a parameter a const struct nlattr *header that's used for
-> error handling :
->=20
->        if (!phydev) {
->                NL_SET_ERR_MSG_ATTR(extack, header,
->                                    "no phy matching phyindex");
->                return ERR_PTR(-ENODEV);
->        }
->=20
-> In the notify path after a ->set operation however, there's no request
-> attributes available.
->=20
-> The typical callsite for the above function looks like:
->=20
-> 	phydev =3D ethnl_req_get_phydev(req_base, tb[ETHTOOL_A_XXX_HEADER],
-> 				      info->extack);
->=20
-> So, when tb is NULL (such as in the ethnl notify path), we have a nice
-> crash.
->=20
-> It turns out that there's only the PLCA command that is in that case, as
-> the other phydev-specific commands don't have a notification.
->=20
-> This commit fixes the crash by passing the cmd index and the nlattr
-> array separately, allowing NULL-checking it directly inside the helper.
->=20
-> Fixes: c15e065b46dc ("net: ethtool: Allow passing a phy index for some
-> commands") Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.co=
-m>
 
-Reviewed-by: Kory Maincent <kory.maincent@bootlin.com>
+Plus this was reviewed so it is even more confusing. Where is the review
+tag? If tag was dropped, you must explain this - see submitting patches,
+which asks for that.
 
-Thank you!
-
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+Best regards,
+Krzysztof
 
