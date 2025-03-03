@@ -1,94 +1,176 @@
-Return-Path: <linux-kernel+bounces-542370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 369D9A4C90B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:17:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 304A8A4C914
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:18:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A6DF3A5166
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:09:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B4B916A760
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 262C725D8FF;
-	Mon,  3 Mar 2025 16:53:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F51E25DCE4;
+	Mon,  3 Mar 2025 16:53:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z++2FkJ2"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VwrkEWOT"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0373325D8FE
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 16:53:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2BDD25DCE2
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 16:53:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741020787; cv=none; b=o5/oyo7NxTQX7cTkEKcy4vgYIVGmYA31CdUljydQHloDsxc3yO1wTpUcoqVCv7K4Y+Swx3ZvMbDmDpjfqnkWUmqHl9IDXZ5RsMC+m+cHkjVw30Pt+Ycni+TpX/QEYrZIUGw6LTBxCJJSelO7vIabXG+WqfPMB0EUHQCvKS0cCJw=
+	t=1741020793; cv=none; b=ubg9c9x4swcpAleRoFoXRx49OL37frUor8t+KR/RZibsoawjZsksCcPO11mOPfBBHY2BMyB+1OPDYMuUgUod6kRVGMCMJuWTny+qOQz7cTJAqQmshfZAp5Z/rEhUz+jhzle6Ijko/6QxhcNcW0hp7esf9sBCOULS7JgEglLHNSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741020787; c=relaxed/simple;
-	bh=0Z3jKPZTqkfGGv8vGqjyKdLv1jksJJM8yOmu5pzo7EQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dqWG51vM/7YkEB/s7Ue3y92bYb+aGMWtbmveUvq7juSgzG3Jgp/+EAlX9lX2wBleQf5ZFUHLv+x93ZAobOBe5SbKbXprjZSnaaiEP4gFCTHJT96JiwJSzDd9+bAlzmCaMx6/cTZ8bqaYz4RACzfwTeZ3udIty3YfbmkVbe79/bQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z++2FkJ2; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741020785;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lqVj5C1JB+xLPX8Cc+LBmGK7OkMIN2JKNHM/ZrubAN0=;
-	b=Z++2FkJ2Gsiv59OQyzqnja0bLS2HKfoD5B+qa0wzHV8PV9ZL5Rod+VniZV3peGbCKcq5/9
-	2NqIMqO3umpsUZSq6/czZyXuNRKfi8rD9OBMPDBtrv3qt6ikcEiDXy1OpkXcu9EtQpoCRn
-	ZtsuyUliA/S8fGhAjJTrwU1Ah173m7E=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-360-RrGXdx_OOWG6mmAQauOuRg-1; Mon,
- 03 Mar 2025 11:53:01 -0500
-X-MC-Unique: RrGXdx_OOWG6mmAQauOuRg-1
-X-Mimecast-MFC-AGG-ID: RrGXdx_OOWG6mmAQauOuRg_1741020780
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8811C18EB2D3;
-	Mon,  3 Mar 2025 16:53:00 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.32.16])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id C12691954B00;
-	Mon,  3 Mar 2025 16:52:58 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Mon,  3 Mar 2025 17:52:30 +0100 (CET)
-Date: Mon, 3 Mar 2025 17:52:27 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] signal: avoid clearing TIF_SIGPENDING in
- recalc_sigpending() if unset
-Message-ID: <20250303165226.GB9870@redhat.com>
-References: <20250303134908.423242-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1741020793; c=relaxed/simple;
+	bh=nh7jbE8u6LWbKN97HqpSqJtJmYm/xnEKtr4eKp/8D9s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kNMPhrZQm2/c9CLu9g7c7C342y4XMIrGJeW7DNgCY5+mB0vr3QrQnE4Hj5IKpm52hVb+a6ixZsL2WSoMfxDrxkk36yg1bNsnkxGH96nCY8qzf4aU1JkudpP47gNB1sd/4GFiCirjV0atlwm9n/Cyxg3sGdGk8m8qyxlb455LKnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VwrkEWOT; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7c07cd527e4so426895885a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 08:53:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741020789; x=1741625589; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WXZMOjTfHdSZ0Fo7cW/JpFxM3Ukm8A0bcRpa5UuF7HY=;
+        b=VwrkEWOTCXCekuPtL5petw2iRCubK96IR0cqtmAlCL2/RU/B1Glqug697hJDLwvPw6
+         JnL9wGfUE0KsjOsizMXlJ3Wbt2a7F7rvinJfF19tYX9mc44v4+Fwvlz5AQaORcEqMSG9
+         Esv9QPnowRPfcWz1mZuCclZNb5kNejqKHdYISFHxJtS6C41Uvq5DZ7UROISjA0f2CXxz
+         P8FGWBd+mdJ1dMO2HtdFU34m02zzdNz8u3rMQ7shLTDfqC0W9MI+Sd7Qf4QSLGIcLhEs
+         ogyWhk5OdCYEBcGBPOeWqSm6y2/IwhZD1iMzJukssnhHVm6GggjmSs8Y4kE/KcullZXE
+         7MMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741020789; x=1741625589;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WXZMOjTfHdSZ0Fo7cW/JpFxM3Ukm8A0bcRpa5UuF7HY=;
+        b=r+npmdb5YM72BI+241KI1ZKRd/vSC68BxYmc6wr97nDxK3+yyA9w/euz35ONUfWl31
+         mwaXWZPWpaFhGVkoJlxfhnmXVd612NjU7RcszHH6jCOFnDdSGB2VIG2dbxQQiUl+kmSH
+         wIIZ09foifim6xvvSfMJ52D13JLp6tc1OvZIOo7xLACJZkU4BMXC4H9vMSUdkMpzimvP
+         TLZFN4+CbOEyKDxtaVL83qJvlgmOuntIUnEnlokkNk+I2PPhvHF9azPL5m3RSkztCi8s
+         gSs69x1n3qv6rgR2Nu6Bz6axwGPBH2wMEE25jj7w+YMYKkXi/O9furguKFEQBwxyuEKN
+         QGJw==
+X-Gm-Message-State: AOJu0YzPL0E2rGOZ4VkWcXSLllVFg1xmonRLMCJ8JRr9m1dyS9qGWz+A
+	97RfnndTZrFvgaCI5JhdsB741qFFOKym+4Rjz7OFdVZJG1fQbMlqWNSU
+X-Gm-Gg: ASbGnctYdsCstWBuuqrtDCzQEMS8ic1/YdCVsrGzZMwMz+GHYLd2bScZLHynTZbppG2
+	xxu5C+f1pFkGE0bLDXNnpn67VqMxbLusqKDNTGP+8Kc1XHHJh18P1llBJ7VMwTp7GwXcYMupCX9
+	KXiHaea6W3nV5afQaeiHyUKnmyW6SpyEXdypANRTDDAODxlzNzwv9/GrYPufQtbs7e0CdoZi2mQ
+	sHn7KHZwDSe/LG2ZfthZw2dK4X08GWKUH6UJCTys8ONvKbu/+wWfqlEbniRwnYJLgclq5HFCRXO
+	SrpZS6RDEIGyjnYCjDvaQKfSgw==
+X-Google-Smtp-Source: AGHT+IHdrIXD6GHVaxbVyWpx/LAhFdATy0P2gAkCesSMqLmABu+o5LX5YPzeXQ7qI7aPziLPcOkHcw==
+X-Received: by 2002:a05:620a:c4a:b0:7c0:c00e:5913 with SMTP id af79cd13be357-7c39c677155mr2300119485a.48.1741020789597;
+        Mon, 03 Mar 2025 08:53:09 -0800 (PST)
+Received: from citadel.lan ([2600:6c4a:4d3f:6d5c::1019])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8976cc9cdsm54730936d6.88.2025.03.03.08.53.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 08:53:08 -0800 (PST)
+From: Brian Gerst <brgerst@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	x86@kernel.org
+Cc: Ingo Molnar <mingo@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Uros Bizjak <ubizjak@gmail.com>,
+	Linus Torvalds <torvalds@linuxfoundation.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Brian Gerst <brgerst@gmail.com>
+Subject: [PATCH v3 00/11] Add a percpu subsection for cache hot data
+Date: Mon,  3 Mar 2025 11:52:35 -0500
+Message-ID: <20250303165246.2175811-1-brgerst@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250303134908.423242-1-mjguzik@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Transfer-Encoding: 8bit
 
-On 03/03, Mateusz Guzik wrote:
->
->  void recalc_sigpending(void)
->  {
-> -	if (!recalc_sigpending_tsk(current) && !freezing(current))
-> -		clear_thread_flag(TIF_SIGPENDING);
-> -
-> +	if (!recalc_sigpending_tsk(current) && !freezing(current)) {
-> +		if (test_thread_flag(TIF_SIGPENDING))
-> +			clear_thread_flag(TIF_SIGPENDING);
-> +	}
+Add a new percpu subsection for data that is frequently accessed and
+exclusive to each processor.  This replaces the pcpu_hot struct on x86,
+and is available to all architectures and the core kernel.
 
-Acked-by: Oleg Nesterov <oleg@redhat.com>
+ffffffff834f5000 D __per_cpu_hot_start
+ffffffff834f5000 D hardirq_stack_ptr
+ffffffff834f5008 D __ref_stack_chk_guard
+ffffffff834f5008 D __stack_chk_guard
+ffffffff834f5010 D const_cpu_current_top_of_stack
+ffffffff834f5010 D cpu_current_top_of_stack
+ffffffff834f5018 D const_current_task
+ffffffff834f5018 D current_task
+ffffffff834f5020 D __x86_call_depth
+ffffffff834f5028 D this_cpu_off
+ffffffff834f5030 D __preempt_count
+ffffffff834f5034 D cpu_number
+ffffffff834f5038 D __softirq_pending
+ffffffff834f503a D hardirq_stack_inuse
+ffffffff834f503b D __per_cpu_hot_pad
+ffffffff834f5040 D __per_cpu_hot_end
+
+This applies to the tip/x86/asm branch.
+
+Changes in v3:
+- Fix typo of CACHE_HOT_DATA()
+- Move hardirq_stack_inuse to irq_64.c
+- Add __per_cpu_hot_pad to show the end of the actual data
+
+Brian Gerst (11):
+  percpu: Introduce percpu hot section
+  x86/percpu: Move pcpu_hot to percpu hot section
+  x86/preempt: Move preempt count to percpu hot section
+  x86/smp: Move cpu number to percpu hot section
+  x86/retbleed: Move call depth to percpu hot section
+  x86/softirq: Move softirq_pending to percpu hot section
+  x86/irq: Move irq stacks to percpu hot section
+  x86/percpu: Move top_of_stack to percpu hot section
+  x86/percpu: Move current_task to percpu hot section
+  x86/stackprotector: Move __stack_chk_guard to percpu hot section
+  x86/smp: Move this_cpu_off to percpu hot section
+
+ arch/x86/entry/entry_32.S             |  4 +--
+ arch/x86/entry/entry_64.S             |  6 ++---
+ arch/x86/entry/entry_64_compat.S      |  4 +--
+ arch/x86/include/asm/current.h        | 36 +++++----------------------
+ arch/x86/include/asm/hardirq.h        |  4 +--
+ arch/x86/include/asm/irq_stack.h      | 12 ++++-----
+ arch/x86/include/asm/nospec-branch.h  | 11 ++++----
+ arch/x86/include/asm/percpu.h         |  4 +--
+ arch/x86/include/asm/preempt.h        | 25 ++++++++++---------
+ arch/x86/include/asm/processor.h      | 16 ++++++++++--
+ arch/x86/include/asm/smp.h            |  7 +++---
+ arch/x86/include/asm/stackprotector.h |  2 +-
+ arch/x86/kernel/asm-offsets.c         |  5 ----
+ arch/x86/kernel/cpu/common.c          | 25 +++++++++++++------
+ arch/x86/kernel/dumpstack_32.c        |  4 +--
+ arch/x86/kernel/dumpstack_64.c        |  2 +-
+ arch/x86/kernel/head_64.S             |  4 +--
+ arch/x86/kernel/irq.c                 |  5 ++++
+ arch/x86/kernel/irq_32.c              | 12 +++++----
+ arch/x86/kernel/irq_64.c              |  7 +++---
+ arch/x86/kernel/process_32.c          |  6 ++---
+ arch/x86/kernel/process_64.c          |  6 ++---
+ arch/x86/kernel/setup_percpu.c        |  7 ++++--
+ arch/x86/kernel/smpboot.c             |  4 +--
+ arch/x86/kernel/vmlinux.lds.S         |  6 ++++-
+ arch/x86/lib/retpoline.S              |  2 +-
+ include/asm-generic/vmlinux.lds.h     | 11 ++++++++
+ include/linux/percpu-defs.h           | 13 ++++++++++
+ include/linux/preempt.h               |  1 +
+ kernel/bpf/verifier.c                 |  4 +--
+ scripts/gdb/linux/cpus.py             |  2 +-
+ 31 files changed, 146 insertions(+), 111 deletions(-)
+
+
+base-commit: 693c8502970a533363e9ece482c80bb6db0c12a5
+-- 
+2.48.1
 
 
