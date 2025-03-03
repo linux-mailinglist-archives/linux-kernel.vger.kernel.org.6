@@ -1,342 +1,366 @@
-Return-Path: <linux-kernel+bounces-541465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1A08A4BD32
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:00:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA194A4BD46
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:03:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30002165BBF
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 934223A96B9
 	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:59:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C980D1F4E3B;
-	Mon,  3 Mar 2025 10:57:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B60611F5433;
+	Mon,  3 Mar 2025 10:57:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="i9nmNf8A"
-Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="aHeEeVH6"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF45015539A;
-	Mon,  3 Mar 2025 10:57:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.59.177.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9A53AD27
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 10:57:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740999436; cv=none; b=g94W9GT/oI8aXp0UF+PLD0hLzSzx0y+Sf9KzIIhDjfaFdkRJT8EAwtm2u5vX4cVyDx00iAH9p1iH1b48RppVH6Mq5f4e5BzBdPKFkn7h/1BMREV96rWkDh19MrnUJOfHmxR9LfhdcMWMrlYZ6rOKCs6p/7vG0/U1MB6EKDd4YHA=
+	t=1740999459; cv=none; b=I2AbJ0gmc42yczZc/zoqPj6m+5fAp/sTnC6Rx3B1o3rRtd+4z7ZL6rf2LkEO7nS7bNPYaF6X1L7Ty/zeDMV0byyAnpVmwOEoqcrqlZzUyVbryimRbHOC5QIqTYWBvwdx+Cw2Ks1aCBUiXFyC8slC2/umxiGV/Ruktskv6QMWl+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740999436; c=relaxed/simple;
-	bh=Dgx0WmiWWJVJFOYXROEjC9QhshtwPpwi2bA+QbGxJUk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=L4Yn207AapPfPE5LHfZtxWqa9gSI6h7jl3fArXPvHbiVtffx8IwL87EgVtXOjujQxmR7oazNe4ARtNFuf1VLcixkXh10w2UjjM6k5ASU6hoslleOzZVC2panlBuJlBA5YOzWfr/dRQ/qsVyGrPtKFigXprULC9NvWHjAD2CsYlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=i9nmNf8A; arc=none smtp.client-ip=52.59.177.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1740999407;
-	bh=K/zA0N8M3Fo/mbM8RcyqXqLjJSa3rFqpG7w6gFb91fI=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version;
-	b=i9nmNf8AhJfMBwhRtzT7/lV/xC2r7jw/6l+OuCD9BbMGOPv6JVFj/BtYhKlMHlPK7
-	 lZLeYwI3OS7nNv+Pgy++3iW1Opyjp/hn+BaKos20DOhf6kpmRoMmwTSskAwifqrDXz
-	 wYrMotOoiIiq6dNEY9uYDvLAVPMRD0w5Np6/wwkE=
-X-QQ-mid: bizesmtpip3t1740999399tyh9d5x
-X-QQ-Originating-IP: BU3UX6VjTov91M/jEpSx5w+TyFJYBoNmFwGIDgHvKlU=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 03 Mar 2025 18:56:37 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 2151004315678109412
-From: raoxu <raoxu@uniontech.com>
-To: mathias.nyman@intel.com,
-	gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	wangyuli@uniontech.com,
-	zhanjun@uniontech.com,
-	Xu Rao <raoxu@uniontech.com>
-Subject: [PATCH V2] usb: xhci: Add debugfs support for xHCI port bandwidth
-Date: Mon,  3 Mar 2025 18:56:35 +0800
-Message-Id: <20250303105635.21290-1-raoxu@uniontech.com>
-X-Mailer: git-send-email 2.20.1
+	s=arc-20240116; t=1740999459; c=relaxed/simple;
+	bh=IZe72e+v2i+jeTtW39ol8WsnkfH3SWr7VXmkTOvqZ7Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pCYb2kqvFOZblHYrxKADuqxSTapqnjFBngqn5K3RTs94kuBIhZd1l7gCf7GixiJldbG7EXtd7errpd5jUqeJp/LhSGTJOz8/f/BMf+1p4CFHTihUq1Wybrc+6npoHdILRzifU7OHLQyg5D3q6xuj8knd/H+fyFmczYKONnLr0rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=aHeEeVH6; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 5A45A40E01D1;
+	Mon,  3 Mar 2025 10:57:30 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id txShmVpQ3j3m; Mon,  3 Mar 2025 10:57:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1740999444; bh=fsF/BJYY/vDdKR++SVp7pZPQ4pqpWof0XiKnlyeuEyc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aHeEeVH6vARp+vq/iNsLnfLXsQahhf7y8tqD7HBji9il6Wr2pXEQ782qC25ooI0KM
+	 RJRux8tT/oZ0lKMTGzs6DcVUh9/PK2Jpf00uylQ8uglfuBwL1kjDrL7PBsZSnqC6HC
+	 K0ZLSgbUKiMMyjViybWsAQZ3lPzFaxoDDTEQgJgz6u5H5NN31ZRe/UZeBGkmbIV1OM
+	 L6BwHGkNd6r167f6wNnQj7LkCPBgv6sqxWjgiMrmJe9OKrIPMx13BgICXKO2QTWsUS
+	 stwfTVnOCqS193hqWO9SBDsMBdHJMqTc/eDMCOm4btC6PRKjFWbvwCIRXP+WmaE6aK
+	 VrF/6GUXsq1qRWI+r/qmvqw52ZQdAIQO3POo6W5SYIPV+Y3EuK1qWiB5eI/3YRz5LM
+	 ZjOR5vsQsAAFGews4++4wJQ2kYKJ2ATj8qIWZdfaMKcsX3HthSb/DJtjTe5KQL6LpN
+	 Q36+NlAVwLAuLuFv7GbCMeRyHWsyZ6FSBH5GKI5SAjRPMWeJa90Vvkh+4dKBqguOzh
+	 JAbbWnFu6xVHjDmTOXImkNNidmSG2p+l81c8UD33IfcR3QbQ8QMy3oVWdi7HcsSN72
+	 MnJyw3WJv2UxBcBbeb7alHxGYe8iWsUXAQRTb2MZEw5NKSHwx78r7a5GgV8JT+AwpI
+	 TwLxd8LlrneIo2s7GROMojeU=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D335B40E01AD;
+	Mon,  3 Mar 2025 10:57:06 +0000 (UTC)
+Date: Mon, 3 Mar 2025 11:57:00 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Rik van Riel <riel@surriel.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org,
+	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
+	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
+	linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
+	jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
+	Manali.Shukla@amd.com, mingo@kernel.org
+Subject: Re: [PATCH v14 10/13] x86/mm: enable broadcast TLB invalidation for
+ multi-threaded processes
+Message-ID: <20250303105700.GAZ8WK_Bkq_r6lBNVc@fat_crate.local>
+References: <20250226030129.530345-1-riel@surriel.com>
+ <20250226030129.530345-11-riel@surriel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz7a-0
-X-QQ-XMAILINFO: MSm4SkBtgodDRJNSz3JVOU14EB5DUY74QUSPdMluwdMWIwOFwqI7LgJo
-	BfRffHIIpatJ0Gmm0U/g3HKbNY8dLW/Bd2VYBnPR8vW0YcQyaCszJDIaky8lldBDSU4J1W1
-	s666NHXOTKrElnqG+7kvG0j0yeUEQX6oljXKVU6V0E0FHDeI/2XEUX/wg0iKcYPagPqNoE1
-	Fb0DuFrRzSautyAS267px7q65t4oATyG1PG6dd6XrKslvih7ygYpv7P4GSf2zqyR4uegrh9
-	v27Ofzfhoj+CVmOmk0+hJ//AVhaMRr3CmR7I42yXp8WnpHAV9GtdNwIO8P19Ue3JJlIjdjN
-	LK3UeGGxvKZGavrUs9l5vQTGntqwgaQSSSuvB0LGxPGNXbhjlPDDVcke3Gfin4aNFberDQm
-	0dm1kqsXPi0pwhxXGy8kR9AycMU3+WylEPc6yXwAoMVQrQJsQH9WrTOY9xg1vDTHoAV2OVn
-	EnKdFc5fCSjgKKksAD3OPZ8+YNs3Auu4jsyT2UyvJsCofS3LcsMNiz5iWN0xUoJIuX2LCu3
-	FfdKoQ877GSm2KLIcIz9g6HdVV5+ZaFe4oqZmw3OkoKp+HXUgMpXs6ohf7hwTGMb7ieIfUJ
-	E+S+J11S0ugWAVgm0Ox7pvwcyfub2NLRpHhPCgWx1c7UvnJT1RAXMbgClT5oqGu06S6tdLy
-	4W/euUC9v+BV0M3Aktvtv7DMHzdAE3YE1pEnvEbAtau8x8drtbqyKAzSKfhjG71VwOhu3xH
-	L4j7Io+M9SQKnxVpFSZB6YUOf/WcnqJhllTx51ursRzR/8RHe7CnNnrZQOknZW+gLOncZIk
-	3gGCgsKtdy0ToGsX+G6z7BuQYgT0DDsCF8/r+ldGalJSicorLP/v6qnmKxmKc8K26ioNG2Y
-	CJ5ijeJV+1RIDYVm/M804gcmOhQwEG5GCgS0wPu+khXgtvQ7Nu0v1ANqc0HmrDYZsywpPd4
-	hSAF7FLw16OXBCZhaSrPQnWCpS8XONmd2Hx4UBOhDGg2pl5OCJBwevZQHNORHc/G6hM+p3t
-	9CcorfuJqjrzmJuFrvmblUixCr9oPGr7PzC2mNrw==
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250226030129.530345-11-riel@surriel.com>
 
-From: Xu Rao <raoxu@uniontech.com>
+On Tue, Feb 25, 2025 at 10:00:45PM -0500, Rik van Riel wrote:
+> +/*
+> + * x86 has 4k ASIDs (2k when compiled with KPTI), but the largest
+> + * x86 systems have over 8k CPUs. Because of this potential ASID
+> + * shortage, global ASIDs are handed out to processes that have
+> + * frequent TLB flushes and are active on 4 or more CPUs simultaneously.
+> + */
+> +static void consider_global_asid(struct mm_struct *mm)
+> +{
+> +	if (!static_cpu_has(X86_FEATURE_INVLPGB))
+> +		return;
+> +
+> +	/* Check every once in a while. */
+> +	if ((current->pid & 0x1f) != (jiffies & 0x1f))
+> +		return;
 
-In many projects, you need to obtain the available bandwidth of the
-xhci roothub port. Refer to xhci rev1_2 and use the TRB_GET_BW
-command to obtain it.
+Uff, this looks funky.
 
-hardware tested:
-03:00.3 USB controller: Advanced Micro Devices, Inc. [AMD] Raven USB 3.1
-(prog-if 30 [XHCI])
-Subsystem: Huawei Technologies Co., Ltd. Raven USB 3.1
-Flags: bus master, fast devsel, latency 0, IRQ 30
-Memory at c0300000 (64-bit, non-prefetchable) [size=1M]
-Capabilities: [48] Vendor Specific Information: Len=08 <?>
-Capabilities: [50] Power Management version 3
-Capabilities: [64] Express Endpoint, MSI 00
-Capabilities: [a0] MSI: Enable- Count=1/8 Maskable- 64bit+
-Capabilities: [c0] MSI-X: Enable+ Count=8 Masked-
-Kernel driver in use: xhci_hcd
+> +
+> +	if (!READ_ONCE(global_asid_available))
+> +		return;
 
-test progress:
-1.cd /sys/kernel/debug/usb/xhci/0000:03:00.3
-cat port_bandwidth
-/sys/kernel/debug/usb/xhci/0000:03:00.3# cat port_bandwidth
-port[1] available bw: 79%.
-port[2] available bw: 79%.
-port[3] available bw: 79%.
-port[4] available bw: 79%.
-port[5] available bw: 90%.
-port[6] available bw: 90%.
-port[7] available bw: 90%.
-port[8] available bw: 90%.
-2.plug in usb video cammer open it
-cat port_bandwidth
-port[1] available bw: 39%.
-port[2] available bw: 39%.
-port[3] available bw: 39%.
-port[4] available bw: 39%.
-port[5] available bw: 90%.
-port[6] available bw: 90%.
-port[7] available bw: 90%.
-port[8] available bw: 90%.
+use_global_asid() will do that check for us already and it'll even warn.
 
-Signed-off-by: Xu Rao <raoxu@uniontech.com>
+> +
+> +	/*
+> +	 * Assign a global ASID if the process is active on
+> +	 * 4 or more CPUs simultaneously.
+> +	 */
+> +	if (mm_active_cpus_exceeds(mm, 3))
+> +		use_global_asid(mm);
+> +}
+> +
+
+...
+
+> +static void broadcast_tlb_flush(struct flush_tlb_info *info)
+> +{
+> +	bool pmd = info->stride_shift == PMD_SHIFT;
+> +	unsigned long asid = mm_global_asid(info->mm);
+> +	unsigned long addr = info->start;
+> +
+> +	/*
+> +	 * TLB flushes with INVLPGB are kicked off asynchronously.
+> +	 * The inc_mm_tlb_gen() guarantees page table updates are done
+> +	 * before these TLB flushes happen.
+> +	 */
+> +	if (info->end == TLB_FLUSH_ALL) {
+> +		invlpgb_flush_single_pcid_nosync(kern_pcid(asid));
+> +		/* Do any CPUs supporting INVLPGB need PTI? */
+
+I hope not. :)
+
+However, I think one can force-enable PTI on AMD so yeah, let's keep that.
+
+...
+
+Final result:
+
+From: Rik van Riel <riel@surriel.com>
+Date: Tue, 25 Feb 2025 22:00:45 -0500
+Subject: [PATCH] x86/mm: Enable broadcast TLB invalidation for multi-threaded
+ processes
+
+There is not enough room in the 12-bit ASID address space to hand out
+broadcast ASIDs to every process. Only hand out broadcast ASIDs to processes
+when they are observed to be simultaneously running on 4 or more CPUs.
+
+This also allows single threaded process to continue using the cheaper, local
+TLB invalidation instructions like INVLPGB.
+
+Due to the structure of flush_tlb_mm_range(), the INVLPGB flushing is done in
+a generically named broadcast_tlb_flush() function which can later also be
+used for Intel RAR.
+
+Combined with the removal of unnecessary lru_add_drain calls() (see
+https://lore.kernel.org/r/20241219153253.3da9e8aa@fangorn) this results in
+a nice performance boost for the will-it-scale tlb_flush2_threads test on an
+AMD Milan system with 36 cores:
+
+  - vanilla kernel:           527k loops/second
+  - lru_add_drain removal:    731k loops/second
+  - only INVLPGB:             527k loops/second
+  - lru_add_drain + INVLPGB: 1157k loops/second
+
+Profiling with only the INVLPGB changes showed while TLB invalidation went
+down from 40% of the total CPU time to only around 4% of CPU time, the
+contention simply moved to the LRU lock.
+
+Fixing both at the same time about doubles the number of iterations per second
+from this case.
+
+Comparing will-it-scale tlb_flush2_threads with several different numbers of
+threads on a 72 CPU AMD Milan shows similar results. The number represents the
+total number of loops per second across all the threads:
+
+  threads	tip		INVLPGB
+
+  1		315k		304k
+  2		423k		424k
+  4		644k		1032k
+  8		652k		1267k
+  16		737k		1368k
+  32		759k		1199k
+  64		636k		1094k
+  72		609k		993k
+
+1 and 2 thread performance is similar with and without INVLPGB, because
+INVLPGB is only used on processes using 4 or more CPUs simultaneously.
+
+The number is the median across 5 runs.
+
+Some numbers closer to real world performance can be found at Phoronix, thanks
+to Michael:
+
+https://www.phoronix.com/news/AMD-INVLPGB-Linux-Benefits
+
+  [ bp:
+   - Massage
+   - :%s/\<static_cpu_has\>/cpu_feature_enabled/cgi
+   - :%s/\<clear_asid_transition\>/mm_clear_asid_transition/cgi
+   ]
+
+Signed-off-by: Rik van Riel <riel@surriel.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Reviewed-by: Nadav Amit <nadav.amit@gmail.com>
+Link: https://lore.kernel.org/r/20250226030129.530345-11-riel@surriel.com
 ---
- drivers/usb/host/xhci-debugfs.c | 42 +++++++++++++++++++
- drivers/usb/host/xhci-ring.c    | 14 +++++++
- drivers/usb/host/xhci.c         | 74 +++++++++++++++++++++++++++++++++
- drivers/usb/host/xhci.h         |  7 ++++
- 4 files changed, 137 insertions(+)
+ arch/x86/include/asm/tlbflush.h |   5 ++
+ arch/x86/mm/tlb.c               | 104 +++++++++++++++++++++++++++++++-
+ 2 files changed, 108 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/host/xhci-debugfs.c b/drivers/usb/host/xhci-debugfs.c
-index 1f5ef174abea..573b6c25f3af 100644
---- a/drivers/usb/host/xhci-debugfs.c
-+++ b/drivers/usb/host/xhci-debugfs.c
-@@ -631,6 +631,46 @@ static void xhci_debugfs_create_ports(struct xhci_hcd *xhci,
- 	}
+diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
+index e6c3be06dd21..8c21030269ff 100644
+--- a/arch/x86/include/asm/tlbflush.h
++++ b/arch/x86/include/asm/tlbflush.h
+@@ -280,6 +280,11 @@ static inline void mm_assign_global_asid(struct mm_struct *mm, u16 asid)
+ 	smp_store_release(&mm->context.global_asid, asid);
  }
-
-+static int xhci_port_bw_show(struct seq_file *s, void *unused)
+ 
++static inline void mm_clear_asid_transition(struct mm_struct *mm)
 +{
-+	struct xhci_hcd		*xhci = (struct xhci_hcd *)s->private;
-+	unsigned int		num_ports;
-+	unsigned int		i;
-+	int			ret;
-+	u8			bw_table[MAX_HC_PORTS] = {0};
-+
-+	num_ports = HCS_MAX_PORTS(xhci->hcs_params1);
-+
-+	/* get roothub port bandwidth */
-+	ret = xhci_get_port_bandwidth(xhci, bw_table);
-+	if (ret)
-+		return ret;
-+
-+	/* print all roothub ports available bandwidth */
-+	for (i = 1; i < num_ports+1; i++)
-+		seq_printf(s, "port[%d] available bw: %d%%.\n", i, bw_table[i]);
-+
-+	return ret;
++	WRITE_ONCE(mm->context.asid_transition, false);
 +}
 +
-+static int bw_open(struct inode *inode, struct file *file)
-+{
-+	return single_open(file, xhci_port_bw_show, inode->i_private);
-+}
-+
-+static const struct file_operations bw_fops = {
-+	.open			= bw_open,
-+	.read			= seq_read,
-+	.llseek			= seq_lseek,
-+	.release		= single_release,
-+};
-+
-+static void xhci_debugfs_create_bandwidth(struct xhci_hcd *xhci,
-+					struct dentry *parent)
-+{
-+	debugfs_create_file("port_bandwidth", 0644, parent, xhci, &bw_fops);
-+}
-+
- void xhci_debugfs_init(struct xhci_hcd *xhci)
+ static inline bool mm_in_asid_transition(struct mm_struct *mm)
  {
- 	struct device		*dev = xhci_to_hcd(xhci)->self.controller;
-@@ -681,6 +721,8 @@ void xhci_debugfs_init(struct xhci_hcd *xhci)
- 	xhci->debugfs_slots = debugfs_create_dir("devices", xhci->debugfs_root);
-
- 	xhci_debugfs_create_ports(xhci, xhci->debugfs_root);
-+
-+	xhci_debugfs_create_bandwidth(xhci, xhci->debugfs_root);
+ 	if (!cpu_feature_enabled(X86_FEATURE_INVLPGB))
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index b5681e6f2333..0efd99053c09 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -430,6 +430,105 @@ static bool mm_needs_global_asid(struct mm_struct *mm, u16 asid)
+ 	return false;
  }
-
- void xhci_debugfs_exit(struct xhci_hcd *xhci)
-diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
-index 965bffce301e..af1cd4f8ace9 100644
---- a/drivers/usb/host/xhci-ring.c
-+++ b/drivers/usb/host/xhci-ring.c
-@@ -1867,6 +1867,8 @@ static void handle_cmd_completion(struct xhci_hcd *xhci,
- 	case TRB_NEC_GET_FW:
- 		xhci_handle_cmd_nec_get_fw(xhci, event);
- 		break;
-+	case TRB_GET_BW:
-+		break;
- 	default:
- 		/* Skip over unknown commands on the event ring */
- 		xhci_info(xhci, "INFO unknown command type %d\n", cmd_type);
-@@ -4414,6 +4416,18 @@ int xhci_queue_configure_endpoint(struct xhci_hcd *xhci,
- 			command_must_succeed);
- }
-
-+/* Queue a get root hub port bandwidth command TRB */
-+int xhci_queue_get_rh_port_bw(struct xhci_hcd *xhci,
-+		struct xhci_command *cmd, dma_addr_t in_ctx_ptr,
-+		u8 dev_speed, u32 slot_id, bool command_must_succeed)
-+{
-+	return queue_command(xhci, cmd, lower_32_bits(in_ctx_ptr),
-+		upper_32_bits(in_ctx_ptr), 0,
-+		TRB_TYPE(TRB_GET_BW) | DEV_SPEED_FOR_TRB(dev_speed) |
-+		SLOT_ID_FOR_TRB(slot_id),
-+		command_must_succeed);
-+}
-+
- /* Queue an evaluate context command TRB */
- int xhci_queue_evaluate_context(struct xhci_hcd *xhci, struct xhci_command *cmd,
- 		dma_addr_t in_ctx_ptr, u32 slot_id, bool command_must_succeed)
-diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
-index 45653114ccd7..84092fe981e8 100644
---- a/drivers/usb/host/xhci.c
-+++ b/drivers/usb/host/xhci.c
-@@ -3088,6 +3088,80 @@ void xhci_reset_bandwidth(struct usb_hcd *hcd, struct usb_device *udev)
- }
- EXPORT_SYMBOL_GPL(xhci_reset_bandwidth);
-
-+/* Get the available bandwidth of the ports under the xhci roothub,
-+ * including USB 2.0 port and USB 3.0 port.
+ 
++/*
++ * x86 has 4k ASIDs (2k when compiled with KPTI), but the largest x86
++ * systems have over 8k CPUs. Because of this potential ASID shortage,
++ * global ASIDs are handed out to processes that have frequent TLB
++ * flushes and are active on 4 or more CPUs simultaneously.
 + */
-+int xhci_get_port_bandwidth(struct xhci_hcd *xhci, u8 *bw_table)
++static void consider_global_asid(struct mm_struct *mm)
 +{
-+	unsigned int		num_ports;
-+	unsigned int		i;
-+	struct xhci_command	*cmd;
-+	dma_addr_t		dma_handle;
-+	void			*dma_buf;
-+	int			ret;
-+	unsigned long		flags;
-+	struct device		*dev  = xhci_to_hcd(xhci)->self.sysdev;
++	if (!cpu_feature_enabled(X86_FEATURE_INVLPGB))
++		return;
 +
-+	num_ports = HCS_MAX_PORTS(xhci->hcs_params1);
++	/* Check every once in a while. */
++	if ((current->pid & 0x1f) != (jiffies & 0x1f))
++		return;
 +
-+	cmd = xhci_alloc_command(xhci, true, GFP_KERNEL);
-+	if (!cmd)
-+		return -ENOMEM;
-+
-+	dma_buf = dma_alloc_coherent(dev, xhci->page_size, &dma_handle,
-+					GFP_KERNEL);
-+	if (!dma_buf) {
-+		xhci_free_command(xhci, cmd);
-+		return -ENOMEM;
-+	}
-+
-+	/* get xhci hub usb3 port bandwidth */
-+	/* refer to xhci rev1_2 protocol 4.6.15*/
-+	spin_unlock_irqrestore(&xhci->lock, flags);
-+	ret = xhci_queue_get_rh_port_bw(xhci, cmd, dma_handle, USB_SPEED_SUPER,
-+					0, false);
-+	if (ret < 0) {
-+		spin_unlock_irqrestore(&xhci->lock, flags);
-+		goto out;
-+	}
-+	xhci_ring_cmd_db(xhci);
-+	spin_unlock_irqrestore(&xhci->lock, flags);
-+
-+	wait_for_completion(cmd->completion);
-+
-+	/* refer to xhci rev1_2 protocol 6.2.6 , byte 0 is reserved */
-+	for (i = 1; i < num_ports+1; i++) {
-+		if (((u8 *)dma_buf)[i])
-+			bw_table[i] = ((u8 *)dma_buf)[i];
-+	}
-+
-+	/* get xhci hub usb2 port bandwidth */
-+	/* refer to xhci rev1_2 protocol 4.6.15*/
-+	spin_unlock_irqrestore(&xhci->lock, flags);
-+	ret = xhci_queue_get_rh_port_bw(xhci, cmd, dma_handle, USB_SPEED_HIGH,
-+					0, false);
-+	if (ret < 0) {
-+		spin_unlock_irqrestore(&xhci->lock, flags);
-+		goto out;
-+	}
-+	xhci_ring_cmd_db(xhci);
-+	spin_unlock_irqrestore(&xhci->lock, flags);
-+
-+	wait_for_completion(cmd->completion);
-+
-+	/* refer to xhci rev1_2 protocol 6.2.6 , byte 0 is reserved */
-+	for (i = 1; i < num_ports+1; i++) {
-+		if (((u8 *)dma_buf)[i])
-+			bw_table[i] = ((u8 *)dma_buf)[i];
-+	}
-+
-+out:
-+	dma_free_coherent(dev, xhci->page_size, dma_buf, dma_handle);
-+	xhci_free_command(xhci, cmd);
-+
-+	return ret;
++	/*
++	 * Assign a global ASID if the process is active on
++	 * 4 or more CPUs simultaneously.
++	 */
++	if (mm_active_cpus_exceeds(mm, 3))
++		use_global_asid(mm);
 +}
 +
- static void xhci_setup_input_ctx_for_config_ep(struct xhci_hcd *xhci,
- 		struct xhci_container_ctx *in_ctx,
- 		struct xhci_container_ctx *out_ctx,
-diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
-index 8c164340a2c3..a137097b0404 100644
---- a/drivers/usb/host/xhci.h
-+++ b/drivers/usb/host/xhci.h
-@@ -999,6 +999,9 @@ enum xhci_setup_dev {
- /* bits 16:23 are the virtual function ID */
- /* bits 24:31 are the slot ID */
-
-+/* bits 19:16 are the dev speed */
-+#define DEV_SPEED_FOR_TRB(p)    ((p) << 16)
++static void finish_asid_transition(struct flush_tlb_info *info)
++{
++	struct mm_struct *mm = info->mm;
++	int bc_asid = mm_global_asid(mm);
++	int cpu;
 +
- /* Stop Endpoint TRB - ep_index to endpoint ID for this TRB */
- #define SUSPEND_PORT_FOR_TRB(p)		(((p) & 1) << 23)
- #define TRB_TO_SUSPEND_PORT(p)		(((p) & (1 << 23)) >> 23)
-@@ -1907,6 +1910,10 @@ int xhci_queue_isoc_tx_prepare(struct xhci_hcd *xhci, gfp_t mem_flags,
- int xhci_queue_configure_endpoint(struct xhci_hcd *xhci,
- 		struct xhci_command *cmd, dma_addr_t in_ctx_ptr, u32 slot_id,
- 		bool command_must_succeed);
-+int xhci_queue_get_rh_port_bw(struct xhci_hcd *xhci,
-+		struct xhci_command *cmd, dma_addr_t in_ctx_ptr,
-+		u8 dev_speed, u32 slot_id, bool command_must_succeed);
-+int xhci_get_port_bandwidth(struct xhci_hcd *xhci, u8 *bw_table);
- int xhci_queue_evaluate_context(struct xhci_hcd *xhci, struct xhci_command *cmd,
- 		dma_addr_t in_ctx_ptr, u32 slot_id, bool command_must_succeed);
- int xhci_queue_reset_ep(struct xhci_hcd *xhci, struct xhci_command *cmd,
---
-2.43.4
++	if (!mm_in_asid_transition(mm))
++		return;
++
++	for_each_cpu(cpu, mm_cpumask(mm)) {
++		/*
++		 * The remote CPU is context switching. Wait for that to
++		 * finish, to catch the unlikely case of it switching to
++		 * the target mm with an out of date ASID.
++		 */
++		while (READ_ONCE(per_cpu(cpu_tlbstate.loaded_mm, cpu)) == LOADED_MM_SWITCHING)
++			cpu_relax();
++
++		if (READ_ONCE(per_cpu(cpu_tlbstate.loaded_mm, cpu)) != mm)
++			continue;
++
++		/*
++		 * If at least one CPU is not using the global ASID yet,
++		 * send a TLB flush IPI. The IPI should cause stragglers
++		 * to transition soon.
++		 *
++		 * This can race with the CPU switching to another task;
++		 * that results in a (harmless) extra IPI.
++		 */
++		if (READ_ONCE(per_cpu(cpu_tlbstate.loaded_mm_asid, cpu)) != bc_asid) {
++			flush_tlb_multi(mm_cpumask(info->mm), info);
++			return;
++		}
++	}
++
++	/* All the CPUs running this process are using the global ASID. */
++	mm_clear_asid_transition(mm);
++}
++
++static void broadcast_tlb_flush(struct flush_tlb_info *info)
++{
++	bool pmd = info->stride_shift == PMD_SHIFT;
++	unsigned long asid = mm_global_asid(info->mm);
++	unsigned long addr = info->start;
++
++	/*
++	 * TLB flushes with INVLPGB are kicked off asynchronously.
++	 * The inc_mm_tlb_gen() guarantees page table updates are done
++	 * before these TLB flushes happen.
++	 */
++	if (info->end == TLB_FLUSH_ALL) {
++		invlpgb_flush_single_pcid_nosync(kern_pcid(asid));
++		/* Do any CPUs supporting INVLPGB need PTI? */
++		if (cpu_feature_enabled(X86_FEATURE_PTI))
++			invlpgb_flush_single_pcid_nosync(user_pcid(asid));
++	} else do {
++		unsigned long nr = 1;
++
++		if (info->stride_shift <= PMD_SHIFT) {
++			nr = (info->end - addr) >> info->stride_shift;
++			nr = clamp_val(nr, 1, invlpgb_count_max);
++		}
++
++		invlpgb_flush_user_nr_nosync(kern_pcid(asid), addr, nr, pmd);
++		if (cpu_feature_enabled(X86_FEATURE_PTI))
++			invlpgb_flush_user_nr_nosync(user_pcid(asid), addr, nr, pmd);
++
++		addr += nr << info->stride_shift;
++	} while (addr < info->end);
++
++	finish_asid_transition(info);
++
++	/* Wait for the INVLPGBs kicked off above to finish. */
++	__tlbsync();
++}
++
+ /*
+  * Given an ASID, flush the corresponding user ASID.  We can delay this
+  * until the next time we switch to it.
+@@ -1260,9 +1359,12 @@ void flush_tlb_mm_range(struct mm_struct *mm, unsigned long start,
+ 	 * a local TLB flush is needed. Optimize this use-case by calling
+ 	 * flush_tlb_func_local() directly in this case.
+ 	 */
+-	if (cpumask_any_but(mm_cpumask(mm), cpu) < nr_cpu_ids) {
++	if (mm_global_asid(mm)) {
++		broadcast_tlb_flush(info);
++	} else if (cpumask_any_but(mm_cpumask(mm), cpu) < nr_cpu_ids) {
+ 		info->trim_cpumask = should_trim_cpumask(mm);
+ 		flush_tlb_multi(mm_cpumask(mm), info);
++		consider_global_asid(mm);
+ 	} else if (mm == this_cpu_read(cpu_tlbstate.loaded_mm)) {
+ 		lockdep_assert_irqs_enabled();
+ 		local_irq_disable();
+-- 
+2.43.0
 
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
