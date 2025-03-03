@@ -1,369 +1,169 @@
-Return-Path: <linux-kernel+bounces-541968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ACDDA4C3F8
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:58:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38EC7A4C3FF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:59:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FC3E16A5AC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:58:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF38918848C3
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:59:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB73213E60;
-	Mon,  3 Mar 2025 14:58:28 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E076213E7D;
+	Mon,  3 Mar 2025 14:59:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="oGuLpio1"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 648BA1482F2;
-	Mon,  3 Mar 2025 14:58:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E04213E62
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 14:59:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741013907; cv=none; b=jT15VfN7nN8NKETsyF5sroyk7IhkV/EIsl5VX6BIg6c6m+E4UJJv+EM47THSKmstQryRPltW8L86WBkDlF0b6D4rdebb69hVFHBb2JFLF13F+q8ZMoiuirD4cBRR66tk63+0I+wUUpk/FK42UR9/1UcZWmXVwMDSHtCADtA8CMA=
+	t=1741013962; cv=none; b=L60eBD0tr14exAMBSCCXx7aimR29RfFM+4g4G1aAlIJInVIw4fjqj9e+dhI/+DA3RIpugqtv2Iz3JvaeGK5y6uqk5lALtdgtB2LhkjIRd4u/XspxE+Em45U4s1JEpS6e6ow4TCjo5MhUXmMkzO9ZASOZ/f1yZdADNQcB7MJKHrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741013907; c=relaxed/simple;
-	bh=N7Rvlt0XUzHcy2qAULJ45W96l/QKXbc9Qw11enNBNJY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SLbJwF0/RXXJt6XcWM25PSTv7JsIBkSARJwGg95DHhLFSbVSyiZpIOmYjGJxhhwuPzrMBPQidTFWI4U4aQzkKE3W+n3AHBPvRGgA825R0L4v3gDTY+E8sXI4fd+N/MbMZn5Cl40af8cQ+ZPZ/WMJ3OoGFgk98OUFS1cQhBvWNz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25EF6C4CED6;
-	Mon,  3 Mar 2025 14:58:24 +0000 (UTC)
-Message-ID: <43f528b5-2c0e-4154-9a7d-7d1003ac109b@xs4all.nl>
-Date: Mon, 3 Mar 2025 15:58:23 +0100
+	s=arc-20240116; t=1741013962; c=relaxed/simple;
+	bh=2p8joFJXzZciQEtOaiKD3tMaTCY09PkvoDJBgirMmUE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=tTlD3p0IHZyuuKYWjdaq+jcaj4ZBxM7Qvsc0RPOpAjzjIoCroQJlnM2CsJwezxreuWSbXu577hCGWkqeuXslKBMztm3qF/NtW/92PU5545WMjEqdreVhOZPmn7Kdhou159XnDVVuObLFK2vvpgR/Xz8kwNvK130lY56tv81fmn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=oGuLpio1; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250303145918euoutp011d7609287f1e9f49a671dba4e4747fea~pUvimzY_Q0490504905euoutp01B
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 14:59:18 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250303145918euoutp011d7609287f1e9f49a671dba4e4747fea~pUvimzY_Q0490504905euoutp01B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1741013958;
+	bh=XEcDJFcbja1D97z3Z+kckgPRPhSOypNgkh6K3+gjOSY=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=oGuLpio1RvbmIWbCeeU102zVslrnwLXWdDBNwgQjlFOkuV33T9clMejFReui6+dEz
+	 I7WqrUVHF0g6F+cYHbHw1DBS1BU8UZgUNKBhFqeZHxRunsMK2L/WtW4DTgs4G846Ei
+	 H+RdvqhmaOEuQhwkj87mqlfvYDemcc65qaT7JrJs=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20250303145918eucas1p126c2cb0be2a456e62b4654a1552c7da3~pUviLu-6Z0745207452eucas1p16;
+	Mon,  3 Mar 2025 14:59:18 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id D4.50.20821.6C3C5C76; Mon,  3
+	Mar 2025 14:59:18 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250303145917eucas1p171f8fcccadddc035f5773f7026a281e3~pUvhin3Eu1309713097eucas1p18;
+	Mon,  3 Mar 2025 14:59:17 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250303145917eusmtrp16eca5e99ae115c6c12ddf406c8523d16~pUvhhy2g52312323123eusmtrp1W;
+	Mon,  3 Mar 2025 14:59:17 +0000 (GMT)
+X-AuditID: cbfec7f2-b11c470000005155-7f-67c5c3c62dd0
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id CE.1D.19654.5C3C5C76; Mon,  3
+	Mar 2025 14:59:17 +0000 (GMT)
+Received: from AMDC4942.home (unknown [106.210.136.40]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250303145916eusmtip23651f23fd9a7ab0b85511596a1b416c3~pUvgq0rQa0239102391eusmtip2G;
+	Mon,  3 Mar 2025 14:59:16 +0000 (GMT)
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com,
+	guoren@kernel.org, wefu@redhat.com, paul.walmsley@sifive.com,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
+	jszhang@kernel.org, ulf.hansson@linaro.org, m.szyprowski@samsung.com
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, Michal
+	Wilczynski <m.wilczynski@samsung.com>
+Subject: [PATCH v1 0/5] TH1520 SoC: Add AON firmware & power-domain support
+Date: Mon,  3 Mar 2025 15:58:56 +0100
+Message-Id: <20250303145901.446791-1-m.wilczynski@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v17 16/17] media: uvcvideo: implement UVC v1.5 ROI
-To: Hans de Goede <hdegoede@redhat.com>,
- Ricardo Ribalda <ribalda@chromium.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Yunke Cao <yunkec@chromium.org>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, Yunke Cao <yunkec@google.com>
-References: <20250203-uvc-roi-v17-0-5900a9fed613@chromium.org>
- <20250203-uvc-roi-v17-16-5900a9fed613@chromium.org>
- <6944a221-b0b4-4042-9d4a-98a0cc806116@xs4all.nl>
- <5d229e8e-f4b9-4589-a978-e80848678e38@redhat.com>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Autocrypt: addr=hverkuil@xs4all.nl; keydata=
- xsFNBFQ84W0BEAC7EF1iL4s3tY8cRTVkJT/297h0Hz0ypA+ByVM4CdU9sN6ua/YoFlr9k0K4
- BFUlg7JzJoUuRbKxkYb8mmqOe722j7N3HO8+ofnio5cAP5W0WwDpM0kM84BeHU0aPSTsWiGR
- yw55SOK2JBSq7hueotWLfJLobMWhQii0Zd83hGT9SIt9uHaHjgwmtTH7MSTIiaY6N14nw2Ud
- C6Uykc1va0Wqqc2ov5ihgk/2k2SKa02ookQI3e79laOrbZl5BOXNKR9LguuOZdX4XYR3Zi6/
- BsJ7pVCK9xkiVf8svlEl94IHb+sa1KrlgGv3fn5xgzDw8Z222TfFceDL/2EzUyTdWc4GaPMC
- E/c1B4UOle6ZHg02+I8tZicjzj5+yffv1lB5A1btG+AmoZrgf0X2O1B96fqgHx8w9PIpVERN
- YsmkfxvhfP3MO3oHh8UY1OLKdlKamMneCLk2up1Zlli347KMjHAVjBAiy8qOguKF9k7HOjif
- JCLYTkggrRiEiE1xg4tblBNj8WGyKH+u/hwwwBqCd/Px2HvhAsJQ7DwuuB3vBAp845BJYUU3
- 06kRihFqbO0vEt4QmcQDcbWINeZ2zX5TK7QQ91ldHdqJn6MhXulPKcM8tCkdD8YNXXKyKqNl
- UVqXnarz8m2JCbHgjEkUlAJCNd6m3pfESLZwSWsLYL49R5yxIwARAQABzSFIYW5zIFZlcmt1
- aWwgPGh2ZXJrdWlsQHhzNGFsbC5ubD7CwZUEEwEKAD8CGwMGCwkIBwMCBhUIAgkKCwQWAgMB
- Ah4BAheAFiEEBSzee8IVBTtonxvKvS1hSGYUO0wFAmaU3GkFCRf7lXsACgkQvS1hSGYUO0wZ
- cw//cLMiaV+p2rCyzdpDjWon2XD6M646THYvqXLb9eVWicFlVG78kNtHrHyEWKPhN3OdWWjn
- kOzXseVR/nS6vZvqCaT3rwgh3ZMb0GvOQk1/7V8UbcIERy036AjQoZmKo5tEDIv48MSvqxjj
- H6wbKXbCyvnIwpGICLyb0xAwvvpTaJkwZjvGqeo5EL0Z+cQ8fCelfKNO5CFFP3FNd3dH8wU6
- CHRtdZE03iIVEWpgCTjsG2zwsX/CKfPx0EKcrQajW3Tc50Jm0uuRUEKCVphlYORAPtFAF1dj
- Ly8zpN1bEXH+0FDXe/SHhzbvgS4sL0J4KQCCZ/GcbKh/vsDC1VLsGS5C7fKOhAtOkUPWRjF+
- kOEEcTOROMMvSUVokO+gCdb9nA/e3WMgiTwWRumWy5eCEnCpM9+rfI2HzTeACrVgGEDkOTHW
- eaGHEy8nS9a25ejQzsBhi+T7MW53ZTIjklR7dFl/uuK+EJ6DLbDpVbwyYo2oeiwP+sf8/Rgv
- WfJv4wzfUo/JABwrsbfWfycVZwFWBzqq+TaKFkMPm017dkLdg4MzxvvTMP7nKfJxU1bQ2OOr
- xkPk5KDcz+aRYBvTqEXgYZ6OZtnOUFKD+uPlbWf68vuz/1iFbQYnNJkTxwWhiIMN7BULK74d
- Ek89MU7JlbYNSv0v21lRF+uDo0J6zyoTt0ZxSPzOwU0EVDzhbQEQANzLiI6gHkIhBQKeQaYs
- p2SSqF9c++9LOy5x6nbQ4s0X3oTKaMGfBZuiKkkU6NnHCSa0Az5ScRWLaRGu1PzjgcVwzl5O
- sDawR1BtOG/XoPRNB2351PRp++W8TWo2viYYY0uJHKFHML+ku9q0P+NkdTzFGJLP+hn7x0RT
- DMbhKTHO3H2xJz5TXNE9zTJuIfGAz3ShDpijvzYieY330BzZYfpgvCllDVM5E4XgfF4F/N90
- wWKu50fMA01ufwu+99GEwTFVG2az5T9SXd7vfSgRSkzXy7hcnxj4IhOfM6Ts85/BjMeIpeqy
- TDdsuetBgX9DMMWxMWl7BLeiMzMGrfkJ4tvlof0sVjurXibTibZyfyGR2ricg8iTbHyFaAzX
- 2uFVoZaPxrp7udDfQ96sfz0hesF9Zi8d7NnNnMYbUmUtaS083L/l2EDKvCIkhSjd48XF+aO8
- VhrCfbXWpGRaLcY/gxi2TXRYG9xCa7PINgz9SyO34sL6TeFPSZn4bPQV5O1j85Dj4jBecB1k
- z2arzwlWWKMZUbR04HTeAuuvYvCKEMnfW3ABzdonh70QdqJbpQGfAF2p4/iCETKWuqefiOYn
- pR8PqoQA1DYv3t7y9DIN5Jw/8Oj5wOeEybw6vTMB0rrnx+JaXvxeHSlFzHiD6il/ChDDkJ9J
- /ejCHUQIl40wLSDRABEBAAHCwXwEGAEKACYCGwwWIQQFLN57whUFO2ifG8q9LWFIZhQ7TAUC
- ZpTcxwUJF/uV2gAKCRC9LWFIZhQ7TMlPD/9ppgrN4Z9gXta9IdS8a+0E7lj/dc0LnF9T6MMq
- aUC+CFffTiOoNDnfXh8sfsqTjAT50TsVpdlH6YyPlbU5FR8bC8wntrJ6ZRWDdHJiCDLqNA/l
- GVtIKP1YW8fA01thMcVUyQCdVUqnByMJiJQDzZYrX+E/YKUTh2RL5Ye0foAGE7SGzfZagI0D
- OZN92w59e1Jg3zBhYXQIjzBbhGIy7usBfvE882GdUbP29bKfTpcOKkJIgO6K+w82D/1d5TON
- SD146+UySmEnjYxHI8kBYaZJ4ubyYrDGgXT3jIBPq8i9iZP3JSeZ/0F9UIlX4KeMSG8ymgCR
- SqL1y9pl9R2ewCepCahEkTT7IieGUzJZz7fGUaxrSyexPE1+qNosfrUIu3yhRA6AIjhwPisl
- aSwDxLI6qWDEQeeWNQaYUSEIFQ5XkZxd/VN8JeMwGIAq17Hlym+JzjBkgkm1LV9LXw9D8MQL
- e8tSeEXX8BZIen6y/y+U2CedzEsMKGjy5WNmufiPOzB3q2JwFQCw8AoNic7soPN9CVCEgd2r
- XS+OUZb8VvEDVRSK5Yf79RveqHvmhAdNOVh70f5CvwR/bfX/Ei2Szxz47KhZXpn1lxmcds6b
- LYjTAZF0anym44vsvOEuQg3rqxj/7Hiz4A3HIkrpTWclV6ru1tuGp/ZJ7aY8bdvztP2KTw==
-In-Reply-To: <5d229e8e-f4b9-4589-a978-e80848678e38@redhat.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrEKsWRmVeSWpSXmKPExsWy7djPc7rHDh9NN9i4SNji2Z2vrBZbf89i
+	t1iz9xyTxfwj51gt7l3awmTxYm8ji0XzsfVsFi9n3WOzuLxrDpvF594jjBbbPrewWaw9cpfd
+	Yv3X+UwWLy/3MFu0zeK3+L9nB7vF8bXhFi37p7A4CHm8efmSxeNwxxd2j3snprF6bFrVyeZx
+	59oeNo/NS+o9WtYeY/J4v+8qm0ffllWMHpear7N7fN4kF8AdxWWTkpqTWZZapG+XwJWx89ZF
+	5oKD/BUbGg+wNzD+5O5i5OSQEDCRePryAHMXIxeHkMAKRolPrz4zQThfGCW2HbjACuF8ZpRY
+	cfwpO0zLvO/TWEBsIYHljBJXD7JAFL1hlDh88wwzSIJNwEjiwfL5YN0iAv1MEn1H/oM5zAIr
+	GSXuXzgLViUs4C1xdNtzoAQHB4uAqsSDqQEgYV4BO4l120+yQGyTl9h/EKKcV0BQ4uTMJ2Bx
+	ZqB489bZYIdLCMzmlNh0q5cdZI6EgItE9+FCiF5hiVfHt0BdLSNxenIP1Mx8iQdbPzFD2DUS
+	O3uOQ9nWEnfO/WIDGcMsoCmxfpc+RNhRYtG1F6wQ0/kkbrwVhLiAT2LStunMEGFeiY42IYhq
+	NYmpPb1wS8+t2MYEYXtIdMxqZ4UEW6zE5uu7WScwKsxC8tcsJH/NQrhhASPzKkbx1NLi3PTU
+	YsO81HK94sTc4tK8dL3k/NxNjMBkePrf8U87GOe++qh3iJGJg/EQowQHs5II7632o+lCvCmJ
+	lVWpRfnxRaU5qcWHGKU5WJTEeRftb00XEkhPLEnNTk0tSC2CyTJxcEo1MKmqFy64I35ve2De
+	os9nhJ9+YnFecD5t1galRUvE7k6cMrsz91l6Gn/c84kmFQemrjaIv2JxX5y1TcRn9p8KSR5j
+	iUeiK/l3K4RuedR/w3SxKMsz54Ta75YXkuruur81zFzustjrk9Am6e1OXmWzK0TyDGSvnzA+
+	pfWk2DPnqsQMrpehl0t0Y7nqz60++vCervKEJPfYW4HfjNIDlfy5NQ9f+5n98x+z+5xWo8bF
+	mr9TVq34pHRJbmpLlLUT70Lm3HcO/1OWfzNVrxf57bDYMbxFumfL1WTxI6kHDbZlN3NM/Ga8
+	cafWX+fsTUFbXcQnXAx/IxZ2W+yv095dBY+Dfr1ZyfMr5UAm78H0rXtb3iuxFGckGmoxFxUn
+	AgDxV4fw9QMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNIsWRmVeSWpSXmKPExsVy+t/xe7pHDx9NN1jwT83i2Z2vrBZbf89i
+	t1iz9xyTxfwj51gt7l3awmTxYm8ji0XzsfVsFi9n3WOzuLxrDpvF594jjBbbPrewWaw9cpfd
+	Yv3X+UwWLy/3MFu0zeK3+L9nB7vF8bXhFi37p7A4CHm8efmSxeNwxxd2j3snprF6bFrVyeZx
+	59oeNo/NS+o9WtYeY/J4v+8qm0ffllWMHpear7N7fN4kF8AdpWdTlF9akqqQkV9cYqsUbWhh
+	pGdoaaFnZGKpZ2hsHmtlZKqkb2eTkpqTWZZapG+XoJex89ZF5oKD/BUbGg+wNzD+5O5i5OSQ
+	EDCRmPd9GksXIxeHkMBSRon7Xc3MEAkZiWvdL1kgbGGJP9e62CCKXjFKzL27H6yITcBI4sHy
+	+awgCRGBhUwSV6dsYAZxmAXWMkocvnqJHaRKWMBb4ui250BVHBwsAqoSD6YGgIR5Bewk1m0/
+	CbVBXmL/wbPMEHFBiZMzn4DFmYHizVtnM09g5JuFJDULSWoBI9MqRpHU0uLc9NxiI73ixNzi
+	0rx0veT83E2MwFjcduznlh2MK1991DvEyMTBeIhRgoNZSYT3VvvRdCHelMTKqtSi/Pii0pzU
+	4kOMpkDnTWSWEk3OByaDvJJ4QzMDU0MTM0sDU0szYyVxXrYr59OEBNITS1KzU1MLUotg+pg4
+	OKUamGQPJ/ieYS9QNuN/ekAqJVXng/VKQ4W379KUbhWbsO96wOKcwvjsyLEVjyxYDhYFz6i4
+	ocn2oL7XSarjG/O2hvDXDxoLah/tEDss+EbxANOCzlWhx/YWJZuJMWWZ//v8uEzi+envsaz7
+	H5Z7/+c/8O9g9e06tari07F3xDZkzlltu/9k79/6rQsXSDQv3P/8YsHuiZvT5dYGW+Zd3Rj6
+	Z6P3L9aN64PbMgzDNWWK+nnrXA1OrVDlmjR90uJCIX6rrydnr1e9uZEjTO1i3MwCnUdHBYzN
+	Y0yrbYPTtmpoX9/4xWeXx03urev3XJn0rVZXJUpmdV5BT/lumQb7azLqzDuX2ZwLY/NgUTth
+	er3mthJLcUaioRZzUXEiAIi+4D1OAwAA
+X-CMS-MailID: 20250303145917eucas1p171f8fcccadddc035f5773f7026a281e3
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250303145917eucas1p171f8fcccadddc035f5773f7026a281e3
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20250303145917eucas1p171f8fcccadddc035f5773f7026a281e3
+References: <CGME20250303145917eucas1p171f8fcccadddc035f5773f7026a281e3@eucas1p1.samsung.com>
 
-On 03/03/2025 15:02, Hans de Goede wrote:
-> Hi,
-> 
-> On 3-Mar-25 14:32, Hans Verkuil wrote:
->> Hans, Laurent, Yunke,
->>
->> On 03/02/2025 12:55, Ricardo Ribalda wrote:
->>> From: Yunke Cao <yunkec@google.com>
->>>
->>> Implement support for ROI as described in UVC 1.5:
->>> 4.2.2.1.20 Digital Region of Interest (ROI) Control
->>>
->>> ROI control is implemented using V4L2 control API as
->>> two UVC-specific controls:
->>> V4L2_CID_UVC_REGION_OF_INTEREST_RECT and
->>> V4L2_CID_UVC_REGION_OF_INTEREST_AUTO.
->>>
->>> Reviewed-by: Ricardo Ribalda <ribalda@chromium.org>
->>> Signed-off-by: Yunke Cao <yunkec@google.com>
->>> Reviewed-by: Yunke Cao <yunkec@google.com>
->>> Tested-by: Yunke Cao <yunkec@google.com>
->>> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
->>> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
->>> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
->>> ---
->>>  drivers/media/usb/uvc/uvc_ctrl.c   | 81 ++++++++++++++++++++++++++++++++++++++
->>>  drivers/media/usb/uvc/uvcvideo.h   |  7 ++++
->>>  include/uapi/linux/usb/video.h     |  1 +
->>>  include/uapi/linux/uvcvideo.h      | 13 ++++++
->>>  include/uapi/linux/v4l2-controls.h |  7 ++++
->>>  5 files changed, 109 insertions(+)
->>>
->>> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
->>> index 17a7ce525f71..1906ce5b7d50 100644
->>> --- a/drivers/media/usb/uvc/uvc_ctrl.c
->>> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
->>> @@ -358,6 +358,24 @@ static const struct uvc_control_info uvc_ctrls[] = {
->>>  		.flags		= UVC_CTRL_FLAG_GET_CUR
->>>  				| UVC_CTRL_FLAG_AUTO_UPDATE,
->>>  	},
->>> +	/*
->>> +	 * UVC_CTRL_FLAG_AUTO_UPDATE is needed because the RoI may get updated
->>> +	 * by sensors.
->>> +	 * "This RoI should be the same as specified in most recent SET_CUR
->>> +	 * except in the case where the ‘Auto Detect and Track’ and/or
->>> +	 * ‘Image Stabilization’ bit have been set."
->>> +	 * 4.2.2.1.20 Digital Region of Interest (ROI) Control
->>> +	 */
->>> +	{
->>> +		.entity		= UVC_GUID_UVC_CAMERA,
->>> +		.selector	= UVC_CT_REGION_OF_INTEREST_CONTROL,
->>> +		.index		= 21,
->>> +		.size		= 10,
->>> +		.flags		= UVC_CTRL_FLAG_SET_CUR | UVC_CTRL_FLAG_GET_CUR
->>> +				| UVC_CTRL_FLAG_GET_MIN | UVC_CTRL_FLAG_GET_MAX
->>> +				| UVC_CTRL_FLAG_GET_DEF
->>> +				| UVC_CTRL_FLAG_AUTO_UPDATE,
->>> +	},
->>>  };
->>>  
->>>  static const u32 uvc_control_classes[] = {
->>> @@ -603,6 +621,44 @@ static const struct uvc_control_mapping *uvc_ctrl_filter_plf_mapping(
->>>  	return out_mapping;
->>>  }
->>>  
->>> +static int uvc_get_rect(struct uvc_control_mapping *mapping, u8 query,
->>> +			const void *uvc_in, size_t v4l2_size, void *v4l2_out)
->>> +{
->>> +	const struct uvc_rect *uvc_rect = uvc_in;
->>> +	struct v4l2_rect *v4l2_rect = v4l2_out;
->>> +
->>> +	if (WARN_ON(v4l2_size != sizeof(struct v4l2_rect)))
->>> +		return -EINVAL;
->>> +
->>> +	if (uvc_rect->left > uvc_rect->right ||
->>> +	    uvc_rect->top > uvc_rect->bottom)
->>> +		return -EIO;
->>> +
->>> +	v4l2_rect->top = uvc_rect->top;
->>> +	v4l2_rect->left = uvc_rect->left;
->>> +	v4l2_rect->height = uvc_rect->bottom - uvc_rect->top + 1;
->>> +	v4l2_rect->width = uvc_rect->right - uvc_rect->left + 1;
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static int uvc_set_rect(struct uvc_control_mapping *mapping, size_t v4l2_size,
->>> +			const void *v4l2_in, void *uvc_out)
->>> +{
->>> +	struct uvc_rect *uvc_rect = uvc_out;
->>> +	const struct v4l2_rect *v4l2_rect = v4l2_in;
->>> +
->>> +	if (WARN_ON(v4l2_size != sizeof(struct v4l2_rect)))
->>> +		return -EINVAL;
->>> +
->>> +	uvc_rect->top = min(0xffff, v4l2_rect->top);
->>> +	uvc_rect->left = min(0xffff, v4l2_rect->left);
->>> +	uvc_rect->bottom = min(0xffff, v4l2_rect->top + v4l2_rect->height - 1);
->>> +	uvc_rect->right = min(0xffff, v4l2_rect->left + v4l2_rect->width - 1);
->>> +
->>> +	return 0;
->>> +}
->>> +
->>>  static const struct uvc_control_mapping uvc_ctrl_mappings[] = {
->>>  	{
->>>  		.id		= V4L2_CID_BRIGHTNESS,
->>> @@ -897,6 +953,28 @@ static const struct uvc_control_mapping uvc_ctrl_mappings[] = {
->>>  		.selector	= UVC_PU_POWER_LINE_FREQUENCY_CONTROL,
->>>  		.filter_mapping	= uvc_ctrl_filter_plf_mapping,
->>>  	},
->>> +	{
->>> +		.id		= V4L2_CID_UVC_REGION_OF_INTEREST_RECT,
->>> +		.entity		= UVC_GUID_UVC_CAMERA,
->>> +		.selector	= UVC_CT_REGION_OF_INTEREST_CONTROL,
->>> +		.size		= sizeof(struct uvc_rect) * 8,
->>> +		.offset		= 0,
->>> +		.v4l2_type	= V4L2_CTRL_TYPE_RECT,
->>> +		.data_type	= UVC_CTRL_DATA_TYPE_RECT,
->>> +		.get		= uvc_get_rect,
->>> +		.set		= uvc_set_rect,
->>> +		.name		= "Region Of Interest Rectangle",
->>
->> According to how titles are capitalized in english, this should be lower-case "of".
->>
->>> +	},
->>> +	{
->>> +		.id		= V4L2_CID_UVC_REGION_OF_INTEREST_AUTO,
->>> +		.entity		= UVC_GUID_UVC_CAMERA,
->>> +		.selector	= UVC_CT_REGION_OF_INTEREST_CONTROL,
->>> +		.size		= 16,
->>> +		.offset		= 64,
->>> +		.v4l2_type	= V4L2_CTRL_TYPE_BITMASK,
->>> +		.data_type	= UVC_CTRL_DATA_TYPE_BITMASK,
->>> +		.name		= "Region Of Interest Auto Controls",
->>
->> Ditto.
->>
->> This string is also one character too long (the control description string is at
->> most 31 characters). Suggested alternatives:
->>
->> "Region of Interest Auto Ctrls"
-> 
-> FWIW my vote goes to the above one, rationale:
-> 
-> 1. ROI is unclear
-> 2. "Ctrls" with the _s_ over "Control" as this is a bitmask which allows
->    multiple options to be set at the same time (so not a menu style control)
->  
->> "ROI Auto Controls"
->> "Region Of Interest Auto Control"
->>
->> I can make the changes myself, but I need to know which alternative to use for
->> this string.
->  
-> Regards,
->  
-> 	Hans
+This patch series introduces and documents power management (PM) support and
+the AON firmware driver for the T-Head TH1520 SoC, as used on the LicheePi 4A
+board. While part of a larger effort to enable the Imagination BXM-4-64 GPU
+upstream, these patches can merge independently.
 
-Thank you for your quick reply! I'll merge it with this change.
+Bigger series cover letter:
+https://lore.kernel.org/all/20250219140239.1378758-1-m.wilczynski@samsung.com/
 
-Regards,
+Michal Wilczynski (5):
+  dt-bindings: firmware: thead,th1520: Add support for firmware node
+  firmware: thead: Add AON firmware protocol driver
+  dt-bindings: power: Add TH1520 SoC power domains
+  pmdomain: thead: Add power-domain driver for TH1520
+  riscv: Enable PM_GENERIC_DOMAINS for T-Head SoCs
 
-	Hans
+ .../bindings/firmware/thead,th1520-aon.yaml   |  53 ++++
+ MAINTAINERS                                   |   5 +
+ arch/riscv/Kconfig.socs                       |   1 +
+ drivers/firmware/Kconfig                      |   9 +
+ drivers/firmware/Makefile                     |   1 +
+ drivers/firmware/thead,th1520-aon.c           | 247 ++++++++++++++++++
+ drivers/pmdomain/Kconfig                      |   1 +
+ drivers/pmdomain/Makefile                     |   1 +
+ drivers/pmdomain/thead/Kconfig                |  12 +
+ drivers/pmdomain/thead/Makefile               |   2 +
+ drivers/pmdomain/thead/th1520-pm-domains.c    | 209 +++++++++++++++
+ .../dt-bindings/power/thead,th1520-power.h    |  19 ++
+ .../linux/firmware/thead/thead,th1520-aon.h   | 200 ++++++++++++++
+ 13 files changed, 760 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/firmware/thead,th1520-aon.yaml
+ create mode 100644 drivers/firmware/thead,th1520-aon.c
+ create mode 100644 drivers/pmdomain/thead/Kconfig
+ create mode 100644 drivers/pmdomain/thead/Makefile
+ create mode 100644 drivers/pmdomain/thead/th1520-pm-domains.c
+ create mode 100644 include/dt-bindings/power/thead,th1520-power.h
+ create mode 100644 include/linux/firmware/thead/thead,th1520-aon.h
 
-> 
-> 
-> 
-> 
-> 
->>
->>> +	},
->>>  };
->>>  
->>>  /* ------------------------------------------------------------------------
->>> @@ -1473,6 +1551,9 @@ static int __uvc_queryctrl_boundaries(struct uvc_video_chain *chain,
->>>  
->>>  static size_t uvc_mapping_v4l2_size(struct uvc_control_mapping *mapping)
->>>  {
->>> +	if (mapping->v4l2_type == V4L2_CTRL_TYPE_RECT)
->>> +		return sizeof(struct v4l2_rect);
->>> +
->>>  	if (uvc_ctrl_mapping_is_compound(mapping))
->>>  		return DIV_ROUND_UP(mapping->size, 8);
->>>  
->>> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
->>> index 6fc1cb9e99d1..b63720e21075 100644
->>> --- a/drivers/media/usb/uvc/uvcvideo.h
->>> +++ b/drivers/media/usb/uvc/uvcvideo.h
->>> @@ -543,6 +543,13 @@ struct uvc_device_info {
->>>  	u16	uvc_version;
->>>  };
->>>  
->>> +struct uvc_rect {
->>> +	u16 top;
->>> +	u16 left;
->>> +	u16 bottom;
->>> +	u16 right;
->>> +} __packed;
->>> +
->>>  struct uvc_status_streaming {
->>>  	u8	button;
->>>  } __packed;
->>> diff --git a/include/uapi/linux/usb/video.h b/include/uapi/linux/usb/video.h
->>> index 526b5155e23c..e1d9f5773187 100644
->>> --- a/include/uapi/linux/usb/video.h
->>> +++ b/include/uapi/linux/usb/video.h
->>> @@ -104,6 +104,7 @@
->>>  #define UVC_CT_ROLL_ABSOLUTE_CONTROL			0x0f
->>>  #define UVC_CT_ROLL_RELATIVE_CONTROL			0x10
->>>  #define UVC_CT_PRIVACY_CONTROL				0x11
->>> +#define UVC_CT_REGION_OF_INTEREST_CONTROL		0x14
->>>  
->>>  /* A.9.5. Processing Unit Control Selectors */
->>>  #define UVC_PU_CONTROL_UNDEFINED			0x00
->>> diff --git a/include/uapi/linux/uvcvideo.h b/include/uapi/linux/uvcvideo.h
->>> index f86185456dc5..cbe15bca9569 100644
->>> --- a/include/uapi/linux/uvcvideo.h
->>> +++ b/include/uapi/linux/uvcvideo.h
->>> @@ -16,6 +16,7 @@
->>>  #define UVC_CTRL_DATA_TYPE_BOOLEAN	3
->>>  #define UVC_CTRL_DATA_TYPE_ENUM		4
->>>  #define UVC_CTRL_DATA_TYPE_BITMASK	5
->>> +#define UVC_CTRL_DATA_TYPE_RECT		6
->>>  
->>>  /* Control flags */
->>>  #define UVC_CTRL_FLAG_SET_CUR		(1 << 0)
->>> @@ -38,6 +39,18 @@
->>>  
->>>  #define UVC_MENU_NAME_LEN 32
->>>  
->>> +/* V4L2 driver-specific controls */
->>> +#define V4L2_CID_UVC_REGION_OF_INTEREST_RECT	(V4L2_CID_USER_UVC_BASE + 1)
->>> +#define V4L2_CID_UVC_REGION_OF_INTEREST_AUTO	(V4L2_CID_USER_UVC_BASE + 2)
->>> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_EXPOSURE		(1 << 0)
->>> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_IRIS			(1 << 1)
->>> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_WHITE_BALANCE		(1 << 2)
->>> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_FOCUS			(1 << 3)
->>> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_FACE_DETECT		(1 << 4)
->>> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_DETECT_AND_TRACK	(1 << 5)
->>> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_IMAGE_STABILIZATION	(1 << 6)
->>> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_HIGHER_QUALITY		(1 << 7)
->>> +
->>>  struct uvc_menu_info {
->>>  	__u32 value;
->>>  	__u8 name[UVC_MENU_NAME_LEN];
->>> diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
->>> index 974fd254e573..72e32814ea83 100644
->>> --- a/include/uapi/linux/v4l2-controls.h
->>> +++ b/include/uapi/linux/v4l2-controls.h
->>> @@ -215,6 +215,13 @@ enum v4l2_colorfx {
->>>   */
->>>  #define V4L2_CID_USER_THP7312_BASE		(V4L2_CID_USER_BASE + 0x11c0)
->>>  
->>> +/*
->>> + * The base for the uvc driver controls.
->>> + * See linux/uvcvideo.h for the list of controls.
->>> + * We reserve 64 controls for this driver.
->>> + */
->>> +#define V4L2_CID_USER_UVC_BASE			(V4L2_CID_USER_BASE + 0x11e0)
->>> +
->>>  /* MPEG-class control IDs */
->>>  /* The MPEG controls are applicable to all codec controls
->>>   * and the 'MPEG' part of the define is historical */
->>>
->>
->>
-> 
+-- 
+2.34.1
 
 
