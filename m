@@ -1,120 +1,213 @@
-Return-Path: <linux-kernel+bounces-542662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2182A4CC21
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:42:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FAADA4CC25
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:42:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 070543AADC6
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:42:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88FCC173F50
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:42:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7FDA23312D;
-	Mon,  3 Mar 2025 19:42:32 +0000 (UTC)
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFA7023315D;
+	Mon,  3 Mar 2025 19:42:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JCBwR/sS";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="89eYe2Hx"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE5021C9EB1;
-	Mon,  3 Mar 2025 19:42:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E9B0231CB0;
+	Mon,  3 Mar 2025 19:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741030952; cv=none; b=S7FKTi3TX3qZ/zMJL+dD/HU6BdVnCIbhi2nTsjGYvD+LDXgH7oMdssvJ/iBI2y+Itjf69zP1hyAsPm7Z1l2fNhBvDOljNBisFjQjB4wzb0y8y0vrLLVb46RkmYHw0cRR8WqLkX+Ixy1LQWUFXMfcfrhIgDAKqoC2WqrJclSD1iI=
+	t=1741030967; cv=none; b=c5CRGKiJnqqlvbmYiGbG8RyHaDEz9yIitUPnTZI7tmxiAWHapIESUEpsKQBQLzIjfCiVi1na9pB4zxyyQJFLe7poEiI/k3B0pNt2juq7xReHq4faeUrywnwI55loAeIVxZ/r4kjQ9Ak5FI9M1KQRqA5uJzyOGxs9dvjz2h0WHA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741030952; c=relaxed/simple;
-	bh=E166rXmV2gKxDo6lvtPbk6l4dZeaRFuu0JgC4cRRb6E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eLyIZ8RLUSoDBx5SmXtG+ykUQIhtbuECCqAu6fAe2EN4QDrWb18Z5nQ/0kAXASV2hCMz4Z4XJHZ/Oi4TgT9RvvSmiKtvbi/oGD3KLxbFa9D2VIaSLCnmGnzrgPz6A7w+gN+XVexRCqts2UDvEWN83pgG3GBwo0j5fgHduGvowek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2fef5c978ccso2557636a91.1;
-        Mon, 03 Mar 2025 11:42:30 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741030950; x=1741635750;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jr7DtT+cBeW7vunNHQDeXWMsjvqkgvHyclExXYfY/bw=;
-        b=IrFa5DMr9jb5fy4OZIJBbqabybWiL9SqAB8iGghE9Ca4sKEmSDxF0VNAx8bCU38TV3
-         QuXaTQbHfSuaZteYbiz54/xKkUjCmdK8iHtekqGHw/TH1NXWfxBE9jRImUn1wVMVnANd
-         EufkZeCL74x/hVAupWzVkya3MCuuWwfl3bVWCjPqPO9yn9yIx+Z5gP6LEw2I+ZYz6GGh
-         BbWkfvhtlOnep0D1n3dS1ehRkBpqz4IiOiH74wWbOB80/1qTWhoB2zaOPh9b6MCYP4Nt
-         QVtMcsfBIdTjAEs7scFSa8wO3LWNJ56DXj+p9YX+uUcW3hxcj671f/CrKjRYmBvY98FZ
-         D2Aw==
-X-Forwarded-Encrypted: i=1; AJvYcCVFG2OXTRAxVSWrD7+n77RY7hkNNaAFU+8eBCse+i272Gyon6PIchlnUphwbgEinH7IJ9lEy+mNWsGLaQyYo8IAfQ==@vger.kernel.org, AJvYcCVgm8VG2g7oDbhtWpct8K6iiT+wb3BY1NOkMMWObWRxD9dj5hvZbwqmukB8juP7rn1t2YpexzoL0eWX@vger.kernel.org, AJvYcCXG0MAhwJUFHkfbK6VR7HFjPV9lOMcpH/CLkeQVugyin7zi53MN4HAzqtFrzfUAZjNiVdOFxD/bzX1Ab20=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVUJo4plKAjzE1XDH8GAKaiLsLM/zauToFVKpqlREqDiukkgAd
-	F0APBNuhyoHtfjlt87Gu0USLoed22wVXO/VXACoZvJBW+YrYjPFr
-X-Gm-Gg: ASbGncvpU6yzInTifvlnAfAhB3HEVbn1VV30U2qX96k3Rl53x85XoCes6dX8NDp5jTJ
-	NVzGz4SK0aoTNxd3tSVekuIQ7/URc5/RS9oMgYvRLWVWOFG52OTpPsgNPndf5ZZxgZKgeTcNr6n
-	BhfuqUBZAc+17W+L0zInDCdz699eGw1LlvutBj8EkJbbt2GM71X/UGwTag95L368PHVvCmdR8fS
-	qWDLEYJXZBfSuJM9kKWh7QtrdKl5Grg/XQghmNQTxlrdilZtqFvP2uOXEXKsQl6zvWRTZKSajVH
-	GzVAmp+RGAavFYpzG3HLoKE6121xd36V4T9jRABSx0ILRN8137D+hVUnD5aWM5Yj5eOG32bD0gN
-	BCLg=
-X-Google-Smtp-Source: AGHT+IHYCQVs+/iE6vvKrmK1B/IMxzVg0/4kX5VfDcWNz3937RP9zksebTa9YiaF4RmT8h+1QZFM1w==
-X-Received: by 2002:a17:90b:1b47:b0:2fa:e9b:33b3 with SMTP id 98e67ed59e1d1-2febab2bdecmr20911899a91.6.1741030950198;
-        Mon, 03 Mar 2025 11:42:30 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2fea67a7ddesm9360259a91.27.2025.03.03.11.42.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 11:42:29 -0800 (PST)
-Date: Tue, 4 Mar 2025 04:42:28 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Fan Ni <nifan.cxl@gmail.com>
-Cc: Shradha Todi <shradha.t@samsung.com>, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org, manivannan.sadhasivam@linaro.org,
-	lpieralisi@kernel.org, robh@kernel.org, bhelgaas@google.com,
-	jingoohan1@gmail.com, Jonathan.Cameron@huawei.com,
-	a.manzanares@samsung.com, pankaj.dubey@samsung.com,
-	cassel@kernel.org, 18255117159@163.com, xueshuai@linux.alibaba.com,
-	renyu.zj@linux.alibaba.com, will@kernel.org, mark.rutland@arm.com
-Subject: Re: [PATCH v7 5/5] Add debugfs based statistical counter support in
- DWC
-Message-ID: <20250303194228.GB1552306@rocinante>
-References: <20250221131548.59616-1-shradha.t@samsung.com>
- <CGME20250221132043epcas5p27fde98558b13b3311cdc467e8f246380@epcas5p2.samsung.com>
- <20250221131548.59616-6-shradha.t@samsung.com>
- <Z8XuuNb6TRevUlHH@debian>
+	s=arc-20240116; t=1741030967; c=relaxed/simple;
+	bh=H+gR3PQ/Dx77ugktUrmlqnLP+dzHy9b5ULJAAHrRYYQ=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=Y262aqrmYoTRAG3DQq45t9BG+e9H+al1rqI4YIciSg7vZyF5xfv1uyJlUemZEn8/zYskNf7vdTsL98s+AuiPuJuObeW60iWlGMWloLqCBjZnfA7h24Y9W+6ZTQYQaEoNGcGZzEAfYgEpOJwLkInxz7jocUpZgbW4x//uHGPLrZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JCBwR/sS; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=89eYe2Hx; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 03 Mar 2025 19:42:41 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741030963;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8GTzabpC7n36RDcyJGC0/dNMq1h9TWvPKpFpVF7s6V4=;
+	b=JCBwR/sSIYWmKw+Bvjp6KmIMOJqCQFfXoFicpfdWLHoG7E9b78F2WBjoZ/gUpykqOcFGdK
+	J4X3hiv3TJJxRufoLcgGJCdDN3zUCJBI64C80PTD9XktZhULi3MW+J46LWbvncAFCes2l2
+	2QJrhwfWP+ddmxURo+xO4ifo1QyJdN6P9HnToEAUsliTx43NX9+Jj+8kqTBIo1SrkFXSKC
+	TAzas7H4uvVl72GKsOlOGftGhHAF489PQ4Iq+awCU3Uj7GyzhVD34aYpFXMrwH7Ab7eI4Z
+	ybQBSAmT2XBxVACaapoQIy5VpWYvp4tD5ygw0LwfaH9g/GLM4QBt8+1SZOW4hw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741030963;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8GTzabpC7n36RDcyJGC0/dNMq1h9TWvPKpFpVF7s6V4=;
+	b=89eYe2Hxgk6kC9vmJPiQD9MTxj6RLmjklVnL7OGZHlWzVnEfKtRJ1yZMrAm6y8v4xflUfV
+	eXdm7u92DQDcKUDA==
+From: "tip-bot2 for Brian Gerst" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/core] x86/smp/32: Remove safe_smp_processor_id()
+Cc: Brian Gerst <brgerst@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Uros Bizjak <ubizjak@gmail.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250303170115.2176553-1-brgerst@gmail.com>
+References: <20250303170115.2176553-1-brgerst@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8XuuNb6TRevUlHH@debian>
+Message-ID: <174103096111.14745.14730277832097676622.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Hello,
+The following commit has been merged into the x86/core branch of tip:
 
-[...]
-> > +static ssize_t counter_value_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
-> > +{
-> > +	struct dwc_pcie_rasdes_priv *pdata = file->private_data;
-> > +	struct dw_pcie *pci = pdata->pci;
-> > +	struct dwc_pcie_rasdes_info *rinfo = pci->debugfs->rasdes_info;
-> > +	char debugfs_buf[DWC_DEBUGFS_BUF_MAX];
-> > +	ssize_t pos;
-> > +	u32 val;
-> > +
-> > +	mutex_lock(&rinfo->reg_event_lock);
-> > +	set_event_number(pdata, pci, rinfo);
-> > +	val = dw_pcie_readl_dbi(pci, rinfo->ras_cap_offset + RAS_DES_EVENT_COUNTER_DATA_REG);
-> > +	mutex_unlock(&rinfo->reg_event_lock);
-> > +	pos = scnprintf(debugfs_buf, DWC_DEBUGFS_BUF_MAX, "Counter value: %d\n", val);
-> > +
-> > +	return simple_read_from_buffer(buf, count, ppos, debugfs_buf, pos);
-> > +}
-> 
-> Do we need to check whether the counter is enabled or not for the event
-> before retrieving the counter value?
+Commit-ID:     604ea3e90b17f27928a64d86259c57710c254438
+Gitweb:        https://git.kernel.org/tip/604ea3e90b17f27928a64d86259c57710c254438
+Author:        Brian Gerst <brgerst@gmail.com>
+AuthorDate:    Mon, 03 Mar 2025 12:01:15 -05:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Mon, 03 Mar 2025 20:30:09 +01:00
 
-I believe, we have a patch that aims to address, have a look at:
+x86/smp/32: Remove safe_smp_processor_id()
 
-  https://lore.kernel.org/linux-pci/20250225171239.19574-1-manivannan.sadhasivam@linaro.org
+The safe_smp_processor_id() function was originally implemented in:
 
-Thank you!
+  dc2bc768a009 ("stack overflow safe kdump: safe_smp_processor_id()")
 
-	Krzysztof
+to mitigate the CPU number corruption on a stack overflow.  At the time,
+x86-32 stored the CPU number in thread_struct, which was located at the
+bottom of the task stack and thus vulnerable to an overflow.
+
+The CPU number is now located in percpu memory, so this workaround
+is no longer needed.
+
+Signed-off-by: Brian Gerst <brgerst@gmail.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Uros Bizjak <ubizjak@gmail.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Link: https://lore.kernel.org/r/20250303170115.2176553-1-brgerst@gmail.com
+---
+ arch/x86/include/asm/cpu.h |  1 -
+ arch/x86/include/asm/smp.h |  6 ------
+ arch/x86/kernel/apic/ipi.c | 30 ------------------------------
+ arch/x86/kernel/crash.c    |  2 +-
+ arch/x86/kernel/reboot.c   |  2 +-
+ 5 files changed, 2 insertions(+), 39 deletions(-)
+
+diff --git a/arch/x86/include/asm/cpu.h b/arch/x86/include/asm/cpu.h
+index 98eced5..f44bbce 100644
+--- a/arch/x86/include/asm/cpu.h
++++ b/arch/x86/include/asm/cpu.h
+@@ -12,7 +12,6 @@
+ #ifndef CONFIG_SMP
+ #define cpu_physical_id(cpu)			boot_cpu_physical_apicid
+ #define cpu_acpi_id(cpu)			0
+-#define safe_smp_processor_id()			0
+ #endif /* CONFIG_SMP */
+ 
+ #ifdef CONFIG_HOTPLUG_CPU
+diff --git a/arch/x86/include/asm/smp.h b/arch/x86/include/asm/smp.h
+index ca073f4..2419e50 100644
+--- a/arch/x86/include/asm/smp.h
++++ b/arch/x86/include/asm/smp.h
+@@ -136,12 +136,6 @@ __visible void smp_call_function_single_interrupt(struct pt_regs *r);
+ #define raw_smp_processor_id()  this_cpu_read(pcpu_hot.cpu_number)
+ #define __smp_processor_id() __this_cpu_read(pcpu_hot.cpu_number)
+ 
+-#ifdef CONFIG_X86_32
+-extern int safe_smp_processor_id(void);
+-#else
+-# define safe_smp_processor_id()	smp_processor_id()
+-#endif
+-
+ static inline struct cpumask *cpu_llc_shared_mask(int cpu)
+ {
+ 	return per_cpu(cpu_llc_shared_map, cpu);
+diff --git a/arch/x86/kernel/apic/ipi.c b/arch/x86/kernel/apic/ipi.c
+index 5da693d..23025a3 100644
+--- a/arch/x86/kernel/apic/ipi.c
++++ b/arch/x86/kernel/apic/ipi.c
+@@ -287,34 +287,4 @@ void default_send_IPI_mask_logical(const struct cpumask *cpumask, int vector)
+ 	__default_send_IPI_dest_field(mask, vector, APIC_DEST_LOGICAL);
+ 	local_irq_restore(flags);
+ }
+-
+-#ifdef CONFIG_SMP
+-static int convert_apicid_to_cpu(u32 apic_id)
+-{
+-	int i;
+-
+-	for_each_possible_cpu(i) {
+-		if (per_cpu(x86_cpu_to_apicid, i) == apic_id)
+-			return i;
+-	}
+-	return -1;
+-}
+-
+-int safe_smp_processor_id(void)
+-{
+-	u32 apicid;
+-	int cpuid;
+-
+-	if (!boot_cpu_has(X86_FEATURE_APIC))
+-		return 0;
+-
+-	apicid = read_apic_id();
+-	if (apicid == BAD_APICID)
+-		return 0;
+-
+-	cpuid = convert_apicid_to_cpu(apicid);
+-
+-	return cpuid >= 0 ? cpuid : 0;
+-}
+-#endif
+ #endif
+diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
+index 340af81..0be61c4 100644
+--- a/arch/x86/kernel/crash.c
++++ b/arch/x86/kernel/crash.c
+@@ -140,7 +140,7 @@ void native_machine_crash_shutdown(struct pt_regs *regs)
+ 	x86_platform.guest.enc_kexec_begin();
+ 	x86_platform.guest.enc_kexec_finish();
+ 
+-	crash_save_cpu(regs, safe_smp_processor_id());
++	crash_save_cpu(regs, smp_processor_id());
+ }
+ 
+ #if defined(CONFIG_KEXEC_FILE) || defined(CONFIG_CRASH_HOTPLUG)
+diff --git a/arch/x86/kernel/reboot.c b/arch/x86/kernel/reboot.c
+index 9aaac1f..964f6b0 100644
+--- a/arch/x86/kernel/reboot.c
++++ b/arch/x86/kernel/reboot.c
+@@ -921,7 +921,7 @@ void nmi_shootdown_cpus(nmi_shootdown_cb callback)
+ 		return;
+ 
+ 	/* Make a note of crashing cpu. Will be used in NMI callback. */
+-	crashing_cpu = safe_smp_processor_id();
++	crashing_cpu = smp_processor_id();
+ 
+ 	shootdown_callback = callback;
+ 
 
