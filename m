@@ -1,120 +1,129 @@
-Return-Path: <linux-kernel+bounces-542668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC75CA4CC32
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:49:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62AD3A4CC39
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:51:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E99421892D52
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:49:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 892AA17470D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D65B233D8C;
-	Mon,  3 Mar 2025 19:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F9D233D98;
+	Mon,  3 Mar 2025 19:51:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X/EvZNex"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q3C7Fn64"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD1D230BCC;
-	Mon,  3 Mar 2025 19:48:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B48D1FFC60
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 19:51:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741031332; cv=none; b=CKusIRONI2F0ClMJyhFqNvqPHVOVRzNycqc4NrlqNTLcym0JhP9iOrBQN1vm+22vfAng8F86ygjSflaWlwGeX+6lXRNSPuqnjF/gxR9sQZgrMUP39MwxAENO3fTKiODWdYkGHC5Weiw4R7TF/ziHVdhvq5VlO82+CMPjVfqXo0A=
+	t=1741031509; cv=none; b=MpzkKODR5k+2wqhPe+PxAeozxCGLLIdGDT36PKV5R+N8AfGJ19DlCiSBPZFkd13YRo7Y/rRcyZaDf5C2jIXyVieP2VphWsnhFDtJddN3mkLJ70zinzWLf2lWiLnEB7iMSkQ6onRT8zvAZIdfofHYs8YXgn5LjfCtr+YFZep8l8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741031332; c=relaxed/simple;
-	bh=lBzLxz9LoAQhSV4qYBwW+SfQKCXYH6lsg4FbRLNjFV8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C+57TDWKOJtKPIixskSipxdTZOPVIekzIRHk30FplaDmgUtlUr89BQ/26gWA4Be3ZFx7FElDGAvoo/yrgkawIoKi7Ohb1RXkDprHPt73264ABhaCnx2GqIAtgRxTB0ODHi+S4xWj90lDmWKBdRtWb0wiV1QQCwQZVgkjrOvqGsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X/EvZNex; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741031331; x=1772567331;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=lBzLxz9LoAQhSV4qYBwW+SfQKCXYH6lsg4FbRLNjFV8=;
-  b=X/EvZNexwEYWSYVX+BU+pWcGo20q9FsbxjsrLKb6QIbVOvlCxIVTnxNX
-   u1W12iJHaMTTP7IZAITSXFqHp6PY8R0VpC2N35+f+5HvcA7I1yKHKHJG6
-   pk2eyBE2zXd4DDzSH3CBO2+Z/tu1L84ghZIMg+v5En9151xNT9A4771kU
-   dL4lEMlkM/u7j1k6+zHwlcZjC1N0MqJlKzJNkS8J5HX/x81q1D2UeeiT3
-   KbbaHUCQ3oXpjLEKG4DFHUBF5qrMe8JruftINYNdtkYzrVtYcbKxLGaA7
-   D5axlfHG0cHRwJ1HxgyJ0X5o+R08zVAGe2pAYjkuchScsWjWVanznNcFp
-   w==;
-X-CSE-ConnectionGUID: UJd82ISCR3yLqRBfSGQJbA==
-X-CSE-MsgGUID: EJMW1Pu4QAOh4tCw48IFuA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="53329438"
-X-IronPort-AV: E=Sophos;i="6.13,330,1732608000"; 
-   d="scan'208";a="53329438"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 11:48:50 -0800
-X-CSE-ConnectionGUID: f0lih0fqSzWhfKMbfsMU2A==
-X-CSE-MsgGUID: QIYx0h9mR3CtXinwurqg0A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,330,1732608000"; 
-   d="scan'208";a="118135060"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa007.fm.intel.com with ESMTP; 03 Mar 2025 11:48:48 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tpBmQ-000Isc-0p;
-	Mon, 03 Mar 2025 19:48:46 +0000
-Date: Tue, 4 Mar 2025 03:48:35 +0800
-From: kernel test robot <lkp@intel.com>
-To: Nam Tran <trannamatk@gmail.com>, pavel@kernel.org, lee@kernel.org,
-	krzk+dt@kernel.org, robh@kernel.org, conor+dt@kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Nam Tran <trannamatk@gmail.com>
-Subject: Re: [PATCH v2 2/2] leds: add new LED driver for TI LP5812
-Message-ID: <202503040306.gen0Ui0l-lkp@intel.com>
-References: <20250225170601.21334-3-trannamatk@gmail.com>
+	s=arc-20240116; t=1741031509; c=relaxed/simple;
+	bh=GsQ4AlMHXflwhjl3qlPbMr5mgvvbV1JUiFvFXS4uYGQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HQKR7Y9L+6CdLUwhZwdh4+Ls0Jn+tXmDo99r72tZqGb7Kh69vs8X4SGd/IUjQzQ3OiWKnW2Djo8OfPuS/rhVL+OKIt+i3nkUBdVCqSoQQtXmNJC7gVGpptU2pS/UjUGalRWheAvG8Yv5r7+F7CLtDvjU1D1koc/pygo9zj4IFU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q3C7Fn64; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-54298ec925bso7292540e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 11:51:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741031505; x=1741636305; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YOeEe/vKXmfGXFSe4NXDP7rT5PatmaYJmBeo1VUXgeM=;
+        b=q3C7Fn64y2JLH/pjzso65AhmdA9PZr8/Mnc2Rbg666gGcfMoD7MELHt7Q4vqPovuhY
+         3Ny89+/JGVfkJFUL0arRtdihgM1uqn9YUhr8Y9LLgx2Z2xK9IemRHM5BNt5sEh7CHxPA
+         0pE6mbQY2hpnA0sxMZnE1JbH1LPZIXEjyjo2ey0AHOD1RtlwojmWmiQSTPVlNQbotq5I
+         rfK+rGnb+D7uVMrGogozAimvBdxTPQZYTtvcZUj2eFO7DLCtnu5C8QFpaXJE1AtcECkl
+         M7npQKwglNKyz3cB5J5kdaxLxc2lM2dX+1CPCUWvos/8vyEp1jeCCzYIHof1KIKU8BAM
+         onfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741031505; x=1741636305;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YOeEe/vKXmfGXFSe4NXDP7rT5PatmaYJmBeo1VUXgeM=;
+        b=o4GUe7IeJ/lnLIn3eeQVmpLPUthbqWb65pbuaSSHftKYj00lJU0klQ5zZVEOzEw1gg
+         kgdMaWpN9DxkqMTpJ44DYIFp1Mv8U+Gh9nhJV5HGRM8DLA4RUwMqzAoAlyvYT5ovAhbS
+         si4sFG2rUhfGayhhdMpjfM0wuIiCcr4xWm+xR3YzWLC1VVYFRifFS7HLLFRmCFrvWll8
+         TsmbWdK1TqZdgJ03In+rAHUhe1JhUNHyst3zhp5/+2ngmjUGR3DSwi1mm2amEkzht+cw
+         PbVvZGO6cKo33aOQuPkUzy+CtC0McJxB0suxZ8IjxEZBcrN7UBSnwF1Ff9djZdw3KN2X
+         YBKA==
+X-Forwarded-Encrypted: i=1; AJvYcCUxTLPHii0cOp8ODBqXzQzsVp2qOUghpr3k+aMSLUZvS3vzopEx91l8J+M+F0By84fHxb75N1x6QLg5Mdg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGlXwVNuCzMClBGpd5TesiF1PilCo0g8fYekO40xx933sWVWHe
+	s79zox9c0RjNhl+NaCZFC/51zvfiDUzAaUo3g89wkPAaREZtFXrVX+/0D9Eu/AVqxkkJ+EihWKy
+	82Dx3aQqK0IUSVAxA+o7GeUzk7G+zykZJAKIqoQ==
+X-Gm-Gg: ASbGncs+TVaX7K8x4XtvlX1ixG/DHNhY1ovPymigLSPMbnMmp1Ja7QCZK5thIyxTopz
+	aOqWSbB1Yg2QuHUG/DVsqcS3h1zvgzUx1HNPv/i4kZCNVopD8DKOuuKkbdrJF6NaGZZXWPHVzHq
+	tE7ovV4mPliKHXPlfBzdUFyiVHAg==
+X-Google-Smtp-Source: AGHT+IFsGbvesnjWbfEk8+qcnhMhpwSK7rY1/+23lfk9h761ve12/onnm+C+Kg2oHwbcpQo6jWrgj2PsmOSffLjO+Lw=
+X-Received: by 2002:a05:6512:124b:b0:549:7145:5d25 with SMTP id
+ 2adb3069b0e04-54971455f79mr1443819e87.34.1741031505444; Mon, 03 Mar 2025
+ 11:51:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225170601.21334-3-trannamatk@gmail.com>
+References: <20250303164928.1466246-1-andriy.shevchenko@linux.intel.com> <20250303164928.1466246-2-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20250303164928.1466246-2-andriy.shevchenko@linux.intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 3 Mar 2025 20:51:34 +0100
+X-Gm-Features: AQ5f1Jr4_oqgGu33I-byOxU2dX3oyVoLqRbYUQ6KaoKwKXnjUNMYEaKqTtmoBw0
+Message-ID: <CACRpkdbm5RQ-YOAaU7Mu2dyEjM12v8mP7rTTmW9-V5EbOPTJPA@mail.gmail.com>
+Subject: Re: [PATCH net-next v2 1/3] ieee802154: ca8210: Use proper setter and
+ getters for bitwise types
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-wpan@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Alexander Aring <alex.aring@gmail.com>, Stefan Schmidt <stefan@datenfreihafen.org>, 
+	Miquel Raynal <miquel.raynal@bootlin.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Bartosz Golaszewski <brgl@bgdev.pl>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Nam,
+On Mon, Mar 3, 2025 at 5:49=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 
-kernel test robot noticed the following build errors:
+> Sparse complains that the driver doesn't respect the bitwise types:
+>
+> drivers/net/ieee802154/ca8210.c:1796:27: warning: incorrect type in assig=
+nment (different base types)
+> drivers/net/ieee802154/ca8210.c:1796:27:    expected restricted __le16 [a=
+ddressable] [assigned] [usertype] pan_id
+> drivers/net/ieee802154/ca8210.c:1796:27:    got unsigned short [usertype]
+> drivers/net/ieee802154/ca8210.c:1801:25: warning: incorrect type in assig=
+nment (different base types)
+> drivers/net/ieee802154/ca8210.c:1801:25:    expected restricted __le16 [a=
+ddressable] [assigned] [usertype] pan_id
+> drivers/net/ieee802154/ca8210.c:1801:25:    got unsigned short [usertype]
+> drivers/net/ieee802154/ca8210.c:1928:28: warning: incorrect type in argum=
+ent 3 (different base types)
+> drivers/net/ieee802154/ca8210.c:1928:28:    expected unsigned short [user=
+type] dst_pan_id
+> drivers/net/ieee802154/ca8210.c:1928:28:    got restricted __le16 [addres=
+sable] [usertype] pan_id
+>
+> Use proper setter and getters for bitwise types.
+>
+> Note, in accordance with [1] the protocol is little endian.
+>
+> Link: https://www.cascoda.com/wp-content/uploads/2018/11/CA-8210_datashee=
+t_0418.pdf [1]
+> Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-[auto build test ERROR on lee-leds/for-leds-next]
-[also build test ERROR on robh/for-next linus/master v6.14-rc5]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Nam-Tran/dt-bindings-leds-Add-LP5812-LED-driver-bindings/20250226-011634
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/leds.git for-leds-next
-patch link:    https://lore.kernel.org/r/20250225170601.21334-3-trannamatk%40gmail.com
-patch subject: [PATCH v2 2/2] leds: add new LED driver for TI LP5812
-config: x86_64-randconfig-006-20250303 (https://download.01.org/0day-ci/archive/20250304/202503040306.gen0Ui0l-lkp@intel.com/config)
-compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250304/202503040306.gen0Ui0l-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503040306.gen0Ui0l-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> ld.lld: error: undefined symbol: i2c_register_driver
-   >>> referenced by leds-lp5812.c:2313 (drivers/leds/leds-lp5812.c:2313)
-   >>>               vmlinux.o:(lp5812_driver_init)
---
->> ld.lld: error: undefined symbol: i2c_del_driver
-   >>> referenced by leds-lp5812.c:2313 (drivers/leds/leds-lp5812.c:2313)
-   >>>               vmlinux.o:(lp5812_driver_exit)
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Yours,
+Linus Walleij
 
