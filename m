@@ -1,244 +1,355 @@
-Return-Path: <linux-kernel+bounces-541318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58A7AA4BB6E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:57:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 834ADA4BB6D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:57:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78D773B2D70
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:56:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AC9B1893E6B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:57:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEDF31F1517;
-	Mon,  3 Mar 2025 09:56:23 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936571F03E8
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 09:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D96FB1F1523;
+	Mon,  3 Mar 2025 09:56:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FT3uUVTP"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2BE1F12F6;
+	Mon,  3 Mar 2025 09:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740995783; cv=none; b=BLP3yfW5NsLJN8SLiwbV/RBPWGKJdx7fwpyhx70eaEYenEtPn3VZ6v/ocwdXRjF4IGQKZIJYp+3TORmnsN9PsRwtdBijLOtGJ+CVNiG8Kk1xiM2pve6sXymUcefXzC4RrzQJeW5JLbGqk+JupMFIqKenlr0RxssbyTVkNZcGprs=
+	t=1740995809; cv=none; b=IQwmMIACLkQkNvB10yHX9OY4U3HNnu9QgLKHYnKHmU2fQD9lwx54rATy0smWP+laXCKnHLZoXr/JvNQHJVX/0SmQeXgx19cDQySUKcSocEne6ybjbFJQXaFUg0sLxbuhUV2bQM44GRpvyxk7aOitnFviDXSp6J/6I7Nn9UE2EDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740995783; c=relaxed/simple;
-	bh=3lavTbbEZnn297qrLhFCr5WMPCOupKpwU2IZhKdDIqA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SXZZU8f073ngh8naRzuBOJa3DhyIP3jhYCcNVKCdiliNBaLQFAy+adwdyMrNWdVzhIudpbO1Itftjl56K6scXdAbLc+Ql4QxvYw27R9CjHvJKAFJH5ZSBMqgdke1vviHmFQ7xb/0Hn26zTmEvJpLQtVFY0pK/MjXe++ikwUC6Yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E78F6113E;
-	Mon,  3 Mar 2025 01:56:34 -0800 (PST)
-Received: from [192.168.1.12] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 797EA3F66E;
-	Mon,  3 Mar 2025 01:56:15 -0800 (PST)
-Message-ID: <a52972c7-aadd-4a77-a292-057fa5f8372d@arm.com>
-Date: Mon, 3 Mar 2025 10:56:12 +0100
+	s=arc-20240116; t=1740995809; c=relaxed/simple;
+	bh=vaauKdgQ/xBP5Sjd+ekagRTM0cnkT9564ZcWHomNZAU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bF0RDFxIpHdpLEkSU7Bzor/55RE1AUKFvJNuf0G1nGgOEbED1vyhKiF7cf1bpkpT/wRT3TYk6c02JJvkChRKTnmIvKw0GFeIJpkCOIeTKhusg3UZyo6QZiR7Lu4hvRWpufzYMliJ6xdjp6xnEfuPdovb++p143OrrTzteSmMbYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FT3uUVTP; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2ff187f027fso732976a91.1;
+        Mon, 03 Mar 2025 01:56:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740995806; x=1741600606; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XWd07D6pFSSlTwQImXpRLf8JSaFpJSpotQCtmwnI1O8=;
+        b=FT3uUVTPPepSgkWj1aVTWXQCyWdmtS0QymYOm02KfxLvowRoLGoKYzHzFT95Atj1Mc
+         nTNXA+Hl9ezJLnubbcbe0wtpDKfhCkBTSmeoduBOhoflds+cfyuOdLhYuOiaJQKdSTyH
+         Dv25I0pIhmwJrhOg4OKL1HTGCMWH8abLLp+E15Q6zeMCJqyl9qQ5ZMfBsqho02xPlV0B
+         RD8VLHS8if+3JmsXqx+JwpySfVUIkqeCqvON4y0+XMmJ3dYU5c9g8tpHqvinI3mcjwNk
+         OfQXAiGBWhgdkQ/DtquQQNRn1PAvIEIAfQmKJpEmOEXZXFE16P6NN52T8/88TYZP1avV
+         Q/Dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740995806; x=1741600606;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XWd07D6pFSSlTwQImXpRLf8JSaFpJSpotQCtmwnI1O8=;
+        b=lmhG8wH6MNT79c9rAw0BfWy94PJMQ9Oj100htRlxfXcFJhTaJvFO168F1WpaCITltJ
+         XiGPY4llfz0MtF2f4xbRJ1YKfw06mLYdzu+RhetmugycwqxE1qc5g9zsI6g/irGu7yxV
+         RI8XmP1f/3sMrxyl5k1U3Mc29CorLiEO2h77JW5DpVZaFe+QDpyxZtogxREXYTQmGmTW
+         sjO+WE67PO8YRfXmnaHewPC0at2TvgOa6YvGVKBBz2DLpg4Nv+X8Br0xYQ3vujpzbReD
+         bcAUMdbtCSs2R5I8twYydNyNzsMd4OSP/89vmjAIMxnEkpQsMQH9wu8s+v7lGXf9rDVf
+         LRYA==
+X-Forwarded-Encrypted: i=1; AJvYcCW+ndhOQJYhw+FvjmGVXOTnrvDf8l8ER2sR86hTSMd0F9ZHNrHsS/vKcdM3mJgTj3Np00e/huIIDcjJyQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOHLXNLaXgqHqgGGR8XCZ/QqsMwq87xCkCLGGDevUkn4Kr0pMR
+	eU13q8t3dj4cz7t97GUGZcoj+1BLivtHk/+I5fp+GhYo+580p7qcAgDzqSd3DSjvSaf6d1OgLuB
+	hL91ct4ktMYn1UypVRiVA7WTXLIvMNGOnfNg=
+X-Gm-Gg: ASbGncvYDkSD7tsxTnp2Z5Y+UoptfZtfbMLgO5dn1idNELPO1IaunDL2sgqBc7QTEaH
+	oTwbIwvdCFAbJlH+8kX6ER3wyH4y36rp7SmF9foUcFMests3nsgAnyYJ4tCxIKIZi346m7uKk+h
+	mNgcQylpuo7lX3T1vwMhQLuEfY1g==
+X-Google-Smtp-Source: AGHT+IEIGVq/NZk6ndWbqLLtN3JumLWvzn/7rxT8lru/+JgeRqnyR+BSdC3a6d2o5WeoVkSyhRK2tsEkoia7e3kQwno=
+X-Received: by 2002:a17:90b:4b0d:b0:2e2:c2b0:d03e with SMTP id
+ 98e67ed59e1d1-2feba5edb2emr18685076a91.5.1740995806361; Mon, 03 Mar 2025
+ 01:56:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 3/4] arm64: topology: Support SMT control on ACPI
- based system
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Yicong Yang <yangyicong@huawei.com>, catalin.marinas@arm.com,
- will@kernel.org, tglx@linutronix.de, peterz@infradead.org,
- mpe@ellerman.id.au, linux-arm-kernel@lists.infradead.org, mingo@redhat.com,
- bp@alien8.de, dave.hansen@linux.intel.com, dietmar.eggemann@arm.com,
- linuxppc-dev@lists.ozlabs.org, x86@kernel.org, linux-kernel@vger.kernel.org,
- morten.rasmussen@arm.com, msuchanek@suse.de, gregkh@linuxfoundation.org,
- rafael@kernel.org, jonathan.cameron@huawei.com, prime.zeng@hisilicon.com,
- linuxarm@huawei.com, yangyicong@hisilicon.com, xuwei5@huawei.com,
- guohanjun@huawei.com, sshegde@linux.ibm.com
-References: <20250218141018.18082-1-yangyicong@huawei.com>
- <20250218141018.18082-4-yangyicong@huawei.com> <Z8HAkZiHYRjj97M7@bogus>
- <336e9c4e-cd9c-4449-ba7b-60ee8774115d@arm.com>
- <20250228190641.q23vd53aaw42tcdi@bogus>
-Content-Language: en-US
-From: Pierre Gondois <pierre.gondois@arm.com>
-In-Reply-To: <20250228190641.q23vd53aaw42tcdi@bogus>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241202123351.86957-1-guille.rodriguez@gmail.com> <Z70UagY4hxDwUDHv@google.com>
+In-Reply-To: <Z70UagY4hxDwUDHv@google.com>
+From: Guillermo Rodriguez Garcia <guille.rodriguez@gmail.com>
+Date: Mon, 3 Mar 2025 10:56:35 +0100
+X-Gm-Features: AQ5f1JpRULr_d7hOptF-J_vi5pYdZoBChQKqNTeGXMyf-KRJy_AwNg324XxObME
+Message-ID: <CABDcavYXBrZMMj1gn7CzNbA4f-L4c+q555goU+U0KUEs-6rW+w@mail.gmail.com>
+Subject: Re: [PATCH 0/1] Input: evdev - fix wrong timestamp after SYN_DROPPED
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Hi Dmitry,
+
+El mar, 25 feb 2025 a las 1:53, Dmitry Torokhov
+(<dmitry.torokhov@gmail.com>) escribi=C3=B3:
+>
+> Hi Guillermo,
+>
+> On Mon, Dec 02, 2024 at 01:33:50PM +0100, Guillermo Rodr=C3=ADguez wrote:
+> > Hi all,
+> >
+> > We are seeing an issue with gpio_keys where the first event after
+> > a SYN_DROPPED has the same timestamp as the SYN_DROPPED event itself.
+> > After some investigation it looks like this is an issue with evdev
+> > and not specific to gpio_keys.
+> >
+> > The issue was originally introduced in commit 3b51c44 ("Input: allow
+> > drivers specify timestamp for input events").
+> >
+> > This commit introduced input_set_timestamp and input_get_timestamp.
+> > The latter (despite the name) actually generates and stores a timestamp
+> > in dev->timestamp if the driver did not set one itself. This timestamp
+> > needs to be reset when events are flushed; otherwise the next event
+> > will use a stale timestamp. A partial fix was implemented in 4370b23
+> > ("Input: reset device timestamp on sync"), but this does not cover the
+> > case of SYN_DROPPED.
+> >
+> > If a SYN_DROPPED is generated (currently only done by evdev), the
+> > following happens:
+> >
+> > - evdev calls input_get_timestamp to generate a timestamp for the
+> >   SYN_DROPPED event.
+> > - input_get_timestamp generates a timestamp and stores it in
+> >   dev->timestamp
+> > - When the next real event is reported (in evdev_events), evdev
+> >   calls input_get_timestamp, which uses the timestamp already
+> >   stored in dev->timestamp, which corresponds to the SYN_DROPPED event
+> >
+> > How to fix:
+> >
+> > - When a SYN_DROPPED is generated, after calling input_get_timestamp,
+> >   the timestamp stored in dev->timestamp should be reset (same as is
+> >   currently done in input_handle_event). The attached patch does that.
+>
+> So this happens after you change clock type of a client, right?
+
+Yes.
+
+>
+> I do dot think having one client affecting timestamp for everyone is a
+> good idea.
+
+Do you mean the timestamp of the SYN_DROPPED event itself?
+I am not sure if this is an issue. The timestamp of the SYN_DROPPED
+event is not particularly meaningful.
+A client that sees a SYN_DROPPED only knows that some events were
+dropped, but the timestamp of the SYN_DROPPED event itself does not
+carry any useful information -- it is not, for example, the timestamp
+of the event that was dropped (in fact you cannot even know how many
+events were dropped).
+
+> Instead I think __evdev_queue_syn_dropped() should either:
+>
+> - use "now" time for SYN_DROPPED generated when user requests clock
+>   change or reads device's current state, or
+>
+> - check if input device has timestamp set and use it or use "now". This
+>   option is needed if we are concerned about timestamps potentially
+>   going backwards if clock change happens in a middle of delivering
+>   input packet.
+
+If you want to do it like this I would advise to just use "now".
+
+CLOCK_MONOTONIC (and CLOCK_BOOTTIME) cannot go backwards by definition.
+
+The wall clock (CLOCK_REALTIME) can go backwards but this is a
+"feature" and should not be "fixed". if client code wants to see wall
+clock timestamps then it should be prepared to see time going
+backwards, for example when the time is updated, or in the middle of
+DST changes.
+
+>
+> >
+> > (Perhaps the underlying problem is that it is not expected that a
+> > function called input_get_timestamp will have side effects. The
+> > commit history of input.c shows that this has actually caused a
+> > few issues since 3b51c44.)
+>
+> Yes, maybe something like below will work better. It does not address
+> the keeping timestamp for SYN_DROPPED though.
+
+Could be.
+But I can't help wondering whether 3b51c44 was a good idea.
+input_set_timestamp was supposed to "allow drivers to provide a more
+accurate timestamp" but I wonder if there was a real need for that --
+it did not seem to have in-tree users except for uinput and more
+recently wacom_wac.
+
+Anyway the original problem I reported is not related to the timestamp
+of the SYN_DROPPED event itself, but to the fact that this timestamp
+is then reused for the next "real" event after SYN_DROPPED. My patch
+clears the timestamp after the SYN_DROPPED is handled, in the same way
+it was already being done on flush, in input_handle_event (now moved
+to input_dispose_event).
+
+Thanks,
+
+Guillermo
+
+>
+> Thanks.
+>
+> --
+> Dmitry
+>
+>
+> diff --git a/drivers/input/input.c b/drivers/input/input.c
+> index 54d35c1a2a24..954c5104a1c1 100644
+> --- a/drivers/input/input.c
+> +++ b/drivers/input/input.c
+> @@ -61,6 +61,66 @@ static const unsigned int input_max_code[EV_CNT] =3D {
+>         [EV_FF] =3D FF_MAX,
+>  };
+>
+> +/**
+> + * input_set_timestamp - set timestamp for input events
+> + * @dev: input device to set timestamp for
+> + * @timestamp: the time at which the event has occurred
+> + *   in CLOCK_MONOTONIC
+> + *
+> + * This function is intended to provide to the input system a more
+> + * accurate time of when an event actually occurred. The driver should
+> + * call this function as soon as a timestamp is acquired ensuring
+> + * clock conversions in input_set_timestamp are done correctly.
+> + *
+> + * The system entering suspend state between timestamp acquisition and
+> + * calling input_set_timestamp can result in inaccurate conversions.
+> + */
+> +void input_set_timestamp(struct input_dev *dev, ktime_t timestamp)
+> +{
+> +       dev->timestamp[INPUT_CLK_MONO] =3D timestamp;
+> +       dev->timestamp[INPUT_CLK_REAL] =3D ktime_mono_to_real(timestamp);
+> +       dev->timestamp[INPUT_CLK_BOOT] =3D ktime_mono_to_any(timestamp,
+> +                                                          TK_OFFS_BOOT);
+> +}
+> +EXPORT_SYMBOL(input_set_timestamp);
+> +
+> +/**
+> + * input_get_timestamp - get timestamp for input events
+> + * @dev: input device to get timestamp from
+> + *
+> + * A valid timestamp is a timestamp of non-zero value.
+> + */
+> +ktime_t *input_get_timestamp(struct input_dev *dev)
+> +{
+> +       bool have_timestamp;
+> +
+> +       /* TODO: remove setting of the timestamp in a few releases. */
+> +       have_timestamp =3D ktime_compare(dev->timestamp[INPUT_CLK_MONO],
+> +                                      ktime_set(0, 0));
+> +       if (WARN_ON_ONCE(!have_timestamp))
+> +               input_set_timestamp(dev, ktime_get());
+> +
+> +       return dev->timestamp;
+> +}
+> +EXPORT_SYMBOL(input_get_timestamp);
+> +
+> +static bool input_is_timestamp_set(struct input_dev *dev)
+> +{
+> +       return ktime_compare(dev->timestamp[INPUT_CLK_MONO], ktime_set(0,=
+ 0));
+> +}
+> +
+> +/*
+> + * Reset timestamp for an input device so that next input event will get
+> + * a new one.
+> + *
+> + * Note we only need to reset the monolithic one as we use its presence =
+when
+> + * deciding whether to generate a synthetic timestamp.
+> + */
+> +static void input_reset_timestamp(struct input_dev *dev)
+> +{
+> +       dev->timestamp[INPUT_CLK_MONO] =3D ktime_set(0, 0);
+> +}
+> +
+>  static inline int is_event_supported(unsigned int code,
+>                                      unsigned long *bm, unsigned int max)
+>  {
+> @@ -342,11 +402,9 @@ static void input_event_dispose(struct input_dev *de=
+v, int disposition,
+>                 dev->num_vals =3D 0;
+>                 /*
+>                  * Reset the timestamp on flush so we won't end up
+> -                * with a stale one. Note we only need to reset the
+> -                * monolithic one as we use its presence when deciding
+> -                * whether to generate a synthetic timestamp.
+> +                * with a stale one in the next event packet.
+>                  */
+> -               dev->timestamp[INPUT_CLK_MONO] =3D ktime_set(0, 0);
+> +               input_reset_timestamp(dev);
+>         } else if (dev->num_vals >=3D dev->max_vals - 2) {
+>                 dev->vals[dev->num_vals++] =3D input_value_sync;
+>                 input_pass_values(dev, dev->vals, dev->num_vals);
+> @@ -366,6 +424,9 @@ void input_handle_event(struct input_dev *dev,
+>                 if (type !=3D EV_SYN)
+>                         add_input_randomness(type, code, value);
+>
+> +               if (!input_is_timestamp_set(dev))
+> +                       input_set_timestamp(dev, ktime_get());
+> +
+>                 input_event_dispose(dev, disposition, type, code, value);
+>         }
+>  }
+> @@ -2053,46 +2114,6 @@ void input_free_device(struct input_dev *dev)
+>  }
+>  EXPORT_SYMBOL(input_free_device);
+>
+> -/**
+> - * input_set_timestamp - set timestamp for input events
+> - * @dev: input device to set timestamp for
+> - * @timestamp: the time at which the event has occurred
+> - *   in CLOCK_MONOTONIC
+> - *
+> - * This function is intended to provide to the input system a more
+> - * accurate time of when an event actually occurred. The driver should
+> - * call this function as soon as a timestamp is acquired ensuring
+> - * clock conversions in input_set_timestamp are done correctly.
+> - *
+> - * The system entering suspend state between timestamp acquisition and
+> - * calling input_set_timestamp can result in inaccurate conversions.
+> - */
+> -void input_set_timestamp(struct input_dev *dev, ktime_t timestamp)
+> -{
+> -       dev->timestamp[INPUT_CLK_MONO] =3D timestamp;
+> -       dev->timestamp[INPUT_CLK_REAL] =3D ktime_mono_to_real(timestamp);
+> -       dev->timestamp[INPUT_CLK_BOOT] =3D ktime_mono_to_any(timestamp,
+> -                                                          TK_OFFS_BOOT);
+> -}
+> -EXPORT_SYMBOL(input_set_timestamp);
+> -
+> -/**
+> - * input_get_timestamp - get timestamp for input events
+> - * @dev: input device to get timestamp from
+> - *
+> - * A valid timestamp is a timestamp of non-zero value.
+> - */
+> -ktime_t *input_get_timestamp(struct input_dev *dev)
+> -{
+> -       const ktime_t invalid_timestamp =3D ktime_set(0, 0);
+> -
+> -       if (!ktime_compare(dev->timestamp[INPUT_CLK_MONO], invalid_timest=
+amp))
+> -               input_set_timestamp(dev, ktime_get());
+> -
+> -       return dev->timestamp;
+> -}
+> -EXPORT_SYMBOL(input_get_timestamp);
+> -
+>  /**
+>   * input_set_capability - mark device as capable of a certain event
+>   * @dev: device that is capable of emitting or accepting event
 
 
 
-On 2/28/25 20:06, Sudeep Holla wrote:
-> On Fri, Feb 28, 2025 at 06:51:16PM +0100, Pierre Gondois wrote:
->>
->>
->> On 2/28/25 14:56, Sudeep Holla wrote:
->>> On Tue, Feb 18, 2025 at 10:10:17PM +0800, Yicong Yang wrote:
->>>> From: Yicong Yang <yangyicong@hisilicon.com>
->>>>
->>>> For ACPI we'll build the topology from PPTT and we cannot directly
->>>> get the SMT number of each core. Instead using a temporary xarray
->>>> to record the heterogeneous information (from ACPI_PPTT_ACPI_IDENTICAL)
->>>> and SMT information of the first core in its heterogeneous CPU cluster
->>>> when building the topology. Then we can know the largest SMT number
->>>> in the system. If a homogeneous system's using ACPI 6.2 or later,
->>>> all the CPUs should be under the root node of PPTT. There'll be
->>>> only one entry in the xarray and all the CPUs in the system will
->>>> be assumed identical.
->>>>
->>>> The core's SMT control provides two interface to the users [1]:
->>>> 1) enable/disable SMT by writing on/off
->>>> 2) enable/disable SMT by writing thread number 1/max_thread_number
->>>>
->>>> If a system have more than one SMT thread number the 2) may
->>>> not handle it well, since there're multiple thread numbers in the
->>>> system and 2) only accept 1/max_thread_number. So issue a warning
->>>> to notify the users if such system detected.
->>>>
->>>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/ABI/testing/sysfs-devices-system-cpu#n542
->>>>
->>>> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
->>>> Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
->>>> ---
->>>>    arch/arm64/kernel/topology.c | 66 ++++++++++++++++++++++++++++++++++++
->>>>    1 file changed, 66 insertions(+)
->>>>
->>>> diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
->>>> index 1a2c72f3e7f8..6eba1ac091ee 100644
->>>> --- a/arch/arm64/kernel/topology.c
->>>> +++ b/arch/arm64/kernel/topology.c
->>>> @@ -15,8 +15,10 @@
->>>>    #include <linux/arch_topology.h>
->>>>    #include <linux/cacheinfo.h>
->>>>    #include <linux/cpufreq.h>
->>>> +#include <linux/cpu_smt.h>
->>>>    #include <linux/init.h>
->>>>    #include <linux/percpu.h>
->>>> +#include <linux/xarray.h>
->>>>    #include <asm/cpu.h>
->>>>    #include <asm/cputype.h>
->>>> @@ -37,17 +39,28 @@ static bool __init acpi_cpu_is_threaded(int cpu)
->>>>    	return !!is_threaded;
->>>>    }
->>>> +struct cpu_smt_info {
->>>> +	unsigned int thread_num;
->>>> +	int core_id;
->>>> +};
->>>> +
->>>>    /*
->>>>     * Propagate the topology information of the processor_topology_node tree to the
->>>>     * cpu_topology array.
->>>>     */
->>>>    int __init parse_acpi_topology(void)
->>>>    {
->>>> +	unsigned int max_smt_thread_num = 0;
->>>> +	struct cpu_smt_info *entry;
->>>> +	struct xarray hetero_cpu;
->>>> +	unsigned long hetero_id;
->>>>    	int cpu, topology_id;
->>>>    	if (acpi_disabled)
->>>>    		return 0;
->>>> +	xa_init(&hetero_cpu);
->>>> +
->>>>    	for_each_possible_cpu(cpu) {
->>>>    		topology_id = find_acpi_cpu_topology(cpu, 0);
->>>>    		if (topology_id < 0)
->>>> @@ -57,6 +70,34 @@ int __init parse_acpi_topology(void)
->>>>    			cpu_topology[cpu].thread_id = topology_id;
->>>>    			topology_id = find_acpi_cpu_topology(cpu, 1);
->>>>    			cpu_topology[cpu].core_id   = topology_id;
->>>> +
->>>> +			/*
->>>> +			 * In the PPTT, CPUs below a node with the 'identical
->>>> +			 * implementation' flag have the same number of threads.
->>>> +			 * Count the number of threads for only one CPU (i.e.
->>>> +			 * one core_id) among those with the same hetero_id.
->>>> +			 * See the comment of find_acpi_cpu_topology_hetero_id()
->>>> +			 * for more details.
->>>> +			 *
->>>> +			 * One entry is created for each node having:
->>>> +			 * - the 'identical implementation' flag
->>>> +			 * - its parent not having the flag
->>>> +			 */
->>>> +			hetero_id = find_acpi_cpu_topology_hetero_id(cpu);
->>>> +			entry = xa_load(&hetero_cpu, hetero_id);
->>>> +			if (!entry) {
->>>> +				entry = kzalloc(sizeof(*entry), GFP_KERNEL);
->>>> +				WARN_ON_ONCE(!entry);
->>>> +
->>>> +				if (entry) {
->>>> +					entry->core_id = topology_id;
->>>> +					entry->thread_num = 1;
->>>> +					xa_store(&hetero_cpu, hetero_id,
->>>> +						 entry, GFP_KERNEL);
->>>> +				}
->>>> +			} else if (entry->core_id == topology_id) {
->>>> +				entry->thread_num++;
->>>> +			}
->>>>    		} else {
->>>>    			cpu_topology[cpu].thread_id  = -1;
->>>>    			cpu_topology[cpu].core_id    = topology_id;
->>>> @@ -67,6 +108,31 @@ int __init parse_acpi_topology(void)
->>>>    		cpu_topology[cpu].package_id = topology_id;
->>>>    	}
->>>> +	/*
->>>> +	 * This should be a short loop depending on the number of heterogeneous
->>>> +	 * CPU clusters. Typically on a homogeneous system there's only one
->>>> +	 * entry in the XArray.
->>>> +	 */
->>>> +	xa_for_each(&hetero_cpu, hetero_id, entry) {
->>>> +		if (entry->thread_num != max_smt_thread_num && max_smt_thread_num)
->>>> +			pr_warn_once("Heterogeneous SMT topology is partly supported by SMT control\n");
->>>
->>> Ditto as previous patch about handling no threaded cores with threaded cores
->>> in the system. I am not sure if that is required but just raising it here.
->>>
->>>> +
->>>> +		max_smt_thread_num = max(max_smt_thread_num, entry->thread_num);
->>>> +		xa_erase(&hetero_cpu, hetero_id);
->>>> +		kfree(entry);
->>>> +	}
->>>> +
->>>> +	/*
->>>> +	 * Notify the CPU framework of the SMT support. Initialize the
->>>> +	 * max_smt_thread_num to 1 if no SMT support detected. A thread
->>>> +	 * number of 1 can be handled by the framework so we don't need
->>>> +	 * to check max_smt_thread_num to see we support SMT or not.
->>>> +	 */
->>>> +	if (!max_smt_thread_num)
->>>> +		max_smt_thread_num = 1;
->>>> +
->>>
->>> Ditto as previous patch, can get rid if it is default 1.
->>>
->>
->> On non-SMT platforms, not calling cpu_smt_set_num_threads() leaves
->> cpu_smt_num_threads uninitialized to UINT_MAX:
->>
->> smt/active:0
->> smt/control:-1
->>
->> If cpu_smt_set_num_threads() is called:
->> active:0
->> control:notsupported
->>
->> So it might be slightly better to still initialize max_smt_thread_num.
->>
-> 
-> Sure, what I meant is to have max_smt_thread_num set to 1 by default is
-> that is what needed anyways and the above code does that now.
-> 
-> Why not start with initialised to 1 instead ?
-> Of course some current logic needs to change around testing it for zero.
-> 
-
-I think there would still be a way to check against the default value.
-If we have:
-unsigned int max_smt_thread_num = 1;
-
-then on a platform with 2 threads, the detection condition would trigger:
-xa_for_each(&hetero_cpu, hetero_id, entry) {
-     if (entry->thread_num != max_smt_thread_num && max_smt_thread_num)     <---- (entry->thread_num=2) and (max_smt_thread_num=1)
-         pr_warn_once("Heterogeneous SMT topology is partly
-                       supported by SMT control\n");
-
-so we would need an additional variable:
-bool is_initialized = false;
+--=20
+Guillermo Rodriguez Garcia
+guille.rodriguez@gmail.com
 
