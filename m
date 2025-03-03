@@ -1,176 +1,249 @@
-Return-Path: <linux-kernel+bounces-540973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3267A4B717
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 05:09:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 88B94A4B719
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 05:11:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32CDC16CC84
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 04:09:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A15F16CD8E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 04:10:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DB5B1D516A;
-	Mon,  3 Mar 2025 04:09:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1ED1DE2DC;
+	Mon,  3 Mar 2025 04:10:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DZdPnqCj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DdKnwaHk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD7513C8E8
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 04:09:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4457B13C8E8
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 04:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740974957; cv=none; b=X5Nvkb7SHbrlwEl2Vwc1ONctR4g6sfYYqg9N0bZM6oNlCiCiLx4HsexZ5h5hp5hb2CfEVCgdYUi3c63IqrhnQQUrpRiBPgkPj0+8nhcKzPYUMb23JRmEDVT5+w/dmiwQJb+gsFsu+1Gtm20phvhKt44LXCMT1iOAQ2/CwmXLXnU=
+	t=1740975053; cv=none; b=iQDvuxpm/J4gaJRaVJ4MjkEVylDVX7cEQ1BL/EjXAuCOWyjnyvflbZH42LArh/O8GbE823RpnWAlE/UX2KJRA+xxfxI7oZZw2nbI4Hhr0ryQr3io2V5ENefuItvHWjxP7AN0qX/4ZXwGyXpfTh8NMba37l/tDGzzKJx0Y+LPSwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740974957; c=relaxed/simple;
-	bh=7hKX0fEuBcixcx19TWpXVaY240JMSAx6tsmyGIUdMEM=;
-	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=rl2eKnb9MHFPib0BLcE4BIrK9dj3GSFOROQqPrldukNxbgAAMAaEZDdjs6W2VkPAVrJiRC8r2BD3utXTwR8zGWAUMvdWUrSpDVWsXPH7ONfpfaCBODx9VkGzO14SN3HQqf4MabXw88M3Ut37ytNLmPD2/ow+8RY4w29dWHPWrec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DZdPnqCj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A778C4CED6;
-	Mon,  3 Mar 2025 04:09:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740974955;
-	bh=7hKX0fEuBcixcx19TWpXVaY240JMSAx6tsmyGIUdMEM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=DZdPnqCjOyS++oQ0WhfMqIqdbk0NhQ67zliHkwy1R4i2tTVkaFuNmgncub0UKpO/G
-	 EtG7pLrT0MCfZimfKZqPedIZ85UnStFbJ8Jl4GEPI9LPxIDubtVycnE7tNhtHzRwub
-	 vbuIRwZZUpOpfVRjpNm8kvmx9xVpu/lRqRlkgJBuTdctJOk54t3OhLqNtLoMx2/VoT
-	 3GF66wR8RjreM30BATrcS5OnBbIvYGogNi2U23jFB5e+D8LpSDu0ebbz0Wwx8OEX8F
-	 WbDppHpYZ6c7mZ0FnfKdqYFJla2IiwqRl0b6hPQvBYhRBMSJHFHnrtBHJrkid507fC
-	 m7Mzy7gW0HgyA==
-Date: Mon, 3 Mar 2025 13:09:12 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Masami Hiramatsu (Google) <mhiramat@kernel.org>, Steven Rostedt
- <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- linux-kernel@vger.kernel.org
-Subject: [GIT PULL] probes: Fixes for v6.14-rc4
-Message-Id: <20250303130912.f5c90441a656c84edbbe5ba2@kernel.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740975053; c=relaxed/simple;
+	bh=Y7HjfUwf/Jdo7JmIWpCYe9yTIbXiqAYv6OQCDypKD3o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Qg1plQAPoIY20uUUFsi6hm8kbCF5QzNT+sRzYJtcBAIOmqOXB3lzy4f2z3hGgpxutoDWiESpU+Gkh8RtHhF0wtUnIzHch4F6qfCdDZiGVpWM/vhHOIbA3AZOUh6c1ivuCtoaOYh9BQGu8LVaGeb0HW2EupXi2mmi+F79IAN7cYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DdKnwaHk; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740975051;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F8Jpi5dvbsyJ9QNrNx2h/R0ed7l3DEYZ+0/PjrpQmlY=;
+	b=DdKnwaHkaHm4w0GRsAOdhZWFzpUNqzhJqP/jlJNU/FrRjA5VWNuDQoK9mKaYAcj/rFRWRK
+	dEVmE73chL5rVqILT9X7GL9vMFzO/fT0hqI2Yj0NaAsinFjTRfRwfzy+GXVWaTt55L4eC/
+	PpCLa4fDtvlZUJlsoHcseioT4W+pBQo=
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
+ [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-137-AIzP6SDcP-Shpsyvf5qMfA-1; Sun, 02 Mar 2025 23:10:35 -0500
+X-MC-Unique: AIzP6SDcP-Shpsyvf5qMfA-1
+X-Mimecast-MFC-AGG-ID: AIzP6SDcP-Shpsyvf5qMfA_1740975034
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-22348343f5aso72529325ad.2
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Mar 2025 20:10:35 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740975034; x=1741579834;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=F8Jpi5dvbsyJ9QNrNx2h/R0ed7l3DEYZ+0/PjrpQmlY=;
+        b=oNZSa41uCHbKRS97bEKTmthgKVnwQa7mU/3HN58MJ3D+YppuuVag1pG1sEJJhNGRap
+         i5lwOIkrMFHeOtnWiS8OERy1YFiRfWIPEVLzsoTRQNdMxC9/PnLO8phhXxKiuwY7jSHG
+         hXkmKSjg9QsYGNPPm+VzWr+2m0id2xzGNzXffrwHOoYCkJ16MCP21DPYNj24lsA8Uuj0
+         PdGeNjiL/tjZjcIAoc0J4Evj2N3MxXxP6lnUgg4ty9BinfsEJLxWSiBymc5yFUGoWcqB
+         FWlfM3firgcPKdcHcc1wtQBByxkvm5yaYZ+gwKu3pM/NOdWYr5WpLYXffyLKR90IX0nM
+         wS/g==
+X-Forwarded-Encrypted: i=1; AJvYcCVLJaE2kf6NpFqYaPgq6GTqx/mWMeDjZgAl/dEaUVaAh3Q9+C4lS22/XlTlMcDTUpJs7V96J71QjtUByQk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaAEjyNIV0LS/0qUMMnTERFnbNsuF0kKbWZSKnnknYXWIugG81
+	hWoJcSiDazJq3iPB7XRAyT7yFV/D9VF9wrnvqG0n7a8XN+qKhmgN2UQazJpoYZfCsH26fS081VS
+	2Q4VfwplzJWZuWD0QRkU7MRg7MK/tEHIrETTWmNkETSdT7IptTP55DufEVyPPLg==
+X-Gm-Gg: ASbGncsDkmPNcAjT7EEpNE6gI+zGr9lE5a+vZmPdRFZHArew/mRcwBQRRRPVORmxwXJ
+	+wQQOYCkJlkuuglgs5CyRidwzJX2Q9Xjybelg5nAHGkpumQ9kztICyQb7781UP6UsTJ0kVTQKgr
+	lwPVpx66WZTrJPMdJLmlg5nsPQc8gDnHS1KuhWq5pZimHIE1zqMKNSVMPSTYZBW+kCZi9MPl8TW
+	RgZnslM0apkrNYy/MkaGoj1oJXl4Q2SlFqEMwfzTc132vGeB8Sdx8oW4y9sewQRwe44bkvzRT2K
+	WkG7K+siwIHZr1eGMQ==
+X-Received: by 2002:a17:902:fc4f:b0:220:f509:686a with SMTP id d9443c01a7336-22368fbeaffmr188469725ad.29.1740975034361;
+        Sun, 02 Mar 2025 20:10:34 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEw8k64wqsi9xaJMniYJ96OZyxXCWbCHDZik8qo7jA9iBAMykPZRI5AC4LCj7ThWiPsfJiuoQ==
+X-Received: by 2002:a17:902:fc4f:b0:220:f509:686a with SMTP id d9443c01a7336-22368fbeaffmr188469335ad.29.1740975034020;
+        Sun, 02 Mar 2025 20:10:34 -0800 (PST)
+Received: from [192.168.68.55] ([180.233.125.164])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223501d26acsm68417915ad.9.2025.03.02.20.10.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 02 Mar 2025 20:10:33 -0800 (PST)
+Message-ID: <e130dd51-330e-43ef-b86f-41fd96cc9ec3@redhat.com>
+Date: Mon, 3 Mar 2025 14:10:24 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 07/45] arm64: RME: Define the user ABI
+To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
+ kvmarm@lists.linux.dev
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
+ <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
+ Alexandru Elisei <alexandru.elisei@arm.com>,
+ Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
+ linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun
+ <alpergun@google.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
+References: <20250213161426.102987-1-steven.price@arm.com>
+ <20250213161426.102987-8-steven.price@arm.com>
+Content-Language: en-US
+From: Gavin Shan <gshan@redhat.com>
+In-Reply-To: <20250213161426.102987-8-steven.price@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi Linus,
+On 2/14/25 2:13 AM, Steven Price wrote:
+> There is one (multiplexed) CAP which can be used to create, populate and
+> then activate the realm.
+> 
+> Co-developed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Signed-off-by: Steven Price <steven.price@arm.com>
+> ---
+> Changes since v6:
+>   * Rename some of the symbols to make their usage clearer and avoid
+>     repetition.
+> Changes from v5:
+>   * Actually expose the new VCPU capability (KVM_ARM_VCPU_REC) by bumping
+>     KVM_VCPU_MAX_FEATURES - note this also exposes KVM_ARM_VCPU_HAS_EL2!
+> ---
+>   Documentation/virt/kvm/api.rst    |  1 +
+>   arch/arm64/include/uapi/asm/kvm.h | 49 +++++++++++++++++++++++++++++++
+>   include/uapi/linux/kvm.h          | 12 ++++++++
+>   3 files changed, 62 insertions(+)
+> 
 
-Probes fixes for v6.14-rc4:
+The newly added ioctl commands need to be documented in Documentation/virt/kvm/api.rst.
+Section 4 would be the right place for it. Other than that, it looks good to me except
+the ioctl commands need to be fixed as suggested by Aneesh.
 
-- probe-events: Some issues are fixed.
- . probe-events: Remove unused MAX_ARG_BUF_LEN macro.
-   MAX_ARG_BUF_LEN is not used so remove it.
- . fprobe-events: Log error for exceeding the number of entry args.
-   Since the max number of entry args is limited, it should be checked
-   and rejected when the parser detects it.
- . tprobe-events: Reject invalid tracepoint name
-   User can specify an invalid tracepoint name e.g. including '/', then
-   the new event is not defined correctly in the eventfs.
- . tprobe-events: Fix a memory leak when tprobe defined with $retval
-   There is a memory leak if tprobe is defined with $retval.
+Thanks,
+Gavin
 
+> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+> index 0d1c3a820ce6..06763d89c0d7 100644
+> --- a/Documentation/virt/kvm/api.rst
+> +++ b/Documentation/virt/kvm/api.rst
+> @@ -5094,6 +5094,7 @@ Recognised values for feature:
+>   
+>     =====      ===========================================
+>     arm64      KVM_ARM_VCPU_SVE (requires KVM_CAP_ARM_SVE)
+> +  arm64      KVM_ARM_VCPU_REC (requires KVM_CAP_ARM_RME)
+>     =====      ===========================================
+>   
+>   Finalizes the configuration of the specified vcpu feature.
+> diff --git a/arch/arm64/include/uapi/asm/kvm.h b/arch/arm64/include/uapi/asm/kvm.h
+> index 568bf858f319..7eae0b1a482e 100644
+> --- a/arch/arm64/include/uapi/asm/kvm.h
+> +++ b/arch/arm64/include/uapi/asm/kvm.h
+> @@ -105,6 +105,7 @@ struct kvm_regs {
+>   #define KVM_ARM_VCPU_PTRAUTH_ADDRESS	5 /* VCPU uses address authentication */
+>   #define KVM_ARM_VCPU_PTRAUTH_GENERIC	6 /* VCPU uses generic authentication */
+>   #define KVM_ARM_VCPU_HAS_EL2		7 /* Support nested virtualization */
+> +#define KVM_ARM_VCPU_REC		8 /* VCPU REC state as part of Realm */
+>   
+>   struct kvm_vcpu_init {
+>   	__u32 target;
+> @@ -415,6 +416,54 @@ enum {
+>   #define   KVM_DEV_ARM_VGIC_SAVE_PENDING_TABLES	3
+>   #define   KVM_DEV_ARM_ITS_CTRL_RESET		4
+>   
+> +/* KVM_CAP_ARM_RME on VM fd */
+> +#define KVM_CAP_ARM_RME_CONFIG_REALM		0
+> +#define KVM_CAP_ARM_RME_CREATE_REALM		1
+> +#define KVM_CAP_ARM_RME_INIT_RIPAS_REALM	2
+> +#define KVM_CAP_ARM_RME_POPULATE_REALM		3
+> +#define KVM_CAP_ARM_RME_ACTIVATE_REALM		4
+> +
+> +/* List of configuration items accepted for KVM_CAP_ARM_RME_CONFIG_REALM */
+> +#define ARM_RME_CONFIG_RPV			0
+> +#define ARM_RME_CONFIG_HASH_ALGO		1
+> +
+> +#define ARM_RME_CONFIG_MEASUREMENT_ALGO_SHA256		0
+> +#define ARM_RME_CONFIG_MEASUREMENT_ALGO_SHA512		1
+> +
+> +#define ARM_RME_CONFIG_RPV_SIZE 64
+> +
+> +struct arm_rme_config {
+> +	__u32 cfg;
+> +	union {
+> +		/* cfg == ARM_RME_CONFIG_RPV */
+> +		struct {
+> +			__u8	rpv[ARM_RME_CONFIG_RPV_SIZE];
+> +		};
+> +
+> +		/* cfg == ARM_RME_CONFIG_HASH_ALGO */
+> +		struct {
+> +			__u32	hash_algo;
+> +		};
+> +
+> +		/* Fix the size of the union */
+> +		__u8	reserved[256];
+> +	};
+> +};
+> +
+> +#define KVM_ARM_RME_POPULATE_FLAGS_MEASURE	(1 << 0)
+> +struct arm_rme_populate_realm {
+> +	__u64 base;
+> +	__u64 size;
+> +	__u32 flags;
+> +	__u32 reserved[3];
+> +};
+> +
+> +struct arm_rme_init_ripas {
+> +	__u64 base;
+> +	__u64 size;
+> +	__u64 reserved[2];
+> +};
+> +
+>   /* Device Control API on vcpu fd */
+>   #define KVM_ARM_VCPU_PMU_V3_CTRL	0
+>   #define   KVM_ARM_VCPU_PMU_V3_IRQ	0
+> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+> index 45e6d8fca9b9..fa8f45029dff 100644
+> --- a/include/uapi/linux/kvm.h
+> +++ b/include/uapi/linux/kvm.h
+> @@ -930,6 +930,8 @@ struct kvm_enable_cap {
+>   #define KVM_CAP_X86_APIC_BUS_CYCLES_NS 237
+>   #define KVM_CAP_X86_GUEST_MODE 238
+>   
+> +#define KVM_CAP_ARM_RME 300 /* FIXME: Large number to prevent conflicts */
+> +
+>   struct kvm_irq_routing_irqchip {
+>   	__u32 irqchip;
+>   	__u32 pin;
+> @@ -1581,4 +1583,14 @@ struct kvm_pre_fault_memory {
+>   	__u64 padding[5];
+>   };
+>   
+> +/* Available with KVM_CAP_ARM_RME, only for VMs with KVM_VM_TYPE_ARM_REALM  */
+> +struct kvm_arm_rmm_psci_complete {
+> +	__u64 target_mpidr;
+> +	__u32 psci_status;
+> +	__u32 padding[3];
+> +};
+> +
+> +/* FIXME: Update nr (0xd2) when merging */
+> +#define KVM_ARM_VCPU_RMM_PSCI_COMPLETE	_IOW(KVMIO, 0xd2, struct kvm_arm_rmm_psci_complete)
+> +
+>   #endif /* __LINUX_KVM_H */
 
-Please pull the latest probes-fixes-v6.14-rc4 tree, which can be found at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-probes-fixes-v6.14-rc4
-
-Tag SHA1: 3af5dabeb0954e0d1f0321556d140b0475547c22
-Head SHA1: fd5ba38390c59e1c147480ae49b6133c4ac24001
-
-
-Masami Hiramatsu (Google) (4):
-      tracing: tprobe-events: Fix a memory leak when tprobe with $retval
-      tracing: tprobe-events: Reject invalid tracepoint name
-      tracing: fprobe-events: Log error for exceeding the number of entry args
-      tracing: probe-events: Remove unused MAX_ARG_BUF_LEN macro
-
-----
- kernel/trace/trace_fprobe.c | 20 ++++++++++++++++++++
- kernel/trace/trace_probe.h  |  5 +++--
- 2 files changed, 23 insertions(+), 2 deletions(-)
----------------------------
-diff --git a/kernel/trace/trace_fprobe.c b/kernel/trace/trace_fprobe.c
-index b8f3c4ba309b..e27305d31fc5 100644
---- a/kernel/trace/trace_fprobe.c
-+++ b/kernel/trace/trace_fprobe.c
-@@ -1049,6 +1049,19 @@ static int parse_symbol_and_return(int argc, const char *argv[],
- 	if (*is_return)
- 		return 0;
- 
-+	if (is_tracepoint) {
-+		tmp = *symbol;
-+		while (*tmp && (isalnum(*tmp) || *tmp == '_'))
-+			tmp++;
-+		if (*tmp) {
-+			/* find a wrong character. */
-+			trace_probe_log_err(tmp - *symbol, BAD_TP_NAME);
-+			kfree(*symbol);
-+			*symbol = NULL;
-+			return -EINVAL;
-+		}
-+	}
-+
- 	/* If there is $retval, this should be a return fprobe. */
- 	for (i = 2; i < argc; i++) {
- 		tmp = strstr(argv[i], "$retval");
-@@ -1056,6 +1069,8 @@ static int parse_symbol_and_return(int argc, const char *argv[],
- 			if (is_tracepoint) {
- 				trace_probe_log_set_index(i);
- 				trace_probe_log_err(tmp - argv[i], RETVAL_ON_PROBE);
-+				kfree(*symbol);
-+				*symbol = NULL;
- 				return -EINVAL;
- 			}
- 			*is_return = true;
-@@ -1215,6 +1230,11 @@ static int trace_fprobe_create_internal(int argc, const char *argv[],
- 	if (is_return && tf->tp.entry_arg) {
- 		tf->fp.entry_handler = trace_fprobe_entry_handler;
- 		tf->fp.entry_data_size = traceprobe_get_entry_data_size(&tf->tp);
-+		if (ALIGN(tf->fp.entry_data_size, sizeof(long)) > MAX_FPROBE_DATA_SIZE) {
-+			trace_probe_log_set_index(2);
-+			trace_probe_log_err(0, TOO_MANY_EARGS);
-+			return -E2BIG;
-+		}
- 	}
- 
- 	ret = traceprobe_set_print_fmt(&tf->tp,
-diff --git a/kernel/trace/trace_probe.h b/kernel/trace/trace_probe.h
-index 5803e6a41570..96792bc4b092 100644
---- a/kernel/trace/trace_probe.h
-+++ b/kernel/trace/trace_probe.h
-@@ -36,7 +36,6 @@
- #define MAX_BTF_ARGS_LEN	128
- #define MAX_DENTRY_ARGS_LEN	256
- #define MAX_STRING_SIZE		PATH_MAX
--#define MAX_ARG_BUF_LEN		(MAX_TRACE_ARGS * MAX_ARG_NAME_LEN)
- 
- /* Reserved field names */
- #define FIELD_STRING_IP		"__probe_ip"
-@@ -481,6 +480,7 @@ extern int traceprobe_define_arg_fields(struct trace_event_call *event_call,
- 	C(NON_UNIQ_SYMBOL,	"The symbol is not unique"),		\
- 	C(BAD_RETPROBE,		"Retprobe address must be an function entry"), \
- 	C(NO_TRACEPOINT,	"Tracepoint is not found"),		\
-+	C(BAD_TP_NAME,		"Invalid character in tracepoint name"),\
- 	C(BAD_ADDR_SUFFIX,	"Invalid probed address suffix"), \
- 	C(NO_GROUP_NAME,	"Group name is not specified"),		\
- 	C(GROUP_TOO_LONG,	"Group name is too long"),		\
-@@ -544,7 +544,8 @@ extern int traceprobe_define_arg_fields(struct trace_event_call *event_call,
- 	C(NO_BTF_FIELD,		"This field is not found."),	\
- 	C(BAD_BTF_TID,		"Failed to get BTF type info."),\
- 	C(BAD_TYPE4STR,		"This type does not fit for string."),\
--	C(NEED_STRING_TYPE,	"$comm and immediate-string only accepts string type"),
-+	C(NEED_STRING_TYPE,	"$comm and immediate-string only accepts string type"),\
-+	C(TOO_MANY_EARGS,	"Too many entry arguments specified"),
- 
- #undef C
- #define C(a, b)		TP_ERR_##a
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
