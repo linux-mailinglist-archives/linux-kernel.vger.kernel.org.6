@@ -1,256 +1,139 @@
-Return-Path: <linux-kernel+bounces-541585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D292A4BEB5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:33:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD45BA4BE9F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:32:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9148167208
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:32:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA8B418877E2
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:32:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1681FBCA4;
-	Mon,  3 Mar 2025 11:31:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BF891FBCA2;
+	Mon,  3 Mar 2025 11:32:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EM4meHfM"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OiLY0/kh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66C81F875B;
-	Mon,  3 Mar 2025 11:31:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5BF71F8BA5;
+	Mon,  3 Mar 2025 11:32:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741001518; cv=none; b=srwrnt+d/caVOsL1FFZ8GVIcvJSf/6+VVdJsXm0hwZ+x/zccENiqfEC3y3Hp+MrRjjHdCcCi0prYRP/QvswtLzN6nw/DQJtIZzgkeRQnsVSuK+pRl+fM0oIkVxicbzQ2uCYm0EGkNJZESqNkNEr71pGgOT/sryNVbdLWqHsvpqY=
+	t=1741001540; cv=none; b=Y3+2VBT1f8ZLzNmlfOC/x/LpSzO2057bTKp0xacGMGkD0QZOEbcyhzBBWxkU8O/WKGupdffszByUr1sbfZpeAmA4Y0nH2N/58NMIkPBTAQEbXxPxISCynYjsepN9R9dAvCKefM9oVIC6o1QfoOsLrvCh5Vr1aDEomMLyLeUHnXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741001518; c=relaxed/simple;
-	bh=VK+wLQ9a1YVw2InQlR9rBHrpWbLQSYD3JLURALNw+wQ=;
+	s=arc-20240116; t=1741001540; c=relaxed/simple;
+	bh=gRNBoJF05jernBUeq/KfMWGP1a+nFz+D5JahRaAph9Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=chWTQPtZX0lKVSn+7W3XBLBMEPSE9Lo5RRnDMsMcBjfM8u3W5Cex5oo2hkgfXeDXU/5a3rOuFuZd9A+0w+1gAnoWvMG5gQ5R5PPCuXPDhVK9t1a7tu1JoSRttt+s588f+SCHRdTZAkt67oNw7ox662hLl8+9U76MZa476Hsx+ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EM4meHfM; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-547bcef2f96so4835828e87.1;
-        Mon, 03 Mar 2025 03:31:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741001515; x=1741606315; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3D8bLpJVMiCGePd22hG/jc8AHfF1TSUBPWzjyI39QwE=;
-        b=EM4meHfMZZSCLEZL7LKramR2/ynMrUw6wxrprERQiJhvlwlkYr7/lcJ8TShDbt+S/v
-         ENxqRgfr6XxgvUkDuS48OhWGNJFXDyf5eq/if91/n3SjAS+qRmz7pk+GUhoDi8YQZXP/
-         5kjWpZKTXjsitkzlPAmcY0e7CTMFw8MAdWX4CkfztZhi40mkpRdwRYg3ICStfBFssmbk
-         HrqzA+f3M0DUI9Rm48mM21PpDdlEi8kfVWFvcAE5YxgxA6+g/R/rYoxPDq3RUz7qolM8
-         oCX2sVkuGInDBAQKceUCvVtIHgziLh0HepvpSFQEP9QF9HyhQlDPiH9MNbiIZkzvulDl
-         oX1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741001515; x=1741606315;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3D8bLpJVMiCGePd22hG/jc8AHfF1TSUBPWzjyI39QwE=;
-        b=GdvEkJwcQDsqJ2z8hxlQfVUPeJQmgKVFFQtLuzTWkNrgIuLMd7udHlkJEMDI2H9DF6
-         D5kWYIOlG25nnter0rdhc+yvaq2U1izMt2rSWQUg5ER8+jcAez2VrLC2LmFWH+fivyhp
-         cawbWKSMQIzHSco9FdMsbQmqRcVDGg7N34kyS7UBPtM/bCmfLGfGzDXOGXeKA2ND/aFo
-         nl6VNdJrQ3HZPJGRIoWivCOSY5S3kZRP1o3A3GOpH/vUiEFy81ShTAQUC7NtCW0GtzbQ
-         nopaf/JggwCnizSKtVV2D0/UocQD5LO49fyVtlcWnCajfkH/XhrcCgtzhdMQ4Y6R9iCa
-         GMfA==
-X-Forwarded-Encrypted: i=1; AJvYcCUuS+Z/JleoNKi2GL0n2im+6MyqXbd1+0UKZsY0iFl29JMzTKzEBooYsceh78FGnW9LfCw5kwEFUM2D@vger.kernel.org, AJvYcCV0pOEzAi8/XPQJDrpAhJ9mbhGt7X0g5weL37YHlndrenpa7CFKYnSdypQi+Z8PjrcUHuVDpb2m0i+p@vger.kernel.org, AJvYcCWUSMQZUkOZ8Ks4BqvZs2QbETfadWF8OI0H+S49gP87J7MaZRLjHkWdGaMclV18OyT7qamZQ6xTUlKV5Q==@vger.kernel.org, AJvYcCX5D7jDBn93sXqvB02BolO5XPInYRmBvmWy23kzZzX4//9gUfr04iKeQ2/AU32G+qv2VP9nIPa0@vger.kernel.org, AJvYcCXJV39risidGXOaY5tdC2WnqE471clJCn6O7vuDVOv2CZ3FhYpWn17G/7tetifBL6OLVJZVyroBfk8bMQ0U@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/hQFuywrO2wMeOEtDj9jnFbQ7+avsAVnzsxlri8c84pvFtpXe
-	cwJAz0ro1gXMqCIXy9EgXse85sI6dw0Qv1KGy0ku+Lfj3sXen45j
-X-Gm-Gg: ASbGncsl7kjXNoRBIpQiTpeoN4GM9HWucSx4ERlkiH/0wcNmK9gNhCYRyOV0KiQf+Ee
-	xtMKxDx1cAyYN/q+TWSM91n0HIyHKXYK13Pgek1hrPh5WiaUnhHjfKwOy68fdO6x0K3OiO1e0GP
-	j0/M4f/29TEEOCO5T4tbx1ul2mElum/WuSeqhALMWcEc6289PFVRsXqd9suo30wl1sV0jJ9dyLX
-	Nzme3wFl+Q1Q32UdTGmisSCD1yLelbw1BoQ2R9JbK1+x8uHGf8SSfocQ//yi6cQsKKBAeDFv7cK
-	yS2Nmcs8pahmn3o8DKVYGZTfeqer5yYjPjjr0LywsOpIPtQc/6ZADiLnuhJ/Xsr5eW0D+j6O9WL
-	gWPE8qI4GjzA=
-X-Google-Smtp-Source: AGHT+IFUzrwDae5itGK0Tklt3eAptl3kvZJJdnByYoCxNj7mnHlHu9IrZm0GFAEmcyC/aR//kpMwfw==
-X-Received: by 2002:a05:6512:3191:b0:544:c36:3333 with SMTP id 2adb3069b0e04-5494c323660mr4969609e87.30.1741001514716;
-        Mon, 03 Mar 2025 03:31:54 -0800 (PST)
-Received: from mva-rohm (mobile-access-2e8451-125.dhcp.inet.fi. [46.132.81.125])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54953457ef0sm915179e87.166.2025.03.03.03.31.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 03:31:52 -0800 (PST)
-Date: Mon, 3 Mar 2025 13:31:45 +0200
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Claudiu Manoil <claudiu.manoil@nxp.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH v5 02/10] property: Add functions to count named child nodes
-Message-ID: <5e35f44db2b4ed43f75c4c53fd0576df9ad24ab2.1740993491.git.mazziesaccount@gmail.com>
-References: <cover.1740993491.git.mazziesaccount@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=l8w1GBI3Oc4J4dLWMHlZKx2SWrX/XNHW4QCHHky+yqX4RjAYnTk5JsnZucdXBlUMzd4YSMHI/vggN5D2BnnZF1krkoWmMsAdyTRJV8Dk/Cv0JsUHDTTuXEpKaH1z/YCelwGrDiVbdWzD1o4Wr2Q894AuAwa8x4JDROX4a0l+0fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OiLY0/kh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33938C4CED6;
+	Mon,  3 Mar 2025 11:32:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741001540;
+	bh=gRNBoJF05jernBUeq/KfMWGP1a+nFz+D5JahRaAph9Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OiLY0/khaL2Ip+oy4IwfXwqO5ikHaoL5ZsUfOE/5XvmQ2y9IP8FjKVfIDmm96eC0a
+	 yfHpmEO43PSH/mrpd3d+aD8AKA+fVWOytuM1HR3QpBSVPGiSAaTAHU+xB6rwXrrsIs
+	 Jk48sJ+GKUTnBXA+FIsT4qEu57+TNJTThg3TR/NuANLQUppAKfwZcjAQmwDN45DC1H
+	 2IYn3GxuHjW09NnOyZLxKWqEjd2ERGSZMz0NeE2yMOQLSE0F2rwjgHQPIHD38C2pPT
+	 uBuqq+mbBeqV3FnACtw/hUBSrf7ETH2df81Ryvt+lJVXPgMLTcDbFOSRndCcxinyOv
+	 XE/n4UbPMPHfg==
+Date: Mon, 3 Mar 2025 12:32:08 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Rostyslav Khudolii <ros@qtec.com>
+Cc: Yazen Ghannam <yazen.ghannam@amd.com>, Borislav Petkov <bp@alien8.de>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	x86@kernel.org, "bhelgaas@google.com" <bhelgaas@google.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>
+Subject: Re: PCI IO ECS access is no longer possible for AMD family 17h
+Message-ID: <Z8WTON2K77Q567Kg@gmail.com>
+References: <CAJDH93s25fD+iaPJ1By=HFOs_M4Hc8LawPDy3n_-VFy04X4N5w@mail.gmail.com>
+ <20241219112125.GAZ2QBteug3I1Sb46q@fat_crate.local>
+ <20241219164408.GA1454146@yaz-khff2.amd.com>
+ <CAJDH93vm0buJn5vZEz9k9GRC3Kr6H7=0MSJpFtdpy_dSsUMDCQ@mail.gmail.com>
+ <Z78uOaPESGXWN46M@gmail.com>
+ <CAJDH93uE+foFfRAXVJ48-PYvEUsbpEu_-BVoG-5HsDG66yY7AQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="kzKPySHPwn0pN7fg"
-Content-Disposition: inline
-In-Reply-To: <cover.1740993491.git.mazziesaccount@gmail.com>
-
-
---kzKPySHPwn0pN7fg
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-There are some use-cases where child nodes with a specific name need to
-be parsed. In a few cases the data from the found nodes is added to an
-array which is allocated based on the number of found nodes. One example
-of such use is the IIO subsystem's ADC channel nodes, where the relevant
-nodes are named as channel[@N].
-
-Add a helpers for counting device's sub-nodes with certain name instead
-of open-coding this in every user.
-
-Suggested-by: Jonathan Cameron <jic23@kernel.org>
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
----
-Revision history:
-v4 =3D> v5:
- - Use given name instead of string 'channel' when counting the nodes
- - Add also fwnode_get_child_node_count_named() as suggested by Rob.
-v3 =3D> v4:
- - New patch as suggested by Jonathan, see discussion in:
-https://lore.kernel.org/lkml/20250223161338.5c896280@jic23-huawei/
----
- drivers/base/property.c  | 57 ++++++++++++++++++++++++++++++++++++++++
- include/linux/property.h |  4 +++
- 2 files changed, 61 insertions(+)
-
-diff --git a/drivers/base/property.c b/drivers/base/property.c
-index c1392743df9c..3faf02b99cff 100644
---- a/drivers/base/property.c
-+++ b/drivers/base/property.c
-@@ -945,6 +945,63 @@ unsigned int device_get_child_node_count(const struct =
-device *dev)
- }
- EXPORT_SYMBOL_GPL(device_get_child_node_count);
-=20
-+/**
-+ * fwnode_get_child_node_count_named - number of child nodes with given na=
-me
-+ * @fwnode: Node which child nodes are counted.
-+ * @name: String to match child node name against.
-+ *
-+ * Scan child nodes and count all the nodes with a specific name. Return t=
-he
-+ * number of found nodes. Potential '@number' -ending for scanned names is
-+ * ignored. Eg,
-+ * device_get_child_node_count(dev, "channel");
-+ * would match all the nodes:
-+ * channel { }, channel@0 {}, channel@0xabba {}...
-+ *
-+ * Return: the number of child nodes with a matching name for a given devi=
-ce.
-+ */
-+unsigned int fwnode_get_child_node_count_named(const struct fwnode_handle =
-*fwnode,
-+					       const char *name)
-+{
-+	struct fwnode_handle *child;
-+	unsigned int count =3D 0;
-+
-+	fwnode_for_each_child_node(fwnode, child)
-+		if (fwnode_name_eq(child, name))
-+			count++;
-+
-+	return count;
-+}
-+EXPORT_SYMBOL_GPL(fwnode_get_child_node_count_named);
-+
-+/**
-+ * device_get_child_node_count_named - number of child nodes with given na=
-me
-+ * @dev: Device to count the child nodes for.
-+ * @name: String to match child node name against.
-+ *
-+ * Scan device's child nodes and find all the nodes with a specific name a=
-nd
-+ * return the number of found nodes. Potential '@number' -ending for scann=
-ed
-+ * names is ignored. Eg,
-+ * device_get_child_node_count(dev, "channel");
-+ * would match all the nodes:
-+ * channel { }, channel@0 {}, channel@0xabba {}...
-+ *
-+ * Return: the number of child nodes with a matching name for a given devi=
-ce.
-+ */
-+unsigned int device_get_child_node_count_named(const struct device *dev,
-+					       const char *name)
-+{
-+	const struct fwnode_handle *fwnode =3D dev_fwnode(dev);
-+
-+	if (!fwnode)
-+		return -EINVAL;
-+
-+	if (IS_ERR(fwnode))
-+		return PTR_ERR(fwnode);
-+
-+	return fwnode_get_child_node_count_named(fwnode, name);
-+}
-+EXPORT_SYMBOL_GPL(device_get_child_node_count_named);
-+
- bool device_dma_supported(const struct device *dev)
- {
- 	return fwnode_call_bool_op(dev_fwnode(dev), device_dma_supported);
-diff --git a/include/linux/property.h b/include/linux/property.h
-index e214ecd241eb..269ab539515b 100644
---- a/include/linux/property.h
-+++ b/include/linux/property.h
-@@ -209,6 +209,10 @@ int fwnode_irq_get(const struct fwnode_handle *fwnode,=
- unsigned int index);
- int fwnode_irq_get_byname(const struct fwnode_handle *fwnode, const char *=
-name);
-=20
- unsigned int device_get_child_node_count(const struct device *dev);
-+unsigned int fwnode_get_child_node_count_named(const struct fwnode_handle =
-*fwnode,
-+					       const char *name);
-+unsigned int device_get_child_node_count_named(const struct device *dev,
-+					       const char *name);
-=20
- static inline int device_property_read_u8(const struct device *dev,
- 					  const char *propname, u8 *val)
---=20
-2.48.1
+In-Reply-To: <CAJDH93uE+foFfRAXVJ48-PYvEUsbpEu_-BVoG-5HsDG66yY7AQ@mail.gmail.com>
 
 
---kzKPySHPwn0pN7fg
-Content-Type: application/pgp-signature; name="signature.asc"
+* Rostyslav Khudolii <ros@qtec.com> wrote:
 
------BEGIN PGP SIGNATURE-----
+> Hi,
+> 
+> > Rostyslav, I would like to ask you, do you have patches / updates for
+> > enabling the EnableCf8ExtCfg bit for AMD 17h+ family? I could try to
+> > adjust my lspci changes for new machines.
+> 
+> Pali, sorry for the late reply. Do I understand correctly, that even
+> though you have access to the ECS via
+> the MMCFG you still want the legacy (direct IO) to work for the
+> debugging purposes? I can prepare a
+> simple patch that will allow you to do so if that's the case.
+> 
+> >
+> > So what is the practical impact here? Do things start breaking
+> > unexpectedly if CONFIG_ACPI_MCFG and CONFIG_PCI_MMCONFIG are disabled?
+> > Then I'd suggest fixing that in the Kconfig space, either by adding a
+> > dependency on ACPI_MCFG && PCI_MMCONFIG, or by selecting those
+> > must-have pieces of infrastructure.
+> >
+> 
+> Ingo, thank you for the reply.
+> 
+> The way I understand the access to the PCI ECS (via raw_pci_ext_ops)
+> works, is the following:
+> 1. If CONFIG_ACPI_MCFG or CONFIG_PCI_MMCONFIG are enabled - set the
+> raw_pci_ext_ops to use
+>     MMCFG to access ECS. See pci_mmcfg_early_init() / pci_mmcfg_late_init();
+> 2. If CONFIG_ACPI_MCFG and CONFIG_PCI_MMCONFIG are disabled - set the
+> raw_pci_ext_ops to use
+>     the 'direct' access to ECS. See pci_direct_init(). The direct
+> access is conditional on the PCI_HAS_IO_ECS
+>     flag being set.
+> 
+> On AMD, the kernel enables the ECS IO access via the
+> amd_bus_cpu_online() and pci_enable_pci_io_ecs().
+> Except those functions have no desired effect on the AMD 17h+ family
+> because the register (EnableCf8ExtCfg),
+> they access, has been moved. What is important though, is that the
+> PCI_HAS_IO_ECS flag is set unconditionally.
+> See pci_io_ecs_init() in amd_bus.c
+> 
+> Therefore I was wondering whether we should add support for the 17h+
+> family in those functions to have
+> the direct access work for those families as well.
 
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmfFkyEACgkQeFA3/03a
-ocVk2Af9Hyi2V4kPlX2y9PP8vv7cf2CaFwFcKaEb3wF4abK7xl/p1iuy5t2IKYP+
-xgpqzjOxRv5nqsftTbERgHalh/VTfmMLsinD1WwV0GnJTjI0z8GojbTQoLAv4aet
-ZX9ruqK1cdteuVCQBf/dBhVVEqXf8btU2z39yzIzyfCi0l9MKj1PHph8xkwoCI6W
-tFMY3vyE8EgQmT6O+nNrMBSZsiqFu/ETBhYW6cwSOWDaHDXlkRX1IKZO4kvbLNdq
-/TckUxLhYFNoU98fXqxuKRI2X4/8demRz6typqEKEhLHHsy2cqGGDtPIjrwnbrU5
-97WE6ObjRcyOl8NLpwE/mDXlPWT03A==
-=vOx6
------END PGP SIGNATURE-----
+Yeah, I think so, but I'm really just guessing:
 
---kzKPySHPwn0pN7fg--
+> Regarding your suggestion to address this in the Kconfig space - I'm 
+> not quite sure I follow, since right now the kernel will use 
+> raw_pci_ext_ops whenever access beyond the first 256 bytes is 
+> requested. Say we want to make that conditional on CONFIG_ACPI_MCFG 
+> and CONFIG_PCI_MMCONFIG, does it also mean then we want to drop 
+> support for the 'direct' PCI IO ECS access altogether?
+
+I thought that enabling CONFIG_ACPI_MCFG would solve the problem, and 
+other architectures are selecting it pretty broadly:
+
+ arch/arm64/Kconfig:     select ACPI_MCFG if (ACPI && PCI)
+ arch/loongarch/Kconfig: select ACPI_MCFG if ACPI
+ arch/riscv/Kconfig:     select ACPI_MCFG if (ACPI && PCI)
+
+While x86 allows it to be user-configured, which may result in 
+misconfiguration, given that PCI_HAS_IO_ECS is being followed 
+unconditionally if a platform provides it?
+
+Thanks,
+
+	Ingo
 
