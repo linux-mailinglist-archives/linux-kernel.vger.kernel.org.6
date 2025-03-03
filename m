@@ -1,145 +1,237 @@
-Return-Path: <linux-kernel+bounces-541852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C59FBA4C268
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:51:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30287A4C216
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:36:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9A78188E556
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:51:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DBA31897F65
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:34:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C9B6212B17;
-	Mon,  3 Mar 2025 13:51:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DACB7212B31;
+	Mon,  3 Mar 2025 13:33:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="F6wdiybK"
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jIDHEwe8"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD0A42101B3;
-	Mon,  3 Mar 2025 13:51:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 346D686347
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 13:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741009894; cv=none; b=n5oeRv8t8YvWcmycuwu66QrnhA2VOkKrmMNjUnmNwON8wEem3kRVuRFhr4Ln+9HYBFfI7a1r9qqkuebMKSaXfdKsOgT16DKTY0oU+6ZepL80cO4rXavIGA6wtR8DmWGwNN3N5YV25MqBkoOfRrM1R0pWhp9tPD6M20ZPrX1oYak=
+	t=1741008835; cv=none; b=ccHCZA3luPPwjTHV6PtY9eg99+bFDew2LT7v/DEA7rthzhBjAs1ZLywGh5D0pDHzFuzr5E910a/eXuFpjr29Gpwm4qoT3XGFiScQMkE5Gs/+X/yqsvVtX5+sxZqyYERUoEb6LKZwfjS+4OIlx3HzA9ndFeiv0NCOutadRwEd1dI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741009894; c=relaxed/simple;
-	bh=p4DhxoHd3mXOHoZ4y5+57jK7IJPUhj8owFfMXypcf4I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qXUTT1wOALP7LRFsUG1SNOEhjXy+LodUvfLPM/YhoaO+pitqwkY3YUyVIFUZwzIZ7LKfjnISEXRfnhlPp2pTKkLha7/tOSENfsN4+cA272PH57fMGLU8eEvfL/p6TtO/UBxRlKoMMP931tzCSwJDJsr8/xJWIfvcrviP2Orv6r4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=F6wdiybK; arc=none smtp.client-ip=67.231.152.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5236w7Hs006077;
-	Mon, 3 Mar 2025 07:33:11 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=ofmnRVwI5AT62ptxh8zklk/N01TYJ0oFg8f5/KIUZRw=; b=
-	F6wdiybK2ED4uAxZOAJ/RRTtc+TbrgGGRp7AsLBjfNmeL1wxKEJe1gpttdgFAZQQ
-	aygpqZQDL0He9/cn7WEOggadA7TgBV94vVupVnreLa1ZfKSWLnpeNovjZ0o9eyC/
-	BDOwxgQ9w5V98ZV5k7y2uCBojEfbl6eO8A9BVEphTGXn+nG98/KF+LmSaCxm5QxL
-	gwZnIK/MUTFJNIPctafUXvydaEtKH/23TqUrELy/xlvQCOc7TIdT+iOC9LnuDmW3
-	q+w2QcBUh3Vxi31LaC6G+AMvTrlFW3vech1ZZUmPbzC0V4UbwTPa7El2/5x0XEV8
-	jDLmZRWhEvTMuB7mDkGsEg==
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 453yhmcw74-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Mar 2025 07:33:11 -0600 (CST)
-Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 3 Mar
- 2025 13:33:10 +0000
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
- 15.2.1544.14 via Frontend Transport; Mon, 3 Mar 2025 13:33:10 +0000
-Received: from [198.90.208.18] (ediswws06.ad.cirrus.com [198.90.208.18])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id E67B2820248;
-	Mon,  3 Mar 2025 13:33:09 +0000 (UTC)
-Message-ID: <84b7c543-7e81-4a20-9f58-7ddf6b2001e5@opensource.cirrus.com>
-Date: Mon, 3 Mar 2025 13:33:09 +0000
+	s=arc-20240116; t=1741008835; c=relaxed/simple;
+	bh=0CT7Dtja27wpKuPK0J3uUyCc6Y5dVR1K8M0npmQguYI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ecznkx8tm/EGJVF1/IVWs47NoAe/G+2sGM6XuAlOiDgHnRysom27kqdhDrzCZL3GCnvXJX+Shum54mH2xQNcBAPWHsdlkMH5V9xBv6ifWts4OQJ2amSW4A5VEIjvdSez5BqerLo4kYHSqieF8P6P0FkANjoc2Yp7NUSILQQFOTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jIDHEwe8; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-390dc0a7605so2412448f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 05:33:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741008831; x=1741613631; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=98OQ8wvaJ9wtoqY/FnFWTw/2aTBVHaqyurEF1+7THsM=;
+        b=jIDHEwe8LddwPcJpPJ14BYSsjhgEx5uDCa9OesQDIbkqjZ0fY9BoInkPGfMTs4Bz7r
+         mRkuVQ7KtVP/TMHzZyHocJq1K4UzCoGlx9EH0hLlhY/n5vBzj1suMZlupnRnAeKBF/Xe
+         f6OUh4i24JleVcO7L8yTjdRDx1WbLbfsWpvtRwaw1Dej3wx0INwYjWODnMu6GEvFI6D0
+         rI7wLFqwLysDFohAwsBhRLhYCNlj8FoODWBupnFpl+xkHQUOwwv+6sipRqlGz9hG4APA
+         oDCBcSCyNCkr0G/NNZ6bOi2HYHGiFIBbzzvz6uv01pELaHVn0T8LN5x4h/jd2XvGG9Tg
+         mpnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741008831; x=1741613631;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=98OQ8wvaJ9wtoqY/FnFWTw/2aTBVHaqyurEF1+7THsM=;
+        b=a2v9yvbpGldxUJlHftsdzKSDL9xtVdkVnFfeVZEbCSUEdh/7iwGN1fAC6mSQ2MBftA
+         rSUh8kvEziw10YhJzocsHIykKdlNWyxfiojBfZJmHVhow3TYvDi2CzkXX1BZCgp4cgLy
+         NKGQbIWmHqoWjIgSTGRVO+fMcPISUGUAdTqFtiPizgM9ByU+8sTuDeq/3SdrrW3tgdR7
+         CSjyAaMDtCvgUAMOB9j3hoBRDZvGqcBOTt42qqUUB3k3jcSvBLv2qqylexdhZ1QtwNn1
+         UUOGD9565VVRHj4CTgxjlAmqf+5jwtwtFZftpSEOr9ez+8foloxQe376W6PntY5N1jbq
+         UK/Q==
+X-Gm-Message-State: AOJu0Yxf/AlCDmheIJbKL+Te1K9QG/JCAzYo/1brVHzT6/U94k/Ry4o0
+	3mShYX4V/vSrleJZkYX/3yvLTY0VhBHrfK9zqp6Use7VYaAPkxpgNb24EjLgZoHXpubFWfvr6so
+	tGnOq2vAtzMTuc8s/+jRONssAYms2hLgWDlV8
+X-Gm-Gg: ASbGncvsgy1sm6jPP2uy7/9qMGWHCMlsGO6+Js7qKwlTZ7B5bayf2jaL1fEL7nUojEZ
+	Pfhwt7rvGgOKFwy3J/DBNu5Wqf57bS8RpDaMyd50HH6UhPUZ60j6P7qQNSJFiYMxeciGcunj+f/
+	VDjuJjPDE1Qs+QNRTOC8Jm8VQFWW6VVmYs1cOzDAHZ6d9opcH94bOs8jfZ
+X-Google-Smtp-Source: AGHT+IE8JWpQtarWwp+2hNt/MR6epGuJDDazTrc2gMvmQUZSN/QRsDdQQeOGHqHvxcXWjRP0+QCxyieUoVOMPKqMUFM=
+X-Received: by 2002:a05:6000:1f8a:b0:390:fc83:a070 with SMTP id
+ ffacd0b85a97d-390fc83a160mr6688529f8f.0.1741008831435; Mon, 03 Mar 2025
+ 05:33:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 11/15] gpio: arizona: use new line value setter callbacks
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mun Yew Tham
-	<mun.yew.tham@intel.com>, Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery
-	<andrew@codeconstruct.com.au>
-CC: <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pwm@vger.kernel.org>, <patches@opensource.cirrus.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-aspeed@lists.ozlabs.org>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20250303-gpiochip-set-conversion-v1-0-1d5cceeebf8b@linaro.org>
- <20250303-gpiochip-set-conversion-v1-11-1d5cceeebf8b@linaro.org>
-Content-Language: en-GB
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-In-Reply-To: <20250303-gpiochip-set-conversion-v1-11-1d5cceeebf8b@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: CRfd2hqIDBqS4F2QrofR-T9cJdEBrOGR
-X-Authority-Analysis: v=2.4 cv=UeirSLSN c=1 sm=1 tr=0 ts=67c5af97 cx=c_pps a=uGhh+3tQvKmCLpEUO+DX4w==:117 a=uGhh+3tQvKmCLpEUO+DX4w==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=KKAkSRfTAAAA:8 a=w1d2syhTAAAA:8 a=IHiEukr3ZQpEQQ-4GLUA:9 a=QEXdDO2ut3YA:10
- a=cvBusfyB2V15izCimMoJ:22 a=YXXWInSmI4Sqt1AkVdoW:22
-X-Proofpoint-GUID: CRfd2hqIDBqS4F2QrofR-T9cJdEBrOGR
-X-Proofpoint-Spam-Reason: safe
+References: <20250213135759.190006-1-fujita.tomonori@gmail.com> <20250213135759.190006-6-fujita.tomonori@gmail.com>
+In-Reply-To: <20250213135759.190006-6-fujita.tomonori@gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 3 Mar 2025 14:33:39 +0100
+X-Gm-Features: AQ5f1JoT3yLvXrcqi1UY1px9Dirgxz3oFETPYn_JBDKUcmKVulP6_KvtwihScxI
+Message-ID: <CAH5fLgjX9hh+QRrKggOKr+6p+UwqHSavzu4UXy9iGNL2wSJXtg@mail.gmail.com>
+Subject: Re: [PATCH v3 5/5] rust: Add warn_on and warn_on_once
+To: FUJITA Tomonori <fujita.tomonori@gmail.com>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	x86@kernel.org, linux-riscv@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev, 
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, peterz@infradead.org, hpa@zytor.com, 
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
+	catalin.marinas@arm.com, will@kernel.org, chenhuacai@kernel.org, 
+	kernel@xen0n.name, tangyouling@loongson.cn, hejinyang@loongson.cn, 
+	yangtiezhu@loongson.cn, ojeda@kernel.org, alex.gaynor@gmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	benno.lossin@proton.me, a.hindborg@kernel.org, tmgross@umich.edu
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 03/03/2025 1:18 pm, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> struct gpio_chip now has callbacks for setting line values that return
-> an integer, allowing to indicate failures. Convert the driver to using
-> them.
-> 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Thu, Feb 13, 2025 at 3:01=E2=80=AFPM FUJITA Tomonori
+<fujita.tomonori@gmail.com> wrote:
+>
+> Add warn_on and warn_on_once macros. Wrapping the C's WARN_* and BUG_*
+> macros doesn't work so this uses the assembly code exported by the C
+> side via ARCH_WARN_ASM macro. Like the static branch code, this
+> generates the assembly code for rust at compile time by using the C
+> preprocessor.
+>
+> file()! macro doesn't work for the Rust inline assembly in the same
+> way as __FILE__ for the C inline assembly. So the code to handle a
+> file name is different from the C assembly code (similar to the
+> arm64/loongarch assembly).
+>
+> Similarly, ARCH_WARN_REACHABLE is also used at compile time to
+> generate the assembly code; objtool's reachable anotation code. Only
+> architectures that use objtool (x86 and loongarch) need it.
+>
+> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
 > ---
->   drivers/gpio/gpio-arizona.c | 9 +++++----
->   1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-arizona.c b/drivers/gpio/gpio-arizona.c
-> index c15fda99120a..e530c94dcce8 100644
-> --- a/drivers/gpio/gpio-arizona.c
-> +++ b/drivers/gpio/gpio-arizona.c
-> @@ -121,7 +121,8 @@ static int arizona_gpio_direction_out(struct gpio_chip *chip,
->   				  ARIZONA_GPN_DIR | ARIZONA_GPN_LVL, value);
->   }
->   
-> -static void arizona_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
-> +static int arizona_gpio_set(struct gpio_chip *chip, unsigned int offset,
-> +			    int value)
->   {
->   	struct arizona_gpio *arizona_gpio = gpiochip_get_data(chip);
->   	struct arizona *arizona = arizona_gpio->arizona;
-> @@ -129,8 +130,8 @@ static void arizona_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
->   	if (value)
->   		value = ARIZONA_GPN_LVL;
->   
-> -	regmap_update_bits(arizona->regmap, ARIZONA_GPIO1_CTRL + offset,
-> -			   ARIZONA_GPN_LVL, value);
-> +	return regmap_update_bits(arizona->regmap, ARIZONA_GPIO1_CTRL + offset,
-> +				  ARIZONA_GPN_LVL, value);
->   }
->   
->   static const struct gpio_chip template_chip = {
-> @@ -139,7 +140,7 @@ static const struct gpio_chip template_chip = {
->   	.direction_input	= arizona_gpio_direction_in,
->   	.get			= arizona_gpio_get,
->   	.direction_output	= arizona_gpio_direction_out,
-> -	.set			= arizona_gpio_set,
-> +	.set_rv			= arizona_gpio_set,
->   	.can_sleep		= true,
->   };
->   
-> 
-Reviewed-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+>  rust/Makefile                                 |   8 ++
+>  rust/kernel/.gitignore                        |   2 +
+>  rust/kernel/bug.rs                            | 100 ++++++++++++++++++
+>  rust/kernel/generated_arch_reachable_asm.rs.S |   7 ++
+>  rust/kernel/generated_arch_warn_asm.rs.S      |   7 ++
+>  rust/kernel/lib.rs                            |   1 +
+>  6 files changed, 125 insertions(+)
+>  create mode 100644 rust/kernel/bug.rs
+>  create mode 100644 rust/kernel/generated_arch_reachable_asm.rs.S
+>  create mode 100644 rust/kernel/generated_arch_warn_asm.rs.S
+>
+> diff --git a/rust/Makefile b/rust/Makefile
+> index 8fcfd60447bc..a295b65c43f3 100644
+> --- a/rust/Makefile
+> +++ b/rust/Makefile
+> @@ -34,6 +34,9 @@ obj-$(CONFIG_RUST_KERNEL_DOCTESTS) +=3D doctests_kernel=
+_generated.o
+>  obj-$(CONFIG_RUST_KERNEL_DOCTESTS) +=3D doctests_kernel_generated_kunit.=
+o
+>
+>  always-$(subst y,$(CONFIG_RUST),$(CONFIG_JUMP_LABEL)) +=3D kernel/genera=
+ted_arch_static_branch_asm.rs
+> +ifndef CONFIG_UML
+> +always-$(subst y,$(CONFIG_RUST),$(CONFIG_BUG)) +=3D kernel/generated_arc=
+h_warn_asm.rs kernel/generated_arch_reachable_asm.rs
+> +endif
+>
+>  # Avoids running `$(RUSTC)` when it may not be available.
+>  ifdef CONFIG_RUST
+> @@ -481,5 +484,10 @@ $(obj)/kernel.o: $(src)/kernel/lib.rs $(obj)/build_e=
+rror.o \
+>  ifdef CONFIG_JUMP_LABEL
+>  $(obj)/kernel.o: $(obj)/kernel/generated_arch_static_branch_asm.rs
+>  endif
+> +ifndef CONFIG_UML
+> +ifdef CONFIG_BUG
+> +$(obj)/kernel.o: $(obj)/kernel/generated_arch_warn_asm.rs $(obj)/kernel/=
+generated_arch_reachable_asm.rs
+> +endif
+> +endif
+>
+>  endif # CONFIG_RUST
+> diff --git a/rust/kernel/.gitignore b/rust/kernel/.gitignore
+> index 6ba39a178f30..f1d7f4225332 100644
+> --- a/rust/kernel/.gitignore
+> +++ b/rust/kernel/.gitignore
+> @@ -1,3 +1,5 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>
+>  /generated_arch_static_branch_asm.rs
+> +/generated_arch_warn_asm.rs
+> +/generated_arch_reachable_asm.rs
+> \ No newline at end of file
+> diff --git a/rust/kernel/bug.rs b/rust/kernel/bug.rs
+> new file mode 100644
+> index 000000000000..7ffd9cb1ad75
+> --- /dev/null
+> +++ b/rust/kernel/bug.rs
+> @@ -0,0 +1,100 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +// Copyright (C) 2024 FUJITA Tomonori
+> +
+> +//! Support for BUG_* and WARN_* functionality.
+> +//!
+> +//! C header: [`include/asm-generic/bug.h`](srctree/include/asm-generic/=
+bug.h)
+> +
+> +#[macro_export]
+> +#[doc(hidden)]
+> +#[cfg(all(CONFIG_BUG, not(CONFIG_UML)))]
+> +macro_rules! warn_flags {
+> +    ($flags:expr) =3D> {
+> +        const FLAGS: u32 =3D $crate::bindings::BUGFLAG_WARNING | $flags;
+> +        // SAFETY: Just an FFI call.
+> +        #[cfg(CONFIG_DEBUG_BUGVERBOSE)]
+> +        unsafe {
+> +            $crate::asm!(concat!(
+> +                "/* {size} */",
+> +                ".pushsection .rodata.str1.1, \"aMS\",@progbits, 1\n",
+> +                "111:\t .string ", "\"", file!(), "\"\n",
+> +                ".popsection\n",
+
+It looks like you're doing this so that you can reference the filename
+with "111b", but could you do this instead:
+
+const _FILE: &[u8] =3D file!().as_bytes();
+// Plus one for nul-terminator.
+static FILE: [u8; 1 + _FILE.len()] =3D {
+    let mut bytes =3D [0; 1 + _FILE.len()];
+    let mut i =3D 0;
+    while i < _FILE.len() {
+        bytes[i] =3D _FILE[i];
+        i +=3D 1;
+    }
+    bytes
+};
+
+and then use
+
+asm!(
+    concat!(
+        "/* {size} */",
+        include!(concat!(env!("OBJTREE"),
+"/rust/kernel/generated_arch_warn_asm.rs")),
+        include!(concat!(env!("OBJTREE"),
+"/rust/kernel/generated_arch_reachable_asm.rs")));
+    file =3D sym FILE,
+    line =3D const line!(),
+    ...
+);
+
+with
+::kernel::concat_literals!(ARCH_WARN_ASM("{file}", "{line}",
+"{flags}", "{size}")),
+
+That would be a lot simpler to understand than what you are doing.
+
+
+Alice
 
