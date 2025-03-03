@@ -1,126 +1,207 @@
-Return-Path: <linux-kernel+bounces-541093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53E4AA4B857
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:28:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9184AA4B854
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:28:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C482163743
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 07:28:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 834F816A556
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 07:28:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5237B1EA7EA;
-	Mon,  3 Mar 2025 07:28:03 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EB5F1E9B25;
+	Mon,  3 Mar 2025 07:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="KT0LYQir"
+Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84E61E8327;
-	Mon,  3 Mar 2025 07:27:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F9E1E9B3A
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 07:27:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740986883; cv=none; b=QkM4Y73o/TpBElBS7bMsKXzgBQzOGe1QtFn5PN162s7lpalCM5rSebA5omqnx4cJQoB9bDcYmX51HoMmpHCbYVELz+gKOtXdKU++PTSHJ/3m4sjiP0W7pZIQt4y2ajjBPwUuoRZmNss5RaeoUdzO419ib0Z8NCgKgdfVDzaf/V0=
+	t=1740986881; cv=none; b=pA5BTVABVfJAsrrHzXoySmQL0AWqgb97WNYfpHqh7udIBHDJF3E3Jyn8END7BKLAFJ9cz+NN0iX8+uEUVsHF+7Rrm5f60x/lOTGz3Wzh1f4oeFke6H7lr8tzQ6umjTpAUbbcwJKSt90d7MgEbT/QLrcEMm1j5H8g6LQaWW6bmug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740986883; c=relaxed/simple;
-	bh=sS6epZ/Q0dmr2tgVut1X+sY8gavr366YXLTOVDwcdzM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=a8Tk1+AVPPfrxp0ILU2DDPo5BdTqkvN6nWbEioA8QEsBcwnk0TPkUSKQJ/APAe+hfQnhJHpzOAudLwKNXodaHWtmvQ8eVGULDQFbheaSdYHKCaCswTyg30d3702xBF27SwfxbuU923TMhbpWrrUnZe4bz0hAzcB7uNkHgaR0xUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-05 (Coremail) with SMTP id zQCowAC3vaHsWcVnWs+uEQ--.52938S2;
-	Mon, 03 Mar 2025 15:27:47 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: jckuo@nvidia.com,
-	vkoul@kernel.org,
-	kishon@kernel.org,
-	thierry.reding@gmail.com,
-	jonathanh@nvidia.com
-Cc: linux-phy@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH v2 RESEND] phy: Fix error handling in tegra_xusb_port_init
-Date: Mon,  3 Mar 2025 15:27:39 +0800
-Message-Id: <20250303072739.3874987-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1740986881; c=relaxed/simple;
+	bh=QhcA4whS6Un5CmsdrWExBnC2H3eBPdvl0YoTWezDvh8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hHi1G/uJbFGlhKpGrRC5rf0jawZ5tIXHBmILkNAF8UpgDJVr2f5mFBn6c+CtyBcKytm2YdVxkkMMQwrAnr7UJmSvsttgDXmtl6ynvCl4Eb6SxMP3pZPWSBWGGgscddc+xSl5ZXQNtDA2lI04oXb5mmABMgFmRtHEMl4U/ED+rXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=KT0LYQir; arc=none smtp.client-ip=209.85.210.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-72a00f1f755so25329a34.2
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Mar 2025 23:27:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1740986879; x=1741591679; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NqQf+xJ+QQAO3X5FgRqwqBs+4VjeomCIEb383qkkc70=;
+        b=KT0LYQir+x5yMcUz5o/a3jgrED+KaNUHPnNifVJGaVuG3ez5HU/nogXThg10pMchEs
+         0qx7Hs1GKpFfcs/u2Xfc+VorDJj/KNFgi8SLTe9d8eC5cRFqRPYUcVRs1lEL+OYW/U4u
+         Afb7KVsDaBHB3vQMIjOMVGOzMZBc8jKkaZ0eJ4nfARAdSzxKbFq19/iCdKvOSXdTjSAw
+         jDNl5VkCkHw+bUUC6+BjQ/NUy48AuU3w/hmg9lKnzbzUYt0R3c1Lk8fKXNfKB3hw5zAR
+         5Bc71jF/s885LoTX2S7PHwICHHcPecbJuudKANQ2sqz+srlYWFK9PyYK9CT+LtExFpJh
+         zEAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740986879; x=1741591679;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NqQf+xJ+QQAO3X5FgRqwqBs+4VjeomCIEb383qkkc70=;
+        b=T9/WXREwso1Zzq4FHvIRb3RimqDNNsE7Pe0+NUbui8yTZzcy5IN9fH83B6vDRT19Hz
+         CMGvPd+WiJsp2k+9pp5ITwibymgzmvxe4+3YQb1fxw2ITdsPL832nPaAUDTsP9Hg/YDN
+         dvNwhdDaMPVv2/SLFX2n6tXv+6oRaPCsbm0pKlVc6GodlQGekKxAL/zhKpCslwPSQjar
+         R1+9ePGls6dBi5BM8m8BGTPb1BzXLYm185uIt4/f41JlTEPSppxeWf7L1nbYLY1FVetm
+         GvhVFNeqOZplvX+M+bSPLZfIwCgmGKGsCtNhBlRYtx4vHD+y+XeN9C2vfFGsRW41OLQa
+         hl4g==
+X-Forwarded-Encrypted: i=1; AJvYcCWqNuXlL6pNwKCOenNUiN4C1l4lIWMI0KmcaNJ+rrjj9f2PkQ5bCUU0fi0n0Ba54agr5BrxTOh7cv0guok=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlpPWIolVPQsgZr8d89L6vgMOTx/hP9CXflsyUjkS1vBzbP06r
+	s0csL5nqESv+KALktypfG3r0X+Qjkk4Ibo3Ac/iDZXCScmNCr9wPtbJ8vgcd2C83ooHTgHU9P28
+	Dd5fPW8+KF4dlcSaYmEq0D1ajSH5UdQurBXg2Eg==
+X-Gm-Gg: ASbGncswFD9W+X9J9n8zkcpDLOf/S+BdkFqVGj7y+j4/i7/Kf1B/FTLVNNzGpcX4J0D
+	zJTTmYbarjPSkxSwSIWZ60nSZqnOnxZDOR9bGA8U9ceftNw/jyJ0xQOIljl9uFb3pK0bIPPSR48
+	3/x5uNMJhwxCGAGUT26/eJD4APx6ky
+X-Google-Smtp-Source: AGHT+IGdGihCdXsHvPy1HB+Hi01lhvTlT2V3S/bXdVPc4cd4/qzcouwXquivhfRUZCtj9S8/0Uw/BjeV/TL6JLeNSuQ=
+X-Received: by 2002:a05:6830:348d:b0:727:3380:66ce with SMTP id
+ 46e09a7af769-728b830562fmr6634750a34.25.1740986878930; Sun, 02 Mar 2025
+ 23:27:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowAC3vaHsWcVnWs+uEQ--.52938S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Aw4DKFWkAF15tFW3Aw4fKrg_yoW8XFyDpa
-	1DGas8Kr9YgrWkKF4jvF409Fy5GF42k3yrur1rJ34akrn3W348tas8trWxXa4UArZ7uF4U
-	ArnxJa4kJFyUC3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUB214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
-	648v4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2
-	Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s02
-	6x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0x
-	vE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE
-	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6x
-	kF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUF0eHDUUUU
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+References: <20250201110607.34766-1-cuiyunhui@bytedance.com>
+ <CAEEQ3w=uYad7UAedSU4M_L277v=RQGWHpJQwOW-p7W6=hcijsQ@mail.gmail.com>
+ <CAHVXubhW9b6fw8ZvHtn7zmyRSUVt-3JjmFbE-_L42wZ9W6=vKA@mail.gmail.com>
+ <CAEEQ3wmAxF=PkRt_pKFZE5-r9w1SMY7YQtco2mCyE+vus7vufg@mail.gmail.com> <CAHVXubiHhDgC4=T7xCxK9hoCG7R2KZ46LRPmS8rgYuT7EiQDcg@mail.gmail.com>
+In-Reply-To: <CAHVXubiHhDgC4=T7xCxK9hoCG7R2KZ46LRPmS8rgYuT7EiQDcg@mail.gmail.com>
+From: yunhui cui <cuiyunhui@bytedance.com>
+Date: Mon, 3 Mar 2025 15:27:48 +0800
+X-Gm-Features: AQ5f1JrsGJklPaO7yuMRDKV0ZqC70eeIlZ0wPBsVlz4-JWSVixlDQ5gxzrmW-PQ
+Message-ID: <CAEEQ3wk9MWBG_neU5Ez9if9UcSsv9Q-EMm0gA2vjt8527rUujQ@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH] riscv: print hartid on bringup
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: apatel@ventanamicro.com, atishp@rivosinc.com, paul.walmsley@sifive.com, 
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, samuel.holland@sifive.com, 
+	jassisinghbrar@gmail.com, takakura@valinux.co.jp, 
+	valentina.fernandezalanis@microchip.com, ruanjinjie@huawei.com, 
+	charlie@rivosinc.com, conor.dooley@microchip.com, haibo1.xu@intel.com, 
+	andybnac@gmail.com, ke.zhao@shingroup.cn, tglx@linutronix.de, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-If device_add() fails, do not use device_unregister() for error
-handling. device_unregister() consists two functions: device_del() and
-put_device(). device_unregister() should only be called after
-device_add() succeeded because device_del() undoes what device_add()
-does if successful. Change device_unregister() to put_device() call
-before returning from the function.
+Hi Alex,
 
-As comment of device_add() says, 'if device_add() succeeds, you should
-call device_del() when you want to get rid of it. If device_add() has
-not succeeded, use only put_device() to drop the reference count'.
+On Fri, Feb 28, 2025 at 4:19=E2=80=AFPM Alexandre Ghiti <alexghiti@rivosinc=
+.com> wrote:
+>
+> Hi Yunhui,
+>
+> On Fri, Feb 28, 2025 at 7:41=E2=80=AFAM yunhui cui <cuiyunhui@bytedance.c=
+om> wrote:
+> >
+> > Hi Alex,
+> >
+> > On Wed, Feb 26, 2025 at 10:58=E2=80=AFPM Alexandre Ghiti <alexghiti@riv=
+osinc.com> wrote:
+> > >
+> > > Hi Yunhui,
+> > >
+> > > On Thu, Feb 20, 2025 at 1:54=E2=80=AFPM yunhui cui <cuiyunhui@bytedan=
+ce.com> wrote:
+> > > >
+> > > > Hi All,
+> > > >
+> > > > Gentle ping. Any comments on this patch?
+> > > >
+> > > > On Sat, Feb 1, 2025 at 7:06=E2=80=AFPM Yunhui Cui <cuiyunhui@byteda=
+nce.com> wrote:
+> > > > >
+> > > > > Firmware randomly releases cores, so CPU numbers don't linearly m=
+ap
+> > > > > to hartids. When the system has an exception, we care more about =
+hartids.
+> > > > >
+> > > > > Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+> > > > > ---
+> > > > >  arch/riscv/kernel/smp.c     | 2 ++
+> > > > >  arch/riscv/kernel/smpboot.c | 4 ++++
+> > > > >  2 files changed, 6 insertions(+)
+> > > > >
+> > > > > diff --git a/arch/riscv/kernel/smp.c b/arch/riscv/kernel/smp.c
+> > > > > index d58b5e751286..e650dec44817 100644
+> > > > > --- a/arch/riscv/kernel/smp.c
+> > > > > +++ b/arch/riscv/kernel/smp.c
+> > > > > @@ -48,6 +48,8 @@ EXPORT_SYMBOL_GPL(__cpuid_to_hartid_map);
+> > > > >  void __init smp_setup_processor_id(void)
+> > > > >  {
+> > > > >         cpuid_to_hartid_map(0) =3D boot_cpu_hartid;
+> > > > > +
+> > > > > +       pr_info("Booting Linux on hartid %lu\n", boot_cpu_hartid)=
+;
+> > > > >  }
+> > > > >
+> > > > >  static DEFINE_PER_CPU_READ_MOSTLY(int, ipi_dummy_dev);
+> > > > > diff --git a/arch/riscv/kernel/smpboot.c b/arch/riscv/kernel/smpb=
+oot.c
+> > > > > index e36d20205bd7..beba0efb00b9 100644
+> > > > > --- a/arch/riscv/kernel/smpboot.c
+> > > > > +++ b/arch/riscv/kernel/smpboot.c
+> > > > > @@ -231,6 +231,10 @@ asmlinkage __visible void smp_callin(void)
+> > > > >         riscv_ipi_enable();
+> > > > >
+> > > > >         numa_add_cpu(curr_cpuid);
+> > > > > +
+> > > > > +       pr_info("CPU%u: Booted secondary hartid %lu\n", curr_cpui=
+d,
+> > > > > +               cpuid_to_hartid_map(curr_cpuid));
+> > > > > +
+> > > > >         set_cpu_online(curr_cpuid, true);
+> > > > >
+> > > > >         /*
+> > > > > --
+> > > > > 2.39.2
+> > > > >
+> > > >
+> > > > Thanks,
+> > > > Yunhui
+> > >
+> > > IIRC that's a debug feature when you can't reach userspace and use
+> > > cpuinfo, so what about using pr_debug() instead?
+> >
+> > Using pr_debug needs enabling #define DEBUG in
+> > arch/riscv/kernel/smpboot.c and adding loglevel=3D8 to cmdline, not
+> > convenient.
+>
+> You can also use a kernel command line parameter to enable a
+> pr_debug() statement
+> https://www.kernel.org/doc/html/latest/admin-guide/dynamic-debug-howto.ht=
+ml#debug-messages-during-boot-process
 
-Found by code review.
+Umm, it works. I'll update v2.
 
-Cc: stable@vger.kernel.org
-Fixes: 53d2a715c240 ("phy: Add Tegra XUSB pad controller support")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
-Changes in v2:
-- modified the bug description as suggestions.
----
- drivers/phy/tegra/xusb.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> Alex
+>
+> > Can't always cat /proc/cpuinfo before running in user
+> > mode.
+> > It's true that pr_info prints a large amount of information in the
+> > startup logs, especially when there are many CPU cores.
+> >
+> > Do you have a better solution?
+> >
+> >
+> > > Thanks,
+> > >
+> > > Alex
+> >
+> > Thanks,
+> > Yunhui
 
-diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-index 79d4814d758d..c89df95aa6ca 100644
---- a/drivers/phy/tegra/xusb.c
-+++ b/drivers/phy/tegra/xusb.c
-@@ -548,16 +548,16 @@ static int tegra_xusb_port_init(struct tegra_xusb_port *port,
- 
- 	err = dev_set_name(&port->dev, "%s-%u", name, index);
- 	if (err < 0)
--		goto unregister;
-+		goto put_device;
- 
- 	err = device_add(&port->dev);
- 	if (err < 0)
--		goto unregister;
-+		goto put_device;
- 
- 	return 0;
- 
--unregister:
--	device_unregister(&port->dev);
-+put_device:
-+	put_device(&port->dev);
- 	return err;
- }
- 
--- 
-2.25.1
-
+Thanks,
+Yunhui
 
