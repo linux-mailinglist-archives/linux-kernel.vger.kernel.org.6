@@ -1,47 +1,46 @@
-Return-Path: <linux-kernel+bounces-544378-lists+linux-kernel=lfdr.de@vger.kernel.org>
-X-Original-To: lists+linux-kernel@lfdr.de
-Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66470A4E0AC
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:23:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 046B53B37C3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:17:20 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B485B204F73;
-	Tue,  4 Mar 2025 14:17:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FlLTRNph"
-Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB3F204F6B
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741097837; cv=pass; b=pP7jPLktY9tP3LX5CzoYObz9/QYxW4eqz1u8f7FjEN/3x2ZDgYK6Y9Yd6UCwkexPUUhtb0vpo+NCs+sHZGo5ZY+uDlOjG5grbHUlsQU6aQFwdi5gj8NUTt2FBwYUpAmF71kppN8Jd2Pu1orRzsAcnCZ5e5Si9H8mIOSF7a96W4A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741097837; c=relaxed/simple;
-	bh=eXllzOnoRt5/aqD3OK5q+LXzVWXzKgBZPq0p3jULFrA=;
+Return-Path: <linuxppc-dev+bounces-6689-lists+linuxppc-dev=lfdr.de@lists.ozlabs.org>
+X-Original-To: lists+linuxppc-dev@lfdr.de
+Delivered-To: lists+linuxppc-dev@lfdr.de
+Received: from lists.ozlabs.org (lists.ozlabs.org [IPv6:2404:9400:2:0:216:3eff:fee1:b9f1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 276DEA4E0F2
+	for <lists+linuxppc-dev@lfdr.de>; Tue,  4 Mar 2025 15:32:11 +0100 (CET)
+Received: from boromir.ozlabs.org (localhost [127.0.0.1])
+	by lists.ozlabs.org (Postfix) with ESMTP id 4Z6dRr31wYz3bmH;
+	Wed,  5 Mar 2025 01:32:08 +1100 (AEDT)
+X-Original-To: linuxppc-dev@lists.ozlabs.org
+Authentication-Results: lists.ozlabs.org; arc=pass smtp.remote-ip=160.75.25.116 arc.chain=subspace.kernel.org
+ARC-Seal: i=2; a=rsa-sha256; d=lists.ozlabs.org; s=201707; t=1741098728;
+	cv=pass; b=fzfW9rBxtMt4efJMieYrVfZf3EKfenEo8AtB3GGb+78xw8ZvhEh6o6/unS2BrvCrvIvmT9srustCxOB2kJ5RoNEk5AzwqmaNeh0ECs9TJ+IZx3wbJU9F9koJPN6zM8MVWT9KtMfVJqkmcIKdNkKYh68f2VHOuOA2TuF09zKXaekcVVwHts0ylDFOlF7KdB/pe73zUTHoEPlb9D4SEOM615hJebdQ1lVrXtFBjZpKWV818MP4SSSJbx86hjKwqlYPyWM/RhJhpK1kqK8rUj+8iVuNKQSvgnMN7J/5QDYt6MUqGvJ1XROvu5eXol9SIs5YfQUqCFMdvmYDBvL3ZyjRhQ==
+ARC-Message-Signature: i=2; a=rsa-sha256; d=lists.ozlabs.org; s=201707;
+	t=1741098728; c=relaxed/relaxed;
+	bh=yhKA0PWZzkHsCkSvRw6WIRSjH0fQoXRBt2BANeFnGaI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oDLQDkd1bVxlxv4Oojx9fe4pff9nhmMmkJnpMn57ZhA9Mhkhzr4Ffo+Uaw1iGEbKgRO/pnF8jzig3VdgoKcauBU4VQRoetU/o0UUL6z2DHffuCTMQKU+yt2EA97raV+NRKJJX/ZffPo43o4Js8iCE/zLCWvHqmU6LJhxAAgOOig=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FlLTRNph; arc=none smtp.client-ip=170.10.133.124; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; arc=pass smtp.client-ip=160.75.25.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
-Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
+	 In-Reply-To:Content-Type; b=Y/Qea84eXQ7yY05Jd5EdVgS7O33lAI+km8sY/ERs/m6Vc0zfUUapGhLsResoJ6wMnL5ABBvslDJYE7ch0xR/BFzhnUuLjqNtGYob86Aq/GhL3tQPtXqIZLCS0z5dFVY7pF0EW+DxYHdewtDLofgd1xuUB1hmqGeJELJFHlrMbItxFbAslMKXyloXLbHB7eJ38tueCVnUbwVOWi4OWuUoiX2Cfp5ty5HbrngfP8pXDtefDtn07Flr2Go+cPeOdkjZYdXxdnWLChjwWlXEa0/Y23OAbswtZCOihpJTQuevf0oR6MeJvs5iTEQNpmgEc6dqdl0DW/06BYZvcYM7ikM7kQ==
+ARC-Authentication-Results: i=2; lists.ozlabs.org; dmarc=pass (p=none dis=none) header.from=redhat.com; dkim=pass (1024-bit key; unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=FlLTRNph; dkim-atps=neutral; spf=none (client-ip=160.75.25.116; helo=beeline2.cc.itu.edu.tr; envelope-from=root@cc.itu.edu.tr; receiver=lists.ozlabs.org) smtp.mailfrom=cc.itu.edu.tr
+Authentication-Results: lists.ozlabs.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: lists.ozlabs.org;
+	dkim=pass (1024-bit key; unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=FlLTRNph;
+	dkim-atps=neutral
+Authentication-Results: lists.ozlabs.org; spf=none (no SPF record) smtp.mailfrom=cc.itu.edu.tr (client-ip=160.75.25.116; helo=beeline2.cc.itu.edu.tr; envelope-from=root@cc.itu.edu.tr; receiver=lists.ozlabs.org)
+X-Greylist: delayed 849 seconds by postgrey-1.37 at boromir; Wed, 05 Mar 2025 01:32:07 AEDT
+Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by lists.ozlabs.org (Postfix) with ESMTPS id 4Z6dRq23Gkz30Vq
+	for <linuxppc-dev@lists.ozlabs.org>; Wed,  5 Mar 2025 01:32:07 +1100 (AEDT)
+Received: from lesvatest1.cc.itu.edu.tr (unknown [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 29D1840D4DDD
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:17:14 +0300 (+03)
+	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id 4970840F1CD2
+	for <linuxppc-dev@lists.ozlabs.org>; Tue,  4 Mar 2025 17:17:22 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Authentication-Results: lesvatest1.cc.itu.edu.tr;
 	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=FlLTRNph
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6d5G66GvzFw9F
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:16:02 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6d5H0x6bzFw9L
+	for <linuxppc-dev@lists.ozlabs.org>; Tue,  4 Mar 2025 17:16:03 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
 	id 1F7C742731; Tue,  4 Mar 2025 17:15:27 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
@@ -63,6 +62,8 @@ Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
 	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F0D1F03EA;
 	Mon,  3 Mar 2025 08:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FlLTRNph"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
@@ -132,11 +133,21 @@ Received: from ?IPV6:2003:cb:c734:9600:af27:4326:a216:2bfb? (p200300cbc7349600af
 Message-ID: <964e8991-44c0-4ff7-91cc-033ed7c09835@redhat.com>
 Date: Mon, 3 Mar 2025 09:58:15 +0100
 Precedence: bulk
-Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+X-Mailing-List: linuxppc-dev@lists.ozlabs.org
+List-Id: <linuxppc-dev.lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev+help@lists.ozlabs.org>
+List-Owner: <mailto:linuxppc-dev+owner@lists.ozlabs.org>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Archive: <https://lore.kernel.org/linuxppc-dev/>,
+  <https://lists.ozlabs.org/pipermail/linuxppc-dev/>
+List-Subscribe: <mailto:linuxppc-dev+subscribe@lists.ozlabs.org>,
+  <mailto:linuxppc-dev+subscribe-digest@lists.ozlabs.org>,
+  <mailto:linuxppc-dev+subscribe-nomail@lists.ozlabs.org>
+List-Unsubscribe: <mailto:linuxppc-dev+unsubscribe@lists.ozlabs.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v9 19/20] fs/dax: Properly refcount fs dax pages
@@ -209,11 +220,16 @@ In-Reply-To: <c7d886ad7468a20452ef6e0ddab6cfe220874e7c.1740713401.git-series.apo
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6d5G66GvzFw9F
+X-ITU-Libra-ESVA-ID: 4Z6d5H0x6bzFw9L
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741702579.40091@0tjCVbu7CbloJGC7ELfgRg
+X-ITU-Libra-ESVA-Watermark: 1741702581.37164@EYeyObqxKOlyqe+7Iqs3OA
 X-ITU-MailScanner-SpamCheck: not spam
+X-Spam-Status: No, score=-1.3 required=5.0 tests=ARC_SIGNED,ARC_VALID,
+	DKIMWL_WL_HIGH,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_NONE autolearn=disabled version=4.0.0
+X-Spam-Checker-Version: SpamAssassin 4.0.0 (2022-12-13) on lists.ozlabs.org
 
 
 > -static inline unsigned long dax_folio_share_put(struct folio *folio)
