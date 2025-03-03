@@ -1,204 +1,120 @@
-Return-Path: <linux-kernel+bounces-542516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 495AFA4CAAE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:04:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B832CA4CA7F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:57:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8FA53AE032
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:55:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4D161889B44
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:55:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 688AC216389;
-	Mon,  3 Mar 2025 17:55:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4133121858A;
+	Mon,  3 Mar 2025 17:55:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PA8IiwNz"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="VCjExzwX"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1970514A62B;
-	Mon,  3 Mar 2025 17:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55167210F6A;
+	Mon,  3 Mar 2025 17:55:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741024508; cv=none; b=QazK/YpG9w1FkGhJO1A1Vu0McjMdWIGfrW+w5te1Gfr8/nc7bfLHZzUyDVEK+jolLhJeYtyh+WBKNZLflZ3hYeus3B0P+MC9rt8AhI6l0GK2eQPtsEX/IAeTHj/QBz9JmavQDi0puwuVJLST+lVfwjdJS02c99/A0FFD/vjFUJE=
+	t=1741024539; cv=none; b=D+XTYlPTqceFaJAZ5qRLB3BkItjwyaeefs/dT71uCgpOdRJ1s3bi/BtLyxp/aPGNToP19L7eTXVIeHXI+mCd5k/OJPeIk8M/9u+z6aecdZp+7gykdQIudhPmkRqR67Ba5Z3Ncn/YuyU5PwT2bl2NxludgB2eLMEuLBxqvF4L12s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741024508; c=relaxed/simple;
-	bh=bygB+KSy4nCyH86yMVpCzDQGwYnbdH7wYJjn25uKJP8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cp/Gts5f6Xvzy1n7WkfdV3fygyAavYMQRjUi7XkefVSisehWCj7L1KL6ou3TtP1PQNO5WoE6jRMMmAznodmRCPUqQLAWlwTw0K1Y3p1L9cbMDjkNmbpkNp1USzuvWIkHuXFPiUKeCAAnSeLXvKG1iiH3S8/IvBgowSM9q3sAPe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PA8IiwNz; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-439946a49e1so30718895e9.0;
-        Mon, 03 Mar 2025 09:55:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741024505; x=1741629305; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GxgMyPCeZhrpNp+/XnLUc7w3JJy9kOWYtBCSGvA+8J8=;
-        b=PA8IiwNz8YRE+fczawZReC5/NRyStLvOxlWZceLPtSfx6XhNCwLq2GocQCFk9/bYDB
-         h5ze5BHmI/ydU1m5CIarEWB0XgKHGoZ5uwLA4TqOOJnfWcFbMpsqSdMH2BzsWeSLigxi
-         qL5q/Pm4qahdklHjcKQi8Kb6hHlsGKdOmUm8AJ/y9Kh90d98rQllbpAxvPmuhJPrit1V
-         AsDdSG2ooyw89Y30c/USoqK02sN7NF6LqB1ThnJB+5qEEPhygNpVzVii9leAfBBGSlcy
-         k/qMCHm7dxylEmNU2MnbYqORfyGgjpC33yfvnDIgqETUYgz0mtRzm+N+s56zFIEUwXN4
-         YRvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741024505; x=1741629305;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GxgMyPCeZhrpNp+/XnLUc7w3JJy9kOWYtBCSGvA+8J8=;
-        b=WNULdoLpKaG9GdOx11N5V2+NPYDgQKP3UYO5OVMkUFPFJ7rMUbIXUQuf6FeowhWV5m
-         B9ikKBQLQ+njEtzJXWIlgG0DEMP+4NLoKHSwpzweZj23ZtRsB2Yb3uIB7MkE36nLh2Mo
-         33lJSJgQX9RBFsrAG4Uiil0MMucA6Dz3/3caSkTxpuUekLu54BnnGf4FVucad1teRSWy
-         FCM4meZ0gDL2fGeQyGcUBRBOhGQ8MB3c/h86SYGKP4JcAdSo54wF7F9hmHm9Zjyoz/tb
-         N2Talrv6jRlgYQSS/LdC/e2SsiWJBbskTxA+dovpOz3OKQoX6q1sxeP3i4ZicrbS7K6T
-         KvTA==
-X-Forwarded-Encrypted: i=1; AJvYcCVd3QgA59sU0VuV62T1N1mL7/qkZgSD55HBx4SnoWmHUeMkj2+LHQaSoMVH/KSbHO/2yDnUE6v34tFSVARl@vger.kernel.org, AJvYcCWCfSFc9UMBdZ7idc4wu2jSyj+eItjqcJsw8W/ZEC4XfIo3iW/TzYi1O7sa9ADUxOiT4AIiA7sC6lP0bd04@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKMy0a7yYFLmKFWA3aH+ff+iMiG/G9klzmmBIjNO0d/EIrG8MA
-	r39Xu9xOqoLGmoiOVb6MGZoFn7bv1ZYAahfORAReVgaCe7YoHUjp
-X-Gm-Gg: ASbGncvnot4/Jxoi93x6mnvGzwBMwEw4tvc2CF1azunm+4m9SVVVMAUaDLGzV31aWhj
-	RQQ2f8N87yHyv099MN3BRlqBLI/Ide2owy5TeD9I3oMWuMV2rWmU8m/CRuJTlwP87EHXde12RQZ
-	yyp8CD3KJAqL2UxQgwnXBD0TC5zq+amX6UizShRwZ4tuWkdJt5v6D/CWdjAfm6Jg5WkrGHQr55/
-	V9o9MQpQim3+7tWTBkejWu/bSQx9hwHlT+AOn7FVvJaRiWKP1w0X0p/jt0GFUGXTHtW/BlJSgOx
-	zWXab5rlrFynPfZWZjgXe3u+EyVzsW7nUYm166tbLyxrqZyXk81QcPZIJA==
-X-Google-Smtp-Source: AGHT+IHSEmvlUjg6uYfCQCNPZnFb4aRlIqcXxHFDy8STT/fnere33E6vvwoMfgidfuWCURMih5FMjQ==
-X-Received: by 2002:a05:600c:1c95:b0:43b:cad1:46a0 with SMTP id 5b1f17b1804b1-43bcad14869mr2729815e9.14.1741024505016;
-        Mon, 03 Mar 2025 09:55:05 -0800 (PST)
-Received: from f (cst-prg-71-44.cust.vodafone.cz. [46.135.71.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba52b591sm200078405e9.6.2025.03.03.09.54.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 09:55:04 -0800 (PST)
-Date: Mon, 3 Mar 2025 18:54:53 +0100
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: "Sapkal, Swapnil" <swapnil.sapkal@amd.com>, 
-	Oleg Nesterov <oleg@redhat.com>, Manfred Spraul <manfred@colorfullife.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, 
-	David Howells <dhowells@redhat.com>, WangYuli <wangyuli@uniontech.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, "Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>, 
-	Neeraj.Upadhyay@amd.com, Ananth.narayan@amd.com
-Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still
- full
-Message-ID: <3jnnhipk2at3f7r23qb7fvznqg6dqw4rfrhajc7h6j2nu7twi2@wc3g5sdlfewt>
-References: <qsehsgqnti4csvsg2xrrsof4qm4smhdhv6s4v4twspf76bp3jo@2mpz5xtqhmgt>
- <c63cc8e8-424f-43e2-834f-fc449b24787e@amd.com>
- <20250227211229.GD25639@redhat.com>
- <06ae9c0e-ba5c-4f25-a9b9-a34f3290f3fe@amd.com>
- <20250228143049.GA17761@redhat.com>
- <20250228163347.GB17761@redhat.com>
- <03a1f4af-47e0-459d-b2bf-9f65536fc2ab@amd.com>
- <CAGudoHHA7uAVUmBWMy4L50DXb4uhi72iU+nHad=Soy17Xvf8yw@mail.gmail.com>
- <CAGudoHE_M2MUOpqhYXHtGvvWAL4Z7=u36dcs0jh3PxCDwqMf+w@mail.gmail.com>
- <741fe214-d534-4484-9cf3-122aabe6281e@amd.com>
+	s=arc-20240116; t=1741024539; c=relaxed/simple;
+	bh=W7ZlCwZ1+R+xVlIL5I/gw+m7bAv/kknFtFmT1LHwQjk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AnGTUgB3ZYYnd71b8tkH43kMiBRDLK2bw7/1y/5WNpqSBs+vDjdXzwid7MYDRkIrRJ0gIcocCjWJDbCOK5dRcSx8/a4xlAq7DgDMiHSHYncJVcnjO2cs/dq0xtemz5OoL5p6yB2dN24gv3Mw5eeR2v6vUZCxwGAayyyHsuQX8a4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=VCjExzwX; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1741024522; x=1741629322; i=markus.elfring@web.de;
+	bh=W7ZlCwZ1+R+xVlIL5I/gw+m7bAv/kknFtFmT1LHwQjk=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=VCjExzwXxHw1/2HeQkqv28mPWPiBgd1Gncc9aqN7Xwky7OF2aldFP6mMEUTnZHqo
+	 J/wIYFbcGQc/uYpDHmKDhDE13bStN7Cui5BkeKcNK8ZxsHBivyELjsm8j9iXwA375
+	 NAnQBtYlLI+cwAPq+TAX8I2aPcUdPsS0jmz7DOZ5bLchzOOLi2yTVZU3c1bjK6zqL
+	 bNb2yEvt3YoHrAtuMpMJj6fhCPicRrmVEuEsKQdXB1KLavCUoK6/aGpXAQe4rRZvg
+	 wtF7/AChsyBsLKzfWoh/K9x2nPRESrpFTyuswRGzR0XbWnx+fX16hhMq2BL0gXgoC
+	 oSgi7EPR+SU6IJxG7Q==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.19]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MUl9B-1tfyxc3XGL-00LaLm; Mon, 03
+ Mar 2025 18:55:21 +0100
+Message-ID: <30ea63cd-4389-4b07-879f-011e1b1af421@web.de>
+Date: Mon, 3 Mar 2025 18:55:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <741fe214-d534-4484-9cf3-122aabe6281e@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: qed: Move a variable assignment behind a null pointer check in
+ two functions
+To: Kory Maincent <kory.maincent@bootlin.com>, netdev@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+ Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, Ariel Elior <aelior@marvell.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Manish Chopra <manishc@marvell.com>,
+ Paolo Abeni <pabeni@redhat.com>, Ram Amrani <Ram.Amrani@caviumnetworks.com>,
+ Yuval Mintz <Yuval.Mintz@caviumnetworks.com>, cocci@inria.fr,
+ LKML <linux-kernel@vger.kernel.org>
+References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
+ <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
+ <f7967bee-f3f1-54c4-7352-40c39dd7fead@web.de>
+ <6958583a-77c0-41ca-8f80-7ff647b385bb@web.de>
+ <Z8VKaGm1YqkxK4GM@mev-dev.igk.intel.com>
+ <325e67fc-48df-4571-a87e-5660a3d3968f@stanley.mountain>
+ <64725552-d915-429d-b8f8-1350c3cc17ae@web.de>
+ <a191bd33-6c59-45c2-9890-265ec182b39a@stanley.mountain>
+ <20250303183532.580eb301@kmaincent-XPS-13-7390>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250303183532.580eb301@kmaincent-XPS-13-7390>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:PrKHLpQ0y3itZPb+HSXogN+l+7pWtXNc95tU8bv3IEFkVAePhKS
+ IkZI6Izg/xnX6ByP/uCgX0TzjSuXHJtZ7QsId1shUQoONR30dOKSJrO5V/x30bufh3qnSOU
+ 1/XQ4EW1hsF+9qv8wZ6K6dzONC8bkSZGeySx0UVyVS2G4oIdWDuUPlI/7yD3/HRnmV0b3xi
+ IoidclaePdKo7lfDxWsAQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ivk4gQMFeBc=;em3m2FPQLtScHCPjq7yxppgF0lG
+ RRQCcX1FzRUUPmF9fUbMlgQqiFCq1qNyXpXArSbZV8ul7SuOaRu5EtsM6UMY1gM1uJETvWB/0
+ ipMhirwYsMYTfBOtltbwDpcHu0hWPUG6dEYCdDn/d59G7JvMH33G/AVrsrUtUd0D3i21JiXkS
+ kAPyqULu1Vi7FAae5JIPUpzc807P7VSyRTVCWJdopli6BGiCiHZ6kIQ9B+DO6o6m47E3h5DqZ
+ wuqHQoIEltuMg59vY8MpjZ6rVoBkYJ3BGd/6jiZhjgxNjUMkOCsc/5Q7lMYV/W9ZGfSoVrjFP
+ iuDzc8BNY9GyZqxL5xVtqc8p+Q+ikhZ5kQ0TrFAgGLrpRPt0oVuXtpgPPp+dM8rg+JHFtlv3T
+ Fh8StOR02wclCqzRBHuoh9bR5dwpLi4wBNipT9xtzVzkflym9k96Izh/uboAdddKZLVnYKtmI
+ B8moxI1J2UjTOdrX0N9I/8vUB/V4Dt35Ewn89ATXUTImhGghvvOkMBwVSQh8KmJsewFd3zZIr
+ tVb2tpc813pRqJuY5Pm77GmYFz2JcVmJvhcujBdno4iCmDCmTUKq2V9TkLlqN5dAeGvTACEoT
+ QGXJICbHkVhytwvIWY67LaGbMPNYlE8mMVyAZ9u0l4dEf05ojgEKTpI215PISr7xSB7vOXnwT
+ Qivz/GWwg+qWTaf5y+nh0WGhzIU0FVs+7FHx3FfHfiM46ypJgGWudH7N0W/Ingp7UfXyLn3Wi
+ 9jzDOONxP0/Mxgfk/YO4zxR6Wp4LC5PjXLuRkF2AY9v4I53kgddAVb7u64+Nduhj+XMpF+hxE
+ LkXzf1iqIqUowxUBuN1OhevuhACykrXSuofo895L6LCNvhBt2GTrqslgEHlsAiE9FJ0b6vGLE
+ qXLf1IGMqGWWRnjGLDmdBxvaVlzI+INry3YsPdT40BsfasPj3Gf8PvHx2OLapZssf9mPXbwdb
+ XoKXn58f71Pk3W7GQpUkdm/wcyExU/3DlyvCkwGGNwQvVssGan2MzSj6U1boEITPKDhck3zVX
+ 7lZ9LaYCr8+x7z3inVrHQAWs5BcrQIVnmAV3u6sy8gcUODlwQU+3ZTIl8TeitthG2yu6ypYcL
+ tpmkNr7uJ2w4VrUkiWSRTDhOMKO+Oayh8Fs6g0dpTLPLyn400KLqQFmTP/pXhhMvH9sA52DlH
+ otcM4uqG0NlHgv2vYAkh1+KRK3VNAIyAUWQ+XQPXAaWLrsV/Po8O3guajaBmBdG/Sfev6dvI0
+ vgRQtSzivCrqo5Q+NaRzEnQLoDRIZbDky50mTVZnMG46yUAuvNjxXU1jV7SEdJpQps83aYV8U
+ xIEZUMPKQjAcohGrtNUWnfoec07FD511kffWb2kEozw54vEH5cjDKVGu3mVN8Hu1hP4N98na7
+ qkxqJ80JhrP7nJnY+GTuB0H5IM2qmU2eHJUQPiIQ1HHWLkMEuxclsWaRcRtGlSq3iLvcQ6+MM
+ ki0T0Lg==
 
-Can you guys try out the patch below?
+> There is a lot of chance that he is a bot.
+I hope that corresponding software development discussions can become
+more constructive again.
 
-It changes things up so that there is no need to read 2 different vars.
-
-It is not the final version and I don't claim to be able to fully
-justify the thing at the moment either, but I would like to know if it
-fixes the problem.
-
-If you don't have time that's fine, this is a quick jab. While I can't
-reproduce the bug myself even after inserting a delay by hand with
-msleep between the loads, I verified it does not outright break either.
-:P
-
-diff --git a/fs/pipe.c b/fs/pipe.c
-index 19a7948ab234..e61ad589fc2c 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -210,11 +210,21 @@ static const struct pipe_buf_operations anon_pipe_buf_ops = {
- /* Done while waiting without holding the pipe lock - thus the READ_ONCE() */
- static inline bool pipe_readable(const struct pipe_inode_info *pipe)
- {
--	unsigned int head = READ_ONCE(pipe->head);
--	unsigned int tail = READ_ONCE(pipe->tail);
--	unsigned int writers = READ_ONCE(pipe->writers);
-+	return !READ_ONCE(pipe->isempty) || !READ_ONCE(pipe->writers);
-+}
-+
-+static inline void pipe_recalc_state(struct pipe_inode_info *pipe)
-+{
-+	pipe->isempty = pipe_empty(pipe->head, pipe->tail);
-+	pipe->isfull = pipe_full(pipe->head, pipe->tail, pipe->max_usage);
-+	VFS_BUG_ON(pipe->isempty && pipe->isfull);
-+}
- 
--	return !pipe_empty(head, tail) || !writers;
-+static inline void pipe_update_head(struct pipe_inode_info *pipe,
-+				    unsigned int head)
-+{
-+	pipe->head = ++head;
-+	pipe_recalc_state(pipe);
- }
- 
- static inline unsigned int pipe_update_tail(struct pipe_inode_info *pipe,
-@@ -244,6 +254,7 @@ static inline unsigned int pipe_update_tail(struct pipe_inode_info *pipe,
- 	 * without the spinlock - the mutex is enough.
- 	 */
- 	pipe->tail = ++tail;
-+	pipe_recalc_state(pipe);
- 	return tail;
- }
- 
-@@ -403,12 +414,7 @@ static inline int is_packetized(struct file *file)
- /* Done while waiting without holding the pipe lock - thus the READ_ONCE() */
- static inline bool pipe_writable(const struct pipe_inode_info *pipe)
- {
--	unsigned int head = READ_ONCE(pipe->head);
--	unsigned int tail = READ_ONCE(pipe->tail);
--	unsigned int max_usage = READ_ONCE(pipe->max_usage);
--
--	return !pipe_full(head, tail, max_usage) ||
--		!READ_ONCE(pipe->readers);
-+	return !READ_ONCE(pipe->isfull) || !READ_ONCE(pipe->readers);
- }
- 
- static ssize_t
-@@ -512,7 +518,7 @@ anon_pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 				break;
- 			}
- 
--			pipe->head = head + 1;
-+			pipe_update_head(pipe, head);
- 			pipe->tmp_page = NULL;
- 			/* Insert it into the buffer array */
- 			buf = &pipe->bufs[head & mask];
-@@ -529,10 +535,9 @@ anon_pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 
- 			if (!iov_iter_count(from))
- 				break;
--		}
- 
--		if (!pipe_full(head, pipe->tail, pipe->max_usage))
- 			continue;
-+		}
- 
- 		/* Wait for buffer space to become available. */
- 		if ((filp->f_flags & O_NONBLOCK) ||
-diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
-index 8ff23bf5a819..d4b7539399b5 100644
---- a/include/linux/pipe_fs_i.h
-+++ b/include/linux/pipe_fs_i.h
-@@ -69,6 +69,8 @@ struct pipe_inode_info {
- 	unsigned int r_counter;
- 	unsigned int w_counter;
- 	bool poll_usage;
-+	bool isempty;
-+	bool isfull;
- #ifdef CONFIG_WATCH_QUEUE
- 	bool note_loss;
- #endif
+Regards,
+Markus
 
