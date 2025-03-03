@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-541926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C6CBA4C380
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:37:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59A50A4C384
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:37:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87D5B1893925
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:37:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28CA83A5B8D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:37:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 663542144C5;
-	Mon,  3 Mar 2025 14:36:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 295832144DD;
+	Mon,  3 Mar 2025 14:36:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="WiZ2owxQ"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VK84/EVo"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F7B214202
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 14:36:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B043214219
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 14:36:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741012602; cv=none; b=sUuEeV2MOPtBQ633vtg6foFwaFLGRjbkx+ZoTqXQY3yU6/WwokI9ps5L6evVEWAEvqZ5cN/xLfkLwcnq+mtiAtwBlyvkH6yH4frqFsB+CMU2CgYV0V0GxWYkEwbH+zcIj/c/S/zOhxbh5Gaoh/BJD7AEgaYY/jtfszpPvWK9B9M=
+	t=1741012603; cv=none; b=PyFkPJtjkW56YlO5xD8hkhFyYzEAIQuCLVDrfAtP7RlpgoM+YjlMaj4VWWLhxKCjXtPm3c+5y97JZXXDQ0OQixPp2Wrwpbcmfp626xN2ZRyD1ifOgGz2FnrOjKEGpHRJjN2wTJKzNLyaFPGkLgiXzYPb8oLBOWnNsvO06i1GiTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741012602; c=relaxed/simple;
-	bh=IWGXuffalkQUnXAiLADUGfTCXoWyGC8Nua9zNIZpmIs=;
+	s=arc-20240116; t=1741012603; c=relaxed/simple;
+	bh=Ua215Hd9PYMD2vvrDycgehoLktDThGS6vrG2nqSqBJA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=oCixqmDcsN86mrDW0OVuGHqVKMSAU3uXmKwCX70TPAYoUFatn5ZwVnUhV3Pn8app6D3HGxOnvZYy7b1ZZvDQPdvgYgHqFdPrMKLbvyJwZM2vUL3TPRSEkF60KIpNtTL54lXTl/Eptt/I/G6As5u1Pp4+0Ul+noDmcn33ckZwM2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=WiZ2owxQ; arc=none smtp.client-ip=210.118.77.11
+	 Content-Type:References; b=S4uXsoTJjeSyFHqnfoz0a9bMkrRCIfU4hdsxV+vtYztawxzCsIGumXK6r42lo0T7qkf6+9smtY4ppriK1B/XZ3VqkoiXqupQ9bdc+8FRcUejeLyWUXGfk4KHZI95oateLyfMdkT5FrIw7O9ZDnwENcU2YUZySqwdUw4Fed5IDG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=VK84/EVo; arc=none smtp.client-ip=210.118.77.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250303143638euoutp0128cc6200215eac245627f937604d3910~pUbvQ-zJw0989509895euoutp013
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250303143638euoutp02a533a8ea9e9dfd4685f7b72fa743bfa8~pUbv9Z7jj2792727927euoutp028
 	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 14:36:38 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250303143638euoutp0128cc6200215eac245627f937604d3910~pUbvQ-zJw0989509895euoutp013
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250303143638euoutp02a533a8ea9e9dfd4685f7b72fa743bfa8~pUbv9Z7jj2792727927euoutp028
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
 	s=mail20170921; t=1741012598;
-	bh=VhIBCc+eKDxBLZw1Fq8aGXRrjbktqWvu0yroBIpoWCg=;
+	bh=2RTzJ2qIW6QHJ1xVf28+dD25ff+FzN3lcglLvG7tFCY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=WiZ2owxQSA1rsQhpbgxgXwFZeL1lEumlj5VzzG2Fdpzy5GA0WRTDMjG5RldlDTrK9
-	 EqnT1qka/LXvfOsoezCITrOC6R82s6Gr4OMC/+Yx2D+1OrIp862J0S1qhH6iB53d5W
-	 cq3ZmBSne72b+2aheVj2IpfKCPgaQqbBJHJsXyZE=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20250303143637eucas1p21703598f0358ec92ef55e2789b87bc78~pUbu2tg0n2665426654eucas1p23;
-	Mon,  3 Mar 2025 14:36:37 +0000 (GMT)
+	b=VK84/EVod75fecIGAtEH7MRU9tsIkWKC2Sa5zBDVnDrfCZce+tyJlPZMIv4eL3RgA
+	 NtBkxZ87Z2z7w4SeoFiCSO0mYBiA+KLH0MwMN5IsR4kULPWx0wBGs4D4VBDeQSq+2o
+	 sqNXUvquopdmAayA/9lN44JiAIklhTbjBqqRALeo=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20250303143638eucas1p1aecf386f4a92e85fcc97b3060875645f~pUbvdQSiU2631826318eucas1p1p;
+	Mon,  3 Mar 2025 14:36:38 +0000 (GMT)
 Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id 1F.8D.20409.57EB5C76; Mon,  3
-	Mar 2025 14:36:37 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id DA.3C.20821.67EB5C76; Mon,  3
+	Mar 2025 14:36:38 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
 	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250303143636eucas1p1c3ca1df44b86efff959c1d5ec016c8ae~pUbuOxDju1621416214eucas1p19;
-	Mon,  3 Mar 2025 14:36:36 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250303143636eusmtrp140dd095e5b9115ee1e760911e56b4c0a~pUbuOFROt0893008930eusmtrp1c;
-	Mon,  3 Mar 2025 14:36:36 +0000 (GMT)
-X-AuditID: cbfec7f4-c0df970000004fb9-a7-67c5be75bd0c
+	20250303143637eucas1p1a3abdea520ab88688de1263a5f07bba0~pUbvDLdwk0504205042eucas1p1P;
+	Mon,  3 Mar 2025 14:36:37 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250303143637eusmtrp2a9001e7e4370175b5446fad2aa8949e6~pUbvCc2Y01887518875eusmtrp2r;
+	Mon,  3 Mar 2025 14:36:37 +0000 (GMT)
+X-AuditID: cbfec7f2-b11c470000005155-60-67c5be769d64
 Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 77.89.19654.47EB5C76; Mon,  3
-	Mar 2025 14:36:36 +0000 (GMT)
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 03.C0.19920.57EB5C76; Mon,  3
+	Mar 2025 14:36:37 +0000 (GMT)
 Received: from AMDC4942.home (unknown [106.210.136.40]) by
 	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250303143635eusmtip2111d49015de186ff013ab1487cc7515c~pUbtRgu4p2137621376eusmtip2U;
-	Mon,  3 Mar 2025 14:36:35 +0000 (GMT)
+	20250303143636eusmtip26d8b366318502581e33c26828353764e~pUbuKTvar2028620286eusmtip2V;
+	Mon,  3 Mar 2025 14:36:36 +0000 (GMT)
 From: Michal Wilczynski <m.wilczynski@samsung.com>
 To: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
 	krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org,
@@ -73,10 +73,10 @@ To: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
 Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, Michal
 	Wilczynski <m.wilczynski@samsung.com>
-Subject: [PATCH v1 3/4] clk: thead: Add support for custom ops in
- CCU_GATE_CLK_OPS macro
-Date: Mon,  3 Mar 2025 15:36:28 +0100
-Message-Id: <20250303143629.400583-4-m.wilczynski@samsung.com>
+Subject: [PATCH v1 4/4] clk: thead: Add GPU clock gate control with CLKGEN
+ reset support
+Date: Mon,  3 Mar 2025 15:36:29 +0100
+Message-Id: <20250303143629.400583-5-m.wilczynski@samsung.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250303143629.400583-1-m.wilczynski@samsung.com>
 Precedence: bulk
@@ -86,116 +86,207 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrIKsWRmVeSWpSXmKPExsWy7djPc7ql+46mG/ycJGvx7M5XVoutv2ex
-	W6zZe47JYv6Rc6wW9y5tYbJ4sbeRxaL52Ho2i5ez7rFZfOy5x2pxedccNottn1vYLNYeuctu
-	sf7rfCaLi6dcLe7eO8Fi8fJyD7NF2yx+i/97drBb/Lu2kcWiZf8UFgcRj/c3Wtk93rx8yeJx
-	uOMLu8e9E9NYPTat6mTz2Lyk3qNl7TEmj/6/Bh7v911l8+jbsorR41LzdXaPz5vkAniiuGxS
-	UnMyy1KL9O0SuDIOnlnNXLBCtGLZtUUsDYzrBbsYOTkkBEwkHr1fzNbFyMUhJLCCUaL9ajuU
-	84VR4kVTBxNIlZDAZ0aJlS+TYDruPf3FAlG0nFFi77M5TBDOG0aJGYfvgnWwCRhJPFg+nxUk
-	ISKwh0ni+/efzCAOs8AqRokn3z6yg1QJC0RJvP9/HcxmEVCVWLTvDFg3r4CdxLLGt4wQ++Ql
-	9h88ywxicwrYSxy63sACUSMocXLmEzCbGaimeetssAUSAuc4JU4s+MEG0ewicXnjbSYIW1ji
-	1fEt7BC2jMTpyT0sEHa+xIOtn5gh7BqJnT3HoWxriTvnfgHN4QBaoCmxfpc+RNhRomnJaVaQ
-	sIQAn8SNt4IQJ/BJTNo2nRkizCvR0SYEUa0mMbWnF27puRXbmCBKPCR2dupMYFScheSXWUh+
-	mYWwdgEj8ypG8dTS4tz01GKjvNRyveLE3OLSvHS95PzcTYzAVHn63/EvOxiXv/qod4iRiYPx
-	EKMEB7OSCO+t9qPpQrwpiZVVqUX58UWlOanFhxilOViUxHkX7W9NFxJITyxJzU5NLUgtgsky
-	cXBKNTDN3cM960P0FskZaWrVjjFbfhy5f+KW4d4Ji8qWZu13r6lJ/xUotOhm9d1Fa/YLbUns
-	7AmIMr23kLU59mYEh+ni15uf6dQ/1Zv3/ufvlZvuGy/dEXOXN+HnMull366uNVsam2Btse/S
-	z9CMHc8n/wptVnfZqaMUc/ZOzLLVJac5L2xTkVqwKsopp/ZDx2Kf4w/OffF2+OjFP0Hl9dkZ
-	05s3r+OY8157/85PTZXrhQ6XGF+4tuuW368VdkFH92SVMVkvWHy0rO6b+1nPLUfLFOzvN69T
-	ZlLMsKi7qNO447TtOftn7VvEH982MmJ/NsVde5PVfbED98RUuj79ZNG0Lb/w9MYibj2JvIfS
-	p5/lLg5KPqXEUpyRaKjFXFScCACvHrjQBAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrEIsWRmVeSWpSXmKPExsVy+t/xe7ol+46mGxxbY2Lx7M5XVoutv2ex
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sf0wTZxjHfe+ud1ek7qwsvEPjpMYSHaIYt7wZC2xjLDczE+f2F7pIJ5dC
+	RgvrAcMfkXal2GnnFpmUVUyN02gqjNnRWgjSrZSWUSyROiEEOpgyBHEMEZ1jwGgPN//7PN/n
+	+zzf90leGpdOiRLofHUxp1ErCmRkDOH0PQluLm1tV26t+0eMfh+YESHHrIVCddeCGLJ6gyIU
+	7mnE0N1rOgLpfQ0kGrOESTRlCotQqLmWRM7pChLVewcp1DBjxdCNziw0GO4g0FjIhKNKy3No
+	ocVFoflbVwhU4f6aeD2OnewzUOzE2BjBthkfUmy4o1rE2m2fk+wP58vZinofxn45t5WdbP2F
+	ZE802gDbo++l2Gn72l2x2TGv5XIF+aWcZkt6TkxeW1e9qGh2c9m8cQZoQYf8GBDTkNkOx8+Y
+	qWMghpYylwD0VJ0gheIhgFVtrbhQTAN4y+sSPR1x+S4TEZYyFwEcdEkF0wSA3lFftEEy2+DQ
+	Raso0ohjWjD4+PGT6CqcsQF459EUFXGtYrLhpO776ATBbIBzxqGoLmHS4W/6m6QQ9yJ0/3Qd
+	j7CYyYCeXi0heFbCn7+5E2V80aN3nI4GQKZTDKs7+5eG34ILwz2UwKvguL9xidfAhSYrJnAh
+	HHI8wAU+DJtM/iVOgwPBvxf30IsBG2FD8xZBfgPevucGERkyK2Df/ZXCE1bAk04zLsgSaKyU
+	Cm45PGX64r/Q4CUnJlhYaJ/48CuQaHnmFsszt1j+jz0LcBuI50p4lZLjU9Xcpym8QsWXqJUp
+	+wtVdrD4KwPz/gcucGZ8KsUDMBp4AKRxWZyk/2i7UirJVRw4yGkK92lKCjjeA1bThCxecs5t
+	UEoZpaKY+5jjijjN0y5GixO0mNmUVZd8dPl78eeTdeWOP9fXjNhUf2R0WZN0Ly/LD2mP/AUN
+	V+RXd3y27Mi5rsoRS/zBV/O/myUPyZyxLWeTZkX7c606fy2oURef1L4Dwi+lkbsKuwZv+mJP
+	9fWPZhdX/bop8Ahfe2+HynDBpwmllZV2H17Y9rwxIfCBu7v3dirzyh5jDtcsKUNXzc3l9fI1
+	iQFvQlZB4gtv80UjmddzRq3rku9Cazqao93mH9O19/u3v79OPlztP+6afxPb03PakalXZNqS
+	Wx0f9Y7M7ZW7WtprvlXxNxRJjbtrNzje1a8OHBqQXN7pY9uXj5qP7zVaTd0hxtBkV+TVGYcP
+	ZHzCygg+T5G6Cdfwin8B+GQTcgQEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrEIsWRmVeSWpSXmKPExsVy+t/xe7ql+46mG2z8p2Px7M5XVoutv2ex
 	W6zZe47JYv6Rc6wW9y5tYbJ4sbeRxaL52Ho2i5ez7rFZfOy5x2pxedccNottn1vYLNYeuctu
 	sf7rfCaLi6dcLe7eO8Fi8fJyD7NF2yx+i/97drBb/Lu2kcWiZf8UFgcRj/c3Wtk93rx8yeJx
 	uOMLu8e9E9NYPTat6mTz2Lyk3qNl7TEmj/6/Bh7v911l8+jbsorR41LzdXaPz5vkAnii9GyK
-	8ktLUhUy8otLbJWiDS2M9AwtLfSMTCz1DI3NY62MTJX07WxSUnMyy1KL9O0S9DIOnlnNXLBC
-	tGLZtUUsDYzrBbsYOTkkBEwk7j39xdLFyMUhJLCUUeLEipNMEAkZiWvdL1kgbGGJP9e62CCK
-	XjFKdC5YwAiSYBMwkniwfD4rSEJE4AKTxK51q5lAHGaBdYwSU7bvABslLBAh0Xf8EDOIzSKg
-	KrFo3xmwOK+AncSyxreMECvkJfYfPAtWwylgL3HoegPYaiGgmj1rd7JD1AtKnJz5BCzODFTf
-	vHU28wRGgVlIUrOQpBYwMq1iFEktLc5Nzy020itOzC0uzUvXS87P3cQIjOxtx35u2cG48tVH
+	8ktLUhUy8otLbJWiDS2M9AwtLfSMTCz1DI3NY62MTJX07WxSUnMyy1KL9O0S9DIOn1nLWvBb
+	t+Jfx1fGBsYTal2MnBwSAiYSO46tZuli5OIQEljKKHFr5w1miISMxLXulywQtrDEn2tdbBBF
+	rxgl5j74wgiSYBMwkniwfD4rSEJE4AKTxK51q5lAHGaBdYwSU7bvYAKpEhaIkHi3oA1sLIuA
+	qsTfjgfsIDavgJ3Eo+YrbBAr5CX2HzwLVsMpYC9x6HoD2GohoJo9a3dC1QtKnJz5BCzODFTf
+	vHU28wRGgVlIUrOQpBYwMq1iFEktLc5Nzy021CtOzC0uzUvXS87P3cQIjOxtx35u3sE479VH
 	vUOMTByMhxglOJiVRHhvtR9NF+JNSaysSi3Kjy8qzUktPsRoCnT3RGYp0eR8YGrJK4k3NDMw
-	NTQxszQwtTQzVhLnZbtyPk1IID2xJDU7NbUgtQimj4mDU6qBaeoOhpUbK+88vV/OuUBAcN/f
-	BI9j+xoPC0uEx3vqWZ3nyirumjDt6co2NvbtZUeXZcd3G1t8Dm/da7d0N2+CT6nky0d71y/4
-	HS0pUHn++b3F7tm7HntfXiy99Ma/BI0/L86eCEk+e+vCsa3bojdfsjyZFxOSMXOTyXupIywh
-	Bx9IF/9cum/OzL8bIid/7N0SfPtCqOaZqAqj2MmPPvyU1Du2JdngWOCn/y951UO/BBnecmnm
-	b736TevA1blGsx99UPLS8pn6bcGsg9PCTH/leMwJ2mc36fHLSex5Umd5Nn0Qi2MrvXe4xnvR
-	ycY5E1c9F+KK3ir6KrW712dt2u23t7XbEszjZ0yJbRA99beLLYFbiaU4I9FQi7moOBEAbWgs
-	dnUDAAA=
-X-CMS-MailID: 20250303143636eucas1p1c3ca1df44b86efff959c1d5ec016c8ae
+	NTQxszQwtTQzVhLndbt8Pk1IID2xJDU7NbUgtQimj4mDU6qBiXlJysKLziEzG2MenlIKElzq
+	OOXAX8bJp20+JXKf4VbcspfvZ4HafwaravVFfY8uBdv3KlwLPGKy5VdeEmtD0NKSc3sSLuZw
+	1uQffzrpzTW/zllzZyXolyz+/DNvV9qWzZaOJ+f+N4r0SlR5ZjWTbeVWj2clNx2ChdTKq2ov
+	tP90Y/34oJKp9rn67Jq8RYkhJ5dZPC/k+7nlIOuKn7p7ts5YINf37uneWa5HI68+CAv0n/R0
+	p3x/KlON44knX34ni1zxe6lyWSJDN2NCc0yCaaSHe3h+fB3vdocrR1g6s46mdFrYyP/c++Pg
+	q7ri779vvjLNqnxVqxMfbPpCPIf3qH6d0DObaxVNZfX7/oQYKrEUZyQaajEXFScCACXhFKN1
+	AwAA
+X-CMS-MailID: 20250303143637eucas1p1a3abdea520ab88688de1263a5f07bba0
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250303143636eucas1p1c3ca1df44b86efff959c1d5ec016c8ae
+X-RootMTR: 20250303143637eucas1p1a3abdea520ab88688de1263a5f07bba0
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20250303143636eucas1p1c3ca1df44b86efff959c1d5ec016c8ae
+X-CMS-RootMailID: 20250303143637eucas1p1a3abdea520ab88688de1263a5f07bba0
 References: <20250303143629.400583-1-m.wilczynski@samsung.com>
-	<CGME20250303143636eucas1p1c3ca1df44b86efff959c1d5ec016c8ae@eucas1p1.samsung.com>
+	<CGME20250303143637eucas1p1a3abdea520ab88688de1263a5f07bba0@eucas1p1.samsung.com>
 
-The IMG Rogue GPU requires three clocks: core, sys, and mem [1]. On the
-T-HEAD TH1520 SoC, the mem clock gate is marked as "Reserved" in the
-hardware manual (section 4.4.2.6.1) [2] and cannot be configured.
+The T-HEAD TH1520 has three GPU clocks: core, cfg, and mem. The mem
+clock gate is marked as "Reserved" in hardware, while core and cfg are
+configurable. In order for these clock gates to work properly, the
+CLKGEN reset must be managed in a specific sequence.
 
-Add a new CCU_GATE_CLK_OPS macro that allows specifying custom clock
-operations. This enables us to use nop operations for the mem clock,
-preventing the driver from attempting to enable/disable this reserved
-clock gate.
+Move the CLKGEN reset handling to the clock driver since it's
+fundamentally a clock-related workaround [1]. This ensures that clk_enabled
+GPU clocks stay physically enabled without external interference from
+the reset driver.  The reset is now deasserted only when both core and
+cfg clocks are enabled, and asserted when either of them is disabled.
 
-Link: https://lore.kernel.org/all/2fe3d93f-62ac-4439-ac17-d81137f6410a@imgtec.com [1]
-Link: https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs/TH1520%20System%20User%20Manual.pdf [2]
+The mem clock is configured to use nop operations since it cannot be
+controlled.
+
+Link: https://lore.kernel.org/all/945fb7e913a9c3dcb40697328b7e9842b75fea5c.camel@pengutronix.de [1]
 
 Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
 ---
- drivers/clk/thead/clk-th1520-ap.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ drivers/clk/thead/clk-th1520-ap.c | 87 ++++++++++++++++++++++++++++---
+ 1 file changed, 81 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th1520-ap.c
-index 57972589f120..ea96d007aecd 100644
+index ea96d007aecd..1dfcde867233 100644
 --- a/drivers/clk/thead/clk-th1520-ap.c
 +++ b/drivers/clk/thead/clk-th1520-ap.c
-@@ -89,6 +89,21 @@ struct ccu_pll {
- 		}							\
- 	}
+@@ -12,6 +12,7 @@
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
++#include <linux/reset.h>
  
-+#define CCU_GATE_CLK_OPS(_clkid, _struct, _name, _parent, _reg, _gate, _flags,	\
-+			 _clk_ops)						\
-+	struct ccu_gate _struct = {						\
-+		.enable	= _gate,						\
-+		.common	= {							\
-+			.clkid		= _clkid,				\
-+			.cfg0		= _reg,					\
-+			.hw.init	= CLK_HW_INIT_PARENTS_DATA(		\
-+						_name,				\
-+						_parent,			\
-+						&_clk_ops,			\
-+						_flags),			\
-+		}								\
-+	}
-+
- static inline struct ccu_common *hw_to_ccu_common(struct clk_hw *hw)
- {
- 	return container_of(hw, struct ccu_common, hw);
-@@ -847,6 +862,11 @@ static CCU_GATE(CLK_SRAM1, sram1_clk, "sram1", axi_aclk_pd, 0x20c, BIT(3), 0);
+ #define TH1520_PLL_POSTDIV2	GENMASK(26, 24)
+ #define TH1520_PLL_POSTDIV1	GENMASK(22, 20)
+@@ -862,17 +863,70 @@ static CCU_GATE(CLK_SRAM1, sram1_clk, "sram1", axi_aclk_pd, 0x20c, BIT(3), 0);
  static CCU_GATE(CLK_SRAM2, sram2_clk, "sram2", axi_aclk_pd, 0x20c, BIT(2), 0);
  static CCU_GATE(CLK_SRAM3, sram3_clk, "sram3", axi_aclk_pd, 0x20c, BIT(1), 0);
  
-+static const struct clk_ops clk_nop_ops = {};
++static struct reset_control *gpu_reset;
++static DEFINE_SPINLOCK(gpu_reset_lock); /* protect GPU reset sequence */
 +
-+static CCU_GATE_CLK_OPS(CLK_GPU_MEM, gpu_mem_clk, "gpu-mem-clk",
-+			video_pll_clk_pd, 0x0, BIT(2), 0, clk_nop_ops);
++static void ccu_gpu_clk_disable(struct clk_hw *hw);
++static int ccu_gpu_clk_enable(struct clk_hw *hw);
 +
++static const struct clk_ops ccu_gate_gpu_ops = {
++	.disable	= ccu_gpu_clk_disable,
++	.enable		= ccu_gpu_clk_enable
++};
++
+ static const struct clk_ops clk_nop_ops = {};
+ 
+ static CCU_GATE_CLK_OPS(CLK_GPU_MEM, gpu_mem_clk, "gpu-mem-clk",
+ 			video_pll_clk_pd, 0x0, BIT(2), 0, clk_nop_ops);
++static CCU_GATE_CLK_OPS(CLK_GPU_CORE, gpu_core_clk, "gpu-core-clk",
++			video_pll_clk_pd, 0x0, BIT(3), 0, ccu_gate_gpu_ops);
++static CCU_GATE_CLK_OPS(CLK_GPU_CFG_ACLK, gpu_cfg_aclk, "gpu-cfg-aclk",
++			video_pll_clk_pd, 0x0, BIT(4), 0, ccu_gate_gpu_ops);
++
++static void ccu_gpu_clk_disable(struct clk_hw *hw)
++{
++	struct ccu_gate *cg = hw_to_ccu_gate(hw);
++	unsigned long flags;
++
++	spin_lock_irqsave(&gpu_reset_lock, flags);
++
++	ccu_disable_helper(&cg->common, cg->enable);
++
++	if ((cg == &gpu_core_clk &&
++	     !clk_hw_is_enabled(&gpu_cfg_aclk.common.hw)) ||
++	    (cg == &gpu_cfg_aclk &&
++	     !clk_hw_is_enabled(&gpu_core_clk.common.hw)))
++		reset_control_assert(gpu_reset);
++
++	spin_unlock_irqrestore(&gpu_reset_lock, flags);
++}
++
++static int ccu_gpu_clk_enable(struct clk_hw *hw)
++{
++	struct ccu_gate *cg = hw_to_ccu_gate(hw);
++	unsigned long flags;
++	int ret;
++
++	spin_lock_irqsave(&gpu_reset_lock, flags);
++
++	ret = ccu_enable_helper(&cg->common, cg->enable);
++	if (ret) {
++		spin_unlock_irqrestore(&gpu_reset_lock, flags);
++		return ret;
++	}
++
++	if ((cg == &gpu_core_clk &&
++	     clk_hw_is_enabled(&gpu_cfg_aclk.common.hw)) ||
++	    (cg == &gpu_cfg_aclk && clk_hw_is_enabled(&gpu_core_clk.common.hw)))
++		ret = reset_control_deassert(gpu_reset);
++
++	spin_unlock_irqrestore(&gpu_reset_lock, flags);
++
++	return ret;
++}
+ 
  static CCU_GATE(CLK_AXI4_VO_ACLK, axi4_vo_aclk, "axi4-vo-aclk",
  		video_pll_clk_pd, 0x0, BIT(0), 0);
- static CCU_GATE(CLK_GPU_CORE, gpu_core_clk, "gpu-core-clk", video_pll_clk_pd,
-@@ -1205,6 +1225,12 @@ static int th1520_clk_probe(struct platform_device *pdev)
- 		ret = devm_clk_hw_register(dev, &emmc_sdio_ref_clk.hw);
+-static CCU_GATE(CLK_GPU_CORE, gpu_core_clk, "gpu-core-clk", video_pll_clk_pd,
+-		0x0, BIT(3), 0);
+-static CCU_GATE(CLK_GPU_CFG_ACLK, gpu_cfg_aclk, "gpu-cfg-aclk",
+-		video_pll_clk_pd, 0x0, BIT(4), 0);
+ static CCU_GATE(CLK_DPU_PIXELCLK0, dpu0_pixelclk, "dpu0-pixelclk",
+ 		video_pll_clk_pd, 0x0, BIT(5), 0);
+ static CCU_GATE(CLK_DPU_PIXELCLK1, dpu1_pixelclk, "dpu1-pixelclk",
+@@ -1046,8 +1100,6 @@ static struct ccu_common *th1520_gate_clks[] = {
+ 
+ static struct ccu_common *th1520_vo_gate_clks[] = {
+ 	&axi4_vo_aclk.common,
+-	&gpu_core_clk.common,
+-	&gpu_cfg_aclk.common,
+ 	&dpu0_pixelclk.common,
+ 	&dpu1_pixelclk.common,
+ 	&dpu_hclk.common,
+@@ -1150,6 +1202,13 @@ static int th1520_clk_probe(struct platform_device *pdev)
+ 	if (IS_ERR(map))
+ 		return PTR_ERR(map);
+ 
++	if (plat_data == &th1520_vo_platdata) {
++		gpu_reset = devm_reset_control_get_exclusive(dev, NULL);
++		if (IS_ERR(gpu_reset))
++			return dev_err_probe(dev, PTR_ERR(gpu_reset),
++					     "GPU reset is required for VO clock controller\n");
++	}
++
+ 	for (i = 0; i < plat_data->nr_pll_clks; i++) {
+ 		struct ccu_pll *cp = hw_to_ccu_pll(&plat_data->th1520_pll_clks[i]->hw);
+ 
+@@ -1226,11 +1285,27 @@ static int th1520_clk_probe(struct platform_device *pdev)
  		if (ret)
  			return ret;
-+	} else if (plat_data == &th1520_vo_platdata) {
-+		ret = devm_clk_hw_register(dev, &gpu_mem_clk.common.hw);
+ 	} else if (plat_data == &th1520_vo_platdata) {
++		/* GPU clocks need to be treated differently, as MEM clock
++		 * is non-configurable, and the reset needs to be de-asserted
++		 * after enabling CORE and CFG clocks.
++		 */
+ 		ret = devm_clk_hw_register(dev, &gpu_mem_clk.common.hw);
+ 		if (ret)
+ 			return ret;
+ 		gpu_mem_clk.common.map = map;
+ 		priv->hws[CLK_GPU_MEM] = &gpu_mem_clk.common.hw;
++
++		ret = devm_clk_hw_register(dev, &gpu_core_clk.common.hw);
 +		if (ret)
 +			return ret;
-+		gpu_mem_clk.common.map = map;
-+		priv->hws[CLK_GPU_MEM] = &gpu_mem_clk.common.hw;
++		gpu_core_clk.common.map = map;
++		priv->hws[CLK_GPU_CORE] = &gpu_core_clk.common.hw;
++
++		ret = devm_clk_hw_register(dev, &gpu_cfg_aclk.common.hw);
++		if (ret)
++			return ret;
++		gpu_cfg_aclk.common.map = map;
++		priv->hws[CLK_GPU_CFG_ACLK] = &gpu_cfg_aclk.common.hw;
  	}
  
  	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, priv);
