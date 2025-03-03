@@ -1,137 +1,138 @@
-Return-Path: <linux-kernel+bounces-541350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A18CDA4BBD5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:16:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82408A4BBD9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:17:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C24D318936AD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:16:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9A6F7A5696
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:16:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DEBE1F0E51;
-	Mon,  3 Mar 2025 10:16:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77F521EE017;
+	Mon,  3 Mar 2025 10:17:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jAM9N0SL"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="UXAvkE01"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 796B41EC01D;
-	Mon,  3 Mar 2025 10:16:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F861DB551
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 10:17:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740996982; cv=none; b=jAkKnDGjceDcfjTckACZrmLetVB52VjYHQTCDPbBXfKCn4OQzLhIdiwnUvoga1OFsJHhbE9HXzG2qFiTrnPmbwrhs3lKW2CJBPyQvhLmCHA3Q49K2yO1Ng2SEA5cGvwJtjmankGZ03biuG9tCtVF2UEu5Go3wwFUDhaYSmw+HMU=
+	t=1740997036; cv=none; b=CZQjEPrnQoYG2SkqcpKVr43BivRxMp5xkiFJtHpPHGW1J6/XM86Q7ec2TSly0tokQ4kwIX2P3A8FyPqze+SYQ35b1QK8diOmxOnYXOyGyHT4b9XvFSqALit1A2cG60lLDWPoDYabLyKqj4CjqaFuWsIrd/INrCGLmatDMBEXUfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740996982; c=relaxed/simple;
-	bh=1crnv6tKD/1d+tCgGsUba8x63Ta7feECjnTHfKoGLOg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FT4SaZhtCshqquFHGV36jyRhez689RFBSGGLENIjK3vbge7FfQBZngGYJ5ef3W5EFkm+iIQetqf5+Hv57JhUl1MqvXFV17Na/ho15aMiXWD0Zww8Q6G+3Mcgommb+PskqqXps6PlrMsmng6Bd0HUC5pzl8mjYA5E7nbUNMALR+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jAM9N0SL; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2fe82430bb4so1152415a91.2;
-        Mon, 03 Mar 2025 02:16:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740996981; x=1741601781; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qhArfDOsbeMK6huD84GwJTmwqFK0bxwYSTSGdYmwOTE=;
-        b=jAM9N0SLvvwTGF12/Hlf0MrLjtIUzjMV4WPDuU5y0TbjVIVLPAwPQAvxsZgtbJR+ue
-         a/JvVg6gfkzoxqV0ncHcuNb9m88lMTHO2GB6ZvlFnxqb7wFVvyq9iajCIWpz7ahSI+3o
-         yfcSV84YfIpH90H0brB7fy/I04Bx5P+AjqVhRjRTgVYW2wdopp0+ycdseWC2Q5SbS7SK
-         6YPogA3HmhGqvSUC4QN263KAMgL1ZHQbrGmufFW/9cxC7c6GQkrBRMH5WwHydFsGeSbY
-         qRtYnbINEeltT556fEJ1H/JMbKq2vJoYEIFwsWMd6HEPz+EPaOqDANIiySN+XgvwBaCd
-         +pIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740996981; x=1741601781;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qhArfDOsbeMK6huD84GwJTmwqFK0bxwYSTSGdYmwOTE=;
-        b=WTAqHCDbNitCoJP6xCO+lMhaCLbsjmDlAmIfKUI0fQ3JHF4RM5ZcKVTChAvcnw4vw7
-         a9803lID4BV821rc4wAWLykdemWTcQY5NCUqKUxiP7uXpUaSOpaIn1jSQjyY4973uMkI
-         Robt/lH0sLJnDj4nnpTKuBX+yr9hwDYuzyMwFzGUfCmzCsENPQDuDX4fdBsmC26kCzyU
-         RRaRILRR6FYK5txktzMsKxlx8mx7QQ5a4vbAK0+LvuQIxeAsHkxFGlH8gkXjYhacsjpM
-         f7+ryaEwS+LW1dH9oCDVMMd/qGac5ilc/uhiaJBAREJvWcwNOL7oWW72YGqzNBcfmTli
-         cOVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV1PfopNJGrXEaghVc+CbTzc66njjtRslROUL3FEinetLynIa4fAA3YIbzsFoBGXIrEKGKF4tYSXQt3ye3zzIE=@vger.kernel.org, AJvYcCVrUydSTHcSE2HX1ie3NkbdcPrgvdC+2WRGaVl6wEXjehi70qfzKbuDkB8+vFraNtLB/LOs2ZGcqg6r6Ign@vger.kernel.org, AJvYcCWLPQyw5NhgKHoERmgbzHjc4DocUocL8Q09Pp5UpKnc4TJons6xzry/Uw7uq0OTcOmSxOm9NlsS7Fo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyd1v74sFnm+kvymLWzVf+pEyrOAFXSZTzam2XSEwRdFkEIvgoP
-	PKw7Lv6P3hohwndVqDRyPys3+m7pWrcTbmwBChwxLlb2v/3GE9AOSoCgYQFBK6RTA7cXoawEcqS
-	qq2LHpgMzswmH+1RkaN4ULxjEZ04=
-X-Gm-Gg: ASbGncsj2jaH3ub6J81hftumYeUPcAvxb/yFml6Y2F9SUSOLBZvZZxAHzpDJ3WP8rnV
-	GLBa0ydG7LMj8QbRD6nY+hQUxNgaTo3JQumpTOsVaQJjM69wbwEjN3To5XMtOiuwBdLiip21IEb
-	q+mZ84VpDlSHmx5yRAa9/e79HVqQ==
-X-Google-Smtp-Source: AGHT+IFd6Evh1lLa7uoaf+1dsVgglClC/wk+plGG74cKrVQ9AhFjTOqfM89v/lZcl9+c12vXftKm63P37wKAnGf/EkQ=
-X-Received: by 2002:a17:90b:3509:b0:2ee:f59a:94d3 with SMTP id
- 98e67ed59e1d1-2febaa7f72fmr7857029a91.0.1740996980647; Mon, 03 Mar 2025
- 02:16:20 -0800 (PST)
+	s=arc-20240116; t=1740997036; c=relaxed/simple;
+	bh=IPcmz/Ophfu4H2fHVFRaf/4NO1aPTZiB1jFWbsY4VJg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nexe7GrY7DoxIG9N2uk2XPkywFByamX92eYf0ShU7tDUderhLE3OpO+GtJzCDU+3gPg9bJflPH8RUMOxOV9pZ4XalSXCGvwLLxB4kWR0DGJznms2bEKxjiGcSb4I3WgF91dFpA5bo5kHHWDKdeN4u1+kY2Gm0bH8CFk4nGFwpeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=UXAvkE01; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8D28640E0202;
+	Mon,  3 Mar 2025 10:17:08 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id bKFAI4kJqnOJ; Mon,  3 Mar 2025 10:17:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1740997024; bh=/T0jAtQw2ziyIRYjhPBximB345bKPYtbcsbnKNs9H3U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UXAvkE01IkdKwazAXwV/pp3KJw9vaBpwc+EZbw3VpkFbVdFcOhfIsKbIPbqheUm87
+	 BJLVKwKluj+oWUVUNisfoSb/L8UPi2ranJcIWn5FqETo4hoqCvI7+/yEWxeXS2l7Fh
+	 c56nm5ovL7PzHgOZSyKoUw2dmH2SHQVZVRosdOWunSziqmBF9krMH7WZLl3uXKSSbV
+	 wf2kkHo9s0Rq/u+0x5j8HNMY6Y3daCdoASNNOYCInoOnet4aBzuR1x3eoH1omwB6ke
+	 cmhHN32AahpGV0bBd0pX/rITM6zvC+WjMy9tnuuaIsKERDBCtiEv+P3TtC5p3QaHEk
+	 p4RlgVQ41Yvq+IQ8/ei7Xz/FSausGb4CxblDsNUwbW5JDgOQxjZ764clOpof9OZLeb
+	 aB68XJqRKYXuIstJQhs4+S75C9mPViLQYU/s95/gSkrqH5rFqGebU8HP6WPDB4BnbD
+	 JbQawXEd2ewT9aj5JyJBBPDxMFXsoUfgC4ve5p3sv1fohqrdJ095yYcY/ZWQ11UouX
+	 9GYldv6T/vQui+sbJ+gKWGgw8Qnq1aztr5QqvyzcXmfdltwqXbj6PbY7PUsq49G2Sr
+	 wc9ei7jcN/5D2L8c2nuwt9vomNqVvYDbfn4g1UGJ7xkm153mt8XB9S6Dpc0tne1vnh
+	 j6DlnEd0FcKQsZt781YnDr4g=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 489BB40E0214;
+	Mon,  3 Mar 2025 10:16:47 +0000 (UTC)
+Date: Mon, 3 Mar 2025 11:16:40 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Rik van Riel <riel@surriel.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org,
+	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
+	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
+	linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
+	jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
+	Manali.Shukla@amd.com, mingo@kernel.org
+Subject: Re: [PATCH v14 09/13] x86/mm: global ASID process exit helpers
+Message-ID: <20250303101640.GAZ8WBiPNKG_4wkVDv@fat_crate.local>
+References: <20250226030129.530345-1-riel@surriel.com>
+ <20250226030129.530345-10-riel@surriel.com>
+ <20250302123838.GKZ8RRTgRxvBSry6mk@fat_crate.local>
+ <683d34253e2bdef9f74d8c44b2eff7ae9cfea5f9.camel@surriel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1740995194.git.viresh.kumar@linaro.org> <023e3061cc164087b9079a9f6cb7e9fbf286794e.1740995194.git.viresh.kumar@linaro.org>
-In-Reply-To: <023e3061cc164087b9079a9f6cb7e9fbf286794e.1740995194.git.viresh.kumar@linaro.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 3 Mar 2025 11:16:08 +0100
-X-Gm-Features: AQ5f1JrPhvFkujCyICYZMVdordWbViYwvAuUtcezJzd9bMbekZhoTJOdN871VFg
-Message-ID: <CANiq72kdWzFOZ39EoFNxEAbk4KYgzLi1OAEc1zn8BM07VpXy3g@mail.gmail.com>
-Subject: Re: [PATCH V3 2/2] rust: Add initial clk abstractions
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Daniel Almeida <daniel.almeida@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <683d34253e2bdef9f74d8c44b2eff7ae9cfea5f9.camel@surriel.com>
 
-On Mon, Mar 3, 2025 at 11:00=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.o=
-rg> wrote:
->
-> +/// Frequency unit.
-> +pub type Hertz =3D crate::ffi::c_ulong;
+On Sun, Mar 02, 2025 at 08:53:10AM -0500, Rik van Riel wrote:
+> I've been there. Repeatedly :)
 
-Do we want this to be an alias or would it make sense to take the
-chance to make this a newtype?
+Yap, it is. And despite all the compile-time disabling fun, clang still can't
+do proper DCE and complains about the inline asm in __invlpgb() using a u64 on
+32-bit builds.
 
-> +/// A simple implementation of `struct clk` from the C code.
+So I did the fix below, ontop and with that randconfig builds all pass fine.
 
-In general, please try to provide some documentation and/or examples
-where possible/reasonable.
+What I have so far is here:
 
-> +    /// Gets clock corresponding to a device and a connection id and ret=
-urns `Clk`.
+https://web.git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git/log/?h=tip-x86-cpu-tlbi
 
-Please use intra-doc links wherever they may work.
+Lemme go through the rest of your patches now.
 
-> +    /// Clock enable.
+Thx.
 
-Should these be e.g. "Enable the clock." or similar?
+diff --git a/arch/x86/include/asm/tlb.h b/arch/x86/include/asm/tlb.h
+index 5375145eb959..04f2c6f4cee3 100644
+--- a/arch/x86/include/asm/tlb.h
++++ b/arch/x86/include/asm/tlb.h
+@@ -29,6 +29,7 @@ static inline void invlpg(unsigned long addr)
+ }
+ 
+ 
++#ifdef CONFIG_BROADCAST_TLB_FLUSH
+ /*
+  * INVLPGB does broadcast TLB invalidation across all the CPUs in the system.
+  *
+@@ -74,6 +75,14 @@ static inline void __tlbsync(void)
+ 	/* TLBSYNC: supported in binutils >= 0.36. */
+ 	asm volatile(".byte 0x0f, 0x01, 0xff" ::: "memory");
+ }
++#else
++/* Some compilers simply can't do DCE */
++static inline void __invlpgb(unsigned long asid, unsigned long pcid,
++			     unsigned long addr, u16 nr_pages,
++			     bool pmd_stride, u8 flags) { }
++
++static inline void __tlbsync(void) { }
++#endif
+ 
+ /*
+  * INVLPGB can be targeted by virtual address, PCID, ASID, or any combination
 
-Moreover, I see quite a lot of documentation about some of these
-functions in the C side. I think we should not regress on that. Should
-we link to the C docs, too?
 
-> +    pub fn enable(&self) -> Result<()> {
+-- 
+Regards/Gruss,
+    Boris.
 
-Can this simply use `Result`?
-
-> +pub mod clk;
-
-Just to double check, do we need any `cfg`? I see some functions exist
-even without e.g. `CONFIG_COMMON_CLK`, but I wanted to ask if you
-tried to build it without it enabled.
-
-Thanks!
-
-Cheers,
-Miguel
+https://people.kernel.org/tglx/notes-about-netiquette
 
