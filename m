@@ -1,119 +1,91 @@
-Return-Path: <linux-kernel+bounces-542124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFB17A4C5EB
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:00:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F174A4C5ED
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:00:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE06616DA00
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:00:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E79F73A2FFE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:00:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B478912D758;
-	Mon,  3 Mar 2025 16:00:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2760215057;
+	Mon,  3 Mar 2025 16:00:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PTUaTksp"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JD+QBAJ9"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FACA84A3E
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 16:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A11214A9E
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 16:00:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741017615; cv=none; b=V3yedkodJ1R2gQHDz8udIARmZOcBVnVImz48ibq0wBxyAguTZOoa8HCVjuPCfRoFKhlVffkyUGHbm2E1DbqWz5/zx4nl9wVQwFDu9MhOqM5z7FQ9KNjMVyqPkXRNM0ozzxOa1in5vpzpKvDD93ZM4MlHzGfJt/kPhWeHDTDcZqQ=
+	t=1741017619; cv=none; b=Zle2QMCMMcUwVrI3CLBMJ8F3VCLrfpwCjfmi9AEPnYJqvYjY0yrtDpVFmS04ycycpLkyR/YNAGdAMNhX63dn8HeANBMXt+SEx7/iBELImhQmWzQDHyn46cy+6Vq7kDUi85z2g8pU7xm/NP95H2f6fpQD2pY1EGF2pS2LUBaEK6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741017615; c=relaxed/simple;
-	bh=jFOF7k8K0bUwNF3eRcNy8u9EGvWjbUR67H+Rn8NM2ok=;
+	s=arc-20240116; t=1741017619; c=relaxed/simple;
+	bh=7cw5uLdvU24ndiad/lnsfKWJMbG0wouaqcy42Hv9J68=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LhFo9DReIr0u7b34VGda4qzMl7UYRJy0h1kLgFYuxCKCGAzyrP6CDA1Hs9Ankl26jL3cxE9dqeVsghoVGHsm1PWjDHgae+XPWW2bXMw7HbdxQYxMZdHihkWDY4uiguJTFqSWn1deqzBHkD3EIJjvA1J/10eotJ6CVMJnYWY/zGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PTUaTksp; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741017612;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DeMgwkEfJ4wko22XhtG7puIWAiqthft7+Cg2qc+WP50=;
-	b=PTUaTksptWQtWv/X/3LpwolpEEwo/8LGF7gw+kPl+ZaPr9LMYjjntAncWHPhzwgOj+OJHN
-	RtiiYVu4mBq2SoW8ogkiHsp6QZUC9/CO3lz4LN5SAnkeHg6oP/76kbReR3HUJITN6DEMkS
-	dq4DhXvmu3gHocH9Nt3wNJx55P6BmJo=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-219-YkbOGX_bN56a9kcK1P-suA-1; Mon, 03 Mar 2025 11:00:11 -0500
-X-MC-Unique: YkbOGX_bN56a9kcK1P-suA-1
-X-Mimecast-MFC-AGG-ID: YkbOGX_bN56a9kcK1P-suA_1741017610
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43bc1aa0673so5284115e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 08:00:10 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=KHZkDtT/6nenyLHmqEMMDHwCo4+1HKYLfbwMRzZeOMG0pVlRC0XuH3LqE5oDB1PA9fUHJqs54XQxlearpZlu/1scQOS411oImGVlEO8g/Gh2xPspzELN4Ln92STvnRRCM+nLLwERehrtUyUE+JinVz2UmKVkgmCC+CxdhW2piwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JD+QBAJ9; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43ba8a87643so94155e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 08:00:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741017613; x=1741622413; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vko7cABqIDq4wyQZcCWllQMJuzpSeLgfyvERDjNgnaM=;
+        b=JD+QBAJ9JiBcQaDWwEsZ4R8UwLEpuRp0G/mEE+EfyFvV9vPurFC4/qwisGlxGWQ5zB
+         ffJHv4XQ+aGeOPY7D1WqOKZ4+YLfkyfgJ5pzqhZvvo8VMi9VIxWDCp1/SImZEYfwRhyN
+         1vPnYRLgi7Fv85VjH6bEW0gcGB6w0cR5h5ZeKotLEdTyNn9JwrbtPxHQ8ss80lsSGJbi
+         eV5kQidedO22jsnpcXA3DSpNdYVylOXYEu3EKWnLd8Uzq3EZEaw5phRjEhQzUb38hP43
+         1OEJvrnAdjAao8aFfC5tFRdo/zAucUnf81rWebD2jzYbggmxuBKtxSG1rks8BLuXl+uj
+         DlUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741017610; x=1741622410;
+        d=1e100.net; s=20230601; t=1741017613; x=1741622413;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DeMgwkEfJ4wko22XhtG7puIWAiqthft7+Cg2qc+WP50=;
-        b=vndfz8H+f1iAzBZuCWy6gfvee7M39Sap/J6h8OwO9VyeW+q48KmRH0nM44ZoEmnXCV
-         GQQ3Q/4jxrYRST1T0pn7atI5L/WMzHQZQQtKDaVtxjmoZzfSG7USe03Edtudz3wJ/FKC
-         6BvEWe+o8t1hwl9C7IOAgdc4FloY99E27zFR5W9FdjvJJM45vDIRaUZR041bZBehfSJI
-         4aeezHs1nutv9W74xWnGukRfGTB3Uvd0UC6SwzVxybfaIeN1JzRe/ZIs9S7x4mvtc0nm
-         3BAd2L0l/uzP6pm4t73AaZW1RNHGSm0lBnR8tAzNztXx17HbZNyxdtMWa3kx1PgO8LBV
-         apTw==
-X-Forwarded-Encrypted: i=1; AJvYcCV8v2xp5nRhydySpRHqsZqy30VGA3i5YdjlrrnxBScEw9sR7JYrzoUmf/FNs7IVwE1Dl38I3jsOVDSVT+I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxj+M1BROPL/P6vVEHEvTl86adIzGeqPwYFoZdwvIxouLmBRtes
-	xBzYTUm0Jdnh/ZEk0iooMav5xc0ZhyBqUcH5aSLnVNgHHYn9hGpr2VLNTJXhnHTQiNGpI9QbHnb
-	1uD+7tymKOs71zuKM3cXyLn1neJKzysa/+2D4blhSUpQtqHsdRqnRcP1xoXhVmg==
-X-Gm-Gg: ASbGncurd2acX+nZRhkO0rNG4443gyasRXHL2t8His5Chj9wEl/MX7xbDH5ciu5SlTz
-	HiO5yldo/55uJLwRaamHz2ZtfEVYIz9xchi2fJDMrdSwhg5pB3wrcrtOkZw/ZBZih0si3m2Kkri
-	tzomWdwmJlG4mdYHwppidLmTU42UolARMeGdRVJIF3YlXb+ct/BWM7wHThBjRCPVBtL45JxUlS9
-	EuN9/I/xCLIJEiJ9IZyVuBqdtTjDFLuDWm22gd1imLo15wGmIxrcCNvHmOao8girvx+5ay5hBOe
-	Gvumnz7Tro8rbDLU8v4QCZ7CKtyAwKD7NCJ/DDSCPiJmb3FJhVqMckLUsn47QRFUSs3Vm+TE7Bu
-	bezQq
-X-Received: by 2002:a05:600c:1548:b0:439:685e:d4c8 with SMTP id 5b1f17b1804b1-43ba66fec18mr128239855e9.15.1741017609772;
-        Mon, 03 Mar 2025 08:00:09 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGcAeVlV0x3Lsv/XUbSYCaDoG4BHyq8Ft0JsRryYoUoofcmIq5h1yB/qI8Y+i3wzQ2M9xQFVA==
-X-Received: by 2002:a05:600c:1548:b0:439:685e:d4c8 with SMTP id 5b1f17b1804b1-43ba66fec18mr128239335e9.15.1741017609386;
-        Mon, 03 Mar 2025 08:00:09 -0800 (PST)
-Received: from jlelli-thinkpadt14gen4.remote.csb (host-89-240-117-139.as13285.net. [89.240.117.139])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba58713bsm200147315e9.34.2025.03.03.08.00.07
+        bh=vko7cABqIDq4wyQZcCWllQMJuzpSeLgfyvERDjNgnaM=;
+        b=ZsV9BiRwB1w+erfoJGTRDR6p/7AvjFzoXOhGACkPEe8XaWhdKBZKSsvEjQzEciuCxk
+         jsEmVGCkVKzOkh0ViX4VALpbeE1Wj9O0xgAf1Y6Z/XOCqfAbnNnqxdcjWNQ6HtAMltx5
+         gKkeGUF8xajwR3RHK65WybFxK7wgSJ9TpiyUvgwD8WESYH3V+RqnflhUzR0bhbtsIRX2
+         tUiJ4dwcj8Rw37gDsHcTr0TP//AVX0768qUn6btuTpl7PdABIwxJWlwsW1CoAYRLhiOL
+         Q31v+2/Hyv3fsYggxIyETTE6MoFa1HtQ4UDhEvGBJC3djMI8n5VSRX0q+M3oH/oJN0MF
+         dCdA==
+X-Forwarded-Encrypted: i=1; AJvYcCUkLfw5BtPXEj35GzVS47BWvBSzcLDMBu9lpLvmg0BFMFJ/t4Mp0ui8Q03gTyuV/3rh24XN9OdptIezWyE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVU4PtJBFwdowcSK99sGowl1joTnzEmgZHUyRWtBSwgLUlk/4H
+	+HtR7lEl5CMLP1nJlNnuuyFpDVbbPpSGItUFxh4aEuxGK6jCP91qeVzGU+1q6w==
+X-Gm-Gg: ASbGncubENr+OeEitGzedXN16U78AXtFoVJhLCnh3ue8zigUi9wgqY8E3lI8VRZarig
+	kEATrI1PE9RiwKvKg2QJ0zv0MnePNBjbbrzRCFBawNpBJyQu6QOEYI2nT+3bwvATf+H1QPCZGXC
+	0uuBd8BPRL4KUc59+1w61CnP4+A5fTBI636X+cNJaVjq/amsWfZa3amPYYM1Xz8kcpSNwsSTNoO
+	r+W/8w+z0vIcEiRySA6SVdTU6kATX0KEUC68ecQrekPKGSN8tLe2I5w0XrAKgIMSyIygS/IvMk2
+	9c4w9jlQ49cQy/5mHD049zm43YsE3fNSHm8W9RtsbxkGzFwr51JZP3Q8anKg8WEizmmfSu1sF3Q
+	SB/TM
+X-Google-Smtp-Source: AGHT+IGyLIQ4fa7Av3UWVJcXm9EPAuZuYf9YOIbfavxsYUDavvmS7GtHJX/36pPQfOHOTqiDJFYG2w==
+X-Received: by 2002:a05:600c:4ec8:b0:439:8f59:2c56 with SMTP id 5b1f17b1804b1-43bb44f1834mr2037135e9.2.1741017613471;
+        Mon, 03 Mar 2025 08:00:13 -0800 (PST)
+Received: from google.com (44.232.78.34.bc.googleusercontent.com. [34.78.232.44])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bca26676esm5183245e9.8.2025.03.03.08.00.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 08:00:08 -0800 (PST)
-Date: Mon, 3 Mar 2025 16:00:06 +0000
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Christian Loehle <christian.loehle@arm.com>,
-	Thierry Reding <treding@nvidia.com>,
-	Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
+        Mon, 03 Mar 2025 08:00:12 -0800 (PST)
+Date: Mon, 3 Mar 2025 16:00:08 +0000
+From: Brendan Jackman <jackmanb@google.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Oscar Salvador <osalvador@suse.de>,
 	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Koutny <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Phil Auld <pauld@redhat.com>, Qais Yousef <qyousef@layalina.io>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
-	Suleiman Souhlal <suleiman@google.com>,
-	Aashish Sharma <shraash@google.com>,
-	Shin Kawamura <kawasin@google.com>,
-	Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v2 3/2] sched/deadline: Check bandwidth overflow earlier
- for hotplug
-Message-ID: <Z8XSBrCNjPVRJszF@jlelli-thinkpadt14gen4.remote.csb>
-References: <537f2207-b46b-4a5e-884c-d6b42f56cb02@arm.com>
- <Z7cGrlXp97y_OOfY@jlelli-thinkpadt14gen4.remote.csb>
- <Z7dJe7XfG0e6ECwr@jlelli-thinkpadt14gen4.remote.csb>
- <1c75682e-a720-4bd0-8bcc-5443b598457f@nvidia.com>
- <d5162d16-e9fd-408f-9bc5-68748e4b1f87@arm.com>
- <9db07657-0d87-43fc-a927-702ae7fd14c7@arm.com>
- <Z7x8Jnb4eMrnlOa8@jlelli-thinkpadt14gen4.remote.csb>
- <4aa1de5c-4817-4117-b944-4b4c8f09ac40@nvidia.com>
- <Z72R5-I91l5FOJK6@jlelli-thinkpadt14gen4.remote.csb>
- <bd9eb72e-5c67-44a7-ba79-1557eaa319e6@nvidia.com>
+	Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mm/page_alloc: Add lockdep assertion for pageblock
+ type change
+Message-ID: <Z8XSCE8goWnEzRSY@google.com>
+References: <20250303-pageblock-lockdep-v2-1-3fc0c37e9532@google.com>
+ <4d0f0bca-3096-4fb4-9e8b-d4dcdf7eeb92@redhat.com>
+ <Z8W0v0LjuyH8ztTQ@google.com>
+ <3e66875e-a4d5-4802-85b3-f873b0aa3b06@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -122,50 +94,124 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bd9eb72e-5c67-44a7-ba79-1557eaa319e6@nvidia.com>
+In-Reply-To: <3e66875e-a4d5-4802-85b3-f873b0aa3b06@redhat.com>
 
-Hi Jon,
-
-On 03/03/25 14:17, Jon Hunter wrote:
-> Hi Juri,
-> 
-> On 25/02/2025 09:48, Juri Lelli wrote:
-> > Hi Jon,
-> > 
-> > On 24/02/25 23:39, Jon Hunter wrote:
-> > > Hi Juri,
-> > > 
-> > > On 24/02/2025 14:03, Juri Lelli wrote:
-> > > > On 24/02/25 14:53, Dietmar Eggemann wrote:
-> > 
-> > ...
-> > 
-> > > > > So DL accounting in partition_and_rebuild_sched_domains() and
-> > > > > partition_sched_domains()!
+On Mon, Mar 03, 2025 at 03:06:54PM +0100, David Hildenbrand wrote:
+> On 03.03.25 14:55, Brendan Jackman wrote:
+> > On Mon, Mar 03, 2025 at 02:11:23PM +0100, David Hildenbrand wrote:
+> > > On 03.03.25 13:13, Brendan Jackman wrote:
+> > > > Since the migratetype hygiene patches [0], the locking here is
+> > > > a bit more formalised.
 > > > > 
-> > > > Yeah that's the gist of it. Wait for domains to be stable and recompute
-> > > > everything.
-> > > > 
-> > > > Thanks for testing. Let's see if Jon can also report good news.
+> > > > For other stuff, it's pretty obvious that it would be protected by the
+> > > > zone lock. But it didn't seem totally self-evident that it should
+> > > > protect the pageblock type. So it seems particularly helpful to have it
+> > > > written in the code.
 > > > 
+> > > [...]
 > > > 
-> > > Sorry for the delay. Yes this is working for me too! If you have an official
-> > > patch to fix this, then I can give it a test on my side.
+> > > > +
+> > > >    u64 max_mem_size = U64_MAX;
+> > > >    /* add this memory to iomem resource */
+> > > > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> > > > index 579789600a3c7bfb7b0d847d51af702a9d4b139a..1ed21179676d05c66f77f9dbebf88e36bbe402e9 100644
+> > > > --- a/mm/page_alloc.c
+> > > > +++ b/mm/page_alloc.c
+> > > > @@ -417,6 +417,10 @@ void set_pfnblock_flags_mask(struct page *page, unsigned long flags,
+> > > >    void set_pageblock_migratetype(struct page *page, int migratetype)
+> > > >    {
+> > > > +	lockdep_assert_once(system_state == SYSTEM_BOOTING ||
+> > > > +		in_mem_hotplug() ||
+> > > > +		lockdep_is_held(&page_zone(page)->lock));
+> > > > +
+> > > 
+> > > I assume the call chain on the memory hotplug path is mostly
+> > > 
+> > > move_pfn_range_to_zone()->memmap_init_range()->set_pageblock_migratetype()
+> > > 
+> > > either when onlining a memory block, or from pagemap_range() while holding
+> > > the hotplug lock.
+> > > 
+> > > But there is also the memmap_init_zone_device()->memmap_init_compound()->__init_zone_device_page()->set_pageblock_migratetype()
+> > > one, called from pagemap_range() *without* holding the hotplug lock, and you
+> > > assertion would be missing that.
+> > > 
+> > > I'm not too happy about that assertion in general.
 > > 
-> > Good! Thanks for testing and confirming it works for you now.
+> > Hmm, thanks for pointing that out.
 > > 
-> > I will be cleaning up the changes and send them out separately.
+> > I guess if we really wanted the assertion the approach would be to
+> > replace in_mem_hotplug() with some more fine-grained logic about the
+> > state of the pageblock? But that seems like it would require rework
+> > that isn't really justified.
 > 
+> I was wondering if we could just grab the zone lock while initializing, then
+> assert that we either hold that or are in boot.
+
+Would that be because you want to avoid creating in_mem_hotplug()? Or
+is it more about just simplifying the synchronization in general?
+
+FWIW I don't think the in_mem_hotplug() is really that bad in the
+assertion, it feels natural to me that memory hotplug would be an
+exception to the locking rules in the same way that startup would be.
+
+> In move_pfn_range_to_zone() it should likely not cause too much harm, and we
+> could just grab it around all zone modification stuff.
 > 
-> I just wanted to see if you have posted anything yet? I was not sure if I
-> missed it.
+> memmap_init_zone_device() might take longer and be more problematic.
+> 
+> But I am not sure why memmap_init_zone_device() would have to set the
+> migratetype at all? Because migratetype is a buddy concept, and
+> ZONE_DEVICE does not interact with the buddy to that degree.
+> 
+> The comment in __init_zone_device_page states:
+> 
+> "Mark the block movable so that blocks are reserved for movable at
+> startup. This will force kernel allocations to reserve their blocks
+> rather than leaking throughout the address space during boot when
+> many long-lived kernel allocations are made."
 
-You didn't miss anything. I cleaned up and refreshed the set and I am
-currently waiting for bots to tell me if it's good to be posted. Should
-be able to send it out in the next few days (of course you will be cc-ed
-:).
+Uh, yeah I was pretty mystified by that. It would certainly be nice if
+we can just get rid of this modification path.
 
-Thanks,
-Juri
+> But that just dates back to 966cf44f637e where we copy-pasted that code.
+>
+> So I wonder if we could just
+> 
+> diff --git a/mm/mm_init.c b/mm/mm_init.c
+> index 57933683ed0d1..b95f545846e6e 100644
+> --- a/mm/mm_init.c
+> +++ b/mm/mm_init.c
+> @@ -1002,19 +1002,11 @@ static void __ref __init_zone_device_page(struct page *page, unsigned long pfn,
+>         page->zone_device_data = NULL;
+>         /*
+> -        * Mark the block movable so that blocks are reserved for
+> -        * movable at startup. This will force kernel allocations
+> -        * to reserve their blocks rather than leaking throughout
+> -        * the address space during boot when many long-lived
+> -        * kernel allocations are made.
+> -        *
+> -        * Please note that MEMINIT_HOTPLUG path doesn't clear memmap
+> -        * because this is done early in section_activate()
+> +        * Note that we leave pageblock migratetypes uninitialized, because
+> +        * they don't apply to ZONE_DEVICE.
+>          */
+> -       if (pageblock_aligned(pfn)) {
+> -               set_pageblock_migratetype(page, MIGRATE_MOVABLE);
+> +       if (pageblock_aligned(pfn))
+>                 cond_resched();
+> -       }
+>         /*
+>          * ZONE_DEVICE pages other than MEMORY_TYPE_GENERIC are released
+
+memory-model.rst says:
+
+> Since the
+> page reference count never drops below 1 the page is never tracked as
+> free memory and the page's `struct list_head lru` space is repurposed
+> for back referencing to the host device / driver that mapped the memory.
+
+And this code seems to assume that the whole pageblock is part of the
+ZONE_DEVICE dance, it would certainly make sense to me...
 
 
