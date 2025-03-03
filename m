@@ -1,247 +1,244 @@
-Return-Path: <linux-kernel+bounces-542482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9C2EA4CA4E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:51:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 85918A4CA36
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:49:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4BB617F5C7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:39:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 487044204F2
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:39:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C961C250C0E;
-	Mon,  3 Mar 2025 17:31:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12EB824EF7F;
+	Mon,  3 Mar 2025 17:30:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="GVfk1qaR"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="DW8nZsHG"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2062.outbound.protection.outlook.com [40.107.244.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43679250BEB;
-	Mon,  3 Mar 2025 17:31:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741023075; cv=none; b=GaNgefKbHjPwnP2RF5mdP1V6ITVPri5cL1SZvQTcu3T/TiqyyvlKBpjj7Qhe1lFUkReNTUZYAS2rV5smr8r/92jL/YtSaSOBJEk7Qdj1nby7EqOAJXHiO8emb7nDPwqPe2cs+yADMDTdMvKI6xPM8BcIiOGSbzpze4TM71b5h9Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741023075; c=relaxed/simple;
-	bh=w6uOTSX/VPzJEMePulP99FzCwhpsVIcs+/wyKHhDP3k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mWHVRrQjivDOxB1uoZdgad4ng84f1UCPjpVwXT22CFM/xNQSoojP/dTZyB9tIFL+FzVXdX/722V4yOFfoxKIeZLRjZxVLBWtwBkcT4De9TE7TVTlQrdD+t3TfennUwpNJy3Po2pC6SCY0U/6cenzQg02dguDw28ZYdXTEqPI0Ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=GVfk1qaR; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 523E361D022672;
-	Mon, 3 Mar 2025 17:30:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=LCr6pU
-	IsgsVXQTAZXfqxcc+mF9zf7Zl8i5wrr90EN08=; b=GVfk1qaRArbJF2/TC/zrmI
-	Z+kwZJFuU0y2OiTdd0BhdLN2g8OU600u+1qD0rfs7twaEEnPyKHuIOhEIEGSyzh7
-	5Kdm7i9s8rg5U9VEIZSk0w2jnPrVdwXIscGyBsg3uArmpv24Gp1sgHG1UWMBB3yc
-	Wii3G9YE5zVnPtwdFvgvaJ1xhg1taj82PvgZdgBAcwJL1neROFQUDkBk8LzYb3VK
-	KwNy9Igf8z7ja2WJIUP05wzkcstUGao7kGA+AKRI+FCflThzC99uBtWfO2I9vw3z
-	xr+jmAIghAbjY0egQHY0V4ztTM22EAexYGmSXui9gjqR/gLb08GCEOTpukxPfiJw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 455dunsuv1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Mar 2025 17:30:58 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 523H77q7029492;
-	Mon, 3 Mar 2025 17:30:57 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 455dunsuuw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Mar 2025 17:30:57 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 523HA61o020928;
-	Mon, 3 Mar 2025 17:30:56 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 454esjrv8t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Mar 2025 17:30:56 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 523HUtH559441516
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 3 Mar 2025 17:30:55 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 185A72004B;
-	Mon,  3 Mar 2025 17:30:55 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3D00520043;
-	Mon,  3 Mar 2025 17:30:53 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.124.215.79])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon,  3 Mar 2025 17:30:53 +0000 (GMT)
-Date: Mon, 3 Mar 2025 23:00:50 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: Baokun Li <libaokun1@huawei.com>
-Cc: linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>,
-        Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org,
-        Mahesh Kumar <maheshkumar657g@gmail.com>,
-        Ritesh Harjani <ritesh.list@gmail.com>,
-        Yang Erkun <yangerkun@huawei.com>
-Subject: Re: [PATCH 1/2] ext4: only defer sb update on error if SB_ACTIVE
-Message-ID: <Z8XnMOT1LNzgjwaN@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-References: <cover.1740212945.git.ojaswin@linux.ibm.com>
- <da8af2e5170f0d94031b812d7d50c6ec1967db1b.1740212945.git.ojaswin@linux.ibm.com>
- <3f9a67e2-ef08-47d4-b35e-41841e24bb71@huawei.com>
- <Z72yUqGWHdRyCE25@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <1a1ff87b-6f75-4d43-ad7b-54883bea13f8@huawei.com>
- <Z8BP4luSfyvz-V4T@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <84ebed94-d4ab-4b8c-962c-f10ebaca5a75@huawei.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ECB724EF6B;
+	Mon,  3 Mar 2025 17:30:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741023058; cv=fail; b=oq+cHD0oKGP7V7FAWXdmZwoDnbUs7vNYbsUS9ojPVpBeAYGjSoWsO+jUmp/cF8xwGv1ARMsADgzwR2cRmtqxMxwPiY6GM/s3oCz6xajzRTHEitEg94dqVkm7lHF7TcKoyniCRaK+O22TWAoXwetPaSM7CwR235NWjH04wZltEgE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741023058; c=relaxed/simple;
+	bh=NHPYpRCAa1F+eDaCvCUQqjctw06vvRswgzGOwTrKyZU=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=r6DvxJemLK9YsfcqaeVR8R9DgibkZPjynWqJtEryxRsAXbdTTIf3kKuRg2fO2TUOvRqsPQUsgFiJDRQu5Nve3Lx09+xbPbfAstyNQqJ3b6ZSP9x4ZHx8D3Tpx7qFggj8SH8wLAWFi8ffXiKpLydBQwLqaV4QGPf7qJNk45s51iw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=DW8nZsHG; arc=fail smtp.client-ip=40.107.244.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=v4GUT35jg/pwFCfAKNFA85Kfe/VaTOe17I26/Q/bsdMb549+ujaOd7TznVeKYx/1Y8MRcmlAqmpvv+jr0qVMAmIPkVecnAZ2C+QYa8LPgrOKHnz6lPrZhUCOSnPsTtHTid0KvPi45xxjNPkd539FKDD5KoWJwWM1o/l/yMfxQGDvNg6o1CGhA/wBNF0k76AuP7pu5vG9eNEo73P1EwV0zI2EiuZCtNhcTXc0ttT3JW8D60W8qwgvtaupoykFjsEug3F4DdIxtVHhNJuc2VbSj2imzDClrDqKXuGT0F24QC0cRdoDDklrv2Gg9GhraJP568HeWxiU3dDfsx4Z1Z5mbg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HWr3Ew1FIec2nVR1hOXg7CQCiB87KYWLT3afRRAd/HE=;
+ b=U1XSp4kjmcPik6ZU4i6UyDSDkWPuWuQMk6cE/WCL8mn2zqxQHDMIrPKkX1cyD4UazFiT+H+bCad9HGYF+GvPkZsEPNFKN6KG8tAhCj7DHrojejTmepKCdYmJAVhiWSiDxCcoCLDA8gW4l8uGSPhmDkCW0YxFpml/mB0Ife37Z2MuL8inRmYBojjja0mzLAAMPH+XhfJ+o5Bi0oPYnTK5fyL7xFxZAdlSERHfVgHl9r09u6mRzOvwDdTi9zZv/qzMRtW0TpvNZDE0Xcz0zTBUwuthR39maV+u86yM5UkIwmuPP6tae+SK9yi9snXL6+l367Lseo4lxgWA8dUWePfcNQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HWr3Ew1FIec2nVR1hOXg7CQCiB87KYWLT3afRRAd/HE=;
+ b=DW8nZsHGUwDX8G6unrszhBvzoYJc44mfN85Ex3waFwgVtpOSjgryeIi1wuZoYmaJH1a5ITEEmYyAvlJ7Pp3tF29yU72dw/qdlNH7Vdoa4eoqpVFG9f4U6VsQ4EbKjy3d58rm0s2IlXIX3YHDt/GiwzqzSVdr1VwbjWTY63apB5Ayuga7n7qbwMlNhdEBvvDWLUOkjkdKDbd6WnOtWbY2U752DRpvQPVvek0bihz+YY5wQw2XMus3GVohPAdeNG7PiEFS97ybCSBXAP90E5piFJ4Kou1xv8I6ZR1xTab/zrW9QW0u4NMje0JXcxH9Izmm5yDTCoajrTXIdUKFxRKyzQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by IA1PR12MB6458.namprd12.prod.outlook.com (2603:10b6:208:3aa::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.25; Mon, 3 Mar
+ 2025 17:30:53 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%5]) with mapi id 15.20.8466.016; Mon, 3 Mar 2025
+ 17:30:53 +0000
+Message-ID: <5f404973-380e-4626-a2ef-8c5c44d56b83@nvidia.com>
+Date: Mon, 3 Mar 2025 12:30:51 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/3] rcu: Use _full() API to debug synchronize_rcu()
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>,
+ Uladzislau Rezki <urezki@gmail.com>, RCU <rcu@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Cheung Wall <zzqq0103.hey@gmail.com>,
+ Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
+References: <Z8HmH85bYNU8enJ2@pc636>
+ <dd15fa79-70a5-4929-9339-51a47099c916@paulmck-laptop>
+ <Z8H_aYBUHD2sS2Ir@pc636>
+ <73724164-71f4-4671-b612-eb82a784da58@paulmck-laptop>
+ <Z8IKs-I-YsOoS4uw@pc636>
+ <cdab57a4-8d58-41d9-a9b5-71d425a7375e@paulmck-laptop>
+ <f6803081-8243-4723-a3ba-00db351aafff@paulmck-laptop>
+ <20250303001507.GA3994772@joelnvbox> <20250303001710.GA3997787@joelnvbox>
+ <20250303170040.GA31126@joelnvbox> <Z8Xh0pP4xaFm0nEV@tardis>
+Content-Language: en-US
+From: Joel Fernandes <joelagnelf@nvidia.com>
+In-Reply-To: <Z8Xh0pP4xaFm0nEV@tardis>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MN2PR22CA0016.namprd22.prod.outlook.com
+ (2603:10b6:208:238::21) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <84ebed94-d4ab-4b8c-962c-f10ebaca5a75@huawei.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: oXwgmBByK124_ABNKnXygQNMWV_MpwZ9
-X-Proofpoint-GUID: eh3u1pGDNo_2LwPiT_df1YunPZ9pV067
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-03_08,2025-03-03_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- adultscore=0 priorityscore=1501 malwarescore=0 bulkscore=0 spamscore=0
- suspectscore=0 mlxlogscore=999 phishscore=0 clxscore=1015 mlxscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2503030133
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|IA1PR12MB6458:EE_
+X-MS-Office365-Filtering-Correlation-Id: e4c9520f-7817-4780-4202-08dd5a7925cf
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?andpM1N6Qk5BNkt2RmpaOHNDclFBTzQxOFpkZ0F6ZHg0Wm00ZUkvTDJGait0?=
+ =?utf-8?B?endGU2xUMkJRZVZrNmYrVnYwa2Z5YXNXais1WWYxTFBNcTR0dmNYSnZYQTBU?=
+ =?utf-8?B?UlNQV1BRcm9EeHU0WW1wdVRoSlNDWm5rQjRuRVRzL0ViSkNFQXFSUExmZjVC?=
+ =?utf-8?B?djVUY2lMdFdGWWh4OXpPYTZ4YlhVejZHS21rbFd3TVpyZXRMNUdNSFgxdkQ3?=
+ =?utf-8?B?WTFITFBFT0pYTlhydGQwL3FWa25ZWEJKY0VVWVZZa1M0amxlQytTSEhGMHRV?=
+ =?utf-8?B?bWxCZXV6eFh2bTBrVzRZQVZtOU1Sb1AyMXBjUG1Ed09nSXhEYU5FUVFMN3Zn?=
+ =?utf-8?B?Rmhha3E3bVlkKzlFTUlaOE9xTmVjdVJpblREdXhoNmpPK1VxK2d1MWViZHZZ?=
+ =?utf-8?B?aHJtRms3RFZBWGhFQnRrY0grR1BjMDBZM0h0RUpSczFJM1FRbS9nN2N0SGhp?=
+ =?utf-8?B?Vm90OGNyMHJIKzNEbi83bnpBcXJZMXQ4aHRBNUpoVFFJKzdhbDlHYVZOZ054?=
+ =?utf-8?B?UE9FL1dUR3NjbnR0SGVGK1FSRXBxT1JpSStZcUZNaUxjTHlnR0lHZUlPQXA4?=
+ =?utf-8?B?bXdvd0NIeGVFMmlHNzFFb3gxUUVKUDlOcTFwLy9scy9EL0JpQUNRMEdna0Q1?=
+ =?utf-8?B?dS9zQ0dxMmcvcUJOWFlWTWxyOE5tWnM5dDQwUFlOYUFraTd2WlVWajlycEdP?=
+ =?utf-8?B?dUNIdFB3TjdnNWgyMFNXamVOVEN5ZWk5YjhrWXVScS9MbkdueGxnc0ZiN3pz?=
+ =?utf-8?B?U1JrK1pOOHZxWWFvbTYvSnRBTlE2MlVCNHFydmhyYXZLNmlmbkhMQ3dIZGkz?=
+ =?utf-8?B?REl6QUdlM2cyaCtCQWxSZkN6OGtSKzBkcFNMVytlSlBpM21WTS9BaVArd21J?=
+ =?utf-8?B?L0VPUEJPUzV6M005WlQ4djJXajBiczBSK3h0a1Jza1pyKzZ2NWxnaDlJc1hy?=
+ =?utf-8?B?UHgxNFpzMldRb2huSWpJK09lNGtZZSttaDZidzRvQ242dmZPVElXelJPY0lF?=
+ =?utf-8?B?L0F3UFBDQjd3d2k4Q0N4enQ0ZW9sRVROQ3dsdytOcmJWZUZVOVdKYmFwM2s5?=
+ =?utf-8?B?NUpQSGlEbEd2WnNacGtCNVExeWYxcHQ3MmlhSi9YeDV3RlNFVU1lNDVhaU1H?=
+ =?utf-8?B?WExRT0k1UnR6bVArdms0S3FRRXhnUjF4SWZReWRUNTBPUzEzNStWUndYNFJG?=
+ =?utf-8?B?bXVXMzBxOE8zSTgwSm9FMmRKQjdxd3A4ei9vRDUvRk1mN2o5cUhBNVVtenRE?=
+ =?utf-8?B?YUcwbnBJRmNBOGozbk5zcytMTDB0SHlRaDFXc3NmYnNpd2g4bnppT0dnbkNo?=
+ =?utf-8?B?T1dBYlltWk5iQVkwMm01WVFYbklRYlJnYUdLaWhnTXpZdVZ2dFBwenYybExK?=
+ =?utf-8?B?KzVYSFZKUmpHa2k4TkRRb1NEUG41VDl1M2VEckpoRHNST1ljQldDa1puSzUx?=
+ =?utf-8?B?ZVpSZGdLUUF4SFROaWdiSlZrWmc1RWloRVVsS2svTUNHakVCT2N4eG0vaHB5?=
+ =?utf-8?B?VzAzMFRUeGRvbkVPcFQzQ1NNejM5eVZ1aTBqTDN1dytCd3J0N0dGeUJBQlBq?=
+ =?utf-8?B?cUdLRWtIczIzbDdwL3JOcm9vR2RLNTU4RmlzNDJmWFoxajBEVG9Rc3E0NTNv?=
+ =?utf-8?B?UEJVVVhYM0NYcW1YNk9WQ290TjNNOWRyYW1QTzNQVXN4T2U3U0Q3aGw5TjV1?=
+ =?utf-8?B?WStmdzJwcjN0ZDVJT3dQRUk5MzF6NVZZd1Jad1QrTE5zMjhnNnljU1U5LzNE?=
+ =?utf-8?B?M3pMM3dkSXpUWVpHWlRGUVU3TUdYQTBBd3ZTYzVudUV1QzR1VU4vdzcwZWZ4?=
+ =?utf-8?B?Y1c0L2c3dW1XT2s3T1E1ZnduUmxzbWQxTzVQVmpMcFFCeHQzc21tcUFmNThT?=
+ =?utf-8?Q?HopnbOKIrItgc?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ODRIVzBhRWQyQk5aZlZlQURISy8vWWZ6eExjbW5oWVV6STVUajRRcVJrSDN2?=
+ =?utf-8?B?cFgwNnhoeEFPWHR5dVcxb2pzU0pNK0VGbzFFdkx3RmJESDBxZ1Z1U3A1di8x?=
+ =?utf-8?B?bUxTNmxvTTVkSnhDeVJJNVJIak9xRzYvVGZTUVFJcSs1V2d4NW9SZldqZFVT?=
+ =?utf-8?B?cjVsblFKdlREeWIvTFN0Sk83dVV3N2JKc2RKSHYrcUpNcVp4K25QaDYyTm80?=
+ =?utf-8?B?VTRTUmY5UTJIT2xENktTaGtYQVJuUkJkdFJzZGhtN2lXVk5oaGdTK250L2JZ?=
+ =?utf-8?B?eXR1YkxLTnlMNHh1czJoNlNFTmhrS3IzVlNHdEVUMFFsVURKYkZWSEQyZkhv?=
+ =?utf-8?B?bjRaTkUxcjRZUU1QVGlYUWlrbFhCb1c1YUlGbU55VTZ6TDZWUUw5NDlMZUE1?=
+ =?utf-8?B?Qlp3UDVWYmEzbG0zRGdGNXNJQXkvOUJSRTNtRUp1ZSsxUE56cUMwMXBJdTgv?=
+ =?utf-8?B?emR5SlR2a3h0VHQzdEVPMVZwTUhMNFJmbE9aVFRyd2dBeEgrM3VDdXZCNk5a?=
+ =?utf-8?B?d1BZejdqUWN1WjFOOC9aTjhlMmt4Y2h6Rm55eTFwRDRMb1hpcUlrMW9MKzhU?=
+ =?utf-8?B?RXhOc1JxeEw4OTBkdEhhOW9td2RXOUtneFdWUGJFU1dBRmRXSGlKYkgxREtU?=
+ =?utf-8?B?WElTSHB5dHYwTUYxUjFPWkRJMzIyV3huckFHYURablNPaGFSRnBxZ2R6ODk0?=
+ =?utf-8?B?c1RCQ25PbERrSEwrUTJWUG1IVGhsejluczFUS294WitDdFNRMkNKL3lHRzZa?=
+ =?utf-8?B?YTdTdTRobzF5Y2ZucmIvL2VBaDBPY3hKa1N5M092eWx3TTgrWTdESjFnbUpZ?=
+ =?utf-8?B?K3NLVGNGUFhIdTFZd2lQaTlPYzFGSHFuTzk3TGNLZ1RtVWN2bWU2bXc5bkNa?=
+ =?utf-8?B?SGlidEJCUlpHc2RFT0UvL1V5czQ4SnlWMTQydnQ4Qmd2ck80WmhVSkZSTVF5?=
+ =?utf-8?B?TFdoVmo0WEh6V1A4WWtDelc5N2RPSmE3T3l2bXhlK2JEQ2FaZCtMMWlaMEp1?=
+ =?utf-8?B?UDk4SWxpSVZMRmZXb2s1Q3FKQXBCUUErUjhtN1pxblo2eWVQVm9TK0FRRk9R?=
+ =?utf-8?B?K1JzVFcrM3BtdUlubEhzZzJTYk9GbmpwSDZMdDQ4dGNabW5Pb3VTM1dWWGNx?=
+ =?utf-8?B?N2hUQjM5R25RalgxdDEwNnJaRTd5c0RNZFJyR2tWMEFqaC9LTUtMV3ZJR0JR?=
+ =?utf-8?B?aCsxdHByZm9BbmhCdWsycmUrZzF1UGFzakExSlFBY2pPcFExRkliU055cmtN?=
+ =?utf-8?B?b0h1UVE1a0svMUpVZmd4aDBSenAzMC96ay8vR2M2VEZ4MjNsMlNhZnczbVdh?=
+ =?utf-8?B?REl6bFBkTWNiV2JFVDV6cWpSb2U2bGtPbDhUTW9wUmNOOFhCSnZkb3IyamxC?=
+ =?utf-8?B?SVBkejFLTG9HVDRaaHg2VVYxK2dTK2RXdXZsa01DZmxycmZIVkZyYjRHSDZo?=
+ =?utf-8?B?bmdLclNCcUdFOEVnckE1TDdWVjN4VW5JU1JoNjFEVUIrK3FsaUZCRjdVSE5n?=
+ =?utf-8?B?TklFUkpMalBZTVlCaHJtTDRVSzQ5OEFuTDRkNzFUSERsSHY0NWJBSEFkU0p2?=
+ =?utf-8?B?QUxQQzVvczl1WDZGS2lHbkcyeDBwbVhrTnBOLzg1UUlIOUJlUHV5aG1peWtG?=
+ =?utf-8?B?SGFORk5sYW0zQWppNE5pOEtFeU5SczJmb0prOE5LVDF0aUtmYTdxOGhKanZU?=
+ =?utf-8?B?aEtuRXNMcnkrek1vemoxaTM0ZlZCT2pSbzNicmhYdTQ0cW5QNmVvM1ZCK2lT?=
+ =?utf-8?B?T1ExRFJGMXdRMnBKcGNUemtHaDQvZGpLZVE1akJQczF5OFk3Ujc5NWN4K2F5?=
+ =?utf-8?B?em9uZGxiTWd6bEtlTThQOXRWSGRwOFA2bDhOSytMTkVqRlVvK2syM2pVUjZt?=
+ =?utf-8?B?Z3YvbTBPdDQ2V3BjdmZiamRRQzVUTFdBOCtQeTZ1eUxSK29lOG95bkgxY3Ur?=
+ =?utf-8?B?TS9GQWdlbEtaZEJXc1FCQlZQcjNWeDJSQTNabHQrU2V6ME1ZOU5FQXoweDJY?=
+ =?utf-8?B?Wkp5TlVvNjY1c0FWL1BMWGhBZk91SHdXWWxVR3VMVHNJUDZGYy9YanM3aFJ4?=
+ =?utf-8?B?MVhqVmhaclFGZG14djc4NlZYcERHNzlLTVE4OUhOeVAzSDZoNnVMeGN4aXB5?=
+ =?utf-8?Q?dTJP/DKpzPHgxSPvNRk0ffxSX?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e4c9520f-7817-4780-4202-08dd5a7925cf
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2025 17:30:52.9852
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 43Fiz6n/PUvE3WstJqPIgjRCksb/GvSFyvBpi9DGL/eawlDwOMZqln479lyW008kpyd6M+0E63vckPVK5I1DJQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6458
 
-On Thu, Feb 27, 2025 at 08:51:11PM +0800, Baokun Li wrote:
-> On 2025/2/27 19:43, Ojaswin Mujoo wrote:
-> > On Wed, Feb 26, 2025 at 09:55:52AM +0800, Baokun Li wrote:
-> > > On 2025/2/25 20:06, Ojaswin Mujoo wrote:
-> > > > On Tue, Feb 25, 2025 at 09:53:10AM +0800, Baokun Li wrote:
-> > > > > On 2025/2/22 16:40, Ojaswin Mujoo wrote:
-> > > > > > Presently we always BUG_ON if trying to start a transaction on a journal
-> > > > > > marked with JBD2_UNMOUNT, since this should never happen. However while
-> > > > > > running stress tests it was observed that in case of some error handling
-> > > > > > paths, it is possible for update_super_work to start a transaction after
-> > > > > > the journal is destroyed eg:
-> > > > > > 
-> > > > > > (umount)
-> > > > > > ext4_kill_sb
-> > > > > >      kill_block_super
-> > > > > >        generic_shutdown_super
-> > > > > >          sync_filesystem /* commits all txns */
-> > > > > >          evict_inodes
-> > > > > >            /* might start a new txn */
-> > > > > >          ext4_put_super
-> > > > > > 	flush_work(&sbi->s_sb_upd_work) /* flush the workqueue */
-> > > > > >            jbd2_journal_destroy
-> > > > > >              journal_kill_thread
-> > > > > >                journal->j_flags |= JBD2_UNMOUNT;
-> > > > > >              jbd2_journal_commit_transaction
-> > > > > >                jbd2_journal_get_descriptor_buffer
-> > > > > >                  jbd2_journal_bmap
-> > > > > >                    ext4_journal_bmap
-> > > > > >                      ext4_map_blocks
-> > > > > >                        ...
-> > > > > >                        ext4_inode_error
-> > > > > Just curious, since jbd2_journal_bmap() only queries the map and does not
-> > > > > create it, how does it fail here? Is there more information in dmesg?
-> > > > > Is s_journal_inum normal after file system corruption?
-> > > > Hey Baokun,
-> > > Hello Ojaswin,
-> > > 
-> > > Thanks for your detailed explanation!
-> > > > So I dug a bit more into the vmcore. The error information in sbi looks
-> > > > like this:
-> > > > 
-> > > >     s_add_error_count = 1,
-> > > >     s_first_error_code = 117,
-> > > >     s_first_error_line = 475,
-> > > >     s_first_error_ino = 0,
-> > > >     s_first_error_block = 0,
-> > > >     s_first_error_func = 0xc0080000055300d0 <__func__.6> "ext4_read_block_bitmap_nowait",
-> > > >     s_first_error_time = 1737023235,
-> > > > 
-> > > >     s_last_error_code = 117,
-> > > >     s_last_error_line = 609,
-> > > >     s_last_error_ino = 8,
-> > > >     s_last_error_block = 783,
-> > > >     s_last_error_func = 0xc008000005531b10 <__func__.41> "ext4_map_blocks",
-> > > >     s_last_error_time = 1737023236,
-> > > > 
-> > > >     The first error is here:
-> > > > 
-> > > >         if ((bitmap_blk <= le32_to_cpu(sbi->s_es->s_first_data_block)) ||
-> > > >        474               (bitmap_blk >= ext4_blocks_count(sbi->s_es))) {
-> > > >     *  475                   ext4_error(sb, "Invalid block bitmap block %llu in "
-> > > >        476                              "block_group %u", bitmap_blk, block_group);
-> > > >        477                   ext4_mark_group_bitmap_corrupted(sb, block_group,
-> > > >        478                                           EXT4_GROUP_INFO_BBITMAP_CORRUPT);
-> > > >        479                   return ERR_PTR(-EFSCORRUPTED);
-> > > >        480           }
-> > > > 
-> > > > and the last error is here:
-> > > > 
-> > > >       608           if (retval > 0 && map->m_flags & EXT4_MAP_MAPPED) {
-> > > >    *  609                   ret = check_block_validity(inode, map);
-> > > >       610                   if (ret != 0)
-> > > >       611                           return ret;
-> > > >       612           }
-> > > > 
-> > > > 
-> > > > And indeed we have the traces of the first error in dmesg:
-> > > > 
-> > > > [75284.713463] EXT4-fs error (device loop36): ext4_read_block_bitmap_nowait:475: comm proc01: Invalid block bitmap block 0 in block_group 0
-> > > > [75284.713470] EXT4-fs error (device loop36): ext4_read_block_bitmap_nowait:475: comm proc01: Invalid block bitmap block 0 in block_group 0
-> > > > [75284.713476] EXT4-fs error (device loop36): ext4_read_block_bitmap_nowait:475: comm proc01: Invalid block bitmap block 0 in block_group 0
-> > > > 
-> > > > However, the last error seems strange. It seems like check_block_validity
-> > > > should ideally never fail for a journal inode.Unfortunately, sbi->s_es page is
-> > > > not recorded in the crash dump for some reason so idk the exact value at the
-> > > > time of the check, but looking in journal->j_inode->i_ino, the inode num is 8,
-> > > > which seems fine to me. So yeah, I'm a bit unsure what caused the corruption.
-> > > > I'll look a bit more into the proc01 ltp to see if we can recreate the failure
-> > > > to get more info.
-> > > Right, check_block_validity() skips the journal inode check. If
-> > > the journal inode check fails, that shows s_es->s_journal_inum and
-> > > journal->j_inode->i_ino are different. The file system doesn't modify
-> > > s_journal_inum, so it should be modified by some other writer bypassing
-> > > the file system (i.e. writing to bare disk).
-> > > 
-> > > If that's how it is, we could avoid this issue by using EXT4_JOURNAL_INO
-> > > directly or saving s_journal_inum to ext4_sb_info (which offers better
-> > > compatibility).
-> > Hey Baokun,
-> > 
-> > So I'm wondering if modifying the check in __check_block_validity the
-> > right thing to do. The fact that something has changed the on disk
-> > journal inode number is itself concerning and maybe stopping IO here is
-> > the right thing to do instead of using a cached journal inode number and
-> > silently ignoring the issue.
-> Because the cached journal inode is fine (it was checked when mounting),
-> and the data we're committing is good too, I think it's okay to keep
-> committing.  The actual problem is someone modified the superblock
-> directly, bypassing the file system, and the file system can't protect
-> against that.
-> > 
-> > Anyways now that the journal inode is corrupted on disk, will the
-> > recovery tooling even be able to read the journal anymore?
-> Actually, the journal inode on disk could still be okay. This just tells us
-> s_es->s_journal_inum is abnormal, meaning part of the superblock on disk
-> got changed. If only the superblock was modified, we can use the backup
-> superblock or grab the latest superblock copy from the journal.
 
-Ahh right thats true idk why I missed that. Although it's very unlikely 
-someone would have modified/corrupted the journal inode num in sb in the
-tests we are running (mostly syscall tests in ltp), but yes your
-suggestion does make sense. I'll try to look into it and add it in the
-next revision.
 
-Regards,
-ojaswin
-
+On 3/3/2025 12:07 PM, Boqun Feng wrote:
+> On Mon, Mar 03, 2025 at 12:00:40PM -0500, Joel Fernandes wrote:
+> [...]
+>>
+>> I see the original patch "rcu: Fix get_state_synchronize_rcu_full() GP-start
+>> detection" is not yet on -next. Once we are convinced about the fix, do we
+>> want to squash the fix into this patch and have Boqun take it?
+>>
 > 
+> Which "-next" are you talking about? The original patch and the fix is
+> already in next-20250303 of linux-next:
 > 
-> Cheers,
-> Baokun
+> 	https://web.git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/log/?h=next-20250303&qt=range&q=153fc45000e0058435ec0609258fb16e7ea257d2
+I see it now during manual inspection, but I'm confused why git cherry tells me
+otherwise.
+
+I tried the following command and it shows the patch in question in the first
+line of output. Basically the question that the command asks is "What is in
+Paul's dev branch that is not in RCU tree's -next branch".  This question is
+asked for the obvious raisins.
+So I am obviously missing something in the command. Thoughts?
+
+(rcugit is the RCU tree, and paul/dev is Paul's dev branch)
+
+git cherry --abbrev -v rcugit/next paul/dev | grep "^+" | cut -d' ' -f2,3-
+
+012f47f0f806 rcu: Fix get_state_synchronize_rcu_full() GP-start detection
+2ada0addbdb6 tools/memory-model: Add atomic_and()/or()/xor() and add_negative
+e176ebffc3f4 tools/memory-model: Add atomic_andnot() with its variants
+de6f99723392 tools/memory-model: Legitimize current use of tags in LKMM macros
+723177d71224 tools/memory-model: Define applicable tags on operation in tools/...
+29279349a566 tools/memory-model: Define effect of Mb tags on RMWs in tools/...
+d80a8e016433 MAINTAINERS: Update Joel's email address
+fafa18068359 tools/memory-model: Switch to softcoded herd7 tags
+dcc5197839f2 tools/memory-model: Distinguish between syntactic and semantic tags
+fa9e35a0772a tools/memory-model/README: Fix typo
+a2bfbf847c96 tools/memory-model: glossary.txt: Fix indents
+3839dbb05869 rcutorture: Make srcu_lockdep.sh check kernel Kconfig
+b5aa1c489085 rcutorture: Make srcu_lockdep.sh check reader-conflict handling
+9a5720bad9ed rcu: Remove swake_up_one_online() bandaid
+04159042a62b Revert "rcu/nocb: Fix rcuog wake-up from offline softirq"
+fdc37fed1c81 rcutorture: Split out beginning and end from rcu_torture_one_read()
+3c6b1925361e rcutorture: Make torture.sh --do-rt use CONFIG_PREEMPT_RT
+fadc715785cc rcutorture: Add tests for SRCU up/down reader primitives
+90a8f490324c rcutorture: Pull rcu_torture_updown() loop body into new function
+5fbaa5179f6a rcutorture: Comment invocations of tick_dep_set_task()
+461810471faa rcutorture: Complain if an ->up_read() is delayed more than 10 seconds
+35e1a180319d rcutorture: Check for ->up_read() without matching ->down_read()
+0676ba797dfa EXP srcu: Enable Tiny SRCU On all CONFIG_SMP=n kernels
+c8fff13fd2fd EXP rcutorture: Add SRCU-V scenario for preemptible Tiny SRCU
+910a5f9ebf5f EXP rcutorture: Limit callback flooding for Tiny SRCU in
+preemptible kernels
+8979a891a365 EXP hrtimers: Force migrate away hrtimers queued after
+CPUHP_AP_HRTIMERS_DYING
+
+
 
