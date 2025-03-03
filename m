@@ -1,384 +1,163 @@
-Return-Path: <linux-kernel+bounces-541672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AACCA4BFED
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:11:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE196A4BFD7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:07:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EC1B3A7742
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:07:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C9CD188F633
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:07:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7AEF20E701;
-	Mon,  3 Mar 2025 12:07:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C076720F085;
+	Mon,  3 Mar 2025 12:07:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="w3Xdi3zI"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kzHF4bu3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A3920E313;
-	Mon,  3 Mar 2025 12:07:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D9E220E714;
+	Mon,  3 Mar 2025 12:07:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741003650; cv=none; b=uK1oQV1tv8UlvNQZiBAtVxrvOsJYB0Qx0AubUHEySQh7MLK/2TmaRAHPvheflwNoPcYKszYGdvZyr8XGfn5NCnfefkEiv/C2DHKHlbNNvNL9rJd1Ijh6XwueKwW0H6j9YXBOmQQBFpAoQOnpmLopSv+EbjB3BGYXXZSv55vJGRA=
+	t=1741003623; cv=none; b=gNvGd94vX/XYDtw1YR25fsXfVIKbkp5b2/rt36WbFVjH41FoJ0hHRLvYjUPvZHw3qWYv8uOHQhXYXpUysaKEOeLl8VnmFlC19NMdr3fWdQ+wQawJK6OLKF9JF3Lw2zZRiPotiD8YVs0+9rU4mqHYQSh3YLC0oai6HWQKp7yFCrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741003650; c=relaxed/simple;
-	bh=UyoKUj+VH4K8nWeOT9n9dJaI3v2+Js4FUWMxJLi8eFE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=P9/oW1c9qf4+JgEAQqdnR12bt2VHfTOFyyS8G93q/kRCIt1+H1YHxeXoucMQFmCdFslYLSyrxy0nQt9XciFiLCn32D66BYTf+0S01e2vc7iJ26jZD/Xv5lf6wwLC53KDu8kNLM5D2DYZxTpgDdoyE6zfLRm5WD2pZnRPStLTahE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=w3Xdi3zI; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 523C6n9E3264168
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 3 Mar 2025 06:06:49 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1741003609;
-	bh=s9FBSWCs4WAMxfZdOCBhk74gKexxCHisaEtZE/UwxC4=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=w3Xdi3zIVxMDVUvZ170MGhZYYYyGRLDorNz54ud0aHM5EyNYPiOn7UCyT/53bVY0D
-	 Nychc7edaG/8grFz2GVMZmU5wJxD270bvbF4TWKeW7NSI9WGF/l4QfiOUpLtfgcI/a
-	 hyD/nqgVbasqHAxo7I6HGMiDycM5UiUriFbNQ7lM=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 523C6ns0074714
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 3 Mar 2025 06:06:49 -0600
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 3
- Mar 2025 06:06:48 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 3 Mar 2025 06:06:48 -0600
-Received: from [172.24.21.156] (lt9560gk3.dhcp.ti.com [172.24.21.156])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 523C6fWD049432;
-	Mon, 3 Mar 2025 06:06:42 -0600
-Message-ID: <21f21dfb-264b-4e01-9cb3-8d0133b5b31b@ti.com>
-Date: Mon, 3 Mar 2025 17:36:41 +0530
+	s=arc-20240116; t=1741003623; c=relaxed/simple;
+	bh=GGhPuAF/+Ro/cKx+hXHR3wcMXAcPr1+p3afDdwS8nRA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JY1Ryy6pbaoMexfU38Sh0NbwEin2uacM+IU54NModm2MJxDjs9W/+VGQgz0kzlsuhz1x3l4Qxsj2t2UdpmBgesM/Pr6WKE5CZuXc8LneFzylociMdLRFxzia0mrGX/Cjdqbgft1MPENbk6+lWpRTb0olrLAHVaRn+24gVR4tINE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kzHF4bu3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EB5EC4CEEA;
+	Mon,  3 Mar 2025 12:07:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741003622;
+	bh=GGhPuAF/+Ro/cKx+hXHR3wcMXAcPr1+p3afDdwS8nRA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=kzHF4bu32yq9bd4utkgKjHfGOk3N2WHVpKJyJ+gKl1UeRVgzpZtiSJFVwQH1guoNa
+	 8ZyPgTy8Bv8aBn1shZrHUWknvJLRU4ZYAQci13+MVHXLZuw0xbSEqm5uHV9ZkQycn/
+	 LNKWtqq9s0KqhBP8EbkOnGcPBgjAKPdjxxXEg0izgufOOHG7LJ1j3j7sx4RM92qJUR
+	 s+Ts4kIdE9wotmqpTtbbuswcFby94OSUQogQDLejlkd54Rb+iOJo9BXc7wVVpUhCFX
+	 RUdDW42ZbA4ZRkJiwf6DkkiqTGnv3Kk3FRQmLW9NLwb3ybTCQ8Jvsa25eJWo8n0QZJ
+	 8NdaCfxHojlxg==
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5f4d935084aso3323673eaf.2;
+        Mon, 03 Mar 2025 04:07:02 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU45rqgWSaPrjAfMge9MI0Y9fAjQsBOFj0KcL9JwxHR1bbsgIO1M+l8XdAO52UxnXyoA6pr9sni0O85UPE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtiKNjIIC2AfKL1SlPnsUUIsWi29EiS9lNyuQz4kUoqiOxLxDk
+	Aos9aq+JcKy16wpGmdA4cGGtLHrEqPacwYPJw5/GfLRo1u4jXiBTwMmrXXmFn67lBsrawTVoNb9
+	kZcTYFCw4lm4Wi7qKSR2tPkILJLw=
+X-Google-Smtp-Source: AGHT+IF3nuslyD1cM4oIcy7W1U/tBThh6i0pBYhkyve1Uv7EJul0hcBY1imYUYYWkaDY1TtyrEveFps+Jof9uI1yWjQ=
+X-Received: by 2002:a05:6820:a08:b0:600:17b0:ab04 with SMTP id
+ 006d021491bc7-60017b0ada8mr1174782eaf.0.1741003621834; Mon, 03 Mar 2025
+ 04:07:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [EXTERNAL] Re: [PATCH net-next v3 3/3] net: ti: icssg-prueth: Add
- XDP support
-To: Dan Carpenter <dan.carpenter@linaro.org>
-CC: <rogerq@kernel.org>, <danishanwar@ti.com>, <pabeni@redhat.com>,
-        <kuba@kernel.org>, <edumazet@google.com>, <davem@davemloft.net>,
-        <andrew+netdev@lunn.ch>, <bpf@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <u.kleine-koenig@baylibre.com>,
-        <matthias.schiffer@ew.tq-group.com>, <schnelle@linux.ibm.com>,
-        <diogo.ivo@siemens.com>, <glaroque@baylibre.com>, <macro@orcam.me.uk>,
-        <john.fastabend@gmail.com>, <hawk@kernel.org>, <daniel@iogearbox.net>,
-        <ast@kernel.org>, <srk@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
-References: <20250224110102.1528552-1-m-malladi@ti.com>
- <20250224110102.1528552-4-m-malladi@ti.com>
- <d362a527-88cf-4cd5-a22f-7eeb938d4469@stanley.mountain>
-Content-Language: en-US
-From: "Malladi, Meghana" <m-malladi@ti.com>
-In-Reply-To: <d362a527-88cf-4cd5-a22f-7eeb938d4469@stanley.mountain>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20250303-pcc_fixes_updates-v1-0-3b44f3d134b1@arm.com> <20250303-pcc_fixes_updates-v1-14-3b44f3d134b1@arm.com>
+In-Reply-To: <20250303-pcc_fixes_updates-v1-14-3b44f3d134b1@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 3 Mar 2025 13:06:49 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0hpdhG8Ejj=ErQP3sNc4YwW_WDjmPR4A32=nFdoRtf0Ng@mail.gmail.com>
+X-Gm-Features: AQ5f1Jq7sbWmZ9IUWEpPInfWVH74pfYGyd-GBpkQJTUIwc9DGM6UAhvZFh4yYh8
+Message-ID: <CAJZ5v0hpdhG8Ejj=ErQP3sNc4YwW_WDjmPR4A32=nFdoRtf0Ng@mail.gmail.com>
+Subject: Re: [PATCH 14/14] ACPI: CPPC: Simplify PCC shared memory region handling
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jassi Brar <jassisinghbrar@gmail.com>, Huisong Li <lihuisong@huawei.com>, 
+	Adam Young <admiyo@os.amperecomputing.com>, "Rafael J. Wysocki" <rafael@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Mar 3, 2025 at 11:53=E2=80=AFAM Sudeep Holla <sudeep.holla@arm.com>=
+ wrote:
+>
+> The PCC driver now handles mapping and unmapping of shared memory
+> areas as part of pcc_mbox_{request,free}_channel(). Without these before,
+> this ACPI CPPC driver did handling of those mappings like several
+> other PCC mailbox client drivers.
+>
+> There were redundant operations, leading to unnecessary code. Maintaining
+> the consistency across these driver was harder due to scattered handling
+> of shmem.
+>
+> Just use the mapped shmem and remove all redundant operations from this
+> driver.
+>
+> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
 
+Acked-by: "Rafael J. Wysocki" <rafael@kernel.org>
 
-On 2/26/2025 4:19 PM, Dan Carpenter wrote:
-> On Mon, Feb 24, 2025 at 04: 31: 02PM +0530, Meghana Malladi wrote: > @@ 
-> -541,7 +558,153 @@ void emac_rx_timestamp(struct prueth_emac *emac, > 
-> ssh->hwtstamp = ns_to_ktime(ns); > } > > -static int 
-> emac_rx_packet(struct prueth_emac
-> ZjQcmQRYFpfptBannerStart
-> This message was sent from outside of Texas Instruments.
-> Do not click links or open attachments unless you recognize the source 
-> of this email and know the content is safe.
-> Report Suspicious
-> <https://us-phishalarm-ewt.proofpoint.com/EWT/v1/G3vK! 
-> uldgnXdPPE27auXFPdnpH8jx2nnu2fsVXLMVOyEVUH9IX54g6v7RJRENIKzAm7XCuLfioMeFBSH4bAdUdQTaEArV63odoRERqTN_5Pk$>
-> ZjQcmQRYFpfptBannerEnd
-> 
-> On Mon, Feb 24, 2025 at 04:31:02PM +0530, Meghana Malladi wrote:
->> @@ -541,7 +558,153 @@ void emac_rx_timestamp(struct prueth_emac *emac,
->>  	ssh->hwtstamp = ns_to_ktime(ns);
->>  }
->>  
->> -static int emac_rx_packet(struct prueth_emac *emac, u32 flow_id)
->> +/**
->> + * emac_xmit_xdp_frame - transmits an XDP frame
->> + * @emac: emac device
->> + * @xdpf: data to transmit
->> + * @page: page from page pool if already DMA mapped
->> + * @q_idx: queue id
->> + *
->> + * Return: XDP state
->> + */
->> +int emac_xmit_xdp_frame(struct prueth_emac *emac,
->> +			struct xdp_frame *xdpf,
->> +			struct page *page,
->> +			unsigned int q_idx)
->> +{
->> +	struct cppi5_host_desc_t *first_desc;
->> +	struct net_device *ndev = emac->ndev;
->> +	struct prueth_tx_chn *tx_chn;
->> +	dma_addr_t desc_dma, buf_dma;
->> +	struct prueth_swdata *swdata;
->> +	u32 *epib;
->> +	int ret;
->> +
->> +	void *data = xdpf->data;
->> +	u32 pkt_len = xdpf->len;
-> 
-> Get rid of these variables?
-> 
-
-Yeah ok
-
->> +
->> +	if (q_idx >= PRUETH_MAX_TX_QUEUES) {
->> +		netdev_err(ndev, "xdp tx: invalid q_id %d\n", q_idx);
->> +		return ICSSG_XDP_CONSUMED;	/* drop */
->> +	}
->> +
->> +	tx_chn = &emac->tx_chns[q_idx];
->> +
->> +	first_desc = k3_cppi_desc_pool_alloc(tx_chn->desc_pool);
->> +	if (!first_desc) {
->> +		netdev_dbg(ndev, "xdp tx: failed to allocate descriptor\n");
->> +		goto drop_free_descs;	/* drop */
->> +	}
->> +
->> +	if (page) { /* already DMA mapped by page_pool */
->> +		buf_dma = page_pool_get_dma_addr(page);
->> +		buf_dma += xdpf->headroom + sizeof(struct xdp_frame);
->> +	} else { /* Map the linear buffer */
->> +		buf_dma = dma_map_single(tx_chn->dma_dev, data, pkt_len, DMA_TO_DEVICE);
->> +		if (dma_mapping_error(tx_chn->dma_dev, buf_dma)) {
->> +			netdev_err(ndev, "xdp tx: failed to map data buffer\n");
->> +			goto drop_free_descs;	/* drop */
->> +		}
->> +	}
->> +
->> +	cppi5_hdesc_init(first_desc, CPPI5_INFO0_HDESC_EPIB_PRESENT,
->> +			 PRUETH_NAV_PS_DATA_SIZE);
->> +	cppi5_hdesc_set_pkttype(first_desc, 0);
->> +	epib = first_desc->epib;
->> +	epib[0] = 0;
->> +	epib[1] = 0;
->> +
->> +	/* set dst tag to indicate internal qid at the firmware which is at
->> +	 * bit8..bit15. bit0..bit7 indicates port num for directed
->> +	 * packets in case of switch mode operation
->> +	 */
->> +	cppi5_desc_set_tags_ids(&first_desc->hdr, 0, (emac->port_id | (q_idx << 8)));
->> +	k3_udma_glue_tx_dma_to_cppi5_addr(tx_chn->tx_chn, &buf_dma);
->> +	cppi5_hdesc_attach_buf(first_desc, buf_dma, pkt_len, buf_dma, pkt_len);
->> +	swdata = cppi5_hdesc_get_swdata(first_desc);
->> +	if (page) {
->> +		swdata->type = PRUETH_SWDATA_PAGE;
->> +		swdata->data.page = page;
->> +	} else {
->> +		swdata->type = PRUETH_SWDATA_XDPF;
->> +		swdata->data.xdpf = xdpf;
->> +	}
->> +
->> +	cppi5_hdesc_set_pktlen(first_desc, pkt_len);
->> +	desc_dma = k3_cppi_desc_pool_virt2dma(tx_chn->desc_pool, first_desc);
->> +
->> +	ret = k3_udma_glue_push_tx_chn(tx_chn->tx_chn, first_desc, desc_dma);
->> +	if (ret) {
->> +		netdev_err(ndev, "xdp tx: push failed: %d\n", ret);
->> +		goto drop_free_descs;
->> +	}
->> +
->> +	return ICSSG_XDP_TX;
->> +
->> +drop_free_descs:
->> +	prueth_xmit_free(tx_chn, first_desc);
->> +	return ICSSG_XDP_CONSUMED;
->> +}
->> +EXPORT_SYMBOL_GPL(emac_xmit_xdp_frame);
->> +
->> +/**
->> + * emac_run_xdp - run an XDP program
->> + * @emac: emac device
->> + * @xdp: XDP buffer containing the frame
->> + * @page: page with RX data if already DMA mapped
->> + *
->> + * Return: XDP state
->> + */
->> +static int emac_run_xdp(struct prueth_emac *emac, struct xdp_buff *xdp,
->> +			struct page *page)
->> +{
->> +	struct net_device *ndev = emac->ndev;
->> +	int err, result = ICSSG_XDP_PASS;
->> +	struct bpf_prog *xdp_prog;
->> +	struct xdp_frame *xdpf;
->> +	int q_idx;
->> +	u32 act;
->> +
->> +	xdp_prog = READ_ONCE(emac->xdp_prog);
->> +	act = bpf_prog_run_xdp(xdp_prog, xdp);
->> +	switch (act) {
->> +	case XDP_PASS:
->> +		break;
->> +	case XDP_TX:
->> +		/* Send packet to TX ring for immediate transmission */
->> +		xdpf = xdp_convert_buff_to_frame(xdp);
->> +		if (unlikely(!xdpf))
-> 
-> This is the second unlikely() macro which is added in this patchset.
-> The rule with likely/unlikely() is that it should only be added if it
-> likely makes a difference in benchmarking.  Quite often the compiler
-> is able to predict that valid pointers are more likely than NULL
-> pointers so often these types of annotations don't make any difference
-> at all to the compiled code.  But it depends on the compiler and the -O2
-> options.
-> 
-
-Do correct me if I am wrong, but from my understanding, XDP feature 
-depends alot of performance and benchmarking and having unlikely does 
-make a difference. Atleast in all the other drivers I see this being 
-used for XDP.
-
->> +			goto drop;
->> +
->> +		q_idx = smp_processor_id() % emac->tx_ch_num;
->> +		result = emac_xmit_xdp_frame(emac, xdpf, page, q_idx);
->> +		if (result == ICSSG_XDP_CONSUMED)
->> +			goto drop;
->> +		break;
->> +	case XDP_REDIRECT:
->> +		err = xdp_do_redirect(emac->ndev, xdp, xdp_prog);
->> +		if (err)
->> +			goto drop;
->> +		result = ICSSG_XDP_REDIR;
->> +		break;
->> +	default:
->> +		bpf_warn_invalid_xdp_action(emac->ndev, xdp_prog, act);
->> +		fallthrough;
->> +	case XDP_ABORTED:
->> +drop:
->> +		trace_xdp_exception(emac->ndev, xdp_prog, act);
->> +		fallthrough; /* handle aborts by dropping packet */
->> +	case XDP_DROP:
->> +		ndev->stats.tx_dropped++;
->> +		result = ICSSG_XDP_CONSUMED;
->> +		page_pool_recycle_direct(emac->rx_chns.pg_pool, page);
->> +		break;
->> +	}
->> +
->> +	return result;
->> +}
->> +
->> +static int emac_rx_packet(struct prueth_emac *emac, u32 flow_id, int *xdp_state)
-> 
-> 
-> xdp_state should be a u32 because it's a bitfield.  Bitfields are never
-> signed.
-
-Ok I will update it.
-
-> 
->>  {
->>  	struct prueth_rx_chn *rx_chn = &emac->rx_chns;
->>  	u32 buf_dma_len, pkt_len, port_id = 0;
->> @@ -552,10 +715,12 @@ static int emac_rx_packet(struct prueth_emac *emac, u32 flow_id)
->>  	struct page *page, *new_page;
->>  	struct page_pool *pool;
->>  	struct sk_buff *skb;
->> +	struct xdp_buff xdp;
->>  	u32 *psdata;
->>  	void *pa;
->>  	int ret;
->>  
->> +	*xdp_state = 0;
->>  	pool = rx_chn->pg_pool;
->>  	ret = k3_udma_glue_pop_rx_chn(rx_chn->rx_chn, flow_id, &desc_dma);
->>  	if (ret) {
->> @@ -596,9 +761,21 @@ static int emac_rx_packet(struct prueth_emac *emac, u32 flow_id)
->>  		goto requeue;
->>  	}
->>  
->> -	/* prepare skb and send to n/w stack */
->>  	pa = page_address(page);
->> -	skb = napi_build_skb(pa, PAGE_SIZE);
->> +	if (emac->xdp_prog) {
->> +		xdp_init_buff(&xdp, PAGE_SIZE, &rx_chn->xdp_rxq);
->> +		xdp_prepare_buff(&xdp, pa, PRUETH_HEADROOM, pkt_len, false);
->> +
->> +		*xdp_state = emac_run_xdp(emac, &xdp, page);
->> +		if (*xdp_state == ICSSG_XDP_PASS)
->> +			skb = xdp_build_skb_from_buff(&xdp);
->> +		else
->> +			goto requeue;
->> +	} else {
->> +		/* prepare skb and send to n/w stack */
->> +		skb = napi_build_skb(pa, PAGE_SIZE);
->> +	}
->> +
->>  	if (!skb) {
->>  		ndev->stats.rx_dropped++;
->>  		page_pool_recycle_direct(pool, page);
->> @@ -861,13 +1038,23 @@ static void prueth_tx_cleanup(void *data, dma_addr_t desc_dma)
->>  	struct prueth_tx_chn *tx_chn = data;
->>  	struct cppi5_host_desc_t *desc_tx;
->>  	struct prueth_swdata *swdata;
->> +	struct xdp_frame *xdpf;
->>  	struct sk_buff *skb;
->>  
->>  	desc_tx = k3_cppi_desc_pool_dma2virt(tx_chn->desc_pool, desc_dma);
->>  	swdata = cppi5_hdesc_get_swdata(desc_tx);
->> -	if (swdata->type == PRUETH_SWDATA_SKB) {
->> +
->> +	switch (swdata->type) {
->> +	case PRUETH_SWDATA_SKB:
->>  		skb = swdata->data.skb;
->>  		dev_kfree_skb_any(skb);
->> +		break;
->> +	case PRUETH_SWDATA_XDPF:
->> +		xdpf = swdata->data.xdpf;
->> +		xdp_return_frame(xdpf);
->> +		break;
->> +	default:
->> +		break;
->>  	}
->>  
->>  	prueth_xmit_free(tx_chn, desc_tx);
->> @@ -904,15 +1091,18 @@ int icssg_napi_rx_poll(struct napi_struct *napi_rx, int budget)
->>  		PRUETH_RX_FLOW_DATA_SR1 : PRUETH_RX_FLOW_DATA;
->>  	int flow = emac->is_sr1 ?
->>  		PRUETH_MAX_RX_FLOWS_SR1 : PRUETH_MAX_RX_FLOWS;
->> +	int xdp_state_or = 0;
->>  	int num_rx = 0;
->>  	int cur_budget;
->> +	int xdp_state;
-> 
-> Both xdp_state_or and xdp_state should be u32 because they are bitfields.
-> 
-
-Ok I will update it.
-
-> regards,
-> dan carpenter
-> 
->>  	int ret;
->>  
->>  	while (flow--) {
->>  		cur_budget = budget - num_rx;
->>  
->>  		while (cur_budget--) {
->> -			ret = emac_rx_packet(emac, flow);
->> +			ret = emac_rx_packet(emac, flow, &xdp_state);
->> +			xdp_state_or |= xdp_state;
->>  			if (ret)
->>  				break;
->>  			num_rx++;
-> 
-
+> ---
+>  drivers/acpi/cppc_acpi.c | 16 +++-------------
+>  1 file changed, 3 insertions(+), 13 deletions(-)
+>
+> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
+> index f193e713825ac24203ece5f94d6cf99dd4724ce4..d972157a79b6ade2f3738c901=
+28e8692141b3ee5 100644
+> --- a/drivers/acpi/cppc_acpi.c
+> +++ b/drivers/acpi/cppc_acpi.c
+> @@ -47,7 +47,6 @@
+>
+>  struct cppc_pcc_data {
+>         struct pcc_mbox_chan *pcc_channel;
+> -       void __iomem *pcc_comm_addr;
+>         bool pcc_channel_acquired;
+>         unsigned int deadline_us;
+>         unsigned int pcc_mpar, pcc_mrtt, pcc_nominal;
+> @@ -95,7 +94,7 @@ static DEFINE_PER_CPU(int, cpu_pcc_subspace_idx);
+>  static DEFINE_PER_CPU(struct cpc_desc *, cpc_desc_ptr);
+>
+>  /* pcc mapped address + header size + offset within PCC subspace */
+> -#define GET_PCC_VADDR(offs, pcc_ss_id) (pcc_data[pcc_ss_id]->pcc_comm_ad=
+dr + \
+> +#define GET_PCC_VADDR(offs, pcc_ss_id) (pcc_data[pcc_ss_id]->pcc_channel=
+->shmem + \
+>                                                 0x8 + (offs))
+>
+>  /* Check if a CPC register is in PCC */
+> @@ -223,7 +222,7 @@ static int check_pcc_chan(int pcc_ss_id, bool chk_err=
+_bit)
+>         int ret, status;
+>         struct cppc_pcc_data *pcc_ss_data =3D pcc_data[pcc_ss_id];
+>         struct acpi_pcct_shared_memory __iomem *generic_comm_base =3D
+> -               pcc_ss_data->pcc_comm_addr;
+> +                                       pcc_ss_data->pcc_channel->shmem;
+>
+>         if (!pcc_ss_data->platform_owns_pcc)
+>                 return 0;
+> @@ -258,7 +257,7 @@ static int send_pcc_cmd(int pcc_ss_id, u16 cmd)
+>         int ret =3D -EIO, i;
+>         struct cppc_pcc_data *pcc_ss_data =3D pcc_data[pcc_ss_id];
+>         struct acpi_pcct_shared_memory __iomem *generic_comm_base =3D
+> -               pcc_ss_data->pcc_comm_addr;
+> +                                       pcc_ss_data->pcc_channel->shmem;
+>         unsigned int time_delta;
+>
+>         /*
+> @@ -571,15 +570,6 @@ static int register_pcc_channel(int pcc_ss_idx)
+>                 pcc_data[pcc_ss_idx]->pcc_mpar =3D pcc_chan->max_access_r=
+ate;
+>                 pcc_data[pcc_ss_idx]->pcc_nominal =3D pcc_chan->latency;
+>
+> -               pcc_data[pcc_ss_idx]->pcc_comm_addr =3D
+> -                       acpi_os_ioremap(pcc_chan->shmem_base_addr,
+> -                                       pcc_chan->shmem_size);
+> -               if (!pcc_data[pcc_ss_idx]->pcc_comm_addr) {
+> -                       pr_err("Failed to ioremap PCC comm region mem for=
+ %d\n",
+> -                              pcc_ss_idx);
+> -                       return -ENOMEM;
+> -               }
+> -
+>                 /* Set flag so that we don't come here for each CPU. */
+>                 pcc_data[pcc_ss_idx]->pcc_channel_acquired =3D true;
+>         }
+>
+> --
+> 2.34.1
+>
 
