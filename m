@@ -1,133 +1,113 @@
-Return-Path: <linux-kernel+bounces-540865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21906A4B5F3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 03:04:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3A79A4B5F4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 03:08:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 130591890212
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 02:04:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E606D188CDD6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 02:09:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E60141987;
-	Mon,  3 Mar 2025 02:03:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B43B814A605;
+	Mon,  3 Mar 2025 02:08:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="nhPlIaTN"
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XmJbLH2J"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A670A11CA9;
-	Mon,  3 Mar 2025 02:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A951822611
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 02:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740967435; cv=none; b=IoJctNJPktW5Kvb1H1+mIGDPIfaX5yopVHOfv7QRgXMtMYytYxFZnYYeN85+2NTcZVgLnlT1bL5ktGIw4WAicNUHyIPKGIRbBSILVyVHo7INOU9EmrNs1/Y3Q2AnvAXd0rVmJySuAe3+USgbfOnuvGfUhgp4PIi779GeLJQcdj0=
+	t=1740967728; cv=none; b=AmMRgT7ptkv5JDibpA6/eC6n6gBMh81jmSWZN/Z/PbMSy7UAJpwUrXaNUZDel2gyt0SvYglZCg36qp/kkHRSWeSTRPLJu9aK/9Er4IAblJrnzUXfkCDE8cyIU5heprLq0jK58ndD30tEt7Avlo6zFvEX11dV0XQ1sPtXESF5T70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740967435; c=relaxed/simple;
-	bh=SEl1Hhf8NGcojuiMYmabQEzaNG0PSXe4Q1cOqkei6w0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S0bGOsMWRrjkdJOMnh0UpioslXNMe54jAskyOj0kwHtADD/BcYwcmYPBHWtcud1JTCrdPXNZg5m9181/CfKuVHhEQU3I4w1C/zexVT+liJHgedsuf5h6pDWHPC+sjDqOKJv015DKks5HmDlB13JUodrvRrquHDLNydi5MpVXRLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=nhPlIaTN; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1740967423; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=ovJU3Q9h8hU/G3fkOoZ1jgiNl8W2k7s8Lwa5u8Ka3Hk=;
-	b=nhPlIaTNEI+rXbuTfVUF4mR3ko8wjzygstZJ6gFuYi68VLE0t8TmMQxJux7BHfMSlKWfQQ//jJYPcYhH2AH6nxk2jyQQ5iIojPCUZb2qs0E7z3ZuFhw80amd8koiSwDbK/S4fa1S+PfNhsb7K+SSUP4BAlvhvdC9viwGi7eyGy4=
-Received: from 30.246.161.128(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WQWfcKP_1740967421 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 03 Mar 2025 10:03:42 +0800
-Message-ID: <8c7b0cbf-fc93-4d97-b388-bfd0f13e404b@linux.alibaba.com>
-Date: Mon, 3 Mar 2025 10:03:41 +0800
+	s=arc-20240116; t=1740967728; c=relaxed/simple;
+	bh=zbImhBAUeUoKRNnib1aRriUOh9I2yVMbdvgcqItiVbk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HgAB6XP9Okc4i4Q+H3PLD8awG6+v+I0+ynSpUqeYEkiGvO7Vp4PkypjVvd89trx63TM/TqeLK77w9ts9zyBqIk7OUbZ7UOiKdfscS18ONici9EEHIsWl0qVx8ZjNtR5+idkleHm7mx13YjjFKtqn9sr/SAMldzKSHDOoNnfiHF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XmJbLH2J; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6fd66f404fbso8351077b3.3
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Mar 2025 18:08:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740967725; x=1741572525; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zbImhBAUeUoKRNnib1aRriUOh9I2yVMbdvgcqItiVbk=;
+        b=XmJbLH2JlYBfKzadCOx0LVSOe+oiCPFsNpkidGEB4tmXMGH2xJW/3Vlrc3dmM9QCt/
+         sy0PwVPbfDd6pLBvr90bjhv4wCPUOOA5lnW0sUpIyWNrIColujyBYCUArBAWhI5aJwPP
+         baubckZ/WGZeU3ImVTtRx9WKs5+oyZiHURhkLwZ/N2zZNU2Hcz9VJmzKYN9cYYNi3l4f
+         SjM/W8spmVqErgFVtcGEMo+LZMBRUMrjNNys8+0iJ0l1ycvI4CTlZdp7M1f8wiOJUqeG
+         AA0VxgT7vs2UQFO2f3lajkulsL7baLQ6j72UkuoprcOvbsZRnkzdtxs/hAdS/UjjYZWn
+         gB2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740967725; x=1741572525;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zbImhBAUeUoKRNnib1aRriUOh9I2yVMbdvgcqItiVbk=;
+        b=vUicVNEF6gSb7m3Viakc+BihgAtcdR+3USfkzSs8VAAF9950TwI2iCKQJDkLp4ZKIj
+         TqMjH43dHvseFev/zk8eP1qqcbDEHeoluGU2e76JwfrHLHiXsOetQclsbPAt27nVHcRN
+         9f31JAsBu6px4JTrhWBn4PRSIDCTFtZCp/FRIwiPjUXML8890yhKO+B4Pcish+pqIIiU
+         xAF4FODc2/84CZ2yw3S6DxnPF7V0OTOEKCnHAu5ggFhp3Wu0Jm0+O7zbfctmYnWoIhVu
+         G5KqJtj8PtDlibbm4KDZLfiWlyr1XDhQLcpq5MvU55GJOx9NCTphj/Tu8Ey1CLFJ3Lu+
+         2IAA==
+X-Forwarded-Encrypted: i=1; AJvYcCVe2yvW8jm4vMPWmXBKPzhzhOgkrFp/SdmMJJIsrqKSkqqPLmtZsFm0MHZiZ9w6+jg7lTlFKtKSe01lyas=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3IpFCeZiPus4lMtfhb7hnKUlxPpCRdCduVpkVHj8nzwdiEoyq
+	B776rlkImxS13/cN7W96TTn/0AVgCLw9yoa1Qm02tlQPY2+CyCeLmYrtAn/Nz+e0x6wssapnf6L
+	pwBxOT5/b3CExnavnel6W5QXSiY9hs8olHYHG
+X-Gm-Gg: ASbGnctPtu+uMiv7f1HzmiyDX2AesSYFuDsCR6p7Qn/XBsC63ugwe6nzZgl2Sl91jCP
+	qo3fUgNDvGlztOsuw9agBTtDHyVyohnDUsh1j2rUcWJaDtOJpSYAGe5DjXXfTvdpR4DFULt2urr
+	G/QuQ+MSQ8XBs509ExlsK1ngGPzMo=
+X-Google-Smtp-Source: AGHT+IGZjYIIWf7s5pXC8snxj3XOzQzjufc19B4hEx+E2T4lbHQFAHQsUuKAeZzUIL9D6AQWGfkgzTgJbRGf+rb2rmE=
+X-Received: by 2002:a05:690c:3349:b0:6fd:41e1:83d8 with SMTP id
+ 00721157ae682-6fd4a03dc9dmr174051087b3.6.1740967725351; Sun, 02 Mar 2025
+ 18:08:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/3] PCI/AER: Report fatal errors of RCiEP and EP if
- link recoverd
-To: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, bhelgaas@google.com, kbusch@kernel.org,
- sathyanarayanan.kuppuswamy@linux.intel.com
-Cc: mahesh@linux.ibm.com, oohall@gmail.com, Jonathan.Cameron@huawei.com,
- terry.bowman@amd.com, tianruidong@linux.alibaba.com
-References: <20250217024218.1681-1-xueshuai@linux.alibaba.com>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <20250217024218.1681-1-xueshuai@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250224045237.1290971-1-chharry@google.com> <2025022431-ditto-shy-c62f@gregkh>
+ <CADg1FFeW5EXOJTqTS+jwBphGnDSCreNwM8hcFOhB1Tatdti6QA@mail.gmail.com>
+ <2025022407-polo-disgrace-9655@gregkh> <CADg1FFehoZr3DmDhV_ri69+XBHLQcpKjoxLMaVhQUdzRuhST9A@mail.gmail.com>
+ <CABBYNZLhR+OJQnYZ5vN5HjgiWwKrXvOse-pXhCcTdFpJrrzsNg@mail.gmail.com>
+ <CADg1FFdtr2gnKy5VfFoCm4+0cGRJkvsOBRXtrcLSaMJwGjhBUQ@mail.gmail.com>
+ <CABBYNZJX2hA8D++hb9d3nvCz4M1rfFrzpMPMQ8p0Bq8FTHZhig@mail.gmail.com>
+ <CADg1FFdKfoJLxD+0A=j=kSLtMPLL-JptcWP1qH0Oo0SttN8k2g@mail.gmail.com>
+ <CABBYNZKJUnhGXJEsExCdWNaE448QhCeiymLm9yS80k18AeWqoQ@mail.gmail.com>
+ <CADg1FFeyRa8rGkJXb+4Ymeqn+3XLJ3ZEpBnQ_F3WvwrS+u1KfQ@mail.gmail.com> <CADwQ6b63Z3HXCx=pXrhTDAXhqPO7-fSvgE7=TiTMTvc4Y+-mNA@mail.gmail.com>
+In-Reply-To: <CADwQ6b63Z3HXCx=pXrhTDAXhqPO7-fSvgE7=TiTMTvc4Y+-mNA@mail.gmail.com>
+From: Hsin-chen Chuang <chharry@google.com>
+Date: Mon, 3 Mar 2025 10:08:08 +0800
+X-Gm-Features: AQ5f1Joq2TEWL0SLESXtDYHS5W2nMxhIZw9WuQ_9W0PUknn_tWxgl_01QZEW3FM
+Message-ID: <CADg1FFeEQVmYD1NnCbZi6v9Jsu7gVzWcFA8VwZuuOL8Cdt=Z6A@mail.gmail.com>
+Subject: Re: [PATCH v2] Bluetooth: btusb: Configure altsetting for USER_CHANNEL
+To: Ying Hsu <yinghsu@chromium.org>
+Cc: Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Greg KH <gregkh@linuxfoundation.org>, 
+	linux-bluetooth@vger.kernel.org, chromeos-bluetooth-upstreaming@chromium.org, 
+	Hsin-chen Chuang <chharry@chromium.org>, Marcel Holtmann <marcel@holtmann.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Feb 28, 2025 at 12:47=E2=80=AFPM Ying Hsu <yinghsu@chromium.org> wr=
+ote:
+>
+> Beyond power concerns, another potential issue is USB host controller
+> scheduling fairness. SCO data is transmitted over isochronous pipes,
+> and if the alternate setting remains non-zero, the USB host controller
+> reserves bandwidth even when no audio data is being transmitted. This
+> could reduce throughput for some USB 1.x/2.0 applications, such as
+> file transfers from USB mass storage devices, when sharing the bus
+> with a Bluetooth controller in SCO mode. I don=E2=80=99t have a Chromeboo=
+k to
+> verify this theory, but I suggest the ChromeOS team measure the
+> potential impact and follow up if necessary.
 
-
-在 2025/2/17 10:42, Shuai Xue 写道:
-> changes since v3:
-> - squash patch 1 and 2 into one patch per Sathyanarayanan
-> - add comments note for dpc_process_error per Sathyanarayanan
-> - pick up Reviewed-by tag from Sathyanarayanan
-> 
-> changes since v2:
-> - moving the "err_port" rename to a separate patch per Sathyanarayanan
-> - rewrite comments of dpc_process_error per Sathyanarayanan
-> - remove NULL initialization for err_dev per Sathyanarayanan
-> 
-> changes since v1:
-> - rewrite commit log per Bjorn
-> - refactor aer_get_device_error_info to reduce duplication per Keith
-> - fix to avoid reporting fatal errors twice for root and downstream ports per Keith
-> 
-> The AER driver has historically avoided reading the configuration space of an
-> endpoint or RCiEP that reported a fatal error, considering the link to that
-> device unreliable. Consequently, when a fatal error occurs, the AER and DPC
-> drivers do not report specific error types, resulting in logs like:
-> 
->     pcieport 0000:30:03.0: EDR: EDR event received
->     pcieport 0000:30:03.0: DPC: containment event, status:0x0005 source:0x3400
->     pcieport 0000:30:03.0: DPC: ERR_FATAL detected
->     pcieport 0000:30:03.0: AER: broadcast error_detected message
->     nvme nvme0: frozen state error detected, reset controller
->     nvme 0000:34:00.0: ready 0ms after DPC
->     pcieport 0000:30:03.0: AER: broadcast slot_reset message
-> 
-> AER status registers are sticky and Write-1-to-clear. If the link recovered
-> after hot reset, we can still safely access AER status of the error device.
-> In such case, report fatal errors which helps to figure out the error root
-> case.
-> 
-> After this patch set, the logs like:
-> 
->     pcieport 0000:30:03.0: EDR: EDR event received
->     pcieport 0000:30:03.0: DPC: containment event, status:0x0005 source:0x3400
->     pcieport 0000:30:03.0: DPC: ERR_FATAL detected
->     pcieport 0000:30:03.0: AER: broadcast error_detected message
->     nvme nvme0: frozen state error detected, reset controller
->     pcieport 0000:30:03.0: waiting 100 ms for downstream link, after activation
->     nvme 0000:34:00.0: ready 0ms after DPC
->     nvme 0000:34:00.0: PCIe Bus Error: severity=Uncorrectable (Fatal), type=Data Link Layer, (Receiver ID)
->     nvme 0000:34:00.0:   device [144d:a804] error status/mask=00000010/00504000
->     nvme 0000:34:00.0:    [ 4] DLP                    (First)
->     pcieport 0000:30:03.0: AER: broadcast slot_reset message
-> 
-> Shuai Xue (3):
->    PCI/DPC: Clarify naming for error port in DPC Handling
->    PCI/DPC: Run recovery on device that detected the error
->    PCI/AER: Report fatal errors of RCiEP and EP if link recoverd
-> 
->   drivers/pci/pci.h      |  5 +++--
->   drivers/pci/pcie/aer.c | 11 +++++++----
->   drivers/pci/pcie/dpc.c | 34 +++++++++++++++++++++++++++-------
->   drivers/pci/pcie/edr.c | 35 ++++++++++++++++++-----------------
->   drivers/pci/pcie/err.c |  9 +++++++++
->   5 files changed, 64 insertions(+), 30 deletions(-)
-> 
-
-
-Hi, All,
-
-Gentle ping.
-
-Thanks.
-Shuai
+Thanks for the input. We will measure the potential impact.
 
