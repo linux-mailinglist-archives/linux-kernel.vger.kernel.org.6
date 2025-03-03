@@ -1,116 +1,131 @@
-Return-Path: <linux-kernel+bounces-541582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A3F4A4BE9C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:32:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB843A4BEDD
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:37:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAFD8168211
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:31:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 061E63B271F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:30:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA9731FBE8B;
-	Mon,  3 Mar 2025 11:30:39 +0000 (UTC)
-Received: from mail115-69.sinamail.sina.com.cn (mail115-69.sinamail.sina.com.cn [218.30.115.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D056E1FBC9C;
+	Mon,  3 Mar 2025 11:30:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="M9LNaQQM"
+Received: from mr85p00im-hyfv06021401.me.com (mr85p00im-hyfv06021401.me.com [17.58.23.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 676EC1F8735
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E6AA1F8726
 	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 11:30:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.69
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.23.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741001439; cv=none; b=DFJSTetI0LHtmIKw7v2jlWsDI/P6fCmpjn668+Jw86Vbu/HJTXeXUEWkgS8VyERNvKdubbvyk+2PN3vf3UbNEIWu9s6PR72IvkHDLExRhNP2HmgvW/Hbo73rUcY4mjcaniwDErRVycFzzBEj53BQ38pzKNuimusjxSMj1WN5Ayk=
+	t=1741001435; cv=none; b=MlSyve2erj4PfUgftZ5jKFNbVWItiqp57aey053ZvohVghks7HZqLXten0iJhZXFusE9to8vwekjFJXKMoE/jK74lPqyNBeaYmPR7zAMyAHgYid8sbQnBEVW2gey+g/DFamkHOaHqAYLKooYKR28oGBkvTyzRQV2xL+wV0AR+o4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741001439; c=relaxed/simple;
-	bh=sA+lmEtH/+EuWqwB7D4qANkpF6ObT710gao9EBuWnDo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gm6H54RRCBs3ok8u44x1ed/qjI7WM5Jn6kCB0uurbtFbv4X+SjIWlfAv2rLXMVOpCUNV5PkKVUnfWbA66Ba/DHUW47GzNH/0mZ9CC5S2kD1V+W1wHj18J7KSWBkoVm5/luy59D46axym//awhdB0D5mgTCNRpZnppdOTYEfuo1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([116.24.11.87])
-	by sina.com (10.185.250.22) with ESMTP
-	id 67C592CF0000283E; Mon, 3 Mar 2025 19:30:25 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 5362867602641
-X-SMAIL-UIID: D71E763B7CE44A88B8D6FE27267AD13D-20250303-193025-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+5d8c5789c8cb076b2c25@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [netfilter?] KASAN: slab-use-after-free Read in nf_tables_trans_destroy_work (2)
-Date: Mon,  3 Mar 2025 19:30:12 +0800
-Message-ID: <20250303113013.2959-1-hdanton@sina.com>
-In-Reply-To: <67c447a7.050a0220.55417.04d3.GAE@google.com>
-References: 
+	s=arc-20240116; t=1741001435; c=relaxed/simple;
+	bh=X0LU3aYn4lUmJVogH7zjqoCFEavVUNcoV5t1PZiDF6c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YRlBYnEOp9BpHZlxSLftsnzJOf5yx4zpNOF/qiXN/bWzlWOHAlAFD0pxyhdZCpSWYp6MwRPxGl21dxl37TdIUSTf1P0deMT4xv4KXOIBzu36Zn5doWFpXm2Qgm5UTMJvoAmxwst4Jw2Ak1iQbo+ax4/UvEjtQdGLqKy9wzORLrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=M9LNaQQM; arc=none smtp.client-ip=17.58.23.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; bh=OZOLugLSboUaxk503olOimdjHThkYZSt/rnUocHx7qo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:x-icloud-hme;
+	b=M9LNaQQMBVnDvn7O9dkyxfqENe+n3CTiJTPQ2UQFIHq6HOYn5yqN3iDQ3RVhMcn23
+	 RYbgEyO7lbqW+H+rJi6eLqXyW0ofbGlb2TozfcwQt+N3LDxfRINewpBQO64R70O6JP
+	 Fj4pbqb3B74JtNoj/kfZRb0TgXmhRDVBpuDr2nHUHUnQnsoslms9i4lxHUEqE597f0
+	 dsKBFbP0qhEmAOCAG72w3Jw4tGGCdcmaS+BdhFHar4cmpTgkAp9kjNy3bhZerCy1fm
+	 yb4VLYz3eRYNRP0qJgIXtuCQgNCwAPfOp2U/Lehb0PDMMPAW6dfU3J1HAJf8t1L7ga
+	 V8U2HDDNFoYsA==
+Received: from [192.168.1.26] (mr38p00im-dlb-asmtp-mailmevip.me.com [17.57.152.18])
+	by mr85p00im-hyfv06021401.me.com (Postfix) with ESMTPSA id D31F830384C0;
+	Mon,  3 Mar 2025 11:30:17 +0000 (UTC)
+Message-ID: <ca719ca0-ee14-4022-bf61-5794d7ec8d3a@icloud.com>
+Date: Mon, 3 Mar 2025 19:30:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH *-next 00/18] Remove weird and needless 'return' for void
+ APIs
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Zijun Hu <quic_zijuhu@quicinc.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Will Deacon <will@kernel.org>, "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Nick Piggin <npiggin@gmail.com>,
+ Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ "David S. Miller" <davem@davemloft.net>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ Johannes Berg <johannes@sipsolutions.net>,
+ Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>,
+ Jiri Pirko <jiri@resnulli.us>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Leon Romanovsky <leon@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Lee Jones <lee@kernel.org>,
+ Thomas Graf <tgraf@suug.ch>, Christoph Hellwig <hch@lst.de>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Robin Murphy <robin.murphy@arm.com>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ linux-arch@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+ netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+ linux-rdma@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-pm@vger.kernel.org, iommu@lists.linux.dev,
+ linux-mtd@lists.infradead.org
+References: <20250221-rmv_return-v1-0-cc8dff275827@quicinc.com>
+ <46d17d84-5298-4460-96b0-9c62672167a0@icloud.com>
+ <20250227130347.GA5880@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <20250227130347.GA5880@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: VRiK2BwrsvBlqf3istvRC36nkjOjRITT
+X-Proofpoint-GUID: VRiK2BwrsvBlqf3istvRC36nkjOjRITT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-03_07,2025-03-03_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 bulkscore=0 suspectscore=0
+ mlxscore=0 adultscore=0 clxscore=1015 mlxlogscore=855 phishscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2503030088
 
-On Sun, 02 Mar 2025 03:57:27 -0800
-> syzbot found the following issue on:
+On 2025/2/27 21:03, Peter Zijlstra wrote:
+>> C) perhaps, most ordinary developers don't known the function mentioned
+>>    by B), and also feel strange for the usage
+> It is quite common to do kernel wide updates using scripts / cocinelle.
 > 
-> HEAD commit:    03d38806a902 Merge tag 'thermal-6.14-rc5' of git://git.ker..
-> git tree:       upstream
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=155128b7980000
+> If you have a specialization that wraps a function to fill out a default
+> value, then you want the return types to keep matching.
+> 
+> Ex.
+> 
+> return_type foo(type1 a1, type2 a2);
+> 
+> return_type my_foo(type1 a1)
+> {
+> 	return foo(a1, value);
+> }
+> 
+> is a normal thing to do. The whole STD C cannot return void bollocks
+> breaks that when return_type := void, so in that regards I would call
+> this a STD C defect.
 
-#syz test
+The usage is a GCC extension.
+but the usage is prone to be used within *inappropriate* context, take
+this patch series for an example:
 
---- x/include/net/netfilter/nf_tables.h
-+++ y/include/net/netfilter/nf_tables.h
-@@ -1915,6 +1915,7 @@ struct nftables_pernet {
- 	unsigned int		base_seq;
- 	unsigned int		gc_seq;
- 	u8			validate_state;
-+	u8			flushed;
- };
- 
- extern unsigned int nf_tables_net_id;
---- x/net/netfilter/nf_tables_api.c
-+++ y/net/netfilter/nf_tables_api.c
-@@ -10654,6 +10654,9 @@ static int nf_tables_commit(struct net *
- 		mutex_unlock(&nft_net->commit_mutex);
- 		return 0;
- 	}
-+	if (nft_net->flushed) {
-+		return -EAGAIN;
-+	}
- 
- 	nft_ctx_init(&ctx, net, skb, nlh, NFPROTO_UNSPEC, NULL, NULL, NULL);
- 
-@@ -11251,6 +11254,7 @@ static int nf_tables_abort(struct net *n
- 	else
- 		nf_tables_module_autoload_cleanup(net);
- 
-+	nft_net->flushed = 0;
- 	mutex_unlock(&nft_net->commit_mutex);
- 
- 	return ret;
-@@ -11854,6 +11858,7 @@ static int nft_rcv_nl_event(struct notif
- 	gc_seq = nft_gc_seq_begin(nft_net);
- 
- 	nf_tables_trans_destroy_flush_work();
-+	nft_net->flushed = 1;
- again:
- 	list_for_each_entry(table, &nft_net->tables, list) {
- 		if (nft_table_has_owner(table) &&
-@@ -11903,6 +11908,7 @@ static int __net_init nf_tables_init_net
- 	nft_net->base_seq = 1;
- 	nft_net->gc_seq = 0;
- 	nft_net->validate_state = NFT_VALIDATE_SKIP;
-+	nft_net->flushed = 0;
- 
- 	return 0;
- }
---
+1)  both foo() and my_foo() are in the same module
+2)  or it seems return type void is the best type for foo(). so no good
+reason to track its type.
+
+
 
