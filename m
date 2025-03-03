@@ -1,260 +1,1502 @@
-Return-Path: <linux-kernel+bounces-541379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FC21A4BC46
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:32:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F34BAA4BC5D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:34:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AA80170030
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:31:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F46B7AA6C8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:31:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83C131F4187;
-	Mon,  3 Mar 2025 10:30:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B5E91F3BAC;
+	Mon,  3 Mar 2025 10:30:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KZtc5OV4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="flAqJQ5P"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E25661F1905
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 10:30:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8A41F1905
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 10:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740997809; cv=none; b=hYQY+3oAZKStz2ByieBNt24QJE6SxnX718khX7pUxXY+xjWO+GlMDsP7uRgCbJNZHSBLDIDaNsF9w9Wro9IJUlG+F7IHNrkQ7BVnV5M/2dW1E1491Jjv6cUpOoBTaAwCMHvBz2bVue+LlKZ3Fcp+DTsGVQAFAG/t3JqYaf43JN4=
+	t=1740997834; cv=none; b=I5uLvLqFdptlSz+B1FwMiQEW6tkYDmo3BJWuHq6eCxLsr8edTuqXzZTyeaGVg5D+3BUFV4SrmmKQ5DSI9B0Ze94PHzAIVmW4nn37qjgvr98Fex6jEdHRtTOCL+6+WljM+8jnhhu5NT84FqOhIqldNUY0br69WN22zNM9kKs4dpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740997809; c=relaxed/simple;
-	bh=UV+fNTBbDPNvHmzvbwDtpiyYBuV69xe7oYGvZxbLxGw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bSAUeeeET64rsCdFeC2Vx8MI3eUv4GfuRozF9KNlbSfHO28Qpw/zUW+F5hBsKM99MhYUsFm+Mj0mkR02SKgJ3Eq8vSg0Wenyp7bCeqDaffsf859Rezcsy2hizrKNfXM2OLEjcItdP+pLcsobiG12jr9vESkLii/cvlnMvzTZZYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KZtc5OV4; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1740997834; c=relaxed/simple;
+	bh=Xd6jeKSTgIZFdafSVXZ/PdjL+vCFnUo1AZ/RbpdFGNw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ka07ZgNjog9B2G12Dk48BC397zemyzti4c3PKIXzGBnF1v/PcM91Zy6fJSymKF6QvPnzgOW5G4cLgnReMLR61t/3Xa9793i5JV0wUdxiNni99tHKNTPQ9X0D8NqQcMXW8URHz6WAEQnyKs077i/hm5x3TVBT03vQCWrxeRR5Amw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=flAqJQ5P; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740997806;
+	s=mimecast20190719; t=1740997830;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=XrsGCGG9AtfSViD3RsQm+eGPnJF4uoft9nYq0L+9jdk=;
-	b=KZtc5OV4fX/X80X/MMaReiU/+3p0TvTV7sWi7NlgWYv/nKmLGGBeaMDe4/dt3UPdvnMJ7x
-	ars7KHsWn4sTA59ftM+5oc2kRAVRp8Scv9F3CJDHdZaYYe+wo2aIPprQ7c3XkofgTxUSwA
-	bPi4DIIu9IK+3RCH+PwHi9568NyTJbs=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=gR6zLqRG9S1za/uF+nzi2msUOEjaoJGIhx4NU2xJ4k0=;
+	b=flAqJQ5P7bHVRs4k4HIxmVb7ZmmqFL8kFQoUA+kvIrVzsmoDKpolSOwvima/A/sZ8bGO84
+	iURXi4TpwXJesUAzOFH+PQrH4/365xPrDTbYTtMNqBSGYBaWQ+Dh76G1mgTSbIlJq+EL2n
+	TAERKDp157VjIp73e8BSy8KzhK4r3dg=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-245-tnGv85UwP9S0nPUri8jj5g-1; Mon, 03 Mar 2025 05:30:05 -0500
-X-MC-Unique: tnGv85UwP9S0nPUri8jj5g-1
-X-Mimecast-MFC-AGG-ID: tnGv85UwP9S0nPUri8jj5g_1740997804
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4399304b329so19191485e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 02:30:05 -0800 (PST)
+ us-mta-194-dbu1oVJVONOrbeNN23fqFQ-1; Mon, 03 Mar 2025 05:30:29 -0500
+X-MC-Unique: dbu1oVJVONOrbeNN23fqFQ-1
+X-Mimecast-MFC-AGG-ID: dbu1oVJVONOrbeNN23fqFQ_1740997828
+Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-5e4987b2107so4363108a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 02:30:29 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740997804; x=1741602604;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=XrsGCGG9AtfSViD3RsQm+eGPnJF4uoft9nYq0L+9jdk=;
-        b=N3XYvmG0+jCY6/Rkwanv02pEIqKVxJYcaQFC7z8XZb7HLzeAQVtec/ZMdrrXMM8aUO
-         6br/6hAzy8iPVyVOqoaHcF5ffzX5JY/CGXtdb5ooMt/gO9LBOl6KjEfbMMfOkec9/vd/
-         VFVXcYQ6snbOAbUV12GDVVinMmB713o7kG5KAYsf3QfNGU1/CrYMgSMcrNHxnPHkU+z0
-         3Gnl2Mk/D7J2VLvD4GXEXO4efOjRzyLJxKjfbpyh+mVq4IEL+6DWViekryxkZNuKrW+z
-         xvwPnGtaP5X8DWANUVQgPsCWME/vbYo0mr2/xKF2siNr6S30Nvt3E1q+tcgpS0925FOm
-         t8GQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWUchrrcARy9XxRUl2sXmQwigVt5jMhuIuPRg4pKyvgRamaXYnBbxF4tDA/ybmKrGWyey9T64GjJMxsq7o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkdlT7biGty3iP381f67W+nOWyw84ghI+wHAQdqBLszo6TNqob
-	fWtC3xAFJibGkAgt/hYXPQ+F1YAFuXz/35JNG+u6LmPH5Y+aIQQNjshe+YW+LwJxifb8dJvGo/s
-	hdM6EoYlh0uz3F+/mvCWP5YYLFv6txY88uNfrHCWWdL9lgYnUnLBLlZ8INvoRjg==
-X-Gm-Gg: ASbGncs5NOevEg1/aOP9qPC1LSvAUhVKus1yvHQnDE2csMLEBTlQG2EEXBsR3HMe9IV
-	pYMeXHyBZKK9QXQ4XackruiC70T/uScJ9lWo42hW19kIcniZETRnbPSOj+HFcWSFWclZixWmgh9
-	aBbZQ38b+bh74Swv0e0OzF2Zkn8G29MU+q3lTMycDFYXqr3fd7fRWkTtx3c98NN6TNXetU3GHty
-	DJXguDjhZELt1i/4Mgb2UDwmDEVaG7cW85ui0n9+CQBOA775nzdrWn8cCB+4jFLQQfmEo5EsLRR
-	pt2mGskuTPOrVrtx8Ozb88up9qTSMZRYUYmPuVG1lTmZwbYRuz2aPKu9aQKH7je6ykKgig1YEiy
-	TYWhCllnwvUkzTPw/xXdRUPi2K7P5ZtTs3MQHEyU0e7I=
-X-Received: by 2002:a05:6000:186f:b0:390:fbba:e64e with SMTP id ffacd0b85a97d-390fbbb1cc2mr7331370f8f.38.1740997804370;
-        Mon, 03 Mar 2025 02:30:04 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFHoLAZ6fEWXVIxhxcXtWWYyuOPAHrr7D24c6RFsAPg6NR1E/hXM+QKIu4+7Y0Ej8r5W1JDdQ==
-X-Received: by 2002:a05:6000:186f:b0:390:fbba:e64e with SMTP id ffacd0b85a97d-390fbbb1cc2mr7331318f8f.38.1740997803893;
-        Mon, 03 Mar 2025 02:30:03 -0800 (PST)
-Received: from ?IPV6:2003:cb:c734:9600:af27:4326:a216:2bfb? (p200300cbc7349600af274326a2162bfb.dip0.t-ipconnect.de. [2003:cb:c734:9600:af27:4326:a216:2bfb])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b7b6asm14383034f8f.51.2025.03.03.02.30.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Mar 2025 02:30:03 -0800 (PST)
-Message-ID: <34388e5d-f9d1-4d29-a0e0-202a9fad345f@redhat.com>
-Date: Mon, 3 Mar 2025 11:30:02 +0100
+        d=1e100.net; s=20230601; t=1740997828; x=1741602628;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gR6zLqRG9S1za/uF+nzi2msUOEjaoJGIhx4NU2xJ4k0=;
+        b=MM7CeR36KGirDi87ET2gdDE9nRTdx1maqYtfKboCqd9myRULfihBG4sLrtZ7Bbsb2s
+         1xUSAnERzNSLnBo/1EFJKdqEuujUU2JL6jkneF5Ly+BUv95MFerZ4WL7H5MT9Irjg9pQ
+         7rimjeFoLSo2cimjo6teavZDZ8Qm/CYVkLoLD0jOra/fEkPshYaHE+SGTn/SHB5vjjwg
+         txtaa9FEg1qGqAmWSewOxCqtyDwQ6dYKmO1B1llucBFUFUG/wqffyaoKuYa93SyIsip6
+         BJ8SdQiHSqmuXDRDRg4Rf8v//GuhuzEJajIWLFfJ/BmCNZya6Wa8D25T9f1tqTJ+TRO7
+         TlIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWZxX5cxkG8387zlBRcwaixvdurnIUsEUgYDaXlg0pGWNKw5ntq8O2LRbFgp/7vmleUS2oJ1iLseht6GL8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyuJkNhqnho5Pr1lLWVw+DemRyRqzBjYdxyuWzq2tYinPCbD5w
+	H6as+C2i1kutvlXk4CJ40VI7Z21TT7mJabcrlMqgGOx30aefIvLwYl41bfi5Cvlze4fsn/+aBQi
+	HfzsBiHpqqtpu36tJclfyG24d2+/azi871mQODcnhqYlIrZQ2Bop/xhkBmKuAJQ==
+X-Gm-Gg: ASbGncuIVKtj8uEZSm/t0GXmCdbsEY0xrNTzBv1lXdw9zvLMmRblraeL1MHgyFuzetT
+	nWH0q+LW29nyW+desA+7X/f1elGRtLrxmm2sZgT50Eh3/xspODVdAIW6efe6Ycf18uu9DZ01KXB
+	OrCH/5quHOqsKMCaRlIVBSFqGiDRZThhVI/mQ0dh6Ll0ja31fS4lnkg+l6LSm0aVKS9t6s6xBW8
+	VDXBpAKO8o2SOkETEASs9mbXm2WAc/j7k4JUJo43y/yG24eIzTPjXjgzobLD2W6oVdV3SKUXiN6
+	o+yfVb+bK8BKfT20AUWLZjxOGkbU+UvcI5EqfJw7ez4WWichjT3O/n0JOHOJd9Q=
+X-Received: by 2002:a05:6402:528a:b0:5e5:437c:1daf with SMTP id 4fb4d7f45d1cf-5e5437c22a7mr5160410a12.16.1740997827216;
+        Mon, 03 Mar 2025 02:30:27 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFWOtveprrubC5jzCtCbdOt9xXXQloZV5gJJWnE6GooHlcrYwBVrf5NDmW5ksFomjWCc6RdKg==
+X-Received: by 2002:a05:6402:528a:b0:5e5:437c:1daf with SMTP id 4fb4d7f45d1cf-5e5437c22a7mr5160377a12.16.1740997826443;
+        Mon, 03 Mar 2025 02:30:26 -0800 (PST)
+Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e4c3bb4bd9sm6630165a12.33.2025.03.03.02.30.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 02:30:25 -0800 (PST)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Arnd Bergmann <arnd@arndb.de>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] media: remove STA2x11 media pci driver
+Date: Mon,  3 Mar 2025 11:30:22 +0100
+Message-ID: <20250303103022.374705-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/4] mm: Fix lazy mmu docs and usage
-To: Ryan Roberts <ryan.roberts@arm.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- "David S. Miller" <davem@davemloft.net>,
- Andreas Larsson <andreas@gaisler.com>, Juergen Gross <jgross@suse.com>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-mm@kvack.org, sparclinux@vger.kernel.org,
- xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-References: <20250302145555.3236789-1-ryan.roberts@arm.com>
- <20250302145555.3236789-2-ryan.roberts@arm.com>
- <5418a661-dbd0-46e9-8ef7-b1c5a34acce3@redhat.com>
- <a9e21c14-d390-4119-ad93-b23e6ccbac15@redhat.com>
- <1ff509c7-187b-4e43-b266-db8ada33b9a2@arm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <1ff509c7-187b-4e43-b266-db8ada33b9a2@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 03.03.25 11:22, Ryan Roberts wrote:
-> On 03/03/2025 08:52, David Hildenbrand wrote:
->> On 03.03.25 09:49, David Hildenbrand wrote:
->>> On 02.03.25 15:55, Ryan Roberts wrote:
->>>> The docs, implementations and use of arch_[enter|leave]_lazy_mmu_mode()
->>>> is a bit of a mess (to put it politely). There are a number of issues
->>>> related to nesting of lazy mmu regions and confusion over whether the
->>>> task, when in a lazy mmu region, is preemptible or not. Fix all the
->>>> issues relating to the core-mm. Follow up commits will fix the
->>>> arch-specific implementations. 3 arches implement lazy mmu; powerpc,
->>>> sparc and x86.
->>>>
->>>> When arch_[enter|leave]_lazy_mmu_mode() was first introduced by commit
->>>> 6606c3e0da53 ("[PATCH] paravirt: lazy mmu mode hooks.patch"), it was
->>>> expected that lazy mmu regions would never nest and that the appropriate
->>>> page table lock(s) would be held while in the region, thus ensuring the
->>>> region is non-preemptible. Additionally lazy mmu regions were only used
->>>> during manipulation of user mappings.
->>>>
->>>> Commit 38e0edb15bd0 ("mm/apply_to_range: call pte function with lazy
->>>> updates") started invoking the lazy mmu mode in apply_to_pte_range(),
->>>> which is used for both user and kernel mappings. For kernel mappings the
->>>> region is no longer protected by any lock so there is no longer any
->>>> guarantee about non-preemptibility. Additionally, for RT configs, the
->>>> holding the PTL only implies no CPU migration, it doesn't prevent
->>>> preemption.
->>>>
->>>> Commit bcc6cc832573 ("mm: add default definition of set_ptes()") added
->>>> arch_[enter|leave]_lazy_mmu_mode() to the default implementation of
->>>> set_ptes(), used by x86. So after this commit, lazy mmu regions can be
->>>> nested. Additionally commit 1a10a44dfc1d ("sparc64: implement the new
->>>> page table range API") and commit 9fee28baa601 ("powerpc: implement the
->>>> new page table range API") did the same for the sparc and powerpc
->>>> set_ptes() overrides.
->>>>
->>>> powerpc couldn't deal with preemption so avoids it in commit
->>>> b9ef323ea168 ("powerpc/64s: Disable preemption in hash lazy mmu mode"),
->>>> which explicitly disables preemption for the whole region in its
->>>> implementation. x86 can support preemption (or at least it could until
->>>> it tried to add support nesting; more on this below). Sparc looks to be
->>>> totally broken in the face of preemption, as far as I can tell.
->>>>
->>>> powewrpc can't deal with nesting, so avoids it in commit 47b8def9358c
->>>> ("powerpc/mm: Avoid calling arch_enter/leave_lazy_mmu() in set_ptes"),
->>>> which removes the lazy mmu calls from its implementation of set_ptes().
->>>> x86 attempted to support nesting in commit 49147beb0ccb ("x86/xen: allow
->>>> nesting of same lazy mode") but as far as I can tell, this breaks its
->>>> support for preemption.
->>>>
->>>> In short, it's all a mess; the semantics for
->>>> arch_[enter|leave]_lazy_mmu_mode() are not clearly defined and as a
->>>> result the implementations all have different expectations, sticking
->>>> plasters and bugs.
->>>>
->>>> arm64 is aiming to start using these hooks, so let's clean everything up
->>>> before adding an arm64 implementation. Update the documentation to state
->>>> that lazy mmu regions can never be nested, must not be called in
->>>> interrupt context and preemption may or may not be enabled for the
->>>> duration of the region.
->>>>
->>>> Additionally, update the way arch_[enter|leave]_lazy_mmu_mode() is
->>>> called in pagemap_scan_pmd_entry() to follow the normal pattern of
->>>> holding the ptl for user space mappings. As a result the scope is
->>>> reduced to only the pte table, but that's where most of the performance
->>>> win is. While I believe there wasn't technically a bug here, the
->>>> original scope made it easier to accidentally nest or, worse,
->>>> accidentally call something like kmap() which would expect an immediate
->>>> mode pte modification but it would end up deferred.
->>>>
->>>> arch-specific fixes to conform to the new spec will proceed this one.
->>>>
->>>> These issues were spotted by code review and I have no evidence of
->>>> issues being reported in the wild.
->>>>
->>>
->>> All looking good to me!
->>>
->>> Acked-by: David Hildenbrand <david@redhat.com>
->>>
->>
->> ... but I do wonder if the set_ptes change should be split from the pagemap change.
-> 
-> So set_ptes + docs changes in one patch, and pagemap change in another? I can do
-> that.
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-Yes.
+With commit dcbb01fbb7ae ("x86/pci: Remove old STA2x11 support"), the
+STA2X11 Video Input Port driver is not needed and cannot be built anymore.
 
-> 
-> I didn't actually cc stable on these, I'm wondering if I should do that? Perhaps
-> for all patches except the pagemap change?
+Remove the driver and its reference in media documentation.
 
-That would make sense to me. CC stable likely doesn't hurt here. 
-(although I wonder if anybody cares about stable on sparc :))
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+---
+ .../admin-guide/media/pci-cardlist.rst        |    1 -
+ drivers/media/pci/Kconfig                     |    1 -
+ drivers/media/pci/Makefile                    |    2 -
+ drivers/media/pci/sta2x11/Kconfig             |   16 -
+ drivers/media/pci/sta2x11/Makefile            |    2 -
+ drivers/media/pci/sta2x11/sta2x11_vip.c       | 1270 -----------------
+ drivers/media/pci/sta2x11/sta2x11_vip.h       |   29 -
+ 7 files changed, 1321 deletions(-)
+ delete mode 100644 drivers/media/pci/sta2x11/Kconfig
+ delete mode 100644 drivers/media/pci/sta2x11/Makefile
+ delete mode 100644 drivers/media/pci/sta2x11/sta2x11_vip.c
+ delete mode 100644 drivers/media/pci/sta2x11/sta2x11_vip.h
 
+diff --git a/Documentation/admin-guide/media/pci-cardlist.rst b/Documentation/admin-guide/media/pci-cardlist.rst
+index 7d8e3c8987db..239879634ea5 100644
+--- a/Documentation/admin-guide/media/pci-cardlist.rst
++++ b/Documentation/admin-guide/media/pci-cardlist.rst
+@@ -86,7 +86,6 @@ saa7134           Philips SAA7134
+ saa7164           NXP SAA7164
+ smipcie           SMI PCIe DVBSky cards
+ solo6x10          Bluecherry / Softlogic 6x10 capture cards (MPEG-4/H.264)
+-sta2x11_vip       STA2X11 VIP Video For Linux
+ tw5864            Techwell TW5864 video/audio grabber and encoder
+ tw686x            Intersil/Techwell TW686x
+ tw68              Techwell tw68x Video For Linux
+diff --git a/drivers/media/pci/Kconfig b/drivers/media/pci/Kconfig
+index 7f65aa609388..eebb16c58f3d 100644
+--- a/drivers/media/pci/Kconfig
++++ b/drivers/media/pci/Kconfig
+@@ -15,7 +15,6 @@ if MEDIA_CAMERA_SUPPORT
+ 
+ source "drivers/media/pci/mgb4/Kconfig"
+ source "drivers/media/pci/solo6x10/Kconfig"
+-source "drivers/media/pci/sta2x11/Kconfig"
+ source "drivers/media/pci/tw5864/Kconfig"
+ source "drivers/media/pci/tw68/Kconfig"
+ source "drivers/media/pci/tw686x/Kconfig"
+diff --git a/drivers/media/pci/Makefile b/drivers/media/pci/Makefile
+index f18c7e15abe3..02763ad88511 100644
+--- a/drivers/media/pci/Makefile
++++ b/drivers/media/pci/Makefile
+@@ -22,8 +22,6 @@ obj-y        +=	ttpci/		\
+ # Please keep it alphabetically sorted by Kconfig name
+ # (e. g. LC_ALL=C sort Makefile)
+ 
+-obj-$(CONFIG_STA2X11_VIP) += sta2x11/
+-
+ obj-$(CONFIG_VIDEO_BT848) += bt8xx/
+ obj-$(CONFIG_VIDEO_COBALT) += cobalt/
+ obj-$(CONFIG_VIDEO_CX18) += cx18/
+diff --git a/drivers/media/pci/sta2x11/Kconfig b/drivers/media/pci/sta2x11/Kconfig
+deleted file mode 100644
+index 118b922c08c3..000000000000
+--- a/drivers/media/pci/sta2x11/Kconfig
++++ /dev/null
+@@ -1,16 +0,0 @@
+-# SPDX-License-Identifier: GPL-2.0-only
+-config STA2X11_VIP
+-	tristate "STA2X11 VIP Video For Linux"
+-	depends on PCI && VIDEO_DEV && I2C
+-	depends on STA2X11 || COMPILE_TEST
+-	select GPIOLIB if MEDIA_SUBDRV_AUTOSELECT
+-	select VIDEO_ADV7180 if MEDIA_SUBDRV_AUTOSELECT
+-	select VIDEOBUF2_DMA_CONTIG
+-	select MEDIA_CONTROLLER
+-	select VIDEO_V4L2_SUBDEV_API
+-	help
+-	  Say Y for support for STA2X11 VIP (Video Input Port) capture
+-	  device.
+-
+-	  To compile this driver as a module, choose M here: the
+-	  module will be called sta2x11_vip.
+diff --git a/drivers/media/pci/sta2x11/Makefile b/drivers/media/pci/sta2x11/Makefile
+deleted file mode 100644
+index bb684a7b6270..000000000000
+--- a/drivers/media/pci/sta2x11/Makefile
++++ /dev/null
+@@ -1,2 +0,0 @@
+-# SPDX-License-Identifier: GPL-2.0-only
+-obj-$(CONFIG_STA2X11_VIP) += sta2x11_vip.o
+diff --git a/drivers/media/pci/sta2x11/sta2x11_vip.c b/drivers/media/pci/sta2x11/sta2x11_vip.c
+deleted file mode 100644
+index 3049bad20f14..000000000000
+--- a/drivers/media/pci/sta2x11/sta2x11_vip.c
++++ /dev/null
+@@ -1,1270 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-only
+-/*
+- * This is the driver for the STA2x11 Video Input Port.
+- *
+- * Copyright (C) 2012       ST Microelectronics
+- *     author: Federico Vaga <federico.vaga@gmail.com>
+- * Copyright (C) 2010       WindRiver Systems, Inc.
+- *     authors: Andreas Kies <andreas.kies@windriver.com>
+- *              Vlad Lungu   <vlad.lungu@windriver.com>
+- */
+-
+-#include <linux/types.h>
+-#include <linux/kernel.h>
+-#include <linux/module.h>
+-#include <linux/init.h>
+-#include <linux/videodev2.h>
+-#include <linux/kmod.h>
+-#include <linux/pci.h>
+-#include <linux/interrupt.h>
+-#include <linux/io.h>
+-#include <linux/gpio/consumer.h>
+-#include <linux/gpio.h>
+-#include <linux/i2c.h>
+-#include <linux/delay.h>
+-#include <media/v4l2-common.h>
+-#include <media/v4l2-device.h>
+-#include <media/v4l2-ctrls.h>
+-#include <media/v4l2-ioctl.h>
+-#include <media/v4l2-fh.h>
+-#include <media/v4l2-event.h>
+-#include <media/videobuf2-dma-contig.h>
+-
+-#include "sta2x11_vip.h"
+-
+-#define DRV_VERSION "1.3"
+-
+-#ifndef PCI_DEVICE_ID_STMICRO_VIP
+-#define PCI_DEVICE_ID_STMICRO_VIP 0xCC0D
+-#endif
+-
+-#define MAX_FRAMES 4
+-
+-/*Register offsets*/
+-#define DVP_CTL		0x00
+-#define DVP_TFO		0x04
+-#define DVP_TFS		0x08
+-#define DVP_BFO		0x0C
+-#define DVP_BFS		0x10
+-#define DVP_VTP		0x14
+-#define DVP_VBP		0x18
+-#define DVP_VMP		0x1C
+-#define DVP_ITM		0x98
+-#define DVP_ITS		0x9C
+-#define DVP_STA		0xA0
+-#define DVP_HLFLN	0xA8
+-#define DVP_RGB		0xC0
+-#define DVP_PKZ		0xF0
+-
+-/*Register fields*/
+-#define DVP_CTL_ENA	0x00000001
+-#define DVP_CTL_RST	0x80000000
+-#define DVP_CTL_DIS	(~0x00040001)
+-
+-#define DVP_IT_VSB	0x00000008
+-#define DVP_IT_VST	0x00000010
+-#define DVP_IT_FIFO	0x00000020
+-
+-#define DVP_HLFLN_SD	0x00000001
+-
+-#define SAVE_COUNT 8
+-#define AUX_COUNT 3
+-#define IRQ_COUNT 1
+-
+-
+-struct vip_buffer {
+-	struct vb2_v4l2_buffer vb;
+-	struct list_head	list;
+-	dma_addr_t		dma;
+-};
+-static inline struct vip_buffer *to_vip_buffer(struct vb2_v4l2_buffer *vb2)
+-{
+-	return container_of(vb2, struct vip_buffer, vb);
+-}
+-
+-/**
+- * struct sta2x11_vip - All internal data for one instance of device
+- * @v4l2_dev: device registered in v4l layer
+- * @video_dev: properties of our device
+- * @pdev: PCI device
+- * @adapter: contains I2C adapter information
+- * @register_save_area: All relevant register are saved here during suspend
+- * @decoder: contains information about video DAC
+- * @ctrl_hdl: handler for control framework
+- * @format: pixel format, fixed UYVY
+- * @std: video standard (e.g. PAL/NTSC)
+- * @input: input line for video signal ( 0 or 1 )
+- * @disabled: Device is in power down state
+- * @slock: for excluse access of registers
+- * @vb_vidq: queue maintained by videobuf2 layer
+- * @buffer_list: list of buffer in use
+- * @sequence: sequence number of acquired buffer
+- * @active: current active buffer
+- * @lock: used in videobuf2 callback
+- * @v4l_lock: serialize its video4linux ioctls
+- * @tcount: Number of top frames
+- * @bcount: Number of bottom frames
+- * @overflow: Number of FIFO overflows
+- * @iomem: hardware base address
+- * @config: I2C and gpio config from platform
+- *
+- * All non-local data is accessed via this structure.
+- */
+-struct sta2x11_vip {
+-	struct v4l2_device v4l2_dev;
+-	struct video_device video_dev;
+-	struct pci_dev *pdev;
+-	struct i2c_adapter *adapter;
+-	unsigned int register_save_area[IRQ_COUNT + SAVE_COUNT + AUX_COUNT];
+-	struct v4l2_subdev *decoder;
+-	struct v4l2_ctrl_handler ctrl_hdl;
+-
+-
+-	struct v4l2_pix_format format;
+-	v4l2_std_id std;
+-	unsigned int input;
+-	int disabled;
+-	spinlock_t slock;
+-
+-	struct vb2_queue vb_vidq;
+-	struct list_head buffer_list;
+-	unsigned int sequence;
+-	struct vip_buffer *active; /* current active buffer */
+-	spinlock_t lock; /* Used in videobuf2 callback */
+-	struct mutex v4l_lock;
+-
+-	/* Interrupt counters */
+-	int tcount, bcount;
+-	int overflow;
+-
+-	void __iomem *iomem;	/* I/O Memory */
+-	struct vip_config *config;
+-};
+-
+-static const unsigned int registers_to_save[AUX_COUNT] = {
+-	DVP_HLFLN, DVP_RGB, DVP_PKZ
+-};
+-
+-static struct v4l2_pix_format formats_50[] = {
+-	{			/*PAL interlaced */
+-	 .width = 720,
+-	 .height = 576,
+-	 .pixelformat = V4L2_PIX_FMT_UYVY,
+-	 .field = V4L2_FIELD_INTERLACED,
+-	 .bytesperline = 720 * 2,
+-	 .sizeimage = 720 * 2 * 576,
+-	 .colorspace = V4L2_COLORSPACE_SMPTE170M},
+-	{			/*PAL top */
+-	 .width = 720,
+-	 .height = 288,
+-	 .pixelformat = V4L2_PIX_FMT_UYVY,
+-	 .field = V4L2_FIELD_TOP,
+-	 .bytesperline = 720 * 2,
+-	 .sizeimage = 720 * 2 * 288,
+-	 .colorspace = V4L2_COLORSPACE_SMPTE170M},
+-	{			/*PAL bottom */
+-	 .width = 720,
+-	 .height = 288,
+-	 .pixelformat = V4L2_PIX_FMT_UYVY,
+-	 .field = V4L2_FIELD_BOTTOM,
+-	 .bytesperline = 720 * 2,
+-	 .sizeimage = 720 * 2 * 288,
+-	 .colorspace = V4L2_COLORSPACE_SMPTE170M},
+-
+-};
+-
+-static struct v4l2_pix_format formats_60[] = {
+-	{			/*NTSC interlaced */
+-	 .width = 720,
+-	 .height = 480,
+-	 .pixelformat = V4L2_PIX_FMT_UYVY,
+-	 .field = V4L2_FIELD_INTERLACED,
+-	 .bytesperline = 720 * 2,
+-	 .sizeimage = 720 * 2 * 480,
+-	 .colorspace = V4L2_COLORSPACE_SMPTE170M},
+-	{			/*NTSC top */
+-	 .width = 720,
+-	 .height = 240,
+-	 .pixelformat = V4L2_PIX_FMT_UYVY,
+-	 .field = V4L2_FIELD_TOP,
+-	 .bytesperline = 720 * 2,
+-	 .sizeimage = 720 * 2 * 240,
+-	 .colorspace = V4L2_COLORSPACE_SMPTE170M},
+-	{			/*NTSC bottom */
+-	 .width = 720,
+-	 .height = 240,
+-	 .pixelformat = V4L2_PIX_FMT_UYVY,
+-	 .field = V4L2_FIELD_BOTTOM,
+-	 .bytesperline = 720 * 2,
+-	 .sizeimage = 720 * 2 * 240,
+-	 .colorspace = V4L2_COLORSPACE_SMPTE170M},
+-};
+-
+-/* Write VIP register */
+-static inline void reg_write(struct sta2x11_vip *vip, unsigned int reg, u32 val)
+-{
+-	iowrite32((val), (vip->iomem)+(reg));
+-}
+-/* Read VIP register */
+-static inline u32 reg_read(struct sta2x11_vip *vip, unsigned int reg)
+-{
+-	return  ioread32((vip->iomem)+(reg));
+-}
+-/* Start DMA acquisition */
+-static void start_dma(struct sta2x11_vip *vip, struct vip_buffer *vip_buf)
+-{
+-	unsigned long offset = 0;
+-
+-	if (vip->format.field == V4L2_FIELD_INTERLACED)
+-		offset = vip->format.width * 2;
+-
+-	spin_lock_irq(&vip->slock);
+-	/* Enable acquisition */
+-	reg_write(vip, DVP_CTL, reg_read(vip, DVP_CTL) | DVP_CTL_ENA);
+-	/* Set Top and Bottom Field memory address */
+-	reg_write(vip, DVP_VTP, (u32)vip_buf->dma);
+-	reg_write(vip, DVP_VBP, (u32)vip_buf->dma + offset);
+-	spin_unlock_irq(&vip->slock);
+-}
+-
+-/* Fetch the next buffer to activate */
+-static void vip_active_buf_next(struct sta2x11_vip *vip)
+-{
+-	/* Get the next buffer */
+-	spin_lock(&vip->lock);
+-	if (list_empty(&vip->buffer_list)) {/* No available buffer */
+-		spin_unlock(&vip->lock);
+-		return;
+-	}
+-	vip->active = list_first_entry(&vip->buffer_list,
+-				       struct vip_buffer,
+-				       list);
+-	/* Reset Top and Bottom counter */
+-	vip->tcount = 0;
+-	vip->bcount = 0;
+-	spin_unlock(&vip->lock);
+-	if (vb2_is_streaming(&vip->vb_vidq)) {	/* streaming is on */
+-		start_dma(vip, vip->active);	/* start dma capture */
+-	}
+-}
+-
+-
+-/* Videobuf2 Operations */
+-static int queue_setup(struct vb2_queue *vq,
+-		       unsigned int *nbuffers, unsigned int *nplanes,
+-		       unsigned int sizes[], struct device *alloc_devs[])
+-{
+-	struct sta2x11_vip *vip = vb2_get_drv_priv(vq);
+-
+-	if (!(*nbuffers) || *nbuffers < MAX_FRAMES)
+-		*nbuffers = MAX_FRAMES;
+-
+-	*nplanes = 1;
+-	sizes[0] = vip->format.sizeimage;
+-
+-	vip->sequence = 0;
+-	vip->active = NULL;
+-	vip->tcount = 0;
+-	vip->bcount = 0;
+-
+-	return 0;
+-};
+-static int buffer_init(struct vb2_buffer *vb)
+-{
+-	struct vb2_v4l2_buffer *vbuf = to_vb2_v4l2_buffer(vb);
+-	struct vip_buffer *vip_buf = to_vip_buffer(vbuf);
+-
+-	vip_buf->dma = vb2_dma_contig_plane_dma_addr(vb, 0);
+-	INIT_LIST_HEAD(&vip_buf->list);
+-	return 0;
+-}
+-
+-static int buffer_prepare(struct vb2_buffer *vb)
+-{
+-	struct vb2_v4l2_buffer *vbuf = to_vb2_v4l2_buffer(vb);
+-	struct sta2x11_vip *vip = vb2_get_drv_priv(vb->vb2_queue);
+-	struct vip_buffer *vip_buf = to_vip_buffer(vbuf);
+-	unsigned long size;
+-
+-	size = vip->format.sizeimage;
+-	if (vb2_plane_size(vb, 0) < size) {
+-		v4l2_err(&vip->v4l2_dev, "buffer too small (%lu < %lu)\n",
+-			 vb2_plane_size(vb, 0), size);
+-		return -EINVAL;
+-	}
+-
+-	vb2_set_plane_payload(&vip_buf->vb.vb2_buf, 0, size);
+-
+-	return 0;
+-}
+-static void buffer_queue(struct vb2_buffer *vb)
+-{
+-	struct vb2_v4l2_buffer *vbuf = to_vb2_v4l2_buffer(vb);
+-	struct sta2x11_vip *vip = vb2_get_drv_priv(vb->vb2_queue);
+-	struct vip_buffer *vip_buf = to_vip_buffer(vbuf);
+-
+-	spin_lock(&vip->lock);
+-	list_add_tail(&vip_buf->list, &vip->buffer_list);
+-	if (!vip->active) {	/* No active buffer, active the first one */
+-		vip->active = list_first_entry(&vip->buffer_list,
+-					       struct vip_buffer,
+-					       list);
+-		if (vb2_is_streaming(&vip->vb_vidq))	/* streaming is on */
+-			start_dma(vip, vip_buf);	/* start dma capture */
+-	}
+-	spin_unlock(&vip->lock);
+-}
+-static void buffer_finish(struct vb2_buffer *vb)
+-{
+-	struct vb2_v4l2_buffer *vbuf = to_vb2_v4l2_buffer(vb);
+-	struct sta2x11_vip *vip = vb2_get_drv_priv(vb->vb2_queue);
+-	struct vip_buffer *vip_buf = to_vip_buffer(vbuf);
+-
+-	/* Buffer handled, remove it from the list */
+-	spin_lock(&vip->lock);
+-	list_del_init(&vip_buf->list);
+-	spin_unlock(&vip->lock);
+-
+-	if (vb2_is_streaming(vb->vb2_queue))
+-		vip_active_buf_next(vip);
+-}
+-
+-static int start_streaming(struct vb2_queue *vq, unsigned int count)
+-{
+-	struct sta2x11_vip *vip = vb2_get_drv_priv(vq);
+-
+-	spin_lock_irq(&vip->slock);
+-	/* Enable interrupt VSYNC Top and Bottom*/
+-	reg_write(vip, DVP_ITM, DVP_IT_VSB | DVP_IT_VST);
+-	spin_unlock_irq(&vip->slock);
+-
+-	if (count)
+-		start_dma(vip, vip->active);
+-
+-	return 0;
+-}
+-
+-/* abort streaming and wait for last buffer */
+-static void stop_streaming(struct vb2_queue *vq)
+-{
+-	struct sta2x11_vip *vip = vb2_get_drv_priv(vq);
+-	struct vip_buffer *vip_buf, *node;
+-
+-	/* Disable acquisition */
+-	reg_write(vip, DVP_CTL, reg_read(vip, DVP_CTL) & ~DVP_CTL_ENA);
+-	/* Disable all interrupts */
+-	reg_write(vip, DVP_ITM, 0);
+-
+-	/* Release all active buffers */
+-	spin_lock(&vip->lock);
+-	list_for_each_entry_safe(vip_buf, node, &vip->buffer_list, list) {
+-		vb2_buffer_done(&vip_buf->vb.vb2_buf, VB2_BUF_STATE_ERROR);
+-		list_del(&vip_buf->list);
+-	}
+-	spin_unlock(&vip->lock);
+-}
+-
+-static const struct vb2_ops vip_video_qops = {
+-	.queue_setup		= queue_setup,
+-	.buf_init		= buffer_init,
+-	.buf_prepare		= buffer_prepare,
+-	.buf_finish		= buffer_finish,
+-	.buf_queue		= buffer_queue,
+-	.start_streaming	= start_streaming,
+-	.stop_streaming		= stop_streaming,
+-};
+-
+-
+-/* File Operations */
+-static const struct v4l2_file_operations vip_fops = {
+-	.owner = THIS_MODULE,
+-	.open = v4l2_fh_open,
+-	.release = vb2_fop_release,
+-	.unlocked_ioctl = video_ioctl2,
+-	.read = vb2_fop_read,
+-	.mmap = vb2_fop_mmap,
+-	.poll = vb2_fop_poll
+-};
+-
+-
+-/**
+- * vidioc_querycap - return capabilities of device
+- * @file: descriptor of device
+- * @cap: contains return values
+- * @priv: unused
+- *
+- * the capabilities of the device are returned
+- *
+- * return value: 0, no error.
+- */
+-static int vidioc_querycap(struct file *file, void *priv,
+-			   struct v4l2_capability *cap)
+-{
+-	strscpy(cap->driver, KBUILD_MODNAME, sizeof(cap->driver));
+-	strscpy(cap->card, KBUILD_MODNAME, sizeof(cap->card));
+-	return 0;
+-}
+-
+-/**
+- * vidioc_s_std - set video standard
+- * @file: descriptor of device
+- * @std: contains standard to be set
+- * @priv: unused
+- *
+- * the video standard is set
+- *
+- * return value: 0, no error.
+- *
+- * -EIO, no input signal detected
+- *
+- * other, returned from video DAC.
+- */
+-static int vidioc_s_std(struct file *file, void *priv, v4l2_std_id std)
+-{
+-	struct sta2x11_vip *vip = video_drvdata(file);
+-
+-	/*
+-	 * This is here for backwards compatibility only.
+-	 * The use of V4L2_STD_ALL to trigger a querystd is non-standard.
+-	 */
+-	if (std == V4L2_STD_ALL) {
+-		v4l2_subdev_call(vip->decoder, video, querystd, &std);
+-		if (std == V4L2_STD_UNKNOWN)
+-			return -EIO;
+-	}
+-
+-	if (vip->std != std) {
+-		vip->std = std;
+-		if (V4L2_STD_525_60 & std)
+-			vip->format = formats_60[0];
+-		else
+-			vip->format = formats_50[0];
+-	}
+-
+-	return v4l2_subdev_call(vip->decoder, video, s_std, std);
+-}
+-
+-/**
+- * vidioc_g_std - get video standard
+- * @file: descriptor of device
+- * @priv: unused
+- * @std: contains return values
+- *
+- * the current video standard is returned
+- *
+- * return value: 0, no error.
+- */
+-static int vidioc_g_std(struct file *file, void *priv, v4l2_std_id *std)
+-{
+-	struct sta2x11_vip *vip = video_drvdata(file);
+-
+-	*std = vip->std;
+-	return 0;
+-}
+-
+-/**
+- * vidioc_querystd - get possible video standards
+- * @file: descriptor of device
+- * @priv: unused
+- * @std: contains return values
+- *
+- * all possible video standards are returned
+- *
+- * return value: delivered by video DAC routine.
+- */
+-static int vidioc_querystd(struct file *file, void *priv, v4l2_std_id *std)
+-{
+-	struct sta2x11_vip *vip = video_drvdata(file);
+-
+-	return v4l2_subdev_call(vip->decoder, video, querystd, std);
+-}
+-
+-static int vidioc_enum_input(struct file *file, void *priv,
+-			     struct v4l2_input *inp)
+-{
+-	if (inp->index > 1)
+-		return -EINVAL;
+-
+-	inp->type = V4L2_INPUT_TYPE_CAMERA;
+-	inp->std = V4L2_STD_ALL;
+-	sprintf(inp->name, "Camera %u", inp->index);
+-
+-	return 0;
+-}
+-
+-/**
+- * vidioc_s_input - set input line
+- * @file: descriptor of device
+- * @priv: unused
+- * @i: new input line number
+- *
+- * the current active input line is set
+- *
+- * return value: 0, no error.
+- *
+- * -EINVAL, line number out of range
+- */
+-static int vidioc_s_input(struct file *file, void *priv, unsigned int i)
+-{
+-	struct sta2x11_vip *vip = video_drvdata(file);
+-	int ret;
+-
+-	if (i > 1)
+-		return -EINVAL;
+-	ret = v4l2_subdev_call(vip->decoder, video, s_routing, i, 0, 0);
+-
+-	if (!ret)
+-		vip->input = i;
+-
+-	return 0;
+-}
+-
+-/**
+- * vidioc_g_input - return input line
+- * @file: descriptor of device
+- * @priv: unused
+- * @i: returned input line number
+- *
+- * the current active input line is returned
+- *
+- * return value: always 0.
+- */
+-static int vidioc_g_input(struct file *file, void *priv, unsigned int *i)
+-{
+-	struct sta2x11_vip *vip = video_drvdata(file);
+-
+-	*i = vip->input;
+-	return 0;
+-}
+-
+-/**
+- * vidioc_enum_fmt_vid_cap - return video capture format
+- * @file: descriptor of device
+- * @priv: unused
+- * @f: returned format information
+- *
+- * returns name and format of video capture
+- * Only UYVY is supported by hardware.
+- *
+- * return value: always 0.
+- */
+-static int vidioc_enum_fmt_vid_cap(struct file *file, void *priv,
+-				   struct v4l2_fmtdesc *f)
+-{
+-
+-	if (f->index != 0)
+-		return -EINVAL;
+-
+-	f->pixelformat = V4L2_PIX_FMT_UYVY;
+-	return 0;
+-}
+-
+-/**
+- * vidioc_try_fmt_vid_cap - set video capture format
+- * @file: descriptor of device
+- * @priv: unused
+- * @f: new format
+- *
+- * new video format is set which includes width and
+- * field type. width is fixed to 720, no scaling.
+- * Only UYVY is supported by this hardware.
+- * the minimum height is 200, the maximum is 576 (PAL)
+- *
+- * return value: 0, no error
+- *
+- * -EINVAL, pixel or field format not supported
+- *
+- */
+-static int vidioc_try_fmt_vid_cap(struct file *file, void *priv,
+-				  struct v4l2_format *f)
+-{
+-	struct sta2x11_vip *vip = video_drvdata(file);
+-	int interlace_lim;
+-
+-	if (V4L2_PIX_FMT_UYVY != f->fmt.pix.pixelformat) {
+-		v4l2_warn(&vip->v4l2_dev, "Invalid format, only UYVY supported\n");
+-		return -EINVAL;
+-	}
+-
+-	if (V4L2_STD_525_60 & vip->std)
+-		interlace_lim = 240;
+-	else
+-		interlace_lim = 288;
+-
+-	switch (f->fmt.pix.field) {
+-	default:
+-	case V4L2_FIELD_ANY:
+-		if (interlace_lim < f->fmt.pix.height)
+-			f->fmt.pix.field = V4L2_FIELD_INTERLACED;
+-		else
+-			f->fmt.pix.field = V4L2_FIELD_BOTTOM;
+-		break;
+-	case V4L2_FIELD_TOP:
+-	case V4L2_FIELD_BOTTOM:
+-		if (interlace_lim < f->fmt.pix.height)
+-			f->fmt.pix.height = interlace_lim;
+-		break;
+-	case V4L2_FIELD_INTERLACED:
+-		break;
+-	}
+-
+-	/* It is the only supported format */
+-	f->fmt.pix.pixelformat = V4L2_PIX_FMT_UYVY;
+-	f->fmt.pix.height &= ~1;
+-	if (2 * interlace_lim < f->fmt.pix.height)
+-		f->fmt.pix.height = 2 * interlace_lim;
+-	if (200 > f->fmt.pix.height)
+-		f->fmt.pix.height = 200;
+-	f->fmt.pix.width = 720;
+-	f->fmt.pix.bytesperline = f->fmt.pix.width * 2;
+-	f->fmt.pix.sizeimage = f->fmt.pix.width * 2 * f->fmt.pix.height;
+-	f->fmt.pix.colorspace = V4L2_COLORSPACE_SMPTE170M;
+-	return 0;
+-}
+-
+-/**
+- * vidioc_s_fmt_vid_cap - set current video format parameters
+- * @file: descriptor of device
+- * @priv: unused
+- * @f: returned format information
+- *
+- * set new capture format
+- * return value: 0, no error
+- *
+- * other, delivered by video DAC routine.
+- */
+-static int vidioc_s_fmt_vid_cap(struct file *file, void *priv,
+-				struct v4l2_format *f)
+-{
+-	struct sta2x11_vip *vip = video_drvdata(file);
+-	unsigned int t_stop, b_stop, pitch;
+-	int ret;
+-
+-	ret = vidioc_try_fmt_vid_cap(file, priv, f);
+-	if (ret)
+-		return ret;
+-
+-	if (vb2_is_busy(&vip->vb_vidq)) {
+-		/* Can't change format during acquisition */
+-		v4l2_err(&vip->v4l2_dev, "device busy\n");
+-		return -EBUSY;
+-	}
+-	vip->format = f->fmt.pix;
+-	switch (vip->format.field) {
+-	case V4L2_FIELD_INTERLACED:
+-		t_stop = ((vip->format.height / 2 - 1) << 16) |
+-			 (2 * vip->format.width - 1);
+-		b_stop = t_stop;
+-		pitch = 4 * vip->format.width;
+-		break;
+-	case V4L2_FIELD_TOP:
+-		t_stop = ((vip->format.height - 1) << 16) |
+-			 (2 * vip->format.width - 1);
+-		b_stop = (0 << 16) | (2 * vip->format.width - 1);
+-		pitch = 2 * vip->format.width;
+-		break;
+-	case V4L2_FIELD_BOTTOM:
+-		t_stop = (0 << 16) | (2 * vip->format.width - 1);
+-		b_stop = (vip->format.height << 16) |
+-			 (2 * vip->format.width - 1);
+-		pitch = 2 * vip->format.width;
+-		break;
+-	default:
+-		v4l2_err(&vip->v4l2_dev, "unknown field format\n");
+-		return -EINVAL;
+-	}
+-
+-	spin_lock_irq(&vip->slock);
+-	/* Y-X Top Field Offset */
+-	reg_write(vip, DVP_TFO, 0);
+-	/* Y-X Bottom Field Offset */
+-	reg_write(vip, DVP_BFO, 0);
+-	/* Y-X Top Field Stop*/
+-	reg_write(vip, DVP_TFS, t_stop);
+-	/* Y-X Bottom Field Stop */
+-	reg_write(vip, DVP_BFS, b_stop);
+-	/* Video Memory Pitch */
+-	reg_write(vip, DVP_VMP, pitch);
+-	spin_unlock_irq(&vip->slock);
+-
+-	return 0;
+-}
+-
+-/**
+- * vidioc_g_fmt_vid_cap - get current video format parameters
+- * @file: descriptor of device
+- * @priv: unused
+- * @f: contains format information
+- *
+- * returns current video format parameters
+- *
+- * return value: 0, always successful
+- */
+-static int vidioc_g_fmt_vid_cap(struct file *file, void *priv,
+-				struct v4l2_format *f)
+-{
+-	struct sta2x11_vip *vip = video_drvdata(file);
+-
+-	f->fmt.pix = vip->format;
+-
+-	return 0;
+-}
+-
+-static const struct v4l2_ioctl_ops vip_ioctl_ops = {
+-	.vidioc_querycap = vidioc_querycap,
+-	/* FMT handling */
+-	.vidioc_enum_fmt_vid_cap = vidioc_enum_fmt_vid_cap,
+-	.vidioc_g_fmt_vid_cap = vidioc_g_fmt_vid_cap,
+-	.vidioc_s_fmt_vid_cap = vidioc_s_fmt_vid_cap,
+-	.vidioc_try_fmt_vid_cap = vidioc_try_fmt_vid_cap,
+-	/* Buffer handlers */
+-	.vidioc_create_bufs = vb2_ioctl_create_bufs,
+-	.vidioc_prepare_buf = vb2_ioctl_prepare_buf,
+-	.vidioc_reqbufs = vb2_ioctl_reqbufs,
+-	.vidioc_querybuf = vb2_ioctl_querybuf,
+-	.vidioc_qbuf = vb2_ioctl_qbuf,
+-	.vidioc_dqbuf = vb2_ioctl_dqbuf,
+-	/* Stream on/off */
+-	.vidioc_streamon = vb2_ioctl_streamon,
+-	.vidioc_streamoff = vb2_ioctl_streamoff,
+-	/* Standard handling */
+-	.vidioc_g_std = vidioc_g_std,
+-	.vidioc_s_std = vidioc_s_std,
+-	.vidioc_querystd = vidioc_querystd,
+-	/* Input handling */
+-	.vidioc_enum_input = vidioc_enum_input,
+-	.vidioc_g_input = vidioc_g_input,
+-	.vidioc_s_input = vidioc_s_input,
+-	/* Log status ioctl */
+-	.vidioc_log_status = v4l2_ctrl_log_status,
+-	/* Event handling */
+-	.vidioc_subscribe_event = v4l2_ctrl_subscribe_event,
+-	.vidioc_unsubscribe_event = v4l2_event_unsubscribe,
+-};
+-
+-static const struct video_device video_dev_template = {
+-	.name = KBUILD_MODNAME,
+-	.release = video_device_release_empty,
+-	.fops = &vip_fops,
+-	.ioctl_ops = &vip_ioctl_ops,
+-	.tvnorms = V4L2_STD_ALL,
+-	.device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_READWRITE |
+-		       V4L2_CAP_STREAMING,
+-};
+-
+-/**
+- * vip_irq - interrupt routine
+- * @irq: Number of interrupt ( not used, correct number is assumed )
+- * @data: local data structure containing all information
+- *
+- * check for both frame interrupts set ( top and bottom ).
+- * check FIFO overflow, but limit number of log messages after open.
+- * signal a complete buffer if done
+- *
+- * return value: IRQ_NONE, interrupt was not generated by VIP
+- *
+- * IRQ_HANDLED, interrupt done.
+- */
+-static irqreturn_t vip_irq(int irq, void *data)
+-{
+-	struct sta2x11_vip *vip = data;
+-	unsigned int status;
+-
+-	status = reg_read(vip, DVP_ITS);
+-
+-	if (!status)		/* No interrupt to handle */
+-		return IRQ_NONE;
+-
+-	if (status & DVP_IT_FIFO)
+-		if (vip->overflow++ > 5)
+-			pr_info("VIP: fifo overflow\n");
+-
+-	if ((status & DVP_IT_VST) && (status & DVP_IT_VSB)) {
+-		/* this is bad, we are too slow, hope the condition is gone
+-		 * on the next frame */
+-		return IRQ_HANDLED;
+-	}
+-
+-	if (status & DVP_IT_VST)
+-		if ((++vip->tcount) < 2)
+-			return IRQ_HANDLED;
+-	if (status & DVP_IT_VSB) {
+-		vip->bcount++;
+-		return IRQ_HANDLED;
+-	}
+-
+-	if (vip->active) { /* Acquisition is over on this buffer */
+-		/* Disable acquisition */
+-		reg_write(vip, DVP_CTL, reg_read(vip, DVP_CTL) & ~DVP_CTL_ENA);
+-		/* Remove the active buffer from the list */
+-		vip->active->vb.vb2_buf.timestamp = ktime_get_ns();
+-		vip->active->vb.sequence = vip->sequence++;
+-		vb2_buffer_done(&vip->active->vb.vb2_buf, VB2_BUF_STATE_DONE);
+-	}
+-
+-	return IRQ_HANDLED;
+-}
+-
+-static void sta2x11_vip_init_register(struct sta2x11_vip *vip)
+-{
+-	/* Register initialization */
+-	spin_lock_irq(&vip->slock);
+-	/* Clean interrupt */
+-	reg_read(vip, DVP_ITS);
+-	/* Enable Half Line per vertical */
+-	reg_write(vip, DVP_HLFLN, DVP_HLFLN_SD);
+-	/* Reset VIP control */
+-	reg_write(vip, DVP_CTL, DVP_CTL_RST);
+-	/* Clear VIP control */
+-	reg_write(vip, DVP_CTL, 0);
+-	spin_unlock_irq(&vip->slock);
+-}
+-static void sta2x11_vip_clear_register(struct sta2x11_vip *vip)
+-{
+-	spin_lock_irq(&vip->slock);
+-	/* Disable interrupt */
+-	reg_write(vip, DVP_ITM, 0);
+-	/* Reset VIP Control */
+-	reg_write(vip, DVP_CTL, DVP_CTL_RST);
+-	/* Clear VIP Control */
+-	reg_write(vip, DVP_CTL, 0);
+-	/* Clean VIP Interrupt */
+-	reg_read(vip, DVP_ITS);
+-	spin_unlock_irq(&vip->slock);
+-}
+-static int sta2x11_vip_init_buffer(struct sta2x11_vip *vip)
+-{
+-	int err;
+-
+-	err = dma_set_coherent_mask(&vip->pdev->dev, DMA_BIT_MASK(29));
+-	if (err) {
+-		v4l2_err(&vip->v4l2_dev, "Cannot configure coherent mask");
+-		return err;
+-	}
+-	memset(&vip->vb_vidq, 0, sizeof(struct vb2_queue));
+-	vip->vb_vidq.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+-	vip->vb_vidq.io_modes = VB2_MMAP | VB2_READ;
+-	vip->vb_vidq.drv_priv = vip;
+-	vip->vb_vidq.buf_struct_size = sizeof(struct vip_buffer);
+-	vip->vb_vidq.ops = &vip_video_qops;
+-	vip->vb_vidq.mem_ops = &vb2_dma_contig_memops;
+-	vip->vb_vidq.timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_MONOTONIC;
+-	vip->vb_vidq.dev = &vip->pdev->dev;
+-	vip->vb_vidq.lock = &vip->v4l_lock;
+-	err = vb2_queue_init(&vip->vb_vidq);
+-	if (err)
+-		return err;
+-	INIT_LIST_HEAD(&vip->buffer_list);
+-	spin_lock_init(&vip->lock);
+-	return 0;
+-}
+-
+-static int sta2x11_vip_init_controls(struct sta2x11_vip *vip)
+-{
+-	/*
+-	 * Inititialize an empty control so VIP can inerithing controls
+-	 * from ADV7180
+-	 */
+-	v4l2_ctrl_handler_init(&vip->ctrl_hdl, 0);
+-
+-	vip->v4l2_dev.ctrl_handler = &vip->ctrl_hdl;
+-	if (vip->ctrl_hdl.error) {
+-		int err = vip->ctrl_hdl.error;
+-
+-		v4l2_ctrl_handler_free(&vip->ctrl_hdl);
+-		return err;
+-	}
+-
+-	return 0;
+-}
+-
+-/**
+- * vip_gpio_reserve - reserve gpio pin
+- * @dev: device
+- * @pin: GPIO pin number
+- * @dir: direction, input or output
+- * @name: GPIO pin name
+- *
+- */
+-static int vip_gpio_reserve(struct device *dev, int pin, int dir,
+-			    const char *name)
+-{
+-	struct gpio_desc *desc = gpio_to_desc(pin);
+-	int ret = -ENODEV;
+-
+-	if (!gpio_is_valid(pin))
+-		return ret;
+-
+-	ret = gpio_request(pin, name);
+-	if (ret) {
+-		dev_err(dev, "Failed to allocate pin %d (%s)\n", pin, name);
+-		return ret;
+-	}
+-
+-	ret = gpiod_direction_output(desc, dir);
+-	if (ret) {
+-		dev_err(dev, "Failed to set direction for pin %d (%s)\n",
+-			pin, name);
+-		gpio_free(pin);
+-		return ret;
+-	}
+-
+-	ret = gpiod_export(desc, false);
+-	if (ret) {
+-		dev_err(dev, "Failed to export pin %d (%s)\n", pin, name);
+-		gpio_free(pin);
+-		return ret;
+-	}
+-
+-	return 0;
+-}
+-
+-/**
+- * vip_gpio_release - release gpio pin
+- * @dev: device
+- * @pin: GPIO pin number
+- * @name: GPIO pin name
+- *
+- */
+-static void vip_gpio_release(struct device *dev, int pin, const char *name)
+-{
+-	if (gpio_is_valid(pin)) {
+-		struct gpio_desc *desc = gpio_to_desc(pin);
+-
+-		dev_dbg(dev, "releasing pin %d (%s)\n",	pin, name);
+-		gpiod_unexport(desc);
+-		gpio_free(pin);
+-	}
+-}
+-
+-/**
+- * sta2x11_vip_init_one - init one instance of video device
+- * @pdev: PCI device
+- * @ent: (not used)
+- *
+- * allocate reset pins for DAC.
+- * Reset video DAC, this is done via reset line.
+- * allocate memory for managing device
+- * request interrupt
+- * map IO region
+- * register device
+- * find and initialize video DAC
+- *
+- * return value: 0, no error
+- *
+- * -ENOMEM, no memory
+- *
+- * -ENODEV, device could not be detected or registered
+- */
+-static int sta2x11_vip_init_one(struct pci_dev *pdev,
+-				const struct pci_device_id *ent)
+-{
+-	int ret;
+-	struct sta2x11_vip *vip;
+-	struct vip_config *config;
+-
+-	/* Check if hardware support 26-bit DMA */
+-	if (dma_set_mask(&pdev->dev, DMA_BIT_MASK(26))) {
+-		dev_err(&pdev->dev, "26-bit DMA addressing not available\n");
+-		return -EINVAL;
+-	}
+-	/* Enable PCI */
+-	ret = pci_enable_device(pdev);
+-	if (ret)
+-		return ret;
+-
+-	/* Get VIP platform data */
+-	config = dev_get_platdata(&pdev->dev);
+-	if (!config) {
+-		dev_info(&pdev->dev, "VIP slot disabled\n");
+-		ret = -EINVAL;
+-		goto disable;
+-	}
+-
+-	/* Power configuration */
+-	ret = vip_gpio_reserve(&pdev->dev, config->pwr_pin, 0,
+-			       config->pwr_name);
+-	if (ret)
+-		goto disable;
+-
+-	ret = vip_gpio_reserve(&pdev->dev, config->reset_pin, 0,
+-			       config->reset_name);
+-	if (ret) {
+-		vip_gpio_release(&pdev->dev, config->pwr_pin,
+-				 config->pwr_name);
+-		goto disable;
+-	}
+-
+-	if (gpio_is_valid(config->pwr_pin)) {
+-		/* Datasheet says 5ms between PWR and RST */
+-		usleep_range(5000, 25000);
+-		gpio_direction_output(config->pwr_pin, 1);
+-	}
+-
+-	if (gpio_is_valid(config->reset_pin)) {
+-		/* Datasheet says 5ms between PWR and RST */
+-		usleep_range(5000, 25000);
+-		gpio_direction_output(config->reset_pin, 1);
+-	}
+-	usleep_range(5000, 25000);
+-
+-	/* Allocate a new VIP instance */
+-	vip = kzalloc(sizeof(struct sta2x11_vip), GFP_KERNEL);
+-	if (!vip) {
+-		ret = -ENOMEM;
+-		goto release_gpios;
+-	}
+-	vip->pdev = pdev;
+-	vip->std = V4L2_STD_PAL;
+-	vip->format = formats_50[0];
+-	vip->config = config;
+-	mutex_init(&vip->v4l_lock);
+-
+-	ret = sta2x11_vip_init_controls(vip);
+-	if (ret)
+-		goto free_mem;
+-	ret = v4l2_device_register(&pdev->dev, &vip->v4l2_dev);
+-	if (ret)
+-		goto free_mem;
+-
+-	dev_dbg(&pdev->dev, "BAR #0 at 0x%lx 0x%lx irq %d\n",
+-		(unsigned long)pci_resource_start(pdev, 0),
+-		(unsigned long)pci_resource_len(pdev, 0), pdev->irq);
+-
+-	pci_set_master(pdev);
+-
+-	ret = pci_request_regions(pdev, KBUILD_MODNAME);
+-	if (ret)
+-		goto unreg;
+-
+-	vip->iomem = pci_iomap(pdev, 0, 0x100);
+-	if (!vip->iomem) {
+-		ret = -ENOMEM;
+-		goto release;
+-	}
+-
+-	pci_enable_msi(pdev);
+-
+-	/* Initialize buffer */
+-	ret = sta2x11_vip_init_buffer(vip);
+-	if (ret)
+-		goto unmap;
+-
+-	spin_lock_init(&vip->slock);
+-
+-	ret = request_irq(pdev->irq, vip_irq, IRQF_SHARED, KBUILD_MODNAME, vip);
+-	if (ret) {
+-		dev_err(&pdev->dev, "request_irq failed\n");
+-		ret = -ENODEV;
+-		goto release_buf;
+-	}
+-
+-	/* Initialize and register video device */
+-	vip->video_dev = video_dev_template;
+-	vip->video_dev.v4l2_dev = &vip->v4l2_dev;
+-	vip->video_dev.queue = &vip->vb_vidq;
+-	vip->video_dev.lock = &vip->v4l_lock;
+-	video_set_drvdata(&vip->video_dev, vip);
+-
+-	ret = video_register_device(&vip->video_dev, VFL_TYPE_VIDEO, -1);
+-	if (ret)
+-		goto vrelease;
+-
+-	/* Get ADV7180 subdevice */
+-	vip->adapter = i2c_get_adapter(vip->config->i2c_id);
+-	if (!vip->adapter) {
+-		ret = -ENODEV;
+-		dev_err(&pdev->dev, "no I2C adapter found\n");
+-		goto vunreg;
+-	}
+-
+-	vip->decoder = v4l2_i2c_new_subdev(&vip->v4l2_dev, vip->adapter,
+-					   "adv7180", vip->config->i2c_addr,
+-					   NULL);
+-	if (!vip->decoder) {
+-		ret = -ENODEV;
+-		dev_err(&pdev->dev, "no decoder found\n");
+-		goto vunreg;
+-	}
+-
+-	i2c_put_adapter(vip->adapter);
+-	v4l2_subdev_call(vip->decoder, core, init, 0);
+-
+-	sta2x11_vip_init_register(vip);
+-
+-	dev_info(&pdev->dev, "STA2X11 Video Input Port (VIP) loaded\n");
+-	return 0;
+-
+-vunreg:
+-	video_set_drvdata(&vip->video_dev, NULL);
+-vrelease:
+-	vb2_video_unregister_device(&vip->video_dev);
+-	free_irq(pdev->irq, vip);
+-release_buf:
+-	pci_disable_msi(pdev);
+-unmap:
+-	pci_iounmap(pdev, vip->iomem);
+-release:
+-	pci_release_regions(pdev);
+-unreg:
+-	v4l2_device_unregister(&vip->v4l2_dev);
+-free_mem:
+-	kfree(vip);
+-release_gpios:
+-	vip_gpio_release(&pdev->dev, config->reset_pin, config->reset_name);
+-	vip_gpio_release(&pdev->dev, config->pwr_pin, config->pwr_name);
+-disable:
+-	/*
+-	 * do not call pci_disable_device on sta2x11 because it break all
+-	 * other Bus masters on this EP
+-	 */
+-	return ret;
+-}
+-
+-/**
+- * sta2x11_vip_remove_one - release device
+- * @pdev: PCI device
+- *
+- * Undo everything done in .._init_one
+- *
+- * unregister video device
+- * free interrupt
+- * unmap ioadresses
+- * free memory
+- * free GPIO pins
+- */
+-static void sta2x11_vip_remove_one(struct pci_dev *pdev)
+-{
+-	struct v4l2_device *v4l2_dev = pci_get_drvdata(pdev);
+-	struct sta2x11_vip *vip =
+-	    container_of(v4l2_dev, struct sta2x11_vip, v4l2_dev);
+-
+-	sta2x11_vip_clear_register(vip);
+-
+-	video_set_drvdata(&vip->video_dev, NULL);
+-	vb2_video_unregister_device(&vip->video_dev);
+-	free_irq(pdev->irq, vip);
+-	pci_disable_msi(pdev);
+-	pci_iounmap(pdev, vip->iomem);
+-	pci_release_regions(pdev);
+-
+-	v4l2_device_unregister(&vip->v4l2_dev);
+-
+-	vip_gpio_release(&pdev->dev, vip->config->pwr_pin,
+-			 vip->config->pwr_name);
+-	vip_gpio_release(&pdev->dev, vip->config->reset_pin,
+-			 vip->config->reset_name);
+-
+-	kfree(vip);
+-	/*
+-	 * do not call pci_disable_device on sta2x11 because it break all
+-	 * other Bus masters on this EP
+-	 */
+-}
+-
+-/**
+- * sta2x11_vip_suspend - set device into power save mode
+- * @dev_d: PCI device
+- *
+- * all relevant registers are saved and an attempt to set a new state is made.
+- *
+- * return value: 0 always indicate success,
+- * even if device could not be disabled. (workaround for hardware problem)
+- */
+-static int __maybe_unused sta2x11_vip_suspend(struct device *dev_d)
+-{
+-	struct v4l2_device *v4l2_dev = dev_get_drvdata(dev_d);
+-	struct sta2x11_vip *vip =
+-	    container_of(v4l2_dev, struct sta2x11_vip, v4l2_dev);
+-	unsigned long flags;
+-	int i;
+-
+-	spin_lock_irqsave(&vip->slock, flags);
+-	vip->register_save_area[0] = reg_read(vip, DVP_CTL);
+-	reg_write(vip, DVP_CTL, vip->register_save_area[0] & DVP_CTL_DIS);
+-	vip->register_save_area[SAVE_COUNT] = reg_read(vip, DVP_ITM);
+-	reg_write(vip, DVP_ITM, 0);
+-	for (i = 1; i < SAVE_COUNT; i++)
+-		vip->register_save_area[i] = reg_read(vip, 4 * i);
+-	for (i = 0; i < AUX_COUNT; i++)
+-		vip->register_save_area[SAVE_COUNT + IRQ_COUNT + i] =
+-		    reg_read(vip, registers_to_save[i]);
+-	spin_unlock_irqrestore(&vip->slock, flags);
+-
+-	vip->disabled = 1;
+-
+-	pr_info("VIP: suspend\n");
+-	return 0;
+-}
+-
+-/**
+- * sta2x11_vip_resume - resume device operation
+- * @dev_d : PCI device
+- *
+- * return value: 0, no error.
+- *
+- * other, could not set device to power on state.
+- */
+-static int __maybe_unused sta2x11_vip_resume(struct device *dev_d)
+-{
+-	struct v4l2_device *v4l2_dev = dev_get_drvdata(dev_d);
+-	struct sta2x11_vip *vip =
+-	    container_of(v4l2_dev, struct sta2x11_vip, v4l2_dev);
+-	unsigned long flags;
+-	int i;
+-
+-	pr_info("VIP: resume\n");
+-
+-	vip->disabled = 0;
+-
+-	spin_lock_irqsave(&vip->slock, flags);
+-	for (i = 1; i < SAVE_COUNT; i++)
+-		reg_write(vip, 4 * i, vip->register_save_area[i]);
+-	for (i = 0; i < AUX_COUNT; i++)
+-		reg_write(vip, registers_to_save[i],
+-			  vip->register_save_area[SAVE_COUNT + IRQ_COUNT + i]);
+-	reg_write(vip, DVP_CTL, vip->register_save_area[0]);
+-	reg_write(vip, DVP_ITM, vip->register_save_area[SAVE_COUNT]);
+-	spin_unlock_irqrestore(&vip->slock, flags);
+-	return 0;
+-}
+-
+-static const struct pci_device_id sta2x11_vip_pci_tbl[] = {
+-	{PCI_DEVICE(PCI_VENDOR_ID_STMICRO, PCI_DEVICE_ID_STMICRO_VIP)},
+-	{0,}
+-};
+-
+-static SIMPLE_DEV_PM_OPS(sta2x11_vip_pm_ops,
+-			 sta2x11_vip_suspend,
+-			 sta2x11_vip_resume);
+-
+-static struct pci_driver sta2x11_vip_driver = {
+-	.name = KBUILD_MODNAME,
+-	.probe = sta2x11_vip_init_one,
+-	.remove = sta2x11_vip_remove_one,
+-	.id_table = sta2x11_vip_pci_tbl,
+-	.driver.pm = &sta2x11_vip_pm_ops,
+-};
+-
+-static int __init sta2x11_vip_init_module(void)
+-{
+-	return pci_register_driver(&sta2x11_vip_driver);
+-}
+-
+-static void __exit sta2x11_vip_exit_module(void)
+-{
+-	pci_unregister_driver(&sta2x11_vip_driver);
+-}
+-
+-#ifdef MODULE
+-module_init(sta2x11_vip_init_module);
+-module_exit(sta2x11_vip_exit_module);
+-#else
+-late_initcall_sync(sta2x11_vip_init_module);
+-#endif
+-
+-MODULE_DESCRIPTION("STA2X11 Video Input Port driver");
+-MODULE_AUTHOR("Wind River");
+-MODULE_LICENSE("GPL v2");
+-MODULE_VERSION(DRV_VERSION);
+-MODULE_DEVICE_TABLE(pci, sta2x11_vip_pci_tbl);
+diff --git a/drivers/media/pci/sta2x11/sta2x11_vip.h b/drivers/media/pci/sta2x11/sta2x11_vip.h
+deleted file mode 100644
+index de6000e7943e..000000000000
+--- a/drivers/media/pci/sta2x11/sta2x11_vip.h
++++ /dev/null
+@@ -1,29 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-only */
+-/*
+- * Copyright (c) 2011 Wind River Systems, Inc.
+- *
+- * Author:  Anders Wallin <anders.wallin@windriver.com>
+- */
+-
+-#ifndef __STA2X11_VIP_H
+-#define __STA2X11_VIP_H
+-
+-/**
+- * struct vip_config - video input configuration data
+- * @pwr_name: ADV powerdown name
+- * @pwr_pin: ADV powerdown pin
+- * @reset_name: ADV reset name
+- * @reset_pin: ADV reset pin
+- * @i2c_id: ADV i2c adapter ID
+- * @i2c_addr: ADV i2c address
+- */
+-struct vip_config {
+-	const char *pwr_name;
+-	int pwr_pin;
+-	const char *reset_name;
+-	int reset_pin;
+-	int i2c_id;
+-	int i2c_addr;
+-};
+-
+-#endif /* __STA2X11_VIP_H */
 -- 
-Cheers,
-
-David / dhildenb
+2.48.1
 
 
