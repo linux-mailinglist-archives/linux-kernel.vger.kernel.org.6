@@ -1,641 +1,113 @@
-Return-Path: <linux-kernel+bounces-541826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B6C0A4C20F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:35:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89B28A4C221
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:38:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9082B173BE9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:34:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88D2B3AAB1B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:35:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CD3E212B2B;
-	Mon,  3 Mar 2025 13:34:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="B3z90Gpe"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 052EC212B2B;
+	Mon,  3 Mar 2025 13:35:44 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63C6153365
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 13:34:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B39CF53365
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 13:35:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741008851; cv=none; b=rUBBLo5Sjz/SaZTlfH6UbHWbcHCbJznrsWUyrT7mDmGmVRyUnmMvkez56rhP+81acTqnIDes5y/PBecKmOqqJl2naCAAIdIUEWDYoFH5NthjpxZ7t+Fl9v47DhKUELdivipbzbc7d+iMXaH+zliucqwjhCl9beSMhux6S1RQch8=
+	t=1741008943; cv=none; b=MBPkEC4FKYqjqw7c5hf0BLHyTAqITDRkPpYIlW4QrWjDz5Zj3w9KySNchvAgJxXfC99jUE2WMtGeqzKhsIz3pkxEP8KBIb3O0yoBzazpvlASrK+Z2zpQko9Pxtk83m7av3wXya5176h3VY7wBND/GEtCl8nyU6VWBN/AvuVOJ2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741008851; c=relaxed/simple;
-	bh=W+QMMzgRl2N3x+jUtrD3SA8SBTq4tV+7/dQW5Cm6/L4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eoPuDV9br+h9U9UclI4yBAWXXeR1lCdmmjqUTQsSWq6H6zodcUsNPKJV7EIFk530DDcQFMp3A2as2pdTaI3Aw8mJEY+GLYBi114kAKE0psLsLATeWnAekK78F74csx7gBVVMVwnWtQDmY44M+qVE7rB3U/K8x1rteTd7hzUHmdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=B3z90Gpe; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id C203A440F4;
-	Mon,  3 Mar 2025 13:34:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1741008846;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bKf+PNKr2lnJDC6ElPe+zilWw9FIi18fnsrAyj9a2eA=;
-	b=B3z90GpeKzPBUeLDwTRwmqRuasDR/yfj0PdpJHnyTczCb8+O9pOIwVHeqzIVUqaDX81HY4
-	6WtSCoTLA+DzZOMCujZqi7DK6qXfLmeTt4Hun9TgCw1M3ZkQvkKn2wxnNzQV7JAD+i288q
-	3ZITZEaJIZMH8vXO8POOf3cfZbK2/St2s6b/raxGOZafJiQioBcsSiJ2D/K4XLZDO4fKz6
-	ihP8DLZIgoDhzF/vNmP5wLnEqRIGaJKDWETgopmDxe1V7KsmfYaUuFJz1DwEjmGBEI209S
-	XJH0uy90wuLQsmpe4OXoggyIbb3Ghm/LRtq6eSkTEleadre+YByh+/+ivVekTQ==
-Date: Mon, 3 Mar 2025 14:34:04 +0100
-From: Herve Codina <herve.codina@bootlin.com>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
- <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
- Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
- <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Douglas
- Anderson <dianders@chromium.org>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, Dmitry Baryshkov
- <dmitry.baryshkov@linaro.org>, Simona Vetter <simona.vetter@ffwll.ch>
-Subject: Re: [PATCH v4 00/15] drm/bridge: Various quality of life
- improvements
-Message-ID: <20250303143404.623a3178@bootlin.com>
-In-Reply-To: <20250303-urban-trout-of-vastness-f8d0e7@houat>
-References: <20250225-bridge-connector-v4-0-7ecb07b09cad@kernel.org>
-	<20250227120004.77814e09@bootlin.com>
-	<20250303-urban-trout-of-vastness-f8d0e7@houat>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1741008943; c=relaxed/simple;
+	bh=LWGfbAM0Oi57epqG0HZfPt9wZvEQRA2SIjtygi0+lBk=;
+	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=K02GvUrp7I9IgKNNfR//aqPCrhs+V/nyYaOIqfYqeOHk5y8zGjo2CyBlAEJvXYBkJX4tKY//9ZgH/ExSlVQuH5Rl+YBDHewYXSx+xSuyfXvEI7njtfKiea9ENMgvFqNpE5ksgFOp9P+4Nodls1UUbTHABsq5K7p28fSoNlrxop4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Z609V2G7zz9wF9;
+	Mon,  3 Mar 2025 21:32:30 +0800 (CST)
+Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6A48E14037B;
+	Mon,  3 Mar 2025 21:35:37 +0800 (CST)
+Received: from [10.67.121.177] (10.67.121.177) by
+ kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Mon, 3 Mar 2025 21:35:36 +0800
+CC: <yangyicong@hisilicon.com>, <linuxppc-dev@lists.ozlabs.org>,
+	<x86@kernel.org>, <linux-kernel@vger.kernel.org>, <morten.rasmussen@arm.com>,
+	<msuchanek@suse.de>, <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
+	<jonathan.cameron@huawei.com>, <prime.zeng@hisilicon.com>,
+	<linuxarm@huawei.com>, <xuwei5@huawei.com>, <guohanjun@huawei.com>,
+	<sshegde@linux.ibm.com>
+Subject: Re: [PATCH v11 1/4] cpu/SMT: Provide a default
+ topology_is_primary_thread()
+To: Dietmar Eggemann <dietmar.eggemann@arm.com>, <catalin.marinas@arm.com>,
+	<will@kernel.org>, <sudeep.holla@arm.com>, <tglx@linutronix.de>,
+	<peterz@infradead.org>, <mpe@ellerman.id.au>,
+	<linux-arm-kernel@lists.infradead.org>, <mingo@redhat.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <pierre.gondois@arm.com>
+References: <20250218141018.18082-1-yangyicong@huawei.com>
+ <20250218141018.18082-2-yangyicong@huawei.com>
+ <e3607ed0-bdf5-4fef-8731-b81fae649312@arm.com>
+From: Yicong Yang <yangyicong@huawei.com>
+Message-ID: <af8d364e-a5e0-decb-4463-fd6b7c54a0d9@huawei.com>
+Date: Mon, 3 Mar 2025 21:35:35 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelledviecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthekredtredtjeenucfhrhhomhepjfgvrhhvvgcuvehoughinhgruceohhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeviefffeegiedtleelieeghfejleeuueevkeevteegffehledtkeegudeigffgvdenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudeipdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgrrghrthgvnhdrlhgrnhhkhhhorhhstheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehtiihimhhmvghrmhgrnhhnsehsuhhsvgdruggvpdhrtghpthhtoheprghirhhlihgvugesghhmrghilhdrtghomhdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtghhpdhrtghpthhtoheprghnu
- ghriigvjhdrhhgrjhgurgesihhnthgvlhdrtghomhdprhgtphhtthhopehnvghilhdrrghrmhhsthhrohhngheslhhinhgrrhhordhorhhgpdhrtghpthhtoheprhhfohhssheskhgvrhhnvghlrdhorhhg
-X-GND-Sasl: herve.codina@bootlin.com
+In-Reply-To: <e3607ed0-bdf5-4fef-8731-b81fae649312@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemd200014.china.huawei.com (7.221.188.8)
 
-Hi Maxime,
-
-On Mon, 3 Mar 2025 14:11:05 +0100
-Maxime Ripard <mripard@kernel.org> wrote:
-
-> On Thu, Feb 27, 2025 at 12:00:04PM +0100, Herve Codina wrote:
-> > Hi Maxime,
-> > 
-> > On Tue, 25 Feb 2025 17:43:48 +0100
-> > Maxime Ripard <mripard@kernel.org> wrote:
-> >   
-> > > Hi,
-> > > 
-> > > Here's a series of changes after to the KMS helpers and bridge API
-> > > following a bunch of reviews I did.
-> > > 
-> > > It's mostly centered across providing an easier time to deal with bridge
-> > > states, and a somewhat consistent with the other entities API.
-> > > 
-> > > It's build tested only, with arm64 allmodconfig.
-> > > 
-> > > Maxime
-> > > 
-> > > Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> > > ---  
-> > 
-> > I Tried to test this series on my system but I've got a compilation issue.
-> >      depmod: ERROR: Cycle detected: drm -> drm_kms_helper -> drm
-> >      depmod: ERROR: Found 2 modules in dependency cycles!
-> > 
-> > CONFIG_DRM=m in my configuration.  
+On 2025/2/28 19:10, Dietmar Eggemann wrote:
+> On 18/02/2025 15:10, Yicong Yang wrote:
+>> From: Yicong Yang <yangyicong@hisilicon.com>
 > 
-> Could you share your configuration? it doesn't happen with allmodconfig.
+> [...]
+> 
+>> diff --git a/include/linux/topology.h b/include/linux/topology.h
+>> index 52f5850730b3..b3aba443c4eb 100644
+>> --- a/include/linux/topology.h
+>> +++ b/include/linux/topology.h
+>> @@ -240,6 +240,28 @@ static inline const struct cpumask *cpu_smt_mask(int cpu)
+>>  }
+>>  #endif
+>>  
+>> +#ifndef topology_is_primary_thread
+>> +
+>> +#define topology_is_primary_thread topology_is_primary_thread
+>> +
+>> +static inline bool topology_is_primary_thread(unsigned int cpu)
+>> +{
+>> +	/*
+>> +	 * On SMT hotplug the primary thread of the SMT won't be disabled.
+>> +	 * Architectures do have a special primary thread (e.g. x86) need
+>> +	 * to override this function. Otherwise just make the first thread
+>> +	 * in the SMT as the primary thread.
+>> +	 *
+>> +	 * The sibling cpumask of an offline CPU contains always the CPU
+>> +	 * itself for architectures using CONFIG_GENERIC_ARCH_TOPOLOGY.
+>> +	 * Other architectures should use this depend on their own
+>> +	 * situation.
+> 
+> This sentence is hard to get. Do you want to say that other
+> architectures (CONFIG_GENERIC_ARCH_TOPOLOGY or
+> !CONFIG_GENERIC_ARCH_TOPOLOGY) have to check whether they can use this
+> default implementation or have to override it?
 > 
 
-Here is a defconfig that leads to the issue on my side:
+yes exactly, will improve the comments. thanks.
 
---- 8< ---
-# CONFIG_LOCALVERSION_AUTO is not set
-CONFIG_SYSVIPC=y
-CONFIG_POSIX_MQUEUE=y
-CONFIG_AUDIT=y
-CONFIG_NO_HZ_IDLE=y
-CONFIG_HIGH_RES_TIMERS=y
-CONFIG_PREEMPT=y
-CONFIG_IRQ_TIME_ACCOUNTING=y
-CONFIG_BSD_PROCESS_ACCT=y
-CONFIG_BSD_PROCESS_ACCT_V3=y
-CONFIG_TASKSTATS=y
-CONFIG_TASK_XACCT=y
-CONFIG_TASK_IO_ACCOUNTING=y
-CONFIG_IKCONFIG=y
-CONFIG_IKCONFIG_PROC=y
-CONFIG_LOG_BUF_SHIFT=20
-CONFIG_LOG_CPU_MAX_BUF_SHIFT=15
-CONFIG_NUMA_BALANCING=y
-CONFIG_MEMCG=y
-CONFIG_BLK_CGROUP=y
-CONFIG_CGROUP_PIDS=y
-CONFIG_CGROUP_FREEZER=y
-CONFIG_CGROUP_HUGETLB=y
-CONFIG_CPUSETS=y
-CONFIG_CGROUP_DEVICE=y
-CONFIG_CGROUP_CPUACCT=y
-CONFIG_CGROUP_PERF=y
-CONFIG_USER_NS=y
-CONFIG_SCHED_AUTOGROUP=y
-CONFIG_BLK_DEV_INITRD=y
-# CONFIG_RD_BZIP2 is not set
-# CONFIG_RD_LZMA is not set
-# CONFIG_RD_XZ is not set
-# CONFIG_RD_LZO is not set
-# CONFIG_RD_LZ4 is not set
-# CONFIG_RD_ZSTD is not set
-# CONFIG_INITRAMFS_PRESERVE_MTIME is not set
-CONFIG_PROFILING=y
-CONFIG_KEXEC_FILE=y
-CONFIG_ARCH_NXP=y
-CONFIG_ARCH_MXC=y
-CONFIG_ARM64_VA_BITS_48=y
-CONFIG_SCHED_MC=y
-CONFIG_SCHED_SMT=y
-CONFIG_NUMA=y
-CONFIG_PARAVIRT=y
-CONFIG_COMPAT=y
-CONFIG_RANDOMIZE_BASE=y
-CONFIG_HIBERNATION=y
-CONFIG_WQ_POWER_EFFICIENT_DEFAULT=y
-CONFIG_ENERGY_MODEL=y
-CONFIG_CPU_IDLE=y
-CONFIG_ARM_PSCI_CPUIDLE=y
-CONFIG_CPU_FREQ=y
-CONFIG_CPU_FREQ_STAT=y
-CONFIG_CPU_FREQ_GOV_POWERSAVE=m
-CONFIG_CPU_FREQ_GOV_USERSPACE=y
-CONFIG_CPU_FREQ_GOV_ONDEMAND=y
-CONFIG_CPU_FREQ_GOV_CONSERVATIVE=m
-CONFIG_CPUFREQ_DT=y
-CONFIG_ARM_IMX_CPUFREQ_DT=m
-CONFIG_ARM_SCMI_CPUFREQ=y
-CONFIG_JUMP_LABEL=y
-CONFIG_MODULES=y
-CONFIG_MODULE_UNLOAD=y
-CONFIG_BLK_DEV_BSGLIB=y
-CONFIG_BLK_DEV_INTEGRITY=y
-# CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
-# CONFIG_COMPAT_BRK is not set
-CONFIG_MEMORY_HOTPLUG=y
-CONFIG_MEMORY_HOTREMOVE=y
-CONFIG_PAGE_REPORTING=y
-CONFIG_KSM=y
-CONFIG_MEMORY_FAILURE=y
-CONFIG_TRANSPARENT_HUGEPAGE=y
-CONFIG_CMA=y
-CONFIG_NET=y
-CONFIG_PACKET=y
-CONFIG_UNIX=y
-CONFIG_INET=y
-CONFIG_IP_MULTICAST=y
-CONFIG_IP_PNP=y
-CONFIG_IP_PNP_DHCP=y
-CONFIG_IP_PNP_BOOTP=y
-# CONFIG_IPV6 is not set
-# CONFIG_WIRELESS is not set
-CONFIG_FAILOVER=y
-CONFIG_PCI=y
-CONFIG_PCIEPORTBUS=y
-CONFIG_PCIEAER=y
-CONFIG_PCI_IOV=y
-CONFIG_PCI_PASID=y
-CONFIG_HOTPLUG_PCI=y
-CONFIG_PCI_HOST_GENERIC=y
-CONFIG_PCI_IMX6_HOST=y
-CONFIG_DEVTMPFS=y
-CONFIG_DEVTMPFS_MOUNT=y
-CONFIG_FW_LOADER_USER_HELPER=y
-CONFIG_ARM_SCMI_PROTOCOL=y
-CONFIG_ARM_SCPI_PROTOCOL=y
-# CONFIG_DMIID is not set
-# CONFIG_EFI_ARMSTUB_DTB_LOADER is not set
-CONFIG_IMX_SCU=y
-CONFIG_MTD=y
-CONFIG_MTD_BLOCK=y
-CONFIG_MTD_SPI_NOR=y
-CONFIG_OF_OVERLAY=y
-CONFIG_BLK_DEV_LOOP=y
-CONFIG_BLK_DEV_NBD=m
-CONFIG_VIRTIO_BLK=y
-CONFIG_BLK_DEV_NVME=m
-CONFIG_SRAM=y
-CONFIG_EEPROM_AT24=y
-CONFIG_EEPROM_AT25=y
-CONFIG_UACCE=m
-CONFIG_SCSI=y
-# CONFIG_SCSI_PROC_FS is not set
-CONFIG_BLK_DEV_SD=y
-# CONFIG_BLK_DEV_BSG is not set
-# CONFIG_SCSI_LOWLEVEL is not set
-CONFIG_MD=y
-CONFIG_BLK_DEV_MD=m
-CONFIG_BLK_DEV_DM=m
-CONFIG_DM_CRYPT=m
-CONFIG_DM_MIRROR=m
-CONFIG_DM_ZERO=m
-CONFIG_NETDEVICES=y
-# CONFIG_NET_VENDOR_3COM is not set
-# CONFIG_NET_VENDOR_ADAPTEC is not set
-# CONFIG_NET_VENDOR_AGERE is not set
-# CONFIG_NET_VENDOR_ALACRITECH is not set
-# CONFIG_NET_VENDOR_ALTEON is not set
-# CONFIG_NET_VENDOR_AMAZON is not set
-# CONFIG_NET_VENDOR_AMD is not set
-# CONFIG_NET_VENDOR_AQUANTIA is not set
-# CONFIG_NET_VENDOR_ARC is not set
-# CONFIG_NET_VENDOR_ASIX is not set
-# CONFIG_NET_VENDOR_ATHEROS is not set
-# CONFIG_NET_VENDOR_BROADCOM is not set
-# CONFIG_NET_VENDOR_CADENCE is not set
-# CONFIG_NET_VENDOR_CAVIUM is not set
-# CONFIG_NET_VENDOR_CHELSIO is not set
-# CONFIG_NET_VENDOR_CISCO is not set
-# CONFIG_NET_VENDOR_CORTINA is not set
-# CONFIG_NET_VENDOR_DAVICOM is not set
-# CONFIG_NET_VENDOR_DEC is not set
-# CONFIG_NET_VENDOR_DLINK is not set
-# CONFIG_NET_VENDOR_EMULEX is not set
-# CONFIG_NET_VENDOR_ENGLEDER is not set
-# CONFIG_NET_VENDOR_EZCHIP is not set
-CONFIG_FEC=y
-CONFIG_FSL_ENETC_MDIO=y
-# CONFIG_NET_VENDOR_FUNGIBLE is not set
-# CONFIG_NET_VENDOR_GOOGLE is not set
-# CONFIG_NET_VENDOR_HISILICON is not set
-# CONFIG_NET_VENDOR_HUAWEI is not set
-# CONFIG_NET_VENDOR_INTEL is not set
-# CONFIG_NET_VENDOR_ADI is not set
-# CONFIG_NET_VENDOR_LITEX is not set
-# CONFIG_NET_VENDOR_MARVELL is not set
-# CONFIG_NET_VENDOR_MELLANOX is not set
-# CONFIG_NET_VENDOR_MICREL is not set
-# CONFIG_NET_VENDOR_MICROCHIP is not set
-# CONFIG_NET_VENDOR_MICROSEMI is not set
-# CONFIG_NET_VENDOR_MICROSOFT is not set
-# CONFIG_NET_VENDOR_MYRI is not set
-# CONFIG_NET_VENDOR_NI is not set
-# CONFIG_NET_VENDOR_NATSEMI is not set
-# CONFIG_NET_VENDOR_NETERION is not set
-# CONFIG_NET_VENDOR_NETRONOME is not set
-# CONFIG_NET_VENDOR_NVIDIA is not set
-# CONFIG_NET_VENDOR_OKI is not set
-# CONFIG_NET_VENDOR_PACKET_ENGINES is not set
-# CONFIG_NET_VENDOR_PENSANDO is not set
-# CONFIG_NET_VENDOR_QLOGIC is not set
-# CONFIG_NET_VENDOR_BROCADE is not set
-# CONFIG_NET_VENDOR_QUALCOMM is not set
-# CONFIG_NET_VENDOR_RDC is not set
-# CONFIG_NET_VENDOR_REALTEK is not set
-# CONFIG_NET_VENDOR_RENESAS is not set
-# CONFIG_NET_VENDOR_ROCKER is not set
-# CONFIG_NET_VENDOR_SAMSUNG is not set
-# CONFIG_NET_VENDOR_SEEQ is not set
-# CONFIG_NET_VENDOR_SILAN is not set
-# CONFIG_NET_VENDOR_SIS is not set
-# CONFIG_NET_VENDOR_SOLARFLARE is not set
-# CONFIG_NET_VENDOR_SMSC is not set
-# CONFIG_NET_VENDOR_SOCIONEXT is not set
-CONFIG_STMMAC_ETH=m
-# CONFIG_NET_VENDOR_SUN is not set
-# CONFIG_NET_VENDOR_SYNOPSYS is not set
-# CONFIG_NET_VENDOR_TEHUTI is not set
-# CONFIG_NET_VENDOR_TI is not set
-# CONFIG_NET_VENDOR_VERTEXCOM is not set
-# CONFIG_NET_VENDOR_VIA is not set
-# CONFIG_NET_VENDOR_WANGXUN is not set
-# CONFIG_NET_VENDOR_WIZNET is not set
-# CONFIG_NET_VENDOR_XILINX is not set
-CONFIG_SMSC_PHY=m
-CONFIG_DP83867_PHY=y
-CONFIG_MDIO_BITBANG=y
-CONFIG_MDIO_BCM_UNIMAC=m
-CONFIG_MDIO_THUNDER=y
-CONFIG_MDIO_BUS_MUX_MULTIPLEXER=y
-CONFIG_MDIO_BUS_MUX_MMIOREG=y
-# CONFIG_WLAN is not set
-CONFIG_INPUT_MATRIXKMAP=y
-CONFIG_INPUT_EVDEV=y
-CONFIG_KEYBOARD_ADC=m
-CONFIG_KEYBOARD_GPIO=y
-CONFIG_KEYBOARD_SNVS_PWRKEY=m
-CONFIG_KEYBOARD_IMX_SC_KEY=m
-CONFIG_INPUT_TOUCHSCREEN=y
-CONFIG_TOUCHSCREEN_ATMEL_MXT=m
-CONFIG_TOUCHSCREEN_EXC3000=m
-CONFIG_INPUT_MISC=y
-CONFIG_INPUT_PWM_BEEPER=m
-CONFIG_INPUT_PWM_VIBRA=m
-# CONFIG_SERIO_SERPORT is not set
-CONFIG_SERIO_AMBAKMI=y
-CONFIG_LEGACY_PTY_COUNT=16
-CONFIG_SERIAL_IMX=y
-CONFIG_SERIAL_IMX_CONSOLE=y
-CONFIG_SERIAL_DEV_BUS=y
-CONFIG_HW_RANDOM_CN10K=m
-# CONFIG_DEVPORT is not set
-CONFIG_I2C=y
-CONFIG_I2C_CHARDEV=y
-CONFIG_I2C_MUX=y
-CONFIG_I2C_MUX_PCA954x=y
-CONFIG_I2C_CADENCE=m
-CONFIG_I2C_DESIGNWARE_CORE=y
-CONFIG_I2C_GPIO=m
-CONFIG_I2C_IMX=y
-CONFIG_I2C_IMX_LPI2C=y
-CONFIG_I2C_RK3X=y
-CONFIG_SPI=y
-CONFIG_SPI_CADENCE_QUADSPI=y
-CONFIG_SPI_DESIGNWARE=m
-CONFIG_SPI_DW_DMA=y
-CONFIG_SPI_DW_MMIO=m
-CONFIG_SPI_FSL_LPSPI=y
-CONFIG_SPI_FSL_QUADSPI=y
-CONFIG_SPI_NXP_FLEXSPI=y
-CONFIG_SPI_IMX=m
-CONFIG_SPI_PL022=y
-CONFIG_SPI_SPIDEV=m
-# CONFIG_PTP_1588_CLOCK is not set
-CONFIG_PINCTRL=y
-CONFIG_PINCTRL_MAX77620=y
-CONFIG_PINCTRL_SINGLE=y
-CONFIG_PINCTRL_IMX8MM=y
-CONFIG_PINCTRL_IMX8MN=y
-CONFIG_PINCTRL_IMX8MP=y
-CONFIG_PINCTRL_IMX8MQ=y
-CONFIG_PINCTRL_IMX8QM=y
-CONFIG_PINCTRL_IMX8QXP=y
-CONFIG_PINCTRL_IMX8DXL=y
-CONFIG_PINCTRL_IMX8ULP=y
-CONFIG_PINCTRL_IMX93=y
-CONFIG_GPIOLIB=y
-CONFIG_GPIO_GENERIC_PLATFORM=y
-CONFIG_GPIO_MXC=y
-CONFIG_GPIO_MAX732X=y
-CONFIG_GPIO_PCA953X=y
-CONFIG_GPIO_PCA953X_IRQ=y
-CONFIG_GPIO_BD9571MWV=m
-CONFIG_GPIO_MAX77620=y
-CONFIG_BATTERY_SBS=m
-CONFIG_BATTERY_BQ27XXX=y
-CONFIG_BATTERY_MAX17042=m
-CONFIG_CHARGER_GPIO=m
-CONFIG_CHARGER_MT6360=m
-CONFIG_CHARGER_BQ25890=m
-CONFIG_CHARGER_BQ25980=m
-CONFIG_SENSORS_ARM_SCMI=y
-CONFIG_SENSORS_ARM_SCPI=y
-CONFIG_SENSORS_IIO_HWMON=m
-CONFIG_SENSORS_JC42=m
-CONFIG_SENSORS_LTC4151=m
-CONFIG_SENSORS_LM75=m
-CONFIG_SENSORS_LM90=m
-CONFIG_SENSORS_TMP103=m
-CONFIG_THERMAL=y
-CONFIG_THERMAL_GOV_POWER_ALLOCATOR=y
-CONFIG_CPU_THERMAL=y
-CONFIG_DEVFREQ_THERMAL=y
-CONFIG_THERMAL_EMULATION=y
-CONFIG_IMX_SC_THERMAL=m
-CONFIG_IMX8MM_THERMAL=m
-CONFIG_QORIQ_THERMAL=m
-CONFIG_GENERIC_ADC_THERMAL=m
-CONFIG_WATCHDOG=y
-CONFIG_ARM_SP805_WATCHDOG=y
-CONFIG_ARM_SBSA_WATCHDOG=y
-CONFIG_DW_WATCHDOG=y
-CONFIG_IMX2_WDT=y
-CONFIG_IMX_SC_WDT=m
-CONFIG_ARM_SMC_WATCHDOG=y
-CONFIG_MFD_BD9571MWV=y
-CONFIG_MFD_AXP20X_I2C=y
-CONFIG_MFD_HI6421_PMIC=y
-CONFIG_MFD_MAX77620=y
-CONFIG_MFD_MT6360=y
-CONFIG_MFD_MT6397=y
-CONFIG_MFD_SEC_CORE=y
-CONFIG_MFD_ROHM_BD718XX=y
-CONFIG_REGULATOR_FIXED_VOLTAGE=y
-CONFIG_REGULATOR_AXP20X=y
-CONFIG_REGULATOR_BD718XX=y
-CONFIG_REGULATOR_BD9571MWV=y
-CONFIG_REGULATOR_FAN53555=y
-CONFIG_REGULATOR_GPIO=y
-CONFIG_REGULATOR_HI6421V530=y
-CONFIG_REGULATOR_MAX77620=y
-CONFIG_REGULATOR_MAX8973=y
-CONFIG_REGULATOR_MP8859=y
-CONFIG_REGULATOR_MT6358=y
-CONFIG_REGULATOR_MT6359=y
-CONFIG_REGULATOR_MT6360=y
-CONFIG_REGULATOR_MT6397=y
-CONFIG_REGULATOR_PCA9450=y
-CONFIG_REGULATOR_PF8X00=y
-CONFIG_REGULATOR_PFUZE100=y
-CONFIG_REGULATOR_PWM=y
-CONFIG_REGULATOR_S2MPS11=y
-CONFIG_REGULATOR_TPS65132=m
-CONFIG_REGULATOR_VCTRL=m
-CONFIG_DRM=m
-CONFIG_DRM_PANEL_SIMPLE=m
-CONFIG_DRM_DISPLAY_CONNECTOR=m
-CONFIG_DRM_FSL_LDB=m
-CONFIG_DRM_I2C_NXP_TDA998X=m
-CONFIG_DRM_SAMSUNG_DSIM=m
-CONFIG_DRM_SIMPLE_BRIDGE=m
-CONFIG_DRM_TI_SN65DSI83=m
-CONFIG_DRM_IMX8MP_DW_HDMI_BRIDGE=m
-CONFIG_DRM_MXSFB=m
-CONFIG_DRM_IMX_LCDIF=m
-CONFIG_BACKLIGHT_CLASS_DEVICE=y
-CONFIG_BACKLIGHT_PWM=m
-CONFIG_BACKLIGHT_LP855X=m
-CONFIG_BACKLIGHT_LED=m
-CONFIG_HID_MULTITOUCH=m
-CONFIG_I2C_HID_OF=m
-# CONFIG_USB_SUPPORT is not set
-CONFIG_MMC=y
-CONFIG_MMC_BLOCK_MINORS=32
-CONFIG_MMC_ARMMMCI=y
-CONFIG_MMC_SDHCI=y
-CONFIG_MMC_SDHCI_PLTFM=y
-CONFIG_MMC_SDHCI_OF_ARASAN=y
-CONFIG_MMC_SDHCI_OF_ESDHC=y
-CONFIG_MMC_SDHCI_OF_DWCMSHC=y
-CONFIG_MMC_SDHCI_CADENCE=y
-CONFIG_MMC_SDHCI_ESDHC_IMX=y
-CONFIG_MMC_SDHCI_F_SDH30=y
-CONFIG_MMC_SPI=y
-CONFIG_MMC_DW=y
-CONFIG_MMC_DW_EXYNOS=y
-CONFIG_MMC_DW_HI3798CV200=y
-CONFIG_MMC_DW_K3=y
-CONFIG_MMC_MTK=y
-CONFIG_MMC_SDHCI_XENON=y
-CONFIG_NEW_LEDS=y
-CONFIG_LEDS_CLASS=y
-CONFIG_LEDS_CLASS_MULTICOLOR=m
-CONFIG_LEDS_LM3692X=m
-CONFIG_LEDS_PCA9532=m
-CONFIG_LEDS_GPIO=y
-CONFIG_LEDS_PCA963X=m
-CONFIG_LEDS_PWM=y
-CONFIG_LEDS_SYSCON=y
-CONFIG_LEDS_TRIGGERS=y
-CONFIG_LEDS_TRIGGER_TIMER=y
-CONFIG_LEDS_TRIGGER_HEARTBEAT=y
-CONFIG_LEDS_TRIGGER_CPU=y
-CONFIG_LEDS_TRIGGER_DEFAULT_ON=y
-CONFIG_LEDS_TRIGGER_PANIC=y
-CONFIG_EDAC=y
-CONFIG_RTC_CLASS=y
-CONFIG_RTC_DRV_RS5C372=m
-CONFIG_RTC_DRV_M41T80=m
-CONFIG_RTC_DRV_S35390A=m
-CONFIG_RTC_DRV_RX8010=m
-CONFIG_RTC_DRV_SNVS=m
-CONFIG_RTC_DRV_IMX_SC=m
-CONFIG_DMADEVICES=y
-CONFIG_FSL_EDMA=y
-CONFIG_IMX_SDMA=m
-CONFIG_MV_XOR_V2=y
-CONFIG_PL330_DMA=y
-CONFIG_QCOM_HIDMA_MGMT=y
-CONFIG_QCOM_HIDMA=y
-# CONFIG_VIRTIO_MENU is not set
-# CONFIG_VHOST_MENU is not set
-# CONFIG_SURFACE_PLATFORMS is not set
-CONFIG_CLK_IMX8MM=y
-CONFIG_CLK_IMX8MN=y
-CONFIG_CLK_IMX8MP=y
-CONFIG_CLK_IMX8MQ=y
-CONFIG_CLK_IMX8QXP=y
-CONFIG_CLK_IMX8ULP=y
-CONFIG_HWSPINLOCK=y
-CONFIG_MAILBOX=y
-CONFIG_ARM_MHU=y
-CONFIG_IMX_MBOX=y
-CONFIG_PLATFORM_MHU=y
-CONFIG_IOMMU_IO_PGTABLE_ARMV7S=y
-CONFIG_IOMMU_IO_PGTABLE_DART=y
-CONFIG_ARM_SMMU=y
-CONFIG_ARM_SMMU_V3=y
-CONFIG_REMOTEPROC=y
-CONFIG_RPMSG_CHAR=m
-CONFIG_RPMSG_CTRL=m
-CONFIG_RPMSG_QCOM_GLINK_RPM=y
-CONFIG_FSL_RCPM=y
-CONFIG_SOC_TI=y
-CONFIG_IMX_SCU_PD=y
-CONFIG_PM_DEVFREQ=y
-CONFIG_DEVFREQ_GOV_SIMPLE_ONDEMAND=y
-CONFIG_DEVFREQ_GOV_PASSIVE=m
-CONFIG_ARM_IMX_BUS_DEVFREQ=m
-CONFIG_ARM_IMX8M_DDRC_DEVFREQ=m
-CONFIG_EXTCON=y
-CONFIG_EXTCON_PTN5150=m
-CONFIG_EXTCON_USB_GPIO=y
-CONFIG_IIO=y
-CONFIG_IIO_ST_ACCEL_3AXIS=m
-# CONFIG_IIO_ST_ACCEL_SPI_3AXIS is not set
-CONFIG_LTC2497=m
-CONFIG_IIO_ST_LSM6DSX=m
-CONFIG_SENSORS_ISL29018=m
-CONFIG_OPT3001=m
-CONFIG_VCNL4000=m
-CONFIG_IIO_ST_MAGN_3AXIS=m
-CONFIG_MPL3115=m
-CONFIG_IIO_ST_PRESS=m
-CONFIG_PWM=y
-CONFIG_PWM_IMX27=m
-CONFIG_RESET_IMX7=y
-CONFIG_PHY_FSL_IMX8M_PCIE=y
-CONFIG_PHY_FSL_SAMSUNG_HDMI_PHY=y
-CONFIG_ARM_CCI_PMU=m
-CONFIG_ARM_CCN=m
-CONFIG_ARM_CMN=m
-CONFIG_ARM_DSU_PMU=m
-CONFIG_FSL_IMX8_DDR_PMU=m
-CONFIG_ARM_SPE_PMU=m
-CONFIG_NVMEM_IMX_OCOTP=y
-CONFIG_NVMEM_IMX_OCOTP_SCU=y
-CONFIG_NVMEM_RMEM=m
-CONFIG_NVMEM_SNVS_LPGPR=y
-CONFIG_STM=m
-CONFIG_MUX_MMIO=y
-CONFIG_INTERCONNECT=y
-CONFIG_INTERCONNECT_IMX=m
-CONFIG_INTERCONNECT_IMX8MM=m
-CONFIG_INTERCONNECT_IMX8MN=m
-CONFIG_INTERCONNECT_IMX8MQ=m
-CONFIG_INTERCONNECT_IMX8MP=m
-CONFIG_EXT2_FS=y
-CONFIG_EXT3_FS=y
-CONFIG_EXT4_FS_POSIX_ACL=y
-CONFIG_FANOTIFY=y
-CONFIG_QUOTA=y
-CONFIG_VFAT_FS=m
-CONFIG_TMPFS=y
-CONFIG_TMPFS_POSIX_ACL=y
-CONFIG_HUGETLBFS=y
-CONFIG_EFIVAR_FS=y
-CONFIG_NFS_FS=y
-CONFIG_ROOT_NFS=y
-CONFIG_NLS_CODEPAGE_437=y
-CONFIG_NLS_ISO8859_1=y
-CONFIG_LSM="landlock,lockdown,yama,loadpin,safesetid,bpf"
-CONFIG_CRYPTO_NULL=y
-CONFIG_CRYPTO_RSA=y
-CONFIG_CRYPTO_DH=m
-CONFIG_CRYPTO_ECDH=m
-CONFIG_CRYPTO_CURVE25519=m
-CONFIG_CRYPTO_DES=m
-CONFIG_CRYPTO_CRC32C=y
-CONFIG_CRYPTO_CRCT10DIF=y
-CONFIG_CRYPTO_DEFLATE=y
-CONFIG_CRYPTO_ANSI_CPRNG=y
-CONFIG_CRYPTO_DRBG_MENU=y
-CONFIG_CRYPTO_USER_API_RNG=m
-# CONFIG_CRYPTO_USER_API_ENABLE_OBSOLETE is not set
-CONFIG_CRYPTO_CHACHA20_NEON=m
-CONFIG_CRYPTO_GHASH_ARM64_CE=y
-CONFIG_CRYPTO_SHA1_ARM64_CE=y
-CONFIG_CRYPTO_SHA2_ARM64_CE=y
-CONFIG_CRYPTO_SHA512_ARM64_CE=m
-CONFIG_CRYPTO_SHA3_ARM64=m
-CONFIG_CRYPTO_SM3_ARM64_CE=m
-CONFIG_CRYPTO_AES_ARM64_BS=m
-CONFIG_CRYPTO_AES_ARM64_CE_CCM=y
-CONFIG_CRYPTO_DEV_FSL_CAAM=m
-CONFIG_CRYPTO_DEV_CCREE=m
-CONFIG_CRYPTO_DEV_AMLOGIC_GXL=m
-CONFIG_PACKING=y
-CONFIG_INDIRECT_PIO=y
-CONFIG_CRC_CCITT=m
-CONFIG_LIBCRC32C=y
-CONFIG_DMA_CMA=y
-CONFIG_CMA_SIZE_MBYTES=32
-CONFIG_IRQ_POLL=y
-CONFIG_PRINTK_TIME=y
-CONFIG_DEBUG_KERNEL=y
-CONFIG_DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT=y
-CONFIG_DEBUG_FS=y
-CONFIG_FUNCTION_TRACER=y
-CONFIG_FUNCTION_GRAPH_RETVAL=y
-CONFIG_FTRACE_SYSCALLS=y
-CONFIG_USER_EVENTS=y
-CONFIG_MEMTEST=y
---- 8< ---
-
-Best regards
-Hervé
 
