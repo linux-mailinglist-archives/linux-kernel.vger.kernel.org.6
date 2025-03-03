@@ -1,197 +1,114 @@
-Return-Path: <linux-kernel+bounces-540961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9256A4B6F7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 04:47:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E664A4B6FD
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 04:48:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8D301891289
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 03:47:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46A5A3A8B66
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 03:47:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0239B1E1C09;
-	Mon,  3 Mar 2025 03:46:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BA071E4110;
+	Mon,  3 Mar 2025 03:46:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LIcMW/5F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="rz57hsA0"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55DB170805
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 03:46:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D84B15854A;
+	Mon,  3 Mar 2025 03:46:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740973581; cv=none; b=ELh2gIfT3fK/Xl5txz68mNYKIzW0Jc1zllGxDhI1yIpbX4Io3DVqjHq9nrcVj/aW0nJR8/X7BLKprEae6k96upLku8TDZqqPq4dFeY6dcEZy48cgu6PjJYTg4ykzG6nIfHNm7Y4Ktb5n7bIhk3YlofHHUkOyqhA2jKAeoQ9/gcs=
+	t=1740973606; cv=none; b=hfLAVQHCtuk8syqLkwTAkZE9de7DbBGzOzDxBYswrmdRZ8UgxDkYBTKyfSIynjdtriSXDiH2i+Z8kUUbrmooqtIS2TmQMul0B7DnTmlpaXd8f4BwpYOi/VNohNq4OD6VTBBR6W1rVpdSu1FJeBcRkl/EO5WMb+aqtCdwYcfROZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740973581; c=relaxed/simple;
-	bh=LIa3c5jErC+Fa9BEa/bZPI0QfpHqsWVhgevulq+HzFo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P5MH+IP/eUrPyVXWggUi/C1FKLtNKKExO5QJj06UOh/GBJrGJ19acTNpEorGL/fEvEmSr2ukrAp0MJRDSs+OGS2/x1c2RrfWY+c8DLANCtcVjgkc6yqXa3buxwSm09/L3FyalE2MKd5v+0MOjoU29re/vGAW8N/PntEzvpQEHT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LIcMW/5F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF3A4C4CEE6;
-	Mon,  3 Mar 2025 03:46:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740973580;
-	bh=LIa3c5jErC+Fa9BEa/bZPI0QfpHqsWVhgevulq+HzFo=;
-	h=From:To:Cc:Subject:Date:From;
-	b=LIcMW/5FVny7KJOkpdM4Ug/xO6v/wn0jO2LGfrNR8V6wusL6G5mzdoEdA/wW1gWNU
-	 3hs3Hq4XRzFKTuviescIVJEayvB9UV87shgMQnsXSIieTDBsC6kOihN6W3G0U/5O1V
-	 DBFJorNfwTHk3liD/qGDTILgjJyQsQY/q6EVA/+8jdftsbL84pK6X49O4h9pv7GtjB
-	 7y4ZxHbBQFcgDcp68aWM2ONuUvHwYUto9ctTUPD2Pibi6PgAti3RDBIpbJ6GUSahT+
-	 20iNMnYzx9aT6Q/aZMCwm2fq3DKddvaFRt8KB3hbYThiZMJb2m7zK4jfiM9zIpx/sh
-	 NgotyexoQODng==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>
-Subject: [PATCH] f2fs: support F2FS_NOLINEAR_LOOKUP_FL
-Date: Mon,  3 Mar 2025 11:46:06 +0800
-Message-ID: <20250303034606.1355224-1-chao@kernel.org>
-X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
+	s=arc-20240116; t=1740973606; c=relaxed/simple;
+	bh=Gckh/ycN09Z74Fo2Bxi44nwY7FtAl/OObixU2gXQDTg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=DhVziE27w+qNjQ0Yy+Ntzvg7QEpTLCZxg9Fl8CwkkWJtdfxmzquyCOBh41YgbBXcdve6230u/MHlMDTvTekdOsMo+wsAVWJCHybne77G/2aIFrwEMr/7XukI3/JPU0BqOyVHwG+hv7ulHNZeQ1jWtNnY32WF8vI30We+7Z62huE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=rz57hsA0; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1740973599;
+	bh=+A6+WN1oynsISedBOaLvXP7v9UZ+gCDGlsHaH38dKF4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=rz57hsA07AOEb/XHq9kTaac1lLmpPm6E+t7Rm2x2eYizFIAI9vmjwZd6QbjCn5EhR
+	 KE5h2Vay+6g2kiIiuLt7aBdNErSHFsK7XDAz6tYwQM72ZOMmUp09YskKZTJdJOKpLJ
+	 utjozia6ft3h7/pf6gVXUoR81er5WvQlNlYAtgDWN8MT9AlNnnh/3A0ldlG6TGsu8W
+	 UHa3eBI/tGKtI0KWXoeNCkHqICtKEBbM4KBMYYZG5P7ENgvfJV595q06eUXPbK7owK
+	 OIMwYoHqAnuvfE54qpf0257j4QzKYypo34jpeTnF0p/K9FBGDqRvTmWPGBDqyrKo52
+	 NzYZ6BdxpR9Kg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Z5l9V6Vr3z4x0L;
+	Mon,  3 Mar 2025 14:46:38 +1100 (AEDT)
+Date: Mon, 3 Mar 2025 14:46:37 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
+ Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, Nam Cao <namcao@linutronix.de>
+Subject: linux-next: manual merge of the tip tree with the mailbox tree
+Message-ID: <20250303144637.71c25bc3@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/57Da8jKAIYl2S5fX1i27fTN";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-This patch introduces a new flag F2FS_NOLINEAR_LOOKUP_FL, so that we can
-tag casefolded directory w/ it to disable linear lookup functionality,
-it can be used for QA.
+--Sig_/57Da8jKAIYl2S5fX1i27fTN
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/dir.c             |  3 ++-
- fs/f2fs/f2fs.h            |  2 ++
- fs/f2fs/file.c            | 36 +++++++++++++++++++++++-------------
- include/uapi/linux/f2fs.h |  5 +++++
- 4 files changed, 32 insertions(+), 14 deletions(-)
+Hi all,
 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 54dd52de7269..4c74f29a2c73 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -366,7 +366,8 @@ struct f2fs_dir_entry *__f2fs_find_entry(struct inode *dir,
- 
- out:
- #if IS_ENABLED(CONFIG_UNICODE)
--	if (IS_CASEFOLDED(dir) && !de && use_hash) {
-+	if (IS_CASEFOLDED(dir) && !de && use_hash &&
-+				!IS_NOLINEAR_LOOKUP(dir)) {
- 		use_hash = false;
- 		goto start_find_entry;
- 	}
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 05879c6dc4d6..787f1e5a52d7 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3047,6 +3047,7 @@ static inline void f2fs_change_bit(unsigned int nr, char *addr)
- #define F2FS_NOCOMP_FL			0x00000400 /* Don't compress */
- #define F2FS_INDEX_FL			0x00001000 /* hash-indexed directory */
- #define F2FS_DIRSYNC_FL			0x00010000 /* dirsync behaviour (directories only) */
-+#define F2FS_NOLINEAR_LOOKUP_FL		0x08000000 /* do not use linear lookup */
- #define F2FS_PROJINHERIT_FL		0x20000000 /* Create with parents projid */
- #define F2FS_CASEFOLD_FL		0x40000000 /* Casefolded file */
- #define F2FS_DEVICE_ALIAS_FL		0x80000000 /* File for aliasing a device */
-@@ -3066,6 +3067,7 @@ static inline void f2fs_change_bit(unsigned int nr, char *addr)
- #define F2FS_OTHER_FLMASK	(F2FS_NODUMP_FL | F2FS_NOATIME_FL)
- 
- #define IS_DEVICE_ALIASING(inode)	(F2FS_I(inode)->i_flags & F2FS_DEVICE_ALIAS_FL)
-+#define IS_NOLINEAR_LOOKUP(inode)	(F2FS_I(inode)->i_flags & F2FS_NOLINEAR_LOOKUP_FL)
- 
- static inline __u32 f2fs_mask_flags(umode_t mode, __u32 flags)
- {
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 014cb7660a9a..1acddc4d11e4 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2062,6 +2062,11 @@ static int f2fs_setflags_common(struct inode *inode, u32 iflags, u32 mask)
- 		}
- 	}
- 
-+	if ((iflags ^ masked_flags) & F2FS_NOLINEAR_LOOKUP_FLAG) {
-+		if (!S_ISDIR(inode->i_mode) || !IS_CASEFOLDED(inode))
-+			return -EINVAL;
-+	}
-+
- 	fi->i_flags = iflags | (fi->i_flags & ~mask);
- 	f2fs_bug_on(F2FS_I_SB(inode), (fi->i_flags & F2FS_COMPR_FL) &&
- 					(fi->i_flags & F2FS_NOCOMP_FL));
-@@ -2093,17 +2098,18 @@ static const struct {
- 	u32 iflag;
- 	u32 fsflag;
- } f2fs_fsflags_map[] = {
--	{ F2FS_COMPR_FL,	FS_COMPR_FL },
--	{ F2FS_SYNC_FL,		FS_SYNC_FL },
--	{ F2FS_IMMUTABLE_FL,	FS_IMMUTABLE_FL },
--	{ F2FS_APPEND_FL,	FS_APPEND_FL },
--	{ F2FS_NODUMP_FL,	FS_NODUMP_FL },
--	{ F2FS_NOATIME_FL,	FS_NOATIME_FL },
--	{ F2FS_NOCOMP_FL,	FS_NOCOMP_FL },
--	{ F2FS_INDEX_FL,	FS_INDEX_FL },
--	{ F2FS_DIRSYNC_FL,	FS_DIRSYNC_FL },
--	{ F2FS_PROJINHERIT_FL,	FS_PROJINHERIT_FL },
--	{ F2FS_CASEFOLD_FL,	FS_CASEFOLD_FL },
-+	{ F2FS_COMPR_FL,		FS_COMPR_FL },
-+	{ F2FS_SYNC_FL,			FS_SYNC_FL },
-+	{ F2FS_IMMUTABLE_FL,		FS_IMMUTABLE_FL },
-+	{ F2FS_APPEND_FL,		FS_APPEND_FL },
-+	{ F2FS_NODUMP_FL,		FS_NODUMP_FL },
-+	{ F2FS_NOATIME_FL,		FS_NOATIME_FL },
-+	{ F2FS_NOCOMP_FL,		FS_NOCOMP_FL },
-+	{ F2FS_INDEX_FL,		FS_INDEX_FL },
-+	{ F2FS_DIRSYNC_FL,		FS_DIRSYNC_FL },
-+	{ F2FS_PROJINHERIT_FL,		FS_PROJINHERIT_FL },
-+	{ F2FS_CASEFOLD_FL,		FS_CASEFOLD_FL },
-+	{ F2FS_NOLINEAR_LOOKUP_FL,	F2FS_NOLINEAR_LOOKUP_FL },
- };
- 
- #define F2FS_GETTABLE_FS_FL (		\
-@@ -2121,7 +2127,8 @@ static const struct {
- 		FS_INLINE_DATA_FL |	\
- 		FS_NOCOW_FL |		\
- 		FS_VERITY_FL |		\
--		FS_CASEFOLD_FL)
-+		FS_CASEFOLD_FL |	\
-+		F2FS_NOLINEAR_LOOKUP_FL)
- 
- #define F2FS_SETTABLE_FS_FL (		\
- 		FS_COMPR_FL |		\
-@@ -2133,7 +2140,8 @@ static const struct {
- 		FS_NOCOMP_FL |		\
- 		FS_DIRSYNC_FL |		\
- 		FS_PROJINHERIT_FL |	\
--		FS_CASEFOLD_FL)
-+		FS_CASEFOLD_FL |	\
-+		F2FS_NOLINEAR_LOOKUP_FL)
- 
- /* Convert f2fs on-disk i_flags to FS_IOC_{GET,SET}FLAGS flags */
- static inline u32 f2fs_iflags_to_fsflags(u32 iflags)
-@@ -3344,6 +3352,8 @@ int f2fs_fileattr_get(struct dentry *dentry, struct fileattr *fa)
- 		fsflags |= FS_INLINE_DATA_FL;
- 	if (is_inode_flag_set(inode, FI_PIN_FILE))
- 		fsflags |= FS_NOCOW_FL;
-+	if (IS_NOLINEAR_LOOKUP(inode))
-+		fsflags |= F2FS_NOLINEAR_LOOKUP_FL;
- 
- 	fileattr_fill_flags(fa, fsflags & F2FS_GETTABLE_FS_FL);
- 
-diff --git a/include/uapi/linux/f2fs.h b/include/uapi/linux/f2fs.h
-index 795e26258355..a03626fdcf35 100644
---- a/include/uapi/linux/f2fs.h
-+++ b/include/uapi/linux/f2fs.h
-@@ -104,4 +104,9 @@ struct f2fs_comp_option {
- 	__u8 log_cluster_size;
- };
- 
-+/* used for FS_IOC_GETFLAGS and FS_IOC_SETFLAGS */
-+enum {
-+	F2FS_NOLINEAR_LOOKUP_FLAG = 0x08000000,
-+};
-+
- #endif /* _UAPI_LINUX_F2FS_H */
--- 
-2.48.1
+Today's linux-next merge of the tip tree got a conflict in:
 
+  drivers/mailbox/mailbox.c
+
+between commit:
+
+  791d7e70a9f4 ("mailbox: Switch to use hrtimer_setup()")
+
+from the mailbox tree and commit:
+
+  c158a29c5c5b ("mailbox: Switch to use hrtimer_setup()")
+
+from the tip tree.
+
+I fixed it up (I just used the former - only a whitespace difference) and
+can carry the fix as necessary. This is now fixed as far as linux-next
+is concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/57Da8jKAIYl2S5fX1i27fTN
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfFJh0ACgkQAVBC80lX
+0Gx4VAf/XQYHFNNjUM8UAs3mqV5O++L59Y37ulFYPgwT6kFA5iYD1QG8TxVf6hxR
+VeTYcO9zUNUIp1bGity6m/W3vfeZ6YPFSGxoPi921FT7KIz0Wt5GcR9wDohSclaP
+6JRVC79XpRtI9puRFont+mo0tDhLCcGSApJYGhCIzx2v4XY689HROY8xInSROvjt
+l7qluwRJ56FbDfudMglWwv8MhwWtB8M1LNiDPNUJmW2n3DZfxVbZcj1thJbGlFd4
+MH7q3+UqyELGseckT6of/Memq1T84rPP6vFwpbZyOYd/rC6TUkV/TtosCuW74S0q
+7G3tS7m/ZRTB7ikM981+8g4fp53OvA==
+=N4C3
+-----END PGP SIGNATURE-----
+
+--Sig_/57Da8jKAIYl2S5fX1i27fTN--
 
