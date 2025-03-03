@@ -1,118 +1,231 @@
-Return-Path: <linux-kernel+bounces-541772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C58A6A4C162
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:12:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3D5CA4C164
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:12:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F4C6188A006
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:12:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBFE616FD52
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:12:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2955A2116EB;
-	Mon,  3 Mar 2025 13:12:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD51212B00;
+	Mon,  3 Mar 2025 13:12:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ibR3gfYh"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KtM8k1CG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A90521128D;
-	Mon,  3 Mar 2025 13:12:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33BFB21128D;
+	Mon,  3 Mar 2025 13:12:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741007538; cv=none; b=co1ormY/Mlb5UtMvOctdwhMGNP+Y4OEKXqLkis2D563f1FsLv+d4K1vUz7OrL5jwBhH6oeSmBLFokvkS3tDtdc89P1lEubLkEbAwWscR7LEOpGSo6NiNema6gsBv7IJkjUNlfyeeMERB8hOXgb/5lQBOqXMaCKDJFQ7/L11dU4E=
+	t=1741007542; cv=none; b=pTCIyKM6fHtlldmYdlNGuq1c6BAo7Aee6Rytr5ylrSLn2Rc1Xe7x/miJvB82nAhpl7a043FQE0GoWZDVxyKRhK02meSvh5kGKyr1fWBLtozB5zNPh521nIpv/XzXfsSQOUgIaSCEvzX52m8Otjms2hMg7RcySXw2iJcAyc0XElc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741007538; c=relaxed/simple;
-	bh=68eMQJn9U5ISKmgEkbjyN0pmdAyTnTwPqx2KXySX+/w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rCqe7Wxz1PpygZ8g+X8Mx1ywbi/Fvkeo6GYvr9+Kkd0r4yEyqDD5b4TKhHmXMnwlPvpUbrJ1YVTeIAkhVlVdVdC0/JaWC6dCvJhwLjQUQZp8Uvcl4cvON/+KdUNCH0KCTpIBoftsYkACFj3aA8ogVol+KwVehcmsfmCysBwPJe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ibR3gfYh; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2232aead377so84107745ad.0;
-        Mon, 03 Mar 2025 05:12:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741007536; x=1741612336; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=AzgjeKIve24Fd+6sZv+68MykgeG3DIorGDi+sVwYibs=;
-        b=ibR3gfYhOBR8zkhpuCTXrscEGNyB5/bfLxHFaG2qOxPUr8WWHd5PyWlqVKGDMmY807
-         Wvajxdiq5JT+JdhotL9nzk2g199UNVv7W9OWFYseSgq9R+Z3PFbXWpYquDCZHUxYqJXQ
-         NQEpa+OztJrNtNr8CQQAkSy/7dm6A59LtlmbTFCPBz3YJ22Oqi+o7KsArjQ5frw1wSSr
-         pLAY6QhPr+XhOb7fkcxIxfzgHviusAA2dnjVyLVaIlpSKQbxfr8sEJEYm/FkHV+AhJDm
-         xPKWbc27WZ9cZI8MzaInI+NYl7M5fBeyUrjt7o7YhReaBIKpgxzI9eRwd71qFYOmg99b
-         FIyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741007536; x=1741612336;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AzgjeKIve24Fd+6sZv+68MykgeG3DIorGDi+sVwYibs=;
-        b=RRXu1YAYLHsqAvqvmSl0kVhHhPMI36PRkeNjgiTuxy0Oc2HIXmdEqj+mI3lEOC9rBa
-         2E5F1aWK0SLo9DaNSLOwVGUdYqJbDlm6pBBJQK+7H3uvcIM6oWB13fhJVcjNOzNJk91b
-         K8hrno0jYr3MnB1UCG6tHrLxWY7TMWGM7qt0Y8Eb2sWdWUT687zZC6s4DrCidlei83Yd
-         e/cm7yMpuYv6IrNH/oitqpBYmB7PLl2zrpE4aS5foQBTAc+BP6sx1QEr3fcbFTGee13B
-         R34uXM4PPEeDCGI0E5Uztmq14dxhxkNSgyYxNJpDMv8ndZTxKfXrs/ilj8aQRaXZ75Bt
-         CN5g==
-X-Forwarded-Encrypted: i=1; AJvYcCUMto8iOi+mfiP2uei/8+9R0iLlyAJBwLhmfnvJoCQ2TAG3hu6f7+GZKBrvcv/sdYrGFlZAc2Qk@vger.kernel.org, AJvYcCUXjRQOjlPe5PFpa5au8gunKf1oRdv1drG6cZWWeFdd+G1fulPCbWZiMqLb0aHnZNKXfK5NIa6IVYjjj+U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyBxBs1dcbynVrExS32e/ZK51fKcfj8qd5xaMLo/G7IHY/19Fp
-	W3FBmD01N1b/K8ltl6tCf1wbzSeyoXZSIbuQnltfpQGC4cLC7xXx
-X-Gm-Gg: ASbGncs6qCrQ98jR5eRnYoCQu5XdkV9FGgkHV3dTiPDoEkCdJjhoc0/fl3i11E3dIQo
-	UlX3+h7Gevl9CXplULL19s/wiEpoUE3srhUsFKZYrH6p6r8wkzA8HZ6lJdavUi+7dBYIHL80dD7
-	NyT+l4GV+5sB5TmEx9es6u4CpRDUnq40mfHSVJ2vqXIoyjTs76ULDW9p3g9Vcyo+aGJ2+8NkZ1V
-	5dxWr6y8UqFUEmIiAPme25Qi1uOYNnUIW4IsUZ34s0fA/1iwp+t2c2OUxA0Ax2lEoKA0fDOoPPb
-	SQqv3hYOxhmg6z9DCbrCJOBuxnjXfu9HsjZblGsipw==
-X-Google-Smtp-Source: AGHT+IGUbSmpt02l8nhbQ1R20Qoqzc0uLkQ8eYbH2yARwiWWhJqLqC0tgoarto+OVZO3BKwq2dQ27Q==
-X-Received: by 2002:a05:6a20:6a1c:b0:1ee:8099:e657 with SMTP id adf61e73a8af0-1f2f4e4c8a9mr22839759637.40.1741007536348;
-        Mon, 03 Mar 2025 05:12:16 -0800 (PST)
-Received: from fedora.. ([186.220.38.89])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-aee7ddf245asm8133458a12.5.2025.03.03.05.12.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 05:12:16 -0800 (PST)
-From: joaomboni <joaoboni017@gmail.com>
-To: anthony.l.nguyen@intel.com,
-	przemyslaw.kitszel@intel.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	joaomboni <joaoboni017@gmail.com>
-Subject: [PATCH] =?UTF-8?q?e1000:=20Adicionado=20const=20para=20melhorar?= =?UTF-8?q?=20a=20seguran=C3=A7a=20do=20c=C3=B3digo?=
-Date: Mon,  3 Mar 2025 10:11:55 -0300
-Message-ID: <20250303131155.74189-1-joaoboni017@gmail.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741007542; c=relaxed/simple;
+	bh=DTKGQ8eC/ctsrimOWqQCAQhsg20781WA34NJR5qYxVU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZlmVfK0pmDkLwSJOXjLQIDIb/7CTBydxBIToHC8Y+LPJM8ueAhRTVR5fCal14R6XYbWIl6TcQUf4xdxKwqrm7DwDSqf5AjjKNGgRrcyjSTy0SwK8AiawwtXSlCVHvxwWHIDJJ+z/jsv8OF1+X3/M7jjFueBdwof+pRsO7ayKCpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KtM8k1CG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0B42C4CEE6;
+	Mon,  3 Mar 2025 13:12:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741007542;
+	bh=DTKGQ8eC/ctsrimOWqQCAQhsg20781WA34NJR5qYxVU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KtM8k1CGr2p1Z9HinZQAFkbEWOIiTsYidqc/4je/JLQoDg6C1XhF+m4L8iL8DZHUE
+	 rnoFQUv+HVSUlckzv6ANO30P7b6AffVyFe01K9NLhl0FXUVBIc3k0Bo3lPT8VQzqQM
+	 bwkVDEgerFG8+TNgyfHJ0nJKZEbqo5qlu3nhTQGz+4m1hNtl9nOcgAwO5ucmQLWhDG
+	 X/NjcxwdJ6zLnCZMHA7MQdTvWvGAU+DaHiLm5AgsTGtFU95i2iV7ioDwATvAKIV8RC
+	 v5zq2lQryTqWK4v9jw+j8iV+P0YCRz2jH1wdS8CXCBXoi8wLNmjlddiLO+V/x6eaTg
+	 +NX8M4RquJ3ew==
+Date: Mon, 3 Mar 2025 07:12:20 -0600
+From: Rob Herring <robh@kernel.org>
+To: Hironori KIKUCHI <kikuchan98@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>, dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] dt-bindings: display: panel: Add some generic
+ MIPI-DSI/DPI panels
+Message-ID: <20250303131220.GA1437304-robh@kernel.org>
+References: <20250226112552.52494-1-kikuchan98@gmail.com>
+ <20250226112552.52494-3-kikuchan98@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226112552.52494-3-kikuchan98@gmail.com>
 
-Signed-off-by: joaomboni <joaoboni017@gmail.com>
----
- drivers/net/ethernet/intel/e1000/e1000_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, Feb 26, 2025 at 08:25:49PM +0900, Hironori KIKUCHI wrote:
+> This is a binding for generic MIPI-DSI/DPI panels that require
+> initialization with a simple command sequence before use.
+> 
+> The initialization of the panel requires a firmware binary which can be
+> made with the Panel Firmware Generator[1] on the web.
+> 
+> Add 4 new panels, as they are available on the same page[1] as a preset
+> (excluding already included ones).
+> 
+> Note that the "xx" in the panel name is taken from a product's name,
+> not a wildcard.
+> 
+> [1]: https://kikuchan.github.io/panel-firmware-generator/
+> 
+> Signed-off-by: Hironori KIKUCHI <kikuchan98@gmail.com>
+> ---
+>  .../bindings/display/panel/panel-mipi.yaml    | 121 ++++++++++++++++++
+>  1 file changed, 121 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/panel/panel-mipi.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/display/panel/panel-mipi.yaml b/Documentation/devicetree/bindings/display/panel/panel-mipi.yaml
+> new file mode 100644
+> index 00000000000..d70cf0063fa
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/panel/panel-mipi.yaml
+> @@ -0,0 +1,121 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/panel/panel-mipi.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Generic MIPI-DSI/DPI Panels Requiring Initialization
+> +
+> +maintainers:
+> +  - Hironori KIKUCHI <kikuchan98@gmail.com>
+> +
+> +description: This is a binding for generic MIPI-DSI/DPI panels that require
+> +  initialization with a simple command sequence before use.
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              # Unknown 3.35" 720x480 24-bit IPS LCD panel
+> +              # used in Anbernic RG 34XX
+> +              - anbernic,rg34xx-panel
+> +              # Unknown 4.00" 640x480 24-bit IPS LCD panel (YLM-LBV0400001X-V1)
+> +              # used in Anbernic RG40XX series
+> +              - anbernic,rg40xx-panel
+> +              # Unknown 3.95" 720x720 24-bit IPS LCD panel (YLM-LBN0395004H-V1)
+> +              # used in Anbernic RG CubeXX
+> +              - anbernic,rgcubexx-panel
+> +          - const: panel-mipi-dpi-spi
 
-diff --git a/drivers/net/ethernet/intel/e1000/e1000_main.c b/drivers/net/ethernet/intel/e1000/e1000_main.c
-index 3f089c3d47b2..96bc85f09aaf 100644
---- a/drivers/net/ethernet/intel/e1000/e1000_main.c
-+++ b/drivers/net/ethernet/intel/e1000/e1000_main.c
-@@ -9,7 +9,7 @@
- #include <linux/if_vlan.h>
- 
- char e1000_driver_name[] = "e1000";
--static char e1000_driver_string[] = "Intel(R) PRO/1000 Network Driver";
-+static const char e1000_driver_string[] = "Intel(R) PRO/1000 Network Driver";
- static const char e1000_copyright[] = "Copyright (c) 1999-2006 Intel Corporation.";
- 
- /* e1000_pci_tbl - PCI Device ID Table
--- 
-2.48.1
+We already have a schema for this: panel-mipi-dpi-spi.yaml
 
+> +      - items:
+> +          - enum:
+> +              # HOTHMI TFT-H028B23VGIST7G40-V1 2.80" 480x640 TFT LCD panel
+> +              - hothmi,tft-h028b23vgist7g40-v1
+> +          - const: panel-mipi-dsi
+
+We have lots of DSI panels already and they don't have a generic 
+fallback. What exactly would "panel-mipi-dsi" mean to the OS? It's got 
+to be useful on its own or it should be dropped.
+
+> +
+> +  reg:
+> +    description: DSI / SPI channel used by that screen
+> +    maxItems: 1
+> +
+> +  power-supply: true
+> +
+> +  io-supply:
+> +    description: I/O system regulator.
+> +      No need to set if this is the same as polwer-supply.
+> +
+> +  dc-gpios:
+> +    maxItems: 1
+> +    description: Controller data/command selection (D/CX) in 4-line SPI mode.
+> +      If not set, the controller is in 3-line SPI mode.
+> +      Disallowed for DSI.
+> +
+> +  port: true
+> +  reset-gpios: true
+> +
+> +  backlight: true
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +allOf:
+> +  - $ref: panel-common.yaml#
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - panel-mipi-dpi-spi
+> +    then:
+> +      # SPI mode
+> +      $ref: /schemas/spi/spi-peripheral-props.yaml#
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - panel-mipi-dsi
+> +    then:
+> +      # DSI mode
+> +      properties:
+> +        dc-gpios: false
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    dsi {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        panel@0 {
+> +            compatible = "hothmi,tft-h028b23vgist7g40-v1", "panel-mipi-dsi";
+> +            reg = <0>;
+> +
+> +            port {
+> +                mipi_in_panel: endpoint {
+> +                    remote-endpoint = <&mipi_out_panel>;
+> +                };
+> +            };
+> +        };
+> +    };
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +
+> +    spi {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        panel@0 {
+> +            compatible = "anbernic,rg40xx-panel", "panel-mipi-dpi-spi";
+> +            reg = <0>;
+> +
+> +            spi-max-frequency = <40000000>;
+> +
+> +            dc-gpios = <&gpio 24 GPIO_ACTIVE_HIGH>;
+> +            reset-gpios = <&gpio 25 GPIO_ACTIVE_LOW>;
+> +
+> +            backlight = <&backlight>;
+> +        };
+> +    };
+> -- 
+> 2.48.1
+> 
 
