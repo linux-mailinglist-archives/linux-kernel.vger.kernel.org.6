@@ -1,299 +1,112 @@
-Return-Path: <linux-kernel+bounces-541733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25B83A4C0E9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:48:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95B9AA4C0F5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:48:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 812D07A6602
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:46:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E05018976E1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:48:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A9C210F53;
-	Mon,  3 Mar 2025 12:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D13211479;
+	Mon,  3 Mar 2025 12:47:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Qy4Y32JG"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XX+/C2cE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C137D07D;
-	Mon,  3 Mar 2025 12:47:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B120210191;
+	Mon,  3 Mar 2025 12:47:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741006046; cv=none; b=WKuB/fsPZwBN1FofX6EtmsLNjiiMu+2/BVH3T9txQGlsafNeUR3vYlqadnW63NkeKdidWzYR6RwGiEYbpyu7I2QAL3ynMijJ3ktFNG4Bboo+gOBOoE/FpI48GwlIB/8jMuaheCcy+szRSLwwjsNZsFuH3wiRofBAbPn6SQyISpQ=
+	t=1741006056; cv=none; b=bZjZjAFTDKNXK+J+8bWLiKZL3tmmySKCTRsX7lC/OS7UBWm+FgjGvThLJnpfIz+ed5cqMM15eeYz3H3t4nSKjjZoj3+cXmvnqTQHZraoGVmLFU2/UuzpDCMVsQqTqsD76Zf6Huq2ScPP49UcgavncTKvZS8/1J4G884uy2smRX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741006046; c=relaxed/simple;
-	bh=oqjzi/zAhOsterMeAfvhd2Lrly5BuIHrXEyDJXM1IIY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NkO2DKa2XDcVRkNUMTHBOHrbW5b03u5VVXDOMwSJeoUiiPf3q9H8RGdI4dBf2+kP/z4s2la5ACAkNmsljcsPoTJ8ptBeUapn3eS3ZqXVItkT7qpNWJheIUg4DC4tWvAEls5vIa4dv2t74UlhKlJBFZBqC9CleL2LTzVMFud0jFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Qy4Y32JG; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 523B8kNN025661;
-	Mon, 3 Mar 2025 12:47:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	rN2bGVg8ZzYNF7l4VQygrAQDDlBNhEOeiHkgxlotQ7E=; b=Qy4Y32JGSiSmCU/w
-	RE3acnnO3HQsFwnkJGjzGvjL7RFItt6du1G+NBV0npjsxGKsXPVTL9Tre8fApAx2
-	r3WB+xgmZIGaYkFOFymYCW5bu6o+/s74NAqo4WSLD41CAtBdSK7C/lekbDPd5SsD
-	+zsIfx7d/q66yF/ncMI3yX+Rzq0nN4bW6tfhbJKvxZnoNB3gS7KwSDXp8a5FT2YZ
-	66nrFf/b6T3q8HK7CJoBniL/H4wbCy1OcRGIMyoTrkF8EUkLI+Iy4ddXMQVaz1pH
-	6yY8HKb3i9po4eU9IUVBesSvsuv0Ip4SX09ev/kbJLrWttHkH3T7Gs9cp5P0UaDu
-	feAdyg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 453t6k4rft-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Mar 2025 12:47:19 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 523ClI1M030976
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 3 Mar 2025 12:47:18 GMT
-Received: from [10.216.31.193] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 3 Mar 2025
- 04:47:12 -0800
-Message-ID: <f20b98fb-1cbc-4211-b616-5421bf43301f@quicinc.com>
-Date: Mon, 3 Mar 2025 18:17:09 +0530
+	s=arc-20240116; t=1741006056; c=relaxed/simple;
+	bh=ZuPX7eSFq6V6WILAzIHrHuBxzy4xj88xCYbFZiRKRUo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WuFB6uHQbMTWju2QHgtgh5qL4AGsZblA6YMLNCJnBleQuy8GwvrFIxVdBw2l5JDwfzut8Muqw3bHyqSfdAyIjrSjRP+0VL7F/YLQBakK1q71/+X8DUjgFhnoRMZm5EWGmSFc1kkMwkWF0Z4xMT6fHd/3wGRTxnXXMNeRQRp/cQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XX+/C2cE; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741006055; x=1772542055;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ZuPX7eSFq6V6WILAzIHrHuBxzy4xj88xCYbFZiRKRUo=;
+  b=XX+/C2cE3hffQl7jLh537I8oRN5AifgEmEmDAprdz1bUUzjBRoG9Qej5
+   OHuKeOqOcn4w7HNZpnZsyN7MSrGD1Grvp8NHOEAH/V0ytsh867ATmIXED
+   vaG/Ba6D0UG9HzFdR6aCgA6bgKY/vOmNOtP8OtQC8n57ndttMtNEeC4Qo
+   b6664vjWVulEKB0mHKr+LFDBSnBzxewn2i8un+ldgdwNfRXpNn1SBjvqt
+   N0dsGjXHn4JJtATDdmLB4xuKakEaabxhBusQpWRVRYNK6EplQCTibdWeY
+   4bB5Vn525BZMb0eqdA5CX01FT42Su1TsYIzacxxwes9vUvXyk7pBWcCfO
+   Q==;
+X-CSE-ConnectionGUID: S8YizcLhS2ibwQc1akI3yA==
+X-CSE-MsgGUID: 2a/SniMYRHOS3oPuPphq7A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="67248570"
+X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
+   d="scan'208";a="67248570"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 04:47:34 -0800
+X-CSE-ConnectionGUID: ug0Odv6ZRJyDMw7YSr1l+Q==
+X-CSE-MsgGUID: 3X2vMFaISD2skzMMRL6K4g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
+   d="scan'208";a="122956328"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 04:47:32 -0800
+Date: Mon, 3 Mar 2025 14:47:29 +0200
+From: Raag Jadav <raag.jadav@intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: lee@kernel.org, giometti@enneenne.com, gregkh@linuxfoundation.org,
+	raymond.tan@intel.com, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] mfd: intel_ehl_pse_gpio: Introduce Intel Elkhart
+ Lake PSE GPIO and TIO
+Message-ID: <Z8Wk4dj7MvrW1-Ou@black.fi.intel.com>
+References: <20250303044745.268964-1-raag.jadav@intel.com>
+ <20250303044745.268964-2-raag.jadav@intel.com>
+ <Z8VnSyH_DBuJpW2o@smile.fi.intel.com>
+ <Z8WU5NiIsu34Gz-Z@black.fi.intel.com>
+ <Z8WWXxTrd1e5V3qb@smile.fi.intel.com>
+ <Z8WdK7wkNnAerkCO@black.fi.intel.com>
+ <Z8WfESNmu4MjEbcx@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/8] soc: qcom: geni-se: Add support to load QUP SE
- Firmware via Linux subsystem
-To: Krzysztof Kozlowski <krzk@kernel.org>, <andi.shyti@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <gregkh@linuxfoundation.org>, <jirislaby@kernel.org>,
-        <broonie@kernel.or>, <andersson@kernel.org>, <konradybcio@kernel.org>,
-        <johan+linaro@kernel.org>, <dianders@chromium.org>,
-        <agross@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-        <linux-spi@vger.kernel.org>
-CC: <quic_msavaliy@quicinc.com>, <quic_anupkulk@quicinc.com>
-References: <20250124105309.295769-1-quic_vdadhani@quicinc.com>
- <20250124105309.295769-6-quic_vdadhani@quicinc.com>
- <af27ae90-99d7-497f-b8f5-b8ca0b039753@kernel.org>
-Content-Language: en-US
-From: Viken Dadhaniya <quic_vdadhani@quicinc.com>
-In-Reply-To: <af27ae90-99d7-497f-b8f5-b8ca0b039753@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: M1Rln0lZesj2TR50AXa1YgGCXMKjmv9Q
-X-Proofpoint-ORIG-GUID: M1Rln0lZesj2TR50AXa1YgGCXMKjmv9Q
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-03_07,2025-03-03_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 priorityscore=1501 bulkscore=0 mlxlogscore=999 mlxscore=0
- lowpriorityscore=0 clxscore=1015 spamscore=0 malwarescore=0 adultscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2503030098
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8WfESNmu4MjEbcx@smile.fi.intel.com>
 
-
-
-On 1/27/2025 12:36 PM, Krzysztof Kozlowski wrote:
-> On 24/01/2025 11:53, Viken Dadhaniya wrote:
->>   /* Common SE registers */
->> @@ -891,6 +896,445 @@ int geni_icc_disable(struct geni_se *se)
->>   }
->>   EXPORT_SYMBOL_GPL(geni_icc_disable);
->>   
->> +/**
->> + * elf_phdr_valid: Function to validate elf header.
->> + * @phdr: A pointer to a elf header.
->> + *
->> + * This function validates elf header by comparing fields
+On Mon, Mar 03, 2025 at 02:22:41PM +0200, Andy Shevchenko wrote:
+> On Mon, Mar 03, 2025 at 02:14:35PM +0200, Raag Jadav wrote:
+> > On Mon, Mar 03, 2025 at 01:45:35PM +0200, Andy Shevchenko wrote:
+> > > On Mon, Mar 03, 2025 at 01:39:16PM +0200, Raag Jadav wrote:
+> > > > On Mon, Mar 03, 2025 at 10:24:43AM +0200, Andy Shevchenko wrote:
+> > > > > On Mon, Mar 03, 2025 at 10:17:41AM +0530, Raag Jadav wrote:
 > 
-> Drop "This function" and use imperative. It's redundant and you keep
-> using it everywherre here
->  
-
-Updated in V3.
-
 > ...
 > 
->> +static int qup_fw_load(struct qup_se_rsc *rsc, const char *fw_name)
->> +{
->> +	int ret;
->> +	const struct firmware *fw;
->> +	struct device *dev = rsc->se->dev;
->> +
->> +	ret = request_firmware(&fw, fw_name, dev);
->> +	if (ret) {
->> +		dev_err(dev, "request_firmware failed for %d: %d\n", rsc->protocol, ret);
->> +		return ret;
->> +	}
->> +
->> +	ret = (rsc->protocol != GENI_SE_NONE) ? geni_load_se_fw(rsc, fw) : -EINVAL;
+> > > > > > +INTEL GPIO MFD DRIVER
+> > > > > 
+> > > > > This also needs to be more precise and follow the name. We have more Intel GPIO
+> > > > > drivers, and MFD doesn't ring any bell about the platform or so. Are you going
+> > > > > to support all of them (existing and comining)?
+> > > > 
+> > > > Not that it is planned as of now but I wouldn't mind :)
+> > > 
+> > > It sounds like solving the problem that even might never appear :-)
+> > 
+> > Right, somehow that sounds familiar :D
 > 
-> Drop ternary operator. Not easy to read
-Updated in V3.
+> So, can we rename the MAINTAINERS record as the result of our discussion?
 
-> 
->> +
->> +	release_firmware(fw);
->> +
->> +	return ret;
->> +}
-> 
->> +
->> +/**
->> + * geni_load_se_firmware: Function to initiate firmware loading.
->> + * @se: Serial engine details.
->> + * @protocol: protocol from spi, i2c or uart for which firmware to
->> + * be loaded
->> + *
->> + * This function is called from the probe function of protocol driver.
->> + * if dtsi properties are configured to load QUP firmware and firmware
->> + * is already not loaded, it will start firmware loading. if dtsi
->> + * properties are not defined,it will skip loading firmware assuming
->> + * it is already loaded by TZ.
->> + *
->> + * return: Return 0 if no error, else return error value.
->> + */
->> +int geni_load_se_firmware(struct geni_se *se,
->> +			  enum geni_se_protocol_type protocol)
->> +{
->> +	struct qup_se_rsc rsc;
->> +	const char *fw_name;
->> +	int ret;
->> +
->> +	ret = device_property_read_string(se->wrapper->dev, "firmware-name", &fw_name);
->> +	if (ret)
->> +		return  -EINVAL;
->> +
->> +	rsc.se = se;
->> +	rsc.protocol = protocol;
->> +
->> +	/* Set default xfer mode to FIFO*/
->> +	rsc.mode = GENI_SE_FIFO;
->> +	of_property_read_u32(se->dev->of_node, "qcom,xfer-mode", &rsc.mode);
->> +	switch (rsc.mode) {
->> +	case GENI_SE_FIFO:
->> +	case GENI_SE_DMA:
-> 
-> How value of 2 is acceptable? Your bindings said it is not.
+Yep, but perhaps wait a few days for review comments.
 
-Corrected in V3.
-
-> 
-> 
->> +	case GENI_GPI_DMA:
->> +		break;
->> +	default:
->> +		dev_err(se->dev, "Invalid xfer mode specified: %d\n", rsc.mode);
->> +		return -EINVAL;
->> +	}
->> +
->> +	ret = qup_fw_load(&rsc, fw_name);
->> +	if (ret) {
->> +		dev_err(se->dev,  "Firmware Loading failed for proto: %s Error: %d\n",
->> +			protocol_name[rsc.protocol], ret);
-> 
-> Aren't you printing same error multiple times?
-
-Removed in V3.
-
-> 
->> +		return ret;
->> +	}
->> +
->> +	dev_dbg(se->dev, "Firmware load for %s protocol is Success for xfer mode %d\n",
->> +		protocol_name[rsc.protocol], rsc.mode);
->> +	return ret;
->> +}
->> +EXPORT_SYMBOL_GPL(geni_load_se_firmware);
->> +
->>   static int geni_se_probe(struct platform_device *pdev)
->>   {
->>   	struct device *dev = &pdev->dev;
->> diff --git a/include/linux/soc/qcom/geni-se.h b/include/linux/soc/qcom/geni-se.h
->> index 2996a3c28ef3..289fa6675d2b 100644
->> --- a/include/linux/soc/qcom/geni-se.h
->> +++ b/include/linux/soc/qcom/geni-se.h
->> @@ -1,6 +1,7 @@
->>   /* SPDX-License-Identifier: GPL-2.0 */
->>   /*
->>    * Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
->> + * Copyright (c) 2023-2025 Qualcomm Innovation Center, Inc. All rights reserved.
->>    */
->>   
->>   #ifndef _LINUX_QCOM_GENI_SE
->> @@ -72,6 +73,19 @@ struct geni_se {
->>   	struct geni_icc_path icc_paths[3];
->>   };
->>   
->> +/**
->> + * struct qup_se_rsc - Structure containing se details protocol and xfer mode
->> + *
->> + * @mode: transfer mode se fifo, dma or gsi.
->> + * @protocol: Protocol spi or i2c or serial.
->> + * @se: Pointer to the concerned serial engine.
->> + */
->> +struct qup_se_rsc {
->> +	struct geni_se *se;
->> +	enum geni_se_xfer_mode mode;
->> +	enum geni_se_protocol_type protocol;
->> +};
->> +
->>   /* Common SE registers */
->>   #define GENI_FORCE_DEFAULT_REG		0x20
->>   #define GENI_OUTPUT_CTRL		0x24
->> @@ -531,5 +545,8 @@ void geni_icc_set_tag(struct geni_se *se, u32 tag);
->>   int geni_icc_enable(struct geni_se *se);
->>   
->>   int geni_icc_disable(struct geni_se *se);
->> +
->> +int geni_load_se_firmware(struct geni_se *se,
->> +			  enum geni_se_protocol_type protocol);
->>   #endif
->>   #endif
->> diff --git a/include/linux/soc/qcom/qup-fw-load.h b/include/linux/soc/qcom/qup-fw-load.h
->> new file mode 100644
->> index 000000000000..b9b58e81f5cb
->> --- /dev/null
->> +++ b/include/linux/soc/qcom/qup-fw-load.h
->> @@ -0,0 +1,179 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +/*
->> + * Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
->> + */
->> +#ifndef _LINUX_QCOM_QUP_FW_LOAD
->> +#define _LINUX_QCOM_QUP_FW_LOAD
->> +
->> +#include <linux/device.h>
->> +#include <linux/elf.h>
->> +#include <linux/firmware.h>
->> +#include <linux/kernel.h>
->> +
->> +/*Magic numbers*/
->> +#define MAGIC_NUM_SE			0x57464553
->> +
->> +/* Common SE registers*/
->> +#define GENI_INIT_CFG_REVISION		0x0
->> +#define GENI_S_INIT_CFG_REVISION	0x4
->> +#define GENI_FORCE_DEFAULT_REG		0x20
->> +#define GENI_CGC_CTRL			0x28
->> +#define GENI_CFG_REG0			0x100
->> +
->> +#define	QUPV3_SE_HW_PARAM_1		0xE28
-> 
-> Drop indentation after 'define'
-
-Updated in V3.
-
-> 
-> 
-> Best regards,
-> Krzysztof
+Raag
 
