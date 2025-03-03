@@ -1,109 +1,82 @@
-Return-Path: <linux-kernel+bounces-542320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DAD1A4C877
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:59:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA5BBA4C87E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:00:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD2C47A3B27
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:56:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8793A188B497
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:57:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2003C233127;
-	Mon,  3 Mar 2025 16:33:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BEFD2343C7;
+	Mon,  3 Mar 2025 16:34:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DijonD+M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pm.me header.i=@pm.me header.b="drSCFxB2"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703BC20E706;
-	Mon,  3 Mar 2025 16:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA7E233D87
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 16:34:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741019634; cv=none; b=rf1pM93BO/1udyM3TBCaE+TT1wBu+v4TJ3H1DeZLUwr8vx1YDOsTzbl7TZIU78R2nHz/UtjvdALy/u1FNzXLXMHGv1nZri9UZ79zxWg8pwrlwIwbY5SEoSMWnyrtBym+6YMylRKm0OR0qoyC9lzhpK5/SG7PimRAvvJNaEnVJWY=
+	t=1741019650; cv=none; b=oJqJUFLksFlhRDSYw6YNS5YuqMwGPMH8z6ksLx//2gDNJLR6Zkn0kJgo8edImujK9apJOUCTpzxB0L2Ey/109lBmcmWH7VgkLawVZal6mQlQiUFYhHHmRyp+nXp2oxLXFgwjBK0kNxNyW+6vCzg3Hqc/VLwz2MvS24cE4y4Mj0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741019634; c=relaxed/simple;
-	bh=kXL73sjW9CE6qW2km9AaFyZiQTVa+1IdrzDGd3cNszo=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W81V9p85kOb/1m+8JbkzSlWPW6MdpuQRWA/Zu9QpDYkhSokrrDFLN1Jtr2avZnjh95QrTnX+FzbW0EDkGOvNRq0e4i3ECF0gyCkpVtJESSQH87DVPeSMMOaDPFeeaCRvI7KxQKEu8MIGztT/XLR+Lm5e+AnFLhzEQ2Km1TTdHCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DijonD+M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF1ADC4CED6;
-	Mon,  3 Mar 2025 16:33:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741019634;
-	bh=kXL73sjW9CE6qW2km9AaFyZiQTVa+1IdrzDGd3cNszo=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=DijonD+MX6p+TQYDSVX7lFCVR5+au+A6DEzqIx+A9Ue79cQvzZCDewi4pcu6LQeso
-	 9nBl8wr7o/ZuJv0drQyGjxDyXakhIg0cUs/cB0k6ixu4ID2orKKl1NASD3R4SNE1YU
-	 QkyROTUKnHSjLbYOClOAwsaYP9wMDZDy2g5IvezgJFAN0U/BilMPBtRexWzmDvGJtt
-	 NKCLMUcboAekwVmhy2ZvtOrXCCgA4u+rzhAWnQu/0tEtcfglE+HxMSqhjINzAxw2/a
-	 cEpDE0P+eeeEqSE3S0C59LxJKG2aWZU3fDoDJ1rPonLoljk3rV6sPcAfZhhs2Gqb2H
-	 Zqux9FNh8IXNg==
-Date: Mon, 3 Mar 2025 08:33:51 -0800
-From: Kees Cook <kees@kernel.org>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, jeffxu@chromium.org,
-	akpm@linux-foundation.org, jannh@google.com,
-	torvalds@linux-foundation.org, vbabka@suse.cz,
-	lorenzo.stoakes@oracle.com, adhemerval.zanella@linaro.org,
-	oleg@redhat.com, avagin@gmail.com, benjamin@sipsolutions.net,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-	linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-	jorgelo@chromium.org, sroettger@google.com, hch@lst.de,
-	ojeda@kernel.org, thomas.weissschuh@linutronix.de,
-	adobriyan@gmail.com, johannes@sipsolutions.net,
-	pedro.falcato@gmail.com, hca@linux.ibm.com, willy@infradead.org,
-	anna-maria@linutronix.de, mark.rutland@arm.com,
-	linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de,
-	rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com,
-	f.fainelli@gmail.com, gerg@kernel.org, dave.hansen@linux.intel.com,
-	mingo@kernel.org, ardb@kernel.org, mhocko@suse.com,
-	42.hyeyoo@gmail.com, peterz@infradead.org, ardb@google.com,
-	enh@google.com, rientjes@google.com, groeck@chromium.org,
-	mpe@ellerman.id.au, aleksandr.mikhalitsyn@canonical.com,
-	mike.rapoport@gmail.com, Jeff Xu <jeffxu@google.com>
-Subject: Re: [PATCH v8 0/7] mseal system mappings
-Message-ID: <202503030832.200CF1F46@keescook>
-References: <20250303050921.3033083-1-jeffxu@google.com>
- <o2ynggupddg2iscald76q5niaipssy3gkmsvdkvobopc5whvah@ealwojbiwsrn>
+	s=arc-20240116; t=1741019650; c=relaxed/simple;
+	bh=TxFXzhsCXG0uQIgmK+6/Wr/GwZRnOhLDI/uMTiTpLSI=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nfLsc+UMIHgJKo7xeBxq3dghcK+NbuUGS+WaosJl+AMehXB6DRczQMMUcOqMf6120eGRJRNGzhW5Cn4RPtreekrk4KXiNsQEuuNVgaPy6AhOxGgfBujvfJaW9IATtHawOBlzswElPDLC54u7wa58jUvZpyvtqZwa5EX/0/yYhk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=drSCFxB2; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1741019641; x=1741278841;
+	bh=TxFXzhsCXG0uQIgmK+6/Wr/GwZRnOhLDI/uMTiTpLSI=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=drSCFxB2ZDqHJRh1F9vUGLaESw9pQ+PUFb+T3Jr6o8i61EUCWTTBiZQckCB3ixRMv
+	 swpOX8bwwydQfuRuuheypSfKDQOYJEeUGJbMUfsbMiyRrRwxdSeRMFc1IyfdSbrOTI
+	 NR5pO0T5Vm6WmBQaC5Y4c0DsF6YQxAEZraQFCU+UIpcNbTFHy0huSgP7rLQyvWy/Gj
+	 96obXM5yyD3jCfcPd9sHy4BaCNPJsCX0D5aPQu8xC/+j0yt3fp8Enp4GdtntxwzRJX
+	 qC2V/9/rHZiorvWllXnkty3Nh4wyA1Z9bDIQ26GflSvlUHqo0JMdvpU8qXFFEteeYm
+	 hQFDcc8J5sqbQ==
+Date: Mon, 03 Mar 2025 16:33:56 +0000
+To: Andreas Hindborg <a.hindborg@kernel.org>
+From: Oliver Mangold <oliver.mangold@pm.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v3] rust: adding UniqueRefCounted and UniqueRef types
+Message-ID: <Z8XZ8EFEXM-kYelX@laptop>
+In-Reply-To: <87o6yijirw.fsf@kernel.org>
+References: <EiaQ-C0o3GMQQpw3jCnXUnNgph2WIJ5-Cm8P5N9OysIlDKYrjHNun5Ol4Q1FfVGw64k6TGCfUVBJK5r0_2eypg==@protonmail.internalid> <MFrukGViddXfhKeURDySTWCDW6Pk8Oo5keozdVg9hehiS3P4FVHKv4d-Fwn87yprBUeyTHcY6T1k9htIhPzc9Q==@protonmail.internalid> <Z8H6EUy1HqLrzytE@laptop> <87frjxncsx.fsf@kernel.org> <R-XaKS9h55NHdh6RYNYWTGw7oDyauYJhAY72W8DAgJJ73VskOhGPlSZP5DC4teo0EdhbDDtLV0Lnd9MMd-jCBg==@protonmail.internalid> <Z8Wuud2UQX6Yukyr@mango> <87o6yijirw.fsf@kernel.org>
+Feedback-ID: 31808448:user:proton
+X-Pm-Message-ID: 33cf7609a55a21449a800aa97e7cd0b3e026495f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <o2ynggupddg2iscald76q5niaipssy3gkmsvdkvobopc5whvah@ealwojbiwsrn>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 03, 2025 at 09:59:13AM -0500, Liam R. Howlett wrote:
-> * jeffxu@chromium.org <jeffxu@chromium.org> [250303 00:09]:
-> 
-> ...
-> 
-> > 
-> > Link: https://lore.kernel.org/all/20240415163527.626541-1-jeffxu@chromium.org/ [1]
-> > Link: Documentation/userspace-api/mseal.rst [2]
-> > Link: https://lore.kernel.org/all/CABi2SkU9BRUnqf70-nksuMCQ+yyiWjo3fM4XkRkL-NrCZxYAyg@mail.gmail.com/ [3]
-> > Link: https://lore.kernel.org/all/CABi2SkV6JJwJeviDLsq9N4ONvQ=EFANsiWkgiEOjyT9TQSt+HA@mail.gmail.com/ [4]
-> > Link: https://lore.kernel.org/all/202502251035.239B85A93@keescook/ [5]
-> > 
-> > -------------------------------------------
-> > History:
-> > 
-> > V8:
-> >   - Change ARCH_SUPPORTS_MSEAL_X to ARCH_SUPPORTS_MSEAL_X (Liam R. Howlett)
-> 
-> It looks like this was captured wrong in just this update. Change
-> ARCH_HAS => ARCH_SUPPORTS.  Code looks correct.
-> 
-> Kees also ran down the meaning of the two more than I did, so thanks
-> again Kees!
+On 250303 1522, Andreas Hindborg wrote:
+>=20
+> This part:
+>=20
+> Goes immedieatly after the cut like so:
+>
+Hi Andreas,
 
-You're welcome; I'm glad I did it -- I really need to capture that
-research somewhere. Perhaps a blog post ... I can't really find a good
-place in Documentation/ ? Hmmm
+sorry, again. I misunderstood what 'after the marker' means.
+But as I now tried all orderings, I should get it right from now on :)
 
--- 
-Kees Cook
+> Again, I'll recommend the use of b4 [1].
+>
+
+Might make sense. I will look into it,
+
+Oliver
+
 
