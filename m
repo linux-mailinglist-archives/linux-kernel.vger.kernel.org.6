@@ -1,153 +1,130 @@
-Return-Path: <linux-kernel+bounces-541836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 138DEA4C22E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:39:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6460EA4C231
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:40:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6792D17134D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:39:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BD8217163B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:39:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48CEE212B2F;
-	Mon,  3 Mar 2025 13:39:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B919212B2B;
+	Mon,  3 Mar 2025 13:39:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hX7P9/Jp"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b="p0KolgJx"
+Received: from smtp-out3.simply.com (smtp-out3.simply.com [94.231.106.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A8F9212B0A
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 13:39:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7229E21148A;
+	Mon,  3 Mar 2025 13:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.231.106.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741009176; cv=none; b=OIMsBzMxMNfqZnfRrI8TceT1ohGKyNnRZ9HjfNx+kbcYY6O5Xiopj8C7948FwVo9LRZXPcZvSmVEHRAJ/1uGe2ZSLozSGIOasgxFF1K1gAwu9Fw3XXBe7mpfu89hEgX+Z7QjhU2rIxr2W4GrZnCCVhvMapd1Q5qI7w/j3EplStI=
+	t=1741009188; cv=none; b=S65dIq9u+ygmuGsCi7QHaz39Yj8h5B/qxujqvRjE9YKMpVL7fcmqyCzcCci/XMQGv1I13RIlkcV4mBbmGEqQUFU7SITyFpFjUx4sqS20drRvnzgoRNkEZ1F2XSte7BaS2NOd6O8vq0iVoaamhebKSASeKAVm4SGUwc3qqVeR4/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741009176; c=relaxed/simple;
-	bh=W42VFbcHM6C8HgZoC7QynK+IoHwG9vv9+hfbJQmY/dU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JAmg2sDGVawk2rms4XD/+e77gvIMbI2ywVK4ccKU6U7+/jZyTqKD3kfVjU44alEx5BdhA/Rth1xKyQNjm+hfCO6qgc0rdcYfIiFlU8qBM0NQKWPSIHLZ9HaPUdbWllSiWwFuA0fryNrBhU1hqkViGP8hYLi/grnPJz0Mxn0hieY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hX7P9/Jp; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5239WmcW028371
-	for <linux-kernel@vger.kernel.org>; Mon, 3 Mar 2025 13:39:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=nIQVnwUkhcucJ5H4WOAoDo
-	sI74zNR+7bQG2dUOq+y6g=; b=hX7P9/JpXtq8Bw8UBWc35JBKUJ0MdCrPjAtwWa
-	AqUwoi6dCkaE7HFlJkuNQltmwuXx3tZfCtgyne5P7vuK6xT+y7ZF1O9MVKYfergL
-	B9mFLQU3bn0UFiIlJdsCxN6XWC5YGWroc0VO/FsltQZTVNn5GIhwnUuRRivrxbUN
-	vOI40Ona0QfQmNg1L4zE8oZRIpXCGXfgeOtH5FJxbju+YrSg6hUJykzU7x0IR259
-	vFkukdQOAZkv6CKWEMvkvsyF+iqJbF083VwdFhuF/KtHaKKv8Niic1pq+RwYOmtF
-	EfRKVoimXJ+5Z+YQANtS9ynbYwzSX8JKE4Ah5+BiCu3Gg6xg==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 453tm5n2rm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 13:39:32 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-22368a8979cso52291675ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 05:39:32 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741009171; x=1741613971;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nIQVnwUkhcucJ5H4WOAoDosI74zNR+7bQG2dUOq+y6g=;
-        b=YjIY4bCZ1IgqLef8eVo+jz2jkg9ik5Xh30mkpORhfGI22VJqo5Nu9Sie15mjeqCu37
-         kXe0RbM4zxJwtcvlSsY8DD6j03nzid3sibrzIvKWf7IFeOsYPzERqyI8HGBAR43KdJTK
-         tvbUl1oB+96FwELDnRXr1RGHHxlH8g6B/t13P9GFy0q1k3JwTbqjQqwhKIwNHAlSPVCw
-         uIiLh+sSypBBy9Uoj0uyWGNOoWNY82UuIW72UJk4hoVMXpRYhNZpVVc5AEYDp/sOp9Yj
-         3J26E0CLTJupdoHORGGeCh7cym99rx8hvW6Z9PfLooGAzOxopOSiUOMBrv0ZjhYfKvnU
-         3k1A==
-X-Forwarded-Encrypted: i=1; AJvYcCWAPNZbH7KoIqIh2yj4hHq/UBv47yBkybvymjtnF9Smpzw+GDmAq4mlruxJYUtPecAOy9uVehlZpNkf0XU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzokllhAOHgW1MKa6qdT6ezqukQHl9UDs0OeQbaT1AxicZprsha
-	vGOb8ReL9ZeaFemXegsYnbGkCkk7kdn6ApC0QXDd+eQGGNuyBrprk8PFMrlCAD7QMu1DC7CjPnQ
-	ViMN5Pgrn9PAKqZ00E3ziGQCJ4ZkXAFnU2Izy9ouCgh5xuAeCRJ5k4THiOLsNV5r7TtjX+5c=
-X-Gm-Gg: ASbGncuf6mAlThlz0hDRYFPcKBO4YSomeUgBs/TqAPjXtlQe1L7vsUntKmHJ52fwVts
-	jHmj5QgmlcfQ4zNfqLxlZ5kTLWEtUMGaL7Ik5NYEhXpZNe1AimAfAqp3BCaRHVnJqc3Wg0fjEya
-	9fZNJcFDSuFwMLzuy1KZiNWHiCuP0H9sNNs6cq6LA06fQyGarVuHr9dMCYZE6U9SFVdT3x7fxbf
-	qboBxEdnWpfiPZph+fC5lJFOrk1s6YJ7752gcURnjxTZFyBVLw9zCuW5K1D5Y/gP/fBa8WTeX3W
-	dAi4jDH3m+reefLr8vgiya4Dkyd30F/FZ9QQReVvqNlvpXN1MPjm3Z2ZVgUxHjJZOvUgEEjVVZK
-	s+6SwmIyQDCzglpbDwnnfZb3dk2yDqomHURIYU6LIaiRFpjViK6g=
-X-Received: by 2002:a05:6a00:1395:b0:736:34a2:8a23 with SMTP id d2e1a72fcca58-73634a28b2emr12020351b3a.15.1741009170902;
-        Mon, 03 Mar 2025 05:39:30 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGhCNCrjRuRuCl022cqkXQEPD1tlSMudTTCp9392WLz5n8Bj4Pqwey3S/sR07jQTUFTopqirA==
-X-Received: by 2002:a05:6a00:1395:b0:736:34a2:8a23 with SMTP id d2e1a72fcca58-73634a28b2emr12020313b3a.15.1741009170425;
-        Mon, 03 Mar 2025 05:39:30 -0800 (PST)
-Received: from hu-kathirav-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73669aa1497sm221264b3a.92.2025.03.03.05.39.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 05:39:29 -0800 (PST)
-From: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
-Date: Mon, 03 Mar 2025 19:09:26 +0530
-Subject: [PATCH v2] mailmap: update my email address
+	s=arc-20240116; t=1741009188; c=relaxed/simple;
+	bh=o+ts1pt/FQ0CGJdP3sC0rV01GDi3wTNTC2H3kxq4b90=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qqS7WfwCCX5yDgwJ/MbZqayNzVCbe/WXdam9yWxPKr1N5rwC3URguhwvpZdLBSEuKNhccVBIDO7Z9iuJ4IEpwFOOIbVW1mg+bRnaPLE77ljlcdDhYW8KcdIFmCXxnBZoM/45gtSKwmDrhfKyhcm1jmdCCZDo+HLzTWHkrp+ogs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com; spf=pass smtp.mailfrom=gaisler.com; dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=p0KolgJx; arc=none smtp.client-ip=94.231.106.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gaisler.com
+Received: from localhost (localhost [127.0.0.1])
+	by smtp.simply.com (Simply.com) with ESMTP id 4Z60Kp3w73z1FbbW;
+	Mon,  3 Mar 2025 14:39:42 +0100 (CET)
+Received: from [10.10.15.10] (h-98-128-223-123.NA.cust.bahnhof.se [98.128.223.123])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by smtp.simply.com (Simply.com) with ESMTPSA id 4Z60Kn4PqSz1Fb3J;
+	Mon,  3 Mar 2025 14:39:41 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gaisler.com;
+	s=unoeuro; t=1741009182;
+	bh=U9UNcI/nx3v8USmf6+dAWPsF1rNLmjoWXEBhsh+2uHs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=p0KolgJx4p9btvk6fYlk/66A1PpkCAcDXoLwwd13tXWlLgCyaTRqeAZoowkRKGUcz
+	 a93BO8cm7m7V9NR5W2AabYKC+pmXp6QfOyzdLHkjLMMme9YAVr/Jk545VauJVRJBRF
+	 f0+BgLYnD++BR/MTcLl9Jh8F872XyJXNOzOZA4ck=
+Message-ID: <f99125f1-e4e4-4ee8-909d-8e8d0618d54b@gaisler.com>
+Date: Mon, 3 Mar 2025 14:39:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 3/4] sparc/mm: Avoid calling
+ arch_enter/leave_lazy_mmu() in set_ptes
+To: Ryan Roberts <ryan.roberts@arm.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "David S. Miller" <davem@davemloft.net>, Juergen Gross <jgross@suse.com>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-mm@kvack.org, sparclinux@vger.kernel.org,
+ xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+References: <20250302145555.3236789-1-ryan.roberts@arm.com>
+ <20250302145555.3236789-4-ryan.roberts@arm.com>
+Content-Language: en-US
+From: Andreas Larsson <andreas@gaisler.com>
+In-Reply-To: <20250302145555.3236789-4-ryan.roberts@arm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250303-mailmap-v2-1-4a325bca941a@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAA2xxWcC/2WMwQ7CIBAFf6XZszQsVKme/A/TA6XUblJKBSWah
- n8Xe/XyknmZzAbRBrIRLtUGwSaK5JcC4lCBmfRyt4yGwiC4OHLJJXOaZqdXJs+9MnhC1aCGYq/
- BjvTeS7eu8ETx6cNnDyf8vf+NhAyZalohx8G03PRXH2P9eOnZeOfqMtDlnL9J4ZVwpQAAAA==
-X-Change-ID: 20250303-mailmap-39b7c161741a
-To: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741009168; l=1473;
- i=kathiravan.thirumoorthy@oss.qualcomm.com; s=20230906;
- h=from:subject:message-id; bh=W42VFbcHM6C8HgZoC7QynK+IoHwG9vv9+hfbJQmY/dU=;
- b=7IbBPU3YePa+D/g1N6+Mtj+EdOl4SVCL5ns1KKzYNeLsNBAjAbjnZDw4SnvbZwiCbwCXzjek7
- dWRCFz1lQs1AMy9940gsuK3X07u3gPJSgvae1budABX1pXXp6B9cyYj
-X-Developer-Key: i=kathiravan.thirumoorthy@oss.qualcomm.com; a=ed25519;
- pk=xWsR7pL6ch+vdZ9MoFGEaP61JUaRf0XaZYWztbQsIiM=
-X-Proofpoint-ORIG-GUID: ve7c8-xm56wUz_6V5rIdUrpPqaqLKxw2
-X-Proofpoint-GUID: ve7c8-xm56wUz_6V5rIdUrpPqaqLKxw2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-03_07,2025-03-03_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 malwarescore=0 mlxlogscore=858 suspectscore=0
- priorityscore=1501 adultscore=0 clxscore=1015 bulkscore=0 mlxscore=0
- phishscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2503030105
 
-Qualcomm is migrating away from quicinc.com email addresses towards ones
-with *.qualcomm.com. Incorporate the same.
+On 2025-03-02 15:55, Ryan Roberts wrote:
+> With commit 1a10a44dfc1d ("sparc64: implement the new page table range
+> API") set_ptes was added to the sparc architecture. The implementation
+> included calling arch_enter/leave_lazy_mmu() calls.
+> 
+> The patch removes the usage of arch_enter/leave_lazy_mmu() since this
+> implies nesting of lazy mmu regions which is not supported. Without this
+> fix, lazy mmu mode is effectively disabled because we exit the mode
+> after the first set_ptes:
+> 
+> remap_pte_range()
+>   -> arch_enter_lazy_mmu()
+>   -> set_ptes()
+>       -> arch_enter_lazy_mmu()
+>       -> arch_leave_lazy_mmu()
+>   -> arch_leave_lazy_mmu()
+> 
+> Powerpc suffered the same problem and fixed it in a corresponding way
+> with commit 47b8def9358c ("powerpc/mm: Avoid calling
+> arch_enter/leave_lazy_mmu() in set_ptes").
+> 
+> Fixes: 1a10a44dfc1d ("sparc64: implement the new page table range API")
+> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+> ---
+>  arch/sparc/include/asm/pgtable_64.h | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/arch/sparc/include/asm/pgtable_64.h b/arch/sparc/include/asm/pgtable_64.h
+> index 2b7f358762c1..dc28f2c4eee3 100644
+> --- a/arch/sparc/include/asm/pgtable_64.h
+> +++ b/arch/sparc/include/asm/pgtable_64.h
+> @@ -936,7 +936,6 @@ static inline void __set_pte_at(struct mm_struct *mm, unsigned long addr,
+>  static inline void set_ptes(struct mm_struct *mm, unsigned long addr,
+>  		pte_t *ptep, pte_t pte, unsigned int nr)
+>  {
+> -	arch_enter_lazy_mmu_mode();
+>  	for (;;) {
+>  		__set_pte_at(mm, addr, ptep, pte, 0);
+>  		if (--nr == 0)
+> @@ -945,7 +944,6 @@ static inline void set_ptes(struct mm_struct *mm, unsigned long addr,
+>  		pte_val(pte) += PAGE_SIZE;
+>  		addr += PAGE_SIZE;
+>  	}
+> -	arch_leave_lazy_mmu_mode();
+>  }
+>  #define set_ptes set_ptes
 
-Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
----
-Changes in v2:
-- added linux-arm-msm in the TO list
-- Link to v1: https://lore.kernel.org/r/20250303-mailmap-v1-1-74823fdc80cb@oss.qualcomm.com
----
- .mailmap | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Acked-by: Andreas Larsson <andreas@gaisler.com>
 
-diff --git a/.mailmap b/.mailmap
-index 01145c078838bf9348e8d0e5e48b7b0954248dc5..928bcf4e45bcd0f6f8d275b59ef876fb3581a108 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -381,7 +381,8 @@ Kalle Valo <kvalo@kernel.org> <kvalo@codeaurora.org>
- Kalle Valo <kvalo@kernel.org> <quic_kvalo@quicinc.com>
- Kalyan Thota <quic_kalyant@quicinc.com> <kalyan_t@codeaurora.org>
- Karthikeyan Periyasamy <quic_periyasa@quicinc.com> <periyasa@codeaurora.org>
--Kathiravan T <quic_kathirav@quicinc.com> <kathirav@codeaurora.org>
-+Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com> <kathirav@codeaurora.org>
-+Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com> <quic_kathirav@quicinc.com>
- Kay Sievers <kay.sievers@vrfy.org>
- Kees Cook <kees@kernel.org> <kees.cook@canonical.com>
- Kees Cook <kees@kernel.org> <keescook@chromium.org>
-
----
-base-commit: cd3215bbcb9d4321def93fea6cfad4d5b42b9d1d
-change-id: 20250303-mailmap-39b7c161741a
-
-Best regards,
--- 
-Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
-
+Thanks,
+Andreas
 
