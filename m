@@ -1,194 +1,127 @@
-Return-Path: <linux-kernel+bounces-541695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FCB7A4C03B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:23:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0EFCA4C034
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:22:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 784E21700F4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:22:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 367FC3A8174
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:21:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E48D3211A14;
-	Mon,  3 Mar 2025 12:22:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88DB420F09D;
+	Mon,  3 Mar 2025 12:22:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W7TV8fFC"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A116qQxc"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C59211261;
-	Mon,  3 Mar 2025 12:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F8320F083;
+	Mon,  3 Mar 2025 12:22:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741004532; cv=none; b=Gpm8trc6eiEvy0axRoVfGXvPQb+6bwDNyvT1pZ7I9jMo9KmdjXZHG7BgE77inKoaHwaVSQe6wJy/YGsOzjW4+G/P4NHxA1SJLpzhzxufmCzxvcf5B2AA3fUsUzui8XZkB5yckzLEyVqD/Je7f6JtzC8rzi2PYKFG+Njjt3BBkl4=
+	t=1741004521; cv=none; b=QyKWhJZgSD/0TTP0Kc10GXWFYuoR1R7xtlulFihBhwWTVaIMT2l4V1oZSOpih34dqlYBLXUJKLhQpas6dc/fA6BOzkRPfZTrxJhFYolUJL/goKWEu8NLIOA6tQWzMQQb7yurE0FLiByKb39veadoV0LD2E8lhq/TlRY4kHrK4uI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741004532; c=relaxed/simple;
-	bh=/RoB+O5ZCm4Jt93NVDs+1xICxKfZ4DLQGNO3TjWMPtU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WFU4PeDdnuTyOEoDy2C3ToJGpKOQlLQonjKOa8irfM/DuJKaADpQhJY/QFY4Slrb88+hNc7ZZT6orpR/hhQTynmVG6zQkKeJhaxOAxrXZSDMNLniAskV2El316oswmfMmaKjhLT9j7r/zPhZ1cSqyGV34zGV8RJsMUi4QYn3YYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W7TV8fFC; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-30b9f7c4165so20927941fa.3;
-        Mon, 03 Mar 2025 04:22:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741004528; x=1741609328; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kOGpGJnVdsS2eqbkL2yrs0irjDblflxlQ891CwEclog=;
-        b=W7TV8fFC+6O9TCz9jLCPIZSfz4gejQRNrN+h2rtLMqI6dWClZR6Jxaqi1n+GGtJEnZ
-         u6wgA9jgLQMMuGn1EBOu4Yx6gQ2vtNT7v5BAjklfKSQEnZpB4gm1wekA+1zjiDJh3uOc
-         9ByiCqyyxOf7vEFtlzqEYXCzNQ4QM0wNnX9Yv/Evu+6hVYBTll5mLsnw9YaySNrEqiB7
-         IKXlO2NUouBOIv+j3xekTBYS4BeS+mF+PTL+A61P5OWhVkI5MtZyZ4rwaZmUL+vRuwM6
-         3+rwnu32QLxoYFLXNgE1hN83YI5Zk4d6zOFpwsGysf9Asec/3DDf3S6Ey2b2eKRqubDr
-         0lEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741004528; x=1741609328;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kOGpGJnVdsS2eqbkL2yrs0irjDblflxlQ891CwEclog=;
-        b=T+zeo7NLX1PXsFiSod9JToJJhWk+IOThnzQ7Rj1T+rZJNnjFYPIDXFW5NbceJb3s2/
-         BhxWmc8qF5rKb9MRpLdix2G1UU4TVSUhafqe/DBpbja4m94oj8jWQqc5bzpoXTt1/YQ8
-         7ddEPGmQl9o7GP1J2zF/MOtqlRwZbaB4PNu6Vfjo7m++sj868/+EtteQomkneaE37zr7
-         tmS5rTxZI3jlUgjUfoGqOFTl9qRveyupE795OIvCxaKaN5HEQPtLdHl5NBxE0l6C3Ov2
-         P1KhDOVr8rOHwtztNMjDjhheY/6WzIB9ecFL/jv5DChe5oP3TltZM5oOYroNMNeStX06
-         i0Fg==
-X-Forwarded-Encrypted: i=1; AJvYcCXnUiT3DcpVS07PK7jFSenuJ+u8XB1Pq04SVipRNRZXXq5R2a4dBENYL9Nbd3P9ZOAAi1EaxUTOd6OU@vger.kernel.org, AJvYcCXyKvoAfhqmT78e1PCX4TelrF9CE/0IqJoXV8AuyiGfkIE2WBdofSKKalrO3PkjDDQ1bj27W8VUz4HA5zam@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcBdjp3L/jJEbtocF37SwtiAGk84cak2XJH5SoE9T4y0hyrGy4
-	w2zetoc3Gyy8Y1k5G2jf4HRuQogGR0Vrymi2Prg+9urI/pJFTaCxQcrK5A==
-X-Gm-Gg: ASbGncvQlT6fQax3jgR5kkuw/x6WNU+kFVRvGN8gLForEzNPtuhlCH3O+ypyvTQaHIp
-	Y/Sgc8tXfefZFpEGgYzH2WMeGXpeEqXz4NjEescoxJ5ZakmR4bMBDc2TJ4vD2vjgk2owZlKiFQD
-	8XGd5LGrHTMv9e9tF8gvRr1me7SQGMyZ/RKrpFmsJ5pEKrOGsJ5ulsUJllVTuMYaAO1hj/EFtsU
-	Qi6NHZEsfktmEJv9fxJfS2+dHH5/cmtdzkBj3dI9W3Tv32C8UDOpFAk2uwJ3ow/uE6lLEsW08ks
-	Qm0A+/y4TUbUCn8+Kup8lxHag5qOjmu31hs=
-X-Google-Smtp-Source: AGHT+IGI1Gd+yOAoF2e2IdT9/R4jZ9Lr6thS4xPZWq9Os6HxY5dMlAcS7PgHy1ECByIHbtsiXkFQgQ==
-X-Received: by 2002:a2e:bc14:0:b0:308:ee65:7f4d with SMTP id 38308e7fff4ca-30b93454590mr44700661fa.32.1741004528273;
-        Mon, 03 Mar 2025 04:22:08 -0800 (PST)
-Received: from xeon.. ([188.163.112.51])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30b868766desm13486611fa.100.2025.03.03.04.22.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 04:22:07 -0800 (PST)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Laxman Dewangan <ldewangan@nvidia.com>
-Cc: linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	s=arc-20240116; t=1741004521; c=relaxed/simple;
+	bh=G+PRDV5mfNwcg2FIzmfIzN2GOCgKDORUlKjOVJveauU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rF2BTkNNf1O4z/EW/iwSv3n8THgr1cRGb4J/1EZIFaHuyOc6PtDpojo3iSxQP/0uaPXsPgmAEzLtEC6wvgvwWriVN7xz5x10Pw61ihzHww6deC9vQb5x5oKddWfktCr52BEs4bh7A7RWNIYTnR8XXWeYkvzmGFF9Qj6+eANoOSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A116qQxc; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741004520; x=1772540520;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=G+PRDV5mfNwcg2FIzmfIzN2GOCgKDORUlKjOVJveauU=;
+  b=A116qQxcSolLScuk5T7Hqqv+jfnbrRJEQoNR22Si5f8Bb6v56yoPQqj3
+   cN3mWbTSH18Mfj+gQHJCc/MAg2QuM0emgtK1r3YHBEthebOKsWWXJeeCw
+   ianGF6lY/F5/k3HgwBBcjeZmBagThwLuNEuc+zF8JnqPmnECaIj0m2Mfu
+   4haETE6OhynGhX3CTp6+JwaSgjDhGlfpA2mR122OOpobNsrJXUCIvsFDg
+   SQVU/+68KIERlJLKtGTAszjIdNdgCUCYe/uN3PjpEGVCktGVDM21qVa4p
+   sRZj0Y7KmahsvY+wpMC9VIFgtSAKIhTbQvoOjuc/mw+3w2KzWpBIjRFAN
+   g==;
+X-CSE-ConnectionGUID: YoCtPTivRlOv6U5IEg8XyA==
+X-CSE-MsgGUID: QI9cS949TkyykwzVtcfSGw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="41764148"
+X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
+   d="scan'208";a="41764148"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 04:22:00 -0800
+X-CSE-ConnectionGUID: OkgzZWZfRvG7oho8rGf9/A==
+X-CSE-MsgGUID: tJWSFf8xQbGxJ7yS/srYmQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
+   d="scan'208";a="118690136"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 04:21:58 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tp4nz-0000000GoJJ-2Ykv;
+	Mon, 03 Mar 2025 14:21:55 +0200
+Date: Mon, 3 Mar 2025 14:21:55 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Raag Jadav <raag.jadav@intel.com>
+Cc: lee@kernel.org, giometti@enneenne.com, gregkh@linuxfoundation.org,
+	raymond.tan@intel.com, linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/2] thermal: thermal-generic-adc: add temperature sensor channel
-Date: Mon,  3 Mar 2025 14:21:51 +0200
-Message-ID: <20250303122151.91557-3-clamor95@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250303122151.91557-1-clamor95@gmail.com>
-References: <20250303122151.91557-1-clamor95@gmail.com>
+Subject: Re: [PATCH v2 2/5] gpio: elkhartlake: depend on
+ MFD_INTEL_EHL_PSE_GPIO
+Message-ID: <Z8We4_FJvxTxegpN@smile.fi.intel.com>
+References: <20250303044745.268964-1-raag.jadav@intel.com>
+ <20250303044745.268964-3-raag.jadav@intel.com>
+ <Z8VmebNcrH6CjHp6@smile.fi.intel.com>
+ <Z8WUpzDHbhp0aMoN@black.fi.intel.com>
+ <Z8WWNHL1rZKV4c4o@smile.fi.intel.com>
+ <Z8Wc73OytMx3khP_@black.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8Wc73OytMx3khP_@black.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-To avoid duplicating sensor functionality and conversion tables, this design
-allows converting an ADC IIO channel's output directly into a temperature IIO
-channel. This is particularly useful for devices where hwmon isn't suitable
-or where temperature data must be accessible through IIO.
+On Mon, Mar 03, 2025 at 02:13:35PM +0200, Raag Jadav wrote:
+> On Mon, Mar 03, 2025 at 01:44:52PM +0200, Andy Shevchenko wrote:
+> > On Mon, Mar 03, 2025 at 01:38:15PM +0200, Raag Jadav wrote:
+> > > On Mon, Mar 03, 2025 at 10:21:13AM +0200, Andy Shevchenko wrote:
+> > > > On Mon, Mar 03, 2025 at 10:17:42AM +0530, Raag Jadav wrote:
 
-One such device is, for example, the MAX17040 fuel gauge.
+...
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
----
- drivers/thermal/thermal-generic-adc.c | 54 ++++++++++++++++++++++++++-
- 1 file changed, 53 insertions(+), 1 deletion(-)
+> > > > >  config GPIO_ELKHARTLAKE
+> > > > >  	tristate "Intel Elkhart Lake PSE GPIO support"
+> > > > > -	depends on X86 || COMPILE_TEST
+> > > > > +	depends on (X86 && MFD_INTEL_EHL_PSE_GPIO) || COMPILE_TEST
+> > > > >  	select GPIO_TANGIER
+> > > > 
+> > > > Looking on how GPIO PMIC drivers are written, I would redo this as
+> > > > 
+> > > > 	depends on (X86 || COMPILE_TEST) && MFD_INTEL_EHL_PSE_GPIO
+> > > 
+> > > True, but perhaps allow independent COMPILE_TEST where possible?
+> > 
+> > It will be tested in all-or-none way. Or you think it has to be tested
+> > individually? If so, why is it needed?
+> 
+> Better CI coverage?
 
-diff --git a/drivers/thermal/thermal-generic-adc.c b/drivers/thermal/thermal-generic-adc.c
-index ee3d0aa31406..a8f3b965b39b 100644
---- a/drivers/thermal/thermal-generic-adc.c
-+++ b/drivers/thermal/thermal-generic-adc.c
-@@ -7,6 +7,7 @@
-  * Author: Laxman Dewangan <ldewangan@nvidia.com>
-  */
- #include <linux/iio/consumer.h>
-+#include <linux/iio/iio.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
-@@ -73,6 +74,57 @@ static const struct thermal_zone_device_ops gadc_thermal_ops = {
- 	.get_temp = gadc_thermal_get_temp,
- };
- 
-+static const struct iio_chan_spec gadc_thermal_iio_channel[] = {
-+	{
-+		.type = IIO_TEMP,
-+		.info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED),
-+	}
-+};
-+
-+static int gadc_thermal_read_raw(struct iio_dev *indio_dev,
-+				 struct iio_chan_spec const *chan,
-+				 int *temp, int *val2, long mask)
-+{
-+	struct gadc_thermal_info *gtinfo = iio_priv(indio_dev);
-+	int ret;
-+
-+	if (mask != IIO_CHAN_INFO_PROCESSED)
-+		return -EINVAL;
-+
-+	ret = gadc_thermal_get_temp(gtinfo->tz_dev, temp);
-+	if (ret < 0)
-+		return ret;
-+
-+	*temp /= 1000;
-+
-+	return IIO_VAL_INT;
-+}
-+
-+static const struct iio_info gadc_thermal_iio_info = {
-+	.read_raw = gadc_thermal_read_raw,
-+};
-+
-+static int gadc_iio_register(struct device *dev, struct gadc_thermal_info *gti)
-+{
-+	struct gadc_thermal_info *gtinfo;
-+	struct iio_dev *indio_dev;
-+
-+	indio_dev = devm_iio_device_alloc(dev, sizeof(struct gadc_thermal_info));
-+	if (!indio_dev)
-+		return -ENOMEM;
-+
-+	gtinfo = iio_priv(indio_dev);
-+	memcpy(gtinfo, gti, sizeof(struct gadc_thermal_info));
-+
-+	indio_dev->name = dev_name(dev);
-+	indio_dev->info = &gadc_thermal_iio_info;
-+	indio_dev->modes = INDIO_DIRECT_MODE;
-+	indio_dev->channels = gadc_thermal_iio_channel;
-+	indio_dev->num_channels = ARRAY_SIZE(gadc_thermal_iio_channel);
-+
-+	return devm_iio_device_register(dev, indio_dev);
-+}
-+
- static int gadc_thermal_read_linear_lookup_table(struct device *dev,
- 						 struct gadc_thermal_info *gti)
- {
-@@ -153,7 +205,7 @@ static int gadc_thermal_probe(struct platform_device *pdev)
- 
- 	devm_thermal_add_hwmon_sysfs(dev, gti->tz_dev);
- 
--	return 0;
-+	return gadc_iio_register(&pdev->dev, gti);
- }
- 
- static const struct of_device_id of_adc_thermal_match[] = {
+How? I do not see the difference, can you elaborate?
+(Assuming that CIs are using the merge_config.sh approach or alike)
+
+> We also have it for Intel pinctrl drivers.
+
+This is unrelated to Intel pin control drivers.
+
 -- 
-2.43.0
+With Best Regards,
+Andy Shevchenko
+
 
 
