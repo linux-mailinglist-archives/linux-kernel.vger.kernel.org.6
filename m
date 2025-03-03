@@ -1,121 +1,83 @@
-Return-Path: <linux-kernel+bounces-545341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FF4EA4EC4A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:48:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F333A4EC1A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:43:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30DCC8A34AA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:31:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5AC18A6290
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:24:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313C2280410;
-	Tue,  4 Mar 2025 18:23:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fAEzjpCj"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8DC1275611;
+	Tue,  4 Mar 2025 18:14:23 +0000 (UTC)
 Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE9E627F4C0
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:23:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D722641DE
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:14:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741112603; cv=pass; b=jl9rVMFH78FB5ZS0k/+PK3vJFsQXAE5YFQFpDKo+rhbJwp8VQuYNgzgwGPNm8VRUxTbGkUu8c1Dmw+lspC8gfwNyhEstFIwRX5l9nwbmgFFoKmOMZXxmAYcU7RmUMGL8SNZRRBftSN9QnW9CunFCoXlFFU0KpNpMrX4ZUfV1nBE=
+	t=1741112063; cv=pass; b=Xiy3C7Bk0ricN2RHFKmSWutuLmR8tzb+kyhCmBKPmrg7K9IlmzmTWci5hoVHU1kVgP3F9TgxP5VHIRiVlO1V9KKbLJoW2OYTEQD+75+my817LmeQmDKBfzPz81gm7ROmOmFnNpejHNTIv5e65YatZfCbuN9WPi+I+h1NSN6wc3M=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741112603; c=relaxed/simple;
-	bh=t/g0xd3Ux115LiKLycQFMagbToxXU2ApMLqVpDJxUaI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IVClG7Dbl326hTYNvrmgnjW+Hmm5q2RTEhWdZOkUL26a+giFW/sKEkmsiWaCocsGJZbs+hmqS7HxXiHanAkpHqv29u79eyF6nDPyucBpTmggETBcEHb5Mgb1JaV9tP2CUggca2/tr4PSZfQrGOjpYkT9nT6YyNrB4gHNUdzvWpg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fAEzjpCj; arc=none smtp.client-ip=209.85.128.196; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; arc=pass smtp.client-ip=160.75.25.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1741112063; c=relaxed/simple;
+	bh=ZHQsw9JxtEtWCNtTod+FBGG8c1aDXetOsMB/Gq2BJcg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=KAy9svwJHxSHO7fGT/QRfcSr89kjF1yFpbsZI+QFg8uhvQAmmZQB4Lqv5hDE6rYeJzpKXkgiyZ1nF4ncnCnt4Q1RrLHQYBPkO6n+qMMCmlIcwijsZ46fXIF9hEbpgx/0N7W5IFfLYjkavQesfKICq8S9ZwndQHUlqV4Ev6RQb28=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=cc.itu.edu.tr; arc=none smtp.client-ip=217.140.110.172; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=pass smtp.client-ip=160.75.25.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
-Received: from lesvatest1.cc.itu.edu.tr (unknown [10.146.128.1])
+Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 033CF40D9764
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 21:23:20 +0300 (+03)
+	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id F327E408B65F
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 21:14:19 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
-Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20230601 header.b=fAEzjpCj
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6fHb3HDhzFyLp
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:10:03 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6h4W1KbyzFyqh
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:30:35 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 8D3ED42731; Tue,  4 Mar 2025 18:09:50 +0300 (+03)
-Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fAEzjpCj
-X-Envelope-From: <linux-kernel+bounces-541435-bozkiru=itu.edu.tr@vger.kernel.org>
-Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fAEzjpCj
+	id 8BF344272F; Tue,  4 Mar 2025 19:30:25 +0300 (+03)
+X-Envelope-From: <linux-kernel+bounces-541450-bozkiru=itu.edu.tr@vger.kernel.org>
 Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id 5744F42A27
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:53:46 +0300 (+03)
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id E016B2DCDE
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:53:45 +0300 (+03)
+	by le2 (Postfix) with ESMTP id D896D42E93
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:57:01 +0300 (+03)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by fgw2.itu.edu.tr (Postfix) with SMTP id AE2342DCDE
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:57:01 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54CD33A7A2E
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:53:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BC0918960FE
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:56:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466171F3BB9;
-	Mon,  3 Mar 2025 10:53:21 +0000 (UTC)
-Received: from mail-yw1-f196.google.com (mail-yw1-f196.google.com [209.85.128.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C531D86DC;
-	Mon,  3 Mar 2025 10:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D6CE1F891D;
+	Mon,  3 Mar 2025 10:53:40 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC471F76A8;
+	Mon,  3 Mar 2025 10:53:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740999198; cv=none; b=SmBi4JU0Br4KEBa8dR+82D5P3IDHHhlDSD5oJdWlGZFwBFr6v5AWDTn4LjsZZ9n5y8WWyqT+06JA+FKeWIvtEStE3hA+TG1we87wXsqrHfYseqGmpje9VEeHq33znKnSPfxnAwHaVltW5jAi+vEqbaCgxWWZes+vfr9eZR+g8Yo=
+	t=1740999218; cv=none; b=vEYFZ2BEpUWq4THomZMVQmGx4bA/XWgOZPmdvJryl8co0j4CL79vSC6gNfeIZ0uDMzzBG3GqDcDG7unxGRCqbd4RU3eQNMsgKYGUz97UmgZs6TqcYuWZ6W09w/uoEb5nMLc8lGR082cSm0ARMzWw/fJS2b9bdsT3ojSiSIOyj6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740999198; c=relaxed/simple;
-	bh=t/g0xd3Ux115LiKLycQFMagbToxXU2ApMLqVpDJxUaI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I8sJ1NooKgbzVdOxy3lmdPvPnjRBp0BD3eefm/UmuaZoF3kNG5Dn6Klz7+cADeTi77Bebo6Ue4la+t/9Fi4mwGVWOYSO2dme6dHLUWvaBmGpgMAdmkTRyBAeH2gZcCwulxjqhYTKhI/0f6xOME9g4ShnVLm+71SGID6wudWEqyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fAEzjpCj; arc=none smtp.client-ip=209.85.128.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f196.google.com with SMTP id 00721157ae682-6f4bc408e49so37593257b3.1;
-        Mon, 03 Mar 2025 02:53:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740999196; x=1741603996; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uqcchcl0H3MHX0plBBglpw5tZdbp+fJLEBNYpMMUwBs=;
-        b=fAEzjpCj4/f0zaMekcT2KyNbJU3fg+KaZHA9bCIk1iA1r6f1TpSY6qIq4MH14xa8pi
-         /UrTwhKwQfvbYkXncpu/gZ1XSaZXAAFrM3UJqZ7yMfQiednG2PfPfeWgaYt8cinCpRiQ
-         oHbKlD7HcDSDtUGSUE/CnJNElijfUnckWp9K7fpwxsuTeA3bQ+86FMGmzjjnc14IIr/h
-         vX4G1kyG1trTxR+DPy3fikZyjuLkAY3+NsVeITmkuGVdru0WlpQ1CRDjAUwDiYIcTA7E
-         AmE3ngWeWgcFVyh/OFu34lksIuf1KJOou3rjMbZUzTiHTgfdDD/np1M/xQHhiDxJoRJb
-         KdTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740999196; x=1741603996;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uqcchcl0H3MHX0plBBglpw5tZdbp+fJLEBNYpMMUwBs=;
-        b=sMBPnW8KKDKXauJZC6pa2LuFUUggQQKRww4N4jKi8oKq0TQUxpfQvGcpAhYBnhRNQe
-         gznvq+z8ApDRSUZM3HAroosgH/hzIY0QafuGS0hfrQaN/h4qkpHhNya1CcQjpqr1YMiu
-         g4J+phuFt57JJtxAnI9TkB1xtIL+qHzYlcqaYDc+8DJ2cWDJRHTFfKF4WSLgSkWrIXxJ
-         SXQoqS365eLePw1DQ7HmgA5e3f0ohTsxodtgWzwH+1tajxZXOT2gi6NAFsk3HQtmW7FX
-         YOJ1aX42AQih9dmPH35fc/oYksxgp4QKtQ7oiU788sx6Qo61A3AWlMhFNyxNxSOnSoL+
-         Pz3A==
-X-Forwarded-Encrypted: i=1; AJvYcCV3d0IdGKeY3Wv+WPpZ9Ts0IDdkX2zFYCkfpRWJieio3M8qTU4xXMrlAJUtoh32viHPiJo=@vger.kernel.org, AJvYcCVWx8EVHq7JhM2A5Dl/sl/oCA/WPND3MFQ2KTHM2XCVKlokfnPuI/NVwlYJ7LaNbyC55+qfaniVqcueLfw5t6ME07rG@vger.kernel.org, AJvYcCWDcABtb0+xZslY0PO669sIMEUXq/S+PILTtByt7l8TZnt9h3MQAChCoci5sHxEeLnSylqm3tAD@vger.kernel.org, AJvYcCWs9KYuIUTBCHzAuQam/RHTGm51g+yFsTlD6+iWZK9XuXhnY48LFk0jy+SlT7u1rDr44GZXOrgCc9plPW/J@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVKs4bh4j8HIMnt2H5KnuTDtyFtg5QtakEW6qbQDgz2TlAFQlP
-	CuLnSLOJR1Q5VkxZBv831ntlJhh5IhOeMgXojarGAtpMPUL9CaypaMcyc8WorTQD2EUzPWyYHkg
-	/neROTnAz5FN9V4GQ+tFLZbnMmGc=
-X-Gm-Gg: ASbGncsuS+OSbVQ4jPiB2HPeBrgG7kZ4keSpAzlZ0L9lE6rD2dRcVSzwj4KcDX/IVFE
-	+F/geXtpVwqEEvo28GSxonTpA73yZrF+ZisVuT/SosrAFUxcp4nGCBbLf8Kgu03k/WV9aV1w7Mk
-	Q77tozpTFwKK+H/55m0CCoiqnY6g==
-X-Google-Smtp-Source: AGHT+IGPFg7vyGunvepCrP71hctzW/wiFhK2mnTSkLrkuSsp6X2qPRH18XUJIiB5Y7juu2x6EocYr5DNocerNm2QyWM=
-X-Received: by 2002:a05:690c:4802:b0:6fd:2f47:f4f9 with SMTP id
- 00721157ae682-6fd4a0bad92mr160996667b3.9.1740999195914; Mon, 03 Mar 2025
- 02:53:15 -0800 (PST)
+	s=arc-20240116; t=1740999218; c=relaxed/simple;
+	bh=ZHQsw9JxtEtWCNtTod+FBGG8c1aDXetOsMB/Gq2BJcg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=ZE89FdAb8lc0lPtRgtRXlB25QRO+JzFYQVCRRttYQIsgDCL6rLWDZ+WezuAHgtyIsfoqaMXj9pdHFRbtSfc/uVwBnJo/uMgzxAuO5dXbx7m5jCwQYlkDkYEv7JjwP7tgyAtu7WfDIKFtesTlMgXO7UUVSDwoAYMH9qA3TWuXrRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0F20012FC;
+	Mon,  3 Mar 2025 02:53:51 -0800 (PST)
+Received: from e133711.arm.com (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E749E3F673;
+	Mon,  3 Mar 2025 02:53:35 -0800 (PST)
+From: Sudeep Holla <sudeep.holla@arm.com>
+Date: Mon, 03 Mar 2025 10:51:44 +0000
+Subject: [PATCH 09/14] mailbox: pcc: Refactor and simplify check_and_ack()
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -123,62 +85,129 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250303065345.229298-1-dongml2@chinatelecom.cn>
- <20250303065345.229298-2-dongml2@chinatelecom.cn> <20250303091811.GH5880@noisy.programming.kicks-ass.net>
-In-Reply-To: <20250303091811.GH5880@noisy.programming.kicks-ass.net>
-From: Menglong Dong <menglong8.dong@gmail.com>
-Date: Mon, 3 Mar 2025 18:51:41 +0800
-X-Gm-Features: AQ5f1JolBjCiOEE9gVLsf6wdPN2zmwGfmSm6JtRrhu885EwwD4hwEQ1WHKYNmyc
-Message-ID: <CADxym3as+KdeBMUigq4xq302g2U7UG-7Gm+vKiYGnSjHouq=bg@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v3 1/4] x86/ibt: factor out cfi and fineibt offset
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: rostedt@goodmis.org, mark.rutland@arm.com, alexei.starovoitov@gmail.com, 
-	catalin.marinas@arm.com, will@kernel.org, mhiramat@kernel.org, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, ast@kernel.org, 
-	daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev, 
-	eddyz87@gmail.com, yonghong.song@linux.dev, john.fastabend@gmail.com, 
-	kpsingh@kernel.org, sdf@fomichev.me, jolsa@kernel.org, davem@davemloft.net, 
-	dsahern@kernel.org, mathieu.desnoyers@efficios.com, nathan@kernel.org, 
-	nick.desaulniers+lkml@gmail.com, morbo@google.com, samitolvanen@google.com, 
-	kees@kernel.org, dongml2@chinatelecom.cn, akpm@linux-foundation.org, 
-	riel@surriel.com, rppt@kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org, netdev@vger.kernel.org, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250303-pcc_fixes_updates-v1-9-3b44f3d134b1@arm.com>
+References: <20250303-pcc_fixes_updates-v1-0-3b44f3d134b1@arm.com>
+In-Reply-To: <20250303-pcc_fixes_updates-v1-0-3b44f3d134b1@arm.com>
+To: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Sudeep Holla <sudeep.holla@arm.com>, 
+ Jassi Brar <jassisinghbrar@gmail.com>, Huisong Li <lihuisong@huawei.com>, 
+ Adam Young <admiyo@os.amperecomputing.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3243; i=sudeep.holla@arm.com;
+ h=from:subject:message-id; bh=ZHQsw9JxtEtWCNtTod+FBGG8c1aDXetOsMB/Gq2BJcg=;
+ b=owEBbQKS/ZANAwAIAQBBurwxfuKYAcsmYgBnxYoiRklIW0oglv683T42D8WPodP5k/f1q9Eff
+ bTWohLZyPSJAjMEAAEIAB0WIQS6ceUSBvMeskPdk+EAQbq8MX7imAUCZ8WKIgAKCRAAQbq8MX7i
+ mLeIEADUI/vKVRKk1CquSAGR2zhz9eRH/k7AjwBgDLyr/beQc/92U8vdcykP/NlpdhC9qGerAdO
+ iksgfayzpUE0R8K4Tk7unsvk3TvCVY8cw0BAnrA4dILaKRxqlMBTRCShB+UzdO9JyBSYMd7ctbA
+ 93aKKmjf0310RSYH1Znf7KrPTZf+FuGZrd5THdq2pT5fYuhw4YT+/RiUvUxccuTGmyDJfYky2Hz
+ 4yqxyL4301KTqUKh0kMn/WFwQBMvpIVFTMopuRLdoQfrW93SpPmJmZeETA+WROwaTV1iVqin1yg
+ CJyZgYIBVfyytVz3xch0YOdYYP0yKOSoeGkYt2BvyXG+u4zspD1Gf5Z74Q6E//j7so15Bsc6flJ
+ F0omSfAlWhDqDYUS9gjOGTLyCrM61mv2hIRNpwtYE85t/Q4vceQQoSPZdQKH5lf4UMoPXdbD1Rq
+ QKhHXQ0iUDFYKN9/HEBTtfo51nAQgPgrvqUNuve+a2KOginyGtrAbMsM2YIFzRwPMRmqhd9T4Pg
+ 4/YVSWjObUUy7gG/KGfiW38pz/23u4sqyQkSWY7ZYGIQMDCXrCQzL4eIo5lRP6UD5DEz3eKEEER
+ tDh/pkj1bEj/KBFf4QWWpju2LwQr8r+v32nXJvLjydL9Z3h7rxcd/rGGEzMyllPoz2dHwogBJ+m
+ 0uxUQ+n1q+ANsGA==
+X-Developer-Key: i=sudeep.holla@arm.com; a=openpgp;
+ fpr=7360A21742ADF5A11767C1C139CFD4755FE2D5B4
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6fHb3HDhzFyLp
+X-ITU-Libra-ESVA-ID: 4Z6h4W1KbyzFyqh
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741713188.36375@NKCCxY34ZoZ/G/Tti+IJ7w
+X-ITU-Libra-ESVA-Watermark: 1741716761.07874@qmB7Pz8aR30Pf85RbuXC6A
 X-ITU-MailScanner-SpamCheck: not spam
 
-On Mon, Mar 3, 2025 at 5:18=E2=80=AFPM Peter Zijlstra <peterz@infradead.org=
-> wrote:
->
-> On Mon, Mar 03, 2025 at 02:53:42PM +0800, Menglong Dong wrote:
-> > index c71b575bf229..ad050d09cb2b 100644
-> > --- a/arch/x86/kernel/alternative.c
-> > +++ b/arch/x86/kernel/alternative.c
-> > @@ -908,7 +908,7 @@ void __init_or_module noinline apply_seal_endbr(s32=
- *start, s32 *end, struct mod
-> >
-> >               poison_endbr(addr, wr_addr, true);
-> >               if (IS_ENABLED(CONFIG_FINEIBT))
-> > -                     poison_cfi(addr - 16, wr_addr - 16);
-> > +                     poison_cfi(addr, wr_addr);
-> >       }
-> >  }
->
-> If you're touching this code, please use tip/x86/core or tip/master.
+The existing check_and_ack() function had unnecessary complexity. The
+logic could be streamlined to improve code readability and maintainability.
 
-Thank you for reminding me that, I were using the linux-next, and
-I notice that you just did some optimization to the FINEIBT :/
+The command update register needs to be updated in order to acknowledge
+the platform notification through type 4 channel. So it can be done
+unconditionally. Currently it is complicated just to make use of
+pcc_send_data() which also executes the same updation.
 
-I'll send a V4 later, based on the tip/x86/core.
+In order to simplify, let us just ring the doorbell directly from
+check_and_ack() instead of calling into pcc_send_data(). While at it,
+rename it into pcc_chan_check_and_ack() to maintain consistency in the
+driver.
 
-Thanks!
-Menglong Dong
+Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+---
+ drivers/mailbox/pcc.c | 38 ++++++++++++++------------------------
+ 1 file changed, 14 insertions(+), 24 deletions(-)
+
+diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
+index 5f2e2b727d99f07c44e87e44c11ba0aefe3a2318..17500d4122af3194011eb47bc91efa4317cd8a32 100644
+--- a/drivers/mailbox/pcc.c
++++ b/drivers/mailbox/pcc.c
+@@ -117,8 +117,6 @@ struct pcc_chan_info {
+ static struct pcc_chan_info *chan_info;
+ static int pcc_chan_count;
+ 
+-static int pcc_send_data(struct mbox_chan *chan, void *data);
+-
+ /*
+  * PCC can be used with perf critical drivers such as CPPC
+  * So it makes sense to locally cache the virtual address and
+@@ -288,33 +286,25 @@ static int pcc_mbox_error_check_and_clear(struct pcc_chan_info *pchan)
+ 	return 0;
+ }
+ 
+-static void check_and_ack(struct pcc_chan_info *pchan, struct mbox_chan *chan)
++static void pcc_chan_check_and_ack(struct pcc_chan_info *pchan)
+ {
+-	struct acpi_pcct_ext_pcc_shared_memory pcc_hdr;
++	struct acpi_pcct_ext_pcc_shared_memory __iomem *pcc_hdr;
+ 
+ 	if (pchan->type != ACPI_PCCT_TYPE_EXT_PCC_SLAVE_SUBSPACE)
+ 		return;
+-	/* If the memory region has not been mapped, we cannot
+-	 * determine if we need to send the message, but we still
+-	 * need to set the cmd_update flag before returning.
+-	 */
+-	if (pchan->chan.shmem == NULL) {
+-		pcc_chan_reg_read_modify_write(&pchan->cmd_update);
+-		return;
+-	}
+-	memcpy_fromio(&pcc_hdr, pchan->chan.shmem,
+-		      sizeof(struct acpi_pcct_ext_pcc_shared_memory));
++
++	pcc_chan_reg_read_modify_write(&pchan->cmd_update);
++
++	pcc_hdr = pchan->chan.shmem;
++
+ 	/*
+-	 * The PCC slave subspace channel needs to set the command complete bit
+-	 * after processing message. If the PCC_ACK_FLAG is set, it should also
+-	 * ring the doorbell.
+-	 *
+-	 * The PCC master subspace channel clears chan_in_use to free channel.
++	 * The PCC slave subspace channel needs to set the command
++	 * complete bit after processing message. If the PCC_ACK_FLAG
++	 * is set, it should also ring the doorbell.
+ 	 */
+-	if (pcc_hdr.flags & PCC_ACK_FLAG_MASK)
+-		pcc_send_data(chan, NULL);
+-	else
+-		pcc_chan_reg_read_modify_write(&pchan->cmd_update);
++	if (ioread32(&pcc_hdr->flags) & PCC_ACK_FLAG_MASK)
++		pcc_chan_reg_read_modify_write(&pchan->db);
++
+ }
+ 
+ /**
+@@ -352,7 +342,7 @@ static irqreturn_t pcc_mbox_irq(int irq, void *p)
+ 	pchan->chan_in_use = false;
+ 	mbox_chan_received_data(chan, NULL);
+ 
+-	check_and_ack(pchan, chan);
++	pcc_chan_check_and_ack(pchan);
+ 
+ 	return IRQ_HANDLED;
+ }
+
+-- 
+2.34.1
+
 
 
