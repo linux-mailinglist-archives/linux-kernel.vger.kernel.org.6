@@ -1,174 +1,166 @@
-Return-Path: <linux-kernel+bounces-541956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4430AA4C3D1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:49:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29007A4C3C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:47:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 678753A6C24
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:48:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 874B2170E24
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:47:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BFEB2139D4;
-	Mon,  3 Mar 2025 14:48:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64A5D212FA7;
+	Mon,  3 Mar 2025 14:46:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="x4nTk59A"
-Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="iPeLLtCh"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE04F7DA93;
-	Mon,  3 Mar 2025 14:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A85B012FF69;
+	Mon,  3 Mar 2025 14:46:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741013299; cv=none; b=GpRSGs34tcRyQvK0asQE+fwmUwR3RCQbExvz3p7s8N9jD3ymq6vGB422D8wdeo5aunLpGKyLDVOEQpwqIX9PMgmnZzyyC+2fmUgLPBTJ9JHtOoEYsqyan9hAM+DTncWvZPe/EBh18LAoWtfh7cZAjGq+O30qSnxEn+T2DfKwOHk=
+	t=1741013217; cv=none; b=eds85E/Zf3fJC32xxUjamYhaPaCfraHOrK/sLlLeN/XhQ0+vAq1tBceVBvtq+cDP5KxdPj1pIDjKAe8vyv/QD0N/EV3q1aAIM7sBlHbury7hvUD1xWAGMVHpQ4x2ZrVBGQKn52m+WBRvqKYh/kKjZHNorQeShsGl6YILv7na3Oo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741013299; c=relaxed/simple;
-	bh=l+kX2MTcfcF4+A6ZDDJW3gOUltnc5ogqGlhahThBv6s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=ZO/BwQgzHNV/1fnI9JC5so49EpxchLwvqIvYQAp4J9qF6RdVaoiSgI21Gtlq71PweAdoGj3iOsvPX3dnWefB/haWsly+NKEwH+f9zjI6KQIAppyVhBDyL0ncInNpf1GtcR2Cg5R4NWpsiWhBKn4SS152C+zJ6krwcugvYzmZv4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=x4nTk59A; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
-	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 523BqxeT032403;
-	Mon, 3 Mar 2025 09:47:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=DKIM; bh=eAq+InRFatcB8I+upMd0/I2BuDO
-	dtHZMZkmyJfVMurI=; b=x4nTk59AMQ4QrZ7is5pktJdEdiClwovAq3erKdxrooy
-	AmFNpPPuWN3/eIYApWf2/T3NiUhzqDAe2B5U9vgUMZkWfaUHzFSrjK5klzB3FtzP
-	HVjmOTc6vPKmtHHRvEFDVQflUeelYobIenDZ4geGDxhYzapD/nc4nzl5h+562Sqb
-	qiyBZEfX3g3mYr221WN++lsXwVso2qQF7HaV3NdO6QBWdOkMo1MAUQ05l2VyTTCN
-	bOQ9ydL6s3y9S6RXKtXbRpPrad4+U1x5kEzVhLi8EBM268s0FP7jWaFCME2dZJ0Q
-	pDBGZDJawMm91B+F8XAsBCzYz55KYx4TM7qHpwcPcCg==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 455bxnrs3y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Mar 2025 09:47:49 -0500 (EST)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 523EllMu009991
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 3 Mar 2025 09:47:48 -0500
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Mon, 3 Mar 2025
- 09:47:47 -0500
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Mon, 3 Mar 2025 09:47:47 -0500
-Received: from HYB-DlYm71t3hSl.ad.analog.com (HYB-DlYm71t3hSl.ad.analog.com [10.44.3.50])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 523Ela3p021465;
-	Mon, 3 Mar 2025 09:47:38 -0500
-From: Jorge Marques <jorge.marques@analog.com>
-Date: Mon, 3 Mar 2025 15:46:25 +0100
-Subject: [PATCH] iio: Mark iio_dev as const in getter methods
+	s=arc-20240116; t=1741013217; c=relaxed/simple;
+	bh=uOkNJShwAnnQjzv5uTkb6RbGAT1W+BW1BZGlsBZodTQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Subject:Cc:From:
+	 References:In-Reply-To; b=A+KIKzdhoj3QbqEADSljTLiUBh59nq2uWA8H7V5VRgNni+YjNfU0YEVMa2LDP8om9nAntbQiwdxRt1HsW+Kn8R3oYnhcBaiLSfPRrTkCpfUU7xY4LM+6MBkTUL81yqcfLEj3fPwQAi1CH8JsoRrGiix6tYSacJUs+QwQuqdZOzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=iPeLLtCh; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 53A77441B6;
+	Mon,  3 Mar 2025 14:46:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741013214;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zDbYOoICs0kyLksCA3nSrPEKG2UdDgw1p8IdLbEdbwc=;
+	b=iPeLLtChV/otssqNfOVqg/51Ax+8DPi61GCdSSCQbbagWxWJzYEBg3l40sx0HR8vL/FcjN
+	YPIEIj6U1vkI4upDHidgNQ8e9Km2WBlAReRsXPJxC6DxRxONNNmoAjW2I8Nj6LwQeuTNOC
+	Wp7lHluAeJ1lNWyGcUxejLyptqDRAs0cf6rFgciBihlwxe93sVob+FFtyJKPLOQ03LmlMT
+	KYqihn5tiLeSwsYURXSt8/wjPhVCWBBFSAtZ3uiGZDGFeDKhl9lH91V5qHQBHpwEazfZiT
+	JLeeuw63SVObqVR4c3RoHvK63HYEZuxBeTemjsouNPpS75JnLjMVgF3p2R7DCA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250303-b4-iio-dev-const-v1-1-c2d9d5fe5ac1@analog.com>
-X-B4-Tracking: v=1; b=H4sIAMDAxWcC/x3MMQqAMAxA0atIZgM1VUGvIg41Rs3SSisiFO9uc
- XzD/xmSRJUEY5Uhyq1Jgy9o6gr4cH4X1LUYyFBnrLG4tKgacJUbOfh0ITP1i+PW0EBQsjPKps+
- /nOb3/QAnfsPPYgAAAA==
-X-Change-ID: 20250303-b4-iio-dev-const-cc26bac40292
-To: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
-CC: <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Jorge Marques
-	<jorge.marques@analog.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741013256; l=2674;
- i=jorge.marques@analog.com; s=20250303; h=from:subject:message-id;
- bh=l+kX2MTcfcF4+A6ZDDJW3gOUltnc5ogqGlhahThBv6s=;
- b=Mk5PYJ/Lw7WTo7fbs0GnzymiuJQbUz2rtjhSeOnzV87AnVF2YqKcSrqjyofleXvgofrYvB0+S
- PEKSFajKNWUAw9rMR/63vEk23Aqbne4ikDXD+x0LM9qNtzWtY6hGVT1
-X-Developer-Key: i=jorge.marques@analog.com; a=ed25519;
- pk=NUR1IZZMH0Da3QbJ2tBSznSPVfRpuoWdhBzKGSpAdbg=
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-GUID: 5NphpABY9T-8umLWhdcUhUF86nlycp8F
-X-Proofpoint-ORIG-GUID: 5NphpABY9T-8umLWhdcUhUF86nlycp8F
-X-Authority-Analysis: v=2.4 cv=Y/ICsgeN c=1 sm=1 tr=0 ts=67c5c115 cx=c_pps a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=gAnH3GRIAAAA:8 a=QG0Klee38qREIk_fXF8A:9 a=QEXdDO2ut3YA:10
- a=oVHKYsEdi7-vN-J5QA_j:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-03_07,2025-03-03_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- spamscore=0 impostorscore=0 phishscore=0 suspectscore=0 adultscore=0
- bulkscore=0 priorityscore=1501 mlxscore=0 malwarescore=0 mlxlogscore=999
- clxscore=1011 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503030113
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 03 Mar 2025 15:46:52 +0100
+Message-Id: <D86POCANGF07.3HE2LVK396FGX@bootlin.com>
+To: "Shawn Guo" <shawnguo2@yeah.net>
+Subject: Re: [PATCH v2 2/3] ARM: dts: imx6ul: Add Variscite VAR-SOM-MX6UL
+ SoM support
+Cc: "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
+ <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Shawn Guo"
+ <shawnguo@kernel.org>, "Sascha Hauer" <s.hauer@pengutronix.de>,
+ "Pengutronix Kernel Team" <kernel@pengutronix.de>, "Fabio Estevam"
+ <festevam@gmail.com>, "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>
+From: "Antonin Godard" <antonin.godard@bootlin.com>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250127-varsom6ul-concerto-dts-v2-0-4dac29256989@bootlin.com>
+ <20250127-varsom6ul-concerto-dts-v2-2-4dac29256989@bootlin.com>
+ <Z7njGg4Hhc4wcZHU@dragon>
+In-Reply-To: <Z7njGg4Hhc4wcZHU@dragon>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelleegtdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepggfgtgffkffvufevhffofhgjsehtqhertdertdejnecuhfhrohhmpedftehnthhonhhinhcuifhouggrrhgufdcuoegrnhhtohhnihhnrdhgohgurghrugessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepjedtteejveetjedtgfektddvvdduueevffetieejteegfeeitdekjeeufeduheejnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemjegthegtmeeirgguvgemjeelgeekmeegtdehleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemjegthegtmeeirgguvgemjeelgeekmeegtdehledphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomheprghnthhonhhinhdrghhouggrrhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedufedprhgtphhtthhopehshhgrfihnghhuohdvseihvggrhhdrnhgvthdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgp
+ dhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehshhgrfihnghhuoheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshdrhhgruhgvrhesphgvnhhguhhtrhhonhhigidruggvpdhrtghpthhtohepkhgvrhhnvghlsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopehfvghsthgvvhgrmhesghhmrghilhdrtghomh
+X-GND-Sasl: antonin.godard@bootlin.com
 
-get_current_scan_type read-only method allows to support multiple
-scan types per channel, which may also depend on a buffer enabled state.
-Mark iio_dev as const in iio_device_id, iio_device_get_current_mode,
-iio_buffer_enabled read-only methods so they can be used from other
-read-only methods.
+Hi Shawn,
 
-Signed-off-by: Jorge Marques <jorge.marques@analog.com>
----
- drivers/iio/industrialio-core.c | 6 +++---
- include/linux/iio/iio.h         | 6 +++---
- 2 files changed, 6 insertions(+), 6 deletions(-)
+On Sat Feb 22, 2025 at 3:45 PM CET, Shawn Guo wrote:
+[...]
+>> +	reg_gpio_dvfs: reg-gpio-dvfs {
+>> +		compatible =3D "regulator-gpio";
+>> +		regulator-min-microvolt =3D <1300000>;
+>> +		regulator-max-microvolt =3D <1400000>;
+>> +		regulator-name =3D "gpio_dvfs";
+>> +		regulator-type =3D "voltage";
+>> +		gpios =3D <&gpio4 13 GPIO_ACTIVE_HIGH>;
+>
+> Don't we need 'enable-active-high'?
 
-diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
-index a2117ad1337d55468c0f21c274fcbedd352c97ff..3b743cc1af6a15c5b9828e2c54d89ab8abb5524d 100644
---- a/drivers/iio/industrialio-core.c
-+++ b/drivers/iio/industrialio-core.c
-@@ -197,7 +197,7 @@ static const char * const iio_chan_info_postfix[] = {
-  *
-  * Returns: Unique ID for the device.
-  */
--int iio_device_id(struct iio_dev *indio_dev)
-+int iio_device_id(const struct iio_dev *indio_dev)
- {
- 	struct iio_dev_opaque *iio_dev_opaque = to_iio_dev_opaque(indio_dev);
- 
-@@ -211,7 +211,7 @@ EXPORT_SYMBOL_GPL(iio_device_id);
-  *
-  * Returns: True, if the buffer is enabled.
-  */
--bool iio_buffer_enabled(struct iio_dev *indio_dev)
-+bool iio_buffer_enabled(const struct iio_dev *indio_dev)
- {
- 	struct iio_dev_opaque *iio_dev_opaque = to_iio_dev_opaque(indio_dev);
- 
-@@ -2227,7 +2227,7 @@ EXPORT_SYMBOL_GPL(iio_device_release_buffer_mode);
-  *				   the opaque @currentmode variable
-  * @indio_dev:			   IIO device structure for device
-  */
--int iio_device_get_current_mode(struct iio_dev *indio_dev)
-+int iio_device_get_current_mode(const struct iio_dev *indio_dev)
- {
- 	struct iio_dev_opaque *iio_dev_opaque = to_iio_dev_opaque(indio_dev);
- 
-diff --git a/include/linux/iio/iio.h b/include/linux/iio/iio.h
-index 56161e02f002cbe3a835cefce0e702c0f9776c81..b9ddfdeaef64dc5df687eac44d3f968bed2fde8e 100644
---- a/include/linux/iio/iio.h
-+++ b/include/linux/iio/iio.h
-@@ -627,9 +627,9 @@ struct iio_dev {
- 	void				*__private priv;
- };
- 
--int iio_device_id(struct iio_dev *indio_dev);
--int iio_device_get_current_mode(struct iio_dev *indio_dev);
--bool iio_buffer_enabled(struct iio_dev *indio_dev);
-+int iio_device_id(const struct iio_dev *indio_dev);
-+int iio_device_get_current_mode(const struct iio_dev *indio_dev);
-+bool iio_buffer_enabled(const struct iio_dev *indio_dev);
- 
- const struct iio_chan_spec
- *iio_find_channel_from_si(struct iio_dev *indio_dev, int si);
+I am not specifying 'enable-gpios' but 'gpios' here so from my understandin=
+g of
+gpio-regulator.yaml and examples from other device trees I don't think so.
 
----
-base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
-change-id: 20250303-b4-iio-dev-const-cc26bac40292
+>> +		states =3D <1300000 0x1 1400000 0x0>;
+>> +	};
+>> +
+>> +	rmii_ref_clk: rmii-ref-clk-grp {
+>
+> What does "-grp" in node name mean?
 
-Best regards,
--- 
-Jorge Marques <jorge.marques@analog.com>
+A mistake on my side, I will rename the label to "rmii-ref-clk".
 
+>> +		compatible =3D "fixed-clock";
+>> +		clock-output-names =3D "rmii-ref";
+>> +	};
+>> +};
+>> +
+>> +&cpu0 {
+>> +	dc-supply =3D <&reg_gpio_dvfs>;
+>> +};
+>> +
+>> +&clks {
+>> +	assigned-clocks =3D <&clks IMX6UL_CLK_PLL4_AUDIO_DIV>;
+>> +	assigned-clock-rates =3D <786432000>;
+>> +};
+>> +
+>> +&fec1 {
+>> +	pinctrl-names =3D "default";
+>> +	pinctrl-0 =3D <&pinctrl_enet1>, <&pinctrl_enet1_gpio>, <&pinctrl_enet1=
+_mdio>;
+>> +	phy-mode =3D "rmii";
+>> +	phy-reset-gpios =3D <&gpio5 0 GPIO_ACTIVE_LOW>;
+>> +	phy-reset-duration =3D <100>;
+>> +	phy-handle =3D <&ethphy0>;
+>> +	status =3D "okay";
+>> +
+>> +	mdio {
+>> +		#address-cells =3D <1>;
+>> +		#size-cells =3D <0>;
+>> +
+>> +		ethphy0: ethernet-phy@1 {
+>> +			compatible =3D "ethernet-phy-ieee802.3-c22";
+>> +			micrel,rmii-reference-clock-select-25-mhz =3D <1>;
+>> +			micrel,led-mode =3D <1>;
+>> +			clocks =3D <&rmii_ref_clk>;
+>> +			clock-names =3D "rmii-ref";
+>> +			reg =3D <1>;
+>
+> We generally sort properties like:
+>
+>   - compatible
+>   - reg
+>   - generic ones
+>   - vendor prefixed ones
+>
+> So in this case, we will get:
+>
+> 	compatible =3D "ethernet-phy-ieee802.3-c22";
+> 	reg =3D <1>;
+> 	clocks =3D <&rmii_ref_clk>;
+> 	clock-names =3D "rmii-ref";
+> 	micrel,rmii-reference-clock-select-25-mhz =3D <1>;
+> 	micrel,led-mode =3D <1>;
+
+Thanks for clarifying that! I will revise this for the next version.
+
+Antonin
+
+--=20
+Antonin Godard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
