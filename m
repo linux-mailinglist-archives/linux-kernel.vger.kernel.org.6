@@ -1,43 +1,40 @@
-Return-Path: <linux-kernel+bounces-544816-lists+linux-kernel=lfdr.de@vger.kernel.org>
-X-Original-To: lists+linux-kernel@lfdr.de
-Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CC2CA4E5BB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:25:17 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 553AA19C6342
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:12:56 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD3C62D0DFC;
-	Tue,  4 Mar 2025 15:51:42 +0000 (UTC)
-Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 734752D0DEF
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:51:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.116
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741103501; cv=pass; b=T62ZafNLc44p87aFtObhAU1W3fXC5GXA4L8npajJlOgpiRH6JCb37Wo6j0lxOv2osn5ZCU89azh9/bGfHhW5F6KmF52+Q8v5OHepayyl2zpVylqk6q6T7XySjaW5uIOgb47jbLArB97fPRRgYJt1PcSxSwd7hJx6NGYFaOcnNDs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741103501; c=relaxed/simple;
-	bh=QKOwJg6BolnauL8LATVVlEllg6JFT7aKk9SSrVmeErQ=;
+Return-Path: <linuxppc-dev+bounces-6700-lists+linuxppc-dev=lfdr.de@lists.ozlabs.org>
+X-Original-To: lists+linuxppc-dev@lfdr.de
+Delivered-To: lists+linuxppc-dev@lfdr.de
+Received: from lists.ozlabs.org (lists.ozlabs.org [IPv6:2404:9400:2:0:216:3eff:fee1:b9f1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25A2DA4E44C
+	for <lists+linuxppc-dev@lfdr.de>; Tue,  4 Mar 2025 16:52:46 +0100 (CET)
+Received: from boromir.ozlabs.org (localhost [127.0.0.1])
+	by lists.ozlabs.org (Postfix) with ESMTP id 4Z6gDq5q80z3bnB;
+	Wed,  5 Mar 2025 02:52:43 +1100 (AEDT)
+X-Original-To: linuxppc-dev@lists.ozlabs.org
+Authentication-Results: lists.ozlabs.org; arc=pass smtp.remote-ip=160.75.25.117 arc.chain=subspace.kernel.org
+ARC-Seal: i=2; a=rsa-sha256; d=lists.ozlabs.org; s=201707; t=1741103563;
+	cv=pass; b=OIo5tSS+qtwj3QjPvx8LTempCg4qXOscCOpoj1U2jk3Tzt14rHYA7K5c97W6rlLVnesRJ28sH4TONlw9hWRCe1rtk7tyE1nYku1ZzqMQS3mbDzZkS7HCmSYuAiq+Hq9XEEsnYAYFxlEy7ya6Ocq50l3nfFAp+Iz9H/gtedLpKmkB4yY1vz9ZsT+HeKRDPs28sQJonzNq6kK4eXYH3gxrvrqtlHM1FoZqvrSD39/xPc+uTg7NQNqDmgRY92sqzQlIkdyjE/1kzAACDB7ehvv4I3dG4WAo3ZQKVHJXv2m3oaNOuBifcxaFesCVA9L/z+MUUfBNQjZsmOpHy8IryoCE9Q==
+ARC-Message-Signature: i=2; a=rsa-sha256; d=lists.ozlabs.org; s=201707;
+	t=1741103563; c=relaxed/relaxed;
+	bh=Z6DpFii+NCizp+XYEG7bTGKOPzmpyrU1BzugwwkH2ZA=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=Up0LCxWFQOtH5Yf/8y4y6Hp82g8BAh/YRZl3d00aCmiE5vquWk305XgoR6oJ7a/PR1makekbRzPRyMHaMm9xQ9Zmx70yKzHl75SyA+I2+8Lz1TMQElkV10V2pLOdL801F7uVHsOHupf5XKGfBCUCavInAooDtNIweOzQps7KzaA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io; spf=none smtp.mailfrom=cc.itu.edu.tr; arc=none smtp.client-ip=194.107.17.57; dmarc=none (p=none dis=none) header.from=strace.io; spf=pass smtp.mailfrom=altlinux.org; arc=pass smtp.client-ip=160.75.25.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
+	 Content-Disposition:In-Reply-To; b=Ieeat4jaTUMNJ4LgHiFl9SdFHRAcJyD7P6k4TZfKVpdbjFuHsoEtJI0IeAHKe9ycp0m2OgV5vq6xyXFRItj8D66qo2yCMSnKa2ZJSO0UYgPfSyewvY9LQa2mw53lDkW9XhO8Ma7r5FO1cjYLeWntGQMHrbOFGOpfT3W24KFi9M8udY1iQbpzjruYXy0ZkFseWrOuG62T9mVsvo7E9C05SdZpdb4IZwlapodfWnWutHolBGD8E5Ka87lUuBh7AN6m2Y6cGnstTgwEWc8Af2vFt+4OdiJ5+84/WnDIvI9euglDONEzmge3Q1AdRA8ku6tC9ymh1giMeMFyiXrOQkSbzw==
+ARC-Authentication-Results: i=2; lists.ozlabs.org; dmarc=none (p=none dis=none) header.from=strace.io; spf=none (client-ip=160.75.25.117; helo=beeline3.cc.itu.edu.tr; envelope-from=root@cc.itu.edu.tr; receiver=lists.ozlabs.org) smtp.mailfrom=cc.itu.edu.tr
+Authentication-Results: lists.ozlabs.org; dmarc=none (p=none dis=none) header.from=strace.io
+Authentication-Results: lists.ozlabs.org; spf=none (no SPF record) smtp.mailfrom=cc.itu.edu.tr (client-ip=160.75.25.117; helo=beeline3.cc.itu.edu.tr; envelope-from=root@cc.itu.edu.tr; receiver=lists.ozlabs.org)
+Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by lists.ozlabs.org (Postfix) with ESMTPS id 4Z6gDp43VCz3bn0
+	for <linuxppc-dev@lists.ozlabs.org>; Wed,  5 Mar 2025 02:52:42 +1100 (AEDT)
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id BCB7D40D0507
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:51:35 +0300 (+03)
+	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id 6974B40CEC8F
+	for <linuxppc-dev@lists.ozlabs.org>; Tue,  4 Mar 2025 18:52:10 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6gC14gPnzG1g2
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:51:09 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6gC14h6FzG1gF
+	for <linuxppc-dev@lists.ozlabs.org>; Tue,  4 Mar 2025 18:51:09 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
 	id 0DB0A42742; Tue,  4 Mar 2025 18:50:58 +0300 (+03)
 X-Envelope-From: <linux-kernel+bounces-541564-bozkiru=itu.edu.tr@vger.kernel.org>
@@ -128,21 +125,35 @@ Cc: Oleg Nesterov <oleg@redhat.com>, Alexey Gladkov <legion@kernel.org>,
 Subject: [PATCH v7 2/6] syscall.h: add syscall_set_arguments()
 Message-ID: <20250303112009.GC24170@strace.io>
 Precedence: bulk
-Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+X-Mailing-List: linuxppc-dev@lists.ozlabs.org
+List-Id: <linuxppc-dev.lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev+help@lists.ozlabs.org>
+List-Owner: <mailto:linuxppc-dev+owner@lists.ozlabs.org>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Archive: <https://lore.kernel.org/linuxppc-dev/>,
+  <https://lists.ozlabs.org/pipermail/linuxppc-dev/>
+List-Subscribe: <mailto:linuxppc-dev+subscribe@lists.ozlabs.org>,
+  <mailto:linuxppc-dev+subscribe-digest@lists.ozlabs.org>,
+  <mailto:linuxppc-dev+subscribe-nomail@lists.ozlabs.org>
+List-Unsubscribe: <mailto:linuxppc-dev+unsubscribe@lists.ozlabs.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20250303111910.GA24170@strace.io>
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6gC14gPnzG1g2
+X-ITU-Libra-ESVA-ID: 4Z6gC14h6FzG1gF
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741708270.7808@3cd+ohwRUa+14Tp6s/fRpg
+X-ITU-Libra-ESVA-Watermark: 1741708271.73588@ePgdcCPplRmtiSjvwbQ+nA
 X-ITU-MailScanner-SpamCheck: not spam
+X-Spam-Status: No, score=-1.0 required=5.0 tests=ARC_SIGNED,ARC_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_NONE autolearn=disabled version=4.0.0
+X-Spam-Checker-Version: SpamAssassin 4.0.0 (2022-12-13) on lists.ozlabs.org
 
 This function is going to be needed on all HAVE_ARCH_TRACEHOOK
 architectures to implement PTRACE_SET_SYSCALL_INFO API.
