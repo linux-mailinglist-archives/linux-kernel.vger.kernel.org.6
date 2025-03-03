@@ -1,250 +1,155 @@
-Return-Path: <linux-kernel+bounces-541949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01631A4C3B7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:45:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58AE8A4C3B9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:45:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 290647A3ECD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:44:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09094170FA4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:45:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D18662139DC;
-	Mon,  3 Mar 2025 14:45:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="cpHL34xq"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1DA4141987
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 14:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 480B5214202;
+	Mon,  3 Mar 2025 14:45:35 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D4CC214217
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 14:45:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741013129; cv=none; b=OQJ9IhcBxRYYJuiCBFDipHOG2EMJXsuP2Kegko071+XoQMKbxrlyXq6JoLsK20D1pzbVEltTDTs2a3a2g/3uPEIs2XEIhZtVdPv7SXvuK6c1/7TKHcZ+Ae//rstLiNd7YwAX3lB2Xm2GkmbQ1e2oosMvkSW4pD+xXN5jmB0ArTY=
+	t=1741013134; cv=none; b=gzG0GuF5/C9oKBxjDqZHwu97CFEKrx1QBMdbmXTn0uwpqA03bbi8cSK1bVmNeg19T7Zp8sP+9oYJKp/1C/SFup+Wi93nkWedrchSePlCY1HrsmoPu4R4BvhuCDV8YZxpqs7nYUL8yVXaAikwd6h5uREUV8m5e28zV9yfNNOQPn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741013129; c=relaxed/simple;
-	bh=kxRrZd4Iu1g3Ar2HC6xOBpvwsjl7MXVzQnlV/fNUQEE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J6GkqapkvWJsjaemcN4F6iChAODW0r3/JYXKHgC6CYHjg8rLZYGrT93r42J9tJgp8qunZ66HQ6oerpHiHZi5XNMFabNgATHI6q+7GWbcvDoOYNgaxhkI9ANFi+lyyf9Ys7LYkLhvZhQB7z58FkKEjz39e6mtaSfE37Ajh7dofV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=cpHL34xq; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-abf45d8db04so370541366b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 06:45:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=openvpn.net; s=google; t=1741013125; x=1741617925; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=2BmXwqganJLn8jq8+b923KGArAolI7ifnS0mWRMdxaY=;
-        b=cpHL34xqxtndZQg5NgLZtyQYbjurB2qhzFdaFdG4Lv4VcOn+fbARQTfdmbXiP7CKUm
-         pObve5sucTeWJNIpMXn+RUyHqGYhCt8Bm5hEsCfynHjwusk33G+WExHDkQZYUk84f3ut
-         oXazGE4s/hHqQ0YZgKRmdSTsV4oqSyPKITvWds7ntd9fLAodp1cA9/U9O8RJOF6fXMHx
-         3zfBM5VIaCpilwS/ECddjTs5pMGNUn+NxBGzUCQ086oUp13lsoNsSQKzar/U/vz+H5UV
-         9s/BzbpBgsXg8Zyg2kuKuEzzaQcSxFcYYuNn3gFPWpxWyO4FHXzyBPYOETGiBocIl+OZ
-         tOfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741013125; x=1741617925;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2BmXwqganJLn8jq8+b923KGArAolI7ifnS0mWRMdxaY=;
-        b=DUmxfSXqJXDmP0sykbX4QgynJqBAKuJV6sOdl4gvP4uihcATaWvbEfznT11Ei6GAAq
-         Lvq7fcqB75DR7BPWUunY4kRq9Pjah+1E59O3ZC3CMgtVHt2K+dhstJgUPDP1lqIncftR
-         sahgVuA3ObT+1pRX14Ix8eofUPSVTcG7ny+/C5zge4FYp63ZOIcmHx3K7YsewgNR4RLK
-         V4jg+04g59sewYdpE3LvcX/Q3mhzLR2/CVIAMSY/6W+vn9u7b194XjNREdAyA5iVQbIu
-         AUFpn5FqUi/LuEbBe8OlB8Zn8qPSuRk4DtKRo6xueG0hd3EpKtzwY6WVBNvI9TVFkmQv
-         +y/A==
-X-Forwarded-Encrypted: i=1; AJvYcCVxa5u31gnmm24vasWckB8fkjM84QIpMgl0uRQMy2nJcZI5/cbz25FQ5dhoslx/Dp0eDk9JJDeyINxTmUE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWYtSdo/z0t7sk31w1IUeAOCdgyFZncO5ZYUILJRF/R4OlT0FE
-	LBgTeXW5MUfH/wvsweG5VWKqObzf0UxG9GZ6krimHGO0v4bALDFBxQb0TnecvlI=
-X-Gm-Gg: ASbGncsdDhuNbSo6ED10q0V1hJY6kb8uTfFo2+1aSeBcTbxnus/+PfMI9kpRVuBokt/
-	blKjJBsXFkXNC2EhbAJZO3ueygHr8B3EAbAzY3gdDGcmPoFhQspR0SWY1M90463YbL5J7Pb9a9s
-	gZ3gZzf3vUSQqruJEKnzthPC4NshU42XH11cdUgP2HcPggHgAbo8DfF6NpH8EVt3jEOZ6EwOmgl
-	IKzN9FAl3qVKLba+CecRdZtq/orkWWuA4CvrqyC6cbnTJ+DZ1xo8lGF4TnPcs5pr2Boy1I8CXlV
-	t3c1io2Pnw4lMObE9VWmuD08E+O2s45RXMfLe+tTr+9n4um4UxnvAhsWoPCznEOIuzaSElagr+u
-	CAfFfr98=
-X-Google-Smtp-Source: AGHT+IHAVJy7KLpojW8TWmlql5y/dSIA4s5XaEQW3g8y6zIpGcUjWmntI7HZ8QA/Igg7m+fa6psmSA==
-X-Received: by 2002:a17:907:a810:b0:ac1:e881:89b1 with SMTP id a640c23a62f3a-ac1e8818cc1mr141191466b.30.1741013125157;
-        Mon, 03 Mar 2025 06:45:25 -0800 (PST)
-Received: from ?IPV6:2001:67c:2fbc:1:4d41:ca07:21a5:f110? ([2001:67c:2fbc:1:4d41:ca07:21a5:f110])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac1e1d620a8sm82187366b.108.2025.03.03.06.45.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Mar 2025 06:45:24 -0800 (PST)
-Message-ID: <2682e274-6be1-4366-a2f6-c870aa9e1252@openvpn.net>
-Date: Mon, 3 Mar 2025 15:45:23 +0100
+	s=arc-20240116; t=1741013134; c=relaxed/simple;
+	bh=sS66acge6yiIBQa1JeXzb4CY96goAFvbCv1lCn2Hhy4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hvAm0N2yuSSIyEsl7r0W1V5MiK+yH4hav4ZVlvY/sbyo9WWR3epBMzsfLYe8OIMRD5ZOYa20al+RCZ9RV7FQ48Avh4Sv1Jpsz5wj8d1gvxuhpw94IvwLTfAO/IFI7X+TLi8VB0snuczmaId8Ol79o0poNKPHcVnoPLM7e6VUo4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 72BAD106F;
+	Mon,  3 Mar 2025 06:45:46 -0800 (PST)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 41B9D3F66E;
+	Mon,  3 Mar 2025 06:45:31 -0800 (PST)
+Date: Mon, 3 Mar 2025 14:45:28 +0000
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Paul Benoit <paul@os.amperecomputing.com>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: <linux-kernel@vger.kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v4] firmware: smccc: Support optional Arm SMC SOC_ID name
+Message-ID: <Z8XAiMSoaOmR5JxY@bogus>
+References: <20241114030452.10149-1-paul@os.amperecomputing.com>
+ <20250219005932.3466-1-paul@os.amperecomputing.com>
+ <Z8W6HXZy46K7ebWe@J2N7QTR9R3.cambridge.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v20 15/25] ovpn: implement multi-peer support
-To: Sabrina Dubroca <sd@queasysnail.net>
-Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Donald Hunter <donald.hunter@gmail.com>, Shuah Khan <shuah@kernel.org>,
- ryazanov.s.a@gmail.com, Andrew Lunn <andrew+netdev@lunn.ch>,
- Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>
-References: <20250227-b4-ovpn-v20-0-93f363310834@openvpn.net>
- <20250227-b4-ovpn-v20-15-93f363310834@openvpn.net> <Z8WpxDpHYzG9pXNl@hog>
-Content-Language: en-US
-From: Antonio Quartulli <antonio@openvpn.net>
-Autocrypt: addr=antonio@openvpn.net; keydata=
- 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
-Organization: OpenVPN Inc.
-In-Reply-To: <Z8WpxDpHYzG9pXNl@hog>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8W6HXZy46K7ebWe@J2N7QTR9R3.cambridge.arm.com>
 
-On 03/03/2025 14:08, Sabrina Dubroca wrote:
-> Hello, a few minor coding style nits on this patch.
-> 
-> 2025-02-27, 02:21:40 +0100, Antonio Quartulli wrote:
->> @@ -197,9 +254,16 @@ static int ovpn_netdev_notifier_call(struct notifier_block *nb,
->>   		netif_carrier_off(dev);
->>   		ovpn->registered = false;
->>   
->> -		if (ovpn->mode == OVPN_MODE_P2P)
->> +		switch (ovpn->mode) {
->> +		case OVPN_MODE_P2P:
->>   			ovpn_peer_release_p2p(ovpn, NULL,
->>   					      OVPN_DEL_PEER_REASON_TEARDOWN);
->> +			break;
->> +		case OVPN_MODE_MP:
->> +			ovpn_peers_free(ovpn, NULL,
->> +					OVPN_DEL_PEER_REASON_TEARDOWN);
->> +			break;
->> +		}
-> 
-> nit: maybe that switch could be done inside ovpn_peers_free, since
-> both places calling ovpn_peers_free do the same thing?
-> (it would also be more consistent with the rest of the peer-related
-> functions that are wrappers for the _mp/_p2p variant, rather than
-> pushing the switch down to the caller)
+On Mon, Mar 03, 2025 at 02:18:05PM +0000, Mark Rutland wrote:
+> Hi Paul,
+>
+> This looks generally good with a couple of minor nits.
+>
+> On Tue, Feb 18, 2025 at 04:59:32PM -0800, Paul Benoit wrote:
+> > Issue Number 1.6 of the Arm SMC Calling Convention introduces an optional
+> > SOC_ID name string.  If implemented, point the 'machine' field of the SoC
+> > Device Attributes at this string so that it will appear under
+> > /sys/bus/soc/devices/soc0/machine.
+> >
+> > On Arm SMC compliant SoCs, this will allow things like 'lscpu' to
+> > eventually get a SoC provider model name from there rather than each
+> > tool/utility needing to get a possibly inconsistent, obsolete, or incorrect
+> > model/machine name from its own hardcoded model/machine name table.
+> >
+> > Signed-off-by: Paul Benoit <paul@os.amperecomputing.com>
+> > Cc: Mark Rutland <mark.rutland@arm.com>
+> > Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> > Cc: Sudeep Holla <sudeep.holla@arm.com>
+> > Cc: linux-arm-kernel@lists.infradead.org
+> > ---
 
-Yeah, makes sense!
+[...]
 
+> > +static char __init *smccc_soc_name_init(void)
+> > +{
+> > +	struct arm_smccc_1_2_regs args;
+> > +	struct arm_smccc_1_2_regs res;
+> > +	size_t len;
+> > +
+> > +	/*
+> > +	 * Issue Number 1.6 of the Arm SMC Calling Convention
+> > +	 * specification introduces an optional "name" string
+> > +	 * to the ARM_SMCCC_ARCH_SOC_ID function.  Fetch it if
+> > +	 * available.
+> > +	 */
+> > +	args.a0 = ARM_SMCCC_ARCH_SOC_ID;
+> > +	args.a1 = 2;    /* SOC_ID name */
+> > +	arm_smccc_1_2_invoke(&args, &res);
+> > +	if ((u32)res.a0 == 0) {
+> > +		const unsigned int regsize = sizeof(res.a1);
+> > +
+> > +		/*
+> > +		 * Copy res.a1..res.a17 to the smccc_soc_id_name string
+> > +		 * 8 bytes at a time.  As per Issue 1.6 of the Arm SMC
+> > +		 * Calling Convention, the string will be NUL terminated
+> > +		 * and padded, from the end of the string to the end of the
+> > +		 * 136 byte buffer, with NULs.
+> > +		 */
+> > +		str_fragment_from_reg(smccc_soc_id_name + 0*regsize, res.a1);
+> > +		str_fragment_from_reg(smccc_soc_id_name + 1*regsize, res.a2);
+> > +		str_fragment_from_reg(smccc_soc_id_name + 2*regsize, res.a3);
+> > +		str_fragment_from_reg(smccc_soc_id_name + 3*regsize, res.a4);
+> > +		str_fragment_from_reg(smccc_soc_id_name + 4*regsize, res.a5);
+> > +		str_fragment_from_reg(smccc_soc_id_name + 5*regsize, res.a6);
+> > +		str_fragment_from_reg(smccc_soc_id_name + 6*regsize, res.a7);
+> > +		str_fragment_from_reg(smccc_soc_id_name + 7*regsize, res.a8);
+> > +		str_fragment_from_reg(smccc_soc_id_name + 8*regsize, res.a9);
+> > +		str_fragment_from_reg(smccc_soc_id_name + 9*regsize, res.a10);
+> > +		str_fragment_from_reg(smccc_soc_id_name + 10*regsize, res.a11);
+> > +		str_fragment_from_reg(smccc_soc_id_name + 11*regsize, res.a12);
+> > +		str_fragment_from_reg(smccc_soc_id_name + 12*regsize, res.a13);
+> > +		str_fragment_from_reg(smccc_soc_id_name + 13*regsize, res.a14);
+> > +		str_fragment_from_reg(smccc_soc_id_name + 14*regsize, res.a15);
+> > +		str_fragment_from_reg(smccc_soc_id_name + 15*regsize, res.a16);
+> > +		str_fragment_from_reg(smccc_soc_id_name + 16*regsize, res.a17);
 > 
+> Please get rid of 'regsize' and use '8' directly. This only exists for
+> arm64, where the registeres are 8 bytes, and the comment immediately
+> above refers to "8 bytes" specifically anyway, so 'regsize' only serves
+> to make this harder to read.
 > 
->> +void ovpn_peers_free(struct ovpn_priv *ovpn, struct sock *sk,
->> +		     enum ovpn_del_peer_reason reason)
->> +{
->> +	struct ovpn_socket *ovpn_sock;
->> +	LLIST_HEAD(release_list);
->> +	struct ovpn_peer *peer;
->> +	struct hlist_node *tmp;
->> +	bool skip;
->> +	int bkt;
->> +
->> +	spin_lock_bh(&ovpn->lock);
->> +	hash_for_each_safe(ovpn->peers->by_id, bkt, tmp, peer, hash_entry_id) {
->> +		/* if a socket was passed as argument, skip all peers except
->> +		 * those using it
->> +		 */
->> +		if (sk) {
->> +			skip = true;
->> +
->> +			rcu_read_lock();
->> +			ovpn_sock = rcu_access_pointer(peer->sock);
+> It'd be a bit clearer as:
 > 
-> rcu_dereference, since you're actually accessing ovpn_sock->sock
-> afterwards?
+> 	str_fragment_from_reg(smccc_soc_id_name + 8 * 0,  res.a1);
+> 	str_fragment_from_reg(smccc_soc_id_name + 8 * 1,  res.a2);
+> 	...
+> 	str_fragment_from_reg(smccc_soc_id_name + 8 * 15, res.a16);
+> 	str_fragment_from_reg(smccc_soc_id_name + 8 * 16, res.a17);
+> 
+> Sudeep, are you happy to fix that up when applying?
+> 
+> > +
+> > +		len = strnlen(smccc_soc_id_name, sizeof(smccc_soc_id_name));
+> > +		if (len) {
+> > +			if (len == sizeof(smccc_soc_id_name))
+> > +				pr_warn(FW_BUG "Ignoring improperly formatted Name\n");
+> 
+> It's odd that 'Name' is capitalized here. Not a big deal, but it doesn't
+> look quite right.
+>
 
-Ouch, good catch.
-
-> 
->> +			if (ovpn_sock && ovpn_sock->sock->sk == sk)
->> +				skip = false;
->> +			rcu_read_unlock();
->> +
->> +			if (skip)
->> +				continue;
-> 
-> 
-> The skip/continue logic looks a tiny bit strange to me, maybe this:
-
-Hehe, it's like a double negation. I agree it can be improved.
-
-> 
-> 	hash_for_each_safe(ovpn->peers->by_id, bkt, tmp, peer, hash_entry_id) {
-> 		bool remove = true;
-
-does the netdev coding style allow to use locally scoped variables?
-Or should I declare everything at the beginning of the function?
-
-I had this rule in mind, but it may have been eliminated by now.
-
-> 
-> 		/* if a socket was passed as argument, skip all peers except
-> 		 * those using it
-> 		 */
-> 		if (sk) {
-> 			rcu_read_lock();
-> 			ovpn_sock = rcu_dereference(peer->sock);
-> 			remove = ovpn_sock && ovpn_sock->sock->sk == sk;
-> 			rcu_read_unlock();
-> 		}
-> 
-> 		if (remove)
-> 			ovpn_peer_remove(peer, reason, &release_list);
-> 	}
-> 
-> 
-> (only if you agree it looks better - if it's my opinion against yours,
-> ignore me since it's really just coding style/taste)
-
-Yours look simpler/cleaner. I'll go with it.
-
-Thanks!
-
-Cheers,
-
-> 
+I can fix both of these and apply. No need to repost.
 
 -- 
-Antonio Quartulli
-OpenVPN Inc.
-
+Regards,
+Sudeep
 
