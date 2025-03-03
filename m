@@ -1,169 +1,122 @@
-Return-Path: <linux-kernel+bounces-540992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48B27A4B73F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 05:49:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10A8FA4B741
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 05:49:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39F611889D0B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 04:48:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D8963A88CC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 04:48:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6E491E8329;
-	Mon,  3 Mar 2025 04:48:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07BD1101C8;
+	Mon,  3 Mar 2025 04:48:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EbOTC9QV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="AcebxZ7+"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92541E5714;
-	Mon,  3 Mar 2025 04:48:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6303C1AD3E1;
+	Mon,  3 Mar 2025 04:48:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740977283; cv=none; b=qZDouUakLpjL+UM71i4JD+GQtS5qooY50emPzID5TRFrFeUlfoJ5Dke1ledn2cGijDXiNqh+ORrI/QsPgruEua1qJXV/PS5eLITVUqp+LwjOlWUxQDBFM/DVF2MVVgwywBMup3aLMf1pzO8rUwUUrMmcv5U6euL9f9+ywzzmJMY=
+	t=1740977321; cv=none; b=Q+Vv2+D/bpizLlkYJYoxeuPfIxABySzCYnJHgXMr6kZ/5ObtcxAJcldqWsVCoxM/Z8hh0TCYy/MQWJ20bGpjbEz8snwY7jaQLVKA4vLTrgcEMWAcIjgv72JRP2WnS86kIAW1VC8QYkIbzRbG0p8R9z7hV5GMDkwRab7ZtRUD5lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740977283; c=relaxed/simple;
-	bh=yRACNcqql97q+efeIS5QfsCUY4jQh++OfyCum2WBK0A=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Xjp/EU3cMviRNsC2l0iKUigjWvYhsJ/l8cozFmGxU1r6HNZh2eRmB7qH7S8xWcBjgyN1kRKTFFufCphhumgSL099YLzzfopCHXpZ4YQ0E+OHv6Nd44gFb7mb8CUxzHNlgKuQvHfEAPbSo1eU+UFiRChBbaXbyGOkpTuRYMgZlH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EbOTC9QV; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740977281; x=1772513281;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=yRACNcqql97q+efeIS5QfsCUY4jQh++OfyCum2WBK0A=;
-  b=EbOTC9QVfp3FyfmeOf3PqOd8OghrWD6jM2/+m2L3kL7qPcNKsu8L8xXH
-   ZvCYKG99vluz2ueQjeu/iflZ0TFmtLdgQpMbx3h/YIKE8HEoSV4lXK38B
-   CKxrp904GlKqyrAXaNk1FDrw+z4mv0SZWTkXaMp4XbaA3dLVErzKWywOx
-   PVCgJmGNhbZ9MLTl/mng9Tc5JHd+mluULhbY/T/L5CvSGQwmI+hIeApi+
-   VXefMGDGRuHry9sK58Q9CVW7W9sGgHntMhlI9Loq5oQgjaS0MMBFi77hO
-   5DOW4TJGhLhrKn138n5tS15LeS3rWYj/xAxX1PZbdx0jatMKMf/a1x/xe
-   g==;
-X-CSE-ConnectionGUID: WJCQsNdoR12bpFPFP7Yg9w==
-X-CSE-MsgGUID: 2BCNiu2QT1m4D5BQSBsYPg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="59382092"
-X-IronPort-AV: E=Sophos;i="6.13,328,1732608000"; 
-   d="scan'208";a="59382092"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2025 20:48:01 -0800
-X-CSE-ConnectionGUID: zHKP/mAXRAO72IJRguYZDg==
-X-CSE-MsgGUID: C+lMtO/6S8CkGHObHw5qwQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="123123972"
-Received: from jraag-z790m-itx-wifi.iind.intel.com ([10.190.239.23])
-  by orviesa005.jf.intel.com with ESMTP; 02 Mar 2025 20:47:59 -0800
-From: Raag Jadav <raag.jadav@intel.com>
-To: lee@kernel.org,
-	giometti@enneenne.com,
-	gregkh@linuxfoundation.org,
-	andriy.shevchenko@linux.intel.com,
-	raymond.tan@intel.com
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Raag Jadav <raag.jadav@intel.com>
-Subject: [PATCH v2 5/5] pps: generators: tio: Introduce Intel Elkhart Lake PSE TIO
-Date: Mon,  3 Mar 2025 10:17:45 +0530
-Message-Id: <20250303044745.268964-6-raag.jadav@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250303044745.268964-1-raag.jadav@intel.com>
-References: <20250303044745.268964-1-raag.jadav@intel.com>
+	s=arc-20240116; t=1740977321; c=relaxed/simple;
+	bh=p6LwRYtnrJJfZZ5+BCgQMKzaVUcIMcR0HgH6NfODAlA=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=glP/92PR1xW14syeU8szaMDBzK+kvxHHHunMh2rRFHTMnXHNyZfFf7iNbZXBuQ3WxsM+sCsybjjkOHMyEgTQaC/4i6llZZFguStS3xZ8tZnm8n1JtCAyJRMvlLYaqj2avePYOUEaL/fKDCyPjCwElSkXFIevWVUXev3OU+csT28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=AcebxZ7+; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 5234mVZX3208506
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Sun, 2 Mar 2025 22:48:31 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1740977311;
+	bh=5Pd0XNKoaa+c5gJJj/KYlWqJ+Okkhjx9Gpi5+4VeGsY=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=AcebxZ7+J6s7vmnwnJ9lZbjTG3EiyILDgP2xu2uzJG2KgA70SousSikGCM/Dj49E3
+	 TEI9eOQZ6EA9AQPATMbmSsQBAu0E3/uS9fP5bQkiuoNWYtqCwdbouZ09ASsN3xT6OU
+	 2Qnzaa060XJIRe4LnHWoKXFQ0G7nmw7FA+B9NerY=
+Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 5234mV5m030303;
+	Sun, 2 Mar 2025 22:48:31 -0600
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 2
+ Mar 2025 22:48:30 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Sun, 2 Mar 2025 22:48:30 -0600
+Received: from uda0132425.dhcp.ti.com (dhcp-10-24-69-250.dhcp.ti.com [10.24.69.250])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 5234mQEw107786;
+	Sun, 2 Mar 2025 22:48:27 -0600
+From: Vignesh Raghavendra <vigneshr@ti.com>
+To: <nm@ti.com>, <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <r-gunasekaran@ti.com>, <rogerq@kernel.org>,
+        <s-vadapalli@ti.com>, Hrushikesh Salunke <h-salunke@ti.com>
+CC: Vignesh Raghavendra <vigneshr@ti.com>, <srk@ti.com>, <danishanwar@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] arm64: dts: ti: k3-j722s-evm: Fix USB2.0_MUX_SEL to select Type-C
+Date: Mon, 3 Mar 2025 10:18:21 +0530
+Message-ID: <174092143353.3272913.3498123853092206909.b4-ty@ti.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250116125726.2549489-1-h-salunke@ti.com>
+References: <20250116125726.2549489-1-h-salunke@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Add initial support for Intel Elkhart Lake PSE TIO controller.
+Hi Hrushikesh Salunke,
 
-Signed-off-by: Raag Jadav <raag.jadav@intel.com>
-Acked-by: Rodolfo Giometti <giometti@enneenne.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pps/generators/Kconfig       |  2 +-
- drivers/pps/generators/pps_gen_tio.c | 17 ++++++++++++++++-
- drivers/pps/generators/pps_gen_tio.h |  5 +++++
- 3 files changed, 22 insertions(+), 2 deletions(-)
+On Thu, 16 Jan 2025 18:27:26 +0530, Hrushikesh Salunke wrote:
+> J722S SOC has two usb controllers USB0 and USB1. USB0 is brought out on
+> the EVM as a stacked USB connector which has one Type-A and one Type-C
+> port. These Type-A and Type-C ports are connected to MUX so only
+> one of them can be enabled at a time.
+> 
+> Commit under Fixes, tries to enable the USB0 instance of USB to
+> interface with the Type-C port via the USB hub, by configuring the
+> USB2.0_MUX_SEL to GPIO_ACTIVE_HIGH. But it is observed on J722S-EVM
+> that Type-A port is enabled instead of Type-C port.
+> 
+> [...]
 
-diff --git a/drivers/pps/generators/Kconfig b/drivers/pps/generators/Kconfig
-index b3f340ed3163..83aada693ad2 100644
---- a/drivers/pps/generators/Kconfig
-+++ b/drivers/pps/generators/Kconfig
-@@ -33,7 +33,7 @@ config PPS_GENERATOR_PARPORT
- 
- config PPS_GENERATOR_TIO
- 	tristate "TIO PPS signal generator"
--	depends on X86 && CPU_SUP_INTEL
-+	depends on X86 && CPU_SUP_INTEL && MFD_INTEL_EHL_PSE_GPIO
- 	help
- 	  If you say yes here you get support for a PPS TIO signal generator
- 	  which generates a pulse at a prescribed time based on the system clock.
-diff --git a/drivers/pps/generators/pps_gen_tio.c b/drivers/pps/generators/pps_gen_tio.c
-index 6e3a4b198259..a2a23cdc2568 100644
---- a/drivers/pps/generators/pps_gen_tio.c
-+++ b/drivers/pps/generators/pps_gen_tio.c
-@@ -231,6 +231,14 @@ static const struct pps_tio_data pmc_data = {
- 	},
- };
- 
-+static const struct pps_tio_data ehl_pse_data = {
-+	.regs = {
-+		.ctl = TIOCTL_PSE,
-+		.compv = TIOCOMPV_PSE,
-+		.ec = TIOEC_PSE,
-+	},
-+};
-+
- static const struct acpi_device_id intel_pmc_tio_acpi_match[] = {
- 	{ "INTC1021", (kernel_ulong_t)&pmc_data },
- 	{ "INTC1022", (kernel_ulong_t)&pmc_data },
-@@ -240,9 +248,16 @@ static const struct acpi_device_id intel_pmc_tio_acpi_match[] = {
- };
- MODULE_DEVICE_TABLE(acpi, intel_pmc_tio_acpi_match);
- 
-+static const struct platform_device_id pps_gen_tio_ids[] = {
-+	{ "pps-gen-tio", (kernel_ulong_t)&ehl_pse_data },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(platform, pps_gen_tio_ids);
-+
- static struct platform_driver pps_gen_tio_driver = {
- 	.probe          = pps_gen_tio_probe,
- 	.remove         = pps_gen_tio_remove,
-+	.id_table	= pps_gen_tio_ids,
- 	.driver         = {
- 		.name                   = "intel-pps-gen-tio",
- 		.acpi_match_table       = intel_pmc_tio_acpi_match,
-@@ -255,5 +270,5 @@ MODULE_AUTHOR("Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>");
- MODULE_AUTHOR("Pandith N <pandith.n@intel.com>");
- MODULE_AUTHOR("Thejesh Reddy T R <thejesh.reddy.t.r@intel.com>");
- MODULE_AUTHOR("Subramanian Mohan <subramanian.mohan@intel.com>");
--MODULE_DESCRIPTION("Intel PMC Time-Aware IO Generator Driver");
-+MODULE_DESCRIPTION("Intel Time-Aware IO Generator Driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/pps/generators/pps_gen_tio.h b/drivers/pps/generators/pps_gen_tio.h
-index 4329b6dbd598..509bd2633dfb 100644
---- a/drivers/pps/generators/pps_gen_tio.h
-+++ b/drivers/pps/generators/pps_gen_tio.h
-@@ -18,6 +18,11 @@
- 
- struct device;
- 
-+/* EHL PSE Registers */
-+#define TIOCTL_PSE			0x00
-+#define TIOCOMPV_PSE			0x04
-+#define TIOEC_PSE			0x24
-+
- /* PMC Registers */
- #define TIOCTL_PMC			0x00
- #define TIOCOMPV_PMC			0x10
--- 
-2.34.1
+I have applied the following to branch ti-next on [1].
+Thank you!
+
+[1/1] arm64: dts: ti: k3-j722s-evm: Fix USB2.0_MUX_SEL to select Type-C
+      commit: bc8d9e6b5821c40ab5dd3a81e096cb114939de50
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent up the chain during
+the next merge window (or sooner if it is a relevant bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
+--
+Vignesh
 
 
