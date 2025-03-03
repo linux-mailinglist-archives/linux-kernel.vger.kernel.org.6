@@ -1,125 +1,140 @@
-Return-Path: <linux-kernel+bounces-545311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EC0BA4EB8C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:28:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FE86A4E9E9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:51:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 635511776C2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:23:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0944017F5FA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:46:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C10552376E6;
-	Tue,  4 Mar 2025 18:13:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5BCB1F4161;
+	Tue,  4 Mar 2025 17:23:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="d/m7hkht"
-Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Gt1dw67V"
+Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA9E2E3370
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:13:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 322D311CAF
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:23:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.116
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741111992; cv=pass; b=rU/7zXHmtRWLIDka1VFnQXwkgfbVy4KmPkSjSQHPc+FQDtd7ecPT3S3aJ8GJCnL6wqF9ynJXa/3HczEGCM946/jVfnIh2wbgZwf0EMqwHrAZKm6bO9tGZ5JWoEutwWtUBMGLzywEraNIc8d/M0GDbnMvaUxw4rSe6/onx/32icg=
+	t=1741109003; cv=fail; b=YAVmJRoN3OLsFkzzAg5xkX7I8ogcgwl2+SWFKLmUrhNRZClB9zem+o4s2M+c0U7IvME+B0AoxzLUJMza+6ph+pUGXAOl7o3+VeSlw6xrdmEGxhsuHkNBCqAJPMr+Evk0CXXMy5RJN0JoR2bvIjeWS+VDMehWZMg8ZOmOyW1EiTQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741111992; c=relaxed/simple;
-	bh=TPu0b3Yb8x9XdyZxR9D2BnVeAYiPf0X8CkpwpVfMdK8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JuOOyTyG7J6h77Ijp9Y4MCNvfE57V0r47Gj/Jz8kxbQq/FeoxrONV5fkpbuHVHugpoY2L5wQzBnDKJBg2DeiGFl7ldwmjxcfr2YAeFwgRdXxMFgP6eFxdyPF28Nv9gONAnNNaKTwm+nEzx+eF/gd8sNIIzynTsVf7DY4kg4pLpo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=d/m7hkht; arc=none smtp.client-ip=209.85.218.44; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; arc=pass smtp.client-ip=160.75.25.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+	s=arc-20240116; t=1741109003; c=relaxed/simple;
+	bh=7FLVy+mHazqBRLUwwxAKIUKPJl1FViNyB85b6akzRXM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=LJaWcjWUT8GVwht6XPu7qog9ezF4WiF0L0i8A07QBob+uMH4V/+gYMYykwe3kou32JlEfkWKgixMvLNs2oxi/bzZ4pZ6eA6I+TS46oedSskty8jHsPKpJ/M52+EvRj3dGnyGzI9M945PVlkQSoi/Tf8oYEVbzUB5fWwKFDSA4+E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Gt1dw67V reason="signature verification failed"; arc=none smtp.client-ip=192.198.163.14; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; arc=fail smtp.client-ip=160.75.25.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id D743440D1F5A
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 21:13:08 +0300 (+03)
+	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id 4F8BE40F1CE6
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:23:20 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
+Authentication-Results: lesvatest1.cc.itu.edu.tr;
+	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=Gt1dw67V
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dSV1h91zFw5r
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:32:42 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6gNB47nwzG1r7
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:59:06 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 1F5814272E; Tue,  4 Mar 2025 17:32:38 +0300 (+03)
+	id B112541898; Tue,  4 Mar 2025 18:58:44 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=d/m7hkht
-X-Envelope-From: <linux-kernel+bounces-541174-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Gt1dw67V
+X-Envelope-From: <linux-kernel+bounces-541185-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=d/m7hkht
-Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id 1BFDD423BF
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:40:51 +0300 (+03)
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id EF70F2DCF6
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:40:50 +0300 (+03)
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Gt1dw67V
+Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
+	by le2 (Postfix) with ESMTP id A5FA341E61
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:49:06 +0300 (+03)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by fgw1.itu.edu.tr (Postfix) with SMTP id 42F723064C07
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:49:06 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2BBD188D51F
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 08:40:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AF933A94CF
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 08:48:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52DAA1EFF99;
-	Mon,  3 Mar 2025 08:40:36 +0000 (UTC)
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B6F51F12F4;
+	Mon,  3 Mar 2025 08:47:37 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E861EE7AD
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 08:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 747231EE014;
+	Mon,  3 Mar 2025 08:47:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740991233; cv=none; b=eSz0LYn0im1osdnJoU5GhGZfckt6ohJR7dQGcIVXcOD3ehJGlGdI4tVX68Txqo8bqyLxcn1SnQRDm6PQw9yOUhisIGv6fmEgayjY8Z2DT6RGgR+xTlWM3Z3lupbLHgXXtRNx2vC4VIELxhI/IARui8dqkHTRXIMY5twKWkh1fJk=
+	t=1740991653; cv=none; b=Mew+Bz+5CcBzzPfCcKuSKG22Vn4YTxmGZ15l7J52G5LgtBG50rJJeXqh4AoMaqi7MFi5nat6heR2DAdzEEI9kxkQdYb8EW0cO7oaJqApWRHraAcwSKfm2DvmnuxoA5V/xi5NURSBI+uENo8qavBzWUzPChDtlI/wsRabvNUsokc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740991233; c=relaxed/simple;
-	bh=TPu0b3Yb8x9XdyZxR9D2BnVeAYiPf0X8CkpwpVfMdK8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J2KH3ZfHBgxl+XS5bOgAeRjyLaHfDADbxIHVDqp/rQ0tcr2Q0+8pkWTtixzCLxobp+7joiWlb6JFGpedMDT7yoyZ7GM+Z7vnFhJNr4EgM3AvRbQp/FFN9IX8lzZszCPgxr1acujV+gAbFy84KGx0nxFtEHrisIhnsYxgBHCgpV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=d/m7hkht; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-abf45d8db04so318273866b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 00:40:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1740991230; x=1741596030; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7t59WyUTPd0L7Mi3cChysUXnRM6v1fDvAcY991WF1bQ=;
-        b=d/m7hkhtYbS9FQ02J6OUue9K8XWSrfTQsCQNsJrxXMnxjx014Y6lhj8GGfZ+cVKWF3
-         6G4lCTOCKCMQgqPi/gOTKfc8c/oZ7g0WdDCdhU8DqXoVmXPUE3yhEVR23oi1Wr5O7Jrc
-         X9YbsxPxkJfmky+wXsnCQ+CMnnS3T6nk3yzLcbJptPvxUXKrBEuYGZPOWj93D+lFsS6t
-         xEeK6ZBm9K9+6z2IKe8baqMJdv8wxUH0fPpsFrwd4QMydaNxCYB8OaTo/fzYc6/pA5ZD
-         D/pQq9D8ezHncVdTX3enW14hctaVjQRdh7w9o0s/hTyKPAOt8BNPnh/YajxIzKBS5fdE
-         N58A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740991230; x=1741596030;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7t59WyUTPd0L7Mi3cChysUXnRM6v1fDvAcY991WF1bQ=;
-        b=awfGi8dt7KIfIWCE33greFGRZUpN9DTIFQuqMhHOgEmAGA0EclTPhTkmANI2PPzqIA
-         TE6mcu1JgBMdPo78IVW8E9XSo/FLLqL+akEaFLU46FyZt7YbEshLqNDHmifWoz5W1zKg
-         BSKJwnb4iA2s9MG958uXRJshp21+IaZvTjm5zN+nblyIy3/xrL3rZsRI1tzT4FA4idk/
-         d+Rz5fxH5H2jHQbCIDvOQrn0oYptOOUjE7XoQKzDCEWqw6Mds2dwL6tpWqfKLPjamdQZ
-         KcofCmJMw6CxsbKt+iD0B7lQj0z0kfP19+GWYUZYUTaVcs+3HYVQ/8nZA3tj0jZbaM7Q
-         wnPg==
-X-Forwarded-Encrypted: i=1; AJvYcCVG3tKa/QLLDQNBpNtxTEyzokUJKgfZPsCL0IpSMVP0Dd5+yEeqCQ2/tmCvNYbfvzdzWmYJCpOm63a0shU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkCl0gOyibHxBnQWqmvXksua7xqPATt4FSuFUFUBrRTTsWFg/a
-	VQ2jIij32PXb3HZlqZBjoLBTPjRIZGx66MX9eFuz9GxxZfMl+dhNva3ExezBzlw=
-X-Gm-Gg: ASbGnctoWQFUkYV6hKEdkWyBCJT3aRAbDlaTFgJbNBv9jybDjgR8guSxVBn1EAlPKiH
-	ppG+LsvJZbwP2C6z8dHKmvvjTe/O170byRBoISZsmsR79NLppdHBBXxMXA+2T9lNXFKm0xGRDn8
-	vfN+Axfown/fHp1G4Who+0C8GXjnO8CYGqYgZiu5cLs4LLI++uK3nsVHjhGBgsqZtYBQRYsTSLI
-	V2QE0gqJSprr1p5qJB/AhFwPb0cBjVp0fVS7dYgXwKy54+BwtL5IBmvv+LaI9kaXQ4S/OtB/XPQ
-	ResJC2Zh3Vvrek+F/jg/mQWWKCcNCl6cjYn7zEC0rw47wvM6aG8UHg==
-X-Google-Smtp-Source: AGHT+IFbnHrYeaaWFN8nqN3k607A73JWI/jQQa94/Cd3rmC/xFunczpany1uHLkd1AybmzRvqJrINA==
-X-Received: by 2002:a17:907:7f0f:b0:ac0:b05:f0c0 with SMTP id a640c23a62f3a-ac00b05f592mr254231866b.1.1740991230131;
-        Mon, 03 Mar 2025 00:40:30 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.138])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c0b98e1sm764527166b.9.2025.03.03.00.40.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Mar 2025 00:40:29 -0800 (PST)
-Message-ID: <2a18e305-090c-41fe-9b27-97ebe93fd4e4@tuxon.dev>
-Date: Mon, 3 Mar 2025 10:40:25 +0200
+	s=arc-20240116; t=1740991653; c=relaxed/simple;
+	bh=LJoG0hwzy11IwSS0GA7f2KkCoIWMhfdeKs7bZI/C2Jg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=M5TnE/OvlApkDBfIpnZhDBQL6N/jVoJQW6cCDGnxZ/VGUznWIHLeYMDL8NdnN1F1C9Eu1IJqV5EAYfnzzmZGqbOAzCGtJsYjXSFVKQA/oJCkxo28K0M49rSHCmhN/nit+Gylur1DQpyCpygGJgkp7XctYQImVX2K6NqzrQWpWkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Gt1dw67V; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740991652; x=1772527652;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=LJoG0hwzy11IwSS0GA7f2KkCoIWMhfdeKs7bZI/C2Jg=;
+  b=Gt1dw67VHBl2jicCy4GNgKflZmGKwdh2AK22+0oGcmxWeAzBAUD+aoc9
+   HFrVu1k8bXmTMvX5Jo//HZ3WPopJJTb1/U2TuvU1C14T84eUZOTusSoso
+   4GNJVIJyyyZa+qOr7IyfXsaEQwi70zyHkcW7/iWsIBsuRNpM3v/P4OrF0
+   9C2CH/E58A2Dn5Q0dXegFX0ePqS0O4Uas2GScumwxLW3IBEFAQ3gy8z5f
+   g+XUYMXyfkoJ4EaEwOu+2EF73V9mCGgXWMMxpfCaEykZ4F98WxnNp5JHs
+   B2QuhAqg+t63fi7KQvMvRsUXvuA2Go5wOhKyLifuBttJONVlvCmi42/jg
+   A==;
+X-CSE-ConnectionGUID: dMwp9FegRd2dXB1nZxp7pQ==
+X-CSE-MsgGUID: nVk5gWsbRN+neeYt63zuaw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="42111867"
+X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
+   d="scan'208";a="42111867"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 00:47:28 -0800
+X-CSE-ConnectionGUID: BqnvijDaScOzKITX7vs36w==
+X-CSE-MsgGUID: yCwbwk1qQtu2vMCztNB7sg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
+   d="scan'208";a="118426765"
+Received: from jf5300-b11a338t.jf.intel.com ([10.242.51.115])
+  by fmviesa010.fm.intel.com with ESMTP; 03 Mar 2025 00:47:26 -0800
+From: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+To: linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	hannes@cmpxchg.org,
+	yosry.ahmed@linux.dev,
+	nphamcs@gmail.com,
+	chengming.zhou@linux.dev,
+	usamaarif642@gmail.com,
+	ryan.roberts@arm.com,
+	21cnbao@gmail.com,
+	ying.huang@linux.alibaba.com,
+	akpm@linux-foundation.org,
+	linux-crypto@vger.kernel.org,
+	herbert@gondor.apana.org.au,
+	davem@davemloft.net,
+	clabbe@baylibre.com,
+	ardb@kernel.org,
+	ebiggers@google.com,
+	surenb@google.com,
+	kristen.c.accardi@intel.com
+Cc: wajdi.k.feghali@intel.com,
+	vinodh.gopal@intel.com,
+	kanchana.p.sridhar@intel.com
+Subject: [PATCH v8 02/14] crypto: acomp - New interfaces to facilitate batching support in acomp & drivers.
+Date: Mon,  3 Mar 2025 00:47:12 -0800
+Message-Id: <20250303084724.6490-3-kanchana.p.sridhar@intel.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20250303084724.6490-1-kanchana.p.sridhar@intel.com>
+References: <20250303084724.6490-1-kanchana.p.sridhar@intel.com>
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -127,47 +142,47 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 00/21] Enable Power Modes Support for SAMA7D65 SoC
-To: Ryan.Wanner@microchip.com, lee@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, sre@kernel.org,
- nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
- p.zabel@pengutronix.de
-Cc: linux@armlinux.org.uk, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org
-References: <cover.1740671156.git.Ryan.Wanner@microchip.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <cover.1740671156.git.Ryan.Wanner@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6dSV1h91zFw5r
+X-ITU-Libra-ESVA-ID: 4Z6gNB47nwzG1r7
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741716700.36473@0FZ2MIDKenUWPuNWnp+xbw
+X-ITU-Libra-ESVA-Watermark: 1741708753.5894@7oLlfLMGYdN/P3TdBpZAOA
 X-ITU-MailScanner-SpamCheck: not spam
 
+This commit adds a get_batch_size() interface to:
 
+  struct acomp_alg
+  struct crypto_acomp
 
-On 27.02.2025 17:51, Ryan.Wanner@microchip.com wrote:
-> Ryan Wanner (20):
->   ARM: at91: Add PM support to sama7d65
->   ARM: at91: pm: add DT compatible support for sama7d65
->   ARM: at91: PM: Add Backup mode for SAMA7D65
->   ARM: at91: pm: Enable ULP0/ULP1 for SAMA7D65
+A crypto_acomp compression algorithm that supports batching of compressio=
+ns
+and decompressions must register and provide an implementation for this
+API, so that higher level modules such as zswap and zram can allocate
+resources for submitting multiple compress/decompress jobs that can be
+batched. In addition, the compression algorithm must register itself
+to use request chaining (cra_flags |=3D CRYPTO_ALG_REQ_CHAIN).
 
-Applied to at91-soc with some adjustments, please check!
+A new helper function acomp_has_async_batching() can be invoked to query =
+if
+a crypto_acomp has registered this API. Further, the newly added
+crypto_acomp API "crypto_acomp_batch_size()" is provided for use by highe=
+r
+level modules like zswap and zram. crypto_acomp_batch_size() returns 1 if
+the acomp has not provided an implementation for get_batch_size().
 
->   ARM: dts: microchip: sama7d65: Add Reset Controller to sama7d65 SoC
->   ARM: dts: microchip: sama7d65: Add Shutdown controller support
->   ARM: dts: microchip: sama7d65: Add RTC support for sama7d65
->   ARM: dts: microchip: sama7d65: Add SFRBU support to sama7d65
->   ARM: dts: microchip: sama7d65: Enable shutdown controller
-
-Applied to at91-dt with some adjustments, please check!
-
-Thank you!
-
+For instance, zswap can call crypto_acomp_batch_size() to get the maximum
+batch-size supported by the compressor. Based on this, zswap can use the
+minimum of any zswap-specific upper limits for batch-size and the
+compressor's max batch-size, to allocate batching resources. Further,
+the way that zswap can avail of the compressor's batching capability is b=
+y
+using request chaining to create a list requests chained to a head reques=
+t.
+zswap can call crypto_acomp_compress() or crypto_acomp_decompress() with
+the head request in the chain for processing the chain as a batch. The ca=
+ll
+into crypto for compress/decompress will thus remain the same from zswap'=
+s
+perspective for both, batching and sequential compressions/decompressions=
 
