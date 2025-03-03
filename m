@@ -1,130 +1,123 @@
-Return-Path: <linux-kernel+bounces-542485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 814E1A4CA55
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:52:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A68BA4CA08
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:44:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4614417FD28
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:40:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8AA4B7AD763
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:40:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 302092153E4;
-	Mon,  3 Mar 2025 17:33:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97AA57080D;
+	Mon,  3 Mar 2025 17:35:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="so20Bmax"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="Q5/eWSJu"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBDAE214A8A
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 17:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3872B1DE2BF;
+	Mon,  3 Mar 2025 17:35:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741023218; cv=none; b=TNc950VqKQA71nAhkAxlNDHYxc7V5wzopB/dt7gygQzqMkRJQVJHzvTaBTB4q5QVywM3DPkpkc8zVLCkitKNa40eVsa8KWcV3ae64PSTNgMxRmOM46cqzMWrA3Xy2IMyEnLl0mqlL/626W047VZ749S/K/q2JxF15XYFC/PBihA=
+	t=1741023311; cv=none; b=ODvvd3rA3pwD4VBJCeCBzCy65SueVoSwi4sT3exgulHkTjtjWW/5UHlwU1KmoELWpXSpIbsFThqGw1R3LlwJf30WMi95zgNQjlTw6WQTIA+lJfobfyjQNn6H4nTI2TpyscLx26JgFeq+WLHwalHJqC8RfSRz2L8kH2Lb7n5h0pM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741023218; c=relaxed/simple;
-	bh=tsWu4EeOlFGbDPeji246ZamPqZJ7HH9+BLmwhTUya04=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=osp0UFP8dYWT1OZVp9ewyJj6xUz82uX4CREaa5zaQTerJkkAZq+YJkLPocDuvOlbiIHF8Ne+VvLx4ZV4bLZykvdx1EgxM+T4Vw0ANA3m9JsB5/nBOqHc8HSS32UuDHvkC/nMcfsyfnrtw1wAWUiTYcp6OWxd76mS2QNPoiNLgrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=so20Bmax; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5e0b70fb1daso8141338a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 09:33:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741023215; x=1741628015; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OUhmolDFCbsRrygEyjdB/SNREOTYrW2sTqcKH1rfaVc=;
-        b=so20BmaxS3R1WIVvSEV/e8XvADVcsNF6NJz4MyTVmbrdpefWCpMDotaMbQJFUwxfdj
-         /Ymds56sieslKu+hweaCQRPpKSK99YFfwt345cQz2XGj6w0H2Fe0jbQ9m/uZNXqOQy9X
-         dVJteso6CP8WbwabZxljwj8Ci4a0Eze5OG6iEfFgdJNJciKyFCnyRYRW2lF8QR2fj8lI
-         SVU9C8Sb957ca9srKOEiN7Pa15mUgb9yuw372lsYB78uq8q2lJd1eUk0V7ad1yKaPLcp
-         T2jpZn8IYDCkLUYn+Wp4YsnpQjRQrjkWEB89llgWy1NsXahGSK/h/Muht+TVsxJ4T187
-         AIvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741023215; x=1741628015;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OUhmolDFCbsRrygEyjdB/SNREOTYrW2sTqcKH1rfaVc=;
-        b=q8dHg7AGTh7q+qDDS55vgShdhtuIEgoR+C0DHE+/SGxhczvlGzZRe/jgp0sg9SLL/X
-         SUjPXFp/IZzB2mEoMltcV5+Ds1t7kZi0whGU2Xf1IWShte8NItRoqv4ql99RK22GHa25
-         rXDr1y2UXK5/RcHws5LLknABT9+lm6Xq0Zy4azQFm9USGkqt0C8HuRvO4CdHXg++Dxni
-         sOtYPyFp7EsGCYwBgA0r/2eNHSr3ACoKfVZRxor2Lyc74Vgx6Qyzc2n8oJm7fHUIswxD
-         79xVUTdvui6iLz7BK3WOD8WpllEhwxh37SpOzzTymhAaERzLqXKh9ssEIC5CF3cG0kIY
-         D4/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV5Hz7f2Msh3ZOaTDasX4V5R/pycQJ4YiXClCzZZFpj7PWZ+jXHNt8UeRoiOuSDGbRtGk7wZYJX3O+yMBs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzULEJmwTUdLfuERidYcYMrzSjwp95FDB5stOu3mYbN4Dg+sEuM
-	LpaOvKKHa9Szq0cPIhb9Qvfi0hY3xUOJsFR7Lts4exMZV+7wg2DXhtk7bRziWVQ=
-X-Gm-Gg: ASbGncsSfmsuIZX1+JC6VqixQRGLZ2Hre810m4QSqTQuR/K1AUVFUYB7cb+9yucUX18
-	7ff4EZ2h73djKdFCN3twYwJFYBme3/ZUPeg2fMnRLEs4HZxAXrFNNzyD4Y8vryaMs03bqGi1Msg
-	+o1QcowsmGrPfvyIZ5DaP8VqBMeNIoFI1q6Y6LykgxgjCEVnFm1CiHiis+ezuR+RGS6AjxJgOzX
-	0eG6MOmPRsXlRJcXxYGWHZc3wd5mKc5WqAanWzWuHXLEkrt1cCcHUt5RBHadydNaB/VNbhFYPFL
-	pAUsTzPktNN3DjFsvL4nDrYsyvHUaI67qzS/4J1IVw==
-X-Google-Smtp-Source: AGHT+IEfd6FqNltMqV3tCjIrZsZmfb/5XycRyRy8vJsW4t7vzj04maxfZbsm1bvOwLU1xzzl3b3NTQ==
-X-Received: by 2002:a05:6402:350e:b0:5de:db0e:311f with SMTP id 4fb4d7f45d1cf-5e4d6ac4393mr14943743a12.4.1741023215104;
-        Mon, 03 Mar 2025 09:33:35 -0800 (PST)
-Received: from linaro.org ([62.231.96.41])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e50751c496sm5104649a12.67.2025.03.03.09.33.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 09:33:34 -0800 (PST)
-Date: Mon, 3 Mar 2025 19:33:33 +0200
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>, Marek Vasut <marex@denx.de>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Shengjiu Wang <shengjiu.wang@nxp.com>,
-	Adam Ford <aford173@gmail.com>,
-	Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
-	linux-clk@vger.kernel.org, imx@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/4] clk: imx8mp: fix parents of AUDIOMIX DSP/OCRAM_A
-Message-ID: <Z8Xn7f6vXg0aM4zx@linaro.org>
-References: <20250226164513.33822-1-laurentiumihalcea111@gmail.com>
- <174102305899.2928950.8837177294161174759.b4-ty@linaro.org>
+	s=arc-20240116; t=1741023311; c=relaxed/simple;
+	bh=EoMRGVDo4FZxd5nlUs9gZNZg2b2BUEFNjawnEOFMg0I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sVgC+VjgmgPyvnC/4vYakqqH2uOMeespfhmEO2aKjghbxKcTvgd+s5a/2gqGKsaTDq4t0Ow4zeSJLkl+7DKp1GLkWwBuqL8JgW8s1j5ukKlpmvirf1ePHruG/xnKcvpaNme8QWFDtR02e35++OBDHqX0zoQAOXO9XLVuTYQBTXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=none smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=Q5/eWSJu; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=yoseli.org
+Received: by mail.gandi.net (Postfix) with ESMTPSA id DF48A204CE;
+	Mon,  3 Mar 2025 17:35:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yoseli.org; s=gm1;
+	t=1741023307;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TEok21Mpkz5RPutY5HcOjkANyfwnJwTHijWGy9H+c9g=;
+	b=Q5/eWSJudErQsWL5JWITlbebWfU1eQou5HQGJ+0yPRfrtVpJ8f/t8KOMYNdw4jtlWMFtUA
+	1KCPYqoBncikdeeuhNZQpJdb/l5Gq8LJz7A+KUJGlhnb3hz00JJWGzORZtWAkuL+njDx7j
+	ZSMLrVlTWO3KKSWVeE6Aw9bhsAcb+BYQLBJ33CNHTi6xI3OC2u4GiQbhLLUiiMHeoE8G0q
+	VidqH+EwcirLuaJRmZkodDOJvnB9JlxzNj/yozm5s2Xq8US+QeGgDGQUyixwpS7xpFgPK8
+	U+yXgsEJal2ufak1U0SGasNSl9JBRKmkJo3ZX9fqKSCyq4i0VoziV5dbGCwhqA==
+Message-ID: <aaf511ad-d7eb-454c-83c0-84f0d14f323d@yoseli.org>
+Date: Mon, 3 Mar 2025 18:35:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <174102305899.2928950.8837177294161174759.b4-ty@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] net: phy: dp83826: Add support for straps reading
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Catalin Popescu <catalin.popescu@leica-geosystems.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250303-dp83826-fixes-v1-0-6901a04f262d@yoseli.org>
+ <20250303-dp83826-fixes-v1-2-6901a04f262d@yoseli.org>
+ <Z8Xl9blPRVXQiOSm@shell.armlinux.org.uk>
+Content-Language: en-US
+From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+In-Reply-To: <Z8Xl9blPRVXQiOSm@shell.armlinux.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelleejgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeflvggrnhdqofhitghhvghlucfjrghuthgsohhishcuoehjvggrnhhmihgthhgvlhdrhhgruhhtsghoihhsseihohhsvghlihdrohhrgheqnecuggftrfgrthhtvghrnhepfeeiteeghedvgefggfffteehhefhteekfeehhfegueehteeuffeuieekgfffffetnecukfhppeeluddrudeihedrudeihedrudeljeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeluddrudeihedrudeihedrudeljedphhgvlhhopegludelvddrudeikedruddriegnpdhmrghilhhfrhhomhepjhgvrghnmhhitghhvghlrdhhrghuthgsohhisheshihoshgvlhhirdhorhhgpdhnsggprhgtphhtthhopedutddprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhmpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhgl
+ hgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtoheptggrthgrlhhinhdrphhophgvshgtuheslhgvihgtrgdqghgvohhshihsthgvmhhsrdgtohhm
+X-GND-Sasl: jeanmichel.hautbois@yoseli.org
 
-On 25-03-03 19:30:58, Abel Vesa wrote:
-> 
-> On Wed, 26 Feb 2025 11:45:09 -0500, Laurentiu Mihalcea wrote:
-> > Correct the parent of the AUDIOMIX DSP and OCRAM_A clock gates by setting
-> > it to AUDIO_AXI_CLK_ROOT, instead of AUDIO_AHB_CLK_ROOT. Additionally, set
-> > the frequency of AUDIO_AXI_CLK_ROOT to 800MHz instead of the current
-> > 400MHz.
-> > 
-> 
-> Applied, thanks!
-> 
-> [1/4] dt-bindings: clock: imx8mp: add axi clock
->       commit: 2471a101938b0d1835b1983df08daeb98eef1205
-> [2/4] clk: clk-imx8mp-audiomix: fix dsp/ocram_a clock parents
->       commit: 91be7d27099dedf813b80702e4ca117d1fb38ce6
-> [3/4] arm64: dts: imx8mp: add AUDIO_AXI_CLK_ROOT to AUDIOMIX block
->       (no commit info)
-> [4/4] arm64: dts: imx8mp: change AUDIO_AXI_CLK_ROOT freq. to 800MHz
->       (no commit info)
+Hi Russel,
 
-Applied only patches 1 and 2.
-
-My b4 setup messed up. Sorry.
-
+On 03/03/2025 18:25, Russell King (Oracle) wrote:
+> On Mon, Mar 03, 2025 at 06:05:52PM +0100, Jean-Michel Hautbois wrote:
+>> +	/* Bit 10: MDIX mode */
+>> +	if (val & BIT(10))
+>> +		phydev_dbg(phydev, "MDIX mode enabled\n");
+>> +
+>> +	/* Bit 9: auto-MDIX disable */
+>> +	if (val & BIT(9))
+>> +		phydev_dbg(phydev, "Auto-MDIX disabled\n");
+>> +
+>> +	/* Bit 8: RMII */
+>> +	if (val & BIT(8)) {
+>> +		phydev_dbg(phydev, "RMII mode enabled\n");
+>> +		phydev->interface = PHY_INTERFACE_MODE_RMII;
+>> +	}
 > 
-> Best regards,
-> -- 
-> Abel Vesa <abel.vesa@linaro.org>
+> Do all users of this PHY driver support having phydev->interface
+> changed?
 > 
+
+I don't know, what is the correct way to know and do it ?
+Other phys did something similar (bcm84881_read_status is an example I 
+took).
+
+>> +
+>> +	/* Bit 5: Slave mode */
+>> +	if (val & BIT(5))
+>> +		phydev_dbg(phydev, "RMII slave mode enabled\n");
+>> +
+>> +	/* Bit 0: autoneg disable */
+>> +	if (val & BIT(0)) {
+>> +		phydev_dbg(phydev, "Auto-negotiation disabled\n");
+>> +		phydev->autoneg = AUTONEG_DISABLE;
+>> +		phydev->speed = SPEED_100;
+>> +		phydev->duplex = DUPLEX_FULL;
+>> +	}
+> 
+> This doesn't force phylib to disallow autoneg.
+> 
+
+Is it needed to call phy_lookup_setting() or something else ?
+
+Thanks for your feedback,
+JM
 
