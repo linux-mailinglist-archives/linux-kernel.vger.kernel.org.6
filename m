@@ -1,112 +1,96 @@
-Return-Path: <linux-kernel+bounces-544960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B716CA4E6DA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:52:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFFF1A4E52C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:11:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FBEC7AA5C9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:48:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A49E420C7F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:04:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD4F298CC1;
-	Tue,  4 Mar 2025 16:28:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B39A294ECB;
+	Tue,  4 Mar 2025 15:45:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RBX5fAtO"
-Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jk5ZUSjp"
+Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 741B8294EE6
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:28:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FB0529B20A
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:45:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741105693; cv=pass; b=QElYrQ9bY/Owimf1LD25iZ24xsBrBhc6JOGBfpzyePxN1aFEGjMG2PH46km3ffliR7GMeYSnqjeEsRfDlS/1Cs30Pz+xTFu7vDTu4G1bEL2IZfFQT/Tz03qGqihyXy+ed0Yh9sY+u38Wn8bqnQ81fwNrgLM728KhNq8Gv54X1dk=
+	t=1741103110; cv=pass; b=bExy+2T5TnaExGD1+RJl1TuzRfkfi95WGEGo1O5f9NLTCn5sH5cgciBGu7CZM+7boIPKRSDr7EkCThmI825nF0wVnmfraP35VIEdxCg/fKUoBmkxdsOBzsgKpgXluc5BF30EOsjhrhV/QL7ceqmrtJv/IX3ejUKdPyqkrPQYAQc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741105693; c=relaxed/simple;
-	bh=5+c/8dUp26rrw26JKWP2mXjUnDArpi3YPn5xzRkRfF4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=od2WPsudY0bSlKhAvhyARoCy8KhtmOPfFj7dRQ1LmMbCRAO0JAW4PvUvwWkWFkfiZRi5xxTeHDOzulfBj9NQJG6wog6n7YLrFKOW1Iq0tgvl2in8B19uTgl8Ro+XuI3QdTK+w6G37r1Bq7YMZccxIHJ8g8cbcyV/hFcU1ZEAnrw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=RBX5fAtO; arc=none smtp.client-ip=198.47.19.245; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; arc=pass smtp.client-ip=160.75.25.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+	s=arc-20240116; t=1741103110; c=relaxed/simple;
+	bh=xwdHDiSfiVLcZ3PJ+2tZNXkhHrgoE2+XcqPiorQMmzc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eK8fhFglMijabzBICKt+gp70X3uDrlUkE17RhFJ+Lz38YDYnzCwIIAgRC1nRzdf4iLcel598hnjP0pObuRvw+SaexVina+wfxbdIXewKuXVBGoAFg3FZfkBSwLpk80GbG+8XnGatZH2P+u6BTYyAHUEGfpzdWx+RnbiFLNItxkg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jk5ZUSjp; arc=none smtp.client-ip=10.30.226.201; arc=pass smtp.client-ip=160.75.25.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id ABD4B408B659
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:28:09 +0300 (+03)
+	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id D909440D5720
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:45:06 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=pass (1024-bit key, unprotected) header.d=ti.com header.i=@ti.com header.a=rsa-sha256 header.s=ti-com-17Q1 header.b=RBX5fAtO
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20201202 header.b=Jk5ZUSjp
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6fry558lzG0j7
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:35:30 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6g246qHczG0pl
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:43:24 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 081F34275C; Tue,  4 Mar 2025 18:35:27 +0300 (+03)
+	id CDE3D400C6; Tue,  4 Mar 2025 18:43:11 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=RBX5fAtO
-X-Envelope-From: <linux-kernel+bounces-541099-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jk5ZUSjp
+X-Envelope-From: <linux-kernel+bounces-541101-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=RBX5fAtO
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jk5ZUSjp
 Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id 8049A41BB1
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:41:00 +0300 (+03)
+	by le2 (Postfix) with ESMTP id 8C95541C36
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:47:19 +0300 (+03)
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id 39B663064C07
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:41:00 +0300 (+03)
+	by fgw1.itu.edu.tr (Postfix) with SMTP id 25B333064C08
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:47:19 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0776A16AB13
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 07:40:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B73616AFE7
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 07:47:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62F405CDF1;
-	Mon,  3 Mar 2025 07:40:44 +0000 (UTC)
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1959A1EDA3E;
+	Mon,  3 Mar 2025 07:47:07 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C0BA1EB192;
-	Mon,  3 Mar 2025 07:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B7F8635F;
+	Mon,  3 Mar 2025 07:47:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740987641; cv=none; b=ahiNVTFV0lgSaeLc6HPoWTd8YuQYjjHahfmULAXdmV6Uz/dVeXi5G+Lpc86cQT8AULYcFeXIhR5RgOnurPq1GEFIaHdyLL969PWiPe8zzqdR7jkXmrgRtv+OTIkhBKjRxmFPFXGmsCfRyIb7H+qfIUuIkh8Jw4BleG/czX6vcTU=
+	t=1740988022; cv=none; b=iMfap7p4AZ7tRBkGwhB6XXFJ4kyYOutNXkExOacARu62YMfbE/sqZiuO2hnI5izjsHE46LU+tMa2FmVMVrSgywA9512J2H/J+T+d9Z8axS4kVDTPKKD5xQEB/DKYMR0EJIUmtauhnRi8+FXAOkShhBVJsWDO35LTSDTj8mmnA5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740987641; c=relaxed/simple;
-	bh=5+c/8dUp26rrw26JKWP2mXjUnDArpi3YPn5xzRkRfF4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QNIFSoiAq9D4wYdPSg7ZFAncTZhlxRn+o5injlLbalEsyeCMkkko9OFpCsiW1VhvwyO7Hg68BIUgUvZXOscmNgOGODJ8SWFahSrjEHbOmam1gqZmE5McT4F01fB7Jd6NJ2G75PP4jmzmqLvOIWWXyKjFUcztVL3BwwtOhglLtYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=RBX5fAtO; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 5237eP7M2626084
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 3 Mar 2025 01:40:25 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1740987625;
-	bh=GQ1xW2NPwpJqRZbwpFeIMuaFkeaa4B6mXxYKzB9+m6E=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=RBX5fAtOXtag7wzZX1/8h/+h6f5p88bKSHwRSH+/JDboHIdH52smlDBb44yPjGvQf
-	 1d8O++uq5j1eIMqsrVsrs2kgANSnAcU1hM3JNvZsyXCZVW6t+sGve7Alw1IBHuf6jF
-	 QezRUPyF0XU8eYWWRBscDC72kUm80xvHor/CPlS8=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 5237ePv9099697
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 3 Mar 2025 01:40:25 -0600
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 3
- Mar 2025 01:40:24 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 3 Mar 2025 01:40:24 -0600
-Received: from [10.24.69.250] (dhcp-10-24-69-250.dhcp.ti.com [10.24.69.250])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 5237eLjR131041;
-	Mon, 3 Mar 2025 01:40:22 -0600
-Message-ID: <3d01a502-47a6-467e-8743-392fde26e66e@ti.com>
-Date: Mon, 3 Mar 2025 13:10:21 +0530
+	s=arc-20240116; t=1740988022; c=relaxed/simple;
+	bh=xwdHDiSfiVLcZ3PJ+2tZNXkhHrgoE2+XcqPiorQMmzc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hsD+MVkuDQcroYhPJJGHpt1zS1EO0uIKvJ1RS8GSPhJ+9jpBNnU/LINCtSi45biLRey88Uk0sZENJKqz7lVOJMZLg7aX8DKjQL/GflY3lQCnAXM+ExFKzlJeaTrtjmLDaUbrvoGYdUZIWfBI0UhOxYSiMAM5rQJvvys5rX6prYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jk5ZUSjp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50B4FC4CED6;
+	Mon,  3 Mar 2025 07:46:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740988022;
+	bh=xwdHDiSfiVLcZ3PJ+2tZNXkhHrgoE2+XcqPiorQMmzc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Jk5ZUSjpndAm65Mc13hxIQ2yr1Aek+IIrzp6+ysfq17A3F+txLY8o1+ERBjV6d4xl
+	 W3WzGznNE8v/kWt5FGuzHw5mZVbTUVkZmknVbiKEw2TPogl4r4VIDVM0djijxUHcmC
+	 JPkjMJ5oQ5T5dxeD7u10aLajBrBgRt1N+KcUzYsapjwVXsv4GafQRVLOOvB+35OLWl
+	 X/p98SQU2hpTqLfL2TV840CXu8KeWphhpA5AV+xVG25BbbfUhyZ5pR9LHzt+cvVJSf
+	 eyDfc1vGXQOKnhsKvB1JtUggVCVnEctYHsgOoDhjXfB8Q9KSNG5Dv8TYZDgpNRtdHz
+	 TnpdwpiXDqK9Q==
+Message-ID: <a8991221-88b2-4a39-a51b-587c4cdeebe4@kernel.org>
+Date: Mon, 3 Mar 2025 08:46:55 +0100
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -115,83 +99,235 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] arm64: dts: ti: k3-am62a-phycore-som: Add boot phase
- tags
-To: Wadim Egorov <w.egorov@phytec.de>, <nm@ti.com>, <kristo@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <upstream@lists.phytec.de>
-References: <20250228101817.865811-1-w.egorov@phytec.de>
- <20250228101817.865811-2-w.egorov@phytec.de>
+Subject: Re: [PATCH v5 5/6] arm64: dts: qcom: Add support for QCS9075 Ride &
+ Ride-r3
+To: Wasim Nazir <quic_wasimn@quicinc.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@quicinc.com
+References: <4wmxjxcvt7un7wk5v43q3jpxqjs2jbc626mgah2fxbfuouu4q6@ptzibxe2apmx>
+ <Z3eMxl1Af8TOAQW/@hu-wasimn-hyd.qualcomm.com>
+ <xuy6tp4dmxiqbjitmoi6x5lngplgcczytnowqjvzvq5hh5zwoa@moipssfsgw3w>
+ <Z3gzezBgZhZJkxzV@hu-wasimn-hyd.qualcomm.com>
+ <37isla6xfjeofsmfvb6ertnqe6ufyu3wh3duqsyp765ivdueex@nlzqyqgnocib>
+ <67b888fb-2207-4da5-b52e-ce84a53ae1f9@kernel.org>
+ <Z3/hmncCDG8OzVkc@hu-wasimn-hyd.qualcomm.com>
+ <b0b08c81-0295-4edb-ad97-73715a88bea6@kernel.org>
+ <Z4dMRjK5I8s2lT3k@hu-wasimn-hyd.qualcomm.com>
+ <80e59b3b-2160-4e24-93f2-ab183a7cbc74@kernel.org>
+ <Z8AWHiVu05s0RJws@hu-wasimn-hyd.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Vignesh Raghavendra <vigneshr@ti.com>
-In-Reply-To: <20250228101817.865811-2-w.egorov@phytec.de>
-Content-Type: text/plain; charset="UTF-8"
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <Z8AWHiVu05s0RJws@hu-wasimn-hyd.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6fry558lzG0j7
+X-ITU-Libra-ESVA-ID: 4Z6g246qHczG0pl
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741710371.71837@K6hYQwaxUaj0aLH755aHuw
+X-ITU-Libra-ESVA-Watermark: 1741707812.09227@U2TOC3GUCDBK590CWVmgrg
 X-ITU-MailScanner-SpamCheck: not spam
 
-Hi Wadim
+On 27/02/2025 08:37, Wasim Nazir wrote:
+> On Wed, Jan 15, 2025 at 09:35:34AM +0100, Krzysztof Kozlowski wrote:
+>> On 15/01/2025 06:48, Wasim Nazir wrote:
+>>>> The the SoC, I am asking about the board. Why each of them is for
+>>>> example r3?
+>>>>
+>>>> So this is not sufficient explanation, nothing about the board, and
+>>>> again just look Renesas and NXP.
+>>>>
+>>>
+>>> Hi Krzysztof,
+>>>
+>>> sa8775p(AUTO), qcs9100(IOT), qcs9075(IOT) are different SoCs based on
+>>> safety capabilities and memory map, serving different purpose.
+>>> Ride & Ride-r3 are different boards based on ethernet capabilities and
+>>> are compatible with all the SoCs mentioned.
+>>
+> 
+> Hi Krzysztof,
+> 
+>> Compatible? What does it mean for a board?
+>>
+> 
+> Ride board is based on multiple daughter cards (SOC-card, display,
+> camera, ethernet, pcie, sensor, etc.).
+> 
+> The SOC is not directly soldered to Ride board, instead SOC is soldered
+> on SIP (System in Package) card which can be mounted on SOC-daughter card of
+> Ride board.
+> 	- SoC => SIP-card => SOC-daughter-card (Ride)
 
-[...]
 
-On 28/02/25 15:48, Wadim Egorov wrote:
-> @@ -168,6 +174,7 @@ &cpsw3g {
->  	status = "okay";
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&main_rgmii1_pins_default>;
-> +	bootph-all;
+So basically pretty like other designs using SoM.
 
-One of the child nodes have bootph-all, so drop this from the parent.
+> 
+> Together with SIP cards and other daughter cards we are creating different
+> <soc>-Ride Variants with differences in memory map & thermal mitigations.
+> 
+> The SIP card consists of SOC, PMIC & DDR and it is pin compatible to the
+> SOC daughter card of <soc>-Ride board. Only SOC is changing accross SIP
+> cards, except an additional third party SIL-PMIC for SAIL, which is not
+> present in QCS9075 Ride.
 
-BTW don't you need main_pktdma to have bootph-all to go along this for
-ETH boot support?
+Just like every SoM
 
->  };
->  
->  &cpsw_port1 {
-> @@ -182,6 +189,7 @@ &cpsw3g_mdio {
->  	cpsw3g_phy1: ethernet-phy@1 {
->  		compatible = "ethernet-phy-id2000.a231", "ethernet-phy-ieee802.3-c22";
->  		reg = <1>;
-> +		bootph-all;
->  		ti,clk-output-sel = <DP83867_CLK_O_SEL_OFF>;
->  		ti,rx-internal-delay = <DP83867_RGMIIDCTL_2_00_NS>;
->  		ti,fifo-depth = <DP83867_PHYCR_FIFO_DEPTH_4_B_NIB>;
-> @@ -196,6 +204,7 @@ &main_i2c0 {
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&main_i2c0_pins_default>;
->  	clock-frequency = <400000>;
-> +	bootph-all;
->  	status = "okay";
->  
->  	pmic@30 {
-> @@ -318,6 +327,7 @@ serial_flash: flash@0 {
->  		cdns,tchsh-ns = <60>;
->  		cdns,tslch-ns = <60>;
->  		cdns,read-delay = <0>;
-> +		bootph-all;
->  	};
->  };
->  
-> @@ -326,5 +336,6 @@ &sdhci0 {
->  	pinctrl-0 = <&main_mmc0_pins_default>;
->  	disable-wp;
->  	non-removable;
-> +	bootph-all;
->  	status = "okay";
->  };
-> -- 2.34.1
+> 
+> Other daughter cards remains same for <soc>-Ride variants, except
+> ethernet card which is different for <soc>-Ride rev3 variants.
+> 
+> So the Ride board (combination of daughter cards) is same across the SIP,
+> while SOC on SIP card is changing which can be sa8775p, qcs9100 or qcs9075.
+> 
+>> Third time: did you look how other vendors do it?
+>>
+> 
+> Yes, we have reviewed other vendors. However, please feel free to share
+> any specific reference you would like us to follow.
+> 
+> Here are few reference files we found from other vendors where similar
+> tasks are performed which includes code refactoring and HW modularity:
+>  - Freescale: fsl-ls208xa.dtsi, fsl-ls2088a.dtsi, fsl-ls2081a-rdb.dts
 
--- 
-Regards
-Vignesh
-https://ti.com/opensource
+That's an unexpected choice - I would rather look at dozen of SoMs for
+iMX platforms.
 
+>  - Renesas: white-hawk-common.dtsi, r8a779g0-white-hawk.dts
+>  - Rockchip: px30-engicam-common.dtsi, px30-engicam-ctouch2.dtsi,
+>    px30-engicam-px30-core-ctouch2.dts
+> 
+> In our case along with describing the HW, code refactoring is also done
+> which might be causing confusion, but we are ready for any inputs for
+> correction.
+
+I don't understand why this was not properly described since beginning.
+You had the hardware in your hands and went with incomplete or even
+incorrect hardware description.
+
+> 
+> Putting this pictorial diagram for updated DT structure depicting our HW.
+>  - qcs9xxx-module.dtsi specifying QCS9xxx based SIP card/module having
+>    SoC, PMICs, Memory-map updates.
+>  - qcom-ride-common.dtsi specifying ride daughter boards, here we are
+>    doing code refactoring also as this is common for all ride boards.
+>  - qcom-ride-ethernet-aqr115c.dtso specifying ethernet overlay board which
+>    uses 2.5G phy and can be overlayed to ride boards to get ride-r3.
+>    By default ride uses 1G phy.
+>  - qcs9075-iq-9075-evk.dts is the new name for RB8 as per new product
+>    name. We will be changing this in next patch series.
+> 
+> +-----------------------------------------------------------------------------------------------------------------------------------------------+
+> |                                                                                                                                               |
+> |                                                          sa8775p.dtsi                                                                         |
+> |                                                              |                                                                                |
+> |                                    +-------------------------+-----------------------+                                                        |
+> |                                    |                         |                       |                                                        |
+> |                                    v                         |                       v                                                        |
+> |                             qcs9075-module.dtsi              |                qcs9100-module.dtsi                                             |
+
+So this is the SoM?
+
+> |                                    |                         |                       |                                                        |
+> |                                    v                         v                       v                                                        |
+> |                                  (IOT)                    (AUTO)                   (IOT)                                                      |
+> |                                    |                         |                       |                                                        |
+> |             +----------------------+                         |                       |                                                        |
+> |             |                      |                         |                       |                                                        |
+> |             |                      | +-------------------------+-----------------------+-------------------< qcom-ride-common.dtsi            |
+
+Which piece of actual hardware is represented in qcom-ride-common?
+
+> |             |                      | |                       | |                     | |                                                      |
+> |             v                      v v                       v v                     v v                                                      |
+> |  qcs9075-iq-9075-evk.dts     qcs9075-ride.dts         sa8775p-ride.dts         qcs9100-ride.dts                                               |
+> |                                    |                         |                       |                                                        |
+> |                                    | +-------------------------+-----------------------+-------------------< qcom-ride-ethernet-aqr115c.dtso  |
+> |                                    | |                       | |                     | |                                                      |
+> |                                    v v                       v v                     v v                                                      |
+> |                             qcs9075-ride-r3.dts      sa8775p-ride-r3.dts      qcs9100-ride-r3.dts                                             |
+
+I think I gave already few times that answer: No. You cannot reference
+from a module.c another .c file. You cannot reference DTS from DTS.
+
+Strictly speaking you can, of course, but you must not. That's not how
+source code is done to be manageable and readable.
+
+> |                                                                                                                                               |
+> +-----------------------------------------------------------------------------------------------------------------------------------------------+
+> 
+>>>
+>>> With the combination of these 3 SoCs and 2 boards, we have 6 platforms,
+>>> all of which we need.
+>>> - sa8775p-ride.dts is auto grade Ride platform with safety feature.
+>>> - qcs9100-ride.dts is IOT grade Ride platform with safety feature.
+>>> - qcs9075-ride.dts is IOT grade Ride platform without safety feature.
+>>>
+>>> Since the Ride-r3 boards are essentially Ride boards with Ethernet
+>>> modifications, we can convert the Ride-r3 DTS to overlays.
+>> How one board can be with multiple SoCs? If it is soldered, it's close
+>> to impossible - that's just not the same board. If it is not soldered,
+>> why you are not explaining it? What is Ride board? What is there? What
+>> can go there? How it can be used in other SoCs? Or for which SoCs? Is
+>> there a datasheet available?
+>>
+> 
+> As our SoC is based on SIP card and SIP card is compatible with Ride
+> board, we could able to use same Ride board (which is combination of
+> multiple daughter cards) with multiple SIP cards.
+> These SIP cards can be of sa8775p, qcs9100 or qcs9075 SOC.
+
+Describe properly the hardware - if you have a module or SIP if you
+decide not to use industry-standard naming (but why...), then describe
+it in DTSI.
+
+Best regards,
+Krzysztof
 
 
