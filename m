@@ -1,180 +1,112 @@
-Return-Path: <linux-kernel+bounces-541334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D670A4BBA4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:05:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D64CEA4BBA6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:05:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82EA816820C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:05:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBE5D1891EC1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249981F1513;
-	Mon,  3 Mar 2025 10:05:14 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E121EE7DF
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 10:05:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A035C1F1909;
+	Mon,  3 Mar 2025 10:05:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="a0brHlXU"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 659A11EE7DF
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 10:05:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740996313; cv=none; b=ovaee2DoIGaflmXgw3cOPqdp/17Wq5lbgluoDO+1uKTSLMmxopOjuxbH5rqikXM7w5h+2BsGgWQXtbHu2NJUYalkOC7QElkJ8NDKjKFoHKafZ7NojzCF/wJ7lv/gwBz2HYgg4l8LIuvP+uWyFm5pyNEOjf9Yxb+948ARWhZ4yP0=
+	t=1740996332; cv=none; b=Fjr0ha59HuP/Qz6+OmzWC3ZutqrwKMn2GEnCrhkhFl9t4RyKCw4VznLtd5PlFaKkHeDh03h+8VH76L+zwq6Eg9z3o+bfRvp6bfCmbXdbtIXSjLNd7TD2sAus3/T8JOIEIsWaS+uNujbDecnWC5GLHdgZedmz0Gx6+PxbBJpvkSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740996313; c=relaxed/simple;
-	bh=AoU4Z3QCQ2/qu0GeNzrhNZiZ91wW/kwe2RXf1SNdPPw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sGL6L1dmJC9DTj4JbrUYdRyzDnLKM+6miKLT3XW47yULJ7Hv6IL5D/j+vpWCbi4eLl5YQog96ICCb1Q1OAO5KsrC1ZSGM03k1+4UbZOUNGFkP4tKCQl7DLfE56CsKmB9CAWALtL9+zZJ1YmBL69wEYN/QJqMBuuJwIbU2s/knLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 87288113E;
-	Mon,  3 Mar 2025 02:05:25 -0800 (PST)
-Received: from [192.168.178.6] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B96123F66E;
-	Mon,  3 Mar 2025 02:05:10 -0800 (PST)
-Message-ID: <14a2aaac-05d5-4b2e-a8c1-617bb4411659@arm.com>
-Date: Mon, 3 Mar 2025 11:05:01 +0100
+	s=arc-20240116; t=1740996332; c=relaxed/simple;
+	bh=7QyQstdhk1iCcfADNLha/6aG2uup2vCJ66MTtxh2nZg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XZy9CBRuE0UlzP6DYm9xON4mfDSklDRFOzPT27mVo108aSoOH9Yo7jeSJsuePomK8sW1wEsC4jLwfoxPVg6HyPBSo23DLpqHyvnQr1Rigg6gnJWW1bNFVSiczfdWFHRGPCmI3WF4ae4f/TolXDoY4xQmVOFjVrS/q4bL9tQInrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=a0brHlXU; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43690d4605dso26539215e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 02:05:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740996329; x=1741601129; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7QyQstdhk1iCcfADNLha/6aG2uup2vCJ66MTtxh2nZg=;
+        b=a0brHlXU2on+kl7ovToLUczsXU4U8kwPaZd+PkQlBdcT51KLmbcFyk8WXmNC5Id9JU
+         jVKp424O8JTFpuMgYReujkGEZ4/W9b++mGMryJYsuU62kZRFjPyOJPgIwafLoTu6OJa/
+         aJmVc/6kobfsq5QfM3mV/rvEE6V6ajHMBcyzV7csVOT+sKOKY4B6KkG8EBii153iqjkU
+         VwayvXd/BX/eHY5mH7v3aIFl5CvcOk7H2ALFsCrq26M0+BQEF+Hw3kT2iKB7JS6B7rnk
+         7R27n9fSJHTHui0z6wkapCp2B6KjsOUp/YTE/Eduo1WiYVd/Bcp4ExLmu1VFgqjRvSrA
+         nq0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740996329; x=1741601129;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7QyQstdhk1iCcfADNLha/6aG2uup2vCJ66MTtxh2nZg=;
+        b=XJMzdO5IfbLklcFnJx7yJB7nsiXGQczV3D+5EwPToq+vO3qQ/fqC7RLnp7n43SUT7p
+         Q4H0mOK2Vg1vVEqckvLlIOxWssZ/qvEFWL5aW7oq0nB2HBRDWNCyxXUW26QuZrhiMHJM
+         xhokgvH8hOtgav8yf73SOKaVwYOfNgi9kqaB1VEGWU+mSRBZ0W7dGdjOvZ4pR0Tr40DN
+         d9HOJiki8S63C7yV5FZ9J4z36VFFx1N9X3kNPYbEiwcTpN99JPNPlwvfv+G9LRhFvtmY
+         RWdjU5c6/sfW2Y2ZXNsubYFx0IN8RNQnbdLqy+D/F5jhKAVFXwkZ12lcBLK3CFBSF4S9
+         1vlA==
+X-Forwarded-Encrypted: i=1; AJvYcCXyVnPMLpop/cUyjfl0rVnBmX/vK8tqbS4e74XztUvkDjT0KIs+LO5MRw+5Qz3m0FXLiqd7eP1MrjD0UNk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzm+rqBWFkC68lxT3rAJDBNEr440adW/1L7Zsb4GWZZa7xpDQA0
+	DZ0IGZeL24Y44q/LFrBePv6SrkYbHpVSWvWf6iDPDT2f/p1FOemAvhVzGUp6fUo5bp+cNcKJkvr
+	A6X9byG8GBQwCoBz7VQm12/iL3p4XcXmozuFB
+X-Gm-Gg: ASbGncvo9qbEZHfiUaKojNM0Y/9Z4JspoaUdAm4VBcyIcVYOzvnJoQCMRhtAcL7WbS2
+	VwOVticNX5QTjsj1olUGzAKinaJRQc+hle6DsaKXB58RdfM9G+KCtWuLMy2e+jqPpBa6bIaqIIX
+	cm5RTakQz/0+BN3eS53Lsvkcbdpwqj6JsEIsbbXXgJkCJClWk0uPCKpD+6
+X-Google-Smtp-Source: AGHT+IFEmyW0EbB6Ka9yQFfGVEPvOJqwYCEl504db3Ko2DygqJYxclr7CKQSdflmS7+pNsrqn4Y5OCDx9d3jRQoSqPk=
+X-Received: by 2002:a5d:64a2:0:b0:390:d6ab:6c49 with SMTP id
+ ffacd0b85a97d-390eca138ddmr11915449f8f.35.1740996328672; Mon, 03 Mar 2025
+ 02:05:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: BUG Report: Fork benchmark drop by 30% on aarch64
-To: Hagar Hemdan <hagarhem@amazon.com>
-Cc: abuehaze@amazon.com, wuchi.zero@gmail.com, linux-kernel@vger.kernel.org
-References: <20250205151026.13061-1-hagarhem@amazon.com>
- <4a9cc5ab-c538-4427-8a7c-99cb317a283f@arm.com>
- <20250207110754.GA10452@amazon.com>
- <1ca758c7-b6ab-4880-9cc7-217093a30bbb@arm.com>
- <20250210213155.GA649@amazon.com>
- <4b48fd24-6cd5-474c-bed8-3faac096fd58@arm.com>
- <20250211214019.GA15530@amazon.com>
- <75503128-c898-4da7-ab99-55f4ef6e2add@arm.com>
- <5f92761b-c7d4-4b96-9398-183a5bf7556a@arm.com>
- <20250221064436.GA485@amazon.com>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Content-Language: en-US
-In-Reply-To: <20250221064436.GA485@amazon.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <cover.1740995194.git.viresh.kumar@linaro.org> <171b6cd811ff4e913880ab33bc11e634f7cdeecb.1740995194.git.viresh.kumar@linaro.org>
+In-Reply-To: <171b6cd811ff4e913880ab33bc11e634f7cdeecb.1740995194.git.viresh.kumar@linaro.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 3 Mar 2025 11:05:16 +0100
+X-Gm-Features: AQ5f1Jo64QlrJ8dyyVG_P39vJUDGWo2eEl4f6vfHkIrvzl7tE2S1Ro0v3PDYRZA
+Message-ID: <CAH5fLgjNE7BF7fC6TxO3NjKV1OHXRxZFKn2Bs6fy8h_0zYd1tg@mail.gmail.com>
+Subject: Re: [PATCH V3 1/2] rust: Add clk helpers
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Daniel Almeida <daniel.almeida@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 21/02/2025 07:44, Hagar Hemdan wrote:
-> On Mon, Feb 17, 2025 at 11:51:45PM +0100, Dietmar Eggemann wrote:
->> On 13/02/2025 19:55, Dietmar Eggemann wrote:
->>> On 11/02/2025 22:40, Hagar Hemdan wrote:
->>>> On Tue, Feb 11, 2025 at 05:27:47PM +0100, Dietmar Eggemann wrote:
->>>>> On 10/02/2025 22:31, Hagar Hemdan wrote:
->>>>>> On Mon, Feb 10, 2025 at 11:38:51AM +0100, Dietmar Eggemann wrote:
->>>>>>> On 07/02/2025 12:07, Hagar Hemdan wrote:
->>>>>>>> On Fri, Feb 07, 2025 at 10:14:54AM +0100, Dietmar Eggemann wrote:
->>>>>>>>> Hi Hagar,
->>>>>>>>>
->>>>>>>>> On 05/02/2025 16:10, Hagar Hemdan wrote:
+On Mon, Mar 3, 2025 at 11:00=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.o=
+rg> wrote:
+>
+> Non-trivial C macros and inlined C functions cannot be used directly
+> in the Rust code and are used via functions ("helpers") that wrap
+> those so that they can be called from Rust.
+>
+> In order to prepare for adding Rust abstractions for the clock APIs,
+> add clock helpers required by the Rust implementation.
+>
+> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-[...]
+Did clk maintainers ask for this to be separate? We normally just add
+helpers in the commit that need them.
 
->> './Run -c 4 spawn' on AWS instance (m7gd.16xlarge) with v6.13, 'mem=16G
->> maxcpus=4 nr_cpus=4' and Ubuntu '22.04.5 LTS':
->>
->> CFG_SCHED_AUTOGROUP | sched_ag_enabled | eff6c8ce8d4d | Fork (lps)
->>
->>    	y	             1		   y            21005 (27120 **)
->> 	y		     0		   y            21059 (27012 **)
->> 	n		     -		   y            21299
->> 	y		     1		   n	        27745 *
->> 	y		     0		   n	        27493 *
->> 	n		     -		   n	        20928
->>
->> (*) So here the higher numbers are only achieved when
->> 'sched_autogroup_exit_task() -> sched_move_task() ->
->> sched_change_group() is called for the 'spawn' tasks.
->>
->> (**) When I apply the fix from
->> https://lkml.kernel.org/r/4a9cc5ab-c538-4427-8a7c-99cb317a283f@arm.com.
-> Thanks!
-> Will you submit that fix upstream?
-
-I will, I just had to understand in detail why this regression happens.
-
-Looks like the issue is rather related to 'sgs->group_util' in
-group_is_overloaded() and group_has_capacity(). If we don't
-'deqeue/detach + attach/enqueue' (1) the task in sched_move_task() then
-sgs->group_util is ~900 (you run 4 CPUs flat in a single MC sched domain
-so sgs->group_capacity = 1024 and this leads to group_is_overloaded()
-returning true and group_has_capacity() false much more often as if
-we would do (1).
-
-I.e. we have much more cases of 'group_is_overloaded' and
-'group_fully_busy' in WF_FORK wakeup sched_balance_find_dst_cpu() which
-then (a) returns much more often a CPU != smp_processor_id() (which
-isn't good for these extremely short running tasks (FORK + EXIT)) and
-also involves calling sched_balance_find_dst_group_cpu() unnecessary
-(since we deal with single CPU sched domains). 
-
-select_task_rq_fair(..., wake_flags = WF_FORK)
-
-  cpu = smp_processor_id()
-
-  new_cpu = sched_balance_find_dst_group(..., cpu, ...)
-
-    do {
-
-      update_sg_wakeup_stats()
-
-        sgs->group_type = group_classify()   
-							w/o patch 	w/ patch                   
-          if group_is_overloaded() (*)
-            return group_overloaded /* 6 */		457,141		394
-
-          if !group_has_capacity() (**)
-            return group_fully_busy /* 1 */ 	  	816,629		714
-
-          return group_has_spare    /* 0 */		1,158,890	3,157,472
-
-    } while group 
-
-    if local_sgs.group_type > idlest_sgs.group_type	
-      return idlest					351,598		273
-
-    case group_has_spare:
-
-      if local_sgs.idle_cpus >= idlest_sgs.idle_cpus
-        return NULL 					156,760		788,462
-
-
-(*)
-
-  if sgs->group_capacity * 100) <			
-		sgs->group_util * imbalance_pct		951,705		856
-    return true
-
-  sgs->group_util ~ 900 and sgs->group_capacity = 1024 (1 CPU per sched group)
-
-
-(**)
-
- if sgs->group_capacity * 100 >
-		sgs->group_util * imbalance_pct
-   return true						1,087,555	3,163,152
-
- return false						1,332,974	882
-
-
-(*) and (**) are for 'wakeup' and 'load-balance' so they don't
-match the only wakeup numbers above!
-
-In this test run I got 608,092 new wakeups w/o and 789,572 (~+ 30%)
-w/ the patch when running './Run -c 4 -i 1 spawn' on AWS instance
-(m7gd.16xlarge) with v6.13, 'mem=16G maxcpus=4 nr_cpus=4' and
-Ubuntu '22.04.5 LTS'
-
-> Do you think that this fix is the same as reverting commit eff6c8ce8d4d and
-> its follow up commit fa614b4feb5a? I mean what does commit eff6c8ce8d4d 
-> actually improve?
-
-There are occurrences in which 'group == tsk->sched_task_group' and
-'!(tsk->flags & PF_EXITING)' so there the early bail might help w/o
-the negative impact on sched benchmarks.
+Alice
 
