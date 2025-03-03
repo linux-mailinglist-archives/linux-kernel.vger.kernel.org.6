@@ -1,311 +1,124 @@
-Return-Path: <linux-kernel+bounces-541144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AF12A4B92C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:25:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAA11A4B931
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:25:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4934716F9DD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:24:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 191CA189349A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:25:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DACF51F1522;
-	Mon,  3 Mar 2025 08:23:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1FF51F2BA1;
+	Mon,  3 Mar 2025 08:23:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="iI7ROYTx"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="IHyrl3N8"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1D2B1F0E58;
-	Mon,  3 Mar 2025 08:23:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D8A1F190E;
+	Mon,  3 Mar 2025 08:23:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740990187; cv=none; b=BSC4pM9IwF8Hu6/UEEUe7WQQCdkattrC421vpUc4S4CAfaHgOPNPMNUWXS88bBrGf0vj6JKNeZI8LcKrPBvlXOH5RFGHTvr366ixOtYaapTbbLruj2kSBxkbNJnyJJxZiM4CbvUUrQFQLw4qPa3wtWnpI+JIMjHKjPkh0sTpNR0=
+	t=1740990191; cv=none; b=NtY3V1uKyVUjGnFEfFZ//HFQ6Vh2hZUevvMdOssRIaHDzv+CMdeqHi0aWFdg3cP+wKkZeESQ6XhK4I5t7FeSyAdAqHEmFj1iG1ZrGKJPj9+pyVFYcxysuZItspxjwGmPg84hSL1PA2/sh/cjJKInO+KKwQvGkKRALcMy1JArO6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740990187; c=relaxed/simple;
-	bh=Ux+PDRTSK4jyRAxw7FyX16jDh9kuuePVRHAT77jRGmI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YteTpmW5wDfiNc6aeFP4o0N1N2u873Q8UqPg+RY8jx8+1HvA+gP26MVrADPQPlU3KEIrirCr/hqD1Ts2I9Kv01zq+dA5o0Sc2++21xmR2G71CZg68cCSPEgwsDzwcGmWq+BXSIsd3v5f/Vlj3dOQZQ/2BvpMpWStN1B1/ydEHQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=iI7ROYTx; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 4A94944363;
-	Mon,  3 Mar 2025 08:23:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740990183;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Zcs1iDkHML15O4/kYubVQU4/T1XRZlV8rA0CRYU4+Bw=;
-	b=iI7ROYTxqtIVlZO6GKwayXpWzrXj4XUu4ukLxwIBFJpnVUPwniKys27+GwhTrBla4uGUG5
-	jbDDsS3uImHxMF1G4DDT8TAd4I6QycVQ/z7+YXHDqOIHysLHHe2zMOujQVGkSad3nQggn+
-	7DWqPNmBTSSO7WfhOG4CZtCyTh4wROD4fYpov3tzSoUrH5RHUXPYGL/PE2S2bSipHlRbzm
-	lH8AiOkD6Vy5BzXhKAakew6tSI7sdU3608G/QbW0RWubs/UqadCw9bLUHEQuKezrTNjveY
-	TFtPJpqlTDJIniiabmnFmTIsNov8unvZFEvupyHg3eK/ImSmM1qfd4MCzArAQA==
-From: "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
-Date: Mon, 03 Mar 2025 09:22:57 +0100
-Subject: [PATCH bpf-next v2 09/10] selftests/bpf: test_tunnel: Move ip6tnl
- tunnel tests to test_progs
+	s=arc-20240116; t=1740990191; c=relaxed/simple;
+	bh=YRq6oVQqeCdHKG5sea7pdbS+m9m7qFjktB2rPbJHuI8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ecmIYiUT/CtRLt5I/ihH2P+sq6Qox0xYjOTSnQ87KOjCyJJRlprRJzCoP184+9dFXxKkGdD79AsH8Wd4GKX9DOLjmdNs4HfYB5Rf/FK1f2JRam1/jtUcz6qqeM4zrts2wdVNU9Mmb3TteUH7ObDuxWYHz0qXUNbFexFth3Uk6IM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=IHyrl3N8; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1740990183; x=1741594983; i=markus.elfring@web.de;
+	bh=pQr1WZ548ecZB3xoVxnsW4k7x9sHO8xZY4WGSA4vMwU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=IHyrl3N8nH/24Fv2D59sEna66ZDL6YcZx1VuTjYlv8zOxC6kfM+Hn4Dzqg9oOzhK
+	 k9S3xBw8V19ADKeFb8D3lG1/azmFLeKXxgimfL7aEDePqPgOHLVTnnfV3HD4g8lB+
+	 D0yD8Bpby1Hsx41T/KE7FS5tuurVvcN4IPMx+jAvLghHyhLTuaycUqNc76zK7fAM2
+	 t86Dcok96zxz7qU2Z3t3iLdw/Ba76G2fKm5qXt8jj8XmcBe0T/bQFMUx89AePKhS2
+	 XkXbdtVyhEYb+AVxIM3BtgNxnEA9+LzWOH4sqNwmxqT+ZkcP7lH7dvxU/MbuKO6TY
+	 m1mxmHHEoDMS++nMlw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.19]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N0Zs0-1t1bHv22Fw-0171x0; Mon, 03
+ Mar 2025 09:23:03 +0100
+Message-ID: <64725552-d915-429d-b8f8-1350c3cc17ae@web.de>
+Date: Mon, 3 Mar 2025 09:22:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250303-tunnels-v2-9-8329f38f0678@bootlin.com>
-References: <20250303-tunnels-v2-0-8329f38f0678@bootlin.com>
-In-Reply-To: <20250303-tunnels-v2-0-8329f38f0678@bootlin.com>
-To: Alexei Starovoitov <ast@kernel.org>, 
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
- Martin KaFai Lau <martin.lau@linux.dev>, 
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, 
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
- Shuah Khan <shuah@kernel.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Alexis Lothore <alexis.lothore@bootlin.com>, bpf@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
- "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
-X-Mailer: b4 0.14.2
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelkeeifecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkfhfjgfvvefosehtjeertdertdejnecuhfhrohhmpedfuegrshhtihgvnhcuvehurhhuthgthhgvthculdgvuefrhfcuhfhouhhnuggrthhiohhnmddfuceosggrshhtihgvnhdrtghurhhuthgthhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeefudfhuedttdeiffetffeljeffkeevveeiuddtgeejleeftdejgedtjedttdfhnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgepjeenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludelvddrudeikedrtddrudegngdpmhgrihhlfhhrohhmpegsrghsthhivghnrdgtuhhruhhttghhvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvtddprhgtphhtthhopehlihhnuhigqdhkshgvlhhfthgvshhtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhhuhgrhheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhohhhnrdhfrghsthgrsggvnhgusehgmhgrihhlrdgtohhmpdhrtghpthhtohepvgguugihiiekjeesghhmr
- ghilhdrtghomhdprhgtphhtthhopehsohhngheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghstheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhihkhholhgrlhesfhgsrdgtohhmpdhrtghpthhtoheprghnughrihhisehkvghrnhgvlhdrohhrgh
-X-GND-Sasl: bastien.curutchet@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND] qed: Move a variable assignment behind a null pointer
+ check in two functions
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
+ netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
+ Ariel Elior <aelior@marvell.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Manish Chopra <manishc@marvell.com>, Paolo Abeni <pabeni@redhat.com>,
+ Ram Amrani <Ram.Amrani@caviumnetworks.com>,
+ Yuval Mintz <Yuval.Mintz@caviumnetworks.com>, cocci@inria.fr,
+ LKML <linux-kernel@vger.kernel.org>
+References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
+ <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
+ <f7967bee-f3f1-54c4-7352-40c39dd7fead@web.de>
+ <6958583a-77c0-41ca-8f80-7ff647b385bb@web.de>
+ <Z8VKaGm1YqkxK4GM@mev-dev.igk.intel.com>
+ <325e67fc-48df-4571-a87e-5660a3d3968f@stanley.mountain>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <325e67fc-48df-4571-a87e-5660a3d3968f@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:FYo4KR0DHw8kUBrjrDdkOAm8f/u2tVyaWSQA2DnGNc9JQQ86MDa
+ bwKKYeavDxHfWlkAduCnA25E+m3vTJHha1KI0SBitDv5vFfARQ5dauvVrFkfEwldr6cbXGt
+ rQCLvY3oVIof17p3AwBXCexkZzFqAr/NbbgHPUCe435Or7d5J5W3ZbwPWaQ1l8mwih/Qifp
+ C0Slqd/P/qBIyY3LvcXTQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:RCqRm2Eproo=;ZlnPkZrhZ60vOLSzosM2YPI9Wto
+ 3AmsBSv9KLN+XyU0X1LyjqAKQErpWV7K6f05wETBTPAZ58PzopnFENYzawmjl1X/VJKmGLojS
+ 2gI2KS0iET6vrphGGHhXKi1Hzd7UTG7Lj39AHYffLz/t1iUOGLHlOWsI8GFWdwmBzMhOxZ936
+ jYsVdJjPsUKRoTMKQOvziv+Mix+NSl631TqKmwCd8F3MqQRsafqZN/j8A96UMPA+u/hWgspI/
+ 9BFmyqSk8N+rtYm6BbOlqYeGPM6dm7F+s8L/R04JR0fGXVLPmWHCtci/efVhlIZ2VKj0Kt1Cy
+ MZ5iIzxadso6cB0Eh2vnv/jnbWdxxK8JvKB32CK7PFz7BOC72Um0Mdx4Mwb4iGPgdCU3Ef/5o
+ 4VWXjwFQaDqGBf9oxZkyIK92y24Ybyj5px1tl3SEoN2GsyFXt4LYjQSTJlgKtcHant1XcaBKd
+ z9T23ZxWcLPomObRfxz9YgU3ddGaCWfX1CD5eabzjnXNeBYkB7V19WFsf5M4Bh4mxYjbF+g9B
+ dOPVAUUiWwzOjW9oT4gBl2m4nlOvthkrYx+2uERqnvVmuNCJFkcIdyhNUHIeWtbo4riP+coH8
+ o2bMu7Yj4Vt2tMl1Xx+uJ702p61Z9m2sh28JanSW+YB1ReG8jWmulP6cex8cFvIf5YgpmPceM
+ z2kn9sRul/TcxXewJUsiZ4fdBQxO3nj5o6W0vDB/3zkQtBcFs80op67pZc4ARQYIZKGCFwcZv
+ YWV8xMIHVpy4+ByUeiwCpSwlACl6HLN49KVgXKgR738RfUxjcFwe8DoaJlywHbGDP2j8einMB
+ tzEb+f9Emed0rVpPoyce8yguveZDnEPDQcXWDkkXblFxKzP7A8wFsbkMM7mgi04hIt+b0W6Do
+ ot/IgkptfQSXr70rj0yADvh9OsOfeTw9qnm34ZW0xSPk/laeR6qCudvliP9ZI5EIlUpp7ynW4
+ IalZfSiycRjcPxf20I/4YC3YpTkeOf6YBbfQCTnQ7CnB5Uv8gDVrG2mwGlJsh91ew8AQVxPjU
+ ZN4fqMenZfLLuUHdrURqhYgHJcUYdTIiRjEsM09zj8qgylPtdJfrLSN999h5uF2rsvUK6ZfZH
+ QxNmHT2jYTH4y7BkMNEpMYBNwfVV0aexJkcfZJFuuMAp9kxLqy6GV5CsI+K4IsDtvzyjqum2v
+ yYZ/H+KLAoXzWRB60R4NCTPpVyRzW4u7m8hqQOEa2Hs1diHLgvYsaaHnDCycHT25ag/Dc5oJV
+ ALfintfOGP14oHY+hM0pjag4b1Z5c2gCfof8jFqfEbzRoSDAJwJtLnqVzKMwX2cxWYRy6GUG+
+ lr/aBRLLD+XwerMop4uYGSUXvpDHJzevnvAOL+/dx5nGQez9eJiTFeV3qXsk8DR+lTcqBijvd
+ JvvjGhM4eJ6sY8FOKdVMKc46vz5mYYJCU3jp9EwmyKr9e0Nm9G7IDXFqT+M9NgKMnptPfcxZ7
+ 447OJIA==
 
-ip6tnl tunnels are tested in the test_tunnel.sh but not in the test_progs
-framework.
+> The assignment:
+>
+> 	p_rx =3D &p_ll2_conn->rx_queue;
+>
+> does not dereference "p_ll2_conn".  It just does pointer math.  So the
+> original code works fine.
 
-Add a new test in test_progs to test ip6tnl tunnels. It uses the same
-network topology and the same BPF programs than the script.
-Remove test_ipip6() and test_ip6ip6() from the script.
+Is there a need to clarify affected implementation details any more?
+https://wiki.sei.cmu.edu/confluence/display/c/EXP34-C.+Do+not+dereference+=
+null+pointers
 
-Acked-by: Stanislav Fomichev <sdf@fomichev.me>
-Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
----
- .../testing/selftests/bpf/prog_tests/test_tunnel.c | 59 +++++++++++++++
- tools/testing/selftests/bpf/test_tunnel.sh         | 88 ----------------------
- 2 files changed, 59 insertions(+), 88 deletions(-)
-
-diff --git a/tools/testing/selftests/bpf/prog_tests/test_tunnel.c b/tools/testing/selftests/bpf/prog_tests/test_tunnel.c
-index b5d48d4fd423a4eb1dc541e2c242943a5f3110aa..bae0e9de277d24c34938de30b42f3418ecb6fba8 100644
---- a/tools/testing/selftests/bpf/prog_tests/test_tunnel.c
-+++ b/tools/testing/selftests/bpf/prog_tests/test_tunnel.c
-@@ -118,6 +118,9 @@
- #define IP6GENEVE_TUNL_DEV0 "ip6geneve00"
- #define IP6GENEVE_TUNL_DEV1 "ip6geneve11"
- 
-+#define IP6TNL_TUNL_DEV0 "ip6tnl00"
-+#define IP6TNL_TUNL_DEV1 "ip6tnl11"
-+
- #define PING_ARGS "-i 0.01 -c 3 -w 10 -q"
- 
- static int config_device(void)
-@@ -513,6 +516,11 @@ static void ping6_veth0(void)
- 	test_ping(AF_INET6, IP6_ADDR_VETH0);
- }
- 
-+static void ping6_dev0(void)
-+{
-+	test_ping(AF_INET6, IP6_ADDR_TUNL_DEV0);
-+}
-+
- static void ping6_dev1(void)
- {
- 	struct nstoken *nstoken;
-@@ -1046,6 +1054,55 @@ static void test_ip6geneve_tunnel(void)
- 	test_tunnel_kern__destroy(skel);
- }
- 
-+enum ip6tnl_test {
-+	IPIP6,
-+	IP6IP6
-+};
-+
-+static void test_ip6tnl_tunnel(enum ip6tnl_test test)
-+{
-+	struct test_tunnel_kern *skel;
-+	int set_fd, get_fd;
-+	int err;
-+
-+	skel = test_tunnel_kern__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "test_tunnel_kern__open_and_load"))
-+		return;
-+
-+	err = add_ipv6_tunnel(IP6TNL_TUNL_DEV0, IP6TNL_TUNL_DEV1, "ip6tnl", "");
-+	if (!ASSERT_OK(err, "add tunnel"))
-+		goto done;
-+
-+	switch (test) {
-+	case IPIP6:
-+		set_fd = bpf_program__fd(skel->progs.ipip6_set_tunnel);
-+		get_fd = bpf_program__fd(skel->progs.ipip6_get_tunnel);
-+		break;
-+	case IP6IP6:
-+		set_fd = bpf_program__fd(skel->progs.ip6ip6_set_tunnel);
-+		get_fd = bpf_program__fd(skel->progs.ip6ip6_get_tunnel);
-+		break;
-+	}
-+	if (generic_attach(IP6TNL_TUNL_DEV1, get_fd, set_fd))
-+		goto done;
-+
-+	ping6_veth0();
-+	switch (test) {
-+	case IPIP6:
-+		ping_dev0();
-+		ping_dev1();
-+		break;
-+	case IP6IP6:
-+		ping6_dev0();
-+		ping6_dev1();
-+		break;
-+	}
-+
-+done:
-+	delete_tunnel(IP6TNL_TUNL_DEV0, IP6TNL_TUNL_DEV1);
-+	test_tunnel_kern__destroy(skel);
-+}
-+
- #define RUN_TEST(name, ...)						\
- 	({								\
- 		if (test__start_subtest(#name)) {			\
-@@ -1075,6 +1132,8 @@ static void *test_tunnel_run_tests(void *arg)
- 	RUN_TEST(ip6erspan_tunnel, V2);
- 	RUN_TEST(geneve_tunnel);
- 	RUN_TEST(ip6geneve_tunnel);
-+	RUN_TEST(ip6tnl_tunnel, IPIP6);
-+	RUN_TEST(ip6tnl_tunnel, IP6IP6);
- 
- 	return NULL;
- }
-diff --git a/tools/testing/selftests/bpf/test_tunnel.sh b/tools/testing/selftests/bpf/test_tunnel.sh
-index f46628f70399e2a049859709e9db9e8419e74770..165023d1b5f70fd48ff05f0a53a332ef50e175da 100755
---- a/tools/testing/selftests/bpf/test_tunnel.sh
-+++ b/tools/testing/selftests/bpf/test_tunnel.sh
-@@ -79,28 +79,6 @@ add_ipip_tunnel()
- 	ip addr add dev $DEV 10.1.1.200/24
- }
- 
--add_ip6tnl_tunnel()
--{
--	ip netns exec at_ns0 ip addr add ::11/96 dev veth0
--	ip netns exec at_ns0 ip link set dev veth0 up
--	ip addr add dev veth1 ::22/96
--	ip link set dev veth1 up
--
--	# at_ns0 namespace
--	ip netns exec at_ns0 \
--		ip link add dev $DEV_NS type $TYPE \
--		local ::11 remote ::22
--	ip netns exec at_ns0 ip addr add dev $DEV_NS 10.1.1.100/24
--	ip netns exec at_ns0 ip addr add dev $DEV_NS 1::11/96
--	ip netns exec at_ns0 ip link set dev $DEV_NS up
--
--	# root namespace
--	ip link add dev $DEV type $TYPE external
--	ip addr add dev $DEV 10.1.1.200/24
--	ip addr add dev $DEV 1::22/96
--	ip link set dev $DEV up
--}
--
- test_ipip()
- {
- 	TYPE=ipip
-@@ -126,62 +104,6 @@ test_ipip()
-         echo -e ${GREEN}"PASS: $TYPE"${NC}
- }
- 
--test_ipip6()
--{
--	TYPE=ip6tnl
--	DEV_NS=ipip6tnl00
--	DEV=ipip6tnl11
--	ret=0
--
--	check $TYPE
--	config_device
--	add_ip6tnl_tunnel
--	ip link set dev veth1 mtu 1500
--	attach_bpf $DEV ipip6_set_tunnel ipip6_get_tunnel
--	# underlay
--	ping6 $PING_ARG ::11
--	# ip4 over ip6
--	ping $PING_ARG 10.1.1.100
--	check_err $?
--	ip netns exec at_ns0 ping $PING_ARG 10.1.1.200
--	check_err $?
--	cleanup
--
--	if [ $ret -ne 0 ]; then
--                echo -e ${RED}"FAIL: $TYPE"${NC}
--                return 1
--        fi
--        echo -e ${GREEN}"PASS: $TYPE"${NC}
--}
--
--test_ip6ip6()
--{
--	TYPE=ip6tnl
--	DEV_NS=ip6ip6tnl00
--	DEV=ip6ip6tnl11
--	ret=0
--
--	check $TYPE
--	config_device
--	add_ip6tnl_tunnel
--	ip link set dev veth1 mtu 1500
--	attach_bpf $DEV ip6ip6_set_tunnel ip6ip6_get_tunnel
--	# underlay
--	ping6 $PING_ARG ::11
--	# ip6 over ip6
--	ping6 $PING_ARG 1::11
--	check_err $?
--	ip netns exec at_ns0 ping6 $PING_ARG 1::22
--	check_err $?
--	cleanup
--
--	if [ $ret -ne 0 ]; then
--                echo -e ${RED}"FAIL: ip6$TYPE"${NC}
--                return 1
--        fi
--        echo -e ${GREEN}"PASS: ip6$TYPE"${NC}
--}
--
- attach_bpf()
- {
- 	DEV=$1
-@@ -201,8 +123,6 @@ cleanup()
- 	ip netns delete at_ns0 2> /dev/null
- 	ip link del veth1 2> /dev/null
- 	ip link del ipip11 2> /dev/null
--	ip link del ipip6tnl11 2> /dev/null
--	ip link del ip6ip6tnl11 2> /dev/null
- }
- 
- cleanup_exit()
-@@ -242,14 +162,6 @@ bpf_tunnel_test()
- 	test_ipip
- 	errors=$(( $errors + $? ))
- 
--	echo "Testing IPIP6 tunnel..."
--	test_ipip6
--	errors=$(( $errors + $? ))
--
--	echo "Testing IP6IP6 tunnel..."
--	test_ip6ip6
--	errors=$(( $errors + $? ))
--
- 	return $errors
- }
- 
-
--- 
-2.48.1
-
+Regards,
+Markus
 
