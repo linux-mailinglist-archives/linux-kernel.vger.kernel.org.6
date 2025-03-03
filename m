@@ -1,100 +1,94 @@
-Return-Path: <linux-kernel+bounces-545003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 820AFA4E7EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:12:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D7456A4EB32
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:21:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F159422BCC
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:02:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C40D16F8E0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:16:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9507928D089;
-	Tue,  4 Mar 2025 16:41:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D430293455;
+	Tue,  4 Mar 2025 18:01:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="p7F306IK"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nVDm6mrH"
 Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BB9A28D08B
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:40:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFA5A281531
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.117
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741106459; cv=pass; b=jAQ7teWJWjhhEQ8OxzsKm4yCTymDDsxcWjB5lLteIq095c+NKFGGs0qIXZ6jgzGO9T0Uw1KSm0vij6lXeX0qer4FeTQzWJi8ZMkDko6eUKglQvM6GTonVw2hN9zDfUEGcbQnTWCMxN2VSRYSCzpWWPm+e9eal5v82hZNMJENA9Q=
+	t=1741111261; cv=fail; b=paRRYeUqquLYEdkbcLK/nboNluyIzWHNdfuMyEW23EQ/Ag1v+xgtpsImty2uAKaE+R7x8/pAoibPv/kL6qfSKBFcHQ5T347D6D8kck5PgHJcpx/MVF3oO06/UNMp9pNUvyuu9kUHvpf6pm8pu8X8kjcAAVZy1u3vC2mF5t3Ozv4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741106459; c=relaxed/simple;
-	bh=DLb+kC1uvEhmBCVhzWxb76oHegZQEMeQ8pFfnrbUdkc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UszDlLAaHKWP/LJ/1TEItGQJjq5ezEAdF1g/NC6GzswzAuOJrPOttDO+tfm9SCNbMpiZazf54NWsFad2Q512FuM4T4nKauG4m0mbIMzOMCX9qM7brrYW+8KmYSRYQnN7JH5InO8cOMP/SheLkwKpB+RsswowvzDYMMIVdRU+lQg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=p7F306IK; arc=none smtp.client-ip=217.70.183.200; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; arc=pass smtp.client-ip=160.75.25.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+	s=arc-20240116; t=1741111261; c=relaxed/simple;
+	bh=fJSn3lSDTlK+8ZW+kH3QUnzoBFI39rQvsG9xd03tdGo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qL+e4x28ty77H6dHeq4ocXgDf4Mt7+2zMms7jSP7zV1YPRyQhd16Tra7vM/+MoCh8KHRKp8Q2GB6XQrWrOS4/fcrUQQyiFR3gdI6G5XIyAbDR+avltLAwPdEfis03jQoqMmNkMxkYz8G5VYfzbF994GurSKimFOsy+9sUHq8deI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nVDm6mrH reason="signature verification failed"; arc=none smtp.client-ip=10.30.226.201; arc=fail smtp.client-ip=160.75.25.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id 3E01840D0479
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:40:56 +0300 (+03)
+	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id 012F340D1F4D
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 21:00:57 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6hH13jg8zG3vs
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:39:41 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6ghB4j4KzG2cY
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:12:58 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 9A82342738; Tue,  4 Mar 2025 19:39:40 +0300 (+03)
+	id C7A4142737; Tue,  4 Mar 2025 19:12:56 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=p7F306IK
-X-Envelope-From: <linux-kernel+bounces-541143-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nVDm6mrH
+X-Envelope-From: <linux-kernel+bounces-541147-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=p7F306IK
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nVDm6mrH
 Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id E6306425F9
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:25:33 +0300 (+03)
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id C47AC2DCE4
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:25:33 +0300 (+03)
+	by le2 (Postfix) with ESMTP id BCEA942CD8
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:27:58 +0300 (+03)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by fgw2.itu.edu.tr (Postfix) with SMTP id 52AC12DCEF
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:27:58 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32B7A18934AB
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 08:25:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8BB53B381A
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 08:25:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 702321F1927;
-	Mon,  3 Mar 2025 08:23:09 +0000 (UTC)
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9024A1EFFA3;
+	Mon,  3 Mar 2025 08:23:47 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9813E1F0E33;
-	Mon,  3 Mar 2025 08:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 449631EF370;
+	Mon,  3 Mar 2025 08:23:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740990185; cv=none; b=nIJW1Y6jHoDqXkX5DUzMsALUA+9VBR7V3t+HeyYHkAf4GFni+7VQ5hGJuQ7FH/p8byzuoaom0CHiTpwFaTEDE9iwc+z0oSD8i9RBPqIzEbazsqjAb2dOt7Re5/GQ2uYgSSrzomJFnqjj77RO/3HkjkC98hlGLrMfZrdayX8KV6k=
+	t=1740990224; cv=none; b=YeNpwptjQ6U6jfGrrQ4F8XoyNBWy3PsMWutDR1se33zfZVIgbrkhMRjxQjE2s0yC8eBNKg4kI8lgGWvU1Svgm6PGXyLvo2EbQLqdk3Y/9oLtT2fWC42+zzkdkUvVGtsNmUMaB8oILDEk34m2hehRcrn+otTCC4vApBeTspbKlZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740990185; c=relaxed/simple;
-	bh=DLb+kC1uvEhmBCVhzWxb76oHegZQEMeQ8pFfnrbUdkc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WaGp3S2uJpAIbu0sCSR3RVo+gfFgqC/cF2wlx6r/igkLkLce8e+uwKIV99+IId3GutVrUylHFUYPlPpfR708BYxe4PvT55qx0RS1gLwWiMlORNAvvblneY1y8nPpYFnHpTUiwF3r7CkeP2Ba6qdpBymKoMWd2dA44s8LXXuO9hU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=p7F306IK; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E666944368;
-	Mon,  3 Mar 2025 08:23:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740990182;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=P0GUh+DQGnmEkb4YfirW4vH0ak6X+T55tKrGKJHVFhQ=;
-	b=p7F306IKxrvwW8Bti9UfXJTq7uJ1tWZT1v1bIEscxrCA/66NlD0qf8CI5gWffr0tAJwEf8
-	vi3NPAdkSX/OGMhbUuF9+vb+fF73bLUhPAQKshjOztzsVKybV/ahou3G7eq6ucFIBdUmZb
-	wxYD97Tv+wYVlfCGa30aDEFZpniAzEywINYfR56TniGaHIC2e16/5OcjamKnPk9Tzfq1VI
-	ji2PWYrr5P3zrVJwPaTqwAl2tM0rD2aMcyx22ziSDzUzNLrMooSNVxzJnZYihs5h3The5y
-	70VSGaoV2jH6ej+UTzCEwA06UhochvkoUjpfZZmT0SuB/NeiWMmnM4adKp6/Ug==
-From: "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
-Date: Mon, 03 Mar 2025 09:22:56 +0100
-Subject: [PATCH bpf-next v2 08/10] selftests/bpf: test_tunnel: Move
- ip6geneve tunnel test to test_progs
+	s=arc-20240116; t=1740990224; c=relaxed/simple;
+	bh=JBYtPPedySIRtCIdRicfOKbQHdjbOfdWis8gttwCsKI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=B6FvrZqC+W6V46yPb7Ff2eN6i0EMkbFPh34rTayNVUaJgabFpd/9qkyZsX5igcK8kk7b5IP01g/jrDjs/5peB0zUHk8qGYjbKeAAdZgbNKy79DCn6UcbgKQEMW8H4wXjlxSm3ptd4fV21BO1C2a1EY/2vKaJegxgi4BaEieV08Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nVDm6mrH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCC04C4CED6;
+	Mon,  3 Mar 2025 08:23:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740990223;
+	bh=JBYtPPedySIRtCIdRicfOKbQHdjbOfdWis8gttwCsKI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=nVDm6mrH12QLK3/qUGEVPT3+GKwhphezMCb3UYIFD2ammHyvoXLfegpFXS35yl7wP
+	 iXAtbjJ81a3G3cAnJPMh2gX7ThMNXotuiezB1R2iwBozQKUtI/az9KcGpGrKa0hbfX
+	 sxIFGSWyqRiLFmiKd/sTiAynk6ZlSoW0DEPRoCOz6hRNJiNqnkJO8N8YaYaj9VEbrL
+	 I+RMLenU3E2DKzLx13fWN3rbKamCKZf30X6qYN21gC7d4+1b1HheP+KW4go/pQ8uTh
+	 pzlUSNBjBBx3Y1gdu86czAZdr9zQiESi4E2sLVt5KZcR86KqZIs6zji4qpoCidL2Gn
+	 GrbFt881OjQNQ==
+Message-ID: <a091f085-a7f0-4aaa-997d-cd478764c18a@kernel.org>
+Date: Mon, 3 Mar 2025 09:23:38 +0100
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -102,215 +96,162 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250303-tunnels-v2-8-8329f38f0678@bootlin.com>
-References: <20250303-tunnels-v2-0-8329f38f0678@bootlin.com>
-In-Reply-To: <20250303-tunnels-v2-0-8329f38f0678@bootlin.com>
-To: Alexei Starovoitov <ast@kernel.org>, 
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
- Martin KaFai Lau <martin.lau@linux.dev>, 
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, 
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
- Shuah Khan <shuah@kernel.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Alexis Lothore <alexis.lothore@bootlin.com>, bpf@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
- "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
-X-Mailer: b4 0.14.2
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelkeeifecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkfhfjgfvvefosehtjeertdertdejnecuhfhrohhmpedfuegrshhtihgvnhcuvehurhhuthgthhgvthculdgvuefrhfcuhfhouhhnuggrthhiohhnmddfuceosggrshhtihgvnhdrtghurhhuthgthhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeefudfhuedttdeiffetffeljeffkeevveeiuddtgeejleeftdejgedtjedttdfhnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgepjeenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludelvddrudeikedrtddrudegngdpmhgrihhlfhhrohhmpegsrghsthhivghnrdgtuhhruhhttghhvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvtddprhgtphhtthhopehlihhnuhigqdhkshgvlhhfthgvshhtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhhuhgrhheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhohhhnrdhfrghsthgrsggvnhgusehgmhgrihhlrdgtohhmpdhrtghpthhtohepvgguugihiiekjeesghhmr
- ghilhdrtghomhdprhgtphhtthhopehsohhngheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghstheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhihkhholhgrlhesfhgsrdgtohhmpdhrtghpthhtoheprghnughrihhisehkvghrnhgvlhdrohhrgh
-X-GND-Sasl: bastien.curutchet@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: power: supply: Document Maxim MAX8971
+ charger
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250226093700.44726-1-clamor95@gmail.com>
+ <20250226093700.44726-2-clamor95@gmail.com>
+ <20250227-cherubic-mantis-from-betelgeuse-86f5ff@krzk-bin>
+ <CAPVz0n2kfxTJUkqrtLia6xBJ8t+fwjujjsc9k=mOk-P06bJH7A@mail.gmail.com>
+ <f83b2a95-e8f6-4e16-bd7f-f7dc96264c04@kernel.org>
+ <CAPVz0n0KVE8baFyGSgM+0rNfY8+Y2LFZbAhHHzPWTV358gc+Bw@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <CAPVz0n0KVE8baFyGSgM+0rNfY8+Y2LFZbAhHHzPWTV358gc+Bw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6hH13jg8zG3vs
+X-ITU-Libra-ESVA-ID: 4Z6ghB4j4KzG2cY
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741711196.61415@8xkDMzM09/VnHdmZ9SjHEw
+X-ITU-Libra-ESVA-Watermark: 1741715936.70527@Mx9uWYwhSD7cmYmg51qruA
 X-ITU-MailScanner-SpamCheck: not spam
 
-ip6geneve tunnels are tested in the test_tunnel.sh but not in the
-test_progs framework.
+On 03/03/2025 09:13, Svyatoslav Ryhel wrote:
+> =D0=BF=D0=BD, 3 =D0=B1=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 09:52 K=
+rzysztof Kozlowski <krzk@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>>
+>> On 27/02/2025 12:03, Svyatoslav Ryhel wrote:
+>>> =D1=87=D1=82, 27 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 12:4=
+5 Krzysztof Kozlowski <krzk@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>>>>
+>>>> On Wed, Feb 26, 2025 at 11:36:59AM +0200, Svyatoslav Ryhel wrote:
+>>>>> +  maxim,fcharge-current-limit-microamp:
+>>>>> +    description:
+>>>>> +      Fast-Charge current limit
+>>>>> +    minimum: 250000
+>>>>> +    default: 500000
+>>>>> +    maximum: 1550000
+>>>>> +
+>>>>> +  maxim,fcharge-timer-hours:
+>>>>> +    description:
+>>>>> +      Fast-Charge timer in hours. Setting this value 3 and lower o=
+r 11 and higher
+>>>>> +      will disable Fast-Charge timer.
+>>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>>>>> +    default: 5
+>>>>
+>>>> You still did not answer why this is board specific. This was reject=
+ed
+>>>> in the past because of that reason and nothing here changed. Nothing
 
-Add a new test in test_progs to test ip6geneve tunnels. It uses the same
-network topology and the same BPF programs than the script.
-Remove test_ip6geneve() from the script.
+Where are the arguments to existing/previous decisions?
 
-Acked-by: Stanislav Fomichev <sdf@fomichev.me>
-Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
----
- .../testing/selftests/bpf/prog_tests/test_tunnel.c | 48 +++++++++++++++++++++
- tools/testing/selftests/bpf/test_tunnel.sh         | 49 ----------------------
- 2 files changed, 48 insertions(+), 49 deletions(-)
+>>>> will change without detailed explanation, so use other interfaces if=
+ you
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/test_tunnel.c b/tools/testing/selftests/bpf/prog_tests/test_tunnel.c
-index 2210a1d768362634b5baa729121c460f99244756..b5d48d4fd423a4eb1dc541e2c242943a5f3110aa 100644
---- a/tools/testing/selftests/bpf/prog_tests/test_tunnel.c
-+++ b/tools/testing/selftests/bpf/prog_tests/test_tunnel.c
-@@ -115,6 +115,9 @@
- #define GENEVE_TUNL_DEV0 "geneve00"
- #define GENEVE_TUNL_DEV1 "geneve11"
- 
-+#define IP6GENEVE_TUNL_DEV0 "ip6geneve00"
-+#define IP6GENEVE_TUNL_DEV1 "ip6geneve11"
-+
- #define PING_ARGS "-i 0.01 -c 3 -w 10 -q"
- 
- static int config_device(void)
-@@ -462,6 +465,22 @@ static int add_geneve_tunnel(const char *dev0, const char *dev1,
- 	return -1;
- }
- 
-+static int add_ip6geneve_tunnel(const char *dev0, const char *dev1,
-+			     const char *type, const char *opt)
-+{
-+	if (!type || !opt || !dev0 || !dev1)
-+		return -1;
-+
-+	SYS(fail, "ip -n at_ns0 link add dev %s type %s id 22 %s remote %s",
-+	    dev0, type, opt, IP6_ADDR1_VETH1);
-+
-+	SYS(fail, "ip link add dev %s type %s %s external", dev1, type, opt);
-+
-+	return set_ipv6_addr(dev0, dev1);
-+fail:
-+	return -1;
-+}
-+
- static int test_ping(int family, const char *addr)
- {
- 	SYS(fail, "%s %s %s > /dev/null", ping_command(family), PING_ARGS, addr);
-@@ -999,6 +1018,34 @@ static void test_geneve_tunnel(void)
- 	delete_tunnel(GENEVE_TUNL_DEV0, GENEVE_TUNL_DEV1);
- 	test_tunnel_kern__destroy(skel);
- }
-+
-+static void test_ip6geneve_tunnel(void)
-+{
-+	struct test_tunnel_kern *skel;
-+	int set_fd, get_fd;
-+	int err;
-+
-+	skel = test_tunnel_kern__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "test_tunnel_kern__open_and_load"))
-+		return;
-+
-+	err = add_ip6geneve_tunnel(IP6GENEVE_TUNL_DEV0, IP6GENEVE_TUNL_DEV1,
-+				   "geneve", "");
-+	if (!ASSERT_OK(err, "add tunnel"))
-+		goto done;
-+
-+	set_fd = bpf_program__fd(skel->progs.ip6geneve_set_tunnel);
-+	get_fd = bpf_program__fd(skel->progs.ip6geneve_get_tunnel);
-+	if (generic_attach(IP6GENEVE_TUNL_DEV1, get_fd, set_fd))
-+		goto done;
-+
-+	ping_dev0();
-+	ping_dev1();
-+done:
-+	delete_tunnel(IP6GENEVE_TUNL_DEV0, IP6GENEVE_TUNL_DEV1);
-+	test_tunnel_kern__destroy(skel);
-+}
-+
- #define RUN_TEST(name, ...)						\
- 	({								\
- 		if (test__start_subtest(#name)) {			\
-@@ -1027,6 +1074,7 @@ static void *test_tunnel_run_tests(void *arg)
- 	RUN_TEST(ip6erspan_tunnel, V1);
- 	RUN_TEST(ip6erspan_tunnel, V2);
- 	RUN_TEST(geneve_tunnel);
-+	RUN_TEST(ip6geneve_tunnel);
- 
- 	return NULL;
- }
-diff --git a/tools/testing/selftests/bpf/test_tunnel.sh b/tools/testing/selftests/bpf/test_tunnel.sh
-index 7f2b1c846a72f07f578afbc9b4bb9882cabc838b..f46628f70399e2a049859709e9db9e8419e74770 100755
---- a/tools/testing/selftests/bpf/test_tunnel.sh
-+++ b/tools/testing/selftests/bpf/test_tunnel.sh
-@@ -64,26 +64,6 @@ config_device()
- 	ip addr add dev veth1 172.16.1.200/24
- }
- 
--add_ip6geneve_tunnel()
--{
--	ip netns exec at_ns0 ip addr add ::11/96 dev veth0
--	ip netns exec at_ns0 ip link set dev veth0 up
--	ip addr add dev veth1 ::22/96
--	ip link set dev veth1 up
--
--	# at_ns0 namespace
--	ip netns exec at_ns0 \
--		ip link add dev $DEV_NS type $TYPE id 22 \
--		remote ::22     # geneve has no local option
--	ip netns exec at_ns0 ip addr add dev $DEV_NS 10.1.1.100/24
--	ip netns exec at_ns0 ip link set dev $DEV_NS up
--
--	# root namespace
--	ip link add dev $DEV type $TYPE external
--	ip addr add dev $DEV 10.1.1.200/24
--	ip link set dev $DEV up
--}
--
- add_ipip_tunnel()
- {
- 	# at_ns0 namespace
-@@ -121,30 +101,6 @@ add_ip6tnl_tunnel()
- 	ip link set dev $DEV up
- }
- 
--test_ip6geneve()
--{
--	TYPE=geneve
--	DEV_NS=ip6geneve00
--	DEV=ip6geneve11
--	ret=0
--
--	check $TYPE
--	config_device
--	add_ip6geneve_tunnel
--	attach_bpf $DEV ip6geneve_set_tunnel ip6geneve_get_tunnel
--	ping $PING_ARG 10.1.1.100
--	check_err $?
--	ip netns exec at_ns0 ping $PING_ARG 10.1.1.200
--	check_err $?
--	cleanup
--
--	if [ $ret -ne 0 ]; then
--                echo -e ${RED}"FAIL: ip6$TYPE"${NC}
--                return 1
--        fi
--        echo -e ${GREEN}"PASS: ip6$TYPE"${NC}
--}
--
- test_ipip()
- {
- 	TYPE=ipip
-@@ -247,7 +203,6 @@ cleanup()
- 	ip link del ipip11 2> /dev/null
- 	ip link del ipip6tnl11 2> /dev/null
- 	ip link del ip6ip6tnl11 2> /dev/null
--	ip link del ip6geneve11 2> /dev/null
- }
- 
- cleanup_exit()
-@@ -283,10 +238,6 @@ bpf_tunnel_test()
- {
- 	local errors=0
- 
--	echo "Testing IP6GENEVE tunnel..."
--	test_ip6geneve
--	errors=$(( $errors + $? ))
--
- 	echo "Testing IPIP tunnel..."
- 	test_ipip
- 	errors=$(( $errors + $? ))
+Again, where is detailed explanation why time is determined per board,
+unlike previously agreed that it is not?
 
--- 
-2.48.1
+>>>> need user-space to configure it (see other drivers, e.g. maxim)
 
+
+
+
+>>>>
+>>>
+>>> Btw, I have used this awesome example you have provided. Take a look
+>>
+>> Where did I provide this example?
+>>
+>=20
+> Its presence in the docs is an example on its no? You have explicitly
+> told to check other maxim devices, I did so, they all have similar set
+> of convifurations.
+
+Choose rather later or latest, not 12 YO, binding as an example.
+
+>=20
+>>>
+>>> https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi=
+t/tree/Documentation/devicetree/bindings/power/supply/maxim,max77693.yaml=
+?h=3Dv6.14-rc4
+>>
+>> I opened it and I do not see anything about time. Please point to
+>> specific line.
+>>
+>> But regardless, how did I propose to use 12 year old binding? Where di=
+d
+>> I suggest that one?
+>>
+>>>
+>>> Oh, I wonder why it uses so much values which duplicate battery? I
+>>> know, it lacks battery, I assume that is why?
+>>
+>> No. You added to DT something which is not a hardware property, but
+>> user-space choice or policy.
+>>
+>=20
+> It is NOT a user-space choice or policy!
+Previous discussions on the lists - since you mention 12 year old
+binding, so also discussions 12 years ago - determined that they are
+closer to them than board configuration.
+
+I already said - this was rejected in the past - so now I am repeating
+myself.
+
+You did not bring any arguments just keep repeating "no", so I suggest
+reading previous discussions and coming with arguments against them.
+
+Best regards,
+Krzysztof
 
 
