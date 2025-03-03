@@ -1,111 +1,213 @@
-Return-Path: <linux-kernel+bounces-541087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A1FCA4B843
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:21:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D42BA4B846
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:22:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DE213AFB42
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 07:21:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7959416DDF7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 07:22:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86F7E1E9B33;
-	Mon,  3 Mar 2025 07:21:48 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2744B1E9B3B;
+	Mon,  3 Mar 2025 07:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RqadlKcd"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B21F12B93;
-	Mon,  3 Mar 2025 07:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B971E5B76;
+	Mon,  3 Mar 2025 07:22:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740986508; cv=none; b=bZqstpOQXoybNzZPWA95/04gdxs8sG8juTXXQ9OpqhHs8fj2Zm9qITSqnm4mnoo4ZbWmrgfH4BiQjRCzO/RX+fMEZ4+4C3Nt5Jq8sb4RAc1wN8cQ7qvdhWgsASHy60hnbyzjB/YHFK7lOBKz7D6N5W1SCuU1GPwmlontRE1nCGs=
+	t=1740986525; cv=none; b=rWoIGCZTj/S+bMEZRzhiFPDneUHs0u6ouJYwEzLcEGAWbCncCPou51Tlv0qtt0+I6OhZyPBtmiiRakydTV4znNldkf8zsVT9mkyh8aqj5rpPZMGv0qthdSfTFpaAwu17NntEQ7Zl2rlnduziUdO5TfLHL9RYpvNmFQj/lzoGRI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740986508; c=relaxed/simple;
-	bh=syPmBwmUMBo0QIBV7GdWdnT0SdfzyuqB5EAPVxcSIkY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=M1ABFjE+1i86e878x0HwMTNP1mDYnrEY3yuG8hJgj0Nz3YEHdabds3SxYYkv94zax5n570pehBzrbi0PT9MqIF59Um0GlTF/jGlhfDgn40HUJg3vtYUznm3b5Ci5jJbkIERpnMuJGTjfMuO9WM9rBUFwAe0Buw8z/ZpWrHM+ROc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-05 (Coremail) with SMTP id zQCowAD3_6NvWMVnHYCuEQ--.60251S2;
-	Mon, 03 Mar 2025 15:21:28 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: bhelgaas@google.com,
-	treding@nvidia.com,
-	arnd@arndb.de
-Cc: linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH v2 RESEND] PCI: fix reference leak in pci_register_host_bridge()
-Date: Mon,  3 Mar 2025 15:21:17 +0800
-Message-Id: <20250303072117.3874694-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1740986525; c=relaxed/simple;
+	bh=GJqAxXSYWniWgFDuASRZCzcna6rw3abw6iW+pr2fSLs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XqgZjYXWoMAoOSYw0V/z7jEuhgPs30pVmauSzgmFX7BYWqZeQGvNAzQ7c21ViKCqwBqBAxhdPSwjQ8NhYh+KLBp5Qk5vUb7UUgObTH5AK7JV8IW6ocxFBSamm/oCDhnf+//7UZMsJFXKM3KPYg1pT9+wjLTOy/8Be51uckxIsE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RqadlKcd; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 522LWrhq027034;
+	Mon, 3 Mar 2025 07:21:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	bqa5QdZw5rjeIAaBH02FxPX964Zdnmjap87BgQFF0JU=; b=RqadlKcdvWqF3ST2
+	2zLcT30S+HEcq+ZvzW/ULmKlP6joBxWzsLb6KDL18LXopOKfESBNHJcrt7zPee5u
+	lWponGcT1UQxiG/cD5yNNnh9g4mjMgD5YrLrEI7Mnh8Zi7sal0qL3qFceim2oqy6
+	ETEizywESkizareELq64XkPBRTF/geg28473t38MYi0yinT/le3sjLb2/matp7Pz
+	QbzU+QIOWM+xBogVZjoJaFmM7QNvpNemHrVAUNQWs1tl5fwTeXgcQvj788E5fkZI
+	7mVqzIkkhiRtjSlBF5kJkwrIhrRmaY4gDuTG/kH6GsawB1aKL3DbKWhKTw0t/BQC
+	uCn5cw==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 453u0d3ptu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Mar 2025 07:21:57 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5237LvYn005792
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 3 Mar 2025 07:21:57 GMT
+Received: from [10.151.37.100] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 2 Mar 2025
+ 23:21:53 -0800
+Message-ID: <1a22a637-c3f1-49b3-adf5-3e952c7d336a@quicinc.com>
+Date: Mon, 3 Mar 2025 12:51:44 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowAD3_6NvWMVnHYCuEQ--.60251S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7GF13GrWUGF4kuFy3ZF43Jrb_yoWkArXEgr
-	109Fy7Zr4rG3Zagr13ArnxZr10k3ZFgrWfGr48tFZ7ZayrXFZIg3ZxZFWYyr17Ca1DCr1U
-	J3WDXr4DCr1I9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbVkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
-	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
-	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
-	rcIFxwCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
-	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
-	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
-	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
-	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2Kf
-	nxnUUI43ZEXa7VUbsYFJUUUUU==
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 1/2] dt-bindings: mailbox: Document qcom,tmel-qmp
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <jassisinghbrar@gmail.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <andersson@kernel.org>, <konradybcio@kernel.org>,
+        <manivannan.sadhasivam@linaro.org>
+References: <20250228045356.3527662-1-quic_srichara@quicinc.com>
+ <20250228045356.3527662-2-quic_srichara@quicinc.com>
+ <velvqajyhrdaipmqmsduv3l3dsv56sy4rfukwm2hrdvh47hgqx@7sbnrgkzsn67>
+Content-Language: en-US
+From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+In-Reply-To: <velvqajyhrdaipmqmsduv3l3dsv56sy4rfukwm2hrdvh47hgqx@7sbnrgkzsn67>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: WNki5m9_TFCeX6WGTAU8cpccCA7JIqxW
+X-Proofpoint-GUID: WNki5m9_TFCeX6WGTAU8cpccCA7JIqxW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-03_02,2025-03-03_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
+ phishscore=0 malwarescore=0 spamscore=0 mlxscore=0 suspectscore=0
+ clxscore=1015 bulkscore=0 priorityscore=1501 mlxlogscore=999
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2503030055
 
-Once device_register() failed, we should call put_device() to
-decrement reference count for cleanup. Or it could cause memory leak.
 
-device_register() includes device_add(). As comment of device_add()
-says, 'if device_add() succeeds, you should call device_del() when you
-want to get rid of it. If device_add() has not succeeded, use only
-put_device() to drop the reference count'.
 
-Found by code review.
+On 2/28/2025 11:36 AM, Dmitry Baryshkov wrote:
+> On Fri, Feb 28, 2025 at 10:23:55AM +0530, Sricharan R wrote:
+>> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+>>
+>> TMEL SS provides different kinds of services like secureboot, remote image
+> 
+> What is TMEL SS? What is Q6, etc? Please provide a definition on the
+> first usagem both in the commit message and in the bindings text. And in
+> the cover letter. Also, in some places you use TME-L instead of TMEL.
+> Please settle on one of those, unless there is a difference between
+> them,
+> 
+ok, both are same, will expand and fix same in all places
 
-Cc: stable@vger.kernel.org
-Fixes: 37d6a0a6f470 ("PCI: Add pci_register_host_bridge() interface")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
-Changes in v2:
-- modified the patch description.
----
- drivers/pci/probe.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+>> authentication, key management, crypto, OEM provisioning etc. This patch
+>> adds support for remote image authentication. Support for rest of the
+>> services can be added.
+>>
+>> The QMP mailbox is the primary means of communication between TMEL SS and
+>> other subsystem on the SoC. A dedicated pair of inbound and outbound
+>> mailboxes is implemented for each subsystem/external execution environment
+>> which needs to communicate with TMEL for security services. The inbound
+>> mailboxes are used to send IPC requests to TMEL, which are then processed
+>> by TMEL firmware and accordingly the responses are sent back via outbound
+>> mailboxes.
+>>
+>> It is an IPC transport protocol which is light weight and supports a subset
+>> of API's. It handles link initialization, negotiation, establishment and
+>> communication across client(CPU/BTSS/AUDIOSS) and server(TMEL SS).
+>>
+>>     -----------------------------------------------       ---------------------------------------------------
+>>    |                                              |       |                                                 |
+>>    |                 SOC  CLIENT                  | SOC   |                TMEL  SS                         |
+>>    |                                              | AHB   |                                                 |
+>>    |     ----------    ---------   ---------      |       | ------    -------     --------    ------------  |
+>>    |     |        |    |       |   |       |      | WO    | |     | R |     |     |      |    |SERVICES   | |
+>>    |     | CPU    |<-->| TMEL  |<->|       |------------->| | IN  |-->|     |     | TMEL |    |--------   | |
+>>    |     |        |    | COM   |   | QMP   |      | RO    | |     | W | QMP |<--->| COM  |<-->| a) ATTEST | |
+>>    |     |        |    |       |   |       |<-------------| | OUT |<--|     |     |      |    | b) CRYPTO | |
+>>    |     |        |    |       |   |       |      |       | |     |   |     |     |      |    | .. more   | |
+>>    |     ---------     ---------   ---------      |       | ------    -------     -------     ------------  |
+>>    |                                              |       |                                                 |
+>>     -----------------------------------------------       --------------------------------------------------
+>>
+>> This binding describes the component responsible for communication between
+>> the TMEL server based subsystems (Q6) and the TMEL client
+>> (CPU/BTSS/AUDIOSS), used for security services like secure image
+>> authentication, enable/disable efuses, crypto services. Each client in the
+>> SoC has its own block of message RAM and IRQ for communication with the
+>> TMEL SS.
+>>
+>> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+>> ---
+>> #V3:
+> 
+> Creative. Where are the previous changelogs?
+> 
+ok, will add
 
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index 246744d8d268..7b1d7ce3a83e 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -1018,8 +1018,10 @@ static int pci_register_host_bridge(struct pci_host_bridge *bridge)
- 	name = dev_name(&bus->dev);
- 
- 	err = device_register(&bus->dev);
--	if (err)
-+	if (err) {
-+		put_device(&bus->dev);
- 		goto unregister;
-+	}
- 
- 	pcibios_add_bus(bus);
- 
--- 
-2.25.1
+>> ---
+>>          Fixed wrappings.
+>>          Made mailbox-cells as a required property and changed value to '1'.
+>>          Fixed to use compatible as filename.
+>>          Renamed compatible as per Krzystof's comments.
+>>          Dropped unused label.
+>>
+>>      Following tests were done and no issues.
+>>
+>>         *)  Checkpatch
+>>         *)  Codespell
+>>         *)  Sparse
+>>         *)  kerneldoc check
+>>         *)  Kernel lock debugging
+>>         *)  dt_binding_check and dtbs_check
+>>
+>>   .../bindings/mailbox/qcom,ipq5424-tmel.yaml   | 62 +++++++++++++++++++
+>>   1 file changed, 62 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/mailbox/qcom,ipq5424-tmel.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/mailbox/qcom,ipq5424-tmel.yaml b/Documentation/devicetree/bindings/mailbox/qcom,ipq5424-tmel.yaml
+>> new file mode 100644
+>> index 000000000000..2e3c79add405
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/mailbox/qcom,ipq5424-tmel.yaml
+>> @@ -0,0 +1,62 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/mailbox/qcom,ipq5424-tmel.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Qualcomm TMEL IPCC channel
+>> +
+>> +maintainers:
+>> +  - Sricharan Ramabadhran <quic_srichara@quicinc.com>
+>> +
+>> +description:
+>> +  TMEL SS provides different kinds of services like secureboot, remote image authentication,
+>> +  key management, crypto, OEM provisioning etc. This patch adds support for remote image
+>> +  authentication. Support for rest of the services can be added.
+>> +
+>> +  The QMP mailbox is the primary means of communication between TMEL SS and other subsystem on
+>> +  the SoC. A dedicated pair of inbound and outbound mailboxes is implemented for each
+>> +  subsystem/external execution environment which needs to communicate with TMEL for security
+>> +  services. The inbound mailboxes are used to send IPC requests to TMEL, which are then processed
+> 
+> This string is 100 chars long. What is the recommended wrapping
+> boundary?
+> 
+I kept it as 100 and checkpatch did not throw any warnings.
+
+Regards,
+  Sricharan
 
 
