@@ -1,324 +1,164 @@
-Return-Path: <linux-kernel+bounces-541784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B6C0A4C19A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:19:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3EE6A4C1BF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:22:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A61F7188CC0F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:19:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4770189513E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:22:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 866C3212F83;
-	Mon,  3 Mar 2025 13:18:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 480F4215192;
+	Mon,  3 Mar 2025 13:18:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b="V2VWHjdH"
-Received: from smtp15.bhosted.nl (smtp15.bhosted.nl [94.124.121.26])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="LQO+QnhA"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E4F120F093
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 13:18:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.124.121.26
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 966B0214A8E
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 13:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741007923; cv=none; b=fKuBsotT/r/oTKUFj/dRXPtxU+rpDz1sXecsgbthSSum4WnvtaweEnsiRiNBKsJ7MT4jTCi9LGYyxnKRLhoj3halOojX/8Qnk+hopDxobi+qd6rJeim4gsdbOxOP8Pkb/nQ1obZe0V200wcs+TTJB+6P5L1xEXI/imZXnNzY2GA=
+	t=1741007935; cv=none; b=X+oK+nBNZLj4sr49YQjDa6sYG8jtalx2OpMJav+CE3MeAxqKDOmdSEEpSGvjpxjAJHZGHHdohwO9qjQWeVW5sj5nIQgoLCCKRRPyyUXoscEVCFt13X88rEDrUHGaZDoejdbZE2F0yfNrf25o39oMELMWaOpHwXeToImX2pBt328=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741007923; c=relaxed/simple;
-	bh=AMDQ9eFx0aMl37aNjAdud2rQll+8S9hW7w2yT459u9w=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Q7ywlUY++JYkYwDOiJ6lnVZaFRwVQK5h6Mr/TGzRn0DBWxwKy3EBYMmQiYtcQBfyEgANCtFB/ZfJ7SQOJZ0mG6+WkiQ1C1BOiS7uMsOLYAWKIW/t+sfjbkOULDLcVxXSjWkFd+l4D85juZwALB3+IfKbDBCyNQLXKVRqqWczII4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl; spf=pass smtp.mailfrom=protonic.nl; dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b=V2VWHjdH; arc=none smtp.client-ip=94.124.121.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonic.nl
+	s=arc-20240116; t=1741007935; c=relaxed/simple;
+	bh=9ppF4aag/8mUCwmIT6ILS41aDAnaQNDafsOCHhvzm30=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Z1GZAaORUWm9hNnUGAFWdOGxmdm9OBPWuI3ct9vizywGsDJmq8f0eWADR4iJ8plQgpDbmgmjZ2THqLF57cu8Ywmaa8SI6bGuYybOF9qHn5K6rRoi48PvhfJrUtsKB4Kdsp9B6Qv0wTuYWVkMnlOAbrWQVbpw8mgbxWHofLlebp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=LQO+QnhA; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43690d4605dso28100355e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 05:18:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=protonic.nl; s=202111;
-	h=content-transfer-encoding:content-type:mime-version:references:in-reply-to:
-	 message-id:subject:cc:to:from:date:from;
-	bh=07jHBQ0Ocr20eMkBHU7wCv3Kb+u8M2gSl1jHl4Krjyw=;
-	b=V2VWHjdH50wFOAzqiqTCz4ucfQSAqCESzCrmKnlGDokUdrXyVCjY95wGlKxQEqab88IbyapJ8HitR
-	 HhPCkTVbdTVmITlaPVwF3DF45rsjZ8KKS9QR1QgL9Z9ZJ5PpeqMyb4Z4Br1b1QGHaU9XuSjwQA5XjL
-	 A9EK9KrVHqZcBBGpkCbhwHNy2zuIXnCvY+Yqh6IJUonUEaNniEQT+LOJaiv8qIBYHv/lxzT4aRN+2w
-	 0Ycn1oeGVIj2B/QPxKjK8H50uESCFnozuiYgwKdA25We/6ZDtA7Zez1CmVi/IbJCfJ/OrJ8aJ40Ipn
-	 ZWeXSYlWcX+QRqZW16a2zXBCEZZ+o4g==
-X-MSG-ID: 04a26b70-f832-11ef-a39b-00505681446f
-Date: Mon, 3 Mar 2025 14:18:37 +0100
-From: David Jander <david@protonic.nl>
-To: David Lechner <dlechner@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, Jonathan Corbet
- <corbet@lwn.net>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- devicetree@vger.kernel.org, linux-doc@vger.kernel.org, Nuno Sa
- <nuno.sa@analog.com>, Jonathan Cameron <jic23@kernel.org>, Oleksij Rempel
- <o.rempel@pengutronix.de>
-Subject: Re: [RFC PATCH 6/7] dt-bindings: motion: Add adi,tmc5240 bindings
-Message-ID: <20250303141837.782e57f7@erd003.prtnl>
-In-Reply-To: <CAMknhBFoRoaXWBL-vDnDrepqw_KJ-VrYeOoGJfjz8q=wDNM6xA@mail.gmail.com>
-References: <20250227162823.3585810-1-david@protonic.nl>
-	<20250227162823.3585810-7-david@protonic.nl>
-	<7b2a8d71-9d83-4d40-903b-ba7ef1c686f3@baylibre.com>
-	<20250303122253.26fec335@erd003.prtnl>
-	<CAMknhBFoRoaXWBL-vDnDrepqw_KJ-VrYeOoGJfjz8q=wDNM6xA@mail.gmail.com>
-Organization: Protonic Holland
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1741007932; x=1741612732; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=N2T+qUj1+rhYU/lDMmm7CtWMW53IZ3sreca30Qhdgoo=;
+        b=LQO+QnhA7NN9y+aVv9UpJlhkjW6jhXrxDTzKKhIxLxPRWEdg30GiLNZt1WDreOZ7UR
+         ZM5Yx7m3phKi3nKmwuvBx5Zo1MyooV1tETZYSb9dlZAGegPvNc/DAdqgVCywSTRhlliV
+         egrC5oRc71KdbcU46doWNfkKEA9yvtbkCW41UUQgFWLF1RrIVD/H5M75+XWNL/nVS/Q7
+         FX0oGbEbSbuQLTiXaVdmB0LNKI5Rz7TFNIA7Smfw5rLzGmsx9ptp0vzsEnj6S2qdM73C
+         FkWIkvlVN0iyD5BZ04UXGvK3nI+gFPnb0JMvRB7iE/83Ddq0VNfOmcNLWAfIwBNb8zzv
+         rULQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741007932; x=1741612732;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=N2T+qUj1+rhYU/lDMmm7CtWMW53IZ3sreca30Qhdgoo=;
+        b=NwfyMENakmYgCTB080umigKkkDVJkkLUA3GWxmPQCfTSGbDFuTngTH213cGh7urFBf
+         BUSCdExulPx6LgFegAp4EmMAwp0QogeRr9I6/AOeV0X0MDeD5KtLFBXdiJxrIP93bihA
+         XpdGVMjqW5uSL/SxL3BRpd8Eig/tlA8+mAZ0JOj0zVWeH4BH7LtY2QIiaN2z2vEUI+6S
+         qQmBc3BcfZ481N2T8tYejUTEAfECFmT1LDotgo7Nxk5439eomxnqKlSRU3/gdEQukju5
+         6l4wVQ/GuJECvVHgVidR507fBPRkKx4RasXVUx/XvLCuXLw8zlkx2u3RYOCL1P5+Tavm
+         7vEA==
+X-Forwarded-Encrypted: i=1; AJvYcCX+pW3WJVo+nf/G/df67Rj1pF58qgNQt9Aqs3WdFzuCIFcuvub3ZBFqOhAqv8XZcRY4xNgrJwjI3wJ1oLM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZKuf7CUK9OT5BWN6h62q6dJMv812MAWk+cUpwhzOsKWlGPYv9
+	Co3trKOW50t1nwUT+BcwTxfesxM3kqbSP13xTGvYt0uB18TgyabOEBl5Gos23sI=
+X-Gm-Gg: ASbGncuzWmmKqCkQcK2+oryD/YnHW/dzBzgvQygtZhWNQlGY93AZHzY9Cru7flly6hD
+	kJS7jTve8J54Lgv8NvtYk9LAL6A2LvlwhlbX+/U7PKY5ZDlZo+3bTz1yeQXXxQzUtRAs0oVtrjd
+	y5Df388/LMpIDa9ke623Us2DObrBV1aXLYlpFUJG2qw9RjpLRkknZ7QA0fYt3K1f2y68IK9ijts
+	qfIzMvJXPCrdadKk10pZMC8Aslq9WUxviMDqS76Nem6p9Eok7nqytZZpTvEqA2kDLAVkmAsId0q
+	Qz1MQ0Cw0ilaZCCD4bBuu9kR0fbapksg/NqdMQ==
+X-Google-Smtp-Source: AGHT+IHrsk8va2f9jUFz0ftD8VEqOjTpXEeQwyIxP0GRFd+ut72EYxcmyfAXXHA/8ZZERm1Ku2/BTQ==
+X-Received: by 2002:a05:600c:4595:b0:439:955d:c4e2 with SMTP id 5b1f17b1804b1-43ba66f9f99mr109740985e9.13.1741007932175;
+        Mon, 03 Mar 2025 05:18:52 -0800 (PST)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:664a:9e92:6aa8:6007])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba538b9fsm194821915e9.17.2025.03.03.05.18.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 05:18:51 -0800 (PST)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 03 Mar 2025 14:18:38 +0100
+Subject: [PATCH 13/15] gpio: aspeed: use new line value setter callbacks
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250303-gpiochip-set-conversion-v1-13-1d5cceeebf8b@linaro.org>
+References: <20250303-gpiochip-set-conversion-v1-0-1d5cceeebf8b@linaro.org>
+In-Reply-To: <20250303-gpiochip-set-conversion-v1-0-1d5cceeebf8b@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, 
+ Michael Hennerich <michael.hennerich@analog.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Mun Yew Tham <mun.yew.tham@intel.com>, Joel Stanley <joel@jms.id.au>, 
+ Andrew Jeffery <andrew@codeconstruct.com.au>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-pwm@vger.kernel.org, patches@opensource.cirrus.com, 
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1579;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=LYFIGRtuwl4aJkBrIp7QZ91bKDFoO6rlmaJc/Y3YEoE=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBnxaws9K4avm5a3/nXOZWmIQcBvBwL1Vb6W/sh9
+ OznmQXSmESJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZ8WsLAAKCRARpy6gFHHX
+ chT8EADTj6ZZXdeJj6Iyu1AzAb4IyTbPKUbO8J/z8nzq3PyDc5bnoj4WHzueOKKmjcxZKh/WYoI
+ FFA/pLjrW+4GZKcD9eBnMz4mRz8lpCmTpcNAFjkQQHqmQULsLzb+wtCk9oR1vgC13G+/mWED0EC
+ pTlhcx4vALIKG+WXXE9jWt7TlQvoM0lE0PXKW30/ll3nG7gFQOS7PA4eNP9PgMrlv7jX0HurDoi
+ KbgabP3JdgvBY1MD2E4m+O3cRHM98gJTDS5qKQEvlC3GzHeppaYDJDPd03NBaAwPtLZ7as52saM
+ +vGxlehYqbNPl92p66PzhTnKVa2rmQy/9MnGUrxoDJFuLkLi4S8CkMbqZRu+qy+yt9tpeIzFUL1
+ eXoBzY9hs+kO9qq0cPab32Cs4kvJ0pj6cgWnTlXqwbpk8isnBLDd5Dvy8O5E4y6zlGSWa5qiTC3
+ MBRxF/68eGz1AeVeDcCuH4xz9FZd0EGTeNoH4nuC5S8kVMwn6hD1lD+nCEs3Y52xMNLU6PHLk5F
+ 5lCN56djX30Hd2YWYLdCvEYrZzprzHncFQgl6CmHJcvnFt4Ln7gVNj1zjO5eY9ZRw9z0JHHY6F3
+ GUnF5ZKdktPzZ+VnH9pYOOyEqrPpcBmkG24xaMnAg+8iGk6JJVKLigkXXE4Q6aQOsSnvnLWmH32
+ 7R+I4hEhoMhBI9g==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Dear David,
+struct gpio_chip now has callbacks for setting line values that return
+an integer, allowing to indicate failures. Convert the driver to using
+them.
 
-On Mon, 3 Mar 2025 13:28:35 +0100
-David Lechner <dlechner@baylibre.com> wrote:
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ drivers/gpio/gpio-aspeed.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-> (Sorry if you get this twice. I don't have my regular computer today
-> and didn't realize I was sending HTML the first time. Resending in
-> plain text so the lists pick it up.)
->=20
-> On Mon, Mar 3, 2025 at 12:22=E2=80=AFPM David Jander <david@protonic.nl> =
-wrote:
-> >
-> >
-> > Dear David,
-> >
-> > On Fri, 28 Feb 2025 16:38:51 -0600
-> > David Lechner <dlechner@baylibre.com> wrote:
-> > =20
-> > > On 2/27/25 10:28 AM, David Jander wrote: =20
-> > > > Add device-tree bindings for Analog Devices TMC5240 stepper control=
-lers.
-> > > >
-> > > > Signed-off-by: David Jander <david@protonic.nl>
-> > > > ---
-> > > >  .../bindings/motion/adi,tmc5240.yaml          | 60 +++++++++++++++=
-++++
-> > > >  1 file changed, 60 insertions(+)
-> > > >  create mode 100644 Documentation/devicetree/bindings/motion/adi,tm=
-c5240.yaml
-> > > >
-> > > > diff --git a/Documentation/devicetree/bindings/motion/adi,tmc5240.y=
-aml b/Documentation/devicetree/bindings/motion/adi,tmc5240.yaml
-> > > > new file mode 100644
-> > > > index 000000000000..3364f9dfccb1
-> > > > --- /dev/null
-> > > > +++ b/Documentation/devicetree/bindings/motion/adi,tmc5240.yaml
-> > > > @@ -0,0 +1,60 @@
-> > > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > > > +%YAML 1.2
-> > > > +---
-> > > > +$id: http://devicetree.org/schemas/motion/adi,tmc5240.yaml#
-> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > +
-> > > > +title: Analog Devices TMC5240 Stepper Motor controller
-> > > > +
-> > > > +maintainers:
-> > > > +  - David Jander <david@protonic>
-> > > > +
-> > > > +description: |
-> > > > +   Stepper motor controller with motion engine and SPI interface. =
-=20
-> > >
-> > > Please include a link to the datasheet. =20
-> >
-> > Will do.
-> > =20
-> > > > +
-> > > > +properties:
-> > > > +  compatible:
-> > > > +    enum:
-> > > > +      - adi,tmc5240
-> > > > +
-> > > > +  reg:
-> > > > +    maxItems: 1
-> > > > +
-> > > > +  interrupts:
-> > > > +    maxItems: 1 =20
-> > >
-> > > I assume that this is the overvoltage output (OV pin). Would be nice =
-to have
-> > > a description here saying that. There are also NAO and DIAG0/1 output=
- pins, so
-> > > it's a bit ambiguous otherwise. =20
-> >
-> > This is the DIAG0 output pin which on this chip has a dual function as =
-either
-> > a STEP output or an interrupt output. The pin name is a bit misleading,=
- but it
-> > is the "interrupt" function that is meant here. The datasheet documents=
- all
-> > the different events that can trigger this interrupt.
-> > I will add a description to clarify this.
-> > =20
->=20
-> If it makes sense that other pins could possibly ever be connected to
-> interrupts then we can add those and also add interrupt-names (but
-> only if there is more than one possible interrupt).
+diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
+index e2535aad1026..2d340a343a17 100644
+--- a/drivers/gpio/gpio-aspeed.c
++++ b/drivers/gpio/gpio-aspeed.c
+@@ -424,8 +424,7 @@ static void __aspeed_gpio_set(struct gpio_chip *gc, unsigned int offset,
+ 	gpio->config->llops->reg_bit_get(gpio, offset, reg_val);
+ }
+ 
+-static void aspeed_gpio_set(struct gpio_chip *gc, unsigned int offset,
+-			    int val)
++static int aspeed_gpio_set(struct gpio_chip *gc, unsigned int offset, int val)
+ {
+ 	struct aspeed_gpio *gpio = gpiochip_get_data(gc);
+ 	bool copro = false;
+@@ -438,6 +437,8 @@ static void aspeed_gpio_set(struct gpio_chip *gc, unsigned int offset,
+ 
+ 	if (copro)
+ 		aspeed_gpio_copro_release(gpio, offset);
++
++	return 0;
+ }
+ 
+ static int aspeed_gpio_dir_in(struct gpio_chip *gc, unsigned int offset)
+@@ -1351,7 +1352,7 @@ static int aspeed_gpio_probe(struct platform_device *pdev)
+ 	gpio->chip.request = aspeed_gpio_request;
+ 	gpio->chip.free = aspeed_gpio_free;
+ 	gpio->chip.get = aspeed_gpio_get;
+-	gpio->chip.set = aspeed_gpio_set;
++	gpio->chip.set_rv = aspeed_gpio_set;
+ 	gpio->chip.set_config = aspeed_gpio_set_config;
+ 	gpio->chip.label = dev_name(&pdev->dev);
+ 	gpio->chip.base = -1;
 
-AFAIK, only DIAG1 would potentially make sense to be connected to an
-interrupt. It can be programmed to go low when the motor position matches t=
-he
-contents of the X_COMPARE/X_COMPARE_REPEAT register setting.
+-- 
+2.45.2
 
-I will add that one if you agree. It will not be mandatory of course.
-
-In any case, if that pin was connected to an interrupt pin right now, it co=
-uld
-already be used as an IIO trigger for example. Just not (yet) via this driv=
-er.
-
->[...]
-> > The resistor connected to the IREF pin (Rref) OTOH does have an implica=
-tion to
-> > the software, as it sets the full-range current of the output stage.
-> >
-> > How should we specify that? Is it adequate to add an optional DT proper=
-ty
-> > "rref" or "rref-ohm" with an int32 value in Ohm? The default value if
-> > unspecified is 12000 Ohm. =20
->=20
-> It looks like there are a few standardized properties, like
-> sense-resistor-ohms if that fits the use case. Otherwise, an
-> vendor-specific ti,rref-ohms would work. FYI, you can find the
-> preferred units at [1].
->=20
-> [1]: https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schem=
-as/property-units.yaml
-
-Ah, thanks! This is helpful.
-
-Will use this for ti,rref-ohms. I guess in this case that would be easier to
-understand than "sense-resistor-ohms", which is also okay, but would require
-reading the description to know what exactly is meant in this context.
-
-> > > And if there are any pins would make sense to connect to a gpio, we c=
-an add
-> > > those even if the driver doesn't use it currently.
-> > > =20
-> > > > +  clocks:
-> > > > +    maxItems: 1
-> > > > +
-> > > > +required:
-> > > > +  - compatible
-> > > > +  - reg
-> > > > +  - interrupts
-> > > > +  - clocks
-> > > > +
-> > > > +allOf:
-> > > > +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-> > > > +  - $ref: /schemas/motion/common.yaml# =20
-> > >
-> > > If we need to know about what is connected to the output of a motor c=
-ontroller
-> > > I would expect it to be done with child node for each output. That wa=
-y each
-> > > output can be unique, if needed. Basically, similar to iio/adc.yaml i=
-s used to
-> > > provide common properties for channel@ child nodes on iio devices. =20
-> >
-> > This controller chip only has one single output for one stepper motor (4
-> > wires). While technically you could connect something else to those 4 w=
-ires, I
-> > don't think it is the scope of LMC to support that. The chip itself isn=
-'t
-> > designed for that purpose and it would clearly go far beyond the intend=
-ed
-> > purpose of this device.
-> >
-> > That being said, your suggestion of supporting child nodes may actually=
- be a
-> > good idea. Right now, we specify the type of motor (basically nominal- =
-and hold
-> > current settings) in user-space and set the IRUN/IHOLD parameters from
-> > user-space via the sysfs attributes interface. It might make sense to h=
-ave a DT
-> > child node to specify this, although in our current application this is=
- not
-> > very practical, since there are many motor controllers on one board, an=
-d it is
-> > configurable in software (runtime) which motor is connected to which ou=
-tput.
-> >
-> > But I can imagine a situation where it may be fixed and thus can be des=
-cribed
-> > in the DT of a board.
-> >
-> > Then again I don't know if it would be over-complicating things with so=
-mething
-> > like this:
-> >
-> >         motor-controller@0 {
-> >                 ...
-> >                 motor@0 {
-> >                         compatible =3D "nanotec,st4118s1006";
-> >                         irun-ma =3D <1800>;
-> >                         ihold-ma =3D <270>;
-> >                 };
-> >         };
-> >
-> > where we'd possibly have a stepper-motors.c file with a lot of structs =
-and
-> > matching tables for the different motor types.... sounds like overkill =
-to me,
-> > but maybe not? =20
->=20
-> A compatible for motors seems too much. I was just thinking along the
-> lines that 1) if we need to so some scaling or something that depends
-> on a motor constant, then it would make sense to put those constants
-> in the DT and 2) if there is a motor controller with more than one
-> output that could be connected to two or more different sizes of
-> motors with different constants, then we either need child nodes or an
-> array to be able to enter the different constants. Either one would
-> work. So maybe simpler to just use an array instead of child nodes now
-> that I'm thinking about it more.
-
-Well, in the case of the TMC5240 there isn't much more than a single motor
-with possibly some fixed setting of irun/ihold in some cases, but like I sa=
-id,
-in our case it is run-time configurable, so not something fixed to the
-hardware-description. Apart from that, there are the speed- and acceleratio=
-n-
-conversion constants, which per default are the constants stated in the
-datasheet. In some rare cases one might want to overrule them, but that can
-already be done.
-
-LMC does als support multi-channel controllers, and in that case I intend to
-make use of child nodes for the different channels, to be able to specify
-those parameters per motor.
-
-So maybe just leave it as it currently is for the tmc5240?
-
-> > > > +
-> > > > +unevaluatedProperties: false
-> > > > +
-> > > > +examples:
-> > > > +  - |
-> > > > +    spi {
-> > > > +        #address-cells =3D <1>;
-> > > > +        #size-cells =3D <0>;
-> > > > +
-> > > > +        motor@0 { =20
-> > >
-> > > motor-controller@ or actuator-controller@
-> > >
-> > > The chip is the controller/driver, it is not a motor. =20
-> >
-> > Make sense. Will change this.
-> > =20
-> > > > +            compatible =3D "adi,tmc5240";
-> > > > +            reg =3D <0>;
-> > > > +            interrupts-extended =3D <&gpiok 7 0>;
-> > > > +            clocks =3D <&clock_tmc5240>;
-> > > > +            enable-supply =3D <&stpsleepn>;
-> > > > +            spi-max-frequency =3D <1000000>;
-> > > > +        };
-> > > > +    }; =20
-
-Best regards,
-
---=20
-David Jander
 
