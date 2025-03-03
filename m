@@ -1,96 +1,100 @@
-Return-Path: <linux-kernel+bounces-544560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E229A4E2A6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:15:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD99FA4E415
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:47:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C51D53BAD78
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:06:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C8FB424D87
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:42:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44F3C28137C;
-	Tue,  4 Mar 2025 15:00:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A28C291FB7;
+	Tue,  4 Mar 2025 15:28:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tbGDHeNQ"
-Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZKs/LwAl"
+Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14C327CCC2
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 747E0291F96
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:28:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741100447; cv=fail; b=gnFnqaKn5VGIyt72n+hHrVk6Cqeu2K4VqNP5JLxhdj4thPZ+SwA6UzXymm+09vg+4ullBQjkEdZx6U+qFTWP04IAmc+ErZKKLF697op8t3ag65nI4u52OITitq0QRuz7ZcKzteizq795jWAE09YveKTGcT7FksLlY+R2E+LBCP4=
+	t=1741102082; cv=pass; b=QwlN1zRsZh6s3jTW25mwETe6d0QimJ730GMZKpdRjoApG5HDxHFtBRyPASfr1vc/96ejJ1iL6WxBX9XQvHVBeAPECZCfG83kSn/2Gp6Ijs29nBRrfbP3cYEpdOJdFWYEU9cvZ68fW2WuyVNfOdSDoVHpay8fXaRRSW2OUY2TAOg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741100447; c=relaxed/simple;
-	bh=MC46LanJmI28bDf53mq7O5Fs4cOUyz9luxJNn4DKSOg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WQ0UVTup/+5G2XP4HYVH0aP294aJrKKyaRLjmSzoYNQhNKVrWUkV4IepsJtBRY9AtyidPG29Bmk3adjStOVYC/kpDwtm+C6ofrVu5swB2zi9golv7HpxxQLR/8kP66Cqu3s9h3d6GsSO8NHzOU5aAkjjg/WnTAEbNeI+UEQcOy0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tbGDHeNQ reason="signature verification failed"; arc=none smtp.client-ip=10.30.226.201; arc=fail smtp.client-ip=160.75.25.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+	s=arc-20240116; t=1741102082; c=relaxed/simple;
+	bh=SlnvAOHpi/pigx7YABM7JMAnlE//LI35JeQHXO5R1kI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Wre2itAcdnT15pkpq63itrfnLvwg4Dccje/RflxdSW4Vx6wHILhfNsCivuycCYvvZocrvYssb3724wQ9Dth4jzvl4cYN0XCLKxNPuk5v8VvE84mj3hszK3UsItC/08hgP6YBYPqx90JYkX+gX6HDpyjz/7VzxGPoiQy8Zc9XRK4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZKs/LwAl; arc=none smtp.client-ip=217.70.183.200; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; arc=pass smtp.client-ip=160.75.25.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id 3735440F1CE0
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:00:44 +0300 (+03)
+	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 9E23440D5704
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:27:58 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
-Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20201202 header.b=tbGDHeNQ
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6f3p0mTBzFwY8
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:59:50 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6ffF4dlszG0JZ
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:26:13 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 85D204275B; Tue,  4 Mar 2025 17:59:41 +0300 (+03)
+	id 250684273A; Tue,  4 Mar 2025 18:26:04 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tbGDHeNQ
-X-Envelope-From: <linux-kernel+bounces-541131-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZKs/LwAl
+X-Envelope-From: <linux-kernel+bounces-541137-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tbGDHeNQ
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZKs/LwAl
 Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id 46EA6424EE
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:18:35 +0300 (+03)
+	by le2 (Postfix) with ESMTP id 717754291A
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:24:42 +0300 (+03)
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id F38862DCE4
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:18:34 +0300 (+03)
+	by fgw2.itu.edu.tr (Postfix) with SMTP id 26AFF2DCEC
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:24:42 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D5DD16F3B8
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 08:18:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DDC716F7C6
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 08:24:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D84A1EF09B;
-	Mon,  3 Mar 2025 08:18:17 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A981F03EF;
+	Mon,  3 Mar 2025 08:23:04 +0000 (UTC)
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BDD47083C;
-	Mon,  3 Mar 2025 08:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 683C11E1A31;
+	Mon,  3 Mar 2025 08:22:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740989894; cv=none; b=J0xcE+JZFPded99ciL1PK0wZVRRAzE9BH37zoKGXXsSRkExy0PdSK/MtnyIYumK8N3SRD953Rptg4fsfKCdVwkP0QUHM3CDGwl6j7ysiFrb0Uvo6O8jtNZg+Hg2OerabXtv6rMCeT91LdDfHlhpqbcX/GrzPWNredxgwtgJMEOs=
+	t=1740990179; cv=none; b=SvBO03R83FISriQYYu3p0qm/j5GvCRRqiZ8YfDA8kn/6RuxiMgK00RuFLfUyHT+MzSp2om/j7uwcJVjzcbFzR6OCqLW5hda/mN/EHfRLLiz41lqYFZ5i+Fn/BeGkti5XgZst1MhLjfvQ08btpmQAVe6c9E13Wx8sLtNhV/Bek3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740989894; c=relaxed/simple;
-	bh=lsSwmwzKwKEFqzEBwDCIkRvNTrenry6xGvPaOarbA9c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=db3XKjbjTAIBi1OV1DQVLs2HivC82Go+uzFyNtN1J0ul8MerGkgbPVTlmZW6H2wsYuqEQkSjNaYr+ulgpjsrxGp2MNy/bFVno2r9W9sLH3m/9VjXZyCvDWVNtC8mba0deQP+cK1ygkEjDs+GMyQqjGPF+pGxxopYdXQimh5qwHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tbGDHeNQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 073B7C4CED6;
-	Mon,  3 Mar 2025 08:18:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740989894;
-	bh=lsSwmwzKwKEFqzEBwDCIkRvNTrenry6xGvPaOarbA9c=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tbGDHeNQpKWJi4/ycf7E7vEQ0vhBq6LZFbg5giQYjELPvTfEakFLO22w1p1Fhhk2h
-	 aQHahr+nq06GmwzcBrvNCxh/vIdlFwXH/hj6BRNgSmlIswxm26E4R6buGEcX8LXzlG
-	 yveABu+wdmZAyJIisrWw8sdCnd2xO34WCxd98j7Wo2yqJ58lWwpwk9JlyAqNMp9lx4
-	 MU+Kw+2B2DOeNltdNBl6VFhY7TvA0IGkMT2BG+sEpACbSb3Zytk1bm4CRLJQqOg0/T
-	 5BKVJu1wvYJ7OcuR0X7EAf4BUK6eT4uj7T0EKht7gH5NCdnsMbW5zXUV4MsOFxWoFD
-	 FY+mGfC7OdKLQ==
-Message-ID: <0b2a76e6-ad64-4c98-b6ab-e1f41cb54684@kernel.org>
-Date: Mon, 3 Mar 2025 09:18:08 +0100
+	s=arc-20240116; t=1740990179; c=relaxed/simple;
+	bh=SlnvAOHpi/pigx7YABM7JMAnlE//LI35JeQHXO5R1kI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=L1Wmyf/vPG/Jh70+94pK2F+cNkOmlfLHfBs6K2II8UxGTFx/np8IJo/BtYCfSLrxiPK1CHgtdJsYh64ga3mGAGwMVHNE/6yCuA1a7LGMcX2TIty8CxZArUMKJhkx8JTet7AV6Lc2jCqUcgQoe+0cKrYisorEoIxzF7KCZIUmW7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZKs/LwAl; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E10F644356;
+	Mon,  3 Mar 2025 08:22:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740990175;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/YIngI9G2c/hKVLTMkw3ZOdP1a1zwEvSGl7sOER1cJU=;
+	b=ZKs/LwAl76Ug7dNzvHDU1KU5wzAlrbaretyVZ7AZzi7Oh1qFr8EScd531iCrWa1bpOqXW+
+	D/PEi1kgSg64bKkW/JQTNdSYyQ3g2FNM21h6deLfA25DJkzt6iY8CNZLU6AyhmSdgU2YGj
+	IIF64OsMaUFjp6gxR83oPQYszXFZ7sCd21PtqWdhBJ3/srj28BE9L2nhQeCQe/Iiq4Rx23
+	YeWNZLSt4tYFf+XtgH/QlwW+grlj2BXNboWJeN1RaGhW++Is4LSNcxbhqGLN9b82qw2bUD
+	6zVi5Z4IDg7hwkDUhfJtlHYCAqWNU8oZxkkfjHm0iweZRjqguEQuNUpb16aN5w==
+From: "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
+Date: Mon, 03 Mar 2025 09:22:51 +0100
+Subject: [PATCH bpf-next v2 03/10] selftests/bpf: test_tunnel: Move gre
+ tunnel test to test_progs
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -98,151 +102,308 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: power: supply: Document Maxim MAX8971
- charger
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250226093700.44726-1-clamor95@gmail.com>
- <20250226093700.44726-2-clamor95@gmail.com>
- <20250227-cherubic-mantis-from-betelgeuse-86f5ff@krzk-bin>
- <CAPVz0n0ygR=ygsvG2+z-zST7kmJ_P3nxf29tqdgHpRs_Nw6D5Q@mail.gmail.com>
- <fbd307ae-1dfa-497b-a597-d15b6baa30f4@kernel.org>
- <CAPVz0n2no1EJnf4GKSJWfYA_8h8x6BRk_ducufie90YPZR-k3g@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CAPVz0n2no1EJnf4GKSJWfYA_8h8x6BRk_ducufie90YPZR-k3g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250303-tunnels-v2-3-8329f38f0678@bootlin.com>
+References: <20250303-tunnels-v2-0-8329f38f0678@bootlin.com>
+In-Reply-To: <20250303-tunnels-v2-0-8329f38f0678@bootlin.com>
+To: Alexei Starovoitov <ast@kernel.org>, 
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, 
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Alexis Lothore <alexis.lothore@bootlin.com>, bpf@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelkeeifecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkfhfjgfvvefosehtjeertdertdejnecuhfhrohhmpedfuegrshhtihgvnhcuvehurhhuthgthhgvthculdgvuefrhfcuhfhouhhnuggrthhiohhnmddfuceosggrshhtihgvnhdrtghurhhuthgthhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeefudfhuedttdeiffetffeljeffkeevveeiuddtgeejleeftdejgedtjedttdfhnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgepvdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludelvddrudeikedrtddrudegngdpmhgrihhlfhhrohhmpegsrghsthhivghnrdgtuhhruhhttghhvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvtddprhgtphhtthhopehlihhnuhigqdhkshgvlhhfthgvshhtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhhuhgrhheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhohhhnrdhfrghsthgrsggvnhgusehgmhgrihhlrdgtohhmpdhrtghpthhtohepvgguugihiiekjeesghhmr
+ ghilhdrtghomhdprhgtphhtthhopehsohhngheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghstheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhihkhholhgrlhesfhgsrdgtohhmpdhrtghpthhtoheprghnughrihhisehkvghrnhgvlhdrohhrgh
+X-GND-Sasl: bastien.curutchet@bootlin.com
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6f3p0mTBzFwY8
+X-ITU-Libra-ESVA-ID: 4Z6ffF4dlszG0JZ
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741705195.94077@0Xf0N27n+f8l+Ct2tmXgQg
+X-ITU-Libra-ESVA-Watermark: 1741706789.85149@oEw9+Y8cHWSUEbzAwtyIQA
 X-ITU-MailScanner-SpamCheck: not spam
 
-On 03/03/2025 09:11, Svyatoslav Ryhel wrote:
-> =D0=BF=D0=BD, 3 =D0=B1=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 09:54 K=
-rzysztof Kozlowski <krzk@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
->>
->> On 27/02/2025 11:55, Svyatoslav Ryhel wrote:
->>>>> +
->>
->> Please kindly trim the replies from unnecessary context. It makes it
->> much easier to find new content.
->>
->>>>> +  maxim,usb-in-current-limit-microamp:
->>>>> +    description:
->>>>> +      USB Input current limit
->>>>> +    minimum: 100000
->>>>> +    default: 500000
->>>>> +    maximum: 1500000
->>>>> +
->>>>> +  maxim,ac-in-current-limit-microamp:
->>>>> +    description:
->>>>> +      AC Input current limit
->>>>> +    minimum: 100000
->>>>> +    default: 500000
->>>>> +    maximum: 1500000
->>>>
->>>> Half of these properties as well are not suitable and duplicate exis=
-ting
->>>> sysfs interface.
->>>>
->>>
->>> All these properties allow configure the charger to suit the device o=
-n
->>> which it is used. None of them are required but are a nice addition.
->>> Why you are denying me an ability to fully utilize hardware I have an=
-d
->>> tune it to the device? All those values represent hardware registers
->>> which can be customized for the device, not for the end user to mess
->>> with.
->>
->> Because you put user-space choice or OS policy into the DT and DT is n=
-ot
->> for that.
->>
->=20
-> Those are NOT user-space choice or OS policy those are vendor
-> configuration for a specific device and are NOT and NEVER were exposed
+gre tunnels are tested in the test_tunnel.sh but not in the test_progs
+framework.
 
-Then look at existing devices. We had these discussions in the past and
-these are usually exposed to user-space.
+Add a new test in test_progs to test gre tunnels. It uses the same
+network topology and the same BPF programs than the script.
+Remove test_gre() and test_gre_no_tunnel_key() from the script.
 
-> to user configurations EVER. User messing with those may lead to
-> device breaking.
->=20
->>>
->>>> And for remaining, still no battery.
->>>>
->>>
->>> reference to power-supply IS included, hence the battery option is
->>> there as well.
->>
->> I don't see it being used at all and you explicitly duplicated
->> properties which means that reference is redundant and should be dropp=
-ed
->> with such binding. So how did you solve my request to add reference
->> which then you make redundant? Add reference and use it.
->>
->=20
-> Which properties I have duplicated?
+Acked-by: Stanislav Fomichev <sdf@fomichev.me>
+Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
+---
+ .../testing/selftests/bpf/prog_tests/test_tunnel.c | 97 ++++++++++++++++++++++
+ tools/testing/selftests/bpf/test_tunnel.sh         | 79 ------------------
+ 2 files changed, 97 insertions(+), 79 deletions(-)
 
-All the current limits.
+diff --git a/tools/testing/selftests/bpf/prog_tests/test_tunnel.c b/tools/testing/selftests/bpf/prog_tests/test_tunnel.c
+index 09e674c147bb31e239476b66eb5f57fc2b447cd9..79b0b1cd85657fa509dd297410de7dd3b4203a90 100644
+--- a/tools/testing/selftests/bpf/prog_tests/test_tunnel.c
++++ b/tools/testing/selftests/bpf/prog_tests/test_tunnel.c
+@@ -98,6 +98,9 @@
+ #define XFRM_SPI_IN_TO_OUT 0x1
+ #define XFRM_SPI_OUT_TO_IN 0x2
+ 
++#define GRE_TUNL_DEV0 "gre00"
++#define GRE_TUNL_DEV1 "gre11"
++
+ #define PING_ARGS "-i 0.01 -c 3 -w 10 -q"
+ 
+ static int config_device(void)
+@@ -216,6 +219,18 @@ static int set_ipip_encap(const char *ipproto, const char *type)
+ 	return -1;
+ }
+ 
++static int set_ipv4_addr(const char *dev0, const char *dev1)
++{
++	SYS(fail, "ip -n at_ns0 link set dev %s up", dev0);
++	SYS(fail, "ip -n at_ns0 addr add dev %s %s/24", dev0, IP4_ADDR_TUNL_DEV0);
++	SYS(fail, "ip link set dev %s up", dev1);
++	SYS(fail, "ip addr add dev %s %s/24", dev1, IP4_ADDR_TUNL_DEV1);
++
++	return 0;
++fail:
++	return 1;
++}
++
+ static int add_ipip_tunnel(enum ipip_encap encap)
+ {
+ 	int err;
+@@ -356,6 +371,31 @@ static void delete_xfrm_tunnel(void)
+ 		   IP4_ADDR1_VETH1, IP4_ADDR_VETH0, XFRM_SPI_OUT_TO_IN);
+ }
+ 
++static int add_ipv4_tunnel(const char *dev0, const char *dev1,
++			   const char *type, const char *opt)
++{
++	if (!type || !opt || !dev0 || !dev1)
++		return -1;
++
++	SYS(fail, "ip -n at_ns0 link add dev %s type %s %s local %s remote %s",
++	    dev0, type, opt, IP4_ADDR_VETH0, IP4_ADDR1_VETH1);
++
++	SYS(fail, "ip link add dev %s type %s external", dev1, type);
++
++	return set_ipv4_addr(dev0, dev1);
++fail:
++	return -1;
++}
++
++static void delete_tunnel(const char *dev0, const char *dev1)
++{
++	if (!dev0 || !dev1)
++		return;
++
++	SYS_NOFAIL("ip netns exec at_ns0 ip link delete dev %s", dev0);
++	SYS_NOFAIL("ip link delete dev %s", dev1);
++}
++
+ static int test_ping(int family, const char *addr)
+ {
+ 	SYS(fail, "%s %s %s > /dev/null", ping_command(family), PING_ARGS, addr);
+@@ -677,6 +717,59 @@ static void test_xfrm_tunnel(void)
+ 		test_tunnel_kern__destroy(skel);
+ }
+ 
++enum gre_test {
++	GRE,
++	GRE_NOKEY,
++	GRETAP,
++	GRETAP_NOKEY,
++};
++
++static void test_gre_tunnel(enum gre_test test)
++{
++	struct test_tunnel_kern *skel;
++	int set_fd, get_fd;
++	int err;
++
++	skel = test_tunnel_kern__open_and_load();
++	if (!ASSERT_OK_PTR(skel, "test_tunnel_kern__open_and_load"))
++		return;
++
++	switch (test) {
++	case GRE:
++		err = add_ipv4_tunnel(GRE_TUNL_DEV0, GRE_TUNL_DEV1, "gre", "seq");
++		set_fd = bpf_program__fd(skel->progs.gre_set_tunnel_no_key);
++		get_fd = bpf_program__fd(skel->progs.gre_get_tunnel);
++		break;
++	case GRE_NOKEY:
++		err = add_ipv4_tunnel(GRE_TUNL_DEV0, GRE_TUNL_DEV1, "gre", "seq key 2");
++		set_fd = bpf_program__fd(skel->progs.gre_set_tunnel);
++		get_fd = bpf_program__fd(skel->progs.gre_get_tunnel);
++		break;
++	case GRETAP:
++		err = add_ipv4_tunnel(GRE_TUNL_DEV0, GRE_TUNL_DEV1, "gretap", "seq");
++		set_fd = bpf_program__fd(skel->progs.gre_set_tunnel_no_key);
++		get_fd = bpf_program__fd(skel->progs.gre_get_tunnel);
++		break;
++	case GRETAP_NOKEY:
++		err = add_ipv4_tunnel(GRE_TUNL_DEV0, GRE_TUNL_DEV1, "gretap", "seq key 2");
++		set_fd = bpf_program__fd(skel->progs.gre_set_tunnel);
++		get_fd = bpf_program__fd(skel->progs.gre_get_tunnel);
++		break;
++	}
++	if (!ASSERT_OK(err, "add tunnel"))
++		goto done;
++
++	if (generic_attach(GRE_TUNL_DEV1, get_fd, set_fd))
++		goto done;
++
++	ping_dev0();
++	ping_dev1();
++
++done:
++	delete_tunnel(GRE_TUNL_DEV0, GRE_TUNL_DEV1);
++	test_tunnel_kern__destroy(skel);
++}
++
+ #define RUN_TEST(name, ...)						\
+ 	({								\
+ 		if (test__start_subtest(#name)) {			\
+@@ -694,6 +787,10 @@ static void *test_tunnel_run_tests(void *arg)
+ 	RUN_TEST(ipip_tunnel, FOU);
+ 	RUN_TEST(ipip_tunnel, GUE);
+ 	RUN_TEST(xfrm_tunnel);
++	RUN_TEST(gre_tunnel, GRE);
++	RUN_TEST(gre_tunnel, GRE_NOKEY);
++	RUN_TEST(gre_tunnel, GRETAP);
++	RUN_TEST(gre_tunnel, GRETAP_NOKEY);
+ 
+ 	return NULL;
+ }
+diff --git a/tools/testing/selftests/bpf/test_tunnel.sh b/tools/testing/selftests/bpf/test_tunnel.sh
+index d9661b9988ba907e023ef9bc58d96a0155f58326..48ac9cb2092f6aa34aa59b3b0c51465390965707 100755
+--- a/tools/testing/selftests/bpf/test_tunnel.sh
++++ b/tools/testing/selftests/bpf/test_tunnel.sh
+@@ -64,26 +64,6 @@ config_device()
+ 	ip addr add dev veth1 172.16.1.200/24
+ }
+ 
+-add_gre_tunnel()
+-{
+-	tun_key=
+-	if [ -n "$1" ]; then
+-		tun_key="key $1"
+-	fi
+-
+-	# at_ns0 namespace
+-	ip netns exec at_ns0 \
+-        ip link add dev $DEV_NS type $TYPE seq $tun_key \
+-		local 172.16.1.100 remote 172.16.1.200
+-	ip netns exec at_ns0 ip link set dev $DEV_NS up
+-	ip netns exec at_ns0 ip addr add dev $DEV_NS 10.1.1.100/24
+-
+-	# root namespace
+-	ip link add dev $DEV type $TYPE $tun_key external
+-	ip link set dev $DEV up
+-	ip addr add dev $DEV 10.1.1.200/24
+-}
+-
+ add_ip6gretap_tunnel()
+ {
+ 
+@@ -234,54 +214,6 @@ add_ip6tnl_tunnel()
+ 	ip link set dev $DEV up
+ }
+ 
+-test_gre()
+-{
+-	TYPE=gretap
+-	DEV_NS=gretap00
+-	DEV=gretap11
+-	ret=0
+-
+-	check $TYPE
+-	config_device
+-	add_gre_tunnel 2
+-	attach_bpf $DEV gre_set_tunnel gre_get_tunnel
+-	ping $PING_ARG 10.1.1.100
+-	check_err $?
+-	ip netns exec at_ns0 ping $PING_ARG 10.1.1.200
+-	check_err $?
+-	cleanup
+-
+-        if [ $ret -ne 0 ]; then
+-                echo -e ${RED}"FAIL: $TYPE"${NC}
+-                return 1
+-        fi
+-        echo -e ${GREEN}"PASS: $TYPE"${NC}
+-}
+-
+-test_gre_no_tunnel_key()
+-{
+-	TYPE=gre
+-	DEV_NS=gre00
+-	DEV=gre11
+-	ret=0
+-
+-	check $TYPE
+-	config_device
+-	add_gre_tunnel
+-	attach_bpf $DEV gre_set_tunnel_no_key gre_get_tunnel
+-	ping $PING_ARG 10.1.1.100
+-	check_err $?
+-	ip netns exec at_ns0 ping $PING_ARG 10.1.1.200
+-	check_err $?
+-	cleanup
+-
+-        if [ $ret -ne 0 ]; then
+-                echo -e ${RED}"FAIL: $TYPE"${NC}
+-                return 1
+-        fi
+-        echo -e ${GREEN}"PASS: $TYPE"${NC}
+-}
+-
+ test_ip6gre()
+ {
+ 	TYPE=ip6gre
+@@ -538,8 +470,6 @@ cleanup()
+ 	ip link del ipip11 2> /dev/null
+ 	ip link del ipip6tnl11 2> /dev/null
+ 	ip link del ip6ip6tnl11 2> /dev/null
+-	ip link del gretap11 2> /dev/null
+-	ip link del gre11 2> /dev/null
+ 	ip link del ip6gre11 2> /dev/null
+ 	ip link del ip6gretap11 2> /dev/null
+ 	ip link del geneve11 2> /dev/null
+@@ -567,7 +497,6 @@ check()
+ 
+ enable_debug()
+ {
+-	echo 'file ip_gre.c +p' > /sys/kernel/debug/dynamic_debug/control
+ 	echo 'file ip6_gre.c +p' > /sys/kernel/debug/dynamic_debug/control
+ 	echo 'file geneve.c +p' > /sys/kernel/debug/dynamic_debug/control
+ 	echo 'file ipip.c +p' > /sys/kernel/debug/dynamic_debug/control
+@@ -584,14 +513,6 @@ bpf_tunnel_test()
+ {
+ 	local errors=0
+ 
+-	echo "Testing GRE tunnel..."
+-	test_gre
+-	errors=$(( $errors + $? ))
+-
+-	echo "Testing GRE tunnel (without tunnel keys)..."
+-	test_gre_no_tunnel_key
+-	errors=$(( $errors + $? ))
+-
+ 	echo "Testing IP6GRE tunnel..."
+ 	test_ip6gre
+ 	errors=$(( $errors + $? ))
 
->=20
->> Best regards,
->> Krzysztof
+-- 
+2.48.1
 
-
-Best regards,
-Krzysztof
 
 
