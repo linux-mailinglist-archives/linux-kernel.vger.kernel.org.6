@@ -1,205 +1,271 @@
-Return-Path: <linux-kernel+bounces-542519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04DD0A4CAA7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:03:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB0BFA4CA84
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:57:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FA9D3B7E75
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:56:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C6EA1894B37
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:56:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41DE621A455;
-	Mon,  3 Mar 2025 17:55:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A235F21CFFF;
+	Mon,  3 Mar 2025 17:55:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="VuXhDQ6e"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GVRm/GPu"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F22C228CB7;
-	Mon,  3 Mar 2025 17:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A1C215F5C
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 17:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741024555; cv=none; b=hG90F4p0gldtB3Fh5wjVjXi7TlBsw/mDqObU7wJx3xqRHgJcLQHgSi/n1japiOjrgQq+rJw+/zCRwqN9fDT2bzgjJY+GwY1DijWJ7H9bhfXrKP7ZNs84QxS0rD39aicDHJRzZRXt7pDpYQIghCE5osnWmZYGWEh2yFAR5HF/9Ik=
+	t=1741024546; cv=none; b=iXPBftKsBzEj268XU6QD/rnot0CjvuGnWCyEtEE+itZejY0L7nypaD6XFB29zHD1NBmAvEAQVn+8p6AW3tm7DEosaTipfxw4+i28tONw2A2XAVaxwNns3I6jzfUI3SdoT/1JkM/KasyCfgncoOuFmYKfnoVBLQnJjAe4GYR/+bE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741024555; c=relaxed/simple;
-	bh=FFa75hjKPxwn9nk90umMY5P1KnPLOGOOgrFEmMy74yA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GL+xwrUQTe7Yw/0EFiXiNMd0WniU2Cx8rHyswAa5OhJPjnbAwmC63fmYt4MvAIL+9GzqDl1BD4jfACQ2j8Zg6BSCyO5dT1G9M1R9NyLHpVlkCnuzA0uEGc86SuoAW64MTnieQ4u6F4QH2eoNMF8roOQTmMlxWSancruVrWdLHC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=VuXhDQ6e; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3EAFE40E0217;
-	Mon,  3 Mar 2025 17:55:50 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id F6NmxbeL5VQP; Mon,  3 Mar 2025 17:55:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1741024545; bh=XR1jzLUSOCB344heFt8abZNteXZYan/jltUHuf6TFy4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VuXhDQ6e8gSDISmRMi7vKxncln2ZBZ2jdNiV4UEcJzJfxHyFLfw5OHFEiyX0EwlRJ
-	 x1D3+4pBB2SkTLo1BKumpmkWxgS97HW09/ATz1AD7L/ZLU8Lnah+NUfC3TYbr7v0/w
-	 VPCOK/aNvGVa6nZq09h3QzB9rocCGawhj6LnMakpjCisjOoTzG4JIfEL1cMHLaqVsa
-	 cHMliDmIrmdLMkijhQ1eIK8fZmBFHRqd8Ba9IlEE+d0OpVaa5Pm18qfjZ6rroiecxy
-	 MMtf7DEHjrG94HhdFve+h5zAUzyospP8xA2E28iW/vmnZxAPlNazvtmabbhakAdI+4
-	 x46B5mkK08UUOfhgmFZP8u9m2VVKuqO+SM6nURgfab/7NaGdYSSNrmXOieR3o+15hH
-	 zaCutAVMQbD4RmTmnzIuJcjp65GTxHmZtqHTT5G6+AiCd3WfdzMkrbL2HAFpB2ue+2
-	 vaUXnn37L6g+UDAxK4X9N/E7HiZDZ80zvgi21u8QCDeVJOIvAWtgT5wTySFLnRxPQb
-	 aDPQaNm8yXfy/VXrmqey46RbBMwhPqHRDbxccTIpZUGXOat2owZbfEaJ8CYx0fItvq
-	 lefXFm7amm0Chn9koRm7YNJUj9GFmvno/FfDDLY5GXq+skyQjyJT8zSO4tk1I8fiBP
-	 9yuCfDgSU3LjYsKniL9kW3bo=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 66C2C40E0215;
-	Mon,  3 Mar 2025 17:55:33 +0000 (UTC)
-Date: Mon, 3 Mar 2025 18:55:27 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: "Datta, Shubhrajyoti" <shubhrajyoti.datta@amd.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Tony Luck <tony.luck@intel.com>,
-	James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-	"git (AMD-Xilinx)" <git@amd.com>
-Subject: Re: [PATCH v5 5/5] EDAC: Versal NET: Add support for error
- notification
-Message-ID: <20250303175527.GDZ8XtD5pOTtLUe16B@fat_crate.local>
-References: <20250106053358.21664-1-shubhrajyoti.datta@amd.com>
- <20250106053358.21664-6-shubhrajyoti.datta@amd.com>
- <20250211094002.GAZ6sa8l_2BdJQfk0I@fat_crate.local>
- <SA1PR12MB89472E1EF3BDE072EEEF17B181CD2@SA1PR12MB8947.namprd12.prod.outlook.com>
+	s=arc-20240116; t=1741024546; c=relaxed/simple;
+	bh=RYeCiH4hrglpzCL4UionL7B70QIq6qUx4/oWmBloBco=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=s8R+y2ZvcR3NjLnKaRl5iy38BRNrcPm5tuqh/2qRwbbR/pN20O+8QDHVvZitSEXTw5ZnVMdcUElhq2UrzoR0b0i9K34FKT1Jhy6ZXFN4o1Kya41Z64w8QjwtW8WDg7GWxbo6K3Cp2GRUHqnzFtQ1L51zo4A3DRBQi8u5SkugAeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GVRm/GPu; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-223878ae339so30256625ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 09:55:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741024544; x=1741629344; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=t29eipV8nLIfT3AxIgJFAPTVE7nBNDXlcKJOKbdgiFo=;
+        b=GVRm/GPu6oSeBjCxdOOKjdcfTC3oeOriYY13rcKw7VQRFIvzYqvyTFhyu+6ZRU1tnj
+         QnGuemkgX8/SPupq4Krkt+S/7a86rm6SW/jnsUaaLZBZWeO1vtK+1gxgu7a9B5PrRyvd
+         7EXYqKsphEucqUsv8Xa0Nh9MbTNyQZjck4YNOU3fjObe0MelUTSdPlb5itmEGCR0iMWC
+         XUzoWdfS6B+uoX/lyC2K0YU7RAZrGJtstc0fOlLXhqj36QHuL2FmkkflII2Myct9aEVX
+         NdV0ju2ZOoWwKkCQDCeZqy7n51Piy7cEqBP4ph1byVZac1gpY5cP9aB5ofabCL3+sq9Z
+         uD1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741024544; x=1741629344;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=t29eipV8nLIfT3AxIgJFAPTVE7nBNDXlcKJOKbdgiFo=;
+        b=h7Lvk7lkbEa5w+zTm5YiEOlV2xNd8yxP7synj2LcVsdgFAREjQw4aaEAHU48OmviJs
+         r4wCTA4ZXBcmMfuweP1lhahQlBgGmqsku2SGIjsCEPwUMYYxoEZ0YVvTbFrLSD+bAWp1
+         f6FlvtDtz75OZPSFqZgAjGYb1Ui9gbFg96DxSlu32z8JHcx7iXyX1T7XbPOhqq5i9SAH
+         s7jZMwDTkhZFlVnhOW68qKdXwS4+gh4+p6GRoot43oPOdb9UOKWpcb8ueK037ySzpfo1
+         QhBSU3fBkPEIN9NnEouARAkQzYWOJa4zGEhKazOljPaVNlJ8jEfGspgFpdVUGskx4iIR
+         y+wQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUr/8joqTEl35PkbieGqscEVde08kPQDrM4P9kjzRf1sLA/B24WOQ01zfT0SuQHGnvIqBRrPZCXtO9R+jA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yya0CFZlhGhghML8bC1hOQpAhDCs1EKb50emZq3DVVEeEa3s752
+	HAHe/q5iYXwKEuO2RU4h7JzQK3ZKushz2glyRs+xcJz2iwHmq6vahnpU6Z+HBVc6kYSUuDHhBO6
+	3SQ==
+X-Google-Smtp-Source: AGHT+IHmiRcJ/TXtxOjZJ9TLtmElrBxOaPNxmsCaonemIQYwQWgcMwsBzh5CFU7u1TN6rwqurQh1oo4KA6M=
+X-Received: from pfbmc22.prod.google.com ([2002:a05:6a00:7696:b0:730:92d9:52e3])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:22d0:b0:21f:89e5:2704
+ with SMTP id d9443c01a7336-2236924f93cmr219888425ad.34.1741024543838; Mon, 03
+ Mar 2025 09:55:43 -0800 (PST)
+Date: Mon, 3 Mar 2025 09:55:42 -0800
+In-Reply-To: <20250303052227.523411-1-zijie.wei@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <SA1PR12MB89472E1EF3BDE072EEEF17B181CD2@SA1PR12MB8947.namprd12.prod.outlook.com>
+Mime-Version: 1.0
+References: <20241121065039.183716-1-zijie.wei@linux.alibaba.com> <20250303052227.523411-1-zijie.wei@linux.alibaba.com>
+Message-ID: <Z8XtHvJ4KZTYa-yr@google.com>
+Subject: Re: [PATCH v4] KVM: x86: ioapic: Optimize EOI handling to reduce
+ unnecessary VM exits
+From: Sean Christopherson <seanjc@google.com>
+To: weizijie <zijie.wei@linux.alibaba.com>
+Cc: kai.huang@intel.com, Paolo Bonzini <pbonzini@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H . Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	xuyun <xuyun_xy.xy@linux.alibaba.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 27, 2025 at 11:32:10AM +0000, Datta, Shubhrajyoti wrote:
-> > > +union edac_info {
-> >
-> > What is an "edac_info"?
-> This is the row and column positions.
-> We are using it to extract the position from the address decoder registers.
+Several minor comments.  No need to post v5, I'll do so today as a small se=
+ries
+with preparatory patches to refactor and deduplicate the userspace vs. in-k=
+ernel
+logic.
 
-Needs a better name which is descriptive as to how it is used or what it
-represents.
+On Mon, Mar 03, 2025, weizijie wrote:
+> Configuring IOAPIC routed interrupts triggers KVM to rescan all vCPU's
+> ioapic_handled_vectors which is used to control which vectors need to
+> trigger EOI-induced VMEXITs. If any interrupt is already in service on
+> some vCPU using some vector when the IOAPIC is being rescanned, the
+> vector is set to vCPU's ioapic_handled_vectors. If the vector is then
+> reused by other interrupts, each of them will cause a VMEXIT even it is
+> unnecessary. W/o further IOAPIC rescan, the vector remains set, and this
+> issue persists, impacting guest's interrupt performance.
+>=20
+> Both
+>=20
+>   commit db2bdcbbbd32 ("KVM: x86: fix edge EOI and IOAPIC reconfig race")
+>=20
+> and
+>=20
+>   commit 0fc5a36dd6b3 ("KVM: x86: ioapic: Fix level-triggered EOI and
+> IOAPIC reconfigure race")
+>=20
+> mentioned this issue, but it was considered as "rare" thus was not
+> addressed. However in real environment this issue can actually happen
+> in a well-behaved guest.
+>=20
+> Simple Fix Proposal:
+> A straightforward solution is to record highest in-service IRQ that
+> is pending at the time of the last scan. Then, upon the next guest
+> exit, do a full KVM_REQ_SCAN_IOAPIC. This ensures that a re-scan of
+> the ioapic occurs only when the recorded vector is EOI'd, and
+> subsequently, the extra bits in the eoi_exit_bitmap are cleared,
+> avoiding unnecessary VM exits.
 
-> > > +static void get_ddr_ue_error_info(u32 error_data[REGS_PER_CONTROLLER],
-> > struct edac_priv *priv)
-> >                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> > What is that for?
-> >
-> The error_data contains the register values. Linux does not have access to the DDRMC register
-> Space. It queries it from the NMC and gets the the data from the rpmsg callback.
+Write changelogs as "commands", i.e. state what changes are actually being =
+made,
+as opposed to passively describing a proposed/possible change.
 
-I wasn't clear. Arrays in C are passed as pointers - the compiler does that
-anyway.  You don't have to do this weird parameter specification.
+> Co-developed-by: xuyun <xuyun_xy.xy@linux.alibaba.com>
+> Signed-off-by: xuyun <xuyun_xy.xy@linux.alibaba.com>
+> Signed-off-by: weizijie <zijie.wei@linux.alibaba.com>
+> Reviewed-by: Kai Huang <kai.huang@intel.com>
+> ---
+>  arch/x86/include/asm/kvm_host.h |  1 +
+>  arch/x86/kvm/ioapic.c           | 10 ++++++++--
+>  arch/x86/kvm/irq_comm.c         |  9 +++++++--
+>  arch/x86/kvm/lapic.c            | 13 +++++++++++++
+>  4 files changed, 29 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_h=
+ost.h
+> index 0b7af5902ff7..8c50e7b4a96f 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -1062,6 +1062,7 @@ struct kvm_vcpu_arch {
+>  #if IS_ENABLED(CONFIG_HYPERV)
+>  	hpa_t hv_root_tdp;
+>  #endif
+> +	u8 last_pending_vector;
 
-> > > +     mci->edac_cap = EDAC_FLAG_SECDED;
-> > > +     mci->ctl_name = "amd_ddr_controller";
-> > > +     mci->dev_name = dev_name(&pdev->dev);
-> > > +     mci->mod_name = "amd_edac";
-> >
-> > Do:
-> >
-> > git grep mod_name drivers/edac/
-> >
-> > to get an idea how those names are chosen.
-> #define EDAC_MOD_STR    "r82600_edac"
-> mci->mod_name = EDAC_MOD_STR;
-> https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/edac/r82600_edac.c?h=v6.14-rc4#n316
-> 
-> https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/edac/i5000_edac.c?h=v6.14-rc4#n1424
-> mci->mod_name = "i5000_edac.c";
-> https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/edac/highbank_mc_edac.c?h=v6.14-rc4#n218
-> mci->mod_name = pdev->dev.driver->name;
-> 
-> let me know if mci->mod_name = pdev->dev.driver->name; is fine.
+To be consistent with how KVM handles IRQs, this should probably be an "int=
+" with
+-1 as the "no pending EOI" value.
 
-I think you didn't get me again.
+I also think we should go with a verbose name to try and precisely capture =
+what
+this field tracks, e.g. highest_stale_pending_ioapic_eoi.  It's abusrdly lo=
+ng,
+but with massaging and refactoring the line lengths are a non-issue, and I =
+want
+to avoid confusion with pending_ioapic_eoi and highest_isr_cache (and other=
+s).
 
-amd64_edac.c - the x86 driver is called this:
+>  };
+> =20
+>  struct kvm_lpage_info {
+> diff --git a/arch/x86/kvm/ioapic.c b/arch/x86/kvm/ioapic.c
+> index 995eb5054360..40252a800897 100644
+> --- a/arch/x86/kvm/ioapic.c
+> +++ b/arch/x86/kvm/ioapic.c
+> @@ -297,10 +297,16 @@ void kvm_ioapic_scan_entry(struct kvm_vcpu *vcpu, u=
+long *ioapic_handled_vectors)
+>  			u16 dm =3D kvm_lapic_irq_dest_mode(!!e->fields.dest_mode);
+> =20
+>  			if (kvm_apic_match_dest(vcpu, NULL, APIC_DEST_NOSHORT,
+> -						e->fields.dest_id, dm) ||
+> -			    kvm_apic_pending_eoi(vcpu, e->fields.vector))
+> +						e->fields.dest_id, dm))
+>  				__set_bit(e->fields.vector,
+>  					  ioapic_handled_vectors);
+> +			else if (kvm_apic_pending_eoi(vcpu, e->fields.vector)) {
+> +				__set_bit(e->fields.vector,
+> +					  ioapic_handled_vectors);
+> +				vcpu->arch.last_pending_vector =3D e->fields.vector >
+> +					vcpu->arch.last_pending_vector ? e->fields.vector :
+> +					vcpu->arch.last_pending_vector;
 
-#define EDAC_MOD_STR "amd64_edac"
+Eh, no need to use a ternary operator, last_pending_vector only needs to be=
+ written
+if it's changing.
 
-Calling yours "amd_edac" doesn't work.
+>  		}
+>  	}
+>  	spin_unlock(&ioapic->lock);
+> diff --git a/arch/x86/kvm/irq_comm.c b/arch/x86/kvm/irq_comm.c
+> index 8136695f7b96..1d23c52576e1 100644
+> --- a/arch/x86/kvm/irq_comm.c
+> +++ b/arch/x86/kvm/irq_comm.c
+> @@ -426,9 +426,14 @@ void kvm_scan_ioapic_routes(struct kvm_vcpu *vcpu,
+> =20
+>  			if (irq.trig_mode &&
+>  			    (kvm_apic_match_dest(vcpu, NULL, APIC_DEST_NOSHORT,
+> -						 irq.dest_id, irq.dest_mode) ||
+> -			     kvm_apic_pending_eoi(vcpu, irq.vector)))
+> +						 irq.dest_id, irq.dest_mode)))
+>  				__set_bit(irq.vector, ioapic_handled_vectors);
+> +			else if (kvm_apic_pending_eoi(vcpu, irq.vector)) {
+> +				__set_bit(irq.vector, ioapic_handled_vectors);
+> +				vcpu->arch.last_pending_vector =3D irq.vector >
+> +					vcpu->arch.last_pending_vector ? irq.vector :
+> +					vcpu->arch.last_pending_vector;
 
-"versalnet_edac"? That's probably better.
+This is wrong.  Well, maybe not "wrong" per se, but unnecessary.  The trig_=
+mode
+check guards both the "new" and "old" routing cases, i.e. KVM's behavior is=
+ to
+intercept EOIs for in-flight IRQs if and only if the IRQ is level-triggered=
+.
 
-> > You don't need "inline" - the compiler can decide that itself. And
-> > "process_bit" needs a better name.
-> 
-> Will rename it to populate_row_bit
+This code really needs to be de-duplicated between the userspace and in-ker=
+nel
+I/O APICs.  It probably should have been de-duplicated by fceb3a36c29a ("KV=
+M: x86:
+ioapic: Fix level-triggered EOI and userspace I/OAPIC reconfigure race"), b=
+ut it's
+a much more pressing issue now.
 
-Or "assign_row_bit" or whatever.
+> +			}
+>  		}
+>  	}
+>  	srcu_read_unlock(&kvm->irq_srcu, idx);
+> diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+> index a009c94c26c2..7c540a0eb340 100644
+> --- a/arch/x86/kvm/lapic.c
+> +++ b/arch/x86/kvm/lapic.c
+> @@ -1466,6 +1466,19 @@ static void kvm_ioapic_send_eoi(struct kvm_lapic *=
+apic, int vector)
+>  	if (!kvm_ioapic_handles_vector(apic, vector))
+>  		return;
+> =20
+> +	/*
+> +	 * When there are instances where ioapic_handled_vectors is
+> +	 * set due to pending interrupts, clean up the record and do
+> +	 * a full KVM_REQ_SCAN_IOAPIC.
+> +	 * This ensures the vector is cleared in the vCPU's ioapic_handled_vect=
+ors,
+> +	 * if the vector is reused=C2=A0by non-IOAPIC interrupts, avoiding unne=
+cessary
+> +	 * EOI-induced VMEXITs for that vector.
+> +	 */
+> +	if (apic->vcpu->arch.last_pending_vector =3D=3D vector) {
+> +		apic->vcpu->arch.last_pending_vector =3D 0;
 
-The function name should be describing what the function does as closely as
-possible.
+I think it makes sense to reset the field when KVM_REQ_SCAN_IOAPIC, mainly =
+so
+that it's more obviously correct, i.e. so that it's easier to see that the =
+field
+is reset immediately prior to scanning, along with the bitmap itself.
 
-> > Why are those functions copying stuff around? Why aren't you using cols
-> > directly?
-> 
-> The column bit position is used in converting to the physical address.
-> We read it at init and use it every time an error occurs to get the address.
-> Did you mean to remove the regval. Or read the error_data every time.
-
-I mean simply use cols instead of assigning stuff to priv->col_bit* and then
-using that.
-
-> > Why is probing a work item?
-> >
-> > Explaining *that* is what a commit message is for - not for repeating useless
-> > info.
-> The RPMsg probe is invoked from a thread within the virtio driver responsible
-> for processing the response ring. If the probe initiates an mcdi API call, it blocks
-> until the mcdi response is received. However, since the mcdi response is also processed
-> by the same thread that triggered the rpmsg probe, the thread remains blocked,
-> preventing it from handling the response. This results in a deadlock.
-> 
-> To prevent it we have a work scheduled.
-
-This is just insane.
-
-I don't see anything in amd_setup_mcdi() that needs some response from some
-mcdi thing. If not, you don't need the work queue thing.
-
-> >
-> > > +     for (i = 0; i < NUM_CONTROLLERS; i++) {
-> > > +             config = priv->adec[CONF + i];
-> > > +             num_chans = FIELD_GET(DDRMC5_NUM_CHANS_MASK, config);
-> > > +             rank = FIELD_GET(DDRMC5_RANK_MASK, config);
-> > > +             rank = 1 << rank;
-> > > +             dwidth = FIELD_GET(DDRMC5_BUS_WIDTH_MASK, config);
-> > > +             dt = get_dwidth(dwidth);
-> > > +             if (dt != DEV_UNKNOWN)
-> > > +                     break;
-> > > +     }
-> >
-> > What is that loop supposed to do? Find the last controller before the one
-> > with DEV_UNKNOWN device width and register that one?
-> 
-> There are 8 controllers all we try to get the first one that is enabled and register that one.
-> We use the device unknown to know if that is enabled or not.
-
-The first one that is enabled has unknown device width? What?
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+> +		kvm_make_request(KVM_REQ_SCAN_IOAPIC, apic->vcpu);
+> +	}
+> +
+>  	/* Request a KVM exit to inform the userspace IOAPIC. */
+>  	if (irqchip_split(apic->vcpu->kvm)) {
+>  		apic->vcpu->arch.pending_ioapic_eoi =3D vector;
+> --=20
+> 2.43.5
+>=20
 
