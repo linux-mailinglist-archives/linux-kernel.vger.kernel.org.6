@@ -1,168 +1,199 @@
-Return-Path: <linux-kernel+bounces-542654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 028BFA4CC00
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:31:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 517A0A4CC02
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:32:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8C491894ECB
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:31:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 524ED1894F76
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:32:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ED08232392;
-	Mon,  3 Mar 2025 19:31:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F93722E011;
+	Mon,  3 Mar 2025 19:32:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="o4mGX424";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FiR+5zla"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PHDWKAHp"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D8801C8604;
-	Mon,  3 Mar 2025 19:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97FF91C8604
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 19:32:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741030296; cv=none; b=rKY0XOdbaoS5nLur0653T/dFppoMPZdQBrgrOBCrhCXrC8/6TvlzcJV8R4PXLahX+4tDU48j3SElSLoo33qwbARPyZEwEFzm4yf1OvQblERdqnCKtkw1UzHRItt39a9re/IaVNHhYV5vV76lGJWnLMqS0xJT6uJWqSqySzEj9MQ=
+	t=1741030328; cv=none; b=Th6YRrPsJR0GtiPIV0UYh/XiRVvnWPtGDjWWC5QkaAKSqepRQSNuvmVvuvnTKa6xtypl9XKbe7UqMat7jCDkFya+m/u6d5O/iDWZS4OkwZ0+rlp1xKSw/zrkTMYhOxw5Nnk2NIwTIN0azn8fitEx6QDoATFVJmViFwdPuJA8YAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741030296; c=relaxed/simple;
-	bh=hHDNM+PiIH5WSoRSEO24mxsJGorFqWQF7bOmOynJ0AQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=NQ2dSyr4tMT2wFjtovBxo6wr6IJAKP0mM7YVp0R2ApHPOeRjZmJowEjVWDModrgxYR2g2w0TcrH547VhXp9WalhLs3hPyaEumIwlfdXEm8eJtn8P0m4A8lDA3dgaugK6xH2rYGpGb624cfgGghyDH8603oWbh2Od1x5Intz/008=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=o4mGX424; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FiR+5zla; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741030293;
+	s=arc-20240116; t=1741030328; c=relaxed/simple;
+	bh=uSGvfjovsdfyUdu7wuGY4zvu92LIyoDYDeUyoexzOlQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T7/7E6xwISZAaSM2iMpDsAeo77WLYgJ0EHi0xD9dWY46RRxvzG8MIg+GOB1nemCjouqXPI79l2/lVYb2SNcyKXql34OiRT23t4OnaRAir50ACANZ6NOGN+EqKA9yJdL+wH4/88/7r8iPTHQ2VEJ084Ob5TFs8fp3KJ98bAN8EzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PHDWKAHp; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 3 Mar 2025 19:31:50 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741030314;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=fx2InO2u3usf4WbNN/ZNNGuXaFAmHvYhKHK29R9jzIc=;
-	b=o4mGX424slXTyDFZ2aMdolAv1azDiqVG1sW43+n5L4OA8uVUWcggkUFPTADrtrsYTvRTdn
-	hT2ngNsZtEn3NodAYtBx44CDQCTo8ouZi1EgLfo2ZiLZ1dErK5fajA/UgrHSCCMGtNd0C5
-	k75DULtB6CFz55YvdOAJkwus5nVJ5m5aPYsySQiMAsF19tytCB9Lmc8YI9MEL92cPjS8KB
-	2xKc1juA1eyBPIir0kkDzO4JXje8VIqDK0PA4k/LeS3Eu0BwVKwvPA3keZQvEGPEV+Va1g
-	CepZyqrW/xV4Yj+OwBm08vgxE0aA4oYxyrT0n++ASwmaKHPZWP1KKTIaSHxAgA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741030293;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fx2InO2u3usf4WbNN/ZNNGuXaFAmHvYhKHK29R9jzIc=;
-	b=FiR+5zla1f10WxtgsNrKkRNPyNQkF5h9wLTcMzIhMidF4c7jj10my5Wyv0JfDYCZuEspzC
-	D/ct61hFvL1ghWBQ==
-To: Inochi Amaoto <inochiama@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto
- <inochiama@gmail.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- sophgo@lists.linux.dev, Yixun Lan <dlan@gentoo.org>, Longbin Li
- <looong.bin@gmail.com>
-Subject: Re: [PATCH 2/2] irqchip/sg2042-msi: Add the Sophgo SG2044 MSI
- interrupt controller
-In-Reply-To: <20250303111648.1337543-3-inochiama@gmail.com>
-References: <20250303111648.1337543-1-inochiama@gmail.com>
- <20250303111648.1337543-3-inochiama@gmail.com>
-Date: Mon, 03 Mar 2025 20:31:32 +0100
-Message-ID: <87y0xlc3mz.ffs@tglx>
+	bh=9y+r94mPtFlrPqF8gB/c1m2hma3BlLx4QJpsnidFoZU=;
+	b=PHDWKAHpgxrRvyweDUVEAPf4YvRGU6e2CndYm/KTctHnfwh5xr02jFubFFCuGKs7E7J9vH
+	KX3VBNBqjUXTTx/hQ4P2CtFekXiTyQUHn+FAx3MZwmM2dS4MV9uu+scGSd5KaXHOTiYCr0
+	5ypchNz96dc86qdUrH6oAWX2TeAZeuk=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Maxim Levitsky <mlevitsk@redhat.com>
+Cc: Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 01/13] KVM: nSVM: Track the ASID per-VMCB
+Message-ID: <Z8YDpocIkdUn8LCU@google.com>
+References: <20250205182402.2147495-1-yosry.ahmed@linux.dev>
+ <20250205182402.2147495-2-yosry.ahmed@linux.dev>
+ <7addde721e3f67bfa8ec5c9671f51d131f84bc6b.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7addde721e3f67bfa8ec5c9671f51d131f84bc6b.camel@redhat.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Mar 03 2025 at 19:16, Inochi Amaoto wrote:
-> Add support for Sophgo SG2044 MSI interrupt controller.
+On Fri, Feb 28, 2025 at 08:23:48PM -0500, Maxim Levitsky wrote:
+> On Wed, 2025-02-05 at 18:23 +0000, Yosry Ahmed wrote:
+> > The ASID is currently tracked per-vCPU, because the same ASID is used by
+> > L1 and L2. That ASID is flushed on every transition between L1 and L2.
+> > 
+> > Track the ASID separately for each VMCB (similar to the
+> > asid_generation), giving L2 a separate ASID. This is in preparation for
+> > doing fine-grained TLB flushes on nested transitions instead of
+> > unconditional full flushes.
+> > 
+> > The ASIDs are still not fully maintained (e.g. a remote flush will only
+> > flush the current ASID), so keep the TLB flush on every transition until
+> > this is sorted out.
+> > 
+> > L1's ASID will be flushed on KVM_REQ_TLB_FLUSH_GUEST if it is the
+> > active context, so remove the TODO in nested_svm_transition_tlb_flush()
+> > about it.
+> > 
+> > Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+> > ---
+> >  arch/x86/kvm/svm/nested.c |  1 -
+> >  arch/x86/kvm/svm/sev.c    |  2 +-
+> >  arch/x86/kvm/svm/svm.c    | 12 +++++++-----
+> >  arch/x86/kvm/svm/svm.h    |  2 +-
+> >  4 files changed, 9 insertions(+), 8 deletions(-)
+> > 
+> > diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
+> > index 04c375bf1ac2a..bbe4f3ac9f250 100644
+> > --- a/arch/x86/kvm/svm/nested.c
+> > +++ b/arch/x86/kvm/svm/nested.c
+> > @@ -495,7 +495,6 @@ static void nested_svm_transition_tlb_flush(struct kvm_vcpu *vcpu)
+> >  	 *  - Honor L1's request to flush an ASID on nested VMRUN
+> >  	 *  - Sync nested NPT MMU on VMRUN that flushes L2's ASID[*]
+> >  	 *  - Don't crush a pending TLB flush in vmcb02 on nested VMRUN
+> > -	 *  - Flush L1's ASID on KVM_REQ_TLB_FLUSH_GUEST
+> >  	 *
+> >  	 * [*] Unlike nested EPT, SVM's ASID management can invalidate nested
+> >  	 *     NPT guest-physical mappings on VMRUN.
+> > diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+> > index 799f8494b599c..b0adfd0537d00 100644
+> > --- a/arch/x86/kvm/svm/sev.c
+> > +++ b/arch/x86/kvm/svm/sev.c
+> > @@ -3468,7 +3468,7 @@ void pre_sev_run(struct vcpu_svm *svm, int cpu)
+> >  	unsigned int asid = sev_get_asid(svm->vcpu.kvm);
+> >  
+> >  	/* Assign the asid allocated with this SEV guest */
+> > -	svm->asid = asid;
+> > +	svm->current_vmcb->asid = asid;
+> >  
+> >  	/*
+> >  	 * Flush guest TLB:
+> > diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+> > index 7640a84e554a6..08340ae57777b 100644
+> > --- a/arch/x86/kvm/svm/svm.c
+> > +++ b/arch/x86/kvm/svm/svm.c
+> > @@ -1335,8 +1335,10 @@ static void init_vmcb(struct kvm_vcpu *vcpu)
+> >  		save->g_pat = vcpu->arch.pat;
+> >  		save->cr3 = 0;
+> >  	}
+> > -	svm->current_vmcb->asid_generation = 0;
+> > -	svm->asid = 0;
+> > +	svm->vmcb01.asid_generation = 0;
+> > +	svm->vmcb01.asid = 0;
+> > +	svm->nested.vmcb02.asid_generation = 0;
+> > +	svm->nested.vmcb02.asid = 0;
+> >  
+> >  	svm->nested.vmcb12_gpa = INVALID_GPA;
+> >  	svm->nested.last_vmcb12_gpa = INVALID_GPA;
+> > @@ -1988,7 +1990,7 @@ static void new_asid(struct vcpu_svm *svm, struct svm_cpu_data *sd)
+> >  	}
+> >  
+> >  	svm->current_vmcb->asid_generation = sd->asid_generation;
+> > -	svm->asid = sd->next_asid++;
+> > +	svm->current_vmcb->asid = sd->next_asid++;
+> >  }
+> >  
+> >  static void svm_set_dr6(struct vcpu_svm *svm, unsigned long value)
+> > @@ -4235,8 +4237,8 @@ static __no_kcsan fastpath_t svm_vcpu_run(struct kvm_vcpu *vcpu,
+> >  
+> >  	sync_lapic_to_cr8(vcpu);
+> >  
+> > -	if (unlikely(svm->asid != svm->vmcb->control.asid)) {
+> > -		svm->vmcb->control.asid = svm->asid;
+> > +	if (unlikely(svm->current_vmcb->asid != svm->vmcb->control.asid)) {
+> > +		svm->vmcb->control.asid = svm->current_vmcb->asid;
+> >  		vmcb_mark_dirty(svm->vmcb, VMCB_ASID);
+> >  	}
+> >  	svm->vmcb->save.cr2 = vcpu->arch.cr2;
+> > diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
+> > index 9d7cdb8fbf872..ebbb0b1a64676 100644
+> > --- a/arch/x86/kvm/svm/svm.h
+> > +++ b/arch/x86/kvm/svm/svm.h
+> > @@ -133,6 +133,7 @@ struct kvm_vmcb_info {
+> >  	unsigned long pa;
+> >  	int cpu;
+> >  	uint64_t asid_generation;
+> > +	u32 asid;
+> >  };
+> >  
+> >  struct vmcb_save_area_cached {
+> > @@ -247,7 +248,6 @@ struct vcpu_svm {
+> >  	struct vmcb *vmcb;
+> >  	struct kvm_vmcb_info vmcb01;
+> >  	struct kvm_vmcb_info *current_vmcb;
+> > -	u32 asid;
+> >  	u32 sysenter_esp_hi;
+> >  	u32 sysenter_eip_hi;
+> >  	uint64_t tsc_aux;
+> 
+> Hi,
+> 
 
-This patch fails to apply on top of:
+Hi,
 
-     git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/drivers
+Thanks for taking a look! 
 
-Please always ensure that your patches apply against the tree/branch
-into which they are supposed to be merged. Grabbing random patches from
-the mailing list as base is not sufficient. It's clearly documented
-against what you should work.
-     
-> +struct sg2042_msi_of_data {
+> 
+> I think it should be possible to eliminate separate ASID field (current_vmcb->asid/svm->asid)
+> completely and instead just use the value stored in the vmcb.
+> 
+> When there is a need to update it, KVM can also set the corresponding dirty bit
+> as done in svm_vcpu_run (new_asid also already does this when the asid generation increases)
+> 
+> Also KVM already sets the tlb_ctl directly in the vmcb.
+> 
+> What do you think?
 
-There is nothing specific to OF in this data structure. This structure
-contains the chip and the MSI parent ops of each variant. So something
-like sg204x_chip_info is way more descriptive.
+Yeah I think we can do that, although if we go with Sean's suggestion of
+a per VM or a per vCPU ASID, this will change anyway. If we use a per
+vCPU ASID, I think it would be nice to have it directly in svm->asid and
+svm->nested.asid02 to be consistent with VMX.
 
-> +	const struct irq_chip		*irqchip;
-> +	const struct msi_parent_ops	*parent_ops;
-> +};
-> +
->  struct sg2042_msi_chipdata {
-
-and rename that one to sg204x_... as it is not longer sg2042 specific.
-
->  	void __iomem	*reg_clr;	// clear reg, see TRM, 10.1.33, GP_INTR0_CLR
->  
-> @@ -29,8 +34,10 @@ struct sg2042_msi_chipdata {
->  	u32		irq_first;	// The vector number that MSIs starts
->  	u32		num_irqs;	// The number of vectors for MSIs
->  
-> -	DECLARE_BITMAP(msi_map, SG2042_MAX_MSI_VECTOR);
-> +	unsigned long	*msi_map;
->  	struct mutex	msi_map_lock;	// lock for msi_map
-> +
-> +	const struct sg2042_msi_of_data	*data;
-
-Please keep the tabular formatting of this struct. See:
-
-https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#coding-style-notes
-
->  };
->  
->  static int sg2042_msi_allocate_hwirq(struct sg2042_msi_chipdata *data, int num_req)
-> @@ -81,6 +88,37 @@ static const struct irq_chip sg2042_msi_middle_irq_chip = {
->  	.irq_compose_msi_msg	= sg2042_msi_irq_compose_msi_msg,
->  };
->  
-> +static void sg2044_msi_irq_ack(struct irq_data *d)
-> +{
-> +	struct sg2042_msi_chipdata *data = irq_data_get_irq_chip_data(d);
-> +
-> +	writel(0, (unsigned int *)data->reg_clr + d->hwirq);
-> +
-
-Pointless newline
-
-> +	irq_chip_ack_parent(d);
-> +}
-> +
-> +static void sg2044_msi_irq_compose_msi_msg(struct irq_data *d,
-> +					   struct msi_msg *msg)
-
-No line break required. Please use up to 100 characters.
-
->  static int sg2042_msi_parent_domain_alloc(struct irq_domain *domain,
->  					  unsigned int virq, int hwirq)
->  {
-> @@ -119,7 +157,7 @@ static int sg2042_msi_middle_domain_alloc(struct irq_domain *domain,
->  			goto err_hwirq;
->  
->  		irq_domain_set_hwirq_and_chip(domain, virq + i, hwirq + i,
-> -					      &sg2042_msi_middle_irq_chip, data);
-> +					      data->data->irqchip, data);
-
-The conversion of the existing code to this should be a preparatory patch
-for ease of review and the support for the new chip built on top.
-
-Also please come up with a sensible name for this new 'data' pointer.
-
-     data->data->
-
-is horribly unintuitive. It's not the same data type. 
-
-     data->chip_info
-
-or such makes it clear what this is about.
-
-Thanks,
-
-        tglx
+I will see how the code turns out to be after taking Sean's suggestion
+and go from there.
 
