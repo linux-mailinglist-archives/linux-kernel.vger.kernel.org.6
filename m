@@ -1,145 +1,209 @@
-Return-Path: <linux-kernel+bounces-541263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30A7BA4BAB0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:21:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BB41A4BAB4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:24:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 973F83B11AA
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:21:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BD2116F148
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:24:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D3602E630;
-	Mon,  3 Mar 2025 09:21:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41FF81F0E43;
+	Mon,  3 Mar 2025 09:24:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qtec.com header.i=@qtec.com header.b="Fe4MPNMk"
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FSz0Xm2N"
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92FDC1487F4
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 09:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA84B13C8E8;
+	Mon,  3 Mar 2025 09:24:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740993699; cv=none; b=V/cQepjUEyOUj1llPf4HhT6QixTzMYhOP3kmVSOIQPKc4OB6qCegmXm4vWWYduZkxpS1Cejqsape5chD/fNz6+FxQBJuHzkNQbboopSnzIdcxSGr8gdpD4WcQQI3Wr9Jo7C1rzPCEHPMTMpM+UJhlo1V6kGf9Ej9Drn3TnBtwHY=
+	t=1740993860; cv=none; b=ZRwPMXqDXOLlv2hXmFimfD5QGhN+2QQdz422lcvnoxLnMhT3lWYsx9r19LsNerhjWUS1c3KLaw+qJcSE23byNl9UTASnLC0YIJkpyOziVZDasfZ3jl3MVNED6utBoeMYyiN/JQBY4HHFbZrHpNu6FUtU0a+iUz4os5jIherSNeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740993699; c=relaxed/simple;
-	bh=pv7JhxNl2I28whP9+adbwP3IvdPyCk6EghnFcKHSLq8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Caku+a+fHRra6BLTMwYdd/L7/PVQquun7iRyx3jvNSsFuh8K4A7Hyn1ys2ddS2K0X2qFPgY+GIyQ31GkmDWnpVTAv2dxliWaj2rnbNxAz/k1i/zP1Pu3kJ5mfeqan+ochP3fnbVYTvetru60024Y0gbfah9sxzb40AIZ39aq54E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qtec.com; spf=pass smtp.mailfrom=qtec.com; dkim=pass (2048-bit key) header.d=qtec.com header.i=@qtec.com header.b=Fe4MPNMk; arc=none smtp.client-ip=209.85.222.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qtec.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qtec.com
-Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-8671441a730so1619958241.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 01:21:37 -0800 (PST)
+	s=arc-20240116; t=1740993860; c=relaxed/simple;
+	bh=jv8QNOnGRtS9x1BC651dA4iBv2EFIu2vDnFzfk0OtiM=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=K2s6KcjyMRCesLhee0K6ExEh+FR4KmDB90JGg+42/ZBj6lrr6FAcF+GVTctnWLAe/7sbm61rGar8kuftqDi9+e+Rn+HF5J5s8FwIOgsNCo4kjUC/mxCI3seO1uxTk59hrCTGip5x2I3HSs5MqPcDvmDZzTl3OwOk1f0GnY+Nvjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FSz0Xm2N; arc=none smtp.client-ip=209.85.160.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-2bcc5c887efso2066605fac.2;
+        Mon, 03 Mar 2025 01:24:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=qtec.com; s=google; t=1740993696; x=1741598496; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
+        d=gmail.com; s=20230601; t=1740993857; x=1741598657; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=nAeXWNkuPZBt1nYKfkioC0KxXx+i2L54nyTk7vpYv0Y=;
-        b=Fe4MPNMk65VWMwDTVoVbm44SCgEeM0RqEDsMk9XX7DwXL3BNTC0rlTaBBpXCpq5RI6
-         Ly0SKdi+ioooUzBJ2TRNB440+biEwvdcK7EDbY2aMJNu2l4MfVLamte1Uq+HRxA0QBgJ
-         dS7oE9TIXHmLGp+l/54eku17Rqe0n5h6hKFUBqvVmyYjSsuhPKZs5QG/UATUDsgN4EJK
-         S+wG072fuZQ9/dChJsYluPWVr2QRCHISBtNavf0tji5dO9eQGIcztn9ctFY07bCTQgQP
-         iNeOzx97L87ISFbwTrbEHPjDWXbdRXipL58GXMPnzuOn91svCU6WD1vZ3fBRhDYe5UaJ
-         uE9A==
+        bh=StT21v5HBuVlAjcwwtmfuWVN4spL/bYiZH8r7Pf+vYo=;
+        b=FSz0Xm2NA0m6Lpi7CnMZ46yRlBFoJAesydVPriutGpuCBlejgTZaTI8tin/9WZDHFp
+         zbcKpdQbu2LNyJupQklemscxFkq64wTLYcJL6NcWAv/i9SYpYIbKc2gc4ZFNZRCfgTcV
+         uMLj5lFr8kJPozdy+xg5J6soTRlIOEm0oGv5vM9RfkE3+JsCeWIMHIR9p+r9jdVu5s6x
+         9nsp5W5ESIPIPjpAyzW5tjip7s75TPHKkXl79gjA78Ky7n4ybLtSE6bzlLUHTMN/Lu9V
+         yuONhIwprbgUb/G1kPGrEte3QEWhWftx4j2wBx9Zh9ShYgbf/DkwvNAne5KMgwXDYEV7
+         5YOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740993696; x=1741598496;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
+        d=1e100.net; s=20230601; t=1740993857; x=1741598657;
+        h=content-transfer-encoding:to:subject:message-id:date:from
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=nAeXWNkuPZBt1nYKfkioC0KxXx+i2L54nyTk7vpYv0Y=;
-        b=oUVqNlzu01D7w7chL3wtIsfoWEs16yAD2CsGmF9MBQX3R69JaTLFwDoN2tFbWSKvlA
-         twlRlBG6dlh1qmsegK6iSE9khyhRJvWGVZ7Q5ynFd/TsWgxiD6rZULsMggVPigXFnT0Z
-         4oguuqp7+l1XMnVSKtrrIE+DW9eZcLu89myC5bb+BLaVGXatKYVXARqTiZ/KD9EC9q0g
-         c791uPzxrDDEeKeRAXmcPOMwf/8H6NR9iC8I7r07xEOqsX3IBEZCu547Gndyeg8eb325
-         HGj6BkufkZdjyFTP+IoZZ8AUvN3HknYj39oQifLWFmKGaVzi8b87J23bnEpmLD0tCDo/
-         txfg==
-X-Forwarded-Encrypted: i=1; AJvYcCXfcD8NQ52QxTW/gYEMx8jv5HfJsXmUU0vvbKVHfreHq8VAPEfcC2TYDVvdT7t2S/NNW/vI+oSJWl+rzkU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoSf1jUtdvn1xn1NqTkJwd2c7s8er1yTfHarqcyE100Gt8WIaG
-	EOLSufPvDTc3y0XnogQGJKqFkjJmYpLvMiytMg+TGncXc4CNwC6mVTMSzWW5DhrUtJVlCWwAXpW
-	OZpP5cDf4jeglfN7Ou8VivBXEZEwQmWx8Nq9DYg==
-X-Gm-Gg: ASbGncuaapOVDAfO6cL+ipFNPYd2NwobMZxSxoj5S8SVK3rYGkJPXyT7CnNCePSDlXv
-	2ZmdgbNWsB9tchZ3jzVMtPyddo5KGnk4t0rsk6Alqwm+B1+EaCa3bjZbTjktoec+2i0Cw7Elwdl
-	ILPLsooZfNhz4onoF7fMB146v+
-X-Google-Smtp-Source: AGHT+IFZbG2eyoSsPmw+ur7eqkya0lr99VJq5r7PqD3pp3CraBkFznVj3MvpZxxCJ8G8DlJOSQmNVFqoW7d+QViHpa8=
-X-Received: by 2002:a05:6102:3f89:b0:4bb:f1f0:1b34 with SMTP id
- ada2fe7eead31-4c044857a38mr8417315137.2.1740993696264; Mon, 03 Mar 2025
- 01:21:36 -0800 (PST)
+        bh=StT21v5HBuVlAjcwwtmfuWVN4spL/bYiZH8r7Pf+vYo=;
+        b=HB0io2UYa1Io9OSumzKTcCaY/zOhnDzjjS+1N37NvZBQvyohC36Ryx7Y31iheZ0pej
+         VnlSAue7VOAGe/s5y54z12sHF809Mme88L7LR0ygGYGSiwYVCnBp2Dg0uFnab9Zrapj2
+         8vbVoeF8vuhciCnJp3JBeaqydGdzgS3YERGLcCtLrrFdIJl/+3qp5XmW0b3kwnyyyoyb
+         1JgKxvRNgNo64ekchn1jCBuNgFUON5kHPheF71kxAi5mkfe8yeZNdBWh8DGpkb5+IQw9
+         qXKVJ6pv2vcHFpRfDsLI7O2Tt5jkKooJQwAB/nXYm1wS0B9w0DKnJNJwiaf7jXqjykHs
+         zRMw==
+X-Forwarded-Encrypted: i=1; AJvYcCUX7Dq3ycgFdHDF8Nfx+WtePqJMa4QZM5Th14SUghj4KD/l/mvgsA0HrA8QpfVUEfYvKJ5PvRcF+/5sc5KY@vger.kernel.org, AJvYcCWs0W4BZOob2J5UF0XCTQnMi4Dc+8InQApZeGjZv1SBoNIqm8fNsE3Oj3rIuvGXo3a6SDer/vIfna2g@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxo9ilaHwGpnVCyuU9QG/6wtYoqqJgP7SM0iybkQyb0l0vHcM4p
+	f4Vrl/vhf3ooKXgRELjqWeAxJHgLLDRI/rJOsY40JVPr3S6PQdxIpXLqV/gBWpm2+Tf6qcl5HJ1
+	RHTtvK8ubqQU4WjFPbOs/vHFMeTc=
+X-Gm-Gg: ASbGncuouSb6g7z2bnA2KXt4J4/lJX9a2VplfPf8ZKaopHcaYqGWBRh98q9evJYuFqJ
+	cI218Xb2IGzAjJyTPmSbSrHxKL/x0LULoeXfFA3y6tVPqH6sG4ImY4IymUb8qBXaDUx5GjNlvLY
+	Rz0u5swBB6rxxC+zOFgVUQKAER5A==
+X-Google-Smtp-Source: AGHT+IF16/kJli1v2uTtADRoHDtMAoUcPO2J+zPdLjC8SofWOkXju3fPYSbHZB7Jnjo8/j/zSdOmfzK79E/Gia8vEc4=
+X-Received: by 2002:a05:6871:6285:b0:29e:6394:fd4a with SMTP id
+ 586e51a60fabf-2c178317c67mr7686734fac.2.1740993856737; Mon, 03 Mar 2025
+ 01:24:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJDH93s25fD+iaPJ1By=HFOs_M4Hc8LawPDy3n_-VFy04X4N5w@mail.gmail.com>
- <20241219112125.GAZ2QBteug3I1Sb46q@fat_crate.local> <20241219164408.GA1454146@yaz-khff2.amd.com>
- <CAJDH93vm0buJn5vZEz9k9GRC3Kr6H7=0MSJpFtdpy_dSsUMDCQ@mail.gmail.com> <Z78uOaPESGXWN46M@gmail.com>
-In-Reply-To: <Z78uOaPESGXWN46M@gmail.com>
-From: Rostyslav Khudolii <ros@qtec.com>
-Date: Mon, 3 Mar 2025 10:21:25 +0100
-X-Gm-Features: AQ5f1Jo0EX3pEM_GVM8NTI1LcFTTbxuaz98gbzh7kKRC0tNKU0-DotXfKkWTSrk
-Message-ID: <CAJDH93uE+foFfRAXVJ48-PYvEUsbpEu_-BVoG-5HsDG66yY7AQ@mail.gmail.com>
-Subject: Re: PCI IO ECS access is no longer possible for AMD family 17h
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Yazen Ghannam <yazen.ghannam@amd.com>, Borislav Petkov <bp@alien8.de>, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, x86@kernel.org, 
-	"bhelgaas@google.com" <bhelgaas@google.com>, "tglx@linutronix.de" <tglx@linutronix.de>
+From: Strforexc yn <strforexc@gmail.com>
+Date: Mon, 3 Mar 2025 17:24:06 +0800
+X-Gm-Features: AQ5f1JoPn6AnvkWK8AKFf6LPWhDzHWifc3pnJcAlMqH7z6CRxab0PmEVW2HxQDE
+Message-ID: <CA+HokZqTi7=ossgk7gKqJY_pViaso=Hy0-iRj8v3H5A35Bxhqw@mail.gmail.com>
+Subject: [BUG] Kernel BUG in ext4_write_inline_data (Ext4) on 6.14.0-rc4 -
+ Possible Regression**
+To: "Theodore Ts'o" <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Dear Linux Kernel Developers,
+I=E2=80=99ve encountered a kernel BUG in the Ext4 filesystem on Linux
+6.14.0-rc4 during an inline data write, which may indicate a
+regression from prior fixes. Here are the details:
 
-> Rostyslav, I would like to ask you, do you have patches / updates for
-> enabling the EnableCf8ExtCfg bit for AMD 17h+ family? I could try to
-> adjust my lspci changes for new machines.
+Kernel commit: v6.14-rc4 (Commits on Feb 24, 2025)
+Kernel Config : https://github.com/Strforexc/LinuxKernelbug/blob/main/.conf=
+ig
+Kernel Log=EF=BC=9A https://github.com/Strforexc/LinuxKernelbug/blob/main/b=
+ug_ext4_write_inline_data/log0
+Reproduce.c: https://github.com/Strforexc/LinuxKernelbug/blob/main/bug_ext4=
+_write_inline_data/repro.cprog
 
-Pali, sorry for the late reply. Do I understand correctly, that even
-though you have access to the ECS via
-the MMCFG you still want the legacy (direct IO) to work for the
-debugging purposes? I can prepare a
-simple patch that will allow you to do so if that's the case.
+A kernel BUG is triggered at fs/ext4/inline.c:235 in
+ext4_write_inline_data, causing an invalid opcode exception. This
+occurs during a sendfile64 operation writing inline data, likely due
+to an assertion failure (BUG_ON).
 
->
-> So what is the practical impact here? Do things start breaking
-> unexpectedly if CONFIG_ACPI_MCFG and CONFIG_PCI_MMCONFIG are disabled?
-> Then I'd suggest fixing that in the Kconfig space, either by adding a
-> dependency on ACPI_MCFG && PCI_MMCONFIG, or by selecting those
-> must-have pieces of infrastructure.
->
+Location: The BUG occurs at a BUG_ON in ext4_write_inline_data, likely
+BUG_ON(pos + len > EXT4_I(inode)->i_inline_size) (line 231), with
+pos=3D96 and len=3D97 (total 193 bytes).
 
-Ingo, thank you for the reply.
+Cause: The write exceeds the inode=E2=80=99s inline size , triggering the
+assertion. Higher-level calls  fail to validate the size, allowing an
+oversized request.
+Context: Syzkaller=E2=80=99s sendfile64 crafted a write to an inline Ext4
+inode, exposing this issue.
+Regression: Ext4 inline data handling has had prior fixes . This BUG
+suggests a regression where size validation was weakened, allowing
+invalid writes to reach the assertion.
 
-The way I understand the access to the PCI ECS (via raw_pci_ext_ops)
-works, is the following:
-1. If CONFIG_ACPI_MCFG or CONFIG_PCI_MMCONFIG are enabled - set the
-raw_pci_ext_ops to use
-    MMCFG to access ECS. See pci_mmcfg_early_init() / pci_mmcfg_late_init();
-2. If CONFIG_ACPI_MCFG and CONFIG_PCI_MMCONFIG are disabled - set the
-raw_pci_ext_ops to use
-    the 'direct' access to ECS. See pci_direct_init(). The direct
-access is conditional on the PCI_HAS_IO_ECS
-    flag being set.
+Impact: The BUG causes a kernel panic (DoS). While not directly
+exploitable beyond that, it indicates a validation gap.
+Request: Could Ext4 maintainers investigate? This appears to be a
+regression from prior inline data fixes. Suggested  Add size
+validation in ext4_da_write_end or ext4_file_write_iter before calling
+ext4_write_inline_data.
 
-On AMD, the kernel enables the ECS IO access via the
-amd_bus_cpu_online() and pci_enable_pci_io_ecs().
-Except those functions have no desired effect on the AMD 17h+ family
-because the register (EnableCf8ExtCfg),
-they access, has been moved. What is important though, is that the
-PCI_HAS_IO_ECS flag is set unconditionally.
-See pci_io_ecs_init() in amd_bus.c
+Our knowledge of the kernel is somewhat limited, and we'd appreciate
+it if you could determine if there is such an issue. If this issue
+doesn't have an impact, please ignore it =E2=98=BA.
 
-Therefore I was wondering whether we should add support for the 17h+
-family in those functions to have
-the direct access work for those families as well.
-
-Regarding your suggestion to address this in the Kconfig space - I'm
-not quite sure I follow, since right now the kernel
-will use raw_pci_ext_ops whenever access beyond the first 256 bytes is
-requested. Say we want to make that
-conditional on CONFIG_ACPI_MCFG and CONFIG_PCI_MMCONFIG, does it also
-mean then we want to drop support
-for the 'direct' PCI IO ECS access altogether?
-
-Best regards,
-Rostyslav
+If you fix this issue, please add the following tag to the commit:
+Reported-by: Zhizhuo Tang strforexctzzchange@foxmail.com, Jianzhou
+Zhao xnxc22xnxc22@qq.com, Haoran Liu <cherest_san@163.com>
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+------------[ cut here ]------------
+kernel BUG at fs/ext4/inline.c:235!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 1 UID: 0 PID: 12157 Comm: syz.0.58 Not tainted 6.14.0-rc4 #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/=
+2014
+RIP: 0010:ext4_write_inline_data+0x346/0x3e0 fs/ext4/inline.c:235
+Code: d0 f6 4b ff e8 cb f6 4b ff 42 8d 6c 25 c4 41 bd 3c 00 00 00 45
+29 e5 e9 e8 fe ff ff e8 b3 f6 4b ff 90 0f 0b e8 ab f6 4b ff 90 <0f> 0b
+e8 63 95 ac ff e9 fb fd ff ff 4c 89 f7 e8 56 95 ac ff e9 96
+RSP: 0018:ffffc900043e7628 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: ffff888012c251f0 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000060
+R13: 0000000000000061 R14: ffff888012c2579a R15: ffffc900043e76c0
+FS:  00007f2c042b2640(0000) GS:ffff88807ee00000(0000) knlGS:000000000000000=
+0
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fc99327fc00 CR3: 000000006a448000 CR4: 00000000000006f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ ext4_write_inline_data_end+0x25f/0xc20 fs/ext4/inline.c:774
+ ext4_da_write_end+0x201/0x2d0 fs/ext4/inode.c:3080
+ generic_perform_write+0x51c/0x910 mm/filemap.c:4204
+ ext4_buffered_write_iter+0x11a/0x440 fs/ext4/file.c:299
+ ext4_file_write_iter+0x350/0x420 fs/ext4/file.c:717
+ iter_file_splice_write+0xa0a/0x1080 fs/splice.c:743
+ do_splice_from fs/splice.c:941 [inline]
+ direct_splice_actor+0x194/0x6f0 fs/splice.c:1164
+ splice_direct_to_actor+0x343/0x9c0 fs/splice.c:1108
+ do_splice_direct_actor fs/splice.c:1207 [inline]
+ do_splice_direct+0x176/0x250 fs/splice.c:1233
+ do_sendfile+0xa79/0xd90 fs/read_write.c:1363
+ __do_sys_sendfile64 fs/read_write.c:1424 [inline]
+ __se_sys_sendfile64 fs/read_write.c:1410 [inline]
+ __x64_sys_sendfile64+0x1de/0x220 fs/read_write.c:1410
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcb/0x260 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f2c033b85ad
+Code: 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 f3 0f 1e fa 48 89 f8 48
+89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
+01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f2c042b1f98 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
+RAX: ffffffffffffffda RBX: 00007f2c03646080 RCX: 00007f2c033b85ad
+RDX: 0000000000000000 RSI: 0000000000000007 RDI: 0000000000000006
+RBP: 00007f2c0346a8d6 R08: 0000000000000000 R09: 0000000000000000
+R10: 000080001d00c0d0 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f2c03646080 R15: 00007f2c04292000
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:ext4_write_inline_data+0x346/0x3e0 fs/ext4/inline.c:235
+Code: d0 f6 4b ff e8 cb f6 4b ff 42 8d 6c 25 c4 41 bd 3c 00 00 00 45
+29 e5 e9 e8 fe ff ff e8 b3 f6 4b ff 90 0f 0b e8 ab f6 4b ff 90 <0f> 0b
+e8 63 95 ac ff e9 fb fd ff ff 4c 89 f7 e8 56 95 ac ff e9 96
+RSP: 0018:ffffc900043e7628 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: ffff888012c251f0 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000060
+R13: 0000000000000061 R14: ffff888012c2579a R15: ffffc900043e76c0
+FS:  00007f2c042b2640(0000) GS:ffff88802b600000(0000) knlGS:000000000000000=
+0
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f2680f65e70 CR3: 000000006a448000 CR4: 00000000000006f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Regards,
+Strforexc
 
