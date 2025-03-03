@@ -1,100 +1,129 @@
-Return-Path: <linux-kernel+bounces-544916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DBBBA4E646
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:39:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9502BA4E29D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:14:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 049417A15AF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:37:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F17317CAA7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:08:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4670E280CC8;
-	Tue,  4 Mar 2025 16:17:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35559262D34;
+	Tue,  4 Mar 2025 15:03:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b="nP9dd9JW"
-Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HG5bAIKj";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1uMmePvw"
+Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F943280CC6
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:17:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B58F209F3B
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:03:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741105044; cv=pass; b=J8/JMgN07U6z36tJfmotcBdYfl0bujBB/vPkf8c03rMRGWXSZ5h89TCnqvsVoY115qj4M8lvLdG0LMrKZR5IpYMWXS7JgcZm+xbd56TpE1p0xXJq7ofgZxX47EagDJhuJx1h03ZxWeLaauS7b05fnQ8NVkVDj5a96naPQoZ+KwM=
+	t=1741100612; cv=pass; b=rlC0aj9ri7j6/NSwvvduGffvPM9rJ6u83Lct2FDnC2AIEUuyTTNLgyDykt2CvKVVuj81ioen0I8kWX0JSX7nhHN2D6xZRBGmNe+c2GEWoYAmS420t/wKIF0S4HMzZ/EoHJf9B3r3jdgWOJ4RV7u6ZRfXTu6uxpPyAyVRZdxF0LA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741105044; c=relaxed/simple;
-	bh=JbI6XhJ61siUdVWSy8Ns1WhjpjszqzNkeDrfZmtl4e4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cFfbIyxb3/J8Uh09pdVCY2OXrwFlG57GBta8A3iV3yeQgTTSVDgaulcmU2rQJVs/mUZa26VjbIT75zxj/++PeIEiO2EV4zB063C5h90xHglP9+fdDOG9P89hYewMs3725vk8ubxFhsa7+3bMl5NtScm0Mk+g6ZBApJIaD7n+KfY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=nP9dd9JW; arc=none smtp.client-ip=94.231.106.210; dmarc=pass (p=none dis=none) header.from=gaisler.com; spf=pass smtp.mailfrom=gaisler.com; arc=pass smtp.client-ip=160.75.25.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com
+	s=arc-20240116; t=1741100612; c=relaxed/simple;
+	bh=jKFWUEr4H2/w0nnELNAAEBCa2v1mA7owLO7zk59NIT8=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=K34iDg8PReGvbt3oCEeNREbvQ0AKK1daqb1OVX5O0pwW6ILZWxKxmJFe2+LS8wIy/6gJxZ2TGwAJU+WMZSeD1FkCWi8l32kjiRkyvvNJaBbpAp+XWCnfJAeJ1hQpRb4M3bmfqGWCNkbAIGFc6Ih1+dPjN7BbybPKvM7lz2fQ4k0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HG5bAIKj; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1uMmePvw; arc=none smtp.client-ip=193.142.43.55; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; arc=pass smtp.client-ip=160.75.25.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id AA25C408B655
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:17:20 +0300 (+03)
+	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id AC61B40D4DFF
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:03:28 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
+Authentication-Results: lesvatest1.cc.itu.edu.tr;
+	dkim=pass (2048-bit key, unprotected) header.d=linutronix.de header.i=@linutronix.de header.a=rsa-sha256 header.s=2020 header.b=HG5bAIKj;
+	dkim=pass header.d=linutronix.de header.i=@linutronix.de header.a=ed25519-sha256 header.s=2020e header.b=1uMmePvw
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6glh4QxczG2rQ
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:16:00 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6f5Z46VYzFyC7
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:01:22 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 5410B42731; Tue,  4 Mar 2025 19:15:48 +0300 (+03)
+	id CCF7142721; Tue,  4 Mar 2025 18:01:18 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=nP9dd9JW
-X-Envelope-From: <linux-kernel+bounces-541746-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HG5bAIKj;
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1uMmePvw
+X-Envelope-From: <linux-kernel+bounces-541737-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=nP9dd9JW
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HG5bAIKj;
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1uMmePvw
 Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id C192E41F4F
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 15:58:43 +0300 (+03)
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id 568AC305F789
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 15:58:43 +0300 (+03)
+	by le2 (Postfix) with ESMTP id 497C941CC5
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 15:51:05 +0300 (+03)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by fgw1.itu.edu.tr (Postfix) with SMTP id D703C305F789
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 15:51:04 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04D093A87C5
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:58:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDC0316229B
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:51:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05B1B211485;
-	Mon,  3 Mar 2025 12:57:56 +0000 (UTC)
-Received: from smtp-out3.simply.com (smtp-out3.simply.com [94.231.106.210])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC8EB2101B3;
+	Mon,  3 Mar 2025 12:50:54 +0000 (UTC)
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA9421018F;
-	Mon,  3 Mar 2025 12:57:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.231.106.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD6891F19A;
+	Mon,  3 Mar 2025 12:50:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741006673; cv=none; b=bgupt6FKDDwKGBx65iwR6fVPS9jX3im7D3TZ2s0/2lOpdZdXafsL2hDM52NJh8ZNnYTYYO1Z0yWTa7XsQ8ufOKnusfyrP3e6iHhC0XGM3O6KXVnSNlDAcRbHbYNl1FepDclD1xIRnty2ubXx/f4JWOk4ONtjQ2CrJolSo6heGv0=
+	t=1741006250; cv=none; b=dF1nTq0MwE9u59V03RjLFagWdj6dThwdAUQ5PzO5QauyBItoewfvzQ6tVpL1KUa7H6hRMOwVlm6YdtVCrwd8kr+GRxAv9JLsndUuDTW2vhIwTs/IWAYTI4xe9HTo689OMkT0541Qq8S3GcDWEx9d/7bQUeU4p1K450BDVf+ucCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741006673; c=relaxed/simple;
-	bh=JbI6XhJ61siUdVWSy8Ns1WhjpjszqzNkeDrfZmtl4e4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h2+QXaluNFS+Gkf6DHUNIP3Xts8j29XLIx8D1bK2WC4Z4I/lAvkj6w70LKF0ad0JDh+AgAuQVVPaGygWViSaQcpPtA87+LiBbOgW7cjROpJByLjFPdqT2lUvpgqr5oc7cQ4N4+JIXpR+eJ/XdOjgrD9EgYYLZvmJyToVWHvV1rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com; spf=pass smtp.mailfrom=gaisler.com; dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=nP9dd9JW; arc=none smtp.client-ip=94.231.106.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gaisler.com
-Received: from localhost (localhost [127.0.0.1])
-	by smtp.simply.com (Simply.com) with ESMTP id 4Z5zCn0L6Nz1FbbL;
-	Mon,  3 Mar 2025 13:49:25 +0100 (CET)
-Received: from [10.10.15.10] (h-98-128-223-123.NA.cust.bahnhof.se [98.128.223.123])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by smtp.simply.com (Simply.com) with ESMTPSA id 4Z5zCm2wxFz1FbZs;
-	Mon,  3 Mar 2025 13:49:24 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gaisler.com;
-	s=unoeuro; t=1741006164;
-	bh=uVrbTI227oB4DG3Xp0tOkuWBdxLi0PVMRa8nC6AqCqk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=nP9dd9JW/wd7xfGVmIclsUAW7Lk6Vl6kAIG/wni38v7deAa6waS1Ayjqwmql3o84n
-	 DZdS63CtpqFoNU3dj2tHF2SuUw3KIn/WTjJVIXHYffz8D4NJUG2Hd1Uk8YLjjoYulN
-	 RX9/cvuf0Gb2o/aPBXh4plpcFNu8CtVnLb9vpzg4=
-Message-ID: <8367749d-8dd7-40f5-881e-8f45e432a91d@gaisler.com>
-Date: Mon, 3 Mar 2025 13:49:23 +0100
+	s=arc-20240116; t=1741006250; c=relaxed/simple;
+	bh=jKFWUEr4H2/w0nnELNAAEBCa2v1mA7owLO7zk59NIT8=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=LbO9tiWcMXfgr9F6O+tbIaB0Ob39qA0KGqPVg1pFCJTl8TWWuuvKb5P44n7U4QI4xvqHgLq1QUMFbmIOAV+McJEVkL54kX97Cv3sOIKphM9TOE/tl6yFFX5Ko/74R67+N1RRODibWg7uRKoOY9eYyZykTyUWYLLebIEgVZyD0fY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HG5bAIKj; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1uMmePvw; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 03 Mar 2025 12:50:42 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741006245;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NEmE9ahNwEwwTzjxMNYxU2gdgR31Xbk7JVVOcGVbkMM=;
+	b=HG5bAIKjpNZP/YqTbIobzNqhviyfBuPe7h3C7+uN9OvHUWZnqbINkvYXHBt9u9WcyK6LjP
+	aMtmxSudc24/BtYndyJXtzLCIzslefPytFZMK47WivZ2VF1AgYOZEdcsQXIrNMqs7ogqgn
+	tSlu3DNfgwOrpQHufsCvD/rwvn+4f0gsHyWrGqeCI6unSuCKoM1F4tf1ZrVV8JkMaQx0Rr
+	Z1MGwMPl5jjb8mzrXvctGjRACAjM4gA4FWswEEUCEQrKcPdhXyLZj0r34jpmC5PNYsTCUn
+	g4UfxYnJcLW1wQ2xVG0qJ+WLVvVYLdVOaz6uJAc0LKvvdSYHtTaf9BHV7jebPg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741006245;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NEmE9ahNwEwwTzjxMNYxU2gdgR31Xbk7JVVOcGVbkMM=;
+	b=1uMmePvwDQ7NbIGtTEOTYZUjqeVJU390qeiZfKMUxJ0Ciy0pCFBn5xzuzfMcNhNJVVnbaZ
+	1YqhGLggyeUoYoAw==
+From: "tip-bot2 for David Hildenbrand" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/mm] x86/mm/pat: Fix VM_PAT handling when fork() fails in
+ copy_page_range()
+Cc: xingwei lee <xrivendell7@gmail.com>, yuxin wang <wang1315768607@163.com>,
+ Marius Fleischer <fleischermarius@gmail.com>,
+ David Hildenbrand <david@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski <luto@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Rik van Riel <riel@surriel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Xu <peterx@redhat.com>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241029210331.1339581-1-david@redhat.com>
+References: <20241029210331.1339581-1-david@redhat.com>
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -102,48 +131,318 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/4] mm: Fix lazy mmu docs and usage
-To: David Hildenbrand <david@redhat.com>, Ryan Roberts
- <ryan.roberts@arm.com>, Andrew Morton <akpm@linux-foundation.org>,
- "David S. Miller" <davem@davemloft.net>, Juergen Gross <jgross@suse.com>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-mm@kvack.org, sparclinux@vger.kernel.org,
- xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-References: <20250302145555.3236789-1-ryan.roberts@arm.com>
- <20250302145555.3236789-2-ryan.roberts@arm.com>
- <5418a661-dbd0-46e9-8ef7-b1c5a34acce3@redhat.com>
- <a9e21c14-d390-4119-ad93-b23e6ccbac15@redhat.com>
- <1ff509c7-187b-4e43-b266-db8ada33b9a2@arm.com>
- <34388e5d-f9d1-4d29-a0e0-202a9fad345f@redhat.com>
-Content-Language: en-US
-From: Andreas Larsson <andreas@gaisler.com>
-In-Reply-To: <34388e5d-f9d1-4d29-a0e0-202a9fad345f@redhat.com>
-Content-Type: text/plain; charset=UTF-8
+Message-ID: <174100624258.10177.4534865061014070904.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6glh4QxczG2rQ
+X-ITU-Libra-ESVA-ID: 4Z6f5Z46VYzFyC7
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741709771.95646@11cHcTiT8gQg29RLm4E8Gg
+X-ITU-Libra-ESVA-Watermark: 1741705300.33144@TP8TaPuJ7pYZRSPwRLwjQw
 X-ITU-MailScanner-SpamCheck: not spam
 
-On 2025-03-03 11:30, David Hildenbrand wrote:
-> On 03.03.25 11:22, Ryan Roberts wrote:[snip]
->>
->> I didn't actually cc stable on these, I'm wondering if I should do that? Perhaps
->> for all patches except the pagemap change?
-> 
-> That would make sense to me. CC stable likely doesn't hurt here. (although I wonder if anybody cares about stable on sparc :))
+The following commit has been merged into the x86/mm branch of tip:
 
-Yes, stable is important for sparc just as well as for other architectures.
+Commit-ID:     4e1c520c95849e16f8dfbcacbfd37be5330447b9
+Gitweb:        https://git.kernel.org/tip/4e1c520c95849e16f8dfbcacbfd37be5330447b9
+Author:        David Hildenbrand <david@redhat.com>
+AuthorDate:    Tue, 29 Oct 2024 22:03:31 +01:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Mon, 03 Mar 2025 13:39:14 +01:00
 
-Cheers,
-Andreas
+x86/mm/pat: Fix VM_PAT handling when fork() fails in copy_page_range()
+
+If track_pfn_copy() fails, we already added the dst VMA to the maple
+tree. As fork() fails, we'll cleanup the maple tree, and stumble over
+the dst VMA for which we neither performed any reservation nor copied
+any page tables.
+
+Consequently untrack_pfn() will see VM_PAT and try obtaining the
+PAT information from the page table -- which fails because the page
+table was not copied.
+
+The easiest fix would be to simply clear the VM_PAT flag of the dst VMA
+if track_pfn_copy() fails. However, the whole thing is about "simply"
+clearing the VM_PAT flag is shaky as well: if we passed track_pfn_copy()
+and performed a reservation, but copying the page tables fails, we'll
+simply clear the VM_PAT flag, not properly undoing the reservation ...
+which is also wrong.
+
+So let's fix it properly: set the VM_PAT flag only if the reservation
+succeeded (leaving it clear initially), and undo the reservation if
+anything goes wrong while copying the page tables: clearing the VM_PAT
+flag after undoing the reservation.
+
+Note that any copied page table entries will get zapped when the VMA will
+get removed later, after copy_page_range() succeeded; as VM_PAT is not set
+then, we won't try cleaning VM_PAT up once more and untrack_pfn() will be
+happy. Note that leaving these page tables in place without a reservation
+is not a problem, as we are aborting fork(); this process will never run.
+
+A reproducer can trigger this usually at the first try:
+
+  https://gitlab.com/davidhildenbrand/scratchspace/-/raw/main/reproducers/pat_fork.c
+
+  [   45.239440] WARNING: CPU: 26 PID: 11650 at arch/x86/mm/pat/memtype.c:983 get_pat_info+0xf6/0x110
+  [   45.241082] Modules linked in: ...
+  [   45.249119] CPU: 26 UID: 0 PID: 11650 Comm: repro3 Not tainted 6.12.0-rc5+ #92
+  [   45.250598] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-2.fc40 04/01/2014
+  [   45.252181] RIP: 0010:get_pat_info+0xf6/0x110
+  ...
+  [   45.268513] Call Trace:
+  [   45.269003]  <TASK>
+  [   45.269425]  ? __warn.cold+0xb7/0x14d
+  [   45.270131]  ? get_pat_info+0xf6/0x110
+  [   45.270846]  ? report_bug+0xff/0x140
+  [   45.271519]  ? handle_bug+0x58/0x90
+  [   45.272192]  ? exc_invalid_op+0x17/0x70
+  [   45.272935]  ? asm_exc_invalid_op+0x1a/0x20
+  [   45.273717]  ? get_pat_info+0xf6/0x110
+  [   45.274438]  ? get_pat_info+0x71/0x110
+  [   45.275165]  untrack_pfn+0x52/0x110
+  [   45.275835]  unmap_single_vma+0xa6/0xe0
+  [   45.276549]  unmap_vmas+0x105/0x1f0
+  [   45.277256]  exit_mmap+0xf6/0x460
+  [   45.277913]  __mmput+0x4b/0x120
+  [   45.278512]  copy_process+0x1bf6/0x2aa0
+  [   45.279264]  kernel_clone+0xab/0x440
+  [   45.279959]  __do_sys_clone+0x66/0x90
+  [   45.280650]  do_syscall_64+0x95/0x180
+
+Likely this case was missed in:
+
+  d155df53f310 ("x86/mm/pat: clear VM_PAT if copy_p4d_range failed")
+
+... and instead of undoing the reservation we simply cleared the VM_PAT flag.
+
+Keep the documentation of these functions in include/linux/pgtable.h,
+one place is more than sufficient -- we should clean that up for the other
+functions like track_pfn_remap/untrack_pfn separately.
+
+Fixes: d155df53f310 ("x86/mm/pat: clear VM_PAT if copy_p4d_range failed")
+Fixes: 2ab640379a0a ("x86: PAT: hooks in generic vm code to help archs to track pfnmap regions - v3")
+Reported-by: xingwei lee <xrivendell7@gmail.com>
+Reported-by: yuxin wang <wang1315768607@163.com>
+Reported-by: Marius Fleischer <fleischermarius@gmail.com>
+Signed-off-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: https://lore.kernel.org/r/20241029210331.1339581-1-david@redhat.com
+Closes: https://lore.kernel.org/lkml/CAJg=8jwijTP5fre8woS4JVJQ8iUA6v+iNcsOgtj9Zfpc3obDOQ@mail.gmail.com/
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Peter Xu <peterx@redhat.com>
+---
+ arch/x86/mm/pat/memtype.c | 66 ++++++++++++++++++++++++--------------
+ include/linux/pgtable.h   | 27 ++++++++++++----
+ kernel/fork.c             |  4 ++-
+ mm/memory.c               |  9 +----
+ 4 files changed, 70 insertions(+), 36 deletions(-)
+
+diff --git a/arch/x86/mm/pat/memtype.c b/arch/x86/mm/pat/memtype.c
+index feb8cc6..3a9e6dd 100644
+--- a/arch/x86/mm/pat/memtype.c
++++ b/arch/x86/mm/pat/memtype.c
+@@ -984,27 +984,54 @@ static int get_pat_info(struct vm_area_struct *vma, resource_size_t *paddr,
+ 	return -EINVAL;
+ }
+ 
+-/*
+- * track_pfn_copy is called when vma that is covering the pfnmap gets
+- * copied through copy_page_range().
+- *
+- * If the vma has a linear pfn mapping for the entire range, we get the prot
+- * from pte and reserve the entire vma range with single reserve_pfn_range call.
+- */
+-int track_pfn_copy(struct vm_area_struct *vma)
++int track_pfn_copy(struct vm_area_struct *dst_vma,
++		struct vm_area_struct *src_vma)
+ {
++	const unsigned long vma_size = src_vma->vm_end - src_vma->vm_start;
+ 	resource_size_t paddr;
+-	unsigned long vma_size = vma->vm_end - vma->vm_start;
+ 	pgprot_t pgprot;
++	int rc;
+ 
+-	if (vma->vm_flags & VM_PAT) {
+-		if (get_pat_info(vma, &paddr, &pgprot))
+-			return -EINVAL;
+-		/* reserve the whole chunk covered by vma. */
+-		return reserve_pfn_range(paddr, vma_size, &pgprot, 1);
++	if (!(src_vma->vm_flags & VM_PAT))
++		return 0;
++
++	/*
++	 * Duplicate the PAT information for the dst VMA based on the src
++	 * VMA.
++	 */
++	if (get_pat_info(src_vma, &paddr, &pgprot))
++		return -EINVAL;
++	rc = reserve_pfn_range(paddr, vma_size, &pgprot, 1);
++	if (!rc)
++		/* Reservation for the destination VMA succeeded. */
++		vm_flags_set(dst_vma, VM_PAT);
++	return rc;
++}
++
++void untrack_pfn_copy(struct vm_area_struct *dst_vma,
++		struct vm_area_struct *src_vma)
++{
++	resource_size_t paddr;
++	unsigned long size;
++
++	if (!(dst_vma->vm_flags & VM_PAT))
++		return;
++
++	/*
++	 * As the page tables might not have been copied yet, the PAT
++	 * information is obtained from the src VMA, just like during
++	 * track_pfn_copy().
++	 */
++	if (get_pat_info(src_vma, &paddr, NULL)) {
++		size = src_vma->vm_end - src_vma->vm_start;
++		free_pfn_range(paddr, size);
+ 	}
+ 
+-	return 0;
++	/*
++	 * Reservation was freed, any copied page tables will get cleaned
++	 * up later, but without getting PAT involved again.
++	 */
++	vm_flags_clear(dst_vma, VM_PAT);
+ }
+ 
+ /*
+@@ -1095,15 +1122,6 @@ void untrack_pfn(struct vm_area_struct *vma, unsigned long pfn,
+ 	}
+ }
+ 
+-/*
+- * untrack_pfn_clear is called if the following situation fits:
+- *
+- * 1) while mremapping a pfnmap for a new region,  with the old vma after
+- * its pfnmap page table has been removed.  The new vma has a new pfnmap
+- * to the same pfn & cache type with VM_PAT set.
+- * 2) while duplicating vm area, the new vma fails to copy the pgtable from
+- * old vma.
+- */
+ void untrack_pfn_clear(struct vm_area_struct *vma)
+ {
+ 	vm_flags_clear(vma, VM_PAT);
+diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+index 94d267d..acf387d 100644
+--- a/include/linux/pgtable.h
++++ b/include/linux/pgtable.h
+@@ -1508,15 +1508,25 @@ static inline void track_pfn_insert(struct vm_area_struct *vma, pgprot_t *prot,
+ }
+ 
+ /*
+- * track_pfn_copy is called when vma that is covering the pfnmap gets
+- * copied through copy_page_range().
++ * track_pfn_copy is called when a VM_PFNMAP VMA is about to get the page
++ * tables copied during copy_page_range().
+  */
+-static inline int track_pfn_copy(struct vm_area_struct *vma)
++static inline int track_pfn_copy(struct vm_area_struct *dst_vma,
++		struct vm_area_struct *src_vma)
+ {
+ 	return 0;
+ }
+ 
+ /*
++ * untrack_pfn_copy is called when a VM_PFNMAP VMA failed to copy during
++ * copy_page_range(), but after track_pfn_copy() was already called.
++ */
++static inline void untrack_pfn_copy(struct vm_area_struct *dst_vma,
++		struct vm_area_struct *src_vma)
++{
++}
++
++/*
+  * untrack_pfn is called while unmapping a pfnmap for a region.
+  * untrack can be called for a specific region indicated by pfn and size or
+  * can be for the entire vma (in which case pfn, size are zero).
+@@ -1528,8 +1538,10 @@ static inline void untrack_pfn(struct vm_area_struct *vma,
+ }
+ 
+ /*
+- * untrack_pfn_clear is called while mremapping a pfnmap for a new region
+- * or fails to copy pgtable during duplicate vm area.
++ * untrack_pfn_clear is called in the following cases on a VM_PFNMAP VMA:
++ *
++ * 1) During mremap() on the src VMA after the page tables were moved.
++ * 2) During fork() on the dst VMA, immediately after duplicating the src VMA.
+  */
+ static inline void untrack_pfn_clear(struct vm_area_struct *vma)
+ {
+@@ -1540,7 +1552,10 @@ extern int track_pfn_remap(struct vm_area_struct *vma, pgprot_t *prot,
+ 			   unsigned long size);
+ extern void track_pfn_insert(struct vm_area_struct *vma, pgprot_t *prot,
+ 			     pfn_t pfn);
+-extern int track_pfn_copy(struct vm_area_struct *vma);
++extern int track_pfn_copy(struct vm_area_struct *dst_vma,
++		struct vm_area_struct *src_vma);
++extern void untrack_pfn_copy(struct vm_area_struct *dst_vma,
++		struct vm_area_struct *src_vma);
+ extern void untrack_pfn(struct vm_area_struct *vma, unsigned long pfn,
+ 			unsigned long size, bool mm_wr_locked);
+ extern void untrack_pfn_clear(struct vm_area_struct *vma);
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 735405a..ca2ca38 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -504,6 +504,10 @@ struct vm_area_struct *vm_area_dup(struct vm_area_struct *orig)
+ 	vma_numab_state_init(new);
+ 	dup_anon_vma_name(orig, new);
+ 
++	/* track_pfn_copy() will later take care of copying internal state. */
++	if (unlikely(new->vm_flags & VM_PFNMAP))
++		untrack_pfn_clear(new);
++
+ 	return new;
+ }
+ 
+diff --git a/mm/memory.c b/mm/memory.c
+index 539c0f7..890333c 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -1379,11 +1379,7 @@ copy_page_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
+ 		return copy_hugetlb_page_range(dst_mm, src_mm, dst_vma, src_vma);
+ 
+ 	if (unlikely(src_vma->vm_flags & VM_PFNMAP)) {
+-		/*
+-		 * We do not free on error cases below as remove_vma
+-		 * gets called on error from higher level routine
+-		 */
+-		ret = track_pfn_copy(src_vma);
++		ret = track_pfn_copy(dst_vma, src_vma);
+ 		if (ret)
+ 			return ret;
+ 	}
+@@ -1420,7 +1416,6 @@ copy_page_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
+ 			continue;
+ 		if (unlikely(copy_p4d_range(dst_vma, src_vma, dst_pgd, src_pgd,
+ 					    addr, next))) {
+-			untrack_pfn_clear(dst_vma);
+ 			ret = -ENOMEM;
+ 			break;
+ 		}
+@@ -1430,6 +1425,8 @@ copy_page_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
+ 		raw_write_seqcount_end(&src_mm->write_protect_seq);
+ 		mmu_notifier_invalidate_range_end(&range);
+ 	}
++	if (ret && unlikely(src_vma->vm_flags & VM_PFNMAP))
++		untrack_pfn_copy(dst_vma, src_vma);
+ 	return ret;
+ }
+ 
 
 
