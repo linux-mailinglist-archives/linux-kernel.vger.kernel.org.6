@@ -1,133 +1,230 @@
-Return-Path: <linux-kernel+bounces-541699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72B37A4C047
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:24:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EB036A4C04E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:27:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63D20189582B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:25:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1FA718967B7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:27:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC7EC20FA8F;
-	Mon,  3 Mar 2025 12:24:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F6DA20FA8B;
+	Mon,  3 Mar 2025 12:27:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n5m6E1fg"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="CVNQlvez"
+Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 087CD1F0E2C;
-	Mon,  3 Mar 2025 12:24:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741004685; cv=none; b=WCDRcFTg6zHs8ZEOEE4E0Aq+d/rgSoygZpCJ+mEBpTRi2f9pQlkvEEKihMYCRBviXzDls5rWGbO0klrfsvYgwU+4bDiBrS08X1SR7YiNpKWZ6tUPXiBAzTTb4TnDeRH1MXqZpU9bEb183aLqbRGcq++wPuQoogsFAyyMxh7YlSA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741004685; c=relaxed/simple;
-	bh=j1ghf+0O9QJ9puRHnNXhg9N1r2ibOt2kzP+sia3x+c0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rNwVUbrKUzrAQv69uAzilwVi+e6fH5ue3uevu8Cw3Qb15rFkvLE1N9Hfu8u6k/+anJcgfUpMi/ZduPXa62TWjWaSs2iJnOxqlMVgGAhUGPlJGaTRqD1LN23he3RolkhvWhZZ0A/PfJdAaepKogDgOPoGmGc4ejPUY61I5i52aSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n5m6E1fg; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741004684; x=1772540684;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=j1ghf+0O9QJ9puRHnNXhg9N1r2ibOt2kzP+sia3x+c0=;
-  b=n5m6E1fgYJt+8ruOl8Eyr6HGGKlOQXFxUX74N1/PSoPH32uLwauZ9hvK
-   NN9rDVakAaWGSIfir2Wl9LEaSqw3c3/RJFK4+fUAmSvPUzXTjUwGYYbWS
-   x3itDJVCdOZfbuST95bVR6TDTFWkAr8DG+Yv9g4W+SoNiFY+VjiVC7L04
-   tvXUL2Cxn65cYm+X5+Fc3ZC4UZrehzKO7QUWfl1B3g9ChduaS2L7Vi8kh
-   8hnzH3ydKxbctsNK9DYUGXLTPgj38GkNFGHZdCeL/OI8PvntZnXenlFfq
-   QtCgVFE7Y+hTDEJ4mZc7mCqZDtu5AKZZ4DfmTGomMAwGTNkLUTWXWyDR+
-   g==;
-X-CSE-ConnectionGUID: 9TOR9/80SJuFyH4xaMIgZw==
-X-CSE-MsgGUID: 03Ko57+NRFGwB2TRgvKiVw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="64320548"
-X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="64320548"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 04:24:43 -0800
-X-CSE-ConnectionGUID: bQufeDxFQFWMqaTx9aSf+Q==
-X-CSE-MsgGUID: in9DvPjwRr+WBjh68L1d5Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="123136809"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 04:24:39 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tp4qZ-0000000GoLr-2PU1;
-	Mon, 03 Mar 2025 14:24:35 +0200
-Date: Mon, 3 Mar 2025 14:24:35 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Claudiu Manoil <claudiu.manoil@nxp.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH RFC net-next v5 10/10] net: gianfar: Use
- device_get_child_node_count_named()
-Message-ID: <Z8Wfgx2NjB-_AyR_@smile.fi.intel.com>
-References: <cover.1740993491.git.mazziesaccount@gmail.com>
- <685cd1affabe50af45b767eeed9b9002d006b0fd.1740993491.git.mazziesaccount@gmail.com>
- <Z8WXqgxgFQC8b8vC@smile.fi.intel.com>
- <aacffceb-e9e8-412a-a624-568e6b10d586@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66C8D1D5CD9;
+	Mon,  3 Mar 2025 12:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741004824; cv=pass; b=ki/p7tMoJGP62hdT5zgouMerzGlnwFdBGcJtPLz2+2E23eQUVeaX/X0yjM3Ujh0q7OMCkGp5BhqLqe5M+KzdhSumZYVoGOkvel8YyhuBA1urcHqSeyTBxfx8KmE9NHB7aol1XNGRtWDEIBFHGw5xlbWzvfBe8aKSmEsNhoLsS8w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741004824; c=relaxed/simple;
+	bh=MjZmkjSJD6MJSiNXTKSj/Prb0VwfVgXZpp5KyeaYd/o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=orQgWGC/KE9S9Ufj/wuWLkG1CIDihZaV+CsgtKyba3n7gKJ1ab6nWgWt257HgppzJ2SVZeflZdWvv90t2xHMpX28whJ3q5kLLShV/vpBNtrwdStWcizvSFGzRYBB/RVn4UoPIc6MFc4G0ht1HRguQ7OQSBAVZdhpzopvHBx7fkI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=CVNQlvez; arc=pass smtp.client-ip=136.143.188.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1741004806; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=dCLmGOpMTmAuxvDdTWEmL7fKkPuH+dQVKI2GbNGEEroHR74o+fJ9Ksu7j8zBBKcab98QwVAg3SpP/eBDQUu+oH5U8orSSG3nCJUgUp6ta70uDZ1YXkgYlUX4oH+55L6EYmc6iKE//z4xO2tsVJhj2WaHiZ7MJECp8THtONN+HaQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1741004806; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=KfBeFzP/GHd5Ky/PKHGXYMvqyX5pKSIENWPgz66iSM4=; 
+	b=LEm5jIlzhczQCmMjF9behFjYEXVl2qlXt2A4wF06HjSHE9jFInFLsQTeWXI7Z1nF327ScTZQohUs9K8r4u2Zx0kxxS4N3xkfuxf1UDVoqAuRGE4FV/o8rpZIxZ1cmQoiTBT5HRTi/0Ik6V00c8J0fE5O2q/ee016MVe52liHB/U=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
+	dmarc=pass header.from=<kingxukai@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741004806;
+	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=KfBeFzP/GHd5Ky/PKHGXYMvqyX5pKSIENWPgz66iSM4=;
+	b=CVNQlvezC9BgEqfUTl+0TxoPgFK5gwalMGh62+cf7hsN2qMQj6BVRH6H6r/2NdBs
+	Wx9BDzmYV04a7WDf8+QA9EMa6kC2SPrUPv1eTfWY3Y5C5fW/37MmSi4qEugw/zQdA79
+	UEcR/9cyl8Z/a6H6Qo9UhJaWwmm0j3OBYpk1w8zw=
+Received: by mx.zohomail.com with SMTPS id 1741004802325445.1739152543331;
+	Mon, 3 Mar 2025 04:26:42 -0800 (PST)
+Message-ID: <c9d436ff-1fc6-4f28-845c-c7635b31917f@zohomail.com>
+Date: Mon, 3 Mar 2025 20:26:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aacffceb-e9e8-412a-a624-568e6b10d586@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-
-On Mon, Mar 03, 2025 at 02:13:30PM +0200, Matti Vaittinen wrote:
-> On 03/03/2025 13:51, Andy Shevchenko wrote:
-> > On Mon, Mar 03, 2025 at 01:34:49PM +0200, Matti Vaittinen wrote:
-> 
-> > What about the second loop (in gfar_of_init)?
-> > I mean perhaps we want to have fwnode_for_each_named_child_node()
-> > and its device variant that may be also reused in the IIO code and here.
-> 
-> I agree the fwnode_for_each_named_child_node() would be useful. I think I
-> said that already during the previous review rounds. There is plenty of code
-> which could be converted to use it.
-
-
-> This, however, is far more than I am willing to do in the context of a
-> simple IIO driver addition. The "BD79124 ADC suupport" is already now 10
-> patches, 2 of which are directly related to it.
-
-But you already will have at least one user (IIO code) and second as in RFC.
-I do not ask you to _add_ patches.
-
-> I propose adding the for_each_named_child_node() as a separate series with
-> bunch of users appended. That's be plenty of beans to count for those who
-> like following the statistics :)
-
-It would sound like an unneeded churn as we first introduce something that we
-already know needs a refactoring.
-
--- 
-With Best Regards,
-Andy Shevchenko
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/3] dt-bindings: clock: Add bindings for Canaan K230
+ clock controller
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ Samuel Holland <samuel.holland@sifive.com>,
+ Troy Mitchell <TroyMitchell988@gmail.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor+dt@kernel.org>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Stephen Boyd <sboyd@kernel.org>,
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor@kernel.org>
+References: <20250303-b4-k230-clk-v5-0-748d121283e3@zohomail.com>
+ <20250303-b4-k230-clk-v5-1-748d121283e3@zohomail.com>
+From: Xukai Wang <kingxukai@zohomail.com>
+Content-Language: en-US
+In-Reply-To: <20250303-b4-k230-clk-v5-1-748d121283e3@zohomail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Feedback-ID: rr080112274afbe326d615e5b0444854c80000c326b26460fff2c574191e95b569a673be03c75ba6492d517c:zu08011227797b7a52fbefa521f9d5fee3000064a766f903853869ab26a37756b41ca77faa2d9e0002872fe9:rf0801122cfa59d5f02a79194a230f625700008f460aca7cd1b032c309e3721df5b9f8152e653064bd03aef47ebc6dabbd:ZohoMail
+X-ZohoMailClient: External
 
 
+On 2025/3/3 20:20, Xukai Wang wrote:
+> This patch adds the Device Tree binding for the clock controller
+> on Canaan k230. The binding defines the new clocks available and
+> the required properties to configure them correctly.
+>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+This patch has been modified,
+
+but it only adds a few necessary UARTs and DMA macros,
+
+so I didn’t remove your `Reviewed-by` tag.
+
+> Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
+> ---
+>  .../devicetree/bindings/clock/canaan,k230-clk.yaml | 43 ++++++++++++++
+>  include/dt-bindings/clock/canaan,k230-clk.h        | 69 ++++++++++++++++++++++
+>  2 files changed, 112 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml b/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..d7220fa30e4699a68fa5279c04abc63c1905fa4a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml
+> @@ -0,0 +1,43 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/canaan,k230-clk.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Canaan Kendryte K230 Clock
+> +
+> +maintainers:
+> +  - Xukai Wang <kingxukai@zohomail.com>
+> +
+> +properties:
+> +  compatible:
+> +    const: canaan,k230-clk
+> +
+> +  reg:
+> +    items:
+> +      - description: PLL control registers.
+> +      - description: Sysclk control registers.
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - '#clock-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    clock-controller@91102000 {
+> +        compatible = "canaan,k230-clk";
+> +        reg = <0x91102000 0x1000>,
+> +              <0x91100000 0x1000>;
+> +        clocks = <&osc24m>;
+> +        #clock-cells = <1>;
+> +    };
+> diff --git a/include/dt-bindings/clock/canaan,k230-clk.h b/include/dt-bindings/clock/canaan,k230-clk.h
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..41edb13ea04bffaa1ddd1d1af87ae3406b688332
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/canaan,k230-clk.h
+> @@ -0,0 +1,69 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * Kendryte Canaan K230 Clock Drivers
+> + *
+> + * Author: Xukai Wang <kingxukai@zohomail.com>
+> + */
+> +
+> +#ifndef CLOCK_K230_CLK_H
+> +#define CLOCK_K230_CLK_H
+> +
+> +/* Kendryte K230 SoC clock identifiers (arbitrary values). */
+> +#define K230_CPU0_SRC			0
+> +#define K230_CPU0_ACLK			1
+> +#define K230_CPU0_PLIC			2
+> +#define K230_CPU0_NOC_DDRCP4		3
+> +#define K230_CPU0_PCLK			4
+> +#define K230_PMU_PCLK			5
+> +#define K230_HS_HCLK_HIGH_SRC		6
+> +#define K230_HS_HCLK_HIGH_GATE		7
+> +#define K230_HS_HCLK_SRC		8
+> +#define K230_HS_SD0_HS_AHB_GAT		9
+> +#define K230_HS_SD1_HS_AHB_GAT		10
+> +#define K230_HS_SSI1_HS_AHB_GA		11
+> +#define K230_HS_SSI2_HS_AHB_GA		12
+> +#define K230_HS_USB0_HS_AHB_GA		13
+> +#define K230_HS_USB1_HS_AHB_GA		14
+> +#define K230_HS_SSI0_AXI15		15
+> +#define K230_HS_SSI1			16
+> +#define K230_HS_SSI2			17
+> +#define K230_HS_QSPI_AXI_SRC		18
+> +#define K230_HS_SSI1_ACLK_GATE		19
+> +#define K230_HS_SSI2_ACLK_GATE		20
+> +#define K230_HS_SD_CARD_SRC		21
+> +#define K230_HS_SD0_CARD_TX		22
+> +#define K230_HS_SD1_CARD_TX		23
+> +#define K230_HS_SD_AXI_SRC		24
+> +#define K230_HS_SD0_AXI_GATE		25
+> +#define K230_HS_SD1_AXI_GATE		26
+> +#define K230_HS_SD0_BASE_GATE		27
+> +#define K230_HS_SD1_BASE_GATE		28
+> +#define K230_HS_OSPI_SRC		29
+> +#define K230_HS_USB_REF_50M		30
+> +#define K230_HS_SD_TIMER_SRC		31
+> +#define K230_HS_SD0_TIMER_GATE		32
+> +#define K230_HS_SD1_TIMER_GATE		33
+> +#define K230_HS_USB0_REFERENCE		34
+> +#define K230_HS_USB1_REFERENCE		35
+> +#define K230_LS_APB_SRC			36
+> +#define K230_LS_UART0_APB		37
+> +#define K230_LS_UART1_APB		38
+> +#define K230_LS_UART2_APB		39
+> +#define K230_LS_UART3_APB		40
+> +#define K230_LS_UART4_APB		41
+> +#define K230_LS_I2C0_APB		42
+> +#define K230_LS_I2C1_APB		43
+> +#define K230_LS_I2C2_APB		44
+> +#define K230_LS_I2C3_APB		45
+> +#define K230_LS_GPIO_APB		46
+> +#define K230_LS_PWM_APB			47
+> +#define K230_LS_UART0			48
+> +#define K230_LS_UART1			49
+> +#define K230_LS_UART2			50
+> +#define K230_LS_UART3			51
+> +#define K230_LS_UART4			52
+> +#define K230_SHRM_AXI_SRC		53
+> +#define K230_SHRM_SDMA_AXI_GATE		54
+> +#define K230_SHRM_PDMA_AXI_GATE		55
+> +
+> +#endif /* CLOCK_K230_CLK_H */
+>
 
