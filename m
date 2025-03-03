@@ -1,126 +1,133 @@
-Return-Path: <linux-kernel+bounces-540891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31009A4B61A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 03:28:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21906A4B5F3
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 03:04:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9366C166389
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 02:28:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 130591890212
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 02:04:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1180D165F1A;
-	Mon,  3 Mar 2025 02:26:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E60141987;
+	Mon,  3 Mar 2025 02:03:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kapbHxaS"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="nhPlIaTN"
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26923159596
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 02:26:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A670A11CA9;
+	Mon,  3 Mar 2025 02:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740968769; cv=none; b=Ufig/PQ9M9SLDJe+PT4ZB1z8FsIWiR9bjlGF2JNredW5G9I9g6JJmGt9odUhOOZLV7VDMt7gluAzuNHEYH2XmobLT4L6Ht7G2burf+kRpP3Bxe2Ssq+4h2i2xLvAzZuVKa84jUEtDGROYfEanAtPIoAhYQdu5mNU9q21kQ6r9AI=
+	t=1740967435; cv=none; b=IoJctNJPktW5Kvb1H1+mIGDPIfaX5yopVHOfv7QRgXMtMYytYxFZnYYeN85+2NTcZVgLnlT1bL5ktGIw4WAicNUHyIPKGIRbBSILVyVHo7INOU9EmrNs1/Y3Q2AnvAXd0rVmJySuAe3+USgbfOnuvGfUhgp4PIi779GeLJQcdj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740968769; c=relaxed/simple;
-	bh=aFGLpXQ2zJikLhp0V/7S2kKJQjxoxLph0MK/8nTuEpk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Qnb8tERxm6bTxgUt1buXtnwVR+9PtzJxSGXvU/rhp6KOShuvKUf0iR1Cdt1ggaEWzgh+sYFTDMbIcY9IyMyK8HaxlbipmDY9Xx1dx6AVZ6N5i0ny8ioEjtyD0DoMazDnvDeeGT8VpgFGiV2xTMAVq4Ja8zygZKF5oqosqKTneZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=kapbHxaS; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-223480ea43aso97214455ad.1
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Mar 2025 18:26:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1740968767; x=1741573567; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uqfsMunD7m+H43cqKfQWJpYb2LZblnvSJ7I+sWg0jpM=;
-        b=kapbHxaST4JZ8fxG7saZcDPoMIAKzHHSAypTh4gYUbUSp45836zQ1UnA2J6hnnhJCF
-         oqA+opmk0b1emeTOg4KZpXz1Yok94Jj2mwfP1/tBU2YgW9n+XZQa32DAlecYcDsPddSJ
-         yslT6kSWnYSFREUmUZu5qNGcurFSUzC65irPU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740968767; x=1741573567;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uqfsMunD7m+H43cqKfQWJpYb2LZblnvSJ7I+sWg0jpM=;
-        b=sHIA89N3ZSbPP9R3wO/zSc2ilHKRKmRM2KoLIhcg1nwvBr/5WYQ0/oFJVciSsJWNSf
-         aXz5L/O2TvNQJMEpwTyG8b7NDXLF1H40jtasICKbv9d1dctHzDdCs6TyaJ5dH4lnobEN
-         bIztyOtCLjOKMxjiJ0vrALCZomrQ+8XNVPS67Ym80q+UGTKx3sM6dJMQDnDXjNWrjgQi
-         uda2jJ+MM9dZbxzN91B8S8lvAQC4YeaaLZoEHRlHcUacLSY4/8Cmy4fpnja8wX6lnjt/
-         Ldt2mY3d/rYKvF0xnhDbh2bExhD/z74Bb7+v55nlcQxFNqQ61dvlne6PFZGk9kq43C4T
-         MD9A==
-X-Forwarded-Encrypted: i=1; AJvYcCUN0g9aMhqfbnZz/P25Gr5X1S2kP4640On/AMZIjMckUqaG9gj4Cyp5puDSRcMEg8q92QOr6UEkamjTYGc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUwrPzW+mjCaeEdoHPt4oZYE4s7MeD7r7TfOdnYwqJE8BiRl9E
-	xr89NGJAt2AI27WumfjrySuotZQ+YOcm2UqEeylHJaK2U9tIe/2Rq4JV7faH3w==
-X-Gm-Gg: ASbGncu3feeZLqCTfDnbVnL/ZKksiq0zmab6KsTyer44OH2hiJhaKID9BcZ4lfa2WG0
-	ca+uEqkFZVzaH/6J/te/55hRP4wX1G3AYQ+Oni2kP3gVFBlkvcGmQ/8XufekxHfwWRg8MRxL8AQ
-	o3elVhkTr8zLmS4w5BIV6dfUFkTBKLrCRjJYnJjpCvpVXdYguRgXMES0PfvZHUH81z0mUY0tUY8
-	srBg/lKYfaplUUBU/vEGzAjaTc8Jj+lY4abaWMdfpREfpX27GHdyiOJ3zFZ8lj4Y+xiVoyGEpz1
-	EfkQoVv18D0jEZvdEYW9ZEex+wvcVnRb1VsWH8ivRTs1l1M=
-X-Google-Smtp-Source: AGHT+IFee2geL4KKk2MpUs+7Jc0KaKLEfwBOxn21cLTIdP8Q7RgxcXKrybsQAiLxlVLTASPWxF9odg==
-X-Received: by 2002:a05:6a00:b86:b0:730:8a0a:9ef9 with SMTP id d2e1a72fcca58-734ac3fffa7mr16371017b3a.22.1740968767388;
-        Sun, 02 Mar 2025 18:26:07 -0800 (PST)
-Received: from localhost ([2401:fa00:8f:203:1513:4f61:a4d3:b418])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-736556c8dccsm787620b3a.100.2025.03.02.18.26.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 02 Mar 2025 18:26:07 -0800 (PST)
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Yosry Ahmed <yosry.ahmed@linux.dev>,
-	Hillf Danton <hdanton@sina.com>,
-	Kairui Song <ryncsn@gmail.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Minchan Kim <minchan@kernel.org>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: [PATCH v10 19/19] zram: add might_sleep to zcomp API
-Date: Mon,  3 Mar 2025 11:03:28 +0900
-Message-ID: <20250303022425.285971-20-senozhatsky@chromium.org>
-X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
-In-Reply-To: <20250303022425.285971-1-senozhatsky@chromium.org>
-References: <20250303022425.285971-1-senozhatsky@chromium.org>
+	s=arc-20240116; t=1740967435; c=relaxed/simple;
+	bh=SEl1Hhf8NGcojuiMYmabQEzaNG0PSXe4Q1cOqkei6w0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S0bGOsMWRrjkdJOMnh0UpioslXNMe54jAskyOj0kwHtADD/BcYwcmYPBHWtcud1JTCrdPXNZg5m9181/CfKuVHhEQU3I4w1C/zexVT+liJHgedsuf5h6pDWHPC+sjDqOKJv015DKks5HmDlB13JUodrvRrquHDLNydi5MpVXRLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=nhPlIaTN; arc=none smtp.client-ip=115.124.30.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1740967423; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=ovJU3Q9h8hU/G3fkOoZ1jgiNl8W2k7s8Lwa5u8Ka3Hk=;
+	b=nhPlIaTNEI+rXbuTfVUF4mR3ko8wjzygstZJ6gFuYi68VLE0t8TmMQxJux7BHfMSlKWfQQ//jJYPcYhH2AH6nxk2jyQQ5iIojPCUZb2qs0E7z3ZuFhw80amd8koiSwDbK/S4fa1S+PfNhsb7K+SSUP4BAlvhvdC9viwGi7eyGy4=
+Received: from 30.246.161.128(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WQWfcKP_1740967421 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 03 Mar 2025 10:03:42 +0800
+Message-ID: <8c7b0cbf-fc93-4d97-b388-bfd0f13e404b@linux.alibaba.com>
+Date: Mon, 3 Mar 2025 10:03:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/3] PCI/AER: Report fatal errors of RCiEP and EP if
+ link recoverd
+To: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, bhelgaas@google.com, kbusch@kernel.org,
+ sathyanarayanan.kuppuswamy@linux.intel.com
+Cc: mahesh@linux.ibm.com, oohall@gmail.com, Jonathan.Cameron@huawei.com,
+ terry.bowman@amd.com, tianruidong@linux.alibaba.com
+References: <20250217024218.1681-1-xueshuai@linux.alibaba.com>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <20250217024218.1681-1-xueshuai@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Explicitly state that zcomp compress/decompress must be
-called from non-atomic context.
 
-Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
----
- drivers/block/zram/zcomp.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/block/zram/zcomp.c b/drivers/block/zram/zcomp.c
-index a1d627054bb1..d26a58c67e95 100644
---- a/drivers/block/zram/zcomp.c
-+++ b/drivers/block/zram/zcomp.c
-@@ -146,6 +146,7 @@ int zcomp_compress(struct zcomp *comp, struct zcomp_strm *zstrm,
- 	};
- 	int ret;
- 
-+	might_sleep();
- 	ret = comp->ops->compress(comp->params, &zstrm->ctx, &req);
- 	if (!ret)
- 		*dst_len = req.dst_len;
-@@ -162,6 +163,7 @@ int zcomp_decompress(struct zcomp *comp, struct zcomp_strm *zstrm,
- 		.dst_len = PAGE_SIZE,
- 	};
- 
-+	might_sleep();
- 	return comp->ops->decompress(comp->params, &zstrm->ctx, &req);
- }
- 
--- 
-2.48.1.711.g2feabab25a-goog
+在 2025/2/17 10:42, Shuai Xue 写道:
+> changes since v3:
+> - squash patch 1 and 2 into one patch per Sathyanarayanan
+> - add comments note for dpc_process_error per Sathyanarayanan
+> - pick up Reviewed-by tag from Sathyanarayanan
+> 
+> changes since v2:
+> - moving the "err_port" rename to a separate patch per Sathyanarayanan
+> - rewrite comments of dpc_process_error per Sathyanarayanan
+> - remove NULL initialization for err_dev per Sathyanarayanan
+> 
+> changes since v1:
+> - rewrite commit log per Bjorn
+> - refactor aer_get_device_error_info to reduce duplication per Keith
+> - fix to avoid reporting fatal errors twice for root and downstream ports per Keith
+> 
+> The AER driver has historically avoided reading the configuration space of an
+> endpoint or RCiEP that reported a fatal error, considering the link to that
+> device unreliable. Consequently, when a fatal error occurs, the AER and DPC
+> drivers do not report specific error types, resulting in logs like:
+> 
+>     pcieport 0000:30:03.0: EDR: EDR event received
+>     pcieport 0000:30:03.0: DPC: containment event, status:0x0005 source:0x3400
+>     pcieport 0000:30:03.0: DPC: ERR_FATAL detected
+>     pcieport 0000:30:03.0: AER: broadcast error_detected message
+>     nvme nvme0: frozen state error detected, reset controller
+>     nvme 0000:34:00.0: ready 0ms after DPC
+>     pcieport 0000:30:03.0: AER: broadcast slot_reset message
+> 
+> AER status registers are sticky and Write-1-to-clear. If the link recovered
+> after hot reset, we can still safely access AER status of the error device.
+> In such case, report fatal errors which helps to figure out the error root
+> case.
+> 
+> After this patch set, the logs like:
+> 
+>     pcieport 0000:30:03.0: EDR: EDR event received
+>     pcieport 0000:30:03.0: DPC: containment event, status:0x0005 source:0x3400
+>     pcieport 0000:30:03.0: DPC: ERR_FATAL detected
+>     pcieport 0000:30:03.0: AER: broadcast error_detected message
+>     nvme nvme0: frozen state error detected, reset controller
+>     pcieport 0000:30:03.0: waiting 100 ms for downstream link, after activation
+>     nvme 0000:34:00.0: ready 0ms after DPC
+>     nvme 0000:34:00.0: PCIe Bus Error: severity=Uncorrectable (Fatal), type=Data Link Layer, (Receiver ID)
+>     nvme 0000:34:00.0:   device [144d:a804] error status/mask=00000010/00504000
+>     nvme 0000:34:00.0:    [ 4] DLP                    (First)
+>     pcieport 0000:30:03.0: AER: broadcast slot_reset message
+> 
+> Shuai Xue (3):
+>    PCI/DPC: Clarify naming for error port in DPC Handling
+>    PCI/DPC: Run recovery on device that detected the error
+>    PCI/AER: Report fatal errors of RCiEP and EP if link recoverd
+> 
+>   drivers/pci/pci.h      |  5 +++--
+>   drivers/pci/pcie/aer.c | 11 +++++++----
+>   drivers/pci/pcie/dpc.c | 34 +++++++++++++++++++++++++++-------
+>   drivers/pci/pcie/edr.c | 35 ++++++++++++++++++-----------------
+>   drivers/pci/pcie/err.c |  9 +++++++++
+>   5 files changed, 64 insertions(+), 30 deletions(-)
+> 
 
+
+Hi, All,
+
+Gentle ping.
+
+Thanks.
+Shuai
 
