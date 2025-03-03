@@ -1,129 +1,107 @@
-Return-Path: <linux-kernel+bounces-542844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE899A4CE66
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FE06A4CE65
 	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:36:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64F89173AE9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:36:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AACE188ED6F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:36:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C50072343AB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C161F23312E;
 	Mon,  3 Mar 2025 22:36:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UStRtFMt"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="JNfuVWDF"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F8FB21507B
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 22:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CDAD22DFB6;
+	Mon,  3 Mar 2025 22:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741041386; cv=none; b=t3qet5HO/auhlBFiHUBmQg8r62LQ7BzF4DCXzh+xZZMu+jyHkGqH+qz6iljzWBA0QC55YKEsOWGznGjxoHbsHw96umjibFZdFTeNn8yy25SbRBpSkCMtfk/claU+xFlzoiIyg9/HyzuewTkK0WxGzc5qwqB2qFYQlJ/1CKijDV8=
+	t=1741041386; cv=none; b=Vs+gJ23IreEps6hB/Wb18FxrVrfHNFGV7tS97WNP5+m6dBflSX/sPze48w/1qmaVH6+0v2KpdKwc8sqrcqR5rGPw6v6pgnZcYwfBtegu8IGC+xoOYRINeaGDa+tKazPJnpOrgEOhPiRZ6we563b6n+Aw+gqjBYoq+iPV6gCY+LE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741041386; c=relaxed/simple;
-	bh=E8IK1YxlvKjv85U+RewdJBr9DRn99tzMqZBsuWCK1hk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ukdH0or/LPsY2e9svo/Z2SoLSkYEu+Lb4FjZSswex6OqITcqxXbN4/J1gT2+IxefYvaWG9HT+Go+U+WWe5d0CpOtXMPz/CajkfDIS/XavjulaTz9QgfkIYX4Zze3l5BwAooK8Qcl4jHt30fgEc7bFYQYMROp47NmLKylirLVKWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UStRtFMt; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5e5491eb37dso2746613a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 14:36:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741041383; x=1741646183; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=goNQpqu1GYYsi3IOrpMNuRocCYgIewdDJpbqVB8lELI=;
-        b=UStRtFMteFZIIDiNYoIzlF0sKQWdRz1sHN97lfvCjM1kyWaCfvF40y7RDYBSytCjwk
-         Lhrjp2I8eOe7CPyemkZL1iF1gK35QEPjuIRSqa1hD9rBQ4Mb/KnNK749pNNGkeXttix/
-         MALKkH5srfmyRF7ZHZCqsXXdHNJMR0+cK90Gf6gZVCyNzaBOMRqFguBhs9pf357pLLG9
-         w43ilA/0SlZCnau2sVL3D1FiazUknSTGRegXjZVyKtR25leClAdYlDw1nc91zl6VOMBv
-         ybQ22iyaTYLwpguwyxCyotUZdFONjcHTERCBSTOE+XvrhgLDdzQGcxC05CHqHtkDAs87
-         sbkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741041383; x=1741646183;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=goNQpqu1GYYsi3IOrpMNuRocCYgIewdDJpbqVB8lELI=;
-        b=Ytwi6ILtq5a8IxOwjzq63TjnTaSYz+vLwo+/hHuo0Ae4Nbc8pTulowioJ2NQEBS+jk
-         htxp/Y9n7ZtOSI4YY5QJf7EBrmqT4EjQWj+4Jb4iHDLusGPf2WT1L+alVNxLPMTkAxWZ
-         ufyOw+QHaaZoX77siKBo+2asYysRRlO444vRhYqSfyELQW7PYKyDtyYiALWIkrHZhLjw
-         Wc61u1RAH6v/u8QNt5TtIdzXs31YXZMR8qL6xjoqTqHlnQFtZe2FrdhVAoIvSIQFdA8q
-         pGmT7g1CuAOuCJ8bJkX03ETevqXSf8aBSYjrUBnc+HWXpd+sVYIxKRliYUhFMbqxp3Sf
-         2r1A==
-X-Forwarded-Encrypted: i=1; AJvYcCWDxndWP1/AEJghIrnTUIBiIVBMnebXzKBx/HL4hbXhF4AqIs9nYiXoS+67hZfqQ0eyNMUrw1CwaUwCFFw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxx4X9xl4vUhbkDoJgamB+pM+dMk3KkoKc/a12QuFw5beJYqlUh
-	5QIhiUxuE0776OFmXLz2vzuExV9dsN3pgOgywN/ZCl5DTLECxMNIqOB5thUqixzfkAelxg5Exhp
-	tXVzADe0JfC6cjWLDyfDPk8tdssM=
-X-Gm-Gg: ASbGncvOn1f8VmaRTeUIXVXQ7RvA6zEy9zl23MaknlNn1X9FeVxqP68LZkIIBm9065T
-	M8Scv/YsSZMGQOiahE9z0BksEPOI7FWmRNEElMzlqnbL9RlNhHDE+7D/RewNRdfeFCqGSkn8iDZ
-	CbUmZVT9wMgu9b5lYUVL3xWoOT
-X-Google-Smtp-Source: AGHT+IE+PnnYfMCwgMy73pwSP89MxxGHaikqADX9oJLzVlPkuzT24iHvjtpaJ8Z9WHOB0YAPysmWKpQu3/96ZaQ0d54=
-X-Received: by 2002:a05:6402:848:b0:5dc:d10a:1be8 with SMTP id
- 4fb4d7f45d1cf-5e4d6b0e6c9mr17146680a12.19.1741041382208; Mon, 03 Mar 2025
- 14:36:22 -0800 (PST)
+	bh=1bRhjZsL2z2GZrqZLcbmsx0EFYTgtSq9PfISuQOdCnM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qlGXgoqffi6MYSbVTf57S3L7gUWlzJ9nsPvMliSqCK6AJv1S7aFLtt4c7PYG8ONdrDGN/xngWbcbSihHYVRhXDDpcuHtBAh4gU10PNjiI2WGCQahKhPkRmfshWbZY3+QOJVtsgHVAb9u29iXvy3Bi050IywN2E5k0tOM+WTMAd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=JNfuVWDF; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=5EOXFMVC6+7oiTirA0ot5v+5pSqEybCdk9aXbZ9tQ+0=; b=JNfuVWDFIye54QW5L2Yg44pbby
+	+ehzxUfqV3vdBNYpO2rmcVeZ6SiaSvoJHG8/uemnPHagfcxEat8dO9RPml2Ku8RyM6w2oaY512unK
+	zCQBrHyPSzT7BakWFT5j67mA6afkF4APHp8VSw3L0UcNVLSuqi8nigmyjL0nW3bG3E9WTjRhU4Vhx
+	AhilD1kh9ztYP5FIRQqanbfm0XcunNe8LtskZ/el5U+DbvKADL2i4GDAFaY8cQWdaqI4FjAh512gt
+	FLZOd36yxWaosHknsnz/rY0FT4JknB6OkBXD4g/WuieP/m+xKu3LKkMNi7BThx7X9FmFgd6FW6+ne
+	8aYZT8Bg==;
+Received: from i53875a38.versanet.de ([83.135.90.56] helo=phil.fritz.box)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tpEOT-0005wL-Ig; Mon, 03 Mar 2025 23:36:13 +0100
+From: Heiko Stuebner <heiko@sntech.de>
+To: linux-rockchip@lists.infradead.org,
+	Dragan Simic <dsimic@manjaro.org>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	didi.debian@cknow.org,
+	chris@z9.de
+Subject: Re: [PATCH v2 0/2] Slightly improve hardware description of Pine64 RockPro64
+Date: Mon,  3 Mar 2025 23:36:10 +0100
+Message-ID: <174104113599.8946.16805724674396090918.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <cover.1740941097.git.dsimic@manjaro.org>
+References: <cover.1740941097.git.dsimic@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250303134908.423242-1-mjguzik@gmail.com> <20250303142425.bf8668d1875aa47e0dadf6d6@linux-foundation.org>
-In-Reply-To: <20250303142425.bf8668d1875aa47e0dadf6d6@linux-foundation.org>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Mon, 3 Mar 2025 23:36:10 +0100
-X-Gm-Features: AQ5f1JqJG2jRj2GFZWUoHveWlsLO4_VmgQELVNwzIw1zmb2UUiA9dopVVZBnGKY
-Message-ID: <CAGudoHEWQN-3V+5nxPhbwdXpgp1C-Z01F0qBGoUnHEmxUgGbnw@mail.gmail.com>
-Subject: Re: [PATCH] signal: avoid clearing TIF_SIGPENDING in
- recalc_sigpending() if unset
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: oleg@redhat.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 3, 2025 at 11:24=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
-n.org> wrote:
->
-> On Mon,  3 Mar 2025 14:49:08 +0100 Mateusz Guzik <mjguzik@gmail.com> wrot=
-e:
->
-> > Clearing is an atomic op and the flag is not set most of the time.
-> >
-> > When creating and destroying threads in the same process with the
-> > pthread family, the primary bottleneck is calls to sigprocmask which
-> > take the process-wide sighand lock.
-> >
-> > Avoiding the atomic gives me a 2% bump in start/teardown rate at 24-cor=
-e
-> > scale.
-> >
->
-> Neat.  Perhaps add an unlikely() also?
->
-> --- a/kernel/signal.c~signal-avoid-clearing-tif_sigpending-in-recalc_sigp=
-ending-if-unset-fix
-> +++ a/kernel/signal.c
-> @@ -177,7 +177,7 @@ static bool recalc_sigpending_tsk(struct
->  void recalc_sigpending(void)
->  {
->         if (!recalc_sigpending_tsk(current) && !freezing(current)) {
-> -               if (test_thread_flag(TIF_SIGPENDING))
-> +               if (unlikely(test_thread_flag(TIF_SIGPENDING)))
->                         clear_thread_flag(TIF_SIGPENDING);
->         }
->  }
-> _
->
 
-Ye that makes sense, I don't think Oleg is going to object :)
+On Sun, 02 Mar 2025 19:48:02 +0100, Dragan Simic wrote:
+> This is a small series that introduces small improvements to the way
+> Pine64 RockPro64 [1] single-board-computer is described in the DT files.
+> This applies to both production-run revisions of the RockPro64.
+> 
+> The introduced improvements boil down to eliminating some warnings from
+> the kernel log, by adding a previously undefined regulator and by adding
+> some previously missing references to the regulators.
+> 
+> [...]
 
-Thanks for a quick turn around to you both,
+Applied, thanks!
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+[1/2] arm64: dts: rockchip: Add avdd HDMI supplies to RockPro64 board dtsi
+      commit: bd1c959f37f384b477f51572331b0dc828bd009a
+[2/2] arm64: dts: rockchip: Add missing PCIe supplies to RockPro64 board dtsi
+      commit: 64ef4a4320e7aa3f0f267e01f170f52b90bf0b1b
+
+I've moved the pcie12v supply up one line.
+While in a mathematical sense it's true 12 > 3.3, we're sorting
+alphabetical, so it's 1?? < 3?? .
+
+And yes I sympathize with 3.3 < 12, but also have come to appreciate not
+having overly many special cases :-)
+
+
+Best regards,
+-- 
+Heiko Stuebner <heiko@sntech.de>
 
