@@ -1,149 +1,93 @@
-Return-Path: <linux-kernel+bounces-542604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EBA2A4CB85
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:04:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D9C0A4CB88
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:04:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5C453A802D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:03:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86F7B168F8A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E20322CBE2;
-	Mon,  3 Mar 2025 19:04:04 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15D9920E313
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 19:04:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E27022F171;
+	Mon,  3 Mar 2025 19:04:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gLTA0aWp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64CF7214A66;
+	Mon,  3 Mar 2025 19:04:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741028643; cv=none; b=jul4rP54vGE6tVukt1Myo6TQ9ieJHMWjSkBgZpOMj1tBUSFY2DnjaFtJEdaxRh66t+7X40CPIZdNGIzlKOV3MGztcc1hVrpZU8t0aoDuBQKGLf109PH1YAtyxFU314wLNCY74qyHqCIDk+7PrSXlCVbJ1ttsatCUNQXS2JIMG7Y=
+	t=1741028668; cv=none; b=TYJMVkLyoQklhCe/gOq3AE+2oT13NKH7CRhqscZpcak8Z+kHB7LrHCBRZMpk19d0SkIfvmF4kgBHbjmcyht1aGu6M6kKqfZX2X1MZ59pjb7PCZiZgNHHD6CJqIcPaeI2+2WcjKaLb2QF3oXH/IC/uJ7cgaf4laFcAEsaAXMfE6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741028643; c=relaxed/simple;
-	bh=SBKTKcxMsfQBXZnyIKo1h7mswmhDUyYtLdOc6AOWgX4=;
+	s=arc-20240116; t=1741028668; c=relaxed/simple;
+	bh=8LWjj1yF/l6+Nko2dcGTFSkEZL9I6BsHVDOlJmSVy6o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SdLJyIt/5AalUMqMcEnT2EuLrS1VBrzKOshBjTPBuxzTbwHUTfaecmq697iRKmP/Pmx2R6cDEicQ7vGCvIQVeuC9JNCAzwe3f2VV74slugXF20XHTgZjqRa4UjxuzJtGzRYxg1NmNO7bhv0YSE2okp1f0KTjM5nQu56FJ+qX8+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 13E62106F;
-	Mon,  3 Mar 2025 11:04:15 -0800 (PST)
-Received: from e133081.arm.com (unknown [10.57.37.154])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A72623F5A1;
-	Mon,  3 Mar 2025 11:03:55 -0800 (PST)
-Date: Mon, 3 Mar 2025 19:03:42 +0000
-From: =?utf-8?Q?Miko=C5=82aj?= Lenczewski <miko.lenczewski@arm.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>,
-	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
-	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
-	"yang@os.amperecomputing.com" <yang@os.amperecomputing.com>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"will@kernel.org" <will@kernel.org>,
-	"joro@8bytes.org" <joro@8bytes.org>,
-	"jean-philippe@linaro.org" <jean-philippe@linaro.org>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"joey.gouly@arm.com" <joey.gouly@arm.com>,
-	"oliver.upton@linux.dev" <oliver.upton@linux.dev>,
-	"james.morse@arm.com" <james.morse@arm.com>,
-	"broonie@kernel.org" <broonie@kernel.org>,
-	"maz@kernel.org" <maz@kernel.org>,
-	"david@redhat.com" <david@redhat.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"nicolinc@nvidia.com" <nicolinc@nvidia.com>,
-	"mshavit@google.com" <mshavit@google.com>,
-	"jsnitsel@redhat.com" <jsnitsel@redhat.com>,
-	"smostafa@google.com" <smostafa@google.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>
-Subject: Re: [PATCH v2 4/4] iommu/arm: Add BBM Level 2 smmu feature
-Message-ID: <20250303190330.GA426248@e133081.arm.com>
-References: <20250228182403.6269-2-miko.lenczewski@arm.com>
- <20250228182403.6269-6-miko.lenczewski@arm.com>
- <20250228193221.GM5011@ziepe.ca>
- <b23aa37f8e864dea82a6143bece912d6@huawei.com>
- <20250303103102.GC13345@e133081.arm.com>
- <20250303165255.GS5011@ziepe.ca>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bPGrqLP7NTHqX883HwfmHA5PBrSYwbDMmPwq0CNF/xHT12pXVwkRP30vm2gS+QsDbM7Pz57eZ5pxxa4mfc4oJUHjUwbi689NX7DHwdMGKPjjKiu2MWv/vqg/pMVWf36Mh3DUHiz1z8Wv5MKXRyTb/Ug1sl0sz0nKmuwjnahGnbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gLTA0aWp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31EB9C4CED6;
+	Mon,  3 Mar 2025 19:04:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741028667;
+	bh=8LWjj1yF/l6+Nko2dcGTFSkEZL9I6BsHVDOlJmSVy6o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gLTA0aWp1PJmysQcPGb5IH62IBT2mqNCpy9v7Q6+ovo7Om05FhNhhV5tOiCWgcNO0
+	 xnXU26aMFijSyIycRCyObC4e+iygvPKnKOilWuErIxU3FkgBdGwonbgm0axassVAD4
+	 RIKFLYITJzwZK2Wbh+PMGVLjj4iEQfU9w7GYpsJlwZGQ4E/5Ad9nSGlPJj1FgiB2Ci
+	 XqGROHu/cjf+8jQlWKOTS3Bu2e4+gcTD6YgIB5gAfgy90PapQrXMf19IJYxHiYiit/
+	 SiBGymKYizRwkxEaFz55Shw0tcwg5Qdr57PDjmzmfDZs0DcYISb9gcES1esOYH6Zyo
+	 XSjrTaopHlWbw==
+Date: Mon, 3 Mar 2025 21:04:24 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: cgzones@googlemail.com
+Cc: Serge Hallyn <serge@hallyn.com>, Jan Kara <jack@suse.com>,
+	Julia Lawall <Julia.Lawall@inria.fr>,
+	Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, cocci@inria.fr,
+	Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
+Subject: Re: [PATCH v2 11/11] infiniband: reorder capability check last
+Message-ID: <20250303190424.GB1955273@unreal>
+References: <20250302160657.127253-1-cgoettsche@seltendoof.de>
+ <20250302160657.127253-10-cgoettsche@seltendoof.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250303165255.GS5011@ziepe.ca>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250302160657.127253-10-cgoettsche@seltendoof.de>
 
-On Mon, Mar 03, 2025 at 12:52:55PM -0400, Jason Gunthorpe wrote:
-> On Mon, Mar 03, 2025 at 10:31:02AM +0000, Mikołaj Lenczewski wrote:
-> 
-> > > > On such a system it seems like your series would break previously
-> > > > working SVA support because this patch will end up disabling it?
-> > 
-> > Perhaps my understanding is flawed here, but I was under the impression
-> > that with SVA both the core and smmu MUST support BBML2 to use it safely
-> > for core translations? 
-> 
-> Yes
-> 
-> But today's kernel does not use BBML2 in the CPU or the SMMU so it is
-> compatible with everything.
-> 
-> So it is an upgrade issue, going from today's kernel without any BBML2
-> support to tomorrow's kernel that does then you loose SVA on
-> previously working HW.
+On Sun, Mar 02, 2025 at 05:06:47PM +0100, Christian G=F6ttsche wrote:
+> From: Christian G=F6ttsche <cgzones@googlemail.com>
+>=20
+> capable() calls refer to enabled LSMs whether to permit or deny the
+> request.  This is relevant in connection with SELinux, where a
+> capability check results in a policy decision and by default a denial
+> message on insufficient permission is issued.
+> It can lead to three undesired cases:
+>   1. A denial message is generated, even in case the operation was an
+>      unprivileged one and thus the syscall succeeded, creating noise.
+>   2. To avoid the noise from 1. the policy writer adds a rule to ignore
+>      those denial messages, hiding future syscalls, where the task
+>      performs an actual privileged operation, leading to hidden limited
+>      functionality of that task.
+>   3. To avoid the noise from 1. the policy writer adds a rule to permit
+>      the task the requested capability, while it does not need it,
+>      violating the principle of least privilege.
+>=20
+> Signed-off-by: Christian G=F6ttsche <cgzones@googlemail.com>
+> Reviewed-by: Serge Hallyn <serge@hallyn.com>
+> ---
+>  drivers/infiniband/hw/mlx5/devx.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
 
-I see what you mean.
-
-If you have hardware that supports cpu BBML2 but doesn't support smmu
-BBML2, either by virtue of having a pre-SMMUv3.2 smmu, or by only
-implementing BBML1, the simplest option I see is then to disable BBML2
-globally in the kernel. A bad klude, but would at least leave current
-SVA working.
-
-> > Hopefully, as you say, the MIDR list restricts the breakage to a limited
-> > (ideally, zero-size) set of implementations which advertise BBML2
-> > without conflict aborts, but which do not support BBML2 on the smmu.
-> > 
-> > However, if my understanding of the BBML2 feature and how it interacts
-> > with SVA is flawed, this will obviously be something for me to fix.
-> 
-> Lets hope, I was not able to discover any NVIDIA platforms that have
-> an issue with this series as is.
-> 
-> But every addition to the MIDR list will require some consideration :\
-
-Yes, I agree. I believe that for larger cores, this is a guarantee that
-implementors will be able to make when adding themselves to the list.
-They know what smmu their core uses, and that tends to be
-performance-focused (hence more likely to use an smmu that support
-BBML2).
-
-For smaller cores, i.e. mobile cores, this becomes a larger issue as you
-may have a higher likelyhood of pairing such a core with an
-older/insufficient smmu version. So, careful consideration is required.
-
-> > On independently enabling BBML2 on the smmu but not the CPU, this should
-> > be possible.
-> 
-> What about the reverse? Could we disable BBML2 on the CPU side on a
-> per-mm basis? Ie when an old SMMU attaches with disable the
-> incompatible feature? Not something for this series, but if we get
-> into trouble down the road
-
-I agree in principle with having, as you point out, some mechanism
-to disable BBML2 when an smmu without BBML2 is used. However, I think
-that the complexity of such a mechanism depends on how the BBML2 feature
-is used by future patches.
-
-For example, if we use BBML2 for kernel mappings, does that require us
-to repaint all kernel mappings when disabling BBML2 on smmu attach? I
-am not sure, but definitely something to be worked out.
-
--- 
-Kind regards,
-Mikołaj Lenczewski
+Thanks, applied.
+https://web.git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git/commit/?h=
+=3Dwip/leon-for-next&id=3D3745242ad1e1c07d5990b33764529eb13565db44
 
