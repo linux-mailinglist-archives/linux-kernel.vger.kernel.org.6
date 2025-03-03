@@ -1,82 +1,131 @@
-Return-Path: <linux-kernel+bounces-545308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE3DAA4EB84
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:28:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1CE1A4EA3E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:59:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FDB216465A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:23:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEA54189C40F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:54:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1B58235BE4;
-	Tue,  4 Mar 2025 18:12:35 +0000 (UTC)
-Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBE26292FA5;
+	Tue,  4 Mar 2025 17:35:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="WHmXBAfU"
+Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 118B52E339B
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:12:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.116
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741111954; cv=pass; b=dMO166ZulY07p4cvfqwbg3ymImJPN7PDDqvpuW0cnmPGpUECQHs8Kt5Cw2a6oRl5D5tTPwZuFXRGGv/yp9i9vcGXZqpbhE8UXJ/dfy2HcoGW/qz/MfzR7lQ4Z5/ZwEOSqjlaHjCIJl3luWtqi9AEXfKuGAV2zEfwf5Z47A8LSfg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741111954; c=relaxed/simple;
-	bh=v8XqCusruxsmNE0u+56IKmxRCWDfbbAUHBEj0qBMdBA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q7XNzlbSR1P5EFFbmXRXFY5wh25x+q66vgNWXnLtHEVtcjWqfxA1mzVvpNEKU7SyHHkDxRf9Zfhr2tKkRgWAHa/v4yseRfZqbms1o2EIrCn584bfDiC3buX5MV9IDsVjdZqtA4pEPbz4cN078bNs7/gXkyGZb2TbnOPXI4ApqtI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=cc.itu.edu.tr; arc=none smtp.client-ip=217.140.110.172; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=pass smtp.client-ip=160.75.25.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E39285417
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:35:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.117
+ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741109713; cv=fail; b=otoCFFba6E91fsXbxjhPxqb1FX2YZ+puL/toWKAfJ2NCT6DTzMkQV4it9/YuQPveK12FZNIBwYxShgm5hJ1XHWWZU2CiMg4jg9ztDSwMV/Jp/R72CNP+6OEwLl/dZpnHXmQTmLy2cRjQm6rqNdzjKyVrQx2NvrHE+RHH6OWFtIg=
+ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741109713; c=relaxed/simple;
+	bh=es5LyWs7oxVaKV20/F5e7YLk6wPNnkFo9e7W+GO11mQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=JdSaH7Iq5Dc8dziS7HMb0rdym0B30pYOL68OGLqPt9QtzX1d5xGpOuZtrq8aq974Y1aHMWnMOlh/T8Pt3yv98Pwtix4JMgZtZehTMfyWAKdBH9XeuTJVVjoCEiVo5zxaxuI54QBcYUm1RG44rfHJxIUFrVXV4J5P285cYFYT2rY=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=WHmXBAfU; arc=fail smtp.client-ip=40.107.220.61; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; arc=fail smtp.client-ip=160.75.25.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
-Received: from lesvatest1.cc.itu.edu.tr (unknown [10.146.128.1])
+Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id 3420240D2868
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 21:12:31 +0300 (+03)
+	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id C99CD40CEC8C
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:35:09 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
+Authentication-Results: lesvatest1.cc.itu.edu.tr;
+	dkim=pass (1024-bit key, unprotected) header.d=amd.com header.i=@amd.com header.a=rsa-sha256 header.s=selector1 header.b=WHmXBAfU
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dTp00p7zFw3N
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:33:50 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dkp71XjzFxKl
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:45:06 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 9304642733; Tue,  4 Mar 2025 17:33:28 +0300 (+03)
-X-Envelope-From: <linux-kernel+bounces-541597-bozkiru=itu.edu.tr@vger.kernel.org>
-Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id 1D3FF4215D
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:42:08 +0300 (+03)
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id A7D403063EFE
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:42:07 +0300 (+03)
+	id 6EF914272E; Tue,  4 Mar 2025 17:45:05 +0300 (+03)
+Authentication-Results: lesva1.cc.itu.edu.tr;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=WHmXBAfU
+X-Envelope-From: <linux-kernel+bounces-541602-bozkiru=itu.edu.tr@vger.kernel.org>
+Authentication-Results: lesva2.cc.itu.edu.tr;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=WHmXBAfU
+Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
+	by le2 (Postfix) with ESMTP id 2F8FA41CE1
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:39:09 +0300 (+03)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by fgw2.itu.edu.tr (Postfix) with SMTP id BD2B42DCDE
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:39:08 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C6E13BF434
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:35:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDA201634DB
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:38:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 571C81FCCEB;
-	Mon,  3 Mar 2025 11:35:27 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 285C01FC11A
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 11:35:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741001725; cv=none; b=vArCs+HXrgovhuUlgCHVYrIUjZXwnMh8j+tKjNi+wq5tnO3Vluhj2VZC156TQogD5DLN45wAzTuTvERa1aXUNaqFRLukJe4BF17HgksBhc6+2raWbmXyxZt0z8LEp5Wq54yro/B/rT//XwoMyz+uMUao0ajZ4mf9WNLpgvVuL38=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741001725; c=relaxed/simple;
-	bh=v8XqCusruxsmNE0u+56IKmxRCWDfbbAUHBEj0qBMdBA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BH0hrjF7s+m8AN8qa1XgJR+9pec0q3vzDYXbT6YOZu7rJTzUWSHmnYtGp99/aU94IbMCoSf1/Q3MU4YqulT7eIaj+BHdUBdXQvXXZNZJ6YnIxEVlY9XNoT7tK17RzoOqJLxBNcL9uJsjuG4g5MYKnTAzTXsXzojiflMf9THxhpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 654ED1063;
-	Mon,  3 Mar 2025 03:35:36 -0800 (PST)
-Received: from [10.57.37.67] (unknown [10.57.37.67])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 111383F673;
-	Mon,  3 Mar 2025 03:35:19 -0800 (PST)
-Message-ID: <2b6d5287-bdea-4ec3-a07f-986bd3c3b285@arm.com>
-Date: Mon, 3 Mar 2025 11:35:19 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 686DF1FF7D7;
+	Mon,  3 Mar 2025 11:38:26 +0000 (UTC)
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2061.outbound.protection.outlook.com [40.107.220.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5552A1FF5FB;
+	Mon,  3 Mar 2025 11:38:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741001900; cv=fail; b=CXQRw/AkBQxZxeP+v4Fl0zpOgoqZinutEMV2lcyoweFLxYlWh6JJWkfDAfswcDwCsmiioJ0ExoK/5IT244esWOgGRtkKpv/QS083sJz56gDIdvVnVrXSW+0vgmZaeY8QIW3R9vDP7S1m7i2kKjIc6RnCV213UgU1brS8j/5IMIA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741001900; c=relaxed/simple;
+	bh=es5LyWs7oxVaKV20/F5e7YLk6wPNnkFo9e7W+GO11mQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=kVboq09cWEGxMt91zuDvcXry0moVtSwdUVsrs84ORTxr471dvqxzTaU8CyuI1F2ca2We+ubo/iwcFeKQb0Tc4L55OHHwNjYXJwyy/zCy0am1vu77ktqZYGJMvLcuMXol9tKgVtj76ieShiDPDqKSLMeTenSnMWxfxf0rYM+itjs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=WHmXBAfU; arc=fail smtp.client-ip=40.107.220.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vVockNFJ0eZbr9tOQ4ozXUEUHdDO1qnsebgPl37ZDbwyahInvFxYRNMlyCLpo/dlWgISDQQO2aUQcr228BCh9wvvARcwvBuUI8FPaVqB2YCsKU0hzR6wHbWS2ssS2AMbsAYfApBXfz+AxJjO5N8/ZnI9WGBGfuS8AeCZXZzZl7yfrx7ogsKX3XU5hQrdPEuYVQma855N/LCvfeexFNOA5/XMm7NtwKD6qC45KpWFBLC7lnDFv/ash8S33hnXoKRgC4k0S4NNZ8IyorFwk0vszHGMBJO48emLnuDI/NtjvyOixWOYn+YJaEBF1AcaLSKlIaMM54inTZ+ZUFh/Xw2Xlg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=G17tZ3DLbfZjvX+8k/EW9YuPxFr/eeKUjfUAz68sdmA=;
+ b=Uz72rR1LeBRfkSkK6buIBPiBh/ADn13uoSmTTpabtxmyzo/nHpbn2Y5HeubJS/bfU1ZjxUH82R54MMOIHCAQZKYPC75OxGM5dmzktGwfvYXg7BlpHwyIfH1PkQjRDvpZzN5pzVUqolMrblnUK6r8AcOSzpC6nKXtlZRzRW3vlh6eQsb6t5u/3cIz3UakRzJYGwdn6yVw7hFvr/WOqUymeJZO+2zoBbObH7qcc2AurS/3oSL80+bB/sdsi/BKoL45BEDa7+4Cp+3yjErcmd8rh4f5gt6jajlBi9twDx/tA4+TOkj0bLHTw4KXvE8iDmuVoaDzC8HNO7MSvnEU/jw4Zw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=G17tZ3DLbfZjvX+8k/EW9YuPxFr/eeKUjfUAz68sdmA=;
+ b=WHmXBAfU1l8lP1fFL2LfEfcPCi98J8BvK8hhTAkMYUkuWjP5fx6ycfpheyXlKRFfExZGH0YLV891vXNk/jO7EY7eKt2FzuD+NRWgLaBaDYpNxjGwu8hSugxePX9Pyw4OO9U4OnLLN8G7Txwi0RHSPF7Kh7mguJFgVlDLjmFStrc=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from IA1PR12MB6460.namprd12.prod.outlook.com (2603:10b6:208:3a8::13)
+ by LV2PR12MB5822.namprd12.prod.outlook.com (2603:10b6:408:179::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.25; Mon, 3 Mar
+ 2025 11:38:13 +0000
+Received: from IA1PR12MB6460.namprd12.prod.outlook.com
+ ([fe80::c819:8fc0:6563:aadf]) by IA1PR12MB6460.namprd12.prod.outlook.com
+ ([fe80::c819:8fc0:6563:aadf%7]) with mapi id 15.20.8489.025; Mon, 3 Mar 2025
+ 11:38:13 +0000
+Message-ID: <7c3b4623-45ea-4340-ac47-334071c1d15f@amd.com>
+Date: Mon, 3 Mar 2025 17:08:05 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 3/5] x86/cpufeatures: Generate a feature mask header
+ based on build config
+To: "Xin Li (Intel)" <xin@zytor.com>, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, will@kernel.org,
+ peterz@infradead.org, yury.norov@gmail.com, akpm@linux-foundation.org,
+ acme@kernel.org, namhyung@kernel.org, brgerst@gmail.com,
+ andrew.cooper3@citrix.com, nik.borisov@suse.com
+References: <20250228082338.73859-1-xin@zytor.com>
+ <20250228082338.73859-4-xin@zytor.com>
+Content-Language: en-US
+From: "Aithal, Srikanth" <sraithal@amd.com>
+In-Reply-To: <20250228082338.73859-4-xin@zytor.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN3PEPF00000184.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c04::4a) To IA1PR12MB6460.namprd12.prod.outlook.com
+ (2603:10b6:208:3a8::13)
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -84,134 +133,420 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/3] arm64: realm: Fix DMA address for devices
-Content-Language: en-GB
-To: linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: will@kernel.org, catalin.marinas@arm.com, maz@kernel.org,
- steven.price@arm.com, aneesh.kumar@kernel.org, gshan@redhat.com,
- robin.murphy@arm.com, linux-arm-kernel@lists.infradead.org,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>,
- Tom Lendacky <thomas.lendacky@amd.com>
-References: <20250227144150.1667735-1-suzuki.poulose@arm.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20250227144150.1667735-1-suzuki.poulose@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR12MB6460:EE_|LV2PR12MB5822:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5d40947a-7284-4f52-5fe2-08dd5a47e1d1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Zi9odi9GTnJGd2dvMTh0M0g4a2hIYTBjTFVoS3NFRDZSYnJLUDVpaS9iZWZD?=
+ =?utf-8?B?VXk4bkFXN1dPbzZxdGpIRGFkNStJejF3L1Z2QW5ySEZFWnc2bFpjWXZUOFFB?=
+ =?utf-8?B?MDZvenlheGdmaDNRdzNpSzdYSUVMcmRzcXhFQWlaallIUlJYV1BHbU5nbTZR?=
+ =?utf-8?B?c0IybmZTWitaUWlmdFlRUzBHM3YzMUFBakdpYjdkVDN4TFE1MUpyS2drOWZR?=
+ =?utf-8?B?OGJxUlZkZnBZMWJPT0xKVkg5b2xTNjMwMlFMcjA2Vk41SmV4d3A4UEg1aGFX?=
+ =?utf-8?B?TUpzSmZYZSt5UG91eWRZZlZhTFVwVWlVM2pUOWRSVlk5cVpIcDkwU3grM3FX?=
+ =?utf-8?B?dkp6QllTZmhWTFpGUUpIeG14d2llZE5wOFlKeTJESmZRZVg4RFprVDE4Um9r?=
+ =?utf-8?B?SWs0aFB5TFNMUjhwcWF3aWF2OG5hVCtqUmt1dm9sMzREUmVzWlRYMWQ3eDVX?=
+ =?utf-8?B?Y21Qc3V2dFR0bzZHRDExTk1XcEx0TU1KODl2UXFZNUU4aWMrRndnZS9NVktu?=
+ =?utf-8?B?YXBMdk5SbUE5c2w4QWY1RTNUdzVObG5CRFFLYW0vWnE3a3NRWHVsTUpta2hW?=
+ =?utf-8?B?YlMvNzgrNFpicThJdDR0VHJaQStzVmUzS0RJZDZmWVRyL2ZvY3FBM25sQnFT?=
+ =?utf-8?B?cXlLOUxyMEM0VS9ZMHVEU1BXRU9SQ1BHdm9Ec3ZvZVhUMUQwU0s5WnZWOWdD?=
+ =?utf-8?B?Q1JDK05DUnBsM3VLd253T2VZMU90YVFkK0pyU2c2b3Q3aTBLZzJXa21VcTBu?=
+ =?utf-8?B?T3FBVGtiR2UySnVvVUlKRFg4YlUwcHdkL2RPQ001TXhQamg0L1lrenh0ait1?=
+ =?utf-8?B?OVkyWTlDMys5TlY5MTdVbHFyZ0ZJUVB4WWJXQVYyNWpXalJmcElDUVdRMGNq?=
+ =?utf-8?B?dTdYdVY3ZEZ2RnlEWms3dG5SVWthKzV5MC8yMFNXZ084cGVETituR1lmTXRM?=
+ =?utf-8?B?ZTVwYWpwUGgrWUxwMlFpZXNxSlNQTFR0SDhDWGZOZitkZUhBVGdMcjB3Vk5n?=
+ =?utf-8?B?azMwaE9TNmxGMzdTWkV6cm1SaDRWVWpWMFIwOWVjVktFK0lnUVkzbmw4ekdS?=
+ =?utf-8?B?VTF4alNZNzc5SG5Tbi90ZnVrQU4yaUEyVmF3WXVtRkh0RTVqdE9TMlJiRGFn?=
+ =?utf-8?B?SVRRN3FQUnU2dFVwWXo3Y1dpdTFUR1lDTUNvc0YraXBNWnRGSDJ2ZlJhRWti?=
+ =?utf-8?B?UW5LZWc1dFFCeHNuZzJ4dVVtMENBb3hkNTBJSmU5NjFqRDFtdFlYeDZrT0xS?=
+ =?utf-8?B?YUZKRTNSSnpGK281WGQ2RndlWUpCV3lDQTQyWCtnaUJjRFVwWjQydkNGcXp6?=
+ =?utf-8?B?eXRqSW40SG9WcldxaWdtd1YxcVlXNG04ekdyTkx6d2t4eFVVbjJnSG0rUUpt?=
+ =?utf-8?B?S0NxZFpLMENHSXdaOWJlQlR5SVVjdnZ3RFRNZ2dZS2krRlF5YStmUHhQWW5V?=
+ =?utf-8?B?WXgxRnJVNFVtaUYrN2hLK3Vyc2taSDVKZnlIU2g0dERNa25Sem0vcHJ0MUFQ?=
+ =?utf-8?B?V29oYWxUdEJqcHZzOVd6Sk5lbitKQStQRkJ5c0ExN3ROaERRZXJDUVFleGdC?=
+ =?utf-8?B?WHBIUnZ5Zm9xOWtuVkRlT1JOSjhwaEcvSk1ldkhSWDh5N2RWK2Z2VFdHVjlE?=
+ =?utf-8?B?YlVOZjFLUjBUOENCangzTWJxQ1hKYjZONXRiT0ZXVUFxL3pXcXZWNGgrUjBs?=
+ =?utf-8?B?R1V2ZExXcEpBOEFhZ3NDOEhDVVU0NEJReVZoZVVwaTlWdSsyUjJ6MklnUkVF?=
+ =?utf-8?B?WUhqKzBMQUZNWDd6RFMrNVNaS3BPMDdWMTRkcFpFRDZLejRpMExDUzRidUNJ?=
+ =?utf-8?B?dzNMUFFicmdHenJmVFk4d254UmFOOENucUw2SnFSdFFsZ3JGR3hvTmhTNXZ1?=
+ =?utf-8?Q?z4q9HMu4FoLVg?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB6460.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Z2M2eFRqR0VDQ1NyVzlGVS9KbEQzRlN3Nmd0bUFLY3g4cnp6b3JlMzN0UFk1?=
+ =?utf-8?B?QzhlTE0vU2RxYmo1V0VmOFN5eEZwRzBraEh0TFZ1UWZSd2pnUWhaWDBXc2JN?=
+ =?utf-8?B?QmtmaU5IMG02MWVFU3pOMFQvL2YybzU3M3M1aXdrMzU3dDk5Z3J1Y29UZHky?=
+ =?utf-8?B?SkEwYnd1RENWZTN0YUNOR3dVNjdxbU9BL2ZHYUI2Q09WbkdmRTFRdW9nWmY3?=
+ =?utf-8?B?dGZFRURZd0FnN3lHYjBscUk1TUdPOGJTalNOSkVlM2htUDRid1g4bUY5RTYw?=
+ =?utf-8?B?N2pYTkdUMFpuU2t1U25kWmlGa0RlZFF1ZktrZGJ5T2FGdDRZRXdtd0VQOURT?=
+ =?utf-8?B?RTY5UmJjdy9TVTFTRGFodHV5WDBrRzcrdmx0RXIrd1ZyN1A0VEdzUGxUaVY5?=
+ =?utf-8?B?RCtEdG93YkE1aGNHTHBVdjdQZUR6enRUcGJEdHljMktGYUpUVUh6Mmo1eVdQ?=
+ =?utf-8?B?eDU0cThKaHY4SnhZd2xwYmo4b28rOU1PQldUY3VHZDNaTHpLS0RzNmdQTlJ2?=
+ =?utf-8?B?N1phOXhJNzRZTWxkVWJ5YU1Mb0duVERhTnQxa0hVREFzK2hLcDRYNHFueXBi?=
+ =?utf-8?B?ZmQyS05TRHdXQnZickZsNHE0cDlienBSTEJ2WnpoVXdiWklSa1hrSjJvU2d3?=
+ =?utf-8?B?VzhlVEt4eTdLc3VrdHcxRmJMZ1F6aFZreDRQT0JnNFk4NnpJS1g3THo2a3lX?=
+ =?utf-8?B?YWpKS29wWk9JKzdGcVB4bzFXL3Q1V1NtQnJ0ek9uY29vWUF2bE15NGhYNTRU?=
+ =?utf-8?B?dDIvbVUwd1pnVllGOEVTWSs4UFlLU1ErM2pVQmlrYmphWkM1L1R4NE5pc25v?=
+ =?utf-8?B?dWVrWnhvaUt1cGR5aUo1YndCZnAxa2xKY1FtUzlIckdFbkY3ckVhUUpBeVc3?=
+ =?utf-8?B?WUJzbmQ1TG9yd3REdGYwdGJkWGFlaHo1SzBUdjdvVWQrbnc5eUdGalJDZ091?=
+ =?utf-8?B?THQvMFRnRHNxS1BLN2tCUlJyRVN3amlnL0VMcUpHMzNza2JyMldreDY4YzIv?=
+ =?utf-8?B?N21IT1MxVmFGSnhvL0IvN0duL0l5S3o4RmdVTHZHK3JKcHEveUFBYlNGS05z?=
+ =?utf-8?B?b0pRSjVEcllkZUg4Rm5tQVBxMHFpM0xlMEg0UHpUY3RLQjVjTkpocTJiWUJR?=
+ =?utf-8?B?U1l3MzNBcGZlQVlNM2RMN3YvSXNjOVJ3NzZoRC90ODZLQ2N1alhWSHZ3R0d3?=
+ =?utf-8?B?YkJpeG1xVEgwV1JOWVk5d2lxaWF2MHI1RmpESm5rdytGazROVEs4TEdVdVkx?=
+ =?utf-8?B?ellwY3pUNHhHcGQ1Mmt6aFRMRlZPelFVSlRFVlFCVEtmeVoxZzdjZHNndTRk?=
+ =?utf-8?B?V0kvL0dJd2VVbUcyTWdENHlEK3ZpczlrUCtDWlZBUHMrSFNIbjFST1FLRkRi?=
+ =?utf-8?B?YVZYSXpmL3BQUFZVamdscVZoNktEMjhZWXpFb3hMNWVla2dCQjArYWNxMGxL?=
+ =?utf-8?B?OTgyanBjb3BHNGZRUUNYK2sxaG9aaWFZZGpFRlViZ3NPSUpGVk8xWWRZT3hk?=
+ =?utf-8?B?Zmt3NUNIOHhZRWpNTGIyTUFHSGczWlJISXEwdUNIbGF0eGFuMjYrdVBtODRj?=
+ =?utf-8?B?SDhiMFUwMnpwTHNXQ2M2VEhab1lZbmRLV08zVm5jSEhPY0dSMkhTVjdoWkU1?=
+ =?utf-8?B?T0MzajZ4UFR5RVMzaGEwVWE0cjRQaGlLQnpmcVB5K0NXYWZ4SHVXY0RZbTIy?=
+ =?utf-8?B?aTNHVTF2T3VSNmU1R25iUDJDNE1SL3dINzVWaFBFQ0ZzOFQ4RVVIK1FOYncy?=
+ =?utf-8?B?NVJTMGVnWG85TUVGMmI3VS9qVFdjU1BXVk81NWR5cG92Zmp2Vjh3TVNLckxD?=
+ =?utf-8?B?NVBIOVNMSFZlSVdqVnBCdUtkODFTcTdLVm5pazMwMlI2U1dpZURIbERoOWJv?=
+ =?utf-8?B?cEVWdEF2YUN1c1NpQm1TUUFMencyU2pqWHZzSXlsUHpGS2ZBTE4zeStUUmVI?=
+ =?utf-8?B?cnZPQzl6dVVBNSttTm9MSFFvdzczVzlVK2I4WUZCVnFOeE9UTVZFZjZ5bFcy?=
+ =?utf-8?B?Ty9nTVNDd1F0eXVSZS9zR083ZjBNWVpwYm8zOVp3NmR2eVQyUGoxY081MTFU?=
+ =?utf-8?B?dHVFTzRWaXFsbDMrckhsTjFIQWZPNEdpME1Ib1V4eC9zMWw1bUwraDFhdmpt?=
+ =?utf-8?Q?c1pIb1cpUjpsd3hueLehLSVfI?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5d40947a-7284-4f52-5fe2-08dd5a47e1d1
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB6460.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2025 11:38:13.8541
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2vAreuqvtcYFGUgCaasmaY/gVh1Vcj8Z27kVM8nKPgme7eAIlgW/WeUpoCwSs3NeiriIEh6Ibd3Jge2drikzlg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5822
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6dTp00p7zFw3N
+X-ITU-Libra-ESVA-ID: 4Z6dkp71XjzFxKl
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741716633.21265@5IOOwxOXIHb2RB+9KsFIwA
+X-ITU-Libra-ESVA-Watermark: 1741714439.5591@iED7tjWS+lScP9nf2waahQ
 X-ITU-MailScanner-SpamCheck: not spam
 
-Hi Marek,
+On 2/28/2025 1:53 PM, Xin Li (Intel) wrote:
+> From: "H. Peter Anvin (Intel)" <hpa@zytor.com>
+> 
+> Introduce an AWK script to auto-generate a header with required and
+> disabled feature masks based on <asm/cpufeatures.h> and current build
+> config. Thus for any CPU feature with a build config, e.g., X86_FRED,
+> simply add
+> 
+> config X86_DISABLED_FEATURE_FRED
+> 	def_bool y
+> 	depends on !X86_FRED
+> 
+> to arch/x86/Kconfig.cpufeatures, instead of adding a conditional CPU
+> feature disable flag, e.g., DISABLE_FRED.
+> 
+> Lastly the generated required and disabled feature masks will be added
+> to their corresponding feature masks for this particular compile-time
+> configuration.
+> 
+> [ Xin: build integration improvements ]
+> 
+> Signed-off-by: H. Peter Anvin (Intel) <hpa@zytor.com>
+> Signed-off-by: Xin Li (Intel) <xin@zytor.com>
+> Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
+> ---
+> 
+> Change in v6:
+> * Make the AWK script work for mawk and BusyBox awk (Borislav Petkov).
+> 
+> Change in v5:
+> * More polishes (Nikolay Borisov).
+> 
+> Changes in v4:
+> * Add a few high-level comments to the AWK script (Nikolay Borisov).
+> * Enforce CPU feature mask values to be unsigned.
+> 
+> Changes in v3:
+> * Remove AWK code that generates extra debugging comments (Brian Gerst).
+> * Move SSE_MASK to verify_cpu.S, the only place it is used (Brian Gerst).
+> 
+> Change in v2:
+> * Remove code generating unused macros {REQUIRED,DISABLED}_FEATURE(x)
+>    to tell if a CPU feature, e.g., X86_FEATURE_FRED, is a required or
+>    disabled feature for this particular compile-time configuration.
+> ---
+>   arch/x86/Makefile                  | 17 ++++++-
+>   arch/x86/boot/cpucheck.c           |  3 +-
+>   arch/x86/boot/cpuflags.c           |  1 -
+>   arch/x86/boot/mkcpustr.c           |  3 +-
+>   arch/x86/include/asm/Kbuild        |  1 +
+>   arch/x86/include/asm/cpufeature.h  |  1 +
+>   arch/x86/include/asm/cpufeatures.h |  8 ---
+>   arch/x86/kernel/verify_cpu.S       |  4 ++
+>   arch/x86/tools/featuremasks.awk    | 81 ++++++++++++++++++++++++++++++
+>   9 files changed, 105 insertions(+), 14 deletions(-)
+>   create mode 100755 arch/x86/tools/featuremasks.awk
+> 
+> diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+> index 6784129328f6..60583987d320 100644
+> --- a/arch/x86/Makefile
+> +++ b/arch/x86/Makefile
+> @@ -263,9 +263,22 @@ archscripts: scripts_basic
+>   	$(Q)$(MAKE) $(build)=arch/x86/tools relocs
+>   
+>   ###
+> -# Syscall table generation
+> +# Feature masks header and syscall table generation
+>   
+> -archheaders:
+> +out := arch/x86/include/generated/asm
+> +featuremasks_hdr := featuremasks.h
+> +featuremasks_awk := $(srctree)/arch/x86/tools/featuremasks.awk
+> +cpufeatures_hdr := $(srctree)/arch/x86/include/asm/cpufeatures.h
+> +quiet_cmd_gen_featuremasks = GEN     $@
+> +      cmd_gen_featuremasks = $(AWK) -f $(featuremasks_awk) $(cpufeatures_hdr) $(KCONFIG_CONFIG) > $@
+> +
+> +$(out)/$(featuremasks_hdr): $(featuremasks_awk) $(cpufeatures_hdr) $(KCONFIG_CONFIG) FORCE
+> +	$(shell mkdir -p $(out))
+> +	$(call if_changed,gen_featuremasks)
+> +
+> +targets += $(out)/$(featuremasks_hdr)
+> +
+> +archheaders: $(out)/$(featuremasks_hdr)
+>   	$(Q)$(MAKE) $(build)=arch/x86/entry/syscalls all
+>   
+>   ###
+> diff --git a/arch/x86/boot/cpucheck.c b/arch/x86/boot/cpucheck.c
+> index 0aae4d4ed615..8d03a741d1b2 100644
+> --- a/arch/x86/boot/cpucheck.c
+> +++ b/arch/x86/boot/cpucheck.c
+> @@ -22,10 +22,11 @@
+>   # include "boot.h"
+>   #endif
+>   #include <linux/types.h>
+> +#include <asm/featuremasks.h>
+>   #include <asm/intel-family.h>
+>   #include <asm/processor-flags.h>
+> -#include <asm/required-features.h>
+>   #include <asm/msr-index.h>
+> +
+>   #include "string.h"
+>   #include "msr.h"
+>   
+> diff --git a/arch/x86/boot/cpuflags.c b/arch/x86/boot/cpuflags.c
+> index d75237ba7ce9..0cabdacb2a2f 100644
+> --- a/arch/x86/boot/cpuflags.c
+> +++ b/arch/x86/boot/cpuflags.c
+> @@ -3,7 +3,6 @@
+>   #include "bitops.h"
+>   
+>   #include <asm/processor-flags.h>
+> -#include <asm/required-features.h>
+>   #include <asm/msr-index.h>
+>   #include "cpuflags.h"
+>   
+> diff --git a/arch/x86/boot/mkcpustr.c b/arch/x86/boot/mkcpustr.c
+> index da0ccc5de538..b90110109675 100644
+> --- a/arch/x86/boot/mkcpustr.c
+> +++ b/arch/x86/boot/mkcpustr.c
+> @@ -12,8 +12,6 @@
+>   
+>   #include <stdio.h>
+>   
+> -#include "../include/asm/required-features.h"
+> -#include "../include/asm/disabled-features.h"
+>   #include "../include/asm/cpufeatures.h"
+>   #include "../include/asm/vmxfeatures.h"
+>   #include "../kernel/cpu/capflags.c"
+> @@ -23,6 +21,7 @@ int main(void)
+>   	int i, j;
+>   	const char *str;
+>   
+> +	printf("#include <asm/featuremasks.h>\n\n");
+>   	printf("static const char x86_cap_strs[] =\n");
+>   
+>   	for (i = 0; i < NCAPINTS; i++) {
+> diff --git a/arch/x86/include/asm/Kbuild b/arch/x86/include/asm/Kbuild
+> index 58f4ddecc5fa..51022d21003e 100644
+> --- a/arch/x86/include/asm/Kbuild
+> +++ b/arch/x86/include/asm/Kbuild
+> @@ -8,6 +8,7 @@ generated-y += syscalls_x32.h
+>   generated-y += unistd_32_ia32.h
+>   generated-y += unistd_64_x32.h
+>   generated-y += xen-hypercalls.h
+> +generated-y += featuremasks.h
+>   
+>   generic-y += early_ioremap.h
+>   generic-y += fprobe.h
+> diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
+> index de1ad09fe8d7..077a5bbd1cc5 100644
+> --- a/arch/x86/include/asm/cpufeature.h
+> +++ b/arch/x86/include/asm/cpufeature.h
+> @@ -9,6 +9,7 @@
+>   #include <asm/asm.h>
+>   #include <linux/bitops.h>
+>   #include <asm/alternative.h>
+> +#include <asm/featuremasks.h>
+>   
+>   enum cpuid_leafs
+>   {
+> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+> index c8701abb7752..b9b7329f4ac4 100644
+> --- a/arch/x86/include/asm/cpufeatures.h
+> +++ b/arch/x86/include/asm/cpufeatures.h
+> @@ -2,14 +2,6 @@
+>   #ifndef _ASM_X86_CPUFEATURES_H
+>   #define _ASM_X86_CPUFEATURES_H
+>   
+> -#ifndef _ASM_X86_REQUIRED_FEATURES_H
+> -#include <asm/required-features.h>
+> -#endif
+> -
+> -#ifndef _ASM_X86_DISABLED_FEATURES_H
+> -#include <asm/disabled-features.h>
+> -#endif
+> -
+>   /*
+>    * Defines x86 CPU feature bits
+>    */
+> diff --git a/arch/x86/kernel/verify_cpu.S b/arch/x86/kernel/verify_cpu.S
+> index 1258a5872d12..a23a65d5d177 100644
+> --- a/arch/x86/kernel/verify_cpu.S
+> +++ b/arch/x86/kernel/verify_cpu.S
+> @@ -29,8 +29,12 @@
+>    */
+>   
+>   #include <asm/cpufeatures.h>
+> +#include <asm/featuremasks.h>
+>   #include <asm/msr-index.h>
+>   
+> +#define SSE_MASK	\
+> +	(REQUIRED_MASK0 & ((1<<(X86_FEATURE_XMM & 31)) | (1<<(X86_FEATURE_XMM2 & 31))))
+> +
+>   SYM_FUNC_START_LOCAL(verify_cpu)
+>   	pushf				# Save caller passed flags
+>   	push	$0			# Kill any dangerous flags
+> diff --git a/arch/x86/tools/featuremasks.awk b/arch/x86/tools/featuremasks.awk
+> new file mode 100755
+> index 000000000000..fd3e72147157
+> --- /dev/null
+> +++ b/arch/x86/tools/featuremasks.awk
+> @@ -0,0 +1,81 @@
+> +#!/usr/bin/awk
+> +#
+> +# Convert cpufeatures.h to a list of compile-time masks
+> +# Note: this blithly assumes that each word has at least one
+> +# feature defined in it; if not, something else is wrong!
+> +#
+> +
+> +BEGIN {
+> +	printf "#ifndef _ASM_X86_FEATUREMASKS_H\n";
+> +	printf "#define _ASM_X86_FEATUREMASKS_H\n\n";
+> +
+> +	file = 0
+> +}
+> +
+> +FNR == 1 {
+> +	++file;
+> +
+> +	# arch/x86/include/asm/cpufeatures.h
+> +	if (file == 1)
+> +		FS = "[ \t()*+]+";
+> +
+> +	# .config
+> +	if (file == 2)
+> +		FS = "=";
+> +}
+> +
+> +# Create a dictionary of sorts, containing all defined feature bits
+> +file == 1 && $1 ~ /^#define$/ && $2 ~ /^X86_FEATURE_/ {
+> +	nfeat = $3 * $4 + $5;
+> +	feat = $2;
+> +	sub(/^X86_FEATURE_/, "", feat);
+> +	feats[nfeat] = feat;
+> +}
+> +file == 1 && $1 ~ /^#define$/ && $2 == "NCAPINTS" {
+> +	ncapints = int($3);
+> +}
+> +
+> +# Create a dictionary featstat[REQUIRED|DISABLED, FEATURE_NAME] = on | off
+> +file == 2 && $1 ~ /^CONFIG_X86_(REQUIRED|DISABLED)_FEATURE_/ {
+> +	on = ($2 == "y");
+> +	if (split($1, fs, "CONFIG_X86_|_FEATURE_") == 3)
+> +		featstat[fs[2], fs[3]] = on;
+> +}
+> +
+> +END {
+> +	sets[1] = "REQUIRED";
+> +	sets[2] = "DISABLED";
+> +
+> +	for (ns in sets) {
+> +		s = sets[ns];
+> +
+> +		printf "/*\n";
+> +		printf " * %s features:\n", s;
+> +		printf " *\n";
+> +		fstr = "";
+> +		for (i = 0; i < ncapints; i++) {
+> +			mask = 0;
+> +			for (j = 0; j < 32; j++) {
+> +				feat = feats[i*32 + j];
+> +				if (featstat[s, feat]) {
+> +					nfstr = fstr " " feat;
+> +					if (length(nfstr) > 72) {
+> +						printf " *   %s\n", fstr;
+> +						nfstr = " " feat;
+> +					}
+> +					fstr = nfstr;
+> +					mask += (2 ^ j);
+> +				}
+> +			}
+> +			masks[i] = mask;
+> +		}
+> +		printf " *   %s\n */\n", fstr;
+> +
+> +		for (i = 0; i < ncapints; i++)
+> +			printf "#define %s_MASK%d\t0x%08xU\n", s, i, masks[i];
+> +
+> +		printf "#define %s_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != %d)\n\n", s, ncapints;
+> +	}
+> +
+> +	printf "#endif /* _ASM_X86_FEATUREMASKS_H */\n";
+> +}
 
 
-On 27/02/2025 14:41, Suzuki K Poulose wrote:
-> Linux can be run as a Confidential Guest in Arm CCA from Linux v6.13. The address
-> space (GPA or IPA) of a Realm VM is split into two halves, with private bottom
-> half and shared top half. In Linux we treat the "top" bit of the IPA space as
-> an attribute, to indicate whether it is shared or not (MSB == 1 implies shared).
-> Stage2 (GPA to PA) translations used by the CPU accesses, cover the full IPA space,
-> and are managed by RMM. The "top" bit as attribute is only a software construct.
-> 
-> At present any device passed through to a Realm is treated as untrusted and the
-> Realm uses bounce buffering for any DMA, using the "decrypted" (shared) DMA
-> buffers (i.e., IPA with top bit set). In Linux, we only send the "DMA" address
-> masking the "top" bit. In Arm CCA, SMMU for untrusted devices are managed by the
-> non-secure Host and thus it can be confusing for the host/device when an unmasked
-> address is provided. Given there could be other hypervisors than Linux/KVM
-> running Arm CCA guests, the Realm Guest must adhere to a single convention for
-> the DMA address. This gets further complicated when we add support for trusted
-> devices, which can DMA into the full Realm memory space, once accepted. Thus,
-> a DMA masked address (with "top" bit lost) will prevent a trusted device from
-> accessing a shared buffer.
-> 
-> To resolve this Arm has decided to standardise the DMA address used by the Realm
-> to include the full IPA address bits (including the "top" bit, which Linux uses
-> as an attribute). This implies, any DMA to a shared buffer must have the top bit
-> of the IPA space set.
-> 
-> There is already a provision to do this in phys_to_dma* and dma_to_phys(), but
-> that is specific to AMD SME and is quite the opposite of what we need for Arm CCA.
-> i.e., For Arm CCA we need to set the bit for "decrypted" DMA and clear the bit
-> for "encrypted".
-> 
-> This series converts the existing __sme_* helpers to a bit more generalised versions :
-> dma_addr_decrypted() and dma_encrypted(). Also, while converting a DMA address back
-> to CPU physical address requires clearing off any "encryption/decryption" bits.
-> I have named this "dma_addr_canonical()". (The other options are :
->    * dma_addr_clear_encryption - Well, not just for encryption, but we clear decryption
->      too, so not ideal.
->    * dma_addr_normal
->    * dma_addr_clear
->    * dma_addr_default
-> 
-> This also implies that the VMMs must take care to :
-> 
->   1. Create the S2-SMMU mappings for VFIO at the "unprotected" alias.
->   2. Always mask the "top" bit off any IPA it receives from the Realm for DMA.
->      KVM already does that today and no changes are required.
-> 
-> A kvmtool branch with the changes above is available here [1]. There are two
-> patches [2] & [3], that are really required on top of the Arm CCA support.
-> 
-> Ideally it would be good to get this backported to v6.13 stable kernel releases
-> to make sure that they are compliant with this change.
-> 
 
-Please could you take a look at this series and let us know your
-thoughts ? If you are happy with the changes, are you happy to pull
-this through the DMA MAP tree ? The relevant bits have been reviewed/
-acked by people (arm64 and AMD bits).
+Building kselftests is regressing with this commit on next-20250303.
 
-Kind regards
-Suzuki
+# make headers
+   HOSTCC  scripts/basic/fixdep
+   HOSTCC  scripts/unifdef
+   WRAP    arch/x86/include/generated/uapi/asm/bpf_perf_event.h
+   WRAP    arch/x86/include/generated/uapi/asm/errno.h
+   WRAP    arch/x86/include/generated/uapi/asm/fcntl.h
+   WRAP    arch/x86/include/generated/uapi/asm/ioctl.h
+   WRAP    arch/x86/include/generated/uapi/asm/ioctls.h
+   WRAP    arch/x86/include/generated/uapi/asm/ipcbuf.h
+   WRAP    arch/x86/include/generated/uapi/asm/param.h
+   WRAP    arch/x86/include/generated/uapi/asm/poll.h
+   WRAP    arch/x86/include/generated/uapi/asm/resource.h
+   WRAP    arch/x86/include/generated/uapi/asm/socket.h
+   WRAP    arch/x86/include/generated/uapi/asm/sockios.h
+   WRAP    arch/x86/include/generated/uapi/asm/termbits.h
+   WRAP    arch/x86/include/generated/uapi/asm/termios.h
+   WRAP    arch/x86/include/generated/uapi/asm/types.h
+make[1]: *** No rule to make target '.config', needed by 
+'arch/x86/include/generated/asm/featuremasks.h'.  Stop.
+make: *** [Makefile:251: __sub-make] Error 2
 
+The same used to work fine until next-20250228.
 
-> Changes since v2:
->   Link: https://lkml.kernel.org/r/20250219220751.1276854-1-suzuki.poulose@arm.com
->    - Collect Acks & Reviews for Patch 1
->    - Rename helpers
->    	dma_encrypted		=> dma_addr_encrypted
-> 	dma_decrypted		=> dma_addr_unencrypted
-> 	dma_clear_encryption	=> dma_addr_canonical
->    - For Arm CCA, use PROT_NS_SHARED, set/clear only the top IPA bit.
->    - Drop dma_addr_encrypted() helper for Arm CCA as it is a NOP
-> 
-> Changes since v1
->   Link: https://lkml.kernel.org/r/20250212171411.951874-1-suzuki.poulose@arm.com
->   - Follow Robin's suggestion to generalise the DMA address conversion helpers
->     to provide dma_{encrypte,decrypted,clear_encryption}. See PATCH 2 for more
->     details.
->   - Add a fix to the ordering of "__sme_clr" for dma_to_phys (PATCH 1)
-> 
-> [1] git@git.gitlab.arm.com:linux-arm/kvmtool-cca.git cca/guest-dma-alias/v1
-> [2] https://gitlab.arm.com/linux-arm/kvmtool-cca/-/commit/ea37a6eb968abe4c75be4a8a90808714657c2ef7
-> [3] https://gitlab.arm.com/linux-arm/kvmtool-cca/-/commit/8afd0d5e6a7ee444dd0c1565fe94ecd831054a29
-> 
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Jean-Philippe Brucker <jean-philippe@linaro.org>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Robin Murphy <robin.murphy@arm.com>
-> Cc: Steven Price <steven.price@arm.com>
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> Cc: Tom Lendacky <thomas.lendacky@amd.com>
-> Cc: Gavin Shan <gshan@redhat.com>
-> 
-> Suzuki K Poulose (3):
->    dma: Fix encryption bit clearing for dma_to_phys
->    dma: Introduce generic dma_addr_*crypted helpers
->    arm64: realm: Use aliased addresses for device DMA to shared buffers
-> 
->   arch/arm64/include/asm/mem_encrypt.h | 11 +++++++++++
->   include/linux/dma-direct.h           | 13 +++++++++----
->   include/linux/mem_encrypt.h          | 23 +++++++++++++++++++++++
->   3 files changed, 43 insertions(+), 4 deletions(-)
-> 
+Recreation steps:
+1. Clone next-20250303
+2. make distclean
+3. make headers
 
+Srikanth Aithal <sraithal@amd.com>
 
 
