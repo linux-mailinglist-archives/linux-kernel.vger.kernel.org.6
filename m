@@ -1,167 +1,119 @@
-Return-Path: <linux-kernel+bounces-541005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 233D3A4B75C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 06:03:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4758A4B75E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 06:04:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 144B87A277B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 05:02:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 391D73AB8A3
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 05:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4670F1B85FD;
-	Mon,  3 Mar 2025 05:02:54 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B001D9346;
+	Mon,  3 Mar 2025 05:04:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NxaukFGG"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 411FEAD27
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 05:02:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBB52AD27;
+	Mon,  3 Mar 2025 05:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740978173; cv=none; b=jeAnVsm+yvwEmkWkXtQbnmRPSul/noNIy8LySH9q7mp/BU5GiG0YSE8O9xj92R4hrAjAzuiFvm11FqLBa0rNnvbsItA9Se6TX5h56wvw63W6UgllJwW0WkHoTwKpcRdLXzlUuTcyFnPUo0CyD1YysX9S3A1kuImr9fbYg+j53aw=
+	t=1740978281; cv=none; b=QqbPcf3nP7uRcQe1KoR1t50sBI5x124m7N1YoyzGDgmVKlTzzf6vwuk95eLK0f/Okzxg81RijNkEyk5txpd81LWcPI+aGPWjSpvVdcKoKKZ1hEwPWigZqqV7KLPtboocmUxlptAoiI+Hgr5fxyzKNj2d8IspiN7YPpq+n7JbqUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740978173; c=relaxed/simple;
-	bh=9lZ6rNFYOMXW/QP+fnfXtQK9juG4DgZluU5Xhsc8yMM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Yk5h9CyQTUZaMfVfhYxC2xewpXEcgQyI5z9yFi1oz5p/qUrX0meayn3Aq/NLakX0Glm1nLthbDCS7A8RcupSm260dmIxivt+1GGQH//avmqpZX3+3ZJTjMjwiq5JTQe3Xj11UJEdCRArxyR9rnqk+SnSmsqVu507cY5SD5H+YhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Z5mmY3lQkz2DkZN;
-	Mon,  3 Mar 2025 12:58:37 +0800 (CST)
-Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4C7DC1402DE;
-	Mon,  3 Mar 2025 13:02:47 +0800 (CST)
-Received: from [10.159.166.136] (10.159.166.136) by
- kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Mon, 3 Mar 2025 13:02:45 +0800
-Message-ID: <6e54c88f-dfaf-462d-b66b-c237d19faec6@huawei.com>
-Date: Mon, 3 Mar 2025 13:02:44 +0800
+	s=arc-20240116; t=1740978281; c=relaxed/simple;
+	bh=ak2JvtkXpdCXNdZWrJpngnDwqqTP4VAWI8V98k0pKL4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VCsKuTZF5w7ZWd4op+eLLBH+NblPIBpcHXfa1DSMWe8CN32M5tIOet1O2GKCrqu6QeTbPCGJ9YFzQQbtta/P605A8rdXAplnwfDL7fMiqKsnhKeIbTbk5NBtzmy5P3AGEKhiV+HVaXCsSolKEyyoXHThX0Rg557iTWyfZ6Bg6PM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NxaukFGG; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-223594b3c6dso65116655ad.2;
+        Sun, 02 Mar 2025 21:04:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740978279; x=1741583079; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0MpZ1k7dX/F+Pw+v841rvHm+uxj93+81TQIaphP5Kq8=;
+        b=NxaukFGGoHvO1DNLp8egEwqfppBVxnVDUI0vJ0CC76djtoMdpGLSeyn+n9oX0iR7OE
+         IuUybPX3ahuhlaWCutSmX7uNmXB9ZZxL0VNJwDhwxFRauuv0Dz3q3vs7hD+rdZCm0At9
+         jQbrIhQed/N1b9KZhN69sGoZhNhsBwBB/S7/sY/rCwU758et/7FRGnKrnsHZmsRbM8+N
+         Mxt/uUKYZoRQMSVyBcbTiopnUhNZ9m+Vb2neNCx/gmszmTfmullsXy1Dwk/yqZCyAjEv
+         ZAEdOMMMvP48fwiBq0+cB9zKWYsm7LCcxkxSfYaRsQpTQVLjz0aJp7g9TsadWxE5je+w
+         YX4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740978279; x=1741583079;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0MpZ1k7dX/F+Pw+v841rvHm+uxj93+81TQIaphP5Kq8=;
+        b=s9XBwG6FdQ7LjnqR/TeU0w3CK6Bj4ggSnAejHrnSUDQ5ie7/GXXHroLr4n6ZKy17Fw
+         4/2bkUKYMte/nkdy42g1oQZlC0F7D4wiTND0jPakB7JO8ggTh3X5LjfhIBD7Jo4ZsHHR
+         c4kfEi+tO6+054Oz/FnmyTj2F4LrZrKkfag907EX+1SvEpkrR2ljl2eGfLYY/QYJgZme
+         s7kPm/5bmbTPDJ2dTVnVKuWanLmIZH2pNYBlYnwj7u4yCUb3Ybzkm2yEFgWM7rZc7gxH
+         9Taw8Wl3T9+h3obuHc3NEH+JJ6OqWPHTuKcNMMejEFJbawkbsM3H1kIiQopAKrLajl7C
+         FWqg==
+X-Forwarded-Encrypted: i=1; AJvYcCVNa74SfDYUsTyF6clF5aq6xokqHeoUbTgoWLwZXLCqyjA+ueZ/B0cCKldpqGro9u//4ekVBYgW0RU=@vger.kernel.org, AJvYcCXhTPYS4WvZEhORcjdtV4lF0kLcurSbm9KC9auSvT4RtZa3nCUGQIgrO3IW13eq+0nGM2TUc5u6nrBFyO5D@vger.kernel.org
+X-Gm-Message-State: AOJu0YyR0XdRVEsEf4sSWU+P8eeyhKvSRJM6wAGrRm09AFBZX/PSEqK1
+	G8JJjX94uJ5El0GWOgqnaDgWcr/lqPdGBEApLigNJ1IVE5XIwCiPtkGYf+RBnXY=
+X-Gm-Gg: ASbGncuzvlXIF6m4aPYMaDR5p3rfYrLqig4CQ/vy6oD1UoE/pNGeeTJzS43gDQqg4pX
+	Cjes+dyR9v3mpV/SaxU1MulPnPWyhuRGhcev5Lym4/7zRvMCxvJ/HWZ0x4EoEibToOFZUj6uXG4
+	w3MsdzJPZUggauUQuIsYQ+YQPlP2sEplD8cmX2WmBBlUfT6nU2HKwbZCjdrx0hUPQJb+Toc9RYI
+	2lXpo1vth33jiQ797K2xVK6cywt+OErNlF9gGmlnYVQPrEg4OijYpdseaDw7FlXtdGMv49P8Msv
+	vpG2Xskdyv1DBjrdLPUbkTccRDrwoMdCLY7YpnsX6LBjfn4DZkb8amU=
+X-Google-Smtp-Source: AGHT+IGeK/uCwqTgR67WHW8NRryne9Z9hLT8og2opBdBcEq55fkcfoQND4y+Y5hAsll/xewqqucAhg==
+X-Received: by 2002:a17:903:3ba5:b0:223:37ec:63d3 with SMTP id d9443c01a7336-22368fa903fmr144894375ad.18.1740978278852;
+        Sun, 02 Mar 2025 21:04:38 -0800 (PST)
+Received: from localhost ([2804:30c:1f21:4300:1cf6:c485:6555:b1c5])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-73652cdcd1bsm1291152b3a.97.2025.03.02.21.04.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Mar 2025 21:04:38 -0800 (PST)
+Date: Mon, 3 Mar 2025 02:05:30 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: Saalim Quadri <danascape@gmail.com>
+Cc: marcelo.schmitt@analog.com, dragos.bogdan@analog.com,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: GSoC Proposal 2025
+Message-ID: <Z8U4mr1vO-TWz91c@debian-BULLSEYE-live-builder-AMD64>
+References: <20250228113304.63160-1-danascape@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 drm-dp 7/8] drm/hisilicon/hibmc: Enable this hot plug
- detect of irq feature
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<kong.kongxinwei@hisilicon.com>, <liangjian010@huawei.com>,
-	<chenjianmin@huawei.com>, <lidongming5@huawei.com>, <libaihan@huawei.com>,
-	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-	<shiyongbang@huawei.com>
-References: <reqpxlbvlz5qssgy6gbjuou33h4zevo4xeztqbsr4keehplyhx@utv22a5ihohx>
- <eef68fc7-30f4-4246-a82e-4f90cd6a665d@huawei.com>
- <6jx5ldpidy2ycrqognfiv5ttqr5ia4dtbryta3kc2mkndrvvgo@qzuakucz765k>
- <6634386b-afc1-4e31-a2f4-9c1afed2d1d8@huawei.com>
- <CAA8EJpqHmhUxLE57XNeh-nVtSP7WvtBE=FiFWk9kqM_P+AC=0A@mail.gmail.com>
- <5af62fa9-e71b-412f-8640-502f03fcaa52@huawei.com>
- <vrsy4hao4qu3hlcbmjyfyibeearhhjgtik3e6o3v2eyzkatdve@kdb7cyvl45tu>
- <ade54ddd-79ea-4335-9058-c17e4525e83f@huawei.com>
- <4hicem4rbz5l7wnzaaz3krrl3euh2dmvlah2rb7errrdq5fann@44dvdxirkuzh>
- <6506e448-3851-436f-9354-42f9ef844d27@huawei.com>
- <njnz5hxumrvqrgsfq7zlunle3jgfan3be34ao5xtkmzczpi6af@waywds2ww6qw>
- <c87613aa-1d17-4a88-acce-269ea9eddc22@huawei.com>
- <CAA8EJpo71m_ae9siT7f4Tsfr0C4XeoraqPYPsPp0gz-N+oMOjw@mail.gmail.com>
-From: Yongbang Shi <shiyongbang@huawei.com>
-In-Reply-To: <CAA8EJpo71m_ae9siT7f4Tsfr0C4XeoraqPYPsPp0gz-N+oMOjw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemd500013.china.huawei.com (7.221.188.12)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250228113304.63160-1-danascape@gmail.com>
+
+Hello Saalim,
+
+On 02/28, Saalim Quadri wrote:
+> Hi everyone, I am Saalim Quadri an undergrad student at Dayananda Sagar College of Engineering, pursuing Electronics and Communications.
+> I wish to participate in the GSoC 2025 as a part of the Linux Foundation, IIO Project.
+> 
+> I have been contributing to the Linux Kernel and have more than 10 accepted patches.
+> I have also worked with Android Linux Ecosystem in the past years, and have worked on several subsystems, backports and fixes.
+> 
+> I started looking into https://wiki.linuxfoundation.org/gsoc/2025-gsoc-iio-driver and Analog Devices Inc. and I am interested in writing
+> the driver for ADE9113 ADC.
+> 
+> In that sense, I would like to know if anyone in the IIO community could provide with some suggestions for my proposal, and a positive impact.
+> Any suggestion or hint is appreciated!
+
+Well, aside from the "Tips for writing a good proposal" section in the project's
+page, I would also consider Jonathan's comments on previous proposals [1].
+
+If you are looking for a task list, see kernelnewbies IIO tasks page [2] and
+some suggested changes for IIO staging drivers [3].
 
 
-> On Sat, 1 Mar 2025 at 11:54, Yongbang Shi <shiyongbang@huawei.com> wrote:
->>
->>> On Sat, Mar 01, 2025 at 04:45:40PM +0800, Yongbang Shi wrote:
->>>>> On Thu, Feb 27, 2025 at 09:46:10PM +0800, Yongbang Shi wrote:
->>>>>>> On Tue, Feb 25, 2025 at 09:57:17PM +0800, Yongbang Shi wrote:
->>>>>>>>> On Mon, 24 Feb 2025 at 16:03, Yongbang Shi <shiyongbang@huawei.com> wrote:
->>>>>>>>>>> On Sat, Feb 22, 2025 at 06:35:48PM +0800, Yongbang Shi wrote:
->>>>>>>>>>>>>> +static int hibmc_dp_hpd_event(struct drm_client_dev *client)
->>>>>>>>>>>>>> +{
->>>>>>>>>>>>>> +  struct hibmc_dp *dp = container_of(client, struct hibmc_dp, client);
->>>>>>>>>>>>>> +  struct hibmc_drm_private *priv = to_hibmc_drm_private(dp->drm_dev);
->>>>>>>>>>>>>> +  struct drm_display_mode *mode = &priv->crtc.state->adjusted_mode;
->>>>>>>>>>>>>> +  int ret;
->>>>>>>>>>>>>> +
->>>>>>>>>>>>>> +  if (dp->hpd_status) {
->>>>>>>>>>>>>> +          hibmc_dp_hpd_cfg(&priv->dp);
->>>>>>>>>>>>>> +          ret = hibmc_dp_prepare(dp, mode);
->>>>>>>>>>>>>> +          if (ret)
->>>>>>>>>>>>>> +                  return ret;
->>>>>>>>>>>>>> +
->>>>>>>>>>>>>> +          hibmc_dp_display_en(dp, true);
->>>>>>>>>>>>>> +  } else {
->>>>>>>>>>>>>> +          hibmc_dp_display_en(dp, false);
->>>>>>>>>>>>>> +          hibmc_dp_reset_link(&priv->dp);
->>>>>>>>>>>>>> +  }
->>>>>>>>>>>>> If I understand this correctly, you are using a separate drm_client to
->>>>>>>>>>>>> enable and disable the link & display. Why is it necessary? Existing
->>>>>>>>>>>>> drm_clients and userspace compositors use drm framework, they should be
->>>>>>>>>>>>> able to turn the display on and off as required.
->>>>>>>>>>>>>
->>>>>>>>>>>> Thanks for your asking, there are cfg/reset process when the connector 's pluging in/out.
->>>>>>>>>>>> We want to cfg DP registers again when the connector changes. Not only dp link training, but also cfg
->>>>>>>>>>>> the different video modes into DP registers.
->>>>>>>>>>> Why? The link training and mode programming should happen during
->>>>>>>>>>> pre_enable / enable stage (legacy or atomic).
->>>>>>>>>> Hi Dmitry,
->>>>>>>>>>
->>>>>>>>>> Right, that's what I'm curious about. It won't call encoder enble/disable functions when I triggered HPD.
->>>>>>>>>> And I'm sure the drm_connector_helper_hpd_irq_event() is called. So I add a drm_client for it.I
->>>>>>>>> It should be userspace, who triggers the enable/disable (or it should
->>>>>>>>> be the in-kernel fbdev / fbcon, which interface through the generic
->>>>>>>>> drm_fbdev client).
->>>>>>>> Right, I knew it. When I insmode my driver firstly (or restart display service), it will call disable, modeset and enable,
->>>>>>>> by user, but it won't call when HPD triggered .
->>>>>>> - Is HPD even properly delivered to userspace? What kind of compsitor
->>>>>>>       are you using? Is .detect working properly and reporting a correct
->>>>>>>       plug-in state?
->>>>>> Thanks for your answering. I'm not very good understanding about userspace in framework. In my opinion, when I call
->>>>>> this drm_connector_helper_hpd_irq_event(), the HPD will deliver to userspace.
->>>>>> I use Xorg, and the display service is GDM.
->>>>>> The .detect is called and the getting modes info is correct.
->>>>>> I find that it would only trigger(disable, modeset and enable), when I changed resolutions, restart display service and insmod driver.
->>>>> You can go to the display settings in GDM. It would be interesting to
->>>>> observe if it notes the second monitor or not. Last, but not least, you
->>>>> can use a simple tool like 'xrandr' under your XOrg session to set the
->>>>> display resolution.
->>>> Thank you for your advice!
->>>> Right, there are DP and VGA two monitors. I tried to totally remove the vga connector in driver, the problem is gone.
->>>> So do I need to clear the vga connector, if dp is plugged in?
->>> Unless your hardware can not manage two outputs at the same time, no,
->>> you don't have to. Just check how it behaves on x86 systems. Ideally
->>> your driver should have the same behaviour.
->> Our hardware cannot support two outputs with different timing, so I used the one crtc and one plane that DP and VGA share. And just add a new DP connector
->> with a encoder, just like the previous VGA's code logic. But the HPD problem makes me feel confused, should I change the framwork structure to slove this problem?
-> I think registering a single CRTC is a correct way. Then it is logical
-> that there is no mode set on the DP when you connect it. The userspace
-> can not output any data. However if you disconnect VGA and connect DP
-> then it should become active and should output your desktop
-> environment.
+[1] https://lore.kernel.org/linux-iio/20240326185207.20f8987e@jic23-huawei/
+[2] https://kernelnewbies.org/IIO_tasks
+[3] https://lore.kernel.org/linux-iio/Z8U0lsntJpTuBzyT@debian-BULLSEYE-live-builder-AMD64/
 
-Okay, Thank you for your guidance. So I need to disconnect VGA when I get the HPD (plugged in) , then
-userapce will active and enanble DP, right?
-
-
->> And also, I will check whether this driver works good on the x86 server. Right now, I'm testing on arm64 server.
->>
->>>> And also, I used xrandr to set modes after 'startx'. Changing resolutions works,
->>>> but there are errs when set some low resolutions.
->>> That's a separate topic, most likely related to timing or to some other
->>> issues. You can fix that separately (but please do, switching modes
->>> should work).
->> Okay!
->>
->>
->
+Regards,
+Marcelo
 
