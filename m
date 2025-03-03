@@ -1,171 +1,121 @@
-Return-Path: <linux-kernel+bounces-542399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C505DA4C9A9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:34:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7760CA4C94D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:25:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE00A3BA85E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:16:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EBBA17E597
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:17:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6669F238174;
-	Mon,  3 Mar 2025 17:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="uo272dwA"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06066236A7A
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 17:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D413239597;
+	Mon,  3 Mar 2025 17:00:24 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CAA1239570;
+	Mon,  3 Mar 2025 17:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741021216; cv=none; b=s9y1nq0r+yoPn5j5wqH/v9WCnxHQt9Q1F6vkNkSfA7BbGIXRpeHDUzV2mGFEcUy+CgWuvoV7Fa7tntMtRfMnxSE4cDoisRFR8a6lk/k2guV03Z4KAQc+jW2EwOeAIbMZmAKyFM+VMTahh35KuRx7zXnTkLHOLavOoXaeUKZygHA=
+	t=1741021223; cv=none; b=IJEivTlKj2GOpBN7r6dsG5Q4aJX2t1tgCP7s4D2FDv0iBG4X3JaR+67BKB16NdMTi2y76RQvePZuZ0iSMcvHj8T+s73cfftya8FXoikCx0mc0xPLSN1+YlPB4uiC+1M+PkQUs1eoaAPaTw//sODRdLSGyB4QrWab7K+5tWPkaTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741021216; c=relaxed/simple;
-	bh=PuyMo56E1J04N+xRFHQpuOme3py1aZX9AvRAkMmg0TQ=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kF1rSz86iJKjsOCWOYDdj4boY13OGzLVV8BlP0c192cJoelrrjXvP9ZZ7HuVTo2nu3bror8+OsaNYDXLNGrDk1yjVm8Ajmo917Oou6FsDhyn8rFO9edYOpAINet2YWEeJkUHozcO7HEAObQxR1621t4yftXnfFPMfTv/YVwrL9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=uo272dwA; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7c07cd527e4so427579285a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 09:00:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1741021213; x=1741626013; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=yL69mmP3AaHszBSiFbdb5IOP3AgAgn4Zq7i8mgBTtbc=;
-        b=uo272dwAOxyYV3wwlUSRK7y6qAgQ5HoJhHH5wUO+q4kQJ7MijoexJ0Ok4/8vSHvJKZ
-         V9CFjNFHIs4Vp9cd0PbwcSNDlgOZ+rPJCoAHTwr/dg1LJMpPFSCcMIhaofmFjMm4yxP8
-         OKDl+pH0oMLDZN76zD+cUfgAApjurwx4afWK8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741021213; x=1741626013;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yL69mmP3AaHszBSiFbdb5IOP3AgAgn4Zq7i8mgBTtbc=;
-        b=e5wRcpWLVJ2d0PFjIa3ZRuXGOwtMllwid9wWyQn77FCvGMhZ8glqpECDIWEUIUx09M
-         iDK0hF5ycQT6kAkyDDnX/j5ug1K/iPzhmeu6zMyQa7AuL9dtnSO7OKMrRtlWWB25AR3y
-         NWTf8VrdkPMQNRnFXX6+UZZSnes1dtmzzh5tMgCkZy1louvIxru9nqlhi0iZPPOj2nER
-         cOLY+36cpOG9Y+MHUMY0XNGlTKMKdJVSmI4WaxddEuQBSZfySmY9CaVQ69KHrX0uZZRP
-         01F85KZoYLsipJeE0of9653FMjrBxZaUuYM7rGbzvZzPe4PWV9CUItZntDAkk74/p3Z7
-         hyxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVaijw1cjfD4dsqO5qw3ibrbP/LoQYYixv8LcLLYHCAGGV9nB1lCXqS5jBZc49Mps5PMvtUwCxQd9kcMFQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuvmLLEsz2x3AFNVPr1OzH2WOEtsmnUmIkbjpktOzBI0jAg4eE
-	Nvil9iCWp8jK5klfALrCKhrZK7rVjVmWQZmLp4f7/R7amFud5wYuuTpwmwLkAuk=
-X-Gm-Gg: ASbGncvoWHEaMIL4C/9UGUpP+tF5In3S3/VipHpmFt9IyOUHjwtiuXQIdWVbCbp0uJg
-	7mzTIhRXOjhQmjIJwusVQ1Tv8iwIqoSY7lpJfdxUE7Xrz52xmtDclLWU6DV5jJ125Uc8hhAkmt+
-	yoJ0nRhE8jhOBazUR3rlRVtYINYlDTuiRgrmNtUlRJUZyhVZPSoYYggfAU3ojk3/fLFWbI0wYD1
-	rU32H/Vowb4Ac7K26JVD+jdXQ9Y2jABJM62M2jA07x0wTKLumdRDTONiXz9IkgNw1Zbg/Y6w595
-	n2yY52rsrqkzUA7KqKf5Phvd3lqoMA5+23enV79W1i31AqcDOS34I4qxxASYf/zJkO9qP39mFEp
-	TxCciB4I=
-X-Google-Smtp-Source: AGHT+IHlpeyEa5ZH06VbJgoLcEMoTEGviZJYbrPAPhw4YUCksto74AOTT5BgLi6sgiQez9Vt7bG6ig==
-X-Received: by 2002:a05:620a:27c7:b0:7c3:bcb2:f44f with SMTP id af79cd13be357-7c3bcb3000emr677131585a.17.1741021212762;
-        Mon, 03 Mar 2025 09:00:12 -0800 (PST)
-Received: from LQ3V64L9R2 (ool-44c5a22e.dyn.optonline.net. [68.197.162.46])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c36ff0f3c0sm621367685a.56.2025.03.03.09.00.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 09:00:12 -0800 (PST)
-Date: Mon, 3 Mar 2025 12:00:10 -0500
-From: Joe Damato <jdamato@fastly.com>
-To: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-	mkarsten@uwaterloo.ca, gerhard@engleder-embedded.com,
-	jasowang@redhat.com, xuanzhuo@linux.alibaba.com, mst@redhat.com,
-	leiyang@redhat.com,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	"open list:VIRTIO CORE AND NET DRIVERS" <virtualization@lists.linux.dev>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next v5 3/4] virtio-net: Map NAPIs to queues
-Message-ID: <Z8XgGrToAD7Bak-I@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-	mkarsten@uwaterloo.ca, gerhard@engleder-embedded.com,
-	jasowang@redhat.com, xuanzhuo@linux.alibaba.com, mst@redhat.com,
-	leiyang@redhat.com,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	"open list:VIRTIO CORE AND NET DRIVERS" <virtualization@lists.linux.dev>,
-	open list <linux-kernel@vger.kernel.org>
-References: <20250227185017.206785-1-jdamato@fastly.com>
- <20250227185017.206785-4-jdamato@fastly.com>
- <20250228182759.74de5bec@kernel.org>
- <Z8Xc0muOV8jtHBkX@LQ3V64L9R2>
+	s=arc-20240116; t=1741021223; c=relaxed/simple;
+	bh=fGmoaUhJ6s4D50XCy7yH/YCCOfr0FJRHN2mzmglh2cc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=rCvfOx7nX7d2/Mg9HEhAJf15yFHihaDeY82CnG7E7pbf4LGHDSXht6dx/vvv+g+MiDMyzSX9ZuHS01kZCGCHJavBAT1WJ5xx+v4HucMmV+YZXyo8kf8c9sQfW6H/TpxtZ91qxd/DNUDEYVT19Tpe3sEj5fgvqN1BzRV82mePo54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5DA57106F;
+	Mon,  3 Mar 2025 09:00:35 -0800 (PST)
+Received: from e129527.arm.com (unknown [10.57.67.1])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 344C03F673;
+	Mon,  3 Mar 2025 09:00:19 -0800 (PST)
+From: Hugues KAMBA MPIANA <hugues.kambampiana@arm.com>
+To: sudeep.holla@arm.com
+Cc: conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	hugues.kambampiana@arm.com,
+	krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	liviu.dudau@arm.com,
+	lpieralisi@kernel.org,
+	robh@kernel.org
+Subject: [PATCH v2] arm64: dts: corstone1000: Add definitions for secondary CPU cores
+Date: Mon,  3 Mar 2025 17:00:12 +0000
+Message-Id: <20250303170012.469576-1-hugues.kambampiana@arm.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <Z8XSIx75B4mtcV48@bogus>
+References: <Z8XSIx75B4mtcV48@bogus>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8Xc0muOV8jtHBkX@LQ3V64L9R2>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 03, 2025 at 11:46:10AM -0500, Joe Damato wrote:
-> On Fri, Feb 28, 2025 at 06:27:59PM -0800, Jakub Kicinski wrote:
-> > On Thu, 27 Feb 2025 18:50:13 +0000 Joe Damato wrote:
-> > > @@ -2870,9 +2883,15 @@ static void refill_work(struct work_struct *work)
-> > >  	for (i = 0; i < vi->curr_queue_pairs; i++) {
-> > >  		struct receive_queue *rq = &vi->rq[i];
-> > >  
-> > > +		rtnl_lock();
-> > >  		virtnet_napi_disable(rq);
-> > > +		rtnl_unlock();
-> > > +
-> > >  		still_empty = !try_fill_recv(vi, rq, GFP_KERNEL);
-> > > +
-> > > +		rtnl_lock();
-> > >  		virtnet_napi_enable(rq);
-> > > +		rtnl_unlock();
-> > 
-> > Looks to me like refill_work is cancelled _sync while holding rtnl_lock
-> > from the close path. I think this could deadlock?
-> 
-> Good catch, thank you!
-> 
-> It looks like this is also the case in the failure path on
-> virtnet_open.
-> 
-> Jason: do you have any suggestions?
-> 
-> It looks like in both open and close disable_delayed_refill is
-> called first, before the cancel_delayed_work_sync.
-> 
-> Would something like this solve the problem?
-> 
-> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> index 76dcd65ec0f2..457115300f05 100644
-> --- a/drivers/net/virtio_net.c
-> +++ b/drivers/net/virtio_net.c
-> @@ -2880,6 +2880,13 @@ static void refill_work(struct work_struct *work)
->         bool still_empty;
->         int i;
-> 
-> +       spin_lock(&vi->refill_lock);
-> +       if (!vi->refill_enabled) {
-> +               spin_unlock(&vi->refill_lock);
-> +               return;
-> +       }
-> +       spin_unlock(&vi->refill_lock);
-> +
->         for (i = 0; i < vi->curr_queue_pairs; i++) {
->                 struct receive_queue *rq = &vi->rq[i];
->
+Add `cpu1`, `cpu2` and `cpu3` nodes to the Corstone1000 device tree to
+enable support for secondary CPU cores.
 
-Err, I suppose this also doesn't work because:
+This update facilitates symmetric multiprocessing (SMP) support on
+the Corstone1000 Fixed Virtual Platform (FVP), allowing the
+secondary cores to be properly initialised and utilised.
 
-CPU0                       CPU1
-rtnl_lock                  (before CPU0 calls disable_delayed_refill) 
-  virtnet_close            refill_work
-                             rtnl_lock()
-  cancel_sync <= deadlock
+Only FVP platform will have SMP support and hence the secondary cpu definitions
+are not added to corstone1000.dtsi.
 
-Need to give this a bit more thought.
+Signed-off-by: Hugues KAMBA MPIANA <hugues.kambampiana@arm.com>
+---
+ arch/arm64/boot/dts/arm/corstone1000-fvp.dts | 24 ++++++++++++++++++++
+ arch/arm64/boot/dts/arm/corstone1000.dtsi    |  2 +-
+ 2 files changed, 25 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/arm/corstone1000-fvp.dts b/arch/arm64/boot/dts/arm/corstone1000-fvp.dts
+index abd013562995..df9700302b8d 100644
+--- a/arch/arm64/boot/dts/arm/corstone1000-fvp.dts
++++ b/arch/arm64/boot/dts/arm/corstone1000-fvp.dts
+@@ -49,3 +49,27 @@ sdmmc1: mmc@50000000 {
+ 		clock-names = "smclk", "apb_pclk";
+ 	};
+ };
++
++&cpus {
++	cpu1: cpu@1 {
++		device_type = "cpu";
++		compatible = "arm,cortex-a35";
++		reg = <0x1>;
++		enable-method = "psci";
++		next-level-cache = <&L2_0>;
++	};
++	cpu2: cpu@2 {
++		device_type = "cpu";
++		compatible = "arm,cortex-a35";
++		reg = <0x2>;
++		enable-method = "psci";
++		next-level-cache = <&L2_0>;
++	};
++	cpu3: cpu@3 {
++		device_type = "cpu";
++		compatible = "arm,cortex-a35";
++		reg = <0x3>;
++		enable-method = "psci";
++		next-level-cache = <&L2_0>;
++	};
++};
+diff --git a/arch/arm64/boot/dts/arm/corstone1000.dtsi b/arch/arm64/boot/dts/arm/corstone1000.dtsi
+index bb9b96fb5314..b4364c61901c 100644
+--- a/arch/arm64/boot/dts/arm/corstone1000.dtsi
++++ b/arch/arm64/boot/dts/arm/corstone1000.dtsi
+@@ -21,7 +21,7 @@ chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	cpus {
++	cpus: cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
 
