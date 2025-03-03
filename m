@@ -1,111 +1,142 @@
-Return-Path: <linux-kernel+bounces-542678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6532EA4CC52
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:58:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D6CA2A4CC59
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 21:00:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1E4B3AC68C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:58:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5928A3AA636
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:00:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 311A223535D;
-	Mon,  3 Mar 2025 19:58:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="AIJhs9Y9"
-Received: from smtp.smtpout.orange.fr (smtp-65.smtpout.orange.fr [80.12.242.65])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42329235360;
+	Mon,  3 Mar 2025 20:00:40 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A310F1E1C1A;
-	Mon,  3 Mar 2025 19:58:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9059D3BBD8;
+	Mon,  3 Mar 2025 20:00:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741031908; cv=none; b=dO62pcSPHa8FsSl6rfljh44b2dfclMU1TUDfPfXwbdnNPfzYECej+6ohIWsmGZ5lWNRlGsVRUahFeTfUGrFv0/qN5JnFJhdMg1p4sbh7pewdGL6S88moddQYXDA55D7J7LZ3nLAotdboSHwBcRIgpUXGJJ7rPLSDL/qnwG5U+O8=
+	t=1741032039; cv=none; b=iMEYImQmWOl8r0uhG67Yqk4LjjZzCkKn/e3rQ/nJqi7mfoVmHmn+38lwpeM3pwgnq17M9DhoHfWPMrN9MlmgSJ6bU9TT2K3DQ4X2f97KG7ihX83erOOcSlT47/fgunZ6QBw0jDrCn/yd+O5zGy9zXcWXDARM64RRXELITl72lhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741031908; c=relaxed/simple;
-	bh=K2Q+AFeiszz6C1lv09sCDBgrUMlDisN6Lkp/AfFLBfc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mHeHCJuGdgfjm2fHe/THJ9S5gHBYIh6ADa5Qk8yDxDl3Kdni7nJlIlCG9pSrMZpMjeIf8JTFcGYdMFVbbyO9jeGLa98u5N6hOi12FFzQiNjylaGZD3aDWgBgh95/uF7ssCL8qhNIxB7pD68eZzPoBkAUeEcEL93tepPSRN3DxSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=AIJhs9Y9; arc=none smtp.client-ip=80.12.242.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id pBvctEjajIXoFpBvftj8tU; Mon, 03 Mar 2025 20:58:19 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1741031899;
-	bh=kJbxcMGXHH3h8T8nkg10LduDp7krf9ekP3X2Gt2ijPA=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=AIJhs9Y9ipKe3tYru49eqqa0YKLVd8iGNxr5MkL1ubw58aOQYSy4TYcLSxHOt6jyW
-	 iib3ykhrcV/rE7wduYUd4qPrWc5Cn7C9D9+pHNZYSed7jzMnZ8e1xyBk/3AkBthzV5
-	 9cqLsPDIBZkE7q84T3ZCjGgZy3/QaNRUjPA6tL9GlN5DHnRNh0kvRZSAN7P3iV/Uzx
-	 DoOrSlzu5xoA8kTDylUcXoDJrt2jnD4WbztTFkc43Rzi4tBFOR6aJMmRTqc2WADQbN
-	 ic1vP4ibFDe9DgoiHtDUHU1CWGdV0FrN8GgKx6zAEyN0rKRW1H2Rnt44Gewo2xVt95
-	 4NojBdySRKvMw==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 03 Mar 2025 20:58:19 +0100
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Jean Delvare <jdelvare@suse.com>,
-	Andi Shyti <andi.shyti@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-i2c@vger.kernel.org
-Subject: [PATCH] i2c: ali15x3: Fix an error handling path in ali15x3_probe()
-Date: Mon,  3 Mar 2025 20:58:06 +0100
-Message-ID: <9b2090cbcc02659f425188ea05f2e02745c4e67b.1741031878.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741032039; c=relaxed/simple;
+	bh=fuKfx+52mOKNtlZjc5ULPHxnRDn1ChhMsm0q83VOu28=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mTx1YnzX673k7x0VcIi0GlK1d5jKju+O+iOcccJYOT3CJEi1VgGdXvFOAqlkhdGgsKM/V9JTV0pC8qsNGELA8rfj5KBvLkyz11wSzmyLKS/VYMsVvyAhyTwA+6oyO5BpGOc360qGe7Wt/atd12rKiAzkUHAnzJFiO1MyJjeWz2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 8016230015867;
+	Mon,  3 Mar 2025 21:00:28 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 6792D4A3B; Mon,  3 Mar 2025 21:00:28 +0100 (CET)
+Date: Mon, 3 Mar 2025 21:00:28 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Kenneth Crudup <kenny@panix.com>, Bjorn Helgaas <helgaas@kernel.org>,
+	ilpo.jarvinen@linux.intel.com, Bjorn Helgaas <bhelgaas@google.com>,
+	Jian-Hong Pan <jhp@endlessos.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Nikl??vs Ko??es??ikovs <pinkflames.linux@gmail.com>,
+	Andreas Noever <andreas.noever@gmail.com>,
+	Michael Jamet <michael.jamet@intel.com>,
+	Yehezkel Bernat <YehezkelShB@gmail.com>, linux-usb@vger.kernel.org
+Subject: Re: diagnosing resume failures after disconnected USB4 drives (Was:
+ Re: PCI/ASPM: Fix L1SS saving (linus/master commit 7507eb3e7bfac))
+Message-ID: <Z8YKXC1IXYXctQrZ@wunner.de>
+References: <21b72adf-aac6-49fa-af40-6db596c87432@panix.com>
+ <20250211055722.GW3713119@black.fi.intel.com>
+ <83d9302a-f743-43e4-9de2-2dd66d91ab5b@panix.com>
+ <20250213135911.GG3713119@black.fi.intel.com>
+ <a8d6ca75-8f50-4c46-8c67-fcf20d870dcc@panix.com>
+ <20250214162948.GJ3713119@black.fi.intel.com>
+ <661459dd-67d0-4e1c-bb28-9adf1417f660@panix.com>
+ <20250226084404.GM3713119@black.fi.intel.com>
+ <Z77ak-4YsdAKXbHr@wunner.de>
+ <20250226091958.GN3713119@black.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226091958.GN3713119@black.fi.intel.com>
 
-If i2c_add_adapter() fails, the request_region() call in ali15x3_setup()
-must be undone by a corresponding release_region() call, as done in the
-remove function.
+On Wed, Feb 26, 2025 at 11:19:58AM +0200, Mika Westerberg wrote:
+> On Wed, Feb 26, 2025 at 10:10:43AM +0100, Lukas Wunner wrote:
+> > On Wed, Feb 26, 2025 at 10:44:04AM +0200, Mika Westerberg wrote:
+> > >   [Meteor Lake host] <--> [TB 4 dock] <--> [TB 3 NVMe]
+> > [...]
+> > > I added "no_console_suspend" to the command line and the did sysrq-w to
+> > > get list of blocked tasks. I've attached it just in case it is needed.
+> > 
+> > This looks like the deadlock we've had for years when hot-removing
+> > nested hotplug ports.
+> > 
+> > If you attach only a single device to the host, I guess the issue
+> > does not occur, right?
+> 
+> Yes.
+> 
+> > Previous attempts to fix this:
+> > 
+> > https://lore.kernel.org/all/4c882e25194ba8282b78fe963fec8faae7cf23eb.1529173804.git.lukas@wunner.de/
+> > 
+> > https://lore.kernel.org/all/20240612181625.3604512-1-kbusch@meta.com/
+> 
+> Well, it does not happen if I revert the commit so isn't that a
+> regresssion?
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/i2c/busses/i2c-ali15x3.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+Does the below fix the issue?
 
-diff --git a/drivers/i2c/busses/i2c-ali15x3.c b/drivers/i2c/busses/i2c-ali15x3.c
-index 4761c7208102..418d11266671 100644
---- a/drivers/i2c/busses/i2c-ali15x3.c
-+++ b/drivers/i2c/busses/i2c-ali15x3.c
-@@ -472,6 +472,8 @@ MODULE_DEVICE_TABLE (pci, ali15x3_ids);
- 
- static int ali15x3_probe(struct pci_dev *dev, const struct pci_device_id *id)
+-- >8 --
+
+diff --git a/drivers/pci/hotplug/pciehp_core.c b/drivers/pci/hotplug/pciehp_core.c
+index ff458e6..b0b4d46 100644
+--- a/drivers/pci/hotplug/pciehp_core.c
++++ b/drivers/pci/hotplug/pciehp_core.c
+@@ -287,24 +287,26 @@ static int pciehp_suspend(struct pcie_device *dev)
+ static bool pciehp_device_replaced(struct controller *ctrl)
  {
-+	int ret;
-+
- 	if (ali15x3_setup(dev)) {
- 		dev_err(&dev->dev,
- 			"ALI15X3 not detected, module not inserted.\n");
-@@ -483,7 +485,15 @@ static int ali15x3_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ 	struct pci_dev *pdev __free(pci_dev_put);
++	u64 dsn;
+ 	u32 reg;
  
- 	snprintf(ali15x3_adapter.name, sizeof(ali15x3_adapter.name),
- 		"SMBus ALI15X3 adapter at %04x", ali15x3_smba);
--	return i2c_add_adapter(&ali15x3_adapter);
-+	ret = i2c_add_adapter(&ali15x3_adapter);
-+	if (ret)
-+		goto release_region;
-+
-+	return 0;
-+
-+release_region:
-+	release_region(ali15x3_smba, ALI15X3_SMB_IOSIZE);
-+	return ret;
- }
+ 	pdev = pci_get_slot(ctrl->pcie->port->subordinate, PCI_DEVFN(0, 0));
+ 	if (!pdev)
+-		return true;
++		return false;
  
- static void ali15x3_remove(struct pci_dev *dev)
--- 
-2.48.1
-
+-	if (pci_read_config_dword(pdev, PCI_VENDOR_ID, &reg) ||
+-	    reg != (pdev->vendor | (pdev->device << 16)) ||
+-	    pci_read_config_dword(pdev, PCI_CLASS_REVISION, &reg) ||
+-	    reg != (pdev->revision | (pdev->class << 8)))
++	if ((pci_read_config_dword(pdev, PCI_VENDOR_ID, &reg) == 0 &&
++	     reg != (pdev->vendor | (pdev->device << 16))) ||
++	    (pci_read_config_dword(pdev, PCI_CLASS_REVISION, &reg) == 0 &&
++	     reg != (pdev->revision | (pdev->class << 8))))
+ 		return true;
+ 
+ 	if (pdev->hdr_type == PCI_HEADER_TYPE_NORMAL &&
+-	    (pci_read_config_dword(pdev, PCI_SUBSYSTEM_VENDOR_ID, &reg) ||
+-	     reg != (pdev->subsystem_vendor | (pdev->subsystem_device << 16))))
++	    pci_read_config_dword(pdev, PCI_SUBSYSTEM_VENDOR_ID, &reg) == 0 &&
++	    reg != (pdev->subsystem_vendor | (pdev->subsystem_device << 16)))
+ 		return true;
+ 
+-	if (pci_get_dsn(pdev) != ctrl->dsn)
++	dsn = pci_get_dsn(pdev);
++	if ((dsn || ctrl->dsn) && dsn != ctrl->dsn)
+ 		return true;
+ 
+ 	return false;
 
