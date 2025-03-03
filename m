@@ -1,282 +1,150 @@
-Return-Path: <linux-kernel+bounces-542155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65D34A4C63F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:09:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E2D7A4C60A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:04:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB3113A74A8
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:09:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21BA61712F3
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:03:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 607A023A98E;
-	Mon,  3 Mar 2025 16:04:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 200F721ADAB;
+	Mon,  3 Mar 2025 16:02:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="e0hPPRS+"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="G6zQRxWr"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0549F21B9E9;
-	Mon,  3 Mar 2025 16:03:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07861EB1BF
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 16:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741017841; cv=none; b=QgjBKzWvCum/GZpNDBMP/O5tcIz3S/hM8xX1AUJSDGopMTk5YC15V9Pd96gF0YvnN55sv1zC/gLyDOEEM7HauellKOO6gco4vMJbkuWckXynN0BygFF0Uq40kqu/ftQFjjfKTAkxoV2kRiuw86vydfbPVFRUo5j5a9wYmMAlvu4=
+	t=1741017757; cv=none; b=GPvWu3PcPgYlYsRLsN8kHpTKMGeWdEANNDrDO0xVtb480U/1qTVInSS2YthXVS8hLzSaSfkj/puzZOM0B2+r25JxQSNyKaXV5586KH+IVEbV4LD6xkZxWzA3Ow7jclJm3A8jVbInMWFUMJKM4CmffwbpOGQyS6yElFUMXi22mp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741017841; c=relaxed/simple;
-	bh=g+H/ekm4a1tNd9/uuqmtmBcE1liUdfh8+ZrY8uuygvc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Px8Y5AWcCrpvKEloNjEjAFgY7o1oR4Bji4n4612iZYmU/D70vsJC4ZIC5qjBt87zco4AtIfq10NerXPTd+TJ8OWMY8nFmJbtve8Um/a+ZQyyR4dWMNG8AFa/dTe0KLZuTtLrLPNegV5X+7CLwTKbP70USnwleyLtdK1oy/Okd/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=e0hPPRS+; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:1c69:8872:6fe4:6987:313:70cc])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 016A822A;
-	Mon,  3 Mar 2025 17:02:26 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1741017747;
-	bh=g+H/ekm4a1tNd9/uuqmtmBcE1liUdfh8+ZrY8uuygvc=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=e0hPPRS+27gKnKXtQUHFEwz0AB2UQ/QtoE5PXCtdmaTaNqcB7jmRNpBCrRGHxdMim
-	 K8XokO9qyEVVZAXkF0osidbf9Ns7oJbpI9xThZiTydW/9NFar1s3X7vZfPcvzWXbq3
-	 HOu3cJoklc5T+wE6G2KPrwLjX1J8WczjQbMzjVBY=
-From: Jai Luthra <jai.luthra@ideasonboard.com>
-Date: Mon, 03 Mar 2025 21:32:22 +0530
-Subject: [PATCH v3 19/19] media: i2c: ds90ub9xx: Set serializer temperature
- ramp
+	s=arc-20240116; t=1741017757; c=relaxed/simple;
+	bh=f3z1YJDae+7qKzu1a/ULS1y8fv2jKayJhoYaJjgj1Lw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sClxK62uTnkgLKP1P9phCGCX+QxejgzxTxmxX0yeKl7Rt+PbEDjHq/E+IR9gkyHzZDPrEmfkBoL/jMMfs4vzn+YRD5cv9wCuqyr1MZemiKfrxRRHCknNH5NlEXJ2nE9pgXDx7ko4HicYM/DumPTJ65QzYVqU1CzIdWJvYwFFwHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=G6zQRxWr; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6e88f3159e3so37869056d6.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 08:02:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1741017754; x=1741622554; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=j0kf09Xt7w2q49Ub1BV7dNTILamWt8grEXO5Ja6in+c=;
+        b=G6zQRxWrNMhTkxwZBqgMdPht5fUcUaayMq50TzI7kuwgCrW5voPoi9QHBl+fojC0xP
+         ceiDEiw3v/wVl31JD9/6Sv8WYjJOapEJ7uVw3yCj5RaCHkXDHAqVdQOlPqOKZVvk/+3N
+         vXjaQPFQ1/tchjgTBvNkxE8IJRVa7a8YLpi2L0HM03nk76aF1bag13c/+f/SjIuzFAx4
+         OWHdVWr3mIchCDbvFpU/Q3tiAITjYTlkcvQGkJwJxEyNYufZ5mWUBfjSHEJBFI3xJgur
+         6+zP5M9mUR27gfq9BF4ncYUKI4sUVuIkhPKh00Zi5RdDyOUdvQb/kBtoYSBlGpsiREgH
+         2WrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741017754; x=1741622554;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=j0kf09Xt7w2q49Ub1BV7dNTILamWt8grEXO5Ja6in+c=;
+        b=e0bBUoVOU0jdHG2+tV2sUUHvUjjQtVxeUdZ2vE1/d45Ww6WM8nEpGDXHszrubFECmI
+         obVQWYK8vTri5PZl3brU5u4YmTXPFI+AA/9bKfX+uadfahDWoHii+KCbACtFnwGpp6qx
+         SB/brp7y616zyFmCFqMVIEpue/dUuGECTw7BuhfSB6aAnK8XBl1gubEnCoNJbzpQvVdj
+         Qn7ktRP0+DtD9fosASm76C5+5boRteGNyAHdD1oSMB3HyeACtwi0Yr1lfhJfkH6ze3Pb
+         6EKuU88H965WHhp5e7xJlN4UDuzMC22ZFITFZ65L8mmsHrsVzX05bcze5WX/zVrlTz9W
+         5Xlg==
+X-Forwarded-Encrypted: i=1; AJvYcCVnMYDnrFD3duj7Tl2y7qQpiC+DS38PAE7xTn6Lq2+FFpkrVupQEhDRu55wf7SUC1VHVpw+xGQdw+h0hmw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywjc9ChMB5fpvLlR5SozNzVWBr4VcVy2w+1pj8DSlUJT3T/U6Jx
+	hwgUkJ+0gbVmYsCVXcHMC5WRQqwYqoMrxc41lCF39gPyNtIKEBcK7zTDUcZ8bA==
+X-Gm-Gg: ASbGncsdHO/DTE1rtXc3Bl/Pk4MykPFdxEAqQ2Mbdaj1t1KWImoEdCOEyDMavB+IxED
+	P7W3Q2ZeqegOWvkeTUVGymj/DZTd9mG0m3WvbmehV1hS092NRhquxBSe8NrNGvJOkVoo+Xunf2l
+	lnXKWMifGUXr1P1vvFgXlVYWkD8U1rL9Gog4Qr68Sn5LTPEcFhMY7fFb4huZwEP4TSqRu9y7e4i
+	0l484XxnXO1PQG03OzmdDJ8nWk86qEcvStfZyEZqsIxFrgO77XcL+wHZJJiJ5+En6LA3Hs/LVYP
+	95FuhnWXhSrf1RyFDDYi1cfZ3kHZWQhkTLb4pIJMpeNPaWaWSRY2/95FpqTe4Nw=
+X-Google-Smtp-Source: AGHT+IGftmtJ1H46cLxhxWAbdbWJGM0W0W4u3xExTd+O5te0WpEQdDeILfCXfX/nJATaCR1Ljm0czw==
+X-Received: by 2002:a05:6214:da8:b0:6e8:96f4:73a with SMTP id 6a1803df08f44-6e8a0d3901dmr235750906d6.19.1741017754321;
+        Mon, 03 Mar 2025 08:02:34 -0800 (PST)
+Received: from rowland.harvard.edu ([140.247.181.15])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8976ccba1sm54361766d6.90.2025.03.03.08.02.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 08:02:33 -0800 (PST)
+Date: Mon, 3 Mar 2025 11:02:31 -0500
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Strforexc yn <strforexc@gmail.com>
+Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
+	Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
+	linux-usb@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [BUG] UBSAN: Array-Index-Out-of-Bounds in usbhid_parse (HID) on
+ 6.14.0-rc4
+Message-ID: <21b63d7e-5141-426b-af06-9465609e2ca2@rowland.harvard.edu>
+References: <CA+HokZreT4LYLbru4cc0iU4jKkdf40YnVunaGX0hFV2GAnnuEg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250303-b4-ub9xx-err-handling-v3-19-7d178796a2b9@ideasonboard.com>
-References: <20250303-b4-ub9xx-err-handling-v3-0-7d178796a2b9@ideasonboard.com>
-In-Reply-To: <20250303-b4-ub9xx-err-handling-v3-0-7d178796a2b9@ideasonboard.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
- Devarsh Thakkar <devarsht@ti.com>, linux-media@vger.kernel.org, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
- Jai Luthra <jai.luthra@ideasonboard.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6487;
- i=jai.luthra@ideasonboard.com; h=from:subject:message-id;
- bh=g+H/ekm4a1tNd9/uuqmtmBcE1liUdfh8+ZrY8uuygvc=;
- b=owEBbQKS/ZANAwAIAUPekfkkmnFFAcsmYgBnxdKBHjjvy8tJ6tgEh+AwC3Jkd3H0+XFY0/gXW
- t4ScrjR/0CJAjMEAAEIAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCZ8XSgQAKCRBD3pH5JJpx
- RTkED/9yHuHpKSVb3fqOOKfB4WRC+qMYWAWVCK3TOiNvZocH5pByQ5r89T4HuwxvujIchsbIIaQ
- z/+DNTg9IdlVOxivcqjcOWjlhFf0G03yfDdbH73GtRQAA8NGYLV0SNyp92HxmxeUyhXvTozx5HI
- eOzUr47O4iNG8cGsfiglLbHdwptQ42qYQ/UDV0Cf3Df6V7hqxMoUFfdPZDY2RufjcaMB4R+bda5
- Knz2eFe5cxZY/3ogfsAUBNb7kKW10ZNotN4J9pthPHYkw/l/LDoIDP7HVCFJCYEfKLvLmJ5oTsP
- pSTky242R/AdL2Fuw3ieSl3XpcSygUHPd0cIKOFuOLYSH9Cp+XTAe944ZtJdMCbN5bSvccxMwU1
- 7b16xcZ6slwTMfSaWE6rzN/pjcS8GgpfsYhCgfOKpZi0/zCLkqzue2Twoq0IUGaipZBXHxteBNO
- +3hPs/7yclikcTg4BcFYsP9ap+Uouzy/R4vXSsTSC4fCHh5SVI0JScvxR8/G45kkqb4OlmoxgWh
- tT2tuBtMFFVBGSvch+GGZ2T4Xnvg/RTywYgu/gQKTlwLdss5NeRFkU7pzXpqq9o32sPsCVG3bWq
- QIWml8SEzrFgjbfxUsBqRRUuJuM0EPpS7bdNWJtVYnvcTvW7sy+UAWIK3Mbg2gTVut7GdQ6OkjA
- v2g5C3RfHHsqAfw==
-X-Developer-Key: i=jai.luthra@ideasonboard.com; a=openpgp;
- fpr=4DE0D818E5D575E8D45AAFC543DE91F9249A7145
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+HokZreT4LYLbru4cc0iU4jKkdf40YnVunaGX0hFV2GAnnuEg@mail.gmail.com>
 
-For continuous PLL lock, it is recommended to extend the temperature
-ramp down range of the DS90UB953-Q1 serializer based on the device's
-initial temperature [1].
+On Mon, Mar 03, 2025 at 04:52:33PM +0800, Strforexc yn wrote:
+> Dear Maintainers, When using our customized Syzkaller to fuzz the
+> latest Linux kernel, the following crash was triggered.
+> 
+> Kernel commit: v6.14-rc4 (Commits on Feb 24, 2025)
+> Kernel Config : https://github.com/Strforexc/LinuxKernelbug/blob/main/.config
+> Kernel Log:  https://github.com/Strforexc/LinuxKernelbug/blob/main/array-index-out-of-bounds_usbhid_parse/log0
+> Reproduce C: https://github.com/Strforexc/LinuxKernelbug/blob/main/array-index-out-of-bounds_usbhid_parse/repro.cprog
+> 
+> I’ve encountered a UBSAN-reported array-index-out-of-bounds issue in
+> the USB HID driver on Linux 6.14.0-rc4 during device probing, likely
+> triggered by a malformed USB descriptor. Here are the details:
+> 
+> UBSAN detects an out-of-bounds access at
+> drivers/hid/usbhid/hid-core.c:1025:18 in usbhid_parse, where index 1
+> exceeds the bounds of hid_class_descriptor [1] in struct
+> hid_descriptor. This occurs when parsing a HID device descriptor
+> during USB probing.
+> 
+> Location: The fault occurs in a loop: for (n = 0; n < num_descriptors;
+> n++) if (hdesc->desc[n].bDescriptorType == HID_DT_REPORT), accessing
+> hdesc->desc[n].
+> 
+> Cause: struct hid_descriptor defines desc as a fixed-size array [1],
+> but the loop iterates up to num_descriptors (based on
+> hdesc->bNumDescriptors). UBSAN flags n=1 as out-of-bounds, though the
+> underlying descriptor buffer may be larger.
+> 
+> Context: Preceded by a USB descriptor error (-22), suggesting a
+> malformed HID device (likely Syzkaller-crafted), triggering the loop
+> with bNumDescriptors > 1.
+> 
+> Impact: No immediate crash, but a code hygiene issue flagged by UBSAN.
+> Runtime safety depends on descriptor buffer allocation, but it’s a
+> potential source of confusion or future bugs.
+> 
+> Could HID maintainers investigate? Suggested fixes:
+> 1. Use a flexible array member (desc[]) in struct hid_descriptor and
+> adjust parsing to rely on runtime buffer size.
+> 2. Add stricter validation of hdesc->bNumDescriptors against bLength
+> to reject malformed descriptors earlier.
+> 
+> Our knowledge of the kernel is somewhat limited, and we'd appreciate
+> it if you could determine if there is such an issue. If this issue
+> doesn't have an impact, please ignore it ☺.
+> If you fix this issue, please add the following tag to the commit:
+> Reported-by: Zhizhuo Tang <strforexctzzchange@foxmail.com>, Jianzhou
+> Zhao <xnxc22xnxc22@qq.com>, Haoran Liu <cherest_san@163.com>
 
-The serializer's die temperature is reported only to the deserializer
-through the sensor status registers, and for UB9702, it is recommended
-to set the temperature ramp during the link setup sequence, i.e. before
-we even probe the ub953 driver.
+Have you seen this patch or tried to test it?
 
-Add support to the deserializer driver to configure ub953's temperature
-ramp.
+https://lore.kernel.org/linux-usb/20250131151600.410242-1-n.zhandarovich@fintech.ru/
 
-[1]: Section 7.3.1.1 - https://www.ti.com/lit/gpn/ds90ub953-q1
-
-Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
----
- drivers/media/i2c/ds90ub953.h |   7 ++-
- drivers/media/i2c/ds90ub960.c | 125 ++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 131 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/media/i2c/ds90ub953.h b/drivers/media/i2c/ds90ub953.h
-index de606474493f8d95a412e5564b0fac21885e581d..97a6b3af326eb96af20653ed13b89798e18646bd 100644
---- a/drivers/media/i2c/ds90ub953.h
-+++ b/drivers/media/i2c/ds90ub953.h
-@@ -71,7 +71,7 @@
- 
- /* Indirect register blocks */
- #define UB953_IND_TARGET_PAT_GEN		0x00
--#define UB953_IND_TARGET_FPD3_TX		0x01
-+#define UB953_IND_TARGET_ANALOG			0x01
- #define UB953_IND_TARGET_DIE_ID			0x02
- 
- #define UB953_IND_PGEN_CTL			0x01
-@@ -92,6 +92,11 @@
- #define UB953_IND_PGEN_VFP			0x0f
- #define UB953_IND_PGEN_COLOR(n)			(0x10 + (n)) /* n <= 15 */
- 
-+#define UB953_IND_ANA_TEMP_DYNAMIC_CFG		0x4b
-+#define UB953_IND_ANA_TEMP_DYNAMIC_CFG_OV	BIT(5)
-+#define UB953_IND_ANA_TEMP_STATIC_CFG		0x4c
-+#define UB953_IND_ANA_TEMP_STATIC_CFG_MASK	GENMASK(6, 4)
-+
- /* UB971 Registers */
- 
- #define UB971_ENH_BC_CHK			0x4b
-diff --git a/drivers/media/i2c/ds90ub960.c b/drivers/media/i2c/ds90ub960.c
-index cad25dcbca11bf6597d00eede6dfa9110f445886..1877eb735cc7d865a68e315446a24b536b387d2a 100644
---- a/drivers/media/i2c/ds90ub960.c
-+++ b/drivers/media/i2c/ds90ub960.c
-@@ -2017,6 +2017,110 @@ static int ub960_rxport_serializer_write(struct ub960_rxport *rxport, u8 reg,
- 	return ret;
- }
- 
-+static int ub960_rxport_serializer_read(struct ub960_rxport *rxport, u8 reg,
-+					u8 *val, int *err)
-+{
-+	struct ub960_data *priv = rxport->priv;
-+	struct device *dev = &priv->client->dev;
-+	union i2c_smbus_data data = { 0 };
-+	int ret;
-+
-+	if (err && *err)
-+		return *err;
-+
-+	ret = i2c_smbus_xfer(priv->client->adapter, rxport->ser.alias,
-+			     priv->client->flags, I2C_SMBUS_READ, reg,
-+			     I2C_SMBUS_BYTE_DATA, &data);
-+	if (ret)
-+		dev_err(dev,
-+			"rx%u: cannot read serializer register 0x%02x (%d)!\n",
-+			rxport->nport, reg, ret);
-+	else
-+		*val = data.byte;
-+
-+	if (ret && err)
-+		*err = ret;
-+
-+	return ret;
-+}
-+
-+static int ub960_serializer_temp_ramp(struct ub960_rxport *rxport)
-+{
-+	struct ub960_data *priv = rxport->priv;
-+	short temp_dynamic_offset[] = {-1, -1, 0, 0, 1, 1, 1, 3};
-+	u8 temp_dynamic_cfg;
-+	u8 nport = rxport->nport;
-+	u8 ser_temp_code;
-+	int ret;
-+
-+	/* Configure temp ramp only on UB953 */
-+	if (!fwnode_device_is_compatible(rxport->ser.fwnode, "ti,ds90ub953-q1"))
-+		return 0;
-+
-+	/* Read current serializer die temperature */
-+	ub960_rxport_read(priv, nport, UB960_RR_SENSOR_STS_2, &ser_temp_code,
-+			  &ret);
-+
-+	/* Enable I2C passthrough on back channel */
-+	ub960_rxport_update_bits(priv, nport, UB960_RR_BCC_CONFIG,
-+				 UB960_RR_BCC_CONFIG_I2C_PASS_THROUGH,
-+				 UB960_RR_BCC_CONFIG_I2C_PASS_THROUGH, &ret);
-+
-+	if (ret)
-+		return ret;
-+
-+	/* Select indirect page for analog regs on the serializer */
-+	ub960_rxport_serializer_write(rxport, UB953_REG_IND_ACC_CTL,
-+				      UB953_IND_TARGET_ANALOG << 2, &ret);
-+
-+	/* Set temperature ramp dynamic and static config */
-+	ub960_rxport_serializer_write(rxport, UB953_REG_IND_ACC_ADDR,
-+				      UB953_IND_ANA_TEMP_DYNAMIC_CFG, &ret);
-+	ub960_rxport_serializer_read(rxport, UB953_REG_IND_ACC_DATA,
-+				     &temp_dynamic_cfg, &ret);
-+
-+	if (ret)
-+		return ret;
-+
-+	temp_dynamic_cfg |= UB953_IND_ANA_TEMP_DYNAMIC_CFG_OV;
-+	temp_dynamic_cfg += temp_dynamic_offset[ser_temp_code];
-+
-+	/* Update temp static config */
-+	ub960_rxport_serializer_write(rxport, UB953_REG_IND_ACC_ADDR,
-+				      UB953_IND_ANA_TEMP_STATIC_CFG, &ret);
-+	ub960_rxport_serializer_write(rxport, UB953_REG_IND_ACC_DATA,
-+				      UB953_IND_ANA_TEMP_STATIC_CFG_MASK, &ret);
-+
-+	/* Update temperature ramp dynamic config */
-+	ub960_rxport_serializer_write(rxport, UB953_REG_IND_ACC_ADDR,
-+				      UB953_IND_ANA_TEMP_DYNAMIC_CFG, &ret);
-+
-+	/* Enable I2C auto ack on BC before we set dynamic cfg and reset */
-+	ub960_rxport_update_bits(priv, nport, UB960_RR_BCC_CONFIG,
-+				 UB960_RR_BCC_CONFIG_AUTO_ACK_ALL,
-+				 UB960_RR_BCC_CONFIG_AUTO_ACK_ALL, &ret);
-+
-+	ub960_rxport_serializer_write(rxport, UB953_REG_IND_ACC_DATA,
-+				      temp_dynamic_cfg, &ret);
-+
-+	if (ret)
-+		return ret;
-+
-+	/* Soft reset to apply PLL updates */
-+	ub960_rxport_serializer_write(rxport, UB953_REG_RESET_CTL,
-+				      UB953_REG_RESET_CTL_DIGITAL_RESET_0,
-+				      &ret);
-+	msleep(20);
-+
-+	/* Disable I2C passthrough and auto-ack on BC */
-+	ub960_rxport_update_bits(priv, nport, UB960_RR_BCC_CONFIG,
-+				 UB960_RR_BCC_CONFIG_I2C_PASS_THROUGH |
-+					 UB960_RR_BCC_CONFIG_AUTO_ACK_ALL,
-+				 0x0, &ret);
-+
-+	return ret;
-+}
-+
- static int ub960_rxport_bc_ser_config(struct ub960_rxport *rxport)
- {
- 	struct ub960_data *priv = rxport->priv;
-@@ -2396,6 +2500,20 @@ static int ub960_init_rx_ports_ub960(struct ub960_data *priv)
- 		return ret;
- 	}
- 
-+	/* Set temperature ramp on serializer */
-+	for_each_active_rxport(priv, it) {
-+		ret = ub960_serializer_temp_ramp(it.rxport);
-+		if (ret)
-+			return ret;
-+
-+		ub960_rxport_update_bits(priv, it.nport, UB960_RR_BCC_CONFIG,
-+					 UB960_RR_BCC_CONFIG_I2C_PASS_THROUGH,
-+					 UB960_RR_BCC_CONFIG_I2C_PASS_THROUGH,
-+					 &ret);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	/*
- 	 * Clear any errors caused by switching the RX port settings while
- 	 * probing.
-@@ -3071,6 +3189,13 @@ static int ub960_init_rx_ports_ub9702(struct ub960_data *priv)
- 	/* Wait time for stable lock */
- 	fsleep(15000);
- 
-+	/* Set temperature ramp on serializer */
-+	for_each_active_rxport(priv, it) {
-+		ret = ub960_serializer_temp_ramp(it.rxport);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	for_each_active_rxport_fpd4(priv, it) {
- 		ret = ub960_enable_dfe_lms_ub9702(priv, it.nport);
- 		if (ret)
-
--- 
-2.48.1
-
+Alan Stern
 
