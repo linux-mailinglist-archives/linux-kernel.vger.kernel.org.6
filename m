@@ -1,68 +1,88 @@
-Return-Path: <linux-kernel+bounces-542614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AC2EA4CB9E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:08:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DF95A4CBA0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:08:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3717D1893A8B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:08:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8C8A3A51C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:08:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3C2922FF35;
-	Mon,  3 Mar 2025 19:08:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35738148316;
+	Mon,  3 Mar 2025 19:08:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="NBxrVktW"
-Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ad5mzEHl"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91AED148316;
-	Mon,  3 Mar 2025 19:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA3E214A64;
+	Mon,  3 Mar 2025 19:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741028910; cv=none; b=hReR2iVHw1Dp1JMsPTXdNDkbqUA61TR24alELv3bpfiSdpw2ASIT5agwDfZ/nOIophEtLfYJjNMQAWku5gAGxbhicJvACaVm603djFZpIoDn2rGM21nCfNIWoEmKpKUkpbbcTUikPIgqGxgp9MD5Q4FSGbzv1aV0AknWRn0AKvA=
+	t=1741028931; cv=none; b=qYO3Gc/8bmvXXD0Mnv/X+XOwvb0UeOnBfCYFHEySwPFxNS9BZlQ0lr+2eTT/ziTrIkzk/Ys6HxRI3mFHbCCffCKeYRTpS/Uoj0jjd1fva8UeqOL24AzOq8/Uzu8xelNEtywVnCoy+e4uKxAwJbkA3Q/CWCOuYzWFqx7xnCxHj24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741028910; c=relaxed/simple;
-	bh=OdaCz1lN4L5zRYlJ62JZ3Igzlho5j0L3B1BtSNpw0lo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F9yKtHH/nFlnAS+l9JhPFpA/7RkrUQn05cJqPiyscmD/e1Cos0JAfmqGlpyOGKApZCTFKFMw1omkfCMWnAuCagaqLe2hV2eh91uHntAGoasWUED8VW2Q2Rd6vtNM3Vgk5r3Xmmp75zb3Zxjo/0N0FwHqWnUVQcnZ5G6cn90HlRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=NBxrVktW; arc=none smtp.client-ip=80.12.242.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id pB98tUF9uZnsCpB9BtL73a; Mon, 03 Mar 2025 20:08:19 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1741028899;
-	bh=Y2nPTpi3tNbwO7vst2oVl4JU/9ZN2dFKqd/bAjL7RF0=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=NBxrVktWQADojleBfDoqQMhS1DhF/rvD6+UTL9FttSpBQlDgls1o9lXCAKb6H3oeg
-	 9WN3Oy7C/Bfhohm58mrrdKN9XZftOogn5idma3f166Hy7dOZEd4HtD6koRk/Wq45IC
-	 xpxD4LJKx54mDNM35QGrE5G2DqYoGP2VOuFLjZABuLrTeczvgWmvXCZ1n51H/0KVyD
-	 t7mqgf98JR4NlYOgOfHe0Bodkgo4MkzxBdSpyGXLFLqHj75Ed123rrf1O+Gyruwje8
-	 e8I/FglWESdS/BcycOP6WKUBxxPFkZk1Kkm+rAm4ACapks2Y1xXLNeE44zYB8sHdOU
-	 8IBWllm2ECURQ==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 03 Mar 2025 20:08:19 +0100
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: "Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
-	Gonglei <arei.gonglei@huawei.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>
+	s=arc-20240116; t=1741028931; c=relaxed/simple;
+	bh=Yje3DuWMISvZSa3Mbxv9NiyZ3ok+2hfDkATqnad69wY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=daj/bgdtCMU8JcfRNoVZuKuYCw2byI0FOTMDdDgm2af7/8hp4g0BnrH3EH+M+DV1WlziCNor57SyYNV5U1OX8L2b2b57aaRuF6H5hgmABf2XRz5mdMOxEz2JYHKqQTNPvoM73KMoc9jXKiKcxE6n+FCMTsURA+D1wk97ZtfrYJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ad5mzEHl; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43bc0b8520cso8833395e9.1;
+        Mon, 03 Mar 2025 11:08:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741028928; x=1741633728; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cF/23zUstDppzkURu8wJfdQbb4zZ6KV4RiUE3G1K/pk=;
+        b=Ad5mzEHlYCwkE3bkEFQy8+MPtKaU2N549pSZfqMQpVToPKnOlIRLDH2mZH7BGCavSU
+         bqlYIVHPAZvIllnCZb1kSx/aNRxl3djy/2sWKJaymJuSSlzut6xrgOrFZPp9lE8yFl0L
+         X2QY2jSwzcPAxzFaedH0TrGmnFCVO/j6aB8gky147D4XWtRuCyBhJgkhdOIhKzmhUrgi
+         fjfj1B+BvLTlNUlZGS020jXpxeD0cKhpKZyMtFkjE54wM+GylN7T3zNKVSbc1MFCl7+h
+         dUs729VgxmIfUPZcyctx4zS/VZPaKU2bI1yQO0WtJ6YAcC7SEipXSc8tFSiON3foPwFb
+         PFoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741028928; x=1741633728;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cF/23zUstDppzkURu8wJfdQbb4zZ6KV4RiUE3G1K/pk=;
+        b=TxZbeHalht5TW/7F3+zRtnACklrNImEwjwDv060KOtR0FD3NhqW5pmamUUE4amNzo1
+         b2qpyO+M57dZmPs20SHuMd5Cjzcql1xOgkORpIYSWKCmHVQxnuzfoTNFsgL4ygqdHjTn
+         tzZprj3DGUbwexHYo20He+LrqGYJn8WeJ2a20qybOpfX4sLKdII+tWnhVxlq6DWqraRV
+         E4s4wpeyCv/4pNsXTRFCMF7NSapM4MfVonP+a0ondrt1pU9aDhjk0nVsKb9ZVwyB3t4T
+         fO4ZtrxCi6HqNuSk7hS6FwxSnFFXm89JtgzHZ9veaxkJ3lxu89zaPLcfQnbo5bSdk87K
+         xL7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVAy5lqEYHpMmrpXLBlWy/zgYBLDu5sIYZoeD8a/3+TAKBLip3DxqY0+N+3cA1+JbAnhriAphuMfBii7gDniwVvDQ==@vger.kernel.org, AJvYcCWQ5a1wv4ZV1SVGeMDRS6hr1qCs/m3gKCdanJwx4WE5gBVpN5XvnaMhd1nMAzWnut7cO1j1VEgY@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLPDcUVqmw3PCG0LUYOrydTsBhMz7fJco9Zj3P1E66gifhbrQS
+	73USvXWM7x80/fXFxjeoatp98DVut/fXGxePamcWWIkd13SJrbKV2Qrd0O8Y
+X-Gm-Gg: ASbGncuPyRUEn+7R+818UCmUyo83qxjcswhHB/NQM1WXg/DBni7hytetrSSUNgDdllF
+	hb9wTmAjEoCfxUNuE5qnXONwLxUI6YOwIJL3IRsNBzfvrIiaTVk/HUvokbuygRrEWzCpQxJ4Nsj
+	Uo7I/56kn8LaNsDx9jVGQrCJU00nxKnLkNqtpPru+N6TUhcssBZm6k/xeKUdsG48UGafmiDQbWO
+	ApaOiv1PJNs+LHAMUSNOZAU7c46b02ITlGWg+qEFXMqio5m3qnbyHoPPbA0nYFWxifjnsUBK0Hg
+	1W84qA0wiOlAaKbJKnmNBG7f4JFFxUwXl3BYM6Ilsv0MIo5b5X3gMM6IORbMuD9vQlsqTvMX
+X-Google-Smtp-Source: AGHT+IEWVs4i0tbonkHc8HHsQJeB84ekhLGbjKn2nYHkiAn5v4AKZwYjR6d1OGmPPVC7xCrrPo0OcA==
+X-Received: by 2002:a05:600c:3ca8:b0:439:84d3:f7ee with SMTP id 5b1f17b1804b1-43ba675d56fmr98691015e9.24.1741028927840;
+        Mon, 03 Mar 2025 11:08:47 -0800 (PST)
+Received: from prasmi.Home ([2a06:5906:61b:2d00:5c8:2ec7:65d8:a3a5])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bc18452c3sm47420455e9.25.2025.03.03.11.08.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 11:08:46 -0800 (PST)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>
 Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	virtualization@lists.linux.dev,
-	linux-crypto@vger.kernel.org
-Subject: [PATCH] crypto: virtio - Erase some sensitive memory when it is freed
-Date: Mon,  3 Mar 2025 20:08:04 +0100
-Message-ID: <a18fc6cf356bc338c69b3cc44d7be8bd35c6d7d0.1741028854.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.48.1
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] reset: rzg2l-usbphy-ctrl: Correct reset status check
+Date: Mon,  3 Mar 2025 19:08:41 +0000
+Message-ID: <20250303190841.179890-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,40 +91,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-virtcrypto_clear_request() does the same as the code here, but uses
-kfree_sensitive() for one of the free operation.
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-So, better safe than sorry, use virtcrypto_clear_request() directly to
-save a few lines of code and cleanly free the memory.
+Ensure the reset status check explicitly evaluates whether all bits in
+`port_mask` are set. Replace the double negation (`!!`) with an equality
+check to prevent incorrect interpretation of partial bit matches as an
+asserted reset.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Fixes: bee08559701f ("reset: renesas: Add RZ/G2L usbphy control driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
-I've no idea if this is needed or not, but it looks not consistent to me.
+ drivers/reset/reset-rzg2l-usbphy-ctrl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-If safe as-is, maybe the kfree_sensitive() in virtcrypto_clear_request()
-should be removed instead.
----
- drivers/crypto/virtio/virtio_crypto_core.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/crypto/virtio/virtio_crypto_core.c b/drivers/crypto/virtio/virtio_crypto_core.c
-index d0278eb568b9..0d522049f595 100644
---- a/drivers/crypto/virtio/virtio_crypto_core.c
-+++ b/drivers/crypto/virtio/virtio_crypto_core.c
-@@ -480,10 +480,8 @@ static void virtcrypto_free_unused_reqs(struct virtio_crypto *vcrypto)
+diff --git a/drivers/reset/reset-rzg2l-usbphy-ctrl.c b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
+index 8a7f167e405e..6451f621e862 100644
+--- a/drivers/reset/reset-rzg2l-usbphy-ctrl.c
++++ b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
+@@ -88,7 +88,7 @@ static int rzg2l_usbphy_ctrl_status(struct reset_controller_dev *rcdev,
  
- 	for (i = 0; i < vcrypto->max_data_queues; i++) {
- 		vq = vcrypto->data_vq[i].vq;
--		while ((vc_req = virtqueue_detach_unused_buf(vq)) != NULL) {
--			kfree(vc_req->req_data);
--			kfree(vc_req->sgs);
--		}
-+		while ((vc_req = virtqueue_detach_unused_buf(vq)) != NULL)
-+			virtcrypto_clear_request(vc_req);
- 		cond_resched();
- 	}
+ 	port_mask = id ? PHY_RESET_PORT2 : PHY_RESET_PORT1;
+ 
+-	return !!(readl(priv->base + RESET) & port_mask);
++	return (readl(priv->base + RESET) & port_mask) == port_mask;
  }
+ 
+ static const struct of_device_id rzg2l_usbphy_ctrl_match_table[] = {
 -- 
-2.48.1
+2.43.0
 
 
