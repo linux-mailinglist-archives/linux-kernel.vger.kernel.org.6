@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-541940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B88DFA4C39D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:41:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2883BA4C38F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:39:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46AE416F2D3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:40:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 232B7188A4AB
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:39:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B7A6214A98;
-	Mon,  3 Mar 2025 14:39:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9383ECA5A;
+	Mon,  3 Mar 2025 14:39:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="LaFLFzVF"
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="ljOeIPFo"
 Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FDDB214A78
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 14:39:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D73E812FF69
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 14:39:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741012786; cv=none; b=YPzXonI/XvoOOjiNAwx/TkXdzz4MJKLZqCxXSa4Tj4zk02wFzIqdcPhH4vf1beQ/tvA/YeW2XJjZQei1lOdWswPGhOPSFpFFFZvXvgby7CE76/q56v4PwoybvJBecpzlxDNPEbf3RkyRI76wfHw2UWKxhwk0gJXGpUinXyj577s=
+	t=1741012771; cv=none; b=MmeKWoYhOBiBFmiJy0B0goqn8DssuYnw9ybn/SyXbeT6DYHH0dzMx8nq/8bnQqW5X703aQvZhkBkdmfT6qNr7yepRj4XY/vgCffDxJwio4xke9/esKajY1aIU+K/g9TCmLllHmqmGshpRT14j2P3VYQDUJVOX7VuMgBlKLXhbYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741012786; c=relaxed/simple;
-	bh=bDltFn72XGX7/YGKM/jJc61Zk89Uap7Gcrzn0no2Mj0=;
+	s=arc-20240116; t=1741012771; c=relaxed/simple;
+	bh=wuCxEcHiHWMbshLJqy+PE4V7Hlt/Y9N7pXTFmE39aXE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FC7/5WbnwkIZ79+NYZo0uuOS0mvK2/JTyPkczamXGqbUAc1LS2+r1l/ABWBzc0KT46pVjb9MQtGWdmfY2uY7p+FiWh+6xAv0wE4AWL9kQ3cUh5DiZXm+kwrBs6PhLvHfr3inxF286G+f7M3++9UvO+2GgXjyu+6wDLu+z0h4ihE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=LaFLFzVF; arc=none smtp.client-ip=46.235.229.95
+	 MIME-Version; b=EY1j/dZx2P67WaWJ7EPT6t2nI9v892boIutnmNogFEqCwdgoPt8f+3CVK1/KAq93RiCjZ8C1Bo/ngb1HvwEa4JJu+iLv1VFvQDKQom4ltcPpGk+zQxnO6zCbHLKK0jmagc9p74/z/u2+0zuKEO8vom/M4JkTYPqjzi54uLf0xr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=ljOeIPFo; arc=none smtp.client-ip=46.235.229.95
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
 	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=NCcGpHSW32vENYyHk+1Go1rb3MBFVM15qU2VwPxGLTQ=; b=LaFLFzVFca63tNHt
-	MFHhSQTdHARen5gH5yOeqOLa3VG6YqaBHlCXpqlPLlpoxWXOSIn8kbhLof3VXLRZvdmv+8gQyk4rm
-	8Cc6AoVCi442tCpUZDIaJYcRReofzgvKEJUPyOL84WCBPmzUGmac9QPMCKp5tiiw87PmNiXtZ/J65
-	AYiuxY5I5LdHPZmDoUTtaIplSoP9xF5ToT7bZHRYsXIqC1XHTnW3eFgADE9VLPx6ODx+CLZ9jldM1
-	QhT3LP6VBaYQcPqsXL2kjaqpF4E1dt6tiZikN4RcJ3XEgZFdFwBdY/CSI4sSzTMbRSBsBJLERL68b
-	+nunWdvbPnbLp6Px9g==;
+	:Subject; bh=zcWTq0+tIXCR7i1Bn8SpUwbeuy7hHsMrsLtvUfkNYic=; b=ljOeIPFoWhayaeSJ
+	rHzpOtXpgkuRPEiKmG2zVC85wjomyNbcZ6lGe2Luo+7Vs5YvEcwxRqVn3fNs+ZJ048QDCVk7+g22f
+	bvlZCLpvIaz19Atyeix5qtly+EMyojwJOzjHhe+gzVPNPPsvK3w7QHwE0c/fBu3Q7iwYLIQXVWp7z
+	0KLfyg1j5o6Zrt1p5GBJ0r3x76+D/r8wRSWGJEZFaRSYxtcvVtMIm7U3RTwtDeGnYaEQUEf6PbpVe
+	g7LjIQQ1uvnHNRfpSwXhfbs1Gx+Q/yGZoHUrxFdF7/tRdKv2nQzRpBPxp2r0cnn70NqZvnWLo0vjE
+	rNw364LqKRK1RqZdlA==;
 Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
 	by mx.treblig.org with esmtp (Exim 4.96)
 	(envelope-from <linux@treblig.org>)
-	id 1tp6x2-0028PG-19;
-	Mon, 03 Mar 2025 14:39:24 +0000
+	id 1tp6x3-0028PG-0W;
+	Mon, 03 Mar 2025 14:39:25 +0000
 From: linux@treblig.org
 To: alexander.deucher@amd.com,
 	Felix.Kuehling@amd.com,
@@ -59,9 +59,9 @@ Cc: airlied@gmail.com,
 	amd-gfx@lists.freedesktop.org,
 	dri-devel@lists.freedesktop.org,
 	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH 1/6] drm/amdgpu: Remove ppatomfwctrl deadcode
-Date: Mon,  3 Mar 2025 14:39:17 +0000
-Message-ID: <20250303143922.36342-2-linux@treblig.org>
+Subject: [PATCH 2/6] drm/amdgpu: Remove phm_powerdown_uvd
+Date: Mon,  3 Mar 2025 14:39:18 +0000
+Message-ID: <20250303143922.36342-3-linux@treblig.org>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250303143922.36342-1-linux@treblig.org>
 References: <20250303143922.36342-1-linux@treblig.org>
@@ -75,123 +75,50 @@ Content-Transfer-Encoding: 8bit
 
 From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-pp_atomfwctrl_get_pp_assign_pin() and pp_atomfwctrl_get_pp_assign_pin()
-were added in 2017 by
-commit 0d2c7569e196 ("drm/amdgpu: add new atomfirmware based helpers for
-powerplay")
-but have remained unused.
+phm_powerdown_uvd() has been unused since 2017's
+commit 47047263c527 ("drm/amd/powerplay: delete eventmgr related files.")
 
-Remove them, and the helper functions they used.
+Remove it.
 
 Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 ---
- .../drm/amd/pm/powerplay/hwmgr/ppatomfwctrl.c | 78 -------------------
- .../drm/amd/pm/powerplay/hwmgr/ppatomfwctrl.h |  3 -
- 2 files changed, 81 deletions(-)
+ .../gpu/drm/amd/pm/powerplay/hwmgr/hardwaremanager.c   | 10 ----------
+ drivers/gpu/drm/amd/pm/powerplay/inc/hardwaremanager.h |  1 -
+ 2 files changed, 11 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/pm/powerplay/hwmgr/ppatomfwctrl.c b/drivers/gpu/drm/amd/pm/powerplay/hwmgr/ppatomfwctrl.c
-index 82d540334318..6120f14caab0 100644
---- a/drivers/gpu/drm/amd/pm/powerplay/hwmgr/ppatomfwctrl.c
-+++ b/drivers/gpu/drm/amd/pm/powerplay/hwmgr/ppatomfwctrl.c
-@@ -158,84 +158,6 @@ int pp_atomfwctrl_get_voltage_table_v4(struct pp_hwmgr *hwmgr,
- 	return result;
+diff --git a/drivers/gpu/drm/amd/pm/powerplay/hwmgr/hardwaremanager.c b/drivers/gpu/drm/amd/pm/powerplay/hwmgr/hardwaremanager.c
+index 90452b66e107..a59677cf8dfc 100644
+--- a/drivers/gpu/drm/amd/pm/powerplay/hwmgr/hardwaremanager.c
++++ b/drivers/gpu/drm/amd/pm/powerplay/hwmgr/hardwaremanager.c
+@@ -149,16 +149,6 @@ int phm_apply_clock_adjust_rules(struct pp_hwmgr *hwmgr)
+ 	return 0;
  }
  
-- 
--static struct atom_gpio_pin_lut_v2_1 *pp_atomfwctrl_get_gpio_lookup_table(
--		struct pp_hwmgr *hwmgr)
+-int phm_powerdown_uvd(struct pp_hwmgr *hwmgr)
 -{
--	const void *table_address;
--	uint16_t idx;
+-	PHM_FUNC_CHECK(hwmgr);
 -
--	idx = GetIndexIntoMasterDataTable(gpio_pin_lut);
--	table_address =	smu_atom_get_data_table(hwmgr->adev,
--			idx, NULL, NULL, NULL);
--	PP_ASSERT_WITH_CODE(table_address,
--			"Error retrieving BIOS Table Address!",
--			return NULL);
--
--	return (struct atom_gpio_pin_lut_v2_1 *)table_address;
--}
--
--static bool pp_atomfwctrl_lookup_gpio_pin(
--		struct atom_gpio_pin_lut_v2_1 *gpio_lookup_table,
--		const uint32_t pin_id,
--		struct pp_atomfwctrl_gpio_pin_assignment *gpio_pin_assignment)
--{
--	unsigned int size = le16_to_cpu(
--			gpio_lookup_table->table_header.structuresize);
--	unsigned int offset =
--			offsetof(struct atom_gpio_pin_lut_v2_1, gpio_pin[0]);
--	unsigned long start = (unsigned long)gpio_lookup_table;
--
--	while (offset < size) {
--		const struct  atom_gpio_pin_assignment *pin_assignment =
--				(const struct  atom_gpio_pin_assignment *)(start + offset);
--
--		if (pin_id == pin_assignment->gpio_id)  {
--			gpio_pin_assignment->uc_gpio_pin_bit_shift =
--					pin_assignment->gpio_bitshift;
--			gpio_pin_assignment->us_gpio_pin_aindex =
--					le16_to_cpu(pin_assignment->data_a_reg_index);
--			return true;
--		}
--		offset += offsetof(struct atom_gpio_pin_assignment, gpio_id) + 1;
--	}
--	return false;
--}
--
--/*
-- * Returns TRUE if the given pin id find in lookup table.
-- */
--bool pp_atomfwctrl_get_pp_assign_pin(struct pp_hwmgr *hwmgr,
--		const uint32_t pin_id,
--		struct pp_atomfwctrl_gpio_pin_assignment *gpio_pin_assignment)
--{
--	bool ret = false;
--	struct atom_gpio_pin_lut_v2_1 *gpio_lookup_table =
--			pp_atomfwctrl_get_gpio_lookup_table(hwmgr);
--
--	/* If we cannot find the table do NOT try to control this voltage. */
--	PP_ASSERT_WITH_CODE(gpio_lookup_table,
--			"Could not find GPIO lookup Table in BIOS.",
--			return false);
--
--	ret = pp_atomfwctrl_lookup_gpio_pin(gpio_lookup_table,
--			pin_id, gpio_pin_assignment);
--
--	return ret;
--}
--
--/*
-- * Enter to SelfRefresh mode.
-- * @param hwmgr
-- */
--int pp_atomfwctrl_enter_self_refresh(struct pp_hwmgr *hwmgr)
--{
--	/* 0 - no action
--	 * 1 - leave power to video memory always on
--	 */
+-	if (hwmgr->hwmgr_func->powerdown_uvd != NULL)
+-		return hwmgr->hwmgr_func->powerdown_uvd(hwmgr);
 -	return 0;
 -}
 -
- /** pp_atomfwctrl_get_gpu_pll_dividers_vega10().
-  *
-  * @param hwmgr       input parameter: pointer to HwMgr
-diff --git a/drivers/gpu/drm/amd/pm/powerplay/hwmgr/ppatomfwctrl.h b/drivers/gpu/drm/amd/pm/powerplay/hwmgr/ppatomfwctrl.h
-index e86e05c786d9..0d62903d5676 100644
---- a/drivers/gpu/drm/amd/pm/powerplay/hwmgr/ppatomfwctrl.h
-+++ b/drivers/gpu/drm/amd/pm/powerplay/hwmgr/ppatomfwctrl.h
-@@ -217,9 +217,6 @@ struct pp_atomfwctrl_smc_dpm_parameters {
- int pp_atomfwctrl_get_gpu_pll_dividers_vega10(struct pp_hwmgr *hwmgr,
- 		uint32_t clock_type, uint32_t clock_value,
- 		struct pp_atomfwctrl_clock_dividers_soc15 *dividers);
--int pp_atomfwctrl_enter_self_refresh(struct pp_hwmgr *hwmgr);
--bool pp_atomfwctrl_get_pp_assign_pin(struct pp_hwmgr *hwmgr, const uint32_t pin_id,
--		struct pp_atomfwctrl_gpio_pin_assignment *gpio_pin_assignment);
+-
+ int phm_disable_clock_power_gatings(struct pp_hwmgr *hwmgr)
+ {
+ 	PHM_FUNC_CHECK(hwmgr);
+diff --git a/drivers/gpu/drm/amd/pm/powerplay/inc/hardwaremanager.h b/drivers/gpu/drm/amd/pm/powerplay/inc/hardwaremanager.h
+index f4f9a104d170..915f1b8e4dba 100644
+--- a/drivers/gpu/drm/amd/pm/powerplay/inc/hardwaremanager.h
++++ b/drivers/gpu/drm/amd/pm/powerplay/inc/hardwaremanager.h
+@@ -396,7 +396,6 @@ struct phm_odn_clock_levels {
+ };
  
- int pp_atomfwctrl_get_voltage_table_v4(struct pp_hwmgr *hwmgr, uint8_t voltage_type,
- 		uint8_t voltage_mode, struct pp_atomfwctrl_voltage_table *voltage_table);
+ extern int phm_disable_clock_power_gatings(struct pp_hwmgr *hwmgr);
+-extern int phm_powerdown_uvd(struct pp_hwmgr *hwmgr);
+ extern int phm_setup_asic(struct pp_hwmgr *hwmgr);
+ extern int phm_enable_dynamic_state_management(struct pp_hwmgr *hwmgr);
+ extern int phm_disable_dynamic_state_management(struct pp_hwmgr *hwmgr);
 -- 
 2.48.1
 
