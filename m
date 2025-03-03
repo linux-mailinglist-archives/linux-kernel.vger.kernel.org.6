@@ -1,138 +1,82 @@
-Return-Path: <linux-kernel+bounces-544478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7765A4E168
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:43:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 43FECA4E15A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:42:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0D9F7A5DD6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:42:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E04657A3628
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:41:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4CC260388;
-	Tue,  4 Mar 2025 14:40:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DXDwVUdr"
-Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D66A25332C;
+	Tue,  4 Mar 2025 14:39:58 +0000 (UTC)
+Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91C7D237702
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CFB8205ABA
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:39:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741099240; cv=pass; b=llwnuvaGDGV3qXLNQbInPh6dixNCmCDCWeH5hKxvt4QIXlWl/GIMCfMUBQGDwYwPpKhklX2XjhL+1zLCKWyWrjMWmE95d/ZCrkaY+3jLplzpIL9fSqYETOC8I6Hp564t+O8kvG+FZZCuUSYXgxrAfDA9vlAsBsVUM46bsbBmroo=
+	t=1741099197; cv=pass; b=Mer76BI1X+ewBjgSikhBv8bBc26Teg6cTZjHGFsHLkpjAWy6hTZhIEP9X2M/cKo1llsIWXxrSqmOodalYLwFLQqwwNSKRqt40UB0hyZPW/NrEF1gsCqk7tEtePsshN2wAsk1dist3k+SZn02vkZNyjnOMlBLFCb0FQDdnRyORig=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741099240; c=relaxed/simple;
-	bh=DhfNdV/O+uocDkBJFYE83PtsNs9K9z/PTwLsOVi9J/g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f/ttqMbD4BoQvZYALuxJ8sZOetRYYETwRpYeRzxwvQQw/tUPUK7qpUP5D/o1kboU0Cmug1bWIT7SXmcORzGUzmVBOx76oXTxakvU0TvXaMU/cpMJ0Vt709AS1GA2uXX3phMMLM8CeagxLouHO2Hs5e2zHyFmze1H7fPE2QqRZyI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DXDwVUdr; arc=none smtp.client-ip=209.85.208.177; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; arc=pass smtp.client-ip=160.75.25.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+	s=arc-20240116; t=1741099197; c=relaxed/simple;
+	bh=8ngrTt5vPnWxJvv5WXsUHu+32lRdZwzHFsBffAE8eJE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SG75yshL7ItqBx7oePPCqbymXn3Zcb+G210WzT7+7PO6Sftj2r1ELvpx2lF3tl95yhtdi8IPe4wZ5J/fWDUqcRMvhHarYL5rxJESe4/wOGkgM77gH4SxowIqvlwbe9nPu4TS/2ff69aN3GnuzwGIjvQDbriKD3TrjTFXMVyjdFs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=cc.itu.edu.tr; arc=none smtp.client-ip=217.140.110.172; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=pass smtp.client-ip=160.75.25.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id C323140F1CD7
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:40:36 +0300 (+03)
+	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 5712F40D4DF7
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:39:54 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
-Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key, unprotected) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=DXDwVUdr
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dcX6LGHzFxB1
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:39:40 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dYs0pLtzFx9H
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:37:21 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id B0C7042723; Tue,  4 Mar 2025 17:39:39 +0300 (+03)
-Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DXDwVUdr
-X-Envelope-From: <linux-kernel+bounces-541752-bozkiru=itu.edu.tr@vger.kernel.org>
-Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DXDwVUdr
-Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id 26FDB41E1E
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 16:03:42 +0300 (+03)
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id AF1383063EFC
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 16:03:41 +0300 (+03)
+	id F1AF842741; Tue,  4 Mar 2025 17:37:13 +0300 (+03)
+X-Envelope-From: <linux-kernel+bounces-541765-bozkiru=itu.edu.tr@vger.kernel.org>
+Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
+	by le2 (Postfix) with ESMTP id 2324241FDC
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 16:09:34 +0300 (+03)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by fgw2.itu.edu.tr (Postfix) with SMTP id CB0F52DCDE
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 16:09:33 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83A803A9F53
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:03:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 375E716B74F
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:09:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8BA21148C;
-	Mon,  3 Mar 2025 13:03:16 +0000 (UTC)
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8495288D2
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 13:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A04B721147F;
+	Mon,  3 Mar 2025 13:08:59 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85EC72101A0;
+	Mon,  3 Mar 2025 13:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741006992; cv=none; b=JW5CenFoqcfRai+YlI4wgYjlMC/kr6c1/Uos7yPFn3IAf7t/MnQjWKpCnKiILBtwUYfcIukEtjczLt6djK33l88gIgJWpLRH7HE9Z6nuYGw5g00F95X2kJIiBcUFbnmaXLEHqolAJXncY4o8z7pW7JK6hrDs+n/fe/jPf9wL2q0=
+	t=1741007338; cv=none; b=kcTlTqkWvpGg77USDLAlXLhjFb/9Bvy1Ef433MR4iQW57/a/FPZ9YhQ4Cq2XZjemX2KOHRuu8TW4BwoRPRXZvvm5gTcmXDp5PWMuKniMfny0yDzviTt0jgD3oTdw0otMoA8SVmRPs8up6Kkb4VKLBPU9rxn6dNhmTZT1SEjZxnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741006992; c=relaxed/simple;
-	bh=DhfNdV/O+uocDkBJFYE83PtsNs9K9z/PTwLsOVi9J/g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oPI7RUxV5vv1Op/BuDUa/ZWC/PEK2mlHsJgj67HvTLI8QI9JlGfZa2JQQFnioi4QcIylSqTYEU/CuhqTRuSSlyKFNzdcd4zzu2MV1jKQLOmBW2EUk7eAHZfp7ikCceGn3Ovb0qlYYmHV4Q33wzjN4j7olOVDtTg94Y8vKgZqx10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DXDwVUdr; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-30bb2fdbb09so12803181fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 05:03:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741006989; x=1741611789; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DuRt7sNsxjnBZpSJFW4wxc/r2PcIDt/KOhq8Vg4VK/w=;
-        b=DXDwVUdrSsk322dDuE/L5lNxzKO0jvB87EdzYcRP5Vd11T20vU0VTNeKiuqCLMLeL2
-         k2ruho4K1IWjXKIsxt9x1yrt07HeD0ScVdLkhON6ws9VS5OToCBdMcHkCkNpbIoaPlur
-         VAU2fxn5X7+SCLtZOLjCLTVVXgR9wzsx0+ftg97sMR0XNnMZvEHzDlJxqNn6AHaW/Ako
-         Ba9SvliI4uKdVzlICirU+0fIrfURpTQJXhsNGE+d/S8PBErEDZfNEUAifm9cfI6ds+fh
-         3puE4q7FZIilXLMLa3zS1GNjQCIgE8/RkIvI/MGIHuwHp5L8j0i47qqcyKQELgSFEpmA
-         M28A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741006989; x=1741611789;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DuRt7sNsxjnBZpSJFW4wxc/r2PcIDt/KOhq8Vg4VK/w=;
-        b=mVfXdJAZk7k/MeC9xtHdDiwFqnFylveYH81ang1dZAhJqgUwi3CuhuAMY05olG2usX
-         iUgTa2qH1ZLuFF//kT5ne1B6n+ga0ZRAflQ1Izo+jE76S2D9Qq5xQLQCDSUgSgZARoPp
-         xpAjREmJHL9MqBl+Vnmzw6Fy/njXNRZNOR3BAImtL+pySimTZ92nGnELR076pWO9SdM3
-         trrDzLefs0fxo+J42ECwbDhU49Tz2qTN2FXDALMmCoAXxirD9bx9y7a2/kAS9Zs1BjpI
-         BIgqfNdr4ii75BqZzPHz+mQdYzHxxxN5XzWIO4YN62QM5k1g/Nww9S/g3BM8UavOZLAL
-         ENdw==
-X-Forwarded-Encrypted: i=1; AJvYcCVNRjC8EZAIV85N75gPJVudnGexI/nC29RN4D0KOjIB0MM+US8vZjhpZTWiskCHl9nIaSehCGkppd0TjIc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZUSIb1iSa9dT4iPTqunGGv2WkUwxT16k7LeiN0NkbmCTsWPo9
-	EeJyreJ8Cjfb40aRDNJhfYwynifaWttpiRGUDngWc8vjcpo86CVVlDVxZgkyQOw=
-X-Gm-Gg: ASbGnctAJF4YMtEGnlIBqeil5a70Wmb8M0kTKXbrMdXQZqvJxtrEe/PSFnSu522D/uf
-	B+7VS/FoRLnUHRMKhJQA423n5rMpADd64ZcCMUot6DomE2Xg6Tma1FvucF9x7bxtynNWscm9c/S
-	IEIJUrSReEviNtpsz91ptnvhZcqGW1y/CZVSjwsuM89N1BrBsGg16gt86zqEzUA3tgHbFgEivfI
-	bUw8hCT+JyGdpuaQzJrceH+xs0OaMwIyxHmO4Oo0nGl2KvRpvEByg50jl/ytZNcMGtS7vzeL7Xn
-	6UEWNSvIwI/lNmsnY/cn4Vy17l1HbQofgRg28EKMZZfvQLAxwPR2u+67rNTPyPoWOZv3CMNHrU+
-	yRJxSyryQJUAWGMNdue6IUcmI
-X-Google-Smtp-Source: AGHT+IF1PolbJR152vR5fP4sMo4m1QykoHvieTbCTpVgWNk/bMvUDzzFZWCKpBvAuMT571N86KTxyA==
-X-Received: by 2002:a2e:bc18:0:b0:30b:b7c3:ea71 with SMTP id 38308e7fff4ca-30bb7c3ef87mr18110021fa.15.1741006988806;
-        Mon, 03 Mar 2025 05:03:08 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30bba62b892sm3743161fa.66.2025.03.03.05.03.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 05:03:08 -0800 (PST)
-Date: Mon, 3 Mar 2025 15:03:06 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-Cc: jassisinghbrar@gmail.com, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, andersson@kernel.org, konradybcio@kernel.org, 
-	manivannan.sadhasivam@linaro.org
-Subject: Re: [PATCH V3 1/2] dt-bindings: mailbox: Document qcom,tmel-qmp
-Message-ID: <5xjtb4cifjjagkeifpkgx4y5cb7mwrocv7sxq3lh4lhadtw2bn@umtwhw7eqkhe>
-References: <20250228045356.3527662-1-quic_srichara@quicinc.com>
- <20250228045356.3527662-2-quic_srichara@quicinc.com>
- <velvqajyhrdaipmqmsduv3l3dsv56sy4rfukwm2hrdvh47hgqx@7sbnrgkzsn67>
- <1a22a637-c3f1-49b3-adf5-3e952c7d336a@quicinc.com>
+	s=arc-20240116; t=1741007338; c=relaxed/simple;
+	bh=8ngrTt5vPnWxJvv5WXsUHu+32lRdZwzHFsBffAE8eJE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dpYHzPPecFb6r9wiUmAJ/T5N+KcYXH5T+J/V7xUZSenlB6p8uRjj9BkG06YCrtS+ql7oKxBg9VFzXFMHhJzCnefJ/n8+Re1xQrKeRX2R9Ahh39BbrByz8W+vfLacQ7CI10fcn8Gfvn2qbqegyHsvSuolPMakFPvavwjLVZAWsR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D60CE113E;
+	Mon,  3 Mar 2025 05:09:07 -0800 (PST)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3EB5C3F673;
+	Mon,  3 Mar 2025 05:08:51 -0800 (PST)
+Message-ID: <fdfb8200-1b07-4dba-9659-ef25a1391f00@arm.com>
+Date: Mon, 3 Mar 2025 13:08:49 +0000
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -140,141 +84,136 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1a22a637-c3f1-49b3-adf5-3e952c7d336a@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 2/3] rust: add dma coherent allocator abstraction.
+To: Abdiel Janulgue <abdiel.janulgue@gmail.com>, aliceryhl@google.com,
+ dakr@kernel.org, daniel.almeida@collabora.com, rust-for-linux@vger.kernel.org
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
+ Valentin Obst <kernel@valentinobst.de>,
+ open list <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>,
+ Marek Szyprowski <m.szyprowski@samsung.com>, airlied@redhat.com,
+ "open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>
+References: <20250224115007.2072043-1-abdiel.janulgue@gmail.com>
+ <20250224115007.2072043-3-abdiel.janulgue@gmail.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20250224115007.2072043-3-abdiel.janulgue@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6dcX6LGHzFxB1
+X-ITU-Libra-ESVA-ID: 4Z6dYs0pLtzFx9H
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741703986.61345@xmdg+D5Oud5QIT2OAEDFWg
+X-ITU-Libra-ESVA-Watermark: 1741703888.49867@lnSWPiprvofsGyUmA9uSCw
 X-ITU-MailScanner-SpamCheck: not spam
 
-On Mon, Mar 03, 2025 at 12:51:44PM +0530, Sricharan Ramabadhran wrote:
+On 24/02/2025 11:49 am, Abdiel Janulgue wrote:
+> Add a simple dma coherent allocator rust abstraction. Based on
+> Andreas Hindborg's dma abstractions from the rnvme driver, which
+> was also based on earlier work by Wedson Almeida Filho.
 > 
+> Nacked-by: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+> ---
+>   rust/bindings/bindings_helper.h |   1 +
+>   rust/helpers/dma.c              |  13 +
+>   rust/helpers/helpers.c          |   1 +
+>   rust/kernel/dma.rs              | 421 ++++++++++++++++++++++++++++++++
+>   rust/kernel/lib.rs              |   1 +
+>   5 files changed, 437 insertions(+)
+>   create mode 100644 rust/helpers/dma.c
+>   create mode 100644 rust/kernel/dma.rs
 > 
-> On 2/28/2025 11:36 AM, Dmitry Baryshkov wrote:
-> > On Fri, Feb 28, 2025 at 10:23:55AM +0530, Sricharan R wrote:
-> > > From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> > > 
-> > > TMEL SS provides different kinds of services like secureboot, remote image
-> > 
-> > What is TMEL SS? What is Q6, etc? Please provide a definition on the
-> > first usagem both in the commit message and in the bindings text. And in
-> > the cover letter. Also, in some places you use TME-L instead of TMEL.
-> > Please settle on one of those, unless there is a difference between
-> > them,
-> > 
-> ok, both are same, will expand and fix same in all places
-> 
-> > > authentication, key management, crypto, OEM provisioning etc. This patch
-> > > adds support for remote image authentication. Support for rest of the
-> > > services can be added.
-> > > 
-> > > The QMP mailbox is the primary means of communication between TMEL SS and
-> > > other subsystem on the SoC. A dedicated pair of inbound and outbound
-> > > mailboxes is implemented for each subsystem/external execution environment
-> > > which needs to communicate with TMEL for security services. The inbound
-> > > mailboxes are used to send IPC requests to TMEL, which are then processed
-> > > by TMEL firmware and accordingly the responses are sent back via outbound
-> > > mailboxes.
-> > > 
-> > > It is an IPC transport protocol which is light weight and supports a subset
-> > > of API's. It handles link initialization, negotiation, establishment and
-> > > communication across client(CPU/BTSS/AUDIOSS) and server(TMEL SS).
-> > > 
-> > >     -----------------------------------------------       ---------------------------------------------------
-> > >    |                                              |       |                                                 |
-> > >    |                 SOC  CLIENT                  | SOC   |                TMEL  SS                         |
-> > >    |                                              | AHB   |                                                 |
-> > >    |     ----------    ---------   ---------      |       | ------    -------     --------    ------------  |
-> > >    |     |        |    |       |   |       |      | WO    | |     | R |     |     |      |    |SERVICES   | |
-> > >    |     | CPU    |<-->| TMEL  |<->|       |------------->| | IN  |-->|     |     | TMEL |    |--------   | |
-> > >    |     |        |    | COM   |   | QMP   |      | RO    | |     | W | QMP |<--->| COM  |<-->| a) ATTEST | |
-> > >    |     |        |    |       |   |       |<-------------| | OUT |<--|     |     |      |    | b) CRYPTO | |
-> > >    |     |        |    |       |   |       |      |       | |     |   |     |     |      |    | .. more   | |
-> > >    |     ---------     ---------   ---------      |       | ------    -------     -------     ------------  |
-> > >    |                                              |       |                                                 |
-> > >     -----------------------------------------------       --------------------------------------------------
-> > > 
-> > > This binding describes the component responsible for communication between
-> > > the TMEL server based subsystems (Q6) and the TMEL client
-> > > (CPU/BTSS/AUDIOSS), used for security services like secure image
-> > > authentication, enable/disable efuses, crypto services. Each client in the
-> > > SoC has its own block of message RAM and IRQ for communication with the
-> > > TMEL SS.
-> > > 
-> > > Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> > > ---
-> > > #V3:
-> > 
-> > Creative. Where are the previous changelogs?
-> > 
-> ok, will add
-> 
-> > > ---
-> > >          Fixed wrappings.
-> > >          Made mailbox-cells as a required property and changed value to '1'.
-> > >          Fixed to use compatible as filename.
-> > >          Renamed compatible as per Krzystof's comments.
-> > >          Dropped unused label.
-> > > 
-> > >      Following tests were done and no issues.
-> > > 
-> > >         *)  Checkpatch
-> > >         *)  Codespell
-> > >         *)  Sparse
-> > >         *)  kerneldoc check
-> > >         *)  Kernel lock debugging
-> > >         *)  dt_binding_check and dtbs_check
-> > > 
-> > >   .../bindings/mailbox/qcom,ipq5424-tmel.yaml   | 62 +++++++++++++++++++
-> > >   1 file changed, 62 insertions(+)
-> > >   create mode 100644 Documentation/devicetree/bindings/mailbox/qcom,ipq5424-tmel.yaml
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/mailbox/qcom,ipq5424-tmel.yaml b/Documentation/devicetree/bindings/mailbox/qcom,ipq5424-tmel.yaml
-> > > new file mode 100644
-> > > index 000000000000..2e3c79add405
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/mailbox/qcom,ipq5424-tmel.yaml
-> > > @@ -0,0 +1,62 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/mailbox/qcom,ipq5424-tmel.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: Qualcomm TMEL IPCC channel
-> > > +
-> > > +maintainers:
-> > > +  - Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> > > +
-> > > +description:
-> > > +  TMEL SS provides different kinds of services like secureboot, remote image authentication,
-> > > +  key management, crypto, OEM provisioning etc. This patch adds support for remote image
-> > > +  authentication. Support for rest of the services can be added.
-> > > +
-> > > +  The QMP mailbox is the primary means of communication between TMEL SS and other subsystem on
-> > > +  the SoC. A dedicated pair of inbound and outbound mailboxes is implemented for each
-> > > +  subsystem/external execution environment which needs to communicate with TMEL for security
-> > > +  services. The inbound mailboxes are used to send IPC requests to TMEL, which are then processed
-> > 
-> > This string is 100 chars long. What is the recommended wrapping
-> > boundary?
-> > 
-> I kept it as 100 and checkpatch did not throw any warnings.
+> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+> index 55354e4dec14..f69b05025e52 100644
+> --- a/rust/bindings/bindings_helper.h
+> +++ b/rust/bindings/bindings_helper.h
+> @@ -11,6 +11,7 @@
+>   #include <linux/blk_types.h>
+>   #include <linux/blkdev.h>
+>   #include <linux/cred.h>
+> +#include <linux/dma-mapping.h>
+>   #include <linux/errname.h>
+>   #include <linux/ethtool.h>
+>   #include <linux/file.h>
+> diff --git a/rust/helpers/dma.c b/rust/helpers/dma.c
+> new file mode 100644
+> index 000000000000..30da079d366c
+> --- /dev/null
+> +++ b/rust/helpers/dma.c
+> @@ -0,0 +1,13 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/dma-mapping.h>
+> +
+> +int rust_helper_dma_set_mask_and_coherent(struct device *dev, u64 mask)
+> +{
+> +	return dma_set_mask_and_coherent(dev, mask);
+> +}
+> +
+> +int rust_helper_dma_set_mask(struct device *dev, u64 mask)
+> +{
+> +	return dma_set_mask(dev, mask);
+> +}
+> diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
+> index 0640b7e115be..8f3808c8b7fe 100644
+> --- a/rust/helpers/helpers.c
+> +++ b/rust/helpers/helpers.c
+> @@ -13,6 +13,7 @@
+>   #include "build_bug.c"
+>   #include "cred.c"
+>   #include "device.c"
+> +#include "dma.c"
+>   #include "err.c"
+>   #include "fs.c"
+>   #include "io.c"
+> diff --git a/rust/kernel/dma.rs b/rust/kernel/dma.rs
+> new file mode 100644
+> index 000000000000..b4dd5d411711
+> --- /dev/null
+> +++ b/rust/kernel/dma.rs
+> @@ -0,0 +1,421 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +//! Direct memory access (DMA).
+> +//!
+> +//! C header: [`include/linux/dma-mapping.h`](srctree/include/linux/dma-mapping.h)
+> +
+> +use crate::{
+> +    bindings, build_assert,
+> +    device::Device,
+> +    error::code::*,
+> +    error::Result,
+> +    transmute::{AsBytes, FromBytes},
+> +    types::ARef,
+> +};
+> +
+> +/// Inform the kernel about the device's DMA addressing capabilities. This will set the mask for
+> +/// both streaming and coherent APIs together.
+> +pub fn dma_set_mask_and_coherent(dev: &Device, mask: u64) -> i32 {
+> +    // SAFETY: device pointer is guaranteed as valid by invariant on `Device`.
+> +    unsafe { bindings::dma_set_mask_and_coherent(dev.as_raw(), mask) }
+> +}
+> +
+> +/// Same as `dma_set_mask_and_coherent`, but set the mask only for streaming mappings.
+> +pub fn dma_set_mask(dev: &Device, mask: u64) -> i32 {
+> +    // SAFETY: device pointer is guaranteed as valid by invariant on `Device`.
+> +    unsafe { bindings::dma_set_mask(dev.as_raw(), mask) }
+> +}
 
-"The preferred limit on the length of a single line is 80 columns."
+It's a bit funny that dma_set_coherent_mask() is the only one you really 
+need at this point (with only the coherent API), yet it's the one that's 
+been left out.
 
-Documentation/process/coding-style.rst
+FWIW, also +1 to the consensus that the DMA masks are, both logically 
+and functionally, properties of the device, so making these Device 
+methods seems sensible.
 
-> 
-> Regards,
->  Sricharan
-> 
-
--- 
-With best wishes
-Dmitry
+Thanks,
+Robin.
 
 
