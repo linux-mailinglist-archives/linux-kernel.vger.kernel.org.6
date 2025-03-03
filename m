@@ -1,161 +1,171 @@
-Return-Path: <linux-kernel+bounces-541424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B2F4A4BCCE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:48:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DF53A4BCC9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:47:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB7073A7F72
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:46:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3C501713C3
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:46:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401FE1F3B92;
-	Mon,  3 Mar 2025 10:44:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 497271F3D55;
+	Mon,  3 Mar 2025 10:44:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LRaq3Pas"
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QLa0LQQp"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F361F0E5A;
-	Mon,  3 Mar 2025 10:44:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 002A21F3D30;
+	Mon,  3 Mar 2025 10:44:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740998670; cv=none; b=oKQs4VKuyntW8NCVYSTghHBSFtG7IZCamkxPaXOEz8gmgNaSnuxYdHydDcnuzj6PLsUYiD+PRdoVgcM4qJhLarYnGYBTdB724KGNAN+hD3K0mvxZLPOgOwC5N1YzY+izrZVawx2kiLZUZluu9N1Qj+yf5IQqGl9F4xBTNnubnlY=
+	t=1740998676; cv=none; b=t+I66HMT6sc1WxHegxE+LeZ0n6f0yMvVrqKCzDeH0j3kf+K+ays+1o083SOhKOwOWiqj0QOaU34wMCB7XZSPuFDzd1+MCDA2hQXdOCWdskAX7MgbDGLZsxlD4JAHcjgs3r6tLGBqDTSLDXffZXhKKnDUPz0MH+66M7xD+91G+I8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740998670; c=relaxed/simple;
-	bh=wC2q10KG3Ghwf6hz4tiJoVuQD0EAzLySdABg2kAHXjw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NzKSfjlDQ1X2R69xN7PyShWsaJ/h2qIYTir0u5iPDx0xIN4phfqKSZAn3Mpth8nKhYMpAWodhGgajYFJJNdtIH1QnkrKKVsxgG2sBvuWvy6C/x5ptwoksaJZkVmPxvewbbrnItQW+bX3+p3EWqStBS2n99ayXDdz7AEVGdVQuGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LRaq3Pas; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-5235db99207so1301249e0c.2;
-        Mon, 03 Mar 2025 02:44:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740998668; x=1741603468; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ValbcMAvryzd2X2LKDNT5TovDreTGpGWQQwvZLlYzoE=;
-        b=LRaq3Pas2V3RbFrgQCBoUjCDHwjxAMNdEIvbmNRVr5UQcRu8eHg6iAijZsovIGQB+B
-         Zw4LHOdkkE/COMarhWBMShig1+mSEQcdjAmz+q5dZgmh11o6YojJVlDC4ScuO3feQiUL
-         L0loHjZ8988xJy4AdcMh4t13j/7aj2YbmcbN3jMK4HMu5jEHr/VWCTaPUpIrQj8h20zv
-         ZraJavdFpLHHDf09eUESC0rPagfhJo6PssUrhG0t0tjW3/WxBH7eCw2/oRaXcbBUrbiU
-         6r4scB9a1x0n2ls3K3sIZawto91uVrnYZQ5FoAIXAv0+GmSNEVQ2haHBtVUB6pTKxuxw
-         MMkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740998668; x=1741603468;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ValbcMAvryzd2X2LKDNT5TovDreTGpGWQQwvZLlYzoE=;
-        b=s54wu/Zpx3HPsdp+xmCtaUOdfybEq/O+qbzyOqeUodxgPt046ZnM68R6nJj2cfVyyj
-         l7Vdlurc9o9rJUFcyKt5Z34k/JGSywuWNuKUdF3lwxAWzd5qMckCvq0p3/T38g8WA+Ee
-         wId7hzDzM6UE3I9TlU1m/hySaGDF0N/1uj7tjWjIEneDO7SmdPeMI7P0O/a4pLeLGS6/
-         gpA5DmEo81ALm2p3aoz3ApWGAlfik+8tg0ROs/l8GI4bAvLnjVR9UjHR4WFQQZYwsJj9
-         6YZihz3C1HNvjGXJsyQkFRRCRyCuzpGvAeTfaIpxbsxN79z4Z21s6rIvVSJMH9y412OC
-         aLEg==
-X-Forwarded-Encrypted: i=1; AJvYcCVGzkzO7v2SO04MQzTmsnk6jAt8lOUazdBmW/oQoVXtV7aD/bSZTpmQaL8ONuOc2qEH9yPkOfVFSDxW@vger.kernel.org, AJvYcCWaItYiHggIHlalVEylFAMfvSTyktlsOZhWdjr7KFvHHhZQAJPwiJNnIBLPfpFEGR4wFIWPeTt2scU9KzwwsY4q2fs=@vger.kernel.org, AJvYcCXQtlQ9KQklNWQW4Fn2GsRCbFowhbtZL5dPqb7S/8PNGwkbsSMDBBT3Vzwu/yVlMYi2X3JOPjO3v+8+aiKO@vger.kernel.org, AJvYcCXo0MAHw/D18JRh/3Ft+ys+fjH4/y9BF/iL/ieDXI1lCDJyTdr2fh5rheClhsmIdFvhBQTtD28a@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxqe6+4m6ucu/ch8ZecnrqUrzD+fr1H7RwP921i008lmrqH7pao
-	RDtMpp7pefDwnNaf2ZefXtWfb6CwVqTKg+HCyxm4LR8uRXmQ+SVZvd+SxRkGcQVJx7ApT/kO28V
-	RmiKIQ2lWWEDZ6IPBkBLqtc2AP9o=
-X-Gm-Gg: ASbGncuA/qkUpgTgZ0L/cATNBWp75aIqS3mEMF0B8bDm0b4KdZmtI8G3YZ2FW8yWPLs
-	9O4bmrHZwsAdo5S1c3X08VwRTDQT5mAZYKu9lYhfJuCZGWLYCwHw4Es4JR7vObVjzJ6ZhcTQ8fD
-	6iNRLSZZf8X5CgIou9g4haFKqJMQ==
-X-Google-Smtp-Source: AGHT+IG2qpwawLE6Rvk15NxvM4Gy6IyXKbg/hPFM7/t75E0bxxABTutKwor2qyggAjfipjh58zDnMErQ1ays2smrJFo=
-X-Received: by 2002:a05:6122:2388:b0:50b:e9a5:cd7b with SMTP id
- 71dfb90a1353d-5235bdaa6aamr7344635e0c.9.1740998667907; Mon, 03 Mar 2025
- 02:44:27 -0800 (PST)
+	s=arc-20240116; t=1740998676; c=relaxed/simple;
+	bh=VIYv7jOirceEsOX7KnRIYeYd32+TAY98cre+XbP4POE=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=CZJRJIj/T/u7jhGuccHx50zgbA+VY6HncpTW6PdDfOvy9R1dqFoUYZYIpII+AXYljsRJOHD8dJUW/Uo6llFRmbQ6t1wZHpyFkhnvbc09xdaBV1WuCDVjky5GdnzqTx5ObhpgsJM+K9ndtTZptSVhJag4MEK3/YZpkgytKje5vpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QLa0LQQp; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740998675; x=1772534675;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=VIYv7jOirceEsOX7KnRIYeYd32+TAY98cre+XbP4POE=;
+  b=QLa0LQQpxK96/v+/4rz6+RcWY+qzNsj7mX7GKvp9eB841z997yxgm8+O
+   c52AgKs6oHFB3HXfl2duH4SdmkYeY4LpQb1S6hY4I4WhQScx1MhfYfeNc
+   Rb5d25gyend3lXV1yRZc2DvUryHi7Ut5l71Hv7aa0J2pzB9eR5tLHUmXm
+   yV0piWVNNQ9+etgCVo4rvGxxsBhtWwn92KN193jbDLCaYWhhcgItx5PXW
+   OEqOeqClEQ4lOyruy5HkdQ4/52R+NHkfZJSdbkWLoT1eAje82GgVZhO/l
+   F9OWrW5JnDuZQfWgLDFOmPP5eXr/MCMmZUyDwCfUgOEy0GlTcZCNAw1xy
+   Q==;
+X-CSE-ConnectionGUID: FH8EeKtqTwmQ4vQnMVNnng==
+X-CSE-MsgGUID: Yq7/lWpOQvi1blQsgxsKqA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="41989334"
+X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
+   d="scan'208";a="41989334"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 02:44:33 -0800
+X-CSE-ConnectionGUID: 2/cLllESQp2mo305RhzW9g==
+X-CSE-MsgGUID: LrJbmPnzQteH3dtF0gSE7w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
+   d="scan'208";a="117963436"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.14])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 02:44:30 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 3 Mar 2025 12:44:26 +0200 (EET)
+To: Lukas Wunner <lukas@wunner.de>
+cc: Bjorn Helgaas <bhelgaas@google.com>, 
+    Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-pci@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, 
+    Joel Mathew Thomas <proxy0@tutamail.com>, stable@vger.kernel.org
+Subject: Re: [PATCH 1/1] PCI/bwctrl: Disable PCIe BW controller during
+ reset
+In-Reply-To: <Z8F1z-gyXJDyR6d0@wunner.de>
+Message-ID: <f8a99fca-62fc-4503-a553-597d87341674@linux.intel.com>
+References: <20250217165258.3811-1-ilpo.jarvinen@linux.intel.com> <Z7RL7ZXZ_vDUbncw@wunner.de> <14797a5a-6ded-bf8f-aa0c-128668ba608f@linux.intel.com> <Z7_4nMod6jWd-Bi1@wunner.de> <Z8F1z-gyXJDyR6d0@wunner.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250302181808.728734-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250302181808.728734-4-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdV8GqnhsJg7J7keGvT=Dvj_w0hZOiuZqCa=tiUgLE8Vtg@mail.gmail.com>
-In-Reply-To: <CAMuHMdV8GqnhsJg7J7keGvT=Dvj_w0hZOiuZqCa=tiUgLE8Vtg@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 3 Mar 2025 10:44:01 +0000
-X-Gm-Features: AQ5f1JoNYFxy-zo3U0bJLlyWfLKhjM8uHRna32Arg2GW5Id0Ld8noNLo_eKIJkU
-Message-ID: <CA+V-a8u_yXu8QkimjArYjPymtyrX1h+bcVHdhCozQx3_NCOHdQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] net: stmmac: Add DWMAC glue layer for Renesas GBETH
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
-	Jose Abreu <joabreu@synopsys.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	netdev@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 
-Hi Geert,
+On Fri, 28 Feb 2025, Lukas Wunner wrote:
 
-On Mon, Mar 3, 2025 at 10:40=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Sun, 2 Mar 2025 at 19:18, Prabhakar <prabhakar.csengg@gmail.com> wrote=
-:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Renesas RZ/V2H(P) SoC is equipped with Synopsys DesignWare Ethernet
-> > Quality-of-Service IP block version 5.20. This commit adds DWMAC glue
-> > layer for the Renesas GBETH found on the RZ/V2H(P) SoC.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Thanks for your patch!
->
-> > --- /dev/null
-> > +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-renesas-gbeth.c
->
-> > +static int renesas_gbeth_probe(struct platform_device *pdev)
-> > +{
-> > +       struct plat_stmmacenet_data *plat_dat;
-> > +       struct stmmac_resources stmmac_res;
-> > +       struct device *dev =3D &pdev->dev;
-> > +       struct renesas_gbeth *gbeth;
-> > +       struct reset_control *rstc;
-> > +       unsigned int i;
-> > +       int err;
-> > +
-> > +       err =3D stmmac_get_platform_resources(pdev, &stmmac_res);
-> > +       if (err)
-> > +               return dev_err_probe(dev, err,
-> > +                                    "failed to get resources\n");
-> > +
-> > +       plat_dat =3D devm_stmmac_probe_config_dt(pdev, stmmac_res.mac);
-> > +       if (IS_ERR(plat_dat))
-> > +               return dev_err_probe(dev, PTR_ERR(plat_dat),
-> > +                                    "dt configuration failed\n");
-> > +
-> > +       gbeth =3D devm_kzalloc(dev, sizeof(*gbeth), GFP_KERNEL);
-> > +       if (!gbeth)
-> > +               return -ENOMEM;
-> > +
-> > +       plat_dat->clk_tx_i =3D devm_clk_get_enabled(dev, "tx");
->
-> drivers/net/ethernet/stmicro/stmmac/dwmac-renesas-gbeth.c:52:17:
-> error: =E2=80=98struct plat_stmmacenet_data=E2=80=99 has no member named =
-=E2=80=98clk_tx_i=E2=80=99
->
-> Also not in next-20250228.
->
-This patch is based on net-next. Patch [0] is the one which adds
-clk_tx_i member.
+> On Thu, Feb 27, 2025 at 06:31:08AM +0100, Lukas Wunner wrote:
+> > pcie_bwnotif_irq() accesses the Link Status register without
+> > acquiring a runtime PM reference on the PCIe port.  This feels
+> > wrong and may also contribute to the issue reported here.
+> > Acquiring a runtime PM ref may sleep, so I think you need to
+> > change the driver to use a threaded IRQ handler.
+> 
+> I've realized we've had a discussion before why a threaded IRQ handler
+> doesn't make sense...
 
-[0] https://web.git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git=
-/commit/?id=3Ddea5c8ec20be
+Yes.
+ 
+> https://lore.kernel.org/all/Z35qJ3H_8u5LQDJ6@wunner.de/
+>
+> ...but I'm still worried that a Downstream Port in a nested-switch
+> configuration may be runtime suspended while the hardirq handler
+> is running.  Is there anything preventing that from happening?
 
-Cheers,
-Prabhakar
+I don't think there is.
+
+> To access config space of a port, it's sufficient if its upstream
+> bridge is runtime active (i.e. in PCI D0).
+> 
+> So basically the below is what I have in mind.  This assumes that
+> the upstream bridge is still in D0 when the interrupt handler runs
+> because in atomic context we can't wait for it to be runtime resumed.
+> Seems like a fair assumption to me but what do I know...
+
+bwctrl doesn't even want to resume the port in the irqhandler. If the port
+is suspended, why would it have LBMS/LABS, and we disabled notifications 
+anyway in suspend handler anyway so we're not even expecting them to come 
+during a period of suspend (which does not mean there couldn't be 
+interrupts due to other sources).
+
+So there should be no problem in not calling resume for it.
+
+> -- >8 --
+> 
+> diff --git a/drivers/pci/pcie/bwctrl.c b/drivers/pci/pcie/bwctrl.c
+> index 0a5e7efbce2c..fea8f7412266 100644
+> --- a/drivers/pci/pcie/bwctrl.c
+> +++ b/drivers/pci/pcie/bwctrl.c
+> @@ -28,6 +28,7 @@
+>  #include <linux/mutex.h>
+>  #include <linux/pci.h>
+>  #include <linux/pci-bwctrl.h>
+> +#include <linux/pm_runtime.h>
+>  #include <linux/rwsem.h>
+>  #include <linux/slab.h>
+>  #include <linux/types.h>
+> @@ -235,9 +236,13 @@ static irqreturn_t pcie_bwnotif_irq(int irq, void *context)
+>  	struct pcie_device *srv = context;
+>  	struct pcie_bwctrl_data *data = srv->port->link_bwctrl;
+>  	struct pci_dev *port = srv->port;
+> +	struct device *parent __free(pm_runtime_put) = port->dev.parent;
+>  	u16 link_status, events;
+>  	int ret;
+>  
+> +	if (parent)
+> +		pm_runtime_get_noresume(parent);
+> +
+
+Should this then check if its suspended and return early if it is 
+suspended?
+
+pm_runtime_suspended() has some caveats in the kerneldoc though so I'm a 
+bit unsure if it can be called safely here, probably not.
+
+>  	ret = pcie_capability_read_word(port, PCI_EXP_LNKSTA, &link_status);
+>  	if (ret != PCIBIOS_SUCCESSFUL)
+>  		return IRQ_NONE;
+> diff --git a/include/linux/pm_runtime.h b/include/linux/pm_runtime.h
+> index d39dc863f612..038228de773d 100644
+> --- a/include/linux/pm_runtime.h
+> +++ b/include/linux/pm_runtime.h
+> @@ -448,6 +448,8 @@ static inline int pm_runtime_put(struct device *dev)
+>  	return __pm_runtime_idle(dev, RPM_GET_PUT | RPM_ASYNC);
+>  }
+>  
+> +DEFINE_FREE(pm_runtime_put, struct device *, if (_T) pm_runtime_put(_T))
+> +
+>  /**
+>   * __pm_runtime_put_autosuspend - Drop device usage counter and queue autosuspend if 0.
+>   * @dev: Target device.
+> 
+
+-- 
+ i.
+
 
