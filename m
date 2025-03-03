@@ -1,180 +1,137 @@
-Return-Path: <linux-kernel+bounces-541975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 955B7A4C413
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:01:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8800DA4C41D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:02:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6E181896C3C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:01:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E6EC3A6CDB
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:01:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB3E4214229;
-	Mon,  3 Mar 2025 15:00:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 820F22144DE;
+	Mon,  3 Mar 2025 15:00:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KPU0XJGi"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lNj/pod5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39CC316FF37
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 15:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E17C72147E8
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 15:00:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741014027; cv=none; b=Xwint8lW2sqVbWAh5PuLjNPH9D4yWIdVkHMJmaHlvQX2xKaiIKvicVX9g+3w57k+YJ2qzJYOfyDclxLVO7jxErkEAkgY4Mfnre9Rv1ZisukxK+3ps7gxz07Uk96ieihqTO9eymUadUgwx6rg8zhRkRmqoE1odmQ772lGBYWxL7s=
+	t=1741014037; cv=none; b=t/zC6eYDOSCorUtRDuCMqtu8GjsU63eaNqfTEN2TurABQQZ1L8qyjDgi1qHWakE6Gx4cX3EERe7YkGcsDcFtPmAWcB+fb1lWW1bPnI3/nlxUwBu9xhonhx4R6trmtI7ufdoT3J1+Thr+JuEeYiw9z5Mk51Fkwq7iNmxG6aw0/AY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741014027; c=relaxed/simple;
-	bh=YYeGUb3k93KBXD4drA2C9f+vdF4GK7YW6npk41CFHg4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=gZLxsSKoDnPwwqnORCcerpoXkhKkal3hp0uigatWZpKBFkQANuhxU3xRubkcbrGTkIksrwwZImqlB9IGH81WaQjw/ReHR8nPiElORsnrH+DBsvRDl+RrLfwwsPr5EGD75GF0ZXnCXnZRSSFME/1/KkBvV1pLMpAulTfJZ4H7nOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KPU0XJGi; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-38f2f391864so2525419f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 07:00:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741014023; x=1741618823; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CS8fOkB/2o1tqv0C/vSIKz5akXsPp61Y6yRvRf4d3qg=;
-        b=KPU0XJGivr7YJE0a0FTD3hXgPa/k7z74xhQRAZrI1qq8tRNDpSh/tu8C+YdJG7ix+l
-         L5j82wMWek5f0Sjc0Tzv6CVETw5eqJXDHtnnAcu+edqeBdfuGV7Bbf0iCD5EbRBmGJkq
-         ed5TdmXm5BfXYoE897X3Pi3OCx0lQ9M/UmI3vE1VevdVvEPRp2Paeyl/52kkWMM7dpMc
-         yRgBQxFCahd7+8bJT89J0DNr2NY4J+0zUvxYs7pMZa0mYLkNf4Bmj9wDUmd37h0Cl4Hf
-         vq3w8DDOvnVfEh7l4BOU8dRIKTdgsmGJls+XDi7R2q7JKWjRf4cR1+Qt8IAxMP9h6i5I
-         CWXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741014023; x=1741618823;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CS8fOkB/2o1tqv0C/vSIKz5akXsPp61Y6yRvRf4d3qg=;
-        b=HGfdFqFyVfgXSGIfaXgJjGzoSho/L/HAxJMQh0fNXmtKOZd3G8+GTNylYaNMOAnRR2
-         uAmy8wq7M1LqwlWKoM8r+b5sojw5/fpgmpDR0r9Nq1I4UdqIGXaIjVjr3ycVJbOVjRMi
-         IUySivYBUQbixO35Y20uX9pzrGcGnJI8CtvQU2UYgV0+nEJGHNK06W4YTCMd97XrlnBs
-         WI5jFgweb1oibpnyJvb/LZcMX3ptPI0BL0iOqT00sm+WQSlyfbLBDg5HA3pRFctvWb5a
-         hHea5TH9vHpcWYqPHrB7nNzHm9Zpn9x6HfpC0YuiYX0nyZwi8zobBZpOJL+Mvs7oSaPS
-         yekw==
-X-Forwarded-Encrypted: i=1; AJvYcCUgM32WOOA0inOfknS6tNfrrFnysLST0iKFflR17D359LN8CcU+G/iPMxE5mtdcFzx6HEByjfJX1zKeReU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywpkf5HxiugUHEbv5bW0gPT46bO8lEWbSceTwBAD4G8yrmZ2NKK
-	5NHye7FQTQVt/NMGOrWWE4slyxmRGQsw4nkQnvo2AmeIVe8FfK2pncq/re+eupY=
-X-Gm-Gg: ASbGncscRQiTW9JVweKFiqiQXsHbZHuAUL8rJx9f7qQlz0APWCT4hmdBI5ScNCb/EVv
-	/QdEil97N5GwbxodObRiyUk/2XB48uCg7w/BL7aLTKeHWj6PYc2m0DKfjqvb1SXtXMh+pSOPSyi
-	Ghn+88HKMQ3iBFNCpsLE/iv8kJ+JI93DhmmY9ry2nqm8zkhlMJWBrhPnljCTdYpa4MURvhVGPoE
-	haP3tmT/vvZ1Yvs3tSCIHEK8Hyqw1rF/1Ok4/IxLgmkO4+RW09QyRvPnrRAFeg4B1nIIUurfbU1
-	Ysm4/cPFs/XRL3bxc0hmiUX+f4itVCz8IcRlD3P4KnMy+1yP8oULrLng36AMmtO3Sg==
-X-Google-Smtp-Source: AGHT+IGzxcAosUY7UZOkZGBKGsfyOleMjoBQWswmFK4WzjmdOJ8Zb7pyuQRUwLOTwEQbHnLoZZ+osw==
-X-Received: by 2002:a05:6000:1a8f:b0:390:ef12:2ee4 with SMTP id ffacd0b85a97d-390ef122f8emr11173836f8f.25.1741014023167;
-        Mon, 03 Mar 2025 07:00:23 -0800 (PST)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e485e03asm14985727f8f.95.2025.03.03.07.00.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 07:00:22 -0800 (PST)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Mon, 03 Mar 2025 16:00:20 +0100
-Subject: [PATCH net] wifi: ath12k: properly set single_chip_mlo_supp to
- true in ath12k_core_alloc()
+	s=arc-20240116; t=1741014037; c=relaxed/simple;
+	bh=mbiIUj4/EVUrMF8Ts2vQ2M6GWTdgcmnzN/tc58xgIt8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EpTiCOlkN6f+9n66Du+i06vLMKo2S1wgia8jEWPXgiAwBao5/m8zlTyynNnpTL582aRqJTrWoGsouATrBIM6RjDqTX4d4zLiV2nPZZgFsPAKJTpwccl/WJuytALODytqSL3fDq6sy88l5i4HhWhm8rBQVuQ2X2OG3FHBc3H3zdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lNj/pod5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB54BC4CED6;
+	Mon,  3 Mar 2025 15:00:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741014036;
+	bh=mbiIUj4/EVUrMF8Ts2vQ2M6GWTdgcmnzN/tc58xgIt8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lNj/pod5Qt5IJeia9n3u9LWgap4a9MOon1FelHi80RE3+JAgmRc1OY2rXm1PaPZIo
+	 dQ/9J6Cka5/r5k7xpLl5Xsc2qN27oKnHzWCKb7TrxIKXWC10crQyT0yZl6vUVNAcSf
+	 4CNVKV6bjnr6rb2qajbvHleV1ulLoiUax3O90AUZkGZd0b3i2rcd+OF422ClMCZog0
+	 ckXRW2TbN+0FyUuAEre+rbt0u+zrhxYHQ3+Tlop6lFMLaGVHl95hBgYgdmccwXNLVJ
+	 UB5w+NDE0kTd2oRHOkV5EIAWah1v1aeyUEfq04mDzk2NINY6QCG6YBnN9XteKNSs5W
+	 eE3RJEVmklKrQ==
+Date: Mon, 3 Mar 2025 16:00:33 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Douglas Anderson <dianders@chromium.org>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Simona Vetter <simona.vetter@ffwll.ch>
+Subject: Re: [PATCH v4 00/15] drm/bridge: Various quality of life improvements
+Message-ID: <20250303-idealistic-camouflaged-mandrill-4fb5f8@houat>
+References: <20250225-bridge-connector-v4-0-7ecb07b09cad@kernel.org>
+ <20250227120004.77814e09@bootlin.com>
+ <20250303-urban-trout-of-vastness-f8d0e7@houat>
+ <20250303143404.623a3178@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250303-topic-ath12k-fix-crash-v1-1-f871d4e4d968@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAAPExWcC/x2MWwqAIBAArxL73YKPDOwq0YfYlkugoRJBdPekz
- 2GYeaBQZiowdQ9kurhwig1k34EPLu6EvDYGJZQRWmis6WSPrgapDtz4Rp9dCThYssIYP0onocV
- npib/8QyRKizv+wEmJKefbQAAAA==
-X-Change-ID: 20250303-topic-ath12k-fix-crash-49e9055c61a1
-To: Johannes Berg <johannes@sipsolutions.net>, 
- Jeff Johnson <jjohnson@kernel.org>, 
- Aditya Kumar Singh <quic_adisi@quicinc.com>, Kalle Valo <kvalo@kernel.org>
-Cc: Jeff Johnson <jeff.johnson@oss.qualcomm.com>, 
- linux-wireless@vger.kernel.org, ath12k@lists.infradead.org, 
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- Neil Armstrong <neil.armstrong@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3032;
- i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=YYeGUb3k93KBXD4drA2C9f+vdF4GK7YW6npk41CFHg4=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBnxcQGiac9YMG/uxNSPYupMemIH+BO2QczD7l4HE93
- pmHw18GJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZ8XEBgAKCRB33NvayMhJ0Z8gD/
- oCcwjPhgqu+IULIv7xd9PpGqkN/jqJgGafyQmUriQbfj7JnoGNj2DO86DHIKhjb/1vi0+6LC0imcBd
- /EtuQk9MZWgAfqYQYEOCbPVk9UtJnpG5C6osAjU6j73F90p5bF0MZkvU3asA8H6Gps5tNXqpwumVGG
- OV4cXFWX/20HZ4w/T+WZLWh5dJsJ7YFvrigU0x10VtEoz5eIGkS7rcznvKdOARlksoxr/WMQNI9CLc
- gDNltzB1STfhE5y0EnBbfhEs58cHcK1QOrx2IUits+JgXmmRiDmgtplYoMzxz78lDyrMZOpl2aFpfZ
- 0TxpPa270xeoyFBppIdyJcoxw9H/T3SuvoPrZbIO2o1XUBmVhUjzapQTiNzHfgkkuc3TKDr3f9vkNq
- wzQIEhMh9+Avtsx7dH/9Ml5zPFRHYJmFe8dZo4XlgNyWvZlO+QbqRyT3yIj+Z9tGONDZX6HpuWNivJ
- +ndvDl/MFsLEcxsyqs4m3eVpyIt3yoNn2mDUNm7qRn2JGuJmqlymvihHGZB4MJ330YYmY/3cgXy/Te
- Z6U4C27bdtZRgyAZvtoKZnvs0rb4fDXK39kq8b2M4YWry/N4+aHTo8UoO/o5+e6rDQVzJfqAeA4iW3
- bDivOa6LJ3bzuntyU+fEf+bDWUWLU+1v+K+lxjQ+mTzfq6uavdLN5BB9r6tQ==
-X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
- fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="cogn5gh4bnpmv6p3"
+Content-Disposition: inline
+In-Reply-To: <20250303143404.623a3178@bootlin.com>
 
-In commit 46d16f7e1d14 ("wifi: ath12k: rename mlo_capable_flags to single_chip_mlo_supp")
-the line:
-	ab->mlo_capable_flags = ATH12K_INTRA_DEVICE_MLO_SUPPORT;
-was incorrectly updated to:
-	ab->single_chip_mlo_supp = false;
-leading to always disabling INTRA_DEVICE_MLO even if the device supports it.
 
-The firmware "WLAN.HMT.1.1.c5-00156-QCAHMTSWPL_V1.0_V2.0_SILICONZ-1"
-crashes on driver initialization with:
- ath12k_pci 0000:01:00.0: chip_id 0x2 chip_family 0x4 board_id 0x3d soc_id 0x40170200
- ath12k_pci 0000:01:00.0: fw_version 0x110f009c fw_build_timestamp 2024-05-30 11:35 fw_build_id QC_IMAGE_VERSION_STRING=WLAN.HMT.1.1.c5-00156-QCAHMTSWPL_V1.0_V2.0_SILICONZ-1
- ath12k_pci 0000:01:00.0: ignore reset dev flags 0x200
- ath12k_pci 0000:01:00.0: failed to receive wmi unified ready event: -110
- ath12k_pci 0000:01:00.0: failed to start core: -110
- failed to send QMI message
- ath12k_pci 0000:01:00.0: qmi failed to send mode request, mode: 4, err = -5
- ath12k_pci 0000:01:00.0: qmi failed to send wlan mode off
+--cogn5gh4bnpmv6p3
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 00/15] drm/bridge: Various quality of life improvements
+MIME-Version: 1.0
 
-With ab->single_chip_mlo_supp set to True, firmware loads nominally.
+On Mon, Mar 03, 2025 at 02:34:04PM +0100, Herve Codina wrote:
+> Hi Maxime,
+>=20
+> On Mon, 3 Mar 2025 14:11:05 +0100
+> Maxime Ripard <mripard@kernel.org> wrote:
+>=20
+> > On Thu, Feb 27, 2025 at 12:00:04PM +0100, Herve Codina wrote:
+> > > Hi Maxime,
+> > >=20
+> > > On Tue, 25 Feb 2025 17:43:48 +0100
+> > > Maxime Ripard <mripard@kernel.org> wrote:
+> > >  =20
+> > > > Hi,
+> > > >=20
+> > > > Here's a series of changes after to the KMS helpers and bridge API
+> > > > following a bunch of reviews I did.
+> > > >=20
+> > > > It's mostly centered across providing an easier time to deal with b=
+ridge
+> > > > states, and a somewhat consistent with the other entities API.
+> > > >=20
+> > > > It's build tested only, with arm64 allmodconfig.
+> > > >=20
+> > > > Maxime
+> > > >=20
+> > > > Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> > > > --- =20
+> > >=20
+> > > I Tried to test this series on my system but I've got a compilation i=
+ssue.
+> > >      depmod: ERROR: Cycle detected: drm -> drm_kms_helper -> drm
+> > >      depmod: ERROR: Found 2 modules in dependency cycles!
+> > >=20
+> > > CONFIG_DRM=3Dm in my configuration. =20
+> >=20
+> > Could you share your configuration? it doesn't happen with allmodconfig.
+> >=20
+>=20
+> Here is a defconfig that leads to the issue on my side:
 
-Fixes: 46d16f7e1d14 ("wifi: ath12k: rename mlo_capable_flags to single_chip_mlo_supp")
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
----
-Bisect log for reference:
-The bisect leaded to:
-git bisect start 'v6.14-rc4' 'v6.12'
-git bisect good 5757b31666277e2b177b406e48878dc48d587a46
-git bisect bad d78794d4f4dbeac0a39e15d2fbc8e917741b5b7c
-git bisect bad cf33d96f50903214226b379b3f10d1f262dae018
-git bisect good 12e070eb6964b341b41677fd260af5a305316a1f
-git bisect bad 6917d207b469ee81e6dc7f8ccca29c234a16916d
-git bisect good 4fefbc66dfb356145633e571475be2459d73ce16
-git bisect bad a6ac667467b642c94928c24ac2eb40d20110983c
-git bisect bad b05d30c2b6df7e2172b18bf1baee9b202f9c6b53
-git bisect good 56dcbf0b520796e26b2bbe5686bdd305ad924954
-git bisect bad d302ac65ac938516487f57ae20f11e9cf6327606
-git bisect good 8c2143702d0719a0357600bca0236900781ffc78
-git bisect good a5686ae820fa7ab03226a3b0ff529720b7bac599
-git bisect bad 6f245ea0ec6c29b90c8fa4fdf6e178c646125d7e
-git bisect bad 46d16f7e1d1413ad7ff99c1334d8874623717745
----
- drivers/net/wireless/ath/ath12k/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I still can't reproduce it, sorry. Is this based on linux-next /
+drm-misc-next, or a private branch?
 
-diff --git a/drivers/net/wireless/ath/ath12k/core.c b/drivers/net/wireless/ath/ath12k/core.c
-index 0606116d6b9c491b6ede401b2e1aedfb619339a8..33aba5fceec946fad5a47a11a4d86b7be96e682e 100644
---- a/drivers/net/wireless/ath/ath12k/core.c
-+++ b/drivers/net/wireless/ath/ath12k/core.c
-@@ -1927,7 +1927,7 @@ struct ath12k_base *ath12k_core_alloc(struct device *dev, size_t priv_size,
- 	ab->dev = dev;
- 	ab->hif.bus = bus;
- 	ab->qmi.num_radios = U8_MAX;
--	ab->single_chip_mlo_supp = false;
-+	ab->single_chip_mlo_supp = true;
- 
- 	/* Device index used to identify the devices in a group.
- 	 *
+Maxime
 
----
-base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
-change-id: 20250303-topic-ath12k-fix-crash-49e9055c61a1
+--cogn5gh4bnpmv6p3
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Best regards,
--- 
-Neil Armstrong <neil.armstrong@linaro.org>
+-----BEGIN PGP SIGNATURE-----
 
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ8XEDQAKCRAnX84Zoj2+
+dg0uAX0WvqRhLb/HZAkDURiKptJwT/cCV4cvWXvhwevHn99+9y2MbewgRPnDXQAD
+WRpELIIBfA98EqeQ6CPJ5vopALVEFTKGw5yAzuxR8RwfzvRHaac58eNTlLZYuxYE
+9WqcJ9Ho8Q==
+=qrxN
+-----END PGP SIGNATURE-----
+
+--cogn5gh4bnpmv6p3--
 
