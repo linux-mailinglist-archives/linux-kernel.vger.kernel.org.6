@@ -1,112 +1,215 @@
-Return-Path: <linux-kernel+bounces-542574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99379A4CB3D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:49:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15EB3A4CB40
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:50:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C22D11735C1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:49:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8D227A93F3
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56A022E3FF;
-	Mon,  3 Mar 2025 18:49:25 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13F592153DA;
-	Mon,  3 Mar 2025 18:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95B5B22DFB5;
+	Mon,  3 Mar 2025 18:50:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZOyoKEdb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC39215F7D;
+	Mon,  3 Mar 2025 18:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741027765; cv=none; b=qCNwVrXnQhJaxlYdhMdN9qG66B28Hb6MDkE1+rWJM9dO7ApCZMtxGS69GcafKHGVffpDnQkXJ4W8dHGOuP/qPk0LfnY0VXDW6dW9JXFVrtLSXZ56TRTWe+qcwmN6jjb8393XKqijG/SFtd/HkmDxkeXV8LJCLYLbhClgeNRKHWI=
+	t=1741027801; cv=none; b=GRLX8Ir0fAIVpe6Wv6VHqQOG/G7B9uA+ook2F4xcD31gUqeAS0wqCKT72/iBkLJUjTJjaljpLEqbSkLrT6eFwJtHyipUNy1omz5Iw7DWOr/u+iCJWdGJ33KYltyb5apH16kJLECGe7KKp4grZcye+qVbdWQMfZ+S6Vjv+narw+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741027765; c=relaxed/simple;
-	bh=yvOErWgGplr1RzfmwsWTWEThOitL1zHkxHLo/eafhMs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fstRheqKOwt9QyqxMRJFRRI06JglWohtK2hkuuJifFgtKSip+8pIC1dpReUSMRrss/2g9o7AhyRVm2z4XwA38XhqSrN3AX4z7W1/YmGR+0WsGsMklcMhI4Bae5Q7oaUFLo4BgKwBrQZzSmliF4GpspROOmA9vKSLU0K8QXRMHnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0BC63106F;
-	Mon,  3 Mar 2025 10:49:36 -0800 (PST)
-Received: from localhost (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A063D3F5A1;
-	Mon,  3 Mar 2025 10:49:21 -0800 (PST)
-Date: Mon, 3 Mar 2025 18:49:17 +0000
-From: Leo Yan <leo.yan@arm.com>
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-	James Clark <james.clark@linaro.org>,
-	Mike Leach <mike.leach@linaro.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Will Deacon <will@kernel.org>,
-	Graham Woodward <graham.woodward@arm.com>, Paschalis.Mpeis@arm.com,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 01/12] perf script: Make printing flags reliable
-Message-ID: <20250303184917.GJ2157064@e132581.arm.com>
-References: <20250217195908.176207-1-leo.yan@arm.com>
- <20250217195908.176207-2-leo.yan@arm.com>
- <34795c29-d256-49ce-9d01-435f8cd91611@intel.com>
- <20250303162210.GH2157064@e132581.arm.com>
- <447bcafc-4c47-4b95-bf21-7aee2cb6a629@intel.com>
- <20250303181152.GI2157064@e132581.arm.com>
- <c227a1c2-13a4-4078-87ee-ed3fe0638060@intel.com>
+	s=arc-20240116; t=1741027801; c=relaxed/simple;
+	bh=ay2Mn2td7LnvXWZz0y/fV3J9yKVFlbL+Ii+8sPB9FlI=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EXKRTzv/EVUpbl6gSCJLb3npttbZqlh+mSgQgtw7WhwOjdEWjUhvMpOKWAX6J+2iGhc8LwrTQ60S/hDmRxcg9i+a7z6JIy0XIx7boWB84fXbHZ6JpRMfpdacJqjU+hg9G2FSP/Psiedgybd0oKlqfyYt9sJMMzzaVAhohSZWop4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZOyoKEdb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA80BC4CED6;
+	Mon,  3 Mar 2025 18:50:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741027800;
+	bh=ay2Mn2td7LnvXWZz0y/fV3J9yKVFlbL+Ii+8sPB9FlI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ZOyoKEdboUWUG+YMMkdL5RPjsQQjxkQgZljsCmkfUknphh5NWjVd5xuL2U5V5YcPd
+	 IycN7aSsNST2N/J6LErZhR1QBg+cSC2AxMlhHhMhlI5qge3YS08YlGALiMwSP4GGfx
+	 koSc1w6VFEM/kLaIoZAfFlHxtHrKzuxX0wstpuhDgBxe0fzvghFQVz+sZINJH7RgKz
+	 qqgvIF9/c79a16CFL7ks+slGk061OyzBAf2SapL7k3eydnwojqTphxYwrJKVV1hh75
+	 d04bon1Z4dwQWtqHZz6+s8JAIvbP1zuwf8LjklHvnl4IZoTdDALzF0KYPiPVsHkhYy
+	 noOLQ+bZpO1cg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tpArW-009xKj-CA;
+	Mon, 03 Mar 2025 18:49:58 +0000
+Date: Mon, 03 Mar 2025 18:49:58 +0000
+Message-ID: <86ikoqoso9.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Peter Chen <peter.chen@cixtech.com>
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	arnd@arndb.de,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	cix-kernel-upstream@cixtech.com,
+	marcin@juszkiewicz.com.pl,
+	Fugang Duan <fugang.duan@cixtech.com>
+Subject: Re: [PATCH v3 6/6] arm64: dts: cix: add initial CIX P1(SKY1) dts support
+In-Reply-To: <Z8WUxyJT1fdHKo67@nchen-desktop>
+References: <20250227120619.1741431-1-peter.chen@cixtech.com>
+	<20250227120619.1741431-7-peter.chen@cixtech.com>
+	<86r03ip0kf.wl-maz@kernel.org>
+	<Z8WUxyJT1fdHKo67@nchen-desktop>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c227a1c2-13a4-4078-87ee-ed3fe0638060@intel.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: peter.chen@cixtech.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, cix-kernel-upstream@cixtech.com, marcin@juszkiewicz.com.pl, fugang.duan@cixtech.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Mon, Mar 03, 2025 at 06:56:42PM +0200, Adrian Hunter wrote:
-> On 3/03/25 20:11, Leo Yan wrote:
-> > On Mon, Mar 03, 2025 at 05:05:13PM +0200, Adrian Hunter wrote:
-> > 
-> > [...]
-> > 
-> >>>>> +	ret = max(ret, SAMPLE_FLAGS_STR_ALIGNED_SIZE);
-> >>>>> +	return fprintf(fp, "  %-*s ", ret, str);
-> >>>>
-> >>>> -21 means the field width is 21 and left-justified.  It should not
-> >>>> truncate the string.
-> >>>
-> >>> No, it does not truncate the string.
-> >>>
-> >>> It calculates a maximum value between the returned length and 21 (
-> >>> defined in SAMPLE_FLAGS_STR_ALIGNED_SIZE).  It keeps left-justified and
-> >>> can printing a complete string if the string length is bigger than 21.
-> >>
-> >> Maybe I am missing something, but that isn't that what
-> >>
-> >> 	return fprintf(fp, "  %-21s ", str);
-> >>
-> >> does anyway?  Why change it to something more complicated.
-> > 
-> > You are right.  I should have done an experiment for this.
-> > 
-> > I will remove the max() sentence and update the last line:
-> > 
-> >         return fprintf(fp, "  %-*s ", SAMPLE_FLAGS_STR_ALIGNED_SIZE, str);
-> > 
-> > Another option is to drop this patch.  But I prefer to keep it, the
-> > reason is except the benefit for the debugging log, an extra reason is
-> > the SAMPLE_FLAGS_STR_ALIGNED_SIZE macro is used to replace the opened
-> > value '21'.  The macro also will be used by a later patch for
-> > right-alignment printing.  How about you think?
+On Mon, 03 Mar 2025 11:38:47 +0000,
+Peter Chen <peter.chen@cixtech.com> wrote:
 > 
-> Sure
+> On 25-02-28 15:10:24, Marc Zyngier wrote:
+> 
+> Hi Marc,
+> 
+> Thanks for your detail review.
+> 
+> > > +
+> > > +             cpu10: cpu@a00 {
+> > > +                     compatible = "arm,cortex-a720";
+> > > +                     enable-method = "psci";
+> > > +                     reg = <0x0 0xa00>;
+> > > +                     device_type = "cpu";
+> > > +                     capacity-dmips-mhz = <1024>;
+> > > +             };
+> > > +
+> > > +             cpu11: cpu@b00 {
+> > > +                     compatible = "arm,cortex-a720";
+> > > +                     enable-method = "psci";
+> > > +                     reg = <0x0 0xb00>;
+> > > +                     device_type = "cpu";
+> > > +                     capacity-dmips-mhz = <1024>;
+> > > +             };
+> > 
+> > Given that half the A720s are advertised with lower clock speed, how
+> > comes they all have the same capacity?
+> 
+> According to Documentation/devicetree/bindings/cpu/cpu-capacity.txt
+> "capacity-dmips-mhz" is u32 value representing CPU capacity expressed
+> in normalized DMIPS/MHz, it means CPU capability per MHz. For sky1
+> SoC, both middle and big cores are A720, so their capability per MHz
+> are the same.
 
-Thanks a lot for confirmation and review!
+Ah, fair enough. I missed that detail.
 
-I will send new version in my tomorrow.
+> 
+> > > +
+> > > +     pmu-a520 {
+> > > +             compatible = "arm,cortex-a520-pmu";
+> > > +             interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW>;
+> > > +     };
+> > > +
+> > > +     pmu-a720 {
+> > > +             compatible = "arm,cortex-a720-pmu";
+> > > +             interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW>;
+> > > +     };
+> > 
+> > This is wrong. The default configuration for PPIs is to expose the
+> > *same* device on all CPUs. You must use PPI affinities for your PMUs.
+> > Please see the GICv3 binding for the details.
+> 
+> We have discussed internally, we have not seen the benefits routing
+> different PPI interrupt to dedicated CPUs. Any use cases?
 
-Leo
+This isn't about changing the PPI. It is about matching CPUs with
+their PMU. Here, you are saying "both PMU types are connected to all
+the CPUs using PPI7".
+
+That's obviously not the case.
+
+> I prefer changing pmu nodes as one generic Armv8 PMU node. Is it accepted?
+
+No, that's not acceptable.
+
+> Or must I keep both pmu for A520 and A720, and add PPI affinities to
+> describe hardware well?
+
+This is an established practice on all big-little systems: each PMU
+node has an affinity that indicates which CPUs they are connected
+to. For GICv3+, this is carried by the interrupt specifier.
+
+Please look at existing SoCs supported, such as rk3399, for example.
+
+> 
+> > 
+> > > +
+> > > +     pmu-spe {
+> > > +             compatible = "arm,statistical-profiling-extension-v1";
+> > > +             interrupts = <GIC_PPI 5 IRQ_TYPE_LEVEL_LOW>;
+> > > +     };
+> > > +
+> > > +     psci {
+> > > +             compatible = "arm,psci-1.0";
+> > > +             method = "smc";
+> > > +     };
+> > > +
+> > > +     soc@0 {
+> > > +             compatible = "simple-bus";
+> > > +             ranges = <0 0 0 0 0x20 0>;
+> > > +             dma-ranges;
+> > > +             #address-cells = <2>;
+> > > +             #size-cells = <2>;
+> > > +
+> > > +             gic: interrupt-controller@e010000 {
+> > > +                     compatible = "arm,gic-v3";
+> > > +                     reg = <0x0 0x0e010000 0 0x10000>,       /* GICD */
+> > > +                           <0x0 0x0e090000 0 0x300000>;       /* GICR * 12 */
+> > > +                     interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_LOW>;
+> > > +                     #interrupt-cells = <3>;
+> > 
+> > This will need to be bumped up to 4, and all the interrupt specifiers adjusted.
+> 
+> Depends on if PPI affinities is must.
+
+Definitely a must, unless you want to completely remove all traces of
+the PMU, which is of course silly, but a valid alternative.
+
+[...]
+
+> > > +             arm,no-tick-in-suspend;
+> > 
+> > Why do you need this? Is the HW so broken that you have implemented
+> > the global counter in a power domain that isn't always on?
+> > 
+> 
+> Not hardware broken, just arch timer will be powered off at cpu idle
+> and system suspend due to power consumption reason.
+
+This is not about the timer. This is about the global counter. If your
+counter stops ticking when you're in idle or suspended, your system is
+broken and you need this property. If the timer (or more precisely the
+comparator) is turned off because the CPU is off, then that's the
+expected behaviour and you don't need this property.
+
+
+-- 
+Without deviation from the norm, progress is not possible.
 
