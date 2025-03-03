@@ -1,144 +1,139 @@
-Return-Path: <linux-kernel+bounces-544525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77410A4E224
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:02:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 70B4CA4E142
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:40:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31D1D189F824
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:56:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1187189A65C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:35:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC2E9264F96;
-	Tue,  4 Mar 2025 14:54:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BEFE276D3C;
+	Tue,  4 Mar 2025 14:33:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="NBRJ9t0/"
-Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c+O8bjEl"
+Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62FD3206F0E
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:54:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E0525D531
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:33:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.117
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741100043; cv=fail; b=XCwMejbSbnq2MSzsf6mBDDAicZS+F5pKA+QX7P45Br5a1hsx2YO4dks3giRS7/1Ttsgp70o59pRtGCKCPnLV81i2Kgutj1C95O2DTEDeRkpTqA82zaZnAvh+TIUaFBlKGZepKfJtjbA+NwlxIkDDUx1s6+02yQ9wV53XgKnlZA0=
+	t=1741098812; cv=pass; b=I3C0q2Vs2RvJGhREWES13400MBey+pPmqCbwFF8q/PVgDWUzvYBHmJjlpi6FwWOu0s3KRFrEEHs4IXnVP8f54BZMsVkDSQlZRiKiNZMnADMUkzwd5hS/Vt2Kmt+oD1KTS/2nEuUzOaRoUf5BvgvE/fm815CghH1cZAD1MOvJty4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741100043; c=relaxed/simple;
-	bh=fh6GrYEp0jAU3aoZMjoRqmKSHT8/NkBpRU1jnSOYaN4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OB+8s0hhWw7S6S1rea4f4ILwzi0sPcKCBaBR8I41BoWT/mS6Is++QdjyyTE/E7SisVM1iA6gmvTLYYyTDh3QXA6BZpkZv90XqeIZgv76hFQysvNekRBu73Zk1whK8rVOGOskBiI4+4iSgRPS2o7SNjbDRaJLqA4piC5Qhxh34pE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=NBRJ9t0/ reason="signature verification failed"; arc=none smtp.client-ip=209.85.128.44; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; arc=fail smtp.client-ip=160.75.25.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	s=arc-20240116; t=1741098812; c=relaxed/simple;
+	bh=WqIKezHZkO7ZmKx+327v0on4OgffbWwg65hwUsgf0aA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MXG2z17xScO7ErBeT/vW+vAp7VnDut+NRfZTtNyyrU5CRN84TpNYtGVY2jBiCkA6O4HwRpABFuaVhGbDpahzkudK0aFuP16Cxz8f9l3ofIfjUY3T7oaqDBYlrJCBe8QrEF/KSx2qw1TesvTYrjkvT7vtVOpyomQG3CMG4akV6O4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c+O8bjEl; arc=none smtp.client-ip=192.198.163.14; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; arc=pass smtp.client-ip=160.75.25.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id DF06D40CFEE4
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:53:59 +0300 (+03)
+	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id 3C4CE40CF4D5
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:33:29 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.a=rsa-sha256 header.s=20230601 header.b=NBRJ9t0/
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=c+O8bjEl
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dv14ZG3zFxM4
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:52:13 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dS24Xl3zFwhy
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:32:18 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id B19E042722; Tue,  4 Mar 2025 17:52:07 +0300 (+03)
+	id 6890B42750; Tue,  4 Mar 2025 17:31:54 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=NBRJ9t0/
-X-Envelope-From: <linux-kernel+bounces-541626-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c+O8bjEl
+X-Envelope-From: <linux-kernel+bounces-541635-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=NBRJ9t0/
-Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id 3B06A42854
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:49:58 +0300 (+03)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c+O8bjEl
+Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
+	by le2 (Postfix) with ESMTP id 1B0D142B80
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:52:35 +0300 (+03)
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id C096C2DCE4
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:49:57 +0300 (+03)
+	by fgw1.itu.edu.tr (Postfix) with SMTP id BE44D3063EFC
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:52:34 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C6CF1676A1
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:49:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D87C168245
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:51:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8105420F06A;
-	Mon,  3 Mar 2025 11:48:01 +0000 (UTC)
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D4A20D509;
+	Mon,  3 Mar 2025 11:51:18 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE39520E022
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 11:47:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3859204F6B;
+	Mon,  3 Mar 2025 11:51:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741002477; cv=none; b=RfDv53d/frw8NpqcGqUHsLpD5fa+peCjBscUs67PooKI84Pd4JpX+Xzei3zWfiqRP2wa7i8yIMtJmxCzbgEfwh+CrCP40b4mnzeLIp/bkJ2rv04zhTCj/8DF3A0OhzLPMElOAR/tqQmDef7X8Gfq9+MsjCh4hCxZpNWEwlapUjM=
+	t=1741002676; cv=none; b=uPm7dUoOsTh0gV0Rvd2N8deaMCrnz9qLXJsUC3//yudLfhuMIBWpbVw81lZnNWT0P7MKpBZAWT56B9+/jCE1zKvTwhRlmondxL+k+1Q7Xj4PXqtFzd4Gl1YMDkBAbI6EAYeahM6fyxCuLqJQoCd/YM1BM4NL40IuuA2bXnAo/gk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741002477; c=relaxed/simple;
-	bh=jqr9EwXfZY3b+14dJHqEdl3sytYGW0GVhd2OmY7oUBw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aY1UdanQftltCFRN3yJSNXGQEGQ/2+PzYB2TV66KRrflh1f3D3yKzskh+LslqXRnINawMql0wIuNVEg/rWFU93dAW9wER4F4qo4SiatLii3yG6hSCwwg9FhCFheRWuUAOaaeY61BVNgic+G8OgN6yuw0RvXc5xdkfc5uVXseHAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=NBRJ9t0/; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-438a39e659cso29314225e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 03:47:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1741002473; x=1741607273; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IQozffwnOCsYFoqS8k7yOzUIgAbpTEtaLUGEzpJWOM8=;
-        b=NBRJ9t0//e8B+CKEW+UUUgx5fjbZqxNGjQXtzkKzqUMs6va+5HtB5fAGU/tqIhv64L
-         d9oeIBN8dmYuNtuXFwDvSjLliIe4syDd0/neJXd8KATVQ4rbeWzOsH354S36oGTSiZKh
-         DA3rwOIkKTWnm/ZJm2xn1sAVqxJ7NTKTE41yhZh9bn3djPqbUIs8u3/XJi4JNLKZfPzb
-         CUWqNQu6ECZe9caabBoP6NlLlEIBGiJrihdE+mF2yzWZNxu3DzoKfsZtG7uoPaeHPpZD
-         ZMuDsH2EmRrnvsTCGL/qw4ZX4t8NAbv1LZ0BUUjIh/ZaE8L645GYIcIOo21oCrp570KS
-         U2ZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741002473; x=1741607273;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IQozffwnOCsYFoqS8k7yOzUIgAbpTEtaLUGEzpJWOM8=;
-        b=dyXZnotuoPGoW7u0CfciC8zWoGAJZ4RJ0msd+Ccm4e40ORmI2vMB4Jg1fPz63P0Oys
-         MAh90Ujp+uA/wJrunOsq6YDW8pieTSOBBm4/RPZ1ecqr8nr3+YeMJ6+0c3ywVwzgK2Ja
-         WhNp5dCJxODLlh3cRgv8XOAUomf1n2tAkbkmAQwg2CUuaLhDv3apVo/iPNqWXiY79biE
-         dFGlPP5N1sraRkRMlIqmbfQIwo1jnp6p/xOm03Le2vpQ73HZsWRq6uqZlYSkCYgSBbWB
-         PeqyzVuLpwzya+eMNlZkXsDylAUoEMv6HaZoJefIDzY5AvsWY8A1rbBcjpeiTayU/dzO
-         KMXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUGjah0/tfdoYP2z7NzP1ptl0kZo8kSxt0DricLete4gMFrCm34sUpslyurw6rmZWets+Aj5FYzFPvyTsk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjFUWdp/o+37DUtWA7J/aLIxt8TzT+yxx83eOUlOlOwF7K3M33
-	G08zV++hy3P7FIkvbgXBot+O369hpIr6gxAGDE1oJlrp2vvNA1KFrXZcdppHOEk=
-X-Gm-Gg: ASbGnctKdNhlcdIB7YyS8PUn74SvlOZqREJjBAgdw1mxHOxtxmkFJFGMhmzR4rowBni
-	orF2zVkaoEH5/RR0c8Gw9fTSR6UTh6+JTLLUmin0zNCmwqhzRdzbOjPM/Jvon2YZwMajcLIx9DW
-	fJIjEgz7dAGXpj+OOus0LgIf1F1oCrf4Kp4tfu4SwLsmnajh4Gzl66M7whatdlanXBJspNwmMjL
-	KJLdPfJhtIsTUXWH8LTU/l3lYD1xMdS3mriDA0TCfofaJl/YgCL6a5GZeV/BIj8ij83AfGM2uRs
-	N6XJZYSQZWZDSD62sYvvuqMy3y/onQxttEw+FKm9KBxT8Rj0T6AQjsdz3NWu+ma0JirHPQrWL3B
-	/tR1R39NU/xl+gvAazZV9qNu6tA==
-X-Google-Smtp-Source: AGHT+IHbFpaqCqy7oJ39CyR2Zwl/9NuAfZAB+lM4qcvF3LKM+A/AKR9yfndWp4sIKq8aPZyIHh+KQA==
-X-Received: by 2002:a05:600c:a581:b0:43b:ba80:4393 with SMTP id 5b1f17b1804b1-43bba80467emr32420225e9.3.1741002473131;
-        Mon, 03 Mar 2025 03:47:53 -0800 (PST)
-Received: from localhost (amontpellier-556-1-148-206.w109-210.abo.wanadoo.fr. [109.210.4.206])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bc222362dsm23270805e9.0.2025.03.03.03.47.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 03:47:52 -0800 (PST)
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Cosmin Tanislav <cosmin.tanislav@analog.com>,
-	Dumitru Ceclan <mitrutzceclan@gmail.com>,
-	Guillaume Ranquet <granquet@baylibre.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Michael Walle <michael@walle.cc>,
-	Nuno Sa <nuno.sa@analog.com>,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 7/8] iio: adc: ad7124: Implement internal calibration at probe time
-Date: Mon,  3 Mar 2025 12:47:05 +0100
-Message-ID: <20250303114659.1672695-17-u.kleine-koenig@baylibre.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250303114659.1672695-10-u.kleine-koenig@baylibre.com>
-References: <20250303114659.1672695-10-u.kleine-koenig@baylibre.com>
+	s=arc-20240116; t=1741002676; c=relaxed/simple;
+	bh=WqIKezHZkO7ZmKx+327v0on4OgffbWwg65hwUsgf0aA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N5Msm04zowrOeZDtvkpYV1tqVnzAWaaz4ilrPr8zH7IwKlIuo79NEwsF/JSMq+5H7H3IxSY8WMpzlIMOS83O1A7SXhnQa+CGCNcO9WN2rBdB/WhDALP9RrIcge5XTJyP+FlkV7kcpiaKlCc/C1QCzc6emm1nEPpLheYMEFzRCn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c+O8bjEl; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741002675; x=1772538675;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=WqIKezHZkO7ZmKx+327v0on4OgffbWwg65hwUsgf0aA=;
+  b=c+O8bjElb4Tb7fB3QkYCNX72101N28LUT/v0nuwnbsBBRhIHfTDd5zr1
+   VEwaEwN16IKd2UlFenQfG1EIBwgMc1ACNAIO+iNacmQeEuCuInk7LSAai
+   v2JJOBKLaf1uwmiPd0IsOXoVJM/1uJTDBuiO1gzpvUsZjk8e/mSx03qVa
+   pp54hguPOYYbJLQA8R4Hd8RIxmoxhdKfNvmOSLAvIZ6x7cYL5EiSSZJoQ
+   4Gv5fIZRF4biPONCXX0lKKHb0Mk48OW93XETrh3AdsphHq3UygXiFz0V2
+   d9thTqOLbOeWJNDcQXbLA3qCg/l36oXSkloD1mIu33lhXCTwarN3pty4c
+   Q==;
+X-CSE-ConnectionGUID: QQo5mCAKSEiw4E8sZ5yw3w==
+X-CSE-MsgGUID: FXHbyWANTyKqHybRDutf3Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="42127243"
+X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
+   d="scan'208";a="42127243"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 03:51:15 -0800
+X-CSE-ConnectionGUID: 3bwOHvTFSnOvwh1JtWxJ8g==
+X-CSE-MsgGUID: EXDMC/eNTIm1xNQT/GlyKA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
+   d="scan'208";a="118021008"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 03:51:10 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tp4KA-0000000Gnqn-1q5u;
+	Mon, 03 Mar 2025 13:51:06 +0200
+Date: Mon, 3 Mar 2025 13:51:06 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Claudiu Manoil <claudiu.manoil@nxp.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH RFC net-next v5 10/10] net: gianfar: Use
+ device_get_child_node_count_named()
+Message-ID: <Z8WXqgxgFQC8b8vC@smile.fi.intel.com>
+References: <cover.1740993491.git.mazziesaccount@gmail.com>
+ <685cd1affabe50af45b767eeed9b9002d006b0fd.1740993491.git.mazziesaccount@gmail.com>
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -146,249 +141,45 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7681; i=u.kleine-koenig@baylibre.com; h=from:subject; bh=jqr9EwXfZY3b+14dJHqEdl3sytYGW0GVhd2OmY7oUBw=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBnxZbOJ2NHnT28BuDYn5pn9Cy6XUnoy62wNXfb8 1o1Xgxn7j+JATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZ8WWzgAKCRCPgPtYfRL+ TlPWB/9kBA/YalUMm9uRc0QIp6zcwfZVklEnf5cUkfHuLQSemru4lDAKLWuZ+lL+vT0jAF4jV8n 7xZcSv8VR3a2ya5bAuJyImvR6GBMkWGZWlm2oU4J/6/6LKZcuumNLwZW6Ugvm5BmbZjxhkOsPH9 yXwP/ruUPptaJgvRK8Y4JYdMfsSulBDX+ht13pS9YSiNnCotRkmwIrQ3HG7RfqOAq4an1Q0+hSf ZCQHouM5Vd4vmdXvLmrLTJcs8OtNUYwf1/1UTrb3nYROcmrcT5Fwk6DF8Q0/zh4iPFtOM2xUJgv nTWQ6ebaS9bWCUd+OB8Hh9+tmmPqI571CRcOq9pi13xZldqj
-X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <685cd1affabe50af45b767eeed9b9002d006b0fd.1740993491.git.mazziesaccount@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6dv14ZG3zFxM4
+X-ITU-Libra-ESVA-ID: 4Z6dS24Xl3zFwhy
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741704759.67551@MdaylHuQ6ZHFhiZjWED3rw
+X-ITU-Libra-ESVA-Watermark: 1741703539.22723@6YzBH6aV8Oj2MdrJQL17xQ
 X-ITU-MailScanner-SpamCheck: not spam
 
-Use the calibration function provided by the ad_sigma_delta shim to
-calibrate all channels at probe time.
+On Mon, Mar 03, 2025 at 01:34:49PM +0200, Matti Vaittinen wrote:
+> We can avoid open-coding the loop construct which counts firmware child
+> nodes with a specific name by using the newly added
+> device_get_child_node_count_named().
+> 
+> The gianfar driver has such open-coded loop. Replace it with the
+> device_get_child_node_count_named().
 
-For measurements with gain 1 (i.e. if CONFIG_x.PGA =3D 0) full-scale
-calibrations are not supported and the reset default value of the GAIN
-register is supposed to be used then.
+...
 
-Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
----
- drivers/iio/adc/ad7124.c | 129 ++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 126 insertions(+), 3 deletions(-)
+> It's fair to tell the pros and cons of this patch.
+> The simplification is there, but it's not a big one. It comes with a cost
+> of getting the property.h included in this driver which currently uses
+> exclusively the of_* APIs.
 
-diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
-index de90ecb5f630..382f46ff2b51 100644
---- a/drivers/iio/adc/ad7124.c
-+++ b/drivers/iio/adc/ad7124.c
-@@ -53,6 +53,11 @@
- #define AD7124_ADC_CTRL_MODE_MSK	GENMASK(5, 2)
- #define AD7124_ADC_CTRL_MODE(x)	FIELD_PREP(AD7124_ADC_CTRL_MODE_MSK, x)
-=20
-+#define AD7124_MODE_CAL_INT_ZERO	0x5 /* Internal Zero-Scale Calibration =
-*/
-+#define AD7124_MODE_CAL_INT_FULL	0x6 /* Internal Full-Scale Calibration =
-*/
-+#define AD7124_MODE_CAL_SYS_ZERO	0x7 /* System Zero-Scale Calibration */
-+#define AD7124_MODE_CAL_SYS_FULL	0x8 /* System Full-Scale Calibration */
-+
- /* AD7124 ID */
- #define AD7124_DEVICE_ID_MSK		GENMASK(7, 4)
- #define AD7124_DEVICE_ID_GET(x)		FIELD_GET(AD7124_DEVICE_ID_MSK, x)
-@@ -166,6 +171,8 @@ struct ad7124_channel_config {
- 		unsigned int odr;
- 		unsigned int odr_sel_bits;
- 		unsigned int filter_type;
-+		unsigned int calibration_offset;
-+		unsigned int calibration_gain;
- 	);
- };
-=20
-@@ -186,6 +193,12 @@ struct ad7124_state {
- 	unsigned int num_channels;
- 	struct mutex cfgs_lock; /* lock for configs access */
- 	unsigned long cfg_slots_status; /* bitmap with slot status (1 means it =
-is used) */
-+
-+	/*
-+	 * Stores the power-on reset value for the GAIN(x) registers which are
-+	 * needed for measurements at gain 1 (i.e. CONFIG(x).PGA =3D=3D 0)
-+	 */
-+	unsigned int gain_default;
- 	DECLARE_KFIFO(live_cfgs_fifo, struct ad7124_channel_config *, AD7124_MA=
-X_CONFIGS);
- };
-=20
-@@ -359,6 +372,8 @@ static struct ad7124_channel_config *ad7124_find_simi=
-lar_live_cfg(struct ad7124_
- 				     unsigned int odr;
- 				     unsigned int odr_sel_bits;
- 				     unsigned int filter_type;
-+				     unsigned int calibration_offset;
-+				     unsigned int calibration_gain;
- 			     }));
-=20
- 	for (i =3D 0; i < st->num_channels; i++) {
-@@ -373,7 +388,9 @@ static struct ad7124_channel_config *ad7124_find_simi=
-lar_live_cfg(struct ad7124_
- 		    cfg->pga_bits =3D=3D cfg_aux->pga_bits &&
- 		    cfg->odr =3D=3D cfg_aux->odr &&
- 		    cfg->odr_sel_bits =3D=3D cfg_aux->odr_sel_bits &&
--		    cfg->filter_type =3D=3D cfg_aux->filter_type)
-+		    cfg->filter_type =3D=3D cfg_aux->filter_type &&
-+		    cfg->calibration_offset =3D=3D cfg_aux->calibration_offset &&
-+		    cfg->calibration_gain =3D=3D cfg_aux->calibration_gain)
- 			return cfg_aux;
- 	}
-=20
-@@ -429,6 +446,14 @@ static int ad7124_write_config(struct ad7124_state *=
-st, struct ad7124_channel_co
-=20
- 	cfg->cfg_slot =3D cfg_slot;
-=20
-+	ret =3D ad_sd_write_reg(&st->sd, AD7124_OFFSET(cfg->cfg_slot), 3, cfg->=
-calibration_offset);
-+	if (ret)
-+		return ret;
-+
-+	ret =3D ad_sd_write_reg(&st->sd, AD7124_GAIN(cfg->cfg_slot), 3, cfg->ca=
-libration_gain);
-+	if (ret)
-+		return ret;
-+
- 	tmp =3D (cfg->buf_positive << 1) + cfg->buf_negative;
- 	val =3D AD7124_CONFIG_BIPOLAR(cfg->bipolar) | AD7124_CONFIG_REF_SEL(cfg=
-->refsel) |
- 	      AD7124_CONFIG_IN_BUFF(tmp) | AD7124_CONFIG_PGA(cfg->pga_bits);
-@@ -835,13 +860,22 @@ static int ad7124_soft_reset(struct ad7124_state *s=
-t)
- 			return dev_err_probe(dev, ret, "Error reading status register\n");
-=20
- 		if (!(readval & AD7124_STATUS_POR_FLAG_MSK))
--			return 0;
-+			break;
-=20
- 		/* The AD7124 requires typically 2ms to power up and settle */
- 		usleep_range(100, 2000);
- 	} while (--timeout);
-=20
--	return dev_err_probe(dev, -EIO, "Soft reset failed\n");
-+	if (readval & AD7124_STATUS_POR_FLAG_MSK)
-+		return dev_err_probe(dev, -EIO, "Soft reset failed\n");
-+
-+	ret =3D ad_sd_read_reg(&st->sd, AD7124_GAIN(0), 3, &st->gain_default);
-+	if (ret < 0)
-+		return dev_err_probe(dev, ret, "Error reading gain register\n");
-+
-+	dev_dbg(dev, "Reset value of GAIN register is 0x%x\n", st->gain_default=
-);
-+
-+	return 0;
- }
-=20
- static int ad7124_check_chip_id(struct ad7124_state *st)
-@@ -1054,6 +1088,91 @@ static int ad7124_setup(struct ad7124_state *st)
- 	return ret;
- }
-=20
-+static int __ad7124_calibrate_all(struct ad7124_state *st, struct iio_de=
-v *indio_dev)
-+{
-+	struct device *dev =3D &st->sd.spi->dev;
-+	int ret, i;
-+
-+	for (i =3D 0; i < st->num_channels; i++) {
-+
-+		if (indio_dev->channels[i].type !=3D IIO_VOLTAGE)
-+			continue;
-+
-+		/*
-+		 * For calibration the OFFSET register should hold its reset default
-+		 * value. For the GAIN register there is no such requirement but
-+		 * for gain 1 it should hold the reset default value, too. So to
-+		 * simplify matters use the reset default value for both.
-+		 */
-+		st->channels[i].cfg.calibration_offset =3D 0x800000;
-+		st->channels[i].cfg.calibration_gain =3D st->gain_default;
-+
-+		/*
-+		 * Full-scale calibration isn't supported at gain 1, so skip in
-+		 * that case. Note that untypically full-scale calibration has
-+		 * to happen before zero-scale calibration. This only applies to
-+		 * the internal calibration. For system calibration it's as
-+		 * usual: first zero-scale then full-scale calibration.
-+		 */
-+		if (st->channels[i].cfg.pga_bits > 0) {
-+			ret =3D ad_sd_calibrate(&st->sd, AD7124_MODE_CAL_INT_FULL, i);
-+			if (ret < 0)
-+				return ret;
-+
-+			/*
-+			 * read out the resulting value of GAIN
-+			 * after full-scale calibration because the next
-+			 * ad_sd_calibrate() call overwrites this via
-+			 * ad_sigma_delta_set_channel() -> ad7124_set_channel()
-+			 * ... -> ad7124_enable_channel().
-+			 */
-+			ret =3D ad_sd_read_reg(&st->sd, AD7124_GAIN(st->channels[i].cfg.cfg_s=
-lot), 3,
-+					     &st->channels[i].cfg.calibration_gain);
-+			if (ret < 0)
-+				return ret;
-+		}
-+
-+		ret =3D ad_sd_calibrate(&st->sd, AD7124_MODE_CAL_INT_ZERO, i);
-+		if (ret < 0)
-+			return ret;
-+
-+		ret =3D ad_sd_read_reg(&st->sd, AD7124_OFFSET(st->channels[i].cfg.cfg_=
-slot), 3,
-+				     &st->channels[i].cfg.calibration_offset);
-+		if (ret < 0)
-+			return ret;
-+
-+		dev_dbg(dev, "offset and gain for channel %d =3D 0x%x + 0x%x\n", i,
-+			st->channels[i].cfg.calibration_offset,
-+			st->channels[i].cfg.calibration_gain);
-+	}
-+
-+	return 0;
-+}
-+
-+static int ad7124_calibrate_all(struct ad7124_state *st, struct iio_dev =
-*indio_dev)
-+{
-+	int ret;
-+	unsigned int adc_control =3D st->adc_control;
-+
-+	/*
-+	 * Calibration isn't supported at full power, so speed down a bit.
-+	 * Setting .adc_control is enough here because the control register is
-+	 * written as part of ad_sd_calibrate() -> ad_sigma_delta_set_mode().
-+	 * The resulting calibration is then also valid for high-speed, so just
-+	 * restore adc_control afterwards.
-+	 */
-+	if (FIELD_GET(AD7124_ADC_CTRL_PWR_MSK, adc_control) >=3D AD7124_FULL_PO=
-WER) {
-+		st->adc_control &=3D ~AD7124_ADC_CTRL_PWR_MSK;
-+		st->adc_control |=3D AD7124_ADC_CTRL_PWR(AD7124_MID_POWER);
-+	}
-+
-+	ret =3D __ad7124_calibrate_all(st, indio_dev);
-+
-+	st->adc_control =3D adc_control;
-+
-+	return ret;
-+}
-+
- static void ad7124_reg_disable(void *r)
- {
- 	regulator_disable(r);
-@@ -1132,6 +1251,10 @@ static int ad7124_probe(struct spi_device *spi)
- 	if (ret < 0)
- 		return dev_err_probe(dev, ret, "Failed to setup triggers\n");
-=20
-+	ret =3D ad7124_calibrate_all(st, indio_dev);
-+	if (ret)
-+		return ret;
-+
- 	ret =3D devm_iio_device_register(&spi->dev, indio_dev);
- 	if (ret < 0)
- 		return dev_err_probe(dev, ret, "Failed to register iio device\n");
---=20
-2.47.1
+I think it's a good step to the right direction. We might convert the rest
+(at least I don't see much impediments while briefly looking into the code).
+
+...
+
+What about the second loop (in gfar_of_init)?
+I mean perhaps we want to have fwnode_for_each_named_child_node()
+and its device variant that may be also reused in the IIO code and here.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
 
