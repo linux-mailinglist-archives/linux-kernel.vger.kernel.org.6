@@ -1,132 +1,123 @@
-Return-Path: <linux-kernel+bounces-541866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB517A4C2AB
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:00:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ACCA2A4C2AD
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:01:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACAC1169670
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:00:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3FD0166318
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:01:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC063212B2B;
-	Mon,  3 Mar 2025 14:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D54F212D66;
+	Mon,  3 Mar 2025 14:01:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LDE7Vziq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hdPyp7wY"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443818489;
-	Mon,  3 Mar 2025 14:00:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 198098489;
+	Mon,  3 Mar 2025 14:01:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741010423; cv=none; b=TLl5Nx3N/EGjJzLzX8AgfxnYh/Z9hNoRhHBdZK2TMf1cBBVwV33jsSeLlJyiP8SYEqQYc03i3Z4MhCk+NyD+d7QnrKUorfu84+aeOK68IPdsPgFawkMHItUmg90fTSi40gmPw00GZcsxTAZN+2pm+dMU8SbKACaGJrE6J+lKSM8=
+	t=1741010510; cv=none; b=SYxw29mDeSGtb+iDjAlAlplK/CJp8Z52B410bnNLjz5aD075ngY068vlQqaJOH25eOHgRDSvdTMs6SSAfjNFF47xJPP48lehcslqwF1KG8xC4tJ+IXGqkjZuyiuaavHHV8gdKe+XRAeJgDNdud8oukSgmdpcbci0xvx0+qAk4pY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741010423; c=relaxed/simple;
-	bh=Kp+dH75fRkj4Yg2B/u14qSdnyXfV1851mjVlG/eyDkU=;
+	s=arc-20240116; t=1741010510; c=relaxed/simple;
+	bh=hWKhorvWNU5jIlxY+oXqSYlO0FKSzqJ4UxdwFEyxyzg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N4dOf+svt5Ia4GXZkAt6JeWK79X8QOvHg8GDDFjuXwyrES1W64+mvRpS/BM3+78wbuuZtZG1o2vrb4nAs/tm3mHy2KZa4CpZMhZTa/X2iLoWZFlTPC1GWPg3NOVUOQYssiTDrws1+bWKtzOl+88EuVLi7c92jzCGlbB6Qa26cgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LDE7Vziq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78C4AC4CED6;
-	Mon,  3 Mar 2025 14:00:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741010422;
-	bh=Kp+dH75fRkj4Yg2B/u14qSdnyXfV1851mjVlG/eyDkU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LDE7VziqE8Z5eAcLy1ADJtkYPvmnQ1FWgShTdhPsi0Jp00/5H4ih7eFkudyTpV6Ey
-	 vzUekJexEEcxmdtofMzZn68/GabGTmMLoyDmPxm2kdElEPPLV3qZha5Aib/AxkKR7v
-	 m/mOgM3NliygKNSm4cdkNZYbDU4CUHy7o2nUsiBNydIculfOZE9XJX6vA2Cx8O7TEs
-	 nqGWAiDj2LY2VHmrB5jeTqSMkAWpR8/oVe9f3U39KoH0vSV+sGksApEvY4YbqOUYgD
-	 MEbgvDOyAHF9gVrkOu+yiC5BM/+QxMgNexT3mwUVWIsR0RWjNldR9e1Z2gFqBmOcaC
-	 wYe+elLtbMKhQ==
-Date: Mon, 3 Mar 2025 08:00:21 -0600
-From: Rob Herring <robh@kernel.org>
-To: =?iso-8859-1?Q?J=2E_Neusch=E4fer?= <j.ne@posteo.net>
-Cc: Richard Weinberger <richard@nod.at>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	Crystal Wood <oss@buserror.net>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	devicetree@vger.kernel.org, Frank Li <Frank.Li@nxp.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	linux-mtd@lists.infradead.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Naveen N Rao <naveen@kernel.org>, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v3 2/3] dt-bindings: nand: Add fsl,elbc-fcm-nand
-Message-ID: <20250303140021.GA1732495-robh@kernel.org>
-References: <20250226-ppcyaml-elbc-v3-0-a90ed71da838@posteo.net>
- <20250226-ppcyaml-elbc-v3-2-a90ed71da838@posteo.net>
- <174059551678.3319332.12055848852503108874.robh@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EmnLWjFEug5vuByJYJQe1kahQlOZm6H635aSCVEHO16OVx3GbhuyP1BONwu1wRsQwXfc1YvVA9MSO2h2otpq2hp2H3bfoTykegwOgeoWBsfhHnZOKjpBIkF0xI3btqFStKOjyFaXV6BjG+1HfqG9wLb3l5NrV1RP8GPqhY+t6gI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hdPyp7wY; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741010509; x=1772546509;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=hWKhorvWNU5jIlxY+oXqSYlO0FKSzqJ4UxdwFEyxyzg=;
+  b=hdPyp7wYGiRUiUN2VK0TOMK1+VK4B80SyMMldacConT1k6y9rcEXqmCc
+   mBsM8sctFZQvRdY8d1noQFmymwhLIZ9XgsoRh+gUlHKU1kpygV7IV/TJo
+   YvkGrba5ulMy5rGjsOg6R+4L5ax9i+mbHP+0agRTGA+XXwpRs7zGTqfHo
+   euL/9Cf3hQXNruSXWdVkg1zzGKi1dcMv9wzxT1n/pN9WxY7+4UJqsADdU
+   iGuh4cpKQaJNu4sTt9v6qMZxgGhtOMTdAktVPTn2TdtMY2pLU2pznuF+H
+   W0d2y0RxyBZdxoi7vDuC0vTvpsCkFtFB00VBmkr8WxgfI+lA8dpDCbkn+
+   A==;
+X-CSE-ConnectionGUID: bFv6T7M1TFKwUecT8PnN8Q==
+X-CSE-MsgGUID: nFo5nh2gS86uiCgdo5sOGg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="53277544"
+X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
+   d="scan'208";a="53277544"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 06:01:48 -0800
+X-CSE-ConnectionGUID: BAgAY12/QnmN45QMtoC30A==
+X-CSE-MsgGUID: KPOP2WG6T+6khWCYU8FLxA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
+   d="scan'208";a="122974866"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 06:01:46 -0800
+Date: Mon, 3 Mar 2025 16:01:43 +0200
+From: Raag Jadav <raag.jadav@intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: lee@kernel.org, giometti@enneenne.com, gregkh@linuxfoundation.org,
+	raymond.tan@intel.com, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] gpio: elkhartlake: depend on
+ MFD_INTEL_EHL_PSE_GPIO
+Message-ID: <Z8W2R0DUS6lctU8v@black.fi.intel.com>
+References: <20250303044745.268964-1-raag.jadav@intel.com>
+ <20250303044745.268964-3-raag.jadav@intel.com>
+ <Z8VmebNcrH6CjHp6@smile.fi.intel.com>
+ <Z8WUpzDHbhp0aMoN@black.fi.intel.com>
+ <Z8WWNHL1rZKV4c4o@smile.fi.intel.com>
+ <Z8Wc73OytMx3khP_@black.fi.intel.com>
+ <Z8We4_FJvxTxegpN@smile.fi.intel.com>
+ <Z8WkoPVk2SsSj5aR@black.fi.intel.com>
+ <Z8WsfXV1vMlRxzLi@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <174059551678.3319332.12055848852503108874.robh@kernel.org>
+In-Reply-To: <Z8WsfXV1vMlRxzLi@smile.fi.intel.com>
 
-On Wed, Feb 26, 2025 at 12:45:17PM -0600, Rob Herring (Arm) wrote:
-> 
-> On Wed, 26 Feb 2025 18:01:41 +0100, J. Neuschäfer wrote:
-> > Formalize the binding already supported by the fsl_elbc_nand.c driver
-> > and used in several device trees in arch/powerpc/boot/dts/.
-> > 
-> > raw-nand-chip.yaml is referenced in order to accommodate situations in
-> > which the ECC parameters settings are set in the device tree. One such
-> > example is in arch/powerpc/boot/dts/turris1x.dts:
-> > 
-> > 	/* MT29F2G08ABAEAWP:E NAND */
-> > 	nand@1,0 {
-> > 		compatible = "fsl,p2020-fcm-nand", "fsl,elbc-fcm-nand";
-> > 		reg = <0x1 0x0 0x00040000>;
-> > 		nand-ecc-mode = "soft";
-> > 		nand-ecc-algo = "bch";
-> > 
-> > 		partitions { ... };
-> > 	};
-> > 
-> > Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> > Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
-> > ---
-> > 
-> > V3:
-> > - remove unnecessary #address/size-cells from nand node in example
-> > - add Frank Li's review tag
-> > - add missing end of document marker (...)
-> > - explain choice to reference raw-nand-chip.yaml
-> > 
-> > V2:
-> > - split out from fsl,elbc binding patch
-> > - constrain #address-cells and #size-cells
-> > - add a general description
-> > - use unevaluatedProperties=false instead of additionalProperties=false
-> > - fix property order to comply with dts coding style
-> > - include raw-nand-chip.yaml instead of nand-chip.yaml
-> > ---
-> >  .../devicetree/bindings/mtd/fsl,elbc-fcm-nand.yaml | 68 ++++++++++++++++++++++
-> >  1 file changed, 68 insertions(+)
-> > 
-> 
-> My bot found errors running 'make dt_binding_check' on your patch:
-> 
-> yamllint warnings/errors:
-> 
-> dtschema/dtc warnings/errors:
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mtd/fsl,elbc-fcm-nand.example.dtb: nand@1,0: $nodename:0: 'nand@1,0' does not match '^nand@[a-f0-9]$'
-> 	from schema $id: http://devicetree.org/schemas/mtd/fsl,elbc-fcm-nand.yaml#
+On Mon, Mar 03, 2025 at 03:19:57PM +0200, Andy Shevchenko wrote:
+> On Mon, Mar 03, 2025 at 02:46:24PM +0200, Raag Jadav wrote:
+> > On Mon, Mar 03, 2025 at 02:21:55PM +0200, Andy Shevchenko wrote:
+> > > On Mon, Mar 03, 2025 at 02:13:35PM +0200, Raag Jadav wrote:
+> > > > On Mon, Mar 03, 2025 at 01:44:52PM +0200, Andy Shevchenko wrote:
+> > > > > On Mon, Mar 03, 2025 at 01:38:15PM +0200, Raag Jadav wrote:
+> > > > > > On Mon, Mar 03, 2025 at 10:21:13AM +0200, Andy Shevchenko wrote:
+> > > > > > > On Mon, Mar 03, 2025 at 10:17:42AM +0530, Raag Jadav wrote:
 
-Drop the unit address in raw-nand-chip.yaml. So: 
+...
 
-properties:
-  $nodename:
-    pattern: "^nand@"
+> > > > Better CI coverage?
+> > > 
+> > > How? I do not see the difference, can you elaborate?
+> > > (Assuming that CIs are using the merge_config.sh approach or alike)
+> > 
+> > That is my understanding of it.
+> > 
+> > config COMPILE_TEST
+> >         bool "Compile also drivers which will not load"
+> >         depends on HAS_IOMEM
+> >         help
+> >           Some drivers can be compiled on a different platform than they are
+> >           intended to be run on. Despite they cannot be loaded there (or even
+> >           when they load they cannot be used due to missing HW support),
+> >           developers still, opposing to distributors, might want to build such
+> >           drivers to compile-test them.
+> 
+> Yes, and how does my suggestion prevent from this happening?
 
+Nothing's preventing it, but since we have an opportunity to allow
+a wider build test (even without arch or mfd dependency), shouldn't
+we allow it?
+
+Raag
 
