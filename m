@@ -1,169 +1,159 @@
-Return-Path: <linux-kernel+bounces-542035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84B46A4C4FF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:28:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC6DBA4C4E3
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:24:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62A577AA2CB
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:22:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 294A918847A9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:24:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 302AA214A76;
-	Mon,  3 Mar 2025 15:23:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 021582144DC;
+	Mon,  3 Mar 2025 15:23:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="kB+ZlQDZ"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sg2apc01olkn2090.outbound.protection.outlook.com [40.92.53.90])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z51Dp6Df"
+Received: from mail-wm1-f65.google.com (mail-wm1-f65.google.com [209.85.128.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B16DF78F44;
-	Mon,  3 Mar 2025 15:23:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.53.90
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741015386; cv=fail; b=JJg74KtHesrv2e6GgzkynVcspgc1zWAMupMHD0N/GTv5FccInukN3bU1ephwPsScOps9/tVCH6FsI3ik2PfCq6VZiu/cTLZO4+kFqOpiWRepsH7Pst7ZbkmXanikrtYl9Bt7HFJ0Q4PCYX/zfXHneHe/1JtwF9WTkmDIcAS55io=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741015386; c=relaxed/simple;
-	bh=t1XWgJ8sDgv65/nvemspGayEY5Ph3QaudoAeYPJxVeY=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=lgIhREa8LzY2t6TEwyNh/9+EPSfFLh9q9Cc1evgwlytIjQIVnh019U0S9cXAYmaC4TVbCZh1/Zq2SNHYj5l/qHZ9jjUqVamom5T0oFpc08VjN8i8RjHSQbFXT0BGdUvtkE/Fmw2Lq6kTXBUfluY6p4PMcMDbl0VZ/gLqZi4ofvo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=kB+ZlQDZ; arc=fail smtp.client-ip=40.92.53.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=whqEWI/aSlu9jTyxjb1sar9YXavtCnmXJjn9Ho+TTRC0/DNlvQINL8sagFCJJyndt7du/1r0NaT9ojKyc2x+h8TXppyjVz0lWFSs+QO2ykTJHSjERfIeOOAYCF/MZI71sfdOmhVP9EUGoQeCYuWVDRQ1GkZAyzPJrsEWiu0NrHWcc1X0FbYFgbCigpimStTvZOqFuKuJPi56bIu2oym5XqiJ392O2Uqi+Tn965ufG9k4clAFf3zAC+A20bRQu2XoCdm0vFkF6aV3QU3L4vAsYIsVguvC+QeHIjxvLLZih7SeLlACzm3kBLhMwc8lu/Fw1s6EzyN4UUvdMLHwPPu34Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LLl0xQKVnLqfhENaed8i1I2D0hPYu0GzTdu6Rbkbycw=;
- b=dA/Pjr7Rnl56MsErLDj/2syFb/+1vdYB/N1T9NRn7yQZD8/NN9hgVqS6Qq6xtyiI35WrYaFjUt3jJbiBErP+b4QKCux75oQgKGk+uZAUFGZ3HXJpPY34Ureo/bnoliWLoRdYnXoWEeAErF7xv84tL2qRIP56EeIym1J7DXRtWkUtEjO48vFr6fGVhRkdR2rw676csYNQfIkadb6tzgqFFDzPrvRL76uZw/aoCavzrZEpy7BGUV5Vd5xRwrDbf8RCKEfQFDGSBzGManllway/xOEG2U+Ws4YZXufe66Qxv5ZED2Hgxupe4Upq5aIkDYKxnize15fJaVP+rmPsk02v0Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LLl0xQKVnLqfhENaed8i1I2D0hPYu0GzTdu6Rbkbycw=;
- b=kB+ZlQDZMGK/y/PAAQvpwb6qevi3Ne9uPJs8UCypKJyMJ087GxJ/GCatNgCojy8JszuXhyrUhqzQ+53Io9b9zC+esb2+bFGukI+eueRIgbm75tu60RYNYMqdKRpFuMTNlVYS1VMueC9ugXieCSam9UNrpZLLbHsQcX0CRCK/cum7xBWR2W2GkrhSicrktSly1t7dQxAiHPMzZEAgZWvt4eljqWDHW/wkicENBmBfsgkbSiPRiNQLY6fvcI3YR/DFacnNeOX4t9ed8LOrqrci3H7gN8UudbKDSGwaLtxbn8BEUSEUkzyzDOmkQkZ929FvY4RqB6jcuVt099xaf2Hklw==
-Received: from TYZPR01MB5556.apcprd01.prod.exchangelabs.com
- (2603:1096:400:363::9) by JH0PR01MB5560.apcprd01.prod.exchangelabs.com
- (2603:1096:990:17::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.27; Mon, 3 Mar
- 2025 15:22:58 +0000
-Received: from TYZPR01MB5556.apcprd01.prod.exchangelabs.com
- ([fe80::3641:305b:41e2:6094]) by TYZPR01MB5556.apcprd01.prod.exchangelabs.com
- ([fe80::3641:305b:41e2:6094%5]) with mapi id 15.20.8489.025; Mon, 3 Mar 2025
- 15:22:58 +0000
-From: Ziyang Huang <hzyitc@outlook.com>
-To: andrew@lunn.ch
-Cc: olteanv@gmail.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	rmk+kernel@armlinux.org.uk,
-	javier.carrasco.cruz@gmail.com,
-	hzyitc@outlook.com,
-	john@phrozen.org,
-	netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38872144C3;
+	Mon,  3 Mar 2025 15:23:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.65
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741015395; cv=none; b=Hne3ljpHVk6JZKDU/UOdIU7mmxJz0R/c3VhkKccGsMmdU6FCcYT/RWevvSMIh4cXRHL9tPAwshDTIZpeCRgoTikduiCHzv1Xbgbu7y62l8JlxEaOYlp2mRlty2z/zpcgPSugVomj97qibrK0++I99eGqB1pF4goclDmQhE17ShM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741015395; c=relaxed/simple;
+	bh=l+FzxzqcQOvCH8c5GurhKDmppajCdKyqii/WUkvzxT8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=sIQTD3DBg1c1tvTNLs+RPA7dp3pIGtwPrymIgGlFNGfUIJSvDKbiOOv4Za8l5PUK/uZnyQgsYICJRvQb2bjZzH9Z23QNZEFI114e+VwuaM5E+Kf4cgUMo9jR9tD0rrpg+smC7EOaWL19OsU2eK0Vqq4s5Mwdl3j8bKD29vP7RxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z51Dp6Df; arc=none smtp.client-ip=209.85.128.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f65.google.com with SMTP id 5b1f17b1804b1-4393dc02b78so29222855e9.3;
+        Mon, 03 Mar 2025 07:23:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741015392; x=1741620192; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Y4Fpzu6vEVBo0wCJhRUrT6eOf6iL8Bnn94ks0el4cwM=;
+        b=Z51Dp6DfOVoMM2SZoNOnS7Y51ZJ5AiIM8lmnXn2DSEP4GknEP/eiGT8HomESgYohPL
+         6d2YosDZjlp6I0NjUyey05jwGux6PNlAL0RgzhL79/ShLoV2afTLvb89LLtgkiJtSf4U
+         D8yQln4/ti/H+ZvMwW/ORzdiVOcx29E3AfOM2Phs+eX0F1IPmEEu1jyxKYg/Ya/F5uqu
+         bOvgsgrlQtGaWwmNFwXgFciavzLvbssm0sPM2VeVM1twHAaT6HSIt1B7RI50ZNQ9C/nJ
+         SWA95HdnQnJS2aVb3ZoMz9RO0pqlREAgqfGbfYKUr0wxPh3xotUCqyDdxDCqnSx+tgO9
+         ClNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741015392; x=1741620192;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Y4Fpzu6vEVBo0wCJhRUrT6eOf6iL8Bnn94ks0el4cwM=;
+        b=OaxrvSj37OW5LI/2fiSlEImqa3atd9ZIM/WMtuwFxP7hqbWKYQghcXIYaPm8zLlxIM
+         IYsqoYgNNI/DqzTq2NcMRZU0ywlmeOJjsI4T18hJYFzFP0QP1IJBBzq+/4eGiW3IcRa3
+         VjmmhFXHWxINgsZEpepynIutEAlwVhOwkSBsNsvqm8rbjsqOGcj9BDDsYh2dqcIHeIvE
+         bfei30ZZihPwTp5qBXiwk47xdNSvO+moJi4s5uwU6p7izixoBBqqCI9PruBDdzbmf3WQ
+         7DyXSUv6tMshUjYuBsiIYwXi7huBltXALXkoD6cclmjT+BBK1iFYW4Qan9lokrFTfN/W
+         kMcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXPYWbPPUBLyCcS639f8MTPs0BLRo0EK5+ooJkmDRGarVcc+rUzIbRMLe/OGYTD/P/mEqNLTc/LGuuu6KM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyA18NYncjoL4F4Fq4pWxqv29L2KegsakNoWp1KDyvwy97eii/G
+	xxuK9xpPX7zJWzDhuUMAqd6sZi63jh3ptuw4z+M7ZKe5UrvMbAA9JSnmeYGPFYU=
+X-Gm-Gg: ASbGncuSFvYJN0BiEQRQFGnzI6UqVda+et7UBRXsd6MBjtnt7+sGq5PkLJNVoxJTxlL
+	TXvp9DSbeP6jZYiMjWNMg6KJD2o2TlzwLCOFqBvBUX3WjANeNfnyFkuVq5gYOoM7yPcWehLH7OV
+	dOzr0g/e0Obs6yUidiutKYHSnac2SBf2nZMPrUm0gm5s3DIIrZjdoJ9kbazB0KZClxMZ0qUBfo1
+	leEP/WdLwDNi3K/PI2gs4AKXdjL37VnAVbX84AwuDxOWCV5/Ax26DEjL1KkFIXqhi6ffH5KxN//
+	Db1RIw2Q0Jaic5mSCpCcJXCXarw5ZsTg2A==
+X-Google-Smtp-Source: AGHT+IGWe7AGIoZyzhIx4o6frHx+jxnpDfdaTig7kvrlS9c7aRLExKFsaeXCaLAhRyKx5jPukd6geQ==
+X-Received: by 2002:a05:600c:4f86:b0:43b:ca39:6c75 with SMTP id 5b1f17b1804b1-43bca3972d7mr4843355e9.16.1741015391407;
+        Mon, 03 Mar 2025 07:23:11 -0800 (PST)
+Received: from localhost ([2a03:2880:31ff:4::])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b736f75ebsm164799315e9.3.2025.03.03.07.23.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 07:23:11 -0800 (PST)
+From: Kumar Kartikeya Dwivedi <memxor@gmail.com>
+To: bpf@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 0/2] net: dsa: qca8k: support internal-PHY-to-PHY CPU link
-Date: Mon,  3 Mar 2025 23:22:40 +0800
-Message-ID:
- <TYZPR01MB555632DC209AA69996309B58C9C92@TYZPR01MB5556.apcprd01.prod.exchangelabs.com>
-X-Mailer: git-send-email 2.40.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: JH0PR01CA0044.apcprd01.prod.exchangelabs.com
- (2603:1096:990:5c::14) To TYZPR01MB5556.apcprd01.prod.exchangelabs.com
- (2603:1096:400:363::9)
-X-Microsoft-Original-Message-ID: <20250303152240.6282-1-hzyitc@outlook.com>
+Cc: Barret Rhoden <brho@google.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Will Deacon <will@kernel.org>,
+	Waiman Long <llong@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Martin KaFai Lau <martin.lau@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Tejun Heo <tj@kernel.org>,
+	Josh Don <joshdon@google.com>,
+	Dohyun Kim <dohyunkim@google.com>,
+	linux-arm-kernel@lists.infradead.org,
+	kkd@meta.com,
+	kernel-team@meta.com
+Subject: [PATCH bpf-next v3 01/25] locking: Move MCS struct definition to public header
+Date: Mon,  3 Mar 2025 07:22:41 -0800
+Message-ID: <20250303152305.3195648-2-memxor@gmail.com>
+X-Mailer: git-send-email 2.43.5
+In-Reply-To: <20250303152305.3195648-1-memxor@gmail.com>
+References: <20250303152305.3195648-1-memxor@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR01MB5556:EE_|JH0PR01MB5560:EE_
-X-MS-Office365-Filtering-Correlation-Id: c982bd76-993b-47c3-73e7-08dd5a6746b4
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|5072599009|19110799003|15080799006|8060799006|461199028|440099028|3412199025|1710799026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?2poVIYGFuXhSIVSVb3K7u550BEkmUyE7xj1tRwNhw00aiLh1lB4vW7WHtKua?=
- =?us-ascii?Q?w8ek5OvteRN3UoZeIuPavh9NuORBHL2m+cPtQ/N7Cu6AsfJA1Rkj1MNrKGl7?=
- =?us-ascii?Q?bEbu8+CxWE4LQCmeD25VAj9imF/8YGlB6jUO245L869FNh0VlpP9z8cg8Hjp?=
- =?us-ascii?Q?AtoMEQEMQizbwxySApwJxpFMpiWDJ04M12DvJNoJu4r4Xxsc+3TSwjzJRz6H?=
- =?us-ascii?Q?OhDhJ57+Jmi4Me0ztoZPjQMz6QgBW7axVfyopbkc3gxOyO4G5qyDcDxzHCbk?=
- =?us-ascii?Q?aQl8Y62pMJTQhq79gIguow+Ma5ebWZzZyhhBuUUuKr+rzC+xlzfpxhHiTUSg?=
- =?us-ascii?Q?+Sz17/1UlV5I5I+1rtSKFvKtG3tMH7g7hdG2iPU6G/CEg1M4TanQ/E3wtmpd?=
- =?us-ascii?Q?hxFVrj3oynhr9ZGnguQzaLuCgHUgmb4vih45OzIfvPZK4797A/eeNVS7OVhF?=
- =?us-ascii?Q?PuuYEct3Q+sutmbk65nN6OzrQtvmsyTYSwjKuLqfJXL1Jy0Q93ibjxq9liMa?=
- =?us-ascii?Q?Zau6LPZvCRLgI1q12KTP8hFD0iZAICamp+ghU4ajTeBaebUH1GdaMAx63/g6?=
- =?us-ascii?Q?gR+eRid8o98UnktRKWGh3mETISrlLIGSUzEXXU72UCt76p1bIxPGjkZM1BW1?=
- =?us-ascii?Q?PX39XJwU8yaIa1fuWGNvV2tyS3pVWgHkZ0hb+Xv119qkbaoaYF81SIrrNlU0?=
- =?us-ascii?Q?+uXol0MQmSOjD58YkxyDn6nzp62ezfeXh3P5UY7428Nx+jXu8nQeCqxohGtj?=
- =?us-ascii?Q?kxTWQfIzfrUueuZCf2pIINP3Vyty3OMsstTBT9FdR+XmqiA8NNEKZ/hxh8vX?=
- =?us-ascii?Q?fkeHHciAqMqkr4ShOWLGgp64O/l8+eNXKcffl9JbhajDn7nzLpwC+lqcS6Q9?=
- =?us-ascii?Q?PC3BJgUlsl0KohqjzNxtkluLIOUfCVBkYYtwk4iO52zqbmFJQNT8tpbplcim?=
- =?us-ascii?Q?iBJE6ee5PH+BY0yhKn/s/CtE9f9j/2xfPm3MA2deHf/z3vr4qChN6eNFuZJZ?=
- =?us-ascii?Q?dIRk6KnRDz7C+xD0tBSXQwI27AxTNK8sFbU26L1M3r0O4qCYXlMo3qydreou?=
- =?us-ascii?Q?bNNCTp1/bYjusKH6D8l8B4VQM/Yzeg=3D=3D?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?+ex7XcWU9JBudOWvWwdwjdlq8wrbLictaUTtSYXZi/gjHxRKceRZ9sU5jonU?=
- =?us-ascii?Q?0uiDY6koNez4M9i/F77ObEGG4odvu9Ht7KWf06H1IMVw6c7qMH2jFppPsLsn?=
- =?us-ascii?Q?7wNcFoTZb7kS8XY5Jc2HVkHnD6n4wD4wo7cq5vZBmxGEurXUbnOtEphlduGm?=
- =?us-ascii?Q?MEY3BnHLe93IoZZSNe8rWSrLJSkTXKLL4NDDqEpeYMjyyr+wkSAaMH7x9RcD?=
- =?us-ascii?Q?DKtUU/J8STzDFhyVW2kYZXuUEfbiox+9cA8L5Jg6HyMxTVBe3PnTdK/Z8sWV?=
- =?us-ascii?Q?FLsQ8KuZlw/Z4H7ueRVMVFzwTDp/UOhk1l/F4XT+7J1xzR3/u4Qf1qpuTsam?=
- =?us-ascii?Q?eGmLSWsG3bLtvtcsEftPnvGXu81Scf7YqBtXc+AqsXWJkKZK6i8icE5I0cVr?=
- =?us-ascii?Q?CzbOh7jEYAqEF3JcKEMouJE5g+qfjRzfwdv+i23awg4bWBwpslefzF5fD2vG?=
- =?us-ascii?Q?WJDvcbRlygzkwzdxBOKl7UZkJ+0a921ady7A0RaJrGdYh59t6C1FY1oK/t/o?=
- =?us-ascii?Q?PGpRBRNdGfZxc49c2L4gVYANz1cJEu6L/volzxKj1/8NrZQodLZyfdkUUSbM?=
- =?us-ascii?Q?lHMZtHehtHVsLIB58rlHHdzro3cWsiT2BUo/QUhS4BO6REcTXB8WGFUk/eOg?=
- =?us-ascii?Q?vgt2nCy1UyqGjC5uKqh37PuVcWfUMKMvoRCyAgR9So5PmXBNYDcoXs2gNt/O?=
- =?us-ascii?Q?e4JP5Mgs0i1pVbmqhbv2tnJkfHME9iO2jhxTKAlpR9Ryf2V/NW3RZkiKCPKa?=
- =?us-ascii?Q?ctwBrAyNyK8GJuVB6Iw2E7Iwhok9vPLl+q1BbvrPkX/vHploTaxTEQXGGb36?=
- =?us-ascii?Q?bG/g0eZnINOmjxM+2rPdM5b6rNNgQUPceb1tvzMrvowSFy6Y+h+oaF4fzyHa?=
- =?us-ascii?Q?g//lX9BOU4o7O7VNlO/6asa1XX/U7jYlFQSgJmMwVPHuXmdnQhvbjjn1CPCY?=
- =?us-ascii?Q?xrbtzejBJPNXNI209k/aHXp0cJInSPMl3MbYNl5OBHyd6rptQaoH6vgqWupr?=
- =?us-ascii?Q?XYTYFHgG2eN3KSnKfcIAWhD8Yl/eQTyYSOiqv3/CGkJaQcqjoI28bNxX3BCy?=
- =?us-ascii?Q?f378tDZeyfT65b64uPiwzs6IOQGLyk9tPts3jE8Vv4NB3JMA5CCY2fJrsx7X?=
- =?us-ascii?Q?Sit5PSnLX8M6E6PQT5KBvsP1gxNkSmHiM4aIovIB0iJ8vp1DqyUiuzC5ANCw?=
- =?us-ascii?Q?65CBfRhZnGZ1WcDsI66Wcd1eXmqGsPWyZ09weLd9XLqPuVFRURM2xO0mlxs?=
- =?us-ascii?Q?=3D?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c982bd76-993b-47c3-73e7-08dd5a6746b4
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR01MB5556.apcprd01.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2025 15:22:58.1364
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR01MB5560
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1522; h=from:subject; bh=l+FzxzqcQOvCH8c5GurhKDmppajCdKyqii/WUkvzxT8=; b=owEBbQKS/ZANAwAIAUzgyIZIvxHKAcsmYgBnxcWVghejvu1V67bqXOIvMlrdiOA5EFuq9ml673Px YVwX7L2JAjMEAAEIAB0WIQRLvip+Buz51YI8YRFM4MiGSL8RygUCZ8XFlQAKCRBM4MiGSL8RypodD/ sHpZiA9+maif3gXLaLeb6BTa8ziYYbNY7ZG6/NdOcNw/uV3egEUUzRRqjKaMmDsRtl8u3i8UuKv93i Jpn+XC/A+FwN36qoS13Atwe1+eFSD/ZK0b52m1Tgy5sHI8wLBe/eCop0B6+TdV+nqpCUG22mIxK8kL yxABesXn6haH0qjCe1WgAx2qbP15M5KLx2leHpzsbXkBjQN/URoZHzBv3oyjrWiFXXn0R1lS3yGOwR V3j3EA44LSwOtcKzHtFmZOPnzXP9h/VaWi9Q/827Uq8Q5YpRgAhsDHaBEinMJ6xrWKWKxzosaTM4qZ 3Kl57QWIF7hlmRccjfD2KGQDbup22QXtz34QHm0FjNknfyT3oVfUVoJ8RTYsXR4h6sIkAEV8mEu9Il 8o/qwNMFXj/K1a3Z2+hKs9CkXdftARzIiKNhnOLoZ6OcMybgSp86eS2StUIeegiSSPWCLSHJRijnuU wb0sFuJWRQ6eveZiG59om0uLPkO1knbSuAk+dkykWu5TmE9nKyt7WXULkN9Q6+rkG9Lkt1jV89MQEX 3sPA7uXmn3t9nLxQINGa3cpYEru6LaMTvUmeUSf5maMPLnh3CMlBYvFVMi5q2JPW9m7JyF1/sqOLrp wGbPN0FktYyVe186BbPjg+7BtvK8bU5OX0ZT5CupTYRg2a1ZfvVBTo+6gZnQ==
+X-Developer-Key: i=memxor@gmail.com; a=openpgp; fpr=4BBE2A7E06ECF9D5823C61114CE0C88648BF11CA
+Content-Transfer-Encoding: 8bit
 
-internal-PHY-to-PHY CPU link is a common/demo design in IPQ50xx platform,
-since it only has a SGMII/SGMII+ link and a MDI link.
+Move the definition of the struct mcs_spinlock from the private
+mcs_spinlock.h header in kernel/locking to the mcs_spinlock.h
+asm-generic header, since we will need to reference it from the
+qspinlock.h header in subsequent commits.
 
-For DSA, CPU tag is the only requirement. Fortunately, qca8337 can enable
-it on any port. So it's ok to trust a internal-PHY-to-PHY link as a CPU
-link.
+Reviewed-by: Barret Rhoden <brho@google.com>
+Signed-off-by: Kumar Kartikeya Dwivedi <memxor@gmail.com>
+---
+ include/asm-generic/mcs_spinlock.h | 6 ++++++
+ kernel/locking/mcs_spinlock.h      | 6 ------
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-Ziyang Huang (2):
-  net: dsa: qca8k: support internal-PHY-to-PHY CPU link
-  dt-bindings: net: dsa: qca8k: add internal-PHY-to-PHY CPU link example
-
- Documentation/devicetree/bindings/net/dsa/qca8k.yaml |  7 +++++--
- drivers/net/dsa/qca/qca8k-8xxx.c                     | 12 +++++++-----
- 2 files changed, 12 insertions(+), 7 deletions(-)
-
+diff --git a/include/asm-generic/mcs_spinlock.h b/include/asm-generic/mcs_spinlock.h
+index 10cd4ffc6ba2..39c94012b88a 100644
+--- a/include/asm-generic/mcs_spinlock.h
++++ b/include/asm-generic/mcs_spinlock.h
+@@ -1,6 +1,12 @@
+ #ifndef __ASM_MCS_SPINLOCK_H
+ #define __ASM_MCS_SPINLOCK_H
+ 
++struct mcs_spinlock {
++	struct mcs_spinlock *next;
++	int locked; /* 1 if lock acquired */
++	int count;  /* nesting count, see qspinlock.c */
++};
++
+ /*
+  * Architectures can define their own:
+  *
+diff --git a/kernel/locking/mcs_spinlock.h b/kernel/locking/mcs_spinlock.h
+index 85251d8771d9..16160ca8907f 100644
+--- a/kernel/locking/mcs_spinlock.h
++++ b/kernel/locking/mcs_spinlock.h
+@@ -15,12 +15,6 @@
+ 
+ #include <asm/mcs_spinlock.h>
+ 
+-struct mcs_spinlock {
+-	struct mcs_spinlock *next;
+-	int locked; /* 1 if lock acquired */
+-	int count;  /* nesting count, see qspinlock.c */
+-};
+-
+ #ifndef arch_mcs_spin_lock_contended
+ /*
+  * Using smp_cond_load_acquire() provides the acquire semantics
 -- 
-2.40.1
+2.43.5
 
 
