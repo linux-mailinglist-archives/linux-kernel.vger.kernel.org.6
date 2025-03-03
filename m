@@ -1,114 +1,142 @@
-Return-Path: <linux-kernel+bounces-540962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E664A4B6FD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 04:48:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09915A4B6FF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 04:48:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46A5A3A8B66
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 03:47:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BE833A403C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 03:48:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BA071E4110;
-	Mon,  3 Mar 2025 03:46:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D19E619C54B;
+	Mon,  3 Mar 2025 03:48:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="rz57hsA0"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uv3lF58d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D84B15854A;
-	Mon,  3 Mar 2025 03:46:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D67E23F36D
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 03:48:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740973606; cv=none; b=hfLAVQHCtuk8syqLkwTAkZE9de7DbBGzOzDxBYswrmdRZ8UgxDkYBTKyfSIynjdtriSXDiH2i+Z8kUUbrmooqtIS2TmQMul0B7DnTmlpaXd8f4BwpYOi/VNohNq4OD6VTBBR6W1rVpdSu1FJeBcRkl/EO5WMb+aqtCdwYcfROZE=
+	t=1740973690; cv=none; b=VnNaHqGA/YfQv1Sz25PluohMdbgc8/fBNf+JG+zQboClt0IRh6uboU2UINzXEfnguQzjAuSaQBAEgXgkmi6FR7TIOXN9kjtXtYLlmUpCtfuiNfFxxSMt+/6La5fTWxO+DOmZA79EGFdFDUcqOMqI0zm2dKyKclYjDanSWwF8gK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740973606; c=relaxed/simple;
-	bh=Gckh/ycN09Z74Fo2Bxi44nwY7FtAl/OObixU2gXQDTg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=DhVziE27w+qNjQ0Yy+Ntzvg7QEpTLCZxg9Fl8CwkkWJtdfxmzquyCOBh41YgbBXcdve6230u/MHlMDTvTekdOsMo+wsAVWJCHybne77G/2aIFrwEMr/7XukI3/JPU0BqOyVHwG+hv7ulHNZeQ1jWtNnY32WF8vI30We+7Z62huE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=rz57hsA0; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1740973599;
-	bh=+A6+WN1oynsISedBOaLvXP7v9UZ+gCDGlsHaH38dKF4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=rz57hsA07AOEb/XHq9kTaac1lLmpPm6E+t7Rm2x2eYizFIAI9vmjwZd6QbjCn5EhR
-	 KE5h2Vay+6g2kiIiuLt7aBdNErSHFsK7XDAz6tYwQM72ZOMmUp09YskKZTJdJOKpLJ
-	 utjozia6ft3h7/pf6gVXUoR81er5WvQlNlYAtgDWN8MT9AlNnnh/3A0ldlG6TGsu8W
-	 UHa3eBI/tGKtI0KWXoeNCkHqICtKEBbM4KBMYYZG5P7ENgvfJV595q06eUXPbK7owK
-	 OIMwYoHqAnuvfE54qpf0257j4QzKYypo34jpeTnF0p/K9FBGDqRvTmWPGBDqyrKo52
-	 NzYZ6BdxpR9Kg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Z5l9V6Vr3z4x0L;
-	Mon,  3 Mar 2025 14:46:38 +1100 (AEDT)
-Date: Mon, 3 Mar 2025 14:46:37 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
- Jassi Brar <jassisinghbrar@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, Nam Cao <namcao@linutronix.de>
-Subject: linux-next: manual merge of the tip tree with the mailbox tree
-Message-ID: <20250303144637.71c25bc3@canb.auug.org.au>
+	s=arc-20240116; t=1740973690; c=relaxed/simple;
+	bh=Q4EsHzFu7W+a0NYcnNSUCxAn6bGe2wN70WdlrxfrVUk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hbitf+QOJV1jCrjMM9fqEdcctvyPtsHcJQMnhF7p/S1qtPpxrx4B4QWZxXLhKgrJ5Ot4i1PSxjKJVuAkgQo1g01pbr4yZ0B8mW0DpqYLT6ul+cJJkNUJx6q4VsYqYTmqrmUMub7mY5VDfHVQnrnHVYAlTgrQRrtKxKtsFYdzCPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uv3lF58d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 545F5C4CED6;
+	Mon,  3 Mar 2025 03:48:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740973689;
+	bh=Q4EsHzFu7W+a0NYcnNSUCxAn6bGe2wN70WdlrxfrVUk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=uv3lF58dTmuX5e0dfQvHx3MjxyVxEWNiO0mbh11YhXyyw7Pn5loIPHJrk50qmtCPM
+	 RE/TdAIYDGNz9n4sEYW2snlHhymS7CPyqM4Ky2t0VQxyrS8CWVQBaGC+zy9U0EhArQ
+	 Op6lH02C9KTd+C4lWO0fufZbe/2TMaiWWr4IBUIXrws74vmS3En1nS3C4P/iYzMNYt
+	 XSBTlFdAkYKX1r8nraTX1JZxghwcqOvefV5EDsTVDOlMsVizURsxBTjh7pPPkMvaTm
+	 fjvM2NSBj6HHozBycTgGOjk+VgBNbVNGpUAaFonEpaGMOVsUFrStrpYYFg3jiTEtD+
+	 ZckyXj3Vw5xAA==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>,
+	syzbot+6653f10281a1badc749e@syzkaller.appspotmail.com
+Subject: [PATCH] f2fs: fix to avoid out-of-bounds access in f2fs_truncate_inode_blocks()
+Date: Mon,  3 Mar 2025 11:47:38 +0800
+Message-ID: <20250303034738.1355927-1-chao@kernel.org>
+X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/57Da8jKAIYl2S5fX1i27fTN";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/57Da8jKAIYl2S5fX1i27fTN
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+syzbot reports an UBSAN issue as below:
 
-Hi all,
+------------[ cut here ]------------
+UBSAN: array-index-out-of-bounds in fs/f2fs/node.h:381:10
+index 18446744073709550692 is out of range for type '__le32[5]' (aka 'unsigned int[5]')
+CPU: 0 UID: 0 PID: 5318 Comm: syz.0.0 Not tainted 6.14.0-rc3-syzkaller-00060-g6537cfb395f3 #0
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ ubsan_epilogue lib/ubsan.c:231 [inline]
+ __ubsan_handle_out_of_bounds+0x121/0x150 lib/ubsan.c:429
+ get_nid fs/f2fs/node.h:381 [inline]
+ f2fs_truncate_inode_blocks+0xa5e/0xf60 fs/f2fs/node.c:1181
+ f2fs_do_truncate_blocks+0x782/0x1030 fs/f2fs/file.c:808
+ f2fs_truncate_blocks+0x10d/0x300 fs/f2fs/file.c:836
+ f2fs_truncate+0x417/0x720 fs/f2fs/file.c:886
+ f2fs_file_write_iter+0x1bdb/0x2550 fs/f2fs/file.c:5093
+ aio_write+0x56b/0x7c0 fs/aio.c:1633
+ io_submit_one+0x8a7/0x18a0 fs/aio.c:2052
+ __do_sys_io_submit fs/aio.c:2111 [inline]
+ __se_sys_io_submit+0x171/0x2e0 fs/aio.c:2081
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f238798cde9
 
-Today's linux-next merge of the tip tree got a conflict in:
+index 18446744073709550692 (decimal, unsigned long long)
+= 0xfffffffffffffc64 (hexadecimal, unsigned long long)
+= -924 (decimal, long long)
 
-  drivers/mailbox/mailbox.c
+In f2fs_truncate_inode_blocks(), UBSAN detects that get_nid() tries to
+access .i_nid[-924], it means both offset[0] and level should zero.
 
-between commit:
+The possible case should be in f2fs_do_truncate_blocks(), we try to
+truncate inode size to zero, however, dn.ofs_in_node is zero and
+dn.node_page is not an inode page, so it fails to truncate inode page,
+and then pass zeroed free_from to f2fs_truncate_inode_blocks(), result
+in this issue.
 
-  791d7e70a9f4 ("mailbox: Switch to use hrtimer_setup()")
+	if (dn.ofs_in_node || IS_INODE(dn.node_page)) {
+		f2fs_truncate_data_blocks_range(&dn, count);
+		free_from += count;
+	}
 
-from the mailbox tree and commit:
+I guess the reason why dn.node_page is not an inode page could be: there
+are multiple nat entries share the same node block address, once the node
+block address was reused, f2fs_get_node_page() may load a non-inode block.
 
-  c158a29c5c5b ("mailbox: Switch to use hrtimer_setup()")
+Let's add a sanity check for such condition to avoid out-of-bounds access
+issue.
 
-from the tip tree.
+Reported-by: syzbot+6653f10281a1badc749e@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/66fdcdf3.050a0220.40bef.0025.GAE@google.com
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/node.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-I fixed it up (I just used the former - only a whitespace difference) and
-can carry the fix as necessary. This is now fixed as far as linux-next
-is concerned, but any non trivial conflicts should be mentioned to your
-upstream maintainer when your tree is submitted for merging.  You may
-also want to consider cooperating with the maintainer of the conflicting
-tree to minimise any particularly complex conflicts.
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index e1ed7ccfb690..36614a1c2590 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1135,7 +1135,14 @@ int f2fs_truncate_inode_blocks(struct inode *inode, pgoff_t from)
+ 	trace_f2fs_truncate_inode_blocks_enter(inode, from);
+ 
+ 	level = get_node_path(inode, from, offset, noffset);
+-	if (level < 0) {
++	if (level <= 0) {
++		if (!level) {
++			level = -EFSCORRUPTED;
++			f2fs_err(sbi, "%s: inode ino=%lx has corrupted node block, from:%lu addrs:%u",
++					__func__, inode->i_ino,
++					from, ADDRS_PER_INODE(inode));
++			set_sbi_flag(sbi, SBI_NEED_FSCK);
++		}
+ 		trace_f2fs_truncate_inode_blocks_exit(inode, level);
+ 		return level;
+ 	}
+-- 
+2.48.1
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/57Da8jKAIYl2S5fX1i27fTN
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfFJh0ACgkQAVBC80lX
-0Gx4VAf/XQYHFNNjUM8UAs3mqV5O++L59Y37ulFYPgwT6kFA5iYD1QG8TxVf6hxR
-VeTYcO9zUNUIp1bGity6m/W3vfeZ6YPFSGxoPi921FT7KIz0Wt5GcR9wDohSclaP
-6JRVC79XpRtI9puRFont+mo0tDhLCcGSApJYGhCIzx2v4XY689HROY8xInSROvjt
-l7qluwRJ56FbDfudMglWwv8MhwWtB8M1LNiDPNUJmW2n3DZfxVbZcj1thJbGlFd4
-MH7q3+UqyELGseckT6of/Memq1T84rPP6vFwpbZyOYd/rC6TUkV/TtosCuW74S0q
-7G3tS7m/ZRTB7ikM981+8g4fp53OvA==
-=N4C3
------END PGP SIGNATURE-----
-
---Sig_/57Da8jKAIYl2S5fX1i27fTN--
 
