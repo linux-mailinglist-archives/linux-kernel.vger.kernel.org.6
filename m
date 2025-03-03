@@ -1,122 +1,123 @@
-Return-Path: <linux-kernel+bounces-544624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6174FA4E348
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:30:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3818AA4E3CD
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:40:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 943FE17F91C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:22:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8138519C4081
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:34:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A17BF27D79C;
-	Tue,  4 Mar 2025 15:16:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47D8727D79F;
+	Tue,  4 Mar 2025 15:22:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="31CVwZAa";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oLzq2OcF"
-Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="DUu0KZw2"
+Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31A2F265CA0
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:16:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA5627D794
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:22:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741101365; cv=pass; b=eKqnv7hA8df04R+abO3Wa4KQl0GfjOl62UjkbiW+R3Ocyk09JLurZhs3cwnhJrMSvpvhqBe133/J0AxxbyX0/VryoXUK3OLONZvARTsSxR1imtUUxdLH9QEAbahIMVvckTAtlui1fpgb+2jCVSTOid7TRjyl0iSp4o7qGPDrsc0=
+	t=1741101772; cv=pass; b=oljChiNynS7+mVRpMkEp6GT45e+//uReDHl9quXlC3G5+RVYdDKJfUfpha3mjBYQ9RreTzX9WKZHlpFjYVbHFHj77jo6HUa699PUT78codQz3HyEzThQJf1ufnYfggX+2SLbct8fXo5EXNYkNYMt3zPuxdYFjUt3gWiEq/HfzAw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741101365; c=relaxed/simple;
-	bh=29vKuSxFvBiNucjPfut9HKw36PNpgECcDRigNDSu8rQ=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=Yl872D0dcjQJv1RrX4XRnyXBb7aDr9Xg0M6lY2wftK43gLQ3RTYI+oWf0V+On6gf/3cG90bnBIu7yCcQYfTMTVCG5E9MnWdzwTDaDFpx8vzup0VtkfcZUi96Uriso2XhRqu19SIoIZJmWzyG+tL+1d875e5xjtfZ2P28KwbcGK0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=31CVwZAa; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oLzq2OcF; arc=none smtp.client-ip=193.142.43.55; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; arc=pass smtp.client-ip=160.75.25.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+	s=arc-20240116; t=1741101772; c=relaxed/simple;
+	bh=jlc0C8rbMbqoeY8g3R7Lv7cLmPJKlL8deuN+Bm1QkIs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BQRxVzsP34KutABRu2t154sJa4XxSM+T9BcaycHl6pV8rIaktiVxmMpAlvV3xGKuv2PKhGVdll4skhGeoX8dnmjXg74pwox5JpLVr1JN1t9hXKF2JWmiTvf0RGsLvrN5ps3aUqr9wU4oxHow2u89AihfBe8G9LQGPYNCUnNCE3w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=DUu0KZw2; arc=none smtp.client-ip=65.109.113.108; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; arc=pass smtp.client-ip=160.75.25.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (unknown [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id 6BF4140F1CED
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:16:02 +0300 (+03)
+	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 4389A40D053B
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:22:48 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
-Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=temperror header.d=linutronix.de header.i=@linutronix.de header.a=rsa-sha256 header.s=2020 header.b=31CVwZAa;
-	dkim=pass header.d=linutronix.de header.i=@linutronix.de header.a=ed25519-sha256 header.s=2020e header.b=oLzq2OcF
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6fNh6pHTzFys3
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:14:28 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6fY037VYzG00k
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:21:40 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 337104272C; Tue,  4 Mar 2025 18:14:27 +0300 (+03)
+	id 9936442730; Tue,  4 Mar 2025 18:21:28 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=31CVwZAa;
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oLzq2OcF
-X-Envelope-From: <linux-kernel+bounces-541703-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=DUu0KZw2
+X-Envelope-From: <linux-kernel+bounces-541718-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=31CVwZAa;
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oLzq2OcF
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=DUu0KZw2
 Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id 5EEB841CA1
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 15:29:59 +0300 (+03)
+	by le2 (Postfix) with ESMTP id 6979341C7F
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 15:43:06 +0300 (+03)
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id 35D673063EFC
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 15:29:59 +0300 (+03)
+	by fgw1.itu.edu.tr (Postfix) with SMTP id 39EEE305F789
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 15:43:06 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B6E018959C0
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:30:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F7CB1893F5E
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:43:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AC7F21129F;
-	Mon,  3 Mar 2025 12:29:38 +0000 (UTC)
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC11F20F08B;
+	Mon,  3 Mar 2025 12:42:55 +0000 (UTC)
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D5D51FF602;
-	Mon,  3 Mar 2025 12:29:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B8BAD27
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 12:42:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741004974; cv=none; b=JOMDuBKGED9rnGI9NZqApzNCUnSTLgydtJDXSLf4ostolCnp/EzVPJA45q3hIt0NXykeAfgtVp9VYw4cdtiwvqSnswxDUAKS2Zf+x7Aq4NtP9KLM6OtoMbIg0l1Jm1Q18t+W7SqIdXr7psPjuE6ao8zz2RudOv+4dkL++opdWF4=
+	t=1741005772; cv=none; b=JK/0E9Zpnr/C3BkazFpWpFVY3MbO92K1S4d5LT7wMbtO6+ncUh0YwjxArxMfnqy6SF/Jw/24DNOl944Z2cAyUA+c/ysx7nSmXELj9WM2xdhrqzgeeNmCtavI2SrNRR3Fd1P1vWiqsl9MKjd1wRS34Af/IU8eKpeH9aOM0qEeiSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741004974; c=relaxed/simple;
-	bh=29vKuSxFvBiNucjPfut9HKw36PNpgECcDRigNDSu8rQ=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=Ij702eqzXDKJFmkkC1gkB29lkXM/RVR9jZoDxOXEslWsG4VOemHmEZsbEJMQlODrjvTsxD/DaP4xE3smG8Pg0SbqQ6SADPB2zXaKhdbgmimx6yL0rwKKwQMzpxMO47PzcCfZLFL37goghlqw8e5giLaFKtPoLuuKR9zHU0hl3UU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=31CVwZAa; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oLzq2OcF; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 03 Mar 2025 12:29:30 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741004971;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Jrf4aZqmcHUA7SyBAF6oygLynG7+fZqWMGqGUVEioQk=;
-	b=31CVwZAadzUUiRBbJor2mPkNmXFtG5W/V+ogUjUIbLzU63/GAry9BohJWL2NnBJNkzymYn
-	ajuYvcBUd7pUyyxu1YNo0GELGPxtwWW/BDHv8/OWG3JKAtb0Uce8vv6fSS2Mxyd3Q+I0Ng
-	u31ido2yQU9x6Lo4DoH4YPxwzSjQ9wxlh1ZkqgvhcgnO4OuMhS/mF1D5mfJFGaoF1N4WEc
-	rgSAldNfC578ygZWX34soYdGusjuW0rfRIIipfBk3TFSm3lt4dwTghu25heOOnefBctEH9
-	vzQYTwARN3bwWv4CFFS791RzR6wZAr2f6DPTkoo5+pVNrAfLDSOAFUxRtaWIOQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741004971;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Jrf4aZqmcHUA7SyBAF6oygLynG7+fZqWMGqGUVEioQk=;
-	b=oLzq2OcFbIR4QeDhk5djILidvkPNxywbrVMuX4Mevr/PdFH2bhNb7ij5PGqFENK3d6/yLv
-	a7H+ME130KIj2zAA==
-From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf/core: Detach 'struct perf_cpu_pmu_context' and
- 'struct pmu' lifetimes
-Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Ingo Molnar <mingo@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241104135518.760214287@infradead.org>
-References: <20241104135518.760214287@infradead.org>
+	s=arc-20240116; t=1741005772; c=relaxed/simple;
+	bh=jlc0C8rbMbqoeY8g3R7Lv7cLmPJKlL8deuN+Bm1QkIs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VMzBqgh7mgvz/NTY5QNFxBeOMXUYUKmQQvjNR2OI9D+IAyK1Q06JybggVE7Rb4RLO9i5jxSZbxGD9jYxKMJQBwwiwpcL7+NqJ+xUb0jBmVKJBGQDvplyxVDRwlowrPSsVpJ2UWvJDKYcdBHtQTa0m+LId1vp8eRG9Yl0o4LT0lE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=DUu0KZw2; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A0B5C40E0216;
+	Mon,  3 Mar 2025 12:42:42 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id F3WNkQU5fF0l; Mon,  3 Mar 2025 12:42:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1741005758; bh=gdGS48ZkBp7tPq/jrYUCtRhNMC7QldOP4oiLkMSaAug=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DUu0KZw23FzzGcPKTR0vKoqqMRQyM3m1l+N9spPfiXWUWg61TvoeVgkCE06UNDsyz
+	 f5Jlk8cK7idtmn4JKQHA208FA5TtoJU/8yTWftHzRMXEyKs+Wh9eNXgmZDr33f7l69
+	 dSlXYB7TqpSesYID+DrprR9m7UJmtwmk+/iXnBNtWlKoHy7K4Wkhx8zjzj1qkxrOwF
+	 8UOzveLc2jp6Rbjb/zs9g3U/UKc6Z3JlmFZbqWaBKz0yAJGvKMki56+k+jmPqPUKgV
+	 OjqN3R7zZZJCbH6PJLkymsdoabSLzh3947SU1b/hYAkfo/2H5hAsAkzb2OCd51ElKE
+	 XDv1lc3zSUruNOlr8YE0ms3g/ikKzHnLrvkOkJAs2li7QLbTQKQa1UB0v+oYV7BIFh
+	 BEUaqd3hHpwASwupNKVFy2KlRSkaplV7jYq/qcpkXXMhW6Roh9T0/tS0Hv0XaBX5Go
+	 IAM1tryo1ruA12/OeHCIXbTy9Yj0N0h0JikxJK7lGTZEjjwYMg2lSwqn1fStZOZF/o
+	 I2IzkzP9eExzOGheni2X4IwbeF+pWCrXe51xG/2VXSvMTGZNBF67H9kBr/EKIyjlCk
+	 VChkaDf5YvCjsFMZl6Tm6tl2rXy5Q83BUA357v0C16biUBtlYSg+zxd2WUyLWGPRfH
+	 MZBpnLHGzlNXRU+wKV79DB0w=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4383F40E01D1;
+	Mon,  3 Mar 2025 12:42:21 +0000 (UTC)
+Date: Mon, 3 Mar 2025 13:42:14 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Rik van Riel <riel@surriel.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org,
+	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
+	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
+	linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
+	jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
+	Manali.Shukla@amd.com, mingo@kernel.org
+Subject: Re: [PATCH v14 00/13] AMD broadcast TLB invalidation
+Message-ID: <20250303124214.GDZ8Wjpn7l4bOy8LYI@fat_crate.local>
+References: <20250226030129.530345-1-riel@surriel.com>
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -124,185 +125,29 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174100497060.10177.13409371343847213450.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250226030129.530345-1-riel@surriel.com>
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6fNh6pHTzFys3
+X-ITU-Libra-ESVA-ID: 4Z6fY037VYzG00k
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741706088.86215@579SFHW2bvMLo0z0rFU6EQ
+X-ITU-Libra-ESVA-Watermark: 1741706511.30401@FQ6rYCrwM9TaAqnE2JTq9A
 X-ITU-MailScanner-SpamCheck: not spam
 
-The following commit has been merged into the perf/core branch of tip:
+On Tue, Feb 25, 2025 at 10:00:35PM -0500, Rik van Riel wrote:
+> Add support for broadcast TLB invalidation using AMD's INVLPGB instruction.
 
-Commit-ID:     f67d1ffd841f31bc4a1314bc7f0a973ba77f39a5
-Gitweb:        https://git.kernel.org/tip/f67d1ffd841f31bc4a1314bc7f0a973ba77f39a5
-Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Mon, 04 Nov 2024 14:39:20 +01:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Mon, 03 Mar 2025 13:24:12 +01:00
+Ok, I've got the whole thing here now:
 
-perf/core: Detach 'struct perf_cpu_pmu_context' and 'struct pmu' lifetimes
+https://web.git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git/log/?h=tip-x86-cpu-tlbi
 
-In prepration for being able to unregister a PMU with existing events,
-it becomes important to detach struct perf_cpu_pmu_context lifetimes
-from that of struct pmu.
+Lemme take it for a spin on my machines, see whether the cat catches fire...
 
-Notably struct perf_cpu_pmu_context embeds a struct perf_event_pmu_context
-that can stay referenced until the last event goes.
+-- 
+Regards/Gruss,
+    Boris.
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Link: https://lore.kernel.org/r/20241104135518.760214287@infradead.org
----
- include/linux/perf_event.h |  4 +--
- kernel/events/core.c       | 56 +++++++++++++++++++++++++++++++------
- 2 files changed, 49 insertions(+), 11 deletions(-)
-
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 5f293e6..76f4265 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -343,7 +343,7 @@ struct pmu {
- 	 */
- 	unsigned int			scope;
- 
--	struct perf_cpu_pmu_context __percpu *cpu_pmu_context;
-+	struct perf_cpu_pmu_context __percpu **cpu_pmu_context;
- 	atomic_t			exclusive_cnt; /* < 0: cpu; > 0: tsk */
- 	int				task_ctx_nr;
- 	int				hrtimer_interval_ms;
-@@ -922,7 +922,7 @@ struct perf_event_pmu_context {
- 	struct list_head		pinned_active;
- 	struct list_head		flexible_active;
- 
--	/* Used to avoid freeing per-cpu perf_event_pmu_context */
-+	/* Used to identify the per-cpu perf_event_pmu_context */
- 	unsigned int			embedded : 1;
- 
- 	unsigned int			nr_events;
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 773875a..8b2a8c3 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -1219,7 +1219,7 @@ static int perf_mux_hrtimer_restart_ipi(void *arg)
- 
- static __always_inline struct perf_cpu_pmu_context *this_cpc(struct pmu *pmu)
- {
--	return this_cpu_ptr(pmu->cpu_pmu_context);
-+	return *this_cpu_ptr(pmu->cpu_pmu_context);
- }
- 
- void perf_pmu_disable(struct pmu *pmu)
-@@ -5007,11 +5007,14 @@ find_get_pmu_context(struct pmu *pmu, struct perf_event_context *ctx,
- 		 */
- 		struct perf_cpu_pmu_context *cpc;
- 
--		cpc = per_cpu_ptr(pmu->cpu_pmu_context, event->cpu);
-+		cpc = *per_cpu_ptr(pmu->cpu_pmu_context, event->cpu);
- 		epc = &cpc->epc;
- 		raw_spin_lock_irq(&ctx->lock);
- 		if (!epc->ctx) {
--			atomic_set(&epc->refcount, 1);
-+			/*
-+			 * One extra reference for the pmu; see perf_pmu_free().
-+			 */
-+			atomic_set(&epc->refcount, 2);
- 			epc->embedded = 1;
- 			list_add(&epc->pmu_ctx_entry, &ctx->pmu_ctx_list);
- 			epc->ctx = ctx;
-@@ -5087,6 +5090,15 @@ static void get_pmu_ctx(struct perf_event_pmu_context *epc)
- 	WARN_ON_ONCE(!atomic_inc_not_zero(&epc->refcount));
- }
- 
-+static void free_cpc_rcu(struct rcu_head *head)
-+{
-+	struct perf_cpu_pmu_context *cpc =
-+		container_of(head, typeof(*cpc), epc.rcu_head);
-+
-+	kfree(cpc->epc.task_ctx_data);
-+	kfree(cpc);
-+}
-+
- static void free_epc_rcu(struct rcu_head *head)
- {
- 	struct perf_event_pmu_context *epc = container_of(head, typeof(*epc), rcu_head);
-@@ -5121,8 +5133,10 @@ static void put_pmu_ctx(struct perf_event_pmu_context *epc)
- 
- 	raw_spin_unlock_irqrestore(&ctx->lock, flags);
- 
--	if (epc->embedded)
-+	if (epc->embedded) {
-+		call_rcu(&epc->rcu_head, free_cpc_rcu);
- 		return;
-+	}
- 
- 	call_rcu(&epc->rcu_head, free_epc_rcu);
- }
-@@ -11752,7 +11766,7 @@ perf_event_mux_interval_ms_store(struct device *dev,
- 	cpus_read_lock();
- 	for_each_online_cpu(cpu) {
- 		struct perf_cpu_pmu_context *cpc;
--		cpc = per_cpu_ptr(pmu->cpu_pmu_context, cpu);
-+		cpc = *per_cpu_ptr(pmu->cpu_pmu_context, cpu);
- 		cpc->hrtimer_interval = ns_to_ktime(NSEC_PER_MSEC * timer);
- 
- 		cpu_function_call(cpu, perf_mux_hrtimer_restart_ipi, cpc);
-@@ -11925,7 +11939,25 @@ static void perf_pmu_free(struct pmu *pmu)
- 		device_del(pmu->dev);
- 		put_device(pmu->dev);
- 	}
--	free_percpu(pmu->cpu_pmu_context);
-+
-+	if (pmu->cpu_pmu_context) {
-+		int cpu;
-+
-+		for_each_possible_cpu(cpu) {
-+			struct perf_cpu_pmu_context *cpc;
-+
-+			cpc = *per_cpu_ptr(pmu->cpu_pmu_context, cpu);
-+			if (!cpc)
-+				continue;
-+			if (cpc->epc.embedded) {
-+				/* refcount managed */
-+				put_pmu_ctx(&cpc->epc);
-+				continue;
-+			}
-+			kfree(cpc);
-+		}
-+		free_percpu(pmu->cpu_pmu_context);
-+	}
- }
- 
- DEFINE_FREE(pmu_unregister, struct pmu *, if (_T) perf_pmu_free(_T))
-@@ -11964,14 +11996,20 @@ int perf_pmu_register(struct pmu *_pmu, const char *name, int type)
- 			return ret;
- 	}
- 
--	pmu->cpu_pmu_context = alloc_percpu(struct perf_cpu_pmu_context);
-+	pmu->cpu_pmu_context = alloc_percpu(struct perf_cpu_pmu_context *);
- 	if (!pmu->cpu_pmu_context)
- 		return -ENOMEM;
- 
- 	for_each_possible_cpu(cpu) {
--		struct perf_cpu_pmu_context *cpc;
-+		struct perf_cpu_pmu_context *cpc =
-+			kmalloc_node(sizeof(struct perf_cpu_pmu_context),
-+				     GFP_KERNEL | __GFP_ZERO,
-+				     cpu_to_node(cpu));
-+
-+		if (!cpc)
-+			return -ENOMEM;
- 
--		cpc = per_cpu_ptr(pmu->cpu_pmu_context, cpu);
-+		*per_cpu_ptr(pmu->cpu_pmu_context, cpu) = cpc;
- 		__perf_init_event_pmu_context(&cpc->epc, pmu);
- 		__perf_mux_hrtimer_init(cpc, cpu);
- 	}
+https://people.kernel.org/tglx/notes-about-netiquette
 
 
