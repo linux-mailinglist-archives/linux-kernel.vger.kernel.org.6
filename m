@@ -1,248 +1,259 @@
-Return-Path: <linux-kernel+bounces-541878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F00AA4C2CF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:07:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 324B0A4C2D1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:07:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD4BA1883D67
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:07:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CC7F18857D4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:07:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A3FC213259;
-	Mon,  3 Mar 2025 14:06:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 606CA212D68;
+	Mon,  3 Mar 2025 14:07:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="wl6iXmqA"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2057.outbound.protection.outlook.com [40.107.92.57])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CY+my+G0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1CB6212D68;
-	Mon,  3 Mar 2025 14:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741010811; cv=fail; b=ongYBEuAfLwuscigwrYknfpCJsoHhjbfR8jS1u8ZKgWmPF9hAAhNYVenA+l9+h8LBT7reIo+Rbez6vInMTQWYbnpQy7+rIfB5JRDHpw/qZiBIRkDgk1/YL/jW0SkItm+YlMFbw2sJSufAFU9VDQzOFSGlCiCZADaHBcfjAg51l4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741010811; c=relaxed/simple;
-	bh=0Uv1yhHk3002hAluQFciow4dAq8FF8lLMqLialcd8u0=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=tyuO2/MAo1e6NIUuOaqjYkVQkFAB+1IL6ZlbbaGowB5M/JWw9e3HBES1u8o9VS/3N9lAnP9XB4kkGGRly7eyyS0XBcDMPr/cAJqbxBQuaE+B/qGaw/JMjLq4qNHQTtkCECdmi09y890JcoHJbKwV083VoHZWvnd5cI6xxDUZJTc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=wl6iXmqA; arc=fail smtp.client-ip=40.107.92.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=An+X5qG8xpkeiNUxKFwjh+X0q1NlrjAAFiUsMvLJbOMJwPS5awj5RdIAUibygL9zfrCNFn4Y1Co7Z24R2l9deWY/fFWUAu/uRXRd2yVYV3uwzgxmIgWnpEHtp9j9UdkiQqrr9aec9YkQPV9tXHyooeF5YBgPoC0BDE2QnYrKICtsTOmrQ0E86hUwO1ROPB3F15G43grMsrdQS8ef88GK3c1O843t6LusGwVv9oLJ9EFOdWXbdqlWnAxEE1K9Q8+JDoew3DBrCoS0WUngcKJ1k2NTZxofPpV7hzCVdwC2yOllONPdivULOY0w9tMaS1Bi4k3QgwwaSSkqjPukvx78Jg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VI0pk/D4wK+j3TjNK3QsSu57F9eGHHcRF4cNghH0MWo=;
- b=mo9XYnS27Zyhl3q4nWBTBTBf2XYzTDysojxi0w44By3PpAsPh+BeMFOe7W01uQVCYUHigQ1bSXYSkjpcROY2ZD8DSoes6msSMmIgjFua9Olzimn+TSOrBHE0MYZvJA/Tf0jzZViVax+n4lor3omFZnt3MfIjTKoFvF+D3jvvtlXwIogP/Z9U+nLkRabLA0oSwlmouH5VCiBO84L1j310LISeEmVeHR5DmtcbV+/14bsyb7+IlCuJONK2wif4LlamTDzi0eLzzieVGMKTJ1lWRIGYnJfAAeTgWcBfdTBq0bLBQxSnYBihjkERU4ojbvPPtBP96qGXO/Sbs4/pLaNePw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VI0pk/D4wK+j3TjNK3QsSu57F9eGHHcRF4cNghH0MWo=;
- b=wl6iXmqAJlnZi8ml1ftCRxl9wCHOx93BUWbiGGxRcRWVESLidmKY7XGHO6va1HT/2STQuja1VKLZbZUWJ2Bj6ufvbnrtz0RcVwTri686TBxV29+hKQg459UTNAD0FeQnKICNW6sIiTlUYg42YuukOISnNIDpo8ov1NHopC1xG0o=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
- by PH7PR12MB5807.namprd12.prod.outlook.com (2603:10b6:510:1d3::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.22; Mon, 3 Mar
- 2025 14:06:46 +0000
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e%7]) with mapi id 15.20.8489.025; Mon, 3 Mar 2025
- 14:06:45 +0000
-Message-ID: <c8e067f3-117a-7737-64ea-ac016b697d0e@amd.com>
-Date: Mon, 3 Mar 2025 08:06:43 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [RFC PATCH v2 3/6] tpm: add send_recv() ops in tpm_class_ops
-To: Stefano Garzarella <sgarzare@redhat.com>,
- Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
- Claudio Carvalho <cclaudio@linux.ibm.com>, Peter Huewe <peterhuewe@gmx.de>,
- x86@kernel.org, Dov Murik <dovmurik@linux.ibm.com>,
- linux-coco@lists.linux.dev, Dionna Glaze <dionnaglaze@google.com>,
- James Bottomley <James.Bottomley@HansenPartnership.com>,
- Ingo Molnar <mingo@redhat.com>, Joerg Roedel <jroedel@suse.de>,
- Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org,
- linux-kernel@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
- Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>
-References: <20250228170720.144739-1-sgarzare@redhat.com>
- <20250228170720.144739-4-sgarzare@redhat.com>
-Content-Language: en-US
-From: Tom Lendacky <thomas.lendacky@amd.com>
-In-Reply-To: <20250228170720.144739-4-sgarzare@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA1PR02CA0021.namprd02.prod.outlook.com
- (2603:10b6:806:2cf::20) To DM4PR12MB5070.namprd12.prod.outlook.com
- (2603:10b6:5:389::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F924212B0A
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 14:06:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741010821; cv=none; b=CXtUIIwxritPDlNJiRvPDmwSR/gW4uP2SHBtUEinpMGZC/T6TZJ1pEqybW/EBNbESpMIgdeoKIIx041OkLfl9O/hLUekujKWCfe0yfP/vCXTzGtca2jPOUXb8vFMbzwQ4iov1nz2DUKhg2lz9xw5cV7hl4xHQc0BPdZ10QM8cIw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741010821; c=relaxed/simple;
+	bh=bAX4nJtptqzVGzhMVWEvU2Vo1a4TfNKeNSRZoHICbTE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MIIdxWLviHKSlKNVo8UwOqGd+EeilqylzSM4+m5R2h87r8NrqNUW+CbCQKf+ZwG4MKUziZIo0MxcbB3B+05sANVnS+1wDbwJ35XMgNoRNjPaZ0lUUFBqsbQX6x0VyzRPwtl7QAx6gZ8r+8KH9nfDKbP6R5qSHvskDj9uUqWWmGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CY+my+G0; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741010818;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ZbNj59zjmhBNc1+Y3UiFD4MOycUDZRwg2fQUZMSseuI=;
+	b=CY+my+G0NPfXP6AVPl13K+f0ez6BPr7+Tg+mPR4ic3DH+Cs90xKBzaweefQDNbbB+DsfVL
+	qcSeryRv0gLnbv7qUsrLpP7JguPWk4hpFZOpsdVLPnTxDHPSoHjMnEzKm1QFHeHFroQ693
+	tJH8Gw+aE13OvTOizfETa9UVZGGhE8M=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-660-b2FJO2HaPDeAjLFh487bXQ-1; Mon, 03 Mar 2025 09:06:57 -0500
+X-MC-Unique: b2FJO2HaPDeAjLFh487bXQ-1
+X-Mimecast-MFC-AGG-ID: b2FJO2HaPDeAjLFh487bXQ_1741010816
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43941ad86d4so19923085e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 06:06:57 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741010816; x=1741615616;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ZbNj59zjmhBNc1+Y3UiFD4MOycUDZRwg2fQUZMSseuI=;
+        b=QyTnKX5k6pYt5XyLt5uHHL/cWhg9ean4gV/eUc991NZqYExgPZLRzsAcIRYfVGlDvm
+         ox2h0HmimFOdK3LP9H/Oh7cothj+l1TvM8IMa5KHDXuFFXTSU6xPJIMPGslU2uiZMTOR
+         lKNOK6PUVVsJcVl5sh+7Qe6UiY6S+8wgPt0YdHC3QIZSzjmRgD1W8ZCFLAml0kV3BrHQ
+         VykyyrUvWA+tUC+PNdrbnLzZzvvVuUwmllEKWO6DrL03DngQdk9Wo7IrvQavkU1ylvjb
+         pCy0R5WAJHUPshr83tUKGTPa37hSqZ44orxT6baOvqoJqCyYY04CO7JXirIwualvLgqK
+         oQfA==
+X-Forwarded-Encrypted: i=1; AJvYcCVB/6RBH1VE4BTcHmmtGEhgo/ayo3qsFeER9xTn3+rbjGCtSpWCIT03F/D+RE9EZWRv6yddQ5YXjwpyd3g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDaQLAmPk3fq6VvZGzbZhkl1/cQyX/TGplVbzrO6HMYR16WXcO
+	pga6S32G8ZT94II6rGABLqMFHu1UO513l0A/c48tJRKm0dZX45MTxaMUVXeWSdUIBNs3ixhb3sR
+	TkcN3oSriw3VuupDJzW4Hc3C4IoabHUnaDywa2lizFXOyUSG05ADrJJM0dUkD7A==
+X-Gm-Gg: ASbGnct1cEUGmdpv5b2KXB6cGwy3AQArZvE11x+P/bgmIcORMbVhRNPLCoefa9Dz4sO
+	Hkx+Ql7dAKbwDxtZR0hOHLEESQa1av9zGbpaLSoXtderXsUAXJQBcOVfuT7q1pZ3ruKFHfBCr3r
+	lVBwNLAdfkTeCiq0uiXSgt/665vn++IVh9SU9YI41ntNKos2Cn0J4X0v+mg/54stadnGdEK0bCE
+	JI38O4F2/j7F3TaZPprErQ9a7j+o6tFJF4HKVVbkRoZDgbUmiI9Aro16PWSFqNMCjkx426Fl6mK
+	GtAY7Z8wqD20kR7165az8rv4oVbcPFlwNasWeiq5u4Xh6Bp/Z+p+fEvpMfqvBHVpnALFnMi8lKG
+	msD1htl+aeXQM4pIa66fLgFWGS//hsv+mgXHN68XBywk=
+X-Received: by 2002:a05:6000:2a1:b0:391:865:5aa8 with SMTP id ffacd0b85a97d-39108655d1amr4255876f8f.54.1741010816040;
+        Mon, 03 Mar 2025 06:06:56 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFMe6rYNOM1qtAY4H/zcbfK2YO8wdVNhdC2+hSh24NYQSxkXER6ttJ97UQPoaWhG2iYJrqOiw==
+X-Received: by 2002:a05:6000:2a1:b0:391:865:5aa8 with SMTP id ffacd0b85a97d-39108655d1amr4255809f8f.54.1741010815529;
+        Mon, 03 Mar 2025 06:06:55 -0800 (PST)
+Received: from ?IPV6:2003:cb:c734:9600:af27:4326:a216:2bfb? (p200300cbc7349600af274326a2162bfb.dip0.t-ipconnect.de. [2003:cb:c734:9600:af27:4326:a216:2bfb])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47a5b96sm14521806f8f.29.2025.03.03.06.06.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Mar 2025 06:06:55 -0800 (PST)
+Message-ID: <3e66875e-a4d5-4802-85b3-f873b0aa3b06@redhat.com>
+Date: Mon, 3 Mar 2025 15:06:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|PH7PR12MB5807:EE_
-X-MS-Office365-Filtering-Correlation-Id: a67c407c-d6a0-4e78-8c22-08dd5a5ca1d9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QUV5UmRRMzc2SExQNDRnMGFZUlhvTWFHcFFrdzk4elNaa29OS3J6QW5ta29J?=
- =?utf-8?B?anJwb2s4c1RMQmV3OVdvbVpHUGFaUmJLWVpVVy83eWR5Ym5VWEQ0MzFOVUlW?=
- =?utf-8?B?Z3ZTZnBmSkRMR29kUnFkWUpEOHc2SWcvcGRnL3RuTldTV0dQT04zTGwrV0JZ?=
- =?utf-8?B?QXMrc2pOa0xtem4wUk9WcXJMVm9vMjhESGRUUnQ1UmRaZGpRZ0E5TVVkUEFp?=
- =?utf-8?B?Z0lMSjk4NGtVQTRiY3pnS1MrTUIwbmVGVVpvMU44RXluTWJ6YXFYYitFN3dH?=
- =?utf-8?B?ZzFjTHJaZmRDZzZFaWdsVEJqdFhNQ0locE4rZnZyQmhvVnQ2RVpRQmtPMmFC?=
- =?utf-8?B?eWhiY0xmdEJGT1laYU5XWVJXZE84VlJQWWJwZnh1UWVKUHV6dVBLeTRucXFK?=
- =?utf-8?B?WVFtaU9LbVJjY0FNMEFWKzlMY0MrVFI3b3pneG1qaVBNUGhIVEJkdHNaREFU?=
- =?utf-8?B?bTM3Y28zRlhXbVVIdWhHSHM4ZFY0TlhlMjZvcGZpemlmWGU3a1FZV0lQLzVT?=
- =?utf-8?B?ZXVqb3Y4eFVCazhQM29sWUE5STBtYmRISHh5ZVYzV2pDV0tFeGN3dWM5aGdB?=
- =?utf-8?B?SFVjVlNiTFd3NFlyVlpnUFpoUGNqTTEwbkRHZjE2NkRYblBXdElkNVdYSWwz?=
- =?utf-8?B?NzZyQktWcWJleWEzKy9WVElRcVYzM0xBSlJGR2RFcWhVamhSSWNtaWY1aWNF?=
- =?utf-8?B?aURFT2xDYWF6M1VoZlcwNE4wZE9SUjJUbFRKbm41aXU2akgxcElqYnlWelhY?=
- =?utf-8?B?d3J5NmR4VmVwYVFaNDlsUTRYU0s4T3Y4WGYrSUE3dzJZbnpDWW9SV2Y4Z2lJ?=
- =?utf-8?B?bFUveFJON2FlUU83QzNXLzRhYm5tbXBrVXlXaTVWZ3dwRXNuVm5PVjJISXVl?=
- =?utf-8?B?ZHRSUndycWZDZDlFVnVOQU8wR3VhenZXdXRxc1hiZ2ZkT3dHUmxlRGlVajVh?=
- =?utf-8?B?bzVyMi9lMFh5MmN4M0Ryd1dkbllKNlpUcnJpVGFPM0hzS1lGZ2JhYlBPUjdm?=
- =?utf-8?B?SVpvdEdIaVJYbVpXSExCQUF2RkZwYVdnUTh2VTNoTng3RlY3RXhNaUlsc1Jj?=
- =?utf-8?B?cVd1SENVZWhmZnI0bGROeTdVWGVjSjliU1p2bzlBdHZkVTV4S0hJSU03cVZW?=
- =?utf-8?B?UGVyajFzZGswQ0NyVkZTaTB3eW96cW55a0IveExvZGhrbTZiU1NuMlVTb0dG?=
- =?utf-8?B?NUV6Z1hpQTZjWW1yeUJxajlGaEQ2MkRDMGdWY1JISDUzSE1GVHIra3Vxc0dJ?=
- =?utf-8?B?UGMveG5STGZWWHE0Qi9QbFJBd3JtY09UbStNUGtYL2NDRG1QTm0xSmdGSlYz?=
- =?utf-8?B?TWFncCtWS001QTA0bEtzS2dESnNoOWd4a1cySi9oOU4reHJMTFhWZE1lRWZP?=
- =?utf-8?B?UXNibk81b0NQOFJIRkZHWFRQMzIzQnI2Ri9OQk9ZdGdFRHV3UVdlci8wMFZ2?=
- =?utf-8?B?U05NTlZxcXpIQzlrd0tOci9KeHU5TzdSSTNWNnFPMVZrVzIzSHpYeUZQTVda?=
- =?utf-8?B?Wk52NjBkWGQ3clNNSGxkeXc1Tk9vaEVrdkp2UnoyM1B5ZWhSUW9iL0FOZFdp?=
- =?utf-8?B?RGx5a2QyWW9JTUhuQ3VZU250WTNpTXhmQ0E4d3VFc3p1NktjdUE4VElNRjBQ?=
- =?utf-8?B?UjdUTGwxR3lPcm5YOExBS1F0ckVLQmo5YXVYbExpV3VtZXA0UlZPbjFQV0o4?=
- =?utf-8?B?L0RKM1Z5dGN4TDg3bFM3T2FmekRKTVBaM1lQOUNhUUN3b0ltK1p5M1FBTkFC?=
- =?utf-8?B?VHpobE9sbmVvTHZEYVU3ZkhacStvV2FOU24rUWpjd2JpWEZibjNRQkZCUHhV?=
- =?utf-8?B?NTAzSVgya1Z4UjRmN2xFc2tINlZsbFhvcWhwREhaKzA4UVpqWmlhYzM5OHY2?=
- =?utf-8?Q?hJW0ZQjoeL228?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VjFKOW5GMVJrK2VkSjdFb0c4YWFLN2dIOVFpdEVhMGRuWHVVN05nUnl1d3hF?=
- =?utf-8?B?Q1RBamRmeEt2WW50SW9OTDJGci9IRm5nQlUzU0g1ei9zSDIvbDlwK256UW5T?=
- =?utf-8?B?eDFJL2l6eU5JcHNMS29adjhOYzFKSlRrek9tVTdQUUFFQjJCOFdGZTBNUnNr?=
- =?utf-8?B?YUtpL3MzYUloRDBhUnduZ0FzdStmMzF3Mzd6ZUVYaHQ1MjFkRXNJRXpjaDg0?=
- =?utf-8?B?S3VqeW5SRGdRZjBUUDNRRUw1aUhYOTdRSW1MaU9SemdJVzNTYXo1cnFrVy83?=
- =?utf-8?B?MSt3eU5SVmJKYWdCcjRkY0pta2xrckVVWlpBQzhnaWJ1cDdwTGhvbjNWY2xm?=
- =?utf-8?B?UFY5RXpTanpBMmQyaisrTHcwOHFxSmlIa01qRHBOMDRCTndVRWlKNW1scTJM?=
- =?utf-8?B?UFQwOVByTHlnZzU4eHhleU1sZ0tFZHN5K0xZMUJZQ1pSRDZiV0ZueGhFclpz?=
- =?utf-8?B?S2xNSlk2azBzZUdQOGxSVFRZNmlOdzBEc0IrMEx2MlR2akxKWFJnYzV5R3h0?=
- =?utf-8?B?NDFZQWROUm1URGY1dnNXc0lacmJTNUJOc3ZPbjJOaURSeXZ6MnhhemxvMGNm?=
- =?utf-8?B?Zm1nNVZCamo0OUxJUXNQMkI3emVVcnRiTjVvb2VpMytaR21sWEVyUzhPbEE2?=
- =?utf-8?B?V2k1c3N6MEp2SElBK1JkWFdiTjhWeFQ4VytpU05lZE9YWEpiNFFWVjByK0Jq?=
- =?utf-8?B?U1pGRDN0M1ErdVJwZ2xCS2laMFIwdDFvd2hTVTJjakdmeW5pUmRYV3pZRS9y?=
- =?utf-8?B?ZERHcmswVktLNlJCMjZZdy9HMm5TVzlFVTNyVC9qZEdDTkYzdUVwem41Qko5?=
- =?utf-8?B?OE9aL3ZlZWZvaUQ1U290bjNpbDY4YnlkZHAxMC9BSXU1RFlpYkt3VWgxbjRF?=
- =?utf-8?B?R0dZeGlpTmFTeHV0c3ZKZHorcVV3TE5McEhnTFE4RkhTd2hpTlI3RXhoOWYz?=
- =?utf-8?B?cXFXeHFXYjZZcHJSWTQ1L3dkb2oyakpWWEJGNEFmOWl5cklsaGE2RXV0bE1C?=
- =?utf-8?B?VU8ycU02VlFPWHQ5VkhhQ0FaTndPdTYrNDd0U3ZPSlR6M1A0SmpwWWxUTU8v?=
- =?utf-8?B?OHc1SXRSdDRDY1lmRmJkWWZ4bGQydGVVVy8vMktKeStSeW1RQWpQcyt3WVJn?=
- =?utf-8?B?bVl2ZkV2bm1ndmdkc2I3UXhGczJLSDJVZ2YwRkQvbjlSTUM3d3B4czhBR0hU?=
- =?utf-8?B?SjMxZkt0bzVCcENwaWtFaDdVM0lTdkpORVBtaUE1dzIxcWkwQXpqVXljUS8w?=
- =?utf-8?B?QWFaV2phbUdpaG5XL0QyWW1UWXhka0xFV1pRQ3lNQXg1OXhMdkRuTEdsT2RI?=
- =?utf-8?B?WU01dGhWMGQ3T3dUVytWa0lGNnVETmVzNTI0YUwvdGkzempXNFk5K240WHFE?=
- =?utf-8?B?RUZ0dXdoRjBoNysyU1hZS0JTc2VBSS9CZkpRSExveVZIZ3RyaEk4eDVoU0FI?=
- =?utf-8?B?R0U1M1Axb1hvVTk1bWRGUDR5QTZZR05mbUI3c0Vaa0FqNjBMbC9YWktZSWRZ?=
- =?utf-8?B?d05qT3B1TjhMUFZpYWxERU5vbHc4dVpLOTNqZldlcEUxQi9VVnhiTGhKVUI5?=
- =?utf-8?B?U2tXMXhqcEtSRGpiYUFZbjEyNnFaNU42QmM4THBVMk9QWDdheFhsaHZsSWtZ?=
- =?utf-8?B?dUIvUTdHdWVHajRwQXRKaURwZ1lMMExBbTNzSTVZR1JseTJSM1d3K3FPdjNR?=
- =?utf-8?B?VkhtWXV2UnNhczdRVVY0TWlmY2VYYzM1YnpuSVBFZTJPZnMwRkpnV1RqVnVv?=
- =?utf-8?B?TDdPTEZWWFpnWXZ1ZW9FZTVxWSsyV0pMVVRFd2xiVzdTcEZ3NDRZQURxMXJk?=
- =?utf-8?B?bUpMVUlHbkNSRDBsZmxCYkxhRGVNUkNnVE1mMEJZT0FaNFAyVHpsYnNyclZF?=
- =?utf-8?B?dGoxUENHa05CVWNpOGdyN2N5WkdIRlBJSjdpN3NBUEliaVZ2QzdRK0dXK21X?=
- =?utf-8?B?VXlEakJDVTlBeHJqRVNpejAwTk8zdGdJYlB6THhqSzcxRTVPd3d4M28zUk5t?=
- =?utf-8?B?UmdyQlcwdmpQdkVmcVRQR1FlaWxsaEE0eEtFOThpVU1rQzBNTGYyYUZGMEVs?=
- =?utf-8?B?dTZrSE96d1k3K3BCakVJRW9yc0hCOGdrZzRhaGo3cE5Bd2V4aVpSN0FpbHlQ?=
- =?utf-8?Q?fGELJ9g8AsHDuIGB+kPgNY/z3?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a67c407c-d6a0-4e78-8c22-08dd5a5ca1d9
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2025 14:06:45.6939
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Mgj190qHEFrDQEItYJ9IVjcvqHyoHowAfE2PxrNdX6EnizfUI2hI/HhRjJDeBWjbR290LI3ay8fVS3LqeJdHhA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5807
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm/page_alloc: Add lockdep assertion for pageblock
+ type change
+To: Brendan Jackman <jackmanb@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Oscar Salvador <osalvador@suse.de>, Johannes Weiner <hannes@cmpxchg.org>,
+ Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20250303-pageblock-lockdep-v2-1-3fc0c37e9532@google.com>
+ <4d0f0bca-3096-4fb4-9e8b-d4dcdf7eeb92@redhat.com>
+ <Z8W0v0LjuyH8ztTQ@google.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <Z8W0v0LjuyH8ztTQ@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 2/28/25 11:07, Stefano Garzarella wrote:
-> Some devices do not support interrupts and provide a single operation
-> to send the command and receive the response on the same buffer.
+On 03.03.25 14:55, Brendan Jackman wrote:
+> On Mon, Mar 03, 2025 at 02:11:23PM +0100, David Hildenbrand wrote:
+>> On 03.03.25 13:13, Brendan Jackman wrote:
+>>> Since the migratetype hygiene patches [0], the locking here is
+>>> a bit more formalised.
+>>>
+>>> For other stuff, it's pretty obvious that it would be protected by the
+>>> zone lock. But it didn't seem totally self-evident that it should
+>>> protect the pageblock type. So it seems particularly helpful to have it
+>>> written in the code.
+>>
+>> [...]
+>>
+>>> +
+>>>    u64 max_mem_size = U64_MAX;
+>>>    /* add this memory to iomem resource */
+>>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+>>> index 579789600a3c7bfb7b0d847d51af702a9d4b139a..1ed21179676d05c66f77f9dbebf88e36bbe402e9 100644
+>>> --- a/mm/page_alloc.c
+>>> +++ b/mm/page_alloc.c
+>>> @@ -417,6 +417,10 @@ void set_pfnblock_flags_mask(struct page *page, unsigned long flags,
+>>>    void set_pageblock_migratetype(struct page *page, int migratetype)
+>>>    {
+>>> +	lockdep_assert_once(system_state == SYSTEM_BOOTING ||
+>>> +		in_mem_hotplug() ||
+>>> +		lockdep_is_held(&page_zone(page)->lock));
+>>> +
+>>
+>> I assume the call chain on the memory hotplug path is mostly
+>>
+>> move_pfn_range_to_zone()->memmap_init_range()->set_pageblock_migratetype()
+>>
+>> either when onlining a memory block, or from pagemap_range() while holding
+>> the hotplug lock.
+>>
+>> But there is also the memmap_init_zone_device()->memmap_init_compound()->__init_zone_device_page()->set_pageblock_migratetype()
+>> one, called from pagemap_range() *without* holding the hotplug lock, and you
+>> assertion would be missing that.
+>>
+>> I'm not too happy about that assertion in general.
 > 
-> To support this scenario, a driver could set TPM_CHIP_FLAG_IRQ in the
-> chip's flags to get recv() to be called immediately after send() in
-> tpm_try_transmit().
+> Hmm, thanks for pointing that out.
 > 
-> Instead of abusing TPM_CHIP_FLAG_IRQ, introduce a new callback
-> send_recv(). If that callback is defined, it is called in
-> tpm_try_transmit() to send the command and receive the response on
-> the same buffer in a single call.
-> 
-> Suggested-by: Jason Gunthorpe <jgg@ziepe.ca>
-> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
-> ---
->  include/linux/tpm.h              | 2 ++
->  drivers/char/tpm/tpm-interface.c | 8 +++++++-
->  2 files changed, 9 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-> index 20a40ade8030..2ede8e0592d3 100644
-> --- a/include/linux/tpm.h
-> +++ b/include/linux/tpm.h
-> @@ -88,6 +88,8 @@ struct tpm_class_ops {
->  	bool (*req_canceled)(struct tpm_chip *chip, u8 status);
->  	int (*recv) (struct tpm_chip *chip, u8 *buf, size_t len);
->  	int (*send) (struct tpm_chip *chip, u8 *buf, size_t len);
-> +	int (*send_recv)(struct tpm_chip *chip, u8 *buf, size_t buf_len,
-> +			 size_t to_send);
->  	void (*cancel) (struct tpm_chip *chip);
->  	u8 (*status) (struct tpm_chip *chip);
->  	void (*update_timeouts)(struct tpm_chip *chip,
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index b1daa0d7b341..4f92b0477696 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -82,6 +82,9 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
->  		return -E2BIG;
->  	}
->  
-> +	if (chip->ops->send_recv)
-> +		goto out_recv;
+> I guess if we really wanted the assertion the approach would be to
+> replace in_mem_hotplug() with some more fine-grained logic about the
+> state of the pageblock? But that seems like it would require rework
+> that isn't really justified.
 
-It might look a bit cleaner if you issue the send_recv() call here and
-then jump to a new label after the recv() call just before 'len' is checked.
+I was wondering if we could just grab the zone lock while initializing, then
+assert that we either hold that or are in boot.
 
-Thanks,
-Tom
+In move_pfn_range_to_zone() it should likely not cause too much harm, and we
+could just grab it around all zone modification stuff.
 
-> +
->  	rc = chip->ops->send(chip, buf, count);
->  	if (rc < 0) {
->  		if (rc != -EPIPE)
-> @@ -123,7 +126,10 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
->  	return -ETIME;
->  
->  out_recv:
-> -	len = chip->ops->recv(chip, buf, bufsiz);
-> +	if (chip->ops->send_recv)
-> +		len = chip->ops->send_recv(chip, buf, bufsiz, count);
-> +	else
-> +		len = chip->ops->recv(chip, buf, bufsiz);
->  	if (len < 0) {
->  		rc = len;
->  		dev_err(&chip->dev, "tpm_transmit: tpm_recv: error %d\n", rc);
+memmap_init_zone_device() might take longer and be more problematic.
+
+But I am not sure why memmap_init_zone_device() would have to set the
+migratetype at all? Because migratetype is a buddy concept, and
+ZONE_DEVICE does not interact with the buddy to that degree.
+
+The comment in __init_zone_device_page states:
+
+"Mark the block movable so that blocks are reserved for movable at
+startup. This will force kernel allocations to reserve their blocks
+rather than leaking throughout the address space during boot when
+many long-lived kernel allocations are made."
+
+But that just dates back to 966cf44f637e where we copy-pasted that code.
+
+
+So I wonder if we could just
+
+diff --git a/mm/mm_init.c b/mm/mm_init.c
+index 57933683ed0d1..b95f545846e6e 100644
+--- a/mm/mm_init.c
++++ b/mm/mm_init.c
+@@ -1002,19 +1002,11 @@ static void __ref __init_zone_device_page(struct page *page, unsigned long pfn,
+         page->zone_device_data = NULL;
+  
+         /*
+-        * Mark the block movable so that blocks are reserved for
+-        * movable at startup. This will force kernel allocations
+-        * to reserve their blocks rather than leaking throughout
+-        * the address space during boot when many long-lived
+-        * kernel allocations are made.
+-        *
+-        * Please note that MEMINIT_HOTPLUG path doesn't clear memmap
+-        * because this is done early in section_activate()
++        * Note that we leave pageblock migratetypes uninitialized, because
++        * they don't apply to ZONE_DEVICE.
+          */
+-       if (pageblock_aligned(pfn)) {
+-               set_pageblock_migratetype(page, MIGRATE_MOVABLE);
++       if (pageblock_aligned(pfn))
+                 cond_resched();
+-       }
+  
+         /*
+          * ZONE_DEVICE pages other than MEMORY_TYPE_GENERIC are released
+
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
