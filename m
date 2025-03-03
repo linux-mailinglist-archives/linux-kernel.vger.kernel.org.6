@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-541918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BB47A4C363
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:32:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EE8DA4C365
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:32:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CF8F7A3637
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:31:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 951317A2C0A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A182135B1;
-	Mon,  3 Mar 2025 14:32:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E2D221324C;
+	Mon,  3 Mar 2025 14:32:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n7Ea9aRr"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EYLeqD1N"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 693D0CA5A;
-	Mon,  3 Mar 2025 14:32:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78D85CA5A;
+	Mon,  3 Mar 2025 14:32:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741012349; cv=none; b=OyHdk5CwLJzaF3xLoscgrBQi5jrtsfLAnCRsgGTiPxfcSSp21TbPUoMdwhOEEEJrvX04AEiGVCqmsrmXsXiSOBPMjC0KJSJwKp5Ls6tICfWspNo8IVsJzr7xbp8jnwzMj7/sUn0wUq4nliafvrKBJse3DjttyLbUhMpriZ8vxjA=
+	t=1741012355; cv=none; b=H5VXDa+37sGNjmP7FX7ZwxaWdmIMtcz4ZZ7G14bGuZ9HF0i7kW5DbusFNY6HA2ZtUFCirOLkX7otIQ9lLDbpcuKF37fqO0a7i0+PV89Hc+fVvAJZZ2Xpqb6gNQnuxk1g/k7QL5Q1bzXFWL/zXadOiT4H9yRcZwoaAg2FUpIdimE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741012349; c=relaxed/simple;
-	bh=ywkrHKrZ59hArCy+DEUAfdTFeVcMyMLdkIvB8eLdimk=;
+	s=arc-20240116; t=1741012355; c=relaxed/simple;
+	bh=fDXn2WYrnQ+HOjx/SlkGUKM7s99K8zS0aQ6zFv8U+8o=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=bvvOmY8tjTOzKtiGHhZGKC2VlTocpt0I7rUfdQLjiax7VGuujJ43Dk4XuQGAKocaju9tyQxtk5un6q6svoRR2ji+g348PBECf0XqO8fPP9EC4h42nUV91g6W1Abf2WxrhmmJxhNqIQ61+xcc1Q6CAfzj9/SkOoKrTchTGGP9JJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n7Ea9aRr; arc=none smtp.client-ip=198.175.65.15
+	 MIME-Version:Content-Type; b=DN4Hw5nVjbIKGCtZp5GIRifMdIvFeMNmE+X2D2N7ybjBzgENgord54Alit3AhimkO1J2jPLVhHuXlZtIZbmNxbZAEPg8DRTxHxyU9kcjgdYOQ4r4w4siwXR2HLX4hAZAZzxWr1sYAEZ+wcSmAqhMDZIAypbxzVK+SRxYzQfWk5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EYLeqD1N; arc=none smtp.client-ip=198.175.65.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741012347; x=1772548347;
+  t=1741012354; x=1772548354;
   h=from:to:cc:in-reply-to:references:subject:message-id:
    date:mime-version:content-transfer-encoding;
-  bh=ywkrHKrZ59hArCy+DEUAfdTFeVcMyMLdkIvB8eLdimk=;
-  b=n7Ea9aRrV19Nuhy0cQVneqk8YLykcvYNUKBTBjJNqW/HfRjeoRl1P+F7
-   i7gKeefPh32GEfpZSAggx2hqPieIC1P1oDdxOx5Nvgc61e45XEwtoG/3I
-   9ds2JDHF7qlLG2oo3db+AxjKD5J7bRq4Qd6ezjKWTMz1naXOM6mIoWD4J
-   /pR56NHisw5MQg8/vr9cngR7fBOs05hMcSwHQ50KD/qGLiKAJ109t7mF9
-   xkZ++14p0g5ezSBYNaL77QLcObugWTecOg5UxZ7kJ34nHWud/i5LaZybK
-   1sst8K4w3z1TFy7ntb6zEU3y9ZOmBiqxcKLA8gLnCigQjyYcICaXBcQmD
-   Q==;
-X-CSE-ConnectionGUID: ldgnCfhqSJmeddp5YIVglA==
-X-CSE-MsgGUID: k6It/o4tTMGv+rzqV+vzgA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="45540626"
+  bh=fDXn2WYrnQ+HOjx/SlkGUKM7s99K8zS0aQ6zFv8U+8o=;
+  b=EYLeqD1Nr/ugdDg9bZ3T2T2tn8g6mWZb9jaU6tYi5MSG7DVUFIeR+Vct
+   yjPQ7diRvDOAMa30D4qFZZ7yC9Bk+kolVhIjJ+RTAxs5ekko1hSpgQcDX
+   Sivn0suy1GsWj1KjW6+XVXxuMu5mymcwnAEaFjei9hebz26sOzzcLXavO
+   Xoe9wzVrqSm43PvdWy0W3356qG0oTSA+eLdw9FJqvfhIBsp/hoL03ud8O
+   6Hg8xfnywEwcqkjbKJ0Js3dyykNTPoP20dRQfonNDdrgoD995wTyx9kYW
+   OYxAka38DbqnOHwKz/LcsSEPIY+hD/0FVCNCMZCj7saAD2k+gr4A1/3mv
+   A==;
+X-CSE-ConnectionGUID: qxOgV+U1R0C5rim/9tw7GA==
+X-CSE-MsgGUID: 04HQttF7T0GE6NzBfGKtWA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="45540640"
 X-IronPort-AV: E=Sophos;i="6.13,330,1732608000"; 
-   d="scan'208";a="45540626"
+   d="scan'208";a="45540640"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 06:32:26 -0800
-X-CSE-ConnectionGUID: Up/OuZUtS22+fPDIV8DCoA==
-X-CSE-MsgGUID: XWhr57FOTxa1bEWF9YXniw==
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 06:32:34 -0800
+X-CSE-ConnectionGUID: 7FxClIGRSCqmBe/suGwE+A==
+X-CSE-MsgGUID: V9nab/WrRtSpdNuUrFL5Pw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="148926782"
+   d="scan'208";a="148926792"
 Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.14])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 06:32:23 -0800
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 06:32:31 -0800
 From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Jorge Lopez <jorge.lopez2@hp.com>, Hans de Goede <hdegoede@redhat.com>, 
- Thorsten Blum <thorsten.blum@linux.dev>
-Cc: linux-hardening@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250225232126.356274-2-thorsten.blum@linux.dev>
-References: <20250225232126.356274-2-thorsten.blum@linux.dev>
-Subject: Re: [PATCH] platform/x86: hp-bioscfg: Replace deprecated strncpy()
- with strscpy()
-Message-Id: <174101233787.8641.12386614759241099330.b4-ty@linux.intel.com>
-Date: Mon, 03 Mar 2025 16:32:17 +0200
+To: hdegoede@redhat.com, Jackie Dong <xy-jackie@139.com>
+Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
+ kuurtb@gmail.com, W_Armin@gmx.de, dongeg1@lenovo.com, 
+ Mark Pearson <mpearson-lenovo@squebb.ca>
+In-Reply-To: <20250222114532.4105-1-xy-jackie@139.com>
+References: <20250222114532.4105-1-xy-jackie@139.com>
+Subject: Re: [PATCH v11] platform/x86:lenovo-wmi-hotkey-utilities.c:
+ Support for mic and audio mute LEDs
+Message-Id: <174101234673.8641.771885577184828253.b4-ty@linux.intel.com>
+Date: Mon, 03 Mar 2025 16:32:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,14 +78,18 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.13.0
 
-On Wed, 26 Feb 2025 00:21:27 +0100, Thorsten Blum wrote:
+On Sat, 22 Feb 2025 19:45:31 +0800, Jackie Dong wrote:
 
-> Since kstrtol() requires a NUL-terminated string as input and strncpy()
-> is deprecated for NUL-terminated destination buffers, use strscpy()
-> instead.
+> Implement Lenovo utility data WMI calls needed to make LEDs
+> work on Ideapads that support this GUID.
+> This enables the mic and audio LEDs to be updated correctly.
 > 
-> Compile-tested only.
-> 
+> Tested on below samples.
+> ThinkBook 13X Gen4 IMH
+> ThinkBook 14 G6 ABP
+> ThinkBook 16p Gen4-21J8
+> ThinkBook 16 G8 IRL
+> ThinkBook 16 G7+ ASP
 > 
 > [...]
 
@@ -96,8 +100,8 @@ platform-drivers-x86/review-ilpo-next branch only once I've pushed my
 local branch there, which might take a while.
 
 The list of commits applied:
-[1/1] platform/x86: hp-bioscfg: Replace deprecated strncpy() with strscpy()
-      commit: baa18b6ed4200aff869e78f2650123572b6a9ad6
+[1/1] platform/x86:lenovo-wmi-hotkey-utilities.c: Support for mic and audio mute LEDs
+      commit: 61250669eaa9fd480e0f1c3cec107924b6a06b46
 
 --
  i.
