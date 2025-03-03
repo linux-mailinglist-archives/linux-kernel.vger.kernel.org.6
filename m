@@ -1,138 +1,150 @@
-Return-Path: <linux-kernel+bounces-542211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8ECFA4C70C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:29:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EA54A4C70E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:29:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3777E189692D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:26:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDA35189BA0B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:26:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2BB4215041;
-	Mon,  3 Mar 2025 16:22:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CslCQHQp"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73A721504A
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 16:22:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06D88217716;
+	Mon,  3 Mar 2025 16:22:20 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF512163A4;
+	Mon,  3 Mar 2025 16:22:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741018925; cv=none; b=BY9+ibWBhmCBuSUUK2HpO8vEMPf5PNRhOoMwExogpG6hDUICsvwt0FuvbJsdglrgX0LRvtd4fzcTTu51NhXEOQ8SsNu4jvEtavbO7ZVqmyyH8r6M/Xrcz/XOkxal7wZ4kUy6ZKB+2BSqZ3wivnw0moUKGKThMUFotQxDd2k5KGM=
+	t=1741018939; cv=none; b=t5A46dCKCeJO0d3SH0mvymOrLKgt+hwFKDuUDDNZ0E14wxZDAFZophlIUXYPhAEn5OHRkA70P+6d6uLL1LQpbu68pi9tr5PjkTSRdpzXh++ZJs/oWe4NzzKva6CUvhleD8O3qcmZOfoNegUw7g6lpb3ra8rjvoLFhYw0ih7eGYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741018925; c=relaxed/simple;
-	bh=LbJNoTrvq+2ziXPQ6cPoGKYMHLbQOYW28RIh2EZ+nAg=;
+	s=arc-20240116; t=1741018939; c=relaxed/simple;
+	bh=hXNpShBlQaqGOkOBpQ3icY/mZYgECaqMzluw+vPG8xk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u8VdAgcnOJokn4N3/IqzBePaLSsxkDxpFd18gMACxwJjz5Z504k4vOulM0D6VWGNpRSzoKeJVsBYA41uKujSsgRglPRWzoyMpxHbWvKAAGhrIkXCakA8DpnKtHG0f3aURYalCbJjUXn9N9wudC91Y5lRud+3ZLGVwpVCRRNxv5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CslCQHQp; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741018922;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XaU2dnDpqgEzFLAHxVwOT4KJt49Y2FVgJePw+X7Ose8=;
-	b=CslCQHQpcOQs0SlZbjolfPdadOx/9gF4mvb62R3R4AXOx+40G9CJURalQYX0mgVpcSL5+0
-	uTGdadKR+OKj041NpR6+rytoKhJUV3vpQjcr2TBIXhg9BE7sAumyMlaDpVmn9MWAiemG+C
-	zoWRNrm3yUpQJqJ48QQuHwexXbK+ufU=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-290-iviJdMn_OrCk3-Hn5OXbPQ-1; Mon, 03 Mar 2025 11:21:56 -0500
-X-MC-Unique: iviJdMn_OrCk3-Hn5OXbPQ-1
-X-Mimecast-MFC-AGG-ID: iviJdMn_OrCk3-Hn5OXbPQ_1741018915
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-390f11e6fdbso1353760f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 08:21:56 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741018915; x=1741623715;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XaU2dnDpqgEzFLAHxVwOT4KJt49Y2FVgJePw+X7Ose8=;
-        b=DJbbrYx8qydd5sYfrIRHGUPnlClRrFHxWI2EJvnFdiAbGhPa7YUkq0poHoCSXxzBWR
-         IUd+FW7igg3hiJ2NtV32qabTgFKzon6pHQkBNl04g8PvFXmIEh/Uln+EtKYe/GP+vQd3
-         7dmfM94csdaleOBLSTbWXDKnFuSf7Nce1WOKNPr7nQfd6wBTf4jc+CeEbjwc/n1SSxbl
-         3QZ64dCnaYeV7v8dEMUaZHFndQEK5PKuwe81QiMTTEQVARvPju851RGfYMeDL75xeoVi
-         AD5Uz8c0SN2Kp78oFmGjDdjdbOtRQgBEiy7x8tx2H7LxydUbe+sHadyPBVX6VmKnLa5r
-         6bqw==
-X-Forwarded-Encrypted: i=1; AJvYcCXUlHTNOUnK/zA3BVSQwSC5EhyVVuNuM3VNca3apQzU1x01D+4EaxJifbVrK4+CJ+RorVYNR7pptjmq24o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMSYr1ippRZ4wiWbc1Bj0cLPVeZg5Lk5GfPYy8njYozcSZM0wi
-	tzjTPelqn68p0f0UHnQATJ7U3qSlOLlNiooK28pLbxsA2US+hrJvKQW8qpUsSRprmDUPTEEOCzM
-	nisJvrEx2OQ/5C6Qyz8CAw2WwjEYvN4pxeae4Z7QOkORwDwUNIsa+URNZz5Vw4w==
-X-Gm-Gg: ASbGncuBtnFRxW/b9T74aMftwHHmSnp/UawOw02oJ/OCvIJ/8Pk+f8NDNnpLPHxC7M/
-	NbzZZEM12hBKvM4AKocXXYyx9JQsslHrvkU6iAvTNWcllAxe+PyVnIS4OkZ34+hP+6rLwLG1qMs
-	6HdgOSiRHzDwuW7YFYP5SNQswwp3nHybpeWAOTqklSykYXhAV8xuCPiY/BTTqlopbXmKF+yf4G2
-	AMAapqdm9qWFl/IzmvWTwRZXAwj+HW/ML8FsnVZzZkzioz0PhDaZLSgqSNwQsLgf5Qm25Tol2Gd
-	n4vlCr+IkTBdbU6I6WVet5H3G8Z4AHtWBRaloPUzTJXasAq4virGYvf84j1JLMY8
-X-Received: by 2002:a05:6000:18ac:b0:391:454:5eb8 with SMTP id ffacd0b85a97d-3910454634cmr5710022f8f.48.1741018915188;
-        Mon, 03 Mar 2025 08:21:55 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IG6QrksmkiLyGLOBejTcc1pl1o5yPlizUYl4FhTdgmEYaBVAixN64pSnMJJOGRErw/KFrdszA==
-X-Received: by 2002:a05:6000:18ac:b0:391:454:5eb8 with SMTP id ffacd0b85a97d-3910454634cmr5709980f8f.48.1741018914747;
-        Mon, 03 Mar 2025 08:21:54 -0800 (PST)
-Received: from sgarzare-redhat (host-79-46-200-29.retail.telecomitalia.it. [79.46.200.29])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47965f3sm14808634f8f.9.2025.03.03.08.21.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 08:21:54 -0800 (PST)
-Date: Mon, 3 Mar 2025 17:21:49 +0100
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, 
-	Claudio Carvalho <cclaudio@linux.ibm.com>, Peter Huewe <peterhuewe@gmx.de>, x86@kernel.org, 
-	Dov Murik <dovmurik@linux.ibm.com>, linux-coco@lists.linux.dev, 
-	Dionna Glaze <dionnaglaze@google.com>, James Bottomley <James.Bottomley@hansenpartnership.com>, 
-	Ingo Molnar <mingo@redhat.com>, Joerg Roedel <jroedel@suse.de>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Tom Lendacky <thomas.lendacky@amd.com>, 
-	Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [RFC PATCH v2 3/6] tpm: add send_recv() ops in tpm_class_ops
-Message-ID: <3p5erujbhxw7ozdnfpmresv3dqdh2xszolv6mh4khkagoy3wit@ow5qht4keh4h>
-References: <20250228170720.144739-1-sgarzare@redhat.com>
- <20250228170720.144739-4-sgarzare@redhat.com>
- <Z8Jmps6AF_geaHUw@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZwBeV5w1uUbM71L2Jkf+Vdp96gxbCyM14TEGus0DseS1u+kGQWx9K4kp5VZo1EvFqGFJsvfx7xZT0dX8G2B3jiUUOhYUq0GWfuv0a3wiR3yz6YkA3SYSz0nB0pDBobBjhb1F/tbp73pdtZcpWN+8fUDIHoQGSr/V9fzoUd8uB+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4B55C106F;
+	Mon,  3 Mar 2025 08:22:29 -0800 (PST)
+Received: from localhost (e132581.arm.com [10.2.76.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D61B73F673;
+	Mon,  3 Mar 2025 08:22:14 -0800 (PST)
+Date: Mon, 3 Mar 2025 16:22:10 +0000
+From: Leo Yan <leo.yan@arm.com>
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+	James Clark <james.clark@linaro.org>,
+	Mike Leach <mike.leach@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Will Deacon <will@kernel.org>,
+	Graham Woodward <graham.woodward@arm.com>, Paschalis.Mpeis@arm.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 01/12] perf script: Make printing flags reliable
+Message-ID: <20250303162210.GH2157064@e132581.arm.com>
+References: <20250217195908.176207-1-leo.yan@arm.com>
+ <20250217195908.176207-2-leo.yan@arm.com>
+ <34795c29-d256-49ce-9d01-435f8cd91611@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z8Jmps6AF_geaHUw@kernel.org>
+In-Reply-To: <34795c29-d256-49ce-9d01-435f8cd91611@intel.com>
 
-On Sat, Mar 01, 2025 at 03:45:10AM +0200, Jarkko Sakkinen wrote:
->On Fri, Feb 28, 2025 at 06:07:17PM +0100, Stefano Garzarella wrote:
->> +	int (*send_recv)(struct tpm_chip *chip, u8 *buf, size_t buf_len,
->> +			 size_t to_send);
->
->Please describe the meaning and purpose of to_send.
+Hi Adrian,
 
-Sure, I'll add in the commit description.
+On Mon, Mar 03, 2025 at 12:44:33PM +0200, Adrian Hunter wrote:
+> On 17/02/25 21:58, Leo Yan wrote:
+> > Add a check for the generated string of flags.  Print out the raw number
+> > if the string generation fails.
+> 
+> How does it fail?
 
-Should I add documentation in the code as well?
+In practice, I agreed perf_sample__sprintf_flags() will not fail.  This
+bases on a careful calculation for every invoking snprintf().
 
-The other callbacks don't have that, but if you think it's useful we can 
-start with that, I mean something like this:
+Please see comment below.
 
-	/**
-	 * send_recv() - send the command and receive the response on the same
-	 * buffer in a single call.
-	 *
-	 * @chip: The TPM chip
-	 * @buf: A buffer used to both send the command and receive the response
-	 * @buf_len: The size of the buffer
-	 * @to_send: Number of bytes in the buffer to send
-	 *
-	 * Return: number of received bytes on success, negative error code on
-	 *         failure.
-	 */
-	int (*send_recv)(struct tpm_chip *chip, u8 *buf, size_t buf_len,
-			 size_t to_send);
+> > In another case, if the string length is longer than the aligned size,
+> > allow the completed string to be printed.
+> > 
+> > Reviewed-by: Ian Rogers <irogers@google.com>
+> > Reviewed-by: James Clark <james.clark@linaro.org>
+> > Signed-off-by: Leo Yan <leo.yan@arm.com>
+> > ---
+> >  tools/perf/builtin-script.c   | 10 ++++++++--
+> >  tools/perf/util/trace-event.h |  2 ++
+> >  2 files changed, 10 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+> > index d797cec4f054..2c4b1fb7dc72 100644
+> > --- a/tools/perf/builtin-script.c
+> > +++ b/tools/perf/builtin-script.c
+> > @@ -1709,9 +1709,15 @@ static int perf_sample__fprintf_bts(struct perf_sample *sample,
+> >  static int perf_sample__fprintf_flags(u32 flags, FILE *fp)
+> >  {
+> >  	char str[SAMPLE_FLAGS_BUF_SIZE];
+> > +	int ret;
+> > +
+> > +	ret = perf_sample__sprintf_flags(flags, str, sizeof(str));
+> > +	if (ret < 0)
+> 
+> AFAICT ret is always >= 0
+
+Since I refactored perf_sample__sprintf_flags() in the sequential
+patches, for easier capturing and debugging, here checks the return
+value to detect any potential issues.
+
+Later when we review a perf log, a printed raw number for error cases
+can remind there must be something wrong for printing flags.
+
+> > +		return fprintf(fp, "  raw flags:0x%-*x ",
+> > +			       SAMPLE_FLAGS_STR_ALIGNED_SIZE - 12, flags);
+> >  
+> > -	perf_sample__sprintf_flags(flags, str, sizeof(str));
+> > -	return fprintf(fp, "  %-21s ", str);
+> > +	ret = max(ret, SAMPLE_FLAGS_STR_ALIGNED_SIZE);
+> > +	return fprintf(fp, "  %-*s ", ret, str);
+> 
+> -21 means the field width is 21 and left-justified.  It should not
+> truncate the string.
+
+No, it does not truncate the string.
+
+It calculates a maximum value between the returned length and 21 (
+defined in SAMPLE_FLAGS_STR_ALIGNED_SIZE).  It keeps left-justified and
+can printing a complete string if the string length is bigger than 21.
 
 Thanks,
-Stefano
+Leo
 
+> 
+> >  }
+> >  
+> >  struct printer_data {
+> > diff --git a/tools/perf/util/trace-event.h b/tools/perf/util/trace-event.h
+> > index ac9fde2f980c..71e680bc3d4b 100644
+> > --- a/tools/perf/util/trace-event.h
+> > +++ b/tools/perf/util/trace-event.h
+> > @@ -145,6 +145,8 @@ int common_flags(struct scripting_context *context);
+> >  int common_lock_depth(struct scripting_context *context);
+> >  
+> >  #define SAMPLE_FLAGS_BUF_SIZE 64
+> > +#define SAMPLE_FLAGS_STR_ALIGNED_SIZE	21
+> > +
+> >  int perf_sample__sprintf_flags(u32 flags, char *str, size_t sz);
+> >  
+> >  #if defined(LIBTRACEEVENT_VERSION) &&  LIBTRACEEVENT_VERSION >= MAKE_LIBTRACEEVENT_VERSION(1, 5, 0)
+> 
 
