@@ -1,261 +1,266 @@
-Return-Path: <linux-kernel+bounces-541965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E276CA4C3F0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:56:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE968A4C3F4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:57:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07A9016F019
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:56:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB8613A6DF0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:56:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45641213E6E;
-	Mon,  3 Mar 2025 14:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED2D214202;
+	Mon,  3 Mar 2025 14:56:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PN2MtFey"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="pINEgrDK"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2073.outbound.protection.outlook.com [40.107.220.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 848A81F3BA3
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 14:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741013781; cv=none; b=fe/qsvKdksoVV1IRKqQBu8An70bU3gTtRT7UtENhmx+xf5TH3hRhEYgN4Qi5wS0uCBKhD2GgOJB6IaUa2s50obiFzSoOxeJB/EyAjSk/No4CUbNO1u7AFzKAKjOlbQ8YCcxj1csiml7C3RQ3SXYdtSUAS3DPK2n9ynnQhrheBYc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741013781; c=relaxed/simple;
-	bh=lSFrNOYTs2ebMzVPy9mCvDUTf4C+oW1azbWapwfMyGI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e/8jvanCGnzfiidqRA1hUkBF1mQ9suVGm8VePRqtVmET7zaVpGFe/Wn5jWT7F6CENm6OQmZLcSytB9c5sx4KjGL+HTTvq7sfbMEdcJ1QIvRklOIR7x9An7Dhm/2rpLfOTC21hK13rRsjvjDZLdg8TQ35NHMxQtmp8Hy/wfNY7mU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PN2MtFey; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43bc6a6aaf7so5965195e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 06:56:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741013778; x=1741618578; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RbOOxP9Odw79YNeXSBNNWZeLoIIK9XfazEkCOs3S38s=;
-        b=PN2MtFeyRN/2FOiMZ6eTv/AGsaMove3HE7zZUKXhBJ0/1vwVyRDDnLEef2OAyN8m1d
-         TSBfhb05CX93ElJAGvJGvv1MHxzujTOHjT9CBkxJjVRpqSqzosEJbBtctB01r2ox4QEx
-         84PTq9NhcCN1cwzE2E54PMzUO0A36Z1tqyicgKDu4GyCiDJcxKvxfI3dMt3ubo66H7Cl
-         rdOeg7vgk1fBlVmnANXsyHwyqJuJdRi8XqUJRSuHTgvBVYvJzqBoXJXGhrS6pJtr0wUt
-         KKI9yEZmP7wIIzGbhpYGIY9+aktBvF1WuUbk80hEbzTQ8Xrd+LoL8H9aok+Sjec0z9uw
-         qjOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741013778; x=1741618578;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RbOOxP9Odw79YNeXSBNNWZeLoIIK9XfazEkCOs3S38s=;
-        b=OBS8MoXIqViVGgpO6APkBr/+0OWDUSF4AsgNTgIyww9+iChsc+URvw0QpnqzNkgvQC
-         CqVSbE24KMan8JL7XQvOFEtnAt1ZVGSF4i05ZVYVjsuBNszamnxVQrphtAOLXfQAThuf
-         nTufBfD+sXDWSrHtL+EFqoApK/mnRQ4TjsLHVacnIbyqaDAAwSTuM42fXZvOUwx0Qrxr
-         oza+K77udF9IAV+rpXnBwmKjLllEVmy7VkvzP8dI1Gre3RKei8cJZJl+W2dw6oi+n8Mx
-         jwuqbPcmlwYhDQLu1cCkH1bFsOtNFjmk+GAkb9pnLHr7qPpmLgminPrjdmXTiurLb8ey
-         ELyA==
-X-Forwarded-Encrypted: i=1; AJvYcCXCID72hy45VGTMdvFy2iLqayQGFza6lpr6wdiak0jB8UElDV8Mjw9MyPbITKRnoT3Thk5+jay45QyH07o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyx/cqVBUpFEo8l13D3TQUD0Zx1HvWaUwswf7pHU3iU+/oYcMX9
-	+YtC7GLJMD1/OXjNfe7yT4tW4UfsJQSLcYsYf83SnjQdt+KfVKQvWXYdvePXCVA=
-X-Gm-Gg: ASbGncvgkH+UHM09gaziHYYGvudb4KcLJbTxixqrIJz2WwNWmYhKZZTeTuPaHsq+8E8
-	0ef9DXcdwchEezkDLxT5SN4ecdAPiYtksDer2vGUxd5aiqeMLQ6JRzKomRUnnBh1CIoXkK18jFb
-	tV6lR5luYW8uAm39u5wVCBT9HOszQpI6UzeoIqRfvAI6ekah/yC4wONDEy+t9WgpDkk8ALiL8+v
-	rse62yYsFXGx01Jvte4KXSMHT5g0Fs3Arxd/rt6bNzjXGsYQxQu33b7UPZf37Q4LP94L40tlsfF
-	yXpA/QDbadmqHEHGkKlL1nYQTQcZ+/vi1UhdzdHO3OcYTv3UMDBQJCtieAeSst+mUbpfzKWPrEK
-	7Iek8GbT4gQ==
-X-Google-Smtp-Source: AGHT+IHQTE8UgpNl0+iqYndm1kEDyeG8ZC6z7YUg02JZH40XU0wlpeVtikbYwt+M3QrfOEWZgq6wSw==
-X-Received: by 2002:a05:600c:3146:b0:439:8c6d:7ad9 with SMTP id 5b1f17b1804b1-43bb453dedcmr61168635e9.31.1741013777738;
-        Mon, 03 Mar 2025 06:56:17 -0800 (PST)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ab2ee361dsm137795585e9.0.2025.03.03.06.56.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Mar 2025 06:56:17 -0800 (PST)
-Message-ID: <2ac68f21-cea8-400c-8a61-3638e545bac8@linaro.org>
-Date: Mon, 3 Mar 2025 14:56:16 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39254202F9F;
+	Mon,  3 Mar 2025 14:56:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.73
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741013796; cv=fail; b=EqNKpNAQT+Ph1Y/lwdpv4HoVo3K/nfDLLy+0TYhKFxLPGhf4h5fDpvqrKoH82UuHReQc4HidhZ5wn+5HmGW4eyGFDMcWGnU4DkaKHAxyMG+J+RXoSdTIXDmCVZFKjMzMqnjwtegGALz2IjpUgAaMn3XukP806lgiLNv4nO8Y+h0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741013796; c=relaxed/simple;
+	bh=HkDHxI+nbmx20WExEB4sxR1w1heVQXM//hbQXoxyFxM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=TZ3vNKBUPnszFNXj8MI/9RtqQiOEkpAy24qVD5wrlhRThm6/FlBhiUwH1yz5QfZB3SHrZOBFBkHo3/i6Vtc6EonpN57tvbqbLjZpTY4MjRa8qylYNrlNwg79LFzyn0PCbZxfymrPpUJYQ09C+kqr2gDqqFUkzfNU0WvwVMVTrao=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=pINEgrDK; arc=fail smtp.client-ip=40.107.220.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VH7U7DK7UgnvQ5ww9oI4LiIv1QRdD4EyuD3xr7WB0QrYCmqYE6q9nUBFQdON//WZNuwrR3AZ8fZekFnSBD1VPzM+IvvD4dnatC4ZknKVK0l87l9AMJDvFLMTo7hkiwX+Rqz3ysKX2T9Iqvi3nAb+CbHFYO459d1G4G+BGRDV8qN7MTKNxdSX/Cr4a8YBlwaVQR7QPzDfQoOxupJtZKtSMr7TLmqfolSZDzD72jjzQfLJwn4wiTVU6RNcJPfFFOYmZYiNt2M7tA73QzH39pRkbL3wXZ9tP/88uy3U8yQoWAf9r7sthP3C7lXhM/QMRBop8mxwlt8vZU9fAzGahq6/kQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MvgzT85Qa/iqOLJCz97m1pig49gBYjNp1tKJVrTb+Zk=;
+ b=Xli9r7PbUJSfQYFoINc48GzxWY8d67ItS1Pju4NvVDBXKnz6EXKOsdOsZaVUSs5LKODGAI6MDHIkemSB3VEm2Rii/fKB3RX7lYRclRYYi/ha2Ir7JjFqC4kae/M9+udaZFd7QcOtx3HjbmmAF5pbnGq1r2Zfzm4xFz98KqnVSfEqGdoq2me60dfRMT4T8Tp0qrmm4uhrcb7EuvYXpINdqy84LzprdjPRv37ZwgeQ9Hc70TuTOU3C/Jqaic1ZS9Aco0aAiMVm4Gk9/2lqmK7lQZDJcOgLOJPFWUhR1KJYbIfNjLQqFrELy+T5DxO/9Z0xquKma9soG8rvC0njn5flNw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MvgzT85Qa/iqOLJCz97m1pig49gBYjNp1tKJVrTb+Zk=;
+ b=pINEgrDKxrZxjwFFY7d+I/XqWjFycwNCOaL+4Y7vTlo29gtEqts0e2BP+t0W00Gv3rICLp17jwXQWUjhlXho26YM1peTR3ZmyLXO09uKnIjBxh5u5b/I3D/6IZwF+hzVBCSol75244/Si2y8Wtmuib1xe1BtM3tszExuA7tOXYI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
+ by CH3PR12MB9219.namprd12.prod.outlook.com (2603:10b6:610:197::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.25; Mon, 3 Mar
+ 2025 14:56:31 +0000
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e%7]) with mapi id 15.20.8489.025; Mon, 3 Mar 2025
+ 14:56:30 +0000
+Message-ID: <a299aa00-a127-cd78-d48e-caf95a489f2a@amd.com>
+Date: Mon, 3 Mar 2025 08:56:28 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v5 4/7] crypto: ccp: Register SNP panic notifier only if
+ SNP is enabled
+Content-Language: en-US
+To: Ashish Kalra <Ashish.Kalra@amd.com>, seanjc@google.com,
+ pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ john.allen@amd.com, herbert@gondor.apana.org.au
+Cc: michael.roth@amd.com, dionnaglaze@google.com, nikunj@amd.com,
+ ardb@kernel.org, kevinloughlin@google.com, Neeraj.Upadhyay@amd.com,
+ aik@amd.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-crypto@vger.kernel.org, linux-coco@lists.linux.dev
+References: <cover.1740512583.git.ashish.kalra@amd.com>
+ <29e8c21eae96b2cbe0614d04cfa1014b424134b1.1740512583.git.ashish.kalra@amd.com>
+From: Tom Lendacky <thomas.lendacky@amd.com>
+In-Reply-To: <29e8c21eae96b2cbe0614d04cfa1014b424134b1.1740512583.git.ashish.kalra@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA1PR04CA0011.namprd04.prod.outlook.com
+ (2603:10b6:806:2ce::18) To DM4PR12MB5070.namprd12.prod.outlook.com
+ (2603:10b6:5:389::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] venus driver fixes to avoid possible OOB read
- access
-To: Vikash Garodia <quic_vgarodia@quicinc.com>,
- Vedang Nagar <quic_vnagar@quicinc.com>,
- Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250215-venus-security-fixes-v2-0-cfc7e4b87168@quicinc.com>
- <c3b27e55-f627-417c-bb62-3189f248fb99@linaro.org>
- <7bf1aeaa-e1bd-412b-90fc-eda30b5f5b37@quicinc.com>
- <19109672-2856-457f-b1f6-305abc6c4434@linaro.org>
- <ba1e7a20-2f68-15e0-bc4a-fe52bc4036cc@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <ba1e7a20-2f68-15e0-bc4a-fe52bc4036cc@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|CH3PR12MB9219:EE_
+X-MS-Office365-Filtering-Correlation-Id: 662facc5-3ea7-4e97-5fb2-08dd5a63951b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NU9XRDhpTzlXL0hneDhXYW5JTFl1ejNsMXVtcFhtTDFKWFRBaUVCZjdENGpC?=
+ =?utf-8?B?TUlvemdISC9lRjN5RkRYWUVvV0NoUWNXd2RVMGtNd0FMOTdYbjRwT1RqSnJJ?=
+ =?utf-8?B?ZU4vQWxjRWRGaU10Q0FrWkZzNmNJejk4dmV3UWdpZDhRbXE5V25tRUgzS3Y1?=
+ =?utf-8?B?dmdmMTdFbnMrTzJoSkQyOWc5MUdoN2xab3BEcU9XQ0NhUm9XSzgrd3BaT2FN?=
+ =?utf-8?B?bGg2VVBlZ1lzRWxpdDd3ZkNkOEEyYzNTaFZleVdvL1ZRUHBVY2prT2F0TW5Z?=
+ =?utf-8?B?b2QrVGxYN1EvbmRHOWhiV1orWk1TSDdtdlQrMHZ1USt2UkxwdGJOSTIxU1lQ?=
+ =?utf-8?B?MVBTU25CcE8xSnBmSDVYdUM5UUhsYVZ5WVJZaVZOalhvVFFiZGtEREp1VGNv?=
+ =?utf-8?B?WUwyWHE3dXdjdm13K2lTK1NpbUVxZ0x6YTNQRnI4dFlXSXdWRmg1UXFQemhu?=
+ =?utf-8?B?bUp2cHBGL3hIb3VQRy9SR1JwempSRkFsS3hOakpRVDN6RFNHTGJyajVKeGRm?=
+ =?utf-8?B?ZTQ4SFNLUkFEWUJiQ1FYcnUxUnVaejFvWDBXRUFQR25OcGhSVEVkTnQ4TXJr?=
+ =?utf-8?B?V0M1REt3MGNSVHBuM1ovRzVic2d6KzRQd2J4RHZEZjMrengxT3VmR0JrNzB0?=
+ =?utf-8?B?VWIzT1NHOEkyekhXWllocFdXOXRzV0I2ZStMK2ZIUHlVd1JDdlY4RmlqRkQ3?=
+ =?utf-8?B?bWtVUmxKT2JDcGN6elVDenBudGNWOXhMdkg4YUJCcVhxd2xnK3BKMXU1N1JJ?=
+ =?utf-8?B?blNoSFBBSnI4M3liaGhVRklvdUQ2b3RZOGZ4Q2ZqaGNaVUF1N3M5ZTQxMVJz?=
+ =?utf-8?B?bkRXL1MxYkVXMS8xbkd5MjlMcEhxOGpKRkJORk1NR3EvV3A4NWJTRGFtQ2xY?=
+ =?utf-8?B?Q3dsQTFzRjJqWVlUK1hQN0cvUGpJRWRyTERuTDFNYzl0RFFmRFhtR3MyaXVq?=
+ =?utf-8?B?TExVSmg0ZTFkZXpDOW9yMm5PTjIwTStJbGI3a0p2c01qa0Vha1ZzQUxGT2xj?=
+ =?utf-8?B?VGFmbjMvbWJxNUNLcUdzV21NU3MrSU9hdm94dTdBTmxXZmJJR0hDWCs0WWJh?=
+ =?utf-8?B?Q2JBY1BIVWl1T3dWQnRNY2I2VFdOdldOaG8xeTlIQlZMaDhaUUVzcWw2c3cz?=
+ =?utf-8?B?L2RXdUY3RDBzSFpwUUQ2SHh1dUMzMStOWmNRZE1KaDZMTjFZZ3FhZkZHQVVP?=
+ =?utf-8?B?RmFLZU1PWlVnRnIrclAwNDRpN2M0aTRuM3FBa3hpRlR2VUdFZkpVaTlvdS9L?=
+ =?utf-8?B?NUxOaDJBTWpPQnVxOXBwNEZaelQ1QWlNZVY2TlR4a2JHVXZ0aEVsSzMyTzBp?=
+ =?utf-8?B?KzVndWFwT0gwUk1CZkhubUdWM2dEZk5FZm4xMUpmL3BnQXVzSTRNZGM1TnNE?=
+ =?utf-8?B?VkFWTHo1VUhTRGltaUQxS0RiYjJDUjYzNE9UaU5GaEtYSkhmV1RhU2l5Z3pV?=
+ =?utf-8?B?bWtEckY1U3J4dlJ0R0UxUTE2eVhkMVBrbWRTU2QwSHlleTFpK1dOQXo1OFhi?=
+ =?utf-8?B?ZU40S3RLdTJQNmFjejBLekFtT2VSUEtBb1NZSWhDOEZWRk1yaC9EbjY0L0E4?=
+ =?utf-8?B?TmZqZEx6blBZWUZMelRsN2ZHNkZlZDlGZVViUUx3YS9UWHFVVHVrVHR2VWUv?=
+ =?utf-8?B?ZzBhR2pZSnh3N1dQZURrZThPRWdVSFV4aG5STEZBVmRTMnB3dmMrcVpHN1hp?=
+ =?utf-8?B?UTNRYnJDRzZjOXpnU0hYSTdqRkZ1RVNJajFJdE5JTFlBWXpKTGl2U29aSXpU?=
+ =?utf-8?B?blhETGErYUdVVEJzektoRDFQZ215b1JUWENQckt1eGJyV2NSK0lKNVpmdENa?=
+ =?utf-8?B?R2Yra3hRVVRyOGpZOW1IMEtiL2dNYkhmelY1Ri84cnBtaEdhaUJFYjFWMHdJ?=
+ =?utf-8?B?MFF3bzVLaUxtcEFUWmtvaG5ObExXSzNmcUxuelJNR2hEV3RwZ2QvSndhdTg0?=
+ =?utf-8?Q?9L+Aj0h6SqQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VUtWaW8vcUM1MmM4ZVA3RHhjWS9nV1I3UWduaTdCSDZRcDJBdFM1bXhYUi9I?=
+ =?utf-8?B?OTVMTlR4cXgreWhad0JqZFdNRVVtZ2Q0SElibmUxaWpZVjU2dkhqK2FJQkRk?=
+ =?utf-8?B?TmlZTVRQUzdGS2V5WVhwa1lPZWNXY0xEQlRJc0tVeThLNXhGdlBHZlNnZjZz?=
+ =?utf-8?B?YkczZCtLKzkyL0pDUk1WWVprSG5CNkQ0WmRYT2N3cjBZeitlMWxkQXNsblhB?=
+ =?utf-8?B?YnRFbGNvVmpsbVBEMXNOVFhnVUV1bDkyRWJ5blRaU2ZsVTZXRlRNZUxkTzlB?=
+ =?utf-8?B?aC96aXpUSitxQXlabUtkL1NVaVFNYzZQOGptYnFBNmNQVWhmWktzRUlKYXI0?=
+ =?utf-8?B?ODhTUm5hREdKaHpEdjFrZ3VDNEtFMHNUbVJPYlkvRHJ6R2F4eWdMSE9sRG9F?=
+ =?utf-8?B?eXJTUWhVck1IQUJscWxCMHByb0czcjhBNVF4MTlsUWdWUEVjYmN2WlEwSy9t?=
+ =?utf-8?B?bTJ3WGo3YXJXUHNTMVZxazc5d0pGNHdsc04rc1RidTMrRVliRGRUY3FKeGJm?=
+ =?utf-8?B?ckxEL2VwdVdJQ2N0R0NHbmVPdDJWT0pWUzhOdmVoWHNISFlLVUVtMVZQNE5u?=
+ =?utf-8?B?WklCNndXeW9qanJnRmZGVGE2dUNRa25IbzZ2T3NwTzNYcTkzenF2ZktDY2hP?=
+ =?utf-8?B?MDMwN0syQjd3K1czSW42YURaZ0RsaGhwanh2MmQ2TmpyWXpzWnRESEpwVFJv?=
+ =?utf-8?B?b0s3S21WcStOYW1DWTExOUQ3eDBza3FVck1BUEVqUFZueUlremRSR0lNRWda?=
+ =?utf-8?B?a242UVRjb2wrd3V6eU01TnhiTE15SUU3cXhBVjlPZ1FNNmhHR29EWnNocDlE?=
+ =?utf-8?B?NEZlVTk2Z3c3WUQyekx0T3Jidjc1M3ZwbEhFRVFaRU5RYWoyRkZLWUg0eFNM?=
+ =?utf-8?B?WHR2YWpHQWFYUlozMXhRY0JBeVgrRnBiZzRJZzltdzJsTjBvUmo4czlCSGxo?=
+ =?utf-8?B?ZUlISGZETENodUEyZDNjeEZjZ2RGeVVvU1JzTUFDK3A3Y25xZFMvRmtPcTZC?=
+ =?utf-8?B?VzZwQnFqTk9JQ21qbHhSWklCQVY4cnM2TnNpMUYxRjh6cHJNZHUxK3BES2pG?=
+ =?utf-8?B?VENYNldBRG1oQ3B5ZS9wYU1FUDFWbXVmb0h3dTBSUDd3b1Y0aHB5YzRUcVJ4?=
+ =?utf-8?B?QmpVSGwwaVkxa1NqeGtDeVYyUzlyMUtBTGNRR0k4R2Z5UGRrUFI3RWNBQzVa?=
+ =?utf-8?B?NEIyTzFUTkhRdXdTbDFieHpUd1BOUHpFTHdLd1ZlcDFONnVsNjFsTDcrTUNp?=
+ =?utf-8?B?WTBucWJUNkQ4TFBtNjFjVmRSbVVaQzFuYTRRY1JPK0dWU3VwVWVLS2lHNE9s?=
+ =?utf-8?B?RGRoZGdpNmZtWlJKUFNCcGJHUnZNWEJQSmV0aXdBTTNjSGZEcXVQV29qUm5E?=
+ =?utf-8?B?dzRQeXNkazNjek9VUGY1NzNoaDdlVlJTYlU5SCtLQzdMaDJjZnhGWXpOeDlH?=
+ =?utf-8?B?Mm9WeXY4R3RtcGI1R2J1cVRVUzlXYUM3SlBhSzhTTXR6ZnVQcFNFT095ZG1D?=
+ =?utf-8?B?ci9ib0RPM3FCWUxwVm1vTkZXOHNhOGVKZHZ5Q1djd0x6Q0N1bHhjZ2daSFpl?=
+ =?utf-8?B?dm0wSnMvZkQ1TDNhblVXYUZQRit0TndoaExQdzlHOGVxYVpBYTZpZVg3TnlQ?=
+ =?utf-8?B?UEpKTHVDbWREaDB0WFAwYnBvc1RPZG1WYm9ueWJYM3Y2aUlWUTZLY00xSkdK?=
+ =?utf-8?B?TGNUcFhvTFAwWGt1NGpITVlOaVl6WHhHMUdLZXJZaUwxc2lNUHdYTXV4MGV4?=
+ =?utf-8?B?bUxDUVJpN25FeVF5U3U4TjAzOThDdnhybVl6YlpKQVh3R09ibUtqRERPVTZk?=
+ =?utf-8?B?Q202OWNoa3RKeGlVWHJxb3hJK3JrWWNwcUJkZ1NJQ1ZHR04rM0RWdkt0SEVu?=
+ =?utf-8?B?ZlFBMVBjMTFOZUtmSnlMM2lYMTIzS2JkcVZhSDdIRHJVQ2RVV2tBdEY5UzJp?=
+ =?utf-8?B?ZjJ1TE5aMm9mcWlVTTVYMUFvSjRZSDNkbmtBM2xxWC9OeHg0WWw2YVhkNVpm?=
+ =?utf-8?B?aWF4MTJVN3Q0Z3Rrc3lOVkpFQmZ4UjZydXRjWjZyaHdOdXN6bW5qUEVUZHIz?=
+ =?utf-8?B?cmpNdnF4eFVsSFJKTVJkQ0VUQklRTG9NTUJwcVI0Wnd4L1FGTE5QMGUwcG16?=
+ =?utf-8?Q?vU61iKZsWeIbrGiKnvYrpMTXo?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 662facc5-3ea7-4e97-5fb2-08dd5a63951b
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2025 14:56:30.8100
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: KiwwJLaF1/iazBlatyJi1Mc2sjK5otsdwPa7h5RwOqArWX+fkThZUOwy9fkOwJ+tpjVtZTWb1+WdY0xpuUlSAA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9219
 
-On 03/03/2025 13:12, Vikash Garodia wrote:
+On 2/25/25 15:00, Ashish Kalra wrote:
+> From: Ashish Kalra <ashish.kalra@amd.com>
 > 
-> On 3/2/2025 9:26 PM, Bryan O'Donoghue wrote:
->> On 02/03/2025 11:58, Vedang Nagar wrote:
->>>>
->>>> The basic question : what is the lifetime of the data from RX interrupt to
->>>> consumption by another system agent, DSP, userspace, whatever ?
->>> As mentioned in [1], With the regular firmware, after RX interrupt the data
->>> can be considered as valid until next interrupt is raised, but with the rouge
->>> firmware, data can get invalid during the second read and our intention is to
->>> avoid out of bound access read because of such issues.
->>
->> This is definitely the part I don't compute.
->>
->> 1. RX interrupt
->> 2. Frame#0 Some amount of time data is always valid
-> This is not correct. Its not the amount of time which determines the validity of
-> the data, its the possibility of rogue firmware which, if incase, puts up the
-> date in shared queue, would always be invalid, irrespective of time.
+> Currently, the SNP panic notifier is registered on module initialization
+> regardless of whether SNP is being enabled or initialized.
 > 
->> 3. RX interrupt - new data
->> 4. Frame#1 new data delivered into a buffer
->>
->> Are you describing a case between RX interrupts 1-3 or a case after 1-4?
->>
->> Why do we need to write code for rouge firmware anyway ?
-> It is a way to prevent any possibility of OOB, similar to how any API does check
-> for validity of any arguments passed to it, prior to processing.
->>
->> And the real question - if the data can be invalidated in the 1-3 window above
->> when is the safe time to snapshot that data ?
->>
->> We seem to have alot of submissions to deal with 'rouge' firmware without I
->> think properly describing the problem of the _expected_ data lifetime.
->>
->> So
->>
->> a) What is the expected data lifetime of an RX buffer between one
->>     RX IRQ and the next ?
->>     I hope the answer to this is - APSS owns the buffer.
->>     This is BTW usually the case in these types of asymmetric setups
->>     with a flag or some other kind of semaphore that indicates which
->>     side of the data-exchange owns the buffer.
->>
->> b) In this rouge - buggy - firmware case what is the scope of the
->>     potential race condition ?
->>
->>     What I'd really like to know here is why we have to seemingly
->>     memcpy() again and again in seemingly incongrous and not
->>     immediately obvious places in the code.
->>
->>     Would we not be better advised to do a memcpy() of the entire
->>     RX frame in the RX IRQ handler path if as you appear to me
->>     suggesting - the firmware can "race" with the APSS
->>     i.e. the data-buffer ownership flag either doesn't work
->>     or isn't respected by one side in the data-exchange.
->>
->> Can we please have a detailed description of the race condition here ?
-> Below is the report which the reporter reported leading to OOB, let me know if
-> you are unable to deduce the trail leading to OOB here.
+> Instead, register the SNP panic notifier only when SNP is actually
+> initialized and unregister the notifier when SNP is shutdown.
 > 
-> OOB read issue is in function event_seq_changed, please reference below code
-> snippet:
-> 
-> Buggy code snippet:
-> 
-> static void event_seq_changed(struct venus_core *core, struct venus_inst *inst,
->          struct hfi_msg_event_notify_pkt *pkt)
-> ...
-> num_properties_changed = pkt->event_data2; //num_properties_changed is from
-> message and is not validated.
-> ...
-> data_ptr = (u8 *)&pkt->ext_event_data[0];
-> do {
->   ptype = *((u32 *)data_ptr);
->   switch (ptype) {
->   case HFI_PROPERTY_PARAM_FRAME_SIZE:
->    data_ptr += sizeof(u32);
->    frame_sz = (struct hfi_framesize *)data_ptr;
->    event.width = frame_sz->width;
-> ...
->   }
->   num_properties_changed--;
-> } while (num_properties_changed > 0);
-> ```
-> There is no validation against `num_properties_changed = pkt->event_data2`, so
-> OOB read occurs.
->>
->> I don't doubt the new memcpy() makes sense to you but without this detailed
->> understanding of the underlying problem its virtually impossible to debate the
->> appropriate remediation - perhaps this patch you've submitted - or some other
->> solution.
->>
->> Sorry to dig into my trench here but, way more detail is needed.
->>
->>> [1]: https://lore.kernel.org/lkml/4cfc1fe1-2fab-4256-9ce2-
->>> b4a0aad1069e@linaro.org/T/#m5f1737b16e68f8b8fc1d75517356b6566d0ec619
->>>>
->>>> Why is it in this small specific window that the data can change but not
->>>> later ? What is the mechanism the data can change and how do the changes you
->>>> propose here address the data lifetime problem ?
->>> Currently this issue has been discovered by external researchers at this
->>> point, but if any such OOB issue is discovered at later point as well then we
->>> shall fix them as well.
->>
->> Right but, I'm looking for a detailed description of the problem.
->>
->> Can you describe from RX interrupt again what the expected data lifetime of the
->> RX frame is, which I hope we agree is until the next RX interrupt associated
->> with a given buffer with an ownership flag shared between firmware and APSS -
->> and then under what circumstances that "software contract" is being violated.
->>
->>> Also, with rougue firmware we cannot fix the data lifetime problem in my
->>> opinion, but atleast we can fix the out of bound issues.
->>>>
->>>> Without that context, I don't believe it is really possible to validate an
->>>> additional memcpy() here and there in the code as fixing anything.
->>> There is no additional memcpy() now in the v2 patch, but as part of the fix,
->>> we are just trying to retain the length of the packet which was being read in
->>> the first memcpy() to avoid the OOB read access.
->>
->> I can't make a suggestion because - personally speaking I still don't quite
->> understand the data-race you are describing.
-> Go through the reports from the reporter, it was quite evident in leading upto
-> OOB case.
-> Putting up the sequence for you to go over the interrupt handling and message
-> queue parsing of the packets from firmware
-> 1.
-> https://elixir.bootlin.com/linux/v6.14-rc4/source/drivers/media/platform/qcom/venus/hfi_venus.c#L1082
-> 2.
-> https://elixir.bootlin.com/linux/v6.14-rc4/source/drivers/media/platform/qcom/venus/hfi_msgs.c#L816
-> 3. event handling (this particular case)
-> https://elixir.bootlin.com/linux/v6.14-rc4/source/drivers/media/platform/qcom/venus/hfi_msgs.c#L658
-> 4.
-> https://elixir.bootlin.com/linux/v6.14-rc4/source/drivers/media/platform/qcom/venus/hfi_msgs.c#L22
-> 
-> the "struct hfi_msg_event_notify_pkt *pkt" pkt here is having the data read from
-> shared queue.
-> 
->>
->> I get that you say the firmware is breaking the contract but, without more
->> detail on _how_ it breaks that contract I don't think it's really possible to
->> validate your fix here, fixes anything.
->>
->> ---
->> bod
-> 
-> Regards,
-> Vikash
+> Reviewed-by: Dionna Glaze <dionnaglaze@google.com>
+> Reviewed-by: Alexey Kardashevskiy <aik@amd.com>
+> Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
 
-I'll go through all of these links given here, thanks.
+Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
 
-Whatever the result of the review, this detail needs to go into the 
-commit log so that a reviewer can reasonably read the problem 
-description and evaluate against submitted code as a fix.
-
----
-bod
+> ---
+>  drivers/crypto/ccp/sev-dev.c | 22 +++++++++++++---------
+>  1 file changed, 13 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/crypto/ccp/sev-dev.c b/drivers/crypto/ccp/sev-dev.c
+> index c784de6c77c3..b3479a2896d0 100644
+> --- a/drivers/crypto/ccp/sev-dev.c
+> +++ b/drivers/crypto/ccp/sev-dev.c
+> @@ -109,6 +109,13 @@ static void *sev_init_ex_buffer;
+>   */
+>  static struct sev_data_range_list *snp_range_list;
+>  
+> +static int snp_shutdown_on_panic(struct notifier_block *nb,
+> +				 unsigned long reason, void *arg);
+> +
+> +static struct notifier_block snp_panic_notifier = {
+> +	.notifier_call = snp_shutdown_on_panic,
+> +};
+> +
+>  static inline bool sev_version_greater_or_equal(u8 maj, u8 min)
+>  {
+>  	struct sev_device *sev = psp_master->sev_data;
+> @@ -1198,6 +1205,9 @@ static int __sev_snp_init_locked(int *error)
+>  	dev_info(sev->dev, "SEV-SNP API:%d.%d build:%d\n", sev->api_major,
+>  		 sev->api_minor, sev->build);
+>  
+> +	atomic_notifier_chain_register(&panic_notifier_list,
+> +				       &snp_panic_notifier);
+> +
+>  	sev_es_tmr_size = SNP_TMR_SIZE;
+>  
+>  	return 0;
+> @@ -1754,6 +1764,9 @@ static int __sev_snp_shutdown_locked(int *error, bool panic)
+>  	sev->snp_initialized = false;
+>  	dev_dbg(sev->dev, "SEV-SNP firmware shutdown\n");
+>  
+> +	atomic_notifier_chain_unregister(&panic_notifier_list,
+> +					 &snp_panic_notifier);
+> +
+>  	/* Reset TMR size back to default */
+>  	sev_es_tmr_size = SEV_TMR_SIZE;
+>  
+> @@ -2481,10 +2494,6 @@ static int snp_shutdown_on_panic(struct notifier_block *nb,
+>  	return NOTIFY_DONE;
+>  }
+>  
+> -static struct notifier_block snp_panic_notifier = {
+> -	.notifier_call = snp_shutdown_on_panic,
+> -};
+> -
+>  int sev_issue_cmd_external_user(struct file *filep, unsigned int cmd,
+>  				void *data, int *error)
+>  {
+> @@ -2533,8 +2542,6 @@ void sev_pci_init(void)
+>  	dev_info(sev->dev, "SEV%s API:%d.%d build:%d\n", sev->snp_initialized ?
+>  		"-SNP" : "", sev->api_major, sev->api_minor, sev->build);
+>  
+> -	atomic_notifier_chain_register(&panic_notifier_list,
+> -				       &snp_panic_notifier);
+>  	return;
+>  
+>  err:
+> @@ -2551,7 +2558,4 @@ void sev_pci_exit(void)
+>  		return;
+>  
+>  	sev_firmware_shutdown(sev);
+> -
+> -	atomic_notifier_chain_unregister(&panic_notifier_list,
+> -					 &snp_panic_notifier);
+>  }
 
