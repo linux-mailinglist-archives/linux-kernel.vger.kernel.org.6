@@ -1,150 +1,158 @@
-Return-Path: <linux-kernel+bounces-541780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D9C5A4C177
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:15:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F365A4C17F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:18:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 633973A79CE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:14:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AC123A90B5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:18:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 411D921170D;
-	Mon,  3 Mar 2025 13:15:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 786862116F3;
+	Mon,  3 Mar 2025 13:18:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UaLGcteD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="pMWhQSZ7"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8985D21148C;
-	Mon,  3 Mar 2025 13:15:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 575711F19A;
+	Mon,  3 Mar 2025 13:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741007703; cv=none; b=HxP30pU4TpD7nyOVql9oSlQESNu0wE7QHcN8MoI60WaA7eJGER+xX0lMXDmQefYxn8OWyXGbp9Shq9JJJYl/wXTGQlDanXDpoRBoNzS9rjkPSk15s4yA8G/55pUx7FloAl8PkbLTIETBczN3N7pl64Ny4KTWCb+W3wbmjtdchW0=
+	t=1741007905; cv=none; b=UJJWiUWktX4xwiPojMYMvc8iZRAuk/7GoWfha53iwNqWs32mv1Exxwm81VhR4+UdYayJciREXYx96TXh9LEs9LM9FvnVnIjQO3jSgIGpSzUsWpZedgDVub1IM/Oq9t63+3GdSSYEzHrP4y8A2LCMtjzAV4IHupTF8De2cb3PPqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741007703; c=relaxed/simple;
-	bh=nwrY5mTBKsH0VrIlw0M+a6qAcq9/UvmEmo3JfFgzxI8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eNIhWr7755sRv5OrpnmQQ+t3UvUF7DSTt0ZqbkC7K94I9yfPCt3dOWxRnp0+QvKGPgYPP082mVgkV8TyMnOtLg6TBzAnMs35Uu1D4WXQaQRIKJY5uYNzfRsWq8YgYIFKKGsKT1wN64PY/0N4G0hI+VRldNhTX3hf2p/BQSng0wM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UaLGcteD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2AF8C4CEF3;
-	Mon,  3 Mar 2025 13:15:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741007703;
-	bh=nwrY5mTBKsH0VrIlw0M+a6qAcq9/UvmEmo3JfFgzxI8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=UaLGcteDJsTlv1tvfPaaRzAuATBXcyf0Op8VczsXtYqjpZKx/ayCpioXL8zJt+eW9
-	 VLfdJdNXU0w5E4heF9VL5kB//4xXQIUvx2s8lXwVMrUUj8LEzd5hvrQz0qF9FVE3kb
-	 2DlLjxFh2Fjpb7MJTj+5Iq+uymFyLH9wx/9B1ZomWEHmzo/yomSrbQOTZUIK5VADxx
-	 iSwqNvqWK84eIrLN3LF7e7i1k6gJccX+iIoT9KrncGiglMumS7P7Cev18AmELHB/JC
-	 lWyRccVUKxzb/7H4Pt5qTIKT8UyieVTCJZOUFO354XFWNL9KcHxx7HKleSqnjH+dsn
-	 uloIVK/eG9H3g==
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2fce3b01efcso6216381a91.3;
-        Mon, 03 Mar 2025 05:15:02 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWF7rsvklxvbxzz7/XSnly5JDOXTRCMlFRAwfLuje82NyHa5GaQMtBVKmKBN0eilikZ+aQnFNaPPd1kPCNV@vger.kernel.org, AJvYcCXPoEGubTxLcpQpJYnfegkZwu0BOs3FSToDHxjRWJvF4gf3Hg2VBFRoeiiivHOhCK41NFWCcZ4cyZL3@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsbCf6+5lr7rI25kpMobSwRAvtinnyA9e7VUsv0Yig5k9BFS0h
-	oLTzLIcvBEbAUfBG4efF2w3ODECCXc7p1pDScpTlHd7cHpUv3Hm9A12AmU0l0SnJ67j4WeTwNRx
-	Am+Ib+cA0Kb7D6mB0WJiYc4kIMg==
-X-Google-Smtp-Source: AGHT+IEdq6TIp16hKhBlDO4xfda53D7O9rz6s7IDZPVAapB9apF5VJ70jX9N1Qnsx75v9OLYhq9X6ox1YKUJZiNS6WQ=
-X-Received: by 2002:a17:90b:4ac6:b0:2fe:b9be:216 with SMTP id
- 98e67ed59e1d1-2febac10927mr18112467a91.31.1741007702343; Mon, 03 Mar 2025
- 05:15:02 -0800 (PST)
+	s=arc-20240116; t=1741007905; c=relaxed/simple;
+	bh=jMjxzuU5ybybM0n8xvB9Cmcz8tDPN1BHkYcTdsgjICY=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=VmXFfhMjxRxTbx9v1w99aU5J5FoElwbkbkqKlMmD4c80H2RpiK/B46vgQre1bSVwul/ef7pIF4IkhcXTnE1jlXYVhy49+whZAEqZ8gNY30fqykIWnqBW9iY5FOAyxXYtqvKM6pYZe3Osg/2NqkQmWqe/EB6D0os17w+9SmZz1ZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=pMWhQSZ7; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1741007901; x=1741612701; i=markus.elfring@web.de;
+	bh=haP3YnQ1hTaM4n45Pmancys67feBgEgblRKSuXDvr1A=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=pMWhQSZ7mmW6WnDrAnSZ/723yKkMZsWgqcHn2JYzn1A2XzjyBQm/ik2Ej2mC1NQH
+	 GS13QOP1KrUfaS9mzQLNqpYvcAXt+ZrVgZNDc8I985hG21SwlbBCjbbyuHewMB0j2
+	 RfUayrlNt2Wq4kVnJ7kkrs/JOnFoliDCRErARsIXSntPWj7AN7XGGIEdC//pfHwBe
+	 C65KCMh/qrJaLbD5iw/e5SYFHMqa8zoI5j6/qFfTybG52f5DLtpbv2CDqt02CG0fl
+	 5XvG3fzPCoxLs+DE5EQh32/D4va8BUxB+HX1cOrQEgmk5eC+PfTdnHTOkS0zaZd89
+	 eX2aliMELA8jm5EZnw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.19]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N9LIO-1tAIuH18K4-00yGaQ; Mon, 03
+ Mar 2025 14:18:21 +0100
+Message-ID: <22e24ec8-283f-49e9-b7b0-555e8113c250@web.de>
+Date: Mon, 3 Mar 2025 14:18:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231023-display-support-v7-0-6703f3e26831@baylibre.com> <20231023-display-support-v7-3-6703f3e26831@baylibre.com>
-In-Reply-To: <20231023-display-support-v7-3-6703f3e26831@baylibre.com>
-From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Date: Mon, 3 Mar 2025 21:15:50 +0800
-X-Gmail-Original-Message-ID: <CAAOTY__qg1R4JQDssy1bDDJMea8Ud7OsPXjek20cHV8S=jfNbA@mail.gmail.com>
-X-Gm-Features: AQ5f1JqYD6WJcU1BIk0mtXtCrxuXqvikkqhcdhVAAsXT4MVrnLil5ua2eCNjEcM
-Message-ID: <CAAOTY__qg1R4JQDssy1bDDJMea8Ud7OsPXjek20cHV8S=jfNbA@mail.gmail.com>
-Subject: Re: [PATCH v7 3/6] drm/mediatek: add MT8365 SoC support
-To: amergnat@baylibre.com
-Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Jitao Shi <jitao.shi@mediatek.com>, CK Hu <ck.hu@mediatek.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Simona Vetter <simona@ffwll.ch>, Simona Vetter <simona.vetter@ffwll.ch>, 
-	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Fabien Parent <fparent@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH RESEND] iwlwifi: Adjust input parameter validation in
+ iwl_sta_calc_ht_flags()
+From: Markus Elfring <Markus.Elfring@web.de>
+To: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org,
+ netdev@vger.kernel.org, Benjamin Berg <benjamin.berg@intel.com>,
+ Gregory Greenman <gregory.greenman@intel.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Johannes Berg <johannes.berg@intel.com>,
+ Kalle Valo <kvalo@kernel.org>,
+ Miri Korenblit <miriam.rachel.korenblit@intel.com>,
+ Paolo Abeni <pabeni@redhat.com>, Sriram R <quic_srirrama@quicinc.com>
+Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>,
+ Simon Horman <horms@kernel.org>
+References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
+ <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
+ <9cb634c8-d6e6-32bc-5fd6-79bf6b274f96@web.de>
+Content-Language: en-GB
+In-Reply-To: <9cb634c8-d6e6-32bc-5fd6-79bf6b274f96@web.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:klaLpxqRowNpOLqo5TgPE5pwLuOQZxsO7wlnEJEJTMtovuceQzK
+ 9j5rbUI7I/TUnJK5L4CF9gFQ/eXeg/hblRTs/rM+HoQQF+nLiHgvC/yTerLULFGe/c3bjBb
+ MarWJxxg7QLtmxPmtF6LdNp6dF/otzHpWAAhCXfm4i7bDtKLPYB1jL9ij0B0MigrfUOTzCo
+ MJ5lJiYrKHkil1c2EPwtA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:8hjet2llDHg=;XzADO0IesvNkdn8ez1GDiDig+Fz
+ zTe+5Ine+8o3lhtscOx2xxi399ryECeYZas5pCUHajSWwa2tGmdwuInMoma4aFSTyAtiZPsT8
+ Td3ElBtGnXvSZPt2JqexXGkv2th3KLL4Ksn6WUyuSs60H4HXN0PkhqDUMGBc3RB5t4JF7sQfT
+ m1o7WJsk8vTAsrhDgRw1ZvFiCqEML2kYSTkJex2XIqjQ7lCXtgVEdfA14+qsl+FdpQOFHFT/0
+ b6el7Rh3ECXRN/hJH96cfwNPbCIUxZNeVXegFDlQXhDnDNlIjz5iMEr8q/CX2O6m+X3x2yYFY
+ v2amNEe2oyJROYUyGCzI9IHecp5McECXojybvKBRSdSrXxH1rT2B1GTvCNZGg3aqVC6GY9wQs
+ YJjK1j4mQC7OdbxrjNQj05YszK8t98EsRL9YXExRvbylVnGj68YlKDuZmdRITkNUEB6NhOXrt
+ 9ENDovRTtJiy67JzRlDE3pKxcPiMHfNPJeMuEO5DpxC2Ca0NPuuq6joFmFz6u1tny/f6gGFvF
+ CwLnm6PYRtyXliEVUEn3UUSmDQTz8qyhLs1YDiBIlfeHeZxOaCMscP4YmSn09lyxFef31utby
+ 9e/uuey3/Jb0I+EZMPUlcH+R23S6MB5gWQ3dFKyQa0f4IypJ389rcODASgUmiXOj5yJYd1u6h
+ 18/XyDfamrCdIDiv8Licz9/xCiJNJ8IcJteTAMtttm7VFfDjpwlNTvnHVsyP+l+s4ArmONhUD
+ XczPFTFaUcmcyFNmNE1+Jf4oEaB8JHXup56yNPoPdXUB6O5mvI/uRDflz8PPQDB3cDowMDC2K
+ fJI5d8OkAD38Lr2Y7HnRdBtpy4YiG/JvLBoDMiMdwdwjku861gIE4yA9KZ5atkEG8iZsiVQNG
+ Fp5RrdyblFAmPqP+tokyt0D02ZaqcVWwaXCJxBtF/bom3uKwkcFeZajNEHvzXJeRimFFxuRSx
+ iTVGaRkdxNOJpP/dncIAe+YYdMSVbCcaPK8BtL5BgehI9VSW730Q+I8Geqoovlt5z0r5C3SyP
+ Sg3sMcN6rbx4eRDJOjdxC7OxPDQ+wq98GAyjOCXUT5kRlB8+qBGyQ4xtCwdswHicA1amiAULB
+ mb7YvyaJRDSVf6JNK115i3QuY5Btciqw5FVf4+X7UmnoDROerESuHj38PUsb1WoBhg9Z4hItd
+ egqapByLzxK/qytebvoMt39/lcwCM9K6VqwRXThr3O/FQk5pmyrSkJsa96UD7aS19COdjUN3C
+ 8vJyHRwOqwn4h0JhsvpgBpMZbA7Xobq7zhjU+IPlCtOJcCB6ycaFsFgxPk6Z/XVY8nh8gT89k
+ cYx7F5B3JDlXk6E1236nBVcknM7JRLrPnkZ/LEGDzy9wvDplvGK301Ntv0TxPsf3//NbNRc3M
+ q/WBsCJCPfXChuIyUY8QNUwh8NbKe56CRjUR3vHSvZctplmyU9Hat8/WJ2yOkA43RHGhLrvre
+ NgFLOXuXjSyn+3kQuRcx4J6xC2XA=
 
-Hi, Amergnat:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 19 Apr 2023 19:19:34 +0200
 
-<amergnat@baylibre.com> =E6=96=BC 2025=E5=B9=B41=E6=9C=8810=E6=97=A5 =E9=80=
-=B1=E4=BA=94 =E4=B8=8B=E5=8D=889:31=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> From: Fabien Parent <fparent@baylibre.com>
->
-> Add DRM support for MT8365 SoC.
->
-> Signed-off-by: Fabien Parent <fparent@baylibre.com>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
-ora.com>
+The address of a data structure member was determined before
+a corresponding null pointer check in the implementation of
+the function =E2=80=9Ciwl_sta_calc_ht_flags=E2=80=9D.
 
-Applied to mediatek-drm-next [1], thanks.
+Thus avoid the risk for undefined behaviour by moving the assignment
+for the variable =E2=80=9Csta_ht_inf=E2=80=9D behind the null pointer chec=
+k.
 
-[1] https://web.git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux.=
-git/log/?h=3Dmediatek-drm-next
+This issue was detected by using the Coccinelle software.
 
-Regards,
-Chun-Kuang.
+Fixes: 046d2e7c50e3 ("mac80211: prepare sta handling for MLO support")
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/net/wireless/intel/iwlwifi/dvm/sta.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-> Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_drm_drv.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
->
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/med=
-iatek/mtk_drm_drv.c
-> index 0829ceb9967c..5471ef744cc1 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> @@ -328,6 +328,10 @@ static const struct mtk_mmsys_driver_data mt8195_vdo=
-sys1_driver_data =3D {
->         .min_height =3D 1,
->  };
->
-> +static const struct mtk_mmsys_driver_data mt8365_mmsys_driver_data =3D {
-> +       .mmsys_dev_num =3D 1,
-> +};
-> +
->  static const struct of_device_id mtk_drm_of_ids[] =3D {
->         { .compatible =3D "mediatek,mt2701-mmsys",
->           .data =3D &mt2701_mmsys_driver_data},
-> @@ -355,6 +359,8 @@ static const struct of_device_id mtk_drm_of_ids[] =3D=
+diff --git a/drivers/net/wireless/intel/iwlwifi/dvm/sta.c b/drivers/net/wi=
+reless/intel/iwlwifi/dvm/sta.c
+index cef43cf80620..74814ce0155e 100644
+=2D-- a/drivers/net/wireless/intel/iwlwifi/dvm/sta.c
++++ b/drivers/net/wireless/intel/iwlwifi/dvm/sta.c
+@@ -147,7 +147,7 @@ static void iwl_sta_calc_ht_flags(struct iwl_priv *pri=
+v,
+ 				  struct iwl_rxon_context *ctx,
+ 				  __le32 *flags, __le32 *mask)
  {
->           .data =3D &mt8195_vdosys0_driver_data},
->         { .compatible =3D "mediatek,mt8195-vdosys1",
->           .data =3D &mt8195_vdosys1_driver_data},
-> +       { .compatible =3D "mediatek,mt8365-mmsys",
-> +         .data =3D &mt8365_mmsys_driver_data},
->         { }
->  };
->  MODULE_DEVICE_TABLE(of, mtk_drm_of_ids);
-> @@ -751,6 +757,8 @@ static const struct of_device_id mtk_ddp_comp_dt_ids[=
-] =3D {
->           .data =3D (void *)MTK_DISP_MUTEX },
->         { .compatible =3D "mediatek,mt8195-disp-mutex",
->           .data =3D (void *)MTK_DISP_MUTEX },
-> +       { .compatible =3D "mediatek,mt8365-disp-mutex",
-> +         .data =3D (void *)MTK_DISP_MUTEX },
->         { .compatible =3D "mediatek,mt8173-disp-od",
->           .data =3D (void *)MTK_DISP_OD },
->         { .compatible =3D "mediatek,mt2701-disp-ovl",
->
-> --
-> 2.25.1
->
+-	struct ieee80211_sta_ht_cap *sta_ht_inf =3D &sta->deflink.ht_cap;
++	struct ieee80211_sta_ht_cap *sta_ht_inf;
+
+ 	*mask =3D STA_FLG_RTS_MIMO_PROT_MSK |
+ 		STA_FLG_MIMO_DIS_MSK |
+@@ -156,7 +156,11 @@ static void iwl_sta_calc_ht_flags(struct iwl_priv *pr=
+iv,
+ 		STA_FLG_AGG_MPDU_DENSITY_MSK;
+ 	*flags =3D 0;
+
+-	if (!sta || !sta_ht_inf->ht_supported)
++	if (!sta)
++		return;
++
++	sta_ht_inf =3D &sta->deflink.ht_cap;
++	if (!sta_ht_inf->ht_supported)
+ 		return;
+
+ 	IWL_DEBUG_INFO(priv, "STA %pM SM PS mode: %s\n",
+=2D-
+2.40.0
+
 
