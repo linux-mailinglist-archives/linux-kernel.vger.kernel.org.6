@@ -1,81 +1,108 @@
-Return-Path: <linux-kernel+bounces-541841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3A7AA4C23F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:42:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC7A6A4C245
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:43:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 126DE188E432
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:42:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43C4116D475
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:43:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DDFA212B07;
-	Mon,  3 Mar 2025 13:42:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c/3Va+tq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04C581EFFB4;
-	Mon,  3 Mar 2025 13:42:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02724212B34;
+	Mon,  3 Mar 2025 13:43:41 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35CAF8634C;
+	Mon,  3 Mar 2025 13:43:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741009335; cv=none; b=Jc026IRQgwuuyul0KxosuSNJ7dhfLF2LPMstUnHrG1ZxLUjz5V57mAK2D4TDHsaxzHNFy9AvA9qI2LaVN538LdfxAEAjzZTQFNPCSUpvwwaBfl7bwC8mDHLT1SBu4jsN+uMbYoOtsKceFkxrxkmxomZgxF9lFBoorEvtguzS8xk=
+	t=1741009420; cv=none; b=IvLMYGxo4k6255crXmoa595c9tN1i3rFrO0ruohVQOOZW8u8/Mm8BbitK6hbqdsBUNGXaEqNjwY/cP+8FFEMNyaFrWWqMNyMa4/OGlZUEcZk9yzz1AMkDdE58SokU6gdRV9TdKh3q4xv0uEbOe+GDb3vANtdTWowkSIKitDGSOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741009335; c=relaxed/simple;
-	bh=+x1M0xAUI4i6rAatwBpVulw/4Yee7AfTm/reCel12kg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GaoJq+a5By/MA5dgzObWuX7s/VSaUJYdJTb6bgy83OkAfyU5AapCs6f5xvj1izUhhdwIeBMKJe8ZixWLqul74oSreHx+AxNIVya+UhnyTuQozdmRdjGsP3uerMkzd1S+iDBR3XWJrkGd0tbQ5KvJzhOc5CT+0IOB4Gbnys/Re6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c/3Va+tq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 047F0C4CED6;
-	Mon,  3 Mar 2025 13:42:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741009334;
-	bh=+x1M0xAUI4i6rAatwBpVulw/4Yee7AfTm/reCel12kg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c/3Va+tqsKURLRutURqRLBVl02bfAmE7iHrtGF7WMJiNUwLhJa+bVlcydar2210jE
-	 12a3bOgqHwzYuXRPpzirSZzwt7958Ko1HzV4PyIYLNSbCEBZx9ZWlXjqEBeBDKO9h7
-	 /0bL6T0JRy6kKjLYJCfsyvMCBomt/xVw2Hr6hPyDSs5q2IsDqyNme1IA2sJ1K8WMRe
-	 iNlwaPd4jyh/dlqN3fHgEz5Uxunmv9/xgx2N5fRq9cYUNyD+roSWIbrL0KdyBHqV0A
-	 YWH0kSdrL+ZSNX5/jtYSXDAuSrCcWwGCLOJBk8JigpBETC1TsUeKJEIwn8ltiIonLw
-	 tL7Mo9HQzQeWA==
-Date: Mon, 3 Mar 2025 13:42:09 +0000
-From: Simon Horman <horms@kernel.org>
-To: MD Danish Anwar <danishanwar@ti.com>
-Cc: Meghana Malladi <m-malladi@ti.com>, Diogo Ivo <diogo.ivo@siemens.com>,
-	Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	srk@ti.com, Vignesh Raghavendra <vigneshr@ti.com>,
-	Roger Quadros <rogerq@kernel.org>
-Subject: Re: [PATCH net-next] net: ti: icssg-prueth: Add ICSSG FW Stats
-Message-ID: <20250303134209.GU1615191@kernel.org>
-References: <20250227093712.2130561-1-danishanwar@ti.com>
+	s=arc-20240116; t=1741009420; c=relaxed/simple;
+	bh=EC3LnVqPbgmcXuI5roGeL5xwiC6iDSLY8CiY9mZTp8k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eyiQeKZNMVBezMyBBq9yneBOrr6ZY8BJ2YTf+813qBVVkdyHVplro3aBjF3skDCczE5MrQv/M6cPBNDxegZCyhbCQ03YLIYqm2WEVvXwjCW63cf4yZz5l1dRj205kDCmogXAPKXd5VTVSq+QbCXnh58S5Wb4yaqfICzOnF+zwOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0855F106F;
+	Mon,  3 Mar 2025 05:43:51 -0800 (PST)
+Received: from [10.57.66.216] (unknown [10.57.66.216])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9D8123F673;
+	Mon,  3 Mar 2025 05:43:35 -0800 (PST)
+Message-ID: <7778df43-5169-4d1c-9fe6-44bee39edfc1@arm.com>
+Date: Mon, 3 Mar 2025 13:43:33 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250227093712.2130561-1-danishanwar@ti.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] PM: EM: fix an API misuse issue in em_create_pd()
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Haoxiang Li <haoxiang_li2024@163.com>
+Cc: len.brown@intel.com, pavel@kernel.org, dietmar.eggemann@arm.com,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20250303034337.3868497-1-haoxiang_li2024@163.com>
+ <CAJZ5v0g5RJaHeYqiP3khp2vPyVHj0W35ab4gtBJ0R14nhSqa_A@mail.gmail.com>
+Content-Language: en-US
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <CAJZ5v0g5RJaHeYqiP3khp2vPyVHj0W35ab4gtBJ0R14nhSqa_A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 27, 2025 at 03:07:12PM +0530, MD Danish Anwar wrote:
-> The ICSSG firmware maintains set of stats called PA_STATS.
-> Currently the driver only dumps 4 stats. Add support for dumping more
-> stats.
+
+
+On 3/3/25 12:38, Rafael J. Wysocki wrote:
+> On Mon, Mar 3, 2025 at 4:43 AM Haoxiang Li <haoxiang_li2024@163.com> wrote:
+>>
+>> Replace kfree() with em_table_free() to free
+>> the memory allocated by em_table_alloc().
 > 
-> The offset for different stats are defined as MACROs in icssg_switch_map.h
-> file. All the offsets are for Slice0. Slice1 offsets are slice0 + 4.
-> The offset calculation is taken care while reading the stats in
-> emac_update_hardware_stats().
+> Ostensibly, this is fixing a problem, but there's no problem described
+> above.  Please describe it.
+
+Thank Rafael for adding me on CC.
+
 > 
-> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+>> Fixes: 24e9fb635df2 ("PM: EM: Remove old table")
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
+>> ---
+>>   kernel/power/energy_model.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
+>> index 3874f0e97651..71b60aa20227 100644
+>> --- a/kernel/power/energy_model.c
+>> +++ b/kernel/power/energy_model.c
+>> @@ -447,7 +447,7 @@ static int em_create_pd(struct device *dev, int nr_states,
+>>          return 0;
+>>
+>>   free_pd_table:
+>> -       kfree(em_table);
+>> +       em_table_free(em_table);
+>>   free_pd:
+>>          kfree(pd);
+>>          return -EINVAL;
+>> --
+>> 2.25.1
+>>
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+IMO there is no need to use RCU freeing mechanism, since
+this table is not used yet. We failed in the initialization
+steps, so we can simply call kfree() on that memory.
 
+That 'free_pd_table' goto label is triggered before the call to:
+
+rcu_assign_pointer(pd->em_table, em_table);
+
+IMO this is even dangerous in the patch to abuse RCU free for such case.
+
+Regards,
+Lukasz
 
