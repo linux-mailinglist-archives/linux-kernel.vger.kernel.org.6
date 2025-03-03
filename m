@@ -1,121 +1,162 @@
-Return-Path: <linux-kernel+bounces-541359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D2C8A4BBF1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:23:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57C67A4BBF9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:24:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21ED618936FF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:23:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D9D4165DA7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:23:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD1C91F181F;
-	Mon,  3 Mar 2025 10:23:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZFFiCPCg";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="p5zYz4L1"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCAFC1F0E3D;
-	Mon,  3 Mar 2025 10:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ADC11F17EB;
+	Mon,  3 Mar 2025 10:23:44 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E21ED1E8338
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 10:23:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740997389; cv=none; b=Eqqet5xPSyj3sMVcGhEkB/jPefFkrVR2cuLF5bES9k7xgWHqRLNg5a803jNM9P+rKvuUuLRYeDAI4azWfxlRc5y/NLBWV+IE4JsDRX6gUAGKD/TRks6TyirTFJYJM2MW+VZo/3vhqd0AIt70Kd645qJ3c3VigES+XIeDBGIoABg=
+	t=1740997423; cv=none; b=mJxNNc9SozBRN78FijRQ42KuBgRiv9IHMetXnaUTnNqhXjBG5FBpcaMhjIxhWyQRovhB75ZrduVm17tiqUIBcBUfdOj1PD2IETIEmayiQ7Vr11bfrPGWMmQzwf4gFM3+SL2tLShtGGA5mU6nS3VOBKXwE+duIVdMWcz78onA5/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740997389; c=relaxed/simple;
-	bh=wYOBcnI3XVtlHLC1GGMPUeDv5qroZJftBhJv4x7ysSY=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=OFFCOkLRfG9O+bj3EEqT1spG3g2MXmOSwhtHRuYTSITOI+zryZgRZjDHKMAV8QBF/VzWMRxG8E239wucooG6ylsqCNpRvRhG1MUkTkkDY+j/XZdnRxDkIHiVanlS/MRPcrRIVLG5lsFunkZgSlJrjdG2wDzjjZvB8/WLJ9duefI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZFFiCPCg; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=p5zYz4L1; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 03 Mar 2025 10:23:03 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740997385;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ForH1bO4z81FxmkT/jXljNK17Iu9LFYhxm7JTnTzFFQ=;
-	b=ZFFiCPCgDonw1ELW9ODtIoYot9dJpxZ0M4MTfqqNfeR88k0IlpCuVkqAHEW0g7IGGHyHI8
-	EZc9JQ0RCX3VXmm3LPqBYZdv4qaAljp0G23kSTjuOXBf1ds1aQHtNMIApP3/FhSBEn6vQ7
-	mPy2YtnfchSe0g4sfphviGc8ZpPTn5jHvqhhfy7k4/ZYTPnYBLX0HF9y+w17JdeCs6rTqS
-	CdhmJj5Pj/20EKUyXzqRgws4YLvX2SXZOzJ6MGbB7c6RsTEnNYKaF6fTUKIlT652ohiK2w
-	Hq0QDGuN5R17p76x3ClxrPUN9lDu4ofhOcTRSdJXyvzigtPFWT5TcE7dg+adtw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740997385;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ForH1bO4z81FxmkT/jXljNK17Iu9LFYhxm7JTnTzFFQ=;
-	b=p5zYz4L1jQ870pXiNwac2RymCnIH/KmcNYOi4SHeVvAYSRv2EfsPH1uIC5llk/lg+58x7x
-	NmsOWlthgL0Ji7AA==
-From: "tip-bot2 for Lukas Bulwahn" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cpu] xen: Kconfig: Drop reference to obsolete configs
- MCORE2 and MK8
-Cc: Lukas Bulwahn <lukas.bulwahn@redhat.com>, Ingo Molnar <mingo@kernel.org>,
- Juergen Gross <jgross@suse.com>, x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250303093759.371445-1-lukas.bulwahn@redhat.com>
-References: <20250303093759.371445-1-lukas.bulwahn@redhat.com>
+	s=arc-20240116; t=1740997423; c=relaxed/simple;
+	bh=HMYFcT1D/Mq/XIZ0zFhB6ymz6wEqEq1zIq2vANNrofo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EJGrWbRbiCCWF8ku42qZB77I2J45KTqmKC/0c0Ee13oxX10CcF6N/aosDzThhQqk0Ag211IU37md+LjmPbHtDoEkdYyvsFKQzwqJOzOZRWRKMs9QoFFwIsNN58GY+FMkJqgvMDbFyp29T2LUncXm/P7UoisoCN8NjIf+GJL0AGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6491F12FC;
+	Mon,  3 Mar 2025 02:23:55 -0800 (PST)
+Received: from [10.1.26.155] (XHFQ2J9959.cambridge.arm.com [10.1.26.155])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 814F63F66E;
+	Mon,  3 Mar 2025 02:23:39 -0800 (PST)
+Message-ID: <9dd8e02c-9abb-47e6-92df-cf7af6cda99c@arm.com>
+Date: Mon, 3 Mar 2025 10:23:37 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174099738443.10177.5303212192707444006.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 0/8] arm64/mm: Drop PXD_TABLE_BIT
+Content-Language: en-GB
+To: Anshuman Khandual <anshuman.khandual@arm.com>,
+ arm-kernel@lists.infradead.org
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+ James Morse <james.morse@arm.com>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Ard Biesheuvel <ardb@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250221044227.1145393-1-anshuman.khandual@arm.com>
+ <aa71c6ed-8ff2-4b52-b8f7-49147c7769ba@arm.com>
+ <a9600c92-bef0-4dd1-95d4-c696d686da18@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <a9600c92-bef0-4dd1-95d4-c696d686da18@arm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the x86/cpu branch of tip:
+On 03/03/2025 05:02, Anshuman Khandual wrote:
+> 
+> 
+> On 2/28/25 21:02, Ryan Roberts wrote:
+>> On 21/02/2025 04:42, Anshuman Khandual wrote:
+>>> Remove the PXX_TABLE_BIT definitions and instead rely on PXX_TYPE_MASK,
+>>> PXX_TYPE_SECT and PXX_TYPE_TABLE. The latter versions are more abstract
+>>> and also include the PTE_VALID bit.
+>>>
+>>> This abstraction is valuable for the impending D128 page table support,
+>>> which doesn't have a single page table bit to determine table vs block.
+>>> Instead it has the skip level (SKL) field, where it will consider 0 to
+>>> mean table and any other value to mean a block entry. So PXX_TABLE_BIT
+>>> therefore doesn't fit into the D128 model well, but the type fields do.
+>>
+>> All the patches look logically correct to me and I agree with the intention of
+>> removing PXX_TABLE_BIT. But personally I'd prefer to see a single patch that
+>> just does everything that's required to remove PXX_TABLE_BIT. And then a second
+>> patch for the pud_bad() fix/improvement (currently patch 6) which is orthogonal
+>> to the removal of PXX_TABLE_BIT.
+>>
+>> That would make it much easier to review IMHO, and would also allow for writing
+>> a single commit log which provides the justification for the change. I find the
+>> current set of 7 commit logs to not be hugely helpful.
+> 
+> Dropping PXX_TABLE_BIT from individual functional components which stand on their
+> own progressively leads to its complete removal from the tree. Even though goal
+> is PXX_TABLE_BIT mask's complete removal, each patch here could be justified on
+> its own improving consistent reasoning around various section mapping creation
+> and identification while keeping the functionality unchanged and also improving
+> code readability as well.
+> 
+>>
+>> But I wrote the original patches and wrote them as I'm suggesting, so I would
+>> say that :)
+> 
+> I can understand :) Although it also follows and expands on the previous attempt
+> in removing this mask that formed a patch series instead.
+> 
+> https://lore.kernel.org/all/20241005123824.1366397-1-anshuman.khandual@arm.com/
+> 
+> TBH this is not a big deal. I can merge all but last one into a single patch as
+> you have suggested if that's a general consensus. Although I would prefer the
+> current logically progressive series based approach but that's just me.
 
-Commit-ID:     5c98a674dcb85be3f42854a80e630f08b436131e
-Gitweb:        https://git.kernel.org/tip/5c98a674dcb85be3f42854a80e630f08b436131e
-Author:        Lukas Bulwahn <lukas.bulwahn@redhat.com>
-AuthorDate:    Mon, 03 Mar 2025 10:37:59 +01:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Mon, 03 Mar 2025 11:15:07 +01:00
+I guess leave as is for now and see what others say.
 
-xen: Kconfig: Drop reference to obsolete configs MCORE2 and MK8
+> 
+>>
+>> I'm guessing I shouldn't provide a Reviewed-By here, given I wrote the code
+>> originally...
+>>
+>> Thanks,
+>> Ryan
+>>
+>>
+>>>
+>>> This series applies on v6.14-rc3.
+>>>
+>>> Changes in V2:
+>>>
+>>> - Changed pmd_mkhuge() and pud_mkhuge() implementation
+>>> - Changed pud_bad() implementation with an additional patch
+>>>
+>>> Changes in V1:
+>>>
+>>> https://lore.kernel.org/all/20241005123824.1366397-1-anshuman.khandual@arm.com/
+>>>
+>>> Cc: Marc Zyngier <maz@kernel.org>
+>>> Cc: Oliver Upton <oliver.upton@linux.dev>
+>>> Cc: James Morse <james.morse@arm.com>
+>>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>>> Cc: Will Deacon <will@kernel.org>
+>>> Cc: Ard Biesheuvel <ardb@kernel.org>
+>>> Cc: Ryan Roberts <ryan.roberts@arm.com>
+>>> Cc: Mark Rutland <mark.rutland@arm.com>
+>>> Cc: kvmarm@lists.linux.dev
+>>> Cc: linux-arm-kernel@lists.infradead.org
+>>> Cc: linux-kernel@vger.kernel.org
+>>>
+>>> Anshuman Khandual (6):
+>>>   KVM: arm64: ptdump: Test PMD_TYPE_MASK for block mapping
+>>>   arm64/ptdump: Test PMD_TYPE_MASK for block mapping
+>>>   arm64/mm: Clear PXX_TYPE_MASK in mk_[pmd|pud]_sect_prot()
+>>>   arm64/mm: Clear PXX_TYPE_MASK and set PXD_TYPE_SECT in [pmd|pud]_mkhuge()
+>>>   arm64/mm: Check PXD_TYPE_TABLE in [p4d|pgd]_bad()
+>>>   arm64/mm: Drop PXD_TABLE_BIT
+>>>
+>>> Ryan Roberts (2):
+>>>   arm64/mm: Check PUD_TYPE_TABLE in pud_bad()
+>>>   arm64/mm: Check pmd_table() in pmd_trans_huge()
+>>>
+>>>  arch/arm64/include/asm/pgtable-hwdef.h |  5 --
+>>>  arch/arm64/include/asm/pgtable.h       | 65 ++++++++++++++++++--------
+>>>  arch/arm64/kvm/ptdump.c                |  4 +-
+>>>  arch/arm64/mm/ptdump.c                 |  4 +-
+>>>  4 files changed, 50 insertions(+), 28 deletions(-)
+>>>
+>>
 
-Commit f388f60ca904 ("x86/cpu: Drop configuration options for early 64-bit CPUs")
-removes the config symbols MCORE2 and MK8.
-
-With that, the references to those two config symbols in xen's x86 Kconfig
-are obsolete. Drop them.
-
-Fixes: f388f60ca904 ("x86/cpu: Drop configuration options for early 64-bit CPUs")
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Link: https://lore.kernel.org/r/20250303093759.371445-1-lukas.bulwahn@redhat.com
----
- arch/x86/xen/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/xen/Kconfig b/arch/x86/xen/Kconfig
-index 77e788e..98d8a50 100644
---- a/arch/x86/xen/Kconfig
-+++ b/arch/x86/xen/Kconfig
-@@ -9,7 +9,7 @@ config XEN
- 	select PARAVIRT_CLOCK
- 	select X86_HV_CALLBACK_VECTOR
- 	depends on X86_64 || (X86_32 && X86_PAE)
--	depends on X86_64 || (X86_GENERIC || MPENTIUM4 || MCORE2 || MATOM || MK8)
-+	depends on X86_64 || (X86_GENERIC || MPENTIUM4 || MATOM)
- 	depends on X86_LOCAL_APIC && X86_TSC
- 	help
- 	  This is the Linux Xen port.  Enabling this will allow the
 
