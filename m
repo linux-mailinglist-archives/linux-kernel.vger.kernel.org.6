@@ -1,328 +1,219 @@
-Return-Path: <linux-kernel+bounces-542418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37CD5A4C927
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:21:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EECBA4C96F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:29:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 150F47A29B8
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:20:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFBBD1894E0A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:23:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C55E222CBF6;
-	Mon,  3 Mar 2025 17:08:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7581250BE8;
+	Mon,  3 Mar 2025 17:10:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="TDOsB2Vv"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lr+Ay+4t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA4D84A3E;
-	Mon,  3 Mar 2025 17:08:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F092505BD;
+	Mon,  3 Mar 2025 17:10:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741021722; cv=none; b=bAgLACN3jTAXYemA9lb9Ulyz+dTiIfJJ9uCpoCHbo+RuDVEaPhficpLmK7vMuWY2McZevLyiyzOkb1VvMOeEdhoxbzRBoExpxK1+AM32jc3uNJtYr9qRx3S+EETgheWe+684RCAtdz9GTa03K1z4IDWoQY37RAVq9g0ZPdC8PpI=
+	t=1741021839; cv=none; b=d+8ogOv0wUbrFmsVbtPYzpd6swsFXEHcK4YrXMqwlyESZHNa7NkIGThGFJBsQno9CljPsQorogHbmYXkHbVa0aEL3FEbjJRjOFOc6ulpJB9AKyC8+vQGiGes6NkD5QP9Ly9MKJA+Pcejoc9mWnrTFP8mJRxXuaJRMH35fT7CZnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741021722; c=relaxed/simple;
-	bh=JYE1xhFKKd/5c4jb4Keu0UaYC7On9wH9tg5GmCG8k1c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TphVuxS3KBKzTYIGq1K3uhyDOE6g4xl/CLlCmxc3TZFVyQkky45+/1Vbfg0GJUMnLkfQy7Z9iME3V7QWCOkEVY0OLgdmP9I3iwHW5u5p2l79wEb995zrIKmayE4OlLHlNqYtL8GfxIiq+uOcb76j+bnoojB4I9zzZxc+Q/ykuqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=TDOsB2Vv; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.42.116] (pd9e59f4f.dip0.t-ipconnect.de [217.229.159.79])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 6287A2FC004A;
-	Mon,  3 Mar 2025 18:08:36 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1741021716;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f+aFrlynqBCI6EAy7aY4YpYPMDWism/F0c6RZQzcRAg=;
-	b=TDOsB2VvBZ8kTxA4mxpTjr4fiGNnA16Ip4gU4C3Yh/Lo3PnBQIpERBdyx+AVkVFN8elUKk
-	PfQF1KbOdzulGgW9lexiDdq7kihnSZGurdxNcS9qs1SiYR0nVNAY9pzWcAFDrLbaICC1/G
-	WykxdigjP8suPztaaft9QBIelAbvrHs=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-Message-ID: <3140a369-7877-41ee-b4e8-b42789d99d45@tuxedocomputers.com>
-Date: Mon, 3 Mar 2025 18:08:36 +0100
+	s=arc-20240116; t=1741021839; c=relaxed/simple;
+	bh=0Ma6qtuWXoQR5mDUqmgzEioSTKwb9JabDAkmPqXbGro=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=tkSSn4D1ALupOitXZ7JAAIruWzIx1dx2r2JToIdqxgWeYFuXmIBiMS1SqGqr7pDxwPEdlYmCmzKQf3DV9Lv0xDx/BODZ6eB3jfG6AG1vQ6aMlWOj1OGqRqY3LHbtL6h9pnF6wJKzgQ6UPAZ91gBM6EzzLURmB/xeERcvhicFF2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lr+Ay+4t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38184C4CEE9;
+	Mon,  3 Mar 2025 17:10:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741021838;
+	bh=0Ma6qtuWXoQR5mDUqmgzEioSTKwb9JabDAkmPqXbGro=;
+	h=From:Date:Subject:To:Cc:From;
+	b=lr+Ay+4tZ+db/l321NhdYmN/Bx44rkHv2eW+ZdMUE9rFVejQ7O5tx6Qm1+b509JuA
+	 tpTOcdJqQf+2YfAZpDK0dWdpx2rpwIV42LYR0AvVT6qz+PvUs4459aAuFnHeLMoakd
+	 ZGOLCeSVStuibTH8OXBXiurlxWCz6w1od1+8om+L0vIA+c5ja21kKaqzAG1EIhOEUh
+	 k/8M7uXCZHjsDbfKZOnbc6QQD2mnyVkJQORcRNIhp4upb99pGtkYL1wC3LgwoPSGb0
+	 FDK/K+rc5Tdsn/ZosaBhO3M3IsJA6FqMguJ5oTeawsXVjhI2NigE9zNUnh0tsdd7ur
+	 5F5JcwOzrb0iw==
+From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Date: Mon, 03 Mar 2025 18:10:13 +0100
+Subject: [PATCH net] mptcp: fix 'scheduling while atomic' in
+ mptcp_pm_nl_append_new_local_addr
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] Input: atkbd - Fix TUXEDO NB02 notebook keyboards
- FN-keys
-To: Mario Limonciello <mario.limonciello@amd.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-References: <20250303161228.437604-1-wse@tuxedocomputers.com>
- <20250303161228.437604-2-wse@tuxedocomputers.com>
- <939e3b28-f11f-48ed-98b9-b5b5ef77eb0e@amd.com>
-Content-Language: en-US
-From: Werner Sembach <wse@tuxedocomputers.com>
-In-Reply-To: <939e3b28-f11f-48ed-98b9-b5b5ef77eb0e@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250303-net-mptcp-fix-sched-while-atomic-v1-1-f6a216c5a74c@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAHTixWcC/x2NQQqDMBBFryKz7kAaEaxXKV0kk7EZ0BiSoIJ49
+ w5dPvjvvwsqF+EKU3dB4V2qbEnh+eiAoktfRgnKYI0dTG96TNxwzY0yznJipcgBjygLo2vbKoT
+ ENDpv/cuPAfQmF9blP/EGteFz3z/daplxdwAAAA==
+X-Change-ID: 20250303-net-mptcp-fix-sched-while-atomic-cec8ab2b9b8d
+To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
+ Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krister Johansen <kjlx@templeofstupid.com>, stable@vger.kernel.org, 
+ "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6168; i=matttbe@kernel.org;
+ h=from:subject:message-id; bh=rI+xTjW/4Di7bik1jLTrX+13V8FWkx3oKnm1qjlifLk=;
+ b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBnxeKK0U7l7IEBnfq70QSMPIDEPTqChfSHmENaY
+ Wmwj+lJbz6JAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZ8XiigAKCRD2t4JPQmmg
+ c8OsEADKOrBAMJdg2+WjVltI89o6n7LuiBcXel5yfXK1OHWldplLTPAu5+mhDblqqhL7ayb/5A7
+ BRj0wwJ3Fa79iMk931xbmQ+rnKRBIIfOexNlgvxjkj8If6ofZueI6WPBthi41y5vQGCfoA/JmX3
+ 1ET7nvS1SyEECNU+oLMpEVoWOEqR8+iebbWa65elJf/G9/1p59QExvg1KiF5K2YByd/uHV9NkWo
+ r1Ebx2CDRFbhoCY2QQB1wu1352LWIA8K76faHkk+3orIt09TFCnYOTeZdTdLgr1d6joTNTEITgC
+ r12PwQoxXTTKnR60C7rJkGm20V8fhP4vLstdMDgozyHlBX/BFwQIdxAsQuj9SfAQGDM/qtUj1Ky
+ nQwkaIRwp1zEYMLTq4+6VxYobOfC2e0Xmt/g5qKM/zt7vyBD4bedv8X/VioXi0EekrMWZVlTrYO
+ QBS5Id9AbY95+34TEpFEUBRyZdavEYZUyH96MoIdtf97x6iSk4DbBhCFXd7x5mHA0IbioCMNkfr
+ gNbheQ3vEGW6V/4NRNRQpnKuOAmvyR37TlyQjkxFYRj7XYSY4c/88Gr39h1ygg3+TClD8n/mRgA
+ 0NgNsXmWFHFBnFP2kM38V6Smkn0G0oe24gZaisgSDMTuM+FyxtaS/zRu1g+P4JTbYz8bAxaD309
+ 0dliG6NJCcXSvYg==
+X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
+ fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
 
+From: Krister Johansen <kjlx@templeofstupid.com>
 
-Am 03.03.25 um 17:46 schrieb Mario Limonciello:
-> On 3/3/2025 10:11, Werner Sembach wrote:
->> This small driver does 2 things:
->>
->> It remaps the touchpad toggle key from Control + Super + Hangaku/Zenkaku to
->> F21 to conform with established userspace defaults. Note that the
->> Hangaku/Zenkaku scancode used here is usually unused, with real
->> Hangaku/Zenkaku keys using the tilde scancode.
->>
->> It suppresses the reserved scancode produced by pressing the FN-key on its
->> own, which fixes a warning spamming the dmesg log otherwise.
->>
->> Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
->> ---
->>   MAINTAINERS                                 |  6 ++
->>   drivers/platform/x86/Kconfig                |  2 +
->>   drivers/platform/x86/Makefile               |  3 +
->>   drivers/platform/x86/tuxedo/Kbuild          |  6 ++
->>   drivers/platform/x86/tuxedo/Kconfig         |  6 ++
->>   drivers/platform/x86/tuxedo/nb02/Kbuild     |  7 ++
->>   drivers/platform/x86/tuxedo/nb02/Kconfig    | 15 ++++
->>   drivers/platform/x86/tuxedo/nb02/platform.c | 79 +++++++++++++++++++++
->>   8 files changed, 124 insertions(+)
->>   create mode 100644 drivers/platform/x86/tuxedo/Kbuild
->>   create mode 100644 drivers/platform/x86/tuxedo/Kconfig
->>   create mode 100644 drivers/platform/x86/tuxedo/nb02/Kbuild
->>   create mode 100644 drivers/platform/x86/tuxedo/nb02/Kconfig
->>   create mode 100644 drivers/platform/x86/tuxedo/nb02/platform.c
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 4ff26fa94895d..d3fbbcef813b0 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -24178,6 +24178,12 @@ T:    git 
->> git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux.git turbostat
->>   F:    tools/power/x86/turbostat/
->>   F:    tools/testing/selftests/turbostat/
->>   +TUXEDO DRIVERS
->> +M:    Werner Sembach <wse@tuxedocomputers.com>
->> +L:    platform-driver-x86@vger.kernel.org
->> +S:    Supported
->> +F:    drivers/platform/x86/tuxedo/
->> +
->>   TW5864 VIDEO4LINUX DRIVER
->>   M:    Bluecherry Maintainers <maintainers@bluecherrydvr.com>
->>   M:    Andrey Utkin <andrey.utkin@corp.bluecherry.net>
->> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
->> index 0258dd879d64b..9b78a1255c08e 100644
->> --- a/drivers/platform/x86/Kconfig
->> +++ b/drivers/platform/x86/Kconfig
->> @@ -1199,3 +1199,5 @@ config P2SB
->>         The main purpose of this library is to unhide P2SB device in case
->>         firmware kept it hidden on some platforms in order to access devices
->>         behind it.
->> +
->> +source "drivers/platform/x86/tuxedo/Kconfig"
->> diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
->> index e1b1429470674..1562dcd7ad9a5 100644
->> --- a/drivers/platform/x86/Makefile
->> +++ b/drivers/platform/x86/Makefile
->> @@ -153,3 +153,6 @@ obj-$(CONFIG_WINMATE_FM07_KEYS)        += 
->> winmate-fm07-keys.o
->>     # SEL
->>   obj-$(CONFIG_SEL3350_PLATFORM)        += sel3350-platform.o
->> +
->> +# TUXEDO
->> +obj-y                    += tuxedo/
->> diff --git a/drivers/platform/x86/tuxedo/Kbuild 
->> b/drivers/platform/x86/tuxedo/Kbuild
->> new file mode 100644
->> index 0000000000000..e9c4243d438ba
->> --- /dev/null
->> +++ b/drivers/platform/x86/tuxedo/Kbuild
->> @@ -0,0 +1,6 @@
->> +# SPDX-License-Identifier: GPL-2.0-or-later
->> +#
->> +# TUXEDO X86 Platform Specific Drivers
->> +#
->> +
->> +obj-y    += nb02/
->> diff --git a/drivers/platform/x86/tuxedo/Kconfig 
->> b/drivers/platform/x86/tuxedo/Kconfig
->> new file mode 100644
->> index 0000000000000..e463f92135780
->> --- /dev/null
->> +++ b/drivers/platform/x86/tuxedo/Kconfig
->> @@ -0,0 +1,6 @@
->> +# SPDX-License-Identifier: GPL-2.0-only
->> +#
->> +# TUXEDO X86 Platform Specific Drivers
->> +#
->> +
->> +source "drivers/platform/x86/tuxedo/nb02/Kconfig"
->> diff --git a/drivers/platform/x86/tuxedo/nb02/Kbuild 
->> b/drivers/platform/x86/tuxedo/nb02/Kbuild
->> new file mode 100644
->> index 0000000000000..8624a012cd683
->> --- /dev/null
->> +++ b/drivers/platform/x86/tuxedo/nb02/Kbuild
->> @@ -0,0 +1,7 @@
->> +# SPDX-License-Identifier: GPL-2.0-only
->> +#
->> +# TUXEDO X86 Platform Specific Drivers
->> +#
->> +
->> +tuxedo_nb02_platform-y            := platform.o
->> +obj-$(CONFIG_TUXEDO_NB02_PLATFORM)    += tuxedo_nb02_platform.o
->> diff --git a/drivers/platform/x86/tuxedo/nb02/Kconfig 
->> b/drivers/platform/x86/tuxedo/nb02/Kconfig
->> new file mode 100644
->> index 0000000000000..848ab61164404
->> --- /dev/null
->> +++ b/drivers/platform/x86/tuxedo/nb02/Kconfig
->> @@ -0,0 +1,15 @@
->> +# SPDX-License-Identifier: GPL-2.0-only
->> +#
->> +# TUXEDO X86 Platform Specific Drivers
->> +#
->> +
->> +menuconfig TUXEDO_NB02_PLATFORM
->> +    tristate "TUXEDO NB02 Platform Driver"
->> +    default m
->
-> Don't most platform/x86 drivers default to 'n'?  It's up to distros and users 
-> to turn on I thought.
-Didn't give much tough to this particularly, will look into it
->
->> +    help
->> +      This driver implements miscellaneous things found on TUXEDO Notebooks
->> +      with board vendor NB02. For the time being this is only remapping the
->> +      touchpad toggle key to something supported by most Linux distros
->> +      out-of-the-box and supressing an unsupported scancode from the FN-key.
->
-> suppressing
-thanks for spotting
->
->> +
->> +      When compiled as a module it will be called tuxedo_nb02_platform.
->> diff --git a/drivers/platform/x86/tuxedo/nb02/platform.c 
->> b/drivers/platform/x86/tuxedo/nb02/platform.c
->> new file mode 100644
->> index 0000000000000..a6137c8b2d4aa
->> --- /dev/null
->> +++ b/drivers/platform/x86/tuxedo/nb02/platform.c
->> @@ -0,0 +1,79 @@
->> +// SPDX-License-Identifier: GPL-2.0-or-later
->> +/*
->> + * Copyright (C) 2025 Werner Sembach wse@tuxedocomputers.com
->> + */
->> +
->> +#include <linux/i8042.h>
->> +#include <linux/kernel.h>
->> +#include <linux/module.h>
->> +#include <linux/serio.h>
->> +
->> +static u8 tux_nb02_touchp_toggle_seq[] = {
->> +    0xe0, 0x5b, // Super down
->> +    0x1d,       // Control down
->> +    0x76,       // Zenkaku/Hankaku down
->> +    0xf6,       // Zenkaku/Hankaku up
->> +    0x9d,       // Control up
->> +    0xe0, 0xdb  // Super up
->> +};
->> +
->> +static bool tux_nb02_i8042_filter(unsigned char data,
->> +                  unsigned char str,
->> +                  struct serio *port,
->> +                  __always_unused void *context)
->> +{
->> +    static u8 seq_pos;
->> +
->> +    if (unlikely(str & I8042_STR_AUXDATA))
->> +        return false;
->> +
->> +    pr_info("%#04x\n", data);
->
-> A bit too noisy for a filter, no?
-Yes, missed it when removing the debugging statements.
->
->> +
->> +    // Replace touchpad toggle key sequence with a singular press of the
->> +    // F21-key.
->
-> Multi-line comments are supposed to be /* */
-will fix
->
->> +    if (unlikely(data == tux_nb02_touchp_toggle_seq[seq_pos])) {
->> +        ++seq_pos;
->> +        if (seq_pos == ARRAY_SIZE(tux_nb02_touchp_toggle_seq)) {
->> +            seq_pos = 0;
->> +            serio_interrupt(port, 0x6c, 0); // F21 down
->> +            serio_interrupt(port, 0xec, 0); // F21 up
->> +        }
->> +        return true;
->> +    }
->> +
->> +    // Ignore bogus scancode produced by the FN-key. Reuse seq_pos as first
->> +    // byte of that is just the "extended"-byte.
->
-> Multi-line comments are supposed to be /* */
-will fix
->
->> +    if (unlikely(seq_pos == 1 && (data == 0x78 || data == 0xf8))) {
->> +        seq_pos = 0;
->> +        return true;
->> +    }
->> +
->> +    // Replay skipped sequence bytes if it did not finish and it was not a
->> +    // FN-key press.
->
-> Multi-line comments are supposed to be /* */
-will fix
->
->> +    if (unlikely(seq_pos)) {
->> +        for (u8 i; i < seq_pos; ++i)
->> +            serio_interrupt(port, tux_nb02_touchp_toggle_seq[i], 0);
->> +        seq_pos = 0;
->> +    }
->> +
->> +    return false;
->> +}
->> +
->> +static int __init tux_nb02_plat_init(void)
->> +{
->> +    return i8042_install_filter(tux_nb02_i8042_filter, NULL);
->
-> The driver is tri-state.  If it was 'm' it wouldn't load on anything but the 
-> matching hardware.
->
-> But think about what happens if a user compiled a kernel with this 'y'.
->
-> The tux_nb02_plat_init() would install a filter even though they didn't have 
-> matching hardware.
->
-> I think you need some sort of assertion this driver matches the hardware and 
-> return -ENODEV if it doesn't.
-Ok
->
->> +}
->> +
->> +static void __exit tux_nb02_plat_exit(void)
->> +{
->> +    i8042_remove_filter(tux_nb02_i8042_filter);
->> +}
->> +
->> +module_init(tux_nb02_plat_init);
->> +module_exit(tux_nb02_plat_exit);
->> +
->> +MODULE_ALIAS("dmi:*:svnTUXEDO:*:rvnNB02:*");
->> +
->> +MODULE_DESCRIPTION("TUXEDO NB02 Platform");
->> +MODULE_AUTHOR("Werner Sembach <wse@tuxedocomputers.com>");
->> +MODULE_LICENSE("GPL");
->
+If multiple connection requests attempt to create an implicit mptcp
+endpoint in parallel, more than one caller may end up in
+mptcp_pm_nl_append_new_local_addr because none found the address in
+local_addr_list during their call to mptcp_pm_nl_get_local_id.  In this
+case, the concurrent new_local_addr calls may delete the address entry
+created by the previous caller.  These deletes use synchronize_rcu, but
+this is not permitted in some of the contexts where this function may be
+called.  During packet recv, the caller may be in a rcu read critical
+section and have preemption disabled.
+
+An example stack:
+
+   BUG: scheduling while atomic: swapper/2/0/0x00000302
+
+   Call Trace:
+   <IRQ>
+   dump_stack_lvl (lib/dump_stack.c:117 (discriminator 1))
+   dump_stack (lib/dump_stack.c:124)
+   __schedule_bug (kernel/sched/core.c:5943)
+   schedule_debug.constprop.0 (arch/x86/include/asm/preempt.h:33 kernel/sched/core.c:5970)
+   __schedule (arch/x86/include/asm/jump_label.h:27 include/linux/jump_label.h:207 kernel/sched/features.h:29 kernel/sched/core.c:6621)
+   schedule (arch/x86/include/asm/preempt.h:84 kernel/sched/core.c:6804 kernel/sched/core.c:6818)
+   schedule_timeout (kernel/time/timer.c:2160)
+   wait_for_completion (kernel/sched/completion.c:96 kernel/sched/completion.c:116 kernel/sched/completion.c:127 kernel/sched/completion.c:148)
+   __wait_rcu_gp (include/linux/rcupdate.h:311 kernel/rcu/update.c:444)
+   synchronize_rcu (kernel/rcu/tree.c:3609)
+   mptcp_pm_nl_append_new_local_addr (net/mptcp/pm_netlink.c:966 net/mptcp/pm_netlink.c:1061)
+   mptcp_pm_nl_get_local_id (net/mptcp/pm_netlink.c:1164)
+   mptcp_pm_get_local_id (net/mptcp/pm.c:420)
+   subflow_check_req (net/mptcp/subflow.c:98 net/mptcp/subflow.c:213)
+   subflow_v4_route_req (net/mptcp/subflow.c:305)
+   tcp_conn_request (net/ipv4/tcp_input.c:7216)
+   subflow_v4_conn_request (net/mptcp/subflow.c:651)
+   tcp_rcv_state_process (net/ipv4/tcp_input.c:6709)
+   tcp_v4_do_rcv (net/ipv4/tcp_ipv4.c:1934)
+   tcp_v4_rcv (net/ipv4/tcp_ipv4.c:2334)
+   ip_protocol_deliver_rcu (net/ipv4/ip_input.c:205 (discriminator 1))
+   ip_local_deliver_finish (include/linux/rcupdate.h:813 net/ipv4/ip_input.c:234)
+   ip_local_deliver (include/linux/netfilter.h:314 include/linux/netfilter.h:308 net/ipv4/ip_input.c:254)
+   ip_sublist_rcv_finish (include/net/dst.h:461 net/ipv4/ip_input.c:580)
+   ip_sublist_rcv (net/ipv4/ip_input.c:640)
+   ip_list_rcv (net/ipv4/ip_input.c:675)
+   __netif_receive_skb_list_core (net/core/dev.c:5583 net/core/dev.c:5631)
+   netif_receive_skb_list_internal (net/core/dev.c:5685 net/core/dev.c:5774)
+   napi_complete_done (include/linux/list.h:37 include/net/gro.h:449 include/net/gro.h:444 net/core/dev.c:6114)
+   igb_poll (drivers/net/ethernet/intel/igb/igb_main.c:8244) igb
+   __napi_poll (net/core/dev.c:6582)
+   net_rx_action (net/core/dev.c:6653 net/core/dev.c:6787)
+   handle_softirqs (kernel/softirq.c:553)
+   __irq_exit_rcu (kernel/softirq.c:588 kernel/softirq.c:427 kernel/softirq.c:636)
+   irq_exit_rcu (kernel/softirq.c:651)
+   common_interrupt (arch/x86/kernel/irq.c:247 (discriminator 14))
+   </IRQ>
+
+This problem seems particularly prevalent if the user advertises an
+endpoint that has a different external vs internal address.  In the case
+where the external address is advertised and multiple connections
+already exist, multiple subflow SYNs arrive in parallel which tends to
+trigger the race during creation of the first local_addr_list entries
+which have the internal address instead.
+
+Fix by skipping the replacement of an existing implicit local address if
+called via mptcp_pm_nl_get_local_id.
+
+Fixes: d045b9eb95a9 ("mptcp: introduce implicit endpoints")
+Cc: stable@vger.kernel.org
+Suggested-by: Paolo Abeni <pabeni@redhat.com>
+Signed-off-by: Krister Johansen <kjlx@templeofstupid.com>
+Reviewed-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+---
+ net/mptcp/pm_netlink.c | 18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
+
+diff --git a/net/mptcp/pm_netlink.c b/net/mptcp/pm_netlink.c
+index c0e47f4f7b1aa2fedf615c44ea595c1f9d2528f9..7868207c4e9d9d7d4855ca3fadc02506637708ba 100644
+--- a/net/mptcp/pm_netlink.c
++++ b/net/mptcp/pm_netlink.c
+@@ -977,7 +977,7 @@ static void __mptcp_pm_release_addr_entry(struct mptcp_pm_addr_entry *entry)
+ 
+ static int mptcp_pm_nl_append_new_local_addr(struct pm_nl_pernet *pernet,
+ 					     struct mptcp_pm_addr_entry *entry,
+-					     bool needs_id)
++					     bool needs_id, bool replace)
+ {
+ 	struct mptcp_pm_addr_entry *cur, *del_entry = NULL;
+ 	unsigned int addr_max;
+@@ -1017,6 +1017,17 @@ static int mptcp_pm_nl_append_new_local_addr(struct pm_nl_pernet *pernet,
+ 			if (entry->addr.id)
+ 				goto out;
+ 
++			/* allow callers that only need to look up the local
++			 * addr's id to skip replacement. This allows them to
++			 * avoid calling synchronize_rcu in the packet recv
++			 * path.
++			 */
++			if (!replace) {
++				kfree(entry);
++				ret = cur->addr.id;
++				goto out;
++			}
++
+ 			pernet->addrs--;
+ 			entry->addr.id = cur->addr.id;
+ 			list_del_rcu(&cur->list);
+@@ -1165,7 +1176,7 @@ int mptcp_pm_nl_get_local_id(struct mptcp_sock *msk, struct mptcp_addr_info *skc
+ 	entry->ifindex = 0;
+ 	entry->flags = MPTCP_PM_ADDR_FLAG_IMPLICIT;
+ 	entry->lsk = NULL;
+-	ret = mptcp_pm_nl_append_new_local_addr(pernet, entry, true);
++	ret = mptcp_pm_nl_append_new_local_addr(pernet, entry, true, false);
+ 	if (ret < 0)
+ 		kfree(entry);
+ 
+@@ -1433,7 +1444,8 @@ int mptcp_pm_nl_add_addr_doit(struct sk_buff *skb, struct genl_info *info)
+ 		}
+ 	}
+ 	ret = mptcp_pm_nl_append_new_local_addr(pernet, entry,
+-						!mptcp_pm_has_addr_attr_id(attr, info));
++						!mptcp_pm_has_addr_attr_id(attr, info),
++						true);
+ 	if (ret < 0) {
+ 		GENL_SET_ERR_MSG_FMT(info, "too many addresses or duplicate one: %d", ret);
+ 		goto out_free;
+
+---
+base-commit: 64e6a754d33d31aa844b3ee66fb93ac84ca1565e
+change-id: 20250303-net-mptcp-fix-sched-while-atomic-cec8ab2b9b8d
+
+Best regards,
+-- 
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
+
 
