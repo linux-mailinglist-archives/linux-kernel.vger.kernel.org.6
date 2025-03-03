@@ -1,109 +1,120 @@
-Return-Path: <linux-kernel+bounces-542799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06487A4CDDB
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:06:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03CF2A4CDDC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:07:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09B01189591D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:06:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 778E53AA8EF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:06:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54459230BE0;
-	Mon,  3 Mar 2025 22:06:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 457791EE00D;
+	Mon,  3 Mar 2025 22:06:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vb7YuO3q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="oR+U18gD"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3DA11C5D76;
-	Mon,  3 Mar 2025 22:06:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9DD1F12ED
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 22:06:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741039585; cv=none; b=TVVf9cGrc0MzAt1Hg37N2NFuINA5kLAnFSRcx0QhzV+yPBaNxbh/ceBbl8s5xhH1aG09tRNGVAIkysFTurg/zNAWJWrK1u1KjGJ1v51Xy8FGHg8TLvwDFBwaM8xniFSjbA4sTdZo2weyflQ9TkIqwHr+P0OPlXM0KJr+ylkz4Kg=
+	t=1741039614; cv=none; b=HYSDIt+UNp+qmQI7R1EOFrKdSsLSr8Iye6xq6TSgVPyduj1+bXBMYvwbjosvZPnuzYwYvZWmO2F2lGWBD9Rgoe0FXtCr36K1G4wwd+pBdzPKBZ5dx7QXicULjNRRLpA6LItvqiDH0t9vMuBYjNgIKSZwmqp3XR6aWMQqNdSKir0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741039585; c=relaxed/simple;
-	bh=FY/qsZhygWjpuZGgX6rBNXN5tHiCmpxfGg9KBXeSsns=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=K9YUz5r0rHL68whx7gAzLWnjmYEZzepoF86BuWmmw6ufio9HasxcFivzvIR/SoUjhfqw/8d6L5seQAr/ei7G4fYQ463++ArsCtUCUbM5gBHtVnGCs5b9jjjdgH4BXEaKCTHU5zEIJFGSqgyGnG/6fQgG4+5Lh4niEQ7q/g+WPOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vb7YuO3q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E7FFC4CED6;
-	Mon,  3 Mar 2025 22:06:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741039585;
-	bh=FY/qsZhygWjpuZGgX6rBNXN5tHiCmpxfGg9KBXeSsns=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Vb7YuO3qusoeGBK0ko0zGkWzbW0j60MrIHFJCRkty0pmhdHlOLosQneChGVWkCpWK
-	 GGWLUAVDRAn3qwttsxsUgO4BQ1NQOTmw3MNsq3KQR1+2ZSuHps9/DDxTNZoMTNZb8l
-	 j6DkB+Ww0IQMuCr3apzU9f/i+XRhaLCJmyN2LF3jjGD4Zb1KYZToLE56VK3DNGOSCe
-	 CDIQeqGJ1C2EF5QlF++js63NJmHKjfL+QHEVK9goGsKsupXUPcuiJigi1DtXQvinWP
-	 FGPvYENokF2qsZj/6cBoT+NVJJQn/I7cx3R4SstAPNx7Dm04z3RNNzurk3zsDZu1/r
-	 1kDGhR5Vv3nyQ==
-Date: Mon, 3 Mar 2025 14:06:23 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Jiri Pirko <jiri@resnulli.us>
-Cc: Tariq Toukan <tariqt@nvidia.com>, "David S. Miller"
- <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>, Eric Dumazet
- <edumazet@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>, Jiri Pirko
- <jiri@nvidia.com>, Cosmin Ratiu <cratiu@nvidia.com>, Carolina Jubran
- <cjubran@nvidia.com>, Gal Pressman <gal@nvidia.com>, Mark Bloch
- <mbloch@nvidia.com>, Donald Hunter <donald.hunter@gmail.com>, Jonathan
- Corbet <corbet@lwn.net>, Saeed Mahameed <saeedm@nvidia.com>, Leon
- Romanovsky <leon@kernel.org>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-rdma@vger.kernel.org
-Subject: Re: [PATCH net-next 03/10] devlink: Serialize access to rate
- domains
-Message-ID: <20250303140623.5df9f990@kernel.org>
-In-Reply-To: <kmjgcuyao7a7zb2u4554rj724ucpd2xqmf5yru4spdqim7zafk@2ry67hbehjgx>
-References: <20250213180134.323929-1-tariqt@nvidia.com>
-	<20250213180134.323929-4-tariqt@nvidia.com>
-	<ieeem2dc5mifpj2t45wnruzxmo4cp35mbvrnsgkebsqpmxj5ib@hn7gphf6io7x>
-	<20250218182130.757cc582@kernel.org>
-	<qaznnl77zg24zh72axtv7vhbfdbxnzmr73bqr7qir5wu2r6n52@ob25uqzyxytm>
-	<20250225174005.189f048d@kernel.org>
-	<wgbtvsogtf4wgxyz7q4i6etcvlvk6oi3xyckie2f7mwb3gyrl4@m7ybivypoojl>
-	<20250226185310.42305482@kernel.org>
-	<kmjgcuyao7a7zb2u4554rj724ucpd2xqmf5yru4spdqim7zafk@2ry67hbehjgx>
+	s=arc-20240116; t=1741039614; c=relaxed/simple;
+	bh=QeY9z0+heLtap8BgmoW1vF5Flfd7VVfdLHG+7vA0RM0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fWSNqCDEg2fyHWjA0eSyVvBeqS+l3umFdGaiwh0rfhNqsKDVgGbPGBOhxNoDot9tzJI1aITGmXCMZ/2uhm7DSa00uG/F0L6X06vKeEKYyote1CVD3IXZtgMJNbQG8EtrRwclaxTub4N37GtsV1JMmX8Nwz0jLBS3pPjWeXOlTZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=oR+U18gD; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 3 Mar 2025 22:06:46 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741039610;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DQl5R4ebaZvP3xaAFBotmrLK16G34ov3SP3Vi7Kwp+U=;
+	b=oR+U18gDDnv2P4Bbry71Vgi6YOA1sxdYR5UFhmEIZzwxhZs1setu4H8KOPQ71LncvVhc40
+	mK0UgrNQzfcxueHIYkUqJzg0U6O0GyOXicTvqsQhlaoXrJpny35um+crfEm52u/YM2gB5G
+	o8Amlm5l97w91jeGdaGd7COFeQ7dAvQ=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Maxim Levitsky <mlevitsk@redhat.com>
+Cc: Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 08/13] KVM: nSVM: Flush both L1 and L2 ASIDs on
+ KVM_REQ_TLB_FLUSH
+Message-ID: <Z8Yn9va1xgIUvNUS@google.com>
+References: <20250205182402.2147495-1-yosry.ahmed@linux.dev>
+ <20250205182402.2147495-9-yosry.ahmed@linux.dev>
+ <0ca86313d7fc0360009888243b1493c2bd44fb7b.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0ca86313d7fc0360009888243b1493c2bd44fb7b.camel@redhat.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, 27 Feb 2025 13:22:25 +0100 Jiri Pirko wrote:
-> >> I'm not sure how you imagine getting rid of them. One PCI PF
-> >> instantiates one devlink now. There are lots of configuration (e.g. params)
-> >> that is per-PF. You need this instance for that, how else would you do
-> >> per-PF things on shared ASIC instance?  
-> >
-> >There are per-PF ports, right?  
-> 
-> Depends. On normal host sr-iov, no. On smartnic where you have PF in
-> host, yes.
-
-Yet another "great choice" in mlx5 other drivers have foreseen
-problems with and avoided.
-
-> >> Creating SFs is per-PF operation for example. I didn't to thorough
-> >> analysis, but I'm sure there are couple of per-PF things like these.  
-> >
-> >Seems like adding a port attribute to SF creation would be a much
-> >smaller extension than adding a layer of objects.
+On Fri, Feb 28, 2025 at 08:58:04PM -0500, Maxim Levitsky wrote:
+> On Wed, 2025-02-05 at 18:23 +0000, Yosry Ahmed wrote:
+> > KVM_REQ_TLB_FLUSH is used to flush all TLB entries for all contexts
+> > (e.g. in kvm_flush_remote_tlbs()). Flush both L1 and L2 ASIDs in
+> > svm_flush_tlb_all() to handle it appropriately.
+> > 
+> > This is currently not required as nested transitions do unconditional
+> > TLB flushes, but this is a step toward eliminating that.
+> > 
+> > Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+> > ---
+> >  arch/x86/kvm/svm/nested.c | 1 -
+> >  arch/x86/kvm/svm/svm.c    | 4 +++-
+> >  2 files changed, 3 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
+> > index 0e9b0592c1f83..0735177b95a1d 100644
+> > --- a/arch/x86/kvm/svm/nested.c
+> > +++ b/arch/x86/kvm/svm/nested.c
+> > @@ -491,7 +491,6 @@ static void nested_svm_entry_tlb_flush(struct kvm_vcpu *vcpu)
+> >  	 * TODO: optimize unconditional TLB flush/MMU sync.  A partial list of
+> >  	 * things to fix before this can be conditional:
+> >  	 *
+> > -	 *  - Flush TLBs for both L1 and L2 remote TLB flush
+> >  	 *  - Honor L1's request to flush an ASID on nested VMRUN
+> >  	 *  - Sync nested NPT MMU on VMRUN that flushes L2's ASID[*]
+> >  	 *  - Don't crush a pending TLB flush in vmcb02 on nested VMRUN
+> > diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+> > index 9e29f87d3bd93..8342c7eadbba8 100644
+> > --- a/arch/x86/kvm/svm/svm.c
+> > +++ b/arch/x86/kvm/svm/svm.c
+> > @@ -4044,7 +4044,9 @@ static void svm_flush_tlb_all(struct kvm_vcpu *vcpu)
+> >  	if (WARN_ON_ONCE(svm_hv_is_enlightened_tlb_enabled(vcpu)))
+> >  		hv_flush_remote_tlbs(vcpu->kvm);
 > >  
-> >> Also not breaking the existing users may be an argument to keep per-PF
-> >> instances.  
-> >
-> >We're talking about multi-PF devices only. Besides pretty sure we 
-> >moved multiple params and health reporters to be per port, so IDK 
-> >what changed now.  
+> > -	svm_flush_tlb_asid(vcpu, svm->current_vmcb);
+> > +	svm_flush_tlb_asid(vcpu, &svm->vmcb01);
+> > +	if (svm->nested.initialized)
+> > +		svm_flush_tlb_asid(vcpu, &svm->nested.vmcb02);
+> >  }
 > 
-> Looks like pretty much all current NICs are multi-PFs, aren't they?
+> This makes sense.
+> 
+> Note that this doesn't really flush the ASID used, but rather ensures
+> that we will flush it on next entry via that vmcb. (because of new asid,
+> that will be picked, or because we set tlb_ctl in that vmcb)
 
-Not in a way which requires cross-port state sharing, no.
-You should know this.
+Right, what I mean by 'flush' here is to setup the flush. For SVM all
+flushes are done on VM-enter anyway.
+
+> 
+> Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
+
+Thanks!
 
