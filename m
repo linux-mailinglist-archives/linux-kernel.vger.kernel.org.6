@@ -1,143 +1,275 @@
-Return-Path: <linux-kernel+bounces-541750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3C42A4C124
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:00:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB627A4C125
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:02:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8980E3A6923
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:00:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82B151887A2D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:02:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30CB62101AF;
-	Mon,  3 Mar 2025 13:00:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 371FF2101A0;
+	Mon,  3 Mar 2025 13:02:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ufKKqhmn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="asPInhEu"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BBB3288D2;
-	Mon,  3 Mar 2025 13:00:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83252288D2
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 13:01:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741006825; cv=none; b=QXYG4gwRudLsVtDKRYjvRWklCOqcv9LZKJjvV7tqzN0gR7DuBZVRjcWn7UY/6XbXDJ8vcKAXjIqwr4TFwtVOD9P5n5dG/GaqMwR5c4jXU/DPFQVZymtIzkoaez5CXYpNYbrxRJOBqDOeB5RKB0BOA6bS0cFryP/3OY0FScWWEg0=
+	t=1741006920; cv=none; b=aA2Jd+sTOSzvuXgA9BA4yguJHmLzZelN08Isjp3LtkCm1r3QIiZdLyzO0or9cMSEabnb+m4g3X2K3WoM16jFwKQSswTUuYNnCQ+4XTYeSIAct4q7w6Wal9e+9NhNDsyK1ioc4+VGMHc8PLfPbDJihZ8dHVxv0Rw6a7RAcs2yaJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741006825; c=relaxed/simple;
-	bh=jl+gSPh6fTvyCxtJVvPNkxhZxS8S0fIeAMj94Tj23R8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=k1piRvyvxa1xV48pxsNjc2mcUUdCKmHcmESK8CoIg7KhmAQenFEdTlDR9YZnvqx9tU0xb6tzu7pFdsaQsdN1t13ux31N02/msuRYO+tkpNb2K2BkCip/l4ixZBOXnVxpzDRUrFlVGWOOv72nBqZidprM95Q399cbgCVlVKDWmhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ufKKqhmn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 271BEC4CED6;
-	Mon,  3 Mar 2025 13:00:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741006825;
-	bh=jl+gSPh6fTvyCxtJVvPNkxhZxS8S0fIeAMj94Tj23R8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=ufKKqhmnZhuV4oVUfv5hQOA1YnuoNJX/yt4miRUe6ED290J9Q2it0uEpbMlc/6Y0X
-	 AkmA13kffGc7iny3/WpPvYv7xIHjOYoeja2WgaEFbxlH7/evWBgMXNGMyjgddXgv57
-	 4cAEqhf2Hha3XoIyv3MthMUoW0AGzMuW9bqSrrDAZQrUDEQvLbkFLkS4snIr6Bgly4
-	 2OQF5vE39/kYHu2jhCl5HVS9SmTI+fF6U55b6ANACV5jR1nzmGjjQFWuRt70Knfq/Y
-	 b5Ms+gW7V2+xhwY+V1NwfYOgSUpfPobcVG/2meFwdkOUQDbMkraFDxPuAblSWWXVsj
-	 gJZwIw0qyFZJw==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Daniel Almeida" <daniel.almeida@collabora.com>
-Cc: "Benno Lossin" <benno.lossin@proton.me>,  "Abdiel Janulgue"
- <abdiel.janulgue@gmail.com>,  <aliceryhl@google.com>,  <dakr@kernel.org>,
-  <robin.murphy@arm.com>,  <rust-for-linux@vger.kernel.org>,  "Miguel
- Ojeda" <ojeda@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun
- Feng" <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,
-  =?utf-8?Q?Bj=C3=B6rn?= Roy
- Baron <bjorn3_gh@protonmail.com>,  "Trevor Gross" <tmgross@umich.edu>,
-  "Valentin Obst" <kernel@valentinobst.de>,
-  <linux-kernel@vger.kernel.org>,  "Christoph Hellwig" <hch@lst.de>,
-  "Marek Szyprowski" <m.szyprowski@samsung.com>,  <airlied@redhat.com>,
-  <iommu@lists.linux.dev>
-Subject: Re: [PATCH v12 2/3] rust: add dma coherent allocator abstraction.
-In-Reply-To: <3202F69F-397E-4BC4-8DD8-E2D4B0AB056F@collabora.com> (Daniel
-	Almeida's message of "Mon, 24 Feb 2025 20:12:05 -0300")
-References: <20250224115007.2072043-1-abdiel.janulgue@gmail.com>
-	<20250224115007.2072043-3-abdiel.janulgue@gmail.com>
-	<6dea7b6a-1534-47e7-94d2-d67417c3d4c1@proton.me>
-	<tnwDK3QN_Xr0Yoa3U8HVxS5OqjvxIhgmmO_ifTGJR_EtIzjoxawOHtnbOJ9yChsUWXyFPcU9beIdrgbpfGZI8w==@protonmail.internalid>
-	<3202F69F-397E-4BC4-8DD8-E2D4B0AB056F@collabora.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Mon, 03 Mar 2025 14:00:11 +0100
-Message-ID: <87bjuil15w.fsf@kernel.org>
+	s=arc-20240116; t=1741006920; c=relaxed/simple;
+	bh=HdnEfe5V6fpdWb1fUIpP74f1UNnnrJHE/240HBHvte0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RJDt+aVFdRIjKpsRHA9GoC/BivWDK3I41Z+1p0i/liMzQJxGs1M5aKxP3dvJ5B0sepPrK6nfaw4NsJ2+uMHFjFTPc+L07xqjZymMp3i61C6H+z/czAdUqF1CUZpq+HMM+EtPMXUq3x2p0grkoFJacyrHvna623JiLZB29djupyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=asPInhEu; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43bc30adad5so5112675e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 05:01:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741006917; x=1741611717; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9kOjHi3v6WAWn60001RHf4ILCZ1JlrGJikmssONDOQ4=;
+        b=asPInhEuvf4jFK1VVDwbnpmf32+b6LjCfNe77TC7TSNaHQzgGXZOSx0ReULhmZNOjO
+         tpQUDEv+gVDnnm0+JYHJpYhMu6d+1QsARSykyzWUTw4g9vQHF3zTxnoeRtCkHzgG3UmJ
+         d1rOYJfKIo4CysfwNkxaTtJTRlOkI9DOLTS9rtjeW0sjb/UpDQnw7j1w8ytLFGezZbtI
+         IqI7y7NtrDrMnz6Cwb8/3fUPFQFZpqMvNq9D8PIAaKdknq2xiQUTGo29BiSvPAmyY1cO
+         IRNXfl0PxY+bvXho14yhIJTeB2DOTsrJVVH+lgPDL0rxA+bOnwU1d+CcH9CqI9ejV98z
+         h2xA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741006917; x=1741611717;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9kOjHi3v6WAWn60001RHf4ILCZ1JlrGJikmssONDOQ4=;
+        b=XfFh4wbWD2szBYiBM/XBJrQaYeoY4jN1g5CJRQ8WlgcG0+eC1irk+sJrAEzmr2tBIX
+         Lfcoz2PEKUk3EnhroHuUBCj2P5/7vRFF3U331kw0vt+gwiH/yxA3d9ZcxD841xI4Md02
+         +W4lgu1rypzxjFQUb8sMCyKB7GARN4dnhuBAuILiCFOaTg57koLozlglKZfj6+CuL78C
+         xTee1oCM/QMPohbUkEBlIGEtVApmlIS60nRIih+25l8qy7op2LMs+jJter+vQxW/jPvk
+         HH4wboSt59owGl5xNoOiuB6wIo3/ShqBxPgYl7/d4q7NHbc+2jgPjpgDwgzgGmH3gJuH
+         +B2A==
+X-Forwarded-Encrypted: i=1; AJvYcCUJwsPH3gnGDWgPEh258JbrZ13TOnClQAIjmh6S1/2iz2smvC+xdZLXc0g5pHOJkoRB2KZVL9hxmea8GvE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcHvA6X9Pm+SMXRmJFoip6D69JH9J6BXqqapzCzX0JsFWTKLTP
+	FdOprluv6LXoNiDinxWdJ3m6pQUL6JM1fw2DZxKp7O6EdvNkQmlEFzZzstWW4tPfQ/DskyLGWm6
+	ZLJGlgK2mdG3qRqNu6FFtR3R1ho7G2KZ1EaFV
+X-Gm-Gg: ASbGncumzhg6xychm5fa48l6VFT4HRD7eFnKYC8JzD6LA7G0rO5CPAORhZNyB3S/znj
+	XKYR/Kvc0Qkl7QxFwLpSomqZL7+wZCKeNgeH0IVKVtJb19qzZJJAbG9LJ5MZgp3S2jeP+HQemPT
+	T7lf23yzoIjstm1fH3QJWx8Jkd2UoOWiNQPN8d6SJsIPeQfyg7lFnMUk4h
+X-Google-Smtp-Source: AGHT+IFF5rgyOnjpuE1IETDDHdPdEmeVkVmiA2FKXzzJZLHbMSUbBYr8y85YibSId3aLy6JEvqWtTaLEUtIRVVROTVc=
+X-Received: by 2002:a05:600c:a01:b0:434:f131:1e64 with SMTP id
+ 5b1f17b1804b1-43ba66e6c78mr101947425e9.9.1741006916510; Mon, 03 Mar 2025
+ 05:01:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250303114037.3259804-2-bqe@google.com> <CAH5fLgjPTvXzcSVDWeYN7nLgxMZgeHUbHiDOv4R=uRBG=50UNQ@mail.gmail.com>
+In-Reply-To: <CAH5fLgjPTvXzcSVDWeYN7nLgxMZgeHUbHiDOv4R=uRBG=50UNQ@mail.gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 3 Mar 2025 14:01:44 +0100
+X-Gm-Features: AQ5f1JrKmwJHE5JRppZPNxmXXSFGO3YJy1xmDPIaqFBwjsJyB4u89WTHMlrpI90
+Message-ID: <CAH5fLgiQkPpMUV0Bvmwd5zUsHy=GHLdoVFjRuAPxpWCbBiD2Jw@mail.gmail.com>
+Subject: Re: [PATCH v2] rust: add bindings and API for bitmap.h and bitops.h.
+To: Burak Emir <bqe@google.com>
+Cc: Yury Norov <yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-"Daniel Almeida" <daniel.almeida@collabora.com> writes:
-
-> Hi Benno,
+On Mon, Mar 3, 2025 at 1:48=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> wr=
+ote:
 >
-
-[...]
-
->>> +    /// Writes data to the region starting from `offset`. `offset` is in units of `T`, not the
->>> +    /// number of bytes.
->>> +    ///
->>> +    /// # Examples
->>> +    ///
->>> +    /// ```
->>> +    /// # fn test(alloc: &mut kernel::dma::CoherentAllocation<u8>) -> Result {
->>> +    /// let somedata: [u8; 4] = [0xf; 4];
->>> +    /// let buf: &[u8] = &somedata;
->>> +    /// alloc.write(buf, 0)?;
->>> +    /// # Ok::<(), Error>(()) }
->>> +    /// ```
->>> +    pub fn write(&self, src: &[T], offset: usize) -> Result {
->>> +        let end = offset.checked_add(src.len()).ok_or(EOVERFLOW)?;
->>> +        if end >= self.count {
->>> +            return Err(EINVAL);
->>> +        }
->>> +        // SAFETY:
->>> +        // - The pointer is valid due to type invariant on `CoherentAllocation`
->>> +        // and we've just checked that the range and index is within bounds.
->>> +        // - `offset` can't overflow since it is smaller than `self.count` and we've checked
->>> +        // that `self.count` won't overflow early in the constructor.
->>> +        unsafe {
->>> +            core::ptr::copy_nonoverlapping(src.as_ptr(), self.cpu_addr.add(offset), src.len())
->>
->> Why are there no concurrent write or read operations on `cpu_addr`?
+> On Mon, Mar 3, 2025 at 12:55=E2=80=AFPM Burak Emir <bqe@google.com> wrote=
+:
+> >
+> > Adds a Rust bitmap API and necessary bitmap and bitops bindings.
+> > These are for porting the approach from commit 15d9da3f818c ("binder:
+> > use bitmap for faster descriptor lookup") to Rust. The functionality
+> > in dbitmap.h makes use of bitmap and bitops.
+> >
+> > The Rust bitmap API provides an abstraction to underlying bitmap
+> > and bitops operations. For now, we only include methods that are
+> > necessary for reimplementing dbitmap.h. It is straightforward to add
+> > more methods later, as needed. We offer a safe API through
+> > bounds checks which panic if violated.
+> >
+> > We introduce bindings for the non-atomic variants __set_bit and
+> > __clear_bit, and use the _find_* variants instead of the find_*
+> > wrappers. The C optimizations enabled by the wrappers does not carry
+> > over to Rust.
+> >
+> > This series uses the usize type for sizes and indices into the bitmap,
+> > because Rust generally always uses that type for indices and lengths
+> > and it will be more convenient if the API accepts that type. This means
+> > that we need to perform some casts to/from u32 and usize, since the C
+> > headers use unsigned int instead of size_t/unsigned long for these
+> > numbers in some places.
+> >
+> > Suggested-by: Alice Ryhl <aliceryhl@google.com>
+> > Signed-off-by: Burak Emir <bqe@google.com>
+> > ---
+> > This is v2 of a patch introducing Rust bitmap API [v1]. Thanks
+> > for all the helpful comments!
+> >
+> > Changes v1 --> v2:
+> > - Rebased on Yury's v2 patch [1] and Viresh's v2 patch [2]
+> > - Removed import of `bindings::*`, keeping only prefix (Miguel)
+> > - Renamed panic methods to make more explicit (Miguel)
+> > - use markdown in doc comments and added example/kunit test (Miguel)
+> > - Added maintainer section for BITOPS API BINDINGS [RUST] (Yury)
+> > - Added M: entry for bitmap.rs which goes to Alice (Viresh, Alice)
+> > - Changed calls from find_* to _find_*, removed helpers (Yury)
+> > - Use non-atomic __set_bit and __clear_bit from Bitmap Rust API (Yury)
+> >
+> > Question to Yury: we could remove `bitmap_copy` helper and instead do
+> > the memcpy in Rust. Should we? If so, should we expose a helper for
+> > `bitmap_size` or duplicate the nbits-to-aligned-nlongs logic?
+> >
+> > [1] https://lore.kernel.org/all/20250224233938.3158-1-yury.norov@gmail.=
+com/
+> > [2] https://lore.kernel.org/all/cover.1740726226.git.viresh.kumar@linar=
+o.org/
+> > [v1]: https://lore.kernel.org/all/20250227101720.1811578-1-bqe@google.c=
+om/
+> >
+> > Thanks,
+> > Burak
+> >
+> > ---
+> >  MAINTAINERS                     |   8 ++
+> >  rust/bindings/bindings_helper.h |   1 +
+> >  rust/helpers/bitmap.c           |   8 ++
+> >  rust/helpers/bitops.c           |  13 +++
+> >  rust/helpers/helpers.c          |   2 +
+> >  rust/kernel/bitmap.rs           | 191 ++++++++++++++++++++++++++++++++
+> >  rust/kernel/lib.rs              |   1 +
+> >  7 files changed, 224 insertions(+)
+> >  create mode 100644 rust/helpers/bitmap.c
+> >  create mode 100644 rust/helpers/bitops.c
+> >  create mode 100644 rust/kernel/bitmap.rs
+> >
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 6d6e55d8593b..8f42fb1f24c6 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -4032,12 +4032,15 @@ F:      tools/lib/find_bit.c
+> >  BITMAP API BINDINGS [RUST]
+> >  M:     Yury Norov <yury.norov@gmail.com>
+> >  S:     Maintained
+> > +F:     rust/helpers/bitmap.c
+> >  F:     rust/helpers/cpumask.c
+> >
+> >  BITMAP API [RUST]
+> >  M:     Viresh Kumar <viresh.kumar@linaro.org> (cpumask)
+> > +M:     Alice Ryhl <aliceryhl@google.com> (bitmap)
+> >  R:     Yury Norov <yury.norov@gmail.com>
+> >  S:     Maintained
+> > +F:     rust/kernel/bitmap.rs
+> >  F:     rust/kernel/cpumask.rs
+> >
+> >  BITOPS API
+> > @@ -4054,6 +4057,11 @@ F:       include/linux/bitops.h
+> >  F:     lib/test_bitops.c
+> >  F:     tools/*/bitops*
+> >
+> > +BITOPS API BINDINGS [RUST]
+> > +M:     Yury Norov <yury.norov@gmail.com>
+> > +S:     Maintained
+> > +F:     rust/helpers/bitops.c
+> > +
+> >  BLINKM RGB LED DRIVER
+> >  M:     Jan-Simon Moeller <jansimon.moeller@gmx.de>
+> >  S:     Maintained
+> > diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_h=
+elper.h
+> > index 673b1daa9a58..50416c1a3de9 100644
+> > --- a/rust/bindings/bindings_helper.h
+> > +++ b/rust/bindings/bindings_helper.h
+> > @@ -7,6 +7,7 @@
+> >   */
+> >
+> >  #include <kunit/test.h>
+> > +#include <linux/bitmap.h>
+> >  #include <linux/blk-mq.h>
+> >  #include <linux/blk_types.h>
+> >  #include <linux/blkdev.h>
+> > diff --git a/rust/helpers/bitmap.c b/rust/helpers/bitmap.c
+> > new file mode 100644
+> > index 000000000000..4fa4e4f76110
+> > --- /dev/null
+> > +++ b/rust/helpers/bitmap.c
+> > @@ -0,0 +1,8 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +
+> > +#include <linux/bitmap.h>
+> > +
+> > +void rust_helper_bitmap_copy(unsigned long *dst, const unsigned long *=
+src, unsigned int nbits)
+> > +{
+> > +       bitmap_copy(dst, src, nbits);
+> > +}
 >
-> Sorry, can you rephrase this question?
+> I was about to say that this could just be a memcpy, but ...
+>
+> > +    /// Copy up to `nbits` bits from this bitmap into another.
+> > +    ///
+> > +    /// # Panics
+> > +    ///
+> > +    /// Panics if `nbits` is too large for this bitmap or destination.
+> > +    #[inline]
+> > +    pub fn bitmap_copy(&self, dst: &mut Bitmap, nbits: usize) {
+> > +        if self.nbits < nbits {
+> > +            panic_not_in_bounds_le("nbits", self.nbits, nbits);
+> > +        }
+> > +        if dst.nbits < nbits {
+> > +            panic_not_in_bounds_le("nbits", dst.nbits, nbits);
+> > +        }
+> > +        // SAFETY: nbits =3D=3D 0 is supported and access to `self` an=
+d `dst` is within bounds.
+> > +        unsafe { bindings::bitmap_copy(dst.as_mut_ptr(), self.ptr.as_p=
+tr(), nbits as u32) };
+> > +    }
+>
+> ... then I realized that we're probably not using it correctly. I
+> would expect this to modify the first `nbits` bits in `dst`, leaving
+> any remaining bits unmodified. However, if nbits is not divisible by
+> BITS_PER_LONG it might modify some bits it shouldn't.
+>
+> That said, Binder needs this only in the case where the sizes are
+> equal. Perhaps we could rename this to `copy_from_bitmap` with this
+> signature:
+> fn copy_from_bitmap(&mut self, src: Bitmap)
 
-This write is suffering the same complications as discussed here [1].
-There are multiple issues with this implementation.
+Sorry I meant src: &Bitmap here.
 
-1) `write` takes a shared reference and thus may be called concurrently.
-There is no synchronization, so `copy_nonoverlapping` could be called
-concurrently on the same address. The safety requirements for
-`copy_nonoverlapping` state that the destination must be valid for
-write. Alice claims in [1] that any memory area that experience data
-races are not valid for writes. So the safety requirement of
-`copy_nonoverlapping` is violated and this call is potential UB.
+Also, we could rewrite it to just call memcpy rather than go through
+bitmap_copy. Though that requires us to have a Rust version of
+bitmap_size, which I think it makes sense to avoid using a Rust helper
+for.
 
-2) The destination of this write is DMA memory. It could be concurrently
-modified by hardware, leading to the same issues as 1). Thus the
-function cannot be safe if we cannot guarantee hardware will not write
-to the region while this function is executing.
+We could reimplement it by first computing the number of longs and
+then computing the number of bytes
 
-Now, I don't think that these _should_ be issues, but according to our
-Rust language experts they _are_.
+const fn bitmap_size(nbits: usize) -> usize {
+    nbits.div_ceil(c_ulong::BITS) * size_of::<c_ulong>()
+}
 
-I really think that copying data through a raw pointer to or from a
-place that experiences data races, should _not_ be UB if the data is not
-interpreted in any way, other than moving it.
+Thoughts?
 
-
-Best regards,
-Andreas Hindborg
-
-
-
-[1] https://rust-for-linux.zulipchat.com/#narrow/channel/291565-Help/topic/Interacting.20with.20user.20space.20pages
-
-
+Alice
 
