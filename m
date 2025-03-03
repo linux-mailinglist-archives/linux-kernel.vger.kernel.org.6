@@ -1,156 +1,173 @@
-Return-Path: <linux-kernel+bounces-540863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A54EA4B5EF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 03:02:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD1E4A4B5F0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 03:03:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63D1A189089A
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C83A7A4BEE
 	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 02:02:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 510BD13D53B;
-	Mon,  3 Mar 2025 02:02:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 233F413B284;
+	Mon,  3 Mar 2025 02:03:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="QHU3h0LK"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QMRTyHQc"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4428D11CA9;
-	Mon,  3 Mar 2025 02:01:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E4C22611
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 02:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740967322; cv=none; b=Yg2E9HUiAvSN6DRtrujI5v4ID2YPag2u++pApK4rvujAB3/QtqR22f4lXzFluL73C97Q+1xVcnK/kQRYVAyR+r0JRnuM1cUn7rN3fvH3UB/mIcmww44m1usG/KftlTKmZjyuh+2CBeFtU0FKpZLmyH5ZhzzeEY10ydc1doh73Qw=
+	t=1740967387; cv=none; b=dZc4CgSLP6j2MBR228ebhI4RmVoC7uuAUDurKYZsUEMwXEKyAxQwsuVW1J4TCnF1ZsrMMVFzDYtMv3xX75TCahJ7oIMH1mwMZP3dU9JxYwWR+FxImVGc5xU5aLXjzTAgZpyX1Jb6llkTbdsZeTzqnjiGqoNq8JinMO4q/UdnujE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740967322; c=relaxed/simple;
-	bh=Lg4HoXy6iEDWr69K/FVya5ESd1zRKYThdMvhH6NXTvY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=uzbfyVV5RIn3PBfJMsCxVuTvxbX6FsaWvd23ozfOg3GFvcKS87gK4GFoI/rlhcCPZiHd06OARKJtsDlcW+tCE6SmIdm8OG8xCOIaKIWwKNaIEKRxHoThWnJ+D7mQyn5Vnc2WiMNDezma+/Hp41Ykze1j9AGr4l+6N46dUz5JAaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=QHU3h0LK; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1740967308; h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type;
-	bh=tAsmzUbsScf+J7KRZDBMIB9hwRSOJTlpY6FjWudl2NE=;
-	b=QHU3h0LKMdduTkjzJBLVD147zrrYDrdHQraaww7/rcXr+FPGjZVLevlNpKa854BgtxpxtTRmM7IFB1YIPf0ts7m0Y/qCmXIX+JAJkcapw5iAsljanAfgUftBsWWtkv8DGBG7zlBpUzUn8UkEfXLPP1zJWuXle+Cick0fq8OMv0M=
-Received: from 30.246.161.128(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WQWe4vV_1740967306 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 03 Mar 2025 10:01:47 +0800
-Message-ID: <8133d4d3-abe0-4039-b209-4c08cebbbc5f@linux.alibaba.com>
-Date: Mon, 3 Mar 2025 10:01:45 +0800
+	s=arc-20240116; t=1740967387; c=relaxed/simple;
+	bh=QYwFbD6K8kfnwtsSG5ynvTsAO1YwO3NjsjGQXGXZghk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MVCoCW3J3gLkb1bv/zhKLSFANw4UByVn4a7ItRWn856a9B0WFFLhp1ylfDJNB3t2GjoYW80vJiNGRlWpe+XnhF7aQ6Ea6t/VhEtIsSBKOc3Xh9ih0JpDni705EI6rFD6qkhYyUFuCKio5Xb7bz5llUfiq6h0i7gp6z0UPYDBPo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QMRTyHQc; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740967384;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lAV0uCT+WsooVoz6S69qz2vMhclHH6xzQjRGhGLXYng=;
+	b=QMRTyHQcRiGPa64heeUdtWL/7QMSPcZpgJwHSWIiqYQyaTavOpGv2k2mXvlix+lCJibHh6
+	MYqWqXU9YA35lvL6jHSr8Y2FGr+pHaM5VHWl6JLj+wIJICx+HFmhZVhSYPwauuwhAY3cCp
+	XtdwdTPGyESWqHbkbkgcynfQEU6bjJk=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-501-Cg5-S6tIMv6V34vDypTwow-1; Sun,
+ 02 Mar 2025 21:02:46 -0500
+X-MC-Unique: Cg5-S6tIMv6V34vDypTwow-1
+X-Mimecast-MFC-AGG-ID: Cg5-S6tIMv6V34vDypTwow_1740967365
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 03B401800873;
+	Mon,  3 Mar 2025 02:02:45 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.52])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A4DD21801768;
+	Mon,  3 Mar 2025 02:02:43 +0000 (UTC)
+Date: Mon, 3 Mar 2025 10:02:38 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Jiri Bohac <jbohac@suse.cz>
+Cc: Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
+	kexec@lists.infradead.org, Philipp Rudo <prudo@redhat.com>,
+	Donald Dutile <ddutile@redhat.com>, Pingfan Liu <piliu@redhat.com>,
+	Tao Liu <ltao@redhat.com>, linux-kernel@vger.kernel.org,
+	David Hildenbrand <dhildenb@redhat.com>,
+	Michal Hocko <mhocko@suse.cz>
+Subject: Re: [PATCH v2 4/5] kdump: wait for DMA to finish when using CMA
+Message-ID: <Z8UNvvEF2Ow/qigk@MiWiFi-R3L-srv>
+References: <Z7dc9Cd8KX3b_brB@dwarf.suse.cz>
+ <Z7demEmgm-D_fqi2@dwarf.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 7/7] dmaengine: idxd: Refactor remove call with
- idxd_cleanup() helper
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-To: Fenghua Yu <fenghuay@nvidia.com>, vinicius.gomes@intel.com,
- dave.jiang@intel.com, vkoul@kernel.org
-Cc: nikhil.rao@intel.com, dmaengine@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250215054431.55747-1-xueshuai@linux.alibaba.com>
- <20250215054431.55747-8-xueshuai@linux.alibaba.com>
- <4b5b45b3-76a1-4850-aeba-ff4d6777e97c@nvidia.com>
- <5dfdb75c-e532-4a5e-8098-7650c6494d78@linux.alibaba.com>
-In-Reply-To: <5dfdb75c-e532-4a5e-8098-7650c6494d78@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z7demEmgm-D_fqi2@dwarf.suse.cz>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
+On 02/20/25 at 05:55pm, Jiri Bohac wrote:
+> When re-using the CMA area for kdump there is a risk of pending DMA into
+> pinned user pages in the CMA area.
+> 
+> Pages that are pinned long-term are migrated away from CMA, so these are not a
+> concern. Pages pinned without FOLL_LONGTERM remain in the CMA and may possibly
+> be the source or destination of a pending DMA transfer.
+> 
+> Although there is no clear specification how long a page may be pinned without
+> FOLL_LONGTERM, pinning without the flag shows an intent of the caller to
+> only use the memory for short-lived DMA transfers, not a transfer initiated
+> by a device asynchronously at a random time in the future.
+> 
+> Add a delay of CMA_DMA_TIMEOUT_MSEC milliseconds before starting the kdump
+> kernel, giving such short-lived DMA transfers time to finish before the CMA
+> memory is re-used by the kdump kernel.
+> 
+> Set CMA_DMA_TIMEOUT_MSEC to 1000 (one second) - chosen arbitrarily as both a
+> huge margin for a DMA transfer, yet not increasing the kdump time
+> significantly.
+> 
+> Signed-off-by: Jiri Bohac <jbohac@suse.cz>
+> ---
+>  include/linux/crash_core.h |  5 +++++
+>  kernel/crash_core.c        | 10 ++++++++++
+>  2 files changed, 15 insertions(+)
+> 
+> diff --git a/include/linux/crash_core.h b/include/linux/crash_core.h
+> index 44305336314e..543e4a71f13c 100644
+> --- a/include/linux/crash_core.h
+> +++ b/include/linux/crash_core.h
+> @@ -56,6 +56,11 @@ static inline unsigned int crash_get_elfcorehdr_size(void) { return 0; }
+>  /* Alignment required for elf header segment */
+>  #define ELF_CORE_HEADER_ALIGN   4096
+>  
+> +/* Time to wait for possible DMA to finish before starting the kdump kernel
+> + * when a CMA reservation is used
+> + */
+> +#define CMA_DMA_TIMEOUT_MSEC 1000
+> +
+>  extern int crash_exclude_mem_range(struct crash_mem *mem,
+>  				   unsigned long long mstart,
+>  				   unsigned long long mend);
+> diff --git a/kernel/crash_core.c b/kernel/crash_core.c
+> index 078fe5bc5a74..543e509b7926 100644
+> --- a/kernel/crash_core.c
+> +++ b/kernel/crash_core.c
+> @@ -21,6 +21,7 @@
+>  #include <linux/reboot.h>
+>  #include <linux/btf.h>
+>  #include <linux/objtool.h>
+> +#include <linux/delay.h>
+>  
+>  #include <asm/page.h>
+>  #include <asm/sections.h>
+> @@ -97,6 +98,14 @@ int kexec_crash_loaded(void)
+>  }
+>  EXPORT_SYMBOL_GPL(kexec_crash_loaded);
+>  
+> +static void crash_cma_clear_pending_dma(void)
+> +{
+> +	if (!crashk_cma_cnt)
+> +		return;
+> +
+> +	mdelay(CMA_DMA_TIMEOUT_MSEC);
+> +}
+> +
+>  /*
+>   * No panic_cpu check version of crash_kexec().  This function is called
+>   * only when panic_cpu holds the current CPU number; this is the only CPU
+> @@ -116,6 +125,7 @@ void __noclone __crash_kexec(struct pt_regs *regs)
+>  		if (kexec_crash_image) {
+>  			struct pt_regs fixed_regs;
+>  
+> +			crash_cma_clear_pending_dma();
 
+This could be too ideal, I am not sure if it's a good way. When crash
+triggered, we need do the urgent and necessary thing as soon as
+possible, then shutdown all CPU to avoid further damage. This one second
+of waiting could give the strayed system too much time. My personal
+opinion.
 
-在 2025/2/19 21:28, Shuai Xue 写道:
+>  			crash_setup_regs(&fixed_regs, regs);
+>  			crash_save_vmcoreinfo();
+>  			machine_crash_shutdown(&fixed_regs);
 > 
+> -- 
+> Jiri Bohac <jbohac@suse.cz>
+> SUSE Labs, Prague, Czechia
 > 
-> 在 2025/2/19 05:01, Fenghua Yu 写道:
->> Hi, Shuai,
->>
->> On 2/14/25 21:44, Shuai Xue wrote:
->>> The idxd_cleanup() helper clean up perfmon, interrupts, internals and so
->>
->> s/clean/cleans/
->>
->>
->>> on. Refactor remove call with idxd_cleanup() helper to avoid code
->> s/idxd_cleanup()/the idxd_cleanup()/
->>> duplication. Note, this also fixes the missing put_device() for idxd
->>> groups, enginces and wqs.
->>>
->>> Fixes: bfe1d56091c1 ("dmaengine: idxd: Init and probe for Intel data accelerators")
->>> Suggested-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
->>> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
->>> ---
->>>   drivers/dma/idxd/init.c | 13 ++-----------
->>>   1 file changed, 2 insertions(+), 11 deletions(-)
->>>
->>> diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
->>> index f40f1c44a302..0fbfbe024c29 100644
->>> --- a/drivers/dma/idxd/init.c
->>> +++ b/drivers/dma/idxd/init.c
->>> @@ -1282,20 +1282,11 @@ static void idxd_remove(struct pci_dev *pdev)
->>>       get_device(idxd_confdev(idxd));
->> get_device() is called here.
->>>       device_unregister(idxd_confdev(idxd));
->>>       idxd_shutdown(pdev);
->>> -    if (device_pasid_enabled(idxd))
->>> -        idxd_disable_system_pasid(idxd);
->>>       idxd_device_remove_debugfs(idxd);
->>> -
->>> -    irq_entry = idxd_get_ie(idxd, 0);
->>> -    free_irq(irq_entry->vector, irq_entry);
->>> -    pci_free_irq_vectors(pdev);
->>> +    idxd_cleanup(idxd);
->>>       pci_iounmap(pdev, idxd->reg_base);
->>> -    if (device_user_pasid_enabled(idxd))
->>> -        idxd_disable_sva(pdev);
->>> -    pci_disable_device(pdev);
->>> -    destroy_workqueue(idxd->wq);
->>> -    perfmon_pmu_remove(idxd);
->>>       idxd_free(idxd);
->>
->> put_device() is called inside idxd_free(). Seems not easy to read code to match the pair.
-> 
-> IMHO, idxd_free() is paired with idxd_alloc() which grap a reference count by
-> device_initialize(). So, we should match that right pair.
-> 
->> * When ->release() is called for the idxd->conf_dev, it frees all the memory related
->> * to the idxd context.
-> 
-> I did not figure out why you explictly grab reference count of
-> idxd_confdev(idxd).
-> 
-> idxd_unregister_devices() is paired with idxd_register_devices(), it only
-> decrease reference through wqs, engines, and groups. So a refcnt of
-> idxd->conf_dev is still hold by idxd_alloc().
-> 
-> Please correct me, if I missed anything.
-> 
->>
->> Plus idxd_free() is called only in non FLR case.
->>
->> Maybe it's better to change this code to:
->>
->> 1. call put_device() outside idxd_free() so that it's easy to match the get_device() and put_deivce in the same level of function.
-> 
-> See my comments above.
->>
->> 2. idxd_free() called here is OK because this is not in FLR handler. But only call it in non FLR path in idxd_pci_probe_alloc()
->>
-> 
-> Exactly, so, shoud I add a protection in idxd_free() in a fact that non FLR case will not call it.
-> 
-> Thanks.
-> Shuai
 
-Hi, all，
-
-Any feedback?
-
-Thanks.
-Shuai
 
