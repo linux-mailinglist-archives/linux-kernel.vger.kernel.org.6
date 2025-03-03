@@ -1,85 +1,85 @@
-Return-Path: <linux-kernel+bounces-541288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5152CA4BAFB
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:42:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 392A0A4BAFD
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:42:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C67D818927A4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:42:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB4653A82A4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:42:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997041F0E5B;
-	Mon,  3 Mar 2025 09:41:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD2141F0E5C;
+	Mon,  3 Mar 2025 09:42:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FT4+r8Sf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ad9CTKT1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64D841D63C0
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 09:41:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6B078F49
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 09:42:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740994907; cv=none; b=Fa6r18CRZkzrKzdor+x4kQIBQ5bAbn0wZldfhPh+76ZcgIAUeOPWdjKDNhVPgnlgpbQvmYfGm6CzhwvvukQjN1eFzz3h//PS7hwqPdL/+TV1dzrXkNRt/jkT8GHx0LZRyY5xDg7fvo5un2v4Asm9bCglh1UPBGr6/xSywInmHSo=
+	t=1740994947; cv=none; b=Qakw7QULmsHHoMSJ8XWTMdVLs9V0icX3XKSPzGeLSiinaryFtSv0yjEEtUc0DjaS5rMRUi1KqmNfXQZ0iAldWfdYYlEeqdxBzfXcTkgvZ+YhGb5YHneculemOag2dCMJl2Xb1eeXV5cygHTQxdo6Ev4gzD1s/TEc5noKaLeLW34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740994907; c=relaxed/simple;
-	bh=kGP9kieYy3EZ0kvFmMM0hh/2O/yfpgHUuO7Mb3OLz+o=;
+	s=arc-20240116; t=1740994947; c=relaxed/simple;
+	bh=2KZN3ZbiL+bTV7no7mxRpvMRno5EVSR1v8XD6Lj/EcI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QAP18MHuJ8V3H018aTHSRKIfialwwrg34tqxHXXjmv2fUfdquxC9CoLsGe6CZWeHlca+zSs02xWmpZSpU8ugyzn4TBxb6qTfArRoGy1Fm64gGHKZrIt9MO9n/1meX5wwAuT8K9yrUXTsp2z2uUezco04AQhCpkMzmaMITN6thQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FT4+r8Sf; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=VHVtaZJghF4L5ntT8QynMJK1w5PqHga+84Rp2ERrpnu/Q8KYrZc7sWfaA11zlF0Pen0ojnJw3YDzmq8kQ9Hy8MF6kq3bCgydBuw7PXk8nqYdVpujw0enVd/qE6pUKr1aEnfezMjU8bx18KoQDnX21mqG+yRHXIwBvLPKLub/9jo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ad9CTKT1; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740994905;
+	s=mimecast20190719; t=1740994944;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=LbnZQEekEL5+7VJfe+tKFsSed1V7olIdl++NfvcMfSE=;
-	b=FT4+r8SfETadyZT/B7V4HPSUTD5fy9hXFO2K9/8OPY8XM1+h8zFvxvoXEkJUXWCPh0R6BM
-	azmer92AQsV5uo4BsIEnOGH1V6TNE5fIGl1dllCuSmvM0CsJiEN0uwIgumOcly98Gh+c1V
-	P+ibXJxVpxJX3JEhHgYVnuR33DhjiDo=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=MBVVdo3tOVYaEl+zgFn8dQqxk+vyBv3FmhJQbHVALgc=;
+	b=Ad9CTKT1C5RNt5mN31DOPTZzsar50zRlv0pcZ+VOnvDXxFVSIFfwwLKW856GCSZVRjwq1Q
+	GoVnG4LL8xzvN6fCFb89ZHwULgmKLciW8OCCFZc2jyQWxMmVdaWNuLzvAFKj9K0wkcvID6
+	By2DgvootjDcTylkagJrPRoYvqQk2zY=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-441-6tLhfodcPgGjrPs1CBoUQQ-1; Mon, 03 Mar 2025 04:41:43 -0500
-X-MC-Unique: 6tLhfodcPgGjrPs1CBoUQQ-1
-X-Mimecast-MFC-AGG-ID: 6tLhfodcPgGjrPs1CBoUQQ_1740994903
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-390de58dc4eso3908379f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 01:41:43 -0800 (PST)
+ us-mta-316-Rg-WXxCIPxCFJvMHVvxjdw-1; Mon, 03 Mar 2025 04:42:13 -0500
+X-MC-Unique: Rg-WXxCIPxCFJvMHVvxjdw-1
+X-Mimecast-MFC-AGG-ID: Rg-WXxCIPxCFJvMHVvxjdw_1740994932
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4394040fea1so20467965e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 01:42:13 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740994903; x=1741599703;
+        d=1e100.net; s=20230601; t=1740994932; x=1741599732;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LbnZQEekEL5+7VJfe+tKFsSed1V7olIdl++NfvcMfSE=;
-        b=is+WdJbNPAkhj8z2PX+Zpeo30ds2sBw9W8bAHTSdE9iQHky25Xl5T0aIajr7g1+sFm
-         K4AMLHktFjkzKWgltcl4OI5u7xhF8OjVFtDQx1pc0LVu1jNMpXvBzvynCiO0CxkLCj17
-         m8kgKSz5ees2OFfRWe4HBff7PIgmMsXcrgXqMnHtPfwFYAIUX+NwhDUYJo8Q6Ii0c5AD
-         uh3n3v6DGrb4FeD/Y+It7KMtHDnDvDkB4OPdVB1fzXF/YcNq9QPeNdLu6F7ANVBe8LX5
-         7g810Vv/TQ/oGldV0BeGUsrF1rXuj5sKG32sW9m/AsKBk/RpW34sPJhkPCkwiiZ9EXhU
-         INYA==
-X-Forwarded-Encrypted: i=1; AJvYcCVS+O5WZisQlHjGcex4+s3u5MolMILLkg1b9/MUQSXqmxYJWL/q9+MaZNyhfeX8Po35BqrZReXghhuXTjA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznVz6K+sT4+Bk1a2XBDEV8hw3hWORIUAZyN+vnHw41XBxbZZRv
-	WTxB/K0Ej8mhd2WHbRYuaIKyrWxrlhbVmzubq+HZfRlvJfr9bNJdrAGG+79MOXZRjOO7CDQU2sA
-	eqcycYdVu8STjEpB884rYEUZHcXNVCJKbeUMEXyZ6Qt9MDa47AZoLB6/L+6n8oQ==
-X-Gm-Gg: ASbGnctPXi+797959ILg9D+MfjQ5eDLEGVPdbaCxJleoDgGz+qYraV8255A6gTdfyS/
-	qt8wRphtvEfKkW5n3QNBDJTW9WXKDvk2b+HIie7rjiOAKlw54OVfMTJo3bQyoq+ClcmwYs8eTns
-	FyQoYcnImUQ8wkjyod43RYeOx0NHBE/dRkvzwXYsxqlmyxV8SqxQKo1P4f264m/XkmplylE6u27
-	cDs8ZJjzNg7HGygiz+d+hIxmvUxGEelDvI6TfV/gym++Saqmug0YScPNfgiiEleXQ694JnEFNsb
-	ny1xjTpUvag8SjPiBI3M+Ap7tDcsZROFubgKYxELUklXvVHr8OssTh8=
-X-Received: by 2002:a5d:61cd:0:b0:38c:3f12:64be with SMTP id ffacd0b85a97d-390eca06cdemr10490968f8f.35.1740994902689;
-        Mon, 03 Mar 2025 01:41:42 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFVizEggt0+gnRtA0jge53v3XHkF35Zs1QmzZY9VyL57FFl+Hjzngtfu34rhJup5F7TcFTjTg==
-X-Received: by 2002:a5d:61cd:0:b0:38c:3f12:64be with SMTP id ffacd0b85a97d-390eca06cdemr10490932f8f.35.1740994902233;
-        Mon, 03 Mar 2025 01:41:42 -0800 (PST)
+        bh=MBVVdo3tOVYaEl+zgFn8dQqxk+vyBv3FmhJQbHVALgc=;
+        b=P8StJiCU5Op81+luBB++40B8caLL76iuVFMLYhd/wajGMMWyC4zEZmwxQDv0loZnuq
+         tIykCP7oRnsW9vivuRw9OXSa3UahnPMKhbmBia+4aS9l2gwW4UijXcr/6ZgcUmfWWtg8
+         Hjv7+ixcMM8sygdi+FgXjv+6j5P+UrKxxcrSJ9Gj20pNGx2ojh1Ied84n8i3Nkb/3+cs
+         U2HOVend+7QEI2G6F1ne43x7YIjJEwuHCMvBHT22ZkYtS5SK7SDMYuMnw6fP1dYuvsPT
+         3OhXv2nnxW4RaiyVCq+RRPHR4VQLrOn1kdawHqRC5ixSezF/9hqdaCSCET7krYsPwoZN
+         fI1w==
+X-Forwarded-Encrypted: i=1; AJvYcCXn2RmQTaQH/LMeYek2zWu+QX0xiSJy+jKZoWvsqYO47IXJH1+Awn3qv6mR91+AERmJFgztazzheI51ujM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeHBg4a2I9wyYDVzEpjKZreUHaTY3flkmK3EpkAG6nL9BWZlwq
+	I1M7s2OdWHk0RvNaDl2UcF/fCVnkJRB5MU7W12/gHdJS2hBDg7FBqjaQgHOHQhVVowIVHksrIx9
+	ESVHOeFlOtACKhV/38S4pdNiRjtnWq3HZoeekBYInDSWDlx0KvcQ4bv088Iu91A==
+X-Gm-Gg: ASbGncviOvWVpyWX243gn3t1zh0O0/bX1liI4JtX5Nb6k2XrDjxkl0uR2uD6/SDXf4g
+	pqUUeFHV8xk/EZpjrWOIBeQAjuMBKaI7NvEPBS7873AIlFdoA4EjtwbUPFS+s8TsgWE+cbxC0pv
+	S3fE9PMtDvR+JpV1CvSKCpFKJe29pJPMWKsMSLaqsGYcPBq1uv0n/RUdmnWGqEPfegq8QSCMWoS
+	XSf79hIHhuZsM8iYnIEkxSTYfZwtIllwSxT71BCUe8UInILCaHM2L3R0t92uviP+Wi8TXGEpnf2
+	VlvR445auAVN9fEYbreKbiLX4nkIrp0lNziNzqHl464OOM38fGgwBE0=
+X-Received: by 2002:a05:600c:b4f:b0:43b:c638:3433 with SMTP id 5b1f17b1804b1-43bc63837a3mr9723215e9.12.1740994932380;
+        Mon, 03 Mar 2025 01:42:12 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFDYmizeCfEPwnub6ZUt8HoyBNoVBgCgnBfss7JKJMNfK/DcWCCY9SyISgPNOR5yKhrWm25LA==
+X-Received: by 2002:a05:600c:b4f:b0:43b:c638:3433 with SMTP id 5b1f17b1804b1-43bc63837a3mr9722845e9.12.1740994931899;
+        Mon, 03 Mar 2025 01:42:11 -0800 (PST)
 Received: from ?IPV6:2a01:e0a:c:37e0:ced3:55bd:f454:e722? ([2a01:e0a:c:37e0:ced3:55bd:f454:e722])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e4844a16sm13917054f8f.79.2025.03.03.01.41.41
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47a6a6csm14062502f8f.30.2025.03.03.01.42.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Mar 2025 01:41:41 -0800 (PST)
-Message-ID: <eecf227f-8f79-4572-95ae-7370f907579d@redhat.com>
-Date: Mon, 3 Mar 2025 10:41:40 +0100
+        Mon, 03 Mar 2025 01:42:11 -0800 (PST)
+Message-ID: <739acf08-6978-41f3-a4db-724acc03ba06@redhat.com>
+Date: Mon, 3 Mar 2025 10:42:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,8 +87,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] drm/panic: fix overindented list items in
- documentation
+Subject: Re: [PATCH] drm/panic: clean Clippy warning
 To: Miguel Ojeda <ojeda@kernel.org>, =?UTF-8?Q?Thomas_B=C3=B6hler?=
  <witcher@wiredspace.de>,
  Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
@@ -101,67 +100,51 @@ Cc: dri-devel@lists.freedesktop.org, Boqun Feng <boqun.feng@gmail.com>,
  Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
  Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
  linux-kernel@vger.kernel.org, patches@lists.linux.dev
-References: <20250301231602.917580-1-ojeda@kernel.org>
- <20250301231602.917580-2-ojeda@kernel.org>
+References: <20250303093242.1011790-1-ojeda@kernel.org>
 Content-Language: en-US, fr
 From: Jocelyn Falempe <jfalempe@redhat.com>
-In-Reply-To: <20250301231602.917580-2-ojeda@kernel.org>
+In-Reply-To: <20250303093242.1011790-1-ojeda@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 02/03/2025 00:16, Miguel Ojeda wrote:
-> Starting with the upcoming Rust 1.86.0 (to be released 2025-04-03),
+On 03/03/2025 10:32, Miguel Ojeda wrote:
 > Clippy warns:
 > 
->      error: doc list item overindented
->         --> drivers/gpu/drm/drm_panic_qr.rs:914:5
+>      error: manual implementation of an assign operation
+>         --> drivers/gpu/drm/drm_panic_qr.rs:418:25
 >          |
->      914 | ///    will be encoded as binary segment, otherwise it will be encoded
->          |     ^^^ help: try using `  ` (2 spaces)
+>      418 |                         self.carry = self.carry % pow;
+>          |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: replace it with: `self.carry %= pow`
 >          |
->          = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#doc_overindented_list_items
+>          = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#assign_op_pattern
 > 
-> The overindentation is slightly hard to notice, since all the items
-> start with a backquote that makes it look OK, but it is there.
-> 
-> Thus fix it.
+> Thus clean it up.
 
 Thanks, it looks good to me.
 
 Reviewed-by: Jocelyn Falempe <jfalempe@redhat.com>
 
 > 
+> Fixes: dbed4a797e00 ("drm/panic: Better binary encoding in QR code")
 > Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 > ---
->   drivers/gpu/drm/drm_panic_qr.rs | 12 ++++++------
->   1 file changed, 6 insertions(+), 6 deletions(-)
+>   drivers/gpu/drm/drm_panic_qr.rs | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 > diff --git a/drivers/gpu/drm/drm_panic_qr.rs b/drivers/gpu/drm/drm_panic_qr.rs
-> index 8bb5e52d75cc..6903e2010cb9 100644
+> index 62cb8a162483..3b0dd59781d4 100644
 > --- a/drivers/gpu/drm/drm_panic_qr.rs
 > +++ b/drivers/gpu/drm/drm_panic_qr.rs
-> @@ -911,16 +911,16 @@ fn draw_all(&mut self, data: impl Iterator<Item = u8>) {
->   ///
->   /// * `url`: The base URL of the QR code. It will be encoded as Binary segment.
->   /// * `data`: A pointer to the binary data, to be encoded. if URL is NULL, it
-> -///    will be encoded as binary segment, otherwise it will be encoded
-> -///    efficiently as a numeric segment, and appended to the URL.
-> +///   will be encoded as binary segment, otherwise it will be encoded
-> +///   efficiently as a numeric segment, and appended to the URL.
->   /// * `data_len`: Length of the data, that needs to be encoded, must be less
-> -///    than data_size.
-> +///   than data_size.
->   /// * `data_size`: Size of data buffer, it should be at least 4071 bytes to hold
-> -///    a V40 QR code. It will then be overwritten with the QR code image.
-> +///   a V40 QR code. It will then be overwritten with the QR code image.
->   /// * `tmp`: A temporary buffer that the QR code encoder will use, to write the
-> -///    segments and ECC.
-> +///   segments and ECC.
->   /// * `tmp_size`: Size of the temporary buffer, it must be at least 3706 bytes
-> -///    long for V40.
-> +///   long for V40.
->   ///
->   /// # Safety
->   ///
+> @@ -415,7 +415,7 @@ fn next(&mut self) -> Option<Self::Item> {
+>                           self.carry_len -= out_len;
+>                           let pow = u64::pow(10, self.carry_len as u32);
+>                           let out = (self.carry / pow) as u16;
+> -                        self.carry = self.carry % pow;
+> +                        self.carry %= pow;
+>                           Some((out, NUM_CHARS_BITS[out_len]))
+>                       }
+>                   }
+> 
+> base-commit: c0eb65494e59d9834af7cbad983629e9017b25a1
 
 
