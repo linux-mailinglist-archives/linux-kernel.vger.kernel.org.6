@@ -1,372 +1,251 @@
-Return-Path: <linux-kernel+bounces-541955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2695A4C3CE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:48:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC3C6A4C3D4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:49:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7CAB16A781
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:48:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AB573A52D1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:49:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0226E21171F;
-	Mon,  3 Mar 2025 14:48:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E937213E6D;
+	Mon,  3 Mar 2025 14:49:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Th9M9mvu"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=framepointer.org header.i=@framepointer.org header.b="koh+VS9V"
+Received: from out-15.pe-b.jellyfish.systems (out-15.pe-b.jellyfish.systems [198.54.127.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C17178F3E
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 14:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEDCC20F07D;
+	Mon,  3 Mar 2025 14:49:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.54.127.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741013289; cv=none; b=ZkdnC9MHQ/FkBqxLLwtGAbdohchLFF/CBS0ipm6muQw3a9OeWhdBN4n4pht4nSUH0qcx6wbhkViuIKTjt7HUlVbFZLZoLZdXOBhSmUp0+6Kaekv6ednVLbDvsw5INYpCzXcnkXwfiMx20xDtI6zIaKutPeM1fCS4W+4blEIu6T4=
+	t=1741013347; cv=none; b=ifaxxV8d9UQvDRzXITrPDddLSUYuIsajlf52wFqgoKKxNbb8Y3A66pN63Fw4HIS6jdkYKPVAcdLDStFSFwKyADR6FHgCnbSkI0S9stUdRLRepyfn/WExCj+qVyw+CHEpfuyzUraaBemcdRn05Qds+zzL4eg/2l6x34lgZnIPYqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741013289; c=relaxed/simple;
-	bh=FVRD4iX3p9k8gSH9i17b/bed7/npTuICPWhmTSWXw5s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mKhGCxo5IJ7RHnmi2cbuPe9KG3d48UMBSyzuuNhdPQmw3lfT0vJ007z9PujG2Ktnxj7MSgMAvJ5dcaJoHYeR0zGWvsLwUBwF9iWM1Eiirjh5Zm5KgaPe/0Qq3QcIH4DhbQvrD5GWRbPtNc/KnbhXBvsygPrKbODBbffoU1WYg8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Th9M9mvu; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741013285;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JeW7ILK4BHwph4vdjZBYJRZp3BpM7DGYuP2lQy/HDSs=;
-	b=Th9M9mvuu96jjcoAqhERvfjZwhJcX6E8rj4u28NoO1/cWSaAUHeGmAV8HH5mvMSyfy5yUp
-	LxQGzJGpycbrnx0QQEfLglqO7AidwPPsplgsxkxRtvSjg92jyt4qdGZg59nZxwz8nq+9TT
-	zvPOlUPdjPYBhPDSibdqt3ksLnqkX+I=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-421-Arf2lOKvMdqSjXNRDRbD1A-1; Mon, 03 Mar 2025 09:47:54 -0500
-X-MC-Unique: Arf2lOKvMdqSjXNRDRbD1A-1
-X-Mimecast-MFC-AGG-ID: Arf2lOKvMdqSjXNRDRbD1A_1741013273
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-ab39f65dc10so572100266b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 06:47:53 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741013273; x=1741618073;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JeW7ILK4BHwph4vdjZBYJRZp3BpM7DGYuP2lQy/HDSs=;
-        b=Cgz9Tad0rJBEMBIUORwGp22dk4s69IP5e0xzI+phFSpyrFlAVDGh9qyy0u4eaczePw
-         N6FFP5YEdNjjoImN6gtk5Q6PfZ1/ILpUxpuUx2+kJ4igwNihFkXLLz2EMmBayhasL48N
-         u6j6JcBQjUglDtnmn0CSm2WF4jLZhupWnB5q01mfEjLjMxEZ4FmXuxlPZSayO/cd91rC
-         h7AYdq3b6GJyKwL4hJjmz/Ex+3GJ1/8Zom/xVJeQpLlYMSyHecLq/dEr50P68rzPXJyr
-         yZc5rIjfIdT0dFhWPjIsFtW36sbI9ng3fQ5zfWIl1lWrfRhji32kZqxiIAL0fyKrg/I3
-         I0nQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW2BxZOOwBFdzcF6sx9ctB75Je1pg2T3aaLgMbJ/r6YtgIA7VLJ55GpHz4phiqNpzbLjQ9ftAsLM9eUTtE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCZw9ryateKyQbB76btv09vRGPDj8ft6MfZ6g2brcH36i7b+DQ
-	QNlNkUr7aDcXkO6/ANrMKx2x94XE3NI5iYfC+O1MuU+V5ct1rZDLWd63LOOtb9PLsJCLjWigxrZ
-	mkais2rDYso1SOsQ+nT0KaIxNUkKH+oogV+blpECaT6kSmUhGiDhIColmKQUElw==
-X-Gm-Gg: ASbGncs2PYT8unxThCyO8dhfdtdc/hWItXYbUHLnFRea/MVCXf5pBiMZY+edGLs3ZWt
-	k+IRnSp6QwWfwUcD0WT8FO+F8Xvfd5G4V2HovfGdMKCUcx/siZoeWORkl1X+dZbge7FUL2SCDTw
-	COmLOuCI1HHibEZZW7Hk8ZH3AmtwxduMioEn8x7yQfoX0Ew3w67OgwRBEM0IH2RWu+na9X4EZCp
-	oh8jEKp6l0nuclNZaZkQLvDRiOQL8GPnepRAOQDS3Br+QgSePWvt7QBUPPb+uvqJaHOB3/5XrD1
-	9F3y4ybxaQH+wBGlzXw=
-X-Received: by 2002:a17:907:d90:b0:ac1:e332:b1ef with SMTP id a640c23a62f3a-ac1e332b45bmr212465666b.48.1741013272751;
-        Mon, 03 Mar 2025 06:47:52 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFxkGtJFlxPNSNyID6fMe+Mm/hHvV0XaEzpcB6ATKLdIpZJ9r5qZolbpF2E4TnEHvKU9ctYww==
-X-Received: by 2002:a17:907:d90:b0:ac1:e332:b1ef with SMTP id a640c23a62f3a-ac1e332b45bmr212462066b.48.1741013272258;
-        Mon, 03 Mar 2025 06:47:52 -0800 (PST)
-Received: from [10.40.98.122] ([78.108.130.194])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c6ee491sm822229966b.103.2025.03.03.06.47.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Mar 2025 06:47:51 -0800 (PST)
-Message-ID: <c6ab8640-d96c-4a71-929a-a4ad6bb2647d@redhat.com>
-Date: Mon, 3 Mar 2025 15:47:51 +0100
+	s=arc-20240116; t=1741013347; c=relaxed/simple;
+	bh=MNjDfqZLSnlJ4xm1Uqst0rrtX/aws1k1MoBULpesUJY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LFBwtmJUFn7Zv9/hExVqrlqkpD+q1D2R91VQYtnJz417jCFJxl1kURNXCbbF2QYeF0ZRyO9DANZh/AXbh5UuZXFCFYnEd7MnCegl1GjrhjUE5FBPQ9FpKVkGveRiL/jM3ltsBDPf/yUPjk+M9Bwh5ho9si8Lr/9asa+chBf0ouc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=framepointer.org; spf=pass smtp.mailfrom=framepointer.org; dkim=pass (2048-bit key) header.d=framepointer.org header.i=@framepointer.org header.b=koh+VS9V; arc=none smtp.client-ip=198.54.127.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=framepointer.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=framepointer.org
+Received: from prod-lbout-phx.jellyfish.systems (new-01.privateemail.com [198.54.118.220])
+	by pe-b.jellyfish.systems (Postfix) with ESMTPA id 4Z61sk4jcnzDqdL;
+	Mon, 03 Mar 2025 14:48:58 +0000 (UTC)
+Received: from MTA-07.privateemail.com (unknown [10.50.14.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
+	(No client certificate requested)
+	by NEW-01.privateemail.com (Postfix) with ESMTPS id 4Z61sk415dz3hhVZ;
+	Mon,  3 Mar 2025 09:48:58 -0500 (EST)
+Received: from mta-07.privateemail.com (localhost [127.0.0.1])
+	by mta-07.privateemail.com (Postfix) with ESMTP id 4Z61sk2f4Vz3hhVR;
+	Mon,  3 Mar 2025 09:48:58 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=framepointer.org;
+	s=default; t=1741013338;
+	bh=MNjDfqZLSnlJ4xm1Uqst0rrtX/aws1k1MoBULpesUJY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=koh+VS9VmykpFaBULoB0C+NqkdT4+y+b8faO/4u84hvjEjsCOoxjiJzOCwNaP7BMp
+	 fK7EPYV2aiuFmsCZW6esl1kqRLGm5NuPSX5H7FfX8iiZQ8xO/nsMWFPn0BuEP7W8Ra
+	 HMoG0l64MLwxFFP8T73zemkcimD1WJ1V2jvHn/UJ9psPMVAlt35rjj5BxIyeMMAP1n
+	 MS5sQgXWBXBiabN2zukKls18yQkjMspAnMS8RxuYMuo/+r3mXMJNsZhLh5aXvhADHk
+	 ntHjHc+1PuJ3GSvNRhFkurgeE6dWJEbm+5+pjlzh4ZY83ekzr/SrjOUupT3RuMDlpU
+	 MdPDbXpkyGOEA==
+Received: from 65YTFL3.secure.tethers.com (unknown [152.44.190.141])
+	by mta-07.privateemail.com (Postfix) with ESMTPA;
+	Mon,  3 Mar 2025 09:48:45 -0500 (EST)
+Date: Mon, 3 Mar 2025 09:48:46 -0500
+From: Sam Winchenbach <sam.winchenbach@framepointer.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, lars@metafoo.de,
+	Michael.Hennerich@analog.com, antoniu.miclaus@analog.com,
+	jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] dt-bindings: iio: filter: Add lpf/hpf freq margins
+Message-ID: <Z8XBTnNWUh54FxS6@65YTFL3.secure.tethers.com>
+References: <20250225134612.577022-1-sam.winchenbach@framepointer.org>
+ <20250225134612.577022-2-sam.winchenbach@framepointer.org>
+ <20250226-sparkling-caped-saluki-b1cbad@krzk-bin>
+ <Z79K8Ag4SJYtJTtM@65YTFL3.secure.tethers.com>
+ <05e56d15-059b-425b-9e55-66993d988f8d@kernel.org>
+ <Z7-SojPPx3kOVa4y@65YTFL3.secure.tethers.com>
+ <8fef9b19-a1de-4153-a186-1aeee87dea9d@kernel.org>
+ <Z8WvKNcCnQI_UYZJ@65YTFL3.secure.tethers.com>
+ <b3f98745-39c3-4b1f-a0e6-51e5138d840c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: uvcvideo: Enable full UVC metadata for all devices
-To: Ricardo Ribalda <ribalda@chromium.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250226-uvc-metadata-v1-1-6cd6fe5ec2cb@chromium.org>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20250226-uvc-metadata-v1-1-6cd6fe5ec2cb@chromium.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b3f98745-39c3-4b1f-a0e6-51e5138d840c@kernel.org>
+X-Virus-Scanned: ClamAV using ClamSMTP
 
-Hi,
-
-On 26-Feb-25 14:00, Ricardo Ribalda wrote:
-> The UVC driver provides two metadata types V4L2_META_FMT_UVC, and
-> V4L2_META_FMT_D4XX. The only difference between the two of them is that
-> V4L2_META_FMT_UVC only copies PTS, SCR, size and flags, and
-> V4L2_META_FMT_D4XX copies the whole metadata section.
+On Mon, Mar 03, 2025 at 03:16:00PM +0100, Krzysztof Kozlowski wrote:
+> On 03/03/2025 14:31, Sam Winchenbach wrote:
+> >>> This prevents the situation where your fundamental frequency falls on, or close
+> >>> to, a corner frequency which could result in 3dB (half power) loss in your
+> >>> signal.
+> >>>
+> >>> This is all completely indepent of the high-pass filter.
+> >>
+> >> Description is confusing a bit, because it suggests the value sets the
+> >> corner frequency. It explicitly says this - "sets ... corner frequency"
+> >> and such meaning for properties we usually associate with the property
+> >> doing this. Here however corner frequency will be always set to rf_in
+> >> and you just adjust the value.
+> >>
+> > 
+> > How about: "Sets the minimum distance (in Hz) between the fundamental
+> > frequency of `rf_in` and the corner frequency of the high-pass, input filter
+> > when operatred in 'auto' mode. The selected high-pass corner frequency will
+> > be less than, or equal to, `rf_in` - `hpf-margin-hz`. If not setting is found
+> > that satisfies this relationship the filter will be put into 'bypass'."
+> > 
+> > Perhaps that is a bit more clear on the intention of this parameter?
 > 
-> Now we only enable V4L2_META_FMT_D4XX for the Intel D4xx family of
-> devices, but it is useful for any device where vendors include other
-> metadata, such as the one described by Microsoft:
-> - https://learn.microsoft.com/en-us/windows-hardware/drivers/stream/mf-capture-metadata
+> Yes
+
+I will update with this wording.
+
 > 
-> This patch removes the UVC_INFO_META macro and enables
-> V4L2_META_FMT_D4XX for every device. It also updates the documentation
-> to reflect the change.
+> > 
+> >>>
+> >>>>
+> >>>>> them as separate controls but I am happy to put them into an array if that is
+> >>>>> the idiomatic approach to situations like this. That said, I am having a
+> >>>>> difficult time getting dt_binding_check to pass when I have an array of uint64.
+> >>>>>
+> >>>>> When listing two items, as in your example below, I get the following:
+> >>>>> adi,admv8818.example.dtb: admv8818@0: adi,filter-margins-hz: [[0, 30000000], [0, 30000000]] is too long
+> >>>>
+> >>>> Tricky to say without seeing your code. Magic crystal ball had
+> >>>> malfunction today.
+> >>>
+> >>> This is the property:
+> >>>
+> >>>   adi,filter-margins-hz:
+> >>>     items:
+> >>>       - description: |
+> >>>           The minimum distance, in Hz, between rf_in and the low-pass corner
+> >>>           frequency when the device is used in "auto" mode. If the sum of
+> >>>           rf_in and this value is greater than 18.85 GHz then the low-pass
+> >>>           filter will be put into bypass mode, otherwise the closest corner
+> >>>           frequency that is greater than or equal to the sum of rf_in plus this
+> >>>           value will be used.
+> >>>         minimum: 0
+> >>>         maximum: 0xFFFFFFFFFFFFFFFF
+> >>>         default: 0
+> >>>       - description: |
+> >>>           The minimum distance, in Hz, between rf_in and the high-pass corner
+> >>>           frequency when the device is used in "auto" mode. If the difference
+> >>>           between rf_in and this value is less than 1.75 GHz then the high-pass
+> >>>           filter will be put into bypass mode, otherwise the closest corner
+> >>>           frequency that is less than or equal to the difference of rf_in and
+> >>>           this value will be used.
+> >>>         minimum: 0
+> >>>         maximum: 0xFFFFFFFFFFFFFFFF
+> >>>         default: 0
+> >>>
+> >>> And this is the example:
+> >>>
+> >>> examples:
+> >>>   - |
+> >>>     spi {
+> >>>       #address-cells = <1>;
+> >>>       #size-cells = <0>;
+> >>>       admv8818@0 {
+> >>>         compatible = "adi,admv8818";
+> >>>         reg = <0>;
+> >>>         spi-max-frequency = <10000000>;
+> >>>         clocks = <&admv8818_rfin>;
+> >>>         clock-names = "rf_in";
+> >>>         adi,filter-margins-hz = /bits/ 64 <30000000 30000000>;
+> >>
+> >>
+> >> foo-hz is in 32-bit, so basically you have here 4 32-bit numbers which
+> >> indeed reported by dtschema - property is too long. Drop 64-bit here.
+> >>
+> > 
+> > I was hoping to keep this 64 bits seeing this is a 18 GHz+ filter. I suppose
+> > I could change this to MHz and just lose a bit of resolution. Does that sound
+> > like a better approach?
 > 
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> Does the hardware accept Hz resolution? How many bits do you have in the
+> registers per each value?
+>
 
-Thanks, patch looks good to me:
+This isn't necessarily abour the hardware accepts, more about the tolerance
+of the application. A user could, for example, require that the corner
+frequency is at least 500 kHz from the fundamental, or the user could require the
+corner be at least 6 GHz from the corner. A lot of it depends on the bandwidth
+of the design. Changing this to MHz would be likely be fine. The average user
+would likely specify 10's if not 100's of MHz in this field.
+ 
+> Anyway, the value was 32-bit even in your original patch and your DTS
+> example was not correct.
+>
 
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Was it incorrect because I chose a value less than 2^32? I believe this expands
+to 64 bits:
++        adi,lpf-margin-hz = /bits/ 64 <30000000>;
++        adi,hpf-margin-hz = /bits/ 64 <30000000>;
 
-Regards,
+Is it more appropriate to specify it like this?
+        adi,lpf-margin-hz = <0 0x1c9c380>;
 
-Hans
-
-
-> ---
->  .../userspace-api/media/v4l/metafmt-d4xx.rst       | 19 +++--
->  .../userspace-api/media/v4l/metafmt-uvc.rst        |  6 +-
->  drivers/media/usb/uvc/uvc_driver.c                 | 83 ----------------------
->  drivers/media/usb/uvc/uvc_metadata.c               | 15 ++--
->  drivers/media/usb/uvc/uvcvideo.h                   |  1 -
->  5 files changed, 23 insertions(+), 101 deletions(-)
 > 
-> diff --git a/Documentation/userspace-api/media/v4l/metafmt-d4xx.rst b/Documentation/userspace-api/media/v4l/metafmt-d4xx.rst
-> index 0686413b16b2..1b18ef056934 100644
-> --- a/Documentation/userspace-api/media/v4l/metafmt-d4xx.rst
-> +++ b/Documentation/userspace-api/media/v4l/metafmt-d4xx.rst
-> @@ -6,12 +6,23 @@
->  V4L2_META_FMT_D4XX ('D4XX')
->  *******************************
->  
-> -Intel D4xx UVC Cameras Metadata
-> +UVC Full Payload Header Data (formerly known as Intel D4xx UVC Cameras
-> +Metadata).
->  
->  
->  Description
->  ===========
->  
-> +V4L2_META_FMT_D4XX buffers follow the metadata buffer layout of
-> +V4L2_META_FMT_UVC with the only difference, that it also includes proprietary
-> +payload header data. It was originally implemented for Intel D4xx cameras, and
-> +thus the name, but now it can be used by any UVC device, when userspace wants
-> +full access to the UVC Metadata.
-> +
-> +
-> +Intel D4xx Metadata
-> +===================
-> +
->  Intel D4xx (D435, D455 and others) cameras include per-frame metadata in their UVC
->  payload headers, following the Microsoft(R) UVC extension proposal [1_]. That
->  means, that the private D4XX metadata, following the standard UVC header, is
-> @@ -21,10 +32,8 @@ types are MetadataId_CaptureStats (ID 3), MetadataId_CameraExtrinsics (ID 4),
->  and MetadataId_CameraIntrinsics (ID 5). For their description see [1_]. This
->  document describes proprietary metadata types, used by D4xx cameras.
->  
-> -V4L2_META_FMT_D4XX buffers follow the metadata buffer layout of
-> -V4L2_META_FMT_UVC with the only difference, that it also includes proprietary
-> -payload header data. D4xx cameras use bulk transfers and only send one payload
-> -per frame, therefore their headers cannot be larger than 255 bytes.
-> +D4xx cameras use bulk transfers and only send one payload per frame, therefore
-> +their headers cannot be larger than 255 bytes.
->  
->  This document implements Intel Configuration version 3 [9_].
->  
-> diff --git a/Documentation/userspace-api/media/v4l/metafmt-uvc.rst b/Documentation/userspace-api/media/v4l/metafmt-uvc.rst
-> index 784346d14bbd..a3aae580e89e 100644
-> --- a/Documentation/userspace-api/media/v4l/metafmt-uvc.rst
-> +++ b/Documentation/userspace-api/media/v4l/metafmt-uvc.rst
-> @@ -6,7 +6,7 @@
->  V4L2_META_FMT_UVC ('UVCH')
->  *******************************
->  
-> -UVC Payload Header Data
-> +UVC Partial Payload Header Data (formerly known as UVC Payload Header Data).
->  
->  
->  Description
-> @@ -44,7 +44,9 @@ Each individual block contains the following fields:
->          them
->      * - :cspan:`1` *The rest is an exact copy of the UVC payload header:*
->      * - __u8 length;
-> -      - length of the rest of the block, including this field
-> +      - length of the rest of the block, including this field (please note that
-> +        regardless of this value, the driver will never copy more than 12
-> +        bytes).
->      * - __u8 flags;
->        - Flags, indicating presence of other standard UVC fields
->      * - __u8 buf[];
-> diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-> index deadbcea5e22..f19dcd4a7ac6 100644
-> --- a/drivers/media/usb/uvc/uvc_driver.c
-> +++ b/drivers/media/usb/uvc/uvc_driver.c
-> @@ -2488,8 +2488,6 @@ static const struct uvc_device_info uvc_quirk_force_y8 = {
->  };
->  
->  #define UVC_INFO_QUIRK(q) (kernel_ulong_t)&(struct uvc_device_info){.quirks = q}
-> -#define UVC_INFO_META(m) (kernel_ulong_t)&(struct uvc_device_info) \
-> -	{.meta_format = m}
->  
->  /*
->   * The Logitech cameras listed below have their interface class set to
-> @@ -3107,87 +3105,6 @@ static const struct usb_device_id uvc_ids[] = {
->  	  .bInterfaceSubClass	= 1,
->  	  .bInterfaceProtocol	= 0,
->  	  .driver_info		= UVC_INFO_QUIRK(UVC_QUIRK_DISABLE_AUTOSUSPEND) },
-> -	/* Intel D410/ASR depth camera */
-> -	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
-> -				| USB_DEVICE_ID_MATCH_INT_INFO,
-> -	  .idVendor		= 0x8086,
-> -	  .idProduct		= 0x0ad2,
-> -	  .bInterfaceClass	= USB_CLASS_VIDEO,
-> -	  .bInterfaceSubClass	= 1,
-> -	  .bInterfaceProtocol	= 0,
-> -	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
-> -	/* Intel D415/ASRC depth camera */
-> -	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
-> -				| USB_DEVICE_ID_MATCH_INT_INFO,
-> -	  .idVendor		= 0x8086,
-> -	  .idProduct		= 0x0ad3,
-> -	  .bInterfaceClass	= USB_CLASS_VIDEO,
-> -	  .bInterfaceSubClass	= 1,
-> -	  .bInterfaceProtocol	= 0,
-> -	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
-> -	/* Intel D430/AWG depth camera */
-> -	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
-> -				| USB_DEVICE_ID_MATCH_INT_INFO,
-> -	  .idVendor		= 0x8086,
-> -	  .idProduct		= 0x0ad4,
-> -	  .bInterfaceClass	= USB_CLASS_VIDEO,
-> -	  .bInterfaceSubClass	= 1,
-> -	  .bInterfaceProtocol	= 0,
-> -	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
-> -	/* Intel RealSense D4M */
-> -	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
-> -				| USB_DEVICE_ID_MATCH_INT_INFO,
-> -	  .idVendor		= 0x8086,
-> -	  .idProduct		= 0x0b03,
-> -	  .bInterfaceClass	= USB_CLASS_VIDEO,
-> -	  .bInterfaceSubClass	= 1,
-> -	  .bInterfaceProtocol	= 0,
-> -	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
-> -	/* Intel D435/AWGC depth camera */
-> -	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
-> -				| USB_DEVICE_ID_MATCH_INT_INFO,
-> -	  .idVendor		= 0x8086,
-> -	  .idProduct		= 0x0b07,
-> -	  .bInterfaceClass	= USB_CLASS_VIDEO,
-> -	  .bInterfaceSubClass	= 1,
-> -	  .bInterfaceProtocol	= 0,
-> -	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
-> -	/* Intel D435i depth camera */
-> -	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
-> -				| USB_DEVICE_ID_MATCH_INT_INFO,
-> -	  .idVendor		= 0x8086,
-> -	  .idProduct		= 0x0b3a,
-> -	  .bInterfaceClass	= USB_CLASS_VIDEO,
-> -	  .bInterfaceSubClass	= 1,
-> -	  .bInterfaceProtocol	= 0,
-> -	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
-> -	/* Intel D405 Depth Camera */
-> -	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
-> -				| USB_DEVICE_ID_MATCH_INT_INFO,
-> -	  .idVendor		= 0x8086,
-> -	  .idProduct		= 0x0b5b,
-> -	  .bInterfaceClass	= USB_CLASS_VIDEO,
-> -	  .bInterfaceSubClass	= 1,
-> -	  .bInterfaceProtocol	= 0,
-> -	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
-> -	/* Intel D455 Depth Camera */
-> -	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
-> -				| USB_DEVICE_ID_MATCH_INT_INFO,
-> -	  .idVendor		= 0x8086,
-> -	  .idProduct		= 0x0b5c,
-> -	  .bInterfaceClass	= USB_CLASS_VIDEO,
-> -	  .bInterfaceSubClass	= 1,
-> -	  .bInterfaceProtocol	= 0,
-> -	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
-> -	/* Intel D421 Depth Module */
-> -	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
-> -				| USB_DEVICE_ID_MATCH_INT_INFO,
-> -	  .idVendor		= 0x8086,
-> -	  .idProduct		= 0x1155,
-> -	  .bInterfaceClass	= USB_CLASS_VIDEO,
-> -	  .bInterfaceSubClass	= 1,
-> -	  .bInterfaceProtocol	= 0,
-> -	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
->  	/* Generic USB Video Class */
->  	{ USB_INTERFACE_INFO(USB_CLASS_VIDEO, 1, UVC_PC_PROTOCOL_UNDEFINED) },
->  	{ USB_INTERFACE_INFO(USB_CLASS_VIDEO, 1, UVC_PC_PROTOCOL_15) },
-> diff --git a/drivers/media/usb/uvc/uvc_metadata.c b/drivers/media/usb/uvc/uvc_metadata.c
-> index 82de7781f5b6..5c44e6cdb83c 100644
-> --- a/drivers/media/usb/uvc/uvc_metadata.c
-> +++ b/drivers/media/usb/uvc/uvc_metadata.c
-> @@ -60,18 +60,16 @@ static int uvc_meta_v4l2_try_format(struct file *file, void *fh,
->  				    struct v4l2_format *format)
->  {
->  	struct v4l2_fh *vfh = file->private_data;
-> -	struct uvc_streaming *stream = video_get_drvdata(vfh->vdev);
-> -	struct uvc_device *dev = stream->dev;
->  	struct v4l2_meta_format *fmt = &format->fmt.meta;
-> -	u32 fmeta = fmt->dataformat;
-> +	u32 fmeta = fmt->dataformat == V4L2_META_FMT_D4XX ?
-> +		    V4L2_META_FMT_D4XX : V4L2_META_FMT_UVC;
->  
->  	if (format->type != vfh->vdev->queue->type)
->  		return -EINVAL;
->  
->  	memset(fmt, 0, sizeof(*fmt));
->  
-> -	fmt->dataformat = fmeta == dev->info->meta_format
-> -			? fmeta : V4L2_META_FMT_UVC;
-> +	fmt->dataformat = fmeta;
->  	fmt->buffersize = UVC_METADATA_BUF_SIZE;
->  
->  	return 0;
-> @@ -110,19 +108,16 @@ static int uvc_meta_v4l2_enum_formats(struct file *file, void *fh,
->  				      struct v4l2_fmtdesc *fdesc)
->  {
->  	struct v4l2_fh *vfh = file->private_data;
-> -	struct uvc_streaming *stream = video_get_drvdata(vfh->vdev);
-> -	struct uvc_device *dev = stream->dev;
->  	u32 index = fdesc->index;
->  
-> -	if (fdesc->type != vfh->vdev->queue->type ||
-> -	    index > 1U || (index && !dev->info->meta_format))
-> +	if (fdesc->type != vfh->vdev->queue->type || index > 1U)
->  		return -EINVAL;
->  
->  	memset(fdesc, 0, sizeof(*fdesc));
->  
->  	fdesc->type = vfh->vdev->queue->type;
->  	fdesc->index = index;
-> -	fdesc->pixelformat = index ? dev->info->meta_format : V4L2_META_FMT_UVC;
-> +	fdesc->pixelformat = index ? V4L2_META_FMT_D4XX : V4L2_META_FMT_UVC;
->  
->  	return 0;
->  }
-> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-> index 5e388f05f3fc..cc2092ae9987 100644
-> --- a/drivers/media/usb/uvc/uvcvideo.h
-> +++ b/drivers/media/usb/uvc/uvcvideo.h
-> @@ -534,7 +534,6 @@ static inline u32 uvc_urb_index(const struct uvc_urb *uvc_urb)
->  
->  struct uvc_device_info {
->  	u32	quirks;
-> -	u32	meta_format;
->  	u16	uvc_version;
->  };
->  
+> > 
+> >> Device allows multiple LPF/HPF values to be stored in LUT tables and it
+> >> actually has four independent filters. Shouldn't these be included here?
+> >> Maybe not LUT tables, but the configuration for all filters?
+> >>
+> > 
+> > There are two filters, the input (high-pass) filter, and the output (low-pass)
+> > filter. Each filter has four banks, each with a different range of frequencies.
+> > Only one bank can be selected at a time. Each bank has 16 different possible
+> > cutoff/corner frequencies. That is a total of 64 distinct values for each of
+> > the two filters.
 > 
-> ---
-> base-commit: d98e9213a768a3cc3a99f5e1abe09ad3baff2104
-> change-id: 20250226-uvc-metadata-2e7e445966de
+> Hm, datasheet says:
+> "four independently controlled high-
+> pass filters (HPFs) and four independently controlled low-pass
+> filters (LPFs)"
+> 
+> so four each, not one each, but I guess they wanted to say banks as only
+> one filter/bank can be active in given time?
+>
+
+Correct. On the first page you can see that each of the 4 filters is selected
+by a multiplexer/demultiplexer - the 5 options are: bypass (pass the signal)
+band 1, band 2, band 3, band 4. You can see this on p. 30, register 0x20.
+
+Register 0x21 selects which of corner is used on the selected band.
+
+> > 
+> > The issue with setting the corner frequency directly is that in certain
+> > applications (such as software defined radios) the fundamental frequency
+> > is adjustable, necessitating that the corner frequencies of the filter are
+> > adjusted accordingly. When the filter is in "auto" mode it is notified via
+> > the clock system of frequency changes, so using this information it should be
+> > possible to select new corner frequencies if you know the minimum distance
+> > between your fundamental frequency and the corner.
+> 
+> I am not advocating to set the corner frequency directly, but just
+> pointing that your current binding seems incomplete.
+>
+
+I see. Let's see if we can come to an agreement on this then. I think this
+would be a useful feature for others.
+
+Thanks,
+-Sam
+ 
 > 
 > Best regards,
-
+> Krzysztof
 
