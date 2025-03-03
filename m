@@ -1,116 +1,127 @@
-Return-Path: <linux-kernel+bounces-541552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7C07A4BE35
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:23:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B7D2A4BE0B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:20:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 458E6169F98
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:19:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BCDF7A6A1E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:19:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DAE81F7580;
-	Mon,  3 Mar 2025 11:15:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E127E1F8681;
+	Mon,  3 Mar 2025 11:15:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="jC3FiKE1"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rBu647ZG"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 144321F1921;
-	Mon,  3 Mar 2025 11:15:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC371F5850
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 11:15:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741000544; cv=none; b=O6xOxIllun6LKZJJHD9Gno514rCmF7ipl11NKV4H8uOc+CI4yLabjUKuUIUZBlGt9g9OhzUKbZpPLNL1tuDabhzp0k0GjSCC69h6+G0sCdWibPyg+wBpbt4NiYoYIRBWQ3ZI+AIFzEQOxTzeo2eQw3hZer2/jWr4F1cCTsNZ9P8=
+	t=1741000550; cv=none; b=L/c+qDtA9MlpuPAEAEILSd/O8HURdSVEMtRXxeddj3jdHDv7vV8XtFkFdHK3VjxwBCKSgikVreb7p1VOsTq489M74opJwCX777Qu28irLoecS8MxRYn0fflANh7w5ke4GhdaLZCXIeK29ToaxW8TZI5Ocet9skNdJVkWv3Tqx2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741000544; c=relaxed/simple;
-	bh=My0FAg9ECNGTXiPTr8yp95tKw/PNZxWh3Wz2mbCwVSE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GX//8KEh/jNiVJL4chIwr0CLfuFxlOr9H0amJMZm9/VYtEI9maDRcmHY2IwBzlywKcDUgAazraKRE4UaBn8oS9Ypd7/N5ki3Opj+P1wd/XX/vByZUJLgeRCcH/8OV3boacDWFusvcVDcbX75Dfi6XCC82eLuc9/tu6gng60EmlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=jC3FiKE1; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1741000527; x=1741605327; i=markus.elfring@web.de;
-	bh=My0FAg9ECNGTXiPTr8yp95tKw/PNZxWh3Wz2mbCwVSE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=jC3FiKE1zwz0jH5Cs5wJHKsMGoy0dqE9amlLs10O3SwZB/FWdFjB9tSe0wJo4tsf
-	 LJujFIQwUlJtAvjP5e4IhYpG46h9GTEeMKngt88WwHnPoxBilG8zm3+hkx53capMF
-	 FIC0uDjHF/1el6X2TFLPdPuIQ1DJs9Lym2QFRu+ZlbOr8mpDJdrWpl5o4zY9gAF2o
-	 YHqD69241/TPyrmkI+ZMEmfYykbYlvIPHRpcNJ2oblmaZYfbxcpSfHqDTKRzP0/SE
-	 +Q7NFKHFaU4R11+vL9f/oudJ9x0zmbVLS/PWZk5lwXk0BaZiYtd8yK+uZmqjGPvvL
-	 lyWRNaPLQ/0VZVQ1OA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.19]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mt8kX-1t06sA36Jl-00yCfC; Mon, 03
- Mar 2025 12:15:27 +0100
-Message-ID: <10afda2a-4c52-47a8-bdfd-4bfd7bd9cb34@web.de>
-Date: Mon, 3 Mar 2025 12:15:25 +0100
+	s=arc-20240116; t=1741000550; c=relaxed/simple;
+	bh=5hC/zsYW4m5dWMFoZYSvLKC4QhkY3ONrIAi+2Fa+xC8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uROiogaM+kIzlcPmAg0X6fzDzq16jRYy8GKWwkLBadWGcPuZey8W53FbhueF5wbCT1hBZ3pNenPkzOsH4XuJiJnEA6R8VQORXodrfzKj9bPfKSWKaEJbU2ipoYdN9r8A8+gF558Xa333F0UgE9q+XkdkzmSh5r3jpWSLBn7E9Ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rBu647ZG; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22349bb8605so80496095ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 03:15:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741000548; x=1741605348; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=aSxQXnps0NX3/X724vkMJF3+1qjDBVTjDpo2eD773ZA=;
+        b=rBu647ZGQ7FavGU9hTdt424Qee0DdYiWJLFz8OxjX3rgtONSQVWBqDEuLT54PJzUDq
+         aYOYHab17PUQqk4UM6ydmYm5OmJyE34/vT06aLOQT1JYO1kUCE+NSRZqQB2FnQfH1wGN
+         RmBtErI8OtRov1oMZ3USehptc712n6Wy1TB6Zgd/u9cRk9r/7PweBTQFpvBV7AWaE3/k
+         HL1DU/wwWki276QoPGegs68X03jMioM5Jbg1n88b7xD+adQdncz9QMh4q6tLiOcXsFvL
+         /3Zd2LPHVtgH2wLSkXlfqDHZfzPzE7aoqK14r6ztSWOfX4yh9sVKhGkJGgr9NS0gWKWf
+         KI6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741000548; x=1741605348;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aSxQXnps0NX3/X724vkMJF3+1qjDBVTjDpo2eD773ZA=;
+        b=KTGlNXVfZoscW8raRLUiyNcsRr/zNWZBNFUhy6qENn7EOZj7Y9JoQ8hfHiafNaqH5m
+         3YIWTPxYqPNVyt1vDnEUEjntgg/6RQB1spFZ53RfyokoeuH+2U+i7mcP3FeDFbDDM2Ef
+         n7TGUOYA2SALm6Yn7nMPmyp9z9BVAzflzunaCX02zVkV1d3duT9r1Ni0VJfVHwlNlZxi
+         paZ8nHZgnEvlUSLrxeg6gAQwEf2fktd2MHIq6cJ8DSNJ207U6fm61CmK0BUlINZVOyhD
+         8iUpOHomK4IoD1ZHRTrfI7mMPzBpzpdydUiFKbHiI0j7OwXvT2XHgrYKO7toh2mO59I2
+         9DaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUxAeTW55LPviGmhH3hMzwsduQ3FvWHMo41/2g1gjQgX9opl4P71TuN5GYq9GLbawe4JhJnSDvWmcVjEVw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxsg+mATTmMbtmL0rIBAYwzHP8+JFORWU7zmiDfEgFTkmPBAKCU
+	AP/B6EzQTfVDQKhtQG/3Fw1pO4H9oAM5ckEngLMb1lRjvvnMo1AqZxi57nIhcoQ=
+X-Gm-Gg: ASbGnctSbNG5w2e18kiG5dOqgkUTF88IbKh+8h2g/bugQbPappphbPHHRii9x8/1KXy
+	S8ostovuvRhmINTTWZRfIMv6gmZ4BKD4uq5joKNOqPzCUXQPUoSlFfLR64kSb5+ZBLdOImDShcv
+	TKquGo1OmOEE3j/UO+RTmFT1isBoW8lNn67vVbmDv+HTbLYEXVqOxdzw8xpj769+fEDqRhqAD1b
+	qlrFmsIaqj8g8Rtr2yD3lSF6dozCif4jk3kYe47y+9aSMu2CIbn25SDuYYBmoL0zipbNuZyu00i
+	fw3NJ6kD/dQBFeoXiAFbJDzN/wLD99bqBQdp9V3SAK6UCw==
+X-Google-Smtp-Source: AGHT+IFZbp31fkpQhA+gdP4RfVHPSfPGmjA4KgAfzi0kwaQaY1tDD62JMcHr6vaO69K8iFjA7m+Low==
+X-Received: by 2002:a17:902:f548:b0:21f:4c8b:c514 with SMTP id d9443c01a7336-2236925f2c5mr179305795ad.45.1741000548141;
+        Mon, 03 Mar 2025 03:15:48 -0800 (PST)
+Received: from localhost ([122.172.84.15])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223501d29cbsm75815325ad.50.2025.03.03.03.15.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 03:15:47 -0800 (PST)
+Date: Mon, 3 Mar 2025 16:45:45 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Alice Ryhl <aliceryhl@google.com>, Greg KH <gregkh@linuxfoundation.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Daniel Almeida <daniel.almeida@collabora.com>
+Subject: Re: [PATCH V3 1/2] rust: Add clk helpers
+Message-ID: <20250303111545.ekszepspoghprh7g@vireshk-i7>
+References: <cover.1740995194.git.viresh.kumar@linaro.org>
+ <171b6cd811ff4e913880ab33bc11e634f7cdeecb.1740995194.git.viresh.kumar@linaro.org>
+ <CAH5fLgjNE7BF7fC6TxO3NjKV1OHXRxZFKn2Bs6fy8h_0zYd1tg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: mtd: rawnand: tegra: Simplify maximum determination in
- tegra_nand_setup_timing()
-To: Miquel Raynal <miquel.raynal@bootlin.com>, linux-tegra@vger.kernel.org,
- linux-mtd@lists.infradead.org
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Lucas Stach <dev@lynxeye.de>,
- Richard Weinberger <richard@nod.at>, Stefan Agner <stefan@agner.ch>,
- Thierry Reding <thierry.reding@gmail.com>,
- Vignesh Raghavendra <vigneshr@ti.com>, LKML <linux-kernel@vger.kernel.org>,
- kernel-janitors@vger.kernel.org, Qasim Ijaz <qasdev00@gmail.com>,
- Natalie Vock <natalie.vock@gmx.de>
-References: <d564cafe-d45a-40b5-9a91-a2e2b97c80d6@web.de>
- <87pliy9yyv.fsf@bootlin.com> <0193ac44-e858-4aff-a50f-dd95dbf3de5b@web.de>
- <87h64a9y04.fsf@bootlin.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <87h64a9y04.fsf@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:R1exJjdCQwDCi4tP+5q2mVtAJq6NaltfMACf/dznh3c2rORKP8d
- EjjNDUoCoUYK/hlQ18JBQvxCEai4B4jLmJCvRepLp06rXRRscEQnIunGbqWjJxlGdOa55J4
- th/oQDxXsk4Ga0eZZt8pvMIhamehVGQ6jakpIypJoEFdJhNHSZM2IKB5F9y9xhW0XqNl+wr
- iANKn8LFoBVo8c9eXiw3g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:9aGubQHfLpA=;X2oznE8qxdpeeK7RDktpeZ6VenX
- SY4S66SxXgz1fvqAzrjZGKCbALvFIOTlSeOrGRCklYGiRfYzeQ0gFJlv4KHA7JQhzD5r0BI4v
- Wz6N9/dPehIzl9RYlP0N8MAHti+KYioj4EYAKcLFjqvYSHmRmDdHWW/ilhqS+HM0q2ZMAEZja
- Q4r17eTq9w+q67VRYXOI5wbP5y09e79a/YdTMzknp/kU2IWg0DWNvmEPdBFPBlX+6dOoQgZRI
- czD7BgbMdJUyY1LF/K/dP13Uic8xLBKBqFDGNfN7ThTfkCTcwPHJ+81yayjP0R9/4LO+3SUWl
- oFtwfI0QVhm5D3GQnvoTQuYINWIoT9mmnO+2Iv380OIjtRQMGObZhmzYJzlaCu8wIIvnmg9VA
- wm2MMcfvA9YsWICoDWwNGKy1ZRFJdWJl+7UW4YxcvRerXqTWI/oDx/GZWFnTmFMEZZYxnMf+5
- aFLhXL7mryGxBAsLlQxNZE5HdYY2G/tJtoTONlFmKqbicGhDysEN46ZZ9PlbLTxUDymiehJAZ
- 6COWzab92QXHQsK9/IaRAkx2MWcW+mSSzW1gjlr68lvY574+G2wBYyftLlWAUDax7TwmqEWbq
- uov7uz2SiPXSjLokY7R1NFhCUk2rXGslLd87ntSjMkG7gTYFAaXA06SnJ3JAlRZJFdDpNxdXA
- sk+0X9zBt0oB1InfFbS7l5wqq909vnZVNZcXiWYR4m3PtoqEQkqwwCdy9jXpncKy1hONv3gCI
- tKkTr2lmFwaGojxltZ90mfROkPwAIzC7n2g1hNuYSYCdkQUjub7wRX3maNqK8wSqg/hsFsZxY
- 9vizJ2c/rmF3H2UvvBdmp6iBtRy4ePbp5eDgBOqAXcDHBJK/sBMD8/haItmCxVC/4UGseVR1g
- 3jDeOBkQ5Hw8WA80Y+UAAlK/S4drhoDf9bnggFJBOH4agcS3jatZOwbkLPe5+vhQHBKTvofZ0
- YYTl8Ipnk8ivIuozDkaMieYQseJ5ypFE/jFyiGKAQnwYTg3LBgajq2eSypUY61kRi4yZERSBr
- Wek9Cfi/H1HmJ6l72jcFcFBxS366IexX/RaSv+mXdW6cT3dLRVTweKWXLe+k8pJlXGLaX9pSZ
- P2Jsafa7cDLgyGP+kUIF+QPNHjJDJx40aipZ/eEDa9EeiK9Sd7g1M3RedraDd4LDbQr2zd7LE
- 0oz/4AFwoz+8F8OWHslygz11JlBgY/X3MahIgO6cOQpoIvgvxGNS4aOgK5sRNyWAapydIe5Lb
- GPI2jSktmQ1dKANNF8yAMXiE1EO9IuEkM6IoLmLsRjdwVOo4+XYSdnhYDc5E2ahL8J/dhEWc2
- 157rZyW3tFYKyqTTK7HTusBHWxpU1D8YGBzexnzr8E7H7KfpRb812BUtX4A7GJKe89RRQDyFk
- jT+Oh6pfkm6PcunGZLMyDDXvCdI4Dbo4t2U5D1jfG66I53Q6/4VwEpemaEGbrXVMj97dl6yMx
- X22nRxA==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH5fLgjNE7BF7fC6TxO3NjKV1OHXRxZFKn2Bs6fy8h_0zYd1tg@mail.gmail.com>
 
->> You would eventually like to express that a maximum should be determine=
-d
->> from three (or even four?) values.
->
-> If there was a max4(), why not, but in this case I don't see the point.
-Do you miss such a programming interface so far?
-Would you be looking for corresponding software adjustments?
+On 03-03-25, 11:05, Alice Ryhl wrote:
+> On Mon, Mar 3, 2025 at 11:00 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> >
+> > Non-trivial C macros and inlined C functions cannot be used directly
+> > in the Rust code and are used via functions ("helpers") that wrap
+> > those so that they can be called from Rust.
+> >
+> > In order to prepare for adding Rust abstractions for the clock APIs,
+> > add clock helpers required by the Rust implementation.
+> >
+> > Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+> > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> 
+> Did clk maintainers ask for this to be separate? We normally just add
+> helpers in the commit that need them.
 
-Regards,
-Markus
+Greg suggested that earlier:
+
+https://lore.kernel.org/all/2025010708-commence-exile-0946@gregkh/
+
+-- 
+viresh
 
