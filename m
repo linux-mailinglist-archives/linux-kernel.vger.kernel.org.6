@@ -1,299 +1,314 @@
-Return-Path: <linux-kernel+bounces-540938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E7CEA4B6A5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 04:32:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFC51A4B689
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 04:30:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01D2C1890CCC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 03:32:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52E077A5A6B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 03:29:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0FEE1DE896;
-	Mon,  3 Mar 2025 03:31:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8618F1D5143;
+	Mon,  3 Mar 2025 03:29:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="o27lRQMs"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AM1zBnwc"
+Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 734B71D5147;
-	Mon,  3 Mar 2025 03:31:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE2BAD27;
+	Mon,  3 Mar 2025 03:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740972671; cv=none; b=oJbIgm32/FmW+l89MVdB8INk1ZFA0FpSLh4ZhTeT7zH6G6EUBAwrD9Bo6klci2+z1/pjJJutWFHKT852fUCjZ6rDPGiYuNKq98PmMABHRH+j44fyM2wRl9sCI9B/fjLpBR6l/yq69DKKin3I+Ll0odSbIRCHPtl/INaNsz40E8Q=
+	t=1740972598; cv=none; b=TyWZVnhSbSmrnB3DUwdVVPwOgXQ1dlXEaHI76r/YK4hAh59IT1wUQF4jzZMBdGeBnCcJrUDh2EC8MSWlXY4lgO6L0VDjKKcsAmmfo9T3PnKsRhjNuM4vK+p4mhdjVR9Bby1GalfC9fDfyxa0o1BaNKHztn3PHz17G5G5IsmyUss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740972671; c=relaxed/simple;
-	bh=tYFvJAC+E6lq1I465BOU8f0pSMGntQzDYaPmWQtwSuc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XNVQ6+zjGwkPLhU6vch+JCNuaXLwntwL8iazWKrB6pvpVEY2S2NVpCzcw4YiPRrTXLTBXJ0qItbG+/zqqdSek32RETZb78k/eQBhkQBE8aVzQZtM5zD4tFV3+LcWKSIU8TaRm7IepdXsbYPc0BROiIeG0NrTXlZAAQNsEh6L/uw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=o27lRQMs; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 522MkaCr005511;
-	Mon, 3 Mar 2025 03:30:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	FrWpXWtpt+ZULEbiR2Up6sVFlN84+mzhnBc7WKp2O/Q=; b=o27lRQMsgOndRnfS
-	SX9sBZqGcYVZSxvd9nXqHZ1ldhJQ8S50VIg4biYUUb+0/1XFb4F6zMMjgRhVUNiZ
-	sZS3N71TmOldYbG6eDheAsJPBk4d8Vt4f45OivZwnJyi1nNEQH1y3AXTVzcVULCi
-	jUqsoHlyTnciXG3MKI6xFVgJgB9NIB2wI632c+njwYVAxdk+QOa51ReU0KYnEyxH
-	OvR675ENBd8xr4PYLgpQ+baitNjufUmDTzObTJc2PbM3uhiPQvJroDqsHpM7XPPs
-	x4LamY7HvODQAX8F5uLisUbbCU66ZgtK7M/F7AELO5OkSQayfGjhOfVyNW7K/aMu
-	7lfzqQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 453t89ufyn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Mar 2025 03:30:56 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5233UtAJ005011
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 3 Mar 2025 03:30:55 GMT
-Received: from jiegan-gv.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Sun, 2 Mar 2025 19:30:49 -0800
-From: Jie Gan <quic_jiegan@quicinc.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach
-	<mike.leach@linaro.org>,
-        James Clark <james.clark@linaro.org>,
-        "Alexander
- Shishkin" <alexander.shishkin@linux.intel.com>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-CC: Tingwei Zhang <quic_tingweiz@quicinc.com>,
-        Jinlong Mao
-	<quic_jinlmao@quicinc.com>, <coresight@lists.linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Konrad Dybcio
-	<konrad.dybcio@oss.qualcomm.com>
-Subject: [PATCH v15 10/10] arm64: dts: qcom: sa8775p: Add CTCU and ETR nodes
-Date: Mon, 3 Mar 2025 11:29:31 +0800
-Message-ID: <20250303032931.2500935-11-quic_jiegan@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250303032931.2500935-1-quic_jiegan@quicinc.com>
-References: <20250303032931.2500935-1-quic_jiegan@quicinc.com>
+	s=arc-20240116; t=1740972598; c=relaxed/simple;
+	bh=WtisgUpe8nKNcHbVQ8d3kt1UOEUUroeDbfP37vsyDmE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=elLNhA4NWbzNQjoEwCnkhw1G4seSbP+YkIEiQtYaqqzQHUbOyDq3kW+fjMf0GwqwTl2kWaWymH/M/eP8NaOXcyeKbYQfdIM2uZMAjcSGQkDq+I7wudCoFVJLH4QayDp/T9D/NgkSx1MF/BShUwnc1KKhqVw5nSVOugjNkmi3e1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AM1zBnwc; arc=none smtp.client-ip=209.85.161.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5fc6fe05460so2392157eaf.1;
+        Sun, 02 Mar 2025 19:29:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740972596; x=1741577396; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TpLoS55VvHYT2ILHdOJH5ho8KuNQfaCMBpbxTBAx2Sk=;
+        b=AM1zBnwcNufI9CVu9wCH2mkjCn+nCxCMaWcBc6bjVfk5fn9xdJdU1Ly0I2q7QM3xEN
+         F0EtDFLY0E0YK31twsIudwYT6Pcfh21QMO7I1MhxOPDmDwQC+Z3XtzjuLbQaUk2Z1cUG
+         E+7S/OInRyahET4Wwwquwza/aSn+bSBYuEI5ZbhEFb9vU9f2bnsisMET44+MfkkKqQye
+         5wxN7pXxzw2DTQpTofzuEWQLFLaN/7upnVbGXYkFk+GKXhqWx3plqv3A8fI4I9oR/zSy
+         NrllHAfVMFWqsh5wV6LbxhECQlfNIpdGWIbBUnuwLjSxagmxebVT7Fs7IFF4xLAGdO72
+         r+Mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740972596; x=1741577396;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TpLoS55VvHYT2ILHdOJH5ho8KuNQfaCMBpbxTBAx2Sk=;
+        b=c5P624XlYInJRmpvX3jw+xPEeHN7J3cIfUkZhisSJdgrjIANL52QA3L9hAoiIaKd5l
+         iC5Tw1b3PHrOiYAB4/CoSW8GPYTJqqRrV99G+leJqVdHYwPwGPzscsZFwtBul3nLadLg
+         uHxUlEEZ6n6g8hTilQy4C0e9croREQOSJaR8sswn7/0lCOeGHj71uauBRBs8sz5M6++k
+         DQhuwfckBpHexWGJ0hnJzXr9bGXdIFmQoTbiadYrpZZYZvSQFbmAr3rGYgX572ITl6zH
+         hHv17fwDFKL61hwXn2nHWtGKJYVX1Y6zEh2R6A7gGEIxgilcddXqM+R09CxGAThctWgZ
+         JyiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVZlKAM3Smf9gFtTpzoOinuQZkko4uYMk5HnJOl1LiY7KQCXQCzpLQ6sdd4GypQgLzODj5oTInC08ND@vger.kernel.org, AJvYcCXCtgNYwTuZiPCS77xJf54Emu/zDFVfDqPgACncImIubn+g7qZZoBfIPh9URMizn6oQpKaL9f6vju4EK8k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDcoWukv33EhzThq4j2voq4fu7ckE6+loeVgHa9tecvDL6JJ2R
+	F5I8/Qlk+WBRZmsIrLpvVDTK0rdXc6nAdzCdlWvD03baEWcUfZ5P17W4Fm7Khax8y/9aeCZM7qe
+	Yf0+GvoKkDIlMxm1DejkJyPfftoVQIcTu
+X-Gm-Gg: ASbGnctquMDjZSxG0O4/tKvDYDeOTWBvp9bFQK2AvW1Irb6HnGW+QMaXDcB2Toq5EG8
+	CM1JRExPO5m5bdlfMG69dxDitZUZPTiXcMq7JUNB14H51Wji5wt3hKm+HvECrdBY+hUefB1y/VW
+	RRzbv5yEHCQ1t5GNGX4gwF+k8fuNRl
+X-Google-Smtp-Source: AGHT+IEYgGovWbNBz5I7Q6NnrFCor20ZSkULZEF0q+jKb3DiruilW0eh3BWAG/rPfq3NMRO854lBki3HhIfSIBSXFHE=
+X-Received: by 2002:a05:6808:1590:b0:3f3:ff05:6d17 with SMTP id
+ 5614622812f47-3f5585004a5mr7823518b6e.5.1740972595914; Sun, 02 Mar 2025
+ 19:29:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: MST9PkTBJiEPb3SPBJTFJe-JapqdRSRc
-X-Proofpoint-GUID: MST9PkTBJiEPb3SPBJTFJe-JapqdRSRc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-03_01,2025-02-28_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- impostorscore=0 priorityscore=1501 spamscore=0 phishscore=0 suspectscore=0
- malwarescore=0 clxscore=1015 adultscore=0 bulkscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503030026
+References: <41847336-9111-4aaa-b3dc-f3c18bb03508@linux.intel.com>
+ <20250228161824.3164826-1-mathias.nyman@linux.intel.com> <CAHN5xi0mf8G4ODMQ9jDXAM4CRXtafZeMh_2KF7efbiFJahO4bw@mail.gmail.com>
+In-Reply-To: <CAHN5xi0mf8G4ODMQ9jDXAM4CRXtafZeMh_2KF7efbiFJahO4bw@mail.gmail.com>
+From: Kuangyi Chiang <ki.chiang65@gmail.com>
+Date: Mon, 3 Mar 2025 11:29:49 +0800
+X-Gm-Features: AQ5f1Jq1ZN-223eChXIw2tYABHxIWApQ9yctPB1j-GtoOZwfiN4U-IozyV-UZuc
+Message-ID: <CAHN5xi0ZCRu-3MyY36MpUDpJOtjTBc2QUY-s+rtLdBUrrHGOaw@mail.gmail.com>
+Subject: Re: [RFT PATCH] xhci: Handle spurious events on Etron host isoc enpoints
+To: Mathias Nyman <mathias.nyman@linux.intel.com>
+Cc: michal.pecio@gmail.com, gregkh@linuxfoundation.org, 
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add CTCU and ETR nodes in DT to enable related functionalities.
+Hi,
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
----
- arch/arm64/boot/dts/qcom/sa8775p.dtsi | 153 ++++++++++++++++++++++++++
- 1 file changed, 153 insertions(+)
+Kuangyi Chiang <ki.chiang65@gmail.com> =E6=96=BC 2025=E5=B9=B43=E6=9C=881=
+=E6=97=A5 =E9=80=B1=E5=85=AD =E4=B8=8A=E5=8D=8810:05=E5=AF=AB=E9=81=93=EF=
+=BC=9A
+>
+> Hi,
+>
+> Thanks for the patch.
+>
+> Mathias Nyman <mathias.nyman@linux.intel.com> =E6=96=BC 2025=E5=B9=B43=E6=
+=9C=881=E6=97=A5 =E9=80=B1=E5=85=AD =E4=B8=8A=E5=8D=8812:17=E5=AF=AB=E9=81=
+=93=EF=BC=9A
+> >
+> > Unplugging a USB3.0 webcam from Etron hosts while streaming results
+> > in errors like this:
+> >
+> > [ 2.646387] xhci_hcd 0000:03:00.0: ERROR Transfer event TRB DMA ptr not=
+ part of current TD ep_index 18 comp_code 13
+> > [ 2.646446] xhci_hcd 0000:03:00.0: Looking for event-dma 000000002fdf86=
+30 trb-start 000000002fdf8640 trb-end 000000002fdf8650
+> > [ 2.646560] xhci_hcd 0000:03:00.0: ERROR Transfer event TRB DMA ptr not=
+ part of current TD ep_index 18 comp_code 13
+> > [ 2.646568] xhci_hcd 0000:03:00.0: Looking for event-dma 000000002fdf86=
+60 trb-start 000000002fdf8670 trb-end 000000002fdf8670
+> >
+> > Etron xHC generates two transfer events for the TRB if an error is
+> > detected while processing the last TRB of an isoc TD.
+> >
+> > The first event can be any sort of error (like USB Transaction or
+> > Babble Detected, etc), and the final event is Success.
+> >
+> > The xHCI driver will handle the TD after the first event and remove it
+> > from its internal list, and then print an "Transfer event TRB DMA ptr
+> > not part of current TD" error message after the final event.
+> >
+> > Commit 5372c65e1311 ("xhci: process isoc TD properly when there was a
+> > transaction error mid TD.") is designed to address isoc transaction
+> > errors, but unfortunately it doesn't account for this scenario.
+> >
+> > This issue is similar to the XHCI_SPURIOUS_SUCCESS case where a success
+> > event follows a 'short transfer' event, but the TD the event points to
+> > is already given back.
+> >
+> > Expand the spurious success 'short transfer' event handling to cover
+> > the spurious success after error on Etron hosts.
+> >
+> > Kuangyi Chiang reported this issue and submitted a different solution
+> > based on using error_mid_td. This commit message is mostly taken
+> > from that patch.
+> >
+> > Reported-by: Kuangyi Chiang <ki.chiang65@gmail.com>
+> > Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+> > ---
+> >  drivers/usb/host/xhci-ring.c | 36 +++++++++++++++++++++++++-----------
+> >  drivers/usb/host/xhci.h      |  2 +-
+> >  2 files changed, 26 insertions(+), 12 deletions(-)
+> >
+> > diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.=
+c
+> > index 965bffce301e..3d3e6cd69019 100644
+> > --- a/drivers/usb/host/xhci-ring.c
+> > +++ b/drivers/usb/host/xhci-ring.c
+> > @@ -2644,6 +2644,22 @@ static int handle_transferless_tx_event(struct x=
+hci_hcd *xhci, struct xhci_virt_
+> >         return 0;
+> >  }
+> >
+> > +static bool xhci_spurious_success_tx_event(struct xhci_hcd *xhci,
+> > +                                          struct xhci_ring *ring)
+> > +{
+> > +       switch (ring->old_trb_comp_code) {
+> > +       case COMP_SHORT_PACKET:
+> > +               return xhci->quirks & XHCI_SPURIOUS_SUCCESS;
+> > +       case COMP_USB_TRANSACTION_ERROR:
+> > +       case COMP_BABBLE_DETECTED_ERROR:
+> > +       case COMP_ISOCH_BUFFER_OVERRUN:
+> > +               return xhci->quirks & XHCI_ETRON_HOST &&
+> > +                       ring->type =3D=3D TYPE_ISOC;
+> > +       default:
+> > +               return false;
+> > +       }
+> > +}
+> > +
+> >  /*
+> >   * If this function returns an error condition, it means it got a Tran=
+sfer
+> >   * event with a corrupted Slot ID, Endpoint ID, or TRB DMA address.
+> > @@ -2697,8 +2713,8 @@ static int handle_tx_event(struct xhci_hcd *xhci,
+> >         case COMP_SUCCESS:
+> >                 if (EVENT_TRB_LEN(le32_to_cpu(event->transfer_len)) !=
+=3D 0) {
+> >                         trb_comp_code =3D COMP_SHORT_PACKET;
+> > -                       xhci_dbg(xhci, "Successful completion on short =
+TX for slot %u ep %u with last td short %d\n",
+> > -                                slot_id, ep_index, ep_ring->last_td_wa=
+s_short);
+> > +                       xhci_dbg(xhci, "Successful completion on short =
+TX for slot %u ep %u with last td comp code %d\n",
+> > +                                slot_id, ep_index, ep_ring->old_trb_co=
+mp_code);
+> >                 }
+> >                 break;
+> >         case COMP_SHORT_PACKET:
+> > @@ -2846,7 +2862,7 @@ static int handle_tx_event(struct xhci_hcd *xhci,
+> >                  */
+> >                 if (trb_comp_code !=3D COMP_STOPPED &&
+> >                     trb_comp_code !=3D COMP_STOPPED_LENGTH_INVALID &&
+> > -                   !ep_ring->last_td_was_short) {
+> > +                   !xhci_spurious_success_tx_event(xhci, ep_ring)) {
+> >                         xhci_warn(xhci, "Event TRB for slot %u ep %u wi=
+th no TDs queued\n",
+> >                                   slot_id, ep_index);
+> >                 }
+> > @@ -2890,11 +2906,12 @@ static int handle_tx_event(struct xhci_hcd *xhc=
+i,
+> >
+> >                         /*
+> >                          * Some hosts give a spurious success event aft=
+er a short
+> > -                        * transfer. Ignore it.
+> > +                        * transfer or error on last TRB. Ignore it.
+> >                          */
+> > -                       if ((xhci->quirks & XHCI_SPURIOUS_SUCCESS) &&
+> > -                           ep_ring->last_td_was_short) {
+> > -                               ep_ring->last_td_was_short =3D false;
+> > +                       if (xhci_spurious_success_tx_event(xhci, ep_rin=
+g)) {
+> > +                               xhci_dbg(xhci, "Spurious event dma %pad=
+, comp_code %u after %u\n",
+> > +                                        &ep_trb_dma, trb_comp_code, ep=
+_ring->old_trb_comp_code);
+> > +                               ep_ring->old_trb_comp_code =3D trb_comp=
+_code;
+> >                                 return 0;
+> >                         }
+> >
+> > @@ -2922,10 +2939,7 @@ static int handle_tx_event(struct xhci_hcd *xhci=
+,
+> >          */
+> >         } while (ep->skip);
+> >
+> > -       if (trb_comp_code =3D=3D COMP_SHORT_PACKET)
+> > -               ep_ring->last_td_was_short =3D true;
+> > -       else
+> > -               ep_ring->last_td_was_short =3D false;
+> > +       ep_ring->old_trb_comp_code =3D trb_comp_code;
+> >
+> >         ep_trb =3D &ep_seg->trbs[(ep_trb_dma - ep_seg->dma) / sizeof(*e=
+p_trb)];
+> >         trace_xhci_handle_transfer(ep_ring, (struct xhci_generic_trb *)=
+ ep_trb, ep_trb_dma);
+> > diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
+> > index 8c164340a2c3..c75c2c12ce53 100644
+> > --- a/drivers/usb/host/xhci.h
+> > +++ b/drivers/usb/host/xhci.h
+> > @@ -1371,7 +1371,7 @@ struct xhci_ring {
+> >         unsigned int            num_trbs_free; /* used only by xhci DbC=
+ */
+> >         unsigned int            bounce_buf_len;
+> >         enum xhci_ring_type     type;
+> > -       bool                    last_td_was_short;
+> > +       u32                     last_td_comp_code;
+>
+> Should be changed to old_trb_comp_code.
+>
+> >         struct radix_tree_root  *trb_address_map;
+> >  };
+> >
+> > --
+> > 2.43.0
+> >
+>
+> I'll test this later.
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-index 3394ae2d1300..31aa94d2a043 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-@@ -2429,6 +2429,35 @@ crypto: crypto@1dfa000 {
- 			interconnect-names = "memory";
- 		};
- 
-+		ctcu@4001000 {
-+			compatible = "qcom,sa8775p-ctcu";
-+			reg = <0x0 0x04001000 0x0 0x1000>;
-+
-+			clocks = <&aoss_qmp>;
-+			clock-names = "apb";
-+
-+			in-ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+
-+					ctcu_in0: endpoint {
-+						remote-endpoint = <&etr0_out>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					ctcu_in1: endpoint {
-+						remote-endpoint = <&etr1_out>;
-+					};
-+				};
-+			};
-+		};
-+
- 		stm: stm@4002000 {
- 			compatible = "arm,coresight-stm", "arm,primecell";
- 			reg = <0x0 0x4002000 0x0 0x1000>,
-@@ -2633,6 +2662,122 @@ qdss_funnel_in1: endpoint {
- 			};
- 		};
- 
-+		replicator@4046000 {
-+			compatible = "arm,coresight-dynamic-replicator", "arm,primecell";
-+			reg = <0x0 0x04046000 0x0 0x1000>;
-+
-+			clocks = <&aoss_qmp>;
-+			clock-names = "apb_pclk";
-+
-+			in-ports {
-+				port {
-+					qdss_rep_in: endpoint {
-+						remote-endpoint = <&swao_rep_out0>;
-+					};
-+				};
-+			};
-+
-+			out-ports {
-+				port {
-+					qdss_rep_out0: endpoint {
-+						remote-endpoint = <&etr_rep_in>;
-+					};
-+				};
-+			};
-+		};
-+
-+		tmc_etr: tmc@4048000 {
-+			compatible = "arm,coresight-tmc", "arm,primecell";
-+			reg = <0x0 0x04048000 0x0 0x1000>;
-+
-+			clocks = <&aoss_qmp>;
-+			clock-names = "apb_pclk";
-+			iommus = <&apps_smmu 0x04c0 0x00>;
-+
-+			arm,scatter-gather;
-+
-+			in-ports {
-+				port {
-+					etr0_in: endpoint {
-+						remote-endpoint = <&etr_rep_out0>;
-+					};
-+				};
-+			};
-+
-+			out-ports {
-+				port {
-+					etr0_out: endpoint {
-+						remote-endpoint = <&ctcu_in0>;
-+					};
-+				};
-+			};
-+		};
-+
-+		replicator@404e000 {
-+			compatible = "arm,coresight-dynamic-replicator", "arm,primecell";
-+			reg = <0x0 0x0404e000 0x0 0x1000>;
-+
-+			clocks = <&aoss_qmp>;
-+			clock-names = "apb_pclk";
-+
-+			in-ports {
-+				port {
-+					etr_rep_in: endpoint {
-+						remote-endpoint = <&qdss_rep_out0>;
-+					};
-+				};
-+			};
-+
-+			out-ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+
-+					etr_rep_out0: endpoint {
-+						remote-endpoint = <&etr0_in>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					etr_rep_out1: endpoint {
-+						remote-endpoint = <&etr1_in>;
-+					};
-+				};
-+			};
-+		};
-+
-+		tmc_etr1: tmc@404f000 {
-+			compatible = "arm,coresight-tmc", "arm,primecell";
-+			reg = <0x0 0x0404f000 0x0 0x1000>;
-+
-+			clocks = <&aoss_qmp>;
-+			clock-names = "apb_pclk";
-+			iommus = <&apps_smmu 0x04a0 0x40>;
-+
-+			arm,scatter-gather;
-+			arm,buffer-size = <0x400000>;
-+
-+			in-ports {
-+				port {
-+					etr1_in: endpoint {
-+						remote-endpoint = <&etr_rep_out1>;
-+					};
-+				};
-+			};
-+
-+			out-ports {
-+				port {
-+					etr1_out: endpoint {
-+						remote-endpoint = <&ctcu_in1>;
-+					};
-+				};
-+			};
-+		};
-+
- 		funnel@4b04000 {
- 			compatible = "arm,coresight-dynamic-funnel", "arm,primecell";
- 			reg = <0x0 0x4b04000 0x0 0x1000>;
-@@ -2708,6 +2853,14 @@ out-ports {
- 				#address-cells = <1>;
- 				#size-cells = <0>;
- 
-+				port@0 {
-+					reg = <0>;
-+
-+					swao_rep_out0: endpoint {
-+						remote-endpoint = <&qdss_rep_in>;
-+					};
-+				};
-+
- 				port@1 {
- 					reg = <1>;
- 					swao_rep_out1: endpoint {
--- 
-2.34.1
+It works. See the below dynamic debug messages:
 
+[ 1138.281772] xhci_hcd 0000:04:00.0: Successful completion on short
+TX for slot 1 ep 18 with last td comp code 13
+[ 1138.281777] xhci_hcd 0000:04:00.0: Spurious event dma
+0x000000010b5ba600, comp_code 13 after 13
+[ 1138.282013] xhci_hcd 0000:04:00.0: Successful completion on short
+TX for slot 1 ep 18 with last td comp code 13
+[ 1138.282019] xhci_hcd 0000:04:00.0: Spurious event dma
+0x000000010b5ba630, comp_code 13 after 13
+[ 1138.282271] xhci_hcd 0000:04:00.0: Successful completion on short
+TX for slot 1 ep 18 with last td comp code 13
+[ 1138.282277] xhci_hcd 0000:04:00.0: Spurious event dma
+0x000000010b5ba660, comp_code 13 after 13
+[ 1138.282420] xhci_hcd 0000:04:00.0: Successful completion on short
+TX for slot 1 ep 18 with last td comp code 13
+[ 1138.282425] xhci_hcd 0000:04:00.0: Spurious event dma
+0x000000010b5ba680, comp_code 13 after 13
+[ 1138.282653] xhci_hcd 0000:04:00.0: Transfer error for slot 1 ep 18
+on endpoint
+[ 1138.282659] xhci_hcd 0000:04:00.0: Error mid isoc TD, wait for
+final completion event
+[ 1138.282779] xhci_hcd 0000:04:00.0: Successful completion on short
+TX for slot 1 ep 18 with last td comp code 4
+[ 1138.282785] xhci_hcd 0000:04:00.0: Transfer error for slot 1 ep 18
+on endpoint
+[ 1138.282911] xhci_hcd 0000:04:00.0: Successful completion on short
+TX for slot 1 ep 18 with last td comp code 4
+[ 1138.282916] xhci_hcd 0000:04:00.0: Spurious event dma
+0x000000010b5ba6c0, comp_code 13 after 4
+[ 1138.282920] xhci_hcd 0000:04:00.0: Transfer error for slot 1 ep 18
+on endpoint
+[ 1138.282923] xhci_hcd 0000:04:00.0: Error mid isoc TD, wait for
+final completion event
+[ 1138.283039] xhci_hcd 0000:04:00.0: Successful completion on short
+TX for slot 1 ep 18 with last td comp code 4
+[ 1138.283045] xhci_hcd 0000:04:00.0: Transfer error for slot 1 ep 18
+on endpoint
+[ 1138.283163] xhci_hcd 0000:04:00.0: Successful completion on short
+TX for slot 1 ep 18 with last td comp code 4
+[ 1138.283167] xhci_hcd 0000:04:00.0: Spurious event dma
+0x000000010b5ba6f0, comp_code 13 after 4
+
+>
+> Thanks,
+> Kuangyi Chiang
+
+Thanks,
+Kuangyi Chiang
 
