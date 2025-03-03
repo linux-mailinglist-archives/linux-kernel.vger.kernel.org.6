@@ -1,142 +1,136 @@
-Return-Path: <linux-kernel+bounces-541199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BCA6A4B9E4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:53:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53F4EA4B9E6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:54:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28C87169DE0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:53:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD36816A767
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:53:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F6B1EFFAD;
-	Mon,  3 Mar 2025 08:49:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=crpt.ru header.i=@crpt.ru header.b="XI8SQK7g"
-Received: from mail.crpt.ru (mail.crpt.ru [91.236.205.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B0511F03D8;
+	Mon,  3 Mar 2025 08:49:13 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3B171EE7AD;
-	Mon,  3 Mar 2025 08:48:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.236.205.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B8E1EFFB6
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 08:49:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740991740; cv=none; b=ljqr25FWT7r5QVXAhuw5113NBTJAnt+7lGrj7/IVoqANvKgoH4dfyayttstlKjP/39E/q+HgXTa8OJonqH0WjDha93X+9PKTbaqo7JgwO3DMcF1nN+xdkTRFcK2SDJ5LWlSlugkjLGCfvrNDANNLF8hs39Bu1qxRB1RHUSEy1FM=
+	t=1740991752; cv=none; b=tQOdaZf53d8w64ziiDxEp97Gdqg5Ia8l5zyb9t/uyvr5nEcPmOUnw4nxt62SLEe8cR6r8/JRors0lgQB3d3k9QrZKsLNGYjVSJx2OZUNq/AXKjfaKoAyUbUv+LDEzmiKC/mfRfXUYQbX1/DdPUDtc6GCIzLHL9j5KLShUPYMOjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740991740; c=relaxed/simple;
-	bh=dlzlgK1uuPwJmnwi9znbAsJgAX3BfyutzQnKO6E48gM=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Wd+itwxcAOOkbjJOpSVpGmw4ODSrK1w6z5SbXDIbG/NcOXD1BaE9vnj5xxpt03JP5lHct16U5A+rk3ALGEwYuv9vkSKjPq914wt7wuQfhGVxM3kbT1DJG1bMDUtFlEWdMlgwvUi3c0a7CTNge1Bi0MllVASCeKmNJdobzkPpmzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crpt.ru; spf=pass smtp.mailfrom=crpt.ru; dkim=pass (2048-bit key) header.d=crpt.ru header.i=@crpt.ru header.b=XI8SQK7g; arc=none smtp.client-ip=91.236.205.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crpt.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crpt.ru
-Received: from mail.crpt.ru ([192.168.60.4])
-	by mail.crpt.ru  with ESMTP id 5238mbWO013501-5238mbWQ013501
-	(version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=OK);
-	Mon, 3 Mar 2025 11:48:37 +0300
-Received: from EX1.crpt.local (192.168.60.3) by ex2.crpt.local (192.168.60.4)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Mon, 3 Mar
- 2025 11:48:36 +0300
-Received: from EX1.crpt.local ([192.168.60.3]) by EX1.crpt.local
- ([192.168.60.3]) with mapi id 15.01.2507.044; Mon, 3 Mar 2025 11:48:36 +0300
-From: =?koi8-r?B?98HUz9LP0MnOIOHOxNLFyg==?= <a.vatoropin@crpt.ru>
-To: Johannes Berg <johannes@sipsolutions.net>
-CC: =?koi8-r?B?98HUz9LP0MnOIOHOxNLFyg==?= <a.vatoropin@crpt.ru>, Jeff Johnson
-	<jjohnson@kernel.org>, Pradeep Kumar Chitrapu <quic_pradeepc@quicinc.com>,
-	Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>, Govindaraj Saminathan
-	<quic_gsamin@quicinc.com>, "linux-wireless@vger.kernel.org"
-	<linux-wireless@vger.kernel.org>, "ath11k@lists.infradead.org"
-	<ath11k@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "lvc-project@linuxtesting.org"
-	<lvc-project@linuxtesting.org>
-Subject: [PATCH] ath11k: fix overflow in tx stats calculation
-Thread-Topic: [PATCH] ath11k: fix overflow in tx stats calculation
-Thread-Index: AQHbjBkN1hoxjWOKr0amjmSVfS9ptA==
-Date: Mon, 3 Mar 2025 08:48:36 +0000
-Message-ID: <20250303084831.61876-1-a.vatoropin@crpt.ru>
-Accept-Language: ru-RU, en-US
+	s=arc-20240116; t=1740991752; c=relaxed/simple;
+	bh=HnzYFezVB5tVeSDfNBT9n44hastY2MKg1+ROV6aoAxk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Z0kJUhNF1NyC1GdMf20/qT9Em8rOcqa0Fx3f7D7Jb4gJCR2+LdnQLErjQQGZ7NdcO5xlirLjAuaeuiVBorPW6bdOHmDonEVKxkkvHoQRCoAWvJPXQE2xueymokepKUyMvonrvRjVqZZ17CJE0PaNilucmqxdwODgPjSipuSlapM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Z5sqx1jRcz6K98L;
+	Mon,  3 Mar 2025 16:46:53 +0800 (CST)
+Received: from frapeml500006.china.huawei.com (unknown [7.182.85.219])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6D8B6140442;
+	Mon,  3 Mar 2025 16:49:02 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (7.182.85.71) by
+ frapeml500006.china.huawei.com (7.182.85.219) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 3 Mar 2025 09:49:02 +0100
+Received: from frapeml500008.china.huawei.com ([7.182.85.71]) by
+ frapeml500008.china.huawei.com ([7.182.85.71]) with mapi id 15.01.2507.039;
+ Mon, 3 Mar 2025 09:49:02 +0100
+From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>, =?utf-8?B?TWlrb8WCYWogTGVuY3pld3NraQ==?=
+	<miko.lenczewski@arm.com>
+CC: "ryan.roberts@arm.com" <ryan.roberts@arm.com>, "suzuki.poulose@arm.com"
+	<suzuki.poulose@arm.com>, "yang@os.amperecomputing.com"
+	<yang@os.amperecomputing.com>, "catalin.marinas@arm.com"
+	<catalin.marinas@arm.com>, "will@kernel.org" <will@kernel.org>,
+	"joro@8bytes.org" <joro@8bytes.org>, "jean-philippe@linaro.org"
+	<jean-philippe@linaro.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"joey.gouly@arm.com" <joey.gouly@arm.com>, "oliver.upton@linux.dev"
+	<oliver.upton@linux.dev>, "james.morse@arm.com" <james.morse@arm.com>,
+	"broonie@kernel.org" <broonie@kernel.org>, "maz@kernel.org" <maz@kernel.org>,
+	"david@redhat.com" <david@redhat.com>, "akpm@linux-foundation.org"
+	<akpm@linux-foundation.org>, "nicolinc@nvidia.com" <nicolinc@nvidia.com>,
+	"mshavit@google.com" <mshavit@google.com>, "jsnitsel@redhat.com"
+	<jsnitsel@redhat.com>, "smostafa@google.com" <smostafa@google.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "iommu@lists.linux.dev"
+	<iommu@lists.linux.dev>
+Subject: RE: [PATCH v2 4/4] iommu/arm: Add BBM Level 2 smmu feature
+Thread-Topic: [PATCH v2 4/4] iommu/arm: Add BBM Level 2 smmu feature
+Thread-Index: AQHbig5Aoe4VsuxA9kWqieCP4z67+bNdChiAgAQQylA=
+Date: Mon, 3 Mar 2025 08:49:02 +0000
+Message-ID: <b23aa37f8e864dea82a6143bece912d6@huawei.com>
+References: <20250228182403.6269-2-miko.lenczewski@arm.com>
+ <20250228182403.6269-6-miko.lenczewski@arm.com>
+ <20250228193221.GM5011@ziepe.ca>
+In-Reply-To: <20250228193221.GM5011@ziepe.ca>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach:
 X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="koi8-r"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-FEAS-Client-IP: 192.168.60.4
-X-FE-Policy-ID: 2:4:0:SYSTEM
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; d=crpt.ru; s=crpt.ru; c=relaxed/relaxed;
- h=from:to:cc:subject:date:message-id:content-type:mime-version;
- bh=GXCR2/qllsmPA+9VDf1WpC/D25nO4d0B9V4QL8xXBpM=;
- b=XI8SQK7gVFOwGxTsYVEGbivOvCizx/6U/Qwcox6F8Zbuq9xSWNt/b+EZaxDRoROTS3cGZgX/Vnd2
-	B2ehybR+dUFKd3Yvy/L2h9t3BD2LUsiFSqA3JGZGlpvrOkNDbq7j0TOxreJ1xem6/SXbMmpvO4xy
-	OrF/dT56ewIB6smBikaPuXWac3mfxgAqrMdqdsbZqiLga/osIpPmOMVnToH9gzM+L1lDxroPtHLj
-	DwXgBhAwhfLidHW/9cs4gvq+KOmqcaK3Rby2BiAPwuAHJvcX7mas6mHoWZUGPRBL16BPK9C8UjM8
-	C8xkwcx1Pa3cEZXehsh9HzH+zesrkQXhXkvX0w==
 
-From: Andrey Vatoropin <a.vatoropin@crpt.ru>
-
-Size of variable peer_stats->succ_bytes equals four bytes.
-Size of variable peer_stats->retry_bytes equals four bytes.
-
-The expression peer_stats->succ_bytes+peer_stats->retry_bytes is currently
-being evaluated using 32-bit arithmetic. So during the addition an
-overflow may occur.
-
-Since a value of type 'u64' is used to store the eventual he, it is
-necessary to perform the 64-bit arithmetic to avoid overflow during the
-multiplication.
-
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
-      =20
-Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
-Signed-off-by: Andrey Vatoropin <a.vatoropin@crpt.ru>
----
- drivers/net/wireless/ath/ath11k/debugfs_sta.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/net/wireless/ath/ath11k/debugfs_sta.c b/drivers/net/wi=
-reless/ath/ath11k/debugfs_sta.c
-index f56a24b6c8da..982a7add6ea6 100644
---- a/drivers/net/wireless/ath/ath11k/debugfs_sta.c
-+++ b/drivers/net/wireless/ath/ath11k/debugfs_sta.c
-@@ -69,26 +69,26 @@ void ath11k_debugfs_sta_add_tx_stats(struct ath11k_sta =
-*arsta,
-=20
- 		if (txrate->flags & RATE_INFO_FLAGS_HE_MCS) {
- 			STATS_OP_FMT(AMPDU).he[0][mcs] +=3D
--			peer_stats->succ_bytes + peer_stats->retry_bytes;
-+			peer_stats->succ_bytes + (u64)peer_stats->retry_bytes;
- 			STATS_OP_FMT(AMPDU).he[1][mcs] +=3D
- 			peer_stats->succ_pkts + peer_stats->retry_pkts;
- 		} else if (txrate->flags & RATE_INFO_FLAGS_MCS) {
- 			STATS_OP_FMT(AMPDU).ht[0][mcs] +=3D
--			peer_stats->succ_bytes + peer_stats->retry_bytes;
-+			peer_stats->succ_bytes + (u64)peer_stats->retry_bytes;
- 			STATS_OP_FMT(AMPDU).ht[1][mcs] +=3D
- 			peer_stats->succ_pkts + peer_stats->retry_pkts;
- 		} else {
- 			STATS_OP_FMT(AMPDU).vht[0][mcs] +=3D
--			peer_stats->succ_bytes + peer_stats->retry_bytes;
-+			peer_stats->succ_bytes + (u64)peer_stats->retry_bytes;
- 			STATS_OP_FMT(AMPDU).vht[1][mcs] +=3D
- 			peer_stats->succ_pkts + peer_stats->retry_pkts;
- 		}
- 		STATS_OP_FMT(AMPDU).bw[0][bw] +=3D
--			peer_stats->succ_bytes + peer_stats->retry_bytes;
-+			peer_stats->succ_bytes + (u64)peer_stats->retry_bytes;
- 		STATS_OP_FMT(AMPDU).nss[0][nss] +=3D
--			peer_stats->succ_bytes + peer_stats->retry_bytes;
-+			peer_stats->succ_bytes + (u64)peer_stats->retry_bytes;
- 		STATS_OP_FMT(AMPDU).gi[0][gi] +=3D
--			peer_stats->succ_bytes + peer_stats->retry_bytes;
-+			peer_stats->succ_bytes + (u64)peer_stats->retry_bytes;
- 		STATS_OP_FMT(AMPDU).bw[1][bw] +=3D
- 			peer_stats->succ_pkts + peer_stats->retry_pkts;
- 		STATS_OP_FMT(AMPDU).nss[1][nss] +=3D
---=20
-2.43.0
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogSmFzb24gR3VudGhvcnBl
+IDxqZ2dAemllcGUuY2E+DQo+IFNlbnQ6IEZyaWRheSwgRmVicnVhcnkgMjgsIDIwMjUgNzozMiBQ
+TQ0KPiBUbzogTWlrb8WCYWogTGVuY3pld3NraSA8bWlrby5sZW5jemV3c2tpQGFybS5jb20+OyBT
+aGFtZWVyYWxpIEtvbG90aHVtDQo+IFRob2RpIDxzaGFtZWVyYWxpLmtvbG90aHVtLnRob2RpQGh1
+YXdlaS5jb20+DQo+IENjOiByeWFuLnJvYmVydHNAYXJtLmNvbTsgc3V6dWtpLnBvdWxvc2VAYXJt
+LmNvbTsNCj4geWFuZ0Bvcy5hbXBlcmVjb21wdXRpbmcuY29tOyBjYXRhbGluLm1hcmluYXNAYXJt
+LmNvbTsNCj4gd2lsbEBrZXJuZWwub3JnOyBqb3JvQDhieXRlcy5vcmc7IGplYW4tcGhpbGlwcGVA
+bGluYXJvLm9yZzsNCj4gbWFyay5ydXRsYW5kQGFybS5jb207IGpvZXkuZ291bHlAYXJtLmNvbTsg
+b2xpdmVyLnVwdG9uQGxpbnV4LmRldjsNCj4gamFtZXMubW9yc2VAYXJtLmNvbTsgYnJvb25pZUBr
+ZXJuZWwub3JnOyBtYXpAa2VybmVsLm9yZzsNCj4gZGF2aWRAcmVkaGF0LmNvbTsgYWtwbUBsaW51
+eC1mb3VuZGF0aW9uLm9yZzsgbmljb2xpbmNAbnZpZGlhLmNvbTsNCj4gbXNoYXZpdEBnb29nbGUu
+Y29tOyBqc25pdHNlbEByZWRoYXQuY29tOyBzbW9zdGFmYUBnb29nbGUuY29tOyBsaW51eC0NCj4g
+YXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwu
+b3JnOw0KPiBpb21tdUBsaXN0cy5saW51eC5kZXYNCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2MiA0
+LzRdIGlvbW11L2FybTogQWRkIEJCTSBMZXZlbCAyIHNtbXUgZmVhdHVyZQ0KPiANCj4gT24gRnJp
+LCBGZWIgMjgsIDIwMjUgYXQgMDY6MjQ6MDRQTSArMDAwMCwgTWlrb8WCYWogTGVuY3pld3NraSB3
+cm90ZToNCj4gPiBGb3Igc3VwcG9ydGluZyBCQk0gTGV2ZWwgMiBmb3IgdXNlcnNwYWNlIG1hcHBp
+bmdzLCB3ZSB3YW50IHRvIGVuc3VyZQ0KPiA+IHRoYXQgdGhlIHNtbXUgYWxzbyBzdXBwb3J0cyBp
+dHMgb3duIHZlcnNpb24gb2YgQkJNIExldmVsIDIuIEx1Y2tpbHksIHRoZQ0KPiA+IHNtbXUgc3Bl
+YyAoSUhJIDAwNzBHIDMuMjEuMS4zKSBpcyBzdHJpY3RlciB0aGFuIHRoZSBhYXJjaDY0IHNwZWMg
+KERESQ0KPiA+IDA0ODdLLmEgRDguMTYuMiksIHNvIGFscmVhZHkgZ3VhcmFudGVlcyB0aGF0IG5v
+IGFib3J0cyBhcmUgcmFpc2VkIHdoZW4NCj4gPiBCQk0gbGV2ZWwgMiBpcyBjbGFpbWVkLg0KPiA+
+DQo+ID4gQWRkIHRoZSBmZWF0dXJlIGFuZCB0ZXN0aW5nIGZvciBpdCB1bmRlciBhcm1fc21tdV9z
+dmFfc3VwcG9ydGVkKCkuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBNaWtvxYJhaiBMZW5jemV3
+c2tpIDxtaWtvLmxlbmN6ZXdza2lAYXJtLmNvbT4NCj4gPiAtLS0NCj4gPiAgYXJjaC9hcm02NC9r
+ZXJuZWwvY3B1ZmVhdHVyZS5jICAgICAgICAgICAgICAgICAgfCA3ICsrKy0tLS0NCj4gPiAgZHJp
+dmVycy9pb21tdS9hcm0vYXJtLXNtbXUtdjMvYXJtLXNtbXUtdjMtc3ZhLmMgfCAzICsrKw0KPiA+
+ICBkcml2ZXJzL2lvbW11L2FybS9hcm0tc21tdS12My9hcm0tc21tdS12My5jICAgICB8IDMgKysr
+DQo+ID4gIGRyaXZlcnMvaW9tbXUvYXJtL2FybS1zbW11LXYzL2FybS1zbW11LXYzLmggICAgIHwg
+NCArKysrDQo+ID4gIDQgZmlsZXMgY2hhbmdlZCwgMTMgaW5zZXJ0aW9ucygrKSwgNCBkZWxldGlv
+bnMoLSkNCj4gDQo+IFRoaXMgcGF0Y2ggbG9va3MgZ29vZCwgZm9yIHdoYXQgaXQgZG9lcy4gSG93
+ZXZlciBmb3IgYmlzZWN0aW9uIHNhZmV0eQ0KPiBpdCBzaG91bGQgYmUgZWFybGllciwgYmVmb3Jl
+IHRoZSBwYXRjaGVzIHRoYXQgY2hhbmdlIHRoZSBwYWdlIHRhYmxlDQo+IGFsZ29yaXRobXMgdG8g
+YmUgdW5zYWZlIGZvciB0aGUgU01NVS4NCj4gDQo+IEhvd2V2ZXIsIEkndmUgaGVhcmQgcGVvcGxl
+IHRhbGtpbmcgYWJvdXQgc2hpcHBpbmcgY2hpcHMgdGhhdCBoYXZlIENQVXMNCj4gd2l0aCBCQk1M
+MiBidXQgU01NVXMgd2l0aG91dC4NCj4gDQo+IE9uIHN1Y2ggYSBzeXN0ZW0gaXQgc2VlbXMgbGlr
+ZSB5b3VyIHNlcmllcyB3b3VsZCBicmVhayBwcmV2aW91c2x5DQo+IHdvcmtpbmcgU1ZBIHN1cHBv
+cnQgYmVjYXVzZSB0aGlzIHBhdGNoIHdpbGwgZW5kIHVwIGRpc2FibGluZyBpdD8NCj4gDQo+IFRo
+b3VnaCBJIHNlZSB5b3VyIE1JRFJfUkVWIGxpc3QgaXMgbGltaXRlZCwgc28gcGVyaGFwcyB0aGF0
+IHdvcnJ5DQo+IGRvZXNuJ3QgZWZmZWN0IGFueSByZWFsIGNoaXBzIG1hZGUgd2l0aCB0aG9zZSBm
+YW1pbGllcz8gSSBhbSB0cnlpbmcgdG8NCj4gY2hlY2sgc29tZSBOVklESUEgcHJvZHVjdHMgYWdh
+aW5zdCB0aGlzIGxpc3QuLg0KDQpXZSBkbyBoYXZlIGltcGxlbWVudGF0aW9ucyB0aGF0IHN1cHBv
+cnQgQ1BVcyB3aXRoIEJCTE0yIHdpdGggVExCDQpjb25mbGljdCBhYm9ydHMgYW5kIFNNTVV2MyB3
+aXRoIEJCTUwyLiAgU28gZG9uJ3QgdGhpbmsgdGhvc2UgcGxhdGZvcm1zDQpiZSBhZmZlY3RlZCBi
+eSB0aGlzLiAgV2lsbCBjaGVjayB3aXRoIG91ciBoYXJkd2FyZSBmb2xrcyBpZiB0aGVyZSBpcw0K
+YW55dGhpbmcgdGhhdCB3aWxsIGJlIGFmZmVjdGVkIGJ5IHRoaXMuDQoNCkFsc28gd2UgIGhhdmUg
+cGxhbnMgdG8gdHJ5IHRvIHVzZSBTTU1VdjMgQkJNTDIgZHVyaW5nIFZNIGxpdmUgbWlncmF0aW9u
+DQp0byBzcGxpdCBibG9jayBwYWdlcyB0byA0Sy4gSSBndWVzcywgaW4gdGhhdCBjYXNlIHdlIGNh
+biBlbmFibGUgU01NVSBCQk1MMg0KaW5kZXBlbmRlbnQgb2YgQ1BVIHNpZGUuIA0KDQpUaGFua3Ms
+DQpTaGFtZWVyDQo=
 
