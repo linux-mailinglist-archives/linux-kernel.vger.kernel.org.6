@@ -1,96 +1,156 @@
-Return-Path: <linux-kernel+bounces-542855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C19F1A4CE88
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:40:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC264A4CE8D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:40:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 288F73AD583
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:39:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD98618877E0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:40:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC1232376EC;
-	Mon,  3 Mar 2025 22:39:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B113722FF4F;
+	Mon,  3 Mar 2025 22:40:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A90lqZc0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ci/MDMy2"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D3B4212B2F;
-	Mon,  3 Mar 2025 22:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 271381F1932
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 22:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741041598; cv=none; b=JxsSwsYQ2BpPHrEzUKFdrX9778wd2KZaigwlmvJtm5i0q2Aht3QCBJ3tbSRXCKQxm9NxErSJ0Mgyv17nA8OFbN6baZpPEuaIUT2g77uJwLGJLcvM0SzYNVL79sD2xIhYJjzhSet97wNHi0fko3rvkR3yxOcpRQnNhOw7eSDuM9A=
+	t=1741041634; cv=none; b=JMuEln5RrZreKCEl8dVTIP+nrK6lLHuNyYXYaRo5nyJ20jpSKsRbWdSnHNg/fl9Blnigxgl3HiqCfh/tLdH+YNt7F4oe2szRfH2bdSZXMtyn+idHJuPxHYEzzvnGx+WIZPbD/eLCaIKrIjYJHmj3YctHVAg57GHPCUqMnub+KXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741041598; c=relaxed/simple;
-	bh=dNjQ+Gtua5eX7r+UCvQQi9mBxp6eDZm379eQznEbG7s=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=g2yYEPn4eo1UgYjTqo/qAQJqzXhMaEn0cczEIIjSDiUgsvE8rqSn6zxFv/P/N621LLEo64+X1prQPu0dSvxIVoaZV0UPyAwS8cjvATvxftLemyK+A3/bsp02KapdRUupRQF11P4/Ui9IQ3WY3qpZOGdK8GD1/jvYh4WrPNUe3/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A90lqZc0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE49BC4CEE6;
-	Mon,  3 Mar 2025 22:39:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741041597;
-	bh=dNjQ+Gtua5eX7r+UCvQQi9mBxp6eDZm379eQznEbG7s=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=A90lqZc0bnnS9p0MLFJrL/aFLHvI1TNPZAdcoSleQJNMFQg3lDM/vvJnOEGOTbMAV
-	 hC4SnArUMZAr2Ji99DoGq2YRGavcsm370Y8M28glJyqsq3VjjhDSNjRWwRaNXKbIDW
-	 2wuYzgYwLGSe3wTi9ZRwIiS6Kikd41rOuTAPVuhKOeKSO38613oq0viBtssAj1Twg1
-	 S70rQ7oFPEVwab4RKBPJdmJGvBwP+46iSTImhO4ai2L/57Ei6wUcYZ6S/4D/Vjzqnf
-	 Ym13PB33q6BSHumNBsTIPIi6mBk8g53Pc1HFocnKHWqm01PKO7g2WMWD4i5B2y6hv7
-	 w9Am9unPN8FZw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE8B53809A8F;
-	Mon,  3 Mar 2025 22:40:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1741041634; c=relaxed/simple;
+	bh=RW1d8JGG6ZFCjwJZI4o44jcHJB2oAfAAF9DG4tn6iXY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lULgeJ2RmLKNcvc2TDh4OuaCP+RdrpCfzMvG128c8ZQHl6yQXsWkYzydaPySUez5BpxSG1dsQ8ZHjt+mybqADmC2pfAds/XGH6+dcp4zPuHfZCRpUx8irW0RnMg9LGme3+QfL31wP78RXkVs2bvn7+scQBmSAxQAEwN0SPyf2tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ci/MDMy2; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741041633; x=1772577633;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=RW1d8JGG6ZFCjwJZI4o44jcHJB2oAfAAF9DG4tn6iXY=;
+  b=ci/MDMy2ixHsvKg1pTXTorUcUQKleYlQkaoWtPxWVTgqOsNRm/zvQRZY
+   ey+nB4lE/ekX+CzUgNVF5VzFXTAimJfS0fgnsj6XGyKpxJLWsTpe6xuf8
+   Dgu7qu4ifvCkqU/AB0JQc9GjjFzf0O3agFicUuQ05t0rlPe/EIN93P7Z4
+   TR8eg9S1SiGv+1AvoBw9S7HxIZFvWIKa/M1VfPQvXRRKEWbH1fA1R2FPl
+   wSx0NzYcj9jTn/bFyo3p1ssYv0YNPvhs1wn5qEV2P0/4DeOStU/TUvKK5
+   XAoaRNqe6Kw/6jks6WNDwPUMnGpSO3LSGHgea8o4F8fOGBZ5/A5SKhcn1
+   A==;
+X-CSE-ConnectionGUID: Qrnp3dOEQKyitfw/pE71Sw==
+X-CSE-MsgGUID: CokU6zEfR/iq72kZk7FwVg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="29526449"
+X-IronPort-AV: E=Sophos;i="6.13,330,1732608000"; 
+   d="scan'208";a="29526449"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 14:40:32 -0800
+X-CSE-ConnectionGUID: oweEt52pSWGKEZGUvxnzbg==
+X-CSE-MsgGUID: BBBDta6EQ+68ESaaDO+laA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="155360889"
+Received: from msatwood-mobl.amr.corp.intel.com (HELO [10.125.109.13]) ([10.125.109.13])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 14:40:32 -0800
+Message-ID: <ffff0bdc-ddf9-4f70-980a-f66eb2a00b18@intel.com>
+Date: Mon, 3 Mar 2025 14:40:49 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v2] xsk: fix __xsk_generic_xmit() error code when cq is
- full
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174104163051.3740022.6320098625451049670.git-patchwork-notify@kernel.org>
-Date: Mon, 03 Mar 2025 22:40:30 +0000
-References: <20250227081052.4096337-1-wangliang74@huawei.com>
-In-Reply-To: <20250227081052.4096337-1-wangliang74@huawei.com>
-To: Wang Liang <wangliang74@huawei.com>
-Cc: bjorn@kernel.org, magnus.karlsson@intel.com, maciej.fijalkowski@intel.com,
- jonathan.lemon@gmail.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, ast@kernel.org,
- daniel@iogearbox.net, hawk@kernel.org, john.fastabend@gmail.com,
- yuehaibing@huawei.com, zhangchangzhong@huawei.com, netdev@vger.kernel.org,
- bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v14 13/13] x86/mm: only invalidate final translations with
+ INVLPGB
+To: Rik van Riel <riel@surriel.com>, x86@kernel.org
+Cc: linux-kernel@vger.kernel.org, bp@alien8.de, peterz@infradead.org,
+ dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
+ nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
+ linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
+ jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
+ Manali.Shukla@amd.com, mingo@kernel.org
+References: <20250226030129.530345-1-riel@surriel.com>
+ <20250226030129.530345-14-riel@surriel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20250226030129.530345-14-riel@surriel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello:
+On 2/25/25 19:00, Rik van Riel wrote:
+>  static inline void __invlpgb_flush_user_nr_nosync(unsigned long pcid,
+>  						  unsigned long addr,
+>  						  u16 nr,
+> -						  bool pmd_stride)
+> +						  bool pmd_stride,
+> +						  bool freed_tables)
+>  {
+> -	__invlpgb(0, pcid, addr, nr, pmd_stride, INVLPGB_PCID | INVLPGB_VA);
+> +	u8 flags = INVLPGB_PCID | INVLPGB_VA;
+> +
+> +	if (!freed_tables)
+> +		flags |= INVLPGB_FINAL_ONLY;
+> +
+> +	__invlpgb(0, pcid, addr, nr, pmd_stride, flags);
+>  }
 
-This patch was applied to bpf/bpf.git (master)
-by Martin KaFai Lau <martin.lau@kernel.org>:
+I'm not sure this is OK.
 
-On Thu, 27 Feb 2025 16:10:52 +0800 you wrote:
-> When the cq reservation is failed, the error code is not set which is
-> initialized to zero in __xsk_generic_xmit(). That means the packet is not
-> send successfully but sendto() return ok.
-> 
-> Considering the impact on uapi, return -EAGAIN is a good idea. The cq is
-> full usually because it is not released in time, try to send msg again is
-> appropriate.
-> 
-> [...]
+Think of a hugetlbfs mapping with shared page tables. Say you had a
+1GB-sized and 1GB-aligned mapping. It might zap the one PUD that it
+needs, set tlb->cleared_puds=1 but it never sets ->freed_tables because
+it didn't actually free the shared page table page.
 
-Here is the summary with links:
-  - [net,v2] xsk: fix __xsk_generic_xmit() error code when cq is full
-    https://git.kernel.org/bpf/bpf/c/6ccf6adb05d0
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+I'd honestly just throw this patch out of the series for now. All of the
+other TLB invalidation that the kernel does implicitly toss out the
+mid-level paging structure caches.
 
