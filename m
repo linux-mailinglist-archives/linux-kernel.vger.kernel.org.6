@@ -1,480 +1,297 @@
-Return-Path: <linux-kernel+bounces-541654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FC28A4BF8F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:58:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC425A4BFC2
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:04:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A524D167A8A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:57:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5D533AF253
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:58:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A74A20CCDE;
-	Mon,  3 Mar 2025 11:57:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C842820D4E9;
+	Mon,  3 Mar 2025 11:58:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="k/KVqWjO"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2086.outbound.protection.outlook.com [40.107.220.86])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VL/7yigD"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBA431F891D;
-	Mon,  3 Mar 2025 11:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741003043; cv=fail; b=Z6i5E9Bbl5apQjoELagRyMLHA1acygbS7n+CT0+Lwn0V/Dds4MkwDzMllMFZ5jQnaEYc8LIRjNorTof+CV5J7mVpmlvcO1WvfhKEpXj7tHJcZcIEYv07lFi7mHk+neSzKDsXuyX/A4DOow2yV6NINzTDp2ogNbFzJ6SzyeoWJc8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741003043; c=relaxed/simple;
-	bh=D+X1Iet3i9n+IT/qbV/ClhjrOxxU9+DMbNxjb9OYO1Y=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=X5i+YMz2eK1vfcUf0n2NJVBwn7pQm96XTM34WmUVn3KNoDpakdDmzQ11zBHVJHc9xK+VjpivZGQ3Zvi2Om1eLTTA+v09WBSbgrYnoHYl4F3+hUmWu2V+LrKiLEDziitBDzAxOYOULYOyCd4jzcruyLOoDwsAzrW75bxf4PUIme4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=k/KVqWjO; arc=fail smtp.client-ip=40.107.220.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LduzGwJ+ywdzykiawJ7vz644s/xXIw7RFLkkBdgnxTeDzhsiYjjd7Hhs2QWnd1Y8pTTUJXnGIu5fYa9CDIDccY5NEALvP+4DZZPxZo988H+RQacVsqZPha1Iern3cTlUyr804SDD9d+pCIkEfIic0z/JEFdE32Uy1AH1zC9MWvNPL5HcyIXmLo2oejukoCpEhkZ4EiGfi+UDuIUY+Bsn28PmUhNclc1VvuL8hvXQwJ51RSujr56tmwKo2voIjCLb3TenJ23RMx626siA3mxgxwnGXxzCQVac3kaMnKAg52rPxIhWrs0xcsj6ifqWachkpiRAGgA4vgC9Lt7OIiDgBw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=h+3M+4C1feb+BUNEPlMBq8Wdtgx+cG+y+1e70IPrfBY=;
- b=sUTabhNZN1tMdW1D2uviBC90R2usHQzHarJrL6OZ8K/uouEBubpU45wesDxq8vam2tFEwAnMMFNsdCfG+ABWBo+32oSviV47nfbfD2mKmRku98SX7RLhiozeMTBPRgaGpL4vY5YPhy0Tc399jnMpiC10m/D01GUE8dog9mzIm2rpfe4kdwiLlx6epfyfsoAHYbxVmJ5FJLbtZTm20UIlrYgoP1hC5xgFuk9BjihP503isbOc9JZI392Ju9NYr80DOPUc4qCXwpkm8KJtqMir7XVFi6bxbolIVh94x11xQtCS/vtNTBAMJWUWe535WyEE9iJIzOa4Uc7Oli4bQFKazw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=h+3M+4C1feb+BUNEPlMBq8Wdtgx+cG+y+1e70IPrfBY=;
- b=k/KVqWjOSsQka26XJdtcreiCk5MCBgDBw2N+ntPhs3TgCTUw+wHQKPzWc8uEajREcmTQvcCjLSOENdI7BccOvsopMdELhPRKbEVUGmrxTFue8eySpD8Djv5P8a8seFnSaitJEH+qB1j5RqSTIvDz8yirVfQ86T65zceAxSJCLJ0=
-Received: from DS7PR12MB6070.namprd12.prod.outlook.com (2603:10b6:8:9e::14) by
- IA1PR12MB6602.namprd12.prod.outlook.com (2603:10b6:208:3a2::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8489.25; Mon, 3 Mar 2025 11:57:19 +0000
-Received: from DS7PR12MB6070.namprd12.prod.outlook.com
- ([fe80::b847:e013:8f93:f6e4]) by DS7PR12MB6070.namprd12.prod.outlook.com
- ([fe80::b847:e013:8f93:f6e4%7]) with mapi id 15.20.8489.025; Mon, 3 Mar 2025
- 11:57:19 +0000
-From: "Manne, Nava kishore" <nava.kishore.manne@amd.com>
-To: "iansdannapel@gmail.com" <iansdannapel@gmail.com>,
-	"linux-fpga@vger.kernel.org" <linux-fpga@vger.kernel.org>
-CC: Moritz Fischer <mdf@kernel.org>, Wu Hao <hao.wu@intel.com>, Xu Yilun
-	<yilun.xu@intel.com>, Tom Rix <trix@redhat.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, Jonathan
- Cameron <Jonathan.Cameron@huawei.com>, =?iso-8859-2?Q?Rafa=B3_Mi=B3ecki?=
-	<rafal@milecki.pl>, Aradhya Bhatia <a-bhatia1@ti.com>, "open list:OPEN
- FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: RE: [v4 3/3] fpga-mgr: Add Efinix SPI programming driver
-Thread-Topic: [v4 3/3] fpga-mgr: Add Efinix SPI programming driver
-Thread-Index: AQHbicYG9R/dKaVbOEakaw6xd74lqbNhS1iQ
-Date: Mon, 3 Mar 2025 11:57:18 +0000
-Message-ID:
- <DS7PR12MB607055136A599EE9A1895414CDC92@DS7PR12MB6070.namprd12.prod.outlook.com>
-References: <20250228094732.54642-1-iansdannapel@gmail.com>
- <20250228094732.54642-4-iansdannapel@gmail.com>
-In-Reply-To: <20250228094732.54642-4-iansdannapel@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ActionId=99e19a79-bad3-4318-97b3-0e78a3651e9e;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=0;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=true;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
- Internal Distribution
- Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2025-03-03T11:28:54Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Tag=10,
- 3, 0, 1;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DS7PR12MB6070:EE_|IA1PR12MB6602:EE_
-x-ms-office365-filtering-correlation-id: 0dca5598-d80a-4f29-d9f9-08dd5a4a8c98
-x-ld-processed: 3dd8961f-e488-4e60-8e11-a82d994e183d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|7416014|376014|38070700018|7053199007;
-x-microsoft-antispam-message-info:
- =?iso-8859-2?Q?2IHeTGjRrcARCV+pyMvw9rxNW13/ennkhrOU/GjpJkOHlPlVsGHUzJ4YD5?=
- =?iso-8859-2?Q?TD8SBOB3dIhWprNHUuiEvfKl5uA7NHoKM1PlTPD4JIQzrPIDR0Zc3p10u3?=
- =?iso-8859-2?Q?VtM6geT2QGlDpNkzPWdc8OAmFqcZLwy8KWqZ7SWtcqbzNm1JLgHZFwNn4n?=
- =?iso-8859-2?Q?4fhN4gjcVkt+TCvB4O1xYh5pHxrfNoZ/mNtTDPuozdpVy/Qnczh/MWjkCa?=
- =?iso-8859-2?Q?9hlWMX7v+92oYWI5XKwdVwC1dbN9yqfm8bPfdGPJvOu/YRn9MvsYqUWlu2?=
- =?iso-8859-2?Q?Ky6/vqVtUr6siUyx3fLKVZn7Ab4bGbnz7+E0dIufxD+X38xdluKruJ2A62?=
- =?iso-8859-2?Q?zX30yGt2QKorYpj7lUnv3ZXnnaAeOWMa5mIJJ6UPhKSvrJi8sNuLIRiSHe?=
- =?iso-8859-2?Q?JKaL2szF6ZhRelflag3RYzR0pO1JxwCKQqKlliVTp33WAght7BYnSGT4LM?=
- =?iso-8859-2?Q?P4V+fbsQoiZCKAhwwNIUbQU9XVMr2Gn9adkeXsa9PQ/PJHzjLsWkHWzzOe?=
- =?iso-8859-2?Q?xM5AEGTnsvpmUcQb6BpZhd+MqrsDKTrDPntOco8cXcAGeNSiQilvbac1nk?=
- =?iso-8859-2?Q?pWJGOt8V25R3b9ilkh7asTvU6nnKg6+xriQOAJ7ZLhAI62ejsPikG+/W7j?=
- =?iso-8859-2?Q?GSAf+hyvuFN8vmcNQhFebIgfpOI/vwVkEM+dSN8cvYsxAwlILk1Q8xiDkN?=
- =?iso-8859-2?Q?GzBz5SzfdU1UneGoUIC/KTI5OF79Nq7JPWrLWgR6KIOsX3UI8Scmso5pw/?=
- =?iso-8859-2?Q?8aSFo4YNxgS47v5tLsX4ZD+dNh7ut2jx5L51MpQfJIW3IePMqBxLFjimth?=
- =?iso-8859-2?Q?0q3va3JchVOuVHSBZ/HDseYW9w5d5kl9c0WvE0VqscC4SCZxFLmz3rIUV5?=
- =?iso-8859-2?Q?4Vc49Rrn1sgpavJsSLahxjugLNLGo7ox+D9Nv+mXi1s6mIfXnvXi4sKjZ9?=
- =?iso-8859-2?Q?R8cIH7dE8nKiQM0Qu0GldYjdKa5PNmz0xgKcg7X9dD5ouiS3OJRBrOld9n?=
- =?iso-8859-2?Q?cXs7JY6BCyUVSu5x5MGBwGciJZDw+Omp0/EQHv+fCXKgKMvDI8SH4G6I4f?=
- =?iso-8859-2?Q?yvyEpBPUKAKdhnAVuLZ3tMHHAg5cHmwvHLdew991RRb3SoY5dcYyOmbcYw?=
- =?iso-8859-2?Q?KyXKyDHC6ga3xzVYkqNKpSkxoXekk2bi0T0Dh49aZBsUyheQkjN5DLY0bz?=
- =?iso-8859-2?Q?+1DGxl081pecY2wM+TDT/lDce5m2GXxVUNu9tEhlNezcIcH2z+93yQaFJm?=
- =?iso-8859-2?Q?r5oCyzazhEco6rVKVSn+CcPMXva1p6zA5Sj9d1cMFbtPyoC/dSLkeC2JLz?=
- =?iso-8859-2?Q?ejH0LCaLtbuJ/HPw9w+yjQpJqg5T2fLW0w8KcFFDWIYqWvX4bEg37aiI+0?=
- =?iso-8859-2?Q?j8VYmwBnP18kgz27C68sxBFR9+xvXjdUKSJIMxtEgPmszBgusBvetKzklf?=
- =?iso-8859-2?Q?etSv5BehR0hxNjxSzh4f9rUtuFgRy38NL5YBb69uvNo0faUxWm5zohbr2U?=
- =?iso-8859-2?Q?V2GrqccGZ4s1hCXHGhbwyy?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(38070700018)(7053199007);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-2?Q?SGfp7i//rNEpTx8vI4QRFGPmWa/YZCrKB59+K6sSIoqUVyszqqiIfqN9DM?=
- =?iso-8859-2?Q?mitl4cjtK8wyg30c8cjSP554DSiy6AAl5tDG+bwN3mKtjpsp99eaAVH0Zb?=
- =?iso-8859-2?Q?btGoZV8YCX9tjk0rRm4AVSgoSBfwIQmtGjgF5f20UYlYV1kVWhVn3hxLh1?=
- =?iso-8859-2?Q?Ll2KRA68SaWYsV5P0adCiXkpE1cg9Ybdek6gSOBm/3TyqMLj04656gx5Ut?=
- =?iso-8859-2?Q?UhqaqD7AMTnruWqvhMHwkwUUqa7QdlL8CgzuMaaLtfxE9/PyWeKL2XrNi0?=
- =?iso-8859-2?Q?N/vjERlwVu5BTxDNOCbrDSRu3hVN/eHuszFlm8XAA9WebsmrzNFOyahSRb?=
- =?iso-8859-2?Q?Y8wQGeoFUNY3PhRXhRxEcB1Y2gg8i0Vlu+FMQ4EHh+h7bIsVNfZ5j/9rBD?=
- =?iso-8859-2?Q?Wj0aRfpfyL9uafoZQrq3voIeMsdkEvGVP7yatTwRxOia96DHSLSAbuEoie?=
- =?iso-8859-2?Q?xThIw3EsxSpiv72N4XBuu4dK5Fik2MaY/+dhSuovKdPnrTEHVJVyic2Fce?=
- =?iso-8859-2?Q?vS9wvcJc1Oa6nSUHY3Sx2JEyPnlQC2xtfNaKZI+HAeGG095nQNNex/uEox?=
- =?iso-8859-2?Q?GcgTyp1rBdHaaWyNEwkLOAC4igA1xPgv/m/eBhJgxNL0lZqKKSogWjNUt9?=
- =?iso-8859-2?Q?qaRlOWXmiFbA1fvT3HbSAQnWZwkgJyicBYJB8mYbyW80zXHroXog4hQKCz?=
- =?iso-8859-2?Q?nkf9stz1eycejtv4s3+u2/kTEBwrcwm1rnKm/1PYAbG16kT3Iofl/NPolO?=
- =?iso-8859-2?Q?tEWm/WA4HmQyXAKvjPtZo5ef8Yj/NNEQ9LSoQ1oFEUW+V6QwEqghE9F0Nb?=
- =?iso-8859-2?Q?BTG2tn69Dq1xkUrlUGA0LUkWKXxJaATww4xs3Ngj1dEqFaZaNx+suqYGfy?=
- =?iso-8859-2?Q?5v0XyRSJwgoFAD2nWXUsOBD/fBG+vc67qfMAMJDj7JxrQZFks2CSgs6zME?=
- =?iso-8859-2?Q?tGbIuEDFJRCPinEODq8OmvtdCfLK+fwKqCzn4mD2H+fS6ACwYXWXMGWS+u?=
- =?iso-8859-2?Q?Wh+G6izMZj7Vfjaeul0jX78TDclCQOSkzO9wvHakmiolxHKq+8HFCshS+5?=
- =?iso-8859-2?Q?bV+jIyy/vYbsTQYxqsl1KKJ0sKdzXpA3m/MeVyUHQPI+iZqn0hwU4ul7Dz?=
- =?iso-8859-2?Q?/LwoGnGdYfj7o+aAZ4RGEXf553fwKuNkxZVEGeEhlfe4TSZl2n094TwZMo?=
- =?iso-8859-2?Q?QJCp63WScpZVoinoIQIhG+IkvkqN/1EGkmFJ+q2up/AIXg3BZRbKYA69rY?=
- =?iso-8859-2?Q?nwosJB9/1+ZxTo3FxKHGKVBHarZwdRQOoV93kyQTDWE5b4l0eve+prvC1R?=
- =?iso-8859-2?Q?ItxyawaUFfE8FrutF5SC5FoMZJigIBHW25a/ktVBJRQxotQfaaYD4rIwTl?=
- =?iso-8859-2?Q?NRED8j8AErat/0uxo04B7VsGCzFtzyunRocJcbXygOCCOzT4uWW7Dxj20z?=
- =?iso-8859-2?Q?OoxkT/D1/uGIQ1jTXWdQAojPpzeTXaZiIQzzG8NRD+IKmMmx2PM6zEU4Lz?=
- =?iso-8859-2?Q?smqnoFrPiJVVvsTzc0TNHmkh+Ees5G7YLOHqQeeaIgOhLMmVLys7VZabMm?=
- =?iso-8859-2?Q?7eF3exgm7WBeodSxbRWOlDU10EXLPK1xa1NyzV5q+a1K79I6o96BRREYRM?=
- =?iso-8859-2?Q?m21OasVvF73+0=3D?=
-Content-Type: text/plain; charset="iso-8859-2"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF2D2036F9;
+	Mon,  3 Mar 2025 11:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741003111; cv=none; b=UZxp1juwH/4H/KFqGkdrlsa5fAoHjvWblt13nz9++dYCNns0+f8RvOdF4vI36LiNvXKQuOWT/bQLdm+5mKpxC9aJZeKRk+p9zNAGvT0peB9frVUaCZe0xNNTalng2nfHnYhK3PX3hcINEUvG3/Ng1bsA591TBvXxp3cGe2WjsGQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741003111; c=relaxed/simple;
+	bh=e0Wy96/Vl/Za2xK/skILAtBW0xOPi/xeh93FvbxO05A=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=T3/KWn8r+cnDKua4eX/uZ4cSQQUFSCtS0WZ1OozirHOcq5eZqI24VbptJb7+TdGHacoGBobrMIf/wkoIbKYAZbaJqGKncmx8Z+9dojlWaqLOee/B4ifD2uTisnmWXYxi17D1Os6tcwKDBfxseiSlVYDfziSE5EjFjl/IYahS9KE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VL/7yigD; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741003110; x=1772539110;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=e0Wy96/Vl/Za2xK/skILAtBW0xOPi/xeh93FvbxO05A=;
+  b=VL/7yigDTIhgpVZFi2217on20CxNR/u0lVny0+G836xGjRe6sjoJotcV
+   1mYbOrTMUz2yCdvLV3eFi9015cO27PcN6+m1+67jubLnHk5FOlSqTjduI
+   ILBL9y4wNiUwGt5v5+5mRbz4v9n+CJFDvSCd2MnafB7+j9A6yDFuRVJJM
+   hLxuaV0a9QatQIYjDH8tej64heZEa7watkTYh/4r4YtP+2uEAFMM6Caai
+   BbxE4BMwR+L3Ck6WonV4QrBQqu5O64kwjvyBpCsufuMwY61f72OfERBm6
+   NBg+ooIXGBiWeZYWXyrxbZZpwnUkOHa2QGNHxBAalbzn5f9nm+t5wpaaT
+   Q==;
+X-CSE-ConnectionGUID: qO1VuDtXT+mwgkTN8qh9lg==
+X-CSE-MsgGUID: TVOE7AfYSmOPNiNw48XHOA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="59419267"
+X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
+   d="scan'208";a="59419267"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 03:58:29 -0800
+X-CSE-ConnectionGUID: d9MuPnbBQimcIBMNmwtQFg==
+X-CSE-MsgGUID: 7CustbZ9QxqW5b+mhEq4NQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
+   d="scan'208";a="122939010"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.14])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 03:58:26 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 3 Mar 2025 13:58:23 +0200 (EET)
+To: Lukas Wunner <lukas@wunner.de>
+cc: Bjorn Helgaas <bhelgaas@google.com>, 
+    Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-pci@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, 
+    Joel Mathew Thomas <proxy0@tutamail.com>, stable@vger.kernel.org
+Subject: Re: [PATCH 1/1] PCI/bwctrl: Disable PCIe BW controller during
+ reset
+In-Reply-To: <Z7_4nMod6jWd-Bi1@wunner.de>
+Message-ID: <7fd2f9e9-9c31-abb0-d0c9-f9d0a0ac1bd6@linux.intel.com>
+References: <20250217165258.3811-1-ilpo.jarvinen@linux.intel.com> <Z7RL7ZXZ_vDUbncw@wunner.de> <14797a5a-6ded-bf8f-aa0c-128668ba608f@linux.intel.com> <Z7_4nMod6jWd-Bi1@wunner.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6070.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0dca5598-d80a-4f29-d9f9-08dd5a4a8c98
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2025 11:57:18.8937
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 4MZNV8POe33IsOLmldIzJkE1U1Jk/JVyeYMNr1AOjDvsBNbQbIMICLnJeFUkTiAQ
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6602
+Content-Type: multipart/mixed; boundary="8323328-551350541-1741003103=:33389"
 
-[AMD Official Use Only - AMD Internal Distribution Only]
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-> -----Original Message-----
-> From: iansdannapel@gmail.com <iansdannapel@gmail.com>
-> Sent: Friday, February 28, 2025 3:18 PM
-> To: linux-fpga@vger.kernel.org
-> Cc: Moritz Fischer <mdf@kernel.org>; Wu Hao <hao.wu@intel.com>; Xu Yilun
-> <yilun.xu@intel.com>; Tom Rix <trix@redhat.com>; Rob Herring
-> <robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>; Conor Dooley
-> <conor+dt@kernel.org>; Neil Armstrong <neil.armstrong@linaro.org>; Jonath=
-an
-> Cameron <Jonathan.Cameron@huawei.com>; Rafa=B3 Mi=B3ecki <rafal@milecki.p=
-l>;
-> Aradhya Bhatia <a-bhatia1@ti.com>; Ian Dannapel <iansdannapel@gmail.com>;
-> open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS
-> <devicetree@vger.kernel.org>; open list <linux-kernel@vger.kernel.org>
-> Subject: [v4 3/3] fpga-mgr: Add Efinix SPI programming driver
+--8323328-551350541-1741003103=:33389
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+
+On Thu, 27 Feb 2025, Lukas Wunner wrote:
+
+> On Mon, Feb 24, 2025 at 05:13:15PM +0200, Ilpo J=E4rvinen wrote:
+> > On Tue, 18 Feb 2025, Lukas Wunner wrote:
+> > > On Mon, Feb 17, 2025 at 06:52:58PM +0200, Ilpo J=E4rvinen wrote:
+> > > > PCIe BW controller enables BW notifications for Downstream Ports by
+> > > > setting Link Bandwidth Management Interrupt Enable (LBMIE) and Link
+> > > > Autonomous Bandwidth Interrupt Enable (LABIE) (PCIe Spec. r6.2 sec.
+> > > > 7.5.3.7).
+> > > >=20
+> > > > It was discovered that performing a reset can lead to the device
+> > > > underneath the Downstream Port becoming unavailable if BW notificat=
+ions
+> > > > are left enabled throughout the reset sequence (at least LBMIE was
+> > > > found to cause an issue).
+> > >=20
+> > > What kind of reset?  FLR?  SBR?  This needs to be specified in the
+> > > commit message so that the reader isn't forced to sift through a
+> > > bugzilla with dozens of comments and attachments.
+> >=20
+> > Heh, I never really tried to figure out it because the reset disable=20
+> > patch was just a stab into the dark style patch. To my surprise, it end=
+ed=20
+> > up working (after the initial confusion was resolved) and I just starte=
+d=20
+> > to prepare this patch from that knowledge.
+>=20
+> If the present patch is of the type "changing this somehow makes the
+> problem go away" instead of a complete root-cause analysis, it would
+> have been appropriate to mark it as an RFC.
+
+I'll keep that mind in the future.
+
+I don't think your depiction is entirely accurate of the situtation=20
+though. The reporter had confirmed that if bwctrl is change(s) are=20
+reverted, the problem is not observed.
+
+So I set to understand why bwctrl has any impact here at all since it=20
+should touch only a different device (and even that in relatively limited=
+=20
+ways). And that is how I found that if bwctrl is not enabled during reset,=
+=20
+the problem is also not observed.
+
+I also noted that the patch just works around the problems and there was=20
+also informal speculation about the suspected root cause in the patch (the=
+=20
+only other theory I've a about the root cause relates to extra interrupts=
+=20
+causing a problem through hp/pme interrupt handlers).
+
+> I've started to dig into the bugzilla and the very first attachment
+> (dmesg for the non-working case) shows:
+>=20
+>   vfio-pci 0000:01:00.0: timed out waiting for pending transaction; perfo=
+rming function level reset anyway
+>=20
+> That message is emitted by pcie_flr().  Perhaps the Nvidia GPU takes
+> more time than usual to finish pending transactions, so the first
+> thing I would have tried would be to raise the timeout significantly
+> and see if that helps.  Yet I'm not seeing any patch or comment in
+> the bugzilla where this was attempted.  Please provide a patch for
+> the reporter to verify this hypothesis.
+
+I've problem in understanding how reverting bwctrl change does "solve" to=
+=20
+this. Bwctrl is not even supposed to touch Nvidia GPU at all AFAIK.
+
+> > Logs do mention this:
+> >=20
+> > [   21.560206] pcieport 0000:00:01.1: unlocked secondary bus reset via:=
+ pciehp_reset_slot+0x98/0x140
+> >=20
+> > ...so it seems to be SBR.
+>=20
+> Looking at the vfio code, vfio_pci_core_enable() (which is called on
+> binding the vfio driver to the GPU) invokes pci_try_reset_function().
+> This will execute the reset method configured via sysfs.  The same
+> is done on unbind via vfio_pci_core_disable().
+>=20
+> So you should have asked the reporter for the contents of:
+> /sys/bus/pci/devices/0000:01:00.0/reset_method
+> /sys/bus/pci/devices/0000:01:00.1/reset_method
+>=20
+> In particular, I would like to know whether the contents differ across
+> different kernel versions.
+>=20
+> There's another way to perform a reset:   Via an ioctl.  This ends up
+> calling vfio_pci_dev_set_hot_reset(), which invokes pci_reset_bus()
+> to perform an SBR.
+>=20
+> Looking at dmesg output in log_linux_6.13.2-arch1-1_pcie_port_pm_off.log
+> it seems that vfio first performs a function reset of the GPU on bind...
+>=20
+> [   40.171564] vfio-pci 0000:01:00.0: resetting
+> [   40.276485] vfio-pci 0000:01:00.0: reset done
+>=20
+> ...and then goes on to perform an SBR both of the GPU and its audio
+> device...
+>=20
+> [   40.381082] vfio-pci 0000:01:00.0: resetting
+> [   40.381180] vfio-pci 0000:01:00.1: resetting
+> [   40.381228] pcieport 0000:00:01.1: unlocked secondary bus reset via: p=
+ciehp_reset_slot+0x98/0x140
+> [   40.620442] vfio-pci 0000:01:00.0: reset done
+> [   40.620479] vfio-pci 0000:01:00.1: reset done
+>=20
+> ...which is odd because the audio device apparently wasn't bound to
+> vfio-pci, otherwise there would have been a function reset.  So why
+> does vfio think it can safely reset it?
+>=20
+> Oddly, there is a third function reset of only the GPU:
+>=20
+> [   40.621894] vfio-pci 0000:01:00.0: resetting
+> [   40.724430] vfio-pci 0000:01:00.0: reset done
+>=20
+> The reporter writes that pcie_port_pm=3Doff avoids the PME messages.
+> If the reset_method is "pm", I could imagine that the Nvidia GPU
+> signals a PME event during the D0 -> D3hot -> D0 transition.
 >
-> From: Ian Dannapel <iansdannapel@gmail.com>
->
-> Add a new driver for loading binary firmware to configuration RAM using "=
-SPI
-> passive mode" on Efinix FPGAs.
->
-> Signed-off-by: Ian Dannapel <iansdannapel@gmail.com>
-> ---
->  drivers/fpga/Kconfig      |   7 ++
->  drivers/fpga/Makefile     |   1 +
->  drivers/fpga/efinix-spi.c | 212 ++++++++++++++++++++++++++++++++++++++
->  3 files changed, 220 insertions(+)
->  create mode 100644 drivers/fpga/efinix-spi.c
->
-> diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig index
-> 37b35f58f0df..b5d60ba62900 100644
-> --- a/drivers/fpga/Kconfig
-> +++ b/drivers/fpga/Kconfig
-> @@ -83,6 +83,13 @@ config FPGA_MGR_XILINX_SPI
->         FPGA manager driver support for Xilinx FPGA configuration
->         over slave serial interface.
->
-> +config FPGA_MGR_EFINIX_SPI
-> +     tristate "Efinix FPGA configuration over SPI"
-> +     depends on SPI
-> +     help
-> +       FPGA manager driver support for Efinix FPGAs configuration over S=
-PI
-> +       (passive mode only).
-> +
->  config FPGA_MGR_ICE40_SPI
->       tristate "Lattice iCE40 SPI"
->       depends on OF && SPI
-> diff --git a/drivers/fpga/Makefile b/drivers/fpga/Makefile index
-> aeb89bb13517..adbd51d2cd1e 100644
-> --- a/drivers/fpga/Makefile
-> +++ b/drivers/fpga/Makefile
-> @@ -18,6 +18,7 @@ obj-$(CONFIG_FPGA_MGR_TS73XX)               +=3D
-> ts73xx-fpga.o
->  obj-$(CONFIG_FPGA_MGR_XILINX_CORE)   +=3D xilinx-core.o
->  obj-$(CONFIG_FPGA_MGR_XILINX_SELECTMAP)      +=3D xilinx-selectmap.o
->  obj-$(CONFIG_FPGA_MGR_XILINX_SPI)    +=3D xilinx-spi.o
-> +obj-$(CONFIG_FPGA_MGR_EFINIX_SPI)    +=3D efinix-spi.o
->  obj-$(CONFIG_FPGA_MGR_ZYNQ_FPGA)     +=3D zynq-fpga.o
->  obj-$(CONFIG_FPGA_MGR_ZYNQMP_FPGA)   +=3D zynqmp-fpga.o
->  obj-$(CONFIG_FPGA_MGR_VERSAL_FPGA)   +=3D versal-fpga.o
-> diff --git a/drivers/fpga/efinix-spi.c b/drivers/fpga/efinix-spi.c new fi=
-le mode 100644
-> index 000000000000..07885110a8a8
-> --- /dev/null
-> +++ b/drivers/fpga/efinix-spi.c
-> @@ -0,0 +1,212 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * FPGA Manager Driver for Efinix
-> + *
-> + * Copyright (C) 2025 iris-GmbH infrared & intelligent sensors
-> + *
-> + * Ian Dannapel <iansdannapel@gmail.com>
-> + *
-> + * Load Efinix FPGA firmware over SPI using the serial configuration int=
-erface.
-> + *
-> + * Note 1: Only passive mode (host initiates transfer) is currently supp=
-orted.
-> + * Note 2: Topaz and Titanium support is based on documentation but
-> +remains
-> + * untested.
-> + */
-> +
-> +#include <linux/delay.h>
-> +#include <linux/fpga/fpga-mgr.h>
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/spi/spi.h>
-> +
-> +struct efinix_spi_conf {
-> +     struct spi_device *spi;
-> +     struct gpio_desc *cdone;
-> +     struct gpio_desc *reset;
-> +};
-> +
-> +static void efinix_spi_reset(struct efinix_spi_conf *conf) {
-> +     gpiod_set_value(conf->reset, 1);
-> +     /* tCRESET_N > 320 ns */
-> +     usleep_range(1, 2);
-> +     gpiod_set_value(conf->reset, 0);
-> +
-> +     /* tDMIN > 32 us */
-> +     usleep_range(35, 40);
+> I also note that the vfio-pci driver allows runtime PM.  So both the
+> GPU and its audio device may runtime suspend to D3hot.  This in turn
+> lets the Root Port runtime suspend to D3hot.  It looks like the
+> reporter is using a laptop with an integrated AMD GPU and a
+> discrete Nvidia GPU.  On such products the platform often allows
+> powering down the discrete GPU and this is usually controlled
+> through ACPI Power Resources attached to the Root Port.
+> Those are powered off after the Root Port goes to D3hot.
+> You should have asked the reporter for an acpidump.
 
-Use macros instead of hardcoded values.
+A lots of these suggestions do not make much sense to me given that=20
+reverting bwctrl alone does not exhibit the problem. E.g., the reset=20
+method should be exactly the same.
 
-> +}
-> +
-> +static enum fpga_mgr_states efinix_spi_state(struct fpga_manager *mgr)
-> +{
-> +     struct efinix_spi_conf *conf =3D mgr->priv;
-> +
-> +     if (conf->cdone && gpiod_get_value(conf->cdone) =3D=3D 1)
-> +             return FPGA_MGR_STATE_OPERATING;
-> +
-> +     return FPGA_MGR_STATE_UNKNOWN;
-> +}
-> +
-> +static int efinix_spi_write_init(struct fpga_manager *mgr,
-> +                              struct fpga_image_info *info,
-> +                              const char *buf, size_t count)
-> +{
-> +     if (info->flags & FPGA_MGR_PARTIAL_RECONFIG) {
-> +             dev_err(&mgr->dev, "Partial reconfiguration not supported\n=
-");
-> +             return -EOPNOTSUPP;
-> +     }
-> +     return 0;
-> +}
-> +
-> +static int efinix_spi_write(struct fpga_manager *mgr, const char *buf,
-> +                         size_t count)
-> +{
-> +     struct efinix_spi_conf *conf =3D mgr->priv;
-> +     int ret;
-> +     struct spi_message message;
-> +     struct spi_transfer assert_cs =3D {
-> +             .cs_change =3D 1
-> +     };
-> +     struct spi_transfer write_xfer =3D {
-> +             .tx_buf =3D buf,
-> +             .len =3D count
-> +     };
-> +     struct spi_transfer clk_cycles =3D {
-> +             .len =3D 13,  // > 100 clock cycles
+I can see there could be some way through either hp or PME interrupt=20
+handlers, where an extra interrupt that comes due to bwctrl (LBMIE) being=
+=20
+enabled triggers one of the such behaviors. But none of the above=20
+description theoritizes anything to that direction.
 
-The .len =3D 13 is based on documentation stating?
-Consider using macro.
+> pcie_bwnotif_irq() accesses the Link Status register without
+> acquiring a runtime PM reference on the PCIe port.  This feels
+> wrong and may also contribute to the issue reported here.
+> Acquiring a runtime PM ref may sleep, so I think you need to
+> change the driver to use a threaded IRQ handler.
+>=20
+> Nvidia GPUs are known to hide the audio device if no audio-capable
+> display is attached (e.g. HDMI).  quirk_nvidia_hda() unhides the
+> audio device on boot and resume.  It might be necessary to also run
+> the quirk after resetting the GPU.  Knowing which reset_method
+> was used is important to decide if that's necessary, and also
+> whether a display was attached.
 
-> +             .tx_buf =3D NULL
-> +     };
-> +     u8 *dummy_buf;
-> +
-> +     dummy_buf =3D kzalloc(13, GFP_KERNEL);
+=2E..You seem to have a lot of ideas on this. ;-)
 
-Same - use macro
+> Moreover Nvidia GPUs are known to change the link speed on idle
+> to reduce power consumption.  Perhaps resetting the GPU causes
+> a change of link speed and thus execution of pcie_bwnotif_irq()?
 
-> +     if (!dummy_buf) {
-> +             ret =3D -ENOMEM;
-> +             goto fail;
-> +     }
-> +
-> +     spi_bus_lock(conf->spi->controller);
-> +     spi_message_init(&message);
-> +     spi_message_add_tail(&assert_cs, &message);
-> +     ret =3D spi_sync_locked(conf->spi, &message);
-> +     if (ret)
-> +             goto fail_unlock;
-> +
-> +     /* reset with asserted cs */
-> +     efinix_spi_reset(conf);
-> +
-> +     spi_message_init(&message);
-> +     spi_message_add_tail(&write_xfer, &message);
-> +
-> +     clk_cycles.tx_buf =3D dummy_buf;
-> +     spi_message_add_tail(&clk_cycles, &message);
-> +
-> +     ret =3D spi_sync_locked(conf->spi, &message);
-> +     if (ret)
-> +             dev_err(&mgr->dev, "SPI error in firmware write: %d\n", ret=
-);
-> +
-> +fail_unlock:
-> +     spi_bus_unlock(conf->spi->controller);
-> +     kfree(dummy_buf);
-> +fail:
-> +     return ret;
-> +}
-> +
-> +static int efinix_spi_write_complete(struct fpga_manager *mgr,
-> +                                  struct fpga_image_info *info)
-> +{
-> +     struct efinix_spi_conf *conf =3D mgr->priv;
-> +     unsigned long timeout =3D
-> +             jiffies + usecs_to_jiffies(info->config_complete_timeout_us=
-);
-> +     bool expired =3D false;
-> +     int done;
-> +
-> +     if (conf->cdone) {
-> +             while (!expired) {
-> +                     expired =3D time_after(jiffies, timeout);
-> +
-> +                     done =3D gpiod_get_value(conf->cdone);
-> +                     if (done < 0)
-> +                             return done;
-> +
-> +                     if (done)
-> +                             break;
-> +             }
-> +     }
-> +
-> +     if (expired)
-> +             return -ETIMEDOUT;
-> +
-> +     /* tUSER > 25 us */
-> +     usleep_range(30, 35);
+Why would execution of pcie_bwnotif_irq() be a problem, it's not that
+complicated?
 
-Same - use macros.
+I'm more worried that having LBMIE enabled causes also the other interrupt=
+=20
+handlers to execute due to the shared interrupt.
 
-> +     return 0;
-> +}
-> +
-> +static const struct fpga_manager_ops efinix_spi_ops =3D {
-> +     .state =3D efinix_spi_state,
-> +     .write_init =3D efinix_spi_write_init,
-> +     .write =3D efinix_spi_write,
-> +     .write_complete =3D efinix_spi_write_complete, };
-> +
-> +static int efinix_spi_probe(struct spi_device *spi) {
-> +     struct efinix_spi_conf *conf;
-> +     struct fpga_manager *mgr;
-> +
-> +     conf =3D devm_kzalloc(&spi->dev, sizeof(*conf), GFP_KERNEL);
-> +     if (!conf)
-> +             return -ENOMEM;
-> +
-> +     conf->spi =3D spi;
-> +
-> +     conf->reset =3D devm_gpiod_get(&spi->dev, "reset", GPIOD_OUT_HIGH);
-> +     if (IS_ERR(conf->reset))
-> +             return dev_err_probe(&spi->dev, PTR_ERR(conf->reset),
-> +                                  "Failed to get RESET gpio\n");
-> +
-> +     if (!(spi->mode & SPI_CPHA) || !(spi->mode & SPI_CPOL))
-> +             return dev_err_probe(&spi->dev, -EINVAL,
-> +                                  "Unsupported SPI mode, set CPHA and CP=
-OL\n");
-> +
-> +     conf->cdone =3D devm_gpiod_get_optional(&spi->dev, "cdone", GPIOD_I=
-N);
-> +     if (IS_ERR(conf->cdone))
-> +             return dev_err_probe(&spi->dev, PTR_ERR(conf->cdone),
-> +                                  "Failed to get CDONE gpio\n");
-> +
-> +     mgr =3D devm_fpga_mgr_register(&spi->dev,
-> +                                  "Efinix FPGA Manager",
-> +                                  &efinix_spi_ops, conf);
-> +
-> +     return PTR_ERR_OR_ZERO(mgr);
-> +}
-> +
-> +static const struct of_device_id efinix_spi_of_match[] =3D {
-> +     { .compatible =3D "efinix,trion-spi", },
-> +     { .compatible =3D "efinix,titanium-spi", },
-> +     { .compatible =3D "efinix,topaz-spi", },
-> +     { .compatible =3D "efinix,fpga-spi", },
-> +     {}
-> +};
-> +MODULE_DEVICE_TABLE(of, efinix_spi_of_match);
-> +
-> +static const struct spi_device_id efinix_ids[] =3D {
-> +     { "trion-spi", 0 },
-> +     { "titanium-spi", 0 },
-> +     { "topaz-spi", 0 },
-> +     {},
-> +};
-> +MODULE_DEVICE_TABLE(spi, efinix_ids);
-> +
-> +static struct spi_driver efinix_spi_driver =3D {
-> +     .driver =3D {
-> +             .name =3D "efinix-spi",
-> +             .of_match_table =3D efinix_spi_of_match,
-> +     },
-> +     .probe =3D efinix_spi_probe,
-> +     .id_table =3D efinix_ids,
-> +};
-> +
-> +module_spi_driver(efinix_spi_driver);
-> +
-> +MODULE_LICENSE("GPL");
-> +MODULE_AUTHOR("Ian Dannapel <iansdannapel@gmail.com>");
-> +MODULE_DESCRIPTION("Efinix FPGA SPI Programming Driver (Topaz/Titanium
-> +untested)");
+> > > This approach won't work if the reset is performed without software
+> > > intervention.  E.g. if a DPC event occurs, the device likewise underg=
+oes
+> > > a reset but there is no prior system software involvement.  Software =
+only
+> > > becomes involved *after* the reset has occurred.
+> > >=20
+> > > I think it needs to be tested if that same issue occurs with DPC.
+> > > It's easy to simulate DPC by setting the Software Trigger bit:
+> > >=20
+> > > setpci -s 00:01.1 ECAP_DPC+6.w=3D40:40
+> > >=20
+> > > If the issue does occur with DPC then this fix isn't sufficient.
+> >=20
+> > Looking into lspci logs, I don't see DPC capability being there for=20
+> > 00:01.1?!
+>=20
+> Hm, so we can't verify whether your approach is safe for DPC.
+>=20
+>=20
+> > > Instead of putting this in the PCI core, amend pcie_portdrv_err_handl=
+er
+> > > with ->reset_prepare and ->reset_done callbacks which call down to al=
+l
+> > > the port service drivers, then amend bwctrl.c to disable/enable
+> > > interrupts in these callbacks.
+> >=20
+> > Will it work? I mean if the port itself is not reset (0000:00:01.1 in t=
+his=20
+> > case), do these callbacks get called for it?
+>=20
+> Never mind, indeed this won't work.
+>=20
+> Thanks,
+>=20
+> Lukas
+>=20
 
-If untested, it might be useful to mark them as experimental in Kconfig.
+I'm sorry for the delay, I've been sick for a while.
 
-Regards,
-Navakishore.
+--=20
+ i.
 
+--8323328-551350541-1741003103=:33389--
 
