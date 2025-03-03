@@ -1,196 +1,146 @@
-Return-Path: <linux-kernel+bounces-542594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE56DA4CB6A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:55:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2121CA4CB6D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:55:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86BBD175E2E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:54:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5C1716D3A6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:55:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D24F22DFB6;
-	Mon,  3 Mar 2025 18:53:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBE7922F16E;
+	Mon,  3 Mar 2025 18:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1sDF35VW"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vMlwRxtx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DE461DE2BF
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 18:53:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1272C214A64;
+	Mon,  3 Mar 2025 18:55:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741028017; cv=none; b=qrSOM2qinv9Zxe3K04LFmpkMhFIU1E0zrmyqt62V+cY6P2Uz+oY0Ds34xkaJYWssHYVzsJJX+IUqFQhJfNvRllu3NEYQW7TqknpU3y19HXz6PxPZl4JiYZeH3DAjBGeN/A1+K+7vtC5uQj7p6ha2icytczQ7b62brDZEd9fDMCs=
+	t=1741028123; cv=none; b=Wi8E3G600CrdAVxzGVKgr6HpC8r2fplywOOVkFEG8jm7BEV8aq0YVOZHsB27ZM8Uk1OylcpEEaTeffvZMvf+b98zi7AFUw1SvSFxOS0eulMsf0ySURC2fh6S8u9RwVf1W7p1maOK6cGUuc1GcMZsq40MKL0IEs/9Y0ydPNgC5yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741028017; c=relaxed/simple;
-	bh=eyW4uvAiKZw6iNEDEnhVcsa7Mr/hVjNJlE3N7IMkQe0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=lL86F8P8IrWVkAAF1nGO3naUDYPYlgGcAdyCK++a1n2v3V/0f0/3mUBuO0JajNIBxMmT0n1bv1jDDV/C3FyKnejyH40HGQsA/RiI4dqvyL8fxhRFa2cX6CYgQ7W56lo61OWW4ThNSdjnzYlhHDw9kLboiuAqwwoqBIrn7K75HyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1sDF35VW; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-22356964533so67309275ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 10:53:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741028015; x=1741632815; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6r9/NFesFUoIvHadBrGFJSc8h4PL3K25ceD37Tn3zwo=;
-        b=1sDF35VWjjOhCMn2db6tJGNhJLGAQj+teW4yazDnHpTs27dntJvakz9FqtqvV/P/jH
-         ArzCl6osFI7YbiIn0nAtjNwj60a44yvQY2ep9XnCUvMf6uyitQubo3SrkURljaE/o0z3
-         UFgItotiQUXkzUgpfF0tQu7hAwwP4silF6+xCZV+Rv2PC+MeRiz4zvYIorV5vmpe+ckg
-         2cYT63RfM0aM7M9cScI9Rj+j9+aej5j1n+aTkdlxOal0AZhVDzFi5ipymk24enej07NG
-         j6VFW2pHykeF4tDAfdpVGTMXtkWFL0S5/w9soqkhDi+AHbei21m13wPGpaLlPQGla5mv
-         0YCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741028015; x=1741632815;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=6r9/NFesFUoIvHadBrGFJSc8h4PL3K25ceD37Tn3zwo=;
-        b=UqcRu3hA5q8XVuItAsGKU4Un+r3VTA/DDdOx1jq/FH2bP4GkqDCb/fTIGXqHRSAQiY
-         egqxm6wrKW0t/qY5Ebly8fO+7WZ+PPiyMkJ4JKSqLyIpvQpjJt9jfCFQ5/knABIOlYIc
-         GMm95kNtlMxjYuTdKW+JQkXtugxmo9xZVggQBEgQKBPIDnh6S3IAKYIQib2E3aJkSDqV
-         VLzInmVfB3gPzRSJamYFgZ+2Yb/q1owoQI83OesoqkE9OiHpMYXZJTV4faSekaeO2J0i
-         Em47agwdpoWUomcH0jXNSPTljn6RTssnBLusF4wb+rNGgi7E9NFQXhYs3WbhI80W8gCm
-         hhLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWvz+Qd4PsIEcIh9OV9o0LEUtfIcp+P5lGYAwcY5ho7Hlp7P8XspUMBaotwigHw5HARAW1IaAT+Vrkfxww=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyO0Hd2TXv+bX2+UEkdOjSd3KGNKDAsM3oBNoOzLVT6QDAMhQ1x
-	T9EYxznvt2qCSZQWbSkyn3n0Mz7sFV2qYdBjI/VmMg4PYYMyYHJfaeBWbTus0kbJkYSfYQRq/Ok
-	BrA==
-X-Google-Smtp-Source: AGHT+IGWjx3WHsPRnBz65sq3hR/Pz6bpJVGezrEQ1CdrZWFRxr60xiXoBSKFm6ZFcrNN6JHU7+cWkAXveL8=
-X-Received: from pfbhm10.prod.google.com ([2002:a05:6a00:670a:b0:736:38eb:5869])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:b95:b0:736:53ef:a04e
- with SMTP id d2e1a72fcca58-73653efa732mr6458527b3a.22.1741028015671; Mon, 03
- Mar 2025 10:53:35 -0800 (PST)
-Date: Mon, 3 Mar 2025 10:53:34 -0800
-In-Reply-To: <CALMp9eSGRLMj-a_ZrzzeLx_jgAea13-to=ZPHu3F+trQq28YjA@mail.gmail.com>
+	s=arc-20240116; t=1741028123; c=relaxed/simple;
+	bh=OMpsrjWjDmvSug1NBsbafCCMDIV5l3SQC3Fgc3Y2F+Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VkhYUU7C/qkqApt3EnWwh3nh7eFAcgS8UV4o9F8uo6ZBnX59ujNLsqRuxfcAIREf2lcHcvG3d5Z5b22K7a/+mbrpMqcBe+QmHnTPNzg1wC1uXi/ks4V3XC8mMydwIqgPg37Dbz/vBAxJ4Xlu6rA6raLR5iPsGa6exMgXi3RtXII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vMlwRxtx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AB73C4CED6;
+	Mon,  3 Mar 2025 18:55:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741028122;
+	bh=OMpsrjWjDmvSug1NBsbafCCMDIV5l3SQC3Fgc3Y2F+Q=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=vMlwRxtxV7o4Dp88rLSQxANUp2Oxj22jKGlRYJWhjyMjDDhkqboLkxejBEsiBRi13
+	 sxAVzMslqYio5xzBFgkOj/pfnCy1iQZGjTa6HWUBw+pIMUl+paU40QuXG4UC55IzKI
+	 i91JXmNr9T55mYae0tiu6svmUC7DtjbKlPEX5fupK9Pdx882WtAfjHg0ChNL0gBU8e
+	 ktGe3PlsElfndhrWxC1S8kKrBvFqqJzwTMESIDXg9b/rrwlSm77SwB4SUiM+dyNjGc
+	 UJ1Y7xvR++XSLfaXrB/6WFqQiEBVgJj8rai5Ju9IAT79glm/x7vvqpNvZMMs8DnnoS
+	 TT9HHfbhflv/A==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 0866BCE0444; Mon,  3 Mar 2025 10:55:22 -0800 (PST)
+Date: Mon, 3 Mar 2025 10:55:22 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Uladzislau Rezki <urezki@gmail.com>,
+	RCU <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Cheung Wall <zzqq0103.hey@gmail.com>,
+	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
+Subject: Re: [PATCH v4 3/3] rcu: Use _full() API to debug synchronize_rcu()
+Message-ID: <667b6907-7ac7-4217-a3e4-0ad299267754@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <Z8H_aYBUHD2sS2Ir@pc636>
+ <73724164-71f4-4671-b612-eb82a784da58@paulmck-laptop>
+ <Z8IKs-I-YsOoS4uw@pc636>
+ <cdab57a4-8d58-41d9-a9b5-71d425a7375e@paulmck-laptop>
+ <f6803081-8243-4723-a3ba-00db351aafff@paulmck-laptop>
+ <20250303001507.GA3994772@joelnvbox>
+ <20250303001710.GA3997787@joelnvbox>
+ <20250303170040.GA31126@joelnvbox>
+ <Z8Xh0pP4xaFm0nEV@tardis>
+ <5f404973-380e-4626-a2ef-8c5c44d56b83@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250205182402.2147495-1-yosry.ahmed@linux.dev>
- <20250205182402.2147495-2-yosry.ahmed@linux.dev> <Z8JOvMx6iLexT3pK@google.com>
- <CALMp9eSGRLMj-a_ZrzzeLx_jgAea13-to=ZPHu3F+trQq28YjA@mail.gmail.com>
-Message-ID: <Z8X6rtIwlTtu5rHx@google.com>
-Subject: Re: [RFC PATCH 01/13] KVM: nSVM: Track the ASID per-VMCB
-From: Sean Christopherson <seanjc@google.com>
-To: Jim Mattson <jmattson@google.com>
-Cc: Yosry Ahmed <yosry.ahmed@linux.dev>, Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5f404973-380e-4626-a2ef-8c5c44d56b83@nvidia.com>
 
-On Mon, Mar 03, 2025, Jim Mattson wrote:
-> On Fri, Feb 28, 2025 at 4:03=E2=80=AFPM Sean Christopherson <seanjc@googl=
-e.com> wrote:
-> >
-> > +Jim, for his input on VPIDs.
-> >
-> > On Wed, Feb 05, 2025, Yosry Ahmed wrote:
-> > > The ASID is currently tracked per-vCPU, because the same ASID is used=
- by
-> > > L1 and L2. That ASID is flushed on every transition between L1 and L2=
-.
-> > >
-> > > Track the ASID separately for each VMCB (similar to the
-> > > asid_generation), giving L2 a separate ASID. This is in preparation f=
-or
-> > > doing fine-grained TLB flushes on nested transitions instead of
-> > > unconditional full flushes.
-> >
-> > After having some time to think about this, rather than track ASIDs per=
- VMCB, I
-> > think we should converge on a single approach for nVMX (VPID) and nSVM =
-(ASID).
-> >
-> > Per **VM**, one VPID/ASID for L1, and one VPID/ASID for L2.
->=20
-> When using EPT on VMX, there is probably no advantage to using one
-> VPID per VM. The physical ASID is determined by <EPTRTA, VPID, PCID>.
-> Two different VMs are not going to share an EPTRTA, so they already
-> have different ASIDs, even if they have the same VPID.
+On Mon, Mar 03, 2025 at 12:30:51PM -0500, Joel Fernandes wrote:
+> 
+> 
+> On 3/3/2025 12:07 PM, Boqun Feng wrote:
+> > On Mon, Mar 03, 2025 at 12:00:40PM -0500, Joel Fernandes wrote:
+> > [...]
+> >>
+> >> I see the original patch "rcu: Fix get_state_synchronize_rcu_full() GP-start
+> >> detection" is not yet on -next. Once we are convinced about the fix, do we
+> >> want to squash the fix into this patch and have Boqun take it?
+> >>
+> > 
+> > Which "-next" are you talking about? The original patch and the fix is
+> > already in next-20250303 of linux-next:
+> > 
+> > 	https://web.git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/log/?h=next-20250303&qt=range&q=153fc45000e0058435ec0609258fb16e7ea257d2
+> I see it now during manual inspection, but I'm confused why git cherry tells me
+> otherwise.
 
-For posterity, which the SDM says this:
+The gitk command for the win!  ;-)
 
-  Linear mappings may be created. They are derived from the paging structur=
-es
-  referenced (directly or indirectly) by the current value of CR3 and are a=
-ssociated
-  with the current VPID and the current PCID.
+Or, in non-GUI environments, tig.
 
-it explicitly disallows creating or using linear mappings when EPT is enabl=
-ed:
+> I tried the following command and it shows the patch in question in the first
+> line of output. Basically the question that the command asks is "What is in
+> Paul's dev branch that is not in RCU tree's -next branch".  This question is
+> asked for the obvious raisins.
+> So I am obviously missing something in the command. Thoughts?
+> 
+> (rcugit is the RCU tree, and paul/dev is Paul's dev branch)
+> 
+> git cherry --abbrev -v rcugit/next paul/dev | grep "^+" | cut -d' ' -f2,3-
 
-  No linear mappings are created while EPT is in use.
+I must defer to others on this one.  I must confess that I have not yet
+found a good use case for "git cherry".
 
-  no linear mappings are used while EPT is in use.
+							Thanx, Paul
 
-I think it's still worth assigning a unique VPID though, e.g. it would prov=
-ide
-some amount of defense in depth.  I.e. two different VMs *shouldn't* share =
-an
-EPTRTA :-)
-
-> > For SVM, the dynamic ASID crud is a holdover from KVM's support for CPU=
-s that
-> > don't support FLUSHBYASID, i.e. needed to purge the entire TLB in order=
- to flush
-> > guest mappings.  FLUSHBYASID was added in 2010, and AFAIK has been supp=
-orted by
-> > all AMD CPUs since.
->=20
-> > KVM already mostly keeps the same ASID, except for when a vCPU is migra=
-ted, in
-> > which case KVM assigns a new ASID.  I suspect that following VMX's lead=
- and
-> > simply doing a TLB flush in this situation would be an improvement for =
-modern
-> > CPUs, as it would flush the entries that need to be flushed, and not po=
-llute the
-> > TLBs with stale, unused entries.
-> >
-> > Using a static per-VM ASID would also allow using broadcast invalidatio=
-ns[*],
-> > would simplify the SVM code base, and I think/hope would allow us to mo=
-ve much
-> > of the TLB flushing logic, e.g. for task migration, to common code.
-> >
-> > For VPIDs, maybe it's because it's Friday afternoon, but for the life o=
-f me I
-> > can't think of any reason why KVM needs to assign VPIDs per vCPU.  Espe=
-cially
-> > since KVM is ridiculously conservative and flushes _all_ EPT/VPID conte=
-xts when
-> > running a different vCPU on a pCPU (which I suspect we can trim down?).
-> >
-> > Am I forgetting something?
->=20
-> TDX? IIRC, TDX requires a unique VPID for each vCPU in a VM.
-
-Ha!  Nope, the TDX module actually does what I'm suggesting, and uses a per=
--VM
-VPID.  So if I'm forgetting some TLB edge case, TDX is already hosed.
-
-FWIW, the hypervisor, i.e. KVM, has no control over the VPID used by the TD=
-X
-module.  Intel incorporated SEAM mode into the ASID tag to prevent TLB coll=
-isions
-between the hypervisor and the TDX module, and that also conveniently provi=
-des
-separation between VPIDs for non-TDX VMs and TDX VMs (and now I'm curious i=
-f TDX
-enabling does the "right" thing and skips VPID allocation).
-
-FWIW, TDX's scheme would match what I'm proposing almost exactly.  TDX "com=
-poses"
-the VPID using the HKID (guaranteed unique per VM) and then a "VM identifie=
-r",
-which at a glance differentiates L1 from L2.
-
-> > [*] https://lore.kernel.org/all/Z8HdBg3wj8M7a4ts@google.com
+> 012f47f0f806 rcu: Fix get_state_synchronize_rcu_full() GP-start detection
+> 2ada0addbdb6 tools/memory-model: Add atomic_and()/or()/xor() and add_negative
+> e176ebffc3f4 tools/memory-model: Add atomic_andnot() with its variants
+> de6f99723392 tools/memory-model: Legitimize current use of tags in LKMM macros
+> 723177d71224 tools/memory-model: Define applicable tags on operation in tools/...
+> 29279349a566 tools/memory-model: Define effect of Mb tags on RMWs in tools/...
+> d80a8e016433 MAINTAINERS: Update Joel's email address
+> fafa18068359 tools/memory-model: Switch to softcoded herd7 tags
+> dcc5197839f2 tools/memory-model: Distinguish between syntactic and semantic tags
+> fa9e35a0772a tools/memory-model/README: Fix typo
+> a2bfbf847c96 tools/memory-model: glossary.txt: Fix indents
+> 3839dbb05869 rcutorture: Make srcu_lockdep.sh check kernel Kconfig
+> b5aa1c489085 rcutorture: Make srcu_lockdep.sh check reader-conflict handling
+> 9a5720bad9ed rcu: Remove swake_up_one_online() bandaid
+> 04159042a62b Revert "rcu/nocb: Fix rcuog wake-up from offline softirq"
+> fdc37fed1c81 rcutorture: Split out beginning and end from rcu_torture_one_read()
+> 3c6b1925361e rcutorture: Make torture.sh --do-rt use CONFIG_PREEMPT_RT
+> fadc715785cc rcutorture: Add tests for SRCU up/down reader primitives
+> 90a8f490324c rcutorture: Pull rcu_torture_updown() loop body into new function
+> 5fbaa5179f6a rcutorture: Comment invocations of tick_dep_set_task()
+> 461810471faa rcutorture: Complain if an ->up_read() is delayed more than 10 seconds
+> 35e1a180319d rcutorture: Check for ->up_read() without matching ->down_read()
+> 0676ba797dfa EXP srcu: Enable Tiny SRCU On all CONFIG_SMP=n kernels
+> c8fff13fd2fd EXP rcutorture: Add SRCU-V scenario for preemptible Tiny SRCU
+> 910a5f9ebf5f EXP rcutorture: Limit callback flooding for Tiny SRCU in
+> preemptible kernels
+> 8979a891a365 EXP hrtimers: Force migrate away hrtimers queued after
+> CPUHP_AP_HRTIMERS_DYING
+> 
+> 
 
