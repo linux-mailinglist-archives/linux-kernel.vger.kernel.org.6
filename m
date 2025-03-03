@@ -1,130 +1,161 @@
-Return-Path: <linux-kernel+bounces-541837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6460EA4C231
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:40:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D336BA4C237
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:41:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BD8217163B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:39:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A741B188D48E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:41:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B919212B2B;
-	Mon,  3 Mar 2025 13:39:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0291D212D6A;
+	Mon,  3 Mar 2025 13:41:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b="p0KolgJx"
-Received: from smtp-out3.simply.com (smtp-out3.simply.com [94.231.106.210])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="hh9Xbh/R"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7229E21148A;
-	Mon,  3 Mar 2025 13:39:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.231.106.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8037D20DD62;
+	Mon,  3 Mar 2025 13:41:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741009188; cv=none; b=S65dIq9u+ygmuGsCi7QHaz39Yj8h5B/qxujqvRjE9YKMpVL7fcmqyCzcCci/XMQGv1I13RIlkcV4mBbmGEqQUFU7SITyFpFjUx4sqS20drRvnzgoRNkEZ1F2XSte7BaS2NOd6O8vq0iVoaamhebKSASeKAVm4SGUwc3qqVeR4/M=
+	t=1741009266; cv=none; b=g5qLwuTSuE5GFIGLLXldrNg7zJQyb6hqmnuW699PJqts3afwQHlS0NA/ml++xgomsTP5vyJmDhmwDO3pwv2jz8iceNUTtWJLIhAdtIwsohZT4UNb61VOzx9FCdS1nXYCcA3lUiprlGpraj8ft4qphx/a4PVJzXjpUG/IGiXzptY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741009188; c=relaxed/simple;
-	bh=o+ts1pt/FQ0CGJdP3sC0rV01GDi3wTNTC2H3kxq4b90=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qqS7WfwCCX5yDgwJ/MbZqayNzVCbe/WXdam9yWxPKr1N5rwC3URguhwvpZdLBSEuKNhccVBIDO7Z9iuJ4IEpwFOOIbVW1mg+bRnaPLE77ljlcdDhYW8KcdIFmCXxnBZoM/45gtSKwmDrhfKyhcm1jmdCCZDo+HLzTWHkrp+ogs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com; spf=pass smtp.mailfrom=gaisler.com; dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=p0KolgJx; arc=none smtp.client-ip=94.231.106.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gaisler.com
-Received: from localhost (localhost [127.0.0.1])
-	by smtp.simply.com (Simply.com) with ESMTP id 4Z60Kp3w73z1FbbW;
-	Mon,  3 Mar 2025 14:39:42 +0100 (CET)
-Received: from [10.10.15.10] (h-98-128-223-123.NA.cust.bahnhof.se [98.128.223.123])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by smtp.simply.com (Simply.com) with ESMTPSA id 4Z60Kn4PqSz1Fb3J;
-	Mon,  3 Mar 2025 14:39:41 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gaisler.com;
-	s=unoeuro; t=1741009182;
-	bh=U9UNcI/nx3v8USmf6+dAWPsF1rNLmjoWXEBhsh+2uHs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=p0KolgJx4p9btvk6fYlk/66A1PpkCAcDXoLwwd13tXWlLgCyaTRqeAZoowkRKGUcz
-	 a93BO8cm7m7V9NR5W2AabYKC+pmXp6QfOyzdLHkjLMMme9YAVr/Jk545VauJVRJBRF
-	 f0+BgLYnD++BR/MTcLl9Jh8F872XyJXNOzOZA4ck=
-Message-ID: <f99125f1-e4e4-4ee8-909d-8e8d0618d54b@gaisler.com>
-Date: Mon, 3 Mar 2025 14:39:40 +0100
+	s=arc-20240116; t=1741009266; c=relaxed/simple;
+	bh=z4i8udCT/ZfEevZGKBvDxxzaszOTpIOByQJPMKtGeNs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uiCWC8lI+rEXmVvdDUSEk/wiNhmtU/bt96TX+afhdvkVCz3+eCH8VW4Od3rsWg+LuxRK81BpsENwHsfDXi3Ybay+U1YzKs9ovkz3/ehIXzMpJAmFg+7Nji5dszq8cHlecMx403zLbWRhVLoxJlllDcWCQhj0aBMXq0JJY3TuK3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=hh9Xbh/R; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 909C344262;
+	Mon,  3 Mar 2025 13:40:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741009254;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nl/1wzHduxVzKeGZ515j0lRor1Gx/DhlgaVPUGMQYoo=;
+	b=hh9Xbh/R7+cqL6kO3EUvJrLcd0D99wSBACUMwxd3PfoMb86Em+iQyXzmftNd5I5ZEj9MAF
+	gq0YraAvXdyywhq2rOVhiYSMRYUH+EuGCLS0qfRzA8WREZjjfw5G8gnRWaYlEtncKDH+ck
+	GaqrXuWkxYZZsdPNnNl1rDMtMVv/C21VtNp8CKn18BcGu2UtEjA2VIN4EXNLVnintGCZyq
+	ShgVkTDvEF5GmxULVcFdZ0C0SPulan8WTDOaplGT9KxHETHzUICistCK5/VdLs1jG+1zwK
+	0DJdkJfIx0Vi6OiBU9UtdCya3aVOwiO0EKeeQT0FQ1lEedI5+bML5+Mz0pyeHQ==
+Date: Mon, 3 Mar 2025 14:40:51 +0100
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew@lunn.ch>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Donald Hunter
+ <donald.hunter@gmail.com>, Rob Herring <robh@kernel.org>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, Simon Horman <horms@kernel.org>, Heiner Kallweit
+ <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>, Dent
+ Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de, Maxime
+ Chevallier <maxime.chevallier@bootlin.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v5 06/12] net: pse-pd: Add support for budget
+ evaluation strategies
+Message-ID: <20250303144051.2503fb43@kmaincent-XPS-13-7390>
+In-Reply-To: <Z8ME-90Xg46-pNhA@pengutronix.de>
+References: <20250224134522.1cc36aa3@kernel.org>
+	<20250225102558.2cf3d8a5@kmaincent-XPS-13-7390>
+	<20250225174752.5dbf65e2@kernel.org>
+	<Z76t0VotFL7ji41M@pengutronix.de>
+	<Z76vfyv5XoMKmyH_@pengutronix.de>
+	<20250226184257.7d2187aa@kernel.org>
+	<Z8AW6S2xmzGZ0y9B@pengutronix.de>
+	<20250227155727.7bdc069f@kmaincent-XPS-13-7390>
+	<Z8CVimyMj261wc7w@pengutronix.de>
+	<20250227192640.20df155d@kmaincent-XPS-13-7390>
+	<Z8ME-90Xg46-pNhA@pengutronix.de>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/4] sparc/mm: Avoid calling
- arch_enter/leave_lazy_mmu() in set_ptes
-To: Ryan Roberts <ryan.roberts@arm.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- "David S. Miller" <davem@davemloft.net>, Juergen Gross <jgross@suse.com>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-mm@kvack.org, sparclinux@vger.kernel.org,
- xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-References: <20250302145555.3236789-1-ryan.roberts@arm.com>
- <20250302145555.3236789-4-ryan.roberts@arm.com>
-Content-Language: en-US
-From: Andreas Larsson <andreas@gaisler.com>
-In-Reply-To: <20250302145555.3236789-4-ryan.roberts@arm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelledvkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthhqredtredtjeenucfhrhhomhepmfhorhihucforghinhgtvghnthcuoehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefguddtfeevtddugeevgfevtdfgvdfhtdeuleetffefffffhffgteekvdefudeiieenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghlohepkhhmrghinhgtvghnthdqigfrufdqudefqdejfeeltddpmhgrihhlfhhrohhmpehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvhedprhgtphhtthhopehordhrvghmphgvlhesphgvnhhguhhtrhhonhhigidruggvpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiiv
+ ghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtoheptghorhgsvghtsehlfihnrdhnvghtpdhrtghpthhtohepughonhgrlhgurdhhuhhnthgvrhesghhmrghilhdrtghomh
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On 2025-03-02 15:55, Ryan Roberts wrote:
-> With commit 1a10a44dfc1d ("sparc64: implement the new page table range
-> API") set_ptes was added to the sparc architecture. The implementation
-> included calling arch_enter/leave_lazy_mmu() calls.
-> 
-> The patch removes the usage of arch_enter/leave_lazy_mmu() since this
-> implies nesting of lazy mmu regions which is not supported. Without this
-> fix, lazy mmu mode is effectively disabled because we exit the mode
-> after the first set_ptes:
-> 
-> remap_pte_range()
->   -> arch_enter_lazy_mmu()
->   -> set_ptes()
->       -> arch_enter_lazy_mmu()
->       -> arch_leave_lazy_mmu()
->   -> arch_leave_lazy_mmu()
-> 
-> Powerpc suffered the same problem and fixed it in a corresponding way
-> with commit 47b8def9358c ("powerpc/mm: Avoid calling
-> arch_enter/leave_lazy_mmu() in set_ptes").
-> 
-> Fixes: 1a10a44dfc1d ("sparc64: implement the new page table range API")
-> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
-> ---
->  arch/sparc/include/asm/pgtable_64.h | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/arch/sparc/include/asm/pgtable_64.h b/arch/sparc/include/asm/pgtable_64.h
-> index 2b7f358762c1..dc28f2c4eee3 100644
-> --- a/arch/sparc/include/asm/pgtable_64.h
-> +++ b/arch/sparc/include/asm/pgtable_64.h
-> @@ -936,7 +936,6 @@ static inline void __set_pte_at(struct mm_struct *mm, unsigned long addr,
->  static inline void set_ptes(struct mm_struct *mm, unsigned long addr,
->  		pte_t *ptep, pte_t pte, unsigned int nr)
->  {
-> -	arch_enter_lazy_mmu_mode();
->  	for (;;) {
->  		__set_pte_at(mm, addr, ptep, pte, 0);
->  		if (--nr == 0)
-> @@ -945,7 +944,6 @@ static inline void set_ptes(struct mm_struct *mm, unsigned long addr,
->  		pte_val(pte) += PAGE_SIZE;
->  		addr += PAGE_SIZE;
->  	}
-> -	arch_leave_lazy_mmu_mode();
->  }
->  #define set_ptes set_ptes
+On Sat, 1 Mar 2025 14:00:43 +0100
+Oleksij Rempel <o.rempel@pengutronix.de> wrote:
 
-Acked-by: Andreas Larsson <andreas@gaisler.com>
+> On Thu, Feb 27, 2025 at 07:26:40PM +0100, Kory Maincent wrote:
+> > On Thu, 27 Feb 2025 17:40:42 +0100
+> > Oleksij Rempel <o.rempel@pengutronix.de> wrote:
 
-Thanks,
-Andreas
+> > > I would prefer to have it in the for of devlink or use regulator netl=
+ink
+> > > interface. But, we do not need to do this discussion right now. =20
+> >=20
+> > If we want to report the method we should discuss it now. We shouldn't =
+add
+> > BUDGET_EVAL_STRAT uAPI to ethtool if we use another way to get and set =
+the
+> > method later. =20
+>=20
+> Ok, I assume we are talking about different things. I mean - not port
+> specific configurations and diagnostic, will have different interface.
+>=20
+> BUDGET_EVAL_STRAT is port specific. HP and Cisco implement it as port
+> specific. PD692x0 Protocol manual describe it as port specific too:
+> 3.3.6 Set BT Port Parameters
+>  Bits [3..0]=E2=80=94BT port PM mode
+>   0x0: The port power that is used for power management purposes is
+>        dynamic (Iport x Vmain).
+>   0x1: The port power that is used for power management purposes is port
+>        TPPL_BT.
+>   0x2: The port power that is used for power management purposes is
+>        dynamic for non LLDP/CDP/Autoclass ports and TPPL_BT for
+> LLDP/CDP/Autoclass ports. 0xF: Do not change settings.
+
+I don't really understand how that can be port specific when the power budg=
+et is
+per PD69208 manager. Maybe I am missing information here.
+
+> > We could also not report the method for now and assume the user knows i=
+t for
+> > the two controllers currently supported. =20
+>=20
+> On one side: it is not just status, but also active configuration. By
+> implementing the interface we may break default configuration and user
+> expectations.
+
+Yes we should not implement the budget method get/set interface in this ser=
+ies.
+=20
+> On other side: PD692x0 seems to need more then just setting prios to
+> manage them correctly. For example power bank limits should be set,
+> otherwise internal firmware won't be able to perform budget calculations.
+
+Patch 8 is already configuring the power PD692x0 bank limit according to PSE
+power domain budget.
+
+> So, I assume, critical components are missing anyway.
+
+As we are not supporting the budget method configured by the user in this
+series, I agreed we should not add any uAPI related to it that could be bro=
+ken
+or confusing later.
+
+I will remove it and send v6.
+
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
