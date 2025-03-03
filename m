@@ -1,158 +1,230 @@
-Return-Path: <linux-kernel+bounces-541511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A5B0A4BDB9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:13:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A02CA4BDC7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:14:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D76A1189443D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:11:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 997DE1895D0B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:12:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7515B1F3B8B;
-	Mon,  3 Mar 2025 11:08:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BAC71F5825;
+	Mon,  3 Mar 2025 11:09:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WY3Bcvwq";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="weIS7mWu"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="RS+SaFNk";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="Naid5mPG"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AE141F37C3
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 11:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741000098; cv=none; b=VmYMIk7c/cISAhXuVXZuM5+Z+xE76T7s+BwKGTKCNQBfuAjB1WmZFyFWXrZVlZNUyZIA1KGEcoI03ftfPH6x4JyMlVdmPFf9pTsWMtprPKmfQDuvARPDQJGRF2qexS7FC8WIYyDCsyYnrAuiJcZfLcFWd5oiM4lF4zVK0W9Cr48=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741000098; c=relaxed/simple;
-	bh=sB62K8wzOoMq7iYIPZzQzh73bdFdBfG2WSbcYg3oeVw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nc/h0fBJOzm2gxz+9+g4uclDyPYWHq+T1PetUWofsfiPeRrCuGJoFp7i4oxHqORkiA/z2Bn06xOsOyeR9VpfCAlrs8e0M0sxibkb3Skc9xqJhAPO1NG1dZsAICcwT9fGs1sBBbcyuaF9ZYr/txFMYKnY9EmzoVGulHbWZxjQt88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WY3Bcvwq; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=weIS7mWu; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 3 Mar 2025 12:08:11 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741000095;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L1D+CnraKUZCvWBX2D//PKQHKSwg0AKuuuoMcb0rgws=;
-	b=WY3BcvwqJfY3+izuTEss/XpsgEDHLEaBomUNon3BENJfcWrR9vFNFyQh+HE0Ng0LU3VJOV
-	cLOhtw/pgT7QEX5+3fnLR+WZEgEEcg3m057qcuRhitc8b9EcjiVXxSGEPipOy8QaGULV1n
-	FMbP+++SB7bbOd7OkE0/sSp4nfRb0wC4D7ObJZEGhDxnn4HFPIo8zIjBr/GQxQbrg2xuvt
-	5WE3Frj635yzpVKORmTTpXTuUOjDnfpWeDu2kxbXbUTDFlKe+gziyLP4TogcUvzKudOl5W
-	3x7WOYHzmQj0qAjeL1jcBmDr20VHXPT/KIhn4zIP8CiDsVlxRfYPzTlnFhKPRA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741000095;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L1D+CnraKUZCvWBX2D//PKQHKSwg0AKuuuoMcb0rgws=;
-	b=weIS7mWuYbNKbYzEpacOGd7w6cmMf55sMrM4/Mj2I5nQ/q7V+crriNXkCP2mUClA/2cbkK
-	328REvnkCOCCwFDQ==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: "Maciej W. Rozycki" <macro@orcam.me.uk>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Mahesh J Salgaonkar <mahesh@linux.ibm.com>, Oliver O'Halloran <oohall@gmail.com>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>, linuxppc-dev@lists.ozlabs.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] powerpc: Don't use %pK through printk
-Message-ID: <20250303115007-beb39d5b-71f5-458a-82fe-9e82c9ab720e@linutronix.de>
-References: <20250217-restricted-pointers-powerpc-v1-1-32c6bff63c9a@linutronix.de>
- <ffd5dd44-babc-480a-b1bc-61bd7ff1e920@csgroup.eu>
- <alpine.DEB.2.21.2502241840360.65342@angie.orcam.me.uk>
- <20250225091250-eac544ad-4e5b-47f7-83fc-5212c720483a@linutronix.de>
- <alpine.DEB.2.21.2502251654370.65342@angie.orcam.me.uk>
- <20250226105757-e935ee3e-f70d-4e0e-83bb-61307722a186@linutronix.de>
- <alpine.DEB.2.21.2502281957310.12637@angie.orcam.me.uk>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843A91F4162
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 11:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741000147; cv=fail; b=iDHV7fD1tf8XATubijejDvl6GDFN8IcBEx6jwLbZbzNPzkWVjKpYepvU7ynr7taU3bQ0fB6CbetlKUJCfJPjmBuynJc9GJlx4VX+68VyPsbWWl/M1+QeFP2vcdpm8fjHqKSjxXBht8mt6AC11SPiJ8MYGCYLpYSfGLeZ4v1sGu4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741000147; c=relaxed/simple;
+	bh=ldDB12YCC/vdZx05pi8mnj4yIPQYHJqJFjG5noujMRs=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Sp6nyEHj3bDy2f1fjwE91FVYjFiuGxbMC2+AEyDOPQmTIl/3n3hRklPWiMe6l9RG8eSy9I6FCLH6rv9qcPWSgEMktLEn6urJS24PpNp8daFyryxTIK69l15OtU5SjGfBjJyXMeHB9nmEE99841B6b2DDECqhf0RtC/QCpPcYvzU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=RS+SaFNk; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=Naid5mPG; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5237tiQY031358;
+	Mon, 3 Mar 2025 11:08:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=corp-2023-11-20; bh=j2j9gNw+L4cfSW6T
+	J+BAgk3kTUABeGBtIPI/vZBD7HE=; b=RS+SaFNk8O9qMcV7ABqbrAr5jstCtyVU
+	9qe+js7MuWQiUFWm+3fccx1gHYsr3hec6PuO8+JB/SVecQxYzRSFwW1Y5YfdPJ1m
+	scd6gvZeDyv7F/0KF9XpaFyrVCgs7eaPpf70SGud9HYb5ss6gpgUyB5rtwGk0QDk
+	JReyae1xwIW5kcjpvzXjhG92riuWK8XytpW3S+aqdt9A3OcwluGRME5FNeMg8Tno
+	q2fGvHQoTMiAUK2IEUv5Ceq9pvaLulGaKA6FjSXDe0U7G79xwfnad8bkyemdMR3d
+	BoaJ22wvnlW1jF07Vkbap56nYFg8FBEZQcIS1Qys/kxKii5K78JFPw==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 453u81td6k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 03 Mar 2025 11:08:50 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 523A3vTW022509;
+	Mon, 3 Mar 2025 11:08:50 GMT
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2047.outbound.protection.outlook.com [104.47.58.47])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 453rwtapad-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 03 Mar 2025 11:08:50 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JK/WAWtuWvVoHbHgPL7M+24PXWwb6bap0YbaMZJxk2f7q+iL+qDzFYKKkSL0MJDgLSpDrhpPCgA+L53AzvQ282x2EqKqATBemvAa4nFvp6leMuAsW+rmy2TDTOc5vIvAEmtSK3b7+5mczS8a4TmY19joXPo3fvggW+IIY3FeU3wgMwNO+QdeDE5AV/Bp1NjjbZNXrm1JzOpwAokS1o0MIzNgDZFOtSOdvHGf/xE2pHmG2sMTEOXNZjyWz3cF3pPZbnKDLwcknbW15SY3Y0TSVoAuQX3pqmIazYF9qMcWJpsrV9m3WjNaerOiNqbMC1GOm2cNqEJpBP/t7xyEYBmaEQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=j2j9gNw+L4cfSW6TJ+BAgk3kTUABeGBtIPI/vZBD7HE=;
+ b=MJBf8T/zt7bUKQvrHurkmPIlxl3APZQ6zV7z2tWJSQqihx8YmPdOX1jX6p6/YxScpf2/Eck6OEKDUOZJadopsfMgDK9CCfCpEKMoBZQxlOlIJMTOmDfuNXhkq3qhIMUR6UccZwBpn/VMYQKLZD8GK/A4NnbbHGyUgPOOAwFB849pgbvU5+C3zt5/NJ8Ps08wYnP9YCvR5ewhPF//8EaETlO+N9xA4nDGDk6I+8FbjSy96UdLfHsu68+I4fewR4IslENBCttbNdUQ42nIgLsZhV1+KUpCpJt6V1dGZXlT+l7u0UHh4/Xei6GtN9ensQRvtpd8gW2dBnUolXsFK/q52Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=j2j9gNw+L4cfSW6TJ+BAgk3kTUABeGBtIPI/vZBD7HE=;
+ b=Naid5mPGUo2LvgOb2SzOGO/2YDvaabmvMvgYl7MgV79rYbPg8/Yf2ZvOq2zWPCi8fZmgve0iU3o+LXKYIih66qCPtDM2qN0+8vaJT+VWOiyXyuyjJJKwK6rP34wuBOVW4B+lffsyEo7XjSJXX7AlSmuEG13wGkdueZQiANdIHxo=
+Received: from MN2PR10MB4112.namprd10.prod.outlook.com (2603:10b6:208:11e::33)
+ by DM4PR10MB7427.namprd10.prod.outlook.com (2603:10b6:8:181::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.27; Mon, 3 Mar
+ 2025 11:08:48 +0000
+Received: from MN2PR10MB4112.namprd10.prod.outlook.com
+ ([fe80::3256:3c8c:73a9:5b9c]) by MN2PR10MB4112.namprd10.prod.outlook.com
+ ([fe80::3256:3c8c:73a9:5b9c%7]) with mapi id 15.20.8489.025; Mon, 3 Mar 2025
+ 11:08:47 +0000
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/7] refactor mremap and fix bug
+Date: Mon,  3 Mar 2025 11:08:30 +0000
+Message-ID: <cover.1740911247.git.lorenzo.stoakes@oracle.com>
+X-Mailer: git-send-email 2.48.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: LO6P123CA0047.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:310::16) To MN2PR10MB4112.namprd10.prod.outlook.com
+ (2603:10b6:208:11e::33)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <alpine.DEB.2.21.2502281957310.12637@angie.orcam.me.uk>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR10MB4112:EE_|DM4PR10MB7427:EE_
+X-MS-Office365-Filtering-Correlation-Id: ddbff7a5-06f5-4a79-d20c-08dd5a43c523
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?rtr4XVwaS0y9PS2YMOesIWlC3UH9+pSEC0Z/ejUbyGRSKNxtaopY3icqTUYI?=
+ =?us-ascii?Q?B2aJFtR6w6UOZSJoSB39hAv0TVGZFK4M5ZHN5bxq+ikSHtO7JJ1L3hx/S93c?=
+ =?us-ascii?Q?VxqqoncPk17sPPRLA+iDNjsaBY0k0WWyVi/JsrAqXYNclALJEenc/g/+kwpU?=
+ =?us-ascii?Q?zvp1oMnZC6OzzKrbvGPnJydz340lP9Rbrv9sTri7g2G1eeSAx3rkf8W1KrSb?=
+ =?us-ascii?Q?l2d2dpy6IR7epXR8n6brAB2hl5Cg8jixtsaze/q886JqoISpR5GTv6NgQPf/?=
+ =?us-ascii?Q?qGPeKyzyXqFXZ8CRnSY6Y4aAmmc1S09v3HcV1Ej4twD6V5mAvYVUGP2gdeMe?=
+ =?us-ascii?Q?XGNMA/eyp62TBYyrVIknuGnoDNBiW/Y4rV3olPkpHYhSnJWCBmEyOPTgaYhh?=
+ =?us-ascii?Q?gNr2P9KUSVbteNLnjQ3mXSx4qhyZbDBfcj/JTHFdY24pKZZyBxjFFC5aPxeR?=
+ =?us-ascii?Q?BtJ9x5qx46LyWgosh4AbkCZXtqNN3NkOaQceoN/zm88mc3J2CjvTfzwhVgnj?=
+ =?us-ascii?Q?EWIIQtmVP6kxQvE8tJZm6UY16I4kz7BT0GVE62Pxp4pgvCNGWq4W0QIdnlvW?=
+ =?us-ascii?Q?ywHTLmvu0e6VgAXAHIZH0+skVfRppJjQoSfzAE3XVvOnfvZy5+Jhksazqwg0?=
+ =?us-ascii?Q?4lTmKyVcOPmH+jiQwOFn1W/E9dhL4iIXOwj4TRAkhlr21yU68lM2TrvMrMef?=
+ =?us-ascii?Q?Plg1R1mfQaBAipFR/0FDPPM0sdz5pn4PKZekAd7DzaYJ0fBN6YnHE+uS94pt?=
+ =?us-ascii?Q?V4sQKW5ZcKQ7gm1j4aSBuDzLpBkisbUZuhxm8FULAs5Y81VC+WoarfzhabJA?=
+ =?us-ascii?Q?UPO9qO2aNotvaIEXhF60bEE5YKtjVznkHNwPJQ24it9hIKfNpSAN/LFLQVo7?=
+ =?us-ascii?Q?6KWCHXMBW1efFaAD/ww4oVO0ncXYPzVTWsX/pgQquS3zhGDKxt5Osnnok+RA?=
+ =?us-ascii?Q?fkZbvWCFP9igS78uS7ZAYSYXjl/lnSX9yZBRrt0UooH8Ex0pmImozgpxSSDF?=
+ =?us-ascii?Q?M2sGlxtUCeHIHiXjzKWsN/T319CgmrTelqrteCoFDHbjPUJkUIDczvAqMd1v?=
+ =?us-ascii?Q?xrPxI0zRuJy/tiJdaKnVMQCGAV5FsTJJD90+PPGTFAqgVgwIBPatqGTS5O8a?=
+ =?us-ascii?Q?aFjA1rlwd8ZJyTUAjooPNPpg2TVSXC05VSR9iH9cPXPNo+BjBab//8l5doNs?=
+ =?us-ascii?Q?FF+ysjYAtkQHliktkqG0DMCdQfUM+JnKNIUgmg2/++xa8Mmc/idixz71cJ+4?=
+ =?us-ascii?Q?ONs97rJ6q19N9ieZw3mS88nmuaaLsCGSydN/tYJsyeUtN0ea7s/HhCc/1oBv?=
+ =?us-ascii?Q?h2gID4WX6BSGJ6bIMOJe25SAVinonI1T9DcOyXoJmdi7BoQnnj611C6NHjwT?=
+ =?us-ascii?Q?KWFpFj48tLaSJ8bdid6urnVlzJId?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR10MB4112.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?sG3jEspAkZ0wD4AvL3lq8HGE5PQdZNAYEzkm/huqM8L30oru7N36LvTVxfLc?=
+ =?us-ascii?Q?5WXb5Dg5gRHpM8OVgt71wYg3/ZdQ0tLkq/7nRzCR74JmnR5dcRXZhytBusWM?=
+ =?us-ascii?Q?hRW/JPYQ/bJOovSsGvA7JBhHNV8aTrPyhYI67QSG+eT8l9rnFFPbMR3Mp1pC?=
+ =?us-ascii?Q?1qjYUdcF9V0sUhN+REMcCFGhSF6EV9RC15nBvYnsZthl67PHZWZYU/lRjpnv?=
+ =?us-ascii?Q?NKfaqr1tySUIZqkBhkc5O/qqznErfEk9u18Rm3NeHci0XTE9onq+d1oAuWaO?=
+ =?us-ascii?Q?qlADNNhEY39mAy2KSmaISipI1uT67+Z20jBNazTVjTnX3eMuU1GV5mMHtumQ?=
+ =?us-ascii?Q?vQL7f5L42vkGh5Js6L9V7iPQFdQjmIkwS9ylZ15st7drFrv1vUCJIi73xLEe?=
+ =?us-ascii?Q?J/tD65nQvqIk9GMe32SL2cxRoM7IWJ1OsMosv5UERlPOmY4qsLc4t1Fplnbz?=
+ =?us-ascii?Q?+hadQVpB+f7DlohRSXlFbmIAzqcPBTenHG2H3PNckwLpmyBLRivSyAB7jKXm?=
+ =?us-ascii?Q?NVkWc0jysxEdhyBOuXVYmpCuY0P1555H9CtoRCQk9i+Yttkz8oxp/iug/aS3?=
+ =?us-ascii?Q?iN+A+lYXC/jKaUdX2cbzWkg3GtgTAyn69eMNnGJ0ybw8NxJAuvawqn60Yw+S?=
+ =?us-ascii?Q?5cvVSyuigjj/TWXdl2Kw7eLuMpI59PPc9Uuu6eL/ZJ5w/FI/Mm3aDghh1sMu?=
+ =?us-ascii?Q?74RPWgrqcUVy9+vObP83r6mYwMbvtZ0Hlo3BQ2WBpFwo5PO9dBFd7APdEUId?=
+ =?us-ascii?Q?gRHgniRrQh8HKadAakHR9ZoPRdwdSm7GhALz45e4V/6TtL9W8xWiW+w81DmQ?=
+ =?us-ascii?Q?YkenTrMXu9aXLsJ5mUkuOR0Ku8O0W3H0zFT2kj4lDzw/41MY8sj01Jw894ej?=
+ =?us-ascii?Q?wuVTaq3w0KfDOwvF7BpDl9vDc16qiv5xQ+8jMnZ3Sw7hHnJAOntzDkv5p4Vp?=
+ =?us-ascii?Q?raEM2yNy2wVjulzwYT8QNfTJDexhnSHtjbX0TDFekeH7C1fvbsWvFrJPsLc5?=
+ =?us-ascii?Q?A62pMPyLTqxwfZ/pvMIo+KS+Z4VwkklBy51pDg2UnMbhJqduiZnhdwdvKW4o?=
+ =?us-ascii?Q?fAds7hrbt+Ujw5fdZiJFF/xBPvAXwvAzuis8i62UJ9ZlHHmgu+RBQoBGKOJG?=
+ =?us-ascii?Q?LLdocV5k9oz9Pc4E6rm7R1vdBTushS+dkUyjhLUjFD2g+RWlpGWH3AeMyMFI?=
+ =?us-ascii?Q?LC6mWHs9FdtBSXaDDhU0XLYbg+cmCIayXlYdMJ9/L56Y3vCGDxiZD2RBvqIZ?=
+ =?us-ascii?Q?pdbvWGt2fKpRLBQdgw7MejTynt392T6nuYvTvTPP9woaCS/A4vefZFW/HPaA?=
+ =?us-ascii?Q?fbgr0MZrPw+oYHs+gpESFtBtsxcN4uo+l5A6s3DcNRO1jE1SuxnF1H9e2+8Q?=
+ =?us-ascii?Q?4fkDKg9CEg9ZIML+takhS1iGMwJHCaHH5SLgYXgGjVh362m/NBT1Vyd45O/3?=
+ =?us-ascii?Q?ZbaDovYW7Lh2xhvr6u5lLjhsZRw4ldtN+fyWzF3wuve3bBBX5mNTyZMlxuR1?=
+ =?us-ascii?Q?CrQ24LmJnK3Sf6O21vz0PS+TnqfLa8X+bKoJNTUhnsnwIb8l0cTaFoZUIEFE?=
+ =?us-ascii?Q?/Jw6DmXnTeQZsZFCYCF5yb5aYNPCvJYH0mm1SUWEnH9wGp0bG210w4hQqEB0?=
+ =?us-ascii?Q?AQ=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	YqTqIXmYGM0F23eEkacquLS3NAjixABNuqoGvyWjdHOxxjgL7UgatrxXSM/tHHXrX4rSOxYaSIHbdRbN/e1kNIes9QZ8cuCZ9ql8FvTEy+bHatfsm3wP1vCDST3vs73huBFPvpcJmQGGHvHRLmJb6gGOCjZwOcoQPFsePvxAU5OfHIwDIQViEe4Hdk0UV32efO+7jbaEIceFYO9ehX48AsoSWBlQKmDl/dcbG6zhQSBY88uCm1tDJrDLMtn/OIeiqBkitDuNP7Md1Ckk7Nbxd7pnxMIr3mX2jeNKuOshZBnokCTj3qVm/8i/3bDpFTTG4bJE2wCJkaVO9lA6VsZ6KAze6VbzLwsqPsf7sMPiaZacdmL9QLEIT7/Y8xgpwxTyL6Rck+xNXSo4BQPuJ/JrxCGC2xtW7LNLv9DHHjo5jIvtRF0LMcLcKcBmC/G5xwCa8rlwQ8XzgM+PaxQnFND4dJwIpHS2tWzFYyJTl3n4hHXYPsLO8ixEEtP6ws9U/J2W4/TXBXzaMkOcCGNiLF+TxtETR0vgnYHkWFmouAzcqvHCU5hTfTvUiijHV7YFwINg5AaPin7z/f5cObcIzoGSRiIhqzLjTwKoSN9DrbcUCjU=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ddbff7a5-06f5-4a79-d20c-08dd5a43c523
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR10MB4112.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2025 11:08:47.5056
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: AN7rVMzFiIfm7kPHXzIsSIbkSXYz1dpk9h1xEEDyfwTNkicy2ev0OhedK1i5fR+QC9bfDFizG25o+lxhsij01JZY4pNQBaULQ8cPn9HhVUI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR10MB7427
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-03_04,2025-03-03_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=534 malwarescore=0
+ bulkscore=0 adultscore=0 suspectscore=0 spamscore=0 phishscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2502100000 definitions=main-2503030086
+X-Proofpoint-GUID: qOw-LyYoUVt7uRdi6RpGiYNoS7b1rCiK
+X-Proofpoint-ORIG-GUID: qOw-LyYoUVt7uRdi6RpGiYNoS7b1rCiK
 
-On Fri, Feb 28, 2025 at 08:15:02PM +0000, Maciej W. Rozycki wrote:
-> On Wed, 26 Feb 2025, Thomas Weißschuh wrote:
-> 
-> > > > By default, when kptr_restrict is set to 0, %pK behaves the same as %p.
-> > > > The same happened for a bunch of other architectures and nobody seems
-> > > > to have noticed in the past.
-> > > > The symbol-relative pointers or pointer formats designed for backtraces,
-> > > > as notes by Christophe, seem to be enough.
-> > > 
-> > >  I do hope so.
-> > 
-> > As mentioned before, personally I am fine with using %px here.
-> 
->  Glad to hear!
-> 
-> > The values are in the register dumps anyways and security sensitive deployments
-> > will panic on WARN(), making the information disclosure useless.
-> 
->  And even more so, I wasn't aware of this feature.  But this code doesn't 
-> make use of the WARN() facility, it just prints at the heightened KERN_ERR 
-> priority.
+The existing mremap() logic has grown organically over a very long period
+of time, resulting in code that is in many parts, very difficult to follow
+and full of subtleties and sources of confusion.
 
-Indeed, I got confused with some other patches where WARN() is used mostly.
-This makes it a bit murkier.
+In addition, it is difficult to thread state through the operation
+correctly, as function arguments have expanded, some parameters are
+expected to be temporarily altered during the operation, others are
+intended to remain static and some can be overridden.
 
-> > > > But personally I'm also fine with using %px, as my goal is to remove the
-> > > > error-prone and confusing %pK.
-> > > 
-> > >  It's clear that `%pK' was meant to restrict access to /proc files and the 
-> > > like that may be accessible by unprivileged users:
-> > 
-> > Then let's stop abusing it. For something that is clear, it is
-> > misunderstood very often.
-> 
->  Absolutely, I haven't questioned the removal of `%pK', but the switch to 
-> `%p' rather than `%px' specifically for this single hunk of your patch.
+This series completely refactors the mremap implementation, sensibly
+separating functions, adding comments to explain the more subtle aspects of
+the implementation and making use of small structs to thread state through
+everything.
 
-Sure. It would be great if one of the maintainers could confirm this preference.
+The reason for doing so is to lay the groundwork for planned future changes
+to the mremap logic, changes which require the ability to easily pass
+around state.
 
-> > > "
-> > > kptr_restrict
-> > > =============
-> > > 
-> > > This toggle indicates whether restrictions are placed on
-> > > exposing kernel addresses via ``/proc`` and other interfaces.
-> > > "
-> > > 
-> > > and not the kernel log, the information in which may come from rare events 
-> > > that are difficult to trigger and hard to recover via other means.  Sigh. 
-> > > Once you've got access to the kernel log, you may as well wipe the system 
-> > > or do any other harm you might like.
-> > 
-> > As I understand it, both the security and printk maintainers don't want the
-> > kernel log in general to be security sensitive and restricted.
-> > My goal here is not to push site-specific policy into the kernel but make life
-> > easier for kernel developers by removing the confusing and error-prone %pK
-> > altogether.
-> 
->  Let me ask a different question then: is your approach to bulk-switch all 
-> instances of `%pK' to `%p' as the safe default and let other people figure 
-> out afterwards whether a different conversion specifier ought to be used 
-> instead on a case-by-case basis and then follow up with another patch, or 
-> will you consider these alternatives right away?
+Additionally, it would be unhelpful to add yet more logic to code that is
+already difficult to follow without first refactoring it like this.
 
-I am considering on a case-by-case basis. But mostly the decision is that %p is
-enough, because by default %pK has been the same as %p anyways.
-Also the current wave of replacements does not touch valid users of %pK.
-They will stay and later be replaced with a new and better API.
+The first patch in this series additionally fixes a bug when a VMA with
+start address zero is partially remapped.
 
-> > Security is only one aspect.
-> 
->  I think it's important enough though for us to ensure we don't compromise 
-> it by chance.
+Tested on real hardware under heavy workload and all self tests are
+passing.
 
-Agreed.
+Lorenzo Stoakes (7):
+  mm/mremap: correctly handle partial mremap() of VMA starting at 0
+  mm/mremap: refactor mremap() system call implementation
+  mm/mremap: introduce and use vma_remap_struct threaded state
+  mm/mremap: initial refactor of move_vma()
+  mm/mremap: complete refactor of move_vma()
+  mm/mremap: refactor move_page_tables(), abstracting state
+  mm/mremap: thread state through move page table operation
+
+ mm/internal.h |   49 +-
+ mm/mmap.c     |    5 +-
+ mm/mremap.c   | 1440 +++++++++++++++++++++++++++++++++----------------
+ 3 files changed, 1033 insertions(+), 461 deletions(-)
+
+--
+2.48.1
 
