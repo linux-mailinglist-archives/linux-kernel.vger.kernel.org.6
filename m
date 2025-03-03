@@ -1,115 +1,171 @@
-Return-Path: <linux-kernel+bounces-542080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6925A4C581
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:43:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB53EA4C561
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:40:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7F147A054C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:37:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4968162D69
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:38:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15CE71A08AF;
-	Mon,  3 Mar 2025 15:37:54 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D1A523F36F;
-	Mon,  3 Mar 2025 15:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9537E211261;
+	Mon,  3 Mar 2025 15:38:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="gfyVgLKw";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="A1oiCjgT"
+Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D02D190468;
+	Mon,  3 Mar 2025 15:38:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741016273; cv=none; b=AX+HVmzxQdc15g1Fr4yEd2QUs6fi6FFyANlHyaDgUrasDFchBGAb8poKUGXmyRcUbMbylkIJqFfaJ1Og8TelPtUDQyACCu8wMmFUU+JKCcgLFhyzbmuNbs65d8fQPFXtPcDDYHLSbQUcoS1Elnn7n8qllJv1TPigyCsA2K7/Ezs=
+	t=1741016321; cv=none; b=V3H7VVAn+CGSb0IAMgtGle3ufWuSCQrOjiwLuyJ2RrepatL6kD7vBF1bCzhBiIFnvvGgQN4aos49lsfkK9TQW7D4aF34ruu1OoPeV0lnFVp0V+UBLe8fTx12FG/VYZFXbTinIyVMuA1NEDrsMxVvX9t3w2SjCh+Qin1xD6zUyyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741016273; c=relaxed/simple;
-	bh=ZudowNZEK9JeVL1QV0s4QYj1IGj4nJAcdTPtImYRZ8Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PPzojKwmYFbl8ZAQXIpDR+KJ+ud1SL9UJRc0QJVMgWK8sLtQvAjqvsJpfwpvhf/tieKNJ+SUba6w5rNOK9A3icgo3esSCM6Es08uhAgOBnfFDYtpkl4trQt5Jj/EY+iqNWtxCm//o1xg9wJB8DlqJsiOMEYW8nRJnsr9gp0ubvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7E16B106F;
-	Mon,  3 Mar 2025 07:38:04 -0800 (PST)
-Received: from e129527.arm.com (unknown [10.57.67.1])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4151E3F5A1;
-	Mon,  3 Mar 2025 07:37:48 -0800 (PST)
-From: Hugues KAMBA MPIANA <hugues.kambampiana@arm.com>
-To: liviu.dudau@arm.com,
-	sudeep.holla@arm.com,
-	lpieralisi@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Hugues KAMBA MPIANA <hugues.kambampiana@arm.com>
-Subject: [PATCH] arm64: dts: corstone1000: Add definitions for secondary CPU cores
-Date: Mon,  3 Mar 2025 15:37:44 +0000
-Message-Id: <20250303153744.376419-1-hugues.kambampiana@arm.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1741016321; c=relaxed/simple;
+	bh=zwcRo8Jb1qRhXHfePb8v1xljWs0mJ5UAz4GPWrIhfuA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pgb4OywEkK3ceO1GptVJ/D7cHo9NrCjPeYD9rKduFJ+eRL0DEq70y9+ywcCtSoUpiYvGuoNmr8nsntOTGF2CTsAS5hxvMo2q9kCnDVKsJA0p3H7vR0t9mbNZgXcIg6oHr9ysv7ZzF0mMQmhzarjyj0Z6td2/qnzSUYjC80J8tQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=gfyVgLKw; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=A1oiCjgT; arc=none smtp.client-ip=202.12.124.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 1EEE425401FA;
+	Mon,  3 Mar 2025 10:38:37 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-05.internal (MEProxy); Mon, 03 Mar 2025 10:38:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1741016316; x=
+	1741102716; bh=O1f/uHg0aPjtGKCT9KiWQYEt0A1Zdgh12YD7b9SeJK0=; b=g
+	fyVgLKwmlgD+q/LWPncJcwJh0nZRMkPlUWXzrvf/QX/rFbUDkZuV/XAG7OP39sdR
+	1e0kJXlFvgE/n1DQf9hjs0DKG9ZnYKXZ35suwBXQ4A+a52Oo2S/qiUnPwhwgA65p
+	xNORG1MwBQkS/oXZI4KKXY764i3FtcvJ5E4OzdCIM7vskIb0egvIGHJ38J8Dgs4G
+	W2j8CVXCUA0e2NI7wQ4ICFIIiakvGGfii1gSTx+9gL5CEYn15G2VfEUXXKYggZHe
+	nlzAuI0BAH/ZhxEO1ZX9PrnFGK2CE1qYEj4esJoipdqW5LJnia0ywyfakfn9Fk7U
+	/kqFK0LZPH+MebWUtAWjw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1741016316; x=1741102716; bh=O1f/uHg0aPjtGKCT9KiWQYEt0A1Zdgh12YD
+	7b9SeJK0=; b=A1oiCjgTowaGp+i2BJteKXRqRJ1xjsnSoME3lqE9hoqCuUG5PZk
+	1vRF5y1RwoB5WI6dLVby8nIZM+Nej7Norkf3zzKNphrJqKvtehLESbqSdj2VdDQ8
+	KK5Dj5Nml73aVakpEnJjb2Q9g1GoWUAsQxTfWuGW0pWlruDqUq+GLVDp1RwtPqft
+	YqRbiazom928cNST79mLrlIpRbh9Kqt4V4SPenJ7KzU/I22G/R/ji/1RpMDZlZAq
+	VJWnxT3SsNkNT+kXf4mtBMhDwHc14FroJ6PjZoI4iiV/DrUpN4ar2of+w3DUOt1k
+	prDy9YUqDbDJ5Kt7ptHl/h0ziT57tmshRJw==
+X-ME-Sender: <xms:_MzFZ7CBzETl4XS4mg9Zb0Q9LsUlMrA4vUY4w3aJuhtkQOSUu7gnMQ>
+    <xme:_MzFZxh0zX37Uac9085qE7D2AAzJDvxXXCdskkd1B7OxEi4VbNMmgaNK8LZlRpqRt
+    tPjb68XYx_GotX3AfU>
+X-ME-Received: <xmr:_MzFZ2lWSPTJyr7PXHTAk0XT8Bu3CF-yeqTeMFS3hyfp-bAX1tcUiwaU60SY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelleehudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttdej
+    necuhfhrohhmpefurggsrhhinhgrucffuhgsrhhotggruceoshgusehquhgvrghshihsnh
+    grihhlrdhnvghtqeenucggtffrrghtthgvrhhnpeeghffftdevudfgkeffjedvieeilefh
+    tefffeefgfehvdevhfejjedvkeefleeggfenucffohhmrghinhepkhgvrhhnvghlrdhorh
+    hgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepshgu
+    sehquhgvrghshihsnhgrihhlrdhnvghtpdhnsggprhgtphhtthhopedufedpmhhouggvpe
+    hsmhhtphhouhhtpdhrtghpthhtoheprghnthhonhhiohesohhpvghnvhhpnhdrnhgvthdp
+    rhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtth
+    hopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehk
+    vghrnhgvlhdrohhrghdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpd
+    hrtghpthhtohepughonhgrlhgurdhhuhhnthgvrhesghhmrghilhdrtghomhdprhgtphht
+    thhopehshhhurghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrhigriigrnhhovh
+    drshdrrgesghhmrghilhdrtghomhdprhgtphhtthhopegrnhgurhgvfidonhgvthguvghv
+    sehluhhnnhdrtghh
+X-ME-Proxy: <xmx:_MzFZ9yMHvyXfXiX_OqQfHQsmGC-muLeLJJqdWYlnePg3B9HZB24bg>
+    <xmx:_MzFZwRmo6r_Twm2u976IvcrptgmPadn2fBcN6dsGWF4NYFdJ-KL7w>
+    <xmx:_MzFZwak0HnaYdR6BEcQ10bftjc-COx8ESLw6D0OAvzxrO-cP5DRmg>
+    <xmx:_MzFZxTMWC3A9yA6vWxWt9hTfkoNThPWCbyNzzODUK7gSlcjd8u-iw>
+    <xmx:_MzFZyAd8xjTBdGSaZlbYlP6apyWu0GKk1M1auvtRfkuJtuOkZMbhLEV>
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 3 Mar 2025 10:38:36 -0500 (EST)
+Date: Mon, 3 Mar 2025 16:38:34 +0100
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: Antonio Quartulli <antonio@openvpn.net>
+Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>
+Subject: Re: [PATCH net-next v20 15/25] ovpn: implement multi-peer support
+Message-ID: <Z8XM-g0LUz4djxvL@hog>
+References: <20250227-b4-ovpn-v20-0-93f363310834@openvpn.net>
+ <20250227-b4-ovpn-v20-15-93f363310834@openvpn.net>
+ <Z8WpxDpHYzG9pXNl@hog>
+ <2682e274-6be1-4366-a2f6-c870aa9e1252@openvpn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2682e274-6be1-4366-a2f6-c870aa9e1252@openvpn.net>
 
-Add `cpu1`, `cpu2` and `cpu3` nodes to the Corstone1000 device tree to
-enable support for secondary CPU cores.
+2025-03-03, 15:45:23 +0100, Antonio Quartulli wrote:
+> On 03/03/2025 14:08, Sabrina Dubroca wrote:
+> > > +			if (ovpn_sock && ovpn_sock->sock->sk == sk)
+> > > +				skip = false;
+> > > +			rcu_read_unlock();
+> > > +
+> > > +			if (skip)
+> > > +				continue;
+> > 
+> > 
+> > The skip/continue logic looks a tiny bit strange to me, maybe this:
+> 
+> Hehe, it's like a double negation. I agree it can be improved.
+> 
+> > 
+> > 	hash_for_each_safe(ovpn->peers->by_id, bkt, tmp, peer, hash_entry_id) {
+> > 		bool remove = true;
+> 
+> does the netdev coding style allow to use locally scoped variables?
+> Or should I declare everything at the beginning of the function?
+> 
+> I had this rule in mind, but it may have been eliminated by now.
 
-This update facilitates symmetric multiprocessing (SMP) support on
-the Corstone1000 Fixed Virtual Platform (FVP), allowing the
-secondary cores to be properly initialised and utilised.
+Based on a few samples from net/core/dev.c, I'd say it's allowed:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/tree/net/core/dev.c?id=357660d7596b#n4634
+https://web.git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/tree/net/core/dev.c?id=357660d7596b#n11404
+https://web.git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/tree/net/core/dev.c?id=357660d7596b#n12319
+https://web.git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/tree/net/core/dev.c?id=357660d7596b#n12531
 
-Signed-off-by: Hugues KAMBA MPIANA <hugues.kambampiana@arm.com>
----
- arch/arm64/boot/dts/arm/corstone1000-fvp.dts | 24 ++++++++++++++++++++
- arch/arm64/boot/dts/arm/corstone1000.dtsi    |  2 +-
- 2 files changed, 25 insertions(+), 1 deletion(-)
+> > 
+> > 		/* if a socket was passed as argument, skip all peers except
+> > 		 * those using it
+> > 		 */
+> > 		if (sk) {
+> > 			rcu_read_lock();
+> > 			ovpn_sock = rcu_dereference(peer->sock);
+> > 			remove = ovpn_sock && ovpn_sock->sock->sk == sk;
+> > 			rcu_read_unlock();
+> > 		}
+> > 
+> > 		if (remove)
+> > 			ovpn_peer_remove(peer, reason, &release_list);
+> > 	}
+> > 
+> > 
+> > (only if you agree it looks better - if it's my opinion against yours,
+> > ignore me since it's really just coding style/taste)
+> 
+> Yours look simpler/cleaner. I'll go with it.
 
-diff --git a/arch/arm64/boot/dts/arm/corstone1000-fvp.dts b/arch/arm64/boot/dts/arm/corstone1000-fvp.dts
-index abd013562995..df9700302b8d 100644
---- a/arch/arm64/boot/dts/arm/corstone1000-fvp.dts
-+++ b/arch/arm64/boot/dts/arm/corstone1000-fvp.dts
-@@ -49,3 +49,27 @@ sdmmc1: mmc@50000000 {
- 		clock-names = "smclk", "apb_pclk";
- 	};
- };
-+
-+&cpus {
-+	cpu1: cpu@1 {
-+		device_type = "cpu";
-+		compatible = "arm,cortex-a35";
-+		reg = <0x1>;
-+		enable-method = "psci";
-+		next-level-cache = <&L2_0>;
-+	};
-+	cpu2: cpu@2 {
-+		device_type = "cpu";
-+		compatible = "arm,cortex-a35";
-+		reg = <0x2>;
-+		enable-method = "psci";
-+		next-level-cache = <&L2_0>;
-+	};
-+	cpu3: cpu@3 {
-+		device_type = "cpu";
-+		compatible = "arm,cortex-a35";
-+		reg = <0x3>;
-+		enable-method = "psci";
-+		next-level-cache = <&L2_0>;
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/arm/corstone1000.dtsi b/arch/arm64/boot/dts/arm/corstone1000.dtsi
-index bb9b96fb5314..b4364c61901c 100644
---- a/arch/arm64/boot/dts/arm/corstone1000.dtsi
-+++ b/arch/arm64/boot/dts/arm/corstone1000.dtsi
-@@ -21,7 +21,7 @@ chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
- 
--	cpus {
-+	cpus: cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
+ok :)
+
+-- 
+Sabrina
 
