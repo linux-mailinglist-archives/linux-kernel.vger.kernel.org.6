@@ -1,163 +1,179 @@
-Return-Path: <linux-kernel+bounces-540978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 125C1A4B723
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 05:24:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 12813A4B725
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 05:26:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E68D13AC314
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 04:24:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41F513ACB31
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 04:26:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187231D88A6;
-	Mon,  3 Mar 2025 04:24:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1872C1BBBF7;
+	Mon,  3 Mar 2025 04:26:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="eYC/iLoq"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LsLhjoyU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5DE41BBBF7;
-	Mon,  3 Mar 2025 04:24:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9772713C9D4
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 04:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740975879; cv=none; b=PGiBKTYYqZr8yusxucARJ6Ga6VQLzGAoMtV/oyituekCm5b7mZaSYWImUyhO4INCD2Thjd4EGccFg3m11fhaUwuNneZELE1RkXRh6NU/yNVTOHwc5IYRSbPxwbJkuULtvaT8doMfYZex1WCyqX3gEo0VPRmoverFeB1FGQQ4cBk=
+	t=1740975976; cv=none; b=Ur7ctqhaHjk8SRz1Nohh+YxySyuU6gVRuAu6+2tAOYUgYuiUiHkR7eYuu8rLbPdiqQliAD2YX4pHOlX0WfoSIccbp3EoQmPVhB8c3cynxkYt/6GNTE5TyRTWAp6lfOAI1dCtLqijhPImQnpfp2bteYWCly73T5Qn/Gs5qP7JMfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740975879; c=relaxed/simple;
-	bh=xZEHXYYvck4yuE2xVssqwKGCBzwJFoefcARJpkqhtvg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OacwIdWUp3D+OxwtGuFzXar3MR4C/alt/cJfIg6xEdODYP9FF3gszjbbGc0GgzDLdONYzJmkcrFaTuLJYIiFuuT4PvbgkyMjN2tHcJLFjQ6zblcoNidgweG/cOAzjZnLJoS9aNQeOsNfGwMl6lu3wqpXbVbu7g9gbokB64f90rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=eYC/iLoq; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
-	s=s31663417; t=1740975864; x=1741580664; i=quwenruo.btrfs@gmx.com;
-	bh=wh7ojeZLhbi469+4Guyv0n3piZHEYpQkVwl7Bw2iar0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=eYC/iLoqiDLVENJP5NMT0DmVZGZpwvBmtpEKnW4LR+FMNlDuSb/apa2/aeTVIln2
-	 7GgHnFt2l9rXbEUSzzAERio8FF3RAI2gH0DZsyE9usiYJDDXa/EnnuR+ymB+i+9LF
-	 l419cNbpFgEclO06coxS2f1xeer538OIKe/OltNAysByaFhWJz6Cwl3cqEmZFHRwZ
-	 F6UlvThnu0JsuT+oYY25HVagemnDsE0rr7qRV7swnya4MVRrEAdf8qZd0Kjy/96lf
-	 0kVB6GaoRkZbf3goWouRKj2F/hERmho/mDfOeP5cc5S/3MZoIuA1OZwgp9imEK9Yq
-	 AhvWhL84zxp/HcYWMA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx105
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1MwQTF-1swzFi1b53-015VFt; Mon, 03
- Mar 2025 05:24:23 +0100
-Message-ID: <31e5c235-4e59-4b37-ab3e-db05012d7119@gmx.com>
-Date: Mon, 3 Mar 2025 14:54:17 +1030
+	s=arc-20240116; t=1740975976; c=relaxed/simple;
+	bh=C5iL4+UgEfYtFgc0oU8GEsbInCv6xJrYflTOLd9mLlE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ix5AG4pphrcjIM3Wkl4zmFNuhNK/IFlen0Z4HJRwMTZXJiLttxAZggSp0ufrv5TK2Nv4a5JhX5UwSpdmZ1zSQd3F/iPSVgXTgu5DaSwhuADmc8qzBF2qXI6hvGVN/+PZEGwF0ZCszNc9T4VDG/YR1fEYEct4lcRghsOzgP4w0uI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LsLhjoyU; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740975973;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=I5dSGTpmLn97joWduARVp0cs22gFzxB4/mv/r4vqwy8=;
+	b=LsLhjoyUTfXwLuCQJUhkN2qQuHYKwhzjFRmhXRujSUG5fAPhthskqrPm7gCRY3BTU88Koo
+	QOTtbZ0bttn9J0fkH+2eh1JXRebH9mzGYal/mAP4fwQeqRCzogyvFR3zCs3SCFI/IpOr3T
+	kqh0AV61ejkBSPGhX3paqYRW0EpX5g8=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-644-CE3TG2njOHSwD-n4A6fhuw-1; Sun, 02 Mar 2025 23:26:12 -0500
+X-MC-Unique: CE3TG2njOHSwD-n4A6fhuw-1
+X-Mimecast-MFC-AGG-ID: CE3TG2njOHSwD-n4A6fhuw_1740975971
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-abf46dba035so196653366b.0
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Mar 2025 20:26:12 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740975971; x=1741580771;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=I5dSGTpmLn97joWduARVp0cs22gFzxB4/mv/r4vqwy8=;
+        b=mtDChC9c+zaSsbXyRO9lqYEpLgTJDfP5gyxHjh3BvrYZTL0hdCIyzsZ0ITVhQUkF6F
+         UQmDASYEbjcgZZmAzZxYWFMkUouCrTHVpBB6IHE/UgKeK8wbKLvPvR7OW7X8obxkYNpI
+         TLeapm4iIUNnxp7zIOJ3jgNBP/3vQeZSSTKwgTJkivAw2JjNAXzu0QGPpEByb93cMYYK
+         MHzwSRjMSMu3gZWgYbu4Af/Epq0TWs017B9Q+A3+sH9j7JcWl6NPpjSBDH+B2xbW3YTv
+         KsGD3Ul0aFmRSZdfmQEpUz428/9WOcm0w9bw5BfCPdYMr+OP79Hmrq+NomAOBjeT0xD+
+         o/Cg==
+X-Forwarded-Encrypted: i=1; AJvYcCVzdPJKuOas3JfKO9IDaMZZ0Td61TiUNjxzdmgAEcBf1NpMlnWMOLanhvOD8VDsZxthI1OqBMNmb6JV0Rk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMtUBNGUPrqUQPPAIscRjS0BhqDje5PcbQY8WL0IwPZ0psEtgz
+	uTirtQq64OG2v0CnO5ceXqjW0a6Z0yRzQ5ZC1LmQokIetDURIniAfUu+cT1b1YaOo1Q9HRblHmk
+	JQKSh3p1ggFGa6DE8t5AFgCtNEennUuuIjJwOGr7KLuB/zLUjTEzufox6gpYj0E11Shp2juUjLc
+	cn57Shd7rEHSga9Boxpn61sXe5JFfAwIHcgyLA
+X-Gm-Gg: ASbGnctsb7pn290Z0jKSAL9WTdfsev8hWvf1V0TCnrXzv1W+U3AGY6bVWXWJENtJMRZ
+	5Sk/NtSIVKIEziGuF5iYXczzBZn29ZONoKiOKphaChZXjZ5npKQT99Ery0YvVNNjKWAosoQQtEQ
+	==
+X-Received: by 2002:a17:906:f587:b0:abf:7a26:c470 with SMTP id a640c23a62f3a-abf7a26c65emr198736866b.51.1740975970955;
+        Sun, 02 Mar 2025 20:26:10 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF0DZmam62M33CFchi6Iot8/yKD5WtjQeX8AZY42o8lCmFpVtXhHd6dmyoN1uMg3/AghFVz73sYvs21PnyxwaA=
+X-Received: by 2002:a17:906:f587:b0:abf:7a26:c470 with SMTP id
+ a640c23a62f3a-abf7a26c65emr198735166b.51.1740975970622; Sun, 02 Mar 2025
+ 20:26:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] btrfs: fix a memory leak issue in read_one_chunk()
-To: Haoxiang Li <haoxiang_li2024@163.com>, clm@fb.com, josef@toxicpanda.com,
- dsterba@suse.com, fdmanana@suse.com
-Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250303024233.3865292-1-haoxiang_li2024@163.com>
-Content-Language: en-US
-From: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1YAUJEP5a
- sQAKCRDCPZHzoSX+qF+mB/9gXu9C3BV0omDZBDWevJHxpWpOwQ8DxZEbk9b9LcrQlWdhFhyn
- xi+l5lRziV9ZGyYXp7N35a9t7GQJndMCFUWYoEa+1NCuxDs6bslfrCaGEGG/+wd6oIPb85xo
- naxnQ+SQtYLUFbU77WkUPaaIU8hH2BAfn9ZSDX9lIxheQE8ZYGGmo4wYpnN7/hSXALD7+oun
- tZljjGNT1o+/B8WVZtw/YZuCuHgZeaFdhcV2jsz7+iGb+LsqzHuznrXqbyUQgQT9kn8ZYFNW
- 7tf+LNxXuwedzRag4fxtR+5GVvJ41Oh/eygp8VqiMAtnFYaSlb9sjia1Mh+m+OBFeuXjgGlG
- VvQFzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
- CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
- /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
- GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
- q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
- ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1gQUJEP5a0gAK
- CRDCPZHzoSX+qHGpB/kB8A7M7KGL5qzat+jBRoLwB0Y3Zax0QWuANVdZM3eJDlKJKJ4HKzjo
- B2Pcn4JXL2apSan2uJftaMbNQbwotvabLXkE7cPpnppnBq7iovmBw++/d8zQjLQLWInQ5kNq
- Vmi36kmq8o5c0f97QVjMryHlmSlEZ2Wwc1kURAe4lsRG2dNeAd4CAqmTw0cMIrR6R/Dpt3ma
- +8oGXJOmwWuDFKNV4G2XLKcghqrtcRf2zAGNogg3KulCykHHripG3kPKsb7fYVcSQtlt5R6v
- HZStaZBzw4PcDiaAF3pPDBd+0fIKS6BlpeNRSFG94RYrt84Qw77JWDOAZsyNfEIEE0J6LSR/
-In-Reply-To: <20250303024233.3865292-1-haoxiang_li2024@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+References: <20250302143259.1221569-1-lulu@redhat.com>
+In-Reply-To: <20250302143259.1221569-1-lulu@redhat.com>
+From: Lei Yang <leiyang@redhat.com>
+Date: Mon, 3 Mar 2025 12:25:34 +0800
+X-Gm-Features: AQ5f1JrtDM4meGmqZ71iruwsh2y39gPiEVFEaxe4BlZl8h_Xwrnd5iQqMoRKc2E
+Message-ID: <CAPpAL=yGBNWYCCEKi049_yBQs0QjSCCA=AjiT-9NoMZikCOKjw@mail.gmail.com>
+Subject: Re: [PATCH v7 0/8] vhost: Add support of kthread API
+To: Cindy Lu <lulu@redhat.com>
+Cc: jasowang@redhat.com, mst@redhat.com, michael.christie@oracle.com, 
+	sgarzare@redhat.com, linux-kernel@vger.kernel.org, 
+	virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:kHvpv533MgH/yvPuv9Yarmg/NoJRktAYzYOi/oaIZwt7cgCKWqy
- 1hP5mbvUCp8jrfS3gbo0ZjJfKrM/RQD5qIITWlOf1epUXNuBwnSZDfKZTXaqysZ6Yb6RVJK
- k4rnUNKxqUQjJT74BeQT0/FUGMWFYjH2ktB8S6h3uDz4AtzQ6X2dSo2WWdCBcO8q1y9G9go
- 0HjEJueZRZXPu42KJUzcw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:ih1cCx4mvQs=;YUZ32KxwuX2/VI1IRWIFzO3MTbc
- By3MfDCzoQqzLVBu9uTze7Z9CH+RmxuN+jMqr+/tHaufbNTCFt0NT/moKAq8H37ye3UU12WVT
- YWpyKrV787FZpBuzQ5AgKLhFpXkB290xjBT91dn3HWTRXCXR+m/74IUBj9uO1hblKWHAVTDso
- ax5r9ibo1PXOm0H8zEx+48xMaUtXGsaADdUz7bXxEoEowEDfmTS6UhI9l4iAwkfadrVs+veP0
- B57L1Cevc//pRWxNYuQ9+AmkeNcNk9HHNpa0D/dJfos5zVbDzbiA3qkHGmBK0Mm50/6QcgOyq
- iFw+7wrWAQU14iKQmhSYp2TauVKdFxdoEdfu4hY+hQjLFVSESdCWYJelzGYuxKsugwYKX/nSU
- q61kuugQvIOer/Q9EmBqBd304I2ml2G8NYgP8jXOmegGMr3NfsJvv6kGyj3o9P5xaRwFZrH11
- JbIbDE8sCcS6LTpBB2kKxJRO193aTobAmp9v8lh67JIrx4F21jNHe+9L4ou5pMr93HfhjdEJN
- OkDYal/3+BnYNrm/0CoE+nrqHgGZ0fIeVestfkpLIbSPy4fknmBmlMg2LwzL/1oRLQfRKuTYY
- lMTnz7Tm9p2MI+ABpP3m3VbMZcVPPGNXx8sI4huPPQrv4dCPTymeAArOQTZ8t3YnOSgpV1eWg
- O11N1Ab+fF7YdDWgAkpfbbsG2V2RTZnxrxTnBe53y5u4l9CtSl7ZVCsNNZdysRK9ibZgv9C++
- 2rxo7aUoWwsKEOFTgHej2rDUAdz4FV4RowUxu4/tj4aa1+er68EKIWB8k9WEa7mGGanS87rSr
- Lpy7Kq0RXD67yvbhZ86UCagN9w1XC1CI2TQyL2KovvWWaavYKee1xacx0uf9zzHH6cvz9WeaP
- UeFIz/gjJJcaowkPP2h9fP6tgN563dBJCMsc9tQ0xqFSZsod/ZEkWYRKghH5IPHN0FboBXO30
- fHmhz7g8pBe3m6BFDhOB9Rk8CXTVV0CwKg6a/uoNX7C4DmfHXSMVCNL2HHz2fvYj8Wd9u7tc2
- tqk/vSJTjJIdg22Gt+eMxqUfJSOyQts5IeFABjqnlXG0qq+Xdnzni0mA17Ko8pdw07cR7vDN1
- D3u9DIRYuJmg/Z590iATz7/N1i8MY7PKSlTDwDYujF6//QlE7q4pEDaxR6K3m6X6i+JL+RYKo
- Pco9PFsuMyyy5cbe+/bKy8KZrAq1JICk/Znbj6TKWJRJsu71mKYYWPItIvro2HNHadh8QGa8W
- EyuAPEcTikUCiSO8M+9Mtcl9ASjvUEFHewVOtGYzz97LnyqdOWmfposdEKvZ1jxdpWyuX9Qoo
- 0yJNY7l6/sJhuXfQyfqIQ7EkFErHkiW3mGSFkrK0Ayi0rAae7dTrw7dNerYAv5ZYW3oPZQwvb
- N/BAcxTx16+cNsZqx6EKLHUZIx5wE11oSmmkFtExDM0Agyn+9AP9zlyuC2
 
+QE tested this series of patches with virtio-net regression tests,
+everything works fine.
 
+Tested-by: Lei Yang <leiyang@redhat.com>
 
-=E5=9C=A8 2025/3/3 13:12, Haoxiang Li =E5=86=99=E9=81=93:
-> Add btrfs_free_chunk_map() to free the memory allocated
-> by btrfs_alloc_chunk_map() if btrfs_add_chunk_map() fails.
+On Sun, Mar 2, 2025 at 10:33=E2=80=AFPM Cindy Lu <lulu@redhat.com> wrote:
 >
-> Fixes: 7dc66abb5a47 ("btrfs: use a dedicated data structure for chunk ma=
-ps")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
-
-Reviewed-by: Qu Wenruo <wqu@suse.com>
-
-And the fixes tag is also correct, before that commit, add_extent_map()
-will increase the ref if tree_insert() succeeded, thus if it failed the
-unconditional free_extent_map() will just free the no longer utilized em.
-
-But at that commit, we no longer has that feature, thus has to manually
-cleanup the map.
-
-Thanks,
-Qu
-
-> ---
->   fs/btrfs/volumes.c | 1 +
->   1 file changed, 1 insertion(+)
+> In commit 6e890c5d5021 ("vhost: use vhost_tasks for worker threads"),
+> the vhost now uses vhost_task and operates as a child of the
+> owner thread. This aligns with containerization principles.
+> However, this change has caused confusion for some legacy
+> userspace applications. Therefore, we are reintroducing
+> support for the kthread API.
 >
-> diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-> index fb22d4425cb0..3f8afbd1ebb5 100644
-> --- a/fs/btrfs/volumes.c
-> +++ b/fs/btrfs/volumes.c
-> @@ -7155,6 +7155,7 @@ static int read_one_chunk(struct btrfs_key *key, s=
-truct extent_buffer *leaf,
->   		btrfs_err(fs_info,
->   			  "failed to add chunk map, start=3D%llu len=3D%llu: %d",
->   			  map->start, map->chunk_len, ret);
-> +		btrfs_free_chunk_map(map);
->   	}
+> In this series, a new UAPI is implemented to allow
+> userspace applications to configure their thread mode.
 >
->   	return ret;
+> Changelog v2:
+>  1. Change the module_param's name to enforce_inherit_owner, and the defa=
+ult value is true.
+>  2. Change the UAPI's name to VHOST_SET_INHERIT_FROM_OWNER.
+>
+> Changelog v3:
+>  1. Change the module_param's name to inherit_owner_default, and the defa=
+ult value is true.
+>  2. Add a structure for task function; the worker will select a different=
+ mode based on the value inherit_owner.
+>  3. device will have their own inherit_owner in struct vhost_dev
+>  4. Address other comments
+>
+> Changelog v4:
+>  1. remove the module_param, only keep the UAPI
+>  2. remove the structure for task function; change to use the function po=
+inter in vhost_worker
+>  3. fix the issue in vhost_worker_create and vhost_dev_ioctl
+>  4. Address other comments
+>
+> Changelog v5:
+>  1. Change wakeup and stop function pointers in struct vhost_worker to vo=
+id.
+>  2. merging patches 4, 5, 6 in a single patch
+>  3. Fix spelling issues and address other comments.
+>
+> Changelog v6:
+>  1. move the check of VHOST_NEW_WORKER from vhost_scsi to vhost
+>  2. Change the ioctl name VHOST_SET_INHERIT_FROM_OWNER to VHOST_FORK_FROM=
+_OWNER
+>  3. reuse the function __vhost_worker_flush
+>  4. use a ops sturct to support worker relates function
+>  5. reset the value of inherit_owner in vhost_dev_reset_owner s.
+>
+> Changelog v7:
+>  1. add a KConfig knob to disable legacy app support
+>  2. Split the changes into two patches to separately introduce the ops an=
+d add kthread support.
+>  3. Utilized INX_MAX to avoid modifications in __vhost_worker_flush
+>  4. Rebased on the latest kernel
+>  5. Address other comments
+>
+> Tested with QEMU with kthread mode/task mode/kthread+task mode
+>
+> Cindy Lu (8):
+>   vhost: Add a new parameter in vhost_dev to allow user select kthread
+>   vhost: Reintroduce vhost_worker to support kthread
+>   vhost: Add the cgroup related function
+>   vhost: Introduce vhost_worker_ops in vhost_worker
+>   vhost: Reintroduce kthread mode support in vhost
+>   vhost: uapi to control task mode (owner vs kthread)
+>   vhost: Add check for inherit_owner status
+>   vhost: Add a KConfig knob to enable IOCTL VHOST_FORK_FROM_OWNER
+>
+>  drivers/vhost/Kconfig      |  15 +++
+>  drivers/vhost/vhost.c      | 227 +++++++++++++++++++++++++++++++++----
+>  drivers/vhost/vhost.h      |  21 ++++
+>  include/uapi/linux/vhost.h |  15 +++
+>  4 files changed, 259 insertions(+), 19 deletions(-)
+>
+> --
+> 2.45.0
+>
+>
 
 
