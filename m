@@ -1,33 +1,34 @@
-Return-Path: <linux-kernel+bounces-541294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C974BA4BB0B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:44:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38BC2A4BB09
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:44:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C4403AD28D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:44:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F7A53ABBDD
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:44:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11CC71F1516;
-	Mon,  3 Mar 2025 09:44:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678C31F1314;
+	Mon,  3 Mar 2025 09:44:26 +0000 (UTC)
 Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 605F62E630
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 09:44:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970361EF0BD
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 09:44:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740995066; cv=none; b=koBDOcBHJ2ora9IyhjI7hhvX6n1ubEp3CcxThlhY7ZptYvFzJAUc7ASuONoxtlZ+08Uy/2IIhzPbmq6+G4R2wh8K/3ALws4Xb6dSuOcQOA7vVTqOy0JnTN+t9t+ULjawv4itnpgvAsGsAnu20Aqhu4+GwnHsHLI85LKIOACgwxk=
+	t=1740995066; cv=none; b=j1EmuX2PsN4ANOwuf6a0DDcHfHDPsxLDWpFddytuum8utNjC9VgILmUIdPHI3Mw80huWqhS9Xtf14xp9WgHbahYPeL/DlC8X+cOyOQEiesybVTy5xXMJOXhBdLxdk42ke68igpJSp3qcHcThUyqBq0bhFoajhAQlRitRrSwZwGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740995066; c=relaxed/simple;
-	bh=/VN/BIVlA7mcSzHD+zvXxjMnGVgIzQaLlLiBpPUpFbc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fo9AayEW5c5IwxNT82UQEoaLRgkMq93wYfflF1yg5iyfqLLDpa5ZrSShUxMppC8kbqge7+g37J3sXeO16yCoUffGY3etygP4ln2xzDmPmP1LRMsDkl9zns9QdiLiVXReAJmbfef3LWv8kuQsT5AaYziX1mxmhEYqvwLkPFyoBAM=
+	bh=g5Iu7zUxCMT66zFNaSWVY9N6SGSRLvL3jvyTzGGX3hk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Ddx1koifLR86IyOFYp4WaVgmuiqrEMNnJrLoqjwJRb+VF7C5lxMwB5kvkZExDP4Ga8461ZS4Hv6pdhacXv7IDeROEHcMWEH2XHGm3wYPygGwAyzlw8xlgGDz82tqwqL1Xvr/L1O6wgMbflqL0LEmuQFWFFaQzBz+mOM9A6x3k9E=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 11c425c0f81411efa216b1d71e6e1362-20250303
+X-UUID: 1275c6aef81411efa216b1d71e6e1362-20250303
 X-CTIC-Tags:
 	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
 	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
@@ -39,25 +40,25 @@ X-CTIC-Tags:
 	GTI_C_BU, AMN_T1, AMN_GOOD, AMN_C_TI, AMN_C_BU
 	ABX_MISS_RDNS
 X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:76d86c97-c7f6-46e3-822a-127c01f09800,IP:10,
-	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTI
-	ON:release,TS:-5
-X-CID-INFO: VERSION:1.1.45,REQID:76d86c97-c7f6-46e3-822a-127c01f09800,IP:10,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:-5
-X-CID-META: VersionHash:6493067,CLOUDID:236222dcadf08c8573a848a7cbdd98cf,BulkI
-	D:250303172844UX4Y89Y6,BulkQuantity:2,Recheck:0,SF:17|19|24|44|66|78|102,T
-	C:nil,Content:0|50,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:40,QS:nil,BEC:n
-	il,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-O-INFO: VERSION:1.1.45,REQID:ec3fcc8f-aa44-4f71-894d-eccf03347660,IP:10,
+	URL:0,TC:0,Content:0,EDM:25,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACT
+	ION:release,TS:20
+X-CID-INFO: VERSION:1.1.45,REQID:ec3fcc8f-aa44-4f71-894d-eccf03347660,IP:10,UR
+	L:0,TC:0,Content:0,EDM:25,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:20
+X-CID-META: VersionHash:6493067,CLOUDID:4081698c0a2419bf5e3690921fac3194,BulkI
+	D:250303172844BQY8HYXC,BulkQuantity:2,Recheck:0,SF:17|19|24|44|66|78|81|82
+	|102,TC:nil,Content:0|50,EDM:5,IP:-2,URL:0,File:nil,RT:nil,Bulk:40,QS:nil,
+	BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
 X-CID-BVR: 0,NGT
 X-CID-BAS: 0,NGT,0,_
 X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
-X-UUID: 11c425c0f81411efa216b1d71e6e1362-20250303
+X-UUID: 1275c6aef81411efa216b1d71e6e1362-20250303
 X-User: liuye@kylinos.cn
 Received: from localhost.localdomain [(223.70.159.239)] by mailgw.kylinos.cn
 	(envelope-from <liuye@kylinos.cn>)
 	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 956718363; Mon, 03 Mar 2025 17:44:15 +0800
+	with ESMTP id 1108455076; Mon, 03 Mar 2025 17:44:16 +0800
 From: Liu Ye <liuye@kylinos.cn>
 To: akpm@linux-foundation.org
 Cc: urezki@gmail.com,
@@ -65,10 +66,12 @@ Cc: urezki@gmail.com,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	Liu Ye <liuye@kylinos.cn>
-Subject: [PATCH 0/4] Optimize __vmalloc_node_range_noprof function.
-Date: Mon,  3 Mar 2025 17:44:06 +0800
-Message-Id: <20250303094410.437985-1-liuye@kylinos.cn>
+Subject: [PATCH 1/4] mm/vmalloc: Remove unnecessary size ALIGN in __vmalloc_node_range_noprof
+Date: Mon,  3 Mar 2025 17:44:07 +0800
+Message-Id: <20250303094410.437985-2-liuye@kylinos.cn>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250303094410.437985-1-liuye@kylinos.cn>
+References: <20250303094410.437985-1-liuye@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,22 +80,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The use of variables real_size and real_align in function 
-__vmalloc_node_range_noprof is unreadable. Optimize it in four patches.
+The same operation already exists in the function __get_vm_area_node,
+so delete the duplicate operation to simplify the code.
 
-Liu Ye (4):
-  mm/vmalloc: Remove unnecessary size ALIGN in
-    __vmalloc_node_range_noprof
-  mm/vmalloc: Size should be used instead of real_size in
-    __vmalloc_node_range_noprof
-  mm/vmalloc: Remove the real_size variable to simplify the code in
-    __vmalloc_node_range_noprof
-  mm/vmalloc: Rename the variable real_align to original_align to
-    prevent misunderstanding
+Signed-off-by: Liu Ye <liuye@kylinos.cn>
+---
+ mm/vmalloc.c | 1 -
+ 1 file changed, 1 deletion(-)
 
- mm/vmalloc.c | 20 ++++++++------------
- 1 file changed, 8 insertions(+), 12 deletions(-)
-
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index dc658d4af181..20d9b9de84b1 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -3798,7 +3798,6 @@ void *__vmalloc_node_range_noprof(unsigned long size, unsigned long align,
+ 			shift = arch_vmap_pte_supported_shift(size);
+ 
+ 		align = max(real_align, 1UL << shift);
+-		size = ALIGN(real_size, 1UL << shift);
+ 	}
+ 
+ again:
 -- 
 2.25.1
 
