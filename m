@@ -1,143 +1,96 @@
-Return-Path: <linux-kernel+bounces-545129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DABC5A4E966
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:40:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BD77A4EB09
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:17:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB7D642118A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:35:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 912C2160A4A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:13:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0257F24C063;
-	Tue,  4 Mar 2025 17:08:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15593279337;
+	Tue,  4 Mar 2025 17:54:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HMuZyZAt"
-Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lyqxOXPF"
+Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6BF62066EB
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:08:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948B824EA98
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:54:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741108123; cv=fail; b=UO1SWgpDyRlxoOSWf9iGlKNVNl9MhZ1e2d+5X9CF90Lnl5k5yIz6anHs6jo0Cr1QQ9uhGTsaeFBr3q6acDgFM8Q21ido6Puk3PAaBHTfm8v5j5j0kSOCNYc85IT0zsAFubCai+71HUAfBtyqStQ6BYvDEM/I8Lq+CHEDLJOQk90=
+	t=1741110859; cv=pass; b=tsZA3du1NQ/yIj2fNctOHiu8ItaX9q+25Kyk87zBgJ9H0HyHemhWIb4h5RF/GgqZsxndl3Y5TpYcjVbqRJQVYFcGS50KTridzSs6EUhf5kbS9SxcaOpct/gS6/r0ElDfITkuqvx+/QFNLTDW5k6As/tfX0xxUagvj6MLxudx+Z8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741108123; c=relaxed/simple;
-	bh=ChzWCAC/nneidv5nY92AltDK1p3xOBlts66BZXwSMHM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J2J0WmZQbSYb4bI6fhWFOvgjXbLQ+Fq1H8ySW248ImWKWCCNcSIf5SsC858pHc1LrbX1fYAWbWsQHH+Zuml80nhroqC3ORPZWJjkhqMtOccBFRah0dSWyEeMv8SbE+u5afp6DaZekYQWqHJS/jZwyQQsJs2XNyen2yoPBfzz8Wc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HMuZyZAt reason="signature verification failed"; arc=none smtp.client-ip=209.85.128.52; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; arc=fail smtp.client-ip=160.75.25.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1741110859; c=relaxed/simple;
+	bh=lpis/SLy0ij+CNsW36P4QCLyGtfJ/WP7YKd97ynHmys=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=le2/Gv97usvy/C6heSjKUXftbvIZOK6wE2Mbz2/yZz5vpir4ZkGogYMKQZcIi/DZ2tTMbcsRjgSYnF1LNPpP8T6Gqpx4Bs7/Y8QdVtxiJ5zxUni0McmcIBGJlXag9am+SpD1skLrMGDo2gkh+EdEnejSNfyODsj9GwsHEZduuEc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lyqxOXPF; arc=none smtp.client-ip=10.30.226.201; arc=pass smtp.client-ip=160.75.25.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
-Received: from lesvatest1.cc.itu.edu.tr (unknown [10.146.128.1])
+Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id 19E3B40D1F46
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:08:40 +0300 (+03)
+	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id CACB040D4DE9
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:54:15 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20230601 header.b=HMuZyZAt
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20201202 header.b=lyqxOXPF
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dF24GgbzFwZH
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:22:46 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6g99508CzG1Nx
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:49:33 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 5FDE04272F; Tue,  4 Mar 2025 17:22:34 +0300 (+03)
+	id 1E17E42726; Tue,  4 Mar 2025 18:49:20 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HMuZyZAt
-X-Envelope-From: <linux-kernel+bounces-541874-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lyqxOXPF
+X-Envelope-From: <linux-kernel+bounces-541880-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HMuZyZAt
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lyqxOXPF
 Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id 0BB234220E
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 17:04:47 +0300 (+03)
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id 95BB4305F789
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 17:04:47 +0300 (+03)
+	by le2 (Postfix) with ESMTP id 968C441E12
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 17:07:48 +0300 (+03)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by fgw1.itu.edu.tr (Postfix) with SMTP id CF84E305F789
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 17:07:47 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66AFE3AA327
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:04:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B60C7A192A
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:06:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784362135D8;
-	Mon,  3 Mar 2025 14:04:19 +0000 (UTC)
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4823213E67;
+	Mon,  3 Mar 2025 14:07:16 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3553320FAB5;
-	Mon,  3 Mar 2025 14:04:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2022212B0A;
+	Mon,  3 Mar 2025 14:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741010656; cv=none; b=GmV0AsmW2GTu4hGxeL7c6lCLPQ+0aMelbzB7M7JhHpOi4bZl62lwAS5t6dvmQdJYtRuqzku6oKU09NLB9+L9d7y7wBnuQYJX71eVccCqwICsthdJ4tg2SIwCoaWliyVcCtlsx1xZoqWpQ6c8KM1zBAgTFRluviklXyLCI1G8NZQ=
+	t=1741010833; cv=none; b=W5RfAskR4c/NWRZXTbpajebB8fj/kqRMX0LPtY5cq9uxrQiVy/IKp1HaLxWBv0mRcYhvQ5woKtFOO+1Fuj4lHtpY//ekSNn+NWtWqENck5bEpC0ImqJcf39WCTEWDl1qNWAfhg4lBaa1WtuloyFKt9c4tS6Nq8pGGsfXoM4PAmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741010656; c=relaxed/simple;
-	bh=8k28ohh0BPSZHJHOBtNIM4qll2UGyVczMLoUtKSqo1k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tj3AsVJiQnxZJpqmydaM9fIRa87U37Eu5BgQkgd3Vo5SQXoKbS7ltowDf0uK5GrNaXL4FKWT/KEb1cImx88i1CLDMWW0eGO6ZIyjPCWLLgDPRxOoY/bTmHZ7rgHczL8jGEuYr8F4ljHKmvg1vEvB3xR7pCqOjThsXoBSBLdJU+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HMuZyZAt; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4394a823036so42853775e9.0;
-        Mon, 03 Mar 2025 06:04:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741010652; x=1741615452; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=8k28ohh0BPSZHJHOBtNIM4qll2UGyVczMLoUtKSqo1k=;
-        b=HMuZyZAt3+HrcqUH2wDsCmDpbKiFItBtr8/0V/WDq2g16LasV9IOnq+dO/GEWPSKtX
-         kMi/Hb1xLCLX+4r3Z0nFzor101reg5Vd2Fn/1KoXe09FMx1g99ojWfM5hJ7kEGlUB2G4
-         WOT3HRaQxMILVhsdYeD+t8a+o+JkQiTi4+VWVfo4KF1zUPnRnNbsDT5ZhvXf3lfAzDV8
-         rRF5tPkrrumjlqxbyunrMHUoh5At7RMr228RzIUton2Mk5p7H4lvvqPiqvc823991v+h
-         kPIUA48tjnZ8luNk8eNDW75+D7uqZamPoCvVUgTLeA/L1J0IB8EG0NXNePXUb99Vhw72
-         tZbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741010652; x=1741615452;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8k28ohh0BPSZHJHOBtNIM4qll2UGyVczMLoUtKSqo1k=;
-        b=rAE9Fy76ozFyqo4amQLQObaKNJfrmaz9CEDMBLLl6LXlFp8FWq6+c4B2PNEMqNcIBx
-         rylt3ohqvwadsc5S5DO2qu5mNzzVyNWjRgSlOv1L1E/iODVBcoqeyGMpXBjWQreWT6+y
-         aMh+ZjfutmfOwO0hdzUWTpnJk5QuL4brYgJifO2s2uT0dxVSYUqvbkXTnNlqiFiY36tn
-         daOAa5YiOUnpvZ+vQlSSahwNMtSrAMuihZ5iy5YyKG1SCZryQKVOrY+z/mfAFjRXkL79
-         DeRmWizEmzXVnGvvI5q4luGd6BZaphDBoNT2194LtRfgFsRJMdSvseLvv82G7nIPQFvs
-         aeVw==
-X-Forwarded-Encrypted: i=1; AJvYcCUx+Ltl09t+5Okss6+7fhvMxHcP4/TKjLG8yV8m5iwyk7wA8MkILGsedHWlhMD+klp4veR8sd+zIDNZ0VkKvNSS9Zs=@vger.kernel.org, AJvYcCWXEfO8zwWZBXxXRvZC3JKmwvCGcIeS/lsXVLiDdqGHBB0EpLRn+j9koeVe2lXQ6PdcyLvBI6HBlHp9QEs=@vger.kernel.org, AJvYcCXa+ESqYlmieoKrmPM3Mv994053zyJSjMQdO4E72RrR8GFW8+i6U+r33OXCCPEh0Xxf45PLqKRaLXDF@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywl855ZvE7prsJAOtYRk0h6G57Za/l751DTqF2bnkVztmjaLM0h
-	LAxE08UDXoNXUEA11BMtLH/Lq2CigUewbyJ+DO1XHAY3ue5tc6/B
-X-Gm-Gg: ASbGncu/OS6VUzHuiuqjRaVH2h0Kp/kTAFvmKS0WwDvYoAJaFXayFkwilZSMn+gGa39
-	qk6feCfTlkywqB4MG6APMmxla5M++u21ayfwKfbarUFghFvcrfeBkinHkVsreI0Ip78BgxOV8kB
-	OJQWTsmNECGDKPYE1GQ+n2VW4Dg+8Km+m15/PNUJAVxCZf1oIrtZyyQbHMPCkighaH9rRrgque3
-	nka7QrTooO5ERTIrbN8pPsgZmqhnRFS9PjnALK+nViUz2+wU2W4cZfb0r5sP5LEzxglc/dVd/lS
-	H1RhGfv/RkutV8TqbQl99BX0ADAlPLFDzEh4TFOmWF/ZaOID8Ptlv0S2OMCmyEH5NuuImGMI+VO
-	QnLI=
-X-Google-Smtp-Source: AGHT+IHvcHXOSeKhHWMUt2xXWhTV53mo6yshUFDelmHEDhBHpCQfhR1rFavwoCbMnPzni4lL0cMigA==
-X-Received: by 2002:a05:6000:1f8c:b0:38d:e48b:1783 with SMTP id ffacd0b85a97d-390eca27761mr8649282f8f.42.1741010652096;
-        Mon, 03 Mar 2025 06:04:12 -0800 (PST)
-Received: from ubuntu2204 (207-pool1.nat.godollo.uni-mate.hu. [192.188.242.207])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47960b6sm14936073f8f.17.2025.03.03.06.04.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 06:04:11 -0800 (PST)
-Date: Mon, 3 Mar 2025 15:04:09 +0100
-From: =?utf-8?B?VMOzdGggSsOhbm9z?= <gomba007@gmail.com>
-To: =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
-	Hans Ulli Kroll <ulli.kroll@googlemail.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
-	Dianlong Li <long17.cool@163.com>, linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-aspeed@lists.ozlabs.org, linux-amlogic@lists.infradead.org
-Subject: Re: [PATCH 13/18] rtc: sd2405al: drop needless struct sd2405al::rtc
- member
-Message-ID: <2gfjdazu2ohv4evd7iuk2dzexlydnd6yu3xmjk2lgsx3iws5sa@xdwf4df4ojck>
-References: <20250228-rtc-cleanups-v1-0-b44cec078481@linaro.org>
- <20250228-rtc-cleanups-v1-13-b44cec078481@linaro.org>
+	s=arc-20240116; t=1741010833; c=relaxed/simple;
+	bh=lpis/SLy0ij+CNsW36P4QCLyGtfJ/WP7YKd97ynHmys=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X8H5C1QK4ZnC76a/vdQeWMSg9MOrd3nzaFZXjrfFgLssOrWdks4SCA5qodA5mhNWvx6cf5rb/x2Rta34zm2/ZpdihWFqZmreiwwLOQ10K1M7S8+H0bLf/5hEegeEycUFuXL3nvrVyPolG9fMWUqQmZkuJcOMEgeA4NjxDd5CKQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lyqxOXPF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEF78C4CEE6;
+	Mon,  3 Mar 2025 14:07:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741010833;
+	bh=lpis/SLy0ij+CNsW36P4QCLyGtfJ/WP7YKd97ynHmys=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=lyqxOXPFsF9x17qZNcmlg/aMg5WJcN3dEmFdqOUp5TKVY2X9vYws8CtZpeYV15+xI
+	 yb6xay/8CPcpToj+RmlgZ7fStV71XpSEtKtxmGFNz1pHa6QaL0zwgiAG86jJ98ZjnL
+	 LivAuVHNTYJpNEd6zv/A4I5FTFMD/FYWfIc3LUipTFR3lDjRhdeZfu+NigDKfa981O
+	 HVSdH3bcPmFY8rKBgN3p+FKcfvJ+Apx+VA4r3z9kl2IDcGLFMjLH2gJn1wsY85T1sf
+	 pH58Mald0DF0MaX0hznMWrCg72fFrNTZ4+vemz+ODOBB5V97qeQhkoJBWQ7VcTgFPC
+	 XpAAtoqRP6hxQ==
+Message-ID: <16e6d822-97c1-4dcf-b538-04b6d8881d32@kernel.org>
+Date: Mon, 3 Mar 2025 15:07:00 +0100
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -145,28 +98,114 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <20250228-rtc-cleanups-v1-13-b44cec078481@linaro.org>
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 09/21] dt-bindings: clock: thead: Add GPU clkgen reset
+ property
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org,
+ wefu@redhat.com, jassisinghbrar@gmail.com, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, frank.binns@imgtec.com,
+ matt.coster@imgtec.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ ulf.hansson@linaro.org, jszhang@kernel.org, p.zabel@pengutronix.de,
+ m.szyprowski@samsung.com, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, dri-devel@lists.freedesktop.org,
+ linux-pm@vger.kernel.org
+References: <20250219140239.1378758-1-m.wilczynski@samsung.com>
+ <CGME20250219140301eucas1p249b17ca44832eb8caad2e9ad0e4f8639@eucas1p2.samsung.com>
+ <20250219140239.1378758-10-m.wilczynski@samsung.com>
+ <20250221-imaginary-ebony-macaque-aace8d@krzk-bin>
+ <7296ddb3-2096-4414-bfa4-28fc5bb8ec86@samsung.com>
+ <df625379-b472-45d9-87a4-8bf52a87ea1e@kernel.org>
+ <4deba4d6-b82d-4e57-bd27-f4e1523b38ea@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <4deba4d6-b82d-4e57-bd27-f4e1523b38ea@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6dF24GgbzFwZH
+X-ITU-Libra-ESVA-ID: 4Z6g99508CzG1Nx
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741712819.9563@7y6UyQtGU1MgY0nHhxZWfA
+X-ITU-Libra-ESVA-Watermark: 1741715536.05856@jk/pjsG3WD0op/nwH57SDw
 X-ITU-MailScanner-SpamCheck: not spam
 
-Hi!
+On 03/03/2025 10:55, Michal Wilczynski wrote:
+> 
+> 
+> On 3/3/25 09:52, Krzysztof Kozlowski wrote:
+>> On 03/03/2025 09:42, Michal Wilczynski wrote:
+>>>>> +allOf:
+>>>>> +  - if:
+>>>>> +      properties:
+>>>>> +        compatible:
+>>>>> +          contains:
+>>>>> +            const: thead,th1520-clk-vo
+>>>>> +    then:
+>>>>> +      required:
+>>>>> +        - resets
+>>>>
+>>>> else:
+>>>> ? What's there? Also reset or no?
+>>>
+>>> If the else: case the reset is not required, as it's only required in
+>>> the th1520clk-vo, so there is no need for else:.
+>> That's not the question. I know it is not required, I can read code.
+>> What is in the hardware?
+> 
+> I noticed the register SW_GMAC1_GRST_N in section 5.4.2.2.66 of the
+> manual (GMAC1_SWRST [2]), which indicates a GMAC1 CLKGEN soft reset.
+> Although this could theoretically reset part of the AP clock, it is not
+> actually used by the AP clock driver or needed for initialization.
 
-> We can drop it from the structure and just use a local temporary
-> variable, reducing runtime memory consumption by a few bytes.
+Thanks, this answers here.
 
-It works on real hardware.
-
-Tested-by: T=F3th J=E1nos <gomba007@gmail.com>
-
-Regards,
-TJ
-
+Best regards,
+Krzysztof
 
 
