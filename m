@@ -1,122 +1,116 @@
-Return-Path: <linux-kernel+bounces-541804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D81DAA4C1D7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:25:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 20BE8A4C1DB
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:25:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF8501883C5E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:25:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68BF418857F9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:26:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93F1021148C;
-	Mon,  3 Mar 2025 13:25:21 +0000 (UTC)
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F854212B10;
+	Mon,  3 Mar 2025 13:25:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Su3Ec0RH"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775EB78F32;
-	Mon,  3 Mar 2025 13:25:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 522931F17E5;
+	Mon,  3 Mar 2025 13:25:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741008321; cv=none; b=pMrLq7oTZAw34O9B0L8Lc2kJcSIb0aDH/U2b8GGiHP76P+Focf+K1fPypEuuLDsAF+haC2Z7CEKn39TEYEBICoYkO35JDQcgx4trG6F3nKtisM05RLlPN8whMDkc6Hvt9zS7DI4yTF5CQhJ+MNx7OAHWKj9Gv1evsqODT5H5BSM=
+	t=1741008338; cv=none; b=rdFiivsY+69s+kCSHn3dLRBTW7M+tHdjk8kSK1I4bvWYnT9V9OZUeRGx57QYdn54jL2GNQpTqERFhAc5p0XGWqXAUomJY+e35tnfEOWvuJXnnN2IIT9BoNn/0iTTTAM2c3AvO+E6tL19gMSwKSHYKySqq0S+CrFUOqEoQ+z3g7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741008321; c=relaxed/simple;
-	bh=CF68ITkEzio2lwFpdhhqfi0tekXN0M3JCQJhfd1ikgE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MCWwmgfd3ikoQTSH8mZYreDXJlNRBc6PZznavyMx354Gj1jcv/sCCZp3ezp8eXiqTG9dwPHd7xxqGLnyyLDtZC+TukhBApVN253amxxoO9PiuBci70RNVkQm3ybMHQwlFB7AyZ1k3KV+bQR0CYgXSf4+yz/GH4VyanZmX9oJIlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joshuagrisham.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joshuagrisham.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5495c1e1b63so2035368e87.0;
-        Mon, 03 Mar 2025 05:25:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741008317; x=1741613117;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LvI8UXCWnMKFItrWuIun9EnniZdpCTtSLK3drgRiXNY=;
-        b=TiPaRhxt9OWS1FT+p0fD08f02ZBBu//NJgiBYLMbh6xhXXylTTA1qXpeHYVAtPWzL9
-         Ls/71il1Sfu9fBwPDzXXeKZC9soAVwnNZq6bn4MrQnI6t/iMTLAm3eHbhINSkFKdHA2r
-         6xZTTBOxMtY1w9Ir97gPcUaxCRrhRwQrnxlnu9NpLzDkUMLhUGWRMGLjMdkZE+fmNfHw
-         KkX1VqPJEN826qr8vXL76Ty7PwlOKtcT95PeTYpI2yS6CCQ/doulVIoG0f5J6918KATy
-         NaNkKXrJ+sdrrAcGACvtssoniLv+XCXjFu4nL4DvHOJgBPvTS7l+FSwZmn9TsykUv0r+
-         OUuw==
-X-Forwarded-Encrypted: i=1; AJvYcCVyXv1XX+u4UViqH/zgFUlAUHvNAql1gtSyUrvD2p3L8MX53vUrF6XZqCv2EGICYTvTMmAndXHAPVmffo9E33QPJcTE5A==@vger.kernel.org, AJvYcCXnM5z8ORff9rQFxpdtX8M8VmMAktiPOSpZAux9tRIAuHgx7Mzo+6SyIOVsZJRjaFO4Kqft0FcLAF+6AGE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydXnjhAJLNxfX2SDB07rhAFoGD52+1+V43GPqVT9JV85iaEEI4
-	ttxIWLlRKpDHJUuhZr3t4laNUOeTzteEz9/HCBuCCQWdOXh71rDN
-X-Gm-Gg: ASbGncvw6ng6NeoB1U4cLsRT7O49FsIaZW3vwfMUIAcejn9ktiKKNF7xb0u4mffvwtL
-	QwlarFnO7qL0jgPjrfNRwlZ3f/cSOM2TWwXEodZqYL8keIOB86Oc3kMRBAFuktd39+OykP8fyZk
-	LY0fsa0F4WOx1+/l2zxccwHOS18SI/dNf/Og/4HUgZ+sqgK2waL12RzeHd6fLSLsWLCqFszTFr9
-	cE4a4e6ZAFRcIfl5kUKuZoEvh0duJOOyIwT/orIZ+0YJV1tFTdq9DOtz5QD1xvUyGfEu4NLwspl
-	umpxXPL0CC2UCuy82UsCeTV+i5KElF2ApLd0UUmKtdim0kYjsO1C2+0QlbnXTLXN/PP/xuOZ1IX
-	9ggPw3UTZQw==
-X-Google-Smtp-Source: AGHT+IEWiJqiN80wxUoSGkDQiEjqewC3CEjHxlQkylO7RhGd89y/xiyRzvl6dA6nkfkKffRfu4Gg6Q==
-X-Received: by 2002:a05:6512:3d19:b0:548:794f:f9dd with SMTP id 2adb3069b0e04-5494c111896mr4440514e87.10.1741008317210;
-        Mon, 03 Mar 2025 05:25:17 -0800 (PST)
-Received: from galaxybook.local (82-183-24-76.customers.ownit.se. [82.183.24.76])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549497fd3c6sm1141139e87.206.2025.03.03.05.25.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 05:25:15 -0800 (PST)
-From: Joshua Grisham <josh@joshuagrisham.com>
-To: W_Armin@gmx.de,
-	thomas@t-8ch.de,
-	kuurtb@gmail.com,
-	ilpo.jarvinen@linux.intel.com,
-	hdegoede@redhat.com,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Joshua Grisham <josh@joshuagrisham.com>
-Subject: [PATCH v2] platform/x86: samsung-galaxybook: Fix block_recording not supported logic
-Date: Mon,  3 Mar 2025 14:24:32 +0100
-Message-ID: <20250303132433.348653-1-josh@joshuagrisham.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1741008338; c=relaxed/simple;
+	bh=gQhExb7nSOYxgg6O2ogjSb5UxFPDluCYS2cxUIokke0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eS9JcyLEJ8WCtqhPe5DNX/OTzldBOCWpqFa8r3mXpKgpSyeTqsZ0DqnagiUfSBjkK4wkQ/MXCx9MBKLS5D6olr+BxPGlVwNBNc47KFfr0MSk+7S0AE9GP2iSLYmF4ddN9ZmMSJVWLa6DYMX3Yir77ahSw19ClNBZ3r33ObKXuXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Su3Ec0RH; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0633E40E01D1;
+	Mon,  3 Mar 2025 13:25:34 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id w17-rpu0EVU8; Mon,  3 Mar 2025 13:25:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1741008330; bh=UX0gSK5mBKm5X8b/mAYIpVQSMFFkqr+fAzk9PmgEfCQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Su3Ec0RHE5acSHA/yBxHnLORM19JzIvRT5U8OeUr2GjDhId8ZyB8RoF02h2ow0JCi
+	 k8DnGuxPjgLmE9qeqTnkJUR1BKpfJBDk+fivWj+xrBjywntlkpQ/PHVGAAy7BJmGPT
+	 JSV/cuptgL6wflljo0CMR1K4IHI1o0OFjz9efxYeGqGoLZRWuAZlpf/ZzSYhQiKr/a
+	 P40V1coe5KMQHixPlh8eEMC1GSzpgW32bdqiFkJa2nIQV0Wu3UzkynTJVXM0MqiL8Z
+	 lubzyBjCA6E8oqsKwl+7rpE3Zby3o9Y5ym3ChJoLZ7C2m1geuRiLEMaaUKZWf3dGVd
+	 5zpT5vaOPIJ9nDvINdVGm7uuFALwkYkLWxW3WVkK/Ejmf0hyt+T6o5ChU56OZW4+Q1
+	 i6o8SrcCxK8fg3BrEDeyxsvpfbIsjNEjrKvvSswgsNn4LD2QVovRTi4rgTk6L8wfiC
+	 j0VItzrWzi2CY6tw5xMnN0IaCBVDIKViUm6faWyBAyfZ8NaRblDieYaruoSfif3ReP
+	 wid6RAKwKcush3fHenupcFItwvfJwiJpMlmi4RWt/jSrKXNA5AvR6R/1ys5X64kBGv
+	 pAuzg64jDTCjyaiFSWBqj/O0RGveFlswpk4KF5MbCrSYXWoreTQ8At+ZblPPbGXiF+
+	 wzcQ8LU0gNPZCD59u5gdpjkU=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2974A40E01AD;
+	Mon,  3 Mar 2025 13:25:12 +0000 (UTC)
+Date: Mon, 3 Mar 2025 14:25:05 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: "Aithal, Srikanth" <sraithal@amd.com>, "Xin Li (Intel)" <xin@zytor.com>,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+	x86@kernel.org, will@kernel.org, peterz@infradead.org,
+	yury.norov@gmail.com, akpm@linux-foundation.org, acme@kernel.org,
+	namhyung@kernel.org, brgerst@gmail.com, andrew.cooper3@citrix.com,
+	nik.borisov@suse.com
+Subject: Re: [PATCH v6 3/5] x86/cpufeatures: Generate a feature mask header
+ based on build config
+Message-ID: <20250303132505.GEZ8WtsXqFpuMOpDjT@fat_crate.local>
+References: <20250228082338.73859-1-xin@zytor.com>
+ <20250228082338.73859-4-xin@zytor.com>
+ <7c3b4623-45ea-4340-ac47-334071c1d15f@amd.com>
+ <D03DAFD2-5EC9-4D16-BA66-FDA4B51F45DD@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <D03DAFD2-5EC9-4D16-BA66-FDA4B51F45DD@zytor.com>
 
-Fixes logic error when block_recording is not supported but the fw attr was
-being added anyway (reported by GitHub user bbregeault).
+On Mon, Mar 03, 2025 at 04:05:54AM -0800, H. Peter Anvin wrote:
+> "make headers" on an unconfigured tree should presumably only produce the uapi headers, not kernel-internal ones, one could surmise?
 
-Tested myself on a Samsung Galaxy Book2 Pro (has block_recording) and by
-bbregeault on a Galaxy Book2 Business (does not have block_recording).
+Well, that's kinda a question for you guys:
 
-Fixes: 56f529ce4370 ("platform/x86: samsung-galaxybook: Add samsung-galaxybook driver")
+cfc7686900a87   (H. Peter Anvin (Intel) 2025-02-28 00:23:36 -0800       281)archheaders: $(out)/$(featuremasks_hdr)
+1f57d5d85ba7f   (Ingo Molnar    2015-06-03 18:36:41 +0200       282)    $(Q)$(MAKE) $(build)=arch/x86/entry/syscalls all
 
-Signed-off-by: Joshua Grisham <josh@joshuagrisham.com>
+and the headers target has
 
----
-v1->v2:
-- Add Fixes tag with prior commit (thanks Ilpo for catching!)
----
- drivers/platform/x86/samsung-galaxybook.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+headers: $(version_h) scripts_unifdef uapi-asm-generic archheaders archscripts
 
-diff --git a/drivers/platform/x86/samsung-galaxybook.c b/drivers/platform/x86/samsung-galaxybook.c
-index de1ed2dc6..5878a3519 100644
---- a/drivers/platform/x86/samsung-galaxybook.c
-+++ b/drivers/platform/x86/samsung-galaxybook.c
-@@ -1100,11 +1100,13 @@ static int galaxybook_fw_attrs_init(struct samsung_galaxybook *galaxybook)
- 	}
- 
- 	err = galaxybook_block_recording_init(galaxybook);
--	if (!err)
--		galaxybook->has_block_recording = true;
--	else if (err != GB_NOT_SUPPORTED)
-+	if (err == GB_NOT_SUPPORTED)
-+		return 0;
-+	else if (err)
- 		return err;
- 
-+	galaxybook->has_block_recording = true;
-+
- 	return galaxybook_fw_attr_init(galaxybook,
- 				       GB_ATTR_BLOCK_RECORDING,
- 				       &block_recording_acpi_get,
+as its prereq.
+
+Judging by
+
+59b2bd05f5f4 ("kbuild: add 'headers' target to build up uapi headers in usr/include")
+
+it sure looks like "make headers" should be for uapi headers only.
+
+Oh, and it should be documented in "make help" output btw.
+
 -- 
-2.45.2
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
