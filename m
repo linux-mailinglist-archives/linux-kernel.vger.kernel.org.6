@@ -1,189 +1,180 @@
-Return-Path: <linux-kernel+bounces-541041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C2E4A4B7BD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 06:52:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A7997A4B7BF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 06:53:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA1FB3A7F65
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 05:52:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9D873AE9CD
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 05:53:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CDA61E32C5;
-	Mon,  3 Mar 2025 05:52:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 739741E32C5;
+	Mon,  3 Mar 2025 05:53:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ALaQEBom"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="R6zz4mav"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D01D6EADC
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 05:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CD50EADC;
+	Mon,  3 Mar 2025 05:53:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740981157; cv=none; b=mJjQKTJ8IuLbiCbopsU1pZDWk9Y6FX1TJiQ+J6Gih+fxV/4/QKYXCU4Yo5r1FJeXNnXTOEbuN/AzVzk1swZTS5jWw9Lp5Ref4QZG5d8OSOWQy7s8Ft4cCTEt7toffYIz4hp0rXdOVsRkkKw5KShtQ9oyqMZga8gbMl/NYB54ruc=
+	t=1740981214; cv=none; b=Oz3K4KUT1CL3l5psSiAI5jab5mSPIMK3Zhl8ALQG+HwYcw6cUO8Jqc7SFM7clphXNPpJgBVtn43OkSmNlrX5KzrlzbCFdm2l9gCluTzEA1Ug3F08xTPMflQbF1C7SieOvBpf9kIKuPjKDAte/eBtn+yimpQPXjkWtkA2tKClLNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740981157; c=relaxed/simple;
-	bh=gLGOdr0gUHxApp4Lbm9o/HiERNBdmbBhaZlmMFU99LI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CTVS749bZvbHTm/Vjj+A3DiTxPwWumGhocgNFUIRQ8hiI39o9otKnVPAksz4Vceh1JIACUoPWiN8VbeZT04ecnZGqGOGGkPQ6V66l/v9mDz0S7FZzEXJzGJy1bSAY2VXBxKpVfvgsgbQWh6OVYczn5vW908qdHeA1qGuopahl3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ALaQEBom; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740981154;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ftdu/1Kbak1I91E2tCsRVJqvNKhfPSzve6d3GLs9Dlw=;
-	b=ALaQEBomjdUsIBJgmDN/eyxjBAa9DkNR+ymJzvss9VJ2gTDm+PvcLD/oHBuRpFpuXKpC4T
-	baKdagBl6bk5vHFKjzTjHqPaVzvUKCmi0cx2ubqM5VCYtyfctsdQ4UCXPd1TyjgE/VyuTI
-	9CbLvLrTmwcxKRUsmNvjBicYVmq4xD8=
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
- [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-479-9SD7VKIKMAKy_fNC2g8gIw-1; Mon, 03 Mar 2025 00:52:22 -0500
-X-MC-Unique: 9SD7VKIKMAKy_fNC2g8gIw-1
-X-Mimecast-MFC-AGG-ID: 9SD7VKIKMAKy_fNC2g8gIw_1740981140
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2fee4c7ef4dso4650398a91.0
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Mar 2025 21:52:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740981139; x=1741585939;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ftdu/1Kbak1I91E2tCsRVJqvNKhfPSzve6d3GLs9Dlw=;
-        b=VDzDUETdcDpBOQa5jIlxhsMN6agTTzM4k/DcrQX60TGRL0dA5ooYVzbqzegllD86yU
-         0nMcuwZC8BD6qgqDssmEmmo+WtD5YWPc4jmRNySOCPDXzqjTyOYFfwOhhpgoxAhyya1o
-         Nysmc6GRlj78sB/yRTm1mU5q/8dlgwyuwuEci3kw56lxndi7v8e5v11kW+kwBr5pyeBH
-         7rH665mEBecjjAq71nW/+3gPLPIZAqIikzWYUYUMwn1w4ufTcyaD9lnNKYKGRHCVIhk2
-         ffjj9J5dAFFXajtx0qXFpImWBHiTgPH9UvJi4OpVw9wUd618vopPwDiG2QVIQvwarJOE
-         Mzxg==
-X-Forwarded-Encrypted: i=1; AJvYcCV6XW+CYE0HTusOo9p0fdAMpkMPHagRbBF0FSSqNzAll0BVbnhAbcNThkmFTAbOsyk81BPt0F+aRuojPp4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxD5UPz56m2zinZwWQtEw93Eg3iTV5PhYXkjAarGwdOSm0JDuPT
-	jAcQ0SOKDTdxOW0fjaHbgVztExT9KDU0jldss+P9jBAiPYyKL2YYOjWee+lHu+y1t+HypnXm9+p
-	xiwn8GGQui/kNp1I9huqOfk8r5Tuj4A4OZoICisLGLtA30dBMHvBsjc1XkO321DaGkyICHRg14z
-	Hifn3KxJUXQ2Dr9wEE+1tG6rN3fP9K4hJejBmYfzM3RH5BwdQ9NcCn
-X-Gm-Gg: ASbGnct/xuukT7G3ljtzSJJyPn0Ix/JQv8rmN/igxysJHvuTcpYpPbAyVDf1uGgwLWl
-	Tx/dGghctU5yIxbhvcKdczfZyk4rcP3s2MvaiahpQjG9ZO0BmwEvCEL9WxoXsSAVKQtlLcv/ZLw
+	s=arc-20240116; t=1740981214; c=relaxed/simple;
+	bh=0254LXZVFBCKkMBzhrr97R5kQbhbf2qzFiB3WLwWtlw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=f9St1BYy1ZqWXAWlBytHtfS6d1K7+JgmvdfP7LPcYhqKBdfSJP51/6EF14lADmkC4rwkZJqvXKooleFSZlH28/jof3G3EDpRDEBSxyz1gJIV6GFtYtKfLrfaKMoM3ox/arccexeOafazk1ZAQyp31CIyfdswcDYgLCRuV9K6uyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=R6zz4mav; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5235UTqw022649;
+	Mon, 3 Mar 2025 05:53:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=b4YpM8
+	BMW3oUpztSHFHpQSgXKNx45WM8WG1c/FbfQEM=; b=R6zz4mav5sCqIylbjRceuZ
+	QYXT1i4BeXy8vlS/Tae4Bz1Jr6kD61wptlHUvbOlXvGMPU+ax6QeNIleKyFGC0Ec
+	5xqJQxhAsj1gISTBenln7zfJSOTxCTn4p4JEvDyuJ95s4JwbJq08bGcf6BHfdglJ
+	gNdaRd++dQAOQVfnKBNYun/n1G5G3BQI1AI8G13Sw9timVZ0uRr6TezIsBibR/qW
+	LtBI9Lh6fhXlS2VEATgE+axLYLWy9FGlSr6vmBvCV5kawpaWfQXsM5FxdDoQFHt9
+	dCDFCUIcNG/kgNMqwBXY1vMpdOhl/b09t5zLLRO66ADAFaGs3bpznR2fIk/npdDg
 	==
-X-Received: by 2002:a17:90b:554f:b0:2ea:712d:9a82 with SMTP id 98e67ed59e1d1-2febabf8577mr18654166a91.29.1740981139235;
-        Sun, 02 Mar 2025 21:52:19 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGhYuZxnpRojNpvlHkuk7NDb2qHnc13DCXse6EtUeiPs2yK5wok7qMMepunLQoYKyM78lF2mK6cW4eqe6uBJnU=
-X-Received: by 2002:a17:90b:554f:b0:2ea:712d:9a82 with SMTP id
- 98e67ed59e1d1-2febabf8577mr18654149a91.29.1740981138899; Sun, 02 Mar 2025
- 21:52:18 -0800 (PST)
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4556b2r3ea-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Mar 2025 05:53:30 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 5235rTFF008560;
+	Mon, 3 Mar 2025 05:53:29 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4556b2r3e5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Mar 2025 05:53:29 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5235cq2m025181;
+	Mon, 3 Mar 2025 05:53:29 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 454f91n82s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Mar 2025 05:53:28 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5235rPW854985092
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 3 Mar 2025 05:53:25 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 54C1220040;
+	Mon,  3 Mar 2025 05:53:25 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EB13020043;
+	Mon,  3 Mar 2025 05:53:24 +0000 (GMT)
+Received: from [9.171.20.173] (unknown [9.171.20.173])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  3 Mar 2025 05:53:24 +0000 (GMT)
+Message-ID: <815e95e9-5a2d-4ef7-96bf-321fb57f42e7@linux.ibm.com>
+Date: Mon, 3 Mar 2025 06:53:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250302143259.1221569-1-lulu@redhat.com> <20250302143259.1221569-9-lulu@redhat.com>
-In-Reply-To: <20250302143259.1221569-9-lulu@redhat.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Mon, 3 Mar 2025 13:52:06 +0800
-X-Gm-Features: AQ5f1JoMEQP4W-edssF3skwLm-BwfJKNJ3aGcD-m4x5KSoAF-9cVDu-CpqhKZBQ
-Message-ID: <CACGkMEv7WdOds0D+QtfMSW86TNMAbjcdKvO1x623sLANkE5jig@mail.gmail.com>
-Subject: Re: [PATCH v7 8/8] vhost: Add a KConfig knob to enable IOCTL VHOST_FORK_FROM_OWNER
-To: Cindy Lu <lulu@redhat.com>
-Cc: mst@redhat.com, michael.christie@oracle.com, sgarzare@redhat.com, 
-	linux-kernel@vger.kernel.org, virtualization@lists.linux-foundation.org, 
-	netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf/test: Skip leader sampling for s390
+To: Ian Rogers <irogers@google.com>, Namhyung Kim <namhyung@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, acme@kernel.org,
+        agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com,
+        hca@linux.ibm.com
+References: <20250228062241.303309-1-tmricht@linux.ibm.com>
+ <Z8JRC2oSs8i53t_s@google.com>
+ <CAP-5=fUqs=mxdgQX0Vx=D0weQSitXh6a8DcW2FycDEk6J-=RtA@mail.gmail.com>
+Content-Language: en-US
+From: Thomas Richter <tmricht@linux.ibm.com>
+Organization: IBM
+In-Reply-To: <CAP-5=fUqs=mxdgQX0Vx=D0weQSitXh6a8DcW2FycDEk6J-=RtA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: XPIdWbvf7PhcQG2DToFNozI6uQVvw4bo
+X-Proofpoint-GUID: 7KcxWvSpTmg-EZyZZlNKlVJtMZBWUOD5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-03_01,2025-03-03_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
+ adultscore=0 mlxlogscore=999 malwarescore=0 bulkscore=0 priorityscore=1501
+ clxscore=1015 impostorscore=0 phishscore=0 suspectscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2503030040
 
-On Sun, Mar 2, 2025 at 10:34=E2=80=AFPM Cindy Lu <lulu@redhat.com> wrote:
->
-> Introduce a new config knob `CONFIG_VHOST_ENABLE_FORK_OWNER_IOCTL`,
-> to control the availability of the `VHOST_FORK_FROM_OWNER` ioctl.
-> When CONFIG_VHOST_ENABLE_FORK_OWNER_IOCTL is set to n, the ioctl
-> is disabled, and any attempt to use it will result in failure.
->
-> Signed-off-by: Cindy Lu <lulu@redhat.com>
-> ---
->  drivers/vhost/Kconfig | 15 +++++++++++++++
->  drivers/vhost/vhost.c | 11 +++++++++++
->  2 files changed, 26 insertions(+)
->
-> diff --git a/drivers/vhost/Kconfig b/drivers/vhost/Kconfig
-> index b455d9ab6f3d..e5b9dcbf31b6 100644
-> --- a/drivers/vhost/Kconfig
-> +++ b/drivers/vhost/Kconfig
-> @@ -95,3 +95,18 @@ config VHOST_CROSS_ENDIAN_LEGACY
->           If unsure, say "N".
->
->  endif
-> +
-> +config VHOST_ENABLE_FORK_OWNER_IOCTL
-> +       bool "Enable IOCTL VHOST_FORK_FROM_OWNER"
-> +       default n
-> +       help
-> +         This option enables the IOCTL VHOST_FORK_FROM_OWNER, which allo=
-ws
-> +         userspace applications to modify the thread mode for vhost devi=
-ces.
-> +
-> +          By default, `CONFIG_VHOST_ENABLE_FORK_OWNER_IOCTL` is set to `=
-n`,
-> +          meaning the ioctl is disabled and any operation using this ioc=
-tl
-> +          will fail.
-> +          When the configuration is enabled (y), the ioctl becomes
-> +          available, allowing users to set the mode if needed.
-> +
-> +         If unsure, say "N".
-> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-> index fb0c7fb43f78..09e5e44dc516 100644
-> --- a/drivers/vhost/vhost.c
-> +++ b/drivers/vhost/vhost.c
-> @@ -2294,6 +2294,8 @@ long vhost_dev_ioctl(struct vhost_dev *d, unsigned =
-int ioctl, void __user *argp)
->                 r =3D vhost_dev_set_owner(d);
->                 goto done;
->         }
-> +
-> +#ifdef CONFIG_VHOST_ENABLE_FORK_OWNER_IOCTL
->         if (ioctl =3D=3D VHOST_FORK_FROM_OWNER) {
->                 u8 inherit_owner;
->                 /*inherit_owner can only be modified before owner is set*=
-/
-> @@ -2313,6 +2315,15 @@ long vhost_dev_ioctl(struct vhost_dev *d, unsigned=
- int ioctl, void __user *argp)
->                 r =3D 0;
->                 goto done;
->         }
-> +
-> +#else
-> +       if (ioctl =3D=3D VHOST_FORK_FROM_OWNER) {
-> +               /* When CONFIG_VHOST_ENABLE_FORK_OWNER_IOCTL is 'n', retu=
-rn error */
-> +               r =3D -ENOTTY;
-> +               goto done;
-> +       }
-> +#endif
-> +
->         /* You must be the owner to do anything else */
->         r =3D vhost_dev_check_owner(d);
->         if (r)
-> --
-> 2.45.0
+On 3/1/25 01:36, Ian Rogers wrote:
+> perf record --count=100000 -e '{cycles,cycles}:Su' -- perf test -w brstack
 
-Do we need to change the default value of the inhert_owner? For example:
+Ian, Namhyung,
 
-#ifdef CONFIG_VHOST_ENABLE_FORK_OWNER_IOCTL
-inherit_owner =3D false;
-#else
-inherit_onwer =3D true;
-#endif
+here is my output using this command:
+# ./perf record --count=100000 -e '{cycles,cycles}:Su' -- perf test -w brstack
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.106 MB perf.data (1080 samples) ]
+# ./perf script
+            perf   22194 484835.185113:     100000 cycles:       3ff9e407c8c _dl_map_object_from_fd+0xa3c (/usr/lib/ld64.so.1)
+            perf   22194 484835.185114:     100000 cycles:       3ff9e408940 _dl_map_object+0x110 (/usr/lib/ld64.so.1)
+            perf   22194 484835.185116:     400000 cycles:       3ff9e40890e _dl_map_object+0xde (/usr/lib/ld64.so.1)
+            perf   22194 484835.185117:     900000 cycles:       3ff9e40b572 _dl_name_match_p+0x42 (/usr/lib/ld64.so.1)
+            perf   22194 484835.185118:     500000 cycles:       3ff9e407c8c _dl_map_object_from_fd+0xa3c (/usr/lib/ld64.so.1)
+            perf   22194 484835.185119:     100000 cycles:       3ff9e40b53e _dl_name_match_p+0xe (/usr/lib/ld64.so.1)
+            perf   22194 484835.185120:     100000 cycles:       3ff9e40890e _dl_map_object+0xde (/usr/lib/ld64.so.1)
+            perf   22194 484835.185121:     100000 cycles:       3ff9e408904 _dl_map_object+0xd4 (/usr/lib/ld64.so.1)
+            perf   22194 484835.185122:     100000 cycles:       3ff9e40369a _dl_map_object_deps+0xbba (/usr/lib/ld64.so.1)
+            perf   22194 484835.185123:     100000 cycles:       3ff9e413460 _dl_check_map_versions+0x100 (/usr/lib/ld64.so.1)
+            perf   22194 484835.185124:     500000 cycles:       3ff9e40b53e _dl_name_match_p+0xe (/usr/lib/ld64.so.1)
+            perf   22194 484835.185125:     100000 cycles:       3ff9e40e7e0 _dl_relocate_object+0x550 (/usr/lib/ld64.so.1)
+            perf   22194 484835.185126:     200000 cycles:       3ff9e40e7e0 _dl_relocate_object+0x550 (/usr/lib/ld64.so.1)
+            perf   22194 484835.185127:     200000 cycles:       3ff9e409558 check_match+0x18 (/usr/lib/ld64.so.1)
+            perf   22194 484835.185128:     200000 cycles:       3ff9e409894 do_lookup_x+0x174 (/usr/lib/ld64.so.1)
+            perf   22194 484835.185129:     100000 cycles:       3ff9e409910 do_lookup_x+0x1f0 (/usr/lib/ld64.so.1)
+            perf   22194 484835.185130:     100000 cycles:       3ff9e409b1e do_lookup_x+0x3fe (/usr/lib/ld64.so.1)
+            perf   22194 484835.185131:     100000 cycles:       3ff9e409894 do_lookup_x+0x174 (/usr/lib/ld64.so.1)
+            perf   22194 484835.185132:     100000 cycles:       3ff9e409558 check_match+0x18 (/usr/lib/ld64.so.1)
+            perf   22194 484835.187445:     100000 cycles:       3ff9e409ad4 do_lookup_x+0x3b4 (/usr/lib/ld64.so.1)
 
-?
+The difference when using counts instead of frequency is similar. Most of time the numbers are identical, 
+but sometime they do not match.
 
-Other patches look good to me.
+Using task-clock as event, I have similar results. The counts vary a bit, but the numbers are pretty close.
+They vary by just a few hundred at the most:
 
-Thanks
+# perf record --count=100000 -e '{task-clock,task-clock}:Su' -- perf test -w brstack
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.016 MB perf.data (246 samples) ]
+]# ./perf script
+            perf   22223 485235.378380:     402070 task-clock:       3ffbed874c6 _dl_map_object_from_fd+0x276 (/usr/lib/ld64.so.1)
+            perf   22223 485235.378380:     404640 task-clock:       3ffbed874c6 _dl_map_object_from_fd+0x276 (/usr/lib/ld64.so.1)
+            perf   22223 485235.378779:     399960 task-clock:       3ffbed888de _dl_map_object+0xae (/usr/lib/ld64.so.1)
+            perf   22223 485235.378779:     397689 task-clock:       3ffbed888de _dl_map_object+0xae (/usr/lib/ld64.so.1)
+            perf   22223 485235.378879:     100055 task-clock:       3ffbed8e7e0 _dl_relocate_object+0x550 (/usr/lib/ld64.so.1)
+            perf   22223 485235.378879:     100100 task-clock:       3ffbed8e7e0 _dl_relocate_object+0x550 (/usr/lib/ld64.so.1)
+            perf   22223 485235.378979:      99981 task-clock:       3ffbed895ae check_match+0x6e (/usr/lib/ld64.so.1)
+            perf   22223 485235.378979:      99876 task-clock:       3ffbed895ae check_match+0x6e (/usr/lib/ld64.so.1)
+            perf   22223 485235.379079:      99950 task-clock:       3ffbed8974c do_lookup_x+0x2c (/usr/lib/ld64.so.1)
+            perf   22223 485235.379079:      99957 task-clock:       3ffbed8974c do_lookup_x+0x2c (/usr/lib/ld64.so.1)
+            perf   22223 485235.379179:     100051 task-clock:       3ffbed8e7f0 _dl_relocate_object+0x560 (/usr/lib/ld64.so.1)
+            perf   22223 485235.379179:     100004 task-clock:       3ffbed8e7f0 _dl_relocate_object+0x560 (/usr/lib/ld64.so.1)
+            perf   22223 485235.379279:      99933 task-clock:       3ffbed8e7ea _dl_relocate_object+0x55a (/usr/lib/ld64.so.1)
+            perf   22223 485235.379279:      99952 task-clock:       3ffbed8e7ea _dl_relocate_object+0x55a (/usr/lib/ld64.so.1)
 
->
+Thanks for your help
+-- 
+Thomas Richter, Dept 3303, IBM s390 Linux Development, Boeblingen, Germany
+--
+IBM Deutschland Research & Development GmbH
 
+Vorsitzender des Aufsichtsrats: Wolfgang Wendt
+
+Geschäftsführung: David Faller
+
+Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
 
