@@ -1,129 +1,153 @@
-Return-Path: <linux-kernel+bounces-542862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07F6AA4CEAC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:46:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07A77A4CEB0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:46:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3258D169E4F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:46:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26080169B24
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:46:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A1C223814F;
-	Mon,  3 Mar 2025 22:46:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99EC1238D28;
+	Mon,  3 Mar 2025 22:46:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KgbsxoNu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yj80RDLK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B507EC4;
-	Mon,  3 Mar 2025 22:46:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA6CEC4;
+	Mon,  3 Mar 2025 22:46:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741041992; cv=none; b=fOfMsgL2OBNuunWy2jYwjw6yzWWJiN0imCJATE3eD30i8RwVqdPXog7uzYYZw9gh7WzaGi9CRbnm8lVewZiMwRvyBsKPZGf8Q1TGClTmRGrxfLYd1ElR3f5ajKrfhZgAir77IGY6pIxzpIWnh/hHgdXFpFVjKOkwUUfzfOX26wQ=
+	t=1741042004; cv=none; b=Y6sf7TABLyH8DR8FX6v5xPfRIW+SUOr2Q+aWaORfah+t/8EUW3FXXPxJc0RKTIHHVl6j+/xJGVpNjxmcBx/hgExxpEQ2Kn1AGPVN17lDQNjgMZnSczp/D0XnMEhm08BVwcUOpuBE+WSdkfQ7Mkj2BMN2IYuvv5JYAgVNmYwZqz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741041992; c=relaxed/simple;
-	bh=1+001NeYazMZQw+vBYsBEOI1qWzgABI/0Tno7peEKf8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=G5wg2b6qsdiB6C5GYObHUfl7qiK5miN8qZM37WivugWi/llDETaC954HImz7W72BeDLhgg5uaVl9iVrJYkyQoQO4VYj2p/WmYAxSQvBcPD7mKKudy79sgC6g2Zojbhw3XJ9XW/rsLvwYnKuUVTtXHK492ji01Fa8McilXp8FYNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KgbsxoNu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A96CCC4CED6;
-	Mon,  3 Mar 2025 22:46:31 +0000 (UTC)
+	s=arc-20240116; t=1741042004; c=relaxed/simple;
+	bh=OW5D+p+/vduzBlWS3j6sL24B87Evh3Ge81TPLw8Nuls=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sC8is+Nvj0ilYcwLcez69wzx4SC61mdo3e7NIRSFsxaBXCg/w/iCjA8S8zpLHCVfIulZ1T6Bz2qVaXEQRfGRlF/zmPhh2bp+jgnp308CvmIQayTaBlxgC+Hou534FsLhwqlCsUr9Kwae+50ZKuumN6bAzi4B/EdVDetC725o/RI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yj80RDLK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A159C4CED6;
+	Mon,  3 Mar 2025 22:46:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741041991;
-	bh=1+001NeYazMZQw+vBYsBEOI1qWzgABI/0Tno7peEKf8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=KgbsxoNus15PD3JZK15+LLH+uySL8KLyTa0EmhRqt1HVvacCzep5IrgCurkYy4FoY
-	 1DNNdU1XqYk4pzIwqMloGneaoXbzNwqTXWF1OWoz2q/hdMzSzpb1GccWCulFEdZ7Ld
-	 01S97hksDMOfJdZeBqWGsIaj6LCewxViHr8a6rhSHin8/HRMxsFQo6vTOQOqAUwEm2
-	 3ezvJK+ZxabF0u6p3TFORj3aRfc9gMemASOoPbljokUwagztHCnWsNh3Ll58CVFjDj
-	 ZldKvx2L4Ie3fHoLwPgGyRrpwpKIO2IDfyTc2oVC9Y27EdQudVPmWMm8wEa11wlFt1
-	 jrv3MxJiiyIQA==
-Date: Mon, 3 Mar 2025 16:46:30 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Zhou Shengqing <zhoushengqing@ttyinfo.com>
-Cc: bhelgaas@google.com, lenb@kernel.org, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	rafael@kernel.org
-Subject: Re: Re: [PATCHv4] PCI/ACPI: _DSM PRESERVE_BOOT_CONFIG function rev
- id doesn't match with spec
-Message-ID: <20250303224630.GA204751@bhelgaas>
+	s=k20201202; t=1741042003;
+	bh=OW5D+p+/vduzBlWS3j6sL24B87Evh3Ge81TPLw8Nuls=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Yj80RDLKKAlItSxFxz/tavuWKeTcL4wFMO3pcUjc1eJkryWusxiwJbiCU8DR4JY/c
+	 AbSKlq1+rDe3faQnVCPpVqJ5vtGZtSIPNW0fBb9ox8oyObdR2yiK0OGj3AgRHFK5T3
+	 E9Vl3YXSFcwI2rW9UGncLRB1j4UcfKCYAqX98b4kVo3JFWJLS4ZOHg8wusCXTQ94mX
+	 GP3ovEiwZVGHToZMsqdGwQaVXsq4FRQe1DUyqhDx8m4A3gePVRkfawpb3fA8GN1u8g
+	 qs2gTchu9Jhu5g1STeTpsCUcljIA6zk6Q67dihWXBB3dOLJvrh1pvTNItIhkpHwDCA
+	 1RZR5SBjHTTkA==
+Received: by venus (Postfix, from userid 1000)
+	id 19FCF1806F5; Mon, 03 Mar 2025 23:46:41 +0100 (CET)
+Date: Mon, 3 Mar 2025 23:46:40 +0100
+From: Sebastian Reichel <sre@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+	Kamal Wadhwa <quic_kamalw@quicinc.com>, Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Johan Hovold <johan@kernel.org>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, 
+	linux-pwm@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] leds: rgb: leds-qcom-lpg: Fix pwm resolution max
+ for normal PWMs
+Message-ID: <h2ipg2qfr7sjpasxxxhmular6fileku3lhrzamvuk6ltzr4fvp@4na3kpmhcmsp>
+References: <20250303-leds-qcom-lpg-fix-max-pwm-on-hi-res-v3-0-62703c0ab76a@linaro.org>
+ <20250303-leds-qcom-lpg-fix-max-pwm-on-hi-res-v3-1-62703c0ab76a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="xqwo236sf227nizw"
 Content-Disposition: inline
-In-Reply-To: <20250301032822.17486-1-zhoushengqing@ttyinfo.com>
+In-Reply-To: <20250303-leds-qcom-lpg-fix-max-pwm-on-hi-res-v3-1-62703c0ab76a@linaro.org>
 
-On Sat, Mar 01, 2025 at 03:28:22AM +0000, Zhou Shengqing wrote:
-> On Thu, Feb 27, 2025 at 6:40 PM Bjorn Helgaas wrote:
-> > On Mon, Dec 16, 2024 at 05:27:51AM +0000, Zhou Shengqing wrote:
-> > > Per PCI Firmware Specification Revision 3.3 Table 4-7 _DSM Definitions
-> > > for PCI. Preserve PCI Boot Configuration Initial Revision ID changed to 2.
-> > > But the code remains unchanged, still 1.
-> > > 
-> > > v4:Initialize *obj to NULL.
-> > > v3:try revision id 1 first, then try revision id 2.
-> > > v2:add Fixes tag.
-> > 
-> > Thanks for working on this issue.
-> > 
-> >   - Thanks for the revision history.  For future posts, put it below
-> >     the "---" line so it's in the email but not part of the commit log.
-> > 
-> >   - I think there's a leak in pci_acpi_preserve_config() because it
-> >     doesn't free "obj" before it returns true.  If you agree, add a
-> >     preparatory patch to fix this.
-> > 
-> >   - Add a preparatory patch to return false early in
-> >     pci_acpi_preserve_config() if !ACPI_HANDLE(&host_bridge->dev) so
-> >     the body of the function is unindented, similar to what
-> >     acpi_pci_add_bus() does.
-> > 
-> >   - Add another preparatory patch that adds acpi_check_dsm() of the
-> >     desired function/rev ID for DSM_PCI_PRESERVE_BOOT_CONFIG,
-> >     DSM_PCI_POWER_ON_RESET_DELAY, DSM_PCI_DEVICE_READINESS_DURATIONS.
-> >     Move the "Evaluate PCI Boot Configuration" comment above the
-> >     acpi_check_dsm() since it applies to the whole function, not just
-> >     the rev 1 code in this patch.
-> > 
-> >   - Rework this patch so it only adds acpi_check_dsm() and
-> >     acpi_evaluate_dsm_typed() for rev 2.
-> 
-> Could you please explain this in more detail? Do you mean we don't need to
-> consider rev 1 anymore?
 
-No, I think we still need to handle platforms that implemented PCI
-Firmware spec r3.2 and used rev 1.
+--xqwo236sf227nizw
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 1/3] leds: rgb: leds-qcom-lpg: Fix pwm resolution max
+ for normal PWMs
+MIME-Version: 1.0
 
-Platforms that implemented spec r3.3 probably use rev 2, and we don't
-know whether they support rev 1.
+Hi,
 
-So I think the ultimate function would look something like this:
+On Mon, Mar 03, 2025 at 01:52:50PM +0200, Abel Vesa wrote:
+> Ideally, the requested duty cycle should never translate to a PWM
+> value higher than the selected resolution (PWM size), but currently the
+> best matched period is never reported back to the PWM consumer, so the
+> consumer will still be using the requested period which is higher than
+> the best matched one. This will result in PWM consumer requesting
+> duty cycle values higher than the allowed PWM value.
+>=20
+> In case of normal PWMs (non Hi-Res), the current implementation is
+> capping the PWM value at a 9-bit resolution, even when the 6-bit
+> resolution is selected.
+>=20
+> Fix the issue by capping the PWM value to the maximum value allowed by
+> the selected resolution.
+>=20
+> Fixes: 7a3350495d9a ("leds: rgb: leds-qcom-lpg: Add support for 6-bit PWM=
+ resolution")
+> Suggested-by: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> ---
 
-  bool pci_acpi_preserve_config(struct pci_host_bridge *host_bridge)
-  {
-      bool rc = false;
+Reviewed-by: Sebastian Reichel <sre@kernel.org>
 
-      if (!ACPI_HANDLE(&host_bridge->dev))
-	  return false;
+Greetings,
 
-      if (acpi_check_dsm(..., 1, BIT(DSM_PCI_PRESERVE_BOOT_CONFIG))) {
-	  obj = acpi_evaluate_dsm_typed(..., 1, DSM_PCI_PRESERVE_BOOT_CONFIG, ...);
-	  if (obj && obj->integer.value == 0)
-	      rc = true;
-	  ACPI_FREE(obj);
-      } else if (acpi_check_dsm(..., 2, BIT(DSM_PCI_PRESERVE_BOOT_CONFIG))) {
-	  obj = acpi_evaluate_dsm_typed(..., 2, DSM_PCI_PRESERVE_BOOT_CONFIG, ...);
-	  if (obj && obj->integer.value == 0)
-	      rc = true;
-	    ACPI_FREE(obj);
-      }
+-- Sebastian
 
-      return rc;
-  }
+>  drivers/leds/rgb/leds-qcom-lpg.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/leds/rgb/leds-qcom-lpg.c b/drivers/leds/rgb/leds-qco=
+m-lpg.c
+> index 4e5c56ded1f0412c9913670699e912b24f3408bd..4454fc6a38480b61916318dd1=
+70f3eddc32976d6 100644
+> --- a/drivers/leds/rgb/leds-qcom-lpg.c
+> +++ b/drivers/leds/rgb/leds-qcom-lpg.c
+> @@ -533,7 +533,7 @@ static void lpg_calc_duty(struct lpg_channel *chan, u=
+int64_t duty)
+>  		max =3D LPG_RESOLUTION_15BIT - 1;
+>  		clk_rate =3D lpg_clk_rates_hi_res[chan->clk_sel];
+>  	} else {
+> -		max =3D LPG_RESOLUTION_9BIT - 1;
+> +		max =3D BIT(lpg_pwm_resolution[chan->pwm_resolution_sel]) - 1;
+>  		clk_rate =3D lpg_clk_rates[chan->clk_sel];
+>  	}
+> =20
+>=20
+> --=20
+> 2.34.1
+>=20
+
+--xqwo236sf227nizw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmfGMUkACgkQ2O7X88g7
++ppe6A//bmFPDK8S9OKGe9vWPeq76fum0q/zWVog39gSifCJV0gdgXmMnv3nqnW7
+70TDNOaHiZHGLdH04txxuSfivSpM0/q8U8a/Ils3JldLs7JXzDPKAfXCqIbQhiik
+JsCMf9CcdezSj5jcRxBIEz9IXfJx3uy4KKJK2Iyz8AJWnyG2TKLTgYBIwxCExowN
+jmRmJES9R4qK3k8HFCMU1rU5zizb6vcOIYjhuzWI88xhD5Z2QCdGuoPGd8AmZFbT
+CAx08AY7yzC1OJUd4dJSwQxFMaHXgc5UyMzYJ+uLMKvwqAEfAMGYhVHBTb0XxCji
+P81sl6MRyHBApZlhtw48Wz1RwG2JnEfqQXGQydCLx1+i/Bkp9Bn5ofNwvi/wC87n
+qKJSdnDKClEVMEEz6+tk5NlhIoLnQyWelhLzYozw0vEAf639t7+pjf2kGypv0lWY
+HweBk5WyuEwydLuc/Jf0i1NBCLWMpHt84QgorYr+vai87gaovcRGsLHvhujQLnjw
+kG2+VM8M3xk67lb74ggKJhYEFr2iPHW5we3kyN6eiiz5SznSodhXK3iSinlNJz3+
+QQfnrucH86osNA/o/SJBDd/okQsaYJOzA6nuu3q1kJlSqYCd53US4j/Fe9lVrwDj
+tj4/hW94osfUfepUPa9jwL2Rl7gRV0Fln99sVZqXdGw3gS1haPw=
+=UN9N
+-----END PGP SIGNATURE-----
+
+--xqwo236sf227nizw--
 
