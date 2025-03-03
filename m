@@ -1,317 +1,206 @@
-Return-Path: <linux-kernel+bounces-542715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55AA8A4CCCC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 21:37:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8168BA4CCCE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 21:39:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A2607A243F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:36:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75D611893285
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:39:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78AA2235362;
-	Mon,  3 Mar 2025 20:37:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94C07235362;
+	Mon,  3 Mar 2025 20:39:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="cD54J7Xp";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="qqJ8VLmE"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A5geYHre"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74FEE2B9AA;
-	Mon,  3 Mar 2025 20:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741034238; cv=fail; b=JYh3KbKOVaqx7gq15KnfOmG2JKZMS1OKMB+uJESNUp6bBk90XxiwRbBEbQLOsDosAtNV46L5XeBe8wZiGY64v8vf1yehF+7m4INBCX9Ffzw8BB/gwe6kepIR56/P2NNaxRYaobUBzToFJF6mGyjAbVW1SYmfVAO34xbCurG7aQg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741034238; c=relaxed/simple;
-	bh=5wbge8DX6JQuEy4ee1aOpvX0fij4hcmQ2cOeqd7sKoI=;
-	h=Message-ID:Date:From:To:Cc:Subject:Content-Type:MIME-Version; b=HihNBH/OFst3Hc21Mcl9BX7rSPxiCbEKXvnIvONYg3dBsL40e0SwDv4d9IDUTqu6YACdlZg9rAtzdMYv2HBLcHvvhGvHGJVK/U8wiPGw95F+EL8rD39cUoMHxDmF1UukqYRWLC1MREyXh0SVK9iQyDKMDGgGCjPzRfIsqcHQPe0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=cD54J7Xp; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=qqJ8VLmE; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 523JfetC005279;
-	Mon, 3 Mar 2025 20:36:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=corp-2023-11-20; bh=PHaONpIPcENFQ/zi
-	NpGtW1XGJ6aHcMcI61xqUUUEURI=; b=cD54J7XpJCZYvRO9ez1IPUUFhUGAodOj
-	C8EF2A0jXzRVh6ZuMvyvLbCZJwQQheL0b87u4WFVJQmA9GA3bVW9whbNFBu+Tvo8
-	0rCNYS0SARMcClXuTtT80Nnh2zJd73f1/03KIENMWLKeD6Q8Mb9SjK1De08LrZxd
-	QvQtuReF6M7Ssn/RaVH/Mmuc93WCQu+hei5Yz0NNCFmnDNxsjwmSlU2kNrYddzkd
-	Zga+g7obCnMnEMISEnpdU0x3lAT2eAIIxukxd66QC7t8hh3a0Fl2fB8vCeRMMWIM
-	Q5NzrMRA22eZuBza1bExUxahBHxq6u+YUCwf6I24msI1LSDqe7Ipzw==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 453u8hbk9w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 03 Mar 2025 20:36:52 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 523K1BfL040417;
-	Mon, 3 Mar 2025 20:36:52 GMT
-Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2177.outbound.protection.outlook.com [104.47.56.177])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 453rpe9mye-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 03 Mar 2025 20:36:52 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iQrKFWPfSBTkgKSqh3FYmukKqr/y14AcW2OfHLSitc3pZVOjRGl6+1tFTMCrlFZOwpycfYbtuRTCyvr4kcMFZdNvg7gjh0RnSJ2eQHx8DBTzndLdk4YvvF31NsXukr45IIQelnAU12XPijQAxRJGFMKgfCTsXrWsnDHZ4b2y6vjLmdJ7M4IlZ1k1nkKsTQe9Tb25qqXY/7aei63iWciRTZKkNvnrTuz7rnQ4NHGnCxCPHWIy5Fd4DXCkme8lenNc8nExuf1XkSgelVqJT3s1edQqfRw3H3ppiI/1ykwauINu9kZdsoowT70/I07KRQIR5xtITkXuyRYTwUX3K8J8Ew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PHaONpIPcENFQ/ziNpGtW1XGJ6aHcMcI61xqUUUEURI=;
- b=t/M806XLcSgdh7pbRjUMtcMlqPR9OnYUJSiX/CwNjd/qY7/3c0bIjnmdWb9U11pDS96jAH4wZO7wpbVS9gBvi/eRR7sQMdh/0RLY6wSJ91suMvHm+KEYYUkQnKgJwcUNsf60HUnNntmX72f5AolzF3RgNYwxiP2mH34wOojHPMquzpobGrZLhCShLfBVMbSv0RMqmmDOPZWliIRDG7SlalmOcMO0BqX4E4vTvvSP+cFAY6NwbnKrITOORUDk+bvC4ODiTiW1vRiaMhV5JYJJirPE44U80sZ2rvc+40WHqxIczLjrVtugNglDwCFtYw8AV0h0X78zMUlXGCNO2Ive8g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PHaONpIPcENFQ/ziNpGtW1XGJ6aHcMcI61xqUUUEURI=;
- b=qqJ8VLmEpwzydev/st7ju6uKH1FhvuCkNaF1d3C7iPOS40IqX5LbCaEo049H1vvTa4trIPfiNp9XH9sltLG3PI9HkSn9oFoHPvf2I7NMMRCbbiGycpav7NS/mxtehv60JSLCm3FR/B48K3c/XxAMw6+Elj4jMdLqhNtPEz40Evo=
-Received: from CY8PR10MB6707.namprd10.prod.outlook.com (2603:10b6:930:93::22)
- by DM4PR10MB6277.namprd10.prod.outlook.com (2603:10b6:8:b6::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.25; Mon, 3 Mar
- 2025 20:36:48 +0000
-Received: from CY8PR10MB6707.namprd10.prod.outlook.com
- ([fe80::ccf3:1df:e15d:7465]) by CY8PR10MB6707.namprd10.prod.outlook.com
- ([fe80::ccf3:1df:e15d:7465%6]) with mapi id 15.20.8489.025; Mon, 3 Mar 2025
- 20:36:48 +0000
-Message-ID: <c0b1189c-6d8e-4c5c-82c6-5c1d9a2bca92@oracle.com>
-Date: Mon, 3 Mar 2025 12:36:43 -0800
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-From: samasth.norway.ananda@oracle.com
-To: yukuai3@huawei.com, czhong@redhat.com, yukuai1@huaweicloud.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, axboe@kernel.dk,
-        xni@redhat.com, harshit.m.mogalapalli@oracle.com,
-        himanshu.madhani@oracle.com, samasth.norway.ananda@oracle.com
-Subject: pgbench buffer readwrite mode showing around 24% perf regression
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BN9PR03CA0232.namprd03.prod.outlook.com
- (2603:10b6:408:f8::27) To CY8PR10MB6707.namprd10.prod.outlook.com
- (2603:10b6:930:93::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4FA81F3B97
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 20:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741034344; cv=none; b=eWkY+XTcBjjIq1okNwaj6FTkC4PQ3gcDJ8qlDu2GxvORJW7YlC0w6VgdV8lGnQ1Jg+dyUGsO1wb9SM80BdhEGWe9i2d3ZBNVNBbxjl6kfZ7ZTYgS45LxmMWberWPnndLwIIf3NgIb9IeSY87r4AHPbDe5R5WGYcJK4QX5F0LI90=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741034344; c=relaxed/simple;
+	bh=FKAENEmdxRxO0niyYat4E6UU2NzH/B8FWEUJNxcOZXk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mHbyM4YiZV+rMmoATh3qccijO0FdkFd5qz/9xSdHYoF69/ABfQDrd3WoNHZjc7c2GKk8ntgFK/KCsxU62cxbphxcb0y+quSXEk946IkNhVZbtdQOIlduzOm/Cgb3M6zMH6qbmPqxbB+IsNtbiyRB40hUlUdKvYJd2aWaJIkJgK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A5geYHre; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83CE8C4CED6;
+	Mon,  3 Mar 2025 20:39:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741034343;
+	bh=FKAENEmdxRxO0niyYat4E6UU2NzH/B8FWEUJNxcOZXk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=A5geYHremFVRHjmjiqtTuFyBmo5uHhb2y2SVrAcPjJfno6mPsvjtcHv+5gt94fK6o
+	 q0oTl18wifT2E+j8cQ9f3Dgrgi0OSrsH4cLzOSqRwfkKq0Vkc/xNuhDutCX8wimNlf
+	 MLD660xKZRX62DS0JohYmuVqR1XOfuPKc7N7Yi18BN+RpP9MYzThWhc5bpGgK3Jd05
+	 iutjxVoZmZYh1qNVK5120feERnMi0bjLyAjUIvwKJPZSVChO82cdZqn8TexcdUeipI
+	 cqfonDSYID9sinn2uMIca3iR43c7ZVcvXfG175n5tgPX8AAlqQ2PywhIGv41mFU0cv
+	 +N5ICzmh52G+w==
+Date: Mon, 3 Mar 2025 21:38:57 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Brian Gerst <brgerst@gmail.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>, Ard Biesheuvel <ardb@kernel.org>,
+	Uros Bizjak <ubizjak@gmail.com>,
+	Linus Torvalds <torvalds@linuxfoundation.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v3 00/11] Add a percpu subsection for cache hot data
+Message-ID: <Z8YTYWs-DeDHal1Q@gmail.com>
+References: <20250303165246.2175811-1-brgerst@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY8PR10MB6707:EE_|DM4PR10MB6277:EE_
-X-MS-Office365-Filtering-Correlation-Id: 96b64d05-87ec-495e-e1c0-08dd5a931ebd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RElHRGUweGNtVk1FRmh1dm1PZ3NvSFZ1Z2NpQlpxZGtsNVNXSTBlM01LZ09F?=
- =?utf-8?B?cTBERUFGY1kzZDFGYzdRZGFiVWRERit2N0tXNGFVZmpDVTZYaVkwRitodlpP?=
- =?utf-8?B?ZkU5OHZIYnlET09mdlhma1ZHM2dyTERmdmxJM1A2SGdnMmNQd00rTFdqblVh?=
- =?utf-8?B?aEFhdmhHTFBaMmRYOHpXR2R5Sk5OenBkMUhIM2YyUnVldkprZlh2Q1J0ZkJG?=
- =?utf-8?B?UzEyUTYxSUFnNzJ6UTNaODVEUm5lSS9MTVBMSEF2NFZTLzBveXB6K2k4dFNZ?=
- =?utf-8?B?OGFJQjE3QWNSL1YyNm5BVFFIbTN6UlA1RFRpWFhIMTZyRUhOSE4xUnBUUGZJ?=
- =?utf-8?B?a0tHTGE5LytJb2hONEpkbEdnR0p4Y3BHdTlMLzlsOTlVdENrM2Q3ZWdoeDJ5?=
- =?utf-8?B?Q0tFNFNKUUVmMmRYcGIzdjgvTWNIZXIydjlGaDJZaFFTdm9wUG5EY2JlTnRr?=
- =?utf-8?B?QWlGaDlwYzlXeWxoMVJtRFliSGV3RnFqb2NSTEhuTG81TGpCak9jdkI3ZEsr?=
- =?utf-8?B?aXdZSzV5dVc4QjJqNXZNQzR0MVRYa1pGQnlpejJhUnVKNVRYSExQaFNHM3Q2?=
- =?utf-8?B?N0xkdEhOMkllb3JPb2xtVTZtVWI3NjBCb0VreCs2S2REUUJzSXRnLzBlV3l6?=
- =?utf-8?B?bHN6VFJ3QWpnSlZJQk5YMmRQOTNici9aODZwUGY5ZHczajJMdEdwYStRV09o?=
- =?utf-8?B?RUNpb1J1am01N1IyRytGOG1PRlJRS0JOTWpXcHp0dTBxYVZnQ3U2UDdBTnl6?=
- =?utf-8?B?dkR6cmpyd3hic21GT20yM3RPSDExNFp4cTJaWXBXYWdDcW9XWG9jcXo5ejNw?=
- =?utf-8?B?N0NwUzE1SHFmWElvZEVWNFdpTmd1NG5kS0hDR0p2UTNiZEVsRU5tOGFnNHo3?=
- =?utf-8?B?K2xWb0FFN3B5WXo2TFhiWU5YeXpCQTNHbEVwdTZZNFBYQUpKWEZvTlBXWFQ1?=
- =?utf-8?B?MzBlSzZWdzJDSTBIcEZ4Vi9ESWRjbXhCSmVOWHQ0SjZicGg4RkZOZlZHb1RS?=
- =?utf-8?B?cG4wMTU2VmxYUWZ3dTZlbE9XUGtibG5hUEprcGxya1phTXdmK1ljcnZrS3FY?=
- =?utf-8?B?c2kwV2gxdml3SkEwZjdaTExxdU8wUncrZGFUSmZVNXJ6bTRCK0lnSjR2VGZ6?=
- =?utf-8?B?bHJreFEycEFqSmFTRWQ4YnlIT0FvNmVVSzhSdkdJalpIemx0L1dnZk5wYlQz?=
- =?utf-8?B?dXo0ZDhvUG5xZldSNDJUTE1FS0FLT2pacG83U1N3bGlHb1I5N1REak1wQVJw?=
- =?utf-8?B?NHh2dzMrOElndHh0YWlzWXRkSVZ6VXdwRUFpNzNmWW5yaDBjdGtDUmNodzIz?=
- =?utf-8?B?R1BNMng3ZHVyTEo1M2JQQmYrUkhmdDFkeWhFbXFsb0ZqNHE1RVZrbU1VS1pG?=
- =?utf-8?B?cmVUb0QyWW8vMFdDZy9MRUJSRnl2QWtmWmhjd3lFTThvU1IwUUtuNGcyWFdh?=
- =?utf-8?B?Q1I1aHBJaGhxWFpydEVnaVFDalE0QndSWlhlSDZQNlAvMlpESi9YZkpHdjVK?=
- =?utf-8?B?UENnQUw2TWxGcTA5dzlRbzhnYXlyZFg2UVNDaVlIOEN6UkNETmJmRGRjMVcv?=
- =?utf-8?B?aVh2UThvdUovOVJEOTBUVnZmcHJBUkVCVDFndlkzcHRwRWN0b25zeGorWUxY?=
- =?utf-8?B?dE9xd2ViRjFLOEs5NjdMdXV1VnlaSzdJMkJDWncwNmF1N2pTTHpFRkZqMjll?=
- =?utf-8?B?RzR5UER4RFlMQWowcXdiKzlRYWVqejEwNEk2Y2JFNkFxc2liSHExRlAxWGJT?=
- =?utf-8?B?dVBmNnFXWVhMNWZBalFNYStHK2kwQVZoVDNTZHJIL2ZEbGh1VTBka1NUcyts?=
- =?utf-8?B?UEhRK1JYa29LQWZKeXdkSlhicjltcTh2WldYMzNwc05xTUFFMnpRaDc4OUs2?=
- =?utf-8?Q?iYEFRWzo6ZCRW?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR10MB6707.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RWI2U0Vid25Ec1BqcjZwcGNVS0lQVXVVaHZSazRlZnA0UnVBbFdxZTNwM2xW?=
- =?utf-8?B?NkxzVDdPKytoOHBiRXZYL0ZkWFBvSmRGN0xwOFQrbnc0bUx4bTlVeHloYnZW?=
- =?utf-8?B?WldaYWZiMVFheG5TMlc1WWpRWEtpeHUzVlRrOGp5MDU2OHVpMmRGNjdQanha?=
- =?utf-8?B?RWlqaExZVExkcUdZTWZQd29JVmlEK042NUs2S29YWmJnNVBQc2g5M09GVHpz?=
- =?utf-8?B?RHdzS3Q2T0kxbEtqMVhBeGQvTjFIVlV1bEZTK3dncXZpVkRRWllCUnJML1o3?=
- =?utf-8?B?RlduTW1jOHFsN1pWVmZ6NWpzcTlDNVVFZUpTeC9wNE40UzVxTTlpdElnbXM2?=
- =?utf-8?B?QndFQlYrdDd1VG4wWEJFbExUOXp3Z1VtbitYeDlXejkyNHRVU01SUzV2cDBp?=
- =?utf-8?B?eU1RSjNxSFhjOVJqVElVRzh3bEpYNDFjMlpkMXE0c0xnYi9vSmRMcHFXbGg2?=
- =?utf-8?B?VzFZOG9GZHl1MTh3ZWNyMW9ndkdaTFZuRFUvSVlUcTJ6Q2ZEYmxMZkQyaEVn?=
- =?utf-8?B?OFBDQjNZOTR3TVY5YzliTmZLY1EzWVVyOEowamNUUGRJRmlxNmNuYXFpZ3JG?=
- =?utf-8?B?NEQ2ZGxIbHc0RkdmcDVMdlJiUVBXM0tZNk1zTmVqb0FHSkxlSVFCWS91QjJ2?=
- =?utf-8?B?M2JndnVPc0hyb3JndnFvazZ0dmpsZkgraysyRDZUU3JwWnM0MFhkcjlEZVlE?=
- =?utf-8?B?bHltV2JvSVdsMVpicE9RWjZ5bkdGcVAvSU9JeFZ6T2RuUEZSVlNZREFWVmVu?=
- =?utf-8?B?QTlzSlFONXhKNjIvUkpWd0pvTUdNZi9Rd1ExM3NWYXpzVzlPWGc3UG5JcFZk?=
- =?utf-8?B?cE1EWnlyVVdGbU83MHVXN1FuTC9ZRnk2TUcydndDRkRmNlpCUmkrMGFpVnVU?=
- =?utf-8?B?UjZNZEpiZE5vaTJHdE9vbGZOZDlDZUFmOG4xK1g4aXVzc2w1Z2s2QXJEUkh6?=
- =?utf-8?B?Q1U5cjF6OGNmeXpjQ3VsWnA3Smx0cEZpK1hZcUlNcUNEYTBqUHZjSW5vSkZZ?=
- =?utf-8?B?d1hGUlBpZ04zenp4Ykl3bUkwK0tBRVk3M1gwaE1iaE1vbERjdXNJNnovK0Er?=
- =?utf-8?B?WWE3cG5CMllweks5Um5lZFM2cThjdnhhRWxNZzZOZzNqaEp4czg2K0k2V1hl?=
- =?utf-8?B?Rm9yNkVHQm5UWFRqVVFHNWhCU1ViZUIyQzZSdlh2SWRTL0s2NmsxSXJ1VkFu?=
- =?utf-8?B?aTRFV1IzZVFrQ0tMaEJvLzhJUUVpbW1ZRG5vTWNxYWwxS0dwdHlXLzNGMDhy?=
- =?utf-8?B?UFZOSUpDVGlLK0tFaGo3dVJrd1FuNzlrNXI5SU5aOXh4ZFJVZnhnZm9nOHZm?=
- =?utf-8?B?K0FHSXNqamFBZVN4OVltc1owbm1VdFIra2RzNnR2c05kd0ptZHVnaVlBMTNu?=
- =?utf-8?B?Z2w5NGJWcEFlamxXZ1FrMUFQRWRxNHBIUFU5MDhxczI0UW5BOUVQZnkxYXZQ?=
- =?utf-8?B?ZTIycThPQzIyU0lRaFNldEMvRFRVVTlwbEVFS0hENG8rVEN2SThheEpnbjZv?=
- =?utf-8?B?WmN5aXFuYUhRaE9PVUp6SWc3QTNPTEYvQjFtREU5V3lYVTI4MTdCaUhCeHRV?=
- =?utf-8?B?cmJ5bjdta0NpTlJZYm55akdUMyswb2ovZ0lmT1dxaW5qdVZDSXc2bUNjSXBK?=
- =?utf-8?B?ZnBxMndJQTkvSkhod2xzRWV1N29EbXJ1dm9SQ2ZLWTVUVTg2OURVaUFJbTJD?=
- =?utf-8?B?MGoyYXlVbnBBQ2Zyb096ZjhKckE5ZG1Mb1hmcTM5dmkvQnVPUzZRcXVwZlVp?=
- =?utf-8?B?V3BhUXkzc3dFM2xnSGFLdzU0Q1JaUnhwdEpjTzJBellMR1J0Uk9ieHhaaUU1?=
- =?utf-8?B?S296cml2R0Q2azFvZmZjNTVrSHBpZWdEdExmb2MrWFUxRm9vODFCSzRiM2Rz?=
- =?utf-8?B?NEIvbUJxZGd4WG1pZGhrRURadXVCN2dFV2JzaW45MFNGVzMzdEJxTDJJZFlD?=
- =?utf-8?B?ZEN0c0Q4NXJ4S3l2Mk9QdHYxdWc4T1AyOERmUGZxRzErYVBsSkF2WWN0OVBq?=
- =?utf-8?B?T2s1UFZ3amMxMytSMllBMTZPd3Yva3Z1V0lXaG5mT0s4M21CbVlCQU1SN3RO?=
- =?utf-8?B?VFlnNmhxU1RFaTFxazgrU3JuL1pyZVhaNEpJS1c1Rk1sUVZLaURsemRrUVdK?=
- =?utf-8?B?L2U5emZoSmtBQW5HQ0ROQ0lON245QUdHVkk1ZE02NEIxemVhY1pGdkVZY2x0?=
- =?utf-8?Q?L29pl0UfAJsJh/VFK67JY0Q=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	jhov14uvo24mCwyBDWW1CJO2mbSwntJ0eooUShUD/g2rpfGai5/7GXKHp5ofRrA1chTEN3GgygAyPzUYeCqypMwTHQlCCzsIiAqR9qG/lO9xMGpGy10DWrH806N+CHJ8iinch4+G2e1wDT1PKsSMYje/54sa13q5evfyWmiyuxVGwJcbL3hbYNOOxwbYjuizq/klVyLfvy0jJ0o/CCNKC5xI+xo37EIvcHGc3Emw0OPk9eD4iW0KN3NId5iayhHPpJXiePVgHwDd83rVLu3efsTdZ/7Si8X3sVnTxMwq22AA3yv3LT1jQH8oY8KTG1S9pKV+y9WwVgEH1LjynjszBn8ctWIaEpIheN5GVpg24YE2QpoT5u6vYpGj7uipVOKHKxgiP8eHhagi4N+8FPomrnOsC9tvIu9rKo2k2nODozJC4/OeuyM7GcnCojUREYAIqhmOSHzeTgGAP/O8KvPJ4HfvRYBxoMzeckZas95THN+d/YzX7ySx3Z4jpBSclRam97DrgPDwm7S3JQ461dxwDOQJ8gvDQ1Zv9w7BzqqW9m2+1ge8ey5Baxpqed/28TSrhuKXghIPtqTovBkrSnyse5RGRrpA0Be82W6nwAskjeQ=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 96b64d05-87ec-495e-e1c0-08dd5a931ebd
-X-MS-Exchange-CrossTenant-AuthSource: CY8PR10MB6707.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2025 20:36:48.1372
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9/l7zIZVBgRUjJyZp/qgKj6MSTK/0dKWImBaWG04Tjfci9KH8fi+jb6xq9HVEHDnhfZESTCL6WvZbb7iWT1X9F++cRErN4dAzIwVQumfXho5xnN9Ty436NSjSnpJNr+l
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR10MB6277
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-03_10,2025-03-03_04,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 adultscore=0
- bulkscore=0 malwarescore=0 mlxlogscore=999 mlxscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502100000
- definitions=main-2503030158
-X-Proofpoint-GUID: ZyfoHzmtgFLDS4Y7joj6CJk2v71-fECO
-X-Proofpoint-ORIG-GUID: ZyfoHzmtgFLDS4Y7joj6CJk2v71-fECO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250303165246.2175811-1-brgerst@gmail.com>
 
 
-Hi,
+* Brian Gerst <brgerst@gmail.com> wrote:
 
+> Add a new percpu subsection for data that is frequently accessed and
+> exclusive to each processor.  This replaces the pcpu_hot struct on x86,
+> and is available to all architectures and the core kernel.
+> 
+> ffffffff834f5000 D __per_cpu_hot_start
+> ffffffff834f5000 D hardirq_stack_ptr
+> ffffffff834f5008 D __ref_stack_chk_guard
+> ffffffff834f5008 D __stack_chk_guard
+> ffffffff834f5010 D const_cpu_current_top_of_stack
+> ffffffff834f5010 D cpu_current_top_of_stack
+> ffffffff834f5018 D const_current_task
+> ffffffff834f5018 D current_task
+> ffffffff834f5020 D __x86_call_depth
+> ffffffff834f5028 D this_cpu_off
+> ffffffff834f5030 D __preempt_count
+> ffffffff834f5034 D cpu_number
+> ffffffff834f5038 D __softirq_pending
+> ffffffff834f503a D hardirq_stack_inuse
+> ffffffff834f503b D __per_cpu_hot_pad
+> ffffffff834f5040 D __per_cpu_hot_end
+> 
+> This applies to the tip/x86/asm branch.
+> 
+> Changes in v3:
+> - Fix typo of CACHE_HOT_DATA()
+> - Move hardirq_stack_inuse to irq_64.c
+> - Add __per_cpu_hot_pad to show the end of the actual data
+> 
+> Brian Gerst (11):
+>   percpu: Introduce percpu hot section
+>   x86/percpu: Move pcpu_hot to percpu hot section
+>   x86/preempt: Move preempt count to percpu hot section
+>   x86/smp: Move cpu number to percpu hot section
+>   x86/retbleed: Move call depth to percpu hot section
+>   x86/softirq: Move softirq_pending to percpu hot section
+>   x86/irq: Move irq stacks to percpu hot section
+>   x86/percpu: Move top_of_stack to percpu hot section
+>   x86/percpu: Move current_task to percpu hot section
+>   x86/stackprotector: Move __stack_chk_guard to percpu hot section
+>   x86/smp: Move this_cpu_off to percpu hot section
 
-We recently discovered a performance regression while running pgbench 
-buffer readwrite metric over the 6.12 kernel.
-After bisecting we were able to narrow it down to the commit
-9a42891c35d50a8472b42c61256867b4dfcc1941 (“block: fix lost bio for plug 
-enabled bio based device”)
+>  31 files changed, 146 insertions(+), 111 deletions(-)
 
-The postgresql db used for this benchmark is stored on an xfs filesystem 
-on top of a stripe across 6 disks.
-lsblk output -
+Yeah, so the result is that on x86-64 allmodconfig we now get:
 
-NAME         MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
-sda            8:0    0 557.9G  0 disk
-└─sda1         8:1    0 557.9G  0 part
-   └─tank-lvm 252:0    0   3.3T  0 lvm  /data
-sdb            8:16   0 557.9G  0 disk
-└─sdb1         8:17   0 557.9G  0 part
-   └─tank-lvm 252:0    0   3.3T  0 lvm  /data
-sdc            8:32   0 557.9G  0 disk
-└─sdc1         8:33   0 557.9G  0 part
-   └─tank-lvm 252:0    0   3.3T  0 lvm  /data
-sdd            8:48   0 557.9G  0 disk
-sde            8:64   0 557.9G  0 disk
-└─sde1         8:65   0 557.9G  0 part
-   └─tank-lvm 252:0    0   3.3T  0 lvm  /data
-sdf            8:80   0 557.9G  0 disk
-└─sdf1         8:81   0 557.9G  0 part
-   └─tank-lvm 252:0    0   3.3T  0 lvm  /data
-sdg            8:96   0 557.9G  0 disk
-└─sdg1         8:97   0 557.9G  0 part
-   └─tank-lvm 252:0    0   3.3T  0 lvm  /data
-sdh            8:112  0 557.9G  0 disk
-├─sdh1         8:113  0     1M  0 part
-├─sdh2         8:114  0   9.8G  0 part /boot
-├─sdh3         8:115  0    32G  0 part /
-├─sdh4         8:116  0     1K  0 part
-├─sdh5         8:117  0    16G  0 part [SWAP]
-└─sdh6         8:118  0 500.1G  0 part /export/bench
-0       /var/crash
+  ld: percpu cache hot section too large
 
+See the relevant .tmp_vmlinux1.map below.
 
-The regression was only observed on some architectures.
-I ran perf on the pqbench operation and found the following report.
+Which is due to:
 
-Base kernel based on 6.12 -
+   CONFIG_X86_INTERNODE_CACHE_SHIFT=12
 
-# Overhead  Command          Shared Object             Symbol 
+Increasing 'cache alignment' to 4096 bytes:
 
-# ........  ...............  ........................ 
-.........................................
-#
-      8.34%  pgbench          [kernel.kallsyms]         [k] 
-update_sg_lb_stats.isra.0
-      3.34%  pgbench          [kernel.kallsyms]         [k] 
-entry_SYSRETQ_unsafe_stack
-      2.57%  pgbench          [kernel.kallsyms]         [k] 
-sched_balance_find_src_rq
-      2.44%  pgbench          [kernel.kallsyms]         [k] 
-_find_next_and_bit
-      2.08%  pgbench          [kernel.kallsyms]         [k] idle_cpu
-      1.99%  pgbench          [kernel.kallsyms]         [k] 
-__raw_spin_lock_irqsave
-      1.56%  pgbench          [kernel.kallsyms]         [k] _raw_spin_lock
-      1.31%  pgbench          [kernel.kallsyms]         [k] 
-native_queued_spin_lock_slowpath
-      1.31%  pgbench          libpq.so.private16-5.16   [.] 
-printfPQExpBuffer
-      1.13%  pgbench          [kernel.kallsyms]         [k] 
-cpu_util.constprop.0
-      1.11%  pgbench          [kernel.kallsyms]         [k] 
-syscall_return_via_sysret
-      1.10%  pgbench          [kernel.kallsyms]         [k] 
-rep_movs_alternative
-      1.08%  pgbench          [kernel.kallsyms]         [k] unix_poll
-      ----------------------cut here----------------------------
+        PERCPU_SECTION(INTERNODE_CACHE_BYTES)
 
-Base kernel based on 6.12 – with reverting the bisected commit -
+... because of the vSMP muck:
 
-  Overhead  Command          Shared Object            Symbol 
+  config X86_INTERNODE_CACHE_SHIFT
+        int
+        default "12" if X86_VSMP
+        default X86_L1_CACHE_SHIFT
 
-# ........  ...............  ....................... 
-.........................................
-#
-      9.19%  pgbench          [kernel.kallsyms]        [k] 
-update_sg_lb_stats.isra.0
-      3.44%  pgbench          [kernel.kallsyms]        [k] 
-entry_SYSRETQ_unsafe_stack
-      3.39%  pgbench          [kernel.kallsyms]        [k] 
-_find_next_and_bit
-      1.85%  pgbench          [kernel.kallsyms]        [k] 
-__raw_spin_lock_irqsave
-      1.83%  pgbench          [kernel.kallsyms]        [k] idle_cpu
-      1.79%  pgbench          [kernel.kallsyms]        [k] 
-sched_balance_find_src_rq
-      1.61%  pgbench          [kernel.kallsyms]        [k] _raw_spin_lock
-      1.21%  pgbench          [kernel.kallsyms]        [k] entry_SYSCALL_64
-      1.16%  pgbench          [kernel.kallsyms]        [k] unix_poll
-      1.16%  pgbench          [kernel.kallsyms]        [k] 
-syscall_return_via_sysret
-      1.12%  pgbench          [kernel.kallsyms]        [k] 
-cpu_util.constprop.0
-      1.09%  pgbench          [kernel.kallsyms]        [k] 
-native_queued_spin_lock_slowpath
-      ----------------------cut here----------------------------
+The workaround would be to use L1_CACHE_BYTES in, but I really dislike 
+what vSMP is doing here.
 
-Please let me know if you need more information.
+Anyway, I applied the short-term fix to patch 02/11, but I'm not sure 
+it's the right fix.
 
 Thanks,
-Samasth.
+
+	Ingo
+
+=====================>
+                0xffffffff8664f000                . = ALIGN (0x1000)
+                0xffffffff8664f000                __per_cpu_hot_start = .
+ *(SORT_BY_ALIGNMENT(.data..percpu..hot.*))
+ .data..percpu..hot..hardirq_stack_ptr
+                0xffffffff8664f000        0x8 vmlinux.o
+                0xffffffff8664f000                hardirq_stack_ptr
+ .data..percpu..hot..__stack_chk_guard
+                0xffffffff8664f008        0x8 vmlinux.o
+                0xffffffff8664f008                __stack_chk_guard
+ .data..percpu..hot..cpu_current_top_of_stack
+                0xffffffff8664f010        0x8 vmlinux.o
+                0xffffffff8664f010                cpu_current_top_of_stack
+ .data..percpu..hot..current_task
+                0xffffffff8664f018        0x8 vmlinux.o
+                0xffffffff8664f018                current_task
+ .data..percpu..hot..__x86_call_depth
+                0xffffffff8664f020        0x8 vmlinux.o
+                0xffffffff8664f020                __x86_call_depth
+ .data..percpu..hot..this_cpu_off
+                0xffffffff8664f028        0x8 vmlinux.o
+                0xffffffff8664f028                this_cpu_off
+ .data..percpu..hot..__preempt_count
+                0xffffffff8664f030        0x4 vmlinux.o
+                0xffffffff8664f030                __preempt_count
+ .data..percpu..hot..cpu_number
+                0xffffffff8664f034        0x4 vmlinux.o
+                0xffffffff8664f034                cpu_number
+ .data..percpu..hot..__softirq_pending
+                0xffffffff8664f038        0x2 vmlinux.o
+                0xffffffff8664f038                __softirq_pending
+ .data..percpu..hot..hardirq_stack_inuse
+                0xffffffff8664f03a        0x1 vmlinux.o
+                0xffffffff8664f03a                hardirq_stack_inuse
+                0xffffffff8664f03b                __per_cpu_hot_pad = .
+                0xffffffff86650000                . = ALIGN (0x1000)
+ *fill*         0xffffffff8664f03b      0xfc5 
+                0xffffffff86650000                __per_cpu_hot_end = .
+ *(.data..percpu..read_mostly)
+ .data..percpu..read_mostly
+                0xffffffff86650000      0xa30 vmlinux.o
+
+=================>
+
+ arch/x86/kernel/vmlinux.lds.S | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
+index 9ac6b42701fa..31f9102b107f 100644
+--- a/arch/x86/kernel/vmlinux.lds.S
++++ b/arch/x86/kernel/vmlinux.lds.S
+@@ -330,7 +330,7 @@ SECTIONS
+ 		EXIT_DATA
+ 	}
+ 
+-	PERCPU_SECTION(INTERNODE_CACHE_BYTES)
++	PERCPU_SECTION(L1_CACHE_BYTES)
+ 	ASSERT(__per_cpu_hot_end - __per_cpu_hot_start <= 64, "percpu cache hot section too large")
+ 
+ 	RUNTIME_CONST_VARIABLES
+
 
