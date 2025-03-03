@@ -1,304 +1,180 @@
-Return-Path: <linux-kernel+bounces-541333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA08EA4BBA2
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:04:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D670A4BBA4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:05:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6AB57A4DEF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:03:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82EA816820C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:05:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3F431F1905;
-	Mon,  3 Mar 2025 10:04:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pY+m9FKQ"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377521E9907
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 10:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249981F1513;
+	Mon,  3 Mar 2025 10:05:14 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E121EE7DF
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 10:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740996280; cv=none; b=Vq3Spr1RGVvDOqo3dOI0qISlZSMYLCkqiXLlL4kPAnUafG+IxFZXYftgJgM0RDlpIBWQnx5Zl6rNbxtVnU7MTlhSQMlFrT1Wrk2jyHm74+F9y6JLbb1DYQvo5Hff70O2CL8pOQpLSVdCdPq+zKAXSz+BdINfRBwXTqRQr8EdRtM=
+	t=1740996313; cv=none; b=ovaee2DoIGaflmXgw3cOPqdp/17Wq5lbgluoDO+1uKTSLMmxopOjuxbH5rqikXM7w5h+2BsGgWQXtbHu2NJUYalkOC7QElkJ8NDKjKFoHKafZ7NojzCF/wJ7lv/gwBz2HYgg4l8LIuvP+uWyFm5pyNEOjf9Yxb+948ARWhZ4yP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740996280; c=relaxed/simple;
-	bh=7jatznALkxiqBPL+NMCYO4jhDNWV0Puk67f6y/obF/Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bRn3u+aSq2aQqscTU8m/TdlP9mFlcNV4JRj3rh0XiLXoK8K2iF5BbTkhby2lQa/CXLqyuSUkzqvxod/U0u9dm7/2sDTi0gRwEovZsLai55xdK2pWL6t73jCcfihhEdEnCZ0NNrB2LDtyTjkbl08ymZZxEbv2QFsDxL+jJbM75kM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pY+m9FKQ; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-390e3b3d3f4so2043360f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 02:04:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740996276; x=1741601076; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CZfm0COZB/L4TTnNAi8+cOMnMfkfk6c9qb6QWtBVoCs=;
-        b=pY+m9FKQG8uaV/Na/0QCgzMHM437/e4VOvahD99H44M1/h65/d0lDXCBGWgcfBcbDo
-         vF+ocpNlfbeeUxrN8CqoL/ij7qO2jHDDoaHcdoT+UEdXvzceAQx8uiRS4ogsd6D6LKsk
-         bShdaG90BqB1LzSmrfj0mONkcqImMyk3DFzHNuI32I5uLxc03SZlnWRhHE6ulsyJKrdw
-         iB3Lb1ZutbEGT/xAj2W/HUaDYuYcGIld+qlTaVtT0fte2JS/zqWaM7TNAj61551T94Jy
-         a5WIq/wG3nOKXhD65iNK8kfEecq7EQGgImrB31iDxbgh2ryv4LCK9bbVr6cFQKq7pZ+L
-         4/Aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740996276; x=1741601076;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CZfm0COZB/L4TTnNAi8+cOMnMfkfk6c9qb6QWtBVoCs=;
-        b=IDagN8BoFCQuPgiutHhQTOMrs3c4UJwiPKrtNmhyN6pOBHOyAX/okTSItUt5xxtCym
-         7BKQ43gwzRKEZM3xaalg+aOHDcpT6JfSip0/N2hQry6U64SQUmahri9c1Icv0tajCxev
-         FmjEngnPNwGhD/JVsqAd6OHYJfu6nUlbB/w+vSESBlGjw587jtUrvPCj4fUvVNiQ+Ysk
-         6R8UoU0uI2q1K1i/kEpdJtF7clFon03c5hdZpNrY+wgM/QffFtR8fGsgLzDlSkTdWnoK
-         tMGso/v3SuLMwnopQxgkv1dbppJD8YVbUl4XQ6DuWzFAVR4dbx2GCPog3udkwn9BoiPd
-         HtTA==
-X-Forwarded-Encrypted: i=1; AJvYcCXHxi7iqnxEJ4U9N6CLPB+d8TkYvg4lBg/eEEtC7Dx04+tbCYZN8m3xzNqGSMgWkQ/qk6kMoPkpuzCpdXY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgkP0e2UX79yfYkkSp36VsqXd0shi81i1e72FngzH6tyD5kK9K
-	3wKR4ejRkNDFW1JvbMHgPu4CHOW8KQTEjUYUyzpgx2urjMDR4yxZwpMH9gc8U9GkeiENr2NdxQc
-	W8t3FbzgxFBiGSeJ0rkU086+ryNDpldLso5CV
-X-Gm-Gg: ASbGncu9ZXBZSf7vWibUkt0kG2iW9JUwcyHY+FY7qWM7dT3TCAG3fLSkjFUZLN0fvzA
-	rRT6+gXZtghtqyaEWV6vL1005JjzXL0076ZfgESWr7g/EE8sddgSTySMBi42jWpiQYlYzXu/gCf
-	/sUugUYstLrQqfnwlO7uKmfYEkHy3PCJnMHNUpN27WULfTHYkRbBydX+Wx
-X-Google-Smtp-Source: AGHT+IF6mYPjM2ZdG1TBhFws1xzfvflCivFfZUBo4SOc/4y/Zm8Qnq7qa1G7WknkW81HNcXY6VsNMMco8YsqzJRcRg8=
-X-Received: by 2002:a5d:5f93:0:b0:38f:23f4:2d7a with SMTP id
- ffacd0b85a97d-390eca070a7mr10178653f8f.40.1740996275924; Mon, 03 Mar 2025
- 02:04:35 -0800 (PST)
+	s=arc-20240116; t=1740996313; c=relaxed/simple;
+	bh=AoU4Z3QCQ2/qu0GeNzrhNZiZ91wW/kwe2RXf1SNdPPw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sGL6L1dmJC9DTj4JbrUYdRyzDnLKM+6miKLT3XW47yULJ7Hv6IL5D/j+vpWCbi4eLl5YQog96ICCb1Q1OAO5KsrC1ZSGM03k1+4UbZOUNGFkP4tKCQl7DLfE56CsKmB9CAWALtL9+zZJ1YmBL69wEYN/QJqMBuuJwIbU2s/knLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 87288113E;
+	Mon,  3 Mar 2025 02:05:25 -0800 (PST)
+Received: from [192.168.178.6] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B96123F66E;
+	Mon,  3 Mar 2025 02:05:10 -0800 (PST)
+Message-ID: <14a2aaac-05d5-4b2e-a8c1-617bb4411659@arm.com>
+Date: Mon, 3 Mar 2025 11:05:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1740995194.git.viresh.kumar@linaro.org> <023e3061cc164087b9079a9f6cb7e9fbf286794e.1740995194.git.viresh.kumar@linaro.org>
-In-Reply-To: <023e3061cc164087b9079a9f6cb7e9fbf286794e.1740995194.git.viresh.kumar@linaro.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 3 Mar 2025 11:04:24 +0100
-X-Gm-Features: AQ5f1Jrv8CfkwtaCjmL4Tc9x8A7QhEGhB8E7QjwjYN-fWaS7PfezdipAC3EplYU
-Message-ID: <CAH5fLggcPo9g7Ep22aUj+5t+zdUQqa96NopZa946nsN649PQ2g@mail.gmail.com>
-Subject: Re: [PATCH V3 2/2] rust: Add initial clk abstractions
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Daniel Almeida <daniel.almeida@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: BUG Report: Fork benchmark drop by 30% on aarch64
+To: Hagar Hemdan <hagarhem@amazon.com>
+Cc: abuehaze@amazon.com, wuchi.zero@gmail.com, linux-kernel@vger.kernel.org
+References: <20250205151026.13061-1-hagarhem@amazon.com>
+ <4a9cc5ab-c538-4427-8a7c-99cb317a283f@arm.com>
+ <20250207110754.GA10452@amazon.com>
+ <1ca758c7-b6ab-4880-9cc7-217093a30bbb@arm.com>
+ <20250210213155.GA649@amazon.com>
+ <4b48fd24-6cd5-474c-bed8-3faac096fd58@arm.com>
+ <20250211214019.GA15530@amazon.com>
+ <75503128-c898-4da7-ab99-55f4ef6e2add@arm.com>
+ <5f92761b-c7d4-4b96-9398-183a5bf7556a@arm.com>
+ <20250221064436.GA485@amazon.com>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Content-Language: en-US
+In-Reply-To: <20250221064436.GA485@amazon.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 3, 2025 at 11:00=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.o=
-rg> wrote:
->
-> Add initial abstractions for the clk APIs. These provide the minimal
-> functionality needed for common use cases, making them straightforward
-> to introduce in the first iteration.
->
-> These will be used by Rust based cpufreq / OPP layers to begin with.
->
-> Tested-by: Daniel Almeida <daniel.almeida@collabora.com>
-> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+On 21/02/2025 07:44, Hagar Hemdan wrote:
+> On Mon, Feb 17, 2025 at 11:51:45PM +0100, Dietmar Eggemann wrote:
+>> On 13/02/2025 19:55, Dietmar Eggemann wrote:
+>>> On 11/02/2025 22:40, Hagar Hemdan wrote:
+>>>> On Tue, Feb 11, 2025 at 05:27:47PM +0100, Dietmar Eggemann wrote:
+>>>>> On 10/02/2025 22:31, Hagar Hemdan wrote:
+>>>>>> On Mon, Feb 10, 2025 at 11:38:51AM +0100, Dietmar Eggemann wrote:
+>>>>>>> On 07/02/2025 12:07, Hagar Hemdan wrote:
+>>>>>>>> On Fri, Feb 07, 2025 at 10:14:54AM +0100, Dietmar Eggemann wrote:
+>>>>>>>>> Hi Hagar,
+>>>>>>>>>
+>>>>>>>>> On 05/02/2025 16:10, Hagar Hemdan wrote:
 
-Every function in this patch could be #[inline]. Otherwise rustc will
-generate a bunch of wrapper functions that just forward a call into C.
+[...]
 
->  MAINTAINERS        |   1 +
->  rust/kernel/clk.rs | 134 +++++++++++++++++++++++++++++++++++++++++++++
->  rust/kernel/lib.rs |   1 +
->  3 files changed, 136 insertions(+)
->  create mode 100644 rust/kernel/clk.rs
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 726110d3c988..96e2574f41c0 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -5779,6 +5779,7 @@ F:        include/linux/clk-pr*
->  F:     include/linux/clk/
->  F:     include/linux/of_clk.h
->  F:     rust/helpers/clk.c
-> +F:     rust/kernel/clk.rs
->  X:     drivers/clk/clkdev.c
->
->  COMMON INTERNET FILE SYSTEM CLIENT (CIFS and SMB3)
-> diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs
-> new file mode 100644
-> index 000000000000..1fa5b7298373
-> --- /dev/null
-> +++ b/rust/kernel/clk.rs
-> @@ -0,0 +1,134 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! Clock abstractions.
-> +//!
-> +//! C header: [`include/linux/clk.h`](srctree/include/linux/clk.h)
-> +
-> +use crate::{
-> +    bindings,
-> +    device::Device,
-> +    error::{from_err_ptr, to_result, Result},
-> +    prelude::*,
-> +};
-> +
-> +use core::{ops::Deref, ptr};
-> +
-> +/// Frequency unit.
-> +pub type Hertz =3D crate::ffi::c_ulong;
-> +
-> +/// A simple implementation of `struct clk` from the C code.
-> +#[repr(transparent)]
-> +pub struct Clk(*mut bindings::clk);
+>> './Run -c 4 spawn' on AWS instance (m7gd.16xlarge) with v6.13, 'mem=16G
+>> maxcpus=4 nr_cpus=4' and Ubuntu '22.04.5 LTS':
+>>
+>> CFG_SCHED_AUTOGROUP | sched_ag_enabled | eff6c8ce8d4d | Fork (lps)
+>>
+>>    	y	             1		   y            21005 (27120 **)
+>> 	y		     0		   y            21059 (27012 **)
+>> 	n		     -		   y            21299
+>> 	y		     1		   n	        27745 *
+>> 	y		     0		   n	        27493 *
+>> 	n		     -		   n	        20928
+>>
+>> (*) So here the higher numbers are only achieved when
+>> 'sched_autogroup_exit_task() -> sched_move_task() ->
+>> sched_change_group() is called for the 'spawn' tasks.
+>>
+>> (**) When I apply the fix from
+>> https://lkml.kernel.org/r/4a9cc5ab-c538-4427-8a7c-99cb317a283f@arm.com.
+> Thanks!
+> Will you submit that fix upstream?
 
-This needs an invariants section.
+I will, I just had to understand in detail why this regression happens.
 
-> +
-> +impl Clk {
-> +    /// Gets clock corresponding to a device and a connection id and ret=
-urns `Clk`.
-> +    pub fn get(dev: &Device, name: Option<&CStr>) -> Result<Self> {
-> +        let con_id =3D if let Some(name) =3D name {
-> +            name.as_ptr() as *const _
-> +        } else {
-> +            ptr::null()
-> +        };
-> +
-> +        // SAFETY: It is safe to call `clk_get()` for a valid device poi=
-nter.
-> +        Ok(Self(from_err_ptr(unsafe {
-> +            bindings::clk_get(dev.as_raw(), con_id)
-> +        })?))
-> +    }
-> +
-> +    /// Obtain the raw `struct clk *`.
-> +    pub fn as_raw(&self) -> *mut bindings::clk {
-> +        self.0
-> +    }
-> +
-> +    /// Clock enable.
-> +    pub fn enable(&self) -> Result<()> {
-> +        // SAFETY: It is safe to call clk APIs of the C code for a clock=
- pointer earlier returned
-> +        // by `clk_get()`.
-> +        to_result(unsafe { bindings::clk_enable(self.as_raw()) })
-> +    }
-> +
-> +    /// Clock disable.
-> +    pub fn disable(&self) {
-> +        // SAFETY: It is safe to call clk APIs of the C code for a clock=
- pointer earlier returned
-> +        // by `clk_get()`.
-> +        unsafe { bindings::clk_disable(self.as_raw()) };
-> +    }
-> +
-> +    /// Clock prepare.
-> +    pub fn prepare(&self) -> Result<()> {
-> +        // SAFETY: It is safe to call clk APIs of the C code for a clock=
- pointer earlier returned
-> +        // by `clk_get()`.
-> +        to_result(unsafe { bindings::clk_prepare(self.as_raw()) })
-> +    }
-> +
-> +    /// Clock unprepare.
-> +    pub fn unprepare(&self) {
-> +        // SAFETY: It is safe to call clk APIs of the C code for a clock=
- pointer earlier returned
-> +        // by `clk_get()`.
-> +        unsafe { bindings::clk_unprepare(self.as_raw()) };
-> +    }
-> +
-> +    /// Clock prepare enable.
-> +    pub fn prepare_enable(&self) -> Result<()> {
-> +        // SAFETY: It is safe to call clk APIs of the C code for a clock=
- pointer earlier returned
-> +        // by `clk_get()`.
-> +        to_result(unsafe { bindings::clk_prepare_enable(self.as_raw()) }=
-)
-> +    }
-> +
-> +    /// Clock disable unprepare.
-> +    pub fn disable_unprepare(&self) {
-> +        // SAFETY: It is safe to call clk APIs of the C code for a clock=
- pointer earlier returned
-> +        // by `clk_get()`.
-> +        unsafe { bindings::clk_disable_unprepare(self.as_raw()) };
-> +    }
-> +
-> +    /// Clock get rate.
-> +    pub fn rate(&self) -> Hertz {
-> +        // SAFETY: It is safe to call clk APIs of the C code for a clock=
- pointer earlier returned
-> +        // by `clk_get()`.
-> +        unsafe { bindings::clk_get_rate(self.as_raw()) }
-> +    }
-> +
-> +    /// Clock set rate.
-> +    pub fn set_rate(&self, rate: Hertz) -> Result<()> {
-> +        // SAFETY: It is safe to call clk APIs of the C code for a clock=
- pointer earlier returned
-> +        // by `clk_get()`.
-> +        to_result(unsafe { bindings::clk_set_rate(self.as_raw(), rate) }=
-)
-> +    }
-> +}
-> +
-> +impl Drop for Clk {
-> +    fn drop(&mut self) {
-> +        // SAFETY: It is safe to call clk APIs of the C code for a clock=
- pointer earlier returned
-> +        // by `clk_get()`.
-> +        unsafe { bindings::clk_put(self.as_raw()) };
-> +    }
-> +}
-> +
-> +/// A simple implementation of optional `Clk`.
-> +pub struct OptionalClk(Clk);
+Looks like the issue is rather related to 'sgs->group_util' in
+group_is_overloaded() and group_has_capacity(). If we don't
+'deqeue/detach + attach/enqueue' (1) the task in sched_move_task() then
+sgs->group_util is ~900 (you run 4 CPUs flat in a single MC sched domain
+so sgs->group_capacity = 1024 and this leads to group_is_overloaded()
+returning true and group_has_capacity() false much more often as if
+we would do (1).
 
-What is this?
+I.e. we have much more cases of 'group_is_overloaded' and
+'group_fully_busy' in WF_FORK wakeup sched_balance_find_dst_cpu() which
+then (a) returns much more often a CPU != smp_processor_id() (which
+isn't good for these extremely short running tasks (FORK + EXIT)) and
+also involves calling sched_balance_find_dst_group_cpu() unnecessary
+(since we deal with single CPU sched domains). 
 
-> +impl OptionalClk {
-> +    /// Gets optional clock corresponding to a device and a connection i=
-d and returns `Clk`.
-> +    pub fn get(dev: &Device, name: Option<&CStr>) -> Result<Self> {
-> +        let con_id =3D if let Some(name) =3D name {
-> +            name.as_ptr() as *const _
-> +        } else {
-> +            ptr::null()
-> +        };
-> +
-> +        // SAFETY: It is safe to call `clk_get_optional()` for a valid d=
-evice pointer.
-> +        Ok(Self(Clk(from_err_ptr(unsafe {
-> +            bindings::clk_get_optional(dev.as_raw(), con_id)
-> +        })?)))
-> +    }
-> +}
-> +
-> +// Make `OptionalClk` behave like `Clk`.
-> +impl Deref for OptionalClk {
-> +    type Target =3D Clk;
-> +
-> +    fn deref(&self) -> &Clk {
-> +        &self.0
-> +    }
-> +}
-> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> index 496ed32b0911..324b86f127a0 100644
-> --- a/rust/kernel/lib.rs
-> +++ b/rust/kernel/lib.rs
-> @@ -40,6 +40,7 @@
->  pub mod block;
->  #[doc(hidden)]
->  pub mod build_assert;
-> +pub mod clk;
->  pub mod cred;
->  pub mod device;
->  pub mod device_id;
-> --
-> 2.31.1.272.g89b43f80a514
->
+select_task_rq_fair(..., wake_flags = WF_FORK)
+
+  cpu = smp_processor_id()
+
+  new_cpu = sched_balance_find_dst_group(..., cpu, ...)
+
+    do {
+
+      update_sg_wakeup_stats()
+
+        sgs->group_type = group_classify()   
+							w/o patch 	w/ patch                   
+          if group_is_overloaded() (*)
+            return group_overloaded /* 6 */		457,141		394
+
+          if !group_has_capacity() (**)
+            return group_fully_busy /* 1 */ 	  	816,629		714
+
+          return group_has_spare    /* 0 */		1,158,890	3,157,472
+
+    } while group 
+
+    if local_sgs.group_type > idlest_sgs.group_type	
+      return idlest					351,598		273
+
+    case group_has_spare:
+
+      if local_sgs.idle_cpus >= idlest_sgs.idle_cpus
+        return NULL 					156,760		788,462
+
+
+(*)
+
+  if sgs->group_capacity * 100) <			
+		sgs->group_util * imbalance_pct		951,705		856
+    return true
+
+  sgs->group_util ~ 900 and sgs->group_capacity = 1024 (1 CPU per sched group)
+
+
+(**)
+
+ if sgs->group_capacity * 100 >
+		sgs->group_util * imbalance_pct
+   return true						1,087,555	3,163,152
+
+ return false						1,332,974	882
+
+
+(*) and (**) are for 'wakeup' and 'load-balance' so they don't
+match the only wakeup numbers above!
+
+In this test run I got 608,092 new wakeups w/o and 789,572 (~+ 30%)
+w/ the patch when running './Run -c 4 -i 1 spawn' on AWS instance
+(m7gd.16xlarge) with v6.13, 'mem=16G maxcpus=4 nr_cpus=4' and
+Ubuntu '22.04.5 LTS'
+
+> Do you think that this fix is the same as reverting commit eff6c8ce8d4d and
+> its follow up commit fa614b4feb5a? I mean what does commit eff6c8ce8d4d 
+> actually improve?
+
+There are occurrences in which 'group == tsk->sched_task_group' and
+'!(tsk->flags & PF_EXITING)' so there the early bail might help w/o
+the negative impact on sched benchmarks.
 
