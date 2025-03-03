@@ -1,156 +1,115 @@
-Return-Path: <linux-kernel+bounces-542151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BDECA4C644
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:10:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 654C9A4C5EF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:00:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6090C164FB9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:08:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A7493A505D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C274235C00;
-	Mon,  3 Mar 2025 16:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lBaP7Y5L"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8CC123496B;
-	Mon,  3 Mar 2025 16:03:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B96213E66;
+	Mon,  3 Mar 2025 16:00:43 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4FF7080D;
+	Mon,  3 Mar 2025 16:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741017832; cv=none; b=Y3bI2yGGYUIZT5Xu3cLlsqXGqSfSnfVzmt+9MzWcHSOlIrznFyNQQE2KsifLa/iCzjNh3nv7PSZMCU2FezlzU8OEacWtLnmBLrN2eht6Oh3oEoTyRF8OksDscWi+87JJJsSbqBYeFGjKt3lSYkOAVabhUKuV7Vkhk0hwm7upqLY=
+	t=1741017643; cv=none; b=kWkv0EaBu2EQ+YnE5xmRBWTzjeaQcMqerC+xDjsJpkFysU9DpEOBVj+XoLjlcYFjGjW+9otNb9NOHCin3wtCCtvnAh/a2JoNYcw7I43qUNWqyIUznL8oGN1iEQLOKOn9SgbXSyHK92OqTQR5/0LG2q39DdwBPRGfoMbMDkAJU4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741017832; c=relaxed/simple;
-	bh=7X6WHFYBLbOh3gruZjblSPMPaVJ2eb2Purwjk6hT300=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gS65aO/xyzZZ/0NXm2nIhAp+kxuYiEta35+e/B89x2J35ouZvjITIJ/64Ba6Z7zzN+xc0g0TrU8e75fZZWwbqT5ENFnGTuM2XWgfLXa9V8WNKoQXKW22jKoaLUu15EKpTts9S7abqQAOVUXiNmtpSmIVGZy99fpIEJc8g+wAA70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lBaP7Y5L; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741017831; x=1772553831;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=7X6WHFYBLbOh3gruZjblSPMPaVJ2eb2Purwjk6hT300=;
-  b=lBaP7Y5LNYCwEZ/rxfwHceazY3H2y8xdsLPnMSCTdY17JzYJADUBACVw
-   tKcNJqnftrZFhcU7fuJYn1BDMebWy2t6L2YonXwTUPZiWfMHWaOU23+3X
-   5EiqdTMDMtjuYu5TCUuB6WAVjS3IEuoFZwT8pusKL9La0lvEWoN/xCPwi
-   yEJsyNm5ncwpqzUACsXhx/UPSp52jgNasd2cHCB4VPMuIn5XR/XDjCW3a
-   IQdGWpgY7Kai6m3f0wWLdE9lm1FxO1UZtknNA+KppdB4W0BaYRAaOV2pN
-   +0v7dNHm9hqsVVOFVvXOx5PpmZxRnJxwV9irD0nyyhfToWUQIYCxxg8Lg
-   w==;
-X-CSE-ConnectionGUID: ChmVP5dnRFaNHlDsxI5WXw==
-X-CSE-MsgGUID: nDpdL/JrRYWr6bTH9K5KpQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="41606691"
-X-IronPort-AV: E=Sophos;i="6.13,330,1732608000"; 
-   d="scan'208";a="41606691"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 08:03:47 -0800
-X-CSE-ConnectionGUID: FL6UjEcmSumMo9xz6A64yQ==
-X-CSE-MsgGUID: 1U8U8Q4zS7qFKflw1sEcrQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,330,1732608000"; 
-   d="scan'208";a="141285579"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa002.fm.intel.com with ESMTP; 03 Mar 2025 08:03:44 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 25EE333D; Mon, 03 Mar 2025 18:03:43 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Mika Westerberg <westeri@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Kent Gibson <warthog618@gmail.com>
-Subject: [PATCH v1 3/3] gpiolib: Rename gpio_do_set_config() --> gpiod_do_set_config()
-Date: Mon,  3 Mar 2025 18:00:34 +0200
-Message-ID: <20250303160341.1322640-4-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250303160341.1322640-1-andriy.shevchenko@linux.intel.com>
-References: <20250303160341.1322640-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1741017643; c=relaxed/simple;
+	bh=qHzQi4+c8kTN8tsNEe9XE1Dq3CCg4miQvbd30I6E+RM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lGmCbcXEHzUmlN0z1cj+RC4lFLb6fJJ5BZpPn8ZYBvHbtFZIlsNlKi/fDezXBSFsKAW260sNA8qAGd1VyaxeUiLe8j8OwYQmz+JWerr42TElSQECCsP2dOwZN1D5KcKDhbim9uGqml6krlLGSeFo+e3ojVWkIcNdNRxwuK+LoLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 35789106F;
+	Mon,  3 Mar 2025 08:00:54 -0800 (PST)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6CF9B3F673;
+	Mon,  3 Mar 2025 08:00:38 -0800 (PST)
+Date: Mon, 3 Mar 2025 16:00:35 +0000
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Hugues KAMBA MPIANA <hugues.kambampiana@arm.com>
+Cc: <liviu.dudau@arm.com>, <lpieralisi@kernel.org>, <robh@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] arm64: dts: corstone1000: Add definitions for secondary
+ CPU cores
+Message-ID: <Z8XSIx75B4mtcV48@bogus>
+References: <20250303153744.376419-1-hugues.kambampiana@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250303153744.376419-1-hugues.kambampiana@arm.com>
 
-In order to reduce the 'gpio' namespace when operate over GPIO descriptor
-rename gpio_do_set_config() to gpiod_do_set_config().
+On Mon, Mar 03, 2025 at 03:37:44PM +0000, Hugues KAMBA MPIANA wrote:
+> Add `cpu1`, `cpu2` and `cpu3` nodes to the Corstone1000 device tree to
+> enable support for secondary CPU cores.
+> 
+> This update facilitates symmetric multiprocessing (SMP) support on
+> the Corstone1000 Fixed Virtual Platform (FVP), allowing the
+> secondary cores to be properly initialised and utilised.
+> 
+> Signed-off-by: Hugues KAMBA MPIANA <hugues.kambampiana@arm.com>
+> ---
+>  arch/arm64/boot/dts/arm/corstone1000-fvp.dts | 24 ++++++++++++++++++++
+>  arch/arm64/boot/dts/arm/corstone1000.dtsi    |  2 +-
+>  2 files changed, 25 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/arm/corstone1000-fvp.dts b/arch/arm64/boot/dts/arm/corstone1000-fvp.dts
+> index abd013562995..df9700302b8d 100644
+> --- a/arch/arm64/boot/dts/arm/corstone1000-fvp.dts
+> +++ b/arch/arm64/boot/dts/arm/corstone1000-fvp.dts
+> @@ -49,3 +49,27 @@ sdmmc1: mmc@50000000 {
+>  		clock-names = "smclk", "apb_pclk";
+>  	};
+>  };
+> +
+> +&cpus {
+> +	cpu1: cpu@1 {
+> +		device_type = "cpu";
+> +		compatible = "arm,cortex-a35";
+> +		reg = <0x1>;
+> +		enable-method = "psci";
+> +		next-level-cache = <&L2_0>;
+> +	};
+> +	cpu2: cpu@2 {
+> +		device_type = "cpu";
+> +		compatible = "arm,cortex-a35";
+> +		reg = <0x2>;
+> +		enable-method = "psci";
+> +		next-level-cache = <&L2_0>;
+> +	};
+> +	cpu3: cpu@3 {
+> +		device_type = "cpu";
+> +		compatible = "arm,cortex-a35";
+> +		reg = <0x3>;
+> +		enable-method = "psci";
+> +		next-level-cache = <&L2_0>;
+> +	};
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpiolib-cdev.c | 2 +-
- drivers/gpio/gpiolib.c      | 6 +++---
- drivers/gpio/gpiolib.h      | 2 +-
- 3 files changed, 5 insertions(+), 5 deletions(-)
+Why are these not part of /cpus node in corstone1000.dtsi ?
+Also I see the original cpu@0 node doesn't have enable-method set to
+"psci" while these secondary cpus have. Please add the same and move all
+these changes in corstone1000.dtsi unless you have strong reasons not to.
 
-diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
-index c8b7499a1e6e..68b6e27ce6ef 100644
---- a/drivers/gpio/gpiolib-cdev.c
-+++ b/drivers/gpio/gpiolib-cdev.c
-@@ -927,7 +927,7 @@ static int debounce_setup(struct line *line, unsigned int debounce_period_us)
- 	 * Try hardware. Skip gpiod_set_config() to avoid emitting two
- 	 * CHANGED_CONFIG line state events.
- 	 */
--	ret = gpio_do_set_config(line->desc,
-+	ret = gpiod_do_set_config(line->desc,
- 			pinconf_to_config_packed(PIN_CONFIG_INPUT_DEBOUNCE,
- 						 debounce_period_us));
- 	if (ret != -ENOTSUPP)
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 8980eef6802c..efaf34a30c20 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2599,7 +2599,7 @@ EXPORT_SYMBOL_GPL(gpiochip_free_own_desc);
-  * rely on gpio_request() having been called beforehand.
-  */
- 
--int gpio_do_set_config(struct gpio_desc *desc, unsigned long config)
-+int gpiod_do_set_config(struct gpio_desc *desc, unsigned long config)
- {
- 	int ret;
- 
-@@ -2634,7 +2634,7 @@ static int gpio_set_config_with_argument(struct gpio_desc *desc,
- 	unsigned long config;
- 
- 	config = pinconf_to_config_packed(mode, argument);
--	return gpio_do_set_config(desc, config);
-+	return gpiod_do_set_config(desc, config);
- }
- 
- static int gpio_set_config_with_argument_optional(struct gpio_desc *desc,
-@@ -3104,7 +3104,7 @@ int gpiod_set_config(struct gpio_desc *desc, unsigned long config)
- 
- 	VALIDATE_DESC(desc);
- 
--	ret = gpio_do_set_config(desc, config);
-+	ret = gpiod_do_set_config(desc, config);
- 	if (ret)
- 		return ret;
- 
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index b3ea7b710995..4f603a530d38 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -260,7 +260,7 @@ struct gpio_desc *gpiod_find_and_request(struct device *consumer,
- 					 const char *label,
- 					 bool platform_lookup_allowed);
- 
--int gpio_do_set_config(struct gpio_desc *desc, unsigned long config);
-+int gpiod_do_set_config(struct gpio_desc *desc, unsigned long config);
- int gpiod_configure_flags(struct gpio_desc *desc, const char *con_id,
- 		unsigned long lflags, enum gpiod_flags dflags);
- int gpiod_do_set_debounce(struct gpio_desc *desc, unsigned int debounce);
+In that case, please clearly state the reason in the commit message.
+
+P.S: I was about to send PR soon for v6.15. If you want this change for
+v6.15, you need to be quicker.
+
 -- 
-2.47.2
-
+Regards,
+Sudeep
 
