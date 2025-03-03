@@ -1,116 +1,102 @@
-Return-Path: <linux-kernel+bounces-542807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BD68A4CDFE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:15:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E96E5A4CE0A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:16:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1155D3AC113
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:14:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD2D13AD098
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:15:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 800BD2397B9;
-	Mon,  3 Mar 2025 22:14:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D601D235C11;
+	Mon,  3 Mar 2025 22:15:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xt5PQR1p"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WU4R4+C6"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A73239561
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 22:14:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0AB91E9B12;
+	Mon,  3 Mar 2025 22:15:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741040076; cv=none; b=gGnD2oedIHGDV8BlyU0/vSL2nB6JA6yyRfOeb8lWRG2HwMuEQVjDA9k/C7THfwy48o5wPAcPJ5rYlGuTkmG2TfbbS3yR18n96NHJYGlEpV0gmc82s7FvZAbxnT0O/LA8R5jYyYZOZWV2tGWFyYE4t5UtHoI7ly5NzN5Bg530ZNs=
+	t=1741040136; cv=none; b=YufDgcFDCU7mwcyMfdwII1A2iBqOiv02jDYrE8WMpTUC35+7pR/teZLw9aK4eOL5ryRqB7Eq+BGXaNi8ecGyQHCdJUijlr+PxofZi63bFR42IY8T2pddigP9E319quA7mmxrWBW71jxwBqEONYNd5zPe+5qvAF+x+hEuoJaR5aU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741040076; c=relaxed/simple;
-	bh=5yGRsimMlo/ynCKSEzqe8MIDcA9rMI5J+4JfhPej2dQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PzR/Ngvw12PMRb7hhEzk1ct3FiXqoITo/9V1HJ3C0smFgaRX0NCSbNUUs0jVMJo0oCwGan9UuGItkb7sHosHDQdDnEHKoicS4OcbRQgHRC4knnmqjhuCEB00o9C9MiVRq8eiabe6OCPMHiGvdERTnms4AyaJfP6JEIj8XY9a/iI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xt5PQR1p; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 3 Mar 2025 22:14:28 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741040071;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TNQ4MdmT+tTgwaoSFCiyayCeDumi5ERILVBdb89V8X0=;
-	b=xt5PQR1pZST+Ysgl+sU68aDP/D4Uj92wZMn/AgylVr+z7VCu9Js+WsNC7+5RD8Zbtb6Kja
-	fDuw6+8YDfx5LCwetsSShaCgk+lUMRKa4DziO9ckx7gMWwcT3UyruAAEkRfes4fLMc6Y2b
-	nceywLLA6I7hVW8YBsrCD7pJUMDDIPE=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Maxim Levitsky <mlevitsk@redhat.com>
-Cc: Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 11/13] KVM: nSVM: Do not reset TLB_CONTROL in VMCB02
- on nested entry
-Message-ID: <Z8YpxLONlmy91Eot@google.com>
-References: <20250205182402.2147495-1-yosry.ahmed@linux.dev>
- <20250205182402.2147495-12-yosry.ahmed@linux.dev>
- <a70458e20e98da9cd6dd1d272cc16b71bfdd4842.camel@redhat.com>
+	s=arc-20240116; t=1741040136; c=relaxed/simple;
+	bh=IZpDwxvIz6DxvmWHj8fUJpQVS3Kqnbxep5cixkk7/hg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=jaqGugg+PEymsLpdI4p0nKb1+lujqctjq4uIQnSOUrpxMoSR5daDpCe5UaBdA1LCn4vJ7hZlgmG2BB7qn5FxICVPJB5JjiwYk5i/uIX/OVqi9vqw6qevgGNaOv/rLJPdUKeGm9iL4Ig6ou7kv6zlZhVT/xbzlSTmea9t4oTlAcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WU4R4+C6; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-219f8263ae0so91910585ad.0;
+        Mon, 03 Mar 2025 14:15:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741040134; x=1741644934; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IZpDwxvIz6DxvmWHj8fUJpQVS3Kqnbxep5cixkk7/hg=;
+        b=WU4R4+C6AjV+Tr55mc+zOTi2QFxIj4UK5LzCCyoeg6IChljC81Y2/8Q4udtoUUWBpg
+         bMFDiiofwdVo06G9Cx1NXtIrAbVWQRhzWAeoAqVYz73/GMgxfp9nrSEQoSHuOCuhG5XW
+         yMT5bN0FTrIHbms1j82lOzjMZNjEROqB1nLrbNLPmpQkkWsgbo1aPADR+dfS0wxLt1eA
+         ki5huqQ/JCDdLO93pMpS/BZJj42pmcd45xAB3rrrbhywDj4cS4vR3FX+tv0Ph4OPQLhV
+         DTLM0eaLLZArpaa+/juBPGdFyNP/0nFhBc+ozr8XQFdyh3nIAbum+SqX/5zFTzWsR/uD
+         ZBYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741040134; x=1741644934;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IZpDwxvIz6DxvmWHj8fUJpQVS3Kqnbxep5cixkk7/hg=;
+        b=Z3fo672fTg7psA9xRWiLHvfHkiFaqYqMAoQE3Q10AAch3niO9YR/JcnZflxR3wEpx7
+         XrIKY9xIg3RAi+m6KyL5AC2TdiEL9chosg8nudl5/6zkHq3t7qw9/Lw8W4h7SABJra+P
+         3F2T65TeU+rrCA/9yvp4idmwSpSPxFhvi6OGrSmyMcK2W09m1Wap6c8YuCp5r59lkEYI
+         wQxIbCOOMrZWcT60fBNYUq3LB6lMcAuVhTSgvQp/ze/Xbgqs04emdbZFvL4v8+uCMbb0
+         b0+Agny4jPY8bZfnZe62GRs0CQyciwyhq/+2yuvYrfcN0t0YO8QPEr/2C4uq4LxvBKKu
+         tVkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV3HBP9p4f9svF4Gz9Sk7uHLFG33YLwn8SR+adBgCo12Uptkr4bahn1QkNrbFFF3GywzYVcbGUbHwvxFN1c@vger.kernel.org, AJvYcCXXnX4MA2yhzGs+R7+mL9p424agcCRul/XraN+ijxm0Cyj3ogEKEQVLnGZ9ZdA2zshffGF8wdEszuE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNOI/xhStS9QxP1xqtUuNXBZuDDsCociCtazPa6eq8xM2Tv+bY
+	JokKLsYwGoORAWy/hDSmqKvdVBiZAM+Wtsg66MIRKqI06NsoJ/uD
+X-Gm-Gg: ASbGncvp+bRktESUIMsbeZwIaT63fnNmkHwDA8HhxPlcu9QhidmofHX51S457zkEZT8
+	M9vONPAVKnhjDSQ8BVwfApNUp+J+xYAkgZYnSXgPT6/w8eXgZU9gYWN6tQxmoVJeHvwximNp3Lh
+	XT4pW6DrQ5WODgJMoII/S5uI473MkBjTlTYTlSJpXaBPzLdFwT5v2qcJELzhJw9LBc+5knpx1ZJ
+	llQBURPhovGxMEF+qh7b9zbZ1/X5N4omFJaTBm/3nwag4UB7Pg+8RxXlPl1PGBhvFBzbH+PqXJF
+	qsW6v1BJgXDLJsoAYKXaJy8YxViZIMsnxl23RDy1XXJWo/L14MkHEuESPDBLnyUU+Syj
+X-Google-Smtp-Source: AGHT+IFNqmjqz1COtK+C2fcfRO8OdpVR4SgcV4rDelIRPY3vO/qJitu3N0K4RCEFeU0jlTv5N22kRA==
+X-Received: by 2002:a17:903:244d:b0:210:fce4:11ec with SMTP id d9443c01a7336-22368f6a5f1mr214828215ad.1.1741040133969;
+        Mon, 03 Mar 2025 14:15:33 -0800 (PST)
+Received: from danascape.tail34aafc.ts.net ([2402:e280:218d:2e5:7b03:1e42:d492:fb71])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-734a003dcafsm9670438b3a.132.2025.03.03.14.15.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 14:15:33 -0800 (PST)
+From: Saalim Quadri <danascape@gmail.com>
+To: marcelo.schmitt1@gmail.com
+Cc: Michael.Hennerich@analog.com,
+	danascape@gmail.com,
+	gregkh@linuxfoundation.org,
+	jic23@kernel.org,
+	lars@metafoo.de,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Subject: Re: [RFC] staging: iio: ad9832: Use devm_regulator_get_enable_read_voltage()
+Date: Tue,  4 Mar 2025 03:45:29 +0530
+Message-Id: <20250303221529.31204-1-danascape@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <Z8YoM4ycB0qMQwOG@debian-BULLSEYE-live-builder-AMD64>
+References: <Z8YoM4ycB0qMQwOG@debian-BULLSEYE-live-builder-AMD64>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a70458e20e98da9cd6dd1d272cc16b71bfdd4842.camel@redhat.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Fri, Feb 28, 2025 at 09:17:52PM -0500, Maxim Levitsky wrote:
-> On Wed, 2025-02-05 at 18:24 +0000, Yosry Ahmed wrote:
-> > TLB_CONTROL is reset to TLB_CONTROL_DO_NOTHING on nested transitions to
-> > L2. This is unnecessary because it should always be
-> > TLB_CONTROL_DO_NOTHING at this point.
-> > 
-> > The flow for setting TLB_CONTROL is as follows:
-> > 1. In vcpu_enter_guest(), servicing a TLB flush request may set it to
-> > TLB_CONTROL_FLUSH_ASID in svm_flush_tlb_asid().
-> > 2. In svm_vcpu_run() -> pre_svm_run(), it may get upgraded to
-> > TLB_CONTROL_FLUSH_ALL_ASID when assigning a new ASID.
-> > 3. In svm_cpu_run(), it gets reset to TLB_CONTROL_DO_NOTHING after the
-> > guest is run.
-> > 
-> > Hence, TLB_CONTROL is reset after each run and there is no need to do it
-> > again on every nested transition to L2.
-> > 
-> > There is a TODO in nested_svm_transition_tlb_flush() about this reset
-> > crushing pending TLB flushes. Remove it, as the reset is not really
-> > crushing anything as explained above.
-> 
-> I am not sure that we don't crush a pending tlb request: 
-> 
-> svm_flush_tlb_asid can also be called by KVM_REQ_TLB_FLUSH
-> and set the flush request in both vmcbs, thus later the nested_svm_exit_tlb_flush
-> can crush this request.
+I sent the patch in a separate thread, if that is alright.
 
-How so?
-
-nested_svm_exit_tlb_flush() makes a KVM_REQ_TLB_FLUSH_GUEST request.
-svm_flush_tlb_asid() is called when servicing KVM_REQ_TLB_* requests.
-
-So svm_flush_tlb_asid() does not make a request in the sense of
-KVM_REQ_*, it sets TLB_CONTROL or invalidates the ASID, which is can
-more-or-less be described as "requesting" a TLB flush on VM-enter, but
-is not the same thing as KVM_REQ_TLB_FLUSH.
-
-So I am not sure there are any requests being crushed here.
-
-> 
-> But the patch itself does look OK to me, although I might be mistaken.
-> 
-> Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
-
-Thanks!
-
-> 
-> 
-> Best regards,
-> 	Maxim Levitsky
+Sincerely,
+Saalim Quadri
 
