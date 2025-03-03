@@ -1,263 +1,128 @@
-Return-Path: <linux-kernel+bounces-542545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16E80A4CAFA
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:28:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DD47A4CAFC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:28:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8912F3A736E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:28:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3735F1750AF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:28:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 949CE22D7AA;
-	Mon,  3 Mar 2025 18:28:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB40222D7A7;
+	Mon,  3 Mar 2025 18:28:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nYlOwgyz"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="FCFfmUKh"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6320217F33;
-	Mon,  3 Mar 2025 18:28:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E7422CBE2
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 18:28:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741026497; cv=none; b=ixCQbLD2RvEpVihcT6xhXAzuHPt492oukARPmD/LoTxmrewFrwfwszdUHl0I8Iw7xFoXNS7VZ72gKv9+1jLXSFyOj0qMKhwE/vaq/YBUv8ClOupcBveTlPDWUBg8T7BkZ8Px+8dC1w9ioCKAfuelc/UyFW9E1HiuiicqRBqNTb4=
+	t=1741026513; cv=none; b=YfzZCwms3hNTqTN9PitvFU6Bdj0FJq6QxIHUtjrlEyIowCNFXWh/eF5w4xNxK4U55Gbd8/ei0Hx2ashpGfpwjjoMnrcev8JehevN2BNq9mC4bRoqZD3y3vOe3A9LFwkTZ1Xv6M5VK5/fBduvyJwj2NLC60eTZdkIs+Igrd05LfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741026497; c=relaxed/simple;
-	bh=rTv0ijG4Y1jg8aOqfg1mevw98KDyQ3ZbLmXyHct+QcM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=G6zCVN5JRrSese0eNpJjNXXgM69uHOwWvqSr+slDP+GHrxXSwkeepswpeEN8rDdBdarYv1FWZm9WsauhXP6hy2XIcbHulVOz/eWDuX3UO8MqZjddyCGIL7SozngHNaF5XNdDk+aXKLJO/RW2GjcNonqHh37OzWVfuBNbxZAFwWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nYlOwgyz; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 523B17Gj000958;
-	Mon, 3 Mar 2025 18:28:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=mWBUAND2jMvUI68h8cXcib
-	OJmnxxc14QYWwE2utG2JY=; b=nYlOwgyzzHZtx2jIzlcHfITsArrrGWfN3kDJ2t
-	WPoxeyXkl8TQ4gaHhdYOewV0ch/S3a69vGHk92R2uuZG/zLhBGV6WliQX9wPFljE
-	tFAhwVrzeCKZVXHkVudlDEPc4sFQo0Yj4Yx+EzR5+7a5JUaWnGwHTHjVbPOOS7bW
-	5j2Sqt7/0VTCN6dk8Ojf7QsxwNd4wqTwwubm2XCuNUyWAdj4ONqH/MpraW7+iLeB
-	2DjUtvSDSJf/ioqM14KVYCY2u5jLbX4cQLi4tnuwRO80EVH1PmzJZMmqSAfMWA2L
-	4Lo9zb6FyFjYQ2J9GgGv4bjxwxar1XyVH/IGDkd5Fd972Z7Q==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 453t95wsva-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Mar 2025 18:28:07 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 523IS6EM006933
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 3 Mar 2025 18:28:06 GMT
-Received: from jesszhan-linux.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 3 Mar 2025 10:28:05 -0800
-From: Jessica Zhang <quic_jesszhan@quicinc.com>
-Date: Mon, 3 Mar 2025 10:28:00 -0800
-Subject: [PATCH RFC] drm/msm/dpu: Force modeset if new CTLs have been
- reserved
+	s=arc-20240116; t=1741026513; c=relaxed/simple;
+	bh=LJlJ9+pfOZXD2l9ILKB0AraWpZl4WF3Irkph39J2hTw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=emH+BtCoveKjFrM0HJrHHhzn3jz2nA1P314WsP2ZxU6CWXIOMbimP8hv2kxcEc+MzUk5NtT9HCUJ4plQXbz983sxKHE+8Twu0at0Tsf5HIKA+kLAZZirL2E31AXHKwdEOPYKfM3lUbcWtg9U+hPdeKLNsevct5UZ5G9v3vZLxeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=FCFfmUKh; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5e4cbade42aso7088980a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 10:28:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1741026509; x=1741631309; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=PiuymdUWUCngSn51k54uj1Me9yyCCIJ/YBBpvsVy4sw=;
+        b=FCFfmUKh2NVH2XNKzWAZPsxP+FV/5dfUm118pWNPpcNA9363Wta3BkEYcI/U3gZDtA
+         1wLDXiepfxb16+5f0mcJJTzBjn/hrNt5rbyksLNQUiRLtTF0kpdUe3UV8Fk9yhi0p4oz
+         58OjtGbGXxXwFYCmpn88s8n8nXV94ZlECHs54=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741026509; x=1741631309;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PiuymdUWUCngSn51k54uj1Me9yyCCIJ/YBBpvsVy4sw=;
+        b=M8MnqnTjpAp51mPHWv3tNnh+ywJdpedqYbpduzrQbFAdDW2fqzJ1PmtJzee/UJTaiZ
+         2A7avbpJqnqB7087XVJ1CjI58oD6YcaB0GyDyD+bGZ+s5Tog2oFSyoA78jt9vacwvrnR
+         Q2ACriAKH790wkYTXUGHkgzWGR24ojC3Zkhts+WjrOnY4heCTR/Mb20EXDIuYU5H2lw6
+         UhpS1eJdc3BQrp6IOucsMpeVv2VJR71lzcfcwPMer9e6pPAIxwjYFkmnlq9JhNs42/qH
+         fb+OKJU7vNnlKIEegAsLRadjf3hQ+aYunjtw32n1EwU93sL49e3qnViJ0lRakEph6EO7
+         BMCw==
+X-Gm-Message-State: AOJu0YwWlUxa6yzLnfxT0/NzEmed77JlsXbsTFEGxumKkIH+xCBbAzxJ
+	OIWukFr4VgzT8Ka0LlqtDRqWUzXQ8Ad1HNmFksPCl7oH8FJteukMqlJc5qgLmzEihQQWTQeQ6qv
+	tAj8=
+X-Gm-Gg: ASbGnctXshqLoF6mdSogJOuoYikp2dA3TBEP21ZfQ5r4V4FXHYHPm1tvo833y9zTyjl
+	gsCU8gUo2ZpIzHublEjIdLxf8jzeHK/5PsTvLGpG7UJ7YUc4MorkJPg8QjlPZ2I2dMEnD2s68yg
+	F3dCJ5Ms5Qskvj7HT39Fkdi7HhpeNE4tOK9jYYU9Us7FCnEiqB8pyK/lMpjULj5JFcg0UgxSHFQ
+	Ghq2m8R8IV9dmMQM8peOtGoAC7c0ra1d4YxyrF5VMWKrm97I5rpNPh5eQBdBMGcUXAWwpFw23ch
+	MwaZ6c4Sg+h3ah8f15K/nRnU13qhECk7F9f6hCzI0afLkFHiQzwlQfMmU26BVKJR4lu4m3IFxfZ
+	LdbaNwrvE61yzK225BTg=
+X-Google-Smtp-Source: AGHT+IFn7XhPv2xwpCsBrIGrKCCp9UpVOCNk6OLPHO6v7CEqiDlrAtt6J/SD8YlLRgrjTwe1gEbP+w==
+X-Received: by 2002:a17:907:7216:b0:abf:6951:4bc2 with SMTP id a640c23a62f3a-ac1f0edc6b9mr23586166b.7.1741026509035;
+        Mon, 03 Mar 2025 10:28:29 -0800 (PST)
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf5fa63b4asm400965766b.33.2025.03.03.10.28.27
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Mar 2025 10:28:28 -0800 (PST)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5e4cbade42aso7088914a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 10:28:27 -0800 (PST)
+X-Received: by 2002:a17:907:980e:b0:abf:6e87:5148 with SMTP id
+ a640c23a62f3a-ac1f13720f7mr23433866b.23.1741026506915; Mon, 03 Mar 2025
+ 10:28:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250303-force-modeset-hw-ctl-v1-1-9cbf6d4fbf8e@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIALD0xWcC/21PyWrDMBD9FaNzBdLI2nwt9AN6LTloGdWC2E5lx
- WkJ+fcqaQiF9jS8mbfNmaxYMq5k6M6k4JbXvMwN8KeOhNHN70hzbJgAA8kADE1LCUinJeKKlY4
- nGuqeRgbeMAfe94E06aFgyp832zfy+vJMdj/Lgh/HFlHvl0fC0DX/ngMAjWWiMZf69cgwhmnrI
- 2iHatiA/K52E7ZizNJ4ONIgkgvapKC4vlMProbxxkzeoNPeog5GJnd1lMYGJSXnzAgDDoRk7P8
- AzlurOmJpY3V+j9Rr7TkKbrVOw8b/qnqmuKFhmcOxFJwrPXlqdVQgjE5WwrCpq8i7FRtrmnIdO
- qMU9sLbXvpkTTLYfo/J9RKDs5Cs4Ek4JoDsLpdvv8X1kbwBAAA=
-X-Change-ID: 20250228-force-modeset-hw-ctl-d02b80a2bb4c
-To: Rob Clark <robdclark@gmail.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>
-CC: Abhinav Kumar <quic_abhinavk@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>,
-        "Jessica
- Zhang" <quic_jesszhan@quicinc.com>
-X-Mailer: b4 0.15-dev-f0f05
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741026485; l=6237;
- i=quic_jesszhan@quicinc.com; s=20230329; h=from:subject:message-id;
- bh=rTv0ijG4Y1jg8aOqfg1mevw98KDyQ3ZbLmXyHct+QcM=;
- b=/AoYFcIzBi1s8fDLKXYokxW3oiO45xaz61z7I/CT+KWZL6btUS9MQuO6wJUCxUECMh7wqLwwQ
- PkxYIxyOUTCCsA7eb2BcCZ/+WHRkfDD0KtmJqJQW5JI6ZgFR7SslPzK
-X-Developer-Key: i=quic_jesszhan@quicinc.com; a=ed25519;
- pk=gAUCgHZ6wTJOzQa3U0GfeCDH7iZLlqIEPo4rrjfDpWE=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 0E42vUDQHO_gYKbLxyznwv8ZLb1_5t1p
-X-Proofpoint-GUID: 0E42vUDQHO_gYKbLxyznwv8ZLb1_5t1p
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-03_09,2025-03-03_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
- phishscore=0 mlxlogscore=999 clxscore=1015 priorityscore=1501
- lowpriorityscore=0 spamscore=0 malwarescore=0 suspectscore=0 adultscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2503030141
+References: <174099976188.10177.7153571701278544000.tip-bot2@tip-bot2>
+In-Reply-To: <174099976188.10177.7153571701278544000.tip-bot2@tip-bot2>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 3 Mar 2025 08:28:10 -1000
+X-Gmail-Original-Message-ID: <CAHk-=wjSwqJhvzAT-=AY88+7QmN=U0A121cGr286ZpuNdC+yaw@mail.gmail.com>
+X-Gm-Features: AQ5f1Jp9645mgpnQPPP7_mu4D7GdZbGoQmNM73EpDQqK94X1yTpIjhLLMBkkATc
+Message-ID: <CAHk-=wjSwqJhvzAT-=AY88+7QmN=U0A121cGr286ZpuNdC+yaw@mail.gmail.com>
+Subject: Re: [tip: x86/asm] x86/asm: Make ASM_CALL_CONSTRAINT conditional on
+ frame pointers
+To: linux-kernel@vger.kernel.org
+Cc: linux-tip-commits@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Ingo Molnar <mingo@kernel.org>, "Peter Zijlstra (Intel)" <peterz@infradead.org>, Brian Gerst <brgerst@gmail.com>, 
+	"H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-If new CTLs are reserved by CRTC but atomic_enable() is skipped, the
-encoders will configure the stale CTL instead of the newly reserved one.
+On Mon, 3 Mar 2025 at 01:02, tip-bot2 for Josh Poimboeuf
+<tip-bot2@linutronix.de> wrote:
+>
+> x86/asm: Make ASM_CALL_CONSTRAINT conditional on frame pointers
+>
+> With frame pointers enabled, ASM_CALL_CONSTRAINT is used in an inline
+> asm statement with a call instruction to force the compiler to set up
+> the frame pointer before doing the call.
+>
+> Without frame pointers, no such constraint is needed.  Make it
+> conditional on frame pointers.
 
-Avoid this by setting mode_changed to true if new CTLs have been
-reserved by CRTC.
+Can we please explain *why* this is done?
 
-Note: This patch only adds tracking for the CTL reservation, but eventually
-all HW blocks used by encoders (i.e. DSC, PINGPONG, CWB) should have a
-similar check to avoid the same issue.
+It may not be required, but it makes the source code uglier and adds a
+conditional. What's the advantage of adding this extra logic?
 
-Suggested-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-Closes: https://lists.freedesktop.org/archives/freedreno/2025-February/036719.html
-Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
----
- drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c    | 13 +++++++++++++
- drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 12 ++++++++++++
- drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h |  1 +
- 3 files changed, 26 insertions(+)
+I'm sure there is some reason for this change, but that reason should
+be explained.
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-index 4073d821158c0..a1a8be8f5ab9f 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-@@ -1406,19 +1406,32 @@ int dpu_crtc_check_mode_changed(struct drm_crtc_state *old_crtc_state,
- 	struct drm_crtc *crtc = new_crtc_state->crtc;
- 	bool clone_mode_enabled = drm_crtc_in_clone_mode(old_crtc_state);
- 	bool clone_mode_requested = drm_crtc_in_clone_mode(new_crtc_state);
-+	struct dpu_crtc_state *cstate = to_dpu_crtc_state(new_crtc_state);
-+	uint32_t enc_ctl_mask = 0;
-+	uint32_t crtc_ctl_mask = 0;
-+	struct dpu_crtc_mixer *m;
- 
- 	DRM_DEBUG_ATOMIC("%d\n", crtc->base.id);
- 
-+	for (int i = 0; i < cstate->num_mixers; i++) {
-+		m = &cstate->mixers[i];
-+		crtc_ctl_mask |= BIT(m->lm_ctl->idx - CTL_0);
-+	}
-+
- 	/* there might be cases where encoder needs a modeset too */
- 	drm_for_each_encoder_mask(drm_enc, crtc->dev, new_crtc_state->encoder_mask) {
- 		if (dpu_encoder_needs_modeset(drm_enc, new_crtc_state->state))
- 			new_crtc_state->mode_changed = true;
-+		enc_ctl_mask |= dpu_encoder_get_ctls(drm_enc);
- 	}
- 
- 	if ((clone_mode_requested && !clone_mode_enabled) ||
- 	    (!clone_mode_requested && clone_mode_enabled))
- 		new_crtc_state->mode_changed = true;
- 
-+	if (crtc_ctl_mask != enc_ctl_mask)
-+		new_crtc_state->mode_changed = true;
-+
- 	return 0;
- }
- 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-index a61598710acda..2f3101caeba91 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-@@ -188,6 +188,7 @@ struct dpu_encoder_virt {
- 
- 	unsigned int dsc_mask;
- 	unsigned int cwb_mask;
-+	unsigned int ctl_mask;
- 
- 	bool intfs_swapped;
- 
-@@ -707,6 +708,13 @@ void dpu_encoder_update_topology(struct drm_encoder *drm_enc,
- 	}
- }
- 
-+uint32_t dpu_encoder_get_ctls(struct drm_encoder *drm_enc)
-+{
-+	struct dpu_encoder_virt *dpu_enc = to_dpu_encoder_virt(drm_enc);
-+
-+	return dpu_enc->ctl_mask;
-+}
-+
- bool dpu_encoder_needs_modeset(struct drm_encoder *drm_enc, struct drm_atomic_state *state)
- {
- 	struct drm_connector *connector;
-@@ -1155,6 +1163,7 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
- 	bool is_cwb_encoder;
- 	unsigned int dsc_mask = 0;
- 	unsigned int cwb_mask = 0;
-+	unsigned int ctl_mask = 0;
- 	int i;
- 
- 	if (!drm_enc) {
-@@ -1245,11 +1254,14 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
- 				"no ctl block assigned at idx: %d\n", i);
- 			return;
- 		}
-+		ctl_mask |= BIT(phys->hw_ctl->idx - CTL_0);
- 
- 		phys->cached_mode = crtc_state->adjusted_mode;
- 		if (phys->ops.atomic_mode_set)
- 			phys->ops.atomic_mode_set(phys, crtc_state, conn_state);
- 	}
-+
-+	dpu_enc->ctl_mask = ctl_mask;
- }
- 
- static void _dpu_encoder_virt_enable_helper(struct drm_encoder *drm_enc)
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h
-index ca1ca2e51d7ea..70b03743dc346 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h
-@@ -91,6 +91,7 @@ bool dpu_encoder_needs_modeset(struct drm_encoder *drm_enc, struct drm_atomic_st
- 
- void dpu_encoder_prepare_wb_job(struct drm_encoder *drm_enc,
- 		struct drm_writeback_job *job);
-+uint32_t dpu_encoder_get_ctls(struct drm_encoder *drm_enc);
- 
- void dpu_encoder_cleanup_wb_job(struct drm_encoder *drm_enc,
- 		struct drm_writeback_job *job);
+Because "we don't need it" cuts both ways. Maybe we don't need the
+ASM_CALL_CONSTRAINT, but it also didn't use to hurt us.
 
----
-base-commit: 866e43b945bf98f8e807dfa45eca92f931f3a032
-change-id: 20250228-force-modeset-hw-ctl-d02b80a2bb4c
-prerequisite-change-id: 20241222-drm-dirty-modeset-88079bd27ae6:v2
-prerequisite-patch-id: 0c61aabfcd13651203f476985380cbf4d3c299e6
-prerequisite-patch-id: c6026f08011c288fd301676e9fa6f46d0cc1dab7
-prerequisite-patch-id: b0cb06d5c88791d6e4755d879ced0d5050aa3cbf
-prerequisite-patch-id: fd72ddde9dba0df053113bc505c213961a9760da
-prerequisite-change-id: 20250209-dpu-c3fac78fc617:v2
-prerequisite-patch-id: c84d2b4b06be06384968429085d1e8ebae23a583
-prerequisite-patch-id: fb8ea7b9e7c85fabd27589c6551108382a235002
-prerequisite-change-id: 20250211-dither-disable-b77b1e31977f:v1
-prerequisite-patch-id: 079e04296212b4b83d51394b5a9b5eea6870d98a
-prerequisite-change-id: 20240618-concurrent-wb-97d62387f952:v6
-prerequisite-patch-id: b52034179741dc182aea9411fd446e270fdc69d1
-prerequisite-patch-id: bc472765a7d5214691f3d92696cc8b0119f3252e
-prerequisite-patch-id: c959bc480e96b04297ebaf30fea3a68bbac69da6
-prerequisite-patch-id: f7db8449b241a41faac357d9257f8c7cb16503ec
-prerequisite-patch-id: 7beb73131d0ab100f266fcd3c1f67c818a3263f4
-prerequisite-patch-id: c08cbb5cf4e67e308afd61fdad6684b89429d3b6
-prerequisite-patch-id: a4e343143b8fbe98ae4aa068cc459c750105eb9d
-prerequisite-patch-id: 1d09edcf12ef7e7ab43547eefacae5b604b698e9
-prerequisite-patch-id: 0008f9802bfd3c5877267666cceb7608203e5830
-prerequisite-patch-id: 49402eb767c97915faf2378c5f5d05ced2dcfdac
-prerequisite-patch-id: 522be2a6b5fe4e3a2d609526bb1539f9bc6f828f
-prerequisite-patch-id: 031da00d0fffd522f74d682a551362f3ecda0c71
-prerequisite-patch-id: 9454cec22231a8f3f01c33d52a5df3e26dd88287
-prerequisite-patch-id: 7edbeaace3549332e581bee3183a76b0e4d18163
+The problems seems entirely caused by the change to use a strictly
+inferior version of ASM_CALL_CONSTRAINT.
 
-Best regards,
--- 
-Jessica Zhang <quic_jesszhan@quicinc.com>
+Is there really no better option? Because the new ASM_CALL_CONSTRAINT
+seems actively horrendous.
 
+                Linus
 
