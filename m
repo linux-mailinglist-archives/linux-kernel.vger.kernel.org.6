@@ -1,91 +1,109 @@
-Return-Path: <linux-kernel+bounces-541251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DD56A4BA87
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:14:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF981A4BA91
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:15:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 397261663FA
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:13:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15F783B1E3C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 091261F0E29;
-	Mon,  3 Mar 2025 09:13:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ADF31EFFA1;
+	Mon,  3 Mar 2025 09:14:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aDOtaufM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=crpt.ru header.i=@crpt.ru header.b="Opd1Ifto"
+Received: from mail.crpt.ru (mail1.crpt.ru [91.236.205.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527F61F03F4;
-	Mon,  3 Mar 2025 09:13:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5901F0E42
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 09:14:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.236.205.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740993230; cv=none; b=Eko/9k+hR9jbHz4SA4fboTq56x6p/VJOBTmwtom7NtQjMBjyqO2jKlv8IjW78jSh/3pzDsJiSQJWIHW0ZqURHYCTpzKEtHh9meD6NZajen381/wiNAj5ofTNkEFyW0GQcQ+h3d4SXP0MbvIbdAPV+h2pdv0ltRdy16f6w/vO4vQ=
+	t=1740993252; cv=none; b=iu812KvnEwKTExnA7JcFeSwxx+FFJT7lqqnfo5kqg9RxnGvgfiNBE2k4P0ajbim6CzneJnwZEoMwMEItJKsgoe2qh7qdPpxXBcosus7p3IFMz0bPE4ZfffkbTNxKY8Gmj5WusGwv3sVvCtbu5mylctPQNicfesUvPVEDfA4i4yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740993230; c=relaxed/simple;
-	bh=cbX1IZV2u0T3mIg8u/7c8HZDjjLHtTM0zS/axg4Z6JY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mAjCp0LdOVKT+fva5YQN8N76QOmGmjIxs0o46vu6f+ieYpXqmRut+Cot2Tk0FSmrj28XTfydIxaiCHzvO31Is5rWK8J2YCbOFxWtVm8foWeejNeE+L33cNjwA88GIuGMxGlCwtKxORThnnuNmnmBH8uWFlrQkRCTZsFxg4OVjrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aDOtaufM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE1BAC4CED6;
-	Mon,  3 Mar 2025 09:13:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740993229;
-	bh=cbX1IZV2u0T3mIg8u/7c8HZDjjLHtTM0zS/axg4Z6JY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aDOtaufMxbaHYemQkA1sEn2VFhvpVjNbRGg4s3snDQeousQZufRD4/mp4Jjg8vzdK
-	 AiQWk1tciD3yQ+XDsAk5CZRbRLSB9SfMT8nuOm22s+onIra+P0D6fyIVHzQAjuUit/
-	 EiCkTOZ7pAvnPrPZm28NCEkm8XTgXKsoY3UVgLp4Q/D8aS6ulDbg5j5+ftR/71R214
-	 Vx6DtQ5zkH/dW27eJ6Win6mBwovAhcHx6S2FFzOXENf17AwrrF4F2D3aJAoq9jECIq
-	 YMVmx5QQTo91y1xV/T0dvwqdsEvcr5lm2/pw0AdIh0tjYIfhHLVVCbH5lO6Yp4I4W4
-	 MnDBV+CMruW4Q==
-Date: Mon, 3 Mar 2025 10:13:46 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Joel Selvaraj <foss@joelselvaraj.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v3 3/4] arm64: dts: qcom: sdm845-xiaomi-beryllium-tianma:
- introduce touchscreen support
-Message-ID: <20250303-flashy-venomous-seal-44ad2d@krzk-bin>
-References: <20250301-pocof1-touchscreen-support-v3-0-af01c3b30b55@joelselvaraj.com>
- <20250301-pocof1-touchscreen-support-v3-3-af01c3b30b55@joelselvaraj.com>
+	s=arc-20240116; t=1740993252; c=relaxed/simple;
+	bh=Y4na+PZuq9qpln+6pQDbOO1I/ozVi+pT4LINH5/Xlf8=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=HdOAl4mQY5k6Lx50SOBwh5DH+z1pd917lpgK06Q+k8YYSG7UzEHSa8v/IrKcrbND/BRF4bRCs/23925yBA8sBoZpqDdAIclCOO2nr30z7gkqmbuhx3yTauQdqKGsG2yXIhCIj8fwQqKfVmAN9q6CsV0r14iJsNarySOmig9Q324=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crpt.ru; spf=pass smtp.mailfrom=crpt.ru; dkim=pass (2048-bit key) header.d=crpt.ru header.i=@crpt.ru header.b=Opd1Ifto; arc=none smtp.client-ip=91.236.205.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crpt.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crpt.ru
+Received: from mail.crpt.ru ([192.168.60.4])
+	by mail.crpt.ru  with ESMTP id 5239Dv3R014231-5239Dv3T014231
+	(version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=OK);
+	Mon, 3 Mar 2025 12:13:57 +0300
+Received: from EX1.crpt.local (192.168.60.3) by ex2.crpt.local (192.168.60.4)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Mon, 3 Mar
+ 2025 12:13:57 +0300
+Received: from EX1.crpt.local ([192.168.60.3]) by EX1.crpt.local
+ ([192.168.60.3]) with mapi id 15.01.2507.044; Mon, 3 Mar 2025 12:13:56 +0300
+From: =?koi8-r?B?98HUz9LP0MnOIOHOxNLFyg==?= <a.vatoropin@crpt.ru>
+To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+CC: =?koi8-r?B?98HUz9LP0MnOIOHOxNLFyg==?= <a.vatoropin@crpt.ru>,
+	"ntfs3@lists.linux.dev" <ntfs3@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>
+Subject: [PATCH] fs/ntfs3: Drop redundant NULL check
+Thread-Topic: [PATCH] fs/ntfs3: Drop redundant NULL check
+Thread-Index: AQHbjByXRCuH30BWgkWBO5T9Xi9FhA==
+Date: Mon, 3 Mar 2025 09:13:56 +0000
+Message-ID: <20250303091321.68634-1-a.vatoropin@crpt.ru>
+Accept-Language: ru-RU, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="koi8-r"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250301-pocof1-touchscreen-support-v3-3-af01c3b30b55@joelselvaraj.com>
+X-FEAS-Client-IP: 192.168.60.4
+X-FE-Policy-ID: 2:4:0:SYSTEM
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; d=crpt.ru; s=crpt.ru; c=relaxed/relaxed;
+ h=from:to:cc:subject:date:message-id:content-type:mime-version;
+ bh=pWgN86eTmOK9MIqHI455dmQDuotfD8lDByCxbx0so6g=;
+ b=Opd1IftoPEawGICNHpkbQc77+FGkvgOn7uG7QKYxcgdPYrnSoeVtjTUDs0qZbmiX5U29LNb/Tr83
+	XlhLZv9DzCfXuiwxvjkTJ5fywD60AU03zRbDx1/skaPjYw4gn2A9yiYMWGPun2EjsGNsITqjn0hl
+	LS/W2EZMoPQhFrNyCxpkub2gcny2mhdl/UOW/TqHC0uQ9Mq8xXVVjSPYNkd0Vc0REvcXJ6dAU/0E
+	pVecCbKYFMad4F16anQfL7+7/SttQ1+PTC8dY3uwIerHeloyU+KJjQH4WQoe24GqnG8DWjCxSRda
+	AnZsasnah1fxbU4i9BwOo6HZtE+8cB1pFILGQw==
 
-On Sat, Mar 01, 2025 at 05:43:09PM -0600, Joel Selvaraj wrote:
-> Enable the Novatek NT36672A touchscreen controller used in the Poco F1
-> (Tianma) panel variant.
-> 
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Signed-off-by: Joel Selvaraj <foss@joelselvaraj.com>
-> ---
->  .../dts/qcom/sdm845-xiaomi-beryllium-tianma.dts    | 23 ++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-tianma.dts b/arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-tianma.dts
-> index e9427851ebaa..b58964cde834 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-tianma.dts
-> +++ b/arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-tianma.dts
-> @@ -13,3 +13,26 @@ &display_panel {
->  	compatible = "tianma,fhd-video", "novatek,nt36672a";
->  	status = "okay";
->  };
+From: Andrey Vatoropin <a.vatoropin@crpt.ru>
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Static analysis shows that pointer "mi" cannot be NULL, since it is
+pre-initialized above. A potential failure when mi equals NULL is
+processed.
 
-Best regards,
-Krzysztof
+Remove the extra NULL check. It is meaningless and harms the readability
+of the code, since before that the pointer is unconditionally
+dereferenced.
 
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
+
+Signed-off-by: Andrey Vatoropin <a.vatoropin@crpt.ru>
+---
+ fs/ntfs3/fslog.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/ntfs3/fslog.c b/fs/ntfs3/fslog.c
+index d0d530f4e2b9..03f3292fa987 100644
+--- a/fs/ntfs3/fslog.c
++++ b/fs/ntfs3/fslog.c
+@@ -3143,7 +3143,7 @@ static int do_action(struct ntfs_log *log, struct OPE=
+N_ATTR_ENRTY *oe,
+=20
+ 			if (inode)
+ 				iput(inode);
+-			else if (mi)
++			else
+ 				mi_put(mi);
+=20
+ 			inode =3D inode_parent;
+--=20
+2.43.0
 
