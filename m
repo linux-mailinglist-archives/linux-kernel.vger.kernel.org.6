@@ -1,290 +1,216 @@
-Return-Path: <linux-kernel+bounces-541328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58EBFA4BB92
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:01:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D276DA4BB7D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:59:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDB653A9C1E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:00:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F8F8188A45A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:59:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A440A1F1906;
-	Mon,  3 Mar 2025 10:00:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1C021F1909;
+	Mon,  3 Mar 2025 09:58:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="urmRmFxZ"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="uRvNzI5k"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37EBF1F2C3B
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 10:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188E51F12F6;
+	Mon,  3 Mar 2025 09:58:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740996031; cv=none; b=QQNepQ09rL3wIsuvZnqlTLCJdbHY9MakUYYFvyfMCj5OHSr5KcrVmgACirzp0acLjzZbi7OUGJ6GQMPdWoTtXiiXqPmxUVsNIesEhHBOsJ+Uxsf32cjnHzJAg19FSsgPKnoV03W5omOS7JYwsrS+SPAR7U57z/TSViRMDK3IRNc=
+	t=1740995924; cv=none; b=lNgLuh/W2/gZ9SYfijBVkzdFReGes2LByVTlxkUlbewst44N0AEuc1VSXv6s/9CAYosJnNLQA2V3ZfB2vUb2kf9v9QHvZxuKEp5bQITcSs/sOw3pY3ACm6p7jChyfBOgeUvuQRHwP3MiktARssPiMZjNBrOBOUfF4Rf3CVu3kYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740996031; c=relaxed/simple;
-	bh=4ePiwYSbOCYH3v1SviQDg3/HbMk9bKn0Y0srxW3uClM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bwwkvbyc405K1zOu+XcR3d2kczPqCred/y0iopMWXlfONvR/QCXJs8PJ0lsAfX6eRO1tlZUmZY7ve7M1YP/VAj3uXi2o8bPldV7xyzsYKUoEN+DCcl0+TZjlsBwyxx/iCncjlCIIkqd9EU5N470pJcsZgALxrGrrc0TBHnWuuPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=urmRmFxZ; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2fec13a4067so4269747a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 02:00:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740996029; x=1741600829; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bCtpbarqcsWFDUrFSqXD3/5LnWihrLhv2toR5uStrCc=;
-        b=urmRmFxZYbF12HuDunEnhJfhZde8ejtb3l2vNYsoImsuixO7ZPmrI1WIHeGJcVt3dl
-         2aYzQV8gOoq1KBxJKuAycUErUqsx1z5elD+4QJX7LWOcb7dHSSFtFBHwziB1ZcQJSgog
-         rp0F8t6Fle2x+FYztrnLRWowhSNMryZ9S5MfPJ800H/DmN/iBXwPQoMVMu5K7kcmdO94
-         dDbn5Qva8xzi7NZ/fOz73GA2s2jaQrqiz8rl/vps9mkbiLbpzHOFHeoyFXswtlTcP2ZE
-         8ABhtvCWlX0dLLdgiBg10kcpaahpaw03aG97Ogq9r0PIYl4hjKXTKTk4qtYKuT3GwLoZ
-         liRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740996029; x=1741600829;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bCtpbarqcsWFDUrFSqXD3/5LnWihrLhv2toR5uStrCc=;
-        b=Gf0Pz0drz2U/RzFmwDDlDyptQMIOinQ3k30Oxi+0dUhcl57PntM7cLN7RYrjFvlP23
-         r5JQ+Lr6eD4wMqbbOKwWqKl/w7dvzYkDjvIU45Uca6rzHB4Fo6Lo+cBO70s68Z6eqUpC
-         14y324pOqThUqWio6QvAhBkCPq1RRkr7wZiYYZKZDMCdSk8AYJIUr868KcfWOjDEuaqZ
-         fL81F2NwvFjsISG29Oj04Ng3uJOFkjwInO4XV2yHYO+2sohYKRphWXKckJW2hF5cvtYI
-         Il6vr6jTmgTiHtUlAYPz5ynut/bWGdA3utkCD9XSTFueHa2UAxlhyIOkq4IGvErSJDAh
-         qDMw==
-X-Forwarded-Encrypted: i=1; AJvYcCUoKah/vwEpeUb9pdp6MAHsa8B8w5Bp5hIvI0ZnGnCnqR96VZbvIHVyDLMZN8G8+iYmOvrKTtz+YvIfxKA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4NhOERgOWnPO9Av/kljzfVF7EVnw/+1L8O3EZi0jJC91J68QG
-	CzQ88gKmQr1zsbLVlE53annGLHTw+afR0f9H+ha59FmIODkuce8yuM1rEZ9Y76Y=
-X-Gm-Gg: ASbGnctPBmBZ8HZJ7au7IvQR10OA4WxeXdn01x6+BfgJzL2nomRAmlEp+16LvhEnJkG
-	NNEmVb5vfkML+UpZa7L/YSZsDKicwp4xBkcw2PjyQCYboNM9JpUQo49ewqWXUQzKsfr5G9Ypdv4
-	5285aY74jOxe7cyEeT1N/nzzp3tPPnP3f+w5F0WTISw0kA3jYmAql+MvKpD0WD0JTHKhyb89Q+e
-	qVDfmnwZOvPx71VlysN4Ih3oLGWXGjwphsMMw7fBi6fZCLjBrrR5g1pJpkNE0uy6PHZZaebSAsp
-	XRUk5fXuUSpiGsCe1BONgSNxzjnxmdeUBjS1m2Dc54grYA==
-X-Google-Smtp-Source: AGHT+IFU5ll4u6S7m0NrVB1a+FHvXW54L7A2aqExOXgrVGjy78eyLcfNYLvSU8KeXTNKCT43lKxykw==
-X-Received: by 2002:a17:90b:528b:b0:2fe:a336:fe65 with SMTP id 98e67ed59e1d1-2febab3c6f0mr20234955a91.10.1740996029494;
-        Mon, 03 Mar 2025 02:00:29 -0800 (PST)
-Received: from localhost ([122.172.84.15])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fe6ded6ebfsm13571496a91.1.2025.03.03.02.00.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 02:00:28 -0800 (PST)
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Daniel Almeida <daniel.almeida@collabora.com>
-Subject: [PATCH V3 2/2] rust: Add initial clk abstractions
-Date: Mon,  3 Mar 2025 15:28:10 +0530
-Message-Id: <023e3061cc164087b9079a9f6cb7e9fbf286794e.1740995194.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
-In-Reply-To: <cover.1740995194.git.viresh.kumar@linaro.org>
-References: <cover.1740995194.git.viresh.kumar@linaro.org>
+	s=arc-20240116; t=1740995924; c=relaxed/simple;
+	bh=EVHnAT0Fj8UFfX1d1iKKikIPT6mE89O8IutiZ9wghW4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QUj/vg5+uC8w2Fn91lWY8nAANi9s5/p0vA6BasrRJYTVJh9cNJjpK4o3Q/uVUf+BS2SCJGk5I76o9mw8U3gNYILim2LVc4p/+zn5e5cxXfzs8orCTgVhwsiC7Wt0GTsPqNDwHB4FRXyb7TXrRr+6cq8Xz5e0WU9za6jyqXX54RI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=uRvNzI5k; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=vocGWq00dHieN/+oIHdRzKoBXygqv9MdZeGwUkedRe8=; b=uRvNzI5kU7RbApRJOXrYX2IOFF
+	5QfX0iCOo6Ens2pw8lKCUfsT18QpgBG3nwlYDqFwdxXv4hqE6jaEXDZG8HfvQxOXLEKsquGbP8NEE
+	OIB2Cgx3P68QPb8V73KpPrf2dsXurdE2IL/EIDuGzeBZzGWdJByIMa8+g5Z1cODYI5TUBw6hFZwC9
+	kaFBMnRyIrk7CkD+V6IwFdYPWRnpx28jtnOWXM9WYHhf2hIdfBc026F7qrR1feEzQMfL/s8S5mK3A
+	ZE5FrGOXdfv3BtB/Gj/8r7ls4V7bUSbI6eF1hOoelJKXwUS6BNNypgWBR1M5J9GGGgJrsCG6TPlBJ
+	a/95o4Pg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:45396)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tp2Z4-00008X-2c;
+	Mon, 03 Mar 2025 09:58:22 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tp2Yy-0003hC-1p;
+	Mon, 03 Mar 2025 09:58:16 +0000
+Date: Mon, 3 Mar 2025 09:58:16 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 3/3] net: stmmac: Add DWMAC glue layer for Renesas GBETH
+Message-ID: <Z8V9OC_1llF3leZd@shell.armlinux.org.uk>
+References: <20250302181808.728734-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250302181808.728734-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <Z8SydsdDsZfdrdbE@shell.armlinux.org.uk>
+ <CA+V-a8vCB7nP=tsv4UkOwODSs-9hiG-PxN6cpihfvwjq2itAHg@mail.gmail.com>
+ <CA+V-a8un7Oy9NtfDUfs0DSwRVAFn52-vWj1Os=u_1dqijJhbMw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+V-a8un7Oy9NtfDUfs0DSwRVAFn52-vWj1Os=u_1dqijJhbMw@mail.gmail.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Add initial abstractions for the clk APIs. These provide the minimal
-functionality needed for common use cases, making them straightforward
-to introduce in the first iteration.
+On Mon, Mar 03, 2025 at 09:41:13AM +0000, Lad, Prabhakar wrote:
+> Hi Russell,
+> 
+> On Sun, Mar 2, 2025 at 9:20 PM Lad, Prabhakar
+> <prabhakar.csengg@gmail.com> wrote:
+> >
+> > Hi Russell,
+> >
+> > On Sun, Mar 2, 2025 at 7:33 PM Russell King (Oracle)
+> > <linux@armlinux.org.uk> wrote:
+> > >
+> > > On Sun, Mar 02, 2025 at 06:18:08PM +0000, Prabhakar wrote:
+> > > > +     gbeth->dev = dev;
+> > > > +     gbeth->regs = stmmac_res.addr;
+> > > > +     plat_dat->bsp_priv = gbeth;
+> > > > +     plat_dat->set_clk_tx_rate = stmmac_set_clk_tx_rate;
+> > >
+> > > Thanks for using that!
+> > >
+> > Yep, it shortens the glue driver further.
+> >
+> > > > +     plat_dat->flags |= STMMAC_FLAG_HWTSTAMP_CORRECT_LATENCY |
+> > > > +                        STMMAC_FLAG_EN_TX_LPI_CLOCKGATING |
+> > >
+> > > I would like to know what value tx_clk_stop is in
+> > > stmmac_mac_enable_tx_lpi() for your setup. Ideally, stmmac should
+> > > use the capability report from the PHY to decide whether the
+> > > transmit clock can be gated, but sadly we haven't had any support
+> > > in phylib/phylink for that until recently, and I haven't modified
+> > > stmmac to allow use of that. However, it would be good to gain
+> > > knowledge in this area.
+> > >
+> > tx_clk_stop =1,
+> >
+> > root@rzv2h-evk-alpha:~# ifconfig eth0 up
+> > [  587.830436] renesas-gbeth 15c30000.ethernet eth0: Register
+> > MEM_TYPE_PAGE_POOL RxQ-0
+> > [  587.838636] renesas-gbeth 15c30000.ethernet eth0: Register
+> > MEM_TYPE_PAGE_POOL RxQ-1
+> > [  587.846792] renesas-gbeth 15c30000.ethernet eth0: Register
+> > MEM_TYPE_PAGE_POOL RxQ-2
+> > [  587.854734] renesas-gbeth 15c30000.ethernet eth0: Register
+> > MEM_TYPE_PAGE_POOL RxQ-3
+> > [  587.926860] renesas-gbeth 15c30000.ethernet eth0: PHY [stmmac-0:00]
+> > driver [Microchip KSZ9131 Gigabit PHY] (irq=POLL)
+> > [  587.949380] dwmac4: Master AXI performs fixed burst length
+> > [  587.954910] renesas-gbeth 15c30000.ethernet eth0: No Safety
+> > Features support found
+> > [  587.962556] renesas-gbeth 15c30000.ethernet eth0: IEEE 1588-2008
+> > Advanced Timestamp supported
+> > [  587.971420] renesas-gbeth 15c30000.ethernet eth0: registered PTP clock
+> > [  587.978004] renesas-gbeth 15c30000.ethernet eth0: configuring for
+> > phy/rgmii-id link mode
+> > root@rzv2h-evk-alpha:~# [  591.070448] renesas-gbeth 15c30000.ethernet
+> > eth0: tx_clk_stop=1
+> > [  591.076590] renesas-gbeth 15c30000.ethernet eth0: Link is Up -
+> > 1Gbps/Full - flow control rx/tx
+> >
+> > With the below diff:
+> >
+> > diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> > b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> > index aec230353ac4..68f1954e6eea 100644
+> > --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> > +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> > @@ -1100,6 +1100,7 @@ static int stmmac_mac_enable_tx_lpi(struct
+> > phylink_config *config, u32 timer,
+> >         struct stmmac_priv *priv = netdev_priv(to_net_dev(config->dev));
+> >         int ret;
+> >
+> > +       netdev_err(priv->dev, "tx_clk_stop=%d\n", tx_clk_stop);
+> >         priv->tx_lpi_timer = timer;
+> >         priv->eee_active = true;
+> >
+> > > > +                        STMMAC_FLAG_RX_CLK_RUNS_IN_LPI |
+> > >
+> I got some feedback from the HW team, based on the feedback this flag
+> depends on the PHY device. I wonder if we should create a DT property
+> for this. Please share your thoughts.
 
-These will be used by Rust based cpufreq / OPP layers to begin with.
+Not sure exactly which flag you're referring to, because you first
+quote the code that you added to dump the _transmit_ clock stop,
+and then you named the _receive_ clock flag.
 
-Tested-by: Daniel Almeida <daniel.almeida@collabora.com>
-Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- MAINTAINERS        |   1 +
- rust/kernel/clk.rs | 134 +++++++++++++++++++++++++++++++++++++++++++++
- rust/kernel/lib.rs |   1 +
- 3 files changed, 136 insertions(+)
- create mode 100644 rust/kernel/clk.rs
+I assume you're referring to STMMAC_FLAG_EN_TX_LPI_CLOCKGATING, which
+is currently used by the driver because it didn't know any better to
+check the capabilities of the PHY - and phylib didn't expose an
+interface to do that.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 726110d3c988..96e2574f41c0 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5779,6 +5779,7 @@ F:	include/linux/clk-pr*
- F:	include/linux/clk/
- F:	include/linux/of_clk.h
- F:	rust/helpers/clk.c
-+F:	rust/kernel/clk.rs
- X:	drivers/clk/clkdev.c
- 
- COMMON INTERNET FILE SYSTEM CLIENT (CIFS and SMB3)
-diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs
-new file mode 100644
-index 000000000000..1fa5b7298373
---- /dev/null
-+++ b/rust/kernel/clk.rs
-@@ -0,0 +1,134 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+//! Clock abstractions.
-+//!
-+//! C header: [`include/linux/clk.h`](srctree/include/linux/clk.h)
-+
-+use crate::{
-+    bindings,
-+    device::Device,
-+    error::{from_err_ptr, to_result, Result},
-+    prelude::*,
-+};
-+
-+use core::{ops::Deref, ptr};
-+
-+/// Frequency unit.
-+pub type Hertz = crate::ffi::c_ulong;
-+
-+/// A simple implementation of `struct clk` from the C code.
-+#[repr(transparent)]
-+pub struct Clk(*mut bindings::clk);
-+
-+impl Clk {
-+    /// Gets clock corresponding to a device and a connection id and returns `Clk`.
-+    pub fn get(dev: &Device, name: Option<&CStr>) -> Result<Self> {
-+        let con_id = if let Some(name) = name {
-+            name.as_ptr() as *const _
-+        } else {
-+            ptr::null()
-+        };
-+
-+        // SAFETY: It is safe to call `clk_get()` for a valid device pointer.
-+        Ok(Self(from_err_ptr(unsafe {
-+            bindings::clk_get(dev.as_raw(), con_id)
-+        })?))
-+    }
-+
-+    /// Obtain the raw `struct clk *`.
-+    pub fn as_raw(&self) -> *mut bindings::clk {
-+        self.0
-+    }
-+
-+    /// Clock enable.
-+    pub fn enable(&self) -> Result<()> {
-+        // SAFETY: It is safe to call clk APIs of the C code for a clock pointer earlier returned
-+        // by `clk_get()`.
-+        to_result(unsafe { bindings::clk_enable(self.as_raw()) })
-+    }
-+
-+    /// Clock disable.
-+    pub fn disable(&self) {
-+        // SAFETY: It is safe to call clk APIs of the C code for a clock pointer earlier returned
-+        // by `clk_get()`.
-+        unsafe { bindings::clk_disable(self.as_raw()) };
-+    }
-+
-+    /// Clock prepare.
-+    pub fn prepare(&self) -> Result<()> {
-+        // SAFETY: It is safe to call clk APIs of the C code for a clock pointer earlier returned
-+        // by `clk_get()`.
-+        to_result(unsafe { bindings::clk_prepare(self.as_raw()) })
-+    }
-+
-+    /// Clock unprepare.
-+    pub fn unprepare(&self) {
-+        // SAFETY: It is safe to call clk APIs of the C code for a clock pointer earlier returned
-+        // by `clk_get()`.
-+        unsafe { bindings::clk_unprepare(self.as_raw()) };
-+    }
-+
-+    /// Clock prepare enable.
-+    pub fn prepare_enable(&self) -> Result<()> {
-+        // SAFETY: It is safe to call clk APIs of the C code for a clock pointer earlier returned
-+        // by `clk_get()`.
-+        to_result(unsafe { bindings::clk_prepare_enable(self.as_raw()) })
-+    }
-+
-+    /// Clock disable unprepare.
-+    pub fn disable_unprepare(&self) {
-+        // SAFETY: It is safe to call clk APIs of the C code for a clock pointer earlier returned
-+        // by `clk_get()`.
-+        unsafe { bindings::clk_disable_unprepare(self.as_raw()) };
-+    }
-+
-+    /// Clock get rate.
-+    pub fn rate(&self) -> Hertz {
-+        // SAFETY: It is safe to call clk APIs of the C code for a clock pointer earlier returned
-+        // by `clk_get()`.
-+        unsafe { bindings::clk_get_rate(self.as_raw()) }
-+    }
-+
-+    /// Clock set rate.
-+    pub fn set_rate(&self, rate: Hertz) -> Result<()> {
-+        // SAFETY: It is safe to call clk APIs of the C code for a clock pointer earlier returned
-+        // by `clk_get()`.
-+        to_result(unsafe { bindings::clk_set_rate(self.as_raw(), rate) })
-+    }
-+}
-+
-+impl Drop for Clk {
-+    fn drop(&mut self) {
-+        // SAFETY: It is safe to call clk APIs of the C code for a clock pointer earlier returned
-+        // by `clk_get()`.
-+        unsafe { bindings::clk_put(self.as_raw()) };
-+    }
-+}
-+
-+/// A simple implementation of optional `Clk`.
-+pub struct OptionalClk(Clk);
-+
-+impl OptionalClk {
-+    /// Gets optional clock corresponding to a device and a connection id and returns `Clk`.
-+    pub fn get(dev: &Device, name: Option<&CStr>) -> Result<Self> {
-+        let con_id = if let Some(name) = name {
-+            name.as_ptr() as *const _
-+        } else {
-+            ptr::null()
-+        };
-+
-+        // SAFETY: It is safe to call `clk_get_optional()` for a valid device pointer.
-+        Ok(Self(Clk(from_err_ptr(unsafe {
-+            bindings::clk_get_optional(dev.as_raw(), con_id)
-+        })?)))
-+    }
-+}
-+
-+// Make `OptionalClk` behave like `Clk`.
-+impl Deref for OptionalClk {
-+    type Target = Clk;
-+
-+    fn deref(&self) -> &Clk {
-+        &self.0
-+    }
-+}
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index 496ed32b0911..324b86f127a0 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -40,6 +40,7 @@
- pub mod block;
- #[doc(hidden)]
- pub mod build_assert;
-+pub mod clk;
- pub mod cred;
- pub mod device;
- pub mod device_id;
+tx_clk_stop is basically the flag from the PHY indicating whether the
+MAC may be permitted to stop its transmit clock. Unfortunately, we
+can't just switch over to using that in stmmac because of it's dumb
+history as that may cause regressions. As we haven't used this flag
+from the PHY before, we have no idea whether it's reliable or not,
+and if it isn't reliable, then using it will cause regressions.
+
+I think that the way forward would be to introduce yet another flag
+(maybe STMMAC_FLAG_LPI_TX_CLK_PHY_CAP) and:
+
+	if (priv->plat->flags & STMMAC_FLAG_LPI_TX_CLK_PHY_CAP)
+		priv->tx_lpi_clk_stop = tx_clk_stop;
+	else
+		priv->tx_lpi_clk_stop = priv->plat->flags &
+					STMMAC_FLAG_EN_TX_LPI_CLOCKGATING;
+
+and then where STMMAC_FLAG_EN_TX_LPI_CLOCKGATING is checked, that
+becomes:
+
+	ret = stmmac_set_lpi_mode(priv, priv->hw, STMMAC_LPI_TIMER,
+				  priv->tx_lpi_clk_stop,
+				  priv->tx_lpi_timer);
+
+It's rather annoying to have to include a flag to say "use the 802.3
+standard behaviour" but given that we want to avoid regressions I don't
+see any other choice. It would've been nice to have had the driver
+using the PHY capability, but that horse has already bolted. We can now
+only try to encourage platform glue authors to try setting
+STMMAC_FLAG_LPI_TX_CLK_PHY_CAP with the above in place.
+
 -- 
-2.31.1.272.g89b43f80a514
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
