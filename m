@@ -1,119 +1,119 @@
-Return-Path: <linux-kernel+bounces-544542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C5B5A4E277
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:10:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF95AA4E4A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:01:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CADAE167BC8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:00:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FC213BBEA6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:32:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2163627C17E;
-	Tue,  4 Mar 2025 14:57:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 001E529617B;
+	Tue,  4 Mar 2025 15:20:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Olb1wiAx"
-Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="T0b68H6F"
+Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E7426738D
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:57:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ABFC296174
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:20:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741100247; cv=pass; b=WDVbGoM2EAbfNKlX1eK5aP07bVGBahP3j/Wcy2PaITT0jL30/v1sgpAL10iYA/iKm4xYC1hpCtFv04AkLXN9KG6XUk6hVeeXrsbDszKLiVvnCwAYjBuQ0j170Ac9FxdwtAEsLd2GLL/uSvzSqvuBI0GP0mOtSCefdXFl3/Is5HM=
+	t=1741101647; cv=pass; b=uy4zfKV+jCvBYgC4s/AZWJNacw7U7FOxRhxD7y3lleaIURSuVqbjWdf/Q7iLlC2u1dMjthOmRZkUcubNnT7AOv3JfoyTIDfg5Z8emsdLsI3w4dP/NQD+77a0DImM34XzZ71AP7Bixr17yncxTBlQWrflT9GaZ/dmFw8rnxU1i68=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741100247; c=relaxed/simple;
-	bh=1cx/0Wzqkw1bPwi1Nc7TApw4S/0gkdh/tF36qjNrxRM=;
+	s=arc-20240116; t=1741101647; c=relaxed/simple;
+	bh=eEQbaOUOg9Ct9BioLacbMGP5yC7XwczqQxZikWutjqc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cmwmFtpvCApCQnPjOs4Vq4cbWbqpMRuyrJELbWr6TMhR5TUchqbaCqrClCF+24naOy6tPsj70B2/xZ5JVG70evZH21czagMB1a8DlC5bo+XbSP6x7UQXs8BVsBCpkk1UX5+E+zT8/4IUp3TeOrlkZ8a6G5mmMDnhH7EZXwFFJzE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Olb1wiAx; arc=none smtp.client-ip=209.85.221.46; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; arc=pass smtp.client-ip=160.75.25.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	 To:Cc:Content-Type; b=W2yaLcg8qnOouFM9T76p5CkVPfKpmtoQLPd+4erEY7N/0N3hraM/91jUuLDoSr605AgVhEBDyI9PyMMTlh/nz9FMaUqhA+cZNxyG7ueMMnvrPUR6g2dPcUi+CYVZ80J0rY4R/IKdjVqewZMgJI8bcEbBFRY/CD57CSOonevnk2o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=T0b68H6F; arc=none smtp.client-ip=209.85.221.43; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; arc=pass smtp.client-ip=160.75.25.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id 102F640CF4CD
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:57:24 +0300 (+03)
+	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id C5CE540D5722
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:20:43 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dzY1lJXzFy34
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:56:09 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6fRD1FZwzFysK
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:16:40 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 7399E42765; Tue,  4 Mar 2025 17:56:00 +0300 (+03)
+	id 22D0142732; Tue,  4 Mar 2025 18:16:35 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Olb1wiAx
-X-Envelope-From: <linux-kernel+bounces-541125-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=T0b68H6F
+X-Envelope-From: <linux-kernel+bounces-541130-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Olb1wiAx
-Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id 40F48426A1
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:14:07 +0300 (+03)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=T0b68H6F
+Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
+	by le2 (Postfix) with ESMTP id 62602420A2
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:17:36 +0300 (+03)
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id 21E653064C0C
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:14:07 +0300 (+03)
+	by fgw2.itu.edu.tr (Postfix) with SMTP id 422002DCDE
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:17:36 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82752188A8F6
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 08:13:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83F3E188DDF5
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 08:17:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B601EF088;
-	Mon,  3 Mar 2025 08:13:39 +0000 (UTC)
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2436C1EF097;
+	Mon,  3 Mar 2025 08:17:22 +0000 (UTC)
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69E0A1EE021;
-	Mon,  3 Mar 2025 08:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB1F1E5706
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 08:17:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740989617; cv=none; b=tC7nZV0C7bdcScltt+Yp5pl4JEl4Jd4Yk0eF8pMTIwmhQ0ajJoA+UNADMj8AvLeIq/d41qopzInAw7dcsp390tLoj5WgV6JLChCRV6pxTrWdo9UFXcWwnP3oR3YffHTNZuP2Zxw4gTj8c/J33xs3B16G3iLHCqnH4xHN5tRegGs=
+	t=1740989839; cv=none; b=Jx4jmS092PjaiV55sie22mUxGzKYVlpkxlrNbiqWzloJgq56nO2lodfAAmqlrxNwVJyoEfvm6NpmIyw3HhLtOdkIM8Tlid8jvsYfGGmM0n+KqVBEwmqPD4dynmcblq6j35OzUgbob0PwlVXdtSnWVmRnmoBjBHINQhG25B6HVs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740989617; c=relaxed/simple;
-	bh=1cx/0Wzqkw1bPwi1Nc7TApw4S/0gkdh/tF36qjNrxRM=;
+	s=arc-20240116; t=1740989839; c=relaxed/simple;
+	bh=eEQbaOUOg9Ct9BioLacbMGP5yC7XwczqQxZikWutjqc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TRuYA1lDjMg3pwJ06oMZcMRRqBNkizd2Ms+t2TF3wdAUB8INNqGf9D/v9ZwA/6NPZUdfAcdiID8Ke1bionrWBEjbN/0R4DYLVTcKYPW3sRPbzumRebKvvtC2Ta2xu+ebRFIJTtnwB7iuqGejMawXpSG6Od2s86tqVDWwzAAIVgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Olb1wiAx; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-390f69e71c8so1280682f8f.0;
-        Mon, 03 Mar 2025 00:13:35 -0800 (PST)
+	 To:Cc:Content-Type; b=J1o4n5LnBRFe0coQGanPeXQm4nrOg3tpPewCLCSauAlyt4TOsAW3nLmMvs6+EyMo/c/4wfBPCR8Gs1wEF8yFigG1XewyQf9gbeo3syywQLgW4HF/c3i/GSl4WCIzllJ5Ib7oJ79wG1vtJmAQPKuapEWuImJfwnDHcitJKfYORd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=T0b68H6F; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-390edaee0cfso1930040f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 00:17:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740989614; x=1741594414; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1740989835; x=1741594635; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iO1v/4//gvyFQ/LwPDpZULEvaHUaoZV84N10PlIJhxE=;
-        b=Olb1wiAxyRG8oI2TvSI6saD3hgMboq9We2F+pub/Bp1T3cV9AGFTNve0rpWcw+Hya7
-         JWObC5lYj+/HqAApnlm5DQNATJ9JSZ2DOcakk49MrC0frvYgQuyFlvBq54CPf5DKrmU8
-         FLvHDRR1+bAbhsOtepA7jnZ8I1bfyH18HIiUKkaCSWG0gBY4uVeIbORzLE6YLeTBegu9
-         09Igxv+zIDqdpSYis485ZP372Sa0YRyqAAEquidxG2UQt41vra3vc+abHXv9QtzhYuRA
-         tYlo72A4X+96zJxhiW781QD/4VMSKkbswlSdcdgNESyMSzZkdkvb8uY6SpgoBAfBBWJx
-         KFSQ==
+        bh=jA0dpvdILr7SLpPAx2h6QOM8iRHWeLVPpniq08kJ/yM=;
+        b=T0b68H6FLXpHdwEpRUX/y/5eqnRLhVVn1Fk0wl25AjztpR469wnvopeV3sg3iXLno7
+         xsSd5hLfT02JRNcqWKJFtdZdNl5F/4zkqvrKEl2TL9qFs+dZaCSIu977hbmXsrPPqT8P
+         52SF/beL6xHheB9esqRXL2AsHDB76ycmQZdmH5zgIGYvyVGbCueegrB4LkPLwMQHH+mZ
+         HjoZQiTGS/m2qqgAIW2LVROSTbb+ESbgggFK+aV7BYhcfWVJUf2aXcUlwNpZZUk0OjMm
+         t3MzE4WUi5xdktHez63XUeXmOkGyJ5H7iWwW2j+gVHvVOrL5Whcfve5p33ItBV5Tz0tD
+         2/tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740989614; x=1741594414;
+        d=1e100.net; s=20230601; t=1740989835; x=1741594635;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=iO1v/4//gvyFQ/LwPDpZULEvaHUaoZV84N10PlIJhxE=;
-        b=AWF5a6AhzkeGCSej/EZd0YtkgZi7ojgKUxSAioY4Exsks/SOpntzeDZ0u03QiUZR/J
-         LlZTq/stCEcUUBsQd5k0iGdl5ZkDeCpfbVnA3UBWuzTTq7tv+zlYQDPTGiDPgX0i4NOF
-         OFvqZ5GE5Fsee3mWbOT8cVM/KRMTbuC/q+tqhFLAeF8OhGbQVqJMC7CTGvLdEwvvDclI
-         sB/hGxsZ2fZprYTepkY9aDK+Llh5hU2QpOYWA18X5sGjVwBqg/LDeCQwYBlG28vnjhPf
-         f1T2z7RCSEbZ3gFS1ZHt6+fbr5zBLl6qF9KptLTHlbuULOV9Q5cD8JLrsLhUpLDkXpsJ
-         jGGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUbZy7nJDRFAtNoi6+SWURAr0neM6aOUkDGfRS8EB+k3qg1FVU22i3JJycfugZEuGKj7VZQrpVRhh9lBShd@vger.kernel.org, AJvYcCV8ysw2QLmUxeAGDRLgyrM47P1yKrrOEMdpupuip1uHGFuHrMpLPU7zefO1UKVhATJ5d7ZIsiKIDT4=@vger.kernel.org, AJvYcCXl57sFAwIdCbQj+kjLwM8UxtjPhviXRaAnw+Nol+ouseabwib+/0edoBM4/Lcmk2PR7wpZty9Q3hkb@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJ4LdYN935ZSbGm0aQsYb42XdAMt5ZJ1AJ1tf4wnJ6fy9NCFpo
-	ZwNr1epw9bXrlTF41X0KcJK/9btF/3PfVjB3KSoH3yH5uSLvlgEhI5Iym9FSVtzMYiPeqkfBK1D
-	rCmR2+m+oI/NLQH6puSBZF23cdys=
-X-Gm-Gg: ASbGncsR0XlrXl+4W2ZzaXRKgIgEZumTNBuoNc+/NKBd5bO+hUPHpxi5HK2zDEr4uQG
-	e55QPzxvL59ZtCeWESi80WNQF7Y7a1zqbQJWPR+LOA0ISzbIvxC+qsJN43TJrCEyRvQToTFt7QH
-	NXs+MnDrvxlKVG303li9E6jHGmRQ4=
-X-Google-Smtp-Source: AGHT+IHN4d7tj/PC9NVTUt0kupriXH4ceWCVyv3rFMZI63Nugtn9+ocm1pMIq1wtSB4Gyj3nEOeMQ/HimavDU4Q5zHQ=
-X-Received: by 2002:a05:6000:1787:b0:390:df83:1f22 with SMTP id
- ffacd0b85a97d-390e18d20ddmr13286509f8f.25.1740989613726; Mon, 03 Mar 2025
- 00:13:33 -0800 (PST)
+        bh=jA0dpvdILr7SLpPAx2h6QOM8iRHWeLVPpniq08kJ/yM=;
+        b=ZAk7/hRcoBJ2PASJ5icLxPuwhGULHeSrwpuRm9VIgO6UJSKFURJFP1nO38MM4x+HtC
+         W68GHq1sN25XzVcJ9OTdYRhWaJmK1sTw4FqkqxzJA6o8yQOiJs0dm0wdzm27NBOygADf
+         SgotSLc+GbhxPeCXZmXqIZOzySEQGINXlh2drbdcAoFk9ImiT2QBN5RUCMPRGKVAvIpV
+         qV+zqBaC2/zn4Z0M+w8UTmrl6e8h0jvH+1vPKZqMzrYc6tzvVvXyp4RLInWh++wZRjGH
+         hmgax9A6xmFbm9xBEIvUUXdlmzfRnWhVWOGFfB0oLAQcBcAIeKgXu6dtK7z0TGercPyN
+         BjLA==
+X-Forwarded-Encrypted: i=1; AJvYcCWAjY2WWX1HnmYwVIpYTaxCn6J5A3J2kzl+vsHyyiysliHJ2dX0s808qmsI528DmbZDutm8aN9iUGXTFJ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2swAAy1G7fqqA/WJMFfW1gsNCd6JQnUqOJg0Y7pnIHI6n7Jzs
+	uC2xrPo1PXeXaguC7CaOq5jRFyvn8ID9hiO75VPe4PwSsHl7mtyBCNkl+s02H5FsohtRUDGn59P
+	hlXv2PJ0wjmI79oF8i6UITXp2WRMksKWM93gZ
+X-Gm-Gg: ASbGnct9VJaYQ1+ebYPniD5pPR8hqmhlA7h57CX3lyKW5Hx7q/lwhfLTTxxoEjSqg99
+	0EyRMk4vR/WbcaZUrFFge/RNWnRmDLACUHKmSEppmnENB6Y/JZm1ERUmit5VJy/jf0vLuG2GARD
+	Lhy/4mdTAAqut5w24mDaCEzMNekNIHBgpqcT2hzvRMBqh9kfImFy7JcjyW
+X-Google-Smtp-Source: AGHT+IFSYdPrfAT2czicp0H2L34T0MTTXxUfMLTH4DIdYq6oZerde5+Qjh15AbNt/anCVI0itN956I2sXy82N+8E8pk=
+X-Received: by 2002:a05:6000:1acb:b0:391:6fd:bb81 with SMTP id
+ ffacd0b85a97d-39106fdbd84mr2778396f8f.50.1740989835532; Mon, 03 Mar 2025
+ 00:17:15 -0800 (PST)
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -121,91 +121,112 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250226093700.44726-1-clamor95@gmail.com> <20250226093700.44726-2-clamor95@gmail.com>
- <20250227-cherubic-mantis-from-betelgeuse-86f5ff@krzk-bin>
- <CAPVz0n2kfxTJUkqrtLia6xBJ8t+fwjujjsc9k=mOk-P06bJH7A@mail.gmail.com> <f83b2a95-e8f6-4e16-bd7f-f7dc96264c04@kernel.org>
-In-Reply-To: <f83b2a95-e8f6-4e16-bd7f-f7dc96264c04@kernel.org>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Mon, 3 Mar 2025 10:13:22 +0200
-X-Gm-Features: AQ5f1JrIM7kZn8l7qiVGIYKIf4ikK-8B_L2nEzqbqEsyYLvp2ITmzJ2q2S2pYpE
-Message-ID: <CAPVz0n0KVE8baFyGSgM+0rNfY8+Y2LFZbAhHHzPWTV358gc+Bw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: power: supply: Document Maxim MAX8971 charger
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250228-export-macro-v2-0-569cc7e8926c@google.com>
+ <20250228-export-macro-v2-2-569cc7e8926c@google.com> <CAJ-ks9nn1_gAqz9f3H9O47QA7dwk5MaT5YK3NQtZtUJHyNXbVg@mail.gmail.com>
+In-Reply-To: <CAJ-ks9nn1_gAqz9f3H9O47QA7dwk5MaT5YK3NQtZtUJHyNXbVg@mail.gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 3 Mar 2025 09:17:03 +0100
+X-Gm-Features: AQ5f1JorySWi-KYwhNh-r8Q996knGQo2fkyzux-yfstz0yHdBixCTqR1Fqf-3Ok
+Message-ID: <CAH5fLgjgfgaoMP7TD46u9OsYuje6yA4ooM+6eCd5whAx+tiTqg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/5] rust: macros: support additional tokens in quote!
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6dzY1lJXzFy34
+X-ITU-Libra-ESVA-ID: 4Z6fRD1FZwzFysK
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741704982.1844@Tz7xRK8Y3Zk5sanvwqK53Q
+X-ITU-Libra-ESVA-Watermark: 1741706339.77837@AxR90/seb+dR//4rdNeI+Q
 X-ITU-MailScanner-SpamCheck: not spam
 
-=D0=BF=D0=BD, 3 =D0=B1=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 09:52 Krzys=
-ztof Kozlowski <krzk@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+On Fri, Feb 28, 2025 at 4:26=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
+ wrote:
 >
-> On 27/02/2025 12:03, Svyatoslav Ryhel wrote:
-> > =D1=87=D1=82, 27 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 12:45 =
-Krzysztof Kozlowski <krzk@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
-> >>
-> >> On Wed, Feb 26, 2025 at 11:36:59AM +0200, Svyatoslav Ryhel wrote:
-> >>> +  maxim,fcharge-current-limit-microamp:
-> >>> +    description:
-> >>> +      Fast-Charge current limit
-> >>> +    minimum: 250000
-> >>> +    default: 500000
-> >>> +    maximum: 1550000
-> >>> +
-> >>> +  maxim,fcharge-timer-hours:
-> >>> +    description:
-> >>> +      Fast-Charge timer in hours. Setting this value 3 and lower or =
-11 and higher
-> >>> +      will disable Fast-Charge timer.
-> >>> +    $ref: /schemas/types.yaml#/definitions/uint32
-> >>> +    default: 5
-> >>
-> >> You still did not answer why this is board specific. This was rejected
-> >> in the past because of that reason and nothing here changed. Nothing
-> >> will change without detailed explanation, so use other interfaces if y=
-ou
-> >> need user-space to configure it (see other drivers, e.g. maxim)
-> >>
+> On Fri, Feb 28, 2025 at 7:42=E2=80=AFAM Alice Ryhl <aliceryhl@google.com>=
+ wrote:
 > >
-> > Btw, I have used this awesome example you have provided. Take a look
->
-> Where did I provide this example?
->
-
-Its presence in the docs is an example on its no? You have explicitly
-told to check other maxim devices, I did so, they all have similar set
-of convifurations.
-
+> > This gives the quote! macro support for the following additional tokens=
+:
 > >
-> > https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/=
-tree/Documentation/devicetree/bindings/power/supply/maxim,max77693.yaml?h=
-=3Dv6.14-rc4
->
-> I opened it and I do not see anything about time. Please point to
-> specific line.
->
-> But regardless, how did I propose to use 12 year old binding? Where did
-> I suggest that one?
->
+> > * The =3D token.
+> > * The _ token.
+> > * Using #my_var with variables of type Ident.
 > >
-> > Oh, I wonder why it uses so much values which duplicate battery? I
-> > know, it lacks battery, I assume that is why?
+> > Additionally, some type annotations are added to allow cases where
+> > groups are empty. For example, quote! does support () in the input, but
+> > only when it is *not* empty. When it is empty, the compiler cannot infe=
+r
+> > the item type of `tokens`.
+> >
+> > These additional quote! features are used by a new proc macro that
+> > generates code looking like this:
+> >
+> >         const _: () =3D {
+> >             if true {
+> >                 ::kernel::bindings::#name
+> >             } else {
+> >                 #name
+> >             };
+> >         };
+> >
+> > where #name has type Ident.
+> >
+> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> > ---
+> >  rust/macros/quote.rs | 21 +++++++++++++++++++--
+> >  1 file changed, 19 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/rust/macros/quote.rs b/rust/macros/quote.rs
+> > index 33a199e4f176..c18960a91082 100644
+> > --- a/rust/macros/quote.rs
+> > +++ b/rust/macros/quote.rs
+> > @@ -20,6 +20,12 @@ fn to_tokens(&self, tokens: &mut TokenStream) {
+> >      }
+> >  }
+> >
+> > +impl ToTokens for proc_macro::Ident {
+> > +    fn to_tokens(&self, tokens: &mut TokenStream) {
+> > +        tokens.extend([TokenTree::from(self.clone())]);
+> > +    }
+> > +}
+> > +
+> >  impl ToTokens for TokenTree {
+> >      fn to_tokens(&self, tokens: &mut TokenStream) {
+> >          tokens.extend([self.clone()]);
+> > @@ -40,7 +46,7 @@ fn to_tokens(&self, tokens: &mut TokenStream) {
+> >  /// `quote` crate but provides only just enough functionality needed b=
+y the current `macros` crate.
+> >  macro_rules! quote_spanned {
+> >      ($span:expr =3D> $($tt:tt)*) =3D> {{
+> > -        let mut tokens;
+> > +        let mut tokens: ::std::vec::Vec<::proc_macro::TokenTree>;
+> >          #[allow(clippy::vec_init_then_push)]
+> >          {
+> >              tokens =3D ::std::vec::Vec::new();
+> > @@ -65,7 +71,8 @@ macro_rules! quote_spanned {
+> >          quote_spanned!(@proc $v $span $($tt)*);
+> >      };
+> >      (@proc $v:ident $span:ident ( $($inner:tt)* ) $($tt:tt)*) =3D> {
+> > -        let mut tokens =3D ::std::vec::Vec::new();
+> > +        #[allow(unused_mut)]
 >
-> No. You added to DT something which is not a hardware property, but
-> user-space choice or policy.
->
+> It'd be nice to mention the need for this attribute in the commit
+> message along with the added type annotations.
 
-It is NOT a user-space choice or policy!
+Adding a note to mention that when the () is empty, not only can't it
+infer the item type, it's also never modified.
 
->
->
-> Best regards,
-> Krzysztof
+Alice
 
 
