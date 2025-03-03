@@ -1,260 +1,480 @@
-Return-Path: <linux-kernel+bounces-541655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A67A8A4BF93
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:58:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FC28A4BF8F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:58:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3D2D188A050
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:58:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A524D167A8A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:57:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5956820CCED;
-	Mon,  3 Mar 2025 11:58:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A74A20CCDE;
+	Mon,  3 Mar 2025 11:57:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Al/PxxZx";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="oliclbF8"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="k/KVqWjO"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2086.outbound.protection.outlook.com [40.107.220.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8FCB2036F9;
-	Mon,  3 Mar 2025 11:57:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBA431F891D;
+	Mon,  3 Mar 2025 11:57:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.86
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741003079; cv=fail; b=RWKddsKLCOX2vNcx7Jz94cluDQg1ad4mQtUrMD3GeTTa1G3tp/1f/QTMmn5Li3rk9SSe8C3D7HhvH/EjcZ96NYcocqf8O2oVIei2gO90+Rdhc9hw7pA93ytmSOHCryxeDW7hUYvvKsvB5d15FAUvTiqqA43cu7su+L9tW3CNOXE=
+	t=1741003043; cv=fail; b=Z6i5E9Bbl5apQjoELagRyMLHA1acygbS7n+CT0+Lwn0V/Dds4MkwDzMllMFZ5jQnaEYc8LIRjNorTof+CV5J7mVpmlvcO1WvfhKEpXj7tHJcZcIEYv07lFi7mHk+neSzKDsXuyX/A4DOow2yV6NINzTDp2ogNbFzJ6SzyeoWJc8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741003079; c=relaxed/simple;
-	bh=9WOcdShl8XhTSe5iYU9s+iBskm3aBmknBA0CAhRXyJA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=ZX1mNTyEhv0hURwkuIIG9LR+gfSR7lG7g8Bp3WbNyBqEKytUDIY8So7BN0cPDEmS9YA0PYCUy1j77cqGdlbhcada+cJ7EKbcGhd5IuE/dQpa0WKb0wmUI73I8owEFsMK29haumLW7kumaycj2h/zzuJugIwYP84L9Ri8HP1kWH8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Al/PxxZx; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=oliclbF8; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5237tdHi022601;
-	Mon, 3 Mar 2025 11:57:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2023-11-20; bh=z6ni8+wOmy73ctTLY+
-	BMsv5uiiXC47WIMmAWzfvoSqs=; b=Al/PxxZxPuKn9k8FfUPRWb3vK3nRnAMDKb
-	OSabNC6mpDsU0tISrz3lLrOQLAG//lsMLbDTqdBe/OajI8191QhGtT2xIwmgITdf
-	xr7LFADc+SxhOJ7A1bqkMFn05qsg9gsj7GZVKwTTcysOUBD7R0LMuydqrfyRVueh
-	kh4SJdCxujEkWsnnes19kmxqv7dDjpRY4fS2oqUJGXynPGSt8OLXkCF8pUKWsu6W
-	XlSxvuGVfx6AtEw2zrtu0mYGBKMi+XFUFSryOz0Dma/PRsf1/9F9gEP22z9W34yj
-	585Unl4qqwhXT5AHsdrnnzC3wBgalqPvsO7VT13KpdlwuFo9zcSw==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 453u8hag7q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 03 Mar 2025 11:57:15 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 523BnX8T003106;
-	Mon, 3 Mar 2025 11:57:15 GMT
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2043.outbound.protection.outlook.com [104.47.70.43])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 453rp7d050-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 03 Mar 2025 11:57:15 +0000
+	s=arc-20240116; t=1741003043; c=relaxed/simple;
+	bh=D+X1Iet3i9n+IT/qbV/ClhjrOxxU9+DMbNxjb9OYO1Y=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=X5i+YMz2eK1vfcUf0n2NJVBwn7pQm96XTM34WmUVn3KNoDpakdDmzQ11zBHVJHc9xK+VjpivZGQ3Zvi2Om1eLTTA+v09WBSbgrYnoHYl4F3+hUmWu2V+LrKiLEDziitBDzAxOYOULYOyCd4jzcruyLOoDwsAzrW75bxf4PUIme4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=k/KVqWjO; arc=fail smtp.client-ip=40.107.220.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RppjF7H8Ptjk3MS+8rwk9b9nJxh1mjGJDc2tuc+46wwt01a48/NeyS6ooZ8bp+uSRMJxB3Si9wijc6cgE7tWH8z74mT9TmihKJloMQvb0MfqMV/IMIUOjT7iaWgIFSGUJtJE7vZ05RXwT+gmjVB60ZvWi8bZHuz5LSQMqvM9v/bcon2tK+lHMrm0FR/NARZ0beyhjNvwM0OVh3dUFlGnGdYZ/HocycGbIsgGm3qAYzjd8z0cZ9Md41tTM1VsUVyIfly5YBw7U3wXP2WX0u8iT/GzHWaJYLHyxlzgJ9Perx76zax2tsDz+aGl3h2RS9IvzNPQVGo416fBztDsXyYzDw==
+ b=LduzGwJ+ywdzykiawJ7vz644s/xXIw7RFLkkBdgnxTeDzhsiYjjd7Hhs2QWnd1Y8pTTUJXnGIu5fYa9CDIDccY5NEALvP+4DZZPxZo988H+RQacVsqZPha1Iern3cTlUyr804SDD9d+pCIkEfIic0z/JEFdE32Uy1AH1zC9MWvNPL5HcyIXmLo2oejukoCpEhkZ4EiGfi+UDuIUY+Bsn28PmUhNclc1VvuL8hvXQwJ51RSujr56tmwKo2voIjCLb3TenJ23RMx626siA3mxgxwnGXxzCQVac3kaMnKAg52rPxIhWrs0xcsj6ifqWachkpiRAGgA4vgC9Lt7OIiDgBw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=z6ni8+wOmy73ctTLY+BMsv5uiiXC47WIMmAWzfvoSqs=;
- b=hNGDVkxzbH0m8+p94SiOBzgg5M0zYJGhDyoEF7iG7Aq99o5sSwclAWYCIeQwA1B7Xo5qncjJqzhNmSV+ytI/UTCRz8DsiaeR/r5DV1tzUwbq0tWcx7TmuFHMQVGs+9/QJNZofJm3vlEkBiNedYzdXiBOmoh4C+yzgyjaDTP0Mo5VvisoK2lac1HXbv6DmN7NF2CJbONvTLDk6GkMZHAEKu2iIkRYYj+PXz6jM5RKRzwFX6DSPliksHAWmMESfauReEbxxLZMZOLtDskqHf7Fs6mRaH/1mVWSoMhdFJ/jCCxZONqea9aOhY0aSPXjpCUAC1IU0PlxeDNaMAP4K4rUDg==
+ bh=h+3M+4C1feb+BUNEPlMBq8Wdtgx+cG+y+1e70IPrfBY=;
+ b=sUTabhNZN1tMdW1D2uviBC90R2usHQzHarJrL6OZ8K/uouEBubpU45wesDxq8vam2tFEwAnMMFNsdCfG+ABWBo+32oSviV47nfbfD2mKmRku98SX7RLhiozeMTBPRgaGpL4vY5YPhy0Tc399jnMpiC10m/D01GUE8dog9mzIm2rpfe4kdwiLlx6epfyfsoAHYbxVmJ5FJLbtZTm20UIlrYgoP1hC5xgFuk9BjihP503isbOc9JZI392Ju9NYr80DOPUc4qCXwpkm8KJtqMir7XVFi6bxbolIVh94x11xQtCS/vtNTBAMJWUWe535WyEE9iJIzOa4Uc7Oli4bQFKazw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=z6ni8+wOmy73ctTLY+BMsv5uiiXC47WIMmAWzfvoSqs=;
- b=oliclbF8Ni6HwU80Kz7sfMD11WTIdUrfDgRnr/ZfngL88bW8RmQhodw6c4VW9yIK7aaRofejXNzjz+62Uw/SCKM7NIjomyejZjik+LAgzwSy08kNFUVBezkVwm7n8F9IX1O2Zxajzrwg5cUeQ4KyxxwJqDACS7ZF9RPDkKgEumA=
-Received: from MN2PR10MB4112.namprd10.prod.outlook.com (2603:10b6:208:11e::33)
- by CO1PR10MB4755.namprd10.prod.outlook.com (2603:10b6:303:9f::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.28; Mon, 3 Mar
- 2025 11:57:12 +0000
-Received: from MN2PR10MB4112.namprd10.prod.outlook.com
- ([fe80::3256:3c8c:73a9:5b9c]) by MN2PR10MB4112.namprd10.prod.outlook.com
- ([fe80::3256:3c8c:73a9:5b9c%7]) with mapi id 15.20.8489.025; Mon, 3 Mar 2025
- 11:57:12 +0000
-Date: Mon, 3 Mar 2025 11:57:10 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: jeffxu@chromium.org
-Cc: akpm@linux-foundation.org, keescook@chromium.org, jannh@google.com,
-        torvalds@linux-foundation.org, vbabka@suse.cz, Liam.Howlett@oracle.com,
-        adhemerval.zanella@linaro.org, oleg@redhat.com, avagin@gmail.com,
-        benjamin@sipsolutions.net, linux-kernel@vger.kernel.org,
-        linux-hardening@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org, jorgelo@chromium.org,
-        sroettger@google.com, hch@lst.de, ojeda@kernel.org,
-        thomas.weissschuh@linutronix.de, adobriyan@gmail.com,
-        johannes@sipsolutions.net, pedro.falcato@gmail.com, hca@linux.ibm.com,
-        willy@infradead.org, anna-maria@linutronix.de, mark.rutland@arm.com,
-        linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de,
-        rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com,
-        f.fainelli@gmail.com, gerg@kernel.org, dave.hansen@linux.intel.com,
-        mingo@kernel.org, ardb@kernel.org, mhocko@suse.com,
-        42.hyeyoo@gmail.com, peterz@infradead.org, ardb@google.com,
-        enh@google.com, rientjes@google.com, groeck@chromium.org,
-        mpe@ellerman.id.au, aleksandr.mikhalitsyn@canonical.com,
-        mike.rapoport@gmail.com, Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH v8 6/7] mseal sysmap: update mseal.rst
-Message-ID: <b7f22fb4-d8dd-48e7-9b12-3a26dc645513@lucifer.local>
-References: <20250303050921.3033083-1-jeffxu@google.com>
- <20250303050921.3033083-7-jeffxu@google.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250303050921.3033083-7-jeffxu@google.com>
-X-ClientProxiedBy: LO4P265CA0154.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2c7::11) To MN2PR10MB4112.namprd10.prod.outlook.com
- (2603:10b6:208:11e::33)
+ bh=h+3M+4C1feb+BUNEPlMBq8Wdtgx+cG+y+1e70IPrfBY=;
+ b=k/KVqWjOSsQka26XJdtcreiCk5MCBgDBw2N+ntPhs3TgCTUw+wHQKPzWc8uEajREcmTQvcCjLSOENdI7BccOvsopMdELhPRKbEVUGmrxTFue8eySpD8Djv5P8a8seFnSaitJEH+qB1j5RqSTIvDz8yirVfQ86T65zceAxSJCLJ0=
+Received: from DS7PR12MB6070.namprd12.prod.outlook.com (2603:10b6:8:9e::14) by
+ IA1PR12MB6602.namprd12.prod.outlook.com (2603:10b6:208:3a2::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8489.25; Mon, 3 Mar 2025 11:57:19 +0000
+Received: from DS7PR12MB6070.namprd12.prod.outlook.com
+ ([fe80::b847:e013:8f93:f6e4]) by DS7PR12MB6070.namprd12.prod.outlook.com
+ ([fe80::b847:e013:8f93:f6e4%7]) with mapi id 15.20.8489.025; Mon, 3 Mar 2025
+ 11:57:19 +0000
+From: "Manne, Nava kishore" <nava.kishore.manne@amd.com>
+To: "iansdannapel@gmail.com" <iansdannapel@gmail.com>,
+	"linux-fpga@vger.kernel.org" <linux-fpga@vger.kernel.org>
+CC: Moritz Fischer <mdf@kernel.org>, Wu Hao <hao.wu@intel.com>, Xu Yilun
+	<yilun.xu@intel.com>, Tom Rix <trix@redhat.com>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, Jonathan
+ Cameron <Jonathan.Cameron@huawei.com>, =?iso-8859-2?Q?Rafa=B3_Mi=B3ecki?=
+	<rafal@milecki.pl>, Aradhya Bhatia <a-bhatia1@ti.com>, "open list:OPEN
+ FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: RE: [v4 3/3] fpga-mgr: Add Efinix SPI programming driver
+Thread-Topic: [v4 3/3] fpga-mgr: Add Efinix SPI programming driver
+Thread-Index: AQHbicYG9R/dKaVbOEakaw6xd74lqbNhS1iQ
+Date: Mon, 3 Mar 2025 11:57:18 +0000
+Message-ID:
+ <DS7PR12MB607055136A599EE9A1895414CDC92@DS7PR12MB6070.namprd12.prod.outlook.com>
+References: <20250228094732.54642-1-iansdannapel@gmail.com>
+ <20250228094732.54642-4-iansdannapel@gmail.com>
+In-Reply-To: <20250228094732.54642-4-iansdannapel@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ActionId=99e19a79-bad3-4318-97b3-0e78a3651e9e;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=0;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=true;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
+ Internal Distribution
+ Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2025-03-03T11:28:54Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Tag=10,
+ 3, 0, 1;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DS7PR12MB6070:EE_|IA1PR12MB6602:EE_
+x-ms-office365-filtering-correlation-id: 0dca5598-d80a-4f29-d9f9-08dd5a4a8c98
+x-ld-processed: 3dd8961f-e488-4e60-8e11-a82d994e183d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|7416014|376014|38070700018|7053199007;
+x-microsoft-antispam-message-info:
+ =?iso-8859-2?Q?2IHeTGjRrcARCV+pyMvw9rxNW13/ennkhrOU/GjpJkOHlPlVsGHUzJ4YD5?=
+ =?iso-8859-2?Q?TD8SBOB3dIhWprNHUuiEvfKl5uA7NHoKM1PlTPD4JIQzrPIDR0Zc3p10u3?=
+ =?iso-8859-2?Q?VtM6geT2QGlDpNkzPWdc8OAmFqcZLwy8KWqZ7SWtcqbzNm1JLgHZFwNn4n?=
+ =?iso-8859-2?Q?4fhN4gjcVkt+TCvB4O1xYh5pHxrfNoZ/mNtTDPuozdpVy/Qnczh/MWjkCa?=
+ =?iso-8859-2?Q?9hlWMX7v+92oYWI5XKwdVwC1dbN9yqfm8bPfdGPJvOu/YRn9MvsYqUWlu2?=
+ =?iso-8859-2?Q?Ky6/vqVtUr6siUyx3fLKVZn7Ab4bGbnz7+E0dIufxD+X38xdluKruJ2A62?=
+ =?iso-8859-2?Q?zX30yGt2QKorYpj7lUnv3ZXnnaAeOWMa5mIJJ6UPhKSvrJi8sNuLIRiSHe?=
+ =?iso-8859-2?Q?JKaL2szF6ZhRelflag3RYzR0pO1JxwCKQqKlliVTp33WAght7BYnSGT4LM?=
+ =?iso-8859-2?Q?P4V+fbsQoiZCKAhwwNIUbQU9XVMr2Gn9adkeXsa9PQ/PJHzjLsWkHWzzOe?=
+ =?iso-8859-2?Q?xM5AEGTnsvpmUcQb6BpZhd+MqrsDKTrDPntOco8cXcAGeNSiQilvbac1nk?=
+ =?iso-8859-2?Q?pWJGOt8V25R3b9ilkh7asTvU6nnKg6+xriQOAJ7ZLhAI62ejsPikG+/W7j?=
+ =?iso-8859-2?Q?GSAf+hyvuFN8vmcNQhFebIgfpOI/vwVkEM+dSN8cvYsxAwlILk1Q8xiDkN?=
+ =?iso-8859-2?Q?GzBz5SzfdU1UneGoUIC/KTI5OF79Nq7JPWrLWgR6KIOsX3UI8Scmso5pw/?=
+ =?iso-8859-2?Q?8aSFo4YNxgS47v5tLsX4ZD+dNh7ut2jx5L51MpQfJIW3IePMqBxLFjimth?=
+ =?iso-8859-2?Q?0q3va3JchVOuVHSBZ/HDseYW9w5d5kl9c0WvE0VqscC4SCZxFLmz3rIUV5?=
+ =?iso-8859-2?Q?4Vc49Rrn1sgpavJsSLahxjugLNLGo7ox+D9Nv+mXi1s6mIfXnvXi4sKjZ9?=
+ =?iso-8859-2?Q?R8cIH7dE8nKiQM0Qu0GldYjdKa5PNmz0xgKcg7X9dD5ouiS3OJRBrOld9n?=
+ =?iso-8859-2?Q?cXs7JY6BCyUVSu5x5MGBwGciJZDw+Omp0/EQHv+fCXKgKMvDI8SH4G6I4f?=
+ =?iso-8859-2?Q?yvyEpBPUKAKdhnAVuLZ3tMHHAg5cHmwvHLdew991RRb3SoY5dcYyOmbcYw?=
+ =?iso-8859-2?Q?KyXKyDHC6ga3xzVYkqNKpSkxoXekk2bi0T0Dh49aZBsUyheQkjN5DLY0bz?=
+ =?iso-8859-2?Q?+1DGxl081pecY2wM+TDT/lDce5m2GXxVUNu9tEhlNezcIcH2z+93yQaFJm?=
+ =?iso-8859-2?Q?r5oCyzazhEco6rVKVSn+CcPMXva1p6zA5Sj9d1cMFbtPyoC/dSLkeC2JLz?=
+ =?iso-8859-2?Q?ejH0LCaLtbuJ/HPw9w+yjQpJqg5T2fLW0w8KcFFDWIYqWvX4bEg37aiI+0?=
+ =?iso-8859-2?Q?j8VYmwBnP18kgz27C68sxBFR9+xvXjdUKSJIMxtEgPmszBgusBvetKzklf?=
+ =?iso-8859-2?Q?etSv5BehR0hxNjxSzh4f9rUtuFgRy38NL5YBb69uvNo0faUxWm5zohbr2U?=
+ =?iso-8859-2?Q?V2GrqccGZ4s1hCXHGhbwyy?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(38070700018)(7053199007);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-2?Q?SGfp7i//rNEpTx8vI4QRFGPmWa/YZCrKB59+K6sSIoqUVyszqqiIfqN9DM?=
+ =?iso-8859-2?Q?mitl4cjtK8wyg30c8cjSP554DSiy6AAl5tDG+bwN3mKtjpsp99eaAVH0Zb?=
+ =?iso-8859-2?Q?btGoZV8YCX9tjk0rRm4AVSgoSBfwIQmtGjgF5f20UYlYV1kVWhVn3hxLh1?=
+ =?iso-8859-2?Q?Ll2KRA68SaWYsV5P0adCiXkpE1cg9Ybdek6gSOBm/3TyqMLj04656gx5Ut?=
+ =?iso-8859-2?Q?UhqaqD7AMTnruWqvhMHwkwUUqa7QdlL8CgzuMaaLtfxE9/PyWeKL2XrNi0?=
+ =?iso-8859-2?Q?N/vjERlwVu5BTxDNOCbrDSRu3hVN/eHuszFlm8XAA9WebsmrzNFOyahSRb?=
+ =?iso-8859-2?Q?Y8wQGeoFUNY3PhRXhRxEcB1Y2gg8i0Vlu+FMQ4EHh+h7bIsVNfZ5j/9rBD?=
+ =?iso-8859-2?Q?Wj0aRfpfyL9uafoZQrq3voIeMsdkEvGVP7yatTwRxOia96DHSLSAbuEoie?=
+ =?iso-8859-2?Q?xThIw3EsxSpiv72N4XBuu4dK5Fik2MaY/+dhSuovKdPnrTEHVJVyic2Fce?=
+ =?iso-8859-2?Q?vS9wvcJc1Oa6nSUHY3Sx2JEyPnlQC2xtfNaKZI+HAeGG095nQNNex/uEox?=
+ =?iso-8859-2?Q?GcgTyp1rBdHaaWyNEwkLOAC4igA1xPgv/m/eBhJgxNL0lZqKKSogWjNUt9?=
+ =?iso-8859-2?Q?qaRlOWXmiFbA1fvT3HbSAQnWZwkgJyicBYJB8mYbyW80zXHroXog4hQKCz?=
+ =?iso-8859-2?Q?nkf9stz1eycejtv4s3+u2/kTEBwrcwm1rnKm/1PYAbG16kT3Iofl/NPolO?=
+ =?iso-8859-2?Q?tEWm/WA4HmQyXAKvjPtZo5ef8Yj/NNEQ9LSoQ1oFEUW+V6QwEqghE9F0Nb?=
+ =?iso-8859-2?Q?BTG2tn69Dq1xkUrlUGA0LUkWKXxJaATww4xs3Ngj1dEqFaZaNx+suqYGfy?=
+ =?iso-8859-2?Q?5v0XyRSJwgoFAD2nWXUsOBD/fBG+vc67qfMAMJDj7JxrQZFks2CSgs6zME?=
+ =?iso-8859-2?Q?tGbIuEDFJRCPinEODq8OmvtdCfLK+fwKqCzn4mD2H+fS6ACwYXWXMGWS+u?=
+ =?iso-8859-2?Q?Wh+G6izMZj7Vfjaeul0jX78TDclCQOSkzO9wvHakmiolxHKq+8HFCshS+5?=
+ =?iso-8859-2?Q?bV+jIyy/vYbsTQYxqsl1KKJ0sKdzXpA3m/MeVyUHQPI+iZqn0hwU4ul7Dz?=
+ =?iso-8859-2?Q?/LwoGnGdYfj7o+aAZ4RGEXf553fwKuNkxZVEGeEhlfe4TSZl2n094TwZMo?=
+ =?iso-8859-2?Q?QJCp63WScpZVoinoIQIhG+IkvkqN/1EGkmFJ+q2up/AIXg3BZRbKYA69rY?=
+ =?iso-8859-2?Q?nwosJB9/1+ZxTo3FxKHGKVBHarZwdRQOoV93kyQTDWE5b4l0eve+prvC1R?=
+ =?iso-8859-2?Q?ItxyawaUFfE8FrutF5SC5FoMZJigIBHW25a/ktVBJRQxotQfaaYD4rIwTl?=
+ =?iso-8859-2?Q?NRED8j8AErat/0uxo04B7VsGCzFtzyunRocJcbXygOCCOzT4uWW7Dxj20z?=
+ =?iso-8859-2?Q?OoxkT/D1/uGIQ1jTXWdQAojPpzeTXaZiIQzzG8NRD+IKmMmx2PM6zEU4Lz?=
+ =?iso-8859-2?Q?smqnoFrPiJVVvsTzc0TNHmkh+Ees5G7YLOHqQeeaIgOhLMmVLys7VZabMm?=
+ =?iso-8859-2?Q?7eF3exgm7WBeodSxbRWOlDU10EXLPK1xa1NyzV5q+a1K79I6o96BRREYRM?=
+ =?iso-8859-2?Q?m21OasVvF73+0=3D?=
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR10MB4112:EE_|CO1PR10MB4755:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3dcd6add-7db8-48c4-b088-08dd5a4a8895
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|366016|7416014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?nMHWAJM0QbtVLIaaHO+1fog7bfdL8Y5smjlSgnphFALw4Wwe7iwg6sQBRQdi?=
- =?us-ascii?Q?DVfK4ZWXKfu1qj1vg0Vk2iQuScXeOs3Q2KtHMr+L6bXiCRhbgvl3asztIkB+?=
- =?us-ascii?Q?IwoS5On8Wz84949auDfoB0U7ptedaNgTcEL0hPDKBG17ceEQ7XXq6BX7HaR+?=
- =?us-ascii?Q?02fuE5wFkq4VkyRHB/w/bHrMNyTBi3swfveenJrCMoWS1eu5LD2MQv2oj502?=
- =?us-ascii?Q?WBo7VtNsuFXtPBNAiPUuPt7hgb8jIimZRaAPakSy8s4fCewuR/s1Dv23Izt5?=
- =?us-ascii?Q?vhRTOwShFgTbbqsa04BI/o2QjVmfuZLg2tAQNlCo4iAllIojl/1IpW53FgO8?=
- =?us-ascii?Q?RLvxWACuhzj6p/cOAgSzvIaQwkDTzWeced5hR6amfzmA7Kmaf57bQ9ShB+SI?=
- =?us-ascii?Q?yBiYd20uJXxneIwInEEz8OfngT/hccPOCI5mrDNAPw7IJxaU0TE58zZ7zSaI?=
- =?us-ascii?Q?zOBIb8NC5cUo1YEDLlk1lKfz6b2G7KvZ1AdNJSecs3GWna7NexRMXitWntlK?=
- =?us-ascii?Q?UgExgARHG/gwfXa5g+SbxkDwXaroUmEGOJqbNGigeHJloX4E5RU+9jsrQtVe?=
- =?us-ascii?Q?KUxO83rQ4R5hZcPlrMF+Fcx0hHDaWa27T1kpyEgfx7hLuFX7TIeFMKf2itDo?=
- =?us-ascii?Q?xAg7a1ytPagEhaAzhQnopJuJi+mlc7td3XEzJsV6fAn+IdU5DgrqXsbzTWa2?=
- =?us-ascii?Q?DSNqVgtAVnSsZVcUwWx440kl75yzZNumLKJbCD/2GFu6AMIymcMazDyCef8F?=
- =?us-ascii?Q?5fmDR8RLupXtj96xLxGIkAmrI7kmZSK0aN9IujGuLltIhi8OXmxqTQ9+KvaA?=
- =?us-ascii?Q?hlANFOCxfqC7kOwt+QaQGFOyTir810zRr7132ardk+qMtPdbxxYP171K6OW+?=
- =?us-ascii?Q?AJOwowInuczP9LRD6FHtTOBr/K55NmLxX3ZfNG9PV1rU3kihLjjCul0J/Ejb?=
- =?us-ascii?Q?hfz/VvXgUnuBkQ2Wg+D6xYx4Qvk1A75cl6GjgTMg3ZE1NaP4iQleQ2WW8S6t?=
- =?us-ascii?Q?hn2GAiYMr5qTBsgnEizhSX1pr9HsIHhpPrr+Sbw9+VCjBjIIHDrVEmO/jr+e?=
- =?us-ascii?Q?VqAgKm1jMQ/TPX3UvCxqtW5aonP8FXLIoey9ebH8mA9Mp9ZXtZLxSslHp0C8?=
- =?us-ascii?Q?UQL8eQgswnL/HZ8e0YQLC2mvgIulM8abuoDWXfwNq9Fptz7FVDMtnGzf8TaM?=
- =?us-ascii?Q?tPP1LKrH0uc1hnaRyKxUgj3+QrVTiwONzz/1co1ZGYvwnAYrFQjANaPgLS5A?=
- =?us-ascii?Q?L81qyH2uSJYaMMwuzdSwnrUMrJb2l5PyeMpZZ5Y+CaO/G4ihfm07o6er8CUP?=
- =?us-ascii?Q?TkDXn0uWqUkitlQP8yBP6DpFFyYscTN1X5RN4er87DoJyHEUeHCXTasMmOWM?=
- =?us-ascii?Q?6W2ZM/sj1kOBi+sRA5DAOjVYVJvM?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR10MB4112.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?kPD+s/0clUaIlDu5lDeKU4mPc3qxuxpiWsi6JLOw4NvP/IgSdPgF8AR1ur+8?=
- =?us-ascii?Q?MoT1h/ajI0CJQwzhk0KG/IkXMeWMGYoDYra5yxKrtyeVeydzunDc0+SBuXwY?=
- =?us-ascii?Q?2sgwEL3bBF/dwZah7OEp0xdis5EHByZrNNHtcodZVM4oUsRPMRfJAtfUtsN5?=
- =?us-ascii?Q?Cyj49Us7BGsyLbWrPxsSs/0uY+ASxVNxEwnQEpw3594cjkFgsilNDbQFVaQC?=
- =?us-ascii?Q?8R5Rd/Eg/8UpL9p8BSUFmNKAXFN/ouKIB2ycV4uyeA8a1yaDLpZ6TfmW5qJN?=
- =?us-ascii?Q?zraDuC7Q9aJWgJxNs+ZV5gLZL2rCRTCeKjvAvdsjVs6kPsAKBvAog1Rdd7LB?=
- =?us-ascii?Q?ZFGtiecs3Ssh5YuIYZhQqPLCGHvs6zl/4VA0ydu2CfRiGQ78doZlBIQDj3TV?=
- =?us-ascii?Q?Ca7ZG7sRtTLz+0/+axcmzIp7rpU4AKdIKxGYMcYH8e092ucIRkDoeXvLO8xU?=
- =?us-ascii?Q?pPfI6/iv7QozCjrz99m8rRTh2XFEp6pJT6bQs1uIP9cU3ZogKa3J2Puyzxea?=
- =?us-ascii?Q?jmhom+rvh4QlhvcoHZo9tOEViyNkoGcFeUMFp4to5mw3S2Dgg7ORDi6I9UnG?=
- =?us-ascii?Q?poAF/BFqABjASj7QhiKaLHnNqsaqw3weL5rJg2OEwG14122vwDH7CvJeANSz?=
- =?us-ascii?Q?hqH1QjhtqYsR+mtNXY16/qzUsTX8cs9Wiz6dIuIRLybuE26mC0N1AOJVrwIq?=
- =?us-ascii?Q?WbUHXOuW/bnPRm0hsqM4gAlKYO7NP6Gx69isEGQvTPGMOU0ic4E9t3nHhNnL?=
- =?us-ascii?Q?seZ/fR9+zqxgUKIkKwadkcp3R7ZvjoMAJM92xi5ywHmbaIFo+UytezJDrNHX?=
- =?us-ascii?Q?caQAa1MrOrHI7anLFsJ5AZ1F9HMA4YO82C9P69MJ9QemfG1HZNTzLeCfZZqy?=
- =?us-ascii?Q?kuJ377bXA3vAae/nM7eaHPQZ+kqsKVUYaF4ww0WiSftVDJFkY7EC4SCIGfEJ?=
- =?us-ascii?Q?+DbTnFg5l+u3IwJ1gcHCWNMlFw7Q7TZ+hoYbpZp5Cnp/zZ9OesVSnfqVWqmO?=
- =?us-ascii?Q?U/+/cw+NH1xjQieUBM6A0LcaVgd7UvZkCOzv9G904RQz7mVxjtz1TYDdZGNo?=
- =?us-ascii?Q?7tSki2iESfiecrpmZmCp6emfYIrjXl16fcIhU1srdT13gXKltD+i+N8m8uDt?=
- =?us-ascii?Q?Wde6vKlg/pGEo2gNNBXCNNSVxVHY8N/2ML8EcXRX1JVRzCw83l5X1NOCBBqR?=
- =?us-ascii?Q?ccsDldcgk1uVEnmojBCRJZV2PXxqC/CvEhHP5eFqH/iF2wFHWpuqYdwp/6UI?=
- =?us-ascii?Q?1O9dcBUL8fDPMxU2RAzgbnBbidR4u4eO+V36tVJJCgLjZ04GmgNLGeBjw1o3?=
- =?us-ascii?Q?aY2CYSt1uq2ogS950QgV1vU/8lx23MzdqEVGy6h0IqMO49nXhWczrTEStxh1?=
- =?us-ascii?Q?/mF35qBwjSEN+1GCtsEoadvXpeFfhWTZsrvnwTrmtcvq6LqANF3OF8ewebig?=
- =?us-ascii?Q?WdCZNEyEmZGhbax2Lv9VS/dJDtosBDAG+ajwiysH0bDzIZykgwtkPepE7DMZ?=
- =?us-ascii?Q?BuMw9k1stEM4aqY4Pbca0jRUoJzoompc8C43ZAzgGkFoDL7hJgJZNN/FUQQ5?=
- =?us-ascii?Q?1BMAxzGx6wGijirh0ix+SGbnHDm5yrayw05Xzp4VNRQyGOol24Xdmevqum8I?=
- =?us-ascii?Q?ew=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	dOdICuJWE7xHsheyhKlxvi+pzdScIC/qT6eJd1EfF9tTs/GYlE4S3zrQwp4ZRRoIGB0Pfy3IvfTbBktgpeqBqMwaFhi+5tzpEy5tYxcVcbisM3zvWbXRls8M/N19HMHJ5s78DDe1x7NdTrYbAhskS9YNQxs/NE4WBbEDhhiPdshl2Hya3r5Ng2PqOBeApxP1VKxnkq16A0Is0wTuZyHLTbSpO6TsR3gRlE8jYf0FMIzFobzZnbhlxgEYuk5+KceuiBJbzIzc6kHVIK7ca3Os7mVg3yE4gIyEzG/ZGTAVEZOMqstxBxbnLTWfxCukSuSnY6SssHptp4ck2/Ljn85dBZNaAv7Rasy/Z350IueK2qgWokgwJuhdR5znztwIo1bOdSLmcLFYS9EFscZZqV4k/6a38SjgfbcYrsL1iIY5yA7rDXtDEj/v0ETAgccScm9NLbHcTtr7WWFOpqkW06QekZtyMpwmv9/gxKEMbEZN5ABjWgNi7QPn07lWSi3JEGv2Cdt8sz5zbCFicbF18+dj9Ooiz6txeBFIoSrfdDMtu39q3qDZ1XyYPN3VL5OULYFxguuzdLG77hy9VVS3CZah5CASyv86I5JabcbQcUAEbgA=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3dcd6add-7db8-48c4-b088-08dd5a4a8895
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR10MB4112.namprd10.prod.outlook.com
+X-OriginatorOrg: amd.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2025 11:57:12.3144
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6070.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0dca5598-d80a-4f29-d9f9-08dd5a4a8c98
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2025 11:57:18.8937
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5OktfPU3shKP/9N+oOABl/+MBd52csh6WOlIxJtjfmeqYfFt2W6z2yQHGE5Uw6OdPD2sZcJshJeyreB/tnol/JEBCl3meIBSuB2vQ/u787k=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR10MB4755
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-03_07,2025-03-03_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 adultscore=0 bulkscore=0
- mlxlogscore=999 malwarescore=0 spamscore=0 phishscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502100000
- definitions=main-2503030092
-X-Proofpoint-GUID: KGFRVbNDMopX24Gh0uLkXe9n0GgNxGCC
-X-Proofpoint-ORIG-GUID: KGFRVbNDMopX24Gh0uLkXe9n0GgNxGCC
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 4MZNV8POe33IsOLmldIzJkE1U1Jk/JVyeYMNr1AOjDvsBNbQbIMICLnJeFUkTiAQ
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6602
 
-On Mon, Mar 03, 2025 at 05:09:20AM +0000, jeffxu@chromium.org wrote:
-> From: Jeff Xu <jeffxu@chromium.org>
+[AMD Official Use Only - AMD Internal Distribution Only]
+
+> -----Original Message-----
+> From: iansdannapel@gmail.com <iansdannapel@gmail.com>
+> Sent: Friday, February 28, 2025 3:18 PM
+> To: linux-fpga@vger.kernel.org
+> Cc: Moritz Fischer <mdf@kernel.org>; Wu Hao <hao.wu@intel.com>; Xu Yilun
+> <yilun.xu@intel.com>; Tom Rix <trix@redhat.com>; Rob Herring
+> <robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>; Conor Dooley
+> <conor+dt@kernel.org>; Neil Armstrong <neil.armstrong@linaro.org>; Jonath=
+an
+> Cameron <Jonathan.Cameron@huawei.com>; Rafa=B3 Mi=B3ecki <rafal@milecki.p=
+l>;
+> Aradhya Bhatia <a-bhatia1@ti.com>; Ian Dannapel <iansdannapel@gmail.com>;
+> open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS
+> <devicetree@vger.kernel.org>; open list <linux-kernel@vger.kernel.org>
+> Subject: [v4 3/3] fpga-mgr: Add Efinix SPI programming driver
 >
-> Update memory sealing documentation to include details about system
-> mappings.
+> From: Ian Dannapel <iansdannapel@gmail.com>
 >
-> Signed-off-by: Jeff Xu <jeffxu@chromium.org>
-> Reviewed-by: Kees Cook <kees@kernel.org>
-
-LGTM so:
-
-Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-
+> Add a new driver for loading binary firmware to configuration RAM using "=
+SPI
+> passive mode" on Efinix FPGAs.
+>
+> Signed-off-by: Ian Dannapel <iansdannapel@gmail.com>
 > ---
->  Documentation/userspace-api/mseal.rst | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
+>  drivers/fpga/Kconfig      |   7 ++
+>  drivers/fpga/Makefile     |   1 +
+>  drivers/fpga/efinix-spi.c | 212 ++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 220 insertions(+)
+>  create mode 100644 drivers/fpga/efinix-spi.c
 >
-> diff --git a/Documentation/userspace-api/mseal.rst b/Documentation/userspace-api/mseal.rst
-> index 41102f74c5e2..76e10938302a 100644
-> --- a/Documentation/userspace-api/mseal.rst
-> +++ b/Documentation/userspace-api/mseal.rst
-> @@ -130,6 +130,26 @@ Use cases
+> diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig index
+> 37b35f58f0df..b5d60ba62900 100644
+> --- a/drivers/fpga/Kconfig
+> +++ b/drivers/fpga/Kconfig
+> @@ -83,6 +83,13 @@ config FPGA_MGR_XILINX_SPI
+>         FPGA manager driver support for Xilinx FPGA configuration
+>         over slave serial interface.
 >
->  - Chrome browser: protect some security sensitive data structures.
->
-> +- System mappings:
-> +  The system mappings are created by the kernel and includes vdso, vvar,
-> +  vvar_vclock, vectors (arm compact-mode), sigpage (arm compact-mode), uprobes.
+> +config FPGA_MGR_EFINIX_SPI
+> +     tristate "Efinix FPGA configuration over SPI"
+> +     depends on SPI
+> +     help
+> +       FPGA manager driver support for Efinix FPGAs configuration over S=
+PI
+> +       (passive mode only).
 > +
-> +  Those system mappings are readonly only or execute only, memory sealing can
-> +  protect them from ever changing to writable or unmmap/remapped as different
-> +  attributes. This is useful to mitigate memory corruption issues where a
-> +  corrupted pointer is passed to a memory management system.
+>  config FPGA_MGR_ICE40_SPI
+>       tristate "Lattice iCE40 SPI"
+>       depends on OF && SPI
+> diff --git a/drivers/fpga/Makefile b/drivers/fpga/Makefile index
+> aeb89bb13517..adbd51d2cd1e 100644
+> --- a/drivers/fpga/Makefile
+> +++ b/drivers/fpga/Makefile
+> @@ -18,6 +18,7 @@ obj-$(CONFIG_FPGA_MGR_TS73XX)               +=3D
+> ts73xx-fpga.o
+>  obj-$(CONFIG_FPGA_MGR_XILINX_CORE)   +=3D xilinx-core.o
+>  obj-$(CONFIG_FPGA_MGR_XILINX_SELECTMAP)      +=3D xilinx-selectmap.o
+>  obj-$(CONFIG_FPGA_MGR_XILINX_SPI)    +=3D xilinx-spi.o
+> +obj-$(CONFIG_FPGA_MGR_EFINIX_SPI)    +=3D efinix-spi.o
+>  obj-$(CONFIG_FPGA_MGR_ZYNQ_FPGA)     +=3D zynq-fpga.o
+>  obj-$(CONFIG_FPGA_MGR_ZYNQMP_FPGA)   +=3D zynqmp-fpga.o
+>  obj-$(CONFIG_FPGA_MGR_VERSAL_FPGA)   +=3D versal-fpga.o
+> diff --git a/drivers/fpga/efinix-spi.c b/drivers/fpga/efinix-spi.c new fi=
+le mode 100644
+> index 000000000000..07885110a8a8
+> --- /dev/null
+> +++ b/drivers/fpga/efinix-spi.c
+> @@ -0,0 +1,212 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * FPGA Manager Driver for Efinix
+> + *
+> + * Copyright (C) 2025 iris-GmbH infrared & intelligent sensors
+> + *
+> + * Ian Dannapel <iansdannapel@gmail.com>
+> + *
+> + * Load Efinix FPGA firmware over SPI using the serial configuration int=
+erface.
+> + *
+> + * Note 1: Only passive mode (host initiates transfer) is currently supp=
+orted.
+> + * Note 2: Topaz and Titanium support is based on documentation but
+> +remains
+> + * untested.
+> + */
 > +
-> +  If supported by an architecture (CONFIG_ARCH_SUPPORTS_MSEAL_SYSTEM_MAPPINGS),
-> +  the CONFIG_MSEAL_SYSTEM_MAPPINGS seals all system mappings of this
-> +  architecture.
+> +#include <linux/delay.h>
+> +#include <linux/fpga/fpga-mgr.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/spi/spi.h>
 > +
-> +  The following architectures currently support this feature: x86-64 and arm64.
+> +struct efinix_spi_conf {
+> +     struct spi_device *spi;
+> +     struct gpio_desc *cdone;
+> +     struct gpio_desc *reset;
+> +};
 > +
-> +  WARNING: This feature breaks programs which rely on relocating
-> +  or unmapping system mappings. Known broken software at the time
-> +  of writing includes CHECKPOINT_RESTORE, UML, gVisor, rr. Therefore
-> +  this config can't be enabled universally.
+> +static void efinix_spi_reset(struct efinix_spi_conf *conf) {
+> +     gpiod_set_value(conf->reset, 1);
+> +     /* tCRESET_N > 320 ns */
+> +     usleep_range(1, 2);
+> +     gpiod_set_value(conf->reset, 0);
+> +
+> +     /* tDMIN > 32 us */
+> +     usleep_range(35, 40);
 
-Perfect, thanks!
+Use macros instead of hardcoded values.
 
+> +}
 > +
->  When not to use mseal
->  =====================
->  Applications can apply sealing to any virtual memory region from userspace,
-> --
-> 2.48.1.711.g2feabab25a-goog
->
+> +static enum fpga_mgr_states efinix_spi_state(struct fpga_manager *mgr)
+> +{
+> +     struct efinix_spi_conf *conf =3D mgr->priv;
+> +
+> +     if (conf->cdone && gpiod_get_value(conf->cdone) =3D=3D 1)
+> +             return FPGA_MGR_STATE_OPERATING;
+> +
+> +     return FPGA_MGR_STATE_UNKNOWN;
+> +}
+> +
+> +static int efinix_spi_write_init(struct fpga_manager *mgr,
+> +                              struct fpga_image_info *info,
+> +                              const char *buf, size_t count)
+> +{
+> +     if (info->flags & FPGA_MGR_PARTIAL_RECONFIG) {
+> +             dev_err(&mgr->dev, "Partial reconfiguration not supported\n=
+");
+> +             return -EOPNOTSUPP;
+> +     }
+> +     return 0;
+> +}
+> +
+> +static int efinix_spi_write(struct fpga_manager *mgr, const char *buf,
+> +                         size_t count)
+> +{
+> +     struct efinix_spi_conf *conf =3D mgr->priv;
+> +     int ret;
+> +     struct spi_message message;
+> +     struct spi_transfer assert_cs =3D {
+> +             .cs_change =3D 1
+> +     };
+> +     struct spi_transfer write_xfer =3D {
+> +             .tx_buf =3D buf,
+> +             .len =3D count
+> +     };
+> +     struct spi_transfer clk_cycles =3D {
+> +             .len =3D 13,  // > 100 clock cycles
+
+The .len =3D 13 is based on documentation stating?
+Consider using macro.
+
+> +             .tx_buf =3D NULL
+> +     };
+> +     u8 *dummy_buf;
+> +
+> +     dummy_buf =3D kzalloc(13, GFP_KERNEL);
+
+Same - use macro
+
+> +     if (!dummy_buf) {
+> +             ret =3D -ENOMEM;
+> +             goto fail;
+> +     }
+> +
+> +     spi_bus_lock(conf->spi->controller);
+> +     spi_message_init(&message);
+> +     spi_message_add_tail(&assert_cs, &message);
+> +     ret =3D spi_sync_locked(conf->spi, &message);
+> +     if (ret)
+> +             goto fail_unlock;
+> +
+> +     /* reset with asserted cs */
+> +     efinix_spi_reset(conf);
+> +
+> +     spi_message_init(&message);
+> +     spi_message_add_tail(&write_xfer, &message);
+> +
+> +     clk_cycles.tx_buf =3D dummy_buf;
+> +     spi_message_add_tail(&clk_cycles, &message);
+> +
+> +     ret =3D spi_sync_locked(conf->spi, &message);
+> +     if (ret)
+> +             dev_err(&mgr->dev, "SPI error in firmware write: %d\n", ret=
+);
+> +
+> +fail_unlock:
+> +     spi_bus_unlock(conf->spi->controller);
+> +     kfree(dummy_buf);
+> +fail:
+> +     return ret;
+> +}
+> +
+> +static int efinix_spi_write_complete(struct fpga_manager *mgr,
+> +                                  struct fpga_image_info *info)
+> +{
+> +     struct efinix_spi_conf *conf =3D mgr->priv;
+> +     unsigned long timeout =3D
+> +             jiffies + usecs_to_jiffies(info->config_complete_timeout_us=
+);
+> +     bool expired =3D false;
+> +     int done;
+> +
+> +     if (conf->cdone) {
+> +             while (!expired) {
+> +                     expired =3D time_after(jiffies, timeout);
+> +
+> +                     done =3D gpiod_get_value(conf->cdone);
+> +                     if (done < 0)
+> +                             return done;
+> +
+> +                     if (done)
+> +                             break;
+> +             }
+> +     }
+> +
+> +     if (expired)
+> +             return -ETIMEDOUT;
+> +
+> +     /* tUSER > 25 us */
+> +     usleep_range(30, 35);
+
+Same - use macros.
+
+> +     return 0;
+> +}
+> +
+> +static const struct fpga_manager_ops efinix_spi_ops =3D {
+> +     .state =3D efinix_spi_state,
+> +     .write_init =3D efinix_spi_write_init,
+> +     .write =3D efinix_spi_write,
+> +     .write_complete =3D efinix_spi_write_complete, };
+> +
+> +static int efinix_spi_probe(struct spi_device *spi) {
+> +     struct efinix_spi_conf *conf;
+> +     struct fpga_manager *mgr;
+> +
+> +     conf =3D devm_kzalloc(&spi->dev, sizeof(*conf), GFP_KERNEL);
+> +     if (!conf)
+> +             return -ENOMEM;
+> +
+> +     conf->spi =3D spi;
+> +
+> +     conf->reset =3D devm_gpiod_get(&spi->dev, "reset", GPIOD_OUT_HIGH);
+> +     if (IS_ERR(conf->reset))
+> +             return dev_err_probe(&spi->dev, PTR_ERR(conf->reset),
+> +                                  "Failed to get RESET gpio\n");
+> +
+> +     if (!(spi->mode & SPI_CPHA) || !(spi->mode & SPI_CPOL))
+> +             return dev_err_probe(&spi->dev, -EINVAL,
+> +                                  "Unsupported SPI mode, set CPHA and CP=
+OL\n");
+> +
+> +     conf->cdone =3D devm_gpiod_get_optional(&spi->dev, "cdone", GPIOD_I=
+N);
+> +     if (IS_ERR(conf->cdone))
+> +             return dev_err_probe(&spi->dev, PTR_ERR(conf->cdone),
+> +                                  "Failed to get CDONE gpio\n");
+> +
+> +     mgr =3D devm_fpga_mgr_register(&spi->dev,
+> +                                  "Efinix FPGA Manager",
+> +                                  &efinix_spi_ops, conf);
+> +
+> +     return PTR_ERR_OR_ZERO(mgr);
+> +}
+> +
+> +static const struct of_device_id efinix_spi_of_match[] =3D {
+> +     { .compatible =3D "efinix,trion-spi", },
+> +     { .compatible =3D "efinix,titanium-spi", },
+> +     { .compatible =3D "efinix,topaz-spi", },
+> +     { .compatible =3D "efinix,fpga-spi", },
+> +     {}
+> +};
+> +MODULE_DEVICE_TABLE(of, efinix_spi_of_match);
+> +
+> +static const struct spi_device_id efinix_ids[] =3D {
+> +     { "trion-spi", 0 },
+> +     { "titanium-spi", 0 },
+> +     { "topaz-spi", 0 },
+> +     {},
+> +};
+> +MODULE_DEVICE_TABLE(spi, efinix_ids);
+> +
+> +static struct spi_driver efinix_spi_driver =3D {
+> +     .driver =3D {
+> +             .name =3D "efinix-spi",
+> +             .of_match_table =3D efinix_spi_of_match,
+> +     },
+> +     .probe =3D efinix_spi_probe,
+> +     .id_table =3D efinix_ids,
+> +};
+> +
+> +module_spi_driver(efinix_spi_driver);
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_AUTHOR("Ian Dannapel <iansdannapel@gmail.com>");
+> +MODULE_DESCRIPTION("Efinix FPGA SPI Programming Driver (Topaz/Titanium
+> +untested)");
+
+If untested, it might be useful to mark them as experimental in Kconfig.
+
+Regards,
+Navakishore.
+
 
