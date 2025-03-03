@@ -1,124 +1,178 @@
-Return-Path: <linux-kernel+bounces-542615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DF95A4CBA0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:08:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF9CEA4CBA7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:10:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8C8A3A51C1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:08:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED2433A4BD5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:10:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35738148316;
-	Mon,  3 Mar 2025 19:08:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EB9D22FF35;
+	Mon,  3 Mar 2025 19:10:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ad5mzEHl"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="d1mmUFuY"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA3E214A64;
-	Mon,  3 Mar 2025 19:08:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741028931; cv=none; b=qYO3Gc/8bmvXXD0Mnv/X+XOwvb0UeOnBfCYFHEySwPFxNS9BZlQ0lr+2eTT/ziTrIkzk/Ys6HxRI3mFHbCCffCKeYRTpS/Uoj0jjd1fva8UeqOL24AzOq8/Uzu8xelNEtywVnCoy+e4uKxAwJbkA3Q/CWCOuYzWFqx7xnCxHj24=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741028931; c=relaxed/simple;
-	bh=Yje3DuWMISvZSa3Mbxv9NiyZ3ok+2hfDkATqnad69wY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=daj/bgdtCMU8JcfRNoVZuKuYCw2byI0FOTMDdDgm2af7/8hp4g0BnrH3EH+M+DV1WlziCNor57SyYNV5U1OX8L2b2b57aaRuF6H5hgmABf2XRz5mdMOxEz2JYHKqQTNPvoM73KMoc9jXKiKcxE6n+FCMTsURA+D1wk97ZtfrYJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ad5mzEHl; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43bc0b8520cso8833395e9.1;
-        Mon, 03 Mar 2025 11:08:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741028928; x=1741633728; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cF/23zUstDppzkURu8wJfdQbb4zZ6KV4RiUE3G1K/pk=;
-        b=Ad5mzEHlYCwkE3bkEFQy8+MPtKaU2N549pSZfqMQpVToPKnOlIRLDH2mZH7BGCavSU
-         bqlYIVHPAZvIllnCZb1kSx/aNRxl3djy/2sWKJaymJuSSlzut6xrgOrFZPp9lE8yFl0L
-         X2QY2jSwzcPAxzFaedH0TrGmnFCVO/j6aB8gky147D4XWtRuCyBhJgkhdOIhKzmhUrgi
-         fjfj1B+BvLTlNUlZGS020jXpxeD0cKhpKZyMtFkjE54wM+GylN7T3zNKVSbc1MFCl7+h
-         dUs729VgxmIfUPZcyctx4zS/VZPaKU2bI1yQO0WtJ6YAcC7SEipXSc8tFSiON3foPwFb
-         PFoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741028928; x=1741633728;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cF/23zUstDppzkURu8wJfdQbb4zZ6KV4RiUE3G1K/pk=;
-        b=TxZbeHalht5TW/7F3+zRtnACklrNImEwjwDv060KOtR0FD3NhqW5pmamUUE4amNzo1
-         b2qpyO+M57dZmPs20SHuMd5Cjzcql1xOgkORpIYSWKCmHVQxnuzfoTNFsgL4ygqdHjTn
-         tzZprj3DGUbwexHYo20He+LrqGYJn8WeJ2a20qybOpfX4sLKdII+tWnhVxlq6DWqraRV
-         E4s4wpeyCv/4pNsXTRFCMF7NSapM4MfVonP+a0ondrt1pU9aDhjk0nVsKb9ZVwyB3t4T
-         fO4ZtrxCi6HqNuSk7hS6FwxSnFFXm89JtgzHZ9veaxkJ3lxu89zaPLcfQnbo5bSdk87K
-         xL7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVAy5lqEYHpMmrpXLBlWy/zgYBLDu5sIYZoeD8a/3+TAKBLip3DxqY0+N+3cA1+JbAnhriAphuMfBii7gDniwVvDQ==@vger.kernel.org, AJvYcCWQ5a1wv4ZV1SVGeMDRS6hr1qCs/m3gKCdanJwx4WE5gBVpN5XvnaMhd1nMAzWnut7cO1j1VEgY@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLPDcUVqmw3PCG0LUYOrydTsBhMz7fJco9Zj3P1E66gifhbrQS
-	73USvXWM7x80/fXFxjeoatp98DVut/fXGxePamcWWIkd13SJrbKV2Qrd0O8Y
-X-Gm-Gg: ASbGncuPyRUEn+7R+818UCmUyo83qxjcswhHB/NQM1WXg/DBni7hytetrSSUNgDdllF
-	hb9wTmAjEoCfxUNuE5qnXONwLxUI6YOwIJL3IRsNBzfvrIiaTVk/HUvokbuygRrEWzCpQxJ4Nsj
-	Uo7I/56kn8LaNsDx9jVGQrCJU00nxKnLkNqtpPru+N6TUhcssBZm6k/xeKUdsG48UGafmiDQbWO
-	ApaOiv1PJNs+LHAMUSNOZAU7c46b02ITlGWg+qEFXMqio5m3qnbyHoPPbA0nYFWxifjnsUBK0Hg
-	1W84qA0wiOlAaKbJKnmNBG7f4JFFxUwXl3BYM6Ilsv0MIo5b5X3gMM6IORbMuD9vQlsqTvMX
-X-Google-Smtp-Source: AGHT+IEWVs4i0tbonkHc8HHsQJeB84ekhLGbjKn2nYHkiAn5v4AKZwYjR6d1OGmPPVC7xCrrPo0OcA==
-X-Received: by 2002:a05:600c:3ca8:b0:439:84d3:f7ee with SMTP id 5b1f17b1804b1-43ba675d56fmr98691015e9.24.1741028927840;
-        Mon, 03 Mar 2025 11:08:47 -0800 (PST)
-Received: from prasmi.Home ([2a06:5906:61b:2d00:5c8:2ec7:65d8:a3a5])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bc18452c3sm47420455e9.25.2025.03.03.11.08.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 11:08:46 -0800 (PST)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] reset: rzg2l-usbphy-ctrl: Correct reset status check
-Date: Mon,  3 Mar 2025 19:08:41 +0000
-Message-ID: <20250303190841.179890-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A5B22CBE2
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 19:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741029024; cv=pass; b=leQYonzyaMkhFlXVGcMPe/sgdSPh+sXQaBX0aA2GoPxJk3kPm7tTvYmTECQteoMLA++kdxtXArT5iYaiwVS1NFwkygN7CbU2tGes+KNNh2hhDnl4IS0vwASHwLOqpncIGzB78D6sPbJ4WKRhM/TisbN0iVW3yD/M12o81Ne/TyI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741029024; c=relaxed/simple;
+	bh=HUNHnaHz0tyCHVNGgH4xZtZVIOlvzizlAX/nJ5SaLww=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ufN9fCDWBLtaQeTJwltrleUV7oNd8VQmePD2v9YKxK2cV3JalKDeTgT7J+BViaGzHi8Bv+3W1PYaU8NeQUVFDqjpjsrkZbKfUGln+xF2JyWXtm7gseI9S1OhMpGnIeOUyN3mXb1UfXBenPZqscCKCa33DW90iMM5IT9RN+WHlv0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=d1mmUFuY; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1741028997; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=enqQTsUYQQxPkqjyvGXFaXPyKtm3bW2Vw9YwAFtXIM7bV/+zQD9qclR4nryMtqfCWVEUfppTOqixbfXNohNRV5ERI9/OOwQSSXbD4vYlKW59xxqSKZetkdgzmLREXmP5p6FUElDg+zH1PhDKh7h4vM8G1Mw8nDtlp2E3CdJ+xFI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1741028997; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=79EEq7MORaFKGZQS0e0YLJcDbCdzpAcNRQ48gbyQtz0=; 
+	b=dQkPQnkVqkY9cy+D3H7VkA/uELGBuR1kKksxWMG6D5ejF58V9TGMYT9Biue+3myJNZpoOqSiLsOj4eHQCtuscRIqtVOmJTXUW6Hgd0fA2t8vdzIR4HNyZb3WWuw7MXCyA6SBjlqeiH6SqWMB2xRidxRCi9evTQziKRXQ7ELh1TA=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741028997;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=79EEq7MORaFKGZQS0e0YLJcDbCdzpAcNRQ48gbyQtz0=;
+	b=d1mmUFuYH+G3X4MbNOHcxlSCq5+THv3xRXcEkHVB/GrGweEgMsUcui5kS9vpP90R
+	9fU+seUWCTsDAP0fpRc78XAmr7p0Pcfh3j9DGm3nugWPbeTGozSxIJosZj3yHZvsuum
+	8NEb+IaasptSQckzRFptdh+upY/dI4sJfvlmOXQk=
+Received: by mx.zohomail.com with SMTPS id 1741028995020517.922490709406;
+	Mon, 3 Mar 2025 11:09:55 -0800 (PST)
+From: =?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>
+To: Boris Brezillon <boris.brezillon@collabora.com>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	=?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>
+Cc: kernel@collabora.com,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 1/2] drm/panthor: Replace sleep locks with spinlocks in fdinfo path
+Date: Mon,  3 Mar 2025 19:08:45 +0000
+Message-ID: <20250303190923.1639985-1-adrian.larumbe@collabora.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Commit 0590c94c3596 ("drm/panthor: Fix race condition when gathering fdinfo
+group samples") introduced an xarray lock to deal with potential
+use-after-free errors when accessing groups fdinfo figures. However, this
+toggles the kernel's atomic context status, so the next nested mutex lock
+will raise a warning when the kernel is compiled with mutex debug options:
 
-Ensure the reset status check explicitly evaluates whether all bits in
-`port_mask` are set. Replace the double negation (`!!`) with an equality
-check to prevent incorrect interpretation of partial bit matches as an
-asserted reset.
+CONFIG_DEBUG_RT_MUTEXES=y
+CONFIG_DEBUG_MUTEXES=y
 
-Fixes: bee08559701f ("reset: renesas: Add RZ/G2L usbphy control driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Replace Panthor's group fdinfo data mutex with a guarded spinlock.
+
+Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+Fixes: 0590c94c3596 ("drm/panthor: Fix race condition when gathering fdinfo group samples")
+Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+Reviewed-by: Steven Price <steven.price@arm.com>
 ---
- drivers/reset/reset-rzg2l-usbphy-ctrl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/panthor/panthor_sched.c | 26 ++++++++++++-------------
+ 1 file changed, 12 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/reset/reset-rzg2l-usbphy-ctrl.c b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
-index 8a7f167e405e..6451f621e862 100644
---- a/drivers/reset/reset-rzg2l-usbphy-ctrl.c
-+++ b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
-@@ -88,7 +88,7 @@ static int rzg2l_usbphy_ctrl_status(struct reset_controller_dev *rcdev,
+diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
+index 1a276db095ff..4d31d1967716 100644
+--- a/drivers/gpu/drm/panthor/panthor_sched.c
++++ b/drivers/gpu/drm/panthor/panthor_sched.c
+@@ -9,6 +9,7 @@
+ #include <drm/panthor_drm.h>
  
- 	port_mask = id ? PHY_RESET_PORT2 : PHY_RESET_PORT1;
+ #include <linux/build_bug.h>
++#include <linux/cleanup.h>
+ #include <linux/clk.h>
+ #include <linux/delay.h>
+ #include <linux/dma-mapping.h>
+@@ -631,10 +632,10 @@ struct panthor_group {
+ 		struct panthor_gpu_usage data;
  
--	return !!(readl(priv->base + RESET) & port_mask);
-+	return (readl(priv->base + RESET) & port_mask) == port_mask;
+ 		/**
+-		 * @lock: Mutex to govern concurrent access from drm file's fdinfo callback
+-		 * and job post-completion processing function
++		 * @fdinfo.lock: Spinlock to govern concurrent access from drm file's fdinfo
++		 * callback and job post-completion processing function
+ 		 */
+-		struct mutex lock;
++		spinlock_t lock;
+ 
+ 		/** @fdinfo.kbo_sizes: Aggregate size of private kernel BO's held by the group. */
+ 		size_t kbo_sizes;
+@@ -910,8 +911,6 @@ static void group_release_work(struct work_struct *work)
+ 						   release_work);
+ 	u32 i;
+ 
+-	mutex_destroy(&group->fdinfo.lock);
+-
+ 	for (i = 0; i < group->queue_count; i++)
+ 		group_free_queue(group, group->queues[i]);
+ 
+@@ -2861,12 +2860,12 @@ static void update_fdinfo_stats(struct panthor_job *job)
+ 	struct panthor_job_profiling_data *slots = queue->profiling.slots->kmap;
+ 	struct panthor_job_profiling_data *data = &slots[job->profiling.slot];
+ 
+-	mutex_lock(&group->fdinfo.lock);
+-	if (job->profiling.mask & PANTHOR_DEVICE_PROFILING_CYCLES)
+-		fdinfo->cycles += data->cycles.after - data->cycles.before;
+-	if (job->profiling.mask & PANTHOR_DEVICE_PROFILING_TIMESTAMP)
+-		fdinfo->time += data->time.after - data->time.before;
+-	mutex_unlock(&group->fdinfo.lock);
++	scoped_guard(spinlock, &group->fdinfo.lock) {
++		if (job->profiling.mask & PANTHOR_DEVICE_PROFILING_CYCLES)
++			fdinfo->cycles += data->cycles.after - data->cycles.before;
++		if (job->profiling.mask & PANTHOR_DEVICE_PROFILING_TIMESTAMP)
++			fdinfo->time += data->time.after - data->time.before;
++	}
  }
  
- static const struct of_device_id rzg2l_usbphy_ctrl_match_table[] = {
+ void panthor_fdinfo_gather_group_samples(struct panthor_file *pfile)
+@@ -2880,12 +2879,11 @@ void panthor_fdinfo_gather_group_samples(struct panthor_file *pfile)
+ 
+ 	xa_lock(&gpool->xa);
+ 	xa_for_each(&gpool->xa, i, group) {
+-		mutex_lock(&group->fdinfo.lock);
++		guard(spinlock)(&group->fdinfo.lock);
+ 		pfile->stats.cycles += group->fdinfo.data.cycles;
+ 		pfile->stats.time += group->fdinfo.data.time;
+ 		group->fdinfo.data.cycles = 0;
+ 		group->fdinfo.data.time = 0;
+-		mutex_unlock(&group->fdinfo.lock);
+ 	}
+ 	xa_unlock(&gpool->xa);
+ }
+@@ -3537,7 +3535,7 @@ int panthor_group_create(struct panthor_file *pfile,
+ 	mutex_unlock(&sched->reset.lock);
+ 
+ 	add_group_kbo_sizes(group->ptdev, group);
+-	mutex_init(&group->fdinfo.lock);
++	spin_lock_init(&group->fdinfo.lock);
+ 
+ 	return gid;
+ 
 -- 
-2.43.0
+2.47.1
 
 
