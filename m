@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-541624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B9A5A4BF3E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:48:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36AD5A4BF59
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:52:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3E4E7A3627
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:47:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4531F3B01B0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:48:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9F2020E00C;
-	Mon,  3 Mar 2025 11:47:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5539320E03A;
+	Mon,  3 Mar 2025 11:47:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Kvg5Dv8q"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="CCyBrL8e"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A0020D500
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 11:47:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB6DF20DD63
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 11:47:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741002472; cv=none; b=WRxUVvAd2SwhnXQX8lVw+HomoDNkZJngiARk5M9djI1iHoeXRFX4GpdaPUH9Z7HdZ5dbXkA7aZtXGV++jcpUuJWnwpx/dgViCTNfH1sOTShXGvwWqsl4FL6sK+DmezJ1SQNV8AKbPUFv4D4tbGOFR0V4o4Qqx+atDzbn/Se2f00=
+	t=1741002474; cv=none; b=kS25eVMmaBMYKeGh1vW4XCfl4FBnhI0+tYD1r2nLkARjnFsqN5mkx529j3HO5/AyEIh/Ld0UeKGeimW5RSzDSHWnNfbRgaPsohwVHw+nTJTcnsEgHRoVyfKK6PC+7uI4DoFdRuLGFR2+OV4Jk1BTFS4+QeGaNAb0nCWA1EO3b1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741002472; c=relaxed/simple;
-	bh=f5oXDYngVLmmeCgw3m2NxlkPSjJDX6EDhYcIJAY4bHI=;
+	s=arc-20240116; t=1741002474; c=relaxed/simple;
+	bh=+v+ir1+IglYL05L7kQ/+NcMJ+uc5Mh8VNYIDLO2zj4c=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hB5yZrwQv6Y/UTxz7wl2OSjMKJ9YewQTtXq1AA30MqmZx3KIS6ZzF4bGqS1dmQ/ijqKy5+cJPlkJ3xN2uFtszMRhlTt4ch7lsA5HIUHW3yuIBqGL7PSYDsCa2YUVc6Vf8IyQqG6lakiGtLKdxQ+aq+P6nr9Nl3yU3GPofYqjxuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Kvg5Dv8q; arc=none smtp.client-ip=209.85.128.46
+	 MIME-Version:Content-Type; b=As3l1vOkEngnlTYeO49s9FtKFpZI9ZzsEjTso3ooGdGPyrvRh5VW6kCedTUVKMqGQsgew5M4apOeaqEnidfsCN0E5kvpareFXPQYMcMVcSXyM+RS3q4Cw610tvGSZ8ioaEvi2ekeR8ykVGYeJ8bfZiNFrGznAeOJOQbI+jM6Uvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=CCyBrL8e; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43bc4b1603fso3792025e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 03:47:50 -0800 (PST)
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-390fdaf2897so1538939f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 03:47:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1741002469; x=1741607269; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1741002471; x=1741607271; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7oStMvILYc+VcE0Bos6wZo8DhR0OCDR8DIF2cp2zAmw=;
-        b=Kvg5Dv8q27F+9fY4+9dvP9nw5dxD/T/cY1xeQpvnMGjlAq+1RCNalf+3aP1HYkxQEh
-         WXD2FrvxELzuGwye3gSljMkPK6xi8cfTLdWfNmWKDS2azpxpKRd7833kDc8cOyUe3u2z
-         zKEgL2KYqdHrqKAC5raBrIWNmAhQR2SV/Eiectu0Wjvf2xjwUViwPWMsptHGWPa2Md+V
-         ui+XdMwAwgC1WxVVNhijfF4Y909WTBbXXGsuFRLvtz6zVTrCmAm6SccUa+5h9y4IlNRa
-         MLz6lmX+HqIhAKgcgLs3v/DtSl3tKlMUpF3vjidw51ki3E105Li8HwNM9ptw9dsz5RkB
-         BtiA==
+        bh=iKR8mmc7je6VNvAt7e6XfCwJ0Xm9s9LiP8WsU315nXs=;
+        b=CCyBrL8eeJVwtW/vo7tWcTm446qekFDbvRoK1W3Pmqxv3iA5H/UdB3hF6EQit9gGwh
+         v9qV1HvcIGe8093vqFQZ7pe583JvPwx1uBhHLNigNoJdRAoZDVUoYG7aZ7u1Hs4HqGcL
+         5KMOMD169w3jkX45AIUarv/Z/j4Lun0gybflb1G7OxCePmO48nc9dt7fLfp5XdYwTIJA
+         MXtf5CM/XmKlwWEyjWaiRv6vNOh/HCsOXMJcLy2Alf1tj2mzV6icIEU+DOimXJLm9RD9
+         yRn3lsSl39E6iPrwmGupqJ42Xe18sRgiK682EedLV/HOp1w2sZuVaCNbQbXUvTnXjOSc
+         X0mA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741002469; x=1741607269;
+        d=1e100.net; s=20230601; t=1741002471; x=1741607271;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7oStMvILYc+VcE0Bos6wZo8DhR0OCDR8DIF2cp2zAmw=;
-        b=Fb9SHuQ4bMes/wkRfchQTpBkg81Yh0uXlUJCVxk0c1EJ1sYwsVmouXilqj3MWVLc/s
-         Xkg+qt+rsfiJoDsHbwxi2lDUYKnkz34Lx8EfhXLZHJJJTQyUD0m6o8ih5jhNPOIIcbLy
-         f0pde2atCDhk82JjBqzTCUulC1w2jlYK5humTPGjard6Z3XQRQdzRf1CJm2SyTr8V+x/
-         H8LX7UiIZmyGWrYFGVHGQpzLJnspSaX55HOiNIBq7JOVlZlaLo1a3opl2Dg0PlbrzX3m
-         Elj6U1ZvEHn8Syi/3u4uxx8QAhbMmaqyP6iXeFdwTqZpNvv9jUANDNk1za11ch4DrdxZ
-         hUug==
-X-Forwarded-Encrypted: i=1; AJvYcCXTKg2TbceGMjfUSWLJKAS0535a4r6sE2GVAPu3W5b9ZH9MlrQCkEGYL1wv5XeBuhJrvbES2oH+p91tgmo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwH3lENXTtBOldphe1yvC+pLgPfEWXAuogMhsY+Qpk6CjV1R3x
-	j+Jkn6vSMU8cF/JqAHrGxuegprclLlIZ27K1Y/bwZMUjZG1xRSLbf2/8Eiwm2So=
-X-Gm-Gg: ASbGncvYFey2ZLnExuxrNnS5Helfy7a+eaekS4Fy2hneQvyJLk36v9+0JKXrejJN2o6
-	LBhWTbKcCEmRW0HpG66sUqriRqmttPUBRcptsEDuzVn4c05Dh/MyYOhCgvtpmGpmc7XjtBrOznp
-	Xsc5goJiflUkkNcDiAIuu64pqTk4xrHUUE1E7GqQVW8D2kzeNp7/rm1Bhd3n/FHB56oCMMS5oiH
-	rnvWmK627eFhvGvZ0zhFbfSnGnctrWF0fZk1y9RLqyoBa2dkMOyfSsl2uoMyec9s12lyE5/qxMH
-	H5l3DBaNX0eF9OIt2pSPnBh29BnGj0YjggXBLV8Qo5fR1AHYLA9T5g4owxHDN+vs/YAfArnxaKU
-	GIzI2neOVfLVpZPcV3LGMu/t66g==
-X-Google-Smtp-Source: AGHT+IELfVBNUZ3T62EMT1S63oZc8YXWbdY+myyuSZ9x2ZPWALyNI6M68yP4U9enUx3QzHfaeTngGA==
-X-Received: by 2002:a05:600c:5119:b0:439:a25b:e7d3 with SMTP id 5b1f17b1804b1-43ba67047c9mr107630935e9.14.1741002469168;
-        Mon, 03 Mar 2025 03:47:49 -0800 (PST)
+        bh=iKR8mmc7je6VNvAt7e6XfCwJ0Xm9s9LiP8WsU315nXs=;
+        b=R25MZOSm+8kUEndqQmnlkq74wjBH0ELak0OWVn+VWqb7CBnOpx9PdG8Hx4JJ/ZrYFl
+         plOAHPIJKiVm7G24WKWlVRD2zH+902ngspyz9bzgprrqosiu4624o0DhKYrdNLGBLfyu
+         LCxtVGSbclEVnHaDUwKzJ1OvLEmiYTM/qrd3PER/Fc+fPRaFj6KsNIYz0j3C3zIPPzIG
+         Lk0ahv6VPBdmF1EKj+HmJ+10gqAruyq8jONE9hjqdbuedWFYYruGLnWAqcbYIwBflfM3
+         RjWRjWy/BX4X6nemjh0LJD1BkmEsE9WR6JwybQ01IbS4nyEoDINSTpeh1NcHNPa0DBOL
+         GwPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVl2+60caxzH79b6FXCUKJfn9ClSAm5RY2JEZ8pmsZ/YTsazrWzBXuXlDTmOmp3ALKSFaHSN1mS983VBCM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKNsiqWUOezvqgclhoObNkA9nUPpsdey3yzg55at9IxLlWD10l
+	sG+Y819kRl7Vv99irERwO7ETkABTYJsqP3uJ2/FdAs/vmqE7MkG56k5ti2oHag8=
+X-Gm-Gg: ASbGncunt4sLw1WuaXrqF+flmLi2XjQYseX/uGvQgttau+YqgW2smmuHP0hK79czQOU
+	9Zn+0LDxG0KuN7vsVhI1zz6evyD+ouctNCT3YPkM3iN83/v68hnoGVELzWeHmdEVdAlddxHBEUZ
+	S0Igvh4oMRfWMRZqlx21a/WK4rfC6w5sU+DMbAGMPPgQRip2pDb72o08jPkNVXDYRLteGvBGNgB
+	M/6vnSvHkEVyGcfAd25o5i9ptok/Pzun+PsDYXLNAtc3f5IRiYPzYCbIJEo8J9tMXKKpzkKWJtL
+	M6ao8vxLuTEEVhXsPnE2T94/5s1ZrcXAvp7tFisYZWeVYlb+sJ3XankXVahT3XpdurWwZhSPSZ9
+	BbP23HE4zRBRGknriHcUtEWZfaA==
+X-Google-Smtp-Source: AGHT+IH5Z6btw41ZKAgQDipPHeM1p1kYa1+Z7ciGYHSk4HbVAIZ7A2f2vv2fwdCwPPHx3p4Q1j+Vww==
+X-Received: by 2002:a5d:424b:0:b0:390:e46f:4454 with SMTP id ffacd0b85a97d-390ec9cbfbfmr10067180f8f.32.1741002471263;
+        Mon, 03 Mar 2025 03:47:51 -0800 (PST)
 Received: from localhost (amontpellier-556-1-148-206.w109-210.abo.wanadoo.fr. [109.210.4.206])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b73702bd0sm158648515e9.10.2025.03.03.03.47.48
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47a66adsm14110736f8f.25.2025.03.03.03.47.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 03:47:48 -0800 (PST)
+        Mon, 03 Mar 2025 03:47:50 -0800 (PST)
 From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
 To: Jonathan Cameron <jic23@kernel.org>
 Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
@@ -84,9 +84,9 @@ Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
 	Nuno Sa <nuno.sa@analog.com>,
 	linux-iio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 5/8] iio: adc: ad4130: Adapt internal names to match official filter_type ABI
-Date: Mon,  3 Mar 2025 12:47:03 +0100
-Message-ID: <20250303114659.1672695-15-u.kleine-koenig@baylibre.com>
+Subject: [PATCH v4 6/8] iio: adc: ad_sigma_delta: Add error checking for ad_sigma_delta_set_channel()
+Date: Mon,  3 Mar 2025 12:47:04 +0100
+Message-ID: <20250303114659.1672695-16-u.kleine-koenig@baylibre.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20250303114659.1672695-10-u.kleine-koenig@baylibre.com>
 References: <20250303114659.1672695-10-u.kleine-koenig@baylibre.com>
@@ -97,281 +97,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=10026; i=u.kleine-koenig@baylibre.com; h=from:subject; bh=f5oXDYngVLmmeCgw3m2NxlkPSjJDX6EDhYcIJAY4bHI=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBnxZbJmgat15ejTK0QQKh7YezB6CM5zXG9qgXEo EJXgAtDlCmJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZ8WWyQAKCRCPgPtYfRL+ TmOEB/40PrifRoyMnbRW15f0Kc5i2Lyj3lHgreXcSplrKQrQ2yQT8ugWqShJzKm3GrX8Ivmxuay /ROUnJccQp+uZrdP6UXQS4IttUfsMk/wET65liNBPSoQr//Mw0l5Do5jUJ2js0C+MssELsulZMO GmX7KoRlwPum8U2U232iA4nUBn7Ed5XHe140HYOsR2+xvZjC80dc+JGdceUW64U0MgXV34DLLWC K3fjzvFG+dyIBLiLUJOnJ2v5B9lchBTUyoZIER10Eufnf9Z7De+rIT0h+kzY2Z1gry51NVnsr+r 4q/SeYDF5v4+nubYhxlYB8zc3sjL5Gd4Wk4G/iDhUh0jOTDx
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1187; i=u.kleine-koenig@baylibre.com; h=from:subject; bh=+v+ir1+IglYL05L7kQ/+NcMJ+uc5Mh8VNYIDLO2zj4c=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBnxZbLpSyJJZQrMNOYSBT3O10ZES5srubfMKd/z Hdc8npRu1aJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZ8WWywAKCRCPgPtYfRL+ TlsjB/wOYCnOMHsdZ0Q3jdrrQBdxHsZXk7f919eqxPaLXjMVofd/123J4vpuLOwaXwaC9W2fjs/ qEW9uVGxoJPU2pXSI/NOnW/tSiqvlVvvF0nKn8Vs8PGs4fACQy+R5WifPK8o/JDCKXnVex6BTOQ NOLo01eR/oiOROTYDKSkx1PKWUW1/efx/ARiHTLKT8bXBKRp0AGXj4nrn1ia98dXJj28h3t7D00 hkX1dnHsPcX5OjWBizSl7SxPa5dXzMQAe11k+Hsa8iu2l58v0J2FCYjmCuCXnxL75xv57fvrK1b 3mRa4JdY9akWMDP7YnNdyNbQyCL286ODl8Ga9ub/dpnFZRT8
 X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 
-Recently the interface to to select a filter was officially blessed to
-use "filter_type". Adapt the naming of several functions accordingly to
-make the new standard more present and so make the driver a better
-template for other drivers. Apart from the comment update this is just
-s/filter_mode/filter_type/.
+All other calls to ad_sigma_delta_set_channel() in ad_sigma_delta.c
+check the return value afterwards. Do it for all calls.
 
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
 ---
- drivers/iio/adc/ad4130.c | 84 ++++++++++++++++++++--------------------
- 1 file changed, 42 insertions(+), 42 deletions(-)
+ drivers/iio/adc/ad_sigma_delta.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/iio/adc/ad4130.c b/drivers/iio/adc/ad4130.c
-index 4ab1943c4697..3dbf1d89b671 100644
---- a/drivers/iio/adc/ad4130.c
-+++ b/drivers/iio/adc/ad4130.c
-@@ -203,7 +203,7 @@ enum ad4130_mode {
- 	AD4130_MODE_IDLE = 0b0100,
- };
+diff --git a/drivers/iio/adc/ad_sigma_delta.c b/drivers/iio/adc/ad_sigma_delta.c
+index d91a3ba127e3..6c37f8e21120 100644
+--- a/drivers/iio/adc/ad_sigma_delta.c
++++ b/drivers/iio/adc/ad_sigma_delta.c
+@@ -390,7 +390,9 @@ int ad_sigma_delta_single_conversion(struct iio_dev *indio_dev,
+ 	if (!iio_device_claim_direct(indio_dev))
+ 		return -EBUSY;
  
--enum ad4130_filter_mode {
-+enum ad4130_filter_type {
- 	AD4130_FILTER_SINC4,
- 	AD4130_FILTER_SINC4_SINC1,
- 	AD4130_FILTER_SINC3,
-@@ -234,7 +234,7 @@ struct ad4130_setup_info {
- 	unsigned int			pga;
- 	unsigned int			fs;
- 	u32				ref_sel;
--	enum ad4130_filter_mode		filter_mode;
-+	enum ad4130_filter_type		filter_type;
- 	bool				ref_bufp;
- 	bool				ref_bufm;
- };
-@@ -255,7 +255,7 @@ struct ad4130_chan_info {
- };
+-	ad_sigma_delta_set_channel(sigma_delta, chan->address);
++	ret = ad_sigma_delta_set_channel(sigma_delta, chan->address);
++	if (ret)
++		goto out_release;
  
- struct ad4130_filter_config {
--	enum ad4130_filter_mode		filter_mode;
-+	enum ad4130_filter_type		filter_type;
- 	unsigned int			odr_div;
- 	unsigned int			fs_max;
- 	enum iio_available_type		samp_freq_avail_type;
-@@ -341,9 +341,9 @@ static const unsigned int ad4130_burnout_current_na_tbl[AD4130_BURNOUT_MAX] = {
- 	[AD4130_BURNOUT_4000NA] = 4000,
- };
+ 	spi_bus_lock(sigma_delta->spi->controller);
+ 	sigma_delta->bus_locked = true;
+@@ -431,6 +433,7 @@ int ad_sigma_delta_single_conversion(struct iio_dev *indio_dev,
+ 	sigma_delta->keep_cs_asserted = false;
+ 	sigma_delta->bus_locked = false;
+ 	spi_bus_unlock(sigma_delta->spi->controller);
++out_release:
+ 	iio_device_release_direct(indio_dev);
  
--#define AD4130_VARIABLE_ODR_CONFIG(_filter_mode, _odr_div, _fs_max)	\
-+#define AD4130_VARIABLE_ODR_CONFIG(_filter_type, _odr_div, _fs_max)	\
- {									\
--		.filter_mode = (_filter_mode),				\
-+		.filter_type = (_filter_type),				\
- 		.odr_div = (_odr_div),					\
- 		.fs_max = (_fs_max),					\
- 		.samp_freq_avail_type = IIO_AVAIL_RANGE,		\
-@@ -354,9 +354,9 @@ static const unsigned int ad4130_burnout_current_na_tbl[AD4130_BURNOUT_MAX] = {
- 		},							\
- }
- 
--#define AD4130_FIXED_ODR_CONFIG(_filter_mode, _odr_div)			\
-+#define AD4130_FIXED_ODR_CONFIG(_filter_type, _odr_div)			\
- {									\
--		.filter_mode = (_filter_mode),				\
-+		.filter_type = (_filter_type),				\
- 		.odr_div = (_odr_div),					\
- 		.fs_max = AD4130_FILTER_SELECT_MIN,			\
- 		.samp_freq_avail_type = IIO_AVAIL_LIST,			\
-@@ -378,7 +378,7 @@ static const struct ad4130_filter_config ad4130_filter_configs[] = {
- 	AD4130_FIXED_ODR_CONFIG(AD4130_FILTER_SINC3_PF4,      148),
- };
- 
--static const char * const ad4130_filter_modes_str[] = {
-+static const char * const ad4130_filter_types_str[] = {
- 	[AD4130_FILTER_SINC4] = "sinc4",
- 	[AD4130_FILTER_SINC4_SINC1] = "sinc4+sinc1",
- 	[AD4130_FILTER_SINC3] = "sinc3",
-@@ -610,7 +610,7 @@ static bool ad4130_setup_info_eq(struct ad4130_setup_info *a,
- 				     unsigned int pga;
- 				     unsigned int fs;
- 				     u32 ref_sel;
--				     enum ad4130_filter_mode filter_mode;
-+				     enum ad4130_filter_type filter_type;
- 				     bool ref_bufp;
- 				     bool ref_bufm;
- 			     }));
-@@ -621,7 +621,7 @@ static bool ad4130_setup_info_eq(struct ad4130_setup_info *a,
- 	    a->pga != b->pga ||
- 	    a->fs != b->fs ||
- 	    a->ref_sel != b->ref_sel ||
--	    a->filter_mode != b->filter_mode ||
-+	    a->filter_type != b->filter_type ||
- 	    a->ref_bufp != b->ref_bufp ||
- 	    a->ref_bufm != b->ref_bufm)
- 		return false;
-@@ -728,7 +728,7 @@ static int ad4130_write_slot_setup(struct ad4130_state *st,
  	if (ret)
- 		return ret;
- 
--	val = FIELD_PREP(AD4130_FILTER_MODE_MASK, setup_info->filter_mode) |
-+	val = FIELD_PREP(AD4130_FILTER_MODE_MASK, setup_info->filter_type) |
- 	      FIELD_PREP(AD4130_FILTER_SELECT_MASK, setup_info->fs);
- 
- 	ret = regmap_write(st->regmap, AD4130_FILTER_X_REG(slot), val);
-@@ -872,11 +872,11 @@ static int ad4130_set_channel_enable(struct ad4130_state *st,
-  * (used in ad4130_fs_to_freq)
-  */
- 
--static void ad4130_freq_to_fs(enum ad4130_filter_mode filter_mode,
-+static void ad4130_freq_to_fs(enum ad4130_filter_type filter_type,
- 			      int val, int val2, unsigned int *fs)
- {
- 	const struct ad4130_filter_config *filter_config =
--		&ad4130_filter_configs[filter_mode];
-+		&ad4130_filter_configs[filter_type];
- 	u64 dividend, divisor;
- 	int temp;
- 
-@@ -895,11 +895,11 @@ static void ad4130_freq_to_fs(enum ad4130_filter_mode filter_mode,
- 	*fs = temp;
- }
- 
--static void ad4130_fs_to_freq(enum ad4130_filter_mode filter_mode,
-+static void ad4130_fs_to_freq(enum ad4130_filter_type filter_type,
- 			      unsigned int fs, int *val, int *val2)
- {
- 	const struct ad4130_filter_config *filter_config =
--		&ad4130_filter_configs[filter_mode];
-+		&ad4130_filter_configs[filter_type];
- 	unsigned int dividend, divisor;
- 	u64 temp;
- 
-@@ -911,7 +911,7 @@ static void ad4130_fs_to_freq(enum ad4130_filter_mode filter_mode,
- 	*val = div_u64_rem(temp, NANO, val2);
- }
- 
--static int ad4130_set_filter_mode(struct iio_dev *indio_dev,
-+static int ad4130_set_filter_type(struct iio_dev *indio_dev,
- 				  const struct iio_chan_spec *chan,
- 				  unsigned int val)
- {
-@@ -919,17 +919,17 @@ static int ad4130_set_filter_mode(struct iio_dev *indio_dev,
- 	unsigned int channel = chan->scan_index;
- 	struct ad4130_chan_info *chan_info = &st->chans_info[channel];
- 	struct ad4130_setup_info *setup_info = &chan_info->setup;
--	enum ad4130_filter_mode old_filter_mode;
-+	enum ad4130_filter_type old_filter_type;
- 	int freq_val, freq_val2;
- 	unsigned int old_fs;
- 	int ret = 0;
- 
- 	guard(mutex)(&st->lock);
--	if (setup_info->filter_mode == val)
-+	if (setup_info->filter_type == val)
- 		return 0;
- 
- 	old_fs = setup_info->fs;
--	old_filter_mode = setup_info->filter_mode;
-+	old_filter_type = setup_info->filter_type;
- 
- 	/*
- 	 * When switching between filter modes, try to match the ODR as
-@@ -937,55 +937,55 @@ static int ad4130_set_filter_mode(struct iio_dev *indio_dev,
- 	 * using the old filter mode, then convert it back into FS using
- 	 * the new filter mode.
- 	 */
--	ad4130_fs_to_freq(setup_info->filter_mode, setup_info->fs,
-+	ad4130_fs_to_freq(setup_info->filter_type, setup_info->fs,
- 			  &freq_val, &freq_val2);
- 
- 	ad4130_freq_to_fs(val, freq_val, freq_val2, &setup_info->fs);
- 
--	setup_info->filter_mode = val;
-+	setup_info->filter_type = val;
- 
- 	ret = ad4130_write_channel_setup(st, channel, false);
- 	if (ret) {
- 		setup_info->fs = old_fs;
--		setup_info->filter_mode = old_filter_mode;
-+		setup_info->filter_type = old_filter_type;
- 		return ret;
- 	}
- 
- 	return 0;
- }
- 
--static int ad4130_get_filter_mode(struct iio_dev *indio_dev,
-+static int ad4130_get_filter_type(struct iio_dev *indio_dev,
- 				  const struct iio_chan_spec *chan)
- {
- 	struct ad4130_state *st = iio_priv(indio_dev);
- 	unsigned int channel = chan->scan_index;
- 	struct ad4130_setup_info *setup_info = &st->chans_info[channel].setup;
--	enum ad4130_filter_mode filter_mode;
-+	enum ad4130_filter_type filter_type;
- 
- 	guard(mutex)(&st->lock);
--	filter_mode = setup_info->filter_mode;
-+	filter_type = setup_info->filter_type;
- 
--	return filter_mode;
-+	return filter_type;
- }
- 
--static const struct iio_enum ad4130_filter_mode_enum = {
--	.items = ad4130_filter_modes_str,
--	.num_items = ARRAY_SIZE(ad4130_filter_modes_str),
--	.set = ad4130_set_filter_mode,
--	.get = ad4130_get_filter_mode,
-+static const struct iio_enum ad4130_filter_type_enum = {
-+	.items = ad4130_filter_types_str,
-+	.num_items = ARRAY_SIZE(ad4130_filter_types_str),
-+	.set = ad4130_set_filter_type,
-+	.get = ad4130_get_filter_type,
- };
- 
--static const struct iio_chan_spec_ext_info ad4130_filter_mode_ext_info[] = {
-+static const struct iio_chan_spec_ext_info ad4130_ext_info[] = {
- 	/*
--	 * Intentional duplication of attributes to keep backwards compatibility
--	 * while standardizing over the main IIO ABI for digital filtering.
-+	 * `filter_type` is the standardized IIO ABI for digital filtering.
-+	 * `filter_mode` is just kept for backwards compatibility.
- 	 */
--	IIO_ENUM("filter_mode", IIO_SEPARATE, &ad4130_filter_mode_enum),
-+	IIO_ENUM("filter_mode", IIO_SEPARATE, &ad4130_filter_type_enum),
- 	IIO_ENUM_AVAILABLE("filter_mode", IIO_SHARED_BY_TYPE,
--			   &ad4130_filter_mode_enum),
--	IIO_ENUM("filter_type", IIO_SEPARATE, &ad4130_filter_mode_enum),
-+			   &ad4130_filter_type_enum),
-+	IIO_ENUM("filter_type", IIO_SEPARATE, &ad4130_filter_type_enum),
- 	IIO_ENUM_AVAILABLE("filter_type", IIO_SHARED_BY_TYPE,
--			   &ad4130_filter_mode_enum),
-+			   &ad4130_filter_type_enum),
- 	{ }
- };
- 
-@@ -999,7 +999,7 @@ static const struct iio_chan_spec ad4130_channel_template = {
- 			      BIT(IIO_CHAN_INFO_SAMP_FREQ),
- 	.info_mask_separate_available = BIT(IIO_CHAN_INFO_SCALE) |
- 					BIT(IIO_CHAN_INFO_SAMP_FREQ),
--	.ext_info = ad4130_filter_mode_ext_info,
-+	.ext_info = ad4130_ext_info,
- 	.scan_type = {
- 		.sign = 'u',
- 		.endianness = IIO_BE,
-@@ -1049,7 +1049,7 @@ static int ad4130_set_channel_freq(struct ad4130_state *st,
- 	guard(mutex)(&st->lock);
- 	old_fs = setup_info->fs;
- 
--	ad4130_freq_to_fs(setup_info->filter_mode, val, val2, &fs);
-+	ad4130_freq_to_fs(setup_info->filter_type, val, val2, &fs);
- 
- 	if (fs == setup_info->fs)
- 		return 0;
-@@ -1141,7 +1141,7 @@ static int ad4130_read_raw(struct iio_dev *indio_dev,
- 		return IIO_VAL_INT;
- 	case IIO_CHAN_INFO_SAMP_FREQ: {
- 		guard(mutex)(&st->lock);
--		ad4130_fs_to_freq(setup_info->filter_mode, setup_info->fs,
-+		ad4130_fs_to_freq(setup_info->filter_type, setup_info->fs,
- 				  val, val2);
- 
- 		return IIO_VAL_INT_PLUS_NANO;
-@@ -1171,7 +1171,7 @@ static int ad4130_read_avail(struct iio_dev *indio_dev,
- 		return IIO_AVAIL_LIST;
- 	case IIO_CHAN_INFO_SAMP_FREQ:
- 		scoped_guard(mutex, &st->lock) {
--			filter_config = &ad4130_filter_configs[setup_info->filter_mode];
-+			filter_config = &ad4130_filter_configs[setup_info->filter_type];
- 		}
- 
- 		*vals = (int *)filter_config->samp_freq_avail;
 -- 
 2.47.1
 
