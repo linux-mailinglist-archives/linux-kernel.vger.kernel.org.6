@@ -1,82 +1,122 @@
-Return-Path: <linux-kernel+bounces-541768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B618DA4C159
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:10:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13CB4A4C15B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:11:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEA2C188FFF6
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:10:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38BAF7A4304
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:10:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13E452116ED;
-	Mon,  3 Mar 2025 13:09:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0758C21147A;
+	Mon,  3 Mar 2025 13:11:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="swyEXDmw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fiO7yk6W"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699F121128D;
-	Mon,  3 Mar 2025 13:09:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9C51CAA71
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 13:11:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741007390; cv=none; b=FdJQf3C0V6z+/iJwkmai9q0EUpkpGnF1m2ZxTM1etBOl94WxqZl777yR/R9sL5atzBdVh3RVqXu90sVcdjcxdVN6ecQDpRS16lrD0gfWxfhs9yViKbruy4/qD7xjW0m7VSrvugKXVdP0+lWjyzXALv0FFGqta0ijY3O0j3N1Kvc=
+	t=1741007468; cv=none; b=SH95EBm8I0FjSOyobgqf1NhfriU9C5+5tQS4mRzPX/O9OQzLxWCM5EAOEdmO0DToNqta5oQvG+VcLmvUhXU3Y7CNsSe5mipcOYXU/RcUGleeG8cm/Xfo3DrgRXCIH0/1vo1k+tgWLzSSUKKixJyVbdfLkJdc87k7RLbDFBw2/5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741007390; c=relaxed/simple;
-	bh=o/Y21k3K8BAtGuRlqRGQ5WfAu2QMrDK4uLxkfdiPHqw=;
+	s=arc-20240116; t=1741007468; c=relaxed/simple;
+	bh=u+X9SKWkfe/2MAlFWd/PUqWxSiWY2RlGsvB38Uys+ws=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mz7JZMWxnvOViyg8wVY04DyIRkeqKZ+oEu4ZRiyHuhsz5XHQAl4r+EPFNofGblR1kzaeuO1bDyHQYI3x3/kvs/Us9qzqx9ZKaSwV8FxRKnWiUukBuq2XVG0R+M+BLWgV2o04O848YMZn6SrWCeruRRF5vxKBVjOHVAwVhkNbQDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=swyEXDmw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4727C4CED6;
-	Mon,  3 Mar 2025 13:09:47 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=JmB9q05Rbw6yYbZS41aKtGudu2Fkn2UmthNkksj88fjs5ZCQ5pfwP4BwYLSb1O8/okTlUNiqADjojABsgp7/ZeiQZf396EZCDoJoAMXu8ympi+qw5gKLE/r0zoOHuzLRcPKVH1DWgXDBtPuHtyarCyZprryNzkhAZTRDf50ZlA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fiO7yk6W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99D86C4CED6;
+	Mon,  3 Mar 2025 13:11:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741007389;
-	bh=o/Y21k3K8BAtGuRlqRGQ5WfAu2QMrDK4uLxkfdiPHqw=;
+	s=k20201202; t=1741007468;
+	bh=u+X9SKWkfe/2MAlFWd/PUqWxSiWY2RlGsvB38Uys+ws=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=swyEXDmw0R0g7ZRw44ogOiq1HHP3y2FeZWG29C850ReRwgC8lzNdttVBTaHFVe65o
-	 zVYLN/A4vGP8u73Ji/YrtcfHWGBO9pVsAXxaZDTIvI6w4WA5owD39ZYG+WPsqvtxtt
-	 6rfvzRPiOvRX9p4m3FK9k0hAmJI4VifjelwS3VIi+Qqzx89O2pq8cSMhGEWt4zeX5g
-	 /J7PQGlObpo+3VnrZr33tGBzuiHEkzryDdXAGsvjicCP+5GLyi2yw93+6o12fFMSVU
-	 ytDYWysry3KgQaYBbbyO5mF0BnaqsPZnYFKudU33iNwWvClH0C+6o57GuX/9dcgFSt
-	 U2WifXCRtyomg==
-Date: Mon, 3 Mar 2025 13:09:45 +0000
-From: Simon Horman <horms@kernel.org>
-To: Jaakko Karrenpalo <jkarrenpalo@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Lukasz Majewski <lukma@denx.de>,
-	MD Danish Anwar <danishanwar@ti.com>, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Jaakko Karrenpalo <jaakko.karrenpalo@fi.abb.com>
-Subject: Re: [PATCH net-next v3 2/2] net: hsr: Add KUnit test for PRP
-Message-ID: <20250303130945.GS1615191@kernel.org>
-References: <20250227050923.10241-1-jkarrenpalo@gmail.com>
- <20250227050923.10241-2-jkarrenpalo@gmail.com>
+	b=fiO7yk6WFCkp5XAHvs0ZEydMfZKskSOX1c+hcaCRvOkuTzjGhzB7/hSzHayzjUWbd
+	 LCv8lHnpL0TzcUaUgaEeHKy16fQSbNG9YQwtggaFE6+IwItajHskOZqHBtPgIMmMuT
+	 noP4wEmwwDjaPAAbA1ESrQBRnGXRvpmAyngUI1AGG/JJPVguBwEg8I6+RdMQXtNVJ9
+	 oZOn1y2MuEEdQC6rvtj3y1L9Un28uM1Bne8S599BESVt9tgcREU+l/nI26npcuKb65
+	 Dc4e6M2LQwBlWvgQa/OEExJi+FVm2Yu9UwF+CHuGDkAa5TyrjOmUqOocDAQ0WkwD7Z
+	 +G1u2tipjQ/cg==
+Date: Mon, 3 Mar 2025 14:11:05 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Douglas Anderson <dianders@chromium.org>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Simona Vetter <simona.vetter@ffwll.ch>
+Subject: Re: [PATCH v4 00/15] drm/bridge: Various quality of life improvements
+Message-ID: <20250303-urban-trout-of-vastness-f8d0e7@houat>
+References: <20250225-bridge-connector-v4-0-7ecb07b09cad@kernel.org>
+ <20250227120004.77814e09@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="6ogcuu3aoimpjkf7"
 Content-Disposition: inline
-In-Reply-To: <20250227050923.10241-2-jkarrenpalo@gmail.com>
+In-Reply-To: <20250227120004.77814e09@bootlin.com>
 
-On Thu, Feb 27, 2025 at 07:09:23AM +0200, Jaakko Karrenpalo wrote:
-> Add unit tests for the PRP duplicate detection
-> 
-> Signed-off-by: Jaakko Karrenpalo <jkarrenpalo@gmail.com>
-> ---
-> Changes in v2:
-> - Changed KUnit tests to compile as built-in only
-> Changes in v3:
-> - Changed the KUnit tests to compile as a module
 
-Thanks, I see that this addresses Paolo's review of v2
-and overall looks good to me.
+--6ogcuu3aoimpjkf7
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 00/15] drm/bridge: Various quality of life improvements
+MIME-Version: 1.0
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+On Thu, Feb 27, 2025 at 12:00:04PM +0100, Herve Codina wrote:
+> Hi Maxime,
+>=20
+> On Tue, 25 Feb 2025 17:43:48 +0100
+> Maxime Ripard <mripard@kernel.org> wrote:
+>=20
+> > Hi,
+> >=20
+> > Here's a series of changes after to the KMS helpers and bridge API
+> > following a bunch of reviews I did.
+> >=20
+> > It's mostly centered across providing an easier time to deal with bridge
+> > states, and a somewhat consistent with the other entities API.
+> >=20
+> > It's build tested only, with arm64 allmodconfig.
+> >=20
+> > Maxime
+> >=20
+> > Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> > ---
+>=20
+> I Tried to test this series on my system but I've got a compilation issue.
+>      depmod: ERROR: Cycle detected: drm -> drm_kms_helper -> drm
+>      depmod: ERROR: Found 2 modules in dependency cycles!
+>=20
+> CONFIG_DRM=3Dm in my configuration.
 
+Could you share your configuration? it doesn't happen with allmodconfig.
+
+Thanks!
+Maxime
+
+--6ogcuu3aoimpjkf7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ8WqaAAKCRAnX84Zoj2+
+dl44AX48FfLtjeWPDYOrJjaK7AmFHqbLJVJ/+oSpco54gcXJ9+H7Qr8QWPAgLL00
+tV3msvABf2WYTbjD4nVOHP0Mn828ZtNNPjod/zsu6d3Q/Rw5xaDFjUenEIHvQi5E
+W2A0IVrirQ==
+=V5Ne
+-----END PGP SIGNATURE-----
+
+--6ogcuu3aoimpjkf7--
 
