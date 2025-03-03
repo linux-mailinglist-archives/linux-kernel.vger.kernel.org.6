@@ -1,125 +1,94 @@
-Return-Path: <linux-kernel+bounces-544921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07A78A4E6E4
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:53:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8357FA4E2C6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:18:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C543423504
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:40:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5B1B7A79CF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:15:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64A9728D0AE;
-	Tue,  4 Mar 2025 16:18:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E85262D1F;
+	Tue,  4 Mar 2025 15:09:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="VDXy9l2Z"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TGmDv4Qy"
 Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A0CC28D08E
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:18:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 847FB25FA30
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:09:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.117
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741105123; cv=pass; b=RVKNA23NNyy1PmEuBsk01kHIoE//JC3oOxWt1INJuoH4eYsMUcOpS8t2svDC3DBhu8QYUm3USm7+pfGb4vY6x8qcLQweT835FcB3igr7mB2Q533YDq5i69OhpJB7FmkQbGLRdu9TEM5JEmfYLV4Hsds/6YWvvH0pT578cRPl/6I=
+	t=1741100957; cv=fail; b=nQOXYyE6YcSroMOFQI6qlisWOY4CmD0C1w/5eKEuikeV1V+E7JaH/ptkjQsdRIQ7mv4tvX8PPe/QNF15s57HMtxPtXJ0QRwxT860ioB/9YscwFBrPDQqilY+sLaTXwoOAGR6a5Q3pGQIYPORPSuRRsV3v1l/tKvL8VUNi/sA+eg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741105123; c=relaxed/simple;
-	bh=uylAwl9z4lLSLbtftXMVsVSfo+l6pIl66/zaUNQcLB0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UBugQ0jCz3uonxkSWnsbgGmfX5EzEaMj5fsYvxRzF4SFnTENDZ/YXtXwV5D4LWLzrUHApDHuUzPX6OSijbXHuQrR8U5Jzud1XfyQT+r0NwzoBA+BYWpOVKnv5uRKCVcpwppqC5tVMq4/qzrgB+2V8yQOik3437lmtu7dG7RDcZs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=VDXy9l2Z; arc=none smtp.client-ip=99.78.197.218; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; arc=pass smtp.client-ip=160.75.25.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+	s=arc-20240116; t=1741100957; c=relaxed/simple;
+	bh=4Rr8+O3wDPGZk2pARDgzHZT5OsxtADYeUZjSZlkVi/4=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=r+kTSYWZDQrnuAzfATdTPZqqLcnfqPCR+BYMFX/K2wBWF9oaI4nuLj19QXWFeqZzigsCxNkwTutSMahi5IrZm3IiwLXTnoL9wr3udH5xtc58FVih9mV6PCqvJyoTIOF/Xoiqe8HGXZZYWo4ztyau0S+YlHELO3fVzcjZOStDN+I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TGmDv4Qy reason="signature verification failed"; arc=none smtp.client-ip=10.30.226.201; arc=fail smtp.client-ip=160.75.25.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
-Received: from lesvatest1.cc.itu.edu.tr (unknown [10.146.128.1])
+Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id CD7C640CF4C2
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:18:29 +0300 (+03)
+	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id D192E40CEC89
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:09:13 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6gNZ2P5QzG1pX
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:59:26 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6fDc0MndzFyYV
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:07:28 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 2F7EB42732; Tue,  4 Mar 2025 18:59:25 +0300 (+03)
+	id 84CDC42720; Tue,  4 Mar 2025 18:07:21 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=VDXy9l2Z
-X-Envelope-From: <linux-kernel+bounces-541763-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TGmDv4Qy
+X-Envelope-From: <linux-kernel+bounces-541779-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=VDXy9l2Z
-Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id A6C2541C9B
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 16:09:09 +0300 (+03)
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id E45CA305F789
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 16:09:08 +0300 (+03)
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TGmDv4Qy
+Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
+	by le2 (Postfix) with ESMTP id 5332A41B74
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 16:15:12 +0300 (+03)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by fgw2.itu.edu.tr (Postfix) with SMTP id 2C5F92DCDE
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 16:15:12 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9883A7A3DA6
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:08:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED0FB188E279
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F14D621128D;
-	Mon,  3 Mar 2025 13:08:51 +0000 (UTC)
-Received: from smtp-fw-80007.amazon.com (smtp-fw-80007.amazon.com [99.78.197.218])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA8FF212FBE;
+	Mon,  3 Mar 2025 13:14:28 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D41210F59;
-	Mon,  3 Mar 2025 13:08:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 395BB212B0A;
+	Mon,  3 Mar 2025 13:14:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741007329; cv=none; b=tcCFC1K7KPOPGFLXDwrsxjSxn2PyO+l/floC12kmwGjn4ncLmDuBY+O7K/3KfbmAxEyYPfQHghc1+3S0/kmxAJKCyVitp+6zi5lnPgwR3dsyOdw+5X1jqrApiJgSRUEcVxU6+eiS8TH8bxg4CZ2L45XNXnENPgd5hZdgRoAN7PI=
+	t=1741007666; cv=none; b=UwHZNnuuZe6vt7V45C8137vf4uxCWM/Tcu4n3W5Vu8C3aKZ2yfjsUbGVFccoCWJYIf2HzNlkgNCrFMV6iMM6qsjA8XfvTBjPivr3IhWTgPzkSBnXkoNMLaklXYpKul13ro9xFEnLV60sUJL7u94fA7yHr7xIVNh268uMT909ku4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741007329; c=relaxed/simple;
-	bh=uylAwl9z4lLSLbtftXMVsVSfo+l6pIl66/zaUNQcLB0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=skrXokXU853by9KIxiQ1XE+7kJzWJPULPDhjtrS85esV5tjD07Ns4Vl6P8WVskMsDN5l4gTm2nFidAPHqdBPkXN6kNIRmQfBED6v+W0roNcO+q6GsjzNHCrfix0GAPBawgdZvEgLENdmcWJoF4W7F5qPp9I1aQ98xd1gGxzVHJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=VDXy9l2Z; arc=none smtp.client-ip=99.78.197.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1741007328; x=1772543328;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=ijLS6/7VoNS5QgB9vq9v8BcogTKboYMwaB+vjiqquWQ=;
-  b=VDXy9l2Zu9p7ohCfcZOJ9vRCae8CYq5vvLUv2tRSBLYo/HiW4psz9Qkt
-   Mj4PXQyj+5BMd4fycVb6Sh9agQrNpbk+ny4LNPm3Jppv5/7jNmT0X9ij9
-   weYDqRtNq3BFdhg+qqx02E5nEY2tKj1uBRet1M/l5/HYx06yPQXyUyluO
-   g=;
-X-IronPort-AV: E=Sophos;i="6.13,329,1732579200"; 
-   d="scan'208";a="382575094"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80007.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 13:08:46 +0000
-Received: from EX19MTAEUB002.ant.amazon.com [10.0.43.254:35314]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.24.106:2525] with esmtp (Farcaster)
- id c10353bf-5d23-44b0-9a7e-a591baedecbb; Mon, 3 Mar 2025 13:08:44 +0000 (UTC)
-X-Farcaster-Flow-ID: c10353bf-5d23-44b0-9a7e-a591baedecbb
-Received: from EX19D015EUB003.ant.amazon.com (10.252.51.113) by
- EX19MTAEUB002.ant.amazon.com (10.252.51.59) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Mon, 3 Mar 2025 13:08:40 +0000
-Received: from EX19MTAUEA002.ant.amazon.com (10.252.134.9) by
- EX19D015EUB003.ant.amazon.com (10.252.51.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Mon, 3 Mar 2025 13:08:40 +0000
-Received: from email-imr-corp-prod-iad-all-1b-3ae3de11.us-east-1.amazon.com
- (10.43.8.2) by mail-relay.amazon.com (10.252.134.34) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.1544.14 via Frontend Transport; Mon, 3 Mar 2025 13:08:40 +0000
-Received: from dev-dsk-kalyazin-1a-a12e27e2.eu-west-1.amazon.com (dev-dsk-kalyazin-1a-a12e27e2.eu-west-1.amazon.com [172.19.103.116])
-	by email-imr-corp-prod-iad-all-1b-3ae3de11.us-east-1.amazon.com (Postfix) with ESMTPS id E2BB7A065C;
-	Mon,  3 Mar 2025 13:08:38 +0000 (UTC)
-From: Nikita Kalyazin <kalyazin@amazon.com>
-To: <pbonzini@redhat.com>, <shuah@kernel.org>
-CC: <kvm@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <michael.day@amd.com>, <david@redhat.com>,
-	<quic_eberman@quicinc.com>, <jthoughton@google.com>, <brijesh.singh@amd.com>,
-	<michael.roth@amd.com>, <graf@amazon.de>, <jgowans@amazon.com>,
-	<roypat@amazon.co.uk>, <derekmn@amazon.com>, <nsaenz@amazon.es>,
-	<xmarcalx@amazon.com>, <kalyazin@amazon.com>
-Subject: [v3 PATCH 0/2] KVM: guest_memfd: use write for population
-Date: Mon, 3 Mar 2025 13:08:36 +0000
-Message-ID: <20250303130838.28812-1-kalyazin@amazon.com>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1741007666; c=relaxed/simple;
+	bh=FiWSvzkRIMYnufn/6j3BHnlJOVYfPeryI4S3GXt0vAc=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=KgK2w1FEydzIwL04wsvM0N4lmt2qa0Zua2a/wUiRTgcWWoRXFLwOv//BRE3GNLa/wBc54ooG+FDVT7rm0sDoExzJb6Ss7EMhZDQal4eV4Y/NYfvW7E+4H6FHcvjb6KUHWsOccbyk4CvNHudC7dBMDH7pGGscEOGRZbvpDJNSS48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TGmDv4Qy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D98BBC4CEE9;
+	Mon,  3 Mar 2025 13:14:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741007666;
+	bh=FiWSvzkRIMYnufn/6j3BHnlJOVYfPeryI4S3GXt0vAc=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=TGmDv4Qy0cdXTql42zoM9MZxyD+mzsNU84Gh2a9Bf7K6p/0qDRxKws68ZDFYHyWON
+	 334fbrKihCSvqDRJGspPw/djb7ne82q3xjesrA1HfHtPYKLh+uHq4AUBa+U1W21glj
+	 e5TM4yUFaV3LSXJYgJLVnlCHzktDkF5R2x2eLbVIgBHr6vJ8UMs4V2N3i/ZxSByZCr
+	 +LHt2BQ6LdRwXX+N7gEsTHfI4yVgFToA8SUQwczwR7qXqArTYC98YLw1nU+ks3qvP/
+	 KzNygSvESuVw7PKUv07+kfDwmhA+N5UwLVHM3xplqdt0imjVpHsVd3t2xOkMMa5xna
+	 hBrhbq/qTUfLA==
+Date: Mon, 03 Mar 2025 07:14:24 -0600
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -127,46 +96,90 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: wim@linux-watchdog.org, krzk+dt@kernel.org, linux@roeck-us.net, 
+ nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, 
+ dmaengine@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, claudiu.beznea@tuxon.dev, vkoul@kernel.org, 
+ linux-watchdog@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ conor+dt@kernel.org
+To: Ryan.Wanner@microchip.com
+In-Reply-To: <cover.1740675317.git.Ryan.Wanner@microchip.com>
+References: <cover.1740675317.git.Ryan.Wanner@microchip.com>
+Message-Id: <174100756391.1496568.10334189756404294750.robh@kernel.org>
+Subject: Re: [PATCH v2 0/2] Add System Components for Microchip SAMA7D65
+ SoC
+Content-Transfer-Encoding: quoted-printable
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6gNZ2P5QzG1pX
+X-ITU-Libra-ESVA-ID: 4Z6fDc0MndzFyYV
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741708785.74523@zfVVzz5dbuai0zj+goqEgg
+X-ITU-Libra-ESVA-Watermark: 1741705666.3659@KIqL6ar3E+gD7Pm2uooP7A
 X-ITU-MailScanner-SpamCheck: not spam
 
-This series is rebased on top of Fuad's v4 for shared mapping of
-guest_memfd [1].
 
-Change since v2 [2]:
- - David/Mike D: Only compile support for the write syscall if
-   CONFIG_KVM_GMEM_SHARED_MEM introduced in [1] is enabled.
+On Fri, 28 Feb 2025 08:24:09 -0700, Ryan.Wanner@microchip.com wrote:
+> From: Ryan Wanner <Ryan.Wanner@microchip.com>
+>=20
+> This patch set adds support for the following systems in the SAMA7D65
+> SoC:
+> - DMAs
+> - Chip ID
+> - Dual watchdog timer.
+>=20
+> Changes v1 -> v2:
+> - Removed pathes that have been accepted and applied from v1 [1].
+> - Corrected missing newline in dt-binding.
+> - Corrected mismatch in watchdog dt node.
+>=20
+> 1) https://lore.kernel.org/linux-arm-kernel/09eafe54-c262-4db4-b11d-064=
+4a1f90a14@tuxon.dev/
+>=20
+> Ryan Wanner (2):
+>   dt-bindings: watchdog: sama5d4-wdt: Add sama7d65-wdt
+>   ARM: dts: microchip: sama7d65: Add watchdog for sama7d65
+>=20
+>  .../devicetree/bindings/watchdog/atmel,sama5d4-wdt.yaml    | 4 ++++
+>  arch/arm/boot/dts/microchip/sama7d65.dtsi                  | 7 +++++++
+>  2 files changed, 11 insertions(+)
+>=20
+> --
+> 2.43.0
+>=20
+>=20
+>=20
 
-In non-CoCo use cases where the host can access guest memory,
-guest_memfd can be allocated and populated via the write syscall.  Even
-though the same can also be achieved via userspace mapping and memcpy
-from userspace, write provides a more performant option because it 1)
-avoids double initialisation as the kernel does not need to zero pages
-and 2) does not require setting up page tables.
 
-Nikita
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-[1] https://lore.kernel.org/kvm/20250218172500.807733-4-tabba@google.com/T/
-[2] https://lore.kernel.org/kvm/20241129123929.64790-1-kalyazin@amazon.com/T/
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
 
-Nikita Kalyazin (2):
-  KVM: guest_memfd: add generic population via write
-  KVM: selftests: update guest_memfd write tests
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
 
- .../testing/selftests/kvm/guest_memfd_test.c  | 85 +++++++++++++++--
- virt/kvm/guest_memfd.c                        | 94 ++++++++++++++++++-
- 2 files changed, 170 insertions(+), 9 deletions(-)
+  pip3 install dtschema --upgrade
 
 
-base-commit: 005f6404708d430abab7fab9b422d0daf6e0c2fe
--- 
-2.47.1
+New warnings running 'make CHECK_DTBS=3Dy for arch/arm/boot/dts/microchip=
+/' for cover.1740675317.git.Ryan.Wanner@microchip.com:
+
+arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dtb: watchdog@e001d00=
+0: Unevaluated properties are not allowed ('clocks' was unexpected)
+	from schema $id: http://devicetree.org/schemas/watchdog/atmel,sama5d4-wd=
+t.yaml#
+arch/arm/boot/dts/microchip/at91-dvk_som60.dtb: /ahb/apb/adc@f8018000: fa=
+iled to match any schema with compatible: ['atmel,sama5d3-adc']
+arch/arm/boot/dts/microchip/at91sam9g25-gardena-smart-gateway.dtb: nand-c=
+ontroller: #address-cells: 1 was expected
+	from schema $id: http://devicetree.org/schemas/mtd/nand-controller.yaml#
+
+
+
+
 
 
 
