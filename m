@@ -1,213 +1,181 @@
-Return-Path: <linux-kernel+bounces-542687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7523DA4CC71
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 21:04:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F6A6A4CC76
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 21:05:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EF6317498E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:03:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D63051898182
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:04:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDB842356BD;
-	Mon,  3 Mar 2025 20:02:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C72A12356AB;
+	Mon,  3 Mar 2025 20:03:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="AdJ4rX/W"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2072.outbound.protection.outlook.com [40.107.237.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JHYMXSg+"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 669702356B1;
-	Mon,  3 Mar 2025 20:02:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.72
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741032165; cv=fail; b=YiKGaDUzBRYaBnLOFvxadIB30N7GoPpAkMVAq9ztp6G9tHDeuRgHyYDx4jXs87r1noh3jRd2Z6KvAYTXgEFGWcIHzLIRb8z84ACtPWNXUs6hyrIFJGn5UeGQMjT0BNoSH827g1xxjUK7sUNMI/CRW+/cLOJ4jMuNhj9pHSgVwIk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741032165; c=relaxed/simple;
-	bh=Q4ykBsHegep1zmbbzC+5SOMXnKWQLpA265LDy0gnIEM=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=aSI7wv/5QwvJ/C/PN/0afxA5DO03K63jM+BYte/tEpXh74+TeKfLByTFjH/Pwib7KoHWuaj/tSEAVpVfOUy6/L92ovjEsQt4rkv2ELxsRYftsbs9a8EaOcocKMrm1sxgZ4veHE3jih3cVByDDj6KclibgDdCLIyu+/73pPpL/lo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=AdJ4rX/W; arc=fail smtp.client-ip=40.107.237.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=E+N4WnxAeHRgCKAx+vErKLyjLG5Cfm+j0qm7wdVUIdivPbSw6LN4inxjWouaXaPK0TUQ2HZTv8dji70+/XFoZNhhEWkhFdNgy8vk78fogURkjR9+StwtC6i0cKiQ3hf70f3le/Qhvz4s9yfjekE/uuF87+CtAN/+w254AgcM9KUcrSiXD4wJyLlI/z4zg8uTGoEi+ptgUX9hAHLWa9O5wN3sp9a5K/BdiHkUlxRVgQGu7f7Ovfd8Fi2pFbWdsL+h9OTJh6WLCRUMuF+Qp9NnUctO2gvY7ny5fdPOw9UYys4nYFZEI5j3nptNdhj5XFqe2b2hRZ/En5S6WkrTnzD3vw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=W2c3MdAIfUNe20PgqLL3BQej2gflSjiyiRNLXu44gfA=;
- b=YiWQ3lbM5y0jz8NFnEllRwupHmcTX85KfCSeZ8KhC2PiHcKpcnvZk2JBfYn17fZL+vPnCfY2LGIQFJq61UGNaDYa+UIaAsVaLBf9+xtagKEDpSm0GYTdQFwc9LDgRqR9Ff6/dPJiyPUYnQSC3IuNxt08ICvu4SH73Y/8bduPx1Gd1HcUjON+MX9CagMMAOVciN/nfauCZWLm40lZDSmTa42OkwGM1MTxetrnRaXf0gW8qcz7pnpLx4r8BjNldGVLnzDB97ymvyFjuYQl5YywPtDusD4f7+4U1AAkxvGeujoAae9GP/2Jo1NnoHfQzn7n8ga5QS4w+K03RQFFvMYLpA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=W2c3MdAIfUNe20PgqLL3BQej2gflSjiyiRNLXu44gfA=;
- b=AdJ4rX/WQUiC8VwHqVO6+dGKY0mB7r9UESBwvQPOK+xPjVO1Bb/eNSMtIkYJgV6XB9rBs9fMXl9Qq9VaJNECG4XtR6U7UImt3UuiDFxa7RW4CQTw6HxFEH0OeEi2YEXMSrz9FTPsgLEyaO7xZDqBFOZYBORBxeZfwsGyHEkcnBvRREjf/vu6eTsqABYwCndYtJvaOjKVH2mNUcTxKavJSpB5olk0CbCRjq/d40g7zjxlHGkaRtkaAuG3lRxadCc6WYYcJBEB9MQ1mQlyiMDk59NDT8icFjCjgwqlhHvUPnWM5pd5gwuaDXtU0ckQA0JANhNzjB1mCnA8fYHyEBtR3A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by SN7PR12MB6912.namprd12.prod.outlook.com (2603:10b6:806:26d::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.25; Mon, 3 Mar
- 2025 20:02:40 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%5]) with mapi id 15.20.8466.016; Mon, 3 Mar 2025
- 20:02:40 +0000
-Message-ID: <aff3f6ba-9ee3-49fb-82e7-b22ae6e12ca7@nvidia.com>
-Date: Mon, 3 Mar 2025 15:02:37 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/3] rcu: Use _full() API to debug synchronize_rcu()
-To: paulmck@kernel.org
-Cc: Boqun Feng <boqun.feng@gmail.com>, Uladzislau Rezki <urezki@gmail.com>,
- RCU <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- Frederic Weisbecker <frederic@kernel.org>,
- Cheung Wall <zzqq0103.hey@gmail.com>,
- Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
- Joel Fernandes <joel@joelfernandes.org>,
- Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-References: <Z8H_aYBUHD2sS2Ir@pc636>
- <73724164-71f4-4671-b612-eb82a784da58@paulmck-laptop>
- <Z8IKs-I-YsOoS4uw@pc636>
- <cdab57a4-8d58-41d9-a9b5-71d425a7375e@paulmck-laptop>
- <f6803081-8243-4723-a3ba-00db351aafff@paulmck-laptop>
- <20250303001507.GA3994772@joelnvbox> <20250303001710.GA3997787@joelnvbox>
- <20250303170040.GA31126@joelnvbox> <Z8Xh0pP4xaFm0nEV@tardis>
- <5f404973-380e-4626-a2ef-8c5c44d56b83@nvidia.com>
- <667b6907-7ac7-4217-a3e4-0ad299267754@paulmck-laptop>
-Content-Language: en-US
-From: Joel Fernandes <joelagnelf@nvidia.com>
-In-Reply-To: <667b6907-7ac7-4217-a3e4-0ad299267754@paulmck-laptop>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BN1PR12CA0003.namprd12.prod.outlook.com
- (2603:10b6:408:e1::8) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B35A9215065;
+	Mon,  3 Mar 2025 20:03:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741032236; cv=none; b=rGx6R4XXo0Pr2HR+rIgpTW0oLeBduC/iIIhAPEEnqkevS5gc/yfJVYrYo+CV2QS/o7ccXgHYFX8opVyUil77XMFH2e6H33vYVzilWYO63EYoaTqBPCUX95hOQK+/t9QeYD7TbEZa5DsyR3lv2uoQwbaPd1e3yB+yQjEDliQ3Cec=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741032236; c=relaxed/simple;
+	bh=UAbB4w7E4m1mLCo3yn77rgKxnrpnomzpIaADSNtpcM0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MjZbVNR8ws/pKi7GA3h5xT8zDR0UYXnt7YobkGlDgejRsE3nrMZPenNSurQiyxcjGWyFOEajDpCtQwQHHEKs536jgTNEpdSeMhA3hb5aqtdN2wc/fEAcRGuHgjMaFNdo+FeVpHN5RP6PVCC+yzFj0gm/EMbtC84KC1Bwavww5/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JHYMXSg+; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-22339936bbfso71433605ad.1;
+        Mon, 03 Mar 2025 12:03:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741032234; x=1741637034; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QrbUEFY/lf1OjHUcnLJiKmmiRtzC2NeD0FfZjZlPltM=;
+        b=JHYMXSg+kZCPXQS+sy3Alaaj3RCipEOvIOD6ptP7YNTnwBZTPGcDyOfXQMsocJUXrA
+         tphGbyGiYKyUOjMWXrYiRQYzQR6Mh+iTdHEUDVWX+RTHrmDHxpUbnvUmlKU6G5eeWoNN
+         yxtPdf+bTXhBc4VYWdhAoLvbPdWoBz1+711u5McGeRsqX85WDeYE3H3UBGE5ll+WvDuQ
+         FnPlw9OnTaNbXCNpPfVO7UZ6EDzjBZlZH5+exYn8u6H0TevAMOFmsWoSYr1u4ccRPZNo
+         QFCRGqFaDxuLyOnnVVrV5c19L36BAFF2UY5JJzqOo0WLJxltC6lkS+AFP7RzrGJ+nz4A
+         /7/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741032234; x=1741637034;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QrbUEFY/lf1OjHUcnLJiKmmiRtzC2NeD0FfZjZlPltM=;
+        b=RFhCiWOS/UAY0gOKU31T3EL1HfUVJXarpyBmw1DVc22in9MfcgTgHmAVt4v6H8BSF8
+         tynaiND4DCLdUnkNX5TP2BMY3DFHcJdFmHcY5vt4QsRuLnQBiuv+wC58F1zAprBRSRby
+         UugDzsu5rJwMz0RWX428NRIRblX2nRCKEqKfqqfO4SHP9Az2ICuZKNnD5CSvzZWcJMbJ
+         3bX5S3gRrRz7D5QI8gUXsOj8/Er6caN+wdTzReVA3HIs1jOB/2VSXdZTrBdXzF/QByVM
+         55vq5pMNVs9Jngzm8GB+sJVamOuTBbxLAl6A6XFCTX+GTmHiKiM9zJTO4Qmh2BM9Hdg1
+         VbAg==
+X-Forwarded-Encrypted: i=1; AJvYcCUbwHhkxw20ai517F4+rFAoL2zz5nPWeAOQY8alKc3yPLmf5YE/sb/mCYQLXegnFhLGob/kbC+KRwufGxJn@vger.kernel.org, AJvYcCWjB9oddvO6ewUhV96pbBgMh3L+X1Ib0qanchiveeYJinXfmhAv3EnAHHcwqeZydKgTiu+EkIvsuzg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCgg8sH6M+uvbSRwf/QFPsjUDAybYjRjljzB8MakZbK94LKqbX
+	DoU2Iosry7LqYEqWtFdVOGco6SRRJqhcxk4Y/2L+l22D0MUWBCYe
+X-Gm-Gg: ASbGncuXBUk0b9np+opgIBjCuXkSRnKRmrxfA4mYoNeec/yAz+XmuSiW6j3+w/N/nNg
+	TZAgFpzFitYM27bty+mAkH4TJR7JMgVZABTYNyymkdvygm+Tnd/Zq3+1bNooK7+kdCXs6oJT4Y+
+	nDiu5O8DyGbYummIv9qoGiLddFbM+bKrFc2QjX7zfNXoVdn70V6NJshB4AjbdhA38xZTkGHTs3N
+	DLnQoSeyMVQsI5+P+CyRlKR5xVoo9lgkjoC0d4Lnp5qyQNzJQ41Kos3R6AmOkyNPa5lxdmlCamn
+	5oq6Op/dN8IVVyZP+mDUaegzI5AEXSJHiWJywj0gyYYsKSmhUyCw5VH7txSV3hTYphNF
+X-Google-Smtp-Source: AGHT+IGBy0TApsj/0F8MuCfPPS47j68Bagj1kWLrrh4wS/ICtMfKU9/DC6Sypb+Zn2+4m3XFwPu+Kg==
+X-Received: by 2002:a05:6a00:b90:b0:736:61c9:f9a6 with SMTP id d2e1a72fcca58-73661ca04c0mr4127339b3a.5.1741032233820;
+        Mon, 03 Mar 2025 12:03:53 -0800 (PST)
+Received: from danascape.tail34aafc.ts.net ([2402:e280:218d:2e5:7b03:1e42:d492:fb71])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-734d444a9fasm7266779b3a.60.2025.03.03.12.03.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 12:03:53 -0800 (PST)
+From: Saalim Quadri <danascape@gmail.com>
+To: jic23@kernel.org
+Cc: lars@metafoo.de,
+	Michael.Hennerich@analog.com,
+	gregkh@linuxfoundation.org,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	Saalim Quadri <danascape@gmail.com>
+Subject: [RFC] staging: iio: ad9832: Use devm_regulator_get_enable_read_voltage()
+Date: Tue,  4 Mar 2025 01:33:47 +0530
+Message-Id: <20250303200347.23354-1-danascape@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|SN7PR12MB6912:EE_
-X-MS-Office365-Filtering-Correlation-Id: 60336afe-fd51-40b0-79ea-08dd5a8e5a38
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MmI0a0wxQWtDNklKU1JqU0o5eVRSc09pYk54K2tIbUg4L1lrY3dIaSthVnhR?=
- =?utf-8?B?aCtWb2JaL1BoeHdkaHliOEdHS05DYmN6cUlldlFEOWY1WVUwaXVhZzdxWk9w?=
- =?utf-8?B?czZiNGZaRERneEVHQkJGYXBtcW9WYURPMTNTRjVRQmQvTVY4elA3VFRVam9J?=
- =?utf-8?B?K1VBWTFBcmtZc1RWWUVXTWIzYTdsL1paY1JkR3o5NHUyM1N3UXNaSjJWd1Jj?=
- =?utf-8?B?N3FFbWlSdWJUMXhFMTVKbG1TMy92L0VZZWpPbExsQXZ1d0RwNDUySjBMaUNM?=
- =?utf-8?B?TEY1a1o3ak04ZmJqWDRZcy9kUERDblZSdG5UWGJNR2lzMVpxa3VXVEQvRmU2?=
- =?utf-8?B?emovQlBYQlpORCt3eVVmVFVqc3M3TE4zY0Z4OHVVTjBxcWNxSlpmeDlZNHAr?=
- =?utf-8?B?ajRqeXZYS0ZVZ0MxOTRXenM2bDRaSW5BaVBvRkNJaHRlU0lJc3hxNVVxb3M1?=
- =?utf-8?B?SE1FUFNiTGlkUzhCTFJRcjUyS04vYXNkUE9qcnp3RktweUtGWUx4MGwyWGg2?=
- =?utf-8?B?QkcxRUxML3BGZEJDek1lWFhDbzIxcm5EcmVIU2x6K0JBaXMwa01yWTdSV1NX?=
- =?utf-8?B?TXpUaklTd1dHOWZtK05yZ3dZTGpSdFZ1UURCU0l4Y1dETStYd3R1eHViRm51?=
- =?utf-8?B?VkVHQ0c0ZGdyVVJ0eVgwcnFESDV4dGY0aWdxZjQwMUxUcG1KSzR6OHd2dWRG?=
- =?utf-8?B?WitDMUxDU0ZSam04RWtrdE5LcW5YLzFSenFzUlZtMVU1aXhrQzk4WWgwR0Zq?=
- =?utf-8?B?SSt6bnJTUEpsYU5QU2pWa0EwNzNUSDFwamFERkVJUGJtVVJ0cWo1d3FrNDhH?=
- =?utf-8?B?V2lYS2dZcGF2UVFHb0VPV3JoRDd4Q3J3UWRGVkJHV1dDK25Zd0p5bE1nZVZT?=
- =?utf-8?B?Tzd2eEtadzd6aXJYWm1XTnhCYW10WUZONTVtcU1HNitNaHZ1a2llOUR6MUJK?=
- =?utf-8?B?WGNGNW9RWmNDbkdmOC9xMlhmQ0hNV1hmdXBSV3g0SEhiSHlBelZNNklpTlda?=
- =?utf-8?B?Y1JkWG9sT3E4b1U4cHNtaFNjNWNrbzhWbWlrNXhwVXpHRnF2WEZ3cGJyaHp6?=
- =?utf-8?B?KzF6eGNMR0RyTXIwa2JIaVhFTG9ZREU0SGdaS1RwMTUxMG92c0FXNWUybFNM?=
- =?utf-8?B?YzVlZjNIZ0tVemNDUEcyVnhZNnZkNHBFcTdkZ3BVS01tbnBKK1pOeGRiN0pT?=
- =?utf-8?B?aGtLZTZTbUJoZFh4cHJYeHM1UVplUmNIR2pmT0lpUEMrRTdvRTAvY2VrZzFk?=
- =?utf-8?B?Ull2eTdVZ05EelVNTGN4RlJNdFRrNkQvNWxjMW0yb0pmRUJZWjNvK1hhOWJF?=
- =?utf-8?B?eDRlVmU3bGo0ajFSa1hzd1JHbER1Sk1HRHdpWFBaT3p2bmdQbElEbFpaY3JX?=
- =?utf-8?B?Z3Bjb1NkSS9jNXFKajhGUE9VT1pnRldZd0tTVWRsVnFCMkhtTjJTbHFYZ3pW?=
- =?utf-8?B?ZTZyM1J1YzI0SU5NSjVQbjJFQ0hiMHNtbzFXWVFTamR0QTZDbXhKRmxRYmtN?=
- =?utf-8?B?bmhHWXBXcE1JNmhCZldVcngwS0F4Tm1SM0NWc0RLcXFhTFc2YkNsLzlMM0Zz?=
- =?utf-8?B?M3ZBK3h4YWc5azZxNzkwVnRFVHFmZHR1QUlUQW9vUHp4RnBwZ3N6MnRub050?=
- =?utf-8?B?VFRRNkpTejhuMXhWaWRZZHI5MlN6NmNlOWNJcmIwbDArR09pc3VabWd0TUg2?=
- =?utf-8?B?b2N3WjBJTzg5Wjc2U28wbGpPNFlwYTJtck9SUkRETmZQaWhyOW1wdEtlQytJ?=
- =?utf-8?B?YjdsVGtZcXFyYjlBZXpVRXFIdzkyNGUyaFZKSENzV2pJMkRCcjNXdUVYZFhl?=
- =?utf-8?B?SkplVVUxa0lzVFQvZlZISEVHZ0VVS0FLNHBzd3BQVzFLQ2Z2YWZvS2ErVWkr?=
- =?utf-8?Q?WZbUCOUvRtBky?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NGlodVlHazFnODdvdTlYRHo0dzF3RGx3UDNaeGNnYXdONWlEOTZRTkJTNExV?=
- =?utf-8?B?S0duSDcxd1FUdFl1WXJlYzh3dm5qRExxOXdITm5PdFIzbkoxR0xiUDR2TFht?=
- =?utf-8?B?WXBIVnVSaVlCdkhkOWU1d2N1Z1hrbnhtQUswM20zMThRMk90SE4rd3BOQXpX?=
- =?utf-8?B?Ykw0blljWHA3Rnc4NEY5QkhIRUNjZGhXVW9oQkM2UmpZUmM5dDJTdHhQVkJs?=
- =?utf-8?B?VGh3OTdyTnpyVW1JZUY1elRYM1RDK3Ywc1lObUZqbDVJZEs5ZVhMcS91Rll3?=
- =?utf-8?B?K2tPbnZUcEl6VEdLZWxKM1EwZzQ4SWxmM2s2czhHYWJCYkhBV2Y4OFZrc3Bn?=
- =?utf-8?B?bkk2Rmtxcys2YWZGZjlVTkpHa0pZREs0OGd0U0wzS1FUcU1JeVc4TEtaT3ZT?=
- =?utf-8?B?YUxVUEMrQzVYWlVyOW0weXRObkdRcjlUazMwUmVpTkE4TUx6eTVDeWorTDZr?=
- =?utf-8?B?SHlvT0wxdUpzYmFVaThwK21kUkp3UXZzN0JiQ1RCVkR6dWZveW9OODFLb0RL?=
- =?utf-8?B?dTNaT0tlVDQ5MDc3S2hmdFhZTmNOQlY4L2F4ODR6TS96ZHdVZFY1d2d1QWVa?=
- =?utf-8?B?QmNOMmsweS83YlMyT1IrWE80NllNNzJpQkdCbmF4NFZMRjgyQVlPT0F4MmtP?=
- =?utf-8?B?c3RtZER1c2l3ZEExRmJWbGo1V1B6a05xWEh6RlFDMzRZSjJ0Q1h2NjBmNDhO?=
- =?utf-8?B?alI4cFY2ZWhtUThrWUozTEtUeUpJQ01WQU5zWTNKc2M4NUNJWmxzcExaUzZS?=
- =?utf-8?B?Ty9jdGxXam01T0ZpV082aHVlZW1saExpSm1BZGVneGNJY1B5Si8weHlZWm92?=
- =?utf-8?B?NTVZYm9uSVJNWjB0NW5NS0hWeTE2RTFaM3VJT2hFK2l4dHpjcTNHeDErMjdN?=
- =?utf-8?B?SEovYkpDRmp5bDlyWWZWVjkzL0hNYmozUGQwcDR1ZEYxMStMNHZkYmV2T0lD?=
- =?utf-8?B?RW41TUpDc2VZRXNFUUZoWEJUd2VReXRuRmtzalYxVXZldmVWazFxUytHby9o?=
- =?utf-8?B?U3NRMWU3WjNVaDRjTGZjSG55bG9lcFJyS1FtK1BPVVB0TE5LN2RCV3RCbHhi?=
- =?utf-8?B?RDUvemRrSzJPTVd6L2dxVkNSTUtDZVVLSXFtYUFvUU40WUxSVzZ2R3UwMDRO?=
- =?utf-8?B?dHFnL0V2UnhyUWJxQlVJTzhleHJYMmE3cDNldThvY3lzQWQwY0RIZkZDNFEz?=
- =?utf-8?B?amwxb0UwOW1NZFVNNW9XcTBDTXh0VnBJbkNMSVRPQXdqRHZHZVFuVkhKUXp4?=
- =?utf-8?B?MDNtdk9iSXhMM3crUTZLYTNjL2k0L1dpSTcrWjNYT0Jlc0tRTVZ1OHZVM2xu?=
- =?utf-8?B?RSsxVkJXdW1senJDa1grVjFnOTBUb3E1ZEpUdU9qdFd3OVdxSWlHeHJNaEZH?=
- =?utf-8?B?RitHNGZ5d0NFRU5heEpra2Q1S3lGdDhHak8wZU9hSmE1dU4ydi9SN1cwYVoz?=
- =?utf-8?B?UGh2Z2hmbXdCQXZkQWNjUVBDWVJUQUErbkxRV2lRYWhsQWtZVXpvVUtDM3Y5?=
- =?utf-8?B?dllBdzBvWnhXR24wYjVZSnpqLzA2QlplVDlwTzlkZ0hrZFdoSEMwVHNwcXk2?=
- =?utf-8?B?TzZNeDRtb2NyTVpDb1NvWGxUU3JKUzRKWURUY0ZpTnJKNjJkMDdyTUxrWWZU?=
- =?utf-8?B?QnZqZXBCRzNrYWlrN1d0QklpZHp3aDVlU0c5V1FzQkYvNndLRWh3ejQ4R0l5?=
- =?utf-8?B?b0twM0xENW44enc1MWlGb0hwcU94YWtwR3NXT05KNWdGbk5kOWNMUGhiRW1h?=
- =?utf-8?B?Qk4waEYzYnRKbTJaQWl3TWFLRks0K1F6Uk1nTmVORmE5VVhXNC8wdHh5UVZB?=
- =?utf-8?B?dms0VlFDbStqZXowUnljbjQxbjNwbE1ha2hXSlYyb3lESFlKaDNWSC8yT0c5?=
- =?utf-8?B?bWF3WWxpZy9LQVhVam9jenJCUGdSdjZFeWZZTWRvTHdPTFlxMzBaVEd1WFhi?=
- =?utf-8?B?RzRUdGEzYTBxUEt4UzBLTWhZMHdoWGhZclNjSEl4SFNQcStseGhZSU41Skpq?=
- =?utf-8?B?dDVXb09leVRtWkVKNTQvSjZEZFA4ZmZZWHRSUUNWN2p3T21vdnRUWFFIQUlK?=
- =?utf-8?B?T1hJWXV1Nm5DS2pqcXFIUG5jeUJxdkhLNi9xVkNraXN3ZkVZTUE4MmRsWmpH?=
- =?utf-8?Q?m6pKYGIWcSJUYdKASh6k/tlnx?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 60336afe-fd51-40b0-79ea-08dd5a8e5a38
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2025 20:02:40.4746
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: AAYFXTGJuggJZXJR1loc4VI1w9ziqBk0talFCZFJd+WAh2niOdFdCu9dRuBAUrjELmLwu4VdPSjI0OIR3cWS0w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6912
+Content-Transfer-Encoding: 8bit
 
+Use devm_regulator_get_enable_read_voltage() to reduce boiler plate
+code.
 
+* Here I am particularly confused about regulator_enable(), part where I should
+  use devm_regulator_get_enable() to enable avdd supply?
+* I can resend this as a patch if everything is alright, specifically with
+  devm_regulator_get_enable() for dvdd
 
-On 3/3/2025 1:55 PM, Paul E. McKenney wrote:
->> I tried the following command and it shows the patch in question in the first
->> line of output. Basically the question that the command asks is "What is in
->> Paul's dev branch that is not in RCU tree's -next branch".  This question is
->> asked for the obvious raisins.
->> So I am obviously missing something in the command. Thoughts?
->>
->> (rcugit is the RCU tree, and paul/dev is Paul's dev branch)
->>
->> git cherry --abbrev -v rcugit/next paul/dev | grep "^+" | cut -d' ' -f2,3-
-> I must defer to others on this one.  I must confess that I have not yet
-> found a good use case for "git cherry".
+Signed-off-by: Saalim Quadri <danascape@gmail.com>
+---
+ drivers/staging/iio/frequency/ad9832.c | 37 +++-----------------------
+ 1 file changed, 4 insertions(+), 33 deletions(-)
 
-In this case git cherry was seemingly correct because it detected a difference
-between the same patch in your dev branch versus the next branch [1]. It seems
-the next branch has the fix with the reordering of the statements. So it thought
-that your branch had a patch that wasn't there in next, where in reality the one
-in next was "newer".
-
-[1]
-https://web.git.kernel.org/pub/scm/linux/kernel/git/rcu/linux.git/commit/?h=misc.2025.03.02a&id=153fc45000e0058435ec0609258fb16e7ea257d2
-
-thanks,
-
- - Joel
+diff --git a/drivers/staging/iio/frequency/ad9832.c b/drivers/staging/iio/frequency/ad9832.c
+index 140ee4f9c137..9e7975265454 100644
+--- a/drivers/staging/iio/frequency/ad9832.c
++++ b/drivers/staging/iio/frequency/ad9832.c
+@@ -74,8 +74,6 @@
+ /**
+  * struct ad9832_state - driver instance specific data
+  * @spi:		spi_device
+- * @avdd:		supply regulator for the analog section
+- * @dvdd:		supply regulator for the digital section
+  * @mclk:		external master clock
+  * @ctrl_fp:		cached frequency/phase control word
+  * @ctrl_ss:		cached sync/selsrc control word
+@@ -94,8 +92,6 @@
+ 
+ struct ad9832_state {
+ 	struct spi_device		*spi;
+-	struct regulator		*avdd;
+-	struct regulator		*dvdd;
+ 	struct clk			*mclk;
+ 	unsigned short			ctrl_fp;
+ 	unsigned short			ctrl_ss;
+@@ -297,11 +293,6 @@ static const struct iio_info ad9832_info = {
+ 	.attrs = &ad9832_attribute_group,
+ };
+ 
+-static void ad9832_reg_disable(void *reg)
+-{
+-	regulator_disable(reg);
+-}
+-
+ static int ad9832_probe(struct spi_device *spi)
+ {
+ 	struct ad9832_platform_data *pdata = dev_get_platdata(&spi->dev);
+@@ -320,33 +311,13 @@ static int ad9832_probe(struct spi_device *spi)
+ 
+ 	st = iio_priv(indio_dev);
+ 
+-	st->avdd = devm_regulator_get(&spi->dev, "avdd");
+-	if (IS_ERR(st->avdd))
+-		return PTR_ERR(st->avdd);
+-
+-	ret = regulator_enable(st->avdd);
+-	if (ret) {
+-		dev_err(&spi->dev, "Failed to enable specified AVDD supply\n");
+-		return ret;
+-	}
+-
+-	ret = devm_add_action_or_reset(&spi->dev, ad9832_reg_disable, st->avdd);
++	ret = devm_regulator_get_enable_read_voltage(&spi->dev, "avdd");
+ 	if (ret)
+-		return ret;
+-
+-	st->dvdd = devm_regulator_get(&spi->dev, "dvdd");
+-	if (IS_ERR(st->dvdd))
+-		return PTR_ERR(st->dvdd);
++			return dev_err_probe(&spi->dev, ret, "failed to get AVDD voltage\n");
+ 
+-	ret = regulator_enable(st->dvdd);
+-	if (ret) {
+-		dev_err(&spi->dev, "Failed to enable specified DVDD supply\n");
+-		return ret;
+-	}
+-
+-	ret = devm_add_action_or_reset(&spi->dev, ad9832_reg_disable, st->dvdd);
++	ret = devm_regulator_get_enable(&spi->dev, "dvdd");
+ 	if (ret)
+-		return ret;
++			return dev_err_probe(&spi->dev, ret, "Failed to enable specified DVDD supply\n");
+ 
+ 	st->mclk = devm_clk_get_enabled(&spi->dev, "mclk");
+ 	if (IS_ERR(st->mclk))
+-- 
+2.34.1
 
 
