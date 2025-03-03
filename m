@@ -1,92 +1,112 @@
-Return-Path: <linux-kernel+bounces-544802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EFFBA4E54A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:16:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20AF8A4E247
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:06:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 921F1424180
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:09:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35A16189E1E4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:59:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F3D727BF91;
-	Tue,  4 Mar 2025 15:49:36 +0000 (UTC)
-Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B20625F78A;
+	Tue,  4 Mar 2025 14:56:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="syr7lVad"
+Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A773327BF87
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 439782066FF
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741103375; cv=pass; b=LcImvX7nhajde53oDGX2SI0u/yLIiP2q/pYTuoI6G5msVdhFLk72MSDG30C9IaDYHrc8pq6NnCZu9uH+O1032YMrGHvpewa8Qf0IM5i8+a6p04BHC/nsjS6vb4ufzQej+ifW0TNhSAUZXxGR8P/FuAG67B99JgCa960PGGYo7Zs=
+	t=1741100165; cv=pass; b=f2CsiHYhRaxR+KxqYztannNvfnAuhikI3TUe+56ATOqhiilAF5CcXsbtJi7a1RikUCtiz/qeaETtzgH8my2UGJ4mS4VyiKMaDzZS+uIy4PbtfrGshKJplztb5xqXtQ1DUqm9s3e9KjeHmRD49l5F98ezj3PpVxoJjwJ/2Qh4nPw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741103375; c=relaxed/simple;
-	bh=i/mv86q/EEkpO+5vvH8tZGjrQa/WXUHTfjDzQ+Vh+Cg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=uzrnioU2L7NfEkW5DGyxLVXqgPz4wdb+Lk47WnQX0g/wojxNulUDe3XTxYjLYYyzG6DNRRowxYNUZ8igmYKTqsQzpB62idXGdZzuJnold3GnA8pTiOpSEZdgPNOE31+8C5gZzMO19b4v+dZ9fVmJAm/x/UKCdDiwkRVDr1PcFo0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io; spf=none smtp.mailfrom=cc.itu.edu.tr; arc=none smtp.client-ip=194.107.17.57; dmarc=none (p=none dis=none) header.from=strace.io; spf=pass smtp.mailfrom=altlinux.org; arc=pass smtp.client-ip=160.75.25.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io
+	s=arc-20240116; t=1741100165; c=relaxed/simple;
+	bh=pM2l3bdhITG33VeNaE8y7SWnUeqKSe+coHYUXEHHDV0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=sIvIW91vo3lj7JHjHT/9t9udy5i/el9TFkjEF6pD62UdB0zg1FLuglEpyu5J0wbRd2UTm5qhBWYkfjc7u9bKxydUR8jVDZgsSXxgO8NCdW0ceSUrMme80TBvmsISowclFwHDTlwjn5glWx1hw4Jfmi+hXocmsCXGGStt+OfUMsw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=syr7lVad; arc=none smtp.client-ip=198.47.23.234; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; arc=pass smtp.client-ip=160.75.25.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id E299E40CF9D2
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:49:28 +0300 (+03)
+	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 99BEC40D5704
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:56:01 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
+Authentication-Results: lesvatest1.cc.itu.edu.tr;
+	dkim=pass (1024-bit key, unprotected) header.d=ti.com header.i=@ti.com header.a=rsa-sha256 header.s=ti-com-17Q1 header.b=syr7lVad
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6g7W0MGWzG1GY
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:48:07 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dxc4GzQzFxxy
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:54:28 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 409E342723; Tue,  4 Mar 2025 18:48:04 +0300 (+03)
-X-Envelope-From: <linux-kernel+bounces-541567-bozkiru=itu.edu.tr@vger.kernel.org>
-Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id 946AB4214A
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:33:21 +0300 (+03)
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id 2BD853063EFE
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:33:11 +0300 (+03)
+	id 3ECC442722; Tue,  4 Mar 2025 17:54:11 +0300 (+03)
+Authentication-Results: lesva1.cc.itu.edu.tr;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=syr7lVad
+X-Envelope-From: <linux-kernel+bounces-541571-bozkiru=itu.edu.tr@vger.kernel.org>
+Authentication-Results: lesva2.cc.itu.edu.tr;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=syr7lVad
+Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
+	by le2 (Postfix) with ESMTP id 3E0F5421F5
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:28:21 +0300 (+03)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by fgw2.itu.edu.tr (Postfix) with SMTP id C7F632DCE0
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:28:20 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 532863BC30B
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:23:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F15A116FA5D
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 624941F75A6;
-	Mon,  3 Mar 2025 11:20:50 +0000 (UTC)
-Received: from vmicros1.altlinux.org (vmicros1.altlinux.org [194.107.17.57])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E801F3D49;
-	Mon,  3 Mar 2025 11:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10BD21F417A;
+	Mon,  3 Mar 2025 11:23:52 +0000 (UTC)
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE52A31;
+	Mon,  3 Mar 2025 11:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741000847; cv=none; b=U9VY9mMQy1Tu/s7dGgzNH4MYlv1fzZjdzEPb3eMj9Rs8uN24K6HhQWfAttx2AXGevtrHzYd99e5SYC5isngNqdc9BEUnlfodxU3D+gOfal9HWBVWHgsaiTxPBGF2iSRTelEP6JeyY8EfW0xAq4EBgzSXv4lXqf5bRvP1GPYA3e4=
+	t=1741001027; cv=none; b=qwMho/oJWGOIfW+XE/MeMvgruA+ntLvjbeBkGHJ6xMTMS7l12EtmzKEdKA2ViC8rWYN6A42PdlKStP1Buia70qSA3h1wFIMfHjbSFM8NtLnqDwSkGA56fTbYbfVEI00oDoxE+rCEoNQZzudbZVr5MCQWiPKpnzdsFpahlgl0FJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741000847; c=relaxed/simple;
-	bh=i/mv86q/EEkpO+5vvH8tZGjrQa/WXUHTfjDzQ+Vh+Cg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=oKrsqinWmTuhisupsVLMGnlfobaAG2tEiSMLDrw64JuEHgBh+W23YFbEuJGqhKhkDZCpffGIXlQgIGdBeoeTDv6hswPhPAeItmM7v4ca5aKQpGok4issJwuvFpLLPhiD84nLWSnqms2nUIqAkhTCVudxS6ivUmV0+YmSPgqFfXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-	by vmicros1.altlinux.org (Postfix) with ESMTP id 83B3972C980;
-	Mon,  3 Mar 2025 14:20:44 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-	id 70B307CCB3A; Mon,  3 Mar 2025 13:20:44 +0200 (IST)
-Date: Mon, 3 Mar 2025 13:20:44 +0200
-From: "Dmitry V. Levin" <ldv@strace.io>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Oleg Nesterov <oleg@redhat.com>, Alexey Gladkov <legion@kernel.org>,
-	Eugene Syromyatnikov <evgsyr@gmail.com>,
-	Charlie Jenkins <charlie@rivosinc.com>,
-	Mike Frysinger <vapier@gentoo.org>,
-	Renzo Davoli <renzo@cs.unibo.it>,
-	Davide Berardi <berardi.dav@gmail.com>,
-	strace-devel@lists.strace.io, linux-kernel@vger.kernel.org,
-	linux-api@vger.kernel.org
-Subject: [PATCH v7 5/6] ptrace: introduce PTRACE_SET_SYSCALL_INFO request
-Message-ID: <20250303112044.GF24170@strace.io>
+	s=arc-20240116; t=1741001027; c=relaxed/simple;
+	bh=pM2l3bdhITG33VeNaE8y7SWnUeqKSe+coHYUXEHHDV0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=E7y4HnCbZHIF4foQChHRP5DvaFG9gxHWSoCvQKRyboBCGeAsSHlM1i2rC8ZjsaADyTVJsSwgH6xwILY9tl2x57IQESGUw/v6/3ootRxwJQ3TvKUkdbKlWRdoO7huQwoM6wQTJOHUpY6PRhrqQPaMygzTZ+kvyN1jBa/6KK6H1PE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=syr7lVad; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 523BNB6w2745496
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 3 Mar 2025 05:23:11 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1741000991;
+	bh=o89D8QcdGEg8aUlyzDT2N6E8USfZjtePyIVsA04Nffs=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=syr7lVadYrS81qgC6zWeFDrf0SMxqUnF78MXmLqweFN9kYCWoP7JyI7qONrY84ViY
+	 r5b5f6fr1KN3PnuKbD4xohUaTq7Alwr6poNDn+kTsVTsuwcNvq/lbc1uFf83GWf11s
+	 lY5eCWtu+0oo5mBEB4TQnjmTo0HJJyIQLtZHKNog=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 523BNBrw106103
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 3 Mar 2025 05:23:11 -0600
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 3
+ Mar 2025 05:23:11 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 3 Mar 2025 05:23:11 -0600
+Received: from [172.24.21.156] (lt9560gk3.dhcp.ti.com [172.24.21.156])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 523BN4iK003466;
+	Mon, 3 Mar 2025 05:23:04 -0600
+Message-ID: <dbddfb0c-01f3-4a07-82b3-81929c3c4420@ti.com>
+Date: Mon, 3 Mar 2025 16:53:03 +0530
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -94,258 +114,327 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250303111910.GA24170@strace.io>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v3 2/3] net: ti: icssg-prueth: introduce and use
+ prueth_swdata struct for SWDATA
+To: Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>,
+        <pabeni@redhat.com>, <kuba@kernel.org>, <edumazet@google.com>,
+        <davem@davemloft.net>, <andrew+netdev@lunn.ch>
+CC: <bpf@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <u.kleine-koenig@baylibre.com>, <matthias.schiffer@ew.tq-group.com>,
+        <dan.carpenter@linaro.org>, <schnelle@linux.ibm.com>,
+        <diogo.ivo@siemens.com>, <glaroque@baylibre.com>, <macro@orcam.me.uk>,
+        <john.fastabend@gmail.com>, <hawk@kernel.org>, <daniel@iogearbox.net>,
+        <ast@kernel.org>, <srk@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
+References: <20250224110102.1528552-1-m-malladi@ti.com>
+ <20250224110102.1528552-3-m-malladi@ti.com>
+ <3d3d180a-12b7-4bee-8172-700f0dae2439@kernel.org>
+Content-Language: en-US
+From: "Malladi, Meghana" <m-malladi@ti.com>
+In-Reply-To: <3d3d180a-12b7-4bee-8172-700f0dae2439@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6g7W0MGWzG1GY
+X-ITU-Libra-ESVA-ID: 4Z6dxc4GzQzFxxy
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741708091.10529@267lgDfSXTl09BsivQSulQ
+X-ITU-Libra-ESVA-Watermark: 1741704870.20192@rz7FsHfZWWP/E7t504cjpw
 X-ITU-MailScanner-SpamCheck: not spam
 
-PTRACE_SET_SYSCALL_INFO is a generic ptrace API that complements
-PTRACE_GET_SYSCALL_INFO by letting the ptracer modify details of
-system calls the tracee is blocked in.
 
-This API allows ptracers to obtain and modify system call details in a
-straightforward and architecture-agnostic way, providing a consistent way
-of manipulating the system call number and arguments across architectures.
 
-As in case of PTRACE_GET_SYSCALL_INFO, PTRACE_SET_SYSCALL_INFO also
-does not aim to address numerous architecture-specific system call ABI
-peculiarities, like differences in the number of system call arguments
-for such system calls as pread64 and preadv.
+On 2/27/2025 5:57 PM, Roger Quadros wrote:
+> 
+> 
+> On 24/02/2025 13:01, Meghana Malladi wrote:
+>> From: Roger Quadros <rogerq@kernel.org>
+>>
+>> We have different cases for SWDATA (skb, page, cmd, etc)
+>> so it is better to have a dedicated data structure for that.
+>> We can embed the type field inside the struct and use it
+>> to interpret the data in completion handlers.
+>>
+>> Increase SWDATA size to 48 so we have some room to add
+>> more data if required.
+>>
+>> Signed-off-by: Roger Quadros <rogerq@kernel.org>
+>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+>> Signed-off-by: Meghana Malladi <m-malladi@ti.com>
+>> ---
+>> Changes since v2 (v3-v2):
+>> - Fix leaking tx descriptor in emac_tx_complete_packets()
+>> - Free rx descriptor if swdata type is not page in emac_rx_packet()
+>> - Revert back the size of PRUETH_NAV_SW_DATA_SIZE
+>> - Use build time check for prueth_swdata size
+>> - re-write prueth_swdata to have enum type as first member in the struct
+>> and prueth_data union embedded in the struct
+>>
+>> All the above changes have been suggested by Roger Quadros <rogerq@kernel.org>
+>>
+>>   drivers/net/ethernet/ti/icssg/icssg_common.c  | 52 +++++++++++++------
+>>   drivers/net/ethernet/ti/icssg/icssg_prueth.c  |  3 ++
+>>   drivers/net/ethernet/ti/icssg/icssg_prueth.h  | 16 ++++++
+>>   .../net/ethernet/ti/icssg/icssg_prueth_sr1.c  |  4 +-
+>>   4 files changed, 57 insertions(+), 18 deletions(-)
+>>
+>> diff --git a/drivers/net/ethernet/ti/icssg/icssg_common.c b/drivers/net/ethernet/ti/icssg/icssg_common.c
+>> index acbb79ad8b0c..01eeabe83eff 100644
+>> --- a/drivers/net/ethernet/ti/icssg/icssg_common.c
+>> +++ b/drivers/net/ethernet/ti/icssg/icssg_common.c
+>> @@ -136,12 +136,12 @@ int emac_tx_complete_packets(struct prueth_emac *emac, int chn,
+>>   	struct net_device *ndev = emac->ndev;
+>>   	struct cppi5_host_desc_t *desc_tx;
+>>   	struct netdev_queue *netif_txq;
+>> +	struct prueth_swdata *swdata;
+>>   	struct prueth_tx_chn *tx_chn;
+>>   	unsigned int total_bytes = 0;
+>>   	struct sk_buff *skb;
+>>   	dma_addr_t desc_dma;
+>>   	int res, num_tx = 0;
+>> -	void **swdata;
+>>   
+>>   	tx_chn = &emac->tx_chns[chn];
+>>   
+>> @@ -163,12 +163,19 @@ int emac_tx_complete_packets(struct prueth_emac *emac, int chn,
+>>   		swdata = cppi5_hdesc_get_swdata(desc_tx);
+>>   
+>>   		/* was this command's TX complete? */
+>> -		if (emac->is_sr1 && *(swdata) == emac->cmd_data) {
+>> +		if (emac->is_sr1 && (void *)(swdata) == emac->cmd_data) {
+>>   			prueth_xmit_free(tx_chn, desc_tx);
+>>   			continue;
+>>   		}
+>>   
+>> -		skb = *(swdata);
+>> +		if (swdata->type != PRUETH_SWDATA_SKB) {
+>> +			netdev_err(ndev, "tx_complete: invalid swdata type %d\n", swdata->type);
+>> +			prueth_xmit_free(tx_chn, desc_tx);
+>> +			budget++;
+> 
+> I don't recollect why we need to increase budget here.
+> 
 
-The current implementation supports changing only those bits of system call
-information that are used by strace system call tampering, namely, syscall
-number, syscall arguments, and syscall return value.
+Probably because this packet hasn't been processed due to invalid swdata 
+we are increasing the budget to compensate the loss -> but sounds 
+counter intuitive to whole idea of using the budget. Will remove it.
 
-Support of changing additional details returned by PTRACE_GET_SYSCALL_INFO,
-such as instruction pointer and stack pointer, could be added later if
-needed, by using struct ptrace_syscall_info.flags to specify the additional
-details that should be set.  Currently, "flags" and "reserved" fields of
-struct ptrace_syscall_info must be initialized with zeroes; "arch",
-"instruction_pointer", and "stack_pointer" fields are currently ignored.
 
-PTRACE_SET_SYSCALL_INFO currently supports only PTRACE_SYSCALL_INFO_ENTRY,
-PTRACE_SYSCALL_INFO_EXIT, and PTRACE_SYSCALL_INFO_SECCOMP operations.
-Other operations could be added later if needed.
+>> +			continue;
+>> +		}
+>> +
+>> +		skb = swdata->data.skb;
+>>   		prueth_xmit_free(tx_chn, desc_tx);
+> 
+> if we set swdata->type to PRUETH_SWDATA_CMD in emac_send_command_sr1() then we could
+> reduce all above code including both ifs to
+> 
+> 		swdata = cppi5_hdesc_get_swdata(desc_tx);
+> 		prueth_xmit_free(tx_chn, desc_tx);
+> 		if (swdata->type != PRUETH_SWDATA_SKB)
+> 			continue;
+> 
+> 		skb = swdata->data.skb;
 
-Ideally, PTRACE_SET_SYSCALL_INFO should have been introduced along with
-PTRACE_GET_SYSCALL_INFO, but it didn't happen.  The last straw that
-convinced me to implement PTRACE_SET_SYSCALL_INFO was apparent failure
-to provide an API of changing the first system call argument on riscv
-architecture.
+Yes this is a nice change. This also addresses the concern Dan pointed 
+out regarding SR1's emac->cmd_data check. I was also wondering the same 
+to use PRUETH_SWDATA_CMD for addressing Dan's comment. Thanks.
 
-ptrace(2) man page:
+> 
+>>   
+>>   		ndev = skb->dev;
+>> @@ -472,9 +479,9 @@ int prueth_dma_rx_push_mapped(struct prueth_emac *emac,
+>>   {
+>>   	struct net_device *ndev = emac->ndev;
+>>   	struct cppi5_host_desc_t *desc_rx;
+>> +	struct prueth_swdata *swdata;
+>>   	dma_addr_t desc_dma;
+>>   	dma_addr_t buf_dma;
+>> -	void **swdata;
+>>   
+>>   	buf_dma = page_pool_get_dma_addr(page) + PRUETH_HEADROOM;
+>>   	desc_rx = k3_cppi_desc_pool_alloc(rx_chn->desc_pool);
+>> @@ -490,7 +497,8 @@ int prueth_dma_rx_push_mapped(struct prueth_emac *emac,
+>>   	cppi5_hdesc_attach_buf(desc_rx, buf_dma, buf_len, buf_dma, buf_len);
+>>   
+>>   	swdata = cppi5_hdesc_get_swdata(desc_rx);
+>> -	*swdata = page;
+>> +	swdata->type = PRUETH_SWDATA_PAGE;
+>> +	swdata->data.page = page;
+>>   
+>>   	return k3_udma_glue_push_rx_chn(rx_chn->rx_chn, PRUETH_RX_FLOW_DATA,
+>>   					desc_rx, desc_dma);
+>> @@ -539,11 +547,11 @@ static int emac_rx_packet(struct prueth_emac *emac, u32 flow_id)
+>>   	u32 buf_dma_len, pkt_len, port_id = 0;
+>>   	struct net_device *ndev = emac->ndev;
+>>   	struct cppi5_host_desc_t *desc_rx;
+>> +	struct prueth_swdata *swdata;
+>>   	dma_addr_t desc_dma, buf_dma;
+>>   	struct page *page, *new_page;
+>>   	struct page_pool *pool;
+>>   	struct sk_buff *skb;
+>> -	void **swdata;
+>>   	u32 *psdata;
+>>   	void *pa;
+>>   	int ret;
+>> @@ -561,7 +569,13 @@ static int emac_rx_packet(struct prueth_emac *emac, u32 flow_id)
+>>   
+>>   	desc_rx = k3_cppi_desc_pool_dma2virt(rx_chn->desc_pool, desc_dma);
+>>   	swdata = cppi5_hdesc_get_swdata(desc_rx);
+>> -	page = *swdata;
+>> +	if (swdata->type != PRUETH_SWDATA_PAGE) {
+>> +		netdev_err(ndev, "rx_pkt: invalid swdata->type %d\n", swdata->type);
+>> +		k3_cppi_desc_pool_free(rx_chn->desc_pool, desc_rx);
+>> +		return 0;
+>> +	}
+>> +
+>> +	page = swdata->data.page;
+>>   	page_pool_dma_sync_for_cpu(pool, page, 0, PAGE_SIZE);
+>>   	cppi5_hdesc_get_obuf(desc_rx, &buf_dma, &buf_dma_len);
+>>   	k3_udma_glue_rx_cppi5_to_dma_addr(rx_chn->rx_chn, &buf_dma);
+>> @@ -626,15 +640,18 @@ static void prueth_rx_cleanup(void *data, dma_addr_t desc_dma)
+>>   {
+>>   	struct prueth_rx_chn *rx_chn = data;
+>>   	struct cppi5_host_desc_t *desc_rx;
+>> +	struct prueth_swdata *swdata;
+>>   	struct page_pool *pool;
+>>   	struct page *page;
+>> -	void **swdata;
+>>   
+>>   	pool = rx_chn->pg_pool;
+>>   	desc_rx = k3_cppi_desc_pool_dma2virt(rx_chn->desc_pool, desc_dma);
+>>   	swdata = cppi5_hdesc_get_swdata(desc_rx);
+>> -	page = *swdata;
+>> -	page_pool_recycle_direct(pool, page);
+>> +	if (swdata->type == PRUETH_SWDATA_PAGE) {
+>> +		page = swdata->data.page;
+>> +		page_pool_recycle_direct(pool, page);
+>> +	}
+>> +
+>>   	k3_cppi_desc_pool_free(rx_chn->desc_pool, desc_rx);
+>>   }
+>>   
+>> @@ -671,13 +688,13 @@ enum netdev_tx icssg_ndo_start_xmit(struct sk_buff *skb, struct net_device *ndev
+>>   	struct prueth_emac *emac = netdev_priv(ndev);
+>>   	struct prueth *prueth = emac->prueth;
+>>   	struct netdev_queue *netif_txq;
+>> +	struct prueth_swdata *swdata;
+>>   	struct prueth_tx_chn *tx_chn;
+>>   	dma_addr_t desc_dma, buf_dma;
+>>   	u32 pkt_len, dst_tag_id;
+>>   	int i, ret = 0, q_idx;
+>>   	bool in_tx_ts = 0;
+>>   	int tx_ts_cookie;
+>> -	void **swdata;
+>>   	u32 *epib;
+>>   
+>>   	pkt_len = skb_headlen(skb);
+>> @@ -739,7 +756,8 @@ enum netdev_tx icssg_ndo_start_xmit(struct sk_buff *skb, struct net_device *ndev
+>>   	k3_udma_glue_tx_dma_to_cppi5_addr(tx_chn->tx_chn, &buf_dma);
+>>   	cppi5_hdesc_attach_buf(first_desc, buf_dma, pkt_len, buf_dma, pkt_len);
+>>   	swdata = cppi5_hdesc_get_swdata(first_desc);
+>> -	*swdata = skb;
+>> +	swdata->type = PRUETH_SWDATA_SKB;
+>> +	swdata->data.skb = skb;
+>>   
+>>   	/* Handle the case where skb is fragmented in pages */
+>>   	cur_desc = first_desc;
+>> @@ -842,15 +860,17 @@ static void prueth_tx_cleanup(void *data, dma_addr_t desc_dma)
+>>   {
+>>   	struct prueth_tx_chn *tx_chn = data;
+>>   	struct cppi5_host_desc_t *desc_tx;
+>> +	struct prueth_swdata *swdata;
+>>   	struct sk_buff *skb;
+>> -	void **swdata;
+>>   
+>>   	desc_tx = k3_cppi_desc_pool_dma2virt(tx_chn->desc_pool, desc_dma);
+>>   	swdata = cppi5_hdesc_get_swdata(desc_tx);
+>> -	skb = *(swdata);
+>> -	prueth_xmit_free(tx_chn, desc_tx);
+>> +	if (swdata->type == PRUETH_SWDATA_SKB) {
+>> +		skb = swdata->data.skb;
+>> +		dev_kfree_skb_any(skb);
+>> +	}
+>>   
+>> -	dev_kfree_skb_any(skb);
+>> +	prueth_xmit_free(tx_chn, desc_tx);
+>>   }
+>>   
+>>   irqreturn_t prueth_rx_irq(int irq, void *dev_id)
+>> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+>> index 00ed97860547..3ff8c322f9d9 100644
+>> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+>> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+>> @@ -1522,6 +1522,9 @@ static int prueth_probe(struct platform_device *pdev)
+>>   
+>>   	np = dev->of_node;
+>>   
+>> +	BUILD_BUG_ON_MSG((sizeof(struct prueth_swdata) > PRUETH_NAV_SW_DATA_SIZE),
+>> +			 "insufficient SW_DATA size");
+>> +
+>>   	prueth = devm_kzalloc(dev, sizeof(*prueth), GFP_KERNEL);
+>>   	if (!prueth)
+>>   		return -ENOMEM;
+>> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+>> index c7b906de18af..3bbabd007129 100644
+>> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+>> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+>> @@ -136,6 +136,22 @@ struct prueth_rx_chn {
+>>   	struct page_pool *pg_pool;
+>>   };
+>>   
+>> +enum prueth_swdata_type {
+>> +	PRUETH_SWDATA_INVALID = 0,
+>> +	PRUETH_SWDATA_SKB,
+>> +	PRUETH_SWDATA_PAGE,
+>> +	PRUETH_SWDATA_CMD,
+> 
+> PRUETH_SWDATA_CMD is not beig used so let's use it in emac_send_command_sr1()
+> 
 
-long ptrace(enum __ptrace_request request, pid_t pid, void *addr, void *data);
-...
-PTRACE_SET_SYSCALL_INFO
-       Modify information about the system call that caused the stop.
-       The "data" argument is a pointer to struct ptrace_syscall_info
-       that specifies the system call information to be set.
-       The "addr" argument should be set to sizeof(struct ptrace_syscall_info)).
+Yes, will do that. This is actually a miss in my previous patches.
 
-Link: https://lore.kernel.org/all/59505464-c84a-403d-972f-d4b2055eeaac@gmail.com/
-Signed-off-by: Dmitry V. Levin <ldv@strace.io>
-Reviewed-by: Alexey Gladkov <legion@kernel.org>
-Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
-Tested-by: Charlie Jenkins <charlie@rivosinc.com>
-Reviewed-by: Eugene Syromiatnikov <esyr@redhat.com>
-Reviewed-by: Oleg Nesterov <oleg@redhat.com>
----
- include/uapi/linux/ptrace.h |   7 ++-
- kernel/ptrace.c             | 121 +++++++++++++++++++++++++++++++++++-
- 2 files changed, 126 insertions(+), 2 deletions(-)
+>> +};
+>> +
+>> +struct prueth_swdata {
+>> +	enum prueth_swdata_type type;
+>> +	union prueth_data {
+>> +		struct sk_buff *skb;
+>> +		struct page *page;
+>> +		u32 cmd;
+>> +	} data;
+>> +};
+>> +
+>>   /* There are 4 Tx DMA channels, but the highest priority is CH3 (thread 3)
+>>    * and lower three are lower priority channels or threads.
+>>    */
+>> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth_sr1.c b/drivers/net/ethernet/ti/icssg/icssg_prueth_sr1.c
+>> index aeeb8a50376b..7bbe0808b3ec 100644
+>> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth_sr1.c
+>> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth_sr1.c
+>> @@ -275,10 +275,10 @@ static struct sk_buff *prueth_process_rx_mgm(struct prueth_emac *emac,
+>>   	struct net_device *ndev = emac->ndev;
+>>   	struct cppi5_host_desc_t *desc_rx;
+>>   	struct page *page, *new_page;
+>> +	struct prueth_swdata *swdata;
+>>   	dma_addr_t desc_dma, buf_dma;
+>>   	u32 buf_dma_len, pkt_len;
+>>   	struct sk_buff *skb;
+>> -	void **swdata;
+>>   	void *pa;
+>>   	int ret;
+>>   
+>> @@ -301,7 +301,7 @@ static struct sk_buff *prueth_process_rx_mgm(struct prueth_emac *emac,
+>>   	}
+>>   
+>>   	swdata = cppi5_hdesc_get_swdata(desc_rx);
+>> -	page = *swdata;
+>> +	page = swdata->data.page;
+>>   	cppi5_hdesc_get_obuf(desc_rx, &buf_dma, &buf_dma_len);
+>>   	pkt_len = cppi5_hdesc_get_pktlen(desc_rx);
+>>   
+> 
 
-diff --git a/include/uapi/linux/ptrace.h b/include/uapi/linux/ptrace.h
-index 72c038fc71d0..5f8ef6156752 100644
---- a/include/uapi/linux/ptrace.h
-+++ b/include/uapi/linux/ptrace.h
-@@ -74,6 +74,7 @@ struct seccomp_metadata {
- };
- 
- #define PTRACE_GET_SYSCALL_INFO		0x420e
-+#define PTRACE_SET_SYSCALL_INFO		0x4212
- #define PTRACE_SYSCALL_INFO_NONE	0
- #define PTRACE_SYSCALL_INFO_ENTRY	1
- #define PTRACE_SYSCALL_INFO_EXIT	2
-@@ -81,7 +82,8 @@ struct seccomp_metadata {
- 
- struct ptrace_syscall_info {
- 	__u8 op;	/* PTRACE_SYSCALL_INFO_* */
--	__u8 pad[3];
-+	__u8 reserved;
-+	__u16 flags;
- 	__u32 arch;
- 	__u64 instruction_pointer;
- 	__u64 stack_pointer;
-@@ -98,6 +100,7 @@ struct ptrace_syscall_info {
- 			__u64 nr;
- 			__u64 args[6];
- 			__u32 ret_data;
-+			__u32 reserved2;
- 		} seccomp;
- 	};
- };
-@@ -142,6 +145,8 @@ struct ptrace_sud_config {
- 	__u64 len;
- };
- 
-+/* 0x4212 is PTRACE_SET_SYSCALL_INFO */
-+
- /*
-  * These values are stored in task->ptrace_message
-  * by ptrace_stop to describe the current syscall-stop.
-diff --git a/kernel/ptrace.c b/kernel/ptrace.c
-index 22e7d74cf4cd..75a84efad40f 100644
---- a/kernel/ptrace.c
-+++ b/kernel/ptrace.c
-@@ -944,7 +944,10 @@ ptrace_get_syscall_info_seccomp(struct task_struct *child, struct pt_regs *regs,
- 	ptrace_get_syscall_info_entry(child, regs, info);
- 	info->seccomp.ret_data = child->ptrace_message;
- 
--	/* ret_data is the last field in struct ptrace_syscall_info.seccomp */
-+	/*
-+	 * ret_data is the last non-reserved field
-+	 * in struct ptrace_syscall_info.seccomp
-+	 */
- 	return offsetofend(struct ptrace_syscall_info, seccomp.ret_data);
- }
- 
-@@ -1016,6 +1019,118 @@ ptrace_get_syscall_info(struct task_struct *child, unsigned long user_size,
- 	write_size = min(actual_size, user_size);
- 	return copy_to_user(datavp, &info, write_size) ? -EFAULT : actual_size;
- }
-+
-+static int
-+ptrace_set_syscall_info_entry(struct task_struct *child, struct pt_regs *regs,
-+			      struct ptrace_syscall_info *info)
-+{
-+	unsigned long args[ARRAY_SIZE(info->entry.args)];
-+	int nr = info->entry.nr;
-+	int i;
-+
-+	/*
-+	 * Check that the syscall number specified in info->entry.nr
-+	 * is either a value of type "int" or a sign-extended value
-+	 * of type "int".
-+	 */
-+	if (nr != info->entry.nr)
-+		return -ERANGE;
-+
-+	for (i = 0; i < ARRAY_SIZE(args); i++) {
-+		args[i] = info->entry.args[i];
-+		/*
-+		 * Check that the syscall argument specified in
-+		 * info->entry.args[i] is either a value of type
-+		 * "unsigned long" or a sign-extended value of type "long".
-+		 */
-+		if (args[i] != info->entry.args[i])
-+			return -ERANGE;
-+	}
-+
-+	syscall_set_nr(child, regs, nr);
-+	/*
-+	 * If the syscall number is set to -1, setting syscall arguments is not
-+	 * just pointless, it would also clobber the syscall return value on
-+	 * those architectures that share the same register both for the first
-+	 * argument of syscall and its return value.
-+	 */
-+	if (nr != -1)
-+		syscall_set_arguments(child, regs, args);
-+
-+	return 0;
-+}
-+
-+static int
-+ptrace_set_syscall_info_seccomp(struct task_struct *child, struct pt_regs *regs,
-+				struct ptrace_syscall_info *info)
-+{
-+	/*
-+	 * info->entry is currently a subset of info->seccomp,
-+	 * info->seccomp.ret_data is currently ignored.
-+	 */
-+	return ptrace_set_syscall_info_entry(child, regs, info);
-+}
-+
-+static int
-+ptrace_set_syscall_info_exit(struct task_struct *child, struct pt_regs *regs,
-+			     struct ptrace_syscall_info *info)
-+{
-+	long rval = info->exit.rval;
-+
-+	/*
-+	 * Check that the return value specified in info->exit.rval
-+	 * is either a value of type "long" or a sign-extended value
-+	 * of type "long".
-+	 */
-+	if (rval != info->exit.rval)
-+		return -ERANGE;
-+
-+	if (info->exit.is_error)
-+		syscall_set_return_value(child, regs, rval, 0);
-+	else
-+		syscall_set_return_value(child, regs, 0, rval);
-+
-+	return 0;
-+}
-+
-+static int
-+ptrace_set_syscall_info(struct task_struct *child, unsigned long user_size,
-+			const void __user *datavp)
-+{
-+	struct pt_regs *regs = task_pt_regs(child);
-+	struct ptrace_syscall_info info;
-+
-+	if (user_size < sizeof(info))
-+		return -EINVAL;
-+
-+	/*
-+	 * The compatibility is tracked by info.op and info.flags: if user-space
-+	 * does not instruct us to use unknown extra bits from future versions
-+	 * of ptrace_syscall_info, we are not going to read them either.
-+	 */
-+	if (copy_from_user(&info, datavp, sizeof(info)))
-+		return -EFAULT;
-+
-+	/* Reserved for future use. */
-+	if (info.flags || info.reserved)
-+		return -EINVAL;
-+
-+	/* Changing the type of the system call stop is not supported yet. */
-+	if (ptrace_get_syscall_info_op(child) != info.op)
-+		return -EINVAL;
-+
-+	switch (info.op) {
-+	case PTRACE_SYSCALL_INFO_ENTRY:
-+		return ptrace_set_syscall_info_entry(child, regs, &info);
-+	case PTRACE_SYSCALL_INFO_EXIT:
-+		return ptrace_set_syscall_info_exit(child, regs, &info);
-+	case PTRACE_SYSCALL_INFO_SECCOMP:
-+		return ptrace_set_syscall_info_seccomp(child, regs, &info);
-+	default:
-+		/* Other types of system call stops are not supported yet. */
-+		return -EINVAL;
-+	}
-+}
- #endif /* CONFIG_HAVE_ARCH_TRACEHOOK */
- 
- int ptrace_request(struct task_struct *child, long request,
-@@ -1234,6 +1349,10 @@ int ptrace_request(struct task_struct *child, long request,
- 	case PTRACE_GET_SYSCALL_INFO:
- 		ret = ptrace_get_syscall_info(child, addr, datavp);
- 		break;
-+
-+	case PTRACE_SET_SYSCALL_INFO:
-+		ret = ptrace_set_syscall_info(child, addr, datavp);
-+		break;
- #endif
- 
- 	case PTRACE_SECCOMP_GET_FILTER:
--- 
-ldv
 
 
