@@ -1,82 +1,133 @@
-Return-Path: <linux-kernel+bounces-542812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AA31A4CE14
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:17:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 698CEA4CE25
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:19:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59F587A7A04
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:16:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 364853AD299
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:19:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19DBD20E313;
-	Mon,  3 Mar 2025 22:17:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59E91F1538;
+	Mon,  3 Mar 2025 22:19:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k8IkKKnS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Z47OAkMR"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79FAB1DDA3C
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 22:17:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF101F03C0
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 22:19:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741040252; cv=none; b=AhnGuEE4BQDoYFfCfpwgixGWEyNPNGLwg70nfmNavWy5D8QQ+Pf+Q3vqz0qfGk7F7r3KjP/qlRAwfczn0E7ds/V6VxsvD9QZn1QVailGRtgvrhzxmuH+TjmT82qC7VBPW1mgOjxxJIjZ+j+vyjpbMpdVfYCG7sTbuRBZ8reIrgE=
+	t=1741040350; cv=none; b=IVZGBwFz0rtEiYLx86HZuIK6yukmGI5LQ/I2xwwiZuuNzVEgdWBpkRspDcf3kTKiO8IFzLw0IbmPrRDmpBoDiRw/pJNgqy6yuMLHLqkrpqOWbrUtjMM3uuRbxbLyK8H6HLzT8AB8QS46bsgT2sxYHbUhAuJEKMS0fpoVsAAHgko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741040252; c=relaxed/simple;
-	bh=3Dhep88DZZmRiLR4JWC42gaVSxkJVdFR1Myn7cDYqJ8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N8dvueDOZcuPIfOGBp91RLADABHuOHOlBZRIDOQGZmjjGOs4faSjAnfx2ECtcOKN31tvA7Ti/9wKV+Vice2HTQWshFlM2rVsq6op35qr6vguj63FwzqydfzfYFqWQwifm30wYX8PmxWTuZ9dEFQZDsdIsa2zHAnhbzmzFfdCZLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k8IkKKnS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 476DCC4CEE5;
-	Mon,  3 Mar 2025 22:17:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741040252;
-	bh=3Dhep88DZZmRiLR4JWC42gaVSxkJVdFR1Myn7cDYqJ8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=k8IkKKnSuXX9oOfKUomPgZ7LlFvIL5SR4515wYm59tc2uZ5PIjBjagYViP42eluJ1
-	 +i7vI38FZeb29Q8uumRm08MMoc1Kajy5RCIP7K2JO52x88tntP2CaAwbA5MVEKuQb2
-	 JhUUTkLVMy3NrcbivsDlUWkT4pHB0KR+V4GFvuz89SVaK9ByRzRCDcQ9kOzmTJbCz4
-	 U4cUsOP62FGX/N2k1fT8b9RaKLwBV0uHXtoPFZcbD2j0obA9jcHquAuXz/Ys5iiv86
-	 NIpr4u8rRjLmZsEt9imeuvcnNe0rmQhvYnq3P/SHKO6PQQWsWIKtGFnLywyjjQOZwM
-	 anBGgrZjSx+hQ==
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: set highest IO priority for checkpoint thread
-Date: Mon,  3 Mar 2025 22:17:30 +0000
-Message-ID: <20250303221730.1284822-1-jaegeuk@kernel.org>
-X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
+	s=arc-20240116; t=1741040350; c=relaxed/simple;
+	bh=BlPYKcfBkBVpT3V5O26Xd6WR6xCeoqftHSDi4xMENnc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RAGpFXFyPAVQH++XrKQ4VEO2iTcKtR8DGq7zqadCEu/9FjVV5CW+BHRhAlrKrhV34W8k9u7nv3YsxC5dFBaPo8DtoAZpiHMALyqMF7KgxJ5RynGAhdPNWJYTXAOdw6ynZsNKT3TP7BugKGHToO3yYmKij95HR6g+dSPhKIuAhR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Z47OAkMR; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 3 Mar 2025 22:18:59 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741040344;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BqNM3b9INTyWTAPDqRKsbsOJ+JU7cKGKgDcZdOQhQpY=;
+	b=Z47OAkMRrnvMr//9J9gBTG2gdHDpVx40BcwBJNHUNaUnH/CJdZKwmch8k2VSxVo23UP5+t
+	1N2DwaEVMtBkYJ8UBI/MkiNsi28wluWEdDHziDMgfUFsirbkwVSSfR9io4AEEQSQTHFf0n
+	oiiuqYL2pVhlKnUdV3zqdeYHRwoaaHU=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Maxim Levitsky <mlevitsk@redhat.com>
+Cc: Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 12/13] KVM: nSVM: Service local TLB flushes before
+ nested transitions
+Message-ID: <Z8Yq00wc_9_NRRkZ@google.com>
+References: <20250205182402.2147495-1-yosry.ahmed@linux.dev>
+ <20250205182402.2147495-13-yosry.ahmed@linux.dev>
+ <540397690642d3aa7e77775a721ba5a62bbdc2ae.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <540397690642d3aa7e77775a721ba5a62bbdc2ae.camel@redhat.com>
+X-Migadu-Flow: FLOW_OUT
 
-The checkpoint is the top priority thread which can stop all the filesystem
-operations. Let's make it RT priority.
+On Fri, Feb 28, 2025 at 09:20:18PM -0500, Maxim Levitsky wrote:
+> On Wed, 2025-02-05 at 18:24 +0000, Yosry Ahmed wrote:
+> > KVM does not track TLB flush requests for L1 vs. L2. Hence, service
+> > local flush that target the current context before switching to a new
+> > one. Since ASIDs are tracked per-VMCB, service the flushes before every
+> > VMCB switch.
+> > 
+> > This is conceptually similar to how nVMX calls
+> > kvm_service_local_tlb_flush_requests() in
+> > nested_vmx_enter_non_root_mode() and nested_vmx_vmexit(), with the
+> > following differences:
+> > 
+> > 1. nVMX tracks the current VPID based on is_guest_mode(), so local TLB
+> >    flushes are serviced before enter_guest_mode() and
+> >    leave_guest_mode(). On the other hand, nSVM tracks the current ASID
+> >    based on the current VMCB, so the TLB flushes are serviced before an
+> >    VMCB switch.
+> > 
+> > 2. nVMX only enters and leaves guest mode in
+> >    nested_vmx_enter_non_root_mode() and nested_vmx_vmexit(). Other paths
+> >    like vmx_set_nested_state() and vmx_leave_nested() call into these
+> >    two functions. On the other hand, nSVM open codes the switch in
+> >    functions like svm_set_nested_state() and svm_leave_nested(), so
+> >    servicing the flush in svm_switch_svm() is probably most reliable.
+> > 
+> > Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+> > ---
+> >  arch/x86/kvm/svm/svm.c | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> > 
+> > diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+> > index 5e7b1c9bfa605..6daa7efa9262b 100644
+> > --- a/arch/x86/kvm/svm/svm.c
+> > +++ b/arch/x86/kvm/svm/svm.c
+> > @@ -1421,6 +1421,12 @@ static void svm_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
+> >  
+> >  void svm_switch_vmcb(struct vcpu_svm *svm, struct kvm_vmcb_info *target_vmcb)
+> >  {
+> > +	/*
+> > +	 * ASIDs are tracked per-VMCB. Perform any pending TLB flushes for the
+> > +	 * current VMCB before switching to a new one.
+> > +	 */
+> > +	kvm_service_local_tlb_flush_requests(&svm->vcpu);
+> > +
+> >  	svm->current_vmcb = target_vmcb;
+> >  	svm->vmcb = target_vmcb->ptr;
+> >  }
+> 
+> 
+> Note that another difference between SVM and VMX is that this code will only set tlb_ctl
+> in the current vmcb, the actual flush can happen much later, when we do VM entry with this vmcb,
+> e.g if we are now in L2, the flush will happen when we enter L2 again.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/checkpoint.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Right, but I think the internal implementation of the TLB flushes is not
+relevant in this specific instance. Do you think it would be useful to
+mention that here?
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index bd890738b94d..8dbb815a35c0 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -21,7 +21,7 @@
- #include "iostat.h"
- #include <trace/events/f2fs.h>
- 
--#define DEFAULT_CHECKPOINT_IOPRIO (IOPRIO_PRIO_VALUE(IOPRIO_CLASS_BE, 3))
-+#define DEFAULT_CHECKPOINT_IOPRIO (IOPRIO_PRIO_VALUE(IOPRIO_CLASS_RT, 3))
- 
- static struct kmem_cache *ino_entry_slab;
- struct kmem_cache *f2fs_inode_entry_slab;
--- 
-2.48.1.711.g2feabab25a-goog
+If we were to document the difference in TLB flush handling between VMX
+and SVM I think a better place would be at kvm_vcpu_flush_tlb_*(), or
+maybe in kvm_host.h where the vendor callbacks are defined? Not sure.
 
+> 
+> I think that this is correct but I might be mistaken.
+> 
+> Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
+
+Thanks!
 
