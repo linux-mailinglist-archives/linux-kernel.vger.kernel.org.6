@@ -1,147 +1,148 @@
-Return-Path: <linux-kernel+bounces-541237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42D30A4BA54
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:09:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5DB5A4BA5A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:09:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 500B27A01A3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:08:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F63D3B1A5C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:09:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01D5A1F0E2B;
-	Mon,  3 Mar 2025 09:08:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 036DB1F098A;
+	Mon,  3 Mar 2025 09:09:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LdnZ+zkO"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="L3nS6aHS"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B24121EF376
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 09:08:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D58201F03D7;
+	Mon,  3 Mar 2025 09:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740992938; cv=none; b=YyMN/W5k+lV1K6ssKPB80XAFu/gXNsPCTXdd2juFCcfktK8YIgbHz6jIMEwNfOgrwTRmquazp1aaUSZovJ+V3Qwv1HqtGSy+5ysHECFbxUsTm5VT8wtw0i/R7QH79SHgWGZnCBA6a8XqjEDQ+g+BSyrWPp+zrspgcXLgiZiWE7g=
+	t=1740992944; cv=none; b=lx7hAGKEiY/WkNi00KgZSBxJJoDEa4XgiLB3xObVHgoRjkT+ojWkAwF/LSfzHPrusKwv18RXUZJF/0tH+wxLAHOXBtPIOmQ4raHIP8pX2i/NqAVo3pbILenEwol2s/GW0rBvEfrdr9SI6yOnQ1bwgnNjo8+dDIkHoCFeeiCmrDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740992938; c=relaxed/simple;
-	bh=5qkLkijq1aHVBAJe+pKnmmcboRU43L52rr+dVfewpTw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WIcJgsDboe8UUn2XknllOzP9JnO9sFPEcS0hCvbegMU8Le3C5+drPt7Tn5gujQJQ3Et4YjrHJuRd/tHcOk2Fwz/hPzhAJF+55Yg2uLLFr+KOzxc21/c25Xr2VdwP0tyCQKRkqL4iTu28j57OcpitKEoKrDbFzsv9ubQB/5IU05w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LdnZ+zkO; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-390dd35c78dso2708584f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 01:08:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740992935; x=1741597735; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=73r+pPBFPmA5vexT3Ec5rGd49/E5Soa5Y1/Qzc7kIO4=;
-        b=LdnZ+zkOpYJrjMymLaQE50OI46e72jhUhFQOQ7S0AJ1Bqu7O8Om5aoK1l624PLoBw6
-         cdBwwQF1OlQ40AoD+YNfyZTgNMTGE+9ghJU8Hv/YXY/pmVwhPFtB2jIL2tAClXfHhTxM
-         ZlGS5VqV4vWHuV//G71OvhfYYxE4Wl1woFedPBkMQ1mrOi1qPRs2VGQY+ZQZpzHBs8Pc
-         PePwOuKJzb/0wO0gFUIimFSWqNhZuiVa7zhUKAWdwi6WPBD6y8Vm4j73gOUXjQNUu/4N
-         E7GkGFP64Q9XyXPM4i/vt7KF+Ik5k0IPwtFUzmKp5NHoBxYC5YA4fIPW8LId/K0rhHmT
-         TmsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740992935; x=1741597735;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=73r+pPBFPmA5vexT3Ec5rGd49/E5Soa5Y1/Qzc7kIO4=;
-        b=IokmYBnVZLFWJ+TvNgFw5mq5nsWc6JueeGNLS+qY+RuwrCFcrNSnjlQWxRXbfIUAqG
-         glnl1y7NGDnlVKfRtTung2GS3lY0GnDvRetX7OsBSP964t487fcydRvqC0q+qVvrse+7
-         JDn1w6QCmcl0PiwVC13PBz3Euih1vitGKYhwQ/8Czp6jIXhMCEDYXKgkUEKcGgFhWZfQ
-         vF2KhXXye+p0RBTijJlUMpZUYDKLz1C2ue8jOgjsGbCYWIiHGv7QZkSl7WLuStFmtjwZ
-         +zhpMl1ed0aV5yPy2MS+M3MkRkcgssjITA17rk7BQw3tx8tSjH9NomebqCmJcCr4hf/w
-         Nt7g==
-X-Forwarded-Encrypted: i=1; AJvYcCVlZyz2Lp5vAXE+u8E3lfcfZ4Pt9TAjjWeqfUbm51HsM9rHnOzlDGx+qvCWWS9AAH1w/u77YiqxzExB9+w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxG9Q72xmmACngh1js8OEWRHi3g1tVXvtJx6xeVEyfmpuI+RzDc
-	8jn1gzLiqcZ0nCBheEzR90U6XBcXbglEA5goJbnrjNwKkE3B1U4ywa8n/DFVAQ==
-X-Gm-Gg: ASbGncu8d8s9fd2KAz6ge3+gL3qxr8SzgrXHk7UkgNSEip6TWw7yVZv55Ca8pH8qkOI
-	b0WSyNJZfqQ6cCcBycVnuyr9KUWB6VgIQxbn1HRk6+56UnSU0tSs6OGmzVDjg0LlvUPiEzvHxNf
-	X1rfALFsl56f2cJ8LqnVtS9ZZs/GCoh27zsiUFGuKsg6MK+3Z9SmplhAcUXD0ksEIJkCvamK/UW
-	xDaNUne7dFk35Q+GreLODTsiXZEGyWfqn2ZqEDcp5A2B7aj0tqTLxZRG6JG3LYAlLvtjKx+LxCv
-	DfZNGCClWicPjf5QO6x7T9DQwjNKtjOgr26P9ASvFHKaBOjTYMw3Q0PShCEFWkjoXwQL04KG3nr
-	LlWHqQCDw+Kxl
-X-Google-Smtp-Source: AGHT+IFulJGyYMQXTykjX7NCa+Iy43Ll73kEXzRosIE/q2QvgywumoNWk3nbePvrLXe4q9Ef14rB/g==
-X-Received: by 2002:a5d:64cf:0:b0:38d:b12f:60d1 with SMTP id ffacd0b85a97d-390ec16ad09mr11136503f8f.26.1740992934969;
-        Mon, 03 Mar 2025 01:08:54 -0800 (PST)
-Received: from google.com (105.168.195.35.bc.googleusercontent.com. [35.195.168.105])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b7a73sm14106715f8f.50.2025.03.03.01.08.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 01:08:54 -0800 (PST)
-Date: Mon, 3 Mar 2025 09:08:50 +0000
-From: Vincent Donnefort <vdonnefort@google.com>
-To: Quentin Perret <qperret@google.com>
-Cc: maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
-	suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, will@kernel.org,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH 1/9] KVM: arm64: Handle huge mappings for np-guest CMOs
-Message-ID: <Z8VxotNAW9CLogum@google.com>
-References: <20250228102530.1229089-1-vdonnefort@google.com>
- <20250228102530.1229089-2-vdonnefort@google.com>
- <Z8IGcA6h6hZx7ujh@google.com>
+	s=arc-20240116; t=1740992944; c=relaxed/simple;
+	bh=ZRrV6YVukHwqMpA7xuFqqMELfGYmOq7MQoJMG5pfdZ0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tMaZspEGNP1X1gwzYPpJPnT1+np3o1E4/Hv1FzWbNgMvq9CZMofXVeOWjqbQxYXsiuZe4Pa81rZ+2feXZr51WVmmgMwmPFLrECG9cDETZTUudQMk/AhQQfu8NQSRN2/xextTK0kNwfyG3if1w0ORuOnt7t4cco6jYFWzLM+X27Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=L3nS6aHS; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 522MmU91029520;
+	Mon, 3 Mar 2025 09:08:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=1imeeoL46u9Hm/RGGWve8ZtZEslUgdzzc5Q
+	ogPrqr+c=; b=L3nS6aHSaTL3v/MiZBQNDavAS2N8rx5TXjsVIS7nbMYAVjtcx4s
+	yiXvFmOLJUMIulLlRvQh0Z+5ypxdEMOEFf/8l/6v9oJmXpG/rUWN+qgar/DdsbZn
+	i/dgczwB9Ijj+gsdcmq1A7zL0DrzZf6b1JRZ4PaJRVEbvGpIJHSZUfF1b08SQOrj
+	My72yn2xRww/nJwpYjNEc8cY65YXMhgQKKyDJLM4hAEtaFT3nq/GMEEeU/aROfR2
+	raXk5zXz33RR3ejps9jtHhPzKjQ3I8nYrUxrUD3FyS/kPOQwydiXiXY/A9/663SW
+	wwYOpexv16NQ4VkNw19+HkG22JzxaltE6ag==
+Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 453tm5mc71-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Mar 2025 09:08:58 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 52391opR010699;
+	Mon, 3 Mar 2025 09:08:55 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 453uakvnwy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Mar 2025 09:08:54 +0000
+Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 52395vJk014646;
+	Mon, 3 Mar 2025 09:08:54 GMT
+Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-schowdhu-hyd.qualcomm.com [10.213.97.56])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 52398seY017511
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Mar 2025 09:08:54 +0000
+Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 2365959)
+	id C9EC759C; Mon,  3 Mar 2025 14:38:53 +0530 (+0530)
+From: Souradeep Chowdhury <quic_schowdhu@quicinc.com>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: stable <stable@vger.kernel.org>,
+        Souradeep Chowdhury <quic_schowdhu@quicinc.com>
+Subject: [PATCH v1] remoteproc: Add device awake calls in rproc boot and shutdown path
+Date: Mon,  3 Mar 2025 14:38:52 +0530
+Message-Id: <20250303090852.301720-1-quic_schowdhu@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8IGcA6h6hZx7ujh@google.com>
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 6FUX2QfO2D3oIp_7k9lYsn5K-DoOLYHJ
+X-Proofpoint-GUID: 6FUX2QfO2D3oIp_7k9lYsn5K-DoOLYHJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-03_03,2025-03-03_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 malwarescore=0 mlxlogscore=999 suspectscore=0
+ priorityscore=1501 adultscore=0 clxscore=1011 bulkscore=0 mlxscore=0
+ phishscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2503030069
 
-On Fri, Feb 28, 2025 at 06:54:40PM +0000, Quentin Perret wrote:
-> On Friday 28 Feb 2025 at 10:25:17 (+0000), Vincent Donnefort wrote:
-> > diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> > index 19c3c631708c..a796e257c41f 100644
-> > --- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> > +++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> > @@ -219,14 +219,24 @@ static void guest_s2_put_page(void *addr)
-> >  
-> >  static void clean_dcache_guest_page(void *va, size_t size)
-> >  {
-> > -	__clean_dcache_guest_page(hyp_fixmap_map(__hyp_pa(va)), size);
-> > -	hyp_fixmap_unmap();
-> > +	while (size) {
-> 
-> Nit: not a problem at the moment, but this makes me mildly worried if
-> size ever became non-page-aligned, could we make the code robust to
-> that?
+Add device awake calls in case of rproc boot and rproc shutdown path.
+Currently, device awake call is only present in the recovery path
+of remoteproc. If a user stops and starts rproc by using the sysfs
+interface, then on pm suspension the firmware loading fails. Keep the
+device awake in such a case just like it is done for the recovery path.
 
-The fixmap doesn't handle !ALIGNED adresses. (I have a patch in the tracing
-series to cover that though). So wonder if that really makes sense to handle
-unaligned size while it wouldn't work with unaligned va anyway?
+Signed-off-by: Souradeep Chowdhury <quic_schowdhu@quicinc.com>
+---
+ drivers/remoteproc/remoteproc_core.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-Perhaps just a WARN_ON() then?
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index c2cf0d277729..908a7b8f6c7e 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1916,7 +1916,8 @@ int rproc_boot(struct rproc *rproc)
+ 		pr_err("invalid rproc handle\n");
+ 		return -EINVAL;
+ 	}
+-
++	
++	pm_stay_awake(rproc->dev.parent);
+ 	dev = &rproc->dev;
+ 
+ 	ret = mutex_lock_interruptible(&rproc->lock);
+@@ -1961,6 +1962,7 @@ int rproc_boot(struct rproc *rproc)
+ 		atomic_dec(&rproc->power);
+ unlock_mutex:
+ 	mutex_unlock(&rproc->lock);
++	pm_relax(rproc->dev.parent);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(rproc_boot);
+@@ -1991,6 +1993,7 @@ int rproc_shutdown(struct rproc *rproc)
+ 	struct device *dev = &rproc->dev;
+ 	int ret = 0;
+ 
++	pm_stay_awake(rproc->dev.parent);
+ 	ret = mutex_lock_interruptible(&rproc->lock);
+ 	if (ret) {
+ 		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, ret);
+@@ -2027,6 +2030,7 @@ int rproc_shutdown(struct rproc *rproc)
+ 	rproc->table_ptr = NULL;
+ out:
+ 	mutex_unlock(&rproc->lock);
++	pm_relax(rproc->dev.parent);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(rproc_shutdown);
+-- 
+2.34.1
 
-> 
-> > +		__clean_dcache_guest_page(hyp_fixmap_map(__hyp_pa(va)),
-> > +					  PAGE_SIZE);
-> > +		hyp_fixmap_unmap();
-> > +		va += PAGE_SIZE;
-> > +		size -= PAGE_SIZE;
-> > +	}
-> >  }
-> >  
-> >  static void invalidate_icache_guest_page(void *va, size_t size)
-> >  {
-> > -	__invalidate_icache_guest_page(hyp_fixmap_map(__hyp_pa(va)), size);
-> > -	hyp_fixmap_unmap();
-> > +	while (size) {
-> > +		__invalidate_icache_guest_page(hyp_fixmap_map(__hyp_pa(va)),
-> > +					       PAGE_SIZE);
-> > +		hyp_fixmap_unmap();
-> > +		va += PAGE_SIZE;
-> > +		size -= PAGE_SIZE;
-> > +	}
-> >  }
-> >  
-> >  int kvm_guest_prepare_stage2(struct pkvm_hyp_vm *vm, void *pgd)
-> > -- 
-> > 2.48.1.711.g2feabab25a-goog
-> > 
 
