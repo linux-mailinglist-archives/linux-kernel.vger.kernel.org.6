@@ -1,102 +1,92 @@
-Return-Path: <linux-kernel+bounces-542335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7ECEA4C8AC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:06:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7195A4C8AE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:06:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8033175108
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:01:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A24BD176A33
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:01:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2C93241675;
-	Mon,  3 Mar 2025 16:40:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7E64241C90;
+	Mon,  3 Mar 2025 16:40:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IZZSZc5n";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5vhqhchG"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U1Fiv2tX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF628214A6C
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 16:40:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 417EB214A6C;
+	Mon,  3 Mar 2025 16:40:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741020020; cv=none; b=ZYyche6x1R5TZiIvdK6fhJmC3Me20cyxLZo6zMjLyKYBuDndc+82cs3SRMm1eqj6xI4g/9MH/4HxkjsJErdcRGB3vHthSe0G4PNF/k25aBGedHEYEbpfM4yoTgTHMJaZOWqBTWYiJCb+2EaHs4MFn/kr+rpmZIlb73bz0oubiEU=
+	t=1741020031; cv=none; b=pC/pQOjlLcMhIXdwK1RLCiCHHoqks/T+h70W0dOxB/tE5zEADAzdBh/YVuz4jwVtr5p2DG+iXsoF60JcRBa9vB12TKI/2tKchlnIi5HPqNnTm5UxUhL89yHx3Fy4Q0O35uHQ1C3Oj/temHgoT6mpxW03bzWNevqTmT87Y+UwZRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741020020; c=relaxed/simple;
-	bh=QdkxP77BRcAwMbcPIB2MHF28HZIagGB9EjdrZfFXb9w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dE/NGRDNuefxLJoCLvA/YhmqrKkQsXKx947FVa2nzmM3f3JWHq8mBag/Dh9mA1zcDZp/w9aSZgiY6RV2CvGZaRQJWd1LkfIaQ+DQEijmxxsg+EbhigUL3W18vF4z7B4VjGIg0IQO4Zer7w4l2b35zEP1imP/02CVwiilzZQ75bo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IZZSZc5n; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5vhqhchG; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 3 Mar 2025 17:40:15 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741020016;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EmqmOOmykWxXuSiFE2JPHQqW/PeacKQl+YUmlDiAnxE=;
-	b=IZZSZc5n2KjHMruuBMr93YuvOnFrK7JWoCKL6wt7Dft5LTWwrFP+m6K5JLs36zRUMxfBQN
-	lKiA27+Yayjqd2tMHR830eNUgqHaveh5TWESVP2AMTV0U+wZFITb/xtMkL8lHvZ9Cz9cGw
-	X8Ht6A46LtcBFfOpjHy5wcm7+++0tlBenTNVQIxz3t/oQR9LQLrJDI+uJspGqN5QvFt2Bv
-	b+m2i6DI0qMXc4PJEDJluVPATkTPeGsPK3wTZGmgNsptD29NeDL2UXg6xhOb+KLzaD9qHc
-	qQqp1QAAohJusoGNffmCOGQKvZl62cpidQJeYKx5IXmsBPZ6DzfHWw2mkbU3lw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741020016;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EmqmOOmykWxXuSiFE2JPHQqW/PeacKQl+YUmlDiAnxE=;
-	b=5vhqhchGQ0/YQsKZyBff7nyRTUugwyksZC+naxgMmc38oROnIf80fYdtsaNZXjc/Bm9toS
-	NFvZV3M0fPfXesCw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org,
-	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH v9 00/11] futex: Add support task local hash maps.
-Message-ID: <20250303164015.HHfy1Ibj@linutronix.de>
-References: <20250225170914.289358-1-bigeasy@linutronix.de>
- <20250303105416.GY11590@noisy.programming.kicks-ass.net>
- <20250303141753.tF-FoCm1@linutronix.de>
+	s=arc-20240116; t=1741020031; c=relaxed/simple;
+	bh=2onDmEnG7b4m9VlHKZQrMnoF88q/5aHk4leZypcCBGY=;
+	h=Message-ID:Subject:From:To:Date:Content-Type:MIME-Version; b=gYuWUj3OG6LRefrhjLhsC3JvZRK58RqfTJNpDGP3ceYRjhJtMslcXnSVCEXBjHbi5Yec326Y4YHKG/+spv+G3cI+RuzitgxGd3e3voFdAHZ0JSiXWF/7iS5zCdzSGf3rdLC8QzDNxDhMSXsxIks21FryF52BrmOxnJOh8I989nQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U1Fiv2tX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28239C4CED6;
+	Mon,  3 Mar 2025 16:40:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741020031;
+	bh=2onDmEnG7b4m9VlHKZQrMnoF88q/5aHk4leZypcCBGY=;
+	h=Subject:From:To:Date:From;
+	b=U1Fiv2tXc8uwoNR5/HhxpXtSgcZnJ3ZRlZaQIjXNT31zWHuvQpAnLdPiUwvb+2kEi
+	 irLtYhjSxuSkNwddwT+9bEpL0GUWgf3y0El5mS8DRYGxhYJ9UcjZyDnBMPpUQ5KpqL
+	 O9wL9xTOfSy9kLZLNaafO39OAXmcgqBKVuM2nOwHeV4u14k4qlwZ69qnYKPp6n7gEA
+	 yoUcid3lUiK7pOvYhtIv8gMtP5hmQVblEbboaEXaNCPshNSMeOGlDtfl/ZSKI1AR6x
+	 twLvsqDBgCHJtCgQku2UGiIlq1nlMVZl50Numk8IlxQ6LE7ET0l8bTDp5/6tTSRzSq
+	 YPEiv9Llbbt1A==
+Message-ID: <f37e9bcb58de3311782490bb7ea781622cfeb238.camel@kernel.org>
+Subject: [ANNOUNCE] 5.4.290-rt95
+From: Tom Zanussi <zanussi@kernel.org>
+To: "To: LKML" <linux-kernel@vger.kernel.org>, linux-rt-users
+ <linux-rt-users@vger.kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, Carsten Emde <C.Emde@osadl.org>, John
+ Kacur <jkacur@redhat.com>, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>, Daniel Wagner <wagi@monom.org>, Clark Williams
+ <williams@redhat.com>,  "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>,
+ joseph.salisbury@oracle.com, josephtsalisbury@gmail.com,  Tom Zanussi
+ <zanussi@kernel.org>
+Date: Mon, 03 Mar 2025 10:40:29 -0600
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250303141753.tF-FoCm1@linutronix.de>
 
-On 2025-03-03 15:17:55 [+0100], To Peter Zijlstra wrote:
-> > Anyway, the entire stack builds and boots, but is otherwise very much
-> > untested.
-> > 
-> > WDYT?
-> 
-> well. Let take a look and do a bit of hammering.
+Hello RT Folks!
 
-so you kept the q.drop_hb_ref logic and the reference get. You kept the
-private reference but renamed it and hid it behind the CLASS. I meant to
-do it, just wanted to check if you had another idea regarding it. But
-okay.
+I'm pleased to announce the 5.4.290-rt95 stable release.
 
-You avoided the two states by dropping refcount only there is no !new
-pointer. That should work. 
+This release is just an update to the new stable 5.4.290
+version and no RT-specific changes have been made.
 
-There is no refcount check in futex_hash_free(). It wouldn't hurt to
-check futex_phash for 0/1, right?
+You can get this release via the git tree at:
 
-My first few tests succeeded. And I have a few RCU annotations, which I
-post once I complete them and finish my requeue-pi tests.
+  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
 
-Sebastian
+  branch: v5.4-rt
+  Head SHA1: d1512e95c4cc010f6750b8cb879cacd6780ba9de
+
+Or to build 5.4.290-rt95 directly, the following patches should be applied:
+
+  https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.4.tar.xz
+
+  https://www.kernel.org/pub/linux/kernel/v5.x/patch-5.4.290.xz
+
+  https://www.kernel.org/pub/linux/kernel/projects/rt/5.4/patch-5.4.290-rt9=
+5.patch.xz
+
+Enjoy!
+
+   Tom
+
+
 
