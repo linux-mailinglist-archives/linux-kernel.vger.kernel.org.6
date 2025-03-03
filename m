@@ -1,113 +1,181 @@
-Return-Path: <linux-kernel+bounces-541828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89B28A4C221
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:38:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 424AAA4C212
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:35:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88D2B3AAB1B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:35:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9999162BE9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:35:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 052EC212B2B;
-	Mon,  3 Mar 2025 13:35:44 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEA68212B07;
+	Mon,  3 Mar 2025 13:35:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o58TizPz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B39CF53365
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 13:35:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08B631E86E;
+	Mon,  3 Mar 2025 13:35:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741008943; cv=none; b=MBPkEC4FKYqjqw7c5hf0BLHyTAqITDRkPpYIlW4QrWjDz5Zj3w9KySNchvAgJxXfC99jUE2WMtGeqzKhsIz3pkxEP8KBIb3O0yoBzazpvlASrK+Z2zpQko9Pxtk83m7av3wXya5176h3VY7wBND/GEtCl8nyU6VWBN/AvuVOJ2E=
+	t=1741008943; cv=none; b=qLl78/ffx83XakKpQN4WQQSgxRYp0+MHCaXuIbQgTFxm5INU+bu0D6H8fdLFlD2cfbnxZA5YQd9DfjFn58yukSOq6YBYZ+gUN4EWrISe5th8JlC08Kr1WPw2srJdN96N0esECcaW1vozrv9BxrqfxsQh/9xQQvJIIZQN5QT2wK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741008943; c=relaxed/simple;
-	bh=LWGfbAM0Oi57epqG0HZfPt9wZvEQRA2SIjtygi0+lBk=;
-	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=K02GvUrp7I9IgKNNfR//aqPCrhs+V/nyYaOIqfYqeOHk5y8zGjo2CyBlAEJvXYBkJX4tKY//9ZgH/ExSlVQuH5Rl+YBDHewYXSx+xSuyfXvEI7njtfKiea9ENMgvFqNpE5ksgFOp9P+4Nodls1UUbTHABsq5K7p28fSoNlrxop4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Z609V2G7zz9wF9;
-	Mon,  3 Mar 2025 21:32:30 +0800 (CST)
-Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6A48E14037B;
-	Mon,  3 Mar 2025 21:35:37 +0800 (CST)
-Received: from [10.67.121.177] (10.67.121.177) by
- kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Mon, 3 Mar 2025 21:35:36 +0800
-CC: <yangyicong@hisilicon.com>, <linuxppc-dev@lists.ozlabs.org>,
-	<x86@kernel.org>, <linux-kernel@vger.kernel.org>, <morten.rasmussen@arm.com>,
-	<msuchanek@suse.de>, <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
-	<jonathan.cameron@huawei.com>, <prime.zeng@hisilicon.com>,
-	<linuxarm@huawei.com>, <xuwei5@huawei.com>, <guohanjun@huawei.com>,
-	<sshegde@linux.ibm.com>
-Subject: Re: [PATCH v11 1/4] cpu/SMT: Provide a default
- topology_is_primary_thread()
-To: Dietmar Eggemann <dietmar.eggemann@arm.com>, <catalin.marinas@arm.com>,
-	<will@kernel.org>, <sudeep.holla@arm.com>, <tglx@linutronix.de>,
-	<peterz@infradead.org>, <mpe@ellerman.id.au>,
-	<linux-arm-kernel@lists.infradead.org>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <pierre.gondois@arm.com>
-References: <20250218141018.18082-1-yangyicong@huawei.com>
- <20250218141018.18082-2-yangyicong@huawei.com>
- <e3607ed0-bdf5-4fef-8731-b81fae649312@arm.com>
-From: Yicong Yang <yangyicong@huawei.com>
-Message-ID: <af8d364e-a5e0-decb-4463-fd6b7c54a0d9@huawei.com>
-Date: Mon, 3 Mar 2025 21:35:35 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.1
+	bh=PiRoSmACwYfEYA3h6HovgqIoBLv0oqC8cx0YgXVH0/Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P6OL0hrIUZlh5gm0RdGj/lFDDwTANUxwLaPT5MUQkw3dSRYYyZmrKO2vFqLrCXX/sbpHQdla375hoVRjRGvh2hkdswOHdnkxsEq1QS6FzWyc81Q/XuOoKItSxaDhy/YSdml2Q85nde+OCSVt/p/wLEG/g1RsVPolX84LEIhXMTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o58TizPz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64513C4CED6;
+	Mon,  3 Mar 2025 13:35:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741008942;
+	bh=PiRoSmACwYfEYA3h6HovgqIoBLv0oqC8cx0YgXVH0/Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=o58TizPz8YP3NjSU/HW3uwAI1fbZfROCeXfvdYjtfvLKVbkvU6L7JzzfYKFs96BwI
+	 UUJ1eiM6U5+xYG7qRu3eY9fAGuTc9WjCoUb0/jau6ehqjqk3VBaLV4e/pbt5ovMHUh
+	 940d8tjKWh+LUv5Bw2zUEop4q5w/FjihlyaWPNC6lYV/8m58iKYWR+BiaT3sclGYDi
+	 jMiwR65OkLm6D1cPQtVX9UfawN38g41tM/SFx0aBZis73Mx7YsXWzYBZKGXFcsJmeZ
+	 DqD49kVtiFy3XBA4Qma0w3RqddrjR6QSzfoJVLpAfEFRdJTUOdg/YrUPFtIaIR02aU
+	 AjxXnYaB+8IKQ==
+Date: Mon, 3 Mar 2025 07:35:40 -0600
+From: Rob Herring <robh@kernel.org>
+To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+Cc: thierry.bultel@linatsea.fr, linux-renesas-soc@vger.kernel.org,
+	geert@linux-m68k.org, paul.barker.ct@bp.renesas.com,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 03/13] dt-bindings: serial: Add compatible for Renesas
+ RZ/T2H SoC in sci
+Message-ID: <20250303133540.GA1681980-robh@kernel.org>
+References: <20250226130935.3029927-1-thierry.bultel.yh@bp.renesas.com>
+ <20250226130935.3029927-4-thierry.bultel.yh@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <e3607ed0-bdf5-4fef-8731-b81fae649312@arm.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemd200014.china.huawei.com (7.221.188.8)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226130935.3029927-4-thierry.bultel.yh@bp.renesas.com>
 
-On 2025/2/28 19:10, Dietmar Eggemann wrote:
-> On 18/02/2025 15:10, Yicong Yang wrote:
->> From: Yicong Yang <yangyicong@hisilicon.com>
+On Wed, Feb 26, 2025 at 02:09:22PM +0100, Thierry Bultel wrote:
+> Document RZ/T2H (a.k.a r9a09g077) in SCI binding.
 > 
-> [...]
+> Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+> Reviewed-by: Paul Barker <paul.barker.ct@bp.renesas.com>
+> ---
+>  .../bindings/serial/renesas,sci.yaml          | 64 ++++++++++++-------
+>  1 file changed, 40 insertions(+), 24 deletions(-)
 > 
->> diff --git a/include/linux/topology.h b/include/linux/topology.h
->> index 52f5850730b3..b3aba443c4eb 100644
->> --- a/include/linux/topology.h
->> +++ b/include/linux/topology.h
->> @@ -240,6 +240,28 @@ static inline const struct cpumask *cpu_smt_mask(int cpu)
->>  }
->>  #endif
->>  
->> +#ifndef topology_is_primary_thread
->> +
->> +#define topology_is_primary_thread topology_is_primary_thread
->> +
->> +static inline bool topology_is_primary_thread(unsigned int cpu)
->> +{
->> +	/*
->> +	 * On SMT hotplug the primary thread of the SMT won't be disabled.
->> +	 * Architectures do have a special primary thread (e.g. x86) need
->> +	 * to override this function. Otherwise just make the first thread
->> +	 * in the SMT as the primary thread.
->> +	 *
->> +	 * The sibling cpumask of an offline CPU contains always the CPU
->> +	 * itself for architectures using CONFIG_GENERIC_ARCH_TOPOLOGY.
->> +	 * Other architectures should use this depend on their own
->> +	 * situation.
-> 
-> This sentence is hard to get. Do you want to say that other
-> architectures (CONFIG_GENERIC_ARCH_TOPOLOGY or
-> !CONFIG_GENERIC_ARCH_TOPOLOGY) have to check whether they can use this
-> default implementation or have to override it?
-> 
+> diff --git a/Documentation/devicetree/bindings/serial/renesas,sci.yaml b/Documentation/devicetree/bindings/serial/renesas,sci.yaml
+> index 64d3db6e54e5..2c4080283963 100644
+> --- a/Documentation/devicetree/bindings/serial/renesas,sci.yaml
+> +++ b/Documentation/devicetree/bindings/serial/renesas,sci.yaml
+> @@ -9,9 +9,6 @@ title: Renesas Serial Communication Interface
+>  maintainers:
+>    - Geert Uytterhoeven <geert+renesas@glider.be>
+>  
+> -allOf:
+> -  - $ref: serial.yaml#
+> -
+>  properties:
+>    compatible:
+>      oneOf:
+> @@ -22,6 +19,8 @@ properties:
+>                - renesas,r9a07g054-sci     # RZ/V2L
+>            - const: renesas,sci            # generic SCI compatible UART
+>  
+> +      - const: renesas,r9a09g077-sci      # RZ/T2H
+> +
 
-yes exactly, will improve the comments. thanks.
+Perhaps explain in the commit msg why the 'renesas,sci' is not 
+applicable for this chip.
 
+>        - items:
+>            - const: renesas,sci            # generic SCI compatible UART
+>  
+> @@ -54,8 +53,6 @@ properties:
+>          - fck # UART functional clock
+>          - sck # optional external clock input
+>  
+> -  uart-has-rtscts: false
+> -
+>  required:
+>    - compatible
+>    - reg
+> @@ -63,25 +60,44 @@ required:
+>    - clocks
+>    - clock-names
+>  
+> -if:
+> -  properties:
+> -    compatible:
+> -      contains:
+> -        enum:
+> -          - renesas,r9a07g043-sci
+> -          - renesas,r9a07g044-sci
+> -          - renesas,r9a07g054-sci
+> -then:
+> -  properties:
+> -    resets:
+> -      maxItems: 1
+> -
+> -    power-domains:
+> -      maxItems: 1
+> -
+> -  required:
+> -    - resets
+> -    - power-domains
+> +allOf:
+> +  - $ref: serial.yaml#
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: renesas,r9a09g077-sci
+> +    then:
+> +      properties:
+> +        uart-has-rtscts: true
+
+Drop. It is already allowed.
+
+> +        power-domains:
+> +          maxItems: 1
+> +      required:
+> +        - power-domains
+> +
+> +    else:
+> +      properties:
+> +        uart-has-rtscts: false
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - renesas,r9a07g043-sci
+> +              - renesas,r9a07g044-sci
+> +              - renesas,r9a07g054-sci
+> +    then:
+> +      properties:
+> +        resets:
+> +          maxItems: 1
+> +
+> +        power-domains:
+> +          maxItems: 1
+> +
+> +      required:
+> +        - resets
+> +        - power-domains
+>  
+>  unevaluatedProperties: false
+>  
+> -- 
+> 2.43.0
+> 
 
