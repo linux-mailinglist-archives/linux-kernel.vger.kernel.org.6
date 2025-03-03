@@ -1,310 +1,180 @@
-Return-Path: <linux-kernel+bounces-541979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD153A4C41C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:02:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 955B7A4C413
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:01:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1997C171047
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:02:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6E181896C3C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:01:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75DD81F3B96;
-	Mon,  3 Mar 2025 15:02:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB3E4214229;
+	Mon,  3 Mar 2025 15:00:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="CZ5NNvb1";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="Z0NiaO2Y"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KPU0XJGi"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C62C584D13;
-	Mon,  3 Mar 2025 15:02:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741014122; cv=fail; b=Mwqsn5dNBTsdbBXs47wEiO5Fz9QKS1DqQDcvxIVpaXsllHc9TW/s65dlr+834QeDEBjaZKdmBmgg1jh5C4cxLz5gI+J7kD6M3QQFhrWMJ3E+cM5W7wRfecNfjaPtDaSpeU9qIW2yzSPAIg4TgM77+q+MARPu/T+RhF1ilU78FPU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741014122; c=relaxed/simple;
-	bh=tAm+vfu9byn6ZzAXNPdLdlTudfrN44UE1LI7uVh9P6c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=gxb+4XPwCz5M1TZrBCHA5N2HE2Z6BehWdk6LzTS6EvoRKYGLJKGMPzIeLrxlpBFYVd+IBZo86bC4Xy170KcICnHmsZxq2Y1G8WXRsbzHv33H9UqqN3HAsyPveq/CYIa8f5ufjbb/Rys394aJmWUyXimliVQnrH1BdbyEy0YAh8k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=CZ5NNvb1; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=Z0NiaO2Y; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5237tc03022593;
-	Mon, 3 Mar 2025 15:01:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2023-11-20; bh=qppct/RLzJVaRGoztg
-	l7QerBwLBRe+b+slYq0EwIU+s=; b=CZ5NNvb1jFcSReDOow4pRRn69irWSu5wLp
-	8nDo74e0C20w/n/+Cqe/zOD1btnRq7uq14vTBdgPVBeucg4bSdi8VI0ec2MizLsn
-	xu9twRqzkx1PnlRNh9EI/S54QuYnfVKXLIqOZvsXm+ZovqJMIYmQ4bGR9G6H2LJW
-	qvoAbFOrN1/4FOvYGwiDhaUmgya2bWBQnnfRaGlZ6z8YAz1yzHKfzslJC4HePMBu
-	4Yt2385sEwaLd0Si5y2LQVdYo+vO+HWCPk/6IbdK+1E10qHeBXlRuz91No2/VGyd
-	K072yFGvV366t4KgCNPty70Rb7OFFDDFMNqBjxoh/CQa7JoSw6yg==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 453u8hava7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 03 Mar 2025 15:01:02 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 523Dq7ZP003178;
-	Mon, 3 Mar 2025 15:01:00 GMT
-Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2046.outbound.protection.outlook.com [104.47.58.46])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 453rp7krmj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 03 Mar 2025 15:01:00 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PeL6L+LeYuR0JKR9ufheNjvVH7ZPTP7cvCm85pSffWTnVgRT2PDK6sXvcqz9I2QMbtw0nZus4QufajACCkXdkOaym+omKVQ3Y6tUf6hcudpZr+EIBWAQf01XQCmW8Coc1/Hdd0UmZkCDRhsqbou1gqA58gITsxiewpIie5Gmrb0t+0JcJzdi5BGJWZysHyLFV/dAxMAFWcGlU0SvMRwQHzXTRgn78Mnt7rbhXIUjKG+fq+IR+bqAQmcNAXQMtIDFA55K6FGSQIVtRHuLA9a2g7sOR/rDL+KlZnRPGJGOrMpUzxPG7gBzxrdlHvMRt9pad3c0eVsVWxPv0ICNmLiDlQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qppct/RLzJVaRGoztgl7QerBwLBRe+b+slYq0EwIU+s=;
- b=rWZ0eTBtVDKRrAqyqTjzmiWH8xPAVxM7MYuc/w5yExxV388PU2OKvZdHqJFxb2kwpTxwfaiG9dOYVyvHf+5bgs5rXwYiRU0JbzPP96CQXEJlbwfvR3VtVsCoWQyaEc3Obu2cr5kJLKz0E1WKQQI0iRpWW4ia326rancIDp1NIg6puHxqOPP/czWmm308QLCGBa8K+DR4I7Hq2zXPbVoEBSDgiKYvlfxbzTOHQ5UgAtUPsHnQN1hopUI91YHTzwdYW17UWc1x51kMspelLhtV2sXq7R5MC7SlX7jVjWsFlfP3/f/32hhVzlxa6P0qSdzVIfrd8R+hpQ9bsLsMnjYUmA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39CC316FF37
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 15:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741014027; cv=none; b=Xwint8lW2sqVbWAh5PuLjNPH9D4yWIdVkHMJmaHlvQX2xKaiIKvicVX9g+3w57k+YJ2qzJYOfyDclxLVO7jxErkEAkgY4Mfnre9Rv1ZisukxK+3ps7gxz07Uk96ieihqTO9eymUadUgwx6rg8zhRkRmqoE1odmQ772lGBYWxL7s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741014027; c=relaxed/simple;
+	bh=YYeGUb3k93KBXD4drA2C9f+vdF4GK7YW6npk41CFHg4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=gZLxsSKoDnPwwqnORCcerpoXkhKkal3hp0uigatWZpKBFkQANuhxU3xRubkcbrGTkIksrwwZImqlB9IGH81WaQjw/ReHR8nPiElORsnrH+DBsvRDl+RrLfwwsPr5EGD75GF0ZXnCXnZRSSFME/1/KkBvV1pLMpAulTfJZ4H7nOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KPU0XJGi; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-38f2f391864so2525419f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 07:00:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qppct/RLzJVaRGoztgl7QerBwLBRe+b+slYq0EwIU+s=;
- b=Z0NiaO2Y8rfP5Dtk5QeKYUMD+iqnCzBfqn+tCMADCIrMxxHN6qT0qmofoCSUXqNJwF9WNQR7JVyQF/79YabDOAVW0L9jyhF5rkEj6Y5BNGYaV7MFYCq4O4XfCawbvzrqWBXzBc5Stbf+yxOdHe2LY6+UrTQwzRBnHij64Kjw2bo=
-Received: from PH0PR10MB5777.namprd10.prod.outlook.com (2603:10b6:510:128::16)
- by PH0PR10MB4503.namprd10.prod.outlook.com (2603:10b6:510:3a::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.28; Mon, 3 Mar
- 2025 15:00:27 +0000
-Received: from PH0PR10MB5777.namprd10.prod.outlook.com
- ([fe80::75a8:21cc:f343:f68c]) by PH0PR10MB5777.namprd10.prod.outlook.com
- ([fe80::75a8:21cc:f343:f68c%4]) with mapi id 15.20.8489.025; Mon, 3 Mar 2025
- 15:00:27 +0000
-Date: Mon, 3 Mar 2025 10:00:18 -0500
-From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-To: jeffxu@chromium.org
-Cc: akpm@linux-foundation.org, keescook@chromium.org, jannh@google.com,
-        torvalds@linux-foundation.org, vbabka@suse.cz,
-        lorenzo.stoakes@oracle.com, adhemerval.zanella@linaro.org,
-        oleg@redhat.com, avagin@gmail.com, benjamin@sipsolutions.net,
-        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        jorgelo@chromium.org, sroettger@google.com, hch@lst.de,
-        ojeda@kernel.org, thomas.weissschuh@linutronix.de, adobriyan@gmail.com,
-        johannes@sipsolutions.net, pedro.falcato@gmail.com, hca@linux.ibm.com,
-        willy@infradead.org, anna-maria@linutronix.de, mark.rutland@arm.com,
-        linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de,
-        rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com,
-        f.fainelli@gmail.com, gerg@kernel.org, dave.hansen@linux.intel.com,
-        mingo@kernel.org, ardb@kernel.org, mhocko@suse.com,
-        42.hyeyoo@gmail.com, peterz@infradead.org, ardb@google.com,
-        enh@google.com, rientjes@google.com, groeck@chromium.org,
-        mpe@ellerman.id.au, aleksandr.mikhalitsyn@canonical.com,
-        mike.rapoport@gmail.com, Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH v8 2/7] selftests: x86: test_mremap_vdso: skip if vdso is
- msealed
-Message-ID: <fguxud5s5lmobsaf5mxbxpc7xodbncetchgs4cghfqobtxwjvi@mwfvomn6cyk2>
-Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	jeffxu@chromium.org, akpm@linux-foundation.org, keescook@chromium.org, 
-	jannh@google.com, torvalds@linux-foundation.org, vbabka@suse.cz, 
-	lorenzo.stoakes@oracle.com, adhemerval.zanella@linaro.org, oleg@redhat.com, avagin@gmail.com, 
-	benjamin@sipsolutions.net, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kselftest@vger.kernel.org, jorgelo@chromium.org, 
-	sroettger@google.com, hch@lst.de, ojeda@kernel.org, thomas.weissschuh@linutronix.de, 
-	adobriyan@gmail.com, johannes@sipsolutions.net, pedro.falcato@gmail.com, 
-	hca@linux.ibm.com, willy@infradead.org, anna-maria@linutronix.de, 
-	mark.rutland@arm.com, linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de, 
-	rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com, f.fainelli@gmail.com, 
-	gerg@kernel.org, dave.hansen@linux.intel.com, mingo@kernel.org, ardb@kernel.org, 
-	mhocko@suse.com, 42.hyeyoo@gmail.com, peterz@infradead.org, ardb@google.com, 
-	enh@google.com, rientjes@google.com, groeck@chromium.org, mpe@ellerman.id.au, 
-	aleksandr.mikhalitsyn@canonical.com, mike.rapoport@gmail.com, Kees Cook <kees@kernel.org>
-References: <20250303050921.3033083-1-jeffxu@google.com>
- <20250303050921.3033083-3-jeffxu@google.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250303050921.3033083-3-jeffxu@google.com>
-User-Agent: NeoMutt/20240425
-X-ClientProxiedBy: YT2PR01CA0006.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:38::11) To PH0PR10MB5777.namprd10.prod.outlook.com
- (2603:10b6:510:128::16)
+        d=linaro.org; s=google; t=1741014023; x=1741618823; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CS8fOkB/2o1tqv0C/vSIKz5akXsPp61Y6yRvRf4d3qg=;
+        b=KPU0XJGivr7YJE0a0FTD3hXgPa/k7z74xhQRAZrI1qq8tRNDpSh/tu8C+YdJG7ix+l
+         L5j82wMWek5f0Sjc0Tzv6CVETw5eqJXDHtnnAcu+edqeBdfuGV7Bbf0iCD5EbRBmGJkq
+         ed5TdmXm5BfXYoE897X3Pi3OCx0lQ9M/UmI3vE1VevdVvEPRp2Paeyl/52kkWMM7dpMc
+         yRgBQxFCahd7+8bJT89J0DNr2NY4J+0zUvxYs7pMZa0mYLkNf4Bmj9wDUmd37h0Cl4Hf
+         vq3w8DDOvnVfEh7l4BOU8dRIKTdgsmGJls+XDi7R2q7JKWjRf4cR1+Qt8IAxMP9h6i5I
+         CWXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741014023; x=1741618823;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CS8fOkB/2o1tqv0C/vSIKz5akXsPp61Y6yRvRf4d3qg=;
+        b=HGfdFqFyVfgXSGIfaXgJjGzoSho/L/HAxJMQh0fNXmtKOZd3G8+GTNylYaNMOAnRR2
+         uAmy8wq7M1LqwlWKoM8r+b5sojw5/fpgmpDR0r9Nq1I4UdqIGXaIjVjr3ycVJbOVjRMi
+         IUySivYBUQbixO35Y20uX9pzrGcGnJI8CtvQU2UYgV0+nEJGHNK06W4YTCMd97XrlnBs
+         WI5jFgweb1oibpnyJvb/LZcMX3ptPI0BL0iOqT00sm+WQSlyfbLBDg5HA3pRFctvWb5a
+         hHea5TH9vHpcWYqPHrB7nNzHm9Zpn9x6HfpC0YuiYX0nyZwi8zobBZpOJL+Mvs7oSaPS
+         yekw==
+X-Forwarded-Encrypted: i=1; AJvYcCUgM32WOOA0inOfknS6tNfrrFnysLST0iKFflR17D359LN8CcU+G/iPMxE5mtdcFzx6HEByjfJX1zKeReU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywpkf5HxiugUHEbv5bW0gPT46bO8lEWbSceTwBAD4G8yrmZ2NKK
+	5NHye7FQTQVt/NMGOrWWE4slyxmRGQsw4nkQnvo2AmeIVe8FfK2pncq/re+eupY=
+X-Gm-Gg: ASbGncscRQiTW9JVweKFiqiQXsHbZHuAUL8rJx9f7qQlz0APWCT4hmdBI5ScNCb/EVv
+	/QdEil97N5GwbxodObRiyUk/2XB48uCg7w/BL7aLTKeHWj6PYc2m0DKfjqvb1SXtXMh+pSOPSyi
+	Ghn+88HKMQ3iBFNCpsLE/iv8kJ+JI93DhmmY9ry2nqm8zkhlMJWBrhPnljCTdYpa4MURvhVGPoE
+	haP3tmT/vvZ1Yvs3tSCIHEK8Hyqw1rF/1Ok4/IxLgmkO4+RW09QyRvPnrRAFeg4B1nIIUurfbU1
+	Ysm4/cPFs/XRL3bxc0hmiUX+f4itVCz8IcRlD3P4KnMy+1yP8oULrLng36AMmtO3Sg==
+X-Google-Smtp-Source: AGHT+IGzxcAosUY7UZOkZGBKGsfyOleMjoBQWswmFK4WzjmdOJ8Zb7pyuQRUwLOTwEQbHnLoZZ+osw==
+X-Received: by 2002:a05:6000:1a8f:b0:390:ef12:2ee4 with SMTP id ffacd0b85a97d-390ef122f8emr11173836f8f.25.1741014023167;
+        Mon, 03 Mar 2025 07:00:23 -0800 (PST)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e485e03asm14985727f8f.95.2025.03.03.07.00.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 07:00:22 -0800 (PST)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Date: Mon, 03 Mar 2025 16:00:20 +0100
+Subject: [PATCH net] wifi: ath12k: properly set single_chip_mlo_supp to
+ true in ath12k_core_alloc()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR10MB5777:EE_|PH0PR10MB4503:EE_
-X-MS-Office365-Filtering-Correlation-Id: 054a844f-22af-403a-9a08-08dd5a64208e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?VYlCTv2LdewfSm2Q92CHq5uVUVTww9yiHypgubPFlL6AmHVweImMxMmBI6nl?=
- =?us-ascii?Q?/7vs4wElRE/9T8QO4bz6pexvivkF9Bfc8RZfTNVk94pmXYGucHYnOTjLHe8i?=
- =?us-ascii?Q?LZXjwsxK2hrWpxqEPKAqY8xp+ot96TEIBRULn6wYztkhlCLari21K0xE+dbr?=
- =?us-ascii?Q?prRGujcVgtus+texD0OXOhEJwdrVqIejg7UJXbdzvKRdOykGF2/TaRoQ+R6U?=
- =?us-ascii?Q?zX2tfnqlX0hhfg9Pk4ob4IpMXlQsqiDmZNHPRcNLWESHkNCwN/QC2ZI51Fjt?=
- =?us-ascii?Q?3oVc6C9KmIfT5WSxdqfwHgzZVQDQZ1DhvbVyDLysQ7PlaulSMWuAeeA6ebtv?=
- =?us-ascii?Q?61/E8OhoqJVK55PPyFswpT/OXfacMjeSt0loxNMrjyWHVI9T9uqqzKpAhvmV?=
- =?us-ascii?Q?LQQwm8pY8/Bt+Un/IaJq4BI8wLgkWFWZZx4obKs5UvzsMeXP1LV8Uh/V8/He?=
- =?us-ascii?Q?LTeG/3/wDJmIrnAVG0rcrhbCqJphew2TN9rRp1SZPARO8tkq9yN9TDs58SOQ?=
- =?us-ascii?Q?HOJ3H+QypBaL7jr37/hMXYM6ECQ0jLvUNmIIvtEyXG/JdDHa0i5Fks9Gmem2?=
- =?us-ascii?Q?65P7CVoc+bwBc8yhSRMfD0WERnbbNIWWOi9QKShu7yghtGmDclG2M3Mv6gl5?=
- =?us-ascii?Q?sx9QpBZG2A2kVVXvfgJfF4wrRLiXm62IKyUa2ghes4MmXCGG2i4zUA1eOKsT?=
- =?us-ascii?Q?H6GrOnnoOYiirjsKD9U6AV5+QuWKHn5wi33rcSnO9DtJ9frkALNQu7k41fEm?=
- =?us-ascii?Q?t5QDxjq5M6eJ8E4vub7OT5gmii7tUWAoUCK/ticYtrHzHQWp4Cw7xpmnNBjU?=
- =?us-ascii?Q?SdDOeN6O/FoAQUFC+6zxo8UaOb3fROciiH0o0D9ETBe/t9XfGQz9X88hFgCK?=
- =?us-ascii?Q?IyjM5+pN97ba6pRexmYkbAm4NpVZDrr2KgzLWiT92aODknXJ+zj7aMIrEB0g?=
- =?us-ascii?Q?vHscFC5s6pPw7EFs/dpMpftmuCRDSlzuPMTW63zJobeJUXkP3igcNJMUimnR?=
- =?us-ascii?Q?DRMBFpryXz4PEAB7WOUfY5+mzCRXb4N/elJPK4T/uMSA+hyQSCX1jXq8Wrtq?=
- =?us-ascii?Q?aL5V+zbELGiPBflUQCcVl+x4s3LYBMj+UqNe9vfccTzr0uoo2m1gTLwbw1In?=
- =?us-ascii?Q?IYUKlw7u0vzREXgyqNWDNag50Dt1NdYZMq0KbVlKP0YWzmGs7lR97t1NNLIX?=
- =?us-ascii?Q?CqaThewUzJzX4e+HGdAlNZIwRWDQMgsdx1USNigq3ISzcqB2VynQMSCSsLiD?=
- =?us-ascii?Q?6+XWtTp3A4vMA7TPTSIMtOku6QZninGy6HfT0hFv63hO4f50/svK8wedjWaG?=
- =?us-ascii?Q?4FUSchg4slC8HfY+LfFnA4KosLlMZ0seuhjqPLfqOhV9jxZlkWErGzTmOlyg?=
- =?us-ascii?Q?HykbUZE/jggtzDGhrOZub7PeYskn?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5777.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?5sf4ndf9pYEV7E4EQhbTUoPQHTbwrVbYwsKbpnE1VK6VnAKKj4RMjbsJ5s/7?=
- =?us-ascii?Q?KcnusK0p4akrTfMEzNLVeV+7xG6ca1sbVAvncwFEXUGziYFlUbS1amrVfy51?=
- =?us-ascii?Q?7TEFyaO8z3qcGtb6uvb/dfTGGGbzWfag/iyk+Yja8XQqPXhetJfCuObgJb42?=
- =?us-ascii?Q?AXHiIdUmsZ/jNhWauBk9gIDHtF/uyirIK1Ruwr12hTVTzkWSwSkOd4a5tIo0?=
- =?us-ascii?Q?WRtYe7U8OdbAWdyomEDUlvOeOnloAfSSKKAZ7sITx7h9rPqdn49e3PZMn3qI?=
- =?us-ascii?Q?SfAvlPsrxnHctwOevQJiiJ5LxHoOOW3a3cZalbHgXeK7K+U6zp2VrskWpL0K?=
- =?us-ascii?Q?UcGyC8ZHxvuK4E7AH5p67/GZ/KePM4g1hzLif3+mxjkkuUHjW7u0/JT3MieA?=
- =?us-ascii?Q?cIhf9L+bPe3JTX9Yu7uwiuhjOhJgCyGxmiovwNPSRBWCIkl0yFUWX4fSO1Sl?=
- =?us-ascii?Q?Ad14UHmu8jixLTK1lk9Az0K30/XMob+TIS9NTDYGeU+lfhD+QazCTkkgjdTg?=
- =?us-ascii?Q?Y7wF681MwwaSPZtf5p37s5NZTNWe3InN4Z3gazaiqgUKkinlsjnQF851P2a8?=
- =?us-ascii?Q?wYTM9IArXF6RulgSglpBAvSyqlnTZnzoZkANNfLEZxpgrNTx6cF5xpzXZLZA?=
- =?us-ascii?Q?KE6HAdUnXjoHnVZg2vY9bi9MHGgasFfbcT0ndIRpPghhu4kBnO/MdC12MQ0G?=
- =?us-ascii?Q?v5GH33Yq9VtjqlL0Ua/2OC6+15fQLvN314kLKcmS2E5rBwF+pn9KgZzMXGme?=
- =?us-ascii?Q?AdZ/VVxooEKliIYLItRfdnR+CDL6oNPQUImiXDGgg+KaP9z6/DcS7jhTYaK5?=
- =?us-ascii?Q?0Wym5EjdNNiYe8ZZVZ2JtZk76SkjSmIzJfGr/74gE+NowQmEXwWubAd1Fco1?=
- =?us-ascii?Q?PKHMozBpubaOigZWWt1gTqkSH81jpP4mJe8tjubF0ydHaHpOpKtlxp0HZ0r8?=
- =?us-ascii?Q?h8rqBqh2o0Pq3aAkajmxXcGJNhja3X601PuLqoTKqXtyveSJiB5mvYUm8yyr?=
- =?us-ascii?Q?3ZvvLHx4FtKRjILHGJwBMI/WZqm/coGLPyP/CMs+ewv/2qxY9MJEVIs+xLni?=
- =?us-ascii?Q?l/xmjqKaFOHMzcd7pDhOKC9s6YNBux1YzEF8ybrntApuDGdNT6pHCOofobbI?=
- =?us-ascii?Q?mWVgsyRwieEm64Qyg+wyTj7d9qMsu2Cgq7gnGOZidK96OynH+TetoUFse/0X?=
- =?us-ascii?Q?ySq5EZo41Aua+/HOE26mKadbBchqQdoLPTACPaajwWhtahYnHZ5r5GXIT61g?=
- =?us-ascii?Q?Ug6HgZ5hnVOPDaoxDu9vtrIhu3/e5C26qBocylNNzZM9pkvMeLcnkCW6wNMd?=
- =?us-ascii?Q?+VQiDbiGDHZGxwIpkZ3yJfmk/Ihy6OOp0KNyP6tABXjTDtJUEHCQKXTHY46q?=
- =?us-ascii?Q?tkKG9Bo3hUAwj5GrOFSVlN+FsRefSSqFpPhz+O28QMF9XcgaND6/NuydS7ZK?=
- =?us-ascii?Q?ms+NVuFhxnwWKuC1wLAQQWkSX8ts6kEDuQ4JoNnyS3bK47OLv7oI4DbBqh/C?=
- =?us-ascii?Q?1GgXpBXZh/vYKzGK+Ln6bmR+3KI3WXz6Yobi1rLE56NoLpOBi7dvh1+qH1Er?=
- =?us-ascii?Q?NV/OymFh3Uzu031UIAxBp/zWzpRYnWIGGIvXO5Tr?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	P2kIj3GNU8b27q91KP0mSmf1un0tvs7vQ2sSqqbSTRIy2vWb5NTgCKAIQrHCp6hM0U0kyo6WdPr9XSwBaWY9nwloqjseoG4IhcoYZ5uDpBiLFHpB0iFqAE9+1X/cbkZ/I3bu+q/BfH/v6mCDD4hovPu0OAHbaiyahDBTVuLpQOJ5GySKDTXsg+NOVcfO0+bMJZ84Hmlu6nG47lFl5qc4gwbMMUe8aTQjFlmN51g8sLKYWp6Cz3AnsnfJxzo5Xbv/PaZZ3MESKnFrQzyJRDh9kxd9i8K3x4N2ljEqra7P1jiGTO/2IHSex9gZRdsTVKFYyz61nYVEZw6WN/QRTdZ8TEcA2Zq43PQqb0DXsD7Nuisap/fVCsy9lBIuIocHIojLRstDqEuL1AWxpLK9yzNx6Ld/L0Z4/bNZ8xeViV8XbeWmq2GHfDwfgPOW/wjvHMnFvry/b0Oau7JCgMCPW2P7E6Qquy0lSB6n/cpfoubZhtCA7+ys4m0sCb4fQQwyWGkf9IgLaUrAwZLc/SxUV9EBPqWdya3upzXQi31dGOxmPGKxzBVKDfKNiUbM9+frt/zEx7ygqJTbe9zvym9nYRpvISnEVNlLJe1hzxSJmUuP0mI=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 054a844f-22af-403a-9a08-08dd5a64208e
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5777.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2025 15:00:26.6096
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5bP8LSQrhZjdFeQXpNEHSO3FmokjSaSM5oAsxEf/0yjOVZ7ViPsg5Kd2SuLt8m1dZvxfC31/wF+N14f5rUbBwA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB4503
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-03_07,2025-03-03_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 adultscore=0 bulkscore=0
- mlxlogscore=999 malwarescore=0 spamscore=0 phishscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502100000
- definitions=main-2503030115
-X-Proofpoint-GUID: IlnzvQBgGWw8xwlE5J5FkHpIkIJZw2gN
-X-Proofpoint-ORIG-GUID: IlnzvQBgGWw8xwlE5J5FkHpIkIJZw2gN
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250303-topic-ath12k-fix-crash-v1-1-f871d4e4d968@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAAPExWcC/x2MWwqAIBAArxL73YKPDOwq0YfYlkugoRJBdPekz
+ 2GYeaBQZiowdQ9kurhwig1k34EPLu6EvDYGJZQRWmis6WSPrgapDtz4Rp9dCThYssIYP0onocV
+ npib/8QyRKizv+wEmJKefbQAAAA==
+X-Change-ID: 20250303-topic-ath12k-fix-crash-49e9055c61a1
+To: Johannes Berg <johannes@sipsolutions.net>, 
+ Jeff Johnson <jjohnson@kernel.org>, 
+ Aditya Kumar Singh <quic_adisi@quicinc.com>, Kalle Valo <kvalo@kernel.org>
+Cc: Jeff Johnson <jeff.johnson@oss.qualcomm.com>, 
+ linux-wireless@vger.kernel.org, ath12k@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3032;
+ i=neil.armstrong@linaro.org; h=from:subject:message-id;
+ bh=YYeGUb3k93KBXD4drA2C9f+vdF4GK7YW6npk41CFHg4=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBnxcQGiac9YMG/uxNSPYupMemIH+BO2QczD7l4HE93
+ pmHw18GJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZ8XEBgAKCRB33NvayMhJ0Z8gD/
+ oCcwjPhgqu+IULIv7xd9PpGqkN/jqJgGafyQmUriQbfj7JnoGNj2DO86DHIKhjb/1vi0+6LC0imcBd
+ /EtuQk9MZWgAfqYQYEOCbPVk9UtJnpG5C6osAjU6j73F90p5bF0MZkvU3asA8H6Gps5tNXqpwumVGG
+ OV4cXFWX/20HZ4w/T+WZLWh5dJsJ7YFvrigU0x10VtEoz5eIGkS7rcznvKdOARlksoxr/WMQNI9CLc
+ gDNltzB1STfhE5y0EnBbfhEs58cHcK1QOrx2IUits+JgXmmRiDmgtplYoMzxz78lDyrMZOpl2aFpfZ
+ 0TxpPa270xeoyFBppIdyJcoxw9H/T3SuvoPrZbIO2o1XUBmVhUjzapQTiNzHfgkkuc3TKDr3f9vkNq
+ wzQIEhMh9+Avtsx7dH/9Ml5zPFRHYJmFe8dZo4XlgNyWvZlO+QbqRyT3yIj+Z9tGONDZX6HpuWNivJ
+ +ndvDl/MFsLEcxsyqs4m3eVpyIt3yoNn2mDUNm7qRn2JGuJmqlymvihHGZB4MJ330YYmY/3cgXy/Te
+ Z6U4C27bdtZRgyAZvtoKZnvs0rb4fDXK39kq8b2M4YWry/N4+aHTo8UoO/o5+e6rDQVzJfqAeA4iW3
+ bDivOa6LJ3bzuntyU+fEf+bDWUWLU+1v+K+lxjQ+mTzfq6uavdLN5BB9r6tQ==
+X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
+ fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
-* jeffxu@chromium.org <jeffxu@chromium.org> [250303 00:09]:
-> From: Jeff Xu <jeffxu@chromium.org>
-> 
-> Add code to detect if the vdso is memory sealed, skip the test
-> if it is.
-> 
-> Signed-off-by: Jeff Xu <jeffxu@chromium.org>
-> Reviewed-by: Kees Cook <kees@kernel.org>
-> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+In commit 46d16f7e1d14 ("wifi: ath12k: rename mlo_capable_flags to single_chip_mlo_supp")
+the line:
+	ab->mlo_capable_flags = ATH12K_INTRA_DEVICE_MLO_SUPPORT;
+was incorrectly updated to:
+	ab->single_chip_mlo_supp = false;
+leading to always disabling INTRA_DEVICE_MLO even if the device supports it.
 
-Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+The firmware "WLAN.HMT.1.1.c5-00156-QCAHMTSWPL_V1.0_V2.0_SILICONZ-1"
+crashes on driver initialization with:
+ ath12k_pci 0000:01:00.0: chip_id 0x2 chip_family 0x4 board_id 0x3d soc_id 0x40170200
+ ath12k_pci 0000:01:00.0: fw_version 0x110f009c fw_build_timestamp 2024-05-30 11:35 fw_build_id QC_IMAGE_VERSION_STRING=WLAN.HMT.1.1.c5-00156-QCAHMTSWPL_V1.0_V2.0_SILICONZ-1
+ ath12k_pci 0000:01:00.0: ignore reset dev flags 0x200
+ ath12k_pci 0000:01:00.0: failed to receive wmi unified ready event: -110
+ ath12k_pci 0000:01:00.0: failed to start core: -110
+ failed to send QMI message
+ ath12k_pci 0000:01:00.0: qmi failed to send mode request, mode: 4, err = -5
+ ath12k_pci 0000:01:00.0: qmi failed to send wlan mode off
 
+With ab->single_chip_mlo_supp set to True, firmware loads nominally.
 
-> ---
->  .../testing/selftests/x86/test_mremap_vdso.c  | 43 +++++++++++++++++++
->  1 file changed, 43 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/x86/test_mremap_vdso.c b/tools/testing/selftests/x86/test_mremap_vdso.c
-> index d53959e03593..94bee6e0c813 100644
-> --- a/tools/testing/selftests/x86/test_mremap_vdso.c
-> +++ b/tools/testing/selftests/x86/test_mremap_vdso.c
-> @@ -14,6 +14,7 @@
->  #include <errno.h>
->  #include <unistd.h>
->  #include <string.h>
-> +#include <stdbool.h>
->  
->  #include <sys/mman.h>
->  #include <sys/auxv.h>
-> @@ -55,13 +56,55 @@ static int try_to_remap(void *vdso_addr, unsigned long size)
->  
->  }
->  
-> +#define VDSO_NAME "[vdso]"
-> +#define VMFLAGS "VmFlags:"
-> +#define MSEAL_FLAGS "sl"
-> +#define MAX_LINE_LEN 512
-> +
-> +bool vdso_sealed(FILE *maps)
-> +{
-> +	char line[MAX_LINE_LEN];
-> +	bool has_vdso = false;
-> +
-> +	while (fgets(line, sizeof(line), maps)) {
-> +		if (strstr(line, VDSO_NAME))
-> +			has_vdso = true;
-> +
-> +		if (has_vdso && !strncmp(line, VMFLAGS, strlen(VMFLAGS))) {
-> +			if (strstr(line, MSEAL_FLAGS))
-> +				return true;
-> +
-> +			return false;
-> +		}
-> +	}
-> +
-> +	return false;
-> +}
-> +
->  int main(int argc, char **argv, char **envp)
->  {
->  	pid_t child;
-> +	FILE *maps;
->  
->  	ksft_print_header();
->  	ksft_set_plan(1);
->  
-> +	maps = fopen("/proc/self/smaps", "r");
-> +	if (!maps) {
-> +		ksft_test_result_skip(
-> +			"Could not open /proc/self/smaps, errno=%d\n",
-> +			 errno);
-> +
-> +		return 0;
-> +	}
-> +
-> +	if (vdso_sealed(maps)) {
-> +		ksft_test_result_skip("vdso is sealed\n");
-> +		return 0;
-> +	}
-> +
-> +	fclose(maps);
-> +
->  	child = fork();
->  	if (child == -1)
->  		ksft_exit_fail_msg("failed to fork (%d): %m\n", errno);
-> -- 
-> 2.48.1.711.g2feabab25a-goog
-> 
+Fixes: 46d16f7e1d14 ("wifi: ath12k: rename mlo_capable_flags to single_chip_mlo_supp")
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+---
+Bisect log for reference:
+The bisect leaded to:
+git bisect start 'v6.14-rc4' 'v6.12'
+git bisect good 5757b31666277e2b177b406e48878dc48d587a46
+git bisect bad d78794d4f4dbeac0a39e15d2fbc8e917741b5b7c
+git bisect bad cf33d96f50903214226b379b3f10d1f262dae018
+git bisect good 12e070eb6964b341b41677fd260af5a305316a1f
+git bisect bad 6917d207b469ee81e6dc7f8ccca29c234a16916d
+git bisect good 4fefbc66dfb356145633e571475be2459d73ce16
+git bisect bad a6ac667467b642c94928c24ac2eb40d20110983c
+git bisect bad b05d30c2b6df7e2172b18bf1baee9b202f9c6b53
+git bisect good 56dcbf0b520796e26b2bbe5686bdd305ad924954
+git bisect bad d302ac65ac938516487f57ae20f11e9cf6327606
+git bisect good 8c2143702d0719a0357600bca0236900781ffc78
+git bisect good a5686ae820fa7ab03226a3b0ff529720b7bac599
+git bisect bad 6f245ea0ec6c29b90c8fa4fdf6e178c646125d7e
+git bisect bad 46d16f7e1d1413ad7ff99c1334d8874623717745
+---
+ drivers/net/wireless/ath/ath12k/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/ath/ath12k/core.c b/drivers/net/wireless/ath/ath12k/core.c
+index 0606116d6b9c491b6ede401b2e1aedfb619339a8..33aba5fceec946fad5a47a11a4d86b7be96e682e 100644
+--- a/drivers/net/wireless/ath/ath12k/core.c
++++ b/drivers/net/wireless/ath/ath12k/core.c
+@@ -1927,7 +1927,7 @@ struct ath12k_base *ath12k_core_alloc(struct device *dev, size_t priv_size,
+ 	ab->dev = dev;
+ 	ab->hif.bus = bus;
+ 	ab->qmi.num_radios = U8_MAX;
+-	ab->single_chip_mlo_supp = false;
++	ab->single_chip_mlo_supp = true;
+ 
+ 	/* Device index used to identify the devices in a group.
+ 	 *
+
+---
+base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
+change-id: 20250303-topic-ath12k-fix-crash-49e9055c61a1
+
+Best regards,
+-- 
+Neil Armstrong <neil.armstrong@linaro.org>
+
 
