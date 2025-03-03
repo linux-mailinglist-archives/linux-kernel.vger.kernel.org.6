@@ -1,102 +1,141 @@
-Return-Path: <linux-kernel+bounces-545303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0917FA4ED09
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:16:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 77B0EA4ECD3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:08:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B0EC8E4DFA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:21:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 254D688630F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:24:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4353527C173;
-	Tue,  4 Mar 2025 18:08:54 +0000 (UTC)
-Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EC9628D04B;
+	Tue,  4 Mar 2025 18:14:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fp6Gy2cF"
+Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F7027934D
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.115
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDEBC2620DE
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:14:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.116
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741111733; cv=fail; b=tGV+5CU3fA+yhhlUoq87c/ywuOCnN+DdEyttvefCVCxmaAxhvDQVa/ALSqLOzkvV9QCfkHxcOm6URv8coDfDdCmbBsUykgJ8ZD2CwswLEEctzHC2FfmqmOL9CHWKIJmSkagKSMUqqyd7hgZXIcOaw/XyoCr9c/TGccSj2BE9y0s=
+	t=1741112063; cv=pass; b=YEyrHm9G4bvTFE5WiriZBDK2s3dRq1EefbLFxlH5IJ5cr4KTuMptYNTrViaq87t4ms1vHQYQLoAWyMH2QeSAPzitOS0YM5vNgi/HaIM2JGq0XgGiRWDiVND8wA6RZCVJBVHgB/iIE2A4idkgYtzA0OW1ALqWjBME5lhPpz4TWjo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741111733; c=relaxed/simple;
-	bh=wC9HWmYIzB+kX2sw7BmI58mfXcQr18/PeLK3ERpLnkc=;
+	s=arc-20240116; t=1741112063; c=relaxed/simple;
+	bh=5p1AURD+UTpH0MuSs+nx8i5sv3QPuK1m1t4ImSSfX9o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z347aan5IQBGdtq0mdyxZvKyQ3KKg5dgZSTUKrhB8E+DTzAdbxCkjPKICHw7JTcDmJAu3phFZuGJkecR8HQksqHctFL0rK4FftJJ8AchJJ7Yqay7zJ+oImRDSvhgPLGH37tYTLEB9Xw1/h3FZTcPgAQIJSZV+hJqHyMvJn+cXHc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=cc.itu.edu.tr; arc=none smtp.client-ip=217.140.110.172; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=fail smtp.client-ip=160.75.25.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=bIPxQM9efV24GlQ1oO+c3030LPLtWF+QOzxDGvFCFuMXLXrPU3VMg5enA4goe3KkZQ6PI8mbFw6v0HEKW5E/vL4nPn3qetPf+W7hQze55uwRvfwhloSdQ7CXog64G25V/cuqM3kC02jUAQ73KsR53WZ9m727HlMkWvSKwBqbZ3A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fp6Gy2cF; arc=none smtp.client-ip=192.198.163.11; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; arc=pass smtp.client-ip=160.75.25.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 6978D408B64F
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 21:08:50 +0300 (+03)
+	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id F3C7A4089195
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 21:14:19 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
+Authentication-Results: lesvatest1.cc.itu.edu.tr;
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=fp6Gy2cF
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dD95BZMzFwVw
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:22:01 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6d9p4tChzFwDv
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:19:58 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 3614042743; Tue,  4 Mar 2025 17:21:44 +0300 (+03)
-X-Envelope-From: <linux-kernel+bounces-541639-bozkiru=itu.edu.tr@vger.kernel.org>
+	id 92C254272A; Tue,  4 Mar 2025 17:19:43 +0300 (+03)
+Authentication-Results: lesva1.cc.itu.edu.tr;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fp6Gy2cF
+X-Envelope-From: <linux-kernel+bounces-541657-bozkiru=itu.edu.tr@vger.kernel.org>
+Authentication-Results: lesva2.cc.itu.edu.tr;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fp6Gy2cF
 Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id 0A8C842293
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:57:37 +0300 (+03)
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id 8FA672DCE0
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:57:37 +0300 (+03)
+	by le2 (Postfix) with ESMTP id 0751842607
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 15:00:07 +0300 (+03)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by fgw2.itu.edu.tr (Postfix) with SMTP id D226F2DCDE
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 15:00:07 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE4283B9C38
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:52:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33755188556A
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:59:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8078320CCFF;
-	Mon,  3 Mar 2025 11:52:54 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 732781F76D3
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 11:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D12F20E009;
+	Mon,  3 Mar 2025 11:59:18 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1017120CCDF;
+	Mon,  3 Mar 2025 11:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741002772; cv=none; b=h8XG36zNwh/8yIqAzDmzih4gIM20zP14uW03hCrCDfBhQmPBnOpANKoTVL5l8TfmZwPnvZ6BSyT4MKS2LbByIIBvHnUXvHjB2ApMLSN89ypoHv0KPzds03c0/il/pYufBHbXaTMT87g2vb7bLk3vWcuLdS7jKyj4UZpGNCcQ+n8=
+	t=1741003155; cv=none; b=BU4bdCH6015rS6bDPDuN6K7I3xOaV4pZU/w4xa/ox5WxGXoKXPafrX5yBh+9jbE9JPqz1b4eoJVYq9xMOm8Er0tVC9t2mfrZChEfmmlY4JqQuCZJcJu9nBxAIu8g0oqJ8A0uCgk0xuPcAf14QxvsJJ3ZWuuJKdhGkf0Q+JdGZ6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741002772; c=relaxed/simple;
-	bh=sqO8TTi8YCCKMd24QARZVRmS0Th7BbKY8hwsVm8FmCk=;
+	s=arc-20240116; t=1741003155; c=relaxed/simple;
+	bh=5p1AURD+UTpH0MuSs+nx8i5sv3QPuK1m1t4ImSSfX9o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iIu0pP0tSAuEiAOdcBX5S+/XRY6G9wbfdxza++e5MedDPippUYQ5qG6bE4YLFYgOMwUvTbvTZ+dElWjkqLdxU7fPOn3sk90vyHcC+CcBGPb0w0rrbmSKCG2BzDG6xqclHYUn8NRqROxl9x7y282vkDYpnWLPnqwlVz/X9na+xDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B7E97106F;
-	Mon,  3 Mar 2025 03:53:04 -0800 (PST)
-Received: from e133081.arm.com (unknown [10.57.37.136])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 220D43F673;
-	Mon,  3 Mar 2025 03:52:46 -0800 (PST)
-Date: Mon, 3 Mar 2025 11:52:44 +0000
-From: =?utf-8?Q?Miko=C5=82aj?= Lenczewski <miko.lenczewski@arm.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: ryan.roberts@arm.com, suzuki.poulose@arm.com,
-	yang@os.amperecomputing.com, catalin.marinas@arm.com,
-	will@kernel.org, joro@8bytes.org, jean-philippe@linaro.org,
-	mark.rutland@arm.com, joey.gouly@arm.com, oliver.upton@linux.dev,
-	james.morse@arm.com, broonie@kernel.org, maz@kernel.org,
-	akpm@linux-foundation.org, jgg@ziepe.ca, nicolinc@nvidia.com,
-	mshavit@google.com, jsnitsel@redhat.com, smostafa@google.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev
-Subject: Re: [PATCH v2 3/4] arm64/mm: Elide tlbi in contpte_convert() under
- BBML2
-Message-ID: <20250303115244.GB74129@e133081.arm.com>
-References: <20250228182403.6269-2-miko.lenczewski@arm.com>
- <20250228182403.6269-5-miko.lenczewski@arm.com>
- <f270bb5d-aa54-45d3-89ed-2b757ab3a4b0@redhat.com>
- <20250303094947.GB13345@e133081.arm.com>
- <7e987f17-ffcb-45e0-8588-2d569d90f776@redhat.com>
- <20250303105539.GA74129@e133081.arm.com>
- <0ff27dbb-401b-4793-be70-1ff9c8010e4a@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KPwOECRE/dqJjgAnEaOOBJDvG2JC4fuKO4USLmJUOLmJ8fMx4OmuuAwXgCBL50MimKThvPo/ufp6YnMb79V4ZuO1qIy+6WnUX2qzrdqnmkvixVu60OeKw4mxb+6U9PZULmk3zGChFrB42UuxtqdqcSzJOeDdh1LOO/PkXo/B+I4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fp6Gy2cF; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741003154; x=1772539154;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=5p1AURD+UTpH0MuSs+nx8i5sv3QPuK1m1t4ImSSfX9o=;
+  b=fp6Gy2cF+ftPMmUDX7SOW/Mgbf1UeLHgGdDQ1cqYfrBZUSu8dD/PRYaR
+   qEATzMNcXWBoPB9jXz6A8+349jdaANpeAiKee0BLmgHycMMBbJhO47FbF
+   rZokKBD9SSNw7YHlF+Za3NQICGV11I91Vm9I1vjCDrvLRqouj6IjCY01u
+   CvqrvuX7/wtcYbp2T96KkYPyuxJm7D1G5pwyL5JzWi9RGpa2YuffLWlGP
+   t0qGl3Mr2hDtJmc5YjKDcRNH1kWgUq3nCYSxyXIZfaNI0lq3kzWmZPHhy
+   eYIgDUYPDMtc8hGen+EBduIB8HJcLvKZslwtRBzoF6q2CT2CQbBNNEWo2
+   w==;
+X-CSE-ConnectionGUID: gYUSQYgaRTeXtUlmMdBIQw==
+X-CSE-MsgGUID: 7060SEbgQVOnzp3/4hrIJQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="52517867"
+X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
+   d="scan'208";a="52517867"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 03:59:13 -0800
+X-CSE-ConnectionGUID: W4pEz0p8RfekLboXWPyH1g==
+X-CSE-MsgGUID: WJ9zNmVDTK2jXZzOepEyhw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
+   d="scan'208";a="117735957"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 03:59:08 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tp4Rs-0000000GnyE-0bOy;
+	Mon, 03 Mar 2025 13:59:04 +0200
+Date: Mon, 3 Mar 2025 13:59:03 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Claudiu Manoil <claudiu.manoil@nxp.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v5 02/10] property: Add functions to count named child
+ nodes
+Message-ID: <Z8WZh5EzFqxvU5rb@smile.fi.intel.com>
+References: <cover.1740993491.git.mazziesaccount@gmail.com>
+ <5e35f44db2b4ed43f75c4c53fd0576df9ad24ab2.1740993491.git.mazziesaccount@gmail.com>
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -104,54 +143,82 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0ff27dbb-401b-4793-be70-1ff9c8010e4a@redhat.com>
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <5e35f44db2b4ed43f75c4c53fd0576df9ad24ab2.1740993491.git.mazziesaccount@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6dD95BZMzFwVw
+X-ITU-Libra-ESVA-ID: 4Z6d9p4tChzFwDv
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741716431.47518@srL0wzd/2WhggMW0ECFwEA
+X-ITU-Libra-ESVA-Watermark: 1741716761.08396@ZA0ES9L1r98g41K2N9fVRw
 X-ITU-MailScanner-SpamCheck: not spam
 
-> > I think I understand what you mean. I agree that it is possible for a
-> > concurrent walk to see an invalid TLBI state, if it is on the same TL=
-B
-> > that the repaint is happening on. For other TLBs, the flush has not y=
-et
-> > propagated our invalidated PTEs (from `__ptep_get_and_clear()`) thoug=
-h?
->=20
-> What I am saying is: if there is no TLB entry yet, HW will walk the pag=
-e
-> table to find no present PTE and trigger a fault.
+On Mon, Mar 03, 2025 at 01:31:45PM +0200, Matti Vaittinen wrote:
+> There are some use-cases where child nodes with a specific name need to
+> be parsed. In a few cases the data from the found nodes is added to an
+> array which is allocated based on the number of found nodes. One example
+> of such use is the IIO subsystem's ADC channel nodes, where the relevant
+> nodes are named as channel[@N].
+> 
+> Add a helpers for counting device's sub-nodes with certain name instead
+> of open-coding this in every user.
 
-Yes, that is 100% correct. I believe that this is unavoidable.
+...
 
-> > That invalidation will only be seen by other TLBs after the
-> > `__flush_tlb_range()`, so we should save a few faults because only
-> > "local" threads will ever see the invalid entry, as opposed to all
-> > threads that try to read our modified range?
->=20
-> So what you say is, that deferring the flush means that if there is alr=
-eady
-> a TLB entry, flushing deferred reduces the likelihood that a page table=
- walk
-> is triggered that could find no present PTE: consequently, reducing the
-> likelihood that a page fault is triggered.
->=20
-> (I use the word likelihood, because I assume other action could result =
-in a
-> TLB entry getting flushed in the meantime, such as TLB entry reuse)
->=20
-> Correct?
+> +unsigned int fwnode_get_child_node_count_named(const struct fwnode_handle *fwnode,
+> +					       const char *name)
+> +{
+> +	struct fwnode_handle *child;
+> +	unsigned int count = 0;
 
-Yes, and your language here is clearer than the original commit message
-(and cover letter). Will amend it to be closer to your wording.
+> +	fwnode_for_each_child_node(fwnode, child)
+> +		if (fwnode_name_eq(child, name))
 
---=20
-Kind regards,
-Miko=C5=82aj Lenczewski
+I would expect this to be a separate macro
+
+	fwnode_for_each_named_child_node()
+
+(and its device variant) that gives us more consistent approach.
+
+> +			count++;
+
+And the above looks like missing {}, which won't be needed with the other
+suggestion in place.
+
+> +	return count;
+> +}
+
+> +	if (!fwnode)
+> +		return -EINVAL;
+> +
+> +	if (IS_ERR(fwnode))
+> +		return PTR_ERR(fwnode);
+
+I expect that this will return 0 or number of nodes. Why do we need an error code?
+If it's really required, it should be in the fwnode API above.
+
+Also do we care about secondary fwnodes?
+
+> +	return fwnode_get_child_node_count_named(fwnode, name);
+> +}
+
+...
+
+> +unsigned int fwnode_get_child_node_count_named(const struct fwnode_handle *fwnode,
+> +					       const char *name);
+
+To me the following name sounds better: fwnode_get_named_child_node_count().
+
+> +unsigned int device_get_child_node_count_named(const struct device *dev,
+> +					       const char *name);
+
+In the similar way.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
 
