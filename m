@@ -1,473 +1,324 @@
-Return-Path: <linux-kernel+bounces-541795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 575DCA4C1BE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:22:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B6C0A4C19A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:19:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFB43189338E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:22:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A61F7188CC0F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:19:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB30C214A93;
-	Mon,  3 Mar 2025 13:18:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 866C3212F83;
+	Mon,  3 Mar 2025 13:18:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="NbLTLPSf"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b="V2VWHjdH"
+Received: from smtp15.bhosted.nl (smtp15.bhosted.nl [94.124.121.26])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1016214A70
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 13:18:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E4F120F093
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 13:18:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.124.121.26
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741007934; cv=none; b=fj5CeuD1CAgGmefzefE1V6xBsmIgawe/caqCaO9fAJ9OVkp22SsjECHyFPF2g+DsNpTtG0BucqyPGeowp6UU/VnUuK9+K2p9C1LEeAYccVjrhJlP6cVU8x8U5GUvXJyzL8D9Bl2b07mBl41xVQuLPLG6vaFqQDpddMcsgzRMz5M=
+	t=1741007923; cv=none; b=fKuBsotT/r/oTKUFj/dRXPtxU+rpDz1sXecsgbthSSum4WnvtaweEnsiRiNBKsJ7MT4jTCi9LGYyxnKRLhoj3halOojX/8Qnk+hopDxobi+qd6rJeim4gsdbOxOP8Pkb/nQ1obZe0V200wcs+TTJB+6P5L1xEXI/imZXnNzY2GA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741007934; c=relaxed/simple;
-	bh=vlo1sOpINhYxlANjGKB2TZCc7AQtX8YGKke1Q97h0SI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HbmF3oKq6P+C/ApUoWBLPyd3/6uJO9aNQe7GSTzkMHTF35ENILSm3D54Poseio7PCMwQEWxGkBUbN/ZBXbjxFrDVuHBjXm5TpcavoQp1WK1JCPxX3VNxPoAk87DHmWnYOXrQHe6f9FABUm+cy9sJo/wbPsdNqR/8clVWAAB7050=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=NbLTLPSf; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43bbb440520so11702655e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 05:18:52 -0800 (PST)
+	s=arc-20240116; t=1741007923; c=relaxed/simple;
+	bh=AMDQ9eFx0aMl37aNjAdud2rQll+8S9hW7w2yT459u9w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Q7ywlUY++JYkYwDOiJ6lnVZaFRwVQK5h6Mr/TGzRn0DBWxwKy3EBYMmQiYtcQBfyEgANCtFB/ZfJ7SQOJZ0mG6+WkiQ1C1BOiS7uMsOLYAWKIW/t+sfjbkOULDLcVxXSjWkFd+l4D85juZwALB3+IfKbDBCyNQLXKVRqqWczII4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl; spf=pass smtp.mailfrom=protonic.nl; dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b=V2VWHjdH; arc=none smtp.client-ip=94.124.121.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonic.nl
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1741007931; x=1741612731; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lfos9Syg08SqOn+//RWYzG2n1+EfVqjsyXohmBPCw+w=;
-        b=NbLTLPSfsZw69VITbK91w98F7jLMKxNfPwJ4DPzT4Old3sMPOSPCztmr5KZ5R4+9No
-         9MOkrBbyOkLWQQLBT938GX6x70o9XouCO25ew7nbLA1iY3Z/ISLvNYcSRw/55xXalAaN
-         8IDM4pPS3pQb4NaWPRP0SW6mmbzGU+JcyX6Xy1EkFAZqaZATm1LpgIMZV/e9Qm9M5ODS
-         PvxjUBviaUjFO3yYA39z2QzlAPz6Eo0/v6ViNVZQ2FQVt7RslQiNK+lM766KvjqlN3gG
-         UYeqpvsLzaFITEZUXXjnNMcsPGxTS3fwaOu+43dnQJpf6o9vlrvlWUfvqBirrVLl5vGs
-         Lg8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741007931; x=1741612731;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lfos9Syg08SqOn+//RWYzG2n1+EfVqjsyXohmBPCw+w=;
-        b=BNcCOYyL4o7Uz4+8BnGNFqinv8SIcuaUkHe3RP9kD4+qFr8Dt6Gfe1DmMq7T1nZCpy
-         yooCA2R/igQ+g59xVGsLtdvDNbBYmEyRtV2bDxOHHBbdxnEiKAomdRE8XWC6R+leouY1
-         bcqb8P9tCiAvTyqgfG76Z7nCvg+z9vRdD4U5zJA1BVCXeTAmmj6RkqX1Uv85o+fxOpEr
-         enAr7hlvEDXa7h1C1MR5rd7w2Q9MI+KHURT1SRyWSEM/BZfV1/9XdOjq0OHMfjFHDuFi
-         UqUjTkfIZhJol30VHsuZCCT9w52HtV2cS8kkz8tJ/a9cDQlcHS3KBnZ3q88eqEOZljUZ
-         NklQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV+z1UfC9hOtRK1nsJXGsT1W/fGz+jIF6pGo4yjah825UF1M0JKojn/wXpa99HMwIZi3Ewtpnv2f223f/Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPMZ4uyM+c1375FCrrOgUSrq8IjXLERwYaZ3UVr37Cae1v3AxS
-	zPyV6oi/HbU6mbpa3F/CIUJFgUDL6U+kCGVwnZtpgx+Gbr38yieEQlYwAh7OLv8=
-X-Gm-Gg: ASbGncvejNFj42CILpiNzBgGDRYXx6p65TsPWSLZLgNYmEl534WyfDEtbLQqVu/Lfct
-	Hu8fRM1fBkC9p/Ff9jO2uKxyLThRMYQLy6oTlZnoeTDh7ljQWOrCxCfx4pJxcSbRuUVtp6+KtoA
-	6lTW3oD3aS3dg/5dVtFAv5Wlr9yn4A41WU4gTbzSbYTyazNBdh1qy87PLuI+ZvhjITQDegoHklP
-	XHL4FjY6GIkJOfE6JN891u/AnLa8A945LpMF66o+72IEtXf2ZU50MUuk99xOolw/Yq5LLZbbk/j
-	M93Kg1GVQKZ2XDlsKiCKTB4juGx1W1IRbd+1Bw==
-X-Google-Smtp-Source: AGHT+IHXK2frQu5mm5st7OG50mDUgW+ZqOAgaKWtdnfNsGdx2IIR5+MeX+T68WRmGU9N2Zhz+vD07w==
-X-Received: by 2002:a05:600c:45cc:b0:439:9ee1:86bf with SMTP id 5b1f17b1804b1-43ba7c9b8e2mr134577995e9.7.1741007931114;
-        Mon, 03 Mar 2025 05:18:51 -0800 (PST)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:664a:9e92:6aa8:6007])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba538b9fsm194821915e9.17.2025.03.03.05.18.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 05:18:50 -0800 (PST)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 03 Mar 2025 14:18:37 +0100
-Subject: [PATCH 12/15] gpio: aspeed: use lock guards
+	d=protonic.nl; s=202111;
+	h=content-transfer-encoding:content-type:mime-version:references:in-reply-to:
+	 message-id:subject:cc:to:from:date:from;
+	bh=07jHBQ0Ocr20eMkBHU7wCv3Kb+u8M2gSl1jHl4Krjyw=;
+	b=V2VWHjdH50wFOAzqiqTCz4ucfQSAqCESzCrmKnlGDokUdrXyVCjY95wGlKxQEqab88IbyapJ8HitR
+	 HhPCkTVbdTVmITlaPVwF3DF45rsjZ8KKS9QR1QgL9Z9ZJ5PpeqMyb4Z4Br1b1QGHaU9XuSjwQA5XjL
+	 A9EK9KrVHqZcBBGpkCbhwHNy2zuIXnCvY+Yqh6IJUonUEaNniEQT+LOJaiv8qIBYHv/lxzT4aRN+2w
+	 0Ycn1oeGVIj2B/QPxKjK8H50uESCFnozuiYgwKdA25We/6ZDtA7Zez1CmVi/IbJCfJ/OrJ8aJ40Ipn
+	 ZWeXSYlWcX+QRqZW16a2zXBCEZZ+o4g==
+X-MSG-ID: 04a26b70-f832-11ef-a39b-00505681446f
+Date: Mon, 3 Mar 2025 14:18:37 +0100
+From: David Jander <david@protonic.nl>
+To: David Lechner <dlechner@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, Jonathan Corbet
+ <corbet@lwn.net>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ devicetree@vger.kernel.org, linux-doc@vger.kernel.org, Nuno Sa
+ <nuno.sa@analog.com>, Jonathan Cameron <jic23@kernel.org>, Oleksij Rempel
+ <o.rempel@pengutronix.de>
+Subject: Re: [RFC PATCH 6/7] dt-bindings: motion: Add adi,tmc5240 bindings
+Message-ID: <20250303141837.782e57f7@erd003.prtnl>
+In-Reply-To: <CAMknhBFoRoaXWBL-vDnDrepqw_KJ-VrYeOoGJfjz8q=wDNM6xA@mail.gmail.com>
+References: <20250227162823.3585810-1-david@protonic.nl>
+	<20250227162823.3585810-7-david@protonic.nl>
+	<7b2a8d71-9d83-4d40-903b-ba7ef1c686f3@baylibre.com>
+	<20250303122253.26fec335@erd003.prtnl>
+	<CAMknhBFoRoaXWBL-vDnDrepqw_KJ-VrYeOoGJfjz8q=wDNM6xA@mail.gmail.com>
+Organization: Protonic Holland
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250303-gpiochip-set-conversion-v1-12-1d5cceeebf8b@linaro.org>
-References: <20250303-gpiochip-set-conversion-v1-0-1d5cceeebf8b@linaro.org>
-In-Reply-To: <20250303-gpiochip-set-conversion-v1-0-1d5cceeebf8b@linaro.org>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, 
- Michael Hennerich <michael.hennerich@analog.com>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Mun Yew Tham <mun.yew.tham@intel.com>, Joel Stanley <joel@jms.id.au>, 
- Andrew Jeffery <andrew@codeconstruct.com.au>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pwm@vger.kernel.org, patches@opensource.cirrus.com, 
- linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=10512;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=6Biyqx/oPiy1u29C0+kNxd6YeuL0GXYE5IHU8R6GPkQ=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBnxawre/nLb8HZ9vCTWG9HgoFrpXBkyMmO3uPg+
- DkbCvt+1bmJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZ8WsKwAKCRARpy6gFHHX
- ct7sD/9yKqknbydRuHgo09mRDQLljVd2RW0HD61Q3y+e/L/B6cyQnjzZKT5uGJ+v6h4lgQv+iXU
- ka+2zeotaUUZDupvz+c5QV5Z7LA8/PWAP3O7uVp9pdDlIJ9GsdOQg9KbFeQZsTOfhMKXfQTt6PY
- z0o7Fa+2lJh1TS+J24HnpMcUWXqI1Nu1N3tBj9XiBcJspKwP0iDeP3a2KjMUw3cNX+EPK7a47J3
- Snyjbs5wm8baI0fqmEyKL4pt1rZZ5mWecGL4VVpLMLZiCBTrIa+LgvxNGHkL+gKevzXYUnoYKR3
- tZKeMyE69KAyE/ZOB1tvR5UmGrw7vjpuPJMpcG4eAIIJswazrvDydIqT4M43TPIevqtqhgQg/YE
- 6vp6cHKqSigeHfJcLF+msUCUvTtjmSKGBGp0LupdS+uPASKA/O/cfZx4v5tIeG2nPSnQZZl6tqR
- SIJHEXkhxoclh99WGXVu0GM2vsR9nl22pgPSYkKIwUzKV2epGnm+RVZZYhddELQ3fVhplnYWUnK
- s6bz7bNOSah0XlLT3p4hQp5s/jkOPlPszWSIJcnxeh5Q05zwmcgbdo4MF2vZBX0iaeCd4y+NI9X
- c6vgDAzA8oJ1o3lkJ5HWlhwdW/fj54pLrh+XXHSZ+a05AcdBd1vi1UyJ5kHAKf8jITmDJdjkq45
- NxSkq37b/jMxB8Q==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Reduce the code complexity by using automatic lock guards with the raw
-spinlock.
+Dear David,
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/gpio/gpio-aspeed.c | 101 +++++++++++++++++----------------------------
- 1 file changed, 38 insertions(+), 63 deletions(-)
+On Mon, 3 Mar 2025 13:28:35 +0100
+David Lechner <dlechner@baylibre.com> wrote:
 
-diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
-index 40c1bd80f8b0..e2535aad1026 100644
---- a/drivers/gpio/gpio-aspeed.c
-+++ b/drivers/gpio/gpio-aspeed.c
-@@ -5,6 +5,7 @@
-  * Joel Stanley <joel@jms.id.au>
-  */
- 
-+#include <linux/cleanup.h>
- #include <linux/clk.h>
- #include <linux/gpio/aspeed.h>
- #include <linux/gpio/driver.h>
-@@ -427,37 +428,33 @@ static void aspeed_gpio_set(struct gpio_chip *gc, unsigned int offset,
- 			    int val)
- {
- 	struct aspeed_gpio *gpio = gpiochip_get_data(gc);
--	unsigned long flags;
- 	bool copro = false;
- 
--	raw_spin_lock_irqsave(&gpio->lock, flags);
-+	guard(raw_spinlock_irqsave)(&gpio->lock);
-+
- 	copro = aspeed_gpio_copro_request(gpio, offset);
- 
- 	__aspeed_gpio_set(gc, offset, val);
- 
- 	if (copro)
- 		aspeed_gpio_copro_release(gpio, offset);
--	raw_spin_unlock_irqrestore(&gpio->lock, flags);
- }
- 
- static int aspeed_gpio_dir_in(struct gpio_chip *gc, unsigned int offset)
- {
- 	struct aspeed_gpio *gpio = gpiochip_get_data(gc);
--	unsigned long flags;
- 	bool copro = false;
- 
- 	if (!have_input(gpio, offset))
- 		return -ENOTSUPP;
- 
--	raw_spin_lock_irqsave(&gpio->lock, flags);
-+	guard(raw_spinlock_irqsave)(&gpio->lock);
- 
- 	copro = aspeed_gpio_copro_request(gpio, offset);
- 	gpio->config->llops->reg_bit_set(gpio, offset, reg_dir, 0);
- 	if (copro)
- 		aspeed_gpio_copro_release(gpio, offset);
- 
--	raw_spin_unlock_irqrestore(&gpio->lock, flags);
--
- 	return 0;
- }
- 
-@@ -465,13 +462,12 @@ static int aspeed_gpio_dir_out(struct gpio_chip *gc,
- 			       unsigned int offset, int val)
- {
- 	struct aspeed_gpio *gpio = gpiochip_get_data(gc);
--	unsigned long flags;
- 	bool copro = false;
- 
- 	if (!have_output(gpio, offset))
- 		return -ENOTSUPP;
- 
--	raw_spin_lock_irqsave(&gpio->lock, flags);
-+	guard(raw_spinlock_irqsave)(&gpio->lock);
- 
- 	copro = aspeed_gpio_copro_request(gpio, offset);
- 	__aspeed_gpio_set(gc, offset, val);
-@@ -479,7 +475,6 @@ static int aspeed_gpio_dir_out(struct gpio_chip *gc,
- 
- 	if (copro)
- 		aspeed_gpio_copro_release(gpio, offset);
--	raw_spin_unlock_irqrestore(&gpio->lock, flags);
- 
- 	return 0;
- }
-@@ -487,7 +482,6 @@ static int aspeed_gpio_dir_out(struct gpio_chip *gc,
- static int aspeed_gpio_get_direction(struct gpio_chip *gc, unsigned int offset)
- {
- 	struct aspeed_gpio *gpio = gpiochip_get_data(gc);
--	unsigned long flags;
- 	u32 val;
- 
- 	if (!have_input(gpio, offset))
-@@ -496,12 +490,10 @@ static int aspeed_gpio_get_direction(struct gpio_chip *gc, unsigned int offset)
- 	if (!have_output(gpio, offset))
- 		return GPIO_LINE_DIRECTION_IN;
- 
--	raw_spin_lock_irqsave(&gpio->lock, flags);
-+	guard(raw_spinlock_irqsave)(&gpio->lock);
- 
- 	val = gpio->config->llops->reg_bit_get(gpio, offset, reg_dir);
- 
--	raw_spin_unlock_irqrestore(&gpio->lock, flags);
--
- 	return val ? GPIO_LINE_DIRECTION_OUT : GPIO_LINE_DIRECTION_IN;
- }
- 
-@@ -527,7 +519,6 @@ static inline int irqd_to_aspeed_gpio_data(struct irq_data *d,
- static void aspeed_gpio_irq_ack(struct irq_data *d)
- {
- 	struct aspeed_gpio *gpio;
--	unsigned long flags;
- 	int rc, offset;
- 	bool copro = false;
- 
-@@ -535,20 +526,19 @@ static void aspeed_gpio_irq_ack(struct irq_data *d)
- 	if (rc)
- 		return;
- 
--	raw_spin_lock_irqsave(&gpio->lock, flags);
-+	guard(raw_spinlock_irqsave)(&gpio->lock);
-+
- 	copro = aspeed_gpio_copro_request(gpio, offset);
- 
- 	gpio->config->llops->reg_bit_set(gpio, offset, reg_irq_status, 1);
- 
- 	if (copro)
- 		aspeed_gpio_copro_release(gpio, offset);
--	raw_spin_unlock_irqrestore(&gpio->lock, flags);
- }
- 
- static void aspeed_gpio_irq_set_mask(struct irq_data *d, bool set)
- {
- 	struct aspeed_gpio *gpio;
--	unsigned long flags;
- 	int rc, offset;
- 	bool copro = false;
- 
-@@ -560,14 +550,14 @@ static void aspeed_gpio_irq_set_mask(struct irq_data *d, bool set)
- 	if (set)
- 		gpiochip_enable_irq(&gpio->chip, irqd_to_hwirq(d));
- 
--	raw_spin_lock_irqsave(&gpio->lock, flags);
-+	guard(raw_spinlock_irqsave)(&gpio->lock);
-+
- 	copro = aspeed_gpio_copro_request(gpio, offset);
- 
- 	gpio->config->llops->reg_bit_set(gpio, offset, reg_irq_enable, set);
- 
- 	if (copro)
- 		aspeed_gpio_copro_release(gpio, offset);
--	raw_spin_unlock_irqrestore(&gpio->lock, flags);
- 
- 	/* Masking the IRQ */
- 	if (!set)
-@@ -591,7 +581,6 @@ static int aspeed_gpio_set_type(struct irq_data *d, unsigned int type)
- 	u32 type2 = 0;
- 	irq_flow_handler_t handler;
- 	struct aspeed_gpio *gpio;
--	unsigned long flags;
- 	int rc, offset;
- 	bool copro = false;
- 
-@@ -620,16 +609,19 @@ static int aspeed_gpio_set_type(struct irq_data *d, unsigned int type)
- 		return -EINVAL;
- 	}
- 
--	raw_spin_lock_irqsave(&gpio->lock, flags);
--	copro = aspeed_gpio_copro_request(gpio, offset);
-+	scoped_guard(raw_spinlock_irqsave, &gpio->lock) {
-+		copro = aspeed_gpio_copro_request(gpio, offset);
- 
--	gpio->config->llops->reg_bit_set(gpio, offset, reg_irq_type0, type0);
--	gpio->config->llops->reg_bit_set(gpio, offset, reg_irq_type1, type1);
--	gpio->config->llops->reg_bit_set(gpio, offset, reg_irq_type2, type2);
-+		gpio->config->llops->reg_bit_set(gpio, offset, reg_irq_type0,
-+						 type0);
-+		gpio->config->llops->reg_bit_set(gpio, offset, reg_irq_type1,
-+						 type1);
-+		gpio->config->llops->reg_bit_set(gpio, offset, reg_irq_type2,
-+						 type2);
- 
--	if (copro)
--		aspeed_gpio_copro_release(gpio, offset);
--	raw_spin_unlock_irqrestore(&gpio->lock, flags);
-+		if (copro)
-+			aspeed_gpio_copro_release(gpio, offset);
-+	}
- 
- 	irq_set_handler_locked(d, handler);
- 
-@@ -686,17 +678,16 @@ static int aspeed_gpio_reset_tolerance(struct gpio_chip *chip,
- 					unsigned int offset, bool enable)
- {
- 	struct aspeed_gpio *gpio = gpiochip_get_data(chip);
--	unsigned long flags;
- 	bool copro = false;
- 
--	raw_spin_lock_irqsave(&gpio->lock, flags);
-+	guard(raw_spinlock_irqsave)(&gpio->lock);
-+
- 	copro = aspeed_gpio_copro_request(gpio, offset);
- 
- 	gpio->config->llops->reg_bit_set(gpio, offset, reg_tolerance, enable);
- 
- 	if (copro)
- 		aspeed_gpio_copro_release(gpio, offset);
--	raw_spin_unlock_irqrestore(&gpio->lock, flags);
- 
- 	return 0;
- }
-@@ -798,7 +789,6 @@ static int enable_debounce(struct gpio_chip *chip, unsigned int offset,
- {
- 	struct aspeed_gpio *gpio = gpiochip_get_data(chip);
- 	u32 requested_cycles;
--	unsigned long flags;
- 	int rc;
- 	int i;
- 
-@@ -812,12 +802,12 @@ static int enable_debounce(struct gpio_chip *chip, unsigned int offset,
- 		return rc;
- 	}
- 
--	raw_spin_lock_irqsave(&gpio->lock, flags);
-+	guard(raw_spinlock_irqsave)(&gpio->lock);
- 
- 	if (timer_allocation_registered(gpio, offset)) {
- 		rc = unregister_allocated_timer(gpio, offset);
- 		if (rc < 0)
--			goto out;
-+			return rc;
- 	}
- 
- 	/* Try to find a timer already configured for the debounce period */
-@@ -855,7 +845,7 @@ static int enable_debounce(struct gpio_chip *chip, unsigned int offset,
- 			 * consistency.
- 			 */
- 			configure_timer(gpio, offset, 0);
--			goto out;
-+			return rc;
- 		}
- 
- 		i = j;
-@@ -863,34 +853,26 @@ static int enable_debounce(struct gpio_chip *chip, unsigned int offset,
- 		iowrite32(requested_cycles, gpio->base + gpio->config->debounce_timers_array[i]);
- 	}
- 
--	if (WARN(i == 0, "Cannot register index of disabled timer\n")) {
--		rc = -EINVAL;
--		goto out;
--	}
-+	if (WARN(i == 0, "Cannot register index of disabled timer\n"))
-+		return -EINVAL;
- 
- 	register_allocated_timer(gpio, offset, i);
- 	configure_timer(gpio, offset, i);
- 
--out:
--	raw_spin_unlock_irqrestore(&gpio->lock, flags);
--
- 	return rc;
- }
- 
- static int disable_debounce(struct gpio_chip *chip, unsigned int offset)
- {
- 	struct aspeed_gpio *gpio = gpiochip_get_data(chip);
--	unsigned long flags;
- 	int rc;
- 
--	raw_spin_lock_irqsave(&gpio->lock, flags);
-+	guard(raw_spinlock_irqsave)(&gpio->lock);
- 
- 	rc = unregister_allocated_timer(gpio, offset);
- 	if (!rc)
- 		configure_timer(gpio, offset, 0);
- 
--	raw_spin_unlock_irqrestore(&gpio->lock, flags);
--
- 	return rc;
- }
- 
-@@ -961,7 +943,6 @@ int aspeed_gpio_copro_grab_gpio(struct gpio_desc *desc,
- 	struct aspeed_gpio *gpio = gpiochip_get_data(chip);
- 	int rc = 0, bindex, offset = gpio_chip_hwgpio(desc);
- 	const struct aspeed_gpio_bank *bank = to_bank(offset);
--	unsigned long flags;
- 
- 	if (!aspeed_gpio_support_copro(gpio))
- 		return -EOPNOTSUPP;
-@@ -974,13 +955,12 @@ int aspeed_gpio_copro_grab_gpio(struct gpio_desc *desc,
- 		return -EINVAL;
- 	bindex = offset >> 3;
- 
--	raw_spin_lock_irqsave(&gpio->lock, flags);
-+	guard(raw_spinlock_irqsave)(&gpio->lock);
- 
- 	/* Sanity check, this shouldn't happen */
--	if (gpio->cf_copro_bankmap[bindex] == 0xff) {
--		rc = -EIO;
--		goto bail;
--	}
-+	if (gpio->cf_copro_bankmap[bindex] == 0xff)
-+		return -EIO;
-+
- 	gpio->cf_copro_bankmap[bindex]++;
- 
- 	/* Switch command source */
-@@ -994,8 +974,6 @@ int aspeed_gpio_copro_grab_gpio(struct gpio_desc *desc,
- 		*dreg_offset = bank->rdata_reg;
- 	if (bit)
- 		*bit = GPIO_OFFSET(offset);
-- bail:
--	raw_spin_unlock_irqrestore(&gpio->lock, flags);
- 	return rc;
- }
- EXPORT_SYMBOL_GPL(aspeed_gpio_copro_grab_gpio);
-@@ -1009,7 +987,6 @@ int aspeed_gpio_copro_release_gpio(struct gpio_desc *desc)
- 	struct gpio_chip *chip = gpiod_to_chip(desc);
- 	struct aspeed_gpio *gpio = gpiochip_get_data(chip);
- 	int rc = 0, bindex, offset = gpio_chip_hwgpio(desc);
--	unsigned long flags;
- 
- 	if (!aspeed_gpio_support_copro(gpio))
- 		return -EOPNOTSUPP;
-@@ -1021,21 +998,19 @@ int aspeed_gpio_copro_release_gpio(struct gpio_desc *desc)
- 		return -EINVAL;
- 	bindex = offset >> 3;
- 
--	raw_spin_lock_irqsave(&gpio->lock, flags);
-+	guard(raw_spinlock_irqsave)(&gpio->lock);
- 
- 	/* Sanity check, this shouldn't happen */
--	if (gpio->cf_copro_bankmap[bindex] == 0) {
--		rc = -EIO;
--		goto bail;
--	}
-+	if (gpio->cf_copro_bankmap[bindex] == 0)
-+		return -EIO;
-+
- 	gpio->cf_copro_bankmap[bindex]--;
- 
- 	/* Switch command source */
- 	if (gpio->cf_copro_bankmap[bindex] == 0)
- 		aspeed_gpio_change_cmd_source(gpio, offset,
- 					      GPIO_CMDSRC_ARM);
-- bail:
--	raw_spin_unlock_irqrestore(&gpio->lock, flags);
-+
- 	return rc;
- }
- EXPORT_SYMBOL_GPL(aspeed_gpio_copro_release_gpio);
+> (Sorry if you get this twice. I don't have my regular computer today
+> and didn't realize I was sending HTML the first time. Resending in
+> plain text so the lists pick it up.)
+>=20
+> On Mon, Mar 3, 2025 at 12:22=E2=80=AFPM David Jander <david@protonic.nl> =
+wrote:
+> >
+> >
+> > Dear David,
+> >
+> > On Fri, 28 Feb 2025 16:38:51 -0600
+> > David Lechner <dlechner@baylibre.com> wrote:
+> > =20
+> > > On 2/27/25 10:28 AM, David Jander wrote: =20
+> > > > Add device-tree bindings for Analog Devices TMC5240 stepper control=
+lers.
+> > > >
+> > > > Signed-off-by: David Jander <david@protonic.nl>
+> > > > ---
+> > > >  .../bindings/motion/adi,tmc5240.yaml          | 60 +++++++++++++++=
+++++
+> > > >  1 file changed, 60 insertions(+)
+> > > >  create mode 100644 Documentation/devicetree/bindings/motion/adi,tm=
+c5240.yaml
+> > > >
+> > > > diff --git a/Documentation/devicetree/bindings/motion/adi,tmc5240.y=
+aml b/Documentation/devicetree/bindings/motion/adi,tmc5240.yaml
+> > > > new file mode 100644
+> > > > index 000000000000..3364f9dfccb1
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/motion/adi,tmc5240.yaml
+> > > > @@ -0,0 +1,60 @@
+> > > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > > > +%YAML 1.2
+> > > > +---
+> > > > +$id: http://devicetree.org/schemas/motion/adi,tmc5240.yaml#
+> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > > +
+> > > > +title: Analog Devices TMC5240 Stepper Motor controller
+> > > > +
+> > > > +maintainers:
+> > > > +  - David Jander <david@protonic>
+> > > > +
+> > > > +description: |
+> > > > +   Stepper motor controller with motion engine and SPI interface. =
+=20
+> > >
+> > > Please include a link to the datasheet. =20
+> >
+> > Will do.
+> > =20
+> > > > +
+> > > > +properties:
+> > > > +  compatible:
+> > > > +    enum:
+> > > > +      - adi,tmc5240
+> > > > +
+> > > > +  reg:
+> > > > +    maxItems: 1
+> > > > +
+> > > > +  interrupts:
+> > > > +    maxItems: 1 =20
+> > >
+> > > I assume that this is the overvoltage output (OV pin). Would be nice =
+to have
+> > > a description here saying that. There are also NAO and DIAG0/1 output=
+ pins, so
+> > > it's a bit ambiguous otherwise. =20
+> >
+> > This is the DIAG0 output pin which on this chip has a dual function as =
+either
+> > a STEP output or an interrupt output. The pin name is a bit misleading,=
+ but it
+> > is the "interrupt" function that is meant here. The datasheet documents=
+ all
+> > the different events that can trigger this interrupt.
+> > I will add a description to clarify this.
+> > =20
+>=20
+> If it makes sense that other pins could possibly ever be connected to
+> interrupts then we can add those and also add interrupt-names (but
+> only if there is more than one possible interrupt).
 
--- 
-2.45.2
+AFAIK, only DIAG1 would potentially make sense to be connected to an
+interrupt. It can be programmed to go low when the motor position matches t=
+he
+contents of the X_COMPARE/X_COMPARE_REPEAT register setting.
 
+I will add that one if you agree. It will not be mandatory of course.
+
+In any case, if that pin was connected to an interrupt pin right now, it co=
+uld
+already be used as an IIO trigger for example. Just not (yet) via this driv=
+er.
+
+>[...]
+> > The resistor connected to the IREF pin (Rref) OTOH does have an implica=
+tion to
+> > the software, as it sets the full-range current of the output stage.
+> >
+> > How should we specify that? Is it adequate to add an optional DT proper=
+ty
+> > "rref" or "rref-ohm" with an int32 value in Ohm? The default value if
+> > unspecified is 12000 Ohm. =20
+>=20
+> It looks like there are a few standardized properties, like
+> sense-resistor-ohms if that fits the use case. Otherwise, an
+> vendor-specific ti,rref-ohms would work. FYI, you can find the
+> preferred units at [1].
+>=20
+> [1]: https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schem=
+as/property-units.yaml
+
+Ah, thanks! This is helpful.
+
+Will use this for ti,rref-ohms. I guess in this case that would be easier to
+understand than "sense-resistor-ohms", which is also okay, but would require
+reading the description to know what exactly is meant in this context.
+
+> > > And if there are any pins would make sense to connect to a gpio, we c=
+an add
+> > > those even if the driver doesn't use it currently.
+> > > =20
+> > > > +  clocks:
+> > > > +    maxItems: 1
+> > > > +
+> > > > +required:
+> > > > +  - compatible
+> > > > +  - reg
+> > > > +  - interrupts
+> > > > +  - clocks
+> > > > +
+> > > > +allOf:
+> > > > +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> > > > +  - $ref: /schemas/motion/common.yaml# =20
+> > >
+> > > If we need to know about what is connected to the output of a motor c=
+ontroller
+> > > I would expect it to be done with child node for each output. That wa=
+y each
+> > > output can be unique, if needed. Basically, similar to iio/adc.yaml i=
+s used to
+> > > provide common properties for channel@ child nodes on iio devices. =20
+> >
+> > This controller chip only has one single output for one stepper motor (4
+> > wires). While technically you could connect something else to those 4 w=
+ires, I
+> > don't think it is the scope of LMC to support that. The chip itself isn=
+'t
+> > designed for that purpose and it would clearly go far beyond the intend=
+ed
+> > purpose of this device.
+> >
+> > That being said, your suggestion of supporting child nodes may actually=
+ be a
+> > good idea. Right now, we specify the type of motor (basically nominal- =
+and hold
+> > current settings) in user-space and set the IRUN/IHOLD parameters from
+> > user-space via the sysfs attributes interface. It might make sense to h=
+ave a DT
+> > child node to specify this, although in our current application this is=
+ not
+> > very practical, since there are many motor controllers on one board, an=
+d it is
+> > configurable in software (runtime) which motor is connected to which ou=
+tput.
+> >
+> > But I can imagine a situation where it may be fixed and thus can be des=
+cribed
+> > in the DT of a board.
+> >
+> > Then again I don't know if it would be over-complicating things with so=
+mething
+> > like this:
+> >
+> >         motor-controller@0 {
+> >                 ...
+> >                 motor@0 {
+> >                         compatible =3D "nanotec,st4118s1006";
+> >                         irun-ma =3D <1800>;
+> >                         ihold-ma =3D <270>;
+> >                 };
+> >         };
+> >
+> > where we'd possibly have a stepper-motors.c file with a lot of structs =
+and
+> > matching tables for the different motor types.... sounds like overkill =
+to me,
+> > but maybe not? =20
+>=20
+> A compatible for motors seems too much. I was just thinking along the
+> lines that 1) if we need to so some scaling or something that depends
+> on a motor constant, then it would make sense to put those constants
+> in the DT and 2) if there is a motor controller with more than one
+> output that could be connected to two or more different sizes of
+> motors with different constants, then we either need child nodes or an
+> array to be able to enter the different constants. Either one would
+> work. So maybe simpler to just use an array instead of child nodes now
+> that I'm thinking about it more.
+
+Well, in the case of the TMC5240 there isn't much more than a single motor
+with possibly some fixed setting of irun/ihold in some cases, but like I sa=
+id,
+in our case it is run-time configurable, so not something fixed to the
+hardware-description. Apart from that, there are the speed- and acceleratio=
+n-
+conversion constants, which per default are the constants stated in the
+datasheet. In some rare cases one might want to overrule them, but that can
+already be done.
+
+LMC does als support multi-channel controllers, and in that case I intend to
+make use of child nodes for the different channels, to be able to specify
+those parameters per motor.
+
+So maybe just leave it as it currently is for the tmc5240?
+
+> > > > +
+> > > > +unevaluatedProperties: false
+> > > > +
+> > > > +examples:
+> > > > +  - |
+> > > > +    spi {
+> > > > +        #address-cells =3D <1>;
+> > > > +        #size-cells =3D <0>;
+> > > > +
+> > > > +        motor@0 { =20
+> > >
+> > > motor-controller@ or actuator-controller@
+> > >
+> > > The chip is the controller/driver, it is not a motor. =20
+> >
+> > Make sense. Will change this.
+> > =20
+> > > > +            compatible =3D "adi,tmc5240";
+> > > > +            reg =3D <0>;
+> > > > +            interrupts-extended =3D <&gpiok 7 0>;
+> > > > +            clocks =3D <&clock_tmc5240>;
+> > > > +            enable-supply =3D <&stpsleepn>;
+> > > > +            spi-max-frequency =3D <1000000>;
+> > > > +        };
+> > > > +    }; =20
+
+Best regards,
+
+--=20
+David Jander
 
