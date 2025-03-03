@@ -1,185 +1,98 @@
-Return-Path: <linux-kernel+bounces-541131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF96FA4B8FE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:18:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41527A4B901
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:20:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F74E1890C2A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:18:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82BA53A6B3D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:20:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 166011EF08A;
-	Mon,  3 Mar 2025 08:18:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB4A41EEA5A;
+	Mon,  3 Mar 2025 08:20:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tbGDHeNQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="Ap5cW4nU"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BDD47083C;
-	Mon,  3 Mar 2025 08:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8BA523F36D;
+	Mon,  3 Mar 2025 08:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740989894; cv=none; b=J0xcE+JZFPded99ciL1PK0wZVRRAzE9BH37zoKGXXsSRkExy0PdSK/MtnyIYumK8N3SRD953Rptg4fsfKCdVwkP0QUHM3CDGwl6j7ysiFrb0Uvo6O8jtNZg+Hg2OerabXtv6rMCeT91LdDfHlhpqbcX/GrzPWNredxgwtgJMEOs=
+	t=1740990023; cv=none; b=h8vQm/G6dgrzMmiW109wewBcOMzHV265aoK39u+ekn25tsnio6BxSIIgq/kd6hcMZXoUZXCBufo/bd6orROly037PJuRmAAJM3FWn8x3oNyC83aY6a51LKPjsVdhi3uEKDv07YccepkNKkfk4rHgF3pN2WVZSnnqyRJcIXlGZTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740989894; c=relaxed/simple;
-	bh=lsSwmwzKwKEFqzEBwDCIkRvNTrenry6xGvPaOarbA9c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=db3XKjbjTAIBi1OV1DQVLs2HivC82Go+uzFyNtN1J0ul8MerGkgbPVTlmZW6H2wsYuqEQkSjNaYr+ulgpjsrxGp2MNy/bFVno2r9W9sLH3m/9VjXZyCvDWVNtC8mba0deQP+cK1ygkEjDs+GMyQqjGPF+pGxxopYdXQimh5qwHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tbGDHeNQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 073B7C4CED6;
-	Mon,  3 Mar 2025 08:18:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740989894;
-	bh=lsSwmwzKwKEFqzEBwDCIkRvNTrenry6xGvPaOarbA9c=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tbGDHeNQpKWJi4/ycf7E7vEQ0vhBq6LZFbg5giQYjELPvTfEakFLO22w1p1Fhhk2h
-	 aQHahr+nq06GmwzcBrvNCxh/vIdlFwXH/hj6BRNgSmlIswxm26E4R6buGEcX8LXzlG
-	 yveABu+wdmZAyJIisrWw8sdCnd2xO34WCxd98j7Wo2yqJ58lWwpwk9JlyAqNMp9lx4
-	 MU+Kw+2B2DOeNltdNBl6VFhY7TvA0IGkMT2BG+sEpACbSb3Zytk1bm4CRLJQqOg0/T
-	 5BKVJu1wvYJ7OcuR0X7EAf4BUK6eT4uj7T0EKht7gH5NCdnsMbW5zXUV4MsOFxWoFD
-	 FY+mGfC7OdKLQ==
-Message-ID: <0b2a76e6-ad64-4c98-b6ab-e1f41cb54684@kernel.org>
-Date: Mon, 3 Mar 2025 09:18:08 +0100
+	s=arc-20240116; t=1740990023; c=relaxed/simple;
+	bh=49AxiX0Eh/BuPuC2O5m+aEnH6BFIvD0QUlDC789siPM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=qrQfO7DjbvGxzPKIPKCPa4buezliqxrIyCOYREEbUQ8EtacQ104yJOuPEna8kSP8VpWC6wiYeFQg/RO00sqTrOK+Tn4YOSOGP5XGuYou1Vuav1d6ezy05SQeTRatPtEQ/juumSLUJ7kkI5eqMlfarUEM6TjWJ75tlaV4v0L6P+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=Ap5cW4nU; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=1msAMH9fRVwyJn77+ikkrddk2GWerXIwokCf+V4Eurc=;
+	t=1740990021; x=1742199621; b=Ap5cW4nUT0LDomDHa8lcTAecdbRLWbvYvV2dZCmTLi3uLvM
+	ldwd9ldclYbOzBa24HgT9Uq7B73OIJ0yg/Vld6/2elD8U33jdSBrrQDNB5sy6It7UJrE/36KXfQLA
+	td+jM+/YlzOK5ZLL69QDq2DrJXu/scNlVmbiZIfHSR4/Up5ByPYxtFCtoLsOMudThhKnI0mR6xqhT
+	46r/BIjmDmt7uCoaf3KsFWu+jKwNgF39uUJ3OcWfHayWorqSRsdruGeYiAcumnj/XXjxgE2JvOvek
+	l6FWoBhxC/dVDs0Uf2J68i3NPiyCb78v8Dh9DjxJh6rOV576SDBmC2r7Jo4lQsfA==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1tp124-0000000H1oC-0A74;
+	Mon, 03 Mar 2025 09:20:12 +0100
+Message-ID: <f808c48596ae1929c62704c226fb109cc03bbd2a.camel@sipsolutions.net>
+Subject: Re: [PATCH v2 0/5] wfx: add support for WoWLAN on Silabs WF200
+From: Johannes Berg <johannes@sipsolutions.net>
+To: =?ISO-8859-1?Q?J=E9r=F4me?= Pouiller <jerome.pouiller@silabs.com>, 
+	linux-wireless@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Kalle Valo <kvalo@kernel.org>, 
+	linux-devel@silabs.com
+Date: Mon, 03 Mar 2025 09:20:11 +0100
+In-Reply-To: <20250302144731.117409-1-jerome.pouiller@silabs.com>
+References: <20250302144731.117409-1-jerome.pouiller@silabs.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: power: supply: Document Maxim MAX8971
- charger
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250226093700.44726-1-clamor95@gmail.com>
- <20250226093700.44726-2-clamor95@gmail.com>
- <20250227-cherubic-mantis-from-betelgeuse-86f5ff@krzk-bin>
- <CAPVz0n0ygR=ygsvG2+z-zST7kmJ_P3nxf29tqdgHpRs_Nw6D5Q@mail.gmail.com>
- <fbd307ae-1dfa-497b-a597-d15b6baa30f4@kernel.org>
- <CAPVz0n2no1EJnf4GKSJWfYA_8h8x6BRk_ducufie90YPZR-k3g@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CAPVz0n2no1EJnf4GKSJWfYA_8h8x6BRk_ducufie90YPZR-k3g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-malware-bazaar: not-scanned
 
-On 03/03/2025 09:11, Svyatoslav Ryhel wrote:
-> пн, 3 бер. 2025 р. о 09:54 Krzysztof Kozlowski <krzk@kernel.org> пише:
->>
->> On 27/02/2025 11:55, Svyatoslav Ryhel wrote:
->>>>> +
->>
->> Please kindly trim the replies from unnecessary context. It makes it
->> much easier to find new content.
->>
->>>>> +  maxim,usb-in-current-limit-microamp:
->>>>> +    description:
->>>>> +      USB Input current limit
->>>>> +    minimum: 100000
->>>>> +    default: 500000
->>>>> +    maximum: 1500000
->>>>> +
->>>>> +  maxim,ac-in-current-limit-microamp:
->>>>> +    description:
->>>>> +      AC Input current limit
->>>>> +    minimum: 100000
->>>>> +    default: 500000
->>>>> +    maximum: 1500000
->>>>
->>>> Half of these properties as well are not suitable and duplicate existing
->>>> sysfs interface.
->>>>
->>>
->>> All these properties allow configure the charger to suit the device on
->>> which it is used. None of them are required but are a nice addition.
->>> Why you are denying me an ability to fully utilize hardware I have and
->>> tune it to the device? All those values represent hardware registers
->>> which can be customized for the device, not for the end user to mess
->>> with.
->>
->> Because you put user-space choice or OS policy into the DT and DT is not
->> for that.
->>
-> 
-> Those are NOT user-space choice or OS policy those are vendor
-> configuration for a specific device and are NOT and NEVER were exposed
+On Sun, 2025-03-02 at 15:47 +0100, J=C3=A9r=C3=B4me Pouiller wrote:
+> This is the initial support for Wake-on-WLAN of Silicon WF200 chipset. Th=
+is
+> version focus on the power management control. For now, the filtering
+> capabilities of the chip are not exposed. So any multicast frame (=3D any=
+ ARP
+> request) will wake up the host.
+>=20
+> I have this series of patches in my git tree for a while. I hesitated to
+> send it because the code is based on a proof of concept and I don't have
+> access to the hardware anymore.
+>=20
+> Therefore, this feature is experimental. However, the only way to reach
+> this code is to run "iw phy phy0 wowlan enable" or explicitly enable it i=
+n
+> /sys. So, I believe it makes sense to merged it in the stable tree. Thus,=
+ I
+> hope some users will be able to report their success (or their failure).
+>=20
+> v2:
+>   - Fix compilation issue reported by "kernel test robot"[1]. Member
+>     'wowlan' only exist if CONFIG_PM.
 
-Then look at existing devices. We had these discussions in the past and
-these are usually exposed to user-space.
+You should probably check patchwork too - now that we're running some
+checks, a missing 'static' jumped out:
 
-> to user configurations EVER. User messing with those may lead to
-> device breaking.
-> 
->>>
->>>> And for remaining, still no battery.
->>>>
->>>
->>> reference to power-supply IS included, hence the battery option is
->>> there as well.
->>
->> I don't see it being used at all and you explicitly duplicated
->> properties which means that reference is redundant and should be dropped
->> with such binding. So how did you solve my request to add reference
->> which then you make redundant? Add reference and use it.
->>
-> 
-> Which properties I have duplicated?
+https://patchwork.kernel.org/project/linux-wireless/list/?series=3D939353
 
-All the current limits.
-
-> 
->> Best regards,
->> Krzysztof
-
-
-Best regards,
-Krzysztof
+johannes
 
