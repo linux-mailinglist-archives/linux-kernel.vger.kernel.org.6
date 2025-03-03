@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-542912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80D33A4CF4D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 00:36:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 194E1A4CF4E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 00:36:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCC2A3ACB51
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:36:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3EFE1728D4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:36:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F41241671;
-	Mon,  3 Mar 2025 23:34:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46DD8241C90;
+	Mon,  3 Mar 2025 23:34:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L8fRAQZz"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jADWn+m3"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AEDE23F28D
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 23:34:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF242405E4
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 23:34:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741044896; cv=none; b=Z7U/5Rdxhxg0oDMy+/qa2j60OadufF94fNKaFDBQQQI461z5SCiC88da0fo3AfYuEcvQOh7ut2YFN45rnfbcdYpEp+1moubTpIEeJY33x2gZo/V13ooz+tWmaqNRNx7sJSknxaj8jyzOiaruIS4/yqZD6V1mnwCXF0mqeJaOz0w=
+	t=1741044897; cv=none; b=N6verzguj379aLsitEH/2n8dmZnFsHQbdpJciOEPJlz4B9+DZj/NqdHLWD0GSJ97+EfLbS8Ymp3kJSDdPRS8tnPsqIQfEcoQDJ3HXu6x65mhT3zRKHoX8+bqNOJMPmPqE9Z/L18feyYaHRsMI0kq+Phs4cvKzHoffifD1ufjWY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741044896; c=relaxed/simple;
-	bh=4MoQg5m1EvWqC4eUPuuvU9SN1nimbFf5mvHqPzoqqSs=;
+	s=arc-20240116; t=1741044897; c=relaxed/simple;
+	bh=QcahdaJ0srwRFNH4DR64JCumoDDRz85MfhiRqpgaJVk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bTXsucN9qobpIf/nOhLp5KCgNaxBWSPF67rVO+W7YbZ9Gc7BYl/u53Ku4RswjjjGfrqtOsJEotNsQ8T4TefITul92GT0z1TOMDYHZRE/fVvyZPQnAZNy2ON//kp+JNsyZzQ6fxmtdOLkCnJdoQUy94AeXa/Nr9Ze5KLxoqTTaxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L8fRAQZz; arc=none smtp.client-ip=192.198.163.17
+	 MIME-Version; b=AkxKadChcLMaPAIGfsbE1iPZl4fK63INTjNop7upYHHMQufg0OVYQmupy53WSgMjvStkQ82plUrjVuzWRhUk1dBfwJtWrCGlrPfvXS9zmZiO8vXb0pM6LFizMr8iROL/qCfTC1EDK7+wg5Zk29emlY1+gc41vLbZT1TvMydpmB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jADWn+m3; arc=none smtp.client-ip=192.198.163.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741044895; x=1772580895;
+  t=1741044896; x=1772580896;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=4MoQg5m1EvWqC4eUPuuvU9SN1nimbFf5mvHqPzoqqSs=;
-  b=L8fRAQZzmdWeShR2ruzqxp/W/zkR24bMDE0ZjvP+yCC0+t2ZsGtHYQij
-   DxFJ/5v1JiLNJNPZUQdHDAn2D23+thMQZgsmajEJlkrNBYfYqJsGmtSxy
-   ae/vx9zVZ8C/kGAola5EeEhjhkTjSs8i2guMFI3CSQdRfId+rxHzXM/X3
-   kSXhDRA3s2ro3pacmYMqcAQLbj1lv1Ee+63x9boDCogZzHQdDgeXdIURD
-   1hZUy5yxF0T7JI2ep7tkvZj5MyBva6NNNaP7H/Qoqcf7j6xbCRXYv5pJx
-   cc+Sx8ou6VymIy3QMVfnnwWfoponAZ6DbPKH76hS6HCA9CKm4E49ES4Yp
-   w==;
-X-CSE-ConnectionGUID: 6QBGma1GT62mb0O7jRmy3Q==
-X-CSE-MsgGUID: AeYlrbuLQqW6fSNLvbkqyQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="41835976"
+  bh=QcahdaJ0srwRFNH4DR64JCumoDDRz85MfhiRqpgaJVk=;
+  b=jADWn+m3isGb9l67z6mQTjKOCrfPj2qw/SIIjrbGVQizLsGygpiNiOds
+   YCu79SPlyGFgDetXfm20m65kQdXXbQNY6cVeE+wAswFW82+MRgUiHo5sx
+   FYQpACIYqYFxw9wkh95eJRPdnXrlRV9NwU1Y0zNXmf6uvdiqr2GqnSEP/
+   wESY3964zAxEUerAUlroogr4H08+2qyWBQE0wtdoEB080md8CE8Vj3L2q
+   3NJWlzpRXUU4o2MWB4/yEpzrRwTqbiviV1LXx2fAb33Conb5AYh+lCjWn
+   aLTivY5ou741GF9fFYEYK2QEslDXXfCAurh4eZKVnmmQ+XK/uK+pjpdKr
+   g==;
+X-CSE-ConnectionGUID: +O77Pjb1Q3+c3knDqnXesQ==
+X-CSE-MsgGUID: qFWnY2PcQqCFyqTz5BMFxA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="41835985"
 X-IronPort-AV: E=Sophos;i="6.13,330,1732608000"; 
-   d="scan'208";a="41835976"
+   d="scan'208";a="41835985"
 Received: from fmviesa006.fm.intel.com ([10.60.135.146])
   by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 15:34:47 -0800
-X-CSE-ConnectionGUID: QNCp+lAXSwKixeh97KdsSw==
-X-CSE-MsgGUID: I+AbBn3jRhKXI4y+W11s4Q==
+X-CSE-ConnectionGUID: jKERIBNCTp2tXNsPsNHOnw==
+X-CSE-MsgGUID: UHK9V27VQHeTxQNeXIXsFw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.13,330,1732608000"; 
-   d="scan'208";a="117982302"
+   d="scan'208";a="117982304"
 Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
   by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 15:33:53 -0800
 From: Tony Luck <tony.luck@intel.com>
@@ -69,9 +69,9 @@ To: Fenghua Yu <fenghuay@nvidia.com>,
 Cc: linux-kernel@vger.kernel.org,
 	patches@lists.linux.dev,
 	Tony Luck <tony.luck@intel.com>
-Subject: [RFC PATCH 12/17] x86/resctrl: Add list of known events to RDT_RESOURCE_INTEL_PMT
-Date: Mon,  3 Mar 2025 15:33:32 -0800
-Message-ID: <20250303233340.333743-13-tony.luck@intel.com>
+Subject: [RFC PATCH 13/17] x86/resctrl: Build lookup table for package events
+Date: Mon,  3 Mar 2025 15:33:33 -0800
+Message-ID: <20250303233340.333743-14-tony.luck@intel.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250303233340.333743-1-tony.luck@intel.com>
 References: <20250303233340.333743-1-tony.luck@intel.com>
@@ -83,62 +83,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Core code uses this list to populate "mon_data" directories.
+The resctrl filesystem saves the evt_type in the private data pointer
+of the kernfs_node of each file in the mon_data directories.
+
+To print the values for each file the show() function will need to map
+from this evtid to:
+
+num_rmids - to make sure data for this file exists
+guid - to pick the pmt_event(s) for each package
+stride/offset - to compute MMIO offset for this RMID/event
+
+Build a lookup table for each event to save searching through
+lists and add macros for ease of use.
 
 Signed-off-by: Tony Luck <tony.luck@intel.com>
 ---
- arch/x86/kernel/cpu/resctrl/intel_pmt.c | 24 +++++++++++++++++++++++-
- 1 file changed, 23 insertions(+), 1 deletion(-)
+ arch/x86/kernel/cpu/resctrl/intel_pmt.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
 diff --git a/arch/x86/kernel/cpu/resctrl/intel_pmt.c b/arch/x86/kernel/cpu/resctrl/intel_pmt.c
-index 754748d858c6..05640e85d303 100644
+index 05640e85d303..c5557d7f5fbe 100644
 --- a/arch/x86/kernel/cpu/resctrl/intel_pmt.c
 +++ b/arch/x86/kernel/cpu/resctrl/intel_pmt.c
-@@ -13,6 +13,7 @@
+@@ -38,6 +38,18 @@ enum pmt_event_id {
+ 	PMT_NUM_EVENTS
+ };
  
- #include <linux/cpu.h>
- #include <linux/cleanup.h>
-+#include <linux/minmax.h>
- #include <linux/slab.h>
- #include "fake_intel_pmt_features.h"
- #include <linux/intel_vsec.h>
-@@ -254,14 +255,35 @@ void rdt_get_intel_pmt_mount(void)
- {
- 	struct rdt_resource *r = &rdt_resources_all[RDT_RESOURCE_INTEL_PMT].r_resctrl;
- 	struct rdt_core_mon_domain *d, *tmp;
-+	struct telem_entry **tentry;
- 	static int do_one_time;
-+	struct mon_evt *evt;
-+	bool ret = false;
- 
- 	if (do_one_time)
- 		return;
- 
- 	do_one_time = 1;
- 
--	if (!get_events()) {
-+	if (!get_events())
-+		goto done;
++static struct evtinfo {
++	struct telem_entry	*telem_entry;
++	struct pmt_event	*pmt_event;
++} evtinfo[PMT_NUM_EVENTS];
 +
-+	for (tentry = telem_entry; *tentry; tentry++) {
-+		if (!(*tentry)->active)
-+			continue;
-+		for (int i = 0; (*tentry)->evts[i].evt.name; i++) {
-+			evt = &(*tentry)->evts[i].evt;
-+			list_add_tail(&evt->list, &r->evt_list);
-+			ret = true;
-+		}
-+		if (!r->num_rmid)
-+			r->num_rmid = (*tentry)->num_rmids;
-+		else
-+			r->num_rmid = min(r->num_rmid, (*tentry)->num_rmids);
-+	}
-+done:
-+	if (!ret) {
-+		r->mon_capable = false;
- 		list_for_each_entry_safe(d, tmp, &r->mon_domains, hdr.list)
- 			kfree(d);
- 		r->mon_capable = false;
++#define EVT_NUM_RMIDS(evtid)	(evtinfo[evtid].telem_entry->num_rmids)
++#define EVT_STRIDE(evtid)	(evtinfo[evtid].telem_entry->stride)
++#define EVT_GUID(evtid)		(evtinfo[evtid].telem_entry->guid)
++
++#define EVT_OFFSET(evtid)	(evtinfo[evtid].pmt_event->evt_offset)
++#define EVT_TYPE(evtid)		(evtinfo[evtid].pmt_event->evt_type)
++
+ enum evt_type {
+ 	EVT_U64,
+ 	EVT_U46_18,
+@@ -274,6 +286,9 @@ void rdt_get_intel_pmt_mount(void)
+ 		for (int i = 0; (*tentry)->evts[i].evt.name; i++) {
+ 			evt = &(*tentry)->evts[i].evt;
+ 			list_add_tail(&evt->list, &r->evt_list);
++
++			evtinfo[evt->evtid].telem_entry = *tentry;
++			evtinfo[evt->evtid].pmt_event = &(*tentry)->evts[i];
+ 			ret = true;
+ 		}
+ 		if (!r->num_rmid)
 -- 
 2.48.1
 
