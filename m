@@ -1,105 +1,110 @@
-Return-Path: <linux-kernel+bounces-541864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED104A4C2A4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:59:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B76DA4C2A5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:59:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E73731667B4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:59:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E92523A6BD0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:59:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CFC8212FB3;
-	Mon,  3 Mar 2025 13:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6B7A21323C;
+	Mon,  3 Mar 2025 13:59:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HMfGrQ0M"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Tlz/rsNV"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0508121128D;
-	Mon,  3 Mar 2025 13:59:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15414212F9A;
+	Mon,  3 Mar 2025 13:59:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741010358; cv=none; b=a7pR0DH7lSRdI4zcl6+qFWDSjsAKr7RTR133SYRlQMAWNvOlpY0QrO+ajQDX9dy/mEvqK0WiTtEPY8fbEuSP98lX9jnPI+YjphHN++zzYbCZnejOB+YSceSk2bgHPmg4mQ/eU5mHjobqwXKcWJ8zU8Wcanr+URLOvS8cpt9uQDQ=
+	t=1741010381; cv=none; b=tY8fWaVh4C5Uix08fDTQX9zRPM57WJ5Ew4mFEZdS9U0RB8Dqcpj37IFJRA6KJBJxri7dS6unocJbyvQiEe3QX6O+WJW7mx+9smqa5CzNkEY+qmv+qbLKSLIhu/wjHzBOEu+KLqNZnJKspAfeJZiBEdQ6vKJngnwKkR0r4mIS0XA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741010358; c=relaxed/simple;
-	bh=aCzck+5umm89xbCr5uf7I4rMYXSf8aGHLei86MNCb04=;
+	s=arc-20240116; t=1741010381; c=relaxed/simple;
+	bh=FCkDWt+wTwZDcGN6QqEl9yLvHrIbg1v2Mer2UItZCz4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TzQMx1VeGeQCh2cs/9OhpiEJCXeJnvXVOERdK+XyhkkVVWEYOBc4XvIE2izC4Wt4TCTdwbs4OF/8m3i00iDNnyk4AC6Zqii3H4xxITZPn5iIYzZ5+GeLObsTJFUXV9JRzSxrkDuWjsagSFSNTBn9i3/nNIhnMG6f/IOPxPtTlRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HMfGrQ0M; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-22328dca22fso66525815ad.1;
-        Mon, 03 Mar 2025 05:59:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741010355; x=1741615155; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jWzcrOwXdymJD531/VeFi+cXBZlpa2+kaaFzyIB35Ik=;
-        b=HMfGrQ0MEL8EpQHoTIkMt/UV//5Re5Swdfpt+9UtQT5dWalG9gSgjdVEGWcGjXhQlN
-         EBKFNSyHH4ogwRIly+MKCIPA2mtiSkP1jjjYK7jWNNPv4JPXcDc4+eh7NQEMSu46WPMb
-         0TyXd80HyAdPq9Lx0QynMfQYDJZ3sHbX3bKLtYEV2E4xUXs1c5omEiiX8X6wJjbJM7Ta
-         Q/HGPp6Yh0UGZmAOUeAxjIL8yglU1Ohq1bVIAoqFhU/TWPDHPZhljW17wxjwyRdjwshi
-         w6U6b6g4dnQRfL4Y7KI/5GY1AI1wk6yHeVCN2vaa3feJFd23aDpHaOIuWoeOFrOcvkYq
-         cZqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741010355; x=1741615155;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jWzcrOwXdymJD531/VeFi+cXBZlpa2+kaaFzyIB35Ik=;
-        b=Yoz50h7mwRLWa9jCLGGqHqMk14yiqZyVj0iEnSU7P+kH1WWW29IuEqYvDJbW3R/EbP
-         twHuJPKpR/AUm9zK/LNHPt6pVeTAG5CCsx/DKtb1SI5m7D4IuaBc4XVhhru3QBwO3Tgi
-         RV6ao07PHQ7WrBvwbp++QkylGYapvJxrsGSe9wTZpVG+aQTksZiIQwM6MYskQ19ZAvhR
-         DRJiq4V5utQNo5JEuiHxML0REFM+pT7gukFjFK7Y3YpjfNTcPmKPB0mFefB3ATGr+DnM
-         M7rn21copFhJQbRoZNyG3F1YSbanP4sI6b8dk16Z9gI13ws1Lju7gI0yTNZySEsKjMbF
-         vJ5w==
-X-Forwarded-Encrypted: i=1; AJvYcCWL6K3on9fNOUSOGZc5TS//865vBwNx6U2xMI5uZFHCeGvTu2b7RVrA8kZLNRH5GPFwztjjrz1C7n0Sb+E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoNp4x5Ibk0vJxazl5mxb6pGFhRN1kIWekU4ncDI8orq6XvocJ
-	cyZlqoqjUqYmzRC2wyKXHo9yK2bkc49t86pPBFc1SVabNxCMDaWW9zjAiQ==
-X-Gm-Gg: ASbGncutN8hwsj6OZLGUzfsSUj+zv2nMWWnhpTp6EgXNoukaBeQ4WpQWo969aLeCgQB
-	6S7zUfSVeHrD972BXxoNRzgvlXZqhEG6gA4IN2bwoustZlSlk3h3QTt+kG1LaQJ2V3nrJBjmZPU
-	C8r+kzKxJM/8Tax7/lEX7YIsavmgYbZdQBX3cLDZnhYr2Tt1hMlHbplI/8AZmtWX985Dh81MLZj
-	nYADxz5JG1GbDQad5FkKrjbG8W/bWW7uCoFaRw8w34RVwqagFHyK9IrRCF7/NLp59jX6hg5i7Gb
-	G5cB4Axbkm/VYsa52sxgM608MJ9d/CcZA29LjmvXY/8pGO+GbISQczt44w==
-X-Google-Smtp-Source: AGHT+IG7Z0nVXtNXCNE3Kj6/NMwSc1HiU62F92nPIsV8Hqt67/S2rnqaIHmgye6z+lvMLC2uRXPQDg==
-X-Received: by 2002:a17:902:ec90:b0:223:628c:199 with SMTP id d9443c01a7336-2236926725amr177548805ad.52.1741010355266;
-        Mon, 03 Mar 2025 05:59:15 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223501fd28dsm78064945ad.94.2025.03.03.05.59.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 05:59:14 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Mon, 3 Mar 2025 05:59:13 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Akshay Gupta <akshay.gupta@amd.com>
-Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-	gregkh@linuxfoundation.org, arnd@arndb.de, shyam-sundar.s-k@amd.com,
-	gautham.shenoy@amd.com, mario.limonciello@amd.com,
-	naveenkrishna.chatradhi@amd.com
-Subject: Re: [PATCH v5 01/11] hwmon/misc: amd-sbi: Move core sbrmi from hwmon
- to misc
-Message-ID: <4a1ba8b2-5d95-4eae-b7a5-cafaf6228817@roeck-us.net>
-References: <20250303105902.215009-1-akshay.gupta@amd.com>
- <20250303105902.215009-2-akshay.gupta@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QV6oyKPh3NBt0HKctwrPp5Ffhx6mVyVRWc0Lkhgjb8lLC5j+CwVqmNljo7UpV92TLNDn1wypkFNEN7ldiU+Xj47C4G5LvNXcWZDmbvdTQfujXM+JxdrSWr7ZmqIKEKIFJfw6hmS9OFMl9nQsT4oPWTe6qPkhdH4X/hj0V7VcguQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Tlz/rsNV; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E334F40E0214;
+	Mon,  3 Mar 2025 13:59:36 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id z8186o3I-Gwu; Mon,  3 Mar 2025 13:59:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1741010372; bh=6saylgDZEGaqn8IRfv0exuo1BIZF6zZsttHwQyJfS38=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Tlz/rsNVrKyIr14dnSWB4zmg0dJM7SK1/pWrPNA+x6S6VZyRhCpVhpA3LKjc54sSF
+	 roVNBUrvjx90Iu/L/IzSk6OFSqBAoMxxOwDvYIA34Uv7IYYphjUiokA7wySM2vTN/b
+	 E+AoBaFl2poYpiXqCHxLqVBgKTzDgsYgVCbcHdbvt508vfth8luuBePJv72q4ozWpp
+	 K31dtZffWfGZibBUjj3Y+pzX9jfHpwucMgha2lxVb0U8p08C7Z8SW+J45KTIR8PPdJ
+	 e7RgrHcmWwHthszwd+Wxb51mgAJkUapU2ZlPy3b3NP3HkKh/aH5pZSSydUWjH7DlZh
+	 MbRFB29lTe85L9/ENVBqJbtQbWSg7DaaqguGXJVJIQLGTAHXyoLeNX9kWejRndqDM8
+	 09XYxoNyDrS1WLHiMjnoP3P7IJPnGhQ0+oljim1sg3yF0+VQ+osfj8XZS0nniEbLk/
+	 vIOKbf+ePrxwqsovZk8iFO8Q+IzZNXOjMLh53wbYSOl+9cch7J7v5D0aiNUFtrg2/+
+	 pS0jv2k+xmSg4iDaa1iOrUpqzgv0mo8ueB7sRSEVsvCYgzaujUtV2Sz3YC9OWGXXKb
+	 h2j9TYmEVA93yWuZAUX+Ogj8GYawnQylvFBtEqAKoAg/Fc2QI0Efy45Wr99YbZk2JZ
+	 p17gSiiljxrmLiJ/xnemlWeE=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 9653640E01AD;
+	Mon,  3 Mar 2025 13:59:20 +0000 (UTC)
+Date: Mon, 3 Mar 2025 14:59:14 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Yosry Ahmed <yosry.ahmed@linux.dev>
+Cc: Patrick Bellasi <derkling@google.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, x86@kernel.org,
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Patrick Bellasi <derkling@matbug.net>,
+	Brendan Jackman <jackmanb@google.com>,
+	David Kaplan <David.Kaplan@amd.com>
+Subject: Re: [PATCH final?] x86/bugs: KVM: Add support for SRSO_MSR_FIX
+Message-ID: <20250303135914.GGZ8W1skZjxqhYiJa8@fat_crate.local>
+References: <20250226184540.2250357-1-derkling@google.com>
+ <Z79wrLx3kJCxweuy@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250303105902.215009-2-akshay.gupta@amd.com>
+In-Reply-To: <Z79wrLx3kJCxweuy@google.com>
 
-On Mon, Mar 03, 2025 at 10:58:52AM +0000, Akshay Gupta wrote:
-> This is done to support other functionality provided by the SBRMI, which
-> does not fit in the hwmon subsystem.
+On Wed, Feb 26, 2025 at 07:51:08PM +0000, Yosry Ahmed wrote:
+> To add more details about this, we are using ASI as our main mitigation
+> for SRSO. However, it's likely that bp-spec-reduce is cheaper, so we
+> basically want to always use bp-spec-reduce if available, if not, we
+> don't want the ibpb-on-vmexit or safe-ret as they are a lot more
+> expensive than ASI.
 > 
-> Reviewed-by: Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>
-> Signed-off-by: Akshay Gupta <akshay.gupta@amd.com>
+> So we want the cmdline option to basically say only use bp-spec-reduce
+> if it's available, but don't fallback if it isn't.
 
-Acked-by: Guenter Roeck <linux@roeck-us.net>
+Yap, that should also be a part of the commit message.
+
+> On the other hand we are enlighting ASI to skip mitigating SRSO if
+> X86_FEATURE_SRSO_BP_SPEC_REDUCE is enabled
+
+Yap, makes sense.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
