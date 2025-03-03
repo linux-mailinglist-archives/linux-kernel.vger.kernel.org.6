@@ -1,136 +1,141 @@
-Return-Path: <linux-kernel+bounces-545193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B66E1A4EA2A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:57:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2289A4E8E7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:32:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56893189AF5C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:52:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67F07178073
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:26:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61565292397;
-	Tue,  4 Mar 2025 17:33:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F5E729008E;
+	Tue,  4 Mar 2025 17:01:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MUEEaKhH"
-Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LHKMulb8"
+Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5F0125F996
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:32:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F727290081
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.117
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741109581; cv=pass; b=KUUHdjG2Iit7Xxo5gZG19PP1GJe+DYY71iVHw91hq8FcNIB6bUGMWNhgM7QnK5ZxvH6XSptjnEKYh4EdxZfBkyy6xNjQZBLe46DrwpoxmEpnKq8cVekdEJQqHcD14jHVN7jk8U7B4egto56CdmIsubq34h9XZ5bb0b/qnnZx1IA=
+	t=1741107661; cv=fail; b=gMhahYfQA4h8hOp/m9qKNfVZ5ywk5hNtXPUaq4Y59vhqIlIFSpwkMJvIN4MofU7lHPbCDsTIAtAftJ3W9GXGcwl5iccXF53iO9ijyj457ZgiVD2kNQ2xY/V669NP7YFjP0aOLooXq8UsBeN/1wrSsdTtsrAv7MOmA+Il0Y09gOM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741109581; c=relaxed/simple;
-	bh=K2F9EW+qiAEiFc0wnbOIq8DzI+iuGYeb0zxsjfA4rl0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZPsp4lcn/W8TtOJK+CHbDxEtoqHqRiSPfFGn0shf/RhdVijIODha4gTHOW64VByT1aTZYeY8+ltINKqVBVNSVDPGiKleZF4dX0i5rpkYXLU44kayC3f2+phERi4+D/7m4IlgtBhnALLefYeBT20s2Bpp0G7YFyqOJzmUayobyL8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MUEEaKhH; arc=none smtp.client-ip=170.10.133.124; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; arc=pass smtp.client-ip=160.75.25.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+	s=arc-20240116; t=1741107661; c=relaxed/simple;
+	bh=d/Wengd+90RLXcT4cA229K9g++HytALzqI3EV/VOshI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Inwz/WpUkUWE6BQeLKqH9rRxn8KzYyMwMdoMxOQeiANOsTtb5s2gaYCEZcUy08AkkpkMg7lIqn5WBV4qpKprRvWrfCwNi/JsbdM+84ZjHceNWamrSMGqGdO2NPymfjMQShvAY/abQrwL1YnIuTh/Jj52MXyE1GzAF00PBdoe5QY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LHKMulb8 reason="signature verification failed"; arc=none smtp.client-ip=170.10.133.124; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; arc=fail smtp.client-ip=160.75.25.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 0639040CCF24
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:32:58 +0300 (+03)
+	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id 52AFA40D1F4D
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:00:58 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=MUEEaKhH
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=LHKMulb8
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6g1Y301XzG1Fm
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:42:57 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6gdy1MfVzG2bq
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:11:02 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id C9663400C6; Tue,  4 Mar 2025 18:42:48 +0300 (+03)
+	id 35FE342734; Tue,  4 Mar 2025 19:10:59 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MUEEaKhH
-X-Envelope-From: <linux-kernel+bounces-541205-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LHKMulb8
+X-Envelope-From: <linux-kernel+bounces-541210-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MUEEaKhH
-Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id 8C1A9421EE
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:55:14 +0300 (+03)
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id 1F1653063EFC
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:55:13 +0300 (+03)
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LHKMulb8
+Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
+	by le2 (Postfix) with ESMTP id B9CA941DCC
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:56:49 +0300 (+03)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by fgw2.itu.edu.tr (Postfix) with SMTP id 97D5D2DCDE
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:56:49 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C02F3A7D51
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 08:55:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47156189143C
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 08:56:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF8791F17E8;
-	Mon,  3 Mar 2025 08:51:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E7D1F3FE8;
+	Mon,  3 Mar 2025 08:52:58 +0000 (UTC)
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EEBB1F151E
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 08:51:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD0B1F3BAE
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 08:52:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740991904; cv=none; b=s+t4rBwbDuB/WPVt85V6S+m+FojOewUkJVHjQmnVLcyr+H6MbsV39zdIGh6wuNduLpy6jl8ZBmq8Kqq9oBSqJ1uhcYSTOuyF0jjJ4DLOSfKEweGLnLTaXB8YL9zq0W+DzRX3mv8RCql5vkfDYLfKqjzOtv4thwTlipNm3pDJOfU=
+	t=1740991976; cv=none; b=JN6Z2yX8mOjxRGoNTdlyD4tPiX5KBdrUeVPHoTa+9IKyBC1V0UgdjTIG+xaWyta2+6Yi25KINvDfE/p9SNRs64lARSp3HwAN3gghE9dk4FaDbae/KuFrp/gowRGOunPJZD5u8ymMGeNjc9PtWarI3zYq5THx1BMWUsO0ZnN2/r8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740991904; c=relaxed/simple;
-	bh=K2F9EW+qiAEiFc0wnbOIq8DzI+iuGYeb0zxsjfA4rl0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XJILvxXCcJ0pELYZ+h/JRQE11NRcS230t56HgjJvxbzwbvGzyFCrRvZVliyPb8vwzNrLQMlkFs6Hlr7piwSW5w1cp3/fvTAw0BdX3vheJr8NBFyMDuok2ZWRNeSK5i7cbUNm5i2deZ4BGZrN3LoDk0gS4SLs0DBvq2/BFE3KxQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MUEEaKhH; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1740991976; c=relaxed/simple;
+	bh=7BJ75VnqDYEbE9e13G+MCHppvDrRT82moH7VLX3ZmAQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YT2nI/fqiXPfVzSEYaDriYPeYMvz6q69O+jZUqS+lzOS6Rvu+5OzMVvQ92rX//QdmyLS72D1dXbq+2NPpnJHYAqzRfBEnyVwCEAKdY5jLOSQnMu47aTFuoiDtB9232mCAZhGzLsNT37ptsokalFkG53UrT25KEEy7HxNWpTtuD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LHKMulb8; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740991899;
+	s=mimecast20190719; t=1740991973;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=PqwL+v3kSKyO1WWdOm3Dn4wn0YpaEHuXEacsy1CmEn4=;
-	b=MUEEaKhHroJTTeUp4KpAtO7naUHm8iEdVaV1kb7KmpWFAiy5a8jkMMipWqsR8y8eLMSPp4
-	dnrl21lc0/K2YOTKaSOBGn9zsA1kc9ocXtz5xe95YVTm0IVvFMv2MwtsCe+Cg53OMg8jXj
-	RwijkMT2v03xMyv/FWpaAgt37lFShcQ=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=x5f0Ge/u6HApn0cHLmrjeezLoP0KdtHv+tljpLM2u/w=;
+	b=LHKMulb8ZRkrmLqS/nzF41xVyQdCfyYpmDB4eIRz9CbJEpcpSPkr1PoJbaI9W+3NPEbxcH
+	4rjwIQRCgpJcaL4S+HyoyeOhvlrIDD4IUSPqdWE8n5/nZtg53UAxPSRs1IZd+gDUhOPBbS
+	UAjcviCqTpkkZfpy1TcopL0VJXUGOy8=
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
+ [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-528-VA546TMQMj6KekOoIIhgNA-1; Mon, 03 Mar 2025 03:51:38 -0500
-X-MC-Unique: VA546TMQMj6KekOoIIhgNA-1
-X-Mimecast-MFC-AGG-ID: VA546TMQMj6KekOoIIhgNA_1740991896
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-390f000e962so851941f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 00:51:37 -0800 (PST)
+ us-mta-484-DvNN2j4vMHa1lbb5_XkTcw-1; Mon, 03 Mar 2025 03:52:47 -0500
+X-MC-Unique: DvNN2j4vMHa1lbb5_XkTcw-1
+X-Mimecast-MFC-AGG-ID: DvNN2j4vMHa1lbb5_XkTcw_1740991966
+Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-5e550e71966so610884a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 00:52:47 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740991896; x=1741596696;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=PqwL+v3kSKyO1WWdOm3Dn4wn0YpaEHuXEacsy1CmEn4=;
-        b=oChVHtL26OvS9qrjvljJrZldt64vp6Jz1zcpZr+vB4t5+9PfB0JpGEB1cYZrHAMEMT
-         NXjKzNG+UD7m0IJtZrPQdobkfI7x6bmeS0hJx2aAGQIn1WchGljz5SjaeJIjHE7tzfgr
-         hDTBGg8C0cdbQB8I+GIONVRFpHZr+GkYexv5pGqZ2HLxtsmgDD1uP+yWv+ID+hJAb6wD
-         +4VT6k645YcC6c/qE0jEWG5z02e3TG8Ok1FHmt7qzF9KB6q/noipl460vIcAnZKWHnhe
-         v71KoEQwdSYshC5cyjqeaJEXexb6zeZWj6kWkBMKM+JkDt8xII4sI8E3pQIbUEWfdO7f
-         m/MA==
-X-Forwarded-Encrypted: i=1; AJvYcCVc25svwb+S47p3fOR3nYCFXI/ntfMoHhydLlSg/5/uGj1PZ4EvXvD3ZIXbPfRaVxzc9Cw4zDLB4hIu1hk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxebEQsUp7eWITMai4/rWadHgwKpfor9f97Zlk47fg+K6F7AEce
-	MUQ0xvkL1LiZKHsWsBgXDirrSC6NhotHg4fTt5oCXP1y5J76vIm3RFUiabYSN5ztErKMQ8UkOX8
-	6WdI/XGMoUk9HpENZlNSfZVfhjjPrjPkdWSGfBi7DBqVEVIFuqy8BOxatWc+RFw==
-X-Gm-Gg: ASbGnctLjE9cHh6S5UKLkvL+JgxfDiBC89/AaEca25iyM49CxH2AT5i85xViGDrmxFa
-	r88D9yYCqVGhGmOzrcGPM8VG5GGtPdErUHrlR6Gw9QPNL4EzU7fT+g3sMl9wA1Rh4nXDLLOegXl
-	X4C46SzHe4Ys1uMsfI4hazpDhITem3D7D4Z+cOsMbu6TqzSXkPZgvyrsPMAg5Sw6oLR9JHvnn/+
-	30eV0FLBe+WJcSc+mOhW6eIM+dyuv8VpKoDex3tX4QM7ejjP9IfJZ/Sq9MOIdN5JIHfLiMRCbeR
-	Rq+H1iPlPIYAvUil6C3J5JhZUSetRTy7fI0J+qKLd/o9Ox+Q7jv8DFlxR2luuRlsY1/0p/BrmSu
-	rx1/skUu2N2QMI+qLT7oKDa8wZUO1puxE72rtFXLS+lk=
-X-Received: by 2002:a05:6000:1565:b0:391:9b2:f48d with SMTP id ffacd0b85a97d-39109b2f8ebmr2190202f8f.33.1740991896372;
-        Mon, 03 Mar 2025 00:51:36 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEiqrTykXg+NUm0kAtziKqLGECEKRMnAI63MS2I3V/WDMW5AEnsAxTN6b4wA0iNetJkZ/Gt5g==
-X-Received: by 2002:a05:6000:1565:b0:391:9b2:f48d with SMTP id ffacd0b85a97d-39109b2f8ebmr2190184f8f.33.1740991895948;
-        Mon, 03 Mar 2025 00:51:35 -0800 (PST)
-Received: from ?IPV6:2003:cb:c734:9600:af27:4326:a216:2bfb? (p200300cbc7349600af274326a2162bfb.dip0.t-ipconnect.de. [2003:cb:c734:9600:af27:4326:a216:2bfb])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e4844a22sm13875701f8f.74.2025.03.03.00.51.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Mar 2025 00:51:35 -0800 (PST)
-Message-ID: <4af46304-cf25-4c4a-8e4a-3a566193ca62@redhat.com>
-Date: Mon, 3 Mar 2025 09:51:34 +0100
+        d=1e100.net; s=20230601; t=1740991966; x=1741596766;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x5f0Ge/u6HApn0cHLmrjeezLoP0KdtHv+tljpLM2u/w=;
+        b=GDpECmJyW90+Rxg521NW1XvvTuvbEtKKmFkC6qYtB8WAtZm1iwH/BXO9e3bTeu+dXn
+         ABOx7iOdb4xHkFVGD10d+Bjk/tidaNB8P8+Bjdcvv0MbT66MZwyF66NFfLYUEPGrp066
+         CI4SXggZF2XJ3svpgwdAQKpxgAwSGVSRC7HN7zpkwEMUP0oMqNQ8LRuy5vD3zoRX2dUT
+         D8oxVWIbCN9RIaUalURZThzZeA/F1xa03U+yZgRR8kIU9XN8UMY5NeHqECddTm9UbFTZ
+         g2b7Xt3DzPB83eXhYr/iEcM5pAZa494VSckITasCyq18ilL7XnOt2/7Bwh5EYgByQLCU
+         wG9g==
+X-Gm-Message-State: AOJu0YyefB7GAki0OGNf/6bEbVznF4SokFnMOzrPr91aP36sk1aUYDvK
+	PEkktYCFU8gZKjz1AkN+jF7Usu0U03TIkB9N3LKm+6pHdQ5wXci+E1sa32Ws+jWvoclGWySKQ0Q
+	UbcgrbY+yg9/n40AbfbjTsTpdOksnqZDrro8ex9t+nV/HMJp582GQ8+NNTWS+Jw==
+X-Gm-Gg: ASbGnctMM7vaRDDMYZI9h6u9VTo/jakCj1oJp5bCWaE6q9T76OoYKuTn5lLlc4Oli6J
+	adAe7vbb6LzBnRzt7dEIjsq5LtxK7qc8jSulfo7UbJCDwL1AZ7Hpy9lLue1D2SrvFk3QKRYuMah
+	lTMCT7wVvLkY3gMfpVa7fVE1FsKGqzlXEiukrFuxYpHjItOSIweTUuOJZNo5nrRigGc28DAezVE
+	Iva/+8p3EWB4tCIwzXyDWjsliIlLF+FGsRyHjXJbG7drANjr5ihTrG06EJ+sk7oPY3t2lM+jbAb
+	z88RnnnqZlAZAFtqNrspBzNh8p20yUcnisTpUYRZebxm9ZtnfkCOhplxUSukY5QFkkxz0wbp
+X-Received: by 2002:a05:6402:270d:b0:5de:5263:ae79 with SMTP id 4fb4d7f45d1cf-5e4d6adec08mr13660773a12.12.1740991965908;
+        Mon, 03 Mar 2025 00:52:45 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHo44UCmf/nhSiQ3s6omsM4aVzpmAfPARCDmTuHp0dZeSeSv2Z6WHtZA+hKBPUeIaCokWugDw==
+X-Received: by 2002:a05:6402:270d:b0:5de:5263:ae79 with SMTP id 4fb4d7f45d1cf-5e4d6adec08mr13660741a12.12.1740991965384;
+        Mon, 03 Mar 2025 00:52:45 -0800 (PST)
+Received: from localhost.localdomain (host-79-46-200-29.retail.telecomitalia.it. [79.46.200.29])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e4c3fb5927sm6466076a12.53.2025.03.03.00.52.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 00:52:43 -0800 (PST)
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: virtualization@lists.linux.dev
+Cc: linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	kvm@vger.kernel.org,
+	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
+	Stefano Garzarella <sgarzare@redhat.com>
+Subject: [PATCH] vhost: fix VHOST_*_OWNER documentation
+Date: Mon,  3 Mar 2025 09:52:37 +0100
+Message-ID: <20250303085237.19990-1-sgarzare@redhat.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -138,133 +143,45 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/4] sparc/mm: Disable preemption in lazy mmu mode
-To: Ryan Roberts <ryan.roberts@arm.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- "David S. Miller" <davem@davemloft.net>,
- Andreas Larsson <andreas@gaisler.com>, Juergen Gross <jgross@suse.com>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-mm@kvack.org, sparclinux@vger.kernel.org,
- xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-References: <20250302145555.3236789-1-ryan.roberts@arm.com>
- <20250302145555.3236789-3-ryan.roberts@arm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250302145555.3236789-3-ryan.roberts@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6g1Y301XzG1Fm
+X-ITU-Libra-ESVA-ID: 4Z6gdy1MfVzG2bq
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741714271.91291@+mIU9ZAuY6OEd2CQH/RUmQ
+X-ITU-Libra-ESVA-Watermark: 1741712342.30905@i/fA2y159etPvvjzMr3QgQ
 X-ITU-MailScanner-SpamCheck: not spam
 
-On 02.03.25 15:55, Ryan Roberts wrote:
-> Since commit 38e0edb15bd0 ("mm/apply_to_range: call pte function with
-> lazy updates") it's been possible for arch_[enter|leave]_lazy_mmu_mode()
-> to be called without holding a page table lock (for the kernel mappings
-> case), and therefore it is possible that preemption may occur while in
-> the lazy mmu mode. The Sparc lazy mmu implementation is not robust to
-> preemption since it stores the lazy mode state in a per-cpu structure
-> and does not attempt to manage that state on task switch.
-> 
-> Powerpc had the same issue and fixed it by explicitly disabling
-> preemption in arch_enter_lazy_mmu_mode() and re-enabling in
-> arch_leave_lazy_mmu_mode(). See commit b9ef323ea168 ("powerpc/64s:
-> Disable preemption in hash lazy mmu mode").
-> 
-> Given Sparc's lazy mmu mode is based on powerpc's, let's fix it in the
-> same way here.
-> 
-> Fixes: 38e0edb15bd0 ("mm/apply_to_range: call pte function with lazy updates")
-> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
-> ---
->   arch/sparc/mm/tlb.c | 5 ++++-
->   1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/sparc/mm/tlb.c b/arch/sparc/mm/tlb.c
-> index 8648a50afe88..a35ddcca5e76 100644
-> --- a/arch/sparc/mm/tlb.c
-> +++ b/arch/sparc/mm/tlb.c
-> @@ -52,8 +52,10 @@ void flush_tlb_pending(void)
->   
->   void arch_enter_lazy_mmu_mode(void)
->   {
-> -	struct tlb_batch *tb = this_cpu_ptr(&tlb_batch);
-> +	struct tlb_batch *tb;
->   
-> +	preempt_disable();
-> +	tb = this_cpu_ptr(&tlb_batch);
->   	tb->active = 1;
->   }
->   
-> @@ -64,6 +66,7 @@ void arch_leave_lazy_mmu_mode(void)
->   	if (tb->tlb_nr)
->   		flush_tlb_pending();
->   	tb->active = 0;
-> +	preempt_enable();
->   }
->   
->   static void tlb_batch_add_one(struct mm_struct *mm, unsigned long vaddr,
+VHOST_OWNER_SET and VHOST_OWNER_RESET are used in the documentation
+instead of VHOST_SET_OWNER and VHOST_RESET_OWNER respectively.
 
-Acked-by: David Hildenbrand <david@redhat.com>
+To avoid confusion, let's use the right names in the documentation.
+No change to the API, only the documentation is involved.
 
--- 
-Cheers,
+Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+---
+ include/uapi/linux/vhost.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-David / dhildenb
+diff --git a/include/uapi/linux/vhost.h b/include/uapi/linux/vhost.h
+index b95dd84eef2d..d4b3e2ae1314 100644
+--- a/include/uapi/linux/vhost.h
++++ b/include/uapi/linux/vhost.h
+@@ -28,10 +28,10 @@
+=20
+ /* Set current process as the (exclusive) owner of this file descriptor.=
+  This
+  * must be called before any other vhost command.  Further calls to
+- * VHOST_OWNER_SET fail until VHOST_OWNER_RESET is called. */
++ * VHOST_SET_OWNER fail until VHOST_RESET_OWNER is called. */
+ #define VHOST_SET_OWNER _IO(VHOST_VIRTIO, 0x01)
+ /* Give up ownership, and reset the device to default values.
+- * Allows subsequent call to VHOST_OWNER_SET to succeed. */
++ * Allows subsequent call to VHOST_SET_OWNER to succeed. */
+ #define VHOST_RESET_OWNER _IO(VHOST_VIRTIO, 0x02)
+=20
+ /* Set up/modify memory layout */
+--=20
+2.48.1
 
 
 
