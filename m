@@ -1,191 +1,233 @@
-Return-Path: <linux-kernel+bounces-542096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67F2BA4C5A7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:50:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06537A4C5A9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:50:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 474F27AA311
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:45:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2B437AA5F4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:46:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A619D215180;
-	Mon,  3 Mar 2025 15:46:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DF5E214A7C;
+	Mon,  3 Mar 2025 15:46:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n+CNwudK"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="tCSBAFze"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2084.outbound.protection.outlook.com [40.107.237.84])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4030D21505C
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 15:46:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741016782; cv=none; b=l3SGQVFCQyTIG+6nE5YLDzb/0fX8JiTXgSWvCgS8ozuI1/ld1PocfzTvRD+joke8YzaGrYoij1WEPDo/5Z2xa5hGUu8RWs/fwXHa6Wd6SlkVxR35ZB2Z0D7WaYcDhoOANzpqO9dkBJ+rKQ/+h1tAIPNZkOD3CUcR2jYbLYzqi3w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741016782; c=relaxed/simple;
-	bh=xZbG9+LargulmZD5V8VthUDEt6YSputXK3s15FU9+zY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=BxsCXR0Kpm2eWdlox3zqINyo0GBtTt/rtxRlIxgWm3FoEW+s6zL65dnwVjXx90F/fJ0OIVuePRiBwyi94FqWw8+wLiY2scbyM2ql6scZFV4+fzOZchZg5dJOyRnYJrLe8uceXFllDAtbrCux7wurjbb1recv4dzWWUuFstkGlsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n+CNwudK; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4398ed35b10so20577805e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 07:46:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741016777; x=1741621577; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=m5VafYnlfGJvqMjKGIihikKtNMHAvBXWGf3PBF9dZwk=;
-        b=n+CNwudKozlZbT6oiHJG+0oHweXrMIE8o1c4Kul4CVLaXWOHS27K9/nn4o9J4R2cHL
-         gmc6DnkJrFdw1vBD5BIy7tXI76q8lGKXeUkVcRjEi7Pp5hXKct3b8A/OQ9mRpB256NUj
-         hRWPatMYOLQXP/nAHl+6Ye1q7qxPDKUEnz8p94SNrYr39oBT+ZMqvl4FaRhlAkkNlzXG
-         x4hS8BaN11TO9BdjA+hgR/JyholaylH4H3LwNVfuI7sWcKvS1qCzEP4kS1fBzvMmn//h
-         FXdYzwQkfasrLZxsJXzx40ZrQS/dHbpY52erK1NmJvgyM4o9qMGFK40QHY6ZYd8r+PZf
-         lepw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741016777; x=1741621577;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=m5VafYnlfGJvqMjKGIihikKtNMHAvBXWGf3PBF9dZwk=;
-        b=dIEAgRVzQ9CJCgbnKX5QZfydvPAPpJ9bnu0RhcjX8uiJBStJgBk7hrIELEuUAdKD+W
-         iOEsmlPMELK1Sn7F5fm52AsMp2yndk74nKIOIdQM52AuwHlb/niNqlDrxMO9UGv3gIlZ
-         qOBHXWlTXWJc7MhlZ+9xOYAg7jIR0psBP7hY9BrnueIcxJlShUfW8eAmoDs5PTjWRrfq
-         mI5If8qTiH9ZS9r8NHr9EtVvUQbKwquDfam6C6Bq8gnl2HTqedJUMkfDzfTOJvjyTxQe
-         5V0TISPDHs2Pl8lBJDaC81VMTJvI5idAQonpfiu6scVxMG71O271bjiChfmwMINN8VIW
-         7dIg==
-X-Gm-Message-State: AOJu0YxybluWR42/gFFFXaQBlVs3t7pTVmRiCoSbn/jrjr/t+7aLcyli
-	kwlRxUNSkxQId5f78HCHowTte0HeP5uhLEZN0gjnlQdKpWTSqCZnPwsHrKH3VfEX6HXJYh9LT66
-	1Vz90qLbpbQ==
-X-Google-Smtp-Source: AGHT+IE3N2oxEHJ5LswDOjLZnmd7mp9zhpcr2Z2YcRShTrfqCv8jdoD7g0qBBoBARJd31RAi+IyGCvu8ellqWA==
-X-Received: from wmbfl18.prod.google.com ([2002:a05:600c:b92:b0:43b:c967:2f53])
- (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:1d0b:b0:43b:c5a3:2e1a with SMTP id 5b1f17b1804b1-43bc5a32fd2mr21349525e9.2.1741016777647;
- Mon, 03 Mar 2025 07:46:17 -0800 (PST)
-Date: Mon, 03 Mar 2025 15:45:39 +0000
-In-Reply-To: <20250303-setcpuid-taint-louder-v1-0-8d255032cb4c@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE77215192;
+	Mon,  3 Mar 2025 15:46:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741016787; cv=fail; b=vB5IBEY7MXOuRcG1/u9SpdebKg4xCihsVAC/Vzy3yJIFFD93WWTuiGWRDAninqB0a46BeT5KMrZho3adLjHHx2ycwjQ6TbViCGZMo5YJ9TABQm/rh8vnLcBPH3A+tpVx8yHk/CW/nADnZu3do558WP/XeWoDLi2G16U1r789VVc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741016787; c=relaxed/simple;
+	bh=1BbSXrxecaJBWFJpPXvk7Dv6au9rTbnJQ3adw+m3FKI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=fOCWi9s6EceEkpqNepULkoB0CVJiIZzGEoTvJ9SwOUjkvbYMdbMVTKRnQumckeHRZuooR7f1nfaS2Sb5ExsFsquaIc5mlwb6egcOcXnsGoUvvqL0il0QpAe835xJFgig4s6Z97VBjabMcPirM6RCr6WnTLbx8z3+XevXL/QspEA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=tCSBAFze; arc=fail smtp.client-ip=40.107.237.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=S5OWVbTbYbMQCPOxWK/7M6g/zY3/obtccCmE5pkGQDtoScDiJZVgrJXlOMHZgpTR54FhnWVFL4kmCUFqtIV/4Jb9S9XV39QSOVk3+ttb9Jd/H7q5gWBvFldyGmaGJ77ElbIpkEKa61hp/jhGmgKFKoSFcoRHAAIYki32HX0jSnA8vCcemxOMTmEF2rppwa1lYL1ii1PnRqeU/hvW9X/0OTOnOwfKtIxp9el+ND051WiBZ6Ff+XnOEj6ybqWqtZjvDPKoxMTf/E2/I+y0DCg3wwzsjfhqCowyDooA+PpUE84z1y2m1qb5HyyvASwdJtqxTQCLSHS+C3QADxG3rzZ2ug==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NlsgxBQIQ0fAHUKXLYAvjTVXAhjWUZdW6h+Id416zqU=;
+ b=TgtYh95XaDOXFiVpNwnmPvTomrooVn4aVs+bw6p852K2ikAPpRBBcme14EDC12zicboAbdbp89aMyCwfUigiqCUAMFYBN7WLR7ugQlqRG1L5Yi3UeBQmUpY37c1T5WFpaloV4mHQBnyhmWC6BshFwgOycPxgeZRX/lX+fT/t0C0NeQI2aOkf2yfyDNUasdKoA2M1MVz9DWw8gYusSRPnVv5eJIyeLiSZZvTM+2izR8+ufpLRmr414YIbQknlhqc+RNfptfN3WaDM2m5/1y72gg2CP+aQPvXUJxbY2HeleZymN1kC/cSAbUvmB21b43z6MNLmwZxCQypBLWzVO64q0A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NlsgxBQIQ0fAHUKXLYAvjTVXAhjWUZdW6h+Id416zqU=;
+ b=tCSBAFze0MmWoBfy21H80XQYXOtUkeGZ1W5+WIgk9GQrNQeONajVmC5BUrQ/DxGPOCxeiBtCh2TVgvw207iKEI6yBj7tg+hRJ38gFqK4sr2KSFGCHwgKOmRerC05PtG2LNIpwd0mX8Ri5ZCwz+tYZYS8399LrcJM75k6N1Ov/7s=
+Received: from SJ2PR07CA0001.namprd07.prod.outlook.com (2603:10b6:a03:505::11)
+ by BY5PR12MB4098.namprd12.prod.outlook.com (2603:10b6:a03:205::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.25; Mon, 3 Mar
+ 2025 15:46:19 +0000
+Received: from CY4PEPF0000EDD3.namprd03.prod.outlook.com
+ (2603:10b6:a03:505:cafe::82) by SJ2PR07CA0001.outlook.office365.com
+ (2603:10b6:a03:505::11) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8489.28 via Frontend Transport; Mon,
+ 3 Mar 2025 15:46:18 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CY4PEPF0000EDD3.mail.protection.outlook.com (10.167.241.199) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8511.15 via Frontend Transport; Mon, 3 Mar 2025 15:46:18 +0000
+Received: from [10.252.205.52] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 3 Mar
+ 2025 09:46:13 -0600
+Message-ID: <30d35796-4687-440e-845f-b015d52fa4f0@amd.com>
+Date: Mon, 3 Mar 2025 21:16:08 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250303-setcpuid-taint-louder-v1-0-8d255032cb4c@google.com>
-X-Mailer: b4 0.15-dev
-Message-ID: <20250303-setcpuid-taint-louder-v1-3-8d255032cb4c@google.com>
-Subject: [PATCH 3/3] x86/cpu: Log CPU flag cmdline hacks more verbosely
-From: Brendan Jackman <jackmanb@google.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-kernel@vger.kernel.org, Brendan Jackman <jackmanb@google.com>, 
-	Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still
+ full
+To: Alexey Gladkov <legion@kernel.org>, Oleg Nesterov <oleg@redhat.com>
+CC: "Sapkal, Swapnil" <swapnil.sapkal@amd.com>, Manfred Spraul
+	<manfred@colorfullife.com>, Linus Torvalds <torvalds@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>, David Howells <dhowells@redhat.com>,
+	WangYuli <wangyuli@uniontech.com>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, "Shenoy, Gautham Ranjal"
+	<gautham.shenoy@amd.com>, <Neeraj.Upadhyay@amd.com>
+References: <20250102140715.GA7091@redhat.com>
+ <e813814e-7094-4673-bc69-731af065a0eb@amd.com>
+ <20250224142329.GA19016@redhat.com> <20250225115736.GA18523@redhat.com>
+ <Z8Wn0nTvevLRG_4m@example.org>
+Content-Language: en-US
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <Z8Wn0nTvevLRG_4m@example.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EDD3:EE_|BY5PR12MB4098:EE_
+X-MS-Office365-Filtering-Correlation-Id: dea755f2-47c1-4e2a-8db1-08dd5a6a89e7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RFRjN1lrTHRFWGRvTFZSWkRFNTBhaFlZU3JBQnRnVDloUkQ2SnU1OUJmRWF4?=
+ =?utf-8?B?TVpzUHNxajV3ck1aWnl3MzQwbkRWQ3JyblU1K1RwVi8vTS9CRGZ5dUxISUtK?=
+ =?utf-8?B?Q0t4MldmeU5kZmpVdCsyODNCRUhhcWxWcURZY2NCaTJXdHRtMXUvSHdiQWVm?=
+ =?utf-8?B?bFZSL2JRcitpQkxiak5ZMTJhU2ZPY096RmJtc1VVKzBFeGFmbGZrVGdqMExm?=
+ =?utf-8?B?R1AxZWdIV2lhaUt2UlJ6azRNU2tUcmhzVU1yMjBJbGkwL1JmYndLU0g5QUJD?=
+ =?utf-8?B?OU8zS0FmWXQ0ZjFkWjgwd2lYeVYwRFNmMWZRbmpScENFSmdodytqZTF1dFNw?=
+ =?utf-8?B?RldWSTN1K0NleHV6YVNZUVJyeUo1eXRtVDFOQ3hBYi8xeWMxY0VlcFBOaXRE?=
+ =?utf-8?B?TVk3RGkza0cwbXc2dGJSenI4ZUlrOVArN0ttWnVRMStON2NrM2U3ZytLN1JH?=
+ =?utf-8?B?SUFZR3dtOTJqZDBKeXNIMHA1Qll6cFV3U2Z4eHp4RzN2NUtLeU5sZWFQNmY0?=
+ =?utf-8?B?ejJZb0N2ZUFrUlJ4Y25Fb1lvWmUvSEk4MFgzYTVVNmFENGNlZlZRenJNQ1Zp?=
+ =?utf-8?B?dUpQVGVlQmZIRWpLQVBSWFJlOCtyY1BZK2phMzFXbjVIWEgrVTJCT2JKYksz?=
+ =?utf-8?B?dUo4QjZjc3lyc2Nsb1JiYlVhTElxYjRDdFV3K0xKS3FJcGRVdzAvNFZpd3Z2?=
+ =?utf-8?B?NVVKYkxISENrY0xWQnp3a0ZFSUZFSlFVa085TzhPU3YrODBQQnQzbnZIUVda?=
+ =?utf-8?B?NlRaa01JS2RZSXBPUUhhSUNtWXBWZkVHK3dhUmRhMlkxejJDY3RaSzJIclBH?=
+ =?utf-8?B?SHRCZmMrUjlwQ1F4L3BGcEg4L2dJaU5CY3Z1S3NVaVZlYjhZdDF0QjRRUFhY?=
+ =?utf-8?B?VE43djgzeGR5aDd2MFdINnMrTzZZc0ZOSTI0cm1VckVLNkVQNVFiL3kyOW1E?=
+ =?utf-8?B?cXZ4Ujl3UVNMVUp6SFJ4K2xINUltZXZYUmVESTE4d1hyU2llUmdnVEx6amVV?=
+ =?utf-8?B?MFpsZFZ5ZlAxRjFlVWFtbXJRSmc4QzlXM2xZSjBBbDBjNmxmRnZCOUZOaHRw?=
+ =?utf-8?B?VXBqUHlqZk5LWEEwdVBqV3l0cnJ4NlVlc1E5dFFrTnNTeG5odzZ5bExoVHJu?=
+ =?utf-8?B?NzlNU0xBWHFLZW91dWJVOFFidGgycUlOeGdUOEE0RFFCSGpvSVlEOWN0QXVE?=
+ =?utf-8?B?bFJLekh5RjN3aG81eFF0WURlaE1scWViNUl1VXBzQU9QLzlSQ3kvYXpEL3BF?=
+ =?utf-8?B?aC9mTFlyY3pLNStTYmtZeGszOGtTSnJkSm9XR2lsOCs4d1F5RTd0V3RJdytt?=
+ =?utf-8?B?cUZ0SU1yY2ZEbGltZGtycHdRRWFpVURqTEpjWExwbk5kZnB3TExxM3ltTFVx?=
+ =?utf-8?B?cDFBSzlMZWpWaThVWlRIa1RkYkRhYzlKekhxVjN1YTdhS2VEb1hQVzh2VVQ1?=
+ =?utf-8?B?a0JEcWVLSkVyWmhTMEVUcEtlYzRTT3Z3bDJISWdTdkMvQXpjU0k1VnFtcWpo?=
+ =?utf-8?B?eC8reHgva25qM1FyMm9nTFBhME94V2lHeEVLaGU3VXpDazlvUERGWWd5K1cx?=
+ =?utf-8?B?ck9mWjFyQ3ViazRzSEhzc1AzVFpOcGpEd2U2N2VYR0FKYTVLQ0IwOWt2Q0F6?=
+ =?utf-8?B?QU5zZ2tHWUlQbU9YZXVmQm1SNC9vT1V5d2RDNG1vSG12eTROK0V0YVVBb0xQ?=
+ =?utf-8?B?RHljN1J3UHc0VEd6Zys2b2I4N1RQYnhOb1hhQ1ZJaGRhUzIzTUppTjVLT2Fs?=
+ =?utf-8?B?RTVlZDkyRDVrR01BcmY2cHhsNFFUL21rK3dRTnlJUlpOZ2w3T0JJbVpqTDg0?=
+ =?utf-8?B?T3pPYk92QTFrRFFGSkdFU3duVEVjcVIrcnVPcVJtUndueE05UUthbG9neHdO?=
+ =?utf-8?B?UFpHVWcyNVR1UkkxYlZpcVVDdE5heGNqbTJvbWZZNHM2a1BabDZwU0VYWGw3?=
+ =?utf-8?B?YVlja1paRURwUVMrNVU5UUxzNDZTN1UraGJ5M1ZOQlpDQXhwaWc4QWpQb0th?=
+ =?utf-8?Q?Rc+SHV7g1l9f/f2KWYIQPN2USMHQSs=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2025 15:46:18.1447
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: dea755f2-47c1-4e2a-8db1-08dd5a6a89e7
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000EDD3.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4098
 
-Since using these options is very dangerous, make details as visible as
-possible:
+Hello Legion,
 
-- Instead of a single message for each of the cmdline options, print a
-  separate pr_warn() for each individual flag.
+On 3/3/2025 6:30 PM, Alexey Gladkov wrote:
+> On Tue, Feb 25, 2025 at 12:57:37PM +0100, Oleg Nesterov wrote:
+>> On 02/24, Oleg Nesterov wrote:
+>>>
+>>> Just in case, did you use
+>>>
+>>> 	https://git.kernel.org/pub/scm/utils/rt-tests/rt-tests.git/tree/src/hackbench/hackbench.c
+>>>
+>>> ?
+>>
+>> Or did you use another version?
+>>
+>> Exactly what parameters did you use?
+>>
+>> If possible, please reproduce the hang again. How many threads/processes
+>> sleeping in pipe_read() or pipe_write() do you see? (you can look at
+>> /proc/$pid/stack).
+>>
+>> Please pick one sleeping writer, and do
+>>
+>> 	$ strace -p pidof_that_write
+>>
+>> this should wake this writer up. If a missed wakeup is the only problem,
+>> hackbench should continue.
+>>
+>> The more info you can provide the better ;)
+> 
+> I was also able to reproduce the hackbench hang with the parameters
+> mentioned earlier (threads and processes) on the kernel from master.
+> 
 
-- Say explicitly whether the flag is a "feature" or a "bug".
+Thank you for reporting your observations!
 
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Brendan Jackman <jackmanb@google.com>
+If you are able to reproduce it reliably, could you please give the
+below diff posted by Swapnil from the parallel thread [1] a try:
+
+diff --git a/fs/pipe.c b/fs/pipe.c
+index ce1af7592780..a1931c817822 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -417,9 +417,19 @@ static inline int is_packetized(struct file *file)
+  /* Done while waiting without holding the pipe lock - thus the READ_ONCE() */
+  static inline bool pipe_writable(const struct pipe_inode_info *pipe)
+  {
+-    unsigned int head = READ_ONCE(pipe->head);
+-    unsigned int tail = READ_ONCE(pipe->tail);
+      unsigned int max_usage = READ_ONCE(pipe->max_usage);
++    unsigned int head, tail;
++
++    tail = READ_ONCE(pipe->tail);
++    /*
++     * Since the unsigned arithmetic in this lockless preemptible context
++     * relies on the fact that the tail can never be ahead of head, read
++     * the head after the tail to ensure we've not missed any updates to
++     * the head. Reordering the reads can cause wraparounds and give the
++     * illusion that the pipe is full.
++     */
++    smp_rmb();
++    head = READ_ONCE(pipe->head);
+  
+      return !pipe_full(head, tail, max_usage) ||
+          !READ_ONCE(pipe->readers);
 ---
- arch/x86/kernel/cpu/common.c | 39 +++++++++++++++++++++++----------------
- 1 file changed, 23 insertions(+), 16 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index c1ced31f976d970efd24d6c9e4ac77cbff3371b9..8eba9ca9c216127ce1a6d630e7f67130520137b4 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1484,8 +1484,6 @@ static inline bool parse_set_clear_cpuid(char *arg, bool set)
- 	char *opt;
- 	int taint = 0;
- 
--	pr_warn("%s CPUID bits:", set ? "Force-enabling" : "Clearing");
--
- 	while (arg) {
- 		bool found __maybe_unused = false;
- 		unsigned int bit;
-@@ -1500,16 +1498,19 @@ static inline bool parse_set_clear_cpuid(char *arg, bool set)
- 		if (!kstrtouint(opt, 10, &bit)) {
- 			if (bit < NCAPINTS * 32) {
- 
-+				if (set) {
-+					pr_warn("setcpuid: force-enabling CPU feature flag:");
-+					setup_force_cpu_cap(bit);
-+				} else {
-+					pr_warn("clearcpuid: force-disabling CPU feature flag:");
-+					setup_clear_cpu_cap(bit);
-+				}
- 				/* empty-string, i.e., ""-defined feature flags */
- 				if (!x86_cap_flags[bit])
--					pr_cont(" %d:%d", bit >> 5, bit & 31);
-+					pr_cont(" %d:%d\n", bit >> 5, bit & 31);
- 				else
--					pr_cont(" %s", x86_cap_flags[bit]);
-+					pr_cont(" %s\n", x86_cap_flags[bit]);
- 
--				if (set)
--					setup_force_cpu_cap(bit);
--				else
--					setup_clear_cpu_cap(bit);
- 				taint++;
- 			}
- 			/*
-@@ -1521,11 +1522,15 @@ static inline bool parse_set_clear_cpuid(char *arg, bool set)
- 
- 		for (bit = 0; bit < 32 * (NCAPINTS + NBUGINTS); bit++) {
- 			const char *flag;
-+			const char *kind;
- 
--			if (bit < 32 * NCAPINTS)
-+			if (bit < 32 * NCAPINTS) {
- 				flag = x86_cap_flags[bit];
--			else
-+				kind = "feature";
-+			} else {
-+				kind = "bug";
- 				flag = x86_bug_flags[bit - (32 * NCAPINTS)];
-+			}
- 
- 			if (!flag)
- 				continue;
-@@ -1533,22 +1538,24 @@ static inline bool parse_set_clear_cpuid(char *arg, bool set)
- 			if (strcmp(flag, opt))
- 				continue;
- 
--			pr_cont(" %s", opt);
--			if (set)
-+			if (set) {
-+				pr_warn("setcpuid: force-enabling CPU %s flag: %s\n",
-+					kind, flag);
- 				setup_force_cpu_cap(bit);
--			else
-+			} else {
-+				pr_warn("clearcpuid: force-disabling CPU %s flag: %s\n",
-+					kind, flag);
- 				setup_clear_cpu_cap(bit);
-+			}
- 			taint++;
- 			found = true;
- 			break;
- 		}
- 
- 		if (!found)
--			pr_cont(" (unknown: %s)", opt);
-+			pr_warn("%s: unknown CPU flag: %s", set ? "setcpuid" : "clearcpuid", opt);
- 	}
- 
--	pr_cont("\n");
--
- 	return taint;
- }
- 
+We've been running hackbench for a while now with the above diff and we
+haven't run into a hang yet. Sorry for the troubles and thank you again.
+
+[1] https://lore.kernel.org/all/03a1f4af-47e0-459d-b2bf-9f65536fc2ab@amd.com/
 
 -- 
-2.48.1.711.g2feabab25a-goog
+Thanks and Regards,
+Prateek
 
 
