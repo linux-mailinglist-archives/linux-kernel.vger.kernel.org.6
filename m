@@ -1,139 +1,110 @@
-Return-Path: <linux-kernel+bounces-541951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F3DDA4C3BF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:46:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89930A4C3C5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:47:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D09F33A55E0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:45:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 752F23AAB2C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:46:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36E08213E67;
-	Mon,  3 Mar 2025 14:45:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6531221420F;
+	Mon,  3 Mar 2025 14:46:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="pR0IFrRI"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="lLccm+L+"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A08F142E6F;
-	Mon,  3 Mar 2025 14:45:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E00F4142E6F
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 14:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741013158; cv=none; b=GXEBwbAsqXsgf0HeejCcIpMkc3djSEFTPt5uSDbbBHty0vwczuwgkktqybn73/eiyfxY00b/XmZF/wpN2SAiSD8zWAUjrxoz9jCINU39BDMRS/ahDXgsV19+3Obpi6Njrs8O8SpVamJAEjGlxRPPYLZRUegA2SSwCRJzpD2Wvi0=
+	t=1741013182; cv=none; b=LrKDPkuprb2kM51OLW4nwGJClr9rmDvA6ZjUmGLSCpRupWNobwN0hxWZtjd91NMFgFx6OMVGa0ze+jEPLPBljBX+bHOlTqedra7y6rf2KSVsv/tg+qV0xKWTHh+V+b3VDFmB+N/oIYfx/BaDmFwZLkNiMySN55p8oPEmUy9lff0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741013158; c=relaxed/simple;
-	bh=oQYo31W0WahUUgGafPAeoZtr6PUwTcxwzU94GR9sNHk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RHFbhiEQaaUWaqhPq1MqFiMdYZe7DWZKdk1v3xoLgjrg2iMsNdQwBdGBLe+xORWOrMQsvov/oERZjsSZ1zH/evDfxfmoMVEbu/YT60GpjwMmF52QAy6rj97xR9+NnRJkk8tjAtGebHEXBcIqT2YQGOzYcdSnMHO5MkOQyu0MEoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=pR0IFrRI; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1741013154;
-	bh=oQYo31W0WahUUgGafPAeoZtr6PUwTcxwzU94GR9sNHk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pR0IFrRInKm/4EW6eI5mCbpu6AcfVVOO9d1GKUgU8zBG7hrdEKWti0g2z9qKTo7gY
-	 TIySusZ81Wlxzu0ugr8hSJHkluVicHzHktayYvlfQ4JY4C69Xs5d49ZVZ6VP4GF+xF
-	 6x/X1Q1rWFk4lojtvsxX04cw/WDmhoz8DRzu77hkZqIwfXOvX53TDdtA/kVJdWvDSg
-	 tmJPG7aZWAePfIVwt4zSMqPpShGVez3MrIzhk6GdTU3a3lDV8epkhGjXQKMo5WxJ7m
-	 9lKkFUxXIl8HQz2256mS7B6P4G9A2R/UfRp3swUIQHxuY4jUNWGJwtron53UPxB3uN
-	 nbZzneyQzINPw==
-Received: from notapiano (unknown [IPv6:2804:14c:1a9:53ee::1001])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 909A317E0E8D;
-	Mon,  3 Mar 2025 15:45:49 +0100 (CET)
-Date: Mon, 3 Mar 2025 11:45:47 -0300
-From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Sen Chu <sen.chu@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
-	Macpaul Lin <macpaul.lin@mediatek.com>, Lee Jones <lee@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, kernel@collabora.com,
-	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2 01/20] ASoC: dt-bindings: Add document for
- mt6359-accdet
-Message-ID: <0120fe30-43c4-4fec-8b5e-fdb6b382fc2a@notapiano>
-References: <20250302-mt6359-accdet-dts-v2-0-5bd633ee0d47@collabora.com>
- <20250302-mt6359-accdet-dts-v2-1-5bd633ee0d47@collabora.com>
- <628a81c5-b9f1-4be9-84ec-90022a3526da@collabora.com>
+	s=arc-20240116; t=1741013182; c=relaxed/simple;
+	bh=CSQeGS/UZUc31BUvv23G8CVIkT12nQMGyFgBEwHK2pc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YCd4cIyhplcHVAnqqBFykkp+lpNbmGbv5dPvnhT46fhu7OGDpT9XyHjRtxIB8u1oMZ5u+LWQ9NBEVI3CTWcVvST7bW07V4dAIoOihbQ022bZjuLYQxBra8/tSYfXBtHhvRnaAfsUn0uALJAQJuqv4YHnUF0CvF2+V4AUKXoJo8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=lLccm+L+; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-474f15a2087so3294861cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 06:46:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1741013179; x=1741617979; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=qjaplGXAgQys6n43UvZfkCCurGUYwKZfvrBKCJx8kSQ=;
+        b=lLccm+L+C5gyQVjYsYDdL1zeNxIZuJZGkpcU6/9jM/EGmEqxoX9VEq8LeF0hguc262
+         OrZIVKmCGpEWYzV9XpeB++QZRuh7XVQ12POq2Tyc80nMnleI7zn72I1w46yYtznIxQfb
+         g0BdLTnqzhNoiDvBa4YtqzHg1bvB09UzU6OUI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741013179; x=1741617979;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qjaplGXAgQys6n43UvZfkCCurGUYwKZfvrBKCJx8kSQ=;
+        b=JDhME8C0haf0DCTeIdQBTZU7K0b5pWU4ZD/rJyotFe/3Osad+zTRKV40mvBNO3eFhy
+         VccJDJWzybHE2hYdnGAEiqWnQ1czh1dzLn/Fo/YoE3E5oX8SZTgk/ec4EEKK4vnItNd/
+         Ev+cJNPYFXrVmvNHcZuBPhwWaQIXa6HZxK9gtXMcBnhLZHDuvu7NQ2dnPtdjz3HfRift
+         f6gnPAroaU9VhT66Oa2YZ0pHRa+ZaTxEnEkd7ViogNgQqIQfe1HZpAqt0JEp4knGnCBJ
+         zpQGP8G8z/77PwEfX1n3/LAjHhuRtGrDKt6OP5dn8whYwr9OWtLFV1E79qv+PCyalvPG
+         v3tA==
+X-Forwarded-Encrypted: i=1; AJvYcCX2wm4dx9xAqN0nqh1+lX2oK8UmfeZ6Gw3pWEq7Ui3dGdo61SU2YYCQGXAv8lHZcT9aHCAH5dij5Is0Zsw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwieYe0CRL/p5QBlIVNE9Utz2xwJpbmw/N3vBLcZs1UNbgo4g/
+	bSTc67lGbRL/HXuNErmXSy8DLlSL5cI74STihrj/UnSEbSej0YQlE6ZCpuNmcMa9PJUqsQJUXMS
+	e9pbqcondEEfXTok/NRdQbPd8kkknVNeFYGfauA==
+X-Gm-Gg: ASbGncvEsqej2MugpzQ/P5e9n/Q64QqbNvrPBI6+8YT+xnBsTkybbN40y1KncQ2ft8c
+	F5/vqLlbZluT83+HXbvwEINcVPpWKGSrG5rzDAU5r4/w7zVFbI4R8C2jOiWhAfP5zEjNfP+Rdbc
+	O2qjexQpnUzNKgTPbrm6WexemWkz0=
+X-Google-Smtp-Source: AGHT+IEc70lGyxC8HHKIoOrpie2Jx8XsivN2M9IFYtspzolVa0r9jSj5J487Smay6+rDx9jahhDHL5KyYqxP+yy2+fA=
+X-Received: by 2002:ac8:5806:0:b0:474:f484:1b4b with SMTP id
+ d75a77b69052e-474f4841d3emr20114471cf.23.1741013178811; Mon, 03 Mar 2025
+ 06:46:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <628a81c5-b9f1-4be9-84ec-90022a3526da@collabora.com>
+References: <20250227013949.536172-1-neilb@suse.de> <20250227013949.536172-5-neilb@suse.de>
+In-Reply-To: <20250227013949.536172-5-neilb@suse.de>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Mon, 3 Mar 2025 15:46:06 +0100
+X-Gm-Features: AQ5f1JoUFcZgsP72xjJitgL04_WZu20xfL4s-mJeajhIk4Eeu4PYIyUzi4H_ijM
+Message-ID: <CAJfpegtu1xs-FifNfc2VpQuhBjbniTqUcE+H=uNpdYW=cOSGkw@mail.gmail.com>
+Subject: Re: [PATCH 4/6] fuse: return correct dentry for ->mkdir
+To: NeilBrown <neilb@suse.de>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, 
+	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, linux-nfs@vger.kernel.org, 
+	Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>, ceph-devel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Richard Weinberger <richard@nod.at>, 
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>, Johannes Berg <johannes@sipsolutions.net>, 
+	linux-um@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Mar 03, 2025 at 12:14:51PM +0100, AngeloGioacchino Del Regno wrote:
-> Il 02/03/25 17:30, Nícolas F. R. A. Prado ha scritto:
-> > Add dt-binding for the MT6359 ACCDET hardware block.
-> > 
-> > Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-> > ---
-> >   .../bindings/sound/mediatek,mt6359-accdet.yaml     | 42 ++++++++++++++++++++++
-> >   1 file changed, 42 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/sound/mediatek,mt6359-accdet.yaml b/Documentation/devicetree/bindings/sound/mediatek,mt6359-accdet.yaml
-> > new file mode 100644
-> > index 0000000000000000000000000000000000000000..d08a79301409374714c76135b061e20e8e8acfaf
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/sound/mediatek,mt6359-accdet.yaml
-> > @@ -0,0 +1,42 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/sound/mediatek,mt6359-accdet.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: MT6359 Accessory Detection
-> > +
-> > +maintainers:
-> > +  - Nícolas F. R. A. Prado <nfraprado@collabora.com>
-> > +
-> > +description: |
-> > +  The MT6359 Accessory Detection block is part of the MT6359 PMIC and allows
-> > +  detecting audio jack insertion and removal, as well as identifying the type of
-> > +  events connected to the jack.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: mediatek,mt6359-accdet
-> > +
-> > +  mediatek,hp-eint-high:
-> > +    type: boolean
-> > +    description:
-> > +      By default, the HP_EINT pin is assumed to be pulled high and connected to
-> 
-> Just to be clearer about this pin being an internal one and not externally sourced,
-> so, *not* a SoC GPIO, but somehing that is completely provided and handled by the
-> accdet IP...
-> 
-> "By default, the accdet IP's internal HP_EINT pin is assumed to be pulled ..."
+On Thu, 27 Feb 2025 at 02:40, NeilBrown <neilb@suse.de> wrote:
+>
+> fuse already uses d_splice_alias() to ensure an appropriate dentry is
+> found for a newly created dentry.  Now that ->mkdir can return that
+> dentry we do so.
+>
+> This requires changing create_new_entry() to return a dentry and
+> handling that change in all callers.
+>
+> Note that when create_new_entry() is asked to create anything other than
+> a directory we can be sure it will NOT return an alternate dentry as
+> d_splice_alias() only returns an alternate dentry for directories.
+> So we don't need to check for that case when passing one the result.
 
-The HP_EINT is an external, not internal, pin of the MT6359 PMIC. It is an input
-pin of the MT6359 IC that gets wired to the tip (left channel) of a 3.5mm audio
-jack to allow for detecting when a plug is connected.
+Still, I'd create a wrapper for non-dir callers with the above comment.
 
-Since this dt-binding is about an IP in the MT6359 PMIC, I think when saying
-"HP_EINT pin" it is already clear that the pin is on the MT6359 IC, but if you
-think it's necessary I could make it "MT6359's HP_EINT pin".
+As is, it's pretty confusing to deal with a "dentry", which is
+apparently "leaked" (no dput) but in reality it's just err or NULL.
 
 Thanks,
-Nícolas
+Miklos
 
