@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-542379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 737A5A4C952
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:26:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA3E3A4C908
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:16:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 315793B86C7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:11:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CAAA188EA4F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:11:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AADE25FA0D;
-	Mon,  3 Mar 2025 16:53:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0777925FA1F;
+	Mon,  3 Mar 2025 16:53:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A9Quz0Br"
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TCaeIM0q"
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C172C25F989
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 16:53:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6379A25FA03
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 16:53:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741020809; cv=none; b=CqfaUyGjaaSkT32GP00Rm74FVf/BWD/Vv0c6vBDxkIEuFlUWZPAFPNAbSQLxrtW0Fc8WsIEeKBYDKVJX7qsMc9FRTM4xInLvEuYaNC1xHC2tpGwXKCttILGc3dUMqbNHCUYNPI2c5A4RvgpfSXEyBJoeZbAGxLknfRl2X/y6bVc=
+	t=1741020811; cv=none; b=S2ORvOCsmvpfayDgq9PRDrqXT/2XPq51UeVdmM1ngPty7Oug4TLWJzu59gmVNSZqhjuhoMCfGEMKzsDJTjhEvNVG0sxn2hP8SzU9yWQHHQ/f3Ph9wjG4pN112ih7Obv38i5RFdoFEWpQQxjg55sFsZQSCGo1SRV9sCmMtyrqm3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741020809; c=relaxed/simple;
-	bh=Qa9rbS11nQ3ULYiX0zFMnX0VY4BRsXfO39BzwlEKLp8=;
+	s=arc-20240116; t=1741020811; c=relaxed/simple;
+	bh=sMsV0xjoxmWPqYhIhvlp1QSk3YpSjAVqBu7XTqzwgfc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=A4RtbNLZ38WXH3pVDqB/I++LwdIFzAWi4FpTERV6azJB/Nj1PmITp+pXJ2CdNlCRqsiu8I5lg7MOx4y6S1lKlvbLALhTU56K+i0AI8sfj4IGi6jYB623v0/v2QVJmb7TPOgJ7zBLTDXy3IZ1U8ezScP94oTD9BBWZiRrEAfXnZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A9Quz0Br; arc=none smtp.client-ip=209.85.222.177
+	 MIME-Version; b=ryUeyQZlqWHb0JPzIvLPTGQDbmtTFvrTtHCsATcSDUm5Ewd7GfbEyw2hsG15BKRRQ/Ou9U9j5hnS1ZAdgP6TOCp4+Sreu2gf7rY+ZUezocpj7S53tPTCMeotZ3eAZ0TXcMXynv5RYo8vLQp7z6efRKWZecZmppuX0nIyHTxAWx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TCaeIM0q; arc=none smtp.client-ip=209.85.219.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7c3cb761402so17347285a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 08:53:27 -0800 (PST)
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6e8c3a0d468so11461106d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 08:53:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741020806; x=1741625606; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741020808; x=1741625608; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=O+Ges8AFZBJaJk/QGwDEBI1qSGnch2qFY9doOlyO4a4=;
-        b=A9Quz0BrJQthf8wpH11n4SyffavneGyEsFIeRGns7JbyrmuQq0LkRMjqqzHODJ3S32
-         hS7r6kQKbSOAj+w0C1vQGeE/0ZMXUZezV/2iOod5frbUkm9BAquyileU5sY/1ccxdxMC
-         9S2A0j3Ip7dZxiNmn1WMU0MIaQcXat59jX86xruUEHCUELyINEx108I+enRC276ECKBG
-         qzNfPeTAY0rPp78yDFW1NkOevZroCLbkX8baIb6PVMH49zKW+EFBDCoRZJ4ipLuzleR+
-         bcdWPMe2df6oUXjK4gLWkRpjRHtDsfCTkf/KVVIHXEg0xLDfesHzySRVZKPEz3qSG9Js
-         xMuA==
+        bh=pIZPQr2eOAkEsD5/zDdOJhEiDfF60twwqPhGFSJXNyk=;
+        b=TCaeIM0qmz8ApJ2saoMVQsZw5aszyNBbt3s+EBu25zWQ2YyhVOUQCqB7FLYT339DbJ
+         59rkb+Jpw70a439w8JrGXyqceuB7cp7PGqfiDaCCMv0aWTezBqw2KsD3Vhj6R6rWwQVr
+         NdrGiuBEwEioxyVSNrFq+n/XqQyRGyBKyVroQI1TIMZTcrWNjtO3/tJ8KjblfPyXylQK
+         3/4xscXjiOtKncho65uzboAEeqv6zgGcEhAHyaXB5zGl4LdopVKml76ovUPz3i9k5jTn
+         HUiFdqcgvQY8PZwFncxeXrNVr3Y8ivWS7pe6FLZqjQGhOU02+0OG4UO6UFGyeEVykT3q
+         pyCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741020806; x=1741625606;
+        d=1e100.net; s=20230601; t=1741020808; x=1741625608;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=O+Ges8AFZBJaJk/QGwDEBI1qSGnch2qFY9doOlyO4a4=;
-        b=WgKPNWsk8e4epn17KMPizc8vhoshIu/I23H8RtwiY5dLnLD8bAhCWAdp8hDcN5V+17
-         XSiDxeyrsU01WCxd5f7yaEWZPHY6yEbWm6S2Oz5T98uVEnba04UqjuWuIYkvpfbtcaZu
-         FLl6Zvg0qmM/EeURfcg9o1hWsv6jT77iL8/NIsPX5WY85Zab8A/JmW4AVFnv4cdlVbO5
-         MuMm9jCmCzpZBbx7pWRLEdKkJQhpTWFY6eB+UsEUwPGghqq5A5lawefy1asFGOOFRp0k
-         LQCOWgaQy6RKCuhl6CdY94NNieu+s6bFhEREn9HxOJin+e9tv8N8vTjcYt9vDBE3eSC6
-         fUPA==
-X-Gm-Message-State: AOJu0YyX1VHump/duz18zzyWPUcw6boUU6BnYEHDnNNOSZXOG0k2u7jk
-	q7dKKVhBPzi7BOpj20IPICmxA0cJPIjvyspgUOUMIT7UKCISNBuQWIiz
-X-Gm-Gg: ASbGnct2wy3ljzSDKvVdFEkwuP9KHlSTTDMC8PxEMAT+yQ7bv+bYaMFTcCQgv/P1ZsZ
-	Rel5sshhXRTemF9cPSHmg21n6yxvQsYvcTD30891SSiYmEhP0IfBZ7bTqCnpNIo97H41+90Hgsb
-	Ylw7MQ8CJdv4qbRt/horYy5zDAz7ZcE4mLVFCRPAuwDmo2o7nyjsTjJVchfQB0hUbAIvOYZiDp1
-	Taw8r+kMXSRXWITFRBdPDCQSe6W3RZGewVtkDqkZrY6s3mhnBvvhtBD/pqGB5C+1e/S+uDakGpi
-	4/HU0vuLtiO2vYnKKYaNvJ50+g==
-X-Google-Smtp-Source: AGHT+IEQGJjHx0IRKzF1BO7sDCFo5HAad462T1g3FuN+Ywu+ucmRpETBqLWaZGTjzKtlTSSNe8eOPQ==
-X-Received: by 2002:a05:620a:462c:b0:7c0:abe0:ce40 with SMTP id af79cd13be357-7c39c4992a1mr2060863985a.5.1741020805992;
-        Mon, 03 Mar 2025 08:53:25 -0800 (PST)
+        bh=pIZPQr2eOAkEsD5/zDdOJhEiDfF60twwqPhGFSJXNyk=;
+        b=DXz3ghuk3xwRDTeZabl9p1dA9fCxEfLcjJjk+gIuG4jXIOU9YMNcvi+SX7CarXSX/H
+         7tZj2814z6Iu/1T5G0wUK9uyZUGMwTu3R321Hi6XxY9gwzfYDZVzBIpbI7eroCvf/RZ6
+         Qwdt8AdJ1mkytieeLWHAH0H/MIXlw8mxWDimCJJlq1QKZZtmP6MvwJfDv3oyNPA/tw9n
+         f/wa0ut3/ir0RWHXbvdtBaPAdA7synFTyr26Cv2xyWv3FozS6ABue7qyHaAOP3BHfgUy
+         VFwFsxlYH7cN4s5wuIZfuhq1YlB/c7pn7RDG57bsPZUdCHVFNPQGWVUV+ihBrUMd2Ztf
+         ZLnA==
+X-Gm-Message-State: AOJu0Yw3OuFd01JEbOcumukou4yGaMBVkR73WR8oOyeKgDPSchtPyP1e
+	kilCl4PFz7RDK/4ORVOjui0jok7Ewr2QbQLzUIRs40NBMjSrLGy3+NTn
+X-Gm-Gg: ASbGnctfjSdosBtj0hDEocenZ4sIAofNKHQTGQDk1VASD75c/0updtPQSFAmYWW617/
+	mPpLKZQbzUQX77+otiftF/WgfBhQrqd0LCh1+2zzjb8m7K6ye1ZhUaEy6p9pE/ZGiP2T9KV9QaL
+	5ahcCO/JPPbEXnlPQKKxUBjrouA7zdZsKqXd3dC1cdQ4pePKSIWaEOAn/WsWYF8tdXuUOmVIW9P
+	QOD9CVEtn1b4hkCCdTbaZAE7udK88++8bevB09TrMOUpwriQoOGkNH5rt+YCHbPk20SBcuHC5KZ
+	K5k5VXdsjAWup5/YVHZ3KvQrcA==
+X-Google-Smtp-Source: AGHT+IF8twjs5LqK9Y6gPVFlK5mkR0wxG91+iQn4l+qqNcJ449loDyByN0+NfqJhh/B+RlmkWE4jIQ==
+X-Received: by 2002:a05:6214:f6f:b0:6e8:9c5c:5385 with SMTP id 6a1803df08f44-6e8a0c850a5mr260864196d6.5.1741020807797;
+        Mon, 03 Mar 2025 08:53:27 -0800 (PST)
 Received: from citadel.lan ([2600:6c4a:4d3f:6d5c::1019])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8976cc9cdsm54730936d6.88.2025.03.03.08.53.24
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8976cc9cdsm54730936d6.88.2025.03.03.08.53.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 08:53:24 -0800 (PST)
+        Mon, 03 Mar 2025 08:53:26 -0800 (PST)
 From: Brian Gerst <brgerst@gmail.com>
 To: linux-kernel@vger.kernel.org,
 	x86@kernel.org
@@ -84,9 +84,9 @@ Cc: Ingo Molnar <mingo@kernel.org>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Brian Gerst <brgerst@gmail.com>
-Subject: [PATCH v3 08/11] x86/percpu: Move top_of_stack to percpu hot section
-Date: Mon,  3 Mar 2025 11:52:43 -0500
-Message-ID: <20250303165246.2175811-9-brgerst@gmail.com>
+Subject: [PATCH v3 09/11] x86/percpu: Move current_task to percpu hot section
+Date: Mon,  3 Mar 2025 11:52:44 -0500
+Message-ID: <20250303165246.2175811-10-brgerst@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250303165246.2175811-1-brgerst@gmail.com>
 References: <20250303165246.2175811-1-brgerst@gmail.com>
@@ -102,239 +102,182 @@ No functional change.
 
 Signed-off-by: Brian Gerst <brgerst@gmail.com>
 ---
- arch/x86/entry/entry_32.S        | 4 ++--
- arch/x86/entry/entry_64.S        | 6 +++---
- arch/x86/entry/entry_64_compat.S | 4 ++--
- arch/x86/include/asm/current.h   | 1 -
- arch/x86/include/asm/percpu.h    | 2 +-
- arch/x86/include/asm/processor.h | 9 +++++++--
- arch/x86/kernel/asm-offsets.c    | 1 -
- arch/x86/kernel/cpu/common.c     | 3 ++-
- arch/x86/kernel/process_32.c     | 4 ++--
- arch/x86/kernel/process_64.c     | 2 +-
- arch/x86/kernel/smpboot.c        | 2 +-
- arch/x86/kernel/vmlinux.lds.S    | 1 +
- 12 files changed, 22 insertions(+), 17 deletions(-)
+ arch/x86/include/asm/current.h | 17 ++++++-----------
+ arch/x86/include/asm/percpu.h  |  2 +-
+ arch/x86/kernel/asm-offsets.c  |  1 -
+ arch/x86/kernel/cpu/common.c   |  8 +++-----
+ arch/x86/kernel/head_64.S      |  4 ++--
+ arch/x86/kernel/process_32.c   |  2 +-
+ arch/x86/kernel/process_64.c   |  2 +-
+ arch/x86/kernel/smpboot.c      |  2 +-
+ arch/x86/kernel/vmlinux.lds.S  |  2 +-
+ scripts/gdb/linux/cpus.py      |  2 +-
+ 10 files changed, 17 insertions(+), 25 deletions(-)
 
-diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index 20be5758c2d2..92c0b4a94e0a 100644
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -1153,7 +1153,7 @@ SYM_CODE_START(asm_exc_nmi)
- 	 * is using the thread stack right now, so it's safe for us to use it.
- 	 */
- 	movl	%esp, %ebx
--	movl	PER_CPU_VAR(pcpu_hot + X86_top_of_stack), %esp
-+	movl	PER_CPU_VAR(cpu_current_top_of_stack), %esp
- 	call	exc_nmi
- 	movl	%ebx, %esp
- 
-@@ -1217,7 +1217,7 @@ SYM_CODE_START(rewind_stack_and_make_dead)
- 	/* Prevent any naive code from trying to unwind to our caller. */
- 	xorl	%ebp, %ebp
- 
--	movl	PER_CPU_VAR(pcpu_hot + X86_top_of_stack), %esi
-+	movl	PER_CPU_VAR(cpu_current_top_of_stack), %esi
- 	leal	-TOP_OF_KERNEL_STACK_PADDING-PTREGS_SIZE(%esi), %esp
- 
- 	call	make_task_dead
-diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index 49d3b222fe99..f40bdf97d390 100644
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -92,7 +92,7 @@ SYM_CODE_START(entry_SYSCALL_64)
- 	/* tss.sp2 is scratch space. */
- 	movq	%rsp, PER_CPU_VAR(cpu_tss_rw + TSS_sp2)
- 	SWITCH_TO_KERNEL_CR3 scratch_reg=%rsp
--	movq	PER_CPU_VAR(pcpu_hot + X86_top_of_stack), %rsp
-+	movq	PER_CPU_VAR(cpu_current_top_of_stack), %rsp
- 
- SYM_INNER_LABEL(entry_SYSCALL_64_safe_stack, SYM_L_GLOBAL)
- 	ANNOTATE_NOENDBR
-@@ -1168,7 +1168,7 @@ SYM_CODE_START(asm_exc_nmi)
- 	FENCE_SWAPGS_USER_ENTRY
- 	SWITCH_TO_KERNEL_CR3 scratch_reg=%rdx
- 	movq	%rsp, %rdx
--	movq	PER_CPU_VAR(pcpu_hot + X86_top_of_stack), %rsp
-+	movq	PER_CPU_VAR(cpu_current_top_of_stack), %rsp
- 	UNWIND_HINT_IRET_REGS base=%rdx offset=8
- 	pushq	5*8(%rdx)	/* pt_regs->ss */
- 	pushq	4*8(%rdx)	/* pt_regs->rsp */
-@@ -1486,7 +1486,7 @@ SYM_CODE_START_NOALIGN(rewind_stack_and_make_dead)
- 	/* Prevent any naive code from trying to unwind to our caller. */
- 	xorl	%ebp, %ebp
- 
--	movq	PER_CPU_VAR(pcpu_hot + X86_top_of_stack), %rax
-+	movq	PER_CPU_VAR(cpu_current_top_of_stack), %rax
- 	leaq	-PTREGS_SIZE(%rax), %rsp
- 	UNWIND_HINT_REGS
- 
-diff --git a/arch/x86/entry/entry_64_compat.S b/arch/x86/entry/entry_64_compat.S
-index ed0a5f2dc129..a45e1125fc6c 100644
---- a/arch/x86/entry/entry_64_compat.S
-+++ b/arch/x86/entry/entry_64_compat.S
-@@ -57,7 +57,7 @@ SYM_CODE_START(entry_SYSENTER_compat)
- 	SWITCH_TO_KERNEL_CR3 scratch_reg=%rax
- 	popq	%rax
- 
--	movq	PER_CPU_VAR(pcpu_hot + X86_top_of_stack), %rsp
-+	movq	PER_CPU_VAR(cpu_current_top_of_stack), %rsp
- 
- 	/* Construct struct pt_regs on stack */
- 	pushq	$__USER_DS		/* pt_regs->ss */
-@@ -193,7 +193,7 @@ SYM_CODE_START(entry_SYSCALL_compat)
- 	SWITCH_TO_KERNEL_CR3 scratch_reg=%rsp
- 
- 	/* Switch to the kernel stack */
--	movq	PER_CPU_VAR(pcpu_hot + X86_top_of_stack), %rsp
-+	movq	PER_CPU_VAR(cpu_current_top_of_stack), %rsp
- 
- SYM_INNER_LABEL(entry_SYSCALL_compat_safe_stack, SYM_L_GLOBAL)
- 	ANNOTATE_NOENDBR
 diff --git a/arch/x86/include/asm/current.h b/arch/x86/include/asm/current.h
-index 6fad5a4c21d7..3d1b123c2ee3 100644
+index 3d1b123c2ee3..dea7d8b854f0 100644
 --- a/arch/x86/include/asm/current.h
 +++ b/arch/x86/include/asm/current.h
-@@ -14,7 +14,6 @@ struct task_struct;
+@@ -12,22 +12,17 @@
  
- struct pcpu_hot {
- 	struct task_struct	*current_task;
--	unsigned long		top_of_stack;
- };
+ struct task_struct;
  
- DECLARE_PER_CPU_CACHE_HOT(struct pcpu_hot, pcpu_hot);
+-struct pcpu_hot {
+-	struct task_struct	*current_task;
+-};
+-
+-DECLARE_PER_CPU_CACHE_HOT(struct pcpu_hot, pcpu_hot);
+-
+-/* const-qualified alias to pcpu_hot, aliased by linker. */
+-DECLARE_PER_CPU_CACHE_HOT(const struct pcpu_hot __percpu_seg_override,
+-			const_pcpu_hot);
++DECLARE_PER_CPU_CACHE_HOT(struct task_struct *, current_task);
++/* const-qualified alias provided by the linker. */
++DECLARE_PER_CPU_CACHE_HOT(struct task_struct * const __percpu_seg_override,
++			  const_current_task);
+ 
+ static __always_inline struct task_struct *get_current(void)
+ {
+ 	if (IS_ENABLED(CONFIG_USE_X86_SEG_SUPPORT))
+-		return this_cpu_read_const(const_pcpu_hot.current_task);
++		return this_cpu_read_const(const_current_task);
+ 
+-	return this_cpu_read_stable(pcpu_hot.current_task);
++	return this_cpu_read_stable(current_task);
+ }
+ 
+ #define current get_current()
 diff --git a/arch/x86/include/asm/percpu.h b/arch/x86/include/asm/percpu.h
-index 60390a019ca9..1ca290ba6f77 100644
+index 1ca290ba6f77..6fbb52abb594 100644
 --- a/arch/x86/include/asm/percpu.h
 +++ b/arch/x86/include/asm/percpu.h
 @@ -549,7 +549,7 @@ do {									\
   * it is accessed while this_cpu_read_stable() allows the value to be cached.
   * this_cpu_read_stable() is more efficient and can be used if its value
   * is guaranteed to be valid across CPUs.  The current users include
-- * pcpu_hot.current_task and pcpu_hot.top_of_stack, both of which are
-+ * pcpu_hot.current_task and cpu_current_top_of_stack, both of which are
+- * pcpu_hot.current_task and cpu_current_top_of_stack, both of which are
++ * current_task and cpu_current_top_of_stack, both of which are
   * actually per-thread variables implemented as per-CPU variables and
   * thus stable for the duration of the respective task.
   */
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index 9203cecb7695..60f1c803b6c1 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -427,6 +427,11 @@ DECLARE_PER_CPU_CACHE_HOT(bool, hardirq_stack_inuse);
- DECLARE_PER_CPU_CACHE_HOT(struct irq_stack *, softirq_stack_ptr);
- #endif
- 
-+DECLARE_PER_CPU_CACHE_HOT(unsigned long, cpu_current_top_of_stack);
-+/* const-qualified alias provided by the linker. */
-+DECLARE_PER_CPU_CACHE_HOT(const unsigned long __percpu_seg_override,
-+			  const_cpu_current_top_of_stack);
-+
- #ifdef CONFIG_X86_64
- static inline unsigned long cpu_kernelmode_gs_base(int cpu)
- {
-@@ -552,9 +557,9 @@ static __always_inline unsigned long current_top_of_stack(void)
- 	 *  entry trampoline.
- 	 */
- 	if (IS_ENABLED(CONFIG_USE_X86_SEG_SUPPORT))
--		return this_cpu_read_const(const_pcpu_hot.top_of_stack);
-+		return this_cpu_read_const(const_cpu_current_top_of_stack);
- 
--	return this_cpu_read_stable(pcpu_hot.top_of_stack);
-+	return this_cpu_read_stable(cpu_current_top_of_stack);
- }
- 
- static __always_inline bool on_thread_stack(void)
 diff --git a/arch/x86/kernel/asm-offsets.c b/arch/x86/kernel/asm-offsets.c
-index 6fae88f8ae1e..54ace808defd 100644
+index 54ace808defd..ad4ea6fb3b6c 100644
 --- a/arch/x86/kernel/asm-offsets.c
 +++ b/arch/x86/kernel/asm-offsets.c
 @@ -107,7 +107,6 @@ static void __used common(void)
  	OFFSET(TSS_sp0, tss_struct, x86_tss.sp0);
  	OFFSET(TSS_sp1, tss_struct, x86_tss.sp1);
  	OFFSET(TSS_sp2, tss_struct, x86_tss.sp2);
--	OFFSET(X86_top_of_stack, pcpu_hot, top_of_stack);
- 	OFFSET(X86_current_task, pcpu_hot, current_task);
+-	OFFSET(X86_current_task, pcpu_hot, current_task);
  #if IS_ENABLED(CONFIG_CRYPTO_ARIA_AESNI_AVX_X86_64)
  	/* Offset for fields in aria_ctx */
+ 	BLANK();
 diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index f051fc90b44b..a771aa77f05e 100644
+index a771aa77f05e..58b63fa4be6c 100644
 --- a/arch/x86/kernel/cpu/common.c
 +++ b/arch/x86/kernel/cpu/common.c
-@@ -2051,7 +2051,6 @@ __setup("setcpuid=", setup_setcpuid);
+@@ -2049,11 +2049,9 @@ static __init int setup_setcpuid(char *arg)
+ }
+ __setup("setcpuid=", setup_setcpuid);
  
- DEFINE_PER_CPU_CACHE_HOT(struct pcpu_hot, pcpu_hot) = {
- 	.current_task	= &init_task,
--	.top_of_stack	= TOP_OF_INIT_STACK,
- };
- EXPORT_PER_CPU_SYMBOL(pcpu_hot);
- EXPORT_PER_CPU_SYMBOL(const_pcpu_hot);
-@@ -2059,6 +2058,8 @@ EXPORT_PER_CPU_SYMBOL(const_pcpu_hot);
+-DEFINE_PER_CPU_CACHE_HOT(struct pcpu_hot, pcpu_hot) = {
+-	.current_task	= &init_task,
+-};
+-EXPORT_PER_CPU_SYMBOL(pcpu_hot);
+-EXPORT_PER_CPU_SYMBOL(const_pcpu_hot);
++DEFINE_PER_CPU_CACHE_HOT(struct task_struct *, current_task) = &init_task;
++EXPORT_PER_CPU_SYMBOL(current_task);
++EXPORT_PER_CPU_SYMBOL(const_current_task);
+ 
  DEFINE_PER_CPU_CACHE_HOT(int, __preempt_count) = INIT_PREEMPT_COUNT;
  EXPORT_PER_CPU_SYMBOL(__preempt_count);
- 
-+DEFINE_PER_CPU_CACHE_HOT(unsigned long, cpu_current_top_of_stack) = TOP_OF_INIT_STACK;
-+
- #ifdef CONFIG_X86_64
- /*
-  * Note: Do not make this dependant on CONFIG_MITIGATION_CALL_DEPTH_TRACKING
-diff --git a/arch/x86/kernel/process_32.c b/arch/x86/kernel/process_32.c
-index 2bdab416298c..8ec44acb863b 100644
---- a/arch/x86/kernel/process_32.c
-+++ b/arch/x86/kernel/process_32.c
-@@ -190,13 +190,13 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
- 	arch_end_context_switch(next_p);
+diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
+index 2843b0a56198..fefe2a25cf02 100644
+--- a/arch/x86/kernel/head_64.S
++++ b/arch/x86/kernel/head_64.S
+@@ -322,7 +322,7 @@ SYM_INNER_LABEL(common_startup_64, SYM_L_LOCAL)
+ 	 *
+ 	 * RDX contains the per-cpu offset
+ 	 */
+-	movq	pcpu_hot + X86_current_task(%rdx), %rax
++	movq	current_task(%rdx), %rax
+ 	movq	TASK_threadsp(%rax), %rsp
  
  	/*
--	 * Reload esp0 and pcpu_hot.top_of_stack.  This changes
-+	 * Reload esp0 and cpu_current_top_of_stack.  This changes
- 	 * current_thread_info().  Refresh the SYSENTER configuration in
- 	 * case prev or next is vm86.
- 	 */
- 	update_task_stack(next_p);
- 	refresh_sysenter_cs(next);
--	this_cpu_write(pcpu_hot.top_of_stack,
-+	this_cpu_write(cpu_current_top_of_stack,
- 		       (unsigned long)task_stack_page(next_p) +
- 		       THREAD_SIZE);
+@@ -433,7 +433,7 @@ SYM_CODE_START(soft_restart_cpu)
+ 	UNWIND_HINT_END_OF_STACK
  
-diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
-index 3a8f967a0c79..04da741dffd2 100644
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -669,7 +669,7 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
- 	 * Switch the PDA and FPU contexts.
- 	 */
- 	raw_cpu_write(pcpu_hot.current_task, next_p);
--	raw_cpu_write(pcpu_hot.top_of_stack, task_top_of_stack(next_p));
-+	raw_cpu_write(cpu_current_top_of_stack, task_top_of_stack(next_p));
+ 	/* Find the idle task stack */
+-	movq	PER_CPU_VAR(pcpu_hot + X86_current_task), %rcx
++	movq	PER_CPU_VAR(current_task), %rcx
+ 	movq	TASK_threadsp(%rcx), %rsp
+ 
+ 	jmp	.Ljump_to_C_code
+diff --git a/arch/x86/kernel/process_32.c b/arch/x86/kernel/process_32.c
+index 8ec44acb863b..4636ef359973 100644
+--- a/arch/x86/kernel/process_32.c
++++ b/arch/x86/kernel/process_32.c
+@@ -206,7 +206,7 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
+ 	if (prev->gs | next->gs)
+ 		loadsegment(gs, next->gs);
+ 
+-	raw_cpu_write(pcpu_hot.current_task, next_p);
++	raw_cpu_write(current_task, next_p);
  
  	switch_fpu_finish(next_p);
  
+diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
+index 04da741dffd2..5016bbe1102b 100644
+--- a/arch/x86/kernel/process_64.c
++++ b/arch/x86/kernel/process_64.c
+@@ -668,7 +668,7 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
+ 	/*
+ 	 * Switch the PDA and FPU contexts.
+ 	 */
+-	raw_cpu_write(pcpu_hot.current_task, next_p);
++	raw_cpu_write(current_task, next_p);
+ 	raw_cpu_write(cpu_current_top_of_stack, task_top_of_stack(next_p));
+ 
+ 	switch_fpu_finish(next_p);
 diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-index 582016967587..83ec0e90c98e 100644
+index 83ec0e90c98e..95beca8044af 100644
 --- a/arch/x86/kernel/smpboot.c
 +++ b/arch/x86/kernel/smpboot.c
-@@ -852,7 +852,7 @@ int common_cpu_up(unsigned int cpu, struct task_struct *idle)
+@@ -842,7 +842,7 @@ int common_cpu_up(unsigned int cpu, struct task_struct *idle)
+ 	/* Just in case we booted with a single CPU. */
+ 	alternatives_enable_smp();
  
- #ifdef CONFIG_X86_32
- 	/* Stack for startup_32 can be just as for start_secondary onwards */
--	per_cpu(pcpu_hot.top_of_stack, cpu) = task_top_of_stack(idle);
-+	per_cpu(cpu_current_top_of_stack, cpu) = task_top_of_stack(idle);
- #endif
- 	return 0;
- }
+-	per_cpu(pcpu_hot.current_task, cpu) = idle;
++	per_cpu(current_task, cpu) = idle;
+ 	cpu_init_stack_canary(cpu, idle);
+ 
+ 	/* Initialize the interrupt stack(s) */
 diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
-index 7586a9be8c59..85032c085af2 100644
+index 85032c085af2..9ac6b42701fa 100644
 --- a/arch/x86/kernel/vmlinux.lds.S
 +++ b/arch/x86/kernel/vmlinux.lds.S
-@@ -44,6 +44,7 @@ ENTRY(phys_startup_64)
+@@ -43,7 +43,7 @@ ENTRY(phys_startup_64)
+ #endif
  
  jiffies = jiffies_64;
- const_pcpu_hot = pcpu_hot;
-+const_cpu_current_top_of_stack = cpu_current_top_of_stack;
+-const_pcpu_hot = pcpu_hot;
++const_current_task = current_task;
+ const_cpu_current_top_of_stack = cpu_current_top_of_stack;
  
  #if defined(CONFIG_X86_64)
- /*
+diff --git a/scripts/gdb/linux/cpus.py b/scripts/gdb/linux/cpus.py
+index 13eb8b3901b8..8f7c4fb78c2c 100644
+--- a/scripts/gdb/linux/cpus.py
++++ b/scripts/gdb/linux/cpus.py
+@@ -164,7 +164,7 @@ def get_current_task(cpu):
+             var_ptr = gdb.parse_and_eval("(struct task_struct *)cpu_tasks[0].task")
+             return var_ptr.dereference()
+         else:
+-            var_ptr = gdb.parse_and_eval("&pcpu_hot.current_task")
++            var_ptr = gdb.parse_and_eval("&current_task")
+             return per_cpu(var_ptr, cpu).dereference()
+     elif utils.is_target_arch("aarch64"):
+         current_task_addr = gdb.parse_and_eval("(unsigned long)$SP_EL0")
 -- 
 2.48.1
 
