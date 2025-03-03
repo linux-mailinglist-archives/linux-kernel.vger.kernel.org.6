@@ -1,122 +1,163 @@
-Return-Path: <linux-kernel+bounces-541245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CDD2A4BA74
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:11:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B395A4BA72
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:11:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A225169C85
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:11:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D25C7A3B73
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:10:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF901F0997;
-	Mon,  3 Mar 2025 09:11:25 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23A771F03E1;
-	Mon,  3 Mar 2025 09:11:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EC831F09A1;
+	Mon,  3 Mar 2025 09:11:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="FzKs2yQ2"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1A871F03E1;
+	Mon,  3 Mar 2025 09:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740993085; cv=none; b=mfvKJpQkMKg6e+6c4C/yORgBGBzbS1mpDPCFFFN+gyJc6JuhwEebOut42xgJGCx3Zh9VTG4whQAL8awHChEkfXxqKBGnODTQBs64sPAjftcqYR+zlv+Oob6i35QLZZvB6TkOt+owDXJsK0E5g9uUTBCRxeusNsbGRM9uZZ2EpJ4=
+	t=1740993095; cv=none; b=e+CqhUC2scqwLZvfQ99gbB9gsvpBt/+3+1VzA8gzXs6oXBYDejgi8qKIDDx3LssE9pFJ5wdrtLNYbT0qjvQyFiWs+8YbfHVjekoADCJjTEV/oAcor1bXFPJ3xY1BhXsem8PIuvbGMz/gnp6ueabl9MUPUCRtIpgqjxtN4bi63RI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740993085; c=relaxed/simple;
-	bh=3P7asazvVhA6Z+2Oqdc1BRq4108S/dF7oNeQJkxp/Z8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VylxTvPkKLRfaPY73wUDW2kCLHPQ3VvHCZ1tFCilMI6bARpXw/oojR61tOfj9uh4XNWPKKLw2Axl5u06fHuFChRoiGAQila46VDkRQsft6m0yyC/AopCQUi1i8ild3oLylftbh75R9hM7pk1zGIu02aIpti3f+VBxpQ9KC2/Ts0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.2.5.213])
-	by gateway (Coremail) with SMTP id _____8CxeXE2csVn7AiJAA--.37601S3;
-	Mon, 03 Mar 2025 17:11:18 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.2.5.213])
-	by front1 (Coremail) with SMTP id qMiowMAxDcUycsVni4AzAA--.57137S2;
-	Mon, 03 Mar 2025 17:11:15 +0800 (CST)
-From: Bibo Mao <maobibo@loongson.cn>
-To: Tianrui Zhao <zhaotianrui@loongson.cn>,
-	Huacai Chen <chenhuacai@kernel.org>
-Cc: WANG Xuerui <kernel@xen0n.name>,
-	kvm@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Xianglai Li <lixianglai@loongson.cn>
-Subject: [PATCH] LoongArch: KVM: Reload guest CSR registers after S4
-Date: Mon,  3 Mar 2025 17:11:14 +0800
-Message-Id: <20250303091114.1511496-1-maobibo@loongson.cn>
-X-Mailer: git-send-email 2.39.3
+	s=arc-20240116; t=1740993095; c=relaxed/simple;
+	bh=HOisNs9xmhTkNfqIGQ85WEO/hhfcVzqEXsxq1Zf3/jU=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ZKk9iQgkc4sKjhi+pqKyJrkb5lcquUmF3AirJ8XMjYqC3b0WXI/Jaj7qvSZvQRtXgomTxxpPXfi579c0zd5RmXuthMHDcPTxQvn/MDUYteqr12Vxyoht6U0jC5wVir9mptU4aqRuX8WmviJHCMsFCQLFJJ3yb633NarpG2Jc2iQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=FzKs2yQ2; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1740993085; x=1741597885; i=markus.elfring@web.de;
+	bh=WARxepTLbX6z7UXlbBldqqIu0yYUulxOMgywu3vUm8Q=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=FzKs2yQ2+Dr9AkXJ6s8AUs3iApm0Qd3ZZqIUDNbtjxegwkj/Z7WgngqpRAhVEP1q
+	 E1MbzsmRG8HLcN8bx0DZAab+LWs5uKlToUU0P/paYopVSjO1c0jJSuWwEqEqeEQaC
+	 mGXvm4a3Etq/uDv5Fdi8oWom3vPUGfjWWtx82fa+YMZUkIuuyz4DQoPDVrL8Z7jrn
+	 k0NIueOlYgbqNp1f15ZdnRuzdhdgJAGGBJHF7qvOxGumeRz5sUF1J/33dSZaCPBkb
+	 P3AhDZcjb8pA2PIQXcPK/RAlZ4BOP9+uXCGgb5DHVC+xjrc0iGMMwx50XDMREXGzI
+	 JP+3ZMh5yOhu15l45Q==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.19]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N0Igl-1t1rWE0UMB-00s8VH; Mon, 03
+ Mar 2025 10:11:25 +0100
+Message-ID: <35fbbb42-ec9d-4733-b3d6-8584b2faf6a1@web.de>
+Date: Mon, 3 Mar 2025 10:11:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMAxDcUycsVni4AzAA--.57137S2
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
-	nUUI43ZEXa7xR_UUUUUUUUU==
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH RESEND] scsi: hpsa: Move two variable assignments behind
+ condition checks in hpsa_scsi_ioaccel_raid_map()
+From: Markus Elfring <Markus.Elfring@web.de>
+To: kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org,
+ storagedev@microchip.com, Don Brace <don.brace@microchip.com>,
+ "James E. J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ Joe Handzik <joseph.t.handzik@hp.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Matt Gates <matthew.gates@hp.com>, Mike Miller
+ <michael.miller@canonical.com>, Scott Teel <scott.teel@hp.com>
+Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
+References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
+ <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
+ <fffd36dd-ec5d-4678-9e63-c52b0a711e76@web.de>
+Content-Language: en-GB
+In-Reply-To: <fffd36dd-ec5d-4678-9e63-c52b0a711e76@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:bzWCP865hxjJTEzdBaGK2iRcc7VEhSNq1cYPXvWjRlHm0BJdnLy
+ eNlUX2yPhreB/Y/Te31acndeYA/aUJapPjh00mR5T4j/2TGoNjeUt0+HCA+g35t9iSE9AGB
+ 5OSlbyFze3cHC6D/DMA+WTUTP9lJpe1Fc166mSGQ3ceC+qLQ0J7aSQJAFn2OemjuGMNKxC8
+ wIug4eEhPB19n7y8/VuIA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:d6HGg8ekmF0=;myk+a3gQ/3PlLho3pKO1Ayta7eU
+ 8aeyv8FOEjEdidQ1NAMCRKImjLV0xvT0+JPW0Cm4cLrxoOw7VAj7nTKWtKn8gWf3AxDokG081
+ atokRK2aySYq2+ek4cv6OLtBNGJLyWkAjCUbTrRSh9Po9bqjyvAGm+iYvtfRO7FcrQzFYP+4s
+ QragXsZNdnMtFpNbu6fWwtnQdg35AS28/14KWa2PEfhPQ2ztiXQg6a0NpnEeuTKgwjhJpH+Ei
+ 5KUCDNISWIePjMDhNJtlX9DyG+scXkTSLdF9wOc4fFZoF7o6GsOVYjPWV4fM41i9Ry6zmL2nd
+ 5cuE9imOnZHDbR2OSaZsdZBMok6WG96pm9T17ZNTCa3ieSxM/c5dz4KaQVQfelYkyH03ejqJq
+ IENXnwFUXnG9e6DcQA1ZzJYabLxkX35O9nTKDRBxMpORmWGN68SQKVicCZ9SKVwbdNHPjM17f
+ c1qg+5y2mbH3OHZABpJG7+sRiiDOSwujIXYKe+BrbxB5O+zQEvJzgzkMTffFhB01KV2ZXOA0D
+ fHUmYupX0Pa/7bHZmfAg7Yx4OquYIF/7P9+Omr7zDNnUgLxdTLXy/6kE19wYaSuwHoaLRAFNP
+ 2c53lfxy7EbFCZ9PIHA7cI7r/tW+RO/1uwheEYjooq72xxxi0yYxCmBHW68wzt3MoHfBnkfZA
+ ai9NpgQbH7H2DpvDRICQ+mr1sXrwj8brk/IVA1qYtfGwqrJ8oKCrLx/VxuuwjZedaK0PEIOXL
+ 6JF9JCn6DFwzjWaKhDGO+ifvmDFw0r5A1V87Tc3tHqYUrucivTDknCgJyJaCeYrq9p+acGyoT
+ NN7/NUT0yfTxcPiHbBzVm6biSsw3u4zjOyGbId9JBC9znc3F6AQCkwz9DF31oIa1Dzd/QVhzC
+ ywqmPuPoPEBraRAwT8n2MdtIPohrIKmozTeuMkL2tkl7zwI6MpHebIAH+ESRDiXuLVGCF5Y8N
+ goSNL8NFKVL3yOQhzwT88LPVbcyKrEyFxa4MYSZYC33mU/bOCO6Kgbw1GjMjUm6hWaOjoHMKg
+ aOThhuZ6R6krfZP6Nfn2KhulCi0zv8dRZMpRYjKVas0rVXfDu9ugb+PggYZ0NjYgMLahHjGMu
+ 4x6WToLTBcxSTxeCkoiPnozGzN9g+QypkqiNqR4WT+CQNxxji7dhYnLi7ctKwl6gHdjsNGXij
+ X1fAL0nELfsfMyJxFYw59Q8CR1sB/jfRnJ/3uykDsK8Zw4m+1NrFXpwmrEHKXpekNjuOobvIk
+ Of69kDom93Fiek1PYFjK975PfYKZIGWfcxh1LQ9SpXXnOHxeBmU1oNElGqm+tSQRjzAAEM8ns
+ sef7+/NcuLjsi+R7h1V+e8a84NHDAvdQF0bpLX5mud2pDW/+clmarQ0F7QUtuyoRXNrqLrOoX
+ M3URhkyF16uuf1EMRLAWuiS+3OjF3NttBKD22p7aFMloZYrG/DEjZ718DnKpFqUzloXL0+MGX
+ P09d/eQ==
 
-On host HW guest CSR registers are lost after suspend and resume
-operation. Since last_vcpu of boot CPU still records latest vCPU pointer
-so that guest CSR register skips to reload when boot CPU resumes and
-vCPU is scheduled.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 14 Apr 2023 11:00:40 +0200
 
-Here last_vcpu is cleared so that guest CSR register will reload from
-scheduled vCPU context after suspend and resume.
+Addresses of two data structure members were determined before
+a corresponding null pointer check in the implementation of
+the function =E2=80=9Chpsa_scsi_ioaccel_raid_map=E2=80=9D.
 
-Also there is another small fix for Loongson AVEC support, bit 14 is added
-in CSR ESTAT register. Macro CSR_ESTAT_IS is replaced with hardcoded value
-0x1fff and AVEC interrupt status bit 14 is supported with macro
-CSR_ESTAT_IS.
+Thus avoid the risk for undefined behaviour by moving the assignment
+for two local variables behind some condition checks.
 
-Signed-off-by: Bibo Mao <maobibo@loongson.cn>
----
- arch/loongarch/kvm/main.c | 8 ++++++++
- arch/loongarch/kvm/vcpu.c | 2 +-
- 2 files changed, 9 insertions(+), 1 deletion(-)
+This issue was detected by using the Coccinelle software.
 
-diff --git a/arch/loongarch/kvm/main.c b/arch/loongarch/kvm/main.c
-index f6d3242b9234..b177773f38f6 100644
---- a/arch/loongarch/kvm/main.c
-+++ b/arch/loongarch/kvm/main.c
-@@ -284,6 +284,7 @@ long kvm_arch_dev_ioctl(struct file *filp,
- int kvm_arch_enable_virtualization_cpu(void)
+Fixes: 283b4a9b98b1 ("[SCSI] hpsa: add ioaccell mode 1 RAID offload suppor=
+t.")
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/scsi/hpsa.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
+index af18d20f3079..562bb5eab134 100644
+=2D-- a/drivers/scsi/hpsa.c
++++ b/drivers/scsi/hpsa.c
+@@ -5104,8 +5104,8 @@ static int hpsa_scsi_ioaccel_raid_map(struct ctlr_in=
+fo *h,
  {
- 	unsigned long env, gcfg = 0;
-+	struct kvm_context *context;
- 
- 	env = read_csr_gcfg();
- 
-@@ -317,6 +318,13 @@ int kvm_arch_enable_virtualization_cpu(void)
- 	kvm_debug("GCFG:%lx GSTAT:%lx GINTC:%lx GTLBC:%lx",
- 		  read_csr_gcfg(), read_csr_gstat(), read_csr_gintc(), read_csr_gtlbc());
- 
-+	/*
-+	 * HW Guest CSR registers are lost after CPU suspend and resume
-+	 * Clear last_vcpu so that Guest CSR register forced to reload
-+	 * from vCPU SW state
-+	 */
-+	context = this_cpu_ptr(vmcs);
-+	context->last_vcpu = NULL;
- 	return 0;
- }
- 
-diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
-index 20f941af3e9e..9e1a9b4aa4c6 100644
---- a/arch/loongarch/kvm/vcpu.c
-+++ b/arch/loongarch/kvm/vcpu.c
-@@ -311,7 +311,7 @@ static int kvm_handle_exit(struct kvm_run *run, struct kvm_vcpu *vcpu)
- {
- 	int ret = RESUME_GUEST;
- 	unsigned long estat = vcpu->arch.host_estat;
--	u32 intr = estat & 0x1fff; /* Ignore NMI */
-+	u32 intr = estat & CSR_ESTAT_IS;
- 	u32 ecode = (estat & CSR_ESTAT_EXC) >> CSR_ESTAT_EXC_SHIFT;
- 
- 	vcpu->mode = OUTSIDE_GUEST_MODE;
+ 	struct scsi_cmnd *cmd =3D c->scsi_cmd;
+ 	struct hpsa_scsi_dev_t *dev =3D cmd->device->hostdata;
+-	struct raid_map_data *map =3D &dev->raid_map;
+-	struct raid_map_disk_data *dd =3D &map->data[0];
++	struct raid_map_data *map;
++	struct raid_map_disk_data *dd;
+ 	int is_write =3D 0;
+ 	u32 map_index;
+ 	u64 first_block, last_block;
+@@ -5209,6 +5209,8 @@ static int hpsa_scsi_ioaccel_raid_map(struct ctlr_in=
+fo *h,
+ 	if (is_write && dev->raid_level !=3D 0)
+ 		return IO_ACCEL_INELIGIBLE;
 
-base-commit: 1e15510b71c99c6e49134d756df91069f7d18141
--- 
-2.39.3
++	map =3D &dev->raid_map;
++
+ 	/* check for invalid block or wraparound */
+ 	if (last_block >=3D le64_to_cpu(map->volume_blk_cnt) ||
+ 		last_block < first_block)
+@@ -5397,6 +5399,7 @@ static int hpsa_scsi_ioaccel_raid_map(struct ctlr_in=
+fo *h,
+ 	if (!c->phys_disk)
+ 		return IO_ACCEL_INELIGIBLE;
+
++	dd =3D &map->data[0];
+ 	disk_handle =3D dd[map_index].ioaccel_handle;
+ 	disk_block =3D le64_to_cpu(map->disk_starting_blk) +
+ 			first_row * le16_to_cpu(map->strip_size) +
+=2D-
+2.40.0
+
 
 
