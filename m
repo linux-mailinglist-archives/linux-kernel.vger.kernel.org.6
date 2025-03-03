@@ -1,112 +1,104 @@
-Return-Path: <linux-kernel+bounces-544487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91ED1A4E1BD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:51:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F421A4E152
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:41:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94E4518957DB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:46:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E5F53BD9B4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:29:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7461209689;
-	Tue,  4 Mar 2025 14:44:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CAA4212FAB;
+	Tue,  4 Mar 2025 14:28:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="nai7Wcce"
-Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="yWADDRKw"
+Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC00F20A5DA
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01EE620A5C4
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.117
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741099468; cv=fail; b=taEeQtC4Rc9i9BIZFs63rMh032RslkD2ysbnxIrss288pkGmaldsOKpDg6gFyPdClc3V6kUDnFuvA/YrhYIGA29v2I3I/eWiROd9qiIr3lDe45qL9P1fkcK4Sqx/PEGPfiVo8+Rn4/REYtdkbzlpGfGUYAwod2C+nG3PluE44i4=
+	t=1741098489; cv=pass; b=A0hSH9t/vm4QSxsKI1FnLryMnp9nozKAhKv6Dusq82FKQRhB9fhvXZak9ans6UEVUrbHXLOw15G/wEX6FHbdw/xIm5rhWf3/SUG9RealMgvxtsMlLRqgbKCntvYqP9aD1QsS1CJnmdqhF21w92Sr+cJm+fD5yzwSHhpoPW+2uwM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741099468; c=relaxed/simple;
-	bh=YMx7qLuWP6vg/7a5/BEOE9nZt/RJpQmS9nMIn5RykNc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WNjIS+CXJfvvh0JESB1fsn3wfV/2R3JnOPA7AucR5u1fbCJ6iUfwr2rTHMlwCwrsKR8bZ6ngwI7HeVUHqa9G2sTGpS3XhfnmdHOg/SrSjAkSqIQ3KTb6yu3wR3+ZJpzt5532L3u3ywgZJcWNhThQnL/oKyGt7Hv0b2E1BEf3+ys=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=ispras.ru; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=nai7Wcce reason="signature verification failed"; arc=none smtp.client-ip=83.149.199.84; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; arc=fail smtp.client-ip=160.75.25.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=ispras.ru
+	s=arc-20240116; t=1741098489; c=relaxed/simple;
+	bh=Bz1lkAIfe6XJhf3eq5SVjSBSproAa10eY3/wDj27F2w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jsFaVFGYmLSpw+sqYDJ9fdPMdC5jbiuvJLzN0Hyl9nASLUfcE5JCUaqvorhxtS9G/+yJCXs53A2d2ZYeeKRX4hbFRUXQePFJE4+Y7UD0sFgm7mP44cIykYg9R8GouaFx+my8wcuLnf8fzgOBdUrYkH7OvVDJ/f6Uy/tskbCOWIQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=yWADDRKw; arc=none smtp.client-ip=198.137.202.133; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; arc=pass smtp.client-ip=160.75.25.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id 104D040D0C45
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:44:24 +0300 (+03)
+	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id 4D15A40CEC80
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:28:06 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
-Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=ispras.ru header.i=@ispras.ru header.a=rsa-sha256 header.s=default header.b=nai7Wcce
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dhC154zzFx0l
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:42:51 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dJz6fjZzFwfK
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:26:11 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id AC2EC41898; Tue,  4 Mar 2025 17:42:41 +0300 (+03)
+	id EFB6042756; Tue,  4 Mar 2025 17:26:04 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=nai7Wcce
-X-Envelope-From: <linux-kernel+bounces-541868-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=yWADDRKw
+X-Envelope-From: <linux-kernel+bounces-541884-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=nai7Wcce
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=yWADDRKw
 Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id 2C04442195
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 17:03:31 +0300 (+03)
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id 6DA442DCE1
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 17:03:30 +0300 (+03)
+	by le2 (Postfix) with ESMTP id 1197B41AE7
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 17:09:50 +0300 (+03)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by fgw2.itu.edu.tr (Postfix) with SMTP id 9AC3C2DCDE
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 17:09:49 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 800A77A5B0D
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:02:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B37713A9CC1
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:09:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 340FE2139C4;
-	Mon,  3 Mar 2025 14:02:59 +0000 (UTC)
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFD612139CE;
+	Mon,  3 Mar 2025 14:09:07 +0000 (UTC)
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0BF1F4167;
-	Mon,  3 Mar 2025 14:02:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12E4C13C816;
+	Mon,  3 Mar 2025 14:09:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741010576; cv=none; b=ocSCzbdzChZFOjmwAzWMUEbbIJvE76tKUKqNp4ssxEiOGIemvQ/CeEBqIPVUIypx/VP7zMOUXxeiN3LVNAo+Qx9iZ82Mo8dI6IQ63VZ6P5al8qedhl+3kQShBFRF843DlRwAoHjklQ4cBDFfCVfb+5xyU2csXteWmMJbY6fmo04=
+	t=1741010945; cv=none; b=pFvCipalJp2tkXPBgcXg/4zfwNSwbWpMhA3KxAST5p2y0KXjQUtubtsNAO0vQ6l/nKUigqtvcl+0CRc3WwyBBQEzzqyfiG8x45GQeXRPHFE3o/wiBqxpS/VU4L7nVQXv6y7Nhkh1KcU2b8CwH0wmNQyfsggQIbF3xXUf77JlZMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741010576; c=relaxed/simple;
-	bh=un//m18e0EyZu6pJVZ/eIwmeKA7wLXFC7L5MaYP//fo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dqG/N64ukZ7Mt8pQsyOjVoMm6sPa7UzB7BwfL2HiVUZaJ0CSJwOJHPmACnAIZpx1aul4TirJugN2bGd2WiY9OYIW2v3xCBcOyk4IA9VQffa7A8/zcxu/zqbqQXHN4fEo/MR1XiLQEkk+H16A0BBhCqMIYy3NrZ8mGZ/tZZ4LY/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=nai7Wcce; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from ldvnode.intra.ispras.ru (unknown [10.10.2.153])
-	by mail.ispras.ru (Postfix) with ESMTPSA id 02E6340CE182;
-	Mon,  3 Mar 2025 14:02:44 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 02E6340CE182
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1741010564;
-	bh=vqgSkFlCQVJ4CaUUmVwPWsAun4vxgHbAxdBt/2bRvcU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=nai7WcceMGUZcGUxKsLVw+ByZ0zB426L99V6BXimgqOYhZ0gpVanAUZ6qjH6bN2NQ
-	 JPdn355SI9GJztXnYg9j9JJcOl8euBD3CbkJPzwu8husGgSvIqsokUvUxf07nI7x8M
-	 QOwFvGitGwy4NiKVWp8R2jIDFXoYzmRY26HJDwZA=
-From: Vitalii Mordan <mordan@ispras.ru>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Vitalii Mordan <mordan@ispras.ru>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Johan Hovold <johan@kernel.org>,
-	Boris Brezillon <bbrezillon@kernel.org>,
-	linux-rtc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Fedor Pchelkin <pchelkin@ispras.ru>,
-	Alexey Khoroshilov <khoroshilov@ispras.ru>,
-	Vadim Mutilin <mutilin@ispras.ru>,
-	lvc-project@linuxtesting.org
-Subject: [PATCH] rtc: at91sam9: fix call balance of rtc->sclk handling routines
-Date: Mon,  3 Mar 2025 17:02:29 +0300
-Message-Id: <20250303140229.642959-1-mordan@ispras.ru>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1741010945; c=relaxed/simple;
+	bh=Bz1lkAIfe6XJhf3eq5SVjSBSproAa10eY3/wDj27F2w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z7hXsMQO6SBP1bEAnvmWUDa6NVJA8pDCuAhDrTl5zUZCgDJrK64pBGXjE+h2taHFhFjjKrbRv41UUH3cgxR4936udKJRkd/+kYAL3UM+p80xcWRhBgrOe3nggc31yKB7oiPDCz4ayxEBBv9sb1+DdFA9sjWJ9MNC21gorNnkK80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=yWADDRKw; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=da6DZJIEZngOU636aAML7UreXiQIbQlvEAqAV9JlA8Q=; b=yWADDRKwjkLdCq/W/PQvaik30N
+	0WruLQPGjrswfXxDKwxx+1WQMUfx750OQAM24RECp2kOZAgjevytteVQNn6PqpP6PzdEr/9U6QUag
+	vyXBq7/jum9t2mJcqHLd/9LNFAFluSZRdJobILmJEl4zK83osoYeKSi39U77Qns7TxoZy1an00tYG
+	Zfdw/l3rd48uH+2izKyhVKLaHpE1zN+463MrOqLdWHqZwZmt6FEJxtFR3gACrbktm/mV2tKxoqRmb
+	HXr3zbkSOn3EExsPDiUAD3ff6bvEwSB87pfzvqHNQxZXyzzqHxeP2RGHJ0PjReJnvraPYRPSnhJbm
+	u7ADZJQA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tp6TY-000000011yk-1M1Z;
+	Mon, 03 Mar 2025 14:08:56 +0000
+Date: Mon, 3 Mar 2025 06:08:56 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Jinliang Zheng <alexjlzheng@gmail.com>
+Cc: cem@kernel.org, djwong@kernel.org, dchinner@redhat.com,
+	alexjlzheng@tencent.com, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] xfs: don't allow log recover IO to be throttled
+Message-ID: <Z8W3-Jni2k_MqmZs@infradead.org>
+References: <20250303112301.766938-1-alexjlzheng@tencent.com>
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -114,111 +106,43 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250303112301.766938-1-alexjlzheng@tencent.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6dhC154zzFx0l
+X-ITU-Libra-ESVA-ID: 4Z6dJz6fjZzFwfK
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741704184.12481@EkyVn/FKdClfZjKgNqguAg
+X-ITU-Libra-ESVA-Watermark: 1741703183.13623@Xsp8gOtWUMv75GezGAeCsg
 X-ITU-MailScanner-SpamCheck: not spam
 
-If rtc->sclk was enabled in at91_rtc_probe(), it must be disabled in
-all error paths to ensure proper cleanup. However, if
-devm_rtc_register_device() returns an error in at91_rtc_probe(), the
-rtc->sclk clock will not be disabled.
+On Mon, Mar 03, 2025 at 07:23:01PM +0800, Jinliang Zheng wrote:
+> When recovering a large filesystem, avoid log recover IO being
+> throttled by rq_qos_throttle().
 
-Use the devm_clk_get_enabled() helper function to ensure proper call
-balance for rtc->sclk.
+Why?  Do you have numbers or a bug report?
 
-Found by Linux Verification Center (linuxtesting.org) with Klever.
+> diff --git a/fs/xfs/xfs_bio_io.c b/fs/xfs/xfs_bio_io.c
+> index fe21c76f75b8..259955f2aeb2 100644
+> --- a/fs/xfs/xfs_bio_io.c
+> +++ b/fs/xfs/xfs_bio_io.c
+> @@ -22,12 +22,15 @@ xfs_rw_bdev(
+>  	unsigned int		left = count;
+>  	int			error;
+>  	struct bio		*bio;
+> +	blk_opf_t		opf = op | REQ_META | REQ_SYNC;
+>  
+>  	if (is_vmalloc && op == REQ_OP_WRITE)
+>  		flush_kernel_vmap_range(data, count);
+>  
+> -	bio = bio_alloc(bdev, bio_max_vecs(left), op | REQ_META | REQ_SYNC,
+> -			GFP_KERNEL);
+> +	if (op == REQ_OP_WRITE)
+> +		opf |= REQ_IDLE;
 
-Fixes: a975f47f6e9a ("rtc: at91sam9: use clk API instead of relying on AT=
-91_SLOW_CLOCK")
-Signed-off-by: Vitalii Mordan <mordan@ispras.ru>
----
- drivers/rtc/rtc-at91sam9.c | 28 +++++++---------------------
- 1 file changed, 7 insertions(+), 21 deletions(-)
-
-diff --git a/drivers/rtc/rtc-at91sam9.c b/drivers/rtc/rtc-at91sam9.c
-index 38991cca5930..f4b7cf37397f 100644
---- a/drivers/rtc/rtc-at91sam9.c
-+++ b/drivers/rtc/rtc-at91sam9.c
-@@ -375,21 +375,16 @@ static int at91_rtc_probe(struct platform_device *p=
-dev)
- 		return -ENOMEM;
- 	}
-=20
--	rtc->sclk =3D devm_clk_get(&pdev->dev, NULL);
--	if (IS_ERR(rtc->sclk))
-+	rtc->sclk =3D devm_clk_get_enabled(&pdev->dev, NULL);
-+	if (IS_ERR(rtc->sclk)) {
-+		dev_err(&pdev->dev, "Could not get and enable slow clock\n");
- 		return PTR_ERR(rtc->sclk);
--
--	ret =3D clk_prepare_enable(rtc->sclk);
--	if (ret) {
--		dev_err(&pdev->dev, "Could not enable slow clock\n");
--		return ret;
- 	}
-=20
- 	sclk_rate =3D clk_get_rate(rtc->sclk);
- 	if (!sclk_rate || sclk_rate > AT91_RTT_RTPRES) {
- 		dev_err(&pdev->dev, "Invalid slow clock rate\n");
--		ret =3D -EINVAL;
--		goto err_clk;
-+		return -EINVAL;
- 	}
-=20
- 	mr =3D rtt_readl(rtc, MR);
-@@ -405,10 +400,8 @@ static int at91_rtc_probe(struct platform_device *pd=
-ev)
- 	rtt_writel(rtc, MR, mr);
-=20
- 	rtc->rtcdev =3D devm_rtc_allocate_device(&pdev->dev);
--	if (IS_ERR(rtc->rtcdev)) {
--		ret =3D PTR_ERR(rtc->rtcdev);
--		goto err_clk;
--	}
-+	if (IS_ERR(rtc->rtcdev))
-+		return PTR_ERR(rtc->rtcdev);
-=20
- 	rtc->rtcdev->ops =3D &at91_rtc_ops;
- 	rtc->rtcdev->range_max =3D U32_MAX;
-@@ -419,7 +412,7 @@ static int at91_rtc_probe(struct platform_device *pde=
-v)
- 			       dev_name(&rtc->rtcdev->dev), rtc);
- 	if (ret) {
- 		dev_dbg(&pdev->dev, "can't share IRQ %d?\n", rtc->irq);
--		goto err_clk;
-+		return ret;
- 	}
-=20
- 	/* NOTE:  sam9260 rev A silicon has a ROM bug which resets the
-@@ -433,11 +426,6 @@ static int at91_rtc_probe(struct platform_device *pd=
-ev)
- 			 dev_name(&rtc->rtcdev->dev));
-=20
- 	return devm_rtc_register_device(rtc->rtcdev);
--
--err_clk:
--	clk_disable_unprepare(rtc->sclk);
--
--	return ret;
- }
-=20
- /*
-@@ -450,8 +438,6 @@ static void at91_rtc_remove(struct platform_device *p=
-dev)
-=20
- 	/* disable all interrupts */
- 	rtt_writel(rtc, MR, mr & ~(AT91_RTT_ALMIEN | AT91_RTT_RTTINCIEN));
--
--	clk_disable_unprepare(rtc->sclk);
- }
-=20
- static void at91_rtc_shutdown(struct platform_device *pdev)
---=20
-2.25.1
+And there's really no need to do any games with the op here.  Do it in
+the caller and document why it's done there.
 
 
 
