@@ -1,123 +1,149 @@
-Return-Path: <linux-kernel+bounces-541120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D05DA4B8B0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:06:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B46C1A4B8D8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:09:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71CFA3A7260
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:05:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8707188B507
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:09:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A0EB1EA7CE;
-	Mon,  3 Mar 2025 08:06:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD8861EDA33;
+	Mon,  3 Mar 2025 08:09:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NBhz+R/q"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=crpt.ru header.i=@crpt.ru header.b="cVRnCZE2"
+Received: from mail.crpt.ru (mail.crpt.ru [91.236.205.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 347031D79A3
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 08:06:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BBF813A3F7;
+	Mon,  3 Mar 2025 08:09:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.236.205.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740989165; cv=none; b=YvfH8TS9pRnhjpxPFMMuwv4YRkAEZyc4oVJXiiT7zcTmZh8j/gSXNL6pSIaD3I2QT0JzG9248IGCfdb1DuZsCRyGjRW8zpAOoop4RrBHMI7WEtKgSliz83J/ykkG1zbNYqW/rLd+uiDnItZlLbKRo5RtEbY7WfvxPwpp2/6We18=
+	t=1740989378; cv=none; b=ebhlCpCPfQpfGzDxgSTyYtKUxTMM2UpTGNl3Z30US178+dsGLAAIkvu2eOLWxcu8HP6/3RecQdh19km/r9VRIILtojffhePjHEZxvtCOA6+ErstbJbmR1cSctKnu7CJ6tplDR26Z140TT6RLOO4puzpFQrq4M/ENjylh9pH8tkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740989165; c=relaxed/simple;
-	bh=IH4Qw4OZUiaQzCHILHMnQ5Z2BcYMRjESRbrTXR7+1/s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XBp3l0fVBTFNGb7cTRVBB7QQVRbnPKI8R1Anum8P3q2rOs+HEisC6sXPDsIuKnA3GNUC5/WEZ8gtxRs1TwMfhQxfXgJzfMm+dqlafrAP2g6UH+z0R7evDM5DhtegAmzPNA4izeptutC5KDBdXdYiQhQ16oKKQLqb0n6Dc99bw+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NBhz+R/q; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-390df942558so3241552f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 00:06:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740989162; x=1741593962; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X0iUVs2ZQh+M1rl5kLkJ/YPcqr6UkD+Cttj33+uPFnc=;
-        b=NBhz+R/qqyjfywOFffrgJ1wP0oqlZb2rYxFPhIP/O7rUgP2s43pWZena9MhiSXJo4q
-         yJ4Ow7ZdKhZz+IN1wrkCPYn1jsBNwdIts0yllsm9rg/omcslSWjV7EFxrNx31Dq2hn5Q
-         PGysDfFx1VPlU1V7Ba87UCvz4GsbwneOYxxmgK0p1pBn6xgcN6Ko63B4orX0JJeCe3gj
-         qxk+cDe8BrPdyX/yTLS9DxO0475a2af7aUIkdWbwvjhEt+bzv1nnhcbX35GPuaanE3Nm
-         y8F5LCADAa7xpM84SzXL2uLLeqN/FaSqPzBYFbU2DJFt/MehcBNf+zASY1zuP3PktDZl
-         fadg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740989162; x=1741593962;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=X0iUVs2ZQh+M1rl5kLkJ/YPcqr6UkD+Cttj33+uPFnc=;
-        b=fV5xzgDs7aBycPpqj6rVAsm1ePgbseUCDDti8DZVvxboG5/2NV1xUDp+9vmjgxq/ZX
-         Igt2BoCRnqWjk4jIbXp/MPSn7mwXmiHin71EdY4kNnh71OBd83PYHfGnlptax3UZWfo5
-         awYO3oATC7Zl/1LnCshbkoxUGz+Rad86Dz3EoZ53+ddkssrPxuzGklVvLTD7rNQn0rE+
-         Vgcpq0/NsombUsVwEWpjfU5VxtK5jehPDxxwu/7tlhaek1kekGOcpeLr/7lAvHxlEVtz
-         Cr/PzzJ6cPI3wJe77nGaU1boX3+fCn038PmnymlDToA9+97+FcsuhJP75vEOhi9gelTP
-         ygJw==
-X-Forwarded-Encrypted: i=1; AJvYcCUn70MLOPDxP8UaqYTB13juoYItC83zVyCipWg9dj4y8aJR4F5czn6qE95KoMrsc2vqX7WZhtnxQRGukBk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVPhDcZd4Bsz5PPud400lIISnpEOBQNt/ZBUl7+g4uLRj+KJOQ
-	uFd1OmxD9Uqz1XuJqFkZlWFrqg0j6rjqFW72leyu+guEIpEUNQ39yUJpZd/7ruk+IswcRZj5YAe
-	mguxUqjw/PlWUeDJGEsZZMVrecL9NaDmgKLyD
-X-Gm-Gg: ASbGncsnL2E1Y47avo3zkFyR6d60PqHlod7dgiEgE4yKFeQHV2PaFVTTKKPEy2p3gjK
-	UKfax4aqcG7MBS+4Wa5mP8zEZF91tXneT6F+BDfZ5K0vH77lwCCbG/mSLzvaBzIIENOZcspmoBy
-	QaSt+zLJ1mXngUsaA05VqwVvrLCrn6r00EwNFhA1ba2znZ/+omPo8bDsSH
-X-Google-Smtp-Source: AGHT+IEk6318AFfc1LcVsJJ84wt3g9PnbPRWzDdM7m2/xTI/OwzWoyIK3cmNaUT7+G0p9cZPZuhg9T+sy8bKgxhf/+k=
-X-Received: by 2002:a5d:5f91:0:b0:38f:3c8a:4bf4 with SMTP id
- ffacd0b85a97d-390ec7cd27fmr9441896f8f.6.1740989162420; Mon, 03 Mar 2025
- 00:06:02 -0800 (PST)
+	s=arc-20240116; t=1740989378; c=relaxed/simple;
+	bh=dlzlgK1uuPwJmnwi9znbAsJgAX3BfyutzQnKO6E48gM=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=SIFMNuRyKXtPel8BoEZWHTlIuvhtZiJMGDKfkt6lSsDSkFox6djV3uxbpcQYz9xfBh0RHGLHWBAaG9MqiG0jqWdqi1tOr7LyVIak6/cDHr3VgyKcQ8VFT2gU7eSYeJA5Xlt8rB1YrrZMzKvdd7nqm/rs5ERdC0SVITVqZg4YjzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crpt.ru; spf=pass smtp.mailfrom=crpt.ru; dkim=pass (2048-bit key) header.d=crpt.ru header.i=@crpt.ru header.b=cVRnCZE2; arc=none smtp.client-ip=91.236.205.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crpt.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crpt.ru
+Received: from mail.crpt.ru ([192.168.60.3])
+	by mail.crpt.ru  with ESMTP id 52388PGD020784-52388PGF020784
+	(version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=OK);
+	Mon, 3 Mar 2025 11:08:25 +0300
+Received: from EX1.crpt.local (192.168.60.3) by ex1.crpt.local (192.168.60.3)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Mon, 3 Mar
+ 2025 11:08:25 +0300
+Received: from EX1.crpt.local ([192.168.60.3]) by EX1.crpt.local
+ ([192.168.60.3]) with mapi id 15.01.2507.044; Mon, 3 Mar 2025 11:08:25 +0300
+From: =?koi8-r?B?98HUz9LP0MnOIOHOxNLFyg==?= <a.vatoropin@crpt.ru>
+To: Johannes Berg <johannes@sipsolutions.net>
+CC: =?koi8-r?B?98HUz9LP0MnOIOHOxNLFyg==?= <a.vatoropin@crpt.ru>, Jeff Johnson
+	<jjohnson@kernel.org>, Pradeep Kumar Chitrapu <quic_pradeepc@quicinc.com>,
+	Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>, Govindaraj Saminathan
+	<quic_gsamin@quicinc.com>, Bhagavathi Perumal S <bperumal@codeaurora.org>,
+	Rajkumar Manoharan <rmanohar@codeaurora.org>,
+	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+	"ath11k@lists.infradead.org" <ath11k@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>
+Subject: [PATCH] ath11k: fix overflow in tx stats calculation
+Thread-Topic: [PATCH] ath11k: fix overflow in tx stats calculation
+Thread-Index: AQHbjBNwlu6FEnv6mkuda429t7F2NQ==
+Date: Mon, 3 Mar 2025 08:08:25 +0000
+Message-ID: <20250303080819.48872-1-a.vatoropin@crpt.ru>
+Accept-Language: ru-RU, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-kse-serverinfo: EX1.crpt.local, 9
+x-kse-antivirus-interceptor-info: scan successful
+x-kse-antivirus-info: Clean, bases: 2/17/2025 9:52:00 AM
+x-kse-attachment-filter-triggered-rules: Clean
+x-kse-attachment-filter-triggered-filters: Clean
+x-kse-bulkmessagesfiltering-scan-result: protection disabled
+Content-Type: text/plain; charset="koi8-r"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250301231602.917580-1-ojeda@kernel.org>
-In-Reply-To: <20250301231602.917580-1-ojeda@kernel.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 3 Mar 2025 09:05:49 +0100
-X-Gm-Features: AQ5f1JrxAQw0Rq7Ilhd1yFsj2dY9VjMUraWB3QJMgYSvaEWDQVWq8PuNQusYF1c
-Message-ID: <CAH5fLgjhMfk1vZCc242vKYnTN13Ss23VhVhaAjwU67Z5qhP9mA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] drm/panic: use `div_ceil` to clean Clippy warning
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Jocelyn Falempe <jfalempe@redhat.com>, =?UTF-8?Q?Thomas_B=C3=B6hler?= <witcher@wiredspace.de>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, dri-devel@lists.freedesktop.org, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-FEAS-Client-IP: 192.168.60.3
+X-FE-Policy-ID: 2:4:0:SYSTEM
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; d=crpt.ru; s=crpt.ru; c=relaxed/relaxed;
+ h=from:to:cc:subject:date:message-id:content-type:mime-version;
+ bh=GXCR2/qllsmPA+9VDf1WpC/D25nO4d0B9V4QL8xXBpM=;
+ b=cVRnCZE2yRwZueFBHy4v+SikDM43pylMgfh911GYqPN0IIt3BSzNGN8ZlKb4vq/dq6CY2qpD4sfg
+	8kRyBybkjfO93Vpxt0HV5zMAGEIcdTOmls/gMqxjyK9DRaPFWd8FWIq+bAPIMDLC72Pq0ZafQrM/
+	xkJKWHQtjde+9Y/OdG/WYtLulJ6X7ojMB1n/zUWXkKLUcTvhw0XU4H6EdBz9kmGEvuV5vTpSZH0Y
+	/8kTPSblVtkLGX1AiybAcIR7naqN66Q8716J6HMQGkYdY7HPAzKtmKWHaS7Fy3/hb18+hHkhSGsA
+	qTQuNNn92yGO2ALB9srRBlcPXvw5W4B2bqxLzg==
 
-On Sun, Mar 2, 2025 at 12:17=E2=80=AFAM Miguel Ojeda <ojeda@kernel.org> wro=
-te:
->
-> Starting with the upcoming Rust 1.86.0 (to be released 2025-04-03),
-> Clippy warns:
->
->     error: manually reimplementing `div_ceil`
->        --> drivers/gpu/drm/drm_panic_qr.rs:548:26
->         |
->     548 |         let pad_offset =3D (offset + 7) / 8;
->         |                          ^^^^^^^^^^^^^^^^ help: consider using =
-`.div_ceil()`: `offset.div_ceil(8)`
->         |
->         =3D help: for further information visit https://rust-lang.github.=
-io/rust-clippy/master/index.html#manual_div_ceil
->
-> And similarly for `stride`. Thus apply the suggestion to both.
->
-> The behavior (and thus codegen) is not exactly equivalent [1][2], since
-> `div_ceil()` returns the right value for the values that currently
-> would overflow.
->
-> Link: https://github.com/rust-lang/rust-clippy/issues/14333 [1]
-> Link: https://godbolt.org/z/dPq6nGnv3 [2]
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+From: Andrey Vatoropin <a.vatoropin@crpt.ru>
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Size of variable peer_stats->succ_bytes equals four bytes.
+Size of variable peer_stats->retry_bytes equals four bytes.
+
+The expression peer_stats->succ_bytes+peer_stats->retry_bytes is currently
+being evaluated using 32-bit arithmetic. So during the addition an
+overflow may occur.
+
+Since a value of type 'u64' is used to store the eventual he, it is
+necessary to perform the 64-bit arithmetic to avoid overflow during the
+multiplication.
+
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
+      =20
+Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
+Signed-off-by: Andrey Vatoropin <a.vatoropin@crpt.ru>
+---
+ drivers/net/wireless/ath/ath11k/debugfs_sta.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/net/wireless/ath/ath11k/debugfs_sta.c b/drivers/net/wi=
+reless/ath/ath11k/debugfs_sta.c
+index f56a24b6c8da..982a7add6ea6 100644
+--- a/drivers/net/wireless/ath/ath11k/debugfs_sta.c
++++ b/drivers/net/wireless/ath/ath11k/debugfs_sta.c
+@@ -69,26 +69,26 @@ void ath11k_debugfs_sta_add_tx_stats(struct ath11k_sta =
+*arsta,
+=20
+ 		if (txrate->flags & RATE_INFO_FLAGS_HE_MCS) {
+ 			STATS_OP_FMT(AMPDU).he[0][mcs] +=3D
+-			peer_stats->succ_bytes + peer_stats->retry_bytes;
++			peer_stats->succ_bytes + (u64)peer_stats->retry_bytes;
+ 			STATS_OP_FMT(AMPDU).he[1][mcs] +=3D
+ 			peer_stats->succ_pkts + peer_stats->retry_pkts;
+ 		} else if (txrate->flags & RATE_INFO_FLAGS_MCS) {
+ 			STATS_OP_FMT(AMPDU).ht[0][mcs] +=3D
+-			peer_stats->succ_bytes + peer_stats->retry_bytes;
++			peer_stats->succ_bytes + (u64)peer_stats->retry_bytes;
+ 			STATS_OP_FMT(AMPDU).ht[1][mcs] +=3D
+ 			peer_stats->succ_pkts + peer_stats->retry_pkts;
+ 		} else {
+ 			STATS_OP_FMT(AMPDU).vht[0][mcs] +=3D
+-			peer_stats->succ_bytes + peer_stats->retry_bytes;
++			peer_stats->succ_bytes + (u64)peer_stats->retry_bytes;
+ 			STATS_OP_FMT(AMPDU).vht[1][mcs] +=3D
+ 			peer_stats->succ_pkts + peer_stats->retry_pkts;
+ 		}
+ 		STATS_OP_FMT(AMPDU).bw[0][bw] +=3D
+-			peer_stats->succ_bytes + peer_stats->retry_bytes;
++			peer_stats->succ_bytes + (u64)peer_stats->retry_bytes;
+ 		STATS_OP_FMT(AMPDU).nss[0][nss] +=3D
+-			peer_stats->succ_bytes + peer_stats->retry_bytes;
++			peer_stats->succ_bytes + (u64)peer_stats->retry_bytes;
+ 		STATS_OP_FMT(AMPDU).gi[0][gi] +=3D
+-			peer_stats->succ_bytes + peer_stats->retry_bytes;
++			peer_stats->succ_bytes + (u64)peer_stats->retry_bytes;
+ 		STATS_OP_FMT(AMPDU).bw[1][bw] +=3D
+ 			peer_stats->succ_pkts + peer_stats->retry_pkts;
+ 		STATS_OP_FMT(AMPDU).nss[1][nss] +=3D
+--=20
+2.43.0
 
