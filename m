@@ -1,102 +1,150 @@
-Return-Path: <linux-kernel+bounces-544775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AD1FA4E4C8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:03:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DC1DA4E3B7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:38:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 671807A2895
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:01:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1642342346D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:32:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E4A281526;
-	Tue,  4 Mar 2025 15:43:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65BF22512FC;
+	Tue,  4 Mar 2025 15:20:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="AMb6Eg85"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZQ1W/RQ5"
 Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40C7292F81
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 115E5238D25
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.116
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741103030; cv=pass; b=iiTuEyMfgdIvXmeIontWgL6Tg3tT27Acleij3CkmICrRcXvApxSId8Qt5gOavh9hi4RUDZR9LqUle2F9NnNQWND77CPzPKCvMDjXVvXrEa3m9jSPqIqjxTs1VRrkaWcq9p2qRja2p0Qef8ZnuaBkgZYYWp8A4INE0ACNoi23mBI=
+	t=1741101654; cv=fail; b=QoRvt+bsHVEye6kgtqGofuM0+nC7utBmiuYU0XaQf/N4XjdfRXnHPlIg/NsIMK2/HyO334+cZZ/dDkOMbZ6fSNsrWWcBAPRvesjCQYRLWQ6OAD/kdZ1MAuVfsy+8idrztA5t91hROjBBjUHsVjWk4GklILYQZsCEWkpi22JAudw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741103030; c=relaxed/simple;
-	bh=te4hVjrT+OPEAMI72j7olQU/QVIQEMsFl6VKrRu98Mk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Dohpzg+9049dlIgpCQ0ZYVR+X3MwEysKXcI/e3V/pKX8NrxBzrJ5YT3ZpqxT9Fc6jQ6FdSwps0u6UA7uqlIPWajllwF2rXsfpfExDyjXnefDU9TSbLiiTdIzn02nN8X0ucByg4uH+WrL0FjgASGvrpl50Smq3BaJOpLJoN33gB0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=AMb6Eg85; arc=none smtp.client-ip=217.70.183.200; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; arc=pass smtp.client-ip=160.75.25.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+	s=arc-20240116; t=1741101654; c=relaxed/simple;
+	bh=YWn7+B5gR6wZlpJDRspD1mV66nJRedzZrS8mLxfwwG4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rVg/KiaSPDq+j4acgFuKduyjsWeQMFBUUX1KRwg8DuAAfDEeAftS19YfZbx5Z7Bf0m3Ug+6Q0ifjAA1CLcpBQcKepPOCGlsaCb5VM/tANVFCzQ/1gw8YxPIY1NA+GPbWkuVpAqTW42HNUT8qGiWlo8hAbaXIUV+vkpN0XPtq0hU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZQ1W/RQ5 reason="signature verification failed"; arc=none smtp.client-ip=209.85.218.54; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; arc=fail smtp.client-ip=160.75.25.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
-Received: from lesvatest1.cc.itu.edu.tr (unknown [10.146.128.1])
+Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id 659AC40D286E
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:43:47 +0300 (+03)
+	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id 8932040F1CF8
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:20:51 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key, unprotected) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=gm1 header.b=AMb6Eg85
+	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=ZQ1W/RQ5
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6fzc0fHjzG17w
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:41:16 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6fVg5C30zG07M
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:19:39 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 0342A42752; Tue,  4 Mar 2025 18:40:44 +0300 (+03)
+	id 43C4E42726; Tue,  4 Mar 2025 18:19:29 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=AMb6Eg85
-X-Envelope-From: <linux-kernel+bounces-541141-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZQ1W/RQ5
+X-Envelope-From: <linux-kernel+bounces-541148-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=AMb6Eg85
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZQ1W/RQ5
 Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id 88D8E41B83
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:25:20 +0300 (+03)
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id 3E8B63064C07
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:25:20 +0300 (+03)
+	by le2 (Postfix) with ESMTP id 66DA742749
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:26:50 +0300 (+03)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by fgw1.itu.edu.tr (Postfix) with SMTP id 40B583064C0C
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:26:50 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F40616958A
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 08:24:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AFEA1893EA4
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 08:26:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0420E1F1509;
-	Mon,  3 Mar 2025 08:23:07 +0000 (UTC)
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 521C91F03D3;
+	Mon,  3 Mar 2025 08:24:37 +0000 (UTC)
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 268321EFFBF;
-	Mon,  3 Mar 2025 08:23:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501E01E1A31
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 08:24:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740990183; cv=none; b=taT//xid1GNnOSoVZNAw3Gw0H7dKBl6oA0LB3n1WZaiXgmpFmnPuSgdocKI+2uHv0GXtxPxtqBoOrKS9GfJMcNH7Zf7N/O8hLYKl1sq0IL1l8niE2M9jILWNs6kyUP5i131Od3e0C/GgAST2duqajef+WtrUxzyJIAsNJ89HHOM=
+	t=1740990274; cv=none; b=NgFSNUFod+jy083OWw8UP7+9U1TI4/FJ1iy7OzMPtKV6L62Gy4siEFNpVTdmaBazjEPXEMv83+0GJEYJ/4r6/y6k/TkbPJa1VHy5ZmQfRuelyrkXSnqM1uHa+QZnH3IWc1eJgPGJsFwPSc27m9sCPF9BA/prdPRLKdvzamQ0f3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740990183; c=relaxed/simple;
-	bh=te4hVjrT+OPEAMI72j7olQU/QVIQEMsFl6VKrRu98Mk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PY+7bJWzvQOj0CF8yEI7yS9g3Vghm80+O0/GirqlJLSUe901uRHhsaslyrnVH6rkvV3ciZ3W1YevLJVM1xO4zXoHZuvR9EL10//NavNWMwQgklUlL0lIBddy8j1HSb29dEPajxwb9MF/RX0htpCotC9UwyY/FS/ai7HMlgUBiSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=AMb6Eg85; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 5D2C544361;
-	Mon,  3 Mar 2025 08:22:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740990179;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IT2zbggKiF2PrlQ3AyzmLytJhfz4wECKzTaVJe6345Y=;
-	b=AMb6Eg85EFbyIFo0bGcH+7PynHCZlID0AWlf8jlKchxwTRmQRA/S6dQCCE6AyN7q2kgnvZ
-	xhtsIsm24dFPibHPZMqMihinQg/ocRUGaNsiEkyK5EF8A1wozRbGOpKV+TaMNG2f8c1GPs
-	2UNMGGzsTKypwOQB9W+DymF4/CS9Pwd4BtjB8GXTrrNjkYVUBn+MMBniJ1o3KUUWF2PTK/
-	QX9oMLUkNoOT/teXR9nMz1wYx3nCan8YB4Sas+Zdg6Q/Ev63cxX2CX72ijBpR/0BxFTw7V
-	/szkzERnhGoPIY8YLqcz+yblibpS/xRqi0ZFwj+iaIp3r/KcTugjXyC6Wc8KOw==
-From: "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
-Date: Mon, 03 Mar 2025 09:22:54 +0100
-Subject: [PATCH bpf-next v2 06/10] selftests/bpf: test_tunnel: Move
- ip6erspan tunnel test to test_progs
+	s=arc-20240116; t=1740990274; c=relaxed/simple;
+	bh=hSBIYLscn2H9J+MqRxZlM/7jQNfEuoPNFDdWWYwe6ss=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bEXOBSOV3AFkmiDbEOsb6kkT8Ll1QJ+DZuY+1VGKKgIP7tf+Q0IUuPU52qH0QYtV8sg5BZpWZg/a+WN5rqzVyI4UxxW59FXxvW6LQSvI/hE8uaFFAwZtLqXFKzjUlqQ9/Sv+zO68KTfD1Mig5J/dluDQGJU1MYBo3YJ1kpOCgTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZQ1W/RQ5; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aaeec07b705so664445366b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 00:24:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740990270; x=1741595070; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=RaZ/CcmeFoBTR8ddNDuQVJv3AT8EACnAOxQQ2V8mS5A=;
+        b=ZQ1W/RQ5pKHe6TuSfXOOT8Y1/PkFTG7ziIuqCfIBuPCyOp5tNnH1ufGf9RtfhRcTGh
+         1M76XPwwFhZLx3vuuIWLTXaC0F+nLB4dwcXcIwomg6E9VBPNJdyKw251zXFlkxJOIK0g
+         aSzJrZlR7Eanw6I82ZLVXkksb3VXsx8SCU30MNrIJMrV9chLYs3a2wzboY5gTtRsZBTy
+         iqxnfXUG89mZwhF9E0Q8mPMSA2CdkWuM5nK67He+MWYzkm47y2wGu28LBrnKFi73Wrlz
+         OMXrXhBsJHaIjUsvI08nypKwfYvs0Ze0r676YLdW/ELE8/11cd/B4x8WI1swGZOFjZMV
+         ndgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740990270; x=1741595070;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RaZ/CcmeFoBTR8ddNDuQVJv3AT8EACnAOxQQ2V8mS5A=;
+        b=tMiRrGx+YDrvZ2fDFT5nae58MfBoqWRQ2B8XykKsrkmsFG68wPnwS2iZLX3thahMEV
+         5pNADOZ6JqKRLY8in3e+CF3HI8ZNcNubu7ahvmBm2YVwhGV7R115odpv081nvz8ogbf+
+         fRlCOQfQ1w5j2Txm/Cj3UxKB3y+jhWPUYzwY9oxsZigGY+Ggp0irxmbWoQNq//zK7cMc
+         Kp1+55dr+BQOll/tqLK0uPG1D/hosiZoJij5OqZUmb5n2JXDgcS7unvkHom8ijFfHNLt
+         SsEZ8r0NBa6uilKmMupXqxKxC9VZW9+jzNv7Wnt90JbNXeiAbHRKoT5o54ZPvv9aFXrf
+         3l4A==
+X-Forwarded-Encrypted: i=1; AJvYcCV8zh63Z3qjMalws9sXnkMWt25g3q+4ufujpvUlT/KzQcb6Ny2zBSWNf5RzM5RlGQkUeTay8iNdEYk5xrg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuYNhjysgan5/k64/C9ar0hgACHzbJuksaPQMEieFmWuHO6tCb
+	8nwRTOLdfAfApLserB8eoTqBp4ebsK9b8iagIXQTb9RxoDWOsJ5YTtToez+OeBg=
+X-Gm-Gg: ASbGnctG5Fcq+v1WdXqY/kZ+MhzWqsxnwJ4Qm6DtLLn5nOKXJvMbA1fgnmIhFYk7n1n
+	f33K8td+VxXOqVz6tNXlZXLa/FksQ/UcqMKpn6Tm1tsph3G5SDAkuJesDPbEt1OKlBMNsh0Mnnf
+	lqO0xFYVADk08AhbLtD0GqXiFrerEYunjQPCdd46et+/hvyv0n+lOAvaiDiGN7JBqus149T1uUb
+	DXVIQo+MNWBXXEUFFZZgF2hPRqUjfMn3J8SXg9aiwUsknTFVKit2mBLujrSDhvOIu3bVVuz3RlA
+	zSym+HKPBOHs6fXyfB8F9zLf2G7neuRNEwAhikXd/YICwbrsbQ==
+X-Google-Smtp-Source: AGHT+IFy4o0lL4wbVfv25BbUZiZprY5pePIQkrVcMtYcd0n6ALHYFSnKECFQ/9k22YMwYBQpC08ZKg==
+X-Received: by 2002:a17:907:6d0c:b0:ac1:791c:1526 with SMTP id a640c23a62f3a-ac1791c1cd3mr169820066b.56.1740990270586;
+        Mon, 03 Mar 2025 00:24:30 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abf3f3bbfb3sm525674166b.77.2025.03.03.00.24.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 00:24:30 -0800 (PST)
+Date: Mon, 3 Mar 2025 11:24:26 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	freedreno@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Archit Taneja <architt@codeaurora.org>,
+	Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
+	Jeykumar Sankaran <jsanka@codeaurora.org>,
+	Jordan Crouse <jordan@cosmicpenguin.net>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+	Simona Vetter <simona@ffwll.ch>, Vinod Koul <vkoul@kernel.org>,
+	cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RESEND] drm/msm/dpu: Delete a variable initialisation before a
+ null pointer check in two functions
+Message-ID: <ce9599fb-a798-4f22-b51a-3341e690f8bc@stanley.mountain>
+References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
+ <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
+ <13566308-9a80-e4aa-f64e-978c02b1406d@web.de>
+ <54c30a69-71cf-4582-9086-50eb0d39f273@web.de>
+ <k7un3bjavyt4ogscgc7jn7thfobegaguqqiy7gtypmq6vq7zox@l4bsevbsjrud>
+ <29b32b0d-312d-4848-9e26-9e5e76e527a7@stanley.mountain>
+ <12050afd-ab60-4bac-bd25-0c3cc925b38b@web.de>
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -104,210 +152,42 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250303-tunnels-v2-6-8329f38f0678@bootlin.com>
-References: <20250303-tunnels-v2-0-8329f38f0678@bootlin.com>
-In-Reply-To: <20250303-tunnels-v2-0-8329f38f0678@bootlin.com>
-To: Alexei Starovoitov <ast@kernel.org>, 
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
- Martin KaFai Lau <martin.lau@linux.dev>, 
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, 
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
- Shuah Khan <shuah@kernel.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Alexis Lothore <alexis.lothore@bootlin.com>, bpf@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
- "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
-X-Mailer: b4 0.14.2
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelkeeifecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkfhfjgfvvefosehtjeertdertdejnecuhfhrohhmpedfuegrshhtihgvnhcuvehurhhuthgthhgvthculdgvuefrhfcuhfhouhhnuggrthhiohhnmddfuceosggrshhtihgvnhdrtghurhhuthgthhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeefudfhuedttdeiffetffeljeffkeevveeiuddtgeejleeftdejgedtjedttdfhnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgepvdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludelvddrudeikedrtddrudegngdpmhgrihhlfhhrohhmpegsrghsthhivghnrdgtuhhruhhttghhvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvtddprhgtphhtthhopehlihhnuhigqdhkshgvlhhfthgvshhtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhhuhgrhheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhohhhnrdhfrghsthgrsggvnhgusehgmhgrihhlrdgtohhmpdhrtghpthhtohepvgguugihiiekjeesghhmr
- ghilhdrtghomhdprhgtphhtthhopehsohhngheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghstheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhihkhholhgrlhesfhgsrdgtohhmpdhrtghpthhtoheprghnughrihhisehkvghrnhgvlhdrohhrgh
-X-GND-Sasl: bastien.curutchet@bootlin.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <12050afd-ab60-4bac-bd25-0c3cc925b38b@web.de>
+Content-Transfer-Encoding: quoted-printable
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6fzc0fHjzG17w
+X-ITU-Libra-ESVA-ID: 4Z6fVg5C30zG07M
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741707753.64206@H94N4Fn+Z5P56fYXSDdiuw
+X-ITU-Libra-ESVA-Watermark: 1741706388.42479@1SDurCdsD89SHrXLnO5r2Q
 X-ITU-MailScanner-SpamCheck: not spam
 
-ip6erspan tunnels are tested in the test_tunnel.sh but not in the
-test_progs framework.
+On Mon, Mar 03, 2025 at 09:15:14AM +0100, Markus Elfring wrote:
+> >>> The address of a data structure member was determined before
+> >>> a corresponding null pointer check in the implementation of
+> >>> the functions =E2=80=9Cdpu_hw_pp_enable_te=E2=80=9D and =E2=80=9Cdp=
+u_hw_pp_get_vsync_info=E2=80=9D.
+> >>>
+> >>> Thus avoid the risk for undefined behaviour by removing extra
+> >>> initialisations for the variable =E2=80=9Cc=E2=80=9D (also because =
+it was already
+> >>> reassigned with the same value behind this pointer check).
+> >
+> > There is no undefined behavior here.
+> Will any software development concerns evolve further also according to
+> undesirable null pointer dereferences?
+> https://wiki.sei.cmu.edu/confluence/display/c/EXP34-C.+Do+not+dereferen=
+ce+null+pointers
+>=20
 
-Add a new test in test_progs to test ip6erspan tunnels. It uses the same
-network topology and the same BPF programs than the script.
-Remove test_ip6erspan() from the script.
+It's not a NULL pointer dereference.  It's just pointer math.  It was
+a common way to implement offsetof() before we had a builtin for that.
 
-Acked-by: Stanislav Fomichev <sdf@fomichev.me>
-Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
----
- .../testing/selftests/bpf/prog_tests/test_tunnel.c | 41 +++++++++++++++
- tools/testing/selftests/bpf/test_tunnel.sh         | 58 ----------------------
- 2 files changed, 41 insertions(+), 58 deletions(-)
+samples/bpf/test_lru_dist.c
+# define offsetof(TYPE, MEMBER) ((size_t)&((TYPE *)0)->MEMBER)
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/test_tunnel.c b/tools/testing/selftests/bpf/prog_tests/test_tunnel.c
-index 1f39ebdf79c8ecab92782b63f2da5c5d7cb64159..1b1b19045282496cc287af801b384ec448cf2dc2 100644
---- a/tools/testing/selftests/bpf/prog_tests/test_tunnel.c
-+++ b/tools/testing/selftests/bpf/prog_tests/test_tunnel.c
-@@ -109,6 +109,9 @@
- #define ERSPAN_TUNL_DEV0 "erspan00"
- #define ERSPAN_TUNL_DEV1 "erspan11"
- 
-+#define IP6ERSPAN_TUNL_DEV0 "ip6erspan00"
-+#define IP6ERSPAN_TUNL_DEV1 "ip6erspan11"
-+
- #define PING_ARGS "-i 0.01 -c 3 -w 10 -q"
- 
- static int config_device(void)
-@@ -916,6 +919,42 @@ static void test_erspan_tunnel(enum erspan_test test)
- 	test_tunnel_kern__destroy(skel);
- }
- 
-+static void test_ip6erspan_tunnel(enum erspan_test test)
-+{
-+	struct test_tunnel_kern *skel;
-+	int set_fd, get_fd;
-+	int err;
-+
-+	skel = test_tunnel_kern__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "test_tunnel_kern__open_and_load"))
-+		return;
-+
-+	switch (test) {
-+	case V1:
-+		err = add_ipv6_tunnel(IP6ERSPAN_TUNL_DEV0, IP6ERSPAN_TUNL_DEV1,
-+				      "ip6erspan", "seq key 2 erspan_ver 1 erspan 123");
-+		break;
-+	case V2:
-+		err = add_ipv6_tunnel(IP6ERSPAN_TUNL_DEV0, IP6ERSPAN_TUNL_DEV1,
-+				      "ip6erspan",
-+				      "seq key 2 erspan_ver 2 erspan_dir egress erspan_hwid 7");
-+		break;
-+	}
-+	if (!ASSERT_OK(err, "add tunnel"))
-+		goto done;
-+
-+	set_fd = bpf_program__fd(skel->progs.ip4ip6erspan_set_tunnel);
-+	get_fd = bpf_program__fd(skel->progs.ip4ip6erspan_get_tunnel);
-+	if (generic_attach(IP6ERSPAN_TUNL_DEV1, get_fd, set_fd))
-+		goto done;
-+
-+	ping6_veth0();
-+	ping_dev1();
-+done:
-+	delete_tunnel(IP6ERSPAN_TUNL_DEV0, IP6ERSPAN_TUNL_DEV1);
-+	test_tunnel_kern__destroy(skel);
-+}
-+
- #define RUN_TEST(name, ...)						\
- 	({								\
- 		if (test__start_subtest(#name)) {			\
-@@ -941,6 +980,8 @@ static void *test_tunnel_run_tests(void *arg)
- 	RUN_TEST(ip6gre_tunnel, IP6GRETAP);
- 	RUN_TEST(erspan_tunnel, V1);
- 	RUN_TEST(erspan_tunnel, V2);
-+	RUN_TEST(ip6erspan_tunnel, V1);
-+	RUN_TEST(ip6erspan_tunnel, V2);
- 
- 	return NULL;
- }
-diff --git a/tools/testing/selftests/bpf/test_tunnel.sh b/tools/testing/selftests/bpf/test_tunnel.sh
-index e8e7839fb5b5f69a50a6f1fcd606d1cb6dee3c64..2b486df9724ddfe2fde4e9695274cc8ab0b036d4 100755
---- a/tools/testing/selftests/bpf/test_tunnel.sh
-+++ b/tools/testing/selftests/bpf/test_tunnel.sh
-@@ -64,36 +64,6 @@ config_device()
- 	ip addr add dev veth1 172.16.1.200/24
- }
- 
--add_ip6erspan_tunnel()
--{
--
--	# assign ipv6 address
--	ip netns exec at_ns0 ip addr add ::11/96 dev veth0
--	ip netns exec at_ns0 ip link set dev veth0 up
--	ip addr add dev veth1 ::22/96
--	ip link set dev veth1 up
--
--	# at_ns0 namespace
--	if [ "$1" == "v1" ]; then
--		ip netns exec at_ns0 \
--		ip link add dev $DEV_NS type $TYPE seq key 2 \
--		local ::11 remote ::22 \
--		erspan_ver 1 erspan 123
--	else
--		ip netns exec at_ns0 \
--		ip link add dev $DEV_NS type $TYPE seq key 2 \
--		local ::11 remote ::22 \
--		erspan_ver 2 erspan_dir egress erspan_hwid 7
--	fi
--	ip netns exec at_ns0 ip addr add dev $DEV_NS 10.1.1.100/24
--	ip netns exec at_ns0 ip link set dev $DEV_NS up
--
--	# root namespace
--	ip link add dev $DEV type $TYPE external
--	ip addr add dev $DEV 10.1.1.200/24
--	ip link set dev $DEV up
--}
--
- add_geneve_tunnel()
- {
- 	# at_ns0 namespace
-@@ -166,29 +136,6 @@ add_ip6tnl_tunnel()
- 	ip link set dev $DEV up
- }
- 
--test_ip6erspan()
--{
--	TYPE=ip6erspan
--	DEV_NS=ip6erspan00
--	DEV=ip6erspan11
--	ret=0
--
--	check $TYPE
--	config_device
--	add_ip6erspan_tunnel $1
--	attach_bpf $DEV ip4ip6erspan_set_tunnel ip4ip6erspan_get_tunnel
--	ping6 $PING_ARG ::11
--	ip netns exec at_ns0 ping $PING_ARG 10.1.1.200
--	check_err $?
--	cleanup
--
--	if [ $ret -ne 0 ]; then
--                echo -e ${RED}"FAIL: $TYPE"${NC}
--                return 1
--        fi
--        echo -e ${GREEN}"PASS: $TYPE"${NC}
--}
--
- test_geneve()
- {
- 	TYPE=geneve
-@@ -341,7 +288,6 @@ cleanup()
- 	ip link del ip6ip6tnl11 2> /dev/null
- 	ip link del geneve11 2> /dev/null
- 	ip link del ip6geneve11 2> /dev/null
--	ip link del ip6erspan11 2> /dev/null
- }
- 
- cleanup_exit()
-@@ -378,10 +324,6 @@ bpf_tunnel_test()
- {
- 	local errors=0
- 
--	echo "Testing IP6ERSPAN tunnel..."
--	test_ip6erspan v2
--	errors=$(( $errors + $? ))
--
- 	echo "Testing GENEVE tunnel..."
- 	test_geneve
- 	errors=$(( $errors + $? ))
-
--- 
-2.48.1
-
+regards,
+dan carpenter
 
 
