@@ -1,138 +1,102 @@
-Return-Path: <linux-kernel+bounces-542167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DC84A4C672
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:15:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB0C1A4C6A2
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:19:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31731162336
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:13:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8EF17A9B9F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:13:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CCE422FDF3;
-	Mon,  3 Mar 2025 16:08:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34530235346;
+	Mon,  3 Mar 2025 16:09:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="kwCThq2g";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="kwCThq2g"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fU2yHPpv"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D68722E01E
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 16:08:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317AC21B9C3;
+	Mon,  3 Mar 2025 16:09:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741018138; cv=none; b=d0RfA5+xPta5415mHf397ynyeYdd6I74Pt8P1QO6MetC6FLHD0twsuolIco+AOFxjtuL1wTgntx5cQFkiIuIikvrMPiPVTlYh//psMdmaK5sIR5VnDQXW2MS400h+BwVSexfPEGkby5sJ+Pm+Z5ee7UOafvjjvD5+TWLYuFiIvE=
+	t=1741018168; cv=none; b=XJ0P+pfR08YVpHDoeIjSoGOFbGgzglfcOsp15CMC1MYHzKbiUM/MHOra7Fq9bV1eDtwDY8IE8aTOChpTK7em+D+0CVJJbmPqurdLF4HIzzXN1Ji4eVm8STU06M7EWkl88uHjt+x5UDxVkfV13PN21bWhxYgwu6rnggXLjrzNtAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741018138; c=relaxed/simple;
-	bh=rGEdzRDu8/Ay8CXkrLVZRuHpUfVbnrvk3k+RgsSv50A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ls+4Q3uEs/Ht9P81/H8xDsqrvIwYMZuRfmxQiUqlgIh8S07rlLu5ayzcuGCIiO91sDIG8H1bO0SZMi2jboeoCCHL56yUHfMVF3w06qAiqfVM3YigM7zO/H0gHwhAciGyamerYlE2C6sX66yhSsPcn7VNJ4eIiqGPJpW38VcJqNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=kwCThq2g; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=kwCThq2g; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A52B71F444;
-	Mon,  3 Mar 2025 16:08:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1741018134; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=L+k4VAY33zlc7nZBeb3NhV3ZRptjc5DJlJ3GC+ZM/bM=;
-	b=kwCThq2gOGlNGMKorPWtd3rWczzFn0R4NZNptx2+Hpmkjum5W96tPh3oYYa9fOPBS+N06o
-	Ydhr3dj9HdUSI0TwbMytfXY1dbUSESyyLqiB+IB45BIVd6h61kG5BMOtu/2/KL88sJzoh9
-	WOgbVx4qDfJBphqefQj5l2SGrP/eVbY=
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=kwCThq2g
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1741018134; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=L+k4VAY33zlc7nZBeb3NhV3ZRptjc5DJlJ3GC+ZM/bM=;
-	b=kwCThq2gOGlNGMKorPWtd3rWczzFn0R4NZNptx2+Hpmkjum5W96tPh3oYYa9fOPBS+N06o
-	Ydhr3dj9HdUSI0TwbMytfXY1dbUSESyyLqiB+IB45BIVd6h61kG5BMOtu/2/KL88sJzoh9
-	WOgbVx4qDfJBphqefQj5l2SGrP/eVbY=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9D5DB13939;
-	Mon,  3 Mar 2025 16:08:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id /H5mJhbUxWdhHAAAD6G6ig
-	(envelope-from <dsterba@suse.com>); Mon, 03 Mar 2025 16:08:54 +0000
-From: David Sterba <dsterba@suse.com>
-To: linux-fsdevel@vger.kernel.org,
-	torvalds@linux-foundation.org
-Cc: David Sterba <dsterba@suse.com>,
+	s=arc-20240116; t=1741018168; c=relaxed/simple;
+	bh=Bbur522PKr26lQbrZOuRbC4ZeP7+GMbA+yItAhu0OzY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jb8cFzeAdrYFqFLO1QDeibyP+fToql5LDIvqdN4qaeEtrzE2la2clQc5l3U222fkaFVU3noc4DQDvYc+vWAj754EUJi/yOIhZ8msO9ESr/EOVbS7Cn0PLHTtxmAGmBSx1Rh/kEdOZAVPj4olMe8MUmt277dns+FRFE4+JFzZpK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fU2yHPpv; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741018167; x=1772554167;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Bbur522PKr26lQbrZOuRbC4ZeP7+GMbA+yItAhu0OzY=;
+  b=fU2yHPpvMk2JVU32C70zwaDT/0Wb9hzzp/VnQXxZklenSE2uzd5Tfypx
+   wfGUGnrZZ/2mfXd2HKanJwxuLMvwe9TlYngiTXYUs/7PgNf6lPO0XIj7b
+   bQGIAx0SOUCQ4Xe16fAjrRcoZiRs8IXY6AJ2SRKXC4lpUZzKTrdyCn94s
+   cg37+fUE6Bmrhn+zLFeV74xvABVc3OPp2k2nY+XZVaDfooAwzztgVtvve
+   KwAqAeOqWK4YqxlYHRaovrTNbuckxMFGzABn1ce9+Cjv5vWw/pdJbc6Zx
+   AvlYgEypf2cONScMxG5/49wYa3G/EqmrXe00RjYc9j+dQojcm7cH9STZ8
+   A==;
+X-CSE-ConnectionGUID: y7F99MkNRUGvuifpG3+02w==
+X-CSE-MsgGUID: Sq3p52W7SJKBKxaF41fi/g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="52878159"
+X-IronPort-AV: E=Sophos;i="6.13,330,1732608000"; 
+   d="scan'208";a="52878159"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 08:09:26 -0800
+X-CSE-ConnectionGUID: INAV7lvPQAGOgLyCQawUfg==
+X-CSE-MsgGUID: cN8iAshRSJiqrvq4nqT8vw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,330,1732608000"; 
+   d="scan'208";a="118065042"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 08:09:24 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tp8M5-0000000GrJe-45zn;
+	Mon, 03 Mar 2025 18:09:21 +0200
+Date: Mon, 3 Mar 2025 18:09:21 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] AFFS fixes for 6.14-rc5
-Date: Mon,  3 Mar 2025 17:08:53 +0100
-Message-ID: <cover.1741016639.git.dsterba@suse.com>
-X-Mailer: git-send-email 2.47.1
+Cc: Mika Westerberg <westeri@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Kent Gibson <warthog618@gmail.com>
+Subject: Re: [PATCH v1 3/3] gpiolib: Rename gpio_do_set_config() -->
+ gpiod_do_set_config()
+Message-ID: <Z8XUMRAlR3H13zha@smile.fi.intel.com>
+References: <20250303160341.1322640-1-andriy.shevchenko@linux.intel.com>
+ <20250303160341.1322640-4-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: A52B71F444
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	DKIM_TRACE(0.00)[suse.com:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250303160341.1322640-4-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi,
+On Mon, Mar 03, 2025 at 06:00:34PM +0200, Andy Shevchenko wrote:
+> In order to reduce the 'gpio' namespace when operate over GPIO descriptor
+> rename gpio_do_set_config() to gpiod_do_set_config().
 
-please pull two fixes from Simon Tatham. They're real bugfixes for
-problems with OFS floppy disks created on linux and then read in the
-emulated Workbench environment. Thanks.
+This change was made against my custom tree and I forgot about that.
+I will wait for the overall response to this series and if okay I
+may issue the correct patch.
 
-----------------------------------------------------------------
-The following changes since commit d082ecbc71e9e0bf49883ee4afd435a77a5101b6:
+-- 
+With Best Regards,
+Andy Shevchenko
 
-  Linux 6.14-rc4 (2025-02-23 12:32:57 -0800)
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/affs-6.14-rc5-tag
-
-for you to fetch changes up to 011ea742a25a77bac3d995f457886a67d178c6f0:
-
-  affs: don't write overlarge OFS data block size fields (2025-02-26 15:20:57 +0100)
-
-----------------------------------------------------------------
-Simon Tatham (2):
-      affs: generate OFS sequence numbers starting at 1
-      affs: don't write overlarge OFS data block size fields
-
- fs/affs/file.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
 
