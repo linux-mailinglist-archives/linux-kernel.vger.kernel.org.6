@@ -1,197 +1,216 @@
-Return-Path: <linux-kernel+bounces-541269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10EC2A4BABF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:26:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AED5A4BABD
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:26:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F406C189251B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:26:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2D897A606B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:25:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C68B1F0E42;
-	Mon,  3 Mar 2025 09:26:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5190E1F0E42;
+	Mon,  3 Mar 2025 09:26:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zj0jkgIT"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tHtGDha5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91CE51F0E2B;
-	Mon,  3 Mar 2025 09:26:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9BD113C8E8;
+	Mon,  3 Mar 2025 09:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740993994; cv=none; b=kW/mBkIGGUbOZVZY3rYrtFhwBrnaa3Ja86TBInJa/8Y61fshl9KfOSbanx3swYG6NXtQhF5Lro0AH0l7kMas/fKLvsirM4dB0M4VYeK4VIBF7sBBoTUEPs6osrvlCHIL7Q8UGyUogvDiU1kNcq3mC2CVXG4D9lbadhuRBEi9ZtQ=
+	t=1740993980; cv=none; b=Y+n/rFqiCJmfSFtBfb4mjdkDd3TFNR0AB/kJOkPAK9iHVXRyngmPaJrlKuf0P+b8NSmHo71OY+mdWBN6m5Nz6Z74GYfR40gYgaX31NfRMXcQZjiito4PdrVXxn1/6vmWVeRg/1LIHb2mFt3pH/C+Uiq/rnmeugDayFOTw9XIDTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740993994; c=relaxed/simple;
-	bh=vk3GR2qxbd+UjMs5iuCidCLWCIkNUIazUDHiqcGYXrE=;
+	s=arc-20240116; t=1740993980; c=relaxed/simple;
+	bh=m7pLdPXQWCNRenKWCOj9QGklukAUggqeQTZ/jePvJ+k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SfXNPomy5VDBv+RRi9K7LeAdj4A7RMAlCLSLCi520BM01rAijeOhodzLZBc1bu8FN0Pp4m68UEMS1hA28zMO02szgLhR4hVe2g00ybLiVl67nTZpy1sWJZLYwYyGwXVVSWGC7MOWTl5DgFHvyCig1hx5pk3HFisRqWaBanEWSec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zj0jkgIT; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740993992; x=1772529992;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=vk3GR2qxbd+UjMs5iuCidCLWCIkNUIazUDHiqcGYXrE=;
-  b=Zj0jkgIT/czTo9kWbwVbdiZgNa/RMY/xs1DsQiSwSELIrjG7nYYKTMC+
-   R7bBf04ts6UCPp2zBBM0/qfI3X8r/u+yHkzr+fSIjzR2eW1S6791pve3w
-   Lgkyz/TycWY1vCpV0riEfCDwjwMsNC0FVcBhX0svMSEGzSZ8e/DleBlb9
-   ybv55+GbU+C9oaGNqUAK3trOTHF3uqh7Q0Q7b5fRgncGaUGziPHuUVA/5
-   1hhIxi0igwHTaViUdIWQakE5+wFrBX7gkCTJQf4+oBq2GYdMDuNYf3WBA
-   am3Xf3KikQyjYZw4enoRWO9ou9UIy4lfNQaBTSvN46Wt1pJy7FtmVt10N
-   A==;
-X-CSE-ConnectionGUID: p4zo12IIRGO7nPHv/tmRIg==
-X-CSE-MsgGUID: eunNt9U1QxGUbI8GSr6I8Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="42050734"
-X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="42050734"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 01:26:31 -0800
-X-CSE-ConnectionGUID: 9Qhsu7kaRCmCZEmB2LbBPg==
-X-CSE-MsgGUID: jFvNESnWTQCmliu6M7VyPQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="155126115"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by orviesa001.jf.intel.com with ESMTP; 03 Mar 2025 01:26:27 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tp248-000IGl-1P;
-	Mon, 03 Mar 2025 09:26:24 +0000
-Date: Mon, 3 Mar 2025 17:25:59 +0800
-From: kernel test robot <lkp@intel.com>
-To: Daniel Tsai <danielsftsai@google.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <helgaas@kernel.org>,
-	Andrew Chant <achant@google.com>,
-	Brian Norris <briannorris@google.com>,
-	Sajid Dalvi <sdalvi@google.com>, Mark Cheng <markcheng@google.com>,
-	Ben Cheng <bccheng@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Tsai Sung-Fu <danielsftsai@google.com>
-Subject: Re: [PATCH] PCI: dwc: Chain the set IRQ affinity request back to the
- parent
-Message-ID: <202503031726.KLKoMMZk-lkp@intel.com>
-References: <20250303070501.2740392-1-danielsftsai@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JjAB3lxBM7hdDwt/YBr6Uk8UdEuyIYFOI0Q9tg6QJF/S9uZYSTfHVQndo2SrloC5E8S1YOQ0rm/TVjcKwF1maUr7RNqp7MY/64yAhvRqS8P5qtozNaZBKl7SbNgHLy+KAamEiMz55O3TGx/HvYJK2B4OYJcVwgM2j4aLM3D/FMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tHtGDha5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44854C4CEE4;
+	Mon,  3 Mar 2025 09:26:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740993980;
+	bh=m7pLdPXQWCNRenKWCOj9QGklukAUggqeQTZ/jePvJ+k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tHtGDha5Zbwwl8eFABfT3/lOyOAPQyA941Oy3/pisGsByfKaNroKCJJdkeYMkYRYQ
+	 08Qx51MIsWAIJEg5b0dI0v/VNC6bwSHJgSpV8iAVRtz6NX0FC9lVxFsAwjPs6Rs12b
+	 CYVS/Gj4opkVuplXo+M1sERIWKz6zjFTEu1CVpLcPtG//Xe5YBinZT+cxoVoTQKVnR
+	 JS/EMs3BKH9rVbmhQXJbsJB0sEaem/VFFFx8l6aGpF/yIUpsNpERSW301+HeqOxBAf
+	 sWC3gL3o+kWCdqssPE3PvHzhy0x+SuEBE72LkIWKwx9nR0rWtZ35ZCENGkXOQOTq1w
+	 MExLrwKSJzUag==
+Date: Mon, 3 Mar 2025 10:26:16 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Hironori KIKUCHI <kikuchan98@gmail.com>
+Cc: linux-kernel@vger.kernel.org, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jakub Kicinski <kuba@kernel.org>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] drm: panel: Add a driver for Generic
+ MIPI-DSI/DPI(+SPI) panels
+Message-ID: <20250303-massive-beagle-of-authority-40bbb5@krzk-bin>
+References: <20250226112552.52494-1-kikuchan98@gmail.com>
+ <20250226112552.52494-4-kikuchan98@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250303070501.2740392-1-danielsftsai@google.com>
+In-Reply-To: <20250226112552.52494-4-kikuchan98@gmail.com>
 
-Hi Daniel,
+On Wed, Feb 26, 2025 at 08:25:50PM +0900, Hironori KIKUCHI wrote:
+> +
+> +struct panel_firmware_header {
+> +	u8 magic[15];
+> +	u8 file_format_version; /* must be 1 */
+> +} __packed;
+> +
+> +struct panel_firmware_config {
+> +	u16 width_mm, height_mm;
+> +	u16 rotation;
+> +	u8 _reserved_1[2];
+> +	u8 _reserved_2[8];
+> +
+> +	u16 reset_delay; /* delay after the reset command, in ms */
+> +	u16 init_delay; /* delay for sending the initial command sequence, in ms */
+> +	u16 sleep_delay; /* delay after the sleep command, in ms */
+> +	u16 backlight_delay; /* delay for enabling the backlight, in ms */
 
-kernel test robot noticed the following build errors:
+These should be implied by compatible.
 
-[auto build test ERROR on pci/next]
-[also build test ERROR on pci/for-linus mani-mhi/mhi-next linus/master v6.14-rc5 next-20250228]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> +	u16 _reserved_3[4];
+> +
+> +	u16 dsi_lanes; /* unsigned int */
+> +	u16 dsi_format; /* enum mipi_dsi_pixel_format */
+> +	u32 dsi_mode_flags; /* unsigned long */
+> +	u32 bus_flags; /* struct drm_bus_flags */
+> +	u8 _reserved_4[2];
+> +	u8 preferred_timing;
+> +	u8 num_timings;
+> +} __packed;
+> +
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Daniel-Tsai/PCI-dwc-Chain-the-set-IRQ-affinity-request-back-to-the-parent/20250303-150704
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
-patch link:    https://lore.kernel.org/r/20250303070501.2740392-1-danielsftsai%40google.com
-patch subject: [PATCH] PCI: dwc: Chain the set IRQ affinity request back to the parent
-config: x86_64-buildonly-randconfig-006-20250303 (https://download.01.org/0day-ci/archive/20250303/202503031726.KLKoMMZk-lkp@intel.com/config)
-compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250303/202503031726.KLKoMMZk-lkp@intel.com/reproduce)
+...
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503031726.KLKoMMZk-lkp@intel.com/
+> +
+> +static int panel_mipi_probe(struct device *dev, int connector_type)
+> +{
+> +	struct panel_mipi *mipi;
+> +	int err;
+> +
+> +	mipi = devm_kzalloc(dev, sizeof(*mipi), GFP_KERNEL);
+> +	if (!mipi)
+> +		return -ENOMEM;
+> +
+> +	mutex_init(&mipi->lock);
+> +
+> +	mipi->display_id = -1;
+> +
+> +	/* Get `power-supply` and `io-supply` (if any) */
+> +	mipi->supplies[0].supply = "power";
+> +	mipi->supplies[1].supply = "io";
+> +	err = devm_regulator_bulk_get(dev, ARRAY_SIZE(mipi->supplies),
+> +				      mipi->supplies);
+> +	if (err < 0) {
+> +		return dev_err_probe(dev, err,
+> +				     "%pOF: Failed to get regulators\n",
+> +				     dev->of_node);
 
-All errors (new ones prefixed by >>):
+Drop pOF. Device name already tells this.
 
->> drivers/pci/controller/dwc/pcie-designware-host.c:223:45: error: no member named 'affinity' in 'struct irq_common_data'
-     223 |                 cpumask_copy(desc_parent->irq_common_data.affinity, mask);
-         |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ^
-   drivers/pci/controller/dwc/pcie-designware-host.c:507:30: warning: shift count >= width of type [-Wshift-count-overflow]
-     507 |                 dma_set_coherent_mask(dev, DMA_BIT_MASK(64));
-         |                                            ^~~~~~~~~~~~~~~~
-   include/linux/dma-mapping.h:73:54: note: expanded from macro 'DMA_BIT_MASK'
-      73 | #define DMA_BIT_MASK(n) (((n) == 64) ? ~0ULL : ((1ULL<<(n))-1))
-         |                                                      ^ ~~~
-   1 warning and 1 error generated.
+> +	}
+> +
+> +	/* GPIO for /RESET */
+> +	mipi->reset = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
+> +	if (IS_ERR(mipi->reset))
+> +		return dev_err_probe(dev, PTR_ERR(mipi->reset),
+> +				     "%pOF: Failed to get GPIO for RESET\n",
 
+Drop pOF. Device name already tells this.
 
-vim +223 drivers/pci/controller/dwc/pcie-designware-host.c
+> +				     dev->of_node);
+> +
+> +	/* Load the firmware */
+> +	mipi->firmware = panel_mipi_load_firmware(dev);
+> +	if (IS_ERR(mipi->firmware))
+> +		return dev_err_probe(dev, PTR_ERR(mipi->firmware),
+> +				     "Failed to load firmware\n");
+> +
+> +	err = panel_mipi_read_firmware(dev, mipi, mipi->firmware);
+> +	if (err)
+> +		return err;
+> +
+> +	err = panel_mipi_probe_modes(dev, mipi);
+> +	if (err)
+> +		return err;
+> +
+> +	/* DRM panel setup */
+> +	drm_panel_init(&mipi->panel, dev, &panel_mipi_funcs, connector_type);
+> +
+> +	err = panel_mipi_set_backlight(&mipi->panel, dev, mipi);
+> +	if (err)
+> +		return dev_err_probe(dev, err, "Failed to set backlight\n");
+> +
+> +	drm_panel_add(&mipi->panel);
+> +
+> +	dev_set_drvdata(dev, mipi);
+> +
+> +	panel_mipi_debugfs_init(dev, mipi);
+> +
+> +	return devm_add_action_or_reset(dev, panel_mipi_cleanup, mipi);
+> +}
+> +
+> +static int panel_mipi_dsi_probe(struct mipi_dsi_device *dsi)
+> +{
+> +	struct panel_mipi *mipi;
+> +	int err;
+> +
+> +	err = panel_mipi_probe(&dsi->dev, DRM_MODE_CONNECTOR_DSI);
+> +	if (err)
+> +		return err;
+> +
+> +	mipi = dev_get_drvdata(&dsi->dev);
+> +	mipi->dsi = dsi;
+> +	mipi->write_command = panel_mipi_dsi_write;
+> +	mipi->read_command = panel_mipi_dsi_read;
+> +
+> +	/* Read from the firmware */
+> +	dsi->lanes = be16_to_cpu(mipi->firmware->config->dsi_lanes);
 
-   178	
-   179	static int dw_pci_msi_set_affinity(struct irq_data *d,
-   180					   const struct cpumask *mask, bool force)
-   181	{
-   182		struct dw_pcie_rp *pp = irq_data_get_irq_chip_data(d);
-   183		struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-   184		int ret;
-   185		int virq_parent;
-   186		unsigned long hwirq = d->hwirq;
-   187		unsigned long flags, ctrl;
-   188		struct irq_desc *desc_parent;
-   189		const struct cpumask *effective_mask;
-   190		cpumask_var_t mask_result;
-   191	
-   192		ctrl = hwirq / MAX_MSI_IRQS_PER_CTRL;
-   193		if (!alloc_cpumask_var(&mask_result, GFP_ATOMIC))
-   194			return -ENOMEM;
-   195	
-   196		/*
-   197		 * Loop through all possible MSI vector to check if the
-   198		 * requested one is compatible with all of them
-   199		 */
-   200		raw_spin_lock_irqsave(&pp->lock, flags);
-   201		cpumask_copy(mask_result, mask);
-   202		ret = dw_pci_check_mask_compatibility(pp, ctrl, hwirq, mask_result);
-   203		if (ret) {
-   204			dev_dbg(pci->dev, "Incompatible mask, request %*pbl, irq num %u\n",
-   205				cpumask_pr_args(mask), d->irq);
-   206			goto unlock;
-   207		}
-   208	
-   209		dev_dbg(pci->dev, "Final mask, request %*pbl, irq num %u\n",
-   210			cpumask_pr_args(mask_result), d->irq);
-   211	
-   212		virq_parent = pp->msi_irq[ctrl];
-   213		desc_parent = irq_to_desc(virq_parent);
-   214		ret = desc_parent->irq_data.chip->irq_set_affinity(&desc_parent->irq_data,
-   215								   mask_result, force);
-   216	
-   217		if (ret < 0)
-   218			goto unlock;
-   219	
-   220		switch (ret) {
-   221		case IRQ_SET_MASK_OK:
-   222		case IRQ_SET_MASK_OK_DONE:
- > 223			cpumask_copy(desc_parent->irq_common_data.affinity, mask);
-   224			fallthrough;
-   225		case IRQ_SET_MASK_OK_NOCOPY:
-   226			break;
-   227		}
-   228	
-   229		effective_mask = irq_data_get_effective_affinity_mask(&desc_parent->irq_data);
-   230		dw_pci_update_effective_affinity(pp, ctrl, effective_mask, hwirq);
-   231	
-   232	unlock:
-   233		free_cpumask_var(mask_result);
-   234		raw_spin_unlock_irqrestore(&pp->lock, flags);
-   235		return ret < 0 ? ret : IRQ_SET_MASK_OK_NOCOPY;
-   236	}
-   237	
+lanes are from DT, because they are depending on how panel is wired. At
+least usually.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> +	dsi->format = be16_to_cpu(mipi->firmware->config->dsi_format);
+> +	dsi->mode_flags = be32_to_cpu(mipi->firmware->config->dsi_mode_flags);
+> +
+> +	if (!dsi->lanes)
+> +		return dev_err_probe(&dsi->dev, -EINVAL,
+> +				     "dsi-lanes == 0 for DSI panel\n");
+> +
+> +	/* Adjust bus_format */
+> +	switch (dsi->format) {
+> +	case MIPI_DSI_FMT_RGB888:
+> +		mipi->bus_format = MEDIA_BUS_FMT_RGB888_1X24;
+> +		break;
+> +	case MIPI_DSI_FMT_RGB666:
+> +		mipi->bus_format = MEDIA_BUS_FMT_RGB666_1X24_CPADHI;
+> +		break;
+> +	case MIPI_DSI_FMT_RGB666_PACKED:
+> +		mipi->bus_format = MEDIA_BUS_FMT_RGB666_1X18;
+> +		break;
+> +	case MIPI_DSI_FMT_RGB565:
+> +		mipi->bus_format = MEDIA_BUS_FMT_RGB565_1X16;
+> +		break;
+> +	}
+
+Best regards,
+Krzysztof
+
 
