@@ -1,207 +1,202 @@
-Return-Path: <linux-kernel+bounces-541175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 964E7A4B9A2
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:42:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1238BA4B9A9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:45:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD05316A244
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:42:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74E337A4866
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:44:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A134A18C937;
-	Mon,  3 Mar 2025 08:42:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1EA51EFF9A;
+	Mon,  3 Mar 2025 08:45:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="D8WBJnEo"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hNwH16HX"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49DBF1EF090
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 08:42:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DFD5B667
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 08:45:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740991331; cv=none; b=N2m9DO+se+PZb0zd2/yMbKkkHXwFADYJPm6MWiLDwCXzswqY2EUlb0zQuIW6KMV6d9crxSVO2UKUNHy2QFqVU6gtCfTQZBwq+dnqofaoVWeFdle6llgn+Tq+kpEt84u7QS/kFmcyBdo8Y5LmuJxnc1n/cE5qDjC/iKdT+iGsPXA=
+	t=1740991516; cv=none; b=VqGQiqXGAC+TGq4DzMStUb02Iowr4vlSDLMqRKgFVJmwmJuaOxcScnouJzU4kNloxxrnfMVIA7MlLIPQoOAXnLBnI8S4/ubmcklf6Yq93FIneVjHShupZGgvRgi6uCFtPt+43n68+7q9gKjD8LDw+yeJAfhfDBAmt2N0dou3nh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740991331; c=relaxed/simple;
-	bh=MQrsAWCl1yUhJaSQrG8surmZQvur7LDh4KoHjIdkEKc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=MVNU14GD4jVTUy9hmiYecgkURZRP9WYtBSb5NY5EswHgd8wTmozfIFGOMKMXrrOtUAmH5528192HqIaTrz1uWzCs36s+xQjOHBrY5WPK147ifmk1dMVnbanXGxKXA7G2gPm7FsLTv4J2wVTWmbaQH90XrFpWPjdUbW9Lb2QeOdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=D8WBJnEo; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250303084208euoutp0146c96c4f3456d1452a971308482fe6cb~pPmOzRvAo2607126071euoutp01d
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 08:42:08 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250303084208euoutp0146c96c4f3456d1452a971308482fe6cb~pPmOzRvAo2607126071euoutp01d
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1740991328;
-	bh=AHzYo2Ru4n9BfduEfPoM21VtgML3aRIm0P2jGenVxNY=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=D8WBJnEoW0Mx2Wegv6NF7hQPi2B++lufV+EkivYweUaE7WogMyjecETFlGKxLgjy/
-	 u8t67JjCiWQXGgpkQbHX+l87SnG+p/N0UNFer/olvaYnhadlbo3TieVb0RYK7EDbDH
-	 PTPeBqB2bvPS69Ga00BK/cniNSFKYHRtlzUADQ18=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20250303084208eucas1p16a28fcf739d34b3864789af971ae7de5~pPmOOios61873218732eucas1p1G;
-	Mon,  3 Mar 2025 08:42:08 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id EE.D7.20821.06B65C76; Mon,  3
-	Mar 2025 08:42:08 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250303084207eucas1p1f947b4d89277675981f8fb8a42fb2a13~pPmNbQoZl0772407724eucas1p1x;
-	Mon,  3 Mar 2025 08:42:07 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20250303084207eusmtrp207ce82c07d64ce0f17a062330b575469~pPmNZ9iak0677306773eusmtrp2f;
-	Mon,  3 Mar 2025 08:42:07 +0000 (GMT)
-X-AuditID: cbfec7f2-b09c370000005155-1d-67c56b60b96f
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id C0.99.19654.F5B65C76; Mon,  3
-	Mar 2025 08:42:07 +0000 (GMT)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250303084205eusmtip1c24745e8c9084816642c784905e3a325~pPmL4zWWQ1255112551eusmtip1H;
-	Mon,  3 Mar 2025 08:42:05 +0000 (GMT)
-Message-ID: <7296ddb3-2096-4414-bfa4-28fc5bb8ec86@samsung.com>
-Date: Mon, 3 Mar 2025 09:42:05 +0100
+	s=arc-20240116; t=1740991516; c=relaxed/simple;
+	bh=bUWqoIF0RSWTyZWSv8LwMFKJPtmJiM+TMfHwuR+g940=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=tX7N8yrf/hjm+iESJf6r5ZFoVAp9J8ThgMA71ARicV90sF2Oelfx6SViy18RC4nP0lOhZcPYth6urIKGyn+U/1KxnGozZ4Wyz8P8+oh/dDU9X6J94QuF0WdYuo7SOrnavFBaosSJZXGQ/6NZuZHp6ZNn9ODzcMKSoJgwJoW7oME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hNwH16HX; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740991513;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Mzc0zyxynm1zLc8lCgBdxcnpn7S2dpYemCwQOpKEfuk=;
+	b=hNwH16HX0osTPn/vOpYMc/EhnVJdpc8E1U+FeQUwz8fIiZ14cUZYMJfMW4CVRyt/rq4yde
+	HGeTvQ4QFRjRtr1z6kAj93rZCm1XNV2As+x4z1muHEGJWadGxP24aWbVBvp0AFMgk6WvTg
+	aopWuSjQGuDoynrrrDR/KfpRnKwqiHU=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-306-7wrT26BSMJ6P7gbEEUKlQA-1; Mon,
+ 03 Mar 2025 03:45:00 -0500
+X-MC-Unique: 7wrT26BSMJ6P7gbEEUKlQA-1
+X-Mimecast-MFC-AGG-ID: 7wrT26BSMJ6P7gbEEUKlQA_1740991498
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1D019180087C;
+	Mon,  3 Mar 2025 08:44:57 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.44.32.200])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E569819560AA;
+	Mon,  3 Mar 2025 08:44:50 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+cc: David Howells <dhowells@redhat.com>,
+    Marc Dionne <marc.dionne@auristor.com>,
+    Jakub Kicinski <kuba@kernel.org>,
+    "David S.
+ Miller" <davem@davemloft.net>,
+    Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+    Simon Horman <horms@kernel.org>,
+    Trond Myklebust <trond.myklebust@hammerspace.com>,
+    Chuck Lever <chuck.lever@oracle.com>,
+    Eric Biggers <ebiggers@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
+    linux-crypto@vger.kernel.org, linux-afs@lists.infradead.org,
+    linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
+    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL v2] crypto: Add Kerberos crypto lib
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 09/21] dt-bindings: clock: thead: Add GPU clkgen
- reset property
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org,
-	wefu@redhat.com, jassisinghbrar@gmail.com, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, frank.binns@imgtec.com,
-	matt.coster@imgtec.com, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
-	ulf.hansson@linaro.org, jszhang@kernel.org, p.zabel@pengutronix.de,
-	m.szyprowski@samsung.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, dri-devel@lists.freedesktop.org,
-	linux-pm@vger.kernel.org
-Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <20250221-imaginary-ebony-macaque-aace8d@krzk-bin>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0xTZxj2Oz09pzTADlXCN7bArLiNbdwMJt/Cwlg25tkM4eIWN5MhDZyU
-	BgqshQ0dTA3lIlaZ6HAWGBcJl2onMMCWcXGAtCADB3KRcE0gUhEJ0G6KK4z24Ma/533e533e
-	9/ny8TiCTsKVJ0lIZmQJonghwcebup8NeEXF3RH7/pZNIMNoOYYan6tIdKO1H0MlXf1cNDXY
-	gKH75mUC/TJ/j0QLrWdwNFJdTKKM7psEMqqmCDQwUEuiFeUUFw01FxFo7XwXQE1rCgJpuiZJ
-	VLbSiKMKbTNAWWcruejP3mA0OWXAkXFIyUFZqpfQZouWRBsjdTgqfNJOoobHF7lIrzmKFO2X
-	8SA3enksk6QfG4043ZljIunWv0pxWqeaJGmlrg/Q9eqzBD0x0kLQP/eE09Pn9Bj9a8UpWqHp
-	xug8iy+93DZM0Bca1IAezBglwwTH+O/FMPGSbxiZT2AUPzaj6CGWpKFSn5rywWkwYJ8L7HiQ
-	8ofFg5V4LuDzBFQ1gKqqGowtTABujBpJtlgD8HlLKfliRJF3G7CNKgBL2lQEWywBmL1o4lpV
-	DlQgnB7O5VgxTnnA2wYLxvJOsOfqHG7FzpQ7nB7/yea6m/oC/rF5xcbvoTzhqOVvrtWUQ7Vw
-	YcHlWpsph3KB43MlNiOCOgBnqkpsvB31PizOytrWuMNbS0Uc6zCkhvnQ8mSew979EexbXsRZ
-	vBs+0jds53kVbupYU0glwpnG1W19GtQp9ds4AE70r2/F5G0t8IQ3m31Y+gM4d8sagLeFHeHY
-	khN7giPMb7rCYWkHmJMlYNWvwx+V5/9b2l/dhP0AhKodr6LaEVK1I4zq/72lAFcDFyZFLhUz
-	cr8E5ltvuUgqT0kQe0cnSuvB1j+/u6Ff1YLiRyveHQDjgQ4AeRzhHoevI7rEAocY0YmTjCzx
-	uCwlnpF3gFd4uNDFobw9UyygxKJkJo5hkhjZiy7Gs3M9jYW+Eb6+UJhwxByXmZqrGf9cmi7J
-	jLa/fm2iz+/3gPlL5Fc+ofqwtkhFZJB8OVKtjZ0o3HVyKDnCLYRainANivtQ8cA/JGpvufBS
-	qGdYwDvpbzeU9dX1jN2QasckGftnUrVE4amnc5ULdS1No4U1Ff4Hy1Zfrq01tcmffem1y+/T
-	Q9ejZ2dzvB46l+md72zMFNfnjTxQm9wO5QdXEnvDLOBaY9+i5pPa3u/TsNQ35zyKDLPxeTpj
-	9nfhr/1z5L6hX+2oPx4cyBxIchpWVt8ruHtu37vOB/nHzJ+ZsTPBR+WExGPIzr1m7YLvvrqP
-	T4RI07xieg/rOg1jvWb7+XSvglbx+n4hLo8V+b3FkclF/wIWiPr2VgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrKKsWRmVeSWpSXmKPExsVy+t/xu7rx2UfTDZ584rE4cX0Rk8XW37PY
-	LdbsPcdkMf/IOVaLe5e2MFlc+fqezWLd0wvsFi/2NrJYXFsxl92i+dh6NouXs+6xWZw/v4Hd
-	4mPPPVaLy7vmsFl87j3CaLHtcwubxdojd9ktFn7cymKxZMcuRou2zmWsFhdPuVrcvXeCxeLl
-	5R5mi7ZZ/Bb/9+xgt/h3bSOLxex3+9kttryZyGpxfG24Rcv+KSwOch7vb7Sye7x5+ZLF43DH
-	F3aPvd8WsHjsnHWX3aNn5xlGj02rOtk87lzbw+Yx72Sgx/3u40wem5fUe7SsPcbk0f/XwOP9
-	vqtsHn1bVjF6XGq+zh4gFKVnU5RfWpKqkJFfXGKrFG1oYaRnaGmhZ2RiqWdobB5rZWSqpG9n
-	k5Kak1mWWqRvl6CX0TznOVPBWoGKH18mMTYwnufpYuTkkBAwkWjpP8DYxcjFISSwlFFi0vcJ
-	bBAJGYlr3S9ZIGxhiT/Xutggil4zSizdtZMVJMErYCdx/2oXM4jNIqAiceDEXyaIuKDEyZlP
-	wJpFBeQl7t+awQ5iCwtESNyecw/MFhHQlLj+9zsryFBmgT2sEoc3f4ba8J9R4vyly2BnMAuI
-	S9x6Mh9sKpuAkcSD5fPBNnMK2EvMbWsDsjmAatQl1s8TgiiXl9j+dg7zBEahWUjumIVk0iyE
-	jllIOhYwsqxiFEktLc5Nzy020itOzC0uzUvXS87P3cQITF/bjv3csoNx5auPeocYmTgYDzFK
-	cDArifAWBh1JF+JNSaysSi3Kjy8qzUktPsRoCgyLicxSosn5wASaVxJvaGZgamhiZmlgamlm
-	rCTOy3blfJqQQHpiSWp2ampBahFMHxMHp1QDkxJL8Kt30xWUrnPsnfFuR2RNcYGAzH5Nk6st
-	H01vsorZVDW66O4XD9pt+03qb7fHOV+GnZsu1iXbpC7ReZxjfT2J/ZabWeFO5nOvowoPylr+
-	3OYXauFyb96BFSI/23/G8zz7t3LeuVa5ySsPO5S+rVjSayaz1so4bsWs3oBnx9NYliUuOXuG
-	90XngjTBU9W+a+pnxt/y01VfcMlQ8tz6XX9nflkm+Wkpl43fqWNz723dXXVl7WQHwXdHNjex
-	fbpl1K+6fMKfmRFH2O23yVoLT092nWXmcyj2VvqJpbVx/ktSNtwr/V//Vzj985P9mosa3ONF
-	uzbu7Vha3N/kbl8oMvX+KXaJmk9PuyeKuNVfOavEUpyRaKjFXFScCADr3ZuJ6AMAAA==
-X-CMS-MailID: 20250303084207eucas1p1f947b4d89277675981f8fb8a42fb2a13
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250219140301eucas1p249b17ca44832eb8caad2e9ad0e4f8639
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20250219140301eucas1p249b17ca44832eb8caad2e9ad0e4f8639
-References: <20250219140239.1378758-1-m.wilczynski@samsung.com>
-	<CGME20250219140301eucas1p249b17ca44832eb8caad2e9ad0e4f8639@eucas1p2.samsung.com>
-	<20250219140239.1378758-10-m.wilczynski@samsung.com>
-	<20250221-imaginary-ebony-macaque-aace8d@krzk-bin>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3709377.1740991489.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 03 Mar 2025 08:44:49 +0000
+Message-ID: <3709378.1740991489@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
+Hi Herbert,
 
+Could you pull this into the crypto tree please?  v2 is just a rebase onto
+your cryptodev/master branch.  It does a couple of things:
 
-On 2/21/25 10:11, Krzysztof Kozlowski wrote:
-> On Wed, Feb 19, 2025 at 03:02:27PM +0100, Michal Wilczynski wrote:
->> Add a mandatory reset property for the TH1520 VO clock controller that
->> handles the GPU clocks. This reset line controls the GPU CLKGEN reset,
->> which is required for proper GPU clock operation.
->>
->> The reset property is only required for the "thead,th1520-clk-vo"
->> compatible, as it specifically handles the GPU-related clocks.
->>
->> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
->> ---
->>  .../bindings/clock/thead,th1520-clk-ap.yaml      | 16 ++++++++++++++++
->>  1 file changed, 16 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml b/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
->> index 9d058c00ab3d..6ea8202718d0 100644
->> --- a/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
->> +++ b/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
->> @@ -40,6 +40,12 @@ properties:
->>              (integer PLL) typically running at 792 MHz (FOUTPOSTDIV), with
->>              a maximum FOUTVCO of 2376 MHz.
->>  
->> +  resets:
->> +    maxItems: 1
->> +    description:
->> +      Required for "thead,th1520-clk-vo". This reset line controls the
-> 
-> You just added the compatible in other patch, so are you saying you
-> added knowingly incomplete code?
-> 
-> No, this must be squashed.
-> 
->> +      GPU CLKGEN reset which is required for proper GPU clock operation.
->> +
->>    "#clock-cells":
->>      const: 1
->>      description:
->> @@ -51,6 +57,16 @@ required:
->>    - clocks
->>    - "#clock-cells"
->>  
->> +allOf:
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          contains:
->> +            const: thead,th1520-clk-vo
->> +    then:
->> +      required:
->> +        - resets
-> 
-> else:
-> ? What's there? Also reset or no?
+ (1) Provide an AEAD crypto driver, krb5enc, that mirrors the authenc
+     driver, but that hashes the plaintext, not the ciphertext.  This was
+     made a separate module rather than just being a part of the authenc
+     driver because it has to do all of the constituent operations in the
+     opposite order - which impacts the async op handling.
 
-If the else: case the reset is not required, as it's only required in
-the th1520clk-vo, so there is no need for else:.
+     Testmgr data is provided for AES+SHA2 and Camellia combinations of
+     authenc and krb5enc used by the krb5 library.  AES+SHA1 is not
+     provided as the RFCs don't contain usable test vectors.
 
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
+ (2) Provide a Kerberos 5 crypto library.  This is an extract from the
+     sunrpc driver as that code can be shared between sunrpc/nfs and
+     rxrpc/afs.  This provides encryption, decryption, get MIC and verify
+     MIC routines that use and wrap the crypto functions, along with some
+     functions to provide layout management.
+
+     This supports AES+SHA1, AES+SHA2 and Camellia encryption types.
+
+     Self-testing is provided that goes further than is possible with
+     testmgr, doing subkey derivation as well.
+
+The patches were previously posted here:
+
+    https://lore.kernel.org/r/20250203142343.248839-1-dhowells@redhat.com/
+
+as part of a larger series, but the networking guys would prefer these to
+go through the crypto tree.  If you want them reposting independently, I
+can do that.
+
+David
+---
+The following changes since commit 17ec3e71ba797cdb62164fea9532c81b60f4716=
+7:
+
+  crypto: lib/Kconfig - Hide arch options from user (2025-03-02 15:21:47 +=
+0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags=
+/crypto-krb5-20250303
+
+for you to fetch changes up to fc0cf10c04f49ddba1925b630467f49ea993569e:
+
+  crypto/krb5: Implement crypto self-testing (2025-03-02 21:56:47 +0000)
+
+----------------------------------------------------------------
+crypto: Add Kerberos crypto lib
+
+----------------------------------------------------------------
+David Howells (17):
+      crypto/krb5: Add API Documentation
+      crypto/krb5: Add some constants out of sunrpc headers
+      crypto: Add 'krb5enc' hash and cipher AEAD algorithm
+      crypto/krb5: Test manager data
+      crypto/krb5: Implement Kerberos crypto core
+      crypto/krb5: Add an API to query the layout of the crypto section
+      crypto/krb5: Add an API to alloc and prepare a crypto object
+      crypto/krb5: Add an API to perform requests
+      crypto/krb5: Provide infrastructure and key derivation
+      crypto/krb5: Implement the Kerberos5 rfc3961 key derivation
+      crypto/krb5: Provide RFC3961 setkey packaging functions
+      crypto/krb5: Implement the Kerberos5 rfc3961 encrypt and decrypt fun=
+ctions
+      crypto/krb5: Implement the Kerberos5 rfc3961 get_mic and verify_mic
+      crypto/krb5: Implement the AES enctypes from rfc3962
+      crypto/krb5: Implement the AES enctypes from rfc8009
+      crypto/krb5: Implement the Camellia enctypes from rfc6803
+      crypto/krb5: Implement crypto self-testing
+
+ Documentation/crypto/index.rst   |   1 +
+ Documentation/crypto/krb5.rst    | 262 +++++++++++++
+ crypto/Kconfig                   |  13 +
+ crypto/Makefile                  |   3 +
+ crypto/krb5/Kconfig              |  26 ++
+ crypto/krb5/Makefile             |  18 +
+ crypto/krb5/internal.h           | 247 ++++++++++++
+ crypto/krb5/krb5_api.c           | 452 ++++++++++++++++++++++
+ crypto/krb5/krb5_kdf.c           | 145 +++++++
+ crypto/krb5/rfc3961_simplified.c | 797 ++++++++++++++++++++++++++++++++++=
++++++
+ crypto/krb5/rfc3962_aes.c        | 115 ++++++
+ crypto/krb5/rfc6803_camellia.c   | 237 ++++++++++++
+ crypto/krb5/rfc8009_aes2.c       | 362 ++++++++++++++++++
+ crypto/krb5/selftest.c           | 544 ++++++++++++++++++++++++++
+ crypto/krb5/selftest_data.c      | 291 ++++++++++++++
+ crypto/krb5enc.c                 | 504 +++++++++++++++++++++++++
+ crypto/testmgr.c                 |  16 +
+ crypto/testmgr.h                 | 351 +++++++++++++++++
+ include/crypto/authenc.h         |   2 +
+ include/crypto/krb5.h            | 160 ++++++++
+ 20 files changed, 4546 insertions(+)
+ create mode 100644 Documentation/crypto/krb5.rst
+ create mode 100644 crypto/krb5/Kconfig
+ create mode 100644 crypto/krb5/Makefile
+ create mode 100644 crypto/krb5/internal.h
+ create mode 100644 crypto/krb5/krb5_api.c
+ create mode 100644 crypto/krb5/krb5_kdf.c
+ create mode 100644 crypto/krb5/rfc3961_simplified.c
+ create mode 100644 crypto/krb5/rfc3962_aes.c
+ create mode 100644 crypto/krb5/rfc6803_camellia.c
+ create mode 100644 crypto/krb5/rfc8009_aes2.c
+ create mode 100644 crypto/krb5/selftest.c
+ create mode 100644 crypto/krb5/selftest_data.c
+ create mode 100644 crypto/krb5enc.c
+ create mode 100644 include/crypto/krb5.h
+
 
