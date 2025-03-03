@@ -1,176 +1,116 @@
-Return-Path: <linux-kernel+bounces-542808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 975C0A4CDFF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:15:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BD68A4CDFE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:15:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26C4B3AC7D0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:15:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1155D3AC113
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:14:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148B823A99B;
-	Mon,  3 Mar 2025 22:14:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 800BD2397B9;
+	Mon,  3 Mar 2025 22:14:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FWc/aW3I"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xt5PQR1p"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04F7423957C;
-	Mon,  3 Mar 2025 22:14:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A73239561
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 22:14:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741040076; cv=none; b=F3cfHOuKMZOUOnHlN7PJC/qIS0p6hfV3ZwQ0canShdjspXIfFmoOmpUVIgt9Wj3qTmBKYeIfS34jtGKrRqMXPji8srbslRhJnGJ4BX9/uiIwgrCDCYkKCbYGJb/qIw+wk5AqQMSFD7ffYMUGIF7IaA8gC/L/gJ52SgB2fBOnbYA=
+	t=1741040076; cv=none; b=gGnD2oedIHGDV8BlyU0/vSL2nB6JA6yyRfOeb8lWRG2HwMuEQVjDA9k/C7THfwy48o5wPAcPJ5rYlGuTkmG2TfbbS3yR18n96NHJYGlEpV0gmc82s7FvZAbxnT0O/LA8R5jYyYZOZWV2tGWFyYE4t5UtHoI7ly5NzN5Bg530ZNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741040076; c=relaxed/simple;
-	bh=C7JgVY4X8BAYahEsXuFW/tC9wcpQdzL2xqnGC2xijmM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Cx1pXiEQgNGKytsTbmWZQVKm/Ojc3eYSbsX/3wc7X3FFkJPRlW/ZIxvM1RvxU4GuwNCrx5238PU4klNSw41zR/c+eb+rPIPodHO0GE1yAOWaWLYOKrkujnlAj5aHqGyXwXLrJA4AiHrrCoVY5d+Fpid7dCRxSqhyP/Wx4QH+MAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FWc/aW3I; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-22113560c57so94731205ad.2;
-        Mon, 03 Mar 2025 14:14:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741040074; x=1741644874; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=AyT0D8McesYB9J+ldJKr6+O6ThsCItnUco/gp+p2zbg=;
-        b=FWc/aW3ITEOttgTHpZhZg7E+4DdZcv4gwAqvpEQiDMV1xCMCPzle0gScUZOteHJ5ob
-         JXaZaq7rVGAYwvh9X/lbC26CT0hJzAhYOA0sU8faGktj8VJT7S+hN9i66GSVaLSK6Bmc
-         zpNRjWFtxYo8o/DbGRIW3pIJBkr4E5iXci+aJS66iTWzoGVB9a/QTa1JU3q/E7RJLMKy
-         ztGWqDf38lhN9gJMCY4P+w9lu470TIYo5VB3ZdsvpVqqhshY3jBN/FL+fiyYGDKEsInx
-         UH4VHwgllj/xxxWWPUFZzfkot2tY8LUTh/XcgaEE/KNmDhZCvWG1QF8o/d36Fl/wcuA2
-         e2cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741040074; x=1741644874;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AyT0D8McesYB9J+ldJKr6+O6ThsCItnUco/gp+p2zbg=;
-        b=nbXBNB7JF406/WanvpTsndqmIh2i8Gfif8+Be8m7ZF1e+HGSrICQyRYHiZG6fDX9SL
-         mh5crAYF+psrLA/oYa0uIQHbQ/1QoVmhgI91+4OYOazASUREjKtgnZZFI+5dKU5K6fUu
-         ohNPtgKB+IwK/vtTr++LLwr3xWb824zqUX3W9PdrpBZxhLpJd0YrjwBvT7kvF7MUJ3f/
-         E1zE+fS8L7wMADAPP55Esvp0DZ6KcKKz1hQpvRp9LccSuyNdzefu/augbXh1mwtCL7/z
-         jRIJlKQWx9puYnSr/cxIpH2lSBOcvN/6wSCHTnzAuvR4AMd5qxsT/VsffqKRUADEQol1
-         3NVA==
-X-Forwarded-Encrypted: i=1; AJvYcCV467BliW932+fDy/Z3lxPcTURB0nTObSUWVHbOemaac0fa55n6saNyP0EoAyGFUtybyL4hvwE4JvIfIo/8@vger.kernel.org, AJvYcCX8Ej0eEkq1INFU3JLbbd/jt6Ts4fk25e/a5GsSIenmy//Nq6v160+HSjJ8sObQsY30AMuz6F0qTGI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhiKA1NcGzm5TqMj58MlPQNrJYXe2BoqgQEIhMBZIXE+8RGcWD
-	xUphSTidZQazkq2EfHhVXYMCylOx7o7JlZhm2P6iXbbRNFO7N+4/
-X-Gm-Gg: ASbGncviUUXIGFK4qMlaZ2mlZEbSVd+fZkWU6n58HvxaBhJnlDz1TrTfI4VJ7v56J6q
-	iopwz1CEKIcu07o3xfP9IxDidEb+U0wdHNQ1HTS6GstBcBUcHJSWZ42rxST1OP+8TpGCVCia6ul
-	Ahdob2HWql/h5mDcqiosSbs1Z8guJy5qtdFzT9+jFsj0zKIdXNMSuUz6pXjxcTnCxZ8ra4+WCt/
-	Nx817FPgGut85Y75dityDgBeqPcgYqjyFn+KGwrRiQnrdJiYLoi7FDwtxjUD+tFELtIlYglBE61
-	TnNjeasirvl4qZCZ1gYzB9BBE4ueE43VzFfv25sxpgoohtEsTrUrAf5kJAKaqajLT4cI
-X-Google-Smtp-Source: AGHT+IHb3NjYrVANg26ZagShVdoKGIRlJuVLDWR+37VklX20Zc1R1eNF5zWcvKSl/YyGlsGRFAmRGg==
-X-Received: by 2002:a05:6a00:ad0:b0:72d:9cbc:730d with SMTP id d2e1a72fcca58-734ac36d76dmr24341437b3a.11.1741040074184;
-        Mon, 03 Mar 2025 14:14:34 -0800 (PST)
-Received: from danascape.tail34aafc.ts.net ([2402:e280:218d:2e5:7b03:1e42:d492:fb71])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7365e74d7a3sm1918182b3a.126.2025.03.03.14.14.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 14:14:33 -0800 (PST)
-From: Saalim Quadri <danascape@gmail.com>
-To: jic23@kernel.org
-Cc: lars@metafoo.de,
-	Michael.Hennerich@analog.com,
-	gregkh@linuxfoundation.org,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	Saalim Quadri <danascape@gmail.com>
-Subject: [PATCH] staging: iio: ad9832: Use devm_regulator_get_enable()
-Date: Tue,  4 Mar 2025 03:44:27 +0530
-Message-Id: <20250303221427.30964-1-danascape@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	bh=5yGRsimMlo/ynCKSEzqe8MIDcA9rMI5J+4JfhPej2dQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PzR/Ngvw12PMRb7hhEzk1ct3FiXqoITo/9V1HJ3C0smFgaRX0NCSbNUUs0jVMJo0oCwGan9UuGItkb7sHosHDQdDnEHKoicS4OcbRQgHRC4knnmqjhuCEB00o9C9MiVRq8eiabe6OCPMHiGvdERTnms4AyaJfP6JEIj8XY9a/iI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xt5PQR1p; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 3 Mar 2025 22:14:28 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741040071;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TNQ4MdmT+tTgwaoSFCiyayCeDumi5ERILVBdb89V8X0=;
+	b=xt5PQR1pZST+Ysgl+sU68aDP/D4Uj92wZMn/AgylVr+z7VCu9Js+WsNC7+5RD8Zbtb6Kja
+	fDuw6+8YDfx5LCwetsSShaCgk+lUMRKa4DziO9ckx7gMWwcT3UyruAAEkRfes4fLMc6Y2b
+	nceywLLA6I7hVW8YBsrCD7pJUMDDIPE=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Maxim Levitsky <mlevitsk@redhat.com>
+Cc: Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 11/13] KVM: nSVM: Do not reset TLB_CONTROL in VMCB02
+ on nested entry
+Message-ID: <Z8YpxLONlmy91Eot@google.com>
+References: <20250205182402.2147495-1-yosry.ahmed@linux.dev>
+ <20250205182402.2147495-12-yosry.ahmed@linux.dev>
+ <a70458e20e98da9cd6dd1d272cc16b71bfdd4842.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a70458e20e98da9cd6dd1d272cc16b71bfdd4842.camel@redhat.com>
+X-Migadu-Flow: FLOW_OUT
 
-Use devm_regulator_get_enable() to reduce boiler plate
-code.
+On Fri, Feb 28, 2025 at 09:17:52PM -0500, Maxim Levitsky wrote:
+> On Wed, 2025-02-05 at 18:24 +0000, Yosry Ahmed wrote:
+> > TLB_CONTROL is reset to TLB_CONTROL_DO_NOTHING on nested transitions to
+> > L2. This is unnecessary because it should always be
+> > TLB_CONTROL_DO_NOTHING at this point.
+> > 
+> > The flow for setting TLB_CONTROL is as follows:
+> > 1. In vcpu_enter_guest(), servicing a TLB flush request may set it to
+> > TLB_CONTROL_FLUSH_ASID in svm_flush_tlb_asid().
+> > 2. In svm_vcpu_run() -> pre_svm_run(), it may get upgraded to
+> > TLB_CONTROL_FLUSH_ALL_ASID when assigning a new ASID.
+> > 3. In svm_cpu_run(), it gets reset to TLB_CONTROL_DO_NOTHING after the
+> > guest is run.
+> > 
+> > Hence, TLB_CONTROL is reset after each run and there is no need to do it
+> > again on every nested transition to L2.
+> > 
+> > There is a TODO in nested_svm_transition_tlb_flush() about this reset
+> > crushing pending TLB flushes. Remove it, as the reset is not really
+> > crushing anything as explained above.
+> 
+> I am not sure that we don't crush a pending tlb request: 
+> 
+> svm_flush_tlb_asid can also be called by KVM_REQ_TLB_FLUSH
+> and set the flush request in both vmcbs, thus later the nested_svm_exit_tlb_flush
+> can crush this request.
 
-Signed-off-by: Saalim Quadri <danascape@gmail.com>
----
- drivers/staging/iio/frequency/ad9832.c | 37 +++-----------------------
- 1 file changed, 4 insertions(+), 33 deletions(-)
+How so?
 
-diff --git a/drivers/staging/iio/frequency/ad9832.c b/drivers/staging/iio/frequency/ad9832.c
-index 140ee4f9c137..a26d7caac131 100644
---- a/drivers/staging/iio/frequency/ad9832.c
-+++ b/drivers/staging/iio/frequency/ad9832.c
-@@ -74,8 +74,6 @@
- /**
-  * struct ad9832_state - driver instance specific data
-  * @spi:		spi_device
-- * @avdd:		supply regulator for the analog section
-- * @dvdd:		supply regulator for the digital section
-  * @mclk:		external master clock
-  * @ctrl_fp:		cached frequency/phase control word
-  * @ctrl_ss:		cached sync/selsrc control word
-@@ -94,8 +92,6 @@
- 
- struct ad9832_state {
- 	struct spi_device		*spi;
--	struct regulator		*avdd;
--	struct regulator		*dvdd;
- 	struct clk			*mclk;
- 	unsigned short			ctrl_fp;
- 	unsigned short			ctrl_ss;
-@@ -297,11 +293,6 @@ static const struct iio_info ad9832_info = {
- 	.attrs = &ad9832_attribute_group,
- };
- 
--static void ad9832_reg_disable(void *reg)
--{
--	regulator_disable(reg);
--}
--
- static int ad9832_probe(struct spi_device *spi)
- {
- 	struct ad9832_platform_data *pdata = dev_get_platdata(&spi->dev);
-@@ -320,33 +311,13 @@ static int ad9832_probe(struct spi_device *spi)
- 
- 	st = iio_priv(indio_dev);
- 
--	st->avdd = devm_regulator_get(&spi->dev, "avdd");
--	if (IS_ERR(st->avdd))
--		return PTR_ERR(st->avdd);
--
--	ret = regulator_enable(st->avdd);
--	if (ret) {
--		dev_err(&spi->dev, "Failed to enable specified AVDD supply\n");
--		return ret;
--	}
--
--	ret = devm_add_action_or_reset(&spi->dev, ad9832_reg_disable, st->avdd);
-+	ret = devm_regulator_get_enable(&spi->dev, "avdd");
- 	if (ret)
--		return ret;
--
--	st->dvdd = devm_regulator_get(&spi->dev, "dvdd");
--	if (IS_ERR(st->dvdd))
--		return PTR_ERR(st->dvdd);
-+			return dev_err_probe(&spi->dev, ret, "failed to get AVDD voltage\n");
- 
--	ret = regulator_enable(st->dvdd);
--	if (ret) {
--		dev_err(&spi->dev, "Failed to enable specified DVDD supply\n");
--		return ret;
--	}
--
--	ret = devm_add_action_or_reset(&spi->dev, ad9832_reg_disable, st->dvdd);
-+	ret = devm_regulator_get_enable(&spi->dev, "dvdd");
- 	if (ret)
--		return ret;
-+			return dev_err_probe(&spi->dev, ret, "Failed to enable specified DVDD supply\n");
- 
- 	st->mclk = devm_clk_get_enabled(&spi->dev, "mclk");
- 	if (IS_ERR(st->mclk))
--- 
-2.34.1
+nested_svm_exit_tlb_flush() makes a KVM_REQ_TLB_FLUSH_GUEST request.
+svm_flush_tlb_asid() is called when servicing KVM_REQ_TLB_* requests.
 
+So svm_flush_tlb_asid() does not make a request in the sense of
+KVM_REQ_*, it sets TLB_CONTROL or invalidates the ASID, which is can
+more-or-less be described as "requesting" a TLB flush on VM-enter, but
+is not the same thing as KVM_REQ_TLB_FLUSH.
+
+So I am not sure there are any requests being crushed here.
+
+> 
+> But the patch itself does look OK to me, although I might be mistaken.
+> 
+> Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
+
+Thanks!
+
+> 
+> 
+> Best regards,
+> 	Maxim Levitsky
 
