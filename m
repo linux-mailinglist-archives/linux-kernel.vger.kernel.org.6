@@ -1,173 +1,191 @@
-Return-Path: <linux-kernel+bounces-540864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD1E4A4B5F0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 03:03:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77063A4B607
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 03:24:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C83A7A4BEE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 02:02:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 555631889931
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 02:24:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 233F413B284;
-	Mon,  3 Mar 2025 02:03:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DF791514F6;
+	Mon,  3 Mar 2025 02:24:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QMRTyHQc"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bg3r9T+w"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E4C22611
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 02:03:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A34B8635E
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 02:24:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740967387; cv=none; b=dZc4CgSLP6j2MBR228ebhI4RmVoC7uuAUDurKYZsUEMwXEKyAxQwsuVW1J4TCnF1ZsrMMVFzDYtMv3xX75TCahJ7oIMH1mwMZP3dU9JxYwWR+FxImVGc5xU5aLXjzTAgZpyX1Jb6llkTbdsZeTzqnjiGqoNq8JinMO4q/UdnujE=
+	t=1740968678; cv=none; b=Emnf2z8vDfXRolqiwupHnvrBW00kUXPE1SRDbmltAk2ijp8F+UuWO9f2l+fpJ5aB95+C6Cid71q6Fwa6JLgf6uq7ueFMXZqHYD+zcY2PDfATtnQVJHVlsXiovvZD1jFj+uF8jZzhBI7svhFQUa/24vS8zYKCxlAQmTet9sucDvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740967387; c=relaxed/simple;
-	bh=QYwFbD6K8kfnwtsSG5ynvTsAO1YwO3NjsjGQXGXZghk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MVCoCW3J3gLkb1bv/zhKLSFANw4UByVn4a7ItRWn856a9B0WFFLhp1ylfDJNB3t2GjoYW80vJiNGRlWpe+XnhF7aQ6Ea6t/VhEtIsSBKOc3Xh9ih0JpDni705EI6rFD6qkhYyUFuCKio5Xb7bz5llUfiq6h0i7gp6z0UPYDBPo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QMRTyHQc; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740967384;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lAV0uCT+WsooVoz6S69qz2vMhclHH6xzQjRGhGLXYng=;
-	b=QMRTyHQcRiGPa64heeUdtWL/7QMSPcZpgJwHSWIiqYQyaTavOpGv2k2mXvlix+lCJibHh6
-	MYqWqXU9YA35lvL6jHSr8Y2FGr+pHaM5VHWl6JLj+wIJICx+HFmhZVhSYPwauuwhAY3cCp
-	XtdwdTPGyESWqHbkbkgcynfQEU6bjJk=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-501-Cg5-S6tIMv6V34vDypTwow-1; Sun,
- 02 Mar 2025 21:02:46 -0500
-X-MC-Unique: Cg5-S6tIMv6V34vDypTwow-1
-X-Mimecast-MFC-AGG-ID: Cg5-S6tIMv6V34vDypTwow_1740967365
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 03B401800873;
-	Mon,  3 Mar 2025 02:02:45 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.52])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A4DD21801768;
-	Mon,  3 Mar 2025 02:02:43 +0000 (UTC)
-Date: Mon, 3 Mar 2025 10:02:38 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Jiri Bohac <jbohac@suse.cz>
-Cc: Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
-	kexec@lists.infradead.org, Philipp Rudo <prudo@redhat.com>,
-	Donald Dutile <ddutile@redhat.com>, Pingfan Liu <piliu@redhat.com>,
-	Tao Liu <ltao@redhat.com>, linux-kernel@vger.kernel.org,
-	David Hildenbrand <dhildenb@redhat.com>,
-	Michal Hocko <mhocko@suse.cz>
-Subject: Re: [PATCH v2 4/5] kdump: wait for DMA to finish when using CMA
-Message-ID: <Z8UNvvEF2Ow/qigk@MiWiFi-R3L-srv>
-References: <Z7dc9Cd8KX3b_brB@dwarf.suse.cz>
- <Z7demEmgm-D_fqi2@dwarf.suse.cz>
+	s=arc-20240116; t=1740968678; c=relaxed/simple;
+	bh=cHtSpwsJWrAvoVo1+dTLRwSY4Op9xcfDdYE2kDIyX/c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UMcFaoooD6hV2l5VFq6J0Vk/XaH9SIezdAqyBa68zZKLyyFRbCICQy95lgDGu3THMxrTrxZWAaeuetzRYeHAgY51AZ2gpXJwar1EtOVU8yDRafEYpfAQMtWoQiXhkfHsgvw+G6NcvwocR0ASEoA6jf7Bp3UV1+hgWaJ/PE5tgBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=bg3r9T+w; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2fe821570e4so5569908a91.0
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Mar 2025 18:24:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1740968676; x=1741573476; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sznfA2l8NibSE6qcuM2Jb9P/DtwF9Yp5f99HQpgSZqY=;
+        b=bg3r9T+wOL58tCthFzDf9lBwIn2QRL/QjCEJP+FjhVGYgTW5IOf4PPCW5iF0sgTb9z
+         CQiPTh10dwpBn5gWMI5rX7otdM+9H0GYuzo9E0X7NTIP/LH4DDaf6V+aL+d2x6hgwluB
+         5bsvdIQnw8VEPCSjgalS8f82v31L2hmI2JT0o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740968676; x=1741573476;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sznfA2l8NibSE6qcuM2Jb9P/DtwF9Yp5f99HQpgSZqY=;
+        b=tGKLX4MOdn4Xs3aN5rzueO77DHsgjZtLoB0+rz9vcl/qgb7EGlmSTqdEFX4xDxtGa9
+         NpkUuagJvy+omybR3TvbjiTDUBjOtqmknCMENPWQEjnEMVIn0LckENuqUFtpONQJ1P/Z
+         XDMxD1sRWlKQaJILhPuEVYTyf8jIRRlmhmpA2R3G0s5Xzqigo5HgslMz2TD5/BSIpnj8
+         oAtSv+woo7pP1Z4Lmcri05sA4ZN4jk+UQrAGOXVBV4K1IdPNB75bud1zk3O+hEuPP6MV
+         2yVQ/uOzZaMcf5bZ2hUSIyN8a2BIJ5nTOUfXHrhb32Tg6mp6+1xdUyI7tXckZjbfWgo8
+         1xrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXgyejJMvsejyU0Xo7gWyEtMekbD1UJFAP6ztJOFGsYXyEBG5u68GrrUIauFkwDY9xD/ZnehDFrNvBZyYU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyz9b4nHJtelMG5Mb1nE27pn0rhWkVCIvOGbzEkw9enF9YcVEgF
+	8a6Rq1+c6vzVb0s3OvQqvyd9I/OyCdwI92tbNt7jYXm8jb6izDwouWsFjG3CtQ==
+X-Gm-Gg: ASbGnctVOn8FU7oqTOeQgJvfA5xZBxxGTF2Qwtj3eO44Is2pb182CroWk4Hdr7eEFsE
+	TV6uvqqQawSwqhdv2pmec/gLjlfWw4ApiWcMJ8igPLHMCr9+6YM65VirUez3RTtnTSIOeSmExSr
+	4sRfbvQ+tGgcVOc0GfBnJpvvOYlU2XBzz13Vf45VMbwlnt0SumzxFxlEKhheJhEOhmKthBJmV2v
+	M26JLI75XggNJKoY/gdQW3JppIUrb4A1BGEHrkf4h8+0dx3mmd0gpBBYWpnU+nlvyzIGIaAZjCB
+	8pFkelEFMawMKBlA85ZPtaLPONXiKcMhTPPpOnE5htNcBZ0=
+X-Google-Smtp-Source: AGHT+IGv6hQiKqkOLC37uSZSWuOIbz10ORF2+JrYswdrfALyUuBndhlzbODDhgkgtSYwTOU6BN3POA==
+X-Received: by 2002:a17:90b:2fc8:b0:2fe:8282:cb9d with SMTP id 98e67ed59e1d1-2febac0466fmr16781267a91.28.1740968676360;
+        Sun, 02 Mar 2025 18:24:36 -0800 (PST)
+Received: from localhost ([2401:fa00:8f:203:1513:4f61:a4d3:b418])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2fe8284f116sm10902322a91.49.2025.03.02.18.24.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 02 Mar 2025 18:24:35 -0800 (PST)
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Yosry Ahmed <yosry.ahmed@linux.dev>,
+	Hillf Danton <hdanton@sina.com>,
+	Kairui Song <ryncsn@gmail.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Minchan Kim <minchan@kernel.org>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: [PATCH v10 00/19] zsmalloc/zram: there be preemption
+Date: Mon,  3 Mar 2025 11:03:09 +0900
+Message-ID: <20250303022425.285971-1-senozhatsky@chromium.org>
+X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z7demEmgm-D_fqi2@dwarf.suse.cz>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Transfer-Encoding: 8bit
 
-On 02/20/25 at 05:55pm, Jiri Bohac wrote:
-> When re-using the CMA area for kdump there is a risk of pending DMA into
-> pinned user pages in the CMA area.
-> 
-> Pages that are pinned long-term are migrated away from CMA, so these are not a
-> concern. Pages pinned without FOLL_LONGTERM remain in the CMA and may possibly
-> be the source or destination of a pending DMA transfer.
-> 
-> Although there is no clear specification how long a page may be pinned without
-> FOLL_LONGTERM, pinning without the flag shows an intent of the caller to
-> only use the memory for short-lived DMA transfers, not a transfer initiated
-> by a device asynchronously at a random time in the future.
-> 
-> Add a delay of CMA_DMA_TIMEOUT_MSEC milliseconds before starting the kdump
-> kernel, giving such short-lived DMA transfers time to finish before the CMA
-> memory is re-used by the kdump kernel.
-> 
-> Set CMA_DMA_TIMEOUT_MSEC to 1000 (one second) - chosen arbitrarily as both a
-> huge margin for a DMA transfer, yet not increasing the kdump time
-> significantly.
-> 
-> Signed-off-by: Jiri Bohac <jbohac@suse.cz>
-> ---
->  include/linux/crash_core.h |  5 +++++
->  kernel/crash_core.c        | 10 ++++++++++
->  2 files changed, 15 insertions(+)
-> 
-> diff --git a/include/linux/crash_core.h b/include/linux/crash_core.h
-> index 44305336314e..543e4a71f13c 100644
-> --- a/include/linux/crash_core.h
-> +++ b/include/linux/crash_core.h
-> @@ -56,6 +56,11 @@ static inline unsigned int crash_get_elfcorehdr_size(void) { return 0; }
->  /* Alignment required for elf header segment */
->  #define ELF_CORE_HEADER_ALIGN   4096
->  
-> +/* Time to wait for possible DMA to finish before starting the kdump kernel
-> + * when a CMA reservation is used
-> + */
-> +#define CMA_DMA_TIMEOUT_MSEC 1000
-> +
->  extern int crash_exclude_mem_range(struct crash_mem *mem,
->  				   unsigned long long mstart,
->  				   unsigned long long mend);
-> diff --git a/kernel/crash_core.c b/kernel/crash_core.c
-> index 078fe5bc5a74..543e509b7926 100644
-> --- a/kernel/crash_core.c
-> +++ b/kernel/crash_core.c
-> @@ -21,6 +21,7 @@
->  #include <linux/reboot.h>
->  #include <linux/btf.h>
->  #include <linux/objtool.h>
-> +#include <linux/delay.h>
->  
->  #include <asm/page.h>
->  #include <asm/sections.h>
-> @@ -97,6 +98,14 @@ int kexec_crash_loaded(void)
->  }
->  EXPORT_SYMBOL_GPL(kexec_crash_loaded);
->  
-> +static void crash_cma_clear_pending_dma(void)
-> +{
-> +	if (!crashk_cma_cnt)
-> +		return;
-> +
-> +	mdelay(CMA_DMA_TIMEOUT_MSEC);
-> +}
-> +
->  /*
->   * No panic_cpu check version of crash_kexec().  This function is called
->   * only when panic_cpu holds the current CPU number; this is the only CPU
-> @@ -116,6 +125,7 @@ void __noclone __crash_kexec(struct pt_regs *regs)
->  		if (kexec_crash_image) {
->  			struct pt_regs fixed_regs;
->  
-> +			crash_cma_clear_pending_dma();
+Currently zram runs compression and decompression in non-preemptible
+sections, e.g.
 
-This could be too ideal, I am not sure if it's a good way. When crash
-triggered, we need do the urgent and necessary thing as soon as
-possible, then shutdown all CPU to avoid further damage. This one second
-of waiting could give the strayed system too much time. My personal
-opinion.
+    zcomp_stream_get()     // grabs CPU local lock
+    zcomp_compress()
 
->  			crash_setup_regs(&fixed_regs, regs);
->  			crash_save_vmcoreinfo();
->  			machine_crash_shutdown(&fixed_regs);
-> 
-> -- 
-> Jiri Bohac <jbohac@suse.cz>
-> SUSE Labs, Prague, Czechia
-> 
+or
+
+    zram_slot_lock()       // grabs entry spin-lock
+    zcomp_stream_get()     // grabs CPU local lock
+    zs_map_object()        // grabs rwlock and CPU local lock
+    zcomp_decompress()
+
+Potentially a little troublesome for a number of reasons.
+
+For instance, this makes it impossible to use async compression
+algorithms or/and H/W compression algorithms, which can wait for OP
+completion or resource availability.  This also restricts what
+compression algorithms can do internally, for example, zstd can
+allocate internal state memory for C/D dictionaries:
+
+do_fsync()
+ do_writepages()
+  zram_bio_write()
+   zram_write_page()                          // become non-preemptible
+    zcomp_compress()
+     zstd_compress()
+      ZSTD_compress_usingCDict()
+       ZSTD_compressBegin_usingCDict_internal()
+        ZSTD_resetCCtx_usingCDict()
+         ZSTD_resetCCtx_internal()
+          zstd_custom_alloc()                 // memory allocation
+
+Not to mention that the system can be configured to maximize
+compression ratio at a cost of CPU/HW time (e.g. lz4hc or deflate
+with very high compression level) so zram can stay in non-preemptible
+section (even under spin-lock or/and rwlock) for an extended period
+of time.  Aside from compression algorithms, this also restricts what
+zram can do.  One particular example is zram_write_page() zsmalloc
+handle allocation, which has an optimistic allocation (disallowing
+direct reclaim) and a pessimistic fallback path, which then forces
+zram to compress the page one more time.
+
+This series changes zram to not directly impose atomicity restrictions
+on compression algorithms (and on itself), which makes zram write()
+fully preemptible; zram read(), sadly, is not always preemptible yet.
+There are still indirect atomicity restrictions imposed by zsmalloc().
+One notable example is object mapping API, which returns with:
+a) local CPU lock held
+b) zspage rwlock held
+
+First, zsmalloc's zspage lock is converted from rwlock to a special
+type of RW-lookalike look with some extra guarantees/features.  Second,
+a new handle mapping is introduced which doesn't use per-CPU buffers
+(and hence no local CPU lock), does fewer memcpy() calls, but requires
+users to provide a pointer to temp buffer for object copy-in (when
+needed).  Third, zram is converted to the new zsmalloc mapping API
+and thus zram read() becomes preemptible.
+
+v9 -> v10
+- moved to statically allocated lockdep lock classes in zram and
+  zsmalloc (Sebastian)
+- dropped lock_contended() because we only can call it under
+  lock_acquire() and thta's not the case for zram and zsmalloc trylock
+
+Sergey Senozhatsky (19):
+  zram: sleepable entry locking
+  zram: permit preemption with active compression stream
+  zram: remove unused crypto include
+  zram: remove max_comp_streams device attr
+  zram: remove second stage of handle allocation
+  zram: add GFP_NOWARN to incompressible zsmalloc handle allocation
+  zram: remove writestall zram_stats member
+  zram: limit max recompress prio to num_active_comps
+  zram: filter out recomp targets based on priority
+  zram: rework recompression loop
+  zram: move post-processing target allocation
+  zsmalloc: rename pool lock
+  zsmalloc: sleepable zspage reader-lock
+  zsmalloc: introduce new object mapping API
+  zram: switch to new zsmalloc object mapping API
+  zram: permit reclaim in zstd custom allocator
+  zram: do not leak page on recompress_store error path
+  zram: do not leak page on writeback_store error path
+  zram: add might_sleep to zcomp API
+
+ Documentation/ABI/testing/sysfs-block-zram  |   8 -
+ Documentation/admin-guide/blockdev/zram.rst |  36 +--
+ drivers/block/zram/backend_zstd.c           |  11 +-
+ drivers/block/zram/zcomp.c                  |  48 ++-
+ drivers/block/zram/zcomp.h                  |   8 +-
+ drivers/block/zram/zram_drv.c               | 330 +++++++++-----------
+ drivers/block/zram/zram_drv.h               |  17 +-
+ include/linux/zsmalloc.h                    |   8 +
+ mm/zsmalloc.c                               | 329 ++++++++++++++-----
+ 9 files changed, 478 insertions(+), 317 deletions(-)
+
+-- 
+2.48.1.711.g2feabab25a-goog
 
 
