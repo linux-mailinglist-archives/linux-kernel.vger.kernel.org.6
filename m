@@ -1,206 +1,214 @@
-Return-Path: <linux-kernel+bounces-542403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E322A4C9BD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:36:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4522A4C9B4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:35:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57E303A1C8C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:17:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E0D03B1FF3
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:17:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF6BF23C384;
-	Mon,  3 Mar 2025 17:01:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1C0021D3F4;
+	Mon,  3 Mar 2025 17:02:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FTb0xTLF"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="MJugn+Cj"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013004.outbound.protection.outlook.com [52.101.67.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B156C23BFA9
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 17:01:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741021283; cv=none; b=OYe/fI8K3id+23u8tgMfxkGKZ/w/0hvmXJ0ZFqXq7xRA2Id4O2pwypr0Y2LEyrEDHTIgqcZn4r2GeG7PnSqENrxSBtN6Qd/egnvlf4FTJO9NNXjHQOSEpgPaozhoHs5q+6sBTLFcJ+wtIBl0k7q9YeLBSsiT426RzUky0NVpbh0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741021283; c=relaxed/simple;
-	bh=9RFMsXYF5lITbRUYlY+rrlpT968InQ/qdSFxN9iNh3E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ongcTX2nWWoMp6zU+6zLR4FfBce/j6jPvILEr0lMlNBxcx+isKZzvucZ2BZiSfesSp7p8WQ1FQ2epLz1ZXO6lwpwHsqiLsFE73rO+cNVwwUsNJ1qis/nLlk12tWpy/s1AcnF990IUWeSGZldAEVfT3ofV3XdUpJdzGYmWbtkir8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FTb0xTLF; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-471f4909650so42554861cf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 09:01:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741021280; x=1741626080; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BszVR+knp6l10F1gCL1VwbIsGUikHke733K0y1CaPEg=;
-        b=FTb0xTLFuAJL4mnKoCspEKt6a6HJJ8yRWCKGeeTNVdaVnsxKlg0tLw36tLrlJdIFyP
-         HxmXM9yep+ZCv8yd1QVdqWBkeTfjg8IVhZpgFG54kIO/slY6bz+S5C3uhCn8W7hfVUc1
-         uLRq6IEC/DwUAsXqoiev9JjdFykFt6RYaHu/C9cRMXGY4l5tBfayysVtwQmkMf60R0jz
-         nPqApVMSw0AVkHa45F1eEKFU201wNxVCZsqqxcqQ+JKFzronYl1nlqs7OWRkD2TXisFI
-         nrfJlnlB2X+Cz+skdfLOHklX4AbOB6rbdUuDd1nM3F7rtERSfaHu0xNpwU7yA48Mw5jx
-         1VZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741021280; x=1741626080;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BszVR+knp6l10F1gCL1VwbIsGUikHke733K0y1CaPEg=;
-        b=QtEwJchQv88h33cKb3XmvGk66XBGf7AqF3R6LirLmmEqMYNv7QzaAnYcSwHGjMg6zm
-         JV92HhKgqpDBZPzpy6asNUguKRF0n/9dRsC7PDAQWBdm2F9GzO7dtMnr/d2nQeTppk6j
-         d8zu4IS89+Ag9Ki42+Kp8qLngwyB94B/jrMnIBkIrybOl+SuJ1Q3V2xGKaHZdL8IUR5u
-         f2vy3ntil26VO0Qqlaj396mfK8mutEP3P+3fQ4VZM+MYpc1K5oEPebUaaxiMdlJCZ/Gk
-         vZi0SjoSIgbGXBEqaYUY2NwnSdnp8++Q6imCiI1FM3xIJIUpsPQzEXsdP2vsnBaqW07E
-         SS5g==
-X-Gm-Message-State: AOJu0YwmmFm22M/icyv2uAZHyPXL/oG/H2JHTGXIWgU6uC85Xv6wqy8y
-	9WrDXhCOaEgY7VLnsoN2Fj0bqIEPL8fYKSSvweEIEcIfB8d1cSdZa2Ip
-X-Gm-Gg: ASbGncvU++5tEFgRCfltU3sgwbsh5G/yPyvCBYbO7OfHw7OT7O86ti6iof8IO9n833t
-	1QAq8GM6MvJokNWdNjnrOLEw1ePnTO49kFdVLcCRFj/ahpGcXNL13F36qia+y/l7S9hHVVioCwV
-	GwmtOMjHBIbuHcvo1Wf3tNH53XIbb/eLuFn0/s/u2i0gxVVvXCDCN9EjWT1YF6RDH0Mg+8Nr11l
-	9+A9W0AOj0NvrSNZqpr7RsiWsf60C+oPI19ncHidav98aon559/U3Teuf8JNGcSnCaLQNNHwz4L
-	XIFwu6teJoh1CaWwwSWzAHn1/Q==
-X-Google-Smtp-Source: AGHT+IFJK132tfPNQUhJvBjdmIlr4P+ByF4POByNjfzZlZPL81Lfu185Vhb4JQgXfSgJ77VJq6wcsg==
-X-Received: by 2002:ac8:59cd:0:b0:472:dff:37fa with SMTP id d75a77b69052e-474bc116912mr209589461cf.47.1741021280164;
-        Mon, 03 Mar 2025 09:01:20 -0800 (PST)
-Received: from citadel.lan ([2600:6c4a:4d3f:6d5c::1019])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-474724310acsm60168151cf.78.2025.03.03.09.01.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 09:01:19 -0800 (PST)
-From: Brian Gerst <brgerst@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	x86@kernel.org
-Cc: Ingo Molnar <mingo@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D842C214A7F;
+	Mon,  3 Mar 2025 17:02:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.4
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741021335; cv=fail; b=YNAIc5saj3gxpUo1BHSJEQTihmZLwimAHUCaJhLdYd85TavaSVOeKNSQb6VtCEoOtqPV8r9zXNuR1uHUbtvE0pNm8ASub/IwiOGCBUXy2xOUlBmv2tueLbSVAmZ7xR2LKIyBdqTkNQczeBJ7lWrtB0SwIAmjYYxGDR+sE1Ct6No=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741021335; c=relaxed/simple;
+	bh=xEevRscg2+BJVnLTuSOpzr0SQezERrqhexc9nAQjfTM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=gQx7b7zMST0w3OBqMnfKE29bzbsl2yejLkq2hFmGvrye2l0BEsB2of8iLL0OVPfOzedxyqURAbNN8ZOmAvMrY4rAhLQLY/kESFrh90Q+vxpwdRQTkxZLYwbF7W/kfTl61SDBKKt0LIcLpLNiy509p26WpMmyQ8i0wycI2aUnqzs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=MJugn+Cj; arc=fail smtp.client-ip=52.101.67.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jhFwIvydVdT9yspwdS5VulKdwS5bzev8VVx7EMXwm28g13ATxVPv6okSgsTqNvHHmIruQ1VINkiiEDDhELJLedVCZ9zvx8ZtZ6SINrf9C0p8Hv9+TcjJ1szXCo2m3EBuzAjVxmXuAFWZdqK1HD5H8gBKa/HgSTdQGKdW+mhw4zPuOUW6Bsb6wi6JZbWQQ9HAgRx1B8KutzDMFtQt+svub/BAbTFYNTWDlXTQ+JJ/+tnz0689wNb/Qr3o2ppMGPA4em7Agl9ggTctbO+W92QqBX2Jbr6bmILUZJNSsmEJYz0Dogu2t5F2XQoMjBHTHhjMl1L7dgjr5KyBjAX8IcOwtw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mSZ8Nij9Yn/j6LkC5iT4+Fg9imcYLwhsRLDRaTlquRw=;
+ b=r4uVUaBthvjV0TXYUX3R0ZNucZ1juEeTyPXObJd8k+V3F7DhMa4QVM86yT6o5e4maI9kotsgeWDTPZSSgl7l8E1YhLswVK0z8yvG+8j09aIsXfZek72Y8ITr/ac/vp1TOVwZiNWphMFK9QSB/Q0oI6M2PgmzfBEYFXuAEE5gCVB3tbGcmhrgybVhnA6bEeX+PVZBovn37jEQ6i3HCtyYGx0Jda2SzuodA9NkwUcCNSeYabmOlHV/BdTYAerdG9zR8RCdDU+IV27LWqyVG36s2PmfcPllB+6g9/3F+DtveclrLzYcKg5D2j6iG1y+ghCaqr4J0euhas7st6sQvk6otg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mSZ8Nij9Yn/j6LkC5iT4+Fg9imcYLwhsRLDRaTlquRw=;
+ b=MJugn+CjmNTIyN4cmpgyAcKNUZbqUAjtGbM/7GaWZofXhsTwyFtcPXNRlhhs/Znu509L0IRZWdyExyLmCINrDmC6wnHcznGrPFjguLIl+vVS8opgnaRuVkr9F4bVTmnoSpwMvLYArBBbmv+qa88WM8BR+Jftg2Zsy4BCie9rvJlPlj0dy1sQZZrAhKc+q9Hj4Fqvme9EWfMIFdADA7CqAyBoB/b6F4zy8CqgtOMgZdPBjkPacQhnRQXc5He35ZRTMm4CEFujR1e5p5time3gRLHlOqbzE6JtAzOieu5ayD7MeZnmoauObicLWalp4d8X1ApSwvbY+YE4YiapQjWzvw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by DBAPR04MB7208.eurprd04.prod.outlook.com (2603:10a6:10:1a8::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.29; Mon, 3 Mar
+ 2025 17:02:08 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8489.019; Mon, 3 Mar 2025
+ 17:02:07 +0000
+Date: Mon, 3 Mar 2025 12:01:56 -0500
+From: Frank Li <Frank.li@nxp.com>
+To: Marc Zyngier <maz@kernel.org>
+Cc: Kishon Vijay Abraham I <kishon@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Brian Gerst <brgerst@gmail.com>
-Subject: [PATCH] x86/smp/32: Remove safe_smp_processor_id()
-Date: Mon,  3 Mar 2025 12:01:15 -0500
-Message-ID: <20250303170115.2176553-1-brgerst@gmail.com>
-X-Mailer: git-send-email 2.48.1
+	Anup Patel <apatel@ventanamicro.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
+	Shuah Khan <shuah@kernel.org>, Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>, dlemoal@kernel.org,
+	jdmason@kudzu.us, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, imx@lists.linux.dev,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v15 02/15] irqdomain: Add IRQ_DOMAIN_FLAG_MSI_IMMUTABLE
+ and irq_domain_is_msi_immutable()
+Message-ID: <Z8XghE/VUrggdN7V@lizhi-Precision-Tower-5810>
+References: <20250211-ep-msi-v15-0-bcacc1f2b1a9@nxp.com>
+ <20250211-ep-msi-v15-2-bcacc1f2b1a9@nxp.com>
+ <86plj1ovkk.wl-maz@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <86plj1ovkk.wl-maz@kernel.org>
+X-ClientProxiedBy: PH2PEPF0000385C.namprd17.prod.outlook.com
+ (2603:10b6:518:1::6a) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DBAPR04MB7208:EE_
+X-MS-Office365-Filtering-Correlation-Id: b05955af-0949-4b4c-2a21-08dd5a752173
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|7416014|376014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?QJLwg3RZmxbzM3EzNpw7VrFIchIIWhCJxB7ZivKX+yhEypSVmwQs6PxuEavl?=
+ =?us-ascii?Q?CC85TTsUMoKRtuA+xpFEijkszw4unbIDzH24qRdjsUIWIRpZ41Hw10XFxuIk?=
+ =?us-ascii?Q?dBmoZ+W+ReB+s0VQ3pIaloE8gN+yX/D1dLAqSkLS0fuXN0UYXnK9z8xDB4Y1?=
+ =?us-ascii?Q?lbql5xu42QI4yt7lhrI03RuSs3hV1Ovu2F2R1DGVefpb+bd55vwmHGP5cPJ4?=
+ =?us-ascii?Q?uDK6XWmTkimRS8FlZWo0ZmQT8Sw3fBbi6ARXv+lbCNOwmOuPZEY3Tt8NmVNJ?=
+ =?us-ascii?Q?7RoywjjMsOMVsy3L08RGSJj7uyl+C2zAy+2gXcSSOZfd57TJbNer2a1ztNKo?=
+ =?us-ascii?Q?B5xCt7TjeRg/MxUxWu3KJT8RJWIbNx9Y60FLeY9wFXtH3NAc92YB+b3wE7MR?=
+ =?us-ascii?Q?TrbVwsItBz+9WxoKT4qLu3SR41dhNCv9KpoGy2426JmDXeRZmP86z/j3GXPn?=
+ =?us-ascii?Q?SJqpy01JqjDltWRoZjzWJU5w2eeDRjQmfXbbWbucXpPDJDBrgSoqEfAOS3x0?=
+ =?us-ascii?Q?cAIH7gSjvMUGOUKLNXPK4mUjpeieHooeCvlkdahNZgpjyRxgmmzLqyrV745w?=
+ =?us-ascii?Q?D/UJ4x9q0UJ/JhFLM7AH5nAqyC+A3QuQYRWxy9yKLl5ypjeR2I3m7kuTxSs0?=
+ =?us-ascii?Q?vJb29dmshazMjDBoNGlRDEWBEllRm9Jy5icTMETQZ08pcn3Zb0MwWsz1wUdd?=
+ =?us-ascii?Q?Y6QfZNvOJzCdqhH8xtDjNIcmOsHxlHoscE7PyVY7m4wzfYCizt8z9NX2Lzb1?=
+ =?us-ascii?Q?JUXdOttX+zdGPjjtrJulY0OTEykyD1+RDb10OHW16cNq1aQxNlBOPrKlLNGZ?=
+ =?us-ascii?Q?bMmRj0xn1iA+1BbLhT5aSIV2gQ2lfhdK42pd/ZL3dFHKwBQVdxb0SnpkErOB?=
+ =?us-ascii?Q?0jVJrgvAOfY+F04IZlw5DylhXxFMDfKgq72cXwCzKYVp+m0XiLaG6FbWL+EZ?=
+ =?us-ascii?Q?iMLz8F7KYEDDwyD5VwO0VYkEe4z7Mt9nyshS7oYtapOUvkDtE/fYya8Gr6mI?=
+ =?us-ascii?Q?/hyhgQS092d25pWle6/+5A+BG3Jb1R4YwQ+Qk9gXirqknew5f3PwFwj03ncN?=
+ =?us-ascii?Q?JchGhsfTSFgxBLpPLamQWhcmr/U60692RUtNioda48+n3wYeTvMPmXrl7KX4?=
+ =?us-ascii?Q?23yzHHpkvlSujhMekv5PpPLLudX3QRip79ClYiYt6AKXg7U1bCoO6txpQ9ki?=
+ =?us-ascii?Q?o6EWNsnUSTdfIFKRa5Ikq0ham3nDZPopRmAEYz0Zu6gWfENHH1rsMGa+kidS?=
+ =?us-ascii?Q?7pPgBRB50lwOG3o01QIS99mA6msF9YyPw8y6pUxY2z9Y8eRo2VpSDdzY5DV9?=
+ =?us-ascii?Q?Ql/jmyU7AtfBhKz/r7Ci6FLZeeLgpVdscgIfFNpBEFxU3qjoDNk2/08iyGEQ?=
+ =?us-ascii?Q?PDODw2Demrlgph0P9y+IhJFNPou0y8EX27lxqgd8GNR+zbvQNW2lycCDAIrh?=
+ =?us-ascii?Q?iOuqU0oKTn08YRfpBiuQ2eNY1+SVMsXA?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(376014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?2ZOoVcyCKrTC34UmNSo4KIh7wbOLsxrxA56cVVlm2mk1yau+XhY2gtIr+OqQ?=
+ =?us-ascii?Q?KZu65M290ANhVYhjbEbF8nQ6aIg/X7dfsP5L7ol8MFbTdwBxiRJnYX313Js6?=
+ =?us-ascii?Q?2svIY995RYDq65AYvIpol4m+TJFaE2I2ccWZ38fTIgOOrkbXAHBNByMUHBHB?=
+ =?us-ascii?Q?Gv0muadALLPrMoK2iShn8FRPVoe8E13XUfD4avkQ2XqbucZQZ2vqS8YyqB9G?=
+ =?us-ascii?Q?FoMbryepvm3WbITXV861N0hNDbxkKjeO/X6zdbi5Cv0JEIZMEUqGbcpxbNoF?=
+ =?us-ascii?Q?vbZCplX12Z10B361DAB0yyfnKCf49G1WE96oDHewQaub/PtB7C3B6FICD4gY?=
+ =?us-ascii?Q?GfEgKYRBjxJkUKdTlRWj+IbYOwM25iZkTmpJMv4SsmSC6uvq9pPTgXR1gLoi?=
+ =?us-ascii?Q?ZmB/1iX7qL/YlpPuKIM1kM16r7awbg8tTsIvuvF2ryOZoEs/c7C6tJI3Csy0?=
+ =?us-ascii?Q?znt3CtBkeAXaTohhcVv9MkaT5uLnmRS4ST83QOV11XYhWpgnvsB23PNABZkk?=
+ =?us-ascii?Q?uQlVnhdiybKeEJGLnX8dfyceDHKkCuB85eKydL2b1XlmMb+Ua87wZ1e+kFCI?=
+ =?us-ascii?Q?szALxmK9SzEN/TKAGmIpmrs9pXxxoV2ZzadnJhc+HcoyfM8UhyZha1L26b/a?=
+ =?us-ascii?Q?HsX3g4pe7Ivia+JjCETetV7ytwSQUQOXQZJKx9R2lH7TBFPE6sTM6hf7cudz?=
+ =?us-ascii?Q?G0djXKLyKa4JvKStuCRRt+c1MXSz0F+3mFs6jjbrhNBQ/NKu5aepZvWGblgX?=
+ =?us-ascii?Q?OZACZIADRQLhbK8lIJ1HZLv5rLYY8Eibfy268dsExdio4r3mZwOIJv3zJIRr?=
+ =?us-ascii?Q?4uEQoKjLiPyjFRCUuUm1rCeb6KNj56bjP06pvHgbhPeYBmYhQoYt8oYmnZDB?=
+ =?us-ascii?Q?+Y0sL0IzuZXolLIeit4UfxDJzlA/da4O1drjprv/T8OkTQxISXUvViyWozd8?=
+ =?us-ascii?Q?gPWHS/9gHWq1bUSzocKeMMGqeMSD3lZwyyDhS2Y6au68EqlfXaUoJys+s075?=
+ =?us-ascii?Q?n1nNXwakRg9P4CxtOvrdMFSYJds8em7wb0Y7JlOrGjEZlStXE9LcYgbQAEV0?=
+ =?us-ascii?Q?7LLlIGLvDm1Wb9Q0CsNwrepoxCTnTFYXtiU9YRKNyLR/tr6QpsuzQapW+9X9?=
+ =?us-ascii?Q?K/DejBc1HQE1YHnvFhg4JLlHnstgdrsA0ASL0RAso3ed6Sno7f6VK8M3hh81?=
+ =?us-ascii?Q?mMbNRtOqS+4jfAjLEm0UmBuKWHjByI85U2KS9YXQuEOB60lbMUNeT1iuDr4R?=
+ =?us-ascii?Q?WVA07D4PcKThFWeuTW0kbo72OoSoGuJDqb1Z3PBQN7KPzbiJJrdcJ6FEGHTy?=
+ =?us-ascii?Q?uEiYvsC6pyX2HV0tXB2Z7rfhV5DMLJOLgrcQWItZmgnQLgI2Zt0hsON4QW3d?=
+ =?us-ascii?Q?P6PoMh+L7Y76PUv0OKzO2HeTzZemRwq4AzF35dnsQehSUN8Mm5NwoV7/52t6?=
+ =?us-ascii?Q?507PqVfErl1X4DdBYdVsAH62EELdOZ2+Bz+I5Rl72DVPqiQFVNgLmjNyNFja?=
+ =?us-ascii?Q?GBP0NlT3b/F9PGpZ+PbYvW3c6TWI/pjgvoPkfr7zmeje70PN5sDwRe03kiDk?=
+ =?us-ascii?Q?+DwtMWCHRxGOqrQAr1dsUuB1jDTbOBPr4lcwq2AM?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b05955af-0949-4b4c-2a21-08dd5a752173
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2025 17:02:07.6549
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ccr2rX1yV7qX0kkXRXtwG0wgUyC2JkVXb5I7bkHQxhs05K+Mob2nWCh8+Dkn6f1Cmh85nENTjYMZiHWjg46SXA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR04MB7208
 
-This function was originally implemented in commit dc2bc768a009 ("stack
-overflow safe kdump: safe_smp_processor_id()") to mitigate the CPU
-number corruption on a stack overflow.  At the time, x86-32 stored the
-CPU number in thread_struct, which was located at the bottom of the task
-stack and thus vulnerable to an overflow.  The CPU number is now located
-in percpu memory, so this workaround is no longer needed.
+On Sat, Mar 01, 2025 at 11:10:35AM +0000, Marc Zyngier wrote:
+> On Tue, 11 Feb 2025 19:21:55 +0000,
+> Frank Li <Frank.Li@nxp.com> wrote:
+> >
+> > Add the flag IRQ_DOMAIN_FLAG_MSI_IMMUTABLE and the API function
+> > irq_domain_is_msi_immutable() to check if the MSI controller retains an
+> > immutable address/data pair during irq_set_affinity().
+> >
+> > Ensure compatibility with MSI users like PCIe Endpoint Doorbell, which
+> > require the address/data pair to remain unchanged after setup. Use this
+> > function to verify if the MSI controller is immutable.
+>
+> Why is that a requirement? Why should a driver even care?
 
-Signed-off-by: Brian Gerst <brgerst@gmail.com>
----
- arch/x86/include/asm/cpu.h |  1 -
- arch/x86/include/asm/smp.h |  6 ------
- arch/x86/kernel/apic/ipi.c | 30 ------------------------------
- arch/x86/kernel/crash.c    |  2 +-
- arch/x86/kernel/reboot.c   |  2 +-
- 5 files changed, 2 insertions(+), 39 deletions(-)
+At v9, there were detail discussion about this
+https://lore.kernel.org/all/87v7w0s9a8.ffs@tglx/
 
-diff --git a/arch/x86/include/asm/cpu.h b/arch/x86/include/asm/cpu.h
-index 0c8ec62789a1..ad235dda1ded 100644
---- a/arch/x86/include/asm/cpu.h
-+++ b/arch/x86/include/asm/cpu.h
-@@ -12,7 +12,6 @@
- #ifndef CONFIG_SMP
- #define cpu_physical_id(cpu)			boot_cpu_physical_apicid
- #define cpu_acpi_id(cpu)			0
--#define safe_smp_processor_id()			0
- #endif /* CONFIG_SMP */
- 
- #ifdef CONFIG_HOTPLUG_CPU
-diff --git a/arch/x86/include/asm/smp.h b/arch/x86/include/asm/smp.h
-index c8508d78ef3e..abf84e3bcb09 100644
---- a/arch/x86/include/asm/smp.h
-+++ b/arch/x86/include/asm/smp.h
-@@ -137,12 +137,6 @@ __visible void smp_call_function_single_interrupt(struct pt_regs *r);
- #define raw_smp_processor_id()  this_cpu_read(pcpu_hot.cpu_number)
- #define __smp_processor_id() __this_cpu_read(pcpu_hot.cpu_number)
- 
--#ifdef CONFIG_X86_32
--extern int safe_smp_processor_id(void);
--#else
--# define safe_smp_processor_id()	smp_processor_id()
--#endif
--
- static inline struct cpumask *cpu_llc_shared_mask(int cpu)
- {
- 	return per_cpu(cpu_llc_shared_map, cpu);
-diff --git a/arch/x86/kernel/apic/ipi.c b/arch/x86/kernel/apic/ipi.c
-index 942168da7195..98a57cb4aa86 100644
---- a/arch/x86/kernel/apic/ipi.c
-+++ b/arch/x86/kernel/apic/ipi.c
-@@ -288,34 +288,4 @@ void default_send_IPI_mask_logical(const struct cpumask *cpumask, int vector)
- 	__default_send_IPI_dest_field(mask, vector, APIC_DEST_LOGICAL);
- 	local_irq_restore(flags);
- }
--
--#ifdef CONFIG_SMP
--static int convert_apicid_to_cpu(u32 apic_id)
--{
--	int i;
--
--	for_each_possible_cpu(i) {
--		if (per_cpu(x86_cpu_to_apicid, i) == apic_id)
--			return i;
--	}
--	return -1;
--}
--
--int safe_smp_processor_id(void)
--{
--	u32 apicid;
--	int cpuid;
--
--	if (!boot_cpu_has(X86_FEATURE_APIC))
--		return 0;
--
--	apicid = read_apic_id();
--	if (apicid == BAD_APICID)
--		return 0;
--
--	cpuid = convert_apicid_to_cpu(apicid);
--
--	return cpuid >= 0 ? cpuid : 0;
--}
--#endif
- #endif
-diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
-index 340af8155658..0be61c45400c 100644
---- a/arch/x86/kernel/crash.c
-+++ b/arch/x86/kernel/crash.c
-@@ -140,7 +140,7 @@ void native_machine_crash_shutdown(struct pt_regs *regs)
- 	x86_platform.guest.enc_kexec_begin();
- 	x86_platform.guest.enc_kexec_finish();
- 
--	crash_save_cpu(regs, safe_smp_processor_id());
-+	crash_save_cpu(regs, smp_processor_id());
- }
- 
- #if defined(CONFIG_KEXEC_FILE) || defined(CONFIG_CRASH_HOTPLUG)
-diff --git a/arch/x86/kernel/reboot.c b/arch/x86/kernel/reboot.c
-index 9aaac1f9f45b..964f6b0a3d68 100644
---- a/arch/x86/kernel/reboot.c
-+++ b/arch/x86/kernel/reboot.c
-@@ -921,7 +921,7 @@ void nmi_shootdown_cpus(nmi_shootdown_cb callback)
- 		return;
- 
- 	/* Make a note of crashing cpu. Will be used in NMI callback. */
--	crashing_cpu = safe_smp_processor_id();
-+	crashing_cpu = smp_processor_id();
- 
- 	shootdown_callback = callback;
- 
+let me summary:
 
-base-commit: 693c8502970a533363e9ece482c80bb6db0c12a5
--- 
-2.48.1
+Host driver workflow like:
 
+1. read address/data from shared memory (PC bar<n>)
+2. write data to address to trigger doorbell.
+
+1 and 2 is not atomic. So EP side may call set_affinity function during 1
+and 2, address/data may be changed in some MSI provider, so 2 write to
+previous address/data pair, which may not existed or map to other place and
+cause write to unexpected place.
+
+Frank
+
+>
+> 	M.
+>
+> --
+> Without deviation from the norm, progress is not possible.
 
