@@ -1,90 +1,91 @@
-Return-Path: <linux-kernel+bounces-542742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93F4DA4CD18
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 21:57:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AEACA4CD1E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:00:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 628B0189592C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:57:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A373C3A9670
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 21:00:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77F9A235C04;
-	Mon,  3 Mar 2025 20:57:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 610E922F3AB;
+	Mon,  3 Mar 2025 21:00:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="WFd+7kVM"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA3A11CA9;
-	Mon,  3 Mar 2025 20:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hncZz6O5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE3D017CA1B;
+	Mon,  3 Mar 2025 21:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741035426; cv=none; b=jeYpJ0liGmJ1vE4D5caevM3EhV/8OGY8pUMPITOb5hRDGKCVGl6YwZpj4iqJTbe3sB0+vT5G2SFBdnyw9NLRF+rC0xjOZvav6a0r9ir/gc/aUpyIpGOODCxzYOZklZSXifHG1Fs4OkKAhafCoBF5k5hvhGZbd/AxcKi9SKaoBi0=
+	t=1741035621; cv=none; b=cYX/w7RS67mJCnA23+gATf6fXMZWcyqrrNtHKNeGawoSTsZkXndXGgMoOXn4MTSQzGyvop3EMl+AOJqkPwGik0nvf59e0SyFeKss6Yme8i25xaWsZaSyxV1zLM7NJVmtQwozSHWZRlmGXF93PdJ4hOXCO7ay8CPtWiml4JhCJfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741035426; c=relaxed/simple;
-	bh=wkPrI5PI4gOi80WWVhId6dzA8Q9owv5JCghvbzkIVPM=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=n3JG0wtFH7R04RvBbbe2Lan+zeQvGgYpxE6cf61o7ycytzdSj80DvaQNBGewJLGpDbW5Ai8XJpHgedJ29J+KA+kDstjKoza3UENdFAuXvnEXN9Ozapd4lZSc67ZngS6Uh1WwN026hXZX+QNTRSA5bhmBfmTrswRnrjjiUhGldrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=WFd+7kVM; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [192.168.35.166] (c-24-22-154-137.hsd1.wa.comcast.net [24.22.154.137])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 860C12110483;
-	Mon,  3 Mar 2025 12:57:04 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 860C12110483
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1741035424;
-	bh=3qh+61wOXo3xnM/WVr1EaxpXDMg9Qc5SkS1wS9/KCaA=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=WFd+7kVMwb8m/yRhGu82uGV6e/HKaH3YScqYDNg3VqULYlWwhYN1W/EwkQ+KpHk2M
-	 B+UrWMeoRFcHhvu9/IkXdfvLFS9RIsO/J8jsCs0ntQiYwMGh95feOKPx7lgiJPPiC7
-	 /EfD2TyFRiTmU900qpo0PnuB9Rpe0/+ft8U6VJfk=
-Message-ID: <f0fa9bc3-159a-413f-a957-0298a55cf728@linux.microsoft.com>
-Date: Mon, 3 Mar 2025 12:57:09 -0800
+	s=arc-20240116; t=1741035621; c=relaxed/simple;
+	bh=bo8HrOIlN5Xf5krNsctVKKdvPdiqrXCjvrUMmNpPcNo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CRAV7K9CgzW29WMRFxATLlLT4xMCbG6G3Bwc0W2pfNfeWS0HFoKTabe88NctGKwx9cGuqYObHfSP7FaAEcObUoMdQMKE1wtsXvYESkR+qEU5D3hZwV//EEBY7XJmTUyK6+kmMGOcS7jLzwoppPAo+Ap9bvJFRpZc0GhEpBlWdO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hncZz6O5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D50AC4CED6;
+	Mon,  3 Mar 2025 21:00:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741035621;
+	bh=bo8HrOIlN5Xf5krNsctVKKdvPdiqrXCjvrUMmNpPcNo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hncZz6O5SzQ0KX7gjO3GOe9xzDMoa4yW4yZqipxllhuZVZIn4j8nJJO3nV3ZNPvUO
+	 6g0BIa85DBrSVK/a7iEZzKSqkt/fKwSFOIWT6hlFT6mTNNSmWN4ue3kJrHpVrM2nw3
+	 cJAiprxl6RVL0xdGqPbKE2yQbqkqNkDhGIwy8wXccJAROe7j4TQWhxaPsneYrHpxgt
+	 7MfKR7bUWDF16JaeGY4vEDa5Mmcxr/Cy3wibEImKe/5CBQ47IYS42DNkRbZ0L78FNA
+	 f5U2rDOQkXOUfYChIQR3bfp7K7jAv1jMhOuyQGRXN3juZtQSpp8B2n5XbVCRVbP6IX
+	 BhdmygBOLobUA==
+Date: Mon, 3 Mar 2025 13:00:19 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Leo Yan <leo.yan@arm.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	James Clark <james.clark@linaro.org>,
+	Mike Leach <mike.leach@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Will Deacon <will@kernel.org>,
+	Graham Woodward <graham.woodward@arm.com>, Paschalis.Mpeis@arm.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 00/12] perf script: Refactor branch flags for Arm SPE
+Message-ID: <Z8YYY2Q_ZPIaZ74g@google.com>
+References: <20250217195908.176207-1-leo.yan@arm.com>
+ <20250303093853.GG2157064@e132581.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: eahariha@linux.microsoft.com, Wenjia Zhang <wenjia@linux.ibm.com>,
- Jan Karcher <jaka@linux.ibm.com>, "D. Wythe" <alibuda@linux.alibaba.com>,
- Tony Lu <tonylu@linux.alibaba.com>, Wen Gu <guwen@linux.alibaba.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- Pablo Neira Ayuso <pablo@netfilter.org>,
- Jozsef Kadlecsik <kadlec@netfilter.org>, David Ahern <dsahern@kernel.org>,
- linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- netfilter-devel@vger.kernel.org, coreteam@netfilter.org
-Subject: Re: [PATCH net-next 0/3] Converge on using secs_to_jiffies() part two
-To: Jakub Kicinski <kuba@kernel.org>
-References: <20250219-netdev-secs-to-jiffies-part-2-v1-0-c484cc63611b@linux.microsoft.com>
- <20250221162107.409ae333@kernel.org>
-From: Easwar Hariharan <eahariha@linux.microsoft.com>
-Content-Language: en-US
-In-Reply-To: <20250221162107.409ae333@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250303093853.GG2157064@e132581.arm.com>
 
-On 2/21/2025 4:21 PM, Jakub Kicinski wrote:
-> On Wed, 19 Feb 2025 20:30:35 +0000 Easwar Hariharan wrote:
->> The conversion is made with Coccinelle with the secs_to_jiffies() script
->> in scripts/coccinelle/misc. Attention is paid to what the best change
->> can be rather than restricting to what the tool provides.
->>
->> The non-netdev patches that include the update to secs_to_jiffies.cocci to address
->> expressions are here: https://lore.kernel.org/all/20250203-converge-secs-to-jiffies-part-two-v2-0-d7058a01fd0e@linux.microsoft.com
+On Mon, Mar 03, 2025 at 09:38:53AM +0000, Leo Yan wrote:
+> Hi Arnaldo, Namhyung,
 > 
-> Can the secs_to_jiffies cocci check script finally run in report mode?
+> On Mon, Feb 17, 2025 at 07:58:56PM +0000, Leo Yan wrote:
+> > This patch series refactors branch flags for support Arm SPE.  The patch
+> > set is divided into two parts, the first part is for refactoring common
+> > code and the second part is for enabling Arm SPE.
 > 
-> I think that needs to be fixed first, before we start "cleaning up"
-> existing code under net.
+> James has given review tags (including the new added patch 06).  Could
+> you kindly pick up this series?
+> 
+> Sorry for pushing a bit, as we have dependency on it.
 
-It does not, yet. I'm not ignoring this feedback, it's just taking a bit
-of wall clock time between commercial commitments. :) 
+No problem, I'll add it to the tmp branch and run some tests.
 
 Thanks,
-Easwar (he/him)
+Namhyung
+
 
