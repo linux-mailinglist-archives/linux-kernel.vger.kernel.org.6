@@ -1,78 +1,44 @@
-Return-Path: <linux-kernel+bounces-540941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 989A5A4B6AC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 04:32:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 99B4AA4B6C5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 04:34:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FDA11890E2D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 03:32:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93C4F1882B78
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 03:34:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E8381D95B4;
-	Mon,  3 Mar 2025 03:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="G33aCWbA"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36F651D95B4;
+	Mon,  3 Mar 2025 03:34:02 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361AE4A05
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 03:32:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5829078F54;
+	Mon,  3 Mar 2025 03:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740972753; cv=none; b=T1/Qi5V6ZdnDuwRx+x24+EBu0ZEe6dV3SDMh0Ty15WkX/tBW4AdLyy5ynJWyXhAN3gF6VLbdHQWSqpQuXOYChoerqVtp/GrmAQwMKT8yiGsfZgRfjhn5d4SkcSIw/MryyRY1HesWxGnQR9Ip4D18dDt3nQ+I5KBt/3YqxVjVg0c=
+	t=1740972841; cv=none; b=s+0Vye2vWLBN+Y5xxmp64Bj46Ed8zBaDX2JJPoLNm8KBDcZ/4tFTLw3uIXBjaNFCKsd0ht51GB4SPgB6jbtUoRG/FdN53uLVD/D5xc2OTQMXuMJgsMqUJhWyFY3jsu4pKPJcpmqluDJArW6u06fd8IFQWabPW4sRdMO3Xw5h53c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740972753; c=relaxed/simple;
-	bh=9HpN8YNbM1g+5HMgusPSZ6T6i/R2IPLHgnjcpfni1kI=;
+	s=arc-20240116; t=1740972841; c=relaxed/simple;
+	bh=bmgWyZ5dxhv2OH9PEfh+oG70EmiwdOasmha5vumDgVs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r2y8UhW7OKU9NiVAyUkPf7oLzDpvRPvQWd5TJzD18tJYEqmayrLZroXK9hmSmP2sEMEAK9/HD/f6ECg4nyqXrKGFAY263mEdHmSf4VjFf78et2md1A25gNt0kB0KilPe7595b6put6gIbdqH3+vDwX/Sc+Ic3b7pplkFnxvksM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=G33aCWbA; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2fee688b474so203360a91.3
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Mar 2025 19:32:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1740972751; x=1741577551; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sKGzbVXfgyG8sHy3CMwzPi1s2SgLFm/W4scE3baWvx4=;
-        b=G33aCWbASN6gexBfPNxv9/xJXx/oR+iI9I4cVJVuRaamiLh9FPh939JZk259AGlkaA
-         qEF4t+7/HVPWTYVRbgZKN0Y7EPjpThUtwTgKHqPVcouHJ54GSCcSR22ml9Ir5/OHALXw
-         CxTV4Mb9a7zdhfPJzsWAnco5s0v1G6YyjKI6zhE6bonpkg41CHV5ZhpsulvOcq5QLgCu
-         oOS1fTrJPiDAq/UDbBrwExeqQgmGGiRL+yAc/QB2WCl2D5jIuyFBHnFKLNTtR14adzn/
-         A9gKnQFeYfS2o4XGH97Fu6W06VCuQavq61Ji02mf2CEIsQn8/4R229W8CY4yYaHOwl18
-         M2Rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740972751; x=1741577551;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sKGzbVXfgyG8sHy3CMwzPi1s2SgLFm/W4scE3baWvx4=;
-        b=b/gels/aaJcHiC/pdBqpXsMzPuU9Q4zFRQUit1dREEjeQF1GIcvqQMfKrtFc5dRuq1
-         S1unjiuQN+f3SkbS7Brcw08lHU54cIkIJ/v8LXUMXuJO3sHK4/UdNG0/wnvs72kvOA3B
-         Mpehp4Xi+hO8hHtUagmDt7s9C15aTET4J/QkykqeuaUN9SFPlkjbdUzQW8SHIiKOv+gE
-         lqedZciENEI7TGraxF/VCftjWKWGxDL7Ip3ibsQ6SkymQDBdjx6zllmhjNZF6ZfvnAOQ
-         Ac6LwumS3sDBUASlHdqWn251AOcLqvBxkZlpTRSOH8WJpVXG2DDnj+vinsKTtf/9nb2h
-         IDaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUGUKlYZF9Jtv3XI4hqedeOYGdabrzosbZFG0ATVyKUlHwWmyV0U18i/NjY27Pmaaib5YECACZreCuRxP4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZYWlm6lbvir1rm+MNN+jmS3Cr5qsXQKIvy59IYC7f2oXAvt99
-	GLbYzh01mjojlqaVzN8nycMLrj5ohDBYxIXb8U1xgsmzJex/Qvv+r9gb0q2Fv98=
-X-Gm-Gg: ASbGnctmExQhibAZdqk8HTW59o/UkNdeZFYin8qUo/2GgGCS87o1k74eNv8nkyA1HvW
-	HxS8b7IgUPxEyQM0trXSnR+ON0gPeqGhcmyliZmvsBzvzZT5MKJ7zU3+4NLJ8Z+JcXpB55qt3SO
-	U/9SEWtdJJUqIS4a5cZ3825Ob1u5PGxUSo76B/599QqiKstC2wufC3n/SQ/t6Dk54Nk4v6NkV3C
-	Dpi7yH2vkr9ei7O7xYw6BgcqRijKS3ZWRK0h+E+PG1cPhW9o4FpdjxxT7LCtneNn1C23kjveuEd
-	ax0VzWVcfTN0x+ZvbcE2Gv12fToG0esTBgHyxDoT9s1PzWsRKafTPQXZCkgp1whIHQWH
-X-Google-Smtp-Source: AGHT+IFhoizGvM4lmwrFXDN5Y7DrMhPmLwqsNJT83KNbuYz0kwllV3EY1WYYzS71FHhg28mFSmBh9g==
-X-Received: by 2002:a05:6a00:429b:b0:736:442d:6310 with SMTP id d2e1a72fcca58-736442d6578mr2294328b3a.6.1740972751390;
-        Sun, 02 Mar 2025 19:32:31 -0800 (PST)
-Received: from [10.254.225.63] ([139.177.225.243])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73634ed9d05sm3713682b3a.178.2025.03.02.19.32.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 02 Mar 2025 19:32:30 -0800 (PST)
-Message-ID: <3cc57824-4a99-4bdc-9283-ca73bdc2fa50@bytedance.com>
-Date: Mon, 3 Mar 2025 11:32:23 +0800
+	 In-Reply-To:Content-Type; b=Nzw5Xdx9ZCf4a+D95Iri82QrfoCQRmz5vBu8XlJbHY0eWWI1ejVHBgqwsS0zcTVBZvgF2qZvPIO14XvjJh2EEkUvZNs1i0U9D31MY5SxEtNggjevRWJS7B3RXi8SpjwpgSvYy1tnuyNFB4eI6Vyh4Y5I/tqhkRHYVZJ8zFvTDTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Z5ktN4yCXz4f3mJF;
+	Mon,  3 Mar 2025 11:33:32 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id AFF111A06D7;
+	Mon,  3 Mar 2025 11:33:54 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgA3m18eI8Vnqo+QFQ--.30568S3;
+	Mon, 03 Mar 2025 11:33:52 +0800 (CST)
+Message-ID: <aaef9940-8510-404f-bbc5-f0260ef90d21@huaweicloud.com>
+Date: Mon, 3 Mar 2025 11:33:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,55 +46,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Re: [PATCH v2 2/2] sched/fair: Fix premature check of
- WAKEUP_PREEMPTION
+Subject: Re: [PATCH] nfs: remove SB_RDONLY when remounting nfs
+To: Li Lingfeng <lilingfeng3@huawei.com>
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ehagberg@janestreet.com, yukuai1@huaweicloud.com, houtao1@huawei.com,
+ yangerkun@huawei.com, lilingfeng@huaweicloud.com, trondmy@kernel.org,
+ anna@kernel.org
+References: <20250221082613.2674633-1-lilingfeng3@huawei.com>
 Content-Language: en-US
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
- Phil Auld <pauld@redhat.com>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Josh Don <joshdon@google.com>, Tianchen Ding <dtcccc@linux.alibaba.com>,
- "open list:SCHEDULER" <linux-kernel@vger.kernel.org>
-References: <20250227085815.18131-1-wuyun.abel@bytedance.com>
- <20250227085815.18131-3-wuyun.abel@bytedance.com>
- <CAKfTPtBj2xhVg1BA5q6cC57TFGVBtgz6bbKrWGkjStSUKdxpgg@mail.gmail.com>
-From: Abel Wu <wuyun.abel@bytedance.com>
-In-Reply-To: <CAKfTPtBj2xhVg1BA5q6cC57TFGVBtgz6bbKrWGkjStSUKdxpgg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <20250221082613.2674633-1-lilingfeng3@huawei.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgA3m18eI8Vnqo+QFQ--.30568S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7uF1rCw1rAr1xAFy3tr1DWrg_yoW5Jr47pr
+	4xAF42krs5AF1agayvkF4rJ3WFqw48A3W5t3sxXw42vrWrK347XrZakr15W3yqgrZ3ua4f
+	Z3W7try7Ja4DXFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UAwI
+	DUUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On 2/28/25 10:26 PM, Vincent Guittot wrote:
-> On Thu, 27 Feb 2025 at 09:58, Abel Wu <wuyun.abel@bytedance.com> wrote:
->>
->> The commit 6bc912b71b6f ("sched: SCHED_OTHER vs SCHED_IDLE isolation")
->> defines the behavior of SCHED_IDLE as following:
->>
->>   - no SCHED_IDLE buddies
->>   - never let SCHED_IDLE preempt on wakeup
->>   - always preempt SCHED_IDLE on wakeup
->>   - limit SLEEPER fairness for SCHED_IDLE
->>
->> and the 3rd rule is broken if !WAKEUP_PREEMPTION due to recently merged
->> commit faa42d29419d ("sched/fair: Make SCHED_IDLE entity be preempted in strict hierarchy")
->>
->> Although WAKEUP_PREEMPTION is mainly there for debug purpose to provide
->> a way to check whether a performance degrade of certain workload is due
->> to overscheduling or not, it is still kind of weird that we treat sched-
->> idle cpus as idle but don't let the non-idle tasks preempt the sched-idle
->> cpus in debug mode (!WAKEUP_PREEMPTION).
->>
->> Fix it by strictly following the aforementioned rules.
->>
->> Fixes: faa42d29419d ("sched/fair: Make SCHED_IDLE entity be preempted in strict hierarchy")
->> Signed-off-by: Abel Wu <wuyun.abel@bytedance.com>
+On 2025/2/21 16:26, Li Lingfeng wrote:
+> In some scenarios, when mounting NFS, more than one superblock may be
+> created. The final superblock used is the last one created, but only the
+> first superblock carries the ro flag passed from user space. If a ro flag
+> is added to the superblock via remount, it will trigger the issue
+> described in Link[1].
 > 
-> WAKEUP_PREEMPTION seems to be still used so
+> Link[2] attempted to address this by marking the superblock as ro during
+> the initial mount. However, this introduced a new problem in scenarios
+> where multiple mount points share the same superblock:
+> [root@a ~]# mount /dev/sdb /mnt/sdb
+> [root@a ~]# echo "/mnt/sdb *(rw,no_root_squash)" > /etc/exports
+> [root@a ~]# echo "/mnt/sdb/test_dir2 *(ro,no_root_squash)" >> /etc/exports
+> [root@a ~]# systemctl restart nfs-server
+> [root@a ~]# mount -t nfs -o rw 127.0.0.1:/mnt/sdb/test_dir1 /mnt/test_mp1
+> [root@a ~]# mount | grep nfs4
+> 127.0.0.1:/mnt/sdb/test_dir1 on /mnt/test_mp1 type nfs4 (rw,relatime,...
+> [root@a ~]# mount -t nfs -o ro 127.0.0.1:/mnt/sdb/test_dir2 /mnt/test_mp2
+> [root@a ~]# mount | grep nfs4
+> 127.0.0.1:/mnt/sdb/test_dir1 on /mnt/test_mp1 type nfs4 (ro,relatime,...
+> 127.0.0.1:/mnt/sdb/test_dir2 on /mnt/test_mp2 type nfs4 (ro,relatime,...
+> [root@a ~]#
 > 
-> Acked-by: Vincent Guittot <vincent.guittot@linaro.org>
+> When mounting the second NFS, the shared superblock is marked as ro,
+> causing the previous NFS mount to become read-only.
+> 
+> To resolve both issues, the ro flag is no longer applied to the superblock
+> during remount. Instead, the ro flag on the mount is used to control
+> whether the mount point is read-only.
+> 
+> Fixes: 281cad46b34d ("NFS: Create a submount rpc_op")
+> Link[1]: https://lore.kernel.org/all/20240604112636.236517-3-lilingfeng@huaweicloud.com/
+> Link[2]: https://lore.kernel.org/all/20241130035818.1459775-1-lilingfeng3@huawei.com/
+> Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
+> ---
+>  fs/nfs/super.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/fs/nfs/super.c b/fs/nfs/super.c
+> index aeb715b4a690..f08e1d7fb179 100644
+> --- a/fs/nfs/super.c
+> +++ b/fs/nfs/super.c
+> @@ -1047,6 +1047,7 @@ int nfs_reconfigure(struct fs_context *fc)
+>  
+>  	sync_filesystem(sb);
+>  
+> +	fc->sb_flags &= ~SB_RDONLY;
 
-Thanks!
+What about change sb_flags_mask instead? Something like below,
+
+	fc->sb_flags_mask &= ~SB_RDONLY;
+
+and I'd also suggested to add a comment to explain the reason in detail.
+
+Thanks,
+Yi.
 
 
