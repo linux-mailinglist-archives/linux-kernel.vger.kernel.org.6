@@ -1,90 +1,127 @@
-Return-Path: <linux-kernel+bounces-541882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBAA4A4C2DD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:09:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 126F8A4C33A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:19:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF3211722DD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:08:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E9903ADE60
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:18:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 151012135AF;
-	Mon,  3 Mar 2025 14:08:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29A95213248;
+	Mon,  3 Mar 2025 14:17:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="sFL5J3qG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="r1TdMit6"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43EA98489;
-	Mon,  3 Mar 2025 14:07:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C4342116F0;
+	Mon,  3 Mar 2025 14:17:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741010879; cv=none; b=Xq+lLAKBFXDRXJZw+BBnvxK/+QYD/Z1MrpUKs8wQwyaNQoEhYJ5HMXGBuBIkoYHD0XuGfOjWYhIo5U5/KL4dJv9s/9bcYScXR3fBq9Tz4yIN3xUN/QMppxtVat1hGqvFl+TRMX/tEROCywX3KcexHmrRxAyA44w7TmdC5mCPqb8=
+	t=1741011461; cv=none; b=fY2Kx39CvKOfciw5zpw5Ke1uteF3B+5bevctlg7iLfItzrcNokEVjA0Lx57qO30+l8u7DaRlP9Ig/TrYrqRyYk1dQjRKu6I7mhYHACqR9M/fHyVBx0ZT7PbGAyjCS5+KWWkNpgvW+PFAWtnP23QljmogrKuZ/du3AxMY6NhvBq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741010879; c=relaxed/simple;
-	bh=lrlCsavUJz6KOvb58RsHd0PRwT4FfA6Nqrz+IF8RGVI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ly8uYygHIvPuM0kKzMFwpupnylCIJbDaPPYi6KakttaA98OCrlsD85hYTQnQlsGnoNc0+YmXvKWR75reliOurew+cyuRWceeRTUxv+qzoUu/zSzexNknK2tpq3F/H64omAoFO1oyQcrhvvcwD6kw5ZCrSL2ZYHu+9ntAYv13UiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=sFL5J3qG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 270AFC4CED6;
-	Mon,  3 Mar 2025 14:07:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1741010877;
-	bh=lrlCsavUJz6KOvb58RsHd0PRwT4FfA6Nqrz+IF8RGVI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sFL5J3qGhSOTmKTqbjuLFlDmWsIydsLfhFPeoLzlZQ48ALrzWHduW9Qd6xfDUUx1S
-	 byZzLv1g18d6A+svIo0LWuCylTMJKurfmTqXFilz4mZXQKT/aH+pjlFy0F2YEQB1Yx
-	 bXoa9mCcwisDGtT+MHnbRzFt8Z+KrxXeynwXofwc=
-Date: Mon, 3 Mar 2025 15:07:53 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	=?iso-8859-1?Q?Herv=E9?= Codina <herve.codina@bootlin.com>,
+	s=arc-20240116; t=1741011461; c=relaxed/simple;
+	bh=WbmEJYpG+ez+XRUdtekHHlARVzaRz80/lQZKN6iRpDU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=awyYfmXt79GdQi9cRi9m6Xc1K6nNfkjO8IzEprX+munQOIV0iq/1G3Uq/MBa7E/XrnYEnCX/tEoOtoxpYThvXmryLEew2WLY9eQUN3BFDZiQGN6+Cn2HO7Xlz1p+2kVf3zhvuRMYGHyxCCeIoK8SFfC1ArF3lxy/ONfkasmDXGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=r1TdMit6; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from ldvnode.intra.ispras.ru (unknown [10.10.2.153])
+	by mail.ispras.ru (Postfix) with ESMTPSA id 49CE440CE18C;
+	Mon,  3 Mar 2025 14:08:14 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 49CE440CE18C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1741010894;
+	bh=e/tq6LrrxRI4HjyCL7aW8miot1l+ge0sIlibb8wrupQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=r1TdMit6+TLG+eMiHJdSUCRE9P5rh75vEJEB8mlvrOQ0laRWMK21/JLXn89Z1TrLJ
+	 6hAA3RMAccZG5qqIODMYZLerMuQGIrPPe3l29Nohtu0XG4IwCZeg35PSQkWjyCVOhR
+	 2glkB4lmMg/jG1Vf3lpPws5T5U6vn4Wv4KG/PViU=
+From: Vitalii Mordan <mordan@ispras.ru>
+To: Michal Simek <michal.simek@amd.com>
+Cc: Vitalii Mordan <mordan@ispras.ru>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Harini Katakam <harinik@xilinx.com>,
+	Wolfram Sang <wsa@kernel.org>,
+	Soren Brinkmann <soren.brinkmann@xilinx.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-i2c@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>, stable@vger.kernel.org
-Subject: Re: [PATCH RESEND v2] drivers: core: fix device leak in
- __fw_devlink_relax_cycles()
-Message-ID: <2025030332-tumble-seduce-7650@gregkh>
-References: <20250303-fix__fw_devlink_relax_cycles_missing_device_put-v2-1-3854d249d54e@bootlin.com>
+	Fedor Pchelkin <pchelkin@ispras.ru>,
+	Alexey Khoroshilov <khoroshilov@ispras.ru>,
+	Vadim Mutilin <mutilin@ispras.ru>,
+	lvc-project@linuxtesting.org
+Subject: [PATCH] i2c: cadence: fix call balance of id->clk handling routines
+Date: Mon,  3 Mar 2025 17:08:05 +0300
+Message-Id: <20250303140805.644143-1-mordan@ispras.ru>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250303-fix__fw_devlink_relax_cycles_missing_device_put-v2-1-3854d249d54e@bootlin.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 03, 2025 at 10:30:51AM +0100, Luca Ceresoli wrote:
-> Commit bac3b10b78e5 ("driver core: fw_devlink: Stop trying to optimize
-> cycle detection logic") introduced a new struct device *con_dev and a
-> get_dev_from_fwnode() call to get it, but without adding a corresponding
-> put_device().
-> 
-> Closes: https://lore.kernel.org/all/20241204124826.2e055091@booty/
-> Fixes: bac3b10b78e5 ("driver core: fw_devlink: Stop trying to optimize cycle detection logic")
-> Cc: stable@vger.kernel.org
-> Reviewed-by: Saravana Kannan <saravanak@google.com>
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> ---
-> Changes in v2:
-> - add 'Cc: stable@vger.kernel.org'
-> - use Closes: tag, not Link:
-> - Link to v1: https://lore.kernel.org/r/20250212-fix__fw_devlink_relax_cycles_missing_device_put-v1-1-41818c7d7722@bootlin.com
-> ---
->  drivers/base/core.c | 1 +
->  1 file changed, 1 insertion(+)
+If the clock id->clk was not enabled in cdns_i2c_probe(), it should not be
+disabled in any execution path. If the clock was not enabled, the probe
+function should return an error code.
 
-This was applied to my tree on Feb 20, right?  Or is this a new version?
-Why was it resent?
+Use the devm_clk_get_enabled() helper function to ensure proper call
+balance for id->clk.
 
-thanks,
+Found by Linux Verification Center (linuxtesting.org) with Klever.
 
-greg k-h
+Fixes: df8eb5691c48 ("i2c: Add driver for Cadence I2C controller")
+Signed-off-by: Vitalii Mordan <mordan@ispras.ru>
+---
+ drivers/i2c/busses/i2c-cadence.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-cadence.c b/drivers/i2c/busses/i2c-cadence.c
+index b64026fbca66..07564a962dcb 100644
+--- a/drivers/i2c/busses/i2c-cadence.c
++++ b/drivers/i2c/busses/i2c-cadence.c
+@@ -1541,7 +1541,7 @@ static int cdns_i2c_probe(struct platform_device *pdev)
+ 	snprintf(id->adap.name, sizeof(id->adap.name),
+ 		 "Cadence I2C at %08lx", (unsigned long)r_mem->start);
+ 
+-	id->clk = devm_clk_get(&pdev->dev, NULL);
++	id->clk = devm_clk_get_enabled(&pdev->dev, NULL);
+ 	if (IS_ERR(id->clk))
+ 		return dev_err_probe(&pdev->dev, PTR_ERR(id->clk),
+ 				     "input clock not found.\n");
+@@ -1551,10 +1551,6 @@ static int cdns_i2c_probe(struct platform_device *pdev)
+ 		return dev_err_probe(&pdev->dev, PTR_ERR(id->reset),
+ 				     "Failed to request reset.\n");
+ 
+-	ret = clk_prepare_enable(id->clk);
+-	if (ret)
+-		dev_err(&pdev->dev, "Unable to enable clock.\n");
+-
+ 	ret = reset_control_deassert(id->reset);
+ 	if (ret) {
+ 		dev_err_probe(&pdev->dev, ret,
+@@ -1617,7 +1613,6 @@ static int cdns_i2c_probe(struct platform_device *pdev)
+ 	clk_notifier_unregister(id->clk, &id->clk_rate_change_nb);
+ 	reset_control_assert(id->reset);
+ err_clk_dis:
+-	clk_disable_unprepare(id->clk);
+ 	pm_runtime_disable(&pdev->dev);
+ 	pm_runtime_set_suspended(&pdev->dev);
+ 	return ret;
+@@ -1642,7 +1637,6 @@ static void cdns_i2c_remove(struct platform_device *pdev)
+ 	i2c_del_adapter(&id->adap);
+ 	clk_notifier_unregister(id->clk, &id->clk_rate_change_nb);
+ 	reset_control_assert(id->reset);
+-	clk_disable_unprepare(id->clk);
+ }
+ 
+ static struct platform_driver cdns_i2c_drv = {
+-- 
+2.25.1
+
 
