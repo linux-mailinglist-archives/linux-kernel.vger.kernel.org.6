@@ -1,110 +1,162 @@
-Return-Path: <linux-kernel+bounces-541963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E591A4C3E4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:53:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8A00A4C3E2
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:52:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DC2C3A53FC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:52:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB4F81895C61
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:53:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D22472139DC;
-	Mon,  3 Mar 2025 14:53:06 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED652213E67;
+	Mon,  3 Mar 2025 14:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="h7JjHMgD"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F0F20F07D
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 14:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34EF820F07D;
+	Mon,  3 Mar 2025 14:52:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741013586; cv=none; b=Vb8Qd1iwsmfMF0Dmk9Qka3Fa9W6qadm/rg9ovuoJBtBeF9SdIEcnJxyXOV8h8xmSKMdLHQD4jUpkdIX+ZOptUEJjRNGOmVBZTF2EoE8GYAwwvtwQvNwDVBByw78ngc19BBmKTBgxr8Fq2oq9f40udUPt6D8B1nvAO15nF86uRiE=
+	t=1741013568; cv=none; b=J4uSn+lPqTyv6ELGUFQM0d1hL3sygVQrtOZArB8VWakB6fVnFKy7XulW+dXTGdwrulZd+ZzUqBsTOaPZ/uK0gua0LMXwrlwpkoTZ6nwfGkJg2oAoV1570ADTkfuANav2INwgnH5lXvoQ7cN3xgGf/sRXCtxCxdKodFiW12bNJEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741013586; c=relaxed/simple;
-	bh=8+DxQIirlP9wZUmGmGZnr1teLjfbQWMQ9s8e3+1PQg4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kCAcOfVUl2kBkIx0zz7Cw6kYVJQbwKtHR332mZ00twyxCkc13mfdY2KLI+5zPH8BBSrJKKt+RylaWxLo4xalJYQqY+XO5Q8xlbZJqjQ6bChKt9515wLX3aAkGhOl2i48DK4TR66G/L1V0Hc9j/vTiaf/cWc3SE295iD9YKiGDrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [124.16.141.245])
-	by APP-01 (Coremail) with SMTP id qwCowAAHNPs4wsVn3GcUEg--.8516S2;
-	Mon, 03 Mar 2025 22:52:41 +0800 (CST)
-From: Wentao Liang <vulab@iscas.ac.cn>
-To: miquel.raynal@bootlin.com,
-	richard@nod.at,
-	vigneshr@ti.com
-Cc: linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Wentao Liang <vulab@iscas.ac.cn>
-Subject: [PATCH] mtd: Fix error handling in mtd_device_parse_register() error path
-Date: Mon,  3 Mar 2025 22:52:23 +0800
-Message-ID: <20250303145223.1748-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.42.0.windows.2
+	s=arc-20240116; t=1741013568; c=relaxed/simple;
+	bh=m8LqLgUKcSZmyeWPSBwRlyO6eYdEV0wMI/HPPxv5yRI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=Jj0Btj0Kqx/MwDDlqyL/jPjMuKckLUyhWPd7bkgdQlO3fUcPRBNRfnoiFqRVwOJBgYCyT135P/7+oCEKobgjbJeZRmp7ho3Wdsd141T/YL1oUafWOmgoEvVTSqSIKFK7iXcE+dk6Pi3e/Wiip4qZ0V/kLaor/OhEYu+GYl4R5M0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=h7JjHMgD; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B400040E0214;
+	Mon,  3 Mar 2025 14:52:42 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id ONsOBIKd_0m5; Mon,  3 Mar 2025 14:52:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1741013558; bh=3Y1lYbvSoDqOWPOG8r6c7lDbEcR6+kXVb8wrSf7bgGM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=h7JjHMgD03Cyet05MwSAe2uxgzEQiEJESaeSSIfMztot3GylrZdpvfDJxywFCcQJN
+	 t+B2CQ8ukEDjG3NcNMIO3Pblo06e10Ws+SgYf/jpBDF0T75WqEPhCDPAiSUplCAY68
+	 sXWEixID3AZ38mz0p9HMwrXRD5UwEVuIFcRCyyM2iuzQJV7hpewWdfMAx/jcnnf3A8
+	 ZxPQ7XypVqiAa5n7K49ZykA7vG4FyX07sDMzMSuNsdPAwTJc1LUQ6KAFGs9/BHjhUM
+	 2BECmgDEAH4x3kPuFui38eXQOCU1uYix+7xc9Akxhbsvfzi+dr2P16v8QVxmv6Hz9Z
+	 4dh+QnsIqxYNNj3NWdPyB5vVRKkgFjZ2mSoWiXtiHQLtk6LKbn4kaNsRFk1fsj3bhU
+	 s02l2877iCCFFG0mUE+pdhWZqDW2VIkWhh5B6JgiGKF8rfKfoCCYexloDQkYR3BH+3
+	 AEZJhKE4HZIjL4y04k2TrMcsvgoLWOZJ3tF811hcsh1IMT++/I4mFuqRSNcPLjpyrc
+	 fAsRaRF7/iQsrYI9BIhoREewwVPMCjVcRzl28igc/pxPqRbPwPZKFWsdRsayeKvHHT
+	 Zw7vWBlDg0eAO1kV1Lb8PLpIS/uwoNJ8pb6znu40V0lKKHtI2TwCGzPwRd3AyIHhe6
+	 vAjnO2z0Kx4IMKZW0iJJLRpQ=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1756340E020E;
+	Mon,  3 Mar 2025 14:52:33 +0000 (UTC)
+Date: Mon, 3 Mar 2025 15:52:26 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+	David Thompson <davthompson@nvidia.com>
+Cc: Shravan Kumar Ramani <sramani@mellanox.com>, linux-edac@vger.kernel.org,
+	lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [bug report] EDAC, mellanox: Add ECC support for BlueField DDR4
+Message-ID: <20250303145226.GCZ8XCKkC0YSLHXycB@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowAAHNPs4wsVn3GcUEg--.8516S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7XFy8ArWUJFyDZF4kJw1fWFg_yoW8Jr1Upw
-	45Wayqk3yUKr4j9w4DZrWDCFy5K3s7tw1ruFZrG342grn5t345tFZ8tF1UAw1UKry8Gayj
-	qrWSqr4kGa18AFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkG14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r1j
-	6r4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWU
-	AVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
-	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkG
-	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4U
-	MIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUcBMtUUU
-	UU=
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBg0KA2fFsHQ0fgAAsu
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <046bf689-9a2b-4993-b8ca-927d7d2a0cc5@stanley.mountain>
 
-Check and log del_mtd_device() failures. Print an error message
-with pr_err() to prevent silent failures, but preserve the original
-error code instead of propagating the secondary error since
-del_mtd_device() is already in an error handling path.
+On Thu, Oct 24, 2024 at 11:20:45AM +0300, Dan Carpenter wrote:
+> Hello Shravan Kumar Ramani,
+> 
+> Commit 82413e562ea6 ("EDAC, mellanox: Add ECC support for BlueField
+> DDR4") from Jun 25, 2019 (linux-next), leads to the following Smatch
+> static checker warning:
+> 
+> drivers/edac/bluefield_edac.c:205 bluefield_gather_report_ecc() error: uninitialized symbol 'dram_syndrom'.
+> drivers/edac/bluefield_edac.c:219 bluefield_gather_report_ecc() error: uninitialized symbol 'dram_additional_info'.
+> drivers/edac/bluefield_edac.c:231 bluefield_gather_report_ecc() error: uninitialized symbol 'edea0'.
+> drivers/edac/bluefield_edac.c:231 bluefield_gather_report_ecc() error: uninitialized symbol 'edea1'.
+> drivers/edac/bluefield_edac.c:256 bluefield_edac_check() error: uninitialized symbol 'ecc_count'.
+> 
+> drivers/edac/bluefield_edac.c
+>     173 static void bluefield_gather_report_ecc(struct mem_ctl_info *mci,
+>     174                                         int error_cnt,
+>     175                                         int is_single_ecc)
+>     176 {
+>     177         struct bluefield_edac_priv *priv = mci->pvt_info;
+>     178         u32 dram_additional_info, err_prank, edea0, edea1;
+>     179         u32 ecc_latch_select, dram_syndrom, serr, derr, syndrom;
+>     180         enum hw_event_mc_err_type ecc_type;
+>     181         u64 ecc_dimm_addr;
+>     182         int ecc_dimm, err;
+>     183 
+>     184         ecc_type = is_single_ecc ? HW_EVENT_ERR_CORRECTED :
+>     185                                    HW_EVENT_ERR_UNCORRECTED;
+>     186 
+>     187         /*
+>     188          * Tell the External Memory Interface to populate the relevant
+>     189          * registers with information about the last ECC error occurrence.
+>     190          */
+>     191         ecc_latch_select = MLXBF_ECC_LATCH_SEL__START;
+>     192         err = bluefield_edac_writel(priv, MLXBF_ECC_LATCH_SEL, ecc_latch_select);
+>     193         if (err)
+>     194                 dev_err(priv->dev, "ECC latch select write failed.\n");
+>     195 
+>     196         /*
+>     197          * Verify that the ECC reported info in the registers is of the
+>     198          * same type as the one asked to report. If not, just report the
+>     199          * error without the detailed information.
+>     200          */
+>     201         err = bluefield_edac_readl(priv, MLXBF_SYNDROM, &dram_syndrom);
+>     202         if (err)
+>     203                 dev_err(priv->dev, "DRAM syndrom read failed.\n");
+> 
+> If bluefield_edac_readl() fails then dram_syndrom is uninitialized.
+> 
+>     204 
+> --> 205         serr = FIELD_GET(MLXBF_SYNDROM__SERR, dram_syndrom);
+>     206         derr = FIELD_GET(MLXBF_SYNDROM__DERR, dram_syndrom);
+>     207         syndrom = FIELD_GET(MLXBF_SYNDROM__SYN, dram_syndrom);
+> 
 
-Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
----
- drivers/mtd/mtdcore.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+This looks forgotten.
 
-diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
-index 724f917f91ba..a7b01ed37f42 100644
---- a/drivers/mtd/mtdcore.c
-+++ b/drivers/mtd/mtdcore.c
-@@ -1053,7 +1053,7 @@ int mtd_device_parse_register(struct mtd_info *mtd, const char * const *types,
- 			      const struct mtd_partition *parts,
- 			      int nr_parts)
- {
--	int ret;
-+	int ret, err;
+I'm thinking of:
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8e0736dc2ee0..061149ade8c0 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8222,8 +8222,7 @@ F:	Documentation/devicetree/bindings/edac/aspeed-sdram-edac.txt
+ F:	drivers/edac/aspeed_edac.c
  
- 	mtd_set_dev_defaults(mtd);
+ EDAC-BLUEFIELD
+-M:	Shravan Kumar Ramani <shravankr@nvidia.com>
+-S:	Supported
++S:	Orphan
+ F:	drivers/edac/bluefield_edac.c
  
-@@ -1105,8 +1105,11 @@ int mtd_device_parse_register(struct mtd_info *mtd, const char * const *types,
- 		nvmem_unregister(mtd->otp_factory_nvmem);
- 	}
- 
--	if (ret && device_is_registered(&mtd->dev))
--		del_mtd_device(mtd);
-+	if (ret && device_is_registered(&mtd->dev)) {
-+		err = del_mtd_device(mtd);
-+		if (err)
-+			pr_err("Error when deleting MTD device (%d)\n", err);
-+	}
- 
- 	return ret;
- }
+ EDAC-CALXEDA
+
+but lemme Cc people who have touched this recently first.
+
+Thx.
+
 -- 
-2.42.0.windows.2
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
