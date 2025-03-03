@@ -1,95 +1,167 @@
-Return-Path: <linux-kernel+bounces-542923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56339A4CF69
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 00:44:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C61DA4CF6F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 00:49:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1DF6188CF2B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:44:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47CB13AC9C2
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:49:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D5223717F;
-	Mon,  3 Mar 2025 23:44:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA8AC1F4165;
+	Mon,  3 Mar 2025 23:49:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o31MaesC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZpAeOByV"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B3D1F4735;
-	Mon,  3 Mar 2025 23:44:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2BD31F0E38;
+	Mon,  3 Mar 2025 23:49:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741045474; cv=none; b=itSNC6NnNoKV1LnBojL3PGPaxFgakkAE6TSn3sm/sfMEY54YWSsnMjDJIeuAUIIqKV2SFn6i9PcmUqCZIKvyQ7fFYqLz37vp3n1zeqJwPhchwuvF65CsS+9vvrbZpwRS237rUEn+Y1yTHq3r5nigZAkbmd2QMH/GYW01O/b9fPw=
+	t=1741045765; cv=none; b=TKUJnCXgWFEzupGWPuxIeOTIjhlpUB4DcDEAh+sOnTx1CUf5dsZikuVkxqpcB8vhgiNIrViDlcySXaeoFvAMUVlaTSawRXzh9x5L8Ezj5iotHA8Bhu0MJCJAZpU4nnw9XZ2I2c2xGj7pYG1EpXld/R1R8HQPIWCB6LT5AtrUEiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741045474; c=relaxed/simple;
-	bh=mYuhDBxNc/e89ws6z4cdoCMAAbClP8hLNaC+xBDI57E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EqlUJ1RGjvvU+B7UCUmVc9Xh+0epRREvDgBX4gFske5AA0lA7Qd92nZfWiknBwqtevdp98HZN4XX+0etLeH41KZ6kC72ta9WH+ocY4HO8/in3TCrlKaIKipyCzkICNwmZbZnVrkCnAQNVEZkdhgffytWE7/5MEI/J7H3RrMmEuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o31MaesC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B14BAC4CEE8;
-	Mon,  3 Mar 2025 23:44:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741045474;
-	bh=mYuhDBxNc/e89ws6z4cdoCMAAbClP8hLNaC+xBDI57E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o31MaesClDbhQ7BppcXMKmMs6N/dQaiDATGICBZiGtiO6FycEHFyv3Nhx8qQCqSjj
-	 3xlP2WcD7i2kRRK4XemY3j54us/Dlx1x5kgB66WVjeERbGVE98/ARiHcYFwynH7AVw
-	 O5sVHJPRhV32fJQ+pK85kZMgyc4I+NZGHOUbYC+nx1UXnNZJUGJLdWeRSDlE8P5TVX
-	 2unjRESVuJIrVcj1r4b3+VcgKxQHTuvIvT9KW6WBiM5u2GFuecGi2z1yZG9zmuRg5o
-	 hlfQLUJHa08c9U7rQH0quO5M6Un+KhIuXjZpHwOtBt8tY6UR4k7YXwL9ZCH6pfC/uv
-	 sGoOZZp9lu/lg==
-Date: Mon, 3 Mar 2025 23:44:28 +0000
-From: Will Deacon <will@kernel.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Sebastian Ene <sebastianene@google.com>,
-	Sudeep Holla <sudeep.holla@arm.com>, catalin.marinas@arm.com,
-	joey.gouly@arm.com, oliver.upton@linux.dev, snehalreddy@google.com,
-	suzuki.poulose@arm.com, vdonnefort@google.com, yuzenghui@huawei.com,
-	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH v2 2/4] KVM: arm64: Move the ffa_to_linux definition to
- the ffa header
-Message-ID: <20250303234426.GB30749@willie-the-truck>
-References: <20250227181750.3606372-1-sebastianene@google.com>
- <20250227181750.3606372-3-sebastianene@google.com>
- <20250227202557.d3fd6ylzbaho4pvx@bogus>
- <Z8DxZY-09R6lwEW3@google.com>
- <86wmdapei8.wl-maz@kernel.org>
+	s=arc-20240116; t=1741045765; c=relaxed/simple;
+	bh=oUi0jUhO0onTNNPUZafZGwsnGSvTxM55zWWRbgJAGRE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YhwyJ/7pPO8g0dBK2034khqEeSIN/fzyBTNBplZMKqyHq560y2trKdCgif85AzF5/KHcE19i83rw38uH9f7yzV3PVGAAhcD3r4P/7j9bAlICmZeKwXmuSejZQs+uUGmh1js1wFxZF/Khvj08Cqh8EjLmwaLOZO5U3RpJnQtpeLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZpAeOByV; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2232b12cd36so67719915ad.0;
+        Mon, 03 Mar 2025 15:49:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741045763; x=1741650563; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uYJ1AOOF6Fuast7FuJwQwgJn1W/QJXvpVCQfOQs8dx4=;
+        b=ZpAeOByVEihWEdORJ4naq8Hj75jm5Od2h6bTClAwBAP3SGFxndv4SePRrm/hEyNPhV
+         G+HRJGsbdxq9TSMFJ7RHne4vDBL6bZsA62aW7DklbLfmbPXqwIfnEjeVie4sOJKIpilN
+         MODKY81RQ7s3CmVha1UnOyEI61aP7neYEaOAkCVZH/U4fp7NeP10zI7gjsp7vUIRQUTC
+         jfPFC1HAidnK4MP6OrOeK5TyE98n2Py/mx+oMK4pDjC0oZj/NfWp/DAd8lqybxUvHEBt
+         8SgFJS99ayHRcYywUSvImsZo1j1qyM0cSpiq4zghYG8+OMmao/Q2IllyCjNeiQJKzBlz
+         Xg0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741045763; x=1741650563;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uYJ1AOOF6Fuast7FuJwQwgJn1W/QJXvpVCQfOQs8dx4=;
+        b=rWkzU6Lq+nKc+S/YAM7Ake5s2zAJRj3syhe/qOStslURIIkRH7txHAHuhNB2AStc1n
+         y+VwQzZnWy5xc/l8G+j3wdA0DqhEfowogX7Aw9+oZ+cDbwAGAmg5QZjZHhdTL/M94pNV
+         tLm33UDxwaDMIqA6cXRVWqEtp6wHSF5IfSyqJHfQbkL7Hm8DX2th18/UpwMWUXeXzy6J
+         3lTdB2lAj9FptXhtBCjjZpgV3gS7ht1QNd+z4hkUXVL8em+B03jaa8FGM8TUoo2q4Qnr
+         ZXA04vRuIf9FZws55V+yx6orlmpsNWBuGf2AmnrbVZCeyYksolPEdg8YSRsLxZ7uHzRk
+         A2dg==
+X-Forwarded-Encrypted: i=1; AJvYcCUxilFUtIiIx0MeaRxPHOi7NFMIotkevfbk7u2N49xlWP2OEY78SMQ0W1CHxz4F4VUDYw5RFW7L743G@vger.kernel.org, AJvYcCVa5kgTj31a4PqsCLFPWSXyouykjqwP3pLHwzNqwEXRB/vy8kWn09olahr1PUj0ghK3WOfKgBkCXknD@vger.kernel.org, AJvYcCVmbnUKc9tP+MtZqAeruJO4NG6ISgmCCgNG27PACQbXGpS8Vu+vXTjFm63xM8+R0Wk0zKsJBdv71v7SiVet@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLz4fZri65+ehL12EbzPxKft9UAksDvOQz/fYYSC7rE2RNBTay
+	7DwLLQoy+dykK29SedR070rm2gRrnFegz//QKAmXWUa5e9Nk343r
+X-Gm-Gg: ASbGncsBHCEMML0NL1ZnAiNF3QqQSfs8hge+OlE2cxOMmVUspfbN0PuBMDini263wNc
+	3eN0kZvzCTG67nJVirNk94cMRgSNPu4pFzuPz96Gz6vpIA9ypM3F4QOU4bYV1bBX8PuujEejIaR
+	InblB24naFmO9Lj9WmEFxKsJPSuhoylisYbYb5uGw7BzC//cDsCpz8jQHxXiCYEWtH8d2CF8Gpy
+	OFQfe8Hz7jyJzPDVxFXExp+wFpxClWY7QQU6l8+Eo9v0XQI3yR2F+SFNiwqeJNJjAUOtHm0nC2f
+	2b6ztTp0cSlIy3tOfflvnj0k4yg4NTAR6W55+myND4h0ZKZ5e1GciNLDNA5Z+4K3DZ2E
+X-Google-Smtp-Source: AGHT+IGud6PYFMMPUpGldM4VW41ELjduKt3ffPZ3XDhZP9ZtgQhTGW1FAO3MuExVyqDYgDsAPDZcwQ==
+X-Received: by 2002:a05:6a20:3946:b0:1ee:ace8:8181 with SMTP id adf61e73a8af0-1f2f4d1d213mr26375064637.21.1741045762741;
+        Mon, 03 Mar 2025 15:49:22 -0800 (PST)
+Received: from danascape.tail34aafc.ts.net ([2402:e280:218d:2e5:7b03:1e42:d492:fb71])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af180155f85sm5689283a12.62.2025.03.03.15.49.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 15:49:22 -0800 (PST)
+From: Saalim Quadri <danascape@gmail.com>
+To: jic23@kernel.org
+Cc: lars@metafoo.de,
+	Michael.Hennerich@analog.com,
+	gregkh@linuxfoundation.org,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	21cnbao@gmail.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	Saalim Quadri <danascape@gmail.com>
+Subject: [PATCH] dt-bindings: iio: accel: add binding documentation for ADIS16203
+Date: Tue,  4 Mar 2025 05:19:13 +0530
+Message-Id: <20250303234913.66614-1-danascape@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <86wmdapei8.wl-maz@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 
-On Fri, Feb 28, 2025 at 10:09:19AM +0000, Marc Zyngier wrote:
-> On Thu, 27 Feb 2025 23:12:37 +0000,
-> Sebastian Ene <sebastianene@google.com> wrote:
-> > 
-> > On Thu, Feb 27, 2025 at 08:25:57PM +0000, Sudeep Holla wrote:
-> > > On Thu, Feb 27, 2025 at 06:17:47PM +0000, Sebastian Ene wrote:
-> > > > Keep the ffa_to_linux error map in the header and move it away
-> > > > from the arm ffa driver to make it accessible for other components.
-> > > 
-> > > Do you plan to push/target these changes for v6.15 ? If not, I can take
-> > > this patch with other FF-A changes in my tree for v6.15. Otherwise, it
-> > > is must go along with other changes.
-> > > 
-> > 
-> > Yes, feel free to pick them with your changes and we can push them
-> > later.
-> 
-> So this series is not a 6.15 candidate?
+This patch add device tree binding documentation for ADIS16203.
 
-I think this is 6.15 stuff once it's been reviewed. Sudeep's message is
-a little confusing as it refers to 6.15 twice (I guess he meant 6.14 the
-first time?).
+Signed-off-by: Saalim Quadri <danascape@gmail.com>
+---
+ .../bindings/iio/accel/adi,adis16203.yaml     | 52 +++++++++++++++++++
+ 1 file changed, 52 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/accel/adi,adis16203.yaml
 
-Will
+diff --git a/Documentation/devicetree/bindings/iio/accel/adi,adis16203.yaml b/Documentation/devicetree/bindings/iio/accel/adi,adis16203.yaml
+new file mode 100644
+index 000000000000..e67e856266f5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/accel/adi,adis16203.yaml
+@@ -0,0 +1,52 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/iio/accel/adi,adis16203.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Analog Devices ADIS16203 Programmable 360 Degrees Inclinometer
++
++maintainers:
++  - Barry Song <21cnbao@gmail.com>
++
++description: |
++  https://www.analog.com/media/en/technical-documentation/data-sheets/adis16203.pdf
++
++properties:
++  compatible:
++    enum:
++      - adi,adis16203
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  vdd-supply: true
++
++required:
++  - compatible
++  - reg
++
++allOf:
++  - $ref: /schemas/spi/spi-peripheral-props.yaml#
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++    spi {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        accelerometer@0 {
++            compatible = "adi,adis16203";
++            reg = <0>;
++            spi-max-frequency = <2500000>;
++            interrupt-parent = <&gpio0>;
++            interrupts = <0 IRQ_TYPE_LEVEL_HIGH>;
++        };
++    };
++...
+-- 
+2.34.1
+
 
