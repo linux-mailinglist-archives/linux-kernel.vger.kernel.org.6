@@ -1,149 +1,151 @@
-Return-Path: <linux-kernel+bounces-542840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 615EEA4CE5B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:35:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 949FEA4CE5A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:35:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D01763AC767
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:35:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B8FC188C16E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:35:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AAC11F4173;
-	Mon,  3 Mar 2025 22:35:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D72237705;
+	Mon,  3 Mar 2025 22:34:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="QA68lz2y"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="vgvMHXNW"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F12A21F130D
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 22:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741041320; cv=pass; b=joKB/sC2YMaSKUEdA2CEJFshrCsotDBmjt743iLHBi4IYSzwBG2+mqZGk51hmEf5j9Le94H9hBLAGKkmV55zvwUMfy8q43qi8ltmOz4nGY7MnhVoApqsRSjSaqc2EGDACxkFtTKmcupYAUouHQaSeLjj2j0FuBCmM+MoJ3Y+YfI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741041320; c=relaxed/simple;
-	bh=bSobJudvyl8snpsPDEXpVSfaZCLlmUilrMZO8q5lrgY=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5F02343AB
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 22:34:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741041296; cv=none; b=jVkpYkUUfSbj+bKbAFQoByFVEn1jN1z2ZCUMhrZ70ErLdh2Mr5rwfv9p5IG6bHbjIyGYDgojzr6HcpNTrpx3HndjY1OcfatKavSryJ1SgFX/nu3C/zpg6YZ/Exb7hLCNGVtRLSU59D2vzogLFwL+h/zZjlrDHCQfWEBLMpqmC+U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741041296; c=relaxed/simple;
+	bh=zhieft+nHqE44cRpoGTo7Wgldf9DHgUQm7cs2zZ74M0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LGqrFJ/+KXT3KsW9EuE/cNH7emve9JV5bVDBjWjmYrwdOnVd/lI8HOBVE5xsFOXRDjFPABnA3AXdYVL+yQYHfz+JESvtnNv6OxHvXUWcmOf6eNx/hpR35re/PAKrZjClbdq0Ea7pQi2Djl+CMuLKUGtQV8IKU3wOKGQ9OJqDO2k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=QA68lz2y; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1741041289; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=GejOG25tOtoCkI+YE4XWkXsIJPTBWqb+UgfAZAhzlcVlFx9TguIJRiy9aXih8TMNzNXFoykF46L1KF5uZzmPH67AFFvZGfVGOyKq9Icxm1FNk9WPJKL42JFMvK1yyKWSfxwhDxSWwGef6Ha5YdFqL7L+H1VF5CHYgB1OBaQgG30=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1741041289; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=PlUzblDYEjYCS98Pl5aItUlNWLm0f3R52njwTiqqC3s=; 
-	b=kLzuwD/FsZ3wdDjrs1pSvD1Fzroo3ViwPQTfll2/3Ks3yAKQqwCqOou5tngdoqL3E6VlfzJ7S4EfIOfTi4Q8i331OGfGoDRiZ4T45XzuIhuKQoyGgwDoxVbUOnri+0cq2YxANGAe9g2+bhHPlvjjSI/vPcsoSP4EGdSQYXwTS9w=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741041289;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=PlUzblDYEjYCS98Pl5aItUlNWLm0f3R52njwTiqqC3s=;
-	b=QA68lz2y9nqvEmAh+PsVrmbG1C6sVQ9Fr4ZjpmixXoldvaSqhRo2v2gOpq/7iP+M
-	rDXhD4MZ8svoTj4rlqTHuSqOneFkzzv3bR5SyG86l2MXv62MffBHzeNr6s30/hZzAij
-	YGmZU4qFolK0P1sJv+jRZHVciMzR1j03uEgziYaM=
-Received: by mx.zohomail.com with SMTPS id 1741041286829334.02204399221273;
-	Mon, 3 Mar 2025 14:34:46 -0800 (PST)
-Received: by venus (Postfix, from userid 1000)
-	id 1766918065C; Mon, 03 Mar 2025 23:34:42 +0100 (CET)
-Date: Mon, 3 Mar 2025 23:34:42 +0100
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: hjc@rock-chips.com, andy.yan@rock-chips.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] drm/rockchip: vop2: add missing bitfield.h include
-Message-ID: <quj727pq3oc4xruatx7s5hob7jtcpw6zhe3wv6fhammxhejcem@eois3su6izj7>
-References: <20250303182256.1727178-1-heiko@sntech.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QKzyUjNyl0sJyy+kEDrPhK3agy/4EC6wxJOVnzic8ph3K6RHXYNa6En1Tgb3kVpFu+8bplEuaVCCEmnqRV7J3FFmd7gYMXnrU+kK95l5sbj2TYtSdB7g+7SqGNNTa/c2eRu76gRK39I4Z4mDHAfLneqGMPmCR1Q/JeGz8cSIDjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=vgvMHXNW; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 3 Mar 2025 22:34:46 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741041292;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9L92r6X7Eg96asDUmcRcp3aZhjsIld49Y1+1SOSF1iI=;
+	b=vgvMHXNWl6+D+INZwx3XRAEmwDjUiLF96Tki7+GGtO+iZdEVhR3zEiGmnJSNK+l4wkyKoL
+	zTSIOOqFLAVLmfX2x8xaPjJc33u5yHxfZV3sdXMK0eDE8Uy46pqoHYA995Q0DGH6/M3acb
+	MKVG781br9YG2v0vjVEyPDMbq+os+ik=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Nhat Pham <nphamcs@gmail.com>, akpm@linux-foundation.org,
+	chengming.zhou@linux.dev, linux-mm@kvack.org, kernel-team@meta.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] page_io: zswap: do not crash the kernel on
+ decompression failure
+Message-ID: <Z8YuhvMZkE7CoYRN@google.com>
+References: <20250303200627.2102890-1-nphamcs@gmail.com>
+ <Z8YdV4Vqju2w7hqI@google.com>
+ <20250303215524.GD120597@cmpxchg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="uxnpfa7xaeh6coyf"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250303182256.1727178-1-heiko@sntech.de>
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.4.2/241.32.4
-X-ZohoMailClient: External
+In-Reply-To: <20250303215524.GD120597@cmpxchg.org>
+X-Migadu-Flow: FLOW_OUT
 
+On Mon, Mar 03, 2025 at 04:55:24PM -0500, Johannes Weiner wrote:
+> On Mon, Mar 03, 2025 at 09:21:27PM +0000, Yosry Ahmed wrote:
+> > On Mon, Mar 03, 2025 at 12:06:27PM -0800, Nhat Pham wrote:
+> > > @@ -635,13 +652,11 @@ void swap_read_folio(struct folio *folio, struct swap_iocb **plug)
+> > >  	}
+> > >  	delayacct_swapin_start();
+> > >  
+> > > -	if (swap_read_folio_zeromap(folio)) {
+> > > -		folio_unlock(folio);
+> > > +	if (swap_read_folio_zeromap(folio) != -ENOENT)
+> > >  		goto finish;
+> > 
+> > I would split the zeromap change into a separate patch, but it's
+> > probably fine either way.
+> 
+> +1
+> 
+> > > @@ -1025,12 +1028,31 @@ static void zswap_decompress(struct zswap_entry *entry, struct folio *folio)
+> > >  	sg_init_table(&output, 1);
+> > >  	sg_set_folio(&output, folio, PAGE_SIZE, 0);
+> > >  	acomp_request_set_params(acomp_ctx->req, &input, &output, entry->length, PAGE_SIZE);
+> > > -	BUG_ON(crypto_wait_req(crypto_acomp_decompress(acomp_ctx->req), &acomp_ctx->wait));
+> > > -	BUG_ON(acomp_ctx->req->dlen != PAGE_SIZE);
+> > > +	decomp_ret = crypto_wait_req(crypto_acomp_decompress(acomp_ctx->req), &acomp_ctx->wait);
+> > > +	dlen = acomp_ctx->req->dlen;
+> > >  
+> > >  	if (src != acomp_ctx->buffer)
+> > >  		zpool_unmap_handle(zpool, entry->handle);
+> > >  	acomp_ctx_put_unlock(acomp_ctx);
+> > > +
+> > > +	if (decomp_ret || dlen != PAGE_SIZE) {
+> > > +		zswap_decompress_fail++;
+> > > +		pr_alert_ratelimited(
+> > > +			"decompression failed with returned value %d on zswap entry with "
+> > 
+> > nit: Decompression*
+> > 
+> > I am also wondering how this looks like in dmesg? Is the line too long
+> > to be read? Should we add some line breaks (e.g. like
+> > warn_sysctl_write()), we could probably also put this in a helper to
+> > keep this function visually easy to follow.
+> 
+> If it were more interwoven, I would agree. But it's only followed by
+> the return true, false. Moving it out of line would need another name
+> in the zswap namespace and also take an awkward amount of parameters,
+> so IMO more taxing on the reader.
 
---uxnpfa7xaeh6coyf
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] drm/rockchip: vop2: add missing bitfield.h include
-MIME-Version: 1.0
+My rationale was that no one reading zswap_decompress() will feel the need
+to read a function called zswap_warn_decompress_failure() in the error
+path, so it will save people parsing this huge thing.
 
-Hi,
+FWIW it would only need to take 3 parameters: decomp_ret, dlen, entry.
 
-On Mon, Mar 03, 2025 at 07:22:56PM +0100, Heiko Stuebner wrote:
-> Commit 328e6885996c ("drm/rockchip: vop2: Add platform specific callback")
-> moved per soc configuration code to the other per-soc data into
-> rockchip_vop2_reg.c, but forgot to also include bitfield.h for the used
-> FIELD_PREP macro. Add this missing include.
->=20
-> Fixes: 328e6885996c ("drm/rockchip: vop2: Add platform specific callback")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202503040135.fgoyWdLB-lkp@i=
-ntel.com/
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
+> 
+> But maybe do if (!decomp_ret && dlen == PAGE_SIZE) return true, and
+> then save an indentation for the error part?
+> 
+> > > +			"swap entry value %08lx, swap type %d, and swap offset %lu. "
+> > > +			"compression algorithm is %s. compressed size is %u bytes, and "
+> > > +			"decompressed size is %u bytes.\n",
+> 
+> Any objections to shortening it and avoiding the line length issue?
+> Even with \n's, this is still a lot of characters to dump 10x/5s. And
+> it's not like the debug info is super useful to anyone but kernel
+> developers, who in turn wouldn't have an issue interpreting this:
+> 
+> pr_alert_ratelimited("Decompression error from zswap (%d:%lu %s %u->%d)\n",
+> 		     swptype, swpoffset, name, clen, dlen);
 
-Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Yeah this looks much more concise. It's a bit harder to parser the dmesg
+as you have to cross check the code, but hopefully this is something
+that people rarely have to do.
 
-Greetings,
+I don't feel strongly about adding a helper in this case, unless we want
+to add local variables (like Johannes did above), in which case a helper
+would be a good way to hide them.
 
--- Sebastian
-
->  drivers/gpu/drm/rockchip/rockchip_vop2_reg.c | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c b/drivers/gpu/d=
-rm/rockchip/rockchip_vop2_reg.c
-> index 0afef24db144..f86a30df94aa 100644
-> --- a/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c
-> +++ b/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c
-> @@ -4,6 +4,7 @@
->   * Author: Andy Yan <andy.yan@rock-chips.com>
->   */
-> =20
-> +#include <linux/bitfield.h>
->  #include <linux/kernel.h>
->  #include <linux/component.h>
->  #include <linux/mod_devicetable.h>
-> --=20
-> 2.47.2
->=20
-
---uxnpfa7xaeh6coyf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmfGLnsACgkQ2O7X88g7
-+prXag/+MoxGEPpemJ0hBwdSLvlh08UR3FhUgUQ07dWpX+Jn/qz1RSQi2zxlnFqp
-gizw7mzUOFbi0+dXZhXOKCKmTa4jdP+SGujt0DBs4psQHQPMRrtokVb+N4IKKKDd
-zH7hfzTI/FFEXjU4ayhYVsezc/5ilTrOcax9WDFuEeFVm8ORr8ntdg+vOYoXEPVa
-kADBpAn23oPmHbHZCrtRUCN5eomaWiUxYJAW6vBAZs24D8Ne+JmvC2oekhasY1V+
-5S9eVwkDncNSyipWAzFBSV2GM4NLKDXnurNc1GqOFJlH4R6o8dhGpTHxagizkba5
-JmYqI8+Kc+FO3NyXL0mSOvMVduXJEqPFetIhn9KC4B0UDPoK63I1bXmAgh0wdyK8
-Ge5heyM4TD6/L0Mu57aCZJjAwCyW2+ImB9EyXlN6pG8vyd5K7FDY3nEBPf7Pm+Y4
-msgCWZmYeTMPYvKhoY1bvF8io19wFOATKNJZAiyFwGYKea3F53QWF7dSNahmq8Pj
-PepbbEE20SxuKfK+ceiOb4KlzsRA2z5lL2+f04rej8AANsU6EPFkhNjRsruy26wL
-dXocafGEvZChcpqS8EnJDjwVreEdUjFJbFca9E+LVEI259RAczoiv5fYkZhWuNag
-23oy+R6C5o1LqVMmkLc7n0j4hzKNRzpfxDiRc7kzWLLSZb4Q4C4=
-=zYzt
------END PGP SIGNATURE-----
-
---uxnpfa7xaeh6coyf--
+> 
+> > > +			decomp_ret,
+> > > +			entry->swpentry.val,
+> > > +			swp_type(entry->swpentry),
+> > > +			swp_offset(entry->swpentry),
+> > > +			entry->pool->tfm_name,
+> > > +			entry->length,
+> > > +			acomp_ctx->req->dlen);
 
