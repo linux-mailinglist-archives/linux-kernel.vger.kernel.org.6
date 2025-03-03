@@ -1,102 +1,153 @@
-Return-Path: <linux-kernel+bounces-541738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98639A4C102
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:52:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 56AF6A4C103
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:53:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D9CD3A38FA
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:52:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 300D73A315F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7823520FABB;
-	Mon,  3 Mar 2025 12:52:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1BAD20FAB9;
+	Mon,  3 Mar 2025 12:53:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ONH1ZfPz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R+OPJNyT"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C826A1F19A;
-	Mon,  3 Mar 2025 12:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C293BBD8;
+	Mon,  3 Mar 2025 12:53:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741006326; cv=none; b=jfCCg2D5oxcLuIQn1/xmHZzp417qtEWDeqbkMOgg+IOiGAZ9HpdfoRjSS6Uze2dfsCBOcdiNng1BFwaDToKHXqGf0vH0YT933A0NR5KIc2CywXQn1MRFaulHDooUBSFAblzC64hjPmFvr/e9nHRyiFACama/nWUAQvjjf5mKdoI=
+	t=1741006382; cv=none; b=r+LV5I192YShQkDcRJcjRrJBS8ds7fruBbXGgrfcx0cNzUjovq5NH2OCO8yx0YuVn4/m+JRlqUOTnYtzkf5SMIKl4+29QOUCvWrK2i+Ued8yfRIxIXbTiAe6muHFNzT/36NBXHg0MpYDAPOcRyc43RCNiWX7UUHMyOfhASl3IYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741006326; c=relaxed/simple;
-	bh=vN6ggPv/ECtAyJIOC13/S4vopzaeQ+5ICHdDXWNQvl4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GwHYxffdUb1s2Nc3pRfcrqXJx/X6l6X+MU2uucc6hmb0QsZElkLoNkZvlXTb+NdMB7Nemyi0I48YlNHVxih6h1I97s2hNEG+WTNFPcsgtzlT/KaD9BQTgibzbTlxQrY4vguef0NGcAkcIGsRnjpa25ROsfq0YTwRkeGMlIEdSws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ONH1ZfPz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76135C4CED6;
-	Mon,  3 Mar 2025 12:52:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741006326;
-	bh=vN6ggPv/ECtAyJIOC13/S4vopzaeQ+5ICHdDXWNQvl4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ONH1ZfPzWGINdRjQAstNyxlvRq0WrepPbpTzxzMkO8ACwrgPNSl2hWt0ohqGNqKuA
-	 uL50x8rLNKdRa9XY7/aeW7PGIw87q9qKRHOXRHrDtwguDhiIN3rzfxldKlRxIBzreB
-	 /3estso0OyqSxlOnsMMjAgNXJ/3pGo8eTz2b/guUTQC2qdVpA/yZZlmht1L3CAbuPo
-	 O/fdWmA6t6nk1wqqWdoCYjsmlMomEjJWZYqFF0q8SEJzK5oxnNj8LDsUXTsvvcZT9w
-	 zTVx+rCHR9aVnZfAVC8g35lY7LBXVKfNrqNeZFnFbpPfFeEIPtzqqUuy/vjAOaxRjp
-	 DjvxWYsY+d68g==
-Date: Mon, 3 Mar 2025 12:52:00 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Sameer Pujar <spujar@nvidia.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Sheetal <sheetal@nvidia.com>, Ritu Chaudhary <rituc@nvidia.com>,
-	stable@vger.kernel.org, linux-sound@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH] ASoC: tegra: Fix ADX S24_LE audio format
-Message-ID: <215b6a0e-20db-49dc-b2d2-df8dfaf899f6@sirena.org.uk>
-References: <20250302225927.245457-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1741006382; c=relaxed/simple;
+	bh=utD4m9KxZU2qXxJGpfZMJDAIaQB3fI8qf3jyLQewJIY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sT1LlCBUTi2/EbA7Cdr7fTsA0f3PUWhstH03mcdJqgM6ANGzbBGshhQNuMfVa0AY1yPgSSSDgQ16tJsE5n2ni4sqVCSfCHmyFoa4h7oTGONZ2SEDgHnu7n1TOTt/zpSKlSUjqPSmjkcEScfJhbk7JBcz/EziI5WmMD6MiYr6YiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R+OPJNyT; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2239c066347so22441015ad.2;
+        Mon, 03 Mar 2025 04:53:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741006380; x=1741611180; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=g7nF4G/QoMSbEjpBCaNBZjiOr+K5P7XYwcdTcf4W28Q=;
+        b=R+OPJNyTr0dseAovsqCjRMfxbuJUtiPycPyZWZbrn18qK2lPRAsqPKCynDidE2+9TV
+         Z0+ByTLE7kagdZozuzow6T/1ldwzaK8bqL9FmMkInCkHnCT7LqTyy7uBWbD9Ta6TbpYx
+         N0vwGVX5jaeYsZc9MBBvR8kiOqK+6YmVN+2DyDV3FVgV9MlQeFMTlTTjV0EvQ8XHshiU
+         YAXQTdSd0bz6Nwv8v9YZ2YEceG3mcQJsmFoG4lxcf8iO+hB8VYy5gnHEHMEsKbl/sKOh
+         9N/0CGxUIPaFR1lKtcyCC+Wgr41+eHUY7FrtcwANcpha6rFk1hOlrque5NqK2PPbI1mp
+         OaNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741006380; x=1741611180;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g7nF4G/QoMSbEjpBCaNBZjiOr+K5P7XYwcdTcf4W28Q=;
+        b=JxKf1/KA3d5n2agKKnZ1R/RsNJ0DnLB7S9/t8nlkMdW9Q7un1m4qVEUW+z9ugj4pZs
+         2BFI9S5eATPDG/mT+5zNzL4COxb7jIUu0iA2PFVJHhjitFEqV88rEr5NvMDf1DymxUNx
+         kxtN6Oh3zqEI1FgIKcK7QLtqMRQ4OxneV6nHFbh0lbWUv/GHF/AEFsR8vaK14cUNzh+w
+         X2e2SfXVcuenP7YtKLd/X8p1wsY3WjvghvFp67nUXXpfUpQwAuqhyP97c+uhTasWYvY8
+         5zHmoO6sbk0VTnfr9d7aBRplCWtU9PMW3eTcaFPTx7hp/1Dv8mgYyF14In5z2xGufbG4
+         dHSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVSv4Y5vH3uKGV8wN9JUmrfH/b/cVf53GUlj56JSi23pd/EzuU/7dNHRmwfpa8dXpw9PDRFRLifmAs=@vger.kernel.org, AJvYcCX8G/AqoWDRcUgRHKwgmNqA4t9fhCvIlEW0KTKjL8hXWkXgRRMos5rMEozzvBF0C0ZkfJ3SvPe6TLuVz58+@vger.kernel.org
+X-Gm-Message-State: AOJu0YzL/NZe7Co7yTxdoSYelRNizlg1GvCzp5alFj3/5bvoQ2cRzVPu
+	v3ZleCWGDH1QCMC5itvsu85Azpeco/U3c4q7uL0KMsEUgoVXaa3K
+X-Gm-Gg: ASbGnctd/2+QGY1fsVJ8KOyXH7KQKpH6/tnOK3fLm/NSTscV6WlSfwo0JcwRednx2rC
+	9wL397k4JB77dP0armU17j7pmQvArugkUZq8c/shD3kISQrRHOYF+DTUbjI7lEG1yOEGMcC0no7
+	VwOAgfAM0sR68CLRCbRr4gNuS7LlAG+FHGC3H2x7BBAZd37j2ScZi4twc0gqzYDL0ei9uEUfohT
+	MJMQb38iz0VYMEgs0JOg7tkW7ZoO9d7q95ELEg2wimZyKQszyaUHu/KvDdgVSXxpPHJTONZmzjh
+	QQxd+IkYzHWEow6G1sJHiGlgCoNZblPpyxF4jpH3CUlq12U60j/Bxbl9vqoXLk+Rkg==
+X-Google-Smtp-Source: AGHT+IF1rgR/bzCyH/MBlhqBNS9tlfKghtSxJphh7ZXwoa+zdyxUgqJSdsvP8GW9uDtbgiIC8Ss9sQ==
+X-Received: by 2002:a17:902:e54a:b0:223:4b8d:32f1 with SMTP id d9443c01a7336-22368f6360dmr208146755ad.1.1741006379784;
+        Mon, 03 Mar 2025 04:52:59 -0800 (PST)
+Received: from danascape.tail34aafc.ts.net ([2402:e280:218d:2e5:dd9a:b4a:c5e:4e48])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223501fa5a6sm77291805ad.72.2025.03.03.04.52.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 04:52:59 -0800 (PST)
+From: Saalim Quadri <danascape@gmail.com>
+To: jic23@kernel.org
+Cc: lars@metafoo.de,
+	Michael.Hennerich@analog.com,
+	gregkh@linuxfoundation.org,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	Saalim Quadri <danascape@gmail.com>
+Subject: [PATCH] staging: iio: ad5933: Fix CamelCase naming
+Date: Mon,  3 Mar 2025 18:22:46 +0530
+Message-Id: <20250303125246.342704-1-danascape@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="09veEn5TwlpgDBHd"
-Content-Disposition: inline
-In-Reply-To: <20250302225927.245457-2-thorsten.blum@linux.dev>
-X-Cookie: You will be awarded some great honor.
+Content-Transfer-Encoding: 8bit
 
+Reported by checkpatch:
 
---09veEn5TwlpgDBHd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+CHECK: Avoid CamelCase
 
-On Sun, Mar 02, 2025 at 11:59:25PM +0100, Thorsten Blum wrote:
-> Commit 4204eccc7b2a ("ASoC: tegra: Add support for S24_LE audio format")
-> added support for the S24_LE audio format, but duplicated S16_LE in
-> OUT_DAI() for ADX instead.
+Signed-off-by: Saalim Quadri <danascape@gmail.com>
+---
+ drivers/staging/iio/impedance-analyzer/ad5933.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-Please allow a reasonable time for review.  People get busy, go on
-holiday, attend conferences and so on so unless there is some reason for
-urgency (like critical bug fixes) please allow at least a couple of
-weeks for review.  If there have been review comments then people may be
-waiting for those to be addressed.
+diff --git a/drivers/staging/iio/impedance-analyzer/ad5933.c b/drivers/staging/iio/impedance-analyzer/ad5933.c
+index d5544fc2fe98..a1a5eee4f736 100644
+--- a/drivers/staging/iio/impedance-analyzer/ad5933.c
++++ b/drivers/staging/iio/impedance-analyzer/ad5933.c
+@@ -43,10 +43,10 @@
+ #define AD5933_CTRL_POWER_DOWN		(0xA << 4)
+ #define AD5933_CTRL_STANDBY		(0xB << 4)
+ 
+-#define AD5933_CTRL_RANGE_2000mVpp	(0x0 << 1)
+-#define AD5933_CTRL_RANGE_200mVpp	(0x1 << 1)
+-#define AD5933_CTRL_RANGE_400mVpp	(0x2 << 1)
+-#define AD5933_CTRL_RANGE_1000mVpp	(0x3 << 1)
++#define AD5933_CTRL_RANGE_2000MVPP	(0x0 << 1)
++#define AD5933_CTRL_RANGE_200MVPP	(0x1 << 1)
++#define AD5933_CTRL_RANGE_400MVPP	(0x2 << 1)
++#define AD5933_CTRL_RANGE_1000MVPP	(0x3 << 1)
+ #define AD5933_CTRL_RANGE(x)		((x) << 1)
+ 
+ #define AD5933_CTRL_PGA_GAIN_1		(0x1 << 0)
+@@ -68,8 +68,8 @@
+ #define AD5933_I2C_ADDR_POINTER		0xB0
+ 
+ /* Device Specs */
+-#define AD5933_INT_OSC_FREQ_Hz		16776000
+-#define AD5933_MAX_OUTPUT_FREQ_Hz	100000
++#define AD5933_INT_OSC_FREQ_HZ		16776000
++#define AD5933_MAX_OUTPUT_FREQ_HZ	100000
+ #define AD5933_MAX_RETRIES		100
+ 
+ #define AD5933_OUT_RANGE		1
+@@ -302,7 +302,7 @@ static ssize_t ad5933_store_frequency(struct device *dev,
+ 	if (ret)
+ 		return ret;
+ 
+-	if (val > AD5933_MAX_OUTPUT_FREQ_Hz)
++	if (val > AD5933_MAX_OUTPUT_FREQ_HZ)
+ 		return -EINVAL;
+ 
+ 	ret = iio_device_claim_direct_mode(indio_dev);
+@@ -695,7 +695,7 @@ static int ad5933_probe(struct i2c_client *client)
+ 		st->mclk_hz = ext_clk_hz;
+ 		st->ctrl_lb = AD5933_CTRL_EXT_SYSCLK;
+ 	} else {
+-		st->mclk_hz = AD5933_INT_OSC_FREQ_Hz;
++		st->mclk_hz = AD5933_INT_OSC_FREQ_HZ;
+ 		st->ctrl_lb = AD5933_CTRL_INT_SYSCLK;
+ 	}
+ 
+-- 
+2.34.1
 
---09veEn5TwlpgDBHd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfFpe8ACgkQJNaLcl1U
-h9D+Lgf8DTpEtDAyCKsn5luzCVg7TGGIKZrLUvqF0vP7Q3NNkRzoy1cS46E6pZyC
-6wnVbCsOZiQ+Yi0a3s5Dj3L0lYDD5my9AQ41ZooayRTxILP+2QZIrgRZZUadWqa4
-0oT6manyA3BkNAL0y8f9riEPaiUdCGoRH0quWPpX4IdQgNygEXbAXwmfndXnay+c
-DhAyrHT+n5G6RYZwToc5TIzw/NmpjNkUUTEoqVt3gARJ2gSK9Spl6Mph1Ol2DlMX
-giSXUP5+795ONq5EBoO+Zxz0F9KmXcvdvPXy/K7knXaIcOAru+e4W7lidbWncJgX
-pFRb6FUb91C4vXk9U8v8FoL/pZw43A==
-=ZzNs
------END PGP SIGNATURE-----
-
---09veEn5TwlpgDBHd--
 
