@@ -1,133 +1,84 @@
-Return-Path: <linux-kernel+bounces-542822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 698CEA4CE25
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:19:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA86AA4CE2A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:20:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 364853AD299
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:19:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E4461735E1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:20:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59E91F1538;
-	Mon,  3 Mar 2025 22:19:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D882356BD;
+	Mon,  3 Mar 2025 22:19:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Z47OAkMR"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UvoPBHed"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF101F03C0
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 22:19:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F631EFFBA;
+	Mon,  3 Mar 2025 22:19:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741040350; cv=none; b=IVZGBwFz0rtEiYLx86HZuIK6yukmGI5LQ/I2xwwiZuuNzVEgdWBpkRspDcf3kTKiO8IFzLw0IbmPrRDmpBoDiRw/pJNgqy6yuMLHLqkrpqOWbrUtjMM3uuRbxbLyK8H6HLzT8AB8QS46bsgT2sxYHbUhAuJEKMS0fpoVsAAHgko=
+	t=1741040390; cv=none; b=E55ABOlAR0SIq3xixhCe/d2oWsmeeSaVBl41+v8P57Usobot3e0nZuiwZtXz2EvZuezetDFA65PgG71YMAdd8xUsGhNdwXoSAC6s02vZZ0LzcqTWf+Wi2YKL5a4NGnskkpN6UM4AOnx/vk9cBZYCrH6n7GbSpX6NrLbOX+Eqk7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741040350; c=relaxed/simple;
-	bh=BlPYKcfBkBVpT3V5O26Xd6WR6xCeoqftHSDi4xMENnc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RAGpFXFyPAVQH++XrKQ4VEO2iTcKtR8DGq7zqadCEu/9FjVV5CW+BHRhAlrKrhV34W8k9u7nv3YsxC5dFBaPo8DtoAZpiHMALyqMF7KgxJ5RynGAhdPNWJYTXAOdw6ynZsNKT3TP7BugKGHToO3yYmKij95HR6g+dSPhKIuAhR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Z47OAkMR; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 3 Mar 2025 22:18:59 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741040344;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BqNM3b9INTyWTAPDqRKsbsOJ+JU7cKGKgDcZdOQhQpY=;
-	b=Z47OAkMRrnvMr//9J9gBTG2gdHDpVx40BcwBJNHUNaUnH/CJdZKwmch8k2VSxVo23UP5+t
-	1N2DwaEVMtBkYJ8UBI/MkiNsi28wluWEdDHziDMgfUFsirbkwVSSfR9io4AEEQSQTHFf0n
-	oiiuqYL2pVhlKnUdV3zqdeYHRwoaaHU=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Maxim Levitsky <mlevitsk@redhat.com>
-Cc: Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 12/13] KVM: nSVM: Service local TLB flushes before
- nested transitions
-Message-ID: <Z8Yq00wc_9_NRRkZ@google.com>
-References: <20250205182402.2147495-1-yosry.ahmed@linux.dev>
- <20250205182402.2147495-13-yosry.ahmed@linux.dev>
- <540397690642d3aa7e77775a721ba5a62bbdc2ae.camel@redhat.com>
+	s=arc-20240116; t=1741040390; c=relaxed/simple;
+	bh=lhz6YjfSTKtzAmONbQMPFT2eHdU4hQ3fNb+tQ4kLtBI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oJmrZ+SHJiCrAowQKJtKqg1nukY+aSW4iypIE8mRHyod3mMii7jCvIApCB/f/mCjBacWsKqY6GNMIZCcK0lTaU3wrx9jJwkaS70Sre02n3Vh/fjVTb3Zuj7CF4brPI0H+v+oMuUJAIVSBBCgW9jnMeL+rN9eP+cyvdKTxMPcpL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UvoPBHed; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EEFFC4CED6;
+	Mon,  3 Mar 2025 22:19:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741040389;
+	bh=lhz6YjfSTKtzAmONbQMPFT2eHdU4hQ3fNb+tQ4kLtBI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=UvoPBHedP90g0YpFicl7IKfoT1tdRFQD6k63Vjx1L59UfdvheV1y4EwUVIKFmuLcw
+	 q0iqMYlci5Kj6/7aq/2vDNUeU7bo/4CbHRKoFlDslsesbsCSvPBR1YLhOvZ6NCIAoj
+	 8dcfZaB1MewlbGBgR5GjPshSCRB0P22cADv4P9h8Gb+NudUQLTobuIxZQKjOX3+zEU
+	 DZCH7gqSGpynwCGKN1oKqGW79Jv/EqyuJPew2T4juZ0q95UpJXWCJXtvlo8Mh2mJJL
+	 ZpSMZXBGs0xROWiNVIJETIbkAW3zOQzRUesgLBSWiKki8x8YYkLbTbNFjKM1CmAgV4
+	 RoQxjes3twGnw==
+Date: Mon, 3 Mar 2025 14:19:48 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Shahar Shitrit <shshitrit@nvidia.com>
+Cc: Tariq Toukan <tariqt@nvidia.com>, "David S. Miller"
+ <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>, Eric Dumazet
+ <edumazet@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>, Saeed Mahameed
+ <saeedm@nvidia.com>, Gal Pressman <gal@nvidia.com>, Leon Romanovsky
+ <leonro@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+ netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Carolina Jubran <cjubran@nvidia.com>
+Subject: Re: [PATCH net-next 3/6] net/mlx5e: Enable lanes configuration when
+ auto-negotiation is off
+Message-ID: <20250303141948.53a5cee6@kernel.org>
+In-Reply-To: <c57977d0-5af6-44b7-80a4-00024f3e5e49@nvidia.com>
+References: <20250226114752.104838-1-tariqt@nvidia.com>
+	<20250226114752.104838-4-tariqt@nvidia.com>
+	<20250228145135.57cf1a73@kernel.org>
+	<c57977d0-5af6-44b7-80a4-00024f3e5e49@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <540397690642d3aa7e77775a721ba5a62bbdc2ae.camel@redhat.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 28, 2025 at 09:20:18PM -0500, Maxim Levitsky wrote:
-> On Wed, 2025-02-05 at 18:24 +0000, Yosry Ahmed wrote:
-> > KVM does not track TLB flush requests for L1 vs. L2. Hence, service
-> > local flush that target the current context before switching to a new
-> > one. Since ASIDs are tracked per-VMCB, service the flushes before every
-> > VMCB switch.
+On Sun, 2 Mar 2025 10:17:58 +0200 Shahar Shitrit wrote:
+> On 01/03/2025 0:51, Jakub Kicinski wrote:
+> > On Wed, 26 Feb 2025 13:47:49 +0200 Tariq Toukan wrote:  
+> >> +		if (table[i].speed == info->speed) {
+> >> +			if (!info->lanes || table[i].lanes == info->lanes)  
 > > 
-> > This is conceptually similar to how nVMX calls
-> > kvm_service_local_tlb_flush_requests() in
-> > nested_vmx_enter_non_root_mode() and nested_vmx_vmexit(), with the
-> > following differences:
-> > 
-> > 1. nVMX tracks the current VPID based on is_guest_mode(), so local TLB
-> >    flushes are serviced before enter_guest_mode() and
-> >    leave_guest_mode(). On the other hand, nSVM tracks the current ASID
-> >    based on the current VMCB, so the TLB flushes are serviced before an
-> >    VMCB switch.
-> > 
-> > 2. nVMX only enters and leaves guest mode in
-> >    nested_vmx_enter_non_root_mode() and nested_vmx_vmexit(). Other paths
-> >    like vmx_set_nested_state() and vmx_leave_nested() call into these
-> >    two functions. On the other hand, nSVM open codes the switch in
-> >    functions like svm_set_nested_state() and svm_leave_nested(), so
-> >    servicing the flush in svm_switch_svm() is probably most reliable.
-> > 
-> > Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
-> > ---
-> >  arch/x86/kvm/svm/svm.c | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> > 
-> > diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-> > index 5e7b1c9bfa605..6daa7efa9262b 100644
-> > --- a/arch/x86/kvm/svm/svm.c
-> > +++ b/arch/x86/kvm/svm/svm.c
-> > @@ -1421,6 +1421,12 @@ static void svm_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
+> > Hm, on a quick look it seems like lane count was added in all tables,
+> > so not sure why the !info->lanes
 > >  
-> >  void svm_switch_vmcb(struct vcpu_svm *svm, struct kvm_vmcb_info *target_vmcb)
-> >  {
-> > +	/*
-> > +	 * ASIDs are tracked per-VMCB. Perform any pending TLB flushes for the
-> > +	 * current VMCB before switching to a new one.
-> > +	 */
-> > +	kvm_service_local_tlb_flush_requests(&svm->vcpu);
-> > +
-> >  	svm->current_vmcb = target_vmcb;
-> >  	svm->vmcb = target_vmcb->ptr;
-> >  }
-> 
-> 
-> Note that another difference between SVM and VMX is that this code will only set tlb_ctl
-> in the current vmcb, the actual flush can happen much later, when we do VM entry with this vmcb,
-> e.g if we are now in L2, the flush will happen when we enter L2 again.
+> it's for the case only speed was passed from ethtool (then ethtool
+> passes 0 for lanes)
 
-Right, but I think the internal implementation of the TLB flushes is not
-relevant in this specific instance. Do you think it would be useful to
-mention that here?
-
-If we were to document the difference in TLB flush handling between VMX
-and SVM I think a better place would be at kvm_vcpu_flush_tlb_*(), or
-maybe in kvm_host.h where the vendor callbacks are defined? Not sure.
-
-> 
-> I think that this is correct but I might be mistaken.
-> 
-> Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
-
-Thanks!
+Makes sense, I think I read the condition backwards TBH 
+(table[i] vs info).
 
