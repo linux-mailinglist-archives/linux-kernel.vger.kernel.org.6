@@ -1,267 +1,193 @@
-Return-Path: <linux-kernel+bounces-542644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23560A4CBDD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:18:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9968CA4CBD3
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:16:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C1C63A85D7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:17:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 075993A9F70
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:16:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3CB2236435;
-	Mon,  3 Mar 2025 19:14:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADAFB236A62;
+	Mon,  3 Mar 2025 19:13:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="OGF2LUB8"
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EWTopqml"
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B1BD21B9CF;
-	Mon,  3 Mar 2025 19:14:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56F29233132
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 19:13:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741029272; cv=none; b=Rne3+SLGVHE1k+3xBkIAssPDiGy2WcYEhCqUaUmAZwoMzWtyyXv+i+9qcw8lHo4rcECcRrdUkXsUoVzxjyKlvAj6we/A5ouMDQhZPECFMy/4UF9QvruYKca6A20YZ2Uz0ENApYjYO77ya4STUolQbZ/ZmECjTcwDGUtLmEpJ9PY=
+	t=1741029227; cv=none; b=kONA21OSVUlaNfVBOCLN/TutWdMIGWzHU8PPJE61Pf7DuwIMptetpVfcX4/upiSJIBju+97Z0YF9dR0lcKoem8KRg5hCCgUaNUlFNiRwc3vgQLiaB4h4v5HzDv46vLDLoJtCmZmrJcgeCzCPcvt6FGLkeguRJPWJ+reI+3DqTU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741029272; c=relaxed/simple;
-	bh=jwFZkMKsnQuTQ4I15c4UmTEXrZv1BKnCiQfLq7G7akE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lH/wkAnVKJZloxwThLggzgztT4SsMXdKjLUOMAMEq03B/6a+cIZevt7OhTjA/0OzO4WaOZWX/s7z9RPoCATS4M52QYd6pA6JJE2kAfvlReAexXkml7/qUHKzwf1Xu38zOkS7q6KXrqybm3xhztZ8S9u8naDMoiCNeSjrJZWZvP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=OGF2LUB8; arc=none smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 523Ehhqf026239;
-	Mon, 3 Mar 2025 11:13:49 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pfpt0220; bh=n0Py2z32teqpooC3t0pLfnB
-	6+SCyXKVrEV463DKAe6I=; b=OGF2LUB8zaMXQHejaMrVwGm3+nesjuEHAwpaSl2
-	mwjsC5yRZLIr6MQ6HPfrZRNCIZr+l0ZASCI5Rre3EhModHf2MkekeHX3oG51T+s/
-	HcFdv4aItLwvKyzDOl9uQMKvGLRIZn49qf+2UuNTAjmFMpGpY8sAUmlNT4/lyFAU
-	LneR/sIFUBQl0gcF2v5dVKQyuPh/jAZA84rMn4yDt88l8SY48v8D4XegUrVkbckL
-	4rPJUmzHGzryJKPtzHSbA0/3FKwd9pZq5+Ip0jwGOv9n5jlf06Y13wr+mfEa/OGp
-	qJSLj5NcV2WRPhw5OLm6zJBLEmJtcyvQOwCAyFVg/QRxuLg==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4542muc74k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Mar 2025 11:13:48 -0800 (PST)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Mon, 3 Mar 2025 11:13:48 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Mon, 3 Mar 2025 11:13:48 -0800
-Received: from hyd1425.marvell.com (unknown [10.29.37.152])
-	by maili.marvell.com (Postfix) with ESMTP id 2A5B03F7062;
-	Mon,  3 Mar 2025 11:13:41 -0800 (PST)
-From: Sai Krishna <saikrishnag@marvell.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-        <pabeni@redhat.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <sgoutham@marvell.com>,
-        <gakula@marvell.com>, <lcherian@marvell.com>, <jerinj@marvell.com>,
-        <hkelam@marvell.com>, <sbhatta@marvell.com>, <andrew+netdev@lunn.ch>,
-        <bbhushan2@marvell.com>, <nathan@kernel.org>,
-        <ndesaulniers@google.com>, <morbo@google.com>,
-        <justinstitt@google.com>, <llvm@lists.linux.dev>
-CC: Sai Krishna <saikrishnag@marvell.com>, kernel test robot <lkp@intel.com>
-Subject: [net-next PATCH] octeontx2-af: fix build warnings flagged by clang, sparse ,kernel test robot
-Date: Tue, 4 Mar 2025 00:43:39 +0530
-Message-ID: <20250303191339.2679028-1-saikrishnag@marvell.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1741029227; c=relaxed/simple;
+	bh=oZxC6dyJCosOIF+mgQG382FfCTLvK7fHEuNpSTlA6/A=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=CVLOett3/gNaHm+VBS3vx+jbZqs2GeaqqDm/mWF8F/P5tT5JDhk7NhxBxgrvXMGu4g/4xz4O+NZJWvcrk4sn8+G5Czla00AZGfBjajWav/iIx66SB0QQnvKLG0o+TgnFMHQDLGY9gHCsQRhHgXs1R6ix6P73OGFf02F6bS6Ogqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=EWTopqml; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6e88983cedaso37546626d6.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 11:13:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1741029224; x=1741634024; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lRCIFV1ZgaG5znhFrv01vJjvvWfbVwJPIuxC5a3io7I=;
+        b=EWTopqmlbY9FaKgfpik1ZkCDucRQHrO5KF4yyGERUbhLr3nYCTscIB7JoYL87jL95F
+         9SsGzrgsudO9rW4sqEXdWEkJ5ue+hUb+LB1+NhymPvBw8psYfyTXBBeKt0cEqWzsUJm8
+         3WB9GiXVEZXFT8rlK7LXH8kXOgKRpq4NaOPwI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741029224; x=1741634024;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lRCIFV1ZgaG5znhFrv01vJjvvWfbVwJPIuxC5a3io7I=;
+        b=tdD7ggK71QuliIa08RfuU2HR2VeOsaTuu/0FGrmSNw+s8XcywvBoBtML47hNPWK0WE
+         sOi0T4ZpqfPAbrcjcRqngdk6/jpfVf6/83lqJeSs2mfoUtYTuuhbgy1VjmnREq0j9Jjz
+         eiv5yoUT60TyA7dQ7/GPr+i/B7EBN+iG3TdXvjC646GbhzQeAm7N1Vq+H4pdY4+kPbO+
+         yiSnvY8Hyjz7yPJS4AQ2YL777matrcQl063InB8XHPP/ALyAa8l6UmEfVzjqwqtHd2Uf
+         05S2PvYBPAIfkEIy94rYPH7hNPZkN1d85lGWNGL+4ETK9OVhNiUDQgcmwIzQ+HZOhMEy
+         aWBw==
+X-Forwarded-Encrypted: i=1; AJvYcCUST2ijDspjQEpVTLcMdnQyF7b6yVXAyysAc4C3CXCncvJfMgkKxf0WDXzKFswMLFMWHxI7GNGORtbVgvk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbTGYwVM2jk7D1t5/3Ky0HKTIZtf/D7qdIsENgj0IgPdPMGd5e
+	VrRinzrUn5kzliSqBR6+E8+68wOadXEn0yaT1V8MSflXX6HdJxc4VfTdfqi5AQ==
+X-Gm-Gg: ASbGncuLm/67ZykFALpV4Tq0nU5ohwiRcjmMdQc23sTLCKQFbwKIVtsXKh7WuNSOG0d
+	2qni8h7EIKhf3C6iPBOvUOqrK7XmXNYRuVFuuuQA4IylKCTwtPTiOEQlv8OXAbk7Nb9u93bJ2B5
+	6GePndI41EvPvYp2BtzokS1Uiha8A7hKTubuFsMFarA8tDLl9BJrpnQV3K/7TwOJjD1h2o83Ggz
+	OVxNoP0oMbbaiEv9VhET5ueFjAAkAh9yUSFNGJ/wFsmqBk5sgayFwJ/I+RCyW4DkKc6l/QZXSri
+	aGUtMox4hJcvycLdG5UGwLwDGz9+orFlYrfdOiOfmm6TTnOeEGjLSIKblVUZtu4WM3u4E1b8dVz
+	BVGbOq5E4PPodKlKV7/qWAw==
+X-Google-Smtp-Source: AGHT+IGgAMhBvpb4nsGeXahyeU7QvHudr2zB0sMWGj7GvAH27b8oGyIO1P2rU2HrJVT6CCDwg9nu2g==
+X-Received: by 2002:a05:6214:1c0c:b0:6e8:96aa:6034 with SMTP id 6a1803df08f44-6e8a0c888d7mr226692286d6.3.1741029224267;
+        Mon, 03 Mar 2025 11:13:44 -0800 (PST)
+Received: from denia.c.googlers.com (15.237.245.35.bc.googleusercontent.com. [35.245.237.15])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-474e0f1e0c1sm19745661cf.47.2025.03.03.11.13.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 11:13:43 -0800 (PST)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Mon, 03 Mar 2025 19:13:39 +0000
+Subject: [PATCH v5 2/5] media: uvcvideo: Create uvc_pm_(get|put) functions
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: -QWUbfMFYpXDRYAB_pcsBQPvIBN4CZtQ
-X-Authority-Analysis: v=2.4 cv=H6Ihw/Yi c=1 sm=1 tr=0 ts=67c5ff6c cx=c_pps a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17 a=Vs1iUdzkB0EA:10 a=RpNjiQI2AAAA:8 a=QyXUC8HyAAAA:8 a=M5GUcnROAAAA:8 a=mOT8R8ziQExDnPD9evEA:9 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: -QWUbfMFYpXDRYAB_pcsBQPvIBN4CZtQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-03_09,2025-03-03_03,2024-11-22_01
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250303-uvc-granpower-ng-v5-2-a3dfbe29fe91@chromium.org>
+References: <20250303-uvc-granpower-ng-v5-0-a3dfbe29fe91@chromium.org>
+In-Reply-To: <20250303-uvc-granpower-ng-v5-0-a3dfbe29fe91@chromium.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Hans de Goede <hdegoede@redhat.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, 
+ Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.14.1
 
-This cleanup patch avoids build warnings flagged by clang,
-sparse, kernel test robot.
+Most of the times that we have to call uvc_status_(get|put) we need to
+call the usb_autopm_ functions.
 
-Warning reported by clang:
-drivers/net/ethernet/marvell/octeontx2/af/rvu.c:2993:47:
-warning: arithmetic between different enumeration types
-('enum rvu_af_int_vec_e' and 'enum rvu_pf_int_vec_e')
-[-Wenum-enum-conversion]
- 2993 | return (pfvf->msix.max >= RVU_AF_INT_VEC_CNT +
-RVU_PF_INT_VEC_CNT) &&
+Create a new pair of functions that automate this for us. This
+simplifies the current code and future PM changes in the driver.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes:
-https://urldefense.proofpoint.com/v2/url?u=https-3A__lore.kernel.org_o
-e-2Dkbuild-2Dall_202410221614.07o9QVjo-2Dlkp-40intel.com_&d=DwIBAg&c=n
-KjWec2b6R0mOyPaz7xtfQ&r=c3MsgrR-U-HFhmFd6R4MWRZG-8QeikJn5PkjqMTpBSg&m=
-3BTQZwLYQz62kiZ1f9l4NBS35e13zrdP_5Hx9-1k5Xt-PgWUMdRcW7G4m5xytsHn&s=OeX
-wAXPel9ALwlzw4B26ORCXJF_gbqT9Sk3-opDDfgA&e=
-Signed-off-by: Sai Krishna <saikrishnag@marvell.com>
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/net/ethernet/marvell/octeontx2/af/common.h |  2 +-
- drivers/net/ethernet/marvell/octeontx2/af/rvu.c    | 14 ++++++++------
- .../ethernet/marvell/octeontx2/nic/otx2_common.c   | 10 +++++-----
- .../net/ethernet/marvell/octeontx2/nic/otx2_pf.c   |  9 ++++-----
- 4 files changed, 18 insertions(+), 17 deletions(-)
+ drivers/media/usb/uvc/uvc_v4l2.c | 36 ++++++++++++++++++++++++------------
+ drivers/media/usb/uvc/uvcvideo.h |  4 ++++
+ 2 files changed, 28 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/af/common.h b/drivers/net/ethernet/marvell/octeontx2/af/common.h
-index 406c59100a35..8a08bebf08c2 100644
---- a/drivers/net/ethernet/marvell/octeontx2/af/common.h
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/common.h
-@@ -39,7 +39,7 @@ struct qmem {
- 	void            *base;
- 	dma_addr_t	iova;
- 	int		alloc_sz;
--	u16		entry_sz;
-+	u32		entry_sz;
- 	u8		align;
- 	u32		qsize;
- };
-diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
-index cd0d7b7774f1..c850ea5d1960 100644
---- a/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
-@@ -591,7 +591,7 @@ static void rvu_check_min_msix_vec(struct rvu *rvu, int nvecs, int pf, int vf)
+diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
+index f9cd6db759c5..de1e105f7263 100644
+--- a/drivers/media/usb/uvc/uvc_v4l2.c
++++ b/drivers/media/usb/uvc/uvc_v4l2.c
+@@ -26,6 +26,27 @@
  
- check_pf:
- 	if (pf == 0)
--		min_vecs = RVU_AF_INT_VEC_CNT + RVU_PF_INT_VEC_CNT;
-+		min_vecs = (int)RVU_AF_INT_VEC_CNT + (int)RVU_PF_INT_VEC_CNT;
- 	else
- 		min_vecs = RVU_PF_INT_VEC_CNT;
+ #include "uvcvideo.h"
  
-@@ -819,13 +819,14 @@ static int rvu_fwdata_init(struct rvu *rvu)
- 		goto fail;
++int uvc_pm_get(struct uvc_device *dev)
++{
++	int ret;
++
++	ret = usb_autopm_get_interface(dev->intf);
++	if (ret)
++		return ret;
++
++	ret = uvc_status_get(dev);
++	if (ret)
++		usb_autopm_put_interface(dev->intf);
++
++	return ret;
++}
++
++void uvc_pm_put(struct uvc_device *dev)
++{
++	uvc_status_put(dev);
++	usb_autopm_put_interface(dev->intf);
++}
++
+ static int uvc_acquire_privileges(struct uvc_fh *handle);
  
- 	BUILD_BUG_ON(offsetof(struct rvu_fwdata, cgx_fw_data) > FWDATA_CGX_LMAC_OFFSET);
--	rvu->fwdata = ioremap_wc(fwdbase, sizeof(struct rvu_fwdata));
-+	rvu->fwdata = (__force struct rvu_fwdata *)
-+		ioremap_wc(fwdbase, sizeof(struct rvu_fwdata));
- 	if (!rvu->fwdata)
- 		goto fail;
- 	if (!is_rvu_fwdata_valid(rvu)) {
- 		dev_err(rvu->dev,
- 			"Mismatch in 'fwdata' struct btw kernel and firmware\n");
--		iounmap(rvu->fwdata);
-+		iounmap((void __iomem *)rvu->fwdata);
- 		rvu->fwdata = NULL;
- 		return -EINVAL;
+ static int uvc_control_add_xu_mapping(struct uvc_video_chain *chain,
+@@ -636,20 +657,13 @@ static int uvc_v4l2_open(struct file *file)
+ 	stream = video_drvdata(file);
+ 	uvc_dbg(stream->dev, CALLS, "%s\n", __func__);
+ 
+-	ret = usb_autopm_get_interface(stream->dev->intf);
+-	if (ret < 0)
+-		return ret;
+-
+ 	/* Create the device handle. */
+ 	handle = kzalloc(sizeof(*handle), GFP_KERNEL);
+-	if (handle == NULL) {
+-		usb_autopm_put_interface(stream->dev->intf);
++	if (!handle)
+ 		return -ENOMEM;
+-	}
+ 
+-	ret = uvc_status_get(stream->dev);
++	ret = uvc_pm_get(stream->dev);
+ 	if (ret) {
+-		usb_autopm_put_interface(stream->dev->intf);
+ 		kfree(handle);
+ 		return ret;
  	}
-@@ -838,7 +839,7 @@ static int rvu_fwdata_init(struct rvu *rvu)
- static void rvu_fwdata_exit(struct rvu *rvu)
- {
- 	if (rvu->fwdata)
--		iounmap(rvu->fwdata);
-+		iounmap((void __iomem *)rvu->fwdata);
+@@ -684,9 +698,7 @@ static int uvc_v4l2_release(struct file *file)
+ 	kfree(handle);
+ 	file->private_data = NULL;
+ 
+-	uvc_status_put(stream->dev);
+-
+-	usb_autopm_put_interface(stream->dev->intf);
++	uvc_pm_put(stream->dev);
+ 	return 0;
  }
  
- static int rvu_setup_nix_hw_resource(struct rvu *rvu, int blkaddr)
-@@ -2384,7 +2385,8 @@ static int rvu_get_mbox_regions(struct rvu *rvu, void **mbox_addr,
- 				bar4 = rvupf_read64(rvu, RVU_PF_VF_BAR4_ADDR);
- 				bar4 += region * MBOX_SIZE;
- 			}
--			mbox_addr[region] = (void *)ioremap_wc(bar4, MBOX_SIZE);
-+			mbox_addr[region] = (__force void *)
-+				ioremap_wc(bar4, MBOX_SIZE);
- 			if (!mbox_addr[region])
- 				goto error;
- 		}
-@@ -2407,7 +2409,7 @@ static int rvu_get_mbox_regions(struct rvu *rvu, void **mbox_addr,
- 					  RVU_AF_PF_BAR4_ADDR);
- 			bar4 += region * MBOX_SIZE;
- 		}
--		mbox_addr[region] = (void *)ioremap_wc(bar4, MBOX_SIZE);
-+		mbox_addr[region] = (__force void *)ioremap_wc(bar4, MBOX_SIZE);
- 		if (!mbox_addr[region])
- 			goto error;
- 	}
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
-index 2b49bfec7869..e0e592fd02f7 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
-@@ -29,10 +29,10 @@ static void otx2_nix_rq_op_stats(struct queue_stats *stats,
- 	u64 incr = (u64)qidx << 32;
- 	u64 *ptr;
+diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+index bc87e1f2c669..fbe3649c7cd6 100644
+--- a/drivers/media/usb/uvc/uvcvideo.h
++++ b/drivers/media/usb/uvc/uvcvideo.h
+@@ -763,6 +763,10 @@ void uvc_status_suspend(struct uvc_device *dev);
+ int uvc_status_get(struct uvc_device *dev);
+ void uvc_status_put(struct uvc_device *dev);
  
--	ptr = (u64 *)otx2_get_regaddr(pfvf, NIX_LF_RQ_OP_OCTS);
-+	ptr = (__force u64 *)otx2_get_regaddr(pfvf, NIX_LF_RQ_OP_OCTS);
- 	stats->bytes = otx2_atomic64_add(incr, ptr);
++/* PM */
++int uvc_pm_get(struct uvc_device *dev);
++void uvc_pm_put(struct uvc_device *dev);
++
+ /* Controls */
+ extern const struct v4l2_subscribed_event_ops uvc_ctrl_sub_ev_ops;
  
--	ptr = (u64 *)otx2_get_regaddr(pfvf, NIX_LF_RQ_OP_PKTS);
-+	ptr = (__force u64 *)otx2_get_regaddr(pfvf, NIX_LF_RQ_OP_PKTS);
- 	stats->pkts = otx2_atomic64_add(incr, ptr);
- }
- 
-@@ -42,10 +42,10 @@ static void otx2_nix_sq_op_stats(struct queue_stats *stats,
- 	u64 incr = (u64)qidx << 32;
- 	u64 *ptr;
- 
--	ptr = (u64 *)otx2_get_regaddr(pfvf, NIX_LF_SQ_OP_OCTS);
-+	ptr = (__force u64 *)otx2_get_regaddr(pfvf, NIX_LF_SQ_OP_OCTS);
- 	stats->bytes = otx2_atomic64_add(incr, ptr);
- 
--	ptr = (u64 *)otx2_get_regaddr(pfvf, NIX_LF_SQ_OP_PKTS);
-+	ptr = (__force u64 *)otx2_get_regaddr(pfvf, NIX_LF_SQ_OP_PKTS);
- 	stats->pkts = otx2_atomic64_add(incr, ptr);
- }
- 
-@@ -853,7 +853,7 @@ void otx2_sqb_flush(struct otx2_nic *pfvf)
- 	struct otx2_snd_queue *sq;
- 	u64 incr, *ptr, val;
- 
--	ptr = (u64 *)otx2_get_regaddr(pfvf, NIX_LF_SQ_OP_STATUS);
-+	ptr = (__force u64 *)otx2_get_regaddr(pfvf, NIX_LF_SQ_OP_STATUS);
- 	for (qidx = 0; qidx < otx2_get_total_tx_queues(pfvf); qidx++) {
- 		sq = &pfvf->qset.sq[qidx];
- 		if (!sq->sqb_ptrs)
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-index e1dde93e8af8..6c23d64e81f8 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-@@ -595,8 +595,7 @@ static int otx2_pfvf_mbox_init(struct otx2_nic *pf, int numvfs)
- 		base = pci_resource_start(pf->pdev, PCI_MBOX_BAR_NUM) +
- 		       MBOX_SIZE;
- 	else
--		base = readq((void __iomem *)((u64)pf->reg_base +
--					      RVU_PF_VF_BAR4_ADDR));
-+		base = readq(pf->reg_base + RVU_PF_VF_BAR4_ADDR);
- 
- 	hwbase = ioremap_wc(base, MBOX_SIZE * pf->total_vfs);
- 	if (!hwbase) {
-@@ -645,7 +644,7 @@ static void otx2_pfvf_mbox_destroy(struct otx2_nic *pf)
- 	}
- 
- 	if (mbox->mbox.hwbase)
--		iounmap(mbox->mbox.hwbase);
-+		iounmap((void __iomem *)mbox->mbox.hwbase);
- 
- 	otx2_mbox_destroy(&mbox->mbox);
- }
-@@ -1309,7 +1308,7 @@ static irqreturn_t otx2_q_intr_handler(int irq, void *data)
- 
- 	/* CQ */
- 	for (qidx = 0; qidx < pf->qset.cq_cnt; qidx++) {
--		ptr = otx2_get_regaddr(pf, NIX_LF_CQ_OP_INT);
-+		ptr = (__force u64 *)otx2_get_regaddr(pf, NIX_LF_CQ_OP_INT);
- 		val = otx2_atomic64_add((qidx << 44), ptr);
- 
- 		otx2_write64(pf, NIX_LF_CQ_OP_INT, (qidx << 44) |
-@@ -1348,7 +1347,7 @@ static irqreturn_t otx2_q_intr_handler(int irq, void *data)
- 		 * these are fatal errors.
- 		 */
- 
--		ptr = otx2_get_regaddr(pf, NIX_LF_SQ_OP_INT);
-+		ptr = (__force u64 *)otx2_get_regaddr(pf, NIX_LF_SQ_OP_INT);
- 		val = otx2_atomic64_add((qidx << 44), ptr);
- 		otx2_write64(pf, NIX_LF_SQ_OP_INT, (qidx << 44) |
- 			     (val & NIX_SQINT_BITS));
+
 -- 
-2.25.1
+2.48.1.711.g2feabab25a-goog
 
 
