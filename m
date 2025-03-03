@@ -1,98 +1,157 @@
-Return-Path: <linux-kernel+bounces-541400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E7B4A4BC8E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:39:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ECCCA4BC93
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:40:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 530DD3A46D2
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:39:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EE92188FAD9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:40:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076221F30C3;
-	Mon,  3 Mar 2025 10:39:31 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F871F37C3;
+	Mon,  3 Mar 2025 10:40:34 +0000 (UTC)
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D3231F1300
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 10:39:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 200F31D7E4C;
+	Mon,  3 Mar 2025 10:40:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740998370; cv=none; b=QNqsUDjIrgaw/9fRY0MPvlDlgg8l1qhS/wxfg9IQhb64btoEe/5wweRUnNwsQq7tSeuz2MAiJHte7Nbj/MY4KUyWUnild4UYz8t1p3kfCdWpFJfb1P+jURZt1EGxKTzP3wzTpMuQbLCRcjyGpxiyGBoUm4nhjfuFmmOYTg1qYcY=
+	t=1740998434; cv=none; b=sxuAHBEdAodfmPL8uFAOBYuZHNeuMgZvhzQMMoHgQUwp6nZONZqhgemB7x37cyoNZkSLU4klQ9kyckGTzRtLiIBLUqIJOk+Flpm5htsN0HyuLuhcUS4jawSZ5tPFebahnSY4AYIHTXczhuG19c0FVodwTYcRxR2p7iZ/4M1MsuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740998370; c=relaxed/simple;
-	bh=90NedZ4Khg1tX2c3RBe9hmd9ZkT5kxT+0JlDT5i+PDM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=jdsY3udx++maAA0LSFLWZxMsP+KjFLxtmCOmwNYNXX4bKp4ZpH3M6y8aUG1XiwPt7rqveJL0nAX+Gt5YqKoDArZ9O5P8Q+Kr2DRPpmrO/Tj2UF5lrIpZX1ZXtayIALirQPTkFLrtdUwuUA4gt+yuYIszUF4Z8eC2sThNGgRGSZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3cf64584097so48941055ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 02:39:28 -0800 (PST)
+	s=arc-20240116; t=1740998434; c=relaxed/simple;
+	bh=GpiZMOoa9Dd0lVa5mQxYvhJCA3PozAweI+AolilGiy4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QfTeT2Iirj9ofdomy8nBDZ9vcnutFBKTUGCTEiT52jqReSK2sfYjP5FMZ/O2pm1lBVctNJdwcyMOIcUoY64SLPd11veGf12wnAEVTSVBvqLyDDqbX1CjhlolQMBbEFFgl/SxLpnba1ZNKgwG49th4nmX0utSgCBl6v1WBWhjDGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-86b3ed5fde5so3631980241.0;
+        Mon, 03 Mar 2025 02:40:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740998368; x=1741603168;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yx2X3YMfRhmckUUpY5mpeveL25sIpLwo96OtO/Bfk+U=;
-        b=q5/iYrzA9kgmNBDsvOp9NehKk3/mG5l26ovWhIlcdJXhJn6HeBeUu6dR+jRoy1CxBP
-         KnsiUtVDmAoVyvnn7wcTHj+NUKkC+ySANP38DpBJhU3eW2B2h3h/syfxlceow29XnlmS
-         wdXAyzRbD3Vd46siCCm6DqLffKble3OSz0BC/eDhBm1lbPcqsPs4mTr/KkL1c/cdAT4b
-         cFFfPxaTrIEG10gOXzyi68xbQFBJFQTv+TO19Bx78i5aGYHJ/kaAmOrexI6KLD0Quu1V
-         mNoO44Wb44RI5zCM8FHD6EjtDvhRUAmjsfHZmmLmzBBkjEX8BI09YKOv7Uabdx4fD/RJ
-         LEOg==
-X-Forwarded-Encrypted: i=1; AJvYcCUBFtjhEmBDBsVloOR2tbmZrWUDs4Q8lvwRG8uj2VjhL2KUHMGAIdAOpd5hcEF2CJ9mt3ggELGCP4X8vPI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyObH+rQC8CPnjJT6qi3UPS5qV7Xcwm1tuEBUh8BQ69SvMLNSJR
-	LL1Fi5H5zLKzA0BG92nvZq6xtNGjDIyQnhT/C0UN8GtPe+n+AnYKTxuXrWb7qz8OiARnSMVJdsp
-	spF/bDfQzgH+qlhHqmnVN5Fs0PPH+HBzI55kDLoeTtoHDnIgIaCC32VI=
-X-Google-Smtp-Source: AGHT+IFiTwFGAjNBROqwDLCtVMeqyIEGryfGDay6c8a6zPiDcT2KKOpnWLTTDcnMd1J12jZaozpL/pUxD2mLRyQBsScqPn06sVE5
+        d=1e100.net; s=20230601; t=1740998429; x=1741603229;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=j7nppDH0wEnn0k1LbQlYHcxjcCY12F5sq67FKUOJ3Wk=;
+        b=rEaU6PylpvNHHpdKiJEKrmy8MaMBSvzNnXk90qka5PgM0cb3/ERyMyZFdidj2PVG4P
+         98w1X+BXNeJvfSTodPEjYdWZFZeQzbM2dtyFRUZFOscPBCKKy/wpmfR43exzR+HiJigp
+         rh4/V12+jv6/88sACfbDEruPRyaZBCUP9EhpbU9jWB/j+4DNIeTgxmC///qPciuvHcI/
+         OpgPmCYvv8TqVc4fiQ+JWc63VaHShMPHCd6NDkNtqnSWKtDrdv5l9JiEOswU8ff9ChjG
+         MY14GrzblGyq/7GsjJCstLJBN1fdBlJ2Zf5zMv4BJdjbqQyGzrizbj9jFJSyRPQmULpt
+         8C+g==
+X-Forwarded-Encrypted: i=1; AJvYcCV8U6MfKFyLEBt8FnCKv3HiUJqI0J2XCdz7iz6ol9xm2AQld5uyny8sgnJTJcpz0yumJcY27KCo82YQ@vger.kernel.org, AJvYcCVfIxa+jDve/e7ktzSTHYBtvGBxDB16NzcpvMJxdCSsvsqicfVXEYzY614h3418Mkv98H1eLtAqBMkiPJORy2D9dh0=@vger.kernel.org, AJvYcCVlGEZfUqYvj2QJ6kEoctNR5xnWRpz3acJ0eUtRG+qOCHJwf1UHcNbkV8n9fXRxq7FMySsXPFzyq2EaOvLT@vger.kernel.org, AJvYcCWTlIj7ynjXLN8qsZuJNIq3eK+rmFnDNFHgYHZlmSGPF1f61qdzzxYuRedQHud2R7tEoQNlVaCV@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4ysIml5Mk3B3PXTCGetjlhBHKhIbnGcwA58Z9XC1EhCC5pEIS
+	LwMPcymBCcQIHCb/vmuMT8xpE9aKE8mii1KasfGBb8VdCVnK0l+WOePPZBbR
+X-Gm-Gg: ASbGncsMWJblpi7D7uL4SqIM6BDi47OralO621+RTPijCN+pYLXtXXL1if1nFM2ISw1
+	5T2CwfbuQzKbLDKSEQ9qtcYrFzPnVZQZJHQIuMWBh9xwcbp7OOzANg/edBuMY7exQw8wgMCYZRD
+	FqeLa6YRha4L6b2oxOIavm2uGL/URavYLZbugH2Ea4Ka28iOtejk+u5BWQXjvLsBy9OPWs872of
+	pOlhXc6qIjaRbbiFrUnNnyblyuJ9AfpyXG9KCcQrrEADj/nwKRuuun9Jl8SysCa3mI7JqEsMXXM
+	iYNnDC+sLUIpugFspEsZn+6hr/vkmaG0oxtDR90sN0Q7tz082D7gXkO92Nz+XRNO8QG9Qzgndyc
+	LnK/lCMM=
+X-Google-Smtp-Source: AGHT+IFwwEwdoibEPNyIJoSsMOSEcyoA3IYhqXdgxg8vWiKueAMO9jJvFjxo2atT96bygP6CrBdCMg==
+X-Received: by 2002:a05:6102:3a65:b0:4c1:9ecd:b250 with SMTP id ada2fe7eead31-4c19ecdcb1cmr813504137.5.1740998428785;
+        Mon, 03 Mar 2025 02:40:28 -0800 (PST)
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com. [209.85.222.41])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4c17e90cf5csm1082975137.3.2025.03.03.02.40.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Mar 2025 02:40:27 -0800 (PST)
+Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-86718541914so4406771241.1;
+        Mon, 03 Mar 2025 02:40:27 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUZTYS7ipsmaPBuDels12ewpHS4+ZWfkP/lO4OSvDUm8dc0LNBg5iG7zVIlVpim6WJPLDgfEr9Hfap45BXE@vger.kernel.org, AJvYcCVIAinCCltIbPZimzTR0OSncfBvxdaVX5fYj9n2QkWWAhPSinc6UC4glZ+LtsklswP+n4k390S+@vger.kernel.org, AJvYcCWniliZqvo+Ihj2NEtAwuqSq3rR7cmXPT9LdKpCjhGxdPh5RGt4XRrbQGasP8RJiojXezgBETCTIjEWAgEfNpNXwdw=@vger.kernel.org, AJvYcCWyQth0XikRHX3bWhrX7DNiClaq9TroMFyRQbYTF/+XZSvwwd5tEhfbE6ycW3nuLbLHqytgwSivDt1O@vger.kernel.org
+X-Received: by 2002:a05:6102:2a42:b0:4c0:435b:5dd2 with SMTP id
+ ada2fe7eead31-4c0435b5ebdmr6337617137.1.1740998427518; Mon, 03 Mar 2025
+ 02:40:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12c4:b0:3d0:4700:db0f with SMTP id
- e9e14a558f8ab-3d3e6e6d719mr129288035ab.12.1740998368321; Mon, 03 Mar 2025
- 02:39:28 -0800 (PST)
-Date: Mon, 03 Mar 2025 02:39:28 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67c586e0.050a0220.1dee4d.0125.GAE@google.com>
-Subject: [syzbot] Monthly nilfs report (Mar 2025)
-From: syzbot <syzbot+list2c89da5b557d9a067af8@syzkaller.appspotmail.com>
-To: konishi.ryusuke@gmail.com, linux-kernel@vger.kernel.org, 
-	linux-nilfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <20250302181808.728734-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250302181808.728734-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250302181808.728734-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 3 Mar 2025 11:40:15 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdV8GqnhsJg7J7keGvT=Dvj_w0hZOiuZqCa=tiUgLE8Vtg@mail.gmail.com>
+X-Gm-Features: AQ5f1Jpv15ql5krxTjLeAExxOGaKNBovwnzhgUjXQ5dDEMa9JTfxXPA61zZ_Iv0
+Message-ID: <CAMuHMdV8GqnhsJg7J7keGvT=Dvj_w0hZOiuZqCa=tiUgLE8Vtg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] net: stmmac: Add DWMAC glue layer for Renesas GBETH
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
+	Jose Abreu <joabreu@synopsys.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello nilfs maintainers/developers,
+Hi Prabhakar,
 
-This is a 31-day syzbot report for the nilfs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/nilfs
+On Sun, 2 Mar 2025 at 19:18, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Renesas RZ/V2H(P) SoC is equipped with Synopsys DesignWare Ethernet
+> Quality-of-Service IP block version 5.20. This commit adds DWMAC glue
+> layer for the Renesas GBETH found on the RZ/V2H(P) SoC.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-During the period, 2 new issues were detected and 1 were fixed.
-In total, 6 issues are still open and 61 have already been fixed.
+Thanks for your patch!
 
-Some of the still happening issues:
+> --- /dev/null
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-renesas-gbeth.c
 
-Ref Crashes Repro Title
-<1> 4       Yes   WARNING in nilfs_btree_assign (3)
-                  https://syzkaller.appspot.com/bug?extid=158be45e4d99232e1900
-<2> 2       Yes   INFO: task hung in find_inode (2)
-                  https://syzkaller.appspot.com/bug?extid=6646318bbcf419411bc5
-<3> 2       No    possible deadlock in nilfs_bmap_clear (2)
-                  https://syzkaller.appspot.com/bug?extid=4d7417d6eb8b36554c0d
+> +static int renesas_gbeth_probe(struct platform_device *pdev)
+> +{
+> +       struct plat_stmmacenet_data *plat_dat;
+> +       struct stmmac_resources stmmac_res;
+> +       struct device *dev =3D &pdev->dev;
+> +       struct renesas_gbeth *gbeth;
+> +       struct reset_control *rstc;
+> +       unsigned int i;
+> +       int err;
+> +
+> +       err =3D stmmac_get_platform_resources(pdev, &stmmac_res);
+> +       if (err)
+> +               return dev_err_probe(dev, err,
+> +                                    "failed to get resources\n");
+> +
+> +       plat_dat =3D devm_stmmac_probe_config_dt(pdev, stmmac_res.mac);
+> +       if (IS_ERR(plat_dat))
+> +               return dev_err_probe(dev, PTR_ERR(plat_dat),
+> +                                    "dt configuration failed\n");
+> +
+> +       gbeth =3D devm_kzalloc(dev, sizeof(*gbeth), GFP_KERNEL);
+> +       if (!gbeth)
+> +               return -ENOMEM;
+> +
+> +       plat_dat->clk_tx_i =3D devm_clk_get_enabled(dev, "tx");
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+drivers/net/ethernet/stmicro/stmmac/dwmac-renesas-gbeth.c:52:17:
+error: =E2=80=98struct plat_stmmacenet_data=E2=80=99 has no member named =
+=E2=80=98clk_tx_i=E2=80=99
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+Also not in next-20250228.
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
+Gr{oetje,eeting}s,
 
-You may send multiple commands in a single email message.
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
