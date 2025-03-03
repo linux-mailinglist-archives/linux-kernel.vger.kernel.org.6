@@ -1,375 +1,129 @@
-Return-Path: <linux-kernel+bounces-542696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCF93A4CC85
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 21:13:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05F3EA4CC8C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 21:15:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D277A188B189
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:13:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3215D3AD22E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:15:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 037DD23496F;
-	Mon,  3 Mar 2025 20:13:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A1A1E5B6B;
+	Mon,  3 Mar 2025 20:15:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BXDoULTr"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nKmVwFwo"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CD69236450;
-	Mon,  3 Mar 2025 20:12:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C24C1DFD83;
+	Mon,  3 Mar 2025 20:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741032781; cv=none; b=a2SHmwXFNe72zVwRG8AVrGZ4JWRqeSi0y6NV5DTeDDjnLHKkUdX3EZWuIKf9j3FQZ/anhsWtZliUDSmM3w9NypvaozQncKnmoYelotX+QAGSRxR82AMiST38rZk3M3CJ46tumu16T2c13D4voTtljoJJLGOVhu5f2SuBZiX7vac=
+	t=1741032914; cv=none; b=I59LKldy1YARXOl5YeNM7heQVAXApV6r3PAB1t+yWJaaFMEa8oIC0Cf0NgF2GZeCN7Hul5P5/1YJ+9kJ42l1f4X1TE+DnUm3gsuskN1/pXvOeGQzAkA+GuN1y2YzCGCahwxLtjVqCgYk+qb7CexWEMiusFw53Uy5WVshqU7KdTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741032781; c=relaxed/simple;
-	bh=j1GOyri8clWLV6gk9oxlX10OSoienhVKi5/DH7gN/NM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uqMYbe4FDlHEJ/NSV8w9JG4NNEIkIj8NRKYu+CJyVkd50ViWMafOQHVLcpAZABdmWmUjVaDeWneOtsKBVYgrE8r35ca9fhdSInOqWnRe96amnfhcKf5aPTOMmQvhlwZz1uEgI9BjoyEilaQgE6+8jmx8Y/yZDkKvk7k3sIv3j28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BXDoULTr; arc=none smtp.client-ip=209.85.128.51
+	s=arc-20240116; t=1741032914; c=relaxed/simple;
+	bh=a7tjVGX/fWg7trjOFWAiSMlw93q/R3mkYEIjqIsDTq4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=l23kRd3yBbShUFBJmk3qRK11gE/teBPr/mztiN7YrXezGlBFANh4To8htxH9bGGVySsoO3yAueQwx677RMDZ4vt5ZNM5v/eDc9ce8TFNq+7N5l5u4uIj4jMpzL4ggjQYSneA+EgcEDf60WCyFXB9N97M6G+yH8qNvcxm/dQCvqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nKmVwFwo; arc=none smtp.client-ip=209.85.221.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43bb6b0b898so16253745e9.1;
-        Mon, 03 Mar 2025 12:12:58 -0800 (PST)
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-390e88caa4dso2249139f8f.1;
+        Mon, 03 Mar 2025 12:15:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741032777; x=1741637577; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741032911; x=1741637711; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vX2+4Eog6d6cNohYxJYbUMt9mMzLGfIeRmLh5xVB2RE=;
-        b=BXDoULTrAdb7sBdy67N+A8DTk4gMt2O4UKS6dN0YkqSLKEgk885QOhIJFat+C+/9Qo
-         UkXtL3W8SE1hJdvjNlTRMG0twqxZI/BDc4CsTvZD08HRgXh3ZFti6tERfriklmQrzwbz
-         03LE1oa/Ll5W44FrKcxVjTxpi4KXYjxhM/YTy0ykY5ixKsV149P+Y05wNwD/fsEis8j7
-         iB1FQwJjF86EVqKymLiyqS1gFu4KjfUwY9TyEvdDjqKYqjaHLmVZfSNansl1GfozUwxx
-         vMT7Wjer5bTg2ktyIxajnipcl9KHsKlZ5gJgcWPi+CaYndI526NYh//G22AJXH1om0n8
-         Ycew==
+        bh=6HISwtThj2ckJiw/oP+EKb6mnu3LLOXUZTz/QPS9xm0=;
+        b=nKmVwFwoFnvJVOKfhEML9dWXRlWkI4KpIqfJBkbXlahQrB2LrMltddwLQMe656ldgo
+         GULDgn3T4RVnikSOdqp18++YXoM+IuTw+dfOekKYxJgEe/sYr3V/l935EU6tNkcYAjxD
+         CxdMUK6jtbPL6/5M+dUSMLTw8r9SdttPiPsK98h/aWDJ2j/ZjaaxyNQkmdo4KvFZzyHM
+         cXRa+AXvN9PuQ9WPO4wI5ka7KNoyAodQPYoEz2WMsviQ93EyxNLnSsG4qgYs/Ig6arah
+         P8Hx/NMUJI0uBf8XRRI0selBKQnpBl6zPKWBHoAJD0QKlnKhvUb8BMvysqIHdqUMa9tV
+         moYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741032777; x=1741637577;
+        d=1e100.net; s=20230601; t=1741032911; x=1741637711;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vX2+4Eog6d6cNohYxJYbUMt9mMzLGfIeRmLh5xVB2RE=;
-        b=K6wgGEJRhxX+uNnofLCOdKH4/hM/3ZjCjwv4El4lh7knNF5k+aswCWls9sFNPi50aK
-         iB1xTe9iXk+nEpouohnEbrpIZ/Q/qYX+wdUSMqa28zks2zD/WbR9sHcyrMMbRLKmMV34
-         brCx1zjUQZ+AFRv/0lGhfTf2W2hu0VrKmGgUVt4cOi/7FPWa0OrrOhfJlURbtl2z2/FI
-         grO1piITubSHCiyXcd+kllGVxbVROu7faZxTD7lJs1uV61zVSU/iyL1zD6fm9zvzwF/3
-         LW9emyzOLl1YKMxaFcGYkT426e/tx0iP0pfgxhwOFXqGNQ3KJqWi6f6ds0tPryFqVBtu
-         k/3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX9xmvuTMlIYwnWH07DSfLnZp4sDgh4TnI1gXaFnTkwOadx6CbD1d7WO061ZOTBw3jxJ3VsNHfxeIctsEP7ula55w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQWsAUFd8zxNQ2k3PnGYHedxrsL5XCX84dM49pbYs4IfkrODuy
-	tmHOYlGBBJk3dtrLq1jrv0l/EsXWcvBcsw9Ax8XAnS/Xo9EYFm1D
-X-Gm-Gg: ASbGncsd9eDavqHCScAIhii7tRSkEUSB0X2RvGYxyYMV4P132OOH9RUqbu7PViwoGCI
-	vdR0rXXppzAfYVujouJYCRTYo0ag9FeLaMHYUaAQ36hOwGhz/dVgAfSCFF9OMPuL0TActN5peIM
-	xvoxDza3FnCCPYRSB5+bsKIQtPrS1rL9jzo5CZ7QQ0vlB7yPY7mRaDoi8xQF42PqDhg1xk4Hdaj
-	HGrcv0trQ5vMEU1tSTQtrzuizDF6Qq03e3sBfNbg/UsmzfpqAo5PmQGr/EdQ7bMvtRBt//04qMi
-	vIvolVk2WsBR/rnWbVhVk28yGKnxjRBpvcetneY8WFKvRcCn4rCqWQKkEpkkMQT0NECaM+Qo
-X-Google-Smtp-Source: AGHT+IEWGFcFdT7svQM0NodnVdHavkXc91K7cy2yVuOZjvDa/aCbuKmfkC4TaoAbHjoIhdtqVWFLzg==
-X-Received: by 2002:a05:600c:4705:b0:439:9f97:7d6c with SMTP id 5b1f17b1804b1-43ba6766cbamr130790385e9.29.1741032776792;
-        Mon, 03 Mar 2025 12:12:56 -0800 (PST)
-Received: from prasmi.Home ([2a06:5906:61b:2d00:5c8:2ec7:65d8:a3a5])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e4844a16sm15447752f8f.79.2025.03.03.12.12.55
+        bh=6HISwtThj2ckJiw/oP+EKb6mnu3LLOXUZTz/QPS9xm0=;
+        b=sTbQx6KTx4fxCB0r1X/JqQK3gNUSxI7b60JcvlHeoJLCZCHaqj0lmUQH7lSrBPfqpO
+         cM+YZtSQCIodRNDDoa7ZuMKuoUQQY3S2UhSjbyD4TDC/Y0weg0+ewWV7e4qvTw8+Nu5G
+         xNCcK1RsAKNOAuRR+Ih0H1sbo70+C3Suh1LxnbcpIOKl4f7PxjzxhHPwyN4ahGoP5eLv
+         KhcbI7LOPMXUCX4TN5J4hm4X3C0KLrLXs8TzZtySF0IwyEV8EcIZ2YtrBcYP3PuRkRHW
+         YquSqe4qiLSPbegFUhmhdl5/5MHjrnZytxXn6OGkgqmrelVgXeVFxcNDvdViDRuBeLOA
+         jpuA==
+X-Forwarded-Encrypted: i=1; AJvYcCWte//7wz0qQ1sYYCzaqQQwE25nCaXaSWNCMS285/Zh4Gd7xkvV3jf2rDTifM4tYll3ayb1t7Jha6CeqIY=@vger.kernel.org, AJvYcCXycBb2pTvz/AdkvY/ggRODC4Q/ZTMMR6TEv+rbeSqKsRhOekbxJ+P2oS/CWbWYDIaoJJZjNplla0inN6iT@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsBfIH0w5H2HmVU5AsvDx3EexWWvXJSi1bBx/aOvHUa7ctirWE
+	BrAQs7qtX1PUfvnMm0+CFQlyjGy+0zQ55I1/BhDU22ozh9Hg3fSr
+X-Gm-Gg: ASbGncumYC/MBjDGtSLLeWlLP3ooOYMA+8dHHSVJ2x+0dP01WllXyodkQalI38lMhXB
+	D75QSMFCdWNZccX1tdBinj4bPRaPJdQPVXj/MiYIiiSrtUD5g+G4chlPOhpNhlNOtn3z6IidgJi
+	i1XLKA/unWgTAuh1G7CRd35R06HzCiYxfWc7Tyz0GdoV8cxtA3hYh86DtB5xmcXYbCsEzEnh91P
+	9ShIez0jQ8m9+RqNelXhJXMZ7y5zemuKYDuSY0YyTjW0WXqEo8oImcIG5t4g8jjv6VY5qncmON0
+	I8SX/IrbNpQyENvsC2rLkwYySJerYmg1TPd0x5bdXP5csn8XPqFBzFYEHmNVGiCHKIu4wgiyXl3
+	+ZLCQS/s=
+X-Google-Smtp-Source: AGHT+IEZcFcEwop42cS1sSfMsNTzvj2OjK7gTdBaNBV75eJDj3qnhXXQFC1+gCRjILig9VtED+gPKg==
+X-Received: by 2002:a05:6000:4188:b0:390:ea4b:e89 with SMTP id ffacd0b85a97d-390eca26303mr11107065f8f.48.1741032910822;
+        Mon, 03 Mar 2025 12:15:10 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bbbff18b3sm62631025e9.24.2025.03.03.12.15.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 12:12:56 -0800 (PST)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 2/2] reset: Add USB2PHY control driver for Renesas RZ/V2H(P)
-Date: Mon,  3 Mar 2025 20:12:30 +0000
-Message-ID: <20250303201230.186227-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250303201230.186227-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20250303201230.186227-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Mon, 03 Mar 2025 12:15:10 -0800 (PST)
+Date: Mon, 3 Mar 2025 20:15:09 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Bill Wendling <morbo@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>, "H.
+ Peter Anvin" <hpa@zytor.com>, Eric Biggers <ebiggers@kernel.org>, Ard
+ Biesheuvel <ardb@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nick
+ Desaulniers <nick.desaulniers+lkml@gmail.com>, Justin Stitt
+ <justinstitt@google.com>, LKML <linux-kernel@vger.kernel.org>,
+ linux-crypto@vger.kernel.org, clang-built-linux <llvm@lists.linux.dev>
+Subject: Re: [PATCH v2] x86/crc32: use builtins to improve code generation
+Message-ID: <20250303201509.32f6f062@pumpkin>
+In-Reply-To: <CAGG=3QVkd9Vb9a=pQ=KwhKzGJXaS+6Mk5K+JtBqamj15MzT9mQ@mail.gmail.com>
+References: <CAGG=3QVi27WRYVxmsk9+HLpJw9ZJrpfLjU8G4exuXm-vUA-KqQ@mail.gmail.com>
+	<CAGG=3QVkd9Vb9a=pQ=KwhKzGJXaS+6Mk5K+JtBqamj15MzT9mQ@mail.gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Thu, 27 Feb 2025 15:47:03 -0800
+Bill Wendling <morbo@google.com> wrote:
 
-Add support for the USB2PHY control driver on the Renesas RZ/V2H(P) SoC.
-Make the driver handle reset and power-down operations for the USB2PHY.
+> For both gcc and clang, crc32 builtins generate better code than the
+> inline asm. GCC improves, removing unneeded "mov" instructions. Clang
+> does the same and unrolls the loops. GCC has no changes on i386, but
+> Clang's code generation is vastly improved, due to Clang's "rm"
+> constraint issue.
+> 
+> The number of cycles improved by ~0.1% for GCC and ~1% for Clang, which
+> is expected because of the "rm" issue. However, Clang's performance is
+> better than GCC's by ~1.5%, most likely due to loop unrolling.
 
-Pass OF data to support future SoCs with similar USB2PHY hardware but
-different register configurations. Define device-specific initialization
-values and control register settings in OF data to ensure flexibility
-for upcoming SoCs.
+How much does it unroll?
+How much you need depends on the latency of the crc32 instruction.
+The copy of Agner's tables I have gives it a latency of 3 on
+pretty much everything.
+If you can only do one chained crc instruction every three clocks
+it is hard to see how unrolling the loop will help.
+Intel cpu (since sandy bridge) will run a two clock loop.
+With three clocks to play with it should be easy (even for a compiler)
+to generate a loop with no extra clock stalls.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- drivers/reset/Kconfig                    |   7 +
- drivers/reset/Makefile                   |   1 +
- drivers/reset/reset-rzv2h-usb2phy-ctrl.c | 220 +++++++++++++++++++++++
- 3 files changed, 228 insertions(+)
- create mode 100644 drivers/reset/reset-rzv2h-usb2phy-ctrl.c
+Clearly if Clang decides to copy arguments to the stack an extra time
+that will kill things. But in this case you want the "m" constraint
+to directly read from the buffer (with a (reg,reg,8) addressing mode).
 
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index 5b3abb6db248..bac08dae8905 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -218,6 +218,13 @@ config RESET_RZG2L_USBPHY_CTRL
- 	  Support for USBPHY Control found on RZ/G2L family. It mainly
- 	  controls reset and power down of the USB/PHY.
- 
-+config RESET_RZV2H_USB2PHY_CTRL
-+	tristate "Renesas RZ/V2H(P) (and similar SoCs) USB2PHY control driver"
-+	depends on ARCH_RENESAS || COMPILE_TEST
-+	help
-+	  Support for USB2PHY Control found on the RZ/V2H(P) SoC (and similar SoCs).
-+	  It mainly controls reset and power down of the USB2 PHY.
-+
- config RESET_SCMI
- 	tristate "Reset driver controlled via ARM SCMI interface"
- 	depends on ARM_SCMI_PROTOCOL || COMPILE_TEST
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index 677c4d1e2632..3cb3df018cf8 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -30,6 +30,7 @@ obj-$(CONFIG_RESET_QCOM_AOSS) += reset-qcom-aoss.o
- obj-$(CONFIG_RESET_QCOM_PDC) += reset-qcom-pdc.o
- obj-$(CONFIG_RESET_RASPBERRYPI) += reset-raspberrypi.o
- obj-$(CONFIG_RESET_RZG2L_USBPHY_CTRL) += reset-rzg2l-usbphy-ctrl.o
-+obj-$(CONFIG_RESET_RZV2H_USB2PHY_CTRL) += reset-rzv2h-usb2phy-ctrl.o
- obj-$(CONFIG_RESET_SCMI) += reset-scmi.o
- obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
- obj-$(CONFIG_RESET_SOCFPGA) += reset-socfpga.o
-diff --git a/drivers/reset/reset-rzv2h-usb2phy-ctrl.c b/drivers/reset/reset-rzv2h-usb2phy-ctrl.c
-new file mode 100644
-index 000000000000..5b6ad5f6dc82
---- /dev/null
-+++ b/drivers/reset/reset-rzv2h-usb2phy-ctrl.c
-@@ -0,0 +1,220 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Renesas RZ/V2H(P) USB2PHY control driver
-+ *
-+ * Copyright (C) 2025 Renesas Electronics Corporation
-+ */
-+
-+#include <linux/cleanup.h>
-+#include <linux/delay.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/reset.h>
-+#include <linux/reset-controller.h>
-+
-+struct rzv2h_usb2phy_regval {
-+	u16 reg;
-+	u16 val;
-+};
-+
-+struct rzv2h_usb2phy_data {
-+	const struct rzv2h_usb2phy_regval *init_vals;
-+	unsigned int init_val_count;
-+
-+	u16 ctrl_reg;
-+	u16 ctrl_assert_val;
-+	u16 ctrl_deassert_val;
-+	u16 ctrl_status_bits;
-+	u16 ctrl_release_val;
-+
-+	u16 ctrl2_reg;
-+	u16 ctrl2_release_val;
-+};
-+
-+struct rzv2h_usb2phy_ctrl_priv {
-+	const struct rzv2h_usb2phy_data *data;
-+	void __iomem *base;
-+	struct device *dev;
-+	struct reset_controller_dev rcdev;
-+	spinlock_t lock;
-+};
-+
-+#define rcdev_to_priv(x) container_of(x, struct rzv2h_usb2phy_ctrl_priv, rcdev)
-+
-+static int rzv2h_usbphy_ctrl_assert(struct reset_controller_dev *rcdev,
-+				    unsigned long id)
-+{
-+	struct rzv2h_usb2phy_ctrl_priv *priv = rcdev_to_priv(rcdev);
-+	const struct rzv2h_usb2phy_data *data = priv->data;
-+	struct device *dev = priv->dev;
-+	int ret;
-+
-+	ret = pm_runtime_resume_and_get(dev);
-+	if (ret) {
-+		dev_err(dev, "pm_runtime_resume_and_get failed\n");
-+		return ret;
-+	}
-+	scoped_guard(spinlock, &priv->lock)
-+		writel(data->ctrl_assert_val, priv->base + data->ctrl_reg);
-+
-+	/* The reset line needs to be asserted for more than 10 microseconds. */
-+	udelay(11);
-+	pm_runtime_put(dev);
-+
-+	return 0;
-+}
-+
-+static int rzv2h_usbphy_ctrl_deassert(struct reset_controller_dev *rcdev,
-+				      unsigned long id)
-+{
-+	struct rzv2h_usb2phy_ctrl_priv *priv = rcdev_to_priv(rcdev);
-+	const struct rzv2h_usb2phy_data *data = priv->data;
-+	struct device *dev = priv->dev;
-+	int ret;
-+
-+	ret = pm_runtime_resume_and_get(dev);
-+	if (ret) {
-+		dev_err(dev, "pm_runtime_resume_and_get failed\n");
-+		return ret;
-+	}
-+
-+	scoped_guard(spinlock, &priv->lock) {
-+		writel(data->ctrl_deassert_val, priv->base + data->ctrl_reg);
-+		writel(data->ctrl2_release_val, priv->base + data->ctrl2_reg);
-+		writel(data->ctrl_release_val, priv->base + data->ctrl_reg);
-+	}
-+
-+	pm_runtime_put(dev);
-+
-+	return 0;
-+}
-+
-+static int rzv2h_usbphy_ctrl_status(struct reset_controller_dev *rcdev,
-+				    unsigned long id)
-+{
-+	struct rzv2h_usb2phy_ctrl_priv *priv = rcdev_to_priv(rcdev);
-+	struct device *dev = priv->dev;
-+	int ret;
-+	u32 reg;
-+
-+	ret = pm_runtime_resume_and_get(dev);
-+	if (ret) {
-+		dev_err(dev, "pm_runtime_resume_and_get failed\n");
-+		return ret;
-+	}
-+
-+	scoped_guard(spinlock, &priv->lock)
-+		reg = readl(priv->base + priv->data->ctrl_reg);
-+
-+	pm_runtime_put(dev);
-+
-+	return (reg & priv->data->ctrl_status_bits) == priv->data->ctrl_status_bits;
-+}
-+
-+static const struct reset_control_ops rzv2h_usbphy_ctrl_reset_ops = {
-+	.assert = rzv2h_usbphy_ctrl_assert,
-+	.deassert = rzv2h_usbphy_ctrl_deassert,
-+	.status = rzv2h_usbphy_ctrl_status,
-+};
-+
-+static int rzv2h_reset_of_xlate(struct reset_controller_dev *rcdev,
-+				const struct of_phandle_args *reset_spec)
-+{
-+	/* No special handling needed, we have only one reset line per device */
-+	return 0;
-+}
-+
-+static int rzv2h_usb2phy_ctrl_probe(struct platform_device *pdev)
-+{
-+	const struct rzv2h_usb2phy_data *data;
-+	struct rzv2h_usb2phy_ctrl_priv *priv;
-+	struct device *dev = &pdev->dev;
-+	struct reset_control *rstc;
-+	int error;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	data = of_device_get_match_data(dev);
-+	if (!data)
-+		return dev_err_probe(dev, -ENODEV,
-+				     "failed to match device\n");
-+
-+	priv->data = data;
-+	priv->dev = dev;
-+	priv->base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(priv->base))
-+		return PTR_ERR(priv->base);
-+
-+	rstc = devm_reset_control_get_shared_deasserted(dev, NULL);
-+	if (IS_ERR(rstc))
-+		return dev_err_probe(dev, PTR_ERR(rstc),
-+				     "failed to get deasserted reset\n");
-+
-+	spin_lock_init(&priv->lock);
-+	dev_set_drvdata(dev, priv);
-+
-+	error = devm_pm_runtime_enable(dev);
-+	if (error)
-+		return dev_err_probe(dev, error, "Failed to enable pm_runtime\n");
-+
-+	error = pm_runtime_resume_and_get(dev);
-+	if (error)
-+		return dev_err_probe(dev, error, "pm_runtime_resume_and_get failed\n");
-+
-+	for (unsigned int i = 0; i < data->init_val_count; i++)
-+		writel(data->init_vals[i].val, priv->base + data->init_vals[i].reg);
-+
-+	pm_runtime_put(dev);
-+
-+	priv->rcdev.ops = &rzv2h_usbphy_ctrl_reset_ops;
-+	priv->rcdev.of_reset_n_cells = 0;
-+	priv->rcdev.nr_resets = 1;
-+	priv->rcdev.of_xlate = rzv2h_reset_of_xlate;
-+	priv->rcdev.of_node = dev->of_node;
-+	priv->rcdev.dev = dev;
-+
-+	return devm_reset_controller_register(dev, &priv->rcdev);
-+}
-+
-+static const struct rzv2h_usb2phy_regval rzv2h_init_vals[] = {
-+	{ .reg = 0xb04, .val = 0x303 },
-+	{ .reg = 0xc10, .val = 0x67c },
-+	{ .reg = 0xc14, .val = 0x1f },
-+	{ .reg = 0x600, .val = 0x909 },
-+};
-+
-+static const struct rzv2h_usb2phy_data rzv2h_of_data = {
-+	.init_vals = rzv2h_init_vals,
-+	.init_val_count = ARRAY_SIZE(rzv2h_init_vals),
-+	.ctrl_reg = 0,
-+	.ctrl_assert_val = 0x206,
-+	.ctrl_status_bits = 0x204,
-+	.ctrl_deassert_val = 0x200,
-+	.ctrl_release_val = 0x0,
-+	.ctrl2_reg = 0xb04,
-+	.ctrl2_release_val = 0x3,
-+};
-+
-+static const struct of_device_id rzv2h_usb2phy_ctrl_match_table[] = {
-+	{ .compatible = "renesas,r9a09g057-usb2phy-ctrl", .data = &rzv2h_of_data },
-+	{ /* Sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, rzv2h_usb2phy_ctrl_match_table);
-+
-+static struct platform_driver rzv2h_usb2phy_ctrl_driver = {
-+	.driver = {
-+		.name		= "rzv2h_usb2phy_ctrl",
-+		.of_match_table	= rzv2h_usb2phy_ctrl_match_table,
-+	},
-+	.probe = rzv2h_usb2phy_ctrl_probe,
-+};
-+module_platform_driver(rzv2h_usb2phy_ctrl_driver);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>");
-+MODULE_DESCRIPTION("Renesas RZ/V2H(P) USB2PHY Control");
--- 
-2.43.0
-
+	David
 
