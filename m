@@ -1,175 +1,89 @@
-Return-Path: <linux-kernel+bounces-542762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18944A4CD5E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:16:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AA77A4CD62
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:18:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 409D417439A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 21:16:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2ACC63AC9FC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 21:17:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 721211EE014;
-	Mon,  3 Mar 2025 21:16:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1579D1EFF9F;
+	Mon,  3 Mar 2025 21:17:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nMx4l2gX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KRiilDaJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA4A3208A9;
-	Mon,  3 Mar 2025 21:16:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70788208A9;
+	Mon,  3 Mar 2025 21:17:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741036604; cv=none; b=OT+O9OKuxSqZL6jpPu51HuIhdnUaejV7DIevCOfHgb+ZepFEpbCuTFxaK2kiEzCq/wKhsK/a0tRMjA39IZWs2Owk1RFktZGJDCQWrf+sC+m4yzzocx6iyTaOjAyj22etti57qcrxhXVL9bDRHfq4D2P5IIhl4bFMsdOKVjct3YA=
+	t=1741036677; cv=none; b=OJGezBG7IOEBgc8T8hrlXIYig4mbUQJYrbo4PQK+d/BNyEwBqGR6h5FQfeu02XrPautXDVh7zXPbvgGYx1raJiB9yCNEKWz0IjbafoyQaGZKkz+RVLrNgJxWAc8dEqkaKp7769GbVIc3JDkt7upnMcJ1bkmtagQq27JJrvSN77M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741036604; c=relaxed/simple;
-	bh=4yCx8RM2Log51QCoNGpRsUX49OvBQOQMd1GTJhQf8qk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rm/zAzL2ByFrUTbNHJdJuEcuBaMSIXwhqG61VUZXzGl3bqF03buNVd7CRd7qrboJVV4aIVthWnKZG9E9oc4SuR5WQHSioHiCFMU4oj4gcE4HcZbl3Jxiz5XuB9AFi9a1XMX+7Y/WKXL2V/QNu3G2NXerrNF23eDuOW2Y7x98dNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nMx4l2gX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAB2DC4CED6;
-	Mon,  3 Mar 2025 21:16:43 +0000 (UTC)
+	s=arc-20240116; t=1741036677; c=relaxed/simple;
+	bh=AszVorE/EkhZ3+7Ol3HRuPVkQBoS4dyx8wSxtua6IrM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=Mss27iTELHRY3HhBAuopWvhrUNUMrIOjsZWlywwnlq1IbHeIn7Xf4zlwH8/lXKJ3dRNKA4wPhz66sd3Xo0xD3AoOtKBRt8yRTxjg3XFluRrLTuHvFugEIfhdxosb36GlFO370qM5YbrAjJTfPNmd3nMMSMPGM3IaxzYPdRKiNRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KRiilDaJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B23BDC4CEE5;
+	Mon,  3 Mar 2025 21:17:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741036604;
-	bh=4yCx8RM2Log51QCoNGpRsUX49OvBQOQMd1GTJhQf8qk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nMx4l2gXAWf62Jb1V8umispwrGuZVsgn5MyubgiePPjUpVhvipEUU8eAdqlcqE3NM
-	 jzGcvwEEVNlOm31ESr6jNHI9/IQrZogjq25wBqaIUpQ3+Zjyh7zQYpDRT93bwJgRD/
-	 Ftgp1xRRt/p4hAR2BN+bsscUgutZtr5I5T0aVyL2uzXuCqnw/19n4a2b4GLycbyfQG
-	 36P+ipLiWdnDSym2mz1uew/8P2po4JRmU9sy7RUeQ1Ip9/uH2g18YzXhD1Mt11L/3e
-	 +TG5g2skM7Qo1OQvhbf+Y2jfEBo96l7FL2cAsQlRTMHrDQO80X80SUykEbH3mhLUqO
-	 lzyEDvD1356LA==
-Date: Mon, 3 Mar 2025 13:16:42 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Thomas Falcon <thomas.falcon@intel.com>
-Cc: linux-perf-users@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
-	Kan Liang <kan.liang@intel.com>
-Subject: Re: [PATCH v4] perf script: Fix output type for dynamically
- allocated core PMU's
-Message-ID: <Z8YcOidenzGofq7R@google.com>
-References: <20250226170043.762219-1-thomas.falcon@intel.com>
+	s=k20201202; t=1741036676;
+	bh=AszVorE/EkhZ3+7Ol3HRuPVkQBoS4dyx8wSxtua6IrM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=KRiilDaJbPT1FK63z1QwEwQrmw9dooZeXCICmsN3P4teawCAbeZ1m711+i6p5X7QD
+	 eVJi8KTTCkxxqSNgC32BU3dotW/95ZM3Uo9eg8Cx9Bjj1yeh7vwHc9rT4z9ZeTjq9L
+	 lghRj06gPac1pEY6rmbMk4VvSnQE7Yw/cdSWOHqP530Cq2X+gTb1uL4jsZVcCXh+FU
+	 4+KNo/Zn4KyEZUiQb3fMgp/dgRrLY26v6+TKkCNu+Bzvp+8BLFmf8YM2v9A2noTjJ/
+	 xJGP2sRcqeIKzfPK5nfkBresmYKnWMVkrmPj0k5ha2vnpxd7ZdaCoitIIHQU1FlwId
+	 polAyf+ckX1Gg==
+Date: Mon, 3 Mar 2025 15:17:55 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Andrew Lunn <andrew@lunn.ch>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	linux-pci@vger.kernel.org, Ariel Almog <ariela@nvidia.com>,
+	Aditya Prabhune <aprabhune@nvidia.com>,
+	Hannes Reinecke <hare@suse.de>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Arun Easi <aeasi@marvell.com>, Jonathan Chocron <jonnyc@amazon.com>,
+	Bert Kenward <bkenward@solarflare.com>,
+	Matt Carlson <mcarlson@broadcom.com>,
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	Jean Delvare <jdelvare@suse.de>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	Jakub Kicinski <kuba@kernel.org>,
+	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+	Stephen Hemminger <stephen@networkplumber.org>
+Subject: Re: [PATCH v4] PCI/sysfs: Change read permissions for VPD attributes
+Message-ID: <20250303211755.GA200634@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250226170043.762219-1-thomas.falcon@intel.com>
+In-Reply-To: <e9943382-8d53-4e28-b600-066ef470f889@app.fastmail.com>
 
-Hello,
+On Tue, Feb 25, 2025 at 10:05:49PM +0200, Leon Romanovsky wrote:
+> On Tue, Feb 25, 2025, at 20:59, Andrew Lunn wrote:
+> >> Chmod solution is something that I thought, but for now I'm looking
+> >> for the out of the box solution. Chmod still require from
+> >> administrator to run scripts with root permissions.
+> >
+> > It is more likely to be a udev rule. 
+> 
+> Udev rule is one of the ways to run such script.
+> 
+> > systemd already has lots of examples:
+> >
+> > /lib/udev/rules.d/50-udev-default.rules:KERNEL=="rfkill", MODE="0664"
 
-On Wed, Feb 26, 2025 at 11:00:43AM -0600, Thomas Falcon wrote:
-> This patch was originally posted here:
-> 
-> https://lore.kernel.org/all/20241213215421.661139-1-thomas.falcon@intel.com/
-> 
-> I have rebased on top of Arnaldo's patch here:
-> 
-> https://lore.kernel.org/all/Z2XCi3PgstSrV0SE@x1/
-> 
-> The original commit message:
-> "
-> perf script output may show different fields on different core PMU's
-> that exist on heterogeneous platforms. For example,
-> 
-> perf record -e "{cpu_core/mem-loads-aux/,cpu_core/event=0xcd,\
-> umask=0x01,ldlat=3,name=MEM_UOPS_RETIRED.LOAD_LATENCY/}:upp"\
-> -c10000 -W -d -a -- sleep 1
-> 
-> perf script:
-> 
-> chromium-browse   46572 [002] 544966.882384:      10000 	cpu_core/MEM_UOPS_RETIRED.LOAD_LATENCY/: 7ffdf1391b0c     10268100142 \
->  |OP LOAD|LVL L1 hit|SNP None|TLB L1 or L2 hit|LCK No|BLK    N/A    5   7    0   7fad7c47425d [unknown] (/usr/lib64/libglib-2.0.so.0.8000.3)
-> 
-> perf record -e cpu_atom/event=0xd0,umask=0x05,ldlat=3,\
-> name=MEM_UOPS_RETIRED.LOAD_LATENCY/upp -c10000 -W -d -a -- sleep 1
-> 
-> perf script:
-> 
-> gnome-control-c  534224 [023] 544951.816227:      10000 cpu_atom/MEM_UOPS_RETIRED.LOAD_LATENCY/:   7f0aaaa0aae0  [unknown] (/usr/lib64/libglib-2.0.so.0.8000.3)
-> 
-> Some fields, such as data_src, are not included by default.
-> 
-> The cause is that while one PMU may be assigned a type such as
-> PERF_TYPE_RAW, other core PMU's are dynamically allocated at boot time.
-> If this value does not match an existing PERF_TYPE_X value,
-> output_type(perf_event_attr.type) will return OUTPUT_TYPE_OTHER.
-> 
-> Instead search for a core PMU with a matching perf_event_attr type
-> and, if one is found, return PERF_TYPE_RAW to match output of other
-> core PMU's.
-> "
-> 
-> Suggested-by: Kan Liang <kan.liang@intel.com>
-> Signed-off-by: Thomas Falcon <thomas.falcon@intel.com>
-> ---
-> v2: restrict pmu lookup to platforms with more than one core pmu
-> v3: only scan core pmu list
-> v4: rebase on top of Arnaldo's patch
-> ---
->  tools/perf/builtin-script.c | 22 ++++++++++++++++++++--
->  1 file changed, 20 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-> index d797cec4f054..abc860d01420 100644
-> --- a/tools/perf/builtin-script.c
-> +++ b/tools/perf/builtin-script.c
-> @@ -398,10 +398,28 @@ static inline int output_type(unsigned int type)
->  	return OUTPUT_TYPE_OTHER;
->  }
->  
-> +static bool output_type_check_core_pmus(unsigned int type)
-
-How about renaming to is_core_pmu_type() ?
-
-> +{
-> +	struct perf_pmu *pmu = NULL;
-> +
-> +	if (perf_pmus__num_core_pmus() > 1) {
-> +		while ((pmu = perf_pmus__scan_core(pmu)) != NULL) {
-> +			if (pmu->type == type)
-> +				return true;
-> +		}
-> +	}
-> +	return false;
-
-To be more generic, it could be
-
-	return type == PERF_TYPE_RAW;
-
-> +}
-> +
->  static inline int evsel__output_type(struct evsel *evsel)
->  {
-> -	if (evsel->script_output_type == OUTPUT_TYPE_UNSET)
-> -		evsel->script_output_type = output_type(evsel->core.attr.type);
-> +	if (evsel->script_output_type == OUTPUT_TYPE_UNSET) {
-> +		if (output_type(evsel->core.attr.type) == OUTPUT_TYPE_OTHER &&
-> +		    output_type_check_core_pmus(evsel->core.attr.type))
-> +			evsel->script_output_type = PERF_TYPE_RAW;
-> +		else
-> +			evsel->script_output_type = output_type(evsel->core.attr.type);
-> +	}
-
-It seems better to put this logic inside output_type().
-
-Thanks,
-Namhyung
-
->  
->  	return evsel->script_output_type;
->  }
-> -- 
-> 2.48.1
-> 
+Where are we at with this?  Is a udev rule a feasible solution?
 
