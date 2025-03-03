@@ -1,115 +1,121 @@
-Return-Path: <linux-kernel+bounces-545011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D604CA4E895
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:26:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8FFAA4EC09
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:41:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A73008C3806
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:05:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45D7B7AC610
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:37:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A5D25FA0A;
-	Tue,  4 Mar 2025 16:43:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06AD428041D;
+	Tue,  4 Mar 2025 18:32:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rP8olQju";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PNpcFeSZ"
-Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QLa0LQQp"
+Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2CE02641D1
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:43:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AF5927FE8A
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:32:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741106613; cv=pass; b=U4F7cYo1b6vZzCj1X/M23TuVW+cPHPMVsE29FHzoeAa4JGkgQqlbXelCJIy+EF54zF4ouRIAMQpyX+1YhKsjf2FLagE3EJI7C6KBz8Ylxp1lb+nrK0yCZLUGuP0kOgz3MCyD4aJrnFhVdjkTd5kPy1DMIXqUfJ6OxUSIZvUJ23I=
+	t=1741113122; cv=pass; b=fZqEo8KCSWKBEKIeMlcrU29Jg5nP9X+WxQQJOCjsXx8DHYRWmVckvJKGkY693C1O3RO/mC1hTYDQ1nsJLb16QGL+Sab4/UtWUx6prv/NtL5G919B1kzlx0rtXFKm1OmNqBnq72GpEoNjr29oeDKmvRKHRx3Op/ilhFU8drWnMak=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741106613; c=relaxed/simple;
-	bh=i5YWhBkmrF5xXH07S+agKTJnJBI+1+7IVU24C9+BOmM=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=C7ytq7d0IQPMjaqC7qq2FhifufinvQiQ5xl89emPi+degpor2NVgTD1mY2Npg7+dkhLzl2hQvDeF9qCkcbqml8gaubJU7sPP3xA1i6dZBboiOb3fpVhcqpAm6KjbgvFcVXrKJZ0Lt81Q1WK1n5+Dvm9mx8OEn8/rYc8rQOxl5cs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rP8olQju; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PNpcFeSZ; arc=none smtp.client-ip=193.142.43.55; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; arc=pass smtp.client-ip=160.75.25.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+	s=arc-20240116; t=1741113122; c=relaxed/simple;
+	bh=VIYv7jOirceEsOX7KnRIYeYd32+TAY98cre+XbP4POE=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=QqmheLm4ywxLJ5n7dtTUpfnsI+Jen3nND0SpOWsCPoo/ckBUUHmYFsBocCCrgVMjcc3gTTQfK0dNZrtEIFCWLKxfE1q1OH4CuGcygFC6wjAI27oWzSIi5DGPMELO0mzhzxujhAjtaqHaSgpPBEQ09d4TRe1UHXa8Hwz6jlPare0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QLa0LQQp; arc=none smtp.client-ip=192.198.163.15; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; arc=pass smtp.client-ip=160.75.25.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id ED4F7408B659
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:43:29 +0300 (+03)
+	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id A055840CF67C
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 21:31:58 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
-Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key, unprotected) header.d=linutronix.de header.i=@linutronix.de header.a=rsa-sha256 header.s=2020 header.b=rP8olQju;
-	dkim=temperror header.d=linutronix.de header.i=@linutronix.de header.a=ed25519-sha256 header.s=2020e header.b=PNpcFeSZ
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6hKL724SzG2kq
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:41:42 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dwL1HL1zFxkB
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:53:22 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 61B1B42730; Tue,  4 Mar 2025 19:41:42 +0300 (+03)
+	id 7137041898; Tue,  4 Mar 2025 17:53:20 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rP8olQju;
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PNpcFeSZ
-X-Envelope-From: <linux-kernel+bounces-541420-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QLa0LQQp
+X-Envelope-From: <linux-kernel+bounces-541425-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rP8olQju;
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PNpcFeSZ
-Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id E99B042E4B
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:47:50 +0300 (+03)
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id 8017F3063EFE
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:47:50 +0300 (+03)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QLa0LQQp
+Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
+	by le2 (Postfix) with ESMTP id 3CBDD42F3B
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:47:52 +0300 (+03)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by fgw2.itu.edu.tr (Postfix) with SMTP id E57722DCE0
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:47:51 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 044173A6E77
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:46:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C25081716B8
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:47:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A11A1F4281;
-	Mon,  3 Mar 2025 10:43:13 +0000 (UTC)
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9547A1F3FEB;
+	Mon,  3 Mar 2025 10:44:39 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BB031F462D;
-	Mon,  3 Mar 2025 10:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 002A21F3D30;
+	Mon,  3 Mar 2025 10:44:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740998590; cv=none; b=lNWV93JMRYa9FAvDsX9UTQG7g/IUGLA0+D/mJGLOK9AhntutMiDc+z3x8g9+9UH1C3kdjzdJW8mwY5ZIcQIUciFBzh7fmMlQcbspEda86yiUmtP9A+DYLdp9vuWqbRlpLu6QA3h2ZK+kJD8n+Jjro8wsl8wmnf70hOtknl8H7PE=
+	t=1740998676; cv=none; b=t+I66HMT6sc1WxHegxE+LeZ0n6f0yMvVrqKCzDeH0j3kf+K+ays+1o083SOhKOwOWiqj0QOaU34wMCB7XZSPuFDzd1+MCDA2hQXdOCWdskAX7MgbDGLZsxlD4JAHcjgs3r6tLGBqDTSLDXffZXhKKnDUPz0MH+66M7xD+91G+I8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740998590; c=relaxed/simple;
-	bh=i5YWhBkmrF5xXH07S+agKTJnJBI+1+7IVU24C9+BOmM=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=ozYUS8uV7sQkk+O7D58gGIwtYcsOH/7vgiyrb5asBueQcCWAUBmBycNpfuZKAIvCBfUfrb40jaspVpBGDBrR4R7cQiThvKQ7ePYwrF6j3fHYQaIyyhXybjOvo2MCZklJQQNln2r3/e2/0mF42GWEiaz735EU+RGH/5GyUDS05HY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rP8olQju; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PNpcFeSZ; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 03 Mar 2025 10:43:06 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740998586;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=DffzsZO2kcnOWCEYAT88mKcoMZiIneZrmlbiz3l1QSs=;
-	b=rP8olQjuJCwYXqumL/xYtfcRnHcG93InbK2KCKRptG1Ue2kwaDG+9P5pKii1D3gnwmse5w
-	9PwULAMXdnmCktRZV545Acw4HRdmTMuSk5InGju8t3FBkHXB0QkQnq51wWYtkkMtaSEtSU
-	rJiBl5HtBdtUTB3h3K4+I+tiuE9v73j0sKF+m0A9SEU2Jsc7J4hT6dJGqpOoUR5EkkFKSc
-	BIMVdMEuFsE/2tloqkMloFyd8p8awxWD3ST5MHNXQWbHP4WY9OzLz8eP6g+az8fgX8nVho
-	dSd3wJqymUTD/oYf3hAI1X8S1xj221nSUD9LyKdnlIHgu9aKcKHflxXycYD1Yw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740998586;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=DffzsZO2kcnOWCEYAT88mKcoMZiIneZrmlbiz3l1QSs=;
-	b=PNpcFeSZPChsXunkWA9g6J6R4g5WBh4TJrYMJm1iKRtitrjoJqsxR7Mobf69POADIRf5Jw
-	qW57kufzh6rTI/BQ==
-From: "tip-bot2 for Anna-Maria Behnsen" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/vdso] vdso: Make vdso_time_data cacheline aligned
-Cc: "Anna-Maria Behnsen" <anna-maria@linutronix.de>,
- Nam Cao <namcao@linutronix.de>, thomas.weissschuh@linutronix.de,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1740998676; c=relaxed/simple;
+	bh=VIYv7jOirceEsOX7KnRIYeYd32+TAY98cre+XbP4POE=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=CZJRJIj/T/u7jhGuccHx50zgbA+VY6HncpTW6PdDfOvy9R1dqFoUYZYIpII+AXYljsRJOHD8dJUW/Uo6llFRmbQ6t1wZHpyFkhnvbc09xdaBV1WuCDVjky5GdnzqTx5ObhpgsJM+K9ndtTZptSVhJag4MEK3/YZpkgytKje5vpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QLa0LQQp; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740998675; x=1772534675;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=VIYv7jOirceEsOX7KnRIYeYd32+TAY98cre+XbP4POE=;
+  b=QLa0LQQpxK96/v+/4rz6+RcWY+qzNsj7mX7GKvp9eB841z997yxgm8+O
+   c52AgKs6oHFB3HXfl2duH4SdmkYeY4LpQb1S6hY4I4WhQScx1MhfYfeNc
+   Rb5d25gyend3lXV1yRZc2DvUryHi7Ut5l71Hv7aa0J2pzB9eR5tLHUmXm
+   yV0piWVNNQ9+etgCVo4rvGxxsBhtWwn92KN193jbDLCaYWhhcgItx5PXW
+   OEqOeqClEQ4lOyruy5HkdQ4/52R+NHkfZJSdbkWLoT1eAje82GgVZhO/l
+   F9OWrW5JnDuZQfWgLDFOmPP5eXr/MCMmZUyDwCfUgOEy0GlTcZCNAw1xy
+   Q==;
+X-CSE-ConnectionGUID: FH8EeKtqTwmQ4vQnMVNnng==
+X-CSE-MsgGUID: Yq7/lWpOQvi1blQsgxsKqA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="41989334"
+X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
+   d="scan'208";a="41989334"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 02:44:33 -0800
+X-CSE-ConnectionGUID: 2/cLllESQp2mo305RhzW9g==
+X-CSE-MsgGUID: LrJbmPnzQteH3dtF0gSE7w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
+   d="scan'208";a="117963436"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.14])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 02:44:30 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 3 Mar 2025 12:44:26 +0200 (EET)
+To: Lukas Wunner <lukas@wunner.de>
+cc: Bjorn Helgaas <bhelgaas@google.com>, 
+    Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-pci@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, 
+    Joel Mathew Thomas <proxy0@tutamail.com>, stable@vger.kernel.org
+Subject: Re: [PATCH 1/1] PCI/bwctrl: Disable PCIe BW controller during
+ reset
+In-Reply-To: <Z8F1z-gyXJDyR6d0@wunner.de>
+Message-ID: <f8a99fca-62fc-4503-a553-597d87341674@linux.intel.com>
+References: <20250217165258.3811-1-ilpo.jarvinen@linux.intel.com> <Z7RL7ZXZ_vDUbncw@wunner.de> <14797a5a-6ded-bf8f-aa0c-128668ba608f@linux.intel.com> <Z7_4nMod6jWd-Bi1@wunner.de> <Z8F1z-gyXJDyR6d0@wunner.de>
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -117,71 +123,104 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174099858620.10177.4119971334794072658.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6hKL724SzG2kq
+X-ITU-Libra-ESVA-ID: 4Z6dwL1HL1zFxkB
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741711321.36422@wf4w1oHMiZdqK4gjaAqm/A
+X-ITU-Libra-ESVA-Watermark: 1741717812.02753@ZtcsyiNzddY254NZqJpLgg
 X-ITU-MailScanner-SpamCheck: not spam
 
-The following commit has been merged into the timers/vdso branch of tip:
+On Fri, 28 Feb 2025, Lukas Wunner wrote:
 
-Commit-ID:     48313da79b19fc4943be7507473a3501cf73906c
-Gitweb:        https://git.kernel.org/tip/48313da79b19fc4943be7507473a3501cf7=
-3906c
-Author:        Anna-Maria Behnsen <anna-maria@linutronix.de>
-AuthorDate:    Tue, 25 Feb 2025 13:36:35 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Mon, 03 Mar 2025 10:24:33 +01:00
+> On Thu, Feb 27, 2025 at 06:31:08AM +0100, Lukas Wunner wrote:
+> > pcie_bwnotif_irq() accesses the Link Status register without
+> > acquiring a runtime PM reference on the PCIe port.  This feels
+> > wrong and may also contribute to the issue reported here.
+> > Acquiring a runtime PM ref may sleep, so I think you need to
+> > change the driver to use a threaded IRQ handler.
+> 
+> I've realized we've had a discussion before why a threaded IRQ handler
+> doesn't make sense...
 
-vdso: Make vdso_time_data cacheline aligned
+Yes.
+ 
+> https://lore.kernel.org/all/Z35qJ3H_8u5LQDJ6@wunner.de/
+>
+> ...but I'm still worried that a Downstream Port in a nested-switch
+> configuration may be runtime suspended while the hardirq handler
+> is running.  Is there anything preventing that from happening?
 
-vdso_time_data is not cacheline aligned at the moment. When instantiating
-an array, the start of the second array member is not cache line aligned.
+I don't think there is.
 
-This increases the number of the required cache lines which needs to be
-read when handling e.g. CLOCK_MONOTONIC_RAW, because the data spawns an
-extra cache line if the previous data does not end at a cache line
-boundary.
+> To access config space of a port, it's sufficient if its upstream
+> bridge is runtime active (i.e. in PCI D0).
+> 
+> So basically the below is what I have in mind.  This assumes that
+> the upstream bridge is still in D0 when the interrupt handler runs
+> because in atomic context we can't wait for it to be runtime resumed.
+> Seems like a fair assumption to me but what do I know...
 
-Therefore make struct vdso_time_data cacheline aligned.
+bwctrl doesn't even want to resume the port in the irqhandler. If the port
+is suspended, why would it have LBMS/LABS, and we disabled notifications 
+anyway in suspend handler anyway so we're not even expecting them to come 
+during a period of suspend (which does not mean there couldn't be 
+interrupts due to other sources).
 
-Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
-Signed-off-by: Nam Cao <namcao@linutronix.de>
-Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+So there should be no problem in not calling resume for it.
 
----
- include/vdso/datapage.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> -- >8 --
+> 
+> diff --git a/drivers/pci/pcie/bwctrl.c b/drivers/pci/pcie/bwctrl.c
+> index 0a5e7efbce2c..fea8f7412266 100644
+> --- a/drivers/pci/pcie/bwctrl.c
+> +++ b/drivers/pci/pcie/bwctrl.c
+> @@ -28,6 +28,7 @@
+>  #include <linux/mutex.h>
+>  #include <linux/pci.h>
+>  #include <linux/pci-bwctrl.h>
+> +#include <linux/pm_runtime.h>
+>  #include <linux/rwsem.h>
+>  #include <linux/slab.h>
+>  #include <linux/types.h>
+> @@ -235,9 +236,13 @@ static irqreturn_t pcie_bwnotif_irq(int irq, void *context)
+>  	struct pcie_device *srv = context;
+>  	struct pcie_bwctrl_data *data = srv->port->link_bwctrl;
+>  	struct pci_dev *port = srv->port;
+> +	struct device *parent __free(pm_runtime_put) = port->dev.parent;
+>  	u16 link_status, events;
+>  	int ret;
+>  
+> +	if (parent)
+> +		pm_runtime_get_noresume(parent);
+> +
 
-diff --git a/include/vdso/datapage.h b/include/vdso/datapage.h
-index ed4fb4c..dfd98f9 100644
---- a/include/vdso/datapage.h
-+++ b/include/vdso/datapage.h
-@@ -11,6 +11,7 @@
-=20
- #include <vdso/align.h>
- #include <vdso/bits.h>
-+#include <vdso/cache.h>
- #include <vdso/clocksource.h>
- #include <vdso/ktime.h>
- #include <vdso/limits.h>
-@@ -126,7 +127,7 @@ struct vdso_time_data {
- 	u32			__unused;
-=20
- 	struct arch_vdso_time_data arch_data;
--};
-+} ____cacheline_aligned;
-=20
- /**
-  * struct vdso_rng_data - vdso RNG state information
+Should this then check if its suspended and return early if it is 
+suspended?
+
+pm_runtime_suspended() has some caveats in the kerneldoc though so I'm a 
+bit unsure if it can be called safely here, probably not.
+
+>  	ret = pcie_capability_read_word(port, PCI_EXP_LNKSTA, &link_status);
+>  	if (ret != PCIBIOS_SUCCESSFUL)
+>  		return IRQ_NONE;
+> diff --git a/include/linux/pm_runtime.h b/include/linux/pm_runtime.h
+> index d39dc863f612..038228de773d 100644
+> --- a/include/linux/pm_runtime.h
+> +++ b/include/linux/pm_runtime.h
+> @@ -448,6 +448,8 @@ static inline int pm_runtime_put(struct device *dev)
+>  	return __pm_runtime_idle(dev, RPM_GET_PUT | RPM_ASYNC);
+>  }
+>  
+> +DEFINE_FREE(pm_runtime_put, struct device *, if (_T) pm_runtime_put(_T))
+> +
+>  /**
+>   * __pm_runtime_put_autosuspend - Drop device usage counter and queue autosuspend if 0.
+>   * @dev: Target device.
+> 
+
+-- 
+ i.
+
 
 
