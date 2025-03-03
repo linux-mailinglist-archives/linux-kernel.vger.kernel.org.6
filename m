@@ -1,97 +1,119 @@
-Return-Path: <linux-kernel+bounces-541418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81508A4BCB9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:45:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4F7CA4BCC1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:46:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92626171530
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:45:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69A423B57F1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:45:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 434C81F561C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D15831F30B2;
 	Mon,  3 Mar 2025 10:43:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZTbOFcm1"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aOlE/8+3";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="S56RAuva"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 053F81F4281;
-	Mon,  3 Mar 2025 10:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A23991F4619;
+	Mon,  3 Mar 2025 10:43:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740998589; cv=none; b=KFwbEY+kQtzSuYt3sKY11Q05n+O7roDheEOOZPslfWvDV10N/D6yqgUyAA8swN7RW5BprNStu9e0rP6wX65W13bELjXdU8mjGzeWIHC0EDd4P1qN9PdpnTaVYLy+QXtsLqYW9MD3q4OHe8YQKqBsziBl0VbuTHQOnuNV7h+u/Pg=
+	t=1740998589; cv=none; b=EE19w+M6SZot8DyLtl5JCq1e+LId//So1k7ByR/zAqMcSHw7CxHgUKn0Ju0zrBxA+/m0vf2GdTVfsRym/nyuaWBBhCAOjniUtwZzMkckywl4sPfv/YLAYQA9PRTmRkdBH7iSd580Ee15SF4pmP0XdKYzc/hXFL+/1QvZ0arw69M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740998589; c=relaxed/simple;
-	bh=jowEScGafDqHehCuuxXQ5RRiB4vq3Q0DU122NO345r8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=vE4h9ZV6a/LfCwug9mW8hWzK9ep21CAMenwzbgSn1JrquIme1UoU7N33iXQOnIiaqK1wWGgYKnUkRrEFUIoutQQLvCKeDNdTF9wFKMplMPGiVRTYgR4/TrA4wldKvotr+hxQ3D91lW0PYCdg/Zs7lZtbm94rTBo05JjhWtkzbaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZTbOFcm1; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 85D9F4419B;
-	Mon,  3 Mar 2025 10:43:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740998585;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jowEScGafDqHehCuuxXQ5RRiB4vq3Q0DU122NO345r8=;
-	b=ZTbOFcm1NXHdDGcFApkbQVn+GvCtY6pHznZmCM/8Fpoza1+dDfDUmHpHWoXfXcn73CYtNz
-	AHMEa1NG0lWQlgUao5wKITGBs/mTFO6CSGThHPHwXSzF2tFHcG90iptSiEYE15hoNhcTQg
-	ZmDz3AEcStB4ZIBqxO41pPZQ8Hvc8EtEeryqPnl6gYMmOZN8sGND4gQv3IX9M8cK7OdmJ5
-	Yip2F0tgDeWDZwtY1/jYiRsym2VbJhJgGholjkEeLmP1L/8orwNOfD1Ures6wK8eIzP1MZ
-	B2H3omjy5L8SC7aL3rquCzr8n2clDF2oeOgcb89rFgnEs5EVck2SApYr7xdcyg==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-tegra@vger.kernel.org,  linux-mtd@lists.infradead.org,  Jonathan
- Hunter <jonathanh@nvidia.com>,  Lucas Stach <dev@lynxeye.de>,  Richard
- Weinberger <richard@nod.at>,  Stefan Agner <stefan@agner.ch>,  Thierry
- Reding <thierry.reding@gmail.com>,  Vignesh Raghavendra <vigneshr@ti.com>,
-  LKML <linux-kernel@vger.kernel.org>,  kernel-janitors@vger.kernel.org,
-  Qasim Ijaz <qasdev00@gmail.com>,  Natalie Vock <natalie.vock@gmx.de>
-Subject: Re: [PATCH] mtd: rawnand: tegra: Simplify maximum determination in
- tegra_nand_setup_timing()
-In-Reply-To: <d564cafe-d45a-40b5-9a91-a2e2b97c80d6@web.de> (Markus Elfring's
-	message of "Fri, 28 Feb 2025 19:33:10 +0100")
-References: <d564cafe-d45a-40b5-9a91-a2e2b97c80d6@web.de>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Mon, 03 Mar 2025 11:43:04 +0100
-Message-ID: <87pliy9yyv.fsf@bootlin.com>
+	bh=efo4wBFzrjlQS7x/6bY6ma6DFCVjMxys/5b58eXcp80=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=hos1LfP/JWv0edTbd4jLYC95Hh4fo9I74uXr96fv12fsSWYQNtTzHh7ah22gf32uQCTqEG8LNQxE5EW16nYNVruhmfViRR/o2OrjQUYEmDT16W7Vc+/0k20ILII5zfPvmjMFpUY8vnH1Mk+SFmnG33RcWStlxT9OiCvxwsye3IE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aOlE/8+3; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=S56RAuva; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 03 Mar 2025 10:43:05 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740998586;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=uPZKwedrrxSDqoiKRYWnXEj1mHKoY7XFb9YTjgF/cAY=;
+	b=aOlE/8+3MmJ078kzonvabWvHwWAr44FNDV1saSwmYYZDv9K0DkeGN3D20n7i3hMuZMJBnE
+	xn1tip3wjSGaypxB1wIA8Y0KP1tnLAxPSYCQ4cMwvkI5ihx/u+iHjROt050Vd2GhHQOXCL
+	cz2BKbv4ZGtZzPZekO6cB4e074tTxivjPLQN4KCgPTVmGD1lo1Xbl68B2O6racMVmIAlIM
+	XtPN2lot2AMkzid87idM0R+Zz1r2MkpVFieR4VsOv2sKdmMJLRpIBQucAzekLiP22fackp
+	flRkJWhh5AfxZmmVmyyJAmzSsUQ/pSeTKnAJmkObHcs7vBPuqBmCqq5V8M8ntQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740998586;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=uPZKwedrrxSDqoiKRYWnXEj1mHKoY7XFb9YTjgF/cAY=;
+	b=S56RAuva0H5aHV988q5a6pcp/QFRhn63iJIr8SOpQ0u/EV/7I/YKiqhNxVIUJkAdnf1aYx
+	g/Fg5a8HciRA5nBQ==
+From: "tip-bot2 for Anna-Maria Behnsen" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/vdso] vdso/datapage: Define for vdso_data to make rework
+ of vdso possible
+Cc: "Anna-Maria Behnsen" <anna-maria@linutronix.de>,
+ Nam Cao <namcao@linutronix.de>, thomas.weissschuh@linutronix.de,
+ Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Message-ID: <174099858572.10177.12620599034642529930.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelkeeludcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefujghffgffkfggtgfgsehtqhertddtreejnecuhfhrohhmpefoihhquhgvlhcutfgrhihnrghluceomhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepffeghfejtdefieeguddukedujeektdeihfelleeuieeuveehkedvleduheeivdefnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudefpdhrtghpthhtohepofgrrhhkuhhsrdfglhhfrhhinhhgseifvggsrdguvgdprhgtphhtthhopehlihhnuhigqdhtvghgrhgrsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqmhhtugeslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehjohhnrghthhgrnhhhsehnvhhiughirgdrtghomhdprhgtphhtthhopeguvghvsehlhihngigvhigvrdguv
- gdprhgtphhtthhopehrihgthhgrrhgusehnohgurdgrthdprhgtphhtthhopehsthgvfhgrnhesrghgnhgvrhdrtghhpdhrtghpthhtohepthhhihgvrhhrhidrrhgvughinhhgsehgmhgrihhlrdgtohhm
-X-GND-Sasl: miquel.raynal@bootlin.com
 
-Hi,
+The following commit has been merged into the timers/vdso branch of tip:
 
-On 28/02/2025 at 19:33:10 +01, Markus Elfring <Markus.Elfring@web.de> wrote:
+Commit-ID:     0065d63c517b3c18a18b30049c7e93661fac8270
+Gitweb:        https://git.kernel.org/tip/0065d63c517b3c18a18b30049c7e93661fa=
+c8270
+Author:        Anna-Maria Behnsen <anna-maria@linutronix.de>
+AuthorDate:    Tue, 25 Feb 2025 13:36:36 +01:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Mon, 03 Mar 2025 10:24:34 +01:00
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 28 Feb 2025 19:19:45 +0100
->
-> Reduce nested max() calls by a single max3() call in this
-> function implementation.
->
-> The source code was transformed by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+vdso/datapage: Define for vdso_data to make rework of vdso possible
 
-I am sorry, I do not see what gets simplified. max(max(a,b),max(c,d))
-looks simpler than max3(a,b,max(c,d)). Does it bring something in terms
-of optimization?
+PTP clocks could also be supported by the vdso to use the advantages of
+this implementation. Therefore the struct must be reworked. For a
+transition to the new structure of the vdso, add a define which maps
+vdso_clock to vdso_data. This will be removed when all users are updated
+step by step.
 
-Thanks,
-Miqu=C3=A8l
+No functional change.
+
+Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Signed-off-by: Nam Cao <namcao@linutronix.de>
+Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+
+---
+ include/vdso/datapage.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/include/vdso/datapage.h b/include/vdso/datapage.h
+index dfd98f9..1df22e8 100644
+--- a/include/vdso/datapage.h
++++ b/include/vdso/datapage.h
+@@ -129,6 +129,8 @@ struct vdso_time_data {
+ 	struct arch_vdso_time_data arch_data;
+ } ____cacheline_aligned;
+=20
++#define vdso_clock vdso_time_data
++
+ /**
+  * struct vdso_rng_data - vdso RNG state information
+  * @generation:	counter representing the number of RNG reseeds
 
