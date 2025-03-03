@@ -1,134 +1,135 @@
-Return-Path: <linux-kernel+bounces-545279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E55FA4EC38
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:46:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5DD9A4EA57
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:02:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 012693A3F65
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:14:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A0DB16F050
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:57:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32AA62620EC;
-	Tue,  4 Mar 2025 17:58:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A07F527934F;
+	Tue,  4 Mar 2025 17:37:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="GpzD4opl"
-Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=amd.com header.i=@amd.com header.b="CmhHd50D"
+Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C82E715383A
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:58:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.116
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741111083; cv=pass; b=LO+EPmlRq/OCFwwTzlS07mnrSN8L8r0wg1iEbFY+eEqtgwv5ZtKQeuCRNbprUadvx0IEKj3z/j1aaRBxXaz0wvfS8lPezE9rlO3NKnsm2TkCaxLGyF8dqHRJGvhx25gX+34cg35gNL6ef13TNaNmHP9xBva45AyWH5feh4S7A7o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741111083; c=relaxed/simple;
-	bh=MuXhWb8I/WgZF55jUWmYmeYlpzilT+5kGD3/bEfg+Qs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Enys3FXPKJWg3mmvIod9unMB5VegoBe439FL0xIfdYcrdQVCqdjEBEkqE/HFtqwBpae19KlUAaWcRMlFZKGsKvHf1WjR3EJMPJ0yYB94JDAM+0xl8K2nSQKCi8GIDMkrEQ7FtFEY8BOutAVWWkk+0Ofyssgoy3xWHjcTchxUxuA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=GpzD4opl reason="signature verification failed"; arc=none smtp.client-ip=78.32.30.218; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; arc=pass smtp.client-ip=160.75.25.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244BA2780FF
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.115
+ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741109837; cv=fail; b=nFq6OmDYYbatjEhvfGasdQiaBIvz7Fa9k2Lv1DmS9R0Y7j4dzcc5x4WqetppL3tCfO2Y1COkIQSZ8JnVeUnSBGcXOo3O4AnKr8XX4sdypfodXHYR2jKEWzOwVyZBTx2VK84DgUnrSlRVrVcccFIc1svFemPzptg93dn9CwPYJXs=
+ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741109837; c=relaxed/simple;
+	bh=6BRQVzOfX88GP7SvSBUjTeJkGHBY7MBwM2jybOVqKVE=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ktwLlH/EN4CJyzZrSfEqkSP3Y2f0QfiEliH3jfnIgbnZ34yxCAnbCSztlCjjd1lPOpGwGqVoir3WXSik1mc1vbTuZhWqvBZYSm57gWzbLQqnsrWcXky+pDCoCJ45Dryx/uEIAC4QDeDzyOk2C9Z2imoQt9NTAso51i8a21Qdezk=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amd.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (1024-bit key) header.d=amd.com header.i=@amd.com header.b=CmhHd50D reason="signature verification failed"; arc=fail smtp.client-ip=40.107.94.55; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; arc=fail smtp.client-ip=160.75.25.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id 0A71940CFEFD
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:57:59 +0300 (+03)
+	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 9B176408B643
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:37:13 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.a=rsa-sha256 header.s=pandora-2019 header.b=GpzD4opl
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=amd.com header.i=@amd.com header.a=rsa-sha256 header.s=selector1 header.b=CmhHd50D
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6hNY6XhfzG46p
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:44:29 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dfB3B0wzFxKr
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:41:06 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id E97864272B; Tue,  4 Mar 2025 19:44:21 +0300 (+03)
+	id 9776E4272C; Tue,  4 Mar 2025 17:40:53 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=GpzD4opl
-X-Envelope-From: <linux-kernel+bounces-541467-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=amd.com header.i=@amd.com header.b=CmhHd50D
+X-Envelope-From: <linux-kernel+bounces-541470-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=GpzD4opl
-Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id ED87E42EF2
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:04:00 +0300 (+03)
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id 7FD6E2DCDE
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:04:00 +0300 (+03)
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=amd.com header.i=@amd.com header.b=CmhHd50D
+Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
+	by le2 (Postfix) with ESMTP id 29288426D5
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:02:41 +0300 (+03)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by fgw1.itu.edu.tr (Postfix) with SMTP id B2D34305F789
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:02:40 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F5AD3AD5E2
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:59:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B3AF175E0B
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:00:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7961F4181;
-	Mon,  3 Mar 2025 10:58:34 +0000 (UTC)
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CBC11F4617;
+	Mon,  3 Mar 2025 10:59:43 +0000 (UTC)
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2055.outbound.protection.outlook.com [40.107.94.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B211F3B9D;
-	Mon,  3 Mar 2025 10:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740999510; cv=none; b=LQ//U+brAMF1U7oEN9/sTDeECfUhQfxIZ+wA7bQQC+ISjZJ8NU6yF+BnfPgx5ogup4kMC8QQQCOC6iAVnvOWi7sd7kms3fkrpUtHeW36M+DPskM+XZy5cM7i5U7WX1S7juo3RTWS3PJLEnBdfUbaj41S2MJlcw4Si6ENXvgAUTM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740999510; c=relaxed/simple;
-	bh=MuXhWb8I/WgZF55jUWmYmeYlpzilT+5kGD3/bEfg+Qs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HJLERoLLDMppbmfYGAqAWVuURV2Uzm3YqFimALW2BPptwzVUdWMjc0jsd523WN9jMix96Hb1EtvCAe70/bK/d9YTYrLgNe4k0VtQ26dGjynVEBdYWP0Bo4Wkvzk3Ah+yceNXxbb3Mz1x7blcsBEF7pEpodJcDGgCYe1kIHrag9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=GpzD4opl; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=zVOQIBvyGVn9misUYWwRCx37wyzZpBfrC8j7hiAI1TM=; b=GpzD4oplECLJoIzVb4BmodHX/E
-	HhO9eVfSr6xJOTEPWMFSpCtOCnbJgBDGPBlsi9s24PYSYbEtYdJbuKeJ90gOHwN72N3VFv2tA4ijP
-	ktNFCW8NIj8dOK1PWBiXjElXVkn/I65LiZ3Jril76QkgLTI/Bnvsh9LUnolgPtzxMncnRRS1jbzfk
-	Mf68n13ZrtowQkmA9pykzMPrzOELtoU4+W53NiOnhT51uYTt9GTkkQr24A+1gHtF+RJ8i0gFK42hw
-	Xnk1ZRi257P5e4QnPZ1N3y3+oTNKfpAvwTCfMxvBckdopN7kMcQyEAO6DPlRfSpb/wcQTrMVUSo53
-	RtZSUNuA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:56642)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tp3Uz-0000I9-14;
-	Mon, 03 Mar 2025 10:58:13 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tp3Uw-0003jb-2J;
-	Mon, 03 Mar 2025 10:58:10 +0000
-Date: Mon, 3 Mar 2025 10:58:10 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH 3/3] net: stmmac: Add DWMAC glue layer for Renesas GBETH
-Message-ID: <Z8WLQrmsi3ZbiQf1@shell.armlinux.org.uk>
-References: <20250302181808.728734-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250302181808.728734-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <Z8SydsdDsZfdrdbE@shell.armlinux.org.uk>
- <CA+V-a8vCB7nP=tsv4UkOwODSs-9hiG-PxN6cpihfvwjq2itAHg@mail.gmail.com>
- <CA+V-a8un7Oy9NtfDUfs0DSwRVAFn52-vWj1Os=u_1dqijJhbMw@mail.gmail.com>
- <Z8V9OC_1llF3leZd@shell.armlinux.org.uk>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD9501F417E;
+	Mon,  3 Mar 2025 10:59:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740999577; cv=fail; b=mBd6eCxE0wI6LUFB4LN/N/uU5qo7PnprulnOwHwHaIRP41MnpR0swai9iFhIg5gA+9VO6e1jnVAp1vTHiN9Rhyh6U0vlGQ5AlbPM7D+WJfvfU5MGlKQcrgTSqQk8uYHIuoYNTF0NDoEDoI6lXEaNIEYq/+mJMBAG9OAqsv+7ITY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740999577; c=relaxed/simple;
+	bh=PIKHWevZDSKouLGTCvfGJfjfIZtcySnJLKiJ8HTFqxE=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sr/BiHTZ4F9XXmazvDX5NduQ4KjWGMSh5KuggBSC1p7JOsWusUrSuRzRnox0Tcdp+t+SPzcTYgCusT2fkJLec/mGUC2wmiWCQSapzN3bbFV9qjL5J9S30D9zfaf0112uP1XpiE5DJlGpQfm3WaNyIZnL2MYGuva+geYJ+WhvXkA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=CmhHd50D; arc=fail smtp.client-ip=40.107.94.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WDOGzgZhZZhf+AG7PVJgWnXmDCZghjefJkf9+vCOwBVq/PKfGwhdVbwd7WnVZlc5yGzRcjPT7p+AliE7MFJ65zFU0uLfK6sZXN1+My44FCHU4qihlP0nXzk86lv2rtZlWADLn00xdi4xUtvmj0Hlw/lwJ0rA/WLODSDvdvfc/q+chjWLLzQVzGkanYDPIWVTaLgLK2VpNndeJyr82tZHINy6k9Xtv1Lf2HS44jt65OomgsygNIWUGXu3osyvGSlHnXBFm1p86AbAVHLEAo3ZJTXTeJojf3hloIh54A26SJBjSLO4Xd6d0mz2OoyuMo9JW+FP5hnOFnZMlcNnJq5ZTg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iqTThDyCbhumJVkijYZpjKt0/QLJeLUuLAM7Zyz1BNU=;
+ b=mBb6UN5B/+1FRITJ+jVwOcPebFcXBXV+NgtOt7G5U/tC1Hnbk1DRdDMp/7raB/hwSju9rhZNBA+Lm0vsLqrA+ZMHlsZPuycmCA7VDv8eqojxu7GQDxuwt/YRPVbX/5y3U6WxC0EcnbOZ2h6TUP4VH6FkJ5IAr6oxE5L7WYZx/pWZyGY4ZcYZmVMYZ/qN2yX7gas7qsKc4zK4hKIxkbvDw6QfaZt0RoofcxgGyctNBlbQ6+Cn9q3PNr+W3yHwZ4wnps1G9sh7+KQnW95ogbSQB3rPaRlDpf2y6EqEY2xSy2W5b88MJeJSXC9nKM2xAhX2m0YQsRUZTYvNLcrhFzsVpA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iqTThDyCbhumJVkijYZpjKt0/QLJeLUuLAM7Zyz1BNU=;
+ b=CmhHd50D0fxPI53OM6Rg+7vcVtv/DCr8Thwe3HWgRJeJ752ZBEGK+EktExNst6iar2a1sBbYblGUe7Dv3q2w3OcsU+HWRT76CSSMcN5kQpq2/69zLVzcIkdokW3Dj9i/36mElQWSJVsWEx/o7B+0WKZ66LPGt/aazHMoONTfZ5E=
+Received: from SA9P223CA0016.NAMP223.PROD.OUTLOOK.COM (2603:10b6:806:26::21)
+ by SA3PR12MB9228.namprd12.prod.outlook.com (2603:10b6:806:39c::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.25; Mon, 3 Mar
+ 2025 10:59:33 +0000
+Received: from SN1PEPF00036F3F.namprd05.prod.outlook.com
+ (2603:10b6:806:26:cafe::8) by SA9P223CA0016.outlook.office365.com
+ (2603:10b6:806:26::21) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8489.28 via Frontend Transport; Mon,
+ 3 Mar 2025 10:59:33 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SN1PEPF00036F3F.mail.protection.outlook.com (10.167.248.23) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8511.15 via Frontend Transport; Mon, 3 Mar 2025 10:59:33 +0000
+Received: from amd.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 3 Mar
+ 2025 04:59:29 -0600
+From: Akshay Gupta <akshay.gupta@amd.com>
+To: <linux-hwmon@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <linux@roeck-us.net>, <gregkh@linuxfoundation.org>, <arnd@arndb.de>,
+	<shyam-sundar.s-k@amd.com>, <gautham.shenoy@amd.com>,
+	<mario.limonciello@amd.com>, <naveenkrishna.chatradhi@amd.com>, Akshay Gupta
+	<akshay.gupta@amd.com>
+Subject: [PATCH v5 02/11] misc: amd-sbi: Move protocol functionality to core file
+Date: Mon, 3 Mar 2025 10:58:53 +0000
+Message-ID: <20250303105902.215009-3-akshay.gupta@amd.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250303105902.215009-1-akshay.gupta@amd.com>
+References: <20250303105902.215009-1-akshay.gupta@amd.com>
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -136,111 +137,516 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8V9OC_1llF3leZd@shell.armlinux.org.uk>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF00036F3F:EE_|SA3PR12MB9228:EE_
+X-MS-Office365-Filtering-Correlation-Id: c50a40ab-966d-47cf-4c2c-08dd5a427add
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?27rrI9+VrPph6swUlH4B6VpGGlPoClBphkfG79gY3/V/38XSyalvZCeJn10d?=
+ =?us-ascii?Q?tK77BV8fzCINS1qNRaYMvr1hb5nxZF7QcroVRCYm3bdbg9IzxqDDY9g9Crup?=
+ =?us-ascii?Q?7CmnNzFltWaubOFFRZD33Rw4lClZ005ci0iPaJbIuSVlJ4UKNxMMpeltAp+P?=
+ =?us-ascii?Q?GD/6AabKWlBnJjs8cUYIM7YQhj0YkPigI8SfjgfLG7OqLxWtzYEp0uXRb1+M?=
+ =?us-ascii?Q?CwN5m1xnyqQi2m3nbCtpDt3QZAybzzuwyPguxZ3tfVcJwMH4Kzfd1+jNGagT?=
+ =?us-ascii?Q?VBKHqZPXpNX4UnZfpn7+pPlMCArHZLn61KpGbBaN+vCYcdiPN63kXNpx/ibx?=
+ =?us-ascii?Q?ChrVKiZBpTRLUtudzGujjWUDKuxW+jbFdZbZ6e3q7J2mffW8KMx1utCSEnQO?=
+ =?us-ascii?Q?RAhBpYGcmZm6YawX+U9VldypwctlV48utVJ4WfsqPjWmdXxTlqU6eDVaGQbc?=
+ =?us-ascii?Q?+cKjgQ6iV8CdUIszoC7t2PIWgTfZ6kw26dlZNIcNHbeNMgw7xPO1A/uHaudo?=
+ =?us-ascii?Q?E8klNt0lUZsNgAaftqjtg4pWh19MMgFnLJDv20+iVmZ8l9KeUi/TLFuMyYJj?=
+ =?us-ascii?Q?kowgb3oTJhKJnb59lSwReRm1+eMXfVj1nFi/+pNI7S7lQ/udbFzLYrYMZImH?=
+ =?us-ascii?Q?Dhutoxx+ISSyUtGA2Mnl1kG9gPsBpruNQAiKC6Qho84Yq35Tgff55SdlNv19?=
+ =?us-ascii?Q?jh6ScApFECXj6R9nZ/ZWKDNkIQqcoJykSYZWHuasXu4uvh6a7acpWIIIg7Jj?=
+ =?us-ascii?Q?afYuxAkamanT9punvcQOgEBT2cBJONXM3ETbqcO2g45J5L0tTPl0b2znTeIY?=
+ =?us-ascii?Q?CWMgj+kIYS5U/54QCZmdMIKQnsrSHG7hcmJLMQGmWHcIwuNCcos+o0wLDaZw?=
+ =?us-ascii?Q?TWZSst2/EVCVxKG6X15Qu1YkqeDoo2HzjxEO9E5/iTZ3yNRXZ1PEpqnG0+mX?=
+ =?us-ascii?Q?ZplqaM0u0qoJ/hVqUGRUu4o5M4WGw7BqwV0LNL47BUYehAPg8tGRH9aUCZQg?=
+ =?us-ascii?Q?xGpRG9nf5Jsu6+cH7vc5+1hbiIyaf3qwLPxTGozUslvADN97oHJPpH2eu0YP?=
+ =?us-ascii?Q?5jbvZSv6eCzy4lGNK+DLn/pTnBBx9UNbUe7oLedEbgkNsX4lpfPE4ucca5KG?=
+ =?us-ascii?Q?VyWTmiUymPVzYTcV/JX6BZkNhXbs603FCF0HslB7XeBJOKzTDz/nO9Tz+ReQ?=
+ =?us-ascii?Q?qu72igzh2Z10HFGou7T5Rpkr1iTXdV6+5aN6PT8yUA+qY1WnzNzxKhQ2IdcD?=
+ =?us-ascii?Q?ifLeOJkDSnnRyM/3Q7GFlRGpTtvq2e/7FAKWKxFQBHcQqay/y5dVHwwyZQsT?=
+ =?us-ascii?Q?Ee4FB3Wb9Yqjmk+EJ2ba3GfxaZphItfha8CGfWhlPRfIgCvs+72F2TKAAgXV?=
+ =?us-ascii?Q?SRWs9UnQE9Ts1RpsRjA+ssRbLVNr3U4JcSI4sLt97LpkVRyJxuHBH9HTpK+M?=
+ =?us-ascii?Q?mVWHlIJS9Z5nehKKfFspvzsIogDKDx9Rgdx6eUw0wfk1QEXicVhbTg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2025 10:59:33.1361
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c50a40ab-966d-47cf-4c2c-08dd5a427add
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF00036F3F.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB9228
+Content-Transfer-Encoding: quoted-printable
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6hNY6XhfzG46p
+X-ITU-Libra-ESVA-ID: 4Z6dfB3B0wzFxKr
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741715762.70165@zVmLGtn+E8/gR86prZYRMA
+X-ITU-Libra-ESVA-Watermark: 1741714512.8819@aoSw4h4qknV8ZqekfOHNhg
 X-ITU-MailScanner-SpamCheck: not spam
 
-On Mon, Mar 03, 2025 at 09:58:16AM +0000, Russell King (Oracle) wrote:
-> I think that the way forward would be to introduce yet another flag
-> (maybe STMMAC_FLAG_LPI_TX_CLK_PHY_CAP) and:
-> 
-> 	if (priv->plat->flags & STMMAC_FLAG_LPI_TX_CLK_PHY_CAP)
-> 		priv->tx_lpi_clk_stop = tx_clk_stop;
-> 	else
-> 		priv->tx_lpi_clk_stop = priv->plat->flags &
-> 					STMMAC_FLAG_EN_TX_LPI_CLOCKGATING;
-> 
-> and then where STMMAC_FLAG_EN_TX_LPI_CLOCKGATING is checked, that
-> becomes:
-> 
-> 	ret = stmmac_set_lpi_mode(priv, priv->hw, STMMAC_LPI_TIMER,
-> 				  priv->tx_lpi_clk_stop,
-> 				  priv->tx_lpi_timer);
+- This is done to utilize the protocol functionality into
+  other domains.
+- Increase the scalability of the module with different bus(i2c/i3c)
 
-I'm thinking something like the following:
+Reviewed-by: Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>
+Signed-off-by: Akshay Gupta <akshay.gupta@amd.com>
+---
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac.h b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-index 3a00a988cb36..04197496ee87 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-@@ -307,6 +307,7 @@ struct stmmac_priv {
- 	struct timer_list eee_ctrl_timer;
- 	int lpi_irq;
- 	u32 tx_lpi_timer;
-+	bool tx_lpi_clk_stop;
- 	bool eee_enabled;
- 	bool eee_active;
- 	bool eee_sw_timer_en;
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index 7d10e58e009e..7709d431e950 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -461,8 +461,7 @@ static void stmmac_try_to_start_sw_lpi(struct stmmac_priv *priv)
- 	/* Check and enter in LPI mode */
- 	if (!priv->tx_path_in_lpi_mode)
- 		stmmac_set_lpi_mode(priv, priv->hw, STMMAC_LPI_FORCED,
--			priv->plat->flags & STMMAC_FLAG_EN_TX_LPI_CLOCKGATING,
--			0);
-+				    priv->tx_lpi_clk_stop, 0);
- }
- 
- /**
-@@ -1110,13 +1109,18 @@ static int stmmac_mac_enable_tx_lpi(struct phylink_config *config, u32 timer,
- 
- 	priv->eee_enabled = true;
- 
-+	/* Update the transmit clock stop according to PHY capability if
-+	 * the platform allows
+Changes since v4:
+New patch: Patch split from v4 patch 1/9
+- Update Copyright year to 2025
+
+ drivers/misc/amd-sbi/Makefile               |   3 +-
+ drivers/misc/amd-sbi/rmi-core.c             | 113 ++++++++++++++
+ drivers/misc/amd-sbi/rmi-core.h             |  63 ++++++++
+ drivers/misc/amd-sbi/{sbrmi.c =3D> rmi-i2c.c} | 165 ++------------------
+ 4 files changed, 187 insertions(+), 157 deletions(-)
+ create mode 100644 drivers/misc/amd-sbi/rmi-core.c
+ create mode 100644 drivers/misc/amd-sbi/rmi-core.h
+ rename drivers/misc/amd-sbi/{sbrmi.c =3D> rmi-i2c.c} (53%)
+
+diff --git a/drivers/misc/amd-sbi/Makefile b/drivers/misc/amd-sbi/Makefil=
+e
+index 304394bf5e59..7cd8e0a1aa5d 100644
+--- a/drivers/misc/amd-sbi/Makefile
++++ b/drivers/misc/amd-sbi/Makefile
+@@ -1,2 +1,3 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+-obj-$(CONFIG_AMD_SBRMI_I2C)	+=3D sbrmi.o
++sbrmi-i2c-objs  		:=3D rmi-i2c.o rmi-core.o
++obj-$(CONFIG_AMD_SBRMI_I2C)	+=3D sbrmi-i2c.o
+diff --git a/drivers/misc/amd-sbi/rmi-core.c b/drivers/misc/amd-sbi/rmi-c=
+ore.c
+new file mode 100644
+index 000000000000..74456756270c
+--- /dev/null
++++ b/drivers/misc/amd-sbi/rmi-core.c
+@@ -0,0 +1,113 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * sbrmi-core.c - file defining SB-RMI protocols compliant
++ *		  AMD SoC device.
++ *
++ * Copyright (C) 2025 Advanced Micro Devices, Inc.
++ */
++#include <linux/delay.h>
++#include <linux/err.h>
++#include <linux/i2c.h>
++#include <linux/mutex.h>
++#include "rmi-core.h"
++
++/* Mask for Status Register bit[1] */
++#define SW_ALERT_MASK	0x2
++
++/* Software Interrupt for triggering */
++#define START_CMD	0x80
++#define TRIGGER_MAILBOX	0x01
++
++int rmi_mailbox_xfer(struct sbrmi_data *data,
++		     struct sbrmi_mailbox_msg *msg)
++{
++	int i, ret, retry =3D 10;
++	int sw_status;
++	u8 byte;
++
++	mutex_lock(&data->lock);
++
++	/* Indicate firmware a command is to be serviced */
++	ret =3D i2c_smbus_write_byte_data(data->client,
++					SBRMI_INBNDMSG7, START_CMD);
++	if (ret < 0)
++		goto exit_unlock;
++
++	/* Write the command to SBRMI::InBndMsg_inst0 */
++	ret =3D i2c_smbus_write_byte_data(data->client,
++					SBRMI_INBNDMSG0, msg->cmd);
++	if (ret < 0)
++		goto exit_unlock;
++
++	/*
++	 * For both read and write the initiator (BMC) writes
++	 * Command Data In[31:0] to SBRMI::InBndMsg_inst[4:1]
++	 * SBRMI_x3C(MSB):SBRMI_x39(LSB)
 +	 */
-+	if (priv->plat->flags & STMMAC_FLAG_EN_TX_LPI_CLK_PHY_CAP)
-+		priv->tx_lpi_clk_stop = tx_clk_stop;
++	for (i =3D 0; i < 4; i++) {
++		byte =3D (msg->data_in >> i * 8) & 0xff;
++		ret =3D i2c_smbus_write_byte_data(data->client,
++						SBRMI_INBNDMSG1 + i, byte);
++		if (ret < 0)
++			goto exit_unlock;
++	}
 +
- 	stmmac_set_eee_timer(priv, priv->hw, STMMAC_DEFAULT_LIT_LS,
- 			     STMMAC_DEFAULT_TWT_LS);
- 
- 	/* Try to cnfigure the hardware timer. */
- 	ret = stmmac_set_lpi_mode(priv, priv->hw, STMMAC_LPI_TIMER,
--				  priv->plat->flags & STMMAC_FLAG_EN_TX_LPI_CLOCKGATING,
--				  priv->tx_lpi_timer);
-+				  priv->tx_lpi_clk_stop, priv->tx_lpi_timer);
- 
- 	if (ret) {
- 		/* Hardware timer mode not supported, or value out of range.
-@@ -1262,6 +1266,10 @@ static int stmmac_phy_setup(struct stmmac_priv *priv)
- 	if (!(priv->plat->flags & STMMAC_FLAG_RX_CLK_RUNS_IN_LPI))
- 		priv->phylink_config.eee_rx_clk_stop_enable = true;
- 
-+	/* Set the default transmit clock stop bit based on the platform glue */
-+	priv->tx_lpi_clk_stop = priv->plat->flags &
-+				STMMAC_FLAG_EN_TX_LPI_CLOCKGATING;
++	/*
++	 * Write 0x01 to SBRMI::SoftwareInterrupt to notify firmware to
++	 * perform the requested read or write command
++	 */
++	ret =3D i2c_smbus_write_byte_data(data->client,
++					SBRMI_SW_INTERRUPT, TRIGGER_MAILBOX);
++	if (ret < 0)
++		goto exit_unlock;
 +
- 	mdio_bus_data = priv->plat->mdio_bus_data;
- 	if (mdio_bus_data)
- 		priv->phylink_config.default_an_inband =
-diff --git a/include/linux/stmmac.h b/include/linux/stmmac.h
-index cd0d1383df87..102de1aeac17 100644
---- a/include/linux/stmmac.h
-+++ b/include/linux/stmmac.h
-@@ -183,7 +183,8 @@ struct dwmac4_addrs {
- #define STMMAC_FLAG_INT_SNAPSHOT_EN		BIT(9)
- #define STMMAC_FLAG_RX_CLK_RUNS_IN_LPI		BIT(10)
- #define STMMAC_FLAG_EN_TX_LPI_CLOCKGATING	BIT(11)
--#define STMMAC_FLAG_HWTSTAMP_CORRECT_LATENCY	BIT(12)
-+#define STMMAC_FLAG_EN_TX_LPI_CLK_PHY_CAP	BIT(12)
-+#define STMMAC_FLAG_HWTSTAMP_CORRECT_LATENCY	BIT(13)
- 
- struct plat_stmmacenet_data {
- 	int bus_id;
++	/*
++	 * Firmware will write SBRMI::Status[SwAlertSts]=3D1 to generate
++	 * an ALERT (if enabled) to initiator (BMC) to indicate completion
++	 * of the requested command
++	 */
++	do {
++		sw_status =3D i2c_smbus_read_byte_data(data->client,
++						     SBRMI_STATUS);
++		if (sw_status < 0) {
++			ret =3D sw_status;
++			goto exit_unlock;
++		}
++		if (sw_status & SW_ALERT_MASK)
++			break;
++		usleep_range(50, 100);
++	} while (retry--);
++
++	if (retry < 0) {
++		dev_err(&data->client->dev,
++			"Firmware fail to indicate command completion\n");
++		ret =3D -EIO;
++		goto exit_unlock;
++	}
++
++	/*
++	 * For a read operation, the initiator (BMC) reads the firmware
++	 * response Command Data Out[31:0] from SBRMI::OutBndMsg_inst[4:1]
++	 * {SBRMI_x34(MSB):SBRMI_x31(LSB)}.
++	 */
++	if (msg->read) {
++		for (i =3D 0; i < 4; i++) {
++			ret =3D i2c_smbus_read_byte_data(data->client,
++						       SBRMI_OUTBNDMSG1 + i);
++			if (ret < 0)
++				goto exit_unlock;
++			msg->data_out |=3D ret << i * 8;
++		}
++	}
++
++	/*
++	 * BMC must write 1'b1 to SBRMI::Status[SwAlertSts] to clear the
++	 * ALERT to initiator
++	 */
++	ret =3D i2c_smbus_write_byte_data(data->client, SBRMI_STATUS,
++					sw_status | SW_ALERT_MASK);
++
++exit_unlock:
++	mutex_unlock(&data->lock);
++	return ret;
++}
+diff --git a/drivers/misc/amd-sbi/rmi-core.h b/drivers/misc/amd-sbi/rmi-c=
+ore.h
+new file mode 100644
+index 000000000000..8e30a43ec714
+--- /dev/null
++++ b/drivers/misc/amd-sbi/rmi-core.h
+@@ -0,0 +1,63 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/*
++ * Copyright (C) 2025 Advanced Micro Devices, Inc.
++ */
++
++#ifndef _SBRMI_CORE_H_
++#define _SBRMI_CORE_H_
++
++#include <linux/mutex.h>
++#include <linux/i2c.h>
++#include <linux/platform_device.h>
++
++/* SB-RMI registers */
++enum sbrmi_reg {
++	SBRMI_CTRL		=3D 0x01,
++	SBRMI_STATUS,
++	SBRMI_OUTBNDMSG0	=3D 0x30,
++	SBRMI_OUTBNDMSG1,
++	SBRMI_OUTBNDMSG2,
++	SBRMI_OUTBNDMSG3,
++	SBRMI_OUTBNDMSG4,
++	SBRMI_OUTBNDMSG5,
++	SBRMI_OUTBNDMSG6,
++	SBRMI_OUTBNDMSG7,
++	SBRMI_INBNDMSG0,
++	SBRMI_INBNDMSG1,
++	SBRMI_INBNDMSG2,
++	SBRMI_INBNDMSG3,
++	SBRMI_INBNDMSG4,
++	SBRMI_INBNDMSG5,
++	SBRMI_INBNDMSG6,
++	SBRMI_INBNDMSG7,
++	SBRMI_SW_INTERRUPT,
++};
++
++/*
++ * SB-RMI supports soft mailbox service request to MP1 (power management
++ * firmware) through SBRMI inbound/outbound message registers.
++ * SB-RMI message IDs
++ */
++enum sbrmi_msg_id {
++	SBRMI_READ_PKG_PWR_CONSUMPTION =3D 0x1,
++	SBRMI_WRITE_PKG_PWR_LIMIT,
++	SBRMI_READ_PKG_PWR_LIMIT,
++	SBRMI_READ_PKG_MAX_PWR_LIMIT,
++};
++
++/* Each client has this additional data */
++struct sbrmi_data {
++	struct i2c_client *client;
++	struct mutex lock;
++	u32 pwr_limit_max;
++};
++
++struct sbrmi_mailbox_msg {
++	u8 cmd;
++	bool read;
++	u32 data_in;
++	u32 data_out;
++};
++
++int rmi_mailbox_xfer(struct sbrmi_data *data, struct sbrmi_mailbox_msg *=
+msg);
++#endif /*_SBRMI_CORE_H_*/
+diff --git a/drivers/misc/amd-sbi/sbrmi.c b/drivers/misc/amd-sbi/rmi-i2c.=
+c
+similarity index 53%
+rename from drivers/misc/amd-sbi/sbrmi.c
+rename to drivers/misc/amd-sbi/rmi-i2c.c
+index d48d8e5460ff..914338a24246 100644
+--- a/drivers/misc/amd-sbi/sbrmi.c
++++ b/drivers/misc/amd-sbi/rmi-i2c.c
+@@ -1,9 +1,9 @@
+ // SPDX-License-Identifier: GPL-2.0-or-later
+ /*
+- * sbrmi.c - hwmon driver for a SB-RMI mailbox
+- *           compliant AMD SoC device.
++ * rmi-i2c.c - Side band RMI over I2C support for AMD out
++ *             of band management
+  *
+- * Copyright (C) 2020-2021 Advanced Micro Devices, Inc.
++ * Copyright (C) 2024 Advanced Micro Devices, Inc.
+  */
+=20
+ #include <linux/delay.h>
+@@ -14,64 +14,10 @@
+ #include <linux/module.h>
+ #include <linux/mutex.h>
+ #include <linux/of.h>
++#include "rmi-core.h"
+=20
+ /* Do not allow setting negative power limit */
+ #define SBRMI_PWR_MIN	0
+-/* Mask for Status Register bit[1] */
+-#define SW_ALERT_MASK	0x2
+-
+-/* Software Interrupt for triggering */
+-#define START_CMD	0x80
+-#define TRIGGER_MAILBOX	0x01
+-
+-/*
+- * SB-RMI supports soft mailbox service request to MP1 (power management
+- * firmware) through SBRMI inbound/outbound message registers.
+- * SB-RMI message IDs
+- */
+-enum sbrmi_msg_id {
+-	SBRMI_READ_PKG_PWR_CONSUMPTION =3D 0x1,
+-	SBRMI_WRITE_PKG_PWR_LIMIT,
+-	SBRMI_READ_PKG_PWR_LIMIT,
+-	SBRMI_READ_PKG_MAX_PWR_LIMIT,
+-};
+-
+-/* SB-RMI registers */
+-enum sbrmi_reg {
+-	SBRMI_CTRL		=3D 0x01,
+-	SBRMI_STATUS,
+-	SBRMI_OUTBNDMSG0	=3D 0x30,
+-	SBRMI_OUTBNDMSG1,
+-	SBRMI_OUTBNDMSG2,
+-	SBRMI_OUTBNDMSG3,
+-	SBRMI_OUTBNDMSG4,
+-	SBRMI_OUTBNDMSG5,
+-	SBRMI_OUTBNDMSG6,
+-	SBRMI_OUTBNDMSG7,
+-	SBRMI_INBNDMSG0,
+-	SBRMI_INBNDMSG1,
+-	SBRMI_INBNDMSG2,
+-	SBRMI_INBNDMSG3,
+-	SBRMI_INBNDMSG4,
+-	SBRMI_INBNDMSG5,
+-	SBRMI_INBNDMSG6,
+-	SBRMI_INBNDMSG7,
+-	SBRMI_SW_INTERRUPT,
+-};
+-
+-/* Each client has this additional data */
+-struct sbrmi_data {
+-	struct i2c_client *client;
+-	struct mutex lock;
+-	u32 pwr_limit_max;
+-};
+-
+-struct sbrmi_mailbox_msg {
+-	u8 cmd;
+-	bool read;
+-	u32 data_in;
+-	u32 data_out;
+-};
+=20
+ static int sbrmi_enable_alert(struct i2c_client *client)
+ {
+@@ -94,100 +40,6 @@ static int sbrmi_enable_alert(struct i2c_client *clie=
+nt)
+ 	return 0;
+ }
+=20
+-static int rmi_mailbox_xfer(struct sbrmi_data *data,
+-			    struct sbrmi_mailbox_msg *msg)
+-{
+-	int i, ret, retry =3D 10;
+-	int sw_status;
+-	u8 byte;
+-
+-	mutex_lock(&data->lock);
+-
+-	/* Indicate firmware a command is to be serviced */
+-	ret =3D i2c_smbus_write_byte_data(data->client,
+-					SBRMI_INBNDMSG7, START_CMD);
+-	if (ret < 0)
+-		goto exit_unlock;
+-
+-	/* Write the command to SBRMI::InBndMsg_inst0 */
+-	ret =3D i2c_smbus_write_byte_data(data->client,
+-					SBRMI_INBNDMSG0, msg->cmd);
+-	if (ret < 0)
+-		goto exit_unlock;
+-
+-	/*
+-	 * For both read and write the initiator (BMC) writes
+-	 * Command Data In[31:0] to SBRMI::InBndMsg_inst[4:1]
+-	 * SBRMI_x3C(MSB):SBRMI_x39(LSB)
+-	 */
+-	for (i =3D 0; i < 4; i++) {
+-		byte =3D (msg->data_in >> i * 8) & 0xff;
+-		ret =3D i2c_smbus_write_byte_data(data->client,
+-						SBRMI_INBNDMSG1 + i, byte);
+-		if (ret < 0)
+-			goto exit_unlock;
+-	}
+-
+-	/*
+-	 * Write 0x01 to SBRMI::SoftwareInterrupt to notify firmware to
+-	 * perform the requested read or write command
+-	 */
+-	ret =3D i2c_smbus_write_byte_data(data->client,
+-					SBRMI_SW_INTERRUPT, TRIGGER_MAILBOX);
+-	if (ret < 0)
+-		goto exit_unlock;
+-
+-	/*
+-	 * Firmware will write SBRMI::Status[SwAlertSts]=3D1 to generate
+-	 * an ALERT (if enabled) to initiator (BMC) to indicate completion
+-	 * of the requested command
+-	 */
+-	do {
+-		sw_status =3D i2c_smbus_read_byte_data(data->client,
+-						     SBRMI_STATUS);
+-		if (sw_status < 0) {
+-			ret =3D sw_status;
+-			goto exit_unlock;
+-		}
+-		if (sw_status & SW_ALERT_MASK)
+-			break;
+-		usleep_range(50, 100);
+-	} while (retry--);
+-
+-	if (retry < 0) {
+-		dev_err(&data->client->dev,
+-			"Firmware fail to indicate command completion\n");
+-		ret =3D -EIO;
+-		goto exit_unlock;
+-	}
+-
+-	/*
+-	 * For a read operation, the initiator (BMC) reads the firmware
+-	 * response Command Data Out[31:0] from SBRMI::OutBndMsg_inst[4:1]
+-	 * {SBRMI_x34(MSB):SBRMI_x31(LSB)}.
+-	 */
+-	if (msg->read) {
+-		for (i =3D 0; i < 4; i++) {
+-			ret =3D i2c_smbus_read_byte_data(data->client,
+-						       SBRMI_OUTBNDMSG1 + i);
+-			if (ret < 0)
+-				goto exit_unlock;
+-			msg->data_out |=3D ret << i * 8;
+-		}
+-	}
+-
+-	/*
+-	 * BMC must write 1'b1 to SBRMI::Status[SwAlertSts] to clear the
+-	 * ALERT to initiator
+-	 */
+-	ret =3D i2c_smbus_write_byte_data(data->client, SBRMI_STATUS,
+-					sw_status | SW_ALERT_MASK);
+-
+-exit_unlock:
+-	mutex_unlock(&data->lock);
+-	return ret;
+-}
+-
+ static int sbrmi_read(struct device *dev, enum hwmon_sensor_types type,
+ 		      u32 attr, int channel, long *val)
+ {
+@@ -297,7 +149,7 @@ static int sbrmi_get_max_pwr_limit(struct sbrmi_data =
+*data)
+ 	return ret;
+ }
+=20
+-static int sbrmi_probe(struct i2c_client *client)
++static int sbrmi_i2c_probe(struct i2c_client *client)
+ {
+ 	struct device *dev =3D &client->dev;
+ 	struct device *hwmon_dev;
+@@ -328,7 +180,7 @@ static int sbrmi_probe(struct i2c_client *client)
+ }
+=20
+ static const struct i2c_device_id sbrmi_id[] =3D {
+-	{"sbrmi"},
++	{"sbrmi-i2c"},
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(i2c, sbrmi_id);
+@@ -343,15 +195,16 @@ MODULE_DEVICE_TABLE(of, sbrmi_of_match);
+=20
+ static struct i2c_driver sbrmi_driver =3D {
+ 	.driver =3D {
+-		.name =3D "sbrmi",
++		.name =3D "sbrmi-i2c",
+ 		.of_match_table =3D of_match_ptr(sbrmi_of_match),
+ 	},
+-	.probe =3D sbrmi_probe,
++	.probe =3D sbrmi_i2c_probe,
+ 	.id_table =3D sbrmi_id,
+ };
+=20
+ module_i2c_driver(sbrmi_driver);
+=20
+ MODULE_AUTHOR("Akshay Gupta <akshay.gupta@amd.com>");
++MODULE_AUTHOR("Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com=
+>");
+ MODULE_DESCRIPTION("Hwmon driver for AMD SB-RMI emulated sensor");
+ MODULE_LICENSE("GPL");
+--=20
+2.25.1
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
 
