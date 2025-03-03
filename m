@@ -1,118 +1,127 @@
-Return-Path: <linux-kernel+bounces-544948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39CBFA4E72D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:58:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 693F8A4E5E7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:30:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 362CB17F07A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:46:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3BB2179682
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:23:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B980C24C072;
-	Tue,  4 Mar 2025 16:24:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F51A24C07F;
+	Tue,  4 Mar 2025 16:05:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FSz0Xm2N"
-Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bdhlIxQ+"
+Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F1B23A9AE
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:24:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE2C207A27
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:05:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741105471; cv=pass; b=t/gJx6wLPsRqWbFCHQGi5P2ZTzpna4XQu3v9+NFz9x92nIeb2j6MBjvoEFfDPSrkeAobq9rCph1MGjl5IHfVU1Fgaat84SFdArFh9A5toYp4zSRfyqtK6lnX479V7IX9eJ2Ij1zK1hFSGhX8G+Ng1oD6YU3yjarAUMTSfOGHqPg=
+	t=1741104330; cv=pass; b=qGlWZI6OqYDNJ1rLuduoC8CU2HsCIa+dc3d14N4tABKpFomfI5xldPd4ExBMWwvUc6MCycaewRAUhqJ4SjGYte2KR64qaRSE2szJoSVRbfeP5MOqEMNhdDfHyee1rvEb+4JIyTH9Rc9yQ4F3Sg6T1DSlmZXakdB6xGWS6WiUu9I=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741105471; c=relaxed/simple;
-	bh=jv8QNOnGRtS9x1BC651dA4iBv2EFIu2vDnFzfk0OtiM=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=KOLuQEJALT+GE2Pf0DTZGj7bb5VxQTIGmQZ+CbHVAac35kKtexrBn9b96TdMf36BausBXhcDKYlI4AeHEVWtYWU17GlwvancwHf8yQff5eqE0aFqlv21ASAHaOq+IJrknUn1xBSDI+coZYnEBXUT/kUUhkvyyrO/XMY97omvTeM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FSz0Xm2N; arc=none smtp.client-ip=209.85.160.43; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; arc=pass smtp.client-ip=160.75.25.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1741104330; c=relaxed/simple;
+	bh=hO/1w0WIreFcCNOGOIiuvQHBGfGmx0RKyWkuiZ5OENQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qoxpHfZohHW36uIcisU9ma0YqBDZiPt+TEgClnwfUDARF0bDG7CrSTjpkk454s8bUj3GrhCSnMjDhf6aSbqtVIZtoBTbhXjhV2ET9ONksZOUH1WEx5ZjoM1iDn0cjBO093a25C2ggN6DfVwz72v35qqu8DWwJaOOg37C68FSO0k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bdhlIxQ+; arc=none smtp.client-ip=170.10.133.124; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; arc=pass smtp.client-ip=160.75.25.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id 36E3540CF138
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:24:28 +0300 (+03)
+	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 7150E40D9763
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:05:27 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20230601 header.b=FSz0Xm2N
+	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=bdhlIxQ+
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6gmR6qH4zG2fB
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:16:39 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6gTZ4jXXzG21D
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:03:46 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 796E742720; Tue,  4 Mar 2025 19:16:38 +0300 (+03)
+	id 0137C42741; Tue,  4 Mar 2025 19:03:31 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FSz0Xm2N
-X-Envelope-From: <linux-kernel+bounces-541264-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bdhlIxQ+
+X-Envelope-From: <linux-kernel+bounces-541273-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FSz0Xm2N
-Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id C303E42495
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:24:37 +0300 (+03)
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id 729422DCDE
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:24:37 +0300 (+03)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bdhlIxQ+
+Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
+	by le2 (Postfix) with ESMTP id ADCB04281C
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:29:57 +0300 (+03)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by fgw1.itu.edu.tr (Postfix) with SMTP id 31A4D3063EFC
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:29:57 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01A81170804
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 09:24:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 008443A7A56
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 09:29:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E8F41F12EA;
-	Mon,  3 Mar 2025 09:24:24 +0000 (UTC)
-Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07EE31F0E4C;
+	Mon,  3 Mar 2025 09:29:40 +0000 (UTC)
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA84B13C8E8;
-	Mon,  3 Mar 2025 09:24:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C5E6AD27
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 09:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740993860; cv=none; b=ZRwPMXqDXOLlv2hXmFimfD5QGhN+2QQdz422lcvnoxLnMhT3lWYsx9r19LsNerhjWUS1c3KLaw+qJcSE23byNl9UTASnLC0YIJkpyOziVZDasfZ3jl3MVNED6utBoeMYyiN/JQBY4HHFbZrHpNu6FUtU0a+iUz4os5jIherSNeE=
+	t=1740994177; cv=none; b=pmxvk+arnf9WJ2Be70MHzfvqAw8d52nYoLs9NE2BT/yhPMTnBVZrd8n/Tz5oedUYAzy/nen/1dK6Pa9TvKdYkC45rY5EzAEpN5Kk40lHTWK+QvlM9ivCFJ9MAHWFqF8cuPwAOaWDu/nIFPt3ANLygka9eFJp5fSG/YbanD7/7YY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740993860; c=relaxed/simple;
-	bh=jv8QNOnGRtS9x1BC651dA4iBv2EFIu2vDnFzfk0OtiM=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=K2s6KcjyMRCesLhee0K6ExEh+FR4KmDB90JGg+42/ZBj6lrr6FAcF+GVTctnWLAe/7sbm61rGar8kuftqDi9+e+Rn+HF5J5s8FwIOgsNCo4kjUC/mxCI3seO1uxTk59hrCTGip5x2I3HSs5MqPcDvmDZzTl3OwOk1f0GnY+Nvjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FSz0Xm2N; arc=none smtp.client-ip=209.85.160.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-2bcc5c887efso2066605fac.2;
-        Mon, 03 Mar 2025 01:24:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740993857; x=1741598657; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=StT21v5HBuVlAjcwwtmfuWVN4spL/bYiZH8r7Pf+vYo=;
-        b=FSz0Xm2NA0m6Lpi7CnMZ46yRlBFoJAesydVPriutGpuCBlejgTZaTI8tin/9WZDHFp
-         zbcKpdQbu2LNyJupQklemscxFkq64wTLYcJL6NcWAv/i9SYpYIbKc2gc4ZFNZRCfgTcV
-         uMLj5lFr8kJPozdy+xg5J6soTRlIOEm0oGv5vM9RfkE3+JsCeWIMHIR9p+r9jdVu5s6x
-         9nsp5W5ESIPIPjpAyzW5tjip7s75TPHKkXl79gjA78Ky7n4ybLtSE6bzlLUHTMN/Lu9V
-         yuONhIwprbgUb/G1kPGrEte3QEWhWftx4j2wBx9Zh9ShYgbf/DkwvNAne5KMgwXDYEV7
-         5YOw==
+	s=arc-20240116; t=1740994177; c=relaxed/simple;
+	bh=hO/1w0WIreFcCNOGOIiuvQHBGfGmx0RKyWkuiZ5OENQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O/9rldAhKnRgUZKPedmtdETE4op8oXQ808cnwP54/sKHi04gMISqCfYJ/BwRFIxkmxWZuLNFEgfMfPAUVjfreEBaWGa4jZe65xMuj0B96w4rq5LDU8y+wOzJSv0nOB9qamIb1KgN4IW1yyPJ3PxDyEs6u3OIC/Ji040c1IjA4KI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bdhlIxQ+; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740994174;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dm+Ad9vtaxKH6b/jFWjk7lOEkc1nxwN4lmuVSAb6Ah0=;
+	b=bdhlIxQ+fjll9LbqpU7NQS6QgIISeDczyHOHsERwPUYy7zo6FFCQpmIX++GEa6bFte5IzC
+	990mvIFsNyaD6fhBfuSrP01LH11fp6XVNPFaxP4Rvv8iC0QPKDY3qascTVltloejJodAZq
+	e/v2kLme4sp5TiOG/FBR0/J/pJSv50o=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-670-kQtZvCu-MsCOdHBpXw7VBg-1; Mon, 03 Mar 2025 04:29:16 -0500
+X-MC-Unique: kQtZvCu-MsCOdHBpXw7VBg-1
+X-Mimecast-MFC-AGG-ID: kQtZvCu-MsCOdHBpXw7VBg_1740994155
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-22334230880so57890955ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 01:29:16 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740993857; x=1741598657;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=StT21v5HBuVlAjcwwtmfuWVN4spL/bYiZH8r7Pf+vYo=;
-        b=HB0io2UYa1Io9OSumzKTcCaY/zOhnDzjjS+1N37NvZBQvyohC36Ryx7Y31iheZ0pej
-         VnlSAue7VOAGe/s5y54z12sHF809Mme88L7LR0ygGYGSiwYVCnBp2Dg0uFnab9Zrapj2
-         8vbVoeF8vuhciCnJp3JBeaqydGdzgS3YERGLcCtLrrFdIJl/+3qp5XmW0b3kwnyyyoyb
-         1JgKxvRNgNo64ekchn1jCBuNgFUON5kHPheF71kxAi5mkfe8yeZNdBWh8DGpkb5+IQw9
-         qXKVJ6pv2vcHFpRfDsLI7O2Tt5jkKooJQwAB/nXYm1wS0B9w0DKnJNJwiaf7jXqjykHs
-         zRMw==
-X-Forwarded-Encrypted: i=1; AJvYcCUX7Dq3ycgFdHDF8Nfx+WtePqJMa4QZM5Th14SUghj4KD/l/mvgsA0HrA8QpfVUEfYvKJ5PvRcF+/5sc5KY@vger.kernel.org, AJvYcCWs0W4BZOob2J5UF0XCTQnMi4Dc+8InQApZeGjZv1SBoNIqm8fNsE3Oj3rIuvGXo3a6SDer/vIfna2g@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxo9ilaHwGpnVCyuU9QG/6wtYoqqJgP7SM0iybkQyb0l0vHcM4p
-	f4Vrl/vhf3ooKXgRELjqWeAxJHgLLDRI/rJOsY40JVPr3S6PQdxIpXLqV/gBWpm2+Tf6qcl5HJ1
-	RHTtvK8ubqQU4WjFPbOs/vHFMeTc=
-X-Gm-Gg: ASbGncuouSb6g7z2bnA2KXt4J4/lJX9a2VplfPf8ZKaopHcaYqGWBRh98q9evJYuFqJ
-	cI218Xb2IGzAjJyTPmSbSrHxKL/x0LULoeXfFA3y6tVPqH6sG4ImY4IymUb8qBXaDUx5GjNlvLY
-	Rz0u5swBB6rxxC+zOFgVUQKAER5A==
-X-Google-Smtp-Source: AGHT+IF16/kJli1v2uTtADRoHDtMAoUcPO2J+zPdLjC8SofWOkXju3fPYSbHZB7Jnjo8/j/zSdOmfzK79E/Gia8vEc4=
-X-Received: by 2002:a05:6871:6285:b0:29e:6394:fd4a with SMTP id
- 586e51a60fabf-2c178317c67mr7686734fac.2.1740993856737; Mon, 03 Mar 2025
- 01:24:16 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740994155; x=1741598955;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dm+Ad9vtaxKH6b/jFWjk7lOEkc1nxwN4lmuVSAb6Ah0=;
+        b=EIN5IcA40gGEXeo0d1EebsGZ/JrMvEDuu3djIBVakuTCfU/+8xvf8stZ1EPMZ8YMhn
+         5CPfeEO/DuyS9fPRdCB/CXE8x2vwScJVwJ6TjyDTSW8Tf3M5oFlDxRecc4Mvtpz6Ru89
+         wW6aF/K9BoZuWRoWYpOTqPbgg6TSslyPODjLSg3fLA/1fLBk5XZ2ZQA2N863KRURpanU
+         40mOumU0GNTj52oQQnfXvv/Kp4MNlJco3cr83gNogm8zicheT2iQyJHluIwjz6My6C7b
+         k2cOmJynQinNB7rF6DkOPTWEsRqiRNAGFX/sWUEj6cTGkH4r5kv3QmC7xFxwL3Taivby
+         /sCw==
+X-Forwarded-Encrypted: i=1; AJvYcCXeHqAzQiD1fIX7ETDvyXT/KoebIT1tO1fTPPUOChzC+06FeO6FHo8K/zbrt+Fo1wEc+avynWu5K2n5CZ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWk0prGDDqTWNrMFeBrtUA2gbk1Eq3hdxa46lMqIZyypkg0zTI
+	9hlV78oV8+n73TcT/r+Ygk2Ndy/b9opsPppKI47WDyRMsqZc7DAoLIMZqFh3PZ74Zc52Cv6Nu48
+	hXoGiNT47HJaHMhc4rcDLCeW9WbtOcUUH3d15A/7/l0J1G+iHcWYhea7N8xHHaeCpCU2WNRGtcc
+	cUi0TkSe/4rI1dP7iBmmYO/8az/1IbF2TC2Mgk
+X-Gm-Gg: ASbGnctnIBr9UrM8QwnBwqmxZCeMg3uDmIaSY3M45421kgtTssUQOCkixRgr2KvtEa3
+	KzK6pB1Qwz6BtlQcb3jZBXoVQH81ErSI/01Fcl/bFsr9GcTNpBAFg7NLUa8ZZJ9Sodp88hIo=
+X-Received: by 2002:a17:902:f547:b0:220:f7bb:842 with SMTP id d9443c01a7336-22369255811mr196196075ad.42.1740994154027;
+        Mon, 03 Mar 2025 01:29:14 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEeh8T/Isef6u47m5QPpp9NHgJMkJl3dnUE8Ylea44Ny6EY1sjUVU9fZMYGnxlnkM9rFe7Jpp6zS4k5VEsVFKw=
+X-Received: by 2002:a17:902:f547:b0:220:f7bb:842 with SMTP id
+ d9443c01a7336-22369255811mr196195835ad.42.1740994153774; Mon, 03 Mar 2025
+ 01:29:13 -0800 (PST)
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -120,146 +129,64 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Strforexc yn <strforexc@gmail.com>
-Date: Mon, 3 Mar 2025 17:24:06 +0800
-X-Gm-Features: AQ5f1JoPn6AnvkWK8AKFf6LPWhDzHWifc3pnJcAlMqH7z6CRxab0PmEVW2HxQDE
-Message-ID: <CA+HokZqTi7=ossgk7gKqJY_pViaso=Hy0-iRj8v3H5A35Bxhqw@mail.gmail.com>
-Subject: [BUG] Kernel BUG in ext4_write_inline_data (Ext4) on 6.14.0-rc4 -
- Possible Regression**
-To: "Theodore Ts'o" <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20250303085237.19990-1-sgarzare@redhat.com>
+In-Reply-To: <20250303085237.19990-1-sgarzare@redhat.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Mon, 3 Mar 2025 10:28:37 +0100
+X-Gm-Features: AQ5f1JpYz8RUYj9eXvkfBI5yoVaRYAPygFZFSo69WGk-H92b36v2eBIN9Cg-xmM
+Message-ID: <CAJaqyWfNieVxJu0pGCcjRc++wRnRpyHqfkuYpAqnKCLUjbW6Xw@mail.gmail.com>
+Subject: Re: [PATCH] vhost: fix VHOST_*_OWNER documentation
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	kvm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6gmR6qH4zG2fB
+X-ITU-Libra-ESVA-ID: 4Z6gTZ4jXXzG21D
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741710141.93073@3c/CB6D4PGP50H+9jF+vkw
+X-ITU-Libra-ESVA-Watermark: 1741709034.21536@hzxC7+nfQBSOJNfXTXlGng
 X-ITU-MailScanner-SpamCheck: not spam
 
-Dear Linux Kernel Developers,
-I=E2=80=99ve encountered a kernel BUG in the Ext4 filesystem on Linux
-6.14.0-rc4 during an inline data write, which may indicate a
-regression from prior fixes. Here are the details:
+On Mon, Mar 3, 2025 at 9:52=E2=80=AFAM Stefano Garzarella <sgarzare@redhat.=
+com> wrote:
+>
+> VHOST_OWNER_SET and VHOST_OWNER_RESET are used in the documentation
+> instead of VHOST_SET_OWNER and VHOST_RESET_OWNER respectively.
+>
+> To avoid confusion, let's use the right names in the documentation.
+> No change to the API, only the documentation is involved.
+>
 
-Kernel commit: v6.14-rc4 (Commits on Feb 24, 2025)
-Kernel Config : https://github.com/Strforexc/LinuxKernelbug/blob/main/.conf=
-ig
-Kernel Log=EF=BC=9A https://github.com/Strforexc/LinuxKernelbug/blob/main/b=
-ug_ext4_write_inline_data/log0
-Reproduce.c: https://github.com/Strforexc/LinuxKernelbug/blob/main/bug_ext4=
-_write_inline_data/repro.cprog
+Reviewed-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
 
-A kernel BUG is triggered at fs/ext4/inline.c:235 in
-ext4_write_inline_data, causing an invalid opcode exception. This
-occurs during a sendfile64 operation writing inline data, likely due
-to an assertion failure (BUG_ON).
+> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+> ---
+>  include/uapi/linux/vhost.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/include/uapi/linux/vhost.h b/include/uapi/linux/vhost.h
+> index b95dd84eef2d..d4b3e2ae1314 100644
+> --- a/include/uapi/linux/vhost.h
+> +++ b/include/uapi/linux/vhost.h
+> @@ -28,10 +28,10 @@
+>
+>  /* Set current process as the (exclusive) owner of this file descriptor.=
+  This
+>   * must be called before any other vhost command.  Further calls to
+> - * VHOST_OWNER_SET fail until VHOST_OWNER_RESET is called. */
+> + * VHOST_SET_OWNER fail until VHOST_RESET_OWNER is called. */
+>  #define VHOST_SET_OWNER _IO(VHOST_VIRTIO, 0x01)
+>  /* Give up ownership, and reset the device to default values.
+> - * Allows subsequent call to VHOST_OWNER_SET to succeed. */
+> + * Allows subsequent call to VHOST_SET_OWNER to succeed. */
+>  #define VHOST_RESET_OWNER _IO(VHOST_VIRTIO, 0x02)
+>
+>  /* Set up/modify memory layout */
+> --
+> 2.48.1
+>
 
-Location: The BUG occurs at a BUG_ON in ext4_write_inline_data, likely
-BUG_ON(pos + len > EXT4_I(inode)->i_inline_size) (line 231), with
-pos=3D96 and len=3D97 (total 193 bytes).
-
-Cause: The write exceeds the inode=E2=80=99s inline size , triggering the
-assertion. Higher-level calls  fail to validate the size, allowing an
-oversized request.
-Context: Syzkaller=E2=80=99s sendfile64 crafted a write to an inline Ext4
-inode, exposing this issue.
-Regression: Ext4 inline data handling has had prior fixes . This BUG
-suggests a regression where size validation was weakened, allowing
-invalid writes to reach the assertion.
-
-Impact: The BUG causes a kernel panic (DoS). While not directly
-exploitable beyond that, it indicates a validation gap.
-Request: Could Ext4 maintainers investigate? This appears to be a
-regression from prior inline data fixes. Suggested  Add size
-validation in ext4_da_write_end or ext4_file_write_iter before calling
-ext4_write_inline_data.
-
-Our knowledge of the kernel is somewhat limited, and we'd appreciate
-it if you could determine if there is such an issue. If this issue
-doesn't have an impact, please ignore it =E2=98=BA.
-
-If you fix this issue, please add the following tag to the commit:
-Reported-by: Zhizhuo Tang strforexctzzchange@foxmail.com, Jianzhou
-Zhao xnxc22xnxc22@qq.com, Haoran Liu <cherest_san@163.com>
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-------------[ cut here ]------------
-kernel BUG at fs/ext4/inline.c:235!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 1 UID: 0 PID: 12157 Comm: syz.0.58 Not tainted 6.14.0-rc4 #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/=
-2014
-RIP: 0010:ext4_write_inline_data+0x346/0x3e0 fs/ext4/inline.c:235
-Code: d0 f6 4b ff e8 cb f6 4b ff 42 8d 6c 25 c4 41 bd 3c 00 00 00 45
-29 e5 e9 e8 fe ff ff e8 b3 f6 4b ff 90 0f 0b e8 ab f6 4b ff 90 <0f> 0b
-e8 63 95 ac ff e9 fb fd ff ff 4c 89 f7 e8 56 95 ac ff e9 96
-RSP: 0018:ffffc900043e7628 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff888012c251f0 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000060
-R13: 0000000000000061 R14: ffff888012c2579a R15: ffffc900043e76c0
-FS:  00007f2c042b2640(0000) GS:ffff88807ee00000(0000) knlGS:000000000000000=
-0
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fc99327fc00 CR3: 000000006a448000 CR4: 00000000000006f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- ext4_write_inline_data_end+0x25f/0xc20 fs/ext4/inline.c:774
- ext4_da_write_end+0x201/0x2d0 fs/ext4/inode.c:3080
- generic_perform_write+0x51c/0x910 mm/filemap.c:4204
- ext4_buffered_write_iter+0x11a/0x440 fs/ext4/file.c:299
- ext4_file_write_iter+0x350/0x420 fs/ext4/file.c:717
- iter_file_splice_write+0xa0a/0x1080 fs/splice.c:743
- do_splice_from fs/splice.c:941 [inline]
- direct_splice_actor+0x194/0x6f0 fs/splice.c:1164
- splice_direct_to_actor+0x343/0x9c0 fs/splice.c:1108
- do_splice_direct_actor fs/splice.c:1207 [inline]
- do_splice_direct+0x176/0x250 fs/splice.c:1233
- do_sendfile+0xa79/0xd90 fs/read_write.c:1363
- __do_sys_sendfile64 fs/read_write.c:1424 [inline]
- __se_sys_sendfile64 fs/read_write.c:1410 [inline]
- __x64_sys_sendfile64+0x1de/0x220 fs/read_write.c:1410
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcb/0x260 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f2c033b85ad
-Code: 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 f3 0f 1e fa 48 89 f8 48
-89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
-01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f2c042b1f98 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
-RAX: ffffffffffffffda RBX: 00007f2c03646080 RCX: 00007f2c033b85ad
-RDX: 0000000000000000 RSI: 0000000000000007 RDI: 0000000000000006
-RBP: 00007f2c0346a8d6 R08: 0000000000000000 R09: 0000000000000000
-R10: 000080001d00c0d0 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f2c03646080 R15: 00007f2c04292000
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:ext4_write_inline_data+0x346/0x3e0 fs/ext4/inline.c:235
-Code: d0 f6 4b ff e8 cb f6 4b ff 42 8d 6c 25 c4 41 bd 3c 00 00 00 45
-29 e5 e9 e8 fe ff ff e8 b3 f6 4b ff 90 0f 0b e8 ab f6 4b ff 90 <0f> 0b
-e8 63 95 ac ff e9 fb fd ff ff 4c 89 f7 e8 56 95 ac ff e9 96
-RSP: 0018:ffffc900043e7628 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff888012c251f0 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000060
-R13: 0000000000000061 R14: ffff888012c2579a R15: ffffc900043e76c0
-FS:  00007f2c042b2640(0000) GS:ffff88802b600000(0000) knlGS:000000000000000=
-0
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f2680f65e70 CR3: 000000006a448000 CR4: 00000000000006f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-Regards,
-Strforexc
 
 
