@@ -1,116 +1,175 @@
-Return-Path: <linux-kernel+bounces-542560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77BC0A4CB19
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:40:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DCFA6A4CB1C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:41:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C92D83AC025
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:40:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 528713ABF6E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:40:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46B6822D4C4;
-	Mon,  3 Mar 2025 18:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11B8722DF83;
+	Mon,  3 Mar 2025 18:40:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mOE/feWO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ovYxqr1v"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32A320FA85;
-	Mon,  3 Mar 2025 18:40:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E542135B2
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 18:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741027213; cv=none; b=t4+FX73GEr9JC5Laj9Jn46XRqB3i051JlV+87dbmyDp5QVOwFTZCC61sTLi36pp1XLKbMXXTeHID8JzycbsXuPQJ1Y/JFGWh973vb3B28ggaIXJp3IfkCWImb7lYcyCqBiBQuRskcQUVyLfa6VfsD+G8ft+vhXbVBbNs0eAkwpU=
+	t=1741027255; cv=none; b=UAvkYWXalL3rvBanFz7Bbg9nZ/rsdd+d3AgQ9hVIdPYCvynQLZzgEuNMWslaVc3vKuvWTub/JFSGHdtiprdroIpcz0dbjKRIAbzkWxb58z3aYPwZ8IdjkdK0kSQ09lkwvrZZPT9EKYf+r2Hh9PLzQEBfLMJOCJISywR7FcCYV8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741027213; c=relaxed/simple;
-	bh=LMcjnXUMRisPi6cns32MGe0Eh+x3GI+oq769ibqyYQE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=YZmUUTwi2vSvR9AXiQNoJk+tVMGfjOXqSBNsRosnQDlLXHVSdgJXpPRJgaLx4tRvKstpEd/zJPyRrmqmQPlzHYPNSfWhRoMvVxMTg9DQYlnCBKpfZKhX0zQ0MQwLFYk+eOcU5Q/ePEfGZ2TPbzFGFkEo4aanC07pbiXaH7xXDyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mOE/feWO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E11B1C4CED6;
-	Mon,  3 Mar 2025 18:40:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741027213;
-	bh=LMcjnXUMRisPi6cns32MGe0Eh+x3GI+oq769ibqyYQE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=mOE/feWOMI5QBDfGntKwEW2sMwYsBWmxRIxRC0pbaEIRGHtz3KkUOSjnvqNUPrSB/
-	 EdR894U/HftKtEilBcmM+5dxQqBeGiQRHwSaw1sVNyHCYcreVvS8fsGQ97Vtip9AnN
-	 Zm17RQWrm/c4SgwAeRdkwIgWbibmJnaZP1ksgdeSUX1L/fM4MDRSF+effKh8tZTjOd
-	 W2OEYlldiejka6KB+t7hJsNOMYANUYWwEUowhZEe5sSBf3mYNt3GAl+NpoJQSrcRD2
-	 ibsl02/0xTC0YhdB6ZMU278KAl2kMikfDRHcZgBtsweuUzJn1jZu7McpJvYmanl4zO
-	 ofod9s4njvGfw==
-Date: Mon, 3 Mar 2025 12:40:11 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Jim Quinlan <james.quinlan@broadcom.com>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Cyril Brulebois <kibi@debian.org>,
-	Stanimir Varbanov <svarbanov@suse.de>,
-	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 4/8] PCI: brcmstb: Fix error path upon call of
- regulator_bulk_get()
-Message-ID: <20250303184011.GA172021@bhelgaas>
+	s=arc-20240116; t=1741027255; c=relaxed/simple;
+	bh=nrcUawcCsSZ4sKk198mMgykA7LrBZL2L/S12GQRvXEA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YcQkkRT2ivyl3GEHIlYFyWbtNiw/vFMcu6iEIcR5chVuZTwOhSJhlqdVIEutL+XSNuVJHBn6mWZZCffD5UzuhPkexhWUl+pt3LHjl5PQZJr+29gh/avrrcQDcb2pThkHhL6zgLZckbYfnEFHoCMJStPozuJNOXTwdmKiM41TEXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ovYxqr1v; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-390fdaf2897so2056622f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 10:40:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741027252; x=1741632052; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=op8ngrfBeKcfAHC0fBDhWmrr+hR58OWpJPg3ZrZyuIM=;
+        b=ovYxqr1vOCW+l1w82H3JnLVSQNzOwhYUwWsSDS84VPdA57fjFUDsVTTdyigTjwYGAB
+         JDvmDYfmj81DuWiYvJy9/Qz2FovKaTR2JRYYE3W94bYBoaik1jr1ityRBDqIi5s6rjP6
+         px2WtBLOi+Ur6O12ZT8IOyEF4aMilTtTfm7QeKIfda45/HH4BueZ0U1R+V7Rt9UHrlJ2
+         zMl/0gvueMfKJqQLT8LZoNPQJhS8FoaR+m5rV0v25lFZ/Pn3o0zXZdBc72g8h9ALUKa5
+         kSvUenTIWenwwwJvYuqtVLeWWRmMrRjBn8tcX+HdQhvDTIVLyU1jej1cD+wKUGbjqkPG
+         knVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741027252; x=1741632052;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=op8ngrfBeKcfAHC0fBDhWmrr+hR58OWpJPg3ZrZyuIM=;
+        b=XweVI6dl9yK/tmS/iNBHZVbmQxtl3qJa9MSX81BZLh5BCW0JbF5iByFjT6cmjUD7J0
+         ax8u/TA2WcbCwo5uoAegrL39okQ3waHom55EpY4l8kILmQlvSUTp/JQqrAwgeHHc/0T2
+         ke8AlKJgzv7Echqg5Zlnd3S0WrYp5HAfdluvehnW3q32I0iM+z/3HRq3r2zpYpqQq/Ca
+         2+xfTHpSwnIZF5+JOaumK8D2SHIUgRZjZvnV7RP7nIPjladcYjRAuJ6XzmiMk2hptaoS
+         2sKIjXhyGdODOqQeU9VYJsJCf7Znb72W9t3gjVxyu8cuHg0v4vEMGWfhGBIWdRJpHane
+         k4og==
+X-Forwarded-Encrypted: i=1; AJvYcCXWw0rTFumaibVLqzO1YyPB790HbKl+ykLTIfVd8UMvVHZD1VCsGBStkSJvNVpCs3Wkfy1Zy4FPoElRZWk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZaR6k+CJkdL21/kTp+fGqYOG5BqW6u0plQmC4469DLY9fJ3oe
+	JRQikaRiEjGlKrNxyJ4j/BckzF/7MibTFMWf6LLOWQ1KunoGtu2RjsSdwEvyOXZyxF0/Ntx89d9
+	E4eqG8A/QuS/NX8CO8eJyDXmVh1ot72K0AKIF
+X-Gm-Gg: ASbGncvrb/FVNOuI6Y3+Ytw/OWZ0CaN8/G4pIX6U6Cm6UDm5jQSZKwqhoHoY4Do0UoX
+	6K8EV78T4MyiJVaPEasWPTuvte0pc+7ZrKv2vNmjLrH69TMLBZnRoC+hjh4rPmGHKGtCN7RXVXx
+	w6laNvTUXsMBRrXNsveDlQ3FMj1t0=
+X-Google-Smtp-Source: AGHT+IEbQAEL5lhQtMyWI2oz7m9QxyO5TIMYD/e1+uZr6W8jisydk+E/Pz2wJklAZ6U1BmFRXEb0dlT7aUP31FVHKCw=
+X-Received: by 2002:a5d:6c6f:0:b0:391:a43:8bbd with SMTP id
+ ffacd0b85a97d-3910a438dbemr5878386f8f.21.1741027251940; Mon, 03 Mar 2025
+ 10:40:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250214173944.47506-5-james.quinlan@broadcom.com>
+References: <20250303-inline-securityctx-v1-1-fb7b9b641fdf@google.com> <a5262d73-2b11-4868-9c6b-1c6161808979@schaufler-ca.com>
+In-Reply-To: <a5262d73-2b11-4868-9c6b-1c6161808979@schaufler-ca.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 3 Mar 2025 19:40:39 +0100
+X-Gm-Features: AQ5f1Jqgc_xVRRc4yVQL3FqBf_jvG-GoH8NZo9p5eLE71Ktv6MhF-CyIro8CARk
+Message-ID: <CAH5fLggNnOv2rhtUeK38GVQ7EuuZkZMwOSVKSsMLFG5eS2i9Ng@mail.gmail.com>
+Subject: Re: [PATCH] lsm: rust: mark SecurityCtx methods inline
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 14, 2025 at 12:39:32PM -0500, Jim Quinlan wrote:
-> If regulator_bulk_get() returns an error, no regulators are created and we
-> need to set their number to zero.  If we do not do this and the PCIe
-> link-up fails, regulator_bulk_free() will be invoked and effect a panic.
-> 
-> Also print out the error value, as we cannot return an error upwards as
-> Linux will WARN on an error from add_bus().
-> 
-> Fixes: 9e6be018b263 ("PCI: brcmstb: Enable child bus device regulators from DT")
-> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
-> ---
->  drivers/pci/controller/pcie-brcmstb.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
-> index e0b20f58c604..56b49d3cae19 100644
-> --- a/drivers/pci/controller/pcie-brcmstb.c
-> +++ b/drivers/pci/controller/pcie-brcmstb.c
-> @@ -1416,7 +1416,8 @@ static int brcm_pcie_add_bus(struct pci_bus *bus)
->  
->  		ret = regulator_bulk_get(dev, sr->num_supplies, sr->supplies);
->  		if (ret) {
-> -			dev_info(dev, "No regulators for downstream device\n");
-> +			dev_info(dev, "Did not get regulators; err=%d\n", ret);
-> +			pcie->sr = NULL;
+On Mon, Mar 3, 2025 at 6:07=E2=80=AFPM Casey Schaufler <casey@schaufler-ca.=
+com> wrote:
+>
+> On 3/3/2025 7:29 AM, Alice Ryhl wrote:
+> > I'm seeing Binder generating calls to methods on SecurityCtx such as
+> > from_secid and drop without inlining. Since these methods are really
+> > simple wrappers around C functions, mark the methods to inline to avoid
+> > generating these useless small functions.
+> >
+> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> > ---
+> >  rust/kernel/security.rs | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> >
+> > diff --git a/rust/kernel/security.rs b/rust/kernel/security.rs
+> > index 25d2b1ac3833..243211050526 100644
+> > --- a/rust/kernel/security.rs
+> > +++ b/rust/kernel/security.rs
+> > @@ -23,6 +23,7 @@ pub struct SecurityCtx {
+> >
+> >  impl SecurityCtx {
+> >      /// Get the security context given its id.
+> > +    #[inline]
+> >      pub fn from_secid(secid: u32) -> Result<Self> {
+> >          // SAFETY: `struct lsm_context` can be initialized to all zero=
+s.
+> >          let mut ctx: bindings::lsm_context =3D unsafe { core::mem::zer=
+oed() };
+> > @@ -35,16 +36,19 @@ pub fn from_secid(secid: u32) -> Result<Self> {
+> >      }
+> >
+> >      /// Returns whether the security context is empty.
+> > +    #[inline]
+> >      pub fn is_empty(&self) -> bool {
+> >          self.ctx.len =3D=3D 0
+> >      }
+> >
+> >      /// Returns the length of this security context.
+> > +    #[inline]
+> >      pub fn len(&self) -> usize {
+> >          self.ctx.len as usize
+> >      }
+> >
+> >      /// Returns the bytes for this security context.
+> > +    #[inline]
+> >      pub fn as_bytes(&self) -> &[u8] {
+> >          let ptr =3D self.ctx.context;
+> >          if ptr.is_null() {
+> > @@ -61,6 +65,7 @@ pub fn as_bytes(&self) -> &[u8] {
+> >  }
+> >
+> >  impl Drop for SecurityCtx {
+> > +    #[inline]
+> >      fn drop(&mut self) {
+> >          // SAFETY: By the invariant of `Self`, this frees a context th=
+at came from a successful
+> >          // call to `security_secid_to_secctx` and has not yet been des=
+troyed by
+>
+> I don't speak rust (well, yet?) so I can't talk about that, but this comm=
+ent
+> has me concerned. Security contexts (secctx) are not destroyed, they are =
+released.
+> While SELinux allocates and frees them, Smack maintains a list of context=
+s that
+> is never freed. A call to security_release_secctx() on SELinux "destroys"=
+ the
+> secctx, but for Smack does not.
 
-Is alloc_subdev_regulators() buying us something useful?  It seems
-like it would be simpler to have:
+It's just a comment on a call to security_release_secctx, I can reword
+from "destroy" to "release".
 
-  struct brcm_pcie {
-    ...
-    struct regulator_bulk_data supplies[3];
-    ...
-  };
+Here's the full context:
 
-I think that's what most callers of devm_regulator_bulk_get() do.
+// SAFETY: By the invariant of `Self`, this frees a context that came from =
+a
+// successful call to `security_secid_to_secctx` and has not yet been destr=
+oyed
+// by `security_release_secctx`.
+unsafe { bindings::security_release_secctx(&mut self.ctx) };
 
->  			goto no_regulators;
->  		}
->  
-> -- 
-> 2.43.0
-> 
+Alice
 
