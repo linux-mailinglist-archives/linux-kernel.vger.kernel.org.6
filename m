@@ -1,283 +1,251 @@
-Return-Path: <linux-kernel+bounces-541560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 736F6A4BE8D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:30:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4642AA4BE90
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:31:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF4063BAD80
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:21:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B27A162CC6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:28:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B44C41F3FE8;
-	Mon,  3 Mar 2025 11:19:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="jlXphypx"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF1E01F17E5;
-	Mon,  3 Mar 2025 11:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9FAE1F3D55;
+	Mon,  3 Mar 2025 11:28:32 +0000 (UTC)
+Received: from vmicros1.altlinux.org (vmicros1.altlinux.org [194.107.17.57])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BACF1F153C;
+	Mon,  3 Mar 2025 11:28:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741000766; cv=none; b=RGWwP3Ij0rioSuylauBfWLN5R7bc03bHOHrHRYeF1NP2kF+gxDv+INEGmIAiCR3rGEfG8JEcQShA65oCXDPEyUoyBawkVcA/4nQaedJXMTOhXfjyHjqdNIKuxXO8K9ADbPE5gRhzvSNQp3fHE0CBkm02MmuhKxPLVZVvKHfzse4=
+	t=1741001312; cv=none; b=GDP7hJAnVD5epXWiSIe9ldb/NWTnS0DOFBCw5EDy17idDJELRlz8KayfuDFgQKUy95VKOePI7cT14Dmi7rrKAklYN4KuC/VaXMGcp5tksAqh6LXP3ECGrK0saIV6brLP7HgBJhOI6Y+872Iwv9BObB7kCtUMxUCHzLoOfK+x4Qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741000766; c=relaxed/simple;
-	bh=wY1JDGsr4w7EVb29Z+PN4ZWHoWt/+wmUL/8nCGk4qnE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YI8wGG4oyTJyhQS4mnmU2/Dlcdle5q+tKZdAfpZmTeSzBDPzmvJCIl0sCp1Zk12Rp8wg4UCdlafIMN9TJDU/1SpFTkeW6s9NKbCVmbUjwpamISMdEBhciED6C4Wq4w9fBLKJ9KEq9YUZpHBMfyMNUhSQV7fy1RFjvzNNzm5TBfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=jlXphypx; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=pNmUy0/SbO1mJMTByohCme5W5UOaVrI5mCX9RycYTCY=; b=jlXphypx+tFIa7QN6nmZyOHchy
-	mAL4FzNXqAx7NBd4kdGVHZF7nbcDi/32cz13sz0Fj9y1/1JM/3A/Y76+s7kFKn3mGfijIUupTU74Q
-	7zeNEGxo0ivgglhHYr/u2LibpbTUcHkmikL6bkI8o7tdVXrpmDkjuz1Lax0XLLmeKI/E9XRS1ZUdj
-	/Ci1QrCRh5Qp2rL6TItEj0fLU0FtSgMv/HXPfEGd4/bdsg2+c0e9GA24LNjWfF4v0YxAyyfBNvjOM
-	Dht70pkuWXppULK3LhsHptnbWfEkJtUnlAkcrbjK9tZ0DEhiNEovwD25XXFPRxUWevS3WVcgAbYUN
-	EEBdOUqQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:38926)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tp3pC-0000Ky-2H;
-	Mon, 03 Mar 2025 11:19:06 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tp3p7-0003kl-2o;
-	Mon, 03 Mar 2025 11:19:01 +0000
-Date: Mon, 3 Mar 2025 11:19:01 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	s=arc-20240116; t=1741001312; c=relaxed/simple;
+	bh=/u+MDloBVzmoc27sdAOV659GJ4fLzQwI2/890oNEeHo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=WK2778ipc99O3zxSJVeahQgwVkbs59DMunl+62MjJ7mT0+OYF40MvAldl9YJMk+GPxXhvuzD12W/xxdIY5CfRdkAcQ+Q+i83uNJ/41Y3F+HVYFc0WC8CrLbDcSu4jLIlcQYXEt0nu/vXgaaY8L8dc8R06yRuLKlVrkYJfnPKVcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
+Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
+	by vmicros1.altlinux.org (Postfix) with ESMTP id 32D5372C8F5;
+	Mon,  3 Mar 2025 14:19:11 +0300 (MSK)
+Received: by mua.local.altlinux.org (Postfix, from userid 508)
+	id 01EDE7CCB3B; Mon,  3 Mar 2025 13:19:10 +0200 (IST)
+Date: Mon, 3 Mar 2025 13:19:10 +0200
+From: "Dmitry V. Levin" <ldv@strace.io>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Alexey Gladkov <legion@kernel.org>,
+	Eugene Syromyatnikov <evgsyr@gmail.com>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Helge Deller <deller@gmx.de>,
+	"Maciej W. Rozycki" <macro@orcam.me.uk>,
+	Mike Frysinger <vapier@gentoo.org>,
+	Renzo Davoli <renzo@cs.unibo.it>,
+	Davide Berardi <berardi.dav@gmail.com>,
+	Vineet Gupta <vgupta@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, Will Deacon <will@kernel.org>,
+	Guo Ren <guoren@kernel.org>, Brian Cain <bcain@quicinc.com>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Michal Simek <monstr@monstr.eu>, Dinh Nguyen <dinguyen@kernel.org>,
+	Jonas Bonn <jonas@southpole.se>,
+	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+	Stafford Horne <shorne@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
 	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH 3/3] net: stmmac: Add DWMAC glue layer for Renesas GBETH
-Message-ID: <Z8WQJQo5kW9QV-wV@shell.armlinux.org.uk>
-References: <20250302181808.728734-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250302181808.728734-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <Z8SydsdDsZfdrdbE@shell.armlinux.org.uk>
- <CA+V-a8vCB7nP=tsv4UkOwODSs-9hiG-PxN6cpihfvwjq2itAHg@mail.gmail.com>
- <Z8TRQX2eaNzXOzV0@shell.armlinux.org.uk>
- <CA+V-a8vykhxqP30iTwN6yrqDgT8YRVE_MadjiTFp653rHVqMNg@mail.gmail.com>
+	Andreas Larsson <andreas@gaisler.com>,
+	Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>,
+	Max Filippov <jcmvbkbc@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+	Shuah Khan <shuah@kernel.org>, strace-devel@lists.strace.io,
+	linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
+	linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev,
+	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+	linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+	sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
+	linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-api@vger.kernel.org
+Subject: [PATCH v7 0/6] ptrace: introduce PTRACE_SET_SYSCALL_INFO API
+Message-ID: <20250303111910.GA24170@strace.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+V-a8vykhxqP30iTwN6yrqDgT8YRVE_MadjiTFp653rHVqMNg@mail.gmail.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Sun, Mar 02, 2025 at 10:02:15PM +0000, Lad, Prabhakar wrote:
-> Hi Russell,
-> 
-> On Sun, Mar 2, 2025 at 9:44 PM Russell King (Oracle)
-> <linux@armlinux.org.uk> wrote:
-> >
-> > On Sun, Mar 02, 2025 at 09:20:49PM +0000, Lad, Prabhakar wrote:
-> > > Hi Russell,
-> > > > What is the reason for setting this flag? If it's because of suspend/
-> > > > resume failures, does my "net: stmmac: fix resume failures due to
-> > > > RX clock" series solve this for you without requiring this flag?
-> > > >
-> > > Ive set this flag based on the configuration supported by this IP.
-> > > Unfortunately the platform which I am working on doesn't support s2r
-> > > yet so I cannot test suspend/resume path yet. But I do see an issue
-> > > when I unload and load just the glue module the DMA reset fails.
-> >
-> > Thanks for that feedback - that's a scenario I hadn't considered.
-> >
-> > I was trying to avoid having to disable LPI RX clock-stop on suspend by
-> > ensuring that it was enabled at resume time. I think that's valid, but
-> > you've brought up another similar scenario:
-> >
-> > - device is brought up, configures RX clock stop
-> > - links with media, negotiates EEE
-> > - driver is unloaded, link doesn't go down, but due to no traffic goes
-> >   into idle, so RX clock is stopped
-> > - driver reloaded, RX clock still stopped, reset fails
-> >
-> > I would like to solve that so we can get the power savings from
-> > stopping the clock, but still have reset work when necessary.
-> >
-> I would be happy to test the patches ;)
-> 
-> > I'm guessing that the "DMA reset fails" refers to this path:
-> >
-> > stmmac_open() -> __stmmac_open() -> stmmac_hw_setup() ->
-> > stmmac_init_dma_engine() -> stmmac_reset() ?
-> >
-> Yes.
-> 
-> > In other words, when the device is being brought back up
-> > adminsitratively?
-> >
-> > What happens if you (replace $if):
-> >
-> > # ip li set dev $if down
-> > # ip li set dev $if up
-> >
-> > Does that also fail without STMMAC_FLAG_RX_CLK_RUNS_IN_LPI set?
-> >
-> Logs without STMMAC_FLAG_RX_CLK_RUNS_IN_LPI flag set:
-> --------------------------------------------------------------
-> root@rzv2h-evk-alpha:~# ip li set dev eth1 down
-> [   33.606549] renesas-gbeth 15c40000.ethernet eth1: Link is Down
-> root@rzv2h-evk-alpha:~#
-> root@rzv2h-evk-alpha:~# ip li set dev eth0 down
-> [   37.356992] renesas-gbeth 15c30000.ethernet eth0: Link is Down
-> root@rzv2h-evk-alpha:~#
-> root@rzv2h-evk-alpha:~# ip li set dev eth1 up
-> [   43.974803] renesas-gbeth 15c40000.ethernet eth1: Register
-> MEM_TYPE_PAGE_POOL RxQ-0
-> [   43.983189] renesas-gbeth 15c40000.ethernet eth1: Register
-> MEM_TYPE_PAGE_POOL RxQ-1
-> [   43.991155] renesas-gbeth 15c40000.ethernet eth1: Register
-> MEM_TYPE_PAGE_POOL RxQ-2
-> [   43.999128] renesas-gbeth 15c40000.ethernet eth1: Register
-> MEM_TYPE_PAGE_POOL RxQ-3
-> [   44.072079] renesas-gbeth 15c40000.ethernet eth1: PHY [stmmac-1:00]
-> driver [Microchip KSZ9131 Gigabit PHY] (irq=POLL)
-> [   44.094605] dwmac4: Master AXI performs fixed burst length
-> [   44.100138] renesas-gbeth 15c40000.ethernet eth1: No Safety
-> Features support found
-> [   44.107748] renesas-gbeth 15c40000.ethernet eth1: IEEE 1588-2008
-> Advanced Timestamp supported
-> [   44.116725] renesas-gbeth 15c40000.ethernet eth1: registered PTP clock
-> [   44.123352] renesas-gbeth 15c40000.ethernet eth1: configuring for
-> phy/rgmii-id link mode
-> root@rzv2h-evk-alpha:~#
-> root@rzv2h-evk-alpha:~# ip li set dev eth1[   47.207761] renesas-gbeth
-> 15c40000.ethernet eth1: Link is Up - 1Gbps/Full - flow control off
-> ^C
-> root@rzv2h-evk-alpha:~# ^C
-> root@rzv2h-evk-alpha:~# ip li set dev eth0 up
-> [   55.636722] renesas-gbeth 15c30000.ethernet eth0: Register
-> MEM_TYPE_PAGE_POOL RxQ-0
-> [   55.645139] renesas-gbeth 15c30000.ethernet eth0: Register
-> MEM_TYPE_PAGE_POOL RxQ-1
-> [   55.653111] renesas-gbeth 15c30000.ethernet eth0: Register
-> MEM_TYPE_PAGE_POOL RxQ-2
-> [   55.661073] renesas-gbeth 15c30000.ethernet eth0: Register
-> MEM_TYPE_PAGE_POOL RxQ-3
-> [   55.732087] renesas-gbeth 15c30000.ethernet eth0: PHY [stmmac-0:00]
-> driver [Microchip KSZ9131 Gigabit PHY] (irq=POLL)
-> [   55.754612] dwmac4: Master AXI performs fixed burst length
-> [   55.760143] renesas-gbeth 15c30000.ethernet eth0: No Safety
-> Features support found
-> [   55.767740] renesas-gbeth 15c30000.ethernet eth0: IEEE 1588-2008
-> Advanced Timestamp supported
-> [   55.776705] renesas-gbeth 15c30000.ethernet eth0: registered PTP clock
-> [   55.783333] renesas-gbeth 15c30000.ethernet eth0: configuring for
-> phy/rgmii-id link mode
-> root@rzv2h-evk-alpha:~#
-> root@rzv2h-evk-alpha:~# [   58.855844] renesas-gbeth 15c30000.ethernet
-> eth0: tx_clk_stop=1
-> [   58.861989] renesas-gbeth 15c30000.ethernet eth0: Link is Up -
-> 1Gbps/Full - flow control rx/tx
-> 
-> root@rzv2h-evk-alpha:~#
-> root@rzv2h-evk-alpha:~#
-> 
-> Logs with STMMAC_FLAG_RX_CLK_RUNS_IN_LPI flag set:
-> --------------------------------------------------------------
-> root@rzv2h-evk-alpha:~# ip li set dev eth1 down
-> [   30.053790] renesas-gbeth 15c40000.ethernet eth1: Link is Down
-> root@rzv2h-evk-alpha:~# ip li set dev eth0 down
-> [   35.366935] renesas-gbeth 15c30000.ethernet eth0: Link is Down
-> root@rzv2h-evk-alpha:~# ip li set dev eth1 up
-> [   40.448563] renesas-gbeth 15c40000.ethernet eth1: Register
-> MEM_TYPE_PAGE_POOL RxQ-0
-> [   40.456725] renesas-gbeth 15c40000.ethernet eth1: Register
-> MEM_TYPE_PAGE_POOL RxQ-1
-> [   40.464893] renesas-gbeth 15c40000.ethernet eth1: Register
-> MEM_TYPE_PAGE_POOL RxQ-2
-> [   40.472840] renesas-gbeth 15c40000.ethernet eth1: Register
-> MEM_TYPE_PAGE_POOL RxQ-3
-> [   40.543895] renesas-gbeth 15c40000.ethernet eth1: PHY [stmmac-1:00]
-> driver [Microchip KSZ9131 Gigabit PHY] (irq=POLL)
-> [   40.566419] dwmac4: Master AXI performs fixed burst length
-> [   40.571949] renesas-gbeth 15c40000.ethernet eth1: No Safety
-> Features support found
-> [   40.579550] renesas-gbeth 15c40000.ethernet eth1: IEEE 1588-2008
-> Advanced Timestamp supported
-> [   40.588505] renesas-gbeth 15c40000.ethernet eth1: registered PTP clock
-> [   40.595135] renesas-gbeth 15c40000.ethernet eth1: configuring for
-> phy/rgmii-id link mode
-> root@rzv2h-evk-alpha:~#
-> root@rzv2h-evk-alpha:~# [   43.687551] renesas-gbeth 15c40000.ethernet
-> eth1: Link is Up - 1Gbps/Full - flow control off
-> 
-> root@rzv2h-evk-alpha:~# ip li set dev eth0 up
-> [   49.644479] renesas-gbeth 15c30000.ethernet eth0: Register
-> MEM_TYPE_PAGE_POOL RxQ-0
-> [   49.652719] renesas-gbeth 15c30000.ethernet eth0: Register
-> MEM_TYPE_PAGE_POOL RxQ-1
-> [   49.660681] renesas-gbeth 15c30000.ethernet eth0: Register
-> MEM_TYPE_PAGE_POOL RxQ-2
-> [   49.669059] renesas-gbeth 15c30000.ethernet eth0: Register
-> MEM_TYPE_PAGE_POOL RxQ-3
-> [   49.740011] renesas-gbeth 15c30000.ethernet eth0: PHY [stmmac-0:00]
-> driver [Microchip KSZ9131 Gigabit PHY] (irq=POLL)
-> [   49.762518] dwmac4: Master AXI performs fixed burst length
-> [   49.768057] renesas-gbeth 15c30000.ethernet eth0: No Safety
-> Features support found
-> [   49.775655] renesas-gbeth 15c30000.ethernet eth0: IEEE 1588-2008
-> Advanced Timestamp supported
-> [   49.784609] renesas-gbeth 15c30000.ethernet eth0: registered PTP clock
-> [   49.791236] renesas-gbeth 15c30000.ethernet eth0: configuring for
-> phy/rgmii-id link mode
-> root@rzv2h-evk-alpha:~#
-> root@rzv2h-evk-alpha:~# [   52.871635] renesas-gbeth 15c30000.ethernet
-> eth0: tx_clk_stop=1
-> [   52.877777] renesas-gbeth 15c30000.ethernet eth0: Link is Up -
-> 1Gbps/Full - flow control rx/tx
+PTRACE_SET_SYSCALL_INFO is a generic ptrace API that complements
+PTRACE_GET_SYSCALL_INFO by letting the ptracer modify details of
+system calls the tracee is blocked in.
 
-I would like to get to the bottom of why this fails for module removal/
-insertion, but not for admistratively down/upping the interface.
+This API allows ptracers to obtain and modify system call details in a
+straightforward and architecture-agnostic way, providing a consistent way
+of manipulating the system call number and arguments across architectures.
 
-Removal of your module will unregister the netdev, and part of that
-work will bring the netdev administratively down. When re-inserting
-the module, that will trigger various userspace events, and it will
-be userspace bringing the network interface(s) back up. This should
-be no different from administratively down/upping the interface but
-it seems you get different behaviour.
+As in case of PTRACE_GET_SYSCALL_INFO, PTRACE_SET_SYSCALL_INFO also
+does not aim to address numerous architecture-specific system call ABI
+peculiarities, like differences in the number of system call arguments
+for such system calls as pread64 and preadv.
 
-I'd like to understand why that is, because at the moment I'm wondering
-whether my patches that address the suspend/resume need further work
-before I send them - but in order to assess that, I need to work out
-why your issue only seems to occur in the module removal/insertion
-and not down/up as well as I'd expect.
+The current implementation supports changing only those bits of system call
+information that are used by strace system call tampering, namely, syscall
+number, syscall arguments, and syscall return value.
 
-Please could you investigate this?
+Support of changing additional details returned by PTRACE_GET_SYSCALL_INFO,
+such as instruction pointer and stack pointer, could be added later if
+needed, by using struct ptrace_syscall_info.flags to specify the additional
+details that should be set.  Currently, "flags" and "reserved" fields of
+struct ptrace_syscall_info must be initialized with zeroes; "arch",
+"instruction_pointer", and "stack_pointer" fields are currently ignored.
 
-Thanks.
+PTRACE_SET_SYSCALL_INFO currently supports only PTRACE_SYSCALL_INFO_ENTRY,
+PTRACE_SYSCALL_INFO_EXIT, and PTRACE_SYSCALL_INFO_SECCOMP operations.
+Other operations could be added later if needed.
+
+Ideally, PTRACE_SET_SYSCALL_INFO should have been introduced along with
+PTRACE_GET_SYSCALL_INFO, but it didn't happen.  The last straw that
+convinced me to implement PTRACE_SET_SYSCALL_INFO was apparent failure
+to provide an API of changing the first system call argument on riscv
+architecture [1].
+
+ptrace(2) man page:
+
+long ptrace(enum __ptrace_request request, pid_t pid, void *addr, void *data);
+...
+PTRACE_SET_SYSCALL_INFO
+       Modify information about the system call that caused the stop.
+       The "data" argument is a pointer to struct ptrace_syscall_info
+       that specifies the system call information to be set.
+       The "addr" argument should be set to sizeof(struct ptrace_syscall_info)).
+
+[1] https://lore.kernel.org/all/59505464-c84a-403d-972f-d4b2055eeaac@gmail.com/
+
+Notes:
+    v7:
+    * csky: Fix typo in comment
+    * mips: syscall_set_arguments: Remove mips_syscall_is_indirect check
+    * mips: syscall_set_nr: Reword comment
+    * mips: Add Reviewed-by
+    * v6: https://lore.kernel.org/all/20250217090834.GA18175@strace.io/
+
+    v6:
+    * mips: Submit mips_get_syscall_arg() o32 fix via mips tree
+      to get it merged into v6.14-rc3
+    * Rebase to v6.14-rc3
+    * v5: https://lore.kernel.org/all/20250210113336.GA887@strace.io/
+
+    v5:
+    * ptrace: Extend the commit message to say that the new API does not aim
+      to address numerous architecture-specific syscall ABI peculiarities
+    * selftests: Add a workaround for s390 16-bit syscall numbers
+    * parisc: Add Acked-by
+    * v4: https://lore.kernel.org/all/20250203065849.GA14120@strace.io/
+
+    v4:
+    * Split out syscall_set_return_value() for hexagon into a separate patch
+    * s390: Change the style of syscall_set_arguments() implementation as
+      requested
+    * ptrace: Add Reviewed-by
+    * v3: https://lore.kernel.org/all/20250128091445.GA8257@strace.io/
+
+    v3:
+    * powerpc: Submit syscall_set_return_value() fix for "sc" case separately
+    * mips: Do not introduce erroneous argument truncation on mips n32,
+      add a detailed description to the commit message of the
+      mips_get_syscall_arg() change
+    * ptrace: Add explicit padding to the end of struct ptrace_syscall_info,
+      simplify obtaining of user ptrace_syscall_info,
+      do not introduce PTRACE_SYSCALL_INFO_SIZE_VER0
+    * ptrace: Change the return type of ptrace_set_syscall_info_* functions
+      from "unsigned long" to "int"
+    * ptrace: Add -ERANGE check to ptrace_set_syscall_info_exit(),
+      add comments to -ERANGE checks
+    * ptrace: Update comments about supported syscall stops
+    * selftests: Extend set_syscall_info test, fix for mips n32
+    * riscv: Add Tested-by and Reviewed-by
+
+    v2:
+    * Add patch to fix syscall_set_return_value() on powerpc
+    * Add patch to fix mips_get_syscall_arg() on mips
+    * Add syscall_set_return_value() implementation on hexagon
+    * Add syscall_set_return_value() invocation to syscall_set_nr()
+      on arm and arm64.
+    * Fix syscall_set_nr() and mips_set_syscall_arg() on mips
+    * Add a comment to syscall_set_nr() on arc, powerpc, s390, sh,
+      and sparc
+    * Remove redundant ptrace_syscall_info.op assignments in
+      ptrace_get_syscall_info_*
+    * Minor style tweaks in ptrace_get_syscall_info_op()
+    * Remove syscall_set_return_value() invocation from
+      ptrace_set_syscall_info_entry()
+    * Skip syscall_set_arguments() invocation in case of syscall number -1
+      in ptrace_set_syscall_info_entry() 
+    * Split ptrace_syscall_info.reserved into ptrace_syscall_info.reserved
+      and ptrace_syscall_info.flags
+    * Use __kernel_ulong_t instead of unsigned long in set_syscall_info test
+
+Dmitry V. Levin (6):
+  hexagon: add syscall_set_return_value()
+  syscall.h: add syscall_set_arguments()
+  syscall.h: introduce syscall_set_nr()
+  ptrace_get_syscall_info: factor out ptrace_get_syscall_info_op
+  ptrace: introduce PTRACE_SET_SYSCALL_INFO request
+  selftests/ptrace: add a test case for PTRACE_SET_SYSCALL_INFO
+
+ arch/arc/include/asm/syscall.h                |  25 +
+ arch/arm/include/asm/syscall.h                |  37 ++
+ arch/arm64/include/asm/syscall.h              |  29 +
+ arch/csky/include/asm/syscall.h               |  13 +
+ arch/hexagon/include/asm/syscall.h            |  21 +
+ arch/loongarch/include/asm/syscall.h          |  15 +
+ arch/m68k/include/asm/syscall.h               |   7 +
+ arch/microblaze/include/asm/syscall.h         |   7 +
+ arch/mips/include/asm/syscall.h               |  43 ++
+ arch/nios2/include/asm/syscall.h              |  16 +
+ arch/openrisc/include/asm/syscall.h           |  13 +
+ arch/parisc/include/asm/syscall.h             |  19 +
+ arch/powerpc/include/asm/syscall.h            |  20 +
+ arch/riscv/include/asm/syscall.h              |  16 +
+ arch/s390/include/asm/syscall.h               |  21 +
+ arch/sh/include/asm/syscall_32.h              |  24 +
+ arch/sparc/include/asm/syscall.h              |  22 +
+ arch/um/include/asm/syscall-generic.h         |  19 +
+ arch/x86/include/asm/syscall.h                |  43 ++
+ arch/xtensa/include/asm/syscall.h             |  18 +
+ include/asm-generic/syscall.h                 |  30 +
+ include/uapi/linux/ptrace.h                   |   7 +-
+ kernel/ptrace.c                               | 179 +++++-
+ tools/testing/selftests/ptrace/Makefile       |   2 +-
+ .../selftests/ptrace/set_syscall_info.c       | 519 ++++++++++++++++++
+ 25 files changed, 1138 insertions(+), 27 deletions(-)
+ create mode 100644 tools/testing/selftests/ptrace/set_syscall_info.c
+
+
+base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+ldv
 
