@@ -1,150 +1,248 @@
-Return-Path: <linux-kernel+bounces-542134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E2D7A4C60A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:04:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93ED6A4C641
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:10:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21BA61712F3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:03:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA7EC7A81FD
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:07:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 200F721ADAB;
-	Mon,  3 Mar 2025 16:02:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C1E235361;
+	Mon,  3 Mar 2025 16:03:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="G6zQRxWr"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NxbbpNZv"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07861EB1BF
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 16:02:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3468C2343AE;
+	Mon,  3 Mar 2025 16:03:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741017757; cv=none; b=GPvWu3PcPgYlYsRLsN8kHpTKMGeWdEANNDrDO0xVtb480U/1qTVInSS2YthXVS8hLzSaSfkj/puzZOM0B2+r25JxQSNyKaXV5586KH+IVEbV4LD6xkZxWzA3Ow7jclJm3A8jVbInMWFUMJKM4CmffwbpOGQyS6yElFUMXi22mp0=
+	t=1741017830; cv=none; b=VyaYLZS0cpUSI0h+4qMXZIDL/lPxbhaJGkr9gXyJQtxlS6fdj5YGXT6YEHB65bfR+IGw6AdeyZ7SCNKXe37cjx35CsToccCWTEJK9Kmsxn278xrpCKu0twejbzh5SiNWSEdPd6GTF9V1SMyuo4TKk2WxXoXhwruLqDPEbLqQQy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741017757; c=relaxed/simple;
-	bh=f3z1YJDae+7qKzu1a/ULS1y8fv2jKayJhoYaJjgj1Lw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sClxK62uTnkgLKP1P9phCGCX+QxejgzxTxmxX0yeKl7Rt+PbEDjHq/E+IR9gkyHzZDPrEmfkBoL/jMMfs4vzn+YRD5cv9wCuqyr1MZemiKfrxRRHCknNH5NlEXJ2nE9pgXDx7ko4HicYM/DumPTJ65QzYVqU1CzIdWJvYwFFwHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=G6zQRxWr; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6e88f3159e3so37869056d6.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 08:02:35 -0800 (PST)
+	s=arc-20240116; t=1741017830; c=relaxed/simple;
+	bh=K9/AQDAf1TTF20oZGaRFG3Ajc6WqbwAy1cZIKuifTKE=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uMX9eXKvRiLbyExhO8lydKnxWQGwDubVrAA2hm/RkkHgdKPKhCB1M/OUZ1ZHqPH7Ke1cIyXYXKh334j43T9IWzdZEihKFJduCV4RJHuNHGvl4wqby/tLKadwOpK2U+ogvKj9jw5liPJJrNUM5RbO683GdmvsJRKSXLS0DxdE9sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NxbbpNZv; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-548409cd2a8so4744387e87.3;
+        Mon, 03 Mar 2025 08:03:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1741017754; x=1741622554; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=j0kf09Xt7w2q49Ub1BV7dNTILamWt8grEXO5Ja6in+c=;
-        b=G6zQRxWrNMhTkxwZBqgMdPht5fUcUaayMq50TzI7kuwgCrW5voPoi9QHBl+fojC0xP
-         ceiDEiw3v/wVl31JD9/6Sv8WYjJOapEJ7uVw3yCj5RaCHkXDHAqVdQOlPqOKZVvk/+3N
-         vXjaQPFQ1/tchjgTBvNkxE8IJRVa7a8YLpi2L0HM03nk76aF1bag13c/+f/SjIuzFAx4
-         OWHdVWr3mIchCDbvFpU/Q3tiAITjYTlkcvQGkJwJxEyNYufZ5mWUBfjSHEJBFI3xJgur
-         6+zP5M9mUR27gfq9BF4ncYUKI4sUVuIkhPKh00Zi5RdDyOUdvQb/kBtoYSBlGpsiREgH
-         2WrA==
+        d=gmail.com; s=20230601; t=1741017826; x=1741622626; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mGm5mmMzr5+gmD7/0oRkuukrN0T9bkZiu15KcUlBcIc=;
+        b=NxbbpNZv8A6PSLmUx8Br/SM1hxwpQwqAod7uVYVKYYQWaefEbYA+rShmuKS7jAiFVb
+         hMPOEPsIcnjiD/fx2K7oTE8S/T1ijZFRgL4BFWTLmhNpyQSzUSIA2gURhdkeZzSo4mFh
+         upklOZ/O4Edyxh73v4QeQNC51NdHOQRY0Xk7p3ZuaxV6f6FjHuWYzmgcy9pI5OdcoJbs
+         zMr5+8EXmyuqCxmnFRTAG7bmyQJtYoM2QmD9mQFsQTzaFwfcdhUiq9T7F8gOZBrAx0NZ
+         EOEMJdUPayhUaKuTMEyI3yGvHlf9hxzIjZG4oBdhiL5mQDK+FwaIOlop/UCaZFPW4dGp
+         xN8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741017754; x=1741622554;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=j0kf09Xt7w2q49Ub1BV7dNTILamWt8grEXO5Ja6in+c=;
-        b=e0bBUoVOU0jdHG2+tV2sUUHvUjjQtVxeUdZ2vE1/d45Ww6WM8nEpGDXHszrubFECmI
-         obVQWYK8vTri5PZl3brU5u4YmTXPFI+AA/9bKfX+uadfahDWoHii+KCbACtFnwGpp6qx
-         SB/brp7y616zyFmCFqMVIEpue/dUuGECTw7BuhfSB6aAnK8XBl1gubEnCoNJbzpQvVdj
-         Qn7ktRP0+DtD9fosASm76C5+5boRteGNyAHdD1oSMB3HyeACtwi0Yr1lfhJfkH6ze3Pb
-         6EKuU88H965WHhp5e7xJlN4UDuzMC22ZFITFZ65L8mmsHrsVzX05bcze5WX/zVrlTz9W
-         5Xlg==
-X-Forwarded-Encrypted: i=1; AJvYcCVnMYDnrFD3duj7Tl2y7qQpiC+DS38PAE7xTn6Lq2+FFpkrVupQEhDRu55wf7SUC1VHVpw+xGQdw+h0hmw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywjc9ChMB5fpvLlR5SozNzVWBr4VcVy2w+1pj8DSlUJT3T/U6Jx
-	hwgUkJ+0gbVmYsCVXcHMC5WRQqwYqoMrxc41lCF39gPyNtIKEBcK7zTDUcZ8bA==
-X-Gm-Gg: ASbGncsdHO/DTE1rtXc3Bl/Pk4MykPFdxEAqQ2Mbdaj1t1KWImoEdCOEyDMavB+IxED
-	P7W3Q2ZeqegOWvkeTUVGymj/DZTd9mG0m3WvbmehV1hS092NRhquxBSe8NrNGvJOkVoo+Xunf2l
-	lnXKWMifGUXr1P1vvFgXlVYWkD8U1rL9Gog4Qr68Sn5LTPEcFhMY7fFb4huZwEP4TSqRu9y7e4i
-	0l484XxnXO1PQG03OzmdDJ8nWk86qEcvStfZyEZqsIxFrgO77XcL+wHZJJiJ5+En6LA3Hs/LVYP
-	95FuhnWXhSrf1RyFDDYi1cfZ3kHZWQhkTLb4pIJMpeNPaWaWSRY2/95FpqTe4Nw=
-X-Google-Smtp-Source: AGHT+IGftmtJ1H46cLxhxWAbdbWJGM0W0W4u3xExTd+O5te0WpEQdDeILfCXfX/nJATaCR1Ljm0czw==
-X-Received: by 2002:a05:6214:da8:b0:6e8:96f4:73a with SMTP id 6a1803df08f44-6e8a0d3901dmr235750906d6.19.1741017754321;
-        Mon, 03 Mar 2025 08:02:34 -0800 (PST)
-Received: from rowland.harvard.edu ([140.247.181.15])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8976ccba1sm54361766d6.90.2025.03.03.08.02.33
+        d=1e100.net; s=20230601; t=1741017826; x=1741622626;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mGm5mmMzr5+gmD7/0oRkuukrN0T9bkZiu15KcUlBcIc=;
+        b=qV8/ZBHTJxmiPf4JxMFK0E++c2Y1aOF0aX33BFJtK01T9IdUMjMpF35vcGAO16HbCX
+         Bbso0D6Ch61da7oab84Ie9nPEpzZm23Hht0m0jRudEMuEICU3FZnW36dIkWvueG/06kA
+         pluSS1Pa5vVyWM7HrgXgVcChZfpvynsQjMXi9J2eZSQBBkAACvmNuPkArA2dtNZJXpec
+         4IK2iPyGGsE/7dJ5yMJIaHXNCVvgsJoF9efdbzjOHrjVBPmztvujUw63UWU5vvUnatGI
+         6Pi7BnW7hYap8KAo3VGskhVOqoXOGcuaOhfC30TpgKUzZLuHJUDW3o7EK4+KGlbGddx8
+         Uo/g==
+X-Forwarded-Encrypted: i=1; AJvYcCU2Avw4sULclFSdRDu4Je2VGC0hnEIT05oZ0ldED7gTuB/sl67woFrqINkp50tSn9UkfqCLrVEuvnUr0v8=@vger.kernel.org, AJvYcCWTnF2MC55HtP2TzyztLLjmI4I7mQuauh1SZMO/Vd8za/8HD1r6fCVddaKBxmVRz0ahV+bS@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6HiRIJagJvBoHfpubqrxgov8aU8jO4LvzNuou7qHeuk3EU0Ik
+	TfC6Yvh1QGWbfgpHsW1x9e05KQ37LJCCikzMvtsvB/WPtbnous32
+X-Gm-Gg: ASbGnctoJ+RXJIA+dB8qs2BHi80YHT8CasWTmMELMTT9I4PTc3mFLCFmQW1sjp26qcF
+	bzVu+/zDiWNJFRqaNeT22llKaSclKvtlj6851pkf3SOxFUzpG+wLRqZQ+TjwjY7yE1XmH9W1yga
+	lW9It5g5vnCMrYgNul66TpJ9iSabljxe4lQsUpBopj7lmKINsPxVrGNFbEbhhJXBXuDjGx9qxXe
+	kJzOoc2xCr1XhkIgsKzjNMrAxGmj3xyIhIRAkaV89HTAjYhYP+pxLbUCH8qLUx3nLBshjvhYTEK
+	g1dTtEj+9es=
+X-Google-Smtp-Source: AGHT+IHQ9QIWigeXjOQEL4SSVtYjRkzqP/8sLAtjcON0jotEGBTKj0liFEziO0qTYuwT/ExG69vuVw==
+X-Received: by 2002:a05:6512:2820:b0:545:fba:8a57 with SMTP id 2adb3069b0e04-5494c10c5e4mr4378966e87.8.1741017825649;
+        Mon, 03 Mar 2025 08:03:45 -0800 (PST)
+Received: from pc636 ([2001:9b1:d5a0:a500::800])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5495522216bsm968381e87.252.2025.03.03.08.03.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 08:02:33 -0800 (PST)
-Date: Mon, 3 Mar 2025 11:02:31 -0500
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Strforexc yn <strforexc@gmail.com>
-Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
-	Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
-	linux-usb@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [BUG] UBSAN: Array-Index-Out-of-Bounds in usbhid_parse (HID) on
- 6.14.0-rc4
-Message-ID: <21b63d7e-5141-426b-af06-9465609e2ca2@rowland.harvard.edu>
-References: <CA+HokZreT4LYLbru4cc0iU4jKkdf40YnVunaGX0hFV2GAnnuEg@mail.gmail.com>
+        Mon, 03 Mar 2025 08:03:44 -0800 (PST)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Mon, 3 Mar 2025 17:03:42 +0100
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Uladzislau Rezki <urezki@gmail.com>,
+	RCU <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Cheung Wall <zzqq0103.hey@gmail.com>,
+	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
+Subject: Re: [PATCH v4 3/3] rcu: Use _full() API to debug synchronize_rcu()
+Message-ID: <Z8XS3hJFR3qMNniG@pc636>
+References: <dd15fa79-70a5-4929-9339-51a47099c916@paulmck-laptop>
+ <Z8H_aYBUHD2sS2Ir@pc636>
+ <73724164-71f4-4671-b612-eb82a784da58@paulmck-laptop>
+ <Z8IKs-I-YsOoS4uw@pc636>
+ <cdab57a4-8d58-41d9-a9b5-71d425a7375e@paulmck-laptop>
+ <f6803081-8243-4723-a3ba-00db351aafff@paulmck-laptop>
+ <Z8QwwBCoWb4J3_Xv@pc636>
+ <d90bd6d9-d15c-4b9b-8a69-95336e74e8f4@paulmck-laptop>
+ <Z8SnhS_LnzN_wvxr@tardis>
+ <e62483fc-489e-40bd-b77d-b4728a53df3e@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+HokZreT4LYLbru4cc0iU4jKkdf40YnVunaGX0hFV2GAnnuEg@mail.gmail.com>
+In-Reply-To: <e62483fc-489e-40bd-b77d-b4728a53df3e@paulmck-laptop>
 
-On Mon, Mar 03, 2025 at 04:52:33PM +0800, Strforexc yn wrote:
-> Dear Maintainers, When using our customized Syzkaller to fuzz the
-> latest Linux kernel, the following crash was triggered.
+On Sun, Mar 02, 2025 at 12:36:51PM -0800, Paul E. McKenney wrote:
+> On Sun, Mar 02, 2025 at 10:46:29AM -0800, Boqun Feng wrote:
+> > On Sun, Mar 02, 2025 at 09:39:44AM -0800, Paul E. McKenney wrote:
+> > > On Sun, Mar 02, 2025 at 11:19:44AM +0100, Uladzislau Rezki wrote:
+> > > > On Fri, Feb 28, 2025 at 05:08:49PM -0800, Paul E. McKenney wrote:
+> > > > > On Fri, Feb 28, 2025 at 11:59:55AM -0800, Paul E. McKenney wrote:
+> > > > > > On Fri, Feb 28, 2025 at 08:12:51PM +0100, Uladzislau Rezki wrote:
+> > > > > > > Hello, Paul!
+> > > > > > > 
+> > > > > > > > > > > > 
+> > > > > > > > > > > > Except that I got this from overnight testing of rcu/dev on the shared
+> > > > > > > > > > > > RCU tree:
+> > > > > > > > > > > > 
+> > > > > > > > > > > > WARNING: CPU: 5 PID: 14 at kernel/rcu/tree.c:1636 rcu_sr_normal_complete+0x5c/0x80
+> > > > > > > > > > > > 
+> > > > > > > > > > > > I see this only on TREE05.  Which should not be too surprising, given
+> > > > > > > > > > > > that this is the scenario that tests it.  It happened within five minutes
+> > > > > > > > > > > > on all 14 of the TREE05 runs.
+> > > > > > > > > > > > 
+> > > > > > > > > > > Hm.. This is not fun. I tested this on my system and i did not manage to
+> > > > > > > > > > > trigger this whereas you do. Something is wrong.
+> > > > > > > > > > 
+> > > > > > > > > > If you have a debug patch, I would be happy to give it a go.
+> > > > > > > > > > 
+> > > > > > > > > I can trigger it. But.
+> > > > > > > > > 
+> > > > > > > > > Some background. I tested those patches during many hours on the stable
+> > > > > > > > > kernel which is 6.13. On that kernel i was not able to trigger it. Running
+> > > > > > > > > the rcutorture on the our shared "dev" tree, which i did now, triggers this
+> > > > > > > > > right away.
+> > > > > > > > 
+> > > > > > > > Bisection?  (Hey, you knew that was coming!)
+> > > > > > > > 
+> > > > > > > Looks like this: rcu: Fix get_state_synchronize_rcu_full() GP-start detection
+> > > > > > > 
+> > > > > > > After revert in the dev, rcutorture passes TREE05, 16 instances.
+> > > > > > 
+> > > > > > Huh.  We sure don't get to revert that one...
+> > > > > > 
+> > > > > > Do we have a problem with the ordering in rcu_gp_init() between the calls
+> > > > > > to rcu_seq_start() and portions of rcu_sr_normal_gp_init()?  For example,
+> > > > > > do we need to capture the relevant portion of the list before the call
+> > > > > > to rcu_seq_start(), and do the grace-period-start work afterwards?
+> > > > > 
+> > > > > I tried moving the call to rcu_sr_normal_gp_init() before the call to
+> > > > > rcu_seq_start() and got no failures in a one-hour run of 200*TREE05.
+> > > > > Which does not necessarily mean that this is the correct fix, but I
+> > > > > figured that it might at least provide food for thought.
+> > > > > 
+> > > > > 							Thanx, Paul
+> > > > > 
+> > > > > ------------------------------------------------------------------------
+> > > > > 
+> > > > > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> > > > > index 48384fa2eaeb8..d3efeff7740e7 100644
+> > > > > --- a/kernel/rcu/tree.c
+> > > > > +++ b/kernel/rcu/tree.c
+> > > > > @@ -1819,10 +1819,10 @@ static noinline_for_stack bool rcu_gp_init(void)
+> > > > >  
+> > > > >  	/* Advance to a new grace period and initialize state. */
+> > > > >  	record_gp_stall_check_time();
+> > > > > +	start_new_poll = rcu_sr_normal_gp_init();
+> > > > >  	/* Record GP times before starting GP, hence rcu_seq_start(). */
+> > > > >  	rcu_seq_start(&rcu_state.gp_seq);
+> > > > >  	ASSERT_EXCLUSIVE_WRITER(rcu_state.gp_seq);
+> > > > > -	start_new_poll = rcu_sr_normal_gp_init();
+> > > > >  	trace_rcu_grace_period(rcu_state.name, rcu_state.gp_seq, TPS("start"));
+> > > > >  	rcu_poll_gp_seq_start(&rcu_state.gp_seq_polled_snap);
+> > > > >  	raw_spin_unlock_irq_rcu_node(rnp);
+> > > > >
+> > > > Running this 24 hours already. TREE05 * 16 scenario. I do not see any
+> > > > warnings yet. There is a race, indeed. The gp_seq is moved forward,
+> > > > wheres clients can still come until rcu_sr_normal_gp_init() places a
+> > > > dummy-wait-head for this GP.
+> > > > 
+> > > > Thank you for testing Paul and looking to this :)
+> > > 
+> > > Very good!  This is a bug in this commit of mine:
+> > > 
+> > > 012f47f0f806 ("rcu: Fix get_state_synchronize_rcu_full() GP-start detection")
+> > > 
+> > > Boqun, could you please fold this into that commit with something like
+> > > this added to the commit log just before the paragraph starting with
+> > > "Although this fixes 91a967fd6934"?
+> > > 
+> > > 	However, simply changing get_state_synchronize_rcu_full() function
+> > > 	to use rcu_state.gp_seq instead of the root rcu_node structure's
+> > > 	->gp_seq field results in a theoretical bug in kernels booted
+> > > 	with rcutree.rcu_normal_wake_from_gp=1 due to the following
+> > > 	sequence of events:
+> > > 
+> > > 	o	The rcu_gp_init() function invokes rcu_seq_start()
+> > > 		to officially start a new grace period.
+> > > 
+> > > 	o	A new RCU reader begins, referencing X from some
+> > > 		RCU-protected list.  The new grace period is not
+> > > 		obligated to wait for this reader.
+> > > 
+> > > 	o	An updater removes X, then calls synchronize_rcu(),
+> > > 		which queues a wait element.
+> > > 
+> > > 	o	The grace period ends, awakening the updater, which
+> > > 		frees X while the reader is still referencing it.
+> > > 
+> > > 	The reason that this is theoretical is that although the
+> > > 	grace period has officially started, none of the CPUs are
+> > > 	officially aware of this, and thus will have to assume that
+> > > 	the RCU reader pre-dated the start of the grace period.
+> > > 
+> > > 	Except for kernels built with CONFIG_PROVE_RCU=y, which use the
+> > > 	polled grace-period APIs, which can and do complain bitterly when
+> > > 	this sequence of events occurs.  Not only that, there might be
+> > > 	some future RCU grace-period mechanism that pulls this sequence
+> > > 	of events from theory into practice.  This commit therefore
+> > > 	also pulls the call to rcu_sr_normal_gp_init() to precede that
+> > > 	to rcu_seq_start().
+> > > 
+> > > I will let you guys decide whether the call to rcu_sr_normal_gp_init()
+> > > needs a comment, and, if so, what that comment should say.  ;-)
+> > > 
+> > 
+> > Please see the updated patch below (next and rcu/dev branches are
+> > updated too).
 > 
-> Kernel commit: v6.14-rc4 (Commits on Feb 24, 2025)
-> Kernel Config : https://github.com/Strforexc/LinuxKernelbug/blob/main/.config
-> Kernel Log:  https://github.com/Strforexc/LinuxKernelbug/blob/main/array-index-out-of-bounds_usbhid_parse/log0
-> Reproduce C: https://github.com/Strforexc/LinuxKernelbug/blob/main/array-index-out-of-bounds_usbhid_parse/repro.cprog
+> Works for me!
 > 
-> I’ve encountered a UBSAN-reported array-index-out-of-bounds issue in
-> the USB HID driver on Linux 6.14.0-rc4 during device probing, likely
-> triggered by a malformed USB descriptor. Here are the details:
+> >               For the comment, I think we can add something like
+> > 
+> > 	/* 
+> > 	 * A new wait segment must be started before gp_seq advanced, so
+> > 	 * that previous gp waiters won't observe the new gp_seq.
+> > 	 */
+> > 
+> > but I will let Ulad to decide ;-)
 > 
-> UBSAN detects an out-of-bounds access at
-> drivers/hid/usbhid/hid-core.c:1025:18 in usbhid_parse, where index 1
-> exceeds the bounds of hid_class_descriptor [1] in struct
-> hid_descriptor. This occurs when parsing a HID device descriptor
-> during USB probing.
+> Over to you, Uladzislau!  ;-)
 > 
-> Location: The fault occurs in a loop: for (n = 0; n < num_descriptors;
-> n++) if (hdesc->desc[n].bDescriptorType == HID_DT_REPORT), accessing
-> hdesc->desc[n].
-> 
-> Cause: struct hid_descriptor defines desc as a fixed-size array [1],
-> but the loop iterates up to num_descriptors (based on
-> hdesc->bNumDescriptors). UBSAN flags n=1 as out-of-bounds, though the
-> underlying descriptor buffer may be larger.
-> 
-> Context: Preceded by a USB descriptor error (-22), suggesting a
-> malformed HID device (likely Syzkaller-crafted), triggering the loop
-> with bNumDescriptors > 1.
-> 
-> Impact: No immediate crash, but a code hygiene issue flagged by UBSAN.
-> Runtime safety depends on descriptor buffer allocation, but it’s a
-> potential source of confusion or future bugs.
-> 
-> Could HID maintainers investigate? Suggested fixes:
-> 1. Use a flexible array member (desc[]) in struct hid_descriptor and
-> adjust parsing to rely on runtime buffer size.
-> 2. Add stricter validation of hdesc->bNumDescriptors against bLength
-> to reject malformed descriptors earlier.
-> 
-> Our knowledge of the kernel is somewhat limited, and we'd appreciate
-> it if you could determine if there is such an issue. If this issue
-> doesn't have an impact, please ignore it ☺.
-> If you fix this issue, please add the following tag to the commit:
-> Reported-by: Zhizhuo Tang <strforexctzzchange@foxmail.com>, Jianzhou
-> Zhao <xnxc22xnxc22@qq.com>, Haoran Liu <cherest_san@163.com>
+Works for me! Sorry for late answer. I got a fever, therefore i reply not
+in time.
 
-Have you seen this patch or tried to test it?
-
-https://lore.kernel.org/linux-usb/20250131151600.410242-1-n.zhandarovich@fintech.ru/
-
-Alan Stern
+--
+Uladzislau Rezki
 
