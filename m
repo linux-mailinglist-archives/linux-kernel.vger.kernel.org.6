@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-542010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C89A3A4C49E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:16:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82216A4C49F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:16:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2277F18977ED
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:16:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C997173C20
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:16:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D87215075;
-	Mon,  3 Mar 2025 15:14:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 349E32147F4;
+	Mon,  3 Mar 2025 15:15:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JU/x9IOu"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w4z0SNNf"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E35702144C2
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 15:14:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13B6D1DA61B
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 15:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741014897; cv=none; b=or2Te5fy7j5LUI2/3lWR8XBM6UbXjhdW5Ztlps/ZBFg5DRxTbCmKhvrmQndSbU9AheJK95mnT0/e3lt3cmIYwv9F26jwaUfKMihgWj6F93pxVjR68HxEODmb/VEVhNXiLbs+Kuy0qAOsCSZnHWZUwHBN4x+xZx6y6uZZT/FjkxQ=
+	t=1741014905; cv=none; b=uWNA9q8P6BcY9AOts/O08cc9AFde26ju6StzYQd99A8XgOYHCiYo1r3/HHUK0baeUxxWy6xSXGPtpBZXtQjGNBmLExpsUmctrpit8hnh4Fgh16tEkggCXf80pXBB+/MW36FG+dBoTPzjs+S9w5qgt7JhDlkAtgdcbP7qkytNqg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741014897; c=relaxed/simple;
-	bh=f7vmxxj2aXQGnMGrEnTOGdqDh+9P0TeHrkYJRqajnDk=;
+	s=arc-20240116; t=1741014905; c=relaxed/simple;
+	bh=WBM/p7IonF+GUTkphvNqY034IFJPvXxbXKnpEjol144=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tZiZJuweM3XPxgbC9OKJOoDVbkkfGcpDsyE5Lv4Tjl4Mt79P9rivsWN8XmAqvnfYTYShZIAzKIygGjzFWLKuFrqDx+ecE26TbT3n353QWpA2JDiFWfjZ+pVkC68AAtjQsqUxgxfQTeDE91Y6GypOpSyNMOqXSypEJjGrW2guwWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JU/x9IOu; arc=none smtp.client-ip=209.85.214.170
+	 In-Reply-To:To:Cc; b=XGm1/CzpL3rGsmDyDnnwbg6/AU1apjnRiGcSgCto43Gtzt6Ct0aL9dFHuZBQZNA92BbvBPd8hVkUM5OTjCO9ASpPRSmzHs7LZGLGWAjunRgP1FQCHpTXLgN8XZclYEph7DGWYU93CyIT1v2seIX9uleYGG4H1hxw3r2ZUanE+fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=w4z0SNNf; arc=none smtp.client-ip=209.85.214.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-22349dc31bcso79460435ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 07:14:55 -0800 (PST)
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-22328dca22fso68739485ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 07:15:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741014895; x=1741619695; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1741014903; x=1741619703; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=23d26b6/rNMhE2TK5FNAdZfYGc+bxo+2P+WD0NWcJF8=;
-        b=JU/x9IOupq9DrXuGxWWQq11Ldg3m9joCu3GsVF3Cdz5twtya4jMbPI3Wy7Nmxt1kzb
-         raju7FAqgcWu/M7GGYUHTw5Xan6r6PhGnqHeJzSif0YGo1K6Imo0NPJB8qF6hLAwv3vg
-         mTBt7ihciLffHnn6kh3L4IS7GsGP+HhIrThRAlBru3cmUdD2hdIzgaftMAGNAihvkO7n
-         gUa0On1D8kypaY2hTMnaW8x+vNH22WkjkR8veHZdGOxJpcEH2kCf3yF8n4Smk6NjrQzP
-         oK9v8YOpV5P9XSWTbZlhsHrGIyETJhM6Me4bTGvb6JAcldfKFWnzVaH7BFm5rLH/D8oz
-         xxeA==
+        bh=rajdpuATf4cHrwTeJ8T+ZsyTPgo2DiGPUjAIn6iu1Wg=;
+        b=w4z0SNNfm07Xta0oZmdh5DPfzvfGIqIYFIwNbv5gYv1SxCOt2H72eBpG8B5ZH8H3y4
+         nN4whT9cuAESXSiibmVf3mnufu1gH+aNs5hep2UeKcLldwgcyzXSKJXscirMQEzHvN7R
+         K6S58fWLGBNV6uvKVH39DdoUwjkzvQNsNHvgP0B6ZyqTJvQ7DdZUjTz6qEGRHfM3PlGE
+         tOoyOYJOLfmf+iEuxsVp7th1cRbvVy3rpxrvoQ1TTHUESbXojrLx/cPTAc0Ryl9JJYAo
+         CCPwmgTvIof4aZw6a/qaALP09AMOMTPtJnVSEXVgamhD4+ipsQvEtEMReIqm+iTivrO1
+         lyNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741014895; x=1741619695;
+        d=1e100.net; s=20230601; t=1741014903; x=1741619703;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=23d26b6/rNMhE2TK5FNAdZfYGc+bxo+2P+WD0NWcJF8=;
-        b=QAWRDNYzwbZOeS5ybohzb/fM9w1zsoKBfXhKnV8fvqr9B43/fsB36fZ/0X9b1ZZKZa
-         fWslNgOSW2ECaE71nYkkA0y8c/0cZjkb3QMootlzDG6yAkNAjPeNZHEfrkE596tdee6E
-         BmbznERCMPh2fU9ubkgtrbZpvhW5oNv/RQ3TdSkNj54ZciuoSxyZlLgSRAUhYxAw3ybB
-         f6NSyV422MM67FoW6nOi8orngT3XoGgekuy0otjpSmiiJ3goJ6TnIZFAKZNagEBzoZoA
-         aUL817R8h/f8381z77saAeApIQAwyWMFGvrplkKwr/Z2+Sp4/JOAuebjl7KqKev/z8Yq
-         NWWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWFxFMzli9Sac6LD9nUOrJusNuwRi+6Sdh4DoT+lBZ87WFGuEIXGRNOfWFLMnGYJiotE58l34r3S8gC5uY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5Wq7al8n/5lX2oi+qJEOK7AzeZtx3Io3Eot2zbbkprNIYx33B
-	9S/b57ie7kSRKmHUHli5ggRC/HzUxyJLY2580QxubkWaBn4uaDpoe2zahhGmnUJ0U8kr1KG7mTp
-	pLKV2ZQ==
-X-Gm-Gg: ASbGncs3oFLNHJ6g2u53kLL7yJ4+a/gbCJgBTIRzez+KW83lWt70pO6TuZ1HyqnGuHU
-	G+HWy5lc96ju76nJQY0jtS+bc/HU96VJeUo56oTItFHVDLxqhHvmQttFi0CET3GUetNJa0HQx4h
-	/+aWMFnlty2NKxkiTb/HF7rI9EWQ0gU62DCso7UamWNeUNH/X2IF0LHTarAQAckr9x5Imny8xZm
-	uqfUe5J81HLDnRXsRyE1fyjEZQlTF/n2PNAd0U7gCMelnvcc6jmPNtbojSmi3/RqFsZDORX0hS7
-	tiYa/sBmnaRmO9ALCe6xuMuIvrcGC3dlWRxK9uTF6A==
-X-Google-Smtp-Source: AGHT+IEZXOVfk9vvs9ueKjdtqfIHne0Pi+FC3U3JHpeDAvVS+sDngfbGOm6cZOFiQeTD6fyidSq0Ig==
-X-Received: by 2002:a05:6a00:1805:b0:736:53ce:a32c with SMTP id d2e1a72fcca58-73653cea459mr5730851b3a.17.1741014894939;
-        Mon, 03 Mar 2025 07:14:54 -0800 (PST)
+        bh=rajdpuATf4cHrwTeJ8T+ZsyTPgo2DiGPUjAIn6iu1Wg=;
+        b=VTxv60C5Ydem+G2IWu7ZgKaFvTPLnoc2Btc6eyhtjxodL+zJK/vaLP12yt8/DYbq1t
+         DCNCBQ8mV7VPZUOoqmSsg2c/YSqxklgSfA/Pkv9OgVAaqt+eOpM44XughG9nODAVu7vj
+         ea5TAK41PGV1K8wvlzVD/tAp6q4HLDxjqJ0d6ewmMczevGuqVIBwCsWTUeroK2hDWzqs
+         IN3C8+CbQlGHZFc+cYEKSVBcAri3NOYGQiY30ItdGWCBydPc1n08cryiCGckRf4Xmmmz
+         BoxVpjnWm4HJ3DNEQ08niFBGu4EqYFLFM6wUuSayOz27fCX1UOaBEBElfGX5RPWntQXW
+         1F3w==
+X-Forwarded-Encrypted: i=1; AJvYcCXkpVdE+jKGAE7uyzXK3nfJCQO3bmGeEeukQ0/0+kp5WRy71x7Ui57271GhMz5hoEsGiaJCZ3nVVLHXKgg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1QzcfsIpE/f1nJHD0G1S9qNJRlOVx0/vWz1LrQVun1rk+l/SK
+	T3ForCABibuWFIrcONejyslH25txIhjhL+XnYLi6oYInMJNDt+xIuLPHFJx5dmqZgpX8eacKm+H
+	cRz3F8g==
+X-Gm-Gg: ASbGncsJSVDwZM8DwUn5dA9GTHbOKTpl4qLbVldHNs5XC2e9fSgwQ0QO01A5sHhBKgh
+	Dw+OHrql1YjVhCw/3dE+zKz3jGXcocq1YHHerXV3n79XX0ryPvlzrh1WevQJURS4Cb7bb1ot+3w
+	vFgCC3ThRA5Bx0+08zR+/rRDeAaNDFMPCo9YpJ3C8QTK1YrnA8nZbebxOl574HCf2Se+dzmH5Cr
+	aBaCl9UFrLh736xW2rWfR1Hv94YvwqL8OUf0QxnvjLuKF7kx/mE8p0VrofylUMkum0thSZCeoxq
+	6JDjvrpiFgupT7p+uDJ33tul3emO+g5INQuAXVGEIg==
+X-Google-Smtp-Source: AGHT+IFfKobZR/YNthU8FSN4d6D3QQs8d0hcDUIFWNCkJQnXRThDPSI3iD8UnplSa5AFqtM/nye7ow==
+X-Received: by 2002:a05:6a00:244d:b0:736:5b46:489b with SMTP id d2e1a72fcca58-7365b46531emr4180973b3a.1.1741014902949;
+        Mon, 03 Mar 2025 07:15:02 -0800 (PST)
 Received: from [127.0.1.1] ([112.64.60.252])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736584b3cffsm1851984b3a.4.2025.03.03.07.14.47
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736584b3cffsm1851984b3a.4.2025.03.03.07.14.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 07:14:54 -0800 (PST)
+        Mon, 03 Mar 2025 07:15:02 -0800 (PST)
 From: Jun Nie <jun.nie@linaro.org>
-Date: Mon, 03 Mar 2025 23:14:30 +0800
-Subject: [PATCH v8 01/15] drm/msm/dpu: check every pipe per capability
+Date: Mon, 03 Mar 2025 23:14:31 +0800
+Subject: [PATCH v8 02/15] drm/msm/dpu: Do not fix number of DSC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,7 +83,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250303-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v8-1-eb5df105c807@linaro.org>
+Message-Id: <20250303-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v8-2-eb5df105c807@linaro.org>
 References: <20250303-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v8-0-eb5df105c807@linaro.org>
 In-Reply-To: <20250303-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v8-0-eb5df105c807@linaro.org>
 To: Rob Clark <robdclark@gmail.com>, 
@@ -96,128 +96,64 @@ Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
  freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
  Jun Nie <jun.nie@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741014878; l=4444;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1741014878; l=1985;
  i=jun.nie@linaro.org; s=20240403; h=from:subject:message-id;
- bh=f7vmxxj2aXQGnMGrEnTOGdqDh+9P0TeHrkYJRqajnDk=;
- b=fDRF2/MiyODTU8Shp8yUwEv89OJ+oBNUEwpo9nXt5OzwqN3ekY205895pFmkZWEonFNGHm2Hj
- Lqws3+XVAlcBBJLFb7btswep0HbOCIrLp9avhWCkS3xLdINzRUYD8we
+ bh=WBM/p7IonF+GUTkphvNqY034IFJPvXxbXKnpEjol144=;
+ b=Eo4AVl6PNa4Zuh1hIo1r0Z2SysdoISXYk+vp0YJpZ7OGVtradN62MDjOdok4y1ut0fVsHeHrf
+ MoiLB40oGZeBnFVeoDof6wy9ApzZxL92NfBW9r0UNStUJzs1O5ddDmZ
 X-Developer-Key: i=jun.nie@linaro.org; a=ed25519;
  pk=MNiBt/faLPvo+iJoP1hodyY2x6ozVXL8QMptmsKg3cc=
 
-The capability stored in sblk and pipe_hw_caps is checked only for
-SSPP of the first pipe in the pair with current implementation. That
-of the 2nd pipe, r_pipe, is not checked and may violate hardware
-capability. Move requirement check to dpu_plane_atomic_check_pipe()
-for the check of every pipe.
+Currently, if DSC is enabled, only 2 DSC engines are supported so far.
+More usage cases will be added, such as 4 DSC in 4:4:2 topology. So
+get the real number of DSCs to decide whether DSC merging is needed.
 
-Fixes: ("dbbf57dfd04e6 drm/msm/dpu: split dpu_plane_atomic_check()")
 Signed-off-by: Jun Nie <jun.nie@linaro.org>
 Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
 ---
- drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 71 ++++++++++++++++---------------
- 1 file changed, 36 insertions(+), 35 deletions(-)
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-index 098abc2c0003cde90ce6219c97ee18fa055a92a5..feb90c42fef58f3385625f6d8165bfcdabf46d2d 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-@@ -729,12 +729,40 @@ static int dpu_plane_check_inline_rotation(struct dpu_plane *pdpu,
- static int dpu_plane_atomic_check_pipe(struct dpu_plane *pdpu,
- 		struct dpu_sw_pipe *pipe,
- 		struct dpu_sw_pipe_cfg *pipe_cfg,
--		const struct msm_format *fmt,
--		const struct drm_display_mode *mode)
-+		const struct drm_display_mode *mode,
-+		struct drm_plane_state *new_plane_state)
- {
- 	uint32_t min_src_size;
- 	struct dpu_kms *kms = _dpu_plane_get_kms(&pdpu->base);
- 	int ret;
-+	const struct msm_format *fmt;
-+	uint32_t supported_rotations;
-+	const struct dpu_sspp_cfg *pipe_hw_caps;
-+	const struct dpu_sspp_sub_blks *sblk;
-+
-+	pipe_hw_caps = pipe->sspp->cap;
-+	sblk = pipe->sspp->cap->sblk;
-+
-+	/*
-+	 * We already have verified scaling against platform limitations.
-+	 * Now check if the SSPP supports scaling at all.
-+	 */
-+	if (!sblk->scaler_blk.len &&
-+	    ((drm_rect_width(&new_plane_state->src) >> 16 !=
-+	      drm_rect_width(&new_plane_state->dst)) ||
-+	     (drm_rect_height(&new_plane_state->src) >> 16 !=
-+	      drm_rect_height(&new_plane_state->dst))))
-+		return -ERANGE;
-+
-+	fmt = msm_framebuffer_format(new_plane_state->fb);
-+
-+	supported_rotations = DRM_MODE_REFLECT_MASK | DRM_MODE_ROTATE_0;
-+
-+	if (pipe_hw_caps->features & BIT(DPU_SSPP_INLINE_ROTATION))
-+		supported_rotations |= DRM_MODE_ROTATE_90;
-+
-+	pipe_cfg->rotation = drm_rotation_simplify(new_plane_state->rotation,
-+						   supported_rotations);
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+index eaac172141ede7bb4002ce1d0268b2f436fffc6c..c734d2c5790d2a8f5f20c4b5aa1e316062d9b34d 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+@@ -164,6 +164,7 @@ enum dpu_enc_rc_states {
+  *				clks and resources after IDLE_TIMEOUT time.
+  * @topology:                   topology of the display
+  * @idle_timeout:		idle timeout duration in milliseconds
++ * @num_dscs:			Number of DSCs in use
+  * @wide_bus_en:		wide bus is enabled on this interface
+  * @dsc:			drm_dsc_config pointer, for DSC-enabled encoders
+  */
+@@ -204,6 +205,7 @@ struct dpu_encoder_virt {
+ 	struct msm_display_topology topology;
  
- 	min_src_size = MSM_FORMAT_IS_YUV(fmt) ? 2 : 1;
+ 	u32 idle_timeout;
++	u32 num_dscs;
  
-@@ -923,47 +951,20 @@ static int dpu_plane_atomic_check_sspp(struct drm_plane *plane,
- 	struct dpu_plane_state *pstate = to_dpu_plane_state(new_plane_state);
- 	struct dpu_sw_pipe *pipe = &pstate->pipe;
- 	struct dpu_sw_pipe *r_pipe = &pstate->r_pipe;
--	const struct msm_format *fmt;
- 	struct dpu_sw_pipe_cfg *pipe_cfg = &pstate->pipe_cfg;
- 	struct dpu_sw_pipe_cfg *r_pipe_cfg = &pstate->r_pipe_cfg;
--	uint32_t supported_rotations;
--	const struct dpu_sspp_cfg *pipe_hw_caps;
--	const struct dpu_sspp_sub_blks *sblk;
- 	int ret = 0;
+ 	bool wide_bus_en;
  
--	pipe_hw_caps = pipe->sspp->cap;
--	sblk = pipe->sspp->cap->sblk;
--
--	/*
--	 * We already have verified scaling against platform limitations.
--	 * Now check if the SSPP supports scaling at all.
--	 */
--	if (!sblk->scaler_blk.len &&
--	    ((drm_rect_width(&new_plane_state->src) >> 16 !=
--	      drm_rect_width(&new_plane_state->dst)) ||
--	     (drm_rect_height(&new_plane_state->src) >> 16 !=
--	      drm_rect_height(&new_plane_state->dst))))
--		return -ERANGE;
--
--	fmt = msm_framebuffer_format(new_plane_state->fb);
--
--	supported_rotations = DRM_MODE_REFLECT_MASK | DRM_MODE_ROTATE_0;
--
--	if (pipe_hw_caps->features & BIT(DPU_SSPP_INLINE_ROTATION))
--		supported_rotations |= DRM_MODE_ROTATE_90;
--
--	pipe_cfg->rotation = drm_rotation_simplify(new_plane_state->rotation,
--						   supported_rotations);
--	r_pipe_cfg->rotation = pipe_cfg->rotation;
--
--	ret = dpu_plane_atomic_check_pipe(pdpu, pipe, pipe_cfg, fmt,
--					  &crtc_state->adjusted_mode);
-+	ret = dpu_plane_atomic_check_pipe(pdpu, pipe, pipe_cfg,
-+					  &crtc_state->adjusted_mode,
-+					  new_plane_state);
- 	if (ret)
- 		return ret;
+@@ -622,9 +624,8 @@ bool dpu_encoder_use_dsc_merge(struct drm_encoder *drm_enc)
+ 		if (dpu_enc->phys_encs[i])
+ 			intf_count++;
  
- 	if (drm_rect_width(&r_pipe_cfg->src_rect) != 0) {
--		ret = dpu_plane_atomic_check_pipe(pdpu, r_pipe, r_pipe_cfg, fmt,
--						  &crtc_state->adjusted_mode);
-+		ret = dpu_plane_atomic_check_pipe(pdpu, r_pipe, r_pipe_cfg,
-+						  &crtc_state->adjusted_mode,
-+						  new_plane_state);
- 		if (ret)
- 			return ret;
+-	/* See dpu_encoder_get_topology, we only support 2:2:1 topology */
+ 	if (dpu_enc->dsc)
+-		num_dsc = 2;
++		num_dsc = dpu_enc->num_dscs;
+ 
+ 	return (num_dsc > 0) && (num_dsc > intf_count);
+ }
+@@ -1261,6 +1262,7 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
+ 		dsc_mask |= BIT(dpu_enc->hw_dsc[i]->idx - DSC_0);
  	}
+ 
++	dpu_enc->num_dscs = num_dsc;
+ 	dpu_enc->dsc_mask = dsc_mask;
+ 
+ 	if ((dpu_enc->disp_info.intf_type == INTF_WB && conn_state->writeback_job) ||
 
 -- 
 2.34.1
