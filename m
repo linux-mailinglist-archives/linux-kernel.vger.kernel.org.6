@@ -1,80 +1,85 @@
-Return-Path: <linux-kernel+bounces-541954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4EBBA4C3CA
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:47:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2695A4C3CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:48:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDB681711E9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:47:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7CAB16A781
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:48:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B54B213E6D;
-	Mon,  3 Mar 2025 14:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0226E21171F;
+	Mon,  3 Mar 2025 14:48:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="hDZyA60H"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Th9M9mvu"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46521F473A
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 14:47:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C17178F3E
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 14:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741013246; cv=none; b=JDJeiNRW7kIESp07nyYte5x94psAmZGKfOGY2f7tCX/5opeUWr3MtlE7RZW39qZW/J1nybxhuABDE3QWN60Z17chInsbswD22SDb/qtbuNX0ilICLwA7LRP0pwn4n637DiJQ+aryVy7jv9JjvZBx9qfag+EY1Q9Ef7cCADxBdZQ=
+	t=1741013289; cv=none; b=ZkdnC9MHQ/FkBqxLLwtGAbdohchLFF/CBS0ipm6muQw3a9OeWhdBN4n4pht4nSUH0qcx6wbhkViuIKTjt7HUlVbFZLZoLZdXOBhSmUp0+6Kaekv6ednVLbDvsw5INYpCzXcnkXwfiMx20xDtI6zIaKutPeM1fCS4W+4blEIu6T4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741013246; c=relaxed/simple;
-	bh=YK3vQOatiZKte940Yh6vGjcxz6PX8lovXmywTS7ON9c=;
+	s=arc-20240116; t=1741013289; c=relaxed/simple;
+	bh=FVRD4iX3p9k8gSH9i17b/bed7/npTuICPWhmTSWXw5s=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YkFv5jQGSBt3y4IHlD7p9NBmfTqSVeSZkyyxSglAA3cY3YlOgzl83asHjZ2NegGFvxMhXFLe9YZffCuTSNAXi5ZCrc3tTPEj6ZiyAluPnsKSz5cnWK06HCLPGTwMaSpvEb319mAddvnDtloQjJwgxlRI2ELeVrVlk8V8N1rGnMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=hDZyA60H; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5e55ec94962so1299876a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 06:47:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=openvpn.net; s=google; t=1741013243; x=1741618043; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=UjbM+V8Y3WsTK62memOwRHcpDks/OOOXgm2wXjSL9fA=;
-        b=hDZyA60HVlnotgdjMdInMw8DCjEbKcBazu95V9LJz7AQycTHQQovUJHDY175AvXJ+H
-         b4UZaKVzUEEmwUNZRAgXZykQgOCSfiM2wYHFWTTbOcYQbWu9ukbWSXipDQdiC4nBf6lX
-         Xqi56tCp8fcL+kTM7hTzIGykVZt00J8/PjTJbpM2+u3qd02oXN1Ua9ewKDqjN+vjvwyQ
-         5j6+PW4ju81yd1HgMd0NHF/0Nv5SttQaY5FDAekCj92UTx+CJbq6PwsHsxI1BiN2/50+
-         s/hv2rFfP6vcDqFiKsURqbmOZlJFjpWEjGiUwB9wogI7frly84aFTHMKo8O+Pq7wxKSs
-         wWtw==
+	 In-Reply-To:Content-Type; b=mKhGCxo5IJ7RHnmi2cbuPe9KG3d48UMBSyzuuNhdPQmw3lfT0vJ007z9PujG2Ktnxj7MSgMAvJ5dcaJoHYeR0zGWvsLwUBwF9iWM1Eiirjh5Zm5KgaPe/0Qq3QcIH4DhbQvrD5GWRbPtNc/KnbhXBvsygPrKbODBbffoU1WYg8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Th9M9mvu; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741013285;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JeW7ILK4BHwph4vdjZBYJRZp3BpM7DGYuP2lQy/HDSs=;
+	b=Th9M9mvuu96jjcoAqhERvfjZwhJcX6E8rj4u28NoO1/cWSaAUHeGmAV8HH5mvMSyfy5yUp
+	LxQGzJGpycbrnx0QQEfLglqO7AidwPPsplgsxkxRtvSjg92jyt4qdGZg59nZxwz8nq+9TT
+	zvPOlUPdjPYBhPDSibdqt3ksLnqkX+I=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-421-Arf2lOKvMdqSjXNRDRbD1A-1; Mon, 03 Mar 2025 09:47:54 -0500
+X-MC-Unique: Arf2lOKvMdqSjXNRDRbD1A-1
+X-Mimecast-MFC-AGG-ID: Arf2lOKvMdqSjXNRDRbD1A_1741013273
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-ab39f65dc10so572100266b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 06:47:53 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741013243; x=1741618043;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UjbM+V8Y3WsTK62memOwRHcpDks/OOOXgm2wXjSL9fA=;
-        b=H0OXG1dGL8S7RmWnlPL5DA3YkFoWdLsOC/R8GO1PGFNxyjjDuZnA//eRbG7kdUR0b/
-         vmVhZuYBkY8GBv47UZoHENiNUA8g/OB4C0J9PW19/ooHnqTd5dn4DT+NXe4ovySZYgz0
-         qP/0+02qf5YdIZQQJhgerQAsMV7ZU2/e5qAR4QJtsFk9K9NwqQAX3NEiP4iHZYhixhCV
-         0ReZap476ol4CNebdB2ke9RIKR1SH7dPz0DOeAtXstBuuesQL6PgMucBjgBgxcgsRTs4
-         VJrnhlWy8dHqVIKlEEDUiM3kSsBAK4GHgzUdyyQ5GYuySi1/Zdf01UK0ZUBMn/KV4Qk3
-         uHbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVW2uCT9PSnZAUrP6ZpXwtPT3fNkn/7b2d7+WpjXhcGdNnz2R9sq9/0d3wU3f7yyFu7VYcl49m2cZt3Y4c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxopzMyN1H1cLFn5BPbZv93eYmX6isDpB8esAqasI45QJJisblL
-	Y+6QmjAmUrZMK/RMnBRZgjhIdeQnzelbkyh+2diW8nQ41PohGVCL7HgVInij3GA=
-X-Gm-Gg: ASbGncuOB+XYyZYcDp1vnqwzmbPcs56YHRFt6SWe8LZNj0CdR5jNxWwFw31MJBo4kMg
-	zIqv/ipVN8a0bLJ1yThZIo+grYPfr03NYFeeMXwTqXtsbfj5et+qo7LjHO705bXRqc+RHlIUsEU
-	hK00ohcvljOqokXqEX17mf8cpmy2v3k3kvEe8hl89YYNK6wd4eDR/oLJUgSWYLnADV7eUsQ854d
-	OlxYhzBNfhwxuQudafU5Mb6UIGP4vYC1/ZuaXrXBcvkH7EmomypaUj/dh2WpSpay6OmS/kD+ZK0
-	PCChjqmzWRK32ZvWYoUpDyWq0YfXjqWr4nhJ4nOVAVKjpgcC19f5VqoqUnkcaARZCxbVFF1kfaN
-	bNDfZheE=
-X-Google-Smtp-Source: AGHT+IHnsFe6vMwt658Orcv6r4zc6wGaqIvSA7uQHKo5p/cRGfjOeudZncUeFojjjSO1eyVXVb2uMA==
-X-Received: by 2002:a05:6402:5c8:b0:5df:6de2:1e38 with SMTP id 4fb4d7f45d1cf-5e4d6b0ca3dmr14243645a12.17.1741013242803;
-        Mon, 03 Mar 2025 06:47:22 -0800 (PST)
-Received: from ?IPV6:2001:67c:2fbc:1:4d41:ca07:21a5:f110? ([2001:67c:2fbc:1:4d41:ca07:21a5:f110])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e4c3b4a81asm6850258a12.9.2025.03.03.06.47.21
+        d=1e100.net; s=20230601; t=1741013273; x=1741618073;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JeW7ILK4BHwph4vdjZBYJRZp3BpM7DGYuP2lQy/HDSs=;
+        b=Cgz9Tad0rJBEMBIUORwGp22dk4s69IP5e0xzI+phFSpyrFlAVDGh9qyy0u4eaczePw
+         N6FFP5YEdNjjoImN6gtk5Q6PfZ1/ILpUxpuUx2+kJ4igwNihFkXLLz2EMmBayhasL48N
+         u6j6JcBQjUglDtnmn0CSm2WF4jLZhupWnB5q01mfEjLjMxEZ4FmXuxlPZSayO/cd91rC
+         h7AYdq3b6GJyKwL4hJjmz/Ex+3GJ1/8Zom/xVJeQpLlYMSyHecLq/dEr50P68rzPXJyr
+         yZc5rIjfIdT0dFhWPjIsFtW36sbI9ng3fQ5zfWIl1lWrfRhji32kZqxiIAL0fyKrg/I3
+         I0nQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW2BxZOOwBFdzcF6sx9ctB75Je1pg2T3aaLgMbJ/r6YtgIA7VLJ55GpHz4phiqNpzbLjQ9ftAsLM9eUTtE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCZw9ryateKyQbB76btv09vRGPDj8ft6MfZ6g2brcH36i7b+DQ
+	QNlNkUr7aDcXkO6/ANrMKx2x94XE3NI5iYfC+O1MuU+V5ct1rZDLWd63LOOtb9PLsJCLjWigxrZ
+	mkais2rDYso1SOsQ+nT0KaIxNUkKH+oogV+blpECaT6kSmUhGiDhIColmKQUElw==
+X-Gm-Gg: ASbGncs2PYT8unxThCyO8dhfdtdc/hWItXYbUHLnFRea/MVCXf5pBiMZY+edGLs3ZWt
+	k+IRnSp6QwWfwUcD0WT8FO+F8Xvfd5G4V2HovfGdMKCUcx/siZoeWORkl1X+dZbge7FUL2SCDTw
+	COmLOuCI1HHibEZZW7Hk8ZH3AmtwxduMioEn8x7yQfoX0Ew3w67OgwRBEM0IH2RWu+na9X4EZCp
+	oh8jEKp6l0nuclNZaZkQLvDRiOQL8GPnepRAOQDS3Br+QgSePWvt7QBUPPb+uvqJaHOB3/5XrD1
+	9F3y4ybxaQH+wBGlzXw=
+X-Received: by 2002:a17:907:d90:b0:ac1:e332:b1ef with SMTP id a640c23a62f3a-ac1e332b45bmr212465666b.48.1741013272751;
+        Mon, 03 Mar 2025 06:47:52 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFxkGtJFlxPNSNyID6fMe+Mm/hHvV0XaEzpcB6ATKLdIpZJ9r5qZolbpF2E4TnEHvKU9ctYww==
+X-Received: by 2002:a17:907:d90:b0:ac1:e332:b1ef with SMTP id a640c23a62f3a-ac1e332b45bmr212462066b.48.1741013272258;
+        Mon, 03 Mar 2025 06:47:52 -0800 (PST)
+Received: from [10.40.98.122] ([78.108.130.194])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c6ee491sm822229966b.103.2025.03.03.06.47.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Mar 2025 06:47:22 -0800 (PST)
-Message-ID: <26dbc569-4566-4f6c-9294-5129befbc6ff@openvpn.net>
-Date: Mon, 3 Mar 2025 15:47:21 +0100
+        Mon, 03 Mar 2025 06:47:51 -0800 (PST)
+Message-ID: <c6ab8640-d96c-4a71-929a-a4ad6bb2647d@redhat.com>
+Date: Mon, 3 Mar 2025 15:47:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,110 +87,286 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v20 09/25] ovpn: implement basic RX path (UDP)
-To: Sabrina Dubroca <sd@queasysnail.net>
-Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Donald Hunter <donald.hunter@gmail.com>, Shuah Khan <shuah@kernel.org>,
- ryazanov.s.a@gmail.com, Andrew Lunn <andrew+netdev@lunn.ch>,
- Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>
-References: <20250227-b4-ovpn-v20-0-93f363310834@openvpn.net>
- <20250227-b4-ovpn-v20-9-93f363310834@openvpn.net> <Z8HVZm_eQwNR_r1A@hog>
-Content-Language: en-US
-From: Antonio Quartulli <antonio@openvpn.net>
-Autocrypt: addr=antonio@openvpn.net; keydata=
- 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
-Organization: OpenVPN Inc.
-In-Reply-To: <Z8HVZm_eQwNR_r1A@hog>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH] media: uvcvideo: Enable full UVC metadata for all devices
+To: Ricardo Ribalda <ribalda@chromium.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250226-uvc-metadata-v1-1-6cd6fe5ec2cb@chromium.org>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20250226-uvc-metadata-v1-1-6cd6fe5ec2cb@chromium.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 28/02/2025 16:25, Sabrina Dubroca wrote:
-> (I'm still reviewing how everything fits together, but one small thing
-> here:)
-> 
-> 2025-02-27, 02:21:34 +0100, Antonio Quartulli wrote:
->> +static void ovpn_udp_close(struct sock *sk, long timeout)
->> +{
->> +	struct ovpn_socket *sock;
->> +	struct ovpn_priv *ovpn;
->> +
->> +	rcu_read_lock();
->> +	sock = rcu_dereference_sk_user_data(sk);
->> +	if (!sock || !sock->ovpn) {
->> +		rcu_read_unlock();
->> +		return;
->> +	}
->> +	ovpn = sock->ovpn;
->> +	rcu_read_unlock();
->> +
->> +	if (ovpn->mode == OVPN_MODE_P2P)
->> +		ovpn_peer_release_p2p(ovpn, sk,
->> +				      OVPN_DEL_PEER_REASON_TRANSPORT_DISCONNECT);
->> +	sock->udp_prot->close(sk, timeout);
->> +}
->> +
->> +static void ovpn_udp_build_protos(struct proto *new_prot,
->> +				  const struct proto *orig_prot)
->> +{
->> +	memcpy(new_prot, orig_prot, sizeof(*new_prot));
->> +	new_prot->close = ovpn_udp_close;
->> +}
-> 
-> Could you set ->encap_destroy in udp_tunnel_sock_cfg, instead of
-> making up your own struct proto? It should allow to do basically the
-> same thing, but with less code in ovpn:
-> 
-> ->close = udp_lib_close -> sk_common_release -> sk_prot->destroy = udp_destroy_sock -> encap_destroy
+Hi,
 
-Oh, this is very nice.
-I'll give it a go and stick to encap_destroy if no issue arise.
-
-Cheers,
-
+On 26-Feb-25 14:00, Ricardo Ribalda wrote:
+> The UVC driver provides two metadata types V4L2_META_FMT_UVC, and
+> V4L2_META_FMT_D4XX. The only difference between the two of them is that
+> V4L2_META_FMT_UVC only copies PTS, SCR, size and flags, and
+> V4L2_META_FMT_D4XX copies the whole metadata section.
 > 
+> Now we only enable V4L2_META_FMT_D4XX for the Intel D4xx family of
+> devices, but it is useful for any device where vendors include other
+> metadata, such as the one described by Microsoft:
+> - https://learn.microsoft.com/en-us/windows-hardware/drivers/stream/mf-capture-metadata
 > 
+> This patch removes the UVC_INFO_META macro and enables
+> V4L2_META_FMT_D4XX for every device. It also updates the documentation
+> to reflect the change.
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 
--- 
-Antonio Quartulli
-OpenVPN Inc.
+Thanks, patch looks good to me:
+
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+Regards,
+
+Hans
+
+
+> ---
+>  .../userspace-api/media/v4l/metafmt-d4xx.rst       | 19 +++--
+>  .../userspace-api/media/v4l/metafmt-uvc.rst        |  6 +-
+>  drivers/media/usb/uvc/uvc_driver.c                 | 83 ----------------------
+>  drivers/media/usb/uvc/uvc_metadata.c               | 15 ++--
+>  drivers/media/usb/uvc/uvcvideo.h                   |  1 -
+>  5 files changed, 23 insertions(+), 101 deletions(-)
+> 
+> diff --git a/Documentation/userspace-api/media/v4l/metafmt-d4xx.rst b/Documentation/userspace-api/media/v4l/metafmt-d4xx.rst
+> index 0686413b16b2..1b18ef056934 100644
+> --- a/Documentation/userspace-api/media/v4l/metafmt-d4xx.rst
+> +++ b/Documentation/userspace-api/media/v4l/metafmt-d4xx.rst
+> @@ -6,12 +6,23 @@
+>  V4L2_META_FMT_D4XX ('D4XX')
+>  *******************************
+>  
+> -Intel D4xx UVC Cameras Metadata
+> +UVC Full Payload Header Data (formerly known as Intel D4xx UVC Cameras
+> +Metadata).
+>  
+>  
+>  Description
+>  ===========
+>  
+> +V4L2_META_FMT_D4XX buffers follow the metadata buffer layout of
+> +V4L2_META_FMT_UVC with the only difference, that it also includes proprietary
+> +payload header data. It was originally implemented for Intel D4xx cameras, and
+> +thus the name, but now it can be used by any UVC device, when userspace wants
+> +full access to the UVC Metadata.
+> +
+> +
+> +Intel D4xx Metadata
+> +===================
+> +
+>  Intel D4xx (D435, D455 and others) cameras include per-frame metadata in their UVC
+>  payload headers, following the Microsoft(R) UVC extension proposal [1_]. That
+>  means, that the private D4XX metadata, following the standard UVC header, is
+> @@ -21,10 +32,8 @@ types are MetadataId_CaptureStats (ID 3), MetadataId_CameraExtrinsics (ID 4),
+>  and MetadataId_CameraIntrinsics (ID 5). For their description see [1_]. This
+>  document describes proprietary metadata types, used by D4xx cameras.
+>  
+> -V4L2_META_FMT_D4XX buffers follow the metadata buffer layout of
+> -V4L2_META_FMT_UVC with the only difference, that it also includes proprietary
+> -payload header data. D4xx cameras use bulk transfers and only send one payload
+> -per frame, therefore their headers cannot be larger than 255 bytes.
+> +D4xx cameras use bulk transfers and only send one payload per frame, therefore
+> +their headers cannot be larger than 255 bytes.
+>  
+>  This document implements Intel Configuration version 3 [9_].
+>  
+> diff --git a/Documentation/userspace-api/media/v4l/metafmt-uvc.rst b/Documentation/userspace-api/media/v4l/metafmt-uvc.rst
+> index 784346d14bbd..a3aae580e89e 100644
+> --- a/Documentation/userspace-api/media/v4l/metafmt-uvc.rst
+> +++ b/Documentation/userspace-api/media/v4l/metafmt-uvc.rst
+> @@ -6,7 +6,7 @@
+>  V4L2_META_FMT_UVC ('UVCH')
+>  *******************************
+>  
+> -UVC Payload Header Data
+> +UVC Partial Payload Header Data (formerly known as UVC Payload Header Data).
+>  
+>  
+>  Description
+> @@ -44,7 +44,9 @@ Each individual block contains the following fields:
+>          them
+>      * - :cspan:`1` *The rest is an exact copy of the UVC payload header:*
+>      * - __u8 length;
+> -      - length of the rest of the block, including this field
+> +      - length of the rest of the block, including this field (please note that
+> +        regardless of this value, the driver will never copy more than 12
+> +        bytes).
+>      * - __u8 flags;
+>        - Flags, indicating presence of other standard UVC fields
+>      * - __u8 buf[];
+> diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+> index deadbcea5e22..f19dcd4a7ac6 100644
+> --- a/drivers/media/usb/uvc/uvc_driver.c
+> +++ b/drivers/media/usb/uvc/uvc_driver.c
+> @@ -2488,8 +2488,6 @@ static const struct uvc_device_info uvc_quirk_force_y8 = {
+>  };
+>  
+>  #define UVC_INFO_QUIRK(q) (kernel_ulong_t)&(struct uvc_device_info){.quirks = q}
+> -#define UVC_INFO_META(m) (kernel_ulong_t)&(struct uvc_device_info) \
+> -	{.meta_format = m}
+>  
+>  /*
+>   * The Logitech cameras listed below have their interface class set to
+> @@ -3107,87 +3105,6 @@ static const struct usb_device_id uvc_ids[] = {
+>  	  .bInterfaceSubClass	= 1,
+>  	  .bInterfaceProtocol	= 0,
+>  	  .driver_info		= UVC_INFO_QUIRK(UVC_QUIRK_DISABLE_AUTOSUSPEND) },
+> -	/* Intel D410/ASR depth camera */
+> -	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
+> -				| USB_DEVICE_ID_MATCH_INT_INFO,
+> -	  .idVendor		= 0x8086,
+> -	  .idProduct		= 0x0ad2,
+> -	  .bInterfaceClass	= USB_CLASS_VIDEO,
+> -	  .bInterfaceSubClass	= 1,
+> -	  .bInterfaceProtocol	= 0,
+> -	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
+> -	/* Intel D415/ASRC depth camera */
+> -	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
+> -				| USB_DEVICE_ID_MATCH_INT_INFO,
+> -	  .idVendor		= 0x8086,
+> -	  .idProduct		= 0x0ad3,
+> -	  .bInterfaceClass	= USB_CLASS_VIDEO,
+> -	  .bInterfaceSubClass	= 1,
+> -	  .bInterfaceProtocol	= 0,
+> -	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
+> -	/* Intel D430/AWG depth camera */
+> -	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
+> -				| USB_DEVICE_ID_MATCH_INT_INFO,
+> -	  .idVendor		= 0x8086,
+> -	  .idProduct		= 0x0ad4,
+> -	  .bInterfaceClass	= USB_CLASS_VIDEO,
+> -	  .bInterfaceSubClass	= 1,
+> -	  .bInterfaceProtocol	= 0,
+> -	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
+> -	/* Intel RealSense D4M */
+> -	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
+> -				| USB_DEVICE_ID_MATCH_INT_INFO,
+> -	  .idVendor		= 0x8086,
+> -	  .idProduct		= 0x0b03,
+> -	  .bInterfaceClass	= USB_CLASS_VIDEO,
+> -	  .bInterfaceSubClass	= 1,
+> -	  .bInterfaceProtocol	= 0,
+> -	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
+> -	/* Intel D435/AWGC depth camera */
+> -	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
+> -				| USB_DEVICE_ID_MATCH_INT_INFO,
+> -	  .idVendor		= 0x8086,
+> -	  .idProduct		= 0x0b07,
+> -	  .bInterfaceClass	= USB_CLASS_VIDEO,
+> -	  .bInterfaceSubClass	= 1,
+> -	  .bInterfaceProtocol	= 0,
+> -	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
+> -	/* Intel D435i depth camera */
+> -	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
+> -				| USB_DEVICE_ID_MATCH_INT_INFO,
+> -	  .idVendor		= 0x8086,
+> -	  .idProduct		= 0x0b3a,
+> -	  .bInterfaceClass	= USB_CLASS_VIDEO,
+> -	  .bInterfaceSubClass	= 1,
+> -	  .bInterfaceProtocol	= 0,
+> -	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
+> -	/* Intel D405 Depth Camera */
+> -	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
+> -				| USB_DEVICE_ID_MATCH_INT_INFO,
+> -	  .idVendor		= 0x8086,
+> -	  .idProduct		= 0x0b5b,
+> -	  .bInterfaceClass	= USB_CLASS_VIDEO,
+> -	  .bInterfaceSubClass	= 1,
+> -	  .bInterfaceProtocol	= 0,
+> -	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
+> -	/* Intel D455 Depth Camera */
+> -	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
+> -				| USB_DEVICE_ID_MATCH_INT_INFO,
+> -	  .idVendor		= 0x8086,
+> -	  .idProduct		= 0x0b5c,
+> -	  .bInterfaceClass	= USB_CLASS_VIDEO,
+> -	  .bInterfaceSubClass	= 1,
+> -	  .bInterfaceProtocol	= 0,
+> -	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
+> -	/* Intel D421 Depth Module */
+> -	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
+> -				| USB_DEVICE_ID_MATCH_INT_INFO,
+> -	  .idVendor		= 0x8086,
+> -	  .idProduct		= 0x1155,
+> -	  .bInterfaceClass	= USB_CLASS_VIDEO,
+> -	  .bInterfaceSubClass	= 1,
+> -	  .bInterfaceProtocol	= 0,
+> -	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
+>  	/* Generic USB Video Class */
+>  	{ USB_INTERFACE_INFO(USB_CLASS_VIDEO, 1, UVC_PC_PROTOCOL_UNDEFINED) },
+>  	{ USB_INTERFACE_INFO(USB_CLASS_VIDEO, 1, UVC_PC_PROTOCOL_15) },
+> diff --git a/drivers/media/usb/uvc/uvc_metadata.c b/drivers/media/usb/uvc/uvc_metadata.c
+> index 82de7781f5b6..5c44e6cdb83c 100644
+> --- a/drivers/media/usb/uvc/uvc_metadata.c
+> +++ b/drivers/media/usb/uvc/uvc_metadata.c
+> @@ -60,18 +60,16 @@ static int uvc_meta_v4l2_try_format(struct file *file, void *fh,
+>  				    struct v4l2_format *format)
+>  {
+>  	struct v4l2_fh *vfh = file->private_data;
+> -	struct uvc_streaming *stream = video_get_drvdata(vfh->vdev);
+> -	struct uvc_device *dev = stream->dev;
+>  	struct v4l2_meta_format *fmt = &format->fmt.meta;
+> -	u32 fmeta = fmt->dataformat;
+> +	u32 fmeta = fmt->dataformat == V4L2_META_FMT_D4XX ?
+> +		    V4L2_META_FMT_D4XX : V4L2_META_FMT_UVC;
+>  
+>  	if (format->type != vfh->vdev->queue->type)
+>  		return -EINVAL;
+>  
+>  	memset(fmt, 0, sizeof(*fmt));
+>  
+> -	fmt->dataformat = fmeta == dev->info->meta_format
+> -			? fmeta : V4L2_META_FMT_UVC;
+> +	fmt->dataformat = fmeta;
+>  	fmt->buffersize = UVC_METADATA_BUF_SIZE;
+>  
+>  	return 0;
+> @@ -110,19 +108,16 @@ static int uvc_meta_v4l2_enum_formats(struct file *file, void *fh,
+>  				      struct v4l2_fmtdesc *fdesc)
+>  {
+>  	struct v4l2_fh *vfh = file->private_data;
+> -	struct uvc_streaming *stream = video_get_drvdata(vfh->vdev);
+> -	struct uvc_device *dev = stream->dev;
+>  	u32 index = fdesc->index;
+>  
+> -	if (fdesc->type != vfh->vdev->queue->type ||
+> -	    index > 1U || (index && !dev->info->meta_format))
+> +	if (fdesc->type != vfh->vdev->queue->type || index > 1U)
+>  		return -EINVAL;
+>  
+>  	memset(fdesc, 0, sizeof(*fdesc));
+>  
+>  	fdesc->type = vfh->vdev->queue->type;
+>  	fdesc->index = index;
+> -	fdesc->pixelformat = index ? dev->info->meta_format : V4L2_META_FMT_UVC;
+> +	fdesc->pixelformat = index ? V4L2_META_FMT_D4XX : V4L2_META_FMT_UVC;
+>  
+>  	return 0;
+>  }
+> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+> index 5e388f05f3fc..cc2092ae9987 100644
+> --- a/drivers/media/usb/uvc/uvcvideo.h
+> +++ b/drivers/media/usb/uvc/uvcvideo.h
+> @@ -534,7 +534,6 @@ static inline u32 uvc_urb_index(const struct uvc_urb *uvc_urb)
+>  
+>  struct uvc_device_info {
+>  	u32	quirks;
+> -	u32	meta_format;
+>  	u16	uvc_version;
+>  };
+>  
+> 
+> ---
+> base-commit: d98e9213a768a3cc3a99f5e1abe09ad3baff2104
+> change-id: 20250226-uvc-metadata-2e7e445966de
+> 
+> Best regards,
 
 
