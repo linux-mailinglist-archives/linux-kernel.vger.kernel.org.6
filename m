@@ -1,172 +1,251 @@
-Return-Path: <linux-kernel+bounces-542771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26741A4CD77
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:26:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BFBADA4CD79
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:28:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D1E2188F564
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 21:26:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6CCD188F466
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 21:28:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 955121F03CF;
-	Mon,  3 Mar 2025 21:26:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B29181F03CF;
+	Mon,  3 Mar 2025 21:28:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="f9OT4S/x";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aJ1FTm7o"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="s7BJda2u"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73CBE148316;
-	Mon,  3 Mar 2025 21:26:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374A01F03C4
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 21:27:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741037179; cv=none; b=qZqdo6kCkIGLyr6duA0U3oNLWDLTl/InUdzJ7/7fiIJgDQEgxQlufBaXunIw85H32tZaX+ov2lo6j2HEhyV76xb8ilBJetM80TTtpNChrY+P0EOcLieCUNscaMUki/6++texTlaTNNVOoDYf6qFPdvipzQJp083ck84fjy7abmk=
+	t=1741037281; cv=none; b=KYKF0EBluHfxts6k2dosUlTgjSEjRDBispLpjTR5liSjeZgojnSbUxukl35H1zCxf/m8g9UA1dG/V2NDrnUG6QU5lPLetMHQjgNfG87SQbry0xngpDNo2ehbHfXr46rv2x4OJj+CA6X+maJV7ZGwFoTUV9iHi6m3GQRkoaK8014=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741037179; c=relaxed/simple;
-	bh=x5niNhbRCTaWYz4g3AUn7yIyOVIMdWY0vUrDjXRo6iA=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=lIXd2FNPP/YMqRHMV/a/bKYeAk6bgaCEZ0lberMjy1PLE6VgWiSHx8/YLcK8tTHeaZw2lt3jRJh/6QPFFAkmL/0n2zDnaRUbaVyzVYoKdnG9jcRZhBAgOy849+/pqmvILJW3nHDSVqD8QBgTgoGk+9pbKKy/XmyvwqQSaCgLuGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=f9OT4S/x; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aJ1FTm7o; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 03 Mar 2025 21:26:07 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741037174;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J9URKAqKnROY8wDeSKuK/mtCv23GRVaI2chW+pe6rO4=;
-	b=f9OT4S/xhhNbt69Y/z35ONra28r4rmHq3rgjBV6ekKJ71o/GODYYdkuADyp9u53fgMc88P
-	7CIK3UwWh/YJGt9/aNAWdbYlRNtfa8xRqPTbpq3PPw1BDra4APajDeB+ENWF/QxETmsp2m
-	xiWl5H2A6XGlxF9m8XC/D67ybI1TMLtjzZLYwV/62DamzMcGdiDbpLTxvge4j4Cztsk30W
-	lx+bmiQn0A6LUOsLbxcXhbkWliQaWU4D+The69MMGRdYhXJ2PVaXeOhjQjUp5YF6Ac2VZc
-	6QYo+mjaIId/XUZ4hCnEkTzn8GaLCBMPnInGfau3AYmLSWtARo8IKb+Gk9vAPQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741037174;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J9URKAqKnROY8wDeSKuK/mtCv23GRVaI2chW+pe6rO4=;
-	b=aJ1FTm7oT5q8yNkgcOtLElx/GavxLmv6Ao7O9jVA2G0tMW2Y/mOuywoKqhVjxowz08sx4+
-	ZkKuCqERvOgbUCDQ==
-From: "tip-bot2 for Hans Zhang" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] genirq/msi: Expose MSI message data in debugfs
-Cc: Hans Zhang <18255117159@163.com>, Thomas Gleixner <tglx@linutronix.de>,
- x86@kernel.org, linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20250303121008.309265-1-18255117159@163.com>
-References: <20250303121008.309265-1-18255117159@163.com>
+	s=arc-20240116; t=1741037281; c=relaxed/simple;
+	bh=BZpx2gEPJd0PbhiRp9w8O40w2vRLkWNOVY9o7RR6hiY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OP4i9+no4d/7TTfsR2hv5tq6WchFMfYhI2yp6ZpsKOJXTuCqrPMNZhyQzW19x0WrK8+bOPqijxkyighE4j7YDZ6XQJr36vlBgijejkuk6U2k3JRyH9I4tv7S0SMNgrMypwjSsC9bqVLwWfh9LNNexGJRn0/VGpwXU7l040YvsJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=s7BJda2u; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2238e884f72so36629155ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 13:27:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1741037278; x=1741642078; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t5+6u/YZI5K5WSEGZ9NbKf7JrIHJ+VjnAiqNVQjLR1U=;
+        b=s7BJda2uMTrkTrB5J0AbWvMnXcwH9GEWJadsCnZ+gwNGIBxNkzd64dpo/ikmiVV28e
+         shtbUZVw7z4RBMVibt5phKRletpUML9JkzwUIHKxftDSenFtCOM64/RuNHsMSRSXMMG9
+         r+gte/u5URlJSuSIf9hx8bzfeQ6xMAYCuX3WOX2EjbDq3fAi3US50dbfAsub3xbZ0jKJ
+         xQmCi9/M6zI950tAkOtTnkuurT2ANbrBi+n4oDPHjm8gWJCQ43k0gmabrG9pIYDsvLhH
+         l5mPeqi3hmhPBnd3ZHz+A+OtBppbT2gwvTFW7B5g+LVnAq8+vRsqexL/Y6EW9zAOebaX
+         nhEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741037278; x=1741642078;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=t5+6u/YZI5K5WSEGZ9NbKf7JrIHJ+VjnAiqNVQjLR1U=;
+        b=nAoMKM43R/tSWLpFRrbJQiolasDqr3jkjVU+TiSkpiMXs+fp4wjZGCNeGyPz5VwPUp
+         yuTrNxM8SPdYuxMDpwW47y6cEePAhdoiecFOvKKfLER/2isAj1eJtumOhsWRSeP1WYMH
+         kGwbB/Tpy+f6eAwbiKUa62F0Q6tfpP1D2qgEW5ueuc15YSpClLgdTJvwT1n3QJHxcyC4
+         OfgLZ4wROJRyHNy3g89U4MZTQOp8eAPdKWKcAT8obfJFz0I3PSvrHpLie6GHeOzzY65c
+         dPuLU+s6F6RLz1OcSIlLtX/lf8nEggZtUNkSjB3JNc/dB9lO35iVVoOdJbE4aRVM9j9d
+         jwrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW6bMX5Pwo/5mBuIluowGj9DCrDo/v3bSYXILZYHEEhiayIu+TgouHbItyPMJLYkQMoDXVRh9eHw91WHHQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlWtVOX1Zfsh4pKUUGuSILiGI2N8q9FXFtg24+tAHn7eOMts6o
+	IlFbkHN3saAND4vlBHCNEHf32jCCnJQYLrOv0VJ6Rtg5A2TeKh/vE4j4JvHOBhJmWv1axoskXHp
+	KPZbTwFIMiR2ycDimYuV6QJRtBNtfrmoY4ZoOzA==
+X-Gm-Gg: ASbGncsVSYluSnziZQ3oO090MercJZcO4fKxWzRbp+mDSRnk8EWStdUVpZSvXz9mIDL
+	SdZGUh23l7CcNNRziETUj8EJF1TEfU3DOH/xGsMQbHYKuNKFA+S4cz1nwFUW/yL7yma28Q3lsiB
+	iEXMS0sWTiN8Iycod0amShZ4lN
+X-Google-Smtp-Source: AGHT+IFWa898pYBSsl/XtTire00C+/Mez1s46zY3VD5s0DWQi6LGPCXHd85UBauAj0l5XQztYMk3Koj9EeRJt1F3O/w=
+X-Received: by 2002:a05:6a00:10d5:b0:736:54c9:df2c with SMTP id
+ d2e1a72fcca58-73654c9e5damr7398143b3a.15.1741037278523; Mon, 03 Mar 2025
+ 13:27:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174103716846.14745.18015237712343112296.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <20250226-kvm_pmu_improve-v1-0-74c058c2bf6d@rivosinc.com>
+ <20250226-kvm_pmu_improve-v1-4-74c058c2bf6d@rivosinc.com> <20250227-f7b303813dab128b5060b0c3@orel>
+In-Reply-To: <20250227-f7b303813dab128b5060b0c3@orel>
+From: Atish Kumar Patra <atishp@rivosinc.com>
+Date: Mon, 3 Mar 2025 13:27:47 -0800
+X-Gm-Features: AQ5f1JoAkFSTZhtomPL4SLm3WBUMZBjoFu7rVfDIUHdBaeUMfROdiGWXnMT4KxU
+Message-ID: <CAHBxVyGGw6Ur4Kdd8Vvwp6viKWPx64w7gNvNiUzmAGeXF2PGoA@mail.gmail.com>
+Subject: Re: [PATCH 4/4] KVM: riscv: selftests: Allow number of interrupts to
+ be configurable
+To: Andrew Jones <ajones@ventanamicro.com>
+Cc: Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, kvm@vger.kernel.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the irq/core branch of tip:
+On Thu, Feb 27, 2025 at 12:16=E2=80=AFAM Andrew Jones <ajones@ventanamicro.=
+com> wrote:
+>
+> On Wed, Feb 26, 2025 at 12:25:06PM -0800, Atish Patra wrote:
+> > It is helpful to vary the number of the LCOFI interrupts generated
+> > by the overflow test. Allow additional argument for overflow test
+> > to accommodate that. It can be easily cross-validated with
+> > /proc/interrupts output in the host.
+> >
+> > Signed-off-by: Atish Patra <atishp@rivosinc.com>
+> > ---
+> >  tools/testing/selftests/kvm/riscv/sbi_pmu_test.c | 36 ++++++++++++++++=
+++++----
+> >  1 file changed, 30 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/tools/testing/selftests/kvm/riscv/sbi_pmu_test.c b/tools/t=
+esting/selftests/kvm/riscv/sbi_pmu_test.c
+> > index 533b76d0de82..7c273a1adb17 100644
+> > --- a/tools/testing/selftests/kvm/riscv/sbi_pmu_test.c
+> > +++ b/tools/testing/selftests/kvm/riscv/sbi_pmu_test.c
+> > @@ -39,8 +39,10 @@ static bool illegal_handler_invoked;
+> >  #define SBI_PMU_TEST_SNAPSHOT        BIT(2)
+> >  #define SBI_PMU_TEST_OVERFLOW        BIT(3)
+> >
+> > +#define SBI_PMU_OVERFLOW_IRQNUM_DEFAULT 5
+> >  struct test_args {
+> >       int disabled_tests;
+> > +     int overflow_irqnum;
+> >  };
+> >
+> >  static struct test_args targs;
+> > @@ -478,7 +480,7 @@ static void test_pmu_events_snaphost(void)
+> >
+> >  static void test_pmu_events_overflow(void)
+> >  {
+> > -     int num_counters =3D 0;
+> > +     int num_counters =3D 0, i =3D 0;
+> >
+> >       /* Verify presence of SBI PMU and minimum requrired SBI version *=
+/
+> >       verify_sbi_requirement_assert();
+> > @@ -495,11 +497,15 @@ static void test_pmu_events_overflow(void)
+> >        * Qemu supports overflow for cycle/instruction.
+> >        * This test may fail on any platform that do not support overflo=
+w for these two events.
+> >        */
+> > -     test_pmu_event_overflow(SBI_PMU_HW_CPU_CYCLES);
+> > -     GUEST_ASSERT_EQ(vcpu_shared_irq_count, 1);
+> > +     for (i =3D 0; i < targs.overflow_irqnum; i++)
+> > +             test_pmu_event_overflow(SBI_PMU_HW_CPU_CYCLES);
+> > +     GUEST_ASSERT_EQ(vcpu_shared_irq_count, targs.overflow_irqnum);
+> > +
+> > +     vcpu_shared_irq_count =3D 0;
+> >
+> > -     test_pmu_event_overflow(SBI_PMU_HW_INSTRUCTIONS);
+> > -     GUEST_ASSERT_EQ(vcpu_shared_irq_count, 2);
+> > +     for (i =3D 0; i < targs.overflow_irqnum; i++)
+> > +             test_pmu_event_overflow(SBI_PMU_HW_INSTRUCTIONS);
+> > +     GUEST_ASSERT_EQ(vcpu_shared_irq_count, targs.overflow_irqnum);
+> >
+> >       GUEST_DONE();
+> >  }
+> > @@ -621,8 +627,11 @@ static void test_vm_events_overflow(void *guest_co=
+de)
+> >
+> >  static void test_print_help(char *name)
+> >  {
+> > -     pr_info("Usage: %s [-h] [-t <test name>]\n", name);
+> > +     pr_info("Usage: %s [-h] [-t <test name>] [-n <number of LCOFI int=
+errupt for overflow test>]\n",
+> > +             name);
+> >       pr_info("\t-t: Test to run (default all). Available tests are 'ba=
+sic', 'events', 'snapshot', 'overflow'\n");
+> > +     pr_info("\t-n: Number of LCOFI interrupt to trigger for each even=
+t in overflow test (default: %d)\n",
+> > +             SBI_PMU_OVERFLOW_IRQNUM_DEFAULT);
+> >       pr_info("\t-h: print this help screen\n");
+> >  }
+> >
+> > @@ -631,6 +640,8 @@ static bool parse_args(int argc, char *argv[])
+> >       int opt;
+> >       int temp_disabled_tests =3D SBI_PMU_TEST_BASIC | SBI_PMU_TEST_EVE=
+NTS | SBI_PMU_TEST_SNAPSHOT |
+> >                                 SBI_PMU_TEST_OVERFLOW;
+> > +     int overflow_interrupts =3D -1;
+>
+> Initializing to -1 made me think that '-n 0' would be valid and a way to
+> disable the overflow test, but...
+>
 
-Commit-ID:     01499ae673dc66cf5e98589648848b520f6fdfe9
-Gitweb:        https://git.kernel.org/tip/01499ae673dc66cf5e98589648848b520f6fdfe9
-Author:        Hans Zhang <18255117159@163.com>
-AuthorDate:    Mon, 03 Mar 2025 20:10:08 +08:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Mon, 03 Mar 2025 22:16:03 +01:00
+Is there any benefit ? I found it much more convenient to select a
+single test and run instead of disabling
+a single test.
 
-genirq/msi: Expose MSI message data in debugfs
+Once you single or a set of tests, all other tests are disabled anyways.
 
-When debugging MSI-related hardware issues (e.g. interrupt delivery
-failures), developers currently need to either:
+> > +
+> >       while ((opt =3D getopt(argc, argv, "h:t:n:")) !=3D -1) {
+> >               switch (opt) {
+> >               case 't':
+> > @@ -646,12 +657,24 @@ static bool parse_args(int argc, char *argv[])
+> >                               goto done;
+> >                       targs.disabled_tests =3D temp_disabled_tests;
+> >                       break;
+> > +             case 'n':
+> > +                     overflow_interrupts =3D atoi_positive("Number of =
+LCOFI", optarg);
+>
+> ...here we use atoi_positive() and...
+>
+> > +                     break;
+> >               case 'h':
+> >               default:
+> >                       goto done;
+> >               }
+> >       }
+> >
+> > +     if (overflow_interrupts > 0) {
+>
+> ...here we only change from the default of 5 for nonzero.
+>
+> Should we allow '-n 0'? Otherwise overflow_interrupts can be initialized
+> to zero (not that it matters).
+>
 
-  1. Recompile the kernel with dynamic debug for tracing msi_desc.
-  2. Manually read device registers through low-level tools.
+I will change the default value to 0 to avoid ambiguity for now.
+Please let me know if you strongly think we should support -n 0.
+We can always support it. I just don't see the point of specifying the
+test with options to disable it anymore.
 
-Both approaches become challenging in production environments where
-dynamic debugging is often disabled.
-
-The interrupt core provides a debugfs interface for inspection of interrupt
-related data, which contains the per interrupt information in the view of
-the hierarchical interrupt domains. Though this interface does not expose
-the MSI address/data pair, which is important information to:
-
-  - Verify whether the MSI configuration matches the hardware expectations
-  - Diagnose interrupt routing errors (e.g., mismatched destination ID)
-  - Validate remapping behavior in virtualized environments
-
-Implement the debug_show() callback for the generic MSI interrupt domains,
-and use it to expose the MSI address/data pair in the per interrupt
-diagnostics.
-
-Sample output:
-  address_hi: 0x00000000
-  address_lo: 0xfe670040
-  msg_data:   0x00000001
-
-[ tglx: Massaged change log. Use irq_data_get_msi_desc() to avoid pointless
-  	lookup. ]
-
-Signed-off-by: Hans Zhang <18255117159@163.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20250303121008.309265-1-18255117159@163.com
----
- kernel/irq/msi.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
-
-diff --git a/kernel/irq/msi.c b/kernel/irq/msi.c
-index 396a067..fa92882 100644
---- a/kernel/irq/msi.c
-+++ b/kernel/irq/msi.c
-@@ -15,6 +15,7 @@
- #include <linux/mutex.h>
- #include <linux/pci.h>
- #include <linux/slab.h>
-+#include <linux/seq_file.h>
- #include <linux/sysfs.h>
- #include <linux/types.h>
- #include <linux/xarray.h>
-@@ -756,12 +757,30 @@ static int msi_domain_translate(struct irq_domain *domain, struct irq_fwspec *fw
- 	return info->ops->msi_translate(domain, fwspec, hwirq, type);
- }
- 
-+#ifdef CONFIG_GENERIC_IRQ_DEBUGFS
-+static void msi_domain_debug_show(struct seq_file *m, struct irq_domain *d,
-+				  struct irq_data *irqd, int ind)
-+{
-+	struct msi_desc *desc = irq_data_get_msi_desc(irqd);
-+
-+	if (!desc)
-+		return;
-+
-+	seq_printf(m, "\n%*saddress_hi: 0x%08x", ind + 1, "", desc->msg.address_hi);
-+	seq_printf(m, "\n%*saddress_lo: 0x%08x", ind + 1, "", desc->msg.address_lo);
-+	seq_printf(m, "\n%*smsg_data:   0x%08x\n", ind + 1, "", desc->msg.data);
-+}
-+#endif
-+
- static const struct irq_domain_ops msi_domain_ops = {
- 	.alloc		= msi_domain_alloc,
- 	.free		= msi_domain_free,
- 	.activate	= msi_domain_activate,
- 	.deactivate	= msi_domain_deactivate,
- 	.translate	= msi_domain_translate,
-+#ifdef CONFIG_GENERIC_IRQ_DEBUGFS
-+	.debug_show     = msi_domain_debug_show,
-+#endif
- };
- 
- static irq_hw_number_t msi_domain_ops_get_hwirq(struct msi_domain_info *info,
+> > +             if (targs.disabled_tests & SBI_PMU_TEST_OVERFLOW) {
+> > +                     pr_info("-n option is only available for overflow=
+ test\n");
+> > +                     goto done;
+> > +             } else {
+> > +                     targs.overflow_irqnum =3D overflow_interrupts;
+> > +             }
+> > +     }
+> > +
+> >       return true;
+> >  done:
+> >       test_print_help(argv[0]);
+> > @@ -661,6 +684,7 @@ static bool parse_args(int argc, char *argv[])
+> >  int main(int argc, char *argv[])
+> >  {
+> >       targs.disabled_tests =3D 0;
+> > +     targs.overflow_irqnum =3D SBI_PMU_OVERFLOW_IRQNUM_DEFAULT;
+> >
+> >       if (!parse_args(argc, argv))
+> >               exit(KSFT_SKIP);
+> >
+> > --
+> > 2.43.0
+> >
+>
+> Thanks,
+> drew
 
