@@ -1,178 +1,185 @@
-Return-Path: <linux-kernel+bounces-542032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 690EEA4C4E9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:25:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E9CEA4C4DC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:23:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B408A7A17AA
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:21:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7E2F188BF22
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:22:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E44A2147F8;
-	Mon,  3 Mar 2025 15:21:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58C27214A7A;
+	Mon,  3 Mar 2025 15:21:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fb2K3wPM"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C25FvsDW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A0E1F17E5;
-	Mon,  3 Mar 2025 15:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E681F17E5;
+	Mon,  3 Mar 2025 15:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741015303; cv=none; b=gG7wgnoX3w1ydfVG6gHNSWwywv1DcXCE6I1rHIciz7TCo5fqCIO8HFL0e7+VgototBhhFV0nbjpAYoSu7BoxdqE9MHOac6DYzxFh2yML6MdBJPpqYJptxxHmtzyRHgFosfdqIvjgsY23rLUzCCfGpDAW2O7IVineO3t4439FjfU=
+	t=1741015311; cv=none; b=o2xaCmKUxjn6pfxmekW6CeprYEofesbNLBOGIFwtqIqbPbmwRd7buH2ufd8mdWhQAlIHFM/LGcVYC8AS3PVC1e6vy8YUs54GRoR1hiRfCqG2QR4dPGgKuQxh0cRmtWtjdIV3iOlkBmzY45W7FYmr476qnkQ7pL051Hpj9vKAowA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741015303; c=relaxed/simple;
-	bh=HrebyizLFSGpmcx5xB//mRN6/SrWyVmW26AAoBXRoQM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=EHq1Jl8h3WfBLGz4nfZzTi8WhDrkE8EMmGLN77aEMHSclQo1cQ1+4qsOJZChz4CX57U/My0g4d3MtXT3H4WYgpxjYwXDcnng/j5lCPX5rVAmpyXYkzGeCCyUBHbcAvPNd/KBA6dk89OstncJ1ZOXo3cfwLCQLU2rLar0Sha3UFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fb2K3wPM; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6dfa69e6922so6696836d6.2;
-        Mon, 03 Mar 2025 07:21:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741015301; x=1741620101; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=HrebyizLFSGpmcx5xB//mRN6/SrWyVmW26AAoBXRoQM=;
-        b=fb2K3wPM9JFw+D0lOuiEoYIyQh8E/05r4ab5iEiGzWQfPeN29Wy+5OIFJVK6OtGZev
-         4WLHoT+Rx5q+580zC+Mh/hl4ERkTDF3bprWSzVkaUtqDL37iAdayjZRDL9kOBwjBlIOv
-         4pYC+QElM0zTbJOsdyNH5eFhBJQ8EyBIKc/vPHwem6ip4VMImAPTnt+7oRirVrdFktzo
-         41nMvYCu9G4nkGdn2zGzluGoNGjiDGQ6cLNF+0HowrVBGWxZHeGgMc6fZBLP/V8J8dZG
-         Qe3QW/glu9W9HxVt911NcDnlVdZ+ZvwuLmooE0plunrN2/Jo3IykI+fUanYCYl5RPAvP
-         /eoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741015301; x=1741620101;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HrebyizLFSGpmcx5xB//mRN6/SrWyVmW26AAoBXRoQM=;
-        b=tl9b3JlgA+RxJ4wfrxHjD0ucmxUjGFQM9e6DecpQl+sKXHly6MiQxiSjImn8QecqKv
-         BFjkbeYFc+EylV0DxGk5IlfA6vIdoARjlCEH1HyGwSG+zJdvvfrTgro6MZ1TMNAtxksi
-         wMwbvyZDRibZ1YIHXEt48oGAnf1+SnGazFdp+veaG46r3yTHN1pgEPcrISwMifV1Aoe8
-         3+FGjQlWBFKhNQX4ZMKrPKe46brDW4qxu1cqBto+E1IDbR4UnV6PD2LsjMrAVOovVK0c
-         bY8a1nlbzH+To0lAlOUhwQiH0tbDiTqn+4etjvyeoZTmn+wbYK7JvPOszW9GPsTfYqXg
-         PDXw==
-X-Forwarded-Encrypted: i=1; AJvYcCVA+Q7CFtH/GnnoxbgdORWykQiSTgL4E4WHPK0rlpFe8ciaenVVtSdWRtmllXGZT5GWC9ZXWVxJtXCFGOFj@vger.kernel.org, AJvYcCXFyoYPUZRrYsIKm6JwP0mQ9yOVSqAs6WaG7Xb7rpy/9J5aVOoJZJwpw4HFw4P4FgYwn+a4L4xqKz+V@vger.kernel.org, AJvYcCXiwiYdLnBJKUs7cVt9DSPD4HBakb0TwNuKD7QfUNTYwa3guOtSrYuRXxWtdLCeU9yJEcdjCVESteSjyQQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyT3suJZWmwWNmTbNGmFXZBYRtQS5oBHRQbkwRqZxlWSMTQTj8Z
-	+K+Ma9SqDfcGwqLncoU68Rsq4LoYkQb//RWN4k2LNrP8MiWNtvP9
-X-Gm-Gg: ASbGncsJ38ukqHcTi9tlAaRyo5E2vOzH/MsJB30lIGC32UnC1ka4OxUkg6xtzBWKRpR
-	IZz4VI4biCk28kNLnlPy4GhpZvi95wvGwdLvOEXSb8djjGydlAxu1ugUm6/4+CwFoFsFKTSrH6f
-	ZMWZXvdSXjlY7/X+cz2FlXrFsrf2G/uU/i/hkBmw9HcCsnQ9VVPDztlAbuktarDItCvMEfh2o8H
-	W/3isARzIsTeLHg1SHQtQwM8cLXeba/KyxDHV3eLZ3CEIOUrgna+RHazjbr+sit1xG4nDUPCUmH
-	AuFv1ljLmhohXHL10NVtPVnoGn1MZFlGJ9De3uP0d6ThhUdrCMn7d2Jc0/FzEA2Texa4gIxPrLV
-	wRSReM3F2Ux0blet3WgH/7/Q0
-X-Google-Smtp-Source: AGHT+IGBBETzxZWMvDcCEcqz2J8GCxkX6hwH+yjvXjOxreqG4J8OkC1oBoHwtqvBKWGvMd20rORHoA==
-X-Received: by 2002:a05:6214:21e7:b0:6c3:5dbd:449c with SMTP id 6a1803df08f44-6e8a0c81d59mr76308736d6.1.1741015301052;
-        Mon, 03 Mar 2025 07:21:41 -0800 (PST)
-Received: from ?IPv6:2600:1002:a012:8f2c:2830:5371:cdd2:ac36? ([2600:1002:a012:8f2c:2830:5371:cdd2:ac36])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8976ccacdsm54029836d6.87.2025.03.03.07.21.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 07:21:40 -0800 (PST)
-Message-ID: <c7141c6554b396d3ddaf7e0e540b80e5990b416b.camel@gmail.com>
-Subject: Re: [PATCH v2 1/2] media: dt-bindings: Add dt bindings for
- m2m-deinterlace device
-From: Matthew Majewski <mattwmajewski@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
- <robh@kernel.org>,  Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Hans Verkuil	 <hverkuil@xs4all.nl>, "Dr. David Alan
- Gilbert" <linux@treblig.org>, Neil Armstrong <neil.armstrong@linaro.org>,
- Uwe Kleine-Konig <u.kleine-koenig@baylibre.com>, Andrzej Pietrasiewicz
- <andrzejtp2010@gmail.com>, devicetree@vger.kernel.org,
- linux-media@vger.kernel.org, 	linux-kernel@vger.kernel.org
-Date: Mon, 03 Mar 2025 10:21:38 -0500
-In-Reply-To: <3d729159-4d13-4a61-88c7-3be992b23728@kernel.org>
-References: <20250214231759.119481-1-mattwmajewski@gmail.com>
-	 <20250214231759.119481-2-mattwmajewski@gmail.com>
-	 <20250218-eggplant-skylark-of-swiftness-dcf6ba@krzk-bin>
-	 <69cb2e95c291f17cff42b45e7c871f30a85c060d.camel@gmail.com>
-	 <3d729159-4d13-4a61-88c7-3be992b23728@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (by Flathub.org) 
+	s=arc-20240116; t=1741015311; c=relaxed/simple;
+	bh=ihqQyMBnJY63qUP0vGr1bCvvjfr6shvvPW4NTMuZEhQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=oKcnz0xE+V6O994CXxWNbX0vhi9E/+q30mWh7ib9ORSi8gLXxfO0aBqqksdDhV189LpYZCzUPsVOUsvQSllyCU7Gl1ZaaFbL2q3RMaxNuqL1QuQDnc8469BcLA3F6hQWkSSBC04i6ntzdCvRhZpsE6Fn6spZHn5AEfJWXZ90hgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C25FvsDW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3770C4CED6;
+	Mon,  3 Mar 2025 15:21:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741015311;
+	bh=ihqQyMBnJY63qUP0vGr1bCvvjfr6shvvPW4NTMuZEhQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=C25FvsDWAoMuIXXqDzcEEUaFA65saxywYeDZkW6e3/Iqk7VcVGyNqAw1yhJ6HBrRA
+	 8LVFSeXnYQbt+k5QMhD6xla6BOb4iAKrnUWLXEuGwrONEQ+umOvudnRogL4xh89V8l
+	 RkboWaFISYnoHuSokQSslHRsuWdpzwdhLXRG+8KT4PS61oUgfI9ADoCiLFHfcsDUgs
+	 ojr6t8XmCJC+MWbeIp3xDN40J22KEsaCWGUwiMDX5yo5lAXvhD/js17prMqh19rYIa
+	 jlz0FjtdFLXpVCChMyFQRvlaFXpOVVu5UltJh9yYbye64RddfANFsNQS0DGQVbqhQo
+	 FbgPbiL8d/2LA==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>
+Cc: "Daniel Almeida" <daniel.almeida@collabora.com>,  "Benno Lossin"
+ <benno.lossin@proton.me>,  "Abdiel Janulgue" <abdiel.janulgue@gmail.com>,
+  <dakr@kernel.org>,  <robin.murphy@arm.com>,
+  <rust-for-linux@vger.kernel.org>,  "Miguel Ojeda" <ojeda@kernel.org>,
+  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
+ <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj?=
+ =?utf-8?Q?=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Trevor Gross" <tmgross@umich.edu>,
+  "Valentin Obst" <kernel@valentinobst.de>,
+  <linux-kernel@vger.kernel.org>,  "Christoph Hellwig" <hch@lst.de>,
+  "Marek Szyprowski" <m.szyprowski@samsung.com>,  <airlied@redhat.com>,
+  <iommu@lists.linux.dev>
+Subject: Re: [PATCH v12 2/3] rust: add dma coherent allocator abstraction.
+In-Reply-To: <CAH5fLgg5MuUu=TX8mMsPf5RcLhMLHSU4Vct=h8rFX6Z7HjPxeA@mail.gmail.com>
+ (Alice
+	Ryhl's message of "Mon, 03 Mar 2025 14:13:07 +0100")
+References: <20250224115007.2072043-1-abdiel.janulgue@gmail.com>
+	<20250224115007.2072043-3-abdiel.janulgue@gmail.com>
+	<6dea7b6a-1534-47e7-94d2-d67417c3d4c1@proton.me>
+	<tnwDK3QN_Xr0Yoa3U8HVxS5OqjvxIhgmmO_ifTGJR_EtIzjoxawOHtnbOJ9yChsUWXyFPcU9beIdrgbpfGZI8w==@protonmail.internalid>
+	<3202F69F-397E-4BC4-8DD8-E2D4B0AB056F@collabora.com>
+	<87bjuil15w.fsf@kernel.org>
+	<t4HxdvR7WBX_861hiTXo72jqC9F9oRpIzgA_dD2yhcSuLISEkC-shMfSgllrFPpnkSZXGfRcc47keudMooNiIQ==@protonmail.internalid>
+	<CAH5fLgg5MuUu=TX8mMsPf5RcLhMLHSU4Vct=h8rFX6Z7HjPxeA@mail.gmail.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Mon, 03 Mar 2025 16:21:40 +0100
+Message-ID: <87ikoqjg1n.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2025-03-03 at 08:31 +0100, Krzysztof Kozlowski wrote:
-> On 26/02/2025 23:41, Matthew Majewski wrote:
-> >=20
-> > As I wrote, supported devices/hardware is anything that provides a
-> > MEM_TO_MEM capable dma-controller with interleaved transfer
-> > support. I
-> > did not list specific devices because the bindings are supposed to
-> > be
-> > generic, as they are not describing actual silicon. But if you want
-> > me
->=20
-> I already told you that no. Bindings are not supposed to be generic.
->=20
-> From where did you get such information?
+"Alice Ryhl" <aliceryhl@google.com> writes:
 
-There are generic bindings in the kernel and I based my bindings off of
-them. spi-gpio.yaml, i2c-gpio.yaml, video-mux.yaml, etc are all generic
-bindings, no?
+> On Mon, Mar 3, 2025 at 2:00=E2=80=AFPM Andreas Hindborg <a.hindborg@kerne=
+l.org> wrote:
+>>
+>> "Daniel Almeida" <daniel.almeida@collabora.com> writes:
+>>
+>> > Hi Benno,
+>> >
+>>
+>> [...]
+>>
+>> >>> +    /// Writes data to the region starting from `offset`. `offset` =
+is in units of `T`, not the
+>> >>> +    /// number of bytes.
+>> >>> +    ///
+>> >>> +    /// # Examples
+>> >>> +    ///
+>> >>> +    /// ```
+>> >>> +    /// # fn test(alloc: &mut kernel::dma::CoherentAllocation<u8>) =
+-> Result {
+>> >>> +    /// let somedata: [u8; 4] =3D [0xf; 4];
+>> >>> +    /// let buf: &[u8] =3D &somedata;
+>> >>> +    /// alloc.write(buf, 0)?;
+>> >>> +    /// # Ok::<(), Error>(()) }
+>> >>> +    /// ```
+>> >>> +    pub fn write(&self, src: &[T], offset: usize) -> Result {
+>> >>> +        let end =3D offset.checked_add(src.len()).ok_or(EOVERFLOW)?;
+>> >>> +        if end >=3D self.count {
+>> >>> +            return Err(EINVAL);
+>> >>> +        }
+>> >>> +        // SAFETY:
+>> >>> +        // - The pointer is valid due to type invariant on `Coheren=
+tAllocation`
+>> >>> +        // and we've just checked that the range and index is withi=
+n bounds.
+>> >>> +        // - `offset` can't overflow since it is smaller than `self=
+count` and we've checked
+>> >>> +        // that `self.count` won't overflow early in the constructo=
+r.
+>> >>> +        unsafe {
+>> >>> +            core::ptr::copy_nonoverlapping(src.as_ptr(), self.cpu_a=
+ddr.add(offset), src.len())
+>> >>
+>> >> Why are there no concurrent write or read operations on `cpu_addr`?
+>> >
+>> > Sorry, can you rephrase this question?
+>>
+>> This write is suffering the same complications as discussed here [1].
+>> There are multiple issues with this implementation.
+>>
+>> 1) `write` takes a shared reference and thus may be called concurrently.
+>> There is no synchronization, so `copy_nonoverlapping` could be called
+>> concurrently on the same address. The safety requirements for
+>> `copy_nonoverlapping` state that the destination must be valid for
+>> write. Alice claims in [1] that any memory area that experience data
+>> races are not valid for writes. So the safety requirement of
+>> `copy_nonoverlapping` is violated and this call is potential UB.
+>>
+>> 2) The destination of this write is DMA memory. It could be concurrently
+>> modified by hardware, leading to the same issues as 1). Thus the
+>> function cannot be safe if we cannot guarantee hardware will not write
+>> to the region while this function is executing.
+>>
+>> Now, I don't think that these _should_ be issues, but according to our
+>> Rust language experts they _are_.
+>>
+>> I really think that copying data through a raw pointer to or from a
+>> place that experiences data races, should _not_ be UB if the data is not
+>> interpreted in any way, other than moving it.
+>>
+>>
+>> Best regards,
+>> Andreas Hindborg
+>
+> We need to make progress on this series, and it's starting to get late
+> in the cycle. I suggest we:
 
->=20
-> > to list some devices which provide a compatible dma-controller,
-> > here
-> > are devices I found in the current mainline kernel:
-> >=20
-> > - TI OMAP Soc Family
-> > - TI Davinci Soc Family
-> > - TI Keystone Processor Family
-> > - IMX27 Processor and variants
-> > - Several Microchip Processors (sama5, sam9x7, sam9x60)
->=20
-> That's too generic - you just listed SoCs, which consist of dozen or
-> hundred of devices. Which hardware piece is here?
->=20
-> Maybe this is not for a real device, but then this should be marked
-> clearly.
->=20
+There is always another cycle.
 
-I listed devices that have a compatible dma-controller, so the list is
-a bit big, sorry. I also specifically mentioned the BeagleBone black
-board which I have been testing on.=20
+>
+> 1. Delete as_slice, as_slice_mut, write, and skip_drop.
+> 2. Change field_read/field_write to use a volatile read/write.
 
-"m2m-deinterlace" used to be a part of the mach-imx27_visstrim_m10.c
-board file, but was removed with commit 879c0e5e0ac711 (ARM: imx:
-Remove i.MX27 board files). So at least the Vistrim M10 device was
-explicitly using the m2m-deinterlace device.=C2=A0
+Volatile reads/writes that race are OK?
 
-When the move away from board files was made towards device-tree, m2m-
-deinterlace support was never ported over to device-tree. This is what
-I am doing now.=20
+>
+> This will let us make progress now and sidestep this discussion. The
+> deleted methods can happen in a follow-up.
 
-And yes, m2m-deinterlace is not a "real device" if by "real device" you
-mean an actual piece of silicon on a specific piece of hardware. I
-think there is just some semantic confusion here. I will no longer
-refer to it as a "device" then, please let me know what the more
-appropriate term is and I will modify the description accordingly.
+`item_from_index`, the `dma_read` and `dma_write` macros as well, I would t=
+hink?
 
-> >=20
-> > I think an appropriate analogy for m2m-deinterlace would be spi-
-> > gpio.
-> > Since spi-gpio leverages gpio for bitbanging the spi protocol, the
-> > bindings do not need to describe any clocks, spi-controller
-> > registers,
->=20
-> Sure, SPI GPIO is Linux driver, not a device and I am asking about it
-> all the time.
->=20
+>
+> Similarly for the dma mask methods, let's either drop them to a
+> follow-up patch or just put them anywhere and move them later.
 
-My point was that spi-gpio has dt-bindings even though these bindings
-do not describe a specific hardware device, hence it is "generic".=20
+Sure.
 
-Best,
-Matthew
+
+Best regards,
+Andreas Hindborg
 
 
 
