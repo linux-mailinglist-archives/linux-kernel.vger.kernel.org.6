@@ -1,83 +1,57 @@
-Return-Path: <linux-kernel+bounces-541462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BE37A4BD24
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:59:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B27C1A4BD3A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:01:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0777D16936F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:58:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF7BE3B75A7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:58:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 074BD1F4284;
-	Mon,  3 Mar 2025 10:55:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="sKqmJQMr"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AE2B1F37C3;
-	Mon,  3 Mar 2025 10:55:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFFAB1F2B99;
+	Mon,  3 Mar 2025 10:56:04 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7361F3BAA
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 10:56:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740999313; cv=none; b=u9KTLfPrE5vx8ldLYLH17BsebEzXLUOVB8XUAoF6sAAmuTjTVTi1aWh3/3IQFDLXGImbH2LJNhzz8ESPFYA+EqHo791Yr78PQWwUCOJ5YJmYKNjgm3YiyjuuxpT1z15OwAEEflI5QjsXxt8lRpCzNlsOHwvGUbYam1YKJxijrjg=
+	t=1740999364; cv=none; b=rqyAgrvbTeg+faAUqe3Mi2AUIPzGvd89ssWSfU8pSnjNHwnlz3BHYbshSxFmBVZY8ZfCo+LxT/ntOXYA8vlVw97I4i3ETD2sFe+GEUzVZl1XJQcIOU2K9zyoHsC3GzNxv8Ipu0eGOG2Qz6brb1BmC5D9SXdXTx3hPBMwRyskD80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740999313; c=relaxed/simple;
-	bh=4epQYMM8V6R2XZ6JN5BLdmkVYJuE3uqln+lvFkjWs6c=;
+	s=arc-20240116; t=1740999364; c=relaxed/simple;
+	bh=FlxgyLo4pSK6DnDRMZ2Gy02rNuDZ9j7QbXDlKG6JUnk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WdMo8yPp4yVeJ3AhMAVgRnzNBeLXZjwXBYoVIYRfIDf+6YaDB7ni7r4/KM0AZOZI2uS4g3J0aZ08+K8PYglqtaHA9fizIwAcJs7/r8Q6ySvke5fKzahPVmIwhrJ2QZ6T+HuC5jImY4moWQ07eU+QkKs2qaudkPHyPTTK3fGRVm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=sKqmJQMr; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=dwfJYbyuqIqVPnvZM3QlfqAfWt6YK41SIugqNIJXGxA=; b=sKqmJQMrnMBahd7o7VMxol5jlD
-	Zd5eCP03/HWkwk5g9RYniKSKC2q1/E05b6JS5R84V28ttl4yY33fjM2DQ/C0nP+ugZNN1A55lvbx1
-	b/w/ldnFmbSWt+oYuTxC/+JuigPU60P5FSMPgDvQ8LsKe6crnQbQjJ9qlfsqWHQtWQJ00xD390a26
-	AUg70g5/PVmBzCUKUDAhxhcRUHW17XzMR1sxvqGoACO7Vt+LiXkUMzWe494Tkw134aqwgiuguVBVF
-	yXOYM4Eb4e99iyIldxDypdxPBXShtM5OhDshsnlnkZhQXs7lSFTzV3PMx8g9N2Qx7R63CoECCJOsn
-	uptfEH8A==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:40532)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tp3Rm-0000HA-33;
-	Mon, 03 Mar 2025 10:54:55 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tp3Rh-0003jJ-2R;
-	Mon, 03 Mar 2025 10:54:49 +0000
-Date: Mon, 3 Mar 2025 10:54:49 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Prabhakar <prabhakar.csengg@gmail.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH 3/3] net: stmmac: Add DWMAC glue layer for Renesas GBETH
-Message-ID: <Z8WKeRS7TvkVJ0Sb@shell.armlinux.org.uk>
-References: <20250302181808.728734-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250302181808.728734-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdV8GqnhsJg7J7keGvT=Dvj_w0hZOiuZqCa=tiUgLE8Vtg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LX/AcuF6FYKboydsv5s+PIS1MDyyGFP68/Lxap2YOxnreBSoQrjsmaC4j8Lf8s4XlbtgKq90VWTwCsZZEWyEJcXiVCU4yNwO7VW7J9LK7t4kIUqzMPvgqAHJKGzhJfp54j6f+fZ2tHLc8DKUnRlJGHzYitLkfg49iTB9B+kK7h4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 836CD113E;
+	Mon,  3 Mar 2025 02:56:16 -0800 (PST)
+Received: from e133081.arm.com (unknown [10.57.37.136])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 77DE73F673;
+	Mon,  3 Mar 2025 02:55:58 -0800 (PST)
+Date: Mon, 3 Mar 2025 10:55:47 +0000
+From: =?utf-8?Q?Miko=C5=82aj?= Lenczewski <miko.lenczewski@arm.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: ryan.roberts@arm.com, suzuki.poulose@arm.com,
+	yang@os.amperecomputing.com, catalin.marinas@arm.com,
+	will@kernel.org, joro@8bytes.org, jean-philippe@linaro.org,
+	mark.rutland@arm.com, joey.gouly@arm.com, oliver.upton@linux.dev,
+	james.morse@arm.com, broonie@kernel.org, maz@kernel.org,
+	akpm@linux-foundation.org, jgg@ziepe.ca, nicolinc@nvidia.com,
+	mshavit@google.com, jsnitsel@redhat.com, smostafa@google.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev
+Subject: Re: [PATCH v2 3/4] arm64/mm: Elide tlbi in contpte_convert() under
+ BBML2
+Message-ID: <20250303105539.GA74129@e133081.arm.com>
+References: <20250228182403.6269-2-miko.lenczewski@arm.com>
+ <20250228182403.6269-5-miko.lenczewski@arm.com>
+ <f270bb5d-aa54-45d3-89ed-2b757ab3a4b0@redhat.com>
+ <20250303094947.GB13345@e133081.arm.com>
+ <7e987f17-ffcb-45e0-8588-2d569d90f776@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,33 +61,87 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdV8GqnhsJg7J7keGvT=Dvj_w0hZOiuZqCa=tiUgLE8Vtg@mail.gmail.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <7e987f17-ffcb-45e0-8588-2d569d90f776@redhat.com>
 
-On Mon, Mar 03, 2025 at 11:40:15AM +0100, Geert Uytterhoeven wrote:
-> > +       err = stmmac_get_platform_resources(pdev, &stmmac_res);
-> > +       if (err)
-> > +               return dev_err_probe(dev, err,
-> > +                                    "failed to get resources\n");
-> > +
-> > +       plat_dat = devm_stmmac_probe_config_dt(pdev, stmmac_res.mac);
-> > +       if (IS_ERR(plat_dat))
-> > +               return dev_err_probe(dev, PTR_ERR(plat_dat),
-> > +                                    "dt configuration failed\n");
-> > +
-> > +       gbeth = devm_kzalloc(dev, sizeof(*gbeth), GFP_KERNEL);
-> > +       if (!gbeth)
-> > +               return -ENOMEM;
-> > +
-> > +       plat_dat->clk_tx_i = devm_clk_get_enabled(dev, "tx");
+On Mon, Mar 03, 2025 at 10:57:21AM +0100, David Hildenbrand wrote:
+> On 03.03.25 10:49, Mikołaj Lenczewski wrote:
+> > Hi David,
+> > 
+> > Thanks for taking the time to review.
+> > 
+> > On Mon, Mar 03, 2025 at 10:17:12AM +0100, David Hildenbrand wrote:
+> > > On 28.02.25 19:24, Mikołaj Lenczewski wrote:
+> > > > If we support bbml2 without conflict aborts, we can avoid the final
+> > > > flush and have hardware manage the tlb entries for us. Avoiding flushes
+> > > > is a win.
+> > > > 
+> > > > Signed-off-by: Mikołaj Lenczewski <miko.lenczewski@arm.com>
+> > > > Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
+> > > > ---
+> > > >    arch/arm64/mm/contpte.c | 3 ---
+> > > >    1 file changed, 3 deletions(-)
+> > > > 
+> > > > diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
+> > > > index 145530f706a9..77ed03b30b72 100644
+> > > > --- a/arch/arm64/mm/contpte.c
+> > > > +++ b/arch/arm64/mm/contpte.c
+> > > > @@ -72,9 +72,6 @@ static void contpte_convert(struct mm_struct *mm, unsigned long addr,
+> > > >    		__flush_tlb_range(&vma, start_addr, addr, PAGE_SIZE, true, 3);
+> > > >    	__set_ptes(mm, start_addr, start_ptep, pte, CONT_PTES);
+> > > > -
+> > > > -	if (system_supports_bbml2_noabort())
+> > > > -		__flush_tlb_range(&vma, start_addr, addr, PAGE_SIZE, true, 3);
+> > > >    }
+> > > >    void __contpte_try_fold(struct mm_struct *mm, unsigned long addr,
+> > > 
+> > > What's the point of not squashing this into #2? :)
+> > > 
+> > > If this split was requested during earlier review, at least seeing patch #2
+> > > on its own confused me.
+> > 
+> > This split is a holdover from an earlier patchset, where it was still
+> > unknown whether the removal of the second flush was permitted with
+> > BBML2. Partly this was due to us being worried about conflict aborts
+> > after the removal, and partly this was because the "delay" is a separate
+> > optimisation that we could apply even if it turned out the final patch
+> > was not architecturally sound.
+> > 
+> > Now that we do not handle conflict aborts (preferring only systems that
+> > handle BBML2 without ever raising aborts), the first issue is not a
+> > problem. The reasoning behind the second patch is also a little bit
+> > outdated, but I can see the logical split between a tlbi reorder, and
+> > the removal of the tlbi. If this is truly redundant though, I would be
+> > happy to squash the two into a single patch.
 > 
-> drivers/net/ethernet/stmicro/stmmac/dwmac-renesas-gbeth.c:52:17:
-> error: ‘struct plat_stmmacenet_data’ has no member named ‘clk_tx_i’
+> Thanks for the information.
+> 
+> Does patch #2 (reordering the tlbi) have any benefit on its own? I read
+> "other threads will not see an invalid pagetable entry", but I am not sure
+> that is correct. A concurrent HW page table walker would still find the
+> invalid PTE? It's just a matter of TLB state.
 
-False error. You need to build netdev patches marked as net-next
-against the net-next tree, not the outdated next tree.
+I think I understand what you mean. I agree that it is possible for a
+concurrent walk to see an invalid TLBI state, if it is on the same TLB
+that the repaint is happening on. For other TLBs, the flush has not yet
+propagated our invalidated PTEs (from `__ptep_get_and_clear()`) though?
+That invalidation will only be seen by other TLBs after the
+`__flush_tlb_range()`, so we should save a few faults because only
+"local" threads will ever see the invalid entry, as opposed to all
+threads that try to read our modified range? Or it is the case that I
+have misunderstood something basic here, or that I have misinterpreted
+what you have written?
+
+> If there is no benefit in having patch #2 independently, I'd just squash
+> them. Reordering to then remove is more complicated than just removing it
+> IMHO.
+> 
+> -- 
+> Cheers,
+> 
+> David / dhildenb
+> 
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Kind regards,
+Mikołaj Lenczewski
 
