@@ -1,57 +1,56 @@
-Return-Path: <linux-kernel+bounces-542797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B8E9A4CDD4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:05:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B342BA4CDD6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:05:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CA661895588
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:05:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 346213A9EFA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:05:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7B2D1F12F9;
-	Mon,  3 Mar 2025 22:05:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A67C02356B7;
+	Mon,  3 Mar 2025 22:05:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="U+gcVmyX"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="avUcecqe"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A0DA18A6B6
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 22:05:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B9D2356B1;
+	Mon,  3 Mar 2025 22:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741039514; cv=none; b=s0BMVWR3IZkJfHbM+Bgh6/libHsBQygiCwYcaHLyvca2Of3wvZDOTvVI8bVMgKosio+L91Rf8MYKCsrj4GP1Mtu5n0HqZqsjjGK7RAUmGWIfFGYU+xCY++CI4gZHsyV8Km5z3CHxJ/eondDxQ2bBVXWY6NSQ6BR0GSyc3r1C/7Q=
+	t=1741039520; cv=none; b=gVTCAuGg9ySAMtBFr7hv+F7tIb5reZvcC7vTVs4CtcMRTeImEiJsTfIKa88FfXLzthl600kSURZ2VAtfcpy2mB2n5KTZ1zawVlV3PR08yxzq4JsK6aWZ1bkIQTzHMqXtDqbhROIA+XJ/Bw2myeyNz54wKuggJaq9cpkYNhDCi54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741039514; c=relaxed/simple;
-	bh=PSbfgjVnu36m4KnKF/NOAM+VUohdMLoEThMEwXanYxA=;
+	s=arc-20240116; t=1741039520; c=relaxed/simple;
+	bh=2Q8hSgHskq8iK2gEQ2tvf13oh4SB3vsMyvT5OJIGh8o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NJO3AZEAQMvMGPnD99/lSiyLEGpe9COVm4GBbbIPkoRI3gJOfOdEsiM1zoNsZ/sCYiUxywOjBtVzDSGxiRiMCvNJ5lIHuEsZSEKWBDyEMVo5FjmOHPnHGyae1Mu04T1IyfJF/7oIFqYD5ZbMCLhK33iBaNjszO7W8cUuSVJ9wjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=U+gcVmyX; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 3 Mar 2025 22:05:02 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741039510;
+	 Content-Type:Content-Disposition:In-Reply-To; b=a9VvZyTzUESOvG4vjUfm5xyF9dhKWj5uBossRlKGmX4HD8wD7b+6grKFMC6nsYQD3pJFV4uVQ4CbhDDL1V2EqOOh81ABjVsM+/MscmPnI6584oz8c5CwYFXG6D3WqIt4KK2upMbY5hPLSU590Vd+Iwxvu9ZSDl9oujetoCOk0bY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=avUcecqe; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A5EB34435F;
+	Mon,  3 Mar 2025 22:05:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741039515;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Lil/2ShpjSQP7pZCJijznRXPlVEveb7PZvzRDIKi0XM=;
-	b=U+gcVmyXfAnnzANx8cwDUw9kPq5OiycnJBnBoJyDc6vNXbn/YmTFjoPkXGtsBefzDJa19R
-	BUU49XobQUd3lcMduUj1dwi1b58UmNzsvKVsi4yNXVH/Fvp0T7GERy7/npEZtWT0DzpbP1
-	55wP2sgptdGQIz4D6TdRYvpdJ4SmozU=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Maxim Levitsky <mlevitsk@redhat.com>
-Cc: Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 07/13] KVM: nSVM: Handle INVLPGA interception
- correctly
-Message-ID: <Z8YnjhfwHM_0HBNx@google.com>
-References: <20250205182402.2147495-1-yosry.ahmed@linux.dev>
- <20250205182402.2147495-8-yosry.ahmed@linux.dev>
- <330b0214680efacf15cf18d70788b9feab2b68b0.camel@redhat.com>
+	bh=UPXaEZTWHPqvZ/4xe6Vgz0dumrtZ+1aArmqTgcjC60w=;
+	b=avUcecqejc2zM9Yl6b0WM9W5Jqe/NKsM1rxAh9j1vG5l67LwViSGKUni8l1YRrvKzZEvB9
+	hAXMj6Q/xCYKTLKkWcR5dMVE7vyymRPY6YNgSMoJUIktJk+1s5e5A5vNLhx9iV+fZQv2xS
+	ot0rMFAPSPRGhlcUyQv9F8H6F3UoylQ9jpKrFJevwmJihrVlT9B2h6ArZv0pSe2Bhlf/px
+	F9TZ2dMfMz4CHdNf+3xwWHIBOLMORP4+fJe28nVwzvJSrtJnQXqbuUuYrHfQlgmJnLCLHq
+	kR1lYm+IsUjLHz9/2Vll7U+7tutDokiwoPd7tGeT0BVg+xHNWugtqR4zvPhGxg==
+Date: Mon, 3 Mar 2025 23:05:13 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Huisong Li <lihuisong@huawei.com>
+Cc: zhanjie9@hisilicon.com, zhenglifeng1@huawei.com, liuyonglong@huawei.com
+Subject: Re: [PATCH v2 0/2] Use HWMON_CHANNEL_INFO macro to simplify code
+Message-ID: <174103950413.1107781.15545984471360569360.b4-ty@bootlin.com>
+References: <20250210054546.10785-1-lihuisong@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,135 +59,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <330b0214680efacf15cf18d70788b9feab2b68b0.camel@redhat.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20250210054546.10785-1-lihuisong@huawei.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutddtvdejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeetlhgvgigrnhgurhgvuceuvghllhhonhhiuceorghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepieejfefhffekjeeuheevueevjedvleevjeetudffheeutdffudefjeduffeuvddtnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepjeejrdduhedtrddvgeeirddvudehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepjeejrdduhedtrddvgeeirddvudehpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeeipdhrtghpthhtoheplhhinhhugidqrhhttgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhhuhhishhonhhgsehhuhgrfigvihdrtghomhdprhgtphhtthhopeiih
+ hgrnhhjihgvleeshhhishhilhhitghonhdrtghomhdprhgtphhtthhopeiihhgvnhhglhhifhgvnhhgudeshhhurgifvghirdgtohhmpdhrtghpthhtoheplhhiuhihohhnghhlohhngheshhhurgifvghirdgtohhm
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On Fri, Feb 28, 2025 at 08:55:18PM -0500, Maxim Levitsky wrote:
-> On Wed, 2025-02-05 at 18:23 +0000, Yosry Ahmed wrote:
-> > Currently, INVPLGA interception handles it like INVLPG, which flushes
-> > L1's TLB translations for the address. It was implemented in this way
-> > because L1 and L2 shared an ASID. Now, L1 and L2 have separate ASIDs. It
-> > is still harmless to flush L1's translations, but it's only correct
-> > because all translations are flushed on nested transitions anyway.
-> > 
-> > In preparation for stopping unconditional flushes on nested transitions,
-> > handle INVPLGA interception properly. If L1 specified zero as the ASID,
-> > this is equivalent to INVLPG, so handle it as such. Otherwise, use
-> > INVPLGA to flush the translations of the appropriate ASID tracked by
-> > KVM, if any. Sync the shadow MMU as well, as L1 invalidated L2's
-> > mappings.
-> > 
-> > Opportunistically update svm_flush_tlb_gva() to use
-> > svm->current_vmcb->asid instead of svm->vmcb->control.asid for
-> > consistency. The two should always be in sync except when KVM allocates
-> > a new ASID in pre_svm_run(), and they are shortly brought back in sync
-> > in svm_vcpu_run(). However, if future changes add more code paths where
-> > KVM allocates a new ASID, flushing the potentially old ASID in
-> > svm->vmcb->control.asid would be unnecessary overhead (although probably
-> > not much different from flushing the newly allocated ASID).
-> > 
-> > Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
-> > ---
-> >  arch/x86/include/asm/kvm_host.h |  2 ++
-> >  arch/x86/kvm/mmu/mmu.c          |  5 +++--
-> >  arch/x86/kvm/svm/svm.c          | 40 ++++++++++++++++++++++++++++++---
-> >  3 files changed, 42 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> > index 5193c3dfbce15..1e147bb2e560f 100644
-> > --- a/arch/x86/include/asm/kvm_host.h
-> > +++ b/arch/x86/include/asm/kvm_host.h
-> > @@ -2213,6 +2213,8 @@ int kvm_mmu_page_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa, u64 error_code,
-> >  		       void *insn, int insn_len);
-> >  void kvm_mmu_print_sptes(struct kvm_vcpu *vcpu, gpa_t gpa, const char *msg);
-> >  void kvm_mmu_invlpg(struct kvm_vcpu *vcpu, gva_t gva);
-> > +void __kvm_mmu_invalidate_addr(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu,
-> > +			       u64 addr, unsigned long roots, bool gva_flush);
-> >  void kvm_mmu_invalidate_addr(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu,
-> >  			     u64 addr, unsigned long roots);
-> >  void kvm_mmu_invpcid_gva(struct kvm_vcpu *vcpu, gva_t gva, unsigned long pcid);
-> > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> > index ac133abc9c173..f5e0d2c8f4bbe 100644
-> > --- a/arch/x86/kvm/mmu/mmu.c
-> > +++ b/arch/x86/kvm/mmu/mmu.c
-> > @@ -6158,8 +6158,8 @@ static void kvm_mmu_invalidate_addr_in_root(struct kvm_vcpu *vcpu,
-> >  	write_unlock(&vcpu->kvm->mmu_lock);
-> >  }
-> >  
-> > -static void __kvm_mmu_invalidate_addr(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu,
-> > -				      u64 addr, unsigned long roots, bool gva_flush)
-> > +void __kvm_mmu_invalidate_addr(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu,
-> > +			       u64 addr, unsigned long roots, bool gva_flush)
-> >  {
-> >  	int i;
-> >  
-> > @@ -6185,6 +6185,7 @@ static void __kvm_mmu_invalidate_addr(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu
-> >  			kvm_mmu_invalidate_addr_in_root(vcpu, mmu, addr, mmu->prev_roots[i].hpa);
-> >  	}
-> >  }
-> > +EXPORT_SYMBOL_GPL(__kvm_mmu_invalidate_addr);
-> >  
-> >  void kvm_mmu_invalidate_addr(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu,
-> >  			     u64 addr, unsigned long roots)
-> > diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-> > index a2d601cd4c283..9e29f87d3bd93 100644
-> > --- a/arch/x86/kvm/svm/svm.c
-> > +++ b/arch/x86/kvm/svm/svm.c
-> > @@ -2483,6 +2483,7 @@ static int clgi_interception(struct kvm_vcpu *vcpu)
-> >  
-> >  static int invlpga_interception(struct kvm_vcpu *vcpu)
-> >  {
-> > +	struct vcpu_svm *svm = to_svm(vcpu);
-> >  	gva_t gva = kvm_rax_read(vcpu);
-> >  	u32 asid = kvm_rcx_read(vcpu);
-> >  
-> > @@ -2492,8 +2493,41 @@ static int invlpga_interception(struct kvm_vcpu *vcpu)
-> >  
-> >  	trace_kvm_invlpga(to_svm(vcpu)->vmcb->save.rip, asid, gva);
-> >  
-> > -	/* Let's treat INVLPGA the same as INVLPG (can be optimized!) */
-> > -	kvm_mmu_invlpg(vcpu, gva);
-> > +	/*
-> > +	 * APM is silent about using INVLPGA to flush the host ASID (i.e. 0).
-> > +	 * Do the logical thing and handle it like INVLPG.
-> > +	 */
-> > +	if (asid == 0) {
-> > +		kvm_mmu_invlpg(vcpu, gva);
-> > +		return kvm_skip_emulated_instruction(vcpu);
-> > +	}
-> > +
-> > +	/*
-> > +	 * Check if L1 specified the L2 ASID we are currently tracking. If it
-> > +	 * isn't, do nothing as we have to handle the TLB flush when switching
-> > +	 * to the new ASID anyway. APM mentions that INVLPGA is typically only
-> > +	 * meaningful with shadow paging, so also do nothing if L1 is using
-> > +	 * nested NPT.
-> > +	 */
-> > +	if (!nested_npt_enabled(svm) && asid == svm->nested.last_asid)
-> > +		invlpga(gva, svm->nested.vmcb02.asid);
+On Mon, 10 Feb 2025 13:45:44 +0800, Huisong Li wrote:
+> The HWMON_CHANNEL_INFO macro is provided by hwmon.h and used widely by many
+> other drivers. This series use HWMON_CHANNEL_INFO macro to simplify code
+> for rtc subsystem.
 > 
+> belonging to the same subsystem.
 > 
-> Hi, 
-> 
-> IMHO we can't just NOP the INVLPGA because it is not useful in nested NPT case.
-> 
-> If I understand the APM correctly, the CPU will honor the INVLPGA
-> request, even when NPT is enabled, and so KVM must do this as well.
-> 
-> It is not useful for the hypervisor because it needs GVA, which in case of NPT,
-> the hypervisor won't usually track, but we can't completely rule out that some
-> hypervisor uses this in some cases.
 
-Yeah I knew this was going to be a contention point, was mainly waiting
-to see what others think here.
+Applied, thanks!
 
-I guess we can just map the ASID passed by L1 to the actual ASID we use
-for L2 and execute the INVLPGA as-is with the gva passed by L1.
+[1/2] rtc: ab-eoz9: Use HWMON_CHANNEL_INFO macro to simplify code
+      https://git.kernel.org/abelloni/c/f432c5d502b4
+[2/2] rtc: ds3232: Use HWMON_CHANNEL_INFO macro to simplify code
+      https://git.kernel.org/abelloni/c/d659dfec7d35
 
-> 
-> 
-> Also, there is out of order patch here: last_asid isn't yet declared.
-> It is added in patch 10.
+Best regards,
 
-Good catch, I will fix that, thanks!
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
