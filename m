@@ -1,156 +1,144 @@
-Return-Path: <linux-kernel+bounces-541125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 724E6A4B8E5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:13:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08244A4B8E7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:14:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B0971657EF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:13:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E6C03AE4E7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:13:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F8961EEA36;
-	Mon,  3 Mar 2025 08:13:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D91B1EEA5C;
+	Mon,  3 Mar 2025 08:13:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Olb1wiAx"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V2ehdjlK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69E0A1EE021;
-	Mon,  3 Mar 2025 08:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBEDB1EF08F;
+	Mon,  3 Mar 2025 08:13:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740989617; cv=none; b=tC7nZV0C7bdcScltt+Yp5pl4JEl4Jd4Yk0eF8pMTIwmhQ0ajJoA+UNADMj8AvLeIq/d41qopzInAw7dcsp390tLoj5WgV6JLChCRV6pxTrWdo9UFXcWwnP3oR3YffHTNZuP2Zxw4gTj8c/J33xs3B16G3iLHCqnH4xHN5tRegGs=
+	t=1740989621; cv=none; b=fQTaY3u4khuSEvEnDuIWq2MlM5jLJfYF39OJjbF/4sqPLc2HEMrmkepyKfkl7kuh924mJ+UWjI4GeCE+gobFvfMfpAy3TCNcPVWUaEBWrSuI4iVYJz1A52f5kePA/bdwu/2n86WR2TvwPoWP025epXcKjNBxQDn+2XTZXCFIk58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740989617; c=relaxed/simple;
-	bh=1cx/0Wzqkw1bPwi1Nc7TApw4S/0gkdh/tF36qjNrxRM=;
+	s=arc-20240116; t=1740989621; c=relaxed/simple;
+	bh=s0S+9I80CpjevCy0wig5fQiXNuZjfab+nVx5S87Gnn8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TRuYA1lDjMg3pwJ06oMZcMRRqBNkizd2Ms+t2TF3wdAUB8INNqGf9D/v9ZwA/6NPZUdfAcdiID8Ke1bionrWBEjbN/0R4DYLVTcKYPW3sRPbzumRebKvvtC2Ta2xu+ebRFIJTtnwB7iuqGejMawXpSG6Od2s86tqVDWwzAAIVgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Olb1wiAx; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-390f69e71c8so1280682f8f.0;
-        Mon, 03 Mar 2025 00:13:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740989614; x=1741594414; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iO1v/4//gvyFQ/LwPDpZULEvaHUaoZV84N10PlIJhxE=;
-        b=Olb1wiAxyRG8oI2TvSI6saD3hgMboq9We2F+pub/Bp1T3cV9AGFTNve0rpWcw+Hya7
-         JWObC5lYj+/HqAApnlm5DQNATJ9JSZ2DOcakk49MrC0frvYgQuyFlvBq54CPf5DKrmU8
-         FLvHDRR1+bAbhsOtepA7jnZ8I1bfyH18HIiUKkaCSWG0gBY4uVeIbORzLE6YLeTBegu9
-         09Igxv+zIDqdpSYis485ZP372Sa0YRyqAAEquidxG2UQt41vra3vc+abHXv9QtzhYuRA
-         tYlo72A4X+96zJxhiW781QD/4VMSKkbswlSdcdgNESyMSzZkdkvb8uY6SpgoBAfBBWJx
-         KFSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740989614; x=1741594414;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iO1v/4//gvyFQ/LwPDpZULEvaHUaoZV84N10PlIJhxE=;
-        b=AWF5a6AhzkeGCSej/EZd0YtkgZi7ojgKUxSAioY4Exsks/SOpntzeDZ0u03QiUZR/J
-         LlZTq/stCEcUUBsQd5k0iGdl5ZkDeCpfbVnA3UBWuzTTq7tv+zlYQDPTGiDPgX0i4NOF
-         OFvqZ5GE5Fsee3mWbOT8cVM/KRMTbuC/q+tqhFLAeF8OhGbQVqJMC7CTGvLdEwvvDclI
-         sB/hGxsZ2fZprYTepkY9aDK+Llh5hU2QpOYWA18X5sGjVwBqg/LDeCQwYBlG28vnjhPf
-         f1T2z7RCSEbZ3gFS1ZHt6+fbr5zBLl6qF9KptLTHlbuULOV9Q5cD8JLrsLhUpLDkXpsJ
-         jGGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUbZy7nJDRFAtNoi6+SWURAr0neM6aOUkDGfRS8EB+k3qg1FVU22i3JJycfugZEuGKj7VZQrpVRhh9lBShd@vger.kernel.org, AJvYcCV8ysw2QLmUxeAGDRLgyrM47P1yKrrOEMdpupuip1uHGFuHrMpLPU7zefO1UKVhATJ5d7ZIsiKIDT4=@vger.kernel.org, AJvYcCXl57sFAwIdCbQj+kjLwM8UxtjPhviXRaAnw+Nol+ouseabwib+/0edoBM4/Lcmk2PR7wpZty9Q3hkb@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJ4LdYN935ZSbGm0aQsYb42XdAMt5ZJ1AJ1tf4wnJ6fy9NCFpo
-	ZwNr1epw9bXrlTF41X0KcJK/9btF/3PfVjB3KSoH3yH5uSLvlgEhI5Iym9FSVtzMYiPeqkfBK1D
-	rCmR2+m+oI/NLQH6puSBZF23cdys=
-X-Gm-Gg: ASbGncsR0XlrXl+4W2ZzaXRKgIgEZumTNBuoNc+/NKBd5bO+hUPHpxi5HK2zDEr4uQG
-	e55QPzxvL59ZtCeWESi80WNQF7Y7a1zqbQJWPR+LOA0ISzbIvxC+qsJN43TJrCEyRvQToTFt7QH
-	NXs+MnDrvxlKVG303li9E6jHGmRQ4=
-X-Google-Smtp-Source: AGHT+IHN4d7tj/PC9NVTUt0kupriXH4ceWCVyv3rFMZI63Nugtn9+ocm1pMIq1wtSB4Gyj3nEOeMQ/HimavDU4Q5zHQ=
-X-Received: by 2002:a05:6000:1787:b0:390:df83:1f22 with SMTP id
- ffacd0b85a97d-390e18d20ddmr13286509f8f.25.1740989613726; Mon, 03 Mar 2025
- 00:13:33 -0800 (PST)
+	 To:Cc:Content-Type; b=FBDGkDfmYXhaF5740x5nr2XiTu5e+zA4+y5tWFLAdvPiPMG6aecSWA60AvZvR6TpwIIs939hc/l18XsAfFIhGi7fUhuliuJKyR/Akri8ipgUoWZBawtRmy/HvWdW/0REx8kjZB79RsqYniFAjeTbmVGojQtFcmrsbb+XTTswVB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V2ehdjlK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DB44C4CEE5;
+	Mon,  3 Mar 2025 08:13:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740989620;
+	bh=s0S+9I80CpjevCy0wig5fQiXNuZjfab+nVx5S87Gnn8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=V2ehdjlK3AKuDNZj9cLT95CKk17kosICa0yoyGXiTwXBT67Ho8dcHidqH8kuTixAX
+	 vfdy8zxrGWowDxmhbznCK3UEFQsny632e9GL1MLwHpznMO5m9lTZpXiCg0C+J06hgI
+	 zRZESt98qUdnEm9EbqRRut4D2Q0D3JJwYuXb1ObuwNJarlFkYMiFRbLhPj6boe/jnI
+	 FxSvbSvci2YI6BIUXdBw066UrRDOnkTtWAiRf75Mim+9P7INT0a7ZlFoR18cXm3HdE
+	 oo2cqaS188F3Bb8FoVrJ591EqyyZL6LSC64HaPdcXCJ8jFLEXcttINelEYmnxD/mEC
+	 FEK+jWTqjKRhA==
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4394a0c65fcso42878815e9.1;
+        Mon, 03 Mar 2025 00:13:40 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV1cO7erh4XTIohCZ+jWayIiVtlhXN+vq8v63qLAAJc3PnFurHOYEYy1teYtIHgT05qh7SCmedSEXBG6bE=@vger.kernel.org, AJvYcCWURf2ikZ2SjV0tAaDOpHywNFZDY++3dDQKzfquTYcoPcZlpqRAEo/PiUdZj51fv5nh6t8dVYTQWvdCqw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUXk9p1a8zaUryIKtDqbobKRzRZRyKfn1n5oQRy5Z98nON42y3
+	NlVi7IFwjyyk6HV/lxlY+TxEvuD5YV8Az5YD1Wo24ct42goWiPPb31ODx9H1v0sPCTZrXLteAlO
+	6QdXUaCgeGvGKBNKtHdmKuN0rGp8=
+X-Google-Smtp-Source: AGHT+IEKV152w3ZCXo5m2irL1a0Bi2dlRqTEhpiMErmu+NKb75HiAlqyHvRjhSl8H5J5VDkj4QHZcQWv/twz6KnAJcQ=
+X-Received: by 2002:a05:6000:154b:b0:390:ffd0:4142 with SMTP id
+ ffacd0b85a97d-390ffd04280mr5293943f8f.26.1740989619182; Mon, 03 Mar 2025
+ 00:13:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250226093700.44726-1-clamor95@gmail.com> <20250226093700.44726-2-clamor95@gmail.com>
- <20250227-cherubic-mantis-from-betelgeuse-86f5ff@krzk-bin>
- <CAPVz0n2kfxTJUkqrtLia6xBJ8t+fwjujjsc9k=mOk-P06bJH7A@mail.gmail.com> <f83b2a95-e8f6-4e16-bd7f-f7dc96264c04@kernel.org>
-In-Reply-To: <f83b2a95-e8f6-4e16-bd7f-f7dc96264c04@kernel.org>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Mon, 3 Mar 2025 10:13:22 +0200
-X-Gm-Features: AQ5f1JrIM7kZn8l7qiVGIYKIf4ikK-8B_L2nEzqbqEsyYLvp2ITmzJ2q2S2pYpE
-Message-ID: <CAPVz0n0KVE8baFyGSgM+0rNfY8+Y2LFZbAhHHzPWTV358gc+Bw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: power: supply: Document Maxim MAX8971 charger
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250228100509.91121-1-marco.crivellari@suse.com>
+ <20250228100509.91121-2-marco.crivellari@suse.com> <alpine.DEB.2.21.2503020042100.12637@angie.orcam.me.uk>
+In-Reply-To: <alpine.DEB.2.21.2503020042100.12637@angie.orcam.me.uk>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Mon, 3 Mar 2025 16:13:30 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5ptAzHTPAr1bxrgByZrnFmMK8zJ68Z++RwC=NHWjqZmw@mail.gmail.com>
+X-Gm-Features: AQ5f1JrruRq92flANTEM2Gs5u5CQJLL2VyoJGiBUlU68yQOpfTov7anWEVRtAeQ
+Message-ID: <CAAhV-H5ptAzHTPAr1bxrgByZrnFmMK8zJ68Z++RwC=NHWjqZmw@mail.gmail.com>
+Subject: Re: [PATCH v5 1/1] MIPS: Fix idle VS timer enqueue
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>
+Cc: Marco Crivellari <marco.crivellari@suse.com>, linux-mips@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	Frederic Weisbecker <frederic@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+	Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-=D0=BF=D0=BD, 3 =D0=B1=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 09:52 Krzys=
-ztof Kozlowski <krzk@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+Hi, Maciej,
+
+On Sun, Mar 2, 2025 at 8:54=E2=80=AFAM Maciej W. Rozycki <macro@orcam.me.uk=
+> wrote:
 >
-> On 27/02/2025 12:03, Svyatoslav Ryhel wrote:
-> > =D1=87=D1=82, 27 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 12:45 =
-Krzysztof Kozlowski <krzk@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
-> >>
-> >> On Wed, Feb 26, 2025 at 11:36:59AM +0200, Svyatoslav Ryhel wrote:
-> >>> +  maxim,fcharge-current-limit-microamp:
-> >>> +    description:
-> >>> +      Fast-Charge current limit
-> >>> +    minimum: 250000
-> >>> +    default: 500000
-> >>> +    maximum: 1550000
-> >>> +
-> >>> +  maxim,fcharge-timer-hours:
-> >>> +    description:
-> >>> +      Fast-Charge timer in hours. Setting this value 3 and lower or =
-11 and higher
-> >>> +      will disable Fast-Charge timer.
-> >>> +    $ref: /schemas/types.yaml#/definitions/uint32
-> >>> +    default: 5
-> >>
-> >> You still did not answer why this is board specific. This was rejected
-> >> in the past because of that reason and nothing here changed. Nothing
-> >> will change without detailed explanation, so use other interfaces if y=
-ou
-> >> need user-space to configure it (see other drivers, e.g. maxim)
-> >>
+> On Fri, 28 Feb 2025, Marco Crivellari wrote:
+>
+> > diff --git a/arch/mips/kernel/genex.S b/arch/mips/kernel/genex.S
+> > index a572ce36a24f..474738d9124e 100644
+> > --- a/arch/mips/kernel/genex.S
+> > +++ b/arch/mips/kernel/genex.S
+> > @@ -104,27 +104,30 @@ handle_vcei:
 > >
-> > Btw, I have used this awesome example you have provided. Take a look
->
-> Where did I provide this example?
->
-
-Its presence in the docs is an example on its no? You have explicitly
-told to check other maxim devices, I did so, they all have similar set
-of convifurations.
-
+> >       __FINIT
 > >
-> > https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/=
-tree/Documentation/devicetree/bindings/power/supply/maxim,max77693.yaml?h=
-=3Dv6.14-rc4
+> > -     .align  5       /* 32 byte rollback region */
+> > +     .align  5
+> >  LEAF(__r4k_wait)
+> >       .set    push
+> >       .set    noreorder
+> > -     /* start of rollback region */
+> > -     LONG_L  t0, TI_FLAGS($28)
+> > -     nop
+> > -     andi    t0, _TIF_NEED_RESCHED
+> > -     bnez    t0, 1f
+> > -      nop
+> > -     nop
+> > -     nop
+> > -#ifdef CONFIG_CPU_MICROMIPS
+> > -     nop
+> > -     nop
+> > -     nop
+> > -     nop
+> > -#endif
+> > +     /* start of idle interrupt region */
+> > +     MFC0    t0, CP0_STATUS
+> > +     /* Enable Interrput */
+>                         ^^
+>  Typo here; also please capitalise sentences and use full stops.
 >
-> I opened it and I do not see anything about time. Please point to
-> specific line.
+> > +     ori     t0, 0x1f
 >
-> But regardless, how did I propose to use 12 year old binding? Where did
-> I suggest that one?
->
-> >
-> > Oh, I wonder why it uses so much values which duplicate battery? I
-> > know, it lacks battery, I assume that is why?
->
-> No. You added to DT something which is not a hardware property, but
-> user-space choice or policy.
->
+>  No time for a thorough review here as I'm heading for a holiday right
+> away, but I can see you still have a coprocessor move hazard here with
+> MIPS III hardware.  The incoming value of $t0 to ORI is not what MFC0 has
+> obtained.  It's the value from before MFC0.
+If this is a problem, then the current local_irq_enable() is also
+wrong for all MIPS III hardware, because this patch uses the same
+instruction sequence of local_irq_enable().
 
-It is NOT a user-space choice or policy!
+
+Huacai
 
 >
+> > +     xori    t0, 0x1e
 >
-> Best regards,
-> Krzysztof
+>  And then it's only this XORI that sees the output from MFC0 (though
+> there's actually a race between the two competing writes to $t0), so
+> effectively you clobber the CP0.Status register...
+>
+> > +     MTC0    t0, CP0_STATUS
+>
+>  ... here.  You need to schedule your instructions differently.  But do
+> you need `.set noreorder' in the first place?  Can you maybe find a way t=
+o
+> avoid it, making all the hazard avoidance stuff much easier?
+>
+>   Maciej
 
