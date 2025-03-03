@@ -1,93 +1,130 @@
-Return-Path: <linux-kernel+bounces-541833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74341A4C227
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:39:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25E69A4C22B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:39:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38861170575
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:39:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3D04170E10
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:39:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8157E212D63;
-	Mon,  3 Mar 2025 13:39:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2C34212B2F;
+	Mon,  3 Mar 2025 13:39:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bNF7zXrW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b="RFhGDprU"
+Received: from smtp-out3.simply.com (smtp-out3.simply.com [94.231.106.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D17E278F44;
-	Mon,  3 Mar 2025 13:38:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED7DE211A10;
+	Mon,  3 Mar 2025 13:39:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.231.106.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741009139; cv=none; b=lHCskcCZrpYJqmwe9cAD+mq8IzWge/+lDstx8Epr5OikYXcqY0gklHyefQQ7iYdaV6MIL+1Wsxuy/XvoXirrdXJIhxAyGa9cH0CkvXSZdM419/JIyjRx8gRf3bhea52K5jwFfFNiR2YbY32V8eab8zH/Hx6dpVZ7162iT4s+7p0=
+	t=1741009167; cv=none; b=KLn8li1D5hW4GwoJPXJ8YMxv2SNwvFWoC6JcZbFyDxQL57i6Pr26/olgzeuq69bmBLKs0sGw+R8+JWO1ZxJAYbQHHMrrGozjhhyJp75vayfpl5RbtJOTUQk/+lFjSCAB7m7q/dDPdEqOxcUNycVDsU9R/8wmop+yrQQJEuCKFc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741009139; c=relaxed/simple;
-	bh=MIcJ6qza0x8UAoFaTaN141FosD7VX5v1L2Ka99l7UT8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z8Zm+8ryb3KXlH1IQCwa+0IFFYsQw0L4yVlk9/fhewBDmHQw0cjRkvOQzkz5oB1SRgPYXMbWVKuck3MbifcYKx2rgy4UZfOxm4T3e2xoae95DSBechBKClOBJdeeMM1xkz35QYyfr8ng5EXGtJtYny6iO3F/5tRyC/au4R9D+4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bNF7zXrW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24296C4CED6;
-	Mon,  3 Mar 2025 13:38:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741009138;
-	bh=MIcJ6qza0x8UAoFaTaN141FosD7VX5v1L2Ka99l7UT8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bNF7zXrWSKUgPYeWav/35e1168Z+ZTec+1d/GxCddFpqg0wrxKLncs0jQjxM4SK22
-	 PbHh0IxwmTInpq9+/0ULJCbA9gWhC/zkISbn5A1SiSQkeDiX3tS4bsZs+5fCn5qgQ1
-	 BryK1nRQNyM7Sa7DS7gBIBt2b14SkOkKh45dljp9AYjsmGzfDV4i1y09ywYZgTAxwv
-	 mfcbFGgiHZur54Gq+6DuZc38+e34nabp3YRQRXnoYsBxNm9NaQ0xq1+DHMjL77BYbB
-	 fU8qaUVIfyXGg/GcDw3ZoNGBakBuzKAq0Bt4dCXG3So8Ug4ak2m8IPEbTpPUHDxT1h
-	 H8NkQw+SCo/lg==
-Date: Mon, 3 Mar 2025 07:38:56 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Cc: linux-kernel@vger.kernel.org, tomm.merciai@gmail.com,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com,
-	linux-media@vger.kernel.org,
-	prabhakar.mahadev-lad.rj@bp.renesas.com, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 02/17] media: dt-bindings: renesas,rzg2l-csi2:
- Document Renesas RZ/G3E CSI-2 block
-Message-ID: <174100913611.1710446.8699796804081764660.robh@kernel.org>
-References: <20250226152418.1132337-1-tommaso.merciai.xr@bp.renesas.com>
- <20250226152418.1132337-3-tommaso.merciai.xr@bp.renesas.com>
+	s=arc-20240116; t=1741009167; c=relaxed/simple;
+	bh=a+xzmZy+B7fCsmKmkr8eFxrN/zN1zTAx89ABihyaOnI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=inap1f6lcXJ1vWcihJTfQRkBrabY1czfCdXRaV09yK4eMxiIOI1U9cv4YyUad5qu7l0eeCMzVVXug/Ke81dkZEq8EeHqd5nmx0frPYL0oBYkHlj9tTWvlRcZfna92adEK7CJmJEXfjh51N3JW8zCn5Ij0E2ttvcKx27pTAcq7NA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com; spf=pass smtp.mailfrom=gaisler.com; dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=RFhGDprU; arc=none smtp.client-ip=94.231.106.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gaisler.com
+Received: from localhost (localhost [127.0.0.1])
+	by smtp.simply.com (Simply.com) with ESMTP id 4Z60KQ0fWkz1FbZy;
+	Mon,  3 Mar 2025 14:39:22 +0100 (CET)
+Received: from [10.10.15.10] (h-98-128-223-123.NA.cust.bahnhof.se [98.128.223.123])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by smtp.simply.com (Simply.com) with ESMTPSA id 4Z60KP1Hk1z1DDhC;
+	Mon,  3 Mar 2025 14:39:21 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gaisler.com;
+	s=unoeuro; t=1741009161;
+	bh=/93h/VFBMXUYlK5HJY61WVbB5bIOZygI64XeIBe95nE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=RFhGDprUngIX8B/WksXu5qCl6jvG6Ue2AZeNLU2uztLVehbOrf4Be7sdpXV7apQAV
+	 L5G/0zYDuoS1MZLUHtd9Cg4ltQmBCZYtoSFItZZTzSCMQlto/+shrAINuGubsl6a9Z
+	 zhVJuX2/VxHBfRJjuhyVJhRfswfIwjfgKGq1o31k=
+Message-ID: <b2b03b41-8442-4c68-9c00-05e524673fe0@gaisler.com>
+Date: Mon, 3 Mar 2025 14:39:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250226152418.1132337-3-tommaso.merciai.xr@bp.renesas.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/4] sparc/mm: Disable preemption in lazy mmu mode
+To: Ryan Roberts <ryan.roberts@arm.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "David S. Miller" <davem@davemloft.net>, Juergen Gross <jgross@suse.com>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-mm@kvack.org, sparclinux@vger.kernel.org,
+ xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+References: <20250302145555.3236789-1-ryan.roberts@arm.com>
+ <20250302145555.3236789-3-ryan.roberts@arm.com>
+Content-Language: en-US
+From: Andreas Larsson <andreas@gaisler.com>
+In-Reply-To: <20250302145555.3236789-3-ryan.roberts@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-On Wed, 26 Feb 2025 16:23:26 +0100, Tommaso Merciai wrote:
-> Document the CSI-2 block which is part of CRU found in Renesas RZ/G3E
-> SoC.
+On 2025-03-02 15:55, Ryan Roberts wrote:
+> Since commit 38e0edb15bd0 ("mm/apply_to_range: call pte function with
+> lazy updates") it's been possible for arch_[enter|leave]_lazy_mmu_mode()
+> to be called without holding a page table lock (for the kernel mappings
+> case), and therefore it is possible that preemption may occur while in
+> the lazy mmu mode. The Sparc lazy mmu implementation is not robust to
+> preemption since it stores the lazy mode state in a per-cpu structure
+> and does not attempt to manage that state on task switch.
 > 
-> The CSI-2 block on the RZ/G3E SoC is identical to one found on the
-> RZ/V2H(P) SoC.
+> Powerpc had the same issue and fixed it by explicitly disabling
+> preemption in arch_enter_lazy_mmu_mode() and re-enabling in
+> arch_leave_lazy_mmu_mode(). See commit b9ef323ea168 ("powerpc/64s:
+> Disable preemption in hash lazy mmu mode").
 > 
-> Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+> Given Sparc's lazy mmu mode is based on powerpc's, let's fix it in the
+> same way here.
+> 
+> Fixes: 38e0edb15bd0 ("mm/apply_to_range: call pte function with lazy updates")
+> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 > ---
-> Changes since v2:
->  - Fixed CRU_CMN_RSTB as suggested by LPinchart
->  - Collected tags.
+>  arch/sparc/mm/tlb.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 > 
->  .../devicetree/bindings/media/renesas,rzg2l-csi2.yaml      | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
-> 
+> diff --git a/arch/sparc/mm/tlb.c b/arch/sparc/mm/tlb.c
+> index 8648a50afe88..a35ddcca5e76 100644
+> --- a/arch/sparc/mm/tlb.c
+> +++ b/arch/sparc/mm/tlb.c
+> @@ -52,8 +52,10 @@ void flush_tlb_pending(void)
+>  
+>  void arch_enter_lazy_mmu_mode(void)
+>  {
+> -	struct tlb_batch *tb = this_cpu_ptr(&tlb_batch);
+> +	struct tlb_batch *tb;
+>  
+> +	preempt_disable();
+> +	tb = this_cpu_ptr(&tlb_batch);
+>  	tb->active = 1;
+>  }
+>  
+> @@ -64,6 +66,7 @@ void arch_leave_lazy_mmu_mode(void)
+>  	if (tb->tlb_nr)
+>  		flush_tlb_pending();
+>  	tb->active = 0;
+> +	preempt_enable();
+>  }
+>  
+>  static void tlb_batch_add_one(struct mm_struct *mm, unsigned long vaddr,
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Acked-by: Andreas Larsson <andreas@gaisler.com>
 
+Thanks,
+Andreas
 
