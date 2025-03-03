@@ -1,273 +1,324 @@
-Return-Path: <linux-kernel+bounces-542027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEC52A4C4CF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:22:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 467F4A4C4B3
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:18:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E8237A518B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:19:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 350A416E18D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:17:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0FDF22D7A1;
-	Mon,  3 Mar 2025 15:16:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D55EC219A9B;
+	Mon,  3 Mar 2025 15:15:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aBXebKEk"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UKrJoowe"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961FD22ACCA
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 15:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191A8215063;
+	Mon,  3 Mar 2025 15:15:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741014997; cv=none; b=FNSiiqdShjnfMeVCZXg8B/KDRA6WPU3IX3XZzrjysCg0DJdHx404JdGBHP1qd+faaogU86ZdzhZnuUwmOlSdhjrg5g3Y++KXisb5iKXv1D2qi5VFYuGHtf+qROlgvCAN7qzAWBuZboPkXkUdWRpLQjLMDMxZJIsaKJw2wIJ23kc=
+	t=1741014945; cv=none; b=JIWqRf8SmmCSoYWtb+eAmA56lFlWDHmQ+PmIgfb2fIDzWj6lm4jVVyaWSNHBc0SCEYGXm1N0FUqeGRJPTjTKZ/F2qq9YUuZ5DtH0FDInKo8cOl/qxvc8yfeUMGjQylYUPpTLySEr46/6XFADZqjVyKNqqOihjfsmRkYlewElqEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741014997; c=relaxed/simple;
-	bh=rX4nJ3PHyeb9gnK5N+cxWYOBB+Jzkkre8ByfC3xgFBE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=d9wBtortth3jPxHNJvHgR0mAMksQ7v9bElvKlYcusZJbg1eG8T4uYSBT00/Y6ktNT5S6mJ8i2hnPEox1Za1bK0+QfXKTLmeEGn5OQJhzF1y/8NdXeF+ZXfY2glm+fOv6V8w7K/kNp9RUQT44kp4GqPVmXqjbKYkkkxm9NpDVoBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aBXebKEk; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2239c066347so28178435ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 07:16:35 -0800 (PST)
+	s=arc-20240116; t=1741014945; c=relaxed/simple;
+	bh=J/6FAEzfZUmcf3YQqpKE3PWJQodoKKL5y/1lxELhgyk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i/8f2vq2KLoWiNx1qltstirHZuu55vYt2b0tV8mBHVp442pGmP+SsuM8f+IMB+YEr3J41qhbNnmuuz2nHeVELBcf+kEAW10klF7J8KkB0yDoQ87kd0GNPf7KiCFulxND2sssy77zPgJ8u1eE+UqSqqtsGEMo/lYoWvZynggLc/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UKrJoowe; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6fd719f9e0dso10331647b3.1;
+        Mon, 03 Mar 2025 07:15:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741014994; x=1741619794; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MS7z2kKTQMha/2re0nvvr2SV5BXsIJZSh7OQaRN4Das=;
-        b=aBXebKEkWn1drsrFz+tPHNF0gNI2Y8T/e0xP27SQ98KbDLnV0BdYuNdW8eIzk0BJiE
-         0rShK1zoUukMN5q32hSJUN7Se28YMiJiC3v/jhZksRm4w2oxdMKJAeu0SrICGBhzVdT6
-         G4Vtns3lZ/zMJ2lDEGmg7yK+Yey78lT+cCoaYn1kJ+PE/wNHqW0RWPAHJlcoItyjU3vM
-         xmBZ33Lf+kfwmgKo/LYRQSeSq1OJV/2Ctt7SjIobuD4bOx99ghEqSthQGrNkKqA4ycpY
-         ///BCO0ge3N9CRKz9AVu4RYexl33KCnPXy1WuXkBPdWPcdub4r+2dxedbjPFSbaKGH6n
-         Domw==
+        d=gmail.com; s=20230601; t=1741014943; x=1741619743; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vnZYfHRjSrDXnbFHbwXoqUV2Rvz3Z3oSLKKN3IWdcq0=;
+        b=UKrJoowevG+eTp3pCUdb+v9q9D26V9QZxC7kbrnvqu5tPVySUr6KR/iQ9ALerKzIkE
+         1CYrkiDzO9oLEJDVFQgGiHtTm9LMXn77L2yxMm1gVMOHPkZW5V5PDFuH+fvuaJA18Jf4
+         PdNRlEqaiOljwKy4PFUlTvWjkRMahCJTne1g6kfaxiBmoyhWK5vjfyT8VI6+XqaQ5zob
+         CEPsk9MxgnfeCNgEae/xMsNoWrpCdSNLMjuyuayClekduCalAr4cMMHeFHZDZRYfnIs4
+         NJy9v/DAFA7ORJFVm/6jdbl8BTxqh5obePTCpmO+dggVBpyVqrzExqLsO5EdQzdwEMKn
+         zfeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741014994; x=1741619794;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MS7z2kKTQMha/2re0nvvr2SV5BXsIJZSh7OQaRN4Das=;
-        b=JJJjQ/2qV9aGLJcwEIdnmHWEt0qYEihe8oas2Y979aZxxQUIG8Pq90i23fOK34U3TF
-         +hnSE1cDZZuCd1ZPdpPe1V0HfzZgRdbWtk1OLtaw3C8UrWuuPWnRA2cq3NB6Dk1fIj5J
-         1h8HnN/2Eu3n1Fg690YWqhrqPj60olIdobSBqujf5y+lAurSs26qb2ic4BDbSN3RILDm
-         dFth3OeYvXxet0i1TnvTbME7UqCXOk6NJgW/Y6BMHY8WIFnRO3Ht7fB1qfsv5soSmSvI
-         JuBdUIU0div/bo4wSG/POTYXvviNAjDjGk/A9iTiv/lmKVjogbKSMsP6KWPsTF4ng0Zn
-         1I5w==
-X-Forwarded-Encrypted: i=1; AJvYcCWpQ5ooX5YcdvdrgvB+MDEPPvTsUwK7sNv9nhU82ow5DGufoxeveGLj8Eha6vAcIMv8uCjLHhhNFMGPn04=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybDsP+Jz3CxS+BQc1Hvbf63+7F68EgWpOl1wNzIfrSGXuH5vh7
-	TLPBlFPmY7urSrFAipn8xssfdLjsOeryPxfDxNzBOCC0h4nQVVt+zexA65G0c8EX7osi8UA3gGB
-	axmk3+A==
-X-Gm-Gg: ASbGncvXVRAIAoGbH1QsS/CVv+zUxWPnXpCr4p/p7iHRy/Oh0/a5UlFkLf+r7y5clH2
-	GTo88vYNKfpOeJJGP8gFj+jmT4VaboWazspSpAo7/mOtIFIVPGHBSvor/5sPYPMS2uQrVTriZv+
-	zUs1zAACdwV/wDV/4KCBvTRsjatJ6YsjdS8NBuPjrqNkgS/nl+nk2HIlYi9k8cPOlpBv4DcOa7F
-	mXaFQ5YcjxGyZuLnYp7WpGl+lZ3xiaXWIVPd2fkTNlQ/77g96jvxqZeqoM7aIMyEthGKnn1GAHm
-	jHQnHAH+lvzQ3o2iWhTKOO5uaQSQdna2ZNBjb9A6Hw==
-X-Google-Smtp-Source: AGHT+IGqsUIgxn0VTNpF19GsGLIer8kpx9wejYDX5o6ypocdMcDRG9DFSFFgDQK2xCjfWuXX2Z073g==
-X-Received: by 2002:a17:902:da8d:b0:215:9bc2:42ec with SMTP id d9443c01a7336-22369260956mr180094215ad.47.1741014994609;
-        Mon, 03 Mar 2025 07:16:34 -0800 (PST)
-Received: from [127.0.1.1] ([112.64.60.252])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736584b3cffsm1851984b3a.4.2025.03.03.07.16.27
+        d=1e100.net; s=20230601; t=1741014943; x=1741619743;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vnZYfHRjSrDXnbFHbwXoqUV2Rvz3Z3oSLKKN3IWdcq0=;
+        b=G9dLQc3OrMUT3dJ5VoqgCbWJqwmqZkmM8BLQLgD4w5/AmoPo07D5tK3D2zcCTVIs45
+         Rp8jV0Ist8Ee82Zjgr+yVd02JPAEVFY3RyQymTRECAZfFtqEWLvFU3GHj9vUBCBC+w8w
+         9FBNlQ236l2U9ilPv7RP2zd9RJu0HbseXTB+4HxWYkEbMUvRvhqHLdVRO4v04SPoazej
+         5opGhFZROWsWER80WF/9Xictuok+rPkaCJ44i9RvRlGHo+4IDVir0C2pdGfneM5wmxAR
+         laiceDnnrXTzemD+IpPX42VHRuAiDn3PoG9yDysyCuJA5JRYMRfyptYMjXNKa9LEDL06
+         4MoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV2aCJZKGNPcImcwWvjH1VxsH1KtdZxmeSXJCWEiAxrrVhbDN4XtMo/jxNO+5zD5lwDce7DLCjL8wEjaRk=@vger.kernel.org, AJvYcCVMeekGvNq+w07nEukudyRXUrysBOaEqfPxHuu3YfeXMUJFYPZhESp78J58AgO+OphX1AQ0LqdgYXUB4J31@vger.kernel.org, AJvYcCVxd6e4BzPIO7AeToIbH3XKJ5Jz87sTCKrdIKcDG9gOgVnooifT9NpGfVTXDp7iA1cbVBM57RGFooumOqcjDCE=@vger.kernel.org, AJvYcCWev/JnMy81b76OYvOQfwFdn+iGNLjKyO5i+6QfbCMHVF7OOlqxlQ6u2UCMYbcsTpsoeXY=@vger.kernel.org, AJvYcCWqJwQ6+IPOugF5kTsfZslWTJAiB5tn5NBBwVaz0TqUy/PsDBeA6KgDWL8Ke9gtNgEhjilIRHeo@vger.kernel.org, AJvYcCWtnmXd2aQwEKD5z9EkcbWMpX30ByNEUFtkOfX0Dho8KfxuKcDGEhxansCaBn7N6+Gd3MOi9BtgziftuTg=@vger.kernel.org, AJvYcCXeOGNB6pKCToM/fvxwKSRSit9NUZjsbXSU1Hbl5YY7ltIsatu+x3aRUUhjzbEu9S2ctNlb4DQbv8SQwo77@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBnYia1bGu91ch4/mFyXvU5M9TrttXjHy0PMkpF1ynmAuT/7fQ
+	Tjm4Q2d7Obga6aNLhesREj6vRG7/h2IgW1RYxSA8vNTk/1g3RNNf
+X-Gm-Gg: ASbGncu4Rh8d+4bJEBZwX4+80cV01ArBVKwIZKw2irGQgQJZ7iQEpBnU2BczZ1cU+SJ
+	qY0KzA7n7/3djof8ljDg9ViU3YeHW8r+7+zdyIkKk5IVOh/QOUToHwhb5DQ78831UJOuxwsYef8
+	TXPR/8E8wYhXFVCjxZmqxbmQJ8POMbp/oSr3F2wJktp5/zHAWoPGzlk79mm/hjEyE3BzFzbkvxd
+	tJAKbazuozJC2JWd3lFFVdLNnIMtDp9kC7P3GRC4dDTv3u6XmMUXrHGnn8KyoJQmIudRc4LdglC
+	o9HKRHOyVbT5ksh9jZkLOmvqIVF0zZtsan5yZ2wvmzwl/xZEV521l0qtYkcmnd/fpWR44ouGNE8
+	b52oh
+X-Google-Smtp-Source: AGHT+IEY4hJ4+y0MnSwcin/X5yMbfMX2rlPGrxXj2stWp9C4NMGoZplIcoPGEYKHHfJxM+PTRJ4GqA==
+X-Received: by 2002:a05:690c:3686:b0:6f9:ad48:a3c7 with SMTP id 00721157ae682-6fd4a0acc71mr190341807b3.21.1741014942895;
+        Mon, 03 Mar 2025 07:15:42 -0800 (PST)
+Received: from localhost (c-73-224-175-84.hsd1.fl.comcast.net. [73.224.175.84])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6fd6b9619c5sm9708167b3.75.2025.03.03.07.15.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 07:16:34 -0800 (PST)
-From: Jun Nie <jun.nie@linaro.org>
-Date: Mon, 03 Mar 2025 23:14:44 +0800
-Subject: [PATCH v8 15/15] drm/msm/dpu: Enable quad-pipe for DSC and
- dual-DSI case
+        Mon, 03 Mar 2025 07:15:42 -0800 (PST)
+Date: Mon, 3 Mar 2025 10:15:41 -0500
+From: Yury Norov <yury.norov@gmail.com>
+To: Kuan-Wei Chiu <visitorckw@gmail.com>
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org, jk@ozlabs.org,
+	joel@jms.id.au, eajames@linux.ibm.com, andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org, rfoss@kernel.org,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+	dmitry.torokhov@gmail.com, mchehab@kernel.org,
+	awalls@md.metrocast.net, hverkuil@xs4all.nl,
+	miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
+	louis.peens@corigine.com, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+	parthiban.veerasooran@microchip.com, arend.vanspriel@broadcom.com,
+	johannes@sipsolutions.net, gregkh@linuxfoundation.org,
+	jirislaby@kernel.org, akpm@linux-foundation.org, hpa@zytor.com,
+	alistair@popple.id.au, linux@rasmusvillemoes.dk,
+	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+	jernej.skrabec@gmail.com, kuba@kernel.org,
+	linux-kernel@vger.kernel.org, linux-fsi@lists.ozlabs.org,
+	dri-devel@lists.freedesktop.org, linux-input@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-mtd@lists.infradead.org,
+	oss-drivers@corigine.com, netdev@vger.kernel.org,
+	linux-wireless@vger.kernel.org, brcm80211@lists.linux.dev,
+	brcm80211-dev-list.pdl@broadcom.com, linux-serial@vger.kernel.org,
+	bpf@vger.kernel.org, jserv@ccns.ncku.edu.tw,
+	david.laight.linux@gmail.com, andrew.cooper3@citrix.com,
+	Yu-Chun Lin <eleanor15x@gmail.com>
+Subject: Re: [PATCH v2 01/18] lib/parity: Add __builtin_parity() fallback
+ implementations
+Message-ID: <Z8XHnToOV03hiQKu@thinkpad>
+References: <20250301142409.2513835-1-visitorckw@gmail.com>
+ <20250301142409.2513835-2-visitorckw@gmail.com>
+ <Z8PMHLYHOkCZJpOh@thinkpad>
+ <Z8QUsgpCB0m2qKJR@visitorckw-System-Product-Name>
+ <Z8SBBM_81wyHfvC0@thinkpad>
+ <Z8SVb4xD4tTiMEpL@visitorckw-System-Product-Name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250303-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v8-15-eb5df105c807@linaro.org>
-References: <20250303-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v8-0-eb5df105c807@linaro.org>
-In-Reply-To: <20250303-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v8-0-eb5df105c807@linaro.org>
-To: Rob Clark <robdclark@gmail.com>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Jun Nie <jun.nie@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741014878; l=6430;
- i=jun.nie@linaro.org; s=20240403; h=from:subject:message-id;
- bh=rX4nJ3PHyeb9gnK5N+cxWYOBB+Jzkkre8ByfC3xgFBE=;
- b=9UZ4kRU7Qe3va1BaKQBnLEfFqWWUCBKjhv6fByihkWOdhAiMfzx9LyYLeSaGKDjgDcOGEd/qm
- nZPYWQnu/wVBHtKJD4K0/RfHVJvZg7184CAx0USfoxd9XSg+xCQPlEx
-X-Developer-Key: i=jun.nie@linaro.org; a=ed25519;
- pk=MNiBt/faLPvo+iJoP1hodyY2x6ozVXL8QMptmsKg3cc=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8SVb4xD4tTiMEpL@visitorckw-System-Product-Name>
 
-To support high-resolution cases that exceed the width limitation of
-a pair of SSPPs, or scenarios that surpass the maximum MDP clock rate,
-additional pipes are necessary to enable parallel data processing
-within the SSPP width constraints and MDP clock rate.
+On Mon, Mar 03, 2025 at 01:29:19AM +0800, Kuan-Wei Chiu wrote:
+> Hi Yury,
+> 
+> On Sun, Mar 02, 2025 at 11:02:12AM -0500, Yury Norov wrote:
+> > On Sun, Mar 02, 2025 at 04:20:02PM +0800, Kuan-Wei Chiu wrote:
+> > > Hi Yury,
+> > > 
+> > > On Sat, Mar 01, 2025 at 10:10:20PM -0500, Yury Norov wrote:
+> > > > On Sat, Mar 01, 2025 at 10:23:52PM +0800, Kuan-Wei Chiu wrote:
+> > > > > Add generic C implementations of __paritysi2(), __paritydi2(), and
+> > > > > __parityti2() as fallback functions in lib/parity.c. These functions
+> > > > > compute the parity of a given integer using a bitwise approach and are
+> > > > > marked with __weak, allowing architecture-specific implementations to
+> > > > > override them.
+> > > > > 
+> > > > > This patch serves as preparation for using __builtin_parity() by
+> > > > > ensuring a fallback mechanism is available when the compiler does not
+> > > > > inline the __builtin_parity().
+> > > > > 
+> > > > > Co-developed-by: Yu-Chun Lin <eleanor15x@gmail.com>
+> > > > > Signed-off-by: Yu-Chun Lin <eleanor15x@gmail.com>
+> > > > > Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+> > > > > ---
+> > > > >  lib/Makefile |  2 +-
+> > > > >  lib/parity.c | 48 ++++++++++++++++++++++++++++++++++++++++++++++++
+> > > > >  2 files changed, 49 insertions(+), 1 deletion(-)
+> > > > >  create mode 100644 lib/parity.c
+> > > > > 
+> > > > > diff --git a/lib/Makefile b/lib/Makefile
+> > > > > index 7bab71e59019..45affad85ee4 100644
+> > > > > --- a/lib/Makefile
+> > > > > +++ b/lib/Makefile
+> > > > > @@ -51,7 +51,7 @@ obj-y += bcd.o sort.o parser.o debug_locks.o random32.o \
+> > > > >  	 bsearch.o find_bit.o llist.o lwq.o memweight.o kfifo.o \
+> > > > >  	 percpu-refcount.o rhashtable.o base64.o \
+> > > > >  	 once.o refcount.o rcuref.o usercopy.o errseq.o bucket_locks.o \
+> > > > > -	 generic-radix-tree.o bitmap-str.o
+> > > > > +	 generic-radix-tree.o bitmap-str.o parity.o
+> > > > >  obj-y += string_helpers.o
+> > > > >  obj-y += hexdump.o
+> > > > >  obj-$(CONFIG_TEST_HEXDUMP) += test_hexdump.o
+> > > > > diff --git a/lib/parity.c b/lib/parity.c
+> > > > > new file mode 100644
+> > > > > index 000000000000..a83ff8d96778
+> > > > > --- /dev/null
+> > > > > +++ b/lib/parity.c
+> > > > > @@ -0,0 +1,48 @@
+> > > > > +// SPDX-License-Identifier: GPL-2.0-only
+> > > > > +/*
+> > > > > + * lib/parity.c
+> > > > > + *
+> > > > > + * Copyright (C) 2025 Kuan-Wei Chiu <visitorckw@gmail.com>
+> > > > > + * Copyright (C) 2025 Yu-Chun Lin <eleanor15x@gmail.com>
+> > > > > + *
+> > > > > + * __parity[sdt]i2 can be overridden by linking arch-specific versions.
+> > > > > + */
+> > > > > +
+> > > > > +#include <linux/export.h>
+> > > > > +#include <linux/kernel.h>
+> > > > > +
+> > > > > +/*
+> > > > > + * One explanation of this algorithm:
+> > > > > + * https://funloop.org/codex/problem/parity/README.html
+> > > > 
+> > > > I already asked you not to spread this link. Is there any reason to
+> > > > ignore it?
+> > > > 
+> > > In v2, this algorithm was removed from bitops.h, so I moved the link
+> > > here instead. I'm sorry if it seemed like I ignored your comment.
+> > 
+> > Yes, it is.
+> >  
+> > > In v1, I used the same approach as parity8() because I couldn't justify
+> > > the performance impact in a specific driver or subsystem. However,
+> > > multiple people commented on using __builtin_parity or an x86 assembly
+> > > implementation. I'm not ignoring their feedback-I want to address these
+> > 
+> > Please ask those multiple people: are they ready to maintain all that
+> > zoo of macros, weak implementations, arch implementations and stubs
+> > for no clear benefit? Performance is always worth it, but again I see
+> > not even a hint that the drivers care about performance. You don't
+> > measure it, so don't care as well. Right?
+> > 
+> > > comments. Before submitting, I sent an email explaining my current
+> > > approach: using David's suggested method along with __builtin_parity,
+> > > but no one responded. So, I decided to submit v2 for discussion
+> > > instead.
+> > 
+> > For discussion use tag RFC.
+> > 
+> > > 
+> > > To avoid mistakes in v3, I want to confirm the following changes before
+> > > sending it:
+> > > 
+> > > (a) Change the return type from int to bool.
+> > > (b) Avoid __builtin_parity and use the same approach as parity8().
+> > > (c) Implement parity16/32/64() as single-line inline functions that
+> > >     call the next smaller variant after xor.
+> > > (d) Add a parity() macro that selects the appropriate parityXX() based
+> > >     on type size.
+> > > (e) Update users to use this parity() macro.
+> > > 
+> > > However, (d) may require a patch affecting multiple subsystems at once
+> > > since some places that already include bitops.h have functions named
+> > > parity(), causing conflicts. Unless we decide not to add this macro in
+> > > the end.
+> > > 
+> > > As for checkpatch.pl warnings, they are mostly pre-existing coding
+> > > style issues in this series. I've kept them as-is, but if preferred,
+> > > I'm fine with fixing them.
+> > 
+> > Checkpatch only complains on new lines. Particularly this patch should
+> > trigger checkpatch warning because it adds a new file but doesn't touch
+> > MAINTAINERS. 
+> > 
+> For example, the following warning:
+> 
+> ERROR: space required after that ',' (ctx:VxV)
+> #84: FILE: drivers/input/joystick/sidewinder.c:368:
+> +                       if (!parity64(GB(0,33)))
+>                                           ^
+> 
+> This issue already existed before this series, and I'm keeping its
+> style unchanged for now.
+> 
+> > > If anything is incorrect or if there are concerns, please let me know.
+> > > 
+> > > Regards,
+> > > Kuan-Wei
+> > > 
+> > > diff --git a/include/linux/bitops.h b/include/linux/bitops.h
+> > > index c1cb53cf2f0f..47b7eca8d3b7 100644
+> > > --- a/include/linux/bitops.h
+> > > +++ b/include/linux/bitops.h
+> > > @@ -260,6 +260,43 @@ static inline int parity8(u8 val)
+> > >  	return (0x6996 >> (val & 0xf)) & 1;
+> > >  }
+> > > 
+> > > +static inline bool parity16(u16 val)
+> > > +{
+> > > +	return parity8(val ^ (val >> 8));
+> > > +}
+> > > +
+> > > +static inline bool parity32(u32 val)
+> > > +{
+> > > +	return parity16(val ^ (val >> 16));
+> > > +}
+> > > +
+> > > +static inline bool parity64(u64 val)
+> > > +{
+> > > +	return parity32(val ^ (val >> 32));
+> > > +}
+> > 
+> > That was discussed between Jiri and me in v2. Fixed types functions
+> > are needed only in a few very specific cases. With the exception of
+> > I3C driver (which doesn't look good for both Jiri and me), all the
+> > drivers have the type of variable passed to the parityXX() matching 
+> > the actual variable length. It means that fixed-type versions of the
+> > parity() are simply not needed. So if we don't need them, please don't
+> > introduce it.
+> >
+> So, I should add the following parity() macro in v3, remove parity8(),
+> and update all current parity8() users to use this macro, right?
 
-Request 4 mixers and 4 DSCs for high-resolution cases where both DSC
-and dual interfaces are enabled. More use cases can be incorporated
-later if quad-pipe capabilities are required.
+If you go with macro, please apply my patch and modify it in-place
+with this __auto_type thing and GCC hack. Feel free to add your
+co-developed-by, or tested, or whatever.
 
-Signed-off-by: Jun Nie <jun.nie@linaro.org>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c         |  2 +-
- drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h         |  6 ++---
- drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c      | 28 ++++++++++++++++++------
- drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h |  2 +-
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h   |  2 +-
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h      |  2 +-
- 6 files changed, 28 insertions(+), 14 deletions(-)
+> I changed u64 to __auto_type and applied David's suggestion to replace
+> the >> 32 with >> 16 >> 16 to avoid compiler warnings.
+> 
+> Regards,
+> Kuan-Wei
+> 
+> #define parity(val)					\
+> ({							\
+> 	__auto_type __v = (val);			\
+> 	bool __ret;					\
+> 	switch (BITS_PER_TYPE(val)) {			\
+> 	case 64:					\
+> 		__v ^= __v >> 16 >> 16;			\
+> 		fallthrough;				\
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-index fa487d625dde5cbd9a83ceb5163c049da45163f7..14b08f11a567b3747101fdbffa36ff5701db7a83 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-@@ -200,7 +200,7 @@ static int dpu_crtc_get_lm_crc(struct drm_crtc *crtc,
- 		struct dpu_crtc_state *crtc_state)
- {
- 	struct dpu_crtc_mixer *m;
--	u32 crcs[CRTC_DUAL_MIXERS];
-+	u32 crcs[CRTC_QUAD_MIXERS];
- 
- 	int rc = 0;
- 	int i;
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h
-index b14bab2754635953da402d09e11a43b9b4cf4153..38820d05edb8b3003971dc6dc675ba8ede847be8 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h
-@@ -210,7 +210,7 @@ struct dpu_crtc_state {
- 
- 	bool bw_control;
- 	bool bw_split_vote;
--	struct drm_rect lm_bounds[CRTC_DUAL_MIXERS];
-+	struct drm_rect lm_bounds[CRTC_QUAD_MIXERS];
- 
- 	uint64_t input_fence_timeout_ns;
- 
-@@ -218,10 +218,10 @@ struct dpu_crtc_state {
- 
- 	/* HW Resources reserved for the crtc */
- 	u32 num_mixers;
--	struct dpu_crtc_mixer mixers[CRTC_DUAL_MIXERS];
-+	struct dpu_crtc_mixer mixers[CRTC_QUAD_MIXERS];
- 
- 	u32 num_ctls;
--	struct dpu_hw_ctl *hw_ctls[CRTC_DUAL_MIXERS];
-+	struct dpu_hw_ctl *hw_ctls[CRTC_QUAD_MIXERS];
- 
- 	enum dpu_crtc_crc_source crc_source;
- 	int crc_frame_skip_count;
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-index c89a5da0fa8321e9082d5aee304fa16402bb4ad9..d4719b45f4cdd5d1f0bd585283c0c16f1df2f1f2 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-@@ -54,7 +54,7 @@
- #define MAX_PHYS_ENCODERS_PER_VIRTUAL \
- 	(MAX_H_TILES_PER_DISPLAY * NUM_PHYS_ENCODER_TYPES)
- 
--#define MAX_CHANNELS_PER_ENC 2
-+#define MAX_CHANNELS_PER_ENC 4
- 
- #define IDLE_SHORT_TIMEOUT	1
- 
-@@ -664,9 +664,13 @@ static struct msm_display_topology dpu_encoder_get_topology(
- 
- 	/* Datapath topology selection
- 	 *
--	 * Dual display
-+	 * Dual display without DSC
- 	 * 2 LM, 2 INTF ( Split display using 2 interfaces)
- 	 *
-+	 * Dual display with DSC
-+	 * 2 LM, 2 INTF ( Split display using 2 interfaces)
-+	 * 4 LM, 2 INTF ( Split display using 2 interfaces)
-+	 *
- 	 * Single display
- 	 * 1 LM, 1 INTF
- 	 * 2 LM, 1 INTF (stream merge to support high resolution interfaces)
-@@ -691,10 +695,20 @@ static struct msm_display_topology dpu_encoder_get_topology(
- 		 * 2 DSC encoders, 2 layer mixers and 1 interface
- 		 * this is power optimal and can drive up to (including) 4k
- 		 * screens
-+		 * But for dual display case, we prefer 4 layer mixers. Because
-+		 * the resolution is always high in the case and 4 DSCs are more
-+		 * power optimal.
- 		 */
--		topology.num_dsc = 2;
--		topology.num_lm = 2;
--		topology.num_intf = 1;
-+
-+		if (intf_count == 2 && dpu_kms->catalog->dsc_count >= 4) {
-+			topology.num_dsc = 4;
-+			topology.num_lm = 4;
-+			topology.num_intf = 2;
-+		} else {
-+			topology.num_dsc = 2;
-+			topology.num_lm = 2;
-+			topology.num_intf = 1;
-+		}
- 	}
- 
- 	return topology;
-@@ -2189,8 +2203,8 @@ static void dpu_encoder_helper_reset_mixers(struct dpu_encoder_phys *phys_enc)
- 	struct dpu_hw_mixer_cfg mixer;
- 	int i, num_lm;
- 	struct dpu_global_state *global_state;
--	struct dpu_hw_blk *hw_lm[2];
--	struct dpu_hw_mixer *hw_mixer[2];
-+	struct dpu_hw_blk *hw_lm[MAX_CHANNELS_PER_ENC];
-+	struct dpu_hw_mixer *hw_mixer[MAX_CHANNELS_PER_ENC];
- 	struct dpu_hw_ctl *ctl = phys_enc->hw_ctl;
- 
- 	memset(&mixer, 0, sizeof(mixer));
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h
-index 63f09857025c2004dcb56bd33e9c51f8e0f80e48..a9e122243dce9006aaa582a1537980c86b6203a4 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h
-@@ -302,7 +302,7 @@ static inline enum dpu_3d_blend_mode dpu_encoder_helper_get_3d_blend_mode(
- 
- 	/* Use merge_3d unless DSC MERGE topology is used */
- 	if (phys_enc->split_role == ENC_ROLE_SOLO &&
--	    dpu_cstate->num_mixers == CRTC_DUAL_MIXERS &&
-+	    (dpu_cstate->num_mixers != 1) &&
- 	    !dpu_encoder_use_dsc_merge(phys_enc->parent))
- 		return BLEND_3D_H_ROW_INT;
- 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-index 4cea19e1a20380c56ae014f2d33a6884a72e0ca0..77a7a5375d545483edb316e8428df12212191362 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-@@ -24,7 +24,7 @@
- #define DPU_MAX_IMG_WIDTH 0x3fff
- #define DPU_MAX_IMG_HEIGHT 0x3fff
- 
--#define CRTC_DUAL_MIXERS	2
-+#define CRTC_QUAD_MIXERS	4
- 
- #define MAX_XIN_COUNT 16
- 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
-index 74bf3ab9d6cfb8152b32d89a6c66e4d92d5cee1d..804858e69e7da1c8c67c725aa462c1a558d1b402 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
-@@ -34,7 +34,7 @@
- #define DPU_MAX_PLANES			4
- #endif
- 
--#define STAGES_PER_PLANE		1
-+#define STAGES_PER_PLANE		2
- #define PIPES_PER_STAGE			2
- #define PIPES_PER_PLANE			(PIPES_PER_STAGE * STAGES_PER_PLANE)
- #ifndef DPU_MAX_DE_CURVES
+This hack should be GCC-only, and well documented.
+For clang it should be 
+ 		__v ^= __v >> 32;			\
 
--- 
-2.34.1
-
+> 	case 32:					\
+> 		__v ^= __v >> 16;			\
+> 		fallthrough;				\
+> 	case 16:					\
+> 		__v ^= __v >> 8;			\
+> 		fallthrough;				\
+> 	case 8:						\
+> 		__v ^= __v >> 4;			\
+> 		__ret =  (0x6996 >> (__v & 0xf)) & 1;	\
+> 		break;					\
+> 	default:					\
+> 		BUILD_BUG();				\
+> 	}						\
+> 	__ret;						\
+> })
 
