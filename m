@@ -1,142 +1,184 @@
-Return-Path: <linux-kernel+bounces-542893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CAFBA4CF23
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 00:17:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98D3AA4CF26
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 00:18:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7786D18951A3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:17:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA333171C3A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:18:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF4323A58F;
-	Mon,  3 Mar 2025 23:17:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15BA223A99C;
+	Mon,  3 Mar 2025 23:17:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JZwTJNTS"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jucf/9/P"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51054235C11
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 23:17:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53C223A58F
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 23:17:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741043852; cv=none; b=NV3J7unE5LedprUkLmD4HrAnjy5bkoWoMocCZlSW8IrMaEapPJwYkbxWKExbbgNS9NXm/ailc8ET93FGevt3pofDAWH1B3JH0dP/SzoG7F8WvskKhrkdFDczso72stdpS7PboibdJ0mUsBnGzR5iDQGkOFXXoaqJxFTM0y5UX04=
+	t=1741043878; cv=none; b=q3mED+oAQcvQxK/gWIdemqVTOV+kQvIAunvvbYmE3a6HhOwVt7KGtzJaupNHcjwuN9Ouso3nQBxTLg4jIRPibIzJtC/FRLvcb2xMZj4aZRQuVVH2zwanLyNH03a6/kMd78s/6p5umdM3M6ey51GZy8bQCJsD/QOCOlAJfMU1gCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741043852; c=relaxed/simple;
-	bh=NPxdklpo+hfB6Q5aEYjRbk28iZGSbxF0mOWy2NS6sNM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LGDYep637fQxYwYtYklf4D0anRe6iB97sigenxU3ouczS11kL9vz7lm6tBFdSg/sglwabBYuniZdGIFH5GM1CM9LqqQCIUBAhluoXJnnFOYY0N7ybJCqr76onQsrRRnEN/HrIylV0p5q6PNuESOvVku2QznoARj9nKgWuWYxgqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JZwTJNTS; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e608b2698fcso3439384276.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 15:17:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741043850; x=1741648650; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=nJU/yvYz6haiwFOMPRsCHOU6kFhXq6ZBBygufHFSnzw=;
-        b=JZwTJNTSJ03cFQz1dWsA/AU9gfbqKKpWb53dCTMAxSDFBa4bQAUB4Gq9V0YAuAwavQ
-         rJcTfIChgqj0TQ4GDoHoZlXfOePZ49Rh2mO9VxlJ4sLVLQgX+tXtdhC0oEmXtjhJiQC4
-         LR4PFmpw4DnjrQkH2dVDgsFJuMwoSxHgipvDOK9CXDlE/gEypP9WoA8yHOGoe1y6plyg
-         +b2H+PWHY9NhdSaUFNeDwbznzU+6S/qTeQOlfMnZZNEpphuDS5y+vjHaXKTJjfV4ZRxM
-         ia7FUPwZxiL66EcFju7Y3sakaRMe2uytakcxz6NJ6we1OZfc4XSvjcNcMJy1TrMjEEvs
-         nQwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741043850; x=1741648650;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nJU/yvYz6haiwFOMPRsCHOU6kFhXq6ZBBygufHFSnzw=;
-        b=Hkgpnwunw7NeDCrqkxICXrd0BM2otE7JbS+K4v9rZ50QI9XGgbhPo6U/DnlRCv5Dcx
-         18XZIQzp16ltdpJKE2LSSkdyuk0G7Ar96YueL2l8TbyjpkFbFshTXzXZKDwPu3kZWlmQ
-         Pz6Lr0mOOSImk/eni1iZZrZBfMpysogDsGL0jCuBrddWb3LNDtE+i70ZESTmDq36OYEQ
-         Y+010gW7xpX2+DEPk7drYiBamw12uKujVObDIR8QgyR4k1Zvt6CwVyTA3Y3rTWxZFCQY
-         35mZVrdL7r+GEPijCBsoA2Pcjk7cissR4RM26phXs14jplszOkV/MkWoDueuhLUkLVa5
-         HmTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWYuusN7gCpDNh0ZPhiiwj7G7BkaUn1+MWFR6TpW5Hb8bkFlgfC570uDjU7V/5AMkulXSSEru01/FGw76o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyMbr3xnc+LnhaA05C35cFH7suncXHM/tT9EdqFaQ8ojlibnyU
-	MGLs9G4xUCWNzKh1HuWNcR4cLKAp1UOgGHRuyohD6X7W0G0O7nhknPI5ckrPjMK89KtNbhKW0yn
-	pWggEpxPf50V4hNUk0hFwMjQncyjRePlpMZeUjA==
-X-Gm-Gg: ASbGncsyhdG9gsA1hCHHMF8gI4AqJEq826nGu8AFMwX9Nmf1nC7az5s6ntEZHzR+xAm
-	QS/J3vHnVq13RDAw/dg+xcrT94+On/IsyCAe1vuv/mJmEuUTWPU56eJgiLossnprW3tNvPpdNl6
-	R/UGKUSIRmReProkbf3ygkAYkz8QHBqOdsv7oNLyQ4R6HJvZWHg8/exgFNe9M=
-X-Google-Smtp-Source: AGHT+IE6J32scZcQCUr9Yh/ghM/bua+zO4/HH6rxu31moRlCqq0EicPtjHBgPE4qSnbGz5efb6sDCSe0Ys70/YyeEEs=
-X-Received: by 2002:a05:6902:2405:b0:e60:9f80:535 with SMTP id
- 3f1490d57ef6-e60b2f1ceabmr19768288276.40.1741043850226; Mon, 03 Mar 2025
- 15:17:30 -0800 (PST)
+	s=arc-20240116; t=1741043878; c=relaxed/simple;
+	bh=SFd9xqY4gRWrEeaGvoL5BbS0dlM1B0xqzUuSgE6I/jU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YXwu/x7IH+SUAvOsPSTvSIYSMYjd+C9P8leln5NdEPHe5t5TQnqlrTj/CG9N30egTXXPvOA/pS12f1SLzdZU2aQ4JK1kkoTdSf9tVDMdeKqaf9SErNc/eBPkSaCiDv5upFwzgFf2E6qA+xeW5zsK2j0h5bxO0KHa3dZ3CtL9rNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jucf/9/P; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741043876; x=1772579876;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=SFd9xqY4gRWrEeaGvoL5BbS0dlM1B0xqzUuSgE6I/jU=;
+  b=Jucf/9/PDtqTOrha5QPHUWsBRNSj+R7AkUPnU39UXdJJ6iB28mrPLJBv
+   LW4SJ78ZWkuzWGD6/wxi0rwKr5f2Y7TZ8ejiSBMw59s20kf+n1grVi/gr
+   cI08Q5wmsGaftp7XviwQ0bpJChWBFP7DFxfI8OPiUwULUET2lwFViqcrT
+   UOJjKFFnxjr7nxlRUp1a7+G0iXOEYxnq9GYd7pE4qI+2IK9oBqbw9OnMw
+   RVAJedwUabKdp/aMgzVU+0TjMRNVksO3/oWWyZufZ+qOOMTeqtfQR5N/O
+   pbqAvySp14X0JuD0CIc4P2QBhvGvZAY29M9uQwjil2cOMyZzKrjMuTYmr
+   Q==;
+X-CSE-ConnectionGUID: 5FtOJCzaQO2HsWdNF4W9Eg==
+X-CSE-MsgGUID: aSm3UtzDTHOYOALYnOeH/A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="41793230"
+X-IronPort-AV: E=Sophos;i="6.13,330,1732608000"; 
+   d="scan'208";a="41793230"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 15:17:55 -0800
+X-CSE-ConnectionGUID: sEVzVHs+QoeNAc8uMv0Xmw==
+X-CSE-MsgGUID: WUITPo2qQcmI9dGrnWUvPQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="118717350"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by orviesa007.jf.intel.com with ESMTP; 03 Mar 2025 15:17:53 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tpF2k-000J1o-1t;
+	Mon, 03 Mar 2025 23:17:50 +0000
+Date: Tue, 4 Mar 2025 07:17:30 +0800
+From: kernel test robot <lkp@intel.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 7/7] mm/mremap: thread state through move page table
+ operation
+Message-ID: <202503040721.0r47FGNO-lkp@intel.com>
+References: <4cc18ebfc0cb32e9e42d86503cef3265108343e4.1740911247.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250201-topic-ignore_unused_warn-v1-1-f29db78cea3a@oss.qualcomm.com>
- <93b5004dacfe1151ca3abbb0fa31eaa6.sboyd@kernel.org> <87241686-90b5-44fe-b4e9-1a59451e3575@broadcom.com>
-In-Reply-To: <87241686-90b5-44fe-b4e9-1a59451e3575@broadcom.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 4 Mar 2025 00:17:21 +0100
-X-Gm-Features: AQ5f1JrNfSaFjOZVORaIa_wvDSL26potTqDwKAKcZrvq460zrESF_F1ECLmvBmM
-Message-ID: <CAA8EJppgU7_BoVCDfTuKVveBnnhtHUN6jEzkUaAou7=aypD-Dw@mail.gmail.com>
-Subject: Re: [PATCH] clk: Warn (and therefore taint the kernel) on clk_ignore_unused
-To: Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4cc18ebfc0cb32e9e42d86503cef3265108343e4.1740911247.git.lorenzo.stoakes@oracle.com>
 
-On Tue, 4 Mar 2025 at 00:16, Florian Fainelli
-<florian.fainelli@broadcom.com> wrote:
->
-> On 3/3/25 14:48, Stephen Boyd wrote:
-> > Quoting Konrad Dybcio (2025-02-01 08:52:30)
-> >> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> >>
-> >> If any sort of ignore_unused is in place, it means one of:
-> >>
-> >> * power is going to waste
-> >> * the platform description is incomplete (missing consumer-provider
-> >>    relationships)
-> >> * the platform description is just broken
-> >>
-> >> Many people will happily declare their job done when a platform
-> >> magically happens to work as they make use of bootloader-enabled
-> >> resources, which then leads to double or triple the amount of work
-> >> of another person, as they attempt to reduce the unnecessary power
-> >> drainage and/or ensure stabiility throughout a suspend-resume cycle.
-> >>
-> >> Issue a good ol' warning (and taint the kernel) to make such cases
-> >> obvious and hopefully draw more attention to it. This way, it'll be
-> >> easier to avoid effectively untested code or DT description getting
-> >> merged into the kernel, or worse, going into production.
-> >>
-> >> The clock subsystem plays a crucial part in this quest, as even if
-> >> the clock controllers themselves don't draw a lot of power when on
-> >> (comparatively), improper description of clock requirements has been
-> >> the #1 cause of incomplete/incorrect devicetree bindings in my
-> >> experience.
-> >
-> > What is a user supposed to do about this warning stack? We already print
-> > a warning. I don't see us dumping the stack when a driver is unfinished
-> > and doesn't implement runtime PM to save power.
-> >
->
-> Agreed, I don't think this is tremendously helpful given that it does
-> not even tell you what part is incomplete, it's just a broad warning for
-> the entire system.
->
-> Assuming you have a clock provided that can be used to turn clocks off,
-> and you did not boot with 'clk_ignore_unused' set on the kernel command
-> line, then you should discover pretty quickly which driver is not
-> managing the clocks as it should no?
+Hi Lorenzo,
 
-Unfortunately it's sometimes not that easy. And some developers
-pretend that 'clk_ignore_unused' is a viable way to run the system.
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on akpm-mm/mm-everything]
+[also build test ERROR on linus/master v6.14-rc5 next-20250303]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Lorenzo-Stoakes/mm-mremap-correctly-handle-partial-mremap-of-VMA-starting-at-0/20250303-192101
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/4cc18ebfc0cb32e9e42d86503cef3265108343e4.1740911247.git.lorenzo.stoakes%40oracle.com
+patch subject: [PATCH 7/7] mm/mremap: thread state through move page table operation
+config: x86_64-buildonly-randconfig-001-20250304 (https://download.01.org/0day-ci/archive/20250304/202503040721.0r47FGNO-lkp@intel.com/config)
+compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250304/202503040721.0r47FGNO-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503040721.0r47FGNO-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from mm/mremap.c:11:
+   In file included from include/linux/mm.h:2302:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from mm/mremap.c:12:
+   include/linux/mm_inline.h:47:41: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+      47 |         __mod_lruvec_state(lruvec, NR_LRU_BASE + lru, nr_pages);
+         |                                    ~~~~~~~~~~~ ^ ~~~
+   include/linux/mm_inline.h:49:22: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+      49 |                                 NR_ZONE_LRU_BASE + lru, nr_pages);
+         |                                 ~~~~~~~~~~~~~~~~ ^ ~~~
+>> mm/mremap.c:581:43: error: too few arguments to function call, expected 5, have 3
+     581 |                         move_huge_pud(pmc, old_entry, new_entry);
+         |                         ~~~~~~~~~~~~~                          ^
+   mm/mremap.c:478:13: note: 'move_huge_pud' declared here
+     478 | static bool move_huge_pud(struct vm_area_struct *vma, unsigned long old_addr,
+         |             ^             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     479 |                           unsigned long new_addr, pud_t *old_pud, pud_t *new_pud)
+         |                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   3 warnings and 1 error generated.
+
+
+vim +581 mm/mremap.c
+
+   552	
+   553	/*
+   554	 * Attempts to speedup the move by moving entry at the level corresponding to
+   555	 * pgt_entry. Returns true if the move was successful, else false.
+   556	 */
+   557	static bool move_pgt_entry(struct pagetable_move_control *pmc,
+   558				   enum pgt_entry entry, void *old_entry, void *new_entry)
+   559	{
+   560		bool moved = false;
+   561		bool need_rmap_locks = should_take_rmap_locks(pmc, entry);
+   562	
+   563		/* See comment in move_ptes() */
+   564		if (need_rmap_locks)
+   565			take_rmap_locks(pmc->old);
+   566	
+   567		switch (entry) {
+   568		case NORMAL_PMD:
+   569			moved = move_normal_pmd(pmc, old_entry, new_entry);
+   570			break;
+   571		case NORMAL_PUD:
+   572			moved = move_normal_pud(pmc, old_entry, new_entry);
+   573			break;
+   574		case HPAGE_PMD:
+   575			moved = IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) &&
+   576				move_huge_pmd(pmc->old, pmc->old_addr, pmc->new_addr, old_entry,
+   577					      new_entry);
+   578			break;
+   579		case HPAGE_PUD:
+   580			moved = IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) &&
+ > 581				move_huge_pud(pmc, old_entry, new_entry);
+   582			break;
+   583	
+   584		default:
+   585			WARN_ON_ONCE(1);
+   586			break;
+   587		}
+   588	
+   589		if (need_rmap_locks)
+   590			drop_rmap_locks(pmc->old);
+   591	
+   592		return moved;
+   593	}
+   594	
 
 -- 
-With best wishes
-Dmitry
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
