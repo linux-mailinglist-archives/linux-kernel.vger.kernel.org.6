@@ -1,607 +1,245 @@
-Return-Path: <linux-kernel+bounces-541568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B0BEA4BE89
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:30:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F311BA4BE69
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:27:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D4633BF1BD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:23:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E72A163BF6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:23:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB311F791A;
-	Mon,  3 Mar 2025 11:20:57 +0000 (UTC)
-Received: from vmicros1.altlinux.org (vmicros1.altlinux.org [194.107.17.57])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA8A31F3D49
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 11:20:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C32C61F3B8C;
+	Mon,  3 Mar 2025 11:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b="mdDLG9XM"
+Received: from smtp28.bhosted.nl (smtp28.bhosted.nl [94.124.121.40])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CAF41F17E5
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 11:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.124.121.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741000856; cv=none; b=izOtqBW2nHn7f6NYRRq60jInVYY2GxcB+0ahvferGyC8XijAwarU+27B+qsz7kXTROttAObjCfIkeo2+yYlmRiVQuX39S4JadIIJF42fL9MIG//0VArfFnImNCI1LCNkbFhWIyd00Wnjh+SzHGJTELVu7+coqM6bc6HEFb8nNXA=
+	t=1741000986; cv=none; b=HNZyUj+OJAte+NTF8mlgT/vL6/pIPmUriyUzT/23UjH03LHMgoisDZRkQQBI/6GPxFKJHdCX5rQY31zi7PSfktK7+gzoK1CLUAcg7VARGmQ9DvpbonZ9SlizZM8J+sHju2/eGBdZynNDUj0QMFEO1Ejzt7s4hEuv+SxMqcYY9NE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741000856; c=relaxed/simple;
-	bh=zZikJWfPdEMiq5MukwQLOEi8g93mbIb/2HZCjPQlDtw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=agBYWHmtg650NKYFonzOeUt4X63+oMaCYwNlWVOkid/MXbqBTWGB+VVdySSpub75CYJYtz1ibXYaqqPmVgCKYAbHWrXPN+Bbw57WrK90of4gSmRQqxTN7il+qAvIYDYdkT+sVuGW46YomsKKhNFcCnRHBlYgjFDz/fexDUzML04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-	by vmicros1.altlinux.org (Postfix) with ESMTP id C0BBC72C981;
-	Mon,  3 Mar 2025 14:20:52 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-	id B1F2A7CCB3A; Mon,  3 Mar 2025 13:20:52 +0200 (IST)
-Date: Mon, 3 Mar 2025 13:20:52 +0200
-From: "Dmitry V. Levin" <ldv@strace.io>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Oleg Nesterov <oleg@redhat.com>, Shuah Khan <shuah@kernel.org>,
-	Alexey Gladkov <legion@kernel.org>,
-	Eugene Syromyatnikov <evgsyr@gmail.com>,
-	Mike Frysinger <vapier@gentoo.org>,
-	Renzo Davoli <renzo@cs.unibo.it>,
-	Davide Berardi <berardi.dav@gmail.com>,
-	strace-devel@lists.strace.io, linux-kernel@vger.kernel.org
-Subject: [PATCH v7 6/6] selftests/ptrace: add a test case for
- PTRACE_SET_SYSCALL_INFO
-Message-ID: <20250303112052.GG24170@strace.io>
+	s=arc-20240116; t=1741000986; c=relaxed/simple;
+	bh=T2/0vtnTHd+jEFQfmJdgjKR4ED0aLjzFr+5YOFGUjfc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mBWIPbmaoxhQt8l5X5HdusvfFlyHJgEP13LPhLnLUJW25xGICf/iHsOgILSI1F4nAjne/fhHbn/1dXrzHpZHBc3MxSvcpfEn0Rc5mLbGJe30JCFEYKKoFCdNPOfSLBoDj717hS9lLEnVPKsrM9cT0VJE9txzde0ToQ1bZI7M4z0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl; spf=pass smtp.mailfrom=protonic.nl; dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b=mdDLG9XM; arc=none smtp.client-ip=94.124.121.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonic.nl
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=protonic.nl; s=202111;
+	h=content-transfer-encoding:content-type:mime-version:references:in-reply-to:
+	 message-id:subject:cc:to:from:date:from;
+	bh=aYFQrbEXcXVk/RpIHRvcbpzo0ainO+2MV7BBazpXsNM=;
+	b=mdDLG9XM0xS9qj5ouZGMgE2pJs8KIO/BmCLOeQMwUL/EXNFTiOwgcmHWoIXfe3uRIpD1NwN9ln3OF
+	 suxAAa8B6RWYwQt0AuquyhZUvUNwseS5QGFqvCfCy3xbMtfrMEzRvKSfcM3kYguX+ehQljA2AIva79
+	 nSsb0ildy3B/CED0f3d8EltoRBaNIVoRm+JfVgmh61D8zOpmy9Na1hRV/UAloxOHguJD34xyZ2DCiU
+	 XB6CwcWvgb/yy5I89E0NjS5dohCWASUkfhBpPO6+cltyv4mRvL2HUrObBqA8dHu/778elJk48WCk8d
+	 78w71JpZw8fQ3Gtl7e1x30RqWWOy9Zg==
+X-MSG-ID: d9a8e41c-f821-11ef-b5ca-0050568164d1
+Date: Mon, 3 Mar 2025 12:22:53 +0100
+From: David Jander <david@protonic.nl>
+To: David Lechner <dlechner@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, Jonathan Corbet
+ <corbet@lwn.net>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ devicetree@vger.kernel.org, linux-doc@vger.kernel.org, Nuno Sa
+ <nuno.sa@analog.com>, Jonathan Cameron <jic23@kernel.org>, Oleksij Rempel
+ <o.rempel@pengutronix.de>
+Subject: Re: [RFC PATCH 6/7] dt-bindings: motion: Add adi,tmc5240 bindings
+Message-ID: <20250303122253.26fec335@erd003.prtnl>
+In-Reply-To: <7b2a8d71-9d83-4d40-903b-ba7ef1c686f3@baylibre.com>
+References: <20250227162823.3585810-1-david@protonic.nl>
+	<20250227162823.3585810-7-david@protonic.nl>
+	<7b2a8d71-9d83-4d40-903b-ba7ef1c686f3@baylibre.com>
+Organization: Protonic Holland
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250303111910.GA24170@strace.io>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Check whether PTRACE_SET_SYSCALL_INFO semantics implemented in the
-kernel matches userspace expectations.
 
-Signed-off-by: Dmitry V. Levin <ldv@strace.io>
-Reviewed-by: Oleg Nesterov <oleg@redhat.com>
----
- tools/testing/selftests/ptrace/Makefile       |   2 +-
- .../selftests/ptrace/set_syscall_info.c       | 519 ++++++++++++++++++
- 2 files changed, 520 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/ptrace/set_syscall_info.c
+Dear David,
 
-diff --git a/tools/testing/selftests/ptrace/Makefile b/tools/testing/selftests/ptrace/Makefile
-index 1c631740a730..c5e0b76ba6ac 100644
---- a/tools/testing/selftests/ptrace/Makefile
-+++ b/tools/testing/selftests/ptrace/Makefile
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0-only
- CFLAGS += -std=c99 -pthread -Wall $(KHDR_INCLUDES)
- 
--TEST_GEN_PROGS := get_syscall_info peeksiginfo vmaccess get_set_sud
-+TEST_GEN_PROGS := get_syscall_info set_syscall_info peeksiginfo vmaccess get_set_sud
- 
- include ../lib.mk
-diff --git a/tools/testing/selftests/ptrace/set_syscall_info.c b/tools/testing/selftests/ptrace/set_syscall_info.c
-new file mode 100644
-index 000000000000..4198248ef874
---- /dev/null
-+++ b/tools/testing/selftests/ptrace/set_syscall_info.c
-@@ -0,0 +1,519 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Copyright (c) 2018-2025 Dmitry V. Levin <ldv@strace.io>
-+ * All rights reserved.
-+ *
-+ * Check whether PTRACE_SET_SYSCALL_INFO semantics implemented in the kernel
-+ * matches userspace expectations.
-+ */
-+
-+#include "../kselftest_harness.h"
-+#include <err.h>
-+#include <fcntl.h>
-+#include <signal.h>
-+#include <asm/unistd.h>
-+#include <linux/types.h>
-+#include <linux/ptrace.h>
-+
-+#if defined(_MIPS_SIM) && _MIPS_SIM == _MIPS_SIM_NABI32
-+/*
-+ * MIPS N32 is the only architecture where __kernel_ulong_t
-+ * does not match the bitness of syscall arguments.
-+ */
-+typedef unsigned long long kernel_ulong_t;
-+#else
-+typedef __kernel_ulong_t kernel_ulong_t;
-+#endif
-+
-+struct si_entry {
-+	int nr;
-+	kernel_ulong_t args[6];
-+};
-+struct si_exit {
-+	unsigned int is_error;
-+	int rval;
-+};
-+
-+static unsigned int ptrace_stop;
-+static pid_t tracee_pid;
-+
-+static int
-+kill_tracee(pid_t pid)
-+{
-+	if (!pid)
-+		return 0;
-+
-+	int saved_errno = errno;
-+
-+	int rc = kill(pid, SIGKILL);
-+
-+	errno = saved_errno;
-+	return rc;
-+}
-+
-+static long
-+sys_ptrace(int request, pid_t pid, unsigned long addr, unsigned long data)
-+{
-+	return syscall(__NR_ptrace, request, pid, addr, data);
-+}
-+
-+#define LOG_KILL_TRACEE(fmt, ...)				\
-+	do {							\
-+		kill_tracee(tracee_pid);			\
-+		TH_LOG("wait #%d: " fmt,			\
-+		       ptrace_stop, ##__VA_ARGS__);		\
-+	} while (0)
-+
-+static void
-+check_psi_entry(struct __test_metadata *_metadata,
-+		const struct ptrace_syscall_info *info,
-+		const struct si_entry *exp_entry,
-+		const char *text)
-+{
-+	unsigned int i;
-+	int exp_nr = exp_entry->nr;
-+#if defined __s390__ || defined __s390x__
-+	/* s390 is the only architecture that has 16-bit syscall numbers */
-+	exp_nr &= 0xffff;
-+#endif
-+
-+	ASSERT_EQ(PTRACE_SYSCALL_INFO_ENTRY, info->op) {
-+		LOG_KILL_TRACEE("%s: entry stop mismatch", text);
-+	}
-+	ASSERT_TRUE(info->arch) {
-+		LOG_KILL_TRACEE("%s: entry stop mismatch", text);
-+	}
-+	ASSERT_TRUE(info->instruction_pointer) {
-+		LOG_KILL_TRACEE("%s: entry stop mismatch", text);
-+	}
-+	ASSERT_TRUE(info->stack_pointer) {
-+		LOG_KILL_TRACEE("%s: entry stop mismatch", text);
-+	}
-+	ASSERT_EQ(exp_nr, info->entry.nr) {
-+		LOG_KILL_TRACEE("%s: syscall nr mismatch", text);
-+	}
-+	for (i = 0; i < ARRAY_SIZE(exp_entry->args); ++i) {
-+		ASSERT_EQ(exp_entry->args[i], info->entry.args[i]) {
-+			LOG_KILL_TRACEE("%s: syscall arg #%u mismatch",
-+					text, i);
-+		}
-+	}
-+}
-+
-+static void
-+check_psi_exit(struct __test_metadata *_metadata,
-+	       const struct ptrace_syscall_info *info,
-+	       const struct si_exit *exp_exit,
-+	       const char *text)
-+{
-+	ASSERT_EQ(PTRACE_SYSCALL_INFO_EXIT, info->op) {
-+		LOG_KILL_TRACEE("%s: exit stop mismatch", text);
-+	}
-+	ASSERT_TRUE(info->arch) {
-+		LOG_KILL_TRACEE("%s: exit stop mismatch", text);
-+	}
-+	ASSERT_TRUE(info->instruction_pointer) {
-+		LOG_KILL_TRACEE("%s: exit stop mismatch", text);
-+	}
-+	ASSERT_TRUE(info->stack_pointer) {
-+		LOG_KILL_TRACEE("%s: exit stop mismatch", text);
-+	}
-+	ASSERT_EQ(exp_exit->is_error, info->exit.is_error) {
-+		LOG_KILL_TRACEE("%s: exit stop mismatch", text);
-+	}
-+	ASSERT_EQ(exp_exit->rval, info->exit.rval) {
-+		LOG_KILL_TRACEE("%s: exit stop mismatch", text);
-+	}
-+}
-+
-+TEST(set_syscall_info)
-+{
-+	const pid_t tracer_pid = getpid();
-+	const kernel_ulong_t dummy[] = {
-+		(kernel_ulong_t) 0xdad0bef0bad0fed0ULL,
-+		(kernel_ulong_t) 0xdad1bef1bad1fed1ULL,
-+		(kernel_ulong_t) 0xdad2bef2bad2fed2ULL,
-+		(kernel_ulong_t) 0xdad3bef3bad3fed3ULL,
-+		(kernel_ulong_t) 0xdad4bef4bad4fed4ULL,
-+		(kernel_ulong_t) 0xdad5bef5bad5fed5ULL,
-+	};
-+	int splice_in[2], splice_out[2];
-+
-+	ASSERT_EQ(0, pipe(splice_in));
-+	ASSERT_EQ(0, pipe(splice_out));
-+	ASSERT_EQ(sizeof(dummy), write(splice_in[1], dummy, sizeof(dummy)));
-+
-+	const struct {
-+		struct si_entry entry[2];
-+		struct si_exit exit[2];
-+	} si[] = {
-+		/* change scno, keep non-error rval */
-+		{
-+			{
-+				{
-+					__NR_gettid,
-+					{
-+						dummy[0], dummy[1], dummy[2],
-+						dummy[3], dummy[4], dummy[5]
-+					}
-+				}, {
-+					__NR_getppid,
-+					{
-+						dummy[0], dummy[1], dummy[2],
-+						dummy[3], dummy[4], dummy[5]
-+					}
-+				}
-+			}, {
-+				{ 0, tracer_pid }, { 0, tracer_pid }
-+			}
-+		},
-+
-+		/* set scno to -1, keep error rval */
-+		{
-+			{
-+				{
-+					__NR_chdir,
-+					{
-+						(uintptr_t) ".",
-+						dummy[1], dummy[2],
-+						dummy[3], dummy[4], dummy[5]
-+					}
-+				}, {
-+					-1,
-+					{
-+						(uintptr_t) ".",
-+						dummy[1], dummy[2],
-+						dummy[3], dummy[4], dummy[5]
-+					}
-+				}
-+			}, {
-+				{ 1, -ENOSYS }, { 1, -ENOSYS }
-+			}
-+		},
-+
-+		/* keep scno, change non-error rval */
-+		{
-+			{
-+				{
-+					__NR_getppid,
-+					{
-+						dummy[0], dummy[1], dummy[2],
-+						dummy[3], dummy[4], dummy[5]
-+					}
-+				}, {
-+					__NR_getppid,
-+					{
-+						dummy[0], dummy[1], dummy[2],
-+						dummy[3], dummy[4], dummy[5]
-+					}
-+				}
-+			}, {
-+				{ 0, tracer_pid }, { 0, tracer_pid + 1 }
-+			}
-+		},
-+
-+		/* change arg1, keep non-error rval */
-+		{
-+			{
-+				{
-+					__NR_chdir,
-+					{
-+						(uintptr_t) "",
-+						dummy[1], dummy[2],
-+						dummy[3], dummy[4], dummy[5]
-+					}
-+				}, {
-+					__NR_chdir,
-+					{
-+						(uintptr_t) ".",
-+						dummy[1], dummy[2],
-+						dummy[3], dummy[4], dummy[5]
-+					}
-+				}
-+			}, {
-+				{ 0, 0 }, { 0, 0 }
-+			}
-+		},
-+
-+		/* set scno to -1, change error rval to non-error */
-+		{
-+			{
-+				{
-+					__NR_gettid,
-+					{
-+						dummy[0], dummy[1], dummy[2],
-+						dummy[3], dummy[4], dummy[5]
-+					}
-+				}, {
-+					-1,
-+					{
-+						dummy[0], dummy[1], dummy[2],
-+						dummy[3], dummy[4], dummy[5]
-+					}
-+				}
-+			}, {
-+				{ 1, -ENOSYS }, { 0, tracer_pid }
-+			}
-+		},
-+
-+		/* change scno, change non-error rval to error */
-+		{
-+			{
-+				{
-+					__NR_chdir,
-+					{
-+						dummy[0], dummy[1], dummy[2],
-+						dummy[3], dummy[4], dummy[5]
-+					}
-+				}, {
-+					__NR_getppid,
-+					{
-+						dummy[0], dummy[1], dummy[2],
-+						dummy[3], dummy[4], dummy[5]
-+					}
-+				}
-+			}, {
-+				{ 0, tracer_pid }, { 1, -EISDIR }
-+			}
-+		},
-+
-+		/* change scno and all args, change non-error rval */
-+		{
-+			{
-+				{
-+					__NR_gettid,
-+					{
-+						dummy[0], dummy[1], dummy[2],
-+						dummy[3], dummy[4], dummy[5]
-+					}
-+				}, {
-+					__NR_splice,
-+					{
-+						splice_in[0], 0, splice_out[1], 0,
-+						sizeof(dummy), SPLICE_F_NONBLOCK
-+					}
-+				}
-+			}, {
-+				{ 0, sizeof(dummy) }, { 0, sizeof(dummy) + 1 }
-+			}
-+		},
-+
-+		/* change arg1, no exit stop */
-+		{
-+			{
-+				{
-+					__NR_exit_group,
-+					{
-+						dummy[0], dummy[1], dummy[2],
-+						dummy[3], dummy[4], dummy[5]
-+					}
-+				}, {
-+					__NR_exit_group,
-+					{
-+						0, dummy[1], dummy[2],
-+						dummy[3], dummy[4], dummy[5]
-+					}
-+				}
-+			}, {
-+				{ 0, 0 }, { 0, 0 }
-+			}
-+		},
-+	};
-+
-+	long rc;
-+	unsigned int i;
-+
-+	tracee_pid = fork();
-+
-+	ASSERT_LE(0, tracee_pid) {
-+		TH_LOG("fork: %m");
-+	}
-+
-+	if (tracee_pid == 0) {
-+		/* get the pid before PTRACE_TRACEME */
-+		tracee_pid = getpid();
-+		ASSERT_EQ(0, sys_ptrace(PTRACE_TRACEME, 0, 0, 0)) {
-+			TH_LOG("PTRACE_TRACEME: %m");
-+		}
-+		ASSERT_EQ(0, kill(tracee_pid, SIGSTOP)) {
-+			/* cannot happen */
-+			TH_LOG("kill SIGSTOP: %m");
-+		}
-+		for (i = 0; i < ARRAY_SIZE(si); ++i) {
-+			rc = syscall(si[i].entry[0].nr,
-+				     si[i].entry[0].args[0],
-+				     si[i].entry[0].args[1],
-+				     si[i].entry[0].args[2],
-+				     si[i].entry[0].args[3],
-+				     si[i].entry[0].args[4],
-+				     si[i].entry[0].args[5]);
-+			if (si[i].exit[1].is_error) {
-+				if (rc != -1 || errno != -si[i].exit[1].rval)
-+					break;
-+			} else {
-+				if (rc != si[i].exit[1].rval)
-+					break;
-+			}
-+		}
-+		/*
-+		 * Something went wrong, but in this state tracee
-+		 * cannot reliably issue syscalls, so just crash.
-+		 */
-+		*(volatile unsigned char *) (uintptr_t) i = 42;
-+		/* unreachable */
-+		_exit(i + 1);
-+	}
-+
-+	for (ptrace_stop = 0; ; ++ptrace_stop) {
-+		struct ptrace_syscall_info info = {
-+			.op = 0xff	/* invalid PTRACE_SYSCALL_INFO_* op */
-+		};
-+		const size_t size = sizeof(info);
-+		const int expected_entry_size =
-+			(void *) &info.entry.args[6] - (void *) &info;
-+		const int expected_exit_size =
-+			(void *) (&info.exit.is_error + 1) -
-+			(void *) &info;
-+		int status;
-+
-+		ASSERT_EQ(tracee_pid, wait(&status)) {
-+			/* cannot happen */
-+			LOG_KILL_TRACEE("wait: %m");
-+		}
-+		if (WIFEXITED(status)) {
-+			tracee_pid = 0;	/* the tracee is no more */
-+			ASSERT_EQ(0, WEXITSTATUS(status)) {
-+				LOG_KILL_TRACEE("unexpected exit status %u",
-+						WEXITSTATUS(status));
-+			}
-+			break;
-+		}
-+		ASSERT_FALSE(WIFSIGNALED(status)) {
-+			tracee_pid = 0;	/* the tracee is no more */
-+			LOG_KILL_TRACEE("unexpected signal %u",
-+					WTERMSIG(status));
-+		}
-+		ASSERT_TRUE(WIFSTOPPED(status)) {
-+			/* cannot happen */
-+			LOG_KILL_TRACEE("unexpected wait status %#x", status);
-+		}
-+
-+		ASSERT_LT(ptrace_stop, ARRAY_SIZE(si) * 2) {
-+			LOG_KILL_TRACEE("ptrace stop overflow");
-+		}
-+
-+		switch (WSTOPSIG(status)) {
-+		case SIGSTOP:
-+			ASSERT_EQ(0, ptrace_stop) {
-+				LOG_KILL_TRACEE("unexpected signal stop");
-+			}
-+			ASSERT_EQ(0, sys_ptrace(PTRACE_SETOPTIONS, tracee_pid,
-+						0, PTRACE_O_TRACESYSGOOD)) {
-+				LOG_KILL_TRACEE("PTRACE_SETOPTIONS: %m");
-+			}
-+			break;
-+
-+		case SIGTRAP | 0x80:
-+			ASSERT_LT(0, ptrace_stop) {
-+				LOG_KILL_TRACEE("unexpected syscall stop");
-+			}
-+			ASSERT_LT(0, (rc = sys_ptrace(PTRACE_GET_SYSCALL_INFO,
-+						      tracee_pid, size,
-+						      (uintptr_t) &info))) {
-+				LOG_KILL_TRACEE("PTRACE_GET_SYSCALL_INFO #1: %m");
-+			}
-+			if (ptrace_stop & 1) {
-+				/* entering syscall */
-+				const struct si_entry *exp_entry =
-+					&si[ptrace_stop / 2].entry[0];
-+				const struct si_entry *set_entry =
-+					&si[ptrace_stop / 2].entry[1];
-+
-+				/* check ptrace_syscall_info before the changes */
-+				ASSERT_EQ(expected_entry_size, rc) {
-+					LOG_KILL_TRACEE("PTRACE_GET_SYSCALL_INFO #1"
-+							": entry stop mismatch");
-+				}
-+				check_psi_entry(_metadata, &info, exp_entry,
-+						"PTRACE_GET_SYSCALL_INFO #1");
-+
-+				/* apply the changes */
-+				info.entry.nr = set_entry->nr;
-+				for (i = 0; i < ARRAY_SIZE(set_entry->args); ++i)
-+					info.entry.args[i] = set_entry->args[i];
-+				ASSERT_EQ(0, sys_ptrace(PTRACE_SET_SYSCALL_INFO,
-+							tracee_pid, size,
-+							(uintptr_t) &info)) {
-+					LOG_KILL_TRACEE("PTRACE_SET_SYSCALL_INFO: %m");
-+				}
-+
-+				/* check ptrace_syscall_info after the changes */
-+				memset(&info, 0, sizeof(info));
-+				info.op = 0xff;
-+				ASSERT_LT(0, (rc = sys_ptrace(PTRACE_GET_SYSCALL_INFO,
-+							      tracee_pid, size,
-+							      (uintptr_t) &info))) {
-+					LOG_KILL_TRACEE("PTRACE_GET_SYSCALL_INFO: %m");
-+				}
-+				ASSERT_EQ(expected_entry_size, rc) {
-+					LOG_KILL_TRACEE("PTRACE_GET_SYSCALL_INFO #2"
-+							": entry stop mismatch");
-+				}
-+				check_psi_entry(_metadata, &info, set_entry,
-+						"PTRACE_GET_SYSCALL_INFO #2");
-+			} else {
-+				/* exiting syscall */
-+				const struct si_exit *exp_exit =
-+					&si[ptrace_stop / 2 - 1].exit[0];
-+				const struct si_exit *set_exit =
-+					&si[ptrace_stop / 2 - 1].exit[1];
-+
-+				/* check ptrace_syscall_info before the changes */
-+				ASSERT_EQ(expected_exit_size, rc) {
-+					LOG_KILL_TRACEE("PTRACE_GET_SYSCALL_INFO #1"
-+							": exit stop mismatch");
-+				}
-+				check_psi_exit(_metadata, &info, exp_exit,
-+						"PTRACE_GET_SYSCALL_INFO #1");
-+
-+				/* apply the changes */
-+				info.exit.is_error = set_exit->is_error;
-+				info.exit.rval = set_exit->rval;
-+				ASSERT_EQ(0, sys_ptrace(PTRACE_SET_SYSCALL_INFO,
-+							tracee_pid, size,
-+							(uintptr_t) &info)) {
-+					LOG_KILL_TRACEE("PTRACE_SET_SYSCALL_INFO: %m");
-+				}
-+
-+				/* check ptrace_syscall_info after the changes */
-+				memset(&info, 0, sizeof(info));
-+				info.op = 0xff;
-+				ASSERT_LT(0, (rc = sys_ptrace(PTRACE_GET_SYSCALL_INFO,
-+							      tracee_pid, size,
-+							      (uintptr_t) &info))) {
-+					LOG_KILL_TRACEE("PTRACE_GET_SYSCALL_INFO #2: %m");
-+				}
-+				ASSERT_EQ(expected_exit_size, rc) {
-+					LOG_KILL_TRACEE("PTRACE_GET_SYSCALL_INFO #2"
-+							": exit stop mismatch");
-+				}
-+				check_psi_exit(_metadata, &info, set_exit,
-+						"PTRACE_GET_SYSCALL_INFO #2");
-+			}
-+			break;
-+
-+		default:
-+			LOG_KILL_TRACEE("unexpected stop signal %u",
-+					WSTOPSIG(status));
-+			abort();
-+		}
-+
-+		ASSERT_EQ(0, sys_ptrace(PTRACE_SYSCALL, tracee_pid, 0, 0)) {
-+			LOG_KILL_TRACEE("PTRACE_SYSCALL: %m");
-+		}
-+	}
-+
-+	ASSERT_EQ(ptrace_stop, ARRAY_SIZE(si) * 2);
-+}
-+
-+TEST_HARNESS_MAIN
+On Fri, 28 Feb 2025 16:38:51 -0600
+David Lechner <dlechner@baylibre.com> wrote:
+
+> On 2/27/25 10:28 AM, David Jander wrote:
+> > Add device-tree bindings for Analog Devices TMC5240 stepper controllers.
+> > 
+> > Signed-off-by: David Jander <david@protonic.nl>
+> > ---
+> >  .../bindings/motion/adi,tmc5240.yaml          | 60 +++++++++++++++++++
+> >  1 file changed, 60 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/motion/adi,tmc5240.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/motion/adi,tmc5240.yaml b/Documentation/devicetree/bindings/motion/adi,tmc5240.yaml
+> > new file mode 100644
+> > index 000000000000..3364f9dfccb1
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/motion/adi,tmc5240.yaml
+> > @@ -0,0 +1,60 @@
+> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/motion/adi,tmc5240.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Analog Devices TMC5240 Stepper Motor controller
+> > +
+> > +maintainers:
+> > +  - David Jander <david@protonic>
+> > +
+> > +description: |
+> > +   Stepper motor controller with motion engine and SPI interface.  
+> 
+> Please include a link to the datasheet.
+
+Will do.
+
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - adi,tmc5240
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  interrupts:
+> > +    maxItems: 1  
+> 
+> I assume that this is the overvoltage output (OV pin). Would be nice to have
+> a description here saying that. There are also NAO and DIAG0/1 output pins, so
+> it's a bit ambiguous otherwise.
+
+This is the DIAG0 output pin which on this chip has a dual function as either
+a STEP output or an interrupt output. The pin name is a bit misleading, but it
+is the "interrupt" function that is meant here. The datasheet documents all
+the different events that can trigger this interrupt.
+I will add a description to clarify this.
+
+> > +
+> > +  enable-supply:
+> > +    description: Optional external enable supply to control SLEEPn pin. Can
+> > +      be shared between several controllers.
+> > +  
+> 
+> This doesn't look like a supply, but krzk already discussed that. But there
+> should be actual power supplies: vs-supply, vdd1v8-supply, vcc-io-supply. And
+> a reference voltage supply: iref-supply
+
+I have added vs-supply and vcc-io-supply to the binding. These are the only
+supply pins that can be connected to the outside world or otherwise be of
+concern to the software.
+
+vdd1v8-supply is an internal power rail that must not have a connection to the
+outside of the chip (besides an external filtering capacitor) and also doesn't
+have any bearing to the software at all. It cannot be disabled, adjusted or
+anything, so I don't think it needs to be mentioned.
+
+IREF isn't a supply pin. It is merely a pin for connecting an external
+reference resistor that is used internally for current scaling and it too has
+no interaction with the software in any way.
+
+The resistor connected to the IREF pin (Rref) OTOH does have an implication to
+the software, as it sets the full-range current of the output stage.
+
+How should we specify that? Is it adequate to add an optional DT property
+"rref" or "rref-ohm" with an int32 value in Ohm? The default value if
+unspecified is 12000 Ohm.
+
+> And if there are any pins would make sense to connect to a gpio, we can add
+> those even if the driver doesn't use it currently.
+> 
+> > +  clocks:
+> > +    maxItems: 1
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - interrupts
+> > +  - clocks
+> > +
+> > +allOf:
+> > +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> > +  - $ref: /schemas/motion/common.yaml#  
+> 
+> If we need to know about what is connected to the output of a motor controller
+> I would expect it to be done with child node for each output. That way each
+> output can be unique, if needed. Basically, similar to iio/adc.yaml is used to
+> provide common properties for channel@ child nodes on iio devices.
+
+This controller chip only has one single output for one stepper motor (4
+wires). While technically you could connect something else to those 4 wires, I
+don't think it is the scope of LMC to support that. The chip itself isn't
+designed for that purpose and it would clearly go far beyond the intended
+purpose of this device.
+
+That being said, your suggestion of supporting child nodes may actually be a
+good idea. Right now, we specify the type of motor (basically nominal- and hold
+current settings) in user-space and set the IRUN/IHOLD parameters from
+user-space via the sysfs attributes interface. It might make sense to have a DT
+child node to specify this, although in our current application this is not
+very practical, since there are many motor controllers on one board, and it is
+configurable in software (runtime) which motor is connected to which output.
+
+But I can imagine a situation where it may be fixed and thus can be described
+in the DT of a board.
+
+Then again I don't know if it would be over-complicating things with something
+like this:
+
+	motor-controller@0 {
+		...
+		motor@0 {
+			compatible = "nanotec,st4118s1006";
+			irun-ma = <1800>;
+			ihold-ma = <270>;
+		};
+	};
+
+where we'd possibly have a stepper-motors.c file with a lot of structs and
+matching tables for the different motor types.... sounds like overkill to me,
+but maybe not?
+
+> > +
+> > +unevaluatedProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    spi {
+> > +        #address-cells = <1>;
+> > +        #size-cells = <0>;
+> > +
+> > +        motor@0 {  
+> 
+> motor-controller@ or actuator-controller@
+> 
+> The chip is the controller/driver, it is not a motor.
+
+Make sense. Will change this.
+
+> > +            compatible = "adi,tmc5240";
+> > +            reg = <0>;
+> > +            interrupts-extended = <&gpiok 7 0>;
+> > +            clocks = <&clock_tmc5240>;
+> > +            enable-supply = <&stpsleepn>;
+> > +            spi-max-frequency = <1000000>;
+> > +        };
+> > +    };
+
+Best regards,
+
 -- 
-ldv
+David Jander
 
