@@ -1,497 +1,152 @@
-Return-Path: <linux-kernel+bounces-542643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A972A4CBDB
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:17:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 885B8A4CBCE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:16:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DA9416D79F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:17:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3F101887C29
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24A722417C9;
-	Mon,  3 Mar 2025 19:13:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A982233127;
+	Mon,  3 Mar 2025 19:13:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="acvOqFZc"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ky22kxvM"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5121923F292
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 19:13:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02F31231CB9
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 19:13:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741029231; cv=none; b=E0RxzRWZZ3CUvOEf9XPpbPTWhds9bS+2hfOJLPCepcwvYn6ev4c2sGyntIbAAW2ErFgI5KUzsdPFhgVDEBVwqKti9j6+38OHTUxbNLoMmQSfoCa4bOwWtm/1SmD05NvXRV1LOjHiXVeZa09wzgzrkZi04c1M3ANHT6GICdgStas=
+	t=1741029224; cv=none; b=axIrAjyhORcI+xLMIQXr1P/i+ZdtbKV5QxeMiWrzF7kOVErfKNs8bRAQy63P4jkYMkxxgDFMbaIuWvFNdbbQvybeEcKk4gpTrj7uMCvM9m6P7eVUjs/CeDiSlhlYaD60UPyXYayVNoEqjDNnm5EbXaV5Jz0KMLDWXlYAz6SF7SM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741029231; c=relaxed/simple;
-	bh=H9xXJijcjJX318yERCK1TsiT23xcEaMjSzq4fDSQ95M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HuAhURHVvgrYazCyFQj5Ph9Cahx2/TxTI2LeXAHa4teIkZwQ1W+uDRyPgCEw0uH99yuK1+8L7eeLuWtccLyb2z40AMwHR9obLb9GLW6gCowOh4ocG1CV6VgmLQrHZC/bVuF/qyOjHjMIIxh/ex6MkpWCCscQ7h1kUI0wy3q6GRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=acvOqFZc; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741029227;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=irvX8HaK6hJSzkI8/UVseCVdZFZ7gxSmTvIl9v8M8ao=;
-	b=acvOqFZcd4xUfSx53oYKTTGPfKQSBN6+UBzlEwyq1Lok7yrYZUcw8LAjuak9ekQYyfeDRE
-	aF11Fv61xis+gpNN/QnhNk3QN9nnXT+kcU5OsaN1HLotI1l3YK+C4GGNUcxY218KW9U2rx
-	8yM25EtLA5uSlHMW5AUNtFzChkL1grU=
-Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com
- [209.85.128.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-248-mZeXjO--Ph2NVbVGHvqq0A-1; Mon, 03 Mar 2025 14:13:46 -0500
-X-MC-Unique: mZeXjO--Ph2NVbVGHvqq0A-1
-X-Mimecast-MFC-AGG-ID: mZeXjO--Ph2NVbVGHvqq0A_1741029225
-Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-6fb7ac4dbf9so58236897b3.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 11:13:46 -0800 (PST)
+	s=arc-20240116; t=1741029224; c=relaxed/simple;
+	bh=d7VB6lS08b3S7Fc7XUxikf6mYgCNwIZOeiIwVhAxxN8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=juQn0oLL83EwRQqFdfNtUPttWBjToA+lJRexRMnl6f0EYjv7HRBQqnIipp2wSm8JC4E9TvX7AkWkzoo+n6WoWRIWJ/nzHH8JmeFi3QS0qw6cm9Brw21Rmmv/WpgJ0Bn6iMJu7BW/pXmVBHItEcQKFy+VJFvfSTA4eKONZnx87N0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ky22kxvM; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-474ef1149f3so9277141cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 11:13:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1741029222; x=1741634022; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=j0vFdDjI8jMTYO147WtZzJpNLnd44hxb//pKlqmAOrw=;
+        b=ky22kxvMSlwLGaP8Ra4BZg7presuQJlxTMmMmOnwlrSROUnzJGzSs8A/jLQojPwKKX
+         6nfDjJXyyAB7cpol6QwPf0EYQJnypfm6zDcb0Yw5y7QFT4weL3uIQKCP0eaAaoFvfZWh
+         E7ayTzUcY5JW0cyzJaALnoKLntSbfTXb1Ky1o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741029225; x=1741634025;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=irvX8HaK6hJSzkI8/UVseCVdZFZ7gxSmTvIl9v8M8ao=;
-        b=fLhc0MAovVNKC03dyTnS/uAC0Lof5iXAsBfaPLIl+iIY9Cj5BxAfLCc8a6gNGNxTLL
-         OVZvvQOIC7JNHLLenzDQFh4Q2jUuWvbd3gUHcCzBvM/dK9yPo3v+nZnGIYEv7BpP908h
-         6GXH6adIWGIZ6vC6LI43WR/JFjaE3RJH+/KcoW5EewWt1tsRdW6252OREiFKqoeMpT+Q
-         ASeA55LeFRqPsUHT4kYccermfyutAHJepXnMpMAHwMOA1vMw41eQ5/rSxxHRT89336on
-         F7xTF0OS7P6Br+eFLxlldgtNPmn9Q44Zz22WdCW+IQPtf+3lT2rq/gB4HIM95mbnqX8m
-         axrw==
-X-Gm-Message-State: AOJu0YzmnRJ0vr29KcmjK4f6VWQzfh2tfv3nBfwprofoFitua3qtBq9G
-	YLDWhAjjj40TIZN8gGEEt2iSeYTFX6Z1kQQEdtnwxi+zndmjvBMj1EOfn8pquyoL/+0DMA3dySg
-	OmKj49Hhq98aA2/Imed/6qsNEu39davMFxHunbGUjFm7YqzObMYYwdG8+ZQs+/pnT2XvIthbTxV
-	vm1nIunHjKo70Y48uRNmL2g8u2d2S+V2Y4Fj4O
-X-Gm-Gg: ASbGncv+7uxR5/omHospufq51UwoV4E5AVQanWbVpQ4OpfuR8cdqOXAjn1lYN6SC1Ov
-	Y7d+tElMuAxQliOuXisnz14jq2SzPI39HkYisHJz5Ig5bl2LDumlBo5fFrVFrFI03qAWt1jmCiq
-	rmPFr3ve8Wm80=
-X-Received: by 2002:a05:690c:3390:b0:6f9:aeee:8f26 with SMTP id 00721157ae682-6fd49e42491mr209886067b3.0.1741029225521;
-        Mon, 03 Mar 2025 11:13:45 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH753F+WZZhkeZ2s8P17zVoSn9ceOxsNxKxezeAy3J2LeiCTKX11mEwaL5ILDda7wt6sOW5FGo1VXCJgGsqgk4=
-X-Received: by 2002:a05:690c:3390:b0:6f9:aeee:8f26 with SMTP id
- 00721157ae682-6fd49e42491mr209885407b3.0.1741029225116; Mon, 03 Mar 2025
- 11:13:45 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741029222; x=1741634022;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=j0vFdDjI8jMTYO147WtZzJpNLnd44hxb//pKlqmAOrw=;
+        b=pOQDqlMMVsDx35TxEIcvpvi7xH2paXV7yt7muZKEcAk7EqEJCn9rFvehdY2TItpBqw
+         fqc/vF7FWqdaj6fe5WuFE2MKKfIKP0thr0K3f1Doyl2Elx+1cHJFlVQNYhbIljHrskjD
+         U6yKX9tKhp9+Kw+gHHRw9Xs3gRZhwV2dAARGLPyNjSdUCoI8rJ6cKewml6pLt+1zDFQZ
+         w0Q7UbIJz0y5sWPUqRAA2j+2N7wjbD+2R5O/v82c1sddUzDKYpR3lXIPfbG0+5KZCkci
+         A6FkMFk9gCjuKrMoz4HBcsARrGeJz1ZesulKrXGbFCjYZiX2AmiKEfix5pUuvbr0taLj
+         Js2g==
+X-Forwarded-Encrypted: i=1; AJvYcCUjBNW0jhg+ayXEin5jGmXhH2JlZrvWMkRho//GMbTxF2FYne359KfBxXE4SjS4aLw/TmIilopyt1Hm8ls=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9J3IWzK/Lvn84Vh6hUElW06WNFEW/ZcH36Aofuyk7dF4TFZpX
+	K0LVnSc2UiwS8ZyLpL1jx2sBXip65XmR9/Ot0lV69+CV4izmSDU7iOskhotavA==
+X-Gm-Gg: ASbGncvYWWuCIbxYzKF3vDpTahZKif+K++/ypxWN8nsvCAoxM7WbFa8kx21c4RhLWEr
+	TarBNKEnajtiHWnrdq8EuRmfCtrhXMd0nGaOwpUSef/dn/+y3P0i8oZlavlbOdADOmi48TrzGy0
+	3nCJ5ANxq6sP9ylftpiOA3qGY10PfHdoPhhUj0ocirq82opdditiZLntq+MeUhZ6+9QBqXVALq2
+	ceca536zbICJCoG7En51T7Cb1rrMqBm+HNgQUkiCif/gNZYuWrNN7ijKK0XaMhQNHpALc8MOPbi
+	2mYXW8FFO9vcpYDtfYieJUC7jXCgCyAksbB3aSYI/TBwo8RhrWOlIN5q14ah15bMqwiIExroNH0
+	uXkRrLBYD5rMJ7kzYZqjpuw==
+X-Google-Smtp-Source: AGHT+IEBTiLnYhOkJlOJ1keQzIaRvT4aWZ1fued+f3xJt8OT24kf1hQHzklYhUaZzgQ92YhyZ5gZrw==
+X-Received: by 2002:a05:622a:1987:b0:467:6563:8b1d with SMTP id d75a77b69052e-474fbc5c607mr4338731cf.6.1741029221862;
+        Mon, 03 Mar 2025 11:13:41 -0800 (PST)
+Received: from denia.c.googlers.com (15.237.245.35.bc.googleusercontent.com. [35.245.237.15])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-474e0f1e0c1sm19745661cf.47.2025.03.03.11.13.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 11:13:41 -0800 (PST)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Subject: [PATCH v5 0/5] media: uvcvideo: Implement Granular Power Saving
+Date: Mon, 03 Mar 2025 19:13:37 +0000
+Message-Id: <20250303-uvc-granpower-ng-v5-0-a3dfbe29fe91@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250211003028.213461-1-npache@redhat.com> <20250211003028.213461-8-npache@redhat.com>
- <0319c841-cde9-42f6-a230-39b050659f1a@arm.com>
-In-Reply-To: <0319c841-cde9-42f6-a230-39b050659f1a@arm.com>
-From: Nico Pache <npache@redhat.com>
-Date: Mon, 3 Mar 2025 12:13:19 -0700
-X-Gm-Features: AQ5f1JqKujvB-JH3nb6Lk4MFEu1ezwB4pLSMxRWU2UB4S4VCAAnK7zfjkGySMcA
-Message-ID: <CAA1CXcCej0ER2wPAdM4arw9JsZ7ZkS2e+hJRENSP0=q=pp8mJQ@mail.gmail.com>
-Subject: Re: [RFC v2 7/9] khugepaged: add mTHP support
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, anshuman.khandual@arm.com, catalin.marinas@arm.com, 
-	cl@gentwo.org, vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com, 
-	dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org, jack@suse.cz, 
-	srivatsa@csail.mit.edu, haowenchao22@gmail.com, hughd@google.com, 
-	aneesh.kumar@kernel.org, yang@os.amperecomputing.com, peterx@redhat.com, 
-	ioworker0@gmail.com, wangkefeng.wang@huawei.com, ziy@nvidia.com, 
-	jglisse@google.com, surenb@google.com, vishal.moola@gmail.com, 
-	zokeefe@google.com, zhengqi.arch@bytedance.com, jhubbard@nvidia.com, 
-	21cnbao@gmail.com, willy@infradead.org, kirill.shutemov@linux.intel.com, 
-	david@redhat.com, aarcange@redhat.com, raquini@redhat.com, dev.jain@arm.com, 
-	sunnanyong@huawei.com, usamaarif642@gmail.com, audra@redhat.com, 
-	akpm@linux-foundation.org, rostedt@goodmis.org, 
-	mathieu.desnoyers@efficios.com, tiwai@suse.de
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGH/xWcC/33PTWrDMBAF4KsErasyGv047qr3KFlY0tjWIlaQG
+ yXB+O6RDYFQRJdvYL43s7CZUqCZfR0WliiHOcSpBP1xYG7spoF48CUzBFRCoOHX7PiQuukSb5T
+ 4NHAwrTjqznjVKFbWLon6cN/Jn1PJY5h/Y3rsDVls03+wLDhwIwXaHo1Wrft2Y4rncD1/xjSwz
+ cv4MjQgyIqBxbDUK6s1NdY0FUO+G7U7ZDEkevCNBaf9sWKoN6P6i9oMcq2lFgyov8a6rk/lFNo
+ ffwEAAA==
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Hans de Goede <hdegoede@redhat.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, 
+ Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.14.1
 
-On Wed, Feb 19, 2025 at 9:52=E2=80=AFAM Ryan Roberts <ryan.roberts@arm.com>=
- wrote:
->
-> On 11/02/2025 00:30, Nico Pache wrote:
-> > Introduce the ability for khugepaged to collapse to different mTHP size=
-s.
-> > While scanning a PMD range for potential collapse candidates, keep trac=
-k
-> > of pages in MIN_MTHP_ORDER chunks via a bitmap. Each bit represents a
-> > utilized region of order MIN_MTHP_ORDER ptes. We remove the restriction
-> > of max_ptes_none during the scan phase so we dont bailout early and mis=
-s
-> > potential mTHP candidates.
-> >
-> > After the scan is complete we will perform binary recursion on the
-> > bitmap to determine which mTHP size would be most efficient to collapse
-> > to. max_ptes_none will be scaled by the attempted collapse order to
-> > determine how full a THP must be to be eligible.
-> >
-> > If a mTHP collapse is attempted, but contains swapped out, or shared
-> > pages, we dont perform the collapse.
-> >
-> > Signed-off-by: Nico Pache <npache@redhat.com>
-> > ---
-> >  mm/khugepaged.c | 122 ++++++++++++++++++++++++++++++++----------------
-> >  1 file changed, 83 insertions(+), 39 deletions(-)
-> >
-> > diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> > index c8048d9ec7fb..cd310989725b 100644
-> > --- a/mm/khugepaged.c
-> > +++ b/mm/khugepaged.c
-> > @@ -1127,13 +1127,14 @@ static int collapse_huge_page(struct mm_struct =
-*mm, unsigned long address,
-> >  {
-> >       LIST_HEAD(compound_pagelist);
-> >       pmd_t *pmd, _pmd;
-> > -     pte_t *pte;
-> > +     pte_t *pte, mthp_pte;
-> >       pgtable_t pgtable;
-> >       struct folio *folio;
-> >       spinlock_t *pmd_ptl, *pte_ptl;
-> >       int result =3D SCAN_FAIL;
-> >       struct vm_area_struct *vma;
-> >       struct mmu_notifier_range range;
-> > +     unsigned long _address =3D address + offset * PAGE_SIZE;
-> >       VM_BUG_ON(address & ~HPAGE_PMD_MASK);
-> >
-> >       /*
-> > @@ -1148,12 +1149,13 @@ static int collapse_huge_page(struct mm_struct =
-*mm, unsigned long address,
-> >               *mmap_locked =3D false;
-> >       }
-> >
-> > -     result =3D alloc_charge_folio(&folio, mm, cc, HPAGE_PMD_ORDER);
-> > +     result =3D alloc_charge_folio(&folio, mm, cc, order);
-> >       if (result !=3D SCAN_SUCCEED)
-> >               goto out_nolock;
-> >
-> >       mmap_read_lock(mm);
-> > -     result =3D hugepage_vma_revalidate(mm, address, true, &vma, cc, H=
-PAGE_PMD_ORDER);
-> > +     *mmap_locked =3D true;
-> > +     result =3D hugepage_vma_revalidate(mm, address, true, &vma, cc, o=
-rder);
-> >       if (result !=3D SCAN_SUCCEED) {
-> >               mmap_read_unlock(mm);
-> >               goto out_nolock;
-> > @@ -1171,13 +1173,14 @@ static int collapse_huge_page(struct mm_struct =
-*mm, unsigned long address,
-> >                * released when it fails. So we jump out_nolock directly=
- in
-> >                * that case.  Continuing to collapse causes inconsistenc=
-y.
-> >                */
-> > -             result =3D __collapse_huge_page_swapin(mm, vma, address, =
-pmd,
-> > -                             referenced, HPAGE_PMD_ORDER);
-> > +             result =3D __collapse_huge_page_swapin(mm, vma, _address,=
- pmd,
-> > +                             referenced, order);
-> >               if (result !=3D SCAN_SUCCEED)
-> >                       goto out_nolock;
-> >       }
-> >
-> >       mmap_read_unlock(mm);
-> > +     *mmap_locked =3D false;
-> >       /*
-> >        * Prevent all access to pagetables with the exception of
-> >        * gup_fast later handled by the ptep_clear_flush and the VM
-> > @@ -1187,7 +1190,7 @@ static int collapse_huge_page(struct mm_struct *m=
-m, unsigned long address,
-> >        * mmap_lock.
-> >        */
-> >       mmap_write_lock(mm);
-> > -     result =3D hugepage_vma_revalidate(mm, address, true, &vma, cc, H=
-PAGE_PMD_ORDER);
-> > +     result =3D hugepage_vma_revalidate(mm, address, true, &vma, cc, o=
-rder);
-> >       if (result !=3D SCAN_SUCCEED)
-> >               goto out_up_write;
-> >       /* check if the pmd is still valid */
-> > @@ -1198,11 +1201,12 @@ static int collapse_huge_page(struct mm_struct =
-*mm, unsigned long address,
-> >       vma_start_write(vma);
-> >       anon_vma_lock_write(vma->anon_vma);
-> >
-> > -     mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, mm, address,
-> > -                             address + HPAGE_PMD_SIZE);
-> > +     mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, mm, _address=
-,
-> > +                             _address + (PAGE_SIZE << order));
-> >       mmu_notifier_invalidate_range_start(&range);
-> >
-> >       pmd_ptl =3D pmd_lock(mm, pmd); /* probably unnecessary */
-> > +
-> >       /*
-> >        * This removes any huge TLB entry from the CPU so we won't allow
-> >        * huge and small TLB entries for the same virtual address to
-> > @@ -1216,10 +1220,10 @@ static int collapse_huge_page(struct mm_struct =
-*mm, unsigned long address,
-> >       mmu_notifier_invalidate_range_end(&range);
-> >       tlb_remove_table_sync_one();
-> >
-> > -     pte =3D pte_offset_map_lock(mm, &_pmd, address, &pte_ptl);
-> > +     pte =3D pte_offset_map_lock(mm, &_pmd, _address, &pte_ptl);
-> >       if (pte) {
-> > -             result =3D __collapse_huge_page_isolate(vma, address, pte=
-, cc,
-> > -                                     &compound_pagelist, HPAGE_PMD_ORD=
-ER);
-> > +             result =3D __collapse_huge_page_isolate(vma, _address, pt=
-e, cc,
-> > +                                     &compound_pagelist, order);
-> >               spin_unlock(pte_ptl);
-> >       } else {
-> >               result =3D SCAN_PMD_NULL;
-> > @@ -1248,8 +1252,8 @@ static int collapse_huge_page(struct mm_struct *m=
-m, unsigned long address,
-> >       anon_vma_unlock_write(vma->anon_vma);
-> >
-> >       result =3D __collapse_huge_page_copy(pte, folio, pmd, _pmd,
-> > -                                        vma, address, pte_ptl,
-> > -                                        &compound_pagelist, HPAGE_PMD_=
-ORDER);
-> > +                                        vma, _address, pte_ptl,
-> > +                                        &compound_pagelist, order);
-> >       pte_unmap(pte);
-> >       if (unlikely(result !=3D SCAN_SUCCEED))
-> >               goto out_up_write;
-> > @@ -1260,20 +1264,37 @@ static int collapse_huge_page(struct mm_struct =
-*mm, unsigned long address,
-> >        * write.
-> >        */
-> >       __folio_mark_uptodate(folio);
-> > -     pgtable =3D pmd_pgtable(_pmd);
-> > -
-> > -     _pmd =3D mk_huge_pmd(&folio->page, vma->vm_page_prot);
-> > -     _pmd =3D maybe_pmd_mkwrite(pmd_mkdirty(_pmd), vma);
-> > -
-> > -     spin_lock(pmd_ptl);
-> > -     BUG_ON(!pmd_none(*pmd));
-> > -     folio_add_new_anon_rmap(folio, vma, address, RMAP_EXCLUSIVE);
-> > -     folio_add_lru_vma(folio, vma);
-> > -     pgtable_trans_huge_deposit(mm, pmd, pgtable);
-> > -     set_pmd_at(mm, address, pmd, _pmd);
-> > -     update_mmu_cache_pmd(vma, address, pmd);
-> > -     deferred_split_folio(folio, false);
-> > -     spin_unlock(pmd_ptl);
-> > +     if (order =3D=3D HPAGE_PMD_ORDER) {
-> > +             pgtable =3D pmd_pgtable(_pmd);
-> > +             _pmd =3D mk_huge_pmd(&folio->page, vma->vm_page_prot);
-> > +             _pmd =3D maybe_pmd_mkwrite(pmd_mkdirty(_pmd), vma);
-> > +
-> > +             spin_lock(pmd_ptl);
-> > +             BUG_ON(!pmd_none(*pmd));
-> > +             folio_add_new_anon_rmap(folio, vma, _address, RMAP_EXCLUS=
-IVE);
-> > +             folio_add_lru_vma(folio, vma);
-> > +             pgtable_trans_huge_deposit(mm, pmd, pgtable);
-> > +             set_pmd_at(mm, address, pmd, _pmd);
-> > +             update_mmu_cache_pmd(vma, address, pmd);
-> > +             deferred_split_folio(folio, false);
-> > +             spin_unlock(pmd_ptl);
-> > +     } else { //mTHP
-> > +             mthp_pte =3D mk_pte(&folio->page, vma->vm_page_prot);
-> > +             mthp_pte =3D maybe_mkwrite(pte_mkdirty(mthp_pte), vma);
-> > +
-> > +             spin_lock(pmd_ptl);
-> > +             folio_ref_add(folio, (1 << order) - 1);
-> > +             folio_add_new_anon_rmap(folio, vma, _address, RMAP_EXCLUS=
-IVE);
-> > +             folio_add_lru_vma(folio, vma);
-> > +             spin_lock(pte_ptl);
-> > +             set_ptes(vma->vm_mm, _address, pte, mthp_pte, (1 << order=
-));
-> > +             update_mmu_cache_range(NULL, vma, _address, pte, (1 << or=
-der));
-> > +             spin_unlock(pte_ptl);
-> > +             smp_wmb(); /* make pte visible before pmd */
-> > +             pmd_populate(mm, pmd, pmd_pgtable(_pmd));
-> > +             deferred_split_folio(folio, false);
-> > +             spin_unlock(pmd_ptl);
->
-> I've only stared at this briefly, but it feels like there might be some b=
-ugs:
+Right now we power-up the device when a user open() the device and we
+power it off when the last user close() the first video node.
 
-Sorry for the delayed response, I needed to catch up on some other
-work and wanted to make sure I looked into your questions before
-answering.
->
->  - Why are you taking the pmd ptl? and calling pmd_populate? Surely the p=
-te
-> table already exists and is attached to the pmd? So we are only need to u=
-pdate
-> the pte entries here? Or perhaps the whole pmd was previously isolated?
+This behaviour affects the power consumption of the device is multiple
+use cases, such as:
+- Polling the privacy gpio
+- udev probing the device
 
-The previous locking behavior is kept; however, because we are not
-installing a NEW pmd we need to repopulate the old PMD (like we do in
-the fail case). The PMD entry was cleared to avoid GUP-fast races.
->
->  - I think some arches use a single PTL for all levels of the pgtable? So=
- in
-> this case it's probably not a good idea to nest the pmd and pte spin lock=
-?
+This patchset introduces a more granular power saving behaviour where
+the camera is only awaken when needed. It is compatible with
+asynchronous controls.
 
-Thanks for pointing that out, I corrected it by making sure they dont nest!
+While developing this patchset, two bugs were found. The patchset has
+been developed so these fixes can be taken independently.
 
->
->  - Given the pte PTL is dropped then reacquired, is there any way that th=
-e ptes
-> could have changed under us? Is any revalidation required? Perhaps not if=
- pte
-> table was removed from the PMD.
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+---
+Changes in v5:
+- Improve "media: uvcvideo: Make power management granular" commit
+  message.
+- Link to v4: https://lore.kernel.org/r/20250226-uvc-granpower-ng-v4-0-3ec9be906048@chromium.org
 
-Correct, I believe we dont even need to take the PTL because of all
-the write locks we took-- but for now i'm trying to keep the locking
-changes to a minimum. We can focus on locking optimizations later.
+Changes in v4:
+- CodeStyle
+- Create uvc_pm_ functions
+- Link to v3: https://lore.kernel.org/r/20250206-uvc-granpower-ng-v3-0-32d0d7b0c5d8@chromium.org
 
->
->  - I would have guessed the memory ordering you want from smp_wmb() would
-> already be handled by the spin_unlock()?
+Changes in v3:
+- Fix build error on sh4.
+- Link to v2: https://lore.kernel.org/r/20250203-uvc-granpower-ng-v2-0-bef4b55e7b67@chromium.org
 
-Yes I think that is correct, I noticed other callers doing this, but
-on a second pass those are all lockless, so in this case we dont need
-it.
+Changes in v2:
+- Add missing semicolon.
+- Rebase on top of media-committers/next
+- Link to v1: https://lore.kernel.org/r/20241126-uvc-granpower-ng-v1-0-6312bf26549c@chromium.org
 
->
->
-> > +     }
-> >
-> >       folio =3D NULL;
-> >
-> > @@ -1353,21 +1374,27 @@ static int khugepaged_scan_pmd(struct mm_struct=
- *mm,
-> >  {
-> >       pmd_t *pmd;
-> >       pte_t *pte, *_pte;
-> > +     int i;
-> >       int result =3D SCAN_FAIL, referenced =3D 0;
-> >       int none_or_zero =3D 0, shared =3D 0;
-> >       struct page *page =3D NULL;
-> >       struct folio *folio =3D NULL;
-> >       unsigned long _address;
-> > +     unsigned long enabled_orders;
-> >       spinlock_t *ptl;
-> >       int node =3D NUMA_NO_NODE, unmapped =3D 0;
-> >       bool writable =3D false;
-> > -
-> > +     int chunk_none_count =3D 0;
-> > +     int scaled_none =3D khugepaged_max_ptes_none >> (HPAGE_PMD_ORDER =
-- MIN_MTHP_ORDER);
-> > +     unsigned long tva_flags =3D cc->is_khugepaged ? TVA_ENFORCE_SYSFS=
- : 0;
-> >       VM_BUG_ON(address & ~HPAGE_PMD_MASK);
-> >
-> >       result =3D find_pmd_or_thp_or_none(mm, address, &pmd);
-> >       if (result !=3D SCAN_SUCCEED)
-> >               goto out;
-> >
-> > +     bitmap_zero(cc->mthp_bitmap, MAX_MTHP_BITMAP_SIZE);
-> > +     bitmap_zero(cc->mthp_bitmap_temp, MAX_MTHP_BITMAP_SIZE);
-> >       memset(cc->node_load, 0, sizeof(cc->node_load));
-> >       nodes_clear(cc->alloc_nmask);
-> >       pte =3D pte_offset_map_lock(mm, pmd, address, &ptl);
-> > @@ -1376,8 +1403,12 @@ static int khugepaged_scan_pmd(struct mm_struct =
-*mm,
-> >               goto out;
-> >       }
-> >
-> > -     for (_address =3D address, _pte =3D pte; _pte < pte + HPAGE_PMD_N=
-R;
-> > -          _pte++, _address +=3D PAGE_SIZE) {
-> > +     for (i =3D 0; i < HPAGE_PMD_NR; i++) {
-> > +             if (i % MIN_MTHP_NR =3D=3D 0)
-> > +                     chunk_none_count =3D 0;
-> > +
-> > +             _pte =3D pte + i;
-> > +             _address =3D address + i * PAGE_SIZE;
-> >               pte_t pteval =3D ptep_get(_pte);
-> >               if (is_swap_pte(pteval)) {
-> >                       ++unmapped;
-> > @@ -1400,16 +1431,14 @@ static int khugepaged_scan_pmd(struct mm_struct=
- *mm,
-> >                       }
-> >               }
-> >               if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
-> > +                     ++chunk_none_count;
-> >                       ++none_or_zero;
-> > -                     if (!userfaultfd_armed(vma) &&
-> > -                         (!cc->is_khugepaged ||
-> > -                          none_or_zero <=3D khugepaged_max_ptes_none))=
- {
-> > -                             continue;
-> > -                     } else {
-> > +                     if (userfaultfd_armed(vma)) {
-> >                               result =3D SCAN_EXCEED_NONE_PTE;
-> >                               count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
-> >                               goto out_unmap;
-> >                       }
-> > +                     continue;
-> >               }
-> >               if (pte_uffd_wp(pteval)) {
-> >                       /*
-> > @@ -1500,7 +1529,16 @@ static int khugepaged_scan_pmd(struct mm_struct =
-*mm,
-> >                    folio_test_referenced(folio) || mmu_notifier_test_yo=
-ung(vma->vm_mm,
-> >                                                                    addr=
-ess)))
-> >                       referenced++;
-> > +
-> > +             /*
-> > +              * we are reading in MIN_MTHP_NR page chunks. if there ar=
-e no empty
-> > +              * pages keep track of it in the bitmap for mTHP collapsi=
-ng.
-> > +              */
-> > +             if (chunk_none_count < scaled_none &&
-> > +                     (i + 1) % MIN_MTHP_NR =3D=3D 0)
-> > +                     bitmap_set(cc->mthp_bitmap, i / MIN_MTHP_NR, 1);
-> >       }
-> > +
-> >       if (!writable) {
-> >               result =3D SCAN_PAGE_RO;
-> >       } else if (cc->is_khugepaged &&
-> > @@ -1513,10 +1551,14 @@ static int khugepaged_scan_pmd(struct mm_struct=
- *mm,
-> >  out_unmap:
-> >       pte_unmap_unlock(pte, ptl);
-> >       if (result =3D=3D SCAN_SUCCEED) {
-> > -             result =3D collapse_huge_page(mm, address, referenced,
-> > -                                         unmapped, cc, mmap_locked, HP=
-AGE_PMD_ORDER, 0);
-> > -             /* collapse_huge_page will return with the mmap_lock rele=
-ased */
-> > -             *mmap_locked =3D false;
-> > +             enabled_orders =3D thp_vma_allowable_orders(vma, vma->vm_=
-flags,
-> > +                     tva_flags, THP_ORDERS_ALL_ANON);
-> > +             result =3D khugepaged_scan_bitmap(mm, address, referenced=
-, unmapped, cc,
-> > +                            mmap_locked, enabled_orders);
-> > +             if (result > 0)
-> > +                     result =3D SCAN_SUCCEED;
-> > +             else
-> > +                     result =3D SCAN_FAIL;
-> >       }
-> >  out:
-> >       trace_mm_khugepaged_scan_pmd(mm, &folio->page, writable, referenc=
-ed,
-> > @@ -2476,11 +2518,13 @@ static int khugepaged_collapse_single_pmd(unsig=
-ned long addr, struct mm_struct *
-> >                       fput(file);
-> >                       if (result =3D=3D SCAN_PTE_MAPPED_HUGEPAGE) {
-> >                               mmap_read_lock(mm);
-> > +                             *mmap_locked =3D true;
-> >                               if (khugepaged_test_exit_or_disable(mm))
-> >                                       goto end;
-> >                               result =3D collapse_pte_mapped_thp(mm, ad=
-dr,
-> >                                                                !cc->is_=
-khugepaged);
-> >                               mmap_read_unlock(mm);
-> > +                             *mmap_locked =3D false;
-> >                       }
-> >               } else {
-> >                       result =3D khugepaged_scan_pmd(mm, vma, addr,
->
+---
+Ricardo Ribalda (5):
+      media: uvcvideo: Keep streaming state in the file handle
+      media: uvcvideo: Create uvc_pm_(get|put) functions
+      media: uvcvideo: Increase/decrease the PM counter per IOCTL
+      media: uvcvideo: Make power management granular
+      media: uvcvideo: Do not turn on the camera for some ioctls
+
+ drivers/media/usb/uvc/uvc_ctrl.c | 13 +++++-
+ drivers/media/usb/uvc/uvc_v4l2.c | 99 ++++++++++++++++++++++++++++++----------
+ drivers/media/usb/uvc/uvcvideo.h |  6 +++
+ 3 files changed, 92 insertions(+), 26 deletions(-)
+---
+base-commit: d98e9213a768a3cc3a99f5e1abe09ad3baff2104
+change-id: 20241126-uvc-granpower-ng-069185a6d474
+
+Best regards,
+-- 
+Ricardo Ribalda <ribalda@chromium.org>
 
 
