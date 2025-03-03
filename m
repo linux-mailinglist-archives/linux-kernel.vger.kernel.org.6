@@ -1,109 +1,121 @@
-Return-Path: <linux-kernel+bounces-545284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44AE7A4EB34
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:21:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 926D1A4E86E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:22:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A528188ADE0
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:16:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFA9317779D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:15:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B10824EAA4;
-	Tue,  4 Mar 2025 18:00:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3D6320C039;
+	Tue,  4 Mar 2025 16:53:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="eFnYccCO"
-Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="KT0LYQir"
+Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B816327C172
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C573920AF99
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:53:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.116
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741111227; cv=pass; b=O+J2705O6NZi5on7JW1buBH6LZL06rvag3hMUSpCun9wFD6MqrN9WlkSFRBIlq+gEa/AGL61mmYUZWhtNycbuvNiDQ/DgthrbgxfvIA+h5yttWnJzyvQJc2lGeWf7yPff9ygDjA4WSRUjW5Yu3lPWMX+dDeqgSd5xeaBMUCjekA=
+	t=1741107238; cv=pass; b=HWmbp/kw52S0+YYmCioHSWIaafl1FwORKd3i7Oa4Z1y1gD5LWg4G8s0bBDIyhYEEXUbCD/rl31w1J8FEzpA8DQIO4KSUQ319OLTch8uy2Z440Sem5TB/50EeuaPYXyg1RSHzoCsWkFtIwwU9eRtCwhwT3LL2MiYdH+hplfZrVSM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741111227; c=relaxed/simple;
-	bh=EoEz1sVPNLIdzQ3hYSNoXZm9t9D20YKTd0JlTlLNOK0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ComicbyQsieilpyoBUllWD3lC/MO/EjFirrGaSSigGVcRXjzAC7W7X2YnXAYQhg+nDBHq7b5zkdFCvsbmUCvCY8o23U+PT2PhapXm8U1wwOigEoxPJcQxor7Wa9q2qhHHllw0K7kSoVAfkioRxho4/nJDdmU8oFze4cxVXV5n9I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=eFnYccCO; arc=none smtp.client-ip=150.107.74.76; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; arc=pass smtp.client-ip=160.75.25.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+	s=arc-20240116; t=1741107238; c=relaxed/simple;
+	bh=QhcA4whS6Un5CmsdrWExBnC2H3eBPdvl0YoTWezDvh8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kPZne8thSSu39c5LIzdpGFLqMh00U9GsRV282SVLkGHtn+tcEwbyA6pN7kynyW88asGTrJPoTwWYTlapZg8F/U/QEfS2/cUtLHWzVc5YzeIN/SPVnYszAN6YxeCi+woWqSIf9E17MDATF3Lz9ykAjy046PprQgLY/d48CkEUti4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=KT0LYQir; arc=none smtp.client-ip=209.85.210.53; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; arc=pass smtp.client-ip=160.75.25.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id CF21C40D977F
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 21:00:22 +0300 (+03)
+	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id 030F6408B649
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:53:55 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key, unprotected) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.a=rsa-sha256 header.s=201702 header.b=eFnYccCO
+	dkim=pass (2048-bit key, unprotected) header.d=bytedance.com header.i=@bytedance.com header.a=rsa-sha256 header.s=google header.b=KT0LYQir
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dvS2jRkzFxrg
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:52:36 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6fyC3KttzG0w9
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:40:03 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 3299E4272E; Tue,  4 Mar 2025 17:52:32 +0300 (+03)
+	id 5E82B4273E; Tue,  4 Mar 2025 18:39:51 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=eFnYccCO
-X-Envelope-From: <linux-kernel+bounces-541091-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=KT0LYQir
+X-Envelope-From: <linux-kernel+bounces-541092-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=eFnYccCO
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=KT0LYQir
 Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id 3B93A424ED
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:27:06 +0300 (+03)
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id 147562DCE5
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:27:06 +0300 (+03)
+	by le2 (Postfix) with ESMTP id 876F44215A
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:28:46 +0300 (+03)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by fgw2.itu.edu.tr (Postfix) with SMTP id 430F42DCEC
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:28:46 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5E081891812
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 07:27:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54CF416E457
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 07:28:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 258F91EB1B3;
-	Mon,  3 Mar 2025 07:26:50 +0000 (UTC)
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F711EBA0D;
+	Mon,  3 Mar 2025 07:28:04 +0000 (UTC)
+Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC9531EA7E0;
-	Mon,  3 Mar 2025 07:26:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F9E1E9B3A
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 07:27:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740986807; cv=none; b=I8FEG/f8MGQpckYgF9084b6A70tIKRF+UC9hSTkH2yhnGIUmSVkYLpwNB8WUiOIzryYK0PzD+0xQTsU0p096N5Egp1WpmfQMXZ/GvN0oHEMoW8pP4QAWHayYLqnYI46KoG3h6kMexMuQ8KsXJy7kGPByAMv4J4AIMdNNjYobW0s=
+	t=1740986881; cv=none; b=pA5BTVABVfJAsrrHzXoySmQL0AWqgb97WNYfpHqh7udIBHDJF3E3Jyn8END7BKLAFJ9cz+NN0iX8+uEUVsHF+7Rrm5f60x/lOTGz3Wzh1f4oeFke6H7lr8tzQ6umjTpAUbbcwJKSt90d7MgEbT/QLrcEMm1j5H8g6LQaWW6bmug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740986807; c=relaxed/simple;
-	bh=EoEz1sVPNLIdzQ3hYSNoXZm9t9D20YKTd0JlTlLNOK0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=O5qDswy1b4/M0f+4IZi5cQKXv/dHMKl4TguzKySK7gCum+G6uXfI/tHw9sOBmDc0IwzWbdwXnNuBO54hsgEcuVnITGf2r+beA7xqAZLZ3Jhaud3ka3qHXOCrFb2zMPdgRHpcajZ5bxsyhQ0k5hEXtdDQUdZWDU/vR5sRuObNkao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=eFnYccCO; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1740986801;
-	bh=JYtmQK7z3nhSyi0RYaAxJIUtW1aTo8IqbYRNufPPnFM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=eFnYccCO7sP4FAvmvadwYkJhNVDQ0y0CDZ/ntq0mSKZhLsOSUDnrziTjyzwRjEmu+
-	 MGX5fEWaQN0qj4XykMm1r5G6/LoV6Op1a6f295F+bZl2iuGpj5rSH+Bn2EQ16k4Mk/
-	 gKlvBY8aVFwc4yMYxmBZL5Gn3qVp0i/+YcWcLI1VTLOSHJA48AnJW9BFZqMstae6xl
-	 gIRO2/Eg6NvPt2L2ubdpO0HsA6L4y/0wZV+jBMtVCC3h8wv1YR+h7y93+T4Ac03znK
-	 TV4mD+XfkF4s8oldCLfGHA4DhXE7WZUCSAHidBzBf3kNRsnLx2dDfjA3cZeWScRA97
-	 5AIJ6kvzcN+cQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Z5r3P1lGKz4wcm;
-	Mon,  3 Mar 2025 18:26:41 +1100 (AEDT)
-Date: Mon, 3 Mar 2025 18:26:39 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi
- <lpieralisi@kernel.org>, Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?=
- <kw@linux.com>
-Cc: Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kwilczynski@kernel.org>, Shradha
- Todi <shradha.t@samsung.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the pci tree
-Message-ID: <20250303182639.5e920622@canb.auug.org.au>
+	s=arc-20240116; t=1740986881; c=relaxed/simple;
+	bh=QhcA4whS6Un5CmsdrWExBnC2H3eBPdvl0YoTWezDvh8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hHi1G/uJbFGlhKpGrRC5rf0jawZ5tIXHBmILkNAF8UpgDJVr2f5mFBn6c+CtyBcKytm2YdVxkkMMQwrAnr7UJmSvsttgDXmtl6ynvCl4Eb6SxMP3pZPWSBWGGgscddc+xSl5ZXQNtDA2lI04oXb5mmABMgFmRtHEMl4U/ED+rXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=KT0LYQir; arc=none smtp.client-ip=209.85.210.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-72a00f1f755so25329a34.2
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Mar 2025 23:27:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1740986879; x=1741591679; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NqQf+xJ+QQAO3X5FgRqwqBs+4VjeomCIEb383qkkc70=;
+        b=KT0LYQir+x5yMcUz5o/a3jgrED+KaNUHPnNifVJGaVuG3ez5HU/nogXThg10pMchEs
+         0qx7Hs1GKpFfcs/u2Xfc+VorDJj/KNFgi8SLTe9d8eC5cRFqRPYUcVRs1lEL+OYW/U4u
+         Afb7KVsDaBHB3vQMIjOMVGOzMZBc8jKkaZ0eJ4nfARAdSzxKbFq19/iCdKvOSXdTjSAw
+         jDNl5VkCkHw+bUUC6+BjQ/NUy48AuU3w/hmg9lKnzbzUYt0R3c1Lk8fKXNfKB3hw5zAR
+         5Bc71jF/s885LoTX2S7PHwICHHcPecbJuudKANQ2sqz+srlYWFK9PyYK9CT+LtExFpJh
+         zEAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740986879; x=1741591679;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NqQf+xJ+QQAO3X5FgRqwqBs+4VjeomCIEb383qkkc70=;
+        b=T9/WXREwso1Zzq4FHvIRb3RimqDNNsE7Pe0+NUbui8yTZzcy5IN9fH83B6vDRT19Hz
+         CMGvPd+WiJsp2k+9pp5ITwibymgzmvxe4+3YQb1fxw2ITdsPL832nPaAUDTsP9Hg/YDN
+         dvNwhdDaMPVv2/SLFX2n6tXv+6oRaPCsbm0pKlVc6GodlQGekKxAL/zhKpCslwPSQjar
+         R1+9ePGls6dBi5BM8m8BGTPb1BzXLYm185uIt4/f41JlTEPSppxeWf7L1nbYLY1FVetm
+         GvhVFNeqOZplvX+M+bSPLZfIwCgmGKGsCtNhBlRYtx4vHD+y+XeN9C2vfFGsRW41OLQa
+         hl4g==
+X-Forwarded-Encrypted: i=1; AJvYcCWqNuXlL6pNwKCOenNUiN4C1l4lIWMI0KmcaNJ+rrjj9f2PkQ5bCUU0fi0n0Ba54agr5BrxTOh7cv0guok=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlpPWIolVPQsgZr8d89L6vgMOTx/hP9CXflsyUjkS1vBzbP06r
+	s0csL5nqESv+KALktypfG3r0X+Qjkk4Ibo3Ac/iDZXCScmNCr9wPtbJ8vgcd2C83ooHTgHU9P28
+	Dd5fPW8+KF4dlcSaYmEq0D1ajSH5UdQurBXg2Eg==
+X-Gm-Gg: ASbGncswFD9W+X9J9n8zkcpDLOf/S+BdkFqVGj7y+j4/i7/Kf1B/FTLVNNzGpcX4J0D
+	zJTTmYbarjPSkxSwSIWZ60nSZqnOnxZDOR9bGA8U9ceftNw/jyJ0xQOIljl9uFb3pK0bIPPSR48
+	3/x5uNMJhwxCGAGUT26/eJD4APx6ky
+X-Google-Smtp-Source: AGHT+IGdGihCdXsHvPy1HB+Hi01lhvTlT2V3S/bXdVPc4cd4/qzcouwXquivhfRUZCtj9S8/0Uw/BjeV/TL6JLeNSuQ=
+X-Received: by 2002:a05:6830:348d:b0:727:3380:66ce with SMTP id
+ 46e09a7af769-728b830562fmr6634750a34.25.1740986878930; Sun, 02 Mar 2025
+ 23:27:58 -0800 (PST)
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -111,52 +123,142 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/kV2jVTek5sdVoFJKnR6Yt71";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+References: <20250201110607.34766-1-cuiyunhui@bytedance.com>
+ <CAEEQ3w=uYad7UAedSU4M_L277v=RQGWHpJQwOW-p7W6=hcijsQ@mail.gmail.com>
+ <CAHVXubhW9b6fw8ZvHtn7zmyRSUVt-3JjmFbE-_L42wZ9W6=vKA@mail.gmail.com>
+ <CAEEQ3wmAxF=PkRt_pKFZE5-r9w1SMY7YQtco2mCyE+vus7vufg@mail.gmail.com> <CAHVXubiHhDgC4=T7xCxK9hoCG7R2KZ46LRPmS8rgYuT7EiQDcg@mail.gmail.com>
+In-Reply-To: <CAHVXubiHhDgC4=T7xCxK9hoCG7R2KZ46LRPmS8rgYuT7EiQDcg@mail.gmail.com>
+From: yunhui cui <cuiyunhui@bytedance.com>
+Date: Mon, 3 Mar 2025 15:27:48 +0800
+X-Gm-Features: AQ5f1JrsGJklPaO7yuMRDKV0ZqC70eeIlZ0wPBsVlz4-JWSVixlDQ5gxzrmW-PQ
+Message-ID: <CAEEQ3wk9MWBG_neU5Ez9if9UcSsv9Q-EMm0gA2vjt8527rUujQ@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH] riscv: print hartid on bringup
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: apatel@ventanamicro.com, atishp@rivosinc.com, paul.walmsley@sifive.com, 
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, samuel.holland@sifive.com, 
+	jassisinghbrar@gmail.com, takakura@valinux.co.jp, 
+	valentina.fernandezalanis@microchip.com, ruanjinjie@huawei.com, 
+	charlie@rivosinc.com, conor.dooley@microchip.com, haibo1.xu@intel.com, 
+	andybnac@gmail.com, ke.zhao@shingroup.cn, tglx@linutronix.de, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6dvS2jRkzFxrg
+X-ITU-Libra-ESVA-ID: 4Z6fyC3KttzG0w9
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741715897.1952@TCxitHBBsbHPChlaoMvCaA
+X-ITU-Libra-ESVA-Watermark: 1741711928.93637@4InF4Ug52A/LDANdb5FQZw
 X-ITU-MailScanner-SpamCheck: not spam
 
---Sig_/kV2jVTek5sdVoFJKnR6Yt71
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Alex,
 
-Hi all,
+On Fri, Feb 28, 2025 at 4:19=E2=80=AFPM Alexandre Ghiti <alexghiti@rivosinc=
+.com> wrote:
+>
+> Hi Yunhui,
+>
+> On Fri, Feb 28, 2025 at 7:41=E2=80=AFAM yunhui cui <cuiyunhui@bytedance.c=
+om> wrote:
+> >
+> > Hi Alex,
+> >
+> > On Wed, Feb 26, 2025 at 10:58=E2=80=AFPM Alexandre Ghiti <alexghiti@riv=
+osinc.com> wrote:
+> > >
+> > > Hi Yunhui,
+> > >
+> > > On Thu, Feb 20, 2025 at 1:54=E2=80=AFPM yunhui cui <cuiyunhui@bytedan=
+ce.com> wrote:
+> > > >
+> > > > Hi All,
+> > > >
+> > > > Gentle ping. Any comments on this patch?
+> > > >
+> > > > On Sat, Feb 1, 2025 at 7:06=E2=80=AFPM Yunhui Cui <cuiyunhui@byteda=
+nce.com> wrote:
+> > > > >
+> > > > > Firmware randomly releases cores, so CPU numbers don't linearly m=
+ap
+> > > > > to hartids. When the system has an exception, we care more about =
+hartids.
+> > > > >
+> > > > > Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+> > > > > ---
+> > > > >  arch/riscv/kernel/smp.c     | 2 ++
+> > > > >  arch/riscv/kernel/smpboot.c | 4 ++++
+> > > > >  2 files changed, 6 insertions(+)
+> > > > >
+> > > > > diff --git a/arch/riscv/kernel/smp.c b/arch/riscv/kernel/smp.c
+> > > > > index d58b5e751286..e650dec44817 100644
+> > > > > --- a/arch/riscv/kernel/smp.c
+> > > > > +++ b/arch/riscv/kernel/smp.c
+> > > > > @@ -48,6 +48,8 @@ EXPORT_SYMBOL_GPL(__cpuid_to_hartid_map);
+> > > > >  void __init smp_setup_processor_id(void)
+> > > > >  {
+> > > > >         cpuid_to_hartid_map(0) =3D boot_cpu_hartid;
+> > > > > +
+> > > > > +       pr_info("Booting Linux on hartid %lu\n", boot_cpu_hartid)=
+;
+> > > > >  }
+> > > > >
+> > > > >  static DEFINE_PER_CPU_READ_MOSTLY(int, ipi_dummy_dev);
+> > > > > diff --git a/arch/riscv/kernel/smpboot.c b/arch/riscv/kernel/smpb=
+oot.c
+> > > > > index e36d20205bd7..beba0efb00b9 100644
+> > > > > --- a/arch/riscv/kernel/smpboot.c
+> > > > > +++ b/arch/riscv/kernel/smpboot.c
+> > > > > @@ -231,6 +231,10 @@ asmlinkage __visible void smp_callin(void)
+> > > > >         riscv_ipi_enable();
+> > > > >
+> > > > >         numa_add_cpu(curr_cpuid);
+> > > > > +
+> > > > > +       pr_info("CPU%u: Booted secondary hartid %lu\n", curr_cpui=
+d,
+> > > > > +               cpuid_to_hartid_map(curr_cpuid));
+> > > > > +
+> > > > >         set_cpu_online(curr_cpuid, true);
+> > > > >
+> > > > >         /*
+> > > > > --
+> > > > > 2.39.2
+> > > > >
+> > > >
+> > > > Thanks,
+> > > > Yunhui
+> > >
+> > > IIRC that's a debug feature when you can't reach userspace and use
+> > > cpuinfo, so what about using pr_debug() instead?
+> >
+> > Using pr_debug needs enabling #define DEBUG in
+> > arch/riscv/kernel/smpboot.c and adding loglevel=3D8 to cmdline, not
+> > convenient.
+>
+> You can also use a kernel command line parameter to enable a
+> pr_debug() statement
+> https://www.kernel.org/doc/html/latest/admin-guide/dynamic-debug-howto.ht=
+ml#debug-messages-during-boot-process
 
-After merging the pci tree, today's linux-next build (htmldocs) produced
-this warning:
+Umm, it works. I'll update v2.
 
-Documentation/ABI/testing/debugfs-dwc-pcie:15: WARNING: Block quote ends wi=
-thout a blank line; unexpected unindent. [docutils]
+>
+> Alex
+>
+> > Can't always cat /proc/cpuinfo before running in user
+> > mode.
+> > It's true that pr_info prints a large amount of information in the
+> > startup logs, especially when there are many CPU cores.
+> >
+> > Do you have a better solution?
+> >
+> >
+> > > Thanks,
+> > >
+> > > Alex
+> >
+> > Thanks,
+> > Yunhui
 
-Introduced by commit
-
-  8562ae832769 ("PCI: dwc: Add debugfs based Error Injection support for DW=
-C")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/kV2jVTek5sdVoFJKnR6Yt71
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfFWa8ACgkQAVBC80lX
-0Gyvxwf+IUgj1fFhKvX4Y94ZR3BUXvqn0nfmHRRT5lY8Nq6wnjhFwsrSK0GQ0E1R
-S9M210O2YP1AiEmhU79ye0i5hmfuRWa3CVfss5JCwugis7/4Fztdlr+aI65Ta6Ru
-0b7C497h5KXP60Zrxtp07wSQV9Px9eVnTuZYoS3xWDovD7GDk2Raz5eCYFw7aqcX
-RRwoYiF0tm7TKy/+5FVX0DnhKAzgcuEg7ePKhAkWq6D4qY5RSsAGKbTyxcSwQ5fH
-oKMywYYPJgkloXFhtlwBbYhso/qNxhKKBdSbhTN7YuJN0enRBBUTJwSZG0svOgIi
-NSXHrSzu2h64LqzG5I78HtMoUozoww==
-=s/dP
------END PGP SIGNATURE-----
-
---Sig_/kV2jVTek5sdVoFJKnR6Yt71--
+Thanks,
+Yunhui
 
 
