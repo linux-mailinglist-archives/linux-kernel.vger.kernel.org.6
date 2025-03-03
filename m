@@ -1,111 +1,127 @@
-Return-Path: <linux-kernel+bounces-544512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64579A4E23D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:05:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3CA8A4E2A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:15:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16D6C3A314F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:52:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02CE119C4218
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:08:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1980727C149;
-	Tue,  4 Mar 2025 14:50:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFD8D20DD4C;
+	Tue,  4 Mar 2025 15:03:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AWWw2ljQ"
-Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Ev0Dv9xg"
+Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F0C20A5EB
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:50:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E5CA207A08
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741099841; cv=fail; b=bCjqgxiWCo0u+kxG7kEmqsx6TK6FJzpsSVnb5wgYwdd0T88QgNEbkgmDozg3TaOSTAJFlu9vUH/hypRSgMYmMgSa3Ff3QeVOhEwqM12ox5OjzN+s+BBShzIpE3bGG/SP36aAXy7W4GyO209u93Hr4XM1KQIhpJElLbuIxEtqIPY=
+	t=1741100587; cv=pass; b=OKw+B9dKdC/N43/OHelypZwShcKnlJMKRRNcX5aLKJlZQ3Ju6W8CENvyD1aLs8paK49nOcHcoOG6eLyxauLYJlaHdSIQc2WH6giN/pj5hNpALYUgzO6H6qw/2yDZP8SrMNPKjZ/yfx+j06zRobAQ+G48ZhQzdHluDaAtVkXXnW4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741099841; c=relaxed/simple;
-	bh=KnNHqHujTr4Q0GxlaELiFS7wRZS3JhquBuOBmHcIfCU=;
+	s=arc-20240116; t=1741100587; c=relaxed/simple;
+	bh=Str9/Z4T7boxdmYNKfUCQAYMERdj9MmqoKnoOftbpzQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PjjCFksgPOjyEITpDPxLs3oWKwHO4/O7rAco/qQqdDTdWzUg0kzRLQPDHl3ASZwoppFSgdmYvbk88TZHAZADMFSFEwWr2yhkz7PY/4Kvn2akTAI6UmbbT9fXa4G40UfgElqNTRWJHxFO0sbdy3JvsmKusEFBtDWGNGjidWkxm08=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AWWw2ljQ reason="signature verification failed"; arc=none smtp.client-ip=192.198.163.16; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; arc=fail smtp.client-ip=160.75.25.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	 In-Reply-To:Content-Type; b=RX6pcGquUyNqOdyRs4/wHktXE01CoYzq5CFeds9fU0FG5YpXXpgFTkCvBeNF3VR8DB/hqq7mC06S4LPstbLne9P8nPYSSHq8bzsT+IlXHZzf/W3tcftRGv9nBd2B7x5Gk9Moouf4OULbUrb3uPQov0KCqciy+rgcZlfObUBNRjE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Ev0Dv9xg; arc=none smtp.client-ip=209.85.208.42; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; arc=pass smtp.client-ip=160.75.25.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id 34D3140CF12A
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:50:38 +0300 (+03)
+	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id B4E7D40D570D
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:03:03 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
+Authentication-Results: lesvatest1.cc.itu.edu.tr;
+	dkim=pass (2048-bit key, unprotected) header.d=tuxon.dev header.i=@tuxon.dev header.a=rsa-sha256 header.s=google header.b=Ev0Dv9xg
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dJt4d47zFwKl
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:26:06 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6f522Z4czFy8D
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:00:54 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id C3FC442729; Tue,  4 Mar 2025 17:25:56 +0300 (+03)
+	id D4F684272A; Tue,  4 Mar 2025 18:00:48 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AWWw2ljQ
-X-Envelope-From: <linux-kernel+bounces-541153-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Ev0Dv9xg
+X-Envelope-From: <linux-kernel+bounces-541157-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AWWw2ljQ
-Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id 1111B4277E
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:30:37 +0300 (+03)
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id A319B2DCFE
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:30:36 +0300 (+03)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Ev0Dv9xg
+Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
+	by le2 (Postfix) with ESMTP id 487EA42322
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:29:36 +0300 (+03)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by fgw1.itu.edu.tr (Postfix) with SMTP id 25DC43064C16
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:29:36 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D4123A9169
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 08:27:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E031F1892C33
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 08:29:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B28DF1EFF81;
-	Mon,  3 Mar 2025 08:27:22 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB7E71EFF8D;
+	Mon,  3 Mar 2025 08:28:48 +0000 (UTC)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC9C81EB192;
-	Mon,  3 Mar 2025 08:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E072F1EF0AB
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 08:28:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740990440; cv=none; b=ksjeSJFTqZFNgHIaGiH+2nqTk+Tk2d9Zivw6fbCa6/HVmUxXQo5jhc/PKBhqcxoDhVOD+ejP0Knz9FAb0v0xA5sVwnRmy9K899/NNfccKrH0ZkN26bGYvyCAiwBthdlFR3N1AdkJxlJoVNg5i1q12WEYNNtr1XjRO2wBIHgckMs=
+	t=1740990525; cv=none; b=h2yucTcDoMzjoUGXChJe20MjkpB6+quwHqOb7sRzqEslg6tYQOPB0lLpDkutmRMuP5s2r+fOXmqGRE1Lrv1/iwNdUZMFl3zW0wMNtYksjxYuwKY6X3k3GKsXZKMw9AS4YY9OJ+caQGBGooLRM14n4Jo+oESRVgKOGxI2iXCvzEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740990440; c=relaxed/simple;
-	bh=gfkLZLX0yooK4MMPMKN+Ae9vAFIEBayZf/3aAJEh/Xc=;
+	s=arc-20240116; t=1740990525; c=relaxed/simple;
+	bh=Str9/Z4T7boxdmYNKfUCQAYMERdj9MmqoKnoOftbpzQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YkbUYwmE7YKMBfTgFELPfXQUQ2myLiCQbZhXPTs+HVihnpeUMTbXzsLhEhWWeXo4MnxHExbLfbJ0FU4dLRu6RaOtlWbLAA0S0CHqDB+Z/f7m+R+z+hPYq/vRj52dIuhExDHXpsj2TyzDh9SiLxA1ObKqOJSvOCG8YpH5vxCObL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AWWw2ljQ; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740990438; x=1772526438;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=gfkLZLX0yooK4MMPMKN+Ae9vAFIEBayZf/3aAJEh/Xc=;
-  b=AWWw2ljQGSHaLKiuV4dEamox3kXMKYex7ULDn4B89hyn5brtnkXtpUSE
-   yQaFDhmPV4RRmpPCxiCnsd5+KnqFdWIphi4E1rBscaelDk7+Y/hh6HQP+
-   5fghrQoDY4JabduN1aA+C3cMKDPDAw3Kvrt0qmSg2Vidu7StUbdzldCGE
-   WwuxZNAHYvu6OrDeVGciY3jhWuzqoaL9XwZBU8WKNlMr1NUvXr22EgooH
-   tL3aqWcsVQH6gQR+Ip9cL9zKQEnkoh0coKh2AFd8o7Syfm4CsOg3pHv11
-   jthDL8gvx50vZYb+kRj3s6vy3lVXYDBsBA8++9PA+GLOj+5Pi7gymab2N
-   Q==;
-X-CSE-ConnectionGUID: sRSWvC2kSWu6vvn2cdgZgA==
-X-CSE-MsgGUID: LTN6fn5lSiSIJSX2/h6rdA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="29442383"
-X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="29442383"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 00:27:17 -0800
-X-CSE-ConnectionGUID: VbCv2Ah+RvqqRPOSiOzT+A==
-X-CSE-MsgGUID: 8hCEqOGWQzW9ywrFdbgxhA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="117963136"
-Received: from unknown (HELO [10.237.72.199]) ([10.237.72.199])
-  by orviesa006.jf.intel.com with ESMTP; 03 Mar 2025 00:27:16 -0800
-Message-ID: <53a7a698-410f-47b2-b50b-9368e4f02cf9@linux.intel.com>
-Date: Mon, 3 Mar 2025 10:28:17 +0200
+	 In-Reply-To:Content-Type; b=CkCbEnaJRF2pcz7bf/lu2Rb0Aah7wsjSHQt/MkjiydOAOscv3av/AWqz+gnzAzQDEzx9hEEeEJdGXTfsVNFuo9l7CmwyPXOr5vYPtzVF7Nlk15AoP6zy48yz/umRGg30YMX02mV6NIZmShvy3Tz8qlpqa8p6d/LWMMwBo9g1km4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Ev0Dv9xg; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5e53b3fa7daso1571059a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 00:28:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1740990521; x=1741595321; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GH41p+03OT08ssRRmEqg+Cy0Qf0zi6uiF2rijzbkmOc=;
+        b=Ev0Dv9xgqBw7wW32FiSRZEU4FnONDvAlKj2KFKPd0crVicIZbCB6JN3ZMVexMZX9cJ
+         ULTqrQXBVSyv8FtYXsbFlL2B4Rqdbjdx+JE1/5D0/ZkEkMJdpBaTyRrp4zG/aHCazaVc
+         4J/2QPge4kYNQUbyql8ewpJwvHe//wvgdBPuABXFAuAgVSr5yspF+kvXLb3LosRi3Z7p
+         gpTjcrBCXHwQKQX3lrVeubWvfR8bXrc18GhaDOUcHKRFL8QYDCcKAhdYDZSMI1pjvXRS
+         ON8pFYCEuw+LuKH7zuGde2Uu248vEs5xEobLxXHX97l5qS+C1fpuwIUNt9mJyzMqPnd2
+         ECFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740990521; x=1741595321;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GH41p+03OT08ssRRmEqg+Cy0Qf0zi6uiF2rijzbkmOc=;
+        b=M7Lm0+oFRfMa2JBq6soRCbiZ/veWfNjVZ2U8SEDsvUtl1TbmATFVSsvnqye50BHY96
+         Lm/KvwnCbDZ2n13e8B5DWBs0nkDtzorXgDYUjH82mV3G3zLhoDbM6KqODGLz4R1VEhUs
+         dwWKkurtayuFzwMbLye1a9UKd8+pHQeDNXRsqNeEJx6mBJo2VEYv9t4skgOTmEIb2nj8
+         9W2SX4WbepEGP41CUYSIsiLJWFjyTBXq7O7FoMCmMLW3/jly7wsz0YcK5SbRqX9YHC8K
+         wvSEfMHq//66oxyqa/GLHjWu2PAcc99y/spVJ9Im3eqIXFC0v/AKr4/wECl/CZte8EAf
+         mUSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX4JVsq6yyBMX92PwAZBI3Q0yqNHUz13FnhV7kAVn8MK0ZXG0qgPsyysvT3BeREbLjyjy7zXAyHMmdIewk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhH18cQUsKmwIfohxzp66LTvkio7TAfD2XHbNuxH4uHHFzrpjI
+	wNQoAWWXmvH+ehgTCP+bOFnpZiPAt8hIk9n0gvqeSkEVmUSQv+VhAfTbEYAJEYQ=
+X-Gm-Gg: ASbGncuKSRrkaPRDvPe7uyK7dzxIrXYexl/y3DPQOyE2nr9DKZobV+wlqzAA8ztxYef
+	RmGwEyngsSFoq4mJS301C8JwvlLMWnm+JLPfJ3y9iyq3f6YCBRPB8NMnPKDPyS+SMcQeVbtKn98
+	dwv4gz09Js9rTrIwRbVLOVVePqJ+Rbh7J9wV9/eWrIdcOSAkDis34R+Qz1trBom5MqeXHkWpj2z
+	VxuChK/bIxOmxURmmxdEhv52rUmeXb13IjAkdTl9ZT+Nm5qPCLVChlBSJYbd3q+l5EbOQAwDyc3
+	x9QZokVs83/OJLeBiXOm5Q/YN4IStXKUKbLr6QDsoafR1EBCnSdDhw==
+X-Google-Smtp-Source: AGHT+IFLKelVEVi00flzE2lHP3gHCMr7kj+GRjh+qndXBWCgYVC+cKiDJx3z7MTtqx+Mlq9hmZIcoQ==
+X-Received: by 2002:a05:6402:34c2:b0:5e0:8937:6ef2 with SMTP id 4fb4d7f45d1cf-5e4d6af1104mr11411025a12.8.1740990519662;
+        Mon, 03 Mar 2025 00:28:39 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.138])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e4c3bb632esm6491336a12.36.2025.03.03.00.28.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Mar 2025 00:28:39 -0800 (PST)
+Message-ID: <3bdac1bc-b84f-43b0-86be-b9d9b18be25f@tuxon.dev>
+Date: Mon, 3 Mar 2025 10:28:36 +0200
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -114,52 +130,104 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFT PATCH] xhci: Handle spurious events on Etron host isoc
- enpoints
-To: Kuangyi Chiang <ki.chiang65@gmail.com>
-Cc: michal.pecio@gmail.com, gregkh@linuxfoundation.org,
- linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <41847336-9111-4aaa-b3dc-f3c18bb03508@linux.intel.com>
- <20250228161824.3164826-1-mathias.nyman@linux.intel.com>
- <CAHN5xi0mf8G4ODMQ9jDXAM4CRXtafZeMh_2KF7efbiFJahO4bw@mail.gmail.com>
+Subject: Re: [PATCH v3 14/21] ARM: dts: microchip: sama7d65: Add SRAM and DRAM
+ components support
+To: Ryan.Wanner@microchip.com, lee@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, sre@kernel.org,
+ nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+ p.zabel@pengutronix.de
+Cc: linux@armlinux.org.uk, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org
+References: <cover.1740671156.git.Ryan.Wanner@microchip.com>
+ <ab4002faa1b672023ffc97bf91755720508c275e.1740671156.git.Ryan.Wanner@microchip.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 Content-Language: en-US
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
-In-Reply-To: <CAHN5xi0mf8G4ODMQ9jDXAM4CRXtafZeMh_2KF7efbiFJahO4bw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <ab4002faa1b672023ffc97bf91755720508c275e.1740671156.git.Ryan.Wanner@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6dJt4d47zFwKl
+X-ITU-Libra-ESVA-ID: 4Z6f522Z4czFy8D
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741704531.14301@OlzzfeGOe4V5b85FaEANaw
+X-ITU-Libra-ESVA-Watermark: 1741705291.29373@ibeT+i+lLSt3o4FiMyDsaA
 X-ITU-MailScanner-SpamCheck: not spam
 
-On 1.3.2025 4.05, Kuangyi Chiang wrote:
-> Hi,
->=20
-> Thanks for the patch.
->=20
-> Mathias Nyman <mathias.nyman@linux.intel.com> =E6=96=BC 2025=E5=B9=B43=E6=
-=9C=881=E6=97=A5 =E9=80=B1=E5=85=AD =E4=B8=8A=E5=8D=8812:17=E5=AF=AB=E9=81=
-=93=EF=BC=9A
+Hi, Ryan,
 
->> index 8c164340a2c3..c75c2c12ce53 100644
->> --- a/drivers/usb/host/xhci.h
->> +++ b/drivers/usb/host/xhci.h
->> @@ -1371,7 +1371,7 @@ struct xhci_ring {
->>          unsigned int            num_trbs_free; /* used only by xhci D=
-bC */
->>          unsigned int            bounce_buf_len;
->>          enum xhci_ring_type     type;
->> -       bool                    last_td_was_short;
->> +       u32                     last_td_comp_code;
->=20
-> Should be changed to old_trb_comp_code.
->=20
+On 27.02.2025 17:52, Ryan.Wanner@microchip.com wrote:
+> From: Ryan Wanner <Ryan.Wanner@microchip.com>
+> 
+> Add SRAM, secumod, UDDRC, and DDR3phy to enable support for low power modes.
+> 
+> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
+> ---
+>  arch/arm/boot/dts/microchip/sama7d65.dtsi | 35 +++++++++++++++++++++++
+>  1 file changed, 35 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/microchip/sama7d65.dtsi b/arch/arm/boot/dts/microchip/sama7d65.dtsi
+> index 92a5347e35b5..c10cc3558efd 100644
+> --- a/arch/arm/boot/dts/microchip/sama7d65.dtsi
+> +++ b/arch/arm/boot/dts/microchip/sama7d65.dtsi
+> @@ -47,12 +47,37 @@ slow_xtal: clock-slowxtal {
+>  		};
+>  	};
+>  
+> +	ns_sram: sram@100000 {
+> +		compatible = "mmio-sram";
+> +		reg = <0x100000 0x20000>;
+> +		ranges;
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +	};
+> +
+>  	soc {
+>  		compatible = "simple-bus";
+>  		ranges;
+>  		#address-cells = <1>;
+>  		#size-cells = <1>;
+>  
+> +		securam: sram@e0000800 {
+> +			compatible = "microchip,sama7d65-securam", "atmel,sama5d2-securam", "mmio-sram";
+> +			reg = <0xe0000800 0x4000>;
+> +			ranges = <0 0xe0000800 0x4000>;
+> +			clocks = <&pmc PMC_TYPE_PERIPHERAL 17>;
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +			no-memory-wc;
+> +		};
+> +
+> +		secumod: secumod@e0004000 {
+> +			compatible = "microchip,sama7d65-secumod", "atmel,sama5d2-secumod", "syscon";
 
-Thanks, forgot to add that last xhci.h change to the patch
+microchip,sama7d65-secumod is undocumented. I'll postpone this until a
+documentation a patch will be posted.
 
--Mathias
+> +			reg = <0xe0004000 0x4000>;
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +		};
+> +
+>  		pioa: pinctrl@e0014000 {
+>  			compatible = "microchip,sama7d65-pinctrl", "microchip,sama7g5-pinctrl";
+>  			reg = <0xe0014000 0x800>;
+> @@ -190,6 +215,16 @@ i2c10: i2c@600 {
+>  			};
+>  		};
+>  
+> +		uddrc: uddrc@e3800000 {
+> +			compatible = "microchip,sama7d65-uddrc", "microchip,sama7g5-uddrc";
+> +			reg = <0xe3800000 0x4000>;
+> +		};
+> +
+> +		ddr3phy: ddr3phy@e3804000 {
+> +			compatible = "microchip,sama7d65-ddr3phy", "microchip,sama7g5-ddr3phy";
+> +			reg = <0xe3804000 0x1000>;
+> +		};
+> +
+>  		gic: interrupt-controller@e8c11000 {
+>  			compatible = "arm,cortex-a7-gic";
+>  			reg = <0xe8c11000 0x1000>,
 
 
 
