@@ -1,203 +1,123 @@
-Return-Path: <linux-kernel+bounces-541432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0D2BA4BCDF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:49:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 694DAA4BCD3
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:49:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53E44169CA5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:49:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A229C168E6C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E9031F193D;
-	Mon,  3 Mar 2025 10:49:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 626A91F2BB5;
+	Mon,  3 Mar 2025 10:48:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="EABLV7M0"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SSVJThAt"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7D61E376C;
-	Mon,  3 Mar 2025 10:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DBD3101C8;
+	Mon,  3 Mar 2025 10:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740998970; cv=none; b=gfg4ACCnLc2S+wfAof8ZZ3C7IrGfdyJjNEL0QcViJbZQ7ntmKMRCM2ZIhvAzd5HZa1a9luwCuZmldWpTyjlcBfJajcNGaLsQMzrjhPBwCovurFIdKNttkC+cF/9JPPjLs59ainUDbkprMMZswPemKGtSGAThRDwGGW4AJFrjoAw=
+	t=1740998887; cv=none; b=CR5h6Y/pEaN30UeRqaCZ70/l08U9b/H/BE4aUpyZhSdREmv8t46dGojkbvMM6Lsks3LGFC13uHOh/DO2N47WJal7I3qcPdjGGcXr1k+vqUfTxImpStYF/vHZu/60rMSAYea/YhDiXVyg5wM5pzxFa6J0D8isrIXEfQYcZ+03Rlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740998970; c=relaxed/simple;
-	bh=FxTyFdldQ/Rg6PXUyOvwskxzWGQOyp4Jrbq8b9VUONU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PEWz2YR6Jr9tYsLewlvdyGUdZaZt9psvGaI6Nevcg9eTuQvj2Sj8fMc5fvKaWs3z7EHmIfIPCd8H3Ouv0PZMVQT/9Zv3HGB23BDDRl/JZeb6sruywcOFhHGO65fGXrqwodPZJRC899hl/kW2HfdGwUr49Ux9ghwDoezFhbMljCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=EABLV7M0; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1740998887; c=relaxed/simple;
+	bh=X9tzQvVlQ+wbFrpPLuFQHJ7qRfiOJX3C1fJr5HbOYdI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kCvgpAHjwAgEAOPwm0N7sN2cRMGNI6gRLaBuwbAPBiBxUF3ahzQzNRhcJNJ6OZXyOwzcm/4PVXFrfJdICmeLtWiOv31oPmNZt9F34gcDJJUah0FGRGTqQmbDv4kV8HsLIeAiIAcewZcCXWbZZCn3D+Q1k05fxCRxJS7CL2J/zJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SSVJThAt; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1740998969; x=1772534969;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=FxTyFdldQ/Rg6PXUyOvwskxzWGQOyp4Jrbq8b9VUONU=;
-  b=EABLV7M0S4zxmAJV4JIEzkZhziFIkiS1AI3I9DHLV6z826RyiaGTVMAI
-   jMwtKPnN0h/xn6jJOKwMQ6BfWB3+oKJuaXVXNVBRQW7EV6lyeH2xREb3G
-   fF/B15RHqRIE9lQEEBZo8rSpiBJCBEicmEVyaL8bG0lXlqJc9O+JEyKNO
-   GJOjlsgmcxiJfvxVkX0n02Gs4SyaJhoDpG9QCZ/Ccg5DSVsVBKP+g97pc
-   D1Z4/T1rplsy1NPgIpNV34XIfBfo6IomolOroP1kuKhVRlvObpUrsOL8y
-   otHKuaK4vjfRn5ouRZ3auUshbt17b1cG24Lg602R7xOmcjEJtRnlOI1kK
-   Q==;
-X-CSE-ConnectionGUID: BikYLFOYSh2j96/3XZqldw==
-X-CSE-MsgGUID: eIVd+EFRTYWJnQbd7HU8Qg==
-X-IronPort-AV: E=Sophos;i="6.13,329,1732604400"; 
-   d="scan'208";a="38768207"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 03 Mar 2025 03:49:28 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 3 Mar 2025 03:48:32 -0700
-Received: from wendy.microchip.com (10.10.85.11) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Mon, 3 Mar 2025 03:48:31 -0700
-From: Conor Dooley <conor.dooley@microchip.com>
-To: <linux-spi@vger.kernel.org>
-CC: Conor Dooley <conor.dooley@microchip.com>, <stable@vger.kernel.org>,
-	"Daire McNamara" <daire.mcnamara@microchip.com>, Mark Brown
-	<broonie@kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] spi: microchip-core: prevent RX overflows when transmit size > FIFO size
-Date: Mon, 3 Mar 2025 10:47:40 +0000
-Message-ID: <20250303-veal-snooper-712c1dfad336@wendy>
-X-Mailer: git-send-email 2.48.1
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740998887; x=1772534887;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=X9tzQvVlQ+wbFrpPLuFQHJ7qRfiOJX3C1fJr5HbOYdI=;
+  b=SSVJThAtDh0taqUjyNeQwaV7/tB6dq/ZtZQ0XJb/Q+YjP3MLaiy2DfqM
+   rJWPxzDCzFo0ptKPegqaECkNpSKjIpYFWXQvCADl/+yt/qEklUiOdEGhi
+   nQp+LRoVclnhzu5xrg0YcpBmbSq5XpoadDtbnkRh44gZDPZLAz1obtbcS
+   YzWI4m2gLiNwJkKXyPUppjUA+HwVnWcbHq0V7SwMdPCse4EgXl3i2izhE
+   fcDs+YUkaxgs7ApESRj/VmZfYziJDAej8rJiaP7eRAZ4IiEXv6YT50g1R
+   wLelfxMUh7qdStlZnvw4ydvJdkp8sjOLRx83OVew7CnvB5JSPYCb0AVgf
+   g==;
+X-CSE-ConnectionGUID: uZOO8U4FR7iXOT/pCkoYNQ==
+X-CSE-MsgGUID: uvsDyYYVRIS7mv4ldyA2oA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="59280184"
+X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
+   d="scan'208";a="59280184"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 02:48:06 -0800
+X-CSE-ConnectionGUID: KFV6zqDdQnOtKHp8FbUXhA==
+X-CSE-MsgGUID: onRsMZUMTKyLS8bi+e41IQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="123190941"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa005.jf.intel.com with ESMTP; 03 Mar 2025 02:48:02 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id 0B80F125; Mon, 03 Mar 2025 12:48:00 +0200 (EET)
+Date: Mon, 3 Mar 2025 12:48:00 +0200
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Kenneth Crudup <kenny@panix.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, ilpo.jarvinen@linux.intel.com,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Jian-Hong Pan <jhp@endlessos.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?utf-8?B?TmlrbMSBdnMgS2/EvGVzxYZpa292cw==?= <pinkflames.linux@gmail.com>,
+	Andreas Noever <andreas.noever@gmail.com>,
+	Michael Jamet <michael.jamet@intel.com>,
+	Lukas Wunner <lukas@wunner.de>,
+	Yehezkel Bernat <YehezkelShB@gmail.com>, linux-usb@vger.kernel.org
+Subject: Re: diagnosing resume failures after disconnected USB4 drives (Was:
+ Re: PCI/ASPM: Fix L1SS saving (linus/master commit 7507eb3e7bfac))
+Message-ID: <20250303104800.GQ3713119@black.fi.intel.com>
+References: <20250213135911.GG3713119@black.fi.intel.com>
+ <a8d6ca75-8f50-4c46-8c67-fcf20d870dcc@panix.com>
+ <20250214162948.GJ3713119@black.fi.intel.com>
+ <661459dd-67d0-4e1c-bb28-9adf1417f660@panix.com>
+ <20250226084404.GM3713119@black.fi.intel.com>
+ <b6eff06e-1a8c-48c3-b536-39b567015d0c@panix.com>
+ <5c131927-87c1-4e21-90f8-8e3a34cd6dbf@panix.com>
+ <20250228104925.GO3713119@black.fi.intel.com>
+ <1f214d95-61c0-4be9-8b19-5aef76631c0e@panix.com>
+ <e5badaa8-20e2-4160-be20-75e174d241bc@panix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4430; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=FxTyFdldQ/Rg6PXUyOvwskxzWGQOyp4Jrbq8b9VUONU=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDOlHO85KdGQ0fHr+8KSfXzH7n6m/Je2v/ju5m/9u/llPpozP H/zLO0pZGMQ4GGTFFFkSb/e1SK3/47LDuectzBxWJpAhDFycAjCRk8IM/ytqOt/+tbZ5fmjmnfAcXf G8t41L2VTfdNotn50cnhF0SIfhv8eGv2yppW3Whk79jGpT3XKuN+16IspsVXnh2+dYE/80XgA=
-X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <e5badaa8-20e2-4160-be20-75e174d241bc@panix.com>
 
-When the size of a transfer exceeds the size of the FIFO (32 bytes), RX
-overflows will be generated and receive data will be corrupted and
-warnings will be produced. For example, here's an error generated by a
-transfer of 36 bytes:
+On Sun, Mar 02, 2025 at 08:13:51AM -0800, Kenneth Crudup wrote:
+> 
+> On 2/28/25 08:04, Kenneth Crudup wrote:
+> 
+> > Don't worry about the printk()s WRT to the code; a couple of weeks ago
+> > I'd seen an NPE on resume in __tb_path_deactivate_hop so threw in a
+> > bunch of tb_port_info(port, "%s(): %d\n", __func__, __LINE__); so I
+> > could get an idea of where the crash was.
+> 
+> I've started a separate E-mail about this, but I'd determined those crashes
+> were due to d6d458d42e1 ("Handle DisplayPort tunnel activation
+> asynchronously").
+> 
+> Since reverting 9d573d1954 and d6d458d42e1 I've been testing several resume
+> scenarios (NVMe connected/disconnected and/or external DP-tunneled monitor
+> connected/disconnected and have yet to have a resume or hibernate failure
+> over several cycles.
+> 
+> Now, how do I help you guys go about fixing these commits?
 
-  spi_master spi0: mchp_corespi_interrupt: RX OVERFLOW: rxlen: 4, txlen: 0
+I commented on the other thread. Let's deal with these as two separate
+issues and investigate both in isolation.
 
-The driver is currently split between handling receiving in the
-interrupt handler, and sending outside of it. Move all handling out of
-the interrupt handling, and explicitly link the number of bytes read of
-of the RX FIFO to the number written into the TX one. This both resolves
-the overflow problems as well as simplifying the flow of the driver.
+For others, the second thread is this one:
 
-CC: stable@vger.kernel.org
-Fixes: 9ac8d17694b6 ("spi: add support for microchip fpga spi controllers")
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
----
-
-Contrary to last time, the reporter did actually manage to this this
-version, and it resolved their probably apparently.
-
-Changes in v2:
-- Move all FIFO interactions out of the interrupt handler
-- Disable the non-error interrupts since they're dealt with out of the
-  isr now
-
-v1: https://lore.kernel.org/all/20250114-easiness-pregame-d1d2d4b57e7b@spud/
-
-CC: Conor Dooley <conor.dooley@microchip.com>
-CC: Daire McNamara <daire.mcnamara@microchip.com>
-CC: Mark Brown <broonie@kernel.org>
-CC: linux-spi@vger.kernel.org
-CC: linux-kernel@vger.kernel.org
----
- drivers/spi/spi-microchip-core.c | 41 ++++++++++++++------------------
- 1 file changed, 18 insertions(+), 23 deletions(-)
-
-diff --git a/drivers/spi/spi-microchip-core.c b/drivers/spi/spi-microchip-core.c
-index 5b6af55855efc..62ba0bd9cbb7e 100644
---- a/drivers/spi/spi-microchip-core.c
-+++ b/drivers/spi/spi-microchip-core.c
-@@ -70,8 +70,7 @@
- #define INT_RX_CHANNEL_OVERFLOW		BIT(2)
- #define INT_TX_CHANNEL_UNDERRUN		BIT(3)
- 
--#define INT_ENABLE_MASK (CONTROL_RX_DATA_INT | CONTROL_TX_DATA_INT | \
--			 CONTROL_RX_OVER_INT | CONTROL_TX_UNDER_INT)
-+#define INT_ENABLE_MASK (CONTROL_RX_OVER_INT | CONTROL_TX_UNDER_INT)
- 
- #define REG_CONTROL		(0x00)
- #define REG_FRAME_SIZE		(0x04)
-@@ -133,10 +132,15 @@ static inline void mchp_corespi_disable(struct mchp_corespi *spi)
- 	mchp_corespi_write(spi, REG_CONTROL, control);
- }
- 
--static inline void mchp_corespi_read_fifo(struct mchp_corespi *spi)
-+static inline void mchp_corespi_read_fifo(struct mchp_corespi *spi, int fifo_max)
- {
--	while (spi->rx_len >= spi->n_bytes && !(mchp_corespi_read(spi, REG_STATUS) & STATUS_RXFIFO_EMPTY)) {
--		u32 data = mchp_corespi_read(spi, REG_RX_DATA);
-+	for (int i = 0; i < fifo_max; i++) {
-+		u32 data;
-+
-+		while (mchp_corespi_read(spi, REG_STATUS) & STATUS_RXFIFO_EMPTY)
-+			;
-+
-+		data = mchp_corespi_read(spi, REG_RX_DATA);
- 
- 		spi->rx_len -= spi->n_bytes;
- 
-@@ -211,11 +215,10 @@ static inline void mchp_corespi_set_xfer_size(struct mchp_corespi *spi, int len)
- 	mchp_corespi_write(spi, REG_FRAMESUP, len);
- }
- 
--static inline void mchp_corespi_write_fifo(struct mchp_corespi *spi)
-+static inline void mchp_corespi_write_fifo(struct mchp_corespi *spi, int fifo_max)
- {
--	int fifo_max, i = 0;
-+	int i = 0;
- 
--	fifo_max = DIV_ROUND_UP(min(spi->tx_len, FIFO_DEPTH), spi->n_bytes);
- 	mchp_corespi_set_xfer_size(spi, fifo_max);
- 
- 	while ((i < fifo_max) && !(mchp_corespi_read(spi, REG_STATUS) & STATUS_TXFIFO_FULL)) {
-@@ -413,19 +416,6 @@ static irqreturn_t mchp_corespi_interrupt(int irq, void *dev_id)
- 	if (intfield == 0)
- 		return IRQ_NONE;
- 
--	if (intfield & INT_TXDONE)
--		mchp_corespi_write(spi, REG_INT_CLEAR, INT_TXDONE);
--
--	if (intfield & INT_RXRDY) {
--		mchp_corespi_write(spi, REG_INT_CLEAR, INT_RXRDY);
--
--		if (spi->rx_len)
--			mchp_corespi_read_fifo(spi);
--	}
--
--	if (!spi->rx_len && !spi->tx_len)
--		finalise = true;
--
- 	if (intfield & INT_RX_CHANNEL_OVERFLOW) {
- 		mchp_corespi_write(spi, REG_INT_CLEAR, INT_RX_CHANNEL_OVERFLOW);
- 		finalise = true;
-@@ -512,9 +502,14 @@ static int mchp_corespi_transfer_one(struct spi_controller *host,
- 
- 	mchp_corespi_write(spi, REG_SLAVE_SELECT, spi->pending_slave_select);
- 
--	while (spi->tx_len)
--		mchp_corespi_write_fifo(spi);
-+	while (spi->tx_len) {
-+		int fifo_max = DIV_ROUND_UP(min(spi->tx_len, FIFO_DEPTH), spi->n_bytes);
- 
-+		mchp_corespi_write_fifo(spi, fifo_max);
-+		mchp_corespi_read_fifo(spi, fifo_max);
-+	}
-+
-+	spi_finalize_current_transfer(host);
- 	return 1;
- }
- 
--- 
-2.48.1
-
+https://lore.kernel.org/linux-usb/8e175721-806f-45d6-892a-bd3356af80c9@panix.com/
 
