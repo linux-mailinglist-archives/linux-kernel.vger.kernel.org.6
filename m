@@ -1,161 +1,278 @@
-Return-Path: <linux-kernel+bounces-541838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D336BA4C237
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:41:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98B11A4C239
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:41:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A741B188D48E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:41:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03037170A0A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:41:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0291D212D6A;
-	Mon,  3 Mar 2025 13:41:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B900213248;
+	Mon,  3 Mar 2025 13:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="hh9Xbh/R"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h4820eR7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8037D20DD62;
-	Mon,  3 Mar 2025 13:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0789212FB4
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 13:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741009266; cv=none; b=g5qLwuTSuE5GFIGLLXldrNg7zJQyb6hqmnuW699PJqts3afwQHlS0NA/ml++xgomsTP5vyJmDhmwDO3pwv2jz8iceNUTtWJLIhAdtIwsohZT4UNb61VOzx9FCdS1nXYCcA3lUiprlGpraj8ft4qphx/a4PVJzXjpUG/IGiXzptY=
+	t=1741009269; cv=none; b=CQrfT1a/S54glGu8DDMZEjshLuLgYcYh/Cyxaida+mce3MtW5gEkRAiSE1/ap7gKtjcHigEYaZos/JyvoosKVKF6D9zZQnLuX2E84cDhAiuCXnkkJqhgj1Owg5A+81cFDtHN5ZsiTX5zXji/tDo9GA7lZnkmOZwMGteYz2GPWmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741009266; c=relaxed/simple;
-	bh=z4i8udCT/ZfEevZGKBvDxxzaszOTpIOByQJPMKtGeNs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uiCWC8lI+rEXmVvdDUSEk/wiNhmtU/bt96TX+afhdvkVCz3+eCH8VW4Od3rsWg+LuxRK81BpsENwHsfDXi3Ybay+U1YzKs9ovkz3/ehIXzMpJAmFg+7Nji5dszq8cHlecMx403zLbWRhVLoxJlllDcWCQhj0aBMXq0JJY3TuK3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=hh9Xbh/R; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 909C344262;
-	Mon,  3 Mar 2025 13:40:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1741009254;
+	s=arc-20240116; t=1741009269; c=relaxed/simple;
+	bh=aeMvAT17042BtfL/IpGfoeKyBKZPAnMUYGKpbhDJI7U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Zxat3uuNlxh3eDnJ7DQq3GbMEq31ze0rCO5GpPf5qCRGJB2ib71ekQGJeb5wlCRzoVFZtJFaK3j7YuML/mRVDNkZbXkgYxwKY+D8RxRRJ2/kR8DfogsD0Px/Pz9s4Xa2+blUUPjZLbixoRksF6qMdZZcLdRj4gyOBs34aZOAxrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h4820eR7; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741009266;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=nl/1wzHduxVzKeGZ515j0lRor1Gx/DhlgaVPUGMQYoo=;
-	b=hh9Xbh/R7+cqL6kO3EUvJrLcd0D99wSBACUMwxd3PfoMb86Em+iQyXzmftNd5I5ZEj9MAF
-	gq0YraAvXdyywhq2rOVhiYSMRYUH+EuGCLS0qfRzA8WREZjjfw5G8gnRWaYlEtncKDH+ck
-	GaqrXuWkxYZZsdPNnNl1rDMtMVv/C21VtNp8CKn18BcGu2UtEjA2VIN4EXNLVnintGCZyq
-	ShgVkTDvEF5GmxULVcFdZ0C0SPulan8WTDOaplGT9KxHETHzUICistCK5/VdLs1jG+1zwK
-	0DJdkJfIx0Vi6OiBU9UtdCya3aVOwiO0EKeeQT0FQ1lEedI5+bML5+Mz0pyeHQ==
-Date: Mon, 3 Mar 2025 14:40:51 +0100
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew@lunn.ch>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
- Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Donald Hunter
- <donald.hunter@gmail.com>, Rob Herring <robh@kernel.org>, Andrew Lunn
- <andrew+netdev@lunn.ch>, Simon Horman <horms@kernel.org>, Heiner Kallweit
- <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
- linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>, Dent
- Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de, Maxime
- Chevallier <maxime.chevallier@bootlin.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v5 06/12] net: pse-pd: Add support for budget
- evaluation strategies
-Message-ID: <20250303144051.2503fb43@kmaincent-XPS-13-7390>
-In-Reply-To: <Z8ME-90Xg46-pNhA@pengutronix.de>
-References: <20250224134522.1cc36aa3@kernel.org>
-	<20250225102558.2cf3d8a5@kmaincent-XPS-13-7390>
-	<20250225174752.5dbf65e2@kernel.org>
-	<Z76t0VotFL7ji41M@pengutronix.de>
-	<Z76vfyv5XoMKmyH_@pengutronix.de>
-	<20250226184257.7d2187aa@kernel.org>
-	<Z8AW6S2xmzGZ0y9B@pengutronix.de>
-	<20250227155727.7bdc069f@kmaincent-XPS-13-7390>
-	<Z8CVimyMj261wc7w@pengutronix.de>
-	<20250227192640.20df155d@kmaincent-XPS-13-7390>
-	<Z8ME-90Xg46-pNhA@pengutronix.de>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	bh=iefXvX3pMp47Dzkf3+ysKe2mkAh2HFa1RNhZSRAia6M=;
+	b=h4820eR7tYhnYGE9UYbCtU1OgDm9BldpfnzFW2duNJ28dI2uh4c02mMj8aS14+dtB9H8Bg
+	BbBu6Nxb+PvhUaOaH3XJQAKYorX2PKCs+uw9hfKPxsFkt4giWq/Rtyo6G/wWunZKhbzcXB
+	MoVpz0f4z0sFx4GImI5Qoy6jQTuXqgA=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-594-3cW4VGhbMW23fZ1TSePE8w-1; Mon, 03 Mar 2025 08:41:05 -0500
+X-MC-Unique: 3cW4VGhbMW23fZ1TSePE8w-1
+X-Mimecast-MFC-AGG-ID: 3cW4VGhbMW23fZ1TSePE8w_1741009264
+Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-5e550e71966so956569a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 05:41:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741009264; x=1741614064;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iefXvX3pMp47Dzkf3+ysKe2mkAh2HFa1RNhZSRAia6M=;
+        b=pWjOeryP0RKrQDptU03R1v3wD+1LzWKrFjYFI/Lpa82Ix2RGf55YYxz2VFJBq0VOPm
+         3zbO8qCayPoH18XjyiCXKprXbgkdAaH1/iDtnqeFArycTt0bW6FJiMUOAxmTlPfbN0u8
+         lPrlpdkG+fzHJFFV+3LW+sGrd8pDosyJ5zHAHc++7RpsE5xvtGHACIzo9m6Fh1zeoz4m
+         nrfM0JYHrB6E1nQgPk5o8BT7rUc1zBwsh1sbOByAmoXZDvUKUFSSqi7dv+fi74KUv/1+
+         6V9wg9C+qTi3zV/h4Shgu7wAsaB2W24XPSWGXNXsF/JPl5cdh8czjo8LXrbJT8vOUE64
+         4gkw==
+X-Forwarded-Encrypted: i=1; AJvYcCVvcmi52fAHx3pnzPb1JuA4LWmMBOY6miuDih+zQQAJ919ZZuVAo9ooaT+y0d9HY3VUUDEGmd9sFyclt6A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpjAMF3Qc/cyM8HbeV9mX+yMdu5cXuIvdiidx7N5vEyvPIudGG
+	oagHuggeh6/0jGKRaHX4birhNXtnqrfue3mJi8sZeiWUYXsMIOICQ+0Mo9cgn66EkQf6qfMHt7x
+	KFP6SOopKDu1olug3KL4//s0fcZjeXtTK+vOmk/v3Qke/pR/8/KlfmU7q2lA5nA==
+X-Gm-Gg: ASbGncsONNQo//XL9GTAeNmn+hgR2+CmOIXKP7dA2oI4uRabsh3Oi5DN1MTfFDfI9Sj
+	hQbG+42zLrAIZ7M3hscM2bpFNUGu8PFBYYFI+sv7T+2RfcueBEs785Z2pT25DQ4GIrQ2IiLfdy0
+	lEwyhql6rBxoxra6BSSh5+kuqLkhT8sdUALBu5b+l1Es52FLH1htOhl55lf7I85DkynpyAZQwUg
+	F3kNgMJNafRx14xE9pCoh7gdw+0jjsg5fBleIS4B4Z8KwZ1me6gw+StW9xIog+xj6ZD3beHX/Tb
+	JB+cUuWTQXA5gScqGjo=
+X-Received: by 2002:a05:6402:254d:b0:5e4:cfe8:3502 with SMTP id 4fb4d7f45d1cf-5e4d6afa314mr15430336a12.17.1741009264039;
+        Mon, 03 Mar 2025 05:41:04 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHw+N+h2RM3Y9DCNRWclwdG5Vz8ZTSM7z6QJd5l/2loxNdR3YQEu3drealeX71uDlwNoPmkCA==
+X-Received: by 2002:a05:6402:254d:b0:5e4:cfe8:3502 with SMTP id 4fb4d7f45d1cf-5e4d6afa314mr15430311a12.17.1741009263565;
+        Mon, 03 Mar 2025 05:41:03 -0800 (PST)
+Received: from [10.40.98.122] ([78.108.130.194])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e4c3b70112sm6735702a12.31.2025.03.03.05.41.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Mar 2025 05:41:02 -0800 (PST)
+Message-ID: <cd25d131-bead-4a38-98dc-1011c2843286@redhat.com>
+Date: Mon, 3 Mar 2025 14:41:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] platform/x86: amd: Add ISP platform info
+To: Pratap Nirujogi <pratap.nirujogi@amd.com>, ilpo.jarvinen@linux.intel.com
+Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+ benjamin.chan@amd.com
+References: <20250228170238.3484860-1-pratap.nirujogi@amd.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20250228170238.3484860-1-pratap.nirujogi@amd.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelledvkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthhqredtredtjeenucfhrhhomhepmfhorhihucforghinhgtvghnthcuoehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefguddtfeevtddugeevgfevtdfgvdfhtdeuleetffefffffhffgteekvdefudeiieenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghlohepkhhmrghinhgtvghnthdqigfrufdqudefqdejfeeltddpmhgrihhlfhhrohhmpehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvhedprhgtphhtthhopehordhrvghmphgvlhesphgvnhhguhhtrhhonhhigidruggvpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiiv
- ghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtoheptghorhgsvghtsehlfihnrdhnvghtpdhrtghpthhtohepughonhgrlhgurdhhuhhnthgvrhesghhmrghilhdrtghomh
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Transfer-Encoding: 7bit
 
-On Sat, 1 Mar 2025 14:00:43 +0100
-Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+Hi Pratap,
 
-> On Thu, Feb 27, 2025 at 07:26:40PM +0100, Kory Maincent wrote:
-> > On Thu, 27 Feb 2025 17:40:42 +0100
-> > Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+Thank you for your patch.
 
-> > > I would prefer to have it in the for of devlink or use regulator netl=
-ink
-> > > interface. But, we do not need to do this discussion right now. =20
-> >=20
-> > If we want to report the method we should discuss it now. We shouldn't =
-add
-> > BUDGET_EVAL_STRAT uAPI to ethtool if we use another way to get and set =
-the
-> > method later. =20
->=20
-> Ok, I assume we are talking about different things. I mean - not port
-> specific configurations and diagnostic, will have different interface.
->=20
-> BUDGET_EVAL_STRAT is port specific. HP and Cisco implement it as port
-> specific. PD692x0 Protocol manual describe it as port specific too:
-> 3.3.6 Set BT Port Parameters
->  Bits [3..0]=E2=80=94BT port PM mode
->   0x0: The port power that is used for power management purposes is
->        dynamic (Iport x Vmain).
->   0x1: The port power that is used for power management purposes is port
->        TPPL_BT.
->   0x2: The port power that is used for power management purposes is
->        dynamic for non LLDP/CDP/Autoclass ports and TPPL_BT for
-> LLDP/CDP/Autoclass ports. 0xF: Do not change settings.
+On 28-Feb-25 18:02, Pratap Nirujogi wrote:
+> Add ov05c i2c boardinfo and GPIO pin info for AMD ISP platform.
+> 
+> Details of the resources added:
+> 
+> - Added i2c bus number for AMD ISP platform is 99.
+> - Added GPIO 85 to allow ISP driver to enable and disable ISP access.
+> - Added GPIO 0 to allow sensor driver to enable and disable sensor module.
+> 
+> Signed-off-by: Pratap Nirujogi <pratap.nirujogi@amd.com>
+> ---
+>  drivers/platform/x86/amd/Kconfig   | 11 +++++
+>  drivers/platform/x86/amd/Makefile  |  1 +
+>  drivers/platform/x86/amd/amd_isp.c | 72 ++++++++++++++++++++++++++++++
+>  3 files changed, 84 insertions(+)
+>  create mode 100644 drivers/platform/x86/amd/amd_isp.c
+> 
+> diff --git a/drivers/platform/x86/amd/Kconfig b/drivers/platform/x86/amd/Kconfig
+> index c3e086ea64fc..4b373edd750d 100644
+> --- a/drivers/platform/x86/amd/Kconfig
+> +++ b/drivers/platform/x86/amd/Kconfig
+> @@ -32,3 +32,14 @@ config AMD_WBRF
+>  
+>  	  This mechanism will only be activated on platforms that advertise a
+>  	  need for it.
+> +
+> +config AMD_ISP_PLATFORM
+> +	bool "AMD platform with ISP4 that supports Camera sensor device"
+> +	depends on I2C && X86_64 && AMD_ISP4
+> +	help
+> +	  For AMD platform that support Image signal processor generation 4, it
+> +	  is necessary to add platform specific camera sensor module board info
+> +	  which includes the sensor driver device id and the i2c address.
+> +
+> +	  If you have a AMD platform that support ISP4 and with a sensor
+> +	  connected to it, say Y here
+> diff --git a/drivers/platform/x86/amd/Makefile b/drivers/platform/x86/amd/Makefile
+> index 56f62fc9c97b..0d89e2d4f7e6 100644
+> --- a/drivers/platform/x86/amd/Makefile
+> +++ b/drivers/platform/x86/amd/Makefile
+> @@ -10,3 +10,4 @@ obj-$(CONFIG_AMD_PMC)		+= pmc/
+>  obj-$(CONFIG_AMD_HSMP)		+= hsmp/
+>  obj-$(CONFIG_AMD_PMF)		+= pmf/
+>  obj-$(CONFIG_AMD_WBRF)		+= wbrf.o
+> +obj-$(CONFIG_AMD_ISP_PLATFORM)	+= amd_isp.o
+> diff --git a/drivers/platform/x86/amd/amd_isp.c b/drivers/platform/x86/amd/amd_isp.c
+> new file mode 100644
+> index 000000000000..751f209e9509
+> --- /dev/null
+> +++ b/drivers/platform/x86/amd/amd_isp.c
+> @@ -0,0 +1,72 @@
+> +/* SPDX-License-Identifier: MIT */
+> +/*
+> + * Copyright 2025 Advanced Micro Devices, Inc.
+> + *
+> + * Permission is hereby granted, free of charge, to any person obtaining a
+> + * copy of this software and associated documentation files (the "Software"),
+> + * to deal in the Software without restriction, including without limitation
+> + * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+> + * and/or sell copies of the Software, and to permit persons to whom the
+> + * Software is furnished to do so, subject to the following conditions:
+> + *
+> + * The above copyright notice and this permission notice shall be included in
+> + * all copies or substantial portions of the Software.
+> + *
+> + * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+> + * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+> + * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+> + * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
+> + * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+> + * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+> + * OTHER DEALINGS IN THE SOFTWARE.
+> + */
+> +
+> +#include <linux/init.h>
+> +#include <linux/i2c.h>
+> +#include <linux/kernel.h>
+> +#include <linux/gpio/machine.h>
+> +
+> +#define AMDISP_I2C_BUS		99
 
-I don't really understand how that can be port specific when the power budg=
-et is
-per PD69208 manager. Maybe I am missing information here.
+I'm not a fan of using static i2c-bus numbers for this. static bus numbers are
+something of the past and we typically do not use these on x86 anymore.
 
-> > We could also not report the method for now and assume the user knows i=
-t for
-> > the two controllers currently supported. =20
->=20
-> On one side: it is not just status, but also active configuration. By
-> implementing the interface we may break default configuration and user
-> expectations.
+Using this static number + i2c_register_board_info() also requires this code
+to be builtin rather then modular which is also undesirable.
 
-Yes we should not implement the budget method get/set interface in this ser=
-ies.
-=20
-> On other side: PD692x0 seems to need more then just setting prios to
-> manage them correctly. For example power bank limits should be set,
-> otherwise internal firmware won't be able to perform budget calculations.
+For a more dynamic way of manually adding i2c-devices see:
 
-Patch 8 is already configuring the power PD692x0 bank limit according to PSE
-power domain budget.
+https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/platform/x86/dell/dell-lis3lv02d.c
 
-> So, I assume, critical components are missing anyway.
+But a better question here is why instantiate the sensor i2c device
+manually at all.
 
-As we are not supporting the budget method configured by the user in this
-series, I agreed we should not add any uAPI related to it that could be bro=
-ken
-or confusing later.
+ACPI has a standardized way to describe I2C-clients which tyically
+is used for all I2C devices on ACPI platforms like I2C touchscreens /
+touchpads / audio-codecs / accelerometers / etc.
+I don't see why the camera sensor on AMD platforms is so special that
+it could not be described in ACPI using an ACPI child-device of the
+i2c-controller with a ACPI resource (_CRS entry) of the I2cSerialBusV2()
+type.
 
-I will remove it and send v6.
+Likewise the sensor enable GPIO should also be described in the ACPI
+table as a Gpio type resource in the same _CRS table.
+
+Can you run acpidump -o acpidump.txt on a laptop with this camera
+sensor and send me the acpidupm.txt offlist ? Please run this
+on a production hardware laptop model using production firmware.
+
+I suspect that Windows will also be using the ACPI description
+for the sensor so we really should figure out what Windows is doing
+here.
+
+As Mario mentioned we cannot just assume that the GPIOs +
+sensor address and model are valid for all laptops. Ideally we should
+be getting this information from ACPI rather then hardcoding it
+in the kernel.
+
+> +
+> +static struct gpiod_lookup_table isp_gpio_table = {
+> +	.dev_id = "amd_isp_capture",
+> +	.table = {
+> +		GPIO_LOOKUP("AMDI0030:00", 85, "enable_isp", GPIO_ACTIVE_HIGH),
+> +		{ }
+> +	},
+> +};
+
+This too really should be an Gpio() type ACPI resource on the ACPI device
+node for the ISP.
+
+How/where is this "amd_isp_capture" device created ?
 
 Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+
+Hans
+
+
+> +
+> +static struct gpiod_lookup_table isp_sensor_gpio_table = {
+> +	.dev_id = "ov05c",
+> +	.table = {
+> +		GPIO_LOOKUP("amdisp-pinctrl", 0, "sensor0_enable", GPIO_ACTIVE_HIGH),
+> +		{ }
+> +	},
+> +};
+> +
+> +static struct i2c_board_info sensor_info = {
+> +	.dev_name = "ov05c",
+> +	I2C_BOARD_INFO("ov05c", 0x10),
+> +};
+> +
+> +static int __init amd_isp_init(void)
+> +{
+> +	int ret;
+> +
+> +	gpiod_add_lookup_table(&isp_gpio_table);
+> +	gpiod_add_lookup_table(&isp_sensor_gpio_table);
+> +
+> +	ret = i2c_register_board_info(AMDISP_I2C_BUS, &sensor_info, 1);
+> +	if (ret)
+> +		pr_err("%s: cannot register i2c board devices:%s",
+> +		       __func__, sensor_info.dev_name);
+> +
+> +	return ret;
+> +}
+> +
+> +arch_initcall(amd_isp_init);
+> +
+> +MODULE_AUTHOR("Benjamin Chan <benjamin.chan@amd.com>");
+> +MODULE_AUTHOR("Pratap Nirujogi <pratap.nirujogi@amd.com>");
+> +MODULE_DESCRIPTION("AMD ISP Platform parameters");
+> +MODULE_LICENSE("GPL and additional rights");
+
 
