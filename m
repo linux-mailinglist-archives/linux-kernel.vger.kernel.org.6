@@ -1,119 +1,94 @@
-Return-Path: <linux-kernel+bounces-542366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 053FCA4C920
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:21:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 369D9A4C90B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:17:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7687A3A6C45
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:08:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A6DF3A5166
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:09:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4984322DFB2;
-	Mon,  3 Mar 2025 16:52:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 262C725D8FF;
+	Mon,  3 Mar 2025 16:53:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VU+6aHpI"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z++2FkJ2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20349F9E6
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 16:52:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0373325D8FE
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 16:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741020738; cv=none; b=rpPknLHk6nOH9h01Zd1U+Cf8L46wcciElYFuBfajsUE7dNNYhjXPSqOfGSI2sxGMGm/vmaRrQp2aDgdlSSGEiJZ5g+QEe2YDPUktNq7tfR1EWxuRzJiE0RkTYdT5O1FxHNDwKOfG73n8ERRRTRvDsEEzz2TsNKxJA404r5yamIY=
+	t=1741020787; cv=none; b=o5/oyo7NxTQX7cTkEKcy4vgYIVGmYA31CdUljydQHloDsxc3yO1wTpUcoqVCv7K4Y+Swx3ZvMbDmDpjfqnkWUmqHl9IDXZ5RsMC+m+cHkjVw30Pt+Ycni+TpX/QEYrZIUGw6LTBxCJJSelO7vIabXG+WqfPMB0EUHQCvKS0cCJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741020738; c=relaxed/simple;
-	bh=X9vuxKvJBiI5voDqnbl4lgtxLuulj8GAfFRersEJ2U8=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ML9zmvBpHb2F5knyAdwQzFZp47MpV/sJ7rFO6KIdmgN9WInbfjnh8t029J7JYo9EFn5qHqIOJCVD+73FPr1hStvAuVsYmFQc5LkdDQNckTLNseamhdD3UaTrCiHr7DovJoVOkiloI3CATFKwr9TGBPhHwSLAHdDZqju2pbXagoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VU+6aHpI; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1741020787; c=relaxed/simple;
+	bh=0Z3jKPZTqkfGGv8vGqjyKdLv1jksJJM8yOmu5pzo7EQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dqWG51vM/7YkEB/s7Ue3y92bYb+aGMWtbmveUvq7juSgzG3Jgp/+EAlX9lX2wBleQf5ZFUHLv+x93ZAobOBe5SbKbXprjZSnaaiEP4gFCTHJT96JiwJSzDd9+bAlzmCaMx6/cTZ8bqaYz4RACzfwTeZ3udIty3YfbmkVbe79/bQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z++2FkJ2; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741020736;
+	s=mimecast20190719; t=1741020785;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=X9vuxKvJBiI5voDqnbl4lgtxLuulj8GAfFRersEJ2U8=;
-	b=VU+6aHpIrxqqy3pMAJatFHOXSsfeKTxLdo+Y6IIstJGcSy9my9zTWWlp+365pcTodbr6Z9
-	K14vVAdThzL4A3KhrMvXNaqZ1KSHD5Q0P5k6n2LRS9ftxCP6SoRFOOVmJ5iLBh07zBaZK2
-	QvZdi6bfc8xqekqoUeuYY8xIokojh3s=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-277-V0YayNyYNFylRpcs0NUeVA-1; Mon, 03 Mar 2025 11:52:15 -0500
-X-MC-Unique: V0YayNyYNFylRpcs0NUeVA-1
-X-Mimecast-MFC-AGG-ID: V0YayNyYNFylRpcs0NUeVA_1741020734
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-474fb9c5524so105051cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 08:52:15 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741020734; x=1741625534;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X9vuxKvJBiI5voDqnbl4lgtxLuulj8GAfFRersEJ2U8=;
-        b=OfCn0u9VddhCxqID/yqZ5wY+pAtjNnjsVAe0LKjK+7300RWcJb7dRkFYHd7Ipb9JgF
-         5sdZVkYl+UqzK2lTw+2hojSPYnVSz1INfbmACb5U2isU5E4/zyyCBppdCNoeT4KG7CE3
-         XUmo4epXlatnEaUy5M/tgx8tIZ/Zy4kny6hH5Q/yYU4dNchv4HXdMBMA6STm5rthSeM3
-         l1ktGMBfouxHN3eDYizpq2BtFxdZUWOKQQ42e6W91sHvMQy5Ay2c/n6/neB1BLBbv7I4
-         kP3e+zMvpftbxqiZHcjqUR2K8BGfjsNvHk3xRfb+NKRH2VqHOhamUfOO/CYO8hfpKflo
-         9/0w==
-X-Forwarded-Encrypted: i=1; AJvYcCVkW36kw6ryYzTTxhSH2+qyAxQS8P19KCvUQMZ430SgnYIa4WDS8KSkvuytihDpM0wV++cSayFcvmNdf7k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyz1S4Oi1wXrKJZUttkP8r4HbziToB2pDl+wz//5Y9/vNgryow4
-	CXxDIzGueLAfuksnbofbTRTYfWhKP8qO7jzHPgzpl/20o4us14asCYZvzymD9IbZikOiAMroeYH
-	Zj7o/N6V2PIfMd1W/jh8DriHl1A82pPcv+5xP0jZ5AxWab2unOmfMaAFijNXY9w==
-X-Gm-Gg: ASbGnctBkINLgrx6LGIX404VoaMQvHGQJUbLCzUQFahtzHKGovxnzkAMO+gkljK7WPx
-	rrPzyOtqU3Hz/gVotwoecLSAbWFRXI7At3f5QQNOrKwcfmaacwEghf50BuH0ivutJweqWs5nTnF
-	eCyeybU59VWdUlZlFaIxmNpovkxp50JGZhwWPXyVTd9j5twUaB/TTg+4N7jU9he8obEBmCyhPBC
-	5Kh3OAiGGCQCWSQfWOD0bGt6Tjy8ZGR4OSFniHGORaeLSNfRa0X0PE9g7D7OoMAK2TC03iMZhFk
-	IygCcYMVW+k0IlXGkSKaIEtv3R4e89qCLmi4tdvoJEbXTlhXkFHTGC15OT4=
-X-Received: by 2002:ac8:7d85:0:b0:474:e4bd:240f with SMTP id d75a77b69052e-474e4bd2933mr76620491cf.15.1741020734609;
-        Mon, 03 Mar 2025 08:52:14 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IESSqcVQ5BVQ40j7IqzCcdGGkpDty4sSfwg8hSbBvllBwbMi0l4DwBjqREU0L+0P4dQsuTKlA==
-X-Received: by 2002:ac8:7d85:0:b0:474:e4bd:240f with SMTP id d75a77b69052e-474e4bd2933mr76620091cf.15.1741020734300;
-        Mon, 03 Mar 2025 08:52:14 -0800 (PST)
-Received: from ?IPV6:2601:188:c100:5710:627d:9ff:fe85:9ade? ([2601:188:c100:5710:627d:9ff:fe85:9ade])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-474691a11fdsm60247171cf.15.2025.03.03.08.52.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Mar 2025 08:52:13 -0800 (PST)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <efe964ad-9b14-48b9-9dab-30f29263191b@redhat.com>
-Date: Mon, 3 Mar 2025 11:52:12 -0500
+	bh=lqVj5C1JB+xLPX8Cc+LBmGK7OkMIN2JKNHM/ZrubAN0=;
+	b=Z++2FkJ2Gsiv59OQyzqnja0bLS2HKfoD5B+qa0wzHV8PV9ZL5Rod+VniZV3peGbCKcq5/9
+	2NqIMqO3umpsUZSq6/czZyXuNRKfi8rD9OBMPDBtrv3qt6ikcEiDXy1OpkXcu9EtQpoCRn
+	ZtsuyUliA/S8fGhAjJTrwU1Ah173m7E=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-360-RrGXdx_OOWG6mmAQauOuRg-1; Mon,
+ 03 Mar 2025 11:53:01 -0500
+X-MC-Unique: RrGXdx_OOWG6mmAQauOuRg-1
+X-Mimecast-MFC-AGG-ID: RrGXdx_OOWG6mmAQauOuRg_1741020780
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8811C18EB2D3;
+	Mon,  3 Mar 2025 16:53:00 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.32.16])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id C12691954B00;
+	Mon,  3 Mar 2025 16:52:58 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon,  3 Mar 2025 17:52:30 +0100 (CET)
+Date: Mon, 3 Mar 2025 17:52:27 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] signal: avoid clearing TIF_SIGPENDING in
+ recalc_sigpending() if unset
+Message-ID: <20250303165226.GB9870@redhat.com>
+References: <20250303134908.423242-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] LOCKDEP and Rust locking changes for v6.15
-To: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com
-Cc: Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
- rust-for-linux@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>
-References: <Z76Uk1d4SHPwVD6n@Mac.home> <Z8IHIYOnI-DMHlC8@boqun-archlinux>
-Content-Language: en-US
-In-Reply-To: <Z8IHIYOnI-DMHlC8@boqun-archlinux>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250303134908.423242-1-mjguzik@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
+On 03/03, Mateusz Guzik wrote:
+>
+>  void recalc_sigpending(void)
+>  {
+> -	if (!recalc_sigpending_tsk(current) && !freezing(current))
+> -		clear_thread_flag(TIF_SIGPENDING);
+> -
+> +	if (!recalc_sigpending_tsk(current) && !freezing(current)) {
+> +		if (test_thread_flag(TIF_SIGPENDING))
+> +			clear_thread_flag(TIF_SIGPENDING);
+> +	}
 
-On 2/28/25 1:57 PM, Boqun Feng wrote:
-> On Tue, Feb 25, 2025 at 08:12:03PM -0800, Boqun Feng wrote:
->> Hi Peter & Ingo,
->>
-> Ping ;-)
-
-Hi Peter, are you going to pull this lockep branch into tip?
-
-Thanks,
-Longman
+Acked-by: Oleg Nesterov <oleg@redhat.com>
 
 
