@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-541079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6698FA4B829
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:13:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DD30A4B82B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:13:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E806C3A7D90
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 07:12:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACFAD3A7FC6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 07:13:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E381E991A;
-	Mon,  3 Mar 2025 07:12:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F7B61E9906;
+	Mon,  3 Mar 2025 07:13:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="obXG80U3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b9wipAEJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF664188CDB;
-	Mon,  3 Mar 2025 07:12:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07E413D539;
+	Mon,  3 Mar 2025 07:13:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740985979; cv=none; b=fDRm8lgXj9bOPJYY9ruyn87n/44Z5uTMXi2fasuSTqx8wSe7oyhPIMQ4o26sTGF1GqYfXEzv95nRJyrYHrynv8vuNKHc6V1vzdBk89+N1Jle6e8741K8+cTWDEb9HI2G59q/OE65D8VnUGHc7AI4QwA1yDMS6dGifOpVCqr+Er0=
+	t=1740986021; cv=none; b=Qn2QWa9zK9DTiOKuogLcdaN7zlHCcd1W+4LmVz772ET+wS3SJLx8P56+I2vUg9xTXi+Zpmjk+qMU/Je8Hr2psN8squ3nR4jOQG4tCt1u2r+jvCgPm1mAamnsmHLLBuHP+9LuyTCRTycl1q5v82S4siDzn8Xfd0bPeyOV1h+vlqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740985979; c=relaxed/simple;
-	bh=XuHTgy/b8dVRKI/BDZeqKU4NvSplJ7y87Zy9KRvgJuM=;
+	s=arc-20240116; t=1740986021; c=relaxed/simple;
+	bh=TenErg1GkLgbzWhephArmGE4BBJlcT1ZMrgwsm6zt8Q=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eXBA/RHUfEsKYtze9cWek4Tcxd3VnxadFvQYoC/Fcy/ojRguYmiPngFhf4R9cjrlv+Z5PrtO9uI6D1mgK+sN/v90SSlvjmc2qX6kHddKFj+V53l92oBiNPMp/C12QvqaF40tsA6Y7i4mhy9q4MXxTf2zsAM9ooNfS9z3HOyFqeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=obXG80U3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B69ECC4CED6;
-	Mon,  3 Mar 2025 07:12:55 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=GQpg1xRBHnwGiAk4JLSuqV/NLX0up+7cl0VyJhI7aVoUFpbp7Wy/bdeoXxqSFiz3nccdgsDSpm3U4R5RphOIbFnkbgPxF4rYJ7i8wMV4XXhFUMTRg/x6G67svHrrLSD9Jh00tPbu7bbqsrGHqJK8xwaYUe/MK/kNrjGZ3FPb2ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b9wipAEJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BE1CC4CED6;
+	Mon,  3 Mar 2025 07:13:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740985978;
-	bh=XuHTgy/b8dVRKI/BDZeqKU4NvSplJ7y87Zy9KRvgJuM=;
+	s=k20201202; t=1740986021;
+	bh=TenErg1GkLgbzWhephArmGE4BBJlcT1ZMrgwsm6zt8Q=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=obXG80U39Xex/u+t9Abm2+poD9uM0dkWR0oohDVNdFOxgTkI5SAKo2MOJneQr2F1a
-	 1kntntXaW0gPxZqBOLwxDOGXh6IsfPGYQYevpCKJWL0j3P6H+wx/S0PC2iOUkgEQOd
-	 btFeXXhugA1pfF3YcDEdHupcXFFKHT9YtoUdHR19wyLZPPaY2I7EqTBoc2YL0bpsVp
-	 FQ449AcSrdmQP1RarD9dXb18zMxlotF67VjnodX9+CIxjgA0LDZVQYxdgc8VM5Rfm2
-	 3Uh23o4yactpt011pBBcE3DThu+sLfmF4zqIu6z1UryvuDKd9BHDQhy0Bh4P9eF/Bp
-	 wrr72TikeqoYQ==
-Message-ID: <1a9d0962-4cdf-47a8-a0b4-5b4b2e0df207@kernel.org>
-Date: Mon, 3 Mar 2025 08:12:53 +0100
+	b=b9wipAEJA5/AZRHQ7XXoj08IcfniqgOD6JVJ0B5OFEBpkBbdZ//Ipgn2Jjt70yexX
+	 pLzSbmQVVoMstRV1Ne3DxE1d22Am9ZDZDeOm4pp3zmt2Iv8d4UjAbprwRjvuOtkirf
+	 rAYliN8axNzcorwvBMNvtsw+h2eru0Zzq332vkhx7sQuEjtWwBW/uTvf4u+EduD8aG
+	 m1loUQxGvBVevmb4KVLcWiCbjyq76x02FssBIWtyerzMaaX2uIEqA3xhnHlzYt1jYh
+	 +lciTkkyxj5bsU6aB4VuzJfi9D4UbA3SP3M8huLr74Mcd8N1inRrEyUTnGGjjkN2vV
+	 GuH/6LsPiH4Mw==
+Message-ID: <a9741e5a-72c7-4a03-92ef-f6f1236078d9@kernel.org>
+Date: Mon, 3 Mar 2025 08:13:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,12 +49,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] platform/x86: amd: Add ISP platform info
-To: Pratap Nirujogi <pratap.nirujogi@amd.com>, mlimonci@amd.com,
- hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
- benjamin.chan@amd.com
-References: <20250303050102.2298520-1-pratap.nirujogi@amd.com>
+Subject: Re: [PATCH] platform/x86: amd: Add ISP platform info
+To: "Nirujogi, Pratap" <Pratap.Nirujogi@amd.com>,
+ "hdegoede@redhat.com" <hdegoede@redhat.com>,
+ "ilpo.jarvinen@linux.intel.com" <ilpo.jarvinen@linux.intel.com>
+Cc: "platform-driver-x86@vger.kernel.org"
+ <platform-driver-x86@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "Chan, Benjamin (Koon Pan)" <Benjamin.Chan@amd.com>
+References: <20250228170238.3484860-1-pratap.nirujogi@amd.com>
+ <ac0a2d39-aecb-4f24-8198-906f660edb17@kernel.org>
+ <CY5PR12MB6429EE863D0ED9DC89EE86F0FEC92@CY5PR12MB6429.namprd12.prod.outlook.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -100,28 +105,17 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250303050102.2298520-1-pratap.nirujogi@amd.com>
+In-Reply-To: <CY5PR12MB6429EE863D0ED9DC89EE86F0FEC92@CY5PR12MB6429.namprd12.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 03/03/2025 06:00, Pratap Nirujogi wrote:
-> Add ov05c i2c boardinfo and GPIO pin info for AMD ISP platform.
+On 03/03/2025 06:17, Nirujogi, Pratap wrote:
+> [AMD Official Use Only - AMD Internal Distribution Only]
 > 
-> Details of the resources added:
+> Hi Krzysztof,
 > 
-> - Added i2c bus number for AMD ISP platform is 99.
-> - Added GPIO 85 to allow ISP driver to enable and disable ISP access.
-> - Added GPIO 0 to allow sensor driver to enable and disable sensor module.
-> 
-> Signed-off-by: Pratap Nirujogi <pratap.nirujogi@amd.com>
-
-
-Didn't you already sent v1? And receive comments?
-
-> ---
-
-Where is the changelog? What happened in this patch comparing to v1?
-
+> Thanks for reviewing this and other AMD patches. Updated the copyright header in V1, please review.
+Do not top post. This was v1.
 
 Best regards,
 Krzysztof
