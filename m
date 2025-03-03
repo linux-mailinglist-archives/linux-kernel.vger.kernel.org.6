@@ -1,105 +1,121 @@
-Return-Path: <linux-kernel+bounces-544840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E522A4E6CB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:51:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F39EA4E559
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:17:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 988498C164D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:18:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FBEA19C3E33
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:04:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F9E4290BC1;
-	Tue,  4 Mar 2025 15:59:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F715294ED2;
+	Tue,  4 Mar 2025 15:45:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jAM9N0SL"
 Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D70A728FFEE
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:59:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.115
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2237294ECE
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:45:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741103969; cv=fail; b=SaGhp/3LuWse56BbBwNTbEdr599B6dvZxowFQZ5iGojxQYURcMlb3wuILgyDBv7KRPMi+S8AFW4gT18qKDVNptsFiuyH+FYaS9UgoKMp+pv0crN194vglJVwFvxGSR66LxOp03LFijKAemmCrEEmQ1pseH+yh11LYtgMCPZyWig=
+	t=1741103110; cv=pass; b=ISNL+ua+ns2LfZrEA+YQsjF4hE8MXsTbCxUVgf9zAVEGb6E2E3RscUoISk7aAyAoDxh5x1GBeNw2TlgYi91l6zs7j9xN9C4ewTsnDFuHDSBAgNgQEzZ/iBAQl8EDaODjmNfFRT/x1/Er3ADJX0pO9eq6R3p6nsqZdRYJdb3en2c=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741103969; c=relaxed/simple;
-	bh=D28MMNWE+45cppScAZmaj/qD9R8U6JIhVyN64bYc/w0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m5KDXh+xQjaXZiMqIcU0J8zep0zMFDJ/hGxwMwCpeTWAI9QDhWw+5Lt0nkevzih3iyQ1UcXhV3CbIZdfkD5658ENWFf4uuxZiNQeGC0wh20WJNri5Ba7PmLiv5WJbDs3+bUHigPCZDBKkwUK0fRNiOuGHHGNyzQnPgfxCcCzs1g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=none smtp.mailfrom=cc.itu.edu.tr; arc=none smtp.client-ip=114.242.206.163; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=fail smtp.client-ip=160.75.25.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+	s=arc-20240116; t=1741103110; c=relaxed/simple;
+	bh=1crnv6tKD/1d+tCgGsUba8x63Ta7feECjnTHfKoGLOg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XD8sXQTRzBUTz9g4IowBC4Yv+iVUC4qNK7ugmXFFDiIGM2822JF8Kut7A3d8Rl2xMeSbdh34jt31qhWVH+MfVqXKXL+ZzqWLhYbwhFOKYMZCun9ikdS4keFpTlbpoasirk7vNp8yqmOMnrN12yixSSneGTS6q6hPjLUZm6vures=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jAM9N0SL; arc=none smtp.client-ip=209.85.216.41; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; arc=pass smtp.client-ip=160.75.25.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (unknown [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id E14A740D046E
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:59:22 +0300 (+03)
+	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id DD9A740D5725
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:45:06 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
+Authentication-Results: lesvatest1.cc.itu.edu.tr;
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20230601 header.b=jAM9N0SL
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6gLb5rXdzG1R9
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:57:43 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6g1N5rY8zG1D2
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:42:48 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 3C49C42760; Tue,  4 Mar 2025 18:57:31 +0300 (+03)
-X-Envelope-From: <linux-kernel+bounces-541347-bozkiru=itu.edu.tr@vger.kernel.org>
-Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id A3D2643482
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:16:09 +0300 (+03)
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id 7BB382DCEB
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:16:09 +0300 (+03)
+	id D81AC42739; Tue,  4 Mar 2025 18:42:45 +0300 (+03)
+Authentication-Results: lesva1.cc.itu.edu.tr;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jAM9N0SL
+X-Envelope-From: <linux-kernel+bounces-541350-bozkiru=itu.edu.tr@vger.kernel.org>
+Authentication-Results: lesva2.cc.itu.edu.tr;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jAM9N0SL
+Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
+	by le2 (Postfix) with ESMTP id 8BDCA43245
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:16:46 +0300 (+03)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by fgw1.itu.edu.tr (Postfix) with SMTP id CC7F13064C0C
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:16:45 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 652AA18936BB
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:16:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A75E47A7343
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:15:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEC3D1F2C3B;
-	Mon,  3 Mar 2025 10:15:45 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703F81EE7DC;
-	Mon,  3 Mar 2025 10:15:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39D61F1909;
+	Mon,  3 Mar 2025 10:16:25 +0000 (UTC)
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 796B41EC01D;
+	Mon,  3 Mar 2025 10:16:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740996943; cv=none; b=HDTGW9+oVPTXaRwJvnPCzrB0iLgEHIZn9ilyYwi/9OKnvaDzUGpyo3z9SJW/rzwADQsHUg0mCAzPS86R6T4xmZLvwQj8wS2HIEoHXVeHa60+L88mp4m0dBEnYdwximP22sksShZjyJZcMwVCUu+iUvjdAjZFkDGNmJGT14wbRGw=
+	t=1740996982; cv=none; b=jAkKnDGjceDcfjTckACZrmLetVB52VjYHQTCDPbBXfKCn4OQzLhIdiwnUvoga1OFsJHhbE9HXzG2qFiTrnPmbwrhs3lKW2CJBPyQvhLmCHA3Q49K2yO1Ng2SEA5cGvwJtjmankGZ03biuG9tCtVF2UEu5Go3wwFUDhaYSmw+HMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740996943; c=relaxed/simple;
-	bh=eg16nEOWpbtYg7w3qAHk9L3ekwHdkL5U1EQOqfl89Q8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qZlPF4aYxZ5NdbRkGt6IN7DHgLE1728e4cw7BI1EyvtNaso1rC3i/TWRc7SuA8CcegMOx2bx6nGJ5e8e4DiTjFBLRADJPKiweRH/r82LIBLUOpEMQmd0Llms/ewqNaanJsinU2+Ovli34Ri/QgEwca2kaYDLHJtu7GfwkGAcDP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.2.10.34])
-	by gateway (Coremail) with SMTP id _____8Ax3eJMgcVnOROJAA--.64036S3;
-	Mon, 03 Mar 2025 18:15:40 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.2.10.34])
-	by front1 (Coremail) with SMTP id qMiowMCxLcVIgcVn0pYzAA--.57593S3;
-	Mon, 03 Mar 2025 18:15:38 +0800 (CST)
-From: Tianyang Zhang <zhangtianyang@loongson.cn>
-To: chenhuacai@kernel.org,
-	kernel@xen0n.name,
-	corbet@lwn.net,
-	alexs@kernel.org,
-	si.yanteng@linux.dev,
-	tglx@linutronix.de,
-	jiaxun.yang@flygoat.com,
-	peterz@infradead.org,
-	wangliupu@loongson.cn,
-	lvjianmin@loongson.cn,
-	maobibo@loongson.cn,
-	siyanteng@cqsoftware.com.cn,
-	gaosong@loongson.cn,
-	yangtiezhu@loongson.cn
-Cc: loongarch@lists.linux.dev,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Tianyang Zhang <zhangtianyang@loongson.cn>
-Subject: [PATCH 1/2] Docs/LoongArch: Add Advanced Extended-Redirect IRQ model description
-Date: Mon,  3 Mar 2025 18:15:32 +0800
-Message-Id: <20250303101533.31462-2-zhangtianyang@loongson.cn>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20250303101533.31462-1-zhangtianyang@loongson.cn>
-References: <20250303101533.31462-1-zhangtianyang@loongson.cn>
+	s=arc-20240116; t=1740996982; c=relaxed/simple;
+	bh=1crnv6tKD/1d+tCgGsUba8x63Ta7feECjnTHfKoGLOg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FT4SaZhtCshqquFHGV36jyRhez689RFBSGGLENIjK3vbge7FfQBZngGYJ5ef3W5EFkm+iIQetqf5+Hv57JhUl1MqvXFV17Na/ho15aMiXWD0Zww8Q6G+3Mcgommb+PskqqXps6PlrMsmng6Bd0HUC5pzl8mjYA5E7nbUNMALR+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jAM9N0SL; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2fe82430bb4so1152415a91.2;
+        Mon, 03 Mar 2025 02:16:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740996981; x=1741601781; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qhArfDOsbeMK6huD84GwJTmwqFK0bxwYSTSGdYmwOTE=;
+        b=jAM9N0SLvvwTGF12/Hlf0MrLjtIUzjMV4WPDuU5y0TbjVIVLPAwPQAvxsZgtbJR+ue
+         a/JvVg6gfkzoxqV0ncHcuNb9m88lMTHO2GB6ZvlFnxqb7wFVvyq9iajCIWpz7ahSI+3o
+         yfcSV84YfIpH90H0brB7fy/I04Bx5P+AjqVhRjRTgVYW2wdopp0+ycdseWC2Q5SbS7SK
+         6YPogA3HmhGqvSUC4QN263KAMgL1ZHQbrGmufFW/9cxC7c6GQkrBRMH5WwHydFsGeSbY
+         qRtYnbINEeltT556fEJ1H/JMbKq2vJoYEIFwsWMd6HEPz+EPaOqDANIiySN+XgvwBaCd
+         +pIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740996981; x=1741601781;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qhArfDOsbeMK6huD84GwJTmwqFK0bxwYSTSGdYmwOTE=;
+        b=WTAqHCDbNitCoJP6xCO+lMhaCLbsjmDlAmIfKUI0fQ3JHF4RM5ZcKVTChAvcnw4vw7
+         a9803lID4BV821rc4wAWLykdemWTcQY5NCUqKUxiP7uXpUaSOpaIn1jSQjyY4973uMkI
+         Robt/lH0sLJnDj4nnpTKuBX+yr9hwDYuzyMwFzGUfCmzCsENPQDuDX4fdBsmC26kCzyU
+         RRaRILRR6FYK5txktzMsKxlx8mx7QQ5a4vbAK0+LvuQIxeAsHkxFGlH8gkXjYhacsjpM
+         f7+ryaEwS+LW1dH9oCDVMMd/qGac5ilc/uhiaJBAREJvWcwNOL7oWW72YGqzNBcfmTli
+         cOVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV1PfopNJGrXEaghVc+CbTzc66njjtRslROUL3FEinetLynIa4fAA3YIbzsFoBGXIrEKGKF4tYSXQt3ye3zzIE=@vger.kernel.org, AJvYcCVrUydSTHcSE2HX1ie3NkbdcPrgvdC+2WRGaVl6wEXjehi70qfzKbuDkB8+vFraNtLB/LOs2ZGcqg6r6Ign@vger.kernel.org, AJvYcCWLPQyw5NhgKHoERmgbzHjc4DocUocL8Q09Pp5UpKnc4TJons6xzry/Uw7uq0OTcOmSxOm9NlsS7Fo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyd1v74sFnm+kvymLWzVf+pEyrOAFXSZTzam2XSEwRdFkEIvgoP
+	PKw7Lv6P3hohwndVqDRyPys3+m7pWrcTbmwBChwxLlb2v/3GE9AOSoCgYQFBK6RTA7cXoawEcqS
+	qq2LHpgMzswmH+1RkaN4ULxjEZ04=
+X-Gm-Gg: ASbGncsj2jaH3ub6J81hftumYeUPcAvxb/yFml6Y2F9SUSOLBZvZZxAHzpDJ3WP8rnV
+	GLBa0ydG7LMj8QbRD6nY+hQUxNgaTo3JQumpTOsVaQJjM69wbwEjN3To5XMtOiuwBdLiip21IEb
+	q+mZ84VpDlSHmx5yRAa9/e79HVqQ==
+X-Google-Smtp-Source: AGHT+IFd6Evh1lLa7uoaf+1dsVgglClC/wk+plGG74cKrVQ9AhFjTOqfM89v/lZcl9+c12vXftKm63P37wKAnGf/EkQ=
+X-Received: by 2002:a17:90b:3509:b0:2ee:f59a:94d3 with SMTP id
+ 98e67ed59e1d1-2febaa7f72fmr7857029a91.0.1740996980647; Mon, 03 Mar 2025
+ 02:16:20 -0800 (PST)
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -107,167 +123,72 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=yes
-X-CM-TRANSID:qMiowMCxLcVIgcVn0pYzAA--.57593S3
-X-CM-SenderInfo: x2kd0wxwld05hdqjqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-	ZEXasCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29K
-	BjDU0xBIdaVrnRJUUUBlb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26c
-	xKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vE
-	j48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxV
-	AFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x02
-	67AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487M2AExVAIFx02aVAFz4v204v7Mc
-	804VCY07AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY
-	67AKxVWUtVWrXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y4
-	8IcxkI7VAKI48JM4kE6I8I3I0E14AKx2xKxVC2ax8xMxAIw28IcxkI7VAKI48JMxC20s02
-	6xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr
-	4lx2IqxVCjr7xvwVAFwI0_Jr0_Jr4lx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxG
-	rwCI42IY6xIIjxv20xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJw
-	CI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2
-	z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8l38UUUUUU==
+References: <cover.1740995194.git.viresh.kumar@linaro.org> <023e3061cc164087b9079a9f6cb7e9fbf286794e.1740995194.git.viresh.kumar@linaro.org>
+In-Reply-To: <023e3061cc164087b9079a9f6cb7e9fbf286794e.1740995194.git.viresh.kumar@linaro.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 3 Mar 2025 11:16:08 +0100
+X-Gm-Features: AQ5f1JrPhvFkujCyICYZMVdordWbViYwvAuUtcezJzd9bMbekZhoTJOdN871VFg
+Message-ID: <CANiq72kdWzFOZ39EoFNxEAbk4KYgzLi1OAEc1zn8BM07VpXy3g@mail.gmail.com>
+Subject: Re: [PATCH V3 2/2] rust: Add initial clk abstractions
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Daniel Almeida <daniel.almeida@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6gLb5rXdzG1R9
+X-ITU-Libra-ESVA-ID: 4Z6g1N5rY8zG1D2
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741708698.10042@J6Xq09ScF5+BMxGKFqbj0g
+X-ITU-Libra-ESVA-Watermark: 1741707793.61437@7Hw1SpsJQyfjYc1sVltHRA
 X-ITU-MailScanner-SpamCheck: not spam
 
-Introduce the Redirect interrupt controllers.When the redirected interrup=
-t
-controller is enabled, the routing target of MSI interrupts is no longer =
-a
-specific CPU and vector number, but a specific redirected entry. The actu=
-al
-CPU and vector number used are described by the redirected entry.
+On Mon, Mar 3, 2025 at 11:00=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.o=
+rg> wrote:
+>
+> +/// Frequency unit.
+> +pub type Hertz =3D crate::ffi::c_ulong;
 
-Signed-off-by: Tianyang Zhang <zhangtianyang@loongson.cn>
----
- .../arch/loongarch/irq-chip-model.rst         | 38 +++++++++++++++++++
- .../zh_CN/arch/loongarch/irq-chip-model.rst   | 37 ++++++++++++++++++
- 2 files changed, 75 insertions(+)
+Do we want this to be an alias or would it make sense to take the
+chance to make this a newtype?
 
-diff --git a/Documentation/arch/loongarch/irq-chip-model.rst b/Documentat=
-ion/arch/loongarch/irq-chip-model.rst
-index a7ecce11e445..45cba22ff181 100644
---- a/Documentation/arch/loongarch/irq-chip-model.rst
-+++ b/Documentation/arch/loongarch/irq-chip-model.rst
-@@ -181,6 +181,44 @@ go to PCH-PIC/PCH-LPC and gathered by EIOINTC, and t=
-hen go to CPUINTC directly::
-              | Devices |
-              +---------+
-=20
-+Advanced Extended-Redirect IRQ model
-+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-+
-+In this model, IPI (Inter-Processor Interrupt) and CPU Local Timer inter=
-rupt go
-+to CPUINTC directly, CPU UARTS interrupts go to LIOINTC, PCH-MSI interru=
-pts go
-+to REDIRECT for remapping it to AVEC, and then go to CPUINTC directly, w=
-hile all
-+other devices interrupts go to PCH-PIC/PCH-LPC and gathered by EIOINTC, =
-and then
-+go to CPUINTC directly::
-+
-+ +-----+     +-----------------------+     +-------+
-+ | IPI | --> |        CPUINTC        | <-- | Timer |
-+ +-----+     +-----------------------+     +-------+
-+              ^          ^          ^
-+              |          |          |
-+       +---------+ +----------+ +---------+     +-------+
-+       | EIOINTC | | AVECINTC | | LIOINTC | <-- | UARTs |
-+       +---------+ +----------+ +---------+     +-------+
-+            ^            ^
-+            |            |
-+            |      +----------+
-+            |      | REDIRECT |
-+            |      +----------+
-+            |            ^
-+            |            |
-+       +---------+  +---------+
-+       | PCH-PIC |  | PCH-MSI |
-+       +---------+  +---------+
-+         ^     ^           ^
-+         |     |           |
-+ +---------+ +---------+ +---------+
-+ | Devices | | PCH-LPC | | Devices |
-+ +---------+ +---------+ +---------+
-+                  ^
-+                  |
-+             +---------+
-+             | Devices |
-+             +---------+
-+
- ACPI-related definitions
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-=20
-diff --git a/Documentation/translations/zh_CN/arch/loongarch/irq-chip-mod=
-el.rst b/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.r=
-st
-index d4ff80de47b6..d935da47ce3b 100644
---- a/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
-+++ b/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
-@@ -174,6 +174,43 @@ CPU=E4=B8=B2=E5=8F=A3=EF=BC=88UARTs=EF=BC=89=E4=B8=AD=
-=E6=96=AD=E5=8F=91=E9=80=81=E5=88=B0LIOINTC=EF=BC=8CPCH-MSI=E4=B8=AD=E6=96=
-=AD=E5=8F=91=E9=80=81=E5=88=B0AVECINTC=EF=BC=8C
-              | Devices |
-              +---------+
-=20
-+=E9=AB=98=E7=BA=A7=E6=89=A9=E5=B1=95-=E9=87=8D=E5=AE=9A=E5=90=91IRQ=E6=A8=
-=A1=E5=9E=8B
-+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-+
-+=E5=9C=A8=E8=BF=99=E7=A7=8D=E6=A8=A1=E5=9E=8B=E9=87=8C=E9=9D=A2=EF=BC=8C=
-IPI=EF=BC=88Inter-Processor Interrupt=EF=BC=89=E5=92=8CCPU=E6=9C=AC=E5=9C=
-=B0=E6=97=B6=E9=92=9F=E4=B8=AD=E6=96=AD=E7=9B=B4=E6=8E=A5=E5=8F=91=E9=80=81=
-=E5=88=B0CPUINTC=EF=BC=8C
-+CPU=E4=B8=B2=E5=8F=A3=EF=BC=88UARTs=EF=BC=89=E4=B8=AD=E6=96=AD=E5=8F=91=E9=
-=80=81=E5=88=B0LIOINTC=EF=BC=8CPCH-MSI=E4=B8=AD=E6=96=AD=E9=A6=96=E5=85=88=
-=E5=8F=91=E9=80=81=E5=88=B0REDIRECT=E6=A8=A1=E5=9D=97,=E5=AE=8C=E6=88=90=E9=
-=87=8D=E5=AE=9A=E5=90=91=E5=90=8E=E5=8F=91
-+=E9=80=81=E5=88=B0AVECINTC=EF=BC=8C=E8=80=8C=E5=90=8E=E9=80=9A=E8=BF=87A=
-VECINTC=E7=9B=B4=E6=8E=A5=E9=80=81=E8=BE=BECPUINTC=EF=BC=8C=E8=80=8C=E5=85=
-=B6=E4=BB=96=E6=89=80=E6=9C=89=E8=AE=BE=E5=A4=87=E7=9A=84=E4=B8=AD=E6=96=AD=
-=E5=88=99=E5=88=86=E5=88=AB=E5=8F=91=E9=80=81=E5=88=B0=E6=89=80=E8=BF=9E
-+=E6=8E=A5=E7=9A=84PCH-PIC/PCH-LPC=EF=BC=8C=E7=84=B6=E5=90=8E=E7=94=B1EIO=
-INTC=E7=BB=9F=E4=B8=80=E6=94=B6=E9=9B=86=EF=BC=8C=E5=86=8D=E7=9B=B4=E6=8E=
-=A5=E5=88=B0=E8=BE=BECPUINTC::
-+
-+ +-----+     +-----------------------+     +-------+
-+ | IPI | --> |        CPUINTC        | <-- | Timer |
-+ +-----+     +-----------------------+     +-------+
-+              ^          ^          ^
-+              |          |          |
-+       +---------+ +----------+ +---------+     +-------+
-+       | EIOINTC | | AVECINTC | | LIOINTC | <-- | UARTs |
-+       +---------+ +----------+ +---------+     +-------+
-+            ^            ^
-+            |            |
-+            |      +----------+
-+            |      | REDIRECT |
-+            |      +----------+
-+            |            ^
-+            |            |
-+       +---------+  +---------+
-+       | PCH-PIC |  | PCH-MSI |
-+       +---------+  +---------+
-+         ^     ^           ^
-+         |     |           |
-+ +---------+ +---------+ +---------+
-+ | Devices | | PCH-LPC | | Devices |
-+ +---------+ +---------+ +---------+
-+                  ^
-+                  |
-+             +---------+
-+             | Devices |
-+             +---------+
-+
- ACPI=E7=9B=B8=E5=85=B3=E7=9A=84=E5=AE=9A=E4=B9=89
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-=20
---=20
-2.43.0
+> +/// A simple implementation of `struct clk` from the C code.
 
+In general, please try to provide some documentation and/or examples
+where possible/reasonable.
+
+> +    /// Gets clock corresponding to a device and a connection id and ret=
+urns `Clk`.
+
+Please use intra-doc links wherever they may work.
+
+> +    /// Clock enable.
+
+Should these be e.g. "Enable the clock." or similar?
+
+Moreover, I see quite a lot of documentation about some of these
+functions in the C side. I think we should not regress on that. Should
+we link to the C docs, too?
+
+> +    pub fn enable(&self) -> Result<()> {
+
+Can this simply use `Result`?
+
+> +pub mod clk;
+
+Just to double check, do we need any `cfg`? I see some functions exist
+even without e.g. `CONFIG_COMMON_CLK`, but I wanted to ask if you
+tried to build it without it enabled.
+
+Thanks!
+
+Cheers,
+Miguel
 
 
