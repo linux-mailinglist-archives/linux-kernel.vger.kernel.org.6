@@ -1,128 +1,111 @@
-Return-Path: <linux-kernel+bounces-544981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A236AA4E73D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:59:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0918A4E623
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:36:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8ECF7A1896
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:55:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04A618C209C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:02:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEDD127BF70;
-	Tue,  4 Mar 2025 16:34:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D35BB28150D;
+	Tue,  4 Mar 2025 15:44:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="cYAWsUbR"
-Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ti.com header.i=@ti.com header.b="AThAQGHZ"
+Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7DAE27C17A
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:34:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8058627FE65
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:43:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.117
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741106049; cv=pass; b=dFkPyaBe0gZ+ydtJ0pgGpp657CObtOJ3Utek7lhabI6dktDLS1poHjDslsK5S2qg1iu/VlRK/zgA5r9/KjUCuO3mtwNytlyQas7b/rgCT8jSmbfL1X55yvMLT2AelVFr9T8M6o8/+gZRc625qORcjNKXppIJM9m7W+3rPoZ1suE=
+	t=1741103041; cv=fail; b=Kxoyi+rv74jQqEWi2oseO7wWrN2mjaLq8iFBVjkURluyRXoUrM9Xl098GP0l5SUd2dZdPb48CN3FIxvB4hHaiyqQJkVjhscSsjwiLS48qUO97/P1IpbJfsv649vjzMftDz3VMj0Zj2IdLsHQYJz45N7gPrvq0lzbrZxRl0hGrI0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741106049; c=relaxed/simple;
-	bh=gJCT2x0MTbORYrOB0+eP20IuPL7gfsLN+SSPmgQiy48=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UuEc1OCgRzu2Ry4IGQFVYXeMrollljSpLSFDvnHHoL0ufEcf4XTJWLijVr6etPYCd9Em0RAALmL6mpWfvc7TOspjV7ENS0kwIADtXYAQYXkB+HUVJcRz6eqR1fd1hDReFmk4NXfdeWJz86lCLD7Q9y1NAaXikpFm2OYtBgrSsrs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=cYAWsUbR; arc=none smtp.client-ip=209.85.128.46; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; arc=pass smtp.client-ip=160.75.25.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	s=arc-20240116; t=1741103041; c=relaxed/simple;
+	bh=4V4Q0QC6enYhZ0HGrj84kONUL41I3OhfuiezJI+AGj0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=jTh8GSAhivKFvLXxkFXFv7fJR+M9icL7ApCQEA7XTrJk4L+CqdvWRFj4nCmQxjmpWh3DTnSrIjnyGrKsAYuPBfBfbu5YbCWyFCbglOAdncN+2Ph/yyRg6grjqZ2jApjkdZLFth7bR3Y3I/ItHt2nL8A7JwgmHWIc8DV4w10WUTg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (1024-bit key) header.d=ti.com header.i=@ti.com header.b=AThAQGHZ reason="signature verification failed"; arc=none smtp.client-ip=198.47.19.245; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; arc=fail smtp.client-ip=160.75.25.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 091EC40D975C
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:34:06 +0300 (+03)
+	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id 03E6C40CEC93
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:43:58 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key, unprotected) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.a=rsa-sha256 header.s=20230601 header.b=cYAWsUbR
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=ti.com header.i=@ti.com header.a=rsa-sha256 header.s=ti-com-17Q1 header.b=AThAQGHZ
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6h7647kyzG3cK
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:32:50 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6fz93XNLzG15h
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:40:53 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 2077F427BA; Tue,  4 Mar 2025 19:32:40 +0300 (+03)
+	id 0117142724; Tue,  4 Mar 2025 18:40:37 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=cYAWsUbR
-X-Envelope-From: <linux-kernel+bounces-541797-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ti.com header.i=@ti.com header.b=AThAQGHZ
+X-Envelope-From: <linux-kernel+bounces-541831-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=cYAWsUbR
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ti.com header.i=@ti.com header.b=AThAQGHZ
 Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id DBB21421DE
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 16:23:17 +0300 (+03)
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id 7376A3064C07
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 16:23:17 +0300 (+03)
+	by le2 (Postfix) with ESMTP id 886F541F0F
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 16:38:27 +0300 (+03)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by fgw1.itu.edu.tr (Postfix) with SMTP id 5C706305F789
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 16:38:27 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1CB13AC751
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:22:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C146188E98C
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:37:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C704D214A70;
-	Mon,  3 Mar 2025 13:19:00 +0000 (UTC)
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7415A2135B8;
+	Mon,  3 Mar 2025 13:37:12 +0000 (UTC)
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDECE21505C
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 13:18:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 380B7212F83;
+	Mon,  3 Mar 2025 13:37:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741007936; cv=none; b=CYA63XO6qNGyKE7O4+EjJ5L/zh17LVPO3M/Y+6EX8R/wenBcQEhTr5Jp30wipRlaQ5OTdbebWREQsD8GP00uKn3wbrmYlO2EaBz1YqSSUKBxb5vRJagDK1Wge8gMC6WIT2B+iyyYsNqec0tFmNzioUlADM5ZFvt20VyV/0VrRIQ=
+	t=1741009029; cv=none; b=RcAlzUABSD+qCd44KsxxjlOCt6CQw6R2c5RGGUhutFVwJ71LKBSDrlM/49LsI4a7iSLtpOz8q40lkb7G3ywguMYV2Em48OWdPrHUKbCAiNzoewGg5XRvk0vSFqJNfLoZDN4rBz/dPdhkIbG+LLJ/zN0uwalLMJYNvF0xtw+AMao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741007936; c=relaxed/simple;
-	bh=gJCT2x0MTbORYrOB0+eP20IuPL7gfsLN+SSPmgQiy48=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fO9X21E549I/5dOAp1VFAg85d0W0/6gfGWY5D+nXpT07JYdQK6289SI9fcLpM5EoSDqIFA50Kj6cD/37FTlcizvR2RTa/wfBoHaScX4v5O83Qf5ww6gzi0YeIKDihrISMf86jwUD6QkCLqeF076q93u1sBKc0LFjn8fz2J3gkT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=cYAWsUbR; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43bbd711eedso9766295e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 05:18:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1741007933; x=1741612733; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9Mna2g5kGAQGbITypIOAf332guWttEFjYKfE+wICzl8=;
-        b=cYAWsUbRJv5Eo4BFu6NUWQjUiXEnOqSFNt/ZkN/pDyEMoLtq5sX5NiyQXdIjAWukBE
-         eFM57fCCrIov/Jcm9TrzvXUH6IbTipsxgWECxyBMIDNoMhzWUU/fveiEOn09cZFWQ/Rv
-         IipgyM5TxnYLiOtKGz7HE5JulJH8Bb5xUy/d8LX7nTicikw9HtYMibi1s7W4i3rKNgGT
-         xRP3KwmdwN72Sb3dlFUX6yUonsdRUby91zG9V1XjVjcDsprjxhlsopARD/GHh4aNdmvj
-         pAukKJguecMZBc0RBGY1EAYoiKKVihaDm+UdvWBM1SVPyCLZBT8uKutySK4OgLn0ROjg
-         /6wQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741007933; x=1741612733;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9Mna2g5kGAQGbITypIOAf332guWttEFjYKfE+wICzl8=;
-        b=iV0D5e/h4O/LuACaH3aKJbNRgfHNpHluxnjjqSU2N76Ruz6XCZE+ehTAvcWysw5rMr
-         M7K5uQEwBLduh3SILfBKsA9UFe2/yZsQdfVGt33lCbXgK0rbqtKa018yVrV76od5oK53
-         99c7WPW7xALa+z0VRv2hps1CQv9qCpMyCEGjj35Ho3QSD1nL96lB4DT9VzaIJsfTrbMf
-         ZofrhGGNZt8pM/Ired9uDKhUxdVnJcSY8vnYe8Cfa0OlihBuk8P7dm0QeR8n05shvpDe
-         N9AIl5Dcqw1ndOnPLng1TTICgQYTBqcCDJbzL8u1WRdh7kzY9ZLEIpv0tKLc2YXN4G+0
-         Inpg==
-X-Forwarded-Encrypted: i=1; AJvYcCWwATv/Lg0AEaMCyzskw3x2IcU+LjQyPSFLC0Ojf5yRo0/+CD7xWkF5OPEDdV0iYw3SwF+a0Lb3x2702h8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHzU/l7NsBYaCFm5cnncgNAgzuHjA/Hdgj8CtGNGNHB/NtvXdY
-	Fy4Z0G+s4eemzAjvIX1NyP31UvFCV5nZMeC/8hrOhpEuZrdZq/Mj3gAuq+O05eU=
-X-Gm-Gg: ASbGncvo1tsd8fg78WgZo5JtJXQdQGVwwiPh3JJcUQhr+f45Yn0vKTacE8Da7Ve4IyG
-	R8sfdT6CtIDQn/uku1V3zPfaD3KMtrN8dJPzwjcfXCel3HxH3TQrZX6bmAf6UiXcHRQUZgEB0Kl
-	4WO1OlUGT/SNzLjNmyPLXjPkGEUPRVRKH83gXqjWd4eKQpe6n3sxmrj3bsm11TBeR3t5n2oZVP1
-	mYhFMeJTG7VE8DbtMzrNPgJZQAfPVEigvMVEpyt1bWgK/vsWYk2g7If8DfUhUjJkIuzqgtiIEe8
-	WGScdamBzxJrhoLDBDB3EwvVD10mlXt75iSm6Q==
-X-Google-Smtp-Source: AGHT+IFY22PCA1a2+aN5bDi5iCcPupeWgrWRYBU3OAd6qR1uqfM8OPw60ciFVK/sAA1n6Y60dhPpwQ==
-X-Received: by 2002:a05:600c:1392:b0:439:88bb:d002 with SMTP id 5b1f17b1804b1-43ba6727b57mr103602005e9.23.1741007933166;
-        Mon, 03 Mar 2025 05:18:53 -0800 (PST)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:664a:9e92:6aa8:6007])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba538b9fsm194821915e9.17.2025.03.03.05.18.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 05:18:52 -0800 (PST)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 03 Mar 2025 14:18:39 +0100
-Subject: [PATCH 14/15] gpio: aspeed-sgpio: use lock guards
+	s=arc-20240116; t=1741009029; c=relaxed/simple;
+	bh=Xn1k7B4WleaLurRItO3p71bGSf1i/m3KCkUgXG8UOWA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=G+JHW47s+grGTjYvWpLxr9AYBn6lUH9guaq9jKyb8SSd/qCNLwWQaXCBNUmSYl6oacP+gdx7alN0B9vdZDE8Z5GANFubKTPpYbrT8AVPuUEpbfMxtRP7GGJu3y5ZQjso7BcN1WdkBiQO5Fuvgf43FLrNNCjZhxrJo8aRJ9j12U8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=AThAQGHZ; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 523DaFOx2693754
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Mon, 3 Mar 2025 07:36:15 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1741008975;
+	bh=YsrLgmhopKk68gcwDTV/NQFgsX6Svsgvrj64ryk9wwg=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=AThAQGHZNeEI4KCqBCVdeJJtIRwBAEZYQVgkKje9cHHogVrGS+9oqS4lW9ujZYEKM
+	 tlCNdOtsVejDrivOD6u9N4titcuS2lPfiSiAc9ZeD4fZ5e1D8Tp8oq0gh0NwvSqM42
+	 bCyGzWrzn8Yu3jsljDGwILtjFXOmOMjoqb6uS81o=
+Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 523DaFPo086963;
+	Mon, 3 Mar 2025 07:36:15 -0600
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 3
+ Mar 2025 07:36:15 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 3 Mar 2025 07:36:15 -0600
+Received: from [172.24.21.156] (lt9560gk3.dhcp.ti.com [172.24.21.156])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 523Da8cj073172;
+	Mon, 3 Mar 2025 07:36:09 -0600
+Message-ID: <40ce8ed3-b36c-4d5f-b75a-7e0409beb713@ti.com>
+Date: Mon, 3 Mar 2025 19:06:07 +0530
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -130,248 +113,125 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250303-gpiochip-set-conversion-v1-14-1d5cceeebf8b@linaro.org>
-References: <20250303-gpiochip-set-conversion-v1-0-1d5cceeebf8b@linaro.org>
-In-Reply-To: <20250303-gpiochip-set-conversion-v1-0-1d5cceeebf8b@linaro.org>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, 
- Michael Hennerich <michael.hennerich@analog.com>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Mun Yew Tham <mun.yew.tham@intel.com>, Joel Stanley <joel@jms.id.au>, 
- Andrew Jeffery <andrew@codeconstruct.com.au>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pwm@vger.kernel.org, patches@opensource.cirrus.com, 
- linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5780;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=0qXZl4P6oay9QYtQck71x8HYJPy63jgVqg/jPZp1JP8=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBnxawsJBgL9NLW7b7FCtj23bKQ2kGRMqw9cfP5j
- kWw5bq4/RWJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZ8WsLAAKCRARpy6gFHHX
- cjEGD/9I/yPodJyzCvoLyTdAs9s5HAxWXV840R+OGBpnA+oBXEY0FEbNiwC/ZRm6SNhGJrpxwfM
- 0Cw6Nxab1aIHNmI/IkLcksuG5r8U++V+RfblyWmsofiye6Cjmi2k1JY8NHPqGNfxGHSCi05c6hr
- +o0YH0h4Pkb/XCzt7Xrp9gQxm14ttMk9AnxYSEj8KT53aCRaiacOJeAueSocxP/0plWhJWnLBlE
- udhOpcnmP2QDd3bu2veRGB05Tb3mO8juN5L0ClWpZH7vfWmJ4tGxo6CLQ/BJCbctfAzExS6R+8Z
- wrisMCfrjV1zNfFfgvEC9iQXHEXeprwQA+LPKEdM8uUK7wsSIaNYRhgCH2zKOv3tfd84zaa04xA
- VHJ6Si4eURMZ5f5J26a+xy6d9LHe7hM6r4zG/yOurvpFt5+UdpPnB7K9tC0AtobOSf1nYMXu/Sx
- xSgB2mwmYmf3UgO0RE9yimPFnwaA4+Q6rMb2bSyqnKDIC9RbqCYCdO0fqjgz0zaWogldF2563Pc
- rqMkKNXgx38lLXc1hXAjdiEn5FsrcnratZRfM72ETy/jHE1TjvODlvn4UVeKvQg1+yYmrtuOnZ5
- D9tcdNqZ961mLhWwMoF//HwFYaND3V9NpBfENgdDRuf/cQg9XmRLHJDhqH0uqZ+Ah5XIdxt1iBe
- e56xOZfdkwuJ96Q==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+User-Agent: Mozilla Thunderbird
+Subject: Re: [EXTERNAL] Re: [PATCH net-next v3 3/3] net: ti: icssg-prueth: Add
+ XDP support
+To: Dan Carpenter <dan.carpenter@linaro.org>
+CC: <rogerq@kernel.org>, <danishanwar@ti.com>, <pabeni@redhat.com>,
+        <kuba@kernel.org>, <edumazet@google.com>, <davem@davemloft.net>,
+        <andrew+netdev@lunn.ch>, <bpf@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <u.kleine-koenig@baylibre.com>,
+        <matthias.schiffer@ew.tq-group.com>, <schnelle@linux.ibm.com>,
+        <diogo.ivo@siemens.com>, <glaroque@baylibre.com>, <macro@orcam.me.uk>,
+        <john.fastabend@gmail.com>, <hawk@kernel.org>, <daniel@iogearbox.net>,
+        <ast@kernel.org>, <srk@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
+References: <20250224110102.1528552-1-m-malladi@ti.com>
+ <20250224110102.1528552-4-m-malladi@ti.com>
+ <d362a527-88cf-4cd5-a22f-7eeb938d4469@stanley.mountain>
+ <21f21dfb-264b-4e01-9cb3-8d0133b5b31b@ti.com>
+ <2c0c1a4f-95d4-40c9-9ede-6f92b173f05d@stanley.mountain>
+Content-Language: en-US
+From: "Malladi, Meghana" <m-malladi@ti.com>
+In-Reply-To: <2c0c1a4f-95d4-40c9-9ede-6f92b173f05d@stanley.mountain>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: quoted-printable
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6h7647kyzG3cK
+X-ITU-Libra-ESVA-ID: 4Z6fz93XNLzG15h
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741710776.69655@TAb5dak8qJZlwrZcK8UomA
+X-ITU-Libra-ESVA-Watermark: 1741707757.49667@B72REGAoIHD3V+4JM0FaUw
 X-ITU-MailScanner-SpamCheck: not spam
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Reduce the code complexity by using automatic lock guards with the raw
-spinlock.
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/gpio/gpio-aspeed-sgpio.c | 76 +++++++++++++++-------------------------
- 1 file changed, 29 insertions(+), 47 deletions(-)
+On 3/3/2025 6:01 PM, Dan Carpenter wrote:
+> On Mon, Mar 03, 2025 at 05:=E2=80=8A36:=E2=80=8A41PM +0530, Malladi, Me=
+ghana wrote: > >=20
+>  > +static int emac_run_xdp(struct prueth_emac *emac, struct xdp_buff=20
+> *xdp, > > > + struct page *page) > > > +{ > > > + struct net_device
+> ZjQcmQRYFpfptBannerStart
+> This message was sent from outside of Texas Instruments.
+> Do not click links or open attachments unless you recognize the source=20
+> of this email and know the content is safe.
+> Report=C2=A0Suspicious
+> <https://us-phishalarm-ewt.proofpoint.com/EWT/v1/G3vK!=20
+> uldqV3eFFkc7oMXFHHkDX4AFLVsE3ldskf6bPMMFmxDOsNtMfZjUscGelUkBFpAeybNre38=
+L_c2LiiUb7AZxLvAeqSk9ifgbPE1AYFU$>
+> ZjQcmQRYFpfptBannerEnd
+>=20
+> On Mon, Mar 03, 2025 at 05:36:41PM +0530, Malladi, Meghana wrote:
+>> > > +static int emac_run_xdp(struct prueth_emac *emac, struct xdp_buff=
+ *xdp,
+>> > > +			struct page *page)
+>> > > +{
+>> > > +	struct net_device *ndev =3D emac->ndev;
+>> > > +	int err, result =3D ICSSG_XDP_PASS;
+>> > > +	struct bpf_prog *xdp_prog;
+>> > > +	struct xdp_frame *xdpf;
+>> > > +	int q_idx;
+>> > > +	u32 act;
+>> > > +
+>> > > +	xdp_prog =3D READ_ONCE(emac->xdp_prog);
+>> > > +	act =3D bpf_prog_run_xdp(xdp_prog, xdp);
+>> > > +	switch (act) {
+>> > > +	case XDP_PASS:
+>> > > +		break;
+>> > > +	case XDP_TX:
+>> > > +		/* Send packet to TX ring for immediate transmission */
+>> > > +		xdpf =3D xdp_convert_buff_to_frame(xdp);
+>> > > +		if (unlikely(!xdpf))
+>> >=20
+>> > This is the second unlikely() macro which is added in this patchset.
+>> > The rule with likely/unlikely() is that it should only be added if i=
+t
+>> > likely makes a difference in benchmarking.  Quite often the compiler
+>> > is able to predict that valid pointers are more likely than NULL
+>> > pointers so often these types of annotations don't make any differen=
+ce
+>> > at all to the compiled code.  But it depends on the compiler and the=
+ -O2
+>> > options.
+>> >=20
+>>=20
+>> Do correct me if I am wrong, but from my understanding, XDP feature de=
+pends
+>> alot of performance and benchmarking and having unlikely does make a
+>> difference. Atleast in all the other drivers I see this being used for=
+ XDP.
+>>=20
+>=20
+> Which compiler are you on when you say that "having unlikely does make =
+a
+> difference"?
 
-diff --git a/drivers/gpio/gpio-aspeed-sgpio.c b/drivers/gpio/gpio-aspeed-sgpio.c
-index 34eb26298e32..5ce86de22563 100644
---- a/drivers/gpio/gpio-aspeed-sgpio.c
-+++ b/drivers/gpio/gpio-aspeed-sgpio.c
-@@ -6,6 +6,7 @@
-  */
- 
- #include <linux/bitfield.h>
-+#include <linux/cleanup.h>
- #include <linux/clk.h>
- #include <linux/gpio/driver.h>
- #include <linux/hashtable.h>
-@@ -170,17 +171,14 @@ static int aspeed_sgpio_get(struct gpio_chip *gc, unsigned int offset)
- {
- 	struct aspeed_sgpio *gpio = gpiochip_get_data(gc);
- 	const struct aspeed_sgpio_bank *bank = to_bank(offset);
--	unsigned long flags;
- 	enum aspeed_sgpio_reg reg;
- 	int rc = 0;
- 
--	raw_spin_lock_irqsave(&gpio->lock, flags);
-+	guard(raw_spinlock_irqsave)(&gpio->lock);
- 
- 	reg = aspeed_sgpio_is_input(offset) ? reg_val : reg_rdata;
- 	rc = !!(ioread32(bank_reg(gpio, bank, reg)) & GPIO_BIT(offset));
- 
--	raw_spin_unlock_irqrestore(&gpio->lock, flags);
--
- 	return rc;
- }
- 
-@@ -214,13 +212,10 @@ static int sgpio_set_value(struct gpio_chip *gc, unsigned int offset, int val)
- static void aspeed_sgpio_set(struct gpio_chip *gc, unsigned int offset, int val)
- {
- 	struct aspeed_sgpio *gpio = gpiochip_get_data(gc);
--	unsigned long flags;
- 
--	raw_spin_lock_irqsave(&gpio->lock, flags);
-+	guard(raw_spinlock_irqsave)(&gpio->lock);
- 
- 	sgpio_set_value(gc, offset, val);
--
--	raw_spin_unlock_irqrestore(&gpio->lock, flags);
- }
- 
- static int aspeed_sgpio_dir_in(struct gpio_chip *gc, unsigned int offset)
-@@ -231,15 +226,14 @@ static int aspeed_sgpio_dir_in(struct gpio_chip *gc, unsigned int offset)
- static int aspeed_sgpio_dir_out(struct gpio_chip *gc, unsigned int offset, int val)
- {
- 	struct aspeed_sgpio *gpio = gpiochip_get_data(gc);
--	unsigned long flags;
- 	int rc;
- 
- 	/* No special action is required for setting the direction; we'll
- 	 * error-out in sgpio_set_value if this isn't an output GPIO */
- 
--	raw_spin_lock_irqsave(&gpio->lock, flags);
-+	guard(raw_spinlock_irqsave)(&gpio->lock);
-+
- 	rc = sgpio_set_value(gc, offset, val);
--	raw_spin_unlock_irqrestore(&gpio->lock, flags);
- 
- 	return rc;
- }
-@@ -269,7 +263,6 @@ static void aspeed_sgpio_irq_ack(struct irq_data *d)
- {
- 	const struct aspeed_sgpio_bank *bank;
- 	struct aspeed_sgpio *gpio;
--	unsigned long flags;
- 	void __iomem *status_addr;
- 	int offset;
- 	u32 bit;
-@@ -278,18 +271,15 @@ static void aspeed_sgpio_irq_ack(struct irq_data *d)
- 
- 	status_addr = bank_reg(gpio, bank, reg_irq_status);
- 
--	raw_spin_lock_irqsave(&gpio->lock, flags);
-+	guard(raw_spinlock_irqsave)(&gpio->lock);
- 
- 	iowrite32(bit, status_addr);
--
--	raw_spin_unlock_irqrestore(&gpio->lock, flags);
- }
- 
- static void aspeed_sgpio_irq_set_mask(struct irq_data *d, bool set)
- {
- 	const struct aspeed_sgpio_bank *bank;
- 	struct aspeed_sgpio *gpio;
--	unsigned long flags;
- 	u32 reg, bit;
- 	void __iomem *addr;
- 	int offset;
-@@ -301,17 +291,15 @@ static void aspeed_sgpio_irq_set_mask(struct irq_data *d, bool set)
- 	if (set)
- 		gpiochip_enable_irq(&gpio->chip, irqd_to_hwirq(d));
- 
--	raw_spin_lock_irqsave(&gpio->lock, flags);
-+	scoped_guard(raw_spinlock_irqsave, &gpio->lock) {
-+		reg = ioread32(addr);
-+		if (set)
-+			reg |= bit;
-+		else
-+			reg &= ~bit;
- 
--	reg = ioread32(addr);
--	if (set)
--		reg |= bit;
--	else
--		reg &= ~bit;
--
--	iowrite32(reg, addr);
--
--	raw_spin_unlock_irqrestore(&gpio->lock, flags);
-+		iowrite32(reg, addr);
-+	}
- 
- 	/* Masking the IRQ */
- 	if (!set)
-@@ -339,7 +327,6 @@ static int aspeed_sgpio_set_type(struct irq_data *d, unsigned int type)
- 	const struct aspeed_sgpio_bank *bank;
- 	irq_flow_handler_t handler;
- 	struct aspeed_sgpio *gpio;
--	unsigned long flags;
- 	void __iomem *addr;
- 	int offset;
- 
-@@ -366,24 +353,22 @@ static int aspeed_sgpio_set_type(struct irq_data *d, unsigned int type)
- 		return -EINVAL;
- 	}
- 
--	raw_spin_lock_irqsave(&gpio->lock, flags);
-+	scoped_guard(raw_spinlock_irqsave, &gpio->lock) {
-+		addr = bank_reg(gpio, bank, reg_irq_type0);
-+		reg = ioread32(addr);
-+		reg = (reg & ~bit) | type0;
-+		iowrite32(reg, addr);
- 
--	addr = bank_reg(gpio, bank, reg_irq_type0);
--	reg = ioread32(addr);
--	reg = (reg & ~bit) | type0;
--	iowrite32(reg, addr);
-+		addr = bank_reg(gpio, bank, reg_irq_type1);
-+		reg = ioread32(addr);
-+		reg = (reg & ~bit) | type1;
-+		iowrite32(reg, addr);
- 
--	addr = bank_reg(gpio, bank, reg_irq_type1);
--	reg = ioread32(addr);
--	reg = (reg & ~bit) | type1;
--	iowrite32(reg, addr);
--
--	addr = bank_reg(gpio, bank, reg_irq_type2);
--	reg = ioread32(addr);
--	reg = (reg & ~bit) | type2;
--	iowrite32(reg, addr);
--
--	raw_spin_unlock_irqrestore(&gpio->lock, flags);
-+		addr = bank_reg(gpio, bank, reg_irq_type2);
-+		reg = ioread32(addr);
-+		reg = (reg & ~bit) | type2;
-+		iowrite32(reg, addr);
-+	}
- 
- 	irq_set_handler_locked(d, handler);
- 
-@@ -487,13 +472,12 @@ static int aspeed_sgpio_reset_tolerance(struct gpio_chip *chip,
- 					unsigned int offset, bool enable)
- {
- 	struct aspeed_sgpio *gpio = gpiochip_get_data(chip);
--	unsigned long flags;
- 	void __iomem *reg;
- 	u32 val;
- 
- 	reg = bank_reg(gpio, to_bank(offset), reg_tolerance);
- 
--	raw_spin_lock_irqsave(&gpio->lock, flags);
-+	guard(raw_spinlock_irqsave)(&gpio->lock);
- 
- 	val = readl(reg);
- 
-@@ -504,8 +488,6 @@ static int aspeed_sgpio_reset_tolerance(struct gpio_chip *chip,
- 
- 	writel(val, reg);
- 
--	raw_spin_unlock_irqrestore(&gpio->lock, flags);
--
- 	return 0;
- }
- 
+I'm on gcc version 10.3.1.
 
--- 
-2.45.2
+>=20
+> I'm on gcc version 14.2.0 (Debian 14.2.0-16) and it doesn't make a
+> difference to the compiled code.  This matches what one would expect fr=
+om
+> a compiler.  Valid pointers are fast path and NULL pointers are slow pa=
+th.
+>=20
+
+Can you tell me how did you verify this? I actually don't know what=20
+level of optimization to expect from a compiler. I said so, because I=20
+have checked with other drivers which implemented XDP and everywhere=20
+unlikely is used. But now I understand its not the driver but the=20
+compiler that plays the major role in defining the optimization.
+
+> Adding an unlikely() is a micro optimization.  There are so many other
+> things you can do to speed up the code.  I wouldn't start with that.
+>
+
+Ok, if you believe that unlikely is doing more harm than good, I am ok=20
+with dropping them off.
+
+> regards,
+> dan
+>=20
 
 
 
