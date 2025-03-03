@@ -1,115 +1,115 @@
-Return-Path: <linux-kernel+bounces-542079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70C20A4C549
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:36:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6925A4C581
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:43:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C50341884DD4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:36:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7F147A054C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:37:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 173A81C863C;
-	Mon,  3 Mar 2025 15:36:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="hhUNmYzs"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 002D714F9D6;
-	Mon,  3 Mar 2025 15:36:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15CE71A08AF;
+	Mon,  3 Mar 2025 15:37:54 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D1A523F36F;
+	Mon,  3 Mar 2025 15:37:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741016194; cv=none; b=hBP8ffZUjMg1TRrgdhHFAeW07fO3K8OwgieJQoMOG1xjbCuOCjWUsnAXAlhe5d1wGxtYEZR9m2oi2A8biSbVqaZYfSOn9fKzQvZjmO6xonXG1PM4vIkxIgHROMXs0JCDlZL2SmWnUVHKCgq7D0SjGtTA3EGNNBz2FjG7897UwKU=
+	t=1741016273; cv=none; b=AX+HVmzxQdc15g1Fr4yEd2QUs6fi6FFyANlHyaDgUrasDFchBGAb8poKUGXmyRcUbMbylkIJqFfaJ1Og8TelPtUDQyACCu8wMmFUU+JKCcgLFhyzbmuNbs65d8fQPFXtPcDDYHLSbQUcoS1Elnn7n8qllJv1TPigyCsA2K7/Ezs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741016194; c=relaxed/simple;
-	bh=lRcZxkNCUpC9i3cpXcoUFlIvQca6FvwQBnHeTywjTOA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ovL0NUl9wg1danI3sWHJXCubb/I/mGGGG4aXz1rS41/bzzH6Ma9RCtwj3anbREUiyC2qrDbencQ46txdRXn7a9O5BPARarpIYA94OnDbJVJeh27O9SDFnCqUteOzhnYZjzQxtG66zwKz0+b9BsWe46Xv//W1V5X5dAsktNAqNAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=hhUNmYzs; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id F3FC940E0217;
-	Mon,  3 Mar 2025 15:36:29 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id vY09TV1g3tfu; Mon,  3 Mar 2025 15:36:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1741016186; bh=VvdHYJX0UP/VpMkj41lRfFMKUsTh6f4n4pUKWdQgYy0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hhUNmYzshKvFFGjdbmCaIrzOF+aZ8c9J2vSLD0jTYaejV2sqXIkifAnKda3ECRLz4
-	 SqrjnTz+2xhljjJfNN82DdqMxu9A174AzpVyQfGhfSZhD5b4yBq5mnL8TlPsE8qPSK
-	 FslUM9mDp/bTijsRcX8g2KcEFf/5FoDjGZPiUsgfRJqVh8dDE6KnCGb7FOWUGmFyI6
-	 tn6RPcmPLOlX72/vJEUV9QOYl4UUvmkHkXSpawI2YWdZKobeE6aHqDUUdZaQ4V1DvE
-	 2edXyWHv7af3MogwfOTgRVo7klazsdX7ltDG0TpZ0SERMlNQegtT/EmgmQfhr1EOr5
-	 ygSXjnGff7eWqP64juguduMXyRSPxt2LMWjH+in8gJQwDcQCj0mTrVTHEZ2DHLI3nY
-	 52dt2WUYLjiYlxIGy6BYcvi2C7UyaMn25nXxbeCg0nkOCmnfN2ifRflbJ2JpqIpd5x
-	 0Fw5UhqW8wR3pYoqbD9FefHrV6SMZRfk/eYlRmcumwiLsbrdCXamOvMYPWgxPVe1zO
-	 0auwYDNLV4UaHG+4Z1pTNarjdfp0vZd/Qfz0v6ZHs4iJHjQ4+Fm68jjNbjfLYQYum/
-	 RJZQl0c7SFz34uY4HoDcf3X4RngdGWLK1l0E49OwZ4LBthMIP8q7NOXlhClJWJTJgS
-	 EQ1Byuh7AExYnli6LM/UxvE4=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id DA22D40E0216;
-	Mon,  3 Mar 2025 15:36:16 +0000 (UTC)
-Date: Mon, 3 Mar 2025 16:36:11 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Tony Luck <tony.luck@intel.com>, Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-	James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-edac@vger.kernel.org
-Subject: Re: [PATCH] EDAC/igen6: Constify struct res_config
-Message-ID: <20250303153611.GJZ8XMa61cuRbheMDO@fat_crate.local>
-References: <a06153870951a64b438e76adf97d440e02c1a1fc.1738355198.git.christophe.jaillet@wanadoo.fr>
+	s=arc-20240116; t=1741016273; c=relaxed/simple;
+	bh=ZudowNZEK9JeVL1QV0s4QYj1IGj4nJAcdTPtImYRZ8Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PPzojKwmYFbl8ZAQXIpDR+KJ+ud1SL9UJRc0QJVMgWK8sLtQvAjqvsJpfwpvhf/tieKNJ+SUba6w5rNOK9A3icgo3esSCM6Es08uhAgOBnfFDYtpkl4trQt5Jj/EY+iqNWtxCm//o1xg9wJB8DlqJsiOMEYW8nRJnsr9gp0ubvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7E16B106F;
+	Mon,  3 Mar 2025 07:38:04 -0800 (PST)
+Received: from e129527.arm.com (unknown [10.57.67.1])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4151E3F5A1;
+	Mon,  3 Mar 2025 07:37:48 -0800 (PST)
+From: Hugues KAMBA MPIANA <hugues.kambampiana@arm.com>
+To: liviu.dudau@arm.com,
+	sudeep.holla@arm.com,
+	lpieralisi@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Hugues KAMBA MPIANA <hugues.kambampiana@arm.com>
+Subject: [PATCH] arm64: dts: corstone1000: Add definitions for secondary CPU cores
+Date: Mon,  3 Mar 2025 15:37:44 +0000
+Message-Id: <20250303153744.376419-1-hugues.kambampiana@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <a06153870951a64b438e76adf97d440e02c1a1fc.1738355198.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jan 31, 2025 at 09:27:02PM +0100, Christophe JAILLET wrote:
-> 'struct res_config' are not modified in this driver.
-> 
-> Constifying these structures moves some data to a read-only section, so
-> increase overall security, especially when the structure holds some
-> function pointers.
-> 
-> On a x86_64, with allmodconfig, as an example:
-> Before:
-> ======
->    text	   data	    bss	    dec	    hex	filename
->   36777	   2479	   4304	  43560	   aa28	drivers/edac/igen6_edac.o
-> 
-> After:
-> =====
->    text	   data	    bss	    dec	    hex	filename
->   37297	   1959	   4304	  43560	   aa28	drivers/edac/igen6_edac.o
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested-only.
-> ---
->  drivers/edac/igen6_edac.c | 20 ++++++++++----------
->  1 file changed, 10 insertions(+), 10 deletions(-)
+Add `cpu1`, `cpu2` and `cpu3` nodes to the Corstone1000 device tree to
+enable support for secondary CPU cores.
 
-Applied, thanks.
+This update facilitates symmetric multiprocessing (SMP) support on
+the Corstone1000 Fixed Virtual Platform (FVP), allowing the
+secondary cores to be properly initialised and utilised.
 
--- 
-Regards/Gruss,
-    Boris.
+Signed-off-by: Hugues KAMBA MPIANA <hugues.kambampiana@arm.com>
+---
+ arch/arm64/boot/dts/arm/corstone1000-fvp.dts | 24 ++++++++++++++++++++
+ arch/arm64/boot/dts/arm/corstone1000.dtsi    |  2 +-
+ 2 files changed, 25 insertions(+), 1 deletion(-)
 
-https://people.kernel.org/tglx/notes-about-netiquette
+diff --git a/arch/arm64/boot/dts/arm/corstone1000-fvp.dts b/arch/arm64/boot/dts/arm/corstone1000-fvp.dts
+index abd013562995..df9700302b8d 100644
+--- a/arch/arm64/boot/dts/arm/corstone1000-fvp.dts
++++ b/arch/arm64/boot/dts/arm/corstone1000-fvp.dts
+@@ -49,3 +49,27 @@ sdmmc1: mmc@50000000 {
+ 		clock-names = "smclk", "apb_pclk";
+ 	};
+ };
++
++&cpus {
++	cpu1: cpu@1 {
++		device_type = "cpu";
++		compatible = "arm,cortex-a35";
++		reg = <0x1>;
++		enable-method = "psci";
++		next-level-cache = <&L2_0>;
++	};
++	cpu2: cpu@2 {
++		device_type = "cpu";
++		compatible = "arm,cortex-a35";
++		reg = <0x2>;
++		enable-method = "psci";
++		next-level-cache = <&L2_0>;
++	};
++	cpu3: cpu@3 {
++		device_type = "cpu";
++		compatible = "arm,cortex-a35";
++		reg = <0x3>;
++		enable-method = "psci";
++		next-level-cache = <&L2_0>;
++	};
++};
+diff --git a/arch/arm64/boot/dts/arm/corstone1000.dtsi b/arch/arm64/boot/dts/arm/corstone1000.dtsi
+index bb9b96fb5314..b4364c61901c 100644
+--- a/arch/arm64/boot/dts/arm/corstone1000.dtsi
++++ b/arch/arm64/boot/dts/arm/corstone1000.dtsi
+@@ -21,7 +21,7 @@ chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	cpus {
++	cpus: cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
 
