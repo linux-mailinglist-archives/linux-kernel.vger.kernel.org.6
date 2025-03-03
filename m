@@ -1,131 +1,115 @@
-Return-Path: <linux-kernel+bounces-542835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0211A4CE4D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:30:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 539B0A4CE4B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:30:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DEA77A7EE7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:29:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79930188D07B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6CA922FF4F;
-	Mon,  3 Mar 2025 22:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148CA2356BD;
+	Mon,  3 Mar 2025 22:30:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="fLR7UpeP"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uSYAPZZ2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04C0238D32;
-	Mon,  3 Mar 2025 22:30:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B60C1DFE1;
+	Mon,  3 Mar 2025 22:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741041012; cv=none; b=Bno62PZKcQqsdodt3NAlVpgkSV88JO4GS8g7iGFlLvIf1Yt2vAwXmonkUT1K4GhthZ6frPykh6PoeafIjqUVvLGus16BKNte6ykQ50wgHsGwxkSyc+58MXcH85/do/agGyWow/yjZciNnBlL537dMJRsdIttVWvsjKStSeHyKGE=
+	t=1741040999; cv=none; b=gtaNRKCVW/YSIgd69sfvv3HvvobdMnwfzxrzAaYEVRUZGynKj+UbfAWh13vEhtaLRdxI8PHjOksL5OmsTJ9ATAPDVwiMtg4/HguM5eZCumvVaEIU37xqwmAOcMyorBZiSzThrU+czr8Nt8KMV7dCB0kYzburGj5FZ3NT1nPdWQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741041012; c=relaxed/simple;
-	bh=/mpM4N1kNDhZtm4ABQXD/3qB+8qtSGSXUnHC8BYYl6E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DvaFpw4R4K6sAFk7wLQn1PMv0MBE9rTkKpkUSd7ZrzukPSF2c8nKY+mebxUvFuQ0Cgebjcy4L9CCQ4uGKRSaQlL9sKc1Nm79z0YW+gZh9HDdqspoabVhZ/9ewChiCbMHzTktpL6Q0MQK6DDRvk4nBcvEZzsFWCjiCJA77/XLfAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=fLR7UpeP; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1741040998;
-	bh=/mpM4N1kNDhZtm4ABQXD/3qB+8qtSGSXUnHC8BYYl6E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fLR7UpeP9xNPJwSceytvWKqQcTq5p6NeGGoTvLGKWIxJtVcrxpGbqjdwwF5chj1R3
-	 jM08LGDSxfPApKI9Rtr8L5T5s6iqVMNEoPc4KzmIQ+v1+ZB614qYp6jgqcyBsOlQFX
-	 VQF8q0mfoa6PkQNAnfigxU0A/pDDo5v1GslYX8cs=
-Date: Mon, 3 Mar 2025 23:29:58 +0100
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Kees Cook <kees@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, llvm@lists.linux.dev, linux-kbuild@vger.kernel.org, 
-	David Gow <davidgow@google.com>, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] kbuild: clang: Support building UM with SUBARCH=i386
-Message-ID: <05a25510-ab44-4eb1-a878-71e84c8aff0d@t-8ch.de>
-References: <20250303215240.work.379-kees@kernel.org>
+	s=arc-20240116; t=1741040999; c=relaxed/simple;
+	bh=bkKPQ1+aiG1teab/DAAAQme9s+I+A36ytQ7sln9PR8o=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=lfv+MoshvUA9/XYYZDtAQiAfP0wu5N/45B0fOSB5F1GVFSzjaIXhj1HTOZ+qF95wm508t62/w0D6cWkuHOLlXD0/Jjm5CkrR/H89SYY+4x/N8L6GxKmFuk1GZYN46wvMWUgpF3M2aCOPlHv75wx05bk8Ht07qoDLvv7pClvBbNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uSYAPZZ2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB408C4CED6;
+	Mon,  3 Mar 2025 22:29:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741040998;
+	bh=bkKPQ1+aiG1teab/DAAAQme9s+I+A36ytQ7sln9PR8o=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=uSYAPZZ28oBsjc2EOl6zT8rCHAt7gxktN7etVU93yhYRI4+QrdXVUfw1RnNINiYNo
+	 Yk1BTdAiEOH2t/XDNlApeKeIPq7Na6ak08AcR0C//+q6S1uRDgNCNyHsS4kfT4Fk6b
+	 4mGQ+HOBNZdvhvPh4H6OsvN2IGRfeCS5lMnGXYU+jYlAkXfnhqJIoxGr0xTfaU3+CT
+	 SrzZC2q94rIbg07HMIbB50MgL5lBA24HrvtMKHi13vDfn0WU6E712rMhsRKnF6F1ns
+	 K2/TZz2FCE0wyPZTu6B6g8FycHXVcp0T0Jg5EYRNhdsePLqwP01K52I+FITZtpOZuq
+	 FSMljipK3/aGg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADE2B3809A8F;
+	Mon,  3 Mar 2025 22:30:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250303215240.work.379-kees@kernel.org>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH bpf-next v2 00/10] selftests/bpf: Migrate test_tunnel.sh to
+ test_progs
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174104103150.3737563.4806214679115746999.git-patchwork-notify@kernel.org>
+Date: Mon, 03 Mar 2025 22:30:31 +0000
+References: <20250303-tunnels-v2-0-8329f38f0678@bootlin.com>
+In-Reply-To: <20250303-tunnels-v2-0-8329f38f0678@bootlin.com>
+To: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
+ shuah@kernel.org, thomas.petazzoni@bootlin.com, alexis.lothore@bootlin.com,
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-On 2025-03-03 13:52:41-0800, Kees Cook wrote:
-> The UM builds distinguish i386 from x86_64 via SUBARCH, but we don't
-> support building i386 directly with Clang. To make SUBARCH work for
-> i386 UM, we need to explicitly test for it.
-> 
-> This lets me run i386 KUnit tests with Clang:
-> 
-> $ ./tools/testing/kunit/kunit.py run \
-> 	--make_options LLVM=1 \
-> 	--make_options SUBARCH=i386
-> ...
-> 
-> Fixes: c7500c1b53bf ("um: Allow builds with Clang")
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
-> I could not find a cleaner way to do this without hardcoding a test
-> for i386 UM. Does anyone see a more sane way to accomplish this? The
-> comment above the CLANG_TARGET_FLAGS seems like it can't be done with
-> UM's Makefile...
+Hello:
 
-This seems to work for me:
+This series was applied to bpf/bpf-next.git (master)
+by Martin KaFai Lau <martin.lau@kernel.org>:
 
-diff --git a/scripts/Makefile.clang b/scripts/Makefile.clang
-index 2435efae67f5..8e349bf30fa8 100644
---- a/scripts/Makefile.clang
-+++ b/scripts/Makefile.clang
-@@ -12,6 +12,7 @@ CLANG_TARGET_FLAGS_riscv      := riscv64-linux-gnu
- CLANG_TARGET_FLAGS_s390                := s390x-linux-gnu
- CLANG_TARGET_FLAGS_sparc       := sparc64-linux-gnu
- CLANG_TARGET_FLAGS_x86         := x86_64-linux-gnu
-+CLANG_TARGET_FLAGS_i386                := i386-linux-gnu
- CLANG_TARGET_FLAGS_um          := $(CLANG_TARGET_FLAGS_$(SUBARCH))
- CLANG_TARGET_FLAGS             := $(CLANG_TARGET_FLAGS_$(SRCARCH))
-
-This is also what exists in tools/testing/selftests/lib.mk.
-Minus the missing CONFIG_FORTIFY_SOURCE on clang x86_32
-and a failure of overflow.DEFINE_FLEX_test (clang 19.1.7).
-
-> Cc: Nathan Chancellor <nathan@kernel.org>
-> Cc: Nick Desaulniers <ndesaulniers@google.com>
-> Cc: Bill Wendling <morbo@google.com>
-> Cc: Justin Stitt <justinstitt@google.com>
-> Cc: Masahiro Yamada <masahiroy@kernel.org>
-> Cc: Nicolas Schier <nicolas@fjasle.eu>
-> Cc: llvm@lists.linux.dev
-> Cc: linux-kbuild@vger.kernel.org
-> ---
->  scripts/Makefile.clang | 4 ++++
->  1 file changed, 4 insertions(+)
+On Mon, 03 Mar 2025 09:22:48 +0100 you wrote:
+> Hi all,
 > 
-> diff --git a/scripts/Makefile.clang b/scripts/Makefile.clang
-> index 2435efae67f5..fa6f9a9be4ac 100644
-> --- a/scripts/Makefile.clang
-> +++ b/scripts/Makefile.clang
-> @@ -12,8 +12,12 @@ CLANG_TARGET_FLAGS_riscv	:= riscv64-linux-gnu
->  CLANG_TARGET_FLAGS_s390		:= s390x-linux-gnu
->  CLANG_TARGET_FLAGS_sparc	:= sparc64-linux-gnu
->  CLANG_TARGET_FLAGS_x86		:= x86_64-linux-gnu
-> +ifeq ($(SRCARCH):$(SUBARCH),um:i386)
-> +CLANG_TARGET_FLAGS		:= i386-linux-gnu
-> +else
->  CLANG_TARGET_FLAGS_um		:= $(CLANG_TARGET_FLAGS_$(SUBARCH))
->  CLANG_TARGET_FLAGS		:= $(CLANG_TARGET_FLAGS_$(SRCARCH))
-> +endif
->  
->  ifeq ($(CLANG_TARGET_FLAGS),)
->  $(error add '--target=' option to scripts/Makefile.clang)
-> -- 
-> 2.34.1
+> This patch series continues the work to migrate the *.sh tests into
+> prog_tests framework.
 > 
+> The test_tunnel.sh script has already been partly migrated to
+> test_progs in prog_tests/test_tunnel.c so I add my work to it.
+> 
+> [...]
+
+Here is the summary with links:
+  - [bpf-next,v2,01/10] selftests/bpf: test_tunnel: Add generic_attach* helpers
+    https://git.kernel.org/bpf/bpf-next/c/6829f3c51baf
+  - [bpf-next,v2,02/10] selftests/bpf: test_tunnel: Add ping helpers
+    https://git.kernel.org/bpf/bpf-next/c/7289e59a7667
+  - [bpf-next,v2,03/10] selftests/bpf: test_tunnel: Move gre tunnel test to test_progs
+    https://git.kernel.org/bpf/bpf-next/c/08d20eaa0727
+  - [bpf-next,v2,04/10] selftests/bpf: test_tunnel: Move ip6gre tunnel test to test_progs
+    https://git.kernel.org/bpf/bpf-next/c/1ea01a806e4c
+  - [bpf-next,v2,05/10] selftests/bpf: test_tunnel: Move erspan tunnel tests to test_progs
+    https://git.kernel.org/bpf/bpf-next/c/0ecd1e9d3237
+  - [bpf-next,v2,06/10] selftests/bpf: test_tunnel: Move ip6erspan tunnel test to test_progs
+    https://git.kernel.org/bpf/bpf-next/c/cae41f74b778
+  - [bpf-next,v2,07/10] selftests/bpf: test_tunnel: Move geneve tunnel test to test_progs
+    https://git.kernel.org/bpf/bpf-next/c/d89542d2534f
+  - [bpf-next,v2,08/10] selftests/bpf: test_tunnel: Move ip6geneve tunnel test to test_progs
+    https://git.kernel.org/bpf/bpf-next/c/8d8609430576
+  - [bpf-next,v2,09/10] selftests/bpf: test_tunnel: Move ip6tnl tunnel tests to test_progs
+    https://git.kernel.org/bpf/bpf-next/c/680a75248df7
+  - [bpf-next,v2,10/10] selftests/bpf: test_tunnel: Remove test_tunnel.sh
+    https://git.kernel.org/bpf/bpf-next/c/c8d6d78cea6e
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
