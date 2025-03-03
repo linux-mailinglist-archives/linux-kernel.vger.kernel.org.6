@@ -1,121 +1,192 @@
-Return-Path: <linux-kernel+bounces-541239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56EC6A4BA5E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:10:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2EC0A4BA67
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:10:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A8CA3AF90E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:09:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 137DE16C4C0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:10:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 922681F03EB;
-	Mon,  3 Mar 2025 09:09:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 863231F03ED;
+	Mon,  3 Mar 2025 09:10:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dmgxez1k"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JLzljCnw";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PxMuCUMC"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E1FE1DF721;
-	Mon,  3 Mar 2025 09:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF731DF721;
+	Mon,  3 Mar 2025 09:10:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740992965; cv=none; b=XpwmTRzSe7SYubWx9rE5s5ktJ5Vbi5xYhNqy5WUNpIu7BBZg/fjphMGBsjejy1kQvW1yJmJgVz7vJBJwk/qXfXiq8KFIBQIs5t5RPlwyHzg/MANZuY7MugM2U09RfZX0ev3ldD6JzC84S5/qIyFkS8A3AaQFiVjYrBQ0/1SptBg=
+	t=1740993008; cv=none; b=LLZfdwpkemJ918eqVzvbXj8W3uQWrui8AlVUMCcF76bkqOqX64KKaa8DF3/lzo/INAhBDTFzRDIRccybAJ9reAj9o9F0uiAWaTsvkNIMtOP//DuCe3+OMxAQkCnBIQ9bu82YPO5IDGJmTydjGk7IkO7Nxx8p9QZ3kF9FM566Ojo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740992965; c=relaxed/simple;
-	bh=SK1S7HC+F0RX5MreBPa9cOuVM4xw7HiLj2Szt7QCPUU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=n4PBAXPNtsfsQBO4B0QNkvWzVLv2GPFaK7CvqEhfal4rXtsgL9/LmzK8VWURTy2FcBuq8bQgP3nAezZP1MA5jsfaiNezvPfVxTjP2T4vU9xiGEaHo7hjuyjQH+jCBJD5HNlWjAomwiL5Wbg89Q9YZ2EvCRV61iCHNaAjHWV4s50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dmgxez1k; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740992964; x=1772528964;
-  h=from:to:cc:in-reply-to:references:subject:message-id:
-   date:mime-version:content-transfer-encoding;
-  bh=SK1S7HC+F0RX5MreBPa9cOuVM4xw7HiLj2Szt7QCPUU=;
-  b=dmgxez1k+bNXiZk3rJFilqg43r/gkMIwly0wDZIbnQf0pJ0RrojuifzF
-   n+Qy35HqLDDv79hcTJne5PYdrjjlgt57u2TAA/l1AmWb/+RvfFyWa2pgR
-   5xMQskhO/5/dDBzGPS4c+/9I0+FK+GGlH2ZLLQ/BRwzDrVZCR15EMHIis
-   7IZBpfvrie8Zka4aW5nevgb+pFXJToRyF2AAz2W7qdWci4pQLg0G3gUJl
-   AT4xCd1I5FMV9Sxyu8JgnQMpf7+jvbTh2pkAhnbXwF8CIC+tF+SSKNEp1
-   SOzVeE/MYEuGKmgltVf4KW2pej63q09cOv0f8xGKsPB3kJk8ScPjKKpX/
-   w==;
-X-CSE-ConnectionGUID: 1LuNZc6tTjO8CcGvGycE1Q==
-X-CSE-MsgGUID: bOuWak5ARBO0YDOvXuRASQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="41771196"
-X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="41771196"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 01:09:23 -0800
-X-CSE-ConnectionGUID: KI32nAl3QpW+0soO/P2K+Q==
-X-CSE-MsgGUID: iR1NtjSnRn2CkFWbNEzgVg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="117951324"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.14])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 01:09:18 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Hans de Goede <hdegoede@redhat.com>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
- Pengyu Luo <mitltlatltl@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
- linux-hwmon@vger.kernel.org
-In-Reply-To: <20250214180656.28599-1-mitltlatltl@gmail.com>
-References: <20250214180656.28599-1-mitltlatltl@gmail.com>
-Subject: Re: [PATCH v7 0/3] platform: arm64: Huawei Matebook E Go embedded
- controller
-Message-Id: <174099295441.1736.4659664887828946482.b4-ty@linux.intel.com>
-Date: Mon, 03 Mar 2025 11:09:14 +0200
+	s=arc-20240116; t=1740993008; c=relaxed/simple;
+	bh=hvQ6UFF0fy3Al/0FUWACovqLUwi5Ps7fWWttcnrP6Lc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=LOQr8A2B9BYaCBA0cKJ/EqYxGtZSVH7CGnhGNDviP9dSYhyhYCg02vn/PZ+DVp8ThX8cARJi+bemYy0cDX8xJTn8vULSVPdFwJ+b2+RghIh8HMhF8igZmn/yislnHfkNyVHq6otMDMZ7JoX5cJV7aOJJPM0CHuDjx3/PzjuUQhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JLzljCnw; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PxMuCUMC; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740993004;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3zjA7Lr/BJ7h7palXzLxMwb3DKcN2jgvvKLiPovQPSk=;
+	b=JLzljCnwpBiZdWy7aKV0gJtiAebsYfhH7hqGmcnRkFVzIbB53tJ9kvSZ9ytWe2mcz7v2yM
+	eJuUznXBqDhLkYuOfaxDS32ylNBuBMX7cAOj3ltMD+Yvwin0/UhqyD+D//3oNrcRgHeYMb
+	/2rUbt4qBb1Uhhiq7BwbbtBbqxaRwUmDQ14OBdZSnewGvh5piWV+qMDFEpfv/x5iPju4Gu
+	MkfqtBNML+xZb40YNhn+eBBxFtaXmimgneifIE795R4Kf89v6ZQctdw4+YnSb1quH8LrYb
+	7rLaGgKebMrWWuhQFuSV4DSiL+wPfI6CaavAFsbh6E8w/8rz1Fiuf4oj0go6fQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740993004;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3zjA7Lr/BJ7h7palXzLxMwb3DKcN2jgvvKLiPovQPSk=;
+	b=PxMuCUMCr/753YDqzSM+x13d7WXAYVecjosp5zzCHkaux3Fe5L0ue1k2juUUvCxBrBBcbM
+	BIY/EtA+pPJj76Bg==
+To: Daniel Tsai <danielsftsai@google.com>, Jingoo Han
+ <jingoohan1@gmail.com>, Manivannan Sadhasivam
+ <manivannan.sadhasivam@linaro.org>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy?=
+ =?utf-8?Q?=C5=84ski?=
+ <kw@linux.com>, Rob Herring <robh@kernel.org>, Bjorn Helgaas
+ <bhelgaas@google.com>, Andrew Chant <achant@google.com>, Brian Norris
+ <briannorris@google.com>, Sajid Dalvi <sdalvi@google.com>, Mark Cheng
+ <markcheng@google.com>, Ben Cheng <bccheng@google.com>,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, Tsai Sung-Fu
+ <danielsftsai@google.com>
+Subject: Re: [PATCH] PCI: dwc: Chain the set IRQ affinity request back to
+ the parent
+In-Reply-To: <20250303070501.2740392-1-danielsftsai@google.com>
+References: <20250303070501.2740392-1-danielsftsai@google.com>
+Date: Mon, 03 Mar 2025 10:10:04 +0100
+Message-ID: <87a5a2cwer.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain
 
-On Sat, 15 Feb 2025 02:06:53 +0800, Pengyu Luo wrote:
+On Mon, Mar 03 2025 at 07:05, Daniel Tsai wrote:
+> +/*
+> + * The algo here honor if there is any intersection of mask of
+> + * the existing MSI vectors and the requesting MSI vector. So we
+> + * could handle both narrow (1 bit set mask) and wide (0xffff...)
+> + * cases, return -EINVAL and reject the request if the result of
+> + * cpumask is empty, otherwise return 0 and have the calculated
+> + * result on the mask_to_check to pass down to the irq_chip.
+> + */
+> +static int dw_pci_check_mask_compatibility(struct dw_pcie_rp *pp,
+> +					   unsigned long ctrl,
+> +					   unsigned long hwirq_to_check,
+> +					   struct cpumask *mask_to_check)
+> +{
+> +	unsigned long end, hwirq;
+> +	const struct cpumask *mask;
+> +	unsigned int virq;
+> +
+> +	hwirq = ctrl * MAX_MSI_IRQS_PER_CTRL;
+> +	end = hwirq + MAX_MSI_IRQS_PER_CTRL;
+> +	for_each_set_bit_from(hwirq, pp->msi_irq_in_use, end) {
+> +		if (hwirq == hwirq_to_check)
+> +			continue;
+> +		virq = irq_find_mapping(pp->irq_domain, hwirq);
+> +		if (!virq)
+> +			continue;
+> +		mask = irq_get_affinity_mask(virq);
 
-> This adds binding, drivers and the DT support for the Huawei Matebook E Go
-> (sc8280xp-based) Embedded Controller which is also found in Huawei Matebook
-> E Go LTE (sc8180x-based), but I don't have the sc8180x one to perform
-> tests, so this series enable support for sc8280xp variant only, this series
-> provides the following features:
-> 
-> - battery and charger information report
-> - charging thresholds control
-> - FN lock (An alternative method)
-> - LID switch detection
-> - Temperature sensors
-> - USB Type-C altmode
-> - USB Type-C PD(high power)
-> 
-> [...]
+What protects @mask against a concurrent modification?
 
+> +		if (!cpumask_and(mask_to_check, mask, mask_to_check))
+> +			return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void dw_pci_update_effective_affinity(struct dw_pcie_rp *pp,
+> +					     unsigned long ctrl,
+> +					     const struct cpumask *effective_mask,
+> +					     unsigned long hwirq_to_check)
+> +{
+> +	struct irq_desc *desc_downstream;
+> +	unsigned int virq_downstream;
+> +	unsigned long end, hwirq;
+> +
+> +	/*
+> +	 * Update all the irq_data's effective mask
+> +	 * bind to this MSI controller, so the correct
+> +	 * affinity would reflect on
+> +	 * /proc/irq/XXX/effective_affinity
+> +	 */
+> +	hwirq = ctrl * MAX_MSI_IRQS_PER_CTRL;
+> +	end = hwirq + MAX_MSI_IRQS_PER_CTRL;
+> +	for_each_set_bit_from(hwirq, pp->msi_irq_in_use, end) {
+> +		virq_downstream = irq_find_mapping(pp->irq_domain, hwirq);
+> +		if (!virq_downstream)
+> +			continue;
+> +		desc_downstream = irq_to_desc(virq_downstream);
+> +		irq_data_update_effective_affinity(&desc_downstream->irq_data,
+> +						   effective_mask);
 
-Thank you for your contribution, it has been applied to my local
-review-ilpo-next branch. Note it will show up in the public
-platform-drivers-x86/review-ilpo-next branch only once I've pushed my
-local branch there, which might take a while.
+Same here.
 
-The list of commits applied:
-[1/3] dt-bindings: platform: Add Huawei Matebook E Go EC
-      commit: defcf2fb30f7bf128c0be5e571f4db2b7fff66cc
-[2/3] platform: arm64: add Huawei Matebook E Go EC driver
-      commit: 7636f090d02e791918bb3c924e695880123d0c59
-[3/3] arm64: dts: qcom: gaokun3: Add Embedded Controller node
-      commit: 0b6d8f9d2df78116afb159df05bbccf13a51b758
+> +	}
+> +}
+> +
+> +static int dw_pci_msi_set_affinity(struct irq_data *d,
+> +				   const struct cpumask *mask, bool force)
+> +{
+> +	struct dw_pcie_rp *pp = irq_data_get_irq_chip_data(d);
+> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> +	int ret;
+> +	int virq_parent;
+> +	unsigned long hwirq = d->hwirq;
+> +	unsigned long flags, ctrl;
+> +	struct irq_desc *desc_parent;
+> +	const struct cpumask *effective_mask;
+> +	cpumask_var_t mask_result;
+> +
+> +	ctrl = hwirq / MAX_MSI_IRQS_PER_CTRL;
+> +	if (!alloc_cpumask_var(&mask_result, GFP_ATOMIC))
+> +		return -ENOMEM;
 
---
- i.
+This does not work on a RT enabled kernel. Allocations with a raw spin
+lock held are not possible.
 
+> +	/*
+> +	 * Loop through all possible MSI vector to check if the
+> +	 * requested one is compatible with all of them
+> +	 */
+> +	raw_spin_lock_irqsave(&pp->lock, flags);
+> +	cpumask_copy(mask_result, mask);
+> +	ret = dw_pci_check_mask_compatibility(pp, ctrl, hwirq, mask_result);
+> +	if (ret) {
+> +		dev_dbg(pci->dev, "Incompatible mask, request %*pbl, irq num %u\n",
+> +			cpumask_pr_args(mask), d->irq);
+> +		goto unlock;
+> +	}
+> +
+> +	dev_dbg(pci->dev, "Final mask, request %*pbl, irq num %u\n",
+> +		cpumask_pr_args(mask_result), d->irq);
+> +
+> +	virq_parent = pp->msi_irq[ctrl];
+> +	desc_parent = irq_to_desc(virq_parent);
+> +	ret = desc_parent->irq_data.chip->irq_set_affinity(&desc_parent->irq_data,
+> +							   mask_result, force);
+
+Again. Completely unserialized.
+
+Thanks,
+
+        tglx
 
