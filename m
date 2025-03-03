@@ -1,112 +1,116 @@
-Return-Path: <linux-kernel+bounces-544738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58088A4E495
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:00:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAB7FA4E518
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:10:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FF2C4230EF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:52:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39B28885938
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:53:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 594A1283C95;
-	Tue,  4 Mar 2025 15:36:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 196C0259C96;
+	Tue,  4 Mar 2025 15:38:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yaj5pg2T";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gRtmheDB"
 Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C54BD281527
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:36:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2116259C8D
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:38:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.116
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741102580; cv=pass; b=npnK7oRt1gJtCNTec0SSgYXRFdT+n1eIv1/GLF2MRhSfDzK3MBYrMvTDNm/AHghhYj/dxKHgoMtCE8BMXhNXLn73BuqYbwP4hCiv3vcG1QZuHe6WVpMDZiAA5/ckQ2cUwD8sUJedpaGBIFSmrxGLd/YIu9twVdwSJ587JpKWmNk=
+	t=1741102706; cv=pass; b=CDguz49kc2gXSFHJ7+8RXx0Arl/+mUApPQA3Z3kcVBIdluooMbVG5dpbcVd2vPiHpShVciXEtKCfDi6Kfoo0pshF8SmtlHTqyTbAUTBb6D3wz2oFTULtOTGTAoIctoa1ZMhd9InUesng/+8bF3DdMq75SPfs1B4u4rhuyceMIPc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741102580; c=relaxed/simple;
-	bh=GpiZMOoa9Dd0lVa5mQxYvhJCA3PozAweI+AolilGiy4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ysm6cy8w6bNALzdubQeYeE+e84oYcTBgJsJpUpG/XOI6+9XgkfI9Y7RuIpFtyP76fKjmPecrBwRWXlRJqqP58jV4rgw+Qi/KRGVVKQx/vtzYeUi6203BzB9oPQY1uzevHUARN2yHtYEGVbuq7U3em04fkr1GYOsIuJnNaIVcOjo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=cc.itu.edu.tr; arc=none smtp.client-ip=209.85.222.54; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=pass smtp.client-ip=160.75.25.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1741102706; c=relaxed/simple;
+	bh=mxyZVd7nIEijL2eG0FKInZ0P9b7LdOz3OpKaFibeUE4=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=PbD2TRvRtxBrUIUNydCSqhLKAIJOHmT6/Xk25U3n7JtQUk036uy5mbewt8iaSD1xZemx0Ja28Z58VvYm+Qxr552w1KWnNQGrxk+TXM/EV5YzyRIUccZAGcTL0wkelG0488wOxXDNNcr28D7Yfk79H0u/EQn4x7O9nwvB/zMf4bs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yaj5pg2T; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gRtmheDB; arc=none smtp.client-ip=193.142.43.55; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; arc=pass smtp.client-ip=160.75.25.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id 1D04F40D286B
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:36:17 +0300 (+03)
+	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id 0FE1C40F1CCC
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:38:23 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
+Authentication-Results: lesvatest1.cc.itu.edu.tr;
+	dkim=temperror header.d=linutronix.de header.i=@linutronix.de header.a=rsa-sha256 header.s=2020 header.b=yaj5pg2T;
+	dkim=pass header.d=linutronix.de header.i=@linutronix.de header.a=ed25519-sha256 header.s=2020e header.b=gRtmheDB
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6frH1FCJzG0Yp
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:34:55 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6fqN5qg5zG0Mr
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:34:08 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 9EC0442731; Tue,  4 Mar 2025 18:34:39 +0300 (+03)
-X-Envelope-From: <linux-kernel+bounces-541401-bozkiru=itu.edu.tr@vger.kernel.org>
+	id 5E55E4271F; Tue,  4 Mar 2025 18:34:08 +0300 (+03)
+Authentication-Results: lesva1.cc.itu.edu.tr;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yaj5pg2T;
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gRtmheDB
+X-Envelope-From: <linux-kernel+bounces-541408-bozkiru=itu.edu.tr@vger.kernel.org>
+Authentication-Results: lesva2.cc.itu.edu.tr;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yaj5pg2T;
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gRtmheDB
 Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id 7EEE74339A
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:41:30 +0300 (+03)
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id C38772DCDE
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:41:29 +0300 (+03)
+	by le2 (Postfix) with ESMTP id 7DBB44231A
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:44:25 +0300 (+03)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by fgw2.itu.edu.tr (Postfix) with SMTP id 316F42DCE1
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:44:25 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 672677A83A3
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:39:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF66F170AAB
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:44:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F7791EB5D7;
-	Mon,  3 Mar 2025 10:40:36 +0000 (UTC)
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E181F1531;
+	Mon,  3 Mar 2025 10:43:07 +0000 (UTC)
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 200F31D7E4C;
-	Mon,  3 Mar 2025 10:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A90AD1F193D;
+	Mon,  3 Mar 2025 10:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740998434; cv=none; b=sxuAHBEdAodfmPL8uFAOBYuZHNeuMgZvhzQMMoHgQUwp6nZONZqhgemB7x37cyoNZkSLU4klQ9kyckGTzRtLiIBLUqIJOk+Flpm5htsN0HyuLuhcUS4jawSZ5tPFebahnSY4AYIHTXczhuG19c0FVodwTYcRxR2p7iZ/4M1MsuY=
+	t=1740998584; cv=none; b=rp3oyht9tOb7DeWnt6S8Rt32UY1STCfyMCslYQStOhps/TvAEdOUbn+oYfvKrVM9WvzCIt7Ly0d74G+4mf8wkqyvT0tsQ0uptp0xN7Dnte1dZQWhol31aKSSgQ6i7G9E4bzxPGUIP/bItWrTTTWaY4XU33cAPMFSwQGKiO5ug1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740998434; c=relaxed/simple;
-	bh=GpiZMOoa9Dd0lVa5mQxYvhJCA3PozAweI+AolilGiy4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QfTeT2Iirj9ofdomy8nBDZ9vcnutFBKTUGCTEiT52jqReSK2sfYjP5FMZ/O2pm1lBVctNJdwcyMOIcUoY64SLPd11veGf12wnAEVTSVBvqLyDDqbX1CjhlolQMBbEFFgl/SxLpnba1ZNKgwG49th4nmX0utSgCBl6v1WBWhjDGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-86b3ed5fde5so3631980241.0;
-        Mon, 03 Mar 2025 02:40:31 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740998429; x=1741603229;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=j7nppDH0wEnn0k1LbQlYHcxjcCY12F5sq67FKUOJ3Wk=;
-        b=rEaU6PylpvNHHpdKiJEKrmy8MaMBSvzNnXk90qka5PgM0cb3/ERyMyZFdidj2PVG4P
-         98w1X+BXNeJvfSTodPEjYdWZFZeQzbM2dtyFRUZFOscPBCKKy/wpmfR43exzR+HiJigp
-         rh4/V12+jv6/88sACfbDEruPRyaZBCUP9EhpbU9jWB/j+4DNIeTgxmC///qPciuvHcI/
-         OpgPmCYvv8TqVc4fiQ+JWc63VaHShMPHCd6NDkNtqnSWKtDrdv5l9JiEOswU8ff9ChjG
-         MY14GrzblGyq/7GsjJCstLJBN1fdBlJ2Zf5zMv4BJdjbqQyGzrizbj9jFJSyRPQmULpt
-         8C+g==
-X-Forwarded-Encrypted: i=1; AJvYcCV8U6MfKFyLEBt8FnCKv3HiUJqI0J2XCdz7iz6ol9xm2AQld5uyny8sgnJTJcpz0yumJcY27KCo82YQ@vger.kernel.org, AJvYcCVfIxa+jDve/e7ktzSTHYBtvGBxDB16NzcpvMJxdCSsvsqicfVXEYzY614h3418Mkv98H1eLtAqBMkiPJORy2D9dh0=@vger.kernel.org, AJvYcCVlGEZfUqYvj2QJ6kEoctNR5xnWRpz3acJ0eUtRG+qOCHJwf1UHcNbkV8n9fXRxq7FMySsXPFzyq2EaOvLT@vger.kernel.org, AJvYcCWTlIj7ynjXLN8qsZuJNIq3eK+rmFnDNFHgYHZlmSGPF1f61qdzzxYuRedQHud2R7tEoQNlVaCV@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4ysIml5Mk3B3PXTCGetjlhBHKhIbnGcwA58Z9XC1EhCC5pEIS
-	LwMPcymBCcQIHCb/vmuMT8xpE9aKE8mii1KasfGBb8VdCVnK0l+WOePPZBbR
-X-Gm-Gg: ASbGncsMWJblpi7D7uL4SqIM6BDi47OralO621+RTPijCN+pYLXtXXL1if1nFM2ISw1
-	5T2CwfbuQzKbLDKSEQ9qtcYrFzPnVZQZJHQIuMWBh9xwcbp7OOzANg/edBuMY7exQw8wgMCYZRD
-	FqeLa6YRha4L6b2oxOIavm2uGL/URavYLZbugH2Ea4Ka28iOtejk+u5BWQXjvLsBy9OPWs872of
-	pOlhXc6qIjaRbbiFrUnNnyblyuJ9AfpyXG9KCcQrrEADj/nwKRuuun9Jl8SysCa3mI7JqEsMXXM
-	iYNnDC+sLUIpugFspEsZn+6hr/vkmaG0oxtDR90sN0Q7tz082D7gXkO92Nz+XRNO8QG9Qzgndyc
-	LnK/lCMM=
-X-Google-Smtp-Source: AGHT+IFwwEwdoibEPNyIJoSsMOSEcyoA3IYhqXdgxg8vWiKueAMO9jJvFjxo2atT96bygP6CrBdCMg==
-X-Received: by 2002:a05:6102:3a65:b0:4c1:9ecd:b250 with SMTP id ada2fe7eead31-4c19ecdcb1cmr813504137.5.1740998428785;
-        Mon, 03 Mar 2025 02:40:28 -0800 (PST)
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com. [209.85.222.41])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4c17e90cf5csm1082975137.3.2025.03.03.02.40.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Mar 2025 02:40:27 -0800 (PST)
-Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-86718541914so4406771241.1;
-        Mon, 03 Mar 2025 02:40:27 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUZTYS7ipsmaPBuDels12ewpHS4+ZWfkP/lO4OSvDUm8dc0LNBg5iG7zVIlVpim6WJPLDgfEr9Hfap45BXE@vger.kernel.org, AJvYcCVIAinCCltIbPZimzTR0OSncfBvxdaVX5fYj9n2QkWWAhPSinc6UC4glZ+LtsklswP+n4k390S+@vger.kernel.org, AJvYcCWniliZqvo+Ihj2NEtAwuqSq3rR7cmXPT9LdKpCjhGxdPh5RGt4XRrbQGasP8RJiojXezgBETCTIjEWAgEfNpNXwdw=@vger.kernel.org, AJvYcCWyQth0XikRHX3bWhrX7DNiClaq9TroMFyRQbYTF/+XZSvwwd5tEhfbE6ycW3nuLbLHqytgwSivDt1O@vger.kernel.org
-X-Received: by 2002:a05:6102:2a42:b0:4c0:435b:5dd2 with SMTP id
- ada2fe7eead31-4c0435b5ebdmr6337617137.1.1740998427518; Mon, 03 Mar 2025
- 02:40:27 -0800 (PST)
+	s=arc-20240116; t=1740998584; c=relaxed/simple;
+	bh=mxyZVd7nIEijL2eG0FKInZ0P9b7LdOz3OpKaFibeUE4=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=el2fv8a8l9z+6mPg7+2BPFmiJCdup80oiMTMPdXrVguadYbDaU2GWIgIU+j58Dh98gZdShw3POEHqIlfUr4cGI77Ty6ly8UxGNbzQ25qraXLCMH7OStAIOOY5yiJ4M2DMEmNm2xG8q+cG0HE5oUBmio1FVejtQ2AI1AFltAtU0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yaj5pg2T; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gRtmheDB; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 03 Mar 2025 10:43:00 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740998581;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=KX+QLi6BhwGucTHJFBz56g75yUkwLoz4X2Ka/L1X300=;
+	b=yaj5pg2TYmtFToB8fCdZCMrZkKlBB6bhfAIXWeB/G8Fva8ThWow0S2yJ4vCZIhlNZv7hFw
+	qasMgEUEfXGS+40n81Ht911FCKz1zSiCveJ8MelK1Fy1xSJkfOttH5ks4PYw46H2IeRAWf
+	aEa4tdXEGCZMz/Dxs6e83IBsvCMZFC/3SRlwbcsJcCL7+haBpmSz32ahAxNJ2Tjm62gbrS
+	mI2QI/wzBlhDqXALzlu0wRz5MygtXnbYrVN6PDiK8ilqYMcrL1XEUhyMUfLg9Wt6Q4LC/y
+	xrfb7mAitoZ6RzWTbHpC9+DmE25s8f7jO1jPgNexhV/9mE0vpM/Ojjqzw+/WNQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740998581;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=KX+QLi6BhwGucTHJFBz56g75yUkwLoz4X2Ka/L1X300=;
+	b=gRtmheDBWahPS8GGBL7UEXoCy14utsZ3T93Q6WWVEu26h3eN6tm4dJh1oMJpbLhg7bC7Pv
+	KrT7/ADM43fxcAAw==
+From: "tip-bot2 for Anna-Maria Behnsen" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: timers/vdso] x86/vdso: Prepare introduction of struct vdso_clock
+Cc: "Anna-Maria Behnsen" <anna-maria@linutronix.de>,
+ Nam Cao <namcao@linutronix.de>, thomas.weissschuh@linutronix.de,
+ Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -114,95 +118,108 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250302181808.728734-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250302181808.728734-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250302181808.728734-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 3 Mar 2025 11:40:15 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdV8GqnhsJg7J7keGvT=Dvj_w0hZOiuZqCa=tiUgLE8Vtg@mail.gmail.com>
-X-Gm-Features: AQ5f1Jpv15ql5krxTjLeAExxOGaKNBovwnzhgUjXQ5dDEMa9JTfxXPA61zZ_Iv0
-Message-ID: <CAMuHMdV8GqnhsJg7J7keGvT=Dvj_w0hZOiuZqCa=tiUgLE8Vtg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] net: stmmac: Add DWMAC glue layer for Renesas GBETH
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
-	Jose Abreu <joabreu@synopsys.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	netdev@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <174099858044.10177.3741699587914529923.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6frH1FCJzG0Yp
+X-ITU-Libra-ESVA-ID: 4Z6fqN5qg5zG0Mr
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741707299.89645@55A8rfAi2ZQ5YOtn2e2i7Q
+X-ITU-Libra-ESVA-Watermark: 1741707376.55358@N+NeEIGlKjvPAgd7eLiZYA
 X-ITU-MailScanner-SpamCheck: not spam
 
-Hi Prabhakar,
+The following commit has been merged into the timers/vdso branch of tip:
 
-On Sun, 2 Mar 2025 at 19:18, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Renesas RZ/V2H(P) SoC is equipped with Synopsys DesignWare Ethernet
-> Quality-of-Service IP block version 5.20. This commit adds DWMAC glue
-> layer for the Renesas GBETH found on the RZ/V2H(P) SoC.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Commit-ID:     30379f9af4108d554af5f3c600a2207dfb783e0e
+Gitweb:        https://git.kernel.org/tip/30379f9af4108d554af5f3c600a2207dfb7=
+83e0e
+Author:        Anna-Maria Behnsen <anna-maria@linutronix.de>
+AuthorDate:    Tue, 25 Feb 2025 13:36:47 +01:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Mon, 03 Mar 2025 10:24:35 +01:00
 
-Thanks for your patch!
+x86/vdso: Prepare introduction of struct vdso_clock
 
-> --- /dev/null
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-renesas-gbeth.c
+To support multiple PTP clocks, the VDSO data structure needs to be
+reworked. All clock specific data will end up in struct vdso_clock and in
+struct vdso_time_data there will be array of it. By now, vdso_clock is
+simply a define which maps vdso_clock to vdso_time_data.
 
-> +static int renesas_gbeth_probe(struct platform_device *pdev)
-> +{
-> +       struct plat_stmmacenet_data *plat_dat;
-> +       struct stmmac_resources stmmac_res;
-> +       struct device *dev =3D &pdev->dev;
-> +       struct renesas_gbeth *gbeth;
-> +       struct reset_control *rstc;
-> +       unsigned int i;
-> +       int err;
-> +
-> +       err =3D stmmac_get_platform_resources(pdev, &stmmac_res);
-> +       if (err)
-> +               return dev_err_probe(dev, err,
-> +                                    "failed to get resources\n");
-> +
-> +       plat_dat =3D devm_stmmac_probe_config_dt(pdev, stmmac_res.mac);
-> +       if (IS_ERR(plat_dat))
-> +               return dev_err_probe(dev, PTR_ERR(plat_dat),
-> +                                    "dt configuration failed\n");
-> +
-> +       gbeth =3D devm_kzalloc(dev, sizeof(*gbeth), GFP_KERNEL);
-> +       if (!gbeth)
-> +               return -ENOMEM;
-> +
-> +       plat_dat->clk_tx_i =3D devm_clk_get_enabled(dev, "tx");
+To prepare for the rework of the data structures, replace the struct
+vdso_time_data pointer with struct vdso_clock pointer whenever applicable.
 
-drivers/net/ethernet/stmicro/stmmac/dwmac-renesas-gbeth.c:52:17:
-error: =E2=80=98struct plat_stmmacenet_data=E2=80=99 has no member named =
-=E2=80=98clk_tx_i=E2=80=99
+No functional change.
 
-Also not in next-20250228.
+Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Signed-off-by: Nam Cao <namcao@linutronix.de>
+Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 
-Gr{oetje,eeting}s,
+---
+ arch/x86/include/asm/vdso/gettimeofday.h | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+diff --git a/arch/x86/include/asm/vdso/gettimeofday.h b/arch/x86/include/asm/=
+vdso/gettimeofday.h
+index edec796..9e52cc4 100644
+--- a/arch/x86/include/asm/vdso/gettimeofday.h
++++ b/arch/x86/include/asm/vdso/gettimeofday.h
+@@ -261,7 +261,7 @@ static inline u64 __arch_get_hw_counter(s32 clock_mode,
+ 	return U64_MAX;
+ }
+=20
+-static inline bool arch_vdso_clocksource_ok(const struct vdso_time_data *vd)
++static inline bool arch_vdso_clocksource_ok(const struct vdso_clock *vc)
+ {
+ 	return true;
+ }
+@@ -300,34 +300,34 @@ static inline bool arch_vdso_cycles_ok(u64 cycles)
+  * declares everything with the MSB/Sign-bit set as invalid. Therefore the
+  * effective mask is S64_MAX.
+  */
+-static __always_inline u64 vdso_calc_ns(const struct vdso_time_data *vd, u64=
+ cycles, u64 base)
++static __always_inline u64 vdso_calc_ns(const struct vdso_clock *vc, u64 cyc=
+les, u64 base)
+ {
+-	u64 delta =3D cycles - vd->cycle_last;
++	u64 delta =3D cycles - vc->cycle_last;
+=20
+ 	/*
+ 	 * Negative motion and deltas which can cause multiplication
+ 	 * overflow require special treatment. This check covers both as
+-	 * negative motion is guaranteed to be greater than @vd::max_cycles
++	 * negative motion is guaranteed to be greater than @vc::max_cycles
+ 	 * due to unsigned comparison.
+ 	 *
+ 	 * Due to the MSB/Sign-bit being used as invalid marker (see
+ 	 * arch_vdso_cycles_ok() above), the effective mask is S64_MAX, but that
+ 	 * case is also unlikely and will also take the unlikely path here.
+ 	 */
+-	if (unlikely(delta > vd->max_cycles)) {
++	if (unlikely(delta > vc->max_cycles)) {
+ 		/*
+ 		 * Due to the above mentioned TSC wobbles, filter out
+ 		 * negative motion.  Per the above masking, the effective
+ 		 * sign bit is now bit 62.
+ 		 */
+ 		if (delta & (1ULL << 62))
+-			return base >> vd->shift;
++			return base >> vc->shift;
+=20
+ 		/* Handle multiplication overflow gracefully */
+-		return mul_u64_u32_add_u64_shr(delta & S64_MAX, vd->mult, base, vd->shift);
++		return mul_u64_u32_add_u64_shr(delta & S64_MAX, vc->mult, base, vc->shift);
+ 	}
+=20
+-	return ((delta * vd->mult) + base) >> vd->shift;
++	return ((delta * vc->mult) + base) >> vc->shift;
+ }
+ #define vdso_calc_ns vdso_calc_ns
+=20
 
 
