@@ -1,95 +1,62 @@
-Return-Path: <linux-kernel+bounces-541274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8443AA4BACE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:30:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D2CBA4BAD0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:30:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72CBB189048E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:30:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4347C17080B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB2C71F151C;
-	Mon,  3 Mar 2025 09:29:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 381211EF0B6;
+	Mon,  3 Mar 2025 09:30:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="suFG/FlY";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="B8FprFIt";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="suFG/FlY";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="B8FprFIt"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ApAYQhp+"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF9F1F0E4F
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 09:29:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19F2EC4
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 09:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740994181; cv=none; b=DBZZPNS8heXUz8IRP3PPCpm3Hi3H72ji36jhP8oa6stFBXROx7vl6dkuvUUoxfsU8zkeSh60zcsccp+lfzY4uPPpuharO3oQVHTH60wmy96h5xnXo9BernhvCl2bx2GUtvtyE4cfvpo3KepqsD3pjEoO+6rtNQHJJ9eAXju9pos=
+	t=1740994245; cv=none; b=CigedPfWny1uufa6eVJ8b5/dPsW+VCdG4TRR47ZahJb424OZcC5qMedBuzYtQ2OYY4ZBcTWoD899LImE9MsF02bDi2eARDW6ai3Y5lSXkuyYa/2IdVMV2EFEuYOluTsgXGzcncfuYXE8rOd9SEmtsWay29qQDXffeU34He0yAu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740994181; c=relaxed/simple;
-	bh=9Cbkt6zSkkx3XsqzbnzOWO/5wx0/MMZJ8cnKPDT1DwI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WusFN2xAskNM2j8ggE7lU80xQn4hfeNfMbqbOhYdrJvVJJTKIWkA1bRKWAP/WGuvhwPRi3tQJD5bW4vj/Y1Tf33hZ/GAqitT3tw927+eTHWZhu/uen1lUQcMxeiEWlZm+164pJ5TIsaQL9YMSutaxNtEvahBUS/6Rvz+01oSElo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=suFG/FlY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=B8FprFIt; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=suFG/FlY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=B8FprFIt; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9737A2116B;
-	Mon,  3 Mar 2025 09:29:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740994175; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=k20e0qHL6dXusoDcwpaKQhA8JbIFxFlDyPMo74Hll8Y=;
-	b=suFG/FlYmMKcbVomcogtNbITCCy7ix5NnqSD8V5LAedrCCBP3DdQx3zv7/xkvsVYY6jb15
-	FdmtwEdXsAfuIHBitriasDfW6qpNs1WV9ryqfIlojgg3tqme5wsyvAZUlvx6JP/xG4F8dm
-	Ip7SNiKvp3zfo+eOgpcrOV2hvOsGpTU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740994175;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=k20e0qHL6dXusoDcwpaKQhA8JbIFxFlDyPMo74Hll8Y=;
-	b=B8FprFItVpmkhESKHSrsJp0b4ojWcAjtS0PIkiIuktfOgQyT3sWPlR9cur7f30G2Tfl9UO
-	M9L7EPWLwk0fyoDg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="suFG/FlY";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=B8FprFIt
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740994175; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=k20e0qHL6dXusoDcwpaKQhA8JbIFxFlDyPMo74Hll8Y=;
-	b=suFG/FlYmMKcbVomcogtNbITCCy7ix5NnqSD8V5LAedrCCBP3DdQx3zv7/xkvsVYY6jb15
-	FdmtwEdXsAfuIHBitriasDfW6qpNs1WV9ryqfIlojgg3tqme5wsyvAZUlvx6JP/xG4F8dm
-	Ip7SNiKvp3zfo+eOgpcrOV2hvOsGpTU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740994175;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=k20e0qHL6dXusoDcwpaKQhA8JbIFxFlDyPMo74Hll8Y=;
-	b=B8FprFItVpmkhESKHSrsJp0b4ojWcAjtS0PIkiIuktfOgQyT3sWPlR9cur7f30G2Tfl9UO
-	M9L7EPWLwk0fyoDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 43C9613A61;
-	Mon,  3 Mar 2025 09:29:35 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ML9YD392xWc1BQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 03 Mar 2025 09:29:35 +0000
-Message-ID: <12b82997-0129-4fef-afc0-e925e542be88@suse.cz>
-Date: Mon, 3 Mar 2025 10:29:34 +0100
+	s=arc-20240116; t=1740994245; c=relaxed/simple;
+	bh=T1FmQ6LIchNam/vh1+twPMasFXg2M6wIlP9IlQFY0Tk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=hBk7er65jyYIW6ux7H8OpiYfLerPhzniToIPBJgI7MOvmD+8KxCbOk9LZdWtYgCVdrdS66u1AoXSLbL4/ylzKSYOUrpmpAkwm5oIXLSPsdl17PFyWJPJe0P4K9XzVkUy/vLW732SFASHmxPwYyMShhen7AoJ+qUKQQ6DJY0iU9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ApAYQhp+; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52309L9i002169;
+	Mon, 3 Mar 2025 09:30:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	r2jFIZdUKx5Dbc3ZCsERsiLP2tPI95deItMdu/Cb6SQ=; b=ApAYQhp+bBNOfR+2
+	vDkaPsNp4jGa2/W771Qf0oy2K2APdg/A5NF9z0uEhHzd9O0xqpmJsWCB0/OIrd6Y
+	xLBzECAmWMGyMTbHNtoUhaFQS5ZgFFkuLcWU4TAcZu0hKpHsBwo9nEaMbg87C9hz
+	6haYxN3PRFBzSEcAR4jI8RBMCLEY9Ke/NjIKJ1O1f+7V9VhpOG2AXmiDVC2xWuhs
+	gETA/5iZf7WOcTf5sWes14WNx5Rpaxuch+FFte/i3Xn31MeX4HtJvLBrUnIsHttR
+	l4FstB60v1frcIm2QzUpcZkcSi4BZvQgxsX7Far31EQqxD3j+86u6Ui5sGYoPOHR
+	obSqcQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 453t88vf7v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Mar 2025 09:30:10 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5239U9Gp017890
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 3 Mar 2025 09:30:09 GMT
+Received: from [10.239.132.245] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 3 Mar 2025
+ 01:30:03 -0800
+Message-ID: <45076e28-dd70-456f-83b2-7b4d532c455c@quicinc.com>
+Date: Mon, 3 Mar 2025 17:29:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,151 +64,169 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 01/12] mm: introduce AS_NO_DIRECT_MAP
+Subject: Re: [PATCH v7] arm64: mm: Populate vmemmap at the page level if not
+ section aligned
+To: David Hildenbrand <david@redhat.com>, <anshuman.khandual@arm.com>,
+        <catalin.marinas@arm.com>
+CC: <will@kernel.org>, <ardb@kernel.org>, <ryan.roberts@arm.com>,
+        <mark.rutland@arm.com>, <joey.gouly@arm.com>,
+        <dave.hansen@linux.intel.com>, <akpm@linux-foundation.org>,
+        <chenfeiyang@loongson.cn>, <chenhuacai@kernel.org>,
+        <linux-mm@kvack.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <quic_tingweiz@quicinc.com>
+References: <20250217092907.3474806-1-quic_zhenhuah@quicinc.com>
+ <8c1578ed-cfef-4fba-a334-ebf5eac26d60@redhat.com>
+ <ce2bd045-3e3a-42bf-9a48-9ad806ff3765@quicinc.com>
+ <871c0dae-c419-4ac2-9472-6901aab90dcf@redhat.com>
+ <a5439884-551c-4104-9175-f95b0895a489@quicinc.com>
+ <00c82c92-35a0-441c-b5b5-e4a6c8a4a9b7@redhat.com>
 Content-Language: en-US
-To: David Hildenbrand <david@redhat.com>, Patrick Roy <roypat@amazon.co.uk>,
- rppt@kernel.org, seanjc@google.com
-Cc: pbonzini@redhat.com, corbet@lwn.net, willy@infradead.org,
- akpm@linux-foundation.org, song@kernel.org, jolsa@kernel.org,
- ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, yonghong.song@linux.dev,
- john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com,
- jannh@google.com, shuah@kernel.org, kvm@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, tabba@google.com, jgowans@amazon.com,
- graf@amazon.com, kalyazin@amazon.com, xmarcalx@amazon.com,
- derekmn@amazon.com, jthoughton@google.com
-References: <20250221160728.1584559-1-roypat@amazon.co.uk>
- <20250221160728.1584559-2-roypat@amazon.co.uk>
- <3dc4bb80-0beb-4bbb-bfd8-47fc096f70e9@redhat.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <3dc4bb80-0beb-4bbb-bfd8-47fc096f70e9@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 9737A2116B
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCPT_COUNT_TWELVE(0.00)[38];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[redhat.com,lwn.net,infradead.org,linux-foundation.org,kernel.org,iogearbox.net,linux.dev,gmail.com,fomichev.me,google.com,oracle.com,vger.kernel.org,kvack.org,amazon.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	R_RATELIMIT(0.00)[to_ip_from(RLo3k5aap4ysuunujcz1d3qjj5)];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+From: Zhenhua Huang <quic_zhenhuah@quicinc.com>
+In-Reply-To: <00c82c92-35a0-441c-b5b5-e4a6c8a4a9b7@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: jBcZU8ak7qkip-7X9ZyIEw8nwf0ChjlD
+X-Proofpoint-GUID: jBcZU8ak7qkip-7X9ZyIEw8nwf0ChjlD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-03_03,2025-03-03_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
+ impostorscore=0 spamscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0
+ priorityscore=1501 mlxlogscore=999 mlxscore=0 clxscore=1015 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2503030072
 
-On 2/25/25 17:52, David Hildenbrand wrote:
-> On 21.02.25 17:07, Patrick Roy wrote:
->> Add AS_NO_DIRECT_MAP for mappings where direct map entries of folios are
->> set to not present . Currently, mappings that match this description are
->> secretmem mappings (memfd_secret()). Later, some guest_memfd
->> configurations will also fall into this category.
->> 
->> Reject this new type of mappings in all locations that currently reject
->> secretmem mappings, on the assumption that if secretmem mappings are
->> rejected somewhere, it is precisely because of an inability to deal with
->> folios without direct map entries.
->> 
->> Use a new flag instead of overloading AS_INACCESSIBLE (which is already
->> set by guest_memfd) because not all guest_memfd mappings will end up
->> being direct map removed (e.g. in pKVM setups, parts of guest_memfd that
->> can be mapped to userspace should also be GUP-able, and generally not
->> have restrictions on who can access it).
->> 
->> Signed-off-by: Patrick Roy <roypat@amazon.co.uk>
->> ---
-> 
-> ...
-> 
->>   static inline gfp_t mapping_gfp_mask(struct address_space * mapping)
->>   {
->>   	return mapping->gfp_mask;
->> diff --git a/lib/buildid.c b/lib/buildid.c
->> index c4b0f376fb34..80b5d805067f 100644
->> --- a/lib/buildid.c
->> +++ b/lib/buildid.c
->> @@ -65,8 +65,8 @@ static int freader_get_folio(struct freader *r, loff_t file_off)
->>   
->>   	freader_put_folio(r);
->>   
->> -	/* reject secretmem folios created with memfd_secret() */
->> -	if (secretmem_mapping(r->file->f_mapping))
->> +	/* reject secretmem folios created with memfd_secret() or guest_memfd() */
->> +	if (secretmem_mapping(r->file->f_mapping) || mapping_no_direct_map(r->file->f_mapping))
->>   		return -EFAULT;
-> 
-> Maybe I'm missing it, but why do we have to special-case secretmem with 
-> that at all anymore?
-> 
-> Couldn't we just let secretmem set AS_NO_DIRECT_MAP as well, and convert 
-> all/most secretmem specific stuff to check AS_NO_DIRECT_MAP as well?
 
-That's done in patch 02. But yeah, squashing them together would reduce some
-churn. I guess because it removes some !IS_ENABLED(CONFIG_SECRETMEM)
-optimizations, a separate change for review was preferred.
 
+On 2025/2/27 1:13, David Hildenbrand wrote:
+> Sorry, I somehow missed this mail.
+> 
+
+No problem. Thanks for your reply.
+
+>>>> Hi David,
+>>>>
+>>>> I had the same doubt initially.
+>>>> After going through the codes, I noticed for vmemmap_populate(), the
+>>>> arguments "start" and "end" passed down should already be within one
+>>>> section.
+>>>> early path:
+>>>> for_each_present_section_nr
+>>>>      __populate_section_memmap
+>>>>          ..
+>>>>          vmemmap_populate()
+>>>>
+>>>> hotplug path:
+>>>> __add_pages
+>>>>      section_activate
+>>>>          vmemmap_populate()
+>>>>
+>>>> Therefore.. focusing only on the size seems OK to me, and fall back
+>>>> solution below appears unnecessary?
+>>>
+>>> Ah, in that case it is fine. Might make sense to document/enforce that
+>>> somehow for the time being ...
+>>
+>> Shall I document and WARN_ON if the size exceeds? like:
+>> WARN_ON(end - start > PAGES_PER_SECTION * sizeof(struct page))
+> 
+> Probably WARN_ON_ONCE() along with a comment that we should never exceed 
+> a single memory section.
+
+Got it.
+
+> 
+>>
+>> Since vmemmap_populate() is implemented per architecture, the change
+>> should apply for other architectures as well. However I have no setup to
+>> test it on...
+>> Therefore, May I implement it only for arm64 now ?
+> 
+> Would work for me; better than no warning.
+
+I made one patch several days ago, could you please help review once? 
+https://lore.kernel.org/linux-mm/20250219084001.1272445-1-quic_zhenhuah@quicinc.com/T/
+Is there anything else you would suggest besides preferring WARN_ON_ONCE() ?
+
+> 
+>> Additionally, from previous discussion, the change is worth
+>> backporting(apologies for missing to CC stable kernel in this version).
+>> Keeping it for arm64 should simplify for backporting. WDYT?
+> 
+> Jup. Of course, we could add a generic warning in a separate patch.
+> 
+>>
+>>>
+>>>
+>>>>> +/*
+>>>>> + * Try to populate PMDs, but fallback to populating base pages when
+>>>>> ranges
+>>>>> + * would only partially cover a PMD.
+>>>>> + */
+>>>>>     int __meminit vmemmap_populate_hugepages(unsigned long start,
+>>>>> unsigned
+>>>>> long end,
+>>>>>                                             int node, struct 
+>>>>> vmem_altmap
+>>>>> *altmap)
+>>>>>     {
+>>>>> @@ -313,6 +317,9 @@ int __meminit vmemmap_populate_hugepages(unsigned
+>>>>> long start, unsigned long end,
+>>>>>            for (addr = start; addr < end; addr = next) {
+>>>>
+>>>> This for loop appears to be redundant for arm64 as well, as above
+>>>> mentioned, a single call to pmd_addr_end() should suffice.
+>>>
+>>> Right, that was what was confusing me in the first place.
+>>>
+>>>>
+>>>>>                    next = pmd_addr_end(addr, end);
+>>>>>
+>>>>> +               if (!IS_ALIGNED(addr, PMD_SIZE) || !IS_ALIGNED(next,
+>>>>> PMD_SIZE))
+>>>>> +                       goto fallback;
+>>>>> +
+>>>>>                    pgd = vmemmap_pgd_populate(addr, node);
+>>>>>                    if (!pgd)
+>>>>>                            return -ENOMEM;
+>>>>> @@ -346,6 +353,7 @@ int __meminit vmemmap_populate_hugepages(unsigned
+>>>>> long start, unsigned long end,
+>>>>>                            }
+>>>>>                    } else if (vmemmap_check_pmd(pmd, node, addr, 
+>>>>> next))
+>>>>>                            continue;
+>>>>> +fallback:
+>>>>>                    if (vmemmap_populate_basepages(addr, next, node,
+>>>>> altmap))
+>>>>>                            return -ENOMEM;
+>>>>
+>>>> It seems we have no chance to call populate_basepages here?
+>>>
+>>>
+>>> Can you elaborate?
+>>
+>> It's invoked within vmemmap_populate_hugepages(), which is called by
+>> vmemmap_populate(). This implies that we are always performing a whole
+>> section hotplug?
+> 
+> Ah, you meant only in the context of this change, yes. I was confused, 
+> because there are other reasons why we run into that fallback (failing 
+> to allocate a PMD).
+
+I observed that this logic was introduced in 
+2045a3b8911b("mm/sparse-vmemmap: generalise 
+vmemmap_populate_hugepages()") which moved from arch-dependent 
+codes(such as vmemmap_set_pmd() in arch/loongarch/mm/init.c or 
+arch/x86/mm/init_64.c) to common arch-independent code(function 
+vmemmap_populate_hugepages).
+
+I suspect it might be causing the confusion, as it may not be fully 
+compatible with arm64. However, it does not seem to cause any bugs :)
+
+> 
 
 
