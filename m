@@ -1,118 +1,145 @@
-Return-Path: <linux-kernel+bounces-541262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B55CA4BAAC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:20:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30A7BA4BAB0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:21:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90C3E16FBAC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:20:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 973F83B11AA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:21:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E6611F0E38;
-	Mon,  3 Mar 2025 09:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D3602E630;
+	Mon,  3 Mar 2025 09:21:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kragniz.eu header.i=@kragniz.eu header.b="dHwPO15f"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=qtec.com header.i=@qtec.com header.b="Fe4MPNMk"
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64BDF1487F4
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 09:20:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92FDC1487F4
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 09:21:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740993629; cv=none; b=digRH78QFNQw8OqKHC/1J0qfZSLXkMEp3VDnu0Ih7cih55siCwXr30gp7tbClvIPhMCSCUOTPq/rmuuHhz5CHhAvU8tebw4cJTDcXUR90UifA9ElUG1QaxP1mIk5hhqXhxviPJ9ol3D1LLrB3PODNf7mSfC/b74j2raF/cFY6Ac=
+	t=1740993699; cv=none; b=V/cQepjUEyOUj1llPf4HhT6QixTzMYhOP3kmVSOIQPKc4OB6qCegmXm4vWWYduZkxpS1Cejqsape5chD/fNz6+FxQBJuHzkNQbboopSnzIdcxSGr8gdpD4WcQQI3Wr9Jo7C1rzPCEHPMTMpM+UJhlo1V6kGf9Ej9Drn3TnBtwHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740993629; c=relaxed/simple;
-	bh=0mkbi+pWV9lNgC4jdlK5EkBndlyRwDkcJnjagi0x4kM=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=S8PgpMNJRObHFHTiU0pYH/8qdxIZDqmaO7sQqdJwAEiWqLYHTN75IzJ395ziTBHAcUxrbHnHzEzI3tO5osUijRmgZ0Z0/QVbGkpkbC80Mrapilnf53/2Drefxr0k0X2LCiBvF/ZfXeDXHO0HFb6OtonYeAikrekkPNC7rJpzzVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kragniz.eu; spf=none smtp.mailfrom=kragniz.eu; dkim=pass (1024-bit key) header.d=kragniz.eu header.i=@kragniz.eu header.b=dHwPO15f; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kragniz.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=kragniz.eu
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-390ec7c2d40so2612342f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 01:20:27 -0800 (PST)
+	s=arc-20240116; t=1740993699; c=relaxed/simple;
+	bh=pv7JhxNl2I28whP9+adbwP3IvdPyCk6EghnFcKHSLq8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Caku+a+fHRra6BLTMwYdd/L7/PVQquun7iRyx3jvNSsFuh8K4A7Hyn1ys2ddS2K0X2qFPgY+GIyQ31GkmDWnpVTAv2dxliWaj2rnbNxAz/k1i/zP1Pu3kJ5mfeqan+ochP3fnbVYTvetru60024Y0gbfah9sxzb40AIZ39aq54E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qtec.com; spf=pass smtp.mailfrom=qtec.com; dkim=pass (2048-bit key) header.d=qtec.com header.i=@qtec.com header.b=Fe4MPNMk; arc=none smtp.client-ip=209.85.222.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qtec.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qtec.com
+Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-8671441a730so1619958241.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 01:21:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kragniz.eu; s=google; t=1740993626; x=1741598426; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Tn9NiVtrc/j1OIcqH+L0OnKwaHLUjUZ0cVMF/aqFASo=;
-        b=dHwPO15fgz5KFpaGbGvG+Hg0woLiNPtusZ0Ta6EYfBoKtgVJlLeHWLrSINcDIGvJjm
-         DrXgUWAQReGlfpr6lPMtgXrLv9gCK52rLpJcWaNd55Ti+n86ho3xREcSttbZL1M2IyLT
-         2WW7DBLJ8Eo4zHLila3Uo7ZFtSyvxG61FYd3A=
+        d=qtec.com; s=google; t=1740993696; x=1741598496; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=nAeXWNkuPZBt1nYKfkioC0KxXx+i2L54nyTk7vpYv0Y=;
+        b=Fe4MPNMk65VWMwDTVoVbm44SCgEeM0RqEDsMk9XX7DwXL3BNTC0rlTaBBpXCpq5RI6
+         Ly0SKdi+ioooUzBJ2TRNB440+biEwvdcK7EDbY2aMJNu2l4MfVLamte1Uq+HRxA0QBgJ
+         dS7oE9TIXHmLGp+l/54eku17Rqe0n5h6hKFUBqvVmyYjSsuhPKZs5QG/UATUDsgN4EJK
+         S+wG072fuZQ9/dChJsYluPWVr2QRCHISBtNavf0tji5dO9eQGIcztn9ctFY07bCTQgQP
+         iNeOzx97L87ISFbwTrbEHPjDWXbdRXipL58GXMPnzuOn91svCU6WD1vZ3fBRhDYe5UaJ
+         uE9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740993626; x=1741598426;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Tn9NiVtrc/j1OIcqH+L0OnKwaHLUjUZ0cVMF/aqFASo=;
-        b=Zqgrb1wM567vSWsbzLtRzuAKtnhkrGu/RI7ETAqt9otQj5SL4dpOuCzA8odRI/veuX
-         bATA0WiyZAttn5OsBWdOz2DGEc4n09uHPsdsVN3sWTtyUfi6Fxa36aZrFWXQRiUu6yDC
-         VRtfcFYNPf56SA9Q+Qh6QJY6cOrjMhwTjIP7PojJvLQsyEcl1jxJCs0eejI82Gv18/G/
-         AdBkqTAz3WWhfEUtDSWkxMn7oeGEavYjqfu4W6vlyn/UexFip5UtrlJLEvwhM20oQa5k
-         aqK0QhrRI0MsbGfJSpNEDTOrpoPov0csiYjDQ7Elgnux2z8bi6R9B5+4SiCD1EZACV7I
-         8+zA==
-X-Forwarded-Encrypted: i=1; AJvYcCXfn5g5TuNUZX8kU+uzPUBkdIN9ZDdd9l90zPMERMIlhEkp4dpjPNRFbRpcGn98e/jvlVcLzRAFhdhE834=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVuvrEUKFJegRFlcWVdbhAEYAaREh0/1HLYY2DWO8ING9bxbPD
-	gB8hKacurKzgc6awEIdtsFuCNt1W/t5TBoXorelS82m2W588ppqkTcXvjhrJl5k=
-X-Gm-Gg: ASbGncuuGhUuBLJgJmvNrh8PxklHZm5udjSZl/B8GBUXw3/ZaAYwvzXfPSkteCOAv5Q
-	ZyyA3TuhlzIgh3JBxdtroWkS8TORm2r8BjMJLFAnFSm9tQExXY2PE7gIRt2OVMHxXBudufhphsg
-	/OUjL3uGGqPmW34k2gE1QAWMekJ5F9/r3ZcY0FUpX4McB1s7IpWfkIy78LEk+DOB9ucpW6bdvc7
-	ojgFNK+mgmcfp5J2wpRO6EICA5JiwJ+saJQjQpmWcm9P45fvOSc/b+nqkaBlpnq2Sjb/DDqz1qP
-	/ByxeMYGAQeRoLDShLN8xqigGmKxsKHm3CvnoGxOyZlYl/NDgD9ITbubD5ZQ0ckUIQ==
-X-Google-Smtp-Source: AGHT+IHpvVAe1hiW/Kg+NZizFxiZQdKOkluPFpQNOe4kEmLp/oqdczH77+lMwgOhbtWKNPNlqPrwWg==
-X-Received: by 2002:a05:6000:20c7:b0:390:fe05:da85 with SMTP id ffacd0b85a97d-390fe05dc1bmr3970057f8f.16.1740993625669;
-        Mon, 03 Mar 2025 01:20:25 -0800 (PST)
-Received: from localhost (161.26.169.217.in-addr.arpa. [217.169.26.161])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba52b947sm181416395e9.2.2025.03.03.01.20.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Mar 2025 01:20:25 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740993696; x=1741598496;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nAeXWNkuPZBt1nYKfkioC0KxXx+i2L54nyTk7vpYv0Y=;
+        b=oUVqNlzu01D7w7chL3wtIsfoWEs16yAD2CsGmF9MBQX3R69JaTLFwDoN2tFbWSKvlA
+         twlRlBG6dlh1qmsegK6iSE9khyhRJvWGVZ7Q5ynFd/TsWgxiD6rZULsMggVPigXFnT0Z
+         4oguuqp7+l1XMnVSKtrrIE+DW9eZcLu89myC5bb+BLaVGXatKYVXARqTiZ/KD9EC9q0g
+         c791uPzxrDDEeKeRAXmcPOMwf/8H6NR9iC8I7r07xEOqsX3IBEZCu547Gndyeg8eb325
+         HGj6BkufkZdjyFTP+IoZZ8AUvN3HknYj39oQifLWFmKGaVzi8b87J23bnEpmLD0tCDo/
+         txfg==
+X-Forwarded-Encrypted: i=1; AJvYcCXfcD8NQ52QxTW/gYEMx8jv5HfJsXmUU0vvbKVHfreHq8VAPEfcC2TYDVvdT7t2S/NNW/vI+oSJWl+rzkU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoSf1jUtdvn1xn1NqTkJwd2c7s8er1yTfHarqcyE100Gt8WIaG
+	EOLSufPvDTc3y0XnogQGJKqFkjJmYpLvMiytMg+TGncXc4CNwC6mVTMSzWW5DhrUtJVlCWwAXpW
+	OZpP5cDf4jeglfN7Ou8VivBXEZEwQmWx8Nq9DYg==
+X-Gm-Gg: ASbGncuaapOVDAfO6cL+ipFNPYd2NwobMZxSxoj5S8SVK3rYGkJPXyT7CnNCePSDlXv
+	2ZmdgbNWsB9tchZ3jzVMtPyddo5KGnk4t0rsk6Alqwm+B1+EaCa3bjZbTjktoec+2i0Cw7Elwdl
+	ILPLsooZfNhz4onoF7fMB146v+
+X-Google-Smtp-Source: AGHT+IFZbG2eyoSsPmw+ur7eqkya0lr99VJq5r7PqD3pp3CraBkFznVj3MvpZxxCJ8G8DlJOSQmNVFqoW7d+QViHpa8=
+X-Received: by 2002:a05:6102:3f89:b0:4bb:f1f0:1b34 with SMTP id
+ ada2fe7eead31-4c044857a38mr8417315137.2.1740993696264; Mon, 03 Mar 2025
+ 01:21:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 03 Mar 2025 09:20:24 +0000
-Message-Id: <D86IQDQZRN67.95DLK0YYQE1A@kragniz.eu>
-Cc: "Willy Tarreau" <w@1wt.eu>, "Shuah Khan" <shuah@kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>
-Subject: Re: [PATCH] tools/nolibc: add support for openat(2)
-From: "Louis Taylor" <louis@kragniz.eu>
-To: "Louis Taylor" <louis@kragniz.eu>, =?utf-8?q?Thomas_Wei=C3=9Fschuh?=
- <linux@weissschuh.net>
-X-Mailer: aerc 0.18.1
-References: <20250302202528.4169024-1-louis@kragniz.eu>
- <d0ed3b0d-4b7d-40cb-bbce-1f2a6605db7f@t-8ch.de>
- <D86I2TBQIPLZ.TCUUJWWM5DMO@kragniz.eu>
-In-Reply-To: <D86I2TBQIPLZ.TCUUJWWM5DMO@kragniz.eu>
+MIME-Version: 1.0
+References: <CAJDH93s25fD+iaPJ1By=HFOs_M4Hc8LawPDy3n_-VFy04X4N5w@mail.gmail.com>
+ <20241219112125.GAZ2QBteug3I1Sb46q@fat_crate.local> <20241219164408.GA1454146@yaz-khff2.amd.com>
+ <CAJDH93vm0buJn5vZEz9k9GRC3Kr6H7=0MSJpFtdpy_dSsUMDCQ@mail.gmail.com> <Z78uOaPESGXWN46M@gmail.com>
+In-Reply-To: <Z78uOaPESGXWN46M@gmail.com>
+From: Rostyslav Khudolii <ros@qtec.com>
+Date: Mon, 3 Mar 2025 10:21:25 +0100
+X-Gm-Features: AQ5f1Jo0EX3pEM_GVM8NTI1LcFTTbxuaz98gbzh7kKRC0tNKU0-DotXfKkWTSrk
+Message-ID: <CAJDH93uE+foFfRAXVJ48-PYvEUsbpEu_-BVoG-5HsDG66yY7AQ@mail.gmail.com>
+Subject: Re: PCI IO ECS access is no longer possible for AMD family 17h
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Yazen Ghannam <yazen.ghannam@amd.com>, Borislav Petkov <bp@alien8.de>, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, x86@kernel.org, 
+	"bhelgaas@google.com" <bhelgaas@google.com>, "tglx@linutronix.de" <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon Mar 3, 2025 at 8:49 AM GMT, Louis Taylor wrote:
-> > > +}
-> > > +
-> > > +static __attribute__((unused))
-> > > +int openat(int dirfd, const char *path, int flags, ...)
-> > > +{
-> > > +	mode_t mode =3D 0;
-> > > +
-> > > +	if (flags & O_CREAT) {
-> > > +		va_list args;
-> > > +
-> > > +		va_start(args, flags);
-> > > +		mode =3D va_arg(args, int);
-> >
-> > mode_t instead of int?
+Hi,
+
+> Rostyslav, I would like to ask you, do you have patches / updates for
+> enabling the EnableCf8ExtCfg bit for AMD 17h+ family? I could try to
+> adjust my lspci changes for new machines.
+
+Pali, sorry for the late reply. Do I understand correctly, that even
+though you have access to the ECS via
+the MMCFG you still want the legacy (direct IO) to work for the
+debugging purposes? I can prepare a
+simple patch that will allow you to do so if that's the case.
+
 >
-> This implementation is yoinked directly from open() below. I have no
-> opinions, but if it should be changed it should be changed in both
-> functions.
+> So what is the practical impact here? Do things start breaking
+> unexpectedly if CONFIG_ACPI_MCFG and CONFIG_PCI_MMCONFIG are disabled?
+> Then I'd suggest fixing that in the Kconfig space, either by adding a
+> dependency on ACPI_MCFG && PCI_MMCONFIG, or by selecting those
+> must-have pieces of infrastructure.
+>
 
-Actually, maybe this openat function could just entirely drop the
-varargs since compatibility is less of an issue, effectively going back
-to the interface before a7604ba149e7 (tools/nolibc/sys: make open() take
-a vararg on the 3rd argument, 2022-02-07) rather than copying the
-current state.
+Ingo, thank you for the reply.
+
+The way I understand the access to the PCI ECS (via raw_pci_ext_ops)
+works, is the following:
+1. If CONFIG_ACPI_MCFG or CONFIG_PCI_MMCONFIG are enabled - set the
+raw_pci_ext_ops to use
+    MMCFG to access ECS. See pci_mmcfg_early_init() / pci_mmcfg_late_init();
+2. If CONFIG_ACPI_MCFG and CONFIG_PCI_MMCONFIG are disabled - set the
+raw_pci_ext_ops to use
+    the 'direct' access to ECS. See pci_direct_init(). The direct
+access is conditional on the PCI_HAS_IO_ECS
+    flag being set.
+
+On AMD, the kernel enables the ECS IO access via the
+amd_bus_cpu_online() and pci_enable_pci_io_ecs().
+Except those functions have no desired effect on the AMD 17h+ family
+because the register (EnableCf8ExtCfg),
+they access, has been moved. What is important though, is that the
+PCI_HAS_IO_ECS flag is set unconditionally.
+See pci_io_ecs_init() in amd_bus.c
+
+Therefore I was wondering whether we should add support for the 17h+
+family in those functions to have
+the direct access work for those families as well.
+
+Regarding your suggestion to address this in the Kconfig space - I'm
+not quite sure I follow, since right now the kernel
+will use raw_pci_ext_ops whenever access beyond the first 256 bytes is
+requested. Say we want to make that
+conditional on CONFIG_ACPI_MCFG and CONFIG_PCI_MMCONFIG, does it also
+mean then we want to drop support
+for the 'direct' PCI IO ECS access altogether?
+
+Best regards,
+Rostyslav
 
