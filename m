@@ -1,117 +1,185 @@
-Return-Path: <linux-kernel+bounces-541697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C924A4C041
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:23:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D1BDA4C045
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:24:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B3D6165847
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:23:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0E043A5FDE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:23:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B713D20FA9D;
-	Mon,  3 Mar 2025 12:22:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B010A20F08B;
+	Mon,  3 Mar 2025 12:23:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jkFSxw9H"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MRMT3DoX"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5851CF96;
-	Mon,  3 Mar 2025 12:22:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 607EB1EF0AE
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 12:23:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741004568; cv=none; b=RnXXvL5uMAfL5pEcsDh7P/N/GJDe/G+rE0KbhfHzNK+mFJUW3NIkNOsSXKu5n56rSR6Ozzxq40DmY2CZmn9Za/sDWfO+eY4XZS+LJ8jV3uPBj/1Iw2ArV5ncHNcvnjCibF+Pqkjs0NIWpaKogsmA9gwf1HLaR/KCisNhFDvjiN8=
+	t=1741004629; cv=none; b=CAuEBYeSMM5z+Xe6PG+bJwrZxof2I//SGBF4bg6xBiij17uG253NeknK8izWYqV0wUKyU1WWnEeBSSW1QoOzzBjygxh9UEGbFTRi+N3FeuFksAOrUu3Xw6bNVoPfjnjFFiUXk39IousuxZ82P8O0CXhOGO0sDT+IH8Z0Vvk4dWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741004568; c=relaxed/simple;
-	bh=LdAb8B+A2aIRRqA7TGNbZE49m+hpZy1lkM63kR3qKqU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GphP2pSUBTWl7OCHsx3+V/PgsyUiMT8pA/57i9R7eKIdkvaePTKketHptXVCWvRQoxFRXwbC7KA5nXqoJbMfKeWJBbq7thmdgYPPVfa1MRUklkdQAPoHRdDbFsjEAwd1D8rAxcOCz2zuF4s9jPmIgw/C3GQsWcwsdM2JxhWPKoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jkFSxw9H; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741004567; x=1772540567;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=LdAb8B+A2aIRRqA7TGNbZE49m+hpZy1lkM63kR3qKqU=;
-  b=jkFSxw9HrnQ/P+wJObFJiHCzZQanAcgTCvZmAjZx9XzskrTtf5oL1Z3Q
-   IhSWsSPp6VvlSruo1x5QwDL61VwdEaBLJsUsFNaKZyo0cuo75KcF8wtFI
-   WnxEc23mE9UsNcr5uTobKsRI8WafilU8mJM9EMQ/Q3mFRsgKvZFfwFH6q
-   YO5khWdo/8VF2j2wP4UKpttb1vd3M+RR4kxMTNqxiAohvvof2KAvhFjJd
-   iUfw8DZTVr06cjG1jvCufgp9C4vYj+StEN57qi6nZ28OqmkeHmWxOjk0T
-   DbNO1FhOysSIvEC2WY10hXqQLi+//c7nRv3UhR+cZoHq9FHVtdpymTMz0
-   g==;
-X-CSE-ConnectionGUID: GoY1AOpwTBGshJ0XtN7cwg==
-X-CSE-MsgGUID: SXKEPV6gQGGA/cQW+mvH1g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="41729753"
-X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="41729753"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 04:22:47 -0800
-X-CSE-ConnectionGUID: JwvZv7yUQBawHs74UT+2Ag==
-X-CSE-MsgGUID: jeZ9L7JYReiks6Snb6yFyQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="123208067"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 04:22:45 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tp4oj-0000000GoKS-3Onw;
-	Mon, 03 Mar 2025 14:22:41 +0200
-Date: Mon, 3 Mar 2025 14:22:41 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Raag Jadav <raag.jadav@intel.com>
-Cc: lee@kernel.org, giometti@enneenne.com, gregkh@linuxfoundation.org,
-	raymond.tan@intel.com, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] mfd: intel_ehl_pse_gpio: Introduce Intel Elkhart
- Lake PSE GPIO and TIO
-Message-ID: <Z8WfESNmu4MjEbcx@smile.fi.intel.com>
-References: <20250303044745.268964-1-raag.jadav@intel.com>
- <20250303044745.268964-2-raag.jadav@intel.com>
- <Z8VnSyH_DBuJpW2o@smile.fi.intel.com>
- <Z8WU5NiIsu34Gz-Z@black.fi.intel.com>
- <Z8WWXxTrd1e5V3qb@smile.fi.intel.com>
- <Z8WdK7wkNnAerkCO@black.fi.intel.com>
+	s=arc-20240116; t=1741004629; c=relaxed/simple;
+	bh=PBniF7tJAvnfYFLkyJoohJ3zXJ6fnWiQdrYLzNNExSY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jOrnmzo5MmSeQJ6+wBZRlQ+oUtFI5mTUYfFjraUGnCacPzDngdMOGcMBXsTjsG4Hp2yQ7imiYN+O4oEMWB2rQABDDaZKpRJOwEXKysjen7Kp1IF/VWKYojDgI4TQGQtl1cBRwUMnFJliz+XYxzIW1ST6P/lyZZ2iWyaUV0/7Ek4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MRMT3DoX; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-30bb2fdbb09so12440201fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 04:23:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741004625; x=1741609425; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d3b8n/e/obQPdbwaKTdE8cviup54gD9KZn9hHTv3J5k=;
+        b=MRMT3DoXTT4QU0T1zlhkiIVeQjOCtE/XQ212wve4AAmdEL0eq3D+/AIAVNCgwlvFVU
+         i7QuZG45iL5QBeBYowTDXlNMhyHfoTybT73uR5RF04LOKBUiqXxu7U10zHJvdDIdXfZh
+         0aEciMZROqj8vg0RjJxexW/ZGaGQ2Lj2GZcJy1P+Uqs13PaRwrb6NeCekM0dWJZ8VQNY
+         PcFYs4F+Bmhe3Y5PkOKan1TCrzQhYeW+bTu2R69KSKHXzngNNXIRASs5d3IdxKnaJnAO
+         YUB0L4GeGGWZdxOdaxF04zUW1FuiPmy5RZoJQnaozrdqNUwE9NTUKOe7tjCtfiVRqadO
+         mOvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741004625; x=1741609425;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=d3b8n/e/obQPdbwaKTdE8cviup54gD9KZn9hHTv3J5k=;
+        b=Bn2ai+u5yCU6//9Ikd1lgF7lZHYmj+ngD/ow3NY6bgv4+7lc/Jc8lpNxdouYwBbk7w
+         yNcr96DHmOvV2vW/YiZaS24rTta7UxB0WCoTYraWFJrZm7DW8Srhe+rBzaQI8u2Cgoia
+         JdtzxXQp0mZ/9q7fxrXoIkCzkU5Q38C8uwJ/NlbggeT2KyQKpY63Ysx8fRu0XOnCFCYe
+         HFEos91qnU8zgc4tPihSm+ucVflrYUrJvE7ZZXsAOG/OlxKdhgyA4D7PkilmNNu8mIKK
+         7RCCbmbJhV24kDIobOBtS8P8KMXkiHq374/CaaDQEBFRnRo47j3RcvlWsVo5ft5+icEl
+         nl2g==
+X-Forwarded-Encrypted: i=1; AJvYcCWnaV95iZusVd24KuXVljRMfRpcdbbAEwVYdowNBmA9mZWSUklCwU3bc6340DLhYKabqRmTxXj5OF3twxM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0eh0S9EQg2//OaMoiHhLRYLFc5/JQUdxp06Xoxp76nfUY6nN2
+	X9ThE71MnaKb9M6aHSBPzsh/3OYgKP9Rs4RVjdi8o7AHeIamwiU+6LCLxgw/kIAS1JJTSsIKn8A
+	yw+IcN1cKta2/ybRXTO5rgkZ5XIc=
+X-Gm-Gg: ASbGnctvPhxeTn+J6R+wlCj1H6+qJHA+5CSmZLYaFl5WGbJbdaiEeha7KAW36jEVkjR
+	TW7Uv2DxPDKuxjxwFGG0YpPWjR54RAcRROWxzdrFOGhGVjt9Edq/Zz+/9EsUfS2x3j6ovl8J+Do
+	q0c9VPM6Nh/1XKNSPTbJKDGxAb5g==
+X-Google-Smtp-Source: AGHT+IFt3JVX/BisMG+/G1UID86/v92wdQg/oLatNZbzfg/rW8LDwl6VvBkenwA3C/SgERotoaPeY6+G4NPus3fHn9M=
+X-Received: by 2002:a2e:895a:0:b0:30b:963e:9b1a with SMTP id
+ 38308e7fff4ca-30b963e9c3amr42491791fa.23.1741004623478; Mon, 03 Mar 2025
+ 04:23:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8WdK7wkNnAerkCO@black.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250228123825.2729925-1-ubizjak@gmail.com> <20f1af22-71dc-4d62-9615-03030012222e@intel.com>
+ <CAFULd4YBcG45bigHBox2pu+To+Y5BzbRxG+pUr42AVOWSnfKsg@mail.gmail.com>
+In-Reply-To: <CAFULd4YBcG45bigHBox2pu+To+Y5BzbRxG+pUr42AVOWSnfKsg@mail.gmail.com>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Mon, 3 Mar 2025 13:23:39 +0100
+X-Gm-Features: AQ5f1JooaXyxsRyuA9byoZjx70TZThfklw3GcoJ1BIxTpBYPovCe2HhtAnddnWg
+Message-ID: <CAFULd4ZsSKwJ4Dz3cCAgaVsa4ypbb0e2savO-3_Ltbs=1wzgKQ@mail.gmail.com>
+Subject: Re: [PATCH -tip] x86/locking/atomic: Use asm_inline for atomic
+ locking insns
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
+	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 03, 2025 at 02:14:35PM +0200, Raag Jadav wrote:
-> On Mon, Mar 03, 2025 at 01:45:35PM +0200, Andy Shevchenko wrote:
-> > On Mon, Mar 03, 2025 at 01:39:16PM +0200, Raag Jadav wrote:
-> > > On Mon, Mar 03, 2025 at 10:24:43AM +0200, Andy Shevchenko wrote:
-> > > > On Mon, Mar 03, 2025 at 10:17:41AM +0530, Raag Jadav wrote:
+On Sun, Mar 2, 2025 at 9:56=E2=80=AFPM Uros Bizjak <ubizjak@gmail.com> wrot=
+e:
+>
+> On Fri, Feb 28, 2025 at 5:48=E2=80=AFPM Dave Hansen <dave.hansen@intel.co=
+m> wrote:
+> >
+> > On 2/28/25 04:35, Uros Bizjak wrote:
+> > > The code size of the resulting x86_64 defconfig object file increases
+> > > for 33.264 kbytes, representing 1.2% code size increase:
+> > >
+> > >    text    data     bss     dec     hex filename
+> > > 27450107        4633332  814148 32897587        1f5fa33 vmlinux-old.o
+> > > 27483371        4633784  814148 32931303        1f67de7 vmlinux-new.o
+> >
+> > So, first of all, thank you for including some objective measurement of
+> > the impact if your patches. It's much appreciated.
+> >
+> > But I think the patches need to come with a solid theory of why they're
+> > good. The minimum bar for that, I think, is *some* kind of actual
+> > real-world performance test. I'm not picky. Just *something* that spend=
+s
+> > a lot of time in the kernel and ideally where a profile points at some
+> > of the code you're poking here.
+> >
+> > I'm seriously not picky: will-it-scale, lmbench, dbench, kernel
+> > compiles. *ANYTHING*. *ANY* hardware. Run it on your laptop.
+> >
+> > But performance patches need to come with performance *numbers*.
+>
+> Please find lmbench results from unpatched (fedora.0) and patched
+> (fedora.1) fedora-41 6.13.5 kernels.
+>
+> lmbench is from [1]
+>
+> [1] https://fedora.pkgs.org/41/rpm-sphere-x86_64/lmbench-3.0-0.a9.3.x86_6=
+4.rpm.html
+>
+> Some tests show quite different results, but I'd appreciate some help
+> in interpreting the results. Maybe they show that the price of 33
+> kbytes is worth the improvement, or they will motivate someone
+> experienced in kernel benchmarks to benchmark the patch in a more
+> scientific way.
 
-...
+These go from:
 
-> > > > > +INTEL GPIO MFD DRIVER
-> > > > 
-> > > > This also needs to be more precise and follow the name. We have more Intel GPIO
-> > > > drivers, and MFD doesn't ring any bell about the platform or so. Are you going
-> > > > to support all of them (existing and comining)?
-> > > 
-> > > Not that it is planned as of now but I wouldn't mind :)
-> > 
-> > It sounds like solving the problem that even might never appear :-)
-> 
-> Right, somehow that sounds familiar :D
+Process fork+exit: 270.0952 microseconds
+Process fork+execve: 2620.3333 microseconds
+Process fork+/bin/sh -c: 6781.0000 microseconds
+File /usr/tmp/XXX write bandwidth: 1780350 KB/sec
+Pagefaults on /usr/tmp/XXX: 0.3875 microseconds
 
-So, can we rename the MAINTAINERS record as the result of our discussion?
+to:
 
--- 
-With Best Regards,
-Andy Shevchenko
+Process fork+exit: 298.6842 microseconds
+Process fork+execve: 1662.7500 microseconds
+Process fork+/bin/sh -c: 2127.6667 microseconds
+File /usr/tmp/XXX write bandwidth: 1950077 KB/sec
+Pagefaults on /usr/tmp/XXX: 0.1958 microseconds
 
+and from:
 
+Socket bandwidth using localhost
+0.000001 2.52 MB/sec
+0.000064 163.02 MB/sec
+0.000128 321.70 MB/sec
+0.000256 630.06 MB/sec
+0.000512 1207.07 MB/sec
+0.001024 2004.06 MB/sec
+0.001437 2475.43 MB/sec
+10.000000 5817.34 MB/sec
+
+Avg xfer: 3.2KB, 41.8KB in 1.2230 millisecs, 34.15 MB/sec
+AF_UNIX sock stream bandwidth: 9850.01 MB/sec
+Pipe bandwidth: 4631.28 MB/sec
+
+to:
+
+Socket bandwidth using localhost
+0.000001 3.13 MB/sec
+0.000064 187.08 MB/sec
+0.000128 324.12 MB/sec
+0.000256 618.51 MB/sec
+0.000512 1137.13 MB/sec
+0.001024 1962.95 MB/sec
+0.001437 2458.27 MB/sec
+10.000000 6168.08 MB/sec
+
+Avg xfer: 3.2KB, 41.8KB in 1.0060 millisecs, 41.52 MB/sec
+AF_UNIX sock stream bandwidth: 9921.68 MB/sec
+Pipe bandwidth: 4649.96 MB/sec
+
+Uros.
 
