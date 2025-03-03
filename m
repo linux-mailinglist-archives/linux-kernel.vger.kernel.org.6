@@ -1,304 +1,214 @@
-Return-Path: <linux-kernel+bounces-542201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 953C2A4C710
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:29:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 323B7A4C6FE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:27:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BB217A54F4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:22:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 384F6188749C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:24:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85266235347;
-	Mon,  3 Mar 2025 16:16:05 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF7CA21B9F4;
+	Mon,  3 Mar 2025 16:18:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="hlPtcxra";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bGHfFUf/"
+Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3D73215193;
-	Mon,  3 Mar 2025 16:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 268A821C189;
+	Mon,  3 Mar 2025 16:18:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741018564; cv=none; b=mgHYuyVIBxpNU8dFX+uCCxTm0XeenxVPCGnwW90lWkdOFCu8ZCJaUnARvHiiNfOB41y1TjpEK4RqRkHdBSJ4Il5gH5quXwjai5sw9/3YHambxvSoYnzllXgEL4nXuNcxs6DkSYBMp28PIP89LQvUeLF49YXh5qHGo8T9ePfbdlo=
+	t=1741018714; cv=none; b=FjYL/zCmzUQ9J3lNqUKVksrQF+TLrimlKerK5brUylmcnPU9TsWLEJFVj8k8IqrEBedAngyarB3vHIAkv+BVQi24YrOLcw8c4G6rt8122GZIDjroeFsxdOE67xvx+l2rWzNU3+za3w1MW+e/qqTSVppyzPFtEFrymnSbiyPL0M8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741018564; c=relaxed/simple;
-	bh=226GBRazPsQUlovXUlaIfleUlXMaCqSaJQkbVRe8mU8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ngsOsy4WahiQFwZzfshRvmhW6FOEW/gAnuHownpB5W001gb6CSIzhZE4SULklm6uq+YqgIDJ0FVwmqylRp7ZWl2tjpQKkGoqAhsw6/RLWc/Ahg7tWGySrr/wf0J3eMgmZ3bgVYRyceCut5/7XVDw8JEEKqItdi/H0zKL41qaOLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16772C4CED6;
-	Mon,  3 Mar 2025 16:16:02 +0000 (UTC)
-Message-ID: <0527dc72-ccc3-4f1f-a982-5bc8b2341c1a@xs4all.nl>
-Date: Mon, 3 Mar 2025 17:16:01 +0100
+	s=arc-20240116; t=1741018714; c=relaxed/simple;
+	bh=Shcgiv0ZUtINUIZW4HJZ/TRBrWAVRSUZV3UdJRymLBw=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=eyw9wbL1C7NQvjGcAG6ub+g91cTTSMmplR/r//G6EZ1ZgLCqOU8vuGq2QS+R5xz4MRbFlDq9kdxnU9nwknUgetzI+LvObfAEbxbAb2YIM4wZ85j3yioxHlQ+zBtH8nekTDAOhbWB1X2un+FbpB2PKhTLyrG8PNCyrr6/zFNaans=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=hlPtcxra; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bGHfFUf/; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfout.phl.internal (Postfix) with ESMTP id 023F813826E2;
+	Mon,  3 Mar 2025 11:18:31 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-09.internal (MEProxy); Mon, 03 Mar 2025 11:18:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1741018710;
+	 x=1741105110; bh=a9n+QWQK7JixvqX2jl9NOcrAvoreNZlOocQmDIAQklg=; b=
+	hlPtcxraYJBuAHEJAc1xFuNxN3Gf/QgO8k7yycrX9lobYCnCUL06nU1a6TfEtLf1
+	BqZWE2neYgZWJD0d3dq+3G1vIuVgqUh0dWM4U/Ub1AYHB4bj+Rtu/YeIkkQyngXf
+	P7CcT07n/NDxgTCIln9e6RIdLQ2uj0No+s1hnQCZq7oxZ6F4eARbBJ4J9QfbJ6tu
+	CiOoRYIF0SQNJi1Fs1lbuhtHz+BtXRqkx/1XYAvc1VnldgdLLXdEObFPaoMlfwib
+	Tf/uK8ms9mRO6UxM6fQlPPQ1RIUPwL2kqH0XDAcGl3zZ87Kvd5TASJRWBPbuB2eZ
+	hOy4gjHTSSxOoa7fTbqIUw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741018710; x=
+	1741105110; bh=a9n+QWQK7JixvqX2jl9NOcrAvoreNZlOocQmDIAQklg=; b=b
+	GHfFUf/4mecdzLQu6P0cImPT/KzjDgCt1BodsMO4nfmy/kMiP4Bk8se9XrXK+s4z
+	Mcl68hG/gXuM/dghDYPrSvQrfHnf55LTMvDH6Zs49Pplx0k7/BdXbJ2uTW9iOwnx
+	4yy9nWQ/HW1RkNn8RI8rQmDY/t/h31b2A+Ol3wPEsCd5O1m5kNl/OSOI/yAyNQoi
+	sAHTaozjoXjVAywWGQag21pqHIRTlXaBvgtao1x2w6PJxm6nPaxbXeuTmGU69jzK
+	S9MXWh2JMbo3h+oEWJSPmdOTexI97h+49Isz8a3B55BzWbF4lGAlpY7SEYJLf4kw
+	LB9LUUwepMdIN3H0g3euQ==
+X-ME-Sender: <xms:VtbFZ153eAy9AkJjjsAzFWphXA2NGSA2VDMmO3ji8anpRzGln0CGRA>
+    <xme:VtbFZy5jJ2F7dkrbOxoAeIMoFGLkUS0J62xZs62D8EPeRjvsKhAESkhv7fi7VGVYS
+    4VbF5kHIA1mEl9RX4w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelleehlecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
+    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeel
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrkhhshhgrhidrghhuphhtrgesrg
+    hmugdrtghomhdprhgtphhtthhopehgrghuthhhrghmrdhshhgvnhhohiesrghmugdrtgho
+    mhdprhgtphhtthhopehmrghrihhordhlihhmohhntghivghllhhosegrmhgurdgtohhmpd
+    hrtghpthhtohepnhgrvhgvvghnkhhrihhshhhnrgdrtghhrghtrhgrughhihesrghmugdr
+    tghomhdprhgtphhtthhopehshhihrghmqdhsuhhnuggrrhdrshdqkhesrghmugdrtghomh
+    dprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdp
+    rhgtphhtthhopehlihhnuhigsehrohgvtghkqdhushdrnhgvthdprhgtphhtthhopehlih
+    hnuhigqdhhfihmohhnsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhi
+    nhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:VtbFZ8fmqAq5--EVuEM-g4YApfa-roxd8oY7OUlnc4T-sgEhVD9vkw>
+    <xmx:VtbFZ-J4mN-uZMBgfRfUhj8HIOj6IjuTro0vMn4K-Q6JgUE7gPoYZg>
+    <xmx:VtbFZ5JIItkfYu5q7tx0ATprNoPizMWRFra6XK3KunZ64xiGmLZnFA>
+    <xmx:VtbFZ3yuSkSgul29DfkTM7yS9-GwogaaD_DSYjWHeIat3zR1VZM-yg>
+    <xmx:VtbFZw8Pi3CZqTi1oUyYPhl_pNDRAY5MmsjL8ZpyTGcu-qxxjDjuJ111>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 9921B2220073; Mon,  3 Mar 2025 11:18:30 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] media: uvcvideo: Set V4L2_CTRL_FLAG_DISABLED during
- queryctrl errors
-To: Ricardo Ribalda <ribalda@chromium.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Hans de Goede <hdegoede@redhat.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
+Date: Mon, 03 Mar 2025 17:18:10 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Akshay Gupta" <akshay.gupta@amd.com>, linux-hwmon@vger.kernel.org,
  linux-kernel@vger.kernel.org
-References: <20250111-uvc-eaccess-v4-1-c7759bfd1bd4@chromium.org>
- <20250223170319.GA2821@pendragon.ideasonboard.com>
- <CANiDSCv1HVu82D=PoJFu=XCQ97k_MM1dmYpufkUCiKpSgGRT9w@mail.gmail.com>
- <20250303151603.GD32048@pendragon.ideasonboard.com>
- <CANiDSCvQ2evpdfg5FYKBRB9ZNQ5Lfa8Sk-EJ4yNiQwB4OfFnKg@mail.gmail.com>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Autocrypt: addr=hverkuil@xs4all.nl; keydata=
- xsFNBFQ84W0BEAC7EF1iL4s3tY8cRTVkJT/297h0Hz0ypA+ByVM4CdU9sN6ua/YoFlr9k0K4
- BFUlg7JzJoUuRbKxkYb8mmqOe722j7N3HO8+ofnio5cAP5W0WwDpM0kM84BeHU0aPSTsWiGR
- yw55SOK2JBSq7hueotWLfJLobMWhQii0Zd83hGT9SIt9uHaHjgwmtTH7MSTIiaY6N14nw2Ud
- C6Uykc1va0Wqqc2ov5ihgk/2k2SKa02ookQI3e79laOrbZl5BOXNKR9LguuOZdX4XYR3Zi6/
- BsJ7pVCK9xkiVf8svlEl94IHb+sa1KrlgGv3fn5xgzDw8Z222TfFceDL/2EzUyTdWc4GaPMC
- E/c1B4UOle6ZHg02+I8tZicjzj5+yffv1lB5A1btG+AmoZrgf0X2O1B96fqgHx8w9PIpVERN
- YsmkfxvhfP3MO3oHh8UY1OLKdlKamMneCLk2up1Zlli347KMjHAVjBAiy8qOguKF9k7HOjif
- JCLYTkggrRiEiE1xg4tblBNj8WGyKH+u/hwwwBqCd/Px2HvhAsJQ7DwuuB3vBAp845BJYUU3
- 06kRihFqbO0vEt4QmcQDcbWINeZ2zX5TK7QQ91ldHdqJn6MhXulPKcM8tCkdD8YNXXKyKqNl
- UVqXnarz8m2JCbHgjEkUlAJCNd6m3pfESLZwSWsLYL49R5yxIwARAQABzSFIYW5zIFZlcmt1
- aWwgPGh2ZXJrdWlsQHhzNGFsbC5ubD7CwZUEEwEKAD8CGwMGCwkIBwMCBhUIAgkKCwQWAgMB
- Ah4BAheAFiEEBSzee8IVBTtonxvKvS1hSGYUO0wFAmaU3GkFCRf7lXsACgkQvS1hSGYUO0wZ
- cw//cLMiaV+p2rCyzdpDjWon2XD6M646THYvqXLb9eVWicFlVG78kNtHrHyEWKPhN3OdWWjn
- kOzXseVR/nS6vZvqCaT3rwgh3ZMb0GvOQk1/7V8UbcIERy036AjQoZmKo5tEDIv48MSvqxjj
- H6wbKXbCyvnIwpGICLyb0xAwvvpTaJkwZjvGqeo5EL0Z+cQ8fCelfKNO5CFFP3FNd3dH8wU6
- CHRtdZE03iIVEWpgCTjsG2zwsX/CKfPx0EKcrQajW3Tc50Jm0uuRUEKCVphlYORAPtFAF1dj
- Ly8zpN1bEXH+0FDXe/SHhzbvgS4sL0J4KQCCZ/GcbKh/vsDC1VLsGS5C7fKOhAtOkUPWRjF+
- kOEEcTOROMMvSUVokO+gCdb9nA/e3WMgiTwWRumWy5eCEnCpM9+rfI2HzTeACrVgGEDkOTHW
- eaGHEy8nS9a25ejQzsBhi+T7MW53ZTIjklR7dFl/uuK+EJ6DLbDpVbwyYo2oeiwP+sf8/Rgv
- WfJv4wzfUo/JABwrsbfWfycVZwFWBzqq+TaKFkMPm017dkLdg4MzxvvTMP7nKfJxU1bQ2OOr
- xkPk5KDcz+aRYBvTqEXgYZ6OZtnOUFKD+uPlbWf68vuz/1iFbQYnNJkTxwWhiIMN7BULK74d
- Ek89MU7JlbYNSv0v21lRF+uDo0J6zyoTt0ZxSPzOwU0EVDzhbQEQANzLiI6gHkIhBQKeQaYs
- p2SSqF9c++9LOy5x6nbQ4s0X3oTKaMGfBZuiKkkU6NnHCSa0Az5ScRWLaRGu1PzjgcVwzl5O
- sDawR1BtOG/XoPRNB2351PRp++W8TWo2viYYY0uJHKFHML+ku9q0P+NkdTzFGJLP+hn7x0RT
- DMbhKTHO3H2xJz5TXNE9zTJuIfGAz3ShDpijvzYieY330BzZYfpgvCllDVM5E4XgfF4F/N90
- wWKu50fMA01ufwu+99GEwTFVG2az5T9SXd7vfSgRSkzXy7hcnxj4IhOfM6Ts85/BjMeIpeqy
- TDdsuetBgX9DMMWxMWl7BLeiMzMGrfkJ4tvlof0sVjurXibTibZyfyGR2ricg8iTbHyFaAzX
- 2uFVoZaPxrp7udDfQ96sfz0hesF9Zi8d7NnNnMYbUmUtaS083L/l2EDKvCIkhSjd48XF+aO8
- VhrCfbXWpGRaLcY/gxi2TXRYG9xCa7PINgz9SyO34sL6TeFPSZn4bPQV5O1j85Dj4jBecB1k
- z2arzwlWWKMZUbR04HTeAuuvYvCKEMnfW3ABzdonh70QdqJbpQGfAF2p4/iCETKWuqefiOYn
- pR8PqoQA1DYv3t7y9DIN5Jw/8Oj5wOeEybw6vTMB0rrnx+JaXvxeHSlFzHiD6il/ChDDkJ9J
- /ejCHUQIl40wLSDRABEBAAHCwXwEGAEKACYCGwwWIQQFLN57whUFO2ifG8q9LWFIZhQ7TAUC
- ZpTcxwUJF/uV2gAKCRC9LWFIZhQ7TMlPD/9ppgrN4Z9gXta9IdS8a+0E7lj/dc0LnF9T6MMq
- aUC+CFffTiOoNDnfXh8sfsqTjAT50TsVpdlH6YyPlbU5FR8bC8wntrJ6ZRWDdHJiCDLqNA/l
- GVtIKP1YW8fA01thMcVUyQCdVUqnByMJiJQDzZYrX+E/YKUTh2RL5Ye0foAGE7SGzfZagI0D
- OZN92w59e1Jg3zBhYXQIjzBbhGIy7usBfvE882GdUbP29bKfTpcOKkJIgO6K+w82D/1d5TON
- SD146+UySmEnjYxHI8kBYaZJ4ubyYrDGgXT3jIBPq8i9iZP3JSeZ/0F9UIlX4KeMSG8ymgCR
- SqL1y9pl9R2ewCepCahEkTT7IieGUzJZz7fGUaxrSyexPE1+qNosfrUIu3yhRA6AIjhwPisl
- aSwDxLI6qWDEQeeWNQaYUSEIFQ5XkZxd/VN8JeMwGIAq17Hlym+JzjBkgkm1LV9LXw9D8MQL
- e8tSeEXX8BZIen6y/y+U2CedzEsMKGjy5WNmufiPOzB3q2JwFQCw8AoNic7soPN9CVCEgd2r
- XS+OUZb8VvEDVRSK5Yf79RveqHvmhAdNOVh70f5CvwR/bfX/Ei2Szxz47KhZXpn1lxmcds6b
- LYjTAZF0anym44vsvOEuQg3rqxj/7Hiz4A3HIkrpTWclV6ru1tuGp/ZJ7aY8bdvztP2KTw==
-In-Reply-To: <CANiDSCvQ2evpdfg5FYKBRB9ZNQ5Lfa8Sk-EJ4yNiQwB4OfFnKg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Cc: "Guenter Roeck" <linux@roeck-us.net>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, shyam-sundar.s-k@amd.com,
+ gautham.shenoy@amd.com, "Mario Limonciello" <mario.limonciello@amd.com>,
+ naveenkrishna.chatradhi@amd.com
+Message-Id: <c3c1fee9-d119-456e-827b-04ba6cdd8d7d@app.fastmail.com>
+In-Reply-To: <20250303105902.215009-7-akshay.gupta@amd.com>
+References: <20250303105902.215009-1-akshay.gupta@amd.com>
+ <20250303105902.215009-7-akshay.gupta@amd.com>
+Subject: Re: [PATCH v5 06/11] misc: amd-sbi: Add support for AMD_SBI IOCTL
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-On 03/03/2025 17:05, Ricardo Ribalda wrote:
-> On Mon, 3 Mar 2025 at 16:16, Laurent Pinchart
-> <laurent.pinchart@ideasonboard.com> wrote:
->>
->> On Mon, Feb 24, 2025 at 10:26:34AM +0100, Ricardo Ribalda wrote:
->>> On Sun, 23 Feb 2025 at 18:03, Laurent Pinchart wrote:
->>>> On Sat, Jan 11, 2025 at 09:57:21AM +0000, Ricardo Ribalda wrote:
->>>>> To implement VIDIOC_QUERYCTRL, we need to know the minimum, maximum,
->>>>> step and flags of the control. For some of the controls, this involves
->>>>> querying the actual hardware.
->>>>>
->>>>> Some non-compliant cameras produce errors when we query them. Right now,
->>>>> we populate that error to userspace. When an error happens, the v4l2
->>>>> framework does not copy the v4l2_queryctrl struct to userspace. Also,
->>>>> userspace apps are not ready to handle any other error than -EINVAL.
->>>>>
->>>>> One of the main usecases of VIDIOC_QUERYCTRL is enumerating the controls
->>>>> of a device. This is done using the V4L2_CTRL_FLAG_NEXT_CTRL flag. In
->>>>> that usecase, a non-compliant control will make it almost impossible to
->>>>> enumerate all controls of the device.
->>>>>
->>>>> A control with an invalid max/min/step/flags is better than non being
->>>>> able to enumerate the rest of the controls.
->>>>>
->>>>> This patch makes VIDIOC_QUERYCTRL return 0 in all the error cases
->>>>> different than -EINVAL, introduces a warning in dmesg so we can
->>>>> have a trace of what has happened and sets the V4L2_CTRL_FLAG_DISABLED.
->>>>>
->>>>> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
->>>>> ---
->>>>> Hi 2*Hans and Laurent!
->>>>>
->>>>> I came around a device that was listing just a couple of controls when
->>>>> it should be listing much more.
->>>>>
->>>>> Some debugging latter I found that the device was returning -EIO when
->>>>> all the focal controls were read.
->>>>>
->>>>> Lots of good arguments in favor/against this patch in the v1. Please
->>>>> check!
->>>>>
->>>>> Without this patch:
->>>>> $ v4l2-ctl --list-ctrls
->>>>>                   auto_exposure 0x009a0901 (menu)   : min=0 max=3 default=3 value=3 (Aperture Priority Mode)
->>>>>          exposure_time_absolute 0x009a0902 (int)    : min=50 max=10000 step=1 default=166 value=166 flags=inactive
->>>>>      exposure_dynamic_framerate 0x009a0903 (bool)   : default=0 value=0
->>>>> region_of_interest_auto_control 0x009a1902 (bitmask): max=0x00000001 default=0x00000001 value=1
->>>>>
->>>>> With this patch:
->>>>> $ v4l2-ctl --list-ctrls
->>>>>                   auto_exposure 0x009a0901 (menu)   : min=0 max=3 default=3 value=3 (Aperture Priority Mode)
->>>>>          exposure_time_absolute 0x009a0902 (int)    : min=50 max=10000 step=1 default=166 value=166 flags=inactive
->>>>>      exposure_dynamic_framerate 0x009a0903 (bool)   : default=0 value=0
->>>>> error 5 getting ext_ctrl Focus, Absolute
->>>>> error 5 getting ext_ctrl Focus, Automatic Continuous
->>>>>    region_of_interest_rectangle 0x009a1901 (unknown): type=107 value=unsupported payload type flags=has-payload
->>>>> region_of_interest_auto_control 0x009a1902 (bitmask): max=0x00000001 default=0x00000001 value=1
->>>>> --
->>>>> ---
->>>>> Changes in v4:
->>>>> - Display control name (Thanks Hans)
->>>>> - Link to v3: https://lore.kernel.org/r/20250107-uvc-eaccess-v3-1-99f3335d5133@chromium.org
->>>>>
->>>>> Changes in v3:
->>>>> - Add a retry mechanism during error.
->>>>
->>>> This needs to be explained in the commit message, including when/why it
->>>> helps, and why the retry count is 2.
->>>>
->>>>> - Set V4L2_CTRL_FLAG_DISABLED flag.
->>>>> - Link to v2: https://lore.kernel.org/r/20241219-uvc-eaccess-v2-1-bf6520c8b86d@chromium.org
->>>>>
->>>>> Changes in v2:
->>>>> - Never return error, even if we are not enumerating the controls
->>>>> - Improve commit message.
->>>>> - Link to v1: https://lore.kernel.org/r/20241213-uvc-eaccess-v1-1-62e0b4fcc634@chromium.org
->>>>> ---
->>>>>  drivers/media/usb/uvc/uvc_ctrl.c | 43 ++++++++++++++++++++++++++++++++--------
->>>>>  1 file changed, 35 insertions(+), 8 deletions(-)
->>>>>
->>>>> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
->>>>> index 4e58476d305e..9d7812e8572d 100644
->>>>> --- a/drivers/media/usb/uvc/uvc_ctrl.c
->>>>> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
->>>>> @@ -1280,6 +1280,8 @@ static u32 uvc_get_ctrl_bitmap(struct uvc_control *ctrl,
->>>>>       return ~0;
->>>>>  }
->>>>>
->>>>> +#define MAX_QUERY_RETRIES 2
->>>>> +
->>>>>  static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
->>>>>       struct uvc_control *ctrl,
->>>>>       struct uvc_control_mapping *mapping,
->>>>> @@ -1305,19 +1307,44 @@ static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
->>>>>               __uvc_find_control(ctrl->entity, mapping->master_id,
->>>>>                                  &master_map, &master_ctrl, 0);
->>>>>       if (master_ctrl && (master_ctrl->info.flags & UVC_CTRL_FLAG_GET_CUR)) {
->>>>> +             unsigned int retries;
->>>>>               s32 val;
->>>>> -             int ret = __uvc_ctrl_get(chain, master_ctrl, master_map, &val);
->>>>> -             if (ret < 0)
->>>>> -                     return ret;
->>>>> +             int ret;
->>>>>
->>>>> -             if (val != mapping->master_manual)
->>>>> -                             v4l2_ctrl->flags |= V4L2_CTRL_FLAG_INACTIVE;
->>>>> +             for (retries = 0; retries < MAX_QUERY_RETRIES; retries++) {
->>>>> +                     ret = __uvc_ctrl_get(chain, master_ctrl, master_map,
->>>>> +                                          &val);
->>>>> +                     if (ret >= 0)
->>>>> +                             break;
->>>>> +             }
->>>>> +
->>>>> +             if (ret < 0) {
->>>>> +                     dev_warn_ratelimited(&chain->dev->udev->dev,
->>>>> +                                          "UVC non compliance: Error %d querying master control %x (%s)\n",
->>>>> +                                           ret, master_map->id,
->>>>> +                                           uvc_map_get_name(master_map));
->>>>> +             } else if (val != mapping->master_manual) {
->>>>> +                     v4l2_ctrl->flags |= V4L2_CTRL_FLAG_INACTIVE;
->>>>> +             }
->>>>>       }
->>>>>
->>>>>       if (!ctrl->cached) {
->>>>> -             int ret = uvc_ctrl_populate_cache(chain, ctrl);
->>>>> -             if (ret < 0)
->>>>> -                     return ret;
->>>>> +             unsigned int retries;
->>>>> +             int ret;
->>>>> +
->>>>> +             for (retries = 0; retries < MAX_QUERY_RETRIES; retries++) {
->>>>> +                     ret = uvc_ctrl_populate_cache(chain, ctrl);
->>>>> +                     if (ret >= 0)
->>>>> +                             break;
->>>>> +             }
->>>>> +
->>>>> +             if (ret < 0) {
->>>>> +                     dev_warn_ratelimited(&chain->dev->udev->dev,
->>>>> +                                          "UVC non compliance: Error %d populating cache of control %x (%s)\n",
->>>>> +                                          ret, mapping->id,
->>>>> +                                          uvc_map_get_name(mapping));
->>>>> +                     v4l2_ctrl->flags |= V4L2_CTRL_FLAG_DISABLED;
->>>>
->>>> Can we make the control permanently disabled ?
->>>
->>> I'd rather not. In funky hardware the control might work with the
->>> right combination of other controls.
->>
->> That makes the behaviour random and therefore very confusing for
->> userspace. All of a sudden a control will start being available, even if
->> it was marked as disabled during enumeration.
-> 
-> Random weird hardware will have random behaviour. I think this is kind
-> of expected.
-> 
-> Also there are probably lots of cameras in the field that cannot
-> enumerate properly but are used by custom apps. We are going to break
-> userspace if we enforce this.
-> 
-> Hans V. What do you think?
+On Mon, Mar 3, 2025, at 11:58, Akshay Gupta wrote:
 
-I agree with Laurent here. If this sometimes works, and sometimes it doesn't,
-then what is an application going to do with that? I would start with just
-permanently disabling this. If it turns out that for some hardware this works
-with some magic combination of other controls values, then that feels more like
-a quirk to me.
+> +static long sbrmi_ioctl(struct file *fp, unsigned int cmd, unsigned 
+> long arg)
+> +{
+> +	int __user *arguser = (int  __user *)arg;
+> +	struct apml_message msg = { 0 };
+> +	bool read = false;
+> +	int ret;
+> +
+> +	struct sbrmi_data *data = container_of(fp->private_data, struct 
+> sbrmi_data,
+> +					       sbrmi_misc_dev);
+> +	if (!data)
+> +		return -ENODEV;
+> +
+> +	/* Copy the structure from user */
+> +	if (copy_struct_from_user(&msg, sizeof(msg), arguser,
+> +				  sizeof(struct apml_message)))
+> +		return -EFAULT;
 
-One note, though:
+This is not how ioctl commands work: you need to check the
+'cmd' argument, which includes the length of the data.
 
->>>>> +                     dev_warn_ratelimited(&chain->dev->udev->dev,
->>>>> +                                          "UVC non compliance: Error %d populating cache of control %x (%s)\n",
->>>>> +                                          ret, mapping->id,
->>>>> +                                          uvc_map_get_name(mapping));
->>>>> +                     v4l2_ctrl->flags |= V4L2_CTRL_FLAG_DISABLED;
+copy_struct_from_user() makes no sense here since the length
+is fixed (for a given command).
 
-That warning is too cryptic. You want to clearly state in the kernel log
-that this specific control is disabled due to UVC non compliance. E.g.:
+> +	switch (msg.cmd) {
+> +	case 0 ... 0x999:
+> +		/* Mailbox protocol */
+> +		ret = rmi_mailbox_xfer(data, &msg);
+> +		break;
 
-                                          "UVC non-compliance: permanently disabling control %x (%s) due to error %d\n",
+This looks like you are blindly passing through any command
+from userspace, which is generally not the preferred way.
 
-Regards,
+Usually this should be a known set of high-level commands
+accepted by the driver.
 
-	Hans
+> +static const struct file_operations sbrmi_fops = {
+> +	.owner		= THIS_MODULE,
+> +	.unlocked_ioctl	= sbrmi_ioctl,
+> +	.compat_ioctl	= sbrmi_ioctl,
 
-> 
->>
->>>>> +             }
->>>>>       }
->>>>>
->>>>>       if (ctrl->info.flags & UVC_CTRL_FLAG_GET_DEF) {
->>>>>
->>>>> ---
->>>>> base-commit: c5aa327e10b194884a9c9001a751f6e4703bc3e3
->>>>> change-id: 20241213-uvc-eaccess-755cc061a360
->>
->> --
->> Regards,
->>
->> Laurent Pinchart
-> 
-> 
-> 
+Change this to
 
+.compat_ioctl = compat_ptr_ioctl,
+
+
+> +	data->sbrmi_misc_dev.name	= devm_kasprintf(dev,
+> +							 GFP_KERNEL,
+> +							 "sbrmi-%x",
+> +							 data->dev_static_addr);
+> +	data->sbrmi_misc_dev.minor	= MISC_DYNAMIC_MINOR;
+> +	data->sbrmi_misc_dev.fops	= &sbrmi_fops;
+> +	data->sbrmi_misc_dev.parent	= dev;
+> +	data->sbrmi_misc_dev.nodename	= devm_kasprintf(dev,
+> +							 GFP_KERNEL,
+> +							 "sbrmi-%x",
+> +							 data->dev_static_addr);
+> +	data->sbrmi_misc_dev.mode	= 0600;
+> +
+> +	return misc_register(&data->sbrmi_misc_dev);
+
+What is 'dev_static_addr'? Usually you want a miscdevice to 
+have a constant name and a static structure definition, not
+dynamic allocation.
+
+Are there multiple devices of this type in a given system?
+
+> +struct apml_message {
+> +	/* message ids:
+> +	 * Mailbox Messages:	0x0 ... 0x999
+> +	 */
+> +	__u32 cmd;
+> +
+> +	/*
+> +	 * 8 bit data for reg read,
+> +	 * 32 bit data in case of mailbox,
+> +	 */
+> +	union {
+> +		__u32 mb_out[2];
+> +		__u8 reg_out[8];
+> +	} data_out;
+> +
+> +	/*
+> +	 * [0]...[3] mailbox 32bit input
+> +	 * [7] read/write functionality
+> +	 */
+> +	union {
+> +		__u32 mb_in[2];
+> +		__u8 reg_in[8];
+> +	} data_in;
+> +} __attribute__((packed));
+
+You normally want to have the in-kernel data aligned. Even
+if userspace has it at a misaligned offset, it will still
+work without the __packed.
+
+     Arnd
 
