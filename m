@@ -1,107 +1,151 @@
-Return-Path: <linux-kernel+bounces-544427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7B9EA4E136
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:39:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20837A4E12D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:38:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BDC33BE491
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:30:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 452461884BFD
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:33:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC048207DF0;
-	Tue,  4 Mar 2025 14:29:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10DD625F97C;
+	Tue,  4 Mar 2025 14:31:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Atf7+ptv"
 Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3668520767F
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:29:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B1E25F793
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.115
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741098563; cv=pass; b=MCbSoqEJT/FEm9H85mD2LY22cEapoqeIkAp7kmZLG41t1iixpX5fteOFxsrSQ5qen2K7756Ll2QF0dJTx1ZPzYL8WxJVFPjexXsWYL7TAMktNc9xKxK9DcrZH2MHSebsFu0X7jnKj2g26NjrY7TzwonDQL8leEV9yTSnD8PJ4BE=
+	t=1741098706; cv=fail; b=JaIt/0cQLkOLGw3QMX9vL8ANRfCH5NLraqueGagc8qkKDVLoLJcUMajRMC/a7qE3hxjzn3oxS+IHfCB3yxMnrTBQQLAKw8GAr7exbnKs+lavGGIJWNffqX34NKoytH4TtFGjKz3HoZTEZEnohpZVTGg9+Y9nUchs+YXxRVu4ZBo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741098563; c=relaxed/simple;
-	bh=4ybMusj+3erW2An8KjCkmALT3RbeQvIrvwKF/FIQxHI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=drPQVSK2nsN7j2etaCjB+2DuG/fan1YSnk7SqqrdUQI9oA5bzK1x2x0LsgKs9w8BcweKX0fz55Pifjj7SOzGrRtEK90jEtRlS8QUHu0gnhg1K0SCam725FgdbflosdYFTNao/uavjboLFOe5zXr7rb4jHm2u30AQh7afTyLv5nk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=none smtp.mailfrom=cc.itu.edu.tr; arc=none smtp.client-ip=185.203.201.7; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=pass smtp.client-ip=160.75.25.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	s=arc-20240116; t=1741098706; c=relaxed/simple;
+	bh=wgwvUzcv9WZS9kUxNOhraSZ9ZOWP+CJ0pKU7K/uc37g=;
+	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=JDvB9bCXAXNIR+6DVot1/5+Kv0ybCNcV1xWj1BrACJFBODPbS5fwhzaTqzg1owQ7bMi985EmiUAk0HJvv6ItUaFBugq8E01HJlsHYCKoVvx/UjyejKVs4AEzLZGT6w2nl4CXNOcslMhs6jsszqNBk7QUUwDR+WKJqHKlAZVzhKE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Atf7+ptv reason="signature verification failed"; arc=none smtp.client-ip=198.175.65.9; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; arc=fail smtp.client-ip=160.75.25.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
-Received: from lesvatest1.cc.itu.edu.tr (unknown [10.146.128.1])
+Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 59CA440D4DE2
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:29:19 +0300 (+03)
+	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 97B6B40CF642
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:31:42 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dLX2jprzFwdf
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:27:32 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dN92LgtzFwlh
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:28:57 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id ABCB742749; Tue,  4 Mar 2025 17:27:19 +0300 (+03)
-X-Envelope-From: <linux-kernel+bounces-541364-bozkiru=itu.edu.tr@vger.kernel.org>
-Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id 138A8433E8
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:26:13 +0300 (+03)
+	id 7188C42731; Tue,  4 Mar 2025 17:28:33 +0300 (+03)
+Authentication-Results: lesva1.cc.itu.edu.tr;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Atf7+ptv
+X-Envelope-From: <linux-kernel+bounces-541370-bozkiru=itu.edu.tr@vger.kernel.org>
+Authentication-Results: lesva2.cc.itu.edu.tr;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Atf7+ptv
+Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
+	by le2 (Postfix) with ESMTP id 15AF1434E4
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:30:17 +0300 (+03)
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id 9E7852DCE3
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:26:12 +0300 (+03)
+	by fgw1.itu.edu.tr (Postfix) with SMTP id A74C43064C0E
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:30:16 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42FE43A4C35
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:26:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C59E3B4022
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:29:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA2391F237D;
-	Mon,  3 Mar 2025 10:25:59 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B43CF1F417D;
+	Mon,  3 Mar 2025 10:28:05 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137671EB187
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 10:25:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 559DA1F1531;
+	Mon,  3 Mar 2025 10:28:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740997558; cv=none; b=OEPEGoAoK8PUvbR/ayBv435SUcxYmyYJZ6FlUHf8ajEW0Y7W8+4YIAm6et+kp5OVi3OvsohT9zxPATU91to7fpLJX/4u/YUjaGwe+9hHumvzTqyZgN6rvfz8f+bK+7hIUrh0lRgVYrsl0mtqJbLvr1V/vLhtzKdtEahVfTAOK/A=
+	t=1740997682; cv=none; b=J3EFh39Ksro3i2hphp1EYlPeWxb7FHZpEJ2pjMHpWy7Z9xvVRxWZcqsVISgIETaYwQKPfi6KqA7SZwmgvV5uX9pm5l8U81NsFcwkx6dAQ+UBhatcaBbrBHVTNAWH3/kIYYNeSVLKSCysgGaRrxCXLcZLSlUa8SzqnkJgZHg/4Ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740997558; c=relaxed/simple;
-	bh=4ybMusj+3erW2An8KjCkmALT3RbeQvIrvwKF/FIQxHI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WTD+jDyeQ41GcpXP6fizZLnMwADgP8eeBu/B449+pk22qOR5is0uTlvVh+moi0sGjmr7q4+vsJX67+YfSj8dJdRBDJPzBE8pwxLDlkaTgtfKDmkw1OcCBmX2EFeIfvGPUl75jqM87n3GTw+/UpsXSVT2TDKyEFuHNZscFl8/iuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tp2zX-0005YR-DZ; Mon, 03 Mar 2025 11:25:43 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tp2zW-003mIZ-0w;
-	Mon, 03 Mar 2025 11:25:42 +0100
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tp2zW-00AhSx-0W;
-	Mon, 03 Mar 2025 11:25:42 +0100
-Date: Mon, 3 Mar 2025 11:25:42 +0100
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Junzhong Pan <panjunzhong@outlook.com>
-Cc: broonie@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
-	festevam@gmail.com, gregkh@linuxfoundation.org,
-	kernel@pengutronix.de, krzk@kernel.org, lgirdwood@gmail.com,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	lkp@intel.com, matthias@kaehlcke.net, mka@chromium.org,
-	oe-kbuild-all@lists.linux.dev, robh@kernel.org
-Subject: Re: [PATCH 1/3] usb: hub: add infrastructure to pass onboard_dev
- port features
-Message-ID: <20250303102542.gbzhvnygj5ve5qrf@pengutronix.de>
-References: <20241028214956.gmefpvcvm3zrfout@pengutronix.de>
- <ME0P300MB055370E97AB98D221B2E0782A60A2@ME0P300MB0553.AUSP300.PROD.OUTLOOK.COM>
- <20250106065202.d2qdd7zmwk4h645h@pengutronix.de>
- <ME0P300MB055308B1FC5F1544F906B72DA61C2@ME0P300MB0553.AUSP300.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1740997682; c=relaxed/simple;
+	bh=2Msp7YoBmanu425m0MXmljH1/c1Or8M2lkzZSA8x+50=;
+	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=gwFL7HifRZ31pXnXgm3LCxleNcgXmlY0m7lLUK3xNokOZlMQFHRE4I2/gu6XED9xVqdzR76sBe35GuNpHgNn+t1Dkfb5KsPla5FkUZQuVmvVSrby6pfF9FDFQ5m9RLnuyekrTVFlpfAjseFJ6otX8BKn6p3nfcdeeubcOeXGxYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Atf7+ptv; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740997681; x=1772533681;
+  h=from:to:subject:date:message-id:in-reply-to:references:
+   mime-version:content-transfer-encoding;
+  bh=2Msp7YoBmanu425m0MXmljH1/c1Or8M2lkzZSA8x+50=;
+  b=Atf7+ptv8dTGijcC4Y2ByFOWVgMvl16sgYfwDZeuSpxjsGwPTAfVwEOL
+   hAsv9w8r6qXw+A99LJQbL8U3aJx5MWhGuH+wFP+m6RicTowSZ+BuzPPBJ
+   FHfGLgfGAsCQ2TRrEeB3O+VoAZ0M8WOdoJvT1onD3gHGydHx4s0T0LRp/
+   JPNolp4zpFUpbV1sVF5VnH/hoxTKJmD688FapwgWfbmwP9TgFnUDYOTyo
+   o825lFYxO5q/7BdELdeQFWSygIJeQOJc96AMXdyqkf/WmXh+gJOeF1aaN
+   TQJR0InVlpsg/Dn+KfSuxwoOoPn5QvTQnkhJnyPnXh2AmZ8Pv4tVzI84q
+   A==;
+X-CSE-ConnectionGUID: USuXoOE4SMm7+bg5rJ8cnw==
+X-CSE-MsgGUID: HzMTCOLxTdOGRmFPo6mRMQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="64310149"
+X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
+   d="scan'208";a="64310149"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 02:28:00 -0800
+X-CSE-ConnectionGUID: t9zZnSvsR46o8m5nS2uR3g==
+X-CSE-MsgGUID: DkMFzS4QTBm8OGTiacD7eQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
+   d="scan'208";a="122569880"
+Received: from mohdfai2-ilbpg12-1.png.intel.com ([10.88.227.73])
+  by fmviesa005.fm.intel.com with ESMTP; 03 Mar 2025 02:27:53 -0800
+From: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
+To: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Simon Horman <horms@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Furong Xu <0x1207@gmail.com>,
+	Russell King <rmk+kernel@armlinux.org.uk>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Xiaolei Wang <xiaolei.wang@windriver.com>,
+	Suraj Jaiswal <quic_jsuraj@quicinc.com>,
+	Kory Maincent <kory.maincent@bootlin.com>,
+	Gal Pressman <gal@nvidia.com>,
+	Jesper Nilsson <jesper.nilsson@axis.com>,
+	Andrew Halaney <ahalaney@redhat.com>,
+	Choong Yong Liang <yong.liang.choong@linux.intel.com>,
+	Faizal Rahim <faizal.abdul.rahim@linux.intel.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+	intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	bpf@vger.kernel.org
+Subject: [PATCH iwl-next v7 4/9] igc: Set the RX packet buffer size for TSN mode
+Date: Mon,  3 Mar 2025 05:26:53 -0500
+Message-Id: <20250303102658.3580232-5-faizal.abdul.rahim@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250303102658.3580232-1-faizal.abdul.rahim@linux.intel.com>
+References: <20250303102658.3580232-1-faizal.abdul.rahim@linux.intel.com>
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -109,58 +153,93 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ME0P300MB055308B1FC5F1544F906B72DA61C2@ME0P300MB0553.AUSP300.PROD.OUTLOOK.COM>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6dLX2jprzFwdf
+X-ITU-Libra-ESVA-ID: 4Z6dN92LgtzFwlh
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741703282.88004@etVAP6E/6lOTj3sl9yov3g
+X-ITU-Libra-ESVA-Watermark: 1741703378.51624@N9ixHiq2gZin4FOfTVRmFQ
 X-ITU-MailScanner-SpamCheck: not spam
 
-Hi,
+In preparation for supporting frame preemption, when entering TSN mode
+set the receive packet buffer to 16KB for the Express MAC, 16KB for
+the Preemptible MAC and 2KB for the BMC, according to the datasheet
+section 7.1.3.2.
 
-sorry for the late response...
+Co-developed-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Signed-off-by: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
+---
+ drivers/net/ethernet/intel/igc/igc_defines.h |  3 +++
+ drivers/net/ethernet/intel/igc/igc_tsn.c     | 13 +++++++++++--
+ 2 files changed, 14 insertions(+), 2 deletions(-)
 
-On 25-01-10, Junzhong Pan wrote:
-> Hi Marco,
-> 
-> Thank you for your reply!
-> 
-> On 2025/1/6 14:52, Marco Felsch Wrote:
-> > On 24-12-31, Junzhong Pan wrote:
-> > > 
-> > > I recently encountered some kind of platforms using an existing onboard
-> > > hub yet their HW don't utilize the USBPE port power control feature
-> > > while the hub support it.
-> > > Instead, we have another GPIO for controlling the vbus of those ports
-> > > to cut the cost.
-> > 
-> > That's exactly our use-case too.
-> > 
-> > > Wonder any idea could use this driver considering the limitation of
-> > > the usb compatible set the properties of onboard_dev_pdata hard coded?
-> > 
-> > Sorry but I don't get this.
-> If the hub have 4 ports, but board only have one gpio to controll all those
-> vbus at once, implemented as some kind of gang mode.
-> 
-> In this case, the onboard_dev driver may not respond to the
-> USB_PORT_FEAT_POWER, but keep the supply always on except for the suspend
-> states.
-> 
-> Do you have any idea how we handle this?
+diff --git a/drivers/net/ethernet/intel/igc/igc_defines.h b/drivers/net/e=
+thernet/intel/igc/igc_defines.h
+index 516ef70c98e9..b19ac6f30dac 100644
+--- a/drivers/net/ethernet/intel/igc/igc_defines.h
++++ b/drivers/net/ethernet/intel/igc/igc_defines.h
+@@ -402,6 +402,9 @@
+=20
+  /* 7KB bytes buffer for each tx queue (total 4 queues) + 4KB for BMC*/
+ #define IGC_TXPBSIZE_TSN	0x041c71c7
++/* 15KB for EXP + 15KB for BE + 2KB for BMC */
++#define IGC_RXPBSIZE_TSN	0x0000f08f
++#define IGC_RXPBSIZE_SIZE_MASK	0x0001FFFF
+=20
+ #define IGC_DTXMXPKTSZ_TSN	0x19 /* 1600 bytes of max TX DMA packet size =
+*/
+ #define IGC_DTXMXPKTSZ_DEFAULT	0x98 /* 9728-byte Jumbo frames */
+diff --git a/drivers/net/ethernet/intel/igc/igc_tsn.c b/drivers/net/ether=
+net/intel/igc/igc_tsn.c
+index 1e44374ca1ff..f0213cfce07d 100644
+--- a/drivers/net/ethernet/intel/igc/igc_tsn.c
++++ b/drivers/net/ethernet/intel/igc/igc_tsn.c
+@@ -132,13 +132,17 @@ static int igc_tsn_disable_offload(struct igc_adapt=
+er *adapter)
+ {
+ 	u16 queue_per_tc[4] =3D { 3, 2, 1, 0 };
+ 	struct igc_hw *hw =3D &adapter->hw;
+-	u32 tqavctrl;
++	u32 tqavctrl, rxpbs;
+ 	int i;
+=20
+ 	wr32(IGC_GTXOFFSET, 0);
+ 	wr32(IGC_TXPBS, I225_TXPBSIZE_DEFAULT);
+ 	wr32(IGC_DTXMXPKTSZ, IGC_DTXMXPKTSZ_DEFAULT);
+=20
++	rxpbs =3D rd32(IGC_RXPBS) & ~IGC_RXPBSIZE_SIZE_MASK;
++	rxpbs |=3D I225_RXPBSIZE_DEFAULT;
++	wr32(IGC_RXPBS, rxpbs);
++
+ 	if (igc_is_device_id_i226(hw))
+ 		igc_tsn_restore_retx_default(adapter);
+=20
+@@ -194,7 +198,7 @@ static int igc_tsn_enable_offload(struct igc_adapter =
+*adapter)
+ {
+ 	struct igc_hw *hw =3D &adapter->hw;
+ 	u32 tqavctrl, baset_l, baset_h;
+-	u32 sec, nsec, cycle;
++	u32 sec, nsec, cycle, rxpbs;
+ 	ktime_t base_time, systim;
+ 	int i;
+=20
+@@ -202,6 +206,11 @@ static int igc_tsn_enable_offload(struct igc_adapter=
+ *adapter)
+ 	wr32(IGC_DTXMXPKTSZ, IGC_DTXMXPKTSZ_TSN);
+ 	wr32(IGC_TXPBS, IGC_TXPBSIZE_TSN);
+=20
++	rxpbs =3D rd32(IGC_RXPBS) & ~IGC_RXPBSIZE_SIZE_MASK;
++	rxpbs |=3D IGC_RXPBSIZE_TSN;
++
++	wr32(IGC_RXPBS, rxpbs);
++
+ 	if (igc_is_device_id_i226(hw))
+ 		igc_tsn_set_retx_qbvfullthreshold(adapter);
+=20
+--=20
+2.34.1
 
-I can think of one crude workaround. Adding 4-regulators which use the
-same shared gpio. This requires the gpio to be requested as shared if
-that is possible.
-
-Regards,
-  Marco
 
 
