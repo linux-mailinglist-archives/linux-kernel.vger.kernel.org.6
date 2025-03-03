@@ -1,134 +1,139 @@
-Return-Path: <linux-kernel+bounces-545185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0001DA4EA16
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:55:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C42F1A4E942
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:37:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2FFF1666F7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:50:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3FBB19C265B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:32:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2194F28D072;
-	Tue,  4 Mar 2025 17:30:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 007112E13A6;
+	Tue,  4 Mar 2025 17:05:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CgNI8YtR"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LEuwjdfT"
 Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE907286291
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:30:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F4AE2BF129
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:05:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.117
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741109432; cv=pass; b=pl9Koc0qLp2rkb9QL3zpGt+vmmFetgZ6F0Grj1Jm7QAcV+XV+XSy7Zxgv6SkoN+L3CQbhVy1wD6mYov+zy6sl9QV1h+xgE8Gt33u9mbVJWh82UCeNDzTVfNO7dJmSqp3yUfkC50UErl5LkJX/4igwgFWnbgt+bV2USrqSp0MN/0=
+	t=1741107947; cv=pass; b=qeezxGFK+O7EONNchINUZKGxpFgpjoIAIk+dl6bqiwd41niljEZAlNZ9MVdmvGTODYqm4O8vwROWvw+8o4qHqS+gWU9xC3z2MkBpVq8dvdXn18w5IpKNr2tmaAg2MSXMte/XI+KMig0N36ucnrvYalu+IEQuhYoiYl+6FaoKH0k=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741109432; c=relaxed/simple;
-	bh=wsYDpicRkA/VSCmc2cmDn+wPKl7RPDx3BLK4UIISPP0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=t57AiXYllajinzF11EGNKx2rGm4MfxvvbF0hvJGhrdfneWFAYjP3bEpOcdrnfIlV25Zr8B9ghaXvmCmJgBq8dvpSVCIyHnZhZIlf6eAYUM/8BJMm9rXtzUfm+y2nxIYFPkFyVbgwWpVT4G7piOByf50ZfR7NhV1oWGFuzYTqsFw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CgNI8YtR; arc=none smtp.client-ip=209.85.218.53; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; arc=pass smtp.client-ip=160.75.25.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1741107947; c=relaxed/simple;
+	bh=lpDLopW56ZiJmp1XcvXqO0pzbDV6pWgE4pCJfBENgvY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oW5vVe40+8ADxQxs511vVrAZs7I2tC8WjE9LDD2/ZDOpI6IbGrapcbsSamfm/jrbEBSl13WMHo+s1WkmxSTA1ouzt/1KXBM0UJe8quaVxMkax7zjdL8DEgyXOerkYxolT9emLAjQ6gaNGNrY1SeGU3MUoYmyYFxC4Z2X91+vToE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LEuwjdfT; arc=none smtp.client-ip=209.85.128.43; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; arc=pass smtp.client-ip=160.75.25.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id D8B7740D1F52
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:30:28 +0300 (+03)
+	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id EA8D240D1F44
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:05:41 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
+Authentication-Results: lesvatest1.cc.itu.edu.tr;
+	dkim=pass (2048-bit key, unprotected) header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20230601 header.b=LEuwjdfT
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6h181xyLzG345
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:27:40 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dp85jRqzFxWT
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:48:00 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id B1B9F42732; Tue,  4 Mar 2025 19:27:29 +0300 (+03)
+	id 6008E42723; Tue,  4 Mar 2025 17:47:40 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CgNI8YtR
-X-Envelope-From: <linux-kernel+bounces-541391-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LEuwjdfT
+X-Envelope-From: <linux-kernel+bounces-541394-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CgNI8YtR
-Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id D3D3642DB0
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:35:16 +0300 (+03)
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id AC0ED3063EFE
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:35:16 +0300 (+03)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LEuwjdfT
+Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
+	by le2 (Postfix) with ESMTP id 33C8C42BC2
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:38:00 +0300 (+03)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by fgw2.itu.edu.tr (Postfix) with SMTP id BDB6A2DCDE
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:37:59 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D54918833C9
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:35:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A4483B88C5
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:35:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E62041F3D58;
-	Mon,  3 Mar 2025 10:34:13 +0000 (UTC)
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56BF41F3BBA;
+	Mon,  3 Mar 2025 10:35:03 +0000 (UTC)
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD4F91EE002;
-	Mon,  3 Mar 2025 10:34:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A478C1F30C3
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 10:34:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740998050; cv=none; b=sbHVl3jmja4H1lxPQiKBx1XvGS0trbURaI21ytC+CfbnWmdwDRMFn5MXJSgk/nDmrGsbbVPj44LNyhgxC5NxvtNRTxfw+b01/PmMZbFzSmhN7X4FFmDNDI6Vx+qsHzuDySE/5QDJyh/Ora5P9GgllUS4zo9D0RaTuCQO16Hu24c=
+	t=1740998100; cv=none; b=lZyOMgroQA//DlO17cBYYByqFpUZc6ElaIU92ceZsHVb/CPDZU2O9wFqj17tsn4HCohhv8ne/lxbLwUqPokksYsiBhOOwGHPk8GXH24PCGJQ9Pfueiave9rj7lSEG9EPAFFgGWdhPLkqecqUALwHorKZ0ZtaJcEqKMrzn3NhpkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740998050; c=relaxed/simple;
-	bh=wsYDpicRkA/VSCmc2cmDn+wPKl7RPDx3BLK4UIISPP0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kVBUQCdlaKBWZ5l1BHVfD4c5XmvYKJWLDKiLjCwdPwdYWeitiKtBwfo0shiqNsRau8KAO7BIZmX+iDrdKsiddoW3LUjvJYnlB7PgvS1PRKa3x+cBI7Ej4TOaM+dpTo3jFidr+s3gHvxYvjWfjrqi1XWSSMZabuv1s0+eS5Sfhh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CgNI8YtR; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-abf518748cbso314895566b.2;
-        Mon, 03 Mar 2025 02:34:08 -0800 (PST)
+	s=arc-20240116; t=1740998100; c=relaxed/simple;
+	bh=lpDLopW56ZiJmp1XcvXqO0pzbDV6pWgE4pCJfBENgvY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i3dEDoUpkGnOwD8vKysISAwcfxg6VP8Kq6Rw6iCsyCaklvvPRsazvUVMdaHf+2k+i4axV9Vhf/VvkEIVUKdlCOaGYZxxDvs7c6tAGy+kfBDqSIZIjGt6B/F1fgjVQnqWIasWmvTt4UbT/jwme+o0yuhBt/f7laKMIP+w1o+csVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LEuwjdfT; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43ba8a87643so76945e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 02:34:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740998047; x=1741602847; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l+N70zPsfvBAx0+/xoB2M8AGZ0n2FkZQFMe5fceFHgA=;
-        b=CgNI8YtROze4Zn1+s/oyx3aiw4PgMJO96ZVPBTxLtQBrCN0pdBIf91fS3QJfFNSCul
-         9tugkYwobSL5SxEOTjfnz9fi6vluL4VeptQ6FYc/Kf2wi0mJKNnmhNXgAAJofzvy2l40
-         uTvI+kWP+2jmChPTipCWnUlj6H7kX/05lxhwxgfBEI8nbUhVs3Yh3xI7VR0HJITK66RT
-         0LMoXL3H0g75EU3R7eoUG7K/XTYKsvn5F8W9yHnvT/JsSbUevlPNfKk1MYdla+/J4s8w
-         DxqZvLmZQQjmcJq1/jxpF8qT6gKDV8NX1avA714gINFKj20xn/PUOZsB0vN8BRv6999h
-         lc7A==
+        d=google.com; s=20230601; t=1740998097; x=1741602897; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+bSaBNG5Yoq7k/pu/7absa0rkEVoeKeNE/Soa/XJKAg=;
+        b=LEuwjdfTBYUvSNpHfqrKJk1ufwL4Ps93/JmuQ7fKw1leSFtC9ZQS1HazDR5j2r91LR
+         OkPPlYIqsAn1801FSJSJDWbY2Qfm0pyObUq/KuczBk15F8+gJgic6HrLxQkI9IFAD6+E
+         Fp6d/X5Ip4o4+w/Dp205g4Exsaw3G01CHKrk9uAG1ir7hFTfBbzsLmlmkardaSdO4ayU
+         p0PYgWpxCoJGfZ464Wxv4dDq5vAdN6sAdV/x4/XR2XrceKvdyFKhbaZTh0+3KTLl1iEG
+         TM3q3hv+7w2UlUYKxzIPMMmkAAMeOUk+6uRg1geugTK7C46Vl7XeITmtl+d3KJgFxy1Q
+         ZA+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740998047; x=1741602847;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=l+N70zPsfvBAx0+/xoB2M8AGZ0n2FkZQFMe5fceFHgA=;
-        b=PZTCm4emaRQTLYyMxzBfzhcc8mbv3+O9sHhKV5pYlsSa0nvZjywq1Vooj+yApj9BbM
-         prSuLuqEfxvz2aDlkV2SngYUZT3clj4W2bih31jx7Yb8GxSd6JiCaywCQPSJBqdqOOAS
-         if2XML4wLd7g5TFhXu9yS5Guz4rXsJPAmi2h9KRq8xaQAnveVvFRbg9tXOlvuCo5c27g
-         ry6TWW08ggxLD5bkb/fMnGtJPANTNjWW/YJS0ta03VkOKwlUIobFVUmYZYzDldG+mbSm
-         m8RlZw9HKyu6zHo0QRUEQ20KtaYEMY2+hIBJ2yiJO2pjk32whZotOdSllh6xzcr45IPQ
-         PTBw==
-X-Forwarded-Encrypted: i=1; AJvYcCVE1HREOYKQoln1EXsMhpoZ8xCaa1R7avE6zKP4RdyLvhMRmanVxZPQihFzkhuWWYh+p91z6JXaFMZS@vger.kernel.org, AJvYcCVzRQG9/2ixXuMFoZ1Pp3az5B6QXqGJOmMTNS4hwDIN7m5g0/dR+tk/xKf35VAoLGQqZyViruMBs4UyrVs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywhf8HHtDZPKHxzlj3Yl8jgKEWlWo7hbtrRNxtbvqj3G4JZ1iqy
-	Lrz5q1+cLpafV85X3yRn4ZTEsYdysceLoOdiarTA/FKiPzVcXDRtMmRz9Q==
-X-Gm-Gg: ASbGncvu+mTW8KsrpW1ErCr7K0FoU0wdUbucqmZfR3BdKo6MnWymqgq03lzUmaNR+VF
-	34kJLsgrihgDMAjTqW+eq+fOd+ueZq8+t/a3Xzfo6gldpv9/u+Aqi34q1hXXaKNsCnp86TRxZ8/
-	yxH9hdmBIUf9UXBvEJIqFshyEVr3BuSFkiLDmZPgEc23+vCQQBYH5JuCPCUGeviOrg3XJM0LTyV
-	gvETSRzivT1iNVyveFqlxTtUt+61Mh6RFkGo3iXZwo6/831DExvoP0ZDMr+RAeanD+wkOmHU9JB
-	qo/1Q4C0ouX99EzVWyJIFApFG7AtPfR5J0os6sx1oe6rYQsK2HBWCtAT/zfO8Q==
-X-Google-Smtp-Source: AGHT+IFrR2cGXgM/hFcyyC3ZiDTsVS3aLPLxtBeIz1vddb0CtUae6L/b8/yBjAMVWTLGUcYCVGXiPQ==
-X-Received: by 2002:a17:906:4fca:b0:abf:6ede:dce1 with SMTP id a640c23a62f3a-abf6ededffcmr504996466b.24.1740998046553;
-        Mon, 03 Mar 2025 02:34:06 -0800 (PST)
-Received: from foxbook (adts246.neoplus.adsl.tpnet.pl. [79.185.230.246])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf55e88748sm419117766b.54.2025.03.03.02.34.05
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Mon, 03 Mar 2025 02:34:06 -0800 (PST)
-Date: Mon, 3 Mar 2025 11:34:01 +0100
-From: =?UTF-8?B?TWljaGHFgg==?= Pecio <michal.pecio@gmail.com>
-To: Mathias Nyman <mathias.nyman@linux.intel.com>
-Cc: ki.chiang65@gmail.com, <gregkh@linuxfoundation.org>,
- <linux-usb@vger.kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [RFT PATCH] xhci: Handle spurious events on Etron host isoc
- enpoints
-Message-ID: <20250303113401.280cb911@foxbook>
-In-Reply-To: <20250228161824.3164826-1-mathias.nyman@linux.intel.com>
-References: <41847336-9111-4aaa-b3dc-f3c18bb03508@linux.intel.com>
-	<20250228161824.3164826-1-mathias.nyman@linux.intel.com>
+        d=1e100.net; s=20230601; t=1740998097; x=1741602897;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+bSaBNG5Yoq7k/pu/7absa0rkEVoeKeNE/Soa/XJKAg=;
+        b=Yan9rxqmmaaGieBwCjcSOjtU2Nz8/5V87Yt0m5gsj1d045tpDwpaii/ZzmOjLoo6Zl
+         r8Fr1HtwaP9CxjCP93RTh3E85sD4v4/Tt2Ojkkg3++N4bYQf6pbEhw+UuIZv8Oi3C+C2
+         aKWObZ49QDK+5MMH1VfE6uTMYcjwmkA2ZSifKxmsa2XaZkToe2D9e0IOQVwltKjvdvcJ
+         tBNyBBm/9FYWhlfUfvOPlt7HFeeT9FeanI2PvmKj2V4gNPb9kxMfbx5+kSVmTk/4yYXY
+         nnrX9+C8XupZabjY08+KaRHQg6Ld4O4MK6QMHIUQCgvWYteF4sSLTQKpR1/Y8/efk2Kd
+         X0TQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXRDUg8+8nqYZCL8E3T3hEQgt8mIvAlc5XyK2YYXOLeRrjGuVcq5EwqpN6WHUw+c7vjMWFDtr+eH2wNCXg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6lnDfcDilTiqwhyqjUgi1KlmaCSQzskAPfK+Z3uViB5hE3LwP
+	PIhemeXpnmsyn25uqMa+EYVw0iBf9YP1ExIkzt85b3zL9hDhNcgrSf28n3yGZg==
+X-Gm-Gg: ASbGncsPa9z497SA9lPPIvVfgsbhRDY+JLzKNNSFGrYNDx3MdGf899arEdvvtdQcrni
+	xo95SWakakwaOZgFd1Qg9UrNNgEsf7tExlOEZmDCJg6RWppUbv19vXoJ2G22XjeBiLHupjWb01n
+	WWcmC4RuhL4RdQkDX4wXZ6QFRBaqPxw0uz8oIBDnAqEHbyQ1xc2JmnjjcWK953SycGI5ggIqCfm
+	YXXAjIzbRzul3h2wTs06tZRAxP6lYsAuJfOuI9WA5YVOG2AmO95H8v513EhbAmIjAwIIwzGRniB
+	1eo0gVZACPF4qxRNfB2OyYPyb62PP18n0skJXD22bMdONsw4z35oDTY2QMuJG3bv7Y1/0Sqz+FG
+	9l2Wi
+X-Google-Smtp-Source: AGHT+IH5+lAh4aDnKOfBgCart5GsF44/Ttw0+2rACrYtMiBk/Nmmsik0qBemWNe1gfOZHSa/eQkRBw==
+X-Received: by 2002:a05:600c:47d1:b0:43b:bf3f:9664 with SMTP id 5b1f17b1804b1-43bbf3f96f9mr1090565e9.5.1740998096859;
+        Mon, 03 Mar 2025 02:34:56 -0800 (PST)
+Received: from google.com (44.232.78.34.bc.googleusercontent.com. [34.78.232.44])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bbf2ed24asm41351505e9.23.2025.03.03.02.34.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 02:34:56 -0800 (PST)
+Date: Mon, 3 Mar 2025 10:34:52 +0000
+From: Brendan Jackman <jackmanb@google.com>
+To: Dev Jain <dev.jain@arm.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Shuah Khan <shuah@kernel.org>, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 04/10] selftests/mm/uffd: Rename nr_cpus -> nr_threads
+Message-ID: <Z8WFzISSAmtjtu3L@google.com>
+References: <20250228-mm-selftests-v3-0-958e3b6f0203@google.com>
+ <20250228-mm-selftests-v3-4-958e3b6f0203@google.com>
+ <b5b1e43d-0298-4772-ba0d-acec63a05149@arm.com>
+ <Z8V6xYvqqkPxULgN@google.com>
+ <18ea9794-3901-4802-875c-b0327984a9d6@arm.com>
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -136,98 +141,48 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <18ea9794-3901-4802-875c-b0327984a9d6@arm.com>
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6h181xyLzG345
+X-ITU-Libra-ESVA-ID: 4Z6dp85jRqzFxWT
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741714106.37691@zS0uzU+/GQr9lXESoLsMuA
+X-ITU-Libra-ESVA-Watermark: 1741712631.76236@UMu2EK9aQDBs6BAYOATA7Q
 X-ITU-MailScanner-SpamCheck: not spam
 
-On Fri, 28 Feb 2025 18:18:24 +0200, Mathias Nyman wrote:
-> Unplugging a USB3.0 webcam from Etron hosts while streaming results
-> in errors like this:
+On Mon, Mar 03, 2025 at 03:48:38PM +0530, Dev Jain wrote:
 > 
-> [ 2.646387] xhci_hcd 0000:03:00.0: ERROR Transfer event TRB DMA ptr
-> not part of current TD ep_index 18 comp_code 13 [ 2.646446] xhci_hcd
-> 0000:03:00.0: Looking for event-dma 000000002fdf8630 trb-start
-> 000000002fdf8640 trb-end 000000002fdf8650 [ 2.646560] xhci_hcd
-> 0000:03:00.0: ERROR Transfer event TRB DMA ptr not part of current TD
-> ep_index 18 comp_code 13 [ 2.646568] xhci_hcd 0000:03:00.0: Looking
-> for event-dma 000000002fdf8660 trb-start 000000002fdf8670 trb-end
-> 000000002fdf8670
 > 
-> Etron xHC generates two transfer events for the TRB if an error is
-> detected while processing the last TRB of an isoc TD.
+> On 03/03/25 3:17 pm, Brendan Jackman wrote:
+> > On Fri, Feb 28, 2025 at 11:06:35PM +0530, Dev Jain wrote:
+> > > Taking a cursory look at the test, it creates three threads for each cpu.
+> > > The bounding of the variable is fine but that being the reason to rename the
+> > > variable is not making sense to me.
+> > 
+> > Hmm yeah the name needs to be more abstract. Do you think nr_workers
+> > would be confusing? Or even just "parallelism" or nr_parallel? Or any
+> > other ideas?
+> > 
+> > FWIW I briefly looked at just cleaning this up to remove the global
+> > variable but that's a bigger time investment than I can afford here I
+> > think. (The local variable in stress() would still need a better name
+> > anyway).
+> > 
+> > Thanks for the review BTW!
 > 
-> The first event can be any sort of error (like USB Transaction or
-> Babble Detected, etc), and the final event is Success.
+> Your welcome.
 > 
-> The xHCI driver will handle the TD after the first event and remove it
-> from its internal list, and then print an "Transfer event TRB DMA ptr
-> not part of current TD" error message after the final event.
-> 
-> Commit 5372c65e1311 ("xhci: process isoc TD properly when there was a
-> transaction error mid TD.") is designed to address isoc transaction
-> errors, but unfortunately it doesn't account for this scenario.
-> 
-> This issue is similar to the XHCI_SPURIOUS_SUCCESS case where a
-> success event follows a 'short transfer' event, but the TD the event
-> points to is already given back.
-> 
-> Expand the spurious success 'short transfer' event handling to cover
-> the spurious success after error on Etron hosts.
-> 
-> Kuangyi Chiang reported this issue and submitted a different solution
-> based on using error_mid_td. This commit message is mostly taken
-> from that patch.
-> 
-> Reported-by: Kuangyi Chiang <ki.chiang65@gmail.com>
-> Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+> I personally prefer leaving it as is; unless someone comes up and completely
+> cleans up the structure, let us save our collective brain cycles for more
+> meaningful battles than renaming variables :)
 
-Works here too, modulo the obvious build problem.
+Hmm, I think that's a false economy on brain cycles. A variable called
+nr_cpus that isn't a number of CPUs is bound to waste a bunch of
+mental energy at some point in the future.
 
-Etron with errors:
-[ 1064.865311] xhci_hcd 0000:06:00.0: Transfer error for slot 1 ep 2 on endpoint
-[ 1064.865322] xhci_hcd 0000:06:00.0: Successful completion on short TX for slot 1 ep 2 with last td comp code 4
-[ 1064.865326] xhci_hcd 0000:06:00.0: Spurious event dma 0x00000000ffef88c0, comp_code 13 after 4
-
-Renesas with short packets:
-[ 1365.299218] xhci_hcd 0000:08:00.0: Successful completion on short TX for slot 1 ep 2 with last td comp code 13
-[ 1365.299223] xhci_hcd 0000:08:00.0: Spurious event dma 0x00000000ffbbf870, comp_code 13 after 13
-
-BTW, it says "comp_code 13 after something" because of this crazy
-TRUST_TX_LENGTH hack, which changes trb_comp_code if it's success
-but the residual is nonzero. If I remove the hack,
-
-Etron:
-[ 2713.630443] xhci_hcd 0000:06:00.0: Spurious event dma 0x00000000ff3b6130, comp_code 1 after 4
-
-Renesas:
-[ 4033.652300] xhci_hcd 0000:08:00.0: Spurious event dma 0x00000000ffcd1b80, comp_code 1 after 13
-
-
-The hack could almost be removed now, but if there really are HCs
-which report Success on the first event, this won't work for them:
-
-> +static bool xhci_spurious_success_tx_event(struct xhci_hcd *xhci,
-> +					   struct xhci_ring *ring)
-> +{
-> +	switch (ring->old_trb_comp_code) {
-> +	case COMP_SHORT_PACKET:
-> +		return xhci->quirks & XHCI_SPURIOUS_SUCCESS;
-
-Could it work without relying on fictional COMP_SHORT_PACKET events?
-
-> +			if (xhci_spurious_success_tx_event(xhci, ep_ring)) {
-> +				xhci_dbg(xhci, "Spurious event dma %pad, comp_code %u after %u\n",
-> +					 &ep_trb_dma, trb_comp_code, ep_ring->old_trb_comp_code);
-> +				ep_ring->old_trb_comp_code = trb_comp_code;
-
-This part will (quite arbitrarily IMO) not execute if td_list is empty.
-
-I had this idea that "empty td_list" and "no matching TD on td_list"
-are practically identical cases, and their code could be merged.
+Unless you strongly object I'll go for nr_parallel. It's not a great
+name but, well... I think that probably just suggests it's not a great
+variable, and I don't have time to fix that.
 
 
