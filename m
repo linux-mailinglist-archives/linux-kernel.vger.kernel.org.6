@@ -1,62 +1,75 @@
-Return-Path: <linux-kernel+bounces-541307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0C04A4BB28
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:49:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EB6FA4BB2E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:50:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 604181892B55
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:49:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A3311893E60
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:50:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B551F151E;
-	Mon,  3 Mar 2025 09:49:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4785E1F151C;
+	Mon,  3 Mar 2025 09:49:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uYdUwo3N"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bXOcgK1Z"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85DD81F131C;
-	Mon,  3 Mar 2025 09:49:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA5AB1F1300;
+	Mon,  3 Mar 2025 09:49:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740995355; cv=none; b=tYafWlFc0StdoWurTmcTK8E/RSRDPtKHi2dEfgXykPXMp/ijYAIJP00Z51cqbD34IuXarejZ6gvdQOXKXcWQj/dphye6yWp+/MGyswPHAxV+0t+fjqAeciebwgAzYq5rssP+9Omjx4qPZMOfCCq9IbgDorJ0qrJArnlqpdBCQ54=
+	t=1740995395; cv=none; b=U9y0PqEtmsqngQusPbsNmeM7vXIe0Opa3To1dCA4gGumVFHWoWrcjcUCJeCsBe0R9kqIVz4ion0Pn3xpDSTotZk9FA5jKoYVHsIDeAJCtU0ZYLGXNMLA2U2FPe5s8m2zYoS4w4PuDtmF4pv8jcjnoD032/sloUZaASdJzZQ+cQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740995355; c=relaxed/simple;
-	bh=bKBTyhky71uYBsaxCFXi3vy/CYFmpwehRG1HobK2WLA=;
+	s=arc-20240116; t=1740995395; c=relaxed/simple;
+	bh=Bo1yf188xcuw3IK9QrIc76aTVVJHnLWeA4UExXopE4E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ptMl2TyNvNcxZ2QAfuKa9LVYHsBBk8beDR8oM5eSJ9iTiiTbMwCkBQGJCHJya4e6z4ED2DY6KN0MF5ER5o6vIkgwazK4nAKOhm9PowpQ9KG4a5wJ/o48hbwxIQSh+rDf3zOM8QefRD4Z18FIghhA/o9qd5cOH7SxEvMDI/EHp1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=uYdUwo3N; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ex6mL5N3y2HnLj8Bam/c+5++LbL+FQRGmaE08QtykjE=; b=uYdUwo3NP446bW5DtXGr+gLlKm
-	3q7P896CCaZPM1ZlewJ1QitoJ9p6puv6V5u85QQRjyB/RAYgFaem1YgOR+N2vYxG4/1oEwXpK/Vny
-	ul9+2nxCC1iY8BgAyIrDrFROXKRBmOzdN1fT3S6ksMhlhXZNtPunLTL9N1IAengf8LG6244P4r8FA
-	UXItZ73N7cP93YsjsXyVp7+cTd9w1IHFr0ijBc2A0BKK3iClchg0AWicyraF7CcIO8Kpy/PS660Nu
-	RGW8hb8Mf5MfdgsuFloZXWHVC7xaApcE5Jlt0ebteSJlT/ekBi1KZCtm2bzaZjWr17u5Z1McimXsN
-	cqatSMmA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tp2QB-0000000BQR2-2UJu;
-	Mon, 03 Mar 2025 09:49:11 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 2EB2230049D; Mon,  3 Mar 2025 10:49:11 +0100 (CET)
-Date: Mon, 3 Mar 2025 10:49:11 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: kernel test robot <lkp@intel.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	Ingo Molnar <mingo@kernel.org>, Kees Cook <kees@kernel.org>
-Subject: Re: [tip:x86/core 16/17] vmlinux.o: warning: objtool: do_jit+0x276:
- relocation to !ENDBR: .noinstr.text+0x6a60
-Message-ID: <20250303094911.GL5880@noisy.programming.kicks-ass.net>
-References: <202503030704.H9KFysNS-lkp@intel.com>
- <20250303092459.GI5880@noisy.programming.kicks-ass.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=raAkuFZny4UEH9hkr7D3/1FsPBaIvXVrpdlNQlA/zAZDoNs5HxhcwOuKHL6HHr+gU8VYab72mQVHErheBr3RQUgD41a8rTTCPx7f9/P70LSVhNj7dmErDKcgHp6iwy/EfYbatJAIPYXFeqOi1E1XNMXwCHQp3GSk5CEb9uU0MYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bXOcgK1Z; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740995394; x=1772531394;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Bo1yf188xcuw3IK9QrIc76aTVVJHnLWeA4UExXopE4E=;
+  b=bXOcgK1ZoWELxvKzQBTaALpasguziCxtI8p3xEPSRWrDxFjCGEAaAA4Y
+   28V0FtShgdA+comx7BmpF90ob+jS3TdcvaBURWC6uCS090VwwnV1xKv4F
+   AQ3fv/otVOIP/bAB2xGtLXk2cnMETteJT3F2vNDhhh7Nar9/jXA5W7Tpr
+   Vj1r15Emna8CLeIOLF1xPse9mluENtv740ZBwT3CZEwvUPH2eZ9IvN76d
+   LyjFyxj1XP1//NX+hEsyPiRE7FOu+cnPGjXRD/WbHj/vuTCXKbDgiBi76
+   hrAHVQM5O0ljrZtMp6QJZCWjSJTj/0LtdS9kuYpD1HEwTORfeXk9B+lOP
+   w==;
+X-CSE-ConnectionGUID: gvfph5E1TKyE8AQ3w0HZKg==
+X-CSE-MsgGUID: I0B8c/VYRz6WW1NqQOf6WA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="44674334"
+X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
+   d="scan'208";a="44674334"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 01:49:53 -0800
+X-CSE-ConnectionGUID: 4SzUMc1GRdavlZ+yhy7IMg==
+X-CSE-MsgGUID: uk7hq89SSX+Z07yFzn0LuA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="118503785"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by orviesa007.jf.intel.com with ESMTP; 03 Mar 2025 01:49:51 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tp2Qn-000IId-0B;
+	Mon, 03 Mar 2025 09:49:49 +0000
+Date: Mon, 3 Mar 2025 17:49:46 +0800
+From: kernel test robot <lkp@intel.com>
+To: Pratap Nirujogi <pratap.nirujogi@amd.com>, andi.shyti@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, benjamin.chan@amd.com,
+	Pratap Nirujogi <pratap.nirujogi@amd.com>
+Subject: Re: [PATCH] i2c: amd-isp: Add ISP i2c-designware driver
+Message-ID: <202503031743.THpYJdQE-lkp@intel.com>
+References: <20250228164519.3453927-1-pratap.nirujogi@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,92 +78,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250303092459.GI5880@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250228164519.3453927-1-pratap.nirujogi@amd.com>
 
-On Mon, Mar 03, 2025 at 10:24:59AM +0100, Peter Zijlstra wrote:
-> On Mon, Mar 03, 2025 at 07:47:57AM +0800, kernel test robot wrote:
-> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/core
-> > head:   dfebe7362f6f461d771cdb9ac2c5172a4721f064
-> > commit: 0c92385dc05ee9637c04372ea95a11bbf6e010ff [16/17] x86/ibt: Implement FineIBT-BHI mitigation
-> > config: x86_64-randconfig-071-20250303 (https://download.01.org/0day-ci/archive/20250303/202503030704.H9KFysNS-lkp@intel.com/config)
-> > compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
-> > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250303/202503030704.H9KFysNS-lkp@intel.com/reproduce)
-> > 
-> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > the same patch/commit), kindly add following tags
-> > | Reported-by: kernel test robot <lkp@intel.com>
-> > | Closes: https://lore.kernel.org/oe-kbuild-all/202503030704.H9KFysNS-lkp@intel.com/
-> > 
-> > All warnings (new ones prefixed by >>):
-> > 
-> > >> vmlinux.o: warning: objtool: do_jit+0x276: relocation to !ENDBR: .noinstr.text+0x6a60
-> 
-> Thanks, below seems to cure it for me.
-> 
-> ---
-> Subject: x86/ibt: Make cfi_bhi a constant for FINEIBT_BHI=n
-> From: Peter Zijlstra <peterz@infradead.org>
-> Date: Mon Mar 3 10:21:47 CET 2025
-> 
-> Robot yielded a .config that tripped:
-> 
->   vmlinux.o: warning: objtool: do_jit+0x276: relocation to !ENDBR: .noinstr.text+0x6a60
-> 
-> This is the result of using __bhi_args[1] in unreachable code; make
-> sure the compiler is able to determine this is unreachable and trigger
-> DCE.
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202503030704.H9KFysNS-lkp@intel.com/
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> ---
+Hi Pratap,
 
-diff --git a/arch/x86/include/asm/cfi.h b/arch/x86/include/asm/cfi.h
-index 2f6a01f098b5..3e51ba459154 100644
---- a/arch/x86/include/asm/cfi.h
-+++ b/arch/x86/include/asm/cfi.h
-@@ -100,7 +100,12 @@ enum cfi_mode {
- };
- 
- extern enum cfi_mode cfi_mode;
-+
-+#ifdef CONFIG_FINEIBT_BHI
- extern bool cfi_bhi;
-+#else
-+#define cfi_bhi (0)
-+#endif
- 
- typedef u8 bhi_thunk[32];
- extern bhi_thunk __bhi_args[];
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index 32e4b801db99..bf82c6f7d690 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -936,7 +936,10 @@ void __init_or_module apply_seal_endbr(s32 *start, s32 *end) { }
- #endif
- 
- enum cfi_mode cfi_mode __ro_after_init = __CFI_DEFAULT;
-+
-+#ifdef CONFIG_FINEIBT_BHI
- bool cfi_bhi __ro_after_init = false;
-+#endif
- 
- #ifdef CONFIG_CFI_CLANG
- struct bpf_insn;
-@@ -1070,11 +1073,15 @@ static __init int cfi_parse_cmdline(char *str)
- 				pr_err("Ignoring paranoid; depends on fineibt.\n");
- 			}
- 		} else if (!strcmp(str, "bhi")) {
-+#ifdef CONFIG_FINEIBT_BHI
- 			if (cfi_mode == CFI_FINEIBT) {
- 				cfi_bhi = true;
- 			} else {
- 				pr_err("Ignoring bhi; depends on fineibt.\n");
- 			}
-+#else
-+			pr_err("Ignoring bhi; depends on FINEIBT_BHI=y.\n");
-+#endif
- 		} else {
- 			pr_err("Ignoring unknown cfi option (%s).", str);
- 		}
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on andi-shyti/i2c/i2c-host]
+[also build test ERROR on linus/master v6.14-rc5 next-20250228]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Pratap-Nirujogi/i2c-amd-isp-Add-ISP-i2c-designware-driver/20250301-005001
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git i2c/i2c-host
+patch link:    https://lore.kernel.org/r/20250228164519.3453927-1-pratap.nirujogi%40amd.com
+patch subject: [PATCH] i2c: amd-isp: Add ISP i2c-designware driver
+config: x86_64-randconfig-005-20250303 (https://download.01.org/0day-ci/archive/20250303/202503031743.THpYJdQE-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250303/202503031743.THpYJdQE-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503031743.THpYJdQE-lkp@intel.com/
+
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fpga/tests/fpga-mgr-test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fpga/tests/fpga-bridge-test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fpga/tests/fpga-region-test.o
+>> ERROR: modpost: "isp_power_set" [drivers/i2c/busses/i2c-designware-amdisp.ko] undefined!
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
