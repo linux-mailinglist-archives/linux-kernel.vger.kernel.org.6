@@ -1,174 +1,95 @@
-Return-Path: <linux-kernel+bounces-541255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FE4AA4BA8E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:14:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47E39A4BA98
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:17:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E34F188CFEA
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:14:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C95A7A40F9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:15:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0A5D1F03FF;
-	Mon,  3 Mar 2025 09:14:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F661EFF95;
+	Mon,  3 Mar 2025 09:16:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IWL6HwQE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="QwuxhhjI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5111EFF8F
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 09:14:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82D64AD27;
+	Mon,  3 Mar 2025 09:16:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740993268; cv=none; b=cG3EgnfdzcVGYK3KnO3HxqeJRhA7KtjVW24nssRsKB9nPW0KX/teoypRtj90YvSK+rRwY63MDWJTv0qd5adpYxmwKBm5b1tWd84UdWu3ySXEkx5+2h1PFhijsrr78L6fFWHnIRBUwTS8xLGX02sH2V0r60Nl8jR9sYNR0g/G5/w=
+	t=1740993410; cv=none; b=TTK4NcdtllABfmqKGSmx+soFmF7papWDqMBQAu4aq1wEPbsWhj0cc8M+dfdB4sBxkFgc8l5A5NseWnViZbR7/b+n95nr20csfy3mcPbffyZUd7tseqROQ6T0L6cDh1lmBqg17LxRzxsG9SzVuZDmwc1h6JsOx+z158cYBCd4sGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740993268; c=relaxed/simple;
-	bh=mCZCBgNa4JfBeO+UdN202MOC0dBcErDpaZ9+i6y6j4M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=OR9J2XqjOWOfyiXjhwXrAyJO5nGUoxqSRuLboBD8/wDXnMWnVm7pIWyF1enPbaA9qI95QckCxsBMjTiF5MdK+zSSF66QBp/orn/54qxsMcm0UEH1OCS1UfgWVoDv2BvZLvED5dmhunvycu3qmGtB1cBtGMRph9C2JzsQE1+DNK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IWL6HwQE; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740993265;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=JQw2p5k8tqJ4bzlOs89ns2VtMHVE85d061ZtoKnG6Lk=;
-	b=IWL6HwQEXW9SaRT0noxbqvrvnKqXKJfaHUwOe/ya0r5ZRyTJ4ZByNxSljj9zhl+jC3ysYP
-	tcJvHybLzMF6+xedt1Pyt+MME7E+WDfraLQPpi9c3UO4rs62/BIkzLEcbPRg+oHznmuS7/
-	AmGrxrXiBSsPD8nEmRtK/s3BbD3MX8U=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-590-Y0A7dobDN5a1SSmabG7Tvw-1; Mon, 03 Mar 2025 04:14:24 -0500
-X-MC-Unique: Y0A7dobDN5a1SSmabG7Tvw-1
-X-Mimecast-MFC-AGG-ID: Y0A7dobDN5a1SSmabG7Tvw_1740993263
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43bc1aa0673so2794655e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 01:14:24 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740993263; x=1741598063;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JQw2p5k8tqJ4bzlOs89ns2VtMHVE85d061ZtoKnG6Lk=;
-        b=F5PTFxw1k2UlrS1Ej9WI7KQCroxNq0rjLRFtLO16/OIwX6jVb1tlbGpygHhcUescXE
-         eJrGEo810MqJRctTUgMibcadxB7P8VOgscEfCxTcHRo4FdHNbTrJuKEvX56S5KxP9/HY
-         ImIUMX1vT+yYWqBz0V6asEREiqtMHMLlMi3KKVtxd0Z5hJ4EQztNgZc8EAF3r1XRyi2J
-         KXsjvmQAAByvRb9cGUeCNL4jz+wQlDy7UAJuf/rJEqWyNgQkSN5JiPypiijeoFLEQ1NF
-         aFWKNaxO+7+fStjMVEdAcglDCpRAVVzQxlhMNU/8v8u4odFz1KsMDQHQsqvXF9ErKz5u
-         fz6A==
-X-Forwarded-Encrypted: i=1; AJvYcCWXGriY25xD2KCXOrsnibNAd+ichU5+TVmX39IF2/xBYSEfOSDRNQuxCMqB+/MMbhz5yRnRWLTiHbEYHKY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRa8Ur4+7OyU2D0fleTM4WXB+u26H3ezHTfShwbn3Vdj73+Ea8
-	cLXd1NS+55mNASJ241I8ba4lq7vSc9bJWeE5LRVvMn4oYPLRFzZbDufVWJNLYOplVqt3WAU97jS
-	5MwHAHbsS6KwLiNlmtzZSFTdBPEZ9NXAud0AlCFIF123jLE1/D97AfLqnNHJWcA==
-X-Gm-Gg: ASbGncsJysqjPP4wr4QR5i+5sR+arNZBBI9MQW97PqYaZRaZxPkCEDzvT+niiatTOt0
-	iPu15wlXZejXGjf4KWzZEf0NQOwm+tKHyPcn+Phb+gcv0LE4ED1RYuNiClKYD15e9usljG3PkiD
-	8wSM8wLwuu1MrAMXKxvGJBQ+kGi+Kr2gaTMu2C20nxaK1X80AeaLu8sUlpTDLilTkGBVixfvj7/
-	53MMaGx8CLxsliiROL+13kG+ByZj+poQ46dyuGYlumupeJ0QB8GYto06tQd0F5uE8j2hzB5MaFV
-	8mGQr8Zl9efj91gsfmS4ut8Kbu14ksNCWFygepUJ9qSqikDuBqa1xQK7kl2AKlmqMG0Wa+zKFDh
-	+alzMzgyv+1l+NsluhRaz+1VOkGiU0duWckdE3Pq6wsg=
-X-Received: by 2002:a05:600c:45d0:b0:43b:a412:d39a with SMTP id 5b1f17b1804b1-43ba8368a6dmr102314025e9.0.1740993263145;
-        Mon, 03 Mar 2025 01:14:23 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEBk2txAHyLgtnxudgOZTIcyeZpAosbYSo1SOfl6vxw93VKcatMetKhoauJTs0xjcyLQ0p8Vg==
-X-Received: by 2002:a05:600c:45d0:b0:43b:a412:d39a with SMTP id 5b1f17b1804b1-43ba8368a6dmr102313675e9.0.1740993262815;
-        Mon, 03 Mar 2025 01:14:22 -0800 (PST)
-Received: from ?IPV6:2003:cb:c734:9600:af27:4326:a216:2bfb? (p200300cbc7349600af274326a2162bfb.dip0.t-ipconnect.de. [2003:cb:c734:9600:af27:4326:a216:2bfb])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bbfece041sm28684095e9.1.2025.03.03.01.14.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Mar 2025 01:14:22 -0800 (PST)
-Message-ID: <8609f693-0786-40bd-9136-3a8f9ee9304b@redhat.com>
-Date: Mon, 3 Mar 2025 10:14:21 +0100
+	s=arc-20240116; t=1740993410; c=relaxed/simple;
+	bh=8C2lBBTuOzy/gLEQfKKi7QGhxyqvHea5OqVTrvMiUmA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DJa5epGg/nbNdpUYRASKezJGSYaOzn0EaROpey/5G/XTLXdSoDXoU0g2Z+jauETHAReh+ygZlBMq/+91u2ClBnAVp5++LWFKZhXyzIjpJ4oktABGVRXHkXgxKXEDWsvBMO9J/pXi6UM75BMHTiQNf0g87RlJ1Rry6+eEbbSti/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=QwuxhhjI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50F66C4CED6;
+	Mon,  3 Mar 2025 09:16:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1740993409;
+	bh=8C2lBBTuOzy/gLEQfKKi7QGhxyqvHea5OqVTrvMiUmA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QwuxhhjI/EWQk7boFqZGYsECDM09hqPvPD9oeDXW2xXJMFcVx+FDw9FPPT5dL7NFM
+	 d7z8+pLnWoRYqWZhx9/BS1P03UD2VTC12HY5yIa8PnlATukc7Un4T0sSIsGZEuPzjE
+	 QxdEfMQmEujHulpARR+K81sjc84jONwTNHyRHOf8=
+Date: Mon, 3 Mar 2025 10:16:46 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Miao Li <limiao870622@163.com>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Miao Li <limiao@kylinos.cn>
+Subject: Re: [PATCH] usb: quirks: Add DELAY_INIT and NO_LPM for Prolific
+ PL2303 Serial Port
+Message-ID: <2025030339-morbidly-relax-80c0@gregkh>
+References: <20250303070047.153591-1-limiao870622@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/4] Initial BBML2 support for contpte_convert()
-To: =?UTF-8?Q?Miko=C5=82aj_Lenczewski?= <miko.lenczewski@arm.com>,
- ryan.roberts@arm.com, suzuki.poulose@arm.com, yang@os.amperecomputing.com,
- catalin.marinas@arm.com, will@kernel.org, joro@8bytes.org,
- jean-philippe@linaro.org, mark.rutland@arm.com, joey.gouly@arm.com,
- oliver.upton@linux.dev, james.morse@arm.com, broonie@kernel.org,
- maz@kernel.org, akpm@linux-foundation.org, jgg@ziepe.ca,
- nicolinc@nvidia.com, mshavit@google.com, jsnitsel@redhat.com,
- smostafa@google.com, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, iommu@lists.linux.dev
-References: <20250228182403.6269-2-miko.lenczewski@arm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250228182403.6269-2-miko.lenczewski@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250303070047.153591-1-limiao870622@163.com>
 
-On 28.02.25 19:24, Mikołaj Lenczewski wrote:
-> Hi All,
+On Mon, Mar 03, 2025 at 03:00:47PM +0800, Miao Li wrote:
+> From: Miao Li <limiao@kylinos.cn>
 > 
-> This patch series adds adding initial support for eliding
-> break-before-make requirements on systems that support BBML2 and
-> additionally guarantee to never raise a conflict abort.
+> When used on Huawei hisi platforms, Prolific PL2303 Serial Port which
+> the VID:PID is in 067b:2731 might fail to enumerate at boot time and
+> doesn't work well with LPM enabled, combination quirks:
+> USB_QUIRK_DELAY_INIT + USB_QUIRK_NO_LPM
+> fixed the problems.
 > 
-> This support reorders and optionally elides a TLB invalidation in
-> contpte_convert(). The elision of said invalidation leads to a 12%
-> improvement when executing a microbenchmark designed to force the
-> pathological path where contpte_convert() gets called. This
-> represents an 80% reduction in the cost of calling contpte_convert().
+> Signed-off-by: Miao Li <limiao@kylinos.cn>
+> ---
+>  drivers/usb/core/quirks.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/usb/core/quirks.c b/drivers/usb/core/quirks.c
+> index dfcfc142bd5e..8aca5518e003 100644
+> --- a/drivers/usb/core/quirks.c
+> +++ b/drivers/usb/core/quirks.c
+> @@ -341,6 +341,10 @@ static const struct usb_device_id usb_quirk_list[] = {
+>  	{ USB_DEVICE(0x0638, 0x0a13), .driver_info =
+>  	  USB_QUIRK_STRING_FETCH_255 },
+>  
+> +	/* Prolific PL2303 Serial Port */
+> +	{ USB_DEVICE(0x067b, 0x2731), .driver_info = USB_QUIRK_DELAY_INIT |
+> +	  USB_QUIRK_NO_LPM },
 
-Just a general comment: Nice! :)
+But this is not the device id for a pl2303 device (or at least one that
+Linux supports), so how was this tested?
 
--- 
-Cheers,
+And why would this device suddenly stop working?  This chipset has been
+working with Linux for decades now, what is new about this device that
+requires this change?
 
-David / dhildenb
+thanks,
 
+greg k-h
 
