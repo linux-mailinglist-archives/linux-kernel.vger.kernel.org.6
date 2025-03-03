@@ -1,116 +1,115 @@
-Return-Path: <linux-kernel+bounces-541310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EB6FA4BB2E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:50:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5FF0A4BB31
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:50:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A3311893E60
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:50:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC17E3B3C46
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:49:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4785E1F151C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F87B1F1527;
 	Mon,  3 Mar 2025 09:49:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bXOcgK1Z"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA5AB1F1300;
-	Mon,  3 Mar 2025 09:49:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81BD41D79A3
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 09:49:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740995395; cv=none; b=U9y0PqEtmsqngQusPbsNmeM7vXIe0Opa3To1dCA4gGumVFHWoWrcjcUCJeCsBe0R9kqIVz4ion0Pn3xpDSTotZk9FA5jKoYVHsIDeAJCtU0ZYLGXNMLA2U2FPe5s8m2zYoS4w4PuDtmF4pv8jcjnoD032/sloUZaASdJzZQ+cQk=
+	t=1740995396; cv=none; b=FJbBNiKIURkhBj3KImXNJX/2rW5/GjjDhs3nvaTa3NThaoFDSpppd4m7WIqIDCgfcr6mw236RQXQIWVxQfcu+dDTY5+wRCARG7fxo90v4O3eFS80ZeZxHpUZqSpNREC2lBnxiii2iv/E6kzuQ+IDp0zXcK+L5hn+mgXVegh01FY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740995395; c=relaxed/simple;
-	bh=Bo1yf188xcuw3IK9QrIc76aTVVJHnLWeA4UExXopE4E=;
+	s=arc-20240116; t=1740995396; c=relaxed/simple;
+	bh=12B+oaAwpkcpy00bG61SDeYnN3Hz/xl/L+K2y+Yf8QA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=raAkuFZny4UEH9hkr7D3/1FsPBaIvXVrpdlNQlA/zAZDoNs5HxhcwOuKHL6HHr+gU8VYab72mQVHErheBr3RQUgD41a8rTTCPx7f9/P70LSVhNj7dmErDKcgHp6iwy/EfYbatJAIPYXFeqOi1E1XNMXwCHQp3GSk5CEb9uU0MYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bXOcgK1Z; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740995394; x=1772531394;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Bo1yf188xcuw3IK9QrIc76aTVVJHnLWeA4UExXopE4E=;
-  b=bXOcgK1ZoWELxvKzQBTaALpasguziCxtI8p3xEPSRWrDxFjCGEAaAA4Y
-   28V0FtShgdA+comx7BmpF90ob+jS3TdcvaBURWC6uCS090VwwnV1xKv4F
-   AQ3fv/otVOIP/bAB2xGtLXk2cnMETteJT3F2vNDhhh7Nar9/jXA5W7Tpr
-   Vj1r15Emna8CLeIOLF1xPse9mluENtv740ZBwT3CZEwvUPH2eZ9IvN76d
-   LyjFyxj1XP1//NX+hEsyPiRE7FOu+cnPGjXRD/WbHj/vuTCXKbDgiBi76
-   hrAHVQM5O0ljrZtMp6QJZCWjSJTj/0LtdS9kuYpD1HEwTORfeXk9B+lOP
-   w==;
-X-CSE-ConnectionGUID: gvfph5E1TKyE8AQ3w0HZKg==
-X-CSE-MsgGUID: I0B8c/VYRz6WW1NqQOf6WA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="44674334"
-X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="44674334"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 01:49:53 -0800
-X-CSE-ConnectionGUID: 4SzUMc1GRdavlZ+yhy7IMg==
-X-CSE-MsgGUID: uk7hq89SSX+Z07yFzn0LuA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="118503785"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by orviesa007.jf.intel.com with ESMTP; 03 Mar 2025 01:49:51 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tp2Qn-000IId-0B;
-	Mon, 03 Mar 2025 09:49:49 +0000
-Date: Mon, 3 Mar 2025 17:49:46 +0800
-From: kernel test robot <lkp@intel.com>
-To: Pratap Nirujogi <pratap.nirujogi@amd.com>, andi.shyti@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, benjamin.chan@amd.com,
-	Pratap Nirujogi <pratap.nirujogi@amd.com>
-Subject: Re: [PATCH] i2c: amd-isp: Add ISP i2c-designware driver
-Message-ID: <202503031743.THpYJdQE-lkp@intel.com>
-References: <20250228164519.3453927-1-pratap.nirujogi@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=a7olotJ8ItbxVlYMCbdu/yeEJ0XGzOBaQpCaonN/M3N6K55v+63inqFGCMTd2HN2MyMWS8CMQ18WucOm7kX2yfAZOhqqEBCbkYXjLmJWEOK1b0PRrt5y4/+i1uNEAUGvZFnqVbvTQ0JadHh0tPPWh7D//w1rCd+M1vZdL2g4N3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CF2CB113E;
+	Mon,  3 Mar 2025 01:50:07 -0800 (PST)
+Received: from e133081.arm.com (unknown [10.57.37.136])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 745A53F66E;
+	Mon,  3 Mar 2025 01:49:50 -0800 (PST)
+Date: Mon, 3 Mar 2025 09:49:47 +0000
+From: =?utf-8?Q?Miko=C5=82aj?= Lenczewski <miko.lenczewski@arm.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: ryan.roberts@arm.com, suzuki.poulose@arm.com,
+	yang@os.amperecomputing.com, catalin.marinas@arm.com,
+	will@kernel.org, joro@8bytes.org, jean-philippe@linaro.org,
+	mark.rutland@arm.com, joey.gouly@arm.com, oliver.upton@linux.dev,
+	james.morse@arm.com, broonie@kernel.org, maz@kernel.org,
+	akpm@linux-foundation.org, jgg@ziepe.ca, nicolinc@nvidia.com,
+	mshavit@google.com, jsnitsel@redhat.com, smostafa@google.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev
+Subject: Re: [PATCH v2 3/4] arm64/mm: Elide tlbi in contpte_convert() under
+ BBML2
+Message-ID: <20250303094947.GB13345@e133081.arm.com>
+References: <20250228182403.6269-2-miko.lenczewski@arm.com>
+ <20250228182403.6269-5-miko.lenczewski@arm.com>
+ <f270bb5d-aa54-45d3-89ed-2b757ab3a4b0@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250228164519.3453927-1-pratap.nirujogi@amd.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f270bb5d-aa54-45d3-89ed-2b757ab3a4b0@redhat.com>
 
-Hi Pratap,
+Hi David,
 
-kernel test robot noticed the following build errors:
+Thanks for taking the time to review.
 
-[auto build test ERROR on andi-shyti/i2c/i2c-host]
-[also build test ERROR on linus/master v6.14-rc5 next-20250228]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+On Mon, Mar 03, 2025 at 10:17:12AM +0100, David Hildenbrand wrote:
+> On 28.02.25 19:24, Mikołaj Lenczewski wrote:
+> > If we support bbml2 without conflict aborts, we can avoid the final
+> > flush and have hardware manage the tlb entries for us. Avoiding flushes
+> > is a win.
+> > 
+> > Signed-off-by: Mikołaj Lenczewski <miko.lenczewski@arm.com>
+> > Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
+> > ---
+> >   arch/arm64/mm/contpte.c | 3 ---
+> >   1 file changed, 3 deletions(-)
+> > 
+> > diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
+> > index 145530f706a9..77ed03b30b72 100644
+> > --- a/arch/arm64/mm/contpte.c
+> > +++ b/arch/arm64/mm/contpte.c
+> > @@ -72,9 +72,6 @@ static void contpte_convert(struct mm_struct *mm, unsigned long addr,
+> >   		__flush_tlb_range(&vma, start_addr, addr, PAGE_SIZE, true, 3);
+> >   	__set_ptes(mm, start_addr, start_ptep, pte, CONT_PTES);
+> > -
+> > -	if (system_supports_bbml2_noabort())
+> > -		__flush_tlb_range(&vma, start_addr, addr, PAGE_SIZE, true, 3);
+> >   }
+> >   void __contpte_try_fold(struct mm_struct *mm, unsigned long addr,
+> 
+> What's the point of not squashing this into #2? :)
+> 
+> If this split was requested during earlier review, at least seeing patch #2
+> on its own confused me.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Pratap-Nirujogi/i2c-amd-isp-Add-ISP-i2c-designware-driver/20250301-005001
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git i2c/i2c-host
-patch link:    https://lore.kernel.org/r/20250228164519.3453927-1-pratap.nirujogi%40amd.com
-patch subject: [PATCH] i2c: amd-isp: Add ISP i2c-designware driver
-config: x86_64-randconfig-005-20250303 (https://download.01.org/0day-ci/archive/20250303/202503031743.THpYJdQE-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250303/202503031743.THpYJdQE-lkp@intel.com/reproduce)
+This split is a holdover from an earlier patchset, where it was still
+unknown whether the removal of the second flush was permitted with
+BBML2. Partly this was due to us being worried about conflict aborts
+after the removal, and partly this was because the "delay" is a separate
+optimisation that we could apply even if it turned out the final patch
+was not architecturally sound.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503031743.THpYJdQE-lkp@intel.com/
-
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fpga/tests/fpga-mgr-test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fpga/tests/fpga-bridge-test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fpga/tests/fpga-region-test.o
->> ERROR: modpost: "isp_power_set" [drivers/i2c/busses/i2c-designware-amdisp.ko] undefined!
+Now that we do not handle conflict aborts (preferring only systems that
+handle BBML2 without ever raising aborts), the first issue is not a
+problem. The reasoning behind the second patch is also a little bit
+outdated, but I can see the logical split between a tlbi reorder, and
+the removal of the tlbi. If this is truly redundant though, I would be
+happy to squash the two into a single patch.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Kind regards,
+Mikołaj Lenczewski
 
