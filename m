@@ -1,252 +1,146 @@
-Return-Path: <linux-kernel+bounces-541611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B66B3A4BF11
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:42:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62A1CA4BF39
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:48:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 151AB7A3A0F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:41:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D11203A5F8B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:44:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40B21202C43;
-	Mon,  3 Mar 2025 11:42:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4543C202C4E;
+	Mon,  3 Mar 2025 11:44:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BIldS06+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eay5GK+5"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADFC820298E
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 11:42:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA381FC7D7
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 11:44:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741002143; cv=none; b=rW1VIbP2LWMCqkorD+gPHS6Sii93JArzkwhG5WQ22Um+6MssfT/8zFu6UHmhmYgolY+gADEobyU0MlmYPE/gFToJc/WaEYUzrHteR6zB5fY5gN/N0uhETr64lIgXwcG7YzeyvLVOZCRCHQnd01SKzkNqeFNtxDhBklRQqT1SMPM=
+	t=1741002250; cv=none; b=YERTe57MwP00FrZdFDKHKf58WnpeeBvIrrNFZs7BlKaqReAPcw1BIMjUmCfeeQTVdOGOwyA9gF1zVN7Z6CEfraLUIEjGPSrbmwFK+4MTrKKLHrhW0jhGdEgqbJpIjymqG6tAlaPwz5EVzRvxpRGUMU+nQEbeGSFFs2KTa5Bk/zA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741002143; c=relaxed/simple;
-	bh=oyoGpoAogNlFLsEfP7tF62uwgGj7bpQ4UrXetHF74oc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t5atHEvcdWVkSslwf8FT6EdznRDQJ125VAxGKeo7Y9M6gUUbT8flc0URlUMLSuSM7wJTFkCQRyEKIUjZMGH5AWrgkbBvOrDg19l10YXzTdWxz0BLFAkgf70gA86j7/lkpk7asEXl0vn03TU8I8lX60EXle4FK+o4DEIXQI3sY2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BIldS06+; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741002140;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=GK+r8CB/zopdHXRJVOxigdSQmwtLGrthh+WgPUejIE4=;
-	b=BIldS06+DAZmGjaNxP9m5gzL5IEb7oC+0yQXrtCFSX3j1MhQSRFLqRJRAqIsCYz6hc95OO
-	jy5vZvjkF3B1xne2C8HYaVL9FJ8NqHdO6IMaH2G3hWR0w8Bunx210brIpBjvSTyWRk79oA
-	ruqzhfeJj/wCCIyBx/9OVbjpbweJTjk=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-592-VcFBPu_-OOSUfqb_EdzrGw-1; Mon, 03 Mar 2025 06:42:19 -0500
-X-MC-Unique: VcFBPu_-OOSUfqb_EdzrGw-1
-X-Mimecast-MFC-AGG-ID: VcFBPu_-OOSUfqb_EdzrGw_1741002138
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43941ad86d4so19160445e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 03:42:19 -0800 (PST)
+	s=arc-20240116; t=1741002250; c=relaxed/simple;
+	bh=luQaXlapm+5N3MbCSgVBhzGQTHPZ+V+taACIos9pA2M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xky6AKpSTYdoO0hLHxtUmjM/tLF5OLuXX+rtjtxh4GXgedAJC/PU6HxkobHp9Wd2ux8b2pwGGjScWtBTdzsexfpsvbR5xwkFhyNSt7eNomNAyJNYI48jtU4cufeRTgse4seDacW3vsi+zomItjfjgFnyk7Eg6YBngV2fnA3mI9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eay5GK+5; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2234daaf269so48225905ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 03:44:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741002248; x=1741607048; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=/iVipZdD4W/u6xESxWCd4AYGgSc83dG/Ajr1AHkUSjs=;
+        b=eay5GK+5IUg2nQIEuL+HcdQXt6aY/71W1U7bdgeTTbeWlfeOvmrbJ69qEkHxL/V2S2
+         GOleLwYYUi40hcbZQ+Hk0bhdgJhrOhMStUUlC//QByBxlvAWK0KEJZPKd5oAixkFryfy
+         yek/Iyfe+vlMxJsPZBWVCNWDIInLhYTyx1XKF9HUPWKDnlLoFLbaCM7vzcXgldneFKSQ
+         kNNVEqBZdxOsG9Gk/dKC5P9W6uesN59f4qZ6P3aDGJ7P8XlmkMvg5/+7bfZ0qYseXWra
+         PCL9yXbel5L7q7qOApt5I3GLZD0KPBWneMTrq4rqRbZaS2uv3XpJTgLZlLwDXJ0ZvWbE
+         sVUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741002138; x=1741606938;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=GK+r8CB/zopdHXRJVOxigdSQmwtLGrthh+WgPUejIE4=;
-        b=hIw4+ME0iNaNxtWHPQlMtNlG9PthK5O+AwzqGOgGI/ooaEqNqtElIBQ2fwnkptzwox
-         4JPtSQD1DD6L9/D541QWQ8sFXGLOutlUoTYxW5rFsDAj/gk6jTul4oW6CPwnu5+qmYUI
-         jOV4vKRjQidyMkp8DYn+tFXgJgrA0dKJG0/TQR2PfFjEUlSL3w0BheQMUIlPHBa7FySg
-         BHWJwto9vraLfmreU1l0ira8mhJab1DalZ6fUUvfVzIjPK1N2PCC10MDrPyYrF9zaMlE
-         i0yG9P1LAJUymrZKA0H343vxVIumT0+5wABngF/8FVnr1gQMWrbGmvBMuSQTaU2OsL47
-         cCoA==
-X-Forwarded-Encrypted: i=1; AJvYcCXFT+IdYIQa0fASCbcR2ptwhSr2o272pTnR69q7EpNy0uQBkNAZDVDC2barqG9pdVRo8TLW0rIDGy5gKCI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+t4Jd0SxB/hgWApGWWJCf7MzqbCdkU2VDzU6u789Uc68gBvpe
-	MLAzH3UHH9OWOHD2gJAP69+5Xr1qv/nKiRwNyvKFTckA64Gs5YNbOXV0vCMocfMEkwF6OfBeKsD
-	GHEn8Wb1REQDiKWGiFkJ18k2U99L0BaQJ+uG2spqENSrQA0kZwg4RZn4f2+JllA==
-X-Gm-Gg: ASbGnctUewIlgImsuGTNf6IBb1qWZUk8MiBKJe1xXofAa5PA8iVDnbRHAZc+uVVeDY5
-	5gaZqcDaSvjQ/iwPBMeMHQXxTmHxzmDhTKwPVtyFR9s0Du/UztsAiBUF07R3rsHGuCMGVrNVtVu
-	+u14JjW1B89rdFgAkpT8MMDxoGe8q5vhi5ub+NlKwNQVqHzfWZIYeKRBaebYTNZyhrne1d5KHxm
-	uGobSX0DwUfK3cX0JMiPS82IY/UfI580MVuVGx9th6l+Oww4uUqwN0tpqLHyVH39WyupX6Mlh9p
-	uNFC4Avttrla1sv30mAxg804/uNnNJ34/iiuNgrj9K2oIOEW8rzGMhq+wlOcXz/Z/iXhKxGqUnB
-	eW3MD1Rznsy6NSVh57NFeDCTTa7rfnWyBhZYvoK35PjE=
-X-Received: by 2002:a05:600c:3506:b0:439:8e46:ee73 with SMTP id 5b1f17b1804b1-43ba6704446mr119492665e9.15.1741002138229;
-        Mon, 03 Mar 2025 03:42:18 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEe6WbxcsGzXZWMC0pjNXpsivZUSmi+rYJFcr/S86qicmIKfyXyNyDXrqfgaMGgOQqTiegQEw==
-X-Received: by 2002:a05:600c:3506:b0:439:8e46:ee73 with SMTP id 5b1f17b1804b1-43ba6704446mr119492405e9.15.1741002137875;
-        Mon, 03 Mar 2025 03:42:17 -0800 (PST)
-Received: from ?IPV6:2003:cb:c734:9600:af27:4326:a216:2bfb? (p200300cbc7349600af274326a2162bfb.dip0.t-ipconnect.de. [2003:cb:c734:9600:af27:4326:a216:2bfb])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba532ba6sm186494095e9.12.2025.03.03.03.42.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Mar 2025 03:42:17 -0800 (PST)
-Message-ID: <0ff27dbb-401b-4793-be70-1ff9c8010e4a@redhat.com>
-Date: Mon, 3 Mar 2025 12:42:11 +0100
+        d=1e100.net; s=20230601; t=1741002248; x=1741607048;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/iVipZdD4W/u6xESxWCd4AYGgSc83dG/Ajr1AHkUSjs=;
+        b=uRXditsEarhsLEBcRJdOOvLwTd83Fh4FsH/ii8dfEutiNqNbk9qlCt8IMoXOccIJ/i
+         7G/t95cqX6Kl5jyjFrzWKDzdYiGJmFmNMud4CjczfcWeNg3qLkTCV65P4p6u2Iig0E08
+         wic/kauhAenItxHwBBlwxzXaxVwx8P9VtUezZ/SVZV7u3Jrj1yIsQreP1WaFz+OnW4Bv
+         IKMbMwueYCxXykUvAYlV/hMXRAAW1BCiGvgr17jutYjnPy+tWv5W5nPi09ZDqsVIt0LD
+         1OmOk69tUfZTaR+6TQt1K5IbppJQ785ysHgK8xQQ7f4Sa2A78ZHnGYHc//lDAE55Ge1a
+         6xLg==
+X-Forwarded-Encrypted: i=1; AJvYcCXhwYdIb90EBduVvZKYrbUuO9faGPW20uxvy2X7XdDJCKtct5fgvN5t7Z+ehsuKCP2M/ltvLa/uqYWcfv8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0E08IAQ6wzGAQQSNYWGyyVep55f8UDvmr7Cf9buL4MlhWieSq
+	f6Oyimh9D/zcCWHrxMpQqv/7U5cERKFBR+81HshvLxhLTHk7gFZHGofier5SBrM=
+X-Gm-Gg: ASbGncv1ruIepnP0WOmQTqD4+UCNqw1oCz3e8kE+H5PjQFq33O2F1sFc/yLNRpAzroS
+	WxiCx4kkk6p46iUXCphhsa8I9VcDpDZcKgCjEa8zEbjx0gKlxWetrpPg9LEsifvWtAzOaUYhVRB
+	TOb2sgQWA+PfgZn3lt5B6LlK3/ez4zsxA8u6s7PPD5QIDQ15R+CbDSg1LFtRU3Cyvz0OjmPDnnR
+	9sdZiR6CPU4zzAuOS86nClXRaPou/OnHwJEAgaVnks1AzmDlL9ErhjqYV2F/4eBgpfIpkgkrPbg
+	qAcpkTrrE3e0gJI2Z9/eqPfA/90iFSlpTTHmcE7FlcPnUg==
+X-Google-Smtp-Source: AGHT+IHK6Lers8i6supYJLggNOwZjS+MBopT5CAeMJGX3443/hyOyrprvywUIlovcrK7G39ADGHiQA==
+X-Received: by 2002:a17:903:1d0:b0:220:bd61:a337 with SMTP id d9443c01a7336-223690ddef3mr188436085ad.23.1741002248534;
+        Mon, 03 Mar 2025 03:44:08 -0800 (PST)
+Received: from localhost ([122.172.84.15])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2235050d7ccsm75787615ad.202.2025.03.03.03.44.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 03:44:08 -0800 (PST)
+Date: Mon, 3 Mar 2025 17:14:06 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Daniel Almeida <daniel.almeida@collabora.com>
+Subject: Re: [PATCH V3 2/2] rust: Add initial clk abstractions
+Message-ID: <20250303114406.xbfzhw7nvxdildb2@vireshk-i7>
+References: <cover.1740995194.git.viresh.kumar@linaro.org>
+ <023e3061cc164087b9079a9f6cb7e9fbf286794e.1740995194.git.viresh.kumar@linaro.org>
+ <CANiq72kdWzFOZ39EoFNxEAbk4KYgzLi1OAEc1zn8BM07VpXy3g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] arm64/mm: Elide tlbi in contpte_convert() under
- BBML2
-To: =?UTF-8?Q?Miko=C5=82aj_Lenczewski?= <miko.lenczewski@arm.com>
-Cc: ryan.roberts@arm.com, suzuki.poulose@arm.com,
- yang@os.amperecomputing.com, catalin.marinas@arm.com, will@kernel.org,
- joro@8bytes.org, jean-philippe@linaro.org, mark.rutland@arm.com,
- joey.gouly@arm.com, oliver.upton@linux.dev, james.morse@arm.com,
- broonie@kernel.org, maz@kernel.org, akpm@linux-foundation.org, jgg@ziepe.ca,
- nicolinc@nvidia.com, mshavit@google.com, jsnitsel@redhat.com,
- smostafa@google.com, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, iommu@lists.linux.dev
-References: <20250228182403.6269-2-miko.lenczewski@arm.com>
- <20250228182403.6269-5-miko.lenczewski@arm.com>
- <f270bb5d-aa54-45d3-89ed-2b757ab3a4b0@redhat.com>
- <20250303094947.GB13345@e133081.arm.com>
- <7e987f17-ffcb-45e0-8588-2d569d90f776@redhat.com>
- <20250303105539.GA74129@e133081.arm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250303105539.GA74129@e133081.arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72kdWzFOZ39EoFNxEAbk4KYgzLi1OAEc1zn8BM07VpXy3g@mail.gmail.com>
 
-On 03.03.25 11:55, Mikołaj Lenczewski wrote:
-> On Mon, Mar 03, 2025 at 10:57:21AM +0100, David Hildenbrand wrote:
->> On 03.03.25 10:49, Mikołaj Lenczewski wrote:
->>> Hi David,
->>>
->>> Thanks for taking the time to review.
->>>
->>> On Mon, Mar 03, 2025 at 10:17:12AM +0100, David Hildenbrand wrote:
->>>> On 28.02.25 19:24, Mikołaj Lenczewski wrote:
->>>>> If we support bbml2 without conflict aborts, we can avoid the final
->>>>> flush and have hardware manage the tlb entries for us. Avoiding flushes
->>>>> is a win.
->>>>>
->>>>> Signed-off-by: Mikołaj Lenczewski <miko.lenczewski@arm.com>
->>>>> Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
->>>>> ---
->>>>>     arch/arm64/mm/contpte.c | 3 ---
->>>>>     1 file changed, 3 deletions(-)
->>>>>
->>>>> diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
->>>>> index 145530f706a9..77ed03b30b72 100644
->>>>> --- a/arch/arm64/mm/contpte.c
->>>>> +++ b/arch/arm64/mm/contpte.c
->>>>> @@ -72,9 +72,6 @@ static void contpte_convert(struct mm_struct *mm, unsigned long addr,
->>>>>     		__flush_tlb_range(&vma, start_addr, addr, PAGE_SIZE, true, 3);
->>>>>     	__set_ptes(mm, start_addr, start_ptep, pte, CONT_PTES);
->>>>> -
->>>>> -	if (system_supports_bbml2_noabort())
->>>>> -		__flush_tlb_range(&vma, start_addr, addr, PAGE_SIZE, true, 3);
->>>>>     }
->>>>>     void __contpte_try_fold(struct mm_struct *mm, unsigned long addr,
->>>>
->>>> What's the point of not squashing this into #2? :)
->>>>
->>>> If this split was requested during earlier review, at least seeing patch #2
->>>> on its own confused me.
->>>
->>> This split is a holdover from an earlier patchset, where it was still
->>> unknown whether the removal of the second flush was permitted with
->>> BBML2. Partly this was due to us being worried about conflict aborts
->>> after the removal, and partly this was because the "delay" is a separate
->>> optimisation that we could apply even if it turned out the final patch
->>> was not architecturally sound.
->>>
->>> Now that we do not handle conflict aborts (preferring only systems that
->>> handle BBML2 without ever raising aborts), the first issue is not a
->>> problem. The reasoning behind the second patch is also a little bit
->>> outdated, but I can see the logical split between a tlbi reorder, and
->>> the removal of the tlbi. If this is truly redundant though, I would be
->>> happy to squash the two into a single patch.
->>
->> Thanks for the information.
->>
->> Does patch #2 (reordering the tlbi) have any benefit on its own? I read
->> "other threads will not see an invalid pagetable entry", but I am not sure
->> that is correct. A concurrent HW page table walker would still find the
->> invalid PTE? It's just a matter of TLB state.
+On 03-03-25, 11:16, Miguel Ojeda wrote:
+> On Mon, Mar 3, 2025 at 11:00 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> >
+> > +/// Frequency unit.
+> > +pub type Hertz = crate::ffi::c_ulong;
 > 
-> I think I understand what you mean. I agree that it is possible for a
-> concurrent walk to see an invalid TLBI state, if it is on the same TLB
-> that the repaint is happening on. For other TLBs, the flush has not yet
-> propagated our invalidated PTEs (from `__ptep_get_and_clear()`) though?
+> Do we want this to be an alias or would it make sense to take the
+> chance to make this a newtype?
 
-What I am saying is: if there is no TLB entry yet, HW will walk the page 
-table to find no present PTE and trigger a fault.
+Actually Daneil did suggest to make this "Struct Hertz(c_ulong)", but then I
+looked at rust/kernel/time.rs:
 
-> That invalidation will only be seen by other TLBs after the
-> `__flush_tlb_range()`, so we should save a few faults because only
-> "local" threads will ever see the invalid entry, as opposed to all
-> threads that try to read our modified range?
+pub type Jiffies = crate::ffi::c_ulong;
 
-So what you say is, that deferring the flush means that if there is 
-already a TLB entry, flushing deferred reduces the likelihood that a 
-page table walk is triggered that could find no present PTE: 
-consequently, reducing the likelihood that a page fault is triggered.
+And I thought this is probably what everyone would have agreed to and did it
+this way.
 
-(I use the word likelihood, because I assume other action could result 
-in a TLB entry getting flushed in the meantime, such as TLB entry reuse)
+> > +    /// Clock enable.
+> 
+> Should these be e.g. "Enable the clock." or similar?
+> 
+> Moreover, I see quite a lot of documentation about some of these
+> functions in the C side. I think we should not regress on that. Should
+> we link to the C docs, too?
 
-Correct?
+Something like this (from print.rs) ?
 
-Or it is the case that I
-> have misunderstood something basic here, or that I have misinterpreted
-> what you have written?
+/// [`pr_debug`]: https://docs.kernel.org/core-api/printk-basics.html#c.pr_debug
 
-No, that makes it clearer, thanks.
+> > +pub mod clk;
+> 
+> Just to double check, do we need any `cfg`? I see some functions exist
+> even without e.g. `CONFIG_COMMON_CLK`, but I wanted to ask if you
+> tried to build it without it enabled.
+
+Yes, I was using this under `cfg` earlier, but removed that recently after
+testing this without CONFIG_HAVE_CLK. clk.h provides wrappers for cases where
+the config option isn't available.
 
 -- 
-Cheers,
-
-David / dhildenb
-
+viresh
 
