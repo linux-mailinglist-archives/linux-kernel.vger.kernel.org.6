@@ -1,174 +1,328 @@
-Return-Path: <linux-kernel+bounces-542417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5EC7A4C959
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:26:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37CD5A4C927
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:21:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB3FC17A1DD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:21:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 150F47A29B8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 472E524BC13;
-	Mon,  3 Mar 2025 17:07:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C55E222CBF6;
+	Mon,  3 Mar 2025 17:08:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NcbdBpTT"
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="TDOsB2Vv"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02786238D27;
-	Mon,  3 Mar 2025 17:07:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA4D84A3E;
+	Mon,  3 Mar 2025 17:08:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741021656; cv=none; b=XnHoiN+88In6NG8Y0zbCRxISwPP8aS6xgDDYQihIyV3To8xj81WfUDPDCiGSLpALJdYAU5NgmrkEa+saG2btef/fQOwwmMwTUWqhksO/AYZw3F/5YWoJ2CG/mAAMgj20ZxVoAQs/gb/bqLS5XghYXC6xvURVKMjDnWxKGmBbjvc=
+	t=1741021722; cv=none; b=bAgLACN3jTAXYemA9lb9Ulyz+dTiIfJJ9uCpoCHbo+RuDVEaPhficpLmK7vMuWY2McZevLyiyzOkb1VvMOeEdhoxbzRBoExpxK1+AM32jc3uNJtYr9qRx3S+EETgheWe+684RCAtdz9GTa03K1z4IDWoQY37RAVq9g0ZPdC8PpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741021656; c=relaxed/simple;
-	bh=+7aYbhrLmYi1T4KA92FmY4sVW55e+0/xae5106xIhbk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xx75AkRIeTcf0+dg2tEEcTaJLvSI5lCK6bZTjxrfUeeepzbPqHfkKZelER8tHBs6S+vdMoN06kCaXchDvMc60+H97qH07W414PuXZo+SgWUAqaNLoTxSng9A3qCEWDA+x4u4q0CeDVYJnSFLZ4jk+Tz2T22VUYdmDvfNmTuc60g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NcbdBpTT; arc=none smtp.client-ip=209.85.222.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7c0ba9825e9so340644085a.0;
-        Mon, 03 Mar 2025 09:07:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741021654; x=1741626454; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=RyyaYtBZfDjnmq80BewbVhk3cLDHgbdcz1CFZloCzdE=;
-        b=NcbdBpTTsLjIWDnTLZleId5RoheQbhNcknqf2dk2RNmoWC+IrF8qqj9MjmHpaeWeCN
-         rhfdC8anZ2KMZX4+Vff5/PzqX9yNeau0dbDQAULU60PYCiDtjsFTc+SfJfy26RtVjiw5
-         P8XCRX30umSVSYoQN1Af7sAte0dLsW7cxRZV5MEHSCzDPXsm8tz0xYqo9KB2incmepSQ
-         tH6o5CEVa9rrmBGuoq0De6+9qKebfwuOJ+QQAPgX3Y3oACIIzwlIdvlxv9NAf29tAOUd
-         nNR9VaiwMca14oJbEcgc32dIbBrD2Di0iR3rjVfgYqKu6IVg2lomC96KBo8pe7G82lTu
-         st2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741021654; x=1741626454;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RyyaYtBZfDjnmq80BewbVhk3cLDHgbdcz1CFZloCzdE=;
-        b=fh8BCrFFTTt9VC2Wot9t6Ws1H83VUIs6niAGvpkaAvdRIpPzBMFB1KEOb4zwHquUjm
-         kY+iu0IJlnFWNRrxpAUfhnURtsp9FUmtX4XL+IQzFohFWizKc+Dh2wIdoSVxvtBfsRgj
-         ectuUrVw38cBH1rBTiJ/ATQ3oC7zjPP5HGgTIHh3yxWhXOhg6nHjsKLqoNkCEKjiIMnf
-         Dq+nu0SN2bgLondeMVdsT0krvjqE0/aC7UvUHwMAE6q6g3o5Rv+BZEGkjU4/FLlzvFVS
-         U995okfzix3bL99cH0n9NB9fI1CYjXExHb/09B7UEFrIZCqpzAkCgyDg10DyP1sUTrnN
-         FKCg==
-X-Forwarded-Encrypted: i=1; AJvYcCW2IhYzDSzExZOPrVL+AGVvNXG5lF5TOHi5bxKpR6WC0rH/K0nEMerucuZf9kWqSRE3sgYo@vger.kernel.org, AJvYcCXkaVBX484MUUxw072ssSG0yIkyjFvse5aGiut1Emz8KnhKdQkVxlBOo+Xxyfy9PQA9qI0TAhIezfipI/g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5u4Kajkz+9kkmWph84fD4ShsCDJYVADbCFMfCJ6GJ5T+UKB75
-	Y2SuwXsVZTfIbMMoCMOZohjNwyEW9CG1COumxFfbt0R2iHJHSg8dACISvw==
-X-Gm-Gg: ASbGncty+QbKlwHwQ0Nl/wMaEDKUV2GgV5lUaSRG3LmwMz37FNul49HVjQ3/gFv0SZS
-	iESfRRgWre1WbMCpMqVpDgJvU/Oxne9x3qWFn5PY2mnq5S5bqVsyaJK4rwYZNP/JIqWjvhhMpPS
-	T/UsD/LLZH4hMb1M2M3E5ukCRzcJ0beJJHe51NF+y6Njy3reyqStiGrahJU2fCZmRckRcWIAthh
-	KpdTkO88MRWpYNNSeO6avFZMVGtSPb99AQbL3QV24N3YNKkCcKQN9LQA74pLi5Z01BomLHse8VS
-	BmIBw4fv6N9emkLCqHHgqJwytk7JH1ujXChU4PJeuEzza6utzmc1ze4K0LCwcgqQkBSBjWbUgBK
-	eqz6o2RE/z1UIpl370/tPEC/PJA/tZ7d2zvU=
-X-Google-Smtp-Source: AGHT+IF0S4xbV8sQIfxqNVFYsLibdZa96Cj16Xhb94nglhix2yYynx4+0GWLxsG0QpbBU1QWy/Vmvg==
-X-Received: by 2002:a05:6214:5098:b0:6e8:8934:337b with SMTP id 6a1803df08f44-6e8a0cfc45cmr212098406d6.14.1741021653786;
-        Mon, 03 Mar 2025 09:07:33 -0800 (PST)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e897633e5dsm55170976d6.12.2025.03.03.09.07.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 09:07:33 -0800 (PST)
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 01C03120006A;
-	Mon,  3 Mar 2025 12:07:33 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Mon, 03 Mar 2025 12:07:33 -0500
-X-ME-Sender: <xms:1OHFZ6fUB8iMPjF9HXXREhVgOehMubiA-9G3MocEmWUAtAfUU9NTmg>
-    <xme:1OHFZ0OxTViDRMMeUIMNp7-OLgk5iRfym3ZTxMFTj4b1QbldLa2qve0hmGZh2Ob3e
-    aI2x4wWt1gKbX5TWg>
-X-ME-Received: <xmr:1OHFZ7gDe-HZbt9XGwUasGtPe48YznfAWyBxAMoN5VUedNVOkRYg8dv20Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelleeikecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthhqredttddt
-    vdenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrih
-    hlrdgtohhmqeenucggtffrrghtthgvrhhnpefghfdutedvjeeuteeiieejjedtudfhvdff
-    vdejhefftdehvedtuefhueehheeigfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgne
-    cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhu
-    nhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqdduje
-    ejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdr
-    nhgrmhgvpdhnsggprhgtphhtthhopeduuddpmhhouggvpehsmhhtphhouhhtpdhrtghpth
-    htohepjhhovghlrghgnhgvlhhfsehnvhhiughirgdrtghomhdprhgtphhtthhopehprghu
-    lhhmtghksehkvghrnhgvlhdrohhrghdprhgtphhtthhopehurhgviihkihesghhmrghilh
-    drtghomhdprhgtphhtthhopehrtghusehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtohepfhhrvgguvghrihgtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopeiiiihq
-    qhdtuddtfedrhhgvhiesghhmrghilhdrtghomhdprhgtphhtthhopehnvggvrhgrjhdruh
-    hprgguhhihrgihsegrmhgurdgtohhmpdhrtghpthhtohepjhhovghlsehjohgvlhhfvghr
-    nhgrnhguvghsrdhorhhg
-X-ME-Proxy: <xmx:1OHFZ39RO8lPWYJaFTCGiHXSswN5aVnobp7mPy5V6gnmHabR2DVGYg>
-    <xmx:1OHFZ2uR0XhjTK_AILKiyjEBGTg28XTtfCyLU42KL0Xx2Z4haE6KUg>
-    <xmx:1OHFZ-GoaxNWeF6WyEq4sES5C4Eb_CbdLnYn9Fao53jUQXTdVj1-Ew>
-    <xmx:1OHFZ1Ofmj4wwtmoYTFE7PclsvnZsHrDOrUtCvSteLFB3W20D2opDQ>
-    <xmx:1OHFZzM1L3b2E5dpuAgJXwcrryv78rALh8zkpG2w7BuDUDWcYtgcXngq>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 3 Mar 2025 12:07:32 -0500 (EST)
-Date: Mon, 3 Mar 2025 09:07:30 -0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>,
-	Uladzislau Rezki <urezki@gmail.com>, RCU <rcu@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Cheung Wall <zzqq0103.hey@gmail.com>,
-	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-Subject: Re: [PATCH v4 3/3] rcu: Use _full() API to debug synchronize_rcu()
-Message-ID: <Z8Xh0pP4xaFm0nEV@tardis>
-References: <Z8HmH85bYNU8enJ2@pc636>
- <dd15fa79-70a5-4929-9339-51a47099c916@paulmck-laptop>
- <Z8H_aYBUHD2sS2Ir@pc636>
- <73724164-71f4-4671-b612-eb82a784da58@paulmck-laptop>
- <Z8IKs-I-YsOoS4uw@pc636>
- <cdab57a4-8d58-41d9-a9b5-71d425a7375e@paulmck-laptop>
- <f6803081-8243-4723-a3ba-00db351aafff@paulmck-laptop>
- <20250303001507.GA3994772@joelnvbox>
- <20250303001710.GA3997787@joelnvbox>
- <20250303170040.GA31126@joelnvbox>
+	s=arc-20240116; t=1741021722; c=relaxed/simple;
+	bh=JYE1xhFKKd/5c4jb4Keu0UaYC7On9wH9tg5GmCG8k1c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TphVuxS3KBKzTYIGq1K3uhyDOE6g4xl/CLlCmxc3TZFVyQkky45+/1Vbfg0GJUMnLkfQy7Z9iME3V7QWCOkEVY0OLgdmP9I3iwHW5u5p2l79wEb995zrIKmayE4OlLHlNqYtL8GfxIiq+uOcb76j+bnoojB4I9zzZxc+Q/ykuqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=TDOsB2Vv; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from [192.168.42.116] (pd9e59f4f.dip0.t-ipconnect.de [217.229.159.79])
+	(Authenticated sender: wse@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 6287A2FC004A;
+	Mon,  3 Mar 2025 18:08:36 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1741021716;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=f+aFrlynqBCI6EAy7aY4YpYPMDWism/F0c6RZQzcRAg=;
+	b=TDOsB2VvBZ8kTxA4mxpTjr4fiGNnA16Ip4gU4C3Yh/Lo3PnBQIpERBdyx+AVkVFN8elUKk
+	PfQF1KbOdzulGgW9lexiDdq7kihnSZGurdxNcS9qs1SiYR0nVNAY9pzWcAFDrLbaICC1/G
+	WykxdigjP8suPztaaft9QBIelAbvrHs=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
+Message-ID: <3140a369-7877-41ee-b4e8-b42789d99d45@tuxedocomputers.com>
+Date: Mon, 3 Mar 2025 18:08:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250303170040.GA31126@joelnvbox>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] Input: atkbd - Fix TUXEDO NB02 notebook keyboards
+ FN-keys
+To: Mario Limonciello <mario.limonciello@amd.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
+References: <20250303161228.437604-1-wse@tuxedocomputers.com>
+ <20250303161228.437604-2-wse@tuxedocomputers.com>
+ <939e3b28-f11f-48ed-98b9-b5b5ef77eb0e@amd.com>
+Content-Language: en-US
+From: Werner Sembach <wse@tuxedocomputers.com>
+In-Reply-To: <939e3b28-f11f-48ed-98b9-b5b5ef77eb0e@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 03, 2025 at 12:00:40PM -0500, Joel Fernandes wrote:
-[...]
->=20
-> I see the original patch "rcu: Fix get_state_synchronize_rcu_full() GP-st=
-art
-> detection" is not yet on -next. Once we are convinced about the fix, do we
-> want to squash the fix into this patch and have Boqun take it?
->=20
 
-Which "-next" are you talking about? The original patch and the fix is
-already in next-20250303 of linux-next:
-
-	https://web.git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/lo=
-g/?h=3Dnext-20250303&qt=3Drange&q=3D153fc45000e0058435ec0609258fb16e7ea257d2
-
-Regards,
-Boqun
-
-> Yet another idea is to apply it for 6.15-rc cycle if more time is needed.
->=20
-> Alternatively, we could squash it and I queue it for 6.16 instead of 6.15.
->=20
-> And I'm guessing Vlad's series is also for 6.16.
->=20
-> thanks,
->=20
->  - Joel
->=20
+Am 03.03.25 um 17:46 schrieb Mario Limonciello:
+> On 3/3/2025 10:11, Werner Sembach wrote:
+>> This small driver does 2 things:
+>>
+>> It remaps the touchpad toggle key from Control + Super + Hangaku/Zenkaku to
+>> F21 to conform with established userspace defaults. Note that the
+>> Hangaku/Zenkaku scancode used here is usually unused, with real
+>> Hangaku/Zenkaku keys using the tilde scancode.
+>>
+>> It suppresses the reserved scancode produced by pressing the FN-key on its
+>> own, which fixes a warning spamming the dmesg log otherwise.
+>>
+>> Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
+>> ---
+>>   MAINTAINERS                                 |  6 ++
+>>   drivers/platform/x86/Kconfig                |  2 +
+>>   drivers/platform/x86/Makefile               |  3 +
+>>   drivers/platform/x86/tuxedo/Kbuild          |  6 ++
+>>   drivers/platform/x86/tuxedo/Kconfig         |  6 ++
+>>   drivers/platform/x86/tuxedo/nb02/Kbuild     |  7 ++
+>>   drivers/platform/x86/tuxedo/nb02/Kconfig    | 15 ++++
+>>   drivers/platform/x86/tuxedo/nb02/platform.c | 79 +++++++++++++++++++++
+>>   8 files changed, 124 insertions(+)
+>>   create mode 100644 drivers/platform/x86/tuxedo/Kbuild
+>>   create mode 100644 drivers/platform/x86/tuxedo/Kconfig
+>>   create mode 100644 drivers/platform/x86/tuxedo/nb02/Kbuild
+>>   create mode 100644 drivers/platform/x86/tuxedo/nb02/Kconfig
+>>   create mode 100644 drivers/platform/x86/tuxedo/nb02/platform.c
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 4ff26fa94895d..d3fbbcef813b0 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -24178,6 +24178,12 @@ T:    git 
+>> git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux.git turbostat
+>>   F:    tools/power/x86/turbostat/
+>>   F:    tools/testing/selftests/turbostat/
+>>   +TUXEDO DRIVERS
+>> +M:    Werner Sembach <wse@tuxedocomputers.com>
+>> +L:    platform-driver-x86@vger.kernel.org
+>> +S:    Supported
+>> +F:    drivers/platform/x86/tuxedo/
+>> +
+>>   TW5864 VIDEO4LINUX DRIVER
+>>   M:    Bluecherry Maintainers <maintainers@bluecherrydvr.com>
+>>   M:    Andrey Utkin <andrey.utkin@corp.bluecherry.net>
+>> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+>> index 0258dd879d64b..9b78a1255c08e 100644
+>> --- a/drivers/platform/x86/Kconfig
+>> +++ b/drivers/platform/x86/Kconfig
+>> @@ -1199,3 +1199,5 @@ config P2SB
+>>         The main purpose of this library is to unhide P2SB device in case
+>>         firmware kept it hidden on some platforms in order to access devices
+>>         behind it.
+>> +
+>> +source "drivers/platform/x86/tuxedo/Kconfig"
+>> diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
+>> index e1b1429470674..1562dcd7ad9a5 100644
+>> --- a/drivers/platform/x86/Makefile
+>> +++ b/drivers/platform/x86/Makefile
+>> @@ -153,3 +153,6 @@ obj-$(CONFIG_WINMATE_FM07_KEYS)        += 
+>> winmate-fm07-keys.o
+>>     # SEL
+>>   obj-$(CONFIG_SEL3350_PLATFORM)        += sel3350-platform.o
+>> +
+>> +# TUXEDO
+>> +obj-y                    += tuxedo/
+>> diff --git a/drivers/platform/x86/tuxedo/Kbuild 
+>> b/drivers/platform/x86/tuxedo/Kbuild
+>> new file mode 100644
+>> index 0000000000000..e9c4243d438ba
+>> --- /dev/null
+>> +++ b/drivers/platform/x86/tuxedo/Kbuild
+>> @@ -0,0 +1,6 @@
+>> +# SPDX-License-Identifier: GPL-2.0-or-later
+>> +#
+>> +# TUXEDO X86 Platform Specific Drivers
+>> +#
+>> +
+>> +obj-y    += nb02/
+>> diff --git a/drivers/platform/x86/tuxedo/Kconfig 
+>> b/drivers/platform/x86/tuxedo/Kconfig
+>> new file mode 100644
+>> index 0000000000000..e463f92135780
+>> --- /dev/null
+>> +++ b/drivers/platform/x86/tuxedo/Kconfig
+>> @@ -0,0 +1,6 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only
+>> +#
+>> +# TUXEDO X86 Platform Specific Drivers
+>> +#
+>> +
+>> +source "drivers/platform/x86/tuxedo/nb02/Kconfig"
+>> diff --git a/drivers/platform/x86/tuxedo/nb02/Kbuild 
+>> b/drivers/platform/x86/tuxedo/nb02/Kbuild
+>> new file mode 100644
+>> index 0000000000000..8624a012cd683
+>> --- /dev/null
+>> +++ b/drivers/platform/x86/tuxedo/nb02/Kbuild
+>> @@ -0,0 +1,7 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only
+>> +#
+>> +# TUXEDO X86 Platform Specific Drivers
+>> +#
+>> +
+>> +tuxedo_nb02_platform-y            := platform.o
+>> +obj-$(CONFIG_TUXEDO_NB02_PLATFORM)    += tuxedo_nb02_platform.o
+>> diff --git a/drivers/platform/x86/tuxedo/nb02/Kconfig 
+>> b/drivers/platform/x86/tuxedo/nb02/Kconfig
+>> new file mode 100644
+>> index 0000000000000..848ab61164404
+>> --- /dev/null
+>> +++ b/drivers/platform/x86/tuxedo/nb02/Kconfig
+>> @@ -0,0 +1,15 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only
+>> +#
+>> +# TUXEDO X86 Platform Specific Drivers
+>> +#
+>> +
+>> +menuconfig TUXEDO_NB02_PLATFORM
+>> +    tristate "TUXEDO NB02 Platform Driver"
+>> +    default m
+>
+> Don't most platform/x86 drivers default to 'n'?  It's up to distros and users 
+> to turn on I thought.
+Didn't give much tough to this particularly, will look into it
+>
+>> +    help
+>> +      This driver implements miscellaneous things found on TUXEDO Notebooks
+>> +      with board vendor NB02. For the time being this is only remapping the
+>> +      touchpad toggle key to something supported by most Linux distros
+>> +      out-of-the-box and supressing an unsupported scancode from the FN-key.
+>
+> suppressing
+thanks for spotting
+>
+>> +
+>> +      When compiled as a module it will be called tuxedo_nb02_platform.
+>> diff --git a/drivers/platform/x86/tuxedo/nb02/platform.c 
+>> b/drivers/platform/x86/tuxedo/nb02/platform.c
+>> new file mode 100644
+>> index 0000000000000..a6137c8b2d4aa
+>> --- /dev/null
+>> +++ b/drivers/platform/x86/tuxedo/nb02/platform.c
+>> @@ -0,0 +1,79 @@
+>> +// SPDX-License-Identifier: GPL-2.0-or-later
+>> +/*
+>> + * Copyright (C) 2025 Werner Sembach wse@tuxedocomputers.com
+>> + */
+>> +
+>> +#include <linux/i8042.h>
+>> +#include <linux/kernel.h>
+>> +#include <linux/module.h>
+>> +#include <linux/serio.h>
+>> +
+>> +static u8 tux_nb02_touchp_toggle_seq[] = {
+>> +    0xe0, 0x5b, // Super down
+>> +    0x1d,       // Control down
+>> +    0x76,       // Zenkaku/Hankaku down
+>> +    0xf6,       // Zenkaku/Hankaku up
+>> +    0x9d,       // Control up
+>> +    0xe0, 0xdb  // Super up
+>> +};
+>> +
+>> +static bool tux_nb02_i8042_filter(unsigned char data,
+>> +                  unsigned char str,
+>> +                  struct serio *port,
+>> +                  __always_unused void *context)
+>> +{
+>> +    static u8 seq_pos;
+>> +
+>> +    if (unlikely(str & I8042_STR_AUXDATA))
+>> +        return false;
+>> +
+>> +    pr_info("%#04x\n", data);
+>
+> A bit too noisy for a filter, no?
+Yes, missed it when removing the debugging statements.
+>
+>> +
+>> +    // Replace touchpad toggle key sequence with a singular press of the
+>> +    // F21-key.
+>
+> Multi-line comments are supposed to be /* */
+will fix
+>
+>> +    if (unlikely(data == tux_nb02_touchp_toggle_seq[seq_pos])) {
+>> +        ++seq_pos;
+>> +        if (seq_pos == ARRAY_SIZE(tux_nb02_touchp_toggle_seq)) {
+>> +            seq_pos = 0;
+>> +            serio_interrupt(port, 0x6c, 0); // F21 down
+>> +            serio_interrupt(port, 0xec, 0); // F21 up
+>> +        }
+>> +        return true;
+>> +    }
+>> +
+>> +    // Ignore bogus scancode produced by the FN-key. Reuse seq_pos as first
+>> +    // byte of that is just the "extended"-byte.
+>
+> Multi-line comments are supposed to be /* */
+will fix
+>
+>> +    if (unlikely(seq_pos == 1 && (data == 0x78 || data == 0xf8))) {
+>> +        seq_pos = 0;
+>> +        return true;
+>> +    }
+>> +
+>> +    // Replay skipped sequence bytes if it did not finish and it was not a
+>> +    // FN-key press.
+>
+> Multi-line comments are supposed to be /* */
+will fix
+>
+>> +    if (unlikely(seq_pos)) {
+>> +        for (u8 i; i < seq_pos; ++i)
+>> +            serio_interrupt(port, tux_nb02_touchp_toggle_seq[i], 0);
+>> +        seq_pos = 0;
+>> +    }
+>> +
+>> +    return false;
+>> +}
+>> +
+>> +static int __init tux_nb02_plat_init(void)
+>> +{
+>> +    return i8042_install_filter(tux_nb02_i8042_filter, NULL);
+>
+> The driver is tri-state.  If it was 'm' it wouldn't load on anything but the 
+> matching hardware.
+>
+> But think about what happens if a user compiled a kernel with this 'y'.
+>
+> The tux_nb02_plat_init() would install a filter even though they didn't have 
+> matching hardware.
+>
+> I think you need some sort of assertion this driver matches the hardware and 
+> return -ENODEV if it doesn't.
+Ok
+>
+>> +}
+>> +
+>> +static void __exit tux_nb02_plat_exit(void)
+>> +{
+>> +    i8042_remove_filter(tux_nb02_i8042_filter);
+>> +}
+>> +
+>> +module_init(tux_nb02_plat_init);
+>> +module_exit(tux_nb02_plat_exit);
+>> +
+>> +MODULE_ALIAS("dmi:*:svnTUXEDO:*:rvnNB02:*");
+>> +
+>> +MODULE_DESCRIPTION("TUXEDO NB02 Platform");
+>> +MODULE_AUTHOR("Werner Sembach <wse@tuxedocomputers.com>");
+>> +MODULE_LICENSE("GPL");
+>
 
