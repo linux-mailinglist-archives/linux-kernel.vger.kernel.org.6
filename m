@@ -1,208 +1,145 @@
-Return-Path: <linux-kernel+bounces-542551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E758AA4CB08
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:33:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC8ABA4CB0A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:34:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DED317575A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:33:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43C353AC1DE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:33:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB6122FAC3;
-	Mon,  3 Mar 2025 18:33:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C77216E39;
+	Mon,  3 Mar 2025 18:33:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="hIW8xu80"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aKN62jzq"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B54B42135B2
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 18:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A5EC1E7C03;
+	Mon,  3 Mar 2025 18:33:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741026797; cv=none; b=Cz8Xld4HFUSxB2AkgKsQFa6z1jiPgAW4LhQP+eN8N8zlNBmfr31gWsNuht017TKQ257aLXKgGINO98fetRMCqIIRjexMJAi3EcIzAIpgVc/SVTPKmkpN8S5lnSW277MDz9LCR5HB41l+lT+qxV022ecrdWXa9VziRpfQVrFAZPc=
+	t=1741026817; cv=none; b=sjAW+su6kAa3ObldD6P1B/Feh1wyAo/MzUQkjlP9FerE01vAOn5Udw5tj4TzKUtcsj1chKlSxgMVcxvoIYVJ6DWl1rFAizQezsL5aLAV4H3E/fJ/UpfJl2WwG9Wkyfy/oayY0BBSyUod64IMW9zXyIwGG/3RjhsWGfSW1NbMp44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741026797; c=relaxed/simple;
-	bh=nLsZQWU52zNpjADgh0ICFnQQGW+rEKz5WdNIEuaOhHc=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KXkyL8Kb1gDT9kq54uF2+UjFX5i5cN4Wm4FpxVWSwlBFpIdNjD2CKSB47uG6FjzHlri0WziaAPtIjDx44cGSn3QxRrze9Kz6isTA/q7xjcoTTUX5Y5Y1QSq0Efp7sl7HFVd6MC/VfGy6MNiJhqeiYyOHSuzeBAwP3os9IqJivz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=hIW8xu80; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-474bc1aaf5fso63412721cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 10:33:14 -0800 (PST)
+	s=arc-20240116; t=1741026817; c=relaxed/simple;
+	bh=X7t0CacmHUpcpJhGItcuM8Xnn6Mn1r21B9z4Wx+RLZY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hXfjFvuTjuDrJh/e1+2naQTtdj6I6xb3P7E2u1+DB+81U9e4VuLRXtnh9DqHnZsfkujwIwS5GwffMIqTOMNuuJhfXE0ESiGYso/5obcCyyXufmbs2fpcKufcB4iexdllpeVzsI9dE99x37IodP0Od5l4D7BTYBVb80SAjYiKt+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aKN62jzq; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-abbd96bef64so758378966b.3;
+        Mon, 03 Mar 2025 10:33:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1741026793; x=1741631593; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=eue7H577BiYj6J1iAvYYX1Oj2dBdZtr+Y46C5Co92Q0=;
-        b=hIW8xu80K46nAHjWLZS6ZdCCK+1hNH9zMOiOo8mbLRQ9+DggAri5K5OcNagElVmeLp
-         ISRhJEc7mpikwYJOOiVfqJYJMveR0DAUSVBkbWgnl+sLmItFOD1uDw9HA3Gb7aYDdVdK
-         ukOe2C0lJVykQUBlHTVosz+jqsdXc8bH32wKU=
+        d=gmail.com; s=20230601; t=1741026814; x=1741631614; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X7t0CacmHUpcpJhGItcuM8Xnn6Mn1r21B9z4Wx+RLZY=;
+        b=aKN62jzq2nrgAQFcAphKd2aWWPO9tc0T7FrvB+yeoMwZAMhybGwDIttMfl36UbDB9X
+         LNj53B3oDFSRHLrtE6wLVl3piEDihvhDl2AFSfQqhh9YHpYspeWYD4H268gA06fBwx1+
+         d1PjzZBEm2AzCeKcB10qpvU1n/9r2x0sUK0cJ3qaMF1Sf5CcZHNfkYbmy39G2WMlOgaC
+         c9O03bkbJYxJ4Wqh3FxHSaoiiM9QlR1lfQCYbpJXPhZBVfpcRVTcAexaigSADNugk2n+
+         v/77MSY2AGuelix6pwb8cgg9DJLGNuFZG9goxbd+hzKPRDC98AOY5NvPyFvkLpUX4HPa
+         IP8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741026793; x=1741631593;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eue7H577BiYj6J1iAvYYX1Oj2dBdZtr+Y46C5Co92Q0=;
-        b=a5imBAfGsLYfFlOAu/gd3y6+D+pCv2QTxxZirvR2RgoR17S6nwMzjgwxVBbKheiFrO
-         7m9e5dh5hpZGi/6kupvc1r/8Ifm00+6YLbKbe5WPhgnJwBwMKyG9sZkUj1/NPu7Qo4Oc
-         v8dRwSwkXKMYWgDdoWF3F5C0uGTtRrljDEg8RM8bCiHfufGicb6f9J7WcDgXEQmQuRcL
-         4Jl40NzHT25vw4Tb0rGgB8oWNih3RB/8HXM7MRPS0xyr32KHsN6CamXKksdvTSWqEAl4
-         P283+PpOWE+mMCRDqCYtPZS8bb1Z+DE0zSWPEfBeqZ5KnaB/6qtDXinoa2xvGHyruUbj
-         Z1EA==
-X-Forwarded-Encrypted: i=1; AJvYcCVV3D0R6Q3gZzremr0ozNdrrNb0tC+rNUfRw1kFPBk+tQTVbbl5XN2uPbmy1585emnWZ8OPNuh/II4kT/4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7IXX6nL0UsIs9xFUQ+vH7dqwu/wD1/r7LtBVj5SnoOPVZTx1z
-	I8mURAvN2ra3aEicKPPw1jynaMcVjlZiXXa9KHXij6J/SWM3m/njePSv7j6qPIE=
-X-Gm-Gg: ASbGncvhSz8bMZW38uTT5ddD134WaanYuQPR0xGargLTiyROCnAkKLcgx79OV/9OuqF
-	ztvkfqjkcsqRS3INnvualkAadMQRYwkRDtPAmXK1XRRXfbAmkip+zaBZoBuvPl8UQZuNlpolqpL
-	x+OO3YKjBJsG1PqB5JXcrHopiwNqFDLRTi9/5cJBgQlPghE28zLmErqjetGVzIDny1yRIwDJSFM
-	4a8n9DTCvtQ9ohHufUCumuoAWCeWpJayAC81C9u2/VdRvgGqnetYtYQSArGKYLRhBHlZ72cGULW
-	PTv7QgIsw0tzjEIsJi1sR5/MdfMEtYJaxSWh5hXph15TFKKXlVsQs7MnmewTioqSLdNCsMsyeVF
-	CASRUCGs=
-X-Google-Smtp-Source: AGHT+IF6Vz0gCa5XLjA6WsMMc9U4S/ofS/vlbDvCV4hoA9DNJ2ex3Jp7A+0DKEqmWTWUFP8908I9Cw==
-X-Received: by 2002:a05:622a:1a9d:b0:471:f9e7:5042 with SMTP id d75a77b69052e-474bc083cc3mr236149171cf.14.1741026793293;
-        Mon, 03 Mar 2025 10:33:13 -0800 (PST)
-Received: from LQ3V64L9R2 (ool-44c5a22e.dyn.optonline.net. [68.197.162.46])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-474721bf582sm61201591cf.37.2025.03.03.10.33.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 10:33:12 -0800 (PST)
-Date: Mon, 3 Mar 2025 13:33:10 -0500
-From: Joe Damato <jdamato@fastly.com>
-To: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-	mkarsten@uwaterloo.ca, gerhard@engleder-embedded.com,
-	jasowang@redhat.com, xuanzhuo@linux.alibaba.com, mst@redhat.com,
-	leiyang@redhat.com,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	"open list:VIRTIO CORE AND NET DRIVERS" <virtualization@lists.linux.dev>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next v5 3/4] virtio-net: Map NAPIs to queues
-Message-ID: <Z8X15hxz8t-vXpPU@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-	mkarsten@uwaterloo.ca, gerhard@engleder-embedded.com,
-	jasowang@redhat.com, xuanzhuo@linux.alibaba.com, mst@redhat.com,
-	leiyang@redhat.com,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	"open list:VIRTIO CORE AND NET DRIVERS" <virtualization@lists.linux.dev>,
-	open list <linux-kernel@vger.kernel.org>
-References: <20250227185017.206785-1-jdamato@fastly.com>
- <20250227185017.206785-4-jdamato@fastly.com>
- <20250228182759.74de5bec@kernel.org>
- <Z8Xc0muOV8jtHBkX@LQ3V64L9R2>
- <Z8XgGrToAD7Bak-I@LQ3V64L9R2>
+        d=1e100.net; s=20230601; t=1741026814; x=1741631614;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=X7t0CacmHUpcpJhGItcuM8Xnn6Mn1r21B9z4Wx+RLZY=;
+        b=IdkFALaLgLXc0Yx/+1Yr8dBYOE+7iutIpEqRz68lavobqhTzkCpA1LcrmGYyH3Ytc8
+         pr1pQ1VSOFa3rAbZEZefQFb77iic9bW9KplxF2Qgrxdiaf45NpXKlEpBT6MX4sMXxh1W
+         Jv9h0gkHb5vCqS+gG4yIYSNKIFtc0MpfJw4we7CLu/1j7wZwGbjP2adiT5/bzm4AxedH
+         mZVuL2J0p2cfwn48u4ZabOfC2WiADrFCpxihc2TFFHI/zmT9Wi67LrLYADmkDXV5R2Nm
+         hXPkEHsjc7/uaKMXfqcn0JvinsZyOJpsn3jBMdTMulumvaoospD/F65WtasJhtpE0QyJ
+         OGBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV0mBS006O35I8OBx/9tu+VOcpbiCFs8ABJx++4CGMkriB4x+pgvTpHswGTIC6QKOeQmziumabeMjDgfTxE@vger.kernel.org, AJvYcCXm6igdPIi+BqZS7djAmx+5PiUwJJ6BLBm3Xjo0tI2NOMiItZp2V+wUREdSVsgidNvtRNqBRk4mUHNY10e5@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNh8zO0TycRwOt8dkYlhqwujpgWoIu8eRksdlhCg2WUGGw1nSj
+	IB5Ol+VzqwQEGl0h1ZrVw0gv6mBuiR5togmswdW3HOlyEPfqTcNqmtqMU6s5ihpwd59PlxrIrme
+	lYisnsNy3pXZ14u/iMLf8NqND46x2KEV6ayI=
+X-Gm-Gg: ASbGnctkMTwo/jPZ/midtQVPh+STo+XxjDWr4weMpymZxLKKqXapt4ZpWFXAvWKrFoL
+	t/R0bpj2M0nIBtNh8GMW+f+Vf+KMtI3oABMVrXRtoLuZA1pfngyHeKl24A2pF45fUjIwwFAAr+c
+	uxKqPbqW+JVRSndB+XlFAEY8Wa
+X-Google-Smtp-Source: AGHT+IEM5mh0zNC9LcJPthDBH8OtjUn9hOrzsAtZn9C2/MmE4wA9PPmrl3l+s6WJD5vVHHM3HoiTsAdh/3kjR7WGsu4=
+X-Received: by 2002:a17:907:1b22:b0:abf:215b:4ac6 with SMTP id
+ a640c23a62f3a-abf26859335mr1942194366b.53.1741026813516; Mon, 03 Mar 2025
+ 10:33:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8XgGrToAD7Bak-I@LQ3V64L9R2>
+References: <qsehsgqnti4csvsg2xrrsof4qm4smhdhv6s4v4twspf76bp3jo@2mpz5xtqhmgt>
+ <c63cc8e8-424f-43e2-834f-fc449b24787e@amd.com> <20250227211229.GD25639@redhat.com>
+ <06ae9c0e-ba5c-4f25-a9b9-a34f3290f3fe@amd.com> <20250228143049.GA17761@redhat.com>
+ <20250228163347.GB17761@redhat.com> <03a1f4af-47e0-459d-b2bf-9f65536fc2ab@amd.com>
+ <CAGudoHHA7uAVUmBWMy4L50DXb4uhi72iU+nHad=Soy17Xvf8yw@mail.gmail.com>
+ <CAGudoHE_M2MUOpqhYXHtGvvWAL4Z7=u36dcs0jh3PxCDwqMf+w@mail.gmail.com>
+ <741fe214-d534-4484-9cf3-122aabe6281e@amd.com> <3jnnhipk2at3f7r23qb7fvznqg6dqw4rfrhajc7h6j2nu7twi2@wc3g5sdlfewt>
+ <CAHk-=whuLzj37umjCN9CEgOrZkOL=bQPFWA36cpb24Mnm3mgBw@mail.gmail.com>
+In-Reply-To: <CAHk-=whuLzj37umjCN9CEgOrZkOL=bQPFWA36cpb24Mnm3mgBw@mail.gmail.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Mon, 3 Mar 2025 19:33:20 +0100
+X-Gm-Features: AQ5f1Jp3WPGBTVafA5aGFgB3i5XGo3XKvFMo6SCtl6TJl7LgydPyRLVBfSK-ltE
+Message-ID: <CAGudoHG2PuhHte91BqrnZi0VbhLBfZVsrFYmYDVrmx4gaLUX3A@mail.gmail.com>
+Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still full
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: K Prateek Nayak <kprateek.nayak@amd.com>, "Sapkal, Swapnil" <swapnil.sapkal@amd.com>, 
+	Oleg Nesterov <oleg@redhat.com>, Manfred Spraul <manfred@colorfullife.com>, 
+	Christian Brauner <brauner@kernel.org>, David Howells <dhowells@redhat.com>, 
+	WangYuli <wangyuli@uniontech.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	"Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>, Neeraj.Upadhyay@amd.com, Ananth.narayan@amd.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 03, 2025 at 12:00:10PM -0500, Joe Damato wrote:
-> On Mon, Mar 03, 2025 at 11:46:10AM -0500, Joe Damato wrote:
-> > On Fri, Feb 28, 2025 at 06:27:59PM -0800, Jakub Kicinski wrote:
-> > > On Thu, 27 Feb 2025 18:50:13 +0000 Joe Damato wrote:
-> > > > @@ -2870,9 +2883,15 @@ static void refill_work(struct work_struct *work)
-> > > >  	for (i = 0; i < vi->curr_queue_pairs; i++) {
-> > > >  		struct receive_queue *rq = &vi->rq[i];
-> > > >  
-> > > > +		rtnl_lock();
-> > > >  		virtnet_napi_disable(rq);
-> > > > +		rtnl_unlock();
-> > > > +
-> > > >  		still_empty = !try_fill_recv(vi, rq, GFP_KERNEL);
-> > > > +
-> > > > +		rtnl_lock();
-> > > >  		virtnet_napi_enable(rq);
-> > > > +		rtnl_unlock();
-> > > 
-> > > Looks to me like refill_work is cancelled _sync while holding rtnl_lock
-> > > from the close path. I think this could deadlock?
-> > 
-> > Good catch, thank you!
-> > 
-> > It looks like this is also the case in the failure path on
-> > virtnet_open.
-> > 
-> > Jason: do you have any suggestions?
-> > 
-> > It looks like in both open and close disable_delayed_refill is
-> > called first, before the cancel_delayed_work_sync.
-> > 
-> > Would something like this solve the problem?
-> > 
-> > diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> > index 76dcd65ec0f2..457115300f05 100644
-> > --- a/drivers/net/virtio_net.c
-> > +++ b/drivers/net/virtio_net.c
-> > @@ -2880,6 +2880,13 @@ static void refill_work(struct work_struct *work)
-> >         bool still_empty;
-> >         int i;
-> > 
-> > +       spin_lock(&vi->refill_lock);
-> > +       if (!vi->refill_enabled) {
-> > +               spin_unlock(&vi->refill_lock);
-> > +               return;
-> > +       }
-> > +       spin_unlock(&vi->refill_lock);
-> > +
-> >         for (i = 0; i < vi->curr_queue_pairs; i++) {
-> >                 struct receive_queue *rq = &vi->rq[i];
-> >
-> 
-> Err, I suppose this also doesn't work because:
-> 
-> CPU0                       CPU1
-> rtnl_lock                  (before CPU0 calls disable_delayed_refill) 
->   virtnet_close            refill_work
->                              rtnl_lock()
->   cancel_sync <= deadlock
-> 
-> Need to give this a bit more thought.
+On Mon, Mar 3, 2025 at 7:11=E2=80=AFPM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> But I don't like the "add separate full/empty fields that duplicate
+> things", just to have those written always under the lock, and then
+> loaded as one op.
+>
+> I think there are better models.
+>
+> So I think I'd prefer the "add the barrier" model.
+>
 
-How about we don't use the API at all from refill_work?
+I was trying to avoid having to reason about the fences, I would argue
+not having to worry about this makes future changes easier to make.
 
-Patch 4 adds consistent NAPI config state and refill_work isn't a
-queue resize maybe we don't need to call the netif_queue_set_napi at
-all since the NAPI IDs are persisted in the NAPI config state and
-refill_work shouldn't change that?
+> We could also possibly just make head/tail be 16-bit fields, and then
+> read things atomically by reading them as a single 32-bit word. That
+> would expose the (existing) alpha issues more, since alpha doesn't
+> have atomic 16-bit writes, but I can't find it in myself to care. I
+> guess we could make it be two aligned 32-bit fields on alpha, and just
+> use 64-bit reads.
 
-In which case, we could go back to what refill_work was doing
-before and avoid the problem entirely.
+I admit I did not think of this, pretty obvious now that you mention it.
 
-What do you think ?
+Perhaps either Prateek or Swapnil would be interested in coding this up?
 
-diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index 76dcd65ec0f2..d6c8fe670005 100644
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -2883,15 +2883,9 @@ static void refill_work(struct work_struct *work)
-        for (i = 0; i < vi->curr_queue_pairs; i++) {
-                struct receive_queue *rq = &vi->rq[i];
+Ultimately the crux of the issue is their finding.
 
--               rtnl_lock();
--               virtnet_napi_disable(rq);
--               rtnl_unlock();
--
-+               napi_disable(&rq->napi);
-                still_empty = !try_fill_recv(vi, rq, GFP_KERNEL);
--
--               rtnl_lock();
--               virtnet_napi_enable(rq);
--               rtnl_unlock();
-+               virtnet_napi_do_enable(rq->vq, &rq->napi);
+>
+> I just generally dislike redundant information in data structures.
+> Then you get into nasty cases where some path forgets to update the
+> redundant fields correctly. So I'd really just prefer the existing
+> model, just with being careful about this case.
+>
 
-                /* In theory, this can happen: if we don't get any buffers in
-                 * we will *never* try to fill again.
+The stock code already has a dedicated routine to advance the tail,
+adding one for head (instead of an ad-hoc increment) is borderline
+just clean up.
+
+Then having both recalc the state imo does not add any bug-pronness [I
+did ignore the CONFIG_WATCH_QUEUE case though] afaics.
+
+Even so, per the above, that's a side note.
+
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
