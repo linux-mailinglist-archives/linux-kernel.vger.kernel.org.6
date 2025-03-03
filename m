@@ -1,155 +1,121 @@
-Return-Path: <linux-kernel+bounces-542830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62711A4CE3E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:25:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69621A4CE46
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:26:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D8131739D3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:25:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93D23173B24
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:26:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED4F423959E;
-	Mon,  3 Mar 2025 22:24:45 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEBE11EF082;
-	Mon,  3 Mar 2025 22:24:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCFCE235BE4;
+	Mon,  3 Mar 2025 22:26:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f+ibnLvJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34AA611CA9;
+	Mon,  3 Mar 2025 22:26:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741040685; cv=none; b=CyKinLxQPAlsxgIYmgOQb+c19+hrURwxtfx1jHMdIzZ1I/iGAwhKprxO0PHOgu4o2sd+i3ixWh3MdByxTdSCtxPJ0FyiTpaxdyLtpQz1bHBhANCVLEqXSWifS9lLeRuFLjdqK7r7stZ7FjqfoKzDRBu52FRqpKyRzQPLKUbPE5s=
+	t=1741040792; cv=none; b=EILe5wXf/CvcERPXJHIywyveCgJV8IaQkQkn8V+OU7wQbs9/MtmnD9ySAh/AKR/VAFRd7xtrXj2lTFkZ1hpW2/xgXnSVA2qzPqu0wYRoFZIlC0Z0L/hfPhi+1gZVjxfEhIsl8wk/P/QodYShWRaFaCvRdQxsui9N3j+FQso3P0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741040685; c=relaxed/simple;
-	bh=ed3v7D8g5+zZxn49ZWB9w7aSJdszoLWmToOe3eQ8y98=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UBLH/YZ3L7iEbWq0CFHCzLe6tLl42IXiD0yZhEcP1wZbt1aXB5yQUPCzvZKDlVLbbkg/i4toqM2NCEoYrEG7kdWJwXc23DuM7uTdGmMIM2BorywLSHkabfd5IeffOwm48TwoEcHMks67mGNJhHCqYATbxtalSeu6eRZBxgIG8eI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BEBA71063;
-	Mon,  3 Mar 2025 14:24:55 -0800 (PST)
-Received: from [10.57.76.116] (unknown [10.57.76.116])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 37C453F673;
-	Mon,  3 Mar 2025 14:24:40 -0800 (PST)
-Message-ID: <f18607ca-30dc-43de-be77-fec69968aeec@arm.com>
-Date: Mon, 3 Mar 2025 22:24:36 +0000
+	s=arc-20240116; t=1741040792; c=relaxed/simple;
+	bh=sKsO4dNLQ1E9U/qUtl2CADnzjPDNXl7y7zE7Zo3mB9Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QlUEoUOa5Uu7FxjAu8dU04nEzcDKdmXSIMivMGaY98ge25XhnNxU48a8E0N4HOTUFBm/ojMUzKUEKwKqXjyUyw5ONEHwCE6CrW0VHS0Dnk2949T406e/Ffx4dPjfy77BqUEtk9vb5VNrCExF56MJ0aBcgumO4zTPx1iA35z43h4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f+ibnLvJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6218FC4CED6;
+	Mon,  3 Mar 2025 22:26:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741040792;
+	bh=sKsO4dNLQ1E9U/qUtl2CADnzjPDNXl7y7zE7Zo3mB9Y=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=f+ibnLvJeJdSqITmAtD7ZTQzbfIlw7udhfAPNZomwBr0qMlAT2DYQhXLdAV+k6O/K
+	 FVyIdiieTcBPKcOjf/Je3AB5ivuVQvwau8Q6AWKErV1sVfc0wEFngLb8NiakU1wu3P
+	 P+Htna4H05lPze5EM+oUVd0r24/ZoZ8vWQVbqtiltE/A0w3tW9twMq1PjE9aQAnNji
+	 S6xS3kYOSSqOyU1Cvvb26cwwRCKhXKZKnvFbbMNlnOBwone4PfOoTdba0yXeUEEsuz
+	 SK0nEwC7as5eMraMObpocHGKJqQNaWJVHIUq05D8W9SFTwK0PrgvH1bjeKiekT5acy
+	 YWVxxP55GamDQ==
+From: cel@kernel.org
+To: jlayton@kernel.org,
+	neilb@suse.de,
+	okorniev@redhat.com,
+	Dai.Ngo@oracle.com,
+	tom@talpey.com,
+	trondmy@kernel.org,
+	anna@kernel.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	Long Li <leo.lilong@huawei.com>
+Cc: Chuck Lever <chuck.lever@oracle.com>,
+	linux-nfs@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	lonuxli.64@gmail.com
+Subject: Re: [PATCH 0/2] sunrpc: Fix issues with cache_detail nextcheck updates
+Date: Mon,  3 Mar 2025 17:26:27 -0500
+Message-ID: <174104077139.32322.8702101289480612960.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20250301064836.3285906-1-leo.lilong@huawei.com>
+References: <20250301064836.3285906-1-leo.lilong@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cpuidle: psd: add power sleep demotion prevention for
- fast I/O devices
-To: Colin Ian King <colin.king@intel.com>, Jens Axboe <axboe@kernel.dk>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, linux-block@vger.kernel.org,
- linux-pm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-References: <33882f284ac6e6d1ec766ca4bb2f3b88@intel.com>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <33882f284ac6e6d1ec766ca4bb2f3b88@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 3/3/25 16:43, Colin Ian King wrote:
-> Modern processors can drop into deep sleep states relatively quickly
-> to save power. However, coming out of deep sleep states takes a small
-> amount of time and this is detrimental to performance for I/O devices
-> such as fast PCIe NVME drives when servicing a completed I/O
-> transactions.
-> 
-> Testing with fio with read/write RAID0 PCIe NVME devices on various
-> modern SMP based systems (such as 96 thead Granite Rapids Xeon 6741P)
-> has shown that on 85-90% of read/write transactions issued on a CPU
-> are completed by the same CPU, so it makes some sense to prevent the
-> CPU from dropping into a deep sleep state to help reduce I/O handling
-> latency.
+From: Chuck Lever <chuck.lever@oracle.com>
 
-For the platform you tested on that may be true, but even if we constrain
-ourselves to pci-nvme there's a variety of queue/irq mappings where
-this doesn't hold I'm afraid.
+On Sat, 01 Mar 2025 14:48:34 +0800, Long Li wrote:
+> During memory fault injection testing with nfsd restart, I encountered an
+> issue where NFS client threads would hang for around 1800 seconds. Analysis
+> showed that nfsd threads were blocked for approximately 1800 seconds with
+> the following scenario:
+> 
+>   PID: 3941444  TASK: ffff0000cf170040  CPU: 0    COMMAND: "nfsd"
+>    #0 [ffff80008d387120] __switch_to at ffffc4ef3c7a6af0
+>    #1 [ffff80008d387170] __schedule at ffffc4ef3c7a73a4
+>    #2 [ffff80008d3872c0] schedule at ffffc4ef3c7a8074
+>    #3 [ffff80008d387300] schedule_timeout at ffffc4ef3c7b7b60
+>    #4 [ffff80008d387470] wait_for_common at ffffc4ef3c7a944c
+>    #5 [ffff80008d387560] wait_for_completion_interruptible_timeout at ffffc4ef3c7a9630
+>    #6 [ffff80008d387570] cache_wait_req at ffffc4ef3c6804dc
+>    #7 [ffff80008d3876f0] cache_check at ffffc4ef3c680740
+>    #8 [ffff80008d3877d0] exp_find_key at ffffc4ef3b6e293c
+>    #9 [ffff80008d387910] exp_find at ffffc4ef3b6e2ccc
+>   #10 [ffff80008d387980] rqst_exp_find at ffffc4ef3b6e445c
+>   #11 [ffff80008d3879e0] exp_pseudoroot at ffffc4ef3b6e4984
+>   #12 [ffff80008d387a90] nfsd4_putrootfh at ffffc4ef3b6f8720
+>   #13 [ffff80008d387ab0] nfsd4_proc_compound at ffffc4ef3b6fe4cc
+>   #14 [ffff80008d387b70] nfsd_dispatch at ffffc4ef3b6cf428
+>   #15 [ffff80008d387c30] svc_process_common at ffffc4ef3c66235c
+>   #16 [ffff80008d387d20] svc_process at ffffc4ef3c6652f8
+>   #17 [ffff80008d387d90] svc_recv at ffffc4ef3c68c5d0
+>   #18 [ffff80008d387e10] nfsd at ffffc4ef3b6cb968
+>   #19 [ffff80008d387e60] kthread at ffffc4ef3ad4aca4
+> 
+> [...]
 
-> 
-> This commit introduces a simple, lightweight and fast power sleep
-> demotion mechanism that provides the block layer a way to inform the
-> menu governor to prevent a CPU from going into a deep sleep when an
-> I/O operation is requested. While it is true that some I/Os may not
+Applied to nfsd-testing, thanks!
 
-s/requested/completed is the full truth, isn't it?
+[1/2] sunrpc: update nextcheck time when adding new cache entries
+      commit: c2689130933a68ee9d6bca39ca5c3c7741279ea3
+[2/2] sunrpc: fix race in cache cleanup causing stale nextcheck time
+      commit: 48a9b0e38470d7f16625dbf51f85d0fb7315b15b
 
-> be serviced on the same CPU that issued the I/O request and hence
-> is not 100% perfect the mechanism does work well in the vast majority
-> of I/O operations and there is very small overhead with the sleep
-> demotion prevention.
-> 
-> Test results on a 96 thread Xeon 6741P with a 6 way RAID0 PCIe NVME md
-> array using fio 3.35 performing random read and read-write test on a
-> 512GB file with 8 concurrent I/O jobs. Tested with the NHM_C1_AUTO_DEMOTE
-> bit set in MSR_PKG_CST_CONFIG_CONTROL set in the BIOS.
-> 
-> Test case: random reads, results based on geometic mean of results from
-> 5 test runs:
->            Bandwidth         IO-ops   Latency   Bandwidth
->            read (bytes/sec)  per sec    (ns)    % Std.Deviation
-> Baseline:  21365755610	     20377     390105   1.86%
-> Patched:   25950107558       24748     322905   0.16%
+--
+Chuck Lever
 
-What is the baseline?
-Do you mind trying with Rafael's recently posted series?
-Given the IOPS I'd expect good results from that alone already.
-https://lore.kernel.org/lkml/1916668.tdWV9SEqCh@rjwysocki.net/
-
-(Happy to see teo as comparison too, which you don't modify).
-
-> 
-> Read rate improvement of ~21%.
-> 
-> Test case: random read+writes, results based on geometic mean of results
-> from 5 test runs:
-> 
->            Bandwidth         IO-ops   Latency   Bandwidth
->            read (bytes/sec)  per sec    (ns)    % Std.Deviation
-> Baseline:   9937848224        9477     550094   1.04%
-> Patched:   10502592508       10016     509315   1.85%
-> 
-> Read rate improvement of ~5.7%
-> 
->            Bandwidth         IO-ops   Latency   Bandwidth
->            write (bytes/sec) per sec    (ns)    % Std.Deviation
-> Baseline:   9945197656        9484     288933   1.02%
-> Patched:   10517268400       10030     287026   1.85%
-> 
-> Write rate improvement of ~5.7%
-> 
-> For kernel builds, where all CPUs are fully loaded no perfomance
-> improvement or regressions were observed based on the results of
-> 5 kernel build test runs.
-> 
-> By default, CPU power sleep demotion blocking is set to run
-> for 3 ms on I/O requests, but this can be modified using the
-> new sysfs interface:
-> 
->   /sys/devices/system/cpu/cpuidle/psd_cpu_lat_timeout_ms
-
-rounding up a jiffie sure is a heavy price to pay then.
-
-> 
-> setting this to zero will disabled the mechanism.
-> 
-> Signed-off-by: Colin Ian King <colin.king@intel.com>
-> ---
->  block/blk-mq.c                   |   2 +
->  drivers/cpuidle/Kconfig          |  10 +++
->  drivers/cpuidle/Makefile         |   1 +
->  drivers/cpuidle/governors/menu.c |   4 +
->  drivers/cpuidle/psd.c            | 123 +++++++++++++++++++++++++++++++
->  include/linux/cpuidle_psd.h      |  32 ++++++++
->  6 files changed, 172 insertions(+)
->  create mode 100644 drivers/cpuidle/psd.c
->  create mode 100644 include/linux/cpuidle_psd.h
-> 
 
