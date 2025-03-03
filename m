@@ -1,75 +1,59 @@
-Return-Path: <linux-kernel+bounces-541909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39503A4C349
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:22:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DA1BA4C347
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:22:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F136A3A6036
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:21:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 347421886557
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:22:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D668C2139D8;
-	Mon,  3 Mar 2025 14:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6A7D204081;
+	Mon,  3 Mar 2025 14:22:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kL0McG5C"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PaMyLW42"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F90212D6C;
-	Mon,  3 Mar 2025 14:21:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47ECA12FF69;
+	Mon,  3 Mar 2025 14:22:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741011718; cv=none; b=FVP8lfhtPzcZaST+oHIdoVcUTHG/j4sCfo2zDfaQaS7ZDr+aO/TrgvMmQiMdlXT6KvkojHcfgjfLpdTd700Rvtrl+gNGA2mQsLW85TqfOy/wcURIckgUdW7SS+qlX4TJxjkvQOEX3bXYOiSdfuY8ELsYwCC2b5EtxpM5d5pA65Q=
+	t=1741011728; cv=none; b=inyR7XDnr5VZYhQnQL0sObuFIq59lCB8x69JAioByaRMJURsN1DUgIDcCRCGQXBnXWQkF8nj3XI6wrTjQHdcbPKFcsoIgWi/wpzi3LXWnDnW2+MSQnsYrHUJoCf8ZSYfRE905fvcV1o+9J6BiNPfiVZgQjoN8+l6WTdz8VsS78A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741011718; c=relaxed/simple;
-	bh=UuYUSQSBgPnBRJILEBpz2qvKXWkThHolQP9J8kqJKhs=;
+	s=arc-20240116; t=1741011728; c=relaxed/simple;
+	bh=XB9K6qeId7bK+escV9osJW7r2f2TzOQgiSy/hD2k3Gg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TQISrLZFqkRL4BF63FHzouN3C5BTi300fVQP2tJ6nFkT1XqB1EfrDYcqs5qry26Cgpc2HoSSejfoO8UD6EDXwM4dLHH8wZ+Krf3z9kHIA7X4qx4I0o1/IhecRRWf+dVgBFVIQes5r0csQtzodTza68GVvEb9in/W0desLrdF8C0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kL0McG5C; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741011717; x=1772547717;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=UuYUSQSBgPnBRJILEBpz2qvKXWkThHolQP9J8kqJKhs=;
-  b=kL0McG5C1/RZFJr009onubg0vy9THZRLxnuN5AAzRBUbnXnC16E2F7Qu
-   EcOAehjI/Y2+qM3SFJOnuS9csVyEv2fPxJ7D1GjVq0TYcNBugapZtGt3/
-   vSXl1WYOkkQm+SdCZ3qHuaDGjQ9l1xm8qNvWyzGa2TIpeJzW2bzRQsBbJ
-   XrIGkVjyq54xgio6aUtZ9mk06JUJQCgQotSUizQfGN0V67L+ZNc/blM6f
-   Ud2yb7izrl3vFtEpqTWsxXNieWw9dnONen/4pTDYo4NQMt+OQFO3MlnBJ
-   u1GUhcAEClVWwS4++Dt0XD7/8Uk25MJM2pvxLw46FmgiagGW+yjJtBTfG
-   A==;
-X-CSE-ConnectionGUID: XevJ/ne5RSGfcj/3OJb9vA==
-X-CSE-MsgGUID: e3LQw/vZRa67aZbNh/4e0Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="42008349"
-X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="42008349"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 06:21:56 -0800
-X-CSE-ConnectionGUID: zw0iAN2PRIWsq4jDZOaKhQ==
-X-CSE-MsgGUID: +l97LuGnQmCCqjeqFlfHqA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="118721988"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 06:21:54 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tp6g4-0000000Gput-1Gyb;
-	Mon, 03 Mar 2025 16:21:52 +0200
-Date: Mon, 3 Mar 2025 16:21:52 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Raag Jadav <raag.jadav@intel.com>, linus.walleij@linaro.org,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] pinctrl: intel: drop repeated config dependency
-Message-ID: <Z8W7AIwN3AiurzqM@smile.fi.intel.com>
-References: <20250303135506.323533-1-raag.jadav@intel.com>
- <20250303140332.GZ3713119@black.fi.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XleN+ZiWeOiAhDmhCwdsnf9X8vPC2CC3faQF007bBFVrQvQmuTrcevcILg1RINxs3276E8GfrhRfY/vUUH/Tl3V2P2t9AL2sh82yHs2cs1XFt4wLoZ8OZFTfyT5ShmMhqR26zLUdFa00kmtcVVKHS+rCmNoORn3Mm586NEM/848=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PaMyLW42; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AFDDC4CED6;
+	Mon,  3 Mar 2025 14:22:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741011727;
+	bh=XB9K6qeId7bK+escV9osJW7r2f2TzOQgiSy/hD2k3Gg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PaMyLW42vY10uucrvQbMUMgTHjZ4C+KEy0vQnosVSEb3Cy/lAk7QJ+BDTT8v9MggD
+	 2y89ZQSZ+Of+HHJs3SpwZT8y7o8+tEc1tgMxy3Nlc+p9gI4bXTXQMS/xK3J375a/hL
+	 PiHYYPGUT/kHbY2H4kCTK83N/eKj76iE9qz/4EYesvPafDG3/rPKe7zXMilG4X1NBo
+	 vr90aqDdO3KkJC+TKhpYjUM6O+rls5IAlnBuioDN8RmPjRoyRCN2+sJGQ46f2IliJs
+	 Fl0OqqhFWNWOtsCVfSdrUAGuNmgvD7IT/rVJh6kDryr6nZuu7Vecawq7WZAjCAlT3v
+	 oVE5468ECkXbw==
+Date: Mon, 3 Mar 2025 08:22:06 -0600
+From: Rob Herring <robh@kernel.org>
+To: Sai Krishna Musham <sai.krishna.musham@amd.com>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+	manivannan.sadhasivam@linaro.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, cassel@kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	michal.simek@amd.com, bharat.kumar.gogada@amd.com,
+	thippeswamy.havalige@amd.com
+Subject: Re: [PATCH v3 1/2] dt-bindings: PCI: xilinx-cpm: Add reset-gpios for
+ PCIe RP PERST#
+Message-ID: <20250303142206.GA1760319-robh@kernel.org>
+References: <20250227042454.907182-1-sai.krishna.musham@amd.com>
+ <20250227042454.907182-2-sai.krishna.musham@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,23 +62,83 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250303140332.GZ3713119@black.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20250227042454.907182-2-sai.krishna.musham@amd.com>
 
-On Mon, Mar 03, 2025 at 04:03:32PM +0200, Mika Westerberg wrote:
-> On Mon, Mar 03, 2025 at 07:25:06PM +0530, Raag Jadav wrote:
-> > We already have ACPI dependency for Intel pinctrl menu. No need to
-> > repeat it.
-> > 
-> > Signed-off-by: Raag Jadav <raag.jadav@intel.com>
+On Thu, Feb 27, 2025 at 09:54:53AM +0530, Sai Krishna Musham wrote:
+> Introduce `reset-gpios` property to enable GPIO-based control of
+> the PCIe RP PERST# signal, generating assert and deassert signals.
 > 
-> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Traditionally, the reset was managed in hardware and enabled during
+> initialization. With this patch set, the reset will be handled by the
+> driver. Consequently, the `reset-gpios` property must be explicitly
+> provided to ensure proper functionality.
+> 
+> Signed-off-by: Sai Krishna Musham <sai.krishna.musham@amd.com>
+> ---
+> This patch depends on the following patch series.
+> https://lore.kernel.org/all/20250217072713.635643-2-thippeswamy.havalige@amd.com/
+> 
+> Changes for v3:
+> - None
+> 
+> Changes for v2:
+> - Add define from include/dt-bindings/gpio/gpio.h for PERST# polarity
+> - Update commit message
+> ---
+>  .../devicetree/bindings/pci/xilinx-versal-cpm.yaml         | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml b/Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml
+> index b63a759ec2d7..6aaeb76f498b 100644
+> --- a/Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml
+> +++ b/Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml
+> @@ -33,6 +33,9 @@ properties:
+>        - const: cpm_csr
+>      minItems: 2
+>  
+> +  reset-gpios:
+> +    description: GPIO used as PERST# signal. Please refer to pci.txt.
 
-Pushed to my review and testing queue, thanks!
+Drop 'Please refer to pci.txt'. pci.txt or portions of it need to be 
+removed as schemas have replaced them.
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+> +
+>    interrupts:
+>      maxItems: 1
+>  
+> @@ -63,6 +66,7 @@ properties:
+>  required:
+>    - reg
+>    - reg-names
+> +  - reset-gpios
+>    - "#interrupt-cells"
+>    - interrupts
+>    - interrupt-map
+> @@ -75,6 +79,7 @@ unevaluatedProperties: false
+>  
+>  examples:
+>    - |
+> +    #include <dt-bindings/gpio/gpio.h>
+>  
+>      versal {
+>                 #address-cells = <2>;
+> @@ -99,6 +104,7 @@ examples:
+>                         reg = <0x0 0xfca10000 0x0 0x1000>,
+>                               <0x6 0x00000000 0x0 0x10000000>;
+>                         reg-names = "cpm_slcr", "cfg";
+> +                       reset-gpios = <&gpio1 38 GPIO_ACTIVE_LOW>;
+>                         pcie_intc_0: interrupt-controller {
+>                                 #address-cells = <0>;
+>                                 #interrupt-cells = <1>;
+> @@ -127,6 +133,7 @@ examples:
+>                               <0x06 0x00000000 0x00 0x1000000>,
+>                               <0x00 0xfce20000 0x00 0x1000000>;
+>                         reg-names = "cpm_slcr", "cfg", "cpm_csr";
+> +                       reset-gpios = <&gpio1 38 GPIO_ACTIVE_LOW>;
+>  
+>                         pcie_intc_1: interrupt-controller {
+>                                 #address-cells = <0>;
+> -- 
+> 2.44.1
+> 
 
