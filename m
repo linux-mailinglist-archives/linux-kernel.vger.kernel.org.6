@@ -1,101 +1,123 @@
-Return-Path: <linux-kernel+bounces-545179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BAE1A4EA03
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:53:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FAE7A4EB54
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:23:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5D5216131B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:49:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A377F8C63CA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:00:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35ED27C17C;
-	Tue,  4 Mar 2025 17:27:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CED22980A7;
+	Tue,  4 Mar 2025 17:40:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="WOZ908gj"
-Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WY3Bcvwq";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="weIS7mWu"
+Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF9D27EC78
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E186424C089
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.117
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741109251; cv=fail; b=eykA/q5K7TJynrX/NGxrlmg2H3eKvgsFT85yONJR+DpLmqbE2t3PoWasQxoIuYe7epvu6d8+EXAx46aGLOThoU3C86s1olg6iRHZbKyq8nSL4fr1JESSJFw6Hq3LqNXZIue2QNNaAMXnAQ/V5myTIOMlldUOh6OF4ywsQP2oDlo=
+	t=1741110024; cv=fail; b=qkPPg57XxXB9kByT4XLY+RXjBpcj+p8TeKCYyOzyx4w34t1yXhm6EgrO+2uBCg5O2js2nBO8pOf2ggi83uVa7egWBPD32RTtlM8SJPEFcPbNrkZvx7KLv800QS6D934VOMdxjNfqc+bdkn9cpu6RpnidVDThWNJVct6+N8a2EMM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741109251; c=relaxed/simple;
-	bh=ni5SGlo5xgdJhxHcTY124nLqtYOiHKk1Lf1qmfk753M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZBEbDtbS34spiQi/QTvMcbqb1mQuwjGFxWSWFwFFikFhPqRJMrMM3ycTFZAk6z7RSVx8HNjoG1zay92zahvdokF14fRaE/yulKJflG2LRS0K4//9YijKLFESfiFVqVy1J0/G1QkyY6s59P+FKbhFzn6LZ2/RMfb9L7RlIIJQuds=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=WOZ908gj reason="signature verification failed"; arc=none smtp.client-ip=148.251.105.195; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; arc=fail smtp.client-ip=160.75.25.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	s=arc-20240116; t=1741110024; c=relaxed/simple;
+	bh=iJT3Z7BK5OQVZ/ql/mi8ZIHEITXLoosb+AhRIs7vzt8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a0rKXWjtsM5esU+S91EIpf2XcUnBqzh3WTzA8JEBFwpuzphciRWEJB5nvS/BTLK44602UkjbuEGMrEmV2Mg2t0/EHsZtyOp0ks7dLARfiLP+grVZ0hekcOPJMhv8WYg4ofDyf+DVYyoc0Jyi6JQgNHGMhGhiiGekacjp2HmITmo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linutronix.de; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WY3Bcvwq reason="signature verification failed"; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=weIS7mWu; arc=none smtp.client-ip=193.142.43.55; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; arc=fail smtp.client-ip=160.75.25.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
-Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
+Received: from lesvatest1.cc.itu.edu.tr (unknown [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id BEA4840F1CEA
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:27:27 +0300 (+03)
+	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id F063840D1F53
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:40:20 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6fbM4DCjzG09h
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:23:43 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6fnN3myczG0Xp
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:32:24 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id E53EC42745; Tue,  4 Mar 2025 18:23:34 +0300 (+03)
+	id 581704273F; Tue,  4 Mar 2025 18:32:09 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=WOZ908gj
-X-Envelope-From: <linux-kernel+bounces-541505-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WY3Bcvwq;
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=weIS7mWu
+X-Envelope-From: <linux-kernel+bounces-541511-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=WOZ908gj
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WY3Bcvwq;
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=weIS7mWu
 Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id 6D4F441C22
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:15:41 +0300 (+03)
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id F0FA12DCE0
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:15:40 +0300 (+03)
+	by le2 (Postfix) with ESMTP id 7AEB941B2E
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:11:16 +0300 (+03)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by fgw2.itu.edu.tr (Postfix) with SMTP id B317D2DCDE
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:11:15 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8438A3BBC9B
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:09:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79D2E7A3A4B
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:10:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01AF1F4288;
-	Mon,  3 Mar 2025 11:07:40 +0000 (UTC)
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B655A1F4C8A;
+	Mon,  3 Mar 2025 11:08:21 +0000 (UTC)
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 763FA1F419F;
-	Mon,  3 Mar 2025 11:07:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AE141F37C3
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 11:08:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741000058; cv=none; b=P8nFGNM0STUYfAPp1ThcsFjm4PRSJ2qvZJmdmzyB07yMGJ0Nqj+YJBNR7xSqWkuSIZyxignZia0Qsg1QhcIGu2i4n9KIrQDBEUVkqxPQOFGEvxLtV6QXtZ/WDKuC6R7EgG1VVz/Z8dIko8e2fK+6uYvZjoNy9Mho3OUIb7sZwZM=
+	t=1741000098; cv=none; b=VmYMIk7c/cISAhXuVXZuM5+Z+xE76T7s+BwKGTKCNQBfuAjB1WmZFyFWXrZVlZNUyZIA1KGEcoI03ftfPH6x4JyMlVdmPFf9pTsWMtprPKmfQDuvARPDQJGRF2qexS7FC8WIYyDCsyYnrAuiJcZfLcFWd5oiM4lF4zVK0W9Cr48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741000058; c=relaxed/simple;
-	bh=OolUssdw8s+8uO15m+LPb/DPhu9schaohRHKsJq3xZ4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uW0WAyHPfjUwAq4hPxHYQa4biaQOOiVYJGynGlzCVjbKiJwfp6Aw94vpOtUj9uw2XhwVCKKVlTU7OlY8k6t4Pw4NuZ1k3d+litkph67DbXyv9nYgazqMidLoJDStd3kyF/hbpUSmoZGMnyuf/2cJe3MZkg094m56bs3+3ImYFGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=WOZ908gj; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1741000054;
-	bh=OolUssdw8s+8uO15m+LPb/DPhu9schaohRHKsJq3xZ4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WOZ908gjvJNY5AxQz60w31MW//POXd5kyBYLJPfJ87zyLdTB6yH67yQzLaYUyHvn4
-	 eShfpI4106nlQsia5YLTCg77KfjSmeSK/aiZwGfZ2O99KD5QRbSq8Up5QqVPatfdiO
-	 UcJ0O4BDgWO8JR1CQulmRSofD5ud2GNBiSobqnvBkfFkRKYTT0tZWeNyf4ljQqXKvr
-	 q0deYDK67my6KHJBMEQ7ofn8NM/K7vm/nuG5yBuFJNmxDycYciGdlvcUjae83WHnH8
-	 ITy2W1sgLrqdn9XB44gH0xjLNV5JR8DBMaO+LDy64isf9K//lXojMAw6T3bkFKCbVN
-	 6mXp9MotsY5tQ==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8AAFA17E0881;
-	Mon,  3 Mar 2025 12:07:32 +0100 (CET)
-Message-ID: <3ab8b2a3-b9de-4c1e-b650-2892be8fc8c9@collabora.com>
-Date: Mon, 3 Mar 2025 12:07:32 +0100
+	s=arc-20240116; t=1741000098; c=relaxed/simple;
+	bh=sB62K8wzOoMq7iYIPZzQzh73bdFdBfG2WSbcYg3oeVw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nc/h0fBJOzm2gxz+9+g4uclDyPYWHq+T1PetUWofsfiPeRrCuGJoFp7i4oxHqORkiA/z2Bn06xOsOyeR9VpfCAlrs8e0M0sxibkb3Skc9xqJhAPO1NG1dZsAICcwT9fGs1sBBbcyuaF9ZYr/txFMYKnY9EmzoVGulHbWZxjQt88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WY3Bcvwq; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=weIS7mWu; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 3 Mar 2025 12:08:11 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741000095;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=L1D+CnraKUZCvWBX2D//PKQHKSwg0AKuuuoMcb0rgws=;
+	b=WY3BcvwqJfY3+izuTEss/XpsgEDHLEaBomUNon3BENJfcWrR9vFNFyQh+HE0Ng0LU3VJOV
+	cLOhtw/pgT7QEX5+3fnLR+WZEgEEcg3m057qcuRhitc8b9EcjiVXxSGEPipOy8QaGULV1n
+	FMbP+++SB7bbOd7OkE0/sSp4nfRb0wC4D7ObJZEGhDxnn4HFPIo8zIjBr/GQxQbrg2xuvt
+	5WE3Frj635yzpVKORmTTpXTuUOjDnfpWeDu2kxbXbUTDFlKe+gziyLP4TogcUvzKudOl5W
+	3x7WOYHzmQj0qAjeL1jcBmDr20VHXPT/KIhn4zIP8CiDsVlxRfYPzTlnFhKPRA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741000095;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=L1D+CnraKUZCvWBX2D//PKQHKSwg0AKuuuoMcb0rgws=;
+	b=weIS7mWuYbNKbYzEpacOGd7w6cmMf55sMrM4/Mj2I5nQ/q7V+crriNXkCP2mUClA/2cbkK
+	328REvnkCOCCwFDQ==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Mahesh J Salgaonkar <mahesh@linux.ibm.com>, Oliver O'Halloran <oohall@gmail.com>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>, linuxppc-dev@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] powerpc: Don't use %pK through printk
+Message-ID: <20250303115007-beb39d5b-71f5-458a-82fe-9e82c9ab720e@linutronix.de>
+References: <20250217-restricted-pointers-powerpc-v1-1-32c6bff63c9a@linutronix.de>
+ <ffd5dd44-babc-480a-b1bc-61bd7ff1e920@csgroup.eu>
+ <alpine.DEB.2.21.2502241840360.65342@angie.orcam.me.uk>
+ <20250225091250-eac544ad-4e5b-47f7-83fc-5212c720483a@linutronix.de>
+ <alpine.DEB.2.21.2502251654370.65342@angie.orcam.me.uk>
+ <20250226105757-e935ee3e-f70d-4e0e-83bb-61307722a186@linutronix.de>
+ <alpine.DEB.2.21.2502281957310.12637@angie.orcam.me.uk>
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -103,47 +125,114 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 05/20] ASoC: mediatek: mt6359-accdet: Handle
- hp-eint-high property
-To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>, Sen Chu <sen.chu@mediatek.com>,
- Sean Wang <sean.wang@mediatek.com>, Macpaul Lin <macpaul.lin@mediatek.com>,
- Lee Jones <lee@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>
-Cc: kernel@collabora.com, linux-sound@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-pm@vger.kernel.org
-References: <20250302-mt6359-accdet-dts-v2-0-5bd633ee0d47@collabora.com>
- <20250302-mt6359-accdet-dts-v2-5-5bd633ee0d47@collabora.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250302-mt6359-accdet-dts-v2-5-5bd633ee0d47@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.2502281957310.12637@angie.orcam.me.uk>
 Content-Transfer-Encoding: quoted-printable
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6fbM4DCjzG09h
+X-ITU-Libra-ESVA-ID: 4Z6fnN3myczG0Xp
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741713938.32053@zPZU58w5zvWeVQj5q1R7Vg
+X-ITU-Libra-ESVA-Watermark: 1741714716.44834@C58mo4HyuhCi7FtUN965AA
 X-ITU-MailScanner-SpamCheck: not spam
 
-Il 02/03/25 17:30, N=C3=ADcolas F. R. A. Prado ha scritto:
-> Now that the dt-binding was introduced, the property that governs the
-> eint polarity is a boolean called mediatek,hp-eint-high, while the
-> current code handles a u32 property called mediatek,eint-level-pol.
-> Update the driver handling accordingly.
+On Fri, Feb 28, 2025 at 08:15:02PM +0000, Maciej W. Rozycki wrote:
+> On Wed, 26 Feb 2025, Thomas Wei=DFschuh wrote:
 >=20
-> Signed-off-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
+> > > > By default, when kptr_restrict is set to 0, %pK behaves the same =
+as %p.
+> > > > The same happened for a bunch of other architectures and nobody s=
+eems
+> > > > to have noticed in the past.
+> > > > The symbol-relative pointers or pointer formats designed for back=
+traces,
+> > > > as notes by Christophe, seem to be enough.
+> > >=20
+> > >  I do hope so.
+> >=20
+> > As mentioned before, personally I am fine with using %px here.
+>=20
+>  Glad to hear!
+>=20
+> > The values are in the register dumps anyways and security sensitive d=
+eployments
+> > will panic on WARN(), making the information disclosure useless.
+>=20
+>  And even more so, I wasn't aware of this feature.  But this code doesn=
+'t=20
+> make use of the WARN() facility, it just prints at the heightened KERN_=
+ERR=20
+> priority.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
-ora.com>
+Indeed, I got confused with some other patches where WARN() is used mostl=
+y.
+This makes it a bit murkier.
 
+> > > > But personally I'm also fine with using %px, as my goal is to rem=
+ove the
+> > > > error-prone and confusing %pK.
+> > >=20
+> > >  It's clear that `%pK' was meant to restrict access to /proc files =
+and the=20
+> > > like that may be accessible by unprivileged users:
+> >=20
+> > Then let's stop abusing it. For something that is clear, it is
+> > misunderstood very often.
+>=20
+>  Absolutely, I haven't questioned the removal of `%pK', but the switch =
+to=20
+> `%p' rather than `%px' specifically for this single hunk of your patch.
 
+Sure. It would be great if one of the maintainers could confirm this pref=
+erence.
+
+> > > "
+> > > kptr_restrict
+> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > >=20
+> > > This toggle indicates whether restrictions are placed on
+> > > exposing kernel addresses via ``/proc`` and other interfaces.
+> > > "
+> > >=20
+> > > and not the kernel log, the information in which may come from rare=
+ events=20
+> > > that are difficult to trigger and hard to recover via other means. =
+ Sigh.=20
+> > > Once you've got access to the kernel log, you may as well wipe the =
+system=20
+> > > or do any other harm you might like.
+> >=20
+> > As I understand it, both the security and printk maintainers don't wa=
+nt the
+> > kernel log in general to be security sensitive and restricted.
+> > My goal here is not to push site-specific policy into the kernel but =
+make life
+> > easier for kernel developers by removing the confusing and error-pron=
+e %pK
+> > altogether.
+>=20
+>  Let me ask a different question then: is your approach to bulk-switch =
+all=20
+> instances of `%pK' to `%p' as the safe default and let other people fig=
+ure=20
+> out afterwards whether a different conversion specifier ought to be use=
+d=20
+> instead on a case-by-case basis and then follow up with another patch, =
+or=20
+> will you consider these alternatives right away?
+
+I am considering on a case-by-case basis. But mostly the decision is that=
+ %p is
+enough, because by default %pK has been the same as %p anyways.
+Also the current wave of replacements does not touch valid users of %pK.
+They will stay and later be replaced with a new and better API.
+
+> > Security is only one aspect.
+>=20
+>  I think it's important enough though for us to ensure we don't comprom=
+ise=20
+> it by chance.
+
+Agreed.
 
 
