@@ -1,98 +1,154 @@
-Return-Path: <linux-kernel+bounces-542117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F571A4C5D7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:56:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 726FEA4C5DC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:57:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECE283A599E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:55:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 617063A3270
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:56:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8E96214A8F;
-	Mon,  3 Mar 2025 15:55:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39300215047;
+	Mon,  3 Mar 2025 15:56:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aTiJSvLV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KIE69zE6"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D626ADD
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 15:55:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C0C2C181;
+	Mon,  3 Mar 2025 15:56:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741017334; cv=none; b=ehQV/eZsWwc9kR20dGzjZnucKS0Pua+WO6T5IfsPO7p/n4jMl6rqYlC8xoMl8mx22X/xzQZwGjr80mG2efMw103GIOdxOKG3Cz0ewtdAvlLQvrTljOAk9n/aykMy9h7eGx84obhOFcHIQMr3G7rZAZaL4QikL/hN1npCq2Nvn88=
+	t=1741017405; cv=none; b=aH562tFh7Ty0eDMLCU/BK5kLgI4KIT/0FTmJ7sVecsesbFqrFytA+6/6PSWAc35lOFQ5ZXpMQbydAGPYaWiUSOcMSGqrL43QHx6SXXVg5QunQtn5GuKf89VFwtfV2r1oEYtd5ecwbw+ZK9tPtJImMExBg82r42geUZbYYit54QA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741017334; c=relaxed/simple;
-	bh=uEsznxX/xMb286UGCWYy8SkfkN538iRw91fvaeob1J8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qV/lqa4AZOLOwXDI9QE552qBQFYa6/Av2yZ317gkTpqinWsN21kiHNAKAjc11xbH3qDC8te209vd0Mw95EAvpQHQ3DAE1dvZPL9WXaY8yPBBt5/CmD6Rr1k5hqoHSzpkGyVHRbxKNfCECl+j8/423Qi+c6rjBEiXVwmG3O9gQ/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aTiJSvLV; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741017331;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uEsznxX/xMb286UGCWYy8SkfkN538iRw91fvaeob1J8=;
-	b=aTiJSvLVId/YLHA+qglJvrVrfeYqV+0wShT/B4mH0sSVstIImF2Q4d5lsSdhM09Mn9VjeL
-	QZGS8/8mDZ+Z5SA3ArBGsohPob0siLMkg4yL0ibCEpG73XEzzMQuiUl7Ujtza6yWtNrejy
-	9Q2vI1v3/CHYpVP/c/Fiq+rsq7V+iBQ=
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
- [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-604-Vx-BSXj3M-OPZ-anoaffTA-1; Mon, 03 Mar 2025 10:55:25 -0500
-X-MC-Unique: Vx-BSXj3M-OPZ-anoaffTA-1
-X-Mimecast-MFC-AGG-ID: Vx-BSXj3M-OPZ-anoaffTA_1741017324
-Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-5e4c2618332so1059080a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 07:55:25 -0800 (PST)
+	s=arc-20240116; t=1741017405; c=relaxed/simple;
+	bh=7rIOQzW2Kx4RVLmTaUmrZOQBt31H5EfH7snaYz0R6E8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e+HI0rrkOxuPP0HgVYAuO3eNf5t14UVzHB8SLZzAsGjzZHkqICpY+xatOwqbPnLA6ktBVX2ENvwABMTVc9E9XD/pvDJLJw9N4t0DvWFrdzb2FOBR7sJKEWX0VIl4LnSRK+oFDbtzjmuAz5orwj2HYBGsUTyXItm55F4mSYHoDdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KIE69zE6; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43bb6b0b898so13986625e9.1;
+        Mon, 03 Mar 2025 07:56:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741017402; x=1741622202; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AX2K9dF2sVTuMfiFarbphoOThRbbt8l8n5tN+Dee20k=;
+        b=KIE69zE6k/eWOGReUFeMRNdIeBbwXkGtbbSZxlon6ZhCiLx7HhAKWqioh3uCeedEUo
+         O+91YyUUWc55vPb67T3vozBKI8M5qv/RhxTsm8nhCEfC8BavEvihPT7kFE9hLqgB16PT
+         HotdL+lyTbHi4g/LWjjElkE0UQ8XRlcg53ywW1Wt9vg6ZGsjmEFfG5xBInfn+kOgT5JY
+         d9lk46Om8b+qAIEq7FHQjykhOstOQQjO3BhLrk6dKl4XTsryqFeBSOLAVv1FCM5qVcMR
+         uHzzojcESONoeHIzQ7R0ttqQjKxMqJDEGMySY8FZOUgDQwNEZQV+4PvCfgmoTzqK48r1
+         SSfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741017324; x=1741622124;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1741017402; x=1741622202;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=uEsznxX/xMb286UGCWYy8SkfkN538iRw91fvaeob1J8=;
-        b=QGIfRSNfFJxvYTx+sN2qOVr0MdXRu+Skc5FBx23xeDMV9VlSJeCYnUEroXdDvHyxCC
-         rEZts0yQNvXtj+X+BGhJBDoxbdQtYTxXk+XycHie56jJ4zEvEgsJ7On8/2a+xL/ilXwK
-         nygr8r4TQe37BS3QQiynPsfz3b96LkYOEEoB8kcmzplGTXJTI+ZX4P9OXreWEUamweTL
-         nCVfUdyVlPLJ+VfdSUt2v0D8sBCsSVrqHY8Rg9PhAvqgs2O+Dz/2e/ztCIwwkqCpdnh7
-         VSqICFcVH/3uJhC2LVleS1FniDu2DBxcbNOQLQQmj6JuGmbfGO9nD0B9cXiGSbJriqst
-         rzdw==
-X-Forwarded-Encrypted: i=1; AJvYcCWio5yXe5c44WbpiZXD24v0hn5wIeM/j+a0xNiBsxQcIjcvzgLzaFf+rMyjEp/fSXzfBpNKlbKTdeiQBtg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrZNmVM8rpZwKlnVgrMOHjj4iYeAYaXEPkqsIVk3lTrJ3oK7Fi
-	6xs7tZwFayOM76uBGG9hkJcux9zveGa8i+7Cog2bagKfgN7sKWdXIWr0prMhsOK1VKfyhzG1qhd
-	5aS6X8FTOTqHfKj14QFW5s5I3Mv8cWYMEV2pIfTOhstfGwGXtZ9aqd4bv+L84N/ryPFEyT8SGeU
-	D7tWia4QApKiR7dUtFRGbU7RBgbRQY9S7ZN+/5
-X-Gm-Gg: ASbGncunRZIh61ZbNQRKSMuhMwQ35Ww9bZCQV4cjv6IeOrtEKsiNH6CZG74OOFQw5/y
-	v6kHduW0/zSGh75COTijjuKrBKz9a646nl1FM/QS2tkNs7Dvc5PlKYUZ02AXFZRfEiBCMB7cu0n
-	V7sJMzhfXwtb371OaRhuVAswtdGz3yfzM=
-X-Received: by 2002:a05:6402:518a:b0:5e0:b542:fb32 with SMTP id 4fb4d7f45d1cf-5e4d6af38c4mr16733486a12.19.1741017324402;
-        Mon, 03 Mar 2025 07:55:24 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHPGTxc1snuBJBdKHqlXGLWSFEPR9nWpoVGKyGNemsQOjxXhG6YU68Dfkwsg9V552o9TegQovJJ4ZO+UZQdfbY=
-X-Received: by 2002:a05:6402:518a:b0:5e0:b542:fb32 with SMTP id
- 4fb4d7f45d1cf-5e4d6af38c4mr16733456a12.19.1741017324012; Mon, 03 Mar 2025
- 07:55:24 -0800 (PST)
+        bh=AX2K9dF2sVTuMfiFarbphoOThRbbt8l8n5tN+Dee20k=;
+        b=CSSjqvd0WL1cRsT3xfEJE29x3ztn/3UGChDr1owaK1sW+QCb1hucT4ZO1/YNubvv9r
+         3UxvRDizagc6p3N6h040/aSk5UVXmWEIa4C7BU4+q2kOZk6m42HPV3sneDC0UlxyN/Ko
+         eSYFNLj3XyRQ81Nw+D9wVBCOebp8MWMJ6ofhIlLC0bDQscM9qk1Jff+2icPR+qquvp49
+         LwCcIGGre1OHzx6m6LtK2VW5oEeA3QYAQiWGclvILfJZPoT1RpeSxkYzh/WXM45uu5zl
+         jKwxcDba7ube0zQYIXh+gPKKDVMppheyC+aEN+4cMhX2VfjdHI/gDYILa+CruNyJyjzF
+         fJUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWQOfSTmTINlW5rZWSATgSx+fsf3B1Vl533AnjpM0LAUTGkQQubiKznJgssPr3dNT5OElafL/yy/uBLssA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7d9iMDD+3SPtejiSMUmxvpTCdvp+6muSVpxjPLASR8JavO44c
+	b8OHdVFNvIhvySGr+lbK2+6YH8p7FX4LTeKFyPcqfLYCIpGThnkAFoK5LpjY
+X-Gm-Gg: ASbGncuIxcILITV09EimFEVreLlU+AMGQn7jueWWzon2W/g7+OKEnt6NxqOlEpcKLJ5
+	i76GOiPhEcv3USXWGUwR6bwVfNR35381DUs8b4GuGxTjQ/STNRmEbGVHeZcmBbil1OUEzVYGR32
+	/ilBZd/D5tIELAsLWWOWoHkM4L7pvO6BZm6DhZNqzQ+VTNdgQ8tmKjzQCOxYOhrq/EyxWqAw3ot
+	k2L3F5ktTNbwhTPk/dilRRy6HrB9R0/vJYfH+oXZuWEb5Q1TjKF6UwjAHKMKe14f01EIzd/Rhx0
+	WoR9xYwU8KV6MasAa3vFGKAln25df9vRjxnjODl1K2+9xiZTUO0Sjmo1
+X-Google-Smtp-Source: AGHT+IE83+IX1LdziB0TpVvQKV9XX+F11wAf/th5ziD87Jl7sy4Bma7ezgN95h5fTZcpxM653qPzzQ==
+X-Received: by 2002:a05:600c:3596:b0:439:84ba:5760 with SMTP id 5b1f17b1804b1-43ba66dff51mr125265275e9.5.1741017402036;
+        Mon, 03 Mar 2025 07:56:42 -0800 (PST)
+Received: from localhost.localdomain ([91.90.123.183])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e485e13fsm14709382f8f.100.2025.03.03.07.56.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 07:56:41 -0800 (PST)
+From: Oscar Maes <oscmaes92@gmail.com>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	viro@zeniv.linux.org.uk,
+	jiri@resnulli.us,
+	linux-kernel@vger.kernel.org,
+	security@kernel.org,
+	stable@kernel.org,
+	idosch@idosch.org,
+	Oscar Maes <oscmaes92@gmail.com>,
+	syzbot+91161fe81857b396c8a0@syzkaller.appspotmail.com
+Subject: [PATCH net v3] vlan: enforce underlying device type
+Date: Mon,  3 Mar 2025 16:56:19 +0100
+Message-Id: <20250303155619.8918-1-oscmaes92@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250127170251.744751-1-costa.shul@redhat.com>
- <20250227200623.60f20571@gandalf.local.home> <CAP4=nvQXaFmemBeW8U3U9zTMK0gVYvp23gfq_6ALsBJPTXt9Uw@mail.gmail.com>
-In-Reply-To: <CAP4=nvQXaFmemBeW8U3U9zTMK0gVYvp23gfq_6ALsBJPTXt9Uw@mail.gmail.com>
-From: Costa Shulyupin <costa.shul@redhat.com>
-Date: Mon, 3 Mar 2025 17:54:47 +0200
-X-Gm-Features: AQ5f1JoWt4ZxpLw4IoDK9sZzUvGLABknJjfBY2g9Ho-HNZIyoFep9paWlRxouPc
-Message-ID: <CADDUTFwyMt5zFqWeKXXiECOeqeyZ46fJcc4-ff=rjccsMDHKSQ@mail.gmail.com>
-Subject: Re: [PATCH v1] rtla: Save trace when option `--trace` is specified
-To: Tomas Glozar <tglozar@redhat.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, linux-trace-kernel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Actually trace collection can be performed using just trace-cmd start,
-trace-cmd stop, and trace-cmd extract.
+Currently, VLAN devices can be created on top of non-ethernet devices.
+
+Besides the fact that it doesn't make much sense, this also causes a
+bug which leaks the address of a kernel function to usermode.
+
+When creating a VLAN device, we initialize GARP (garp_init_applicant)
+and MRP (mrp_init_applicant) for the underlying device.
+
+As part of the initialization process, we add the multicast address of
+each applicant to the underlying device, by calling dev_mc_add.
+
+__dev_mc_add uses dev->addr_len to determine the length of the new
+multicast address.
+
+This causes an out-of-bounds read if dev->addr_len is greater than 6,
+since the multicast addresses provided by GARP and MRP are only 6
+bytes long.
+
+This behaviour can be reproduced using the following commands:
+
+ip tunnel add gretest mode ip6gre local ::1 remote ::2 dev lo
+ip l set up dev gretest
+ip link add link gretest name vlantest type vlan id 100
+
+Then, the following command will display the address of garp_pdu_rcv:
+
+ip maddr show | grep 01:80:c2:00:00:21
+
+Fix the bug by enforcing the type of the underlying device during VLAN
+device initialization.
+
+Fixes: 22bedad3ce11 ("net: convert multicast list to list_head")
+Reported-by: syzbot+91161fe81857b396c8a0@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/netdev/000000000000ca9a81061a01ec20@google.com/
+Signed-off-by: Oscar Maes <oscmaes92@gmail.com>
+---
+ net/8021q/vlan.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/8021q/vlan.c b/net/8021q/vlan.c
+index e45187b88..73a92e748 100644
+--- a/net/8021q/vlan.c
++++ b/net/8021q/vlan.c
+@@ -131,7 +131,7 @@ int vlan_check_real_dev(struct net_device *real_dev,
+ {
+ 	const char *name = real_dev->name;
+ 
+-	if (real_dev->features & NETIF_F_VLAN_CHALLENGED) {
++	if (real_dev->features & NETIF_F_VLAN_CHALLENGED || real_dev->type != ARPHRD_ETHER) {
+ 		pr_info("VLANs not supported on %s\n", name);
+ 		NL_SET_ERR_MSG_MOD(extack, "VLANs not supported on device");
+ 		return -EOPNOTSUPP;
+-- 
+2.39.5
 
 
