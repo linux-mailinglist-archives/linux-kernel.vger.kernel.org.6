@@ -1,172 +1,113 @@
-Return-Path: <linux-kernel+bounces-544570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E24FA4E29E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:14:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B157A4E58C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:21:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD67017F7A6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:09:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 895B8421C46
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:13:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28576265CA0;
-	Tue,  4 Mar 2025 15:03:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C877280A31;
+	Tue,  4 Mar 2025 15:51:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nMHT7yf0"
-Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tAyuPAfk"
+Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33EB9209F3B
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6963427FE9A
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:51:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741100626; cv=fail; b=Wbz7vm5QpctNSNwrUNDW1cqEZ5gP99i19FCNhZQdy6T6LQp9QN+FCWTEgDCEgwS71VsVgeE7SRrAnF5g0ZBXrCC3rXbRxv6P+9xcUGANjnVgeR/UdhwuLDNUBsHpTLDVAhKocYf3rHGGsiJzfqYY5wF/wW638xV3E5ndznz6ntk=
+	t=1741103508; cv=pass; b=q5QmA2tkutgfjppTsC5dYywqFKrf8hUybZ1n24B6c3t0ODsciicHoBQNVAyCOGwiezaQmEPyFaCiqyklkKSNGoAHuQfSH9vsI8S8+d9un812t7oQ3e9FTqtv1j8EMVsNA/kz8prEl9a9F8dxkBNVfKCg6XUVU255B/rHfIAWgOA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741100626; c=relaxed/simple;
-	bh=uc8YibK4BEiim5VXC8kvxRFxKontNFEJxhuF6oIl0oQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=s9Fi1BMfdZCgSejma4Mu28b+Nx/hzGySRA3Ix+r4liXMYl6P1qiSYNdCd2K0UlH4nFhh/OZpPdTJQO/ZhD813h4DebBzHiY0X4p8E8TgEqu/8hL2+KVewl5gHNhC4ilaaOtI9ajwkYqvwcptD1L0jT2+/6ig9BOw+9Q0XcK4prQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nMHT7yf0 reason="signature verification failed"; arc=none smtp.client-ip=209.85.216.67; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; arc=fail smtp.client-ip=160.75.25.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1741103508; c=relaxed/simple;
+	bh=MaU/9J4rYZguLJRFREIL4lOXQ5ryYtil1v54eokO2nY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PNtVKxc5jmLVdaQPer4yc262I2hpCF46YjkO7552LgKH/xTpYSP6367/Gk+9KDAWx0VV8f25sXF91pDRbmgEMR2shyatkUrDxOvrSede9OjK0gHEPEPa4iLE6F/ov2/NhJJcX7YlLqKS6EJ6+tGQVm9BkC4Y9DfzpFTsK6R5UA0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tAyuPAfk; arc=none smtp.client-ip=10.30.226.201; arc=pass smtp.client-ip=160.75.25.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id 7B62640D0479
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:03:42 +0300 (+03)
+	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 8E0CC40D5718
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:51:45 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
+Authentication-Results: lesvatest1.cc.itu.edu.tr;
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20201202 header.b=tAyuPAfk
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6f6G0ympzFxvQ
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:01:58 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6g915Vk8zG0wG
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:49:25 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id DAB8042722; Tue,  4 Mar 2025 18:01:44 +0300 (+03)
+	id 979E34274A; Tue,  4 Mar 2025 18:49:22 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nMHT7yf0
-X-Envelope-From: <linux-kernel+bounces-541066-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tAyuPAfk
+X-Envelope-From: <linux-kernel+bounces-541073-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nMHT7yf0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tAyuPAfk
 Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id 4A67A41A49
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 09:56:58 +0300 (+03)
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id 23DAE2DCE4
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 09:56:58 +0300 (+03)
+	by le2 (Postfix) with ESMTP id 96A5E41F7E
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:07:32 +0300 (+03)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by fgw2.itu.edu.tr (Postfix) with SMTP id E2BCA2DCDE
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:07:31 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C9EF18904AE
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 06:56:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A10647A27D8
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 07:06:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16CEE1EBFFC;
-	Mon,  3 Mar 2025 06:56:04 +0000 (UTC)
-Received: from mail-pj1-f67.google.com (mail-pj1-f67.google.com [209.85.216.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7B21E9B3A;
+	Mon,  3 Mar 2025 07:07:13 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58F41E5701;
-	Mon,  3 Mar 2025 06:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 088321D6DDC;
+	Mon,  3 Mar 2025 07:07:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740984959; cv=none; b=ga0XXXdTmCawMAOTbGZf71IBfzm4edkk9dIYwMOwgpugAue78KRl2qJRE0Y8cSuYnsPTHR9V5oMNRTSqQLPhwTP7NkbuiBTIvYQab5F93yTmhmunfYAfVhdIjSc/JvxT+S5wCU9Tislq3K2FMHVWYv1Nk2qKSelqjUlEMxitiLw=
+	t=1740985631; cv=none; b=FA3Ib/5b5m+pDhvtfXyAYX/YO0uGGVG/tYn3n5VPvYusogSxUBKxAg7euGQ7bBJZHOyhYlq72mOxv2eQBZ4xIhAgI2hFpCbf9IjS9bcOo+vAC1LgbWxa3cbyQijAUJ/SRK0QO75muQKEhrW44dxexuUr/6ezWxEWly4UYLfOJPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740984959; c=relaxed/simple;
-	bh=/mOskEeuSOoI6Ik4GZTrnIyvVE91D9OQfL2ePFfqnyY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=t/fp31aBhpPtR4uCfcVhou+b/shG3hPMjjmlRPc7eQTxQcSVN0ky5d3feFZWupxrfXyz569cNJ58G4gH55OygJcRDQA8cXBIj5Mif3R19df+EElfoW8xAOyTr3RawXwnfUnM7HSf6yC07FS89lDr5LozLgPdFfvGYsloQCTYNV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nMHT7yf0; arc=none smtp.client-ip=209.85.216.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f67.google.com with SMTP id 98e67ed59e1d1-2fe848040b1so8486159a91.3;
-        Sun, 02 Mar 2025 22:55:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740984957; x=1741589757; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g+TPvgOYa0/i6hWJUb51m5UVXTU1tbJahC/+FJNQh8Y=;
-        b=nMHT7yf0JSBuKVUPVDM0n2rvnQRbtXnVHvDEHVZ7QUoe0Gsk9REU15zU1AUaZ2CvaJ
-         NnfBPFlsyS2PlTm8U5m9zy9RBIYjEuH+K4eRFVHik4Ii2rUWXD4m3dgjyQ++TyqVe4rC
-         HkOgOhQ4f5XJ7KFI73Rfhu3JiK2ibMK3KcSv/AwaDXecHuC+lUEn4cQNesacM60KfTBi
-         lJAnRi62yvdGkpnfl1Nf/OQDVLf7xlJpVW7zkrIUnDSTAQMSnUVUwyTgd3CooGNlF4uB
-         NaKpzz2t/kyR5CpZJi43ATuhoqh5T2cG6AO3XSDxfMw2hkSnrZT9aRyFOom0WLgGdPPV
-         2Bog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740984957; x=1741589757;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g+TPvgOYa0/i6hWJUb51m5UVXTU1tbJahC/+FJNQh8Y=;
-        b=X6ZOkvo9V2kycllh6Qn5o9MzbUJQpY4W3tHL1cARCeBWIdFHuzWsbsxpjNief5judS
-         52ezlrlbzNy5L/GhOv+W2tXTAJf35KrZ8q810aprVyrSHN3TwxANBzo1LJ0p8GNbJiwK
-         RjXs/iPmCOlE9/LVvxTUDCvBu/YBwlRY2ciSbPefYca4Zi6A4j79ePWMEYn0D35XTiU4
-         LVyN4KY6K3gV01oO4d3P+uV/0cLKyiV4qTifoegHJtBihMxWSTAz9Q2S2ffJANdNTMPF
-         zSga25L9P+z8M5LT6uNXgSJtX7uSC6sl+AUBR4wY0o3ulcXcRT7xVlHCDuvA2tWtFG/e
-         bojw==
-X-Forwarded-Encrypted: i=1; AJvYcCU8AT66V1i88rl74t44bh/ooXQKLMrjDM0CkwQauKnenhj1KoMT0f1FyhrksFVXyUeYlI5qartG@vger.kernel.org, AJvYcCVClG7VO1mk8CG9ipeLXGLT+i2mDnimiFHFCO5pPTrpgj2e16ox7VW5FuRnFdpf+PmyNUg=@vger.kernel.org, AJvYcCVjSijtfIJgraPwu8m3NuPmfo40A9WIg+fywbpg04eiWSE7xbgxZcJuDSheDFcLF04KyBQdGDYcfUD0tsUq@vger.kernel.org, AJvYcCXOXCOb/HX6KLAFacyAjmo4p0oXcOp0L+zwaAM3uJHulaHUY9zrCNtdqopXCyrBziHb9b89QjaVatyOuiJKgj9xKzX2@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy99xJo930iYZcSin16wy507WQL497UjdSiHTegBYI1xx+Z9Nsi
-	fWd6vRC/S38wBmZ0l9JH03IySfmOnzIUGHY1WUMdHXSZTe5BAN4w
-X-Gm-Gg: ASbGncsWjhrIKsJxNzMSEqBp9BCSOzwlcwhDImK5JMtVMnfqUjS8xnNC7t63Rcv1Dk3
-	foWemDiq2S/gwouOk6ARxa35YJAzwU1vhaZ/1QJJ/qk7QCbk6egurVZ22g4s9WtSNDu6Y/nGVY/
-	yJdmyqWWdfjGXz4a6GC21+WNIro5cD4moufybCiSpduvOwrIzDGm63g4RtMEjmoVF/batvHHHRI
-	y/VTHg/X0T8tATEQYrVO3i1WaEa0SJFIhvHUVOm7CWgHf0o/duDazvjwNHiAaFyRmeZL/PadP6y
-	qdp1DEGwm6IcbgNCutGesRgdUXFOzEfw7r0HwRxkxJqXtKeRhaALsbHsykr3sg==
-X-Google-Smtp-Source: AGHT+IGrORT4INWtpUNjluDwXHOnFxXU+/PjylHNkD+c6r6BnZ0CyNVYuiS0gySDL2RRjqIVNqAxlA==
-X-Received: by 2002:a17:90b:3c88:b0:2ee:ee77:2263 with SMTP id 98e67ed59e1d1-2febab2ecd6mr20664608a91.7.1740984956958;
-        Sun, 02 Mar 2025 22:55:56 -0800 (PST)
-Received: from localhost.localdomain ([43.129.244.20])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fea6769ad2sm8139575a91.11.2025.03.02.22.55.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Mar 2025 22:55:56 -0800 (PST)
-From: Menglong Dong <menglong8.dong@gmail.com>
-X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
-To: peterz@infradead.org,
-	rostedt@goodmis.org,
-	mark.rutland@arm.com,
-	alexei.starovoitov@gmail.com
-Cc: catalin.marinas@arm.com,
-	will@kernel.org,
-	mhiramat@kernel.org,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org,
-	hpa@zytor.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	jolsa@kernel.org,
-	davem@davemloft.net,
-	dsahern@kernel.org,
-	mathieu.desnoyers@efficios.com,
-	nathan@kernel.org,
-	nick.desaulniers+lkml@gmail.com,
-	morbo@google.com,
-	samitolvanen@google.com,
-	kees@kernel.org,
-	dongml2@chinatelecom.cn,
-	akpm@linux-foundation.org,
-	riel@surriel.com,
-	rppt@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	netdev@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [PATCH bpf-next v3 2/4] add per-function metadata storage support
-Date: Mon,  3 Mar 2025 14:53:43 +0800
-Message-Id: <20250303065345.229298-3-dongml2@chinatelecom.cn>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250303065345.229298-1-dongml2@chinatelecom.cn>
-References: <20250303065345.229298-1-dongml2@chinatelecom.cn>
+	s=arc-20240116; t=1740985631; c=relaxed/simple;
+	bh=MaU/9J4rYZguLJRFREIL4lOXQ5ryYtil1v54eokO2nY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uI1k15hN3RBjiF56mv2SxNlbDA4D3jRPN21ac9gYycFLiTyFwTJ4QrOrOUXapfvrPWscC5ZOdm3P2WBK7Y9or2x1Kaa5cEVONX3wQSYtE1r6KXxguW8faLOUeH2w8Rg1qXFXRszSAo/lo4UMMSx5J6RPVoBRKgVyAI8Wa4mArug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tAyuPAfk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B851C4CED6;
+	Mon,  3 Mar 2025 07:07:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740985630;
+	bh=MaU/9J4rYZguLJRFREIL4lOXQ5ryYtil1v54eokO2nY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tAyuPAfkzxDlkoVT6p1/oh+xXrJGTYE6EdI0DU87OVwF//74VuTdBJCTbe0T4vda9
+	 x5K1Hzui0kzCcm1V/zY6j6+0LIlJmjBTeEm61+9qmkJqf9dqHVS8i2m9aqcAXsuTm5
+	 QDlt5BclX1ItesBeefNrRS2PBWsTTGCIJ9eGU0bOYP59WrMyVWSex+QAcrW7dYKnjq
+	 hPZgSyXb6WBBjgkcDCUTSexa192ADNFORVm3c2prOTHcW6dLghZ0+cM2zZe2OeLI0i
+	 R5OSLYBFpdWaLSGlR2ClHpZDIY3JdVwRWnDlG6lnU8DrzGgEvi0aMdU0q8grfSH0js
+	 HSkYnSyNWulNw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1toztI-0000000055w-2SHu;
+	Mon, 03 Mar 2025 08:07:04 +0100
+Date: Mon, 3 Mar 2025 08:07:04 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+Cc: Johan Hovold <johan+linaro@kernel.org>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Stephan Gerhold <stephan.gerhold@linaro.org>,
+	linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] usb: typec: ps883x: fix missing accessibility check
+Message-ID: <Z8VVGBDh2VnxyHw0@hovoldconsulting.com>
+References: <20250218152933.22992-1-johan+linaro@kernel.org>
+ <20250218152933.22992-3-johan+linaro@kernel.org>
+ <8c6f9c8c-3d03-45d3-b601-989e6c441501@oldschoolsolutions.biz>
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -174,374 +115,48 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8c6f9c8c-3d03-45d3-b601-989e6c441501@oldschoolsolutions.biz>
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6f6G0ympzFxvQ
+X-ITU-Libra-ESVA-ID: 4Z6g915Vk8zG0wG
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741705330.9097@FNUCUgPUJUBKbzNp3Vx9Ew
+X-ITU-Libra-ESVA-Watermark: 1741708239.31091@U8Tx0m/Q2CBFbT216oeCkQ
 X-ITU-MailScanner-SpamCheck: not spam
 
-For now, there isn't a way to set and get per-function metadata with
-a low overhead, which is not convenient for some situations. Take
-BPF trampoline for example, we need to create a trampoline for each
-kernel function, as we have to store some information of the function
-to the trampoline, such as BPF progs, function arg count, etc. The
-performance overhead and memory consumption can be higher to create
-these trampolines. With the supporting of per-function metadata storage,
-we can store these information to the metadata, and create a global BPF
-trampoline for all the kernel functions. In the global trampoline, we
-get the information that we need from the function metadata through the
-ip (function address) with almost no overhead.
+Hi Jens,
 
-Another beneficiary can be ftrace. For now, all the kernel functions that
-are enabled by dynamic ftrace will be added to a filter hash if there are
-more than one callbacks. And hash lookup will happen when the traced
-functions are called, which has an impact on the performance, see
-__ftrace_ops_list_func() -> ftrace_ops_test(). With the per-function
-metadata supporting, we can store the information that if the callback is
-enabled on the kernel function to the metadata.
+On Sun, Mar 02, 2025 at 02:34:41PM +0100, Jens Glathe wrote:
+> On 2/18/25 16:29, Johan Hovold wrote:
+> > Make sure that the retimer is accessible before registering to avoid
+> > having later consumer calls fail to configure it, something which, for
+> > example, can lead to a hotplugged display not being recognised:
+> >
+> > 	[drm:msm_dp_panel_read_sink_caps [msm]] *ERROR* read dpcd failed -110
+> >
+> > Fixes: 257a087c8b52 ("usb: typec: Add support for Parade PS8830 Type-C Retimer")
+> > Cc: Abel Vesa <abel.vesa@linaro.org>
+> > Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> 
+> unfortunately, this one goes south on the HP Omnibook X14, and also on
+> the Elitebook G1Q. After excluding a lot of other causes, like inverted
+> resets and wrong i2c channels, I did a bisect and landed at this commit.
 
-Support per-function metadata storage in the function padding, and
-previous discussion can be found in [1]. Generally speaking, we have two
-way to implement this feature:
+According to the X14 ACPI tables there is no ps8830 on &i2c7i (I2C8),
+which means that the devicetree is broken.
 
-1. Create a function metadata array, and prepend a insn which can hold
-the index of the function metadata in the array. And store the insn to
-the function padding.
+> Looking at it, I speculatively increased the firmware initialization
+> delay to 200ms. To no effect. Reverting this patch "resolves" the issue.
 
-2. Allocate the function metadata with kmalloc(), and prepend a insn whic=
-h
-hold the pointer of the metadata. And store the insn to the function
-padding.
+This patch (series) only makes sure that there actually is a retimer at
+the described address so it appears to work as intended.
 
-Compared with way 2, way 1 consume less space, but we need to do more wor=
-k
-on the global function metadata array. And we implement this function in
-the way 1.
+You may unknowingly have been relying on firmware configuration or reset
+values. Does orientation switching (SuperSpeed in both orientations) and
+DP altmode work at all on the second USB-C port with this patch
+reverted?
 
-Link: https://lore.kernel.org/bpf/CADxym3anLzM6cAkn_z71GDd_VeKiqqk1ts=3Dx=
-uiP7pr4PO6USPA@mail.gmail.com/ [1]
-Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
----
-v2:
-- add supporting for arm64
-- split out arch relevant code
-- refactor the commit log
----
- include/linux/kfunc_md.h |  25 ++++
- kernel/Makefile          |   1 +
- kernel/trace/Makefile    |   1 +
- kernel/trace/kfunc_md.c  | 239 +++++++++++++++++++++++++++++++++++++++
- 4 files changed, 266 insertions(+)
- create mode 100644 include/linux/kfunc_md.h
- create mode 100644 kernel/trace/kfunc_md.c
-
-diff --git a/include/linux/kfunc_md.h b/include/linux/kfunc_md.h
-new file mode 100644
-index 000000000000..df616f0fcb36
---- /dev/null
-+++ b/include/linux/kfunc_md.h
-@@ -0,0 +1,25 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_KFUNC_MD_H
-+#define _LINUX_KFUNC_MD_H
-+
-+#include <linux/kernel.h>
-+
-+struct kfunc_md {
-+	int users;
-+	/* we can use this field later, make sure it is 8-bytes aligned
-+	 * for now.
-+	 */
-+	int pad0;
-+	void *func;
-+};
-+
-+extern struct kfunc_md *kfunc_mds;
-+
-+struct kfunc_md *kfunc_md_find(void *ip);
-+struct kfunc_md *kfunc_md_get(void *ip);
-+void kfunc_md_put(struct kfunc_md *meta);
-+void kfunc_md_put_by_ip(void *ip);
-+void kfunc_md_lock(void);
-+void kfunc_md_unlock(void);
-+
-+#endif
-diff --git a/kernel/Makefile b/kernel/Makefile
-index 87866b037fbe..7435674d5da3 100644
---- a/kernel/Makefile
-+++ b/kernel/Makefile
-@@ -108,6 +108,7 @@ obj-$(CONFIG_TRACE_CLOCK) +=3D trace/
- obj-$(CONFIG_RING_BUFFER) +=3D trace/
- obj-$(CONFIG_TRACEPOINTS) +=3D trace/
- obj-$(CONFIG_RETHOOK) +=3D trace/
-+obj-$(CONFIG_FUNCTION_METADATA) +=3D trace/
- obj-$(CONFIG_IRQ_WORK) +=3D irq_work.o
- obj-$(CONFIG_CPU_PM) +=3D cpu_pm.o
- obj-$(CONFIG_BPF) +=3D bpf/
-diff --git a/kernel/trace/Makefile b/kernel/trace/Makefile
-index 057cd975d014..9780ee3f8d8d 100644
---- a/kernel/trace/Makefile
-+++ b/kernel/trace/Makefile
-@@ -106,6 +106,7 @@ obj-$(CONFIG_FTRACE_RECORD_RECURSION) +=3D trace_recu=
-rsion_record.o
- obj-$(CONFIG_FPROBE) +=3D fprobe.o
- obj-$(CONFIG_RETHOOK) +=3D rethook.o
- obj-$(CONFIG_FPROBE_EVENTS) +=3D trace_fprobe.o
-+obj-$(CONFIG_FUNCTION_METADATA) +=3D kfunc_md.o
-=20
- obj-$(CONFIG_TRACEPOINT_BENCHMARK) +=3D trace_benchmark.o
- obj-$(CONFIG_RV) +=3D rv/
-diff --git a/kernel/trace/kfunc_md.c b/kernel/trace/kfunc_md.c
-new file mode 100644
-index 000000000000..7ec25bcf778d
---- /dev/null
-+++ b/kernel/trace/kfunc_md.c
-@@ -0,0 +1,239 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/slab.h>
-+#include <linux/memory.h>
-+#include <linux/rcupdate.h>
-+#include <linux/ftrace.h>
-+#include <linux/kfunc_md.h>
-+
-+#define ENTRIES_PER_PAGE (PAGE_SIZE / sizeof(struct kfunc_md))
-+
-+static u32 kfunc_md_count =3D ENTRIES_PER_PAGE, kfunc_md_used;
-+struct kfunc_md __rcu *kfunc_mds;
-+EXPORT_SYMBOL_GPL(kfunc_mds);
-+
-+static DEFINE_MUTEX(kfunc_md_mutex);
-+
-+
-+void kfunc_md_unlock(void)
-+{
-+	mutex_unlock(&kfunc_md_mutex);
-+}
-+EXPORT_SYMBOL_GPL(kfunc_md_unlock);
-+
-+void kfunc_md_lock(void)
-+{
-+	mutex_lock(&kfunc_md_mutex);
-+}
-+EXPORT_SYMBOL_GPL(kfunc_md_lock);
-+
-+static u32 kfunc_md_get_index(void *ip)
-+{
-+	return *(u32 *)(ip - KFUNC_MD_DATA_OFFSET);
-+}
-+
-+static void kfunc_md_init(struct kfunc_md *mds, u32 start, u32 end)
-+{
-+	u32 i;
-+
-+	for (i =3D start; i < end; i++)
-+		mds[i].users =3D 0;
-+}
-+
-+static int kfunc_md_page_order(void)
-+{
-+	return fls(DIV_ROUND_UP(kfunc_md_count, ENTRIES_PER_PAGE)) - 1;
-+}
-+
-+/* Get next usable function metadata. On success, return the usable
-+ * kfunc_md and store the index of it to *index. If no usable kfunc_md i=
-s
-+ * found in kfunc_mds, a larger array will be allocated.
-+ */
-+static struct kfunc_md *kfunc_md_get_next(u32 *index)
-+{
-+	struct kfunc_md *new_mds, *mds;
-+	u32 i, order;
-+
-+	mds =3D rcu_dereference(kfunc_mds);
-+	if (mds =3D=3D NULL) {
-+		order =3D kfunc_md_page_order();
-+		new_mds =3D (void *)__get_free_pages(GFP_KERNEL, order);
-+		if (!new_mds)
-+			return NULL;
-+		kfunc_md_init(new_mds, 0, kfunc_md_count);
-+		/* The first time to initialize kfunc_mds, so it is not
-+		 * used anywhere yet, and we can update it directly.
-+		 */
-+		rcu_assign_pointer(kfunc_mds, new_mds);
-+		mds =3D new_mds;
-+	}
-+
-+	if (likely(kfunc_md_used < kfunc_md_count)) {
-+		/* maybe we can manage the used function metadata entry
-+		 * with a bit map ?
-+		 */
-+		for (i =3D 0; i < kfunc_md_count; i++) {
-+			if (!mds[i].users) {
-+				kfunc_md_used++;
-+				*index =3D i;
-+				mds[i].users++;
-+				return mds + i;
-+			}
-+		}
-+	}
-+
-+	order =3D kfunc_md_page_order();
-+	/* no available function metadata, so allocate a bigger function
-+	 * metadata array.
-+	 */
-+	new_mds =3D (void *)__get_free_pages(GFP_KERNEL, order + 1);
-+	if (!new_mds)
-+		return NULL;
-+
-+	memcpy(new_mds, mds, kfunc_md_count * sizeof(*new_mds));
-+	kfunc_md_init(new_mds, kfunc_md_count, kfunc_md_count * 2);
-+
-+	rcu_assign_pointer(kfunc_mds, new_mds);
-+	synchronize_rcu();
-+	free_pages((u64)mds, order);
-+
-+	mds =3D new_mds + kfunc_md_count;
-+	*index =3D kfunc_md_count;
-+	kfunc_md_count <<=3D 1;
-+	kfunc_md_used++;
-+	mds->users++;
-+
-+	return mds;
-+}
-+
-+static int kfunc_md_text_poke(void *ip, void *insn, void *nop)
-+{
-+	void *target;
-+	int ret =3D 0;
-+	u8 *prog;
-+
-+	target =3D ip - KFUNC_MD_INSN_OFFSET;
-+	mutex_lock(&text_mutex);
-+	if (insn) {
-+		if (!memcmp(target, insn, KFUNC_MD_INSN_SIZE))
-+			goto out;
-+
-+		if (memcmp(target, nop, KFUNC_MD_INSN_SIZE)) {
-+			ret =3D -EBUSY;
-+			goto out;
-+		}
-+		prog =3D insn;
-+	} else {
-+		if (!memcmp(target, nop, KFUNC_MD_INSN_SIZE))
-+			goto out;
-+		prog =3D nop;
-+	}
-+
-+	ret =3D kfunc_md_arch_poke(target, prog);
-+out:
-+	mutex_unlock(&text_mutex);
-+	return ret;
-+}
-+
-+static bool __kfunc_md_put(struct kfunc_md *md)
-+{
-+	u8 nop_insn[KFUNC_MD_INSN_SIZE];
-+
-+	if (WARN_ON_ONCE(md->users <=3D 0))
-+		return false;
-+
-+	md->users--;
-+	if (md->users > 0)
-+		return false;
-+
-+	if (!kfunc_md_arch_exist(md->func))
-+		return false;
-+
-+	kfunc_md_arch_nops(nop_insn);
-+	/* release the metadata by recovering the function padding to NOPS */
-+	kfunc_md_text_poke(md->func, NULL, nop_insn);
-+	/* TODO: we need a way to shrink the array "kfunc_mds" */
-+	kfunc_md_used--;
-+
-+	return true;
-+}
-+
-+/* Decrease the reference of the md, release it if "md->users <=3D 0" */
-+void kfunc_md_put(struct kfunc_md *md)
-+{
-+	mutex_lock(&kfunc_md_mutex);
-+	__kfunc_md_put(md);
-+	mutex_unlock(&kfunc_md_mutex);
-+}
-+EXPORT_SYMBOL_GPL(kfunc_md_put);
-+
-+/* Get a exist metadata by the function address, and NULL will be return=
-ed
-+ * if not exist.
-+ *
-+ * NOTE: rcu lock should be held during reading the metadata, and
-+ * kfunc_md_lock should be held if writing happens.
-+ */
-+struct kfunc_md *kfunc_md_find(void *ip)
-+{
-+	struct kfunc_md *md;
-+	u32 index;
-+
-+	if (kfunc_md_arch_exist(ip)) {
-+		index =3D kfunc_md_get_index(ip);
-+		if (WARN_ON_ONCE(index >=3D kfunc_md_count))
-+			return NULL;
-+
-+		md =3D rcu_dereference(kfunc_mds) + index;
-+		return md;
-+	}
-+	return NULL;
-+}
-+EXPORT_SYMBOL_GPL(kfunc_md_find);
-+
-+void kfunc_md_put_by_ip(void *ip)
-+{
-+	struct kfunc_md *md;
-+
-+	mutex_lock(&kfunc_md_mutex);
-+	md =3D kfunc_md_find(ip);
-+	if (md)
-+		__kfunc_md_put(md);
-+	mutex_unlock(&kfunc_md_mutex);
-+}
-+EXPORT_SYMBOL_GPL(kfunc_md_put_by_ip);
-+
-+/* Get a exist metadata by the function address, and create one if not
-+ * exist. Reference of the metadata will increase 1.
-+ *
-+ * NOTE: always call this function with kfunc_md_lock held, and all
-+ * updating to metadata should also hold the kfunc_md_lock.
-+ */
-+struct kfunc_md *kfunc_md_get(void *ip)
-+{
-+	u8 nop_insn[KFUNC_MD_INSN_SIZE], insn[KFUNC_MD_INSN_SIZE];
-+	struct kfunc_md *md;
-+	u32 index;
-+
-+	md =3D kfunc_md_find(ip);
-+	if (md) {
-+		md->users++;
-+		return md;
-+	}
-+
-+	md =3D kfunc_md_get_next(&index);
-+	if (!md)
-+		return NULL;
-+
-+	kfunc_md_arch_pretend(insn, index);
-+	kfunc_md_arch_nops(nop_insn);
-+
-+	if (kfunc_md_text_poke(ip, insn, nop_insn)) {
-+		kfunc_md_used--;
-+		md->users =3D 0;
-+		return NULL;
-+	}
-+	md->func =3D ip;
-+
-+	return md;
-+}
-+EXPORT_SYMBOL_GPL(kfunc_md_get);
---=20
-2.39.5
-
+Johan
 
 
