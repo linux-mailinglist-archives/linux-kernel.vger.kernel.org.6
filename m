@@ -1,127 +1,139 @@
-Return-Path: <linux-kernel+bounces-544860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 693F8A4E5E7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:30:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5D96A4E733
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:58:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3BB2179682
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:23:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 316927A9FE4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:54:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F51A24C07F;
-	Tue,  4 Mar 2025 16:05:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20122278154;
+	Tue,  4 Mar 2025 16:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bdhlIxQ+"
-Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QVV9iRau"
+Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE2C207A27
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:05:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB5E825D90A
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.117
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741104330; cv=pass; b=qGlWZI6OqYDNJ1rLuduoC8CU2HsCIa+dc3d14N4tABKpFomfI5xldPd4ExBMWwvUc6MCycaewRAUhqJ4SjGYte2KR64qaRSE2szJoSVRbfeP5MOqEMNhdDfHyee1rvEb+4JIyTH9Rc9yQ4F3Sg6T1DSlmZXakdB6xGWS6WiUu9I=
+	t=1741106013; cv=pass; b=NlUSDUWSbkZVldLb+9NfnNDDnB8mQg4IC1uKiaYP2sxEIISn0jE0WNT3b0ZjWcSaORA+syQHU6UYU20qdCZo6eK+d/g6jCAi9haVawpNmSxhDpvYF57eTc7VX0H+T1vHIn2tg9RzlLOVJPeem3wPyqfZPdbDKUNYZAZSHIl7TBo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741104330; c=relaxed/simple;
-	bh=hO/1w0WIreFcCNOGOIiuvQHBGfGmx0RKyWkuiZ5OENQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qoxpHfZohHW36uIcisU9ma0YqBDZiPt+TEgClnwfUDARF0bDG7CrSTjpkk454s8bUj3GrhCSnMjDhf6aSbqtVIZtoBTbhXjhV2ET9ONksZOUH1WEx5ZjoM1iDn0cjBO093a25C2ggN6DfVwz72v35qqu8DWwJaOOg37C68FSO0k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bdhlIxQ+; arc=none smtp.client-ip=170.10.133.124; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; arc=pass smtp.client-ip=160.75.25.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+	s=arc-20240116; t=1741106013; c=relaxed/simple;
+	bh=jLJKFq3DzDFZlX1XSnSbaeOdYYwfb/ehBF5/SPp1ssQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ETmUJMep2B9lhhgLkNdt0f7k0cS8Ybv/SbD7hJAQXuRb+USWVZ2xeuRWxP74MHc6Db65BLSHu1tee5mbwz2whnX4vbzdRBkGK31y6hL4Wv22TWWyFTkC+fOD5DAermE+LZicFuyQUe40lLCEeM9nlWKnVnWeDiMKS394GZSXlSc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QVV9iRau; arc=none smtp.client-ip=209.85.128.43; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; arc=pass smtp.client-ip=160.75.25.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 7150E40D9763
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:05:27 +0300 (+03)
+	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id 060F440CECA4
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:33:30 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=bdhlIxQ+
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20230601 header.b=QVV9iRau
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6gTZ4jXXzG21D
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:03:46 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6gy20fnJzG37C
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:24:58 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 0137C42741; Tue,  4 Mar 2025 19:03:31 +0300 (+03)
+	id F34A142747; Tue,  4 Mar 2025 19:24:45 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bdhlIxQ+
-X-Envelope-From: <linux-kernel+bounces-541273-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QVV9iRau
+X-Envelope-From: <linux-kernel+bounces-541276-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bdhlIxQ+
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QVV9iRau
 Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id ADCB04281C
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:29:57 +0300 (+03)
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id 31A4D3063EFC
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:29:57 +0300 (+03)
+	by le2 (Postfix) with ESMTP id D01A941EBB
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:31:10 +0300 (+03)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by fgw1.itu.edu.tr (Postfix) with SMTP id 86D583063EFC
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:31:10 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 008443A7A56
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 09:29:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8F62170B7C
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 09:31:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07EE31F0E4C;
-	Mon,  3 Mar 2025 09:29:40 +0000 (UTC)
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F084E1F12F6;
+	Mon,  3 Mar 2025 09:30:59 +0000 (UTC)
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C5E6AD27
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 09:29:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F6061D63C0
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 09:30:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740994177; cv=none; b=pmxvk+arnf9WJ2Be70MHzfvqAw8d52nYoLs9NE2BT/yhPMTnBVZrd8n/Tz5oedUYAzy/nen/1dK6Pa9TvKdYkC45rY5EzAEpN5Kk40lHTWK+QvlM9ivCFJ9MAHWFqF8cuPwAOaWDu/nIFPt3ANLygka9eFJp5fSG/YbanD7/7YY=
+	t=1740994257; cv=none; b=TilnpKc/fpXoIoJIdbSqgm0SO0tMr4DP1FW+BzEhIY9JBd/2Hxw440RlS0W7r+gdC7KI1ICyeGB1smrk+mMiB97p51j3CSnp7EdZBFYnOw57uA7hQTHaPWTYpprIXH81q5ICoMrqmzJBoP82f5Jw6hQyFR++4ZUZBGYY6jX22Pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740994177; c=relaxed/simple;
-	bh=hO/1w0WIreFcCNOGOIiuvQHBGfGmx0RKyWkuiZ5OENQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O/9rldAhKnRgUZKPedmtdETE4op8oXQ808cnwP54/sKHi04gMISqCfYJ/BwRFIxkmxWZuLNFEgfMfPAUVjfreEBaWGa4jZe65xMuj0B96w4rq5LDU8y+wOzJSv0nOB9qamIb1KgN4IW1yyPJ3PxDyEs6u3OIC/Ji040c1IjA4KI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bdhlIxQ+; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740994174;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dm+Ad9vtaxKH6b/jFWjk7lOEkc1nxwN4lmuVSAb6Ah0=;
-	b=bdhlIxQ+fjll9LbqpU7NQS6QgIISeDczyHOHsERwPUYy7zo6FFCQpmIX++GEa6bFte5IzC
-	990mvIFsNyaD6fhBfuSrP01LH11fp6XVNPFaxP4Rvv8iC0QPKDY3qascTVltloejJodAZq
-	e/v2kLme4sp5TiOG/FBR0/J/pJSv50o=
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-670-kQtZvCu-MsCOdHBpXw7VBg-1; Mon, 03 Mar 2025 04:29:16 -0500
-X-MC-Unique: kQtZvCu-MsCOdHBpXw7VBg-1
-X-Mimecast-MFC-AGG-ID: kQtZvCu-MsCOdHBpXw7VBg_1740994155
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-22334230880so57890955ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 01:29:16 -0800 (PST)
+	s=arc-20240116; t=1740994257; c=relaxed/simple;
+	bh=jLJKFq3DzDFZlX1XSnSbaeOdYYwfb/ehBF5/SPp1ssQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mrhfmr6XmaYQMgFP1n/ZfIsy0vlX1+XBzGtCIF4EsThC9E5/W9yMXC/v+0Kc/psGFC91EzbJ0IA6CfxaIJoRQtrz3vAYyHKzu57zHzXDU6j3jnFTK4MdJwOSKgpGrOQXp0vM/6kL7NeTAs/xfFTk222HqwDxJ2I5MCZf8h2jhj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QVV9iRau; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43998deed24so39680795e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 01:30:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740994254; x=1741599054; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=40IljttzQ4D51zd6+tKieDE6wTjSWdKsG254DqLzf6A=;
+        b=QVV9iRaunQUVPFpWm49OJ/gpXZMShxnxVdt36tNG7Dxpm5V2x/iSGDtd7r3OFK/eHv
+         qY9m/KHSzXeMfWzbC3E4UzmuDvt4X9SDM1knWeXyaMFtaUmMVJbttj7LmLN25qgfVSGS
+         BsU0OwwKgIp9rbJw/9BYRsiJKlmN2z+AseNyFDLwRAmeBPXAhShXPT5+0Vaj0HZ2Wrws
+         gg/Yxjpk/wE5S4ybz3sOCo85mWo3ktNuhYvC3BNoGYwEwZ0wPN4zL4cvJUx1ILUPOJlr
+         IkcLpDwXP40fgQlPsQoh490eLeIdAGKQsRC4KTPhowg+CLbArurqBCG7AAGgmRJ82V9i
+         WreQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740994155; x=1741598955;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dm+Ad9vtaxKH6b/jFWjk7lOEkc1nxwN4lmuVSAb6Ah0=;
-        b=EIN5IcA40gGEXeo0d1EebsGZ/JrMvEDuu3djIBVakuTCfU/+8xvf8stZ1EPMZ8YMhn
-         5CPfeEO/DuyS9fPRdCB/CXE8x2vwScJVwJ6TjyDTSW8Tf3M5oFlDxRecc4Mvtpz6Ru89
-         wW6aF/K9BoZuWRoWYpOTqPbgg6TSslyPODjLSg3fLA/1fLBk5XZ2ZQA2N863KRURpanU
-         40mOumU0GNTj52oQQnfXvv/Kp4MNlJco3cr83gNogm8zicheT2iQyJHluIwjz6My6C7b
-         k2cOmJynQinNB7rF6DkOPTWEsRqiRNAGFX/sWUEj6cTGkH4r5kv3QmC7xFxwL3Taivby
-         /sCw==
-X-Forwarded-Encrypted: i=1; AJvYcCXeHqAzQiD1fIX7ETDvyXT/KoebIT1tO1fTPPUOChzC+06FeO6FHo8K/zbrt+Fo1wEc+avynWu5K2n5CZ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWk0prGDDqTWNrMFeBrtUA2gbk1Eq3hdxa46lMqIZyypkg0zTI
-	9hlV78oV8+n73TcT/r+Ygk2Ndy/b9opsPppKI47WDyRMsqZc7DAoLIMZqFh3PZ74Zc52Cv6Nu48
-	hXoGiNT47HJaHMhc4rcDLCeW9WbtOcUUH3d15A/7/l0J1G+iHcWYhea7N8xHHaeCpCU2WNRGtcc
-	cUi0TkSe/4rI1dP7iBmmYO/8az/1IbF2TC2Mgk
-X-Gm-Gg: ASbGnctnIBr9UrM8QwnBwqmxZCeMg3uDmIaSY3M45421kgtTssUQOCkixRgr2KvtEa3
-	KzK6pB1Qwz6BtlQcb3jZBXoVQH81ErSI/01Fcl/bFsr9GcTNpBAFg7NLUa8ZZJ9Sodp88hIo=
-X-Received: by 2002:a17:902:f547:b0:220:f7bb:842 with SMTP id d9443c01a7336-22369255811mr196196075ad.42.1740994154027;
-        Mon, 03 Mar 2025 01:29:14 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEeh8T/Isef6u47m5QPpp9NHgJMkJl3dnUE8Ylea44Ny6EY1sjUVU9fZMYGnxlnkM9rFe7Jpp6zS4k5VEsVFKw=
-X-Received: by 2002:a17:902:f547:b0:220:f7bb:842 with SMTP id
- d9443c01a7336-22369255811mr196195835ad.42.1740994153774; Mon, 03 Mar 2025
- 01:29:13 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740994254; x=1741599054;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=40IljttzQ4D51zd6+tKieDE6wTjSWdKsG254DqLzf6A=;
+        b=ZSWRZeoHPZSd7JCd03YFu1IjCR3FzBv7/M+61bk4gMNieVw2ihbN7HwE54ZUPV6r7D
+         wI+H7wU1TPLbWMJ+1bcw8SRnLrXZdPtTNq24zN7rIwQkXoAivqP0tUIuk8DdDjDuX8AA
+         ZpsLj9Ps9ciVdwRfqs68N+kbv/52cVizVY4b8TlHviOKXIu7E+0w3WUR8vMkAUTvSbP1
+         CEF0ff/yeLxKBcZJTpxcs0a3w1YipVl0cDga16IW0h/Takn5t3gdEiUjhv0y1TxHWbTj
+         dnSO4b220NJK+m5gaYPAaiL9VkQcgeGTGJxUwG9GLBMrXnfNoZbvme1tXDluCjWX5bof
+         Fr+w==
+X-Forwarded-Encrypted: i=1; AJvYcCXwjf4ahrIe+lfVEPlLJxtaUTKSlbfdFG29Qc1gahBsrlbaU/CvGpuMp8dRcxAHyuG5Wg2ns2na8Zkz4rQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywp5eVO276tmooYeVU/glLoslseek50eRWOsRW47g5ASsxgiobb
+	3rYizSfRVZRpWo+eTbUn9sbWwCn47SeRBJ3iZ4ISgrbeQXhqgvkF
+X-Gm-Gg: ASbGnctNfinJz7CN0q6zJB98dksFQJ+Q3J8Yh5bnqoFsk+7YSrB6sJQJKAnC6Y7mYnf
+	00zbKlZ7xHqO/FWQiKNiRjF+AXOxp3gqnSIRYhUy/qdtLev/1RzyZdZqPGeiuAbiNYbuR5Ia/7F
+	NHGITlCc8hV9yjyxtyhOSPB+lOepnA2YgH16aaUYoLJ9mRsTkvA/yreFa9a7lU74DZ3CoNbNBR/
+	zmtV40CYGiaEmbA/IDyjOgi/YSKXoy7YYqmDkCRNVQAkOHiJdPe0b7LAXG2leMj1B5ljEKMMK9b
+	GuY8+EqFww+wFzfVVk3b8uQBzxIsvFkfy30fablmDB0M
+X-Google-Smtp-Source: AGHT+IE593cTzA3Ll5VUo6n9spv8sl0rB5EmPJ7Oo0urGlRI3JU+kEeG6M0t/EplWSVuxhmvW3R3dg==
+X-Received: by 2002:a05:600c:4444:b0:439:92ca:f01b with SMTP id 5b1f17b1804b1-43ba6708bd2mr103876125e9.13.1740994253402;
+        Mon, 03 Mar 2025 01:30:53 -0800 (PST)
+Received: from eichest-laptop ([2a02:168:af72:0:4dab:10cc:7f02:7565])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba5710c2sm179671575e9.32.2025.03.03.01.30.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 01:30:52 -0800 (PST)
+Date: Mon, 3 Mar 2025 10:30:51 +0100
+From: Stefan Eichenberger <eichest@gmail.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: vkoul@kernel.org, kishon@kernel.org, shawnguo@kernel.org,
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+	tharvey@gateworks.com, hongxing.zhu@nxp.com,
+	francesco.dolcini@toradex.com, linux-phy@lists.infradead.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Stefan Eichenberger <stefan.eichenberger@toradex.com>
+Subject: Re: [PATCH v1 1/2] phy: freescale: imx8m-pcie: cleanup reset logic
+Message-ID: <Z8V2yzfYGirBFi1u@eichest-laptop>
+References: <20250228103959.47419-1-eichest@gmail.com>
+ <20250228103959.47419-2-eichest@gmail.com>
+ <c965906ea8797385399534e974cabdba5564ae0f.camel@pengutronix.de>
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -129,64 +141,53 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250303085237.19990-1-sgarzare@redhat.com>
-In-Reply-To: <20250303085237.19990-1-sgarzare@redhat.com>
-From: Eugenio Perez Martin <eperezma@redhat.com>
-Date: Mon, 3 Mar 2025 10:28:37 +0100
-X-Gm-Features: AQ5f1JpYz8RUYj9eXvkfBI5yoVaRYAPygFZFSo69WGk-H92b36v2eBIN9Cg-xmM
-Message-ID: <CAJaqyWfNieVxJu0pGCcjRc++wRnRpyHqfkuYpAqnKCLUjbW6Xw@mail.gmail.com>
-Subject: Re: [PATCH] vhost: fix VHOST_*_OWNER documentation
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
-	kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c965906ea8797385399534e974cabdba5564ae0f.camel@pengutronix.de>
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6gTZ4jXXzG21D
+X-ITU-Libra-ESVA-ID: 4Z6gy20fnJzG37C
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741709034.21536@hzxC7+nfQBSOJNfXTXlGng
+X-ITU-Libra-ESVA-Watermark: 1741710329.27872@LyRtwz6TlqxXdbMwQMaqQg
 X-ITU-MailScanner-SpamCheck: not spam
 
-On Mon, Mar 3, 2025 at 9:52=E2=80=AFAM Stefano Garzarella <sgarzare@redhat.=
-com> wrote:
->
-> VHOST_OWNER_SET and VHOST_OWNER_RESET are used in the documentation
-> instead of VHOST_SET_OWNER and VHOST_RESET_OWNER respectively.
->
-> To avoid confusion, let's use the right names in the documentation.
-> No change to the API, only the documentation is involved.
->
+Hi Philipp,
 
-Reviewed-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
+On Fri, Feb 28, 2025 at 01:38:11PM +0100, Philipp Zabel wrote:
+> On Fr, 2025-02-28 at 11:38 +0100, Stefan Eichenberger wrote:
+> > From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+> > 
+> > Remove the switch statement and base perst release on whether it is
+> > found in the device tree. The probe function fails without the reset
+> > property, making it mandatory. Therefore, always release reset
+> > independent of the variant.
+> > 
+> > This does not change the behavior of the driver but reduces driver
+> > complexity and allows for easier future modifications.
+> > 
+> > Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+> > ---
+> >  drivers/phy/freescale/phy-fsl-imx8m-pcie.c | 12 ++++--------
+> >  1 file changed, 4 insertions(+), 8 deletions(-)
+> > 
+> > diff --git a/drivers/phy/freescale/phy-fsl-imx8m-pcie.c b/drivers/phy/freescale/phy-fsl-imx8m-pcie.c
+> > index e98361dcdeadf..00f957a42d9dc 100644
+> > --- a/drivers/phy/freescale/phy-fsl-imx8m-pcie.c
+> > +++ b/drivers/phy/freescale/phy-fsl-imx8m-pcie.c
+> > @@ -141,15 +141,11 @@ static int imx8_pcie_phy_power_on(struct phy *phy)
+> >  			   IMX8MM_GPR_PCIE_REF_CLK_PLL);
+> >  	usleep_range(100, 200);
+> >  
+> > -	switch (imx8_phy->drvdata->variant) {
+> > -	case IMX8MP:
+> > +	if (imx8_phy->perst)
+> 
+> This check is not necessary, reset_control_deassert(NULL) is a no-op:
+> 
 
-> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
-> ---
->  include/uapi/linux/vhost.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/include/uapi/linux/vhost.h b/include/uapi/linux/vhost.h
-> index b95dd84eef2d..d4b3e2ae1314 100644
-> --- a/include/uapi/linux/vhost.h
-> +++ b/include/uapi/linux/vhost.h
-> @@ -28,10 +28,10 @@
->
->  /* Set current process as the (exclusive) owner of this file descriptor.=
-  This
->   * must be called before any other vhost command.  Further calls to
-> - * VHOST_OWNER_SET fail until VHOST_OWNER_RESET is called. */
-> + * VHOST_SET_OWNER fail until VHOST_RESET_OWNER is called. */
->  #define VHOST_SET_OWNER _IO(VHOST_VIRTIO, 0x01)
->  /* Give up ownership, and reset the device to default values.
-> - * Allows subsequent call to VHOST_OWNER_SET to succeed. */
-> + * Allows subsequent call to VHOST_SET_OWNER to succeed. */
->  #define VHOST_RESET_OWNER _IO(VHOST_VIRTIO, 0x02)
->
->  /* Set up/modify memory layout */
-> --
-> 2.48.1
->
+Thanks for the feedback, I will remove the check in the next version.
 
+Regards,
+Stefan
 
 
