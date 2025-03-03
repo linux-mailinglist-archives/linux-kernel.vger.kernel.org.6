@@ -1,123 +1,117 @@
-Return-Path: <linux-kernel+bounces-541485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAF1CA4BD5D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:06:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9A88A4BD64
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:06:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 880181881632
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:03:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 138F33B55F8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:01:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF261F3BAD;
-	Mon,  3 Mar 2025 11:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VuuPQ+fM";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5NZl5nNc"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223F71F3FC2;
+	Mon,  3 Mar 2025 11:00:02 +0000 (UTC)
+Received: from mail114-240.sinamail.sina.com.cn (mail114-240.sinamail.sina.com.cn [218.30.114.240])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E6151F3BAC;
-	Mon,  3 Mar 2025 11:02:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C230B1F4C9D
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 10:59:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.114.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740999766; cv=none; b=RJzUHXH089W1VeUnk8eKcJTQfP0tw64h5/ABrPnVuahtEtFHwki4gEEZpprLPZYvOzuFi/yxVUfA4JPmxKY/KQW+EFjdtT2cw/4MpqdXCMDuYv8Zax44BpJt5I8G2aSJYn+ovFDoTbxmKqIZMrYwDKxX/g5omq7ARrUIO67KMwA=
+	t=1740999601; cv=none; b=NpjMOLt19FanGTuDa4wAeis2287SzsbchFPp7VbgGNVJfY1gwIw9MwXAmreLfpYfPYrEbYjVdexTFA+LioEJpELpL7fmOl2GHEYhI09gTnMqRfk4m6WOeZNgCEwDC4PWf9RRUDzQ51RHqv5/83b8QM7L6Ov8xQEkIMCugxINYiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740999766; c=relaxed/simple;
-	bh=6BmY9HloQWmrIWcWlHrC1eQA/4eP0yEIEpkSTTKuxd0=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=RQEqmcurbAq3MMz3jfhxCeMhLF9EuEfxnS8uvKqKM+m02qWVi2Rbgou261u16jl8Tp/TLrCON53yfqTlTcVWLG7LDul+FzL+bV4Nhxb3VZ0tzM7n3uJewV/Hq35jSFbA5NR0KVmdCTpMBQLht91LQiI3oUP8hPx5q41ERNki4yQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VuuPQ+fM; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5NZl5nNc; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 03 Mar 2025 11:02:41 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740999762;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=k00XNAJvAe2C6KjqVMcLSHnjJgrkU8rXHH4c4JwqzGQ=;
-	b=VuuPQ+fMX4u/5tMZeBAp1d26H40t+byCaCFgJUvtg0HW8QguqZG80XiBgauFp5KQF/j65D
-	hUg70kyM+BZqyjioWy5KKril+HS7pJTrm9NtJjrcR9YaKktKZJuFxho91KV5qprxh8YPaw
-	GN7exZXoexlYsy03aa7VWcmliPc+ELmk6XKCIJW5mmRpB6gkxACdvHh/SP6p3eWn08cBOY
-	Qp8KIQVEuo1rx7K/c23PYeHlyCaCTaZ4hjf57HqWXxtMNXl19OUtl0EqD5hitVnIDR3JQw
-	vKkV81dhzfKTrt8ZJWLKD5ztddO3jIvy3OxmM729xzsVJM9nE0nJJ7eddNTl/A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740999762;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=k00XNAJvAe2C6KjqVMcLSHnjJgrkU8rXHH4c4JwqzGQ=;
-	b=5NZl5nNc6azhHUVy8/SSMOwdttI648gV7CNRcNJEl4x+p59kPWgRR306biK8g+/V/DLfU8
-	Rn6UVcilh6MJVaDQ==
-From: "tip-bot2 for Josh Poimboeuf" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/asm] x86/asm: Make ASM_CALL_CONSTRAINT conditional on frame
- pointers
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Ingo Molnar <mingo@kernel.org>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Brian Gerst <brgerst@gmail.com>, "H. Peter Anvin" <hpa@zytor.com>,
- linux-kernel@vger.kernel.org, x86@kernel.org
+	s=arc-20240116; t=1740999601; c=relaxed/simple;
+	bh=Dtq3yE+UNHEsj6x2wPixGnasokmKm3LElA9fktZdOWA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=bouwoEV6gJbb0zyZxCuTAMz3e8v+dNfFDKHf1pI15p8wdOEopAza/K9fkzX5oIAqCVHLqy7v6uFP4kV+uePBYLw0F5ULG8S57xT23IzyfS6AqfSD/HI8hBF5dF7jyuVioHsW60lZvUbyLtdVsnV9Z+haUNQnTKdKMhc0zFC2lo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.114.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([116.24.11.87])
+	by sina.com (10.185.250.23) with ESMTP
+	id 67C58A5F0000477C; Mon, 3 Mar 2025 18:54:25 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 3596408913434
+X-SMAIL-UIID: 4DE9BD4B872042298C567D4F95590111-20250303-185425-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+5d8c5789c8cb076b2c25@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [netfilter?] KASAN: slab-use-after-free Read in nf_tables_trans_destroy_work (2)
+Date: Mon,  3 Mar 2025 18:54:12 +0800
+Message-ID: <20250303105413.2938-1-hdanton@sina.com>
+In-Reply-To: <67c447a7.050a0220.55417.04d3.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174099976188.10177.7153571701278544000.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the x86/asm branch of tip:
+On Sun, 02 Mar 2025 03:57:27 -0800
+> syzbot found the following issue on:
+> 
+> HEAD commit:    03d38806a902 Merge tag 'thermal-6.14-rc5' of git://git.ker..
+> git tree:       upstream
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=155128b7980000
 
-Commit-ID:     e5ff90b179d45df71373cf79f99d20c9abe229cb
-Gitweb:        https://git.kernel.org/tip/e5ff90b179d45df71373cf79f99d20c9abe229cb
-Author:        Josh Poimboeuf <jpoimboe@kernel.org>
-AuthorDate:    Sun, 02 Mar 2025 17:21:03 -08:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Mon, 03 Mar 2025 11:39:54 +01:00
+#syz test
 
-x86/asm: Make ASM_CALL_CONSTRAINT conditional on frame pointers
-
-With frame pointers enabled, ASM_CALL_CONSTRAINT is used in an inline
-asm statement with a call instruction to force the compiler to set up
-the frame pointer before doing the call.
-
-Without frame pointers, no such constraint is needed.  Make it
-conditional on frame pointers.
-
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: linux-kernel@vger.kernel.org
----
- arch/x86/include/asm/asm.h | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/arch/x86/include/asm/asm.h b/arch/x86/include/asm/asm.h
-index 0d268e6..f1db9e8 100644
---- a/arch/x86/include/asm/asm.h
-+++ b/arch/x86/include/asm/asm.h
-@@ -232,7 +232,11 @@ register unsigned long current_stack_pointer asm(_ASM_SP);
-  * gets set up by the containing function.  If you forget to do this, objtool
-  * may print a "call without frame pointer save/setup" warning.
-  */
-+#ifdef CONFIG_UNWINDER_FRAME_POINTER
- #define ASM_CALL_CONSTRAINT "r" (__builtin_frame_address(0))
-+#else
-+#define ASM_CALL_CONSTRAINT
-+#endif
+--- x/net/netfilter/nf_tables_api.c
++++ y/net/netfilter/nf_tables_api.c
+@@ -10654,6 +10654,10 @@ static int nf_tables_commit(struct net *
+ 		mutex_unlock(&nft_net->commit_mutex);
+ 		return 0;
+ 	}
++	if (nft_net->flushed) {
++		mutex_unlock(&nft_net->commit_mutex);
++		return -EAGAIN;
++	}
  
- #endif /* __ASSEMBLY__ */
+ 	nft_ctx_init(&ctx, net, skb, nlh, NFPROTO_UNSPEC, NULL, NULL, NULL);
  
+@@ -11251,6 +11255,7 @@ static int nf_tables_abort(struct net *n
+ 	else
+ 		nf_tables_module_autoload_cleanup(net);
+ 
++	nft_net->flushed = 0;
+ 	mutex_unlock(&nft_net->commit_mutex);
+ 
+ 	return ret;
+@@ -11854,6 +11859,7 @@ static int nft_rcv_nl_event(struct notif
+ 	gc_seq = nft_gc_seq_begin(nft_net);
+ 
+ 	nf_tables_trans_destroy_flush_work();
++	nft_net->flushed = 1;
+ again:
+ 	list_for_each_entry(table, &nft_net->tables, list) {
+ 		if (nft_table_has_owner(table) &&
+@@ -11903,6 +11909,7 @@ static int __net_init nf_tables_init_net
+ 	nft_net->base_seq = 1;
+ 	nft_net->gc_seq = 0;
+ 	nft_net->validate_state = NFT_VALIDATE_SKIP;
++	nft_net->flushed = 0;
+ 
+ 	return 0;
+ }
+--- x/include/net/netfilter/nf_tables.h
++++ y/include/net/netfilter/nf_tables.h
+@@ -1915,6 +1915,7 @@ struct nftables_pernet {
+ 	unsigned int		base_seq;
+ 	unsigned int		gc_seq;
+ 	u8			validate_state;
++	u8			flushed;
+ };
+ 
+ extern unsigned int nf_tables_net_id;
+--
 
