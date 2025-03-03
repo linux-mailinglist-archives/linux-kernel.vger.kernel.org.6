@@ -1,90 +1,51 @@
-Return-Path: <linux-kernel+bounces-541070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A0D8A4B80D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 07:58:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6E25A4B811
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:01:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50C973A1C89
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 06:57:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4C6918904B1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 07:01:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CD501E98F4;
-	Mon,  3 Mar 2025 06:57:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E9BA1E7C28;
+	Mon,  3 Mar 2025 07:01:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AgG13HQC"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5763B156237;
-	Mon,  3 Mar 2025 06:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="PMjky6qx"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45CA75684;
+	Mon,  3 Mar 2025 07:01:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740985040; cv=none; b=fU0hnrsejOHlquAasBpnKVXyVWh7UIDavvcW9wtJL7zz5r3y7irLWGWqHmJpmWAAYztiqZVIyQRwF5FI2t7NcI0bGRiwe0zpT+mfFJyTXuqKRV0LnJzhm0sjYDG8uV8bY7noqTi0nGOpWXgh7S3DKlQU9s2GQJV/168r1MnsL/0=
+	t=1740985268; cv=none; b=owoRtFLjss3MtIiUnW6qPReyRLaDp7ylD/rNgA0Za6jgVK97DInt4y2Bdgzyi5KrS/bh16mpVvbG3N7+UbbmnguU90PJ4DNxo4VzVBu0mIPrKodzb6JdsUazhFsmKgL39ofX7GFdDgX9cfMBT+wDAbIQ6iO80ssDbHe4+esQqxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740985040; c=relaxed/simple;
-	bh=28Vxb9MlXzLgsQOz839ouf1ZOb6pV/zDw7qLv1Gk4Z8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nhHPyUsmyq7fGalwwYzBxH1/wp/i4YT15DVRr1tmj7dKQGKOLRfstznmaYXcDKkrJfMP+Yw3MeNSDqeCdLvyFoUuHx4/dwJXnntZtryPgJQjrq6xFx0dHipw4IxqIg6RqZK6+wR3P1iuHabrp8qkbOyHl/Vb7n8wprhNOH/tdIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AgG13HQC; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7c0a159ded2so323373185a.0;
-        Sun, 02 Mar 2025 22:57:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740985038; x=1741589838; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dXZfifyJPh8wTQJHpr1hJkVkOZWigbIijHigtJZZIQY=;
-        b=AgG13HQC0jrPT4PRhvB22LG94PhT0Uhe4doWnPx+ID1PsF3L37ck05bxDl7MBXhelN
-         +sx6hojZvnNCWn9LyRqcObQSbh+0o6fjI5eWshPUYhNwtRiloSNfcfvrG//NWbSI18G1
-         LPqUCoBnzySZpOcrUkdk3CbJlHk8MogOG27RpHRJPYGhfWy4rpPdoc+hAaCiSSQNencs
-         XQOoXKs8+RGvQ6HBnO/fhcwBoCXqKBXIQsuFO/2CcaCMG7/eUhDvBZR0gw4j/3RpqGWF
-         HLSX0P55RrKKeJLggCaLDTGE6b2bvf9Ns9kEfiIoVQTPRs3K/gRa1r6Cvnqm6Lqff8C6
-         iOUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740985038; x=1741589838;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dXZfifyJPh8wTQJHpr1hJkVkOZWigbIijHigtJZZIQY=;
-        b=KihaSo/1XvGM9ufFHUrrE2SqNdC8BVNuwOKfRDiUvOqygflImnpD4u0LMxUjAJtXph
-         XkMSt8VGml9ypxrZS3fgujtDZqB/vc+odGlU47wvtdlmhDtzuAkOgeEN5NRknS5gz3Nt
-         6iyaba17oNeF1v4vUK39n8IkNbyzPbkvuAEELhf1Mrf/QIan98Yktlm0wiRf0YnJVqYh
-         bOQTwf7WUSfRh4d/oD1bDLe0lEizmRvwVAoeXdCedzZ6X/t5Sx+xeq4yizwbgZr70tJK
-         fONbzBLVO2aNybrD5fh0T7OMvwyBWZ2j2FgznwD4jW7gEDbu6qcgkKhJbjaGyv4l5taZ
-         MTaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUkj7zQcq07qDLqopG3i/WUQAS18RCgWaVR6mjjkVLe7kOO32/BBBbIgKSsvz5VZSuHRA4F184PYTYi/Z7e@vger.kernel.org, AJvYcCVnmEsslT2yEpbBXzvcd7iTNemOLK0cshv/R1bk0b9vj9XWrcLBqdpgQKTOTwahLR6Ce3vK5n82VXJS@vger.kernel.org, AJvYcCXh30+ZnJcHY+LTP7t76c+QieiaFonhm4NHdm5rY6PFe5x6qMs/XCeeCm/t9/Pi6ZstSmzBWORF0MOQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMRuOfqk9TNagClQpe9uBbwjusDAbAvbPOJSo9uva9JSuizgrM
-	YQvQlY6FpsnO4FdOQTMgjBOtkJJG6LzuWx7vbd2O7h+3RNBQLcAa
-X-Gm-Gg: ASbGncvf5ZlnHDw5npBTJc00Ac9JJU6wMOBhoBQm2nHEgoYBm8U6bnMmkICXrLOq8fj
-	jWoT2TfsFb89ekvp8zgEhUQsNDvSRhHdW1I9gTtn3jdLT/3VE+o7qUS5dlG6iRoQmBeMNhE4EtN
-	tzhXXv+TEGU5zjcqS+Ga6+xoFjAynY35I4W1Ejwf++yHGkXRrGE1lvoEqqJe/wVNsL0IdQxSbgs
-	9HsJOZ6OVgUMMHlVpbNd/G5wGHxF6MPjsrF1Qx4S8ZESUbniupoh/rR+673y9EMQWkZnKrJu/0h
-	Zgrwg3N5scqp1vlUZxHl
-X-Google-Smtp-Source: AGHT+IErdmW0jjNNNMzApy6HTTPEzszrqwNuoD6aXiczUEO8+rrdFm3G8YBCKzFZYWry8xg0LYIFVA==
-X-Received: by 2002:a05:620a:4392:b0:7c3:c1b4:c8f5 with SMTP id af79cd13be357-7c3c1b4cd30mr159420085a.15.1740985038075;
-        Sun, 02 Mar 2025 22:57:18 -0800 (PST)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c3c57684dasm17000885a.77.2025.03.02.22.57.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Mar 2025 22:57:17 -0800 (PST)
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Inochi Amaoto <inochiama@gmail.com>,
-	dmaengine@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	s=arc-20240116; t=1740985268; c=relaxed/simple;
+	bh=06/lFsI+jRiJfxa1MNxYK6jt9nzUM276nC+0ai3Lqu8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mhORt8PqHkGXnQMChVydTFBmkJ7hFQGyHvnrrlmIgoQ540+B9hcfhsUPWLGwUlYQImk/YZshgOK1ohIOMi7cGt1jJm5mvOIaTT8gtqyiUNQxJvbaiDo9nTTNLV2xxRwQK9VuNTBi89t+OXIJPxqDiDyyGUHXzDhHnEEU7vpFSX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=PMjky6qx; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=nFsyP
+	1HLyJu4C2yuVvpg4ClcQGgSmKQc6q3wf7J3EK4=; b=PMjky6qxNHQd85tZZCATp
+	sl6rsUn8g34co6ZSzLtkDojlhN3ew0ELA051+snzc9AFW0JZ6cwl7AxsJD4hVYcq
+	KK+P1RUW7nxu6RS5GIHH5clZvCmIRfV28L8M6mKnRpHGnILYJbA8b9Ul1GBVzDu1
+	rYYzQrXghxRRpWbmABS9Fg=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wDn1d2kU8VnvlsCQA--.28777S2;
+	Mon, 03 Mar 2025 15:00:53 +0800 (CST)
+From: Miao Li <limiao870622@163.com>
+To: gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Yixun Lan <dlan@gentoo.org>,
-	Longbin Li <looong.bin@gmail.com>
-Subject: [PATCH] dt-bindings: dma: snps,dw-axi-dmac: Allow devices to be marked as noncoherent
-Date: Mon,  3 Mar 2025 14:56:48 +0800
-Message-ID: <20250303065649.937233-1-inochiama@gmail.com>
-X-Mailer: git-send-email 2.48.1
+	limiao870622@163.com,
+	Miao Li <limiao@kylinos.cn>
+Subject: [PATCH] usb: quirks: Add DELAY_INIT and NO_LPM for Prolific PL2303 Serial Port
+Date: Mon,  3 Mar 2025 15:00:47 +0800
+Message-Id: <20250303070047.153591-1-limiao870622@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,37 +53,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDn1d2kU8VnvlsCQA--.28777S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7XFyfuFyDZw4UCF15Zr15XFb_yoWDCwbEkr
+	1UWa93u3W8GFZ7trn7Za1fZrZ5Kw429rykua4qqa43Ja1UCw1kJF4xArWUZr1UGry8tF4D
+	Kan7u34DZr1v9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRiNeO5UUUUU==
+X-CM-SenderInfo: 5olpxtbryxiliss6il2tof0z/1tbiShAFzWfFTX7fnwAAsD
 
-A RISC-V platform can have both DMA coherent/noncoherent devices.
-Since the RISC-V architecture is marked coherent, devices should
-be marked as noncoherent when coherent devices exist.
+From: Miao Li <limiao@kylinos.cn>
 
-Add dma-noncoherent property for snps,dw-axi-dmac device. It will
-be used on SG2044, and it has other coherent devices.
+When used on Huawei hisi platforms, Prolific PL2303 Serial Port which
+the VID:PID is in 067b:2731 might fail to enumerate at boot time and
+doesn't work well with LPM enabled, combination quirks:
+USB_QUIRK_DELAY_INIT + USB_QUIRK_NO_LPM
+fixed the problems.
 
-Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+Signed-off-by: Miao Li <limiao@kylinos.cn>
 ---
-Related discussion for this property.
+ drivers/usb/core/quirks.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-https://lore.kernel.org/all/20250221013758.370936-1-inochiama@gmail.com/
----
- Documentation/devicetree/bindings/dma/snps,dw-axi-dmac.yaml | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/dma/snps,dw-axi-dmac.yaml b/Documentation/devicetree/bindings/dma/snps,dw-axi-dmac.yaml
-index 525f5f3932f5..935735a59afd 100644
---- a/Documentation/devicetree/bindings/dma/snps,dw-axi-dmac.yaml
-+++ b/Documentation/devicetree/bindings/dma/snps,dw-axi-dmac.yaml
-@@ -59,6 +59,8 @@ properties:
-     minimum: 1
-     maximum: 8
-
-+  dma-noncoherent: true
+diff --git a/drivers/usb/core/quirks.c b/drivers/usb/core/quirks.c
+index dfcfc142bd5e..8aca5518e003 100644
+--- a/drivers/usb/core/quirks.c
++++ b/drivers/usb/core/quirks.c
+@@ -341,6 +341,10 @@ static const struct usb_device_id usb_quirk_list[] = {
+ 	{ USB_DEVICE(0x0638, 0x0a13), .driver_info =
+ 	  USB_QUIRK_STRING_FETCH_255 },
+ 
++	/* Prolific PL2303 Serial Port */
++	{ USB_DEVICE(0x067b, 0x2731), .driver_info = USB_QUIRK_DELAY_INIT |
++	  USB_QUIRK_NO_LPM },
 +
-   resets:
-     minItems: 1
-     maxItems: 2
---
-2.48.1
+ 	/* Saitek Cyborg Gold Joystick */
+ 	{ USB_DEVICE(0x06a3, 0x0006), .driver_info =
+ 			USB_QUIRK_CONFIG_INTF_STRINGS },
+-- 
+2.25.1
 
 
