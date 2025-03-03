@@ -1,258 +1,251 @@
-Return-Path: <linux-kernel+bounces-544786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 398E7A4E643
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:39:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3A08A4E759
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:01:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6F808A267C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:05:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D6A03BC3D0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:08:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B876A24C07F;
-	Tue,  4 Mar 2025 15:47:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D6A27BF82;
+	Tue,  4 Mar 2025 15:49:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hNwH16HX"
-Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2+q9BSJh"
+Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61DCD20A5D9
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:47:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 402CC27BF6A
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741103235; cv=pass; b=IkGIgKPOz5bH4rwnO6xDdjXN7B1CciUiRl6CgKkGK7GUWjCF9FPOjYXzM5knip+ZkC6NKU02Hv+3vgL28fcOrcGvqqhoj7i36dmpWTBr61a9+Ga4tt6GyFN4Sg965gAzI1Hbc59r6FD41u45+bG1c35mqx+42uc2333mF8UJf10=
+	t=1741103368; cv=pass; b=WGXbnvuGsPrxeFz7kTDIlKEMnW4e5orC0ncmjtMLuwe5ivwE3D9fLo9CghsGbeF8jVxgK8pex84lrq/Zcn3aQ5A2rSexRPSp6G2GhGBY2dKGmritmQaVjGboTh++xHlJf9PW5GnLx18wqEzfoK7uN3Zs3sVVlru2rfiZ+8unezU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741103235; c=relaxed/simple;
-	bh=bUWqoIF0RSWTyZWSv8LwMFKJPtmJiM+TMfHwuR+g940=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=S+uaQYsZO/qTyF4QOTBPRx4+n7W664EyVz95O1hn0EDdQckxjzuVI+o1SQFtT7yYNAzU4P/NHbHkgq1VZ6wG70acLM0/WkM+xsbki35dl2LLSY/HYbuilp8rKj43Ct4ihhEeunu5U8zhRfD1cqnC/LGBWjdjNw1EbzlgHvraVZs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hNwH16HX; arc=none smtp.client-ip=170.10.133.124; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; arc=pass smtp.client-ip=160.75.25.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+	s=arc-20240116; t=1741103368; c=relaxed/simple;
+	bh=XSadD9QdYJXXkkA+j9SkTugvzm8YkfIPAOAXziKNvY4=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=AK7sUKbJ1A5SWS3Ew+QlQf1bnyAt0k8PXpvintV7dv/da4qCHrAqD5xVjJSGHRRGJHyI1CH2kfJhwokUpvB0W5fdFQRPIZektq/8mz9grdwssd1AfJ9gJve5WLcVRnXsMuJUs7EPssToG4gB4fNMGz1hYL0qX9Ukm77NTpowX2Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2+q9BSJh; arc=none smtp.client-ip=209.85.128.73; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; arc=pass smtp.client-ip=160.75.25.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
-Received: from lesvatest1.cc.itu.edu.tr (unknown [10.146.128.1])
+Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id D891340CF4F1
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:47:12 +0300 (+03)
+	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 6E1A640CF642
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:49:25 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=hNwH16HX
+	dkim=pass (2048-bit key, unprotected) header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20230601 header.b=2+q9BSJh
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6g4W2CBPzG1B2
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:45:31 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6g6D3P25zG0CD
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:47:00 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 8F9AF42740; Tue,  4 Mar 2025 18:45:18 +0300 (+03)
+	id D27644275B; Tue,  4 Mar 2025 18:46:53 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hNwH16HX
-X-Envelope-From: <linux-kernel+bounces-541176-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2+q9BSJh
+X-Envelope-From: <linux-kernel+bounces-541177-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hNwH16HX
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2+q9BSJh
 Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id 9042B41C5D
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:45:42 +0300 (+03)
+	by le2 (Postfix) with ESMTP id 92AFD42239
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:46:41 +0300 (+03)
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id D13B73063EFF
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:45:41 +0300 (+03)
+	by fgw1.itu.edu.tr (Postfix) with SMTP id D3C883063EFC
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:46:40 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6549D7A4DCF
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 08:44:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71CED7A615B
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 08:45:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E6B1EFFB7;
-	Mon,  3 Mar 2025 08:45:19 +0000 (UTC)
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DE531F03E5;
+	Mon,  3 Mar 2025 08:45:54 +0000 (UTC)
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DFD5B667
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 08:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84C3AB667
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 08:45:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740991516; cv=none; b=VqGQiqXGAC+TGq4DzMStUb02Iowr4vlSDLMqRKgFVJmwmJuaOxcScnouJzU4kNloxxrnfMVIA7MlLIPQoOAXnLBnI8S4/ubmcklf6Yq93FIneVjHShupZGgvRgi6uCFtPt+43n68+7q9gKjD8LDw+yeJAfhfDBAmt2N0dou3nh4=
+	t=1740991550; cv=none; b=d6EBY8gKBtbioVQK/ZZ6qGHS7euw/n3ScZNwyTWTUNomI6U6fP9gU32Po1K3k3QVHL4UdAMisLi4JkUp+hgwhsxATpYTvz+5A6wM/CklYoJfCyfGUw0QqaQYdvwKeQ9dkImX7nw5wWKo7b83kq/S/0BDmto+c31QQ7oPhJnwlzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740991516; c=relaxed/simple;
-	bh=bUWqoIF0RSWTyZWSv8LwMFKJPtmJiM+TMfHwuR+g940=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=tX7N8yrf/hjm+iESJf6r5ZFoVAp9J8ThgMA71ARicV90sF2Oelfx6SViy18RC4nP0lOhZcPYth6urIKGyn+U/1KxnGozZ4Wyz8P8+oh/dDU9X6J94QuF0WdYuo7SOrnavFBaosSJZXGQ/6NZuZHp6ZNn9ODzcMKSoJgwJoW7oME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hNwH16HX; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740991513;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Mzc0zyxynm1zLc8lCgBdxcnpn7S2dpYemCwQOpKEfuk=;
-	b=hNwH16HX0osTPn/vOpYMc/EhnVJdpc8E1U+FeQUwz8fIiZ14cUZYMJfMW4CVRyt/rq4yde
-	HGeTvQ4QFRjRtr1z6kAj93rZCm1XNV2As+x4z1muHEGJWadGxP24aWbVBvp0AFMgk6WvTg
-	aopWuSjQGuDoynrrrDR/KfpRnKwqiHU=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-306-7wrT26BSMJ6P7gbEEUKlQA-1; Mon,
- 03 Mar 2025 03:45:00 -0500
-X-MC-Unique: 7wrT26BSMJ6P7gbEEUKlQA-1
-X-Mimecast-MFC-AGG-ID: 7wrT26BSMJ6P7gbEEUKlQA_1740991498
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1D019180087C;
-	Mon,  3 Mar 2025 08:44:57 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.44.32.200])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E569819560AA;
-	Mon,  3 Mar 2025 08:44:50 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-cc: David Howells <dhowells@redhat.com>,
-    Marc Dionne <marc.dionne@auristor.com>,
-    Jakub Kicinski <kuba@kernel.org>,
-    "David S.
- Miller" <davem@davemloft.net>,
-    Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-    Simon Horman <horms@kernel.org>,
-    Trond Myklebust <trond.myklebust@hammerspace.com>,
-    Chuck Lever <chuck.lever@oracle.com>,
-    Eric Biggers <ebiggers@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
-    linux-crypto@vger.kernel.org, linux-afs@lists.infradead.org,
-    linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL v2] crypto: Add Kerberos crypto lib
+	s=arc-20240116; t=1740991550; c=relaxed/simple;
+	bh=XSadD9QdYJXXkkA+j9SkTugvzm8YkfIPAOAXziKNvY4=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=hWZK2b4Y2UyDbEn7WVZ6KVNstY/uyJMLIgNM7zKCsupl7a5AZp8RFAZn/L3F7B7NICJQiXjsrhngLW1Ff7VIMBnd/6aBjN7H3n5JQOG6IcHTPlrcrkEZD/b/JqfulQUtsY13PUWXXSWTkcOnwMQyBx6RcXI0cm89f4HQX4PG3+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2+q9BSJh; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4393b6763a3so15599315e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 00:45:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740991547; x=1741596347; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=DYh/tabkIBU+qEEozteNgGAzw7miJ+u0L3IImQNu48A=;
+        b=2+q9BSJhzYe9eA3ZzqmsZ7K86oMHDjVQCdz01H0IXnQPN9r8xDnylytIt1p20qFStv
+         /NpEGcXJwEd4LyenwSQ1pMwtW/s6xe10BjylPTm7/fglKhoKPctSqgwKGnNhMVf1URM2
+         uBEtXWVSLKlFvjTxE3BaMpAazKZR4DjFDwmT9AnTajgjW0LzDTOGJsaoW2ITxci4J2YR
+         68y3YL2VTgbwjaQVckKqehD4YR+VwHHA3A/V0sMZQ5+dZNtnZfkwZnjo5aoZfcRRIoxG
+         b7mTmfj342x6mrSGM7yHJo9eTEBfn0DYtCyGIhbdkN4BU0eeRkQrq912wOBoW1es8l0j
+         2htQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740991547; x=1741596347;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DYh/tabkIBU+qEEozteNgGAzw7miJ+u0L3IImQNu48A=;
+        b=VwWMJaIkJBnqzlLzhoa+ErsneR8Y4FMNnGYIjWRiD7vZwFxPVI7XocGPvenP7MT3jF
+         L1reLx5Rm9abEa/PZrh1C/JbD5hF+VPYx1Hy4IOsClnRC3796m+48+BYYk7tVE+HYGNU
+         oXhSzEcQpdEuj3EWWl5/3YSRRSBBVPL9ze3ik9Z+JWzGLtH63Gc9/AtmEgW+PBLeZnfJ
+         0B7XnUNoGkCQGXxfng4MdqyWmulYfoeEv3J3STGDdqqmOI/6esEEAH+cL7B/URfsWBuy
+         w6oiE6Ex3v689V/tJMMIDQbImL0nw4HG1A0B/y0LQ78zrrarbmloMoklrn1nkmpR6MjI
+         v97w==
+X-Forwarded-Encrypted: i=1; AJvYcCXEENj3nfK9heA6ELKp1e6dkFxMETCTW9/Z8AN2LACBcMQu5MNLhMDGAUN27dgM3AsXGNQ0DaLOy5O8Um0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfZ/w7/lGGvj85iCB52w7fqkk43Tl8JFqfcio94zl+mKl/DZLe
+	W3hImB190EBVoVaGoDChIeCRqXOdalN6xOsNPuThXbX2UXB4VmdgMGhWjyPkXM/qnOe9BRjrFAA
+	CNTG8WINQ8vx1bw==
+X-Google-Smtp-Source: AGHT+IFmqw4UbJRnAxWOF/CCPg0pJy+REFK0/XB06eG3qGGCxRsn3vY5ejkeGCpS1Z/tDA6VnHB5nKKppGUUZbw=
+X-Received: from wmby11-n1.prod.google.com ([2002:a05:600c:c04b:10b0:43b:b3bb:a157])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:5119:b0:439:a25b:e7d3 with SMTP id 5b1f17b1804b1-43ba67047c9mr101624845e9.14.1740991547025;
+ Mon, 03 Mar 2025 00:45:47 -0800 (PST)
+Date: Mon, 03 Mar 2025 08:45:11 +0000
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3709377.1740991489.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 03 Mar 2025 08:44:49 +0000
-Message-ID: <3709378.1740991489@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIABdsxWcC/3XMQQqDMBCF4atI1k1JYjVJV71H6SKMowaqI4kEi
+ 3j3Rldtocv34PtXFjF4jOxarCxg8tHTmEd5Khj0buyQ+yZvpoSqhFKa4zJRmPngIBC3ztlWClk
+ 3BlgmU8DWL0fu/si793Gm8DrqSe7vn1CSXHB7MVpXLZTauVtH1D3xDDSwvZTUpzY/WmVd1RZAo 7Gqhi+9bdsbP0D1TecAAAA=
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3761; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=XSadD9QdYJXXkkA+j9SkTugvzm8YkfIPAOAXziKNvY4=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBnxWwcAkFZ406niQYuJKOAySGk+oWjSWs0I3Fh0
+ ok2nKx19rSJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZ8VsHAAKCRAEWL7uWMY5
+ Rti8EACRQPC2zHJp3GDFyYGJqI+4nrsuB5oQ+lNboNPv2qNhWsn09WyJNMU+WzMLp+LKIDoxTyB
+ Kn48A+KiJfCIBwv0ouAWfOSS70nP0ljroURRA7iY/TfXiw/5w0hT/TpMLFDdamBZGAZWCaZFZzH
+ H6jlSdEmse4sPtyKOysR50rayzE/YUVIhkfC0H+TXCHkIrJC/PuxEo9zBTr6UWIkhpET1JSm6xY
+ ywHtbeT8+ANwwJpU95C9gBBdbLnACkxPLYDXsZwJP2pYf/vr2NP8I/v+479JUhvUqfmwuUIp4vk
+ HYHT8E1txLzcKoqykb2C7JqDt7Q3vaXnDhIAbUe98Nxz2H/S5VfOu554U5ZaIAc0dw8kr2cJKTo
+ BfNquJxfEc7l5vNtnpGBMHOhzopfMuCzjegVHOYB8h5sbdjRsk3PddOEJOwnyJK6oi9oDAbjoy5
+ sm3HIXwaq4WWHGDdXCnKGFpqQTkd6U6j8UmilrJz6PrDhYqT0c4o81h5EgscETjhM4wAaDqcqDi
+ GhzbOLMYx3KdzLwDeN8hGaNqB2vcrbDJrAag7ybpstECJM4qQNkUjsj2LiP3lmJLJ+T8cMVWpio
+ 6PqjwOvrowEXiVfYk6M60GPpb3uRfdGWPpAlTkgXocdVcDWeuRmgpo+3o9f7G0cukEo5ZG08lUa ySxlf3m+JxXweWQ==
+X-Mailer: b4 0.14.1
+Message-ID: <20250303-export-macro-v3-0-41fbad85a27f@google.com>
+Subject: [PATCH v3 0/5] Check Rust signatures at compile time
+From: Alice Ryhl <aliceryhl@google.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>
+Cc: Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Tamir Duberstein <tamird@gmail.com>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	Alice Ryhl <aliceryhl@google.com>, Simona Vetter <simona.vetter@ffwll.ch>
+Content-Type: text/plain; charset="utf-8"
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6g4W2CBPzG1B2
+X-ITU-Libra-ESVA-ID: 4Z6g6D3P25zG0CD
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741707942.20718@K/w4CpzKvqorZU4t5jK/Eg
+X-ITU-Libra-ESVA-Watermark: 1741708085.49992@XY2XxEBkgVqHLAqS2MurIQ
 X-ITU-MailScanner-SpamCheck: not spam
 
-Hi Herbert,
+Rust has two different tools for generating function declarations to
+call across the FFI boundary:
 
-Could you pull this into the crypto tree please?  v2 is just a rebase onto
-your cryptodev/master branch.  It does a couple of things:
+* bindgen. Generates Rust declarations from a C header.
+* cbindgen. Generates C headers from Rust declarations.
 
- (1) Provide an AEAD crypto driver, krb5enc, that mirrors the authenc
-     driver, but that hashes the plaintext, not the ciphertext.  This was
-     made a separate module rather than just being a part of the authenc
-     driver because it has to do all of the constituent operations in the
-     opposite order - which impacts the async op handling.
+However, we only use bindgen in the kernel. This means that when C code
+calls a Rust function by name, its signature must be duplicated in both
+Rust code and a C header, and the signature needs to be kept in sync
+manually.
 
-     Testmgr data is provided for AES+SHA2 and Camellia combinations of
-     authenc and krb5enc used by the krb5 library.  AES+SHA1 is not
-     provided as the RFCs don't contain usable test vectors.
+Introducing cbindgen as a mandatory dependency to build the kernel would
+be a rather complex and large change, so we do not consider that at this
+time. Instead, to eliminate this manual checking, introduce a new macro
+that verifies at compile time that the two function declarations use the
+same signature. The idea is to run the C declaration through bindgen,
+and then have rustc verify that the function pointers have the same
+type.
 
- (2) Provide a Kerberos 5 crypto library.  This is an extract from the
-     sunrpc driver as that code can be shared between sunrpc/nfs and
-     rxrpc/afs.  This provides encryption, decryption, get MIC and verify
-     MIC routines that use and wrap the crypto functions, along with some
-     functions to provide layout management.
+The signature must still be written twice, but at least you can no
+longer get it wrong. If the signatures don't match, you will get errors
+that look like this:
 
-     This supports AES+SHA1, AES+SHA2 and Camellia encryption types.
+error[E0308]: `if` and `else` have incompatible types
+  --> <linux>/rust/kernel/print.rs:22:22
+   |
+21 | #[export]
+   | --------- expected because of this
+22 | unsafe extern "C" fn rust_fmt_argument(
+   |                      ^^^^^^^^^^^^^^^^^ expected `u8`, found `i8`
+   |
+   = note: expected fn item `unsafe extern "C" fn(*mut u8, *mut u8, *mut c_void) -> *mut u8 {bindings::rust_fmt_argument}`
+              found fn item `unsafe extern "C" fn(*mut i8, *mut i8, *const c_void) -> *mut i8 {print::rust_fmt_argument}`
 
-     Self-testing is provided that goes further than is possible with
-     testmgr, doing subkey derivation as well.
+It is unfortunate that the error message starts out by saying "`if` and
+`else` have incompatible types", but I believe the rest of the error
+message is reasonably clear and not too confusing.
 
-The patches were previously posted here:
+The main commit of this series is "rust: add #[export] macro".
 
-    https://lore.kernel.org/r/20250203142343.248839-1-dhowells@redhat.com/
-
-as part of a larger series, but the networking guys would prefer these to
-go through the crypto tree.  If you want them reposting independently, I
-can do that.
-
-David
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
-The following changes since commit 17ec3e71ba797cdb62164fea9532c81b60f4716=
-7:
+Changes in v3:
+- Reword commit message about cbindgen to remove cargo comment.
+- Add # token to quote! macro and mention allow(unused_mut) warning.
+- Use quote! macro for #[no_mangle] in #[export].
+- Reword "since" in `export` last line of docs.
+- Drop extern from drm_panic_qr function declarations.
+- Add comment about drm_panic_qr_max_data_size being unsafe.
+- Add comment to drm/drm_panic.h include.
+- Pick up tags to commit trailers.
+- Link to v2: https://lore.kernel.org/r/20250228-export-macro-v2-0-569cc7e8926c@google.com
 
-  crypto: lib/Kconfig - Hide arch options from user (2025-03-02 15:21:47 +=
-0800)
+Changes in v2:
+- Various improvements to documentation.
+- Split out quote! changes into its own commit.
+- Link to v1: https://lore.kernel.org/r/20250227-export-macro-v1-0-948775fc37aa@google.com
 
-are available in the Git repository at:
+---
+Alice Ryhl (5):
+      rust: fix signature of rust_fmt_argument
+      rust: macros: support additional tokens in quote!
+      rust: add #[export] macro
+      print: use new #[export] macro for rust_fmt_argument
+      panic_qr: use new #[export] macro
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags=
-/crypto-krb5-20250303
+ drivers/gpu/drm/drm_panic.c     |  5 -----
+ drivers/gpu/drm/drm_panic_qr.rs | 15 +++++++++++----
+ include/drm/drm_panic.h         |  7 +++++++
+ include/linux/sprintf.h         |  3 +++
+ lib/vsprintf.c                  |  3 ---
+ rust/bindings/bindings_helper.h |  5 +++++
+ rust/kernel/prelude.rs          |  2 +-
+ rust/kernel/print.rs            | 10 +++++-----
+ rust/macros/export.rs           | 29 +++++++++++++++++++++++++++++
+ rust/macros/helpers.rs          | 19 ++++++++++++++++++-
+ rust/macros/lib.rs              | 24 ++++++++++++++++++++++++
+ rust/macros/quote.rs            | 27 +++++++++++++++++++++++++--
+ 12 files changed, 128 insertions(+), 21 deletions(-)
+---
+base-commit: a64dcfb451e254085a7daee5fe51bf22959d52d3
+change-id: 20250227-export-macro-9aa9f1016d8c
 
-for you to fetch changes up to fc0cf10c04f49ddba1925b630467f49ea993569e:
-
-  crypto/krb5: Implement crypto self-testing (2025-03-02 21:56:47 +0000)
-
-----------------------------------------------------------------
-crypto: Add Kerberos crypto lib
-
-----------------------------------------------------------------
-David Howells (17):
-      crypto/krb5: Add API Documentation
-      crypto/krb5: Add some constants out of sunrpc headers
-      crypto: Add 'krb5enc' hash and cipher AEAD algorithm
-      crypto/krb5: Test manager data
-      crypto/krb5: Implement Kerberos crypto core
-      crypto/krb5: Add an API to query the layout of the crypto section
-      crypto/krb5: Add an API to alloc and prepare a crypto object
-      crypto/krb5: Add an API to perform requests
-      crypto/krb5: Provide infrastructure and key derivation
-      crypto/krb5: Implement the Kerberos5 rfc3961 key derivation
-      crypto/krb5: Provide RFC3961 setkey packaging functions
-      crypto/krb5: Implement the Kerberos5 rfc3961 encrypt and decrypt fun=
-ctions
-      crypto/krb5: Implement the Kerberos5 rfc3961 get_mic and verify_mic
-      crypto/krb5: Implement the AES enctypes from rfc3962
-      crypto/krb5: Implement the AES enctypes from rfc8009
-      crypto/krb5: Implement the Camellia enctypes from rfc6803
-      crypto/krb5: Implement crypto self-testing
-
- Documentation/crypto/index.rst   |   1 +
- Documentation/crypto/krb5.rst    | 262 +++++++++++++
- crypto/Kconfig                   |  13 +
- crypto/Makefile                  |   3 +
- crypto/krb5/Kconfig              |  26 ++
- crypto/krb5/Makefile             |  18 +
- crypto/krb5/internal.h           | 247 ++++++++++++
- crypto/krb5/krb5_api.c           | 452 ++++++++++++++++++++++
- crypto/krb5/krb5_kdf.c           | 145 +++++++
- crypto/krb5/rfc3961_simplified.c | 797 ++++++++++++++++++++++++++++++++++=
-+++++
- crypto/krb5/rfc3962_aes.c        | 115 ++++++
- crypto/krb5/rfc6803_camellia.c   | 237 ++++++++++++
- crypto/krb5/rfc8009_aes2.c       | 362 ++++++++++++++++++
- crypto/krb5/selftest.c           | 544 ++++++++++++++++++++++++++
- crypto/krb5/selftest_data.c      | 291 ++++++++++++++
- crypto/krb5enc.c                 | 504 +++++++++++++++++++++++++
- crypto/testmgr.c                 |  16 +
- crypto/testmgr.h                 | 351 +++++++++++++++++
- include/crypto/authenc.h         |   2 +
- include/crypto/krb5.h            | 160 ++++++++
- 20 files changed, 4546 insertions(+)
- create mode 100644 Documentation/crypto/krb5.rst
- create mode 100644 crypto/krb5/Kconfig
- create mode 100644 crypto/krb5/Makefile
- create mode 100644 crypto/krb5/internal.h
- create mode 100644 crypto/krb5/krb5_api.c
- create mode 100644 crypto/krb5/krb5_kdf.c
- create mode 100644 crypto/krb5/rfc3961_simplified.c
- create mode 100644 crypto/krb5/rfc3962_aes.c
- create mode 100644 crypto/krb5/rfc6803_camellia.c
- create mode 100644 crypto/krb5/rfc8009_aes2.c
- create mode 100644 crypto/krb5/selftest.c
- create mode 100644 crypto/krb5/selftest_data.c
- create mode 100644 crypto/krb5enc.c
- create mode 100644 include/crypto/krb5.h
+Best regards,
+-- 
+Alice Ryhl <aliceryhl@google.com>
 
 
 
