@@ -1,120 +1,111 @@
-Return-Path: <linux-kernel+bounces-542788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CBA1A4CDB2
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:52:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79CA2A4CDB7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:53:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5688A172522
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 21:52:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A45D7A4219
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 21:52:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 709651F0E29;
-	Mon,  3 Mar 2025 21:52:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E2C1F0E49;
+	Mon,  3 Mar 2025 21:53:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lSqNzfik"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mCLyG6hB"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D6B1E5213;
-	Mon,  3 Mar 2025 21:52:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DB591E5213;
+	Mon,  3 Mar 2025 21:53:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741038766; cv=none; b=ShkbStd3og/imRnrNotGcibAyGc/yUHpFo1aLVMgYeu6xrM9nDS6DZjjQln3R3IpfkfI7YKqRNTsdh86ldKeZF4eEXqC9Okgf6H1GkSuxU6RBPLN9agL8X/q9PR4wL5+6m7UnEloMvhUcrhKbnf7IoXvNtcPDZJQQ5rHpcRAkx0=
+	t=1741038796; cv=none; b=dz4RphOxohHhYOACdDIBQA/CINI8yyFqWCBAL6JgzpIhPI5AEw1gq2Eh487D1iFC544cO0Rjh6kCgmYJzfA6GpGvgq/dg40AsQAiZBO5vcu3RGpBtiVjHfhHrBck5uwSOTwaIoT5edGrfK4kK4TLir3MqSsGZbKAYyO8HsCwsPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741038766; c=relaxed/simple;
-	bh=5u8kfojZwKUUhSAm2BNerYZcjQOmKlfy3X+YC7zYZRY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lIMN321zYGShKhKmzyIj0MBiJMpjcHyjEh3Tj1eGL5n1rFA41Pw44ua7flR4297qG8OagesQ4Hl3HPR4mjAjjcoFlSmMD3Bq9n+tB0Sv10+AgIDeXXdBJZ3I5cSaUbKu2iBFTsFxCBSS4fWsvjfS041wYi7bNuyG/Cq7HLUVs28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lSqNzfik; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A622C4CED6;
-	Mon,  3 Mar 2025 21:52:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741038766;
-	bh=5u8kfojZwKUUhSAm2BNerYZcjQOmKlfy3X+YC7zYZRY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=lSqNzfikbpnoZYDMtA/etknEuUAqP9odrbb3O0I3M7EN/cz8fM3CkX3zyWZ7HTOgW
-	 2u/9pGOVduJ9CEgCEvbdFE+l+ZSvgZC9z0GD7KxqmDmrTI80MH1lHRuyrQk/9Ib91Y
-	 AoOiOQKQd3v48bMfODpnBrnv6S6WG46oyN/atlHR4oOoBh/vbhhIIW8UpfSXIMzzek
-	 RCkfLw+1yvxHC1yiaL6pMfSvb5P715rBp+n+8KEWoJRCHv33rWpdreywLFRmi8TT+t
-	 KbNuD9VlrBpe7YzKXCwnYxduER+FLqqQSz5k5gisdpTzhhUtY/wAkdLCeTnFnDh7Q0
-	 pjHEk3kgLGVog==
-From: Kees Cook <kees@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Kees Cook <kees@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	llvm@lists.linux.dev,
-	linux-kbuild@vger.kernel.org,
-	David Gow <davidgow@google.com>,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH] kbuild: clang: Support building UM with SUBARCH=i386
-Date: Mon,  3 Mar 2025 13:52:41 -0800
-Message-Id: <20250303215240.work.379-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1741038796; c=relaxed/simple;
+	bh=WmcVLKQEvOHuv+dHBbFCnwsMqOiusRFYcHbCKfxKTfI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A1Al/E3Oc8gFxKzyPv9rIHwm4JX7tzJur0ILKxMa+G+P//9vyL3XWdiiOGe6puGq6F+QBkMpBTJN/Ie1q+R+Dm44wx5fMm2ezHp8RQ45HQrKmJ+A3FUATFGG7kXkqhrIJm/nv4M8Jc34zx1QeVriTGUk8nMqEtA9DDruzqZd9Gs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mCLyG6hB; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 6B05120457;
+	Mon,  3 Mar 2025 21:53:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741038791;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xBOb7oGeYLEpXfq67SR7gONs2pzCSxu5VZhQZhEOe6c=;
+	b=mCLyG6hBbbcmuyXpIbTsjYLroVo6Y073oLGc5iIpWunCG6SjJWBZ/AJoHMoWREdxC7S6Nk
+	6GgGL/bUWpapqJdoccETbQhHWoy+6n7m1GncwhDEOdRrGasYG2WJe+4qvDbZHSfBctKoaR
+	IsWpDs1zNJ66dPivtbwU9WO3bSShsk/t5nRXE+CxdN9MoZV2QXkJeHgCLP+0Y+5E89lNPN
+	x7xpc6f0aQ5rlxWQkCn2x6oiITMkS1lzaWEcE6pA3lu1ceCWUEt6hzI3Igt6Ztrj/m386X
+	L/bbEVEfh0VlN/Xzm4HV8DwbUkQ3aAwT8WvoX4t9X2Jf6TUfTDE+78Ek8ul8Pg==
+Date: Mon, 3 Mar 2025 22:53:09 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	"Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: linux-rtc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-riscv@lists.infradead.org,
+	Peng Fan <peng.fan@nxp.com>,
+	Antonio Borneo <antonio.borneo@foss.st.com>
+Subject: Re: [PATCH 0/7] rtc: Use devm_pm_set_wake_irq to simplify code
+Message-ID: <174103876909.1106916.958645902819103595.b4-ty@bootlin.com>
+References: <20250205-rtc-cleanup-v1-0-66165678e089@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1751; i=kees@kernel.org; h=from:subject:message-id; bh=5u8kfojZwKUUhSAm2BNerYZcjQOmKlfy3X+YC7zYZRY=; b=owGbwMvMwCVmps19z/KJym7G02pJDOnHVFYGcmZcbd+5tO75XZ8Txdf6H6k+3nnxgvHn8Glfo o5NK3h/t6OUhUGMi0FWTJElyM49zsXjbXu4+1xFmDmsTCBDGLg4BWAiEdcYGWb7+fHoJH6buZ7h jtrvkr7EVOZbsx6u3Capetc31u/KxjRGhvtckmaL3E5/Ypio9d9wXrNrRbrgt38d4ZNDF8z7ovU 4nREA
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250205-rtc-cleanup-v1-0-66165678e089@nxp.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutddtvdehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeetlhgvgigrnhgurhgvuceuvghllhhonhhiuceorghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepieejfefhffekjeeuheevueevjedvleevjeetudffheeutdffudefjeduffeuvddtnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepjeejrdduhedtrddvgeeirddvudehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepjeejrdduhedtrddvgeeirddvudehpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedugedprhgtphhtthhopehmtghoqhhuvghlihhnrdhsthhmfedvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghlvgigrghnughrvgdrthhorhhguhgvsehfohhsshdrshhtrdgtohhmpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpt
+ hhtoheptghonhhorhdrughoohhlvgihsehmihgtrhhotghhihhprdgtohhmpdhrtghpthhtohepuggrihhrvgdrmhgtnhgrmhgrrhgrsehmihgtrhhotghhihhprdgtohhmpdhrtghpthhtohepphgvnhhgrdhfrghnsehoshhsrdhngihprdgtohhmpdhrtghpthhtoheplhhinhhugidqrhhttgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhsthhmfedvsehsthdqmhguqdhmrghilhhmrghnrdhsthhorhhmrhgvphhlhidrtghomh
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-The UM builds distinguish i386 from x86_64 via SUBARCH, but we don't
-support building i386 directly with Clang. To make SUBARCH work for
-i386 UM, we need to explicitly test for it.
+On Wed, 05 Feb 2025 08:58:18 +0800, Peng Fan (OSS) wrote:
+> This is a pick-up of patch 6-12 from patchset [1]
+> 
+> Since devm_pm_set_wake_irq is in 6.14, so resend the rtc parts.
+> 
+> R-b tags from Linus Walleij and Antonio Borneo are still kept.
+> 
+> [1] https://lore.kernel.org/all/CAJZ5v0jb=0c5m=FeA-W-aG30H4706Ay_xCHTsiC1S-7MuGxqTQ@mail.gmail.com/#r
+> 
+> [...]
 
-This lets me run i386 KUnit tests with Clang:
+Applied, thanks!
 
-$ ./tools/testing/kunit/kunit.py run \
-	--make_options LLVM=1 \
-	--make_options SUBARCH=i386
-...
+[1/7] rtc: stm32: Use resource managed API to simplify code
+      https://git.kernel.org/abelloni/c/04572d18921d
+[2/7] rtc: nxp-bbnsm: Use resource managed API to simplify code
+      https://git.kernel.org/abelloni/c/6b296dee3eb7
+[3/7] rtc: ds1343: Use devm_pm_set_wake_irq
+      https://git.kernel.org/abelloni/c/5ad218f101e4
+[4/7] rtc: pm8xxx: Use devm_pm_set_wake_irq
+      https://git.kernel.org/abelloni/c/e8a0b6e62429
+[5/7] rtc: ab8500: Use resource managed API to simplify code
+      https://git.kernel.org/abelloni/c/ca36c9301117
+[6/7] rtc: mpfs: Use devm_pm_set_wake_irq
+      https://git.kernel.org/abelloni/c/d8690ce183bb
+[7/7] rtc: pl031: Use resource managed API to simplify code
+      https://git.kernel.org/abelloni/c/90e0bcc9392d
 
-Fixes: c7500c1b53bf ("um: Allow builds with Clang")
-Signed-off-by: Kees Cook <kees@kernel.org>
----
-I could not find a cleaner way to do this without hardcoding a test
-for i386 UM. Does anyone see a more sane way to accomplish this? The
-comment above the CLANG_TARGET_FLAGS seems like it can't be done with
-UM's Makefile...
+Best regards,
 
-Cc: Nathan Chancellor <nathan@kernel.org>
-Cc: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Bill Wendling <morbo@google.com>
-Cc: Justin Stitt <justinstitt@google.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Nicolas Schier <nicolas@fjasle.eu>
-Cc: llvm@lists.linux.dev
-Cc: linux-kbuild@vger.kernel.org
----
- scripts/Makefile.clang | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/scripts/Makefile.clang b/scripts/Makefile.clang
-index 2435efae67f5..fa6f9a9be4ac 100644
---- a/scripts/Makefile.clang
-+++ b/scripts/Makefile.clang
-@@ -12,8 +12,12 @@ CLANG_TARGET_FLAGS_riscv	:= riscv64-linux-gnu
- CLANG_TARGET_FLAGS_s390		:= s390x-linux-gnu
- CLANG_TARGET_FLAGS_sparc	:= sparc64-linux-gnu
- CLANG_TARGET_FLAGS_x86		:= x86_64-linux-gnu
-+ifeq ($(SRCARCH):$(SUBARCH),um:i386)
-+CLANG_TARGET_FLAGS		:= i386-linux-gnu
-+else
- CLANG_TARGET_FLAGS_um		:= $(CLANG_TARGET_FLAGS_$(SUBARCH))
- CLANG_TARGET_FLAGS		:= $(CLANG_TARGET_FLAGS_$(SRCARCH))
-+endif
- 
- ifeq ($(CLANG_TARGET_FLAGS),)
- $(error add '--target=' option to scripts/Makefile.clang)
 -- 
-2.34.1
-
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
