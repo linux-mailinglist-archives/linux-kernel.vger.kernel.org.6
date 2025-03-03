@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-540886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F386A4B615
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 03:27:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC668A4B617
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 03:27:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A6FC16C12D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 02:27:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A0267A29FE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 02:26:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 014651D517E;
-	Mon,  3 Mar 2025 02:25:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D3D1E7C05;
+	Mon,  3 Mar 2025 02:25:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Q9hyLQMB"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lRfVeWDz"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E01D1E51F5
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 02:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 028AF1E5B7A
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 02:25:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740968745; cv=none; b=mRTk6hTCnL5OsOcGmrOozuUhAR32DWdELiiZKdWpbPrBlst49nz4Z7ZznoLDKoGlI0M4bReswrO6wKDArXkndJemtMa80YMnXiYSeyv0EbF3aCyBKkrIZBlTmRVzLJnGP7FogOW5D2l+9BSbFyoa1OEUkKYske2IYu8aEH5jhiU=
+	t=1740968750; cv=none; b=ONgOYrNIloy1oZ4c3DvER7BzyFGEZwv9Rs8GLlBqwaRoBax8xCnWjaD3XjLfojevJ2EliFNKRrxPMnpRcATzW0K53tXYwvcC2ZwOnjhj2tssZG5418S2ZQcsrc2gUwJj92PlLofm/EH5ieMRPwa0O8n7rArYEs0MywliX3+QQCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740968745; c=relaxed/simple;
-	bh=3iFieOUYn4iqBiRwGHIpWNqgK/MF7aWW1jnWLFdMd18=;
+	s=arc-20240116; t=1740968750; c=relaxed/simple;
+	bh=wcSr27N3MI4dvCoc9p6MifR/HaNjuWH8mKzrev84nnk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G0yKbqTetdU/TtibGzyI2QDTMFfuhZAF8QOF0wKu5G+/alHUYNneTfR0TEQ/0m+UKKBfzuxATfR8mUg55L3h0oVtKNgOmyP1aU+lmxi8ecvuvhBCCxfhwLDi32i0ZZxE553cf3xqiysEVqRua+wNDXvi5aXZngs/fryMoMla6ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Q9hyLQMB; arc=none smtp.client-ip=209.85.214.175
+	 MIME-Version; b=D2j8gPiT7IWPx7pNpQUFHVNA2jysndrN5/T/7uJrgqBJnBDbugoKBhkTZT++jRc1h6HT/jOGPuvKsPy1V/isHZ1TfTKzD+ti/HKQsD+oSPFbfso8Bgr/LllNHcI6pu5QD+NsWb2N2fRS3TiExs7Y4HN/jjBradU5ncdXzwxqcLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lRfVeWDz; arc=none smtp.client-ip=209.85.216.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-223a3c035c9so9000995ad.1
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Mar 2025 18:25:43 -0800 (PST)
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2fe96dd93b4so7159852a91.0
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Mar 2025 18:25:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1740968743; x=1741573543; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1740968748; x=1741573548; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=LmmGIMp09Xa9+ajjYrlkAeQFbd0l0inskGKz/hBM/Wo=;
-        b=Q9hyLQMBz2vaE4DoH0SR7wV8R1Gvuqc9ctvxkhjuQ7vT1v5TI23ZFUcpOky7dKmO1y
-         RBWeBBBG9vNAUmmyiCcFc3G4F2liQbeuH0rkXI3+EqPU69/E6vSmHv/zwD7ioc5xhO4j
-         GS7AnxPr4dEdqtF94y6wZzf0Wm9U2IfLsplUw=
+        bh=T67dKHYswiGrddgSZiZdCiBHKq1q/ZI+uUwWC6eNCTs=;
+        b=lRfVeWDzWDD4EbRAf7thShz7Gr0KkoRIZ3+aiuFPzVGqi2pJ6y0cceU1LGxzDgJH5o
+         Bgp5cvwA4lMK9+7K0YdybnfYSIMQlvv6DZIZBdh8ryZc69snpCw9g4oHGYhZMuxLarsS
+         DY27LDSZBGHEycd6yWGyEseLXfNp9YegQtRoc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740968743; x=1741573543;
+        d=1e100.net; s=20230601; t=1740968748; x=1741573548;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=LmmGIMp09Xa9+ajjYrlkAeQFbd0l0inskGKz/hBM/Wo=;
-        b=RKzg3X5OlMa6RfPp/I4jbKN01jT/Fhn83YznkhlixIDKD21PMgTW+WCOUtE73NMm2L
-         LBNvzNCZmR0S20V6QL3aJdm79VdS9MAsc3C3sTZRIlejRYnFMvGT7qYSCF+eVJKN10MT
-         PI71oB8amirVEZE0738IH8Qz4oebVmFhlMGembct07lLg03aK118w4/WJydkU5bT32+x
-         qi6MNcEVNBPHHj9Dyf2seiQvRp589I0QpBQ68Vf1rr3oh5NMUoEp/M6UAYbs3UOSrysY
-         35oQrHpugie4ebfPOq5JZxSVNVFb3+cGKqEDqZzk5twJuWHTbbTWFffmYWb+alwcDvCT
-         eG6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXVxnRe+BOl1PnMBoCr8pl2y7bQmoegxQ03hYJ9Dv1Ak7MipulZbt3fWB8mF1VKxHOZq57XDLaB4BUa1eE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQkiYh0UzSeY9z6h7WXBtKFSIwu80PrRNSvHaqgC5iHEMNGe70
-	HKoa0hu4P+LHT1JbG17SFzA9We8pGolKSDTgEEjJZqT9pjNtqKwF6wwPM2KwHQ==
-X-Gm-Gg: ASbGnctZnwzyoBoYE8DujTXsHnxSJgIWzj7Erbr2DAYbNEJvhkMvs8mYP+ghvBFXhlU
-	ZNHS6TBEoDtP9jGnuG7sI1n4VvZcFQTPzyc9sr2uR3G5wpJSrBVnRWtW39a+kc50ejyfq+k9y1r
-	GWrpla/qBx23SJcYw3+yGKSmz7UsexuFHfD58oy3UrdK+rPkLCDlhY3y2zraPi7E94tNrTa4Pyg
-	Rchgv+Uzyj6Y2Vpk/ZdAciA7uZniRSQlAuMC0w6K3PAr/4ZsfaA7jFQsup5cW82L273quOxk7SD
-	LdznxTvuTgJjxPHowukYvj0k0bMN1IFc0Aics31RheoVvdY=
-X-Google-Smtp-Source: AGHT+IE+JByFLuBtDUrc5bcjQDL8kXzJ75Xakggo0iV8YwzjqWoQMMXMd+ywhB7PLbJgopN3ZGVCPQ==
-X-Received: by 2002:a17:902:e84e:b0:21f:6f33:f96 with SMTP id d9443c01a7336-2234a188d50mr267570275ad.6.1740968742708;
-        Sun, 02 Mar 2025 18:25:42 -0800 (PST)
+        bh=T67dKHYswiGrddgSZiZdCiBHKq1q/ZI+uUwWC6eNCTs=;
+        b=Uccg71/o24H8FippjYbFus5Y8G6OxgQtvzTJbsJ3MxoeUJddjP3Kzp2duOEKHAz41x
+         Ucu1qfcEm7Ig1/pY71SsrWrurIlUlhsMoHaFcV3pad3pO6E3YqdopIzYO3z3Iu68MTbl
+         XC7H4H3JRTVmxd2fKaX3yAlBE6T8tkdx9gXla7NdvXx/1dMaABFedjFQWXL2MzhILh4y
+         qLnwv6n8ClRgqCW3pR0CgXos+9H8oJaB1ujmyARJc0nIsxFxBJK0WQYN7fuJTVVUwZxu
+         9hbBxPCHmMYXM4WYYN2kCgGgHi/drP9EfEQUYhtED7LZ3B8IWY5sgv5n8A3Xov1tyV5R
+         HqbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUBQqsRIME2UApEJ8l8JNpuY1Pmj33Xfyzu0y1HI9Eu6D4rT3ymDDhPILPbCfob8+MIY2omKXDPCfa3PaY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWbFvhWcdbKgE+SROi6X9StVQ4KNDxC8M2YQ3OvH7eJ88b3xn1
+	i455KKCu2u+gNIdkKNh3myGVzvMlN3d+vhs3hgd7zPQgVb5hXJsIJ0SC1SgN1w==
+X-Gm-Gg: ASbGnctmY5m+Gf3xPxjpdgX3QWs7WTJNLlmbnU9VKUo7Dc9oqcXX5swBKj+1Snc13Q8
+	8JhTy0TM4LpjQtwG8DCxLg49PgZfRV1GViZ8jAjSdDgg33jAyWrd4RmQrH/hOGZvs5iSjnW/KjX
+	rl/0ACZcV//hiLIcXsRW8EZ+MGVYySrZvYlZm/3atiWGiffOWBBP1LZHI5SJ5TwjIUxQSre/RmM
+	+tOT6+12z3urIDd1gGjaLRx8tFchVn82L59EJTqhkbpcpd7SBPPuaYLb0AWjRF6jARc/O1t/uPY
+	f0eUGNyFkLoYWC/JNrIIm3pS24tbGMYTcpg0d80rA6Ka9G8=
+X-Google-Smtp-Source: AGHT+IH55gKbbFLH/4p1SdtWLi5VFnXEFbXHma9n71ec/lgw7BNRJwBiDWwI7fYS8F4jPBgKdgrzew==
+X-Received: by 2002:a05:6a21:6e03:b0:1f0:e2e6:f41e with SMTP id adf61e73a8af0-1f2f3cee5b8mr17138562637.8.1740968748420;
+        Sun, 02 Mar 2025 18:25:48 -0800 (PST)
 Received: from localhost ([2401:fa00:8f:203:1513:4f61:a4d3:b418])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-22350533a10sm67008045ad.247.2025.03.02.18.25.40
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7364002f247sm2421551b3a.90.2025.03.02.18.25.46
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 02 Mar 2025 18:25:42 -0800 (PST)
+        Sun, 02 Mar 2025 18:25:48 -0800 (PST)
 From: Sergey Senozhatsky <senozhatsky@chromium.org>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Yosry Ahmed <yosry.ahmed@linux.dev>,
@@ -78,9 +78,9 @@ Cc: Yosry Ahmed <yosry.ahmed@linux.dev>,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: [PATCH v10 14/19] zsmalloc: introduce new object mapping API
-Date: Mon,  3 Mar 2025 11:03:23 +0900
-Message-ID: <20250303022425.285971-15-senozhatsky@chromium.org>
+Subject: [PATCH v10 15/19] zram: switch to new zsmalloc object mapping API
+Date: Mon,  3 Mar 2025 11:03:24 +0900
+Message-ID: <20250303022425.285971-16-senozhatsky@chromium.org>
 X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
 In-Reply-To: <20250303022425.285971-1-senozhatsky@chromium.org>
 References: <20250303022425.285971-1-senozhatsky@chromium.org>
@@ -92,248 +92,156 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Current object mapping API is a little cumbersome.  First, it's
-inconsistent, sometimes it returns with page-faults disabled and
-sometimes with page-faults enabled.  Second, and most importantly,
-it enforces atomicity restrictions on its users.  zs_map_object()
-has to return a liner object address which is not always possible
-because some objects span multiple physical (non-contiguous)
-pages.  For such objects zsmalloc uses a per-CPU buffer to which
-object's data is copied before a pointer to that per-CPU buffer
-is returned back to the caller.  This leads to another, final,
-issue - extra memcpy().  Since the caller gets a pointer to
-per-CPU buffer it can memcpy() data only to that buffer, and
-during zs_unmap_object() zsmalloc will memcpy() from that per-CPU
-buffer to physical pages that object in question spans across.
+Use new read/write zsmalloc object API.  For cases when RO mapped
+object spans two physical pages (requires temp buffer) compression
+streams now carry around one extra physical page.
 
-New API splits functions by access mode:
-- zs_obj_read_begin(handle, local_copy)
-  Returns a pointer to handle memory.  For objects that span two
-  physical pages a local_copy buffer is used to store object's
-  data before the address is returned to the caller.  Otherwise
-  the object's page is kmap_local mapped directly.
-
-- zs_obj_read_end(handle, buf)
-  Unmaps the page if it was kmap_local mapped by zs_obj_read_begin().
-
-- zs_obj_write(handle, buf, len)
-  Copies len-bytes from compression buffer to handle memory
-  (takes care of objects that span two pages).  This does not
-  need any additional (e.g. per-CPU) buffers and writes the data
-  directly to zsmalloc pool pages.
-
-In terms of performance, on a synthetic and completely reproducible
-test that allocates fixed number of objects of fixed sizes and
-iterates over those objects, first mapping in RO then in RW mode:
-
-OLD API
-=======
-
-3 first results out of 10
-
-  369,205,778      instructions        #    0.80  insn per cycle
-   40,467,926      branches            #  113.732 M/sec
-
-  369,002,122      instructions        #    0.62  insn per cycle
-   40,426,145      branches            #  189.361 M/sec
-
-  369,036,706      instructions        #    0.63  insn per cycle
-   40,430,860      branches            #  204.105 M/sec
-
-[..]
-
-NEW API
-=======
-
-3 first results out of 10
-
-  265,799,293      instructions        #    0.51  insn per cycle
-   29,834,567      branches            #  170.281 M/sec
-
-  265,765,970      instructions        #    0.55  insn per cycle
-   29,829,019      branches            #  161.602 M/sec
-
-  265,764,702      instructions        #    0.51  insn per cycle
-   29,828,015      branches            #  189.677 M/sec
-
-[..]
-
-T-test on all 10 runs
-=====================
-
-Difference at 95.0% confidence
-   -1.03219e+08 +/- 55308.7
-   -27.9705% +/- 0.0149878%
-   (Student's t, pooled s = 58864.4)
-
-The old API will stay around until the remaining users switch
-to the new one.  After that we'll also remove zsmalloc per-CPU
-buffer and CPU hotplug handling.
-
-The split of map(RO) and map(WO) into read_{begin/end}/write is
-suggested by Yosry Ahmed.
-
-Suggested-by: Yosry Ahmed <yosry.ahmed@linux.dev>
 Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-Reviewed-by: Yosry Ahmed <yosry.ahmed@linux.dev>
 ---
- include/linux/zsmalloc.h |   8 +++
- mm/zsmalloc.c            | 125 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 133 insertions(+)
+ drivers/block/zram/zcomp.c    |  4 +++-
+ drivers/block/zram/zcomp.h    |  2 ++
+ drivers/block/zram/zram_drv.c | 28 ++++++++++------------------
+ 3 files changed, 15 insertions(+), 19 deletions(-)
 
-diff --git a/include/linux/zsmalloc.h b/include/linux/zsmalloc.h
-index a48cd0ffe57d..7d70983cf398 100644
---- a/include/linux/zsmalloc.h
-+++ b/include/linux/zsmalloc.h
-@@ -58,4 +58,12 @@ unsigned long zs_compact(struct zs_pool *pool);
- unsigned int zs_lookup_class_index(struct zs_pool *pool, unsigned int size);
- 
- void zs_pool_stats(struct zs_pool *pool, struct zs_pool_stats *stats);
-+
-+void *zs_obj_read_begin(struct zs_pool *pool, unsigned long handle,
-+			void *local_copy);
-+void zs_obj_read_end(struct zs_pool *pool, unsigned long handle,
-+		     void *handle_mem);
-+void zs_obj_write(struct zs_pool *pool, unsigned long handle,
-+		  void *handle_mem, size_t mem_len);
-+
- #endif
-diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
-index afbd72363731..7566070729ee 100644
---- a/mm/zsmalloc.c
-+++ b/mm/zsmalloc.c
-@@ -1362,6 +1362,131 @@ void zs_unmap_object(struct zs_pool *pool, unsigned long handle)
+diff --git a/drivers/block/zram/zcomp.c b/drivers/block/zram/zcomp.c
+index cfdde2e0748a..a1d627054bb1 100644
+--- a/drivers/block/zram/zcomp.c
++++ b/drivers/block/zram/zcomp.c
+@@ -45,6 +45,7 @@ static const struct zcomp_ops *backends[] = {
+ static void zcomp_strm_free(struct zcomp *comp, struct zcomp_strm *zstrm)
+ {
+ 	comp->ops->destroy_ctx(&zstrm->ctx);
++	vfree(zstrm->local_copy);
+ 	vfree(zstrm->buffer);
+ 	zstrm->buffer = NULL;
  }
- EXPORT_SYMBOL_GPL(zs_unmap_object);
+@@ -57,12 +58,13 @@ static int zcomp_strm_init(struct zcomp *comp, struct zcomp_strm *zstrm)
+ 	if (ret)
+ 		return ret;
  
-+void *zs_obj_read_begin(struct zs_pool *pool, unsigned long handle,
-+			void *local_copy)
-+{
-+	struct zspage *zspage;
-+	struct zpdesc *zpdesc;
-+	unsigned long obj, off;
-+	unsigned int obj_idx;
-+	struct size_class *class;
-+	void *addr;
-+
-+	/* Guarantee we can get zspage from handle safely */
-+	read_lock(&pool->lock);
-+	obj = handle_to_obj(handle);
-+	obj_to_location(obj, &zpdesc, &obj_idx);
-+	zspage = get_zspage(zpdesc);
-+
-+	/* Make sure migration doesn't move any pages in this zspage */
-+	zspage_read_lock(zspage);
-+	read_unlock(&pool->lock);
-+
-+	class = zspage_class(pool, zspage);
-+	off = offset_in_page(class->size * obj_idx);
-+
-+	if (off + class->size <= PAGE_SIZE) {
-+		/* this object is contained entirely within a page */
-+		addr = kmap_local_zpdesc(zpdesc);
-+		addr += off;
-+	} else {
-+		size_t sizes[2];
-+
-+		/* this object spans two pages */
-+		sizes[0] = PAGE_SIZE - off;
-+		sizes[1] = class->size - sizes[0];
-+		addr = local_copy;
-+
-+		memcpy_from_page(addr, zpdesc_page(zpdesc),
-+				 off, sizes[0]);
-+		zpdesc = get_next_zpdesc(zpdesc);
-+		memcpy_from_page(addr + sizes[0],
-+				 zpdesc_page(zpdesc),
-+				 0, sizes[1]);
-+	}
-+
-+	if (!ZsHugePage(zspage))
-+		addr += ZS_HANDLE_SIZE;
-+
-+	return addr;
-+}
-+EXPORT_SYMBOL_GPL(zs_obj_read_begin);
-+
-+void zs_obj_read_end(struct zs_pool *pool, unsigned long handle,
-+		     void *handle_mem)
-+{
-+	struct zspage *zspage;
-+	struct zpdesc *zpdesc;
-+	unsigned long obj, off;
-+	unsigned int obj_idx;
-+	struct size_class *class;
-+
-+	obj = handle_to_obj(handle);
-+	obj_to_location(obj, &zpdesc, &obj_idx);
-+	zspage = get_zspage(zpdesc);
-+	class = zspage_class(pool, zspage);
-+	off = offset_in_page(class->size * obj_idx);
-+
-+	if (off + class->size <= PAGE_SIZE) {
-+		if (!ZsHugePage(zspage))
-+			off += ZS_HANDLE_SIZE;
-+		handle_mem -= off;
-+		kunmap_local(handle_mem);
-+	}
-+
-+	zspage_read_unlock(zspage);
-+}
-+EXPORT_SYMBOL_GPL(zs_obj_read_end);
-+
-+void zs_obj_write(struct zs_pool *pool, unsigned long handle,
-+		  void *handle_mem, size_t mem_len)
-+{
-+	struct zspage *zspage;
-+	struct zpdesc *zpdesc;
-+	unsigned long obj, off;
-+	unsigned int obj_idx;
-+	struct size_class *class;
-+
-+	/* Guarantee we can get zspage from handle safely */
-+	read_lock(&pool->lock);
-+	obj = handle_to_obj(handle);
-+	obj_to_location(obj, &zpdesc, &obj_idx);
-+	zspage = get_zspage(zpdesc);
-+
-+	/* Make sure migration doesn't move any pages in this zspage */
-+	zspage_read_lock(zspage);
-+	read_unlock(&pool->lock);
-+
-+	class = zspage_class(pool, zspage);
-+	off = offset_in_page(class->size * obj_idx);
-+
-+	if (off + class->size <= PAGE_SIZE) {
-+		/* this object is contained entirely within a page */
-+		void *dst = kmap_local_zpdesc(zpdesc);
-+
-+		if (!ZsHugePage(zspage))
-+			off += ZS_HANDLE_SIZE;
-+		memcpy(dst + off, handle_mem, mem_len);
-+		kunmap_local(dst);
-+	} else {
-+		/* this object spans two pages */
-+		size_t sizes[2];
-+
-+		off += ZS_HANDLE_SIZE;
-+		sizes[0] = PAGE_SIZE - off;
-+		sizes[1] = mem_len - sizes[0];
-+
-+		memcpy_to_page(zpdesc_page(zpdesc), off,
-+			       handle_mem, sizes[0]);
-+		zpdesc = get_next_zpdesc(zpdesc);
-+		memcpy_to_page(zpdesc_page(zpdesc), 0,
-+			       handle_mem + sizes[0], sizes[1]);
-+	}
-+
-+	zspage_read_unlock(zspage);
-+}
-+EXPORT_SYMBOL_GPL(zs_obj_write);
-+
- /**
-  * zs_huge_class_size() - Returns the size (in bytes) of the first huge
-  *                        zsmalloc &size_class.
++	zstrm->local_copy = vzalloc(PAGE_SIZE);
+ 	/*
+ 	 * allocate 2 pages. 1 for compressed data, plus 1 extra for the
+ 	 * case when compressed size is larger than the original one
+ 	 */
+ 	zstrm->buffer = vzalloc(2 * PAGE_SIZE);
+-	if (!zstrm->buffer) {
++	if (!zstrm->buffer || !zstrm->local_copy) {
+ 		zcomp_strm_free(comp, zstrm);
+ 		return -ENOMEM;
+ 	}
+diff --git a/drivers/block/zram/zcomp.h b/drivers/block/zram/zcomp.h
+index 23b8236b9090..25339ed1e07e 100644
+--- a/drivers/block/zram/zcomp.h
++++ b/drivers/block/zram/zcomp.h
+@@ -34,6 +34,8 @@ struct zcomp_strm {
+ 	struct mutex lock;
+ 	/* compression buffer */
+ 	void *buffer;
++	/* local copy of handle memory */
++	void *local_copy;
+ 	struct zcomp_ctx ctx;
+ };
+ 
+diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
+index f6e887f94b71..62aef12417a4 100644
+--- a/drivers/block/zram/zram_drv.c
++++ b/drivers/block/zram/zram_drv.c
+@@ -1561,11 +1561,11 @@ static int read_incompressible_page(struct zram *zram, struct page *page,
+ 	void *src, *dst;
+ 
+ 	handle = zram_get_handle(zram, index);
+-	src = zs_map_object(zram->mem_pool, handle, ZS_MM_RO);
++	src = zs_obj_read_begin(zram->mem_pool, handle, NULL);
+ 	dst = kmap_local_page(page);
+ 	copy_page(dst, src);
+ 	kunmap_local(dst);
+-	zs_unmap_object(zram->mem_pool, handle);
++	zs_obj_read_end(zram->mem_pool, handle, src);
+ 
+ 	return 0;
+ }
+@@ -1583,11 +1583,11 @@ static int read_compressed_page(struct zram *zram, struct page *page, u32 index)
+ 	prio = zram_get_priority(zram, index);
+ 
+ 	zstrm = zcomp_stream_get(zram->comps[prio]);
+-	src = zs_map_object(zram->mem_pool, handle, ZS_MM_RO);
++	src = zs_obj_read_begin(zram->mem_pool, handle, zstrm->local_copy);
+ 	dst = kmap_local_page(page);
+ 	ret = zcomp_decompress(zram->comps[prio], zstrm, src, size, dst);
+ 	kunmap_local(dst);
+-	zs_unmap_object(zram->mem_pool, handle);
++	zs_obj_read_end(zram->mem_pool, handle, src);
+ 	zcomp_stream_put(zstrm);
+ 
+ 	return ret;
+@@ -1683,7 +1683,7 @@ static int write_incompressible_page(struct zram *zram, struct page *page,
+ 				     u32 index)
+ {
+ 	unsigned long handle;
+-	void *src, *dst;
++	void *src;
+ 
+ 	/*
+ 	 * This function is called from preemptible context so we don't need
+@@ -1701,11 +1701,9 @@ static int write_incompressible_page(struct zram *zram, struct page *page,
+ 		return -ENOMEM;
+ 	}
+ 
+-	dst = zs_map_object(zram->mem_pool, handle, ZS_MM_WO);
+ 	src = kmap_local_page(page);
+-	memcpy(dst, src, PAGE_SIZE);
++	zs_obj_write(zram->mem_pool, handle, src, PAGE_SIZE);
+ 	kunmap_local(src);
+-	zs_unmap_object(zram->mem_pool, handle);
+ 
+ 	zram_slot_lock(zram, index);
+ 	zram_set_flag(zram, index, ZRAM_HUGE);
+@@ -1726,7 +1724,7 @@ static int zram_write_page(struct zram *zram, struct page *page, u32 index)
+ 	int ret = 0;
+ 	unsigned long handle;
+ 	unsigned int comp_len;
+-	void *dst, *mem;
++	void *mem;
+ 	struct zcomp_strm *zstrm;
+ 	unsigned long element;
+ 	bool same_filled;
+@@ -1773,11 +1771,8 @@ static int zram_write_page(struct zram *zram, struct page *page, u32 index)
+ 		return -ENOMEM;
+ 	}
+ 
+-	dst = zs_map_object(zram->mem_pool, handle, ZS_MM_WO);
+-
+-	memcpy(dst, zstrm->buffer, comp_len);
++	zs_obj_write(zram->mem_pool, handle, zstrm->buffer, comp_len);
+ 	zcomp_stream_put(zstrm);
+-	zs_unmap_object(zram->mem_pool, handle);
+ 
+ 	zram_slot_lock(zram, index);
+ 	zram_set_handle(zram, index, handle);
+@@ -1882,7 +1877,7 @@ static int recompress_slot(struct zram *zram, u32 index, struct page *page,
+ 	unsigned int comp_len_new;
+ 	unsigned int class_index_old;
+ 	unsigned int class_index_new;
+-	void *src, *dst;
++	void *src;
+ 	int ret = 0;
+ 
+ 	handle_old = zram_get_handle(zram, index);
+@@ -1993,12 +1988,9 @@ static int recompress_slot(struct zram *zram, u32 index, struct page *page,
+ 		return PTR_ERR((void *)handle_new);
+ 	}
+ 
+-	dst = zs_map_object(zram->mem_pool, handle_new, ZS_MM_WO);
+-	memcpy(dst, zstrm->buffer, comp_len_new);
++	zs_obj_write(zram->mem_pool, handle_new, zstrm->buffer, comp_len_new);
+ 	zcomp_stream_put(zstrm);
+ 
+-	zs_unmap_object(zram->mem_pool, handle_new);
+-
+ 	zram_free_page(zram, index);
+ 	zram_set_handle(zram, index, handle_new);
+ 	zram_set_obj_size(zram, index, comp_len_new);
 -- 
 2.48.1.711.g2feabab25a-goog
 
