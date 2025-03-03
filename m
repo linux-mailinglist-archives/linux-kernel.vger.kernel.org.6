@@ -1,355 +1,223 @@
-Return-Path: <linux-kernel+bounces-541319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 834ADA4BB6D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:57:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A0BAA4BB70
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:58:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AC9B1893E6B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:57:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C018188DC88
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:57:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D96FB1F1523;
-	Mon,  3 Mar 2025 09:56:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7671F152E;
+	Mon,  3 Mar 2025 09:57:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FT3uUVTP"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ev+4igjO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2BE1F12F6;
-	Mon,  3 Mar 2025 09:56:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD7661F130B
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 09:57:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740995809; cv=none; b=IQwmMIACLkQkNvB10yHX9OY4U3HNnu9QgLKHYnKHmU2fQD9lwx54rATy0smWP+laXCKnHLZoXr/JvNQHJVX/0SmQeXgx19cDQySUKcSocEne6ybjbFJQXaFUg0sLxbuhUV2bQM44GRpvyxk7aOitnFviDXSp6J/6I7Nn9UE2EDs=
+	t=1740995858; cv=none; b=iVbApv8JIDIXsGMRfmI9hBVZH02GcdLg3MjN+LdpR76nVpwzptknskUNW3N+OkufDoFfR2PiZbjAylAMq0WXPSkeX/j8f4zOtsTVKk/J0H3JSMpErWFPVFBir4JnNhmbclRlKHWMRwxNPuN9AN2z1GIMRETBqJspvnkWpUrhW0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740995809; c=relaxed/simple;
-	bh=vaauKdgQ/xBP5Sjd+ekagRTM0cnkT9564ZcWHomNZAU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bF0RDFxIpHdpLEkSU7Bzor/55RE1AUKFvJNuf0G1nGgOEbED1vyhKiF7cf1bpkpT/wRT3TYk6c02JJvkChRKTnmIvKw0GFeIJpkCOIeTKhusg3UZyo6QZiR7Lu4hvRWpufzYMliJ6xdjp6xnEfuPdovb++p143OrrTzteSmMbYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FT3uUVTP; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2ff187f027fso732976a91.1;
-        Mon, 03 Mar 2025 01:56:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740995806; x=1741600606; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XWd07D6pFSSlTwQImXpRLf8JSaFpJSpotQCtmwnI1O8=;
-        b=FT3uUVTPPepSgkWj1aVTWXQCyWdmtS0QymYOm02KfxLvowRoLGoKYzHzFT95Atj1Mc
-         nTNXA+Hl9ezJLnubbcbe0wtpDKfhCkBTSmeoduBOhoflds+cfyuOdLhYuOiaJQKdSTyH
-         Dv25I0pIhmwJrhOg4OKL1HTGCMWH8abLLp+E15Q6zeMCJqyl9qQ5ZMfBsqho02xPlV0B
-         RD8VLHS8if+3JmsXqx+JwpySfVUIkqeCqvON4y0+XMmJ3dYU5c9g8tpHqvinI3mcjwNk
-         OfQXAiGBWhgdkQ/DtquQQNRn1PAvIEIAfQmKJpEmOEXZXFE16P6NN52T8/88TYZP1avV
-         Q/Dw==
+	s=arc-20240116; t=1740995858; c=relaxed/simple;
+	bh=OlfOKlRc1CiBZb5Ud3wlY9YTANw9SXSmmOkIniwxfkk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I/NbPMbWctVa0XnjlNSTlq4Pa1IG/CTQrgu+BKjxzkf95C1NFGaDiHeR/79vXzCKLZaSyWskQjJhjMRprOw9iW1oSRgplVUWXGRnG4TQgWv/t1HaUsxySwDrRIk/1RuigJSHmbJltTCUerpOJ4oWlJMrAvl7FqOO4j5dSGcrXSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ev+4igjO; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740995855;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ykua7q7gnustm8lPrA9ZG6NARq70FXycw/3eNBtt0hs=;
+	b=Ev+4igjOAV2dZVTkYAenuccUQUPIn7GAD2BN8FUqVIdvUYxQs7Ouv4iPEphnkz4RBhGn5+
+	k0Mipjdj++jEWS62Jl4ZhLyFRsHF1hFmnocDHb/UP85BAptmEPeY/UKed7Z3VlIw9PF/iG
+	tj/zSukQMVkLahR8ClOjfago7lQPJuk=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-83-N8lCu01ZPf-MWkL6NsmAGw-1; Mon, 03 Mar 2025 04:57:24 -0500
+X-MC-Unique: N8lCu01ZPf-MWkL6NsmAGw-1
+X-Mimecast-MFC-AGG-ID: N8lCu01ZPf-MWkL6NsmAGw_1740995844
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4393e89e910so23893615e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 01:57:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740995806; x=1741600606;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XWd07D6pFSSlTwQImXpRLf8JSaFpJSpotQCtmwnI1O8=;
-        b=lmhG8wH6MNT79c9rAw0BfWy94PJMQ9Oj100htRlxfXcFJhTaJvFO168F1WpaCITltJ
-         XiGPY4llfz0MtF2f4xbRJ1YKfw06mLYdzu+RhetmugycwqxE1qc5g9zsI6g/irGu7yxV
-         RI8XmP1f/3sMrxyl5k1U3Mc29CorLiEO2h77JW5DpVZaFe+QDpyxZtogxREXYTQmGmTW
-         sjO+WE67PO8YRfXmnaHewPC0at2TvgOa6YvGVKBBz2DLpg4Nv+X8Br0xYQ3vujpzbReD
-         bcAUMdbtCSs2R5I8twYydNyNzsMd4OSP/89vmjAIMxnEkpQsMQH9wu8s+v7lGXf9rDVf
-         LRYA==
-X-Forwarded-Encrypted: i=1; AJvYcCW+ndhOQJYhw+FvjmGVXOTnrvDf8l8ER2sR86hTSMd0F9ZHNrHsS/vKcdM3mJgTj3Np00e/huIIDcjJyQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOHLXNLaXgqHqgGGR8XCZ/QqsMwq87xCkCLGGDevUkn4Kr0pMR
-	eU13q8t3dj4cz7t97GUGZcoj+1BLivtHk/+I5fp+GhYo+580p7qcAgDzqSd3DSjvSaf6d1OgLuB
-	hL91ct4ktMYn1UypVRiVA7WTXLIvMNGOnfNg=
-X-Gm-Gg: ASbGncvYDkSD7tsxTnp2Z5Y+UoptfZtfbMLgO5dn1idNELPO1IaunDL2sgqBc7QTEaH
-	oTwbIwvdCFAbJlH+8kX6ER3wyH4y36rp7SmF9foUcFMests3nsgAnyYJ4tCxIKIZi346m7uKk+h
-	mNgcQylpuo7lX3T1vwMhQLuEfY1g==
-X-Google-Smtp-Source: AGHT+IEIGVq/NZk6ndWbqLLtN3JumLWvzn/7rxT8lru/+JgeRqnyR+BSdC3a6d2o5WeoVkSyhRK2tsEkoia7e3kQwno=
-X-Received: by 2002:a17:90b:4b0d:b0:2e2:c2b0:d03e with SMTP id
- 98e67ed59e1d1-2feba5edb2emr18685076a91.5.1740995806361; Mon, 03 Mar 2025
- 01:56:46 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740995843; x=1741600643;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ykua7q7gnustm8lPrA9ZG6NARq70FXycw/3eNBtt0hs=;
+        b=DkQVaghL2BwaQ/ajLPoz7c6Oh58HbCi693P/JeifOTDfFYsyupBG7fJLsC6lmvcYis
+         wkw0y5Wq5YDeod0B4g2B6zQZDZEJFj9qWKTw1RVo3okDDaL5wTJPFgleoz+YPb/ZeFsn
+         qOMk5fJ+j/30fb9I3n8jySr2QcFutaF0rXidsa15K2Eje6oYttGDUBYLtbQYzm2lj+YJ
+         AURphv+ZcH4LgxIHAs1ZPZxw3q+kGQgw5Kwj9+BNryE4dC6uJxcPaD1EDWKraWufbK2Z
+         YaYKimNoMZPvwFF+fW/+dQPlzKKn43UnFKpxaZivJ/+DiFHJ2U9L8J9gL0hn+vmJF0xG
+         7q1g==
+X-Forwarded-Encrypted: i=1; AJvYcCW9Sd6GIM8sArYbq2kR6Zw/2LhN8xiZwXYBM4H0A6Y0GLI4CAcj8mWyIlbnmsHuX77I4uGROq/4seO3mtk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgHWzlk8fPJ0pROjRXnX5mhTF/LmCYRFA3zecnn+Ts1F1OX7CO
+	XE/DJHx/sy7iiZUC6KfBKMeJtuTom9sJaFDMJSErgVwSjGMhTDvxqNK1FcjGRToVYGOSTJLD+OM
+	4EwP72s1qY+VHqfKp50MC0jMSbveopWSa4MNXFnw3FfhlqjqdICK+33hL1N2Y1g==
+X-Gm-Gg: ASbGnctr23P6bm1f90OHVzo/BV1/+wMCwjdX/8dttzswHfuEOjNmyqdsPcbHqsR+2C2
+	Kv5pdrBVkMKs5sJZOzVbcDtoWn/6jsw0f/L7sn+zi0wYZKyZbyhr9PjKjUeA0XdClLYwtwewXXN
+	c5NhSoEzTi0jsh/hdzc8GViIoMOpcBaNgVZlAOAlf1EWzO/fjQ56tdqNaESQ1/8SmnSKBLS/Nsn
+	IxRnhRolMeNZPJZk3QLSrhYW/XPJYiNZswX4XiPSVOyfz9uFGUHp5x1qd6VJW9QHcct8zzLf5TR
+	hiDtmvHi73wTa6avn951G5t23GalfVLSUa3XGW6zAkQulAYNslijiQdRtJQBIavR4Xh5DMxB5sj
+	MUF9X0VbD0M0YkDoDStiw+3tPvl9s1Xcl9po/XJh+qoE=
+X-Received: by 2002:a05:6000:178b:b0:390:e7c1:59d3 with SMTP id ffacd0b85a97d-390ec7c6abamr9721388f8f.2.1740995843582;
+        Mon, 03 Mar 2025 01:57:23 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHyA1rt+UhzjYjejJGIWpt5BNfcz7BL9jMerlSYdXlUaUi7HhGoy2uwdvEypDw3lLTiKoqZLw==
+X-Received: by 2002:a05:6000:178b:b0:390:e7c1:59d3 with SMTP id ffacd0b85a97d-390ec7c6abamr9721350f8f.2.1740995843219;
+        Mon, 03 Mar 2025 01:57:23 -0800 (PST)
+Received: from ?IPV6:2003:cb:c734:9600:af27:4326:a216:2bfb? (p200300cbc7349600af274326a2162bfb.dip0.t-ipconnect.de. [2003:cb:c734:9600:af27:4326:a216:2bfb])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e4795da5sm14193732f8f.15.2025.03.03.01.57.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Mar 2025 01:57:22 -0800 (PST)
+Message-ID: <7e987f17-ffcb-45e0-8588-2d569d90f776@redhat.com>
+Date: Mon, 3 Mar 2025 10:57:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241202123351.86957-1-guille.rodriguez@gmail.com> <Z70UagY4hxDwUDHv@google.com>
-In-Reply-To: <Z70UagY4hxDwUDHv@google.com>
-From: Guillermo Rodriguez Garcia <guille.rodriguez@gmail.com>
-Date: Mon, 3 Mar 2025 10:56:35 +0100
-X-Gm-Features: AQ5f1JpRULr_d7hOptF-J_vi5pYdZoBChQKqNTeGXMyf-KRJy_AwNg324XxObME
-Message-ID: <CABDcavYXBrZMMj1gn7CzNbA4f-L4c+q555goU+U0KUEs-6rW+w@mail.gmail.com>
-Subject: Re: [PATCH 0/1] Input: evdev - fix wrong timestamp after SYN_DROPPED
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/4] arm64/mm: Elide tlbi in contpte_convert() under
+ BBML2
+To: =?UTF-8?Q?Miko=C5=82aj_Lenczewski?= <miko.lenczewski@arm.com>
+Cc: ryan.roberts@arm.com, suzuki.poulose@arm.com,
+ yang@os.amperecomputing.com, catalin.marinas@arm.com, will@kernel.org,
+ joro@8bytes.org, jean-philippe@linaro.org, mark.rutland@arm.com,
+ joey.gouly@arm.com, oliver.upton@linux.dev, james.morse@arm.com,
+ broonie@kernel.org, maz@kernel.org, akpm@linux-foundation.org, jgg@ziepe.ca,
+ nicolinc@nvidia.com, mshavit@google.com, jsnitsel@redhat.com,
+ smostafa@google.com, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, iommu@lists.linux.dev
+References: <20250228182403.6269-2-miko.lenczewski@arm.com>
+ <20250228182403.6269-5-miko.lenczewski@arm.com>
+ <f270bb5d-aa54-45d3-89ed-2b757ab3a4b0@redhat.com>
+ <20250303094947.GB13345@e133081.arm.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250303094947.GB13345@e133081.arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Dmitry,
+On 03.03.25 10:49, Mikołaj Lenczewski wrote:
+> Hi David,
+> 
+> Thanks for taking the time to review.
+> 
+> On Mon, Mar 03, 2025 at 10:17:12AM +0100, David Hildenbrand wrote:
+>> On 28.02.25 19:24, Mikołaj Lenczewski wrote:
+>>> If we support bbml2 without conflict aborts, we can avoid the final
+>>> flush and have hardware manage the tlb entries for us. Avoiding flushes
+>>> is a win.
+>>>
+>>> Signed-off-by: Mikołaj Lenczewski <miko.lenczewski@arm.com>
+>>> Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
+>>> ---
+>>>    arch/arm64/mm/contpte.c | 3 ---
+>>>    1 file changed, 3 deletions(-)
+>>>
+>>> diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
+>>> index 145530f706a9..77ed03b30b72 100644
+>>> --- a/arch/arm64/mm/contpte.c
+>>> +++ b/arch/arm64/mm/contpte.c
+>>> @@ -72,9 +72,6 @@ static void contpte_convert(struct mm_struct *mm, unsigned long addr,
+>>>    		__flush_tlb_range(&vma, start_addr, addr, PAGE_SIZE, true, 3);
+>>>    	__set_ptes(mm, start_addr, start_ptep, pte, CONT_PTES);
+>>> -
+>>> -	if (system_supports_bbml2_noabort())
+>>> -		__flush_tlb_range(&vma, start_addr, addr, PAGE_SIZE, true, 3);
+>>>    }
+>>>    void __contpte_try_fold(struct mm_struct *mm, unsigned long addr,
+>>
+>> What's the point of not squashing this into #2? :)
+>>
+>> If this split was requested during earlier review, at least seeing patch #2
+>> on its own confused me.
+> 
+> This split is a holdover from an earlier patchset, where it was still
+> unknown whether the removal of the second flush was permitted with
+> BBML2. Partly this was due to us being worried about conflict aborts
+> after the removal, and partly this was because the "delay" is a separate
+> optimisation that we could apply even if it turned out the final patch
+> was not architecturally sound.
+> 
+> Now that we do not handle conflict aborts (preferring only systems that
+> handle BBML2 without ever raising aborts), the first issue is not a
+> problem. The reasoning behind the second patch is also a little bit
+> outdated, but I can see the logical split between a tlbi reorder, and
+> the removal of the tlbi. If this is truly redundant though, I would be
+> happy to squash the two into a single patch.
 
-El mar, 25 feb 2025 a las 1:53, Dmitry Torokhov
-(<dmitry.torokhov@gmail.com>) escribi=C3=B3:
->
-> Hi Guillermo,
->
-> On Mon, Dec 02, 2024 at 01:33:50PM +0100, Guillermo Rodr=C3=ADguez wrote:
-> > Hi all,
-> >
-> > We are seeing an issue with gpio_keys where the first event after
-> > a SYN_DROPPED has the same timestamp as the SYN_DROPPED event itself.
-> > After some investigation it looks like this is an issue with evdev
-> > and not specific to gpio_keys.
-> >
-> > The issue was originally introduced in commit 3b51c44 ("Input: allow
-> > drivers specify timestamp for input events").
-> >
-> > This commit introduced input_set_timestamp and input_get_timestamp.
-> > The latter (despite the name) actually generates and stores a timestamp
-> > in dev->timestamp if the driver did not set one itself. This timestamp
-> > needs to be reset when events are flushed; otherwise the next event
-> > will use a stale timestamp. A partial fix was implemented in 4370b23
-> > ("Input: reset device timestamp on sync"), but this does not cover the
-> > case of SYN_DROPPED.
-> >
-> > If a SYN_DROPPED is generated (currently only done by evdev), the
-> > following happens:
-> >
-> > - evdev calls input_get_timestamp to generate a timestamp for the
-> >   SYN_DROPPED event.
-> > - input_get_timestamp generates a timestamp and stores it in
-> >   dev->timestamp
-> > - When the next real event is reported (in evdev_events), evdev
-> >   calls input_get_timestamp, which uses the timestamp already
-> >   stored in dev->timestamp, which corresponds to the SYN_DROPPED event
-> >
-> > How to fix:
-> >
-> > - When a SYN_DROPPED is generated, after calling input_get_timestamp,
-> >   the timestamp stored in dev->timestamp should be reset (same as is
-> >   currently done in input_handle_event). The attached patch does that.
->
-> So this happens after you change clock type of a client, right?
+Thanks for the information.
 
-Yes.
+Does patch #2 (reordering the tlbi) have any benefit on its own? I read 
+"other threads will not see an invalid pagetable entry", but I am not 
+sure that is correct. A concurrent HW page table walker would still find 
+the invalid PTE? It's just a matter of TLB state.
 
->
-> I do dot think having one client affecting timestamp for everyone is a
-> good idea.
+If there is no benefit in having patch #2 independently, I'd just squash 
+them. Reordering to then remove is more complicated than just removing 
+it IMHO.
 
-Do you mean the timestamp of the SYN_DROPPED event itself?
-I am not sure if this is an issue. The timestamp of the SYN_DROPPED
-event is not particularly meaningful.
-A client that sees a SYN_DROPPED only knows that some events were
-dropped, but the timestamp of the SYN_DROPPED event itself does not
-carry any useful information -- it is not, for example, the timestamp
-of the event that was dropped (in fact you cannot even know how many
-events were dropped).
+-- 
+Cheers,
 
-> Instead I think __evdev_queue_syn_dropped() should either:
->
-> - use "now" time for SYN_DROPPED generated when user requests clock
->   change or reads device's current state, or
->
-> - check if input device has timestamp set and use it or use "now". This
->   option is needed if we are concerned about timestamps potentially
->   going backwards if clock change happens in a middle of delivering
->   input packet.
+David / dhildenb
 
-If you want to do it like this I would advise to just use "now".
-
-CLOCK_MONOTONIC (and CLOCK_BOOTTIME) cannot go backwards by definition.
-
-The wall clock (CLOCK_REALTIME) can go backwards but this is a
-"feature" and should not be "fixed". if client code wants to see wall
-clock timestamps then it should be prepared to see time going
-backwards, for example when the time is updated, or in the middle of
-DST changes.
-
->
-> >
-> > (Perhaps the underlying problem is that it is not expected that a
-> > function called input_get_timestamp will have side effects. The
-> > commit history of input.c shows that this has actually caused a
-> > few issues since 3b51c44.)
->
-> Yes, maybe something like below will work better. It does not address
-> the keeping timestamp for SYN_DROPPED though.
-
-Could be.
-But I can't help wondering whether 3b51c44 was a good idea.
-input_set_timestamp was supposed to "allow drivers to provide a more
-accurate timestamp" but I wonder if there was a real need for that --
-it did not seem to have in-tree users except for uinput and more
-recently wacom_wac.
-
-Anyway the original problem I reported is not related to the timestamp
-of the SYN_DROPPED event itself, but to the fact that this timestamp
-is then reused for the next "real" event after SYN_DROPPED. My patch
-clears the timestamp after the SYN_DROPPED is handled, in the same way
-it was already being done on flush, in input_handle_event (now moved
-to input_dispose_event).
-
-Thanks,
-
-Guillermo
-
->
-> Thanks.
->
-> --
-> Dmitry
->
->
-> diff --git a/drivers/input/input.c b/drivers/input/input.c
-> index 54d35c1a2a24..954c5104a1c1 100644
-> --- a/drivers/input/input.c
-> +++ b/drivers/input/input.c
-> @@ -61,6 +61,66 @@ static const unsigned int input_max_code[EV_CNT] =3D {
->         [EV_FF] =3D FF_MAX,
->  };
->
-> +/**
-> + * input_set_timestamp - set timestamp for input events
-> + * @dev: input device to set timestamp for
-> + * @timestamp: the time at which the event has occurred
-> + *   in CLOCK_MONOTONIC
-> + *
-> + * This function is intended to provide to the input system a more
-> + * accurate time of when an event actually occurred. The driver should
-> + * call this function as soon as a timestamp is acquired ensuring
-> + * clock conversions in input_set_timestamp are done correctly.
-> + *
-> + * The system entering suspend state between timestamp acquisition and
-> + * calling input_set_timestamp can result in inaccurate conversions.
-> + */
-> +void input_set_timestamp(struct input_dev *dev, ktime_t timestamp)
-> +{
-> +       dev->timestamp[INPUT_CLK_MONO] =3D timestamp;
-> +       dev->timestamp[INPUT_CLK_REAL] =3D ktime_mono_to_real(timestamp);
-> +       dev->timestamp[INPUT_CLK_BOOT] =3D ktime_mono_to_any(timestamp,
-> +                                                          TK_OFFS_BOOT);
-> +}
-> +EXPORT_SYMBOL(input_set_timestamp);
-> +
-> +/**
-> + * input_get_timestamp - get timestamp for input events
-> + * @dev: input device to get timestamp from
-> + *
-> + * A valid timestamp is a timestamp of non-zero value.
-> + */
-> +ktime_t *input_get_timestamp(struct input_dev *dev)
-> +{
-> +       bool have_timestamp;
-> +
-> +       /* TODO: remove setting of the timestamp in a few releases. */
-> +       have_timestamp =3D ktime_compare(dev->timestamp[INPUT_CLK_MONO],
-> +                                      ktime_set(0, 0));
-> +       if (WARN_ON_ONCE(!have_timestamp))
-> +               input_set_timestamp(dev, ktime_get());
-> +
-> +       return dev->timestamp;
-> +}
-> +EXPORT_SYMBOL(input_get_timestamp);
-> +
-> +static bool input_is_timestamp_set(struct input_dev *dev)
-> +{
-> +       return ktime_compare(dev->timestamp[INPUT_CLK_MONO], ktime_set(0,=
- 0));
-> +}
-> +
-> +/*
-> + * Reset timestamp for an input device so that next input event will get
-> + * a new one.
-> + *
-> + * Note we only need to reset the monolithic one as we use its presence =
-when
-> + * deciding whether to generate a synthetic timestamp.
-> + */
-> +static void input_reset_timestamp(struct input_dev *dev)
-> +{
-> +       dev->timestamp[INPUT_CLK_MONO] =3D ktime_set(0, 0);
-> +}
-> +
->  static inline int is_event_supported(unsigned int code,
->                                      unsigned long *bm, unsigned int max)
->  {
-> @@ -342,11 +402,9 @@ static void input_event_dispose(struct input_dev *de=
-v, int disposition,
->                 dev->num_vals =3D 0;
->                 /*
->                  * Reset the timestamp on flush so we won't end up
-> -                * with a stale one. Note we only need to reset the
-> -                * monolithic one as we use its presence when deciding
-> -                * whether to generate a synthetic timestamp.
-> +                * with a stale one in the next event packet.
->                  */
-> -               dev->timestamp[INPUT_CLK_MONO] =3D ktime_set(0, 0);
-> +               input_reset_timestamp(dev);
->         } else if (dev->num_vals >=3D dev->max_vals - 2) {
->                 dev->vals[dev->num_vals++] =3D input_value_sync;
->                 input_pass_values(dev, dev->vals, dev->num_vals);
-> @@ -366,6 +424,9 @@ void input_handle_event(struct input_dev *dev,
->                 if (type !=3D EV_SYN)
->                         add_input_randomness(type, code, value);
->
-> +               if (!input_is_timestamp_set(dev))
-> +                       input_set_timestamp(dev, ktime_get());
-> +
->                 input_event_dispose(dev, disposition, type, code, value);
->         }
->  }
-> @@ -2053,46 +2114,6 @@ void input_free_device(struct input_dev *dev)
->  }
->  EXPORT_SYMBOL(input_free_device);
->
-> -/**
-> - * input_set_timestamp - set timestamp for input events
-> - * @dev: input device to set timestamp for
-> - * @timestamp: the time at which the event has occurred
-> - *   in CLOCK_MONOTONIC
-> - *
-> - * This function is intended to provide to the input system a more
-> - * accurate time of when an event actually occurred. The driver should
-> - * call this function as soon as a timestamp is acquired ensuring
-> - * clock conversions in input_set_timestamp are done correctly.
-> - *
-> - * The system entering suspend state between timestamp acquisition and
-> - * calling input_set_timestamp can result in inaccurate conversions.
-> - */
-> -void input_set_timestamp(struct input_dev *dev, ktime_t timestamp)
-> -{
-> -       dev->timestamp[INPUT_CLK_MONO] =3D timestamp;
-> -       dev->timestamp[INPUT_CLK_REAL] =3D ktime_mono_to_real(timestamp);
-> -       dev->timestamp[INPUT_CLK_BOOT] =3D ktime_mono_to_any(timestamp,
-> -                                                          TK_OFFS_BOOT);
-> -}
-> -EXPORT_SYMBOL(input_set_timestamp);
-> -
-> -/**
-> - * input_get_timestamp - get timestamp for input events
-> - * @dev: input device to get timestamp from
-> - *
-> - * A valid timestamp is a timestamp of non-zero value.
-> - */
-> -ktime_t *input_get_timestamp(struct input_dev *dev)
-> -{
-> -       const ktime_t invalid_timestamp =3D ktime_set(0, 0);
-> -
-> -       if (!ktime_compare(dev->timestamp[INPUT_CLK_MONO], invalid_timest=
-amp))
-> -               input_set_timestamp(dev, ktime_get());
-> -
-> -       return dev->timestamp;
-> -}
-> -EXPORT_SYMBOL(input_get_timestamp);
-> -
->  /**
->   * input_set_capability - mark device as capable of a certain event
->   * @dev: device that is capable of emitting or accepting event
-
-
-
---=20
-Guillermo Rodriguez Garcia
-guille.rodriguez@gmail.com
 
