@@ -1,67 +1,86 @@
-Return-Path: <linux-kernel+bounces-541875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7237EA4C2BF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:04:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B3B1A4C2C2
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:05:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4A0F3A962E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:04:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05DD21886521
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:05:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A7B82139D2;
-	Mon,  3 Mar 2025 14:04:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 071B6212FAD;
+	Mon,  3 Mar 2025 14:04:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bAjYxIxb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TyLKPQJG"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F481F8733;
-	Mon,  3 Mar 2025 14:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B3F212B0A;
+	Mon,  3 Mar 2025 14:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741010665; cv=none; b=r2qTiIi7fVnQgxHXDxaE2yg4bFU/fXUZhlbBSDE8vflQ5MLvps1UZs5mWtRaFj1FEllXfQzNKGXH8y857o4gNAUQPoGJTlSuHel5JzvduClqvL0OTqQqUzMXkoMMv/QCgoWUvuLZBDbp92KIbc+PW8pJ8/kmk8JllTXzlR7Vt+Y=
+	t=1741010692; cv=none; b=BILq+zoWhjuM2DZxd5oKyydox1X3C8SCHzcMghF4AQNhzy2KQKTOAlSPaYvx47OFScWv5sv04qcuwIxK9IWQ00l2eih9dIlMmtCasS70uVLYcDSbPqh8J0khZzZv79f0DPrnkb0DE9V77uD5FIr1BTQLPcHkFyK2Q4ebn6vSl+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741010665; c=relaxed/simple;
-	bh=vWYLCmVVjXgIacFX+hNigDLTQqVgZq+pPM2kMcc60p4=;
+	s=arc-20240116; t=1741010692; c=relaxed/simple;
+	bh=zgcKsEOUWpNBJREA/izuckdYXAzMPtyUrD1iD60/azs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mfx60xgK6+/qjQkrWWJsDSKgrXWXnoKVNlBD5xNMAiWaM+dWW5djz04KQJLrFTd1/mxA44UjrLXK1Icie92eF2D4k2yUQPQYjLQqodV7zNH9cWUcroI1qE6lGjKA9T/zSYJ8H4QzLl491RZTZCVUPA/My9igcaS9kwj0Q1yx0dU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bAjYxIxb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D15CC4CED6;
-	Mon,  3 Mar 2025 14:04:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741010665;
-	bh=vWYLCmVVjXgIacFX+hNigDLTQqVgZq+pPM2kMcc60p4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bAjYxIxbNmdV1RMtw7UQDSa5c3z8p7aoYkPv224WubW2b5wPuPSE4nVTsySnxyPES
-	 cSYjbQ13OCwxtLIauTh84eN/8NrZKMXU6NA4I/TV42DGqmLZrQpzd+oO199EO6tQBR
-	 16kVgC/dU0ecXbKPpIncLba3mJVwgvMbf4/5bg/MxRi21cuB88PY1r1B5CQKrrW0DW
-	 yiVf8Kzyag3oQnIWNK2RGf82MmiVelLFk81a77IcivMhSTMSR8cVdvQ4V1AQCDGI+A
-	 vho/duRwrgNbT2ZewgJdFfEntk5+UysLgBm/an9Ua8OQ8cPQLxqMa66tQm/hCCljQ7
-	 URNEQGGMV5YVw==
-Date: Mon, 3 Mar 2025 15:04:19 +0100
-From: Joel Granados <joel.granados@kernel.org>
-To: Nicolas Bouchinet <nicolas.bouchinet@clip-os.org>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, 
-	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, linux-scsi@vger.kernel.org, 
-	codalist@coda.cs.cmu.edu, linux-nfs@vger.kernel.org, 
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Joel Granados <j.granados@samsung.com>, 
-	Clemens Ladisch <clemens@ladisch.de>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Leon Romanovsky <leon@kernel.org>, "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
-	Jan Harkes <jaharkes@cs.cmu.edu>, Chuck Lever <chuck.lever@oracle.com>, 
-	Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>, 
-	Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, 
-	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
-	Bart Van Assche <bvanassche@acm.org>, Zhu Yanjun <yanjun.zhu@linux.dev>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v2 4/6] sysctl: Fixes scsi_logging_level bounds
-Message-ID: <rgh2ffvmp2wlyupv6vw5s3qexuipgu6vdr2qsitgnbn6syk6ye@ln74xh26jdwp>
-References: <20250224095826.16458-1-nicolas.bouchinet@clip-os.org>
- <20250224095826.16458-5-nicolas.bouchinet@clip-os.org>
- <yq1y0xubz40.fsf@ca-mkp.ca.oracle.com>
- <0a9869e0-d091-4568-a6e7-8d7d72b296a9@clip-os.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=a0lMtDpoqQ+FQEOIIsKhoOlSEsCqfPX2UQSFQ1xzUJEK1Ygtmv5+VDiFV37Ba7KOQ59p7gvI0hTX5kEtuOsIE94kOv9OVt0kL81NMRLFqiL7n8MSmQwEE5VSwdGr15XV9dBpsySuNh02MwSEBli9PxV56KbKyF+xoAjmY4Oln2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TyLKPQJG; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2f42992f608so6887518a91.0;
+        Mon, 03 Mar 2025 06:04:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741010690; x=1741615490; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LvE6T4ivpLX+1F6WHj2bh0sHwMKlhe/ppb8XVzDUeaA=;
+        b=TyLKPQJGep8Cc0uqH5IyHW6TjXZzCZMDFW02ayDyN177fUIuhRT7rQjD7/Zsd0R+G7
+         kly/41M3wtb0HM0I0nj+s5/dI+vWvJEPXfuEeAEo+d4G2mBUmvKRpAr3/XTVWB9AFAOL
+         D3Wa3scDaPETPk+pmht6rGe58nffWpg8PZm+pLgLL/wOaHAMyPRTDo2RiJRxyKJPZiC9
+         PrF6/B8JODgoyQPGinlIQaEayBIXMUrZyODPX+vk7PNu08oP0iCfQVow0gT5VTDoumKM
+         BXkpMSAZfCGdklGzGISLIYfCF1ajytTs6+pJaqscNU5YNV9QCyDzu8DDKG44AbGVaJqQ
+         mrPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741010690; x=1741615490;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LvE6T4ivpLX+1F6WHj2bh0sHwMKlhe/ppb8XVzDUeaA=;
+        b=ehv54HhlP2bKuXE1JUIYAU3b29uBEyOd2qloCzBsIhL4L1OUOwfmz/ENDdLdpKwRua
+         wk6qDmDmzK5QG4O3FOer11eO/d5yoc2K+bCo+bRoAvGIKEpIXfQtjdjV30EJX3v3LWMt
+         o5JEh17C0/wdy+ncafX0VpTbU4H9Z97BAh7cDzmKLQhn67LxnGqUhMsiWTioCiqxUJzn
+         IxQ6b89pKxa8fXT7DirCLqPQ96Eg3+z/H/9rjAar9DI7dz6yKz1o1U7Y6auq49h9kua+
+         7SggOI1wFopm5MOWsRFmqijeaLe336nvs2smfTEIREPKdvk9JEe58/Q5+GwnMp+WUqJ1
+         lo2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV8Y9MUDd26EtUk0an9dbXb1o5o11Lwen4drNtHQJpkDu3q/zuM62l3gKBJeuaE1n34IJnQxR1/LJ4fEQ==@vger.kernel.org, AJvYcCW/zMgV6jnNmDq/bxcoj/692K+5NiAZvS+rDMiWATOZe/0IC3+C9uG7nRf++uHZbkiYqhnYzi4sU7Z69QaI@vger.kernel.org
+X-Gm-Message-State: AOJu0YytQJ6jAswdhoVnCpifixTvR1ZPUesc4+4eKfzm3aKbl8rdIsX5
+	iHGa1k5lCWQyY3U1Bt/b4YbBpvGotzHnTk7iPBt7aEZqKPuvlcS71ildoQ==
+X-Gm-Gg: ASbGnctnnCCboUKL/fsBBMAp0Bvdg+B4hkWdnCFoKww+4Phug09q2VkZ1lYuyl8Mgke
+	XuLlFLdhCg+T1Mb5HK9QTObpsz7JaBDTQ//MC9oADu7q1c8ygzz2j8GKvLeQNk0Rm7Hlwemwqij
+	3PMVSHBPqeWb9nnT/RU6akc9km8Zy4lchAuanfc8fS65Zx2aqEWSiWLQYXzcMa8s8yl7RjOaeXj
+	oJOxZkuXJvfxotRqrJ3C9AMkzwcg7SoEGv8UzQLQOoI2aNbno/nMpX/KPiwyk3GlETtGYDSjx5x
+	setpTsYYYvWTaF4T+YcxOCwSuT8cei/GLxBx/Cd0vb+x5mmgQrBNhz/7fA==
+X-Google-Smtp-Source: AGHT+IGPO1HLnLRdrbDTxb8Lo5MjAMwrz3DRbHe7D8TQ81it8ZfNDaagM1DXl9eEgK9x7XZMXDez9A==
+X-Received: by 2002:a17:90b:1e46:b0:2ee:f80c:6884 with SMTP id 98e67ed59e1d1-2febabf8235mr22991089a91.33.1741010690181;
+        Mon, 03 Mar 2025 06:04:50 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fea679df1asm8934905a91.22.2025.03.03.06.04.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 06:04:49 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Mon, 3 Mar 2025 06:04:48 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: xinghuo.chen@foxmail.com
+Cc: jdelvare@suse.com, linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, jingfelix@hust.edu.cn
+Subject: Re: [PATCH v2] hwmon: fix a NULL vs IS_ERR_OR_NULL() check in
+ xgene_hwmon_probe()
+Message-ID: <4e8b32f8-4570-4630-bd0f-91e63cd33767@roeck-us.net>
+References: <tencent_9AD8E7683EC29CAC97496B44F3F865BA070A@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,59 +89,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0a9869e0-d091-4568-a6e7-8d7d72b296a9@clip-os.org>
+In-Reply-To: <tencent_9AD8E7683EC29CAC97496B44F3F865BA070A@qq.com>
 
-On Tue, Feb 25, 2025 at 11:47:42AM +0100, Nicolas Bouchinet wrote:
+On Mon, Mar 03, 2025 at 07:57:33AM -0500, xinghuo.chen@foxmail.com wrote:
+> From: Xinghuo Chen <xinghuo.chen@foxmail.com>
 > 
-> On 2/25/25 02:20, Martin K. Petersen wrote:
-> > Hi Nicolas!
-> > 
-> > > --- a/drivers/scsi/scsi_sysctl.c
-> > > +++ b/drivers/scsi/scsi_sysctl.c
-> > > @@ -17,7 +17,9 @@ static const struct ctl_table scsi_table[] = {
-> > >   	  .data		= &scsi_logging_level,
-> > >   	  .maxlen	= sizeof(scsi_logging_level),
-> > >   	  .mode		= 0644,
-> > > -	  .proc_handler	= proc_dointvec },
-> > > +	  .proc_handler	= proc_dointvec_minmax,
-> > > +	  .extra1	= SYSCTL_ZERO,
-> > > +	  .extra2	= SYSCTL_INT_MAX },
-> > scsi_logging_level is a bitmask and should be unsigned.
-> > 
+> The devm_memremap() function returns error pointers on error,
+> it doesn't return NULL.
 > 
-> Hi Martin,
+> Fixes: c7cefce03e69 ("hwmon: (xgene) access mailbox as RAM")
+> Signed-off-by: Xinghuo Chen <xinghuo.chen@foxmail.com>
+
+Applied.
+
+Thanks,
+Guenter
+
+> ---
+> v1 -> v2:
+> Use IS_ERR_OR_NULL() instead of IS_ERR() as devm_ioremap()
+> return NULL on error.
 > 
-> Thank's for your review.
+> Link to v1: https://lore.kernel.org/all/tencent_370DBB5BD8EF699EC030ACA74BCB440FFA0A@qq.com
+> ---
+>  drivers/hwmon/xgene-hwmon.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Does `scsi_logging_level` needs the full range of a unsigned 32-bit integer
-> ?
-> As it was using `proc_dointvec`, it was capped to an INT_MAX.
-> 
-> If it effectively need the full range of an unsigned 32-bit integer, the
-> `proc_handler` could be changed to `proc_douintvec` as suggested by Chuck.
-And as mentioned in another patch in this series:
-1. Having the upper bound be SYSCTL_INT_MAX is not necessary (as it is
-   silently capped by proc_dointvec_minmax, but it is good to have as it
-   adds to the understanding on what the range of the values are.
-
-2. Having the lower bound capped by SYSCTL_ZERO is needed as it will
-   prevent ppl trying to assigning negative values to the unsigned integer
-
-Let me know if you take this through the scsi subsystem so I know to
-drop it from sysctl 
-
-Best
-
-Reviewed-by: Joel Granados <joel.granados@kernel.org>
-
-
-> 
-> Best regards,
-> 
-> Nicolas
-> 
-
--- 
-
-Joel Granados
+> diff --git a/drivers/hwmon/xgene-hwmon.c b/drivers/hwmon/xgene-hwmon.c
+> index 1e3bd129a922..7087197383c9 100644
+> --- a/drivers/hwmon/xgene-hwmon.c
+> +++ b/drivers/hwmon/xgene-hwmon.c
+> @@ -706,7 +706,7 @@ static int xgene_hwmon_probe(struct platform_device *pdev)
+>  			goto out;
+>  		}
+>  
+> -		if (!ctx->pcc_comm_addr) {
+> +		if (IS_ERR_OR_NULL(ctx->pcc_comm_addr)) {
+>  			dev_err(&pdev->dev,
+>  				"Failed to ioremap PCC comm region\n");
+>  			rc = -ENOMEM;
 
