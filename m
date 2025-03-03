@@ -1,144 +1,180 @@
-Return-Path: <linux-kernel+bounces-541126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08244A4B8E7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:14:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0689A4B8EB
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:15:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E6C03AE4E7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:13:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAA02188D792
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:15:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D91B1EEA5C;
-	Mon,  3 Mar 2025 08:13:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 040C91EEA37;
+	Mon,  3 Mar 2025 08:15:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V2ehdjlK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="MlPoNGwA"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBEDB1EF08F;
-	Mon,  3 Mar 2025 08:13:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA3F1C8FB5;
+	Mon,  3 Mar 2025 08:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740989621; cv=none; b=fQTaY3u4khuSEvEnDuIWq2MlM5jLJfYF39OJjbF/4sqPLc2HEMrmkepyKfkl7kuh924mJ+UWjI4GeCE+gobFvfMfpAy3TCNcPVWUaEBWrSuI4iVYJz1A52f5kePA/bdwu/2n86WR2TvwPoWP025epXcKjNBxQDn+2XTZXCFIk58=
+	t=1740989715; cv=none; b=SGdsK4ErNTJVWWDOJp8LHO15n9dIoSsVkePha+xT3ANriWrP0C/P9lplV7Rkw34dZGTptrnf1nIx0GOE0BIGbhyTnpRT5u+u4BjO+QPFotvCngk6ek8hCp1CwbNkdyvqK+GBQQ0UO51ZDxSVUJe4v2zZc/ayt9Ca7Grn4h0MSZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740989621; c=relaxed/simple;
-	bh=s0S+9I80CpjevCy0wig5fQiXNuZjfab+nVx5S87Gnn8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FBDGkDfmYXhaF5740x5nr2XiTu5e+zA4+y5tWFLAdvPiPMG6aecSWA60AvZvR6TpwIIs939hc/l18XsAfFIhGi7fUhuliuJKyR/Akri8ipgUoWZBawtRmy/HvWdW/0REx8kjZB79RsqYniFAjeTbmVGojQtFcmrsbb+XTTswVB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V2ehdjlK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DB44C4CEE5;
-	Mon,  3 Mar 2025 08:13:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740989620;
-	bh=s0S+9I80CpjevCy0wig5fQiXNuZjfab+nVx5S87Gnn8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=V2ehdjlK3AKuDNZj9cLT95CKk17kosICa0yoyGXiTwXBT67Ho8dcHidqH8kuTixAX
-	 vfdy8zxrGWowDxmhbznCK3UEFQsny632e9GL1MLwHpznMO5m9lTZpXiCg0C+J06hgI
-	 zRZESt98qUdnEm9EbqRRut4D2Q0D3JJwYuXb1ObuwNJarlFkYMiFRbLhPj6boe/jnI
-	 FxSvbSvci2YI6BIUXdBw066UrRDOnkTtWAiRf75Mim+9P7INT0a7ZlFoR18cXm3HdE
-	 oo2cqaS188F3Bb8FoVrJ591EqyyZL6LSC64HaPdcXCJ8jFLEXcttINelEYmnxD/mEC
-	 FEK+jWTqjKRhA==
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4394a0c65fcso42878815e9.1;
-        Mon, 03 Mar 2025 00:13:40 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV1cO7erh4XTIohCZ+jWayIiVtlhXN+vq8v63qLAAJc3PnFurHOYEYy1teYtIHgT05qh7SCmedSEXBG6bE=@vger.kernel.org, AJvYcCWURf2ikZ2SjV0tAaDOpHywNFZDY++3dDQKzfquTYcoPcZlpqRAEo/PiUdZj51fv5nh6t8dVYTQWvdCqw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUXk9p1a8zaUryIKtDqbobKRzRZRyKfn1n5oQRy5Z98nON42y3
-	NlVi7IFwjyyk6HV/lxlY+TxEvuD5YV8Az5YD1Wo24ct42goWiPPb31ODx9H1v0sPCTZrXLteAlO
-	6QdXUaCgeGvGKBNKtHdmKuN0rGp8=
-X-Google-Smtp-Source: AGHT+IEKV152w3ZCXo5m2irL1a0Bi2dlRqTEhpiMErmu+NKb75HiAlqyHvRjhSl8H5J5VDkj4QHZcQWv/twz6KnAJcQ=
-X-Received: by 2002:a05:6000:154b:b0:390:ffd0:4142 with SMTP id
- ffacd0b85a97d-390ffd04280mr5293943f8f.26.1740989619182; Mon, 03 Mar 2025
- 00:13:39 -0800 (PST)
+	s=arc-20240116; t=1740989715; c=relaxed/simple;
+	bh=hvf3bLmYcCD2RVnYD3zf2EHbeFHrfsM9AzqM4rgBX0E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VBQK/N+BTHpT03YghVwIotIql9vw5uBcMNPsi76n9QSuuSw8FVRvZSB+KXLyRTb35V6P+zw5klCGqSluVAXTa2megOpsUSjqIfqC68yoyZgNU/GDxPoOiT5W4ypHzxsnbYS7ebhMo11uyQvzdmDhKFu60C4C9yOox+M4jfBxMgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=MlPoNGwA; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 5238F37i3211325
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 3 Mar 2025 02:15:03 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1740989703;
+	bh=YjPB87iikfu9izwaLqCSsdnIg9W8kOp9vImsqtjmRP4=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=MlPoNGwASaKO0WGFJJHt0Ifukx+kTqShmpvITTdrXq5ch3bjxXw0mc3NmRNH8ugMh
+	 scGEkTc5lmKWiI6JizGCwNn/nLp1kCNVHYOpST/Ely4L4sAP2keJZUZOtRu5CjzkZO
+	 CevEWz3RM/DtborZkJhNMO3SShEwxaheAOetsbtE=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 5238F2Zs025001
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 3 Mar 2025 02:15:03 -0600
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 3
+ Mar 2025 02:15:02 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 3 Mar 2025 02:15:02 -0600
+Received: from [10.24.69.250] (dhcp-10-24-69-250.dhcp.ti.com [10.24.69.250])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 5238Evsr042138;
+	Mon, 3 Mar 2025 02:14:58 -0600
+Message-ID: <6b5839b3-84cb-42ee-8336-81ebf9b2e40d@ti.com>
+Date: Mon, 3 Mar 2025 13:44:57 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250228100509.91121-1-marco.crivellari@suse.com>
- <20250228100509.91121-2-marco.crivellari@suse.com> <alpine.DEB.2.21.2503020042100.12637@angie.orcam.me.uk>
-In-Reply-To: <alpine.DEB.2.21.2503020042100.12637@angie.orcam.me.uk>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Mon, 3 Mar 2025 16:13:30 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H5ptAzHTPAr1bxrgByZrnFmMK8zJ68Z++RwC=NHWjqZmw@mail.gmail.com>
-X-Gm-Features: AQ5f1JrruRq92flANTEM2Gs5u5CQJLL2VyoJGiBUlU68yQOpfTov7anWEVRtAeQ
-Message-ID: <CAAhV-H5ptAzHTPAr1bxrgByZrnFmMK8zJ68Z++RwC=NHWjqZmw@mail.gmail.com>
-Subject: Re: [PATCH v5 1/1] MIPS: Fix idle VS timer enqueue
-To: "Maciej W. Rozycki" <macro@orcam.me.uk>
-Cc: Marco Crivellari <marco.crivellari@suse.com>, linux-mips@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	Frederic Weisbecker <frederic@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
-	Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] arm64: dts: ti: k3-am68-sk/k3-j721s2-mcu: Add
+ bootph-all property to enable Ethernet boot
+To: Chintan Vankar <c-vankar@ti.com>, Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>, Tero
+ Kristo <kristo@kernel.org>,
+        Nishanth Menon <nm@ti.com>
+CC: <s-vadapalli@ti.com>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+References: <20250302153502.181832-1-c-vankar@ti.com>
+ <20250302153502.181832-2-c-vankar@ti.com>
+From: Vignesh Raghavendra <vigneshr@ti.com>
+Content-Language: en-US
+In-Reply-To: <20250302153502.181832-2-c-vankar@ti.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Hi, Maciej,
-
-On Sun, Mar 2, 2025 at 8:54=E2=80=AFAM Maciej W. Rozycki <macro@orcam.me.uk=
-> wrote:
->
-> On Fri, 28 Feb 2025, Marco Crivellari wrote:
->
-> > diff --git a/arch/mips/kernel/genex.S b/arch/mips/kernel/genex.S
-> > index a572ce36a24f..474738d9124e 100644
-> > --- a/arch/mips/kernel/genex.S
-> > +++ b/arch/mips/kernel/genex.S
-> > @@ -104,27 +104,30 @@ handle_vcei:
-> >
-> >       __FINIT
-> >
-> > -     .align  5       /* 32 byte rollback region */
-> > +     .align  5
-> >  LEAF(__r4k_wait)
-> >       .set    push
-> >       .set    noreorder
-> > -     /* start of rollback region */
-> > -     LONG_L  t0, TI_FLAGS($28)
-> > -     nop
-> > -     andi    t0, _TIF_NEED_RESCHED
-> > -     bnez    t0, 1f
-> > -      nop
-> > -     nop
-> > -     nop
-> > -#ifdef CONFIG_CPU_MICROMIPS
-> > -     nop
-> > -     nop
-> > -     nop
-> > -     nop
-> > -#endif
-> > +     /* start of idle interrupt region */
-> > +     MFC0    t0, CP0_STATUS
-> > +     /* Enable Interrput */
->                         ^^
->  Typo here; also please capitalise sentences and use full stops.
->
-> > +     ori     t0, 0x1f
->
->  No time for a thorough review here as I'm heading for a holiday right
-> away, but I can see you still have a coprocessor move hazard here with
-> MIPS III hardware.  The incoming value of $t0 to ORI is not what MFC0 has
-> obtained.  It's the value from before MFC0.
-If this is a problem, then the current local_irq_enable() is also
-wrong for all MIPS III hardware, because this patch uses the same
-instruction sequence of local_irq_enable().
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
 
-Huacai
 
->
-> > +     xori    t0, 0x1e
->
->  And then it's only this XORI that sees the output from MFC0 (though
-> there's actually a race between the two competing writes to $t0), so
-> effectively you clobber the CP0.Status register...
->
-> > +     MTC0    t0, CP0_STATUS
->
->  ... here.  You need to schedule your instructions differently.  But do
-> you need `.set noreorder' in the first place?  Can you maybe find a way t=
-o
-> avoid it, making all the hazard avoidance stuff much easier?
->
->   Maciej
+On 02/03/25 21:05, Chintan Vankar wrote:
+> Ethernet boot requires CPSW nodes to be present starting from R5 SPL
+> stage. Add bootph-all property to required nodes to enable Ethernet boot
+> on AM68-SK and J721S2-EVM.
+> 
+> Signed-off-by: Chintan Vankar <c-vankar@ti.com>
+> ---
+> 
+> Link to v1:
+> https://lore.kernel.org/r/20250106123122.3531845-2-c-vankar@ti.com/
+> 
+> Changes from v1 to v2:
+> - No changes.
+> 
+>  arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts | 3 +++
+>  arch/arm64/boot/dts/ti/k3-j721s2-mcu-wakeup.dtsi | 4 ++++
+>  2 files changed, 7 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts b/arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts
+> index 11522b36e0ce..8e9101dd2152 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts
+> +++ b/arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts
+> @@ -333,6 +333,7 @@ J721S2_WKUP_IOPAD(0x008, PIN_OUTPUT, 0) /* (E22) MCU_RGMII1_TD3 */
+>  			J721S2_WKUP_IOPAD(0x018, PIN_OUTPUT, 0) /* (F21) MCU_RGMII1_TXC */
+>  			J721S2_WKUP_IOPAD(0x000, PIN_OUTPUT, 0) /* (F22) MCU_RGMII1_TX_CTL */
+>  		>;
+> +		bootph-all;
+>  	};
+>  
+>  	mcu_mdio_pins_default: mcu-mdio-default-pins {
+> @@ -340,6 +341,7 @@ mcu_mdio_pins_default: mcu-mdio-default-pins {
+>  			J721S2_WKUP_IOPAD(0x034, PIN_OUTPUT, 0) /* (A21) MCU_MDIO0_MDC */
+>  			J721S2_WKUP_IOPAD(0x030, PIN_INPUT, 0) /* (A22) MCU_MDIO0_MDIO */
+>  		>;
+> +		bootph-all;
+>  	};
+>  
+>  	mcu_mcan0_pins_default: mcu-mcan0-default-pins {
+> @@ -615,6 +617,7 @@ &mcu_cpsw {
+>  &davinci_mdio {
+>  	phy0: ethernet-phy@0 {
+>  		reg = <0>;
+> +		bootph-all;
+>  		ti,rx-internal-delay = <DP83867_RGMIIDCTL_2_00_NS>;
+>  		ti,fifo-depth = <DP83867_PHYCR_FIFO_DEPTH_4_B_NIB>;
+>  		ti,min-output-impedance;
+> diff --git a/arch/arm64/boot/dts/ti/k3-j721s2-mcu-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-j721s2-mcu-wakeup.dtsi
+> index bc31266126d0..29cd4b1ffbbf 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j721s2-mcu-wakeup.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j721s2-mcu-wakeup.dtsi
+> @@ -154,12 +154,14 @@ mcu_conf: bus@40f00000 {
+>  		cpsw_mac_syscon: ethernet-mac-syscon@200 {
+>  			compatible = "ti,am62p-cpsw-mac-efuse", "syscon";
+>  			reg = <0x200 0x8>;
+> +			bootph-all;
+>  		};
+>  
+>  		phy_gmii_sel: phy@4040 {
+>  			compatible = "ti,am654-phy-gmii-sel";
+>  			reg = <0x4040 0x4>;
+>  			#phy-cells = <1>;
+> +			bootph-all;
+>  		};
+>  
+>  	};
+> @@ -538,6 +540,7 @@ mcu_cpsw: ethernet@46000000 {
+>  		clocks = <&k3_clks 29 28>;
+>  		clock-names = "fck";
+>  		power-domains = <&k3_pds 29 TI_SCI_PD_EXCLUSIVE>;
+> +		bootph-all;
+>  
+
+Since a child node has bootph-all, no need to put the same in the parent
+hierarchy.
+
+>  		dmas = <&mcu_udmap 0xf000>,
+>  		       <&mcu_udmap 0xf001>,
+> @@ -562,6 +565,7 @@ cpsw_port1: port@1 {
+>  				label = "port1";
+>  				ti,syscon-efuse = <&cpsw_mac_syscon 0x0>;
+>  				phys = <&phy_gmii_sel 1>;
+> +				bootph-all;
+>  			};
+>  		};
+>  
+
+
+-- 
+Regards
+Vignesh
+https://ti.com/opensource
+
 
