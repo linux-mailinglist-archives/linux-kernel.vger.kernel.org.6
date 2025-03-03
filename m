@@ -1,90 +1,109 @@
-Return-Path: <linux-kernel+bounces-542798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B342BA4CDD6
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:05:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06487A4CDDB
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:06:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 346213A9EFA
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:05:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09B01189591D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:06:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A67C02356B7;
-	Mon,  3 Mar 2025 22:05:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54459230BE0;
+	Mon,  3 Mar 2025 22:06:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="avUcecqe"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vb7YuO3q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B9D2356B1;
-	Mon,  3 Mar 2025 22:05:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3DA11C5D76;
+	Mon,  3 Mar 2025 22:06:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741039520; cv=none; b=gVTCAuGg9ySAMtBFr7hv+F7tIb5reZvcC7vTVs4CtcMRTeImEiJsTfIKa88FfXLzthl600kSURZ2VAtfcpy2mB2n5KTZ1zawVlV3PR08yxzq4JsK6aWZ1bkIQTzHMqXtDqbhROIA+XJ/Bw2myeyNz54wKuggJaq9cpkYNhDCi54=
+	t=1741039585; cv=none; b=TVVf9cGrc0MzAt1Hg37N2NFuINA5kLAnFSRcx0QhzV+yPBaNxbh/ceBbl8s5xhH1aG09tRNGVAIkysFTurg/zNAWJWrK1u1KjGJ1v51Xy8FGHg8TLvwDFBwaM8xniFSjbA4sTdZo2weyflQ9TkIqwHr+P0OPlXM0KJr+ylkz4Kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741039520; c=relaxed/simple;
-	bh=2Q8hSgHskq8iK2gEQ2tvf13oh4SB3vsMyvT5OJIGh8o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a9VvZyTzUESOvG4vjUfm5xyF9dhKWj5uBossRlKGmX4HD8wD7b+6grKFMC6nsYQD3pJFV4uVQ4CbhDDL1V2EqOOh81ABjVsM+/MscmPnI6584oz8c5CwYFXG6D3WqIt4KK2upMbY5hPLSU590Vd+Iwxvu9ZSDl9oujetoCOk0bY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=avUcecqe; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id A5EB34435F;
-	Mon,  3 Mar 2025 22:05:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1741039515;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UPXaEZTWHPqvZ/4xe6Vgz0dumrtZ+1aArmqTgcjC60w=;
-	b=avUcecqejc2zM9Yl6b0WM9W5Jqe/NKsM1rxAh9j1vG5l67LwViSGKUni8l1YRrvKzZEvB9
-	hAXMj6Q/xCYKTLKkWcR5dMVE7vyymRPY6YNgSMoJUIktJk+1s5e5A5vNLhx9iV+fZQv2xS
-	ot0rMFAPSPRGhlcUyQv9F8H6F3UoylQ9jpKrFJevwmJihrVlT9B2h6ArZv0pSe2Bhlf/px
-	F9TZ2dMfMz4CHdNf+3xwWHIBOLMORP4+fJe28nVwzvJSrtJnQXqbuUuYrHfQlgmJnLCLHq
-	kR1lYm+IsUjLHz9/2Vll7U+7tutDokiwoPd7tGeT0BVg+xHNWugtqR4zvPhGxg==
-Date: Mon, 3 Mar 2025 23:05:13 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Huisong Li <lihuisong@huawei.com>
-Cc: zhanjie9@hisilicon.com, zhenglifeng1@huawei.com, liuyonglong@huawei.com
-Subject: Re: [PATCH v2 0/2] Use HWMON_CHANNEL_INFO macro to simplify code
-Message-ID: <174103950413.1107781.15545984471360569360.b4-ty@bootlin.com>
-References: <20250210054546.10785-1-lihuisong@huawei.com>
+	s=arc-20240116; t=1741039585; c=relaxed/simple;
+	bh=FY/qsZhygWjpuZGgX6rBNXN5tHiCmpxfGg9KBXeSsns=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=K9YUz5r0rHL68whx7gAzLWnjmYEZzepoF86BuWmmw6ufio9HasxcFivzvIR/SoUjhfqw/8d6L5seQAr/ei7G4fYQ463++ArsCtUCUbM5gBHtVnGCs5b9jjjdgH4BXEaKCTHU5zEIJFGSqgyGnG/6fQgG4+5Lh4niEQ7q/g+WPOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vb7YuO3q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E7FFC4CED6;
+	Mon,  3 Mar 2025 22:06:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741039585;
+	bh=FY/qsZhygWjpuZGgX6rBNXN5tHiCmpxfGg9KBXeSsns=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Vb7YuO3qusoeGBK0ko0zGkWzbW0j60MrIHFJCRkty0pmhdHlOLosQneChGVWkCpWK
+	 GGWLUAVDRAn3qwttsxsUgO4BQ1NQOTmw3MNsq3KQR1+2ZSuHps9/DDxTNZoMTNZb8l
+	 j6DkB+Ww0IQMuCr3apzU9f/i+XRhaLCJmyN2LF3jjGD4Zb1KYZToLE56VK3DNGOSCe
+	 CDIQeqGJ1C2EF5QlF++js63NJmHKjfL+QHEVK9goGsKsupXUPcuiJigi1DtXQvinWP
+	 FGPvYENokF2qsZj/6cBoT+NVJJQn/I7cx3R4SstAPNx7Dm04z3RNNzurk3zsDZu1/r
+	 1kDGhR5Vv3nyQ==
+Date: Mon, 3 Mar 2025 14:06:23 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Jiri Pirko <jiri@resnulli.us>
+Cc: Tariq Toukan <tariqt@nvidia.com>, "David S. Miller"
+ <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>, Eric Dumazet
+ <edumazet@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>, Jiri Pirko
+ <jiri@nvidia.com>, Cosmin Ratiu <cratiu@nvidia.com>, Carolina Jubran
+ <cjubran@nvidia.com>, Gal Pressman <gal@nvidia.com>, Mark Bloch
+ <mbloch@nvidia.com>, Donald Hunter <donald.hunter@gmail.com>, Jonathan
+ Corbet <corbet@lwn.net>, Saeed Mahameed <saeedm@nvidia.com>, Leon
+ Romanovsky <leon@kernel.org>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-rdma@vger.kernel.org
+Subject: Re: [PATCH net-next 03/10] devlink: Serialize access to rate
+ domains
+Message-ID: <20250303140623.5df9f990@kernel.org>
+In-Reply-To: <kmjgcuyao7a7zb2u4554rj724ucpd2xqmf5yru4spdqim7zafk@2ry67hbehjgx>
+References: <20250213180134.323929-1-tariqt@nvidia.com>
+	<20250213180134.323929-4-tariqt@nvidia.com>
+	<ieeem2dc5mifpj2t45wnruzxmo4cp35mbvrnsgkebsqpmxj5ib@hn7gphf6io7x>
+	<20250218182130.757cc582@kernel.org>
+	<qaznnl77zg24zh72axtv7vhbfdbxnzmr73bqr7qir5wu2r6n52@ob25uqzyxytm>
+	<20250225174005.189f048d@kernel.org>
+	<wgbtvsogtf4wgxyz7q4i6etcvlvk6oi3xyckie2f7mwb3gyrl4@m7ybivypoojl>
+	<20250226185310.42305482@kernel.org>
+	<kmjgcuyao7a7zb2u4554rj724ucpd2xqmf5yru4spdqim7zafk@2ry67hbehjgx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250210054546.10785-1-lihuisong@huawei.com>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutddtvdejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeetlhgvgigrnhgurhgvuceuvghllhhonhhiuceorghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepieejfefhffekjeeuheevueevjedvleevjeetudffheeutdffudefjeduffeuvddtnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepjeejrdduhedtrddvgeeirddvudehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepjeejrdduhedtrddvgeeirddvudehpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeeipdhrtghpthhtoheplhhinhhugidqrhhttgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhhuhhishhonhhgsehhuhgrfigvihdrtghomhdprhgtphhtthhopeiih
- hgrnhhjihgvleeshhhishhilhhitghonhdrtghomhdprhgtphhtthhopeiihhgvnhhglhhifhgvnhhgudeshhhurgifvghirdgtohhmpdhrtghpthhtoheplhhiuhihohhnghhlohhngheshhhurgifvghirdgtohhm
-X-GND-Sasl: alexandre.belloni@bootlin.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, 10 Feb 2025 13:45:44 +0800, Huisong Li wrote:
-> The HWMON_CHANNEL_INFO macro is provided by hwmon.h and used widely by many
-> other drivers. This series use HWMON_CHANNEL_INFO macro to simplify code
-> for rtc subsystem.
+On Thu, 27 Feb 2025 13:22:25 +0100 Jiri Pirko wrote:
+> >> I'm not sure how you imagine getting rid of them. One PCI PF
+> >> instantiates one devlink now. There are lots of configuration (e.g. params)
+> >> that is per-PF. You need this instance for that, how else would you do
+> >> per-PF things on shared ASIC instance?  
+> >
+> >There are per-PF ports, right?  
 > 
-> belonging to the same subsystem.
+> Depends. On normal host sr-iov, no. On smartnic where you have PF in
+> host, yes.
+
+Yet another "great choice" in mlx5 other drivers have foreseen
+problems with and avoided.
+
+> >> Creating SFs is per-PF operation for example. I didn't to thorough
+> >> analysis, but I'm sure there are couple of per-PF things like these.  
+> >
+> >Seems like adding a port attribute to SF creation would be a much
+> >smaller extension than adding a layer of objects.
+> >  
+> >> Also not breaking the existing users may be an argument to keep per-PF
+> >> instances.  
+> >
+> >We're talking about multi-PF devices only. Besides pretty sure we 
+> >moved multiple params and health reporters to be per port, so IDK 
+> >what changed now.  
 > 
+> Looks like pretty much all current NICs are multi-PFs, aren't they?
 
-Applied, thanks!
-
-[1/2] rtc: ab-eoz9: Use HWMON_CHANNEL_INFO macro to simplify code
-      https://git.kernel.org/abelloni/c/f432c5d502b4
-[2/2] rtc: ds3232: Use HWMON_CHANNEL_INFO macro to simplify code
-      https://git.kernel.org/abelloni/c/d659dfec7d35
-
-Best regards,
-
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Not in a way which requires cross-port state sharing, no.
+You should know this.
 
