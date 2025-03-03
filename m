@@ -1,225 +1,307 @@
-Return-Path: <linux-kernel+bounces-542525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BE42A4CACA
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:10:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19C08A4CAA8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:03:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CAE53B2B30
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:02:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C6341887129
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:03:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25197228CB7;
-	Mon,  3 Mar 2025 18:02:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OovLkFaM"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB3B721B9EC;
-	Mon,  3 Mar 2025 18:02:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 572F622A1E2;
+	Mon,  3 Mar 2025 18:03:04 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D447C2153D8;
+	Mon,  3 Mar 2025 18:03:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741024964; cv=none; b=GM7D9NuIRazzXL7JgPmBs/7oWdLA1X9RV7RWNKIR4xEnqtyy3cGJkj/WiJKOsUjghBTQ1I82cTaf7mi6trUXTGJrZv/C1yPIZZYnK2t7TQAINLI4jQP4OoJuo0YJZZ+rcST/ynPUEpJKj5fJOSB/4na77l1Y7K+qgf/7+Jntjvw=
+	t=1741024983; cv=none; b=Cfp2EJx53hgLSEDTwsWaN8G7mUJzNbo7jGh5KYSXV9amlgPEJIvFN/aN9PzAhGlwynP5SHgINTZaESgQBugBhWkHTIwZCYqVQsE6AaLihmQqVl344Wt+dnPi6iQGNrHr3SAPUghqbv8KXsDrhbcDFWkhfdFmxcdig1/U7bUFlC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741024964; c=relaxed/simple;
-	bh=b8cpnI0t1ZGE/4GhGe0WJPPFmne1LjgPLSwPpkjCOuU=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l/Qlit8YxHYOXt+byXYq2Q6IzevtN/Ww1W05tHkWrLZVnwryIJfedDFTQvmULe3VMa9cP6AlALv0XMa9EOAWzr7TWOHRDO3QJ/1rd1qqbkxiOUJkRLN1fDytRu7mDck3TZRKm066Jgy209X1rAv7sK6OEIncofgH/N3h4YABq8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OovLkFaM; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6e897847086so35399936d6.3;
-        Mon, 03 Mar 2025 10:02:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741024961; x=1741629761; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=uaH51U1EARjWt1wUptMoCo83LSnQN+HwOWnZIFYX+bw=;
-        b=OovLkFaMr6EnwYXcSIiP2SH4+CnqgQ94k7zf5Az2wqyhF2504PhpzSPehs8HsGge4f
-         iWiMRKCf/x+dt4KN7IXkjENqiPFG4BT3382PmbAWwC879/vCO1sihk0CwjSUxRKNNlgG
-         xi8nly5rbRfXs/Je/W+vrIzkWpPzNSyzCAlCjXNqKfvpZ4r/LlC6tNK6eLz/crEzy4gH
-         8hTUbJQ7q640Lt4X17eYs0y8ktWPxMDoKZyRjeLYukrBzDMaDjIDEWzMpGYfj6ltb5s5
-         89jB/hQgJ8rArjLJMGYk34KW+OV0ayCcfo6AQ7n71q2QM8ey76J1GrOr460m/jKjBp2H
-         ZZCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741024961; x=1741629761;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uaH51U1EARjWt1wUptMoCo83LSnQN+HwOWnZIFYX+bw=;
-        b=M0e0LN8EjnSWJk9nqJOOGXVf63Yrzu2D3iTj+SnqdDbdmJwCBYP1GLCly0R8IL8GOU
-         pluTM+H0bsFhR23jjFZLTrBh/Vo88vus93+Mp/msXYDn3npLMTyxTsf7aYj9rvECuGuA
-         ntYd3r0V4gV4pZgN9rAfZHzZjDa/G5/ZrIJ2aeRNRvl7/YXkipkIDAiY3WERDs7kyfNn
-         ZAd64GGKuClyWGoCIBx05ZgC4XE4S3StutNEIDEcN0l36MTcfjpxvL0Yscv3gDNQJ/Te
-         61qZbSuAS9wTsReTy/hybR9XrS0wMT0+ZF9F8yVpBVEKKYi6wbZxCWcityuM6tS7rh0z
-         en4w==
-X-Forwarded-Encrypted: i=1; AJvYcCUY2IL7I3elXvKC8C7NWZfPG8NOPrd+pR5I4JgTMTV0FpviBl3hPc1PDVDOhrB4UXwAAttuGZHHuG4MtPd5gwnnCg==@vger.kernel.org, AJvYcCVRUZyXpZzH+ZKrDKiRAqFesyj9QfEpGYEaO0GRiBkY6OkZ9ZipMecjgvroVMC4kwncyvq6YsSYKOI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeRseeT+XTjdmorcrHLN1pLs4D7GzIAkU5YPIf0PF6Dl0fTUjR
-	AfewlG415V646qbI/L2kq9iknKWR6imS2aIqFM1X/xJIwjxaWoBB
-X-Gm-Gg: ASbGncvdjAgJS3ZGKiZ9dP0cZBWlfOoNhYI4yKT9HX9SmiR7az5/tbgLlmEYMeE4ke0
-	LzveC2DNmczRhf12zidEbg4aCVX5IITHHsuDCQyfzGBWSBrvppPzUQ9gK8srWz5qW+b5WkWAotr
-	F9PiCX7Kq71VCp6jK+slmBZQ2amHRRWBLgrxeR0YXgP0+wL1JC/jtJyfu1vfWFCA+G4c6U9gcWE
-	ex38gAVmWOtm8l8H/y4J4GC8Ajl8tebNahaodB/XimEbm42OXOZckMehhZyikYEFYv6G2Np/clU
-	PpniDuqCWU5UM3aQAZfw5ge8hryNQZEvduql9wnS
-X-Google-Smtp-Source: AGHT+IHjzkfcwb10GrGN3uoaAD93gQYyAxTYz59dkNKhr3SqimWrYHhjEzDaYdTtiZWAuzKMb2Txaw==
-X-Received: by 2002:a05:6214:2aad:b0:6e8:9ac9:55ad with SMTP id 6a1803df08f44-6e8a0d94f85mr225579736d6.37.1741024960502;
-        Mon, 03 Mar 2025 10:02:40 -0800 (PST)
-Received: from debian ([2607:fb90:8e63:c2b3:5405:c8bf:c1d1:41d5])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e89763479csm55795596d6.2.2025.03.03.10.02.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 10:02:39 -0800 (PST)
-From: Fan Ni <nifan.cxl@gmail.com>
-X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
-Date: Mon, 3 Mar 2025 10:02:32 -0800
-To: Shradha Todi <shradha.t@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org, manivannan.sadhasivam@linaro.org,
-	lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-	bhelgaas@google.com, jingoohan1@gmail.com,
-	Jonathan.Cameron@huawei.com, nifan.cxl@gmail.com,
-	a.manzanares@samsung.com, pankaj.dubey@samsung.com,
-	cassel@kernel.org, 18255117159@163.com, xueshuai@linux.alibaba.com,
-	renyu.zj@linux.alibaba.com, will@kernel.org, mark.rutland@arm.com
-Subject: Re: [PATCH v7 5/5] Add debugfs based statistical counter support in
- DWC
-Message-ID: <Z8XuuNb6TRevUlHH@debian>
-References: <20250221131548.59616-1-shradha.t@samsung.com>
- <CGME20250221132043epcas5p27fde98558b13b3311cdc467e8f246380@epcas5p2.samsung.com>
- <20250221131548.59616-6-shradha.t@samsung.com>
+	s=arc-20240116; t=1741024983; c=relaxed/simple;
+	bh=mgRL3HyqLWU5AzgennCHg4W7U29GH2XuXFK+qAFAGH4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nZGRUt42uIsEriGlA9/YUcsmEpHiaqHPSxUPfZjoOhhHV/8y8tWn8f0jcVDUkZ/yIC1oBPxCNmb96nEVgssZrU006ZKIgDRnN2q9Gi4Utt5AtPt/4H9S3nQm9kieSIgEYITWCIoBon8BCOQ34KkEmcL8X9XP7D/QmpQ0sESOIzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AE804106F;
+	Mon,  3 Mar 2025 10:03:14 -0800 (PST)
+Received: from [10.57.37.67] (unknown [10.57.37.67])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 32E5E3F5A1;
+	Mon,  3 Mar 2025 10:02:57 -0800 (PST)
+Message-ID: <6a7bf3ea-6f9b-4f8f-aa23-9a75a7c2e190@arm.com>
+Date: Mon, 3 Mar 2025 18:02:56 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250221131548.59616-6-shradha.t@samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 14/45] arm64: RME: Support for the VGIC in realms
+Content-Language: en-GB
+To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
+ kvmarm@lists.linux.dev
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
+ <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
+ Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ Gavin Shan <gshan@redhat.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ Alper Gun <alpergun@google.com>, "Aneesh Kumar K . V"
+ <aneesh.kumar@kernel.org>
+References: <20250213161426.102987-1-steven.price@arm.com>
+ <20250213161426.102987-15-steven.price@arm.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20250213161426.102987-15-steven.price@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 21, 2025 at 06:45:48PM +0530, Shradha Todi wrote:
-> Add support to provide statistical counter interface to userspace. This set
-> of debug registers are part of the RASDES feature present in DesignWare
-> PCIe controllers.
+On 13/02/2025 16:13, Steven Price wrote:
+> The RMM provides emulation of a VGIC to the realm guest but delegates
+> much of the handling to the host. Implement support in KVM for
+> saving/restoring state to/from the REC structure.
 > 
-One comment inline.
-> Signed-off-by: Shradha Todi <shradha.t@samsung.com>
+> Signed-off-by: Steven Price <steven.price@arm.com>
 > ---
->  Documentation/ABI/testing/debugfs-dwc-pcie    |  61 +++++
->  .../controller/dwc/pcie-designware-debugfs.c  | 229 +++++++++++++++++-
->  2 files changed, 289 insertions(+), 1 deletion(-)
+> Changes from v5:
+>   * Handle RMM providing fewer GIC LRs than the hardware supports.
+> ---
+>   arch/arm64/include/asm/kvm_rme.h |  1 +
+>   arch/arm64/kvm/arm.c             | 16 +++++++++---
+>   arch/arm64/kvm/rme.c             |  5 ++++
+>   arch/arm64/kvm/vgic/vgic-init.c  |  2 +-
+>   arch/arm64/kvm/vgic/vgic-v3.c    |  5 ++++
+>   arch/arm64/kvm/vgic/vgic.c       | 43 ++++++++++++++++++++++++++++++--
+>   6 files changed, 66 insertions(+), 6 deletions(-)
 > 
-> diff --git a/Documentation/ABI/testing/debugfs-dwc-pcie b/Documentation/ABI/testing/debugfs-dwc-pcie
-> index 6ee0897fe753..650a89b0511e 100644
-> --- a/Documentation/ABI/testing/debugfs-dwc-pcie
-> +++ b/Documentation/ABI/testing/debugfs-dwc-pcie
-> @@ -81,3 +81,64 @@ Description:	rasdes_err_inj is the directory which can be used to inject errors
->  
->  			<count>
->  				Number of errors to be injected
-
-...
-
+> diff --git a/arch/arm64/include/asm/kvm_rme.h b/arch/arm64/include/asm/kvm_rme.h
+> index 5db377943db4..2e319db9a05f 100644
+> --- a/arch/arm64/include/asm/kvm_rme.h
+> +++ b/arch/arm64/include/asm/kvm_rme.h
+> @@ -83,6 +83,7 @@ struct realm_rec {
+>   
+>   void kvm_init_rme(void);
+>   u32 kvm_realm_ipa_limit(void);
+> +u32 kvm_realm_vgic_nr_lr(void);
+>   
+>   int kvm_realm_enable_cap(struct kvm *kvm, struct kvm_enable_cap *cap);
+>   int kvm_init_realm_vm(struct kvm *kvm);
+> diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
+> index a6a3034a2f50..a2bc86b3798f 100644
+> --- a/arch/arm64/kvm/arm.c
+> +++ b/arch/arm64/kvm/arm.c
+> @@ -672,19 +672,24 @@ void kvm_arch_vcpu_put(struct kvm_vcpu *vcpu)
+>   		kvm_call_hyp_nvhe(__pkvm_vcpu_put);
+>   	}
+>   
+> +	kvm_timer_vcpu_put(vcpu);
+> +	kvm_vgic_put(vcpu);
 > +
-> +static ssize_t counter_value_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
-> +{
-> +	struct dwc_pcie_rasdes_priv *pdata = file->private_data;
-> +	struct dw_pcie *pci = pdata->pci;
-> +	struct dwc_pcie_rasdes_info *rinfo = pci->debugfs->rasdes_info;
-> +	char debugfs_buf[DWC_DEBUGFS_BUF_MAX];
-> +	ssize_t pos;
-> +	u32 val;
+> +	vcpu->cpu = -1;
 > +
-> +	mutex_lock(&rinfo->reg_event_lock);
-> +	set_event_number(pdata, pci, rinfo);
-> +	val = dw_pcie_readl_dbi(pci, rinfo->ras_cap_offset + RAS_DES_EVENT_COUNTER_DATA_REG);
-> +	mutex_unlock(&rinfo->reg_event_lock);
-> +	pos = scnprintf(debugfs_buf, DWC_DEBUGFS_BUF_MAX, "Counter value: %d\n", val);
+> +	if (vcpu_is_rec(vcpu))
+> +		return;
 > +
-> +	return simple_read_from_buffer(buf, count, ppos, debugfs_buf, pos);
-> +}
-
-Do we need to check whether the counter is enabled or not for the event
-before retrieving the counter value?
-
-Fan
-> +
->  #define dwc_debugfs_create(name)			\
->  debugfs_create_file(#name, 0644, rasdes_debug, pci,	\
->  			&dbg_ ## name ## _fops)
-> @@ -249,6 +436,23 @@ static const struct file_operations dwc_pcie_err_inj_ops = {
->  	.write = err_inj_write,
->  };
->  
-> +static const struct file_operations dwc_pcie_counter_enable_ops = {
-> +	.open = simple_open,
-> +	.read = counter_enable_read,
-> +	.write = counter_enable_write,
-> +};
-> +
-> +static const struct file_operations dwc_pcie_counter_lane_ops = {
-> +	.open = simple_open,
-> +	.read = counter_lane_read,
-> +	.write = counter_lane_write,
-> +};
-> +
-> +static const struct file_operations dwc_pcie_counter_value_ops = {
-> +	.open = simple_open,
-> +	.read = counter_value_read,
-> +};
-> +
->  static void dwc_pcie_rasdes_debugfs_deinit(struct dw_pcie *pci)
->  {
->  	struct dwc_pcie_rasdes_info *rinfo = pci->debugfs->rasdes_info;
-> @@ -258,7 +462,7 @@ static void dwc_pcie_rasdes_debugfs_deinit(struct dw_pcie *pci)
->  
->  static int dwc_pcie_rasdes_debugfs_init(struct dw_pcie *pci, struct dentry *dir)
->  {
-> -	struct dentry *rasdes_debug, *rasdes_err_inj;
-> +	struct dentry *rasdes_debug, *rasdes_err_inj, *rasdes_event_counter, *rasdes_events;
->  	struct dwc_pcie_rasdes_info *rasdes_info;
->  	struct dwc_pcie_rasdes_priv *priv_tmp;
->  	struct device *dev = pci->dev;
-> @@ -277,6 +481,7 @@ static int dwc_pcie_rasdes_debugfs_init(struct dw_pcie *pci, struct dentry *dir)
->  	/* Create subdirectories for Debug, Error injection, Statistics */
->  	rasdes_debug = debugfs_create_dir("rasdes_debug", dir);
->  	rasdes_err_inj = debugfs_create_dir("rasdes_err_inj", dir);
-> +	rasdes_event_counter = debugfs_create_dir("rasdes_event_counter", dir);
->  
->  	mutex_init(&rasdes_info->reg_event_lock);
->  	rasdes_info->ras_cap_offset = ras_cap;
-> @@ -299,6 +504,28 @@ static int dwc_pcie_rasdes_debugfs_init(struct dw_pcie *pci, struct dentry *dir)
->  		debugfs_create_file(err_inj_list[i].name, 0200, rasdes_err_inj, priv_tmp,
->  				    &dwc_pcie_err_inj_ops);
->  	}
-> +
-> +	/* Create debugfs files for Statistical counter subdirectory */
-> +	for (i = 0; i < ARRAY_SIZE(event_list); i++) {
-> +		priv_tmp = devm_kzalloc(dev, sizeof(*priv_tmp), GFP_KERNEL);
-> +		if (!priv_tmp) {
-> +			ret = -ENOMEM;
-> +			goto err_deinit;
-> +		}
-> +
-> +		priv_tmp->idx = i;
-> +		priv_tmp->pci = pci;
-> +		rasdes_events = debugfs_create_dir(event_list[i].name, rasdes_event_counter);
-> +		if (event_list[i].group_no == 0 || event_list[i].group_no == 4) {
-> +			debugfs_create_file("lane_select", 0644, rasdes_events,
-> +					    priv_tmp, &dwc_pcie_counter_lane_ops);
-> +		}
-> +		debugfs_create_file("counter_value", 0444, rasdes_events, priv_tmp,
-> +				    &dwc_pcie_counter_value_ops);
-> +		debugfs_create_file("counter_enable", 0644, rasdes_events, priv_tmp,
-> +				    &dwc_pcie_counter_enable_ops);
+>   	kvm_vcpu_put_debug(vcpu);
+>   	kvm_arch_vcpu_put_fp(vcpu);
+>   	if (has_vhe())
+>   		kvm_vcpu_put_vhe(vcpu);
+> -	kvm_timer_vcpu_put(vcpu);
+> -	kvm_vgic_put(vcpu);
+>   	kvm_vcpu_pmu_restore_host(vcpu);
+>   	if (vcpu_has_nv(vcpu))
+>   		kvm_vcpu_put_hw_mmu(vcpu);
+>   	kvm_arm_vmid_clear_active();
+>   
+>   	vcpu_clear_on_unsupported_cpu(vcpu);
+> -	vcpu->cpu = -1;
+>   }
+>   
+>   static void __kvm_arm_vcpu_power_off(struct kvm_vcpu *vcpu)
+> @@ -889,6 +894,11 @@ int kvm_arch_vcpu_run_pid_change(struct kvm_vcpu *vcpu)
+>   			return ret;
+>   	}
+>   
+> +	if (!irqchip_in_kernel(kvm) && kvm_is_realm(vcpu->kvm)) {
+> +		/* Userspace irqchip not yet supported with Realms */
+> +		return -EOPNOTSUPP;
 > +	}
 > +
->  	return 0;
->  
->  err_deinit:
-> -- 
-> 2.17.1
-> 
+>   	mutex_lock(&kvm->arch.config_lock);
+>   	set_bit(KVM_ARCH_FLAG_HAS_RAN_ONCE, &kvm->arch.flags);
+>   	mutex_unlock(&kvm->arch.config_lock);
+> diff --git a/arch/arm64/kvm/rme.c b/arch/arm64/kvm/rme.c
+> index 0aa1f29b0610..195390a66bc4 100644
+> --- a/arch/arm64/kvm/rme.c
+> +++ b/arch/arm64/kvm/rme.c
+> @@ -77,6 +77,11 @@ u32 kvm_realm_ipa_limit(void)
+>   	return u64_get_bits(rmm_feat_reg0, RMI_FEATURE_REGISTER_0_S2SZ);
+>   }
+>   
+> +u32 kvm_realm_vgic_nr_lr(void)
+> +{
+> +	return u64_get_bits(rmm_feat_reg0, RMI_FEATURE_REGISTER_0_GICV3_NUM_LRS);
+> +}
+> +
+>   static int get_start_level(struct realm *realm)
+>   {
+>   	return 4 - ((realm->ia_bits - 8) / (RMM_PAGE_SHIFT - 3));
+> diff --git a/arch/arm64/kvm/vgic/vgic-init.c b/arch/arm64/kvm/vgic/vgic-init.c
+> index bc7e22ab5d81..0ec9f6f62e86 100644
+> --- a/arch/arm64/kvm/vgic/vgic-init.c
+> +++ b/arch/arm64/kvm/vgic/vgic-init.c
+> @@ -79,7 +79,7 @@ int kvm_vgic_create(struct kvm *kvm, u32 type)
+>   	 * the proper checks already.
+>   	 */
+>   	if (type == KVM_DEV_TYPE_ARM_VGIC_V2 &&
+> -		!kvm_vgic_global_state.can_emulate_gicv2)
+> +	    (!kvm_vgic_global_state.can_emulate_gicv2 || kvm_is_realm(kvm)))
+>   		return -ENODEV;
+>   
+>   	/* Must be held to avoid race with vCPU creation */
+> diff --git a/arch/arm64/kvm/vgic/vgic-v3.c b/arch/arm64/kvm/vgic/vgic-v3.c
+> index d7233ab982d0..41c3de063e72 100644
+> --- a/arch/arm64/kvm/vgic/vgic-v3.c
+> +++ b/arch/arm64/kvm/vgic/vgic-v3.c
+> @@ -8,9 +8,11 @@
+>   #include <linux/kvm_host.h>
+>   #include <linux/string_choices.h>
+>   #include <kvm/arm_vgic.h>
+> +#include <asm/kvm_emulate.h>
+>   #include <asm/kvm_hyp.h>
+>   #include <asm/kvm_mmu.h>
+>   #include <asm/kvm_asm.h>
+> +#include <asm/rmi_smc.h>
+>   
+>   #include "vgic.h"
+>   
+> @@ -748,6 +750,9 @@ void vgic_v3_put(struct kvm_vcpu *vcpu)
+>   {
+>   	struct vgic_v3_cpu_if *cpu_if = &vcpu->arch.vgic_cpu.vgic_v3;
+>   
+> +	if (vcpu_is_rec(vcpu))
+> +		cpu_if->vgic_vmcr = vcpu->arch.rec.run->exit.gicv3_vmcr;
+> +
+
+
+>   	if (likely(!is_protected_kvm_enabled()))
+
+	else if (likely(...)) ?
+
+>   		kvm_call_hyp(__vgic_v3_save_vmcr_aprs, cpu_if);
+
+Otherwise, the VMCR could be rewritten from what we set above and 
+pointless APR saves ?
+
+Rest looks good to me.
+
+Suzuki
+
+>   	WARN_ON(vgic_v4_put(vcpu));
+> diff --git a/arch/arm64/kvm/vgic/vgic.c b/arch/arm64/kvm/vgic/vgic.c
+> index 1077fab2df4b..4218de3ea9da 100644
+> --- a/arch/arm64/kvm/vgic/vgic.c
+> +++ b/arch/arm64/kvm/vgic/vgic.c
+> @@ -10,7 +10,9 @@
+>   #include <linux/list_sort.h>
+>   #include <linux/nospec.h>
+>   
+> +#include <asm/kvm_emulate.h>
+>   #include <asm/kvm_hyp.h>
+> +#include <asm/kvm_rme.h>
+>   
+>   #include "vgic.h"
+>   
+> @@ -23,6 +25,8 @@ struct vgic_global kvm_vgic_global_state __ro_after_init = {
+>   
+>   static inline int kvm_vcpu_vgic_nr_lr(struct kvm_vcpu *vcpu)
+>   {
+> +	if (unlikely(vcpu_is_rec(vcpu)))
+> +		return kvm_realm_vgic_nr_lr();
+>   	return kvm_vgic_global_state.nr_lr;
+>   }
+>   
+> @@ -864,10 +868,23 @@ static inline bool can_access_vgic_from_kernel(void)
+>   	return !static_branch_unlikely(&kvm_vgic_global_state.gicv3_cpuif) || has_vhe();
+>   }
+>   
+> +static inline void vgic_rmm_save_state(struct kvm_vcpu *vcpu)
+> +{
+> +	struct vgic_v3_cpu_if *cpu_if = &vcpu->arch.vgic_cpu.vgic_v3;
+> +	int i;
+> +
+> +	for (i = 0; i < kvm_vcpu_vgic_nr_lr(vcpu); i++) {
+> +		cpu_if->vgic_lr[i] = vcpu->arch.rec.run->exit.gicv3_lrs[i];
+> +		vcpu->arch.rec.run->enter.gicv3_lrs[i] = 0;
+> +	}
+> +}
+> +
+>   static inline void vgic_save_state(struct kvm_vcpu *vcpu)
+>   {
+>   	if (!static_branch_unlikely(&kvm_vgic_global_state.gicv3_cpuif))
+>   		vgic_v2_save_state(vcpu);
+> +	else if (vcpu_is_rec(vcpu))
+> +		vgic_rmm_save_state(vcpu);
+>   	else
+>   		__vgic_v3_save_state(&vcpu->arch.vgic_cpu.vgic_v3);
+>   }
+> @@ -894,10 +911,28 @@ void kvm_vgic_sync_hwstate(struct kvm_vcpu *vcpu)
+>   	vgic_prune_ap_list(vcpu);
+>   }
+>   
+> +static inline void vgic_rmm_restore_state(struct kvm_vcpu *vcpu)
+> +{
+> +	struct vgic_v3_cpu_if *cpu_if = &vcpu->arch.vgic_cpu.vgic_v3;
+> +	int i;
+> +
+> +	for (i = 0; i < kvm_vcpu_vgic_nr_lr(vcpu); i++) {
+> +		vcpu->arch.rec.run->enter.gicv3_lrs[i] = cpu_if->vgic_lr[i];
+> +		/*
+> +		 * Also populate the rec.run->exit copies so that a late
+> +		 * decision to back out from entering the realm doesn't cause
+> +		 * the state to be lost
+> +		 */
+> +		vcpu->arch.rec.run->exit.gicv3_lrs[i] = cpu_if->vgic_lr[i];
+> +	}
+> +}
+> +
+>   static inline void vgic_restore_state(struct kvm_vcpu *vcpu)
+>   {
+>   	if (!static_branch_unlikely(&kvm_vgic_global_state.gicv3_cpuif))
+>   		vgic_v2_restore_state(vcpu);
+> +	else if (vcpu_is_rec(vcpu))
+> +		vgic_rmm_restore_state(vcpu);
+>   	else
+>   		__vgic_v3_restore_state(&vcpu->arch.vgic_cpu.vgic_v3);
+>   }
+> @@ -938,7 +973,9 @@ void kvm_vgic_flush_hwstate(struct kvm_vcpu *vcpu)
+>   
+>   void kvm_vgic_load(struct kvm_vcpu *vcpu)
+>   {
+> -	if (unlikely(!irqchip_in_kernel(vcpu->kvm) || !vgic_initialized(vcpu->kvm))) {
+> +	if (unlikely(!irqchip_in_kernel(vcpu->kvm) ||
+> +		     !vgic_initialized(vcpu->kvm) ||
+> +		     vcpu_is_rec(vcpu))) {
+>   		if (has_vhe() && static_branch_unlikely(&kvm_vgic_global_state.gicv3_cpuif))
+>   			__vgic_v3_activate_traps(&vcpu->arch.vgic_cpu.vgic_v3);
+>   		return;
+> @@ -952,7 +989,9 @@ void kvm_vgic_load(struct kvm_vcpu *vcpu)
+>   
+>   void kvm_vgic_put(struct kvm_vcpu *vcpu)
+>   {
+> -	if (unlikely(!irqchip_in_kernel(vcpu->kvm) || !vgic_initialized(vcpu->kvm))) {
+> +	if (unlikely(!irqchip_in_kernel(vcpu->kvm) ||
+> +		     !vgic_initialized(vcpu->kvm) ||
+> +		     vcpu_is_rec(vcpu))) {
+>   		if (has_vhe() && static_branch_unlikely(&kvm_vgic_global_state.gicv3_cpuif))
+>   			__vgic_v3_deactivate_traps(&vcpu->arch.vgic_cpu.vgic_v3);
+>   		return;
+
 
