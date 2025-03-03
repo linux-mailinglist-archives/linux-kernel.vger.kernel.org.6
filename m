@@ -1,105 +1,154 @@
-Return-Path: <linux-kernel+bounces-544476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 405A2A4E1AE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:49:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 107FCA4E0E7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:30:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 386C83BB64A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:42:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDE5117B42F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:27:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41AB3263F4F;
-	Tue,  4 Mar 2025 14:40:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EAAB2066DA;
+	Tue,  4 Mar 2025 14:25:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fHPhV/4i"
-Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YtHyLO03"
+Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E25425E837
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:40:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFB022063F8
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:25:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.116
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741099219; cv=pass; b=gQR1ho/xUC9U4od2xyB4Z9IazYA5IrpeHVZf9alaHAQWKppLBZJsBm9A2TACRbnG5b60FRdSfYNWizW48P9qL6Q4qkDKNwSARpnUG08T+Sz0Yfz26UALovk7bf1OpafQqPT/++HcK1hkcO01v4Tip//qhL0Bj3maER3iVLTJ/KQ=
+	t=1741098343; cv=pass; b=rxlic6jW0BkFXB/GPTVc2OGObE6Q2TyXPR3NiSg6pW14AAl8kzfyGWdMYVZ9IbhehwIPG5GG77aByrgvJmfpkD9m4hY2WuIwzeO3WNY1XSProdW12yXeymih85jPv9loFeeohRZDGmlyx5NGeXTRvWiLqeNX/vSgyE/x45QyODw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741099219; c=relaxed/simple;
-	bh=G9APMeQdymAEahfy3Dj+Uz/s4tn8OkfL0M5xvxvc9kA=;
+	s=arc-20240116; t=1741098343; c=relaxed/simple;
+	bh=h/6aNDKIJEJax3YQY4YtbeLa1xekm6VvSIFc00ga2qE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jbRLgNrSp2RA5yqegU0vMyN3F2ZksLTy0csREQNYKPA3lll7ucy/m9L6ELD3FqjsmljYgAP/Yjd+zkL/SYbpMUSfAI37NPDJf3FvdUtcPi9DGJBCL0FM4QImqNslW0zPlCmR62eywbTipoSUj0rG90Dxve7fYS+qM1MGmUQR2wU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fHPhV/4i; arc=none smtp.client-ip=10.30.226.201; arc=pass smtp.client-ip=160.75.25.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kernel.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=mgD0Wn3FdoOkySOYxzHikyjn8SpzD7g7oVOBSADwNzt3052EkrvYbXqGNiNDivKzL81egu1aMf9rhm2IYuQqRky6wJJ4T1KhYLEImi+J/3dLYSFEZnqCWBzKGCnykO4hXw3jdQ9PqgqFO04ekv/uwg23VsQYZ4pfKd1lcR8nANM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YtHyLO03; arc=none smtp.client-ip=209.85.208.181; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; arc=pass smtp.client-ip=160.75.25.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id CB7D340CF13F
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:40:15 +0300 (+03)
+	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id DDA9240F1CDF
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:25:39 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
+Authentication-Results: lesvatest1.cc.itu.edu.tr;
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20230601 header.b=YtHyLO03
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dbD4MZhzFx2H
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:38:32 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dGB1YvfzFwbp
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:23:46 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 97FD64272A; Tue,  4 Mar 2025 17:38:25 +0300 (+03)
+	id DBD3842725; Tue,  4 Mar 2025 17:23:32 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fHPhV/4i
-X-Envelope-From: <linux-kernel+bounces-541561-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YtHyLO03
+X-Envelope-From: <linux-kernel+bounces-541594-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fHPhV/4i
-Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id 24D4C4206A
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:25:28 +0300 (+03)
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id CFDFC2DCE3
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:25:27 +0300 (+03)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YtHyLO03
+Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
+	by le2 (Postfix) with ESMTP id 0DA2641C98
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:35:17 +0300 (+03)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by fgw1.itu.edu.tr (Postfix) with SMTP id D97783063EFC
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:35:16 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D63F6176FD6
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:22:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9684B1884B58
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:34:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3641C1F4635;
-	Mon,  3 Mar 2025 11:19:43 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CADD11FC7D4;
+	Mon,  3 Mar 2025 11:34:19 +0000 (UTC)
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF631F2BA7
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 11:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 336A51FBCA6;
+	Mon,  3 Mar 2025 11:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741000780; cv=none; b=OXzKs1IQz9eIm9/AlcN1NDwBB0e8PkU4BrSV6uicMtmxTby8nvBRmybK4u89beiAf70nOheckzLaidHeC/pPT/Eb4YEM8685zbFpE6WpizxPCQ5fw2f0U9i0FSURj+7mSciPeD/zkQR6pSj20dn1MlpGi6Ns53gbU7LaCZr8Wb8=
+	t=1741001656; cv=none; b=SL3qrAt7irPBKhoXB3JhluKKLobKo+zZ9UAUDyUhW+Eozc+fQGUad8b5VNAk7FqmwF98qqV5WLvNaxSHzZ3MuEq5blkdh4N0DEwmUJiFJBXcMjUHD77BJZEhUYb9meXnOVsbw7wlvqiGCR7Tsg2TTtRU/5BikEQUsVnl5HUparM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741000780; c=relaxed/simple;
-	bh=G9APMeQdymAEahfy3Dj+Uz/s4tn8OkfL0M5xvxvc9kA=;
+	s=arc-20240116; t=1741001656; c=relaxed/simple;
+	bh=h/6aNDKIJEJax3YQY4YtbeLa1xekm6VvSIFc00ga2qE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kjMINWAYekDikzk6ukS78E9kvpo2Nc4JTFPBT7kHCNuw6jehlTAP0d1FZmTQOKWSd+vQVDVLonDP1KWV3Lof1KmSCOu/WQx315XjRnKGrwng2o79CPsfvxw4Q3mEX/nPTXWjRCE53SL9/NGHzqNMr0tZ/A/z8t7wDNgBzrj8iGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fHPhV/4i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFBB1C4CED6;
-	Mon,  3 Mar 2025 11:19:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741000779;
-	bh=G9APMeQdymAEahfy3Dj+Uz/s4tn8OkfL0M5xvxvc9kA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fHPhV/4iZfWIKwhi4s7Jsgg8YJvkxGm22sqRAe0n9eZbwqhJhd1FV3btFCHsN7LFl
-	 ZqMmQ4oXklikhQBfXbvupLM6kQ0Ro/Nvcw2yusj07qQq6MmJ9agt2QVS824X6Lzp8Z
-	 MRgiBMYsAskPu+aAI2pk78GxwLf8+1/LHAKARoIe4oQ64Ew3ALkLC8q4/z0vii82ap
-	 R6erjcSkd4sknS0LqJbtncE8QyLWxkL9EjJaEvhuTGcEnsq7nwYMFElstdUrnHDD8T
-	 cpiqEjnI1ODuzziJgGVynb/J4xVHHzjOrZ5K5oedDslRDM8TOXB7pbC/5X8rlt1kho
-	 MPUyRjNvFsQig==
-Date: Mon, 3 Mar 2025 12:19:25 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Ravi Bangoria <ravi.bangoria@amd.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-	willy@infradead.org, acme@kernel.org, namhyung@kernel.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, lucas.demarchi@intel.com
-Subject: Re: [PATCH v2 19/24] perf: Simplify perf_mmap() control flow
-Message-ID: <Z8WQPds5x8-9ABOm@gmail.com>
-References: <20250205102120.531585416@infradead.org>
- <20250205102450.350989371@infradead.org>
- <932e26ff-0654-442e-b6a9-166a7da03fd7@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WjqdfL4xdG+Jy82vmxx0U5OZ2+wu+V6kvN2iYK4YtaPFdX1AM50RdEcrK/7SkP5eQHssfw2S/l/V4DF+DkHG7j/FdKm+XZuWFKlcz7JD1bqdb4gjFRp5/yAL9Mouhl06eqffo/AalbFRQA1AiholJuWbNz1nDLor7fVOBnJw8vE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YtHyLO03; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30615661f98so45009581fa.2;
+        Mon, 03 Mar 2025 03:34:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741001653; x=1741606453; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jKyByvqg+jAL9PKNdpeqdSWpvScxjw4N93b4UfEb/Uo=;
+        b=YtHyLO0357ECTGFU22Up8x85UJV4NccqO2ot5RpmvHfIPZ3vvnrXJXeWuvH0Y83c0j
+         vDzYQjj3Vu7e9vE8pD86bwSQ52XKgbgblv8hN0lYcDNpx8AKWVt18gUW3PjKBCuyLtJc
+         xDmrQAktlv31L6f6rSG6CRyBAl26GxvCCWCfu0TDwnItIPIXy5Es01HjrGlFC5OB9nNU
+         1Z6W5BmobOIplVYoodfBNtNlBcxp+UrYNBxykmc56WEMcsfCE7JdWLIrpQ2qjJrhMw/4
+         ERCfqG4I2Un9Ene8LGq87OLauDH1L2F2yxgjrVI0PmpKJB+NhUMlspnU7tSVKowMU7CY
+         MBhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741001653; x=1741606453;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jKyByvqg+jAL9PKNdpeqdSWpvScxjw4N93b4UfEb/Uo=;
+        b=k6EQ7q0zetGUI/555PRqH2gjr191Kzn0t0GmkI/e7qOFKNX3DrFfC0I56xI62K972d
+         piyNAyGB2lnnHCAwdW+9Dmo4OJ4Ntkg1AvcIr6XrSZ2L8I4MawgRkNegkF0hUKYVh5Lz
+         7w+flSPp/H+en5bLzlf8bhUj4Pmiaixqr+RwVbgFqbfZ6vsy5in9nJQ56OCJdqWf9uUr
+         OMRs70Brgp8yQJ53Z+Z5OFjNOh2K6Xc9u1BlVmSvJUNerD0/S6+RrVXn3YY+xfA4sWHJ
+         h9vfSWNyqmZs+TM0CvUyxvnImBjXcl/GMFi+R10xLGQ9x+lc1WvtaJFJsXsaqOGIeJr9
+         72rg==
+X-Forwarded-Encrypted: i=1; AJvYcCV631R08IpNvPcBxg+9IMIJ5u/GB3wJZTDY3AkMkRJMS1G2KpcH5q1EOcAGItKcaSF4CMGgE7YQKbAwEu980WG0T0U=@vger.kernel.org, AJvYcCVbbkbKWHL3bqDhxp6wCOEJQ9qI0OhmeHlXqErvvDCPOGC+6C4s4woa8MuH6xckjrGTJMXi332XMhd4@vger.kernel.org, AJvYcCWJyIR02SyElbjgmEBH+WW5F2+fUyiLKu37jGmplrPOYY8/QWchAF2KQ1iZ++ZeCJbc+B8Uu41n8xm+Lg==@vger.kernel.org, AJvYcCWToZiGzVrgaBEL1eyPnyF6/ezpNF/mcrtJNaiXzMAELupn3xwq2e4TeOcHFwNmQPYE0f1arh2ax8P26cwH@vger.kernel.org, AJvYcCXA5vgkNQlQc7KLPxPnBN2lx8vZ/wn5C0H26nZ+1+kEGPXiBfJORVKhPUPiP+mQ3wQb5HnP5pjKmOrA@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgzoiniqZGGCdPNS5L1npXo+wc6V/M+XtlOnAPhWDWCSjvTPI3
+	8PGaheL5A4J2jrfVIk+tu37p6ahV9fNSh9UUqzFn4JbNmGXppxqK
+X-Gm-Gg: ASbGncu7haFeXXOgJcaB2VdkAH8CjYLEVLRMyGOsnB6XymcSsz414jORsB+yk7Cn7Tt
+	xco+h2H+J8oN5eltI8MXjQ0LuAoD50irpO9zJGQ3bxbyZZFofV+IKuw8OAx+9OQsGEl9S5mTRrL
+	FSxWN3gVqTWWIqQeUTXwt8zlchbvhfvlWz98MmjNQZY5fTb5RcKzRqgPPYDYviZZnkRusT8T003
+	mpM5ynOlMUrhMjnk6xki08udKgkk1fBdFNkiOKCjR+x2Dcd91kYd/nL53B05KFVzis105jlmAqe
+	jilsYjxsQaBZTsf3IoKpGwve01Qn4yzQrAPtWeh2l3K1J44inYSHfUSGzetoUUmizFdFqHUpcy1
+	pMD7MqRODbhc=
+X-Google-Smtp-Source: AGHT+IH2q/EQ50OKDdOvQmK3DgcD8QV9qiZg9HjaiRlsRxpoAX3Icmu9TOCjXHgkc5dFCtxPesT+sQ==
+X-Received: by 2002:a2e:9515:0:b0:307:dc1f:e465 with SMTP id 38308e7fff4ca-30b9326b162mr42530121fa.22.1741001653116;
+        Mon, 03 Mar 2025 03:34:13 -0800 (PST)
+Received: from mva-rohm (mobile-access-2e8451-125.dhcp.inet.fi. [46.132.81.125])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30b86875b76sm14035841fa.91.2025.03.03.03.34.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 03:34:12 -0800 (PST)
+Date: Mon, 3 Mar 2025 13:34:06 +0200
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	Nuno Sa <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Guillaume Stols <gstols@baylibre.com>,
+	Dumitru Ceclan <mitrutzceclan@gmail.com>,
+	Trevor Gamblin <tgamblin@baylibre.com>,
+	Matteo Martelli <matteomartelli3@gmail.com>,
+	Alisa-Dariana Roman <alisadariana@gmail.com>,
+	Ramona Alexandra Nechita <ramona.nechita@analog.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
+Subject: [PATCH v5 08/10] MAINTAINERS: Add IIO ADC helpers
+Message-ID: <78c18b224cd18b1bd83eea51c7e52dcea28e3d50.1740993491.git.mazziesaccount@gmail.com>
+References: <cover.1740993491.git.mazziesaccount@gmail.com>
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -107,92 +156,71 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="5Rvc/P61F8vV1THI"
 Content-Disposition: inline
-In-Reply-To: <932e26ff-0654-442e-b6a9-166a7da03fd7@amd.com>
+In-Reply-To: <cover.1740993491.git.mazziesaccount@gmail.com>
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6dbD4MZhzFx2H
+X-ITU-Libra-ESVA-ID: 4Z6dGB1YvfzFwbp
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741703930.30376@J/kYJvvkyCi3/karR9zsog
+X-ITU-Libra-ESVA-Watermark: 1741703055.74739@xRAJNYSq2TPCB70y2KTqKw
 X-ITU-MailScanner-SpamCheck: not spam
 
 
-* Ravi Bangoria <ravi.bangoria@amd.com> wrote:
+--5Rvc/P61F8vV1THI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Peter,
-> 
-> Minor nit below:
-> 
-> > +			if (!atomic_inc_not_zero(&event->rb->mmap_count)) {
-> > +				/*
-> > +				 * Raced against perf_mmap_close(); remove the
-> > +				 * event and try again.
-> > +				 */
-> > +				ring_buffer_attach(event, NULL);
-> > +				mutex_unlock(&event->mmap_mutex);
-> > +				goto again;
-> > +			}
-> > +
-> 
-> here ...
-> 
-> > +			rb = event->rb;
-> > +			goto unlock;
-> > +		}
-> > +
-> > +		user_extra = nr_pages + 1;
-> >  	} else {
-> >  		/*
-> >  		 * AUX area mapping: if rb->aux_nr_pages != 0, it's already
-> > @@ -6723,47 +6758,9 @@ static int perf_mmap(struct file *file,
-> >  
-> >  		atomic_set(&rb->aux_mmap_count, 1);
-> >  		user_extra = nr_pages;
-> > -
-> > -		goto accounting;
-> >  	}
-> >  
-> > -	/*
-> > -	 * If we have rb pages ensure they're a power-of-two number, so we
-> > -	 * can do bitmasks instead of modulo.
-> > -	 */
-> > -	if (nr_pages != 0 && !is_power_of_2(nr_pages))
-> > -		return -EINVAL;
-> > -
-> > -	if (vma_size != PAGE_SIZE * (1 + nr_pages))
-> > -		return -EINVAL;
-> > -
-> > -	WARN_ON_ONCE(event->ctx->parent_ctx);
-> > -again:
-> > -	mutex_lock(&event->mmap_mutex);
-> > -	if (event->rb) {
-> > -		if (data_page_nr(event->rb) != nr_pages) {
-> > -			ret = -EINVAL;
-> > -			goto unlock;
-> > -		}
-> > -
-> > -		if (!atomic_inc_not_zero(&event->rb->mmap_count)) {
-> > -			/*
-> > -			 * Raced against perf_mmap_close(); remove the
-> > -			 * event and try again.
-> > -			 */
-> > -			ring_buffer_attach(event, NULL);
-> > -			mutex_unlock(&event->mmap_mutex);
-> > -			goto again;
-> > -		}
-> > -
-> >  		/* We need the rb to map pages. */
-> 
->                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> This comment should also go up. Keeping it here is misleading.
+Add undersigned as a maintainer for the IIO ADC helpers.
 
-Yeah, I did that in the conflict resolution (which conflicted in this 
-very area), so the end result in tip:perf/core (or tip:master) should 
-be fine as-is, correct?
+Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+---
+Revision history:
+RFC v1 =3D> v2:
+ - New patch
+---
+ MAINTAINERS | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Thanks,
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8e0736dc2ee0..5b96fb864227 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11208,6 +11208,13 @@ L:	linux-media@vger.kernel.org
+ S:	Maintained
+ F:	drivers/media/rc/iguanair.c
+=20
++IIO ADC HELPERS
++M:	Matti Vaittinen <mazziesaccount@gmail.com>
++L:	linux-iio@vger.kernel.org
++S:	Maintained
++F:	drivers/iio/adc/industrialio-adc.c
++F:	include/linux/iio/adc-helpers.h
++
+ IIO BACKEND FRAMEWORK
+ M:	Nuno Sa <nuno.sa@analog.com>
+ R:	Olivier Moysan <olivier.moysan@foss.st.com>
+--=20
+2.48.1
 
-	Ingo
+
+--5Rvc/P61F8vV1THI
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmfFk64ACgkQeFA3/03a
+ocUpgwf/SNY3Pn6d3XX6wgquUJWMeNypZTRBxzVX+t3Nm+6wYifiTOOpcNdIYHfV
+UEO/B8hbJ6BzXcUxHFFEUnq5pTr/a1gbQvg+rtBnZiXV95/wnLJjJgx9guw7IW48
+BjUoZhymuhP201Y3/EzSSXwe7MnrOTaUfcTwBxZQSsipdd8PK9co9V1EzEGGIeO+
+LqTyj2W1KqdWOE5qqnTZhzLj3fdEYfJoxyUdXWiHJEcmDyoc9qZ0HNnsLa59j5Co
+d+8xCLwqyB6CFOJWkl7gL/92nAyFvn1XzEvpuQGyz2Ouoo1cZexz/6s+UvexWkuo
+Hh1QZj0U9ni99bqIrOfrEk7zUk5lMQ==
+=gikD
+-----END PGP SIGNATURE-----
+
+--5Rvc/P61F8vV1THI--
 
 
