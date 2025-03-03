@@ -1,128 +1,164 @@
-Return-Path: <linux-kernel+bounces-541675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D94AA4BFF3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:12:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 635F8A4BFE9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:11:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A8C73A9D96
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:09:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 772F27A5BC2
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:10:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86FA820E30C;
-	Mon,  3 Mar 2025 12:09:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF7820E32A;
+	Mon,  3 Mar 2025 12:11:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SsctDWSi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DADDB1E573B;
-	Mon,  3 Mar 2025 12:09:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="BiUE35rv"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6C041F542A;
+	Mon,  3 Mar 2025 12:10:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741003793; cv=none; b=Er2Yqwj/Rc2v2iTsaz+NGlqWk1Lw11dnJvzIyFgmt/iYxRKFEV9zv5sK4NDI/CF92M5+9ePuCQay2ZdpVbolnyd73fQ/YbJpKaFJXq8B+v065O4W27mnUzi3RXdehLBtOkBBZc0/C4bQ0KDVj7xCXqsA30hJVTk0BU5nam6cxPo=
+	t=1741003863; cv=none; b=jJNJECSQlKAsksUGVSpbKByD61CC+0fV0Y3K3YACwoVuPJkDu9sqlYlIAdmfdQ9e9eai37yp1DUvk43VQZZn6/DB+DZ7UBbhOYjYBJrSD4U6UEhgN75mKzvJRyhEIFCTZa2AsH7NL1eUU05RCQu/pDSg0Crd8f5SrTyGrFe9am0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741003793; c=relaxed/simple;
-	bh=LUAoYTszaLxNeJx/yBRh3ZlnPdqTfEgiCJW9o7WNQwc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dY5B/VuUw+K5o/NLbHwC4iLKGK9tdheI1otpF8NApXt9RmoY2QNrQrqk5rXot4NvBY1gRPtECDBjRiYZibOsaFsHxcRbE0FtDpHXcpF8NK3psltRZfJV9Qf6X9Gn+DkGgLPVHjdfr5NkGDIO4IrdZQIHn5sV++GpAMjkdlUtXZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SsctDWSi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10EDFC4CED6;
-	Mon,  3 Mar 2025 12:09:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741003792;
-	bh=LUAoYTszaLxNeJx/yBRh3ZlnPdqTfEgiCJW9o7WNQwc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SsctDWSi9pS9rcV/wwMdJY5J5XeV7cyEMURzj3suf+wMa20/GReH03dYzBtZ6ibol
-	 Hkog/+Ltxie8ggy8kAsG089Xr5Be0xQaQ+sEv4ibFkJT5dDNMz8FHNGvSP2P0FHtlw
-	 SKU9ljSatSvyMbnHy9ms5Ot+qkkwpxYDVDbgeBp/C/B97NQwvSXooyBhNrzvbf9o/6
-	 r/QKhy8FVcaP8QwDe0YuWjUgjnduBGPIAPRiZPfIE9DpX2yyTtSEuynF7DJRl6ScWM
-	 EivbgD6GuxQfpOVp3UC1XLSQgSzwdOA4dr4qZd+4NhhHr+G61e238vXkyd/UepUS/+
-	 RGZqy90UIvxKA==
-Message-ID: <567addb4-169b-4fd0-aabb-78ceded22702@kernel.org>
-Date: Mon, 3 Mar 2025 13:09:46 +0100
+	s=arc-20240116; t=1741003863; c=relaxed/simple;
+	bh=b7aImQFO+vv4AEKqKZKWMgzQwLwslHy4AIvR8oe7et8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oGROunNhUDgVHUXnHm1GpMJvMlweXNxzweyTB/iMTjlY0A5IT7FV5yhZooSXZ1oXqN65iFt5bRsnA9lDlUu+lJKuBclt2PQxBsazahNzIOsYvRCrumMEmhopXV9Cy5t9dvdCCQjYhsbiSkoKKJdlWBnmowEg+8/fGoOrVyQ2d0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=BiUE35rv; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=xGRwi
+	//d5mFSgNiOHp/4i7d4yZJCrVYLvCULn3+cKsg=; b=BiUE35rvVON2Dk1gnLPCS
+	Kfr3GJYbaGs4bh4Hk2QuuSdzwq7QOt8kwhzX1x9G1TfK5utYuyo5DRcoeGb+iJrA
+	Ox/4SjEK6woFve2fGRhNkzUS62ypj1aqoWaYWe+044LS4Kc6Q1mQZI+t8NYj2VoJ
+	Gwdh+kt+aUVORXHDAOlSrc=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wAH3eEinMVni5QpPQ--.16783S2;
+	Mon, 03 Mar 2025 20:10:12 +0800 (CST)
+From: Hans Zhang <18255117159@163.com>
+To: tglx@linutronix.de
+Cc: manivannan.sadhasivam@linaro.org,
+	kw@linux.com,
+	kwilczynski@kernel.org,
+	bhelgaas@google.com,
+	Frank.Li@nxp.com,
+	cassel@kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Hans Zhang <18255117159@163.com>
+Subject: [v4] genirq/msi: Add the address and data that show MSI/MSIX
+Date: Mon,  3 Mar 2025 20:10:08 +0800
+Message-Id: <20250303121008.309265-1-18255117159@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] dt-bindings: display: extend the simple bridge
- with MStar TSUMU88ADT3-LF-1
-To: Svyatoslav Ryhel <clamor95@gmail.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Maxim Schwalm <maxim.schwalm@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250303120455.90156-1-clamor95@gmail.com>
- <20250303120455.90156-3-clamor95@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250303120455.90156-3-clamor95@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wAH3eEinMVni5QpPQ--.16783S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxJF45Ww1fKrWDtryDZF43ZFb_yoW5KrWkpF
+	Z0kF47Wr43Jr1UWa1xC3W7u345Ka95tF4Uu3s3uw1fArWDKryvyF1vgFW29FyayFyUKw1U
+	A3ZFgF1DuFyDAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zE1CJDUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbBDwwFo2fFm0wbuQAAsy
 
-On 03/03/2025 13:04, Svyatoslav Ryhel wrote:
-> A simple bridge used in ASUS Transformer AiO P1801-T.
-> 
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> Reviewed-by: Robert Foss <rfoss@kernel.org>
-> ---
+The debug_show() callback function is implemented in the MSI core code.
+And assign it to the domain ops::debug_show() creation.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+When debugging MSI-related hardware issues (e.g., interrupt delivery
+failures), developers currently need to either:
+1. Recompile kernel with dynamic debug for tracing msi_desc.
+2. Manually read device registers through low-level tools.
 
-Best regards,
-Krzysztof
+Both approaches become challenging in production environments where
+dynamic debugging is often disabled.
+
+This patch proposes to expose MSI address_hi/address_lo and msg_data in
+`/sys/kernel/debug/irq/irqs/<msi_irq_num>`. These fields are critical to:
+- Verify if MSI configuration matches hardware programming
+- Diagnose interrupt routing errors (e.g., mismatched destination ID)
+- Validate remapping behavior in virtualized environments
+
+The information is already maintained in msi_desc and irq_data structures.
+By surfacing it through debugfs:
+- We create a unified place for runtime IRQ diagnostics
+- Enable debugging without kernel rebuilds or special tools
+- Align with existing exposure of IRQ chip/type/affinity data
+
+Sample output:
+  address_hi: 0x00000000
+  address_lo: 0xfe670040
+  msg_data:   0x00000001
+
+Signed-off-by: Hans Zhang <18255117159@163.com>
+---
+Changes since v2-v3:
+https://lore.kernel.org/linux-pci/20250301123953.291675-1-18255117159@163.com/
+https://lore.kernel.org/linux-pci/20250302020328.296523-1-18255117159@163.com/
+
+- Fix implicit declaration of function 'seq_printf'.
+- Fix 'const struct irq_domain_ops' has no member named 'debug_show'.
+- The patch commit message were modified.
+- Removes the display that is not currently an MSI/MSIX interrupt.
+
+Changes since v1:
+https://lore.kernel.org/linux-pci/20250227162821.253020-1-18255117159@163.com/
+
+- According to Thomas(tglx), the debug_show() callback should be added
+  to the MSI core code.
+---
+ kernel/irq/msi.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+diff --git a/kernel/irq/msi.c b/kernel/irq/msi.c
+index 396a067a8a56..adcc7c638295 100644
+--- a/kernel/irq/msi.c
++++ b/kernel/irq/msi.c
+@@ -15,6 +15,7 @@
+ #include <linux/mutex.h>
+ #include <linux/pci.h>
+ #include <linux/slab.h>
++#include <linux/seq_file.h>
+ #include <linux/sysfs.h>
+ #include <linux/types.h>
+ #include <linux/xarray.h>
+@@ -756,12 +757,30 @@ static int msi_domain_translate(struct irq_domain *domain, struct irq_fwspec *fw
+ 	return info->ops->msi_translate(domain, fwspec, hwirq, type);
+ }
+ 
++#ifdef CONFIG_GENERIC_IRQ_DEBUGFS
++static void msi_domain_debug_show(struct seq_file *m, struct irq_domain *d,
++				  struct irq_data *irqd, int ind)
++{
++	struct msi_desc *desc = irq_get_msi_desc(irqd->irq);
++
++	if (!desc)
++		return;
++
++	seq_printf(m, "\n%*saddress_hi: 0x%08x", ind + 1, "", desc->msg.address_hi);
++	seq_printf(m, "\n%*saddress_lo: 0x%08x", ind + 1, "", desc->msg.address_lo);
++	seq_printf(m, "\n%*smsg_data:   0x%08x\n", ind + 1, "", desc->msg.data);
++}
++#endif
++
+ static const struct irq_domain_ops msi_domain_ops = {
+ 	.alloc		= msi_domain_alloc,
+ 	.free		= msi_domain_free,
+ 	.activate	= msi_domain_activate,
+ 	.deactivate	= msi_domain_deactivate,
+ 	.translate	= msi_domain_translate,
++#ifdef CONFIG_GENERIC_IRQ_DEBUGFS
++	.debug_show     = msi_domain_debug_show,
++#endif
+ };
+ 
+ static irq_hw_number_t msi_domain_ops_get_hwirq(struct msi_domain_info *info,
+
+base-commit: 76544811c850a1f4c055aa182b513b7a843868ea
+-- 
+2.25.1
+
 
