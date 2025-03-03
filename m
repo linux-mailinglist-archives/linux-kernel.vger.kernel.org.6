@@ -1,72 +1,87 @@
-Return-Path: <linux-kernel+bounces-542528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FCEEA4CAB5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:05:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27D9AA4CAB6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:05:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B2F81889684
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:05:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50F56162A63
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:05:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6016B2222AA;
-	Mon,  3 Mar 2025 18:05:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F52922ACF2;
+	Mon,  3 Mar 2025 18:05:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=ashley.smith@collabora.com header.b="BzC9/P8z"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EGABGaEp"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20C49148316
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 18:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741025130; cv=pass; b=Ef32wHqL72TNiQKWgOUvC0RtAQHh9YA/29W+VlP4gEhR5CoMCBqBR0U8zncBJZHMJJO+Oyq3C+r/Ekf0IXrd4rjTmVUUfLtNSn7wzg4GG5S9uOfJ8t6DEdRUM6YVXvIMKF0oda9B6rIN4izrSQc5gLYpqGnaxuoxpPuP+RqJbrY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741025130; c=relaxed/simple;
-	bh=qmmirbxpOL3idbY/lOlKdqR+iaR8cliSOXxK7n6RYYM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oE0xLyLbHDwzAwnbUQ49iG0lVt6lZrec9QsciP/V7pivwJLPWKToiM20YSsyTsTpk+ti8LuQwHI3hTsZhY+SMCtjQeKbsjpWoTJnq1SdGuHkUzONZYBEr7i0WshLcfW/kra+eQU9qcj688KYR7DQQ/TR5T7UIbIVtvP6kTASXzI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ashley.smith@collabora.com header.b=BzC9/P8z; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1741025103; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=h0aPE23bAR5Rmn6tvnzAbKi2/ynilRCM3ErqPJ0NeAITr+Et8/S/TBnDjORFs8wmn15WYRg8/v0jeY8n7Mb8if7lweAYr94Aw08hFQOJtnr3joBk44SoJxvZ99B10GMcer0yBF6ZHKaLCKEShSng9hERNkYkIbl/viMrrgKodEM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1741025103; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=STsojHn/FtIOgZ7OHhHBsckQARPuAh3DtPMiHKIURsY=; 
-	b=PoPsHtlLNaLy4adzbsBh7fRW8mprucya8dPiRbgGkLruFPLs3dgrPWSP5CIJg/0C8DfIN+To5Ij8Q50lO4WWnfpHoRb3OiVgvvjzK8D8ViPV5Oo/CamzcYcevwElxG72XSuBPZ8hnWIlucnH8buTYhn74g+e9xc2pwlKNmmwMko=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=ashley.smith@collabora.com;
-	dmarc=pass header.from=<ashley.smith@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741025103;
-	s=zohomail; d=collabora.com; i=ashley.smith@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=STsojHn/FtIOgZ7OHhHBsckQARPuAh3DtPMiHKIURsY=;
-	b=BzC9/P8zO7cgNdeplsHi0xf9aiFRFiRMh1rfSRr/2kEkyzs3OrH8DX/yh1H3F1gt
-	HZltaRRwkV+nay0LerXpWDPkSAfPHH+WKKV3Ofcn866mJvYlCM3lF9LptQpT8ulasPR
-	V5j2DoVu7x0LH8GxBQ/xq80sto13X2x8Yl7ZOrls=
-Received: by mx.zohomail.com with SMTPS id 1741025102723800.0365885276387;
-	Mon, 3 Mar 2025 10:05:02 -0800 (PST)
-From: Ashley Smith <ashley.smith@collabora.com>
-To: Boris Brezillon <boris.brezillon@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Heiko Stuebner <heiko@sntech.de>
-Cc: kernel@collabora.com,
-	Ashley Smith <ashley.smith@collabora.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] drm/panthor: Update CS_STATUS_ defines to correct values
-Date: Mon,  3 Mar 2025 18:04:32 +0000
-Message-ID: <20250303180444.3768993-1-ashley.smith@collabora.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89A82135B8;
+	Mon,  3 Mar 2025 18:05:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741025132; cv=none; b=Skk8Ja93XeBC64EFAckgOzQX+h50QuLCEUc13T1PSVd3faEmrtGwoXAMUZAL3ApHqL0GydA1g+9e7fZlxL/Uezr0nr4NDnYE7ludmcqnhrixqImIu39BE5oQ1dP/SrjFRj0HcP4dpWX4FSnpOuVJgnJU3ynTYxixw2XDCFgdPAI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741025132; c=relaxed/simple;
+	bh=VAH4v5bJFlLZrKM681qO/g3XFqUam0Q1Ghkk8lgbyjA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LxTJyb2ghM08nJ5/IJap/XwAyVhE3T5Hf4uUwV0222tVKZv9qRkUYb7mbITV341+sQEGrahh6H/o+acZs9zExYOXJ0mOrs3tFG8ehrsxTdeYBkVTEfRJjHlUb5XUyj+rRbLqHLEhpMUXdRplGUtnOBcngkwG6AmuhvBdTpZlSG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EGABGaEp; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2234bec7192so71783125ad.2;
+        Mon, 03 Mar 2025 10:05:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741025130; x=1741629930; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9VkWdnxLuCrqr1vq5T7s75fh5Wv8+/qm0qNVED0OlTU=;
+        b=EGABGaEp9UoqQBqsBfFch0GuyArrjpl2JdDwvb1E5SnAqy2uJO2NrgHcgKF3YwLwm0
+         TwyHsDQ/YSHJUrHHmVMD6c/34/TGO94h6HvzbIKClPplvFcLaDR1p48kQYnNZltMfTis
+         1RycVNVoqE+GVrdP4p+Tj0NeCYs+UCXUyxiNUl64L9u7K28jcLc1xyEGhBDMvcO1tW9F
+         8VWbnlHRPpAUPvgRxNOWZbKM0Vv75STvQz2GqEhsfz7AsTW9/0Owu+PCXsMmllEe/6of
+         glaJiuC6LcsFZdQfGz9rrMAhriRVP/iMHGcfgXsetztcX5CYWjphhQQ6VnZ0HEB/xFLl
+         Wg8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741025130; x=1741629930;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9VkWdnxLuCrqr1vq5T7s75fh5Wv8+/qm0qNVED0OlTU=;
+        b=ww1jEwUqjH+kvALG8gx+Y6UmaSTHDE2HUULmlH3flg26zC9/B8DAWaEyaRlUu4Z9li
+         0IKFxdSTtL7Wef5lkYqrSzGamcsqWQJpJQRTEIU31FTMLGKT8RijOjuCPz3V1dnPFB5Y
+         PN30Ltx9YuhoZlpnrVscVOm0cL10eKwxt04+VrqKzgCtVbAajJ0/Q8u85WFRq4jUEGH6
+         GIx02qIcbGZdQ+WTm9zX8a2Zr4TQJ+Jb4+wrQvzhACgCg2zJaPTNfq/e6Iwh8QcO8341
+         NbswaCT8Zh3Khd4J25uW8eP7pUayyM2d1+DHZXRye0Mz3fxNg13D+3EuyCMlKdQqMeRO
+         Nc0w==
+X-Forwarded-Encrypted: i=1; AJvYcCU/FTO0kDnrw9jYRXUxnkJ8HWDsqnQjyo+VeD9z4olvHsdG8SlpkqLx7ZSuIO1fzYi97VttuPSa5moAh81H@vger.kernel.org, AJvYcCX0q4WLHti8Ny1w/jEha+mgPm4EHBJAsipvkzJAUmyQCuvUr8cES4cC4upihchG+2HWyxF5Xk09wuM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfI+0C3xTptTHqstrVQTjr+Z4teJULjjs3hpYs/49yskwcNBC7
+	71wnEYPTBNQEP5yOmXKvAhqxCMWAlMEt7vxAPyV0apvadJmLIj2o
+X-Gm-Gg: ASbGnctWd4N6JkkIvlWMmkRyUf4JJrI7BnC0XcwikAf1O9iibMUftCRCPT4yX6adYmU
+	IJdqP2Vcw3LVVOPQqaAFWP3BOW0au5ScFe1/sYO7h0Vym5LSxToGFyxpIAIsJbGU9tgocm7jSEX
+	fWtqYZ/YmUmIMA2o4EuiC0iDDMFoyuHn4o9m1+rUBr84gIEJ7PomzlegvNQ9i6EBJPeip3S/vIg
+	ly0WHyYmX34JlO7tEzV7lp0HEsW6UfKs39r8Na3xFxxdsO8h4XOBc/fPmWsA4VzL5Z5sHDVU5Og
+	z/2UitgmMPclohMk2RWvDPh/7x84vfja3PGJ2sQQuU3rafV4M6UsiiXGEgOXtkgY6PM9
+X-Google-Smtp-Source: AGHT+IEW89lTZAYKBGO7spjOgM6BNdSZ6lApduXyII/5vwtNdJIM/6NiUw7JrWJ1rE0/V8JqintsxA==
+X-Received: by 2002:a17:902:dac4:b0:223:6436:72bf with SMTP id d9443c01a7336-2236921ebeemr275963095ad.44.1741025129900;
+        Mon, 03 Mar 2025 10:05:29 -0800 (PST)
+Received: from danascape.tail34aafc.ts.net ([2402:e280:218d:2e5:7b03:1e42:d492:fb71])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223501d29cbsm81319975ad.50.2025.03.03.10.05.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 10:05:29 -0800 (PST)
+From: Saalim Quadri <danascape@gmail.com>
+To: jic23@kernel.org
+Cc: lars@metafoo.de,
+	Michael.Hennerich@analog.com,
+	gregkh@linuxfoundation.org,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	Saalim Quadri <danascape@gmail.com>
+Subject: [PATCH] staging: iio: adis16203: Remove unneeded spi_set_drvdata()
+Date: Mon,  3 Mar 2025 23:35:23 +0530
+Message-Id: <20250303180523.15445-1-danascape@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,42 +89,29 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
 
-Values for SC_STATUS_BLOCKED_REASON_ are documented in the G610 "Odin"
-GPU specification (CS_STATUS_BLOCKED_REASON register).
+* Since we are making use of devm_iio_device_register(), we no longer
+  need this nor do we have any spi_get_drvdata() in the driver.
 
-This change updates the defines to the correct values.
-
-Fixes: 2718d91816ee ("drm/panthor: Add the FW logical block")
-Signed-off-by: Ashley Smith <ashley.smith@collabora.com>
+Signed-off-by: Saalim Quadri <danascape@gmail.com>
 ---
-Changes in v2:
-  - Rename _RES to _RESOURCE
----
- drivers/gpu/drm/panthor/panthor_fw.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/staging/iio/accel/adis16203.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/panthor/panthor_fw.h b/drivers/gpu/drm/panthor/panthor_fw.h
-index 22448abde992..6598d96c6d2a 100644
---- a/drivers/gpu/drm/panthor/panthor_fw.h
-+++ b/drivers/gpu/drm/panthor/panthor_fw.h
-@@ -102,9 +102,9 @@ struct panthor_fw_cs_output_iface {
- #define CS_STATUS_BLOCKED_REASON_SB_WAIT	1
- #define CS_STATUS_BLOCKED_REASON_PROGRESS_WAIT	2
- #define CS_STATUS_BLOCKED_REASON_SYNC_WAIT	3
--#define CS_STATUS_BLOCKED_REASON_DEFERRED	5
--#define CS_STATUS_BLOCKED_REASON_RES		6
--#define CS_STATUS_BLOCKED_REASON_FLUSH		7
-+#define CS_STATUS_BLOCKED_REASON_DEFERRED	4
-+#define CS_STATUS_BLOCKED_REASON_RESOURCE	5
-+#define CS_STATUS_BLOCKED_REASON_FLUSH		6
- #define CS_STATUS_BLOCKED_REASON_MASK		GENMASK(3, 0)
- 	u32 status_blocked_reason;
- 	u32 status_wait_sync_value_hi;
-
-base-commit: 16e57a72780931c3c70dbc928aeee4a0518075de
+diff --git a/drivers/staging/iio/accel/adis16203.c b/drivers/staging/iio/accel/adis16203.c
+index c1c73308800c..3faf3c61046a 100644
+--- a/drivers/staging/iio/accel/adis16203.c
++++ b/drivers/staging/iio/accel/adis16203.c
+@@ -267,8 +267,6 @@ static int adis16203_probe(struct spi_device *spi)
+ 	if (!indio_dev)
+ 		return -ENOMEM;
+ 	st = iio_priv(indio_dev);
+-	/* this is only used for removal purposes */
+-	spi_set_drvdata(spi, indio_dev);
+ 
+ 	indio_dev->name = spi->dev.driver->name;
+ 	indio_dev->channels = adis16203_channels;
 -- 
-2.43.0
+2.34.1
 
 
