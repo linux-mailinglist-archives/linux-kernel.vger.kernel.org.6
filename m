@@ -1,96 +1,102 @@
-Return-Path: <linux-kernel+bounces-545016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43DA0A4E810
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:14:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30589A4EC02
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:40:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2199E19C44E1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:07:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B3ED1897751
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:36:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E07B294F07;
-	Tue,  4 Mar 2025 16:45:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AF3424EA9A;
+	Tue,  4 Mar 2025 18:29:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jAIT05GX"
-Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UaLGcteD"
+Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378032638A0
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:45:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23F652E3397
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:29:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.116
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741106719; cv=fail; b=NqVyLJxpfRHv/Es7GlID8o5jsgl9m33RqnA5HsQa9s7QeG7Jrw0UU2FVQNGa2E8CmS22JjFQAPFm77euNvtkTAAZuYTveZd+vZUtwPn7Mt0cf2Tb12RKDGuaHW+H9uekQ8bayDGVnZESKoceTFzb+XfvCLt7aBGpb31SoW3/PJ0=
+	t=1741112985; cv=pass; b=JMsbv3tF2HmfCGnf8rzqi/K1/dEQuR9OX8lq+TvKX+bvXlYKaO6oc0xOzUmkct4kfqSC4PSZPtOh0i1nrYYv1BRutkHB/8u06zv/tJkZXF2XgXO/INPR7n7Ud32/9bDprvGCw34MmCiiCZMpmHNDN0+u/S+6nPk0JYlxtlMDqWE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741106719; c=relaxed/simple;
-	bh=7wYFbAlzdadoiEVNDbiWOtlXTrasaU1w7A4OaUFOngQ=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=eConlhjK4mg8aLmkfCmYSopZTPw+DfBcZORyzw8akFxNqY+M6brYGguj8ix/xKS2bT5XzFF85H4nOkeb3oonjvEFxI5/j16SS+MM/rNOEv3csrZrvEN51zqTacMp9i9FpTlOvjHc1ivAKvOK3g4xuUtFwwVoVNLQ6p23uEBjaEU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jAIT05GX reason="signature verification failed"; arc=none smtp.client-ip=10.30.226.201; arc=fail smtp.client-ip=160.75.25.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+	s=arc-20240116; t=1741112985; c=relaxed/simple;
+	bh=nwrY5mTBKsH0VrIlw0M+a6qAcq9/UvmEmo3JfFgzxI8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BAFm0mj6BvjAre4nW/l3fK9OH5x8qTMhu2lu4CuWXS7hv1iv1VijsWufMQxN0m0EcCGL0K5q/qpRaAp2f0lXw2+ewIZ1nwkYWpAcgnRKzE38Ez5D+FDWq70ZE+42cu6iuknN5ecGC6m4uWhTIKe+HHPVdL22z+SZ5yAdP1tlPe0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UaLGcteD; arc=none smtp.client-ip=10.30.226.201; arc=pass smtp.client-ip=160.75.25.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
-Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
+Received: from lesvatest1.cc.itu.edu.tr (unknown [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id 5CBF040CEC91
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:45:15 +0300 (+03)
+	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id 9887C40891AC
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 21:29:42 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
-Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20201202 header.b=jAIT05GX
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6hMh59sVzG443
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:43:44 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6db50KyfzFwtH
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:38:25 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id ED09F42766; Tue,  4 Mar 2025 19:43:35 +0300 (+03)
+	id 6BB4D42752; Tue,  4 Mar 2025 17:38:06 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jAIT05GX
-X-Envelope-From: <linux-kernel+bounces-541777-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UaLGcteD
+X-Envelope-From: <linux-kernel+bounces-541780-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jAIT05GX
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UaLGcteD
 Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id EC87341CAA
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 16:14:59 +0300 (+03)
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id C2A272DCE0
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 16:14:59 +0300 (+03)
+	by le2 (Postfix) with ESMTP id 249BC41CF8
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 16:15:27 +0300 (+03)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by fgw2.itu.edu.tr (Postfix) with SMTP id CCFA32DCDE
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 16:15:26 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86C25188DD4B
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:15:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 441F216A581
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:15:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 066CD212D6B;
-	Mon,  3 Mar 2025 13:14:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63DEA212B07;
+	Mon,  3 Mar 2025 13:15:06 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A6002B9AA;
-	Mon,  3 Mar 2025 13:14:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8985D21148C;
+	Mon,  3 Mar 2025 13:15:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741007663; cv=none; b=IdOvCffhexAzcR0qqhxlASIpA6B3VkVZm2vJAKnGzBizkGCZ8G+ut81vjz6qt+JEeQm8OakfYIk2wgkm16kHEPHPYJf4T2wo1jr/qq4qjctnmp+IiQl8T0IB/Jt8L4h5whVijGI07UgZwKLeqXznIUBWka+hLENYejUyVMWTcEY=
+	t=1741007703; cv=none; b=HxP30pU4TpD7nyOVql9oSlQESNu0wE7QHcN8MoI60WaA7eJGER+xX0lMXDmQefYxn8OWyXGbp9Shq9JJJYl/wXTGQlDanXDpoRBoNzS9rjkPSk15s4yA8G/55pUx7FloAl8PkbLTIETBczN3N7pl64Ny4KTWCb+W3wbmjtdchW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741007663; c=relaxed/simple;
-	bh=G1uZpetOhbHY9bpzj+SkAW4l9OHZnpwWUgprbajQf+4=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=GezSRKV+CdCZyPlX+A5uzcd9+3cpb8TvPrK4nz2FqERc6CdFSQs1JtbZt60Hj62wCwLd7XZsYVluzrRYB7CEGs2KT/rz67r1cA37YLV9RLenPSKtTyywL0RrzGnnJy6lsS18A3+sF8j9PsozvukOLh7tBwhVmeyO3FIdkArS+fs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jAIT05GX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C876C4CED6;
-	Mon,  3 Mar 2025 13:14:22 +0000 (UTC)
+	s=arc-20240116; t=1741007703; c=relaxed/simple;
+	bh=nwrY5mTBKsH0VrIlw0M+a6qAcq9/UvmEmo3JfFgzxI8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eNIhWr7755sRv5OrpnmQQ+t3UvUF7DSTt0ZqbkC7K94I9yfPCt3dOWxRnp0+QvKGPgYPP082mVgkV8TyMnOtLg6TBzAnMs35Uu1D4WXQaQRIKJY5uYNzfRsWq8YgYIFKKGsKT1wN64PY/0N4G0hI+VRldNhTX3hf2p/BQSng0wM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UaLGcteD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2AF8C4CEF3;
+	Mon,  3 Mar 2025 13:15:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741007662;
-	bh=G1uZpetOhbHY9bpzj+SkAW4l9OHZnpwWUgprbajQf+4=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=jAIT05GXn7yxRhRLvLdFqbZwM88rIEzp9VkwLrCcLRGjM+RJsPJhHB9unwTNOhfXs
-	 kAyzTLYIn2MbD86d34TTk+hzLP1LKaWVL5huvpQUBbNPxKWA8cTtYoULDt6oA0eKI9
-	 xExWzr2DXx6ajZBNho2wyZxZrWEol3jLutehR2lghiZA975diAfjB8ll7wt/wcHsV7
-	 RF/Z8A3L2Z2/4ATFrxuyDPY3xCq+IKq1LJXDzk0XKRffU5JwJZ+5wos15nu5bKLZkG
-	 g4c/sGJqZ47An5cSxCunJFXQtLkJEilcoJ2FlO4jGQrCFJY/EFsi1A/ioU3HbGpYjl
-	 yRKnFFRgbu5AQ==
-Date: Mon, 03 Mar 2025 07:14:20 -0600
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1741007703;
+	bh=nwrY5mTBKsH0VrIlw0M+a6qAcq9/UvmEmo3JfFgzxI8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=UaLGcteDJsTlv1tvfPaaRzAuATBXcyf0Op8VczsXtYqjpZKx/ayCpioXL8zJt+eW9
+	 VLfdJdNXU0w5E4heF9VL5kB//4xXQIUvx2s8lXwVMrUUj8LEzd5hvrQz0qF9FVE3kb
+	 2DlLjxFh2Fjpb7MJTj+5Iq+uymFyLH9wx/9B1ZomWEHmzo/yomSrbQOTZUIK5VADxx
+	 iSwqNvqWK84eIrLN3LF7e7i1k6gJccX+iIoT9KrncGiglMumS7P7Cev18AmELHB/JC
+	 lWyRccVUKxzb/7H4Pt5qTIKT8UyieVTCJZOUFO354XFWNL9KcHxx7HKleSqnjH+dsn
+	 uloIVK/eG9H3g==
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2fce3b01efcso6216381a91.3;
+        Mon, 03 Mar 2025 05:15:02 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWF7rsvklxvbxzz7/XSnly5JDOXTRCMlFRAwfLuje82NyHa5GaQMtBVKmKBN0eilikZ+aQnFNaPPd1kPCNV@vger.kernel.org, AJvYcCXPoEGubTxLcpQpJYnfegkZwu0BOs3FSToDHxjRWJvF4gf3Hg2VBFRoeiiivHOhCK41NFWCcZ4cyZL3@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsbCf6+5lr7rI25kpMobSwRAvtinnyA9e7VUsv0Yig5k9BFS0h
+	oLTzLIcvBEbAUfBG4efF2w3ODECCXc7p1pDScpTlHd7cHpUv3Hm9A12AmU0l0SnJ67j4WeTwNRx
+	Am+Ib+cA0Kb7D6mB0WJiYc4kIMg==
+X-Google-Smtp-Source: AGHT+IEdq6TIp16hKhBlDO4xfda53D7O9rz6s7IDZPVAapB9apF5VJ70jX9N1Qnsx75v9OLYhq9X6ox1YKUJZiNS6WQ=
+X-Received: by 2002:a17:90b:4ac6:b0:2fe:b9be:216 with SMTP id
+ 98e67ed59e1d1-2febac10927mr18112467a91.31.1741007702343; Mon, 03 Mar 2025
+ 05:15:02 -0800 (PST)
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -98,221 +104,102 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, Tony Luck <tony.luck@intel.com>, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- Krzysztof Kozlowski <krzk@kernel.org>, Kees Cook <kees@kernel.org>, 
- "Guilherme G. Piccoli" <gpiccoli@igalia.com>, linux-kernel@vger.kernel.org, 
- Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, 
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
- linux-hardening@vger.kernel.org
-To: Kaustabh Chakraborty <kauschluss@disroot.org>
-In-Reply-To: <20250301-exynos7870-v4-0-2925537f9b2a@disroot.org>
-References: <20250301-exynos7870-v4-0-2925537f9b2a@disroot.org>
-Message-Id: <174100756283.1496281.12555971793250210333.robh@kernel.org>
-Subject: Re: [PATCH v4 0/7] Add support for the Exynos7870 SoC, along with
- three devices
+References: <20231023-display-support-v7-0-6703f3e26831@baylibre.com> <20231023-display-support-v7-3-6703f3e26831@baylibre.com>
+In-Reply-To: <20231023-display-support-v7-3-6703f3e26831@baylibre.com>
+From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+Date: Mon, 3 Mar 2025 21:15:50 +0800
+X-Gmail-Original-Message-ID: <CAAOTY__qg1R4JQDssy1bDDJMea8Ud7OsPXjek20cHV8S=jfNbA@mail.gmail.com>
+X-Gm-Features: AQ5f1JqYD6WJcU1BIk0mtXtCrxuXqvikkqhcdhVAAsXT4MVrnLil5ua2eCNjEcM
+Message-ID: <CAAOTY__qg1R4JQDssy1bDDJMea8Ud7OsPXjek20cHV8S=jfNbA@mail.gmail.com>
+Subject: Re: [PATCH v7 3/6] drm/mediatek: add MT8365 SoC support
+To: amergnat@baylibre.com
+Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Jitao Shi <jitao.shi@mediatek.com>, CK Hu <ck.hu@mediatek.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Simona Vetter <simona@ffwll.ch>, Simona Vetter <simona.vetter@ffwll.ch>, 
+	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, Fabien Parent <fparent@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6hMh59sVzG443
+X-ITU-Libra-ESVA-ID: 4Z6db50KyfzFwtH
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741711430.08298@4RHZqeKGX/d6bUr5OaCaoA
+X-ITU-Libra-ESVA-Watermark: 1741717686.919@901FsS6H+RmSA82KbcRblA
 X-ITU-MailScanner-SpamCheck: not spam
 
+Hi, Amergnat:
 
-On Sat, 01 Mar 2025 01:16:48 +0530, Kaustabh Chakraborty wrote:
-> Samsung Exynos 7870 (codename: Joshua) is an ARM-v8 system-on-chip that=
- was
-> announced in 2016. The chipset was found in several popular mid-range t=
-o
-> low-end Samsung phones, released within 2016 to 2019.
->=20
-> This patch series aims to add support for Exynos 7870, starting with th=
-e
-> most basic yet essential components such as CPU, GPU, clock controllers=
-,
-> PMIC, pin controllers, etc.
->=20
-> Moreover, the series also adds support for three Exynos 7870 devices vi=
-a
-> devicetree. The devices are:
->  * Samsung Galaxy J7 Prime	- released 2016, codename on7xelte
->  * Samsung Galaxy J6		- released 2018, codename j6lte
->  * Samsung Galaxy A2 Core	- released 2019, codename a2corelte
->=20
-> Additional features implemented in this series include:
->  * I2C	- touchscreen, IIO sensors, etc.
->  * UART	- bluetooth and serial debugging
->  * MMC	- eMMC, Wi-Fi SDIO, SDCard
->  * USB	- micro-USB 2.0 interface
->=20
-> Build dependencies are in these sub-series:
->  * bootmode	  	- https://lore.kernel.org/all/20250204-exynos7870-bootmo=
-de-v1-1-0f17b3033c2d@disroot.org/
->  * pmu-clocks		- https://lore.kernel.org/all/20250301-exynos7870-pmu-cl=
-ocks-v4-0-0f3e73b10db7@disroot.org/
->=20
-> Other related sub-series:
->  * gpu			R https://lore.kernel.org/all/20250204-exynos7870-gpu-v1-1-0db=
-4c163a030@disroot.org/
->  * i2c	      		A https://lore.kernel.org/all/20250204-exynos7870-i2c-v1=
--0-63d67871ab7e@disroot.org/
->  * mmc			- https://lore.kernel.org/all/20250219-exynos7870-mmc-v2-0-b42=
-55a3e39ed@disroot.org/
->  * pinctrl	  	- https://lore.kernel.org/all/20250301-exynos7870-pinctrl=
--v3-0-ba1da9d3cd2f@disroot.org/
->  * pmic-regulators	- https://lore.kernel.org/all/20250301-exynos7870-pm=
-ic-regulators-v3-0-808d0b47a564@disroot.org/
->  * uart			R https://lore.kernel.org/all/20250219-exynos7870-uart-v2-1-c=
-8c67f3a936c@disroot.org/
->  * usb			- https://lore.kernel.org/all/20250301-exynos7870-usb-v3-0-f01=
-697165d19@disroot.org/
->  * usbphy		- https://lore.kernel.org/all/20250219-exynos7870-usbphy-v2-=
-0-b8ba4e7a72e9@disroot.org/
-> (Legend: [R]eviewed, [A]pplied)
->=20
-> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+<amergnat@baylibre.com> =E6=96=BC 2025=E5=B9=B41=E6=9C=8810=E6=97=A5 =E9=80=
+=B1=E4=BA=94 =E4=B8=8B=E5=8D=889:31=E5=AF=AB=E9=81=93=EF=BC=9A
+>
+> From: Fabien Parent <fparent@baylibre.com>
+>
+> Add DRM support for MT8365 SoC.
+>
+> Signed-off-by: Fabien Parent <fparent@baylibre.com>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
+ora.com>
+
+Applied to mediatek-drm-next [1], thanks.
+
+[1] https://web.git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux.=
+git/log/?h=3Dmediatek-drm-next
+
+Regards,
+Chun-Kuang.
+
+> Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
 > ---
-> Changes in v4:
-> - Drop merged [PATCH v3 1/7].
-> - Explicitly mention sub-series having build dependencies.
-> - Include the following patch from the pmu-clocks series:
->   - dt-bindings: soc: samsung: exynos-pmu: add exynos7870-pmu compatibl=
-e
-> - Adjust clock header file name to match changes in pmu-clocks.
-> - Change regulator node names to match changes in pmic-regulators.
-> - Remove non-removable flag for the SDCard's mmc node.
-> - Link to v3: https://lore.kernel.org/r/20250219-exynos7870-v3-0-e384fb=
-610cad@disroot.org
->=20
-> Changes in v3:
-> - Added patches from https://lore.kernel.org/all/20250204-exynos7870-ch=
-ipid-v1-0-0bf2db08e621@disroot.org/
-> - Fix devicetree formatting according to the devicetree style guide.
-> - Take over ownership of patches by the co-author, upon their request.
-> - Link to v2: https://lore.kernel.org/r/20250204-exynos7870-v2-0-563131=
-65ef0c@disroot.org
->=20
-> Changes in v2:
-> - Redo a few commit descriptions.
-> - Split patchsets into multiple sub-series, subsystem-wise.
-> - Link to v1: https://lore.kernel.org/r/20250203-exynos7870-v1-0-2b6df4=
-76a3f0@disroot.org
->=20
-> ---
-> Kaustabh Chakraborty (7):
->       dt-bindings: soc: samsung: exynos-pmu: add exynos7870-pmu compati=
-ble
->       dt-bindings: arm: samsung: add compatibles for exynos7870 devices
->       soc: samsung: exynos-chipid: add support for exynos7870
->       arm64: dts: exynos: add initial devicetree support for exynos7870
->       arm64: dts: exynos: add initial support for Samsung Galaxy J7 Pri=
-me
->       arm64: dts: exynos: add initial support for Samsung Galaxy A2 Cor=
-e
->       arm64: dts: exynos: add initial support for Samsung Galaxy J6
->=20
->  .../bindings/arm/samsung/samsung-boards.yaml       |    8 +
->  .../bindings/soc/samsung/exynos-pmu.yaml           |    1 +
->  arch/arm64/boot/dts/exynos/Makefile                |    3 +
->  .../arm64/boot/dts/exynos/exynos7870-a2corelte.dts |  628 ++++++++++++
->  arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts    |  616 ++++++++++++
->  arch/arm64/boot/dts/exynos/exynos7870-on7xelte.dts |  664 ++++++++++++=
-+
->  arch/arm64/boot/dts/exynos/exynos7870-pinctrl.dtsi | 1022 ++++++++++++=
-++++++++
->  arch/arm64/boot/dts/exynos/exynos7870.dtsi         |  714 ++++++++++++=
-++
->  drivers/soc/samsung/exynos-chipid.c                |    1 +
->  9 files changed, 3657 insertions(+)
-> ---
-> base-commit: be5c7bbb3a64baf884481a1ba0c2f8fb2f93f7c3
-> change-id: 20250201-exynos7870-049587e4b7df
->=20
-> Best regards,
+>  drivers/gpu/drm/mediatek/mtk_drm_drv.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/med=
+iatek/mtk_drm_drv.c
+> index 0829ceb9967c..5471ef744cc1 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> @@ -328,6 +328,10 @@ static const struct mtk_mmsys_driver_data mt8195_vdo=
+sys1_driver_data =3D {
+>         .min_height =3D 1,
+>  };
+>
+> +static const struct mtk_mmsys_driver_data mt8365_mmsys_driver_data =3D {
+> +       .mmsys_dev_num =3D 1,
+> +};
+> +
+>  static const struct of_device_id mtk_drm_of_ids[] =3D {
+>         { .compatible =3D "mediatek,mt2701-mmsys",
+>           .data =3D &mt2701_mmsys_driver_data},
+> @@ -355,6 +359,8 @@ static const struct of_device_id mtk_drm_of_ids[] =3D=
+ {
+>           .data =3D &mt8195_vdosys0_driver_data},
+>         { .compatible =3D "mediatek,mt8195-vdosys1",
+>           .data =3D &mt8195_vdosys1_driver_data},
+> +       { .compatible =3D "mediatek,mt8365-mmsys",
+> +         .data =3D &mt8365_mmsys_driver_data},
+>         { }
+>  };
+>  MODULE_DEVICE_TABLE(of, mtk_drm_of_ids);
+> @@ -751,6 +757,8 @@ static const struct of_device_id mtk_ddp_comp_dt_ids[=
+] =3D {
+>           .data =3D (void *)MTK_DISP_MUTEX },
+>         { .compatible =3D "mediatek,mt8195-disp-mutex",
+>           .data =3D (void *)MTK_DISP_MUTEX },
+> +       { .compatible =3D "mediatek,mt8365-disp-mutex",
+> +         .data =3D (void *)MTK_DISP_MUTEX },
+>         { .compatible =3D "mediatek,mt8173-disp-od",
+>           .data =3D (void *)MTK_DISP_OD },
+>         { .compatible =3D "mediatek,mt2701-disp-ovl",
+>
 > --
-> Kaustabh Chakraborty <kauschluss@disroot.org>
->=20
->=20
->=20
+> 2.25.1
+>
 
-
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=3Dy for arch/arm64/boot/dts/exynos/=
-' for 20250301-exynos7870-v4-0-2925537f9b2a@disroot.org:
-
-In file included from arch/arm64/boot/dts/exynos/exynos7870-on7xelte.dts:=
-10:
-arch/arm64/boot/dts/exynos/exynos7870.dtsi:9:10: fatal error: dt-bindings=
-/clock/samsung,exynos7870-cmu.h: No such file or directory
-    9 | #include <dt-bindings/clock/samsung,exynos7870-cmu.h>
-      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-compilation terminated.
-make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/exynos/exyno=
-s7870-on7xelte.dtb] Error 1
-make[2]: *** [scripts/Makefile.build:461: arch/arm64/boot/dts/exynos] Err=
-or 2
-make[2]: Target 'arch/arm64/boot/dts/exynos/exynos7870-on7xelte.dtb' not =
-remade because of errors.
-make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1462: exynos/exyno=
-s7870-on7xelte.dtb] Error 2
-In file included from arch/arm64/boot/dts/exynos/exynos7870-a2corelte.dts=
-:10:
-arch/arm64/boot/dts/exynos/exynos7870.dtsi:9:10: fatal error: dt-bindings=
-/clock/samsung,exynos7870-cmu.h: No such file or directory
-    9 | #include <dt-bindings/clock/samsung,exynos7870-cmu.h>
-      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-compilation terminated.
-make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/exynos/exyno=
-s7870-a2corelte.dtb] Error 1
-make[2]: *** [scripts/Makefile.build:461: arch/arm64/boot/dts/exynos] Err=
-or 2
-make[2]: Target 'arch/arm64/boot/dts/exynos/exynos7870-a2corelte.dtb' not=
- remade because of errors.
-make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1462: exynos/exyno=
-s7870-a2corelte.dtb] Error 2
-In file included from arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts:10:
-arch/arm64/boot/dts/exynos/exynos7870.dtsi:9:10: fatal error: dt-bindings=
-/clock/samsung,exynos7870-cmu.h: No such file or directory
-    9 | #include <dt-bindings/clock/samsung,exynos7870-cmu.h>
-      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-compilation terminated.
-make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/exynos/exyno=
-s7870-j6lte.dtb] Error 1
-make[2]: *** [scripts/Makefile.build:461: arch/arm64/boot/dts/exynos] Err=
-or 2
-make[2]: Target 'arch/arm64/boot/dts/exynos/exynos7870-j6lte.dtb' not rem=
-ade because of errors.
-make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1462: exynos/exyno=
-s7870-j6lte.dtb] Error 2
-make: *** [Makefile:251: __sub-make] Error 2
-make: Target 'exynos/exynos8895-dreamlte.dtb' not remade because of error=
-s.
-make: Target 'exynos/exynos850-e850-96.dtb' not remade because of errors.
-make: Target 'exynos/exynos7870-on7xelte.dtb' not remade because of error=
-s.
-make: Target 'exynos/exynos7885-jackpotlte.dtb' not remade because of err=
-ors.
-make: Target 'exynos/exynos990-x1slte.dtb' not remade because of errors.
-make: Target 'exynos/exynos5433-tm2.dtb' not remade because of errors.
-make: Target 'exynos/exynos990-r8s.dtb' not remade because of errors.
-make: Target 'exynos/exynos7-espresso.dtb' not remade because of errors.
-make: Target 'exynos/google/gs101-oriole.dtb' not remade because of error=
-s.
-make: Target 'exynos/google/gs101-raven.dtb' not remade because of errors=
 
