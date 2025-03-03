@@ -1,239 +1,255 @@
-Return-Path: <linux-kernel+bounces-541167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4285CA4B97B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:36:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64E61A4B97C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:36:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CD067A7CC2
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:35:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 895C33AA23F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:36:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AC8F1EDA37;
-	Mon,  3 Mar 2025 08:36:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0E191EBA08;
+	Mon,  3 Mar 2025 08:36:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b="WRach1XS"
-Received: from smtp16.bhosted.nl (smtp16.bhosted.nl [94.124.121.27])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TnxJR2Pl"
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E581E9B3D
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 08:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.124.121.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BC641E9B3D;
+	Mon,  3 Mar 2025 08:36:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740990977; cv=none; b=bb8ZXoiRvs6exUusJKaWgMwcuzZD0tWVjhgmc4kymexOn2a9HzgST05fBQATl8TqJKKcyksYi209aX9vQVrlDzNz9xRE1dTgG0YjuWECs6DsxRwh/f4jWtuNtYwurRKGvQR00bm/PZeC/9+IQVpNbQ8diUEkraBGPGr8p3FWj4o=
+	t=1740991006; cv=none; b=IvQyLHrZCPJhH0BR6vxHbECtJVGRV8vDykd4ZAzGnkGLCu//O/Td9kaNj0usE654XYsJfmJBEiz2JMzUMx/2z94i9SAowmYIKH45G76pxE9dh6/cHWi4bGgQ5kSTwCZm1f4t0kCZMti9zK6IzjUzbq7wuU6TaI1PYsOGygUf2l4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740990977; c=relaxed/simple;
-	bh=d1NYIkne731OE+4CRC6V4DUzMRnaaze2xrbzMMdG9Ug=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TkztX9qyrLPLjrYgekC6F66fnvE3JywqUQfpQgZjyD6+IRK4ecF0oopIBWE5eQJDnyO8MqKW8ChaOhkk+rf7lBRHwVNYi2Nqu9SF68OHXCw1dM9sBUt00TiHO4Vk7UBegdWRubZT7MiGJmnfqqEbP+MtFuenFL1IUc6WDpJ9NLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl; spf=pass smtp.mailfrom=protonic.nl; dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b=WRach1XS; arc=none smtp.client-ip=94.124.121.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonic.nl
+	s=arc-20240116; t=1740991006; c=relaxed/simple;
+	bh=FhmhAZyEcpgTM+6P0ZltvrlSmw5z7rq6LGrVAQTgLUc=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=qBSG+2J94mnpl/11s0vrCIHuxXXeF99dZ10jpRwK3uCeL890wEQJQzLT9wZERW98XSQklPfIHyHDL9Bnfhw0jGLKeyFCm9Xi9ljbBN30u2ESQlbteC+rkfKoFmc56PWzTvUASd4SPLxBvKiZITqOLS2D0OdO3sS2PE/O+KtKdDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TnxJR2Pl; arc=none smtp.client-ip=209.85.160.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-2bcc0c6c149so3752391fac.1;
+        Mon, 03 Mar 2025 00:36:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=protonic.nl; s=202111;
-	h=content-transfer-encoding:content-type:mime-version:references:in-reply-to:
-	 message-id:subject:cc:to:from:date:from;
-	bh=2/+XCEqvmukm9RwANq8BW3npMw0J+xX5amPy/WbdtVI=;
-	b=WRach1XSFtAcDjazCArngNMW2cyrFOxXScIWFWWOdINqmaeWJan4lFn1LNjjIyXTpZq9065FqsLoP
-	 +3itXZg8TJNqKfcXBnyDpumogBIoLOWnUbLWnirBnZzp0TpMQAmee2VLOmbe/mLSg3gA4mkwCdi+Xc
-	 uY1xXfdpkFEll65qv87FM8/ltc8KARzlbgBXXcp4/G0fYNyDLrvL7Rtbyi9l2zrcltZf3GIS+qdDJX
-	 bDLMv2sioDSzuZuV+zCX63FqdXkfHiIl7Xtbzlzd8QjbyjW9KfLuNPQd5iBWjo1WN3aKdaG54sCSdm
-	 tBzPTtcvU5iGKGE4cMcCg0zAtYKbEdw==
-X-MSG-ID: 8fdfc9e4-f80a-11ef-8b46-005056817704
-Date: Mon, 3 Mar 2025 09:36:11 +0100
-From: David Jander <david@protonic.nl>
-To: David Lechner <dlechner@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, Jonathan Corbet
- <corbet@lwn.net>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- devicetree@vger.kernel.org, linux-doc@vger.kernel.org, Nuno Sa
- <nuno.sa@analog.com>, Jonathan Cameron <jic23@kernel.org>, Oleksij Rempel
- <o.rempel@pengutronix.de>, Pavel Pisa <ppisa@pikron.com>
-Subject: Re: [RFC PATCH 1/7] drivers: Add motion control subsystem
-Message-ID: <20250303093611.325b4fb6@erd003.prtnl>
-In-Reply-To: <7fb93572-3ef4-47f2-b505-669af742dee5@baylibre.com>
-References: <20250227162823.3585810-1-david@protonic.nl>
-	<20250227162823.3585810-2-david@protonic.nl>
-	<7fb93572-3ef4-47f2-b505-669af742dee5@baylibre.com>
-Organization: Protonic Holland
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+        d=gmail.com; s=20230601; t=1740991004; x=1741595804; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=e+xmtTeQ6le8DHUZ2pKRu6fVSKJXYIHfU/7nENHpMVY=;
+        b=TnxJR2PljP3E1teHMQ7Q75ViCaaS1eNkU8sIG0L+DGJJlPt1NpvDamJhIdjCf1N4fO
+         P61gYam5QbzWZ1949NoaX7wWHWFAeuQT9TgTGRoWDwQXAz/yXB147Vrj6+XMyWKXXF+f
+         kuC6W4ofpzbN4Uhmk0oEcB0e2e6wGXOm8lP1Grin7sTpf226k9TPr9rVZ0zbVqgrFM36
+         q2t4xPPRFTBO818jqaI9b5//weKu/0NJKuul4vz6awRJ7cuMRVerRp2Irc1SwnWtUtKK
+         Jw8gqi1kZp9aG1Ums84ptXECj3LFyduRT+JXDGQfXcXuHuj9dbiyBERZ/8mSOkjCD6j8
+         mgpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740991004; x=1741595804;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=e+xmtTeQ6le8DHUZ2pKRu6fVSKJXYIHfU/7nENHpMVY=;
+        b=G/5YlEzd0zrmH2cbRL73zrLDyInYUShDvU8PyhzOhz/06hNw3JffQoF1CIFR4CY1AG
+         TiiShAHzBAABrhjGA2CZ5KvgrSITlbrbvA/R/lWGHXuZsmNuyEzLGLnbIzBHceWpBhxZ
+         /LCDVieNQym6Cy1gSmXyHFBGdUsmWahILzssa/b+GFiBhUiFF89rc5drG4d3h+/cq4iv
+         nSQ5EaQQHx/KJ6k2Ad4gpSoud8QA1PVPuQoe9Jpj7bktWWZg6XKfs5N6ww6SvspA0/Rb
+         TAStKhTt0Pg1plS5vHrPlGiwiwmIoLYkXyK092B0GmXMHr7NiKD/iSELUedMITanD6VQ
+         kpiA==
+X-Forwarded-Encrypted: i=1; AJvYcCUvJPRQ1B3tg0GgUHMYabx7mRt8iq2Q+Ls2Knpyi5y4i62ShFghddRNzma7LIIuR9gcRbkL2+CP5iVDaxKJgg==@vger.kernel.org, AJvYcCXi4YYlmc051s2qjLB73L89tZVYhyxAnCAzVqfjs4BiQkSDQaQNzRsXo9nm15ceKZjdymsKYsGbN7EGFzIA@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3kWqJz2AOWLFNNcJOljmtwYxcCmUZl3AwcgyDmJKpsofeWxoI
+	uGAcf/jzznq4DOX4L8tvSZcBseKrbOhJRse5LANvTJ1EuRl8lCf9HohW80F/WNxVJySFERQtdnt
+	nvI43QbgOlw2NAGuzBl0oPuO46fA=
+X-Gm-Gg: ASbGnctsSyQtvnsuk+QWoYjsxk2sVfxX6TEwdtoy5JS8yao79+3jhvYX2CRta5U3mhI
+	6+0GIzQITiDOQyWyHZt6h/DOJlNymQslg0Omo0JldMNWI9fCrtNr6fZ5hMyuXJ6ZjV14hEExJI3
+	796JzkXL7Mb473PZFdvGKTYPWGaw==
+X-Google-Smtp-Source: AGHT+IGLrgCF9bhojFbMj5hTYar1qpiA2lXfLvkY2WGahh5FA3P1m/fbqcXDx2ohWgJUoA3Ec8V+Xtqnvo6z7Fxs5hg=
+X-Received: by 2002:a05:6870:bb0c:b0:2c1:6948:d57c with SMTP id
+ 586e51a60fabf-2c178647718mr7620263fac.28.1740991004091; Mon, 03 Mar 2025
+ 00:36:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Strforexc yn <strforexc@gmail.com>
+Date: Mon, 3 Mar 2025 16:36:33 +0800
+X-Gm-Features: AQ5f1Jr83p_Oe7kHMbWs6y-C_nqTfDNRamOd2tKyQb6DOdSeUA0HLsBeoo3tq5c
+Message-ID: <CA+HokZrg9rP1Wf=SbfRTCxU07M9yD48TV0dyPQDcUM7eL9Br0g@mail.gmail.com>
+Subject: [BUG] KASAN: Use-After-Free in crc32c_le_base via bch2_checksum_update
+ (Bcachefs) on 6.14.0-rc4
+To: Kent Overstreet <kent.overstreet@linux.dev>, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Cc: syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 28 Feb 2025 16:36:41 -0600
-David Lechner <dlechner@baylibre.com> wrote:
+Dear Linux Kernel Developers,
+I=E2=80=99ve identified a KASAN-reported use-after-free in the Bcachefs
+filesystem on Linux 6.14.0-rc4 during recovery, potentially affecting
+filesystem integrity. Here are the details:
 
-> On 2/27/25 10:28 AM, David Jander wrote:
-> > The Linux Motion Control subsystem (LMC) is a new driver subsystem for
-> > peripheral devices that control mechanical motion in some form or another.
-> > This could be different kinds of motors (stepper, DC, AC, SRM, BLDC...)
-> > or even linear actuators.
-> > The subsystem presents a unified UAPI for those devices, based on char
-> > devices with ioctl's.
-> > It can make use of regular gpio's to function as trigger inputs, like
-> > end-stops, fixed position- or motion start triggers and also generate
-> > events not only to user-space but also to the IIO subsystem in the form of
-> > IIO triggers.
-> > 
-> > Signed-off-by: David Jander <david@protonic.nl>
-> > ---
-> >  MAINTAINERS                     |   8 +
-> >  drivers/Kconfig                 |   2 +
-> >  drivers/Makefile                |   2 +
-> >  drivers/motion/Kconfig          |  19 +
-> >  drivers/motion/Makefile         |   3 +
-> >  drivers/motion/motion-core.c    | 823 ++++++++++++++++++++++++++++++++
-> >  drivers/motion/motion-core.h    | 172 +++++++
-> >  drivers/motion/motion-helpers.c | 590 +++++++++++++++++++++++
-> >  drivers/motion/motion-helpers.h |  23 +
-> >  include/uapi/linux/motion.h     | 229 +++++++++
-> >  10 files changed, 1871 insertions(+)  
-> 
-> Ooof, this is really a lot for one patch. Makes it hard to review. 500 lines in
-> a patch is much easier to digest.
+Kernel commit: v6.14-rc4 (Commits on Feb 24, 2025)
+Kernel Config : https://github.com/Strforexc/LinuxKernelbug/blob/main/.conf=
+ig
+Kernel Log=EF=BC=9A https://github.com/Strforexc/LinuxKernelbug/blob/main/u=
+af_r_bch2_checksum_update/log0
+Reproduce.c: https://github.com/Strforexc/LinuxKernelbug/blob/main/uaf_r_bc=
+h2_checksum_update/repro.cprog
 
-Sorry for that. I wouldn't know how to split up this patch to make it any
-easier. It's just a complete new subsystem, and I think it is the bare minimum
-to start and also to give a good idea of what it is supposed to be able to do.
+Bug Description=EF=BC=9A
+KASAN detects a use-after-free read of size 1 at address
+ffff88804d060000 in crc32c_le_base (lib/crc32.c:51), called via
+bch2_checksum_update (fs/bcachefs/checksum.c:85), during B-tree node
+reading in Bcachefs recovery.
 
-> But before commenting on the details of the code I have some more high-level
-> comments. As I mentioned in my reply to the cover letter, I've gone through the
-> exercise of writing some motor control divers in the Linux kernel that have been
-> used by 1000s of people that used them to build everything imaginable using LEGO
-> robotics over the last 10+ years.
-> 
-> From what I see here (I didn't have time to really get into the details of it
-> yet, so maybe missed some important details), it looks like you are trying to
-> do motor control stuff in the kernel so that the interface for a basic H-bridge
-> will be close to the same as a fancy stepper motor controller. We tried doing
-> something very similar because it sounds like a really nice thing to do. The
-> kernel does everything and makes it really easy for the users. But what we
-> actually found is that it is not possible to make a solution in the kernel that
-> can handle every possible use case. In the end, we wished that we had a much
-> more low-level interface to the motor controllers to give us more flexibility
-> for the many different types of applications this ended up getting used for.
-> Having to modify the kernel for your use case is too high of a bar for most
-> users and not practical even if you are a kernel hacker.
+The fault occurs in crc32c_le_base, accessing a buffer (data) freed
+earlier by btree_bounce_free in bch2_btree_node_read_done.
+Cause: bch2_btree_node_read_done frees a bounce buffer (kvfree) before
+its checksum is computed via bch2_checksum_update, leaving a stale
+pointer. The buffer is used after freeing, causing the use-after-free.
+Context: Syzkaller=E2=80=99s mount operation triggers Bcachefs recovery,
+likely with a crafted filesystem exposing this buffer lifetime issue.
 
-The idea for LMC is to be able to support hardware that realistically can be
-used by an OS as complex as the Linux kernel. There are a lot of motor
-controllers out there that suit that category, like the TMC5240 chip for
-example. But also many bigger systems, like the ones Pavel Pisa works with.
-That said, I think the Linux kernel on modestly modern SoC's, like the
-STM32MP1xx is pretty capable of doing more than that, but we have to draw the
-line somewhere. Like I hinted in the cover letter, I think it might even be
-possible to do crazy stuff like bit-banging STEP/DIR type controllers in the
-kernel, possibly aided by PREEMPT_RT, but that is not the main purpose of LMC.
-The main purpose is to talk to controllers that can receive motion profiles
-and execute movements (semi-)autonomously. Going just one step lower is the
-simple PWM based driver in this patch set: It takes the execution of the
-profile into the kernel by using a HRTIMER to sample the profile curve using a
-sample period of 20ms, which is fast enough for most applications while not
-imposing a high CPU load on the kernel on slower CPU cores.
-motion-helper.c contains the trapezoidal ramp generator code that can be used
-by any LMC driver that can work with speed information but doesn't have its
-own ramp generator in hardware. It could be extended to support other type of
-profiles if needed in the future, which would automatically upgrade all
-drivers that use it.
+Could Bcachefs maintainers investigate? Possible issues:
+1. Premature freeing of the bounce buffer in bch2_btree_node_read_done
+before checksum completion.
+2. Lack of pointer invalidation after kvfree.
+Suggested fixes:
+1. Defer btree_bounce_free until after all buffer operations (e.g.,
+move it after checksum and validation).
+2. Nullify pointers post-free to catch misuse.
 
-> When writing kernel drivers for this sort of thing, I think the rule of thumb
-> should be to keep the driver as "thin" as possible. If the hardware doesn't
-> provide a feature, the kernel should not be trying to emulate it.
+Our knowledge of the kernel is somewhat limited, and we'd appreciate
+it if you could determine if there is such an issue. If this issue
+doesn't have an impact, please ignore it =E2=98=BA.
 
-In general I would agree with this, but in this case some limited "emulation"
-seems adequate. As a rule of thumb, code is better placed in an FPGA/uC, the
-kernel or in user-space according to its latency requirements. Microsecond
-stuff shouldn't be done on the application SoC at all, millisecond stuff (or
-maybe 100s of microseconds if you like) can be done in the kernel, 10s of
-milliseconds or slower is good for user-space. A very general guideline.
+If you fix this issue, please add the following tag to the commit:
+Reported-by: Zhizhuo Tang strforexctzzchange@foxmail.com, Jianzhou
+Zhao xnxc22xnxc22@qq.com, Haoran Liu <cherest_san@163.com>
 
-So if you have a device that can take a speed-setpoint but doesn't have a
-ramp generator, that is not a device that LMC is made for in the first place,
-but still pretty usable if we do the ramp generator in the kernel.
-To steal Pavel's analogy: Think of the TMC5240 driver as a FullMAC Wifi device
-and the simple PWM driver as a SoftMAC Wifi device.
-For an LMC device, same as for a wifi interface, we want to talk TCP/IP to it
-from user-space, not radio-packets. ;-)
 
-> So for an
-> H-bridge I would want something that just provides a way to tell it I want
-> fast-decay mode with some normalized duty cycle between -1 and 1 (obviously we
-> will have to multiply this by some factor since the kernel doesn't do floating
-> point). A duty cycle of 0 will "brake" the motor. And then we would need one
-> more control parameter to tell it to remove power completely to "coast" the
-> motor. I guess this is what the "basic_run" and "basic_stop" are other than
-> the run seems to have speed instead of duty cycle? The kernel shouldn't be
-> trying to convert this duty cycle to speed or have a background task that tries
-> to provide an acceleration profile or turn off the power after some time. Just
-> let the kernel provide direct, low-level access to the hardware and let
-> userspace handle all of the rest in a way that makes the most sense for the
-> specific application. Sometimes they might not even be connected to a motor!
-> With the LEGO MINDSTORMS and BeableBone Blue, the H-bridge outputs are
-> hot-pluggable, so they can even be connected to things like LEDs or used as a
-> general power supply. (A reason to call this subsystem "actuation" rather than
-> "motion".)
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+BUG: KASAN: use-after-free in crc32c_le_base+0xdb/0xf0 lib/crc32.c:51
+Read of size 1 at addr ffff88804d060000 by task syz.4.204/13836
 
-LMC aims to offer a common interface to different sorts of motion devices
-(think different types of motors), so offering access to the lowest level of
-each device is kinda defeating of that purpose. Nevertheless, all of the
-things you mention are possible with LMC. The relationship between speed and
-the PWM duty-cycle of a simple DC motor H-bridge for example, is determined by
-the speed_conv* and accel_conv* parameters. If you want a 1:1 relation, just
-make them 1 in your device tree.
-OTOH, if you had only a duty-cycle setting from user-space, you would need to
-have code that generates an acceleration profile in user-space, which would be
-a much higher CPU load and have a much higher latency jitter, much more likely
-to cause mechanical and audible effects than if done in the kernel.
-It's still possible though.
-And talking about mis-using a motor driver for something else, that's exactly
-what one of our customers is doing with a DC motor H-bridge via LMC. They just
-set each output to 0% or 100% duty-cycle (max speed without profile) to control
-2 warning lights.
+CPU: 0 UID: 0 PID: 13836 Comm: syz.4.204 Not tainted 6.14.0-rc4 #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/=
+2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1b0 lib/dump_stack.c:120
+ print_address_description.constprop.0+0x2c/0x420 mm/kasan/report.c:408
+ print_report+0xaa/0x270 mm/kasan/report.c:521
+ kasan_report+0xbd/0x100 mm/kasan/report.c:634
+ crc32c_le_base+0xdb/0xf0 lib/crc32.c:51
+ crc32c_le_arch+0x183/0x1d0 arch/x86/lib/crc32-glue.c:69
+ __crc32c_le include/linux/crc32.h:36 [inline]
+ crc32c include/linux/crc32c.h:9 [inline]
+ bch2_checksum_update+0x136/0x1a0 fs/bcachefs/checksum.c:85
+ bch2_checksum+0x104/0x2c0 fs/bcachefs/checksum.c:226
+ bch2_btree_node_read_done+0x28e7/0x4b90 fs/bcachefs/btree_io.c:1130
+ btree_node_read_work+0x670/0x1060 fs/bcachefs/btree_io.c:1358
+ bch2_btree_node_read+0x855/0xc50 fs/bcachefs/btree_io.c:1748
+ __bch2_btree_root_read+0x288/0x410 fs/bcachefs/btree_io.c:1789
+ bch2_btree_root_read+0x54/0xa0 fs/bcachefs/btree_io.c:1811
+ read_btree_roots+0x2ba/0x760 fs/bcachefs/recovery.c:581
+ bch2_fs_recovery+0x1822/0x2fa0 fs/bcachefs/recovery.c:928
+ bch2_fs_start+0x33d/0x690 fs/bcachefs/super.c:1041
+ bch2_fs_get_tree+0x105a/0x1470 fs/bcachefs/fs.c:2203
+ vfs_get_tree+0x93/0x350 fs/super.c:1814
+ do_new_mount+0x368/0x730 fs/namespace.c:3560
+ path_mount+0x4a6/0x17f0 fs/namespace.c:3887
+ do_mount fs/namespace.c:3900 [inline]
+ __do_sys_mount fs/namespace.c:4111 [inline]
+ __se_sys_mount fs/namespace.c:4088 [inline]
+ __x64_sys_mount+0x288/0x310 fs/namespace.c:4088
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcb/0x260 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f4c581ba41e
+Code: 48 c7 c0 ff ff ff ff eb aa e8 5e 20 00 00 66 2e 0f 1f 84 00 00
+00 00 00 0f 1f 40 00 f3 0f 1e fa 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d
+01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f4c59158da8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000000000005d94 RCX: 00007f4c581ba41e
+RDX: 0000400000000040 RSI: 0000400000005dc0 RDI: 00007f4c59158e00
+RBP: 00007f4c59158e40 R08: 00007f4c59158e40 R09: 0000000000014002
+R10: 0000000000014002 R11: 0000000000000246 R12: 0000400000000040
+R13: 0000400000005dc0 R14: 00007f4c59158e00 R15: 0000400000000080
+ </TASK>
 
-> Another way of putting this is that it was very tempting to model the actual
-> motor in the kernel. But that didn't work well because there are so many
-> different kinds of motors and related mechanical systems that you can connect
-> to the same motor driver chip.
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000
+index:0xffff88804d062840 pfn:0x4d060
+flags: 0x4fff00000000000(node=3D1|zone=3D1|lastcpupid=3D0x7ff)
+page_type: f0(buddy)
+raw: 04fff00000000000 ffffea0001301008 ffff88807ffda7a8 0000000000000000
+raw: ffff88804d062840 0000000000000005 00000000f0000000 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as freed
+page last allocated via order 5, migratetype Reclaimable, gfp_mask
+0x452cd0(GFP_KERNEL_ACCOUNT|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_REC=
+LAIMABLE),
+pid 13836, tgid 13835 (syz.4.204), ts 115647482830, free_ts
+115856278729
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1a3/0x1d0 mm/page_alloc.c:1551
+ prep_new_page mm/page_alloc.c:1559 [inline]
+ get_page_from_freelist+0x8a5/0xfa0 mm/page_alloc.c:3477
+ __alloc_frozen_pages_noprof+0x1d8/0x3b0 mm/page_alloc.c:4739
+ __alloc_pages_noprof+0xc/0x1c0 mm/page_alloc.c:4773
+ __alloc_pages_node_noprof include/linux/gfp.h:265 [inline]
+ alloc_pages_node_noprof include/linux/gfp.h:292 [inline]
+ ___kmalloc_large_node+0x8b/0x1b0 mm/slub.c:4239
+ __kmalloc_large_node_noprof+0x1a/0x80 mm/slub.c:4266
+ __do_kmalloc_node mm/slub.c:4282 [inline]
+ __kmalloc_node_noprof+0x39e/0x570 mm/slub.c:4300
+ __kvmalloc_node_noprof+0x7e/0x1c0 mm/util.c:662
+ btree_node_data_alloc.constprop.0+0xe9/0x2a0 fs/bcachefs/btree_cache.c:156
+ __bch2_btree_node_mem_alloc+0x37/0xa0 fs/bcachefs/btree_cache.c:201
+ bch2_fs_btree_cache_init+0x110/0x560 fs/bcachefs/btree_cache.c:655
+ bch2_fs_alloc+0x16fc/0x1e30 fs/bcachefs/super.c:919
+ bch2_fs_open+0x91b/0xb90 fs/bcachefs/super.c:2064
+ bch2_fs_get_tree+0xf83/0x1470 fs/bcachefs/fs.c:2190
+ vfs_get_tree+0x93/0x350 fs/super.c:1814
+ do_new_mount+0x368/0x730 fs/namespace.c:3560
+page last free pid 13836 tgid 13835 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1127 [inline]
+ __free_pages_ok+0x61f/0xe70 mm/page_alloc.c:1271
+ __folio_put+0x304/0x3d0 mm/swap.c:112
+ kvfree+0x46/0x50 mm/util.c:705
+ btree_bounce_free fs/bcachefs/btree_io.c:111 [inline]
+ bch2_btree_node_read_done+0x3acc/0x4b90 fs/bcachefs/btree_io.c:1243
+ btree_node_read_work+0x670/0x1060 fs/bcachefs/btree_io.c:1358
+ bch2_btree_node_read+0x855/0xc50 fs/bcachefs/btree_io.c:1748
+ __bch2_btree_root_read+0x288/0x410 fs/bcachefs/btree_io.c:1789
+ bch2_btree_root_read+0x54/0xa0 fs/bcachefs/btree_io.c:1811
+ read_btree_roots+0x2ba/0x760 fs/bcachefs/recovery.c:581
+ bch2_fs_recovery+0x1822/0x2fa0 fs/bcachefs/recovery.c:928
+ bch2_fs_start+0x33d/0x690 fs/bcachefs/super.c:1041
+ bch2_fs_get_tree+0x105a/0x1470 fs/bcachefs/fs.c:2203
+ vfs_get_tree+0x93/0x350 fs/super.c:1814
+ do_new_mount+0x368/0x730 fs/namespace.c:3560
+ path_mount+0x4a6/0x17f0 fs/namespace.c:3887
+ do_mount fs/namespace.c:3900 [inline]
+ __do_sys_mount fs/namespace.c:4111 [inline]
+ __se_sys_mount fs/namespace.c:4088 [inline]
+ __x64_sys_mount+0x288/0x310 fs/namespace.c:4088
 
-Yes, but on the other side, you have many different driver chips that all
-control motors that do the same thing: move in different directions with
-different speeds and different acceleration profiles. As a user, I want to be
-able to tell that to the motor in the same sense as I want to send a data
-through an ethernet interface without having to know what kind of interface I
-have to an extend reasonably possible. Of course each motor/driver has
-different limitations (just as different network interfaces have), and more
-often than not I will have to know some of those in user-space, but the whole
-idea of a subsystem UAPI is to abstract as much as possible of that from
-user-space.
-
-With LMC I could easily swap a stepper motor for a BLDC or DC motor for
-example. If they have an encoder to provide accurate position feedback, it
-could even work as well as a stepper for many applications. No changes in
-user-space code required.
-
-> So the driver really should just be for the
-> H-bridge chip itself and not care about the motor. And the rest can be put in
-> a libmotion userspace library and have that be the convenient API for users
-> that want to get something up and running quickly.
-
-I get your point, and from the standpoint of Lego hardware and hobby tinkerers
-doing all sorts of stuff with it, I can understand the desire to have
-low-level access from user-space to the H-bridge. It is similar to how
-Raspberry-pi exposes direct access to their GPIO controllers to user-space. It
-is nice for tinkerers, but it is inadequate for anything else, not to mention
-potentially unsafe. I remember when I first installed Linux on my PC in 1994,
-we had the X server access the video card directly from user-space. That was a
-really bad idea. ;-)
-
-Best regards,
-
--- 
-David Jander
+Memory state around the buggy address:
+ ffff88804d05ff00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff88804d05ff80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffff88804d060000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+                   ^
+ ffff88804d060080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ ffff88804d060100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Regards,
+Strforexc
 
