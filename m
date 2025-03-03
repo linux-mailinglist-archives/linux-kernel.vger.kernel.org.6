@@ -1,116 +1,121 @@
-Return-Path: <linux-kernel+bounces-544522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C717A4E245
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:05:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A477DA4E45C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:54:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 242F01796E7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:55:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CA35189AB31
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:44:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17B1E25290B;
-	Tue,  4 Mar 2025 14:53:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA91929B20F;
+	Tue,  4 Mar 2025 15:29:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="EABLV7M0"
-Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="3BeQndjN"
+Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CF5223A983
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A64D29B204
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:29:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.116
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741099998; cv=fail; b=l8ag6p511/M3Lr/ZhqhhXr7ApMJgJULfvfAfqaqhXyqJAV7BLNJjst1gR8f50mtmqR4Uzo8zZGnKsx41G/bUwd+s/Tp9NIiIp8oZT1bR7J1qbDs9aNlr0dbPP0AxKRQddViaMeSoMs9nFfMs1Xat8MhRGcMp2iZu8HsrZUghgos=
+	t=1741102185; cv=pass; b=CsjBKceH1iyHHGloDWNqOjIgZ+G24c/c3laWSeD21JqQ6PJNg1akLCVOjz4X8yNlGS2Irmr4hVHClMWTNsEiXthDKob6vFV6jvRy/qlRVHhkFAiV7BOpm5u58Il+ouJUxpjmf9NpLbkEG2VzpGm1sO5uaKObsUT0AU2ne/VfJDo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741099998; c=relaxed/simple;
-	bh=Bmygpzn/8Cwf0eDzohTCD08BpNlslOTqk9asMbjGsjM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sf3o5s98GAI5i7xOO7cT3th53Zhrxnatho4dX+eGY+qKFljRGveaWhhqDcKjJXTWRA9vM0xu2K23UBtZaWlV9/yLSBFlTX4fWe2svgDYVQD8x+jVVuZWWSOVMDYajsspcQ1gPWpISjctyp7r+3bWEJMwTRPlXLDQtktfn74Ny/I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=reject dis=none) header.from=microchip.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=EABLV7M0 reason="signature verification failed"; arc=none smtp.client-ip=68.232.154.123; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; arc=fail smtp.client-ip=160.75.25.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=reject dis=none) header.from=microchip.com
+	s=arc-20240116; t=1741102185; c=relaxed/simple;
+	bh=jiHdE51xfDe7UWHKDk7UeUSBh/D7H7YwrHUywcZ5yvQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qJpEKoIDfnbzeFepRAdN1b+P9qZTDICS5W1XtBxTc2C5BBRPG+uA3OK3wBD0oQY+TJyiNZWhkBNncYeIePqI8XXhQV8t4eN8Pp9JJP3ASDegbXSsjgrmw750S4L7gCbwtnximK5lrvSu/Ww3Q9BSkKrZqItAUZgbIskle4iUh7E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=3BeQndjN; arc=none smtp.client-ip=209.85.208.179; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; arc=pass smtp.client-ip=160.75.25.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id B9D9C40CEC88
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:53:14 +0300 (+03)
+	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id 030E5408B640
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:29:42 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
+Authentication-Results: lesvatest1.cc.itu.edu.tr;
+	dkim=pass (2048-bit key, unprotected) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.a=rsa-sha256 header.s=20230601 header.b=3BeQndjN
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dtR3tSlzFxd8
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:51:43 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6ffP5bwtzG08h
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:26:21 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id D3BFF400C6; Tue,  4 Mar 2025 17:51:42 +0300 (+03)
+	id B565B4271F; Tue,  4 Mar 2025 18:26:20 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=EABLV7M0
-X-Envelope-From: <linux-kernel+bounces-541432-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=3BeQndjN
+X-Envelope-From: <linux-kernel+bounces-541434-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=EABLV7M0
-Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id 3A52042FE5
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:49:49 +0300 (+03)
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id 113F63063EFE
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:49:49 +0300 (+03)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=3BeQndjN
+Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
+	by le2 (Postfix) with ESMTP id 717FF42CD7
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:52:57 +0300 (+03)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by fgw2.itu.edu.tr (Postfix) with SMTP id 060D42DCDE
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:52:56 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A415188676B
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:49:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07B4A3A5167
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:52:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C311F3B9C;
-	Mon,  3 Mar 2025 10:49:33 +0000 (UTC)
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 822DE1F3B89;
+	Mon,  3 Mar 2025 10:52:26 +0000 (UTC)
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7D61E376C;
-	Mon,  3 Mar 2025 10:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2117E1F0E5A
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 10:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740998970; cv=none; b=gfg4ACCnLc2S+wfAof8ZZ3C7IrGfdyJjNEL0QcViJbZQ7ntmKMRCM2ZIhvAzd5HZa1a9luwCuZmldWpTyjlcBfJajcNGaLsQMzrjhPBwCovurFIdKNttkC+cF/9JPPjLs59ainUDbkprMMZswPemKGtSGAThRDwGGW4AJFrjoAw=
+	t=1740999143; cv=none; b=lO8YVh9BPniKvm9aXToTpmyK5hWSpsxF1Q0Wpbe1XX/y053wVYpFX+u7B4fpaYrxIY6MYJumC+Ok+zP0vyQ0vzHBP5KzsxCNGpU3AsweycIAsk0gB/jFTXwRrunHmMbHBDUW1CNUoCNfBfo8l80u/JsgjBjO0jeloqnlwYeZIII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740998970; c=relaxed/simple;
-	bh=FxTyFdldQ/Rg6PXUyOvwskxzWGQOyp4Jrbq8b9VUONU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PEWz2YR6Jr9tYsLewlvdyGUdZaZt9psvGaI6Nevcg9eTuQvj2Sj8fMc5fvKaWs3z7EHmIfIPCd8H3Ouv0PZMVQT/9Zv3HGB23BDDRl/JZeb6sruywcOFhHGO65fGXrqwodPZJRC899hl/kW2HfdGwUr49Ux9ghwDoezFhbMljCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=EABLV7M0; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1740998969; x=1772534969;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=FxTyFdldQ/Rg6PXUyOvwskxzWGQOyp4Jrbq8b9VUONU=;
-  b=EABLV7M0S4zxmAJV4JIEzkZhziFIkiS1AI3I9DHLV6z826RyiaGTVMAI
-   jMwtKPnN0h/xn6jJOKwMQ6BfWB3+oKJuaXVXNVBRQW7EV6lyeH2xREb3G
-   fF/B15RHqRIE9lQEEBZo8rSpiBJCBEicmEVyaL8bG0lXlqJc9O+JEyKNO
-   GJOjlsgmcxiJfvxVkX0n02Gs4SyaJhoDpG9QCZ/Ccg5DSVsVBKP+g97pc
-   D1Z4/T1rplsy1NPgIpNV34XIfBfo6IomolOroP1kuKhVRlvObpUrsOL8y
-   otHKuaK4vjfRn5ouRZ3auUshbt17b1cG24Lg602R7xOmcjEJtRnlOI1kK
-   Q==;
-X-CSE-ConnectionGUID: BikYLFOYSh2j96/3XZqldw==
-X-CSE-MsgGUID: eIVd+EFRTYWJnQbd7HU8Qg==
-X-IronPort-AV: E=Sophos;i="6.13,329,1732604400"; 
-   d="scan'208";a="38768207"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 03 Mar 2025 03:49:28 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 3 Mar 2025 03:48:32 -0700
-Received: from wendy.microchip.com (10.10.85.11) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Mon, 3 Mar 2025 03:48:31 -0700
-From: Conor Dooley <conor.dooley@microchip.com>
-To: <linux-spi@vger.kernel.org>
-CC: Conor Dooley <conor.dooley@microchip.com>, <stable@vger.kernel.org>,
-	"Daire McNamara" <daire.mcnamara@microchip.com>, Mark Brown
-	<broonie@kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] spi: microchip-core: prevent RX overflows when transmit size > FIFO size
-Date: Mon, 3 Mar 2025 10:47:40 +0000
-Message-ID: <20250303-veal-snooper-712c1dfad336@wendy>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1740999143; c=relaxed/simple;
+	bh=jiHdE51xfDe7UWHKDk7UeUSBh/D7H7YwrHUywcZ5yvQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JOtYq6q454sTRdzrShmrSx7PqZIMh/SqDj4zSzpvgzU0JG8+HYPbNYS5wkFs2eUkMOtdnzlm/4HSJg6VpioZQf8JOYNs6fIXZg1akYSlA8D1eALn0wOYBY5O0xs3MWtrfHg+1azGEBLkf5KGT0cuqHrGLGYB/K1OIEBOgJr1n6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=3BeQndjN; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-3061513d353so44352871fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 02:52:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1740999139; x=1741603939; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jiHdE51xfDe7UWHKDk7UeUSBh/D7H7YwrHUywcZ5yvQ=;
+        b=3BeQndjN95Jh+A37g9kvmDPRt9+WvvvsF8cDPIMAG1EC/9WsOD8nfC0bgeKYQmfp5s
+         oAI57o6UlWM28J4wVyPs93TmILFbBMs4arPdGsL84bwqF6OTmzxtdeADbI7d8fb8Vm5G
+         x3IwPyDaLfeTLGr8lhqVWw9XhpallVg84txf5cTrcLlp/DhTOYsHdnXlH8T6+6D6jAPp
+         VUWeHcP0quKcpU55IG1WkaYGySicWVS/3+4Z5rAmD34evYusaKhWchLfg4lIOj8wzky7
+         rNn4yJe8hvLQx5OS3wiaDuKUfNsE/LTKGTPIFBnhz6KNtZ+XUZ5C3opNB0brO4EcLcPy
+         VSGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740999139; x=1741603939;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jiHdE51xfDe7UWHKDk7UeUSBh/D7H7YwrHUywcZ5yvQ=;
+        b=HayBoRlaByrgQiXv0v2W+0Av4Zy5uDmnnFQ10EiiyIfoA5GV3avsTVKEYPWS1G1qjn
+         OHuZB0NtXeh+QiZmJXd0nap8/g/+54kQQMxjOSImXC13Zka9q3lEajRQs7Nh2LxLmp9f
+         LCUkFKYeFhrUOkXZCJpVqYw6Y4d1pi+6ZyGu5vmyAuqEL24D0KEHv1zgA1QiEhF+s7ai
+         7j8U7gR0A17LRLTXZm90Uk7J22fQ4MjeSGqs6YG0DAMB4egKtphvLvY9ANJJUaLPlv2r
+         HCDgqFV/48N4YINnHFawcNhNCN1JocMcPoUjkyE571PSc7Yu71/DWkEO2A8svZVBf2qz
+         azsA==
+X-Forwarded-Encrypted: i=1; AJvYcCUkf96sk8DdvY75EPalLEegHDkekiUsgItoEoZ/Tw4uF3Faft0DbVbrtZdLWk+JwhBqwWj55px+fTJVKi0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yysk5dadtrO5ctNc9s6cBKcJvmHGILV3MKfmsl3KyIrBDOliCeP
+	2FDhTTlkNPmnWwjlWRDrdgtMddnc4/mn8lzFbVTv3QldO44JXO8CFqe4i/LoA1b2MX7LXBmmeyt
+	xNrSl81ei2f7qse3CGthKLzKmJaGfDF9mUmznnw==
+X-Gm-Gg: ASbGnctVav8g7VwyBP5VzjQKXjuPKeZYSINhuEexWEu78FJCH3YEFUsp2c/YNBQQjhR
+	pL3B2gXrGsiwKkxajVnK0WCAYTxyiTOuRCRcFdSSIjgAeivKoXgLp3+5cMsw3QbrAjRPJV/XM6t
+	FrbQHg2eilMs+nGA2LG24AWg3puh19UvsunKKx94GZHV4bclxk5EPv3bXwhw==
+X-Google-Smtp-Source: AGHT+IF8fkfV29Z/HA928OoGgTZHXhKuyAxLwcUqLae5A9q1bV5bQjlkE0VaGo4fkbUTL9tFTMn51z6IlDksQu53oso=
+X-Received: by 2002:a05:651c:b06:b0:309:231c:c676 with SMTP id
+ 38308e7fff4ca-30b93259b13mr54096241fa.17.1740999138576; Mon, 03 Mar 2025
+ 02:52:18 -0800 (PST)
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -118,153 +123,59 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4430; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=FxTyFdldQ/Rg6PXUyOvwskxzWGQOyp4Jrbq8b9VUONU=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDOlHO85KdGQ0fHr+8KSfXzH7n6m/Je2v/ju5m/9u/llPpozP H/zLO0pZGMQ4GGTFFFkSb/e1SK3/47LDuectzBxWJpAhDFycAjCRk8IM/ytqOt/+tbZ5fmjmnfAcXf G8t41L2VTfdNotn50cnhF0SIfhv8eGv2yppW3Whk79jGpT3XKuN+16IspsVXnh2+dYE/80XgA=
-X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
-Content-Type: text/plain
+References: <20250220162238.2738038-1-andriy.shevchenko@linux.intel.com> <Z8WJNPrD6033anWw@smile.fi.intel.com>
+In-Reply-To: <Z8WJNPrD6033anWw@smile.fi.intel.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 3 Mar 2025 11:52:07 +0100
+X-Gm-Features: AQ5f1JoQMnxj-WCNLM1m-bQQM8090ZXf675BYUgTuNzV5rfdvFkUP1ykES3KC3Q
+Message-ID: <CAMRc=McQMvbLc0OGa7JU_F7Y6Qw6-pUGK9EC25jfVAZNcTkzfA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] gpiolib: finish conversion to devm_*_action*() APIs
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Zijun Hu <quic_zijuhu@quicinc.com>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Raag Jadav <raag.jadav@intel.com>, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6dtR3tSlzFxd8
+X-ITU-Libra-ESVA-ID: 4Z6ffP5bwtzG08h
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741704722.20194@Wkm0ExZJ9Pwfo2Ai25izdQ
+X-ITU-Libra-ESVA-Watermark: 1741706891.76109@pqs7MkpQ/Cxx9E1HcQTghA
 X-ITU-MailScanner-SpamCheck: not spam
 
-When the size of a transfer exceeds the size of the FIFO (32 bytes), RX
-overflows will be generated and receive data will be corrupted and
-warnings will be produced. For example, here's an error generated by a
-transfer of 36 bytes:
+On Mon, Mar 3, 2025 at 11:49=E2=80=AFAM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Thu, Feb 20, 2025 at 06:20:25PM +0200, Andy Shevchenko wrote:
+> > GPIOLIB has some open coded stuff that can be folded to the devm_*_acti=
+on*()
+> > calls. This mini-series is for that. The necessary prerequisites are he=
+re
+> > as well, namely:
+> > 1) moving the respective APIs to the devres.h;
+> > 2) adding a simple helper that GPIOLIB will rely on;
+> > 3) finishing the GPIOLIB conversion to the device managed action APIs.
+> >
+> > The series is based on another series that's available via immutable ta=
+g
+> > devres-iio-input-pinctrl-v6.15 [1]. The idea is to route this via GPIOL=
+IB
+> > tree (or Intel GPIO for the starter) with an immutable tag for the devi=
+ce
+> > core and others if needed. Please, review and acknowledge.
+>
+> Bart, I know it's still 2 days left till the two-week ping time, but sinc=
+e we
+> are at rc-5 and this may affect other subsystems I gently ask for your
+> Ack/Review and I push it to my branch for GPIO (as it has dependencies wh=
+ich
+> are already in my and a few other trees).
+>
 
-  spi_master spi0: mchp_corespi_interrupt: RX OVERFLOW: rxlen: 4, txlen: =
-0
+I thought this needs an Ack from Greg or Rafael?
 
-The driver is currently split between handling receiving in the
-interrupt handler, and sending outside of it. Move all handling out of
-the interrupt handling, and explicitly link the number of bytes read of
-of the RX FIFO to the number written into the TX one. This both resolves
-the overflow problems as well as simplifying the flow of the driver.
-
-CC: stable@vger.kernel.org
-Fixes: 9ac8d17694b6 ("spi: add support for microchip fpga spi controllers=
-")
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
----
-
-Contrary to last time, the reporter did actually manage to this this
-version, and it resolved their probably apparently.
-
-Changes in v2:
-- Move all FIFO interactions out of the interrupt handler
-- Disable the non-error interrupts since they're dealt with out of the
-  isr now
-
-v1: https://lore.kernel.org/all/20250114-easiness-pregame-d1d2d4b57e7b@sp=
-ud/
-
-CC: Conor Dooley <conor.dooley@microchip.com>
-CC: Daire McNamara <daire.mcnamara@microchip.com>
-CC: Mark Brown <broonie@kernel.org>
-CC: linux-spi@vger.kernel.org
-CC: linux-kernel@vger.kernel.org
----
- drivers/spi/spi-microchip-core.c | 41 ++++++++++++++------------------
- 1 file changed, 18 insertions(+), 23 deletions(-)
-
-diff --git a/drivers/spi/spi-microchip-core.c b/drivers/spi/spi-microchip=
--core.c
-index 5b6af55855efc..62ba0bd9cbb7e 100644
---- a/drivers/spi/spi-microchip-core.c
-+++ b/drivers/spi/spi-microchip-core.c
-@@ -70,8 +70,7 @@
- #define INT_RX_CHANNEL_OVERFLOW		BIT(2)
- #define INT_TX_CHANNEL_UNDERRUN		BIT(3)
-=20
--#define INT_ENABLE_MASK (CONTROL_RX_DATA_INT | CONTROL_TX_DATA_INT | \
--			 CONTROL_RX_OVER_INT | CONTROL_TX_UNDER_INT)
-+#define INT_ENABLE_MASK (CONTROL_RX_OVER_INT | CONTROL_TX_UNDER_INT)
-=20
- #define REG_CONTROL		(0x00)
- #define REG_FRAME_SIZE		(0x04)
-@@ -133,10 +132,15 @@ static inline void mchp_corespi_disable(struct mchp=
-_corespi *spi)
- 	mchp_corespi_write(spi, REG_CONTROL, control);
- }
-=20
--static inline void mchp_corespi_read_fifo(struct mchp_corespi *spi)
-+static inline void mchp_corespi_read_fifo(struct mchp_corespi *spi, int =
-fifo_max)
- {
--	while (spi->rx_len >=3D spi->n_bytes && !(mchp_corespi_read(spi, REG_ST=
-ATUS) & STATUS_RXFIFO_EMPTY)) {
--		u32 data =3D mchp_corespi_read(spi, REG_RX_DATA);
-+	for (int i =3D 0; i < fifo_max; i++) {
-+		u32 data;
-+
-+		while (mchp_corespi_read(spi, REG_STATUS) & STATUS_RXFIFO_EMPTY)
-+			;
-+
-+		data =3D mchp_corespi_read(spi, REG_RX_DATA);
-=20
- 		spi->rx_len -=3D spi->n_bytes;
-=20
-@@ -211,11 +215,10 @@ static inline void mchp_corespi_set_xfer_size(struc=
-t mchp_corespi *spi, int len)
- 	mchp_corespi_write(spi, REG_FRAMESUP, len);
- }
-=20
--static inline void mchp_corespi_write_fifo(struct mchp_corespi *spi)
-+static inline void mchp_corespi_write_fifo(struct mchp_corespi *spi, int=
- fifo_max)
- {
--	int fifo_max, i =3D 0;
-+	int i =3D 0;
-=20
--	fifo_max =3D DIV_ROUND_UP(min(spi->tx_len, FIFO_DEPTH), spi->n_bytes);
- 	mchp_corespi_set_xfer_size(spi, fifo_max);
-=20
- 	while ((i < fifo_max) && !(mchp_corespi_read(spi, REG_STATUS) & STATUS_=
-TXFIFO_FULL)) {
-@@ -413,19 +416,6 @@ static irqreturn_t mchp_corespi_interrupt(int irq, v=
-oid *dev_id)
- 	if (intfield =3D=3D 0)
- 		return IRQ_NONE;
-=20
--	if (intfield & INT_TXDONE)
--		mchp_corespi_write(spi, REG_INT_CLEAR, INT_TXDONE);
--
--	if (intfield & INT_RXRDY) {
--		mchp_corespi_write(spi, REG_INT_CLEAR, INT_RXRDY);
--
--		if (spi->rx_len)
--			mchp_corespi_read_fifo(spi);
--	}
--
--	if (!spi->rx_len && !spi->tx_len)
--		finalise =3D true;
--
- 	if (intfield & INT_RX_CHANNEL_OVERFLOW) {
- 		mchp_corespi_write(spi, REG_INT_CLEAR, INT_RX_CHANNEL_OVERFLOW);
- 		finalise =3D true;
-@@ -512,9 +502,14 @@ static int mchp_corespi_transfer_one(struct spi_cont=
-roller *host,
-=20
- 	mchp_corespi_write(spi, REG_SLAVE_SELECT, spi->pending_slave_select);
-=20
--	while (spi->tx_len)
--		mchp_corespi_write_fifo(spi);
-+	while (spi->tx_len) {
-+		int fifo_max =3D DIV_ROUND_UP(min(spi->tx_len, FIFO_DEPTH), spi->n_byt=
-es);
-=20
-+		mchp_corespi_write_fifo(spi, fifo_max);
-+		mchp_corespi_read_fifo(spi, fifo_max);
-+	}
-+
-+	spi_finalize_current_transfer(host);
- 	return 1;
- }
-=20
---=20
-2.48.1
-
+Bart
 
 
