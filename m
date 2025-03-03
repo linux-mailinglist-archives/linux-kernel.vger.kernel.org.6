@@ -1,131 +1,128 @@
-Return-Path: <linux-kernel+bounces-541941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FF9AA4C39F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:41:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CBF3FA4C3A3
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:41:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7392516EEE1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:41:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E5FA16F531
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:41:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFF0721422D;
-	Mon,  3 Mar 2025 14:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="dTJX1luz"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A08C62139BF;
+	Mon,  3 Mar 2025 14:40:57 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 536D5214213
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 14:40:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA9D12FF69
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 14:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741012806; cv=none; b=NohQySul9iVWPWfzvWae2vkqxBt8eTmsQnDh/rVN8K6AoiUQoGr9RTzYsoDgzPMiwaoE1QDZsY8x9mUQRKpWVIAxVrmPjhRCxXWwafytpO9BSW2uLZfPR6umrSUf5NKfL/ZwaHsNv2GElH7unzvuoEF3L4J/xS1J9DgRzElWF48=
+	t=1741012857; cv=none; b=dLVRM74Gx0KjPzaNcE5i71s/JUhDkgssyU9n44zujc/si/fmiJQF4+JcYS/XLkBk0P2wuD5FQl7yPvhnR3UBtEFIidCpusb+0LCTh1fvMj9U8A078vvh2sEgNkDQJ2yXbCm9+YVXgVwvfKCqsMKQkYtELRe7mA6+wKHMaQNurQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741012806; c=relaxed/simple;
-	bh=huTITU+3NLOlGIQKUO1Q57DNwMMY/Xb18Ro9MUcuAZA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=nw7Vh7FPBcs9G2K4TV8PfzRB+JhvAuzKqCAHivaEoMg+hsd6hXR19Kxf4sOyffp2ES+rp9jE5rTl48UcV4eJT9Q55IxlpqVqW0aFA+1zhHBzqkCAgb5CzqDC3q0VY1Y/wsi6P4o4cBpabLMUAdQHpPPXYwqm6Ns8K5UqxPOvfMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=dTJX1luz; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-390eb7c1024so2512745f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 06:40:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1741012800; x=1741617600; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cCvz2PQitaL3G15KvIJkAOr8tNO1gvVwjPom0Ibxufk=;
-        b=dTJX1luzeTmtWi+dFz9agN48SvJXrKpiLJhBzXIU4vnMm/QGn9sE1ebGiC2PWA4Vm7
-         W+byrAciKvEzUmYrnNZnVTvhN8H0i6Enllf4Um9v5AnDxpbSnnqJEth9ze/KBUntGs7y
-         ZeNQENI8t1kg3TiO/bQgBZDoFe/B66F2AwEy9TOEF3e5i99vVIrwmxG2ZWmkyM3zr1na
-         Ir69Z7r3ylWpWVLJXEzraoDHnMiWiY0ok8UdcNDiQk8wkB8qGfLWqaulKvAtqX6zxxPU
-         nI4N+p0rNJD6T1fInxNHi9IzyP6T5nR1r1P8GgqRZ/N3dlcBrJg93oKDT6vxow5Rif2w
-         xgkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741012800; x=1741617600;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cCvz2PQitaL3G15KvIJkAOr8tNO1gvVwjPom0Ibxufk=;
-        b=orZMqdbfT0e9cCHIJ4vMryrAn2SqYRtRDKraIZfaLA19o2PQcRcFASGmj2dmUAAvp7
-         oJzFsDM9pMVfv/gcn/Q2HCiwSSAAL70E7e2OTI9F5VnltwvKAY5vcDcPzLxZqUKIIMCH
-         Bt38ojNxVk3+FcBI5KJS6DOz+nL/My1rfp4wBbuXIINVKFFiG0dw2v1QwxPTQX010FCO
-         7DqcvDOB1Qar5PBcJbr5qtRW1I+uPQh0Di3OUYK/3XjW2lVcoVzS9gNt9fyW532ZRxg/
-         4hPhZAqZclxDBY7Vf+CwANnpEHrCS3IrNuJuwpt4XCUeAqI8E90Vfe6lU5UOreJ32Tvx
-         E7Bg==
-X-Gm-Message-State: AOJu0Yw9NbxlKJumfmPMbZ5RmnYWLGAIyH6oZax12ZXZgnuCxg+Iv8rt
-	D4B7HjhuuMcCd5YSuGz/MHnQ0Yxy8v3pQsI7mzhlhiSUGv3yNXDZ5P93EuYf87Y=
-X-Gm-Gg: ASbGnctf8MbbSZY8cXfY2IdKxcDCjb/lIBvvjRFWF7N4nNtNXionwePyTUiKU5PFfes
-	WsikGXlVP4/6p4Iey2suDrjyCrfsK/W2WmdhzVAx/l+LpDrwU2pras91W+B1+2M2Hu6RAs5Wy4/
-	yGLP5DGrA86PLgN1LRFK6UftWIYjHNmBRNOzeABP8UvgL/TCr0ETafUWOApkouiFw79xnS6UsWU
-	neE3x/I5rPPt08BPfPHQDrrHoVJJcKU6jEUtOW4+nDv/RAi4aWon4PnqjdGZYnGQTQbUNnsGhO1
-	lKnMMCp+F1IL7vD30fgbrv6y1fHtq616XXRoeEpJ0woZWDOcJrKsPEhDPVdebnKqeHzxhDwfgfb
-	pFa3Dr7Fk0N6/l2WnhnEM/OCCLh09
-X-Google-Smtp-Source: AGHT+IFGoay4YJM6YSXz0DZ05o3quafyCNLOWh8vQu4Eq4apk6qCX8ogXLL13gs5Zle+ply0NrLrLg==
-X-Received: by 2002:a05:6000:1f8b:b0:391:ccf:2d1b with SMTP id ffacd0b85a97d-3910ccf2dcdmr2532910f8f.49.1741012800564;
-        Mon, 03 Mar 2025 06:40:00 -0800 (PST)
-Received: from [127.0.1.1] (amontpellier-556-1-148-206.w109-210.abo.wanadoo.fr. [109.210.4.206])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b7c43sm14394801f8f.49.2025.03.03.06.40.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 06:40:00 -0800 (PST)
-From: David Lechner <dlechner@baylibre.com>
-Date: Mon, 03 Mar 2025 14:39:57 +0000
-Subject: [PATCH] MAINTAINERS: remove adi,ad7606.yaml from SEPS525
+	s=arc-20240116; t=1741012857; c=relaxed/simple;
+	bh=DOp3KjDEz0qGTGAuOx5OcUhKxH279AG6sIlVJA9e1ow=;
+	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=U4R4aU/q5hE169XyBjSBFEkq59WzHo7wx144bTAlqoLJp0Ac5TObe+7XFNfmTg+B46oE7x+u+ggG18FKb1eX/6FjRjI8ZgqrbvzHMUZ2xpo3fFb/XxWuPWcnL5KBHZzCbdMewgx/yH5O8antW9TySC+dcOJvcAg/xUKEW07q9IA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Z61Zl13Y8zwW49;
+	Mon,  3 Mar 2025 22:35:59 +0800 (CST)
+Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3682E1402C8;
+	Mon,  3 Mar 2025 22:40:51 +0800 (CST)
+Received: from [10.67.121.177] (10.67.121.177) by
+ kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Mon, 3 Mar 2025 22:40:50 +0800
+CC: <yangyicong@hisilicon.com>, <catalin.marinas@arm.com>, <will@kernel.org>,
+	<tglx@linutronix.de>, <peterz@infradead.org>, <mpe@ellerman.id.au>,
+	<linux-arm-kernel@lists.infradead.org>, <mingo@redhat.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <dietmar.eggemann@arm.com>,
+	<linuxppc-dev@lists.ozlabs.org>, <x86@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <morten.rasmussen@arm.com>,
+	<msuchanek@suse.de>, <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
+	<jonathan.cameron@huawei.com>, <prime.zeng@hisilicon.com>,
+	<linuxarm@huawei.com>, <xuwei5@huawei.com>, <guohanjun@huawei.com>,
+	<sshegde@linux.ibm.com>
+Subject: Re: [PATCH v11 3/4] arm64: topology: Support SMT control on ACPI
+ based system
+To: Sudeep Holla <sudeep.holla@arm.com>, Pierre Gondois
+	<pierre.gondois@arm.com>
+References: <20250218141018.18082-1-yangyicong@huawei.com>
+ <20250218141018.18082-4-yangyicong@huawei.com> <Z8HAkZiHYRjj97M7@bogus>
+ <336e9c4e-cd9c-4449-ba7b-60ee8774115d@arm.com>
+ <20250228190641.q23vd53aaw42tcdi@bogus>
+ <a52972c7-aadd-4a77-a292-057fa5f8372d@arm.com> <Z8WPiOweOjFZqTwN@bogus>
+From: Yicong Yang <yangyicong@huawei.com>
+Message-ID: <32e572d6-dedd-d8a3-13be-6de02303a64d@huawei.com>
+Date: Mon, 3 Mar 2025 22:40:49 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <Z8WPiOweOjFZqTwN@bogus>
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250303-maintainers-remove-adi-ad7606-yaml-from-seps525-lcd-controller-v1-1-a4e4f1b824ab@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIADy/xWcC/x2OywrDIBAAfyXsuQs20Qj9ldKD0bVd8BHWEFJC/
- r3SwxzmNHNCI2Fq8BhOENq5cS1d7rcB/MeVNyGH7jCq0ahJTZgdl61D0lAo153QBe7YWc34dTl
- hlJqx0drMaDD5gL6WTWpKJLhYG7TXSzTaQY+sQpGP/8DzdV0/McmlB5AAAAA=
-X-Change-ID: 20250303-maintainers-remove-adi-ad7606-yaml-from-seps525-lcd-controller-b77d4c4bf54a
-To: linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev, 
- linux-fbdev@vger.kernel.org, linux-iio@vger.kernel.org, 
- Michael Hennerich <michael.hennerich@analog.com>
-Cc: David Lechner <dlechner@baylibre.com>
-X-Mailer: b4 0.14.2
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemd200014.china.huawei.com (7.221.188.8)
 
-Remove Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml from
-STAGING - SEPS525 LCD CONTROLLER DRIVERS. This was likley a copy/paste
-mistake. There is no bindings file for SEPS525 since it is only in
-staging.
+On 2025/3/3 19:16, Sudeep Holla wrote:
+> On Mon, Mar 03, 2025 at 10:56:12AM +0100, Pierre Gondois wrote:
+>> On 2/28/25 20:06, Sudeep Holla wrote:
+>>>>>
+>>>>> Ditto as previous patch, can get rid if it is default 1.
+>>>>>
+>>>>
+>>>> On non-SMT platforms, not calling cpu_smt_set_num_threads() leaves
+>>>> cpu_smt_num_threads uninitialized to UINT_MAX:
+>>>>
+>>>> smt/active:0
+>>>> smt/control:-1
+>>>>
+>>>> If cpu_smt_set_num_threads() is called:
+>>>> active:0
+>>>> control:notsupported
+>>>>
+>>>> So it might be slightly better to still initialize max_smt_thread_num.
+>>>>
+>>>
+>>> Sure, what I meant is to have max_smt_thread_num set to 1 by default is
+>>> that is what needed anyways and the above code does that now.
+>>>
+>>> Why not start with initialised to 1 instead ?
+>>> Of course some current logic needs to change around testing it for zero.
+>>>
+>>
+>> I think there would still be a way to check against the default value.
+>> If we have:
+>> unsigned int max_smt_thread_num = 1;
+>>
+>> then on a platform with 2 threads, the detection condition would trigger:
+>> xa_for_each(&hetero_cpu, hetero_id, entry) {
+>>     if (entry->thread_num != max_smt_thread_num && max_smt_thread_num)     <---- (entry->thread_num=2) and (max_smt_thread_num=1)
+>>         pr_warn_once("Heterogeneous SMT topology is partly
+>>                       supported by SMT control\n");
+>>
+>> so we would need an additional variable:
+>> bool is_initialized = false;
+> 
+> Sure, we could do that or skip the check if max_smt_thread_num == 1 ?
+> 
+> I mean
+> 	if (entry->thread_num != max_smt_thread_num && max_smt_thread_num != 1)
+> 
 
-The removed file matches Documentation/devicetree/bindings/iio/*/adi,*
-under ANALOG DEVICES INC IIO DRIVERS already so wasn't just misplaced.
+this will work for me. will launch some tests.
 
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
-This falls under FBTFT which is currently orphaned, so someone else will
-have to volunteer to pick this up.
----
- MAINTAINERS | 1 -
- 1 file changed, 1 deletion(-)
+Thanks.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8e0736dc2ee0e33544fa373a4978b7dae18c040c..215dbaeedced8473b5b339329b3596a2fbfd13b1 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -22512,7 +22512,6 @@ STAGING - SEPS525 LCD CONTROLLER DRIVERS
- M:	Michael Hennerich <michael.hennerich@analog.com>
- L:	linux-fbdev@vger.kernel.org
- S:	Supported
--F:	Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
- F:	drivers/staging/fbtft/fb_seps525.c
- 
- STAGING - SILICON MOTION SM750 FRAME BUFFER DRIVER
-
----
-base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
-change-id: 20250303-maintainers-remove-adi-ad7606-yaml-from-seps525-lcd-controller-b77d4c4bf54a
-
-Best regards,
--- 
-David Lechner <dlechner@baylibre.com>
 
 
