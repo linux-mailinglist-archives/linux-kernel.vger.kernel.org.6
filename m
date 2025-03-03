@@ -1,138 +1,204 @@
-Return-Path: <linux-kernel+bounces-542792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 826A7A4CDBF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:56:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C8C23A4CDC0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:57:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8461C189402C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 21:57:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0E6A189401A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 21:57:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E17522FF4F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FAA0235C04;
 	Mon,  3 Mar 2025 21:56:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gGJjuC1r"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MiKBgU4v"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D61C11F03E1
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 21:56:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EEC71F0E49;
+	Mon,  3 Mar 2025 21:56:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741039002; cv=none; b=TpAW4tv6WGnIuRfIbXMIu4L9HymdjTmwFpoUo4kVC/y1NLZeY9AAGiAIIDQDWUeMUv6+TprOO0BAfboP22IQQk4VsBV2wIokZqblqlXwjHvpjiNbCDJZaYfaTCatN3Lfd7cGmzLty2ieCs5fyGVJeoV6lPnIgyzC5cbuy1Q7BR8=
+	t=1741039003; cv=none; b=POAlfk2fUQss/bp1sG9dwL0Xmr7nGt1wq/Fu4AibhGD3KW/JkFa58hzDeF1QKBGwNViNDYjTG5Dr8pYfDgPMeqlIZSNAPJxowkGxul/KphLL06oLPPBiuiKZtI2PVq122V5lv/kNkhDVPS/1uiyj/cMbeENFTubZ3Cjs4ZNGb18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741039002; c=relaxed/simple;
-	bh=hQRHnDkkYYJm1kGP411WuGPS6pRSmfEvNG8A2sv/jFI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LOOIW0cLqRAbqwnRcO9fj7pd/6C4tnXXfcF4Eo9LjhZUo2xC6Uvgr5foA3meqf97apsdsAkKZrKOf1DQJMZsyh+hdn6iJ5rm99y1oKibH8+Z7n8wl44pCH4xsVHXseEPHOXlfzivQ93Z4eZRlBgxk+H/nvf8SSMsyezkmvJAVAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gGJjuC1r; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 523B5o38004538
-	for <linux-kernel@vger.kernel.org>; Mon, 3 Mar 2025 21:56:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Kdn0EPWjFWi47gSGgVfPoqhV4FTHW45fU21tUvu6lFM=; b=gGJjuC1rR3uk/jKs
-	PyqX6LaRjzfVdTM8o2IIHA8+VSQvpd8NxuRZ8q+SvGrQ7pZEkc9wx0OPfJizgP9U
-	hIprJcrb6w8Nj2Ys3RqKH6hoNmJ+CWOwsyik6zgpcLSvttHnpysQzm41xkZJIGES
-	ewnI2VPLLs5OZrLoXgbKMju6I77fnWApKh2ZdLhy5mLcOC+svC79AA2uICJ4oZuK
-	E0879FZOme7PtrDO94DZBgi+KEQpGpfyaMBjA4VLqqQ7kQfbsBHE8Xh7uGOUzzl/
-	OLpATw3+Zv+2GmFbFfuGd0F+O/SAB+NN+NsSfVcdWQ+mnKbKk5fgLiy0kApUk4is
-	OJQxzw==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 453u0d5wrj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 21:56:39 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-474eb69d822so3753141cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 13:56:38 -0800 (PST)
+	s=arc-20240116; t=1741039003; c=relaxed/simple;
+	bh=lEaVgkWLDsAoo7SCtrvHeS2rrk7e+4rhOrGqQw8hgx0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GElZVDZ3/cmipwhiDtuyuThxD7MoFqBig74/BO/TzZLs5+3M3LwIZXHGlzDaZxgHQ85lhx9rs+vCXaVwAhjLYjvzfX0lhYch9hs7KthGotxrV+kGU4SvXSdGZ0h39xTHHXb3L6PlO+FtNzJ54YQfZ9JafChA3oSwCGNVxLR4XbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MiKBgU4v; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e3c8ae3a3b2so3674362276.0;
+        Mon, 03 Mar 2025 13:56:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741039000; x=1741643800; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MNbwSIfUeSXXPmyUg0Xj+MaylekMn1nHxUkSWUyl25E=;
+        b=MiKBgU4v2bMJxeVC89sYOfaX04ZbMqdTZcET0he37eDT2WSl/B+1u1CiCdpVl7/m8P
+         lMiGynT0qCD5s+ZB6vB8+XhRpi0KGu4lQ2GvlDtDr3qo1GJq+aj0oOEnXiK0nBm/CBl0
+         2D1bTz7eOpGolHpdWMZtZIuQy4N+ZgWy/S3l+5B6wn+/oGBhnXF3cFiAaZxsiZS4wFmf
+         Pn4ANVi0Zywv06tMKLDYESMZsrAK77hNS5vIMlxZGIWMCDxeP/cYm1qGuK9IB/Uh0WO9
+         2i3sNVyy2K21Ng8ZrQrYZMAhaLHJq17nCDrep87T5LmNl9UyJ1ulIAPpoxrpIbTCbRb6
+         PiDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741038998; x=1741643798;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kdn0EPWjFWi47gSGgVfPoqhV4FTHW45fU21tUvu6lFM=;
-        b=ulTRrMNskTcNQZ/9vmPmWWxvG2N0/UUpmkhhrABhYUzt9JBtTudy7xrSX+9KBoyl+y
-         o04CHhTH60B6SsBppKF6Vs++KGjQVbWmNQ/rTcEB8+GQHMXxGqpaC8ZoR1LWkKorLU2z
-         qRib7S6fCIyrFt+UAyun/uybL3tsuY/rk0nNMlzHgZTMHQhqiQ8IK4thsrKhQ/1tq+ZQ
-         8FYXjUZQajg/PBf/X0DSATHY9GtSRq/UXqNw44B3fuCkQCbT8cwjgBPL5pWtPhG9zyaL
-         VUX1WY38iV/N0vBR5xhMf9MCOXMXzunpFlOK/HThgUYCJu1vjl40UQUuqGPdsTz5mppQ
-         YXgg==
-X-Forwarded-Encrypted: i=1; AJvYcCXoyfjQArRX7VqG7q+kvV/p2FFP5rWMY6Es8Zll2mutvgfA9KcFQo1RiMMT0thzmLjf+Yto5nRmn49EZTw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFjfz/JKxrafwbPq2ziUF28SSg6UaPXe608J/2C7Q+K8RVO7Pb
-	lhcW2A21s4wz+wP6TqtnYAOS+xfMP8Z/g4gQmA8akV7YSIM4QYZQYdMVOdULY12/29t65enSdUa
-	KLeUu7GsI/VG269jfLF4Ta25Zptn9FnKnHd32S+LCVkzxUanSK6WbX7bKWFzxod0=
-X-Gm-Gg: ASbGnctUGfbHq1/veO7bvGKsLcEh+WTYQiSJW7/NfpsGcA6qSi2ZZ2C+AichfXSAigz
-	lVLsiof5CtpWOTnCF0VqJBlJgWQFuuNhlrAm+FvLLrgyCSiQa5y7BZSBaVZVm1F5zR+63bQBOsm
-	reblbBLzjFFJ68Yh/Q3AEPSlrzO58XX5FLymX+mMLZ7TF8MTfuZnPTl9A9wRl2MNgDbApwep5DP
-	hkcIMHHyUN6cANWvM4QQVBIR7iz4zDiQDgIfrUuVhe3D2TowdhqZEN7RyV+d3Wn9T97FbD/KlJd
-	UuTknypvbFYTocp86nglwGLav8RfvWOkcJTb2pHjl1hubMPlT3fXQdPDo42OgCOO7QRvwQ==
-X-Received: by 2002:a05:6214:2aad:b0:6e8:9ed4:140c with SMTP id 6a1803df08f44-6e8a0d6de81mr72806056d6.7.1741038997598;
-        Mon, 03 Mar 2025 13:56:37 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFrJuoSvkjwi3RX1KRgiUtMf0XgXWhFFVFKUGmACEcoXKDG2ph4RBblLXA+X1oIIsGokl70Sg==
-X-Received: by 2002:a05:6214:2aad:b0:6e8:9ed4:140c with SMTP id 6a1803df08f44-6e8a0d6de81mr72805786d6.7.1741038997268;
-        Mon, 03 Mar 2025 13:56:37 -0800 (PST)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac1d860c279sm172592866b.27.2025.03.03.13.56.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Mar 2025 13:56:36 -0800 (PST)
-Message-ID: <33bf565a-82af-46d3-920a-ed664aaef183@oss.qualcomm.com>
-Date: Mon, 3 Mar 2025 22:56:33 +0100
+        d=1e100.net; s=20230601; t=1741039000; x=1741643800;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MNbwSIfUeSXXPmyUg0Xj+MaylekMn1nHxUkSWUyl25E=;
+        b=l7nG87cD5lGc2n8cDUKekLFaNBBVc4uIZRryV68cDWEOKMvkZSbGo+LQO0GYqdO9XY
+         kWuIpR6c2JkSYe2qsW3CjJrWsc6++ftGSR5gqsHU8ODk4UBWBsXJV03rTx2eGW2c6hJU
+         H5SuHeZGRmzCtXTXYNt2zHu3VZQQWk5+eupm0eDEpF6EDzzRRspsr4+SbQJitgODn4Dq
+         l7na9smOFOWZLO65kSCj0EfSa1/vHNxXxRAagvbwV1u2WST6c+xYeYpN/V7Ib1STB7Go
+         RMyr4GPceNWg+9vjvQyw/vPbm5+BwqYpd/aZmZgtqjCuwJNw+QhUZisz7z5opT+3I/lI
+         zR1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV1V8hfyaMbUXl/+7tPvG0/B8Nyr5jPEQvq1veOjFy6cd+HgaLVsdJ00XiFPgIcVcevpAwcCG7Y8lfw@vger.kernel.org, AJvYcCWw2Z5qROstoZzgil5T+anoe+0kjVbGOt5eDBk78GpVok/Elq6STw1tQL75CIrQPHB8xdro2iTS0FtpjpnR@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFA9X/pmzv+wsBdSLbTsNXa1kzPyubM4LWFPYY6azxpySfVONF
+	nHzk4p5K1u6bjBo6sHN3hIAAT6mie2T22IV8DTKrs/HzgkmubN1w
+X-Gm-Gg: ASbGncsEHW6bcjZ6fYEBbT8G5TttZ/it1W4J/5MwNywZWRa9VOnUGzJUgxxAv/fJEzD
+	P3eTEaT0+VzK6+2PZ2RiduyMuId3/8VdUsbs5ehJFY4O3z942Q0n1vVer82hucZOd3rYuQ4Gwkw
+	407XLYCgc0S35xsNzZBYrgF6koOj6RNqAD41LAAUdRiobls1aUqfiZQu6KO3wFo2wxTxvXxBEv9
+	q1bKzLqO5CHMRojrx5rQGJEdLqw+IHr78rauKk4DEtW5WEqErfycfXn8L+6dhU5tccCS3H5g52h
+	rYWPV+r7+U0yC1aYL3PKSoy6hERWf6ZXzjNq6/P2Twc=
+X-Google-Smtp-Source: AGHT+IEA8yLhpHzDWjatXgDyinVX0Lpz5abZAJlFq+1cN7NEeFsiJwzy35+xYSdJC0T1I1JTUbAr+Q==
+X-Received: by 2002:a05:6902:1682:b0:e5a:ca6b:4531 with SMTP id 3f1490d57ef6-e60b2e9a4d2mr20720874276.12.1741039000158;
+        Mon, 03 Mar 2025 13:56:40 -0800 (PST)
+Received: from localhost ([2a03:2880:25ff:5::])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e60a3a42594sm3315506276.31.2025.03.03.13.56.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 13:56:39 -0800 (PST)
+From: Joshua Hahn <joshua.hahnjy@gmail.com>
+To: Honggyu Kim <honggyu.kim@sk.com>
+Cc: gourry@gourry.net,
+	harry.yoo@oracle.com,
+	ying.huang@linux.alibaba.com,
+	kernel_team@skhynix.com,
+	gregkh@linuxfoundation.org,
+	rakie.kim@sk.com,
+	akpm@linux-foundation.org,
+	rafael@kernel.org,
+	lenb@kernel.org,
+	dan.j.williams@intel.com,
+	Jonathan.Cameron@huawei.com,
+	dave.jiang@intel.com,
+	horen.chuang@linux.dev,
+	hannes@cmpxchg.org,
+	linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-mm@kvack.org,
+	kernel-team@meta.com,
+	yunjeong.mun@sk.com
+Subject: Re: [PATCH 2/2 v6] mm/mempolicy: Don't create weight sysfs for memoryless nodes
+Date: Mon,  3 Mar 2025 13:56:36 -0800
+Message-ID: <20250303215638.317539-1-joshua.hahnjy@gmail.com>
+X-Mailer: git-send-email 2.43.5
+In-Reply-To: <c43c64f4-e697-468e-80af-87bd02a95ba2@sk.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 4/6] clk: qcom: Add NSS clock Controller driver for
- IPQ9574
-To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>, andersson@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org,
-        catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de,
-        richardcochran@gmail.com, geert+renesas@glider.be,
-        dmitry.baryshkov@linaro.org, arnd@arndb.de, nfraprado@collabora.com,
-        quic_tdas@quicinc.com, biju.das.jz@bp.renesas.com, ebiggers@google.com,
-        ross.burton@arm.com, elinor.montmasson@savoirfairelinux.com,
-        quic_anusha@quicinc.com, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        netdev@vger.kernel.org
-Cc: quic_srichara@quicinc.com, quic_varada@quicinc.com
-References: <20250226075449.136544-1-quic_mmanikan@quicinc.com>
- <20250226075449.136544-5-quic_mmanikan@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250226075449.136544-5-quic_mmanikan@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: lY7QQXu5Ly-EqWB_tNC54fARrgVuA46k
-X-Proofpoint-GUID: lY7QQXu5Ly-EqWB_tNC54fARrgVuA46k
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-03_11,2025-03-03_04,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- phishscore=0 malwarescore=0 spamscore=0 mlxscore=0 suspectscore=0
- clxscore=1015 bulkscore=0 priorityscore=1501 mlxlogscore=662
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2503030170
+Content-Transfer-Encoding: 8bit
 
-On 26.02.2025 8:54 AM, Manikanta Mylavarapu wrote:
-> From: Devi Priya <quic_devipriy@quicinc.com>
+On Thu, 27 Feb 2025 12:20:03 +0900 Honggyu Kim <honggyu.kim@sk.com> wrote:
+
+Hi Honggyu, thank you for taking time to review my patch, as always!
+I thought I had sent this, but it seems like it was left in my draft
+without being sent. 
+
+I will follow Gregory's advice and we will drop the patch from this series,
+and send the first patch only (with Yunjeong's changes). Thanks again!
+
 > 
-> Add Networking Sub System Clock Controller (NSSCC) driver for ipq9574 based
-> devices.
+> On 2/27/2025 11:32 AM, Honggyu Kim wrote:
+> > Hi Joshua,
+> > 
+> > On 2/27/2025 6:35 AM, Joshua Hahn wrote:
+> >> We should never try to allocate memory from a memoryless node. Creating a
+> >> sysfs knob to control its weighted interleave weight does not make sense,
+> >> and can be unsafe.
+> >>
+> >> Only create weighted interleave weight knobs for nodes with memory.
+> >>
+> >> Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
+> >> ---
+> >>   mm/mempolicy.c | 2 +-
+> >>   1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+> >> index 4cc04ff8f12c..50cbb7c047fa 100644
+> >> --- a/mm/mempolicy.c
+> >> +++ b/mm/mempolicy.c
+> >> @@ -3721,7 +3721,7 @@ static int add_weighted_interleave_group(struct 
+> >> kobject *root_kobj)
+> >>           return err;
+> >>       }
+> >> -    for_each_node_state(nid, N_POSSIBLE) {
+> > 
+> > Actually, we're aware of this issue and currently trying to fix this.
+> > In our system, we've attached 4ch of CXL memory for each socket as
+> > follows.
+> > 
+> >          node0             node1
+> >        +-------+   UPI   +-------+
+> >        | CPU 0 |-+-----+-| CPU 1 |
+> >        +-------+         +-------+
+> >        | DRAM0 |         | DRAM1 |
+> >        +---+---+         +---+---+
+> >            |                 |
+> >        +---+---+         +---+---+
+> >        | CXL 0 |         | CXL 4 |
+> >        +---+---+         +---+---+
+> >        | CXL 1 |         | CXL 5 |
+> >        +---+---+         +---+---+
+> >        | CXL 2 |         | CXL 6 |
+> >        +---+---+         +---+---+
+> >        | CXL 3 |         | CXL 7 |
+> >        +---+---+         +---+---+
+> >          node2             node3
+> > 
+> > The 4ch of CXL memory are detected as a single NUMA node in each socket,
+> > but it shows as follows with the current N_POSSIBLE loop.
+> > 
+> > $ ls /sys/kernel/mm/mempolicy/weighted_interleave/
+> > node0 node1 node2 node3 node4 node5
+> > node6 node7 node8 node9 node10 node11
+
+I see. For my education, would you mind explaining how the numbering works
+here? I am not very familiar with this setup, and not sure how you would
+figure out what node is which, just by looking at the numbering.
+
+> >> +    for_each_node_state(nid, N_MEMORY) {
 > 
-> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
-> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-> ---
+> Thinking it again, we can leave it as a separate patch but add our patch 
+> on top of it.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+That sounds good to me. 
 
-Konrad
+> The only concern I have is having only N_MEMORY patch hides weight
+> setting knobs for CXL memory and it makes there is no way to set weight 
+> values to CXL memory in my system.
+
+You can use weighted interleave auto-tuning : -)
+In all seriousness, this makes sense. It seems pretty problematic that
+the knobs aren't created for the CXL channels, and I'm not sure that hiding
+it is the correct approach here (it was not my intent, either).
+
+> IMHO, this and our patch is better to be submitted together.
+
+That sounds good. We can hold off on this patch then, and just consider
+the first patch of this series. Thank you for letting me know!
+
+Thank you for always reviewing my patches. Have a great day!
+Joshua
+
+Sent using hkml (https://github.com/sjp38/hackermail)
 
 
