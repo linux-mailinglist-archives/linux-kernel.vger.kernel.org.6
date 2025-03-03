@@ -1,75 +1,91 @@
-Return-Path: <linux-kernel+bounces-541301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6472BA4BB18
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:46:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0E86A4BB1B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:46:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C02B17115D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:46:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31704171207
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:46:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFE731F1518;
-	Mon,  3 Mar 2025 09:46:09 +0000 (UTC)
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDACC1F12F6;
+	Mon,  3 Mar 2025 09:46:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bie2sbwR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D58221F12F4;
-	Mon,  3 Mar 2025 09:46:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E79A185C5E;
+	Mon,  3 Mar 2025 09:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740995169; cv=none; b=a4XWVjJehmQzajQn6FMdNFLxlJljdaE1eifimdOCf8wcfOf9SZr+wQPUcjB8Cz0p2aWK730AOJ0xuiKzzgZ2vMAegCZrreLp5E9E0TTEDz1/OyAer893aLnPXusRWXFuDN79Lplz5VSJZ/PGvM+CJdyGXj/Ee8su7a2cZjTW470=
+	t=1740995177; cv=none; b=C8Pspc6zrAhVxV2FtY0oH4aNr2KWZxwf5RsCwnL1+ki1MUdZWiOwVxlHigw4g6J91dKRJiLwioUo06aB8Y5MtkfoaUIP0ettCdBb4ky8TuutYpWJQX5+S5M/pTqNbKdf/OSZdXsf4S0aY6WRCHLjWMH19KpkiEOzTdRBKpBHhVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740995169; c=relaxed/simple;
-	bh=qRFySgLxKhY09jGIh6AHVnc/LV4R144Fqvz+okmsay8=;
+	s=arc-20240116; t=1740995177; c=relaxed/simple;
+	bh=sjUNmsBoxg1lTuhhmLZRfysPKGMMkrAdGhjiE+alWPA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RQCgj3NiO/W2poFh14ocO2l4BsDfQBrNYG3P5MEoIM5MegKR8ouMyO725u/bpisTgWhhu7CaQbcnyKPto/+3Ar+jPzTgtJw0wpJjUnkGtVMLFrAGkv3C1NPKljUqRyi9OWvss+kdyaMBqqDF4XQAjGJ24Fw0LS47F1X+jtUlTU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2fe82414cf7so8224442a91.0;
-        Mon, 03 Mar 2025 01:46:07 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740995167; x=1741599967;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xerpIyc82MG6KvHsqBUiiJzLJy4hP6RzDKtr/CeFuq4=;
-        b=Ai9RgHowmYjpg07TnhN9dhLhj26L9EMSU2D7qdW6mnemz5Ieb55HL/+C9cKZNvsL2e
-         nSwQpASolQ89BMIKlZdvvww6/xkmlGTdxLQm5XG7NhqoFDv/LxMdeOvz/TmiD2OwwjWm
-         /EhVRQxekA49jN2v7fmxse5Ka8wLLg6WO+XuDswuUkAskur0xlAO6jUF4VWLkh2frv9q
-         nwlEIOMpUbzabjoeNZJDR60KyaFgzcpz2DwrZGcNqP6rc8tpzazaVd5X3V68sGUj8v6o
-         jmWmLJ2cC8UPCDsdQlUVTQu9q5RV8fhgSHC5xYU8g04T61x828EU0VIrZ0R05bRMSqwd
-         Ppbg==
-X-Forwarded-Encrypted: i=1; AJvYcCWQgYEJdVb0XBnXWgTDb1KB0vlex8Fewae1VWicyg0Z7MYgehtjqP6KWHmiMfnyt4t4G1wScVR1YhCZ70s=@vger.kernel.org, AJvYcCX0mjBnrW6rQt9BFekqFUpUkt6uttRyreflN5F90faKAvcR4RtozMIfqPXZCD1Bp3Q76lk7VkCl3IbZJA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxqqtlj6+XSwrZZC6BzDiK4b+v//fNu2w+Dqhj1R6/kEg5q5YZ/
-	B12czt4ntMTmv5ErxwIJRvc1Cc4sHyEEl+LYRAGJZRGTNZm6PGwo
-X-Gm-Gg: ASbGnctCoi2MPryfca5wVKqd/eDU/3f87rB3J//N8wft0ISqyTKA3DCxZl61KoUCGNC
-	cUoSEj+ca3T4+M/4sPDBhxpMYT1fct7S4oKf7kX8+a+jKjGrt9hAC+1/jPdT/RNy451nUPqor+5
-	qjJVjI2lxSlg2H3CPTf70WgO1cZHehLSMWIWytDF6JBkLLzpPLDXXLTCjrNDZjwpT1Tk2stEZtS
-	bUDxMfXKMo6MZMz6vSDZYZFNAPU2D8W2mRByr0lt12wyevR142RjrBw029V7nRuNkdjLcM5EEA9
-	ES5wKcKud6NBH36InTs2zvhLnmJygaMRrsXVOvY5/dSnZBaPTgSMQYqdR661Y10hKVnX/RTBhPc
-	iV2A=
-X-Google-Smtp-Source: AGHT+IHELCHlJeL98RkfpUln7YkAY9rOB6Z387rUchChjvJfXfuMUBqbuPtRfO6CRAxTwwlwMlMU1Q==
-X-Received: by 2002:a17:90b:2252:b0:2fa:ba3:5457 with SMTP id 98e67ed59e1d1-2febab78780mr22387538a91.17.1740995166995;
-        Mon, 03 Mar 2025 01:46:06 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2fe8283c9d2sm10587214a91.35.2025.03.03.01.46.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 01:46:06 -0800 (PST)
-Date: Mon, 3 Mar 2025 18:46:04 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Shradha Todi <shradha.t@samsung.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the pci tree
-Message-ID: <20250303094604.GA1065658@rocinante>
-References: <20250303182639.5e920622@canb.auug.org.au>
- <20250303075002.GB138071@rocinante>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tnjX1Nsbw4Zs01+Y8qeGAGyRMvK/MC+wbq+U6ENETqqVC/pZKitfO4VxApwjsm8aWe49+QhiTOX0iGcJU0OSugz77I7Mz8/vn9oB70wUEq5Fq9rt/rVYujcrKLG8Ug3tI04RnZ2SmcO+RvGaIw60P/Y9AlnhbSnqeQ+U/puBCI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bie2sbwR; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740995176; x=1772531176;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=sjUNmsBoxg1lTuhhmLZRfysPKGMMkrAdGhjiE+alWPA=;
+  b=bie2sbwRuK5VTMXgwP3eFw3HR+qpjmPpvvRqRMvsgujklXZIxpqVS2JK
+   5s8rTX2CgpNNwdhDcy9NEza2u1LRhPp7Nz9Q5wqtsJdjeTxf4W0UL/YuL
+   NJui9F+RDSodrGAvo/q9q8UWLMNyyX4Enkx0xPh3CnORfV+RmLn87lfbZ
+   12FgKYq11HxYx9tvLY7Q6CHbTijy0xIN64lE6Q6qfUZMLJgL47CLS8vKk
+   haVHZX35WOMTMr/d3oU98mhlItqZzl9j/WOCDZo5/lBH0VxZUxqTvKjc8
+   Mt8tfgN3ynw3b+5YvY8wjnIFnO//41s9jCRFJbjbDg0P9MBDvvbwR61GL
+   Q==;
+X-CSE-ConnectionGUID: TzI1hDBpS6eAxT2fWoxVlQ==
+X-CSE-MsgGUID: PU6If1rATcyflj0xjpIP9Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="41774518"
+X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
+   d="scan'208";a="41774518"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 01:46:15 -0800
+X-CSE-ConnectionGUID: RWWDyvIoQLmvqfjgWcNLpA==
+X-CSE-MsgGUID: 15D++kOTS7Sq6gqbKzvO4A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
+   d="scan'208";a="118435744"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 01:46:09 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tp2NB-0000000GlrM-3yzh;
+	Mon, 03 Mar 2025 11:46:05 +0200
+Date: Mon, 3 Mar 2025 11:46:05 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Miguel Ojeda <ojeda@kernel.org>, Petr Mladek <pmladek@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Tamir Duberstein <tamird@gmail.com>, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v3 4/5] print: use new #[export] macro for
+ rust_fmt_argument
+Message-ID: <Z8V6XafrTyrB4z8D@smile.fi.intel.com>
+References: <20250303-export-macro-v3-0-41fbad85a27f@google.com>
+ <20250303-export-macro-v3-4-41fbad85a27f@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,21 +94,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250303075002.GB138071@rocinante>
+In-Reply-To: <20250303-export-macro-v3-4-41fbad85a27f@google.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-> > After merging the pci tree, today's linux-next build (htmldocs) produced
-> > this warning:
-> > 
-> > Documentation/ABI/testing/debugfs-dwc-pcie:15: WARNING: Block quote ends without a blank line; unexpected unindent. [docutils]
-> > 
-> > Introduced by commit
-> > 
-> >   8562ae832769 ("PCI: dwc: Add debugfs based Error Injection support for DWC")
-> 
-> Thank you Stephen!  Having a look...
+On Mon, Mar 03, 2025 at 08:45:15AM +0000, Alice Ryhl wrote:
+> This moves the rust_fmt_argument function over to use the new #[export]
+> macro, which will verify at compile-time that the function signature
+> matches what is in the header file.
 
-Fixed and pushed updates to our branch.  Will update our next in due
-course.  Thank you!
+...
 
-	Krzysztof
+>  extern bool no_hash_pointers;
+>  int no_hash_pointers_enable(char *str);
+>  
+> +/* Used for Rust formatting ('%pA'). */
+
+In case you need a new version, please drop a period at the end as this is the
+style used in the sprintf.h already.
+
+> +char *rust_fmt_argument(char *buf, char *end, const void *ptr);
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
