@@ -1,123 +1,133 @@
-Return-Path: <linux-kernel+bounces-544778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2D1CA4E522
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:11:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8401A4E583
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:20:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DF7517A38D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:03:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 254A68C3781
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:07:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8908B293B58;
-	Tue,  4 Mar 2025 15:44:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E40729616C;
+	Tue,  4 Mar 2025 15:48:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mm5vzNqn";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Qs8RDPGm"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="T6qLtJnb"
 Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39CC3293B56
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:44:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39975296166
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:48:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741103071; cv=pass; b=XeD676ylfv1HYb6KaxNzltwxXNbQ2UyDw9oD4+e13C6F0DPHoJ0un8hJfddzTnTkAgCx6wvbdV6QRYEdVQPwFfbRqB406mFGiLxNxTjoPbIUyi5wh2MO//TjvyyRwAsSUCvgYqTqbKup+5+F49y9F6/yuffHX3D2RuLJiq74BMo=
+	t=1741103333; cv=pass; b=AWEN/9hVgfuhz1cN8wbhMcOFaOwvZdIETkIYQ/xEWOiVWS//Y2bbXw3ox3e+udhCCqKtNcTNqjRlHrILwVFNhJpsqxkFBTymC4ihjeSK6l5v1fTVNo/pecACM8CYVaL2zfkuKg4ozrNr7msNP9xcUuK530YHHgki0gDFRTN9GeU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741103071; c=relaxed/simple;
-	bh=rb6HiHdTrrfQcE6pGBqpshK1auuAjYTiGBZi4GUMEQg=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=e/EMw2a1mUiuGJT3P7oVrLAKbgQBVNm0qWYviX+UfE0QgycombDKem1T9hhdHm6+mNxi0EIEBDD39WtIfjPhbEaudhT3HTGFTzOzyu479DBq4SPMPKrhjG2hWdYyyt5ZgJDNT2jc1wDV05zmlCrnZK3fXudz2QN1WUU7f9ENG9U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mm5vzNqn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Qs8RDPGm; arc=none smtp.client-ip=193.142.43.55; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; arc=pass smtp.client-ip=160.75.25.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+	s=arc-20240116; t=1741103333; c=relaxed/simple;
+	bh=oNannqQPiN20GZ+BHfvaroWwQhuHDZI4eMqVKF/YwNo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oMLnf2OkciA1fmg9BRlWwfoqz9EiDV4b7zoqI2rMn1mowTZIpODFUdNN31u3APt5AVBVFiWxRqBiOtAjcPPYF/dU+Yog6MfFxlqOb2Fe+Er114L9ZKqeBA4SksoC/XIX08oo1Qnl2UI94pGmhBtgs37QYhStKyjlTct/f6XmmTI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=T6qLtJnb; arc=none smtp.client-ip=205.220.168.131; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; arc=pass smtp.client-ip=160.75.25.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
-Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
+Received: from lesvatest1.cc.itu.edu.tr (unknown [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 6374F40D5728
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:44:28 +0300 (+03)
+	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 715D040D5725
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:48:50 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
-Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=temperror header.d=linutronix.de header.i=@linutronix.de header.a=rsa-sha256 header.s=2020 header.b=mm5vzNqn;
-	dkim=pass header.d=linutronix.de header.i=@linutronix.de header.a=ed25519-sha256 header.s=2020e header.b=Qs8RDPGm
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6g1V5HFdzG1FQ
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:42:54 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6g752z5MzG1MM
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:47:45 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id BDC5B42746; Tue,  4 Mar 2025 18:42:52 +0300 (+03)
+	id EC5E742728; Tue,  4 Mar 2025 18:47:42 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mm5vzNqn;
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Qs8RDPGm
-X-Envelope-From: <linux-kernel+bounces-541358-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=T6qLtJnb
+X-Envelope-From: <linux-kernel+bounces-541362-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mm5vzNqn;
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Qs8RDPGm
-Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id 8C58743397
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:23:33 +0300 (+03)
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id 63C8C3063EFC
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:23:33 +0300 (+03)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=T6qLtJnb
+Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
+	by le2 (Postfix) with ESMTP id 93F0C431CB
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:25:01 +0300 (+03)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by fgw2.itu.edu.tr (Postfix) with SMTP id 282862DCE0
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:25:00 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 721BC1893308
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:23:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E694C3A762E
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 006421F30B3;
-	Mon,  3 Mar 2025 10:23:12 +0000 (UTC)
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D574C1F12EC;
+	Mon,  3 Mar 2025 10:24:47 +0000 (UTC)
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 825681DB551;
-	Mon,  3 Mar 2025 10:23:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628B91F0E50
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 10:24:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740997389; cv=none; b=EvDk8k4006U3m0vW58dCbNYWX/z+yAq2z8sZgqWDRkAMYLXoa774K0TsonK2aYDTm/rzfIsFX5rHuHUiexhq8J7BKIblFmcXeQWFJ9eD+WWoaoZNfT8IMKuQNz6qeJUN0cSFA8LZNYW1THICXvXOZr4oN3MtcvGKueaCShQA2PY=
+	t=1740997484; cv=none; b=seov4qU7gebbeqheKr+cRLRF1Hm04I7aYAMZThnfafRRlKpd/OZa8RWYrmrzNCoHlGyLc9JNIJWXUChqndNiu1AgA7vO+AkVGd4GMcUcc7VZS9wCZmEJCEniNv3L8ufd4Qqa16KTYAgQsZqVbm7wP9PQsjiUqLNZYo4JXVc+QCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740997389; c=relaxed/simple;
-	bh=rb6HiHdTrrfQcE6pGBqpshK1auuAjYTiGBZi4GUMEQg=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=h9/wd3oebcTATXPM/dQP5hgHaEBCurP8RljcDohDHDgAr0M97CulDb1bTfq5UnTS5DLuLbYN8W1bHtfo9TlDdRScKURFQfCU9gFwLVP0M9KdNmb10Rsl5sAwZpmQQhbwHbk6w5mzxpbMim2oghgmxRzQX47UEIAekKb5kLApuF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mm5vzNqn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Qs8RDPGm; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 03 Mar 2025 10:23:01 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740997383;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L93HLqzNF/w4Btg40ftW1mueR1K1M75TuT6aU5m3ApE=;
-	b=mm5vzNqndV7TUbtbTyk1c8Kv6JE8sILgPk/I4OIpJA22D8lVrxr45ddRRW0eFdIGSj/Ch/
-	vAoqOBebLzISUgfGJUF0NISL3LUrTxS0agqMm/jjJyJVVKIZPs+4GVsTTlsZx05KiqAe5u
-	5gHBABH3NpQrvP7taOaSqt+camvDW4IZ7Rr/KNqk++0lbHxv1O8P2tFD82WncjBDQBF6jY
-	/Mh3gY3ZUw75ChDoibCjYYUYcYshS8i2Es4K2Q7DJ2hmlno8UDXNPt5DfziGpqOVZhXO3v
-	gk7qSioJMjZfNpLmZwuJVdD8/I+pxmXcepiDDCCdvFTHjdE5Q/vgKfzAOijhzw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740997383;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L93HLqzNF/w4Btg40ftW1mueR1K1M75TuT6aU5m3ApE=;
-	b=Qs8RDPGmeGYotipGuX6X/x7R6KoSQx1TZkYCDMWSTIYekdLPWXzrm4Pa0C3DoxxZGpO7Pr
-	JBO2ziwVpHiG+hBg==
-From: "tip-bot2 for Dr. David Alan Gilbert" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/cleanups] x86/paravirt: Remove unused paravirt_disable_iospace()
-Cc: "Dr. David Alan Gilbert" <linux@treblig.org>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, Juergen Gross <jgross@suse.com>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250303004441.250451-1-linux@treblig.org>
-References: <20250303004441.250451-1-linux@treblig.org>
+	s=arc-20240116; t=1740997484; c=relaxed/simple;
+	bh=oNannqQPiN20GZ+BHfvaroWwQhuHDZI4eMqVKF/YwNo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=urRmfbxD6MJl6de0OHjfvKweIkiM0w6pzs73q/mosgofom7C97TtrVFsjNr07NI9hjUeJmzNcQJckcOGvGZmd6hGoDFFBle9Ni5+yCvu/zQeOmg0eAnGzzKGJbjMGho5NAeFC2PGb9ZwmMgau3YRDda1WUDUtc1W6K1iGfiIigg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=T6qLtJnb; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 522NTtni009143
+	for <linux-kernel@vger.kernel.org>; Mon, 3 Mar 2025 10:24:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Q5ahGViu7mWHfBE/U6LabXy74q9ltD+IEs/cbzuNlcM=; b=T6qLtJnbfCJhPlGv
+	EkgU3kDNr6HKJCP4M5wBdVg4Yz9ZTmUqZ0yBItZAkrZkn98XAwouH7ZtlikkwPax
+	GCEsRJMvhKRfmxzdDMLRpRtZdlXQJtUq7tOSgn2Ejld8dmcykaR8N/uLUEAdpleI
+	fA39wVaq0nKIFHyWEtozFD12JNHxyGL4ynZzBk+nJrwrHrhPxAd4JFyPzo737jPW
+	aAYFnQobvcEUXmhIOIoW35JMaT/Xn1/XJN5FsPvfPl09s829Dj4OwZjZcNGb7WpX
+	vGiP0g9lMLw10YL+aC4Y87M5cre5/k3doIseW2/UDl4wc3dA6Z7PvvdikSL8SpJo
+	8Vu/9Q==
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 453t994esf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 10:24:42 +0000 (GMT)
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2fec3e38b60so4892278a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 02:24:42 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740997482; x=1741602282;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q5ahGViu7mWHfBE/U6LabXy74q9ltD+IEs/cbzuNlcM=;
+        b=q/YfnDd+GHKWSkEugfE5Sm3EIAx9U6SKkNGeiyVNBvPQeiHqc7kthLs1gGXVOhAz/R
+         v76NBpg254O+4aBt1I1TD3XTRs/r+0uIAriD7AuIc7VkCh60JXbKKGnvFJeMnpgMB4NX
+         8Zqd0CUbgwRgETJc/WS+7lLyNlGRiiZ5GVqh4jFuAUKLmKDmaTJeBPxGd5Lrbodc+qve
+         rwT4VAJwAUV914yN4JFehJxT+4IcF3HyqwlpU8nd9LBu2FCwokb6yl3RhuVvVRrdK8qV
+         Su1oorreE6jmKimjUoYcwoTQBSaJI6yu9h7S6n7B7zRsmt8Ir8EvCTftAWrwEKlmIFiP
+         DkAg==
+X-Forwarded-Encrypted: i=1; AJvYcCWFc+fSITqHnyodQCFNbQMQ8pbcY41wHFzGTMyMZHLX72iBLX3Z3Yj+MQYAtMnIJSwEz6h7Wni913dI0NY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxURTj4yCe1HyUtMWk1AJy2e5x2TNRJvwaXh8LuhKYRev4R370O
+	4fjEYV5cc8FlFCjLPJUj6jQlbK091sSf3yrJntXk8fvt3iNqivuKtAZn6HraJQW/Di5DaclYvG2
+	JB8h3IDOf++YdGiq3X1Qc82t5DsMUCNdxtLwNm30LKZlN2Ug9eID4QaDFQMGOoAQ=
+X-Gm-Gg: ASbGncuNtyk6Cz1Mkbxrb78o5fZIZypOrsh8dsOt1PSp2hO16xcRjhSzrapQxOPPjyW
+	UN7uEnU2opAqqqX7gmTL4lu+zHLqgnVG1F1qi6DbsjHiSQ/vJ5k4e4hmCcCrbDchferDp6kJh3c
+	8UGHJhJb7nLI8wuP7Je8R0mnNAi2Y8QZsBq/rjZA/qZ8KfCPKGdDs6UNjQIaXBX6U5Zs/+WyJNK
+	99YoT3M7NxzUeMfdh1Iu94vepiXlxEDyZ4wIq8UuubPE1pD5KRRl00skLpVIazMKqGx5fLkxLo5
+	LkSmisL4K2reNw0yLPWdbqITDbXTNbmBOoT3qizfo6FQkpSlvlCiEYMYt4U=
+X-Received: by 2002:a17:90b:4988:b0:2ee:a76a:830 with SMTP id 98e67ed59e1d1-2febabcb0c7mr21393582a91.24.1740997481660;
+        Mon, 03 Mar 2025 02:24:41 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEALCniW+g8dNGDdCDI6uEm0eVuwQCKj33EnrSZUUlmNAZ/nXpTsx/74bSfs7XoeJdEM7XvHg==
+X-Received: by 2002:a17:90b:4988:b0:2ee:a76a:830 with SMTP id 98e67ed59e1d1-2febabcb0c7mr21393547a91.24.1740997481289;
+        Mon, 03 Mar 2025 02:24:41 -0800 (PST)
+Received: from [192.168.1.35] ([117.236.245.126])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223505293ddsm73795215ad.229.2025.03.03.02.24.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Mar 2025 02:24:40 -0800 (PST)
+Message-ID: <8c416213-8f46-40b0-aa04-a2a89d5dd0a3@oss.qualcomm.com>
+Date: Mon, 3 Mar 2025 15:54:37 +0530
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -125,91 +135,58 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174099738198.10177.3185496763546260161.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 17/23] arm64: dts: qcom: ipq8074: Add missing MSI and
+ 'global' IRQs
+Content-Language: en-US
+To: manivannan.sadhasivam@linaro.org,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+        Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org
+Cc: linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250227-pcie-global-irq-v1-0-2b70a7819d1e@linaro.org>
+ <20250227-pcie-global-irq-v1-17-2b70a7819d1e@linaro.org>
+From: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+In-Reply-To: <20250227-pcie-global-irq-v1-17-2b70a7819d1e@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: EtZBDHae6-dH55vpYb6qDMBQV527iyTs
+X-Proofpoint-GUID: EtZBDHae6-dH55vpYb6qDMBQV527iyTs
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-03_04,2025-03-03_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=575
+ mlxscore=0 lowpriorityscore=0 suspectscore=0 priorityscore=1501
+ clxscore=1015 spamscore=0 adultscore=0 impostorscore=0 malwarescore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2503030080
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6g1V5HFdzG1FQ
+X-ITU-Libra-ESVA-ID: 4Z6g752z5MzG1MM
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741707790.87538@GDSDObeQD8HTn/0lusWJww
+X-ITU-Libra-ESVA-Watermark: 1741708075.79273@QfoIyfm/0ZBIqbpmtodCTw
 X-ITU-MailScanner-SpamCheck: not spam
 
-The following commit has been merged into the x86/cleanups branch of tip:
 
-Commit-ID:     47f0008ed7774dd3b12bd5f596e8d106dfea305a
-Gitweb:        https://git.kernel.org/tip/47f0008ed7774dd3b12bd5f596e8d106dfea305a
-Author:        Dr. David Alan Gilbert <linux@treblig.org>
-AuthorDate:    Mon, 03 Mar 2025 00:44:41 
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Mon, 03 Mar 2025 10:59:16 +01:00
+On 2/27/2025 7:10 PM, Manivannan Sadhasivam via B4 Relay wrote:
+> From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> 
+> IPQ8074 has 8 MSI SPI interrupts and one 'global' interrupt.
+> 
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>   arch/arm64/boot/dts/qcom/ipq8074.dtsi | 40 +++++++++++++++++++++++++++++++----
+>   1 file changed, 36 insertions(+), 4 deletions(-)
+> 
 
-x86/paravirt: Remove unused paravirt_disable_iospace()
-
-The last use of paravirt_disable_iospace() was removed in 2015 by
-commit d1c29465b8a5 ("lguest: don't disable iospace.")
-
-Remove it.
-
-Note the comment above it about 'entry.S' is unrelated to this
-but stayed when intervening code got deleted.
-
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Link: https://lore.kernel.org/r/20250303004441.250451-1-linux@treblig.org
----
- arch/x86/include/asm/paravirt_types.h |  2 --
- arch/x86/kernel/paravirt.c            | 20 --------------------
- 2 files changed, 22 deletions(-)
-
-diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
-index fea56b0..3c54ac5 100644
---- a/arch/x86/include/asm/paravirt_types.h
-+++ b/arch/x86/include/asm/paravirt_types.h
-@@ -242,8 +242,6 @@ extern struct paravirt_patch_template pv_ops;
- 
- #define paravirt_ptr(op)	[paravirt_opptr] "m" (pv_ops.op)
- 
--int paravirt_disable_iospace(void);
--
- /* This generates an indirect call based on the operation type number. */
- #define PARAVIRT_CALL					\
- 	ANNOTATE_RETPOLINE_SAFE				\
-diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
-index 1ccaa33..debe928 100644
---- a/arch/x86/kernel/paravirt.c
-+++ b/arch/x86/kernel/paravirt.c
-@@ -90,26 +90,6 @@ void paravirt_set_sched_clock(u64 (*func)(void))
- 	static_call_update(pv_sched_clock, func);
- }
- 
--/* These are in entry.S */
--static struct resource reserve_ioports = {
--	.start = 0,
--	.end = IO_SPACE_LIMIT,
--	.name = "paravirt-ioport",
--	.flags = IORESOURCE_IO | IORESOURCE_BUSY,
--};
--
--/*
-- * Reserve the whole legacy IO space to prevent any legacy drivers
-- * from wasting time probing for their hardware.  This is a fairly
-- * brute-force approach to disabling all non-virtual drivers.
-- *
-- * Note that this must be called very early to have any effect.
-- */
--int paravirt_disable_iospace(void)
--{
--	return request_resource(&ioport_resource, &reserve_ioports);
--}
--
- #ifdef CONFIG_PARAVIRT_XXL
- static noinstr void pv_native_write_cr2(unsigned long val)
- {
+Reviewed-by: Kathiravan Thirumoorthy 
+<kathiravan.thirumoorthy@oss.qualcomm.com>
 
 
