@@ -1,134 +1,84 @@
-Return-Path: <linux-kernel+bounces-541296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BF1AA4BB0C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:45:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5499DA4BB10
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:45:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C90E16CAC2
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:44:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC1D9171107
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:45:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D24791EF0BD;
-	Mon,  3 Mar 2025 09:44:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F010A1EB186;
+	Mon,  3 Mar 2025 09:45:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VMM5U53P"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ek491Sbc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B0511F12F4
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 09:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54FF42E630;
+	Mon,  3 Mar 2025 09:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740995067; cv=none; b=eQJcQBChOmRb49iHNMj967d12MzCZBu0i884+FYbrN0TL5eKskzJzcSFiHWRlbC2jSxUfaN+Gmhr79Gl+YYBg5S+KEIm8y3+3wAODCuAh0ZrdXE3L7+BB330HZOj9/Hh3/m3ehZ17Jo9ZyNOp4mnAdJSf5TRoa0mZttLmzd31dk=
+	t=1740995121; cv=none; b=vBuSwhMTpzAbQMZixM/wG/MCOl9vBabGal976PwGB8uMAzP2z/9pphu0w6vj9Br2BHinL9TD0GDFUmFggTH3n10Xm46x1ArRWV4a7HopJVyRDO/9U+pcozgq/LnDBeVPkoG7oftoyjnphzNxV0bi1fZ7EmxyewakOxT+b2qf1u8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740995067; c=relaxed/simple;
-	bh=kmhsLwMr92wvj2tVECupC4kokl7bd6tIGb3uxMKfJE8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P0Hio/YvVKD/APMnKlsmoYbi2ha2gCqIpotUQxMz+O0sVrwsn6U2u5ropQRvEvJjlWKUrOJG5mT9qWLvHoElLsxvb5oo+2WkmUYBSpdVYq0SmacYkvOrbZhS3y8k1hyzbEc7j1RdjoAcTUqxzZYpVNib1s8STEn9PX0ts9qlQNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VMM5U53P; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740995065; x=1772531065;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=kmhsLwMr92wvj2tVECupC4kokl7bd6tIGb3uxMKfJE8=;
-  b=VMM5U53PGgU1mK4TIncwmAlqkAo8P2voFeFoYNWMAYZjsb5pwBPtqcYd
-   FnFZootROl7CpiC0Tkp80BNAKYSHggGfSWMsMgfIzHDnuqgmxHBTEEL6S
-   wmpcy4k06tvphB4fJSDbaN6TYlSxZqI/+yG+JJHPSqDVxdukw+p24m0I2
-   2L79DyiF/+r6SFjJaQTWSVh1kFSwi+MpR2YNKM09xL6J2NAaIwV3Qn4rq
-   6ZUar4jLcPlIRTafG8cU9DYFNK2eCVpAGfP4Dmf3oCu6LvIG4VOHqPfzx
-   kJZIwi5kEKwIr3A5jsCGK8L5664u2r4dCtvYvVcbWmYGguDQAAfk5878S
-   A==;
-X-CSE-ConnectionGUID: 7F2zp2KzSEOJ387DyS4tkg==
-X-CSE-MsgGUID: ATVYbiKSQxmsVsA6wdBJNg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="42053471"
-X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="42053471"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 01:44:24 -0800
-X-CSE-ConnectionGUID: ROUhzQPRTdCNvSTFl2lcFA==
-X-CSE-MsgGUID: VPLDbsH0QDCXq7V8Ys0EwQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="117754741"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 01:44:22 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tp2LU-0000000Glpd-08fZ;
-	Mon, 03 Mar 2025 11:44:20 +0200
-Date: Mon, 3 Mar 2025 11:44:19 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Raag Jadav <raag.jadav@intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dave Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/2] Cleanup io.h
-Message-ID: <Z8V587DSa1VE_BO3@smile.fi.intel.com>
-References: <Z8CD33_OWK2LB6IZ@smile.fi.intel.com>
- <0011035a-5816-48c4-9fe4-c0b9db3c8e72@app.fastmail.com>
- <Z8H1Y2_RlFnXeNEa@black.fi.intel.com>
- <Z8IDXD2bkO1t71yB@smile.fi.intel.com>
- <Z8IDgmrLx5DQADxJ@smile.fi.intel.com>
- <Z8IERmwHXUuJoD4S@black.fi.intel.com>
- <Z8IGA821OAgYN-K1@smile.fi.intel.com>
- <Z8IJn7dp4gypnoyz@black.fi.intel.com>
- <Z8Ve1CQQQAz2le0a@smile.fi.intel.com>
- <fa3b2ef5-e2f8-473f-9e9c-c855d70230cf@app.fastmail.com>
+	s=arc-20240116; t=1740995121; c=relaxed/simple;
+	bh=9MjpxNDWc0Mel493RuZtnmix9eO5EL7yH9UaB35eo6U=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=BN2Fyj6KHbyZ5v+oM2uIjxpFkDWKw/Syd7FxLvtlQ624hQAtxBcH+FVPC6DrmyL0cSiBSWbaFYXI3+iY9fb487MwOzdn9dr4Q9NsQu2vS+dV+v7rzMHBri8ucyAKFy9ychlM+K4Hec9uBaV5nToEseqMCD7VivcBhKlIDnRIHSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ek491Sbc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AF0DC4CEE4;
+	Mon,  3 Mar 2025 09:45:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740995120;
+	bh=9MjpxNDWc0Mel493RuZtnmix9eO5EL7yH9UaB35eo6U=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=ek491SbccVRRWyc8CFtPBbXGQDRHNVeEKQGU+vU/YAllzteV4QCXiCuFX2oLI91eW
+	 gFmqsNGV7QAvZt0Fl89wFkfbTJv3Y4xZEp/0kH7647YQAAvLbRbkT5JJFjqA0DLtO2
+	 xGeVIwvdwCPJYQrKcBHnxBT/xHcUjpEjLnbO9UbFee56Vix/Z/T6Ya7y+pkk14bTug
+	 H9fB/UctibrjtLPyHi3NLrDVduTApQfN8vyFqMzB2bFlJVfsYG0tniXvEBh5/mEj6B
+	 YxKhhnOtE6sOca3bxkl4lz0pizRkrN6UuQC1NZh30mC04Jb+DExm4jL2j0fms+hyor
+	 C4F57XtYRhw0g==
+From: Robert Foss <rfoss@kernel.org>
+To: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ dri-devel@lists.freedesktop.org, Colin Ian King <colin.i.king@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250228083248.676473-1-colin.i.king@gmail.com>
+References: <20250228083248.676473-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH][next] drm/bridge: Fix spelling mistake "gettin" ->
+ "getting"
+Message-Id: <174099511726.139840.6705775137322314261.b4-ty@kernel.org>
+Date: Mon, 03 Mar 2025 10:45:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fa3b2ef5-e2f8-473f-9e9c-c855d70230cf@app.fastmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On Mon, Mar 03, 2025 at 09:31:06AM +0100, Arnd Bergmann wrote:
-> On Mon, Mar 3, 2025, at 08:48, Andy Shevchenko wrote:
-> > On Fri, Feb 28, 2025 at 09:08:15PM +0200, Raag Jadav wrote:
-> >> > > > Ah, you mean devres related?
-> >> > > 
-> >> > > Yeah, couldn't find it on Arnd's tree and I'm not sure if this series
-> >> > > works without it.
-> >> > 
-> >> > But err.h is included in the io.h, no? Or did I misunderstand the point?
-> >> 
-> >> First patch on the immutable tag moves IOMEM_ERR_PTR() to err.h and here
-> >> we're dropping err.h from io.h. So without the tag this series will probably
-> >> break IOMEM_ERR_PTR().
-> >
-> > I see, I think it might be due to some other includes that make this happen.
-> > Whatever, I assume that Arnd heavily tested this anyway, so it's good to go
-> > independently on the immutable tag..
+On Fri, 28 Feb 2025 08:32:47 +0000, Colin Ian King wrote:
+> There is a spelling mistake in a dev_err message. Fix it.
 > 
-> I see that err.h gets included through at least linux/string.h,
-> linux/logic_pio.h and (depending on the architecture architectures)
-> asm/page.h, so there is no huge risk of something breaking here ;-)
 > 
-> Ideally all of the above should be removed here, but to do
-> it right, the linux/pgtable.h dependency needs to also be replaced
-> with a smaller pgprot_t specific one, which takes a bit of
-> cross-platform work as the definition is not in a consistent
-> place at the moment.
-> 
-> The change below still builds fine, and that likely indicates
-> that the same headers are still included from either asm/io.h
-> or asm/pgtable.h on the architectures I'm testing.
 
-Sounds even better. Can you submit a formal patch that other CIs will have
-a chance to go through this?
+Applied, thanks!
 
--- 
-With Best Regards,
-Andy Shevchenko
+[1/1] drm/bridge: Fix spelling mistake "gettin" -> "getting"
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/db505ff68c12
+
+
+
+Rob
 
 
 
