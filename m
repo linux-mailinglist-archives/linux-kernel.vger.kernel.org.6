@@ -1,131 +1,101 @@
-Return-Path: <linux-kernel+bounces-544935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 741B8A4E84E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:18:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BAE1A4EA03
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:53:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C2238E25DC
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:43:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5D5216131B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:49:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F310F292F80;
-	Tue,  4 Mar 2025 16:22:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35ED27C17C;
+	Tue,  4 Mar 2025 17:27:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="do/gsAo4"
-Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="WOZ908gj"
+Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B89291FA4
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:22:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF9D27EC78
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.116
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741105332; cv=pass; b=b4nVzIttA4ErxtsbgIBIF4OlPgMJGVz8sRGQxhU/0zuLpj/usIAlz/f8Qk5pbx87Vl/JGjWAIo40GQ+igFyy9fN2cmtnAeJ1vVe7eWWIYa9OvE02L80GgwdhlVn7zzRpUNhqc+zyqEuaQGjV2YePftweOMJHHd5Aq3NqcaAXAnQ=
+	t=1741109251; cv=fail; b=eykA/q5K7TJynrX/NGxrlmg2H3eKvgsFT85yONJR+DpLmqbE2t3PoWasQxoIuYe7epvu6d8+EXAx46aGLOThoU3C86s1olg6iRHZbKyq8nSL4fr1JESSJFw6Hq3LqNXZIue2QNNaAMXnAQ/V5myTIOMlldUOh6OF4ywsQP2oDlo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741105332; c=relaxed/simple;
-	bh=/QzomCTIFsL8+Zge4gSHgukORn6rUTkJqZQWdz6RUAM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LWtTVy31sSZS6ZyilE3ABdB7I+rfFYpDw26S52Ka8VMevxe2ssiJ3P4iduF8tV4nYinIkRhv9DP1fQy12nSBgMZOmWxVeedtHbtor6QmGo5VEEsAbQ2DWcALcXh9H6uR4OyPOBOcemq+ySoOFDemA41/LT6G+ufzasDD19USBZY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=do/gsAo4; arc=none smtp.client-ip=198.175.65.18; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; arc=pass smtp.client-ip=160.75.25.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+	s=arc-20240116; t=1741109251; c=relaxed/simple;
+	bh=ni5SGlo5xgdJhxHcTY124nLqtYOiHKk1Lf1qmfk753M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZBEbDtbS34spiQi/QTvMcbqb1mQuwjGFxWSWFwFFikFhPqRJMrMM3ycTFZAk6z7RSVx8HNjoG1zay92zahvdokF14fRaE/yulKJflG2LRS0K4//9YijKLFESfiFVqVy1J0/G1QkyY6s59P+FKbhFzn6LZ2/RMfb9L7RlIIJQuds=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=WOZ908gj reason="signature verification failed"; arc=none smtp.client-ip=148.251.105.195; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; arc=fail smtp.client-ip=160.75.25.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id 1C57F40CF4F1
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:22:08 +0300 (+03)
+	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id BEA4840F1CEA
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:27:27 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6grB0W7YzG32d
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:19:54 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6fbM4DCjzG09h
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:23:43 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 713B541898; Tue,  4 Mar 2025 19:19:47 +0300 (+03)
+	id E53EC42745; Tue,  4 Mar 2025 18:23:34 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=do/gsAo4
-X-Envelope-From: <linux-kernel+bounces-541507-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=WOZ908gj
+X-Envelope-From: <linux-kernel+bounces-541505-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=do/gsAo4
-Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id C7EBA42309
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:12:39 +0300 (+03)
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id 9FE463063EFC
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:12:39 +0300 (+03)
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=WOZ908gj
+Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
+	by le2 (Postfix) with ESMTP id 6D4F441C22
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:15:41 +0300 (+03)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by fgw2.itu.edu.tr (Postfix) with SMTP id F0FA12DCE0
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:15:40 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D83E1887F8A
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:10:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8438A3BBC9B
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:09:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43BE61F8BAF;
-	Mon,  3 Mar 2025 11:07:55 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01AF1F4288;
+	Mon,  3 Mar 2025 11:07:40 +0000 (UTC)
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 646B81F8734;
-	Mon,  3 Mar 2025 11:07:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 763FA1F419F;
+	Mon,  3 Mar 2025 11:07:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741000071; cv=none; b=IfMP1uQMO8anfR4Bozrl2uCr0RN6juidmkeVY9hm2iZSb3f+QMc6/u0Jse4Fci7qXzXNSOebxzMTvXjFjUKdQmX1uY1ypK8sfIUisNLVxa0TiFvocLvqDvywrptZi4LICzN9ENojQxmnaLWkuW4UJMfCqdQnG30C34ICCfVXdis=
+	t=1741000058; cv=none; b=P8nFGNM0STUYfAPp1ThcsFjm4PRSJ2qvZJmdmzyB07yMGJ0Nqj+YJBNR7xSqWkuSIZyxignZia0Qsg1QhcIGu2i4n9KIrQDBEUVkqxPQOFGEvxLtV6QXtZ/WDKuC6R7EgG1VVz/Z8dIko8e2fK+6uYvZjoNy9Mho3OUIb7sZwZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741000071; c=relaxed/simple;
-	bh=/QzomCTIFsL8+Zge4gSHgukORn6rUTkJqZQWdz6RUAM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ofVWXQYq153Mi3ZrjRuoDXjznwdq31ZOmBbn5ZDn3JkFKYdbxu/RwdsvqJp+u5MvZuWKGYgJeYEfWCb+ffTjBPPBRu1sZK8zd055lyk0NZM/b0vV+ZPhekZDHl6lKY2VSUZDUGgA/v87g3Taxo8QWAS/0YcCiybD/S1gp3VpleU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=do/gsAo4; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741000069; x=1772536069;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/QzomCTIFsL8+Zge4gSHgukORn6rUTkJqZQWdz6RUAM=;
-  b=do/gsAo47ThmKfqaqDN/r2/5wrRXerOY/oNQk7PTGp2HmEE2acgsiCKC
-   kCqNAucF0nnriCC292xRgiueYuxW0/Hh83UqCuLP1mrtslCWzWrjCY1ox
-   hbEBjjg/2SIYTh+LsiUSwH+D2qiuuNf45SkLyst1Z5LcgRGBaO6afJ4nn
-   xiIVmVEYW3KkeqoHSOvi5lIUEvKdomDs+Q2qGn4OL5dwVy+yX8QGFx2NI
-   RuwdDmiiRPdvI1mip087s1VEGjoBjRC+RiJY3mC8wiiU+LMuIcStB6IsX
-   9QtJT+92j3lr5WQc5Q5wIDpczceO4iHwGXujkk9jo6XxwiR94AqTuM6tV
-   g==;
-X-CSE-ConnectionGUID: 4Zp1/VKKQjuyPp6tFIlwqg==
-X-CSE-MsgGUID: PempWpmyTV+ILp7DKv47PA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="42062425"
-X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="42062425"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 03:07:49 -0800
-X-CSE-ConnectionGUID: 6k/F+HPPRtCI9ZSXx6xyUw==
-X-CSE-MsgGUID: gY5rBCG/Qlu3+iNtxoMw/w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="141190252"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa002.fm.intel.com with ESMTP; 03 Mar 2025 03:07:43 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tp3e9-000IOB-07;
-	Mon, 03 Mar 2025 11:07:41 +0000
-Date: Mon, 3 Mar 2025 19:07:20 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	hannes@cmpxchg.org, yosry.ahmed@linux.dev, nphamcs@gmail.com,
-	chengming.zhou@linux.dev, usamaarif642@gmail.com,
-	ryan.roberts@arm.com, 21cnbao@gmail.com,
-	ying.huang@linux.alibaba.com, akpm@linux-foundation.org,
-	linux-crypto@vger.kernel.org, herbert@gondor.apana.org.au,
-	davem@davemloft.net, clabbe@baylibre.com, ardb@kernel.org,
-	ebiggers@google.com, surenb@google.com, kristen.c.accardi@intel.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	wajdi.k.feghali@intel.com, vinodh.gopal@intel.com,
-	kanchana.p.sridhar@intel.com
-Subject: Re: [PATCH v8 14/14] mm: zswap: Compress batching with request
- chaining in zswap_store() of large folios.
-Message-ID: <202503031847.j1iReOtf-lkp@intel.com>
-References: <20250303084724.6490-15-kanchana.p.sridhar@intel.com>
+	s=arc-20240116; t=1741000058; c=relaxed/simple;
+	bh=OolUssdw8s+8uO15m+LPb/DPhu9schaohRHKsJq3xZ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uW0WAyHPfjUwAq4hPxHYQa4biaQOOiVYJGynGlzCVjbKiJwfp6Aw94vpOtUj9uw2XhwVCKKVlTU7OlY8k6t4Pw4NuZ1k3d+litkph67DbXyv9nYgazqMidLoJDStd3kyF/hbpUSmoZGMnyuf/2cJe3MZkg094m56bs3+3ImYFGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=WOZ908gj; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1741000054;
+	bh=OolUssdw8s+8uO15m+LPb/DPhu9schaohRHKsJq3xZ4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WOZ908gjvJNY5AxQz60w31MW//POXd5kyBYLJPfJ87zyLdTB6yH67yQzLaYUyHvn4
+	 eShfpI4106nlQsia5YLTCg77KfjSmeSK/aiZwGfZ2O99KD5QRbSq8Up5QqVPatfdiO
+	 UcJ0O4BDgWO8JR1CQulmRSofD5ud2GNBiSobqnvBkfFkRKYTT0tZWeNyf4ljQqXKvr
+	 q0deYDK67my6KHJBMEQ7ofn8NM/K7vm/nuG5yBuFJNmxDycYciGdlvcUjae83WHnH8
+	 ITy2W1sgLrqdn9XB44gH0xjLNV5JR8DBMaO+LDy64isf9K//lXojMAw6T3bkFKCbVN
+	 6mXp9MotsY5tQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8AAFA17E0881;
+	Mon,  3 Mar 2025 12:07:32 +0100 (CET)
+Message-ID: <3ab8b2a3-b9de-4c1e-b650-2892be8fc8c9@collabora.com>
+Date: Mon, 3 Mar 2025 12:07:32 +0100
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -133,186 +103,47 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250303084724.6490-15-kanchana.p.sridhar@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 05/20] ASoC: mediatek: mt6359-accdet: Handle
+ hp-eint-high property
+To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>, Sen Chu <sen.chu@mediatek.com>,
+ Sean Wang <sean.wang@mediatek.com>, Macpaul Lin <macpaul.lin@mediatek.com>,
+ Lee Jones <lee@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>
+Cc: kernel@collabora.com, linux-sound@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-pm@vger.kernel.org
+References: <20250302-mt6359-accdet-dts-v2-0-5bd633ee0d47@collabora.com>
+ <20250302-mt6359-accdet-dts-v2-5-5bd633ee0d47@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250302-mt6359-accdet-dts-v2-5-5bd633ee0d47@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6grB0W7YzG32d
+X-ITU-Libra-ESVA-ID: 4Z6fbM4DCjzG09h
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741710015.62726@hfemBrvjv5miJm/dDxL6oQ
+X-ITU-Libra-ESVA-Watermark: 1741713938.32053@zPZU58w5zvWeVQj5q1R7Vg
 X-ITU-MailScanner-SpamCheck: not spam
 
-Hi Kanchana,
+Il 02/03/25 17:30, N=C3=ADcolas F. R. A. Prado ha scritto:
+> Now that the dt-binding was introduced, the property that governs the
+> eint polarity is a boolean called mediatek,hp-eint-high, while the
+> current code handles a u32 property called mediatek,eint-level-pol.
+> Update the driver handling accordingly.
+>=20
+> Signed-off-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
 
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on 5f089a9aa987ccf72df0c6955e168e865f280603]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Kanchana-P-Sridhar/crypto-acomp-Add-synchronous-asynchronous-acomp-request-chaining/20250303-164927
-base:   5f089a9aa987ccf72df0c6955e168e865f280603
-patch link:    https://lore.kernel.org/r/20250303084724.6490-15-kanchana.p.sridhar%40intel.com
-patch subject: [PATCH v8 14/14] mm: zswap: Compress batching with request chaining in zswap_store() of large folios.
-config: s390-randconfig-001-20250303 (https://download.01.org/0day-ci/archive/20250303/202503031847.j1iReOtf-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250303/202503031847.j1iReOtf-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503031847.j1iReOtf-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> mm/zswap.c:1166:4: error: call to undeclared function 'prefetchw'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-    1166 |                         prefetchw(entries[j]);
-         |                         ^
-   1 error generated.
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
+ora.com>
 
 
-vim +/prefetchw +1166 mm/zswap.c
-
-  1053	
-  1054	/*
-  1055	 * Unified code paths for compressors that do and do not support
-  1056	 * batching. This procedure will compress multiple @nr_pages in @folio,
-  1057	 * starting from @index.
-  1058	 * If @batching is set to true, it will create a request chain for
-  1059	 * compression batching. It is assumed that the caller has verified
-  1060	 * that the acomp_ctx->nr_reqs is at least @nr_pages.
-  1061	 * If @batching is set to false, it will process each page sequentially.
-  1062	 * In both cases, if all compressions were successful, it will proceed
-  1063	 * to store the compressed buffers in zpool.
-  1064	 */
-  1065	static bool zswap_batch_compress(struct folio *folio,
-  1066					 long index,
-  1067					 unsigned int nr_pages,
-  1068					 struct zswap_entry *entries[],
-  1069					 struct zswap_pool *pool,
-  1070					 struct crypto_acomp_ctx *acomp_ctx,
-  1071					 bool batching)
-  1072	{
-  1073		struct scatterlist inputs[ZSWAP_MAX_BATCH_SIZE];
-  1074		struct scatterlist outputs[ZSWAP_MAX_BATCH_SIZE];
-  1075		struct zpool *zpool = pool->zpool;
-  1076		int acomp_idx = 0, nr_to_store = 1;
-  1077		unsigned int i, j;
-  1078		int err = 0;
-  1079		gfp_t gfp;
-  1080	
-  1081		lockdep_assert_held(&acomp_ctx->mutex);
-  1082	
-  1083		gfp = __GFP_NORETRY | __GFP_NOWARN | __GFP_KSWAPD_RECLAIM;
-  1084		if (zpool_malloc_support_movable(zpool))
-  1085			gfp |= __GFP_HIGHMEM | __GFP_MOVABLE;
-  1086	
-  1087		for (i = 0; i < nr_pages; ++i) {
-  1088			struct page *page = folio_page(folio, index + i);
-  1089	
-  1090			sg_init_table(&inputs[acomp_idx], 1);
-  1091			sg_set_page(&inputs[acomp_idx], page, PAGE_SIZE, 0);
-  1092	
-  1093			/*
-  1094			 * Each dst buffer should be of size (PAGE_SIZE * 2).
-  1095			 * Reflect same in sg_list.
-  1096			 */
-  1097			sg_init_one(&outputs[acomp_idx], acomp_ctx->buffers[acomp_idx], PAGE_SIZE * 2);
-  1098			acomp_request_set_params(acomp_ctx->reqs[acomp_idx], &inputs[acomp_idx],
-  1099						 &outputs[acomp_idx], PAGE_SIZE, PAGE_SIZE);
-  1100	
-  1101			if (batching) {
-  1102				/* Add the acomp request to the chain. */
-  1103				if (likely(i))
-  1104					acomp_request_chain(acomp_ctx->reqs[acomp_idx], acomp_ctx->reqs[0]);
-  1105				else
-  1106					acomp_reqchain_init(acomp_ctx->reqs[0], 0, crypto_req_done,
-  1107							    &acomp_ctx->wait);
-  1108	
-  1109				if (i == (nr_pages - 1)) {
-  1110					/* Process the request chain. */
-  1111					err = crypto_wait_req(crypto_acomp_compress(acomp_ctx->reqs[0]), &acomp_ctx->wait);
-  1112	
-  1113					/*
-  1114					 * Get the individual compress errors from request chaining.
-  1115					 */
-  1116					for (j = 0; j < nr_pages; ++j) {
-  1117						if (unlikely(acomp_request_err(acomp_ctx->reqs[j]))) {
-  1118							err = -EINVAL;
-  1119							if (acomp_request_err(acomp_ctx->reqs[j]) == -ENOSPC)
-  1120								zswap_reject_compress_poor++;
-  1121							else
-  1122								zswap_reject_compress_fail++;
-  1123						}
-  1124					}
-  1125					/*
-  1126					 * Request chaining cleanup:
-  1127					 *
-  1128					 * - Clear the CRYPTO_TFM_REQ_CHAIN bit on acomp_ctx->reqs[0].
-  1129					 * - Reset the acomp_ctx->wait to notify acomp_ctx->reqs[0].
-  1130					 */
-  1131					acomp_reqchain_clear(acomp_ctx->reqs[0], &acomp_ctx->wait);
-  1132					if (unlikely(err))
-  1133						return false;
-  1134					j = 0;
-  1135					nr_to_store = nr_pages;
-  1136					goto store_zpool;
-  1137				}
-  1138	
-  1139				++acomp_idx;
-  1140				continue;
-  1141			} else {
-  1142				err = crypto_wait_req(crypto_acomp_compress(acomp_ctx->reqs[0]), &acomp_ctx->wait);
-  1143	
-  1144				if (unlikely(err)) {
-  1145					if (err == -ENOSPC)
-  1146						zswap_reject_compress_poor++;
-  1147					else
-  1148						zswap_reject_compress_fail++;
-  1149					return false;
-  1150				}
-  1151				j = i;
-  1152				nr_to_store = 1;
-  1153			}
-  1154	
-  1155	store_zpool:
-  1156			/*
-  1157			 * All batch pages were successfully compressed.
-  1158			 * Store the pages in zpool.
-  1159			 */
-  1160			acomp_idx = -1;
-  1161			while (nr_to_store--) {
-  1162				unsigned long handle;
-  1163				char *buf;
-  1164	
-  1165				++acomp_idx;
-> 1166				prefetchw(entries[j]);
-  1167				err = zpool_malloc(zpool, acomp_ctx->reqs[acomp_idx]->dlen, gfp, &handle);
-  1168	
-  1169				if (unlikely(err)) {
-  1170					if (err == -ENOSPC)
-  1171						zswap_reject_compress_poor++;
-  1172					else
-  1173						zswap_reject_alloc_fail++;
-  1174	
-  1175					return false;
-  1176				}
-  1177	
-  1178				buf = zpool_map_handle(zpool, handle, ZPOOL_MM_WO);
-  1179				memcpy(buf, acomp_ctx->buffers[acomp_idx], acomp_ctx->reqs[acomp_idx]->dlen);
-  1180				zpool_unmap_handle(zpool, handle);
-  1181	
-  1182				entries[j]->handle = handle;
-  1183				entries[j]->length = acomp_ctx->reqs[acomp_idx]->dlen;
-  1184				++j;
-  1185			}
-  1186		}
-  1187	
-  1188		return true;
-  1189	}
-  1190	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
 
