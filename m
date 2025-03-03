@@ -1,166 +1,146 @@
-Return-Path: <linux-kernel+bounces-542086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78EB0A4C574
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:42:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A83BA4C591
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:47:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 926E4160CDF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:42:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E88217A2B70
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:42:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4898C2144B8;
-	Mon,  3 Mar 2025 15:42:22 +0000 (UTC)
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E2D22135C9;
+	Mon,  3 Mar 2025 15:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PZ6IM/I1"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55318142900;
-	Mon,  3 Mar 2025 15:42:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D2512135BB;
+	Mon,  3 Mar 2025 15:43:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741016541; cv=none; b=M3hfir0XABXC++pOmvOUCIENEJn4bblJaGuElPmL8dgGh9tnX85S483qbHTwZYd22L5XJxUyOR1wxb2/w6/M9FyysE+alQYe26PJxkuNyt8neifSDpPlrt/94Qi+6+kFoMCnilKq+RI2KsaLbOVWztM5Gl/2/ALDL96KxNMry5A=
+	t=1741016596; cv=none; b=H/bIGANSO2JYunReu6XyM85sBL4T032VOn6qRpy1ax3WBP4TRNUgAaDYBa+y2rc4WbcGBc/Xv0B0Csw4ZBMRj5XJqIoNz0hQQi+finKzpqKqtA58+T++ZNXOUSN6Y1kS0nsycNjUqBqw/hMtQ9fYfiBKmeGnp801lY+Iw8z17BY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741016541; c=relaxed/simple;
-	bh=c0rbulC+YHbb5daw/fx8ZNMv/ZzxDGYND2fLyrNaARk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Wc/BvZDaPUvUOPXcm6vTQKpxbcY38AS5ar1xk5+tJynb2zJ2hg7nCcXNYJGdm/iVh88VRgBvuVoJ8ycrmvZ56Hkn4UumpfWsLXZ71mo1rGFhZiQu7HkAiRmyQgO9XkHfPNvyfBfmL/HEop/Bg3v+xIk4tFS7OvtWsKbjqrJwTIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1741016596; c=relaxed/simple;
+	bh=ghfaZbIiUJzse2shN7QuXoFlGxnLXRzYB7t3m0+2OGE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y/IIqP7OzibPeihqzt18eI8wLN6eFLKfGRO0czw+QzbuLU4u2LFaLwkgWVf8ebAcP1wtpghcSf+aKibghejdOGWJK/EpkAySmgk7hLQ33jUtAYpn5pda73PFz5Ij618dXA/2AYVeV2/f2w1z91HRwJ7lDb8kwQ5E9fg7g70oSw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PZ6IM/I1; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-51f22008544so1831345e0c.1;
-        Mon, 03 Mar 2025 07:42:18 -0800 (PST)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43bc31227ecso6916995e9.1;
+        Mon, 03 Mar 2025 07:43:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741016591; x=1741621391; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gX/3lsZgxbQ9Eu8icrnCZRTD736z7Ychh8myylxpAg0=;
+        b=PZ6IM/I1LAAWOMENoC1M5umG/lqE5PyRxHSG2SgwFt8Q89EyPZ4TgKkOVYV5+ZF+Rh
+         p1TxMldCjmCcVhDCLyUhgPgmPXn7aLCoNcQVWfbkwQn8Mka/hQUAMV8ZaHrRwr9nUcPd
+         BkdbkZvP/Q07kCIFBzbZ5fhI0lO277k+UTmBIpqiI+y52OpKPEUbiN57kcGc/KZWxPX1
+         M4mbaLTqhBt3kcR+JhLS24Kyb2PQ+mkLUK5kjTXgMr6E2M/rihYA2BTXF/rbzR7qnlVg
+         ziPtSplNlM31bpsXo7BLTY6z2fo43LNn6qU4EtCmbIa3T7y2NTvxp4dkssPt+BmW8+7u
+         dRAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741016537; x=1741621337;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PEmVeCz4Uzs+jWGBRQohRmwcfz59z4FOg768eOIxkzI=;
-        b=LZKkJf+NLf/tCAzzIU6Ue4Zl6mCftNbAwQX0/5lSQiRGZ9HqUEeLo7arL0eHoRk7KO
-         /NTDS0M61VJk+sqa2uJ+Ni8aFmT5NWEaeH/BU38d7Cz/Z/85J1L3YljWozAGcoUy5OB2
-         d/3r02KEukPgyrWETBXqT20ck36bOrl26BYsfASXQ377ihVzKfDVAOm0hVYhu5pC/ITu
-         gK5RlO33Sn0SYV3rDknhurfaiG2FPspEM4hz3bnpGo9LyUlWkvjHAGfb0ON+NFn/FAc9
-         u7OhovW7vyWstodHeSS76qqgkseqh2qwD0DVA0Af+YoGAenAUvzGZmjm8Zb/Kshy3W3U
-         igUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUoTRIvMalkwkxv0gv5mK+e9mrs/mKS/XN9xkD5+TJSu/+tQA0wYEl4AiiQnY9t7Gc/ZKz+p6sabaXJ0h+0@vger.kernel.org, AJvYcCVE7WO+xXs8DKssAUShQeXlsHwMN+TNuxtc/n6TArG/6Ng8wW267pyuq6xKnQAqb9SPeZvYUKgF2RWs@vger.kernel.org, AJvYcCWpRLeuvqquudC+VDbdzTtLdAAHaxo49nWYi9M/XSqPjEWAluNqTrMvr4OVTJV2VN5/sw806jztIWfusLkR@vger.kernel.org, AJvYcCXTSl+RDowaLTB0nndzGiIZnWPVzyS+EiZTvzmWAUsb/oe92cv7WjmKeosUds4NOOyJxPGUdyvHeSNpQIF2uPb2YOo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6LhIiWVRODNM7MV0DNHe1TVLSAqHfb0Gwgn65rVnLnsDIrser
-	DFcg3Kb1TyiQXEicEgJAodc/qso4GOA5OsuwZeE9ZHgPhNb/gBd3vQCLIB08
-X-Gm-Gg: ASbGncsL5uVW4KvtHymQANQ509j1LOOX2RqzpsmSPOZwLKxtvKatOwv29SpAm5k9Pt7
-	eFwcqZhfmJKSO8lrSraBBOOCGM7iI1cIBgLHbB54f7vCwCcjnpRjqJeHLBVFBJMmpmouCUxBvMr
-	UXMNS+bOhe/Gkv4+JlVKHiyDLVeGHUQBFSBn2qijws/K9EbgQPJPzTCbOwLrQcsv5hlyMbj3hsF
-	PizWHPaabWoYmUmcWpE627h/CLD+YwGBGsI7Gax64MyqTWV/1YBvSENTV6cqp9LwtTjY/w0utr+
-	rsmRQgRyhR4dumDA5sIrLuBn8Pmp6CGQhdQN2wSAlyo0tM4X9d99mIvpyWNLYWHFB2US95M4YG1
-	1hFwcPUL+qO8=
-X-Google-Smtp-Source: AGHT+IFN8Ax3GZXDB2gNFK+7EvOvj5OalczQ2YcALagsFj9Dcvyyy/URUcct3XyM2U+Jw0thh+U9NA==
-X-Received: by 2002:a05:6122:8d3:b0:51b:b750:8303 with SMTP id 71dfb90a1353d-5235b8cccffmr7484558e0c.11.1741016536644;
-        Mon, 03 Mar 2025 07:42:16 -0800 (PST)
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com. [209.85.221.173])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-86b3da71bd4sm1897940241.0.2025.03.03.07.42.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Mar 2025 07:42:16 -0800 (PST)
-Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-51eb181331bso2156588e0c.0;
-        Mon, 03 Mar 2025 07:42:16 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU1esdBp3qSbUfDSQXiQWhTlunCA5fqkRdOim8v01d3HSe2SYzo/uXMVrtNLQWii+9xF3Cszv2qIS+2@vger.kernel.org, AJvYcCUtuFjlbCfyaBoje4tuBmZct49RLuI53EYyAhBSPp+DCsupT2u/eaVk4Kvha6ndx2spQ2AQ3jlFSJYGXFuf@vger.kernel.org, AJvYcCVeevKLnNvsRTMylFzY8RQoOTloHf+/ftPDJbtXTLsui56WTdIOesE8FlOpAWOlZWpka56F5Om/CXuNCd0N@vger.kernel.org, AJvYcCWR9s9yAv4J7h133c1Rz2xOghfDu6VeTfEJuPo6p3WHOf/BZr0Zax/8XaXguODTelZvEG7MUJcbK5kdBVwwmkLMLmI=@vger.kernel.org
-X-Received: by 2002:a05:6102:6c1:b0:4bb:b809:36c6 with SMTP id
- ada2fe7eead31-4c04495290fmr9157605137.11.1741016536000; Mon, 03 Mar 2025
- 07:42:16 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741016591; x=1741621391;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gX/3lsZgxbQ9Eu8icrnCZRTD736z7Ychh8myylxpAg0=;
+        b=KUvayw+yZf99wSoSSD4Xq3BnurFegHVNGyV+Ly3Fln+EnQXZtlJezcR8qpZR7gFzJl
+         KoZwDl8jaohrWKt+WWWRfD7LhFCiz2rpgMNZu5kGso/Z8wSKTAPq1L6Ve8+y/voTHG4A
+         Ouc1btrwksGqbKDul2+wmBnk423I5aYu2FxH0xmzAM75mifYn4nqjOm8PdMmv6603v14
+         O6ciY1vl5aHZLtmjj8kHaTfwWS91FKduok7ldiBc45vQD2ynXIZNy9Xn4/1nofq/Y8B4
+         8S9sFEnGKdIJopL1s7YOdE+B9RPjChaJjkb8zhZOHLqiVXWYRX125Xvh/WGx2dzc5QP/
+         2ZBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVWrAJQHIbBIANX9LHSWSUUJj8RPWgk1TfSJ9+ah13SWZgtOJ/2TsyPolBKiN6gXsF13g1IEgLZS3P1BiA=@vger.kernel.org, AJvYcCWLF1OnsAWebbcYZ3PpJnprCIATEaMYTpJNdhaWFIn0X12+vJP5qtyBSVQk9pz+XTGvXITCCwugRZwKai8=@vger.kernel.org, AJvYcCWsdhoBqA0hFibD3eoPQhxBS6WzzIxfonQglIgyaD7gs+9lXbQOjp8HpgCbndO/fucQi/ZDh8roibnTpLE=@vger.kernel.org, AJvYcCWxEs2tCGf+gney1PU03wOMF5RE1wNZjnWtUDHkX4/k74ptI1SuSSCPf9fsQj9ozXhfEPbdZFdu@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDogHWLRFzrZZxCGCLwo+RF74RZ55kqdc5cbupfPZn0ApgKfnd
+	lvpVL5gUE0rSOGmfmhUl4J02mIaHOIzQ0b9UE/BpNDySfDEmM2LEcQoRfw==
+X-Gm-Gg: ASbGncs2y3bISiFRkYP01lcXxm27ujPE6xJnVDwnSMX6P4LzPdtJI+GzCFpQ/mrFSMv
+	dvMrBva3f7ZdHQPxFenu7oY9JOjLY3xQYbRsEQAQzl+ElS/FGrmm7zzxnJz4diKZlJmiahtfVLA
+	UAsVoEEHkF4s2JTQ98D5fKAvRSl3eiwb80Umi8Jjm3ZVipACelRCgpdl9qJts9FQxLeXGZz+QKo
+	SVH5xYXbWvN/pJrZLyEDvSREXPqAY9aVMmis0Bt7R8qgBLtAXNuLRNmOWEMmULoTvRxMu/MFOnf
+	O2YDsp0Kgj6Ua0GdJIAKi+I9UOZEQCkU07EJrhCcMZRi8wx4ep3xrnVeG2TqlLPsd332BFVvWEE
+	4VgWf0WYP5nlQhBm2HJ9NMhstQXMKdX8=
+X-Google-Smtp-Source: AGHT+IHMe/5gEMg5r0++v4ePAUtdrMnkeRZYRGazD6vR/8Czngk/4bbcLGPo6dtarHyEH+gQAJht3g==
+X-Received: by 2002:a05:600c:3505:b0:439:8cbf:3e26 with SMTP id 5b1f17b1804b1-43ba66d5659mr108280575e9.4.1741016590931;
+        Mon, 03 Mar 2025 07:43:10 -0800 (PST)
+Received: from orome (p200300e41f187700f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f18:7700:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b792asm14768152f8f.53.2025.03.03.07.43.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 07:43:09 -0800 (PST)
+Date: Mon, 3 Mar 2025 16:43:08 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Sameer Pujar <spujar@nvidia.com>, 
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, Sheetal <sheetal@nvidia.com>, Ritu Chaudhary <rituc@nvidia.com>, 
+	stable@vger.kernel.org, linux-sound@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [RESEND PATCH] ASoC: tegra: Fix ADX S24_LE audio format
+Message-ID: <mhqpjehmhw57nljlq2e6ip3qisar7knxku5in3q4grnf3wfwj7@tj3ahtatgjv3>
+References: <20250302225927.245457-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250226130935.3029927-1-thierry.bultel.yh@bp.renesas.com>
- <20250226130935.3029927-4-thierry.bultel.yh@bp.renesas.com>
- <20250303133540.GA1681980-robh@kernel.org> <TYCPR01MB1149261DFCD83872B2F94435F8AC92@TYCPR01MB11492.jpnprd01.prod.outlook.com>
-In-Reply-To: <TYCPR01MB1149261DFCD83872B2F94435F8AC92@TYCPR01MB11492.jpnprd01.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 3 Mar 2025 16:42:04 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVj9=TysOOMc6pg-Yy2XRA4MCUw2e+5GwEKzMTcpnLbXw@mail.gmail.com>
-X-Gm-Features: AQ5f1Jp1wUchYyU3RiyC7BHY0Mt9sgg6vrImyJ3xNHKGwXzepnM3aITEspelp3g
-Message-ID: <CAMuHMdVj9=TysOOMc6pg-Yy2XRA4MCUw2e+5GwEKzMTcpnLbXw@mail.gmail.com>
-Subject: Re: [PATCH v3 03/13] dt-bindings: serial: Add compatible for Renesas
- RZ/T2H SoC in sci
-To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	"thierry.bultel@linatsea.fr" <thierry.bultel@linatsea.fr>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	Paul Barker <paul.barker.ct@bp.renesas.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="xjbbdfvz2jer6yos"
+Content-Disposition: inline
+In-Reply-To: <20250302225927.245457-2-thorsten.blum@linux.dev>
 
-Hi Thierry,
 
-On Mon, 3 Mar 2025 at 16:10, Thierry Bultel
-<thierry.bultel.yh@bp.renesas.com> wrote:
-> > -----Original Message-----
-> > From: Rob Herring <robh@kernel.org>
-> > Sent: lundi 3 mars 2025 14:36
-> > To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-> > Cc: thierry.bultel@linatsea.fr; linux-renesas-soc@vger.kernel.org;
-> > geert@linux-m68k.org; Paul Barker <paul.barker.ct@bp.renesas.com>; Geert
-> > Uytterhoeven <geert+renesas@glider.be>; linux-kernel@vger.kernel.org;
-> > linux-serial@vger.kernel.org; devicetree@vger.kernel.org
-> > Subject: Re: [PATCH v3 03/13] dt-bindings: serial: Add compatible for
-> > Renesas RZ/T2H SoC in sci
-> >
-> > On Wed, Feb 26, 2025 at 02:09:22PM +0100, Thierry Bultel wrote:
-> > > Document RZ/T2H (a.k.a r9a09g077) in SCI binding.
-> > >
-> > > Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-> > > Reviewed-by: Paul Barker <paul.barker.ct@bp.renesas.com>
-> > > ---
-> > >  .../bindings/serial/renesas,sci.yaml          | 64 ++++++++++++-------
-> > >  1 file changed, 40 insertions(+), 24 deletions(-)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/serial/renesas,sci.yaml
-> > > b/Documentation/devicetree/bindings/serial/renesas,sci.yaml
-> > > index 64d3db6e54e5..2c4080283963 100644
-> > > --- a/Documentation/devicetree/bindings/serial/renesas,sci.yaml
-> > > +++ b/Documentation/devicetree/bindings/serial/renesas,sci.yaml
-> > > @@ -9,9 +9,6 @@ title: Renesas Serial Communication Interface
-> > >  maintainers:
-> > >    - Geert Uytterhoeven <geert+renesas@glider.be>
-> > >
-> > > -allOf:
-> > > -  - $ref: serial.yaml#
-> > > -
-> > >  properties:
-> > >    compatible:
-> > >      oneOf:
-> > > @@ -22,6 +19,8 @@ properties:
-> > >                - renesas,r9a07g054-sci     # RZ/V2L
-> > >            - const: renesas,sci            # generic SCI compatible UART
-> > >
-> > > +      - const: renesas,r9a09g077-sci      # RZ/T2H
-> > > +
-> >
-> > Perhaps explain in the commit msg why the 'renesas,sci' is not applicable
-> > for this chip.
->
-> Would something like that be explicit enough ?
->
-> "The SCI of RZ/T2H SoC (a.k.a r9a09g077), as a lot
-> of similarities with other Renesas SoCs like G2L, G3S and V2L,
-> but a different set of registers, that moreover are 32 bits instead
-> of 16 bits.
-> This is why the 'renesas,sci' fallback does not apply for it".
+--xjbbdfvz2jer6yos
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [RESEND PATCH] ASoC: tegra: Fix ADX S24_LE audio format
+MIME-Version: 1.0
 
-FTR, the registers being 32-bit instead of 8/16-bit wide is the least of
-your problems... If it was just a SCI with 32-bit registers, you could
-use "reg-io-width = <4>;" and "reg-shift = <2>;", and add support for
-the latter to the driver (it already uses regshift on non-DT SuperH).
+On Sun, Mar 02, 2025 at 11:59:25PM +0100, Thorsten Blum wrote:
+> Commit 4204eccc7b2a ("ASoC: tegra: Add support for S24_LE audio format")
+> added support for the S24_LE audio format, but duplicated S16_LE in
+> OUT_DAI() for ADX instead.
+>=20
+> Fix this by adding support for the S24_LE audio format.
+>=20
+> Compile-tested only.
+>=20
+> Cc: stable@vger.kernel.org
+> Fixes: 4204eccc7b2a ("ASoC: tegra: Add support for S24_LE audio format")
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> ---
+>  sound/soc/tegra/tegra210_adx.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Gr{oetje,eeting}s,
+Good catch!
 
-                        Geert
+Acked-by: Thierry Reding <treding@nvidia.com>
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+--xjbbdfvz2jer6yos
+Content-Type: application/pgp-signature; name="signature.asc"
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmfFzgsACgkQ3SOs138+
+s6FhkxAArQUlJi/PQPfUex/iHG7bwTxOAGpHP770c8QqjhekGFUQWErLQwNPqh3V
+3Zv7+PUyqW2UlMuo7PyrUwPj+gl/uER8blYrm1JvDCHTFDU4d7L2EuxyFD6mHeCS
+MYaAeCbmFtGV0BuGBDvUnLV1BXwNftTNaTXOwVuIdUFPlcJ0qpxC+yywv8giuO+q
+Xm2wznbWHhBJXSBUtxvJ1AMOlIEqZdt3Lkb4fh57HCQ3KxgevTuyxy9V9gJLiRv0
+L1pSleqGBNrCSmHEmiP0MGWebp1Q7zHueATkdZc6y9UvzoTjM2CEePq4xfaHvm63
+IIsFXkTtTltzKjeLQDs2lWtG1V+ee+VH/oRYNgol37q/+gO05WhB8ZJmdRrBKjcI
+rjj9WwLt2o4IPkNvR2scU6kWcjmvVwd52HtFU7wKd4C2HT49VyXn7rJenq8M11+l
+ZV3a92+3X982h6vCbWNHcFk8RdOh7GDpJzYPqWXuHkzHfW0T32WqJhMbxhmBWcoU
+eQ8nsz40ty3Hu5x/1ZH9q+6pSQSTD/UQM4lyOefMhc2+S3g5+eToTy8evwY2nbw3
+oIFfZvoG5lIOloC+s/ZWlF8WSdN8itWMN9DvEC0sgcYHgYEImw8C+PR1zQz2uBRD
+qDZXtvIMaFOepuc5z31E58rSx3s0HygoCGgslkqlOTkiR93ABdU=
+=cRoZ
+-----END PGP SIGNATURE-----
+
+--xjbbdfvz2jer6yos--
 
