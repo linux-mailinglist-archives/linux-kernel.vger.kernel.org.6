@@ -1,98 +1,103 @@
-Return-Path: <linux-kernel+bounces-542564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D8C5A4CB23
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:42:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6371CA4CB24
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:42:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 612DE1896AC7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:42:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CDC217419B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:42:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D23FC22E3FF;
-	Mon,  3 Mar 2025 18:42:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D80D922DFB6;
+	Mon,  3 Mar 2025 18:42:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="oPw3V5Qr"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HFR5Nxab"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3945E20FA85;
-	Mon,  3 Mar 2025 18:42:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D03F920F09D;
+	Mon,  3 Mar 2025 18:42:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741027338; cv=none; b=jzyrXEu75dH00m/asjg0SwvGxn2etpOoiLVFZSEE9coidHt2SywyRX6Ba8q5EMoK+Rzt+nS0PcoLH9dEP/wPYP6cuHWIZYdCp6XX3xvmkMov0vkN3wIMsQul42ZRv+fH8Yk3qXDhbNaam/F160pbBp10f+h7AcdMvgy5fS25Cns=
+	t=1741027369; cv=none; b=BosaqVngDb/E74CyKrgc0g2MoRLmhEMege1w0uIOxn/bp36/zHmiwsaRTg10CPNaCuOPpfDEMRqPplemx/+JcRHaTFPBP4IvtNBWgtkTVUndwmASD8FL7T2tXnIP2ts0K2Rgqne54wTIFRGbmTkqvG5K+UIFpq5nljQC44elA0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741027338; c=relaxed/simple;
-	bh=GgL5l5p7cLIK3jtpm2PKvweYN8IGRE0x81hzIGh6psM=;
+	s=arc-20240116; t=1741027369; c=relaxed/simple;
+	bh=K1AkAgN7ZRf8Mrg47kNl3fz4g4KHlXhzpSUh/NBiP9k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A0lkTrkWAKpjHXHqQ0TcHh7PPqywgE2cs1EoLyiVoDscY6GMXAHXgmdnBzz9DRYJHtlj5iqWb9W7m4vv56Hw5ntLhqljT5EUmoXssRDqKEVP+3T3D1IUaFLpivV+vaHg94wKcmZxjnSrzLnHuoFyTFuf2C3TvI15izyhcBCzHAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=oPw3V5Qr; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=+blnsrHAxihwIlHpvyveOux8noercGhAiceXO94VY1k=; b=oPw3V5Qr/ypp0ZNY
-	35NdCkYmE2Ij7+RA2l2EX2HizcINmpziFDhFwhBlQQTOmfjGPM/XojC3ZzSC/mF/c2mLglOhPhGUj
-	7/p/sBRwpcXDs0tfnTpxdYxoDK8yLHIa7TRgfaycCnXuTpFN1ekzGXmyN44XHZFbVXE9fmQR++gPj
-	aQRmrFBi99qg/7fkyMYi5Qtg3r1OlU2kwrMmHfHKBpYuLu6PnQAUtoerWVg5IeO/6lqDuaiPCeDYS
-	SPB5c+ueCtBH+aZ1xZOK+VPx1vn9SewKVuPL+gf0aVNwyfa6ye/x1rkD3wwGFoCr7YMYOG6kpbZk9
-	227J4gnpUxhdzJJQWA==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1tpAjz-002E4j-1w;
-	Mon, 03 Mar 2025 18:42:11 +0000
-Date: Mon, 3 Mar 2025 18:42:11 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: bryan-bt.tan@broadcom.com, vishnu.dasa@broadcom.com, leon@kernel.org,
-	bcm-kernel-feedback-list@broadcom.com, linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: Unwired pvrdma_modify_device ?
-Message-ID: <Z8X4Ax5UCerz9lP8@gallifrey>
-References: <Z8TWF6coBUF3l_jk@gallifrey>
- <20250303182629.GV5011@ziepe.ca>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PUsLnGKhpnS80SEFzTuosyCbZH4X3c/lObMz/j6kaLXkSqziDT2BUhAehvOugkqxshuje1ApdmevsHbQlnZLJBos17GfTM9HRNHxoJE6btVGRzWWEzJLOO+Xz+nWa5fZKwVGUozyVpVBDeaSuAhZv53+oZrOrp+xFB6YUXYkULY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HFR5Nxab; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=PqPGO8jyp+1cRsyxsj1BJJQydzk97c227dyWjDsQP/U=; b=HFR5NxabM0k6SlgmT3D1RQEbie
+	ic8XOnsYMvkUl0bEPKYBpHWiyD9oFYcBWbNSW5UcIaz16MV8Rh6RFNuJe0zY9DvKb2+sJeFITa7YK
+	7oz29Dt0AIfpR51X5OqUki/Cn+CQY8Z/SbHFMKFvNG+JBJwDb63E0STn7crKjYqZKFPwcmwVOXAdu
+	Rm9eLleG+pJEJrhuourdejOOQIlx8NwJzkVIOBKmauJl95ojbRdd7qxSdobz1EjlntZhLqmJ4/gwD
+	PBezC4RNU8+Y/ZNrvnMk7JqPqgznIwULjc/ofJcsnvO0KUV/xIG5Rm6mSGVRf6wCGJxvIympW1jU4
+	7jCjnJ0w==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tpAkT-00000004bPX-1I2S;
+	Mon, 03 Mar 2025 18:42:41 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 8D40030049D; Mon,  3 Mar 2025 19:42:40 +0100 (CET)
+Date: Mon, 3 Mar 2025 19:42:40 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: mingo@redhat.com, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, linux-kernel@vger.kernel.org,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org
+Subject: Re: [GIT PULL] LOCKDEP and Rust locking changes for v6.15
+Message-ID: <20250303184240.GB15322@noisy.programming.kicks-ass.net>
+References: <Z76Uk1d4SHPwVD6n@Mac.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250303182629.GV5011@ziepe.ca>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 18:41:23 up 299 days,  5:55,  1 user,  load average: 0.10, 0.05,
- 0.01
-User-Agent: Mutt/2.2.12 (2023-09-09)
+In-Reply-To: <Z76Uk1d4SHPwVD6n@Mac.home>
 
-* Jason Gunthorpe (jgg@ziepe.ca) wrote:
-> On Sun, Mar 02, 2025 at 10:05:11PM +0000, Dr. David Alan Gilbert wrote:
-> > Hi,
-> >   I noticed that pvrdma_modify_device() in
-> >    drivers/infiniband/hw/vmw_pvrdma/pvrdma_verbs.c
-> > isn't called anywhere; shouldn't it be wired up in pvrdma_dev_ops ?
-> > 
-> > (I've not got VMWare anywhere to try it on, and don't know the innards
-> > of RDMA drivers; so can't really test it).
+On Tue, Feb 25, 2025 at 08:12:03PM -0800, Boqun Feng wrote:
 
-Hi Jason,
-  Thanks for the reply,
-
-> Seems probably right
+> Alice Ryhl (2):
+>       rust: sync: Add accessor for the lock behind a given guard
+>       rust: sync: condvar: Add wait_interruptible_freezable()
 > 
-> But at this point I'd just delete it unless pvrdma maintainers say
-> otherwise in the next week
+> Boqun Feng (1):
+>       rust: sync: lock: Add an example for Guard::lock_ref()
+> 
+> Mitchell Levy (2):
+>       rust: lockdep: Remove support for dynamically allocated LockClassKeys
+>       rust: lockdep: Use Pin for all LockClassKey usages
+> 
+> Randy Dunlap (1):
+>       locking/rtmutex: Use struct keyword in kernel-doc comment
+> 
+> Ryo Takakura (1):
+>       lockdep: Fix wait context check on softirq for PREEMPT_RT
+> 
+> Waiman Long (5):
+>       locking/semaphore: Use wake_q to wake up processes outside lock critical section
+>       locking/lock_events: Add locking events for rtmutex slow paths
+>       locking/lock_events: Add locking events for lockdep
+>       locking/lockdep: Disable KASAN instrumentation of lockdep.c
+>       locking/lockdep: Add kasan_check_byte() check in lock_acquire()
 
-OK, lets see if they wake up.
+OK, done!
 
-Dave
-
-> Jason
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+Thanks, and sorry for being tardy, somehow time got away from me :/
 
