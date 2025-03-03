@@ -1,174 +1,111 @@
-Return-Path: <linux-kernel+bounces-542879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 674E9A4CED9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:55:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98DE5A4CEE4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:59:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68AE7165D65
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:55:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9C883AAFB5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:59:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9542E23A566;
-	Mon,  3 Mar 2025 22:55:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4F8923BFBC;
+	Mon,  3 Mar 2025 22:59:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="atuko3OM"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Co9//dWp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 554EA238D27
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 22:55:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D22EC4;
+	Mon,  3 Mar 2025 22:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741042510; cv=none; b=kdNXera0uVFX+kdxD+JGzaCOe9zzK9rRvMwBdo8MVBWzGaPKAiD1B4YSpxSCrp1wIEYLl+dN+OCXGbKmNHA0hv4SOsps9BZ22A/F9Tuy4TFD7b5hcJNFKjZNz1DODSEI0MGBrDbckgGF8Ps/1Ds52fd0TnGUuJismZgHtEgDy88=
+	t=1741042744; cv=none; b=I1OqWWT5G5xEcrOgndYj3LtZmw64hluBP8BfpmhGsVNxlQFAIA4dVueeKj0p9X+EVQoexZc/AzH+jCJkpfXzwPJ7NQDwVu2d3H73lRNXVCjaD5SNN9wX4B65UH8NBQfxnwvCQrmn/njXAqjCzhZ3Zfjd3f134JB0y/4muBjQcBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741042510; c=relaxed/simple;
-	bh=FV0AMXP2plgQ+6X5x5sS4h/E9JkH8Jx7ZwLybj2GHcI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rKcgKGfNVDoOceD8gVDBwxgFMW1qqh2s0QNRW0m8a7s03lBhNoxT2Hd6RTzibsKh3duZwu+NaiYvZpInXrX9JQOjeAhnELgRvJTLTvkpKhKE09TxktlQLLZ1FUVrp0SLnGNcblssyb1wY/9p4/WUDyamGjEmb4mv7aGTJ6xli/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=atuko3OM; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6ef7c9e9592so38533077b3.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 14:55:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1741042508; x=1741647308; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JsORS7Y/VoLn8iE6xrSTP5GOFu3anHKEztygS4ARAzc=;
-        b=atuko3OMuoBz3M8LQtPH5T/blMmnfG/pMclyA6oWZsL/vtwG+Q0vl3DoLc+AhhtddT
-         ZgQTKtkenmfV9rf0t5H+Nja4KOJfROLi+nZvlIjd+K3VX47myciX4rJcrLqCoTWzb+nC
-         G3s0fXm75FEizTCevZPrKSK/N6kQ/+g/sEHSEuFUbTwiFCDsLCKV3POnZI1X/8ZZPhc9
-         hLCBxkKTwePc0zGerA9BhVEFCAwD91CZLUAd8iiuwSTNOEsMD8RMxFZ/9Tpj0bMJaKMW
-         93Y0origjL0yPlr9s5ijGsI6eZ6frktvV3kPrp4xiFoz3lmn+MFHQ/QRo+T4eUVsIzBW
-         Wz5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741042508; x=1741647308;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JsORS7Y/VoLn8iE6xrSTP5GOFu3anHKEztygS4ARAzc=;
-        b=NkzAdxAqwvLOrDNKqQVh0tSVVoplyqrwAsFYk50IXjhDVP5XZmOmS2al4vKOR/goOz
-         8/5h7+OIR2Eo0lI7BH84tfu1L2DFZ/63IPAULJLqHthT4Ktqyvwn+aOJUzggBPl7P24I
-         4sML7/iBriljso9FmRNhJrggN8Omv2pyVqvFCUB9TG3q/LdO+JfnCuYhwGz4NwFqglic
-         mt8Ii5la9VTkGdLXZYZ6xROGcQHbwS8chhON/5gUkOSO1m5S5AXWAWiKnzgqWUh8BnZ+
-         RCLjcR4+lFamFd7+dZ4sBAc9sAjaju6App6wKrWuSPurMOw2AxjXTg7rIvUleGLpa+Iw
-         G/QQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUUm7a/cFvOmUpW0CnYnCf91au1ZeXgHWPlOSwLn6h4k4P+XZzRibhZjuNRPBslqoA+FyLpXehf6josmsQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMQwkeQfMHZd9N5SeLMszJknotIZUEbdRnjUm4sooiaP25QIz4
-	/pxvs+hHrOEU+Re0bAC02EMvb0FDD54+yNwPgfZYE6fiIt994t22jQmC9IGgQy9EB8UbkSnpw0r
-	ocSGWDCFr3q4k04cssp2nZtpIKrRAMME5Y6gr
-X-Gm-Gg: ASbGncvK/hZe7+BaUDitkVJqCcCK2vAGwJjqZKjEmobkvze8rEf6VyOlWZEkwCtDjLQ
-	eN8HCZ2OXp4G7xr9agnlQrQnG3OWg07WByM7MIoiidp9e3xpT15Jk27vHCa9elbcl04gxSxb7Jy
-	EriQSX6NHR7QRYSiQDyGGg11S4gw==
-X-Google-Smtp-Source: AGHT+IE6rf8uW5Ake0yIOw7LcxxwfLNQ7aN2DZQJSmlz7GVUFfcRLmQdGJcdT3Qfu+CP0SMft2VWYj9dKOHeWHzxgUA=
-X-Received: by 2002:a05:690c:3686:b0:6fb:b4e7:1471 with SMTP id
- 00721157ae682-6fd49f9f825mr204154037b3.7.1741042508271; Mon, 03 Mar 2025
- 14:55:08 -0800 (PST)
+	s=arc-20240116; t=1741042744; c=relaxed/simple;
+	bh=XbOH1fC1/MqVpPPDTqHt/Rol16iCZE4/cwigRDqrXss=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=RWl1hqhVwZnHJLdAUpa3CcwoSAxTji9dvL1x48+lC/82fFCmsNSd2iihaoFbwrhD5xoutT4+svjr80GCCJ/vbsyA5d2WwD/hL0MYKl77KUykhR416Ikj2eABbLS0GrvzOQ+WnRSj58tsdN2NY1CP08lV/T5tOD3wOilOr5ujJXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Co9//dWp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id AB1D7C4CEE9;
+	Mon,  3 Mar 2025 22:59:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux.dev; s=korg;
+	t=1741042743; bh=XbOH1fC1/MqVpPPDTqHt/Rol16iCZE4/cwigRDqrXss=;
+	h=From:Subject:Date:To:Cc:From;
+	b=Co9//dWpARvtu9grWKQH/G7K2ze8qZhCuFrb9iPhp0EgFj+Mzxp/xhWLzc7JHtbQo
+	 bPzLW4KmKAOznW7tRn3RW5ZWfIRwJrytoGFsuFHBvjSBMJ/Zd/isOvWT+2HV4UZ4eA
+	 Pm4oKO7lBU9f5Ff3rmzq2dPgOI0wLKZfPI18fOc0=
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FD38C282D0;
+	Mon,  3 Mar 2025 22:59:03 +0000 (UTC)
+From: Richard Leitner <richard.leitner@linux.dev>
+Subject: [PATCH 0/3] Add flash/strobe support for ov9282
+Date: Mon, 03 Mar 2025 23:58:56 +0100
+Message-Id: <20250303-ov9282-flash-strobe-v1-0-0fd57a1564ba@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250303-inline-securityctx-v1-1-fb7b9b641fdf@google.com>
-In-Reply-To: <20250303-inline-securityctx-v1-1-fb7b9b641fdf@google.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 3 Mar 2025 17:54:57 -0500
-X-Gm-Features: AQ5f1Jr5IfzltzAXVNhmGo-A7qd4NzIh3iaT1pjM1-RaMmUpgWxt70koGP_h_PA
-Message-ID: <CAHC9VhSo3aGsJVd=a3MTeakgU66oTN86oh5sZE8P4ghSk8Rx2g@mail.gmail.com>
-Subject: Re: [PATCH] lsm: rust: mark SecurityCtx methods inline
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADA0xmcC/0XMywrDIBCF4VcJs+6AmhoaX6Vk4WVMhKKtplIIe
+ fdKQunyP3C+DQrlQAVUt0GmGkpIsQW/dGAXHWfC4FqDYEKynvWY6ihuAv1DlwXLmpMh1HYwjjE
+ 7OhqgPZ+ZfPgc6n06O9Pr3fD1HP+26g5ZCInm+sNnHSKS59Zpo6XxTlUO075/AURFWfKuAAAA
+X-Change-ID: 20250303-ov9282-flash-strobe-ac6bd00c9de6
+To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Richard Leitner <richard.leitner@linux.dev>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1741042742; l=1479;
+ i=richard.leitner@linux.dev; s=20250225; h=from:subject:message-id;
+ bh=XbOH1fC1/MqVpPPDTqHt/Rol16iCZE4/cwigRDqrXss=;
+ b=tPsXSgcYuvu4Sx6vaJjj2l/fOFaX2Ujdxbk35Mtejtr68dD/w/VDfKMwsAOA2P9f9fUKvMzn9
+ 9hkSLXJOWU8DAZFP8SNmuPzXo4EUbzMSV+95eKEnfqIia+VIrINvDTk
+X-Developer-Key: i=richard.leitner@linux.dev; a=ed25519;
+ pk=8hZNyyyQFqZ5ruVJsSGBSPIrmJpfDm5HwHU4QVOP1Pk=
+X-Endpoint-Received: by B4 Relay for richard.leitner@linux.dev/20250225
+ with auth_id=350
 
-On Mon, Mar 3, 2025 at 10:30=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
-rote:
->
-> I'm seeing Binder generating calls to methods on SecurityCtx such as
-> from_secid and drop without inlining. Since these methods are really
-> simple wrappers around C functions, mark the methods to inline to avoid
-> generating these useless small functions.
->
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
->  rust/kernel/security.rs | 5 +++++
->  1 file changed, 5 insertions(+)
+This series adds basic flash/strobe support for ov9282 sensors using
+their "hardware strobe output".
 
-While this isn't specific to your patch, Casey's comment about "free"
-vs "release" is something to keep in mind when working on the LSM
-bindings; what happens inside the individual LSMs for a given LSM hook
-can vary quite a bit.
+Apart from en-/disabling the flash/strobe output, setting a timeout
+(duration of activated strobe per frame) is implemented. The calculation
+of this timeout is only interpolated from various measurements, as no
+documentation was found.
 
-I also saw a similar Rust patch where a commenter suggested using
-"impersonal facts" in the commit description and I believe that is a
-good idea here as well.
+Further flash/strobe-related controls as well as a migration to v4l2-cci
+helpers will likely be implemented in future series.
 
-Beyond those nitpicks, this looks okay to me based on my *extremely*
-limited Rust knowledge.  With the minor requested changes in place,
-would you prefer me to take this via the LSM tree, or would you prefer
-it to go up to Linus via a more Rust-y tree?
+All register addresses/values are based on the OV9281 datasheet v1.53
+(january 2019). This series was tested using an ov9281 VisionComponents
+camera module.
 
-> diff --git a/rust/kernel/security.rs b/rust/kernel/security.rs
-> index 25d2b1ac3833..243211050526 100644
-> --- a/rust/kernel/security.rs
-> +++ b/rust/kernel/security.rs
-> @@ -23,6 +23,7 @@ pub struct SecurityCtx {
->
->  impl SecurityCtx {
->      /// Get the security context given its id.
-> +    #[inline]
->      pub fn from_secid(secid: u32) -> Result<Self> {
->          // SAFETY: `struct lsm_context` can be initialized to all zeros.
->          let mut ctx: bindings::lsm_context =3D unsafe { core::mem::zeroe=
-d() };
-> @@ -35,16 +36,19 @@ pub fn from_secid(secid: u32) -> Result<Self> {
->      }
->
->      /// Returns whether the security context is empty.
-> +    #[inline]
->      pub fn is_empty(&self) -> bool {
->          self.ctx.len =3D=3D 0
->      }
->
->      /// Returns the length of this security context.
-> +    #[inline]
->      pub fn len(&self) -> usize {
->          self.ctx.len as usize
->      }
->
->      /// Returns the bytes for this security context.
-> +    #[inline]
->      pub fn as_bytes(&self) -> &[u8] {
->          let ptr =3D self.ctx.context;
->          if ptr.is_null() {
-> @@ -61,6 +65,7 @@ pub fn as_bytes(&self) -> &[u8] {
->  }
->
->  impl Drop for SecurityCtx {
-> +    #[inline]
->      fn drop(&mut self) {
->          // SAFETY: By the invariant of `Self`, this frees a context that=
- came from a successful
->          // call to `security_secid_to_secctx` and has not yet been destr=
-oyed by
->
-> ---
-> base-commit: a64dcfb451e254085a7daee5fe51bf22959d52d3
-> change-id: 20250303-inline-securityctx-6fc1ca669156
->
-> Best regards,
-> --
-> Alice Ryhl <aliceryhl@google.com>
+Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
+---
+Richard Leitner (3):
+      media: i2c: ov9282: add output enable register definitions
+      media: i2c: ov9282: add led_mode v4l2 control
+      media: i2c: ov9282: add strobe_timeout v4l2 control
 
---=20
-paul-moore.com
+ drivers/media/i2c/ov9282.c | 89 ++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 86 insertions(+), 3 deletions(-)
+---
+base-commit: f41427b3bdee7d9845b13a80c0d03882212f4b20
+change-id: 20250303-ov9282-flash-strobe-ac6bd00c9de6
+prerequisite-change-id: 20250225-b4-ov9282-gain-ef1cdaba5bfd:v1
+prerequisite-patch-id: 86f2582378ff7095ab65ce4bb25a143eb639e840
+prerequisite-patch-id: b06eb6ec697aaf0b3155b4b2370f171d0d304ae2
+prerequisite-patch-id: b123047d71bfb9b93f743bbdd6893d5a98495801
+
+Best regards,
+-- 
+Richard Leitner <richard.leitner@linux.dev>
+
+
 
