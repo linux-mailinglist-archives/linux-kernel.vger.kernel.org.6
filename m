@@ -1,110 +1,115 @@
-Return-Path: <linux-kernel+bounces-542527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3EA2A4CACB
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:10:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FCEEA4CAB5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:05:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EF1D3A7C64
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:04:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B2F81889684
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:05:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F2BF22A4D1;
-	Mon,  3 Mar 2025 18:04:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6016B2222AA;
+	Mon,  3 Mar 2025 18:05:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=grabatoulnz.fr header.i=@grabatoulnz.fr header.b="PVwnOS3E"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=ashley.smith@collabora.com header.b="BzC9/P8z"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FF15214A8A;
-	Mon,  3 Mar 2025 18:04:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741025065; cv=none; b=WmMSjGFmMvEMJmdxTuTRhgMecCHBKibH2DDExauNHIexAjv95haNbYJdDZ5jY/0554g3KbR4YU2TlLT7lc+YHWl02VbMKPdNAN6XbcigZrmurJBEJsjMwNXcpd9OkViRfotXvCvhMN6EZRVq1mbQSiKQ+xBQoHYMCkVhnCP4XOE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741025065; c=relaxed/simple;
-	bh=zoa9d1W2hAHMj2Xu5aH+Voz4qYbR0KEfYZx6lQa6UrU=;
-	h=Message-ID:Date:MIME-Version:Subject:References:To:From:
-	 In-Reply-To:Content-Type; b=ueyWY5qtnZLfnLF6OdprHcvQ+hzd1rYNBVftSHbQ//C1Ei0BPxy1hlvVd4cx2p7Pi20wyIGGnCo/s5M7G2P9mjUMbFQ6FArd5tKN1QCT/qfPj9xk81OZsmLWzB2p6orJcYPZIzYdiprC8qOyhTk1JxBudKHXTTszha7+gatDAks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grabatoulnz.fr; spf=pass smtp.mailfrom=grabatoulnz.fr; dkim=pass (2048-bit key) header.d=grabatoulnz.fr header.i=@grabatoulnz.fr header.b=PVwnOS3E; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grabatoulnz.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grabatoulnz.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 2A48D4425F;
-	Mon,  3 Mar 2025 18:04:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grabatoulnz.fr;
-	s=gm1; t=1741025061;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=h29U88rKE0F9ZULoLkFLslgs12yl8Pik059fbjfoXBI=;
-	b=PVwnOS3E/h/TsZWB6T6zmH/EOBZ4fW6bNWQf57rTUuMGrNIRAt12dKlgI5CRyIudHj4Y1c
-	FEQg1pIxnPZiSyQUND2hgTKAw5uFGpFKDTabEYXLyAGFnqRPGGyT3/zeH9jCqy6M2xIZV2
-	lVAn9s1eqP4XfW3hUowx8Tv2JHqv2cHf+BUmc3S+unohm/0qC0+uO4szrFUTabUGFwABtu
-	/efHftawX7fP4iv/NQYK7mgUtnVTwHYURajwkNw8q5AXxt+Rz333bU33h2U7CHMYgI1XAV
-	GVj2sJ/JWC9MqU2mgfu4dj8Zjlz0bsLm/SauqffL2VItrQ37CAQVSdKgnTp/jA==
-Message-ID: <88b4e029-1513-41f7-be39-4f31d360be8a@grabatoulnz.fr>
-Date: Mon, 3 Mar 2025 19:04:13 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20C49148316
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 18:05:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741025130; cv=pass; b=Ef32wHqL72TNiQKWgOUvC0RtAQHh9YA/29W+VlP4gEhR5CoMCBqBR0U8zncBJZHMJJO+Oyq3C+r/Ekf0IXrd4rjTmVUUfLtNSn7wzg4GG5S9uOfJ8t6DEdRUM6YVXvIMKF0oda9B6rIN4izrSQc5gLYpqGnaxuoxpPuP+RqJbrY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741025130; c=relaxed/simple;
+	bh=qmmirbxpOL3idbY/lOlKdqR+iaR8cliSOXxK7n6RYYM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oE0xLyLbHDwzAwnbUQ49iG0lVt6lZrec9QsciP/V7pivwJLPWKToiM20YSsyTsTpk+ti8LuQwHI3hTsZhY+SMCtjQeKbsjpWoTJnq1SdGuHkUzONZYBEr7i0WshLcfW/kra+eQU9qcj688KYR7DQQ/TR5T7UIbIVtvP6kTASXzI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ashley.smith@collabora.com header.b=BzC9/P8z; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1741025103; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=h0aPE23bAR5Rmn6tvnzAbKi2/ynilRCM3ErqPJ0NeAITr+Et8/S/TBnDjORFs8wmn15WYRg8/v0jeY8n7Mb8if7lweAYr94Aw08hFQOJtnr3joBk44SoJxvZ99B10GMcer0yBF6ZHKaLCKEShSng9hERNkYkIbl/viMrrgKodEM=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1741025103; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=STsojHn/FtIOgZ7OHhHBsckQARPuAh3DtPMiHKIURsY=; 
+	b=PoPsHtlLNaLy4adzbsBh7fRW8mprucya8dPiRbgGkLruFPLs3dgrPWSP5CIJg/0C8DfIN+To5Ij8Q50lO4WWnfpHoRb3OiVgvvjzK8D8ViPV5Oo/CamzcYcevwElxG72XSuBPZ8hnWIlucnH8buTYhn74g+e9xc2pwlKNmmwMko=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=ashley.smith@collabora.com;
+	dmarc=pass header.from=<ashley.smith@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741025103;
+	s=zohomail; d=collabora.com; i=ashley.smith@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=STsojHn/FtIOgZ7OHhHBsckQARPuAh3DtPMiHKIURsY=;
+	b=BzC9/P8zO7cgNdeplsHi0xf9aiFRFiRMh1rfSRr/2kEkyzs3OrH8DX/yh1H3F1gt
+	HZltaRRwkV+nay0LerXpWDPkSAfPHH+WKKV3Ofcn866mJvYlCM3lF9LptQpT8ulasPR
+	V5j2DoVu7x0LH8GxBQ/xq80sto13X2x8Yl7ZOrls=
+Received: by mx.zohomail.com with SMTPS id 1741025102723800.0365885276387;
+	Mon, 3 Mar 2025 10:05:02 -0800 (PST)
+From: Ashley Smith <ashley.smith@collabora.com>
+To: Boris Brezillon <boris.brezillon@collabora.com>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: kernel@collabora.com,
+	Ashley Smith <ashley.smith@collabora.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] drm/panthor: Update CS_STATUS_ defines to correct values
+Date: Mon,  3 Mar 2025 18:04:32 +0000
+Message-ID: <20250303180444.3768993-1-ashley.smith@collabora.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Regression from 7627a0edef54 ("ata: ahci: Drop low power policy
- board type") on reboot (but not cold boot)
-Content-Language: en-US
-References: <8b1cbfd4-6877-48ef-b17d-fc10402efbf7@grabatoulnz.fr>
-To: regressions@lists.linux.dev, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, linux-ide@vger.kernel.org
-From: Eric <eric.4.debian@grabatoulnz.fr>
-In-Reply-To: <8b1cbfd4-6877-48ef-b17d-fc10402efbf7@grabatoulnz.fr>
-X-Forwarded-Message-Id: <8b1cbfd4-6877-48ef-b17d-fc10402efbf7@grabatoulnz.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: 0
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelleejlecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucenucfjughrpefkffggfgfufhfvhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpefgrhhitgcuoegvrhhitgdrgedruggvsghirghnsehgrhgrsggrthhouhhlnhiirdhfrheqnecuggftrfgrthhtvghrnhepleefudeltdffhefghedvueelieduueduteejgedvgeekieelkeevledtheejfedvnecuffhomhgrihhnpeguvggsihgrnhdrohhrghenucfkphepvdgrtddumegtsgdtgeemleegudemsgdutddtmeegvdduieemjegvfhhfmehfvgdvheemleehrgdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdtgeemleegudemsgdutddtmeegvdduieemjegvfhhfmehfvgdvheemleehrgdupdhhvghloheplgfkrfggieemvdgrtddumegtsgdtgeemleegudemsgdutddtmeegvdduieemjegvfhhfmehfvgdvheemleehrgdungdpmhgrihhlfhhrohhmpegvrhhitgdrgedruggvsghirghnsehgrhgrsggrthhouhhlnhiirdhfrhdpnhgspghrtghpthhtohepgedprhgtphhtthhopehrvghgrhgvshhsihhonhhssehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhor
- hhgpdhrtghpthhtohepshhtrggslhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqihguvgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-GND-Sasl: eric.degenetais@grabatoulnz.fr
+X-ZohoMailClient: External
 
-re-sent to lists because my client mistaklenly sent as HTML (now fixed, 
-AFAIK). Sorry for the inconvenience.
+Values for SC_STATUS_BLOCKED_REASON_ are documented in the G610 "Odin"
+GPU specification (CS_STATUS_BLOCKED_REASON register).
 
+This change updates the defines to the correct values.
 
-Hi Niklas
+Fixes: 2718d91816ee ("drm/panthor: Add the FW logical block")
+Signed-off-by: Ashley Smith <ashley.smith@collabora.com>
+---
+Changes in v2:
+  - Rename _RES to _RESOURCE
+---
+ drivers/gpu/drm/panthor/panthor_fw.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Le 03/03/2025 à 07:25, Niklas Cassel a écrit :
-> So far, this just sounds like a bug where UEFI cannot detect your SSD.
-Bit it is detected during cold boot, though.
-> UEFI problems should be reported to your BIOS vendor.
-I'll try to see what can be done, however I am not sure how responsive 
-they will be for this board...
-> It would be interesting to see if _Linux_ can detect your SSD, after a
-> reboot, without UEFI involvement.
->
-> If you kexec into the same kernel as you are currently running:
-> https://manpages.debian.org/testing/kexec-tools/kexec.8.en.html
->
-> Do you see your SSD in the kexec'd kernel?
+diff --git a/drivers/gpu/drm/panthor/panthor_fw.h b/drivers/gpu/drm/panthor/panthor_fw.h
+index 22448abde992..6598d96c6d2a 100644
+--- a/drivers/gpu/drm/panthor/panthor_fw.h
++++ b/drivers/gpu/drm/panthor/panthor_fw.h
+@@ -102,9 +102,9 @@ struct panthor_fw_cs_output_iface {
+ #define CS_STATUS_BLOCKED_REASON_SB_WAIT	1
+ #define CS_STATUS_BLOCKED_REASON_PROGRESS_WAIT	2
+ #define CS_STATUS_BLOCKED_REASON_SYNC_WAIT	3
+-#define CS_STATUS_BLOCKED_REASON_DEFERRED	5
+-#define CS_STATUS_BLOCKED_REASON_RES		6
+-#define CS_STATUS_BLOCKED_REASON_FLUSH		7
++#define CS_STATUS_BLOCKED_REASON_DEFERRED	4
++#define CS_STATUS_BLOCKED_REASON_RESOURCE	5
++#define CS_STATUS_BLOCKED_REASON_FLUSH		6
+ #define CS_STATUS_BLOCKED_REASON_MASK		GENMASK(3, 0)
+ 	u32 status_blocked_reason;
+ 	u32 status_wait_sync_value_hi;
 
-Sorry, I've tried that using several methods (systemctl kexec / kexec 
---load + kexec -e / kexec --load + shutdown --reboot now) and it failed 
-each time. I *don't* think it is related to this bug, however, because 
-each time the process got stuck just after displaying "kexec_core: 
-Starting new kernel".
-
-No further output, the machine is completely unreponsive, even to the 
-power button (I had to force power down by pressing the button until the 
-system switches off).
-
-> Kind regards,
-> Niklas
-
-kind regards,
-
-Eric
+base-commit: 16e57a72780931c3c70dbc928aeee4a0518075de
+-- 
+2.43.0
 
 
