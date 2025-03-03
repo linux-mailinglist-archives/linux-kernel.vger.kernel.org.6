@@ -1,100 +1,142 @@
-Return-Path: <linux-kernel+bounces-542846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4134FA4CE67
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:37:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99956A4CEA9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:46:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BD47173A69
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:37:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1451B3ACBAE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:46:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33700239585;
-	Mon,  3 Mar 2025 22:36:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32E0023C8C3;
+	Mon,  3 Mar 2025 22:37:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Rpblhqao"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PioO9/WV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988A422DFB6
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 22:36:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5F02343AB;
+	Mon,  3 Mar 2025 22:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741041405; cv=none; b=SGxcXY7XUbmBFwZ18GuFaTA9/NBrbfWeNYzhso70bhLq4yNJ2mSrRRja6e6xtyAyDFLOagTO7FFmOtNUHqAeKfBj8PZJ9nmGwJFUiHbvzjEh0pNGY0nbqDiWW9VGPmtrK8DvmQ5ai3Z8gTxRlTxrd8JRnuoz/kIK/66h20x8ikQ=
+	t=1741041424; cv=none; b=TALTsYLrGqbtkYvwuqKj7M4j1zChMomZAdMeua/DZOaZE5xmeYqTk7QR4CbtaxPGSSXt13sgQpWVNBnN8joppWaIkHvcki83VW+0GpMDpzJptz7AlN34/R5s4CCOuA9w3qD4r9wmWmjNDmcaK/JLPHZg2Aw0ufgO70/3DwJubIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741041405; c=relaxed/simple;
-	bh=yjhdlITOXY603XJTSLK2Nfm0O6a5v0EnDBsDSH4BAEI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e3XSq2Wf/eZ7F+lj7UFt1ygNq81D1JXlf9JvuTGk0G2/ivq1WGZ3+0XFmxIvZt5CtifvK2w1F9dF0v1OOr2v30ghe0vmQZ9keykTSSOHsyB68RMKFfk1fpsb2JI5ba9FYhc835R7qs+5XUZ2p+5ll1vSvpCXuQ9DbV6e4D2jheA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Rpblhqao; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 1A22F433EC;
-	Mon,  3 Mar 2025 22:36:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1741041401;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=DsWrwEPA0jf6ymSLm56xpLPPzeLpifAMOAkYO6Yfc2c=;
-	b=Rpblhqao8kf5CWt6HF8hM5sP3Tvdp8xstZXn92PJGdHbs3OyuH9BEap43QkIEf5cJCeUMX
-	stpwL9vYoSsajgkyN0q8uKU1ulrJh5C5K+bm5uGD89KXVsb0CMQqKL4WrqIR1PgRTrZVql
-	MJSscjUf4FKka+jA5tr4Z/9a7pFYRgALMuo+4vMqCJRKF2x8fJextvyPR9EDVwyU2cOoMj
-	/vyfOVZsIfaK/h3Z5p7WkogAslqAC5ycYNIgXcGf5QE2LQmrrFxTpQTPIpek/XxM4SxAH7
-	fpDYx1s78NIu0Y9Xr7C8q97VYQ7PyeZ5CpC6Py0H7OpawQtbSywUmJhcDDGhsQ==
-From: alexandre.belloni@bootlin.com
-To: Lee Jones <lee@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH] rtc: mt6397: drop unused defines
-Date: Mon,  3 Mar 2025 23:36:37 +0100
-Message-ID: <20250303223637.1135362-1-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741041424; c=relaxed/simple;
+	bh=AAwL5uoOTe6wCwpJpDywIRpKXFmiHBgm7TpEJavHXSQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=IiQamMuX8lp5UB+hX39rDl0zKPf6hB9hy7HvNHBmmP6Ctdg9bXIkn7Fd82EzPNyYjzTDnzOLSoSL4o+wYd+RKRKgd4MOSpjYydoFjMTePThDW8Gg8e9BJt9zB4oJ1BWIG9vFDpZKp5IFaxNhcF3ulTB5St9lO0l+loSB+zpixls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PioO9/WV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A8463C4CED6;
+	Mon,  3 Mar 2025 22:37:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741041423;
+	bh=AAwL5uoOTe6wCwpJpDywIRpKXFmiHBgm7TpEJavHXSQ=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=PioO9/WVs4P4H3kkPurA8Vv7zCUThGkYiQ7u1KbDRPHAq3xeJMhyvswGrYgAk1WYB
+	 44/xgXM28ekWTMpUPcecYzzK1rVuqEshuSyFA59LDF/mN57ovSOEhPlNmzZ7A+2m0E
+	 AVvXpcrlNOqcIVm9Sl15KwUTrDjHDGWGbcg33yjZGUmE+84qaHUnATzVvlOXGZjqHM
+	 Ic1UB3Et7C3yEzo2iDrqJjCD62rhmNksFaFfw9ZZHoyUA2y074tYFasHF6isj4PVtD
+	 z76W+qkysJV1JToKDNUKSACNwxeGfZB3ND9NKcLF8Nm22Jf4hHo+sFdaaBZQV2huQT
+	 eXiSeoXHJBXsQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EC0CC282D0;
+	Mon,  3 Mar 2025 22:37:03 +0000 (UTC)
+From: Joel Selvaraj via B4 Relay <devnull+foss.joelselvaraj.com@kernel.org>
+Subject: [PATCH v4 0/4] Add Xiaomi Poco F1 touchscreen support
+Date: Mon, 03 Mar 2025 16:36:54 -0600
+Message-Id: <20250303-pocof1-touchscreen-support-v4-0-cdc3bebc3942@joelselvaraj.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutddtfeehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmnecuggftrfgrthhtvghrnhepgedtffeugeeftedtfffhiedtjeefieeuveelffetledvueeludeggedtjefgveevnecukfhppeejjedrudehtddrvdegiedrvdduheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeejjedrudehtddrvdegiedrvdduhedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomheprghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepjedprhgtphhtthhopehlvggvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmrghtthhhihgrshdrsghgghesghhmrghilhdrtghomhdprhgtphhtthhopegrnhhgvghlohhgihhorggttghhihhnohdruggvlhhrvghgnhhosegtohhllhgrsghorhgrrdgtohhmpdhrtghpthhtoheprghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgv
- ghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdhmvgguihgrthgvkheslhhishhtshdrihhnfhhrrgguvggrugdrohhrgh
-X-GND-Sasl: alexandre.belloni@bootlin.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAYvxmcC/43QTU7DMBAF4KtEXmPk8U8cd8U9EAt7MqGu2ji1k
+ whU9e44rRAbqNjNm5G+kd6FFcqRCts1F5ZpjSWmsQb91DDc+/GdeOxrZlJIDUJYPiVMA/A5Lbg
+ vmIlGXpZpSnnmaI300ErsUbIKTJmG+HHDX99q3scyp/x5+7XCtv0XuwIXvA8KgoQOOjQvh0THQ
+ sfVZ394xnRim77KH1GK7qEoq2h8S9YqR4P+S1TfohFKwENRVdEPAlAFJYL5TbzeK8l0XmrN870
+ XFnwhXu+nOO8aFBRao50m43rXKe0Hi8FvYysdOQE2SOOhYtcvdPVsB7sBAAA=
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, 
+ Joel Selvaraj <foss@joelselvaraj.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1741041422; l=2842;
+ i=foss@joelselvaraj.com; s=20241007; h=from:subject:message-id;
+ bh=AAwL5uoOTe6wCwpJpDywIRpKXFmiHBgm7TpEJavHXSQ=;
+ b=ZETUobULmmXhyhIGzHqdwoGOGOnpjPs32JZM3DQR8vuUwgI8D/VvKYwj+oxKlCx5C2iXlL90Z
+ CL4KpMOKJXWAOcF5NglFXw9lc/krCFjR5hbvNpZZCOjiTA+o8ZhlNA2
+X-Developer-Key: i=foss@joelselvaraj.com; a=ed25519;
+ pk=pqYvzJftxCPloaoUbVsfQE7Gwv8bynZPy8mjYohwMCc=
+X-Endpoint-Received: by B4 Relay for foss@joelselvaraj.com/20241007 with
+ auth_id=238
+X-Original-From: Joel Selvaraj <foss@joelselvaraj.com>
+Reply-To: foss@joelselvaraj.com
 
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+In the first patch, I have updated the edt-ft5x06 touchscreen binding 
+documentation. In Xiaomi Poco F1(qcom/sdm845-xiaomi-beryllium-ebbg.dts),
+the FocalTech FT8719 touchscreen is integrally connected to the display 
+panel (EBBG FT8719) and thus should be power sequenced together with 
+display panel for proper functioning using the panel property. Since the
+edt-ft5x06 touchscreen binding uses almost all the properties present in 
+touchscreen.yaml, let's remove additionalProperties: false and use 
+unevaluatedProperties to include all the properties, including the needed
+panel property.
 
-RTC_NUM_YEARS has never been used, the other defines are not used since
-commit 34bbdc12d04e ("rtc: mt6359: Add RTC hardware range and add support
-for start-year")
+In the second patch, I have enabled the qupv3_id_1 and gpi_dma1 as they
+are required for configuring touchscreen. Also added the pinctrl
+configurations. These are common for both the Poco F1 Tianma and EBBG
+panel variant.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+In the subsequent patches, I have enabled support for the Novatek NT36672a
+touchscreen and FocalTech FT8719 touchscreen that are used in the Poco F1
+Tianma and EBBG panel variant respectively.
+
+Signed-off-by: Joel Selvaraj <foss@joelselvaraj.com>
 ---
- include/linux/mfd/mt6397/rtc.h | 5 -----
- 1 file changed, 5 deletions(-)
+Changes in v4:
+- Update the dt-binding patch's commit message to be more accurate
+- Link to v3: https://lore.kernel.org/r/20250301-pocof1-touchscreen-support-v3-0-af01c3b30b55@joelselvaraj.com
 
-diff --git a/include/linux/mfd/mt6397/rtc.h b/include/linux/mfd/mt6397/rtc.h
-index 068ae1c0f0e8..27883af44f87 100644
---- a/include/linux/mfd/mt6397/rtc.h
-+++ b/include/linux/mfd/mt6397/rtc.h
-@@ -60,11 +60,6 @@
- #define RTC_PDN2               0x002e
- #define RTC_PDN2_PWRON_ALARM   BIT(4)
- 
--#define RTC_MIN_YEAR           1968
--#define RTC_BASE_YEAR          1900
--#define RTC_NUM_YEARS          128
--#define RTC_MIN_YEAR_OFFSET    (RTC_MIN_YEAR - RTC_BASE_YEAR)
--
- #define MTK_RTC_POLL_DELAY_US  10
- #define MTK_RTC_POLL_TIMEOUT   (jiffies_to_usecs(HZ))
- 
+Changes in v3:
+- Fix SoB email id mismatch (suggested by Krzysztof Kozlowski)
+- Use unevaluatedProperties instead additionalProperties in dt-binding (suggested by Krzysztof Kozlowski)
+- Link to v2: https://lore.kernel.org/r/20241208-pocof1-touchscreen-support-v2-0-5a6e7739ef45@joelselvaraj.com
+
+Changes in v2:
+- Fixed the missing "panel" property dt-binding error reported by Rob Herring's bot.
+- Change the "input-enable" property to "output-disable" in qcom/sdm845-xiaomi-beryllium-common.dtsi
+  (Based on a patch suggested by Konrad Dybcio).
+- Link to v1: https://lore.kernel.org/r/20241007-pocof1-touchscreen-support-v1-0-db31b21818c5@joelselvaraj.com
+
+---
+Joel Selvaraj (4):
+      dt-bindings: input: touchscreen: edt-ft5x06: use unevaluatedProperties
+      arm64: dts: qcom: sdm845-xiaomi-beryllium-common: add touchscreen related nodes
+      arm64: dts: qcom: sdm845-xiaomi-beryllium-tianma: introduce touchscreen support
+      arm64: dts: qcom: sdm845-xiaomi-beryllium-ebbg: introduce touchscreen support
+
+ .../bindings/input/touchscreen/edt-ft5x06.yaml     |  9 +----
+ .../dts/qcom/sdm845-xiaomi-beryllium-common.dtsi   | 39 ++++++++++++++++++++++
+ .../boot/dts/qcom/sdm845-xiaomi-beryllium-ebbg.dts | 23 +++++++++++++
+ .../dts/qcom/sdm845-xiaomi-beryllium-tianma.dts    | 23 +++++++++++++
+ 4 files changed, 86 insertions(+), 8 deletions(-)
+---
+base-commit: c0eb65494e59d9834af7cbad983629e9017b25a1
+change-id: 20241007-pocof1-touchscreen-support-c752a162cdc2
+
+Best regards,
 -- 
-2.48.1
+Joel Selvaraj <foss@joelselvaraj.com>
+
 
 
