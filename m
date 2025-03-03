@@ -1,113 +1,135 @@
-Return-Path: <linux-kernel+bounces-541272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 730E8A4BAC4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:29:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EF1CA4BAC8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:29:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98AA0170839
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:29:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2330E18903E8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:29:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C9E1F0E50;
-	Mon,  3 Mar 2025 09:29:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B00221F0E5B;
+	Mon,  3 Mar 2025 09:29:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cEVa/RxL"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bdhlIxQ+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C84AD27;
-	Mon,  3 Mar 2025 09:29:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C5E6AD27
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 09:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740994143; cv=none; b=XZfNcY3dyR4pHbxRgX0WLHKLQOZ7mI4c8T8wxOR69wuE+yP2pRIyzyzK6JtmeCcmFOrVswJYv+yvFocjpRJN2ser2SVBWPvPhQLt7wCkYPVX1Iq32wxNu0eozbHYSMHDzunN5g6mjdF1Mqn/aFzwKFHtVVL2da+jh/UV63zaK/c=
+	t=1740994177; cv=none; b=pmxvk+arnf9WJ2Be70MHzfvqAw8d52nYoLs9NE2BT/yhPMTnBVZrd8n/Tz5oedUYAzy/nen/1dK6Pa9TvKdYkC45rY5EzAEpN5Kk40lHTWK+QvlM9ivCFJ9MAHWFqF8cuPwAOaWDu/nIFPt3ANLygka9eFJp5fSG/YbanD7/7YY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740994143; c=relaxed/simple;
-	bh=ui3R14myRdZwTTXue/QIbtIVVhsxfritmC1MAYwUXZA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QSh7Ju8zWbKeBFWaHnrubJdRk1iv8pBERHFMDGGGy+lzGDDH2G5ICwmXsyvuiHFG74tXrZHXeqTvDkxuuoKUmqBcWBOhlcYPjaOquxz0ES4sHmNFdOOSfN+W9cGmSYKl2SMg2OH9x9WbHDCu5anJ7C5SXQj3IthNzdziR3YqpKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cEVa/RxL; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-439946a49e1so26154345e9.0;
-        Mon, 03 Mar 2025 01:29:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740994140; x=1741598940; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hjzg0yBHDp5xJiHuoo+8NOoe8pSEpfgs6lM2e2fa2dA=;
-        b=cEVa/RxLioFyRDgXGpUPiPoARTJWRwGXwUC5Hs/m3TfuerTrWCEzc0ai8F4njvBXyY
-         WGXukGD3qtM8h7MWIQnq9UeVf63wDP5P6M7YAc4z6FVEPwgRdZbgo5txGjXZ/4V4hv5N
-         oCznZXPhbklYMZVYcF2w6+w7b8nxBCfysZQCsmzX6XItAwAr4vFwwh6k4SZQDsVbTMpG
-         52rpiqxJvT+74nSOIf1bQsuTRL2Uk0+So/g1RHHuA9D4M/j2HxsdV0N6Jktn2I1aG9da
-         POmCxYNTqXwEUJ8J3O2XgsizVa71BilDbBJuVcgvCkAk/FAVkOBa1U/KzK9fUDId67+g
-         EMDw==
+	s=arc-20240116; t=1740994177; c=relaxed/simple;
+	bh=hO/1w0WIreFcCNOGOIiuvQHBGfGmx0RKyWkuiZ5OENQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O/9rldAhKnRgUZKPedmtdETE4op8oXQ808cnwP54/sKHi04gMISqCfYJ/BwRFIxkmxWZuLNFEgfMfPAUVjfreEBaWGa4jZe65xMuj0B96w4rq5LDU8y+wOzJSv0nOB9qamIb1KgN4IW1yyPJ3PxDyEs6u3OIC/Ji040c1IjA4KI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bdhlIxQ+; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740994174;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dm+Ad9vtaxKH6b/jFWjk7lOEkc1nxwN4lmuVSAb6Ah0=;
+	b=bdhlIxQ+fjll9LbqpU7NQS6QgIISeDczyHOHsERwPUYy7zo6FFCQpmIX++GEa6bFte5IzC
+	990mvIFsNyaD6fhBfuSrP01LH11fp6XVNPFaxP4Rvv8iC0QPKDY3qascTVltloejJodAZq
+	e/v2kLme4sp5TiOG/FBR0/J/pJSv50o=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-670-kQtZvCu-MsCOdHBpXw7VBg-1; Mon, 03 Mar 2025 04:29:16 -0500
+X-MC-Unique: kQtZvCu-MsCOdHBpXw7VBg-1
+X-Mimecast-MFC-AGG-ID: kQtZvCu-MsCOdHBpXw7VBg_1740994155
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-22334230880so57890955ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 01:29:16 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740994140; x=1741598940;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hjzg0yBHDp5xJiHuoo+8NOoe8pSEpfgs6lM2e2fa2dA=;
-        b=AMA/JcI0gQOGGSwjrCcuZqaTgFvJhBB2MUTHNgeKV8pD/bgCPT6/E4FY4rsjlXbPm0
-         wcpGj40aZ0bA2QKEv2stjb/1P+OS9DpVhib2uITK7lu9M9vZKx+mgkrLyjqtdlKOFmyR
-         SPDOVTe3MxWdfZlMSQnQODVv+28ETFchohIB5cBqpkm1997IB4hwcwP2ldP6NWdBjWJD
-         pNO1uHM8Xg3F7Sw/h0ISOx5su34XnwR1QGhrztJdmPVIl4HFbv6QiHdgkgGxju0o137w
-         bkyyxZI30EczEetNrAxT7zA0HS4D4DAEZb4vYN4BDNCjqD70A+Ulu2x/87JqsvHw2oIw
-         5LBA==
-X-Forwarded-Encrypted: i=1; AJvYcCUx9Xde+sCI/dHgSczOOf4NM2OI3zvq2u4OO67JnUwZtUnHgD/mDGyQZ8jbnH615uUPVDEwh4gZ24iL@vger.kernel.org, AJvYcCV65LLrOtRotzCn8usiP9yw445UAwZ+T8XJBoN0HDgM0G0+Neiuxxa3ZeS7mEo0ywbZCh1mYicq2+GU5iMn@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzf3svnNPSxZXOL3YAvH8XfJ3RoDz6BxPYEFMLegIfgjNWZSJr+
-	yB3pG8xtXSI7O6GTfuekhPvcrN4imginBp+p8orKDpmKamzD2Zra
-X-Gm-Gg: ASbGnctVdCNtEebzBwP5lI/noVchQ7iO9kceJCQk5iqmRwiC9whqFCC0BicVZ7z10ET
-	7ciwwJLrUDYC9ZT4Q2relWI2gcbOG8Ez6F2V+iNEbd2QI2mjzGiik15A4BSL+CycgHeU++q+hG1
-	2cjrUv2YntVs2sV0XIXi4UV4FIVtPRsHDFE9paYkaV97XLDEq+r2SkUq2NjmZb/5uK5bb3OyZen
-	jVZGJo96Spz/J+3cL9lRvafpwYhlZBia9AvX2y0TZlMQTqcQhNtr/N9x3QrFKingVY3LBslQFBu
-	Ux0z5IRjckM2bEmEPQVAFK17YB5iNrJu7AuWPJSxrw4Cjw==
-X-Google-Smtp-Source: AGHT+IFOvnLknIuCVa048FB5fDiu5+2tclMleviAhfjB9S+evUys8Sh8gS6S8nWHU/unGvITK9WJWA==
-X-Received: by 2002:a05:600c:3505:b0:439:8cbf:3e26 with SMTP id 5b1f17b1804b1-43ba66d5659mr95783095e9.4.1740994140122;
-        Mon, 03 Mar 2025 01:29:00 -0800 (PST)
-Received: from localhost ([194.120.133.72])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43bc1b5db02sm30694895e9.19.2025.03.03.01.28.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 01:28:59 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] pinctrl: pinconf-generic: Fix spelling mistake "paramers" -> "parameters"
-Date: Mon,  3 Mar 2025 09:28:26 +0000
-Message-ID: <20250303092826.318638-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.47.2
+        d=1e100.net; s=20230601; t=1740994155; x=1741598955;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dm+Ad9vtaxKH6b/jFWjk7lOEkc1nxwN4lmuVSAb6Ah0=;
+        b=EIN5IcA40gGEXeo0d1EebsGZ/JrMvEDuu3djIBVakuTCfU/+8xvf8stZ1EPMZ8YMhn
+         5CPfeEO/DuyS9fPRdCB/CXE8x2vwScJVwJ6TjyDTSW8Tf3M5oFlDxRecc4Mvtpz6Ru89
+         wW6aF/K9BoZuWRoWYpOTqPbgg6TSslyPODjLSg3fLA/1fLBk5XZ2ZQA2N863KRURpanU
+         40mOumU0GNTj52oQQnfXvv/Kp4MNlJco3cr83gNogm8zicheT2iQyJHluIwjz6My6C7b
+         k2cOmJynQinNB7rF6DkOPTWEsRqiRNAGFX/sWUEj6cTGkH4r5kv3QmC7xFxwL3Taivby
+         /sCw==
+X-Forwarded-Encrypted: i=1; AJvYcCXeHqAzQiD1fIX7ETDvyXT/KoebIT1tO1fTPPUOChzC+06FeO6FHo8K/zbrt+Fo1wEc+avynWu5K2n5CZ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWk0prGDDqTWNrMFeBrtUA2gbk1Eq3hdxa46lMqIZyypkg0zTI
+	9hlV78oV8+n73TcT/r+Ygk2Ndy/b9opsPppKI47WDyRMsqZc7DAoLIMZqFh3PZ74Zc52Cv6Nu48
+	hXoGiNT47HJaHMhc4rcDLCeW9WbtOcUUH3d15A/7/l0J1G+iHcWYhea7N8xHHaeCpCU2WNRGtcc
+	cUi0TkSe/4rI1dP7iBmmYO/8az/1IbF2TC2Mgk
+X-Gm-Gg: ASbGnctnIBr9UrM8QwnBwqmxZCeMg3uDmIaSY3M45421kgtTssUQOCkixRgr2KvtEa3
+	KzK6pB1Qwz6BtlQcb3jZBXoVQH81ErSI/01Fcl/bFsr9GcTNpBAFg7NLUa8ZZJ9Sodp88hIo=
+X-Received: by 2002:a17:902:f547:b0:220:f7bb:842 with SMTP id d9443c01a7336-22369255811mr196196075ad.42.1740994154027;
+        Mon, 03 Mar 2025 01:29:14 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEeh8T/Isef6u47m5QPpp9NHgJMkJl3dnUE8Ylea44Ny6EY1sjUVU9fZMYGnxlnkM9rFe7Jpp6zS4k5VEsVFKw=
+X-Received: by 2002:a17:902:f547:b0:220:f7bb:842 with SMTP id
+ d9443c01a7336-22369255811mr196195835ad.42.1740994153774; Mon, 03 Mar 2025
+ 01:29:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20250303085237.19990-1-sgarzare@redhat.com>
+In-Reply-To: <20250303085237.19990-1-sgarzare@redhat.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Mon, 3 Mar 2025 10:28:37 +0100
+X-Gm-Features: AQ5f1JpYz8RUYj9eXvkfBI5yoVaRYAPygFZFSo69WGk-H92b36v2eBIN9Cg-xmM
+Message-ID: <CAJaqyWfNieVxJu0pGCcjRc++wRnRpyHqfkuYpAqnKCLUjbW6Xw@mail.gmail.com>
+Subject: Re: [PATCH] vhost: fix VHOST_*_OWNER documentation
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	kvm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There is a spelling mistake in a dev_err message. Fix it.
+On Mon, Mar 3, 2025 at 9:52=E2=80=AFAM Stefano Garzarella <sgarzare@redhat.=
+com> wrote:
+>
+> VHOST_OWNER_SET and VHOST_OWNER_RESET are used in the documentation
+> instead of VHOST_SET_OWNER and VHOST_RESET_OWNER respectively.
+>
+> To avoid confusion, let's use the right names in the documentation.
+> No change to the API, only the documentation is involved.
+>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/pinctrl/pinconf-generic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
 
-diff --git a/drivers/pinctrl/pinconf-generic.c b/drivers/pinctrl/pinconf-generic.c
-index ecb7bc175283..d67838afb085 100644
---- a/drivers/pinctrl/pinconf-generic.c
-+++ b/drivers/pinctrl/pinconf-generic.c
-@@ -262,7 +262,7 @@ int pinconf_generic_parse_dt_pinmux(struct device_node *np, struct device *dev,
- 	}
- 
- 	if (!pid || !pmux || !npins) {
--		dev_err(dev, "paramers error\n");
-+		dev_err(dev, "parameters error\n");
- 		return -EINVAL;
- 	}
- 
--- 
-2.47.2
+> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+> ---
+>  include/uapi/linux/vhost.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/include/uapi/linux/vhost.h b/include/uapi/linux/vhost.h
+> index b95dd84eef2d..d4b3e2ae1314 100644
+> --- a/include/uapi/linux/vhost.h
+> +++ b/include/uapi/linux/vhost.h
+> @@ -28,10 +28,10 @@
+>
+>  /* Set current process as the (exclusive) owner of this file descriptor.=
+  This
+>   * must be called before any other vhost command.  Further calls to
+> - * VHOST_OWNER_SET fail until VHOST_OWNER_RESET is called. */
+> + * VHOST_SET_OWNER fail until VHOST_RESET_OWNER is called. */
+>  #define VHOST_SET_OWNER _IO(VHOST_VIRTIO, 0x01)
+>  /* Give up ownership, and reset the device to default values.
+> - * Allows subsequent call to VHOST_OWNER_SET to succeed. */
+> + * Allows subsequent call to VHOST_SET_OWNER to succeed. */
+>  #define VHOST_RESET_OWNER _IO(VHOST_VIRTIO, 0x02)
+>
+>  /* Set up/modify memory layout */
+> --
+> 2.48.1
+>
 
 
