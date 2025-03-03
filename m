@@ -1,120 +1,117 @@
-Return-Path: <linux-kernel+bounces-540843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A28FBA4B5B2
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 02:02:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91EB3A4B5B6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 02:09:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89AB1189057A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 01:02:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6C891696F8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 01:09:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B2E52C190;
-	Mon,  3 Mar 2025 01:02:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nHCkATj4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F3F912FF69;
+	Mon,  3 Mar 2025 01:09:05 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 860754C85
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 01:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DBDC4C85;
+	Mon,  3 Mar 2025 01:09:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740963723; cv=none; b=oldNwfkZrUjcIHC40MUaQvuQlQqBjAyGfPLcmhnpEhxLKZ3r2Pth/2JilkQB1ZHM9Xb+hPG6ztoOoOvMzmuQQcvYjTKSNVhFdUk565QEVFD0l34XVygtXXnPepd+P1B/kFacLiIhnSvapDOQIvlA+rC5qT07pOIKtMp2WIdp0mg=
+	t=1740964145; cv=none; b=BDFaAX6tKan/pacw+3gUpQCJ/ImaPa5f9Vbhm1CVijcA/Th2kh8WFd1jQLLv6vCKMArQMXUMTEf48te0Yn1wophXmM3EGLg7d5a2GD2bENJ1LehbyXLP25I4cmwWt28wFikRfX81BKP3clal58DWyr6GvA5Ixhx+RffhubtPynk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740963723; c=relaxed/simple;
-	bh=zptuAMgcKHkjjSCc3Vad3LElYs5BZ1Fj2qcnIlzFFzs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TSu6r3oXCnJLn1p9Vedg/RdRCdZdhNcPMGDVzKm6TEeYgIZ/cAlJqJdSMpW4n8ou7sJHgSB4SA+kxXiJIaFKqgPkkGzn+zUX23iv7KV3DVZ9Mb5rRzYKTZJAXA4IQMjRumcVNUDEiqSoAG31RPZnblEcDtyV6bUvIOHel+Ul5UI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nHCkATj4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F48FC4CED6;
-	Mon,  3 Mar 2025 01:02:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740963723;
-	bh=zptuAMgcKHkjjSCc3Vad3LElYs5BZ1Fj2qcnIlzFFzs=;
-	h=From:To:Cc:Subject:Date:From;
-	b=nHCkATj4GlkTcQQTl2vtxDUJ1lzHvHuj1laTL0uDX79U8KBjqRcRtIwCHwQSmwrGg
-	 ZzqilDCFWNYr7Ocp8ZDGxWQIzm0pP8Ut1PHTKA/sxW2Egznmdi8COwBJrtKHh3G1DJ
-	 l3l78snBxpevJwXb6NtzU0b1szKPuG9xJHWS8k9B8lp2Fa9FmHQITegmnbaBCt6Fd8
-	 rfqsR/2iBj4fhlBUr5Hkh8DHYXTvH2IQV4XLZRjEVsU9opNH5otll67n8+JShjGtp+
-	 0x9wrCYTnbwIH2qBX/KnVIjJAQbhoNPQABlI5IlUHuK+wQue1pi2Hk8Kqb3jj+zLmj
-	 nyrPT45D+1RwQ==
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	linux-kernel@vger.kernel.org,
-	x86@kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Arthur Marsh <arthur.marsh@internode.on.net>
-Subject: [PATCH] tools build: Fix fixdep dependencies
-Date: Sun,  2 Mar 2025 17:01:42 -0800
-Message-ID: <a63ddb79a9adc11ab68052da633fc01d7dc65c06.1740963699.git.jpoimboe@kernel.org>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1740964145; c=relaxed/simple;
+	bh=1HiOL9RH+rvFiD7Cn3Np2M9s38IDFzHffazjCCdTCpg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=O/h1yzIxWvv+aIub77Zt8a83CFmduBRzrw+XtIs7S6hviBNaNd/ah+9071F1uL0fhoqb43gsLX76+SQCzP6AzW72ZW/xe1R9IlHR9ieIAVjI+QSVjPpNXqoW2zvMtBmz/py7VuH9ASWHHOwrmTj4S0iI94hPaAiYimtbTynzIUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Z5gb63h0lzvWpr;
+	Mon,  3 Mar 2025 09:05:06 +0800 (CST)
+Received: from kwepemg500017.china.huawei.com (unknown [7.202.181.81])
+	by mail.maildlp.com (Postfix) with ESMTPS id EAA34140156;
+	Mon,  3 Mar 2025 09:08:52 +0800 (CST)
+Received: from [10.174.179.155] (10.174.179.155) by
+ kwepemg500017.china.huawei.com (7.202.181.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 3 Mar 2025 09:08:51 +0800
+Message-ID: <95a2cb76-bade-47e0-a6fb-e22d50c13501@huawei.com>
+Date: Mon, 3 Mar 2025 09:08:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: =?UTF-8?B?TW96aWxsYSBUaHVuZGVyYmlyZCDmtYvor5XniYg=?=
+Subject: Re: [PATCH] nfs: remove SB_RDONLY when remounting nfs
+To: <trondmy@kernel.org>, <anna@kernel.org>
+CC: <linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<ehagberg@janestreet.com>, <yukuai1@huaweicloud.com>, <houtao1@huawei.com>,
+	<yi.zhang@huawei.com>, <yangerkun@huawei.com>, <lilingfeng@huaweicloud.com>
+References: <20250221082613.2674633-1-lilingfeng3@huawei.com>
+From: Li Lingfeng <lilingfeng3@huawei.com>
+In-Reply-To: <20250221082613.2674633-1-lilingfeng3@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemg500017.china.huawei.com (7.202.181.81)
 
-The tools version of fixdep has broken dependencies.  It doesn't get
-rebuilt if the host compiler or headers change.
+Friendly ping.
 
-Build fixdep with the tools kbuild infrastructure, so fixdep runs on
-itself.  Due to the recursive dependency, its dependency file is
-incomplete the very first time it gets built.  In that case build it a
-second time to achieve fixdep inception.
+Thanks.
 
-Reported-by: Arthur Marsh <arthur.marsh@internode.on.net>
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
----
- tools/build/Build    |  2 ++
- tools/build/Makefile | 23 +++++++++++++++++++++--
- 2 files changed, 23 insertions(+), 2 deletions(-)
- create mode 100644 tools/build/Build
-
-diff --git a/tools/build/Build b/tools/build/Build
-new file mode 100644
-index 000000000000..1c7e598e9f59
---- /dev/null
-+++ b/tools/build/Build
-@@ -0,0 +1,2 @@
-+hostprogs	:= fixdep
-+fixdep-y	:= fixdep.o
-diff --git a/tools/build/Makefile b/tools/build/Makefile
-index 63ef21878761..a5b3c29b8d70 100644
---- a/tools/build/Makefile
-+++ b/tools/build/Makefile
-@@ -37,5 +37,24 @@ ifneq ($(wildcard $(TMP_O)),)
- 	$(Q)$(MAKE) -C feature OUTPUT=$(TMP_O) clean >/dev/null
- endif
- 
--$(OUTPUT)fixdep: $(srctree)/tools/build/fixdep.c
--	$(QUIET_CC)$(HOSTCC) $(KBUILD_HOSTCFLAGS) $(KBUILD_HOSTLDFLAGS) -o $@ $<
-+include $(srctree)/tools/build/Makefile.include
-+
-+FIXDEP		:= $(OUTPUT)fixdep
-+FIXDEP_IN	:= $(OUTPUT)fixdep-in.o
-+
-+# To track fixdep's dependencies properly, fixdep needs to run on itself.
-+# Build it twice the first time.
-+$(FIXDEP_IN): FORCE
-+	$(Q)if [ ! -f $(FIXDEP) ]; then						\
-+		$(MAKE) $(build)=fixdep HOSTCFLAGS="$(KBUILD_HOSTCFLAGS)";	\
-+		rm -f $(FIXDEP).o;						\
-+	fi
-+	$(Q)$(MAKE) $(build)=fixdep HOSTCFLAGS="$(KBUILD_HOSTCFLAGS)"
-+
-+
-+$(FIXDEP): $(FIXDEP_IN)
-+	$(QUIET_LINK)$(HOSTCC) $(FIXDEP_IN) $(KBUILD_HOSTLDFLAGS) -o $@
-+
-+FORCE:
-+
-+.PHONY: FORCE
--- 
-2.48.1
-
+在 2025/2/21 16:26, Li Lingfeng 写道:
+> In some scenarios, when mounting NFS, more than one superblock may be
+> created. The final superblock used is the last one created, but only the
+> first superblock carries the ro flag passed from user space. If a ro flag
+> is added to the superblock via remount, it will trigger the issue
+> described in Link[1].
+>
+> Link[2] attempted to address this by marking the superblock as ro during
+> the initial mount. However, this introduced a new problem in scenarios
+> where multiple mount points share the same superblock:
+> [root@a ~]# mount /dev/sdb /mnt/sdb
+> [root@a ~]# echo "/mnt/sdb *(rw,no_root_squash)" > /etc/exports
+> [root@a ~]# echo "/mnt/sdb/test_dir2 *(ro,no_root_squash)" >> /etc/exports
+> [root@a ~]# systemctl restart nfs-server
+> [root@a ~]# mount -t nfs -o rw 127.0.0.1:/mnt/sdb/test_dir1 /mnt/test_mp1
+> [root@a ~]# mount | grep nfs4
+> 127.0.0.1:/mnt/sdb/test_dir1 on /mnt/test_mp1 type nfs4 (rw,relatime,...
+> [root@a ~]# mount -t nfs -o ro 127.0.0.1:/mnt/sdb/test_dir2 /mnt/test_mp2
+> [root@a ~]# mount | grep nfs4
+> 127.0.0.1:/mnt/sdb/test_dir1 on /mnt/test_mp1 type nfs4 (ro,relatime,...
+> 127.0.0.1:/mnt/sdb/test_dir2 on /mnt/test_mp2 type nfs4 (ro,relatime,...
+> [root@a ~]#
+>
+> When mounting the second NFS, the shared superblock is marked as ro,
+> causing the previous NFS mount to become read-only.
+>
+> To resolve both issues, the ro flag is no longer applied to the superblock
+> during remount. Instead, the ro flag on the mount is used to control
+> whether the mount point is read-only.
+>
+> Fixes: 281cad46b34d ("NFS: Create a submount rpc_op")
+> Link[1]: https://lore.kernel.org/all/20240604112636.236517-3-lilingfeng@huaweicloud.com/
+> Link[2]: https://lore.kernel.org/all/20241130035818.1459775-1-lilingfeng3@huawei.com/
+> Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
+> ---
+>   fs/nfs/super.c | 1 +
+>   1 file changed, 1 insertion(+)
+>
+> diff --git a/fs/nfs/super.c b/fs/nfs/super.c
+> index aeb715b4a690..f08e1d7fb179 100644
+> --- a/fs/nfs/super.c
+> +++ b/fs/nfs/super.c
+> @@ -1047,6 +1047,7 @@ int nfs_reconfigure(struct fs_context *fc)
+>   
+>   	sync_filesystem(sb);
+>   
+> +	fc->sb_flags &= ~SB_RDONLY;
+>   	/*
+>   	 * Userspace mount programs that send binary options generally send
+>   	 * them populated with default values. We have no way to know which
 
