@@ -1,138 +1,110 @@
-Return-Path: <linux-kernel+bounces-541889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47B8CA4C2FA
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:13:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AE05A4C309
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:16:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5DCC3A92F0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:13:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 894EE7A3685
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:15:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A96B2139BC;
-	Mon,  3 Mar 2025 14:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l8Ncmeal"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB8BF1F4183;
-	Mon,  3 Mar 2025 14:13:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86C9F12FF69;
+	Mon,  3 Mar 2025 14:15:58 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 550D74685;
+	Mon,  3 Mar 2025 14:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741011182; cv=none; b=PfTVTHhgfCyZXBPen9v3a7wJd4H1QQlx5mdjkfLIkAMcxtOxd9cZNn1krmTx/tqRPAtANj33gZ8EmBtTq2KYULl23xqB6dyDh4+7d/4NziwIARonMu2zz75/J+ynkVQbD06IaM4SfeiALnt4cegqGqiUWoUHz+rwrYAbe+CMrOc=
+	t=1741011358; cv=none; b=Ft9D//d4dUrpZBZOYNcm/8LUWWGRUaSsdFoRBM8ooLCSUhR4fqTfZQfQpbhtRznDxN257jCLqA0BBfCS39QeoKSuTcxsmr449vVz0tojHjiFVJacrqNflVg4Z5NIKLCKkOi6g089qiQgf5KLUUYabmVxwuan1hW7OXdgqWkkX88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741011182; c=relaxed/simple;
-	bh=NIkjVShdKRa5sGBLlP+sLIy3qEWBWoHE4n488XDvYok=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d6rx5m5lLMJRoiAyG/8MMqkZcQ1w4K95/tzmh6WTjIlR672xWuCMh1i6hN1I6b2UDRadIZRTmRBsLz5bLRYNkF+hs3I+oAjtZYkhJDIAl8PVInZCvSiiOHAUnsiT2MZIcqh22jpgG4kD+D0zc3pFG9mzayst8x1wkahlpWkTDw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l8Ncmeal; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC87EC4CEE8;
-	Mon,  3 Mar 2025 14:13:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741011182;
-	bh=NIkjVShdKRa5sGBLlP+sLIy3qEWBWoHE4n488XDvYok=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l8NcmealtKOCjMDYfhdGZsoBwszh/QDHSXXyO9AkgtlA0A7pTR7/xFaGW34rZnnaz
-	 YHS0EwxYVDs1NFXN+N2tSljRNN13wZmGh6sFsfuk0zt3imQMkQesFDN2Lqx+2b2NeD
-	 o+omZ99N4G9TItj/1aVbVqOJjMPEX5em5uEm2F2rrL0aPFH1m7ScVFAyKghAtBCOFP
-	 XWRW5JwHnscbK0tsgpyf5q+RHj8aOk+pSlm6/pKcYUJWhFECMznnK4DWOzq7ABL6k2
-	 zI2//1NZ2NEPGWYm67q76imjrJSJRgiJLYR2HsOEilvxHei1l7N4qtTuJH3LllhEjS
-	 aPRRlbXzLvdyg==
-Date: Mon, 3 Mar 2025 15:12:57 +0100
-From: Joel Granados <joel.granados@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: nicolas.bouchinet@clip-os.org, linux-kernel@vger.kernel.org, 
-	linux-rdma@vger.kernel.org, linux-scsi@vger.kernel.org, codalist@coda.cs.cmu.edu, 
-	linux-nfs@vger.kernel.org, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
-	Joel Granados <j.granados@samsung.com>, Clemens Ladisch <clemens@ladisch.de>, 
-	Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, 
-	Jan Harkes <jaharkes@cs.cmu.edu>, Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>, 
-	Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, 
-	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
-	Bart Van Assche <bvanassche@acm.org>, Zhu Yanjun <yanjun.zhu@linux.dev>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v2 2/6] sysctl: Fixes nsm_local_state bounds
-Message-ID: <42t2lpwwwihg4heu4ogudt4fe5uz7trg3y2lsoqvmjnzmhnjmy@pebnborzqodv>
-References: <20250224095826.16458-1-nicolas.bouchinet@clip-os.org>
- <20250224095826.16458-3-nicolas.bouchinet@clip-os.org>
- <da418443-a98b-4b08-ad44-7d45d89b4173@oracle.com>
+	s=arc-20240116; t=1741011358; c=relaxed/simple;
+	bh=h2fqgjv7C6q2gg+EhqriK+B50X2nVechT92LfHhTqt8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eZSqHPZxIQcZdAgxR+AFe7MxIbHAjRMWnRUzMXg78q0S/Kvcqv/hovkJZbGhlxv1+GtguBNydMRao/HShM+JDM5po/Vv7xKplUplxYdPAHy+GFa7gZLCabTg0Ey84pKJVaDzdM8MsEftSEFQte+S1tU9gdO7TZAzYpIo7Xs1kxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 535C3106F;
+	Mon,  3 Mar 2025 06:16:08 -0800 (PST)
+Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 46EB83F66E;
+	Mon,  3 Mar 2025 06:15:52 -0800 (PST)
+From: Ryan Roberts <ryan.roberts@arm.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Juergen Gross <jgross@suse.com>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Catalin Marinas <catalin.marinas@arm.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>,
+	linux-mm@kvack.org,
+	sparclinux@vger.kernel.org,
+	xen-devel@lists.xenproject.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/5] Fix lazy mmu mode
+Date: Mon,  3 Mar 2025 14:15:34 +0000
+Message-ID: <20250303141542.3371656-1-ryan.roberts@arm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <da418443-a98b-4b08-ad44-7d45d89b4173@oracle.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 24, 2025 at 09:38:17AM -0500, Chuck Lever wrote:
-> On 2/24/25 4:58 AM, nicolas.bouchinet@clip-os.org wrote:
-> > From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
-> > 
-> > Bound nsm_local_state sysctl writings between SYSCTL_ZERO
-> > and SYSCTL_INT_MAX.
-> > 
-> > The proc_handler has thus been updated to proc_dointvec_minmax.
-> > 
-> > Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
-> > ---
-> >  fs/lockd/svc.c | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/lockd/svc.c b/fs/lockd/svc.c
-> > index 2c8eedc6c2cc9..984ab233af8b6 100644
-> > --- a/fs/lockd/svc.c
-> > +++ b/fs/lockd/svc.c
-> > @@ -461,7 +461,9 @@ static const struct ctl_table nlm_sysctls[] = {
-> >  		.data		= &nsm_local_state,
-> >  		.maxlen		= sizeof(int),
-> >  		.mode		= 0644,
-> > -		.proc_handler	= proc_dointvec,
-> > +		.proc_handler	= proc_dointvec_minmax,
-> > +		.extra1		= SYSCTL_ZERO,
-> > +		.extra2		= SYSCTL_INT_MAX,
-> >  	},
-> >  };
-> >  
-> 
-> Hi Nicolas -
-> 
-> nsm_local_state is an unsigned 32-bit integer. The type of that value is
-> defined by spec, because this value is exchanged between peers on the
-> network.
-> 
-> Perhaps this patch should replace proc_dointvec with proc_douintvec
-> instead.
-As Nicolas stated, that is completely up to how you used the variable.
+Hi All,
 
-Things to notice:
-1. If you want the full range of a unsigned long, then you should stop
-   using proc_dointvec as it will upper limit the value to INT_MAX.
-2. If you want to keep using nsm_local_state as unsigned int, then
-   please add SYSCTL_ZERO as a lower bound to avoid assigning negative
-   values
-3. Having SYSCTL_INT_MAX is not necessary as it is already capped by
-   proc_dointvec{_minmax,}, but it is nice to have as it makes explicit
-   what is happening.
+I'm planning to implement lazy mmu mode for arm64 to optimize vmalloc. As part
+of that, I will extend lazy mmu mode to cover kernel mappings in vmalloc table
+walkers. While lazy mmu mode is already used for kernel mappings in a few
+places, this will extend it's use significantly.
 
-Let me know if you take this through your trees so I can remove it from
-sysctl.
+Having reviewed the existing lazy mmu implementations in powerpc, sparc and x86,
+it looks like there are a bunch of bugs, some of which may be more likely to
+trigger once I extend the use of lazy mmu. So this series attempts to clarify
+the requirements and fix all the bugs in advance of that series. See patch #1
+commit log for all the details.
 
-Reviewed-by: Joel Granados <joel.granados@kernel.org>
+Note that I have only been able to compile test these changes but I think they
+are in good enough shape for some linux-next testing.
 
-Best
+Applies on Friday's mm-unstable (5f089a9aa987), as I assume this would be
+preferred via that tree.
 
-> 
-> 
-> -- 
-> Chuck Lever
+Changes since v1
+================
+  - split v1 patch #1 into v2 patch #1 and #2; per David
+  - Added Acked-by tags from David and Andreas; Thanks!
+  - Refined the patches which are truely fixes and added to stable to cc
 
--- 
+Thanks,
+Ryan
 
-Joel Granados
+Ryan Roberts (5):
+  mm: Fix lazy mmu docs and usage
+  fs/proc/task_mmu: Reduce scope of lazy mmu region
+  sparc/mm: Disable preemption in lazy mmu mode
+  sparc/mm: Avoid calling arch_enter/leave_lazy_mmu() in set_ptes
+  Revert "x86/xen: allow nesting of same lazy mode"
+
+ arch/sparc/include/asm/pgtable_64.h   |  2 --
+ arch/sparc/mm/tlb.c                   |  5 ++++-
+ arch/x86/include/asm/xen/hypervisor.h | 15 ++-------------
+ arch/x86/xen/enlighten_pv.c           |  1 -
+ fs/proc/task_mmu.c                    | 11 ++++-------
+ include/linux/pgtable.h               | 14 ++++++++------
+ 6 files changed, 18 insertions(+), 30 deletions(-)
+
+--
+2.43.0
+
 
