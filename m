@@ -1,191 +1,278 @@
-Return-Path: <linux-kernel+bounces-541344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0F36A4BBC1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:14:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 754E0A4BBBF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:14:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FEBB7A5D24
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:13:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E491F3AA685
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:14:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC3AD1F150A;
-	Mon,  3 Mar 2025 10:14:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC89F1F153C;
+	Mon,  3 Mar 2025 10:14:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f6vZzUqh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o03s5EIn"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F55F1F09A8;
-	Mon,  3 Mar 2025 10:14:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08DEA1DFD95
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 10:14:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740996876; cv=none; b=shj9cSNfOKojfWZZpuRES79xGaspJmxtPV4yXn+MQhpjtIOgJtS925W9UCqqy1KbEEQ4ZdJqYCEGr3nVS7sOqTUyQd6qO8upv0zNyGAk4RmiHSjeGzXqYo7qheW7wUhyxeB4h35ZSq4TPFZBdq/eMsAf2dIjBK70Ep9yOC5O/cI=
+	t=1740996866; cv=none; b=ibiC58MI6qyGRpD1hGcQV8CJIruvLMIaye3kWknahAwIburAcQoYC9pCIlZ0ec3axYj73d0L4qDRPDMPBy3lXpQtlal/UWXhLlicgcXdoh84/+6KSUtQk2D/iorqtKkjr9bNfX9uOc1A2UyTJuKpDGonFwsKpTEwHEPdywjkRxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740996876; c=relaxed/simple;
-	bh=lkZaj9uqtTh8hEsign5KZMtVATzuW4IX9LDEg7WlQWE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S5sQpECTgmTB2lnvBsdBiaKMHNnAmZmMPuoO26fXklqYQMfopyXoMTdMCZgKM3a1AiE/taXo5dCMwyP5+fP3Q5ngEfUefrI9SbBan8H/gOxTT1NIUzQ9RPeEIXRcB2mWaOBbOqRfUsMeHGZo+QFLlLLPmZFTG7hoC8bhYoQr8vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f6vZzUqh; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740996874; x=1772532874;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=lkZaj9uqtTh8hEsign5KZMtVATzuW4IX9LDEg7WlQWE=;
-  b=f6vZzUqhvn8Q9mUsGGQs52rRurvElNYa5/oOwguuAKpOlNFMeqmPyFSQ
-   JELl+zkdLwMYy3+SNXqKvQWqZtOdbsp1SHlx36qfP878eQxKUM6CwIwb6
-   NOqmWDYxTY0KPOnEkrwiF5zjqmtkhJtDp5AHOaclQ/HZIOqNh9QbHRZK9
-   ypBBpITgVzlXnn3fgYiQS2rS4CtAoyesCG3WU1MDVrS3IVJ6IZX63bSLz
-   87gfwYMgXX6oldWmdqw8+xpWcTAuALFSbjsMWXx4kXsZ0lrYg/sE3DOFk
-   G6JEeW9nUdyx7EKrCBSD4f6ABp+26BfE5l3SWsZxNEbg5rYUk/jrmE3xE
-   A==;
-X-CSE-ConnectionGUID: 6KiSZ6QFQHSaS2HjJkgD/A==
-X-CSE-MsgGUID: QTxfqPWNTXatSf/wYSXiCA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="52843611"
-X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="52843611"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 02:14:34 -0800
-X-CSE-ConnectionGUID: rN1sCiqRSv29QdX9eoTyaQ==
-X-CSE-MsgGUID: cKOWUCSWQhyHb6DQ5Z4cBw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="117818554"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by orviesa010.jf.intel.com with ESMTP; 03 Mar 2025 02:14:30 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tp2od-000IKV-2v;
-	Mon, 03 Mar 2025 10:14:27 +0000
-Date: Mon, 3 Mar 2025 18:13:51 +0800
-From: kernel test robot <lkp@intel.com>
-To: Daniel Tsai <danielsftsai@google.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <helgaas@kernel.org>,
-	Andrew Chant <achant@google.com>,
-	Brian Norris <briannorris@google.com>,
-	Sajid Dalvi <sdalvi@google.com>, Mark Cheng <markcheng@google.com>,
-	Ben Cheng <bccheng@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Tsai Sung-Fu <danielsftsai@google.com>
-Subject: Re: [PATCH] PCI: dwc: Chain the set IRQ affinity request back to the
- parent
-Message-ID: <202503031759.oiGkE9fl-lkp@intel.com>
-References: <20250303070501.2740392-1-danielsftsai@google.com>
+	s=arc-20240116; t=1740996866; c=relaxed/simple;
+	bh=G9/uBg00EU1Tmmudo57eJcpVmJYglzFxYsrxNZqg2Yg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nJ0w5AH9gvZAQuuzQgOzWS/hZXs0BnzMPpfo4NT3Ur+DsS86CidrKzzzvpDR43bXycZqUGqdHOuyuwpsjlwI4ICLT1rGCBy1w1DzROHaU4s5V53DZQ15Opb5dNBnQjKGnEpY8bK0NAIsTmuGe5EfRcdrOalvK/WfogGyETd9PI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=o03s5EIn; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-abf5358984bso269834066b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 02:14:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740996862; x=1741601662; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=55m0k1ECPOk2V9hGVGAuPJ09oAemXnzHA5pb7QwYfNY=;
+        b=o03s5EInCRcewlIhfkgIHdSEYB9+nCw8+Jg0ROGm69ky/2sS7f1lgW5pWlFQg0ViPn
+         u5ss/XnFZTtBPkHn2U8G9FhYr2jgEaasFiNEuQng9FWqucFN71YR1CDPqywijoXCHLVH
+         q/N3FteIdQTOJAAb5k4pDHaRFw8qSkGAXc025YdZB05Vp2lWD+1nURhaDGaihrFrP+RS
+         wAP/UcHu1urjNSMSHpHrKFI//TvSx2VxMTEOs5//m7tIngT5Ji0yCDRkGiwRpEDt/DSB
+         eXJwnUwAZDF/sXJkdNNGD/sPRnZbL8zovdR0J8J/b3jTFKlMojmPMD3g22igUsQm2gP+
+         in8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740996862; x=1741601662;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=55m0k1ECPOk2V9hGVGAuPJ09oAemXnzHA5pb7QwYfNY=;
+        b=mLOqNvTy9QIjglmbrnZw2qX2vwc86O36yhrVHb44aHLeVrnfsGeJhNlOLDP0sKHZyn
+         bsI+ho4sTNp/t96a9F5bKLtr778a/C6stCMkupYYHzAEvpkAdnarKf7Mm51rcLtoogVr
+         3zQPN9o9ZKrB5ZLMWKI49iSPNaK7dhRGWMb3VWjIU6q2lxf/ee3Z6po1t+NLwnDVUTQm
+         NDCxhaR0ASZR+oj58Wt7vZeuEQk8s+4lNzz6HkFgeWG27PZsrdrmiGvtjO+7UpLggk1e
+         goJh60qBaDlcBou2Xel/e+RBSjwBGLeFVQrSgpItNWeitPGFcI/4vJNYwhYgP7ZR76lg
+         ZkIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUG2qaO8Ky0KVOgeUtHbuFwIJ3wCeOwFZwU3bzr8QEf28QJm+JRxtoM6cH/5IxunTHPLZbHFq/Vof+gilg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5fKOTrSwtFanSLsSmXYelfRvVXfVIaBVMNro1dTQ6GrmBkYEj
+	uYGgvW4najH53YHg1V82HPM6P27butu/8idqYGLvbLAFkObQFipPP3tqZT+lmIfz2zDPNTn9PPi
+	ujeczw6ZFgQ8T21WRGXmS/RVGC4L49OBEyCc5
+X-Gm-Gg: ASbGncsr/qbLZmDEc5TU2CN0pHt2RIK0KelKkhOfqXKOVisDAcW0FeDwCftg1Jeg7OS
+	VmF3RHRfLpbFMphJGGDll50RhWoMrPvg1hFLWDPkozABQl+tLWvfXBx+MaJF6u2Ykd9YorrdDs+
+	kEOO4ermIx+f5MvMqMKByloCLkBIh+chjjzY/0pF2u8gTOrs4z6o1RZd2V
+X-Google-Smtp-Source: AGHT+IEW/AZQiaj2xg+9vFyP6xkhqVZeH17JHEFKLHiUyANtk6MEBcP3jF2mfCG7BnFOqaawgya0NbcrML/K9xn41LM=
+X-Received: by 2002:a17:907:980b:b0:ac1:ddaa:2c03 with SMTP id
+ a640c23a62f3a-ac1ddaa727dmr171499666b.0.1740996862082; Mon, 03 Mar 2025
+ 02:14:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250303070501.2740392-1-danielsftsai@google.com>
+References: <20250228195913.24895-1-james.morse@arm.com>
+In-Reply-To: <20250228195913.24895-1-james.morse@arm.com>
+From: Peter Newman <peternewman@google.com>
+Date: Mon, 3 Mar 2025 11:14:10 +0100
+X-Gm-Features: AQ5f1JoexOFT4uBmvAQMnsmNvIWesaFcPzCbBfkhoHlPbFxFey3yIMb_6cFvaNc
+Message-ID: <CALPaoCjpdJB6GPk13GGHoA-UBgEpPdSMrqonThYObfkS9P7w+g@mail.gmail.com>
+Subject: Re: [PATCH v7 00/49] x86/resctrl: Move the resctrl filesystem code to /fs/resctrl
+To: James Morse <james.morse@arm.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
+	Reinette Chatre <reinette.chatre@intel.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, H Peter Anvin <hpa@zytor.com>, 
+	Babu Moger <Babu.Moger@amd.com>, shameerali.kolothum.thodi@huawei.com, 
+	D Scott Phillips OS <scott@os.amperecomputing.com>, carl@os.amperecomputing.com, 
+	lcherian@marvell.com, bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com, 
+	baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>, 
+	Xin Hao <xhao@linux.alibaba.com>, dfustini@baylibre.com, amitsinght@marvell.com, 
+	David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>, 
+	Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>, 
+	Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Daniel,
+Hi James,
 
-kernel test robot noticed the following build errors:
+On Fri, Feb 28, 2025 at 8:59=E2=80=AFPM James Morse <james.morse@arm.com> w=
+rote:
+>
+> Changes since v6?:
+>  * All the excitement is in patch 37, turns out there are two rmdir() pat=
+hs
+>    that don't join up.
+> The last eight patches are new:
+>  * The python script has been replaced with the patch that it generates, =
+see
+>    the bare branch below if you want to regenerate it.
+>  * There have been comments on the followup to the generated patch, those=
+ are
+>    included here - I suggest they be squashed into the generated patch.
+>  * This version includes some checkpatch linting from Dave.
+>
+> ---
+> This series renames functions and moves code around. With the
+> exception of invalid configurations for the configurable-events, there sh=
+ould
+> be no changes in behaviour caused by this series. It is now possible for
+> throttle_mode to report 'undefined', but no known platform will do this.
+>
+> The driving pattern is to make things like struct rdtgroup private to res=
+ctrl.
+> Features like pseudo-lock aren't going to work on arm64, the ability to d=
+isable
+> it at compile time is added.
+>
+> After this, I can start posting the MPAM driver to make use of resctrl on=
+ arm64.
+> (What's MPAM? See the cover letter of the first series. [1])
+>
+> This series is based on v6.14-rc3 and can be retrieved from:
+> https://git.kernel.org/pub/scm/linux/kernel/git/morse/linux.git mpam/move=
+_to_fs/v7
+> or for those who want to regnerate the patch that moves all the code:
+> https://git.kernel.org/pub/scm/linux/kernel/git/morse/linux.git mpam/move=
+_to_fs/v7_bare
+>
+>
+> As ever - bugs welcome,
+> Thanks,
+>
+> James
+>
+> [v6] https://lore.kernel.org/lkml/20250207181823.6378-1-james.morse@arm.c=
+om/
+> [v5] https://lore.kernel.org/r/20241004180347.19985-1-james.morse@arm.com
+> [v4] https://lore.kernel.org/all/20240802172853.22529-1-james.morse@arm.c=
+om/
+> [v3] https://lore.kernel.org/r/20240614150033.10454-1-james.morse@arm.com
+> [v2] https://lore.kernel.org/r/20240426150537.8094-1-Dave.Martin@arm.com
+> [v1] https://lore.kernel.org/r/20240321165106.31602-1-james.morse@arm.com
+> [1] https://lore.kernel.org/lkml/20201030161120.227225-1-james.morse@arm.=
+com/
+>
+> Amit Singh Tomar (1):
+>   x86/resctrl: Remove the limit on the number of CLOSID
+>
+> Dave Martin (3):
+>   x86/resctrl: Squelch whitespace anomalies in resctrl core code
+>   x86/resctrl: Prefer alloc(sizeof(*foo)) idiom in rdt_init_fs_context()
+>   x86/resctrl: Relax some asm #includes
+>
+> James Morse (45):
+>   x86/resctrl: Fix allocation of cleanest CLOSID on platforms with no
+>     monitors
+>   x86/resctrl: Add a helper to avoid reaching into the arch code
+>     resource list
+>   x86/resctrl: Remove fflags from struct rdt_resource
+>   x86/resctrl: Use schema type to determine how to parse schema values
+>   x86/resctrl: Use schema type to determine the schema format string
+>   x86/resctrl: Remove data_width and the tabular format
+>   x86/resctrl: Add max_bw to struct resctrl_membw
+>   x86/resctrl: Generate default_ctrl instead of sharing it
+>   x86/resctrl: Add helper for setting CPU default properties
+>   x86/resctrl: Remove rdtgroup from update_cpu_closid_rmid()
+>   x86/resctrl: Expose resctrl fs's init function to the rest of the
+>     kernel
+>   x86/resctrl: Move rdt_find_domain() to be visible to arch and fs code
+>   x86/resctrl: Move resctrl types to a separate header
+>   x86/resctrl: Add an arch helper to reset one resource
+>   x86/resctrl: Move monitor exit work to a resctrl exit call
+>   x86/resctrl: Move monitor init work to a resctrl init call
+>   x86/resctrl: Rewrite and move the for_each_*_rdt_resource() walkers
+>   x86/resctrl: Move the is_mbm_*_enabled() helpers to asm/resctrl.h
+>   x86/resctrl: Add resctrl_arch_is_evt_configurable() to abstract BMEC
+>   x86/resctrl: Change mon_event_config_{read,write}() to be arch helpers
+>   x86/resctrl: Move mba_mbps_default_event init to filesystem code
+>   x86/resctrl: Move mbm_cfg_mask to struct rdt_resource
+>   x86/resctrl: Add resctrl_arch_ prefix to pseudo lock functions
+>   x86/resctrl: Allow an architecture to disable pseudo lock
+>   x86/resctrl: Make prefetch_disable_bits belong to the arch code
+>   x86/resctrl: Make resctrl_arch_pseudo_lock_fn() take a plr
+>   x86/resctrl: Move RFTYPE flags to be managed by resctrl
+>   x86/resctrl: Handle throttle_mode for SMBA resources
+>   x86/resctrl: Move get_config_index() to a header
+>   x86/resctrl: Move get_{mon,ctrl}_domain_from_cpu() to live with their
+>     callers
+>   x86/resctrl: Rename resctrl_sched_in() to begin with "resctrl_arch_"
+>   x86/resctrl: resctrl_exit() teardown resctrl but leave the mount point
+>   x86/resctrl: Drop __init/__exit on assorted symbols
+>   x86/resctrl: Move is_mba_sc() out of core.c
+>   x86/resctrl: Add end-marker to the resctrl_event_id enum
+>   x86/resctrl: Expand the width of dom_id by replacing mon_data_bits
+>   x86/resctrl: Remove a newline to avoid confusing the code move script
+>   x86/resctrl: Split trace.h
+>   fs/resctrl: Add boiler plate for external resctrl code
+>   x86/resctrl: Move the filesystem bits to headers visible to fs/resctrl
+>   x86,fs/resctrl: Move the resctrl filesystem code to live in
+>     /fs/resctrl
+>   x86,fs/resctrl: Remove duplicated trace header files
+>   fs/resctrl: Remove unnecessary includes
+>   fs/resctrl: Change internal.h's header guard macros
+>   x86,fs/resctrl: Move resctrl.rst to live under
+>     Documentation/filesystems
+>
+>  Documentation/arch/x86/index.rst              |    1 -
+>  Documentation/filesystems/index.rst           |    1 +
+>  .../{arch/x86 =3D> filesystems}/resctrl.rst     |    0
+>  MAINTAINERS                                   |    4 +-
+>  arch/Kconfig                                  |    8 +
+>  arch/x86/Kconfig                              |    6 +-
+>  arch/x86/include/asm/resctrl.h                |   43 +-
+>  arch/x86/kernel/cpu/resctrl/Makefile          |    8 +-
+>  arch/x86/kernel/cpu/resctrl/core.c            |  214 +-
+>  arch/x86/kernel/cpu/resctrl/ctrlmondata.c     |  606 +--
+>  arch/x86/kernel/cpu/resctrl/internal.h        |  504 +-
+>  arch/x86/kernel/cpu/resctrl/monitor.c         |  863 +---
+>  arch/x86/kernel/cpu/resctrl/pseudo_lock.c     | 1120 +----
+>  .../resctrl/{trace.h =3D> pseudo_lock_trace.h}  |   26 +-
+>  arch/x86/kernel/cpu/resctrl/rdtgroup.c        | 4031 +--------------
+>  arch/x86/kernel/process_32.c                  |    2 +-
+>  arch/x86/kernel/process_64.c                  |    2 +-
+>  fs/Kconfig                                    |    1 +
+>  fs/Makefile                                   |    1 +
+>  fs/resctrl/Kconfig                            |   39 +
+>  fs/resctrl/Makefile                           |    6 +
+>  fs/resctrl/ctrlmondata.c                      |  660 +++
+>  fs/resctrl/internal.h                         |  435 ++
+>  fs/resctrl/monitor.c                          |  933 ++++
+>  fs/resctrl/monitor_trace.h                    |   33 +
+>  fs/resctrl/pseudo_lock.c                      | 1104 +++++
+>  fs/resctrl/rdtgroup.c                         | 4329 +++++++++++++++++
+>  include/linux/resctrl.h                       |  216 +-
+>  include/linux/resctrl_types.h                 |   59 +
+>  29 files changed, 7992 insertions(+), 7263 deletions(-)
+>  rename Documentation/{arch/x86 =3D> filesystems}/resctrl.rst (100%)
+>  rename arch/x86/kernel/cpu/resctrl/{trace.h =3D> pseudo_lock_trace.h} (5=
+6%)
+>  create mode 100644 fs/resctrl/Kconfig
+>  create mode 100644 fs/resctrl/Makefile
+>  create mode 100644 fs/resctrl/ctrlmondata.c
+>  create mode 100644 fs/resctrl/internal.h
+>  create mode 100644 fs/resctrl/monitor.c
+>  create mode 100644 fs/resctrl/monitor_trace.h
+>  create mode 100644 fs/resctrl/pseudo_lock.c
+>  create mode 100644 fs/resctrl/rdtgroup.c
+>  create mode 100644 include/linux/resctrl_types.h
+>
+> --
+> 2.39.5
+>
 
-[auto build test ERROR on pci/next]
-[also build test ERROR on pci/for-linus mani-mhi/mhi-next linus/master v6.14-rc5 next-20250228]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I applied the series successfully and ran through my usual assortment
+of container management-oriented testcases on the following
+implementations:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Daniel-Tsai/PCI-dwc-Chain-the-set-IRQ-affinity-request-back-to-the-parent/20250303-150704
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
-patch link:    https://lore.kernel.org/r/20250303070501.2740392-1-danielsftsai%40google.com
-patch subject: [PATCH] PCI: dwc: Chain the set IRQ affinity request back to the parent
-config: sparc64-randconfig-002-20250303 (https://download.01.org/0day-ci/archive/20250303/202503031759.oiGkE9fl-lkp@intel.com/config)
-compiler: sparc64-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250303/202503031759.oiGkE9fl-lkp@intel.com/reproduce)
+* AMD EPYC 7B12 64-Core Processor
+* Intel(R) Xeon(R) Gold 6268CL CPU @ 2.80GHz
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503031759.oiGkE9fl-lkp@intel.com/
+Everything looked good.
 
-All errors (new ones prefixed by >>):
+Tested-by: Peter Newman <peternewman@google.com>
 
-   drivers/pci/controller/dwc/pcie-designware-host.c: In function 'dw_pci_msi_set_affinity':
->> drivers/pci/controller/dwc/pcie-designware-host.c:223:58: error: 'struct irq_common_data' has no member named 'affinity'
-     223 |                 cpumask_copy(desc_parent->irq_common_data.affinity, mask);
-         |                                                          ^
-
-
-vim +223 drivers/pci/controller/dwc/pcie-designware-host.c
-
-   178	
-   179	static int dw_pci_msi_set_affinity(struct irq_data *d,
-   180					   const struct cpumask *mask, bool force)
-   181	{
-   182		struct dw_pcie_rp *pp = irq_data_get_irq_chip_data(d);
-   183		struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-   184		int ret;
-   185		int virq_parent;
-   186		unsigned long hwirq = d->hwirq;
-   187		unsigned long flags, ctrl;
-   188		struct irq_desc *desc_parent;
-   189		const struct cpumask *effective_mask;
-   190		cpumask_var_t mask_result;
-   191	
-   192		ctrl = hwirq / MAX_MSI_IRQS_PER_CTRL;
-   193		if (!alloc_cpumask_var(&mask_result, GFP_ATOMIC))
-   194			return -ENOMEM;
-   195	
-   196		/*
-   197		 * Loop through all possible MSI vector to check if the
-   198		 * requested one is compatible with all of them
-   199		 */
-   200		raw_spin_lock_irqsave(&pp->lock, flags);
-   201		cpumask_copy(mask_result, mask);
-   202		ret = dw_pci_check_mask_compatibility(pp, ctrl, hwirq, mask_result);
-   203		if (ret) {
-   204			dev_dbg(pci->dev, "Incompatible mask, request %*pbl, irq num %u\n",
-   205				cpumask_pr_args(mask), d->irq);
-   206			goto unlock;
-   207		}
-   208	
-   209		dev_dbg(pci->dev, "Final mask, request %*pbl, irq num %u\n",
-   210			cpumask_pr_args(mask_result), d->irq);
-   211	
-   212		virq_parent = pp->msi_irq[ctrl];
-   213		desc_parent = irq_to_desc(virq_parent);
-   214		ret = desc_parent->irq_data.chip->irq_set_affinity(&desc_parent->irq_data,
-   215								   mask_result, force);
-   216	
-   217		if (ret < 0)
-   218			goto unlock;
-   219	
-   220		switch (ret) {
-   221		case IRQ_SET_MASK_OK:
-   222		case IRQ_SET_MASK_OK_DONE:
- > 223			cpumask_copy(desc_parent->irq_common_data.affinity, mask);
-   224			fallthrough;
-   225		case IRQ_SET_MASK_OK_NOCOPY:
-   226			break;
-   227		}
-   228	
-   229		effective_mask = irq_data_get_effective_affinity_mask(&desc_parent->irq_data);
-   230		dw_pci_update_effective_affinity(pp, ctrl, effective_mask, hwirq);
-   231	
-   232	unlock:
-   233		free_cpumask_var(mask_result);
-   234		raw_spin_unlock_irqrestore(&pp->lock, flags);
-   235		return ret < 0 ? ret : IRQ_SET_MASK_OK_NOCOPY;
-   236	}
-   237	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks!
+-Peter
 
