@@ -1,52 +1,80 @@
-Return-Path: <linux-kernel+bounces-542006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C40AA4C482
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:15:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3780A4C4B8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:19:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED7FE3A3496
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:14:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07DC716BDE5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:18:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A6422147F1;
-	Mon,  3 Mar 2025 15:14:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E39121D5B5;
+	Mon,  3 Mar 2025 15:15:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lM8Dn0PI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mrOHFsWu"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8FE7213E66;
-	Mon,  3 Mar 2025 15:14:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D565D2144A4
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 15:15:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741014887; cv=none; b=dJ3vfaqmL/EL8bXB7TCykYM+bPdELKXYTmjOZsm73bk/l44yVnxlXVboQt+xR8DIT1Vdz6Syk0/zUv6ALkoVqtxSS9NC6l4XciTgH+XMbid34zURQpSj0yVG7GQMbLCdQ66MWgirtB6qKQbkrW6O/MA3vkIKKmoqH6GnRhcNBL0=
+	t=1741014953; cv=none; b=Hs61AzMyHZ4nRy+zh+stj0oFqKegAKnA/epHVo/p8pepg9g9FRlny7CHQzQqhcg+e7R1dZ7bOMB0d+Mqsq4lL5hqWoofXIonUhz+b2aUG0uNi+yIkY7pmiHG9Y21uayvskFBYih63Oj7o3qqKowic4BE/X1ZjuaPmRpEqEXb4Ww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741014887; c=relaxed/simple;
-	bh=fCmSeaLsHOGgZCOe1ZjtdfESaoOaO/P39GiorM9u4bw=;
+	s=arc-20240116; t=1741014953; c=relaxed/simple;
+	bh=CYxXjoGPBo4uvT8jsEkwbX8WYPTbGIdNFxJtu3SWxQs=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=oc5OmE+TUegM3BT94Iu/7pHwQ4vTmbOPFHzKXD5bRWlB8C01yNwDiP5K8wWb3GB4sZbLRexD2ZSBoUsvaaRfYOQvahpIOHsYwlOqSQ8AXXaHXg9rXKmmN92FgT4j/QfBZ92iGby8La77Vn1W+5gaCSnymiRh+GF5Rhzu9V9KQU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lM8Dn0PI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 82649C4CEE9;
-	Mon,  3 Mar 2025 15:14:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741014886;
-	bh=fCmSeaLsHOGgZCOe1ZjtdfESaoOaO/P39GiorM9u4bw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=lM8Dn0PIV/Hd+HRlhme1MmK6Qs/yxnMHZtQGS4sJDXF2jg/ab1llKxZjBdEZGmV/n
-	 M+7I8cLWLemEbmdYmctpGUeqjxDft9Guhsn5iEwAYcOIGEkDZinKG/57VxYbnD4T/Q
-	 JVZsTV6LqrAIKq1FZ/Ouhq3v3XyY88bbokotdjgriaM4YR+Zm2eVg+cWNkwQVB+rN4
-	 8IMDi4O4O/zk+5xZ6sC3la6a2x0TOg47hBewmIr4PysOdyx+tEiWKmIxVp1yLk1JvE
-	 VcpYdPYI6tjsF1TxDa2lhsSgmkOgyaYZpjPoLtQZNPDiGvJHcnqlugB1OFKCxmsJ73
-	 wLEL894ozF13g==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7657CC282CD;
-	Mon,  3 Mar 2025 15:14:46 +0000 (UTC)
-From: Dimitri Fedrau via B4 Relay <devnull+dimitri.fedrau.liebherr.com@kernel.org>
-Date: Mon, 03 Mar 2025 16:14:37 +0100
-Subject: [PATCH 2/2] net: phy: tja11xx: enable PHY in sleep mode for
- TJA1102S
+	 In-Reply-To:To:Cc; b=avIAC5ZTD6Cc+56WUci+q5SR8HfEJXs40Yspue9Q5kYWHBbauZIXkvtGLprxp/+90fe+FBxGPm8aPt4xDtcYp8p7+MUQp8aB6KssjIeCVOeqU1LQ40H5UjrdVfkSa0yspLias5xlv9hYvmAMyO+7cGcBgJM9vr7WmXNl0d27NM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mrOHFsWu; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2234bec7192so66482455ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 07:15:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741014951; x=1741619751; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qYqL5aquEf9QP1MU+9dPpzn37KZ182hWurvxtiyryKc=;
+        b=mrOHFsWueKXVwYJNFaUIQxaaHG8V9FFv4RGX+O/fiA7PLM8rq6z0sXI65VlNEAeL35
+         +3Hh5tavVM1W6OYswkdcoDYQdp4KN+bTr8rGSD67rnk1GLIuvzZd8vnIxxPxn51VDTv2
+         c+aHRNoipQySlJNhgRQZfY6aaH/KPnbqsMDwKPQeCl3pzxdzmMUh9lLIzvjLI7G1BvyC
+         njMmIObFaGZWsZNtSJR378Wn0aQr+Vnf+lWh+gGIKBQAPO0HIEnF/Z6gidin5e1bnLaF
+         Ua7qImu3AU5QDiv363KX1Xf9OdMCmIPK9z85upOwSxfkASz8m+5l29ohfvplogoJG2gT
+         4uEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741014951; x=1741619751;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qYqL5aquEf9QP1MU+9dPpzn37KZ182hWurvxtiyryKc=;
+        b=eoVjIRHO7DNeSeP1Hjj2UExRynr1+xja3WFb6QfdN/7EkmbZWgFV6aChUqU93CZI73
+         iIrx72ewrOO+C4BoUhpzaBdGAtAjuv3TYRvRP7Nk/mof4fFWg6h0jIgf/L8kq139bkTD
+         LEJ93clbGdiIe/tbzfoHjBkOIT3ShbvUcwfrcdhiAhVZY6Sd0gA/I5FlvTtTzHHBoXbb
+         GENnBnxSTXE0HJh7/KTzPmFlp97PtR139gWWv6dQpb8N2Gx747E6UehLjNLjagb7W3GC
+         VPy1LtZciqDx49bwE5ZWb8v0btQfLX9UfhUP4rx//f/v5ZkycVghcQDP9feWoUBya9O9
+         kj7g==
+X-Forwarded-Encrypted: i=1; AJvYcCU2/xGfapT3HYe3uyAUu12dvXas9sq2O7aBa2/FtTRFOfBOdNDjw1ynWD21qONI76/KQpKDi7LgA53QHZY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5QOCRGo4DWQxC2Q2du3ZXp3KWCoOjYRYn3bhXRJnuL/YnL0Zo
+	kpZ0dZIKTTH14SA2fXmoihSEfBeOl5HrQIqNUl8/8v0kFXV05lSNHiqmADyj18Y7OzoNPU36uSi
+	r5bJGlQ==
+X-Gm-Gg: ASbGnctVkHDPPr9Ys3mjAzra4Ug5/T8rf3u9GO4BxScWUzao9tEAuNji9yTY5I0ZXG1
+	ODW0gvsjpz1B0v0UpSQ30QThAGaWV0NIdd1DBRIRkyNUBGpocyDbwRZIOAj68wv4ybqWQS50BE5
+	I5eEBYGsWNGmPNs5tGLIMaFl4xv06Qq28O0YfKaJ4q2G8aAQbFWCBQdRmC9CO/q6nGgouvmIJww
+	UUDU2CbQnpFTAgBonvPDNObg3/oWJiC2cWSzyaM1BrM3NvWd4v4ya3OWv2dFSIsmBG2bFQ7iEai
+	nZURc7Z2+V/RWioXvNDhy9SatBWbCklbDT0hPPHxYQ==
+X-Google-Smtp-Source: AGHT+IHBMkeJ/K/xmZ0r+6e1iC6/N1q8Tpd5ZgTdrqZ75hZ98XnPHX+o0gzUBYeec6SHcEus8rnwfA==
+X-Received: by 2002:a05:6a00:139c:b0:736:5e6f:295b with SMTP id d2e1a72fcca58-7365e6f2a10mr4343635b3a.12.1741014951078;
+        Mon, 03 Mar 2025 07:15:51 -0800 (PST)
+Received: from [127.0.1.1] ([112.64.60.252])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736584b3cffsm1851984b3a.4.2025.03.03.07.15.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 07:15:50 -0800 (PST)
+From: Jun Nie <jun.nie@linaro.org>
+Date: Mon, 03 Mar 2025 23:14:38 +0800
+Subject: [PATCH v8 09/15] drm/msm/dpu: Add pipe as trace argument
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,81 +83,82 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250303-tja1102s-support-v1-2-180e945396e0@liebherr.com>
-References: <20250303-tja1102s-support-v1-0-180e945396e0@liebherr.com>
-In-Reply-To: <20250303-tja1102s-support-v1-0-180e945396e0@liebherr.com>
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
- Russell King <linux@armlinux.org.uk>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Dimitri Fedrau <dimitri.fedrau@liebherr.com>, 
- Dimitri Fedrau <dima.fedrau@gmail.com>, Marek Vasut <marex@denx.de>, 
- Oleksij Rempel <o.rempel@pengutronix.de>
+Message-Id: <20250303-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v8-9-eb5df105c807@linaro.org>
+References: <20250303-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v8-0-eb5df105c807@linaro.org>
+In-Reply-To: <20250303-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v8-0-eb5df105c807@linaro.org>
+To: Rob Clark <robdclark@gmail.com>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Jun Nie <jun.nie@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741014885; l=1657;
- i=dimitri.fedrau@liebherr.com; s=20241202; h=from:subject:message-id;
- bh=fBVwJfKA7vzb3FvQIQ+c8V1qrobOuDv18BhKafbdQZE=;
- b=FdXcsDo2MrmnegrJeWJl01AAbNIN2MwO2dE2AqikztnZHnXJ1ZWgENF8egIt/ke00SojEpV3+
- TUBuD61aB5eBIkkczmouE+W/Fmvq7sQ/VtWqMlkvRyA+i6vbVqYln+H
-X-Developer-Key: i=dimitri.fedrau@liebherr.com; a=ed25519;
- pk=rT653x09JSQvotxIqQl4/XiI4AOiBZrdOGvxDUbb5m8=
-X-Endpoint-Received: by B4 Relay for dimitri.fedrau@liebherr.com/20241202
- with auth_id=290
-X-Original-From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-Reply-To: dimitri.fedrau@liebherr.com
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1741014878; l=2487;
+ i=jun.nie@linaro.org; s=20240403; h=from:subject:message-id;
+ bh=CYxXjoGPBo4uvT8jsEkwbX8WYPTbGIdNFxJtu3SWxQs=;
+ b=tEkg4RUT7oIGfsE4cuD/GwxCmFq8r/pBRQl9NiRcBh8QSHfXdU+84EoL4yepFYoNSj4QpB8Dh
+ i4x5sqCQIuNBKjB1Q4RTZE+R5Y4emQpw31G4+A4LPEc+J5kUhrVA0gI
+X-Developer-Key: i=jun.nie@linaro.org; a=ed25519;
+ pk=MNiBt/faLPvo+iJoP1hodyY2x6ozVXL8QMptmsKg3cc=
 
-From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+Add pipe as trace argument in trace_dpu_crtc_setup_mixer() to ease
+converting pipe into pipe array later.
 
-Due to pin strapping the PHY maybe disabled per default. TJA1102 devices
-can be enabled by setting the PHY_EN bit. Support is provided for TJA1102S
-devices but can be easily added for TJA1102 too.
-
-Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+Signed-off-by: Jun Nie <jun.nie@linaro.org>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
 ---
- drivers/net/phy/nxp-tja11xx.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c  |  2 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_trace.h | 10 +++++-----
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/phy/nxp-tja11xx.c b/drivers/net/phy/nxp-tja11xx.c
-index 8f3bd27b023b5755c223b6769980aad0b76aad89..42a21371c7502a2bd08ae1a9385bf90dfab9105c 100644
---- a/drivers/net/phy/nxp-tja11xx.c
-+++ b/drivers/net/phy/nxp-tja11xx.c
-@@ -28,6 +28,7 @@
- #define MII_ECTRL_POWER_MODE_MASK	GENMASK(14, 11)
- #define MII_ECTRL_POWER_MODE_NO_CHANGE	(0x0 << 11)
- #define MII_ECTRL_POWER_MODE_NORMAL	(0x3 << 11)
-+#define MII_ECTRL_POWER_MODE_SLEEP	(0xa << 11)
- #define MII_ECTRL_POWER_MODE_STANDBY	(0xc << 11)
- #define MII_ECTRL_CABLE_TEST		BIT(5)
- #define MII_ECTRL_CONFIG_EN		BIT(2)
-@@ -79,6 +80,9 @@
- #define MII_COMMCFG			27
- #define MII_COMMCFG_AUTO_OP		BIT(15)
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+index 41c9d3e3e3c7c0c74ac9007a1ea6dcdde0b05f97..05abe2d05d8d81fbaac58cf0b298abb8d2164735 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+@@ -411,7 +411,7 @@ static void _dpu_crtc_blend_setup_pipe(struct drm_crtc *crtc,
  
-+#define MII_CFG3			28
-+#define MII_CFG3_PHY_EN			BIT(0)
-+
- /* Configure REF_CLK as input in RMII mode */
- #define TJA110X_RMII_MODE_REFCLK_IN       BIT(0)
+ 	trace_dpu_crtc_setup_mixer(DRMID(crtc), DRMID(plane),
+ 				   state, to_dpu_plane_state(state), stage_idx,
+-				   format->pixel_format,
++				   format->pixel_format, pipe,
+ 				   modifier);
  
-@@ -180,6 +184,14 @@ static int tja11xx_wakeup(struct phy_device *phydev)
- 			return ret;
- 
- 		return tja11xx_enable_link_control(phydev);
-+	case MII_ECTRL_POWER_MODE_SLEEP:
-+		switch (phydev->phy_id & PHY_ID_MASK) {
-+		case PHY_ID_TJA1102S:
-+			/* Enable PHY, maybe it is disabled due to pin strapping */
-+			return phy_set_bits(phydev, MII_CFG3, MII_CFG3_PHY_EN);
-+		default:
-+			return 0;
-+		}
- 	default:
- 		break;
- 	}
+ 	DRM_DEBUG_ATOMIC("crtc %d stage:%d - plane %d sspp %d fb %d multirect_idx %d\n",
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_trace.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_trace.h
+index 5307cbc2007c5044c5b897c53b44a8e356f1ad0f..cb24ad2a6d8d386bbc97b173854c410220725a0d 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_trace.h
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_trace.h
+@@ -651,9 +651,9 @@ TRACE_EVENT(dpu_crtc_setup_mixer,
+ 	TP_PROTO(uint32_t crtc_id, uint32_t plane_id,
+ 		 struct drm_plane_state *state, struct dpu_plane_state *pstate,
+ 		 uint32_t stage_idx, uint32_t pixel_format,
+-		 uint64_t modifier),
++		 struct dpu_sw_pipe *pipe, uint64_t modifier),
+ 	TP_ARGS(crtc_id, plane_id, state, pstate, stage_idx,
+-		pixel_format, modifier),
++		pixel_format, pipe, modifier),
+ 	TP_STRUCT__entry(
+ 		__field(	uint32_t,		crtc_id		)
+ 		__field(	uint32_t,		plane_id	)
+@@ -676,9 +676,9 @@ TRACE_EVENT(dpu_crtc_setup_mixer,
+ 		__entry->dst_rect = drm_plane_state_dest(state);
+ 		__entry->stage_idx = stage_idx;
+ 		__entry->stage = pstate->stage;
+-		__entry->sspp = pstate->pipe.sspp->idx;
+-		__entry->multirect_idx = pstate->pipe.multirect_index;
+-		__entry->multirect_mode = pstate->pipe.multirect_mode;
++		__entry->sspp = pipe->sspp->idx;
++		__entry->multirect_idx = pipe->multirect_index;
++		__entry->multirect_mode = pipe->multirect_mode;
+ 		__entry->pixel_format = pixel_format;
+ 		__entry->modifier = modifier;
+ 	),
 
 -- 
-2.39.5
-
+2.34.1
 
 
