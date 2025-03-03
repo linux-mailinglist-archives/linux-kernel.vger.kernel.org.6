@@ -1,232 +1,112 @@
-Return-Path: <linux-kernel+bounces-541275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D2CBA4BAD0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:30:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63108A4BAD5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:31:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4347C17080B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:30:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 823BD189186F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:31:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 381211EF0B6;
-	Mon,  3 Mar 2025 09:30:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07EF51F0E42;
+	Mon,  3 Mar 2025 09:31:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ApAYQhp+"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="e357nYO5"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19F2EC4
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 09:30:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67503EC4;
+	Mon,  3 Mar 2025 09:31:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740994245; cv=none; b=CigedPfWny1uufa6eVJ8b5/dPsW+VCdG4TRR47ZahJb424OZcC5qMedBuzYtQ2OYY4ZBcTWoD899LImE9MsF02bDi2eARDW6ai3Y5lSXkuyYa/2IdVMV2EFEuYOluTsgXGzcncfuYXE8rOd9SEmtsWay29qQDXffeU34He0yAu0=
+	t=1740994288; cv=none; b=NauoGjQwNunFwtpOdIOYCyJ0NsXVqqh4KeS4dZZk6XB3Ccj08p6TEJsPHj4pVLXU+BFcRhQULYhfGihbGyQoa1lybU6esIvvvMUGWyAFNvpbPwBx2fQ4fHlJgHTPkEUdWAfVVsbHRMWDcAYFf88MAbNAAIdrQDqLa5PmU4oRAdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740994245; c=relaxed/simple;
-	bh=T1FmQ6LIchNam/vh1+twPMasFXg2M6wIlP9IlQFY0Tk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hBk7er65jyYIW6ux7H8OpiYfLerPhzniToIPBJgI7MOvmD+8KxCbOk9LZdWtYgCVdrdS66u1AoXSLbL4/ylzKSYOUrpmpAkwm5oIXLSPsdl17PFyWJPJe0P4K9XzVkUy/vLW732SFASHmxPwYyMShhen7AoJ+qUKQQ6DJY0iU9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ApAYQhp+; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52309L9i002169;
-	Mon, 3 Mar 2025 09:30:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	r2jFIZdUKx5Dbc3ZCsERsiLP2tPI95deItMdu/Cb6SQ=; b=ApAYQhp+bBNOfR+2
-	vDkaPsNp4jGa2/W771Qf0oy2K2APdg/A5NF9z0uEhHzd9O0xqpmJsWCB0/OIrd6Y
-	xLBzECAmWMGyMTbHNtoUhaFQS5ZgFFkuLcWU4TAcZu0hKpHsBwo9nEaMbg87C9hz
-	6haYxN3PRFBzSEcAR4jI8RBMCLEY9Ke/NjIKJ1O1f+7V9VhpOG2AXmiDVC2xWuhs
-	gETA/5iZf7WOcTf5sWes14WNx5Rpaxuch+FFte/i3Xn31MeX4HtJvLBrUnIsHttR
-	l4FstB60v1frcIm2QzUpcZkcSi4BZvQgxsX7Far31EQqxD3j+86u6Ui5sGYoPOHR
-	obSqcQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 453t88vf7v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Mar 2025 09:30:10 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5239U9Gp017890
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 3 Mar 2025 09:30:09 GMT
-Received: from [10.239.132.245] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 3 Mar 2025
- 01:30:03 -0800
-Message-ID: <45076e28-dd70-456f-83b2-7b4d532c455c@quicinc.com>
-Date: Mon, 3 Mar 2025 17:29:55 +0800
+	s=arc-20240116; t=1740994288; c=relaxed/simple;
+	bh=PRazXW/kbPHtowtTsKIzPmtMu8CfBctVKjuE3JfV5iU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ljoNaCvtaddpnH3Y7Sb0zrnmebePO1gVzPvo3QJnOJVvbARdUGiCKQd1NOFPygNFiDqkpjtsK9FxAlRWzJwscQv1g/onltV4OxKW5mbbCiQljL4RGbY3Epbua3E2uiZEV1ExamW6S5VkdjKogyfJPZyaMHlgLvUoFIvumoP1W+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=e357nYO5; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id EB87E44188;
+	Mon,  3 Mar 2025 09:31:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740994284;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=QbJppxNHduGQ+2DYZU3v7Z2KhYNzPxsOebdIfv4nVEc=;
+	b=e357nYO5dtFfQG7Vc42IzmG9v6q4eS3fB5R79wwAjnafvXc+ejmJN6Pi7ccq0hMp6+AYpA
+	Fe/YzVsng1md+nJBXjOi6dbfut2nTUbdhM8L1J+QmkFhsGmlUVkolug7YGEUO3bwcoYaqd
+	cKrJ17lFXpZTcuxeNTtrIle/zYiAIuWgJT7wrDVQTtBStCnCbQFslUJh1wPE9YJ03YOeSD
+	6KfbX7MTDwMU7EuceFctLzR8Q1zpZmyeWG0CBZCUimDLqhjNJGtXMsT1SZ6oVCY+GcqiRQ
+	IjN9jOg/nxxjRmiM894LPrJcyXkUS+3QRf4hGZ6atNdKm6lc+9rURXZcekYKqA==
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Date: Mon, 03 Mar 2025 10:30:51 +0100
+Subject: [PATCH RESEND v2] drivers: core: fix device leak in
+ __fw_devlink_relax_cycles()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7] arm64: mm: Populate vmemmap at the page level if not
- section aligned
-To: David Hildenbrand <david@redhat.com>, <anshuman.khandual@arm.com>,
-        <catalin.marinas@arm.com>
-CC: <will@kernel.org>, <ardb@kernel.org>, <ryan.roberts@arm.com>,
-        <mark.rutland@arm.com>, <joey.gouly@arm.com>,
-        <dave.hansen@linux.intel.com>, <akpm@linux-foundation.org>,
-        <chenfeiyang@loongson.cn>, <chenhuacai@kernel.org>,
-        <linux-mm@kvack.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <quic_tingweiz@quicinc.com>
-References: <20250217092907.3474806-1-quic_zhenhuah@quicinc.com>
- <8c1578ed-cfef-4fba-a334-ebf5eac26d60@redhat.com>
- <ce2bd045-3e3a-42bf-9a48-9ad806ff3765@quicinc.com>
- <871c0dae-c419-4ac2-9472-6901aab90dcf@redhat.com>
- <a5439884-551c-4104-9175-f95b0895a489@quicinc.com>
- <00c82c92-35a0-441c-b5b5-e4a6c8a4a9b7@redhat.com>
-Content-Language: en-US
-From: Zhenhua Huang <quic_zhenhuah@quicinc.com>
-In-Reply-To: <00c82c92-35a0-441c-b5b5-e4a6c8a4a9b7@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: jBcZU8ak7qkip-7X9ZyIEw8nwf0ChjlD
-X-Proofpoint-GUID: jBcZU8ak7qkip-7X9ZyIEw8nwf0ChjlD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-03_03,2025-03-03_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
- impostorscore=0 spamscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0
- priorityscore=1501 mlxlogscore=999 mlxscore=0 clxscore=1015 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503030072
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250303-fix__fw_devlink_relax_cycles_missing_device_put-v2-1-3854d249d54e@bootlin.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
+ Saravana Kannan <saravanak@google.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ =?utf-8?q?Herv=C3=A9_Codina?= <herve.codina@bootlin.com>, 
+ linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
+ stable@vger.kernel.org, Luca Ceresoli <luca.ceresoli@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelkeejiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkffvvefosehtjeertdertdejnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepvdeuleetffeutdfhvedvjeffuddtteejtdfhffdvhedvleevteekjeejgfejgfehnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvpdhhvghloheplgduledvrdduieekrddujeekrdejhegnpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddtpdhrtghpthhtohephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehluhgtrgdrt
+ ggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhm
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
+Commit bac3b10b78e5 ("driver core: fw_devlink: Stop trying to optimize
+cycle detection logic") introduced a new struct device *con_dev and a
+get_dev_from_fwnode() call to get it, but without adding a corresponding
+put_device().
 
+Closes: https://lore.kernel.org/all/20241204124826.2e055091@booty/
+Fixes: bac3b10b78e5 ("driver core: fw_devlink: Stop trying to optimize cycle detection logic")
+Cc: stable@vger.kernel.org
+Reviewed-by: Saravana Kannan <saravanak@google.com>
+Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+---
+Changes in v2:
+- add 'Cc: stable@vger.kernel.org'
+- use Closes: tag, not Link:
+- Link to v1: https://lore.kernel.org/r/20250212-fix__fw_devlink_relax_cycles_missing_device_put-v1-1-41818c7d7722@bootlin.com
+---
+ drivers/base/core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-On 2025/2/27 1:13, David Hildenbrand wrote:
-> Sorry, I somehow missed this mail.
-> 
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index 5a1f051981149dc5b5eee4fb69c0ab748a85956d..2fde698430dff98b5e30f7be7d43d310289c4217 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -2079,6 +2079,7 @@ static bool __fw_devlink_relax_cycles(struct fwnode_handle *con_handle,
+ out:
+ 	sup_handle->flags &= ~FWNODE_FLAG_VISITED;
+ 	put_device(sup_dev);
++	put_device(con_dev);
+ 	put_device(par_dev);
+ 	return ret;
+ }
 
-No problem. Thanks for your reply.
+---
+base-commit: 09fbf3d502050282bf47ab3babe1d4ed54dd1fd8
+change-id: 20250212-fix__fw_devlink_relax_cycles_missing_device_put-37cae5f4aac0
 
->>>> Hi David,
->>>>
->>>> I had the same doubt initially.
->>>> After going through the codes, I noticed for vmemmap_populate(), the
->>>> arguments "start" and "end" passed down should already be within one
->>>> section.
->>>> early path:
->>>> for_each_present_section_nr
->>>>      __populate_section_memmap
->>>>          ..
->>>>          vmemmap_populate()
->>>>
->>>> hotplug path:
->>>> __add_pages
->>>>      section_activate
->>>>          vmemmap_populate()
->>>>
->>>> Therefore.. focusing only on the size seems OK to me, and fall back
->>>> solution below appears unnecessary?
->>>
->>> Ah, in that case it is fine. Might make sense to document/enforce that
->>> somehow for the time being ...
->>
->> Shall I document and WARN_ON if the size exceeds? like:
->> WARN_ON(end - start > PAGES_PER_SECTION * sizeof(struct page))
-> 
-> Probably WARN_ON_ONCE() along with a comment that we should never exceed 
-> a single memory section.
-
-Got it.
-
-> 
->>
->> Since vmemmap_populate() is implemented per architecture, the change
->> should apply for other architectures as well. However I have no setup to
->> test it on...
->> Therefore, May I implement it only for arm64 now ?
-> 
-> Would work for me; better than no warning.
-
-I made one patch several days ago, could you please help review once? 
-https://lore.kernel.org/linux-mm/20250219084001.1272445-1-quic_zhenhuah@quicinc.com/T/
-Is there anything else you would suggest besides preferring WARN_ON_ONCE() ?
-
-> 
->> Additionally, from previous discussion, the change is worth
->> backporting(apologies for missing to CC stable kernel in this version).
->> Keeping it for arm64 should simplify for backporting. WDYT?
-> 
-> Jup. Of course, we could add a generic warning in a separate patch.
-> 
->>
->>>
->>>
->>>>> +/*
->>>>> + * Try to populate PMDs, but fallback to populating base pages when
->>>>> ranges
->>>>> + * would only partially cover a PMD.
->>>>> + */
->>>>>     int __meminit vmemmap_populate_hugepages(unsigned long start,
->>>>> unsigned
->>>>> long end,
->>>>>                                             int node, struct 
->>>>> vmem_altmap
->>>>> *altmap)
->>>>>     {
->>>>> @@ -313,6 +317,9 @@ int __meminit vmemmap_populate_hugepages(unsigned
->>>>> long start, unsigned long end,
->>>>>            for (addr = start; addr < end; addr = next) {
->>>>
->>>> This for loop appears to be redundant for arm64 as well, as above
->>>> mentioned, a single call to pmd_addr_end() should suffice.
->>>
->>> Right, that was what was confusing me in the first place.
->>>
->>>>
->>>>>                    next = pmd_addr_end(addr, end);
->>>>>
->>>>> +               if (!IS_ALIGNED(addr, PMD_SIZE) || !IS_ALIGNED(next,
->>>>> PMD_SIZE))
->>>>> +                       goto fallback;
->>>>> +
->>>>>                    pgd = vmemmap_pgd_populate(addr, node);
->>>>>                    if (!pgd)
->>>>>                            return -ENOMEM;
->>>>> @@ -346,6 +353,7 @@ int __meminit vmemmap_populate_hugepages(unsigned
->>>>> long start, unsigned long end,
->>>>>                            }
->>>>>                    } else if (vmemmap_check_pmd(pmd, node, addr, 
->>>>> next))
->>>>>                            continue;
->>>>> +fallback:
->>>>>                    if (vmemmap_populate_basepages(addr, next, node,
->>>>> altmap))
->>>>>                            return -ENOMEM;
->>>>
->>>> It seems we have no chance to call populate_basepages here?
->>>
->>>
->>> Can you elaborate?
->>
->> It's invoked within vmemmap_populate_hugepages(), which is called by
->> vmemmap_populate(). This implies that we are always performing a whole
->> section hotplug?
-> 
-> Ah, you meant only in the context of this change, yes. I was confused, 
-> because there are other reasons why we run into that fallback (failing 
-> to allocate a PMD).
-
-I observed that this logic was introduced in 
-2045a3b8911b("mm/sparse-vmemmap: generalise 
-vmemmap_populate_hugepages()") which moved from arch-dependent 
-codes(such as vmemmap_set_pmd() in arch/loongarch/mm/init.c or 
-arch/x86/mm/init_64.c) to common arch-independent code(function 
-vmemmap_populate_hugepages).
-
-I suspect it might be causing the confusion, as it may not be fully 
-compatible with arm64. However, it does not seem to cause any bugs :)
-
-> 
+Best regards,
+-- 
+Luca Ceresoli <luca.ceresoli@bootlin.com>
 
 
