@@ -1,122 +1,97 @@
-Return-Path: <linux-kernel+bounces-541576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1B4BA4BEBD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:34:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E08E6A4BECA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:35:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39DA13BD6C9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:25:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56EF43B7113
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:25:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BBA31F4261;
-	Mon,  3 Mar 2025 11:25:41 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 258E61F4171;
+	Mon,  3 Mar 2025 11:25:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="BkjwN4/t"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FCE51F4180
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 11:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37281F37D4;
+	Mon,  3 Mar 2025 11:25:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741001141; cv=none; b=C+mKUZMxNqeAqEOpvy8/VnqvLXzuw2PCOnhWFgwEvvbGh0opJ6QlrcfUa9EPlE1vcuSSUX5w+ZRgb8DHbGM9Ckd8XuVkgDGRfM7U1C9DLXKw/Y7YT9X06nRaaDDXh4oEqZrthBJMUeou8wxtw4PwXPRDoDiTPNbiad1Mbr0GmKQ=
+	t=1741001138; cv=none; b=UPJC/6mHI/cP9DeZgia2GqZ5U/xJroQ9+nIP0f0v/Ppd0kkI2MGkwfyhoRNuUFKWi2oSzOfIq85PetnB7OPN6hoI2Pg8DsJ5+9EoPQBsLH+Itds0OyAdzJHvAeKAEX3qXDdNPFkOxSOVfb09zX4bx4APB0z2eG1zifqVvac7Goc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741001141; c=relaxed/simple;
-	bh=3+YMU5QVO8O5inRiM0lXe5oV4sm6tHhKvfipqFyuCeE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E/CE+eKUNBu0p1crL2IMj7bK6wl8vRF40pedbovHwiRTbO7vtXeAIYaHG1UQ7hL/NoqOV1ydmNSB2lnRnWCqgohWvLCI5zaZXfwdKTI3McC1Lg6WwCeNdNmfrhT/A93pqIO27wBZ+EA2Bg8qCJ2chyq82nKpDEBzm5cjgugdoj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tp3vO-0005VN-TN; Mon, 03 Mar 2025 12:25:30 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tp3vO-003mo5-22;
-	Mon, 03 Mar 2025 12:25:30 +0100
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tp3vO-00AihB-1j;
-	Mon, 03 Mar 2025 12:25:30 +0100
-Date: Mon, 3 Mar 2025 12:25:30 +0100
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Rob Herring <robh@kernel.org>, Jiri Slaby <jirislaby@kernel.org>,
-	Johan Hovold <johan@kernel.org>, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH 0/3] USB-Serial serdev support
-Message-ID: <20250303112530.igosjo3s5uocndxj@pengutronix.de>
-References: <20240807-v6-10-topic-usb-serial-serdev-v1-0-ed2cc5da591f@pengutronix.de>
- <20241001072453.3xv5sqxaj4zjprnz@pengutronix.de>
- <2024100109-maker-ravine-7c65@gregkh>
- <20241028225702.tdtfqzhm335vvuv5@pengutronix.de>
+	s=arc-20240116; t=1741001138; c=relaxed/simple;
+	bh=B40IpQiU2fM+pVK7wquDYMb2HsNMGEC55LxsvTQcN4s=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=IzS22qoe88HmZwRs+lvORiXIr204KmlfnswER8YXk5NmDs1hx9mhxYbMP5LhvLbDXO6QJeadJMp9GRutJ+L+j3hHotvW2IwdXjWtM2Cw1hVAyZ9Fjg2qsCKAfO0yrMl83E3kIvWw+36lWD3JBGlKIacwBfKNYOBemouy4iGy9bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=BkjwN4/t; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 7F1F54341A;
+	Mon,  3 Mar 2025 11:25:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741001134;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=B40IpQiU2fM+pVK7wquDYMb2HsNMGEC55LxsvTQcN4s=;
+	b=BkjwN4/tsxmaO4+R7FAMmi485T6901iwWzyz1XQv40fA/bnC1/8MfN0e/DtKEnYmbV0ZQx
+	KTmsVFoZYp5BJfaliwDBG7BiQMIAQE5waOKMctsSOMnNTH2uVUlSbiw1yo/8ZKIGIAjLQx
+	zeIwltgkKYWLfJxx+9yo363ujP5Q8P86Ay3D01CuyCz7yBe19ek8111LbZHSc20hFTnXbO
+	VoyWopf8T38LsZw0kFjnFpnVUWgNeCdqFqigmaBt+qXT5gkWRhSIZ8Zo+AMheKoN4h6AZR
+	ZGxSBCQJkP7TX2uzMASAIOf5LCcrdPEzxhv3Iz2FOSZOd59fB2p/3zg9xNuMBA==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-tegra@vger.kernel.org,  linux-mtd@lists.infradead.org,  Jonathan
+ Hunter <jonathanh@nvidia.com>,  Lucas Stach <dev@lynxeye.de>,  Richard
+ Weinberger <richard@nod.at>,  Stefan Agner <stefan@agner.ch>,  Thierry
+ Reding <thierry.reding@gmail.com>,  Vignesh Raghavendra <vigneshr@ti.com>,
+  LKML <linux-kernel@vger.kernel.org>,  kernel-janitors@vger.kernel.org,
+  Qasim Ijaz <qasdev00@gmail.com>,  Natalie Vock <natalie.vock@gmx.de>
+Subject: Re: mtd: rawnand: tegra: Simplify maximum determination in
+ tegra_nand_setup_timing()
+In-Reply-To: <10afda2a-4c52-47a8-bdfd-4bfd7bd9cb34@web.de> (Markus Elfring's
+	message of "Mon, 3 Mar 2025 12:15:25 +0100")
+References: <d564cafe-d45a-40b5-9a91-a2e2b97c80d6@web.de>
+	<87pliy9yyv.fsf@bootlin.com>
+	<0193ac44-e858-4aff-a50f-dd95dbf3de5b@web.de>
+	<87h64a9y04.fsf@bootlin.com>
+	<10afda2a-4c52-47a8-bdfd-4bfd7bd9cb34@web.de>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Mon, 03 Mar 2025 12:25:33 +0100
+Message-ID: <878qpm9x02.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241028225702.tdtfqzhm335vvuv5@pengutronix.de>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelledtudcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefujghffgffkfggtgfgsehtqhertddtreejnecuhfhrohhmpefoihhquhgvlhcutfgrhihnrghluceomhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepffeghfejtdefieeguddukedujeektdeihfelleeuieeuveehkedvleduheeivdefnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudefpdhrtghpthhtohepofgrrhhkuhhsrdfglhhfrhhinhhgseifvggsrdguvgdprhgtphhtthhopehlihhnuhigqdhtvghgrhgrsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqmhhtugeslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehjohhnrghthhgrnhhhsehnvhhiughirgdrtghomhdprhgtphhtthhopeguvghvsehlhihngigvhigvrdguv
+ gdprhgtphhtthhopehrihgthhgrrhgusehnohgurdgrthdprhgtphhtthhopehsthgvfhgrnhesrghgnhgvrhdrtghhpdhrtghpthhtohepthhhihgvrhhrhidrrhgvughinhhgsehgmhgrihhlrdgtohhm
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-Hi,
+On 03/03/2025 at 12:15:25 +01, Markus Elfring <Markus.Elfring@web.de> wrote:
 
-On 24-10-28, Marco Felsch wrote:
-> Hi Greg,
-> 
-> On 24-10-01, Greg Kroah-Hartman wrote:
-> > On Tue, Oct 01, 2024 at 09:24:53AM +0200, Marco Felsch wrote:
-> > > Hi,
-> > > 
-> > > gentle ping as this is series is two months old now.
-> > 
-> > And it was rejected as serdev does not support hotplug which of course,
-> > usb-serial does.
-> 
-> I hoped to get some feedback on my answer [1]. Regarding hotplug
-> support: serdev _requires_ some sort of firmware like OF (not sure if it
-> does work with ACPI too). That said, if serdev finds no firmware a
-> fallback is provided to the standard serial handling.
-> 
-> The firmware could either be added directly by the platform OF file or
-> via OF-overlays. By making use of overlays we could gain some kind of
-> hotplug: Once a usb devices was detected and the driver has an
-> overlay, the overlay gets applied and the probe continues, like we do it
-> for PCIe devices now [2]. For devices which don't have a registered
-> overlay the standard usb-serial setup is done by exposing the serial
-> interface to the userspace.
+>>> You would eventually like to express that a maximum should be determined
+>>> from three (or even four?) values.
+>>
+>> If there was a max4(), why not, but in this case I don't see the point.
+> Do you miss such a programming interface so far?
 
-is this idea worth to give it a try for a v2 or do you have something
-different in mind?
+No I do not.
 
-I'm happy for any input.
+> Would you be looking for corresponding software adjustments?
 
-Regards,
-  Marco
+Not necessarily, unless there is some performance improvement.
 
-> > So until serdev is fixed up to handle that correctly, this is not going
-> > anywhere, nor should you want it to as then you would be in charge of
-> > code that does not work properly :)
-> 
-> Regards,
->   Marco
-> 
-> [1] https://lore.kernel.org/all/20240917044948.i2eog4ondf7vna7q@pengutronix.de/
-> [2] https://lore.kernel.org/all/7512cbb7911b8395d926e9e9e390fbb55ce3aea9.camel@pengutronix.de/
-> 
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> > 
+Thanks,
+Miqu=C3=A8l
 
