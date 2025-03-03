@@ -1,118 +1,200 @@
-Return-Path: <linux-kernel+bounces-540995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B235CA4B745
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 05:49:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED5D3A4B743
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 05:49:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AA7618925A7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 04:49:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EF7C3A9B09
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 04:49:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EB191DDC23;
-	Mon,  3 Mar 2025 04:49:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9593A1E0B91;
+	Mon,  3 Mar 2025 04:48:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="eyehp6S3"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ViU0dSQ4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCB2733FE;
-	Mon,  3 Mar 2025 04:49:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5184E1DDC23
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 04:48:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740977351; cv=none; b=GGDOxsU+ZgNUuqiIIrdIXBc5LsWZ21oFUEgDThe7/MaRVjwGqf1Z2fHtkmKy5ma3rywdei/GgQgHHtOX5iq1lWlqRCc3q7dRTYjLJw92QzvEyJfnH0dvt12l3WGk57upFI8HOHjdkPAs6vDqZL2wE2gp+RxsP6PSvQYyE/wDkMA=
+	t=1740977338; cv=none; b=Gm/PNqyq4Z0RvdJucDi9uSw3MuexTL+BYXYfFpfYjbHMfIb5avYbRi+WJUiGHY7oB1kxvpFikUnac2VEwhbqrWUTAebpxXM5eHC5QRmvqedjezfxKMCsIU3VthO/UCY6dPlEX7W1LZhQgTdqWjN5rGxhJteSISfDHld5Ja3gTF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740977351; c=relaxed/simple;
-	bh=Re0US//5z2zBhLPVUwz6ZLMmTFMo3MlRNOGAtPZo6qM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=myMHtIW75wAiuheQOQja9x2FDXxFZeirHso5DfXoyNGBorpbLgX+mvzKZZAqdJmKAHUyr4+3L4G7Q9qtCwYYmuatk4ZJwgfXr17qh2Twqn/4IgvryadaHL0bogqei654GZ5nbPyHJM6s2EjO39+U9G8/BqI/Q4+SsveeIKzLLAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=eyehp6S3; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 5234mllH2589775
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 2 Mar 2025 22:48:48 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1740977328;
-	bh=FCkRH65NwGl00HMiThTUBsiZpkAdvh3DpvpaROVnq2g=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=eyehp6S3CddB2RtUJznYJjMIrii+52wavayNT87k8K3Yb4Cij990S0w1duZ8uKqt2
-	 yhkz3r2Sv65T6EqIjVXVUVVDkpkan+qEJp+SEgwMm+WXzEI1UUUCGxQqu9UpPYMDZR
-	 OwouZ42seINIEgJ4co6r0jGnP60HlHDmBvjivncI=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 5234mlFO067333
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sun, 2 Mar 2025 22:48:47 -0600
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 2
- Mar 2025 22:48:47 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sun, 2 Mar 2025 22:48:47 -0600
-Received: from uda0132425.dhcp.ti.com (dhcp-10-24-69-250.dhcp.ti.com [10.24.69.250])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 5234mgG2056332;
-	Sun, 2 Mar 2025 22:48:43 -0600
-From: Vignesh Raghavendra <vigneshr@ti.com>
-To: <nm@ti.com>, <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <kees@kernel.org>, <tony.luck@intel.com>,
-        <gpiccoli@igalia.com>, Wadim Egorov <w.egorov@phytec.de>
-CC: Vignesh Raghavendra <vigneshr@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <upstream@lists.phytec.de>
-Subject: Re: [PATCH 1/2] arm64: dts: ti: k3-am64-phycore-som: Reserve RTOS IPC memory
-Date: Mon, 3 Mar 2025 10:18:41 +0530
-Message-ID: <174092143359.3272913.1513661794535250352.b4-ty@ti.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250131093531.1054924-1-w.egorov@phytec.de>
-References: <20250131093531.1054924-1-w.egorov@phytec.de>
+	s=arc-20240116; t=1740977338; c=relaxed/simple;
+	bh=zGU7A3mRvM1g91UEynHedjBx/bXUZ7w7qLMnWHvuBwk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L0kgUJsqLCQIWW2HpZxRSwdFnuSmMC2vYJwrd4IwL6DrlAEtQwt0/0gGwYdKVDrUTfLNolU8mdyjjLzb0NoPyBXedRVkYE/MXaKG5pio/uiHCPQnnxzcQo62J+oKo8NWwJ5YxLRAO7xKstEzlh8HSo0gFhbumq1Vw3PWhsDLEmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ViU0dSQ4; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740977336;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=szUhRzEc3gD/KXfeBaNWZbbt2DelRUyv9Ye2MPiDleo=;
+	b=ViU0dSQ4VYznw5zuLAZoWWzkYc1BoCP1nOly2nlryCwOO6jZRU2JenN5yqc18YYvPGU599
+	YsiL8czkWZiBjolqkqk5Wc4k0+q7hb4mSkv6n3MA3xfxFILGU5LYJUGu8Zb/iYYL9NzbCp
+	5Ja5AV6JaBbYxkE7skQV8O4IXue0kNw=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-647-HSZFqULBOxGJA2RjssZF3A-1; Sun, 02 Mar 2025 23:48:55 -0500
+X-MC-Unique: HSZFqULBOxGJA2RjssZF3A-1
+X-Mimecast-MFC-AGG-ID: HSZFqULBOxGJA2RjssZF3A_1740977334
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2fed20dd70cso3235364a91.1
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Mar 2025 20:48:55 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740977333; x=1741582133;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=szUhRzEc3gD/KXfeBaNWZbbt2DelRUyv9Ye2MPiDleo=;
+        b=t6kEvJ4pMNS/1AVN1F4LSDfIqEYngscMpBqJJMv4O0hGq3rNB1gyaIiL3TM+M2AThF
+         GHRLpgoaNIT52B/B8k/OxpwkLqFEE7TkljBTP7tn+nWtITE/asl21Gek8UJd+8uBzhwS
+         Dmu5HL8YO7YABvZ0581sx7w/OIk59k0bK1LfEmXXB1BeT8PSttly/58coGrTNHRNZQoX
+         s//ebMLW/kgdmEW4JYDjTmeW1rx0gS/9llWNwVXb4YtJqd2PFLWCSYIjjMpmcerYoo74
+         FcYrw2b3sfReZgCkPlIdoOxP3wPY/B/674sAUmaBVyz+Am0FDz+qLNJgcj5US7clhlK1
+         AkXg==
+X-Forwarded-Encrypted: i=1; AJvYcCXIbUY3G8a2/HyVImhBcFjuDDdThS2umXONDD5YYrAcV+xWSOJi4EQGSohqMaw2cApZ5+H7NCygRF5SV0c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7U+oPhNlCrQ61jKutcGZDhrd35uSGdKs2mf1QanJmYtiJAW+0
+	A9jgD3cJdO8ZvtO5ZsoLGW06gD6C5cnA5o4+XAIdEgnKiMyOukaypNJSGucbusEr9LcV9IE1zSZ
+	TeuwK3xSL/oyWYbTY2/xkc5JGtEE93Nmn/jQEPoN2Lb1yj1VeXG90HMJu2gOwkbSmAhji/w==
+X-Gm-Gg: ASbGncvvIEIFk5qx3h40m88xoLBbl405uvWvARrjwYhK9FoFD+IivEDAGT2zPKrKdbQ
+	Qx3fEvXJ694eRgISFHg+Mbyh2DYWKS1lSp3M9zocYWFCCXf7aEfeBfuX9JQ2vfnTYCPB7ScYwwa
+	MK02/a73B2o9Xy4KWbluKpjPFMAf5MJfEpATSrX/7HQOdlXC8LUahWiV+Q/mqSCwKWpxLr6Ip5z
+	C7mT8SmbP4SqjTZ5eDRrwgh0+ksmxX7piZB3SN4ouofjln5lJS4P1+ok/ggiU7eoqUVjFytiyan
+	/dRZJqGlkStLq6OMDg==
+X-Received: by 2002:a17:90b:3e84:b0:2ee:8031:cdbc with SMTP id 98e67ed59e1d1-2febac046a6mr14181199a91.23.1740977333518;
+        Sun, 02 Mar 2025 20:48:53 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF0bFqBHp5vrV5kno/u9pdc5LbTz/krk4wxyP++znTwdfie+ZMz0iB8kF9GwoMI70Qf1wWKBg==
+X-Received: by 2002:a17:90b:3e84:b0:2ee:8031:cdbc with SMTP id 98e67ed59e1d1-2febac046a6mr14181169a91.23.1740977333178;
+        Sun, 02 Mar 2025 20:48:53 -0800 (PST)
+Received: from [192.168.68.55] ([180.233.125.164])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2235050d7c1sm68704355ad.198.2025.03.02.20.48.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 02 Mar 2025 20:48:52 -0800 (PST)
+Message-ID: <cec600f2-2ddc-4c71-9bab-0a0403132b43@redhat.com>
+Date: Mon, 3 Mar 2025 14:48:44 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 09/45] kvm: arm64: Expose debug HW register numbers for
+ Realm
+To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
+ kvmarm@lists.linux.dev
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
+ <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
+ Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun
+ <alpergun@google.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
+References: <20250213161426.102987-1-steven.price@arm.com>
+ <20250213161426.102987-10-steven.price@arm.com>
+Content-Language: en-US
+From: Gavin Shan <gshan@redhat.com>
+In-Reply-To: <20250213161426.102987-10-steven.price@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Wadim Egorov,
-
-On Fri, 31 Jan 2025 10:35:30 +0100, Wadim Egorov wrote:
-> Reserve a portion of memory for inter-processor communication between
-> all remote processors running RTOS or baremetal firmware.
+On 2/14/25 2:13 AM, Steven Price wrote:
+> From: Suzuki K Poulose <suzuki.poulose@arm.com>
 > 
+> Expose VM specific Debug HW register numbers.
+> 
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Signed-off-by: Steven Price <steven.price@arm.com>
+> ---
+>   arch/arm64/kvm/arm.c | 24 +++++++++++++++++++++---
+>   1 file changed, 21 insertions(+), 3 deletions(-)
 > 
 
-I have applied the following to branch ti-next on [1].
-Thank you!
+Documentation/virt/kvm/api.rst needs to be updated accordingly.
 
-[1/2] arm64: dts: ti: k3-am64-phycore-som: Reserve RTOS IPC memory
-      commit: eeab4a777eb490b9eca670379720b938226b1c79
-[2/2] arm64: dts: ti: k3-am62-phycore-som: Reserve RTOS IPC memory
-      commit: 4ad59ca98c2764ee2a58e48c96338b6fb88ce85a
+> diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
+> index b8fa82be251c..df6eb5e9ca96 100644
+> --- a/arch/arm64/kvm/arm.c
+> +++ b/arch/arm64/kvm/arm.c
+> @@ -78,6 +78,22 @@ bool is_kvm_arm_initialised(void)
+>   	return kvm_arm_initialised;
+>   }
+>   
+> +static u32 kvm_arm_get_num_brps(struct kvm *kvm)
+> +{
+> +	if (!kvm_is_realm(kvm))
+> +		return get_num_brps();
+> +	/* Realm guest is not debuggable. */
+> +	return 0;
+> +}
+> +
+> +static u32 kvm_arm_get_num_wrps(struct kvm *kvm)
+> +{
+> +	if (!kvm_is_realm(kvm))
+> +		return get_num_wrps();
+> +	/* Realm guest is not debuggable. */
+> +	return 0;
+> +}
+> +
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent up the chain during
-the next merge window (or sooner if it is a relevant bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+The above two comments "Realm guest is not debuggable." can be dropped since
+the code is self-explanatory, and those two functions are unnecessary to be
+kept in that way, for example:
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+	case KVM_CAP_GUEST_DEBUG_HW_BPS:
+		return kvm_is_realm(kvm) ? 0 : get_num_brps();
+	case KVM_CAP_GUEST_DEBUG_HW_WRPS:
+		return kvm_is_realm(kvm) ? 0 : get_num_wrps();
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+>   int kvm_arch_vcpu_should_kick(struct kvm_vcpu *vcpu)
+>   {
+>   	return kvm_vcpu_exiting_guest_mode(vcpu) == IN_GUEST_MODE;
+> @@ -323,7 +339,6 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+>   	case KVM_CAP_ARM_IRQ_LINE_LAYOUT_2:
+>   	case KVM_CAP_ARM_NISV_TO_USER:
+>   	case KVM_CAP_ARM_INJECT_EXT_DABT:
+> -	case KVM_CAP_SET_GUEST_DEBUG:
+>   	case KVM_CAP_VCPU_ATTRIBUTES:
+>   	case KVM_CAP_PTP_KVM:
+>   	case KVM_CAP_ARM_SYSTEM_SUSPEND:
+> @@ -331,6 +346,9 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+>   	case KVM_CAP_COUNTER_OFFSET:
+>   		r = 1;
+>   		break;
+> +	case KVM_CAP_SET_GUEST_DEBUG:
+> +		r = !kvm_is_realm(kvm);
+> +		break;
+>   	case KVM_CAP_SET_GUEST_DEBUG2:
+>   		return KVM_GUESTDBG_VALID_MASK;
+>   	case KVM_CAP_ARM_SET_DEVICE_ADDR:
+> @@ -376,10 +394,10 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+>   		r = cpus_have_final_cap(ARM64_HAS_32BIT_EL1);
+>   		break;
+>   	case KVM_CAP_GUEST_DEBUG_HW_BPS:
+> -		r = get_num_brps();
+> +		r = kvm_arm_get_num_brps(kvm);
+>   		break;
+>   	case KVM_CAP_GUEST_DEBUG_HW_WPS:
+> -		r = get_num_wrps();
+> +		r = kvm_arm_get_num_wrps(kvm);
+>   		break;
+>   	case KVM_CAP_ARM_PMU_V3:
+>   		r = kvm_arm_support_pmu_v3();
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
---
-Vignesh
+Thanks,
+Gavin
 
 
