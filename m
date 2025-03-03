@@ -1,164 +1,145 @@
-Return-Path: <linux-kernel+bounces-541981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBC01A4C424
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:04:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03FD0A4C42A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:05:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14DD8188E478
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:04:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16C791712E6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:05:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4A552135CB;
-	Mon,  3 Mar 2025 15:03:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FShK3EoR"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B2218D620;
-	Mon,  3 Mar 2025 15:03:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7737E213E7D;
+	Mon,  3 Mar 2025 15:05:32 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E9B5156F5E;
+	Mon,  3 Mar 2025 15:05:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741014237; cv=none; b=lpnMf2NQqZwvATrAEgKljekDY9heFX7H7VEBW/jdlqQtosXNufinu1F/Cy5hXPaRmOwNwjG+CNgzIottBggNgadDTtKHsJ5TOgmBdv0ki7A37x4UusBXMldgFx5W9mka6DQFjYUcxhbE1zSC0ZEyF+2ZrAimGjxBJJSaWqHSPFk=
+	t=1741014332; cv=none; b=BBFYHbITm32fw0Tra4MK1sPlPlj5pHOJ6XI9zquhZaUqK3dtR4SACZEMhYd0qwoD4hN3AC1hQCBjjegfO9KKx1WR3S/M/3QOaVGZsTlyOINr/BJ3ehNfA/jSiZXFwGA4Nzlt7z2degc/gem7Qih0ccJ+wu5VP67/6iNPi/8HcLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741014237; c=relaxed/simple;
-	bh=D+2OjHifyWJer/WkKi39uakZygvjoE6gINPmlEYsVE8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OLvjP7CImlbr1vIaazlj4ijE1g3P9EebjFxAahbOtYrVcENufw7tQUHNkmmT0KCmaWfJY3nWbazV9dkbdFrV+rkiL4pmX+qx9w2EWAKITYVoPXkIy9bD8ZuqCQaLkqI2O7DE6AffqTCPO876GvM1ns6Ey3V7scMT7YqqS4XqSl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FShK3EoR; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6f768e9be1aso52330097b3.0;
-        Mon, 03 Mar 2025 07:03:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741014234; x=1741619034; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=x+dzQxlm+hznt93iYLJumzN/omtywLYvhZijugcl3wM=;
-        b=FShK3EoRJG1gIEDFoe0UKv77whxEamO2wL22VUSBf4Gi4InDQqt7omBNkXQaX5O4sD
-         /RF3inAkTcviOQDOfHldfMRGD1DdedKCER7PF/++McionyaEcSeLH464y3SBN+lRWYYN
-         9RxRM+dzBgYFqVza8AqEpFLAaTpEpVJp866P7vvdA6QjiWQ6GMt+g6YND8qLnBgyh3RN
-         m5HXwAEaE/phxuUmPL9enIJ+6gA0zZQd2A8GteHKnIBj1iko1uD2MpOrDHBD/M8Uj89O
-         z6oXBAGj1CG/lt5xp5r3EtQyHNpAB4Dfiwhsk8g5V6yK96sdxm9PhozlwOMbQfqqI571
-         bzcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741014234; x=1741619034;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=x+dzQxlm+hznt93iYLJumzN/omtywLYvhZijugcl3wM=;
-        b=CgMy4noXCFqwQgDrxymMdnRWMyX8XlwL5cnzqixTyFpFkmoWSvIzuIGbnwTrpnQEiu
-         dwxbFty6jmDKtxdqK8NLVj9lxAwmklkgiKo5C0B863iBQa092UYPVZgVxCwoz7WtbN4+
-         IIA8sxgkxD7XrW5t2qpwNpqsrUnY6aLlRHVJvCpirs4fqXCeErQUFYeH2oEWTHFSajpR
-         ZNlUkLiQzQEsSKpqO/YP6W5DAY+U1RfQ7OY60gjuWU+1OJd5Wx6eK3yRiGFFoo9yXbRp
-         i4cgxk4pjKDd6aJuN56GpE9VJkXyzWFJU32DUM0YQDZLMdM1T9LxSG+P4FmpZrzcCDbP
-         jELQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWE3mmNjJWemw/2SzmQMxebE0Wm1qP1cQbuO523DBaTCQmP5VoartG3fFfgC4e/cqeVeh0D0heoJDFfim3buZY=@vger.kernel.org, AJvYcCWKqKWEAnftolgPYQEHLXQUpVq+9Lwc3Og0oj0xQeYm4LdA6ysfNwVRkLQAZAfM3KRf80zmOL9EtekWuHU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIgwkYhx2ZZ0hyrSh7KpKRdNWGrWTa7mHIndHVnEjFO4cw0b0m
-	wiamvyPgOrnJiQMp3bw+A/v8N8VMBpThu4uyH7XU48lU0fJz1klg
-X-Gm-Gg: ASbGnct4e5Zt08vga1V4zVdGWE5s/LpGcHIdHC5pQexO0fHyyMt5SB6X7tiHPRpcDoN
-	kvbC2C6jWScegNiYhC/SzT03YwE0l+fNwUDiekuYqtc2taU4C5Ed+X1AcsuDB40QxA+mUFb/TCf
-	RrhQvaNnKp3wgspeAzgJYYCDpqeXuiMtYg5QGFzVGemHSd0KCCx0xJLpsFiJTFDbHxhczZ31/dl
-	SX+uhSmcLGmgkPB9414HysCxboiHWe4Lto6aImDwy7syAMHtlshzIBvYZEVpLtVbB9e3ec3xRXD
-	FS6Hr8GkA5x/hPMRKBdl5PgxO8zW+aaiNHR/PdVGf9liFSEb0ebl8b7e9GWzaOlQYplz+o611Hx
-	WSHwJ
-X-Google-Smtp-Source: AGHT+IHGiYXy/BjrKAy1qTEMsokZjZvqxm65haT2o9Z0kZqUyVg0LDK8WBbag2g6ZRoQJNTfFSCJ7A==
-X-Received: by 2002:a05:6902:1089:b0:e60:88f9:b081 with SMTP id 3f1490d57ef6-e60b23f8464mr17772239276.17.1741014234375;
-        Mon, 03 Mar 2025 07:03:54 -0800 (PST)
-Received: from localhost (c-73-224-175-84.hsd1.fl.comcast.net. [73.224.175.84])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e60a3a1fef8sm2978694276.12.2025.03.03.07.03.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 07:03:53 -0800 (PST)
-Date: Mon, 3 Mar 2025 10:03:52 -0500
-From: Yury Norov <yury.norov@gmail.com>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Burak Emir <bqe@google.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] rust: add bindings and API for bitmap.h and bitops.h.
-Message-ID: <Z8XE2H3vGDNiOra7@thinkpad>
-References: <20250303114037.3259804-2-bqe@google.com>
- <CAH5fLgjPTvXzcSVDWeYN7nLgxMZgeHUbHiDOv4R=uRBG=50UNQ@mail.gmail.com>
- <CAH5fLgiQkPpMUV0Bvmwd5zUsHy=GHLdoVFjRuAPxpWCbBiD2Jw@mail.gmail.com>
+	s=arc-20240116; t=1741014332; c=relaxed/simple;
+	bh=FAfxwdkJdI2ka4k/gWKw/rIYeoMTctGSdN1ZWB+qzBE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tEZ+YJ6MNNc7AqxhfFJjND/FcQZMyixH89NV0/iuC2dS1bRWm2l0IUX2tivdalpR6B6o1zaPY8t25A0gLfyEYA17/h+o+HHziZ9s/LegbxOQ13BHmL4LS0S62r7KfNotu+ZBB7Iuvhq27XN1al7crtUQ7jMsVBua4FzjtvAPa/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6B0B6113E;
+	Mon,  3 Mar 2025 07:05:43 -0800 (PST)
+Received: from [10.1.39.33] (e122027.cambridge.arm.com [10.1.39.33])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CD6FE3F5A1;
+	Mon,  3 Mar 2025 07:05:25 -0800 (PST)
+Message-ID: <762524e0-d54f-4026-8a1d-732a7cfc6a1a@arm.com>
+Date: Mon, 3 Mar 2025 15:05:24 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAH5fLgiQkPpMUV0Bvmwd5zUsHy=GHLdoVFjRuAPxpWCbBiD2Jw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 01/45] KVM: Prepare for handling only shared mappings
+ in mmu_notifier events
+To: Gavin Shan <gshan@redhat.com>, kvm@vger.kernel.org, kvmarm@lists.linux.dev
+Cc: Sean Christopherson <seanjc@google.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
+ <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
+ Alexandru Elisei <alexandru.elisei@arm.com>,
+ Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
+ linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun
+ <alpergun@google.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
+References: <20250213161426.102987-1-steven.price@arm.com>
+ <20250213161426.102987-2-steven.price@arm.com>
+ <8bf9ba6c-a8b2-42aa-9802-8e968bec1cd5@redhat.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <8bf9ba6c-a8b2-42aa-9802-8e968bec1cd5@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 03, 2025 at 02:01:44PM +0100, Alice Ryhl wrote:
-> > > +void rust_helper_bitmap_copy(unsigned long *dst, const unsigned long *src, unsigned int nbits)
-> > > +{
-> > > +       bitmap_copy(dst, src, nbits);
-> > > +}
-> >
-> > I was about to say that this could just be a memcpy, but ...
-> >
-> > > +    /// Copy up to `nbits` bits from this bitmap into another.
-> > > +    ///
-> > > +    /// # Panics
-> > > +    ///
-> > > +    /// Panics if `nbits` is too large for this bitmap or destination.
-> > > +    #[inline]
-> > > +    pub fn bitmap_copy(&self, dst: &mut Bitmap, nbits: usize) {
-> > > +        if self.nbits < nbits {
-> > > +            panic_not_in_bounds_le("nbits", self.nbits, nbits);
-> > > +        }
-> > > +        if dst.nbits < nbits {
-> > > +            panic_not_in_bounds_le("nbits", dst.nbits, nbits);
-> > > +        }
-> > > +        // SAFETY: nbits == 0 is supported and access to `self` and `dst` is within bounds.
-> > > +        unsafe { bindings::bitmap_copy(dst.as_mut_ptr(), self.ptr.as_ptr(), nbits as u32) };
-> > > +    }
-> >
-> > ... then I realized that we're probably not using it correctly. I
-> > would expect this to modify the first `nbits` bits in `dst`, leaving
-> > any remaining bits unmodified. However, if nbits is not divisible by
-> > BITS_PER_LONG it might modify some bits it shouldn't.
-> >
-> > That said, Binder needs this only in the case where the sizes are
-> > equal. Perhaps we could rename this to `copy_from_bitmap` with this
-> > signature:
-> > fn copy_from_bitmap(&mut self, src: Bitmap)
+On 02/03/2025 23:36, Gavin Shan wrote:
+> On 2/14/25 2:13 AM, Steven Price wrote:
+>> From: Sean Christopherson <seanjc@google.com>
+>>
+>> Add flags to "struct kvm_gfn_range" to let notifier events target only
+>> shared and only private mappings, and write up the existing mmu_notifier
+>> events to be shared-only (private memory is never associated with a
+>> userspace virtual address, i.e. can't be reached via mmu_notifiers).
+>>
+>> Add two flags so that KVM can handle the three possibilities (shared,
+>> private, and shared+private) without needing something like a tri-state
+>> enum.
+>>
+>> Link: https://lore.kernel.org/all/ZJX0hk+KpQP0KUyB@google.com
+>> Signed-off-by: Sean Christopherson <seanjc@google.com>
+>> Signed-off-by: Steven Price <steven.price@arm.com>
+>> ---
+>>   include/linux/kvm_host.h | 2 ++
+>>   virt/kvm/kvm_main.c      | 7 +++++++
+>>   2 files changed, 9 insertions(+)
+>>
+>> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+>> index 3cb9a32a6330..0de1e485452c 100644
+>> --- a/include/linux/kvm_host.h
+>> +++ b/include/linux/kvm_host.h
+>> @@ -266,6 +266,8 @@ struct kvm_gfn_range {
+>>       gfn_t end;
+>>       union kvm_mmu_notifier_arg arg;
+>>       enum kvm_gfn_range_filter attr_filter;
+>> +    bool only_private;
+>> +    bool only_shared;
+>>       bool may_block;
+>>   };
 > 
-> Sorry I meant src: &Bitmap here.
+> The added members (only_private and only_shared) looks duplicated to the
+> member of attr_filter, which can be set to KVM_FILTER_SHARED,
+> KVM_FILTER_PRIVATE,
+> or both of them. More details can be found from the following commit where
+> attr_filter was by dca6c88532322 ("KVM: Add member to struct kvm_gfn_range
+> to indicate private/shared").
+> 
+> I'm guessing Sean's suggestion was given before dca6c88532322 showed up.
 
-Yes, you're right. bitmap_copy() copies the whole bitmap. So if your
-Bitmap already has size, you don't need to pass it explicitly.
- 
-> Also, we could rewrite it to just call memcpy rather than go through
-> bitmap_copy. Though that requires us to have a Rust version of
-> bitmap_size, which I think it makes sense to avoid using a Rust helper
-> for.
+Thanks for pointing this out - you are absolutely right. I need to
+switch the code in the following patches over to use attr_filter
+instead. I hadn't realised when rebasing that attr_filter is the
+replacement.
 
-No, you couldn't. I don't want rust bindings to diverge from the main
-kernel. So the rule is simple: if inline wrapper exists only for the
-small_const_nbits() optimization - go ahead and use the outlined
-underscored version. If the wrapper does something else - no matter
-what - it should be wrapped.
+Thanks,
+Steve
 
-> We could reimplement it by first computing the number of longs and
-> then computing the number of bytes
+>>   bool kvm_unmap_gfn_range(struct kvm *kvm, struct kvm_gfn_range *range);
+>> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+>> index faf10671eed2..4f0136094fac 100644
+>> --- a/virt/kvm/kvm_main.c
+>> +++ b/virt/kvm/kvm_main.c
+>> @@ -593,6 +593,13 @@ static __always_inline kvm_mn_ret_t
+>> __kvm_handle_hva_range(struct kvm *kvm,
+>>                * the second or later invocation of the handler).
+>>                */
+>>               gfn_range.arg = range->arg;
+>> +
+>> +            /*
+>> +             * HVA-based notifications aren't relevant to private
+>> +             * mappings as they don't have a userspace mapping.
+>> +             */
+>> +            gfn_range.only_private = false;
+>> +            gfn_range.only_shared = true;
+>>               gfn_range.may_block = range->may_block;
+>>               /*
+>>                * HVA-based notifications aren't relevant to private
 > 
-> const fn bitmap_size(nbits: usize) -> usize {
->     nbits.div_ceil(c_ulong::BITS) * size_of::<c_ulong>()
-> }
+> Thanks,
+> Gavin
 > 
-> Thoughts?
-> 
-> Alice
+
 
