@@ -1,223 +1,313 @@
-Return-Path: <linux-kernel+bounces-540929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4744A4B686
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 04:28:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F383A4B72E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 05:42:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C2441890C87
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 03:28:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8535016B95E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 04:42:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EBCF1CDFD4;
-	Mon,  3 Mar 2025 03:28:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B95E91C84CE;
+	Mon,  3 Mar 2025 04:42:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="xD4iZ3+I"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011000.outbound.protection.outlook.com [52.101.70.0])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GN6VxoCm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A45AD27;
-	Mon,  3 Mar 2025 03:28:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.0
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740972512; cv=fail; b=V58RE68HGnWQmPONeJYKGJzKs6SPRICHHVv5L1GCzpd4DqeR3yYdFK94d9fjjcEsGWOKG97YFqIicIf068G18kgxzNA3goOXWScDdV+UGAzOG6vuBVUrEQEZGD8c+fd0npGEhxv9T45wab5yYsS0HPl0eiqyK9/NHrlmKzCH7Ag=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740972512; c=relaxed/simple;
-	bh=XMGvxyvzSxS8zJMU0Nl5DTqvGIgs3LiY/gK/dYawxs8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=PDQeLDONYbK+Sagw5dyxGilWlPhu7+/OuqjJwbeZD16yiidd1A8X3feErPDhyuXcXAxIqlzzqV5v8KYj9iy2BmeAx2p3qwUrQnUsQTvbhXjQxPQMxkWnquISDnrSiJGFu+FNNDD6SbYpdmmfxbc1MeacoJLDgxURFg5j3+wB4Sc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=xD4iZ3+I; arc=fail smtp.client-ip=52.101.70.0
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=l/Z1Ln1E3mCWxHmoPmxAH0f1wmS01tnLVQ1CFNVIjYv5UqdbdSICH9M/51rnG/PHdl7lffHV1LdPvbeLDe6Ccor5mGZUkEFflwC7WLUauFWBaZBPV5TolP59Tnqo457qWctjScJiQNqwVoGa6UeKma5CUs28VXHoEU1Gmt5cBae1IkqnIhcgPmvMvrTbXE1nbBT6HupWimh+bJydi320s1j4H9Agy+LBU/lCv3hLkqqkAWJBHCqxVUxNy1yEQlK6j7N8G9TS0dogLXuhTC7IGxdhG3/xR3MHReVVJrMvb6ZDomN2S4goETeIhhhSoVwq7RC1Tzj6mgdY00TVhIq0rA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XMGvxyvzSxS8zJMU0Nl5DTqvGIgs3LiY/gK/dYawxs8=;
- b=pylmwsjZ2MM5+CHja7VOyQ6jMowsLUqc0idqqtfRVDdksqFv4oaxCmaz6rzcidB4EQaVfFdbyQWb71WuEZHYxBmvQDg0eJVu4/kJrCssfCz6p27NKqS8f0KjHdPzo8NdPz3VwIjBdeNKjfn2gySWB6DO0Bdnduh18uOtA3jqrV7QPhSuCf2NCYc0g1orOn9HBmI56ANWkpRfXLFjEZBZfalhCROuQkIKKtYuc0zNqwBhFa3ZaIGEw9KHboMjlFPVSNAOem3yr6ybJPTUEtLlb54Ve9PdgrhT+Vs9bNSibb/pNL+1g+rVvcAu0kV7kCXneJ48mFzeRQJEFG6YEDQwcQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XMGvxyvzSxS8zJMU0Nl5DTqvGIgs3LiY/gK/dYawxs8=;
- b=xD4iZ3+ISH7bklImlv3LrCdXOg+qLoQm4pSRMVWaXCK3SsZy9UCwu0m9hHWwxo8LCvqhL3x1HxgbseX0lsLBtcKgWVlN+sR4Y/6XbXrxgfp8xPnEL1G4mQQ1lSNaxU5j0zNJsRZNc0AInjmTkjJTHVKAEiHt5hRF21KEQ6kfOaHQ6trQleZSAhlUsNFTwibyxbT3eehCQfYErDK63NVC4HPAA7uA0nb1ZoGSnsZRxhOQxKqn9W09exOG/HESJwx5gLMZRLfPB+mH+uM6ljRtukcPdRTndfzoPDFD+6xENGTNpEp27/j0pBNNIxpxeqPKKU+zp3nx3ktxHIkzlkqQmA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by DBBPR04MB7722.eurprd04.prod.outlook.com (2603:10a6:10:207::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.28; Mon, 3 Mar
- 2025 03:28:26 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.8489.025; Mon, 3 Mar 2025
- 03:28:26 +0000
-Date: Mon, 3 Mar 2025 12:35:51 +0800
-From: Peng Fan <peng.fan@oss.nxp.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, saravanak@google.com,
-	cristian.marussi@arm.com, krzk+dt@kernel.org, conor+dt@kernel.org,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [RFC] dt-bindings: firmware: scmi: Introduce compatible string
-Message-ID: <20250303043551.GE13236@nxa18884-linux>
-References: <20250226094456.2351571-1-peng.fan@oss.nxp.com>
- <20250226160945.GA2505223-robh@kernel.org>
- <20250227030924.GB11411@nxa18884-linux>
- <CAL_JsqJOqKeDRuASWxCT=EA5LJbONpCX=Re8=XxKUbPToWy2Dg@mail.gmail.com>
- <Z8HCZQQLofaiGtpG@bogus>
- <CAL_JsqLePri5m_dE989poUV4auasAxFvgAiYuXVuZHqLcOBGMg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAL_JsqLePri5m_dE989poUV4auasAxFvgAiYuXVuZHqLcOBGMg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-ClientProxiedBy: SG2PR06CA0218.apcprd06.prod.outlook.com
- (2603:1096:4:68::26) To PAXPR04MB8459.eurprd04.prod.outlook.com
- (2603:10a6:102:1da::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 075BB13C82E
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 04:42:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740976954; cv=none; b=qZZzjHVhGUmVxslbqvZcOwxyFHStnvAiT1WruhO+zuGX6Qt9s40gidRA5JYRZhFNDxBRDp50SQp8qHczhXDzGd1p4qpHsq3Q/F67fu+HRQ3ewuDqPdHMwPPgCs8OOOYPSQjfbBtmZgp6Ss9SferqOJNcpYfDSqh+lS/6lqRKoro=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740976954; c=relaxed/simple;
+	bh=d9xG4OwrGjzvhEjvrP19eENQGSWBx98WpPyZysjrJ10=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CvbNNH888aUaG/y3Srw8V4hpep+8rREngGab+jb0aQDBtj9lQDoN8mbFs8qQJYhsFvQQOyRB4o+2It8YpzPNdxVIzWGI2jxDjT68UrAw3SaocvTaQ214bAyvp9RboD2yer80LLbNrshaG/3y9poKzizNV6N/GNfaH/S2zgjNKbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GN6VxoCm; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740976951;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uZWlrNkWyyIdXT2p4tYOkQhHrguS4IQ3yj366dONwt0=;
+	b=GN6VxoCml4HOL+t9DfK8hbKqSlrVV7yUa+DsvO+8XQw1M+EJxoD0SIhrUqP2aByBciuhRx
+	4SGa60e0psN8RquOKedOvB22IHYKCTKjxmMlPfvgb/Z2mYwuiKj7g9rv+OigAOK6qZl7V9
+	ZpARXnqS1k3sRBLnG10iUuUopWnqy0Q=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-348-HrZokwpgOAahtKgrNqltsQ-1; Sun, 02 Mar 2025 23:42:15 -0500
+X-MC-Unique: HrZokwpgOAahtKgrNqltsQ-1
+X-Mimecast-MFC-AGG-ID: HrZokwpgOAahtKgrNqltsQ_1740976934
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2ff0875e92bso1918417a91.2
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Mar 2025 20:42:15 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740976934; x=1741581734;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uZWlrNkWyyIdXT2p4tYOkQhHrguS4IQ3yj366dONwt0=;
+        b=KigQj6N+CWRbmtKS9h0kTZruqKC6nIDJf8bpohx6mBGHqRiqEkx4Zc6gRTOhDEzS8+
+         7q89vB82YX2lgYV6e7/oIkK76YGUntWzWvd9aP2c7BCsp3besn7KbdrchP1nOH+PUu8r
+         ZGi31SluPs9p9PUAjJ8Ck60hA8VgcGvF4BpbbNKbOKgVS2LOnb8pDsae5aH+VRS/Jh+b
+         Js23pMq1hG03M0gKuWEp4urE2hlZuTjFWaOpfeOHPZBCVkXNI7gFP0bNL3+Vp62yEH6g
+         9siRa15VMM/trGbtdL/r6hkdhYUuoBuEBennWczR8d+EjfnGHp6itkWE6lVxNxbDFAfh
+         LMkw==
+X-Forwarded-Encrypted: i=1; AJvYcCWkUKrpB3fsrVCd5o/UJtAiwQpy0IgcJP7yUREel93HQzDvrl9xAiTuaOsIVXTh53DBXCOYgO1u29IJko8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFpemeWIyTZLjpl8NsAw/76BOeK34+y7BlVV2bwZelYPWSMoeq
+	sbCRy0kAalDVEOoxQL1fCYcIZHVr9Wrxq0WPeCxHXBegRu43RYPCjCFTL4cjsvrQGUbgCgVgQw3
+	koDcTOtbgY6FVF62UHWKjj4PedNN1/MLGQyLLe8aNFTcYYN3Eo/lniHPky4iLTw==
+X-Gm-Gg: ASbGncubKkXyC5GhC1NlsZIAgusQHFlIdYSAaGvd6wZCl20lzBcb8Iao/q03IeQAfQV
+	rrIZEj7ZKIfAqYt5IKr5p6016ivNhJkhN7TvvTk3wyQc8Qi2o+Zur4RhgBF3Ob70IQkrliCNVv6
+	Ww2B0h1eGYe2r6FogyBt8vDDxiLiHDG2teqj30zkh21Kc73LOW21IuwTaDgdddmkUoNdWuYbCBw
+	sgRlThVGYCGvML0rGS0nfTOidXpdFSJRRiCqVaqeY7CgONpp56K9DOGFLcZzjINoypLQQmDr2+9
+	U2RCeGq7B5pT+MjcPQ==
+X-Received: by 2002:a05:6a20:7347:b0:1f0:e7e2:b295 with SMTP id adf61e73a8af0-1f2f4c9c884mr15086801637.5.1740976934440;
+        Sun, 02 Mar 2025 20:42:14 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFMQAnjp3aPLIp+JkScadGYw1k0nhzSpzFpRULDgvvNejMSWpiBemFKZIbJFmyuqZgvHibZmA==
+X-Received: by 2002:a05:6a20:7347:b0:1f0:e7e2:b295 with SMTP id adf61e73a8af0-1f2f4c9c884mr15086777637.5.1740976934109;
+        Sun, 02 Mar 2025 20:42:14 -0800 (PST)
+Received: from [192.168.68.55] ([180.233.125.164])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af221346042sm3304724a12.28.2025.03.02.20.42.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 02 Mar 2025 20:42:13 -0800 (PST)
+Message-ID: <3413f278-2507-4bb5-8904-550abe93e459@redhat.com>
+Date: Mon, 3 Mar 2025 14:42:04 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|DBBPR04MB7722:EE_
-X-MS-Office365-Filtering-Correlation-Id: babc3737-6ba1-4229-6591-08dd5a0375e0
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|7416014|376014|52116014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Qnpzd1dzZWt5Unh2aWZKdkNlZHkwenVWUVhBL0ZmOGVxbnVwWm92SGpVTjA5?=
- =?utf-8?B?V2RzU2QyVS9zaWo0d2w1VVJkVFkzRUhBL1FOcTJQQkxxVzQyRnJ0NXZ5dExy?=
- =?utf-8?B?emo2cWJsRHIwOVVtWXNSekdWTFJFNjAxOUkyeFRsTUhZVWQ4cTlhempiZEZ5?=
- =?utf-8?B?TXc2dmRLb3p1STAyTGZCakFsTXJUdXM4TmllL25uK0dPN05zS3N0RHAzQlhQ?=
- =?utf-8?B?WEJkOC9CQUxGamp4NXpVaDhQL3d4QzVualc2cDU4RWhLKzdTd0hPVmVKWEJ2?=
- =?utf-8?B?ZVA4cjdGSWNRdEVlVS8vOW8xTENuRnNCRzdjcXFSMGpNNzhTd1NCOWZRNjJu?=
- =?utf-8?B?WHhnMDdvUlVFaVM2akRLZTFVeENCTWJLM1Q0WDM1UE5kK2pNb0FnalFmQ0lE?=
- =?utf-8?B?RzhjbmtEWWYzUmdWY1lIRGhkV2NQWlQ1Q2dEOElvRHRkUEJ4Q0tIc2lRVU9Y?=
- =?utf-8?B?L28zU2liMUF6UzRoRHEvYWlkWnlFYnJPMzZibE8vbXVvcTR4RjlYMmxIRlJ4?=
- =?utf-8?B?TFI5UTN2OGM4L1BVeEV2bTJnWkY1SVd3VWt1eTRyOWlZb08rZk82UUhkTTZu?=
- =?utf-8?B?aGRxK3J6WkdPb3l6Vkl0aGpxRE1yOFIvUDhTaE91NGMvTW5PVnJIeFNDYS8x?=
- =?utf-8?B?R21Fa3I1RHluZlBYZ1JMdWVXN3E2aEdOVUpxc25HUHVFZmx1NW1DNnlWMEpP?=
- =?utf-8?B?WXlJRXJXZVBOTXdrMHR1cS83c3AyMTRGcHdQVW9XUHB5Ukt5U0pkQ2lQUUF2?=
- =?utf-8?B?ekJZRTFnUytpcWZ2QThoakdEaFNic0FuSGtXRmpMS082Z0JzanQ1Si9pS3hK?=
- =?utf-8?B?VnJZKy9XK3IxZEpIRGoxSHA0YjNQSDVpRUsxMDR1ejhtbDlhdDNsdU5RbEI5?=
- =?utf-8?B?VTBXK0JEdEYzTDNxYkdZalpSL01lM3hZbGJ1TnUzODMxdG5WTzQ1Q21rN2NZ?=
- =?utf-8?B?a0E4UHhCUk1mMUpNLzljYnZNNUlKdm5wRDk5ckxtYmJQdU5oMEE3K0dZY0FG?=
- =?utf-8?B?aC9WTCtURU82RzlVK3ArWVpVd3lHeDJ5Z1BlVXMvUnZyOVp2bDR6cXVDNHBG?=
- =?utf-8?B?QUYrZ1JQOFlpWVdpSHVoWVM5clAvY2lvN2ZMMjErcWdWb0RmVTRHdjRyMXdW?=
- =?utf-8?B?Y0lkbjJBcW1BRVA4eWdwbTlwbDRDMERPaXlKT1FReGU2blQ3bjZRWlE3Q0lU?=
- =?utf-8?B?RlVFK2l2NVpqN1lsZmROTXB4RTNWQTBVKytMSDFZUHpCUk5xSEo5YThwd1ZG?=
- =?utf-8?B?YkhJZitFYmc4d1d0VTY0RDVtSWltWVQvM1RlNStDZW5vTHl0R2Y3TGhwUVg0?=
- =?utf-8?B?YmNhOC8wdis0NytKeXI2T3RZNEJpYTFBbkxXVHBvdkVGZUZqZHN2ck9JWGxG?=
- =?utf-8?B?RU5Nc1oycnJPVXAwQzQ5K0NzQ2d5bUU4RTFsL0lZWHJZS2FFeTRMam5XRm15?=
- =?utf-8?B?MG9HTjAzSDRXSXhObmdQLzQybncyZFZ5MUVaY3A3U0VUZGpiUU10MTVVeDla?=
- =?utf-8?B?QXlPTENtc1UyYUZ3Q3RKYW14alRhN2dDd2Y3WEhRQ282ZzRiZ2EzMllDZ2Na?=
- =?utf-8?B?ekRTVWRBYmJybjN1ZUV4c2tkN2NZMjRvWm5WbWFJUDRjdGtmdWtkdW9mSm5n?=
- =?utf-8?B?ZEJtRDlFK0pVT1lQb2FuODdhMzFnZ3dzYVNHWFhDbmU5dlNHR01ucGprckNB?=
- =?utf-8?B?b3E5T1o4ZU5sb0xObHh4YjRabjhRK29wN2J4VVdIZVpHVVpHbm9XYkNENDFp?=
- =?utf-8?B?ejhSNUNDSnorYmVFZUhlMjBMeE55N01aOS9ZRVJVY3o4b0U2dTI0WnBkbStD?=
- =?utf-8?B?WlE3R2JPS05SM0lKdTJzMXI1OXZtVlJKWFQ3QUlxcE5BWXZOSW9qeDFOWmd6?=
- =?utf-8?B?YkNHZHdLNW8zRDFlL1BITlF5cEFkVEtxMXBRL3ZEY1M5dytjaERyNHNZVEdC?=
- =?utf-8?Q?NAt9vADbwI11fwqU//Cn+Kkn4QLPY8ho?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aU9uMFVGckFZbUs1Z2FTNXNGNmxxNFNneXdFUkJmdE9XbU5qbkZ3VlN6b3dZ?=
- =?utf-8?B?UzlPNVFGSXgrZXkvK3pNYmJMSEowTnMrajhkK3FpWHZzUjZVb0xPR1ZVeFls?=
- =?utf-8?B?QWpPdXdxMk16dkptQmRHbXd3a2JxZCtvZGlSamRDNzlUaWxXN0pvTHIrNk1Y?=
- =?utf-8?B?MFlEY2owREFoUXBnMzE4Y2pnMXZtUGlla1NCYzlQS2RMN2xzcWQ1OXJBRVRu?=
- =?utf-8?B?N0FPVDJ4ZnZVTG4wa2pXMk1QY0ZzbzNvUWExWUpzdWQ1V3gvdUFWc3o1UWN3?=
- =?utf-8?B?L1NGZTNoWXhHVFEweVRQR0s4Wm9ucUtkalowZ0c5alF0Y0tLSlhxTWcvNnho?=
- =?utf-8?B?MnhrV3VTZE1nMXJTeW5QTTIxT0lBTVhVd3FmM25VVkRoNWNyYi9zOTNvRTFO?=
- =?utf-8?B?U3Z5MGlHZ2tab1B6ekY1Ni9vQ2p5MlRSZXQ0WkdEbzAxZWJYTlNlbVFVSFBy?=
- =?utf-8?B?SFRSaVRyamRabGF5TFE3dlBIWmxZVDY1YmNRaGFCM053enJDbjg0UWNXdlFD?=
- =?utf-8?B?NWt4Y1lmb2l4Rm1xZEpxbTBiWlB3cmpJT3JxTFJXU3gxSUlFTmdmay85ZzIx?=
- =?utf-8?B?QTEvZEVmV3J0bFBISkc0SGJ0U05uaGtGeTRuNi9LQ0tOc0t0UzBQL1FIRmky?=
- =?utf-8?B?eXZGZC92cmRSQm9RMWxXTHFnM0xMUlFTZzlrMDNMN0NqQ25XVGJ2Ynk0NnBv?=
- =?utf-8?B?ZUNNNnNiZ0x1SHZjYk9wUFY0RjFmSkNWYytTV1psWlFzZzI1TFdDR0hrZTNU?=
- =?utf-8?B?bnErQW9BWGRGcGdDelI3OHc2dm0yb3J2WFQrZEJDVktUdXVKSndUUDFxblgr?=
- =?utf-8?B?bDdHQlR2VWRqWmhSWmNvbkppWHM5UXh6RUhwWUt6OTdPdERyMUxyMDFZU3hR?=
- =?utf-8?B?U3Y4emxZKzQvbkIvQzY5bGdMMW9jU3JJQ216SVo5dmlERDVuRC9LT29xd0Fv?=
- =?utf-8?B?bDFwOXpJRElsRkNnQUs3dExIWjFWaHl1M1JwdTVEdDR5bXI5b3FnU0kvMno2?=
- =?utf-8?B?Vk1GWDZuQnpZaXQwTG41dzJ5UXZYYkpDWWJQUVZnaDJBSW56d3RxVHllV1Ew?=
- =?utf-8?B?WXF3bkhPcUdpaVZIRE9WV21GSFVGS3VpMUZCTTRpRHJKQlhqMTZrSldBOVFG?=
- =?utf-8?B?c0pyMldYRjltWE52V3o4Tjh0U2o1amV5V3huV0VxSUMwd2t0WURhenZUT3BH?=
- =?utf-8?B?YVk2cTFCeWZaSGx6Zmg0dThiY0IyMUo3QSt0VE5xVkNhekJjVHhtSmpLTDR4?=
- =?utf-8?B?andBYWxBdkIxQmJJcXJvTkFJRUZMVVJyUzVvNmNoMDVQcXVGalZnV01aK3JW?=
- =?utf-8?B?ZmVHSTZZU1Q0SjQyZHU2b1ltVWswRDMvci8wMWpSOEUraTFaN2VkTkR4YU5K?=
- =?utf-8?B?TWRuTUdxeWc2RWk5ZVJFSmtEbld6SjNNRys3Vm1Qb0ZhTUYwdCszdHc1ZWtF?=
- =?utf-8?B?M3JkeTg1WDcyZFQxNStCM1dJamlhUmxTOU50YmpoQnZpWk1iaitROHU3aDBw?=
- =?utf-8?B?NjBlRHA4OEFpRzlkQy9UUFdtVlFhbER1eTEybDlxcXdBdnZiWVNMc1ExeDhH?=
- =?utf-8?B?THovenUyeGdrTmhBZ0tkTVErUlU4VDJpZmFROVoyTDFmVDdESVBZZVNsOSt6?=
- =?utf-8?B?TGJXK251RGU2TkhTMk1UTktlcVpTMjJjRGp2Q3J3MXAxeDgzdkp2YWlZVnp3?=
- =?utf-8?B?V2V0c3FReFpCNFlUTEMyeHY3RzVyTzhmTzFjOE5sbTNheXFPQWZKN2J5UGE0?=
- =?utf-8?B?QXJJT2FNRXoxVG9HTWJWUHlJcjNKNzVhRG9LVVN6Z3lDSmNzMU1iV1BEL041?=
- =?utf-8?B?dXJrWUJxUFNNZldSUEJsaVc2YmFtZUZ3UkpmU0JBMEd5VVpSM0RITWR6Ym5Y?=
- =?utf-8?B?SmtDZVJoZU5DOFJBNHU2bzVuWlYyRU4rbkFLTVJ3ZVd6TlB0eWxLSURteHpL?=
- =?utf-8?B?QzdFZ3YrNGc0a01MQXJERkpsVTZhbkFEalZyeVVkcVM1aStmYUxKc1Y3OHlG?=
- =?utf-8?B?RXpYckZqaGVXaXNBenpoQWQ2RHI1YlhBV2MxVVZMVTZaZlVOakh2TlV2VlFs?=
- =?utf-8?B?dmJ4aVVKMHowVVJPYnNCVWV1Q3Z0SXdKNlEyeER4Ni80cEJKOU8zdG8rWk55?=
- =?utf-8?Q?zBiqk7hwgHLnTi/I5TPqyyQ6I?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: babc3737-6ba1-4229-6591-08dd5a0375e0
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2025 03:28:26.7107
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZBV10tNVmW+Pe2zxVrgqtfgcXKEoL/kOk17VAM9NMlmCIInq9+W/5V7eCwI01VfZxrKsgtBDlJSNgVZT7QdvWQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7722
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 08/45] arm64: RME: ioctls to create and configure
+ realms
+To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
+ kvmarm@lists.linux.dev
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
+ <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
+ Alexandru Elisei <alexandru.elisei@arm.com>,
+ Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
+ linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun
+ <alpergun@google.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
+References: <20250213161426.102987-1-steven.price@arm.com>
+ <20250213161426.102987-9-steven.price@arm.com>
+Content-Language: en-US
+From: Gavin Shan <gshan@redhat.com>
+In-Reply-To: <20250213161426.102987-9-steven.price@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Rob,
-On Fri, Feb 28, 2025 at 08:17:03AM -0600, Rob Herring wrote:
->On Fri, Feb 28, 2025 at 8:04 AM Sudeep Holla <sudeep.holla@arm.com> wrote:
->>
->> On Fri, Feb 28, 2025 at 07:34:09AM -0600, Rob Herring wrote:
->> >
->> > - The parent driver creates child devices. The child devices can
->> > either reuse the parent DT node (i.e. set dev.of_node) or just get it
->> > from the parent device if needed.
->> >
->>
->> This is exactly what I was thinking to deal with the issue since this
->> discussion started. I will give this a go. I believe this must solve
->> the issue, but I didn't want to spit it out loud until I tried to hack
->> and check.
->
+On 2/14/25 2:13 AM, Steven Price wrote:
+> Add the KVM_CAP_ARM_RME_CREATE_RD ioctl to create a realm. This involves
+> delegating pages to the RMM to hold the Realm Descriptor (RD) and for
+> the base level of the Realm Translation Tables (RTT). A VMID also need
+> to be picked, since the RMM has a separate VMID address space a
+> dedicated allocator is added for this purpose.
+> 
+> KVM_CAP_ARM_RME_CONFIG_REALM is provided to allow configuring the realm
+> before it is created. Configuration options can be classified as:
+> 
+>   1. Parameters specific to the Realm stage2 (e.g. IPA Size, vmid, stage2
+>      entry level, entry level RTTs, number of RTTs in start level, LPA2)
+>      Most of these are not measured by RMM and comes from KVM book
+>      keeping.
+> 
+>   2. Parameters controlling "Arm Architecture features for the VM". (e.g.
+>      SVE VL, PMU counters, number of HW BRPs/WPs), configured by the VMM
+>      using the "user ID register write" mechanism. These will be
+>      supported in the later patches.
+> 
+>   3. Parameters are not part of the core Arm architecture but defined
+>      by the RMM spec (e.g. Hash algorithm for measurement,
+>      Personalisation value). These are programmed via
+>      KVM_CAP_ARM_RME_CONFIG_REALM.
+> 
+> For the IPA size there is the possibility that the RMM supports a
+> different size to the IPA size supported by KVM for normal guests. At
+> the moment the 'normal limit' is exposed by KVM_CAP_ARM_VM_IPA_SIZE and
+> the IPA size is configured by the bottom bits of vm_type in
+> KVM_CREATE_VM. This means that it isn't easy for the VMM to discover
+> what IPA sizes are supported for Realm guests. Since the IPA is part of
+> the measurement of the realm guest the current expectation is that the
+> VMM will be required to pick the IPA size demanded by attestation and
+> therefore simply failing if this isn't available is fine. An option
+> would be to expose a new capability ioctl to obtain the RMM's maximum
+> IPA size if this is needed in the future.
+> 
+> Co-developed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Signed-off-by: Steven Price <steven.price@arm.com>
+> ---
+> Changes since v6:
+>   * Separate RMM RTT calculations from host PAGE_SIZE. This allows the
+>     host page size to be larger than 4k while still communicating with an
+>     RMM which uses 4k granules.
+> Changes since v5:
+>   * Introduce free_delegated_granule() to replace many
+>     undelegate/free_page() instances and centralise the comment on
+>     leaking when the undelegate fails.
+>   * Several other minor improvements suggested by reviews - thanks for
+>     the feedback!
+> Changes since v2:
+>   * Improved commit description.
+>   * Improved return failures for rmi_check_version().
+>   * Clear contents of PGD after it has been undelegated in case the RMM
+>     left stale data.
+>   * Minor changes to reflect changes in previous patches.
+> ---
+>   arch/arm64/include/asm/kvm_emulate.h |   5 +
+>   arch/arm64/include/asm/kvm_rme.h     |  19 ++
+>   arch/arm64/kvm/arm.c                 |  16 ++
+>   arch/arm64/kvm/mmu.c                 |  22 +-
+>   arch/arm64/kvm/rme.c                 | 322 +++++++++++++++++++++++++++
+>   5 files changed, 382 insertions(+), 2 deletions(-)
+> 
 
->The issue with fw_devlink is that it only checks the dependency of the
->parent which won't be enough. When the parent's probe creates the
->child device, that doesn't mean the child has probed. The child driver
->might not be loaded and/or probe is async. I don't think there's
->anyway for the parent probe to wait for child drivers to be probed and
+With below comments addressed:
 
-Please forgive if my understanding is wrong.
-Based on device tree, there is fwnode link created using fwnode_link_add,
-then in device_add, the fw_devlink_link_device will do the device supplier
-and consumer link. It is just device level link, not related to child's probe.
+Reviewed-by: Gavin Shan <gshan@redhat.com>
 
-So if child device(work as supplier) is created only when a prarent's probe
-done, the consumer of the child device will not have link ready and consumer
-device's driver will not probe until the child device created and probe done.
+[...]
+
+> +
+> +static int realm_create_rd(struct kvm *kvm)
+> +{
+> +	struct realm *realm = &kvm->arch.realm;
+> +	struct realm_params *params = realm->params;
+> +	void *rd = NULL;
+> +	phys_addr_t rd_phys, params_phys;
+> +	size_t pgd_size = kvm_pgtable_stage2_pgd_size(kvm->arch.mmu.vtcr);
+> +	int i, r;
+> +	int rtt_num_start;
+> +
+> +	realm->ia_bits = VTCR_EL2_IPA(kvm->arch.mmu.vtcr);
+> +	rtt_num_start = realm_num_root_rtts(realm);
+> +
+> +	if (WARN_ON(realm->rd) || WARN_ON(!realm->params))
+> +		return -EEXIST;
+> +
+
+Two WARN_ON() can be combined into one.
+
+	if (WARN_ON(realm->rd || !realm->param))
+
+> +	if (pgd_size / RMM_PAGE_SIZE < rtt_num_start)
+> +		return -EINVAL;
+> +
+> +	rd = (void *)__get_free_page(GFP_KERNEL);
+> +	if (!rd)
+> +		return -ENOMEM;
+> +
+> +	rd_phys = virt_to_phys(rd);
+> +	if (rmi_granule_delegate(rd_phys)) {
+> +		r = -ENXIO;
+> +		goto free_rd;
+> +	}
+> +
+> +	for (i = 0; i < pgd_size; i += RMM_PAGE_SIZE) {
+> +		phys_addr_t pgd_phys = kvm->arch.mmu.pgd_phys + i;
+> +
+> +		if (rmi_granule_delegate(pgd_phys)) {
+> +			r = -ENXIO;
+> +			goto out_undelegate_tables;
+> +		}
+> +	}
+> +
+> +	params->s2sz = VTCR_EL2_IPA(kvm->arch.mmu.vtcr);
+> +	params->rtt_level_start = get_start_level(realm);
+> +	params->rtt_num_start = rtt_num_start;
+> +	params->rtt_base = kvm->arch.mmu.pgd_phys;
+> +	params->vmid = realm->vmid;
+> +
+> +	params_phys = virt_to_phys(params);
+> +
+> +	if (rmi_realm_create(rd_phys, params_phys)) {
+> +		r = -ENXIO;
+> +		goto out_undelegate_tables;
+> +	}
+> +
+> +	if (WARN_ON(rmi_rec_aux_count(rd_phys, &realm->num_aux))) {
+> +		WARN_ON(rmi_realm_destroy(rd_phys));
+> +		goto out_undelegate_tables;
+> +	}
+> +
+> +	realm->rd = rd;
+> +
+> +	return 0;
+> +
+> +out_undelegate_tables:
+> +	while (i > 0) {
+> +		i -= RMM_PAGE_SIZE;
+> +
+> +		phys_addr_t pgd_phys = kvm->arch.mmu.pgd_phys + i;
+> +
+> +		if (WARN_ON(rmi_granule_undelegate(pgd_phys))) {
+> +			/* Leak the pages if they cannot be returned */
+> +			kvm->arch.mmu.pgt = NULL;
+> +			break;
+> +		}
+> +	}
+> +	if (WARN_ON(rmi_granule_undelegate(rd_phys))) {
+> +		/* Leak the page if it isn't returned */
+> +		return r;
+> +	}
+> +free_rd:
+> +	free_page((unsigned long)rd);
+> +	return r;
+> +}
+> +
+
+[...]
+
+> +
+> +int kvm_init_realm_vm(struct kvm *kvm)
+> +{
+> +	struct realm_params *params;
+> +
+> +	params = (struct realm_params *)get_zeroed_page(GFP_KERNEL);
+> +	if (!params)
+> +		return -ENOMEM;
+> +
+> +	kvm->arch.realm.params = params;
+> +	return 0;
+> +}
+> +
+
+The local variable @params is unnecessary, something like below.
+
+	kvm->arch.realm.params = (struct realm_parms *)get_zeroed_page(GFP_KERNEL);
+
+>   void kvm_init_rme(void)
+>   {
+>   	if (PAGE_SIZE != SZ_4K)
+> @@ -52,5 +368,11 @@ void kvm_init_rme(void)
+>   		/* Continue without realm support */
+>   		return;
+>   
+> +	if (WARN_ON(rmi_features(0, &rmm_feat_reg0)))
+> +		return;
+> +
+> +	if (rme_vmid_init())
+> +		return;
+> +
+>   	/* Future patch will enable static branch kvm_rme_is_available */
+>   }
 
 Thanks,
-Peng
+Gavin
 
->ready. I think there's similar issues with the DWC3 wrapper and core
->driver split.
->
->Rob
 
