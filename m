@@ -1,120 +1,205 @@
-Return-Path: <linux-kernel+bounces-542517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B832CA4CA7F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:57:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04DD0A4CAA7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:03:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4D161889B44
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:55:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FA9D3B7E75
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:56:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4133121858A;
-	Mon,  3 Mar 2025 17:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41DE621A455;
+	Mon,  3 Mar 2025 17:55:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="VCjExzwX"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="VuXhDQ6e"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55167210F6A;
-	Mon,  3 Mar 2025 17:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F22C228CB7;
+	Mon,  3 Mar 2025 17:55:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741024539; cv=none; b=D+XTYlPTqceFaJAZ5qRLB3BkItjwyaeefs/dT71uCgpOdRJ1s3bi/BtLyxp/aPGNToP19L7eTXVIeHXI+mCd5k/OJPeIk8M/9u+z6aecdZp+7gykdQIudhPmkRqR67Ba5Z3Ncn/YuyU5PwT2bl2NxludgB2eLMEuLBxqvF4L12s=
+	t=1741024555; cv=none; b=hG90F4p0gldtB3Fh5wjVjXi7TlBsw/mDqObU7wJx3xqRHgJcLQHgSi/n1japiOjrgQq+rJw+/zCRwqN9fDT2bzgjJY+GwY1DijWJ7H9bhfXrKP7ZNs84QxS0rD39aicDHJRzZRXt7pDpYQIghCE5osnWmZYGWEh2yFAR5HF/9Ik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741024539; c=relaxed/simple;
-	bh=W7ZlCwZ1+R+xVlIL5I/gw+m7bAv/kknFtFmT1LHwQjk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AnGTUgB3ZYYnd71b8tkH43kMiBRDLK2bw7/1y/5WNpqSBs+vDjdXzwid7MYDRkIrRJ0gIcocCjWJDbCOK5dRcSx8/a4xlAq7DgDMiHSHYncJVcnjO2cs/dq0xtemz5OoL5p6yB2dN24gv3Mw5eeR2v6vUZCxwGAayyyHsuQX8a4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=VCjExzwX; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1741024522; x=1741629322; i=markus.elfring@web.de;
-	bh=W7ZlCwZ1+R+xVlIL5I/gw+m7bAv/kknFtFmT1LHwQjk=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=VCjExzwXxHw1/2HeQkqv28mPWPiBgd1Gncc9aqN7Xwky7OF2aldFP6mMEUTnZHqo
-	 J/wIYFbcGQc/uYpDHmKDhDE13bStN7Cui5BkeKcNK8ZxsHBivyELjsm8j9iXwA375
-	 NAnQBtYlLI+cwAPq+TAX8I2aPcUdPsS0jmz7DOZ5bLchzOOLi2yTVZU3c1bjK6zqL
-	 bNb2yEvt3YoHrAtuMpMJj6fhCPicRrmVEuEsKQdXB1KLavCUoK6/aGpXAQe4rRZvg
-	 wtF7/AChsyBsLKzfWoh/K9x2nPRESrpFTyuswRGzR0XbWnx+fX16hhMq2BL0gXgoC
-	 oSgi7EPR+SU6IJxG7Q==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.19]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MUl9B-1tfyxc3XGL-00LaLm; Mon, 03
- Mar 2025 18:55:21 +0100
-Message-ID: <30ea63cd-4389-4b07-879f-011e1b1af421@web.de>
-Date: Mon, 3 Mar 2025 18:55:17 +0100
+	s=arc-20240116; t=1741024555; c=relaxed/simple;
+	bh=FFa75hjKPxwn9nk90umMY5P1KnPLOGOOgrFEmMy74yA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GL+xwrUQTe7Yw/0EFiXiNMd0WniU2Cx8rHyswAa5OhJPjnbAwmC63fmYt4MvAIL+9GzqDl1BD4jfACQ2j8Zg6BSCyO5dT1G9M1R9NyLHpVlkCnuzA0uEGc86SuoAW64MTnieQ4u6F4QH2eoNMF8roOQTmMlxWSancruVrWdLHC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=VuXhDQ6e; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3EAFE40E0217;
+	Mon,  3 Mar 2025 17:55:50 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id F6NmxbeL5VQP; Mon,  3 Mar 2025 17:55:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1741024545; bh=XR1jzLUSOCB344heFt8abZNteXZYan/jltUHuf6TFy4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VuXhDQ6e8gSDISmRMi7vKxncln2ZBZ2jdNiV4UEcJzJfxHyFLfw5OHFEiyX0EwlRJ
+	 x1D3+4pBB2SkTLo1BKumpmkWxgS97HW09/ATz1AD7L/ZLU8Lnah+NUfC3TYbr7v0/w
+	 VPCOK/aNvGVa6nZq09h3QzB9rocCGawhj6LnMakpjCisjOoTzG4JIfEL1cMHLaqVsa
+	 cHMliDmIrmdLMkijhQ1eIK8fZmBFHRqd8Ba9IlEE+d0OpVaa5Pm18qfjZ6rroiecxy
+	 MMtf7DEHjrG94HhdFve+h5zAUzyospP8xA2E28iW/vmnZxAPlNazvtmabbhakAdI+4
+	 x46B5mkK08UUOfhgmFZP8u9m2VVKuqO+SM6nURgfab/7NaGdYSSNrmXOieR3o+15hH
+	 zaCutAVMQbD4RmTmnzIuJcjp65GTxHmZtqHTT5G6+AiCd3WfdzMkrbL2HAFpB2ue+2
+	 vaUXnn37L6g+UDAxK4X9N/E7HiZDZ80zvgi21u8QCDeVJOIvAWtgT5wTySFLnRxPQb
+	 aDPQaNm8yXfy/VXrmqey46RbBMwhPqHRDbxccTIpZUGXOat2owZbfEaJ8CYx0fItvq
+	 lefXFm7amm0Chn9koRm7YNJUj9GFmvno/FfDDLY5GXq+skyQjyJT8zSO4tk1I8fiBP
+	 9yuCfDgSU3LjYsKniL9kW3bo=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 66C2C40E0215;
+	Mon,  3 Mar 2025 17:55:33 +0000 (UTC)
+Date: Mon, 3 Mar 2025 18:55:27 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: "Datta, Shubhrajyoti" <shubhrajyoti.datta@amd.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Tony Luck <tony.luck@intel.com>,
+	James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+	"git (AMD-Xilinx)" <git@amd.com>
+Subject: Re: [PATCH v5 5/5] EDAC: Versal NET: Add support for error
+ notification
+Message-ID: <20250303175527.GDZ8XtD5pOTtLUe16B@fat_crate.local>
+References: <20250106053358.21664-1-shubhrajyoti.datta@amd.com>
+ <20250106053358.21664-6-shubhrajyoti.datta@amd.com>
+ <20250211094002.GAZ6sa8l_2BdJQfk0I@fat_crate.local>
+ <SA1PR12MB89472E1EF3BDE072EEEF17B181CD2@SA1PR12MB8947.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: qed: Move a variable assignment behind a null pointer check in
- two functions
-To: Kory Maincent <kory.maincent@bootlin.com>, netdev@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,
- Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, Ariel Elior <aelior@marvell.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Manish Chopra <manishc@marvell.com>,
- Paolo Abeni <pabeni@redhat.com>, Ram Amrani <Ram.Amrani@caviumnetworks.com>,
- Yuval Mintz <Yuval.Mintz@caviumnetworks.com>, cocci@inria.fr,
- LKML <linux-kernel@vger.kernel.org>
-References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
- <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
- <f7967bee-f3f1-54c4-7352-40c39dd7fead@web.de>
- <6958583a-77c0-41ca-8f80-7ff647b385bb@web.de>
- <Z8VKaGm1YqkxK4GM@mev-dev.igk.intel.com>
- <325e67fc-48df-4571-a87e-5660a3d3968f@stanley.mountain>
- <64725552-d915-429d-b8f8-1350c3cc17ae@web.de>
- <a191bd33-6c59-45c2-9890-265ec182b39a@stanley.mountain>
- <20250303183532.580eb301@kmaincent-XPS-13-7390>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250303183532.580eb301@kmaincent-XPS-13-7390>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:PrKHLpQ0y3itZPb+HSXogN+l+7pWtXNc95tU8bv3IEFkVAePhKS
- IkZI6Izg/xnX6ByP/uCgX0TzjSuXHJtZ7QsId1shUQoONR30dOKSJrO5V/x30bufh3qnSOU
- 1/XQ4EW1hsF+9qv8wZ6K6dzONC8bkSZGeySx0UVyVS2G4oIdWDuUPlI/7yD3/HRnmV0b3xi
- IoidclaePdKo7lfDxWsAQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:ivk4gQMFeBc=;em3m2FPQLtScHCPjq7yxppgF0lG
- RRQCcX1FzRUUPmF9fUbMlgQqiFCq1qNyXpXArSbZV8ul7SuOaRu5EtsM6UMY1gM1uJETvWB/0
- ipMhirwYsMYTfBOtltbwDpcHu0hWPUG6dEYCdDn/d59G7JvMH33G/AVrsrUtUd0D3i21JiXkS
- kAPyqULu1Vi7FAae5JIPUpzc807P7VSyRTVCWJdopli6BGiCiHZ6kIQ9B+DO6o6m47E3h5DqZ
- wuqHQoIEltuMg59vY8MpjZ6rVoBkYJ3BGd/6jiZhjgxNjUMkOCsc/5Q7lMYV/W9ZGfSoVrjFP
- iuDzc8BNY9GyZqxL5xVtqc8p+Q+ikhZ5kQ0TrFAgGLrpRPt0oVuXtpgPPp+dM8rg+JHFtlv3T
- Fh8StOR02wclCqzRBHuoh9bR5dwpLi4wBNipT9xtzVzkflym9k96Izh/uboAdddKZLVnYKtmI
- B8moxI1J2UjTOdrX0N9I/8vUB/V4Dt35Ewn89ATXUTImhGghvvOkMBwVSQh8KmJsewFd3zZIr
- tVb2tpc813pRqJuY5Pm77GmYFz2JcVmJvhcujBdno4iCmDCmTUKq2V9TkLlqN5dAeGvTACEoT
- QGXJICbHkVhytwvIWY67LaGbMPNYlE8mMVyAZ9u0l4dEf05ojgEKTpI215PISr7xSB7vOXnwT
- Qivz/GWwg+qWTaf5y+nh0WGhzIU0FVs+7FHx3FfHfiM46ypJgGWudH7N0W/Ingp7UfXyLn3Wi
- 9jzDOONxP0/Mxgfk/YO4zxR6Wp4LC5PjXLuRkF2AY9v4I53kgddAVb7u64+Nduhj+XMpF+hxE
- LkXzf1iqIqUowxUBuN1OhevuhACykrXSuofo895L6LCNvhBt2GTrqslgEHlsAiE9FJ0b6vGLE
- qXLf1IGMqGWWRnjGLDmdBxvaVlzI+INry3YsPdT40BsfasPj3Gf8PvHx2OLapZssf9mPXbwdb
- XoKXn58f71Pk3W7GQpUkdm/wcyExU/3DlyvCkwGGNwQvVssGan2MzSj6U1boEITPKDhck3zVX
- 7lZ9LaYCr8+x7z3inVrHQAWs5BcrQIVnmAV3u6sy8gcUODlwQU+3ZTIl8TeitthG2yu6ypYcL
- tpmkNr7uJ2w4VrUkiWSRTDhOMKO+Oayh8Fs6g0dpTLPLyn400KLqQFmTP/pXhhMvH9sA52DlH
- otcM4uqG0NlHgv2vYAkh1+KRK3VNAIyAUWQ+XQPXAaWLrsV/Po8O3guajaBmBdG/Sfev6dvI0
- vgRQtSzivCrqo5Q+NaRzEnQLoDRIZbDky50mTVZnMG46yUAuvNjxXU1jV7SEdJpQps83aYV8U
- xIEZUMPKQjAcohGrtNUWnfoec07FD511kffWb2kEozw54vEH5cjDKVGu3mVN8Hu1hP4N98na7
- qkxqJ80JhrP7nJnY+GTuB0H5IM2qmU2eHJUQPiIQ1HHWLkMEuxclsWaRcRtGlSq3iLvcQ6+MM
- ki0T0Lg==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <SA1PR12MB89472E1EF3BDE072EEEF17B181CD2@SA1PR12MB8947.namprd12.prod.outlook.com>
 
-> There is a lot of chance that he is a bot.
-I hope that corresponding software development discussions can become
-more constructive again.
+On Thu, Feb 27, 2025 at 11:32:10AM +0000, Datta, Shubhrajyoti wrote:
+> > > +union edac_info {
+> >
+> > What is an "edac_info"?
+> This is the row and column positions.
+> We are using it to extract the position from the address decoder registers.
 
-Regards,
-Markus
+Needs a better name which is descriptive as to how it is used or what it
+represents.
+
+> > > +static void get_ddr_ue_error_info(u32 error_data[REGS_PER_CONTROLLER],
+> > struct edac_priv *priv)
+> >                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> > What is that for?
+> >
+> The error_data contains the register values. Linux does not have access to the DDRMC register
+> Space. It queries it from the NMC and gets the the data from the rpmsg callback.
+
+I wasn't clear. Arrays in C are passed as pointers - the compiler does that
+anyway.  You don't have to do this weird parameter specification.
+
+> > > +     mci->edac_cap = EDAC_FLAG_SECDED;
+> > > +     mci->ctl_name = "amd_ddr_controller";
+> > > +     mci->dev_name = dev_name(&pdev->dev);
+> > > +     mci->mod_name = "amd_edac";
+> >
+> > Do:
+> >
+> > git grep mod_name drivers/edac/
+> >
+> > to get an idea how those names are chosen.
+> #define EDAC_MOD_STR    "r82600_edac"
+> mci->mod_name = EDAC_MOD_STR;
+> https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/edac/r82600_edac.c?h=v6.14-rc4#n316
+> 
+> https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/edac/i5000_edac.c?h=v6.14-rc4#n1424
+> mci->mod_name = "i5000_edac.c";
+> https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/edac/highbank_mc_edac.c?h=v6.14-rc4#n218
+> mci->mod_name = pdev->dev.driver->name;
+> 
+> let me know if mci->mod_name = pdev->dev.driver->name; is fine.
+
+I think you didn't get me again.
+
+amd64_edac.c - the x86 driver is called this:
+
+#define EDAC_MOD_STR "amd64_edac"
+
+Calling yours "amd_edac" doesn't work.
+
+"versalnet_edac"? That's probably better.
+
+> > You don't need "inline" - the compiler can decide that itself. And
+> > "process_bit" needs a better name.
+> 
+> Will rename it to populate_row_bit
+
+Or "assign_row_bit" or whatever.
+
+The function name should be describing what the function does as closely as
+possible.
+
+> > Why are those functions copying stuff around? Why aren't you using cols
+> > directly?
+> 
+> The column bit position is used in converting to the physical address.
+> We read it at init and use it every time an error occurs to get the address.
+> Did you mean to remove the regval. Or read the error_data every time.
+
+I mean simply use cols instead of assigning stuff to priv->col_bit* and then
+using that.
+
+> > Why is probing a work item?
+> >
+> > Explaining *that* is what a commit message is for - not for repeating useless
+> > info.
+> The RPMsg probe is invoked from a thread within the virtio driver responsible
+> for processing the response ring. If the probe initiates an mcdi API call, it blocks
+> until the mcdi response is received. However, since the mcdi response is also processed
+> by the same thread that triggered the rpmsg probe, the thread remains blocked,
+> preventing it from handling the response. This results in a deadlock.
+> 
+> To prevent it we have a work scheduled.
+
+This is just insane.
+
+I don't see anything in amd_setup_mcdi() that needs some response from some
+mcdi thing. If not, you don't need the work queue thing.
+
+> >
+> > > +     for (i = 0; i < NUM_CONTROLLERS; i++) {
+> > > +             config = priv->adec[CONF + i];
+> > > +             num_chans = FIELD_GET(DDRMC5_NUM_CHANS_MASK, config);
+> > > +             rank = FIELD_GET(DDRMC5_RANK_MASK, config);
+> > > +             rank = 1 << rank;
+> > > +             dwidth = FIELD_GET(DDRMC5_BUS_WIDTH_MASK, config);
+> > > +             dt = get_dwidth(dwidth);
+> > > +             if (dt != DEV_UNKNOWN)
+> > > +                     break;
+> > > +     }
+> >
+> > What is that loop supposed to do? Find the last controller before the one
+> > with DEV_UNKNOWN device width and register that one?
+> 
+> There are 8 controllers all we try to get the first one that is enabled and register that one.
+> We use the device unknown to know if that is enabled or not.
+
+The first one that is enabled has unknown device width? What?
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
