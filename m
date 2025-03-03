@@ -1,142 +1,182 @@
-Return-Path: <linux-kernel+bounces-541609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B06CA4BF08
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:41:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E4E3A4BF30
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:46:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C080162B53
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:41:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECDF23BB468
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:41:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD49202C2F;
-	Mon,  3 Mar 2025 11:40:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9897C201262;
+	Mon,  3 Mar 2025 11:40:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="p3bK6d8D"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b="qphRwrCN"
+Received: from smtp15.bhosted.nl (smtp15.bhosted.nl [94.124.121.26])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43F920296C
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 11:40:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26EF9201025
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 11:40:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.124.121.26
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741002021; cv=none; b=Ch2ycr6idfAlIyRguf6XUiHCQMr4cHUOhbegOj8b0TMDNw0PSTIyaupPVHAIuQtsmCD9gtow+zaJHMIqU6TaouIBrs6ldCFMflrhNngtEXK6kFyb5cb5oxRaNH2KsILEi1+sWynL3ZZRT4fczgYqZ25a6vWdZv8w6zOzvgWt6Ug=
+	t=1741002039; cv=none; b=akcIzpIasZpnpd61PdZNTbo4iBwhXCrv0YD4xnaV91IJbExMW2Bd/kWSU0yO6tXJSdKxna/4YcC0/JzsHY9idt/+PhP6xECJ+NfIQc4ITmI3ArRntpMaPjr2i/Vo6IXMAT+JrJH6MMPICVwxc8ck00ctmPXyvByMjLBCP1CTJE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741002021; c=relaxed/simple;
-	bh=32Qik+C6Gy82VbaZ+W9H7pBMHl/CZaXxobg9NI2Xga4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kjhAt4eIT/UH82nLxU/wWPzUqb23+l30FrVs2omLN0wkMgxJTd5yXc21OtRffyBVnbJfhwh83rpLFwDkI+edBQHjXbzVVLPVDNHhWja72YRIMuciHAm9UXCB2CdEmKOXFOeVUVHVnvl9zfSrpIuXIma0AyDKZJPfoJIEYRgVhNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=p3bK6d8D; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-390ec7c2d40so2724433f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 03:40:18 -0800 (PST)
+	s=arc-20240116; t=1741002039; c=relaxed/simple;
+	bh=xjKhMtLA9tK9j8SX+seT9UK5BSImtLHPUuXRUCeDyBc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AWULaN5Ll8LqoxdqPjmwU3t3VugyIlHTRkOCw4Gqw8CauUau8SqlRIMjRa0QNdEjhxKkERz9h01PluX9sRWybJ0HwE71gw3JrZLzN5m0q0qqeSCV1GM/ya2CB9BKWV7sQVkWlAtaN6r4FkkiXp9RkJK8rStO39FVDOj8Phn+Wr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl; spf=pass smtp.mailfrom=protonic.nl; dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b=qphRwrCN; arc=none smtp.client-ip=94.124.121.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonic.nl
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1741002017; x=1741606817; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4NtAA2UHYocmR2KbGMJPhzPhzOIPXF5Y+cD7gkzWW/A=;
-        b=p3bK6d8DrjrhK0/qO2+o0XXclKbDdJbPyaEJqebJFnj6UftGu/Wlp0g0z460UuK8eQ
-         jqP5dZiDvaf13EWZxYf429fumpQf+BuKXNtjjUA1NBj79GysscTVo0cg0j48fqmhX5NV
-         9efVLZPrgc0Lj4xKJGCHbJmoh8/VB/GderaMZxkIzlOfM8yT/xfitEr/NJBqrSttwzsv
-         D2S8SLnciUvPRACHbdtcIkpSchM5xwppp3eKPT9K2p2QOLfBtVwD7D66BHHzvMMQDhR3
-         p5TyUVouF6jIyBsh7KwZIVWxs5mF+hJOLYmeHoxXDNdBYVQ5ilopY0Vx1AvSDV4gvTVv
-         9zZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741002017; x=1741606817;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4NtAA2UHYocmR2KbGMJPhzPhzOIPXF5Y+cD7gkzWW/A=;
-        b=BBfrxdcDTkV7QihRYcOrSea0Jh+mved6IG3uOdLbUwtc7fpnfzjbIoT6ZkwH8RFjE7
-         8bV2KzpRqzGBTl3AqNOiEOrVQiLI/OZCLDM9nhH++o3bMC5ecRVsfZKjuFUQq/JclNY2
-         4cGZX47fJ3GFslIPQNIOeAkHh2vmtGqjNTHpNJxXkEpTkYvUTGxBzxKvR2jK+3MTbHw/
-         y/VPc+LQKrKXwmhzGb6ihCcM3jTrMX0kUf+p1Q6+AAzSHyMn/L1Z2P7/mXUYi2NcIxwA
-         O2LUEzmZKzIBikJ7K7jmQ+TycjEGgmc1GauyZcwSb38Cg+B/T8qAZDf3N6KlkwldAtTa
-         1kqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVnNYUjYkq5pTN9FR0FESnWz8s/18hfmlQ5OlUnAcdp4DbU7EksNv3GjIr0xXrL9hWX3VQVDNZLHJLcNiI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHSjWN3xuypSQPglmGS/dvGTbcZgWHgLtK6LzjHhz+GYq/EZ6L
-	Lkq9vOMWdFjFtUASMLN/mJmZFHKfUykPbuzPZH26nUttPa3dyNTdWkHhxaAa3pA=
-X-Gm-Gg: ASbGnctyBpKJOeAAjD6bN9BnoK83hFY//qH/j3vhyOAAqQLCdEFzESAZVov767oWVi/
-	2hRyiGM+o9GmUqqQRxReB14nUCSoR/FF5zncg9PpAW6b2rJVpb78148LLB0HOFILT2mAYCCU0AK
-	p1nqtm8gcoBR9DvtF/ZlO6g2EsYoNrir2uvTN9DSrKo7Wvv6PsJiRyCb7nRxCsUiYIkvUDLkx9P
-	yFpy/AA4kPxjgr6z6q889bXu1vSM5sEMJe93aoN1R9gvYTOGyEdASU28brbLh9M++W6CiZFR5ph
-	f6fL6M09HpX5AJFZKQilPBz+7o9jg18mfYugkJv9YYO5G5Jj9A/XQk8juovYj1vDrSvtZq0P
-X-Google-Smtp-Source: AGHT+IFz1lKrp8HJjVJu85QHKOfDHRDkxYAgfR/PMWyeJaGKL7qzodzH7XjGqSVE9eCdgx8AE4rhHQ==
-X-Received: by 2002:a05:6000:144c:b0:391:c3a:b8ae with SMTP id ffacd0b85a97d-3910c3aba7emr2411994f8f.23.1741002017110;
-        Mon, 03 Mar 2025 03:40:17 -0800 (PST)
-Received: from jiri-mlt.client.nvidia.com ([140.209.217.212])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e479596dsm14212516f8f.7.2025.03.03.03.40.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 03:40:16 -0800 (PST)
-Date: Mon, 3 Mar 2025 12:40:13 +0100
-From: Jiri Pirko <jiri@resnulli.us>
-To: longli@linuxonhyperv.com
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>, 
-	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Shradha Gupta <shradhagupta@linux.microsoft.com>, Simon Horman <horms@kernel.org>, 
-	Konstantin Taranov <kotaranov@microsoft.com>, Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>, 
-	Erick Archer <erick.archer@outlook.com>, linux-hyperv@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, Long Li <longli@microsoft.com>
-Subject: Re: [PATCH] hv_netvsc: set device master/slave flags on bonding
-Message-ID: <52aig2mkbfggjyar6euotbihowm6erv3wxxg5crimveg3gfjr2@pmlx6omwx2n2>
-References: <1740781513-10090-1-git-send-email-longli@linuxonhyperv.com>
+	d=protonic.nl; s=202111;
+	h=content-transfer-encoding:content-type:mime-version:references:in-reply-to:
+	 message-id:subject:cc:to:from:date:from;
+	bh=W7xQaIM8KUgQYXUjWEz/yyKUU3dOwVVtoiKveZse1LQ=;
+	b=qphRwrCNarcdXMc+8nT9gMvUDncjj28vFRItzfiNE/jdOd2yOkJll/C0YqOI+M2Lv7xxVV69I4kDC
+	 EabyatzTV4QIi2a/uhHtenSOQTvgnl5afF0HzFmvDBTlBx3REPp83KwvYQxLaqXi/7tk4a3czrMRSI
+	 xgOPVkiNuzqBXgPhGvTeLVEAHDwWVaCBb56qs9Zz5cVnGinA1MkMCkialX23Gp8qC6Mdum9rxl4KCu
+	 3VMeU0juaMaLuz2lcY4aa2AjD6nutiVQVBifdXvBV3CXO1CKO+e2ypMhFdH54HYn4n/U6bDSNx7C9U
+	 Zxl8AX8zA0VD+Ja7BOpB/LKmPsgqzqQ==
+X-MSG-ID: 51c43871-f824-11ef-a39b-00505681446f
+Date: Mon, 3 Mar 2025 12:40:34 +0100
+From: David Jander <david@protonic.nl>
+To: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-doc@vger.kernel.org, Nuno Sa <nuno.sa@analog.com>, Jonathan Cameron
+ <jic23@kernel.org>, Oleksij Rempel <o.rempel@pengutronix.de>,
+ linux-pwm@vger.kernel.org
+Subject: Re: [RFC PATCH 7/7] dt-bindings: motion: Add motion-simple-pwm
+ bindings
+Message-ID: <20250303124034.726ba698@erd003.prtnl>
+In-Reply-To: <tm57fsmijq4t4y4dpmtss63ekzpm5oefir5tz4aioxq5dx4or6@lgoqjpxc3axh>
+References: <20250227162823.3585810-1-david@protonic.nl>
+	<20250227162823.3585810-8-david@protonic.nl>
+	<20250228-wonderful-python-of-resistance-d5b662@krzk-bin>
+	<20250228102201.590b4be6@erd003.prtnl>
+	<9a1d75a2-66c0-46b6-91a1-4922b892dfb1@kernel.org>
+	<20250228110931.7bdae7fd@erd003.prtnl>
+	<tm57fsmijq4t4y4dpmtss63ekzpm5oefir5tz4aioxq5dx4or6@lgoqjpxc3axh>
+Organization: Protonic Holland
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1740781513-10090-1-git-send-email-longli@linuxonhyperv.com>
-
-Fri, Feb 28, 2025 at 11:25:13PM +0100, longli@linuxonhyperv.com wrote:
->From: Long Li <longli@microsoft.com>
->
->Currently netvsc only sets the SLAVE flag on VF netdev when it's bonded. It
->should also set the MASTER flag on itself and clear all those flags when
->the VF is unbonded.
-
-I don't understand why you need this. Who looks at these flags?
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
 
->
->Signed-off-by: Long Li <longli@microsoft.com>
->---
-> drivers/net/hyperv/netvsc_drv.c | 6 ++++++
-> 1 file changed, 6 insertions(+)
->
->diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
->index d6c4abfc3a28..7ac18fede2f3 100644
->--- a/drivers/net/hyperv/netvsc_drv.c
->+++ b/drivers/net/hyperv/netvsc_drv.c
->@@ -2204,6 +2204,7 @@ static int netvsc_vf_join(struct net_device *vf_netdev,
-> 		goto rx_handler_failed;
-> 	}
-> 
->+	ndev->flags |= IFF_MASTER;
-> 	ret = netdev_master_upper_dev_link(vf_netdev, ndev,
-> 					   NULL, NULL, NULL);
-> 	if (ret != 0) {
->@@ -2484,7 +2485,12 @@ static int netvsc_unregister_vf(struct net_device *vf_netdev)
-> 
-> 	reinit_completion(&net_device_ctx->vf_add);
-> 	netdev_rx_handler_unregister(vf_netdev);
->+
->+	/* Unlink the slave device and clear flag */
->+	vf_netdev->flags &= ~IFF_SLAVE;
->+	ndev->flags &= ~IFF_MASTER;
-> 	netdev_upper_dev_unlink(vf_netdev, ndev);
->+
-> 	RCU_INIT_POINTER(net_device_ctx->vf_netdev, NULL);
-> 	dev_put(vf_netdev);
-> 
->-- 
->2.34.1
->
->
+Dear Uwe,
+
+Thanks for chiming in!
+
+On Fri, 28 Feb 2025 16:18:05 +0100
+Uwe Kleine-K=C3=B6nig <ukleinek@kernel.org> wrote:
+
+> Hey David,
+>=20
+> On Fri, Feb 28, 2025 at 11:09:31AM +0100, David Jander wrote:
+> > On Fri, 28 Feb 2025 10:37:48 +0100
+> > Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> >  =20
+> > > On 28/02/2025 10:22, David Jander wrote: =20
+> > > >    =20
+> > > >>> +
+> > > >>> +  motion,pwm-inverted:
+> > > >>> +    $ref: /schemas/types.yaml#/definitions/flag     =20
+> > > >>
+> > > >> And PWM flag does not work?   =20
+> > > >=20
+> > > > I have seen PWM controllers that don't seem to support the
+> > > > PWM_POLARITY_INVERTED flag and those where it just doesn't work. Sh=
+ould all   =20
+> > >=20
+> > >=20
+> > > Shouldn't the controllers be fixed? Or let's rephrase the question: w=
+hy
+> > > only this PWM consumer needs this property and none of others need it=
+? =20
+> >=20
+> > CCing Uwe Kleine-Koenig and linux-pwm mailing list.
+> >=20
+> > I know that at least in kernel 6.11 the pwm-stm32.c PWM driver doesn't
+> > properly invert the PWM signal when specifying PWM_POLARITY_INVERTED. I=
+ agree
+> > this is a probably bug that needs fixing if still present in 6.14-rc. B=
+esides
+> > that, if linux-pwm agrees that every single PWM driver _must_ properly =
+support
+> > this flag, I will drop this consumer flag an start fixing broken PWM dr=
+ivers
+> > that I encounter. I agree that it makes more sense this way, but I want=
+ed to
+> > be sure. =20
+>=20
+> Some hardwares cannot support PWM_POLARITY_INVERTED. Affected drivers
+> include:
+>=20
+> 	pwm-adp5585
+> 	pwm-ntxec
+> 	pwm-raspberrypi-poe
+> 	pwm-rz-mtu3 (software limitation only)
+> 	pwm-sunplus
+> 	pwm-twl-led (not completely sure, that one is strange)
+>=20
+> . ISTR that there is a driver that does only support inverted polarity,
+> but I don't find it. For an overview I recommend reading through the
+> output of:
+>=20
+> 	for f in drivers/pwm/pwm-*; do
+> 		echo $f;
+> 		sed -rn '/Limitations:/,/\*\/?$/p' $f;
+> 		echo;
+> 	done | less
+>=20
+> . (Note not all drivers have commentary in the right format to unveil
+> their limitations.)
+>=20
+> For most use-cases you can just do
+>=20
+> 	.duty_cycle =3D .period - .duty_cycle
+
+Yes, that is exactly what the relevant code in motion/simple-pwm.c does when
+the "pwm-inverted" flag is present in the DT node.
+
+> instead of inverting polarity, but there is no abstraction in the PWM
+> bindings for that and also no helpers in the PWM framework. The problem
+> is more or less ignored, so if you have a device with
+>=20
+> 	pwms =3D <&pwm0 0 PWM_POLARITY_INVERTED>;
+>=20
+> and the PWM chip in question doesn't support that, the pwm API functions
+> will fail. So the system designer better makes sure that the PWM
+> hardware can cope with the needed polarity.
+
+Thanks for clarifying this!
+
+@Krzysztof, do you think that given this situation it is acceptable to incl=
+ude
+the "pwm-inverted" flag in the dt-schema of the simple PWM motor driver?
+
+The need for an inverted PWM signal is something very common in the case of
+H-bridge motor drivers, where the PWM signal represents the actual logical
+output level of each of the two halves of the bridge. Often the high-side
+switches are used as the free-wheel position, so that 100% duty-cycle on bo=
+th
+channels is actually standstill, while 0% duty-cycle on one channel is full
+speed in either direction. This isn't always the case though, hence the
+importance for this to be able to be selected.
+
+Best regards,
+
+--=20
+David Jander
 
