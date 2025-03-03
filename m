@@ -1,245 +1,265 @@
-Return-Path: <linux-kernel+bounces-542562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62B93A4CB1F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:41:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D9A3A4CB21
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:42:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5A4D3AC0F1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:41:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D03453AA439
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:42:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3DF216E39;
-	Mon,  3 Mar 2025 18:41:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD61E22D4C8;
+	Mon,  3 Mar 2025 18:42:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LtWzZOVr"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="gMUZmKM4"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2086.outbound.protection.outlook.com [40.107.92.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3ADF20F09D
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 18:41:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741027293; cv=none; b=LRj9i8Q6IBN7SbtXmBu/uFKxOQFI9LqbogJWXYGs6/4Km0O6j2Vak7fjXhDy+Ia0kKuTt4ISuCoTgVkzCdgMlTe1vCuXabIFbeGfZ5g0NIz5GghI5ftm3d3x0OjJF/YFuC+fb4AvxK0vb7zCblL7ziIdDjQDcBfzF4kdw8cEMyc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741027293; c=relaxed/simple;
-	bh=DfezaikIbpffUCQ8toUww0i1aCv5MEBhXcVU/Ph9PuU=;
-	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To; b=eihXJ7t8zDMowBZ+Uh4gBOIr7lHJRhB9ZiZ8fcgfkZnhRlpRNbMdkQMOds0tfJkRIf+eQxnr1ub4wi4Wl/6pXsmfArsNTCPqyVy50eisOVsV2P7rENS55OunghWgemz819rE4YRXtz1OFiNPfmaLewu4mg87zI3Ir5emdllVKJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LtWzZOVr; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741027290; x=1772563290;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to;
-  bh=DfezaikIbpffUCQ8toUww0i1aCv5MEBhXcVU/Ph9PuU=;
-  b=LtWzZOVrZOtjR6AgDvGQRozvO6EVj0T3l53pLbuk773IgLZYy8ppc3q4
-   4Oit/9pXOj//fV3fyOJZdxhELzq16juFvof02kjE7ZH7YSbfMLiZ2mREM
-   so2kvGSwv4bt8vb4eqG1HTbbvYN3h2wO6RNL2A6vlbBt5E/o16Ehx/8Fk
-   mm+C5ZYBUY+3DxGK1A+itMGY1nyuVs4BoRbqQuminy3OjyWX6XaqyeV2c
-   RgqUOrBO7+tP/B+dpP9InmX03axpuBZlbqiAo1WVy/myUQ+6dXC8JaIeN
-   U/g8dfnf/rQ0SyoGvGvX3KetmsrlYsKcov+rJL9GPfl3Xe/I2E/GdRjFi
-   Q==;
-X-CSE-ConnectionGUID: UOrRB7EgRxWF7/UTbb+11w==
-X-CSE-MsgGUID: EXJIFnryQIum7XZgYQaCOA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="45568610"
-X-IronPort-AV: E=Sophos;i="6.13,330,1732608000"; 
-   d="scan'208";a="45568610"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 10:41:29 -0800
-X-CSE-ConnectionGUID: G49fbFoBSMS+DXxwoTmwfA==
-X-CSE-MsgGUID: 3zitSSg0QuOhW4I9KyQWVg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,330,1732608000"; 
-   d="scan'208";a="117916427"
-Received: from msatwood-mobl.amr.corp.intel.com (HELO [10.125.109.13]) ([10.125.109.13])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 10:41:27 -0800
-Content-Type: multipart/mixed; boundary="------------uN8jXvp4vvy0mjcYW4E3DSkl"
-Message-ID: <30c721e0-338d-4172-989c-5226d584bcbc@intel.com>
-Date: Mon, 3 Mar 2025 10:41:44 -0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3039420F09D;
+	Mon,  3 Mar 2025 18:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.86
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741027337; cv=fail; b=bSDkTVmOgQB6AMKfpRYiyazS7ee93kgln1yOZJGzOxCpUxMNjpD7J3xPLtf6Iud8X4bMk21k73K6PlycXiBy4ZASErp3uaZsupyjnHUhWuiNJY1cfTqsl3fwqO5LWTUOV2OBOFbL09+2KrvTZI5oUQNMddBvfg1yGgbJnebvuIE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741027337; c=relaxed/simple;
+	bh=lsw8ZXEJaFFxaVImvdtrw4DEtnGdwk3eaz+16gsEdk8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=V+OkRFQ1JSgUHWZ07blR7xPxQozUOFTyr4Ch141Q7H5fsE+w+oru8KhvtXyUZxyKsDeRIkQt/lMZ54ciFobd/y7GFpVPZerte5LwyYXxOVQ4+rs6DCzSVsFIvOO0FZJRdHKhMq1nTxYZDJhzHhzplTQOk0cXPnpxaDv0OyrcW7Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=gMUZmKM4; arc=fail smtp.client-ip=40.107.92.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VA/BF9+GtgUPHCYPOWg6Tx3tacdW14lB9jwYW8K13cT0BTGE5jUNvPbF26mNEu3DOJ9Fn5/rTvXLdHe1s9v10jcpFZxtLSPZ4RABPvAJV+eQsETO7Tsxp+SYxUYGg35NUv+c/n9nNdDo6SZ4w03Dmro4tXu9rOOzIx8kNkRJVCGgBpYahFfLtk2fqz0BYLfvPHxzHKNob4xTUUa4H455qHd4q90AA/0OeY/H2Y7jTfYcJABjZwi+gxMxNYog0KigPS8cueMoYJNZ0M5iv6ijkBxtRbXmETiu8//L+XEIJt56wGSSIV/kSKPEG6bj0kS/GLmFbwmJepi1YBfODDxDpA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=h3Vd7/dS3cBa/jB/3iMXgcxU/4k7sbKFUDpg6aDCTHw=;
+ b=KuUGr9xqFjWlfIMAfAMUsv1h2yn/X/DNCFp+kOGGpUhw+bHg+Y0HS4uogFJpAQwiUYqruMi5PP/O7QmkyD+m0kvaMKmXrTxTwVQQvf924q2vli7lTE3x6F0Io5OlQDA3uGXSk/UUHy6/CYsme/YGiuPpFbc1i2ASt15ZXSkZRiXs6nCj6SBf+BHTpnF59eZjB3/6cOCrbOTZo/IGPTBkHRHj66biY/flfTGtrDd+7O0a0G1ajoc8n2x5pgEfcHJmLRb9jHyNpEKxXV1BSeufLPbdBjwlzpF5WEsAc0dHecT4JqbqXkCoBZQJzjvihOO0yXmIjFxsFZbDRCrHRMhtpQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=h3Vd7/dS3cBa/jB/3iMXgcxU/4k7sbKFUDpg6aDCTHw=;
+ b=gMUZmKM4+uU6XOgueluvmCm+RCy7WmYpF2HIUZYICKKUpfi+whQA4DjMcQl/gddhkaTonIojzQc5BdwcgTlfyKxj09DmOCV8Yfr2CetmtJzkWGEh0UPR3tzO+3CBDgUlYSfELs6cwCUALkBJRl1hBrfT4qZ3vcNqpBAW8mleGMI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com (2603:10b6:8:a4::7) by
+ MN2PR12MB4238.namprd12.prod.outlook.com (2603:10b6:208:199::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.25; Mon, 3 Mar
+ 2025 18:42:12 +0000
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::12f7:eff:380b:589f]) by DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::12f7:eff:380b:589f%5]) with mapi id 15.20.8466.016; Mon, 3 Mar 2025
+ 18:42:12 +0000
+Date: Mon, 3 Mar 2025 13:42:08 -0500
+From: Yazen Ghannam <yazen.ghannam@amd.com>
+To: Rostyslav Khudolii <ros@qtec.com>
+Cc: Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	x86@kernel.org, "bhelgaas@google.com" <bhelgaas@google.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>
+Subject: Re: PCI IO ECS access is no longer possible for AMD family 17h
+Message-ID: <20250303184208.GB1520489@yaz-khff2.amd.com>
+References: <CAJDH93s25fD+iaPJ1By=HFOs_M4Hc8LawPDy3n_-VFy04X4N5w@mail.gmail.com>
+ <20241219112125.GAZ2QBteug3I1Sb46q@fat_crate.local>
+ <20241219164408.GA1454146@yaz-khff2.amd.com>
+ <CAJDH93vm0buJn5vZEz9k9GRC3Kr6H7=0MSJpFtdpy_dSsUMDCQ@mail.gmail.com>
+ <Z78uOaPESGXWN46M@gmail.com>
+ <CAJDH93uE+foFfRAXVJ48-PYvEUsbpEu_-BVoG-5HsDG66yY7AQ@mail.gmail.com>
+ <Z8WTON2K77Q567Kg@gmail.com>
+ <CAJDH93vwqiiNgiUQrw0kqDkHvaUNUcrOfHJW7PGezDHSOb-5Hg@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJDH93vwqiiNgiUQrw0kqDkHvaUNUcrOfHJW7PGezDHSOb-5Hg@mail.gmail.com>
+X-ClientProxiedBy: MN2PR11CA0017.namprd11.prod.outlook.com
+ (2603:10b6:208:23b::22) To DM4PR12MB6373.namprd12.prod.outlook.com
+ (2603:10b6:8:a4::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v14 03/13] x86/mm: add INVLPGB support code
-To: Borislav Petkov <bp@alien8.de>, Rik van Riel <riel@surriel.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org,
- dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
- nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
- linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
- jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
- Manali.Shukla@amd.com, mingo@kernel.org
-References: <20250226030129.530345-1-riel@surriel.com>
- <20250226030129.530345-4-riel@surriel.com>
- <20250228194734.GGZ8IS1iFVpPzmEyYl@fat_crate.local>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250228194734.GGZ8IS1iFVpPzmEyYl@fat_crate.local>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6373:EE_|MN2PR12MB4238:EE_
+X-MS-Office365-Filtering-Correlation-Id: c03ebd8a-04b0-4268-73d0-08dd5a831cb8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?nFaazje/7UFu/+vst8ffss0qcGXCPZDLTK8zaznk6gZ6JP7I2Yw8W2ofY1fo?=
+ =?us-ascii?Q?DqVefyJgCNW6oCk07rtz+53uMdYlB4PEhEaNlF9EdkEVsaLPbH8hhp+NUxPF?=
+ =?us-ascii?Q?acwXP/FO1cccj/z0fp4f1/Fm6UNk8LauLVNUBvNVh+Kw96DgOWbnNX0+0LHk?=
+ =?us-ascii?Q?1XaKLTJa9C2Qy5xSQP8noDOxBcyq23sndFT0ehxEJ/WBu9RvYK0pbkqwJVVm?=
+ =?us-ascii?Q?9g9Cfr7W1xKVm7HU3ulQo4Tx4giFodPhYvPQMTjTbPqAQ2noBvCmv8LalT1u?=
+ =?us-ascii?Q?sDr8BfjvIUXBqk19nCpi1qjWo2G/GjMdl/GnR3ReC9qiiia1yO95hfdNy2Hj?=
+ =?us-ascii?Q?v9Ad5WEJAZ7OFvPYf3BBwCFsNKz07BJPodtPd22nx/C5+iEG2C/lGuPLxvIp?=
+ =?us-ascii?Q?W89fN3tQKi1zre0gpmI9Uc1LzcDbctVyAgNMs6tazhqQb6nEhx5El2VPrQbv?=
+ =?us-ascii?Q?0ctATB9U/wEJDNLKBItuudBxjdZMmzucvJVeU/Tg36jgjw8vJk8Kz8A3fb6d?=
+ =?us-ascii?Q?9gSomRADwzVBVpL9Bm81MxA7nnglfywc0P2bYOFHq+Wd4WcotBrTxKJ26Fur?=
+ =?us-ascii?Q?BGU2PXBn9RC6NAQX2Q9kCiidmZhJ4bdWtzix8++S4IS4BGKyr2agmLYGAjeW?=
+ =?us-ascii?Q?gebAVn7Q+41Vo6Wz+z+s7z0a/ZGryLhuyeekesIzW6JAF6AK3JujdcH4JCK4?=
+ =?us-ascii?Q?SV9cINRerzdxAVH8E5Du4qZoBTs6844bfEW38y2txZCrPq+ozm9nrXP8jbvb?=
+ =?us-ascii?Q?s0Z0Bo3WNSdnYGx+YqOOe6yIDuR7+1aoFr3NlGc80RyqsLy7jMfW9jdYi/D6?=
+ =?us-ascii?Q?/HEmrTUS3QnzU2kPhRPfk/F46fb9AkjD68LynX2buE61+D1dFcoYwfxa6Y00?=
+ =?us-ascii?Q?anAtGtM29uEFOhZyFxSZzu7GUyN/FJvG/xQR2zTDdCTKMsPqBfdVA/AZ9Lrd?=
+ =?us-ascii?Q?VUCzwVYZf8UGahpT2k2AZvAVyNgFM/mR/cJNO903U7FF1/Vi2IubTZBjAgrz?=
+ =?us-ascii?Q?hO7VDexF3H2zV1bicCkkN7oXJVgPQ9v0QvAltmg8jj87+2tSNI3RUNtWcSp6?=
+ =?us-ascii?Q?5oTyNcRMxn7LZUdTm0HFXwqcXgG0q4o2v2/1E1Mw/tBHE6kFLOJK1Jg7kHdK?=
+ =?us-ascii?Q?oTnxL80te+vsRcEwEWChm/i69KQYw30YUUGm0O6XNDoP3oea7+WmZb5trI3n?=
+ =?us-ascii?Q?F+kN7qpqxVu+She2vVYslnh3AqD2yY07VfaxzM4oX6HCyZj/gmnoTQGswX9w?=
+ =?us-ascii?Q?Uu5SxCUcYKHJVPxSH5VpMaSCZaZVk4F85iF0Sz/2LO0nmkXfjUdHFZ/OdyMM?=
+ =?us-ascii?Q?sNJp9BAkO8e/hNiCmAB+jrLkPSxRvNi3rQ7ESmBEYdbj5fBvgsgoB7pD7stp?=
+ =?us-ascii?Q?DfyCY6SqnHKeA4T1Zq7MiAmoPmjA?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6373.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?rlGlTZ2rsymvVNpV1KclbRs0S/XeWjhjxOud6EziuNwRO8yNvRjSZ+d96SEf?=
+ =?us-ascii?Q?2XiaGdyDT3U5bvuHhN25n4OlQGMQl8avVPKr+xdi+qUM5oNuiuAGp8KoKRFx?=
+ =?us-ascii?Q?+6vX1rfhZHKdsnmktxBfBknx234pjFwy9k2ml8twtyidnUm6H/WW/I0j4dqv?=
+ =?us-ascii?Q?znMONMp7vbNHJWffGZFKSYoBT4pchEZ7+FLqk4dzf/559EiMRdQ/vcTjdr91?=
+ =?us-ascii?Q?6XgzlH9cSYOKPvyEKc2Bxx9hKdU2LtvAggkK8DNicdqr3ZAAk9cxcnTYLbLw?=
+ =?us-ascii?Q?XjqpfuQYmgCAsZxDVooVfNSmCtfb8yW1fDDsCCQeK93UPAD0NESnrWFU85aR?=
+ =?us-ascii?Q?Q8HcgzGa/JqIO9zOPj2ZIz6/dFrveSmYmYSMs5paPttk3UEBiF/ILohpTsVg?=
+ =?us-ascii?Q?Ex6byI42mkz4rzGjdYyJ3jNaLaMwbTbbTA58iDO5uwERzHJMbaRCxyYZ8vhP?=
+ =?us-ascii?Q?eE7LVIQ0qAxZtLAzI83A41QdlcXrmwSmHiU6SOFHAqOPy0u0rsonPG4OX0Ma?=
+ =?us-ascii?Q?qDHhSZzso1REho3fJpfcGHL/kU7Fk5FlfX2rHeF82g1H1DC3ss9ASIXfAkDe?=
+ =?us-ascii?Q?CUHj5xwENRaaGs9Xd+8IR9RtN3XWFDjcd7xAKWj7GA9cl/YSXgmwZQ6FFnX2?=
+ =?us-ascii?Q?EVdaVSe9NVZdIbB9n2GChvhxcwHP/GrhSxg8t/ZBT+3SoqL8Rpkk7RNb1ci4?=
+ =?us-ascii?Q?bTNUxUAzaxJT5ZXHr7nhf81v5UpwBkZuh5jbrzGRGiuG7zD0vwEJsC38enES?=
+ =?us-ascii?Q?99YJ0UllNra3CmJpmBIGl7ly024ymnU/gTt6/OCFkG2U4mjapzWKNa/l/i61?=
+ =?us-ascii?Q?DuiCV4IK9tDcE3LasFOwnRhGy50vZcGBUC3T32Xjw6KM/qbG0YHUWua1JzQM?=
+ =?us-ascii?Q?9aB3LzltlLWaO9kkhILkjOXyzwXh1Q0ma8+gvv0+n73/BpITDQoVj58XaQ44?=
+ =?us-ascii?Q?DbMcFMSLkObbeo8X6oECdAOZqu94ELm5OFUn5IlUbC9G2HWtsZyqR+Nd7PtT?=
+ =?us-ascii?Q?gRQFef1TQpDZ1FXOyerOSz5WszE3OPodsFTfbc2OLtc3QNFhUF/YdefICcB3?=
+ =?us-ascii?Q?Z9jahiAtRmT9UztK+aU6cQo4fk6h+1hnXNZ0oc4PJFMVpaanixrozvWDoj48?=
+ =?us-ascii?Q?Yuva5W1buK6INgfnnR1N6KJ0CGpXxYg/DRsyim42tF0JdwBaLfdRjFGrpE9f?=
+ =?us-ascii?Q?WAk2wXaDeXeSXW9SKlK5Fq1p8N5w2FOH6Zb2r7liQ99q3DqgWOuHbIUqDHUw?=
+ =?us-ascii?Q?3OplsTz4jQnf9R1Sz/G60aJ4OtkWO50PLbsD1uAOdLfyKtzDLOXDmDwtSbDm?=
+ =?us-ascii?Q?3Px4nuOWYzlIPyR36sB7mozcJ7zcpgB7i4LxZuX+Buen2h9tvuW4YGCNA24Y?=
+ =?us-ascii?Q?uh0p9GPL8BjWNQtC9d9HoqwwyEy0PS5fBqxM4bhlPzQoZMDrzOlLH0L/W/mx?=
+ =?us-ascii?Q?vE3U7kEuXlX87h8lnFks7gpOMi6Dr8QPx13y0LTGzc5AumS5qf0Yuc6/Xkjt?=
+ =?us-ascii?Q?HMSJ3fK7FKf3xedb8l+CI20UPO8y46FPJuf7waQbyqiVBZNpxOOoz2NUc46c?=
+ =?us-ascii?Q?cPqmvP4w1dvtuWdLO+/LvaKJjyIu9lu6mm4VhfNK?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c03ebd8a-04b0-4268-73d0-08dd5a831cb8
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6373.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2025 18:42:12.7716
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: lRsQJvRWDnJxmPM0vgXIGe3LooX1l8pcOi1tvsGnaBOpGpAwbj7PZs027enBb3h+n1aQTqJaO2zdOwdBWcvFPw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4238
 
-This is a multi-part message in MIME format.
---------------uN8jXvp4vvy0mjcYW4E3DSkl
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+On Mon, Mar 03, 2025 at 01:20:21PM +0100, Rostyslav Khudolii wrote:
+> * Ingo Molnar <mingo@kernel.org> wrote:
+> >
+> >
+> > * Rostyslav Khudolii <ros@qtec.com> wrote:
+> >
+> > > Hi,
+> > >
+> > > > Rostyslav, I would like to ask you, do you have patches / updates for
+> > > > enabling the EnableCf8ExtCfg bit for AMD 17h+ family? I could try to
+> > > > adjust my lspci changes for new machines.
+> > >
+> > > Pali, sorry for the late reply. Do I understand correctly, that even
+> > > though you have access to the ECS via
+> > > the MMCFG you still want the legacy (direct IO) to work for the
+> > > debugging purposes? I can prepare a
+> > > simple patch that will allow you to do so if that's the case.
+> > >
+> > > >
+> > > > So what is the practical impact here? Do things start breaking
+> > > > unexpectedly if CONFIG_ACPI_MCFG and CONFIG_PCI_MMCONFIG are disabled?
+> > > > Then I'd suggest fixing that in the Kconfig space, either by adding a
+> > > > dependency on ACPI_MCFG && PCI_MMCONFIG, or by selecting those
+> > > > must-have pieces of infrastructure.
+> > > >
+> > >
+> > > Ingo, thank you for the reply.
+> > >
+> > > The way I understand the access to the PCI ECS (via raw_pci_ext_ops)
+> > > works, is the following:
+> > > 1. If CONFIG_ACPI_MCFG or CONFIG_PCI_MMCONFIG are enabled - set the
+> > > raw_pci_ext_ops to use
+> > >     MMCFG to access ECS. See pci_mmcfg_early_init() / pci_mmcfg_late_init();
+> > > 2. If CONFIG_ACPI_MCFG and CONFIG_PCI_MMCONFIG are disabled - set the
+> > > raw_pci_ext_ops to use
+> > >     the 'direct' access to ECS. See pci_direct_init(). The direct
+> > > access is conditional on the PCI_HAS_IO_ECS
+> > >     flag being set.
+> > >
+> > > On AMD, the kernel enables the ECS IO access via the
+> > > amd_bus_cpu_online() and pci_enable_pci_io_ecs().
+> > > Except those functions have no desired effect on the AMD 17h+ family
+> > > because the register (EnableCf8ExtCfg),
+> > > they access, has been moved. What is important though, is that the
+> > > PCI_HAS_IO_ECS flag is set unconditionally.
+> > > See pci_io_ecs_init() in amd_bus.c
+> > >
+> > > Therefore I was wondering whether we should add support for the 17h+
+> > > family in those functions to have
+> > > the direct access work for those families as well.
+> >
+> > Yeah, I think so, but I'm really just guessing:
+> >
+> > > Regarding your suggestion to address this in the Kconfig space - I'm
+> > > not quite sure I follow, since right now the kernel will use
+> > > raw_pci_ext_ops whenever access beyond the first 256 bytes is
+> > > requested. Say we want to make that conditional on CONFIG_ACPI_MCFG
+> > > and CONFIG_PCI_MMCONFIG, does it also mean then we want to drop
+> > > support for the 'direct' PCI IO ECS access altogether?
+> >
+> > I thought that enabling CONFIG_ACPI_MCFG would solve the problem, and
+> > other architectures are selecting it pretty broadly:
+> >
+> >  arch/arm64/Kconfig:     select ACPI_MCFG if (ACPI && PCI)
+> >  arch/loongarch/Kconfig: select ACPI_MCFG if ACPI
+> >  arch/riscv/Kconfig:     select ACPI_MCFG if (ACPI && PCI)
+> >
+> > While x86 allows it to be user-configured, which may result in
+> > misconfiguration, given that PCI_HAS_IO_ECS is being followed
+> > unconditionally if a platform provides it?
+> >
+> > Thanks,
+> >
+> >         Ingo
+> 
+> So it seems that the config option that needs to be enabled is
+> CONFIG_PCI_MMCONFIG.
+> The MCFG kernel support depends on it (aka not compiled when disabled).
+> With that said - the IO ECS question remains. Do we want to support it
+> for AMD 17h+ or
+> it's not required anymore?
+> 
 
-On 2/28/25 11:47, Borislav Petkov wrote:
-> @@ -157,11 +140,14 @@ index 77f52bc1578a..91c9a4da3ace 100644
->  +/* Flush all mappings for all PCIDs except globals. */
->  +static inline void invlpgb_flush_all_nonglobals(void)
->  +{
-> ++	/*
-> ++	 * @addr=0 means both rax[1] (valid PCID) and rax[2] (valid ASID) are clear
-> ++	 * so flush *any* PCID and ASID.
-> ++	 */
->  +	__invlpgb(0, 0, 0, 1, 0, 0);
->  +	__tlbsync();
->  +}
+Hi all,
 
-I had a bit of an allergic reaction to all of the magic numbers.
+I'd say it is not required (nor encouraged) anymore based on my reading
+of the AMD docs and PCI Firmware spec.
 
-Could we do something like the attached where we give a _few_ of the
-magic numbers some symbolic names?
+The possibility for direct access is still in hardware for backwards
+compatibility. But this doesn't mean that it *must* be used. And it
+seems that it shouldn't be used, if possible.
 
-For instance, instead of passing around a bool for pmd_stride, this uses
-an enum. It also explicitly separates things that are setting
-pmd_stride=0 but are really saying "this is a 4k stride" from things
-that set pmd_stride=0 but are for operations that don't _have_ a stride.
---------------uN8jXvp4vvy0mjcYW4E3DSkl
-Content-Type: text/x-patch; charset=UTF-8; name="supportcode.patch"
-Content-Disposition: attachment; filename="supportcode.patch"
-Content-Transfer-Encoding: base64
+I'm for the option to address this issue through Kconfig.
 
-LS0tIGM4MzQ0OTY4MDE3MDE3MGY1NWEwYWIyZWI0OThiOTJjZTk3YzA2MjQucGF0Y2gJMjAy
-NS0wMy0wMyAxMDozNTo0Ny40MjIyNzczMzUgLTA4MDAKKysrIDExY2U0YjIyNjQzYmUucGF0
-Y2gJMjAyNS0wMy0wMyAxMDozODowNS42OTI1MDk5OTMgLTA4MDAKQEAgLTEsOCArMSw4IEBA
-Ci1jb21taXQgYzgzNDQ5NjgwMTcwMTcwZjU1YTBhYjJlYjQ5OGI5MmNlOTdjMDYyNAorY29t
-bWl0IDExY2U0YjIyNjQzYmU1NGIyYzcwY2Y2YjQ3NDNlNmI3M2I0NjE4MTQKIEF1dGhvcjog
-UmlrIHZhbiBSaWVsIDxyaWVsQHN1cnJpZWwuY29tPgogRGF0ZTogICBGcmkgRmViIDI4IDIw
-OjMyOjMwIDIwMjUgKzAxMDAKIAotICAgICB4ODYvbW06IEFkZCBJTlZMUEdCIHN1cHBvcnQg
-Y29kZQorICAgIHg4Ni9tbTogQWRkIElOVkxQR0Igc3VwcG9ydCBjb2RlCiAgICAgCiAgICAg
-QWRkIGhlbHBlciBmdW5jdGlvbnMgYW5kIGRlZmluaXRpb25zIG5lZWRlZCB0byB1c2UgYnJv
-YWRjYXN0IFRMQgogICAgIGludmFsaWRhdGlvbiBvbiBBTUQgQ1BVcy4KQEAgLTE3LDcgKzE3
-LDcgQEAKICAgICBMaW5rOiBodHRwczovL2xvcmUua2VybmVsLm9yZy9yLzIwMjUwMjI2MDMw
-MTI5LjUzMDM0NS00LXJpZWxAc3VycmllbC5jb20KIAogZGlmZiAtLWdpdCBhL2FyY2gveDg2
-L2luY2x1ZGUvYXNtL3RsYi5oIGIvYXJjaC94ODYvaW5jbHVkZS9hc20vdGxiLmgKLWluZGV4
-IDc3ZjUyYmMxNTc4YTcuLjUzNzUxNDVlYjk1OTYgMTAwNjQ0CitpbmRleCA3N2Y1MmJjMTU3
-OGE3Li4zYmQ2MTdjMjA0MzQ2IDEwMDY0NAogLS0tIGEvYXJjaC94ODYvaW5jbHVkZS9hc20v
-dGxiLmgKICsrKyBiL2FyY2gveDg2L2luY2x1ZGUvYXNtL3RsYi5oCiBAQCAtNiw2ICs2LDkg
-QEAKQEAgLTMwLDEwICszMCwxNSBAQAogIAogIHN0YXRpYyBpbmxpbmUgdm9pZCB0bGJfZmx1
-c2goc3RydWN0IG1tdV9nYXRoZXIgKnRsYikKICB7Ci1AQCAtMjUsNCArMjgsMTEwIEBAIHN0
-YXRpYyBpbmxpbmUgdm9pZCBpbnZscGcodW5zaWduZWQgbG9uZyBhZGRyKQorQEAgLTI1LDQg
-KzI4LDExOSBAQCBzdGF0aWMgaW5saW5lIHZvaWQgaW52bHBnKHVuc2lnbmVkIGxvbmcgYWRk
-cikKICAJYXNtIHZvbGF0aWxlKCJpbnZscGcgKCUwKSIgOjoiciIgKGFkZHIpIDogIm1lbW9y
-eSIpOwogIH0KICAKKytlbnVtIGludmxwZ2Jfc3RyaWRlIHsKKysJTk9fU1RSSURFICA9IDAs
-CisrCVBURV9TVFJJREUgPSAwLAorKwlQTURfU1RSSURFID0gMQorK307CiArCiArLyoKICsg
-KiBJTlZMUEdCIGRvZXMgYnJvYWRjYXN0IFRMQiBpbnZhbGlkYXRpb24gYWNyb3NzIGFsbCB0
-aGUgQ1BVcyBpbiB0aGUgc3lzdGVtLgpAQCAtNTQsMTAgKzU5LDEwIEBACiArICovCiArc3Rh
-dGljIGlubGluZSB2b2lkIF9faW52bHBnYih1bnNpZ25lZCBsb25nIGFzaWQsIHVuc2lnbmVk
-IGxvbmcgcGNpZCwKICsJCQkgICAgIHVuc2lnbmVkIGxvbmcgYWRkciwgdTE2IG5yX3BhZ2Vz
-LAotKwkJCSAgICAgYm9vbCBwbWRfc3RyaWRlLCB1OCBmbGFncykKKysJCQkgICAgIGVudW0g
-aW52bHBnYl9zdHJpZGUgc3RyaWRlLCB1OCBmbGFncykKICt7CiArCXUzMiBlZHggPSAocGNp
-ZCA8PCAxNikgfCBhc2lkOwotKwl1MzIgZWN4ID0gKHBtZF9zdHJpZGUgPDwgMzEpIHwgKG5y
-X3BhZ2VzIC0gMSk7CisrCXUzMiBlY3ggPSAoc3RyaWRlIDw8IDMxKSB8IChucl9wYWdlcyAt
-IDEpOwogKwl1NjQgcmF4ID0gYWRkciB8IGZsYWdzOwogKwogKwkvKiBUaGUgbG93IGJpdHMg
-aW4gcmF4IGFyZSBmb3IgZmxhZ3MuIFZlcmlmeSBhZGRyIGlzIGNsZWFuLiAqLwpAQCAtODQs
-MzMgKzg5LDM3IEBACiArLyoKICsgKiBJTlZMUEdCIGNhbiBiZSB0YXJnZXRlZCBieSB2aXJ0
-dWFsIGFkZHJlc3MsIFBDSUQsIEFTSUQsIG9yIGFueSBjb21iaW5hdGlvbgogKyAqIG9mIHRo
-ZSB0aHJlZS4gRm9yIGV4YW1wbGU6Ci0rICogLSBJTlZMUEdCX1ZBIHwgSU5WTFBHQl9JTkNM
-VURFX0dMT0JBTDogaW52YWxpZGF0ZSBhbGwgVExCIGVudHJpZXMgYXQgdGhlIGFkZHJlc3MK
-LSsgKiAtIElOVkxQR0JfUENJRDoJCQkgIGludmFsaWRhdGUgYWxsIFRMQiBlbnRyaWVzIG1h
-dGNoaW5nIHRoZSBQQ0lECisrICogLSBGTEFHX1ZBIHwgRkxBR19JTkNMVURFX0dMT0JBTDog
-aW52YWxpZGF0ZSBhbGwgVExCIGVudHJpZXMgYXQgdGhlIGFkZHJlc3MKKysgKiAtIEZMQUdf
-UENJRDoJCQkgICAgaW52YWxpZGF0ZSBhbGwgVExCIGVudHJpZXMgbWF0Y2hpbmcgdGhlIFBD
-SUQKICsgKgotKyAqIFRoZSBmaXJzdCBjYW4gYmUgdXNlZCB0byBpbnZhbGlkYXRlIChrZXJu
-ZWwpIG1hcHBpbmdzIGF0IGEgcGFydGljdWxhcgorKyAqIFRoZSBmaXJzdCBpcyB1c2VkIHRv
-IGludmFsaWRhdGUgKGtlcm5lbCkgbWFwcGluZ3MgYXQgYSBwYXJ0aWN1bGFyCiArICogYWRk
-cmVzcyBhY3Jvc3MgYWxsIHByb2Nlc3Nlcy4KICsgKgogKyAqIFRoZSBsYXR0ZXIgaW52YWxp
-ZGF0ZXMgYWxsIFRMQiBlbnRyaWVzIG1hdGNoaW5nIGEgUENJRC4KICsgKi8KLSsjZGVmaW5l
-IElOVkxQR0JfVkEJCQlCSVQoMCkKLSsjZGVmaW5lIElOVkxQR0JfUENJRAkJCUJJVCgxKQot
-KyNkZWZpbmUgSU5WTFBHQl9BU0lECQkJQklUKDIpCi0rI2RlZmluZSBJTlZMUEdCX0lOQ0xV
-REVfR0xPQkFMCQlCSVQoMykKLSsjZGVmaW5lIElOVkxQR0JfRklOQUxfT05MWQkJQklUKDQp
-Ci0rI2RlZmluZSBJTlZMUEdCX0lOQ0xVREVfTkVTVEVECQlCSVQoNSkKKysjZGVmaW5lIElO
-VkxQR0JfRkxBR19WQQkJCUJJVCgwKQorKyNkZWZpbmUgSU5WTFBHQl9GTEFHX1BDSUQJCUJJ
-VCgxKQorKyNkZWZpbmUgSU5WTFBHQl9GTEFHX0FTSUQJCUJJVCgyKQorKyNkZWZpbmUgSU5W
-TFBHQl9GTEFHX0lOQ0xVREVfR0xPQkFMCUJJVCgzKQorKyNkZWZpbmUgSU5WTFBHQl9GTEFH
-X0ZJTkFMX09OTFkJCUJJVCg0KQorKyNkZWZpbmUgSU5WTFBHQl9GTEFHX0lOQ0xVREVfTkVT
-VEVECUJJVCg1KQorKworKy8qIFRoZSBpbXBsaWVkIG1vZGUgd2hlbiBhbGwgYml0cyBhcmUg
-Y2xlYXI6ICovCisrI2RlZmluZSBJTlZMUEdCX01PREVfQUxMX05PTkdMT0JBTFMJMFVMCiAr
-CiArc3RhdGljIGlubGluZSB2b2lkIGludmxwZ2JfZmx1c2hfdXNlcl9ucl9ub3N5bmModW5z
-aWduZWQgbG9uZyBwY2lkLAogKwkJCQkJCXVuc2lnbmVkIGxvbmcgYWRkciwKICsJCQkJCQl1
-MTYgbnIsCiArCQkJCQkJYm9vbCBwbWRfc3RyaWRlKQogK3sKLSsJX19pbnZscGdiKDAsIHBj
-aWQsIGFkZHIsIG5yLCBwbWRfc3RyaWRlLCBJTlZMUEdCX1BDSUQgfCBJTlZMUEdCX1ZBKTsK
-KysJX19pbnZscGdiKDAsIHBjaWQsIGFkZHIsIG5yLCBwbWRfc3RyaWRlLCBJTlZMUEdCX0ZM
-QUdfUENJRCB8CisrCQkgIAkJCQkgSU5WTFBHQl9GTEFHX1ZBKTsKICt9CiArCiArLyogRmx1
-c2ggYWxsIG1hcHBpbmdzIGZvciBhIGdpdmVuIFBDSUQsIG5vdCBpbmNsdWRpbmcgZ2xvYmFs
-cy4gKi8KICtzdGF0aWMgaW5saW5lIHZvaWQgaW52bHBnYl9mbHVzaF9zaW5nbGVfcGNpZF9u
-b3N5bmModW5zaWduZWQgbG9uZyBwY2lkKQogK3sKLSsJX19pbnZscGdiKDAsIHBjaWQsIDAs
-IDEsIDAsIElOVkxQR0JfUENJRCk7CisrCV9faW52bHBnYigwLCBwY2lkLCAwLCAxLCBOT19T
-VFJJREUsIElOVkxQR0JfRkxBR19QQ0lEKTsKICt9CiArCiArLyogRmx1c2ggYWxsIG1hcHBp
-bmdzLCBpbmNsdWRpbmcgZ2xvYmFscywgZm9yIGFsbCBQQ0lEcy4gKi8KQEAgLTEyMywyMSAr
-MTMyLDIxIEBACiArCSAqIGFzIGl0IGlzIGNoZWFwZXIuCiArCSAqLwogKwlndWFyZChwcmVl
-bXB0KSgpOwotKwlfX2ludmxwZ2IoMCwgMCwgMCwgMSwgMCwgSU5WTFBHQl9JTkNMVURFX0dM
-T0JBTCk7CisrCV9faW52bHBnYigwLCAwLCAwLCAxLCBOT19TVFJJREUsIElOVkxQR0JfRkxB
-R19JTkNMVURFX0dMT0JBTCk7CiArCV9fdGxic3luYygpOwogK30KICsKICsvKiBGbHVzaCBh
-ZGRyLCBpbmNsdWRpbmcgZ2xvYmFscywgZm9yIGFsbCBQQ0lEcy4gKi8KICtzdGF0aWMgaW5s
-aW5lIHZvaWQgaW52bHBnYl9mbHVzaF9hZGRyX25vc3luYyh1bnNpZ25lZCBsb25nIGFkZHIs
-IHUxNiBucikKICt7Ci0rCV9faW52bHBnYigwLCAwLCBhZGRyLCBuciwgMCwgSU5WTFBHQl9J
-TkNMVURFX0dMT0JBTCk7CisrCV9faW52bHBnYigwLCAwLCBhZGRyLCBuciwgUFRFX1NUUklE
-RSwgSU5WTFBHQl9GTEFHX0lOQ0xVREVfR0xPQkFMKTsKICt9CiArCiArLyogRmx1c2ggYWxs
-IG1hcHBpbmdzIGZvciBhbGwgUENJRHMgZXhjZXB0IGdsb2JhbHMuICovCiArc3RhdGljIGlu
-bGluZSB2b2lkIGludmxwZ2JfZmx1c2hfYWxsX25vbmdsb2JhbHModm9pZCkKICt7CiArCWd1
-YXJkKHByZWVtcHQpKCk7Ci0rCV9faW52bHBnYigwLCAwLCAwLCAxLCAwLCAwKTsKKysJX19p
-bnZscGdiKDAsIDAsIDAsIDEsIE5PX1NUUklERSwgSU5WTFBHQl9NT0RFX0FMTF9OT05HTE9C
-QUxTKTsKICsJX190bGJzeW5jKCk7CiArfQogICNlbmRpZiAvKiBfQVNNX1g4Nl9UTEJfSCAq
-Lwo=
+Ros,
+Is/was there a reason why you didn't have the MCFG/MMCONFIG options
+enabled in your kernel?
 
---------------uN8jXvp4vvy0mjcYW4E3DSkl--
+Was this a side effect of trying to build a minimal kernel or similar?
+
+Thanks,
+Yazen
+
+P.S. Sorry for the late reply. My mailbox is missing Ros's reply to me.
 
