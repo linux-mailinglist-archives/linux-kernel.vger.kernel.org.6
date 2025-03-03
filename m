@@ -1,113 +1,85 @@
-Return-Path: <linux-kernel+bounces-542824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DC61A4CE2F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:21:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 279F4A4CE08
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:16:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2BF33AD0C1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:21:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 483107A970D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:14:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED59622C325;
-	Mon,  3 Mar 2025 22:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B5C02376EC;
+	Mon,  3 Mar 2025 22:15:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OA80H5t3"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nNlpbk/b"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B22F1EE00D
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 22:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B50215782;
+	Mon,  3 Mar 2025 22:15:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741040464; cv=none; b=p5C9rCJ7fLxQR9UUck1IX4hTYtciZZt20zGvm+ZtJTF1GmQw++d9AJHSQQy1wCyRO3Ng/u4zC1yQumexhMwtD+723xBol4gJZXN/kozzw6hTLIjLB7N7gsC8YdTHBS0mJNiCZb1NgOGCUllEbQhbBUTurt7q6HVWOez0ZDYj1PQ=
+	t=1741040104; cv=none; b=k5dHMC8zgTZilUmJMpMh61frK1Va1tlO5+6+O8Z8XEVSiXWvrrhj+StjWhXNDwurxT3aHdbySOiMovLFfNNfa1+CeErUredXMHdWAOUPQZ/CiqH723FaCOtLVikk6zD33J2WfbCHtkOl6PeiLyKQ5e5rrdQKVNPjGRY+5kprop8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741040464; c=relaxed/simple;
-	bh=8lSPo+KIIq2qYRr/9d3MJdKf0ce1XIDRY2s2HaDhhXs=;
+	s=arc-20240116; t=1741040104; c=relaxed/simple;
+	bh=zpPxLelE9Ybujo8zHlA6Bkn57MYTewjeu9jGuzQ7Jtw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K5N8o+7EfaXjodaiZmUQpYwWzI+yTZC24gcjDt2GuMo++xeUt6tmgxdBbO7mxv1AgMe+f/HJYfktBcxFu/EEx2y3wI/+QRNq0wEv8lZFjKE6UPMX75qKNQ0jyioKHI66ZitDI+h8KCfM15vDggBSxFQhoDgvtJnzjzVfFRU0TyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OA80H5t3; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-223a0da61easo56975ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 14:21:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741040462; x=1741645262; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TIPE161XE6h+XbpKbqRdjbwFF+hmkeZmLDbhV/M2UTU=;
-        b=OA80H5t3RtNNuYvjlw0//qqL+sgjc7wPnLNGw/yNi52z072O13Tf2MSnjo30V8Kg4V
-         Qewn+EV+ncE+yhSE4ywBHWeaaGXO0F+4W/wL0rU2FxRZ0gLeNMYO8bKB3llmU6E4+ZsK
-         a9fJ6tiTN5SSWkCgXCYg3/RbxpTust+fSeYn50usD2WEi+3s5FDVBF+RUJzqgV8o2V1x
-         qkD96rac4IqwmDJEn9RaHFaRFYbym1JkvufH66xJd4HksBDQU3vVKCDYuLm8TosQ2UQP
-         LL174c+nrOMgn+UwzfxpsMJ97055SaNXfw96i8rREDzt+ZFOgih2YRAO6OI+dl4Lsmuf
-         BeSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741040462; x=1741645262;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TIPE161XE6h+XbpKbqRdjbwFF+hmkeZmLDbhV/M2UTU=;
-        b=Ru1pzHl6mW6STLL1emM632aTgqwc3LWsseuJL0KCBs+I6mR9znP0h0MxMGn0Vc4j9A
-         M+R8NJ7TWRGCtSM2WJiNKlhHzw7lqpKYMefQtglbQDi43A2KPyFNZPZQrBYxbYdUM+gd
-         w708iDMXxxFC4RdSYVSDrG8iYPciySbj1cjCAuHqCkSvBDUWINiVtVPYVy6LRF00ZIZd
-         RZ0FF0/cg7mAhuKOdLt08T6F/33Lb0pGxNTnEQYx7bq+To5lOlXALqhfDr9YGlvYBnv8
-         5gDzuZo+Xz67NQSKcyM1igwRBcxHvVxWbsz/gm1AErgZdarDzdViKLCCDL2b11xKF0wi
-         cstw==
-X-Forwarded-Encrypted: i=1; AJvYcCULOOiOIHV7wfjS8AMfU0Kr2j2czB+AGVTAAyE4LMtpO2F/p0AlG1uHyOVfbuwVMJUZfYW40QCgNIhaFI0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiysAfEe0ultH9XJch/uiIHdc6IQYjsAjE8KkLbJt/p/7eh9aJ
-	L/FSuFVb9y3iJ3jkgOiGlScM2D4GYJrtiDLs96HcTOCcmCSX4cwXmxIQh1IXOw==
-X-Gm-Gg: ASbGncvKPTAUiiFAfu30XFlcN61rAoSJeHTw3KEwhtUAtBuQEnSs4etvD7KgjIjWRi1
-	npn/o0kDX9yd1benHeOPHq7jSre2JwtRo6Vu/F6DDdxmv1KvaVBstG/by6nWaaB17MzTuilmRfX
-	DBK0WdbxgS38x68uwO1VvkXRFfgAGnULet/MmfXyjm8W0TtEjvbTn4CMJyxfa4yV0PDZNmK/eDK
-	BUDSowEsOt7R8g+rxOYSotJJI4zYE7V3SlxS1ox9xcQDi/JqyNdu15pS6Ct04TK6R1R8909ghF8
-	KsvyqVKKH2MS63ns3tVinRSLJXK1Vc1x4Lw6SoPIEvIjgVStUheJFXLDZ82PV+J8IAqAHMNmFxM
-	/TjIeG2o=
-X-Google-Smtp-Source: AGHT+IHFnd6jZyLm3rBh852SMedzrz4n0Ml2vmv/2ld5Rglar/I+rjdCt1PE6PBirI1AmbiL/BJNuA==
-X-Received: by 2002:a17:902:e546:b0:21f:3e29:9cd4 with SMTP id d9443c01a7336-223d9e656cfmr770325ad.20.1741040462117;
-        Mon, 03 Mar 2025 14:21:02 -0800 (PST)
-Received: from google.com (147.141.16.34.bc.googleusercontent.com. [34.16.141.147])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-aee7dedd22esm7402504a12.63.2025.03.03.14.21.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 14:21:01 -0800 (PST)
-Date: Mon, 3 Mar 2025 22:20:55 +0000
-From: Peilin Ye <yepeilin@google.com>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: bpf <bpf@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	bpf@ietf.org, Alexei Starovoitov <ast@kernel.org>,
-	Xu Kuohai <xukuohai@huaweicloud.com>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	David Vernet <void@manifault.com>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Puranjay Mohan <puranjay@kernel.org>,
-	Ilya Leoshkevich <iii@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Quentin Monnet <qmo@kernel.org>,
-	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
-	Ihor Solodrai <ihor.solodrai@linux.dev>,
-	Yingchi Long <longyingchi24s@ict.ac.cn>,
-	Josh Don <joshdon@google.com>, Barret Rhoden <brho@google.com>,
-	Neel Natu <neelnatu@google.com>,
-	Benjamin Segall <bsegall@google.com>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH bpf-next v4 03/10] bpf/verifier: Factor out
- check_load_mem() and check_store_reg()
-Message-ID: <Z8YrR7p7ikaw0Kpr@google.com>
-References: <cover.1740978603.git.yepeilin@google.com>
- <8b39c94eac2bb7389ff12392ca666f939124ec4f.1740978603.git.yepeilin@google.com>
- <CAADnVQKyMx64_mP+u+rmnRGyzVoBs4rViTHeE4_0Rr+Kf3R5Tg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZAIy/7gW7ig9wrkTPzcNI1AQoAlEIgKHfNVZ+s5eoEYJdpfqRlQBEvcspgdsFCv2w/lJbFtrx5b9VJM6fLFHCHsKvUrq3iKKk3IKTiIO7irs4OJt/27ZZPerbv+NURfRCuL3Z85jY9POj8n7PxlUQCBElVd67D+KKy3S4InM0Pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nNlpbk/b; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741040103; x=1772576103;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zpPxLelE9Ybujo8zHlA6Bkn57MYTewjeu9jGuzQ7Jtw=;
+  b=nNlpbk/bIxQ/SHA5m21NCB9LMpjYCPNLt1v5nuV8bXsqI1+bmGsZ39JO
+   wePVIHpSBVJjsvl8GTWPQqocEjk+Fq8rCSbDMUEzHwxFxfSA8m1/MZT+T
+   BmbNIJSNEcP5+NxhfmayGTpDHJoPh7SaQhB5JB3DUa4PyxCaukVEgu4ea
+   S/vLUmNFC4qO7GRv6ASp05kG7Q7ed8ZFvaLFB9MnnO2ysj7kQaV2DN8Zc
+   0dAbV90+soXnMbkuznE33pvJ1tcmCW+lmNetjiqLPLqVRXncE5I73fSJf
+   QsbHDu5xy/dOSERGr5iya4O6bjCg54mzCJHd00ORwq3pqgfjtH/MCeIiw
+   A==;
+X-CSE-ConnectionGUID: QjHes+I2ToeNUFLu5kpitg==
+X-CSE-MsgGUID: 4QzwpZm8RUe4dB3xDWcFtw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="52914242"
+X-IronPort-AV: E=Sophos;i="6.13,330,1732608000"; 
+   d="scan'208";a="52914242"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 14:15:02 -0800
+X-CSE-ConnectionGUID: 7OFb8wluTW6tVcy0CNgGPA==
+X-CSE-MsgGUID: xb8BCAlYSYq5R7HwB9qaIQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,330,1732608000"; 
+   d="scan'208";a="117909222"
+Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 14:15:01 -0800
+Date: Mon, 3 Mar 2025 14:21:02 -0800
+From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Yunhong Jiang <yunhong.jiang@linux.intel.com>, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, kys@microsoft.com, haiyangz@microsoft.com,
+	wei.liu@kernel.org, decui@microsoft.com, rafael@kernel.org,
+	lenb@kernel.org, kirill.shutemov@linux.intel.com,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-hyperv@vger.kernel.org, linux-acpi@vger.kernel.org,
+	ricardo.neri@intel.com, ravi.v.shankar@intel.com
+Subject: Re: [PATCH v2 2/9] dt-bindings: x86: Add a binding for x86 wakeup
+ mailbox
+Message-ID: <20250303222102.GA16733@ranerica-svr.sc.intel.com>
+References: <20240823232327.2408869-1-yunhong.jiang@linux.intel.com>
+ <20240823232327.2408869-3-yunhong.jiang@linux.intel.com>
+ <ujfqrllrii6iijlhbwx3bltpjogiosw4xx5pqbcddgpxjobrzh@xqqrfxi5lv3i>
+ <20240827204549.GA4545@yjiang5-mobl.amr.corp.intel.com>
+ <20240910061227.GA76@yjiang5-mobl.amr.corp.intel.com>
+ <1d0ba3fc-1504-4af3-a0bc-fba86abe41e8@kernel.org>
+ <20240919191725.GA11928@yjiang5-mobl.amr.corp.intel.com>
+ <874d5908-f1db-412f-96a2-83fcebe8dd98@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -116,25 +88,96 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAADnVQKyMx64_mP+u+rmnRGyzVoBs4rViTHeE4_0Rr+Kf3R5Tg@mail.gmail.com>
+In-Reply-To: <874d5908-f1db-412f-96a2-83fcebe8dd98@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 
-On Mon, Mar 03, 2025 at 10:52:08AM -0800, Alexei Starovoitov wrote:
-> > Extract BPF_LDX and most non-ATOMIC BPF_STX instruction handling logic
-> > in do_check() into helper functions to be used later.  While we are
-> > here, make that comment about "reserved fields" more specific.
-> >
-> > Suggested-by: Eduard Zingerman <eddyz87@gmail.com>
-> > Acked-by: Eduard Zingerman <eddyz87@gmail.com>
-> > Signed-off-by: Peilin Ye <yepeilin@google.com>
+On Fri, Sep 20, 2024 at 01:15:41PM +0200, Krzysztof Kozlowski wrote:
+
+[...]
+ 
+> enable-method is part of CPUs, so you probably should match the CPUs...
+> I am not sure, I don't have the big picture here.
 > 
-> Applied the first 3 patches.
+> Maybe if companies want to push more of bindings for purely virtual
+> systems, then they should first get involved more, instead of relying on
+> us. Provide reviews for your virtual stuff, provide guidance. There is
+> resistance in accepting bindings for such cases for a reason - I don't
+> even know what exactly is this and judging/reviewing based on my
+> practices will no be accurate.
 
-Thanks!
+Hi Krzysztof,
 
-I'll fix that build issue for 32-bit arches, then send remaining patches
-(except v4 10/10) as v5.
+I am taking over this work from Yunhong.
 
-Cheers,
-Peilin Ye
+First of all, I apologize for the late reply. I will make sure
+communications are timely in the future.
 
+Our goal is to describe in the device tree a mechanism or artifact to boot
+secondary CPUs.
+
+In our setup, the firmware puts secondary CPUs to monitor a memory location
+(i.e., the wakeup mailbox) while spinning. From the boot CPU, the OS writes
+in the mailbox the wakeup vector and the ID of the secondary CPU it wants
+to boot. When a secondary CPU sees its own ID it will jump to the wakeup
+vector.
+
+This is similar to the spin-table described in the Device Tree
+specification. The key difference is that with the spin-table CPUs spin
+until a non-zero value is written in `cpu-release-addr`. The wakeup mailbox
+uses CPU IDs.
+
+You raised the issue of the lack of a `compatible` property, and the fact
+that we are not describing an actual device.
+
+I took your suggestion of matching by node and I came up with the binding
+below. I see these advantages in this approach:
+
+  * I define a new node with a `compatible` property.
+  * There is precedent: the psci node. In the `cpus` node, each cpu@n has
+    an `enable-method` property that specify `psci`.
+  * The mailbox is a device as it is located in a reserved memory region.
+    This true regardless of the device tree describing bare-metal or
+    virtualized machines.
+
+Thanks in advance for your feedback!
+
+Best,
+Ricardo
+
+(only the relevant sections of the binding are shown for brevity)
+
+properties:
+  $nodename:
+    const: wakeup-mailbox
+
+  compatible:
+    const: x86,wakeup-mailbox
+
+  mailbox-addr:
+    $ref: /schemas/types.yaml#/definitions/uint64
+
+required:
+  - compatible
+  - mailbox-addr
+
+additionalProperties: false
+
+examples:
+  - |
+    wakeup-mailbox {
+      compatible = "x86,wakeup-mailbox";
+      mailbox-addr = <0 0x1c000500>;
+    };
+
+    cpus {
+        #address-cells = <1>;
+        #size-cells = <0>;
+
+        cpu@0 {
+            device_type = "cpu";
+            reg = <0x00>;
+            enable-method = "wakeup-mailbox";
+        };
+    };
+...
 
