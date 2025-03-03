@@ -1,272 +1,163 @@
-Return-Path: <linux-kernel+bounces-542712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEED7A4CCC1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 21:30:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE401A4CCC4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 21:32:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAB3A161EAE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:30:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB91C188B731
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:32:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 030992343D2;
-	Mon,  3 Mar 2025 20:30:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD0B42356B1;
+	Mon,  3 Mar 2025 20:31:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cisco.com header.i=@cisco.com header.b="Lr/lMHy2"
-Received: from rcdn-iport-3.cisco.com (rcdn-iport-3.cisco.com [173.37.86.74])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="MfyNYO5R"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B611A1EE7D6;
-	Mon,  3 Mar 2025 20:30:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=173.37.86.74
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741033847; cv=fail; b=l+p9ncX6SE+HiHD5QQXKG8xpHwCN2Gow+DUHtxd3dc1pkP2DauGJq5mBIcMI6pBFoPFWc3giyKJLL4W4m57QuMx8WfIAatwDFA1cyWnd28VUU51KfXEbEJHhAnGRn5TTkBYuO+D3w8KrecutZh5lhQzt8ZyntHJsRhGyrg7MM2c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741033847; c=relaxed/simple;
-	bh=PhBFfiV+OanZTty3A3idF0e8IcKsscQkS8R3lWKaYMI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=oUCgLCdan9BwaCb0R4O12DoRFSvLV5QPG2C/6Gs4TEEyUUWYW25qIBne7pigv0TxEfFf7RN2M5G1qGfAFZ0xU8vrWfSpIUCHHvYYG4tv5V1ju4MzpZEtII1RA8BymTiO7vPqh/FxKjeI/pv8qHFTkeoTSRGu5oYFNizgPhLIzMo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com; spf=pass smtp.mailfrom=cisco.com; dkim=pass (2048-bit key) header.d=cisco.com header.i=@cisco.com header.b=Lr/lMHy2; arc=fail smtp.client-ip=173.37.86.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cisco.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=cisco.com; i=@cisco.com; l=1194; q=dns/txt;
-  s=iport01; t=1741033844; x=1742243444;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=RxsCSce6qsuRB1NRRq/Fca/xa2ySV9QQP5NI0+0+FpQ=;
-  b=Lr/lMHy2+fKsSRGS7rbQZkfLB31efF3oY1PDcuLSP5FrOm73ZKJbLdi9
-   9WdteNid4IKs08NIorl2s530PZuoeOqyxZTgTznKAeWz8LV6CvDYxOUc1
-   aCvqakGRdrIAvtwZAj/+sq6jx82neJTIrhrN1l3U7cCAOnvMnVyjHIka6
-   otCpVI50lcxfUy3XVl9az8NZrpwrYYkM9B4uzusP/lXwlIXteTGz48T+V
-   gnguutrFBR75SHypDXyDaizckQdZAOiVxaACmWkIU3olYFzKavmZmF29c
-   KbNEFES/2JWmUUTCz5bVVW/ncwk/Zkof/rRDfZ9312ZXwfbUr5x8ge2vq
-   Q==;
-X-CSE-ConnectionGUID: Rm8rbkydQ0+R5xu9v4Tuug==
-X-CSE-MsgGUID: EIyadQSmTSKafilTMzFk5w==
-X-IPAS-Result: =?us-ascii?q?A0BbAAAQEMZn/4v/Ja1aHAEBAQEBAQcBARIBAQQEAQFAJ?=
- =?us-ascii?q?YEcBQEBCwGBcVIHghJIiCEDhS2GU4IknhSBJQNWDwEBAQ0CRAQBAYUHAosUA?=
- =?us-ascii?q?iY2Bw4BAgQBAQEBAwIDAQEBAQEBAQEBAQELAQEFAQEBAgEHBYEOE4YIhloBA?=
- =?us-ascii?q?QEBAxIoPxACAQgYHhAxJQIEDgUIGoVFAwGieAGBQAKKK3iBNIEB4CKBSAGIT?=
- =?us-ascii?q?gGFa4R3JxuCDYFXgmg+hEWEE4IvBIIvRYEkgldnmgWOU1J7HANZLAFVExcLB?=
- =?us-ascii?q?wWBKUgDgQ8jD4EUBTQKNzqCC2lJOgINAjWCHnyCK4IXgjeEPYRAhVKCEYFdA?=
- =?us-ascii?q?wMWEIIwb3cchHyEax1AAwttPTcUGwUEgTUFoG46h3gWASmWTa5TgTMKhBuhf?=
- =?us-ascii?q?heqVph9pTSDUwIEAgQFAg8BAQaBbg0ogVlwFYMiUhkPjlnME3g8AgcLAQEDC?=
- =?us-ascii?q?ZFlAQE?=
-IronPort-PHdr: A9a23:tH/fXBJOX0wZlWLqptmcuVQyDhhOgF28FhQe5pxijKpBbeH4uZ/jJ
- 0fYo/5qiQyBUYba7qdcgvHN++D7WGMG6Iqcqn1KbpFWVhEEhMlX1wwtCcKIEwv6edbhbjcxG
- 4JJU1oNwg==
-IronPort-Data: A9a23:cUij1aPFIv2p2oHvrR3OlsFynXyQoLVcMsEvi/4bfWQNrUp21zYCy
- WAZUWiHPv/fNGCmKt5yb9ngoR9Tv8TdmN5lHnM5pCpnJ55oRWUpJjg4wmPYZX76whjrFRo/h
- ykmQoCeaphyFjmE+0/F3oHJ9RFUzbuPSqf3FNnKMyVwQR4MYCo6gHqPocZh6mJTqYb/WljlV
- e/a+ZWFZQf+g2UsaAr41orawP9RlKWq0N8nlgRWicBj5Df2i3QTBZQDEqC9R1OQapVUBOOzW
- 9HYx7i/+G7Dlz91Yj9yuu+mGqGiaue60Tmm0hK6aYD76vRxjnBaPpIACRYpQRw/ZwNlMDxG4
- I4lWZSYEW/FN0BX8QgXe0Ew/ypWZcWq9FJbSJSymZT78qHIT5fj689rXFs8PpwUw740Ozxe6
- K0GdAwQcx/W0opawJrjIgVtrt4oIM+uOMYUvWttiGmDS/0nWpvEBa7N4Le03h9p2ZsIRqmYP
- ZdEL2M0PXwsYDUXUrsTIJE3hvupgnD8WzZZs1mS46Ew5gA/ySQqiui8YIuKK4biqcN9s2eJr
- 27/xGHFOTITOt2b9R+X3HHxmbqa9c/8cMdIfFGizdZugVuO1ikQBQcQWF+Tv/a0kAi9VshZJ
- khS/TAhxYA29Uq2XpzmVAa5iGCLswRaWNdKFeA+rgaXxcLpDx2xHGMISHtFLdchrsJzHWZs3
- V6SlNSvDjtq2FGIdU+gGn6vhWraEQAeLHQJYmkPSg5t3jUpiNhbYs7nJjq7LJOIsw==
-IronPort-HdrOrdr: A9a23:SxnsyqtZjhiWuJOzTmPbcbE07skCOYAji2hC6mlwRA09TyXGrb
- HMoB1L73/JYWgqOU3IwerwRpVoIUmxyXZ0ibNhW4tKLzOWyVdAS7sSorcKogeQVxEWmdQtr5
- uIH5IObOEYSGIK8voSgzPIXerIouP3jZxA7N22pxwCPGMaDp2IrT0JdjpzeXcGPTWucKBJb6
- Z0kfA33wZIF05nCfiTNz0uZcSGjdvNk57tfB4BADAayCTmt1mVwY+/OSK1mjMFXR1y4ZpKyw
- X4egrCiZmLgrWe8FvxxmXT55NZlJ/K0d1YHvGBjcATN3HFlhuoTJ4JYczDgBkF5MWUrHo6mt
- jFpBkte+5p7WnKQ22zqRzxnyH9zTcV7WP4w1PwuwqhnSW5fkN5NyNyv/McTvLr0TtmgDi66t
- MM44utjesTMfoHplWl2zGHbWAzqqP+mwtTrQdatQ0tbWJZUs4RkWTal3klSqvp20nBmdsaOf
- grA8fG6PlMd1SGK3jfo2l02dSpGm8+BxGcXyE5y4eoOhVt7TlEJnEjtYQit2ZF8Ih4R4hP5u
- zCPKgtnLZSTtUOZaY4AOsaW8O4BmHEXBqJaQupUBnaPbBCP2iIp4/84b0z6u3vcJsUzIEqkJ
- CEVF9Dr2Y9d0/nFMXL1pxW9RLGRnm7QF3Wu4tjzok8vqe5SKvgMCWFRlxrm8y8o+8HCsmeQP
- q3MII+OY6UEYIvI/c/4+TTYegnFZBFarxmhj8SYSP6nv72
-X-Talos-CUID: 9a23:zdZHUWBCzoJilJL6ExNipFQeGdEpSyWe9irAPh6mVVp0VbLAHA==
-X-Talos-MUID: =?us-ascii?q?9a23=3A/TZu4QxngEGFXc9HYtvD5l4T2l+aqImPGUkBqK4?=
- =?us-ascii?q?Dh/KnPCJxPwu4nhq0H5Byfw=3D=3D?=
-X-IronPort-Anti-Spam-Filtered: true
-Received: from rcdn-l-core-02.cisco.com ([173.37.255.139])
-  by rcdn-iport-3.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 03 Mar 2025 20:29:34 +0000
-Received: from rcdn-opgw-3.cisco.com (rcdn-opgw-3.cisco.com [72.163.7.164])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by rcdn-l-core-02.cisco.com (Postfix) with ESMTPS id B7C7118000346;
-	Mon,  3 Mar 2025 20:29:34 +0000 (GMT)
-X-CSE-ConnectionGUID: gC0d65kYS22TuBO9MYfqXg==
-X-CSE-MsgGUID: QOA4kxxFQOqzzw4Y7jU5BA==
-Authentication-Results: rcdn-opgw-3.cisco.com; dkim=pass (signature verified) header.i=@cisco.com
-X-IronPort-AV: E=Sophos;i="6.13,330,1732579200"; 
-   d="scan'208";a="33212451"
-Received: from mail-co1nam11lp2170.outbound.protection.outlook.com (HELO NAM11-CO1-obe.outbound.protection.outlook.com) ([104.47.56.170])
-  by rcdn-opgw-3.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 03 Mar 2025 20:29:34 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=afn7gZv8DPhgjVNi5MxFCKbHNMOm0QjTu2fkBFd04v2fi0Icx/NlULQpZDnyO6k4oOa5efYCv28PmCSI28BxbFKxFaDBkCqg1V8dec+eFRwBCHLI2hQ9R/xWJa5nNehvDforblhOuz4ME5WxGNgYa6qc+PDUCYbgL3NW89Wvaf8wOCRuB9d9nJJnP7tRh4dgzseZCW4B/yf1Er0qab9c89CInZH6seDf7ZtMXYaNz6ZuLOf8odvEb7lvobxo7BI2AgO05mkg7b7TGju5/ivpkNQc9lVls8OEcHVlbSRg+hquINrY8RwZ9xOxTZ/GkQmZ3qD1dMwLkequ5QfJg2xv7Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RxsCSce6qsuRB1NRRq/Fca/xa2ySV9QQP5NI0+0+FpQ=;
- b=MZoa+KVLr/Kpxld/HMUToFfcBU6YHz1NOa3YMFrlTbei5Xs0yA+mENRWkVlA4ou2rjoeVrRHahPHc16ZKOQ2c4sJgUs4AkeTeTZsnsxE9lsoZ2JQn5GK1PdVNkIG1SquQzk4Y5z4YmTUNSnfqCiv2DLqE8sSZXg4gGJcmZXfLW+2hnWIiI06bgtWRQSau2e0lmWqwX32tFDCDNaTbgYN6Rh9RcX44pqjAXSevtibOGmISKQDpLrzWcu2y98TPDPC5ihEmEA0GnyIL+wrX8Jyjg3jH5kikrap9RnudA0tUYoQYx5HId9XP3krJXUniwep+HffH6piAJ4athKFoNZ4aA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cisco.com; dmarc=pass action=none header.from=cisco.com;
- dkim=pass header.d=cisco.com; arc=none
-Received: from SJ0PR11MB5896.namprd11.prod.outlook.com (2603:10b6:a03:42c::19)
- by SA3PR11MB7525.namprd11.prod.outlook.com (2603:10b6:806:31a::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.28; Mon, 3 Mar
- 2025 20:29:31 +0000
-Received: from SJ0PR11MB5896.namprd11.prod.outlook.com
- ([fe80::2081:bcd4:cb3e:e2dd]) by SJ0PR11MB5896.namprd11.prod.outlook.com
- ([fe80::2081:bcd4:cb3e:e2dd%5]) with mapi id 15.20.8489.025; Mon, 3 Mar 2025
- 20:29:31 +0000
-From: "Karan Tilak Kumar (kartilak)" <kartilak@cisco.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-CC: "Sesidhar Baddela (sebaddel)" <sebaddel@cisco.com>, "Arulprabhu Ponnusamy
- (arulponn)" <arulponn@cisco.com>, "Dhanraj Jhawar (djhawar)"
-	<djhawar@cisco.com>, "Gian Carlo Boffa (gcboffa)" <gcboffa@cisco.com>, "Masa
- Kai (mkai2)" <mkai2@cisco.com>, "Satish Kharat (satishkh)"
-	<satishkh@cisco.com>, "Arun Easi (aeasi)" <aeasi@cisco.com>,
-	"jejb@linux.ibm.com" <jejb@linux.ibm.com>, "martin.petersen@oracle.com"
-	<martin.petersen@oracle.com>, "linux-scsi@vger.kernel.org"
-	<linux-scsi@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2 2/2] scsi: fnic: Remove unnecessary spinlock locking
- and unlocking
-Thread-Topic: [PATCH v2 2/2] scsi: fnic: Remove unnecessary spinlock locking
- and unlocking
-Thread-Index: AQHbikqVLC/w869I+USuWBacBB9ftbNeJakAgAO7TXA=
-Date: Mon, 3 Mar 2025 20:29:31 +0000
-Message-ID:
- <SJ0PR11MB5896B3B54B679A023A3DED2FC3C92@SJ0PR11MB5896.namprd11.prod.outlook.com>
-References: <20250301013712.3115-1-kartilak@cisco.com>
- <20250301013712.3115-2-kartilak@cisco.com>
- <95135f06-cd1f-47a3-8253-c4275e7a5c3a@stanley.mountain>
-In-Reply-To: <95135f06-cd1f-47a3-8253-c4275e7a5c3a@stanley.mountain>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ0PR11MB5896:EE_|SA3PR11MB7525:EE_
-x-ms-office365-filtering-correlation-id: 72acee97-2240-452c-43f1-08dd5a921aac
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|10070799003|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?uxAtVLH5BWnvmR63C1tuvhhofrszWfQwhFAJYkkG4+6bqa6cC0kSbDjeRxz1?=
- =?us-ascii?Q?/3z+gT5IaCpan53JSye8pStMj2ReiqcLBLVtgZaiyhX2B4PVZN9zoG5U85yL?=
- =?us-ascii?Q?9qvvKLMl+NEbOmbOHSmKK4vnPfZmRCIKl5wDYkxHqtmTTd/wvvBlhjMTBCNH?=
- =?us-ascii?Q?K+4kqrfoNQEcd3fsVUBBqwZyi2o0q3eQ2YEZk5k07326kALYQ3y1eBvC0vJZ?=
- =?us-ascii?Q?hDiq7styJlZ8jjqjPOXa0cEe98BuaqT4lfbm4MSuHzFTF8Sy3p6Zj+r1cc0R?=
- =?us-ascii?Q?rZGUnNTJIfCrGJs/XI88k5ISR+qMumF1eZjs9IGs4J73gcn3SynUDC7V+GCY?=
- =?us-ascii?Q?IWOKqDADjJsM69WFAkgfEAze3zYFwVf/cFaJf8pzYBUR5VoDTdgK61IX0eA9?=
- =?us-ascii?Q?UrbU6+9HHWOmtFjmaUY31VlzFxfFyf22tYWPqiWx71+KGflK3LfMFuk+W5bM?=
- =?us-ascii?Q?7Tlg9UKcD4xxE+Oh2H4P2iJqDs8SRVamNIkQuT5/rWFPkrveMwTED0Svc7M4?=
- =?us-ascii?Q?zQ23gvLcFUDrmcT8dEKG7Qh5SFkK5wovDpSWRUduNci0x0Qgz9SCP0cl83uj?=
- =?us-ascii?Q?Dzr/ajiOB0dIot1LV0FEMdw1tuhr2qrkBmy0fSWUDrcUgKf3BzWhs17EeOtv?=
- =?us-ascii?Q?+wZ0pJGh7Kw67swPuC4vcd831+fELAb2suQJuKcXQtnsxwPq7SRI6PlXPBe2?=
- =?us-ascii?Q?3mKPqTPbrCvUy2m+jHd/eefabbv8WA05llFwhwqwl64vYyDJE9DQ98Z3HXYB?=
- =?us-ascii?Q?/G/+LENVXuP65AII4hGHFPNf2j1itWFwrE6Q3NslEVojaaQ345lb2deGhaKx?=
- =?us-ascii?Q?djzKc2OKCRcx5a/36zSe1Nc2J34oU5jrzpzS0a0jLSRAJ67ZEHhAWAeWoG8j?=
- =?us-ascii?Q?Zo5TSLZuqgIR8e6xKf8j5LSEcVuTE112F+eGWk04USY4om0C4kPsNNSVfx9E?=
- =?us-ascii?Q?zR8C9uBft64XGRj94s1QFJxs9YUJBrjZCO2Z7locpkibIXv7AprzIVTe39tH?=
- =?us-ascii?Q?f512tqVI7oE+Hv12YhhjziSblsRljsu9qOHiApblvBuFQMB3KH+/uJPtZkaA?=
- =?us-ascii?Q?0be9aPzSs3Dh1mg6z90mHy/lWQcdKQm7ZZ4tHOBVf0MJxknLdNkHFKwzPCLg?=
- =?us-ascii?Q?lVmXWutbojkHY5mRb7KcgWVCsYw+Q6X0ZghTDf9CA8DTxAqsVZverMbHJxtT?=
- =?us-ascii?Q?TBjHVlQ/5xmla9VB1KKbWdzik3RG/0pBiaewLd1h7Z/i8FX+8mrM2B2DCde1?=
- =?us-ascii?Q?8eIcUsZA+3F17+6FSQCK8EFgGNNKAePxRa7TGw//B5IjWf6Bu3gv6GltQrG2?=
- =?us-ascii?Q?a2o5CYzMgzERak1PDg/xylE2eouPpaVzKlMcxsFf8qVWwxbhfYQSD8SIZz7Z?=
- =?us-ascii?Q?dAHfULqXh7DyaCQiDtbXK04Hp2VcxytRM5kju42HsiRI63GLWk7b5d7zFc7T?=
- =?us-ascii?Q?QwQuv3crX/M/sZrcGapPehLUF2CMn9RT?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR11MB5896.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(10070799003)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?KjzVOz7+zrpQVmmgGceKnQ8P/e4dHmDMsbQH1brinevxLSipuA3ErF2+wvEq?=
- =?us-ascii?Q?jVJO1P8xcE/sVTdGBZZGB4pj210wHS+oXCpwqlcFVzldzuMs/w77+Nls+oWK?=
- =?us-ascii?Q?gvz3rakHjM0CARReJOoUpqefmdt4pKNYkqQ5rz+RteQcJo05A7vMBAeyiWE5?=
- =?us-ascii?Q?a3BBBVE1ZlKW0Vsv7k2QoYU1aHsA3LXYrk/tcTliFTYsD2RUpNiIIR3OAvwi?=
- =?us-ascii?Q?+Q+Q/x0ytKmr+Zt37knkpxLYo2Vrhq8dnWj51f4eXXAlIQbhvN2NjoQgQAKk?=
- =?us-ascii?Q?ehtUz5DbgdoT6E9aP3gLxh6eGMbiR7NVRyuvGUG+74JVWWOfBmWatmp00b5Q?=
- =?us-ascii?Q?I5HNrwO2fuwDp2++zKOYdkg95rzmWJVK4hRIlEzSOnSvqFjjz8DJ3VFZr8Rn?=
- =?us-ascii?Q?G21WDMmzMEXReSdLzmRVni95tYPSExrDUGPc//Djq3XAQgH6g1mSVphe/sLN?=
- =?us-ascii?Q?8tFhujykgbboFUANHxnHYp33BDjhhx1tJfo+DgIIBp92Z4/5uiSv3vU/5EHI?=
- =?us-ascii?Q?uLqZNX/QR4UG+ZuNF0UFtrsrVTaPz/q26w8xiDUxfDjAMokcGvnrr+pEbqDU?=
- =?us-ascii?Q?PrqKm56VZWzACHVq8wGQ4R7t6NdWrBhhqldR/O9svPWEt4krWXBVM8FDfkR+?=
- =?us-ascii?Q?ebzMq4swGK7ueCqv5WAO3eZYosbfZ1sdFhnZ0UVwB+OWHIiVZk6V6f9fPiAm?=
- =?us-ascii?Q?it79yyRiqRhNd6gAz4tLrQvcNmJy3gr74tI8c8pIV67NuELzHu+FA3J7bQZC?=
- =?us-ascii?Q?QH4VxnFGdfpfaQFHnPdwrIQAkUW3THgPG7t4fhznZ7nMYHK6CCjApBmYOBMa?=
- =?us-ascii?Q?ILvvRtTvpxoEW2mPhP/lcq3aGRClNmWYkgDCWdStikWgmNVpEgq9ax7v6+2K?=
- =?us-ascii?Q?F+pfHYLvG0OfsLf7aetCmMeVJYkDeF1eqfDQyiaMT1sqyVH5ze6kgJfJ4uF7?=
- =?us-ascii?Q?F2Iqa016Z6zjiLQmJr4gS1PpanRfgBMHjQU+J2GDFEG8ZK5tl+Xs1kYRJ1D8?=
- =?us-ascii?Q?OzZUXFx/1TiRvLoTsMKkIDXqoOlOKKpRv+nMfq3C51GQDwCexNs6KumU5O22?=
- =?us-ascii?Q?v8oo798NxuGL7R22XTgWLUTwdxLXca03SfAXnoOkbl8YDOaeiCVnxAIm4zEn?=
- =?us-ascii?Q?O48rdzy5IUbsgsacGdB0StzB8ath1QSOCogXriiUhoGue5qHJMDtyj1w/z+G?=
- =?us-ascii?Q?NZRcKMLfI/8xy05X61tjPjp2OiTWR8qppgDghBNzNg5Hr4uXIIhuHY76Xs1q?=
- =?us-ascii?Q?fkKKjuLIgPBcOtmKgKEIKmuR3++PSi8QexnvRz02AXwVhBvONqzs8YTXG37k?=
- =?us-ascii?Q?mDgbPWGDIhU86eT9wVTA+Tetjb8046CMLFvEi7QubMfhtOcFvUiIgohoPBPZ?=
- =?us-ascii?Q?ecPEdr3paOACqwWvGuQqD+aRC0t15MuiQmwx4/wigGrgH9QSiRvE29Av/cN5?=
- =?us-ascii?Q?4PRvh+WAbiWHSfAwwDseW42mcl0gJFX/i+nI4wUjOPOU18+U2nXQ9ZmuL0HL?=
- =?us-ascii?Q?B8RX4zuaZGKfXInxSzhPrF0GTpKPsYxeXXyAsKSYVNAJm0B5gfC43+J6eMOO?=
- =?us-ascii?Q?+nsK5MiRqsMHsS0HrrXDHzwSLVDzVQKhP4T1Eod30HI9jNqIgqZl1V8ULFwG?=
- =?us-ascii?Q?Ci35mkwUeJsdgtF3U1YByFYYwCigngYsjCMWf9nk/gxr?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C72E1EE7D6;
+	Mon,  3 Mar 2025 20:31:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741033915; cv=none; b=YidRT7Xc6aqdEwELvn2oEtQASwHZGu1tQ2bcoVWmPo0ZvM8aowH4OohcY1MPa2eSxyRA2YkVFkiVNGZsoYzprS1wLVbzw/dHeJcjqUBSDh6I850R07vkffXMqzMtKyqeyVDRxKrGS9gsILMRQnB0D81v3b/tFuyq0IP5zF2iH4g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741033915; c=relaxed/simple;
+	bh=tJzwP9V4sBzOTaR6IgBXslaBwnRtpEy2L/p+HucBL0M=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Qb3b4Pzrf3pxS7WrjxorqKAuHLGkXCfw2X2DW+zHBXGYWzvvNnEuTMJfEsN4Y1EihENLtcoDXwdwVOnsTbx5kKjaIZZOAAVKvEu2w1JhAAfBkPfimnSn32iobyDRmVRX1IFGj/Q94eQU8ndhwif8gO+wVg81/7TTxcOEW+sDQNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=MfyNYO5R; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1741033907; x=1741638707; i=markus.elfring@web.de;
+	bh=D7+bOdSKzrxQTuFq1CY/qx2E6hue+i+kR6PvAKN6CDQ=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=MfyNYO5Rf1IJaR1bl+5D5IsmJseNDY+YIie8758fLsUuri15hqT7OmtuxDBDLEkr
+	 +b2BCWTckRH7iqlAQsSswvQPN3R7GzupXlX+wUGPpM0ZB9UGMBQNVqFZcgJVsj5Mm
+	 KQpBNZjng1tLYogquBk5m1qen5lw6p+qtHxYR0vhEGaMPMvG3z08f3UvjxbxmxtT2
+	 Nf5PRQUo/JgcvqQv9n+tEvS6guLUTKrVj9gytk75E/w7Bd5LxIAQqtflav8oL4CnK
+	 Sd342HevHymEA2CHayV1yciCAlvHtqGvs7TXLCJNoVAPP3hMNGCO5LNK7CxPAO1m0
+	 MBC0/Q1C8TIvuRnShw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.19]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mi537-1tKnNS2NY9-00ZvTN; Mon, 03
+ Mar 2025 21:31:47 +0100
+Message-ID: <09fe60d4-8eda-42bf-b2d4-ada265a09ce5@web.de>
+Date: Mon, 3 Mar 2025 21:31:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: cisco.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR11MB5896.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 72acee97-2240-452c-43f1-08dd5a921aac
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2025 20:29:31.5212
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 5ae1af62-9505-4097-a69a-c1553ef7840e
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: CZ/an+Tw9OavQRJgDPQwUC/XkpYIg2CYqwTG5Ufsl++xCt44oSYnmKI6vw7YldRoL0Fw6eeGRXcNB7RpbGwyrg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR11MB7525
-X-Outbound-SMTP-Client: 72.163.7.164, rcdn-opgw-3.cisco.com
-X-Outbound-Node: rcdn-l-core-02.cisco.com
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH RESEND] btrfs: Fix exception handling in
+ relocating_repair_kthread()
+From: Markus Elfring <Markus.Elfring@web.de>
+To: kernel-janitors@vger.kernel.org, linux-btrfs@vger.kernel.org,
+ Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+ Josef Bacik <josef@toxicpanda.com>, Naohiro Aota <naohiro.aota@wdc.com>
+Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
+References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
+ <cebfc94f-8fdb-4d5c-56ee-4d37df3430a1@web.de>
+Content-Language: en-GB
+In-Reply-To: <cebfc94f-8fdb-4d5c-56ee-4d37df3430a1@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:csYVwvzlghPepZ2AyyY46eRwA8AS8BMfd7Ao//GWrCPl1A/GPLx
+ yj8777LveO9YiAnzu+Isjxx46A/wzaMMh4+Mei0pWllSt1K7tKExTVXsM1jRO4mBZ/AFap4
+ ZGQs5wk/ZupNx4PS4mkNzeZlE2UBN+JxipFft3d7SY6vJRyW8vLluaQ1AImETEakmh45VRP
+ Qh6fvi0Yl43mkeYhbF9vA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:TMOfPqAf9qA=;q6Vge51zuOVBjj6nlCJUUhQUdU5
+ fGQgPLo6XTWTDAkVhVwF65N5FuyhGq2NGBUKuAKpsL5xruexqlo9wDpJLIkd0Er+Gj0Oj36TQ
+ qtNlBd65iIADb1O0lrufmP8uug54EEa04vRvN+xQWhqV8UQCnsdiU814FHCz6DsJ0UtYyzJbF
+ BmZs6xXs+MYDbxFBA9IaB5F0+MLFu/w1FSxqWhHAg3XXUyAshRr8qUe7HSiCIOucpc+c9eQml
+ GLDInfjUYHTdf41sUjyIy6FFAiCPmntplZxo9IiZld5sNhtqxZvsu3yE19eZWgup9QqlmYwzY
+ amHpLBDE7qUw7VmqVG4VZCoBrmuDZRzNYBj+4OzXYXDdicXl1PUNgLx8M5F4SR4cTg9QH5vgu
+ MXvgbZVNtLAg9vVqpkfsQnfr3yw+FTmWpA2I0acyw5oIPf7a6eMEUy2c3jiih9FrBW7oSsK0G
+ v6gtT22jHTg/PZfwVya/yY/rT0UDVB0H6UlUUQTPrmbahyshOiC8rKFDkSWW4c+GLY1MgVKli
+ 6jOYCXqlB5AQt4+PLrqPUj0/Ucvma26rreL+Cti1W5jbAK7C2Fenx3hOIZH4dnNxL/3Ye8zww
+ w6ZM4WZJV/YZN2ZQ0mrt8Ap1BSeIhMal2YKFr+3UUDlnPa8D/d8HO9TYQ9xr7Bom6MXyIzrfp
+ 2fT4SwGNWHYEMrxM/rvxBdm1Yid1g/qMseGcvRhxrFIN/vbEDH4sB7FRm+gteBwzvZtwAkaPI
+ 2e1ZIBt+DjE0LmcdJX4ai8WwlMmB+Pju42Vyb3rNDILrFIhgIPg6Xu9V9OP4qOgkidl0v7KjI
+ 1z2DjNe38lZYZUBbDLgAZaAuLXwNkPt7WqqaX4OC1bVsJhBCjbCyOrmIpqW7wVaEB0Z8SVrNH
+ A4vYDcUtAOsHsaPTOMwcX9jHjIkEsqgyElixVLifECkKlq7xD5k7msNrJtuGSEH1czrK7gx4A
+ 0nIlsiRqJclYGptiA9q0zgkVGNOmttbzjPju2W6QZ+EKG+8hmnOUH0TS3nd1RoclnNmN3VAxC
+ AfiugjotANNOOlu3IVDcVFTIoN88hr6CIN3lL/oahQybP9DnBHn36V2oA3DVC7JhLyok0aqhG
+ vOkmyoDCUTkXwLKwFoeiG+WAU77hoZ2TYajr9DzzJk4ex//bD1H9mM6NkfRSMXvhJJzVBQuQj
+ yZ4HEaT5uWlBNkW8qstMSP0eJLWVnyIJKzwTdCZaXTyCd0Swy1Zz84t23pIqBvhhKiK7+qjyi
+ oYvNUgWfDCEgnFLLMrVQBTafJnzQcWA26U7x8nAvgbgnh1LWJjz1efS0OkvZGsy0ZpmW4xNpD
+ bM/AQFk+Bj2wu1CMvfQmwFVz9hIg0fbKB8IrguRNvpX7CWOohqK4k1OaXX/+tNwhhVqyPxxKt
+ s0EoBnfB4elxaDNOEGmszmfuifIALAgtqdyyHDY8zZXVvk3QpybaW9NEE04LuBuqORZBy23he
+ XMXkYjdnk2mY8Xg2G65K84lm6f0g=
 
-On Saturday, March 1, 2025 3:29 AM, Dan Carpenter <dan.carpenter@linaro.org=
-> wrote:
->
-> On Fri, Feb 28, 2025 at 05:37:12PM -0800, Karan Tilak Kumar wrote:
-> > Remove unnecessary locking and unlocking of spinlock in
-> > fdls_schedule_oxid_free_retry_work.
-> > This will shorten the time in the critical section.
-> >
-> > Suggested-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > Fixes: a63e78eb2b0f ("scsi: fnic: Add support for fabric based solicite=
-d requests and responses")
-> > Reviewed-by: Sesidhar Baddela <sebaddel@cisco.com>
-> > Reviewed-by: Arulprabhu Ponnusamy <arulponn@cisco.com>
-> > Reviewed-by: Gian Carlo Boffa <gcboffa@cisco.com>
-> > Reviewed-by: Arun Easi <aeasi@cisco.com>
-> > Tested-by: Karan Tilak Kumar <kartilak@cisco.com>
-> > Signed-off-by: Karan Tilak Kumar <kartilak@cisco.com>
-> > ---
-> > Changes between v1 and v2:
-> >     Incorporate review comments by Dan:
-> >     Replace test and clear bit with clear bit.
-> > ---
->
-> Thanks!
->
-> I'm not really qualified to give a reviewed-by tag to this, but it looks
-> okay to me.
->
-> regards,
-> dan carpenter
->
->
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 22 Mar 2023 20:10:09 +0100
 
-Thanks for your review and comments, Dan.
-Appreciate your help.
+The label =E2=80=9Cout=E2=80=9D was used to jump to another pointer check =
+despite of
+the detail in the implementation of the function
+=E2=80=9Crelocating_repair_kthread=E2=80=9D that it was determined already=
+ that
+a corresponding variable contained a null pointer because of
+a failed call of the function =E2=80=9Cbtrfs_lookup_block_group=E2=80=9D.
 
-Regards,
-Karan
+* Thus use more appropriate labels instead.
+
+* Delete a redundant check.
+
+
+This issue was detected by using the Coccinelle software.
+
+Fixes: f7ef5287a63d ("btrfs: zoned: relocate block group to repair IO fail=
+ure in zoned filesystems")
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ fs/btrfs/volumes.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
+
+diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+index 6d0124b6e79e..de11ad6c8740 100644
+=2D-- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -8096,23 +8096,22 @@ static int relocating_repair_kthread(void *data)
+ 	/* Ensure block group still exists */
+ 	cache =3D btrfs_lookup_block_group(fs_info, target);
+ 	if (!cache)
+-		goto out;
++		goto unlock;
+
+ 	if (!test_bit(BLOCK_GROUP_FLAG_RELOCATING_REPAIR, &cache->runtime_flags)=
+)
+-		goto out;
++		goto put_block_group;
+
+ 	ret =3D btrfs_may_alloc_data_chunk(fs_info, target);
+ 	if (ret < 0)
+-		goto out;
++		goto put_block_group;
+
+ 	btrfs_info(fs_info,
+ 		   "zoned: relocating block group %llu to repair IO failure",
+ 		   target);
+ 	ret =3D btrfs_relocate_chunk(fs_info, target);
+-
+-out:
+-	if (cache)
+-		btrfs_put_block_group(cache);
++put_block_group:
++	btrfs_put_block_group(cache);
++unlock:
+ 	mutex_unlock(&fs_info->reclaim_bgs_lock);
+ 	btrfs_exclop_finish(fs_info);
+ 	sb_end_write(fs_info->sb);
+=2D-
+2.40.0
+
 
