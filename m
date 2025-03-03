@@ -1,204 +1,258 @@
-Return-Path: <linux-kernel+bounces-542793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8C23A4CDC0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:57:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11710A4CDC3
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:57:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0E6A189401A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 21:57:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBE8C3A7958
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 21:57:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FAA0235C04;
-	Mon,  3 Mar 2025 21:56:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2FCC1F1303;
+	Mon,  3 Mar 2025 21:57:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MiKBgU4v"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="B0Cv12UH"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11011044.outbound.protection.outlook.com [52.101.65.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EEC71F0E49;
-	Mon,  3 Mar 2025 21:56:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741039003; cv=none; b=POAlfk2fUQss/bp1sG9dwL0Xmr7nGt1wq/Fu4AibhGD3KW/JkFa58hzDeF1QKBGwNViNDYjTG5Dr8pYfDgPMeqlIZSNAPJxowkGxul/KphLL06oLPPBiuiKZtI2PVq122V5lv/kNkhDVPS/1uiyj/cMbeENFTubZ3Cjs4ZNGb18=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741039003; c=relaxed/simple;
-	bh=lEaVgkWLDsAoo7SCtrvHeS2rrk7e+4rhOrGqQw8hgx0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GElZVDZ3/cmipwhiDtuyuThxD7MoFqBig74/BO/TzZLs5+3M3LwIZXHGlzDaZxgHQ85lhx9rs+vCXaVwAhjLYjvzfX0lhYch9hs7KthGotxrV+kGU4SvXSdGZ0h39xTHHXb3L6PlO+FtNzJ54YQfZ9JafChA3oSwCGNVxLR4XbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MiKBgU4v; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e3c8ae3a3b2so3674362276.0;
-        Mon, 03 Mar 2025 13:56:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741039000; x=1741643800; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MNbwSIfUeSXXPmyUg0Xj+MaylekMn1nHxUkSWUyl25E=;
-        b=MiKBgU4v2bMJxeVC89sYOfaX04ZbMqdTZcET0he37eDT2WSl/B+1u1CiCdpVl7/m8P
-         lMiGynT0qCD5s+ZB6vB8+XhRpi0KGu4lQ2GvlDtDr3qo1GJq+aj0oOEnXiK0nBm/CBl0
-         2D1bTz7eOpGolHpdWMZtZIuQy4N+ZgWy/S3l+5B6wn+/oGBhnXF3cFiAaZxsiZS4wFmf
-         Pn4ANVi0Zywv06tMKLDYESMZsrAK77hNS5vIMlxZGIWMCDxeP/cYm1qGuK9IB/Uh0WO9
-         2i3sNVyy2K21Ng8ZrQrYZMAhaLHJq17nCDrep87T5LmNl9UyJ1ulIAPpoxrpIbTCbRb6
-         PiDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741039000; x=1741643800;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MNbwSIfUeSXXPmyUg0Xj+MaylekMn1nHxUkSWUyl25E=;
-        b=l7nG87cD5lGc2n8cDUKekLFaNBBVc4uIZRryV68cDWEOKMvkZSbGo+LQO0GYqdO9XY
-         kWuIpR6c2JkSYe2qsW3CjJrWsc6++ftGSR5gqsHU8ODk4UBWBsXJV03rTx2eGW2c6hJU
-         H5SuHeZGRmzCtXTXYNt2zHu3VZQQWk5+eupm0eDEpF6EDzzRRspsr4+SbQJitgODn4Dq
-         l7na9smOFOWZLO65kSCj0EfSa1/vHNxXxRAagvbwV1u2WST6c+xYeYpN/V7Ib1STB7Go
-         RMyr4GPceNWg+9vjvQyw/vPbm5+BwqYpd/aZmZgtqjCuwJNw+QhUZisz7z5opT+3I/lI
-         zR1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV1V8hfyaMbUXl/+7tPvG0/B8Nyr5jPEQvq1veOjFy6cd+HgaLVsdJ00XiFPgIcVcevpAwcCG7Y8lfw@vger.kernel.org, AJvYcCWw2Z5qROstoZzgil5T+anoe+0kjVbGOt5eDBk78GpVok/Elq6STw1tQL75CIrQPHB8xdro2iTS0FtpjpnR@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFA9X/pmzv+wsBdSLbTsNXa1kzPyubM4LWFPYY6azxpySfVONF
-	nHzk4p5K1u6bjBo6sHN3hIAAT6mie2T22IV8DTKrs/HzgkmubN1w
-X-Gm-Gg: ASbGncsEHW6bcjZ6fYEBbT8G5TttZ/it1W4J/5MwNywZWRa9VOnUGzJUgxxAv/fJEzD
-	P3eTEaT0+VzK6+2PZ2RiduyMuId3/8VdUsbs5ehJFY4O3z942Q0n1vVer82hucZOd3rYuQ4Gwkw
-	407XLYCgc0S35xsNzZBYrgF6koOj6RNqAD41LAAUdRiobls1aUqfiZQu6KO3wFo2wxTxvXxBEv9
-	q1bKzLqO5CHMRojrx5rQGJEdLqw+IHr78rauKk4DEtW5WEqErfycfXn8L+6dhU5tccCS3H5g52h
-	rYWPV+r7+U0yC1aYL3PKSoy6hERWf6ZXzjNq6/P2Twc=
-X-Google-Smtp-Source: AGHT+IEA8yLhpHzDWjatXgDyinVX0Lpz5abZAJlFq+1cN7NEeFsiJwzy35+xYSdJC0T1I1JTUbAr+Q==
-X-Received: by 2002:a05:6902:1682:b0:e5a:ca6b:4531 with SMTP id 3f1490d57ef6-e60b2e9a4d2mr20720874276.12.1741039000158;
-        Mon, 03 Mar 2025 13:56:40 -0800 (PST)
-Received: from localhost ([2a03:2880:25ff:5::])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e60a3a42594sm3315506276.31.2025.03.03.13.56.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 13:56:39 -0800 (PST)
-From: Joshua Hahn <joshua.hahnjy@gmail.com>
-To: Honggyu Kim <honggyu.kim@sk.com>
-Cc: gourry@gourry.net,
-	harry.yoo@oracle.com,
-	ying.huang@linux.alibaba.com,
-	kernel_team@skhynix.com,
-	gregkh@linuxfoundation.org,
-	rakie.kim@sk.com,
-	akpm@linux-foundation.org,
-	rafael@kernel.org,
-	lenb@kernel.org,
-	dan.j.williams@intel.com,
-	Jonathan.Cameron@huawei.com,
-	dave.jiang@intel.com,
-	horen.chuang@linux.dev,
-	hannes@cmpxchg.org,
-	linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-mm@kvack.org,
-	kernel-team@meta.com,
-	yunjeong.mun@sk.com
-Subject: Re: [PATCH 2/2 v6] mm/mempolicy: Don't create weight sysfs for memoryless nodes
-Date: Mon,  3 Mar 2025 13:56:36 -0800
-Message-ID: <20250303215638.317539-1-joshua.hahnjy@gmail.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <c43c64f4-e697-468e-80af-87bd02a95ba2@sk.com>
-References: 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C993F1E5213;
+	Mon,  3 Mar 2025 21:57:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741039063; cv=fail; b=Kie+rdX8vkCWemHH7PPeNEVSJ2FfNCHxFkmvwMxq2ManCgZ6ux0WmccrRGEzSTfnI10eagojA2tX0IB05LxZo790PXBMQyzymL/PnB2gxvOAIryzTBPm9lO3Fzv/IL2wnnXjAIoZZRNug+X/BpWewHwhpk0jkGzcNStxKv3qdpI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741039063; c=relaxed/simple;
+	bh=2B/DmQ791OicXBAlM/f3gq1SfcoECIusIbEiJO1VAik=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=n4RrbKBdM3wZ5A3Oh8WUtMWmX1e4jbLPkCFLsgobl+7XM+jMJxzX5MXftTxBcAOstuwXdVnHGwiwZmkkEhTN5S85Y5ayhaSqCed2qHnPSMqyNAcTdwvL5MbF97nlMbrRALl2opDp+A7y7KTKSuA3jseu5cS6BeJxk2ISofYgDtE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=B0Cv12UH; arc=fail smtp.client-ip=52.101.65.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=BTFZic7F9+/RwpZDpbWs2u2I0YSg5JCWTaMTfSwcE0IRgmVovzLzClMxyMM+sGoKJPYKgt7eAU3Lja9TDU3+9b+nMzi5reVYe5hNUABF3PhBEsG2ZJ7pHX2rSpBKVKfnH8+ki4KkclswbbUUgnt1e21fTWsVrVS+bew24VVG/hUI3E5xEUu1pnJud/MAMIoQHTSdeXW4XlFp1WwDOzC4rjoAhsmbU4ftXwx3eUz41lAbfGi9yCKxkjZlhKnt6iBB4qt85ut9iuHXtsZmludYw2/SK9KsEzHvs/q/7hmJzdCRXyvq/N5XZFLcPcG7ydlCyT2w2WjcfpzJXwpLYD7miQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9sxxFTwBCmy07b17h1uPkhQMTyDEADvYmXs/vNiGFOM=;
+ b=m+kuzeblNpYjvkOrtYC+6Z56Z8Qs9Lyl43lDx0lyMMzBw3j2F9xpa4xLSozkz9Xb0wauYs35YDL/nyfv0TUh2uLJooMoPQx6bWrfQhr4/MLDIR/X1p0yzkoQjOU+ImwaZXG1EwjFNhbE8Cjoxjxylt+6e2vTQ8lnjPhMoBgkpBGNdxgXVEZqulpgCssyHFjVaa/wm3I14/RhkcMIVtwwAUhbDN5zKoo4qbZvMUicsdWFtRAYRs9r24JXNapWpvacS+nVmhRB+5+A2zvmeRX1ISCgM+w9CC8sm4g5pFTIHSL+LoeD8/JU4rPzdxjuzRf1s2EN5fJ5YgplukvDeddWiA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9sxxFTwBCmy07b17h1uPkhQMTyDEADvYmXs/vNiGFOM=;
+ b=B0Cv12UHdXJdy2f5akpR80L2PNYZh2VIUbOtNRBBkR/jLXjPwQh7GTwk7r73AGumhdGHpDhkKsHcb/oPOemAYnpVxUb8c211+ALxO0o7CvaFKjGVBvI5VtYS8HoRT3l6Jfrjq2569GrMEShB2ACpIJJNgvGQE58+keJ0RNZ55lg/mCRZa5v7huxhHew1GRjo2hcOFxrKw1lrR7oURtQ4yWsjWU2McjqyrmPzLDUYFZGYwTBz/F7x/6XC17/MOy0fy3XBzYLPPeqTwUFIaJaXkUSGC3r50gnm9B9dsGwEGTlgWsLha67le7xCtQoi3RCl2IlU4iVGS0WrfK/1I/jx9w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by PAWPR04MB9910.eurprd04.prod.outlook.com (2603:10a6:102:380::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.28; Mon, 3 Mar
+ 2025 21:57:37 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8489.019; Mon, 3 Mar 2025
+ 21:57:37 +0000
+Date: Mon, 3 Mar 2025 16:57:29 -0500
+From: Frank Li <Frank.li@nxp.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+	Niklas Cassel <cassel@kernel.org>
+Subject: Re: [PATCH v9 3/7] PCI: Add parent_bus_offset to resource_entry
+Message-ID: <Z8YlySM6Xtr0beo1@lizhi-Precision-Tower-5810>
+References: <20250128-pci_fixup_addr-v9-3-3c4bb506f665@nxp.com>
+ <20250227002326.GA566507@bhelgaas>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250227002326.GA566507@bhelgaas>
+X-ClientProxiedBy: PH7P220CA0125.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:510:327::18) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PAWPR04MB9910:EE_
+X-MS-Office365-Filtering-Correlation-Id: 79156882-b337-45ac-cf11-08dd5a9e6957
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|52116014|7416014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?bNSyovjhdTRrItZ4i8836Ww+okiBFq2zkAu8UZm87p3RsQL9LyorGVMw5lig?=
+ =?us-ascii?Q?j7eznSV6UFOZURpFNIqje9H7Vx+M1aQRU/WTxEk86WUQkWpUuPA8NJE04OiV?=
+ =?us-ascii?Q?nSrAOdca7VTtqi9vO+Qk4rLUN9H2CoqBocISXKHda5cOyTgatyXkU1hIzoka?=
+ =?us-ascii?Q?Wt/1bT3z5Dsi2A4kIWRew3AJ+oPtb9l0XpdTYnDdAYuMyAdVMqrbyty915qy?=
+ =?us-ascii?Q?rZvJDgztCl/Sg9f+BQ4tNCuiSH/sbdWNSnTzN9S7wRaSYiPZ4K+PWHHXw5ij?=
+ =?us-ascii?Q?cp41XbOoePm9kukZ05Oq0UOriTSQjt6BWNKVtkJEUhGgp8NQ++3ah5jDoyLd?=
+ =?us-ascii?Q?46AHlTmVyjJneYhqxHefYS7+IGhpmpIoudCUT8uSiKx+HaN5O+/UuFxR8Hia?=
+ =?us-ascii?Q?UlEHZnPmTXGUCN9LOL8baovWeYbjyPkWiNgH3d8bJXuOnMMtp2UskH0SDBOY?=
+ =?us-ascii?Q?9UGMqSBb2EmFCtqHfDH8bOaxadOlPrCDxQQY7PMIN5eg+ziyKx61wdQUvdIL?=
+ =?us-ascii?Q?0wx3DfL6PfUsNfWRHfakupDsADmyO78hMKUnRIS2YqSdn8odoCRadioJDb5D?=
+ =?us-ascii?Q?PF8ykhCWnUskJeoWaAFBqxFu9Dck/B9UGZ+gyYbkmoraEPiXCBfNm5uE3u7t?=
+ =?us-ascii?Q?Jwfd/4ZVRaB+fQ+IplcWNDJchaVj5hmy6DTTIM7YwA/ayT/kfzTLk89Gy/vN?=
+ =?us-ascii?Q?pDeY8fUBWn37WYxQK+3YUHrHG+Kps+IV43kAt12rTLnMvx+iafvVVylGSEM/?=
+ =?us-ascii?Q?oRwDDjgy+Kg7C3C6gW3thsyngxICPzuxZ8vC/+ioU0B8DiJO5KMX43uWHKcp?=
+ =?us-ascii?Q?BnUz3tW9FjlxMMqAJMlAGjXkoLLymSeUP/398ptmCyxLL+ocn6karLS3s9AE?=
+ =?us-ascii?Q?vd+7FzKs9H9I5ZDPw/vKKASc3VMK53g4fUvPa9u+dja4tx0LDdB6yq3YLYAS?=
+ =?us-ascii?Q?eWwQKlKEXD4kw58NeoF58cNIkaaAzjoOy7Bc1nXKtlUMu0Ry1qKZSb++tgsu?=
+ =?us-ascii?Q?7Om/Faj2KUPG5q9CLexqWnKc7LYD/IxsXv4k62YjhlTmJtWypeubEFkVwYyG?=
+ =?us-ascii?Q?OjSL3oa03mIWnmYLC1cMZa0XOBygVKVWBq8pqp/S240uU5pHMEp7l52+R8j+?=
+ =?us-ascii?Q?ZArWLd5kCmXqTSu0FzOT7MpTNqbRCWuQ1XggFvtcPQo0IZVCzHgWWpJtwr1a?=
+ =?us-ascii?Q?gGGi5gnaAhewciwALg1/0sS8MJaL9Fj873DqFnaVtNRMl16v7R1+46V4ToCp?=
+ =?us-ascii?Q?VCBDUmm3yeOSohXrZIjNq/AQy82MSW6Q/dbrgRcp2mN4aDN2IDrYXi3FBtSc?=
+ =?us-ascii?Q?L1aWr78Bsic/hZKdSjv2N1JHiqglPHkpMgVC78SOEot//P83IKY1VDJ/ehvC?=
+ =?us-ascii?Q?nM5/WKi3n8kONHXfHQ3m4zFKjSNJj1WbdUJ/Il7KUU8XAl5rGxpSrGeZh552?=
+ =?us-ascii?Q?2Fk2L3uIzuhJwoe7/ZqPcuj3dqz4OAVi?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(7416014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?lde8msIyrNMcd6Fjk+rTV6eFzkJkuI51GTFnxuG25Oulw1XdN1yKxND/WrTE?=
+ =?us-ascii?Q?QTP/ISodd0xYv+WxfrFH4FiBTwmIgeKN9kTThwCo6iTkSAURaB9dloHTOCV+?=
+ =?us-ascii?Q?TlQwpFNq1UEGyEGEVeHxSuPXHNPp/vjD5U5/sRt7WlguCYf+Zc7JEStk0TYM?=
+ =?us-ascii?Q?G02QGMxhLczJxgCUW6eSYRJCc8hMF5wbAAE2Z6IeGsF/VfKemtT4tOyCQ2WD?=
+ =?us-ascii?Q?vrj3iB0uR0LncSQOWob672H3u1F2pOnidM16Go8kJCYHCIqaLeE7ws2qUNaP?=
+ =?us-ascii?Q?g6P241kD/NaL7jhI8+BLsvPm99IRGBgmrxUCJvS+2LgFHY5lGsslFxUUWNPF?=
+ =?us-ascii?Q?WNwzAM5x/SJIeyVAoUCFDPaWvL/QQQnZxY6ZXa1y4TY+2MNphO/Ed56qb11J?=
+ =?us-ascii?Q?nrktmLR8Y9voJ/+Tw5dc9H3aZ47BQragBkg7uxBKkDlEXGxETFDOuJkjG29r?=
+ =?us-ascii?Q?V76OLJfw3svFv0V+d0kONSgCMnPa+5pt+cLudTYFfQBe+OaaMunKY6QzV/0b?=
+ =?us-ascii?Q?W5Pew519yMXE4t7z1XuzEznfFyjXmpU3YV4dd/nr5MiX7r/5fS7G1Otx42lz?=
+ =?us-ascii?Q?xWgt9bv/co3374QDByID7WXY7xnucDSUhcCHK0M5iJAM9uY2W2DHY62Bm8mC?=
+ =?us-ascii?Q?rhRT8C9P/4NXs/hfqxJdXqRPrrv3TzYBNb491pGSbA4PgBq6e56Ecig/+5Wh?=
+ =?us-ascii?Q?0StLvdw1pBPsn+DmF4dURBbStXAXei6J8UODKRV65O40FDRoKoSd/QAD9rt+?=
+ =?us-ascii?Q?lwAgYLny/UbcGzAT8PV5GQzCZTSs1qz5zQ+FFPpUx64m3arufZCMKywxDh+x?=
+ =?us-ascii?Q?wH59DZoro+3Tjn+r3zGSbrcw5DCa3S8cDD9jC5Y2ej/OMMLoWHoVpL8l3KUb?=
+ =?us-ascii?Q?80F6DA98dGObLtzhPkx1ibnEPToM+j9LCidgg8hBPMxm1uQuWe9O68A+koD5?=
+ =?us-ascii?Q?9ATzKqsvPTNluEyxEvg/4TQwmeE6usUcLiIJaDYep8P5uYMMA/23YmuSvxUJ?=
+ =?us-ascii?Q?LcSfKrXTi2L8Ogy/wR6Ntk7OmMri5QKuZQDSLAt45eBsX5J1o0qQh//y50li?=
+ =?us-ascii?Q?ah0AhPxpn6UQFDow9ktUBgCnrQY+bPJxfQ88l0pjbchPng/DCafxyUlbwFre?=
+ =?us-ascii?Q?12oJTjQkrb8h9oiXSwq9h35Sg2DNglUqCQtNwzrt1Bbfa2GIKyazP2Inx1eO?=
+ =?us-ascii?Q?OSNxHkCncejhmgp9+mMO3npweply2VJiIvowjRxTwmixvwEUhqys7Nax6VLf?=
+ =?us-ascii?Q?A/u2253pVJYIgBVCXvxLAcjM96SJlwc51xk75z/lPRQPIk1NnQT98OTvMcyN?=
+ =?us-ascii?Q?BXx4UXFI9jFcrUvYcLhhQfN2Xa7CfdBbBjVxsAs2YKf27CG9lEfdjmLLnBo8?=
+ =?us-ascii?Q?uF/xqJ21Fm2YdnN4SpQTxWcqwN5X/wkaDxcJi15GYVTjWSg2o8ntDg8KCsTg?=
+ =?us-ascii?Q?rkTJmRafb12mTnaTfw7tW3JaPpCMS+8nxZW2i5mptVQQchyXTx/Ef6uphOQb?=
+ =?us-ascii?Q?cRXJnxncq0cjrUH1/HPDny6G+Ryi5PSKuXCz8z7gNnseMrn3rJ6QJ6krN5Ys?=
+ =?us-ascii?Q?o8by6iN214m6vqlpLNM=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 79156882-b337-45ac-cf11-08dd5a9e6957
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2025 21:57:37.6723
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9O7epum/xtYv5U6uo9f2sMgTpQw1jJh73w0pKv51JI4WMJp3yuVL5tOM1fMcqBvo8w8p4eyqE/9mJgyUz4CvTA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR04MB9910
 
-On Thu, 27 Feb 2025 12:20:03 +0900 Honggyu Kim <honggyu.kim@sk.com> wrote:
+On Wed, Feb 26, 2025 at 06:23:26PM -0600, Bjorn Helgaas wrote:
+> On Tue, Jan 28, 2025 at 05:07:36PM -0500, Frank Li wrote:
+> > Introduce `parent_bus_offset` in `resource_entry` and a new API,
+> > `pci_add_resource_parent_bus_offset()`, to provide necessary information
+> > for PCI controllers with address translation units.
+> >
+> > Typical PCI data flow involves:
+> >   CPU (CPU address) -> Bus Fabric (Intermediate address) ->
+> >   PCI Controller (PCI bus address) -> PCI Bus.
+> >
+> > While most bus fabrics preserve address consistency, some modify addresses
+> > to intermediate values. The `parent_bus_offset` enables PCI controllers to
+> > translate these intermediate addresses correctly to PCI bus addresses.
+> >
+> > Pave the road to remove hardcoded cpu_addr_fixup() and similar patterns in
+> > PCI controller drivers.
+> > ...
+>
+> > +++ b/drivers/pci/of.c
+> > @@ -402,7 +402,17 @@ static int devm_of_pci_get_host_bridge_resources(struct device *dev,
+> >  			res->flags &= ~IORESOURCE_MEM_64;
+> >  		}
+> >
+> > -		pci_add_resource_offset(resources, res,	res->start - range.pci_addr);
+> > +		/*
+> > +		 * IORESOURCE_IO res->start is io space start address.
+> > +		 * IORESOURCE_MEM res->start is cpu start address, which is the
+> > +		 * same as range.cpu_addr.
+> > +		 *
+> > +		 * Use (range.cpu_addr - range.parent_bus_addr) to align both
+> > +		 * IO and MEM's parent_bus_offset always offset to cpu address.
+> > +		 */
+> > +
+> > +		pci_add_resource_parent_bus_offset(resources, res, res->start - range.pci_addr,
+> > +						   range.cpu_addr - range.parent_bus_addr);
+>
+> I don't know exactly where it needs to go, but I think we can call
+> .cpu_addr_fixup() once at startup on the base of the region.  This
+> will tell us the offset that applies to the entire region, i.e.,
+> parent_bus_offset.
+>
+> Then we can remove all the .cpu_addr_fixup() calls in
+> cdns_pcie_host_init_address_translation(),
+> cdns_pcie_set_outbound_region(), and dw_pcie_prog_outbound_atu().
+>
+> Until we can get rid of all the .cpu_addr_fixup() implementations,
+> We'll still have that single call at startup (I guess once for cadence
+> and another for designware), but it should simplify the current
+> callers quite a bit.
 
-Hi Honggyu, thank you for taking time to review my patch, as always!
-I thought I had sent this, but it seems like it was left in my draft
-without being sent. 
+I don't think it can simple code. cdns_pcie_set_outbound_region() and
+dw_pcie_prog_outbound_atu() are called by EP functions, which have not use
+"resource" to manage outbound windows. And there are IO/CFG/MEM space at
+host side, It will involve more .cpu_addr_fixup() calls to setup these
+range.
 
-I will follow Gregory's advice and we will drop the patch from this series,
-and send the first patch only (with Yunjeong's changes). Thanks again!
-
-> 
-> On 2/27/2025 11:32 AM, Honggyu Kim wrote:
-> > Hi Joshua,
-> > 
-> > On 2/27/2025 6:35 AM, Joshua Hahn wrote:
-> >> We should never try to allocate memory from a memoryless node. Creating a
-> >> sysfs knob to control its weighted interleave weight does not make sense,
-> >> and can be unsafe.
-> >>
-> >> Only create weighted interleave weight knobs for nodes with memory.
-> >>
-> >> Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
-> >> ---
-> >>   mm/mempolicy.c | 2 +-
-> >>   1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-> >> index 4cc04ff8f12c..50cbb7c047fa 100644
-> >> --- a/mm/mempolicy.c
-> >> +++ b/mm/mempolicy.c
-> >> @@ -3721,7 +3721,7 @@ static int add_weighted_interleave_group(struct 
-> >> kobject *root_kobj)
-> >>           return err;
-> >>       }
-> >> -    for_each_node_state(nid, N_POSSIBLE) {
-> > 
-> > Actually, we're aware of this issue and currently trying to fix this.
-> > In our system, we've attached 4ch of CXL memory for each socket as
-> > follows.
-> > 
-> >          node0             node1
-> >        +-------+   UPI   +-------+
-> >        | CPU 0 |-+-----+-| CPU 1 |
-> >        +-------+         +-------+
-> >        | DRAM0 |         | DRAM1 |
-> >        +---+---+         +---+---+
-> >            |                 |
-> >        +---+---+         +---+---+
-> >        | CXL 0 |         | CXL 4 |
-> >        +---+---+         +---+---+
-> >        | CXL 1 |         | CXL 5 |
-> >        +---+---+         +---+---+
-> >        | CXL 2 |         | CXL 6 |
-> >        +---+---+         +---+---+
-> >        | CXL 3 |         | CXL 7 |
-> >        +---+---+         +---+---+
-> >          node2             node3
-> > 
-> > The 4ch of CXL memory are detected as a single NUMA node in each socket,
-> > but it shows as follows with the current N_POSSIBLE loop.
-> > 
-> > $ ls /sys/kernel/mm/mempolicy/weighted_interleave/
-> > node0 node1 node2 node3 node4 node5
-> > node6 node7 node8 node9 node10 node11
-
-I see. For my education, would you mind explaining how the numbering works
-here? I am not very familiar with this setup, and not sure how you would
-figure out what node is which, just by looking at the numbering.
-
-> >> +    for_each_node_state(nid, N_MEMORY) {
-> 
-> Thinking it again, we can leave it as a separate patch but add our patch 
-> on top of it.
-
-That sounds good to me. 
-
-> The only concern I have is having only N_MEMORY patch hides weight
-> setting knobs for CXL memory and it makes there is no way to set weight 
-> values to CXL memory in my system.
-
-You can use weighted interleave auto-tuning : -)
-In all seriousness, this makes sense. It seems pretty problematic that
-the knobs aren't created for the CXL channels, and I'm not sure that hiding
-it is the correct approach here (it was not my intent, either).
-
-> IMHO, this and our patch is better to be submitted together.
-
-That sounds good. We can hold off on this patch then, and just consider
-the first patch of this series. Thank you for letting me know!
-
-Thank you for always reviewing my patches. Have a great day!
-Joshua
-
-Sent using hkml (https://github.com/sjp38/hackermail)
-
+Frank
+>
+> >  	}
+> >
+> >  	/* Check for dma-ranges property */
+> > diff --git a/include/linux/pci.h b/include/linux/pci.h
+> > index 47b31ad724fa5..0d7e67b47be47 100644
+> > --- a/include/linux/pci.h
+> > +++ b/include/linux/pci.h
+> > @@ -1510,6 +1510,8 @@ static inline void pci_release_config_region(struct pci_dev *pdev,
+> >  void pci_add_resource(struct list_head *resources, struct resource *res);
+> >  void pci_add_resource_offset(struct list_head *resources, struct resource *res,
+> >  			     resource_size_t offset);
+> > +void pci_add_resource_parent_bus_offset(struct list_head *resources, struct resource *res,
+> > +					resource_size_t offset, resource_size_t parent_bus_offset);
+> >  void pci_free_resource_list(struct list_head *resources);
+> >  void pci_bus_add_resource(struct pci_bus *bus, struct resource *res);
+> >  struct resource *pci_bus_resource_n(const struct pci_bus *bus, int n);
+> > diff --git a/include/linux/resource_ext.h b/include/linux/resource_ext.h
+> > index ff0339df56afc..b6ec6cc318203 100644
+> > --- a/include/linux/resource_ext.h
+> > +++ b/include/linux/resource_ext.h
+> > @@ -24,6 +24,7 @@ struct resource_entry {
+> >  	struct list_head	node;
+> >  	struct resource		*res;	/* In master (CPU) address space */
+> >  	resource_size_t		offset;	/* Translation offset for bridge */
+> > +	resource_size_t		parent_bus_offset; /* Parent bus address offset for bridge */
+> >  	struct resource		__res;	/* Default storage for res */
+> >  };
+> >
+> >
+> > --
+> > 2.34.1
+> >
 
