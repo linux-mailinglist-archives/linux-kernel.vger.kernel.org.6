@@ -1,164 +1,141 @@
-Return-Path: <linux-kernel+bounces-541207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BF1FA4B9F2
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:55:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72355A4B9F4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:56:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 141C5188D895
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:55:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C005A1660ED
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:55:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8E71F237A;
-	Mon,  3 Mar 2025 08:52:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 764621F30A9;
+	Mon,  3 Mar 2025 08:52:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="b7w2STaE"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H5bBw+sC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71FCB1F1508
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 08:52:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCD041F1508;
+	Mon,  3 Mar 2025 08:52:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740991958; cv=none; b=PTTPSgYs6WyidyjVQZfETofHQcIyykJwbzEZmillFpUVD/7wDbIWTU6GA48XXa2Kfr2YDvGIJ1xM6Eq2byTxpqwnbZofCIUirUD7aUVE4pg5abwET82buWpxkJSHOmrDobcTK/B2slDG0bZOWHCEoE1QY0v/HbLbmgkwHDp0s34=
+	t=1740991961; cv=none; b=Yw9G10JwTRtN04kzdytFKfvhXiQA5/krc2cHwvtiksLmNmbY3Kp/VAB+rl4iTA7+2pxpsgYqU8cyuAgQ/e2fGqzWza/4xdBZASD1dI6pKHKlkGh9NxcS3thiD9bw3A1JpipvKY/pMzhevezeMgBV/WxAB9kibG331/7iTspvAc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740991958; c=relaxed/simple;
-	bh=n0ff1xI1lgmg8Rykovee0x4apm8ykyWD2JrE1dHfyPw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rht7+g9z4BBY5ZxBtBIqNj5Pnu1Mo6LbeaT7315FDle+tvcQ1pwTrgyi0914IV/89bW/QS4Xlm2EMJg9aLIVPordupUTELNBnnpu8i+GLaa7Op+DODeCOHNvAqMtnZGt95k1nQjXU8KYXuiRKX4kOEdokYpXFFwSTRlY+Mn/ppU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=b7w2STaE; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-38f406e9f80so3211387f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 00:52:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740991955; x=1741596755; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cZedBe7vxwSHNQekhyj5949NlNVonJ7luZ+4oJCMZq0=;
-        b=b7w2STaEee5vPKceONXDZJvCBWg/UKCJpdTtwghOFeDYwQc9/8k5gxR8jSH+QgnV1h
-         h88VwqUn6kXhdjHxAO+7MFlPm8gZOpHMcp30+B8HC2Qu1Dc1fHBwvS0UJ1YtGmVmT8zP
-         LExDFqSmzuRixDyNUyhoezUkgBvpoxRQJn0U3fOf1Fzp3xOWCxQs8fBe9ivMTTy7R+dd
-         Vx9HVidy3MkafrqJxiZi2xvX9O9SHxmmClp1k3lVrPUZB8qKPjfFxR2zmbsV68v4gGC2
-         ViiWHTj6j17PDx23ZPIKJGUPRgqX3yEfbHzHsSk/LcD2NhWOT1EHhhMgq8bXqDU8bZBd
-         w0Rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740991955; x=1741596755;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cZedBe7vxwSHNQekhyj5949NlNVonJ7luZ+4oJCMZq0=;
-        b=gsdCertxv6SHm4yZyCxgboriJk3hS26lsVPMSt2g0vFrnFXOO9MGPBPb/pyaJuJ1rY
-         ZszLDm0LGsHJn3dosHHKiVEdwzsDAOgrAcZYM8/2SPdkwebPGWND2s0Wdsbk0ma1tlSc
-         TbzYhMUNkw546WSxjBYnwbZnhdHgjQoQAT3YbGTZryUFg9kmJ7grNZlZw9cnpYG2v0Hp
-         bSLP6QXLJG6XyogMw6hRBLGthU4wxOogsB7eawj5Je1Ns0vEMyt5uqnd5Wv8Nm5EIMsr
-         rJuFQ23bZZE/WMfMzQAiL/3KWveal6CefEJyHC6FmU+QB66urv7x8C7A8wb8aTBatPWA
-         8MaA==
-X-Forwarded-Encrypted: i=1; AJvYcCU5RjmBy4WM8WJdWmZziYWx0uSPG72i99BVmL09oYlQ3nJLW5F7et+h7xz4PIiV7GtPdpqs/7qnP9q9A9s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzklfnF9wmq7QOYX3kYS38zoGvkhiIP6OHPB99Hd3DzRZWU3xnX
-	mHe4uDHSOyvR1LgsxXXXqQRczmFeGkes1R6Y1U0DhX+RhFF0W+L5UfO25HVcNr4sR6f6t3A0RJV
-	CBM3eReClosH/Ku9/Qz+6RXa2z4RveyLQPDB6
-X-Gm-Gg: ASbGncvnsDXqbSU5VGWbqTKO8hEB6FtnDca4KsuZhwgvRKTGaUGumm8jKq7RvEeuihW
-	GQA394OLutxm2o0wPV74LXvrYbTQdCZo365ZKha8s7rsNYG1UXCztEBneU9NqZtPxNpcsgFq5TW
-	aJQgZgt1dIWQxpelLxGqt068nDkeeeIIY4xcXQNVVWrj0xxHnZNJXYtkmC
-X-Google-Smtp-Source: AGHT+IGPWx+m6XG7095T3v0ZVlAXzNJwhfctSVi2QHnsOIWVW4GZ3S/6Td355pTg0Z+ilOrY+qMqRFrKA4AKwqV4ahA=
-X-Received: by 2002:a05:6000:188b:b0:391:ba6:c069 with SMTP id
- ffacd0b85a97d-3910ba6c26amr2138123f8f.44.1740991954661; Mon, 03 Mar 2025
- 00:52:34 -0800 (PST)
+	s=arc-20240116; t=1740991961; c=relaxed/simple;
+	bh=ZHfPcRu3w6X4uOEal8YGwnhiBv+LQjiuBdcRJVG07co=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r7JgO9nPgG9c00qr59Ncag54I4FV2UFr5d7gBLQtvIEAhFesOoqrj8/Wkkf6aJKrKR9aoILupTQkd1CcDSFkt2axDwBRd9OPDR4xCjLPPTa/S56NU/dy84featI/2jLUf2F0LKBoE6rNj5jLW1Vqlqifg8M2L8HLv6qHNXvgmF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H5bBw+sC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED1F5C4CED6;
+	Mon,  3 Mar 2025 08:52:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740991961;
+	bh=ZHfPcRu3w6X4uOEal8YGwnhiBv+LQjiuBdcRJVG07co=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=H5bBw+sC1xLk4F8+u9tHxnMv0U7KKbadL8pdYOC840vnMrjRGHY5ia2ninPQwXkIe
+	 PftPYTcdMvdSeuBpcuKqBFm+qRfEj1snXY4+b/PBGc2WjtucJnB+TYMjPyohF1XxLx
+	 wvfXg97cwuRo1SomO0LpLuCXJyPK/19JJvOje9qpywQFCL4zpXT3erARdfLg9bWckE
+	 Sis1jEPtpAVUPkTob/0+T/qzJBmq8AjtY6LkduxlwetxY3hffBdTt7jSS5nnTAz5IS
+	 jIE5vaqB7qEJy8vc83RSlAHc59OMrCVGC7KWQNAeJQ23tAYv6CH3H0TMK5UzGAAF4H
+	 lQxhU2ehVylyg==
+Message-ID: <df625379-b472-45d9-87a4-8bf52a87ea1e@kernel.org>
+Date: Mon, 3 Mar 2025 09:52:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250228-export-macro-v2-0-569cc7e8926c@google.com>
- <20250228-export-macro-v2-5-569cc7e8926c@google.com> <CAJ-ks9k4rZdpL5dDfwMHuiKFdyYdY00YioYxdtsqszpcbhzjHQ@mail.gmail.com>
- <CAH5fLggDgYYk-0HzCjDmmHjV6JkR7WJhmQU-Nhbo4iBGBw1AJw@mail.gmail.com> <CAJ-ks9k2HaeTyGfFSfeJUFWkwc2F2hvTg2m4yEQ+8-AvLS6UZg@mail.gmail.com>
-In-Reply-To: <CAJ-ks9k2HaeTyGfFSfeJUFWkwc2F2hvTg2m4yEQ+8-AvLS6UZg@mail.gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 3 Mar 2025 09:52:22 +0100
-X-Gm-Features: AQ5f1JqSjZAAlx6Wf7jKinnV6m6qfDAlCxxS5CZwf1LezmrZAHRqRlmJeyImFx8
-Message-ID: <CAH5fLggVOKrWZhR8rEH1ZFbJ4naoAP8Dp=pKpuj0MmsThBuK4g@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] panic_qr: use new #[export] macro
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 09/21] dt-bindings: clock: thead: Add GPU clkgen reset
+ property
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org,
+ wefu@redhat.com, jassisinghbrar@gmail.com, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, frank.binns@imgtec.com,
+ matt.coster@imgtec.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ ulf.hansson@linaro.org, jszhang@kernel.org, p.zabel@pengutronix.de,
+ m.szyprowski@samsung.com, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, dri-devel@lists.freedesktop.org,
+ linux-pm@vger.kernel.org
+References: <20250219140239.1378758-1-m.wilczynski@samsung.com>
+ <CGME20250219140301eucas1p249b17ca44832eb8caad2e9ad0e4f8639@eucas1p2.samsung.com>
+ <20250219140239.1378758-10-m.wilczynski@samsung.com>
+ <20250221-imaginary-ebony-macaque-aace8d@krzk-bin>
+ <7296ddb3-2096-4414-bfa4-28fc5bb8ec86@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <7296ddb3-2096-4414-bfa4-28fc5bb8ec86@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 28, 2025 at 6:15=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
- wrote:
->
-> On Fri, Feb 28, 2025 at 12:08=E2=80=AFPM Alice Ryhl <aliceryhl@google.com=
-> wrote:
-> >
-> > On Fri, Feb 28, 2025 at 4:55=E2=80=AFPM Tamir Duberstein <tamird@gmail.=
-com> wrote:
-> > >
-> > > On Fri, Feb 28, 2025 at 7:41=E2=80=AFAM Alice Ryhl <aliceryhl@google.=
-com> wrote:
-> > > >
-> > > > @@ -980,8 +983,12 @@ fn draw_all(&mut self, data: impl Iterator<Ite=
-m =3D u8>) {
-> > > >  /// * If `url_len` > 0, remove the 2 segments header/length and al=
-so count the
-> > > >  ///   conversion to numeric segments.
-> > > >  /// * If `url_len` =3D 0, only removes 3 bytes for 1 binary segmen=
-t.
-> > > > -#[no_mangle]
-> > > > -pub extern "C" fn drm_panic_qr_max_data_size(version: u8, url_len:=
- usize) -> usize {
-> > > > +///
-> > > > +/// # Safety
-> > > > +///
-> > > > +/// Always safe to call.
-> > >
-> > > This should explain why it's marked unsafe, since it's always safe to=
- call.
-> >
-> > Safety comments generally do not explain rationale for why they are
-> > the way they are. Where would you like me to put it?
->
-> Safety comments also generally do not say that the function isn't
-> really unsafe (with a notable exception in
-> `samples/rust/rust_print_main.rs` which is similar to this case).
->
-> Perhaps "This function is marked unsafe because ... but since a safety
-> comment is still required:" would flow nicely into the safety section.
+On 03/03/2025 09:42, Michal Wilczynski wrote:
+>>> +allOf:
+>>> +  - if:
+>>> +      properties:
+>>> +        compatible:
+>>> +          contains:
+>>> +            const: thead,th1520-clk-vo
+>>> +    then:
+>>> +      required:
+>>> +        - resets
+>>
+>> else:
+>> ? What's there? Also reset or no?
+> 
+> If the else: case the reset is not required, as it's only required in
+> the th1520clk-vo, so there is no need for else:.
+That's not the question. I know it is not required, I can read code.
+What is in the hardware?
 
-I added a comment, but I disagree with this claim. The phrase "Always
-safe to call." is actually quite common for a "# Safety" section, even
-if we have rarely needed it in the kernel specifically.
-
-> > > > @@ -36,6 +36,10 @@
-> > > >  #include <linux/workqueue.h>
-> > > >  #include <trace/events/rust_sample.h>
-> > > >
-> > > > +#if defined(CONFIG_DRM_PANIC_SCREEN_QR_CODE)
-> > > > +#include <drm/drm_panic.h>
-> > > > +#endif
-> > >
-> > > Why the guard here?
-> > >
-> > > It'd be nice to have a comment here explaining the atypical need for
-> > > this include.
-> >
-> > It's not necessary. I can drop it.
->
-> Ok. A comment on the include would still be helpful.
-
-Added.
-
-Alice
+Best regards,
+Krzysztof
 
