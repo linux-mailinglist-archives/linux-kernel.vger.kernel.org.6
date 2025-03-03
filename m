@@ -1,127 +1,143 @@
-Return-Path: <linux-kernel+bounces-545023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE0BCA4E830
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:16:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C5A3A4E89F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:27:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B5E019C4DA4
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:09:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C70219C46A2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21953265628;
-	Tue,  4 Mar 2025 16:48:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 184AC280A39;
+	Tue,  4 Mar 2025 16:58:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pN4BIftL"
-Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mIfEcwmt"
+Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E75826A086
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:48:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92B0B26460F
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741106923; cv=pass; b=csNAjWtEe0X4wEKq7Csn6pSkbPEHve2K3qQYLA1149gSUWDYBHv3EB24hnVDfKvtzSMZzGc+BsNwe5FqC+xS4s9CHbW/5xjaTMTT14TooyqBKUP1FdFE9LtU5sE+4unH5JHSsjHIcwmlL6fSf2TVGg1lHzwl+V16+J7lkFagSsc=
+	t=1741107503; cv=pass; b=ch2ip2KD+J9d0Tc9Xu80+eJg1TanEcpOd/5iOTSmqFKQNc7id82ItWv1ghsW0in1SsYJM0MCgjut21bjQhHLwlSieP+oD/VNV8BVDwtcBDoi03l+Fz/OyaJGeODG7tb1mu/i4XVtrDVMpjOu6k1IecOKQQTynDfk5MQfsgsAXh0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741106923; c=relaxed/simple;
-	bh=r0ACFUP8gmClzRtzoxXd/Ng22ZxFYgefb4nyAq8SEaU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ms84xdMajriNymHLBKhlu6/rSDzT8udIcYuCoHUHxWAlQc8aWtx2G6Dfhex2BPjNDFh6ty+Z8D+9pC2c2nVxyw1C3A8G4VyDQI2Q03wrgZLiQODj9tu8C4UfkRRrZdZS+/V2ZWqWc3I2VJMIeUwZ8VGlUomPRXjO/t/j+RMkDb0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pN4BIftL; arc=none smtp.client-ip=209.85.128.42; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; arc=pass smtp.client-ip=160.75.25.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+	s=arc-20240116; t=1741107503; c=relaxed/simple;
+	bh=FcZ1QaEWtyTndqxE0LHILSs0Kyeh6C+jJB4Mj+rNv+w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=laK1WdTzmZHO0cnrLrfO/tLuVeGpym7Y5Lkl6DpPZYtgD/rGAT3HgVOD8QdsLzPZFH45Zn3kLWelyMiJKG6hL0A58eHXV8TxVhnfi9+77w78j+x+7dkFjCyaDlDtxxFSbRTr2VyeYq8yUm+eMyYaq12pHElbD1czMQlp/6jtxnw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mIfEcwmt; arc=none smtp.client-ip=209.85.221.43; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; arc=pass smtp.client-ip=160.75.25.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id F342940893B3
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:48:39 +0300 (+03)
+	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id E1A5640D9766
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:58:19 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key, unprotected) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=pN4BIftL
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20230601 header.b=mIfEcwmt
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6hRl0HVNzG4GZ
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:47:15 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6drs0L1DzFxgY
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:50:21 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 677AD4272D; Tue,  4 Mar 2025 19:47:08 +0300 (+03)
+	id 3F7D642724; Tue,  4 Mar 2025 17:50:03 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pN4BIftL
-X-Envelope-From: <linux-kernel+bounces-541770-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mIfEcwmt
+X-Envelope-From: <linux-kernel+bounces-541774-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pN4BIftL
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mIfEcwmt
 Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id F1BB3421D1
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 16:11:45 +0300 (+03)
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id A2EE52DCE0
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 16:11:45 +0300 (+03)
+	by le2 (Postfix) with ESMTP id 3764C41A3D
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 16:13:09 +0300 (+03)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by fgw2.itu.edu.tr (Postfix) with SMTP id 76D462DCDE
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 16:13:08 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D957316B7FD
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:11:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42B417A47FD
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:12:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 615AE211A13;
-	Mon,  3 Mar 2025 13:11:31 +0000 (UTC)
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E1F021148E;
+	Mon,  3 Mar 2025 13:12:43 +0000 (UTC)
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54A41210F6A
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 13:11:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A851CAA71
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 13:12:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741007488; cv=none; b=PnY0LUl3C9nZNvok7wlauuQqQju1ShZbSs7Vm7MuSQ4cI+i9Bg8AjQ6aEOuExYHv574CRCrFPAQaCqdBojR4nQ5E7wD04gxn7uaxZs6ZDtl49XcWK/GS765UxryCfRJkJNFapFD2n25/LVlgqiC19kqaV2xKyOXqbsT0B54+dJM=
+	t=1741007560; cv=none; b=srYBSkez4jjBfxAtXjBTs0d75ekW3mLiMcTGb4b7CyWWfarCh4VefAKTAEz1gMVnqprY5U+NuvPlnpZEcDBs3RjFH+EIwZLVANd2X1xFDNByhj1j+7LoZ/dUNGhBkLYoeREm9FKeDCfuEgtHlvdViOBAGfvAXiJPKqueNtW0bMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741007488; c=relaxed/simple;
-	bh=r0ACFUP8gmClzRtzoxXd/Ng22ZxFYgefb4nyAq8SEaU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Z641CvWww4bhJW8lZfaZHAWqmtkSseSFfFRulOFwHHOZpbHAeZgvCYy1PnLoMoBKtK194gyBmsnOi0qFvV2Jmh3ldWQWZerzPkxR4urCzcVMteUPHsU1NklI3Ax5AZfsN4eu7QDEaA3vSCT6yHr2X6KL2QckKLtb9x4tiXqrvmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pN4BIftL; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43995b907cfso27797545e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 05:11:26 -0800 (PST)
+	s=arc-20240116; t=1741007560; c=relaxed/simple;
+	bh=FcZ1QaEWtyTndqxE0LHILSs0Kyeh6C+jJB4Mj+rNv+w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XGRYB8xPmTcSPquBTEyv/7X2TxeTJzs/Gl0uLjuC7sxjQAAmDvnKT98SlXmDDjn3uEb4YWd2s89O7s5Xa5kvX1gcm/H8iSTqPs7p5KxZvYzChL1qobvkOOyeDsaPPIewO+GyVp3ZJmTiq+/fBtobUYUB9se+iSFuR8CN00O10X4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mIfEcwmt; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-390dd3403fdso3847550f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 05:12:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741007485; x=1741612285; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kBkIEoZc6BXsEi/Xl/zpbl5kQzqAT2D5l+fVFL9X634=;
-        b=pN4BIftLkHFRfR5AiJpuj19pHI5ut4jL33Ps2somyZnfde4kwsmxWa5EWjNccUAGsx
-         Aa/vUiFbOV8VpatiTYUh6iIvB36u+gDT8D7B4CalZ9xcEcr4iBDut5N1lqsCfNCDB8Xi
-         elv1Lg3eEJ9NUeVlmxFAwC7Tb1Tu9nk4GJmQb7t56JLL3/Y8EWqDzABdZ0OCDqMZn67i
-         +BnauNVri/z/ZjPDFShIjaZv+2JNzM2XfKWG3u34waH04tR/tYKETBogDDYqOrLUr3e6
-         xhp8k+jDkInJZbIgSm8PruesGfGGWBLDEwVJZE8ZKtaZJZxWOe459VwyTFlNbH/LdBEv
-         UVxA==
+        d=gmail.com; s=20230601; t=1741007557; x=1741612357; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aiYRzF/fWDQOKl7jciF5ykDGkkm+nONe0hq5xgHmuZQ=;
+        b=mIfEcwmtiSPKiRKNCmc/qAKSf5AdcBUjmjp9DFyp+cbSMThATluSeQfQ3EIuZBlmhn
+         ahiHVSNjGnMFL2tnanoBmOrWTxq7YLo7S19aUqNOegiU20xDCfSWFzsH0xBwwErOW0q3
+         nXMpqazUnj5mhrrodc2xgruHJlEbVB5kVV+OSZVvvQ1TzqPaDsrS/W5ZvN8chqyF0PJQ
+         +t2MMh74juIEXAfLMw9kwoJq7R7UdsU03CTXhT9uUlJqfobK22LuJCCUbaL/EqNIpysL
+         Y378w3lVbQPbE9XOQ+HeIopu+14JnxIWl6U6VJCNDa0uSnmNqprTFWjn2LYaf0SBXz6X
+         zFhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741007485; x=1741612285;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kBkIEoZc6BXsEi/Xl/zpbl5kQzqAT2D5l+fVFL9X634=;
-        b=U1jVXd9QlT9x1gidMMalUVVJhBIXdSXPmIIpWpl8kxVVz7kZJiqpXEExVl5UXiWpg5
-         3aexsi51BmUIYxaAG13R3Lu8wQOaYyuFQwD5R2UcOHm6wFqKEG52qvW0zsUypuQBlc93
-         t80zK0vNVqOAuLsRIWVPSr+E/Y2uHAmvC81OorO9s0ifRGWcuHVR9nZlkO1ABIT26Y9S
-         ogx/mpEAtDcZbPEaVZcjWczoeG96Mouou/b/FPLkNIThKTSiybLdP7GGNlubkaJLesxx
-         sX7+h4fG+el5rCRBpV5Jo4VcdJewlOIJHUFvG6Y3Lr2+PyIJOicv1TSxUbvBY4xaDQgB
-         59iA==
-X-Forwarded-Encrypted: i=1; AJvYcCVOORa8azeocJHn1p0JW4BasW3/2LJHLZZ4M/G6ChqiIoka/VZAk9R2Ol6p9VRCsuJYUmGFNOd4pbUMNEY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiAAPZXTof8fdCtuWlqLFDZd6mqhD+A5uTlvcM6O3jhuoHsCKc
-	oO/hvZ/pXxcgPg121feM7VSBVP8czpCoLc5ukr2L4GwJROrSQNLDNtv6ZkiYdrA=
-X-Gm-Gg: ASbGncswNe+ynMmtU1IV6/mUxArwHC05ys/aYzIbnj/l5m2ieVlKQSxmFxS9zAoMS24
-	QuBmB9aq4sWZwOmNYoBb2y4OPwxHsVa2XRV4EFFi4Pb7l0iQBGdfjsusceVA0gQW9BxgcA9k83U
-	Cy262WvxcZCt2U1yVgE+v/l2ZLqEZT0aKFwTMzwAGwUZzM7zKcoPANVKpUTV+QpUGHT5Jfi/Hj8
-	++eLCZMVozVos4T+q92d5FLrFX0sxyfhVU/xtyNxRuuqhqau8vInR0kc/vdZfGd8EzHrSTxEDma
-	rnewmwtKOes/yXw30decpJ1tmL8RtXrB2dt+8mtrrPAowWm6FEPRU0VGl+c9RDVtPoavTTqC8Cs
-	=
-X-Google-Smtp-Source: AGHT+IFogfy4vTLX2D880m2Emlv1b0QxLptjPdeT4ir4OaH0lDrtdJ8Ijk5zG3y61SkNW3iZImJ9Gw==
-X-Received: by 2002:a5d:5f96:0:b0:38d:e3e2:27e5 with SMTP id ffacd0b85a97d-390ec7ca98fmr10768345f8f.5.1741007484699;
-        Mon, 03 Mar 2025 05:11:24 -0800 (PST)
-Received: from gpeter-l.roam.corp.google.com ([209.198.129.23])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b73703caesm158307785e9.12.2025.03.03.05.11.23
+        d=1e100.net; s=20230601; t=1741007557; x=1741612357;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aiYRzF/fWDQOKl7jciF5ykDGkkm+nONe0hq5xgHmuZQ=;
+        b=LJMZBOjVJ2z8zpIpC17dzN+rjWtCZhhqsY5V2I5ouKF3Ou1P8dFHE/NvTWzNLX48tE
+         hPHYvB8Iw9Yhvta4LccmzetuUu+VkANWtguUwkJuo8M71IiknuwFPo/szN10o2gy9kVi
+         JBc3kkppK7GZor1lk/Xf4yWnYSTn2EOQf5Py6ioamzfxzNZN0dBFj06GNxm71/SfL6wj
+         X9wgPv74G8TaVX1KTbLabworlPrMDQq9CqaqO5r3e1sg8NmfIhgzUlQAIQVjjXRQCCSI
+         rw2NdkLT1CUJUi3d/4RKLBkcWKHHtNrr0mkq8FX9G8ukjdqcEwsMztziFGqrcfoGGEwE
+         TLmg==
+X-Forwarded-Encrypted: i=1; AJvYcCVn9MfAnGUh28yuuDg5zbzci1uo8JSHL80j5NA+cmKIwgUrB7X1QO44F8t4c3wUg0QEwII8xlyznlnkL7k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyN282kqNzTuieYIj5gNlD0c5EfuoLl3kYTuDaMyNzSBiLth9gL
+	WfchQqF8QpgSnsm1Glck5WlUlL6iSzHa8pEEGlRy8Sdd5F/EEjRH
+X-Gm-Gg: ASbGncv/4+XFY8Y9RYp5bB/gmy5Z6ZuSY+xBvt+iAbEY4AzDspio6eIx3xMnB4NJ5/9
+	AilkWD0oMTDbwsQy1EIyry6Z7FjBGs6mq+lRRKpQNTg6VD5CEcamGPvsKWlhVinm0eOjtVMIN/r
+	N9Pr5Ta2vYGI0G65Harh8Ee0YVt51nI+uI8YxXFpIkcUTkSP7CTjcSGeJNLE8UhbTikHXi+ZtkY
+	wByoZuUZdtm90cgOhQcBTmJ6uX+NXXzxTBrzSp+8NXD7EIWRN51D8iCcqb3Hxil8uH7ZVbgk95I
+	0MJBhjqR10EoZJ+wzub4Usv0FLRNhco/jQu2PIvnQKlFAseI0CMAc0Pl04XL9AkHGYexQGtJEhb
+	f6VMZLNU=
+X-Google-Smtp-Source: AGHT+IG+3HK80cjS08v6+YP5br2EDbuB4ZN2d7EFt+zxJkRoPG+7fWt39kUBWPrj/oCKzTQ6fqsIMw==
+X-Received: by 2002:a05:6000:402a:b0:38f:2efb:b829 with SMTP id ffacd0b85a97d-390eca815a6mr10788175f8f.50.1741007556492;
+        Mon, 03 Mar 2025 05:12:36 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e485d6cdsm14391389f8f.84.2025.03.03.05.12.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 05:11:24 -0800 (PST)
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Mon, 03 Mar 2025 13:11:21 +0000
-Subject: [PATCH] clk: samsung: gs101: fix synchronous external abort in
- samsung_clk_save()
+        Mon, 03 Mar 2025 05:12:35 -0800 (PST)
+Date: Mon, 3 Mar 2025 13:12:34 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Uros Bizjak <ubizjak@gmail.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, Thomas
+ Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, Borislav
+ Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter
+ Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH -tip] x86/locking/atomic: Use asm_inline for atomic
+ locking insns
+Message-ID: <20250303131234.0a2e20e4@pumpkin>
+In-Reply-To: <c4aca08a-95c1-48ee-b4da-55a69b74101c@intel.com>
+References: <20250228123825.2729925-1-ubizjak@gmail.com>
+	<20f1af22-71dc-4d62-9615-03030012222e@intel.com>
+	<CAFULd4bpHGE83qc37sbh=rpGj+SFqQrsNDLzL_-NQpo6pQH3jw@mail.gmail.com>
+	<c4aca08a-95c1-48ee-b4da-55a69b74101c@intel.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -129,100 +145,73 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250303-clk-suspend-fix-v1-1-c2edaf66260f@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAHiqxWcC/x2MSQqAMAwAvyI5G+iCWvyKeJA2alCqNCiC9O8Wj
- zMw84JQYhLoqxcS3Sx8xAK6rsCvU1wIORQGo0yjrLLo9w3lkpNiwJkfdNo3obXOdGShVGeiov/
- jMOb8AUPfVtthAAAA
-To: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com, 
- Peter Griffin <peter.griffin@linaro.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1935;
- i=peter.griffin@linaro.org; h=from:subject:message-id;
- bh=r0ACFUP8gmClzRtzoxXd/Ng22ZxFYgefb4nyAq8SEaU=;
- b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBnxap7U2WN1YaRHw7W9uRbiu+2fenuf1A5eZ5Xs
- bFL73mvclGJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCZ8WqewAKCRDO6LjWAjRy
- urfgD/9/FuIh/ujTyKiv8Fzda0+kpo71fe+GrwZib/NQ3obhlvSc2WG2XGPhRQqKlMOt+DkEN5R
- pkLY3fshHXDFGhS39zEkhSA7qIaltThWozUvf38use4WQqs4eriaJxl2vWe4+s2/uztjluGDzsO
- 3h4ya7IYa8MwskiloUzzctUj72lrg1OatkYUBxed0T8dky1XnyAMxKJhvDO0b7pleAuVzbEaY6J
- HOpd+dJS0SoZXlir3FNdpL1Tj9AO40Bi+GtLOYFu2qoBsIpAvgfZgsWkKgudL4fatx1TyChxbIU
- WciyJusPm8nN9ZhblpHBPvx1TZBYKTqgSJH4l49LreqaSvPkll4IiVBtYdiTii3WKT/VYKpEQLm
- eS1C0DH11KnPbQGXvk9hqQk/Hvnrwy/8H0By6KghKQZ1/KmpHEIEK3SzD9iYzK6ipbaMi53ihFx
- MQ5YkGLXWljT8CAnz8WiWR+kP5Rc0ePEgX1/AH9j28xALgYmvS1oLEefx2divEis2r1ubctopys
- xXiMu4ffHKQX/TM6zqkIFpeoXMvS+S/DjCpYVPeixRCu43QIBUO2/cSWIH8ArxA8OLg3vIZyTEe
- n5W+B9NFHjIOfmXhKKZnbNo61bf2pAIkXP7TZPPB6X2Moqeo50SGuhjSusHrW7SMp9zX4j8mjvL
- eagVef8tl5/9+hg==
-X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
- fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6hRl0HVNzG4GZ
+X-ITU-Libra-ESVA-ID: 4Z6drs0L1DzFxgY
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741711649.59543@CSKYCLSY6VnLc+uIOmCmjQ
+X-ITU-Libra-ESVA-Watermark: 1741712174.49899@ewFu2emnEnR9CASgOFvfeQ
 X-ITU-MailScanner-SpamCheck: not spam
 
-EARLY_WAKEUP_SW_TRIG_*_SET and EARLY_WAKEUP_SW_TRIG_*_CLEAR
-registers are only writeable. Attempting to read these registers
-during samsung_clk_save() causes a synchronous external abort.
+On Fri, 28 Feb 2025 14:58:47 -0800
+Dave Hansen <dave.hansen@intel.com> wrote:
 
-Remove these 8 registers from cmu_top_clk_regs[] array so that
-system suspend gets further.
+> On 2/28/25 14:31, Uros Bizjak wrote:
+> > On Fri, Feb 28, 2025 at 5:48=E2=80=AFPM Dave Hansen <dave.hansen@intel.=
+com> wrote: =20
+> >>
+> >> On 2/28/25 04:35, Uros Bizjak wrote: =20
+> >>> The code size of the resulting x86_64 defconfig object file increases
+> >>> for 33.264 kbytes, representing 1.2% code size increase:
+> >>>
+> >>>    text    data     bss     dec     hex filename
+> >>> 27450107        4633332  814148 32897587        1f5fa33 vmlinux-old.o
+> >>> 27483371        4633784  814148 32931303        1f67de7 vmlinux-new.o=
+ =20
+> >>
+> >> So, first of all, thank you for including some objective measurement of
+> >> the impact if your patches. It's much appreciated.
+> >>
+> >> But I think the patches need to come with a solid theory of why they're
+> >> good. The minimum bar for that, I think, is *some* kind of actual
+> >> real-world performance test. I'm not picky. Just *something* that spen=
+ds
+> >> a lot of time in the kernel and ideally where a profile points at some
+> >> of the code you're poking here.
+> >>
+> >> I'm seriously not picky: will-it-scale, lmbench, dbench, kernel
+> >> compiles. *ANYTHING*. *ANY* hardware. Run it on your laptop.
+> >>
+> >> But performance patches need to come with performance *numbers*. =20
+> >=20
+> > I don't consider this patch a performance patch, it is more a patch
+> > that fixes a correctness issue. The compiler estimates the number of
+> > instructions in the asm template wrong, so the patch instructs the
+> > compiler that everything in the template in fact results in a single
+> > instruction, no matter the pseudos there. The correct estimation then
+> > allows the compiler to do its job better (e.g. better scheduling,
+> > better inlining decisions, etc...). =20
+>=20
+> Why does it matter if the compiler does its job better?
+>=20
+> I'll let the other folks who maintain this code chime in if they think
+> I'm off my rocker. But, *I* consider this -- and all of these, frankly
+> -- performance patches.
 
-Note: the code path can be exercised using the following command:
-echo mem > /sys/power/state
+I was looking at some size changes related to a different 'trivial'
+code change.
+It caused gcc to make apparently unrelated inlining decisions that caused
+some functions to grow/shrink by +/-100+ bytes even though the actual
+change would mostly only add/remove a single instruction.
 
-Fixes: 2c597bb7d66a ("clk: samsung: clk-gs101: Add cmu_top, cmu_misc and cmu_apm support")
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-Cc: stable@vger.kernel.org
----
-Note: to hit this clock driver issue you also need the CPU hotplug
-series otherwise system fails earlier offlining CPUs
-Link: https://lore.kernel.org/linux-arm-kernel/20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v1-0-c72978f63713@linaro.org/T/
----
- drivers/clk/samsung/clk-gs101.c | 8 --------
- 1 file changed, 8 deletions(-)
+I've lost the patch for this one, but if the asm block does expand to a
+single instruction it is likely to making gcc decide to inline one of the
+functions that uses it - so increasing overall code size.
+Whether that helps or hinders performance is difficult to say.
 
-diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-gs101.c
-index 86b39edba122..08b867ae3ed9 100644
---- a/drivers/clk/samsung/clk-gs101.c
-+++ b/drivers/clk/samsung/clk-gs101.c
-@@ -382,17 +382,9 @@ static const unsigned long cmu_top_clk_regs[] __initconst = {
- 	EARLY_WAKEUP_DPU_DEST,
- 	EARLY_WAKEUP_CSIS_DEST,
- 	EARLY_WAKEUP_SW_TRIG_APM,
--	EARLY_WAKEUP_SW_TRIG_APM_SET,
--	EARLY_WAKEUP_SW_TRIG_APM_CLEAR,
- 	EARLY_WAKEUP_SW_TRIG_CLUSTER0,
--	EARLY_WAKEUP_SW_TRIG_CLUSTER0_SET,
--	EARLY_WAKEUP_SW_TRIG_CLUSTER0_CLEAR,
- 	EARLY_WAKEUP_SW_TRIG_DPU,
--	EARLY_WAKEUP_SW_TRIG_DPU_SET,
--	EARLY_WAKEUP_SW_TRIG_DPU_CLEAR,
- 	EARLY_WAKEUP_SW_TRIG_CSIS,
--	EARLY_WAKEUP_SW_TRIG_CSIS_SET,
--	EARLY_WAKEUP_SW_TRIG_CSIS_CLEAR,
- 	CLK_CON_MUX_MUX_CLKCMU_BO_BUS,
- 	CLK_CON_MUX_MUX_CLKCMU_BUS0_BUS,
- 	CLK_CON_MUX_MUX_CLKCMU_BUS1_BUS,
+	David
 
----
-base-commit: 480112512bd6e770fa1902d01173731d02377705
-change-id: 20250303-clk-suspend-fix-81c5d63827e3
-
-Best regards,
--- 
-Peter Griffin <peter.griffin@linaro.org>
 
 
 
