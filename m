@@ -1,57 +1,53 @@
-Return-Path: <linux-kernel+bounces-542833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D3A6A4CE48
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:27:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A0211A4CE4D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:30:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4384D7A7D7B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:26:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DEA77A7EE7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:29:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9848E2356DC;
-	Mon,  3 Mar 2025 22:27:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6CA922FF4F;
+	Mon,  3 Mar 2025 22:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X08N3H77"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="fLR7UpeP"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0224E1F03C0;
-	Mon,  3 Mar 2025 22:27:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04C0238D32;
+	Mon,  3 Mar 2025 22:30:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741040823; cv=none; b=Hk0Wfetma++yBa8TuQKGCxodpo6YrVhsv9mWVpJPIpN2hufehMylO/nufq2IB7p0RfI/z6XoCRSvPU7BAqbR9zxCj8FnONSltKdWzom8xJQcsFynUoEHlcb3AIIPM2e74+ZJQWMkOR3HiD3I/lR2+YtN/ehuH+D1ILYP2pgc8+M=
+	t=1741041012; cv=none; b=Bno62PZKcQqsdodt3NAlVpgkSV88JO4GS8g7iGFlLvIf1Yt2vAwXmonkUT1K4GhthZ6frPykh6PoeafIjqUVvLGus16BKNte6ykQ50wgHsGwxkSyc+58MXcH85/do/agGyWow/yjZciNnBlL537dMJRsdIttVWvsjKStSeHyKGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741040823; c=relaxed/simple;
-	bh=nbQ+GTtR9+WtDAUfLtWWJMdNyA5rS1jCv0pKqdQLtDs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=aLYXyk/l2I0Ly5I4ZOsEFJMdsVimsh8ejpMU4EdmEglTpKMt9OjLdcXskMTLUTx25SKQiJCkQXuj8+kknOZCzKapWzzc/1ca3jskE2O7/baEbLGHDEDyWdqLN/PqfjCR8CKuyENzDBd7EzUIH313BVv7knA2W2P8gHSyeEGPqYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X08N3H77; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A465C4CED6;
-	Mon,  3 Mar 2025 22:27:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741040822;
-	bh=nbQ+GTtR9+WtDAUfLtWWJMdNyA5rS1jCv0pKqdQLtDs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=X08N3H77tknBP9x4lqnFGW4CaHWFeDKNKP1igDYF204C7pKJbY+xitfSAIR5knMmQ
-	 y6nIab/jmsU3gdNNJYmBFqSez5VRrlMDN0IHf+yI2T6H062HjW9SUS+Vsp07d0Zv76
-	 m4RW12dy3UqpiR8bQqXzRmAPJVxq7Z6CBWlXqQtB603JZOHyoddCUdtVr2zMMdRqI1
-	 /3vavvzTFGdXes5n2c11rxW83tJmnG+SDXz8ENdzslFMXUt2agFxP27U793nOq1bSf
-	 tT2P89sqQVnlWBV+kHt4XXvdFmyyWa6RtoH8mpaHRtpGZ221ai/8PxxsBzs8i1VAPg
-	 HkTFERsTkyrcA==
-Date: Mon, 3 Mar 2025 16:27:00 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Mukesh Sisodiya <mukesh.sisodiya@intel.com>,
-	Miri Korenblit <miriam.rachel.korenblit@intel.com>,
-	Matti Gottlieb <matti.gottlieb@intel.com>,
-	Luca Coelho <luciano.coelho@intel.com>
-Cc: Johannes Berg <johannes.berg@intel.com>, Kalle Valo <kvalo@kernel.org>,
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [regression] Significant WiFi Speed Reduction with Kernel
- Versions > 6.8.12 on Intel Wi-Fi 6 AX203
-Message-ID: <20250303222700.GA202089@bhelgaas>
+	s=arc-20240116; t=1741041012; c=relaxed/simple;
+	bh=/mpM4N1kNDhZtm4ABQXD/3qB+8qtSGSXUnHC8BYYl6E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DvaFpw4R4K6sAFk7wLQn1PMv0MBE9rTkKpkUSd7ZrzukPSF2c8nKY+mebxUvFuQ0Cgebjcy4L9CCQ4uGKRSaQlL9sKc1Nm79z0YW+gZh9HDdqspoabVhZ/9ewChiCbMHzTktpL6Q0MQK6DDRvk4nBcvEZzsFWCjiCJA77/XLfAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=fLR7UpeP; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1741040998;
+	bh=/mpM4N1kNDhZtm4ABQXD/3qB+8qtSGSXUnHC8BYYl6E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fLR7UpeP9xNPJwSceytvWKqQcTq5p6NeGGoTvLGKWIxJtVcrxpGbqjdwwF5chj1R3
+	 jM08LGDSxfPApKI9Rtr8L5T5s6iqVMNEoPc4KzmIQ+v1+ZB614qYp6jgqcyBsOlQFX
+	 VQF8q0mfoa6PkQNAnfigxU0A/pDDo5v1GslYX8cs=
+Date: Mon, 3 Mar 2025 23:29:58 +0100
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Kees Cook <kees@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, llvm@lists.linux.dev, linux-kbuild@vger.kernel.org, 
+	David Gow <davidgow@google.com>, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] kbuild: clang: Support building UM with SUBARCH=i386
+Message-ID: <05a25510-ab44-4eb1-a878-71e84c8aff0d@t-8ch.de>
+References: <20250303215240.work.379-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,82 +56,76 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250225182514.GA512422@bhelgaas>
+In-Reply-To: <20250303215240.work.379-kees@kernel.org>
 
-On Tue, Feb 25, 2025 at 12:25:16PM -0600, Bjorn Helgaas wrote:
-> On Thu, Aug 08, 2024 at 08:43:53AM +0200, Linux regression tracking (Thorsten Leemhuis) wrote:
-> > On 07.08.24 11:12, Linux regression tracking (Thorsten Leemhuis) wrote:
-> > > 
-> > > Mukesh Sisodiya, I noticed a report about a regression in
-> > > bugzilla.kernel.org that appears to be caused by a change of yours:
-> > > 
-> > > 099a47dbe71b75 ("wifi: iwlwifi: Add support for new 802.11be device")
-> > > [v6.9-rc1]
-> > 
-> > For the record, turns out the bisection went a bit sideways and the
-> > problems apparently is caused by 84ec2d2e960f33 ("wifi: iwlwifi: disable
-> > 160 MHz based on subsystem device ID") [v6.9-rc1]. For details, see
-> > https://bugzilla.kernel.org/show_bug.cgi?id=219114#c8
+On 2025-03-03 13:52:41-0800, Kees Cook wrote:
+> The UM builds distinguish i386 from x86_64 via SUBARCH, but we don't
+> support building i386 directly with Clang. To make SUBARCH work for
+> i386 UM, we need to explicitly test for it.
 > 
-> Browsing the regression tracker, this seems stalled with no responses
-> even though the submitter (bcc'd) has bisected it.
+> This lets me run i386 KUnit tests with Clang:
+> 
+> $ ./tools/testing/kunit/kunit.py run \
+> 	--make_options LLVM=1 \
+> 	--make_options SUBARCH=i386
+> ...
+> 
+> Fixes: c7500c1b53bf ("um: Allow builds with Clang")
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> ---
+> I could not find a cleaner way to do this without hardcoding a test
+> for i386 UM. Does anyone see a more sane way to accomplish this? The
+> comment above the CLANG_TARGET_FLAGS seems like it can't be done with
+> UM's Makefile...
 
-FWIW, it looks like the following commits are relevant:
+This seems to work for me:
 
-  https://git.kernel.org/linus/d6f2134a3831 ("iwlwifi: add mac/rf types and 160MHz to the device tables")
-  https://git.kernel.org/linus/568d3434178b ("iwlwifi: pcie: invert values of NO_160 device config entries")
-  https://git.kernel.org/linus/4886460c4d15 ("iwlwifi: Fix IWL_SUBDEVICE_NO_160 macro to use the correct bit.")
-  https://git.kernel.org/linus/84ec2d2e960f ("wifi: iwlwifi: disable 160 MHz based on subsystem device ID")
+diff --git a/scripts/Makefile.clang b/scripts/Makefile.clang
+index 2435efae67f5..8e349bf30fa8 100644
+--- a/scripts/Makefile.clang
++++ b/scripts/Makefile.clang
+@@ -12,6 +12,7 @@ CLANG_TARGET_FLAGS_riscv      := riscv64-linux-gnu
+ CLANG_TARGET_FLAGS_s390                := s390x-linux-gnu
+ CLANG_TARGET_FLAGS_sparc       := sparc64-linux-gnu
+ CLANG_TARGET_FLAGS_x86         := x86_64-linux-gnu
++CLANG_TARGET_FLAGS_i386                := i386-linux-gnu
+ CLANG_TARGET_FLAGS_um          := $(CLANG_TARGET_FLAGS_$(SUBARCH))
+ CLANG_TARGET_FLAGS             := $(CLANG_TARGET_FLAGS_$(SRCARCH))
 
-4886460c4d15 ("iwlwifi: Fix IWL_SUBDEVICE_NO_160 macro to use the
-correct bit.") updated IWL_SUBDEVICE_NO_160() to identify devices that
-should not support 160MHz:
+This is also what exists in tools/testing/selftests/lib.mk.
+Minus the missing CONFIG_FORTIFY_SOURCE on clang x86_32
+and a failure of overflow.DEFINE_FLEX_test (clang 19.1.7).
 
-  -#define IWL_SUBDEVICE_NO_160(subdevice)        ((u16)((subdevice) & 0x0100) >> 9)
-  +#define IWL_SUBDEVICE_NO_160(subdevice)        ((u16)((subdevice) & 0x0200) >> 9)
-
-The submitter's device has Subdevice ID 0x1652.  Prior to
-4886460c4d15, that did not match IWL_SUBDEVICE_NO_160(), but
-afterwards it does:
-
-  0000:00:14.3 Network controller [0280]: Intel Corporation Alder Lake-P PCH CNVi WiFi [8086:51f0] (rev 01)
-    Subsystem: Rivet Networks Dual Band Wi-Fi 6(802.11ax) Killer AX1650i 160MHz 2x2 [Cyclone Peak] [1a56:1652]
-
-But apparently it wasn't until 84ec2d2e960f ("wifi: iwlwifi: disable
-160 MHz based on subsystem device ID"), that 160MHz support actually
-got disabled for devices that match IWL_SUBDEVICE_NO_160():
-
-  @@ -1061,6 +1061,10 @@ iwl_nvm_fixup_sband_iftd(struct iwl_trans *trans,
-
-  +       if (trans->no_160)
-  +               iftype_data->he_cap.he_cap_elem.phy_cap_info[0] &=
-  +                       ~IEEE80211_HE_PHY_CAP0_CHANNEL_WIDTH_SET_160MHZ_IN_5G;
-  +
-
-
-  @@ -1394,6 +1394,7 @@ static int iwl_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
-
-          dev_info = iwl_pci_find_dev_info(pdev->device, pdev->subsystem_device,
-                                           ...
-                                           IWL_SUBDEVICE_NO_160(pdev->subsystem_device),
-                                           ...);
-
-          if (dev_info) {
-                  iwl_trans->cfg = dev_info->cfg;
-                  iwl_trans->name = dev_info->name;
-  +               iwl_trans->no_160 = dev_info->no_160 == IWL_CFG_NO_160;
-          }
-
-84ec2d2e960f appeared in v6.9.  Per the submitter, the speed reduction
-appeared in v6.8.12.  Maybe it was backported?  I dunno.
-
-If 160MHz is disabled on that device because of regulatory
-restrictions, and it worked when it should not have prior to
-84ec2d2e960f, I guess the submitter is out of luck.
-
-If that's the case, maybe we could at least update the bugzilla with
-the status to close this out?  The submitter has done a LOT of work to
-isolate this, and I think we owe them the courtesy of resolving it.
-
-Bjorn
+> Cc: Nathan Chancellor <nathan@kernel.org>
+> Cc: Nick Desaulniers <ndesaulniers@google.com>
+> Cc: Bill Wendling <morbo@google.com>
+> Cc: Justin Stitt <justinstitt@google.com>
+> Cc: Masahiro Yamada <masahiroy@kernel.org>
+> Cc: Nicolas Schier <nicolas@fjasle.eu>
+> Cc: llvm@lists.linux.dev
+> Cc: linux-kbuild@vger.kernel.org
+> ---
+>  scripts/Makefile.clang | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/scripts/Makefile.clang b/scripts/Makefile.clang
+> index 2435efae67f5..fa6f9a9be4ac 100644
+> --- a/scripts/Makefile.clang
+> +++ b/scripts/Makefile.clang
+> @@ -12,8 +12,12 @@ CLANG_TARGET_FLAGS_riscv	:= riscv64-linux-gnu
+>  CLANG_TARGET_FLAGS_s390		:= s390x-linux-gnu
+>  CLANG_TARGET_FLAGS_sparc	:= sparc64-linux-gnu
+>  CLANG_TARGET_FLAGS_x86		:= x86_64-linux-gnu
+> +ifeq ($(SRCARCH):$(SUBARCH),um:i386)
+> +CLANG_TARGET_FLAGS		:= i386-linux-gnu
+> +else
+>  CLANG_TARGET_FLAGS_um		:= $(CLANG_TARGET_FLAGS_$(SUBARCH))
+>  CLANG_TARGET_FLAGS		:= $(CLANG_TARGET_FLAGS_$(SRCARCH))
+> +endif
+>  
+>  ifeq ($(CLANG_TARGET_FLAGS),)
+>  $(error add '--target=' option to scripts/Makefile.clang)
+> -- 
+> 2.34.1
+> 
 
