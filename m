@@ -1,82 +1,117 @@
-Return-Path: <linux-kernel+bounces-545090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7094A4E99F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:44:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF007A4EB25
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:20:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC6508E12AF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:26:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D4367AC08D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:19:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D1DF25F7A8;
-	Tue,  4 Mar 2025 17:01:43 +0000 (UTC)
-Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 170AC1F30BE;
+	Tue,  4 Mar 2025 18:07:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uux8NV77";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FOi/iE3l"
+Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29BBA20A5C4
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0FEF11CAF
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:07:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.116
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741107702; cv=pass; b=mzqOep6E8eX9YVa/H9T+dG6uneQimZRN4aGR+V2lZABKFwxU0zIh6gPiCZV/GblZww14CqiufJ8CBqwALdE6D4F0lejUAyXYpnAqcyUjKYIG9N0rynqYlMTUGQxthMh3ipTk+gOEGOTk4CkVOGF4TkkomlsYShjzgplVPVYDUME=
+	t=1741111638; cv=pass; b=jgc92PLt6naUv3RS7NBmZFOqNuNTuRdP8Jo1k/AhGJ0k/8Lto7L7mH81Rfk0N19xVw6eJzFjeFHrXOQSMeETxDa36gsWT++9ceh3qJw1M9ddFDmNo09z46fT+jcKNBzC+8YEkml6CC8e/23yIMc6pXEfJUnxA0PrCYAlB7r89L8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741107702; c=relaxed/simple;
-	bh=AQzDbz27cyww8YaKKugmTRVzCm2lMH+Jzk/q4qDm4no=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iPE+nQpn5T38Ya8dlhIcTPz35RY4VvVmC/0C8DwQK7/SqKrgJgwVyrurgyZUGtIBS972nqzoZv7T67tfKodiB8bggj6zAh+zuUgecQ4YFDxf2r21mK2gkVmXQ31AUSx/kgC2TXG/7n9T/caAg3cB9o8hiJDMpFpdu3MW/c/xHSI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=cc.itu.edu.tr; arc=none smtp.client-ip=217.140.110.172; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=pass smtp.client-ip=160.75.25.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+	s=arc-20240116; t=1741111638; c=relaxed/simple;
+	bh=abJXjbt0QNdzHR1CaggoycF4Eu2X+o/tIXvg+vtuf1E=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=iMSujipQ7ySOqz7v85IR0UPTxglu0FSIlcI3kCYX9/5ZLLLaQJSWzxiVYhPhl2k8RbYpTPAULuSGtFPwLFwFh/KTTF5TNZuDNpcVbxzZ9CyJJZ+XIIe9+ccj9KAqn2wtSnUqRJYAUQ3N8F0a0DAPDyxPJKEY+FFYW0Jv3t0xxrw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uux8NV77; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FOi/iE3l; arc=none smtp.client-ip=193.142.43.55; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; arc=pass smtp.client-ip=160.75.25.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (unknown [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 65E9740CF67C
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:01:38 +0300 (+03)
+	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id 170F840D052D
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 21:07:15 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
+Authentication-Results: lesvatest1.cc.itu.edu.tr;
+	dkim=pass (2048-bit key, unprotected) header.d=linutronix.de header.i=@linutronix.de header.a=rsa-sha256 header.s=2020 header.b=uux8NV77;
+	dkim=pass header.d=linutronix.de header.i=@linutronix.de header.a=ed25519-sha256 header.s=2020e header.b=FOi/iE3l
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dzK6DyTzFy1P
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:55:57 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6flN1s00zG0ZL
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:30:40 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 6359A42727; Tue,  4 Mar 2025 17:55:51 +0300 (+03)
-X-Envelope-From: <linux-kernel+bounces-541481-bozkiru=itu.edu.tr@vger.kernel.org>
+	id DA48D42724; Tue,  4 Mar 2025 18:30:28 +0300 (+03)
+Authentication-Results: lesva1.cc.itu.edu.tr;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uux8NV77;
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FOi/iE3l
+X-Envelope-From: <linux-kernel+bounces-541487-bozkiru=itu.edu.tr@vger.kernel.org>
+Authentication-Results: lesva2.cc.itu.edu.tr;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uux8NV77;
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FOi/iE3l
 Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id 40706424B1
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:04:49 +0300 (+03)
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id 17BE82DCE0
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:04:49 +0300 (+03)
+	by le2 (Postfix) with ESMTP id 7818642080
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:07:33 +0300 (+03)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by fgw2.itu.edu.tr (Postfix) with SMTP id 2BCDA2DCDE
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:07:33 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE58D1896F56
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:02:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 731A6173B26
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:04:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D314F1F4265;
-	Mon,  3 Mar 2025 11:00:55 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B57AB1EF0AA;
-	Mon,  3 Mar 2025 11:00:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72B131F540F;
+	Mon,  3 Mar 2025 11:02:50 +0000 (UTC)
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B44F91F3BB2;
+	Mon,  3 Mar 2025 11:02:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740999654; cv=none; b=WMSaftljr8MBz/+Encz2g7SeQ/Yu0lCThtdTKDqxZx51WnQDV527ZDhbTNI5qYj6OmCrIbT3En1zJXSd0m8EzKKzyNEE/kJagAV9WX3XxU/7w207vh4rus+G9jKvaNGInzbp++BAGAaJ4gMNl2BB+hQGb4a0YuQN1bxqUSAhYNE=
+	t=1740999767; cv=none; b=jp1IWsK+wm047tOBfKbe0zDt4hRrWI3/z/4HNIFwgxYjkAW/MiIRPuWEUwUt7dCK2UQF8DS00+Nh6BrpKPW7wQf40BAmBbDPeByHnSQ94Yr4ywnUf/oBymShPDM+jcsHWR5euOlyJSqH7IXZuTKVMO/YHLriUJK69HRDr3t9pbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740999654; c=relaxed/simple;
-	bh=AQzDbz27cyww8YaKKugmTRVzCm2lMH+Jzk/q4qDm4no=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dJARYJHWVHESpIThqLQl13jzuyPNvE4gUentBeBVWKXkReaVwPWpWgm+yVXWHjZXTVYFmj3U8JNeEL/0qX3RNt235F5ukVBSr1TckOG4cgon9Qyn5YdVQHpwoBuTq0ot2YRgdvoeIxQUCeUstVQqJ/ODMsFTiihkAnNgEaZUx8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 23097113E;
-	Mon,  3 Mar 2025 03:01:06 -0800 (PST)
-Received: from [10.163.38.109] (unknown [10.163.38.109])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3C3AA3F673;
-	Mon,  3 Mar 2025 03:00:48 -0800 (PST)
-Message-ID: <ca8d7011-5f5a-4270-af8e-44b37aff2bb4@arm.com>
-Date: Mon, 3 Mar 2025 16:30:45 +0530
+	s=arc-20240116; t=1740999767; c=relaxed/simple;
+	bh=abJXjbt0QNdzHR1CaggoycF4Eu2X+o/tIXvg+vtuf1E=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=JcW8qx3MvTprQLjDIfl+DF8TN4Fwr9Iy59ZfsFoP24fuQL9ajWi8A5LSF+UzeMyiyPwbsMoFabUaAx2fE/CsndqC4CJx0V4kaqr1T9nYudxMiD+2v55lRIhYSVzCFAJWhU6Xq3uqCY4uDX9xJlxo91+d7WyoCohlQcmKYc0ztYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uux8NV77; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FOi/iE3l; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 03 Mar 2025 11:02:43 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740999764;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=cOWBUmZ+W30ERdUzKWprcZa86+fY9MVo6XhRucTIH/A=;
+	b=uux8NV77MPBZsLMFmxDqLTVO875gJTffI8kBXk7r1gTVvL6daPZms6IRBkyGYUT0YnLUCa
+	uZx10ZCE6nAzLePBxV56tFm10URnVlDeFNa0/T3SK6NFFLPuGV0T3dfSu43yw/4XFY1Tjp
+	dQYhJES4eyD0/sTR0D5qHgGkxbLSLFNTVicibSZhqGgVC4W51S3HB3Thn5icW32Rv1Yaz8
+	30NEW4UK1+oI39AF3i1M3x1tORrh2l+iTpTgM0yx4dtKjFfB7IMxzYy1iYr5MRJM6q5szZ
+	+JCRhNPqePGs2SXKVr99A/AkVIbWvayn+vwyNpteIk7FN/6iemulP5qWTiA4RQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740999764;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=cOWBUmZ+W30ERdUzKWprcZa86+fY9MVo6XhRucTIH/A=;
+	b=FOi/iE3llT0NRJwR+6WEKeOPfqwrLESwJaiaagDLpaApJqxGfrPgjqZpXqU1zzsBJM1Otu
+	KaeE7irFWDTllADA==
+From: "tip-bot2 for Josh Poimboeuf" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/asm] x86/hyperv: Use named operands in inline asm
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ "K. Y. Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>, linux-kernel@vger.kernel.org,
+ x86@kernel.org
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -84,116 +119,104 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 03/10] selftests/mm: Skip uffd-wp-mremap if userfaultfd
- not available
-To: Brendan Jackman <jackmanb@google.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>,
- linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Muhammad Usama Anjum <usama.anjum@collabora.com>
-References: <20250228-mm-selftests-v3-0-958e3b6f0203@google.com>
- <20250228-mm-selftests-v3-3-958e3b6f0203@google.com>
- <99739a23-9843-4c96-a614-ce2d48431a5c@arm.com> <Z8WJEsEAwUPeMkqy@google.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <Z8WJEsEAwUPeMkqy@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Message-ID: <174099976350.10177.10962388060201277125.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6dzK6DyTzFy1P
+X-ITU-Libra-ESVA-ID: 4Z6flN1s00zG0ZL
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741712392.16053@WvGkQHMBGWp7CjXYMGn5DA
+X-ITU-Libra-ESVA-Watermark: 1741716341.45546@sUDceTr72mtBYaHyhpsTBA
 X-ITU-MailScanner-SpamCheck: not spam
 
-+ Muhammad, I guess he has been working on selftests, maybe he can chime in.
+The following commit has been merged into the x86/asm branch of tip:
 
-On 03/03/25 4:18 pm, Brendan Jackman wrote:
-> On Fri, Feb 28, 2025 at 10:55:00PM +0530, Dev Jain wrote:
->>
->>
->> On 28/02/25 10:24 pm, Brendan Jackman wrote:
->>> It's obvious that this should fail in that case, but still, save the
->>> reader the effort of figuring out that they've run into this by just
->>> SKIPping
->>>
->>> Signed-off-by: Brendan Jackman <jackmanb@google.com>
->>> ---
->>>    tools/testing/selftests/mm/uffd-wp-mremap.c | 5 ++++-
->>>    1 file changed, 4 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/tools/testing/selftests/mm/uffd-wp-mremap.c b/tools/testing/selftests/mm/uffd-wp-mremap.c
->>> index 2c4f984bd73caa17e12b9f4a5bb71e7fdf5d8554..c2ba7d46c7b4581a3c32a6b6acd148e3e89c2172 100644
->>> --- a/tools/testing/selftests/mm/uffd-wp-mremap.c
->>> +++ b/tools/testing/selftests/mm/uffd-wp-mremap.c
->>> @@ -182,7 +182,10 @@ static void test_one_folio(size_t size, bool private, bool swapout, bool hugetlb
->>>    	/* Register range for uffd-wp. */
->>>    	if (userfaultfd_open(&features)) {
->>> -		ksft_test_result_fail("userfaultfd_open() failed\n");
->>> +		if (errno == ENOENT)
->>> +			ksft_test_result_skip("userfaultfd not available\n");
->>> +		else
->>> +			ksft_test_result_fail("userfaultfd_open() failed\n");
->>>    		goto out;
->>>    	}
->>>    	if (uffd_register(uffd, mem, size, false, true, false)) {
->>>
->>
->> I think you are correct, just want to confirm whether "uffd not available"
->> if and only if "errno == ENOENT" is true. That is,
->> is it possible that errno can be something else and uffd is still not
->> available,
-> 
-> Yeah, I strongly suspect this can happen. This is an attempt to
-> improve things but I don't think it's a full solution.
-> 
-> I've been pondering this a bit and I think it's impractical to solve
-> problems like this in the code of individual testst. I think the right
-> thing to do is either:
-> 
-> 1. Have a centralised facility for detecting conditions like
->     "userfaultfd not available" that tests can just query it, so they
->     say something like:
-> 
->     ksft_test_requires("userfaultfd");
+Commit-ID:     2668d7b4aff83a7999cdafa984927f87a6e51922
+Gitweb:        https://git.kernel.org/tip/2668d7b4aff83a7999cdafa984927f87a6e51922
+Author:        Josh Poimboeuf <jpoimboe@kernel.org>
+AuthorDate:    Sun, 02 Mar 2025 17:21:00 -08:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Mon, 03 Mar 2025 11:39:53 +01:00
 
-Agreed, there should be a single point of reporting whether the facility 
-is available.
+x86/hyperv: Use named operands in inline asm
 
-> 
->     Which would do some sort of actual principled check for presence
->     and then skip the test with an informative message when it's not
->     there. There would be a list of these "system requirements" in the
->     code so you can easily see in one place what things might be needed
->     to successfully run all the tests.
-> 
-> or
-> 
-> 2. Specify out of band that there's a fixed set of requirements for
->     running the tests and document that you shouldn't run them without
->     satisfying them. Then just don't bother with SKIPs and call it user
->     error.
-> 
->     This would require some reasonably usable tooling for actually
->     getting a system that satisfies the requirements.
-> 
-> But both of them require a deeper investment. I would quite like to
-> explore option 1 a bit but that's for a future Brendan.
-> 
-> In the meantime I'm just trying to get these tests running on
-> virtme-ng. (I'm not even gonna add all of them, because e.g. once I
-> noticed this one I added a `scripts/config -e USERFAULTFD` to my
-> script, so I won't notice if anything else is missing the check).
-> 
->> or errno can be ENOENT even if uffd is available.
-> 
-> I think it's probably posible for this to happen too, e.g. if the
-> system has a perverted /dev or something. But again I think that can
-> only be solved with the kinda stuff I mentioned above.
-> 
-> Sorry for the essay :D
+Use named operands in inline asm to make it easier to change the
+constraint order.
 
+Do this in preparation of changing the ASM_CALL_CONSTRAINT primitive.
+
+Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: Wei Liu <wei.liu@kernel.org>
+Cc: Dexuan Cui <decui@microsoft.com>
+Cc: linux-kernel@vger.kernel.org
+---
+ arch/x86/include/asm/mshyperv.h | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
+index f91ab1e..5e6193d 100644
+--- a/arch/x86/include/asm/mshyperv.h
++++ b/arch/x86/include/asm/mshyperv.h
+@@ -77,11 +77,11 @@ static inline u64 hv_do_hypercall(u64 control, void *input, void *output)
+ 		return hv_tdx_hypercall(control, input_address, output_address);
+ 
+ 	if (hv_isolation_type_snp() && !hyperv_paravisor_present) {
+-		__asm__ __volatile__("mov %4, %%r8\n"
++		__asm__ __volatile__("mov %[output_address], %%r8\n"
+ 				     "vmmcall"
+ 				     : "=a" (hv_status), ASM_CALL_CONSTRAINT,
+ 				       "+c" (control), "+d" (input_address)
+-				     :  "r" (output_address)
++				     : [output_address] "r" (output_address)
+ 				     : "cc", "memory", "r8", "r9", "r10", "r11");
+ 		return hv_status;
+ 	}
+@@ -89,12 +89,12 @@ static inline u64 hv_do_hypercall(u64 control, void *input, void *output)
+ 	if (!hv_hypercall_pg)
+ 		return U64_MAX;
+ 
+-	__asm__ __volatile__("mov %4, %%r8\n"
++	__asm__ __volatile__("mov %[output_address], %%r8\n"
+ 			     CALL_NOSPEC
+ 			     : "=a" (hv_status), ASM_CALL_CONSTRAINT,
+ 			       "+c" (control), "+d" (input_address)
+-			     :  "r" (output_address),
+-				THUNK_TARGET(hv_hypercall_pg)
++			     : [output_address] "r" (output_address),
++			       THUNK_TARGET(hv_hypercall_pg)
+ 			     : "cc", "memory", "r8", "r9", "r10", "r11");
+ #else
+ 	u32 input_address_hi = upper_32_bits(input_address);
+@@ -187,18 +187,18 @@ static inline u64 _hv_do_fast_hypercall16(u64 control, u64 input1, u64 input2)
+ 		return hv_tdx_hypercall(control, input1, input2);
+ 
+ 	if (hv_isolation_type_snp() && !hyperv_paravisor_present) {
+-		__asm__ __volatile__("mov %4, %%r8\n"
++		__asm__ __volatile__("mov %[input2], %%r8\n"
+ 				     "vmmcall"
+ 				     : "=a" (hv_status), ASM_CALL_CONSTRAINT,
+ 				       "+c" (control), "+d" (input1)
+-				     : "r" (input2)
++				     : [input2] "r" (input2)
+ 				     : "cc", "r8", "r9", "r10", "r11");
+ 	} else {
+-		__asm__ __volatile__("mov %4, %%r8\n"
++		__asm__ __volatile__("mov %[input2], %%r8\n"
+ 				     CALL_NOSPEC
+ 				     : "=a" (hv_status), ASM_CALL_CONSTRAINT,
+ 				       "+c" (control), "+d" (input1)
+-				     : "r" (input2),
++				     : [input2] "r" (input2),
+ 				       THUNK_TARGET(hv_hypercall_pg)
+ 				     : "cc", "r8", "r9", "r10", "r11");
+ 	}
 
 
