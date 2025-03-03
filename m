@@ -1,129 +1,120 @@
-Return-Path: <linux-kernel+bounces-544841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E8B0A4E5DA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:28:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14E42A4E6F1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:54:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 818411884DB3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:19:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A313B7A59BC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:50:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4386C286291;
-	Tue,  4 Mar 2025 15:59:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14DE429CB25;
+	Tue,  4 Mar 2025 16:30:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tcEKZu3A"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FCX1s3W7"
 Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEF68259C98
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:59:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE7B229CB26
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:30:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741103986; cv=pass; b=YBJFbn8OoWXcGOa0Yb1qHvujpj4m2WyWiJtbkJRkoC9iyvwVdZgOLgnMpMBGPEGG2Ffm0kiNwajwUcffOgx2FuROz+VvI5BlN3+yrAj0ChAb3HZq2+M6cCU7Y4zvxD7eY2105HDtaIKiIiifPqgs1VdJMSa0ejCQQXCgEzYpDj4=
+	t=1741105813; cv=pass; b=LQpIeL1e1KVubN+cupBZSn18pkZSFgTBKMruigE7jSr9EwypmNlxhGQVPEAn3nyFkLDw+Jqmy1O2O5Bu/yNAIkn1PLR8XrRgS3x92ypjwhz3tNfQ3PUl9wnY+YYjMVfYnYdDN4efXDc6r3rlhkQaGX/y4hKi1PUXFgk4b8Hpo0E=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741103986; c=relaxed/simple;
-	bh=uKlaO0VtSYqlCulEvoLtkmUhyB9oj5gsIjZc4WzZr5I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bggtGqtch6J2UXbYKDFXOWatlj6KHyaq65nQXPkRilDGKFbqvTn2YlJ00mrwhBF5hMwv2CFUz6CiV3v8JPsF6ad0HpDgw/V5+VW+bzzCRZJAOIrr5Hv4yEzohB1MCHPQlweRCsKIfRZ0D3lHk/jvc/Vd46QQmEjGHrSQOR3jxGU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tcEKZu3A; arc=none smtp.client-ip=209.85.218.47; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; arc=pass smtp.client-ip=160.75.25.115
+	s=arc-20240116; t=1741105813; c=relaxed/simple;
+	bh=XNgWdH8fl5cRzt9ljpvgTEJNjZwPu9TAIUcQAUPpGJ4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PKmmCCza1R4sHLKo9GU8gw5Pfl97AQnS6ICTgLa0I9IbhzFETUgVLndbvuk6NCuAL5+XMicj8roU0L5mLRpAGwh99Tlc+Rp5TkYVDZaO/XzlOfIQ0MGK3MRvnsVEE9cJKWtAiTWQThryWjxFXcejPsxJ/habMdoiL9UBItqG3Ho=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FCX1s3W7; arc=none smtp.client-ip=209.85.128.182; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; arc=pass smtp.client-ip=160.75.25.115
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 34E9740D571B
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:59:43 +0300 (+03)
+	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 0439240D9778
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:30:10 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key, unprotected) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=tcEKZu3A
+	dkim=pass (2048-bit key, unprotected) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=FCX1s3W7
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6gMQ589GzG1wx
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:58:26 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6h216bBwzG1fq
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:28:25 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 87DE442724; Tue,  4 Mar 2025 18:58:15 +0300 (+03)
+	id 647294274C; Tue,  4 Mar 2025 19:28:22 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tcEKZu3A
-X-Envelope-From: <linux-kernel+bounces-541641-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FCX1s3W7
+X-Envelope-From: <linux-kernel+bounces-541649-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tcEKZu3A
-Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id A503442827
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:58:34 +0300 (+03)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FCX1s3W7
+Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
+	by le2 (Postfix) with ESMTP id D595342AB9
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 15:01:32 +0300 (+03)
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id 3B9A0305F789
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:58:34 +0300 (+03)
+	by fgw2.itu.edu.tr (Postfix) with SMTP id 70F262DCE1
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 15:01:32 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32E8D3BA730
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:53:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8981B3B030A
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC00520E007;
-	Mon,  3 Mar 2025 11:53:17 +0000 (UTC)
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3871420D4EB;
+	Mon,  3 Mar 2025 11:56:02 +0000 (UTC)
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C5141F426F
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 11:53:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BA3F202C55
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 11:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741002794; cv=none; b=E3QZf36eajPzrWrn+PAIvIEm3hyTcYUzBSGqosD2JSqMJISCBlKgpcr2GCIhLv+fGoJ3pcmaCHCFKL/tyin8u9SWClp86mc1gTX0i4VAl2GxQWzF5MxeJKhtlxRZ1js4qMVzRGcRKRQcUg0yzMGCzbKc2+ArmwzuMGrOivJM2tc=
+	t=1741002959; cv=none; b=XnqtQ+GWKvo8yW6cv3ktq4sL6fTxY5kDI7OYWt63BTFqN7T9Eb2xkl56oAYoE92J/Zzn+1/uOm9lW5qVQ1D+q5Om37k2Jx98v5Hsk1YfH4xWfl5Nbbjbugu8H12X3/Om7QRLm4s9cg7pq3YRbOwR2U51FUIv1EcZwslRta637hE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741002794; c=relaxed/simple;
-	bh=uKlaO0VtSYqlCulEvoLtkmUhyB9oj5gsIjZc4WzZr5I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UFlwjXE3geUi987IReGrhhlVUnQJeabKaIsfu+yp5Xn9j7v3zpVy9AZv8mCXZpxuCLZvcv2Qje5P/6bPqofJoPVa576bi+vKERINzLNQZZjvxdVHNuvgsWIwH76Oqkbt3o/06PG/sKIzuSC6oOnroYqdej/5D540pNxaes0/Aqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tcEKZu3A; arc=none smtp.client-ip=209.85.218.47
+	s=arc-20240116; t=1741002959; c=relaxed/simple;
+	bh=XNgWdH8fl5cRzt9ljpvgTEJNjZwPu9TAIUcQAUPpGJ4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Rx1I3SsJE0227n5B4xgi8UXBnp1ZQO5Wv77U3p9wNLDLB9YdxFJk6neYjcOyUWbBOsdNxKv/sVlUD5e0A95iduC3HJsXCilpwe02egz7l3qlfcHo5Dexxf8L3J0prAUxji6zpjOPuZaDkjqxWq1JeDXP7fIF1IwrLjrBZfkJlUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FCX1s3W7; arc=none smtp.client-ip=209.85.128.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-abffb7b9619so129404766b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 03:53:12 -0800 (PST)
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6fd719f9e0dso8363357b3.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 03:55:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741002791; x=1741607591; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DtXhuUfoSsHo3hqQz5EZhILyhw+RNyGbAyDJWOR+1Fw=;
-        b=tcEKZu3APPhdgjUAY/aHvcuQkgyftTG8+65l130l4oW3yr4NET89g/Yjlh2GJV//9C
-         Jou0K+svlQ0InU2V2RPif4ceEhz4eqDgx0CCLtlRWImnnVEWJKCd8EUwd3NOKLjn1wwf
-         6POx8Zrz8T+IB7Ysa61iw2gOBRwNCnTmWpmDAxM6odhxiBlXpjg11vAV7ZTxBMG/SGmG
-         p8VFseHLZEmVF4OWjnDjHrgR6zZ1uzNVLKvmLRrUMEtadjgnMx+g+aVKSE2lB/Z2bP14
-         lGyYr+yoZXohaxh2NRe2YeuFB5PIPfCrC22bEzRIY1LF8lwj43/+aBWlzxoiZjkfZeb/
-         YXbg==
+        d=linaro.org; s=google; t=1741002957; x=1741607757; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=XNgWdH8fl5cRzt9ljpvgTEJNjZwPu9TAIUcQAUPpGJ4=;
+        b=FCX1s3W7gks/gh1gIaOYRXTZMnZnt5XYck4kneFLu1lY53SmOcChbVtjj/FYmSWOvE
+         tH7XeRuCCxMQDvpvj6CIE2s35eMVGd3dMRELe4xJl3w4Ecw4tHdwFSYjicq7XMaZrbK9
+         J3Zb9GnCK5MrgVENiax+Wj4CP4+30ULaKIoB7cVk4HVlL1UC3lOPeeK7/4mi2KDNPZon
+         HakKlODddkGd/FkddB4b54NQlKJsWDeoMXTDS0mkYtmvypHOLx3QqKDx+hrdtAtWdmbR
+         2rMFSIV50oWxtzECb6I3YOChrCr4tzRgYE+UMvGAthnElw6O81qqExbblEn+/LbCYvxU
+         Y+yQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741002791; x=1741607591;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DtXhuUfoSsHo3hqQz5EZhILyhw+RNyGbAyDJWOR+1Fw=;
-        b=vxxsSSFbJEY70+CCHaS2mPqWZHsJiBelAGenUPf5OWa8Ku6PWmvW0RGMoJFSVzxrQh
-         5L5+xFWztZLqkhB5B4HpuS7j5z1sPlS2qUZN4UQlDIbc4E6NdrYai7EJCXWB0t56HpCZ
-         zpMV6tLBT1+XhLi8P8iSqbj/hQAIXIjohCmSGQFY2JZ9yIc+zifGuzEYYnqNvf3qemk/
-         4DdOG3EIQUpeez1QIi3eru4qQihdufXxpMAQvpfzWocw62WddlfUrXLo/Nn3rFdOfF35
-         2kcEH9T0jxpxF1Wbyb6tzbPSvyWUFDNWMb06Xk1egmfjPVdKlAG/P9VNYml26DrJaRRp
-         /ifw==
-X-Forwarded-Encrypted: i=1; AJvYcCXXxC2JZT0SfSvTxDtQRlJ9jXkTUfFPidqqgI+TCWjp4Zu9Ug5kLNRJg7EVR+H1A0IgiKqoqljUkNnTHY0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz28KdnrW26CIFbHZDkLo8xuVOe1wOkhcZiYmTVFpVaQmBP/jNZ
-	IrwPJ/SRdge9ugp9xvSiLFepW73PY56dKetFGCIGHhikjjSalqG9U41CeIOiJzA=
-X-Gm-Gg: ASbGnctNT9/LtuSt2fAJY00uYS8rRCSBGAF2aLAGwYRhWbugzYFjswWdWCV1cKAzryI
-	rV70ccjZhkTBXbaRH7BGu9ofHpWbDfoE7OX/mIOhknw2ChM2UBSIbmZfNR30kwHyic6o2vHK8pT
-	CgN+L40wbbDPn3zs+oKzF8swxGn1UDIBsBxivlvPkewk+M2DWOR2/lWcGMeH4dIc/jsrFBU3JWR
-	8t2BJUPdqdEZkBR2XstNlcZgIpikADxiRHyfu30fLxQNC0i5wYmwgxHNoh9hKll+xgW5KWmI8Hg
-	ijnP7vJN14KHhFSjdDLhsKwFcIkGfZjHEzn0ZFZxUMA=
-X-Google-Smtp-Source: AGHT+IFiXqW+Lwb1rqttilbKTCuFqrnwCuwyzVJ/cOH1SDiElNMin3wYFpdUDPax2lPnPWv8bfRXEA==
-X-Received: by 2002:a17:907:9717:b0:ac1:e53c:d15a with SMTP id a640c23a62f3a-ac1e53cdb94mr96050266b.54.1741002790638;
-        Mon, 03 Mar 2025 03:53:10 -0800 (PST)
-Received: from [127.0.1.1] ([62.231.96.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac1de83fa49sm86833866b.158.2025.03.03.03.53.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 03:53:10 -0800 (PST)
-From: Abel Vesa <abel.vesa@linaro.org>
-Date: Mon, 03 Mar 2025 13:52:50 +0200
-Subject: [PATCH v3 1/3] leds: rgb: leds-qcom-lpg: Fix pwm resolution max
- for normal PWMs
+        d=1e100.net; s=20230601; t=1741002957; x=1741607757;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XNgWdH8fl5cRzt9ljpvgTEJNjZwPu9TAIUcQAUPpGJ4=;
+        b=JAW7kEMaVn83W1W3teRQtQyeLvdx1S8J6vCI7hjwcx4zwpCjah3fzh2L3toYIIbFO1
+         flMYHb9ptf0SA99aYs8H8ard4d2Z9le2nY7gud6F4OFOzy6TNpcWE72kr3+pv1/FSpVe
+         piTCFe/eYK4GruzMLh1j3Xjfi+lcMMnihVD4KPNuZBVCwgGauPyts6Id5BN+zGETl+dQ
+         RjDAmTZ51VV6RVe/4P6kceiM98O12mAyJwo75drdBVEZ5QkM/3I1NC0zRQtTQoCjMUSN
+         y72mbVbnhhtK51FLUf7nBiHhKh0z0nyeLkW+yh6iLRzMCCKxBwJBc6SmBD5sP1/L1/tv
+         wYLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXN/RC2PWV+r7a/Y+OcTfWjoBjOQ/XtFTOWlTqeQa2ClEKiXtxcrE0fLlCnYVHCY4ajlQj5oIetRjNTgEE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz27TAg5UMDTl6Qf+vxpvPwV43LE7+yAdd4eg8/tDiD80P1qgqT
+	QISMK/CYY9nUGf0/0dTGVKwtUzMkMJhSpC9taN/kINAuznxzvea6XF2Dz70V9UMI5uX3yQv/5Yw
+	Q/rhjrSQPYatWME/x7jDSz60tReXGnJIy8goDL2ARRSwxtW0s
+X-Gm-Gg: ASbGncsYYd0mj2ebypZ1ni8z76LvlslwRruP7gNXb+DXkbP7F84nPDx33uu/3yFPBrj
+	CIBmXH+AEu/Z259MpCXPGkmFPu1pThnuiJGWKMYzWettUmr2IWbu3AhgR5zJgVo5RcWPMZs+v25
+	5XMPh9IDa4iyl8/4ZGhdujcxASkLo=
+X-Google-Smtp-Source: AGHT+IGX8q8UK5ca8HVl/UrYuKtJYKHT+VOk7Nc15oA5SjFGT6TC1WnbIOSec57WlAO7CIGV36a6PfFL7M2kit01IOI=
+X-Received: by 2002:a05:690c:5719:b0:6fd:3ff9:ad96 with SMTP id
+ 00721157ae682-6fd4a16d0aemr115286237b3.37.1741002957064; Mon, 03 Mar 2025
+ 03:55:57 -0800 (PST)
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -131,83 +122,46 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250303-leds-qcom-lpg-fix-max-pwm-on-hi-res-v3-1-62703c0ab76a@linaro.org>
-References: <20250303-leds-qcom-lpg-fix-max-pwm-on-hi-res-v3-0-62703c0ab76a@linaro.org>
-In-Reply-To: <20250303-leds-qcom-lpg-fix-max-pwm-on-hi-res-v3-0-62703c0ab76a@linaro.org>
-To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
- Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
-Cc: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
- Kamal Wadhwa <quic_kamalw@quicinc.com>, 
- Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Johan Hovold <johan@kernel.org>, 
- Sebastian Reichel <sre@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
- linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Abel Vesa <abel.vesa@linaro.org>
-X-Mailer: b4 0.15-dev-dedf8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1589; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=uKlaO0VtSYqlCulEvoLtkmUhyB9oj5gsIjZc4WzZr5I=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBnxZggiuDOGZkfqUQVY+9AhAVfnorbl76qyE9MP
- JBMYI0CuO6JAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZ8WYIAAKCRAbX0TJAJUV
- Vt1NEACPUiQuUoYbNCNbZokEmpQboLB57GjVIEzFMwPmh1FQEiRui9yAA3dOOo+/2l4/d/sY1Nm
- iqGo2Tqn71CiK2WEZhI44HoMD0jJypHcAQIKEKmzLXLTd9GcW+GxCMwXg4G5N2VGLccJY2yKHoD
- vZl/9Gts5SgVB+z+TJgzK5JQLIBotZJlqJTqa2xrJ4GpB+NW91c7OmpgfIaEkP6XU0+0HVKNaYZ
- BopTmw2p+42Heqv29pyGRm+WCTpRFv3PWFLahDT8woEp92Qw+Bu1nj7s+jeVm99zs008LcnyAK5
- gVSQU5RNN8q5XHQ6sv1POSU8N5j+R/c4bY+PdnuAFOtNw87XUULyFcWYIzDSvuCIcHiTSRxvqKM
- SA7+4TxqL6PyMbOr2Xjx724j9pHszGQSkD3q5wth/DlJpu8lphKMH0XpxwVMRoTfwfC0X/Tr65O
- SJiafnT2TiAIa50gTnitnQCaoXGXRiH2Qt2yYrzNKJ/e0zWaFM40KePsqHQQeTr3bVOq5Xygcy7
- y12cIrmJPryAn2SMbO+CFuasEq4XPvcsSHVCKfTRgp5OjTByyR0Ppl7AswN6g4kEB2yxnoo9hXn
- /fR51OFPyN31yZR594DFRNcul687gYj5VPRrklVimZJGrffgLfTwpEM13fgkNQIkF7lJStAsPHY
- C0i0LawvGl2MSJw==
-X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
- fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
+References: <5000287.31r3eYUQgx@rjwysocki.net>
+In-Reply-To: <5000287.31r3eYUQgx@rjwysocki.net>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 3 Mar 2025 12:55:20 +0100
+X-Gm-Features: AQ5f1JoaEzH0RILD_BxoqNSMy1juR0ec4QxtwfOG9M6tuXJbj4t5l5bWPbiZLn4
+Message-ID: <CAPDyKFpo-Pn_4aUAwowQmNDDa2zEZ6hwJhAAzCfArzzdt511Fw@mail.gmail.com>
+Subject: Re: [PATCH v1 0/3] PM: Tweaks on top of "smart suspend" handling changes
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Alan Stern <stern@rowland.harvard.edu>, Johan Hovold <johan@kernel.org>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Jon Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6gMQ589GzG1wx
+X-ITU-Libra-ESVA-ID: 4Z6h216bBwzG1fq
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741708712.76767@X8NQHjbDMfuesm86ptlP/g
+X-ITU-Libra-ESVA-Watermark: 1741710517.45611@D3E5zC807M5KrO4sFm2mlg
 X-ITU-MailScanner-SpamCheck: not spam
 
-Ideally, the requested duty cycle should never translate to a PWM
-value higher than the selected resolution (PWM size), but currently the
-best matched period is never reported back to the PWM consumer, so the
-consumer will still be using the requested period which is higher than
-the best matched one. This will result in PWM consumer requesting
-duty cycle values higher than the allowed PWM value.
+On Thu, 27 Feb 2025 at 11:49, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+>
+> Hi Everyone,
+>
+> These are some tweaks based on
+>
+> https://lore.kernel.org/linux-pm/12612706.O9o76ZdvQC@rjwysocki.net/
+>
+> which in the meantime has been applied to linux-pm.git/linux-next (as 6.15
+> material).
+>
+> None of them is essential, so if you have objections, please let me know,
+> but IMV they generally will make the code work better.
+>
+> Please refer to the individual patch changelogs for details.
 
-In case of normal PWMs (non Hi-Res), the current implementation is
-capping the PWM value at a 9-bit resolution, even when the 6-bit
-resolution is selected.
+For the series:
 
-Fix the issue by capping the PWM value to the maximum value allowed by
-the selected resolution.
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Fixes: 7a3350495d9a ("leds: rgb: leds-qcom-lpg: Add support for 6-bit PWM resolution")
-Suggested-by: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
----
- drivers/leds/rgb/leds-qcom-lpg.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/leds/rgb/leds-qcom-lpg.c b/drivers/leds/rgb/leds-qcom-lpg.c
-index 4e5c56ded1f0412c9913670699e912b24f3408bd..4454fc6a38480b61916318dd170f3eddc32976d6 100644
---- a/drivers/leds/rgb/leds-qcom-lpg.c
-+++ b/drivers/leds/rgb/leds-qcom-lpg.c
-@@ -533,7 +533,7 @@ static void lpg_calc_duty(struct lpg_channel *chan, uint64_t duty)
- 		max = LPG_RESOLUTION_15BIT - 1;
- 		clk_rate = lpg_clk_rates_hi_res[chan->clk_sel];
- 	} else {
--		max = LPG_RESOLUTION_9BIT - 1;
-+		max = BIT(lpg_pwm_resolution[chan->pwm_resolution_sel]) - 1;
- 		clk_rate = lpg_clk_rates[chan->clk_sel];
- 	}
- 
-
--- 
-2.34.1
-
+Kind regards
+Uffe
 
 
