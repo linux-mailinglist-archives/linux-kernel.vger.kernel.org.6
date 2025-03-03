@@ -1,110 +1,117 @@
-Return-Path: <linux-kernel+bounces-541278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC771A4BAD9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:33:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BB4DA4BADC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:34:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2606B7A3356
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:32:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDC1B3ACAA4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:34:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA0B1F0E48;
-	Mon,  3 Mar 2025 09:33:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 637721F0E50;
+	Mon,  3 Mar 2025 09:34:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zot24OU+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u7d7ufUt"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29D1EC4;
-	Mon,  3 Mar 2025 09:33:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B3F17082D
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 09:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740994391; cv=none; b=NiPv1PwMB8LpO+QkLoMMgUM1clrRNYC677k2+6Ru9ESBDOZFIJ67FX2LJveO/m64vGhc15hXltOhFT/gzXoqDwcC4tTgFNUf3k+rBxEFQzAmVxcbDNGOKFiwRJuLyhRQwry/BBFBJebHbLro99Fey6JagYHRtQEfdO+YM+BAGK4=
+	t=1740994446; cv=none; b=o7D0n1Jj/tPa77nlB8SLr5aymG6B0cbc1p23dBDTrseSwvwyZYCbEzA74k9kSzLUXsP3wrTZdrzj7Vo07axlYLPNDJXsq46atwLlaldItjlYY1c8AhhzlipRIMmRZlLZte6DT6LIHYZGsyJdw2CtIDX17B8obHpu8Q0Nt8e627g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740994391; c=relaxed/simple;
-	bh=uxWb5weZnx4w75c+cNd9geof+3mOOtF83ztdgamkHZc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Bw8nVXWp3rynnNr5wgMScj+rpi0MXrSNlRY6bK6POlCnqDt0iwMlosR4r0uF9O8o3pISRLaP0zNU8wjjVLAlhvV1nnZQ6Qla7gGvpS8Juy0fQeY4lKZWzEErtXZfp5wdlx8lE6U8bUf5EkzWffj8GLaKseVMlNWSFofb2xktZko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zot24OU+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7E6CC4CED6;
-	Mon,  3 Mar 2025 09:33:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740994391;
-	bh=uxWb5weZnx4w75c+cNd9geof+3mOOtF83ztdgamkHZc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Zot24OU+Kr3IVKlNxS8Ms3Pi6PvMwu9DHSIsqRFgjxP7aaO6HBF+zxguPxwkhaO2a
-	 xrdRh9uBrtzK+Ykgl393iwGLK8grS93jXMrw/M0Jj0oWxBTRY58YtHO+mmTaRseX2I
-	 bwx01tB5PVV+suC6VLbWhT09Tqr1VNPpdd3/9dK4QlGfahn05Hh3Kp5xbqtzv3xwhm
-	 O65rL/CJBPtzWDzv1AOWI5Q5YPz+w3dHiYps7UNc3zVcLGycvh5U026fbDNLbGuWdj
-	 Bnj8SfZx8IFw+vKyH2xq2DVorZGK5IOZDXsua4NUVPxKkq4g9T8Y1Rw4H+/nn9pxqK
-	 tcLnUaY4LNqEQ==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: Jocelyn Falempe <jfalempe@redhat.com>,
-	=?UTF-8?q?Thomas=20B=C3=B6hler?= <witcher@wiredspace.de>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>
-Cc: dri-devel@lists.freedesktop.org,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: [PATCH] drm/panic: clean Clippy warning
-Date: Mon,  3 Mar 2025 10:32:42 +0100
-Message-ID: <20250303093242.1011790-1-ojeda@kernel.org>
+	s=arc-20240116; t=1740994446; c=relaxed/simple;
+	bh=QQfQeOchMFjMIbBZd9BGjFJG6WdiEeD+IaXEtKwcvFQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L6amLbtwMWetN33O4RDY2exdgrIsSggH5KY1cCOph6YiDpU9L2rZqTb9MFWb5bFokWkuyjIBoOUPX28u+37Xa4qkO1pyXh/2QZ0uv8g1uL7VzShcNwLwI7pHWksmVeYR83rUj0ckraoEYSHeLXxfTlI9OIezlh89I5gDshDTk08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=u7d7ufUt; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-438a39e659cso28231925e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 01:34:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740994442; x=1741599242; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jXnZ3E5/TKOVFTli8c7ZgXogoCXoZZU7O3qVHvhvQxo=;
+        b=u7d7ufUtjKfmtL9ThHTDuErw2V/XCxyJcYvhw7Hr/ehv4m0IcBDTI1MAtaQ2CMfyJ3
+         Sg+w/2czFI3XCRx+g7V08+beVnA5QOc6xMPicRga51Yfw/TcatDHp06aHb3crbsEJ9lI
+         U75QXzx3Xhxf3GnzrSJ42Ohlh8JdE2878iObTiafNFzdd7wQW3N6aAPOmNAVRrIjyP5w
+         OQfjMEX+Adkrreql3OFNI6BcfFP4Lxqlagr99anFGZGnIEWdAyWJ2ttwmYt2qNvJ2xE7
+         YVIj4QuliFGMiYz/KL8jQOybDLcO6gYCQ8P/4vqZiQlMgWoeKa5ZY3LebnFJp4iHvQiP
+         7BPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740994442; x=1741599242;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jXnZ3E5/TKOVFTli8c7ZgXogoCXoZZU7O3qVHvhvQxo=;
+        b=as8WLMdtQfOSPv5Fn19lEPPhDclLqYZ6NGXYMI+hrJzEYbkQUDIys84/s0VFesD9qb
+         cdmKQQNdbbK0/2CsTHEwD72ZAV+7HuHVrBeZG2ty2+N7lwBHNknDS6e75jQIp2bkanY3
+         0rJGi7oYoY+6GwP0yqVZ7KVykGFL+rHZPi9gfsdhNkA18s1RMQw3NKGtkeoOvA1YOCoH
+         21X+OvAK8O/DiKxPtZR+R5okap6O9IWAJ0JtO64c/3XuDInwGV8gsBFxu7IST/7c+19H
+         f2FBs1aUYdMfN1xSAUpZgCoaMaU75h8f++cz8zhcifTeacG5KhMAixnUfPnEdQV/oUew
+         Kcrg==
+X-Forwarded-Encrypted: i=1; AJvYcCXVU0+XIT0G48W4mBrKE3jfio5euvibfD6kQxJx3yEMEmS5Vnlge+OW3tcBE+WQ/JhPjZCSOeVhXFwOS3g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywj/uoux04CSt3YCQNbdTdLl0XvtsEGJV0xP8Afdsx9IZiDOCdS
+	4XzMDOm7oi/XKFIU8Zjk9tfLXsUNTpAU7YozR6bvfnaXbAuh7H13cQw80DFeIxpNytcUrnbea94
+	Q4NueAd835erHkAjEuxMptCwnOWkHkUXyJLvp
+X-Gm-Gg: ASbGnct3MoXfmMMofL6Fm8wJxpTWWV98xCeeEg0yA0hlAUrK5Eh/UY7GFE7rYdd5UTU
+	4jjWleGq3+Eg879VmPwHRQnmt+XIrsXdkltmjvayc2wOR18HsFpI5H+hoQb4q8Uip8lkznGKnoU
+	7crw2rxjNiCebiQ82IJAkRHaLE2Ztwcl1tCRlHFZbiCWAfoXs04OWBEWG1
+X-Google-Smtp-Source: AGHT+IF7tkX24sQKlhC4282EiZxY+hctHT5EHwLzLcZo0eYUQP0MVXGgfz4uJEhk1VzgcXR0gnLyV/lIaiDtAcofzqo=
+X-Received: by 2002:a05:600c:5106:b0:439:9496:181c with SMTP id
+ 5b1f17b1804b1-43ba67745d4mr107426315e9.29.1740994442374; Mon, 03 Mar 2025
+ 01:34:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250303093242.1011790-1-ojeda@kernel.org>
+In-Reply-To: <20250303093242.1011790-1-ojeda@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 3 Mar 2025 10:33:50 +0100
+X-Gm-Features: AQ5f1JpToETt_xPFbUXkjE6L7wUMFuPji7pUB4N-gMgIpy2I89dr701AOdtWuTc
+Message-ID: <CAH5fLgg_Ax3x8qLvJCE=0xay7gosaq0w_=xc4zu2dQ7tFV=B5w@mail.gmail.com>
+Subject: Re: [PATCH] drm/panic: clean Clippy warning
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Jocelyn Falempe <jfalempe@redhat.com>, =?UTF-8?Q?Thomas_B=C3=B6hler?= <witcher@wiredspace.de>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, dri-devel@lists.freedesktop.org, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Clippy warns:
+On Mon, Mar 3, 2025 at 10:33=E2=80=AFAM Miguel Ojeda <ojeda@kernel.org> wro=
+te:
+>
+> Clippy warns:
+>
+>     error: manual implementation of an assign operation
+>        --> drivers/gpu/drm/drm_panic_qr.rs:418:25
+>         |
+>     418 |                         self.carry =3D self.carry % pow;
+>         |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: rep=
+lace it with: `self.carry %=3D pow`
+>         |
+>         =3D help: for further information visit https://rust-lang.github.=
+io/rust-clippy/master/index.html#assign_op_pattern
+>
+> Thus clean it up.
+>
+> Fixes: dbed4a797e00 ("drm/panic: Better binary encoding in QR code")
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-    error: manual implementation of an assign operation
-       --> drivers/gpu/drm/drm_panic_qr.rs:418:25
-        |
-    418 |                         self.carry = self.carry % pow;
-        |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: replace it with: `self.carry %= pow`
-        |
-        = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#assign_op_pattern
-
-Thus clean it up.
-
-Fixes: dbed4a797e00 ("drm/panic: Better binary encoding in QR code")
-Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
----
- drivers/gpu/drm/drm_panic_qr.rs | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/drm_panic_qr.rs b/drivers/gpu/drm/drm_panic_qr.rs
-index 62cb8a162483..3b0dd59781d4 100644
---- a/drivers/gpu/drm/drm_panic_qr.rs
-+++ b/drivers/gpu/drm/drm_panic_qr.rs
-@@ -415,7 +415,7 @@ fn next(&mut self) -> Option<Self::Item> {
-                         self.carry_len -= out_len;
-                         let pow = u64::pow(10, self.carry_len as u32);
-                         let out = (self.carry / pow) as u16;
--                        self.carry = self.carry % pow;
-+                        self.carry %= pow;
-                         Some((out, NUM_CHARS_BITS[out_len]))
-                     }
-                 }
-
-base-commit: c0eb65494e59d9834af7cbad983629e9017b25a1
--- 
-2.48.1
-
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
