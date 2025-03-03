@@ -1,272 +1,164 @@
-Return-Path: <linux-kernel+bounces-541922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3ECEA4C36E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:34:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DD3E9A4C373
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:36:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA4E918923B0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:34:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDF931893212
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:36:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD07CA5A;
-	Mon,  3 Mar 2025 14:34:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C4ED2139DB;
+	Mon,  3 Mar 2025 14:36:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UFtEnUxM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="b0jxFdoy"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 384912139CF
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 14:34:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B6A20F086
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 14:36:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741012475; cv=none; b=D5POAQRKmWFIZKPXBFNf1ycUOqqvU9kocRwISAhDJ8ndvgqQHpiaxtcMmD/tOjo72/6RFC2wuvNAoTsfD3XU7aMfY+EPQ5EHNUsxEUD7gOQASsbLHwOh1yJjudeFIjmu+zv0N9bilIjmLLtTU6NU6Wyz33DHnA5aaO6Jh/eM1n4=
+	t=1741012598; cv=none; b=JRnLjk/BhNEirrWOvRq54H6bOmkmkUQ8uEghatL/45XoTZ9Jn4lCQlf36i6KCvSaXjKFnRmHPVwBTZk9NXHCoV+cv0XXnFUSytYQctTLdqLaxxvCil3h9OEBC13op5Cg61DHI5gCxtEkTBTCw7epPgLvVP2Y9kpGr+4w5PouGR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741012475; c=relaxed/simple;
-	bh=5qvGUIZ/I5J/i3g9av11OIbWKvv8KsxZRfgvPegFhq4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jkc1vAWhNqJdq/Q0sHVJiwTq5TpHgwMAQiHP1wPg0Bzm5a+i5GDOeAYZIqP6MKPMwaUdQGh5wJBZ9OGUBx7QxmAZsO+cCepeYfAEjBfv4xEEHmmD2GqMQgoiZAdNe/klb061uzRKa0PFYP6aYh1MTn180OzxSdOi7lGYOvqUH9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UFtEnUxM; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741012472;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=I34YFTmas2vrNzlk9v8DChrYz3A19H2Ms0F9Tcfezvw=;
-	b=UFtEnUxMI5w6yU0PSy6hdCBdqi1ABSoYffGS/SRdtkDSfd9/0k2/yNiR9S6Z1i+EL38zff
-	1AewcmeIfPAJhYqADX8j8rhJcXYTDw9bpizDnKwGoZY9f0PD3HYcwPIhRUxWVgbwa9Vk42
-	P8adj23gQl2G7PAYAXQkRVQxSZj//oI=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-520-7SsszYBaNyuf8eEOdxNvDA-1; Mon, 03 Mar 2025 09:34:25 -0500
-X-MC-Unique: 7SsszYBaNyuf8eEOdxNvDA-1
-X-Mimecast-MFC-AGG-ID: 7SsszYBaNyuf8eEOdxNvDA_1741012465
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-abf553044abso204187366b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 06:34:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741012464; x=1741617264;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=I34YFTmas2vrNzlk9v8DChrYz3A19H2Ms0F9Tcfezvw=;
-        b=q0OLyf8rOxDOgAzlYO1+dPyOS0mJxs39HUa29qvX/JTMpTekFw2sL/ACDE0glaQ8hM
-         wekA7RQ9CL16wnccSC1K/VHy7uubS4i9xUSeQy/0EI/PJiNCVBbYmzidLtg2Pt9uvJle
-         zDyBl0mlbJ3yJdgWSHpOXVFmdWKXbYmcVqXq+5Vw8fRGg5cU6u8CnSANDPRk0Wzzu/yX
-         fmpiRIbhMtsK3HRfm6Rb+fMBS6cF3IvhUmr2oQnvsIVIn6OHmciiOPIx0R+IB0QZpc4F
-         nHUMApaibjssF+j63NTAFlTu8labr3gjKYCUkz3g2hKxRb2uKcgP1HkY+/txueKnBYLc
-         sxSw==
-X-Forwarded-Encrypted: i=1; AJvYcCUGnXngr38w9EMdR1NInWQPU6unelft6m2LeCb4swP6Pzxarrywy8f7yjk7GXk4F2YuXL57w2mygYnTCa4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8bvmtCxFX4hnvOrBBFf57CMwkvZWe/xSQ1iwTjeWVN5k7dNlK
-	MGp5CrHbVbSck8m05+hpVYghojxe7oq6z+Hjo2BRc6+CVANsJJg8BSY4WQizw1NL7ZKeCP+zn7n
-	lWrHr8kzgvo8MhLOAMoEZwEuXC1MF3gKkNIeYGjkeimltCscvLdkvHAuGxfMvcA==
-X-Gm-Gg: ASbGncvqp+p3T6YWyk7/81GnE61PaA8Q05Tas+H3pMCt78aeH6TvFWrdZqZkokcdXdy
-	t7Y+Gh9kMp7ZPoNZ6Oq+Qia/+JVIyI9uBJ5WJU2Fq+dVBFCKzobWocw6D2S0YJ8GPh4uzcsKgcb
-	xqPoHzuVv64e3QwgI0Xy1DW2tfdlleDZPckTLfLn2h9JPr4X22YS0d7SFhjdFJD4Kp4jkGxyiSa
-	5gfD+I+dQ5gEhW1mV5K3UrJlwP7lfOXwkCEegszZPOBpSni9qCvkirgCyX3zpJbIXG0dx7vRWkA
-	l3jMb2foI+/CDjs4Zdg=
-X-Received: by 2002:a17:907:3545:b0:abf:44b1:22e4 with SMTP id a640c23a62f3a-abf44b12416mr1013702566b.11.1741012464585;
-        Mon, 03 Mar 2025 06:34:24 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGihIPNx7b5A2OG9AxeVc7V+cJcoZ0+m+poQG0Vt/bJ2O+YoX+CsSfZPuX7kYqgg+p9uOVxcQ==
-X-Received: by 2002:a17:907:3545:b0:abf:44b1:22e4 with SMTP id a640c23a62f3a-abf44b12416mr1013700066b.11.1741012464138;
-        Mon, 03 Mar 2025 06:34:24 -0800 (PST)
-Received: from [10.40.98.122] ([78.108.130.194])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf4e50c80esm483595066b.61.2025.03.03.06.34.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Mar 2025 06:34:23 -0800 (PST)
-Message-ID: <9ffc2b57-579e-46f8-83cd-a7d5cca15a42@redhat.com>
-Date: Mon, 3 Mar 2025 15:34:22 +0100
+	s=arc-20240116; t=1741012598; c=relaxed/simple;
+	bh=I/74DaK6OwRQxqLGBF1ylRLIPNLrG2psU7QD8Iv7Pnc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=cUM9cbaFQEJ/oOKfe9ET3fihPhnlNWpqRry4jUHt5u/eiHJXA7kG4XTbVvj+NJWZ1OeVYq1e25OGXio1FaY4GwZgaW3ILluDZMho28vXws4l1y0xihQowbosoDrONRTL2jOGniJGjEb8DvgEOYqzEXE5yxejPfKaPR4mPnkRjKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=b0jxFdoy; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250303143635euoutp0213369683ce14d41a2495f3aee0768c75~pUbshVKMK2659126591euoutp02h
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 14:36:35 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250303143635euoutp0213369683ce14d41a2495f3aee0768c75~pUbshVKMK2659126591euoutp02h
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1741012595;
+	bh=pTjIhab8FRPR9yXV/fmQexbnMHTD4v3PKosSwFKK0e4=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=b0jxFdoyc43MHMRFKwa1VHx4XZT/eOv7H6+dZpdH5/juf2W44WVVAPu+nDJxaTOWW
+	 INT3I//iX6ekTonAyQONmx/wN9xB1a86BpgPA8gPJUcHXgK6fk0ffmRAS1GsvZK6Qb
+	 MxiBhPLlsdy6TYVBnA8uv6x+wtFi09AZl4rHxIxA=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20250303143634eucas1p203aef65baec1b28baa23e41bdcbfbdef~pUbsDPrX42682126821eucas1p2s;
+	Mon,  3 Mar 2025 14:36:34 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id A9.8D.20409.27EB5C76; Mon,  3
+	Mar 2025 14:36:34 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250303143634eucas1p269281f72bdc4d764edd54b9427f68787~pUbrokfQM2682126821eucas1p2r;
+	Mon,  3 Mar 2025 14:36:34 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250303143634eusmtrp194320dd4bcc931db79a659cb79d181c8~pUbrmn-s01014710147eusmtrp1l;
+	Mon,  3 Mar 2025 14:36:34 +0000 (GMT)
+X-AuditID: cbfec7f4-c0df970000004fb9-99-67c5be722ace
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id B4.89.19654.17EB5C76; Mon,  3
+	Mar 2025 14:36:34 +0000 (GMT)
+Received: from AMDC4942.home (unknown [106.210.136.40]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250303143633eusmtip28a4429ddccd06e468ba9ba46be450def~pUbqqIMVy2026320263eusmtip2j;
+	Mon,  3 Mar 2025 14:36:33 +0000 (GMT)
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+To: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org,
+	wefu@redhat.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, alex@ghiti.fr, jszhang@kernel.org,
+	p.zabel@pengutronix.de, m.szyprowski@samsung.com
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, Michal
+	Wilczynski <m.wilczynski@samsung.com>
+Subject: [PATCH v1 0/4] Add T-Head TH1520 VO clock support for LicheePi 4A
+ GPU enablement
+Date: Mon,  3 Mar 2025 15:36:25 +0100
+Message-Id: <20250303143629.400583-1-m.wilczynski@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/5] media: uvcvideo: Increase/decrease the PM counter
- per IOCTL
-To: Ricardo Ribalda <ribalda@chromium.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-References: <20250226-uvc-granpower-ng-v4-0-3ec9be906048@chromium.org>
- <20250226-uvc-granpower-ng-v4-3-3ec9be906048@chromium.org>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20250226-uvc-granpower-ng-v4-3-3ec9be906048@chromium.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrIKsWRmVeSWpSXmKPExsWy7djPc7pF+46mG3QeULB4ducrq8XW37PY
+	LdbsPcdkMf/IOVaLe5e2MFm82NvIYtF8bD2bxctZ99gsPvbcY7W4vGsOm8W2zy1sFmuP3GW3
+	WP91PpPFxVOuFnfvnWCxeHm5h9mibRa/xf89O9gt/l3byGLRsn8Ki4OIx/sbreweb16+ZPE4
+	3PGF3ePeiWmsHptWdbJ5bF5S79Gy9hiTR/9fA4/3+66yefRtWcXocan5OrvH501yATxRXDYp
+	qTmZZalF+nYJXBn7phcUXOSpaHi7iqmBcStXFyMnh4SAicS0b98Yuxi5OIQEVjBKrGtsZ4Vw
+	vjBKnJ/+kxnC+cwo8bH3OTNMS8O5RewQieVALVPfs4EkhATeMEpMvcAIYrMJGEk8WD4fbJSI
+	wB4mie/fIUYxC6xilHjy7SM7SJWwQLTEkgkNYDaLgKrExEOtLCA2r4CdxJX2xVDr5CX2HzzL
+	DBEXlDg58wlYDTNQvHnrbLChEgL7OSX2rn/MCtHgIrH9RAcjhC0s8er4FnYIW0bi9OQeFgg7
+	X+LB1k9QC2okdvYch7KtJe6c+wX0DgfQAk2J9bv0IcKOEj+vzwELSwjwSdx4KwhxAp/EpG3T
+	mSHCvBIdbUIQ1WoSU3t64ZaeW7GNCcL2kHj+YCsjJKxiJT4dnc44gVFhFpLHZiF5bBbCDQsY
+	mVcxiqeWFuempxYb5aWW6xUn5haX5qXrJefnbmIEpsrT/45/2cG4/NVHvUOMTByMhxglOJiV
+	RHhvtR9NF+JNSaysSi3Kjy8qzUktPsQozcGiJM67aH9rupBAemJJanZqakFqEUyWiYNTqoGp
+	Kvf30c9JD9e6JXSxOz5IOKKxJH6qhfbvVTml3gwPCmOfFy48+efTmml1sa6h/7lmb1uklPgq
+	sHamsJ5p4OIsp9rfji/4c879FtppE/pk14Uf9hU3nNO1lc/bFCnWS6+uF1wVaDFd9VbG4lPq
+	JgbsKVVMSin2S3rSXGyL9SfHRQl4zRF4fvLM+UWfVAX3W3Dl2F+0b2ivUru0ONHP/tIprlN5
+	t5/1cD+SrWb8cfvilmVV3bdXOlm2eR0yXv0vKPhj9r/ULx+3HL/Kc3Rii8SLksnrr4adDCgz
+	TZ2TtX9J35r2XZN62YUvGj0Umyb7OXv626y7FnnzDzmarVBnXcjx8lN2y5WFfxnLsm0WGnUo
+	sRRnJBpqMRcVJwIA2loBZQQEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHIsWRmVeSWpSXmKPExsVy+t/xe7pF+46mG0w/xGzx7M5XVoutv2ex
+	W6zZe47JYv6Rc6wW9y5tYbJ4sbeRxaL52Ho2i5ez7rFZfOy5x2pxedccNottn1vYLNYeuctu
+	sf7rfCaLi6dcLe7eO8Fi8fJyD7NF2yx+i/97drBb/Lu2kcWiZf8UFgcRj/c3Wtk93rx8yeJx
+	uOMLu8e9E9NYPTat6mTz2Lyk3qNl7TEmj/6/Bh7v911l8+jbsorR41LzdXaPz5vkAnii9GyK
+	8ktLUhUy8otLbJWiDS2M9AwtLfSMTCz1DI3NY62MTJX07WxSUnMyy1KL9O0S9DL2TS8ouMhT
+	0fB2FVMD41auLkZODgkBE4mGc4vYuxi5OIQEljJKrDuzmRkiISNxrfslC4QtLPHnWhcbiC0k
+	8IpRoudkFYjNJmAk8WD5fFaQZhGBC0wSu9atZgJxmAXWMUpM2b6DCaRKWCBS4v33hWCTWARU
+	JSYeagWzeQXsJK60L4baJi+x/+BZZoi4oMTJmU+AajiABqlLrJ8nBBJmBipp3jqbeQIj/ywk
+	VbMQqmYhqVrAyLyKUSS1tDg3PbfYSK84Mbe4NC9dLzk/dxMjMKK3Hfu5ZQfjylcf9Q4xMnEw
+	HmKU4GBWEuG91X40XYg3JbGyKrUoP76oNCe1+BCjKdDVE5mlRJPzgSklryTe0MzA1NDEzNLA
+	1NLMWEmcl+3K+TQhgfTEktTs1NSC1CKYPiYOTqkGppCtrvvNv70z1Y45pLXhVvPF+pdawdMf
+	MLXv25g965HNx4tzHjEsT1kkldzh9TclP1ujZCnPl91Gj+wYdRQj7q8WfDp36qZKiclxP5xE
+	JS9frhPlEggSe5yZrLTbZ+ME9qP9bwT28qjmbZlSzLn7UE5o/H/HQuk1sha2687/WdbCqPBS
+	SlDq2iEWSYPwfPYZJb8+VTHe2+CePEMm4PySJTrLW26rH/rQLTqrP5zh6E7nl5MfJEtNrbhl
+	J3+oaKJVjr4A7wyB01efPv/GWmHXpMp3826oWOeUG+Er1+bItPHGdzre27uh377dxyXmUUnE
+	92jLk9GZD1bxt9p2+BbvWBcQ+JFXQ3em04t7vuEZSizFGYmGWsxFxYkACo1pLXEDAAA=
+X-CMS-MailID: 20250303143634eucas1p269281f72bdc4d764edd54b9427f68787
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250303143634eucas1p269281f72bdc4d764edd54b9427f68787
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20250303143634eucas1p269281f72bdc4d764edd54b9427f68787
+References: <CGME20250303143634eucas1p269281f72bdc4d764edd54b9427f68787@eucas1p2.samsung.com>
 
-Hi,
+This is a subset of a larger patch series enabling the Imagination BXM-4-64 GPU
+on the LicheePi 4A board, which is powered by the T-HEAD TH1520 SoC. While the
+full series includes power-domain, reset, and firmware changes, this part
+focuses solely on the clock subsystem needed for the GPU and other VO (video
+output) blocks. By merging these clock patches independently, we prepare the
+groundwork for future GPU integration via the `drm/imagination` driver.
 
-On 26-Feb-25 15:23, Ricardo Ribalda wrote:
-> Now we call uvc_pm_get/put from the device open/close. This low
-> level of granularity might leave the camera powered on in situations
-> where it is not needed.
-> 
-> Increase the granularity by increasing and decreasing the Power
-> Management counter per ioctl. There are two special cases where the
-> power management outlives the ioctl: async controls and streamon. Handle
-> those cases as well.
-> 
-> In a future patch, we will remove the uvc_pm_get/put from open/close.
-> 
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+The T-HEAD TH1520 SoC features multiple clock controllers. Initially, only the
+AP clock controller was supported upstream. The patches below add support for
+the VO (video output) clock controller, which manages GPU-related gates, HDMI,
+and other multimedia clocks. Additionally, they introduce a mechanism to
+provide no-op operations for the GPU's "mem" clock gate (documented as
+“Reserved” in the hardware manual) and coordinate the GPU CLKGEN reset in the
+clock driver.
 
-Thanks, patch looks good to me:
+Bigger series cover letter:
 
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+https://lore.kernel.org/all/20250219140239.1378758-1-m.wilczynski@samsung.com/
 
-Regards,
+Michal Wilczynski (4):
+  dt-bindings: clock: thead: Add TH1520 VO clock controller
+  clk: thead: Add clock support for VO subsystem in T-Head TH1520 SoC
+  clk: thead: Add support for custom ops in CCU_GATE_CLK_OPS macro
+  clk: thead: Add GPU clock gate control with CLKGEN reset support
 
-Hans
+ .../bindings/clock/thead,th1520-clk-ap.yaml   |  33 +-
+ drivers/clk/thead/clk-th1520-ap.c             | 298 ++++++++++++++++--
+ .../dt-bindings/clock/thead,th1520-clk-ap.h   |  34 ++
+ 3 files changed, 334 insertions(+), 31 deletions(-)
 
-
-
-
-> ---
->  drivers/media/usb/uvc/uvc_ctrl.c | 13 +++++++++++--
->  drivers/media/usb/uvc/uvc_v4l2.c | 23 +++++++++++++++++++++--
->  drivers/media/usb/uvc/uvcvideo.h |  1 +
->  3 files changed, 33 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-> index 4e58476d305e..47188c7f96c7 100644
-> --- a/drivers/media/usb/uvc/uvc_ctrl.c
-> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-> @@ -1594,12 +1594,15 @@ static void uvc_ctrl_set_handle(struct uvc_fh *handle, struct uvc_control *ctrl,
->  
->  		if (ctrl->handle) {
->  			WARN_ON(!ctrl->handle->pending_async_ctrls);
-> -			if (ctrl->handle->pending_async_ctrls)
-> +			if (ctrl->handle->pending_async_ctrls) {
->  				ctrl->handle->pending_async_ctrls--;
-> +				uvc_pm_put(handle->chain->dev);
-> +			}
->  		}
->  
->  		ctrl->handle = new_handle;
->  		handle->pending_async_ctrls++;
-> +		uvc_pm_get(handle->chain->dev);
->  		return;
->  	}
->  
-> @@ -1611,6 +1614,7 @@ static void uvc_ctrl_set_handle(struct uvc_fh *handle, struct uvc_control *ctrl,
->  	if (WARN_ON(!handle->pending_async_ctrls))
->  		return;
->  	handle->pending_async_ctrls--;
-> +	uvc_pm_put(handle->chain->dev);
->  }
->  
->  void uvc_ctrl_status_event(struct uvc_video_chain *chain,
-> @@ -2815,6 +2819,7 @@ int uvc_ctrl_init_device(struct uvc_device *dev)
->  void uvc_ctrl_cleanup_fh(struct uvc_fh *handle)
->  {
->  	struct uvc_entity *entity;
-> +	int i;
->  
->  	guard(mutex)(&handle->chain->ctrl_mutex);
->  
-> @@ -2829,7 +2834,11 @@ void uvc_ctrl_cleanup_fh(struct uvc_fh *handle)
->  		}
->  	}
->  
-> -	WARN_ON(handle->pending_async_ctrls);
-> +	if (!WARN_ON(handle->pending_async_ctrls))
-> +		return;
-> +
-> +	for (i = 0; i < handle->pending_async_ctrls; i++)
-> +		uvc_pm_put(handle->stream->dev);
->  }
->  
->  /*
-> diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
-> index de1e105f7263..1c9ac72be58a 100644
-> --- a/drivers/media/usb/uvc/uvc_v4l2.c
-> +++ b/drivers/media/usb/uvc/uvc_v4l2.c
-> @@ -691,6 +691,9 @@ static int uvc_v4l2_release(struct file *file)
->  	if (uvc_has_privileges(handle))
->  		uvc_queue_release(&stream->queue);
->  
-> +	if (handle->is_streaming)
-> +		uvc_pm_put(stream->dev);
-> +
->  	/* Release the file handle. */
->  	uvc_dismiss_privileges(handle);
->  	v4l2_fh_del(&handle->vfh);
-> @@ -857,6 +860,7 @@ static int uvc_ioctl_streamon(struct file *file, void *fh,
->  		return ret;
->  
->  	handle->is_streaming = true;
-> +	uvc_pm_get(stream->dev);
->  
->  	return 0;
->  }
-> @@ -873,7 +877,10 @@ static int uvc_ioctl_streamoff(struct file *file, void *fh,
->  	guard(mutex)(&stream->mutex);
->  
->  	uvc_queue_streamoff(&stream->queue, type);
-> -	handle->is_streaming = false;
-> +	if (handle->is_streaming) {
-> +		handle->is_streaming = false;
-> +		uvc_pm_put(stream->dev);
-> +	}
->  
->  	return 0;
->  }
-> @@ -1410,6 +1417,8 @@ static long uvc_v4l2_compat_ioctl32(struct file *file,
->  	void __user *up = compat_ptr(arg);
->  	long ret;
->  
-> +	guard(uvc_pm)(handle->stream->dev);
-> +
->  	switch (cmd) {
->  	case UVCIOC_CTRL_MAP32:
->  		ret = uvc_v4l2_get_xu_mapping(&karg.xmap, up);
-> @@ -1444,6 +1453,16 @@ static long uvc_v4l2_compat_ioctl32(struct file *file,
->  }
->  #endif
->  
-> +static long uvc_v4l2_video_ioctl2(struct file *file,
-> +				  unsigned int cmd, unsigned long arg)
-> +{
-> +	struct uvc_fh *handle = file->private_data;
-> +
-> +	guard(uvc_pm)(handle->stream->dev);
-> +
-> +	return video_ioctl2(file, cmd, arg);
-> +}
-> +
->  static ssize_t uvc_v4l2_read(struct file *file, char __user *data,
->  		    size_t count, loff_t *ppos)
->  {
-> @@ -1529,7 +1548,7 @@ const struct v4l2_file_operations uvc_fops = {
->  	.owner		= THIS_MODULE,
->  	.open		= uvc_v4l2_open,
->  	.release	= uvc_v4l2_release,
-> -	.unlocked_ioctl	= video_ioctl2,
-> +	.unlocked_ioctl	= uvc_v4l2_video_ioctl2,
->  #ifdef CONFIG_COMPAT
->  	.compat_ioctl32	= uvc_v4l2_compat_ioctl32,
->  #endif
-> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-> index fbe3649c7cd6..eb8e374fa4c5 100644
-> --- a/drivers/media/usb/uvc/uvcvideo.h
-> +++ b/drivers/media/usb/uvc/uvcvideo.h
-> @@ -766,6 +766,7 @@ void uvc_status_put(struct uvc_device *dev);
->  /* PM */
->  int uvc_pm_get(struct uvc_device *dev);
->  void uvc_pm_put(struct uvc_device *dev);
-> +DEFINE_GUARD(uvc_pm, struct uvc_device *, uvc_pm_get(_T), uvc_pm_put(_T))
->  
->  /* Controls */
->  extern const struct v4l2_subscribed_event_ops uvc_ctrl_sub_ev_ops;
-> 
+-- 
+2.34.1
 
 
