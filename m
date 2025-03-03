@@ -1,111 +1,120 @@
-Return-Path: <linux-kernel+bounces-544615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F345CA4E330
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:28:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 127ECA4E651
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:40:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7479F17D4F5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:19:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C36DF8C7B8C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:23:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0F6C283C8C;
-	Tue,  4 Mar 2025 15:12:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7779924C06F;
+	Tue,  4 Mar 2025 16:06:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uYdUwo3N"
-Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="iOuR5pQS"
+Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A52CB280A56
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:12:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C5B20A5C0
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:06:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741101159; cv=pass; b=WA0/kXolbR8+cUvBFTmQASTw7SBF8cwC0sre2q3g+4UPEZ7CbQ04gqoRZZycTSOp5NfAsxca4uvnuwZwwKLLhB2SFkN925WvJi+QQZw2UEdLXE4FH9wKoF10uPxWy7qXVgxVJCM+AkABCBOQXhcc5sXGRSq026wQrEsireYdjks=
+	t=1741104371; cv=pass; b=p3dnQ+zswdhI6CWaU6eoV1nBfb2lvkjBDqwLBMd11Qs25jTJJk/NeBIu54GpOo3cMNh97j6Utfs83wtqE1iFolscW7V0X+DU9Fq2jgP3xm4ttBjKUuYlcEt/ySz1fzifzlUQ2mP9ZJkBvAAJZl0bUeJPpWglUD/DGr64JSUySZI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741101159; c=relaxed/simple;
-	bh=bKBTyhky71uYBsaxCFXi3vy/CYFmpwehRG1HobK2WLA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Izs2XYDfdZlWGP8wySTiNtS/oEnKDMOJqh8Z9aDUkBGfIZZ4nPhm3C9MhiwqPwwjmWGPGQXIIGymGJXZoK2T/Xxs3GKtkUzUTI0BkPix/WB3JISAeHNfwFnDjPF4k1PGRmuO6i94fJbAD5GI10LSUcSDpPNcS12s5M0f8Ox0Few=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=uYdUwo3N; arc=none smtp.client-ip=90.155.50.34; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; arc=pass smtp.client-ip=160.75.25.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	s=arc-20240116; t=1741104371; c=relaxed/simple;
+	bh=6dFKW+lioLDu60dHVNyKGbg+VYbzqtMUAtM10HSxmKE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=eidNDYwUYtctR5hTNQmAqrMfNGjwGoprdTg5DKTR+hX2EsyTBWhD5inv7bj4yMzfaH7J0GUa7hdrSztBijXc9gB7aeJktjKPcAwjKXplsY/zL478WVDf3y+QL8EQxbLAuOGTv9DQpBwPHV78AjWQI1ElMWe+MWod1c8CMfBUBAk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=iOuR5pQS; arc=none smtp.client-ip=210.118.77.12; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; arc=pass smtp.client-ip=160.75.25.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id D6FD340CFB88
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:12:35 +0300 (+03)
+	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 4071B40D976C
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:06:08 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key, unprotected) header.d=infradead.org header.i=@infradead.org header.a=rsa-sha256 header.s=casper.20170209 header.b=uYdUwo3N
+	dkim=pass (1024-bit key, unprotected) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=iOuR5pQS
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6fJV5KMnzFyNY
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:10:50 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6gQQ72L8zG28g
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:01:02 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 1F2944274A; Tue,  4 Mar 2025 18:10:42 +0300 (+03)
+	id 0153242725; Tue,  4 Mar 2025 19:00:21 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=uYdUwo3N
-X-Envelope-From: <linux-kernel+bounces-541307-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=iOuR5pQS
+X-Envelope-From: <linux-kernel+bounces-541317-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=uYdUwo3N
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=iOuR5pQS
 Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id 58CC04319A
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:49:35 +0300 (+03)
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id 2F8122DCDE
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:49:35 +0300 (+03)
+	by le2 (Postfix) with ESMTP id A874841B84
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:56:52 +0300 (+03)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by fgw2.itu.edu.tr (Postfix) with SMTP id 5CD2C2DCDE
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:56:52 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD2091893154
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 09:49:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89ABA171B30
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 09:56:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAAF51F12F6;
-	Mon,  3 Mar 2025 09:49:17 +0000 (UTC)
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1101F30CC;
+	Mon,  3 Mar 2025 09:55:29 +0000 (UTC)
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85DD81F131C;
-	Mon,  3 Mar 2025 09:49:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B2B1F1520
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 09:55:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740995355; cv=none; b=tYafWlFc0StdoWurTmcTK8E/RSRDPtKHi2dEfgXykPXMp/ijYAIJP00Z51cqbD34IuXarejZ6gvdQOXKXcWQj/dphye6yWp+/MGyswPHAxV+0t+fjqAeciebwgAzYq5rssP+9Omjx4qPZMOfCCq9IbgDorJ0qrJArnlqpdBCQ54=
+	t=1740995726; cv=none; b=TBqoNOc/v7J4tfj7mcAmtIsmAsP9IRNrA0ahuQhq3SMRftueNBn1p0YOdZZy/uYjoradSoOb108GT8HjNV2jQZOrwE0lTYscGEv97kEop5BL3562wpWNoeImVEIDhiwwEQRjP9/cb5047Yft+ht8Mhle8m1f29ggZKth9cKCZxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740995355; c=relaxed/simple;
-	bh=bKBTyhky71uYBsaxCFXi3vy/CYFmpwehRG1HobK2WLA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ptMl2TyNvNcxZ2QAfuKa9LVYHsBBk8beDR8oM5eSJ9iTiiTbMwCkBQGJCHJya4e6z4ED2DY6KN0MF5ER5o6vIkgwazK4nAKOhm9PowpQ9KG4a5wJ/o48hbwxIQSh+rDf3zOM8QefRD4Z18FIghhA/o9qd5cOH7SxEvMDI/EHp1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=uYdUwo3N; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ex6mL5N3y2HnLj8Bam/c+5++LbL+FQRGmaE08QtykjE=; b=uYdUwo3NP446bW5DtXGr+gLlKm
-	3q7P896CCaZPM1ZlewJ1QitoJ9p6puv6V5u85QQRjyB/RAYgFaem1YgOR+N2vYxG4/1oEwXpK/Vny
-	ul9+2nxCC1iY8BgAyIrDrFROXKRBmOzdN1fT3S6ksMhlhXZNtPunLTL9N1IAengf8LG6244P4r8FA
-	UXItZ73N7cP93YsjsXyVp7+cTd9w1IHFr0ijBc2A0BKK3iClchg0AWicyraF7CcIO8Kpy/PS660Nu
-	RGW8hb8Mf5MfdgsuFloZXWHVC7xaApcE5Jlt0ebteSJlT/ekBi1KZCtm2bzaZjWr17u5Z1McimXsN
-	cqatSMmA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tp2QB-0000000BQR2-2UJu;
-	Mon, 03 Mar 2025 09:49:11 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 2EB2230049D; Mon,  3 Mar 2025 10:49:11 +0100 (CET)
-Date: Mon, 3 Mar 2025 10:49:11 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: kernel test robot <lkp@intel.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	Ingo Molnar <mingo@kernel.org>, Kees Cook <kees@kernel.org>
-Subject: Re: [tip:x86/core 16/17] vmlinux.o: warning: objtool: do_jit+0x276:
- relocation to !ENDBR: .noinstr.text+0x6a60
-Message-ID: <20250303094911.GL5880@noisy.programming.kicks-ass.net>
-References: <202503030704.H9KFysNS-lkp@intel.com>
- <20250303092459.GI5880@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1740995726; c=relaxed/simple;
+	bh=6dFKW+lioLDu60dHVNyKGbg+VYbzqtMUAtM10HSxmKE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=mFhGcmHfoOMfqM+eTOU6EuPzTDKrliDUNVJLItPnRsTXyYJOsUi9l6Oi7PTSHVgeCPgNUln26uCbDUCyr4RESSck23wTaM/0vM4VecTzksQ1t+4oYv7tUVNMa93ZjuCAnb3QhXRTAgJoCUs9d0I4K/F7geP+pRB+NOWAQjeXHnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=iOuR5pQS; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250303095522euoutp029734b3b1c192f40d4c435687fcde8bfb~pQmK1sciJ2969329693euoutp02h
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 09:55:22 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250303095522euoutp029734b3b1c192f40d4c435687fcde8bfb~pQmK1sciJ2969329693euoutp02h
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1740995722;
+	bh=jkAx3oP1ERyW9hpWianokfe1kkMolVE+K5Ndsqy3gk0=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=iOuR5pQS7+qqFtOPV46S4Hy6dQuMPQhYuid5Ci7LELDTRFVkVQug3gKvcpxU135Mo
+	 1APKhmYi1jvFdS8DZZ/67aOStH8U6ztnCndaJuOAHa4dQZFCKwOmoY85IYUA/NvaMC
+	 bd9i0Z0/cgaARw/1oYfXFSJWfWfZ6M2GHxn1D95E=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20250303095521eucas1p18b3e85146d3b4e58d374ee65443f510c~pQmKDy2hP1876818768eucas1p1H;
+	Mon,  3 Mar 2025 09:55:21 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id A3.CF.20397.98C75C76; Mon,  3
+	Mar 2025 09:55:21 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250303095521eucas1p24b0494320e01283259315a138346d672~pQmJhIYUQ1753017530eucas1p2w;
+	Mon,  3 Mar 2025 09:55:21 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250303095521eusmtrp2a5ece5c802ffd421b11eeb5d30ebd786~pQmJgJtYD1593015930eusmtrp2I;
+	Mon,  3 Mar 2025 09:55:21 +0000 (GMT)
+X-AuditID: cbfec7f5-e59c770000004fad-c5-67c57c899582
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id A8.7F.19920.98C75C76; Mon,  3
+	Mar 2025 09:55:21 +0000 (GMT)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250303095519eusmtip10a4185fb739894007312f6777ae0b061~pQmIDKL-s0171201712eusmtip1D;
+	Mon,  3 Mar 2025 09:55:19 +0000 (GMT)
+Message-ID: <4deba4d6-b82d-4e57-bd27-f4e1523b38ea@samsung.com>
+Date: Mon, 3 Mar 2025 10:55:19 +0100
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -113,101 +122,112 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250303092459.GI5880@noisy.programming.kicks-ass.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 09/21] dt-bindings: clock: thead: Add GPU clkgen
+ reset property
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org,
+	wefu@redhat.com, jassisinghbrar@gmail.com, paul.walmsley@sifive.com,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, frank.binns@imgtec.com,
+	matt.coster@imgtec.com, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+	ulf.hansson@linaro.org, jszhang@kernel.org, p.zabel@pengutronix.de,
+	m.szyprowski@samsung.com, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, dri-devel@lists.freedesktop.org,
+	linux-pm@vger.kernel.org
+Content-Language: en-US
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+In-Reply-To: <df625379-b472-45d9-87a4-8bf52a87ea1e@kernel.org>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0xTVxzHc+69vffSCFyqC2dgZOsIi4sCKrKTsZnBILlbjI+5OLcxt0Zv
+	ihsUbGE4ZzIYyKxWZA5BO4TizEQUYawUigUmsNYK8lRKeBSz1QYqyKuCG6+1XN347/P7/h7f
+	3+/k0LioifSjD8mSOblMEi8mhYTO+Hf7RuWxP6Sh47c2otuWSxiqmlNT6HpdG4aKmtsEyNql
+	xdC9J+MkuvGwg0LDdekE6im5SKEMYzmJRtRWErW3V1BoUmUVoO7aAhJNn24GSDedSaKy5kEK
+	FU9WEehyTS1AWcpfBKjzTgwatN4m0Ei3CkdZam+0ZKih0GLPrwT66XEDhbSjPwiQqexDlNmQ
+	S7y9jh3vPU6xoyMjBNt0wkmxdTMagtWrBylWpW8FbGWpkmQHegwkW2jezQ6dMmHsb5e/ZTPL
+	jBh7ZiGUHa+/T7LZ2lLAdmVYqF2ij4VvHuTiD33FyUO2fS6M+9HyO5l0njoydyedTAMVgpPA
+	g4ZMGGydzXOxkBYxJQA6G3MBHzgBtOWMknwwDaA120A8b+m351F84gqAmefsGB+MAWgqMAJ3
+	lSezDRqvGnE3E0wgrHfMULzuA80XbMuTXmAC4FDf+WV9NbMP3l3KX9bXMOuhZWF2eSmcMQhg
+	Xi6/Lc74wj5bEeZmktkMH1wpWtY9XGaVZ0wYXxMAq8cKcHczZDqF8OS9689OjYYdT/tInldD
+	h0lL8bwWLun5oZBJhA+qpnCej0G9yvSMI+BA2z+uXtplsB6W14bwciS0VbsPoF3sBXvHfPgV
+	vOBZXT7Oy57wRJaIrw6C51Sn/zNtK9FhOUCsXvEq6hVHqlcco/7fVwOIUuDLpSgSpJxii4xL
+	DVZIEhQpMmnwgcSESuD65y2Lpic1oMQxGdwIMBo0Akjj4jWeh99vloo8D0q+PsrJEz+Tp8Rz
+	ikbgTxNiX89LDcelIkYqSea+5LgkTv48i9EefmkYvraw0JY7ry9XGu3K+Zc3KIOkZSETX+ze
+	OewRTcTZHeaKIFwYle7YsXi3r+7G94GzHRHGv0IiU9Nl/rGf5Gzfs+Vp/l5zhKg7ZuujiMG6
+	AIet18/of9PLkISNbR/3i+xUWcM+iMqeeGnDq4oU7d6jh4vN9c5rpaF77Kcy9s8syg6E3Wrw
+	xi500Nc+zRLtiC23pD6O0UX/+XpAt05T9lHez5p5b5vw4bubO4db1r2zqvq7qy9i4RrDe4Fn
+	fWUgdml4zrkT739lf/SmNxxF/lt9ar2akiam9EcGxNmOFt+09igf+9D8o/urrN+ET7U2dV0c
+	DZ/u17+F7Vu4OVcVkF+cPLhLKyYUcZJNr+FyheRfLoBNOFYEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrKKsWRmVeSWpSXmKPExsVy+t/xu7qdNUfTDS6dYLc4cX0Rk8XW37PY
+	LdbsPcdkMf/IOVaLe5e2MFlc+fqezWLd0wvsFi/2NrJYXFsxl92i+dh6NouXs+6xWZw/v4Hd
+	4mPPPVaLy7vmsFl87j3CaLHtcwubxdojd9ktFn7cymKxZMcuRou2zmWsFhdPuVrcvXeCxeLl
+	5R5mi7ZZ/Bb/9+xgt/h3bSOLxex3+9kttryZyGpxfG24Rcv+KSwOch7vb7Sye7x5+ZLF43DH
+	F3aPvd8WsHjsnHWX3aNn5xlGj02rOtk87lzbw+Yx72Sgx/3u40wem5fUe7SsPcbk0f/XwOP9
+	vqtsHn1bVjF6XGq+zh4gFKVnU5RfWpKqkJFfXGKrFG1oYaRnaGmhZ2RiqWdobB5rZWSqpG9n
+	k5Kak1mWWqRvl6CXMfn6AbaCGewVv081sjUwbmDtYuTkkBAwkbj9bBp7FyMXh5DAUkaJy1sW
+	QCVkJK51v2SBsIUl/lzrYoMoes0oceVpJxtIglfATuLYymPMIDaLgIrEvlff2CHighInZz4B
+	axYVkJe4f2sGWFxYIELi9px7YLaIgKbE9b/fWUGGMgvsYZU4vPkz1IYXTBITJrwB28AsIC5x
+	68l8JhCbTcBI4sHy+WDncQJt3tR/HCjOAVSjLrF+nhBEubzE9rdzmCcwCs1CcscsJJNmIXTM
+	QtKxgJFlFaNIamlxbnpusaFecWJucWleul5yfu4mRmD62nbs5+YdjPNefdQ7xMjEwXiIUYKD
+	WUmEtzDoSLoQb0piZVVqUX58UWlOavEhRlNgWExklhJNzgcm0LySeEMzA1NDEzNLA1NLM2Ml
+	cV63y+fThATSE0tSs1NTC1KLYPqYODilGpjWZbgu4amz51zbvclj01cdjUnB7xdYVmeqrsja
+	lHJliV3H+hP8nxQuRrvencq9k2vizncTfDeoHDXxEroaIDXvaVrAp50rXHLqeb1YD5dXV65r
+	OnP2V0SUxt1/7U2vJDZNPiWQeWI2v6KlFPOXpx+c/rTf3Cmafr15/9VDZ1t3Pc5kT2itOHtv
+	gi/PQ9aDUk9vnv2anRFst4T7z5o7Sp8fr+TScqlPaLc6/t9e6P7aFRd4jHcy/wxgWhj587da
+	MPPRuJc274uC26W89PNKEmaLttVONk4XNL0ntLT1Q6jM/EDbr4GLe9Ojj889anB45bzO3cdm
+	M561sA2U4Ei78O/s/RbH6QqT/ry5Ujf/L6O0EktxRqKhFnNRcSIACJJKEugDAAA=
+X-CMS-MailID: 20250303095521eucas1p24b0494320e01283259315a138346d672
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250219140301eucas1p249b17ca44832eb8caad2e9ad0e4f8639
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20250219140301eucas1p249b17ca44832eb8caad2e9ad0e4f8639
+References: <20250219140239.1378758-1-m.wilczynski@samsung.com>
+	<CGME20250219140301eucas1p249b17ca44832eb8caad2e9ad0e4f8639@eucas1p2.samsung.com>
+	<20250219140239.1378758-10-m.wilczynski@samsung.com>
+	<20250221-imaginary-ebony-macaque-aace8d@krzk-bin>
+	<7296ddb3-2096-4414-bfa4-28fc5bb8ec86@samsung.com>
+	<df625379-b472-45d9-87a4-8bf52a87ea1e@kernel.org>
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6fJV5KMnzFyNY
+X-ITU-Libra-ESVA-ID: 4Z6gQQ72L8zG28g
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741705862.32015@Gs6SdF9jsWp8Q/akjjMrJg
+X-ITU-Libra-ESVA-Watermark: 1741709060.80307@J7pS5h+inAc2q5UxVUhNGA
 X-ITU-MailScanner-SpamCheck: not spam
 
-On Mon, Mar 03, 2025 at 10:24:59AM +0100, Peter Zijlstra wrote:
-> On Mon, Mar 03, 2025 at 07:47:57AM +0800, kernel test robot wrote:
-> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/core
-> > head:   dfebe7362f6f461d771cdb9ac2c5172a4721f064
-> > commit: 0c92385dc05ee9637c04372ea95a11bbf6e010ff [16/17] x86/ibt: Implement FineIBT-BHI mitigation
-> > config: x86_64-randconfig-071-20250303 (https://download.01.org/0day-ci/archive/20250303/202503030704.H9KFysNS-lkp@intel.com/config)
-> > compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
-> > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250303/202503030704.H9KFysNS-lkp@intel.com/reproduce)
-> > 
-> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > the same patch/commit), kindly add following tags
-> > | Reported-by: kernel test robot <lkp@intel.com>
-> > | Closes: https://lore.kernel.org/oe-kbuild-all/202503030704.H9KFysNS-lkp@intel.com/
-> > 
-> > All warnings (new ones prefixed by >>):
-> > 
-> > >> vmlinux.o: warning: objtool: do_jit+0x276: relocation to !ENDBR: .noinstr.text+0x6a60
-> 
-> Thanks, below seems to cure it for me.
-> 
-> ---
-> Subject: x86/ibt: Make cfi_bhi a constant for FINEIBT_BHI=n
-> From: Peter Zijlstra <peterz@infradead.org>
-> Date: Mon Mar 3 10:21:47 CET 2025
-> 
-> Robot yielded a .config that tripped:
-> 
->   vmlinux.o: warning: objtool: do_jit+0x276: relocation to !ENDBR: .noinstr.text+0x6a60
-> 
-> This is the result of using __bhi_args[1] in unreachable code; make
-> sure the compiler is able to determine this is unreachable and trigger
-> DCE.
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202503030704.H9KFysNS-lkp@intel.com/
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> ---
 
-diff --git a/arch/x86/include/asm/cfi.h b/arch/x86/include/asm/cfi.h
-index 2f6a01f098b5..3e51ba459154 100644
---- a/arch/x86/include/asm/cfi.h
-+++ b/arch/x86/include/asm/cfi.h
-@@ -100,7 +100,12 @@ enum cfi_mode {
- };
- 
- extern enum cfi_mode cfi_mode;
-+
-+#ifdef CONFIG_FINEIBT_BHI
- extern bool cfi_bhi;
-+#else
-+#define cfi_bhi (0)
-+#endif
- 
- typedef u8 bhi_thunk[32];
- extern bhi_thunk __bhi_args[];
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index 32e4b801db99..bf82c6f7d690 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -936,7 +936,10 @@ void __init_or_module apply_seal_endbr(s32 *start, s32 *end) { }
- #endif
- 
- enum cfi_mode cfi_mode __ro_after_init = __CFI_DEFAULT;
-+
-+#ifdef CONFIG_FINEIBT_BHI
- bool cfi_bhi __ro_after_init = false;
-+#endif
- 
- #ifdef CONFIG_CFI_CLANG
- struct bpf_insn;
-@@ -1070,11 +1073,15 @@ static __init int cfi_parse_cmdline(char *str)
- 				pr_err("Ignoring paranoid; depends on fineibt.\n");
- 			}
- 		} else if (!strcmp(str, "bhi")) {
-+#ifdef CONFIG_FINEIBT_BHI
- 			if (cfi_mode == CFI_FINEIBT) {
- 				cfi_bhi = true;
- 			} else {
- 				pr_err("Ignoring bhi; depends on fineibt.\n");
- 			}
-+#else
-+			pr_err("Ignoring bhi; depends on FINEIBT_BHI=y.\n");
-+#endif
- 		} else {
- 			pr_err("Ignoring unknown cfi option (%s).", str);
- 		}
+
+On 3/3/25 09:52, Krzysztof Kozlowski wrote:
+> On 03/03/2025 09:42, Michal Wilczynski wrote:
+>>>> +allOf:
+>>>> +  - if:
+>>>> +      properties:
+>>>> +        compatible:
+>>>> +          contains:
+>>>> +            const: thead,th1520-clk-vo
+>>>> +    then:
+>>>> +      required:
+>>>> +        - resets
+>>>
+>>> else:
+>>> ? What's there? Also reset or no?
+>>
+>> If the else: case the reset is not required, as it's only required in
+>> the th1520clk-vo, so there is no need for else:.
+> That's not the question. I know it is not required, I can read code.
+> What is in the hardware?
+
+I noticed the register SW_GMAC1_GRST_N in section 5.4.2.2.66 of the
+manual (GMAC1_SWRST [2]), which indicates a GMAC1 CLKGEN soft reset.
+Although this could theoretically reset part of the AP clock, it is not
+actually used by the AP clock driver or needed for initialization.
+
+> 
+> Best regards,
+> Krzysztof
+> 
 
 
