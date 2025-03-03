@@ -1,107 +1,196 @@
-Return-Path: <linux-kernel+bounces-541714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97AD2A4C078
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:39:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 315ACA4C07E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:40:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2224F188B1A4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:39:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD3513A6B99
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:40:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A62020FA96;
-	Mon,  3 Mar 2025 12:39:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iPIduBF/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7B620D51A;
+	Mon,  3 Mar 2025 12:40:18 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E5657FBAC;
-	Mon,  3 Mar 2025 12:39:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 759507FBAC;
+	Mon,  3 Mar 2025 12:40:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741005544; cv=none; b=o+kvSl2RtylBRWj/z2y0eskI9If+QA73LMnfuyDNNgyi431AXiEPmUKgsiZPG920bcrMWEJouwiIhgirNO8xFRCoL62au4FjGKpVHiiwk+O1+0PyJDgkhyvytm5ml7hoL+ydcKwnGrO0trc5lNME4wvg982W+hOlpLqoQf+6eh8=
+	t=1741005617; cv=none; b=X99yoFoeFGPFFbjoCAHXZHdw9Z4y1KYw45ECC6eZpVEsCCLYDCd1iTwvJRIdQRvJzq87JUR9qEcEQRFS+bFTaVFupDtEvfvDK7j9ub1zK9+V6v126hs1291hS8TklxahQxmxQL3sT8kSlau7wyPVYLQk4m9+hntPHvIiAT2igug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741005544; c=relaxed/simple;
-	bh=B86K9mL2DWSBbOS2P/XXx6FWnpdGnhaunsmZn+LgU1A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EEQJXKy7WDaOUaP3EEMyR38LIWQxZsTLej2MWkSfLn+Z5vqwTYGIhV0wimM9WVqq95HuYWSqN3sDkBkVPtgOJWczo2zJHAd+gE5iOBQasOofH1nbPJtH0b18NQSt6pOu+SZee4kaBHXunoYCzxlhbLljPXK3U+yNMhu0BwDZw5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iPIduBF/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13A9DC4CEE8;
-	Mon,  3 Mar 2025 12:39:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741005544;
-	bh=B86K9mL2DWSBbOS2P/XXx6FWnpdGnhaunsmZn+LgU1A=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=iPIduBF/ryFdMhJVjAcCERxHSX8AW4S7CCuHeo1rsoc4ksIQmmXxMaTZsaoBaXm0t
-	 p75PvLX6Rd5cikacEeqPg0KjFR4iK5qKFPqyx1WqUoboTMmU/oQBCZJ09DGA5Cz56t
-	 VbdHMcL9bz3qP8u85LX783N3N7dP64HQhMAesZkZ3oCCdDZ/RYbyZlWERcDbOFN27G
-	 9sxSsNIfOYeYHTTOMKqxCw3GcFiPIKk91BA6Wphfyta1GfBDu7yrjSkESZ22HF8OuK
-	 YsOY/I1HhFIDFAcFjjjb2A09XobR6j1g3uVOIxnAfaqMFBQ0dCBpLd9VroGWKuCWaw
-	 szEVuWhkdCVgw==
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-72726e4f96cso2411224a34.0;
-        Mon, 03 Mar 2025 04:39:04 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUJL+UI8pauK0UtuVITxHGTd9uZ6ysjRlWEiiIalRvmdiGjumOJ6HWJ5tPT7zBnDE0dFw3G8VXq@vger.kernel.org, AJvYcCVIISWGXJtt8lfk5trYNxen5IKuBaZtnTSXss/FDRyODUkX132y27KIdwpVHhhXVoKMeX2hITiGiPI=@vger.kernel.org, AJvYcCWgjIW3fel4nBQE+JbF1qFDgXMv9OxTkR2sXS1UGkKrQxq9B0Tuv6WTfbQQQILPeuHNKV2jk1flVK4BUxc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdM+q0UMTnbPHAJxhYEOz3u5DFX+YT4FJ6JZbn8QzR4PqH6p71
-	Qh/i3NdeFdDBTI4IMgmHlaIIBdUe0g9gW9WC2SEZdfjpEZQwbQhFVf1cOOm7l4fxOsFSDR4Eu+X
-	kr/zz5Z0v+MYWt46a/oKJYILUhMw=
-X-Google-Smtp-Source: AGHT+IHL7QcHIA/gOliSbHVKnX78oe4T2jnrZGkt3ri8BU4falSM2AKPYFtTywanWJLfm4FpFouSbDhOekSp/JpP7jc=
-X-Received: by 2002:a05:6830:388b:b0:727:2a80:e3b9 with SMTP id
- 46e09a7af769-728b8306967mr9059477a34.24.1741005543352; Mon, 03 Mar 2025
- 04:39:03 -0800 (PST)
+	s=arc-20240116; t=1741005617; c=relaxed/simple;
+	bh=r2XBzxVbY183ENmxhOU6qKFdYiUysRWHJxDNkNuv0aQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WJzL/WrErBuqUd4H+wQjkIGVisKi1fTi6QsiuAr1iiBKY+QM9s3dwXBFoob9TkD0E1ydcJE5IC6jwrInDxsxCRVTB3nK53A8fRNtcQTVfFaCvH8NZq5ADNiSvKo/tIiDBrcNZZE+83vgkixLzw1BzY5v+I4DwlWy+ZLaSIj/PDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [116.232.55.252])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 46A66342FEA;
+	Mon, 03 Mar 2025 12:40:15 +0000 (UTC)
+Date: Mon, 3 Mar 2025 12:40:11 +0000
+From: Yixun Lan <dlan@gentoo.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Alex Elder <elder@riscstar.com>,
+	Inochi Amaoto <inochiama@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev, Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 1/2] irqdomain: support three-cell scheme interrupts
+Message-ID: <20250303124011-GYA59067@gentoo>
+References: <20250302-04-gpio-irq-threecell-v2-0-34f13ad37ea4@gentoo.org>
+ <20250302-04-gpio-irq-threecell-v2-1-34f13ad37ea4@gentoo.org>
+ <87jz97cml1.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250303034337.3868497-1-haoxiang_li2024@163.com>
-In-Reply-To: <20250303034337.3868497-1-haoxiang_li2024@163.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 3 Mar 2025 13:38:49 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0g5RJaHeYqiP3khp2vPyVHj0W35ab4gtBJ0R14nhSqa_A@mail.gmail.com>
-X-Gm-Features: AQ5f1Jpbua78r-Y1CAXxGLBF0QiCkuqUxIYIZ26St3GtTy8Yb-YsB_WumRvmuoE
-Message-ID: <CAJZ5v0g5RJaHeYqiP3khp2vPyVHj0W35ab4gtBJ0R14nhSqa_A@mail.gmail.com>
-Subject: Re: [PATCH] PM: EM: fix an API misuse issue in em_create_pd()
-To: Haoxiang Li <haoxiang_li2024@163.com>
-Cc: rafael@kernel.org, len.brown@intel.com, pavel@kernel.org, 
-	dietmar.eggemann@arm.com, lukasz.luba@arm.com, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87jz97cml1.ffs@tglx>
 
-On Mon, Mar 3, 2025 at 4:43=E2=80=AFAM Haoxiang Li <haoxiang_li2024@163.com=
-> wrote:
->
-> Replace kfree() with em_table_free() to free
-> the memory allocated by em_table_alloc().
+Hello, Thomas Gleixner:
 
-Ostensibly, this is fixing a problem, but there's no problem described
-above.  Please describe it.
+On 19:30 Sun 02 Mar     , Thomas Gleixner wrote:
+> On Sun, Mar 02 2025 at 07:15, Yixun Lan wrote:
+> > The is a prerequisite patch to support parsing three-cell
+> > interrupts which encoded as <instance hwirq irqflag>,
+> > the translate function will always retrieve irq number and
+> > flag from last two cells.
+> >
+> > In this patch, we introduce a generic interrupt cells translation
+> > function, others functions will be inline version.
+> 
+> Please read:
+> 
+>   https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#changelog
+>   https://www.kernel.org/doc/html/latest/process/submitting-patches.html#describe-changes
+> 
+> > +int irq_domain_translate_cells(struct irq_domain *d,
+> > +			       struct irq_fwspec *fwspec,
+> > +			       unsigned long *out_hwirq,
+> > +			       unsigned int *out_type);
+> 
+> Please get rid of the extra line breaks. You have 100 (99) characters available.
+> 
+> > +static inline int irq_domain_translate_onecell(struct irq_domain *d,
+> > +					       struct irq_fwspec *fwspec,
+> > +					       unsigned long *out_hwirq,
+> > +					       unsigned int *out_type)
+> > +{
+> > +	return irq_domain_translate_cells(d, fwspec, out_hwirq, out_type);
+> > +}
+> > +
+> > +static inline int irq_domain_translate_twocell(struct irq_domain *d,
+> > +					       struct irq_fwspec *fwspec,
+> > +					       unsigned long *out_hwirq,
+> > +					       unsigned int *out_type)
+> > +{
+> > +	return irq_domain_translate_cells(d, fwspec, out_hwirq, out_type);
+> > +}
+> > +
+> > +static inline int irq_domain_translate_threecell(struct irq_domain *d,
+> > +						 struct irq_fwspec *fwspec,
+> > +						 unsigned long *out_hwirq,
+> > +						 unsigned int *out_type)
+> > +{
+> > +	return irq_domain_translate_cells(d, fwspec, out_hwirq, out_type);
+> > +}
+> 
+> What's this for? It's not used. The onecell/twocell wrappers are just
+> there to keep the current code working.
+>   
+> > +int irq_domain_translate_cells(struct irq_domain *d,
+> > +			       struct irq_fwspec *fwspec,
+> > +			       unsigned long *out_hwirq,
+> > +			       unsigned int *out_type)
+> 
+> Please remove the extra line breaks.
+> 
+> int irq_domain_translate_cells(struct irq_domain *d, struct irq_fwspec *fwspec,
+> 			       unsigned long *out_hwirq, unsigned int *out_type)
+> 
+> is perfectly fine.
+> 
+> >  {
+> > -	if (WARN_ON(fwspec->param_count < 1))
+> > -		return -EINVAL;
+> > -	*out_hwirq = fwspec->param[0];
+> > -	*out_type = IRQ_TYPE_NONE;
+> > -	return 0;
+> > -}
+> > -EXPORT_SYMBOL_GPL(irq_domain_translate_onecell);
+> > +	unsigned int cells = fwspec->param_count;
+> >  
+> > -/**
+> > - * irq_domain_translate_twocell() - Generic translate for direct two cell
+> > - * bindings
+> > - * @d:		Interrupt domain involved in the translation
+> > - * @fwspec:	The firmware interrupt specifier to translate
+> > - * @out_hwirq:	Pointer to storage for the hardware interrupt number
+> > - * @out_type:	Pointer to storage for the interrupt type
+> > - *
+> > - * Device Tree IRQ specifier translation function which works with two cell
+> > - * bindings where the cell values map directly to the hwirq number
+> > - * and linux irq flags.
+> > - */
+> > -int irq_domain_translate_twocell(struct irq_domain *d,
+> > -				 struct irq_fwspec *fwspec,
+> > -				 unsigned long *out_hwirq,
+> > -				 unsigned int *out_type)
+> > -{
+> > -	if (WARN_ON(fwspec->param_count < 2))
+> > +	switch (cells) {
+> > +	case 1:
+> > +		*out_hwirq = fwspec->param[0];
+> > +		*out_type = IRQ_TYPE_NONE;
+> > +		return 0;
+> > +	case 2 ... 3:
+> 
+> I have second thoughts about this when looking deeper.
+> 
+> The current one/two cell implementations validate that param_count is at
+> least the number of parameters. Which means that the parameter count
+> could be larger, but only evaluates the first one or the first two.
+> 
+> I have no idea whether this matters or not, but arguably a two cell
+> fwspec could be successfully fed into translate_onecell(), no?
+> 
+> And that triggers a related question.
+> 
+> Why is the three cell translation not following the one/two cell scheme
+> and has the parameters at the same place (index 0,1), i.e. adding the
+> extra information at the end? That makes sense to me as the extra cell
+> is obviously not directly related to the interrupt mapping.
 
-> Fixes: 24e9fb635df2 ("PM: EM: Remove old table")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
-> ---
->  kernel/power/energy_model.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
-> index 3874f0e97651..71b60aa20227 100644
-> --- a/kernel/power/energy_model.c
-> +++ b/kernel/power/energy_model.c
-> @@ -447,7 +447,7 @@ static int em_create_pd(struct device *dev, int nr_st=
-ates,
->         return 0;
->
->  free_pd_table:
-> -       kfree(em_table);
-> +       em_table_free(em_table);
->  free_pd:
->         kfree(pd);
->         return -EINVAL;
-> --
-> 2.25.1
->
+this from gpio DT
+ gpios = <&gpio instance offset flags>;
+
+I think we currently just following the scheme with gpio cells order
+scheme, which is (index(instance) offset flag..), the index and offset
+are parameters to locate the irq which can easily derive from global
+gpio pin number, so I thought it's more intuitive to group them 
+orderly together..
+
+But you really raise a good suggestion here, if we follow appending extra
+information at the end, then it will make threecell translate scheme
+compatible with twocell, which mean we don't really need extra function
+to prase, and can eventually drop this patch, I personally like this direction.
+
+hi, Linus Walleij, what do you think on this?
+
+-- 
+Yixun Lan (dlan)
+Gentoo Linux Developer
+GPG Key ID AABEFD55
 
