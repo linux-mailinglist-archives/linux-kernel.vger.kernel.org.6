@@ -1,106 +1,129 @@
-Return-Path: <linux-kernel+bounces-541134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09CD2A4B906
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:21:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74942A4B90C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:23:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D5AF3A6E4B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:21:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 211651891E1D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:23:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 409BD1EF091;
-	Mon,  3 Mar 2025 08:21:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64F0A1EF0A6;
+	Mon,  3 Mar 2025 08:22:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QHSENisG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UJN6nX7O"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128C51EEA37;
-	Mon,  3 Mar 2025 08:21:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA6023F36D;
+	Mon,  3 Mar 2025 08:22:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740990080; cv=none; b=gs5fJW50takPlpyW9JaU0qqzeqXxPaRHuFcHnptgENnz85S6G5oQmXHQ5ymzX51I8M6PtmE3GemEXOWrydvwwzVMjT1pTMkXOFYB/FaP1XlM32nE8cBGfWrQnyN2IdPAKyhuGQbduKdKvACJDAO4SM+NSPiOMpVLZ4qRbxlZGbw=
+	t=1740990177; cv=none; b=aQbPY7uXB/CNf4SYSiphRsaHKazbT0fiZ50tgluqoFSCqfbFUydctuBmAk5bfANKDLkjmysYUmLCc+kuj83AxrLOfb/VH6XJyMJ7YKnvzITPN86oR3Rx/yDqB/6h5hVwhkQVb1CYbWerjtzwCSfKqLK6K+jveAV+U+W/WAdd/1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740990080; c=relaxed/simple;
-	bh=N9mZl4TD3z0y0yE+U4uxZdByy4waB69DBjZwBEDVK0s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YXWjaz6tBqVMryOVu3hfIC3+AuJFnNlrOjT7PGuIk6L6xou9tQR8VFfW7ABpAm/F/b/ekeranwpNvddmRM5IeuF2SIgxoAq5XSfsfvexc8AKCkmTXL2TOnORrjECgmq/B+x+NO0tM8wNT/Bs890QD9UVgIfMQt47AELVWcHpiHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QHSENisG; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740990079; x=1772526079;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=N9mZl4TD3z0y0yE+U4uxZdByy4waB69DBjZwBEDVK0s=;
-  b=QHSENisGlf/P1/vlyD6SApEXNHQJkWY20TlJYqH1FZC/Bh9T8nyP4Nft
-   dgTH4OpTZohvcW2Nj19rlcmC7F0+v52HaOLhUuDFLjRuVD0szL8aCmq+s
-   DWf32KIQ6f6DW7tvvmFuMo1BLgqeNdGL4+VqyEuhPARi9ol2mvjJhuRw/
-   qHV8exm9TbSghvvFjh+3aXJqPgJq398MMvxs6zuce0O0kmpC7kTXlGFGk
-   zXNczbuE3vULP4C/omPsTYZG7kgzpDsJPVImEVPylaPUrt1NGbc4tcKcI
-   AAchiUTrG00DW1+TWqod1xpfRv3KfPH7Xvafrgsh7xtNazGztAVp8vS21
-   g==;
-X-CSE-ConnectionGUID: PZlu3JROTVu1UWbU2Mn6Sw==
-X-CSE-MsgGUID: bxck2UHdSAmiEmA5UYIWlQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="41741002"
-X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="41741002"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 00:21:18 -0800
-X-CSE-ConnectionGUID: 97up0/dCQbWEIlFstbw+Gg==
-X-CSE-MsgGUID: VKhMROqeTjyq46TDp4kIKw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="122947971"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 00:21:17 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tp133-0000000Gkip-2FPH;
-	Mon, 03 Mar 2025 10:21:13 +0200
-Date: Mon, 3 Mar 2025 10:21:13 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Raag Jadav <raag.jadav@intel.com>
-Cc: lee@kernel.org, giometti@enneenne.com, gregkh@linuxfoundation.org,
-	raymond.tan@intel.com, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] gpio: elkhartlake: depend on
- MFD_INTEL_EHL_PSE_GPIO
-Message-ID: <Z8VmebNcrH6CjHp6@smile.fi.intel.com>
-References: <20250303044745.268964-1-raag.jadav@intel.com>
- <20250303044745.268964-3-raag.jadav@intel.com>
+	s=arc-20240116; t=1740990177; c=relaxed/simple;
+	bh=VmzpT3xQVyvpJRwyRzfT67E539eO66WnD2nAargeggQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Zi6ZPjnZAFIIUK/Gh6/VKQiOsnqxUZYiXpgVMsprn7sdAHtNDEPES4u3Fx26kAngi6bz35u2apZMdqPtVUycouWZb8gksG8gg43rQBPjbbYSRE7/61yXryMCTFxj7bdqZOz4K3Ce/S4lT+iaxeQwI92Y6PGXKNsuS8Z6zWVC+t0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UJN6nX7O; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 4539D44352;
+	Mon,  3 Mar 2025 08:22:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740990172;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=jqlu8eOJiZMNZm/+Mkhpb1rlBXN5YMdMX15PMY6me0M=;
+	b=UJN6nX7Om5ZXdA8i/wrHFqWm6b317tIL/moZqP5+5o5ASSr7cSh2+yxB/WjLoJ7J08sfqZ
+	WKYEHGB/H5mygk56iHVN5h5Dj6IZkjzQbbsveiaU4LrIjn+TA8YKle0MhMWB4em8OdqPEQ
+	2Wc08R0Yt9IepEnIgHKbMuKtKcSuzM2jg0BVuUkktweDxkBlHesTNjISSOb08xdCEsI0AO
+	G/GeqpBaREnV+RPgnaJ/hJ5U0VbSC+RC2luhN9vU6x7lvhEPXmpzf0Dv9l7zgdb4UMbtQR
+	VySb5FV5iyJk/UMW945XW5i07SzcolBZWrD0HqxrniWetntDG0E8TcOw9pqWjw==
+From: "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
+Subject: [PATCH bpf-next v2 00/10] selftests/bpf: Migrate test_tunnel.sh to
+ test_progs
+Date: Mon, 03 Mar 2025 09:22:48 +0100
+Message-Id: <20250303-tunnels-v2-0-8329f38f0678@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250303044745.268964-3-raag.jadav@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANhmxWcC/z2Nyw7CIBBFf6WZtRgeRaMr/8N0Ae1gJ6nQAJKap
+ v8uYeHy5Nycu0PCSJjg3u0QsVCi4CvIUwfjbPwLGU2VQXKpuVCC5Y/3uCSmb/bSCzTKCQ51vUZ
+ 0tLXSE+zqmMctw1DNTCmH+G0XRTTfalJe/7UiGGdKTU6PihvD+4cNIS/kz2N4w3Acxw99YJm5q
+ gAAAA==
+X-Change-ID: 20250131-tunnels-59b641ea3f10
+To: Alexei Starovoitov <ast@kernel.org>, 
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, 
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Alexis Lothore <alexis.lothore@bootlin.com>, bpf@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelkeeifecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffufffkgggtgffvvefosehtjeertdertdejnecuhfhrohhmpedfuegrshhtihgvnhcuvehurhhuthgthhgvthculdgvuefrhfcuhfhouhhnuggrthhiohhnmddfuceosggrshhtihgvnhdrtghurhhuthgthhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhephffgheekudehgeduiedufeevtdejjedvffekffetudejiefgkefgieeuheeftdejnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddugegnpdhmrghilhhfrhhomhepsggrshhtihgvnhdrtghurhhuthgthhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvddtpdhrtghpthhtoheplhhinhhugidqkhhsvghlfhhtvghsthesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehshhhurghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohhhnhdrfhgrshhtrggsvghnugesghhmrghilhdrtghomhdpr
+ hgtphhtthhopegvugguhiiikeejsehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhonhhgsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrshhtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmhihkohhlrghlsehfsgdrtghomhdprhgtphhtthhopegrnhgurhhiiheskhgvrhhnvghlrdhorhhg
+X-GND-Sasl: bastien.curutchet@bootlin.com
 
-On Mon, Mar 03, 2025 at 10:17:42AM +0530, Raag Jadav wrote:
-> Now that we have Intel MFD driver for PSE GPIO, depend on it.
+Hi all,
 
-...
+This patch series continues the work to migrate the *.sh tests into
+prog_tests framework.
 
->  config GPIO_ELKHARTLAKE
->  	tristate "Intel Elkhart Lake PSE GPIO support"
-> -	depends on X86 || COMPILE_TEST
-> +	depends on (X86 && MFD_INTEL_EHL_PSE_GPIO) || COMPILE_TEST
->  	select GPIO_TANGIER
+The test_tunnel.sh script has already been partly migrated to
+test_progs in prog_tests/test_tunnel.c so I add my work to it.
 
-Looking on how GPIO PMIC drivers are written, I would redo this as
+PATCH 1 & 2 create some helpers to avoid code duplication and ease the
+migration in the following patches.
+PATCH 3 to 9 migrate the tests of gre, ip6gre, erspan, ip6erspan,
+geneve, ip6geneve and ip6tnl tunnels.
+PATCH 10 removes test_tunnel.sh
 
-	depends on (X86 || COMPILE_TEST) && MFD_INTEL_EHL_PSE_GPIO
+Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
+---
+Changes in v2:
+- PATCH 1: Move tc_hook definition to attatch_tc_prog()
+- PATCH 4: Disable DAD through `ip addr`
+- Link to v1: https://lore.kernel.org/r/20250227-tunnels-v1-0-33df5c30aa04@bootlin.com
 
+---
+Bastien Curutchet (eBPF Foundation) (10):
+      selftests/bpf: test_tunnel: Add generic_attach* helpers
+      selftests/bpf: test_tunnel: Add ping helpers
+      selftests/bpf: test_tunnel: Move gre tunnel test to test_progs
+      selftests/bpf: test_tunnel: Move ip6gre tunnel test to test_progs
+      selftests/bpf: test_tunnel: Move erspan tunnel tests to test_progs
+      selftests/bpf: test_tunnel: Move ip6erspan tunnel test to test_progs
+      selftests/bpf: test_tunnel: Move geneve tunnel test to test_progs
+      selftests/bpf: test_tunnel: Move ip6geneve tunnel test to test_progs
+      selftests/bpf: test_tunnel: Move ip6tnl tunnel tests to test_progs
+      selftests/bpf: test_tunnel: Remove test_tunnel.sh
+
+ tools/testing/selftests/bpf/Makefile               |   1 -
+ .../testing/selftests/bpf/prog_tests/test_tunnel.c | 633 ++++++++++++++++----
+ tools/testing/selftests/bpf/test_tunnel.sh         | 645 ---------------------
+ 3 files changed, 530 insertions(+), 749 deletions(-)
+---
+base-commit: 97b4501198b918f1d0adeb8205004d64f780e472
+change-id: 20250131-tunnels-59b641ea3f10
+
+Best regards,
 -- 
-With Best Regards,
-Andy Shevchenko
-
+Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
 
 
