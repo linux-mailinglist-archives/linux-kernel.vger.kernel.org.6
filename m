@@ -1,138 +1,144 @@
-Return-Path: <linux-kernel+bounces-544475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E9CCA4E1A3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:49:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77410A4E224
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:02:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44EEE4200EF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:42:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31D1D189F824
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 696E221D00D;
-	Tue,  4 Mar 2025 14:40:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC2E9264F96;
+	Tue,  4 Mar 2025 14:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="p3bK6d8D"
-Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="NBRJ9t0/"
+Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AEDB207E19
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62FD3206F0E
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.116
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741099217; cv=pass; b=hkoOEyIVLg3Wq7IXlgR5KIvxDwZY3wqVdx2n316xyiJxmri16oJ3C7TjXm8cZnVg0HZiKw2su+jO1O2cc08PeJJUZxcCbSa/LEPdh39SrFvAi9YvAxg7neMVvsrknUTSNZMF7BRwio25QguTSTCBlF8dRqE9QNSm3Li49F98Y9k=
+	t=1741100043; cv=fail; b=XCwMejbSbnq2MSzsf6mBDDAicZS+F5pKA+QX7P45Br5a1hsx2YO4dks3giRS7/1Ttsgp70o59pRtGCKCPnLV81i2Kgutj1C95O2DTEDeRkpTqA82zaZnAvh+TIUaFBlKGZepKfJtjbA+NwlxIkDDUx1s6+02yQ9wV53XgKnlZA0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741099217; c=relaxed/simple;
-	bh=32Qik+C6Gy82VbaZ+W9H7pBMHl/CZaXxobg9NI2Xga4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RYSLkuwirdMCYCBwhxcSeEThPYzmTl5j2wbmBNKUmHpCztgQOo8eYh6W8k1FB06ZZd4vGmJ0IIK5n+kAqY9xL25gRNOGejiOzOy9MLV237ivOBARuajyHefchszRx69eW1ybINQQ3kou9ZXKT9aFkJeP85avyKtgOjYkLMYW+SM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=p3bK6d8D; arc=none smtp.client-ip=209.85.221.48; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; arc=pass smtp.client-ip=160.75.25.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
+	s=arc-20240116; t=1741100043; c=relaxed/simple;
+	bh=fh6GrYEp0jAU3aoZMjoRqmKSHT8/NkBpRU1jnSOYaN4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OB+8s0hhWw7S6S1rea4f4ILwzi0sPcKCBaBR8I41BoWT/mS6Is++QdjyyTE/E7SisVM1iA6gmvTLYYyTDh3QXA6BZpkZv90XqeIZgv76hFQysvNekRBu73Zk1whK8rVOGOskBiI4+4iSgRPS2o7SNjbDRaJLqA4piC5Qhxh34pE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=NBRJ9t0/ reason="signature verification failed"; arc=none smtp.client-ip=209.85.128.44; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; arc=fail smtp.client-ip=160.75.25.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
-Received: from lesvatest1.cc.itu.edu.tr (unknown [10.146.128.1])
+Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 603E540D4DFA
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:40:13 +0300 (+03)
+	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id DF06D40CFEE4
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:53:59 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key, unprotected) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.a=rsa-sha256 header.s=20230601 header.b=p3bK6d8D
+	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.a=rsa-sha256 header.s=20230601 header.b=NBRJ9t0/
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dbM0GlJzFwjP
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:38:39 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dv14ZG3zFxM4
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:52:13 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 16F654275B; Tue,  4 Mar 2025 17:38:32 +0300 (+03)
+	id B19E042722; Tue,  4 Mar 2025 17:52:07 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=p3bK6d8D
-X-Envelope-From: <linux-kernel+bounces-541609-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=NBRJ9t0/
+X-Envelope-From: <linux-kernel+bounces-541626-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=p3bK6d8D
-Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id 2551E41E09
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:41:27 +0300 (+03)
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=NBRJ9t0/
+Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
+	by le2 (Postfix) with ESMTP id 3B06A42854
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:49:58 +0300 (+03)
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id CAAF1305F789
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:41:26 +0300 (+03)
+	by fgw2.itu.edu.tr (Postfix) with SMTP id C096C2DCE4
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:49:57 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BCC2162C72
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:41:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C6CF1676A1
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:49:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51AD4202F65;
-	Mon,  3 Mar 2025 11:40:24 +0000 (UTC)
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8105420F06A;
+	Mon,  3 Mar 2025 11:48:01 +0000 (UTC)
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43F920296C
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 11:40:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE39520E022
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 11:47:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741002021; cv=none; b=Ch2ycr6idfAlIyRguf6XUiHCQMr4cHUOhbegOj8b0TMDNw0PSTIyaupPVHAIuQtsmCD9gtow+zaJHMIqU6TaouIBrs6ldCFMflrhNngtEXK6kFyb5cb5oxRaNH2KsILEi1+sWynL3ZZRT4fczgYqZ25a6vWdZv8w6zOzvgWt6Ug=
+	t=1741002477; cv=none; b=RfDv53d/frw8NpqcGqUHsLpD5fa+peCjBscUs67PooKI84Pd4JpX+Xzei3zWfiqRP2wa7i8yIMtJmxCzbgEfwh+CrCP40b4mnzeLIp/bkJ2rv04zhTCj/8DF3A0OhzLPMElOAR/tqQmDef7X8Gfq9+MsjCh4hCxZpNWEwlapUjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741002021; c=relaxed/simple;
-	bh=32Qik+C6Gy82VbaZ+W9H7pBMHl/CZaXxobg9NI2Xga4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kjhAt4eIT/UH82nLxU/wWPzUqb23+l30FrVs2omLN0wkMgxJTd5yXc21OtRffyBVnbJfhwh83rpLFwDkI+edBQHjXbzVVLPVDNHhWja72YRIMuciHAm9UXCB2CdEmKOXFOeVUVHVnvl9zfSrpIuXIma0AyDKZJPfoJIEYRgVhNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=p3bK6d8D; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-390ec7c2d40so2724433f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 03:40:18 -0800 (PST)
+	s=arc-20240116; t=1741002477; c=relaxed/simple;
+	bh=jqr9EwXfZY3b+14dJHqEdl3sytYGW0GVhd2OmY7oUBw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aY1UdanQftltCFRN3yJSNXGQEGQ/2+PzYB2TV66KRrflh1f3D3yKzskh+LslqXRnINawMql0wIuNVEg/rWFU93dAW9wER4F4qo4SiatLii3yG6hSCwwg9FhCFheRWuUAOaaeY61BVNgic+G8OgN6yuw0RvXc5xdkfc5uVXseHAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=NBRJ9t0/; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-438a39e659cso29314225e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 03:47:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1741002017; x=1741606817; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4NtAA2UHYocmR2KbGMJPhzPhzOIPXF5Y+cD7gkzWW/A=;
-        b=p3bK6d8DrjrhK0/qO2+o0XXclKbDdJbPyaEJqebJFnj6UftGu/Wlp0g0z460UuK8eQ
-         jqP5dZiDvaf13EWZxYf429fumpQf+BuKXNtjjUA1NBj79GysscTVo0cg0j48fqmhX5NV
-         9efVLZPrgc0Lj4xKJGCHbJmoh8/VB/GderaMZxkIzlOfM8yT/xfitEr/NJBqrSttwzsv
-         D2S8SLnciUvPRACHbdtcIkpSchM5xwppp3eKPT9K2p2QOLfBtVwD7D66BHHzvMMQDhR3
-         p5TyUVouF6jIyBsh7KwZIVWxs5mF+hJOLYmeHoxXDNdBYVQ5ilopY0Vx1AvSDV4gvTVv
-         9zZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741002017; x=1741606817;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1741002473; x=1741607273; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4NtAA2UHYocmR2KbGMJPhzPhzOIPXF5Y+cD7gkzWW/A=;
-        b=BBfrxdcDTkV7QihRYcOrSea0Jh+mved6IG3uOdLbUwtc7fpnfzjbIoT6ZkwH8RFjE7
-         8bV2KzpRqzGBTl3AqNOiEOrVQiLI/OZCLDM9nhH++o3bMC5ecRVsfZKjuFUQq/JclNY2
-         4cGZX47fJ3GFslIPQNIOeAkHh2vmtGqjNTHpNJxXkEpTkYvUTGxBzxKvR2jK+3MTbHw/
-         y/VPc+LQKrKXwmhzGb6ihCcM3jTrMX0kUf+p1Q6+AAzSHyMn/L1Z2P7/mXUYi2NcIxwA
-         O2LUEzmZKzIBikJ7K7jmQ+TycjEGgmc1GauyZcwSb38Cg+B/T8qAZDf3N6KlkwldAtTa
-         1kqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVnNYUjYkq5pTN9FR0FESnWz8s/18hfmlQ5OlUnAcdp4DbU7EksNv3GjIr0xXrL9hWX3VQVDNZLHJLcNiI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHSjWN3xuypSQPglmGS/dvGTbcZgWHgLtK6LzjHhz+GYq/EZ6L
-	Lkq9vOMWdFjFtUASMLN/mJmZFHKfUykPbuzPZH26nUttPa3dyNTdWkHhxaAa3pA=
-X-Gm-Gg: ASbGnctyBpKJOeAAjD6bN9BnoK83hFY//qH/j3vhyOAAqQLCdEFzESAZVov767oWVi/
-	2hRyiGM+o9GmUqqQRxReB14nUCSoR/FF5zncg9PpAW6b2rJVpb78148LLB0HOFILT2mAYCCU0AK
-	p1nqtm8gcoBR9DvtF/ZlO6g2EsYoNrir2uvTN9DSrKo7Wvv6PsJiRyCb7nRxCsUiYIkvUDLkx9P
-	yFpy/AA4kPxjgr6z6q889bXu1vSM5sEMJe93aoN1R9gvYTOGyEdASU28brbLh9M++W6CiZFR5ph
-	f6fL6M09HpX5AJFZKQilPBz+7o9jg18mfYugkJv9YYO5G5Jj9A/XQk8juovYj1vDrSvtZq0P
-X-Google-Smtp-Source: AGHT+IFz1lKrp8HJjVJu85QHKOfDHRDkxYAgfR/PMWyeJaGKL7qzodzH7XjGqSVE9eCdgx8AE4rhHQ==
-X-Received: by 2002:a05:6000:144c:b0:391:c3a:b8ae with SMTP id ffacd0b85a97d-3910c3aba7emr2411994f8f.23.1741002017110;
-        Mon, 03 Mar 2025 03:40:17 -0800 (PST)
-Received: from jiri-mlt.client.nvidia.com ([140.209.217.212])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e479596dsm14212516f8f.7.2025.03.03.03.40.15
+        bh=IQozffwnOCsYFoqS8k7yOzUIgAbpTEtaLUGEzpJWOM8=;
+        b=NBRJ9t0//e8B+CKEW+UUUgx5fjbZqxNGjQXtzkKzqUMs6va+5HtB5fAGU/tqIhv64L
+         d9oeIBN8dmYuNtuXFwDvSjLliIe4syDd0/neJXd8KATVQ4rbeWzOsH354S36oGTSiZKh
+         DA3rwOIkKTWnm/ZJm2xn1sAVqxJ7NTKTE41yhZh9bn3djPqbUIs8u3/XJi4JNLKZfPzb
+         CUWqNQu6ECZe9caabBoP6NlLlEIBGiJrihdE+mF2yzWZNxu3DzoKfsZtG7uoPaeHPpZD
+         ZMuDsH2EmRrnvsTCGL/qw4ZX4t8NAbv1LZ0BUUjIh/ZaE8L645GYIcIOo21oCrp570KS
+         U2ZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741002473; x=1741607273;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IQozffwnOCsYFoqS8k7yOzUIgAbpTEtaLUGEzpJWOM8=;
+        b=dyXZnotuoPGoW7u0CfciC8zWoGAJZ4RJ0msd+Ccm4e40ORmI2vMB4Jg1fPz63P0Oys
+         MAh90Ujp+uA/wJrunOsq6YDW8pieTSOBBm4/RPZ1ecqr8nr3+YeMJ6+0c3ywVwzgK2Ja
+         WhNp5dCJxODLlh3cRgv8XOAUomf1n2tAkbkmAQwg2CUuaLhDv3apVo/iPNqWXiY79biE
+         dFGlPP5N1sraRkRMlIqmbfQIwo1jnp6p/xOm03Le2vpQ73HZsWRq6uqZlYSkCYgSBbWB
+         PeqyzVuLpwzya+eMNlZkXsDylAUoEMv6HaZoJefIDzY5AvsWY8A1rbBcjpeiTayU/dzO
+         KMXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUGjah0/tfdoYP2z7NzP1ptl0kZo8kSxt0DricLete4gMFrCm34sUpslyurw6rmZWets+Aj5FYzFPvyTsk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjFUWdp/o+37DUtWA7J/aLIxt8TzT+yxx83eOUlOlOwF7K3M33
+	G08zV++hy3P7FIkvbgXBot+O369hpIr6gxAGDE1oJlrp2vvNA1KFrXZcdppHOEk=
+X-Gm-Gg: ASbGnctKdNhlcdIB7YyS8PUn74SvlOZqREJjBAgdw1mxHOxtxmkFJFGMhmzR4rowBni
+	orF2zVkaoEH5/RR0c8Gw9fTSR6UTh6+JTLLUmin0zNCmwqhzRdzbOjPM/Jvon2YZwMajcLIx9DW
+	fJIjEgz7dAGXpj+OOus0LgIf1F1oCrf4Kp4tfu4SwLsmnajh4Gzl66M7whatdlanXBJspNwmMjL
+	KJLdPfJhtIsTUXWH8LTU/l3lYD1xMdS3mriDA0TCfofaJl/YgCL6a5GZeV/BIj8ij83AfGM2uRs
+	N6XJZYSQZWZDSD62sYvvuqMy3y/onQxttEw+FKm9KBxT8Rj0T6AQjsdz3NWu+ma0JirHPQrWL3B
+	/tR1R39NU/xl+gvAazZV9qNu6tA==
+X-Google-Smtp-Source: AGHT+IHbFpaqCqy7oJ39CyR2Zwl/9NuAfZAB+lM4qcvF3LKM+A/AKR9yfndWp4sIKq8aPZyIHh+KQA==
+X-Received: by 2002:a05:600c:a581:b0:43b:ba80:4393 with SMTP id 5b1f17b1804b1-43bba80467emr32420225e9.3.1741002473131;
+        Mon, 03 Mar 2025 03:47:53 -0800 (PST)
+Received: from localhost (amontpellier-556-1-148-206.w109-210.abo.wanadoo.fr. [109.210.4.206])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bc222362dsm23270805e9.0.2025.03.03.03.47.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 03:40:16 -0800 (PST)
-Date: Mon, 3 Mar 2025 12:40:13 +0100
-From: Jiri Pirko <jiri@resnulli.us>
-To: longli@linuxonhyperv.com
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>, 
-	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Shradha Gupta <shradhagupta@linux.microsoft.com>, Simon Horman <horms@kernel.org>, 
-	Konstantin Taranov <kotaranov@microsoft.com>, Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>, 
-	Erick Archer <erick.archer@outlook.com>, linux-hyperv@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, Long Li <longli@microsoft.com>
-Subject: Re: [PATCH] hv_netvsc: set device master/slave flags on bonding
-Message-ID: <52aig2mkbfggjyar6euotbihowm6erv3wxxg5crimveg3gfjr2@pmlx6omwx2n2>
-References: <1740781513-10090-1-git-send-email-longli@linuxonhyperv.com>
+        Mon, 03 Mar 2025 03:47:52 -0800 (PST)
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Cosmin Tanislav <cosmin.tanislav@analog.com>,
+	Dumitru Ceclan <mitrutzceclan@gmail.com>,
+	Guillaume Ranquet <granquet@baylibre.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Michael Walle <michael@walle.cc>,
+	Nuno Sa <nuno.sa@analog.com>,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 7/8] iio: adc: ad7124: Implement internal calibration at probe time
+Date: Mon,  3 Mar 2025 12:47:05 +0100
+Message-ID: <20250303114659.1672695-17-u.kleine-koenig@baylibre.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20250303114659.1672695-10-u.kleine-koenig@baylibre.com>
+References: <20250303114659.1672695-10-u.kleine-koenig@baylibre.com>
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -140,60 +146,249 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1740781513-10090-1-git-send-email-longli@linuxonhyperv.com>
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7681; i=u.kleine-koenig@baylibre.com; h=from:subject; bh=jqr9EwXfZY3b+14dJHqEdl3sytYGW0GVhd2OmY7oUBw=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBnxZbOJ2NHnT28BuDYn5pn9Cy6XUnoy62wNXfb8 1o1Xgxn7j+JATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZ8WWzgAKCRCPgPtYfRL+ TlPWB/9kBA/YalUMm9uRc0QIp6zcwfZVklEnf5cUkfHuLQSemru4lDAKLWuZ+lL+vT0jAF4jV8n 7xZcSv8VR3a2ya5bAuJyImvR6GBMkWGZWlm2oU4J/6/6LKZcuumNLwZW6Ugvm5BmbZjxhkOsPH9 yXwP/ruUPptaJgvRK8Y4JYdMfsSulBDX+ht13pS9YSiNnCotRkmwIrQ3HG7RfqOAq4an1Q0+hSf ZCQHouM5Vd4vmdXvLmrLTJcs8OtNUYwf1/1UTrb3nYROcmrcT5Fwk6DF8Q0/zh4iPFtOM2xUJgv nTWQ6ebaS9bWCUd+OB8Hh9+tmmPqI571CRcOq9pi13xZldqj
+X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: quoted-printable
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6dbM0GlJzFwjP
+X-ITU-Libra-ESVA-ID: 4Z6dv14ZG3zFxM4
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741703933.70141@yr+ryhOgFrcvgXRin51PvQ
+X-ITU-Libra-ESVA-Watermark: 1741704759.67551@MdaylHuQ6ZHFhiZjWED3rw
 X-ITU-MailScanner-SpamCheck: not spam
 
-Fri, Feb 28, 2025 at 11:25:13PM +0100, longli@linuxonhyperv.com wrote:
->From: Long Li <longli@microsoft.com>
->
->Currently netvsc only sets the SLAVE flag on VF netdev when it's bonded. It
->should also set the MASTER flag on itself and clear all those flags when
->the VF is unbonded.
+Use the calibration function provided by the ad_sigma_delta shim to
+calibrate all channels at probe time.
 
-I don't understand why you need this. Who looks at these flags?
+For measurements with gain 1 (i.e. if CONFIG_x.PGA =3D 0) full-scale
+calibrations are not supported and the reset default value of the GAIN
+register is supposed to be used then.
 
+Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
+---
+ drivers/iio/adc/ad7124.c | 129 ++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 126 insertions(+), 3 deletions(-)
 
->
->Signed-off-by: Long Li <longli@microsoft.com>
->---
-> drivers/net/hyperv/netvsc_drv.c | 6 ++++++
-> 1 file changed, 6 insertions(+)
->
->diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
->index d6c4abfc3a28..7ac18fede2f3 100644
->--- a/drivers/net/hyperv/netvsc_drv.c
->+++ b/drivers/net/hyperv/netvsc_drv.c
->@@ -2204,6 +2204,7 @@ static int netvsc_vf_join(struct net_device *vf_netdev,
-> 		goto rx_handler_failed;
-> 	}
-> 
->+	ndev->flags |= IFF_MASTER;
-> 	ret = netdev_master_upper_dev_link(vf_netdev, ndev,
-> 					   NULL, NULL, NULL);
-> 	if (ret != 0) {
->@@ -2484,7 +2485,12 @@ static int netvsc_unregister_vf(struct net_device *vf_netdev)
-> 
-> 	reinit_completion(&net_device_ctx->vf_add);
-> 	netdev_rx_handler_unregister(vf_netdev);
->+
->+	/* Unlink the slave device and clear flag */
->+	vf_netdev->flags &= ~IFF_SLAVE;
->+	ndev->flags &= ~IFF_MASTER;
-> 	netdev_upper_dev_unlink(vf_netdev, ndev);
->+
-> 	RCU_INIT_POINTER(net_device_ctx->vf_netdev, NULL);
-> 	dev_put(vf_netdev);
-> 
->-- 
->2.34.1
->
->
+diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
+index de90ecb5f630..382f46ff2b51 100644
+--- a/drivers/iio/adc/ad7124.c
++++ b/drivers/iio/adc/ad7124.c
+@@ -53,6 +53,11 @@
+ #define AD7124_ADC_CTRL_MODE_MSK	GENMASK(5, 2)
+ #define AD7124_ADC_CTRL_MODE(x)	FIELD_PREP(AD7124_ADC_CTRL_MODE_MSK, x)
+=20
++#define AD7124_MODE_CAL_INT_ZERO	0x5 /* Internal Zero-Scale Calibration =
+*/
++#define AD7124_MODE_CAL_INT_FULL	0x6 /* Internal Full-Scale Calibration =
+*/
++#define AD7124_MODE_CAL_SYS_ZERO	0x7 /* System Zero-Scale Calibration */
++#define AD7124_MODE_CAL_SYS_FULL	0x8 /* System Full-Scale Calibration */
++
+ /* AD7124 ID */
+ #define AD7124_DEVICE_ID_MSK		GENMASK(7, 4)
+ #define AD7124_DEVICE_ID_GET(x)		FIELD_GET(AD7124_DEVICE_ID_MSK, x)
+@@ -166,6 +171,8 @@ struct ad7124_channel_config {
+ 		unsigned int odr;
+ 		unsigned int odr_sel_bits;
+ 		unsigned int filter_type;
++		unsigned int calibration_offset;
++		unsigned int calibration_gain;
+ 	);
+ };
+=20
+@@ -186,6 +193,12 @@ struct ad7124_state {
+ 	unsigned int num_channels;
+ 	struct mutex cfgs_lock; /* lock for configs access */
+ 	unsigned long cfg_slots_status; /* bitmap with slot status (1 means it =
+is used) */
++
++	/*
++	 * Stores the power-on reset value for the GAIN(x) registers which are
++	 * needed for measurements at gain 1 (i.e. CONFIG(x).PGA =3D=3D 0)
++	 */
++	unsigned int gain_default;
+ 	DECLARE_KFIFO(live_cfgs_fifo, struct ad7124_channel_config *, AD7124_MA=
+X_CONFIGS);
+ };
+=20
+@@ -359,6 +372,8 @@ static struct ad7124_channel_config *ad7124_find_simi=
+lar_live_cfg(struct ad7124_
+ 				     unsigned int odr;
+ 				     unsigned int odr_sel_bits;
+ 				     unsigned int filter_type;
++				     unsigned int calibration_offset;
++				     unsigned int calibration_gain;
+ 			     }));
+=20
+ 	for (i =3D 0; i < st->num_channels; i++) {
+@@ -373,7 +388,9 @@ static struct ad7124_channel_config *ad7124_find_simi=
+lar_live_cfg(struct ad7124_
+ 		    cfg->pga_bits =3D=3D cfg_aux->pga_bits &&
+ 		    cfg->odr =3D=3D cfg_aux->odr &&
+ 		    cfg->odr_sel_bits =3D=3D cfg_aux->odr_sel_bits &&
+-		    cfg->filter_type =3D=3D cfg_aux->filter_type)
++		    cfg->filter_type =3D=3D cfg_aux->filter_type &&
++		    cfg->calibration_offset =3D=3D cfg_aux->calibration_offset &&
++		    cfg->calibration_gain =3D=3D cfg_aux->calibration_gain)
+ 			return cfg_aux;
+ 	}
+=20
+@@ -429,6 +446,14 @@ static int ad7124_write_config(struct ad7124_state *=
+st, struct ad7124_channel_co
+=20
+ 	cfg->cfg_slot =3D cfg_slot;
+=20
++	ret =3D ad_sd_write_reg(&st->sd, AD7124_OFFSET(cfg->cfg_slot), 3, cfg->=
+calibration_offset);
++	if (ret)
++		return ret;
++
++	ret =3D ad_sd_write_reg(&st->sd, AD7124_GAIN(cfg->cfg_slot), 3, cfg->ca=
+libration_gain);
++	if (ret)
++		return ret;
++
+ 	tmp =3D (cfg->buf_positive << 1) + cfg->buf_negative;
+ 	val =3D AD7124_CONFIG_BIPOLAR(cfg->bipolar) | AD7124_CONFIG_REF_SEL(cfg=
+->refsel) |
+ 	      AD7124_CONFIG_IN_BUFF(tmp) | AD7124_CONFIG_PGA(cfg->pga_bits);
+@@ -835,13 +860,22 @@ static int ad7124_soft_reset(struct ad7124_state *s=
+t)
+ 			return dev_err_probe(dev, ret, "Error reading status register\n");
+=20
+ 		if (!(readval & AD7124_STATUS_POR_FLAG_MSK))
+-			return 0;
++			break;
+=20
+ 		/* The AD7124 requires typically 2ms to power up and settle */
+ 		usleep_range(100, 2000);
+ 	} while (--timeout);
+=20
+-	return dev_err_probe(dev, -EIO, "Soft reset failed\n");
++	if (readval & AD7124_STATUS_POR_FLAG_MSK)
++		return dev_err_probe(dev, -EIO, "Soft reset failed\n");
++
++	ret =3D ad_sd_read_reg(&st->sd, AD7124_GAIN(0), 3, &st->gain_default);
++	if (ret < 0)
++		return dev_err_probe(dev, ret, "Error reading gain register\n");
++
++	dev_dbg(dev, "Reset value of GAIN register is 0x%x\n", st->gain_default=
+);
++
++	return 0;
+ }
+=20
+ static int ad7124_check_chip_id(struct ad7124_state *st)
+@@ -1054,6 +1088,91 @@ static int ad7124_setup(struct ad7124_state *st)
+ 	return ret;
+ }
+=20
++static int __ad7124_calibrate_all(struct ad7124_state *st, struct iio_de=
+v *indio_dev)
++{
++	struct device *dev =3D &st->sd.spi->dev;
++	int ret, i;
++
++	for (i =3D 0; i < st->num_channels; i++) {
++
++		if (indio_dev->channels[i].type !=3D IIO_VOLTAGE)
++			continue;
++
++		/*
++		 * For calibration the OFFSET register should hold its reset default
++		 * value. For the GAIN register there is no such requirement but
++		 * for gain 1 it should hold the reset default value, too. So to
++		 * simplify matters use the reset default value for both.
++		 */
++		st->channels[i].cfg.calibration_offset =3D 0x800000;
++		st->channels[i].cfg.calibration_gain =3D st->gain_default;
++
++		/*
++		 * Full-scale calibration isn't supported at gain 1, so skip in
++		 * that case. Note that untypically full-scale calibration has
++		 * to happen before zero-scale calibration. This only applies to
++		 * the internal calibration. For system calibration it's as
++		 * usual: first zero-scale then full-scale calibration.
++		 */
++		if (st->channels[i].cfg.pga_bits > 0) {
++			ret =3D ad_sd_calibrate(&st->sd, AD7124_MODE_CAL_INT_FULL, i);
++			if (ret < 0)
++				return ret;
++
++			/*
++			 * read out the resulting value of GAIN
++			 * after full-scale calibration because the next
++			 * ad_sd_calibrate() call overwrites this via
++			 * ad_sigma_delta_set_channel() -> ad7124_set_channel()
++			 * ... -> ad7124_enable_channel().
++			 */
++			ret =3D ad_sd_read_reg(&st->sd, AD7124_GAIN(st->channels[i].cfg.cfg_s=
+lot), 3,
++					     &st->channels[i].cfg.calibration_gain);
++			if (ret < 0)
++				return ret;
++		}
++
++		ret =3D ad_sd_calibrate(&st->sd, AD7124_MODE_CAL_INT_ZERO, i);
++		if (ret < 0)
++			return ret;
++
++		ret =3D ad_sd_read_reg(&st->sd, AD7124_OFFSET(st->channels[i].cfg.cfg_=
+slot), 3,
++				     &st->channels[i].cfg.calibration_offset);
++		if (ret < 0)
++			return ret;
++
++		dev_dbg(dev, "offset and gain for channel %d =3D 0x%x + 0x%x\n", i,
++			st->channels[i].cfg.calibration_offset,
++			st->channels[i].cfg.calibration_gain);
++	}
++
++	return 0;
++}
++
++static int ad7124_calibrate_all(struct ad7124_state *st, struct iio_dev =
+*indio_dev)
++{
++	int ret;
++	unsigned int adc_control =3D st->adc_control;
++
++	/*
++	 * Calibration isn't supported at full power, so speed down a bit.
++	 * Setting .adc_control is enough here because the control register is
++	 * written as part of ad_sd_calibrate() -> ad_sigma_delta_set_mode().
++	 * The resulting calibration is then also valid for high-speed, so just
++	 * restore adc_control afterwards.
++	 */
++	if (FIELD_GET(AD7124_ADC_CTRL_PWR_MSK, adc_control) >=3D AD7124_FULL_PO=
+WER) {
++		st->adc_control &=3D ~AD7124_ADC_CTRL_PWR_MSK;
++		st->adc_control |=3D AD7124_ADC_CTRL_PWR(AD7124_MID_POWER);
++	}
++
++	ret =3D __ad7124_calibrate_all(st, indio_dev);
++
++	st->adc_control =3D adc_control;
++
++	return ret;
++}
++
+ static void ad7124_reg_disable(void *r)
+ {
+ 	regulator_disable(r);
+@@ -1132,6 +1251,10 @@ static int ad7124_probe(struct spi_device *spi)
+ 	if (ret < 0)
+ 		return dev_err_probe(dev, ret, "Failed to setup triggers\n");
+=20
++	ret =3D ad7124_calibrate_all(st, indio_dev);
++	if (ret)
++		return ret;
++
+ 	ret =3D devm_iio_device_register(&spi->dev, indio_dev);
+ 	if (ret < 0)
+ 		return dev_err_probe(dev, ret, "Failed to register iio device\n");
+--=20
+2.47.1
+
 
 
