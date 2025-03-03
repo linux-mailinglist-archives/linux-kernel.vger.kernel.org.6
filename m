@@ -1,215 +1,242 @@
-Return-Path: <linux-kernel+bounces-542091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17F73A4C589
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:45:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57B33A4C58E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:46:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1583B188C645
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:45:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83CE03A56D3
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:45:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73874214A70;
-	Mon,  3 Mar 2025 15:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08F61214A60;
+	Mon,  3 Mar 2025 15:45:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s1zlH7O0"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1X4kg6t1";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/9Z7tXhu";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1X4kg6t1";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/9Z7tXhu"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C7B2144DC
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 15:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A51B1165F1F
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 15:45:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741016708; cv=none; b=pYNCG/L2KMnBjCXJA2fWpUM6YXQNaNnjQyy5m38px3lPFuoVno5CWBai6oGCi/5ZCngq1dgOjZZWZ/XFZO17maP+/uioU6aQDhHfrIQCXy9zdFA4RdUrwb+Og6xHbK6Nhc2pFfAtwe0qgC+rDozLrJ9VElNSr5kNpGNQqtlnf20=
+	t=1741016738; cv=none; b=tDkBgzyqEu7XgGpHCct/BjQN1TTunafXSB1BCHjU0w2kLoqMaotP8ViSx4/iDCF88Rk5QpEQzK4Ek6JgcEtFjCnZTSJ3DCqEnSJBdJgmmsHUgh8KbnsS7Eqgmj/Tv2pz5Qm+dOFS9nF2slu+licqsjifQfrFN+fe+yhNlwb782A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741016708; c=relaxed/simple;
-	bh=TvEt7HL2f2+ZiPYpZgA9Wv//CyB2sGr83sClfxce/Js=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ciJO+sPUU0vpN8Zd52Ph4peptJcriERWxWEKwB5JYX8aV4uA4vvC0ILQPbhCh7xHUb8nRCc7Rqc8VDYQAvyGSnE7WQbbHYaYOcRr9rfBjqC3dTMwK7eYjA2R7BDvz64QNTyxAtlzdry4r3YZTaMaIQnFRPc8M+oy8uPfO/aZhvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s1zlH7O0; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-439ac3216dcso31762025e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 07:45:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741016704; x=1741621504; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3kow4xuk+1mNeQ4oexSjSmUNlEIdhe4RIwb0wGDmCC8=;
-        b=s1zlH7O0h915hMWBG4aPJ0ZiB9mvsECjZ+YtIAz5FaT00pxSVz9vLtf4tnOISz7YmK
-         qP2sFtt76VC2xdOkapqpeGY3RDX9ABhuvnD+K8sSpypE6cDyexjy9yajNNgmAfXJ5i2c
-         CvpDFeRW999FXUN6ebuHHw+hA/IIlKZrOvDqN5h2CLee1ZoX+kcA/QjldpIx1Ev2owjy
-         dOrfSrtC/9m2lZ6uN1cBDH8tpTm06ymFFmozowsX/yw7VVHmYQ06CvHGFhxFEQU6KaGD
-         NM8QCoKGeKNzM5Z64x+LzlZdUpaC9avyb3/FOXCtohL/fdisgyv+9rMQ0V/jxKkF1y5v
-         4lBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741016704; x=1741621504;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3kow4xuk+1mNeQ4oexSjSmUNlEIdhe4RIwb0wGDmCC8=;
-        b=YM6pLmmHEcv+6EzJf54bCeApfE8bYU+AjzLBJ/ZonctJFGmDOmw7Ope8auNTJ0MFVf
-         oIrCcVtXckV/wZfviuZO3qBz4yULSGVrya9FkSLn80E6xxi27jSDGerDjRsoVS9WIwsa
-         TodS56RZ6mtBEj0VZNh9uRiHfV59OJ/qzFEtDw66SxWBw9lIq9SHo2kaVcuUussVYwyD
-         DHeNRxSgPEkGy56+gpyCErIATIscQPGCfskm32dNDKiMCoj9JvE9eSBA2iOFsMWJoovz
-         jerpzwEMZyjLL9gSMIyVTqx3ayeo6IhwsKFitNvG2bFECWWwlE7xBVPbbmu4PFT4nVuC
-         fJFw==
-X-Forwarded-Encrypted: i=1; AJvYcCUS/mREsE7XASOxko8lf6A+wJxnJZ1VUzzFFgWDhX4T4GyWnfX7XjsmYh9rNwNCTOCmYiG4fJJJ05lZmfk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhXZobJC0LFPZVnOiB1Z2l9ZKtPOHM9TC8UFC2P8rXKzc5prTG
-	ZJroK4cd5q+0kPnteR5awPoLuKRThnSlcDef8i2PzTTCwFvWw34ndHi8vFvEdELFP/d80VirXX9
-	y9zhQJZvZo40bYwvk9iSqsXw292FzWBZRe0k+
-X-Gm-Gg: ASbGncs+rYl7VpFThPFGl/I4xoaVQGSWziJSRwbBoRbe4F1SjC7xq6vPQMl7BsFu1rc
-	jmf88BzPw8D4x2LmZi4TVjolmGI+7q05jaqdJiOmylal7LukZxKDeuw3pTcvNcYj3MMxr/yjEIL
-	LbqEXy3+ewRhbUdZlvxwPYkWJYRhQL59DQh2fY4qTvMg9taU6QL3PTvO7w
-X-Google-Smtp-Source: AGHT+IHXXQ7buQBEorS4efQ1j2iNuWmeS1bZKP0/m94hhxiT8OFf6H7yU2EGk9/SwAGsuWxPOOcRN2PU93WYRcIT0a8=
-X-Received: by 2002:a05:6000:270f:b0:390:dfe0:1320 with SMTP id
- ffacd0b85a97d-390ec9c1bddmr8951802f8f.33.1741016704234; Mon, 03 Mar 2025
- 07:45:04 -0800 (PST)
+	s=arc-20240116; t=1741016738; c=relaxed/simple;
+	bh=+1NcLQy+/TCaLlYlvyVkmvxNCspiHOMWqe1dFHkklz0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FoLYIxMviKUTKvGesv85fMjQQBOv5CDvcgmf8TWRKCj0IxmtM7uuCjACssjxupYfYGFPQMwZvlUjsSmATgfFXQwepG7Hv83zzDGYIH3ErQUaTB/6tNktHYMSK4OLym4KPdPgA7JfUryYxMlj2vrQX/me6Fb7FpBou9DrZQ8j8Nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1X4kg6t1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/9Z7tXhu; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1X4kg6t1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/9Z7tXhu; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 90A8521199;
+	Mon,  3 Mar 2025 15:45:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1741016734; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ak+RjPIQj4V4k7FMIvSJQyPpJOXQIaNwc6DJlet0xm0=;
+	b=1X4kg6t1Olo3SZVeeaOJcdxj04j5VexJ2JuyzJ8RBGN5nrmGj2b9m+Y5XvFrniAv0B11A7
+	LT4m4dJ3+XS+hXPTxMaqTzSScs01VgFCEe9NlqxW4aX4rI1NtjWmX1x5s9wG4vWqpYsAwY
+	i16mEy8gLb576wjkL3/am8nq8Kylt84=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1741016734;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ak+RjPIQj4V4k7FMIvSJQyPpJOXQIaNwc6DJlet0xm0=;
+	b=/9Z7tXhuo3lkEr3ha+xJCgKsKEC8xKq0iCg6i8pQXIQr4uWV70OTg6KIDU24IFPd3aew2k
+	xy0TuAdYCpjJi1CA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1741016734; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ak+RjPIQj4V4k7FMIvSJQyPpJOXQIaNwc6DJlet0xm0=;
+	b=1X4kg6t1Olo3SZVeeaOJcdxj04j5VexJ2JuyzJ8RBGN5nrmGj2b9m+Y5XvFrniAv0B11A7
+	LT4m4dJ3+XS+hXPTxMaqTzSScs01VgFCEe9NlqxW4aX4rI1NtjWmX1x5s9wG4vWqpYsAwY
+	i16mEy8gLb576wjkL3/am8nq8Kylt84=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1741016734;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ak+RjPIQj4V4k7FMIvSJQyPpJOXQIaNwc6DJlet0xm0=;
+	b=/9Z7tXhuo3lkEr3ha+xJCgKsKEC8xKq0iCg6i8pQXIQr4uWV70OTg6KIDU24IFPd3aew2k
+	xy0TuAdYCpjJi1CA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 37DB913A23;
+	Mon,  3 Mar 2025 15:45:34 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 0wivC57OxWcUFAAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Mon, 03 Mar 2025 15:45:34 +0000
+Message-ID: <fc353e0b-25dc-437c-84bc-c76fffd21b65@suse.de>
+Date: Mon, 3 Mar 2025 16:45:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224115007.2072043-1-abdiel.janulgue@gmail.com>
- <20250224115007.2072043-3-abdiel.janulgue@gmail.com> <6dea7b6a-1534-47e7-94d2-d67417c3d4c1@proton.me>
- <tnwDK3QN_Xr0Yoa3U8HVxS5OqjvxIhgmmO_ifTGJR_EtIzjoxawOHtnbOJ9yChsUWXyFPcU9beIdrgbpfGZI8w==@protonmail.internalid>
- <3202F69F-397E-4BC4-8DD8-E2D4B0AB056F@collabora.com> <87bjuil15w.fsf@kernel.org>
- <t4HxdvR7WBX_861hiTXo72jqC9F9oRpIzgA_dD2yhcSuLISEkC-shMfSgllrFPpnkSZXGfRcc47keudMooNiIQ==@protonmail.internalid>
- <CAH5fLgg5MuUu=TX8mMsPf5RcLhMLHSU4Vct=h8rFX6Z7HjPxeA@mail.gmail.com> <87ikoqjg1n.fsf@kernel.org>
-In-Reply-To: <87ikoqjg1n.fsf@kernel.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 3 Mar 2025 16:44:51 +0100
-X-Gm-Features: AQ5f1JpQwVPMNAtyLQEi5zozvB7zbblDDYl0-W2nDZDSA_G1jc6Lh4mO8DNqPys
-Message-ID: <CAH5fLgh6ubawHh76wq7JPbcuBCWhm91m7Rc01MVsX-a3C6qaVA@mail.gmail.com>
-Subject: Re: [PATCH v12 2/3] rust: add dma coherent allocator abstraction.
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Daniel Almeida <daniel.almeida@collabora.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Abdiel Janulgue <abdiel.janulgue@gmail.com>, dakr@kernel.org, robin.murphy@arm.com, 
-	rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Trevor Gross <tmgross@umich.edu>, Valentin Obst <kernel@valentinobst.de>, linux-kernel@vger.kernel.org, 
-	Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, airlied@redhat.com, 
-	iommu@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 2/2] drm/tiny: add driver for Apple Touch Bars in x86
+ Macs
+To: Aditya Garg <gargaditya08@live.com>
+Cc: "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+ "mripard@kernel.org" <mripard@kernel.org>,
+ "airlied@gmail.com" <airlied@gmail.com>, "simona@ffwll.ch"
+ <simona@ffwll.ch>,
+ "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
+ Kerem Karabay <kekrby@gmail.com>, Atharva Tiwari <evepolonium@gmail.com>,
+ Aun-Ali Zaidi <admin@kodeit.net>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+References: <361DAD47-01E8-4ED9-BC8C-0F98B08FFA5C@live.com>
+ <FCAC702C-F84A-47F9-8C78-BBBB34D08500@live.com>
+ <72610225-c6e0-413a-a791-468635743fc2@suse.de>
+ <PN3PR01MB9597D311510957F1FDABE143B8CD2@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <PN3PR01MB9597D311510957F1FDABE143B8CD2@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_TO(0.00)[live.com];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,live.com];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux.intel.com,kernel.org,gmail.com,ffwll.ch,kodeit.net,vger.kernel.org,lists.freedesktop.org];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	URIBL_BLOCKED(0.00)[kodeit.net:email,live.com:email,suse.de:email,suse.de:mid,imap1.dmz-prg2.suse.org:helo];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-On Mon, Mar 3, 2025 at 4:21=E2=80=AFPM Andreas Hindborg <a.hindborg@kernel.=
-org> wrote:
->
-> "Alice Ryhl" <aliceryhl@google.com> writes:
->
-> > On Mon, Mar 3, 2025 at 2:00=E2=80=AFPM Andreas Hindborg <a.hindborg@ker=
-nel.org> wrote:
-> >>
-> >> "Daniel Almeida" <daniel.almeida@collabora.com> writes:
-> >>
-> >> > Hi Benno,
-> >> >
-> >>
-> >> [...]
-> >>
-> >> >>> +    /// Writes data to the region starting from `offset`. `offset=
-` is in units of `T`, not the
-> >> >>> +    /// number of bytes.
-> >> >>> +    ///
-> >> >>> +    /// # Examples
-> >> >>> +    ///
-> >> >>> +    /// ```
-> >> >>> +    /// # fn test(alloc: &mut kernel::dma::CoherentAllocation<u8>=
-) -> Result {
-> >> >>> +    /// let somedata: [u8; 4] =3D [0xf; 4];
-> >> >>> +    /// let buf: &[u8] =3D &somedata;
-> >> >>> +    /// alloc.write(buf, 0)?;
-> >> >>> +    /// # Ok::<(), Error>(()) }
-> >> >>> +    /// ```
-> >> >>> +    pub fn write(&self, src: &[T], offset: usize) -> Result {
-> >> >>> +        let end =3D offset.checked_add(src.len()).ok_or(EOVERFLOW=
-)?;
-> >> >>> +        if end >=3D self.count {
-> >> >>> +            return Err(EINVAL);
-> >> >>> +        }
-> >> >>> +        // SAFETY:
-> >> >>> +        // - The pointer is valid due to type invariant on `Coher=
-entAllocation`
-> >> >>> +        // and we've just checked that the range and index is wit=
-hin bounds.
-> >> >>> +        // - `offset` can't overflow since it is smaller than `se=
-lfcount` and we've checked
-> >> >>> +        // that `self.count` won't overflow early in the construc=
-tor.
-> >> >>> +        unsafe {
-> >> >>> +            core::ptr::copy_nonoverlapping(src.as_ptr(), self.cpu=
-_addr.add(offset), src.len())
-> >> >>
-> >> >> Why are there no concurrent write or read operations on `cpu_addr`?
-> >> >
-> >> > Sorry, can you rephrase this question?
-> >>
-> >> This write is suffering the same complications as discussed here [1].
-> >> There are multiple issues with this implementation.
-> >>
-> >> 1) `write` takes a shared reference and thus may be called concurrentl=
-y.
-> >> There is no synchronization, so `copy_nonoverlapping` could be called
-> >> concurrently on the same address. The safety requirements for
-> >> `copy_nonoverlapping` state that the destination must be valid for
-> >> write. Alice claims in [1] that any memory area that experience data
-> >> races are not valid for writes. So the safety requirement of
-> >> `copy_nonoverlapping` is violated and this call is potential UB.
-> >>
-> >> 2) The destination of this write is DMA memory. It could be concurrent=
-ly
-> >> modified by hardware, leading to the same issues as 1). Thus the
-> >> function cannot be safe if we cannot guarantee hardware will not write
-> >> to the region while this function is executing.
-> >>
-> >> Now, I don't think that these _should_ be issues, but according to our
-> >> Rust language experts they _are_.
-> >>
-> >> I really think that copying data through a raw pointer to or from a
-> >> place that experiences data races, should _not_ be UB if the data is n=
-ot
-> >> interpreted in any way, other than moving it.
-> >>
-> >>
-> >> Best regards,
-> >> Andreas Hindborg
-> >
-> > We need to make progress on this series, and it's starting to get late
-> > in the cycle. I suggest we:
->
-> There is always another cycle.
->
-> >
-> > 1. Delete as_slice, as_slice_mut, write, and skip_drop.
-> > 2. Change field_read/field_write to use a volatile read/write.
->
-> Volatile reads/writes that race are OK?
+Hi
 
-I will not give a blanket yes to that. If you read their docs, you
-will find that they claim to not allow it. But they are the correct
-choice for DMA memory, and there's no way in practice to get
-miscompilations on memory locations that are only accessed with
-volatile operations, and never have references to them created.
-
-In general, this will fall into the exception that we've been given
-from the Rust people. In cases such as this where the Rust language
-does not give us the operation we want, do it like you do in C. Since
-Rust uses LLVM which does not miscompile the C part of the kernel, it
-should not miscompile the Rust part either.
-
-> > This will let us make progress now and sidestep this discussion. The
-> > deleted methods can happen in a follow-up.
+Am 27.02.25 um 10:42 schrieb Aditya Garg:
 >
-> `item_from_index`, the `dma_read` and `dma_write` macros as well, I would=
- think?
+>> On 27 Feb 2025, at 3:04 PM, Thomas Zimmermann <tzimmermann@suse.de> wrote:
+>>
+>> ﻿Hi
+>>
+>>> Am 26.02.25 um 17:04 schrieb Aditya Garg:
+>>> From: Kerem Karabay <kekrby@gmail.com>
+>>>
+>>> The Touch Bars found on x86 Macs support two USB configurations: one
+>>> where the device presents itself as a HID keyboard and can display
+>>> predefined sets of keys, and one where the operating system has full
+>>> control over what is displayed.
+>>>
+>>> This commit adds support for the display functionality of the second
+>>> configuration. Functionality for the first configuration has been
+>>> merged in the HID tree.
+>>>
+>>> Note that this driver has only been tested on T2 Macs, and only includes
+>>> the USB device ID for these devices. Testing on T1 Macs would be
+>>> appreciated.
+>>>
+>>> Credit goes to Ben (Bingxing) Wang on GitHub for reverse engineering
+>>> most of the protocol.
+>>>
+>>> Also, as requested by Andy, I would like to clarify the use of __packed
+>>> structs in this driver:
+>>>
+>>> - All the packed structs are aligned except for appletbdrm_msg_information.
+>>> - We have to pack appletbdrm_msg_information since it is requirement of
+>>>    the protocol.
+>>> - We compared binaries compiled by keeping the rest structs __packed and
+>>>    not __packed using bloat-o-meter, and __packed was not affecting code
+>>>    generation.
+>>> - To maintain consistency, rest structs have been kept __packed.
+>>>
+>>> I would also like to point out that since the driver was reverse-engineered
+>>> the actual data types of the protocol might be different, including, but
+>>> not limited to, endianness.
+>>>
+>>> Link: https://github.com/imbushuo/DFRDisplayKm
+>>> Signed-off-by: Kerem Karabay <kekrby@gmail.com>
+>>> Co-developed-by: Atharva Tiwari <evepolonium@gmail.com>
+>>> Signed-off-by: Atharva Tiwari <evepolonium@gmail.com>
+>>> Co-developed-by: Aditya Garg <gargaditya08@live.com>
+>>> Signed-off-by: Aditya Garg <gargaditya08@live.com>
+>>> Signed-off-by: Aun-Ali Zaidi <admin@kodeit.net>
+>> Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+>>
+>> Thanks for the effort. As far as I'm concerned, this driver looks good. If no further comments come in, I can add it to the DRM tree in a few days.
+> Thanks a lot Thomas, as well as Andy for reviewing the driver and making it better!
 
-Those are necessary to use field_read/field_write, so I think it's
-fine to keep those.
+I've merged the driver into the DRM misc tree and it should be available 
+in v6.15.
 
-Alice
+Best regards
+Thomas
+
+
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
 
