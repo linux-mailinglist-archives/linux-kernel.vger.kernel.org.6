@@ -1,173 +1,123 @@
-Return-Path: <linux-kernel+bounces-542882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 804F6A4CEE7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:59:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 035D3A4CF07
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 00:04:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABA54189255F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:59:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B005518929A5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:04:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFD6123C8AB;
-	Mon,  3 Mar 2025 22:59:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AC942356B7;
+	Mon,  3 Mar 2025 23:04:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="X9Xwto2l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WWAefU4H"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F6123959B;
-	Mon,  3 Mar 2025 22:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4D241EEA2A;
+	Mon,  3 Mar 2025 23:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741042744; cv=none; b=C7AR5kzVL3wd6bBr3BUS+TRdnnsyV9jAyLkG+FzSUQKDahdM0ZCA9bUZr55pLwsqpnbxaVlhHtVyu8OvdvLoDkUUyPqLCPvHykY7G4QXbBm2CrkZ2hRQ9jhgTjFamBzUjmB3SlnttFRNREAFeCYkHntRQmb25OKNbugHfrKnqb8=
+	t=1741043067; cv=none; b=XOdueCCgFVacnN4rzVHclYZRm9QHwpo3ahvXKyV0AQtKQWA/Okj3NPCRQ2l/AE3VoPGMwZ7mycrXbjDK4LCjThX+S62o+BSzyUtcyJW7MSRxNt3hTxg+VN6eh6DxC46AXplq0o4GMfv7e01yygWjLdkZz+JOxInoFLjP+1T9b5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741042744; c=relaxed/simple;
-	bh=2qBIlc61Bz0jLXzWYXDw1jJCbwLUdYBGjPC1XgOpVUc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hObh992n5hRjUkJBRK8c8N19cQl3QVWhKp5r29GRnuCz+cGDcJuyBIxoX/gDWklHrzKh0pL0PfDVbH+MX1pG68D72XSKIblk0QqaeORk9e2Eq8cXNaWhHiGjiYQkvbGIawnWur6YrgtAQwZCdLC++9nSRh1kiBG/LvDXIPFnEH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=X9Xwto2l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D999BC4CEEB;
-	Mon,  3 Mar 2025 22:59:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux.dev; s=korg;
-	t=1741042743; bh=2qBIlc61Bz0jLXzWYXDw1jJCbwLUdYBGjPC1XgOpVUc=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=X9Xwto2leAXjKRjdW1eoxgRqC843CRbjMbyf7JsGQGz95it15ExlPNDfaAR6dSgMJ
-	 njxquyAcTPb0x1hyPQTK/gg5ADz+b0+ZvfT103I2Doy3iXgiefRjrDTHpWnudgSQzD
-	 Gz5DVCnhqe6QgvMQGAPtAOYjPkGev6FtKauqSlKA=
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDC34C282D6;
-	Mon,  3 Mar 2025 22:59:03 +0000 (UTC)
-From: Richard Leitner <richard.leitner@linux.dev>
-Date: Mon, 03 Mar 2025 23:58:59 +0100
-Subject: [PATCH 3/3] media: i2c: ov9282: add strobe_timeout v4l2 control
+	s=arc-20240116; t=1741043067; c=relaxed/simple;
+	bh=1dga3ZyGa56Srd27YrzgJM4YBMG+svOtEN9xbmvulUM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TzCz50quY2Vd4HQzbiaggnjz4Yr0qu69N/dWstx2EXqsjhZQxyaOl1WSUiu8z4or9TnJ1ZnBtiu4RHng8YlX5MEK3IVBUDirp8aBMYmxX+aD/BEWIRIEbGX2laR+lR/HjlsusjIgU1aLbRQmibSfZXZZRm9bHaBw3MwfAie1Lj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WWAefU4H; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4399ee18a57so31498985e9.1;
+        Mon, 03 Mar 2025 15:04:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741043064; x=1741647864; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sPrC46dARN0LjaxKxSWkkaHdPArQam0Dkp/wu01ntBs=;
+        b=WWAefU4HxUUndEwiNbpaT2jiZF+jY/j+hcn3uUbflte/eRQPmI5/ZV5FHIs2pr0iH1
+         6aF4iM2HHydvT0Bz2VNbWdR8jIEKbT4wdzh99FTIRmfQZJK+BSsPMwuBd+EJRa/9mQLI
+         Q7VnC6tSyFJFp5NUUWtGwyI7ha5GmGXRmnq/iUYX5mtM60Reoyc5PxFNZ+4xL2VuhelT
+         W7lqIZcrj3w3i+AVzRU0rWq5vUfpadGexyklfJE1mMBaWyJ+T2Vf8l0KRdgmSQdf5dnG
+         mdhkkcDEb3lyFMDc/a65by8dcYGVQGUtGr5wEC9EN4sK0LA9cp2VtLXRNcczcnsD9bKk
+         y/fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741043064; x=1741647864;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sPrC46dARN0LjaxKxSWkkaHdPArQam0Dkp/wu01ntBs=;
+        b=O6oq2vjlz9h5LxhrrMFElTeqUwqZW7bDSjxlk0/uDnuWKrKq9J6vmgbBhN+3EOGQum
+         DKEaHr1KRTDyXGi7tW4h+A4Ze2jFptL5mkQdlqnpe1YeYxHeSmC56IP00FCcCduO/CEu
+         aoHBA6KSDPbbZ57UCiouHbzVOFQUctkRxaxINHWr1sZIWZ1gFuBUTSsCHKjB+CmEk72u
+         scyva41gmPlg+tItJsKiA8AY1fxkKz0bMjTbAoGUJ3/pDfXOUMjd6guUoiCrwuoxv7Jc
+         Vlyz5ea6gHeuT/4jlo53PZejLE9n816AeAWes/gdA1z4SqndkTpHdcfZAa1Dfi6Jo/FU
+         0TYA==
+X-Forwarded-Encrypted: i=1; AJvYcCUiRHInI4gzax0byXNHUEWOpO3tAaoCSZEX0rvEv2S/jnrc4mWUNQOLVd/G4RJNVyYxCLPOo4obWt1YCDD3@vger.kernel.org, AJvYcCXimrRYyf4P+JI9XHtQ2aSPwRSQLVuugEdyWkn29NF2+c9UCHylgsedco8FsYZ0bDMKurj2vLmppA33N3Pt@vger.kernel.org
+X-Gm-Message-State: AOJu0YzI7Cfu6WDy34jizTwOXGmyMoEHG5YRv+wY7ExTpMp5jVrhj71M
+	TA+r2OIn6sQaZLU0ysVry7lWo5PMzUmtkYNmJIXgFLMc25ai6cx4
+X-Gm-Gg: ASbGncuFH7ZoYH/rMkEBEQZlLmli0JrWQvYkDjesGPClhsjJIyXgEMWjWvjzQOa8jPA
+	4I2yewDqLNTYQlHeDHj6NWdzfm9JsgHeF15Ud42KBcXwmwxOd+3i8v1NSOkEqPB89XtrDWjxBcc
+	v9paxVIBUEj7Pr3fhXnhCWhJQpx3cI/44RXnxDL1+TuvVXowKHhLStGLKSb7gaTkVnjvdGwIXMy
+	zwPykobjAPdgF/A/PZwlbNwdi3gzjqBIBpOSkz5L/JsCtHH6KHTsJmViCYJro4jBExUvusj2NY9
+	sP2M4cqrzEhKRH1yL9lfIanhPLLiqDh4bLgXBFMiwfxcDJJYHRd9e49xz5Eu
+X-Google-Smtp-Source: AGHT+IGOBC6hxzmLOdi3PDf1ZBbud9og/t0k9D2kRRsbPqkFlx3ttchAE9Qq0/Z35uubnFaAHwXeMA==
+X-Received: by 2002:a05:600c:5252:b0:439:5f04:4f8d with SMTP id 5b1f17b1804b1-43bcb03c512mr7222235e9.12.1741043063825;
+        Mon, 03 Mar 2025 15:04:23 -0800 (PST)
+Received: from f.. (cst-prg-71-44.cust.vodafone.cz. [46.135.71.44])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bc57529fasm37679255e9.31.2025.03.03.15.04.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 15:04:22 -0800 (PST)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: torvalds@linux-foundation.org
+Cc: oleg@redhat.com,
+	brauner@kernel.org,
+	mingo@redhat.com,
+	peterz@infradead.org,
+	rostedt@goodmis.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH 0/3] some pipe + wait stuff
+Date: Tue,  4 Mar 2025 00:04:06 +0100
+Message-ID: <20250303230409.452687-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250303-ov9282-flash-strobe-v1-3-0fd57a1564ba@linux.dev>
-References: <20250303-ov9282-flash-strobe-v1-0-0fd57a1564ba@linux.dev>
-In-Reply-To: <20250303-ov9282-flash-strobe-v1-0-0fd57a1564ba@linux.dev>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Dave Stevenson <dave.stevenson@raspberrypi.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Richard Leitner <richard.leitner@linux.dev>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741042742; l=3993;
- i=richard.leitner@linux.dev; s=20250225; h=from:subject:message-id;
- bh=2qBIlc61Bz0jLXzWYXDw1jJCbwLUdYBGjPC1XgOpVUc=;
- b=j8FXv3/aOnxHqzyRM0RPHz9QmI2mC4+6onIZX4C0TQL+YMCjlVdVkVd7gWomBgJaN13tzgcCR
- ZvKCC3Ef+JzDTPOoYFUQPDkRcYMuEzTLCuyo4z4BlJvom4QFXhRCxMl
-X-Developer-Key: i=richard.leitner@linux.dev; a=ed25519;
- pk=8hZNyyyQFqZ5ruVJsSGBSPIrmJpfDm5HwHU4QVOP1Pk=
-X-Endpoint-Received: by B4 Relay for richard.leitner@linux.dev/20250225
- with auth_id=350
 
-Add V4L2_CID_FLASH_TIMEOUT support using the "strobe_frame_span"
-feature of the sensor. This is implemented by transforming the given µs
-value by an interpolated formula to a "span step width" value and
-writing it to register PWM_CTRL_25, PWM_CTRL_26, PWM_CTRL_27,
-PWM_CTRL_28 (0x3925, 0x3926, 0x3927, 0x3928).
+As a side effect of looking at the pipe hang I came up with 3 changes to
+consider for -next.
 
-The maximum control value is set to the period of the current framerate.
-This must be changed to a dynamic range as soon as this driver
-implements the set_frame_interval() pad operation.
+The first one is a trivial clean up which I wont mind if it merely gets
+folded into someone else's change for pipes.
 
-All register values are based on the OV9281 datasheet v1.53 (jan 2019)
-and tested using an ov9281 VisionComponents module.
+The second one reduces page alloc/free calls for the backing area (60%
+less during a kernel build in my testing). I already posted this, but
+the cc list was not proper.
 
-Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
----
- drivers/media/i2c/ov9282.c | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+The last one concerns the wait/wakeup mechanism and drops one lock trip
+in the common case after waking up. That too was posted some days ago,
+but nobody was biting. Perhaps you will be interested (but again, maybe
+I got the wrong people from get_maintainer.pl).
 
-diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
-index c98ba466e9aea29baff0b13578d760bf69c958c5..f7dfe8987e524b73af7e16e12567e96627b4f89a 100644
---- a/drivers/media/i2c/ov9282.c
-+++ b/drivers/media/i2c/ov9282.c
-@@ -97,6 +97,10 @@
- #define OV9282_REG_MIPI_CTRL00	0x4800
- #define OV9282_GATED_CLOCK	BIT(5)
- 
-+/* Flash/Strobe control registers */
-+#define OV9282_REG_FLASH_DURATION	0x3925
-+#define OV9282_FLASH_DURATION_DEFAULT	0x0000001A
-+
- /* Input clock rate */
- #define OV9282_INCLK_RATE	24000000
- 
-@@ -193,6 +197,7 @@ struct ov9282_mode {
-  * @again_ctrl: Pointer to analog gain control
-  * @pixel_rate: Pointer to pixel rate control
-  * @flash_led_mode: Pointer to flash led mode control
-+ * @flash_timeout: Pointer to flash timeout control
-  * @vblank: Vertical blanking in lines
-  * @noncontinuous_clock: Selection of CSI2 noncontinuous clock mode
-  * @cur_mode: Pointer to current selected sensor mode
-@@ -216,6 +221,7 @@ struct ov9282 {
- 	};
- 	struct v4l2_ctrl *pixel_rate;
- 	struct v4l2_ctrl *flash_led_mode;
-+	struct v4l2_ctrl *flash_timeout;
- 	u32 vblank;
- 	bool noncontinuous_clock;
- 	const struct ov9282_mode *cur_mode;
-@@ -689,6 +695,24 @@ static int ov9282_set_ctrl_flash_led_mode(struct ov9282 *ov9282, int mode)
- 				current_val);
- }
- 
-+static int ov9282_set_ctrl_flash_timeout(struct ov9282 *ov9282, int value)
-+{
-+	/* Calculate "strobe_frame_span" increments from a given value (µs).
-+	 * This is quite tricky as "The step width of shift and span is
-+	 * programmable under system clock domain.", but it's not documented
-+	 * how to program this step width (at least in the datasheet available
-+	 * to the author at time of writing).
-+	 * The formula below is interpolated from different modes/framerates
-+	 * and should work quite well for most settings.
-+	 */
-+	u32 val = value * 192 / (ov9282->cur_mode->width + ov9282->hblank_ctrl->val);
-+
-+	ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION, 1, (val >> 24) & 0xff);
-+	ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION + 1, 1, (val >> 16) & 0xff);
-+	ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION + 2, 1, (val >> 8) & 0xff);
-+	return ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION + 3, 1, val & 0xff);
-+}
-+
- /**
-  * ov9282_set_ctrl() - Set subdevice control
-  * @ctrl: pointer to v4l2_ctrl structure
-@@ -758,6 +782,9 @@ static int ov9282_set_ctrl(struct v4l2_ctrl *ctrl)
- 	case V4L2_CID_FLASH_LED_MODE:
- 		ret = ov9282_set_ctrl_flash_led_mode(ov9282, ctrl->val);
- 		break;
-+	case V4L2_CID_FLASH_TIMEOUT:
-+		ret = ov9282_set_ctrl_flash_timeout(ov9282, ctrl->val);
-+		break;
- 	default:
- 		dev_err(ov9282->dev, "Invalid control %d", ctrl->id);
- 		ret = -EINVAL;
-@@ -1420,6 +1447,10 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
- 							(1 << V4L2_FLASH_LED_MODE_TORCH),
- 							V4L2_FLASH_LED_MODE_NONE);
- 
-+	ov9282->flash_timeout = v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops,
-+						  V4L2_CID_FLASH_TIMEOUT,
-+						  0, 13900, 1, 8);
-+
- 	ret = v4l2_fwnode_device_parse(ov9282->dev, &props);
- 	if (!ret) {
- 		/* Failure sets ctrl_hdlr->error, which we check afterwards anyway */
+Mateusz Guzik (3):
+  pipe: drop an always true check in anon_pipe_write()
+  pipe: cache 2 pages instead of 1
+  wait: avoid spurious calls to prepare_to_wait_event() in
+    ___wait_event()
+
+ fs/pipe.c                 | 63 +++++++++++++++++++++++++--------------
+ include/linux/pipe_fs_i.h |  2 +-
+ include/linux/wait.h      |  3 ++
+ 3 files changed, 45 insertions(+), 23 deletions(-)
 
 -- 
-2.47.2
-
+2.43.0
 
 
