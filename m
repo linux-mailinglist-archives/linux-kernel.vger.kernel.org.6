@@ -1,197 +1,179 @@
-Return-Path: <linux-kernel+bounces-542801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40606A4CDDE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:07:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D108CA4CDE3
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:08:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF3FF3A9C2F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:07:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 447183AA5E0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:08:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96BE3236A61;
-	Mon,  3 Mar 2025 22:06:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0F551F12FD;
+	Mon,  3 Mar 2025 22:08:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nG+DH1uY"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="aKNIsYn9"
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC6B2343AB;
-	Mon,  3 Mar 2025 22:06:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64E7B1F12F9
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 22:08:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741039618; cv=none; b=rak+8+/h9XLkE6SuZXlvD/tKSo/uT9dDQziBzc/rvoiQvaaBegsfMDS+9v2Zwgpa9qYGh5x/5ABk7ICDDuKqbM2WPCkMCKzjMuE5yRFfVA80/iz/o8MUe+U4hwXTnVFMkIk23nuS1yODba0iVfcuzrF6Jpzdi28BtysKvD2ePrU=
+	t=1741039707; cv=none; b=cDdYQgmx2V1/eFNA22LUMpk5LZXCkvSh3sU77985DMYB1oHAjdLQIFT+3GNleH1ckrfYq7IYPBDcYsYOGgLfW1DDZfsqwjYpFf4wtrD2V18DxvOVo8peGviDZKi1ngrZydW12gZGCblCNl8VS4eayMDigutQeYRL1HKXcNSOb/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741039618; c=relaxed/simple;
-	bh=JqxhaPx/4PkOgVkCLHhMzASh2FO9a3L/0EsE1pIt20Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L1LSeWbrEohJTwlSrL5tItf8rUPTPZxuAb/d24thkqQ4Cw8fGR7jNxWJSxWEECtwVXsLjL4D6Iivu0iMW/t21katvuSujXxri2svwBzqt9JzsRNrQdfJWi39+PCNdcD0dcMRzXmB23OCzsiBK7LMT6f198JhXMvgzT/gliBsdHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nG+DH1uY; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-22337bc9ac3so94314505ad.1;
-        Mon, 03 Mar 2025 14:06:56 -0800 (PST)
+	s=arc-20240116; t=1741039707; c=relaxed/simple;
+	bh=b4iMWATKJPmqEf3YNKW6l41GKN4rNmQLHLGWfk6g7rU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QfFrernHyXv6/mekYdYU1wKGbDqEl4UIkqCb1vbUQ1F/FZwGcKwtKnjRsjGrlljSma2tCtFEWvD/b/7jcQiV4q8TbebnlM4sW70Puc43PvhJ8Ue/oB98GbsB+sn11qgIMX2NxBdTmf6lKLOmvlm9lWYFVVBHyvNSiz6gsaNB37Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=aKNIsYn9; arc=none smtp.client-ip=209.85.160.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-2c186270230so744457fac.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 14:08:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741039616; x=1741644416; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nyrPi5HAkeHZcWwEBF6xTNbTlSUohW8oencgE4qGFYo=;
-        b=nG+DH1uY2i9pl67ou9XrPKTn13BKTz6ymDFw5ErcbdcQja0GFOFhdMqlv5bX+tTGhg
-         XbyX36BQN2iipvug1h+odU03UvuZ5wwCdKF+8KZ9o4LOFQGsh4N0AI+dmP/C3l0aBDzn
-         IoxJdXyOL0J3EHdyalkRplJV16ouvZ/iaGz+E0AClxU7wiYTAZkCvvgJ0HPFMLAsMIbb
-         9IoCVywEqrxf4sH9j2NeNOO2g4tSb3XcU7yaxHGTJqrSrPS1uKTfYkoLbcPusxLm+6QG
-         QFT7sxw2EyKmWvvMJRiAh+r+KSHyg7iaa6vKOiYBCBwW4hNQVDnrzI6u6TpLhtpjty/b
-         zSWw==
+        d=broadcom.com; s=google; t=1741039704; x=1741644504; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=m1LlYx3lX3cmCu9HC5TAQ4F7fddxzpssEl8kFZBezXM=;
+        b=aKNIsYn9DSnRgsXxLy0JV7f/biCgDlESBa/LaRd6u0yj5EQdvbdV9Wua7NbQvwMcuT
+         DWw78g44GF9x6C3yeZuOZ9PZ7oJy/L3NsXpvosPMyTL/fjg+7tAzDKbuJjhdtPxyh3Mf
+         OepAtmo+AAPp/kUz8m3euCDQ+efaply9/OFMQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741039616; x=1741644416;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1741039704; x=1741644504;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nyrPi5HAkeHZcWwEBF6xTNbTlSUohW8oencgE4qGFYo=;
-        b=f+F/FNOwGVIqaO9lw9ZgWBsRXgkQ28XZkuTbhrtE1uIAjfL8pj0/IT1UoKEZejVNnr
-         BHZaoN6D77VAM8NAP+RRN4ZisT/5fnTPBbT8WPVwNDWEnWYYQqLIenXFHBOO+Ni47SAW
-         GOrNavn7ISVy5TWbbmm6hN37HxaBUjPKWWH4qsYpbwXWgzrP4SRHvpQ4r5VOADB/ckaA
-         /o5b8OTbbNeDX8Zy/y7Y2vPg8R+54qPM+FzV/wwCIPCzenGjNLflQg+iR1OUkF1lWYke
-         ymgXL2uqOubVKUPAE9Juxxgr6oB8JPEZhLU1W5B5OoYPaI0v6b6YkUlXDaFYcqjyEaBf
-         CdMg==
-X-Forwarded-Encrypted: i=1; AJvYcCUV2DDCgcsdb1mill2ziZIBEOOwkvcyFO48gqVYRvJi7ALeb9Zai8TQ5MsQozdMZqJX2pKLoQ8Ue6/iBwcL@vger.kernel.org, AJvYcCXOVZNP0EwC9t2xyRQ+o3xv17W7gsiZzY/lQKLSTKI4B0DVweX73qZBRHrFT8TbD1QSSUXoU1xTOZM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8+FMeZiHGwncHacW/QrxB2vq2Oqu+zo/JK6ISQ/N1aNMO5z6Q
-	EB740f+UGWxfU5SGM1Ap8Qy3w8BbBcjgBZCvjiuPpyGp5dhkagHd
-X-Gm-Gg: ASbGncvxHki9ynlphFH+LwLNpdFqkrkVKo2VfwBEaV5uTCBCZKANLuiBxBEhi5atTiF
-	/McZHTACIypEubktWp9oNmaismXWNlqCySIslOwFyd1+ZTTFCMoBZXjGAUwxh4kEonZULmZfMt+
-	yZPmUZB9N+4BxXQmO9rliT35ZVJmg3ZZRmW8JhDAqWVF+2GB7BeCc/WV0bKjSdd2jeSPOX2SFyu
-	RmNCjern2lOSvU/k9RM0H7e6z23D+WmlTVjCoJ6TYPV2+lIj3ibAcbPBjQ5RpWLCCqynru0lS1Z
-	6JGf1lBbe/qgpDKOrXQyjz7jgE4oczBkFn0HAXjrH9ijfKAzTAnpViU=
-X-Google-Smtp-Source: AGHT+IF210btO6rb30eQ+sEDHAyP6Jb2nAg1Js5HWY+VJpxXxEm3Ip9l6khqtgq0M00D4C6JjlL1cA==
-X-Received: by 2002:a62:f20c:0:b0:736:3184:7fe8 with SMTP id d2e1a72fcca58-73631848087mr13036440b3a.2.1741039615593;
-        Mon, 03 Mar 2025 14:06:55 -0800 (PST)
-Received: from localhost ([2804:30c:1f21:4300:1cf6:c485:6555:b1c5])
-        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-aee7ddf230dsm8757673a12.8.2025.03.03.14.06.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 14:06:54 -0800 (PST)
-Date: Mon, 3 Mar 2025 19:07:47 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: Saalim Quadri <danascape@gmail.com>
-Cc: jic23@kernel.org, lars@metafoo.de, Michael.Hennerich@analog.com,
-	gregkh@linuxfoundation.org, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev
-Subject: Re: [RFC] staging: iio: ad9832: Use
- devm_regulator_get_enable_read_voltage()
-Message-ID: <Z8YoM4ycB0qMQwOG@debian-BULLSEYE-live-builder-AMD64>
-References: <20250303200347.23354-1-danascape@gmail.com>
+        bh=m1LlYx3lX3cmCu9HC5TAQ4F7fddxzpssEl8kFZBezXM=;
+        b=e67YGZR3rDSolaGJmlJcoIq4W3HF5Af1SFCXZw0q+m7FGJqIK4I8Bg8UWkZWj0/EWf
+         JSke9hvannNIChN4n8sF7yWUXEIm3lgdX2TutyFl0By49DF+28xnXbrilbYqbcOFBTfk
+         Q+SeiN+Wb2rTr2798XXaOPjPXhhwKWRGmUB9rtAKmKDnzyPj5h5Rkc/FOLMhHE2tPq2Q
+         ij5t1jJCEI+g+UZfdVlLBLsFbpXhI3E/ZOl6wycCOs4ntHImVDdkhf6c01QsdZnpNVr8
+         XDUYvnWAtoM/yFwQjNpjZ50dSfeYSr/8QhacfNwP4QtVIp41+RDpM/XkDToRbBvnvMzI
+         bPRg==
+X-Forwarded-Encrypted: i=1; AJvYcCX+GYgstAM3pesT9K8iuUAC4zJsqjmUx4ZaP3kOxW/K1UiT5L+ENxz0X0Aj72mNcfGSK3q5rZcdSLaoi1U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6YZUdEJcw6Lb/WWy4ld7xuAqHszIoTcwaEZinLfVlnzup4xIl
+	PFPBSByyKd/x2tMwN1NNRvyavDn3JgaWxDGpBgZpL7hh4mcZQ3GMxpsYovMaPA==
+X-Gm-Gg: ASbGnctHkYYEAqP0Yu3utibQfgtj7fhxRTxGOqgRdLgtuU83JosnqnbR07cv1Rc4w6c
+	/PXNID3g2egkVhmPvQC2e+J9hYtBBEhxrKPcnq2VuFQ0ttfK4+2q46Z8+LZWCKjviS6MRaIIuHG
+	E/teIAUJERzZj8CCRtgdrVN1heG1NJf83TnWbbaPgSRisyuFjWQFpWPOkymlqmYo3gXIqxyBY3b
+	0uxwVRQSLyySU3k7iLDCeyxq9sNF0rzdkoCPn7UAJDyByZzAzsPF5wFq/ff0nIShQN40rMGGeBL
+	w/UYtg7XX0HM0ZqpFiaoXPj4j2roDsr719RcLE/Z5LOCwpEZFrQ0wejqtl+3jnUnBIuXQdq2CI8
+	Vc8bCQYsE
+X-Google-Smtp-Source: AGHT+IHEVCPRn+btmLTPyi7+Zllya/+YMJ9hICXwbK1mVgTBAEQzyvJDdOEMxmoti3Sm0FE6b1BkfA==
+X-Received: by 2002:a05:6870:5b97:b0:2c1:4eaf:5b6e with SMTP id 586e51a60fabf-2c1787befb5mr10220992fac.35.1741039704273;
+        Mon, 03 Mar 2025 14:08:24 -0800 (PST)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2c15c12e133sm2004144fac.19.2025.03.03.14.08.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Mar 2025 14:08:23 -0800 (PST)
+Message-ID: <cbc21738-2212-4124-9763-bb20fd927ba9@broadcom.com>
+Date: Mon, 3 Mar 2025 14:08:16 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250303200347.23354-1-danascape@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 2/5] firmware: psci: Read and use vendor reset types
+To: Elliot Berman <quic_eberman@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Vinod Koul <vkoul@kernel.org>, Andy Yan <andy.yan@rock-chips.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ cros-qcom-dts-watchers@chromium.org, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
+ Melody Olvera <quic_molvera@quicinc.com>,
+ Shivendra Pratap <quic_spratap@quicinc.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Stephen Boyd <swboyd@chromium.org>, linux-pm@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, Elliot Berman <elliotb317@gmail.com>,
+ Elliot Berman <elliot.berman@oss.qualcomm.com>
+References: <20250303-arm-psci-system_reset2-vendor-reboots-v9-0-b2cf4a20feda@oss.qualcomm.com>
+ <20250303-arm-psci-system_reset2-vendor-reboots-v9-2-b2cf4a20feda@oss.qualcomm.com>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20250303-arm-psci-system_reset2-vendor-reboots-v9-2-b2cf4a20feda@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello Saalim,
-
-On 03/04, Saalim Quadri wrote:
-> Use devm_regulator_get_enable_read_voltage() to reduce boiler plate
-> code.
+On 3/3/25 13:08, Elliot Berman wrote:
+> From: Elliot Berman <elliot.berman@oss.qualcomm.com>
 > 
-> * Here I am particularly confused about regulator_enable(), part where I should
->   use devm_regulator_get_enable() to enable avdd supply?
-
-I misread the driver yesterday and thought avdd and dvdd regulator voltages were
-being read, but that is not true. devm_regulator_get_enable() is enough for the
-cases where the voltage is not read.
-
-> * I can resend this as a patch if everything is alright, specifically with
->   devm_regulator_get_enable() for dvdd
+> SoC vendors have different types of resets and are controlled through
+> various registers. For instance, Qualcomm chipsets can reboot to a
+> "download mode" that allows a RAM dump to be collected. Another example
+> is they also support writing a cookie that can be read by bootloader
+> during next boot. PSCI offers a mechanism, SYSTEM_RESET2, for these
+> vendor reset types to be implemented without requiring drivers for every
+> register/cookie.
 > 
-If I'm not missing anything else, you'll probably be using
-devm_regulator_get_enable() for both avdd and dvdd. And probably ok to update
-both in a single patch.
+> Add support in PSCI to statically map reboot mode commands from
+> userspace to a vendor reset and cookie value using the device tree.
+> 
+> A separate initcall is needed to parse the devicetree, instead of using
+> psci_dt_init because mm isn't sufficiently set up to allocate memory.
+> 
+> Reboot mode framework is close but doesn't quite fit with the
+> design and requirements for PSCI SYSTEM_RESET2. Some of these issues can
+> be solved but doesn't seem reasonable in sum:
+>   1. reboot mode registers against the reboot_notifier_list, which is too
+>      early to call SYSTEM_RESET2. PSCI would need to remember the reset
+>      type from the reboot-mode framework callback and use it
+>      psci_sys_reset.
+>   2. reboot mode assumes only one cookie/parameter is described in the
+>      device tree. SYSTEM_RESET2 uses 2: one for the type and one for
+>      cookie.
+>   3. psci cpuidle driver already registers a driver against the
+>      arm,psci-1.0 compatible. Refactoring would be needed to have both a
+>      cpuidle and reboot-mode driver.
+> 
+> Signed-off-by: Elliot Berman <elliot.berman@oss.qualcomm.com>
 
-Regards,
-Marcelo
-
-> Signed-off-by: Saalim Quadri <danascape@gmail.com>
-> ---
->  drivers/staging/iio/frequency/ad9832.c | 37 +++-----------------------
->  1 file changed, 4 insertions(+), 33 deletions(-)
-> 
-> diff --git a/drivers/staging/iio/frequency/ad9832.c b/drivers/staging/iio/frequency/ad9832.c
-> index 140ee4f9c137..9e7975265454 100644
-> --- a/drivers/staging/iio/frequency/ad9832.c
-> +++ b/drivers/staging/iio/frequency/ad9832.c
-> @@ -74,8 +74,6 @@
->  /**
->   * struct ad9832_state - driver instance specific data
->   * @spi:		spi_device
-> - * @avdd:		supply regulator for the analog section
-> - * @dvdd:		supply regulator for the digital section
->   * @mclk:		external master clock
->   * @ctrl_fp:		cached frequency/phase control word
->   * @ctrl_ss:		cached sync/selsrc control word
-> @@ -94,8 +92,6 @@
->  
->  struct ad9832_state {
->  	struct spi_device		*spi;
-> -	struct regulator		*avdd;
-> -	struct regulator		*dvdd;
->  	struct clk			*mclk;
->  	unsigned short			ctrl_fp;
->  	unsigned short			ctrl_ss;
-> @@ -297,11 +293,6 @@ static const struct iio_info ad9832_info = {
->  	.attrs = &ad9832_attribute_group,
->  };
->  
-> -static void ad9832_reg_disable(void *reg)
-> -{
-> -	regulator_disable(reg);
-> -}
-> -
->  static int ad9832_probe(struct spi_device *spi)
->  {
->  	struct ad9832_platform_data *pdata = dev_get_platdata(&spi->dev);
-> @@ -320,33 +311,13 @@ static int ad9832_probe(struct spi_device *spi)
->  
->  	st = iio_priv(indio_dev);
->  
-> -	st->avdd = devm_regulator_get(&spi->dev, "avdd");
-> -	if (IS_ERR(st->avdd))
-> -		return PTR_ERR(st->avdd);
-> -
-> -	ret = regulator_enable(st->avdd);
-> -	if (ret) {
-> -		dev_err(&spi->dev, "Failed to enable specified AVDD supply\n");
-> -		return ret;
-> -	}
-> -
-> -	ret = devm_add_action_or_reset(&spi->dev, ad9832_reg_disable, st->avdd);
-> +	ret = devm_regulator_get_enable_read_voltage(&spi->dev, "avdd");
->  	if (ret)
-> -		return ret;
-> -
-> -	st->dvdd = devm_regulator_get(&spi->dev, "dvdd");
-> -	if (IS_ERR(st->dvdd))
-> -		return PTR_ERR(st->dvdd);
-> +			return dev_err_probe(&spi->dev, ret, "failed to get AVDD voltage\n");
->  
-> -	ret = regulator_enable(st->dvdd);
-> -	if (ret) {
-> -		dev_err(&spi->dev, "Failed to enable specified DVDD supply\n");
-> -		return ret;
-> -	}
-> -
-> -	ret = devm_add_action_or_reset(&spi->dev, ad9832_reg_disable, st->dvdd);
-> +	ret = devm_regulator_get_enable(&spi->dev, "dvdd");
->  	if (ret)
-> -		return ret;
-> +			return dev_err_probe(&spi->dev, ret, "Failed to enable specified DVDD supply\n");
->  
->  	st->mclk = devm_clk_get_enabled(&spi->dev, "mclk");
->  	if (IS_ERR(st->mclk))
-> -- 
-> 2.34.1
-> 
-> 
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
