@@ -1,203 +1,177 @@
-Return-Path: <linux-kernel+bounces-541632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D229A4BF52
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:51:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BBE2A4BF7A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:55:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3291C1886F96
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:50:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 323823B84EE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:50:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E338B20D4EB;
-	Mon,  3 Mar 2025 11:50:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E7920C02E;
+	Mon,  3 Mar 2025 11:50:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ObLVyW93"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F8hsg1Ui"
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A70420C028;
-	Mon,  3 Mar 2025 11:50:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F23A20C016
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 11:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741002625; cv=none; b=cnsm6e+EuXg6ltuvvEXL7uO48gX93wGFtX8/vzxPlklb2R48Z/NXYmL0ocVHJATBF/2tUg/xFW927amurRYgN6M2sbw0/KhKB0XfRTESKyfXqBwS7nWZ1owc7AkriIdkFbdP49g1tCRkiUH1n2SUUFmhLvzJQeG1nzIS4IsnQ/E=
+	t=1741002632; cv=none; b=rJMPmNQr5jxnHBvpiowYGcuv8PkLfmP4CC0vgZuKLP50rBkTYyYpyeBdIYNphR/1pdvGqSCwYXZG8CU9f2AxbiVyny+gYjDK4ANiagZkVFXYt3+ZLxmi9+JDLkDlmZ62iAaHcfmMPAJfUblT8oMwJlG6h4BIQDIFy3iTRryxo8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741002625; c=relaxed/simple;
-	bh=EIYFdXApveqnm4xf9rgkR4gC39U63SZZJHFclnE2ODQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Go1/xx/Wg97SrRyPIgiNE37qCax5sjPHH+J89EGKKxvrzw13LKtSyc0ZvBkAbH1tMHTndxJjeVfQ8EjpCQ97ACsCAcLwSGAWUa3atoj5FqMr2Us0mEQCxV7nHTUKoYvb7oCfF8nFXrlrxb5bFQvQt6E5DI7yJ2acmzJVh1Om5rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ObLVyW93; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 523BnaOA2672834
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 3 Mar 2025 05:49:36 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1741002576;
-	bh=LtLTcgj+wTfwtj7P3s1/LE4IyDDTgXqvwipyBUTOI18=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=ObLVyW93xulqoW6jAymFcaL01GbRW6yejSpjz1KmauRIAYoBh+4QLKrz7qVp+Uk1/
-	 KP7AZorNrO+VZDq2nlT9Pwx6j6rpJpKtxfpdbC8vI3snKumo//FkBEA8Woj0NRjqyO
-	 HVB++sLbrK15SZFx8qiV3E3OuMSu5BnunZSyAbCo=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 523Bnaac119408
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 3 Mar 2025 05:49:36 -0600
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 3
- Mar 2025 05:49:36 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 3 Mar 2025 05:49:36 -0600
-Received: from [172.24.21.156] (lt9560gk3.dhcp.ti.com [172.24.21.156])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 523BnTXH029594;
-	Mon, 3 Mar 2025 05:49:30 -0600
-Message-ID: <06d2b616-9f11-46ae-91f7-e97f86f9f24c@ti.com>
-Date: Mon, 3 Mar 2025 17:19:28 +0530
+	s=arc-20240116; t=1741002632; c=relaxed/simple;
+	bh=iYUckyVAVeI7XDNNji2uBn6ccd7npEcaiKeFcolCkl4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZobWUkm3uzySMl14US8Mbf+XTHbAfcGGvjbqUrZi8KKlLXnWDTJncSEY5bdgJAFa1ZhDKYkcgxwBsl4sz1eZF4xMJZRMyUoDYXnxISKcZMP5Bbl9nDeYRWW9iFApUTaiNcWXTvMqAcjAvFwet5egUYEB7nDvQl6serTx+KWQjk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F8hsg1Ui; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6fd3b6a6a24so28438537b3.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 03:50:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741002629; x=1741607429; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=uk4RC6gYyKlg81cJh6W+VhPYO5gDI/YlGZXXv16k7MQ=;
+        b=F8hsg1UiwKECfQsGtOKKbFDKGEqu6ZIXQDa1QTruaoye6q78NWZQHYBzvcQ4B2iuWI
+         1o8gez1SEP7H37/UixC4ZDON6HsTim+Aj6WvUFxmrlymX5Xs3+XB35XCtlI/X2Y5kTlc
+         wj8bAMqDg9mXtAdq/e0QRkB1szc12HpCUDsHTxrOS1jMWptro81bmUyTJcHV1HFxkJCL
+         gM/ouAshpbk3r/zDp6J2WVawtLvsmZGj6VPQBaVCyJsLH9ihO9XY5qGjB4Y5hyF5iCcj
+         FVclzS6mR9jXufNj1uasHP+WQI3T/Zqn/THUJgqYDBRo7iuuN2p4bKV0ELXPCc8AzVHR
+         iPPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741002629; x=1741607429;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uk4RC6gYyKlg81cJh6W+VhPYO5gDI/YlGZXXv16k7MQ=;
+        b=tYl9WLD1NpqHyWJGcEp6DJPpW8JHZRmdFgHnFA02qOojE2Gt7pxKjWRzLH0uE8uys/
+         kJLiCsEeNhLO2MlfGJA6turfziNQbv0fO7aBMF5c4p247YpwX/XJk1oZluMWYKWeOrWa
+         yv4uzwLY/fVsHoh7n1rx2k5bvW+guiUdJ7pnpAQip25A3jQAheCEeYxrKAs8t52JkVHV
+         42dNhN6hoarckTif8cyEFcQiJirgZahI0DAV7snOnWXc0zPCoDxRoKXyYaVCuwiJK0dN
+         4FzKNGYLd7HkRPCPXS1TmTTfbbY/D9CZEzdS+R5InMTRF8K2qQRPYKw7xehSLA/e2Hny
+         xbng==
+X-Forwarded-Encrypted: i=1; AJvYcCVQrHsXtoJlCypNl4clQVV53bR0mfa+jY7yGhP4rU47UgV6lxedQuAr9aCb46NMNKcQOzYuqSYfWUMIhN0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2yDMuZ67eF4faFRMhYwyFf/x3WRgYvEJqUjgEjEjzckJF1AGr
+	seyX1ZmJKyM9T7ZUkamrNsOBH5qP+t+UfOvgxbWCpY0ErdiKCVA3xSyIVYvi74otot1k56fxy00
+	OAt1izITSeHncDURvGB1VJO+TqELy8fDqprRS1w==
+X-Gm-Gg: ASbGnctHG8befiAhfHdv+OOo73EZ8weoDA5rg7MajEe6ud8wO7Y0Ym88CYzP4S+Yf3G
+	1EEnP9KoJepL5qMeXCiME2sQkhQxhBk+zRfs2YGwol4jbvsJz+uSKNb/SINh8r0lFBmzGhuzubW
+	HIVCeLu0aA+trbWKHxJW8YohaZHLE=
+X-Google-Smtp-Source: AGHT+IHbEZTHl8hhFga4vQY/ULqM1THSQSqqYAdq51p7CVUXvrld+wWN+muocGAUEDlP0o1E2tcH3vx/K7c1uLHnFyY=
+X-Received: by 2002:a05:690c:4b8c:b0:6fd:47b7:9730 with SMTP id
+ 00721157ae682-6fd49fb60a6mr161831797b3.12.1741002628443; Mon, 03 Mar 2025
+ 03:50:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [EXTERNAL] Re: [PATCH net-next v3 2/3] net: ti: icssg-prueth:
- introduce and use prueth_swdata struct for SWDATA
-To: Dan Carpenter <dan.carpenter@linaro.org>
-CC: <rogerq@kernel.org>, <danishanwar@ti.com>, <pabeni@redhat.com>,
-        <kuba@kernel.org>, <edumazet@google.com>, <davem@davemloft.net>,
-        <andrew+netdev@lunn.ch>, <bpf@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <u.kleine-koenig@baylibre.com>,
-        <matthias.schiffer@ew.tq-group.com>, <schnelle@linux.ibm.com>,
-        <diogo.ivo@siemens.com>, <glaroque@baylibre.com>, <macro@orcam.me.uk>,
-        <john.fastabend@gmail.com>, <hawk@kernel.org>, <daniel@iogearbox.net>,
-        <ast@kernel.org>, <srk@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
-References: <20250224110102.1528552-1-m-malladi@ti.com>
- <20250224110102.1528552-3-m-malladi@ti.com>
- <41fbeb70-bf49-4751-b4ba-6b122a45233d@stanley.mountain>
-Content-Language: en-US
-From: "Malladi, Meghana" <m-malladi@ti.com>
-In-Reply-To: <41fbeb70-bf49-4751-b4ba-6b122a45233d@stanley.mountain>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <3353728.44csPzL39Z@rjwysocki.net>
+In-Reply-To: <3353728.44csPzL39Z@rjwysocki.net>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 3 Mar 2025 12:49:52 +0100
+X-Gm-Features: AQ5f1JrH4q1zOIaTrqYzbdkfjiU66g40RtbSmo7LK-gb4j9oNzq1abNpZhBdAkc
+Message-ID: <CAPDyKFoQvKFmwpzPtHGzPKzPv7KLo_7-2oYb2=BXEZAm4xpVbQ@mail.gmail.com>
+Subject: Re: [PATCH v2] PM: sleep: Adjust check before setting power.must_resume
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Alan Stern <stern@rowland.harvard.edu>, Johan Hovold <johan@kernel.org>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Jon Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 
+On Thu, 27 Feb 2025 at 11:53, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+>
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> The check before setting power.must_resume in device_suspend_noirq()
+> does not take power.child_count into account, but it should do that, so
+> use pm_runtime_need_not_resume() in it for this purpose and adjust the
+> comment next to it accordingly.
+>
+> Fixes: 107d47b2b95e ("PM: sleep: core: Simplify the SMART_SUSPEND flag handling")
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-On 2/26/2025 3:59 PM, Dan Carpenter wrote:
-> On Mon, Feb 24, 2025 at 04: 31: 01PM +0530, Meghana Malladi wrote: > 
-> From: Roger Quadros <rogerq@ kernel. org> > > We have different cases 
-> for SWDATA (skb, page, cmd, etc) > so it is better to have a dedicated 
-> data structure for
-> ZjQcmQRYFpfptBannerStart
-> This message was sent from outside of Texas Instruments.
-> Do not click links or open attachments unless you recognize the source 
-> of this email and know the content is safe.
-> Report Suspicious
-> <https://us-phishalarm-ewt.proofpoint.com/EWT/v1/G3vK! 
-> uldqnT1FPMdbygXOdhMC_1iqujTzdK2ZTrOjiy9hZrrhggm_lCduTFVqMq5QnhhjXmDeSX6KQhxE9U6zpHeghHYcqYQiiHpSSbljHpY$>
-> ZjQcmQRYFpfptBannerEnd
-> 
-> On Mon, Feb 24, 2025 at 04:31:01PM +0530, Meghana Malladi wrote:
->> From: Roger Quadros <rogerq@kernel.org>
->> 
->> We have different cases for SWDATA (skb, page, cmd, etc)
->> so it is better to have a dedicated data structure for that.
->> We can embed the type field inside the struct and use it
->> to interpret the data in completion handlers.
->> 
->> Increase SWDATA size to 48 so we have some room to add
->> more data if required.
-> 
-> What is the "SWDATA size"?  Where is that specified?  Is
-> that a variable or a define or the size of a struct or
-> what?
-> 
+Kind regards
+Uffe
 
-Will be removing this line, since "increase SWDATA size" change is not 
-applicable anymore. It is a macro PRUETH_NAV_SW_DATA_SIZE used to define 
-the size held for swdata.
-
->> 
->> Signed-off-by: Roger Quadros <rogerq@kernel.org>
->> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
->> Signed-off-by: Meghana Malladi <m-malladi@ti.com>
->> ---
->> Changes since v2 (v3-v2):
->> - Fix leaking tx descriptor in emac_tx_complete_packets()
->> - Free rx descriptor if swdata type is not page in emac_rx_packet()
->> - Revert back the size of PRUETH_NAV_SW_DATA_SIZE
->> - Use build time check for prueth_swdata size
->> - re-write prueth_swdata to have enum type as first member in the struct
->> and prueth_data union embedded in the struct
->> 
->> All the above changes have been suggested by Roger Quadros <rogerq@kernel.org>
->> 
->>  drivers/net/ethernet/ti/icssg/icssg_common.c  | 52 +++++++++++++------
->>  drivers/net/ethernet/ti/icssg/icssg_prueth.c  |  3 ++
->>  drivers/net/ethernet/ti/icssg/icssg_prueth.h  | 16 ++++++
->>  .../net/ethernet/ti/icssg/icssg_prueth_sr1.c  |  4 +-
->>  4 files changed, 57 insertions(+), 18 deletions(-)
->> 
->> diff --git a/drivers/net/ethernet/ti/icssg/icssg_common.c b/drivers/net/ethernet/ti/icssg/icssg_common.c
->> index acbb79ad8b0c..01eeabe83eff 100644
->> --- a/drivers/net/ethernet/ti/icssg/icssg_common.c
->> +++ b/drivers/net/ethernet/ti/icssg/icssg_common.c
->> @@ -136,12 +136,12 @@ int emac_tx_complete_packets(struct prueth_emac *emac, int chn,
->>  	struct net_device *ndev = emac->ndev;
->>  	struct cppi5_host_desc_t *desc_tx;
->>  	struct netdev_queue *netif_txq;
->> +	struct prueth_swdata *swdata;
->>  	struct prueth_tx_chn *tx_chn;
->>  	unsigned int total_bytes = 0;
->>  	struct sk_buff *skb;
->>  	dma_addr_t desc_dma;
->>  	int res, num_tx = 0;
->> -	void **swdata;
->>  
->>  	tx_chn = &emac->tx_chns[chn];
->>  
->> @@ -163,12 +163,19 @@ int emac_tx_complete_packets(struct prueth_emac *emac, int chn,
->>  		swdata = cppi5_hdesc_get_swdata(desc_tx);
->>  
->>  		/* was this command's TX complete? */
->> -		if (emac->is_sr1 && *(swdata) == emac->cmd_data) {
->> +		if (emac->is_sr1 && (void *)(swdata) == emac->cmd_data) {
-> 
-> I don't think this conversion is correct.  You still need to say:
-> 
-> 		if (emac->is_sr1 && swdata->data.something == emac->cmd_data) {
-> 
-> Where something is probably "page".
-> 
-
-Yes you are right. This needs to be changes to:
-
-if (emac->is_sr1 && swdata->data.cmd== emac->cmd_data) {
-
-This issue can be addressed more cleanly with the fix Roger mentioned 
-here: 
-https://lore.kernel.org/all/3d3d180a-12b7-4bee-8172-700f0dae2439@kernel.org/
-
-> regards,
-> dan carpenter
-> 
->>  			prueth_xmit_free(tx_chn, desc_tx);
->>  			continue;
->>  		}
->>  
->> -		skb = *(swdata);
->> +		if (swdata->type != PRUETH_SWDATA_SKB) {
->> +			netdev_err(ndev, "tx_complete: invalid swdata type %d\n", swdata->type);
->> +			prueth_xmit_free(tx_chn, desc_tx);
->> +			budget++;
->> +			continue;
->> +		}
-> 
-
+> ---
+>
+> The previous version of this patch is here:
+>
+> https://lore.kernel.org/linux-pm/3548152.QJadu78ljV@rjwysocki.net/
+>
+> v1 -> v2:
+>    * Changelog rewrite.
+>    * Added the Fixes: tag.
+>    * Refined the comment adjustment.
+>
+> ---
+>  drivers/base/power/main.c    |   13 ++++++-------
+>  drivers/base/power/runtime.c |    2 +-
+>  include/linux/pm_runtime.h   |    2 ++
+>  3 files changed, 9 insertions(+), 8 deletions(-)
+>
+> --- a/drivers/base/power/main.c
+> +++ b/drivers/base/power/main.c
+> @@ -1382,14 +1382,13 @@
+>         dev->power.is_noirq_suspended = true;
+>
+>         /*
+> -        * Skipping the resume of devices that were in use right before the
+> -        * system suspend (as indicated by their PM-runtime usage counters)
+> -        * would be suboptimal.  Also resume them if doing that is not allowed
+> -        * to be skipped.
+> +        * Devices must be resumed unless they are explicitly allowed to be left
+> +        * in suspend, but even in that case skipping the resume of devices that
+> +        * were in use right before the system suspend (as indicated by their
+> +        * runtime PM usage counters and child counters) would be suboptimal.
+>          */
+> -       if (atomic_read(&dev->power.usage_count) > 1 ||
+> -           !(dev_pm_test_driver_flags(dev, DPM_FLAG_MAY_SKIP_RESUME) &&
+> -             dev->power.may_skip_resume))
+> +       if (!(dev_pm_test_driver_flags(dev, DPM_FLAG_MAY_SKIP_RESUME) &&
+> +             dev->power.may_skip_resume) || !pm_runtime_need_not_resume(dev))
+>                 dev->power.must_resume = true;
+>
+>         if (dev->power.must_resume)
+> --- a/drivers/base/power/runtime.c
+> +++ b/drivers/base/power/runtime.c
+> @@ -1897,7 +1897,7 @@
+>         pm_request_idle(link->supplier);
+>  }
+>
+> -static bool pm_runtime_need_not_resume(struct device *dev)
+> +bool pm_runtime_need_not_resume(struct device *dev)
+>  {
+>         return atomic_read(&dev->power.usage_count) <= 1 &&
+>                 (atomic_read(&dev->power.child_count) == 0 ||
+> --- a/include/linux/pm_runtime.h
+> +++ b/include/linux/pm_runtime.h
+> @@ -66,6 +66,7 @@
+>
+>  extern int pm_generic_runtime_suspend(struct device *dev);
+>  extern int pm_generic_runtime_resume(struct device *dev);
+> +extern bool pm_runtime_need_not_resume(struct device *dev);
+>  extern int pm_runtime_force_suspend(struct device *dev);
+>  extern int pm_runtime_force_resume(struct device *dev);
+>
+> @@ -254,6 +255,7 @@
+>
+>  static inline int pm_generic_runtime_suspend(struct device *dev) { return 0; }
+>  static inline int pm_generic_runtime_resume(struct device *dev) { return 0; }
+> +static inline bool pm_runtime_need_not_resume(struct device *dev) {return true; }
+>  static inline int pm_runtime_force_suspend(struct device *dev) { return 0; }
+>  static inline int pm_runtime_force_resume(struct device *dev) { return 0; }
+>
+>
+>
+>
 
