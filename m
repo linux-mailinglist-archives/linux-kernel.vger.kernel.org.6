@@ -1,135 +1,150 @@
-Return-Path: <linux-kernel+bounces-542121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31CB2A4C5DF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:57:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 40632A4C5E5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:58:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 592CC16A171
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:57:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8CD816DC34
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:58:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28D632144A7;
-	Mon,  3 Mar 2025 15:57:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E67F1214A8F;
+	Mon,  3 Mar 2025 15:58:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="hZ09LH30"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SGyu2w57"
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8A286ADD
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 15:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5B73C00;
+	Mon,  3 Mar 2025 15:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741017468; cv=none; b=VJWWZh62yE1tZoBYZAJK8mPtAvrtRPVg6Q6U74WLTOofBcqtz4fsLXDUjHULXXe3Bm3B3TNT4TpKFyVS+dfOzr7+uYxVgGwc9akHXkpSRw3bgSVxqk8fkOgx7RPNkzKqdfa7kpt/UItFQTPGBiASEog2AlyiHlbCdnu2rPfXLHQ=
+	t=1741017511; cv=none; b=G/Gt5vHsh5rqFd/gnQAQzYoaogbg4UhaGge9piqB/YNuDW10HefawvlhqrHwffVJyudqM6Y1pZnZEzBieqqOKLxqOmdisDjp4qKTt7u3jM4zhDoGwYPuS1OOiXwco8FbpUFpKkGzfBO2GR3cH2+QEm/9KgYxlI0HBNDtMic1rb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741017468; c=relaxed/simple;
-	bh=BaCYaLkFfhF0aJ9owPFoGunK7n7mUSsdKzAWLXEjmgw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NJG6WctrN/XeVr6+IMh3IRWmJlWL8pWBFRjyeI9iMDiSiar8P10pI9kpSkJ2awGAUv2kbJD0fpGv9QKo4+mp/i/JMkR4fS7kgrfyC9NnKwUmWD9Db5D3yCsL3aKWTVcripaaD8yfbfaR1tqZfnN7nuk+ebrMpsy+AeeuyGQuirA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=hZ09LH30; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6dd420f82e2so65388316d6.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 07:57:46 -0800 (PST)
+	s=arc-20240116; t=1741017511; c=relaxed/simple;
+	bh=dcvZl8D+/ZSKXEMSWxVFM9RcCCcopUHDnFLS4WubIdc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CG0YJFBo5KnJQTYbt1m1OCN/LIk9MGQ/n5ccTVREj1LH5XcR9oTsT16ALOF6ZyI6RgSS/MFXzoLvbaKEtlo6KPThm7IUWqXcvrCYqV8c73wdYBZNo4uXOBogqB3HNO+74BpQ6D32dj46FLZ55vzELL1rGWQ58QNSQYIDgw2Mdsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SGyu2w57; arc=none smtp.client-ip=209.85.221.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-520a7bdb901so1955859e0c.0;
+        Mon, 03 Mar 2025 07:58:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1741017465; x=1741622265; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YinX87LDYMtoABV6o6KK1J0RlnIm0/nmsIr9899AJhw=;
-        b=hZ09LH30nn7Ipp6igcagUy8vTf+KZxbT6kwnZjsSjWav33XOUaK6VE/YQWCzboAwb3
-         LmOV3rejygiZaAQB+95wY9YE0dokIgsUTzcPnrrpN3brrpTH9d8BLmdfICk4OJgNHlA3
-         aSPxWGwjkwXGpn42XR7HDjKflWW4UdvVFP+CyCv4/nkmCqqqYNHSPZcH3P/q1R500KtM
-         40BCLEauyhCYMmBDjYg3lp5hGAHLNQdkV2Y43hBdvZ96Bv/UOchvFMD0HJ4aR1GXT0l5
-         2nWwvWULu1RYYduKpmm9alY3del5IWGcJgvjnb0FIS9VuqtPO6IrAHmFAcwbwJYNjjZL
-         UMDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741017465; x=1741622265;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1741017508; x=1741622308; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YinX87LDYMtoABV6o6KK1J0RlnIm0/nmsIr9899AJhw=;
-        b=YsvfnPZe72bjR5y4/LT4nLcaUff/GC6/lCFfzjTeXgKAUgHuGOs4BvNjAd+MdvB8eZ
-         TKH+sGM8dI1eW1S7qFPwJZ0l89wtqy8QzSfxlaTlFUx6bUGsJKoky8UKIlFFpKA9Ts7s
-         u1uOUHhS2ySFoJ8bYrBC5TTnR0A8X4a7owRAervuwyAHgUHhK92wXDWD+WMaPx68yAwK
-         dX1UdHn8sdTDFBGgPF117vguSJhxIKzuTCpT8EXdKGo1/fwRr45hP+eT6Ive9HmSW/39
-         3ZksTU5jUb7gIYiddvkVaBNiJAp3Oktk27IVbMsyZKz8AIWoPM/X7n7OuVa9tv0+Xoi0
-         4FXg==
-X-Forwarded-Encrypted: i=1; AJvYcCVBw769aGNOejHzLej3K+FCgwjnLauBHTpc62cf2nUNMvTLnT8JuuuWtmYLWFhYP9jjuRnGAx9TZW9Ys5I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxgc5Nbo8h5Mw3KslTyXarD9cdhcp95I3RwqOPBwwJtabroTpmm
-	pjGLYV4DjHqvKJTfC1qJ8EWUk5y1gWkUCw3DaZR/XkA8M+NgL3f7cBRQcU1VTTA=
-X-Gm-Gg: ASbGncv8jaI84Ub8OBqii+WkRKCtpmzoXzr/oIdoLykOp/7oAAKNU+g0UZpbJBcY7G1
-	k1JRqNoj7rkbEtmwlREQ5U04aUjVu0MYcvNh1mri3sKO3AO4JGHRFvegtt3yZ8kLp9tnNqfdFNo
-	zhNBQK8UBajUaRCEKb/602VWLMYvTD9myJgwg/p4uxyx1xQ2hwXS8ospq4u4RFYfzsavC19CNC+
-	4Y4z3VYhLp7sl9Cf2OZ2gYUVKI9zJ0DU5SQ/2V2uGdCOnJ38QeN1i+GTWiPn2hp4eRZNyh1mA7e
-	/bdkhHDfSMcvPgkKOFBoGkGL//xib7Qo/8tfMiD6GFvXjXKUWTgxJe1sxizdMTtcRdkjgPg13ig
-	Ol46SuyV6kVx65e23OsE0pRggWNs=
-X-Google-Smtp-Source: AGHT+IE+DJuOheMVcKCaoN4GZgzluwLtYEbwq0IullHqskTTy+jfFv5btA6pSQY/LiiUMonaE7lbrg==
-X-Received: by 2002:a05:6214:2aad:b0:6e6:6225:a907 with SMTP id 6a1803df08f44-6e8a0d3bae8mr227548976d6.31.1741017464767;
-        Mon, 03 Mar 2025 07:57:44 -0800 (PST)
-Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c378d9f917sm612248385a.78.2025.03.03.07.57.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 07:57:44 -0800 (PST)
-Date: Mon, 3 Mar 2025 10:57:42 -0500
-From: Gregory Price <gourry@gourry.net>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: krisman@collabora.com, tglx@linutronix.de, luto@kernel.org,
-	peterz@infradead.org, keescook@chromium.org,
-	gregory.price@memverge.com, Marco Elver <elver@google.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] selftests: Extend syscall_user_dispatch test to
- check allowed range
-Message-ID: <Z8XRdougwM_Wx76A@gourry-fedora-PF4VCD3F>
-References: <cover.1739894594.git.dvyukov@google.com>
- <5e105b1382cd43d05f1d3a80958e4f50f32144c8.1739894594.git.dvyukov@google.com>
- <Z7dHid-IL7OAPmUa@gourry-fedora-PF4VCD3F>
- <CACT4Y+btS62MDJLRToydRfK-QAMBiihv9d7Du=zEf5U_GbiOMg@mail.gmail.com>
+        bh=20CSEVsOsoWbrKdQvrJ9t0ssYFchlpZ8awFkCe5Gwfc=;
+        b=SGyu2w57oy5FmWfpmWQBZ3Prm6W/T2bbEzpfvwLlyORTsaivRHwSTXNsoDpw5gnKOc
+         4LiIkg1uos1GlxmuF7qygSFcWdaGV7NiGRuEz4kkiYhOau7YfLIKtEYTd/fKblH8eD/t
+         SZPtDsfBuQ+26aVM/2d6G5CVlIrditNtOsyp38vLAoYG1/eOsGMiJBGOxzg5elfi1JZU
+         rSf5iUe79FmDSkE0+hj2d+rcUe1/AGMGVQCmKqEd5oNAjlUmD6nFWLMo+FrK7T5gwLu7
+         rIhCZskP79cXxmN8+n8UpfXc9aoBTO7Z11d5Ce57QeF6BqQL019m/BIOhBToIF6Q03UC
+         npeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741017508; x=1741622308;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=20CSEVsOsoWbrKdQvrJ9t0ssYFchlpZ8awFkCe5Gwfc=;
+        b=nPHEBpfMtmKCqFnRVr8g7k6oRXyarJnw1EvbXJHClpMHvoRBu+pmG6I46ub632jgyV
+         XxnCLCP+0Ttmi50S+tjluBUYK2+MaeTqn/v2lwl4di+f2QkUa/E7yEji6nPtfWiL2yWC
+         FXE77MSuBQjAO+zPG96uznwGm7QoI3KEIOhdWsO7+JW6Lll/7KpEAhVTZMi4ofCjUZpq
+         nLWZXCJES6270cA+dl5Vu+Eb/axLwU6XRQzWKcqtCkFy0Tp/RCIWy8CeH3hH51F3Gwmu
+         sVvR/NZy/sDxbAtjlhrmkTM/J8rIdcY+FO5Aj4J/bWStJzNZ7G53RRpwS/uY7xdXMQaM
+         OaFw==
+X-Forwarded-Encrypted: i=1; AJvYcCUDuL7Cp/VpB/YWJN8L81G1XUjjaxYQ5jvIEpqBKIPK00FdgdZ/iKCfGX7/q87ogZKH/Ln8ZieSe/fr@vger.kernel.org, AJvYcCUqeYUw+hcFkkipbWunmG6cBcL/xWAH6ohI4s+nmMoUtLbzfa8auQmwpziLxw0VgxIdwBIUqEgQ@vger.kernel.org, AJvYcCWJlacFWsZg8xXRkOcN5B19UnRCpUANoshOGjpcnFgAyLeNEKq8Ec1FwEd2UA5RfOANFU9S30TW98QxL339cQda/As=@vger.kernel.org, AJvYcCWULLnyD780VRvorib6nXsq2GgKQFCPVd1Lk6YeRqNsJx48MGueHPLPLC6CdXIYnptJX7tVwprEFgE+pYif@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0ZMa5CPISWacb4YS39WdNCZRCazEHEH8ro5Q5yrpJgHd8aykE
+	j7WT2fFjhEBU7cEiO2H/g8nnGtEL++zJ8wkb7aojBIRy/tSNMIRbedByuCGymyaqIx9INcqjfpy
+	CyCJ9G6ZJpkFljfP6J/Ns7KnoGORfzVcA/NE=
+X-Gm-Gg: ASbGncsk+1J2cl25hGaLLGFkCF3Aba2CziXlTO1IXmnFQ4heiLZiFTgXu4bGTh6BMl9
+	zgDvKgu3xZbr1Q5p5OzCCb1KTWJmWmUQimabgCtfmvobfUVIDDzENeTVhHU+yHR6bQ94jx7WcU9
+	9WAGNp2mWbaaruUFxSvIfUsK8kIBQVpDm4r8c6Z3vBKsWu59ybxG4O5qs6Cg==
+X-Google-Smtp-Source: AGHT+IGf8mOuyk+yJX8WQ3uBBifLVC0NC0DlQpg3TejRFtkWs//y7lwRv/N/QPDyUQQ9CUkzN9EVbnwVC9X4VC+ObF8=
+X-Received: by 2002:a05:6122:2788:b0:520:60c2:3f1 with SMTP id
+ 71dfb90a1353d-5235a921377mr7533183e0c.0.1741017508458; Mon, 03 Mar 2025
+ 07:58:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+btS62MDJLRToydRfK-QAMBiihv9d7Du=zEf5U_GbiOMg@mail.gmail.com>
+References: <20250302181808.728734-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250302181808.728734-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250303152628.GA1873145-robh@kernel.org>
+In-Reply-To: <20250303152628.GA1873145-robh@kernel.org>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 3 Mar 2025 15:58:02 +0000
+X-Gm-Features: AQ5f1JpmCBY848cgT_1ecbvsoHfbS3xC710nAzbWM7vESPxSnajffbfXbBeCIyI
+Message-ID: <CA+V-a8ukVgx7OqDTP6EharPJxUnVw5wAohveJw+VCABvz7FSRA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] dt-bindings: net: dwmac: Increase 'maxItems' for
+ 'interrupts' and 'interrupt-names'
+To: Rob Herring <robh@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
+	Jose Abreu <joabreu@synopsys.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 24, 2025 at 09:48:19AM +0100, Dmitry Vyukov wrote:
-> On Thu, 20 Feb 2025 at 16:17, Gregory Price <gourry@gourry.net> wrote:
+Hi Rob,
+
+Thank you for the review.
+
+On Mon, Mar 3, 2025 at 3:26=E2=80=AFPM Rob Herring <robh@kernel.org> wrote:
+>
+> On Sun, Mar 02, 2025 at 06:18:06PM +0000, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > >
-> > On Tue, Feb 18, 2025 at 05:04:36PM +0100, Dmitry Vyukov wrote:
-> > > diff --git a/tools/testing/selftests/syscall_user_dispatch/sud_test.c b/tools/testing/selftests/syscall_user_dispatch/sud_test.c
-> > > index b0969925ec64c..fa40e46e6d3e9 100644
-> > > --- a/tools/testing/selftests/syscall_user_dispatch/sud_test.c
-> > > +++ b/tools/testing/selftests/syscall_user_dispatch/sud_test.c
-> > ... snip ...
-> > > @@ -110,31 +111,15 @@ TEST(bad_prctl_param)
-> > >       /* PR_SYS_DISPATCH_ON */
-> > >       op = PR_SYS_DISPATCH_ON;
-> > >
-> > > -     /* Dispatcher region is bad (offset > 0 && len == 0) */
-> > > -     EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x1, 0x0, &sel));
-> > > -     EXPECT_EQ(EINVAL, errno);
-> > > -     EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, -1L, 0x0, &sel));
-> > > -     EXPECT_EQ(EINVAL, errno);
-> > > +     /* All ranges are allowed */
-> > > +     EXPECT_EQ(0, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x1, 0x0, &sel));
-> > > +     EXPECT_EQ(0, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, -1L, 0x0, &sel));
+> > Increase the `maxItems` value for the `interrupts` and `interrupt-names=
+`
+> > properties to accommodate the Renesas RZ/V2H(P) SoC, which features the
+> > `snps,dwmac-5.20` IP with 11 interrupts.
 > >
-> > A 0 length is ambiguous and nonsensical in every other context, not sure
-> > why you'd allow it here.
-> 
-> Yes, but it's also not special in any way. One asks for a range of N
-> bytes, one gets a range of N bytes.
+> > Also add `additionalItems: true` to allow specifying extra interrupts
+> > beyond the predefined ones. Update the `interrupt-names` property to
+> > allow specifying extra `interrupt-names`.
+> >
+> > Also refactor the optional `interrupt-names` property by consolidating
+> > repeated enums into a single enum list.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> >  Documentation/devicetree/bindings/net/snps,dwmac.yaml | 6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Do=
+cumentation/devicetree/bindings/net/snps,dwmac.yaml
+> > index 91e75eb3f329..85d499bd49b5 100644
+> > --- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> > +++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> > @@ -110,6 +110,8 @@ properties:
+> >
+> >    interrupts:
+> >      minItems: 1
+> > +    maxItems: 11
+> > +    additionalItems: true
+>
+> This just increased the number if interrupts for anyone that allowed 4
+> interrupts. Rockchip and Intel are 2 though it is not clear if they
+> support more than 1. So maybe not a new problem, but you are making it
+> worse. Any of the ones in the 'select' in this file are affected as
+> well.
+>
+How do you want me to handle this case:
+1] Update vendors binding
+2] Duplicate snps,dwmac.yaml in vendors binding.
 
-It's specialy in the sense that it's nonsensical :]
-
-I don't know what the prevaling opinion here is, but it seems pretty
-obvious that a 0-length is almost certainly a mistake and reasonbly
-should result in an EINVAL.
-
-I don't feel strongly about this though.
-
-~Gregory
+Cheers,
+Prabhakar
 
