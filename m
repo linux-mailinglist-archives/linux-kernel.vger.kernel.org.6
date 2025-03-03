@@ -1,121 +1,88 @@
-Return-Path: <linux-kernel+bounces-540923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28D10A4B678
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 04:24:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA4E5A4B67A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 04:25:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B61B16B1ED
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 03:24:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCAD416BB96
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 03:25:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03BCC1C5D50;
-	Mon,  3 Mar 2025 03:24:42 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FDEF1C84CF;
+	Mon,  3 Mar 2025 03:25:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OM4rpPP4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B402A142900;
-	Mon,  3 Mar 2025 03:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E36811C3314
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 03:25:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740972281; cv=none; b=nc40CyHLZ/x+/u3FcyOaI8BAlQo7AZqv2MUBJP47/wir8JqG/u0RU9NTqMFujuh5Uu/l55sHu13GwfssVqfMV6Y873HKEi99549B5v32blsoj0OFjwAhxJbmO6W28a96feYe9ZlvLvmrLNSNOFHa8DyNd0+e/v5C54Tsdg1+9rk=
+	t=1740972349; cv=none; b=BEANl+6kk08SBoJyIZXbjf9P3rYTMNYUfAlzorAPIY9HkaQb7/m/U95TA72oupeAA56d607nqPDOomUZZ1M1i9BWNX0fksEd/05AQmhBzyuUW9BbkstG1lcJC/B0+puEaSxisEwyhM09tqfYHo7o0D/14FGO1XwHIOkxgmNOAEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740972281; c=relaxed/simple;
-	bh=UcP3opEi5PP9Ja8NK4VfQ8fuAffygbj26lA15ZkNhBI=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=duDUDH5a3eh4a7LAkMcG+D5D2PVzV4uDApSerL3CrTCTYdN0P+nue9TDtZN0MXcMknPDH9U62EyB7AuiUsjt1V8G68G0Zz+pRDUX8ne7Oec0nh6kpMR8AEfY2BEcDUtiwui9oW05MKWYEPXL0fmOkZVQfRamJu5tYp4QCDEmQTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 04fd338ef7df11efa216b1d71e6e1362-20250303
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:a0c845bf-8a62-4b64-817b-71fe6da47bd4,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:4f134b344d0d9fd307ada4f0dd2ebdd0,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 04fd338ef7df11efa216b1d71e6e1362-20250303
-Received: from node2.com.cn [(10.44.16.197)] by mailgw.kylinos.cn
-	(envelope-from <liuye@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 2042143849; Mon, 03 Mar 2025 11:24:30 +0800
-Received: from node2.com.cn (localhost [127.0.0.1])
-	by node2.com.cn (NSMail) with SMTP id 4B7C2B807587;
-	Mon,  3 Mar 2025 11:24:29 +0800 (CST)
-X-ns-mid: postfix-67C520ED-258227829
-Received: from [172.30.70.73] (unknown [172.30.70.73])
-	by node2.com.cn (NSMail) with ESMTPA id B58AAB807587;
-	Mon,  3 Mar 2025 03:24:28 +0000 (UTC)
-Message-ID: <e46e7143-84e7-4f98-962c-27467bef5457@kylinos.cn>
-Date: Mon, 3 Mar 2025 11:23:42 +0800
+	s=arc-20240116; t=1740972349; c=relaxed/simple;
+	bh=7fBJ+9SkI851aRpJLiCAVAcdqfXjwH5g0lFDk3gGWVs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t3Ugp1yuwg1hr0U8Koz72L79nYEu/bSbzoCMUP0Bg9fBREP7GmP/Ar0G/0mOlD87DGDRb16oQ4SlxNJmwe3siVi+OuQkilXl/IMkbA2nE/u97vROgPpbTXGB3fabEjzW4AYpj33Jb6fNTd8XU2d1k7ieXIDsakeqRotM46Sr1mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OM4rpPP4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 281E5C4CED6;
+	Mon,  3 Mar 2025 03:25:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740972348;
+	bh=7fBJ+9SkI851aRpJLiCAVAcdqfXjwH5g0lFDk3gGWVs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=OM4rpPP4GFlRA/XDbjnPWZe1YXGy5r5ZL6IbUFzaPpMMzsh2NrLb39V2Wb24gdl4A
+	 tits4FnyopTerfSpURwHWpTH5/heyR3erk/9cxz2Lo6L8Y5mCDQZj47AptfyyuP4bj
+	 DjiXPTO6KeQP59rvPJdPVf6LQq82DrlvzSN4Db4YOutDi+0e91P9uD4c0KVKRG+fDY
+	 eycw+nwpLdhJhbeU3pVz9ByHzl1xbXquzib91HVfx5SEqn+Mlf4TGqPlGbWjaXxuN5
+	 xZBCalowRpKnRUQygOELr2EYj1txyLFPKIreiyi94g1T4V5VG15oI8MJ0tbfVZwNbv
+	 IKVayumeCjylg==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>
+Subject: [PATCH] f2fs: fix to call f2fs_recover_quota_end() correctly
+Date: Mon,  3 Mar 2025 11:25:00 +0800
+Message-ID: <20250303032500.1310215-1-chao@kernel.org>
+X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: liuye <liuye@kylinos.cn>
-Subject: Re: [PATCH] selftests/dma: Fix bad array reference.
-To: Shuah Khan <skhan@linuxfoundation.org>, shuah@kernel.org
-Cc: zhujun2@cmss.chinamobile.com, iommu@lists.linux.dev,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250206021239.51897-1-liuye@kylinos.cn>
- <3b51ae45-4dd4-4238-bf3f-3cb4d263eda4@kylinos.cn>
- <0758d73d-98b7-4f9b-a3b2-001d69eb949d@linuxfoundation.org>
-Content-Language: en-US
-In-Reply-To: <0758d73d-98b7-4f9b-a3b2-001d69eb949d@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-By code observation only.
+f2fs_recover_quota_begin() and f2fs_recover_quota_end() should be called
+in pair, there is some cases we may skip calling f2fs_recover_quota_end(),
+fix it.
 
-Thanks,
-Liu Ye
+Fixes: e1bb7d3d9cbf ("f2fs: fix to recover quota data correctly")
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-=E5=9C=A8 2025/2/27 05:41, Shuah Khan =E5=86=99=E9=81=93:
-> On 2/25/25 18:31, liuye wrote:
->> Friendly ping.
->>
->> =E5=9C=A8 2025/2/6 10:12, Liu Ye =E5=86=99=E9=81=93:
->>> dir[directions] should be directions[dir] to correctly index the
->>> directions array.
->>>
->>> Signed-off-by: Liu Ye <liuye@kylinos.cn>
->>> ---
->>> =C2=A0 tools/testing/selftests/dma/dma_map_benchmark.c | 2 +-
->>> =C2=A0 1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/tools/testing/selftests/dma/dma_map_benchmark.c b/tools/=
-testing/selftests/dma/dma_map_benchmark.c
->>> index b12f1f9babf8..b925756373ce 100644
->>> --- a/tools/testing/selftests/dma/dma_map_benchmark.c
->>> +++ b/tools/testing/selftests/dma/dma_map_benchmark.c
->>> @@ -118,7 +118,7 @@ int main(int argc, char **argv)
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->>> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 printf("dma mapping benchmark: =
-threads:%d seconds:%d node:%d dir:%s granule: %d\n",
->>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 t=
-hreads, seconds, node, dir[directions], granule);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 t=
-hreads, seconds, node, directions[dir], granule);
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 printf("average map latency(us):%.1f s=
-tandard deviation:%.1f\n",
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 map.avg_map_100ns/10.0, map.map_stddev/10.0);
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 printf("average unmap latency(us):%.1f=
- standard deviation:%.1f\n",
->
-> How did you find this problem?
->
-> thanks,
-> -- Shuah
->
->
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 7a8fcc1e278c..3c875dc07266 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -4805,10 +4805,10 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 		}
+ 	}
+ 
++reset_checkpoint:
+ #ifdef CONFIG_QUOTA
+ 	f2fs_recover_quota_end(sbi, quota_enabled);
+ #endif
+-reset_checkpoint:
+ 	/*
+ 	 * If the f2fs is not readonly and fsync data recovery succeeds,
+ 	 * write pointer consistency of cursegs and other zones are already
+-- 
+2.48.1
+
 
