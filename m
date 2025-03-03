@@ -1,149 +1,258 @@
-Return-Path: <linux-kernel+bounces-542728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A82BA4CCF1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 21:53:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3FFDA4CCFD
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 21:54:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BC943AB6D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:53:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0284189728F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:54:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE1751F0E42;
-	Mon,  3 Mar 2025 20:53:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C075B23643A;
+	Mon,  3 Mar 2025 20:53:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RgCUYbV9"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="uOFh884x"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA671F099D
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 20:53:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD5F7235C11
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 20:53:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741035194; cv=none; b=hPUsnK4ToHU30WA087Y48NHt+KR2VL3dP5+InmRXlDdicRbXXkjIfI4aSsJFA5/tuw4dRTTqJ5yPNcgFYuTzjM4wLWQMCjSge3UltmMXWVn8mzpA+HaVFE+VctItpw4wLvw2mkeorBtJHGJiB0cCzA3qRoIiGyQ20ivtEBMWg70=
+	t=1741035222; cv=none; b=SnwQvVhCGUQDlGXYhyNTCeYpf8iKcaQ22gJ04b4vZW05YYTssoxNt3HTQXQQwty7GGjQ5bMJLNLIHVF7bQHZle3giXgDDEb8FnUxUm8eNfR6VcT8dVfFWj6xszVQemDeW1A1hKGOHUCg8Nso/+nBLVegc10BaAOJnG9ZsAV3Tz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741035194; c=relaxed/simple;
-	bh=lYiwGGpy+jObEGmZeK6fiOPc7idRqjoFD+d0OH5vfY8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Kp5bRbKxH/bHjjzCRZrjHO2vh98SHAtmubzYoZOgEugt7Wdjhri3ucNGEx9nr3+aClFTR79wPEiGsOSmIaRiF2JVu48ciTIqeGBwi8lCahhN7AATj9jjhiJLXTr+8GeXjztUp5GwGZ1pmp0M6nmoZdMuPh5mHIPlGGSoVJ8eQPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RgCUYbV9; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2feb8d29740so7299461a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 12:53:12 -0800 (PST)
+	s=arc-20240116; t=1741035222; c=relaxed/simple;
+	bh=OedX+KmRNsSP5qwD3uo/SOxs71msjzcbVQqNZ/HnSqM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qCf2cKMAJV/is/NDN8lLjK256yGiSd7tYVfwsJKNXHiW1XmWRRnWahTvu6SFB1/Rtm8reeiyQqrExoqkyImKRn4jUehUN1M4PwmepeUjfp0XMj/pfdnonPfpyizD3uTlvQ54V2Z0xUF9pvWncjuhZSlyu1fDx1bR82oWNMSllL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=uOFh884x; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-223480ea43aso122125415ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 12:53:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741035192; x=1741639992; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sN1tRRXOdkRuhSE1RMnqdPqM5oFgXi6jywzgZSSDWUM=;
-        b=RgCUYbV9OffG1ydptORCJghVqfw2MmEWRIbPuf3/58MNCg10LnBXkIPaBaLuCPRTFA
-         fxfzX8n5SeONuaW2qp4N6RaJHZ8I1RcJAh7TKIoHNN4YQIyC4aey3ZZJDe2qrtr6Bwzz
-         sRdruAipZudcQZw88Cp7BJhTNn/H9Rxb+9qdL6a2awMYIoohmtFQ+R0+v3r/hs9EDXNv
-         KNqo4GzAbwZChm9Fzu8WQZw129U21yODQPr6SHPdz268w7t98djLi4hBt8/Ch9tT/tr/
-         EoQhqSzwG1lFsnLunTscfniD83fds479XHNidhDPjt/LaNHvZn/4/+HyLFndtwVjstYa
-         A+PA==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1741035218; x=1741640018; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g5AQc/OecpKtLu8kT/3BCu+mfDeh9ylI+xKZIi5ekec=;
+        b=uOFh884x43VjW66KHj/ZZO5DIK3e9SL2nYv+FKMa5847kN/GmXmVs+PWlp1QTxfN/G
+         KmTY50SsLJmBQbrY73DGWjOKO8Ul+s6xPnd+GOYModSBV5WBm2Kz4WrtgYecaYBOZIoi
+         Oq7YfJTCnMZYTRvbxcsGE2WBg0EIkP1mPaGanRCHWLotjO9sZugcDrXTFNZ6tMUbj3cm
+         1avLGpHp5VA7h/Zikm2Zn6Mc2+2khEKH5Q5zqMIGldD4oaVmA/+jwxqRTdlVnhAbfWDI
+         BDRlZvsLuLuX8gJPxGLZv8ksiIDcSmt4k5Q/jg0nCuHowlOZ6QncZgcoGRhKWC+zvvO0
+         JYFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741035192; x=1741639992;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=sN1tRRXOdkRuhSE1RMnqdPqM5oFgXi6jywzgZSSDWUM=;
-        b=UPZBrgBdt3ykKImQw508vjyyKDcB9YXqYjPo0rA14rnL7PeVDaMq0qrCf0dBESqD2w
-         TuXQR9+i4mRcQTyfBnC1x9OlP3LSWGnQP4AFJW9fRA/fa1v8vLreAMleQNhzqnmVgcbJ
-         XjJifnWYn2dsK/jKYEhNSfgBjTd5RLIy6SZkWZmD2kG84LimFm18wAj54M0NQOA2qYHP
-         yacunRvIx7lxOC7PAp54ukMDOqKfF2Aep28Hp4SZRfB6GY/0gHtOhre3GjTs8oTIAnNT
-         xP5tbiOImYELVp9OqLgE9ma0BaEC3Hklv+3qztCbxVNQo/erJWdrcdzln+4C1nxb57PE
-         5NRw==
-X-Forwarded-Encrypted: i=1; AJvYcCURxW3T8bgpYjxKJY4gA6SuY4jG5Ztb+jVQsomM0NJqUqu+m74MzgesANAsfMaIpxf4WLOGAw+LodsiwE4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxd1OMMjHrO5MRJ9fezenSTEdBiAQ/iOuLpDOaXOsnjaE9CKaVP
-	IGZIuNn9c+xicslB72/fKpPNv26aPnGHWDJ9+WAJXikVQoqo/PgXihmi4N6kB2d4VrYOpa1OfVW
-	6dQ==
-X-Google-Smtp-Source: AGHT+IGvAbM1SbEAkwQZlxQS7zV3KYE59+INXt1p2VCN8UPIm/E/EWQNfbPJi6CZOYL8GIUxW/fPR5QROP8=
-X-Received: from pjn11.prod.google.com ([2002:a17:90b:570b:b0:2f5:4762:e778])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1a86:b0:2ee:ab29:1a63
- with SMTP id 98e67ed59e1d1-2febab30c7amr20186639a91.3.1741035192190; Mon, 03
- Mar 2025 12:53:12 -0800 (PST)
-Date: Mon, 3 Mar 2025 12:53:10 -0800
-In-Reply-To: <5bdb92ab83269b49ad8fbbe8f54df01f6b98ea8f.camel@infradead.org>
+        d=1e100.net; s=20230601; t=1741035218; x=1741640018;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=g5AQc/OecpKtLu8kT/3BCu+mfDeh9ylI+xKZIi5ekec=;
+        b=kFXMxQm3LwrAU+hwGDJLWmTPRedndBRuIjDdJCKAUCG6diDv8Dowc3HjopPSNQjnxt
+         5istf2ic19cP7TRB5dvvH9mliboMFHvLnpxF6TZW+zPgghWFijGVj5rssYPmB853j6Pb
+         7M1xJVGQZ/EKnchBIEhF6KqyVZ/7SJrMoxcPh2pc8FlJCZELKWBJAIxO8HHwOfm7tzHs
+         nwjIZWvDjoKHbm+we/w9+J3KidTllus0RYiPkMm3LXGd3kMihr63i9O0ZqvVqj2kpm05
+         0AdiqQBon0OT/6tDXbhZJEaJkapAbDUyJAC4Pb4mPFQp+aBLZtHUndI7kTct5guX1+Ci
+         z+Bg==
+X-Forwarded-Encrypted: i=1; AJvYcCUcrLEmeeBOGLJjsrP7T5eeK3BV5ELVhe45+bB6DLAQEt9vRDaNISYfsHwlUDF3IM8yM0Og7JTC+7/Gc2w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4Fwf53/+PERgyAsw9KQF1ZXI8siqqn/0Xd2o/tr2a9Vk5eg99
+	fj2uos0KGOZ77gJxVx+FaQkZ8wqlD2NTL4ASmJJHxELT48XA37kuc3BwPqrE9N/LCmfoP92l2Cb
+	/eB8N9ob+fSyjnL7VuwPts7Iez2vdFj7IykpYlg==
+X-Gm-Gg: ASbGncsr+hkPCLEw42fqScDrPmJvSRX/R6+BQGtqU9NlsfCLhneL8rtkm+Mr4Fu8JDV
+	e7sfidtK1sCJNikqDcquuC1xFyHwx0w32oCac5IZAZz97OQ7DPTPpp8J5bfG+5HJ7b9DQii/6ue
+	4nruObCcblH5BgxBss/S1Er8lG
+X-Google-Smtp-Source: AGHT+IFxmaYGsqxuWzE42pNki0QyERt8aeeJIc4FpkFS3fZJz6bTIl+8F5KKzfYsUutrBaR5UQYgO+HCr+aSIeXuR/8=
+X-Received: by 2002:a17:902:ec82:b0:21f:89e5:2712 with SMTP id
+ d9443c01a7336-22369247861mr199207785ad.39.1741035217946; Mon, 03 Mar 2025
+ 12:53:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250227021855.3257188-1-seanjc@google.com> <5bdb92ab83269b49ad8fbbe8f54df01f6b98ea8f.camel@infradead.org>
-Message-ID: <Z8YWttWDtvkyCtdJ@google.com>
-Subject: Re: [PATCH v2 00/38] x86: Try to wrangle PV clocks vs. TSC
-From: Sean Christopherson <seanjc@google.com>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Juergen Gross <jgross@suse.com>, "K. Y. Srinivasan" <kys@microsoft.com>, 
-	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
-	Dexuan Cui <decui@microsoft.com>, Ajay Kaher <ajay.kaher@broadcom.com>, 
-	Jan Kiszka <jan.kiszka@siemens.com>, Andy Lutomirski <luto@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	John Stultz <jstultz@google.com>, linux-kernel@vger.kernel.org, 
-	linux-coco@lists.linux.dev, kvm@vger.kernel.org, 
-	virtualization@lists.linux.dev, linux-hyperv@vger.kernel.org, 
-	xen-devel@lists.xenproject.org, Tom Lendacky <thomas.lendacky@amd.com>, 
-	Nikunj A Dadhania <nikunj@amd.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20250226-kvm_pmu_improve-v1-0-74c058c2bf6d@rivosinc.com>
+ <20250226-kvm_pmu_improve-v1-3-74c058c2bf6d@rivosinc.com> <20250227-eb9e3d8de1de2ff609ac8f64@orel>
+In-Reply-To: <20250227-eb9e3d8de1de2ff609ac8f64@orel>
+From: Atish Kumar Patra <atishp@rivosinc.com>
+Date: Mon, 3 Mar 2025 12:53:27 -0800
+X-Gm-Features: AQ5f1Jrqg0QCQLdb27_ngzuhj87U0gO9gK8_pEhgxfLHs93uJVPCudYkbQ6uAvs
+Message-ID: <CAHBxVyF=gteGvQqbCAy88heLzfAWebuUH2PXud=zvMjmxsE0YA@mail.gmail.com>
+Subject: Re: [PATCH 3/4] KVM: riscv: selftests: Change command line option
+To: Andrew Jones <ajones@ventanamicro.com>
+Cc: Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, kvm@vger.kernel.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 28, 2025, David Woodhouse wrote:
-> On Wed, 2025-02-26 at 18:18 -0800, Sean Christopherson wrote:
-> > This... snowballed a bit.
-> >=20
-> > The bulk of the changes are in kvmclock and TSC, but pretty much every
-> > hypervisor's guest-side code gets touched at some point.=C2=A0 I am rea=
-onsably
-> > confident in the correctness of the KVM changes.=C2=A0 For all other hy=
-pervisors,
-> > assume it's completely broken until proven otherwise.
+On Thu, Feb 27, 2025 at 12:08=E2=80=AFAM Andrew Jones <ajones@ventanamicro.=
+com> wrote:
+>
+> On Wed, Feb 26, 2025 at 12:25:05PM -0800, Atish Patra wrote:
+> > The PMU test commandline option takes an argument to disable a
+> > certain test. The initial assumption behind this was a common use case
+> > is just to run all the test most of the time. However, running a single
+> > test seems more useful instead. Especially, the overflow test has been
+> > helpful to validate PMU virtualizaiton interrupt changes.
 > >
-> > Note, I deliberately omitted:
-> >=20
-> > =C2=A0 Alexey Makhalov <alexey.amakhalov@broadcom.com>
-> > =C2=A0 jailhouse-dev@googlegroups.com
-> >=20
-> > from the To/Cc, as those emails bounced on the last version, and I have=
- zero
-> > desire to get 38*2 emails telling me an email couldn't be delivered.
-> >=20
-> > The primary goal of this series is (or at least was, when I started) to
-> > fix flaws with SNP and TDX guests where a PV clock provided by the untr=
-usted
-> > hypervisor is used instead of the secure/trusted TSC that is controlled=
- by
-> > trusted firmware.
-> >=20
-> > The secondary goal is to draft off of the SNP and TDX changes to slight=
-ly
-> > modernize running under KVM.=C2=A0 Currently, KVM guests will use TSC f=
-or
-> > clocksource, but not sched_clock.=C2=A0 And they ignore Intel's CPUID-b=
-ased TSC
-> > and CPU frequency enumeration, even when using the TSC instead of kvmcl=
-ock.
-> > And if the host provides the core crystal frequency in CPUID.0x15, then=
- KVM
-> > guests can use that for the APIC timer period instead of manually calib=
-rating
-> > the frequency.
-> >=20
-> > Lots more background on the SNP/TDX motiviation:
-> > https://lore.kernel.org/all/20250106124633.1418972-13-nikunj@amd.com
->=20
-> Looks good; thanks for tackling this.
->=20
-> I think there are still some things from my older series at
-> https://lore.kernel.org/all/20240522001817.619072-1-dwmw2@infradead.org/
-> which this doesn't address.
+> > Switching the command line option to run a single test instead
+> > of disabling a single test also allows to provide additional
+> > test specific arguments to the test. The default without any options
+> > remains unchanged which continues to run all the tests.
+> >
+> > Signed-off-by: Atish Patra <atishp@rivosinc.com>
+> > ---
+> >  tools/testing/selftests/kvm/riscv/sbi_pmu_test.c | 40 +++++++++++++++-=
+--------
+> >  1 file changed, 26 insertions(+), 14 deletions(-)
+> >
+> > diff --git a/tools/testing/selftests/kvm/riscv/sbi_pmu_test.c b/tools/t=
+esting/selftests/kvm/riscv/sbi_pmu_test.c
+> > index 284bc80193bd..533b76d0de82 100644
+> > --- a/tools/testing/selftests/kvm/riscv/sbi_pmu_test.c
+> > +++ b/tools/testing/selftests/kvm/riscv/sbi_pmu_test.c
+> > @@ -39,7 +39,11 @@ static bool illegal_handler_invoked;
+> >  #define SBI_PMU_TEST_SNAPSHOT        BIT(2)
+> >  #define SBI_PMU_TEST_OVERFLOW        BIT(3)
+> >
+> > -static int disabled_tests;
+> > +struct test_args {
+> > +     int disabled_tests;
+> > +};
+> > +
+> > +static struct test_args targs;
+> >
+> >  unsigned long pmu_csr_read_num(int csr_num)
+> >  {
+> > @@ -604,7 +608,11 @@ static void test_vm_events_overflow(void *guest_co=
+de)
+> >       vcpu_init_vector_tables(vcpu);
+> >       /* Initialize guest timer frequency. */
+> >       timer_freq =3D vcpu_get_reg(vcpu, RISCV_TIMER_REG(frequency));
+> > +
+> > +     /* Export the shared variables to the guest */
+> >       sync_global_to_guest(vm, timer_freq);
+> > +     sync_global_to_guest(vm, vcpu_shared_irq_count);
+> > +     sync_global_to_guest(vm, targs);
+> >
+> >       run_vcpu(vcpu);
+> >
+> > @@ -613,28 +621,30 @@ static void test_vm_events_overflow(void *guest_c=
+ode)
+> >
+> >  static void test_print_help(char *name)
+> >  {
+> > -     pr_info("Usage: %s [-h] [-d <test name>]\n", name);
+> > -     pr_info("\t-d: Test to disable. Available tests are 'basic', 'eve=
+nts', 'snapshot', 'overflow'\n");
+> > +     pr_info("Usage: %s [-h] [-t <test name>]\n", name);
+> > +     pr_info("\t-t: Test to run (default all). Available tests are 'ba=
+sic', 'events', 'snapshot', 'overflow'\n");
+>
+> It's probably fine to drop '-d', since we don't make any claims about
+> support, but doing so does risk breaking some CI somewhere. If that
+> potential breakage is a concern, then we could keep '-d', since nothing
+> stops us from having both.
 
-Most definitely.  I was/am assuming you're going to send a v4 at some point=
-?
+I don't think we have so much legacy usage with this test that we need
+to maintain both options.
+Since this was merged only a few cycles ago, I assume that it's not
+available in many CI to cause breakage.
+If somebody running CI actually shouts that it breaks their setup,
+sure. Otherwise, I feel it will be just confusing to the users.
+
+>
+> >       pr_info("\t-h: print this help screen\n");
+> >  }
+> >
+> >  static bool parse_args(int argc, char *argv[])
+> >  {
+> >       int opt;
+> > -
+> > -     while ((opt =3D getopt(argc, argv, "hd:")) !=3D -1) {
+> > +     int temp_disabled_tests =3D SBI_PMU_TEST_BASIC | SBI_PMU_TEST_EVE=
+NTS | SBI_PMU_TEST_SNAPSHOT |
+> > +                               SBI_PMU_TEST_OVERFLOW;
+> > +     while ((opt =3D getopt(argc, argv, "h:t:n:")) !=3D -1) {
+>
+> '-h' doesn't need an argument and '-n' should be introduced with the next
+> patch.
+>
+
+Yes. Thanks for catching it. I will fix it in v2.
+
+> >               switch (opt) {
+> > -             case 'd':
+> > +             case 't':
+> >                       if (!strncmp("basic", optarg, 5))
+> > -                             disabled_tests |=3D SBI_PMU_TEST_BASIC;
+> > +                             temp_disabled_tests &=3D ~SBI_PMU_TEST_BA=
+SIC;
+> >                       else if (!strncmp("events", optarg, 6))
+> > -                             disabled_tests |=3D SBI_PMU_TEST_EVENTS;
+> > +                             temp_disabled_tests &=3D ~SBI_PMU_TEST_EV=
+ENTS;
+> >                       else if (!strncmp("snapshot", optarg, 8))
+> > -                             disabled_tests |=3D SBI_PMU_TEST_SNAPSHOT=
+;
+> > +                             temp_disabled_tests &=3D ~SBI_PMU_TEST_SN=
+APSHOT;
+> >                       else if (!strncmp("overflow", optarg, 8))
+> > -                             disabled_tests |=3D SBI_PMU_TEST_OVERFLOW=
+;
+> > +                             temp_disabled_tests &=3D ~SBI_PMU_TEST_OV=
+ERFLOW;
+> >                       else
+> >                               goto done;
+> > +                     targs.disabled_tests =3D temp_disabled_tests;
+> >                       break;
+> >               case 'h':
+> >               default:
+> > @@ -650,25 +660,27 @@ static bool parse_args(int argc, char *argv[])
+> >
+> >  int main(int argc, char *argv[])
+> >  {
+> > +     targs.disabled_tests =3D 0;
+> > +
+> >       if (!parse_args(argc, argv))
+> >               exit(KSFT_SKIP);
+> >
+> > -     if (!(disabled_tests & SBI_PMU_TEST_BASIC)) {
+> > +     if (!(targs.disabled_tests & SBI_PMU_TEST_BASIC)) {
+> >               test_vm_basic_test(test_pmu_basic_sanity);
+> >               pr_info("SBI PMU basic test : PASS\n");
+> >       }
+> >
+> > -     if (!(disabled_tests & SBI_PMU_TEST_EVENTS)) {
+> > +     if (!(targs.disabled_tests & SBI_PMU_TEST_EVENTS)) {
+> >               test_vm_events_test(test_pmu_events);
+> >               pr_info("SBI PMU event verification test : PASS\n");
+> >       }
+> >
+> > -     if (!(disabled_tests & SBI_PMU_TEST_SNAPSHOT)) {
+> > +     if (!(targs.disabled_tests & SBI_PMU_TEST_SNAPSHOT)) {
+> >               test_vm_events_snapshot_test(test_pmu_events_snaphost);
+> >               pr_info("SBI PMU event verification with snapshot test : =
+PASS\n");
+> >       }
+> >
+> > -     if (!(disabled_tests & SBI_PMU_TEST_OVERFLOW)) {
+> > +     if (!(targs.disabled_tests & SBI_PMU_TEST_OVERFLOW)) {
+> >               test_vm_events_overflow(test_pmu_events_overflow);
+> >               pr_info("SBI PMU event verification with overflow test : =
+PASS\n");
+> >       }
+> >
+> > --
+> > 2.43.0
+> >
+>
+> Otherwise,
+>
+> Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
 
