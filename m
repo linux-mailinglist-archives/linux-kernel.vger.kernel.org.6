@@ -1,145 +1,138 @@
-Return-Path: <linux-kernel+bounces-544465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0C6AA4E188
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:45:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E9CCA4E1A3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:49:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEA87189F1D7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:40:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44EEE4200EF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A41A6253B66;
-	Tue,  4 Mar 2025 14:37:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 696E221D00D;
+	Tue,  4 Mar 2025 14:40:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BdLAZTJV"
-Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
+	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="p3bK6d8D"
+Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82911253B5E
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:37:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AEDB207E19
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741099060; cv=pass; b=FkenrMElodijuruAvfaFSB8rXZ0vOPsVLxeiFCUMgIpe6OQlRrCXhKolFF+Bkynf4kquIK88Ek1L04rqtCQO+L0JdgNo5JDDRVv7oo3xMjXnjtuZPQ7tPb1I54TRk7VQCRNwYEi+q6+MoboDtb0wPu9NxZd5sL6AjeUsMSeDxQ4=
+	t=1741099217; cv=pass; b=hkoOEyIVLg3Wq7IXlgR5KIvxDwZY3wqVdx2n316xyiJxmri16oJ3C7TjXm8cZnVg0HZiKw2su+jO1O2cc08PeJJUZxcCbSa/LEPdh39SrFvAi9YvAxg7neMVvsrknUTSNZMF7BRwio25QguTSTCBlF8dRqE9QNSm3Li49F98Y9k=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741099060; c=relaxed/simple;
-	bh=hIH1EtAXm1ZDL6e1wVVaoeBlRzWdkdD1nTbcRmTz+Y8=;
+	s=arc-20240116; t=1741099217; c=relaxed/simple;
+	bh=32Qik+C6Gy82VbaZ+W9H7pBMHl/CZaXxobg9NI2Xga4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r5rsTtsq7k6A0+i4vajUljapH+gjXHVidULOPxe6Mvo0MSNDX+mDbemZTWY17M4TeJkk4l35X2fJZ7sWBeGSoFGJkA1u+m9RxumDlfA4Bf08Tacsd5B02qnRnfq4QNi6Msg/G4X0UGgbtTPJb5JB4pKLEQPuzYVgs+C7yY48uoU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BdLAZTJV; arc=none smtp.client-ip=209.85.167.46; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; arc=pass smtp.client-ip=160.75.25.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=RYSLkuwirdMCYCBwhxcSeEThPYzmTl5j2wbmBNKUmHpCztgQOo8eYh6W8k1FB06ZZd4vGmJ0IIK5n+kAqY9xL25gRNOGejiOzOy9MLV237ivOBARuajyHefchszRx69eW1ybINQQ3kou9ZXKT9aFkJeP85avyKtgOjYkLMYW+SM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=p3bK6d8D; arc=none smtp.client-ip=209.85.221.48; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; arc=pass smtp.client-ip=160.75.25.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
-Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
+Received: from lesvatest1.cc.itu.edu.tr (unknown [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id B11E240CF4E8
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:37:37 +0300 (+03)
+	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 603E540D4DFA
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:40:13 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
+Authentication-Results: lesvatest1.cc.itu.edu.tr;
+	dkim=pass (2048-bit key, unprotected) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.a=rsa-sha256 header.s=20230601 header.b=p3bK6d8D
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dXC1v7lzFx4s
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:35:55 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dbM0GlJzFwjP
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:38:39 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 938B142755; Tue,  4 Mar 2025 17:35:38 +0300 (+03)
+	id 16F654275B; Tue,  4 Mar 2025 17:38:32 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BdLAZTJV
-X-Envelope-From: <linux-kernel+bounces-541595-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=p3bK6d8D
+X-Envelope-From: <linux-kernel+bounces-541609-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BdLAZTJV
-Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id 20ADA41B3C
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:41:42 +0300 (+03)
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id A6EE32DCDE
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:41:41 +0300 (+03)
+	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=p3bK6d8D
+Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
+	by le2 (Postfix) with ESMTP id 2551E41E09
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:41:27 +0300 (+03)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by fgw1.itu.edu.tr (Postfix) with SMTP id CAAF1305F789
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:41:26 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C32EA3BE261
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:34:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BCC2162C72
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:41:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EFE51FC7E6;
-	Mon,  3 Mar 2025 11:34:41 +0000 (UTC)
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51AD4202F65;
+	Mon,  3 Mar 2025 11:40:24 +0000 (UTC)
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9157A1F4170;
-	Mon,  3 Mar 2025 11:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43F920296C
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 11:40:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741001678; cv=none; b=aNqxkUPM+mZUJBVfQjpbKzOmlfB2ime/p8CMPf52WkmWAXTeMWOD/4eVgaHhZcs+ud9fG38GJKBWkeG/1h+EHUFkGMk8jJ865Qg3rKEDJ7YVdyxxIb2gmSjlviHobKaKj9Pcx2NBP82ad2BfVLVq72g7OUqlX/I1D/ZvQV3pVQg=
+	t=1741002021; cv=none; b=Ch2ycr6idfAlIyRguf6XUiHCQMr4cHUOhbegOj8b0TMDNw0PSTIyaupPVHAIuQtsmCD9gtow+zaJHMIqU6TaouIBrs6ldCFMflrhNngtEXK6kFyb5cb5oxRaNH2KsILEi1+sWynL3ZZRT4fczgYqZ25a6vWdZv8w6zOzvgWt6Ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741001678; c=relaxed/simple;
-	bh=hIH1EtAXm1ZDL6e1wVVaoeBlRzWdkdD1nTbcRmTz+Y8=;
+	s=arc-20240116; t=1741002021; c=relaxed/simple;
+	bh=32Qik+C6Gy82VbaZ+W9H7pBMHl/CZaXxobg9NI2Xga4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QKSFa1KaPzaS4+Xx4v7JWXGR90ya3fir/W6Zh/59iqeS4T1+ycmLUvysh1hvbsESFPPEHdOD4PKYDr9sdL6KsGuFxanc9RAqpBG2lizq1CpoScZeNTK8WafguVO6GkcqvoldzyGTMSljeKspVD1KB/aPaZPicRDWDk4DqlsIrXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BdLAZTJV; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-54964f8ce4bso1072978e87.2;
-        Mon, 03 Mar 2025 03:34:36 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=kjhAt4eIT/UH82nLxU/wWPzUqb23+l30FrVs2omLN0wkMgxJTd5yXc21OtRffyBVnbJfhwh83rpLFwDkI+edBQHjXbzVVLPVDNHhWja72YRIMuciHAm9UXCB2CdEmKOXFOeVUVHVnvl9zfSrpIuXIma0AyDKZJPfoJIEYRgVhNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=p3bK6d8D; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-390ec7c2d40so2724433f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 03:40:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741001675; x=1741606475; darn=vger.kernel.org;
+        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1741002017; x=1741606817; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=M3bLf2ekL2mjEzD7tkujcNOqagMHRICtK+3JCb+oWjM=;
-        b=BdLAZTJV4ShtJlsbVaJR93jL81ZIG+17P6FJfrETUofCDZKZ1UYxFMZ3L7d5iNxs1X
-         GSLnb+44Qjui9e+cDQnCYnjWsevbvgk4JzgD5RnxrGZ7qSzohzxkQn9fB3o9ZtuwRFhe
-         xhrrwOKcvnZoDAbBRIBxDPreJmkX17v1nto71UY1QXDO+hX8+z+SQH+E26WnQ0np/k4g
-         eSFCfkT4uoeVpBODQ6gePalIiQxIHfbQpZsFmRzxxdVQsrjeGSR6Nd+7mz2m+fl+LLGo
-         kML5r4xe+DBcinmD6BzDhyBI1fd5sELhTNgvN2ra0Khx4r7eEMC3r083Ogld80/2ILvd
-         4vNg==
+        bh=4NtAA2UHYocmR2KbGMJPhzPhzOIPXF5Y+cD7gkzWW/A=;
+        b=p3bK6d8DrjrhK0/qO2+o0XXclKbDdJbPyaEJqebJFnj6UftGu/Wlp0g0z460UuK8eQ
+         jqP5dZiDvaf13EWZxYf429fumpQf+BuKXNtjjUA1NBj79GysscTVo0cg0j48fqmhX5NV
+         9efVLZPrgc0Lj4xKJGCHbJmoh8/VB/GderaMZxkIzlOfM8yT/xfitEr/NJBqrSttwzsv
+         D2S8SLnciUvPRACHbdtcIkpSchM5xwppp3eKPT9K2p2QOLfBtVwD7D66BHHzvMMQDhR3
+         p5TyUVouF6jIyBsh7KwZIVWxs5mF+hJOLYmeHoxXDNdBYVQ5ilopY0Vx1AvSDV4gvTVv
+         9zZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741001675; x=1741606475;
+        d=1e100.net; s=20230601; t=1741002017; x=1741606817;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=M3bLf2ekL2mjEzD7tkujcNOqagMHRICtK+3JCb+oWjM=;
-        b=KBuZsHyzWwiNd5iXuwBWRNf6OZ/e3N0xNavXVgDhUKp31Nvrzd5FfnU23pKNmYEsjh
-         nYvjpcM3DEWz0sjF5Y3TxPwXWxOObiY0QI7/e0aH0KPx8l3Z1Ui5/CJAQ7aPng/SMIDQ
-         HKa9E3RifpQeMLr9BB2vytSCSANLx3FM/KIAUEPGZETQvAww2AIEN9VAxlYTrhjycUtq
-         tTEtXU+C0P0PvE6KEmZ249/sutVfyhu94VTBWQaUf3AsjtqwYTuj9vWi7ctF8xcxB5eh
-         6nSAUkOIoHld5nTobCW8/qcOGdPimdn06n1c6+ZWLC4uAMFL6hOxP4fzYomg6mhbzO6O
-         a0jg==
-X-Forwarded-Encrypted: i=1; AJvYcCU0DNwdfKvVLriaSNYAtVKH+Gs/tc80YmN8CaXgiZjO8IJER/fDreZvp2eI5gwwP2517hh0CwP3FKpOneu8@vger.kernel.org, AJvYcCXGt4cRmWmDTtV7YhYkNS83QUmOiSgwqdQH5kU3uHM90d/U+atSE/yWCNhUKK4m5x+PMLuy58AfUUM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjvjGCk4Krc5SfW05ooJgPObRsS2A/olDHfyshehB0lrk3k7Uh
-	BhwBQUBgfmZYCaQyQaqV0aZvi9d1FLhw04dCQpqmc3/srLjEcxW/
-X-Gm-Gg: ASbGncvzokYuFJndhG01x//wJACkqeIiDR/8GXaTIzP8Y0RgT1+56kllSgfRw2+Q8Dl
-	6G3KMxbc0PERwoJWyQrdKjiXpMeQBLDmTm5dYrQhFGWct9eVHq18ntnQakOhdOrP+YIhsTEYy6M
-	yP/oLV1i0sY9zlzk9xA9Wh7hc8JJwZ/pR+Q/xNCI5NYv0lwBW01e9l3fIObZQ081iI11U+SZlX7
-	6ciyB+56lmwEOdfcbFlFY5LhuKRTTdA3O9SzaKa9UiQUw9fo3VOkaMhOWqZti2Y8GvgZJHsZkln
-	Hk2xArp2Px6ufvw/5bzZ2DqaeN5W7cUDkFLhugCNDYtwUqCgR036zz6OBfzBnxRiI+5HLuSdpwo
-	nznU30EEeWiI=
-X-Google-Smtp-Source: AGHT+IEP82kzQb79FpLajjOBMO2V96WoIqxu0JlVkEgDMCgt2ecdJx0G1lKCMssIMejcLev9HvQw7w==
-X-Received: by 2002:a05:6512:3d0e:b0:545:576:cbca with SMTP id 2adb3069b0e04-5494c129f87mr4424033e87.8.1741001674446;
-        Mon, 03 Mar 2025 03:34:34 -0800 (PST)
-Received: from mva-rohm (mobile-access-2e8451-125.dhcp.inet.fi. [46.132.81.125])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54962415d13sm441244e87.257.2025.03.03.03.34.32
+        bh=4NtAA2UHYocmR2KbGMJPhzPhzOIPXF5Y+cD7gkzWW/A=;
+        b=BBfrxdcDTkV7QihRYcOrSea0Jh+mved6IG3uOdLbUwtc7fpnfzjbIoT6ZkwH8RFjE7
+         8bV2KzpRqzGBTl3AqNOiEOrVQiLI/OZCLDM9nhH++o3bMC5ecRVsfZKjuFUQq/JclNY2
+         4cGZX47fJ3GFslIPQNIOeAkHh2vmtGqjNTHpNJxXkEpTkYvUTGxBzxKvR2jK+3MTbHw/
+         y/VPc+LQKrKXwmhzGb6ihCcM3jTrMX0kUf+p1Q6+AAzSHyMn/L1Z2P7/mXUYi2NcIxwA
+         O2LUEzmZKzIBikJ7K7jmQ+TycjEGgmc1GauyZcwSb38Cg+B/T8qAZDf3N6KlkwldAtTa
+         1kqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVnNYUjYkq5pTN9FR0FESnWz8s/18hfmlQ5OlUnAcdp4DbU7EksNv3GjIr0xXrL9hWX3VQVDNZLHJLcNiI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHSjWN3xuypSQPglmGS/dvGTbcZgWHgLtK6LzjHhz+GYq/EZ6L
+	Lkq9vOMWdFjFtUASMLN/mJmZFHKfUykPbuzPZH26nUttPa3dyNTdWkHhxaAa3pA=
+X-Gm-Gg: ASbGnctyBpKJOeAAjD6bN9BnoK83hFY//qH/j3vhyOAAqQLCdEFzESAZVov767oWVi/
+	2hRyiGM+o9GmUqqQRxReB14nUCSoR/FF5zncg9PpAW6b2rJVpb78148LLB0HOFILT2mAYCCU0AK
+	p1nqtm8gcoBR9DvtF/ZlO6g2EsYoNrir2uvTN9DSrKo7Wvv6PsJiRyCb7nRxCsUiYIkvUDLkx9P
+	yFpy/AA4kPxjgr6z6q889bXu1vSM5sEMJe93aoN1R9gvYTOGyEdASU28brbLh9M++W6CiZFR5ph
+	f6fL6M09HpX5AJFZKQilPBz+7o9jg18mfYugkJv9YYO5G5Jj9A/XQk8juovYj1vDrSvtZq0P
+X-Google-Smtp-Source: AGHT+IFz1lKrp8HJjVJu85QHKOfDHRDkxYAgfR/PMWyeJaGKL7qzodzH7XjGqSVE9eCdgx8AE4rhHQ==
+X-Received: by 2002:a05:6000:144c:b0:391:c3a:b8ae with SMTP id ffacd0b85a97d-3910c3aba7emr2411994f8f.23.1741002017110;
+        Mon, 03 Mar 2025 03:40:17 -0800 (PST)
+Received: from jiri-mlt.client.nvidia.com ([140.209.217.212])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e479596dsm14212516f8f.7.2025.03.03.03.40.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 03:34:33 -0800 (PST)
-Date: Mon, 3 Mar 2025 13:34:28 +0200
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Nuno Sa <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	Guillaume Stols <gstols@baylibre.com>,
-	Dumitru Ceclan <mitrutzceclan@gmail.com>,
-	Trevor Gamblin <tgamblin@baylibre.com>,
-	Matteo Martelli <matteomartelli3@gmail.com>,
-	Alisa-Dariana Roman <alisadariana@gmail.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: [PATCH v5 09/10] MAINTAINERS: Add ROHM BD79124 ADC/GPO
-Message-ID: <155ab72096f96a0bcd30dea58c681322e825d09b.1740993491.git.mazziesaccount@gmail.com>
-References: <cover.1740993491.git.mazziesaccount@gmail.com>
+        Mon, 03 Mar 2025 03:40:16 -0800 (PST)
+Date: Mon, 3 Mar 2025 12:40:13 +0100
+From: Jiri Pirko <jiri@resnulli.us>
+To: longli@linuxonhyperv.com
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>, 
+	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Shradha Gupta <shradhagupta@linux.microsoft.com>, Simon Horman <horms@kernel.org>, 
+	Konstantin Taranov <kotaranov@microsoft.com>, Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>, 
+	Erick Archer <erick.archer@outlook.com>, linux-hyperv@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, Long Li <longli@microsoft.com>
+Subject: Re: [PATCH] hv_netvsc: set device master/slave flags on bonding
+Message-ID: <52aig2mkbfggjyar6euotbihowm6erv3wxxg5crimveg3gfjr2@pmlx6omwx2n2>
+References: <1740781513-10090-1-git-send-email-longli@linuxonhyperv.com>
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -147,69 +140,60 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="wDFfFH4w+vNHhxIE"
-Content-Disposition: inline
-In-Reply-To: <cover.1740993491.git.mazziesaccount@gmail.com>
-X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6dXC1v7lzFx4s
-X-ITU-Libra-ESVA: No virus found
-X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741703771.35422@zPX8+Is1o+BpgIVwXvZVcA
-X-ITU-MailScanner-SpamCheck: not spam
-
-
---wDFfFH4w+vNHhxIE
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1740781513-10090-1-git-send-email-longli@linuxonhyperv.com>
+X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
+X-ITU-Libra-ESVA-ID: 4Z6dbM0GlJzFwjP
+X-ITU-Libra-ESVA: No virus found
+X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
+X-ITU-Libra-ESVA-Watermark: 1741703933.70141@yr+ryhOgFrcvgXRin51PvQ
+X-ITU-MailScanner-SpamCheck: not spam
 
-Add undersigned as a maintainer for the ROHM BD79124 ADC/GPO driver.
+Fri, Feb 28, 2025 at 11:25:13PM +0100, longli@linuxonhyperv.com wrote:
+>From: Long Li <longli@microsoft.com>
+>
+>Currently netvsc only sets the SLAVE flag on VF netdev when it's bonded. It
+>should also set the MASTER flag on itself and clear all those flags when
+>the VF is unbonded.
 
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
----
-Revision history:
-RFC v1 =3D> v2:
- - Drop MFD and pinmux drivers
----
- MAINTAINERS | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 5b96fb864227..2e4416b59930 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20547,6 +20547,11 @@ S:	Supported
- F:	drivers/power/supply/bd99954-charger.c
- F:	drivers/power/supply/bd99954-charger.h
-=20
-+ROHM BD79124 ADC / GPO IC
-+M:	Matti Vaittinen <mazziesaccount@gmail.com>
-+S:	Supported
-+F:	drivers/iio/adc/rohm-bd79124.c
-+
- ROHM BH1745 COLOUR SENSOR
- M:	Mudit Sharma <muditsharma.info@gmail.com>
- L:	linux-iio@vger.kernel.org
---=20
-2.48.1
+I don't understand why you need this. Who looks at these flags?
 
 
---wDFfFH4w+vNHhxIE
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmfFk8QACgkQeFA3/03a
-ocUebgf+KOZVTupqMHJ1wPEqgTrD4SUVuhs8pHOvDFao/DTG8OwV8sgVd0TYCcBO
-zCdoj8i17vb0DbWAGLbp4pccSCaUf/DOcOjISfiTCuoDAz1u0RWCNimOKmMIyU5x
-fKIqmnsFp3jztJHIB6YriEUOlHUEX9eNNZt6A3U39CGs+azqHThxByIWXjykmJwv
-rItqFdGnrhsTXIjaH9icQ4WWYbDXJBGukV9Mr7xqpLfkWZjwWGMlaR18MtjNT+Mt
-d6S9fF0dsUvzLCLXVJV6ZrBer5TV+R4VIZH4mD/iAnPIFsVoRQe6MAwWLJExZ5dO
-h8poDH9Gf18kslPITvMcEsTsBtUfcA==
-=XRnx
------END PGP SIGNATURE-----
-
---wDFfFH4w+vNHhxIE--
+>
+>Signed-off-by: Long Li <longli@microsoft.com>
+>---
+> drivers/net/hyperv/netvsc_drv.c | 6 ++++++
+> 1 file changed, 6 insertions(+)
+>
+>diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
+>index d6c4abfc3a28..7ac18fede2f3 100644
+>--- a/drivers/net/hyperv/netvsc_drv.c
+>+++ b/drivers/net/hyperv/netvsc_drv.c
+>@@ -2204,6 +2204,7 @@ static int netvsc_vf_join(struct net_device *vf_netdev,
+> 		goto rx_handler_failed;
+> 	}
+> 
+>+	ndev->flags |= IFF_MASTER;
+> 	ret = netdev_master_upper_dev_link(vf_netdev, ndev,
+> 					   NULL, NULL, NULL);
+> 	if (ret != 0) {
+>@@ -2484,7 +2485,12 @@ static int netvsc_unregister_vf(struct net_device *vf_netdev)
+> 
+> 	reinit_completion(&net_device_ctx->vf_add);
+> 	netdev_rx_handler_unregister(vf_netdev);
+>+
+>+	/* Unlink the slave device and clear flag */
+>+	vf_netdev->flags &= ~IFF_SLAVE;
+>+	ndev->flags &= ~IFF_MASTER;
+> 	netdev_upper_dev_unlink(vf_netdev, ndev);
+>+
+> 	RCU_INIT_POINTER(net_device_ctx->vf_netdev, NULL);
+> 	dev_put(vf_netdev);
+> 
+>-- 
+>2.34.1
+>
+>
 
 
