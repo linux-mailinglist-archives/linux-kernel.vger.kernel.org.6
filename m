@@ -1,209 +1,143 @@
-Return-Path: <linux-kernel+bounces-541264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BB41A4BAB4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:24:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67892A4BABA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:25:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BD2116F148
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:24:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BFF03B052B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:25:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41FF81F0E43;
-	Mon,  3 Mar 2025 09:24:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 047ED1F0E4F;
+	Mon,  3 Mar 2025 09:25:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FSz0Xm2N"
-Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="AZS5c8pK"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA84B13C8E8;
-	Mon,  3 Mar 2025 09:24:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD991F0E38;
+	Mon,  3 Mar 2025 09:25:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740993860; cv=none; b=ZRwPMXqDXOLlv2hXmFimfD5QGhN+2QQdz422lcvnoxLnMhT3lWYsx9r19LsNerhjWUS1c3KLaw+qJcSE23byNl9UTASnLC0YIJkpyOziVZDasfZ3jl3MVNED6utBoeMYyiN/JQBY4HHFbZrHpNu6FUtU0a+iUz4os5jIherSNeE=
+	t=1740993912; cv=none; b=jdBbsXEYiOdBCE2zkC2oQt8pu4sQI2WLseRfrj/0rzAc175eWkvoVKE0AegfvmNiO2FivYlz0wlJ2VfHOidHmeriGvxqcLFZNpwbucQXVWc+Ig0PczLoR+sxa5vHEhlYCSpL4075j8Ns05137nNzeby58EekQEaaRzejslWTTHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740993860; c=relaxed/simple;
-	bh=jv8QNOnGRtS9x1BC651dA4iBv2EFIu2vDnFzfk0OtiM=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=K2s6KcjyMRCesLhee0K6ExEh+FR4KmDB90JGg+42/ZBj6lrr6FAcF+GVTctnWLAe/7sbm61rGar8kuftqDi9+e+Rn+HF5J5s8FwIOgsNCo4kjUC/mxCI3seO1uxTk59hrCTGip5x2I3HSs5MqPcDvmDZzTl3OwOk1f0GnY+Nvjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FSz0Xm2N; arc=none smtp.client-ip=209.85.160.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-2bcc5c887efso2066605fac.2;
-        Mon, 03 Mar 2025 01:24:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740993857; x=1741598657; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=StT21v5HBuVlAjcwwtmfuWVN4spL/bYiZH8r7Pf+vYo=;
-        b=FSz0Xm2NA0m6Lpi7CnMZ46yRlBFoJAesydVPriutGpuCBlejgTZaTI8tin/9WZDHFp
-         zbcKpdQbu2LNyJupQklemscxFkq64wTLYcJL6NcWAv/i9SYpYIbKc2gc4ZFNZRCfgTcV
-         uMLj5lFr8kJPozdy+xg5J6soTRlIOEm0oGv5vM9RfkE3+JsCeWIMHIR9p+r9jdVu5s6x
-         9nsp5W5ESIPIPjpAyzW5tjip7s75TPHKkXl79gjA78Ky7n4ybLtSE6bzlLUHTMN/Lu9V
-         yuONhIwprbgUb/G1kPGrEte3QEWhWftx4j2wBx9Zh9ShYgbf/DkwvNAne5KMgwXDYEV7
-         5YOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740993857; x=1741598657;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=StT21v5HBuVlAjcwwtmfuWVN4spL/bYiZH8r7Pf+vYo=;
-        b=HB0io2UYa1Io9OSumzKTcCaY/zOhnDzjjS+1N37NvZBQvyohC36Ryx7Y31iheZ0pej
-         VnlSAue7VOAGe/s5y54z12sHF809Mme88L7LR0ygGYGSiwYVCnBp2Dg0uFnab9Zrapj2
-         8vbVoeF8vuhciCnJp3JBeaqydGdzgS3YERGLcCtLrrFdIJl/+3qp5XmW0b3kwnyyyoyb
-         1JgKxvRNgNo64ekchn1jCBuNgFUON5kHPheF71kxAi5mkfe8yeZNdBWh8DGpkb5+IQw9
-         qXKVJ6pv2vcHFpRfDsLI7O2Tt5jkKooJQwAB/nXYm1wS0B9w0DKnJNJwiaf7jXqjykHs
-         zRMw==
-X-Forwarded-Encrypted: i=1; AJvYcCUX7Dq3ycgFdHDF8Nfx+WtePqJMa4QZM5Th14SUghj4KD/l/mvgsA0HrA8QpfVUEfYvKJ5PvRcF+/5sc5KY@vger.kernel.org, AJvYcCWs0W4BZOob2J5UF0XCTQnMi4Dc+8InQApZeGjZv1SBoNIqm8fNsE3Oj3rIuvGXo3a6SDer/vIfna2g@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxo9ilaHwGpnVCyuU9QG/6wtYoqqJgP7SM0iybkQyb0l0vHcM4p
-	f4Vrl/vhf3ooKXgRELjqWeAxJHgLLDRI/rJOsY40JVPr3S6PQdxIpXLqV/gBWpm2+Tf6qcl5HJ1
-	RHTtvK8ubqQU4WjFPbOs/vHFMeTc=
-X-Gm-Gg: ASbGncuouSb6g7z2bnA2KXt4J4/lJX9a2VplfPf8ZKaopHcaYqGWBRh98q9evJYuFqJ
-	cI218Xb2IGzAjJyTPmSbSrHxKL/x0LULoeXfFA3y6tVPqH6sG4ImY4IymUb8qBXaDUx5GjNlvLY
-	Rz0u5swBB6rxxC+zOFgVUQKAER5A==
-X-Google-Smtp-Source: AGHT+IF16/kJli1v2uTtADRoHDtMAoUcPO2J+zPdLjC8SofWOkXju3fPYSbHZB7Jnjo8/j/zSdOmfzK79E/Gia8vEc4=
-X-Received: by 2002:a05:6871:6285:b0:29e:6394:fd4a with SMTP id
- 586e51a60fabf-2c178317c67mr7686734fac.2.1740993856737; Mon, 03 Mar 2025
- 01:24:16 -0800 (PST)
+	s=arc-20240116; t=1740993912; c=relaxed/simple;
+	bh=g2u4KWHAbEr61K3IGP6F6Dzv/QjB4YrY/gbIp2B/7eE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pURWHTvJj53nfJPW2rI4o8VEL4UOxyqogTFzIlEvpLFM3WdFZq0gxKfNlO/QnrXI3kDHxsJ4NyX6iVr2mBuB4w8KAS8UrzQQeDbc2x/iubEAMDrUoYH1aUOHDzvpFmOMP+6FLtoLcRZQNiGEQbqLkDSZOIR5LIVSRBlrQIxcw0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=AZS5c8pK; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5239DJnF006969;
+	Mon, 3 Mar 2025 09:24:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=kjOu7pwLW51iYtAOgoncP2baULu3m3yha+h5Jk0Py
+	M0=; b=AZS5c8pKGQ+NDgRkHfBJ3uMDzJyH3/0hWTV6htap0uD1wCu9sLomUi2su
+	/DFS0MtPP+6VL6kmt/86gyPyAPxLucoty+8emDOw6tIgS4gv9abx/yUEOkSLso5M
+	9R6LSVo4/n/vxin3SsFbFskMbqM/cvSoMlyQBweyXU5EajPLVjk0lZ1q118LU5PS
+	4DnZlny/U3fcJbrvy3D8mKLNCSaaa2MBzow11AaIlmVInhttQj2yluTmkylbl63n
+	I0mr7cwiVWDW22uO0yYbp8KW3wYA+yzv7khlyRIiLg04RCFe4YK3Jmq/vZic5a0a
+	taJSuL6tapJElGmpXYJUxbWzBnZew==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 454rrnks1g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Mar 2025 09:24:58 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 5239DUO7007324;
+	Mon, 3 Mar 2025 09:24:58 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 454rrnks1e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Mar 2025 09:24:58 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5238U1cG013720;
+	Mon, 3 Mar 2025 09:24:57 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 454e2kecef-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Mar 2025 09:24:57 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5239OsQ618219458
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 3 Mar 2025 09:24:54 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6AC612004B;
+	Mon,  3 Mar 2025 09:24:54 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0A6CF20040;
+	Mon,  3 Mar 2025 09:24:52 +0000 (GMT)
+Received: from li-621bac4c-27c7-11b2-a85c-c2bf7c4b3c07.in.ibm.com (unknown [9.109.219.153])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  3 Mar 2025 09:24:51 +0000 (GMT)
+From: Saket Kumar Bhaskar <skb99@linux.ibm.com>
+To: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org,
+        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+        jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+        kan.liang@linux.intel.com, hbathini@linux.ibm.com,
+        atrajeev@linux.vnet.ibm.com
+Subject: [PATCH] perf/hw_breakpoint: Return EOPNOTSUPP for unsupported breakpoint type
+Date: Mon,  3 Mar 2025 14:54:51 +0530
+Message-ID: <20250303092451.1862862-1-skb99@linux.ibm.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Strforexc yn <strforexc@gmail.com>
-Date: Mon, 3 Mar 2025 17:24:06 +0800
-X-Gm-Features: AQ5f1JoPn6AnvkWK8AKFf6LPWhDzHWifc3pnJcAlMqH7z6CRxab0PmEVW2HxQDE
-Message-ID: <CA+HokZqTi7=ossgk7gKqJY_pViaso=Hy0-iRj8v3H5A35Bxhqw@mail.gmail.com>
-Subject: [BUG] Kernel BUG in ext4_write_inline_data (Ext4) on 6.14.0-rc4 -
- Possible Regression**
-To: "Theodore Ts'o" <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: z-Zl_pgDd762yZl9RWOFN818MhGm5ZpY
+X-Proofpoint-ORIG-GUID: enF0SJJ43EYkPngJh6ffURjuLsPJNpbv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-03_03,2025-03-03_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 clxscore=1011
+ mlxscore=0 suspectscore=0 adultscore=0 bulkscore=0 spamscore=0
+ impostorscore=0 priorityscore=1501 phishscore=0 malwarescore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2503030068
 
-Dear Linux Kernel Developers,
-I=E2=80=99ve encountered a kernel BUG in the Ext4 filesystem on Linux
-6.14.0-rc4 during an inline data write, which may indicate a
-regression from prior fixes. Here are the details:
+Currently, __reserve_bp_slot() returns -ENOSPC for unsupported
+breakpoint types on the architecture. For example, powerpc
+does not support hardware instruction breakpoints. This causes
+the perf_skip BPF selftest to fail, as neither ENOENT nor
+EOPNOTSUPP is returned by perf_event_open for unsupported
+breakpoint types. As a result, the test that should be skipped
+for this arch is not correctly identified.
 
-Kernel commit: v6.14-rc4 (Commits on Feb 24, 2025)
-Kernel Config : https://github.com/Strforexc/LinuxKernelbug/blob/main/.conf=
-ig
-Kernel Log=EF=BC=9A https://github.com/Strforexc/LinuxKernelbug/blob/main/b=
-ug_ext4_write_inline_data/log0
-Reproduce.c: https://github.com/Strforexc/LinuxKernelbug/blob/main/bug_ext4=
-_write_inline_data/repro.cprog
+To resolve this, hw_breakpoint_event_init() should exit early by
+checking for unsupported breakpoint types using
+hw_breakpoint_slots_cached() and return the appropriate error
+(-EOPNOTSUPP).
 
-A kernel BUG is triggered at fs/ext4/inline.c:235 in
-ext4_write_inline_data, causing an invalid opcode exception. This
-occurs during a sendfile64 operation writing inline data, likely due
-to an assertion failure (BUG_ON).
+Signed-off-by: Saket Kumar Bhaskar <skb99@linux.ibm.com>
+---
+ kernel/events/hw_breakpoint.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Location: The BUG occurs at a BUG_ON in ext4_write_inline_data, likely
-BUG_ON(pos + len > EXT4_I(inode)->i_inline_size) (line 231), with
-pos=3D96 and len=3D97 (total 193 bytes).
+diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
+index bc4a61029b6d..8ec2cb688903 100644
+--- a/kernel/events/hw_breakpoint.c
++++ b/kernel/events/hw_breakpoint.c
+@@ -950,9 +950,10 @@ static int hw_breakpoint_event_init(struct perf_event *bp)
+ 		return -ENOENT;
+ 
+ 	/*
+-	 * no branch sampling for breakpoint events
++	 * Check if breakpoint type is supported before proceeding.
++	 * Also, no branch sampling for breakpoint events.
+ 	 */
+-	if (has_branch_stack(bp))
++	if (!hw_breakpoint_slots_cached(find_slot_idx(bp->attr.bp_type)) || has_branch_stack(bp))
+ 		return -EOPNOTSUPP;
+ 
+ 	err = register_perf_hw_breakpoint(bp);
+-- 
+2.43.5
 
-Cause: The write exceeds the inode=E2=80=99s inline size , triggering the
-assertion. Higher-level calls  fail to validate the size, allowing an
-oversized request.
-Context: Syzkaller=E2=80=99s sendfile64 crafted a write to an inline Ext4
-inode, exposing this issue.
-Regression: Ext4 inline data handling has had prior fixes . This BUG
-suggests a regression where size validation was weakened, allowing
-invalid writes to reach the assertion.
-
-Impact: The BUG causes a kernel panic (DoS). While not directly
-exploitable beyond that, it indicates a validation gap.
-Request: Could Ext4 maintainers investigate? This appears to be a
-regression from prior inline data fixes. Suggested  Add size
-validation in ext4_da_write_end or ext4_file_write_iter before calling
-ext4_write_inline_data.
-
-Our knowledge of the kernel is somewhat limited, and we'd appreciate
-it if you could determine if there is such an issue. If this issue
-doesn't have an impact, please ignore it =E2=98=BA.
-
-If you fix this issue, please add the following tag to the commit:
-Reported-by: Zhizhuo Tang strforexctzzchange@foxmail.com, Jianzhou
-Zhao xnxc22xnxc22@qq.com, Haoran Liu <cherest_san@163.com>
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-------------[ cut here ]------------
-kernel BUG at fs/ext4/inline.c:235!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 1 UID: 0 PID: 12157 Comm: syz.0.58 Not tainted 6.14.0-rc4 #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/=
-2014
-RIP: 0010:ext4_write_inline_data+0x346/0x3e0 fs/ext4/inline.c:235
-Code: d0 f6 4b ff e8 cb f6 4b ff 42 8d 6c 25 c4 41 bd 3c 00 00 00 45
-29 e5 e9 e8 fe ff ff e8 b3 f6 4b ff 90 0f 0b e8 ab f6 4b ff 90 <0f> 0b
-e8 63 95 ac ff e9 fb fd ff ff 4c 89 f7 e8 56 95 ac ff e9 96
-RSP: 0018:ffffc900043e7628 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff888012c251f0 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000060
-R13: 0000000000000061 R14: ffff888012c2579a R15: ffffc900043e76c0
-FS:  00007f2c042b2640(0000) GS:ffff88807ee00000(0000) knlGS:000000000000000=
-0
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fc99327fc00 CR3: 000000006a448000 CR4: 00000000000006f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- ext4_write_inline_data_end+0x25f/0xc20 fs/ext4/inline.c:774
- ext4_da_write_end+0x201/0x2d0 fs/ext4/inode.c:3080
- generic_perform_write+0x51c/0x910 mm/filemap.c:4204
- ext4_buffered_write_iter+0x11a/0x440 fs/ext4/file.c:299
- ext4_file_write_iter+0x350/0x420 fs/ext4/file.c:717
- iter_file_splice_write+0xa0a/0x1080 fs/splice.c:743
- do_splice_from fs/splice.c:941 [inline]
- direct_splice_actor+0x194/0x6f0 fs/splice.c:1164
- splice_direct_to_actor+0x343/0x9c0 fs/splice.c:1108
- do_splice_direct_actor fs/splice.c:1207 [inline]
- do_splice_direct+0x176/0x250 fs/splice.c:1233
- do_sendfile+0xa79/0xd90 fs/read_write.c:1363
- __do_sys_sendfile64 fs/read_write.c:1424 [inline]
- __se_sys_sendfile64 fs/read_write.c:1410 [inline]
- __x64_sys_sendfile64+0x1de/0x220 fs/read_write.c:1410
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcb/0x260 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f2c033b85ad
-Code: 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 f3 0f 1e fa 48 89 f8 48
-89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
-01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f2c042b1f98 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
-RAX: ffffffffffffffda RBX: 00007f2c03646080 RCX: 00007f2c033b85ad
-RDX: 0000000000000000 RSI: 0000000000000007 RDI: 0000000000000006
-RBP: 00007f2c0346a8d6 R08: 0000000000000000 R09: 0000000000000000
-R10: 000080001d00c0d0 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f2c03646080 R15: 00007f2c04292000
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:ext4_write_inline_data+0x346/0x3e0 fs/ext4/inline.c:235
-Code: d0 f6 4b ff e8 cb f6 4b ff 42 8d 6c 25 c4 41 bd 3c 00 00 00 45
-29 e5 e9 e8 fe ff ff e8 b3 f6 4b ff 90 0f 0b e8 ab f6 4b ff 90 <0f> 0b
-e8 63 95 ac ff e9 fb fd ff ff 4c 89 f7 e8 56 95 ac ff e9 96
-RSP: 0018:ffffc900043e7628 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff888012c251f0 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000060
-R13: 0000000000000061 R14: ffff888012c2579a R15: ffffc900043e76c0
-FS:  00007f2c042b2640(0000) GS:ffff88802b600000(0000) knlGS:000000000000000=
-0
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f2680f65e70 CR3: 000000006a448000 CR4: 00000000000006f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-Regards,
-Strforexc
 
