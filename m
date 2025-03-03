@@ -1,414 +1,229 @@
-Return-Path: <linux-kernel+bounces-542349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A24FA4C8E3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:12:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85B79A4C8FF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:15:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 872FD3B3C4D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:04:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 401353B3A0F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:04:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B811B250C0A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382482512D2;
 	Mon,  3 Mar 2025 16:46:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Ai17qirI"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2046.outbound.protection.outlook.com [40.107.94.46])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TYsBl577"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEFA0250C00;
-	Mon,  3 Mar 2025 16:46:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741020398; cv=fail; b=d/QKNQASoIiOiC+0m2bP/akCdXRAgQEGUTY5aJG5ISlLUSvKsr8m+cUv1Cx6m5ozpQt6N6I79ealFX4dLGviBNZo0RznEd5E6XugOfPlga1WGbuabVQ+zLiTGp/F+bbImez4Rl72IKsEZePOnapE0mlWgU0I9OIkdULPjASjoeI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6909250C12
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 16:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741020398; cv=none; b=QmuXtCEixq/3uqHRCKKcPcExmcBiC+qScggdNVU21YDQ6/PoFMGCXQKtCaxkmNIxOrLsTZb1r8LeN5rLFQHlJVyLMocrbNDEe4F4OPOYBkWDI2sFxOy5o5nCjP82VxtuEnYFJu5OtsDCmhn+8yJKIyCrP6dIaf1IGjcz3WPtjbY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741020398; c=relaxed/simple;
-	bh=nrcs9wJJmGWQq+mDqL7cZD/IPzovpZXp2/m8tcnUgeY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=MJXu3jKBLW4fnz0ByD/zmoCgbP4WdaDV9E1hftovV3bOZNiL56qMw7FqDzZCra2E7Xjjk6E8kkYTeZtrbD09TBMTjP1UdG6hNeu4u67V5dNPmwCs6j7IsaLWfgV0pBnhHgbqqBhLdSf+l1FEQxqnitiJCRUcNGZ7XjwJTc5EYCc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Ai17qirI; arc=fail smtp.client-ip=40.107.94.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LpZoPPu0R6hbuv1zv9o+eRzqJOxoHhjdUnp8p9RoFzI307nuD+tfFMxKjiLcpXibHlQpaiVL7dzgc/foRENNp3VizjP0k/4QRZMsKqYWPIufRpUxSbIQEKVVWZXC+Tb8oLPfACMomdlkB5dC7YK9LK+8dirIeudU6vPfHKuuYRuw8BUiOgD41ULDfjd7IPVok0LGMUh3DAyF5LK6f5ZtzP3v7pUIVIZxQQCPonEofIYeEek7GGz9chhubHLLygUJfC7oggjZ24SryMQDppoB0m8aJSsTBV1kMoHn71JRsRgos0y1a5MgKOtu+L8fsZM9z5ckU606CsPdruNffWguHw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=73aZoLwisempMCQYIACR1TJtUp8gKeJF1zT0A/kDC/8=;
- b=ml2VwfKDiP0DiS1cuGe+rp3ftKfJ/l3V/viunRC07xc3UlZnRhxeycq7uoePIWBpjIuaObSymmSNZ9aoSRk82epV+sw2Qp/lhYUy7ENL6o41QT/ayd8J3+7QtSJmO+51/7F5pdPjLVvlE4BWwFbw47i6qr62LzqzmIoB3x8D4RDRMCQvGbL4NvC6WYbvrwvBVmuy7yBjOmf8yw4eUqIgUYCIgr29QQKDNuwzvMp1CtZBrTh0uL/Myw2/5oOga/voL1N4Nk7D3H/AtIRWzJrfSNyf/uc+kAapNEkbL0Juimzzt70LqxJfn9XNaHVAvCLVrBTRr3KhuKu4UaAoBPJ0og==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=73aZoLwisempMCQYIACR1TJtUp8gKeJF1zT0A/kDC/8=;
- b=Ai17qirIzf18UG55V7Zdzyd8OZkowBkViVYhxf6gnI/64Jy2DVBO0bZLvYcbaT7kTu/0JTA/u0JN9Pwa8jGM4M9ErMHbqc8e7qwV22qRI7I8S9/38HUX6pB77KI5qXJoUVSfcLIx4tM28W1IK5OrEwGe7f0csHtkA62joisCuTI=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by DM4PR12MB5964.namprd12.prod.outlook.com (2603:10b6:8:6b::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8489.25; Mon, 3 Mar 2025 16:46:29 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%4]) with mapi id 15.20.8489.025; Mon, 3 Mar 2025
- 16:46:27 +0000
-Message-ID: <939e3b28-f11f-48ed-98b9-b5b5ef77eb0e@amd.com>
-Date: Mon, 3 Mar 2025 10:46:26 -0600
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] Input: atkbd - Fix TUXEDO NB02 notebook keyboards
- FN-keys
-To: Werner Sembach <wse@tuxedocomputers.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-References: <20250303161228.437604-1-wse@tuxedocomputers.com>
- <20250303161228.437604-2-wse@tuxedocomputers.com>
-Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <20250303161228.437604-2-wse@tuxedocomputers.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA1P222CA0069.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:806:2c1::29) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+	bh=F6HNbgsPWAN5LWQUdNVC3XbuFJZN56aHKHYxhDstltg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aGKdo89QNkgJbyyxIFinUfJqtDhmqlchUMIZuolLSLMQLhH60TG+TyQ8Jqug7naABnFzDRXuiXzO4AyP1mF9OT3DS/0n2PfhNSY3qXoaPzx4bEsP0fWm4pXbRNnJSGzVaR7DXJr9ynK2gxh08ssA7U/cFHIQUuk1+Wnf3tAm0js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TYsBl577; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741020395;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=dSm9FbqleokqOgHDmRDUnZh4oGvfFBiZ+uQxTGBWfyE=;
+	b=TYsBl577B+KMfFeh52w5ygiPtNOB7JZiUD0aYVtNwJiDuriXMvuSGl8sl8TDXRjDPNiY7k
+	+Mvq2JgjO9gAhBOb51ZN8LSSzXxXNwMfvpXbuN0ipo3LKkx7jfaUW/9B+H+ow0NIPyCgyD
+	P3yvJx5I+VZWMjHH7ovYTl03viBdYcM=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-691-yY8Dh8-VNQOzvnxby7i6rw-1; Mon, 03 Mar 2025 11:46:32 -0500
+X-MC-Unique: yY8Dh8-VNQOzvnxby7i6rw-1
+X-Mimecast-MFC-AGG-ID: yY8Dh8-VNQOzvnxby7i6rw_1741020391
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43ab456333aso41626835e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 08:46:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741020391; x=1741625191;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dSm9FbqleokqOgHDmRDUnZh4oGvfFBiZ+uQxTGBWfyE=;
+        b=vP1/uyMx6+XFe2QtCnesLuhKhsm2cGVEUkFQ4spOmOo92aZqodTiMMBHEAGCp3ow5X
+         dNL/x9XvBRrVWU6Ii0rhE5+Io2oiKaz65TxetgH7sivHrfWkSoMk/uoM2nlT0FLnAD58
+         ZaBj8pF2ozOomuuBEjWWwy8XDju8GJWKNJkDX+r3bUAelbMLjIaBv4UUSRDs5JMgPhrW
+         P7UKECdyjq8sQ6L3rrSFdKniP5xiCDJVJflTETpV/vr12vRNlfWMuPKyqVruMqCPHxn/
+         cP69imbq5c0BvNTOr4i2mRy3DFJeldAffOsVar4/3zD/XuXiEUiZvFRul6jazJv3GOZr
+         4aoA==
+X-Gm-Message-State: AOJu0YyBh3U/N15isStuspw4KVuJzHwB54IAC4o5mNh117LmVlpc+BuL
+	pjrwUBX/pukRh09xj1TXKrAUteYe3EqFGPfYFryN/75+dsOUUmQp6Jd0PNgQMXW69cwfM/U20or
+	iCbx6TMWC6liqA3w8MSLm88bN2Id6tH7oWMvR1hNeOgTLe4080NTlV9Be5pUMlQ==
+X-Gm-Gg: ASbGncsye/VX7x+WCLSQWOsu8QKRKFZYMsFjKuQWMt7TMGF63pjduO/YKFITjYGynzf
+	rSDnR/jvkCijzMQaqyLLzl1M4q1GsnDLgPML4LYxGfzUXnTzmahEFekzlSydDrOPbiYeOTJ1zBW
+	PHevIKjt9WD9rfvoQ2iVY8R0r23inqdG+JuCBzGtySKR3Me9fb7SJEpm5k7Wx2Ehkjg72KRAJ+k
+	ZjNJ2gkjb0KTIQ0OTwEOGOoI81+LPbiBizkwtiBaFHPGHe2RE7bO5EDtnoUzQxp5DxATDIB7ZHq
+	IzYDNuAJIAHKEC5MTzro0wtDfH62ipV1SV5Ouj3GzqUyqJJLB/asTTFJRHvmzyDgPPS2RU2piFr
+	B6Fm2Y9p0o9x9BWyGTHBvCLHKdvmKitRKRGBXS6Q9m0I=
+X-Received: by 2002:a05:600c:4fd3:b0:439:a255:b2ed with SMTP id 5b1f17b1804b1-43ba66e5f09mr139944085e9.9.1741020391080;
+        Mon, 03 Mar 2025 08:46:31 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFfYzwt9QxpbKClJYXe8+pF5oEzRieGO2Rkc5PIh9FjKKRoO2TIkQQs6doEwSSc3wdltpwpDg==
+X-Received: by 2002:a05:600c:4fd3:b0:439:a255:b2ed with SMTP id 5b1f17b1804b1-43ba66e5f09mr139943845e9.9.1741020390633;
+        Mon, 03 Mar 2025 08:46:30 -0800 (PST)
+Received: from ?IPV6:2003:cb:c734:9600:af27:4326:a216:2bfb? (p200300cbc7349600af274326a2162bfb.dip0.t-ipconnect.de. [2003:cb:c734:9600:af27:4326:a216:2bfb])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bbbff18b3sm57280375e9.24.2025.03.03.08.46.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Mar 2025 08:46:30 -0800 (PST)
+Message-ID: <efc2a483-34a2-4445-8dcb-7168869834af@redhat.com>
+Date: Mon, 3 Mar 2025 17:46:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|DM4PR12MB5964:EE_
-X-MS-Office365-Filtering-Correlation-Id: 555699cb-f239-4b36-80e4-08dd5a72f110
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SWxJZ3JnSkthYkxhcDZzMmx3US84UFk5aTRGajFvTlJVRmY4VmhDTTk1NzRH?=
- =?utf-8?B?SnFCaFFud2FJdGdPMEVWb2J5TzBLWFh6YWNsdzJkRjVQREd3bWJ2SUY0cXhw?=
- =?utf-8?B?UDc2clNJMUhqRGg0UHZKSzdodU1CeldqRUVlRjFhcDhiUHpkTVYrZEVUS1pG?=
- =?utf-8?B?RDEzK29pOHNvSGRBbEplSE1rUkZZY01vQ20zRnpLWG9HYXNlNlFaUjIrNHdv?=
- =?utf-8?B?aHh5V1JocWxRcFVia2lmSy9TdG1RS3IveEdodW5LWTY3cWFDZ04rQzczYkRm?=
- =?utf-8?B?bVpQU0xKbG11dHhDMjhYYURCaVRGODRPZmdkSTJVMCtOeHJHK3JZVDVJRUZ0?=
- =?utf-8?B?TFlhaVYyVjY0cUpzN1RlNXJXWXVxZkg3OW84WVhJMy9uU2NRcDBkTk8wRnk3?=
- =?utf-8?B?akRwaWZyYnZ2eWpaZ1pFUGxhSnpOcDVmNTFvQjAzQmQ0cW9KRUlNV3JrcmQ5?=
- =?utf-8?B?UEM3S0JMVzJ0bVhyRHFSNlo1d3Joc0t3M2hFZUpwajluZWxUMEdWdUVYRENi?=
- =?utf-8?B?OUNzK2I5ZzVQdzJsdUdhTStCMEtYcjh1UllqVGkwRmQrSE1qb2lMaE90a0o0?=
- =?utf-8?B?T0U4aGpTTElGYjFqRG0zZUxnYVRmYVVMbXRieEQ1eWJZazVwVzcrK3U2aWlF?=
- =?utf-8?B?ZWJiSGFMazBPQU5iK04ybnBMajYwYlNGNlNIZ2RteERySFdmRkZBYWVHREMz?=
- =?utf-8?B?TUNha01xc3R4dkhKdWU5UlVob2tVV3hNcUh5eUZFSC93ZFRTaEE4d1lvdjV2?=
- =?utf-8?B?SDYvNzBuQVdEMjZEZG1RaFpRUXZiSytBUlk5SldmUEdWbmk4NUVuUkNldTNn?=
- =?utf-8?B?ZGFJSmpOWWYxblVpZ0RRdFNqVXk4TnFjb2IvSnhxMVdpZ1VzODlYZTRIVk1P?=
- =?utf-8?B?djdzZ2FjL0U4Ym9FZG44S05uUmMrMDZXMXg0ckh1UmNpbjR1UDd6SU1VWVE4?=
- =?utf-8?B?NzczbU1TeWhhMnRGa2dHQXo3Z1lNZU1iVTU0NmFVZ3c0SGdtalFBT0gyWFlB?=
- =?utf-8?B?aHpCZ0JvZFdTK3ZJTlVVNFRqUkoxK3BVdkE0SlVzV3VnMFdGN0d2TFVvVXFF?=
- =?utf-8?B?U3MxZ3FLbC9zcUpIVWxkR2hNYWptdTVyS3ZRN0NpZTU4L2Q4ZnlyOUFFM3N0?=
- =?utf-8?B?WXQ2YitIWkt2Z20vcHFFWXZibVh4M2JIZFArNEp4VlNMQWUyOW0rSVhPclA5?=
- =?utf-8?B?VnVsR09GdnpjcUhqZWI2WndGM053bUdYMHpIck1jWlBiZnliSzdycHNZd2F6?=
- =?utf-8?B?SUlsWWxYUkk3WXdqU3NOZWVTNHc5ajJka0NIZGo0Z0ZIN2VTN1RFNmRIZUhR?=
- =?utf-8?B?NHNyRGpUbHNXNFArSFROU0pRZlRDUys4emRabjllb2JJK2Nja3BFVTU3emhC?=
- =?utf-8?B?R2FrQTAwVk1jblV1R2cwRjY1WXR0OCtRbFlxbXJGYzI1bDI0WVN0Ky9SR3li?=
- =?utf-8?B?VDI0dklIVm55d3BaL3pUekJ5SStIcVJIVXE3NEJlMXhwd01aWXZucjVFNkNw?=
- =?utf-8?B?Um91L0RBcXViTVJoNVFjTGRoWU8rMUkrVUU4c2RzOVkxU3M3b1BDam5CQ256?=
- =?utf-8?B?QkZpZnpJNUkxdlNUUGR4S3NMbWN1R3F6OURyS2VZN0dsdllncHoyQTBJeExV?=
- =?utf-8?B?QmUzSkxLRnlyblhwdVJaUEdseVhySE8rTXVjdUxBdEZwOGpiWEJDcEs0cHRK?=
- =?utf-8?B?N3I1UEVUVmk2cWljVGU1VFU2U1R5WXAwb1FLSXZqVE9xRFl5d1VQdERiMHJa?=
- =?utf-8?B?R3kyNHYxSmJnUXUrRXVUck9tRUsrRGt0ZDJOK2ppWDJDTUtyK0pnNTlSNXJV?=
- =?utf-8?B?U1l2WVV2anlaQS9WQTJQYmtxWksyT0RvMm53eUp3UUF1WW1qNEE3OVpOY29o?=
- =?utf-8?Q?KqtSe5VOg4G23?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TTVQcU9QU2dZRFJJUjVKV2VkakJVcGtiR2xWT3dVYVVDVGYrOFU0a0Y4bVBy?=
- =?utf-8?B?V1dHaUNCNTYvbjNlQUNXQlR0VU8xUlA5U1REdU5JU0VnY01VOVUxbXhrWFVx?=
- =?utf-8?B?Q2FJM3VKN3hiWGpFY0xqbytGL2JWODNjWlQ0aFVhOENSNk5MQWVNS2ovWlN1?=
- =?utf-8?B?WGdMeVF5MU9RcHVvRTZxWTdKMDQ4OGU2Z25tVGJjZnZHS3VlbStvLzUrWW1P?=
- =?utf-8?B?QVJWWWNjQXVJRFFGY1lHZWJkSHlCYjlLRW9VeHpSdXNGVERMNVJscStieGEv?=
- =?utf-8?B?dk11dkxUN29iZWxONTN6UUg1K1JxS2hOeHNXckFiTGJ1dktlcDVZaDJmMDU3?=
- =?utf-8?B?MnJjTFNsUllkUHh6TlI4UDlNSSthMVVzdGR5aENzMllTODFSMWMyMlIvcXVr?=
- =?utf-8?B?Y25VN2tkR1NqbllHdHR3aTlxS0ZlQ3BNTVV3Q2xIM205cHBuQXgxUEF2Wmxh?=
- =?utf-8?B?V2doaENDT1NRTytUMlVjYXNIOVljUVpQNHlZL05PcUxuK2NldmIvWDJjTGlq?=
- =?utf-8?B?YnFacVBsQnFNM0FvYVNKQjdQNnVQSWhzYVF1QjV6NWhpSGlaNHFWMDFpV2JF?=
- =?utf-8?B?aGlCQ3UzT3ZEUlZQbG1KWjNIb3ZmV1BieEtPTVUvRHBWQXRVTlBxUmduTTVD?=
- =?utf-8?B?T3FwTi9aUGZuemtHdWlkV1h5cldyWWpVTXBST3dZODB3SnJBMWJneDhQRERt?=
- =?utf-8?B?YytFOUd1OTVGVk4yTENOS0JrMXhYOWJWWGdJRkthS25JOUVLTEhuZHNMcDND?=
- =?utf-8?B?VUFYblRKUGZ1NEl4YlMxYXZ6amhNK2dMOFBYOXFGcXJNRDdGd1Z6SnJkVG5j?=
- =?utf-8?B?QUd5UlYwZnlaTFVSdFV5eGhCeTNteDhKZTNtaldGSTRaRE9pdVNkcndzOW44?=
- =?utf-8?B?VnJLYkRPZldlVlFrbGRQZmx5cnNERnd1OStITG5wWmdNVmtZMTFjUm1iSVZk?=
- =?utf-8?B?MmJWN0FteENKUllkdURsQ2xZNXYyQlRIWThMaHZsTDhnUjk2ZmJSbzRiQS95?=
- =?utf-8?B?MTZLVEd4VnFDVXlyNTYwOXlNQnNoRlhEN25aRnoyVkk2M0JEcW9JNUtPems5?=
- =?utf-8?B?Sis2SEdvRUxXaTgzWGNpVXM1VXFwU1lvTTg5ZXZWdkFadlliNVBPSW1xckZx?=
- =?utf-8?B?bksxdURWWjg4U1JXcVdLaE1YSUcwNmRvaXl5R2NpMXR4QlVaRHlSRzU5cG9w?=
- =?utf-8?B?eGJqVGZjZGh6T3ptTWdzVGZJNjgwR3RZcXV3MTVLRDNkd1ErdVM5K0dTMHNL?=
- =?utf-8?B?eGlEV1Bic2hEUnc1ZUMyMThHV3o5T1d4RXlNbjdrQVl1OHdReVU2eDhTeGxK?=
- =?utf-8?B?dnh5Z0VyVWdOZVVtYSthNll6QUhLVXA2QU1jR3VjWjVmN0ZRUG5MVVZ6WWtG?=
- =?utf-8?B?Y0pqS2ZCY1NSb2MwSlRxK2hMNTRBSGUzUzJtQkhtVnM5UG1sOVhFUW9JNVNi?=
- =?utf-8?B?Mk56V050YzlJL1ovWnV6TjlqZXFySmJQU2FEay9EeDEvdEtNb05HakwxTHVP?=
- =?utf-8?B?TVk2S0hPaUNyaWhuRVI4NExoemxNQVRkRXFFK2FCUVYreWVJMjVMUUZLOHcv?=
- =?utf-8?B?aEZFQUcyYkRPM3dsdkRJOWtmVTdma3R3dTE4N2tsV1lKMlE2Tk85aWdBWGFV?=
- =?utf-8?B?Nkh6aXVhZFdXK1Brall4UDRjMWNyMC83ditmQVRkeU95N0JFc3NpVEZRdlpi?=
- =?utf-8?B?VmcyM0tCQWV3ai93ZHpVcm10VjJWTVAvQnpvd0Vlb2hzNW8ybWxRclBnNDN1?=
- =?utf-8?B?UjB0bmxGN2Q2U09tREF2bE1YSU9jRVIrcnBFN0VUZktHbTEyRUNyQk5ManNG?=
- =?utf-8?B?bkhOZ3czeUxoeEZSL1ZTYVl0TEsyaEh0WU12eDJ3UTBHakZDbWk4eFFEZWxm?=
- =?utf-8?B?T0hRR2ZjNWxOZnU5OVhSbm9ZVzdDR2xVb3N5b0pSZlZVVGlkY3ZXTHVUQzM5?=
- =?utf-8?B?cGdQNjRuREVBTzhZbUhnM2Y4c25FWXBuRmZjVjlFMWNLK0VCNnRDYW5ISDV1?=
- =?utf-8?B?TThQL2c2RFVCOFhGa1hTT2NGTzRvM05JMkUvVGowWkpCbWlrVWFkaDliTVRm?=
- =?utf-8?B?SDlMMkQ4Q3BzVHRnTWw5RVMrYTlGaTcrUTlLYnIxeG1weVJ2b2tKbWcweklQ?=
- =?utf-8?Q?hLSU7W5waI1kpiPAYKwyDP8GB?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 555699cb-f239-4b36-80e4-08dd5a72f110
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2025 16:46:27.5251
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4v1Y+ucUzlS8JS/+rzBlpQicGsAI2CnnlytMIYN7ilYyxx+z3IvXZI0z/XMr5FPCW79BFVviyeHH0gnUce5mTQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5964
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [mm?] kernel BUG in try_to_unmap_one
+To: Hillf Danton <hdanton@sina.com>,
+ syzbot <syzbot+fb86166504f57eff29d7@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ syzkaller-bugs@googlegroups.com, Zi Yan <ziy@nvidia.com>
+References: <20250301234002.2893-1-hdanton@sina.com>
+Content-Language: en-US
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250301234002.2893-1-hdanton@sina.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 3/3/2025 10:11, Werner Sembach wrote:
-> This small driver does 2 things:
+On 02.03.25 00:40, Hillf Danton wrote:
+> On Sat, 01 Mar 2025 14:41:20 -0800
+>> Hello,
+>>
+>> syzbot found the following issue on:
+>>
+>> HEAD commit:    e5d3fd687aac Add linux-next specific files for 20250218
+>> git tree:       linux-next
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=12faf7f8580000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=4e945b2fe8e5992f
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=fb86166504f57eff29d7
+>> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+>>
+>> Unfortunately, I don't have any reproducer for this issue yet.
+>>
+>> Downloadable assets:
+>> disk image: https://storage.googleapis.com/syzbot-assets/ef079ccd2725/disk-e5d3fd68.raw.xz
+>> vmlinux: https://storage.googleapis.com/syzbot-assets/99f2123d6831/vmlinux-e5d3fd68.xz
+>> kernel image: https://storage.googleapis.com/syzbot-assets/eadfc9520358/bzImage-e5d3fd68.xz
+>>
+>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+>> Reported-by: syzbot+fb86166504f57eff29d7@syzkaller.appspotmail.com
+>>
+>>   evict+0x4e8/0x9a0 fs/inode.c:806
+>>   __dentry_kill+0x20d/0x630 fs/dcache.c:660
+>>   dput+0x19f/0x2b0 fs/dcache.c:902
+>>   __fput+0x60b/0x9f0 fs/file_table.c:472
+>>   task_work_run+0x24f/0x310 kernel/task_work.c:227
+>>   resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+>>   exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+>>   exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
+>>   __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+>>   syscall_exit_to_user_mode+0x13f/0x340 kernel/entry/common.c:218
+>>   do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+>>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>> ------------[ cut here ]------------
+>> kernel BUG at mm/rmap.c:1858!
+>> Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+>> CPU: 1 UID: 0 PID: 6053 Comm: syz.4.27 Not tainted 6.14.0-rc3-next-20250218-syzkaller #0
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+>> RIP: 0010:try_to_unmap_one+0x3d0d/0x3fa0 mm/rmap.c:1858
+>> Code: c7 c7 80 93 c3 8e 48 89 da e8 ef f3 19 03 e9 68 ca ff ff e8 b5 12 ab ff 48 8b 7c 24 20 48 c7 c6 80 17 36 8c e8 94 d2 f5 ff 90 <0f> 0b e8 9c 12 ab ff 48 8b 7c 24 18 48 c7 c6 40 1c 36 8c e8 7b d2
+>> RSP: 0018:ffffc9000b1be9c0 EFLAGS: 00010246
+>> RAX: 367eb4645686ad00 RBX: 00000000f4000000 RCX: ffffc9000b1be503
+>> RDX: 0000000000000004 RSI: ffffffff8c2aaf60 RDI: ffffffff8c8156e0
+>> RBP: ffffc9000b1bedf0 R08: ffffffff903da477 R09: 1ffffffff207b48e
+>> R10: dffffc0000000000 R11: fffffbfff207b48f R12: 8000000053c008e7
+>> R13: dffffc0000000000 R14: ffffea00014f0000 R15: ffffea00014f0030
+>> FS:  00007f4d2783e6c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> CR2: 000000110c465fa1 CR3: 000000002a1f6000 CR4: 00000000003526f0
+>> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>> Call Trace:
+>>   <TASK>
+>>   __rmap_walk_file+0x420/0x5f0 mm/rmap.c:2774
+>>   try_to_unmap+0x219/0x2e0
+>>   unmap_folio+0x183/0x1f0 mm/huge_memory.c:3053
+>>   __folio_split+0x849/0x16d0 mm/huge_memory.c:3696
+>>   truncate_inode_partial_folio+0x9b1/0xdc0 mm/truncate.c:234
+>>   shmem_undo_range+0x82f/0x1820 mm/shmem.c:1143
 > 
-> It remaps the touchpad toggle key from Control + Super + Hangaku/Zenkaku to
-> F21 to conform with established userspace defaults. Note that the
-> Hangaku/Zenkaku scancode used here is usually unused, with real
-> Hangaku/Zenkaku keys using the tilde scancode.
+> Given folio_test_hugetlb(folio) [1], what is weird is hugetlb page in a
+> shmem mapping.
 > 
-> It suppresses the reserved scancode produced by pressing the FN-key on its
-> own, which fixes a warning spamming the dmesg log otherwise.
-> 
-> Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
-> ---
->   MAINTAINERS                                 |  6 ++
->   drivers/platform/x86/Kconfig                |  2 +
->   drivers/platform/x86/Makefile               |  3 +
->   drivers/platform/x86/tuxedo/Kbuild          |  6 ++
->   drivers/platform/x86/tuxedo/Kconfig         |  6 ++
->   drivers/platform/x86/tuxedo/nb02/Kbuild     |  7 ++
->   drivers/platform/x86/tuxedo/nb02/Kconfig    | 15 ++++
->   drivers/platform/x86/tuxedo/nb02/platform.c | 79 +++++++++++++++++++++
->   8 files changed, 124 insertions(+)
->   create mode 100644 drivers/platform/x86/tuxedo/Kbuild
->   create mode 100644 drivers/platform/x86/tuxedo/Kconfig
->   create mode 100644 drivers/platform/x86/tuxedo/nb02/Kbuild
->   create mode 100644 drivers/platform/x86/tuxedo/nb02/Kconfig
->   create mode 100644 drivers/platform/x86/tuxedo/nb02/platform.c
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 4ff26fa94895d..d3fbbcef813b0 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -24178,6 +24178,12 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux.git turbostat
->   F:	tools/power/x86/turbostat/
->   F:	tools/testing/selftests/turbostat/
->   
-> +TUXEDO DRIVERS
-> +M:	Werner Sembach <wse@tuxedocomputers.com>
-> +L:	platform-driver-x86@vger.kernel.org
-> +S:	Supported
-> +F:	drivers/platform/x86/tuxedo/
-> +
->   TW5864 VIDEO4LINUX DRIVER
->   M:	Bluecherry Maintainers <maintainers@bluecherrydvr.com>
->   M:	Andrey Utkin <andrey.utkin@corp.bluecherry.net>
-> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-> index 0258dd879d64b..9b78a1255c08e 100644
-> --- a/drivers/platform/x86/Kconfig
-> +++ b/drivers/platform/x86/Kconfig
-> @@ -1199,3 +1199,5 @@ config P2SB
->   	  The main purpose of this library is to unhide P2SB device in case
->   	  firmware kept it hidden on some platforms in order to access devices
->   	  behind it.
-> +
-> +source "drivers/platform/x86/tuxedo/Kconfig"
-> diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
-> index e1b1429470674..1562dcd7ad9a5 100644
-> --- a/drivers/platform/x86/Makefile
-> +++ b/drivers/platform/x86/Makefile
-> @@ -153,3 +153,6 @@ obj-$(CONFIG_WINMATE_FM07_KEYS)		+= winmate-fm07-keys.o
->   
->   # SEL
->   obj-$(CONFIG_SEL3350_PLATFORM)		+= sel3350-platform.o
-> +
-> +# TUXEDO
-> +obj-y					+= tuxedo/
-> diff --git a/drivers/platform/x86/tuxedo/Kbuild b/drivers/platform/x86/tuxedo/Kbuild
-> new file mode 100644
-> index 0000000000000..e9c4243d438ba
-> --- /dev/null
-> +++ b/drivers/platform/x86/tuxedo/Kbuild
-> @@ -0,0 +1,6 @@
-> +# SPDX-License-Identifier: GPL-2.0-or-later
-> +#
-> +# TUXEDO X86 Platform Specific Drivers
-> +#
-> +
-> +obj-y	+= nb02/
-> diff --git a/drivers/platform/x86/tuxedo/Kconfig b/drivers/platform/x86/tuxedo/Kconfig
-> new file mode 100644
-> index 0000000000000..e463f92135780
-> --- /dev/null
-> +++ b/drivers/platform/x86/tuxedo/Kconfig
-> @@ -0,0 +1,6 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +#
-> +# TUXEDO X86 Platform Specific Drivers
-> +#
-> +
-> +source "drivers/platform/x86/tuxedo/nb02/Kconfig"
-> diff --git a/drivers/platform/x86/tuxedo/nb02/Kbuild b/drivers/platform/x86/tuxedo/nb02/Kbuild
-> new file mode 100644
-> index 0000000000000..8624a012cd683
-> --- /dev/null
-> +++ b/drivers/platform/x86/tuxedo/nb02/Kbuild
-> @@ -0,0 +1,7 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +#
-> +# TUXEDO X86 Platform Specific Drivers
-> +#
-> +
-> +tuxedo_nb02_platform-y			:= platform.o
-> +obj-$(CONFIG_TUXEDO_NB02_PLATFORM)	+= tuxedo_nb02_platform.o
-> diff --git a/drivers/platform/x86/tuxedo/nb02/Kconfig b/drivers/platform/x86/tuxedo/nb02/Kconfig
-> new file mode 100644
-> index 0000000000000..848ab61164404
-> --- /dev/null
-> +++ b/drivers/platform/x86/tuxedo/nb02/Kconfig
-> @@ -0,0 +1,15 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +#
-> +# TUXEDO X86 Platform Specific Drivers
-> +#
-> +
-> +menuconfig TUXEDO_NB02_PLATFORM
-> +	tristate "TUXEDO NB02 Platform Driver"
-> +	default m
 
-Don't most platform/x86 drivers default to 'n'?  It's up to distros and 
-users to turn on I thought.
+Right, the problem begins when we call __folio_split() on a hugetlb 
+folio, and the issue is that we seem to find that in the pagecache.
 
-> +	help
-> +	  This driver implements miscellaneous things found on TUXEDO Notebooks
-> +	  with board vendor NB02. For the time being this is only remapping the
-> +	  touchpad toggle key to something supported by most Linux distros
-> +	  out-of-the-box and supressing an unsupported scancode from the FN-key.
+I wonder if there is some weird interaction with out recent folio split 
+changes in next. Maybe, for some reason, we end up adding a wrong folio 
+to the pagecache during a split (truncation), and a follow-up split 
+(truncation) finds the wrong folio.
 
-suppressing
+Just a guess, though. CCing Zi Yan.
 
-> +
-> +	  When compiled as a module it will be called tuxedo_nb02_platform.
-> diff --git a/drivers/platform/x86/tuxedo/nb02/platform.c b/drivers/platform/x86/tuxedo/nb02/platform.c
-> new file mode 100644
-> index 0000000000000..a6137c8b2d4aa
-> --- /dev/null
-> +++ b/drivers/platform/x86/tuxedo/nb02/platform.c
-> @@ -0,0 +1,79 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Copyright (C) 2025 Werner Sembach wse@tuxedocomputers.com
-> + */
-> +
-> +#include <linux/i8042.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/serio.h>
-> +
-> +static u8 tux_nb02_touchp_toggle_seq[] = {
-> +	0xe0, 0x5b, // Super down
-> +	0x1d,       // Control down
-> +	0x76,       // Zenkaku/Hankaku down
-> +	0xf6,       // Zenkaku/Hankaku up
-> +	0x9d,       // Control up
-> +	0xe0, 0xdb  // Super up
-> +};
-> +
-> +static bool tux_nb02_i8042_filter(unsigned char data,
-> +				  unsigned char str,
-> +				  struct serio *port,
-> +				  __always_unused void *context)
-> +{
-> +	static u8 seq_pos;
-> +
-> +	if (unlikely(str & I8042_STR_AUXDATA))
-> +		return false;
-> +
-> +	pr_info("%#04x\n", data);
+-- 
+Cheers,
 
-A bit too noisy for a filter, no?
-
-> +
-> +	// Replace touchpad toggle key sequence with a singular press of the
-> +	// F21-key.
-
-Multi-line comments are supposed to be /* */
-
-> +	if (unlikely(data == tux_nb02_touchp_toggle_seq[seq_pos])) {
-> +		++seq_pos;
-> +		if (seq_pos == ARRAY_SIZE(tux_nb02_touchp_toggle_seq)) {
-> +			seq_pos = 0;
-> +			serio_interrupt(port, 0x6c, 0); // F21 down
-> +			serio_interrupt(port, 0xec, 0); // F21 up
-> +		}
-> +		return true;
-> +	}
-> +
-> +	// Ignore bogus scancode produced by the FN-key. Reuse seq_pos as first
-> +	// byte of that is just the "extended"-byte.
-
-Multi-line comments are supposed to be /* */
-
-> +	if (unlikely(seq_pos == 1 && (data == 0x78 || data == 0xf8))) {
-> +		seq_pos = 0;
-> +		return true;
-> +	}
-> +
-> +	// Replay skipped sequence bytes if it did not finish and it was not a
-> +	// FN-key press.
-
-Multi-line comments are supposed to be /* */
-
-> +	if (unlikely(seq_pos)) {
-> +		for (u8 i; i < seq_pos; ++i)
-> +			serio_interrupt(port, tux_nb02_touchp_toggle_seq[i], 0);
-> +		seq_pos = 0;
-> +	}
-> +
-> +	return false;
-> +}
-> +
-> +static int __init tux_nb02_plat_init(void)
-> +{
-> +	return i8042_install_filter(tux_nb02_i8042_filter, NULL);
-
-The driver is tri-state.  If it was 'm' it wouldn't load on anything but 
-the matching hardware.
-
-But think about what happens if a user compiled a kernel with this 'y'.
-
-The tux_nb02_plat_init() would install a filter even though they didn't 
-have matching hardware.
-
-I think you need some sort of assertion this driver matches the hardware 
-and return -ENODEV if it doesn't.
-
-> +}
-> +
-> +static void __exit tux_nb02_plat_exit(void)
-> +{
-> +	i8042_remove_filter(tux_nb02_i8042_filter);
-> +}
-> +
-> +module_init(tux_nb02_plat_init);
-> +module_exit(tux_nb02_plat_exit);
-> +
-> +MODULE_ALIAS("dmi:*:svnTUXEDO:*:rvnNB02:*");
-> +
-> +MODULE_DESCRIPTION("TUXEDO NB02 Platform");
-> +MODULE_AUTHOR("Werner Sembach <wse@tuxedocomputers.com>");
-> +MODULE_LICENSE("GPL");
+David / dhildenb
 
 
