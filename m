@@ -1,179 +1,131 @@
-Return-Path: <linux-kernel+bounces-542756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E012A4CD49
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:10:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 046A3A4CD31
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:08:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A9FD18967CC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 21:10:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABE63188EFAA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 21:08:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8242923E23D;
-	Mon,  3 Mar 2025 21:09:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B42812356A8;
+	Mon,  3 Mar 2025 21:08:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="G1EYmKln"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lzekS9eI"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD67F237180;
-	Mon,  3 Mar 2025 21:09:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1205F1EA7CB;
+	Mon,  3 Mar 2025 21:08:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741036180; cv=none; b=r+T3BePS9XH4MyfvU/yBGEDw42/bGMvImlUE53ygzj6mIXudycrXiE7Ht0huDuCbrEQQEjjIHlkRYqLoY7uRqfRcLGqCFV+LJL/IQ0eN5TFTWCLt382z9kIHtOFDzhzvMaVSGg/S+yHDcZoAuzGu4zO2LQLpBlyt2NmNGxK6Uus=
+	t=1741036118; cv=none; b=i9VZ6nEbemVuf30AGBM5oo2gpBR6TiU0aBptormdM8iyqEvj+ziSuLo4Whf2KqNQIlhVrhiAmadEhyQtEvvEMPFtKPZl+DTetAtd56lxfKyWGkWSkVaIXGykQxIeHgQ1RpFl0zoa0OTSrzXX4/5oSHLmqVNOdJOsV1aQGITIlmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741036180; c=relaxed/simple;
-	bh=bEIAdkgYYYEmT3BRyRTPHqaTC6uFu/JgYHBROcY8mr0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=WjWEZj8qN3fLFCMm8kMlb01LAT9QvJPmzUnPepuB/LjT+Ak01uGukzqba2Eq18UnZRw59WNqqsJeRBV+mFnAoyoEmYFRJrmaxo0xug2+QVMDAkvzbwTOskYC22LNGGOIFvk/lgJ8JcsQurg+ekKj8UD9L5+jGiiXBZw8VvOism4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=G1EYmKln; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 523AnHMM030348;
-	Mon, 3 Mar 2025 21:09:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	jGndhHnQQNDenaXC7Fsaso36Ez+QokVQnTjKX5ofuE8=; b=G1EYmKlnig1ahqy1
-	+WRLQZ+9xuBYTM3E92MqqNiRu/sBqFw2PBNEt2aOejyFIYcyuntyXahDTHunLkkg
-	UDbexbgrxuqVWjRpG2BTLlqAuLnMR6VN7Oa4+r/J+TMcOcSjhsbIKMcdqWZu/5S4
-	ruuTO9+YPc+x+6kgohCpzAGWJxp6uNmD4Ka5h6GJfeB0fVt0Rtad0SIonpZtxA6x
-	YFXrIsB0mR1p7XDx+JxG8FlBNQ7CWbPgZS2I6Ik8caCVlW6dhjTblNqu0J1abP0B
-	h3XhHauM6YhTQCze0r84ALpx9svVJ5Gie6tOfbbFfFNmt32GmoRMaBgrrSHUfSX3
-	ruB5Yg==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 453t6k5xq3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Mar 2025 21:09:17 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 523L9GWH000500
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 3 Mar 2025 21:09:16 GMT
-Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 3 Mar 2025 13:09:16 -0800
-From: Elliot Berman <quic_eberman@quicinc.com>
-Date: Mon, 3 Mar 2025 13:08:32 -0800
-Subject: [PATCH v9 3/5] arm64: dts: qcom: qcm6490-idp: Add PSCI
- SYSTEM_RESET2 types
+	s=arc-20240116; t=1741036118; c=relaxed/simple;
+	bh=Q/K/8K9/IVMQ+BwkrMtXHGOTssfEL1BOg/FvXQrYS5s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N2yClBi5t62w76b69Ft1QhOgxRXMN3cTqrglon6/uDVSUnUrIqS0ZDMcAI5isu6jyEtEoK/Yeouqo9xLj2YK39ZRH49GkJGpA7208xxtCU4qbuFbFBrRfyJdp/SjqAiFUa4XOOIpO5unVB/CXup7WG0chJmctC4DkQwzlFcLLsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lzekS9eI; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741036116; x=1772572116;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Q/K/8K9/IVMQ+BwkrMtXHGOTssfEL1BOg/FvXQrYS5s=;
+  b=lzekS9eIo0pdjsRHxg868P2AReSf6FM1DV1Ah0wE3GZ8PNUL+1LC0ApZ
+   gl+fNYG+wCaUfyhkodRHEsN1dLJoxBn7bQetS+gUqXAYqnzWjxddsPpC8
+   SyABBgapEroUl7WYNhM8FpQbQcB5X1Hzm84xgHpG817k2a82SkDl7ajit
+   YuEx4wKR/BWCCn6jHwPJQ4ERM+DFzbb0EvP/b+KyPIHBsy6fj97eRnpyC
+   3M7fUT+Wyb5+g4fpHf5oQeJqg1CZ72i5sixyynW7UFuG2gczjdM8CP4o3
+   dKP5jWjTNxBWVYSs2dOgQYdlGB9ZHD9OQEx7lH2fn0AZ1ntn5eOd9wbnc
+   w==;
+X-CSE-ConnectionGUID: dinN5mpxSNSvGKWbjUFODQ==
+X-CSE-MsgGUID: bDoVdQN2SwOQSDl5J3RDig==
+X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="41175041"
+X-IronPort-AV: E=Sophos;i="6.13,330,1732608000"; 
+   d="scan'208";a="41175041"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 13:08:35 -0800
+X-CSE-ConnectionGUID: mYy76fXAS4uq1Fpy/wETQg==
+X-CSE-MsgGUID: cA2rMsFiS8eM1Gl6IP+nGA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,330,1732608000"; 
+   d="scan'208";a="118643569"
+Received: from kcaccard-desk.amr.corp.intel.com (HELO [10.125.109.29]) ([10.125.109.29])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 13:08:34 -0800
+Message-ID: <df490330-287c-410d-a041-3290ab38e9e7@intel.com>
+Date: Mon, 3 Mar 2025 14:08:33 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] PCI: Log debug messages about reset method
+To: Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org
+Cc: Alex Williamson <alex.williamson@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Keith Busch <kbusch@kernel.org>, Todd Kjos <tkjos@google.com>,
+ Dan Williams <dan.j.williams@intel.com>, linux-kernel@vger.kernel.org,
+ Bjorn Helgaas <bhelgaas@google.com>
+References: <20250303204220.197172-1-helgaas@kernel.org>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250303204220.197172-1-helgaas@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-ID: <20250303-arm-psci-system_reset2-vendor-reboots-v9-3-b2cf4a20feda@oss.qualcomm.com>
-References: <20250303-arm-psci-system_reset2-vendor-reboots-v9-0-b2cf4a20feda@oss.qualcomm.com>
-In-Reply-To: <20250303-arm-psci-system_reset2-vendor-reboots-v9-0-b2cf4a20feda@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Sebastian Reichel
-	<sre@kernel.org>, Rob Herring <robh@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Andy Yan
-	<andy.yan@rock-chips.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        "Mark
- Rutland" <mark.rutland@arm.com>,
-        Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, "Olof
- Johansson" <olof@lixom.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "Will
- Deacon" <will@kernel.org>,
-        <cros-qcom-dts-watchers@chromium.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-CC: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        "Satya Durga
- Srinivasu Prabhala" <quic_satyap@quicinc.com>,
-        Melody Olvera
-	<quic_molvera@quicinc.com>,
-        Shivendra Pratap <quic_spratap@quicinc.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Florian Fainelli
-	<florian.fainelli@broadcom.com>,
-        Stephen Boyd <swboyd@chromium.org>, <linux-pm@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, Elliot Berman
-	<elliotb317@gmail.com>,
-        Elliot Berman <quic_eberman@quicinc.com>,
-        "Elliot
- Berman" <elliot.berman@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: jvfgHVUYYxZaEeZtegBF9TlBa2WSY2dV
-X-Proofpoint-ORIG-GUID: jvfgHVUYYxZaEeZtegBF9TlBa2WSY2dV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-03_10,2025-03-03_04,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 priorityscore=1501 bulkscore=0 mlxlogscore=819 mlxscore=0
- lowpriorityscore=0 clxscore=1011 spamscore=0 malwarescore=0 adultscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2503030163
 
-From: Elliot Berman <elliot.berman@oss.qualcomm.com>
 
-qcm6490-idp firmware supports vendor-defined SYSTEM_RESET2 types.
-Describe the reset types: "bootloader" will cause device to reboot and
-stop in the bootloader's fastboot mode. "edl" will cause device to
-reboot into "emergency download mode", which permits loading images via
-the Firehose protocol.
 
-Co-developed-by: Shivendra Pratap <quic_spratap@quicinc.com>
-Signed-off-by: Shivendra Pratap <quic_spratap@quicinc.com>
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-Signed-off-by: Elliot Berman <elliot.berman@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/qcm6490-idp.dts | 7 +++++++
- arch/arm64/boot/dts/qcom/sc7280.dtsi     | 2 +-
- 2 files changed, 8 insertions(+), 1 deletion(-)
+On 3/3/25 1:42 PM, Bjorn Helgaas wrote:
+> From: Bjorn Helgaas <bhelgaas@google.com>
+> 
+> Log pci_dbg() messages about the reset methods we attempt and any errors
+> (-ENOTTY means "try the next method").
+> 
+> Set CONFIG_DYNAMIC_DEBUG=y and enable by booting with
+> dyndbg="file drivers/pci/* +p" or enable at runtime:
+> 
+>   # echo "file drivers/pci/* +p" > /sys/kernel/debug/dynamic_debug/control
+> 
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 
-diff --git a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-index c5fb153614e1f1d32a8d074d96829beb643c6919..471e71ab0db4db68d776e6b840d93e4e541ed5d7 100644
---- a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-+++ b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-@@ -625,6 +625,13 @@ &pon_resin {
- 	status = "okay";
- };
- 
-+&psci {
-+	reset-types {
-+		mode-bootloader = <0x10001 0x2>;
-+		mode-edl = <0 0x1>;
-+	};
-+};
-+
- &qupv3_id_0 {
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-index 55db1c83ef5517f82504816baeee583695065225..07474bd2301edea0037da1194a941b8a3d2fa452 100644
---- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-@@ -855,7 +855,7 @@ pmu-a78 {
- 		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW>;
- 	};
- 
--	psci {
-+	psci: psci {
- 		compatible = "arm,psci-1.0";
- 		method = "smc";
- 
-
--- 
-2.34.1
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> ---
+>  drivers/pci/pci.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index 869d204a70a3..3d13bb8e5c53 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -5230,6 +5230,7 @@ const struct pci_reset_fn_method pci_reset_fn_methods[] = {
+>  int __pci_reset_function_locked(struct pci_dev *dev)
+>  {
+>  	int i, m, rc;
+> +	const struct pci_reset_fn_method *method;
+>  
+>  	might_sleep();
+>  
+> @@ -5246,9 +5247,13 @@ int __pci_reset_function_locked(struct pci_dev *dev)
+>  		if (!m)
+>  			return -ENOTTY;
+>  
+> -		rc = pci_reset_fn_methods[m].reset_fn(dev, PCI_RESET_DO_RESET);
+> +		method = &pci_reset_fn_methods[m];
+> +		pci_dbg(dev, "reset via %s\n", method->name);
+> +		rc = method->reset_fn(dev, PCI_RESET_DO_RESET);
+>  		if (!rc)
+>  			return 0;
+> +
+> +		pci_dbg(dev, "%s failed with %d\n", method->name, rc);
+>  		if (rc != -ENOTTY)
+>  			return rc;
+>  	}
 
 
