@@ -1,159 +1,125 @@
-Return-Path: <linux-kernel+bounces-541060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69BE4A4B7EE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 07:36:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA412A4B7F0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 07:41:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D65416BC2C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 06:36:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDEAF16BDCC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 06:41:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 714761E3DF4;
-	Mon,  3 Mar 2025 06:36:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEB6E1E5B76;
+	Mon,  3 Mar 2025 06:41:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PDg5OUbF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nr1sGQ5D"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C762A15853B;
-	Mon,  3 Mar 2025 06:36:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 098A31DA60F;
+	Mon,  3 Mar 2025 06:41:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740983771; cv=none; b=L+8/4X5Lua77SF/9kmJLUbbwKsgzOsk1os8VIgDwWpEBmnKSiGWfTJ/a0YiOOqL3i+Z8xHFXdbSwNw+V+CpPkINEBVh5VVqhxgfT5WNJ+sZeJeR0NfkR+itBgik3TBhc4Z0aienNQR8yF9XqemLOOFPIpuzEA/xyYnZqIP40hms=
+	t=1740984062; cv=none; b=BdxlayVwU/HIvc8SjnejNqERGU/ksXVCuJ9T+0yVT5e/h1yy5GExC8lUzjazmo+bImnBH/yhLmv4MMjuR2MX4refMgfbVsQ7a326AvVqXW7JLVroVJIWp/xYLoNsLGGjauWC6ZM2axHRcgkJmYT1cfm/zBQ/io/R0tFXc4FSQi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740983771; c=relaxed/simple;
-	bh=HqvhAMtCZRjUm1Q7HW15Lf7hRzeADdKMZCORIoQCpHc=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=YtrFJWFq8EwmEXMbmTy6UOOIEtsIXC2FJ1KdlXax4kM2DhdTPcj5dEcn8i8+MX7rwYIzt1rRpzL0abZPfS0EW/P53TfLbd3oLjTkHpc2X0jWNNRCTh8fMPa0aOqG2vC9++GOhGreJZxB6vewfQ1t7iMlXmI/5xnhMYPlq3RRZs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PDg5OUbF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E43E7C4CED6;
-	Mon,  3 Mar 2025 06:36:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740983771;
-	bh=HqvhAMtCZRjUm1Q7HW15Lf7hRzeADdKMZCORIoQCpHc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=PDg5OUbFhLhIGRt0iZtKwAJGKJARFmkHwRTABE4PQcFkz5oGSu5M52IvQNaRtAmN9
-	 9D8ML9Arf8xYZcttdA+TcgpUSiwWEBA71Es+MUw0TRzeTcHaFJaj8N8yoqqkzoxK9T
-	 E27WJt4Av62moJ5tKzK5osfeQeiXVeH0HR4dGHBPPTGz3waD4Aa0vfcKi0Adh9QV1n
-	 Fm34uaEje9EpzyCQIkwUpH0P3//aJNP6ih0Wa2bZKfcqFmUyZ5M5PF08PHTWT7pZGg
-	 QEAGzW6j361Kp81iqkXpLccnQjn4Zu/r08c4QhurVA1/9/YLEMYr4N1T6AN+l1v9lC
-	 +fwUB6WtfhtaA==
-Date: Mon, 3 Mar 2025 15:36:07 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH] tracing: probe-events: Add comments about entry data
- storing code
-Message-Id: <20250303153607.da48fad3e90a28bc8c7f50e6@kernel.org>
-In-Reply-To: <20250228174712.44e03694@gandalf.local.home>
-References: <174061715004.501424.333819546601401102.stgit@devnote2>
-	<20250228174712.44e03694@gandalf.local.home>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740984062; c=relaxed/simple;
+	bh=3DPoJ+Z1SNuR/KkpCY+uheOaeDu2g+cbdEMwuj+D5gU=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=PnolMAiNvYK1IE6gJ++/u7hLiY+C3vV1IaeiHKatri8GTPgFqO9kYWcnkFvZcTDe/Ql80vYOoHny2ifygVXWZ8dL23A3A+jqXco3U9jcsuzO3069Qmve/WoZBnjaOen4RsE5usMdl8gUXUlN0Bh8/YWkQ1gpM1W6YlrT5UQ/qFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nr1sGQ5D; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-22349bb8605so76655095ad.0;
+        Sun, 02 Mar 2025 22:41:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740984060; x=1741588860; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gYU92NSFBZRKwbwQxofn8usYPW9ZYolv8EQ17z3D3Dk=;
+        b=Nr1sGQ5DgtHDi0kjZwwCkLE7fDeJjZ6PINpuIPIGjjcgUm0AH7A11ZE62d+Lr4GpJf
+         MlL2hzszeAWKw8L6zDtg8LIErEZNj+4s8681QiXrPTmE3zV9whjqa8gG2Q+pThcye3Nl
+         dAK7nfLwNmjVL78EfL+6O91vW/6Sh6SfoW6QivMB1SZ1f52jRsazAJ1McFvylURaNksA
+         +ulhiEjCVmaby55GNLtYHcpFaNdRguQSneMqilfTwVApK+BprgZMBHFkO54jQ2kuOCyQ
+         dpShhhi3LiD+cj86i/VuieAq/bt+jD4UWF5Q9wJ9GC/h6faBgTuwuHA2GrcQ6egAlugW
+         DsUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740984060; x=1741588860;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=gYU92NSFBZRKwbwQxofn8usYPW9ZYolv8EQ17z3D3Dk=;
+        b=GlUvAvUln7ylL1DKnjQP/JYZvw5cPsyep6dTceoOoqtDZpv7rKKZetnHHSEWiFPfhW
+         Xk5wUn4zvZ/AfeqaSjJFyEgEJTD15FGuZ9MvSZmPDbNZTtdJD/m3vAnVu9il8hjYJMV/
+         IlvcF5r+wbpgN3IqiZXoLvXxDjkdhKELJGZsQmQWyHx8pD9aEeYhfov9f2wFyEi/oFh+
+         s03EhkUh5mF9naofBM5J1dbsnn6UpDgCMRi31TkBralUVP9ECdjOhadvnjQTyUrGC86o
+         6qYCQWPxfS5q5q6ECZBEYYGO8jQYQ3sNYdDTmTG0wERU0F+I9rDljq5XsIJ0kw/GPM75
+         ad5A==
+X-Forwarded-Encrypted: i=1; AJvYcCXZmPAuirWpURAiT74A+R7kFXLlZqJB6hFwnMGxyqiBoGAltm0/6meW/hjiw1CHRyx+RBJsWpv/80KqJHM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgNZKXYKJg7Sy/i3NbmZhSATkz2A0dcp2xYlLwqO9Eebtfe9Pq
+	1R/cTIQa5pDzvgw+xRXUN1EWpkUg3uJ/bIh/+xWs4e/V78orjJikWgYgUN0Z
+X-Gm-Gg: ASbGncshxvyNOqulIJEc/GW3lVmx8YqtH7HMecpicfqemxJil/dGJQm3MnZ7O4KEnKb
+	dhqNKQ3Bbz/58EIY9H5Krzwq2wD8ugphOyul+2fqEqM0yGfepOw/5VGhYVZtGYG3R6qy5eZncjN
+	ywedUtN8fGH6FvxiwaQRQz1mmDf15wE+w/b3TvENQKUY3hoMq+QRyaYJ5YNxcThq3FR+w2Eitr2
+	Hclo6Q1gXEBWNgLFqxUlxbNti4TxX246aqsL5NeFsdHiX3KqsQenWQODESqufDamFoxdLjptY1w
+	rOgdxzxgtgqf1h6szesKmU3Bj/+4XF5ATKMRae//fYnUSpaVVdiP8T0=
+X-Google-Smtp-Source: AGHT+IHs7B/z3MyKZatR94inMLA4+7p2dS1Vlg5WIEqQEWbOiKVYEtISJcubAC7Lk7mpXxE50GLhoQ==
+X-Received: by 2002:a05:6a21:205:b0:1f3:22c0:89be with SMTP id adf61e73a8af0-1f322c08d25mr4067724637.14.1740984060187;
+        Sun, 02 Mar 2025 22:41:00 -0800 (PST)
+Received: from [147.47.189.163] ([147.47.189.163])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af242e9fc1esm985857a12.23.2025.03.02.22.40.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 02 Mar 2025 22:40:59 -0800 (PST)
+Message-ID: <3e620e1e-d3e2-4243-a355-0874bd25775d@gmail.com>
+Date: Mon, 3 Mar 2025 15:40:56 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Manish Chopra <manishc@marvell.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Kyungwook Boo <bookyungwook@gmail.com>
+Subject: Divide-by-zero error in qed_hw_get_nvm_info()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, 28 Feb 2025 17:47:12 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
+Hello,
 
-> On Thu, 27 Feb 2025 09:45:50 +0900
-> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
-> 
-> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > 
-> > Add comments about entry data storing code to __store_entry_arg() and
-> > traceprobe_get_entry_data_size(). These are a bit complicated because of
-> > building the entry data storing code and scanning it.
-> > 
-> > This just add comments, no behavior change.
-> > 
-> > Reported-by: Steven Rostedt <rostedt@goodmis.org>
-> > Closes: https://lore.kernel.org/all/20250226102223.586d7119@gandalf.local.home/
-> > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > ---
-> >  kernel/trace/trace_probe.c |   28 ++++++++++++++++++++++++++++
-> >  1 file changed, 28 insertions(+)
-> > 
-> > diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
-> > index 8f58ee1e8858..2eeecb6c95ee 100644
-> > --- a/kernel/trace/trace_probe.c
-> > +++ b/kernel/trace/trace_probe.c
-> > @@ -770,6 +770,10 @@ static int check_prepare_btf_string_fetch(char *typename,
-> >  
-> >  #ifdef CONFIG_HAVE_FUNCTION_ARG_ACCESS_API
-> >  
-> > +/*
-> > + * Add the entry code to store the 'argnum'th parameter and return the offset
-> > + * in the entry data buffer where the data will be stored.
-> > + */
-> >  static int __store_entry_arg(struct trace_probe *tp, int argnum)
-> >  {
-> >  	struct probe_entry_arg *earg = tp->entry_arg;
-> > @@ -793,6 +797,20 @@ static int __store_entry_arg(struct trace_probe *tp, int argnum)
-> >  		tp->entry_arg = earg;
-> >  	}
-> >  
-> > +	/*
-> > +	 * The entry code array is repeating the pair of
-> > +	 * [FETCH_OP_ARG(argnum)][FETCH_OP_ST_EDATA(offset of entry data buffer)]
-> > +	 * and the rest of entries are filled with [FETCH_OP_END].
-> > +	 *
-> > +	 * To reduce the redundant function parameter fetching, we scan the entry
-> > +	 * code array to find the FETCH_OP_ARG which already fetches the 'argnum'
-> > +	 * parameter. If it doesn't match, update 'offset' to find the last
-> > +	 * offset.
-> > +	 * If we find the FETCH_OP_END without matching FETCH_OP_ARG entry, we
-> > +	 * will save the entry with FETCH_OP_ARG and FETCH_OP_ST_EDATA, and
-> > +	 * return data offset so that caller can find the data offset in the entry
-> > +	 * data buffer.
-> > +	 */
-> 
-> So I'm still not 100% sure what is happening here, but at least these
-> comments can help me figure it out if I spend some time gawking at the code
-> a bit more ;-)
+It seems that qed_hw_info_port_num() reads the value of num_ports from MMIO
+and then qed_hw_get_nvm_info() performs a division opertation
+using this value, which could lead to a divide-by-zero error.
 
-I think the code is a bit complicated too. I will rewrite it a bit.
+The following is a call stack example:
 
-> 
-> Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+ qed_probe
+   ├── qed_hw_prepare
+   │     ├── qed_hw_prepare_single
+   │     │     ├── qed_get_hw_info
+   │     │     │     ├── qed_hw_info_port_num
+   │     │     │     │     ├── qed_rd (MMIO read: num_ports)
+   │     │     │     ├── qed_hw_get_nvm_info
+   │     │     │     │     ├── MFW_PORT (uses num_ports in modulo)
 
-Thanks you!
+In qed_hw_info_port_num(), cdev->num_ports is read from MMIO:
 
-> 
-> -- Steve
-> 
-> 
-> >  	offset = 0;
-> >  	for (i = 0; i < earg->size - 1; i++) {
-> >  		switch (earg->code[i].op) {
-> > @@ -826,6 +844,16 @@ int traceprobe_get_entry_data_size(struct trace_probe *tp)
-> >  	if (!earg)
-> >  		return 0;
-> >  
-> > +	/*
-> > +	 * earg->code[] array has an operation sequence which is run in
-> > +	 * the entry handler.
-> > +	 * The sequence stopped by FETCH_OP_END and each data stored in
-> > +	 * the entry data buffer by FETCH_OP_ST_EDATA. The FETCH_OP_ST_EDATA
-> > +	 * stores the data at the data buffer + its offset, and all data are
-> > +	 * "unsigned long" size. The offset must be increased when a data is
-> > +	 * stored. Thus we need to find the last FETCH_OP_ST_EDATA in the
-> > +	 * code array.
-> > +	 */
-> >  	for (i = 0; i < earg->size; i++) {
-> >  		switch (earg->code[i].op) {
-> >  		case FETCH_OP_END:
-> 
+cdev->num_ports = (u8)qed_rd(p_hwfn, p_ptt, addr);
 
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+This value is then used for modulo operation in qed_hw_get_nvm_info():
+
+port_cfg_addr = MCP_REG_SCRATCH + nvm_cfg1_offset +
+	offsetof(struct nvm_cfg1, port[MFW_PORT(p_hwfn)]);
+
+// #define MFW_PORT(_p_hwfn)       ((_p_hwfn)->abs_pf_id %	\
+//		  qed_device_num_ports((_p_hwfn)->cdev))
+
+
+Could you check this?
+
+Best regards,
+Kyungwook Boo
 
