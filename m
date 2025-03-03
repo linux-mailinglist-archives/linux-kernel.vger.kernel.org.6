@@ -1,310 +1,401 @@
-Return-Path: <linux-kernel+bounces-540930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA4C5A4B687
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 04:29:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A3DDA4B694
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 04:30:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36C551883D7D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 03:29:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10233188878D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 03:30:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C00AB1C84BF;
-	Mon,  3 Mar 2025 03:29:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D66601D6DDC;
+	Mon,  3 Mar 2025 03:30:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BgWzHEaZ"
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="P6YXCFTd"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30A74AD27
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 03:29:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E7C2AE89;
+	Mon,  3 Mar 2025 03:30:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740972550; cv=none; b=WCT1tKC/dCcIdC1/6Q3Ai4KpUo3SnAgh9lsvEJrD/M/VRdqqIZZD3YEVcaX6bG0/fQn+Iq3AKa8Ua6npJHFLXrkXnn6eEtMgWRelwVBHGe6LbKLUAX/C9Xgm9h0NfAP44QyITy7wjVqOzZSnakW/Oz/0l8lGGgBXNUvBY/zKS9M=
+	t=1740972628; cv=none; b=Y+eeH0qoyPblSP7oo0IElHU1zpkxoDafa63yWDVUxo5L9PUGOTsPbT7uFcPK/YiYN5Bq2Av+Rud1eIK4IBywK8sPk2THcbT8s1m/UahlfjNyJSG4vjDFR3ya1cNZTmdSjYkGpr/lVHa9N5bxK3J2LbRruwHrL+IM1DaExMX1t3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740972550; c=relaxed/simple;
-	bh=PH+UgVpduJvVs4Sv/iL4r4yCTZGVDVkTj8oJSBImvMk=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=EXzFBdAJ4sQRXufQ4vDuioD6NWNc+in/Z5af1i9K8Gg+JsXvFnOxA69klx8hRuCFLCg6ehj1FuloIBoQ0HXyMlM+tPV1EHUTCcN+ow0t0Te82iYiIiwKCnHJA4xxK4OtREFrLpz2qyMDrsne41cxzJSqmrukL3cMwD4ZfSby7vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BgWzHEaZ; arc=none smtp.client-ip=209.85.210.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-724d1724657so2554208a34.0
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Mar 2025 19:29:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740972548; x=1741577348; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=aWknhiFa0B4WqxpoLJBg7zPZQxK85hrLUV4++fYVOc4=;
-        b=BgWzHEaZIct810VwTaUyEnri5NYETHJeiYKNoE3xGGE4cCXbq06v4du0CSM8fIZ3No
-         4Qhq80HPdSfNtpBT7HSFgCkLi942/qQcGEHQZz2o0UkGtwoxVm089z5B3y5q18mhU0V1
-         u9DV8skHh7yi5Z2oiQDdsaZO58UeRnqsz1tRBOhrGMszvPWZHcmKaKbZuPA/NpFsG5xC
-         yKk4xIQZ7RHdAe/3vySHwfTsO+UUbsa9HKMt7jLq/XB8KMwxV7pVlq4x4Qlo8ahqksLQ
-         FHTSJiRkrLpPPNw/aR9cW9T/rGMaoAoUKNgtawd4+f3qB6r+OZ0aPfc8wVs8d3asAi1j
-         rRgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740972548; x=1741577348;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aWknhiFa0B4WqxpoLJBg7zPZQxK85hrLUV4++fYVOc4=;
-        b=Lx9HUZsONDR6qies4C0flNpsjaTi4NdVyUMP9zQaGkIJoXRyXrKqFaOaNSYZTLYkPd
-         Ni6UWPQra51+LVyYGb+DfDFT6cdPcg+8WfoPnaN5TlGn2VdSugpMgVfUvAKUWnGMkK+u
-         tJ+kNj4QWLkcHB/DNU7KjvtVx5NZhr3CgySF3S6CodEDbjQgf/9VYTOB18lskPt7l2As
-         deS4cD15SSoYpYMHp8/F+io9BYHc2CZSrUjf9ARoWsnLkvyDT6iR01zWREix0mUnghGP
-         0rfgorA2zhHmkwQpScWGjOdIBVUgiJ5cNg2PaINyk2Hy9Azr1rSDsXVNi9951HK6FWuD
-         o/Xg==
-X-Forwarded-Encrypted: i=1; AJvYcCVRDopgbRLNm/r3XZUZ8+ATjaq0XFcC5Zbc6rv5EeBv1lI9FVcYaGSiotpQOfK1XA4/EUNamkvYxFeWK9o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYlzz85xDaW1HWs/5tTdegHwkM8uy+1Y3R72fHgwPO4WtjKzsx
-	OGK5qnena4sADmVgGnmO+OF/C/dCwZ4PHnQZEBXQAd9IMbCpHURBCdzk9RP7mZhQ/EuRmy7DGt0
-	TceKop8Rl0UpHeLI0ROvx2dEz6Ik=
-X-Gm-Gg: ASbGncupWl1rgPAKp3IEAyX3fNNFV0uG8aNrpdUSzHZVZ1eQ2CofD4VemgkcPOTMB1j
-	YZgGo0NOPFvdkGPFA8jACqQzKPOU65uBIbn4QcFPhttcpgHFCeMZ5JbEk9NQz/RZnmqJ4PqtFb5
-	EfjGY5UhegWrKGV05AqgvzUkjBQw==
-X-Google-Smtp-Source: AGHT+IF431HQo0sh51P/q4eWGcWUJ4aJPIzgNglznC/u/q9dI7YEsaGN6v6CFxn86/4fe3OwfJVuMhGQpjAQrHTEeWs=
-X-Received: by 2002:a05:6830:1e76:b0:727:2fad:105a with SMTP id
- 46e09a7af769-728ae56f48bmr9008452a34.1.1740972547972; Sun, 02 Mar 2025
- 19:29:07 -0800 (PST)
+	s=arc-20240116; t=1740972628; c=relaxed/simple;
+	bh=SryItDwcQcXoNY14VTogR4V6goQulBC/BUqa8EFHB80=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=X7vZCOprHwr4boheDpnG8CZ1RpHEs+T9fYIfAF4JJLlaE/Jtor2sZ3DZRt7NWueT1MoRJhNUte+ee4+GAjTUQ7OpLd9DH15fKEfr/cCGn6jzxfkBo9LBHUmBLL52emOIUuB5q2MUlRKLwZ3T7GqGzlvMEL4BGKVgwKFn/ayJZrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=P6YXCFTd; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 522NoUxZ009232;
+	Mon, 3 Mar 2025 03:29:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=hYAdSew6AptzJBVsbHhvRE
+	pcJmARjrEFgChOrvn1g98=; b=P6YXCFTdM0F2R47QDe3L/Z9sXDejHL+qmFhq1J
+	Quw5p+SscZ/tr/C3jXSlx0IKSUPOHVk9rKTVsS3MTUquKF8Pu3qpl3vku+Qo56jw
+	QTHp9/SdkVRhhIU8P1ZGy1eQUSMb87fdi/soMruTyOu+Etc6mAlTWhglwznrxFZL
+	8acSgpZcXnCk91e9QOF0t9ojVqJ/tsCWjPWGA1B7XehusNRWKr5ZAMtP2OuOR4w9
+	QGFibJAdOx6FoMmcSZd7G71pPQr9wcPJU/KRJ8WR5WMOEsklp7NGU1LMl1gZRud3
+	3kRmv17gIdFXUIi7b//XtKjkRdFDdu2QZt5k08EJbBwDUK7Q==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 453t95ufpy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Mar 2025 03:29:56 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5233TtHv016864
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 3 Mar 2025 03:29:55 GMT
+Received: from jiegan-gv.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Sun, 2 Mar 2025 19:29:49 -0800
+From: Jie Gan <quic_jiegan@quicinc.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach
+	<mike.leach@linaro.org>,
+        James Clark <james.clark@linaro.org>,
+        "Alexander
+ Shishkin" <alexander.shishkin@linux.intel.com>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+CC: Tingwei Zhang <quic_tingweiz@quicinc.com>,
+        Jinlong Mao
+	<quic_jinlmao@quicinc.com>, <coresight@lists.linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+Subject: [PATCH v15 00/10] Coresight: Add Coresight TMC Control Unit driver
+Date: Mon, 3 Mar 2025 11:29:21 +0800
+Message-ID: <20250303032931.2500935-1-quic_jiegan@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Strforexc yn <strforexc@gmail.com>
-Date: Mon, 3 Mar 2025 11:28:57 +0800
-X-Gm-Features: AQ5f1Jo-WCLwzAVS6nUrg3Z8UlF4GpsTpf5wKbrsDhXE_5g5gQBskG_9H8erOog
-Message-ID: <CA+HokZok8x=9Z=o0Y+hFWTNbeokM3Gmenq741HKqHOMLfarezw@mail.gmail.com>
-Subject: =?UTF-8?Q?KASAN=3A_slab=2Duse=2Dafter=2Dfree_Read_in_hdm=5Fdisconnect_?=
-	=?UTF-8?Q?=EF=BC=88_v6=2E14=2Drc4_kernel=EF=BC=89?=
-To: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>, 
-	Christian Gromm <christian.gromm@microchip.com>, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 6hN2KhVmMiXIs-I1uw5g3xcvOyyf0Z5-
+X-Proofpoint-GUID: 6hN2KhVmMiXIs-I1uw5g3xcvOyyf0Z5-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-03_01,2025-02-28_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ phishscore=0 mlxlogscore=999 clxscore=1015 priorityscore=1501
+ lowpriorityscore=0 spamscore=0 malwarescore=0 suspectscore=0 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2503030026
 
-Dear Maintainers, When using our customized Syzkaller to fuzz the
-latest Linux kernel, the following crashwas triggered.
+From: Jie Gan <jie.gan@oss.qualcomm.com>
 
-Kernel commit: v6.14-rc4 (Commits on Feb 24, 2025)
-Kernel Config : https://github.com/Strforexc/LinuxKernelbug/blob/main/.conf=
-ig
-Kernel Log=EF=BC=9A https://github.com/Strforexc/LinuxKernelbug/blob/main/s=
-lab_uaf_read_gfs2_dis/log0
-Reproduce.c:  https://github.com/Strforexc/LinuxKernelbug/blob/main/slab_ua=
-f_read_hdm_disconnect/repro.cprog
+The Coresight TMC Control Unit(CTCU) device hosts miscellaneous configuration
+registers to control various features related to TMC ETR device.
 
-KASAN detects a use-after-free read of size 8 at address
-ffff88806e3c9898 in hdm_disconnect (drivers/most/most_usb.c:1125),
-triggered by a USB disconnect event processed via the usb_hub_wq
-workqueue.
+The CTCU device works as a helper device physically connected to the TMC ETR device.
+---------------------------------------------------------
+             |ETR0|             |ETR1|
+              . \                 / .
+              .  \               /  .
+              .   \             /   .
+              .    \           /    .
+---------------------------------------------------
+ETR0ATID0-ETR0ATID3     CTCU    ETR1ATID0-ETR1ATID3
+---------------------------------------------------
+Each ETR has four ATID registers with 128 bits long in total.
+e.g. ETR0ATID0-ETR0ATID3 registers are used by ETR0 device.
 
-This bug seems to have been reported and fixed in the old kernel,
-which seems to be a regression issue? If you fix this issue, please
-add the following tag to the commit:
-Reported-by: Zhizhuo Tang strforexctzzchange@foxmail.com, Jianzhou
-Zhao xnxc22xnxc22@qq.com, Haoran Liu <cherest_san@163.com>
+Based on the trace id which is programed in CTCU ATID register of
+specific ETR, trace data with that trace id can get into ETR's buffer
+while other trace data gets ignored. The number of CTCU ATID registers
+depends on the number of defined TMC ETR devices. For example, two TMC
+ETR devices need eight ATID registers. ETR0 with ETR0ATID0-ETR0ATID3
+and ETR1 with ETR1ATID0-ETRATID3.
 
-usb 7-1: USB disconnect, device number 9
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-BUG: KASAN: slab-use-after-free in hdm_disconnect+0x227/0x250
-drivers/most/most_usb.c:1125
-Read of size 8 at addr ffff88806e3c9898 by task kworker/0:1/9
+The significant challenge in enabling the data filter function is how
+to collect the trace ID of the source device. The introduction of
+trace_id callback function addresses this challenge. The callback function
+collects trace ID of the device and return it back. The trace ID will be
+stored in the structure called coresight_path and transmitted to helper
+and sink devices.
 
-CPU: 0 UID: 0 PID: 9 Comm: kworker/0:1 Not tainted 6.14.0-rc4 #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/=
-2014
-Workqueue: usb_hub_wq hub_event
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1b0 lib/dump_stack.c:120
- print_address_description.constprop.0+0x2c/0x420 mm/kasan/report.c:408
- print_report+0xaa/0x270 mm/kasan/report.c:521
- kasan_report+0xbd/0x100 mm/kasan/report.c:634
- hdm_disconnect+0x227/0x250 drivers/most/most_usb.c:1125
- usb_unbind_interface+0x1e5/0x980 drivers/usb/core/driver.c:458
- device_remove+0x125/0x170 drivers/base/dd.c:569
- __device_release_driver drivers/base/dd.c:1273 [inline]
- device_release_driver_internal+0x443/0x620 drivers/base/dd.c:1296
- bus_remove_device+0x22f/0x420 drivers/base/bus.c:579
- device_del+0x395/0x9e0 drivers/base/core.c:3854
- usb_disable_device+0x360/0x7b0 drivers/usb/core/message.c:1418
- usb_disconnect+0x2db/0x930 drivers/usb/core/hub.c:2316
- hub_port_connect+0x1f7/0x2730 drivers/usb/core/hub.c:5373
- hub_port_connect_change+0x27c/0x7f0 drivers/usb/core/hub.c:5673
- port_event+0xe3d/0x1220 drivers/usb/core/hub.c:5833
- hub_event+0x517/0xca0 drivers/usb/core/hub.c:5915
- process_one_work+0x109d/0x18c0 kernel/workqueue.c:3236
- process_scheduled_works kernel/workqueue.c:3317 [inline]
- worker_thread+0x677/0xe90 kernel/workqueue.c:3398
- kthread+0x3b3/0x760 kernel/kthread.c:464
- ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+The coresight_path structure is created to address how to transmit
+parameters needs by coresight_enable_path/coresight_disbale_path
+functions.
 
-Allocated by task 9:
- kasan_save_stack+0x24/0x50 mm/kasan/common.c:47
- kasan_save_track+0x14/0x40 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
- __kasan_kmalloc+0xba/0xc0 mm/kasan/common.c:394
- kmalloc_noprof include/linux/slab.h:901 [inline]
- kzalloc_noprof include/linux/slab.h:1037 [inline]
- hdm_probe+0xb7/0x18b0 drivers/most/most_usb.c:959
- usb_probe_interface+0x30b/0x9e0 drivers/usb/core/driver.c:396
- call_driver_probe drivers/base/dd.c:579 [inline]
- really_probe+0x252/0xaa0 drivers/base/dd.c:658
- __driver_probe_device+0x1df/0x460 drivers/base/dd.c:800
- driver_probe_device+0x49/0x120 drivers/base/dd.c:830
- __device_attach_driver+0x1e3/0x2f0 drivers/base/dd.c:958
- bus_for_each_drv+0x14c/0x1e0 drivers/base/bus.c:462
- __device_attach+0x1f2/0x4d0 drivers/base/dd.c:1030
- bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:537
- device_add+0xc5e/0x1490 drivers/base/core.c:3665
- usb_set_configuration+0x11a5/0x1c50 drivers/usb/core/message.c:2210
- usb_generic_driver_probe+0xbf/0x120 drivers/usb/core/generic.c:250
- usb_probe_device+0xed/0x3e0 drivers/usb/core/driver.c:291
- call_driver_probe drivers/base/dd.c:579 [inline]
- really_probe+0x252/0xaa0 drivers/base/dd.c:658
- __driver_probe_device+0x1df/0x460 drivers/base/dd.c:800
- driver_probe_device+0x49/0x120 drivers/base/dd.c:830
- __device_attach_driver+0x1e3/0x2f0 drivers/base/dd.c:958
- bus_for_each_drv+0x14c/0x1e0 drivers/base/bus.c:462
- __device_attach+0x1f2/0x4d0 drivers/base/dd.c:1030
- bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:537
- device_add+0xc5e/0x1490 drivers/base/core.c:3665
- usb_new_device+0x8f4/0x1430 drivers/usb/core/hub.c:2663
- hub_port_connect+0x1122/0x2730 drivers/usb/core/hub.c:5533
- hub_port_connect_change+0x27c/0x7f0 drivers/usb/core/hub.c:5673
- port_event+0xe3d/0x1220 drivers/usb/core/hub.c:5833
- hub_event+0x517/0xca0 drivers/usb/core/hub.c:5915
- process_one_work+0x109d/0x18c0 kernel/workqueue.c:3236
- process_scheduled_works kernel/workqueue.c:3317 [inline]
- worker_thread+0x677/0xe90 kernel/workqueue.c:3398
- kthread+0x3b3/0x760 kernel/kthread.c:464
- ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+Here is the definition of the struct coresight_path:
+/**
+ * struct coresight_path - data needed by enable/disable path
+ * @path:               path from source to sink.
+ * @trace_id:           trace_id of the whole path.
+ */
+struct coresight_path {
+        struct list_head                path;
+        u8                              trace_id;
+};
 
-Freed by task 9:
- kasan_save_stack+0x24/0x50 mm/kasan/common.c:47
- kasan_save_track+0x14/0x40 mm/kasan/common.c:68
- kasan_save_free_info+0x3b/0x80 mm/kasan/generic.c:576
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x54/0x80 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:233 [inline]
- slab_free_hook mm/slub.c:2353 [inline]
- slab_free mm/slub.c:4609 [inline]
- kfree+0x12e/0x420 mm/slub.c:4757
- device_release+0xa6/0x240 drivers/base/core.c:2567
- kobject_cleanup+0x136/0x410 lib/kobject.c:689
- kobject_release lib/kobject.c:720 [inline]
- kref_put include/linux/kref.h:65 [inline]
- kobject_put+0xf0/0x130 lib/kobject.c:737
- put_device drivers/base/core.c:3773 [inline]
- device_unregister+0x30/0xc0 drivers/base/core.c:3896
- hdm_disconnect+0x10b/0x250 drivers/most/most_usb.c:1123
- usb_unbind_interface+0x1e5/0x980 drivers/usb/core/driver.c:458
- device_remove+0x125/0x170 drivers/base/dd.c:569
- __device_release_driver drivers/base/dd.c:1273 [inline]
- device_release_driver_internal+0x443/0x620 drivers/base/dd.c:1296
- bus_remove_device+0x22f/0x420 drivers/base/bus.c:579
- device_del+0x395/0x9e0 drivers/base/core.c:3854
- usb_disable_device+0x360/0x7b0 drivers/usb/core/message.c:1418
- usb_disconnect+0x2db/0x930 drivers/usb/core/hub.c:2316
- hub_port_connect+0x1f7/0x2730 drivers/usb/core/hub.c:5373
- hub_port_connect_change+0x27c/0x7f0 drivers/usb/core/hub.c:5673
- port_event+0xe3d/0x1220 drivers/usb/core/hub.c:5833
- hub_event+0x517/0xca0 drivers/usb/core/hub.c:5915
- process_one_work+0x109d/0x18c0 kernel/workqueue.c:3236
- process_scheduled_works kernel/workqueue.c:3317 [inline]
- worker_thread+0x677/0xe90 kernel/workqueue.c:3398
- kthread+0x3b3/0x760 kernel/kthread.c:464
- ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+The atid_offset mentioned before is the offset to ATID register in CTCU
+device.
 
-The buggy address belongs to the object at ffff88806e3c8000
- which belongs to the cache kmalloc-8k of size 8192
-The buggy address is located 6296 bytes inside of
- freed 8192-byte region [ffff88806e3c8000, ffff88806e3ca000)
+Enabling the source device will configure one bit in the ATID register based
+on its trace ID.
+Disabling the source devices will reset the bit in the AITD register
+based on its trace ID.
 
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x6e3c8
-head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-ksm flags: 0x4fff00000000040(head|node=3D1|zone=3D1|lastcpupid=3D0x7ff)
-page_type: f5(slab)
-raw: 04fff00000000040 ffff88801b442280 ffffea0001242000 dead000000000003
-raw: 0000000000000000 0000000080020002 00000000f5000000 0000000000000000
-head: 04fff00000000040 ffff88801b442280 ffffea0001242000 dead000000000003
-head: 0000000000000000 0000000080020002 00000000f5000000 0000000000000000
-head: 04fff00000000003 ffffea0001b8f201 ffffffffffffffff 0000000000000000
-head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 3, migratetype Unmovable, gfp_mask
-0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEM=
-ALLOC),
-pid 16917, tgid 16916 (syz.6.368), ts 182425166303, free_ts
-182208588085
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1a3/0x1d0 mm/page_alloc.c:1551
- prep_new_page mm/page_alloc.c:1559 [inline]
- get_page_from_freelist+0x8a5/0xfa0 mm/page_alloc.c:3477
- __alloc_frozen_pages_noprof+0x1d8/0x3b0 mm/page_alloc.c:4739
- alloc_pages_mpol+0x1f2/0x550 mm/mempolicy.c:2270
- alloc_slab_page mm/slub.c:2423 [inline]
- allocate_slab+0x229/0x310 mm/slub.c:2587
- ___slab_alloc+0x7f3/0x12b0 mm/slub.c:3826
- __slab_alloc.constprop.0+0x56/0xc0 mm/slub.c:3916
- __slab_alloc_node mm/slub.c:3991 [inline]
- slab_alloc_node mm/slub.c:4152 [inline]
- __kmalloc_cache_noprof+0x280/0x450 mm/slub.c:4320
- kmalloc_noprof include/linux/slab.h:901 [inline]
- kzalloc_noprof include/linux/slab.h:1037 [inline]
- cryptomgr_schedule_probe+0x92/0xab0 crypto/algboss.c:87
- cryptomgr_notify+0x49/0x70 crypto/algboss.c:225
- notifier_call_chain+0xd7/0x250 kernel/notifier.c:85
- blocking_notifier_call_chain+0x6b/0xb0 kernel/notifier.c:380
- crypto_probing_notify crypto/api.c:322 [inline]
- crypto_alg_mod_lookup+0x350/0x500 crypto/api.c:352
- crypto_type_has_alg+0x2d/0xa0 crypto/algapi.c:1006
- xfrm_probe_algs+0x16b/0x400 net/xfrm/xfrm_algo.c:825
- pfkey_register+0xef/0x270 net/key/af_key.c:1701
-page last free pid 5211 tgid 5211 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1127 [inline]
- free_frozen_pages+0x71f/0xff0 mm/page_alloc.c:2660
- __put_partials+0x13b/0x190 mm/slub.c:3153
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x50/0x130 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x1a5/0x1f0 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x6f/0xa0 mm/kasan/common.c:329
- kasan_slab_alloc include/linux/kasan.h:250 [inline]
- slab_post_alloc_hook mm/slub.c:4115 [inline]
- slab_alloc_node mm/slub.c:4164 [inline]
- kmem_cache_alloc_noprof+0x167/0x400 mm/slub.c:4171
- getname_flags+0xd2/0x620 fs/namei.c:139
- do_sys_openat2+0xf2/0x1d0 fs/open.c:1422
- do_sys_open fs/open.c:1443 [inline]
- __do_sys_openat fs/open.c:1459 [inline]
- __se_sys_openat fs/open.c:1454 [inline]
- __x64_sys_openat+0x140/0x200 fs/open.c:1454
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcb/0x260 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Useage:
+Enable:
+STM device with trace ID 5 and ETR0 is activated.
+Bitmap before the enablement:
+ETR0ATID0:
+31..................543210
+==========================
+0000000000000000000000...0
+==========================
 
-Memory state around the buggy address:
- ffff88806e3c9780: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff88806e3c9800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff88806e3c9880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                            ^
- ffff88806e3c9900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff88806e3c9980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Bitmap after the enablement:
+31..................543210
+==========================
+0000000000000...0000100000
+==========================
 
-Regards,
-Zhizhuo Tang
+The bit 5 of the ETR0ATID0 register is configured to 1 when enabling the
+STM device.
+
+Disable:
+STM device with trace ID 5 and ETR0 is activated.
+Bitmap before the disablement:
+ETR0ATID0:
+31................6543210
+=========================
+000000000010111...0100000
+=========================
+
+Bitmap after the disablement
+ETR0ATID0:
+31................6543210
+=========================
+000000000010111...0000000
+=========================
+
+The bit 5 of the ETR0ATID0 register is reset to 0 when disabling the STM
+device.
+
+Sincere thanks to James Clark for providing an excellent idea to handle
+the trace_id of the path.
+
+---
+Changes in V15:
+1. Rebased on tag: next-20250228.
+2. Optimize patch(2/10), add check process before using sink.
+Link to V14 - https://lore.kernel.org/all/20250226041342.53933-1-quic_jiegan@quicinc.com/
+---
+
+---
+Changes in V14:
+1. Drop the reviewed-by tag for previous patch: Coresight-Introduce-a-new-struct-coresight_path
+   due to a massive modification.
+2. Split the patch, Coresight-Introduce-a-new-struct-coresight_path, into
+   four patches.
+   - Coresight-Introduce-a-new-struct-coresight_path
+   - Coresight-Allocate-trace-ID-after-building-the-path
+   - Coresight-Change-to-read-the-trace-ID-from-coresight_path
+   - Coresight-Change-functions-to-accept-the-coresight_path
+3. Change the type of the coresight_path_assign_trace_id function to void.
+4. Change the type of the path_list from struct list_head * to struct list_head to avoid
+   extra memory allocate/free.
+5. Rename the file coresight-ctcu.c to coresight-ctcu-core.c to improve scalibility.
+6. Add pm_ops for CTCU driver.
+7. Rename the struct ctcu_atid_config to ctcu_etr_config to improve scalibility.
+8. Optimize following functions of the CTCU driver to improve readability.
+   - ctcu_program_atid_register
+   - __ctcu_set_etr_traceid
+9. Change the way to get the port number. The new solution is searching
+   the sink device from CTCU's view.
+10. Add desc.access for CTCU driver.
+Link to V13 - https://lore.kernel.org/linux-arm-msm/20250221060543.2898845-1-quic_jiegan@quicinc.com/
+---
+
+---
+Changes in V13:
+1. Move the trace_id callback to coresight_ops to simplify the code.
+Link to V12 - https://lore.kernel.org/linux-arm-msm/20250217093024.1133096-1-quic_jiegan@quicinc.com/
+---
+
+---
+Changes in V12:
+1. Update the method for allocating trace_id for perf mode.
+Link to V11 - https://lore.kernel.org/linux-arm-msm/20250214024021.249655-1-quic_jiegan@quicinc.com/
+---
+
+---
+Changes in V11:
+1. Add reviewed-by tag to patch(2/7), (4/7), (6/7). Patch(3/7) is
+   contributed by James, so didnot add reviewed-by tag of James.
+2. Fix warning reported by kernel bot and verified with build(W=1).
+3. Restore to the original logic that responsible for allocate trace_id
+   of ETM device in perf mode according to James' comment.
+Link to V10 - https://lore.kernel.org/linux-arm-msm/20250207064213.2314482-1-quic_jiegan@quicinc.com/
+---
+
+---
+Changes in V10:
+1. Introduce a new API to allocate and read trace_id after path is built.
+2. Introduce a new API to allocate and read trace_id of ETM device.
+3. Add a new patch: [PATCH v10 3/7] Coresight: Use coresight_etm_get_trace_id() in traceid_show()
+4. Remove perf handle from coresight_path.
+5. Use u8 instead of atomic_t for traceid_refcnt.
+6. Optimize the part of code in CTCU drvier that is responsible for program atid register.
+Link to V9 - https://lore.kernel.org/all/20250124072537.1801030-1-quic_jiegan@quicinc.com/
+
+Changes in V9:
+1. Rebased on tag next-20250113.
+2. Separate the previous trace_id patch (patch 2/5 Coresight: Add trace_id function to
+   retrieving the trace ID) into two patches.
+3. Introduce a new struct coresight_path instead of cs_sink_data which was
+   created in previous version. The coresight_path will be initialized
+   and constructed in coresight_build_path function and released by
+   coresight_release_path function.
+   Detail of the struct coresight_path is shown below:
+/**
+ * struct coresight_path - data needed by enable/disable path
+ * @path:               path from source to sink.
+ * @trace_id:           trace_id of the whole path.
+ */
+struct coresight_path {
+        struct list_head                *path;
+        u8                              trace_id;
+};
+
+4. Introduce an array of atomic in CTCU driver to represent the refcnt or each
+   enabled trace_id for each sink. The reason is there is a scenario that more
+   than one TPDM device physically connected to the same TPDA device has
+   been enabled. The CTCU driver must verify the refcnt before resetting the
+   bit of the atid register according to the trace_id of the TPDA device.
+5. Remove redundant codes in CTCU driver.
+6. Add reviewed-by tag to the commit message for APB clock path(patch
+   1/5).
+Link to V8 - https://lore.kernel.org/all/20241226011022.1477160-1-quic_jiegan@quicinc.com/
+
+Changes in V8:
+1. Rebased on tag next-20241220.
+2. Use raw_spinlock_t instead of spinlock_t.
+3. Remove redundant codes in CTCU driver:
+   - Eliminate unnecessary parameter validations.
+   - Correct log level when an error occurs.
+   - Optimize codes.
+4. Correct the subject prefix for DT patch.
+5. Collected reviewed-by tag from Konrad Dybcib for DT patch.
+Link to V7 - https://lore.kernel.org/all/20241210031545.3468561-1-quic_jiegan@quicinc.com/
+
+Changes in V7:
+1. Rebased on tag next-20241204.
+2. Fix format issue for dts patch.
+   - Padding the address part to 8 digits
+Link to V6 - https://lore.kernel.org/linux-arm-msm/20241009112503.1851585-1-quic_jiegan@quicinc.com/
+
+Changes in V6:
+1. Collected reviewed-by tag from Rob for dt-binding patch.
+2. Rebased on tag next-20241008.
+3. Dropped all depends-on tags.
+Link to V5 - https://lore.kernel.org/linux-arm-msm/20240909033458.3118238-1-quic_jiegan@quicinc.com/
+
+Changes in V5:
+1. Fix the format issue for description paragrah in dt binding file.
+2. Previous discussion for why use "in-ports" property instead of "ports".
+Link to V4 - https://lore.kernel.org/linux-arm-msm/20240828012706.543605-1-quic_jiegan@quicinc.com/
+
+Changes in V4:
+1. Add TMC description in binding file.
+2. Restrict the number of ports for the CTCU device to a range of 0 to 1 in the binding file,
+   because the maximum number of CTCU devices is 2 for existing projects.
+Link to V3 - https://lore.kernel.org/linux-arm-kernel/20240812024141.2867655-1-quic_jiegan@quicinc.com/
+
+Changes in V3:
+1. Rename the device to Coresight TMC Control Unit(CTCU).
+2. Introduce a new way to define the platform related configs. The new
+   structure, qcom_ctcu_config, is used to store configurations specific
+   to a platform. Each platform should have its own qcom_ctcu_config structure.
+3. In perf mode, the ETM devices allocate their trace IDs using the
+   perf_sink_id_map. In sysfs mode, the ETM devices allocate their trace
+   IDs using the id_map_default.
+4. Considering the scenario where both ETR devices might be enabled simultaneously
+   with multiple sources, retrieving and using trace IDs instead of id_map is more effective
+   for the CTCU device in sysfs mode. For example, We can configure one ETR as sink for high
+   throughput trace data like ETM and another ETR for low throughput trace data like STM.
+   In this case, STM data won’t be flushed out by ETM data quickly. However, if we use id_map to
+   manage the trace IDs, we need to create a separate id_map for each ETR device. Addtionally, We
+   would need to iterate through the entire id_map for each configuration.
+5. Add support for apb's clock name "apb". If the function fails to obtain the clock with
+   the name "apb_pclk", it will attempt to acquire the clock with the name "apb".
+Link to V2 - https://lore.kernel.org/linux-arm-msm/20240705090049.1656986-1-quic_jiegan@quicinc.com/T/#t
+
+Changes in V2:
+1. Rename the device to Coresight Control Unit.
+2. Introduce the trace_id function pointer to address the challeng how to
+   properly collect the trace ID of the device.
+3. Introduce a new way to define the qcom,ccu-atid-offset property in
+device tree.
+4. Disabling the filter function blocked on acquiring the ATID-offset,
+   which will be addressed in a separate patch once it’s ready.
+Link to V1 - https://lore.kernel.org/lkml/20240618072726.3767974-1-quic_jiegan@quicinc.com/T/#t
+---
+
+James Clark (1):
+  Coresight: Use coresight_etm_get_trace_id() in traceid_show()
+
+Jie Gan (9):
+  Coresight: Add support for new APB clock name
+  Coresight: Add trace_id function to retrieving the trace ID
+  Coresight: Introduce a new struct coresight_path
+  Coresight: Allocate trace ID after building the path
+  Coresight: Change to read the trace ID from coresight_path
+  Coresight: Change functions to accept the coresight_path
+  dt-bindings: arm: Add Coresight TMC Control Unit hardware
+  Coresight: Add Coresight TMC Control Unit driver
+  arm64: dts: qcom: sa8775p: Add CTCU and ETR nodes
+
+ .../bindings/arm/qcom,coresight-ctcu.yaml     |  84 +++++
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi         | 153 ++++++++
+ drivers/hwtracing/coresight/Kconfig           |  12 +
+ drivers/hwtracing/coresight/Makefile          |   2 +
+ drivers/hwtracing/coresight/coresight-core.c  | 125 +++++--
+ .../hwtracing/coresight/coresight-ctcu-core.c | 326 ++++++++++++++++++
+ drivers/hwtracing/coresight/coresight-ctcu.h  |  39 +++
+ drivers/hwtracing/coresight/coresight-dummy.c |  15 +-
+ .../hwtracing/coresight/coresight-etm-perf.c  |  27 +-
+ .../hwtracing/coresight/coresight-etm-perf.h  |   2 +-
+ drivers/hwtracing/coresight/coresight-etm.h   |   1 -
+ .../coresight/coresight-etm3x-core.c          |  55 +--
+ .../coresight/coresight-etm3x-sysfs.c         |   3 +-
+ .../coresight/coresight-etm4x-core.c          |  55 +--
+ .../coresight/coresight-etm4x-sysfs.c         |   4 +-
+ drivers/hwtracing/coresight/coresight-etm4x.h |   1 -
+ drivers/hwtracing/coresight/coresight-priv.h  |  14 +-
+ drivers/hwtracing/coresight/coresight-stm.c   |  13 +-
+ drivers/hwtracing/coresight/coresight-sysfs.c |  17 +-
+ drivers/hwtracing/coresight/coresight-tpda.c  |  11 +
+ drivers/hwtracing/coresight/coresight-tpdm.c  |   2 +-
+ include/linux/coresight.h                     |  27 +-
+ 22 files changed, 827 insertions(+), 161 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/qcom,coresight-ctcu.yaml
+ create mode 100644 drivers/hwtracing/coresight/coresight-ctcu-core.c
+ create mode 100644 drivers/hwtracing/coresight/coresight-ctcu.h
+
+-- 
+2.34.1
+
 
