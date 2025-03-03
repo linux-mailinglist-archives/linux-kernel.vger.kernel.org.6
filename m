@@ -1,180 +1,128 @@
-Return-Path: <linux-kernel+bounces-541729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 504CFA4C0E5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:47:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC9FAA4C0E6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:47:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 474B318972B7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:47:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE7CE1726AE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:47:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A7A72116E5;
-	Mon,  3 Mar 2025 12:45:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE7520E6E5;
+	Mon,  3 Mar 2025 12:46:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dQV+9IKO";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uGlr0zbc";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dQV+9IKO";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uGlr0zbc"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hrxURQ35"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C6B61EB18D
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 12:45:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE45313B58A;
+	Mon,  3 Mar 2025 12:46:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741005917; cv=none; b=jyB/bIPLf0Z/9pZNHnua8ZrxRGyow9lQ5HJhT2ARjERgEA4WN0b/9BW+o3/qVQG4Rj8yqyepTHLG8Hmq5cSgNjfrMQktGXRCclsePSeo4Nnm+LcDNZAwPdL2sX0W3EM6Rno3F4q38o+crVgwdeBfezfI0FJzAMx0MJzBf9YTiM8=
+	t=1741005991; cv=none; b=gbYeAlbtKRfBW0rwxmFXo/raSphwnuwEy2Iw2sfia43aT2TV8ccxrGp4a2U2emNDeZ56unaPfak+3VrvULxEPz+17bhQAg7BpomynEa4Ovegsj2cg0DHV4HbeVy7mWBdf2g/XyL3tKFDBPUc3eLkNmk68ekeXwUK1ZV3KHD6d9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741005917; c=relaxed/simple;
-	bh=ctXb+Vk4ikF5d2NAAL8/4EeUfcrsXV7pPJi6G8PMurI=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rdJc436C590LuulKPVcMhfteX8B+ujU/9QRKEFJk9RaFUGExqPRkkbyKR8xLS72T8VlEiMgwwY1EwStVFx2YNClGtandpm403VMaWxAxR2Uvb8RJriI7hRRByu9PRFprTSMdjC5lgodw+3YIcSzvbBSJy3uTYn0mQWPFv9L3Bqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dQV+9IKO; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uGlr0zbc; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dQV+9IKO; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uGlr0zbc; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 46C232116B;
-	Mon,  3 Mar 2025 12:45:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741005914; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ekAiXbksR6ZxnzQ2JDubU6L33W8b0iyoZPr2f5UoEas=;
-	b=dQV+9IKONC+Zp3RrnURVMKcmZm8YLmoEpBHwLS25gjsxU3wlnugSIwcR/jW+n8rNgnwHxO
-	yPVKTH6lVYrt4VrSXKWOvsvezGx6RFTioqU/U0KSMNL2P4pCCJV6nm1aN6k+pJnxgkMcS/
-	7skmdjfOizTXXiCCRiMyCeI+gInLvmU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741005914;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ekAiXbksR6ZxnzQ2JDubU6L33W8b0iyoZPr2f5UoEas=;
-	b=uGlr0zbcdOvJ7MEeSSteK8faUMUrSU8Peqk7EZg3guUJbmWHTgo4+nvBEatk87gfNKv7Ut
-	5KUy6IcDcr5XloCQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=dQV+9IKO;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=uGlr0zbc
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741005914; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ekAiXbksR6ZxnzQ2JDubU6L33W8b0iyoZPr2f5UoEas=;
-	b=dQV+9IKONC+Zp3RrnURVMKcmZm8YLmoEpBHwLS25gjsxU3wlnugSIwcR/jW+n8rNgnwHxO
-	yPVKTH6lVYrt4VrSXKWOvsvezGx6RFTioqU/U0KSMNL2P4pCCJV6nm1aN6k+pJnxgkMcS/
-	7skmdjfOizTXXiCCRiMyCeI+gInLvmU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741005914;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ekAiXbksR6ZxnzQ2JDubU6L33W8b0iyoZPr2f5UoEas=;
-	b=uGlr0zbcdOvJ7MEeSSteK8faUMUrSU8Peqk7EZg3guUJbmWHTgo4+nvBEatk87gfNKv7Ut
-	5KUy6IcDcr5XloCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1290713939;
-	Mon,  3 Mar 2025 12:45:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id cR3dAlqkxWfzSQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 03 Mar 2025 12:45:14 +0000
-Date: Mon, 03 Mar 2025 13:45:13 +0100
-Message-ID: <87ldtme10m.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Cc: Kailang <kailang@realtek.com>,
-	Takashi Iwai <tiwai@suse.de>,
-	"linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] ALSA: hda/realtek: Enable PC beep passthrough for HP EliteBook 855 G7
-In-Reply-To: <2fea9fe8-312f-45a0-9bed-455c910fba43@maciej.szmigiero.name>
-References: <7461f695b4daed80f2fc4b1463ead47f04f9ad05.1739741254.git.mail@maciej.szmigiero.name>
-	<87jz9o99ef.wl-tiwai@suse.de>
-	<a02344f2-3b99-41ea-af64-8d2bcb01e435@maciej.szmigiero.name>
-	<87h64s972a.wl-tiwai@suse.de>
-	<6224620265674b09b5762f908b5158f9@realtek.com>
-	<2fea9fe8-312f-45a0-9bed-455c910fba43@maciej.szmigiero.name>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1741005991; c=relaxed/simple;
+	bh=TBMaAolBIofq75INIcE+jWJ6q6e9PQsYK6izjdNQww8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BLlzvjgdcNYZsdM6XJ8ep/n+wNIZN29D1/VD8Oa0LJ7oygClTdb+7QU4jDpcYgOSyAUGFpE3+QF3fa25QSeG9P8dj3LKeIoydIYsENp+Rgc56L/4maI0E2bQ064fUk5NSDNvNn6lFz0xJetEYjONjoi8nwD7G+V6KUmnlNvGwNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hrxURQ35; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741005990; x=1772541990;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=TBMaAolBIofq75INIcE+jWJ6q6e9PQsYK6izjdNQww8=;
+  b=hrxURQ3568nhN04Yq3kUh0N0SWOYb9tp0XDKPZlYbzCUgiKOM5hB9+dH
+   eDrnkn+bS970ogia3rxkx9oWUe/agRUOjpiIVU7S4VC7/9mYZU7jse/nG
+   CAi2hnhEslHle+fDza8QxqoSlqeui2UY66MuZfnDBEViZbmmaC4tOWonO
+   utuYSgu4b/Ze43f9GMJRPZCmRIum5uh5wz8auJ/LiY7YYFAsmrH7ArAPK
+   dqtRM4f2rAcqKtHoV/Kzjm+lc+yYENjYjPbzqJvcBUxwCEXYiw+Tm+XVV
+   fAmKP00v5F6wZ96jW0nQI8uvL6dPTF6t+DIr9QjobDNVNR+A4HiJhPjMG
+   g==;
+X-CSE-ConnectionGUID: 38FWDP4GTbSKPku5DBqOVA==
+X-CSE-MsgGUID: F948avsfQJyZhfz5tcL0Qw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="42071966"
+X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
+   d="scan'208";a="42071966"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 04:46:29 -0800
+X-CSE-ConnectionGUID: y+m4kChvRniIkKPM8bo8Ng==
+X-CSE-MsgGUID: V2xwT2GMRayuxHmUiMd91A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="155177534"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 04:46:28 -0800
+Date: Mon, 3 Mar 2025 14:46:24 +0200
+From: Raag Jadav <raag.jadav@intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: lee@kernel.org, giometti@enneenne.com, gregkh@linuxfoundation.org,
+	raymond.tan@intel.com, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] gpio: elkhartlake: depend on
+ MFD_INTEL_EHL_PSE_GPIO
+Message-ID: <Z8WkoPVk2SsSj5aR@black.fi.intel.com>
+References: <20250303044745.268964-1-raag.jadav@intel.com>
+ <20250303044745.268964-3-raag.jadav@intel.com>
+ <Z8VmebNcrH6CjHp6@smile.fi.intel.com>
+ <Z8WUpzDHbhp0aMoN@black.fi.intel.com>
+ <Z8WWNHL1rZKV4c4o@smile.fi.intel.com>
+ <Z8Wc73OytMx3khP_@black.fi.intel.com>
+ <Z8We4_FJvxTxegpN@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: 46C232116B
-X-Spam-Score: -3.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8We4_FJvxTxegpN@smile.fi.intel.com>
 
-On Wed, 19 Feb 2025 12:16:35 +0100,
-Maciej S. Szmigiero wrote:
+On Mon, Mar 03, 2025 at 02:21:55PM +0200, Andy Shevchenko wrote:
+> On Mon, Mar 03, 2025 at 02:13:35PM +0200, Raag Jadav wrote:
+> > On Mon, Mar 03, 2025 at 01:44:52PM +0200, Andy Shevchenko wrote:
+> > > On Mon, Mar 03, 2025 at 01:38:15PM +0200, Raag Jadav wrote:
+> > > > On Mon, Mar 03, 2025 at 10:21:13AM +0200, Andy Shevchenko wrote:
+> > > > > On Mon, Mar 03, 2025 at 10:17:42AM +0530, Raag Jadav wrote:
 > 
-> Hi Kailang,
+> ...
 > 
-> On 19.02.2025 09:32, Kailang wrote:
+> > > > > >  config GPIO_ELKHARTLAKE
+> > > > > >  	tristate "Intel Elkhart Lake PSE GPIO support"
+> > > > > > -	depends on X86 || COMPILE_TEST
+> > > > > > +	depends on (X86 && MFD_INTEL_EHL_PSE_GPIO) || COMPILE_TEST
+> > > > > >  	select GPIO_TANGIER
+> > > > > 
+> > > > > Looking on how GPIO PMIC drivers are written, I would redo this as
+> > > > > 
+> > > > > 	depends on (X86 || COMPILE_TEST) && MFD_INTEL_EHL_PSE_GPIO
+> > > > 
+> > > > True, but perhaps allow independent COMPILE_TEST where possible?
+> > > 
+> > > It will be tested in all-or-none way. Or you think it has to be tested
+> > > individually? If so, why is it needed?
 > > 
-> > Hi Maciej S,
-> >     Could you test plug headphone then speaker will mute or not?
-> >     Below was why I close the beep mode.
-> >   https://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git/commit/?id=fcf c9f711d1e2fc7876ac12b1b16c509404b9625
+> > Better CI coverage?
 > 
-> 
-> When I plug headphones then both normal sound playback (ALSA) and PC beep move to headphones.
-> The main laptop speaker gets muted indeed.
-> 
-> I'm testing on kernel 6.12 so the Dell patch above is included.
-> 
-> >   Hi Takashi,
-> >     COEF 0x36 bit 13 was the enable bit for pcbeep passthrough for
-> > 0x14.
-> >   If this patch no PM issues and speaker can mute by plug headphone or headset,
-> >   I think this work for me.
-> > 
-> 
-> Nice, thanks for clarifying.
+> How? I do not see the difference, can you elaborate?
+> (Assuming that CIs are using the merge_config.sh approach or alike)
 
-So, Kailang, is Maciej's patch OK to take from Realtek POV?
+That is my understanding of it.
 
-If so, feel free to give an Acked-by tag or such for the upstream
-inclusion.
+config COMPILE_TEST
+        bool "Compile also drivers which will not load"
+        depends on HAS_IOMEM
+        help
+          Some drivers can be compiled on a different platform than they are
+          intended to be run on. Despite they cannot be loaded there (or even
+          when they load they cannot be used due to missing HW support),
+          developers still, opposing to distributors, might want to build such
+          drivers to compile-test them.
 
-
-thanks,
-
-Takashi
+Raag
 
