@@ -1,81 +1,79 @@
-Return-Path: <linux-kernel+bounces-542397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4B8AA4C906
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:16:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EA54A4C92B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:21:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8AD797A8C5F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:15:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D29201884248
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:16:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC1232356AC;
-	Mon,  3 Mar 2025 16:59:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E02C237168;
+	Mon,  3 Mar 2025 17:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="indBYQiQ"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="rnh2iLvL"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2059.outbound.protection.outlook.com [40.107.223.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C47215186
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 16:59:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741021185; cv=none; b=dWETNWp+qALs6hQOd2a2yRHyqmRFgz4vQkZ+DEywZZmGCVzFO5obyjKZ6iWcqP19LxNbIfsdaESBFYm/wPf8AUelw2PVtR9t6z6IGTwtwOBa/kzVkMC1QWSblt/+lwO0JBsISZ4wnYMZ1TCRfijWeXEkkiWvOfkSxbkJslEUz1s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741021185; c=relaxed/simple;
-	bh=oH978JFzs5QlFfeiXA41hwt/41QiwNuuxnrXBUVHP/E=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=rIg57kEWOh0NmHreq2jE+EmEWVubglZH5KTD108lzI3COQqnuWEZnI1HQ3Xd2c+Hha+4PO/fP3w/wofhGs5ea7WDSgAtWJhAvBvJyPCC7QEGXzBWybUOT/rZPOVUwkTts4PHDfaI4k788QDmYa62BP9L7F2625F24YFTV6RB+iA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=indBYQiQ; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43bc6a6aaf7so7403405e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 08:59:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741021180; x=1741625980; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rqEytWC5Mz9hcceZZmQuQUkkVtwWYuhWvrPiRd/Fx4k=;
-        b=indBYQiQscVvGgwbf2QX7V2S7+pzkSj/JD3P2TGZSscZbFbS52f61gSmv1m9h4m1qo
-         spkd3w+ikeeFZx2TD1qYh3+8QM9e4NkUfYDqDWeXQTHUp3vyW+9rdiEE2ETCbdeHgegz
-         sFlS4Bjo7mQZa4zR2FoY6pAazFayZDsagyOSwZSsyqtzhWKLBRHM8ThdVLygytbDpb1L
-         sIZsGUXjH/hXsYOABN1oKcvooDY0R5WRnyzB6YNYye5HEbklH7ar99AVvJUKCKMN2Y93
-         UsvBCisqKC8g+Rqxm7lDNMdF5EAwI6xsLo9ebgQdk+iCO+5eD3JeOSapsztDuSMlhUCa
-         HedQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741021180; x=1741625980;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=rqEytWC5Mz9hcceZZmQuQUkkVtwWYuhWvrPiRd/Fx4k=;
-        b=IfZD1Dc5KOrfTGLnmU4Y+1r/KuFWxdlySE37Jd+y+rBFA7XPZQWJRBz8Qk+2dp9q/n
-         lI+qFQTA6T8EkAahOmgZ5HBQwC5nrTTKQMmY5cIkmyC1fjKN3Ek2p/MhP/pdBKJuVafa
-         9DF9OiEoQpDcVh6Ff4HBJxsIeWaIflpnDUJFe/6P8z2rMuwPHr9raPg0wQVjdyjRjpPD
-         i9w2Pvv/yTmd5yClosClB1YHz4EPMsnc9kLjdtFlIhJAjICugGYgZrAJK20oAPMxHT74
-         6Ya/KVKJAZB4l4d/XuVfwdqWenK2r0lFWrmzQJ0J8hAxVmpv42yyjU7HeU58vZe7LFsU
-         GiVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVPge0MDhf7c41jdNUvaTIvXV8asbPqVX5ZF0rstZNu2yV0BfbyM7nW/FpR8tjeep9JLN4y3fj5dEyanoY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywV59PNH3ojDy1qQNLdpaScnji3tbrvLetO8LQgmI8URLJckEE
-	9MkHtIifSJHLCvmbGJ5qlVVQqa1Ekd3+brtm5TAjjHmqN4FN5VgXRaOpXNoUN04=
-X-Gm-Gg: ASbGncuyVYEN3m/u0xZwvNmm80HEIlfrpx/ZXLFrP/+FDwQ8BtNMl8g3DgHoeWHfOJn
-	NU1v3sMOqG6IOgNzztXAljhgCTDrvI/nu6nNnnJkHLFydW6Kei+xo6rI0477wW30nwAJ4KhCa3o
-	zD6ruPpzfWIEi+WX+UdsH9Nu/HBNW6fSyOzBktEWVRPWM453WAoph4RA7nu1s7I1I9LfCb1DTTv
-	crl1kKEyis4ngG1SzMtluTTVpcQHJ1Gx2Lv7NfYJoZGS3RyxZo5xID65FhIy+vAEmCleqS2eonh
-	62LEabrYO+BTlZnCIo3s1+gcc52VhmhI+b6S8Bo95cqegAL6Bms5yIEJgc+PVC4sN+fLXq3UHwq
-	R/F+FbM57Wy+hy2nSLKPJCA==
-X-Google-Smtp-Source: AGHT+IHB5e8qHoNaz92JEh8SpwvriHPYxgjOv/OhwXAPTDqbY6gedugAXYtghujiNdzQrADoIS9mEg==
-X-Received: by 2002:a05:600c:3b24:b0:439:9496:17df with SMTP id 5b1f17b1804b1-43ba66fee15mr121905145e9.13.1741021180506;
-        Mon, 03 Mar 2025 08:59:40 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:982:cbb0:1c49:dea2:d749:5015? ([2a01:e0a:982:cbb0:1c49:dea2:d749:5015])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b694524c6sm171865805e9.0.2025.03.03.08.59.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Mar 2025 08:59:40 -0800 (PST)
-Message-ID: <71c8e765-7eb8-4572-8461-30e4761be836@linaro.org>
-Date: Mon, 3 Mar 2025 17:59:39 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B1321B9D9;
+	Mon,  3 Mar 2025 17:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741021213; cv=fail; b=JAbdhTDc8UC7xm6e+4tjnEX7GFd6tA6F66tqD6wPvZc4yVREOrj6Mpa9qJo0EvXGpd8nRLKvBWCBXs5YcbEFtaaViTehhq+mjvAam9TUyanIi6JUpvfsubUWgRULP9kUaPDmZ8CwU7jfZupU6OIDcg0qS90Vhcm4jZ/coGWphwA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741021213; c=relaxed/simple;
+	bh=6C5RkUTeE84juFKF44uMIfmRuno/m7OuQk60PtQ2lws=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=EhyQaTClc/7q2LFCJlX1OgFGfSbtwoGcWy+cJzUh9NFFF0oGG+qXAAoxoaPt3fqlRp+SJp/TpkJNdu5L8efRgWApzCoX+P7nxojirKd901f8fehs0YuGSyxwfbVfnxbdrNeXYfT+eM571s5/hMVBpIjVcR1OTOaDy2gDXRP97vg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=rnh2iLvL; arc=fail smtp.client-ip=40.107.223.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ukziqCeKXmQ5RNmHz/MHl7Q9geirMe0rPWL86+9UVZ6VJtd7KrhSVmf2q7UHSFiKfOnCI8Uv/DXfUfJTBnxMP0O8WwbRfEmgfIoHgF9df2VWEZ+8fH8T7PXBHCM1tERTk7Zgi8Fb14fuaA5seYwZyIuOsGEpGPoz8eWMrzWgMUVUiWx6x7OLi6AO3ZDjXpCjUuC/xyrp3df7F0VQPg6APyt27D8JY2MJEEfkh2PCyT9fySTIUgM2aMslTSAkr0vR2CQNoyUFGTpsKfS4O4/wE3JohyK5pm/3LGX6e1IMMnxgMcuDJjpfViRntThXdWSv44rHSBSzQZkUAV7zx+McQQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=V1FK87fFhbcY9LDH52bTXwrgxX4LzD1G3BselZzCPWY=;
+ b=E/jC3r7Ped4HPUfVKbkdZ3BITtk/C260f1Vm9Auj3aB9Sv1b8nejT/ciGzQvWXiN9vKNsVD0GPOzeI/Vkf56bcvM1CehmGxawokjv4Uip51h+s6cK+voYRkt8ZUiULatBxE6Un9+0Gv57HgCwn1juTaC2v2sk1FDpPSeRhxaVYYGONffpzEJGoad4oLwNChgpPL12AK4K6PHv4lwsnzRMtGA+0BiBsuExXFePGpnuo6CiC0/+D4vH0kl0w1KyoChaWZyXeC9pq0gQ2oEwlJomA8ff1lDJgB51vidPApk8iLQC1gbtw52uTZBnJN47ZB+gIOdAzF4PGFHMky3d0YZ5w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=V1FK87fFhbcY9LDH52bTXwrgxX4LzD1G3BselZzCPWY=;
+ b=rnh2iLvL45f6/q/azP3pq7W+kSjPY0dX4EM0YZ4IZAPchTjh0bvfZrca9S8RGAsV68+k2VxQ09Rv9LXH2UxJL2eknxzzW6SZEYyYydWnzpgelX7NsTHEVp9cLliYpfUUDClWbEEqs7h/8Pjp3TMkNFfa+fL1oOZ0AW2+nI6TTO0=
+Received: from BL0PR0102CA0023.prod.exchangelabs.com (2603:10b6:207:18::36) by
+ SJ2PR12MB8182.namprd12.prod.outlook.com (2603:10b6:a03:4fd::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.29; Mon, 3 Mar
+ 2025 17:00:07 +0000
+Received: from BL02EPF0002992E.namprd02.prod.outlook.com
+ (2603:10b6:207:18:cafe::7f) by BL0PR0102CA0023.outlook.office365.com
+ (2603:10b6:207:18::36) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8489.23 via Frontend Transport; Mon,
+ 3 Mar 2025 17:00:06 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BL02EPF0002992E.mail.protection.outlook.com (10.167.249.59) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8511.15 via Frontend Transport; Mon, 3 Mar 2025 17:00:05 +0000
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 3 Mar
+ 2025 11:00:01 -0600
+Received: from [172.19.74.139] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Mon, 3 Mar 2025 11:00:00 -0600
+Message-ID: <e7c69353-0146-46e0-9f93-27fdae6791f5@amd.com>
+Date: Mon, 3 Mar 2025 09:00:00 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,179 +81,172 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 3/4] media: platform: qcom/iris: add support for vpu33
-To: Philipp Zabel <p.zabel@pengutronix.de>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250225-topic-sm8x50-iris-v10-v1-0-128ef05d9665@linaro.org>
- <20250225-topic-sm8x50-iris-v10-v1-3-128ef05d9665@linaro.org>
- <1fcf08fe37a8e14c4acae445d65bd1503b13b6d2.camel@pengutronix.de>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <1fcf08fe37a8e14c4acae445d65bd1503b13b6d2.camel@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH V2 1/4] drivers/fpga/amd: Add new driver amd versal-pci
+To: Xu Yilun <yilun.xu@linux.intel.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-fpga@vger.kernel.org>,
+	<mdf@kernel.org>, <hao.wu@intel.com>, <yilun.xu@intel.com>,
+	<lizhi.hou@amd.com>, DMG Karthik <Karthik.DMG@amd.com>, Nishad Saraf
+	<nishads@amd.com>, Hayden Laccabue <hayden.laccabue@amd.com>
+References: <Z6Q3W2mUw/ZbtnWV@yilunxu-OptiPlex-7050>
+ <796e2826-a423-4d0c-977a-105ed236e067@amd.com>
+ <Z6Vtz/Bb8wsIH0pG@yilunxu-OptiPlex-7050>
+ <7b9bd24f-8f89-4d6c-a079-47c4c0b88a35@amd.com>
+ <Z6WO2Ktc9HoqdUSU@yilunxu-OptiPlex-7050>
+ <e68be2e2-7fdd-4f09-b479-4b0e31af5be5@amd.com>
+ <Z6sT20uzjes7SGzr@yilunxu-OptiPlex-7050>
+ <84281771-52d8-4b1d-8478-1fedb6f31608@amd.com>
+ <Z8LDSjhcXvwnyeiF@yilunxu-OptiPlex-7050>
+ <790910eb-4876-49de-b8eb-0ac50868bc1f@amd.com>
+ <Z8Vg0nJ2T9ezHDVf@yilunxu-OptiPlex-7050>
+Content-Language: en-US
+From: Yidong Zhang <yidong.zhang@amd.com>
+In-Reply-To: <Z8Vg0nJ2T9ezHDVf@yilunxu-OptiPlex-7050>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+Received-SPF: None (SATLEXMB04.amd.com: yidong.zhang@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL02EPF0002992E:EE_|SJ2PR12MB8182:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9e717e0f-c8c1-4750-dab0-08dd5a74d8e3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|1800799024|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UlFvQlhXQmdBS0xCL0djZit5R04rVEpVeFRqWTkrNnkvT2NhZVpKVkh0aU4y?=
+ =?utf-8?B?THdkTEY2enhaemJuMzIrZmlvNldmSi82Y2NoQmVGbGw2R2xza3BGNTExUFQr?=
+ =?utf-8?B?VDlmbElsL21yNGFxMkJKaXdCbDR1TzFrRjVrR2pVNmZqbGV4dXllWEdGT1Jz?=
+ =?utf-8?B?ZFUzWFdrNDRrclEwZ3lhRHdPTlFGMFRHTVZ2UDg2RUQwZkUzZk50SEs5dEUx?=
+ =?utf-8?B?VnNzek5RaSszTGtybU9mYUNkRFpPcjNlS2hSS2pLWitOcE5mSGdGaU5MMFBx?=
+ =?utf-8?B?djFxcUp1TTJ2cTVWUFROc3pJUjBMbEhRSW00NEtSZExGTWs3YktxSWNOUEVh?=
+ =?utf-8?B?TGJmNkFMSVpDMEVJeXA5RzZYWFV4d0pvY3d5Tzkxa1hZV1ZlNzlmcG45bDAw?=
+ =?utf-8?B?VUdZdDJuYzJhMk9nSlVhbEZRb1l4QUhNbSs2ZGZwZzFJRlFMeVBZQXdaUXFK?=
+ =?utf-8?B?SmErS2VtZ2EvOHpEeTA4QUxhbGp4cWRJMnJ0WW0wV2Nvd2ZHSExDU0sraUpV?=
+ =?utf-8?B?aDBPZ0oweThWZjcrYkpaNnF6WTZIRk5LTEJzVUdlNzZvVXRyWWhqU0lZZ212?=
+ =?utf-8?B?aHhlM1ZMYW9wK3Z2QUpqRjQ5a0lZOHc0cDNGc1lmajBxV1ZhRWFoanlLYmE0?=
+ =?utf-8?B?c080T1lhejJjTGFGMjhGV1ZtUGd2VzhObXZUUDhJakJGZFlLS1RKRDErRkZx?=
+ =?utf-8?B?ZDZiNjhOemhhZjY3MU1qaWNwQlcyLzh4d0Q1VkFEN0pyYXNHMjJ1OVA3R1Q2?=
+ =?utf-8?B?eDZ6ZFh4cWdzZmovUkZIRzRkc0ZLSVpHWms5UDBNZ1ZvUUZKTXM4d1kvaVNK?=
+ =?utf-8?B?eWFUdU9rbVp6L0ozeHMzallDMkd4U1Iwc1RHZXVIZ2xtejBlZnMzUERwU3Zm?=
+ =?utf-8?B?Q3Q5UVEwcUFjRmRCTDdGQStXS0YvZC9qQUwvS21nNUJCNlNXQ1B2c2xRalUv?=
+ =?utf-8?B?anJVaW4yY1lvamI0ckFNMEJKelQyVFRnOXYzbVRPN1VWR3BURjlHNWFlZHhE?=
+ =?utf-8?B?VWQyZEVPQ2RHTzl1ZlBZZ0FhaStVd004M3NDcEFaTG5qMGkzVFpuSktJeFJt?=
+ =?utf-8?B?a3MvQlJKOExSZXRnNjZxRFNSY3lEMjhUWEt6QmlaZ2lGMjJ0NHIxY0t0ampY?=
+ =?utf-8?B?SnNqcExMNjc4eGJRTTFvd1VpRHJ0cWRwV25vUkZ0SkRFNEsxNm83a1UzT2Vn?=
+ =?utf-8?B?YTVUN2hwb09MZnA3MCtsRFNSR2E3OFFnaFlYLzVtTzFYMWhCdFk5WlIxTnJ1?=
+ =?utf-8?B?dGJ0YVRZVUVvV0d5aUQ1K3NVQmoySTJqTnJ3K1lzbGh4SmhLSU5veHRubVFN?=
+ =?utf-8?B?RFltUE1KVUd6ZXlWNVJqRXVHTVk4OEZHdDNYK0s2Szl0aWVzN1R5RHUrVDNy?=
+ =?utf-8?B?MjNudWNPdDZ5WUplOWZ4bnRET1RiU2xjVEovZUNHbWVqZnJmK3ZDbGxya3NY?=
+ =?utf-8?B?NkVuaGVUYVpuU2JyaysybDVTNE5Uamh6bXhnMWlhVEdpUFdZRHFVS3VtSVlI?=
+ =?utf-8?B?ZTV2UTlBS0hYS29ENU5BMFFMb0NZVGdLZVRzMmw2dzZ6a2Y1aVF5Q3JlYVRI?=
+ =?utf-8?B?dHRxc1dRQldCbHVPWmsvbnZMQVd3UXBZNlVlVVdHL1hrdEVaR3l0RldhaDBH?=
+ =?utf-8?B?Z3YwQzFFNzNWM0dIdmtrbXlwa2NmNkk5VjVTNGJWcGkwZXlBTXdhcTZmTW1N?=
+ =?utf-8?B?SFV0ak9lcFlQb0xkVlFpZzR2QWZLalJVck93cVRjOHhFZE51akZNR0UvdWlV?=
+ =?utf-8?B?M0lDTUZJNXB3bVprTlN0TnIrSmVrUzVSTG1TUFVTMjFZdXlDaFdIQlYxbVg3?=
+ =?utf-8?B?WDNZZmhCYXl1YU42RGFWdUVWcWhRb0pkejQ5VDBITjNHU1lZYVNQUkxmNzRu?=
+ =?utf-8?B?alRVZ0ZyTWNjSDFiQU05UklLRElpVk1mNWJZdTY2bWIya29aWldlRnkzWjJW?=
+ =?utf-8?B?WGJ5WjBaZ01jWk5yU3p6WWlwb284RHBOcWorbDF6M2VFQm95eVF6THlsSTFM?=
+ =?utf-8?Q?JY+rz0w+DeYw0mAlWp31xBQIrM/oxc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2025 17:00:05.7527
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9e717e0f-c8c1-4750-dab0-08dd5a74d8e3
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL02EPF0002992E.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8182
 
-On 28/02/2025 17:38, Philipp Zabel wrote:
-> On Di, 2025-02-25 at 10:05 +0100, Neil Armstrong wrote:
->> The IRIS acceleration found in the SM8650 platforms uses the vpu33
->> hardware version, and requires a slighly different reset and power off
->> sequences in order to properly get out of runtime suspend.
+
+
+On 3/2/25 23:57, Xu Yilun wrote:
+> Caution: This message originated from an External Source. Use proper caution when opening attachments, clicking links, or responding.
+> 
+> 
+> On Sat, Mar 01, 2025 at 11:03:29AM -0800, Yidong Zhang wrote:
 >>
->> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->> ---
->>   drivers/media/platform/qcom/iris/Makefile          |   1 +
->>   drivers/media/platform/qcom/iris/iris_vpu33.c      | 315 +++++++++++++++++++++
->>   drivers/media/platform/qcom/iris/iris_vpu_common.h |   1 +
->>   3 files changed, 317 insertions(+)
 >>
->> diff --git a/drivers/media/platform/qcom/iris/Makefile b/drivers/media/platform/qcom/iris/Makefile
->> index 35390534534e93f4617c1036a05ca0921567ba1d..6b64c9988505afd9707c704449d60bb53209229f 100644
->> --- a/drivers/media/platform/qcom/iris/Makefile
->> +++ b/drivers/media/platform/qcom/iris/Makefile
->> @@ -21,6 +21,7 @@ qcom-iris-objs += \
->>                iris_vdec.o \
->>                iris_vpu2.o \
->>                iris_vpu3.o \
->> +             iris_vpu33.o \
->>                iris_vpu_buffer.o \
->>                iris_vpu_common.o \
->>   
->> diff --git a/drivers/media/platform/qcom/iris/iris_vpu33.c b/drivers/media/platform/qcom/iris/iris_vpu33.c
->> new file mode 100644
->> index 0000000000000000000000000000000000000000..128a050f206f99ec0d43b97ff995fa50d5684150
->> --- /dev/null
->> +++ b/drivers/media/platform/qcom/iris/iris_vpu33.c
->> @@ -0,0 +1,315 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
->> + */
->> +
->> +#include <linux/iopoll.h>
->> +#include <linux/reset.h>
->> +
->> +#include "iris_instance.h"
->> +#include "iris_vpu_common.h"
->> +#include "iris_vpu_register_defines.h"
->> +
->> +#define WRAPPER_TZ_BASE_OFFS			0x000C0000
->> +#define AON_BASE_OFFS				0x000E0000
->> +#define AON_MVP_NOC_RESET			0x0001F000
->> +
->> +#define WRAPPER_DEBUG_BRIDGE_LPI_CONTROL	(WRAPPER_BASE_OFFS + 0x54)
->> +#define WRAPPER_DEBUG_BRIDGE_LPI_STATUS		(WRAPPER_BASE_OFFS + 0x58)
->> +#define WRAPPER_IRIS_CPU_NOC_LPI_CONTROL	(WRAPPER_BASE_OFFS + 0x5C)
->> +#define REQ_POWER_DOWN_PREP			BIT(0)
->> +#define WRAPPER_IRIS_CPU_NOC_LPI_STATUS		(WRAPPER_BASE_OFFS + 0x60)
->> +#define WRAPPER_CORE_CLOCK_CONFIG		(WRAPPER_BASE_OFFS + 0x88)
->> +#define CORE_CLK_RUN				0x0
->> +
->> +#define WRAPPER_TZ_CTL_AXI_CLOCK_CONFIG		(WRAPPER_TZ_BASE_OFFS + 0x14)
->> +#define CTL_AXI_CLK_HALT			BIT(0)
->> +#define CTL_CLK_HALT				BIT(1)
->> +
->> +#define WRAPPER_TZ_QNS4PDXFIFO_RESET		(WRAPPER_TZ_BASE_OFFS + 0x18)
->> +#define RESET_HIGH				BIT(0)
->> +
->> +#define CPU_CS_AHB_BRIDGE_SYNC_RESET		(CPU_CS_BASE_OFFS + 0x160)
->> +#define CORE_BRIDGE_SW_RESET			BIT(0)
->> +#define CORE_BRIDGE_HW_RESET_DISABLE		BIT(1)
->> +
->> +#define CPU_CS_X2RPMH				(CPU_CS_BASE_OFFS + 0x168)
->> +#define MSK_SIGNAL_FROM_TENSILICA		BIT(0)
->> +#define MSK_CORE_POWER_ON			BIT(1)
->> +
->> +#define AON_WRAPPER_MVP_NOC_RESET_REQ		(AON_MVP_NOC_RESET + 0x000)
->> +#define VIDEO_NOC_RESET_REQ			(BIT(0) | BIT(1))
->> +
->> +#define AON_WRAPPER_MVP_NOC_RESET_ACK		(AON_MVP_NOC_RESET + 0x004)
->> +
->> +#define VCODEC_SS_IDLE_STATUSN			(VCODEC_BASE_OFFS + 0x70)
->> +
->> +#define AON_WRAPPER_MVP_NOC_LPI_CONTROL		(AON_BASE_OFFS)
->> +#define AON_WRAPPER_MVP_NOC_LPI_STATUS		(AON_BASE_OFFS + 0x4)
->> +
->> +#define AON_WRAPPER_MVP_NOC_CORE_SW_RESET	(AON_BASE_OFFS + 0x18)
->> +#define SW_RESET				BIT(0)
->> +#define AON_WRAPPER_MVP_NOC_CORE_CLK_CONTROL	(AON_BASE_OFFS + 0x20)
->> +#define NOC_HALT				BIT(0)
->> +#define AON_WRAPPER_SPARE			(AON_BASE_OFFS + 0x28)
->> +
->> +#define VCODEC_DMA_SPARE_3 0x87B8
->> +
->> +static int reset_control_bulk_assert_id(int num_rstcs,
->> +					struct reset_control_bulk_data *rstcs,
->> +					char *id)
->> +{
->> +	int i;
->> +
->> +	for (i = 0; i < num_rstcs; ++i) {
->> +		if (!strcmp(rstcs[i].id, id))
->> +			return reset_control_assert(rstcs[i].rstc);
->> +	}
->> +
->> +	return -ENODEV;
->> +}
->> +
->> +static int reset_control_bulk_deassert_id(int num_rstcs,
->> +					  struct reset_control_bulk_data *rstcs,
->> +					  char *id)
->> +{
->> +	int i;
->> +
->> +	for (i = 0; i < num_rstcs; ++i) {
->> +		if (!strcmp(rstcs[i].id, id))
->> +			return reset_control_deassert(rstcs[i].rstc);
->> +	}
->> +
->> +	return -ENODEV;
->> +}
+>> On 3/1/25 00:20, Xu Yilun wrote:
+>>> Caution: This message originated from an External Source. Use proper caution when opening attachments, clicking links, or responding.
+>>>
+>>>
+>>>> My last question for this topic:
+>>>> If we decide to upstream both userPF and mgmtPF driver together, could them
+>>>> be both within the drivers/fpga/amd as in-tree driver? This will help user
+>>>
+>>> I don't look into your full driver stack. Generally, if your drivers are
+>>> all about reprogramming, then yes. If they are also about all kinds of
+>>> accelaration functions you'd better split them out in different domains.
+>>> I may not have enough knowledge to make them correct.
+>>>
+>>
+>> The driver has more features than just re-programing. The re-programing is
+>> already done in the embedded firmware that's why the mgmtPF driver is just a
+>> utility driver.
+>>
+>> The userPF driver has features such as:
+>>    xdma (already in drivers/xilinx/xdma as platform driver)
+>>    qdma (already in drivers/amd/qdma as platform driver)
+>>    mailbox and more which have not been upstreamed in linux kernel yet.
+>>
+>> The driver architecture is:
+>>
+>>    userPF driver (as pci_driver)
+>>      qdma (as platform_driver)
+>>      ..
+>>      mailbox (as platform_driver)
+>>         /\
+>>         ||
+>>         \/
+>>      mailbox (as platform_driver)
+>>    mgmtPF driver (as pci_driver)
+>>         /\
+>>         ||
+>>         \/
+>>      Embedded firmware (re-programing done here)
+>>
+>> Right now, I am working on upstreaming the mgmtPF driver as pci_driver.
+>> In the future, I think the userPF driver should be fitting into the
+>> "drivers/fpga", given that should manage all these platform_drivers and
 > 
-> Please adapt the abstractions instead of working around them. If the
-> driver isn't suited for a single reset_control_bulk_data in iris_core,
-> split it into multiple groups, or store the resets individually.
-> 
-> At the very least, this could use constant indices instead of linear
-> search with string compares.
+> No I think userPF driver should manage all these *platform_devices*.
+Yes, userPF driver manage all these "platform_devices" by leveraging the 
+fpga_region callback ops. That's why I am thinking the userPF should be 
+in drivers/fpga.
 
-It was a first try, I'll think about something better for v2.
-
-Neil
+> Platform_drivers could be independent and put into proper domain folders.
+Yes. All these "platform_devices" - drivers - should be put into proper 
+domain. Aka, not in the drivers/fpga.
 
 > 
-> regards
-> Philipp
+>> utilize the fpga_region callbacks to online/offline services due to hardware
+> 
+> fpga_region should online/offline platform devices. Not services, which is the
+> job of each platform_driver.
 
+Yes. I think we are thinking the same concept - online/offline platform 
+devices. Not the services like probe/remove. The online/offline are 
+separate ops just designed for the platform_devices to be online/offline.
+
+Thanks,
+David
+
+> 
+> Thanks,
+> Yilun
+> 
+>> changes after re-programing.
+>>
+>> Thanks,
+>> David
+>>
+>>> Thanks,
+>>> Yilun
+>>>
+>>>> find source code easily.
 
