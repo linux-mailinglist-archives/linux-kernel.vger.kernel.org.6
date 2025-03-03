@@ -1,506 +1,251 @@
-Return-Path: <linux-kernel+bounces-541439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDD8EA4BCFC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:54:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C720A4BCF9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:54:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5CE818951EE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:54:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95BE33A67E0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:53:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50B31F4604;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E841F4262;
 	Mon,  3 Mar 2025 10:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bGu5L1CD"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b="X7VxzFcz"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05olkn2055.outbound.protection.outlook.com [40.92.89.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 293A21F2B99
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 10:53:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740999209; cv=none; b=Qn0bLwO1MOMLVIm+ZAsrcGyIHHD3BH8nBpsl8pObuMu5S8X/6VnnzQsjyIvgGqRfJIHAz9CMP8haLdrDeL7g2fckpMSQJIsCaw3Wy1uYe3NA6Ag7ECY/INskfi8/EvNUSv8FPoA1z5NeRuWOpWmmgQrlu6Biwdfv2jmlJLagPhE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414F11F2BA4;
+	Mon,  3 Mar 2025 10:53:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.89.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740999209; cv=fail; b=pBnkcT9pmQjWmwuA4uSAD8zjUgvd9Qjfd1EnJNTzTsCsdSpeiuZun1+GyyrR8Zdmti9GdJoPOHjRhAL8/shsavPrYTGy5LBUGrUn0NE6obXrZPI/vDYKlMFPixkIy0vTnuauYTlc+NE7y/toM3scw2VU73wTY5htCrOJqxhEbFQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740999209; c=relaxed/simple;
-	bh=O/n1cN/pULZnhP8Vt1zz2rQUzfGlW0aWxCPzENDiiIg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZqDuif5DDFRX2R3IWUhI8EjrpmOoxlL383f7AWjgg5AN7lQwT/xKNlLnRh4WCLMIziw/B2k45l0hqUUqkKcx+9pGZXBfzOTbp86gyFvXff+zkUj1qZtYdSZ8VU2V1pm68oQRsIhZ+z3DsEiT8a3AqMMNzU/Y0hz+QGbucpbRPKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bGu5L1CD; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-abf3cf3d142so328493666b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 02:53:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740999205; x=1741604005; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NfC4EUHzjOvx/sqQD97WH0wCB9NYOdqvIzRt50L23LI=;
-        b=bGu5L1CDpKQEN0eNK801DXPKf5OnRvPqNfnRZ3EBmr6mpxRl+ZE32mxke1f68GvlO5
-         sQoFZ1l7+uW4W7IS8ZGeoXBMju9cIEifBVGQEqebHNM6wE8z4suprLYBJVb4BAdQQQyJ
-         LUwEaa11C0W3ICPPXC9cmMpHcO/8aAe2dc+dAI07w7+8PG/Ef+x1vRHyDLiy7SAD3PLZ
-         u9ax55L8KcUAFPWsOInIeLl6oZSmKkxWHQM61pLunDJiO5sk3+pHxy29ZTOH0vzdLKg0
-         g2CEpDyVB3/RLv+o3YIkOksjsVmLtzA/YeQ+z1AZFiLd1Jw3fKwHSEPAFo3R/dJ8houg
-         ZTjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740999205; x=1741604005;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NfC4EUHzjOvx/sqQD97WH0wCB9NYOdqvIzRt50L23LI=;
-        b=l6TiQvelkO9HvX5LWg+5JXxBocRbQnAKpZ40f39rIzYt2VosHRdETH7NZTO7Uvgzzu
-         /0GYDf/yn+oA0J1noE4SVgtWVzjRJ5sVXn66Awd+Kw9GODzGXTWYS+luhXhCqW/MHLM7
-         XqSjjaMGDisrxlUR03yFBCrwI3U72/aHTJetZGCoIuArnWZ9dPqXTyOgDBMYz++SGv72
-         OvthzZRybATXnyr2GAqxgXiXv+5qJz8BcxJZs+bGlsItI4A4rqxS2OEsG84Rkzt867k+
-         dvNpIdPEYJEacLbu2W6HzHpZ//NiJvZO0t1smrfWQoOrcTiIkTOM11lnAedTW7L9XqsN
-         sCUg==
-X-Forwarded-Encrypted: i=1; AJvYcCVEMFYBj1a5DU6pvMBu9+ctZiLFo6xqfCxyWvZPVe8MaAL6YnLyJkA5yhtdd7NuePcdvUv+Jh48jF8ZnrA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUYHuBmdKMjt3mU9paoRIncWXDpB4DALMBhepoTtF9tLI81R0c
-	hTv3kLUmUJF4od88yAPD+4mTqX0zrvwvoocAHSJN0ZLNo6rY8MoYtF1zWwQmRV370Z0pHLfdwIQ
-	iTIebdf56h23fhj6Xom16Fzlqg9F4mxf3
-X-Gm-Gg: ASbGnctKJAlBZbKbENTl6hctzukrqkUVw0tB1/NQUdJXpRMnabqYN3HJdK3TpSciXYz
-	3V+7YsgNlM292D7MtwMs8/kpAD2YtVy2Sh3fdwQrKcOvgns0Z2Ru1er0+X+c1y9EXHBV/b627G1
-	1fQnsphq0dSc5hlXyi/GtpFANm6eDW
-X-Google-Smtp-Source: AGHT+IF0CRYuLH+z8KBMJFQOwVjjvDozeVaHE/3Zb/Pc7Uxep3lMRMAGDPxcLvQDWFg6kRK+yvlSoWyBQSFgFFwxD7g=
-X-Received: by 2002:a05:6402:234e:b0:5de:a6a8:5ec6 with SMTP id
- 4fb4d7f45d1cf-5e4d6ad8686mr38469039a12.10.1740999204974; Mon, 03 Mar 2025
- 02:53:24 -0800 (PST)
+	bh=U+yMRZ5FBeKps06BqGxZ595lBluzV5o1g/NO9Jmw0AA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=kQrWU75rnhkWFKOVI54Yh/7ykb6/p7G7wGflzdpYsrJS8+U8TYSHA86xOo+FnfigTG7bsanNka8GunSDeLiG9O6BvFxELFWfbehNSxHA9vy7MUpZrvc4Yy+ptXuymndSm5rcuoUe4a37cMq5os8tiAXeEnD1O+7xyGeBGpzsby4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com; spf=pass smtp.mailfrom=hotmail.com; dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b=X7VxzFcz; arc=fail smtp.client-ip=40.92.89.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=boy5pTz/QsWc4QEVg0WvZtjIRBICYVoYWOxH7BLlcPbbr8MlioDLt1+QYr/cCrADi63Cs8+fVF49MGBxXj6Nkd9u3GFDQCdBbwxN2/q1jPVORL0MNpvIVgqspJhmSwdOO3SrR+P5WnI8Ix9D7dmaqt/78yxoVL27JOO8kl5y/Ds61s8xJN/e+GgG8WSMViUY+I5oi3ihOJJt9mygZtndc4uKNJthG7Jjio+6QaCTCnPjsAx50TEMDMeiiNwXxfXgqXhMk+jCB+WJIZdQaWgoFUD63DDc4D1P8J4KPDCWmx5FWKbyvZl0mUNkqM+8MszNnbMoJ/l8iItG6qhyNJ4r8w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=M5pe0odQwLPzjUmKHk2xNk+hG82Zl1ydLqVR6DxJlqU=;
+ b=Bllt0OUE9vFqC09al6eJSNOqDbY3qT7tQfTJOpFp3WokJ2ueSfmPZt+6Y9y9B65w0MkRU9oK7dM6xYrLpWfb/VZDa8x5Cbxbq8BLI7nTjLFwm0VOyNxWLLogrgA9P40HnyHjPg0LURoBTAdJrUeTpsjTsesLeJ2IwWIpOZUl7KfOriLUt2bYitXyJKzDqvoKMWpj9Ed81AEmF91SnhvGsHy/sBZUjLtgXs4cHGuCsNOc0CoeaKRm3Rhyzia5kawKPItLNezCR1dPi9Sy8wpVAn8ddzRmM4lreOPzghSNV4WfeiNbU6tV04UhIYOXIgempGZ4QrXB69O+1IHn6WGyMQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=M5pe0odQwLPzjUmKHk2xNk+hG82Zl1ydLqVR6DxJlqU=;
+ b=X7VxzFcz+vbkPuZlaZ1EdcJk+HTgdfzUPhXY48x5ZUfN6eNY+xXpDFdxOuYkemUU/8s6iY6j0eO8WVwm5PReLPTQfHE4/nQAHmdLbmjrkc/oi+kIB/kmtmgBTYlcHCgmLE2Br33I7OAh1LeftvTTFz6rlrAmrrxxaNDLHLDCmaRhqV34h/8Fc4SqRrEK5HaEyCto/iofIT5lDli+H/in+idIIFM4jJjC/k+r5oPtM/R+4XxeuW90LyyilkzegUd8//VNiqGSBQFox9jQs4btGXaXLLtOgmDZ9jJ6yY091jX8BICgaZ4wava8vNngyMCKPXFDDc67rC/un/hVkFHjHQ==
+Received: from AM7P189MB1009.EURP189.PROD.OUTLOOK.COM (2603:10a6:20b:175::17)
+ by AS2P189MB2581.EURP189.PROD.OUTLOOK.COM (2603:10a6:20b:644::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Mon, 3 Mar
+ 2025 10:53:24 +0000
+Received: from AM7P189MB1009.EURP189.PROD.OUTLOOK.COM
+ ([fe80::e9f1:a878:e797:ee1a]) by AM7P189MB1009.EURP189.PROD.OUTLOOK.COM
+ ([fe80::e9f1:a878:e797:ee1a%2]) with mapi id 15.20.8489.025; Mon, 3 Mar 2025
+ 10:53:24 +0000
+Message-ID:
+ <AM7P189MB100990908D24EEB89CB0EAD2E3C92@AM7P189MB1009.EURP189.PROD.OUTLOOK.COM>
+Date: Mon, 3 Mar 2025 11:53:22 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 7/7] dt-bindings: motion: Add motion-simple-pwm
+ bindings
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ David Jander <david@protonic.nl>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-doc@vger.kernel.org, Nuno Sa <nuno.sa@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Oleksij Rempel
+ <o.rempel@pengutronix.de>, linux-pwm@vger.kernel.org
+References: <20250227162823.3585810-1-david@protonic.nl>
+ <20250227162823.3585810-8-david@protonic.nl>
+ <20250228-wonderful-python-of-resistance-d5b662@krzk-bin>
+ <20250228102201.590b4be6@erd003.prtnl>
+ <9a1d75a2-66c0-46b6-91a1-4922b892dfb1@kernel.org>
+ <20250228110931.7bdae7fd@erd003.prtnl>
+ <tm57fsmijq4t4y4dpmtss63ekzpm5oefir5tz4aioxq5dx4or6@lgoqjpxc3axh>
+Content-Language: en-US
+From: Maud Spierings <maud_spierings@hotmail.com>
+In-Reply-To: <tm57fsmijq4t4y4dpmtss63ekzpm5oefir5tz4aioxq5dx4or6@lgoqjpxc3axh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: AM9P195CA0007.EURP195.PROD.OUTLOOK.COM
+ (2603:10a6:20b:21f::12) To AM7P189MB1009.EURP189.PROD.OUTLOOK.COM
+ (2603:10a6:20b:175::17)
+X-Microsoft-Original-Message-ID:
+ <434b5118-1e2f-47e1-a5c0-f848d1f1ea24@hotmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250301055102.88746-1-ioworker0@gmail.com> <20250303152907.d61151bbdaf0b8a6a8f9978f@kernel.org>
-In-Reply-To: <20250303152907.d61151bbdaf0b8a6a8f9978f@kernel.org>
-From: Lance Yang <ioworker0@gmail.com>
-Date: Mon, 3 Mar 2025 18:52:48 +0800
-X-Gm-Features: AQ5f1JqSBFbm8-vzNy-VSmgmHzxXYeGD676WZJ47IHD3xAFGOxOdw01VQdfNDUA
-Message-ID: <CAK1f24=EH4d2Zboke82YY3DjxfDwJBtoZDPEfDvD6vYiGROMKg@mail.gmail.com>
-Subject: Re: [PATCH 1/1] hung_task: show the blocker task if the task is hung
- on semaphore
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: akpm@linux-foundation.org, will@kernel.org, peterz@infradead.org, 
-	mingo@redhat.com, longman@redhat.com, anna.schumaker@oracle.com, 
-	boqun.feng@gmail.com, joel.granados@kernel.org, kent.overstreet@linux.dev, 
-	leonylgao@tencent.com, linux-kernel@vger.kernel.org, rostedt@goodmis.org, 
-	senozhatsky@chromium.org, tfiga@chromium.org, 
-	Mingzhe Yang <mingzhe.yang@ly.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM7P189MB1009:EE_|AS2P189MB2581:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5f99e7c0-af3b-4f42-e9a1-08dd5a419e11
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|15080799006|19110799003|6090799003|461199028|8060799006|5072599009|1602099012|10035399004|440099028|3412199025|4302099013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?djViTzRhZkwvamhFWmNFRWkvMFY1Zlo5MGsvVDRvaWIveTVRZU9pazc3ZnY3?=
+ =?utf-8?B?TXR5K0FVTkhybHdvaVpyQW0zcEVPL3VvM0N5aVovQXJSUW95QzFCSGpVZ1ph?=
+ =?utf-8?B?VE4rV2lXaC9oczZ1aWpsalBqOVJuNkphbGFOY2dsQWUzZ056SEM2VW5XTXlr?=
+ =?utf-8?B?TkZZNXZia2sxSXd5Q1ZRM1JOb1NmY2VGRTFrOVRHYXc5S0p1ejBITkRvRlhw?=
+ =?utf-8?B?LzlkZVE5K0dKRi9icjhFenJOeUtBdUd2NHU2aFUxUG1ZQ2UxbWtwc2JEVmQ0?=
+ =?utf-8?B?dmhkVkZpR1czVHBmVFQ5WWVDb0Rta3JVamJ1Zi9nNzhxYklvNlo0eGFUUkY0?=
+ =?utf-8?B?MVI2R2xqc3BpNi9id3FOSWZYTUdNNXBDam50L1FrS3lhMVF1MnpVUGJvQmdJ?=
+ =?utf-8?B?a0kyVnlHZzh2VjljRE15bHRWUGJnOWpsOUJ3U1J1djZxR3I1VFFtd244dHV1?=
+ =?utf-8?B?N1hsVjJjU2tYY1pmbWNCblJvdVAzZ3hFU1ZnL1gwbmJKSnJld1g3SWFCWXlP?=
+ =?utf-8?B?RUVqdWRnOHlWTGFTdUhUV0VCTnM1NWJqVG1hRFBqQTNuZTJ2TlljVUVPVEZD?=
+ =?utf-8?B?SklDell1VnFDTStkdjhVOVhVSENUS1BtY21jSjlZWFFsQnc1UXZJa0lMWm1X?=
+ =?utf-8?B?cERrNUc5TENyT0JiS1RQOGhvd1hjUnhjb21SZUtRZlJ6d00rY1RhZWZ0Q1A2?=
+ =?utf-8?B?OUU5MUVWd3RKSk9TM3pxdU1PYk1XWGNkMGJNNUxhT053WENZbk9saTlnalB5?=
+ =?utf-8?B?bVJacUcrcVdOMnNXVFpTeUg4M0Q5RXZIdHdkWUF2MmRGYVl5alA3dVNGRTNR?=
+ =?utf-8?B?TmFWZmZXUFRWaGw5YVEweTh5WUlNbU9pcGdWNmE0MlpUUXN1aUMyTGlyQkpz?=
+ =?utf-8?B?cUlIRGdha0NQWkFaWEdSalZYaEVSVFJYN0NuWW5FUDB2cVNJZ3g2K3NOdVpH?=
+ =?utf-8?B?d29ESEFleC9YYWpFUHc2UHJGelpLcTR4cjFodmE5RisvQ2NCQWs1WVVrUExG?=
+ =?utf-8?B?QTh6b2U3Yy8velBEZFFFTFBVU3YxbmV1eElPY0Y2VHFiL2hPa2dPYUY5V3dq?=
+ =?utf-8?B?Qkd2dmpRMXNoOXNGY1dYaFpoSjkwYy9BcVZmS2Q3T2hiaDdvVjZrSlBXeXNJ?=
+ =?utf-8?B?Mnc4R1o4OVFuYWRjVWZYMlB5VHV2cW9YanM1emxvOGgyUXdJUkJJb1hiOEpz?=
+ =?utf-8?B?Z3hWS2lCZWFHSXZ0YmgzODZYRm1mQmV1ZTAvYnBVRGZLZDZzYkk0eUVOOFA5?=
+ =?utf-8?B?VTNxSkEzWTZ4ZmpBa0t1RW5GZ1RQN3FZTkIwc01MckxjYWk0N2FZcnhTRmRV?=
+ =?utf-8?B?ekltdmJlQjNFUmNlakQvbjh1eWhMSXh2TXJ0M21EUTJ1NXIzMUpxMnY4V2NW?=
+ =?utf-8?B?R3dEWFNvNjMvdk1lRmhCaGU1bmFnZjE4ODcwZXNzaHYzeG43SVBtcUplMjV4?=
+ =?utf-8?B?NXIxeS9vUVBEa3lpQUl5Zm9SYmVBcStyZXVyZUJQaDBCaFZEbnZJZk9KWmlI?=
+ =?utf-8?B?V2l6SnAyOWc3NjRsWkN5MnZOc1lNaEhIdVFXdTNXV0IxNGhQbUNyUUxrS2NH?=
+ =?utf-8?B?bUVDVDVUTzNiWHRnYlNYdGlBSVdsYURIY3Q2MHNaaERadUVnbU1BOEc5WlRp?=
+ =?utf-8?B?ZXl0ejNlL2NZWjJnbkFQalRRODdlU0pLMWhBVE4yZGpzYThxWVMvaGRMR3Rn?=
+ =?utf-8?Q?fN35ZkiD/Gi4LGIBFIay?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dVpXcHFzdG1ueXNiM0haQXlSQUpPWHNTRHlOZUhJeHF2eG5oR3RIclNWaGw5?=
+ =?utf-8?B?d2llQzJqQUN1RnFaQksxdEpISW1lSTBtbzF6NFhhN2FhSzcwL2R5bktvclpx?=
+ =?utf-8?B?bldNOVhjcW4zL2lMWmVCemJ3T3V5cEJ5UUtaOTA5QmhaK21vRWovZWxjS3Np?=
+ =?utf-8?B?VHZnc3Y1eUM0elI1cVBPYmJXRThGbFFBQzZrUVJIYUFqbFpWNlIzRjR1UkdE?=
+ =?utf-8?B?UE4ybEZrck81UW1Qd2YzeXRLaExKekx1S1NtV3NtMDR0T01sSm9QckNHVFpC?=
+ =?utf-8?B?ZG91dWNKMmg5bmkyS1Q5TDBIbUhTbG9DbnhjVHZUby9LZ1FuRU5JcFZGWGgx?=
+ =?utf-8?B?S2x1SzRZVmlyRUwrVmpmUHh6bVE2a1VxVm9xbmRJdVpQdE9jZ2k4eCtPMjlv?=
+ =?utf-8?B?QnRiRElYTDZ4RDJEdTNPVUdIcER1elFwRXpNVTZOM1FtNnhJNk1QSlU5NVV6?=
+ =?utf-8?B?K2NUZHk5aXo0WHZWMDUwbm55dGpGbW4zZWRwY2NjMW12WGRrRVl1VjlVWU1D?=
+ =?utf-8?B?UnE2dG5DQk5Fd0JDdzdNWVdIVktiZGZxNzFiblJnZWZoQm1RVXVnQ05LdU54?=
+ =?utf-8?B?S0ZvaHY3Nnd1QURHcDROTmdNSkxyTlE1RnprUGs1UCs1aHBvdy9FK2d0UDlx?=
+ =?utf-8?B?Um1FdElwQjEycnJoWEFUR3RyU3VOYnlzajA3aDFOU1k3dGRRUmtIdHVpU2N0?=
+ =?utf-8?B?Mkk2eitlbG1PaFJ5SXBKYlJXaU5SOGtRUjdiM1lmeURmdGlmNjN0Mm0vbC9i?=
+ =?utf-8?B?SXVqdmlOOVg2RHhzYnB3azhNekZERFNJY0hqLzlRU0VydGQyL1Q0bmN2bHA3?=
+ =?utf-8?B?SlY5VlVZMXd0OEw3N0dZTWpRRzNpSllkUmFhZU9oYUZUQTZ1VUtVc2ZhTURn?=
+ =?utf-8?B?WnRpVk81b1kvVGZ6dS91MkQ3WDZWcGE3ZlhKUzNrNk5pTVlVT1l6OU9Qc0d4?=
+ =?utf-8?B?WEJlQVd1UUFoZ05IeEYxL1NXSUE4VzJESTJVN1hNL29wQzBDWVc4QXRXZmEv?=
+ =?utf-8?B?bDM4OFRnUE9Bdm9SNTlxelF2NGRQZDltNUdOMGdqbW0xQnpxU3lwM3BsUDFU?=
+ =?utf-8?B?cGUySTg3NlhPUXVYVUF3Z05yazFZT0tOQkhodGxIQXFTMHpzeWVTTmFTSi9i?=
+ =?utf-8?B?V0x3eldVVldNeURrdVNGMUZNSndCVCtXNTBnNVVRWXNyUUJ2SGpnY2M4TG8y?=
+ =?utf-8?B?bzBTT053cDRKWmVMalkyZFVOY3l4TFM2V3VIU3RSK3JSQUJPVmdwQjRaVnlN?=
+ =?utf-8?B?eVYwVkZadjIyR0J3M1p1RGlXblRvWWRaMFUvaU9xSEJQLzJZbFBjbG1HcDBR?=
+ =?utf-8?B?S1R2SVFVRXhXZXU5S1R5ZzZtcVZJbXAyQVo0Z2NXVjdHVFJ1MzQ5WElWTGJR?=
+ =?utf-8?B?emdDZldXVGg1QTNlZldCYTU4bWtJR3dIcU16LzRRTU43Mi91bWpjRlduWERn?=
+ =?utf-8?B?MFQxaWc1QnFPdHMyNjdSc09wMHRQMEFlYWRIWjdCck9Pb2hVaTk0aWhsM0hS?=
+ =?utf-8?B?bnYwL3FYUHoyazQ1VlZoZlJ0VkZ0MEgrd1o1d2V1MVFCeG1oeStta3pXU3ZS?=
+ =?utf-8?B?aFlLYXc4YzRQNTU5RUpqOXZpYWtHSURkZ0pTZlJ2WWs1S1RudFBrVUZ4bEsx?=
+ =?utf-8?B?U1VOamkwNHYzN1BwWHZhb3plNlZOUGxKeUtWeFdBN2ZyWDBwZnVwaDluOWJl?=
+ =?utf-8?B?cHBWVmpZYURwdnErQ0o1Wmgzc1NUcHF5V2FKemJTbW04NzdHazAyVDZtaGZ0?=
+ =?utf-8?Q?ptUNKc2i4BpYdDOpCc7nvXHPK6/LaVHSX57KmBu?=
+X-OriginatorOrg: sct-15-20-7719-19-msonline-outlook-3b3e0.templateTenant
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5f99e7c0-af3b-4f42-e9a1-08dd5a419e11
+X-MS-Exchange-CrossTenant-AuthSource: AM7P189MB1009.EURP189.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2025 10:53:24.5714
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2P189MB2581
 
-Hi Masami,
 
-Thanks a lot for taking time to review!
+On 2/28/25 4:18 PM, Uwe Kleine-König wrote:
+> Hey David,
+>
+> On Fri, Feb 28, 2025 at 11:09:31AM +0100, David Jander wrote:
+>> On Fri, 28 Feb 2025 10:37:48 +0100
+>> Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>>> On 28/02/2025 10:22, David Jander wrote:
+>>>>    
+>>>>>> +
+>>>>>> +  motion,pwm-inverted:
+>>>>>> +    $ref: /schemas/types.yaml#/definitions/flag
+>>>>> And PWM flag does not work?
+>>>> I have seen PWM controllers that don't seem to support the
+>>>> PWM_POLARITY_INVERTED flag and those where it just doesn't work. Should all
+>>>
+>>> Shouldn't the controllers be fixed? Or let's rephrase the question: why
+>>> only this PWM consumer needs this property and none of others need it?
+>> CCing Uwe Kleine-Koenig and linux-pwm mailing list.
+>>
+>> I know that at least in kernel 6.11 the pwm-stm32.c PWM driver doesn't
+>> properly invert the PWM signal when specifying PWM_POLARITY_INVERTED. I agree
+>> this is a probably bug that needs fixing if still present in 6.14-rc. Besides
+>> that, if linux-pwm agrees that every single PWM driver _must_ properly support
+>> this flag, I will drop this consumer flag an start fixing broken PWM drivers
+>> that I encounter. I agree that it makes more sense this way, but I wanted to
+>> be sure.
+> Some hardwares cannot support PWM_POLARITY_INVERTED. Affected drivers
+> include:
+>
+> 	pwm-adp5585
+> 	pwm-ntxec
+> 	pwm-raspberrypi-poe
+> 	pwm-rz-mtu3 (software limitation only)
+> 	pwm-sunplus
+> 	pwm-twl-led (not completely sure, that one is strange)
+>
+> . ISTR that there is a driver that does only support inverted polarity,
+> but I don't find it. For an overview I recommend reading through the
+> output of:
 
-On Mon, Mar 3, 2025 at 2:29=E2=80=AFPM Masami Hiramatsu <mhiramat@kernel.or=
-g> wrote:
->
-> On Sat,  1 Mar 2025 13:51:02 +0800
-> Lance Yang <ioworker0@gmail.com> wrote:
->
-> > Inspired by mutex blocker tracking[1], this patch makes a trade-off to
-> > balance the overhead and utility of the hung task detector.
->
-> Thanks for adding new one!
->
-> >
-> > Unlike mutexes, semaphores lack explicit ownership tracking, making it
-> > challenging to identify the root cause of hangs. To address this, we
-> > introduce a last_holder field to the semaphore structure, which is
-> > updated when a task successfully calls down() and cleared during up().
-> >
-> > The assumption is that if a task is blocked on a semaphore, the holders
-> > must not have released it. While this does not guarantee that the last
-> > holder is one of the current blockers, it likely provides a practical h=
-int
-> > for diagnosing semaphore-related stalls.
->
-> Yeah, if we can have something like the owner_list, we can find the
-> longest time blocker (owner) but it takes more {memory, performance}
-> overheads.
 
-You're right. Let's keep it simple and light for now without more
- {memory, performance} overheads ;p
+The only one that I know of is the opencores pwm driver that the 
+starfive jh71xx uses, I remember talking with you there. That one does 
+still need a proper review I believe:
+https://lore.kernel.org/all/20250106103540.10079-1-william.qiu@starfivetech.com/
 
->
-> >
-> > With this change, the hung task detector can now show blocker task's in=
-fo
-> > like below:
-> >
-> > [Sat Mar  1 02:39:52 2025] INFO: task cat:1437 blocked for more than 12=
-2 seconds.
-> > [Sat Mar  1 02:39:52 2025]       Tainted: G           OE      6.14.0-rc=
-3+ #9
-> > [Sat Mar  1 02:39:52 2025] "echo 0 > /proc/sys/kernel/hung_task_timeout=
-_secs" disables this message.
-> > [Sat Mar  1 02:39:52 2025] task:cat             state:D stack:0     pid=
-:1437  tgid:1437  ppid:1007   task_flags:0x400000 flags:0x00000004
-> > [Sat Mar  1 02:39:52 2025] Call trace:
-> > [Sat Mar  1 02:39:52 2025]  __switch_to+0x1ec/0x380 (T)
-> > [Sat Mar  1 02:39:52 2025]  __schedule+0xc30/0x44f8
-> > [Sat Mar  1 02:39:52 2025]  schedule+0xb8/0x3b0
-> > [Sat Mar  1 02:39:52 2025]  schedule_timeout+0x1d0/0x208
-> > [Sat Mar  1 02:39:52 2025]  __down_common+0x27c/0x600
-> > [Sat Mar  1 02:39:52 2025]  __down+0x24/0x50
-> > [Sat Mar  1 02:39:52 2025]  down+0xe0/0x140
-> > [Sat Mar  1 02:39:52 2025]  read_dummy+0x3c/0xa0 [hung_task_sem]
-> > [Sat Mar  1 02:39:52 2025]  full_proxy_read+0xfc/0x1d0
-> > [Sat Mar  1 02:39:52 2025]  vfs_read+0x1a0/0x858
-> > [Sat Mar  1 02:39:52 2025]  ksys_read+0x100/0x220
-> > [Sat Mar  1 02:39:52 2025]  __arm64_sys_read+0x78/0xc8
-> > [Sat Mar  1 02:39:52 2025]  invoke_syscall+0xd8/0x278
-> > [Sat Mar  1 02:39:52 2025]  el0_svc_common.constprop.0+0xb8/0x298
-> > [Sat Mar  1 02:39:52 2025]  do_el0_svc+0x4c/0x88
-> > [Sat Mar  1 02:39:52 2025]  el0_svc+0x44/0x108
-> > [Sat Mar  1 02:39:52 2025]  el0t_64_sync_handler+0x134/0x160
-> > [Sat Mar  1 02:39:52 2025]  el0t_64_sync+0x1b8/0x1c0
-> > [Sat Mar  1 02:39:52 2025] INFO: task cat:1437 blocked on a semaphore l=
-ikely last held by task cat:1436
-> > [Sat Mar  1 02:39:52 2025] task:cat             state:S stack:0     pid=
-:1436  tgid:1436  ppid:1007   task_flags:0x400000 flags:0x00000004
-> > [Sat Mar  1 02:39:52 2025] Call trace:
-> > [Sat Mar  1 02:39:52 2025]  __switch_to+0x1ec/0x380 (T)
-> > [Sat Mar  1 02:39:52 2025]  __schedule+0xc30/0x44f8
-> > [Sat Mar  1 02:39:52 2025]  schedule+0xb8/0x3b0
-> > [Sat Mar  1 02:39:52 2025]  schedule_timeout+0xf4/0x208
-> > [Sat Mar  1 02:39:52 2025]  msleep_interruptible+0x70/0x130
-> > [Sat Mar  1 02:39:52 2025]  read_dummy+0x48/0xa0 [hung_task_sem]
-> > [Sat Mar  1 02:39:52 2025]  full_proxy_read+0xfc/0x1d0
-> > [Sat Mar  1 02:39:52 2025]  vfs_read+0x1a0/0x858
-> > [Sat Mar  1 02:39:52 2025]  ksys_read+0x100/0x220
-> > [Sat Mar  1 02:39:52 2025]  __arm64_sys_read+0x78/0xc8
-> > [Sat Mar  1 02:39:52 2025]  invoke_syscall+0xd8/0x278
-> > [Sat Mar  1 02:39:52 2025]  el0_svc_common.constprop.0+0xb8/0x298
-> > [Sat Mar  1 02:39:52 2025]  do_el0_svc+0x4c/0x88
-> > [Sat Mar  1 02:39:52 2025]  el0_svc+0x44/0x108
-> > [Sat Mar  1 02:39:52 2025]  el0t_64_sync_handler+0x134/0x160
-> > [Sat Mar  1 02:39:52 2025]  el0t_64_sync+0x1b8/0x1c0
-> >
-> > [1] https://lore.kernel.org/all/174046694331.2194069.154729520502408074=
-69.stgit@mhiramat.tok.corp.google.com
-> >
-> > Signed-off-by: Mingzhe Yang <mingzhe.yang@ly.com>
-> > Signed-off-by: Lance Yang <ioworker0@gmail.com>
-> > ---
-> >  include/linux/sched.h      |  1 +
-> >  include/linux/semaphore.h  | 15 ++++++++++-
-> >  kernel/hung_task.c         | 52 ++++++++++++++++++++++++++-----------
-> >  kernel/locking/semaphore.c | 53 ++++++++++++++++++++++++++++++++++----
-> >  4 files changed, 100 insertions(+), 21 deletions(-)
-> >
-> > diff --git a/include/linux/sched.h b/include/linux/sched.h
-> > index 0cebdd736d44..5dfdca879ac4 100644
-> > --- a/include/linux/sched.h
-> > +++ b/include/linux/sched.h
-> > @@ -1219,6 +1219,7 @@ struct task_struct {
-> >
-> >  #ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
-> >       struct mutex                    *blocker_mutex;
-> > +     struct semaphore                *blocker_sem;
->
-> Can we make this a union because only one blocker is active at a time?
-> Waiman has been suggested the update way;
->
-> https://lore.kernel.org/all/9f9150b4-1cf5-4380-b431-419f70775a7d@redhat.c=
-om/
->
-> If we can use MSB or LSB of those pointers, it is the smallest memory
-> footprint.
-
-Nice! Thanks for sharing the link and the idea. I will look into it and see
-if we can make it work ;)
-
->
-> >  #endif
-> >
-> >  #ifdef CONFIG_DEBUG_ATOMIC_SLEEP
-> > diff --git a/include/linux/semaphore.h b/include/linux/semaphore.h
-> > index 04655faadc2d..ca8240a5dbfc 100644
-> > --- a/include/linux/semaphore.h
-> > +++ b/include/linux/semaphore.h
-> > @@ -16,13 +16,25 @@ struct semaphore {
-> >       raw_spinlock_t          lock;
-> >       unsigned int            count;
-> >       struct list_head        wait_list;
-> > +
-> > +#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
-> > +     atomic_long_t last_holder;
-> > +#endif
->
-> Would we need to make this atomic? I think mutex needs to use it directly
-> as a pointer, but debug_show_blocker() searches the task, so we can
-> use an unsigned long + WRITE_ONCE()/READ_ONCE().
-
-Good spot! Using 'an unsigned long + WRITE_ONCE()/READ_ONCE()' is
-the way to go, so let me give it a try ;)
-
->
-> >  };
-> >
-> > +#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
-> > +#define __LAST_HOLDER_SEMAPHORE_INITIALIZER                          \
-> > +     , .last_holder =3D ATOMIC_LONG_INIT(0)
-> > +#else
-> > +#define __LAST_HOLDER_SEMAPHORE_INITIALIZER
-> > +#endif
-> > +
-> >  #define __SEMAPHORE_INITIALIZER(name, n)                             \
-> >  {                                                                    \
-> >       .lock           =3D __RAW_SPIN_LOCK_UNLOCKED((name).lock),       =
- \
-> >       .count          =3D n,                                           =
- \
-> > -     .wait_list      =3D LIST_HEAD_INIT((name).wait_list),            =
- \
-> > +     .wait_list      =3D LIST_HEAD_INIT((name).wait_list)             =
- \
-> > +     __LAST_HOLDER_SEMAPHORE_INITIALIZER                             \
-> >  }
-> >
-> >  /*
-> > @@ -47,5 +59,6 @@ extern int __must_check down_killable(struct semaphor=
-e *sem);
-> >  extern int __must_check down_trylock(struct semaphore *sem);
-> >  extern int __must_check down_timeout(struct semaphore *sem, long jiffi=
-es);
-> >  extern void up(struct semaphore *sem);
-> > +extern unsigned long sem_last_holder(struct semaphore *sem);
-> >
-> >  #endif /* __LINUX_SEMAPHORE_H */
-> > diff --git a/kernel/hung_task.c b/kernel/hung_task.c
-> > index ccd7217fcec1..332f555a97a9 100644
-> > --- a/kernel/hung_task.c
-> > +++ b/kernel/hung_task.c
-> > @@ -98,30 +98,52 @@ static struct notifier_block panic_block =3D {
-> >  static void debug_show_blocker(struct task_struct *task)
-> >  {
-> >       struct task_struct *g, *t;
-> > -     unsigned long owner;
-> > -     struct mutex *lock;
-> > +     unsigned long owner, holder;
-> > +     struct semaphore *sem_lock;
-> > +     struct mutex *mutex_lock;
-> >
-> >       RCU_LOCKDEP_WARN(!rcu_read_lock_held(), "No rcu lock held");
-> >
-> > -     lock =3D READ_ONCE(task->blocker_mutex);
-> > -     if (!lock)
-> > -             return;
-> > +     mutex_lock =3D READ_ONCE(task->blocker_mutex);
-> > +     if (mutex_lock) {
-> > +             owner =3D mutex_get_owner(mutex_lock);
-> > +             if (unlikely(!owner)) {
-> > +                     pr_err("INFO: task %s:%d is blocked on a mutex, b=
-ut the owner is not found.\n",
-> > +                            task->comm, task->pid);
-> > +                     goto blocker_sem;
-> > +             }
-> >
-> > -     owner =3D mutex_get_owner(lock);
-> > -     if (unlikely(!owner)) {
-> > -             pr_err("INFO: task %s:%d is blocked on a mutex, but the o=
-wner is not found.\n",
-> > -                     task->comm, task->pid);
-> > +             /* Ensure the owner information is correct. */
-> > +             for_each_process_thread(g, t) {
-> > +                     if ((unsigned long)t =3D=3D owner) {
-> > +                             pr_err("INFO: task %s:%d is blocked on a =
-mutex likely owned by task %s:%d.\n",
-> > +                                    task->comm, task->pid, t->comm, t-=
->pid);
-> > +                             sched_show_task(t);
-> > +                             return;
-> > +                     }
-> > +             }
-> >               return;
-> >       }
-> >
-> > -     /* Ensure the owner information is correct. */
-> > -     for_each_process_thread(g, t) {
-> > -             if ((unsigned long)t =3D=3D owner) {
-> > -                     pr_err("INFO: task %s:%d is blocked on a mutex li=
-kely owned by task %s:%d.\n",
-> > -                             task->comm, task->pid, t->comm, t->pid);
-> > -                     sched_show_task(t);
-> > +blocker_sem:
-> > +     sem_lock =3D READ_ONCE(task->blocker_sem);
-> > +     if (sem_lock) {
-> > +             holder =3D sem_last_holder(sem_lock);
-> > +             if (unlikely(!holder)) {
-> > +                     pr_err("INFO: task %s:%d is blocked on a semaphor=
-e, but the last holder is not found.\n",
-> > +                            task->comm, task->pid);
-> >                       return;
-> >               }
-> > +
-> > +             for_each_process_thread(g, t) {
-> > +                     if ((unsigned long)t =3D=3D holder) {
-> > +                             pr_err("INFO: task %s:%d blocked on a sem=
-aphore likely last held by task %s:%d\n",
-> > +                                    task->comm, task->pid, t->comm, t-=
->pid);
-> > +                             sched_show_task(t);
-> > +                             return;
-> > +                     }
-> > +             }
-> > +             return;
-> >       }
-> >  }
-> >  #else
-> > diff --git a/kernel/locking/semaphore.c b/kernel/locking/semaphore.c
-> > index 34bfae72f295..5a684c0a3087 100644
-> > --- a/kernel/locking/semaphore.c
-> > +++ b/kernel/locking/semaphore.c
-> > @@ -39,6 +39,7 @@ static noinline int __down_interruptible(struct semap=
-hore *sem);
-> >  static noinline int __down_killable(struct semaphore *sem);
-> >  static noinline int __down_timeout(struct semaphore *sem, long timeout=
-);
-> >  static noinline void __up(struct semaphore *sem);
-> > +static inline void __sem_acquire(struct semaphore *sem);
-> >
-> >  /**
-> >   * down - acquire the semaphore
-> > @@ -58,7 +59,7 @@ void __sched down(struct semaphore *sem)
-> >       might_sleep();
-> >       raw_spin_lock_irqsave(&sem->lock, flags);
-> >       if (likely(sem->count > 0))
-> > -             sem->count--;
-> > +             __sem_acquire(sem);
-> >       else
-> >               __down(sem);
-> >       raw_spin_unlock_irqrestore(&sem->lock, flags);
-> > @@ -82,7 +83,7 @@ int __sched down_interruptible(struct semaphore *sem)
-> >       might_sleep();
-> >       raw_spin_lock_irqsave(&sem->lock, flags);
-> >       if (likely(sem->count > 0))
-> > -             sem->count--;
-> > +             __sem_acquire(sem);
-> >       else
-> >               result =3D __down_interruptible(sem);
-> >       raw_spin_unlock_irqrestore(&sem->lock, flags);
-> > @@ -109,7 +110,7 @@ int __sched down_killable(struct semaphore *sem)
-> >       might_sleep();
-> >       raw_spin_lock_irqsave(&sem->lock, flags);
-> >       if (likely(sem->count > 0))
-> > -             sem->count--;
-> > +             __sem_acquire(sem);
-> >       else
-> >               result =3D __down_killable(sem);
-> >       raw_spin_unlock_irqrestore(&sem->lock, flags);
-> > @@ -139,7 +140,7 @@ int __sched down_trylock(struct semaphore *sem)
-> >       raw_spin_lock_irqsave(&sem->lock, flags);
-> >       count =3D sem->count - 1;
-> >       if (likely(count >=3D 0))
-> > -             sem->count =3D count;
-> > +             __sem_acquire(sem);
-> >       raw_spin_unlock_irqrestore(&sem->lock, flags);
-> >
-> >       return (count < 0);
-> > @@ -164,7 +165,7 @@ int __sched down_timeout(struct semaphore *sem, lon=
-g timeout)
-> >       might_sleep();
-> >       raw_spin_lock_irqsave(&sem->lock, flags);
-> >       if (likely(sem->count > 0))
-> > -             sem->count--;
-> > +             __sem_acquire(sem);
-> >       else
-> >               result =3D __down_timeout(sem, timeout);
-> >       raw_spin_unlock_irqrestore(&sem->lock, flags);
-> > @@ -242,10 +243,18 @@ static inline int __sched __down_common(struct se=
-maphore *sem, long state,
-> >  {
-> >       int ret;
-> >
-> > +#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
-> > +     WRITE_ONCE(current->blocker_sem, sem);
-> > +#endif
-> > +
-> >       trace_contention_begin(sem, 0);
-> >       ret =3D ___down_common(sem, state, timeout);
-> >       trace_contention_end(sem, ret);
-> >
-> > +#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
-> > +     WRITE_ONCE(current->blocker_sem, NULL);
-> > +#endif
-> > +
-> >       return ret;
-> >  }
-> >
-> > @@ -274,6 +283,40 @@ static noinline void __sched __up(struct semaphore=
- *sem)
-> >       struct semaphore_waiter *waiter =3D list_first_entry(&sem->wait_l=
-ist,
-> >                                               struct semaphore_waiter, =
-list);
-> >       list_del(&waiter->list);
-> > +
-> > +#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
-> > +     atomic_long_cmpxchg_release(&sem->last_holder, (unsigned long)cur=
-rent,
-> > +                                 0UL);
->
-> Ah, you don't need atomic here because __up() is called with sem->lock lo=
-cked.
-
-Indeed.
-
-> Also, if wait_list is empty, the 'up()' does only sem->count++. In this c=
-ase,
-> the owner is not cleared.
-
-Good catch! I totally missed that and will fix it in the next version.
-
-Thanks a lot again for your time!
-Lance
+It is kind of in a limbo right now
 
 
 >
-> Thank you,
+> 	for f in drivers/pwm/pwm-*; do
+> 		echo $f;
+> 		sed -rn '/Limitations:/,/\*\/?$/p' $f;
+> 		echo;
+> 	done | less
 >
-> > +#endif
-> > +
-> >       waiter->up =3D true;
-> >       wake_up_process(waiter->task);
-> >  }
-> > +
-> > +static inline struct task_struct *__holder_task(unsigned long holder)
-> > +{
-> > +     return (struct task_struct *)holder;
-> > +}
-> > +
-> > +#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
-> > +/* Do not use the return value as a pointer directly. */
-> > +unsigned long sem_last_holder(struct semaphore *sem)
-> > +{
-> > +     unsigned long holder =3D atomic_long_read(&sem->last_holder);
-> > +
-> > +     return (unsigned long)__holder_task(holder);
-> > +}
-> > +#else
-> > +unsigned long sem_last_holder(struct semaphore *sem)
-> > +{
-> > +     return 0;
-> > +}
-> > +#endif
-> > +
-> > +static inline void __sem_acquire(struct semaphore *sem)
-> > +{
-> > +     sem->count--;
-> > +#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
-> > +     atomic_long_set(&sem->last_holder, (unsigned long)current);
-> > +#endif
-> > +}
-> > --
-> > 2.45.2
-> >
-> >
+> . (Note not all drivers have commentary in the right format to unveil
+> their limitations.)
 >
+> For most use-cases you can just do
 >
-> --
-> Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> 	.duty_cycle = .period - .duty_cycle
+>
+> instead of inverting polarity, but there is no abstraction in the PWM
+> bindings for that and also no helpers in the PWM framework. The problem
+> is more or less ignored, so if you have a device with
+>
+> 	pwms = <&pwm0 0 PWM_POLARITY_INVERTED>;
+>
+> and the PWM chip in question doesn't support that, the pwm API functions
+> will fail. So the system designer better makes sure that the PWM
+> hardware can cope with the needed polarity.
+>
+> Best regards
+> Uwe
 
