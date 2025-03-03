@@ -1,52 +1,55 @@
-Return-Path: <linux-kernel+bounces-540977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAD43A4B721
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 05:24:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 125C1A4B723
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 05:24:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1586A3ACB0A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 04:23:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E68D13AC314
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 04:24:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 018411C860E;
-	Mon,  3 Mar 2025 04:23:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187231D88A6;
+	Mon,  3 Mar 2025 04:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="K8aFmrKf"
-Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
+	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="eYC/iLoq"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86B022AE89;
-	Mon,  3 Mar 2025 04:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5DE41BBBF7;
+	Mon,  3 Mar 2025 04:24:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740975834; cv=none; b=fyj4rA/As3vADvB2ETabtkl8BWXUk1zpfbgSAFLEkqICsqDqMZango6yrU5ALM0DLxHgGoQGRWmGgYemlBl9sBOgakRuC0Iz2ASpVDLeEI0N8HlzH6ED6rloWqeKYRkDC8DLS+6VIxT4kWkWbCJiB2aBxJwYMzh1+RlTK4nroZI=
+	t=1740975879; cv=none; b=PGiBKTYYqZr8yusxucARJ6Ga6VQLzGAoMtV/oyituekCm5b7mZaSYWImUyhO4INCD2Thjd4EGccFg3m11fhaUwuNneZELE1RkXRh6NU/yNVTOHwc5IYRSbPxwbJkuULtvaT8doMfYZex1WCyqX3gEo0VPRmoverFeB1FGQQ4cBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740975834; c=relaxed/simple;
-	bh=RHRwTwF2rci0UsFXaOFZeSD9+Dqtg4+acVTeXRyCq9E=;
+	s=arc-20240116; t=1740975879; c=relaxed/simple;
+	bh=xZEHXYYvck4yuE2xVssqwKGCBzwJFoefcARJpkqhtvg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b8ESWoyzbxVDBzJ4VY/zM37ZtnlZDZnz0yDp61tytsmAP+ZS6cqT7qfDdaQvq9CLdp9sL1cXKttuCBXguX9KowiZYexkNQRvbC5oed5uICcLbi4WQ1kHBkexCLpesUuO7x8SBmzzpuHjNHjlUe5pQolACOsb6Qylsd4BzDbpXuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=K8aFmrKf; arc=none smtp.client-ip=54.206.16.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1740975808;
-	bh=eEGr07Gnc/KgfHm5IaSFcJgCJQ+k3INFRhhVYtc5hGE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=K8aFmrKfyWPhQtQP3w30b88YIdD9QzX2FmdBp9s4OQqMZSUhl4T9kiA3933ZC9Wom
-	 dDgOKBZ7v8vcNr8vvyGB5+q3+kUokwaHvOs1ar4Vm7YVk2Al5l2hOl/RzaOIy3Dqek
-	 G71S7IZmqyOvw8qcBOG+nJ+A+v6nJ4zNjt919Qk0=
-X-QQ-mid: bizesmtpip4t1740975795t603la1
-X-QQ-Originating-IP: AcZd1tD18G2+fzJs10igiJn3HJWy/8QKPUnlHzTb1Cc=
-Received: from [IPV6:240e:668:120a::212:156] ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 03 Mar 2025 12:23:13 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 11475789549793595180
-Message-ID: <A1142BF8B63D5EC4+98768bf8-7bde-46ec-85fc-f077d67a1798@uniontech.com>
-Date: Mon, 3 Mar 2025 12:23:13 +0800
+	 In-Reply-To:Content-Type; b=OacwIdWUp3D+OxwtGuFzXar3MR4C/alt/cJfIg6xEdODYP9FF3gszjbbGc0GgzDLdONYzJmkcrFaTuLJYIiFuuT4PvbgkyMjN2tHcJLFjQ6zblcoNidgweG/cOAzjZnLJoS9aNQeOsNfGwMl6lu3wqpXbVbu7g9gbokB64f90rw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=eYC/iLoq; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
+	s=s31663417; t=1740975864; x=1741580664; i=quwenruo.btrfs@gmx.com;
+	bh=wh7ojeZLhbi469+4Guyv0n3piZHEYpQkVwl7Bw2iar0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=eYC/iLoqiDLVENJP5NMT0DmVZGZpwvBmtpEKnW4LR+FMNlDuSb/apa2/aeTVIln2
+	 7GgHnFt2l9rXbEUSzzAERio8FF3RAI2gH0DZsyE9usiYJDDXa/EnnuR+ymB+i+9LF
+	 l419cNbpFgEclO06coxS2f1xeer538OIKe/OltNAysByaFhWJz6Cwl3cqEmZFHRwZ
+	 F6UlvThnu0JsuT+oYY25HVagemnDsE0rr7qRV7swnya4MVRrEAdf8qZd0Kjy/96lf
+	 0kVB6GaoRkZbf3goWouRKj2F/hERmho/mDfOeP5cc5S/3MZoIuA1OZwgp9imEK9Yq
+	 AhvWhL84zxp/HcYWMA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx105
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1MwQTF-1swzFi1b53-015VFt; Mon, 03
+ Mar 2025 05:24:23 +0100
+Message-ID: <31e5c235-4e59-4b37-ab3e-db05012d7119@gmx.com>
+Date: Mon, 3 Mar 2025 14:54:17 +1030
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,211 +57,107 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/7] MIPS: dec: Remove dec_irq_dispatch()
-To: "Maciej W. Rozycki" <macro@orcam.me.uk>
-Cc: chenlinxuan@uniontech.com, guanwentao@uniontech.com,
- linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
- niecheng1@uniontech.com, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- zhanjun@uniontech.com
-References: <487CE8AA937621E2+20250218125101.663980-1-wangyuli@uniontech.com>
- <222468E85948B141+20250218125842.667798-1-wangyuli@uniontech.com>
- <alpine.DEB.2.21.2502220019210.65342@angie.orcam.me.uk>
+Subject: Re: [PATCH] btrfs: fix a memory leak issue in read_one_chunk()
+To: Haoxiang Li <haoxiang_li2024@163.com>, clm@fb.com, josef@toxicpanda.com,
+ dsterba@suse.com, fdmanana@suse.com
+Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20250303024233.3865292-1-haoxiang_li2024@163.com>
 Content-Language: en-US
-From: WangYuli <wangyuli@uniontech.com>
-Autocrypt: addr=wangyuli@uniontech.com; keydata=
- xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSKP+nX39DN
- IVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAxFiEEa1GMzYeuKPkg
- qDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMBAAAKCRDF2h8wRvQL7g0UAQCH
- 3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfPbwD/SrncJwwPAL4GiLPEC4XssV6FPUAY
- 0rA68eNNI9cJLArOOARmgSyJEgorBgEEAZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7
- VTL0dvPDofBTjFYDAQgHwngEGBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIb
- DAAKCRDF2h8wRvQL7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkU
- o9ERi7qS/hbUdUgtitI89efbY0TVetgDsyeQiwU=
-In-Reply-To: <alpine.DEB.2.21.2502220019210.65342@angie.orcam.me.uk>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------cpzNAlvaVuHJSvSPikjQO7we"
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MMKL56urm3zQZA3sqrdtmNGN9V/2Fi1TOCTMQddWnLV1tUFsuIDCZZGu
-	F0jdSNsD1WU2RDETI1kBfM5aYCjDis5Ta1xqkdJzvVpqhb0QuApccPEMWLMGqCLcw88gkKD
-	NbbyWYveaoBmtJQjlQ1DNUgC1WeUPQIQcN33eg3iuLWdVZB32q26DpDWSdvQ49uKHySl+uY
-	ngW/+dXCVhMAmJo0e75OWbC96Ai03b1z1pkqxxkNjVbQcCWWXnZQ0E8ma5PiJa3CFXYO5rM
-	oIonKCeOFZyjxNsaGZm9kb4RUeTxZX2Vk1NM0wL+zccUqr5vjg8KAEhVcZ+1wUrIP1F/tOD
-	6Fxw4y4OOPvwtrrDKXvl5bqB/cLaXO18E/ve0mQgLiWd7yIP+wAMnptHtUFjSacySO07n3W
-	ytAduYm2eFT5fTyyZmOsDoglefMCyvwfmuQkdo3G1HITLVpKiU553ie6kwPh55UWJElCvzV
-	En/VK3UNctrI21qN3rjjbJ+Uc5qUOebANDG150LX92YFScm37FzfbTS12PN9SuQwZw3HEoY
-	AqKyMhNB9Q6+3iBWpJWG/nlf3fK9tJUNdwuLUWl+tT5BYtWSOx9sOC0QsjC+YnflpDNqdQ6
-	rXJdD9sbAxi5qFBShq40ZZW2qnE7v+hC6guOgtvEf2OAd7DV4V/X76cJMJLeXu3thOOcToR
-	crwE5EpTtMqyqzF/Tac4Qdt/m0qBhP8teve0ICSdpxaPQlnYriYtKsCkspp9qOrzcQzvkq8
-	HaglUgj2LwtmRKmYvcwcmWuzXlKaVoGXa49AqQrfpJswm1v1yumP8D81eAiOzShy54Kq9o/
-	rZjJGa0BfFKGLINsoIBZ5V5dA7TcwdtV+Vq8xAz/WmVK2H71I7u06tG8CsUvXcI9K1HvuKf
-	Pn6x4LFJLUicjbnMMDN/p1DPOApbLEOZdlBTzPCXjhD4SWqqSEVRa6XzkHqXBW6vYHDEA2v
-	CK12x+EHZtD+rLnJt5EsOOvGcJXJxhuc7xZX2NwRAw/HlQrxLOw8X6eohqrtSAk72coB2nO
-	yDrebExt8mw8RsE/PK0TQbvgc7iVwsKyXHnWmTatCDTy8MSxwkL4nu+4JUzSJvAX0tUbBbI
-	j+eYvveBndJZDzi//ZFOjvMxPEP17gyE4sK9162q9aM
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-X-QQ-RECHKSPAM: 0
-
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------cpzNAlvaVuHJSvSPikjQO7we
-Content-Type: multipart/mixed; boundary="------------Dr8oZ0Svb2l280lRAcsbpviW";
- protected-headers="v1"
-From: WangYuli <wangyuli@uniontech.com>
-To: "Maciej W. Rozycki" <macro@orcam.me.uk>
-Cc: chenlinxuan@uniontech.com, guanwentao@uniontech.com,
- linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
- niecheng1@uniontech.com, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- zhanjun@uniontech.com
-Message-ID: <98768bf8-7bde-46ec-85fc-f077d67a1798@uniontech.com>
-Subject: Re: [PATCH 5/7] MIPS: dec: Remove dec_irq_dispatch()
-References: <487CE8AA937621E2+20250218125101.663980-1-wangyuli@uniontech.com>
- <222468E85948B141+20250218125842.667798-1-wangyuli@uniontech.com>
- <alpine.DEB.2.21.2502220019210.65342@angie.orcam.me.uk>
-In-Reply-To: <alpine.DEB.2.21.2502220019210.65342@angie.orcam.me.uk>
-
---------------Dr8oZ0Svb2l280lRAcsbpviW
-Content-Type: multipart/mixed; boundary="------------VWdM82tDfrgrrAVtP6lrC0RP"
-
---------------VWdM82tDfrgrrAVtP6lrC0RP
-Content-Type: multipart/alternative;
- boundary="------------qVwLyZwqZC4S0TSExECJBtOy"
-
---------------qVwLyZwqZC4S0TSExECJBtOy
+From: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1YAUJEP5a
+ sQAKCRDCPZHzoSX+qF+mB/9gXu9C3BV0omDZBDWevJHxpWpOwQ8DxZEbk9b9LcrQlWdhFhyn
+ xi+l5lRziV9ZGyYXp7N35a9t7GQJndMCFUWYoEa+1NCuxDs6bslfrCaGEGG/+wd6oIPb85xo
+ naxnQ+SQtYLUFbU77WkUPaaIU8hH2BAfn9ZSDX9lIxheQE8ZYGGmo4wYpnN7/hSXALD7+oun
+ tZljjGNT1o+/B8WVZtw/YZuCuHgZeaFdhcV2jsz7+iGb+LsqzHuznrXqbyUQgQT9kn8ZYFNW
+ 7tf+LNxXuwedzRag4fxtR+5GVvJ41Oh/eygp8VqiMAtnFYaSlb9sjia1Mh+m+OBFeuXjgGlG
+ VvQFzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
+ CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
+ /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
+ GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
+ q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
+ ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1gQUJEP5a0gAK
+ CRDCPZHzoSX+qHGpB/kB8A7M7KGL5qzat+jBRoLwB0Y3Zax0QWuANVdZM3eJDlKJKJ4HKzjo
+ B2Pcn4JXL2apSan2uJftaMbNQbwotvabLXkE7cPpnppnBq7iovmBw++/d8zQjLQLWInQ5kNq
+ Vmi36kmq8o5c0f97QVjMryHlmSlEZ2Wwc1kURAe4lsRG2dNeAd4CAqmTw0cMIrR6R/Dpt3ma
+ +8oGXJOmwWuDFKNV4G2XLKcghqrtcRf2zAGNogg3KulCykHHripG3kPKsb7fYVcSQtlt5R6v
+ HZStaZBzw4PcDiaAF3pPDBd+0fIKS6BlpeNRSFG94RYrt84Qw77JWDOAZsyNfEIEE0J6LSR/
+In-Reply-To: <20250303024233.3865292-1-haoxiang_li2024@163.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
-
-SGkgTWFjaWVqLA0KDQpPbiAyMDI1LzMvMSAwMDowMSwgTWFjaWVqIFcuIFJvenlja2kgd3Jv
-dGU6DQo+ICAgVXAgdG8gY29tbWl0IDhmOTlhMTYyNjUzNTMgKCJNSVBTOiBUcmFjaW5nOiBB
-ZGQgSVJRRU5UUllfRVhJVCBzZWN0aW9uIGZvcg0KPiBNSVBTIikgYGRvX0lSUScgdXNlZCB0
-byBiZSBhIG1hY3JvLCB0aGF0J3Mgd2h5LiAgQXQgdGhlIHRpbWUgYGRvX0lSUScgd2FzDQo+
-IGNvbnZlcnRlZCB0byBhIG1hY3JvIGBkZWNfaXJxX2Rpc3BhdGNoJyB3YXMgY3JlYXRlZCBh
-bmQgcHJldmlvdXNseSB0aGlzDQo+IHBsYWNlIHVzZWQgdG8gY2FsbCBgZG9fSVJRJyB0b28u
-DQo+DQo+ICAgSXQncyBhbHdheXMgZ29vZCBmaW5kaW5nIG91dCB3aHkgdGhpbmdzIGFyZSBh
-cyB0aGV5IGFyZSBzbyBhcyB0byBtYWtlDQo+IHN1cmUgeW91IGhhdmVuJ3QgYmVlbiBtaXNz
-aW5nIHNvbWV0aGluZy4gIFRoaXMgY2xlYW51cCBzaG91bGQgaGF2ZSBiZWVuDQo+IG1hZGUg
-YWxvbmcgd2l0aCBjb21taXQgOGY5OWExNjI2NTM1Mywgc28gaXQncyBwcmV0dHkgb2xkIGEg
-dGVjaG5pY2FsIGRlYnQNCj4gYmVpbmcgc29ydGVkIGhlcmUuDQo+DQo+ICAgUGxlYXNlIGFk
-ZCB0aGVzZSBmaW5kaW5ncyB0byB5b3VyIGNvbW1pdCBkZXNjcmlwdGlvbiBpbiB2Mi4NCg0K
-QWxyaWdodCwgdGhhbmsgeW91IGZvciB0aGUgY29ycmVjdGlvbi4NCg0KSSBkbyBzZWUgdGhh
-dCB0aGlzIGNvbW1pdCBoYXMgYWxyZWFkeSBiZWVuIGFwcGxpZWQgdG8gbWlwcy1uZXh0Lg0K
-DQogwqBJZiBpdCdzIGFscmlnaHQgd2l0aCB5b3UgYW5kIFRob21hcywgSSdtIGhhcHB5IHRv
-IHNlbmQgYSBwYXRjaCB2MiB0byANCmluY2x1ZGUgdGhlc2UgZGV0YWlscyBzb29uLg0KDQo+
-ICAgTkIgSSdtIG9mZiBvbiBob2xpZGF5IHN0YXJ0aW5nIGZyb20gdG9tb3Jyb3cgYW5kIEkg
-aGFkIGlzc3VlcyB3aXRoIERFQw0KPiBoYXJkd2FyZSBpbiBteSBsYWIgKG5vdyBzb3J0ZWQs
-IHJlcXVpcmVkIGEgdmlzaXQgb24gc2l0ZSkgc28gSSBjb3VsZG4ndA0KPiBnZXQgdG8geW91
-ciBzdHVmZiBzb29uZXIgYW5kIGFsc28gSSB3b24ndCBiZSBhYmxlIHRvIHZlcmlmeSBhbnkg
-b2YgdGhpcw0KPiB1bnRpbCBJJ20gYmFjayBtaWQtTWFyY2guDQo+DQo+ICAgIE1hY2llag0K
-DQpJdCdzIGEgcGl0eSBJIGRvbid0IGhhdmUgREVDIGhhcmR3YXJlIG15c2VsZiwgdGhlcmVm
-b3JlIEknbSBsaW1pdGVkIHRvIA0KdXNpbmcgY3Jvc3MtY29tcGlsYXRpb24gdG8gdmFsaWRh
-dGUgY29tcGlsYXRpb24gaXNzdWVzLg0KDQpOZXZlcnRoZWxlc3MsIGhhdmUgYSBmYW50YXN0
-aWMgaG9saWRheSENCg0KVGhhbmtzLA0KDQotLSANCldhbmdZdWxpKg0KKg0K
---------------qVwLyZwqZC4S0TSExECJBtOy
-Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:kHvpv533MgH/yvPuv9Yarmg/NoJRktAYzYOi/oaIZwt7cgCKWqy
+ 1hP5mbvUCp8jrfS3gbo0ZjJfKrM/RQD5qIITWlOf1epUXNuBwnSZDfKZTXaqysZ6Yb6RVJK
+ k4rnUNKxqUQjJT74BeQT0/FUGMWFYjH2ktB8S6h3uDz4AtzQ6X2dSo2WWdCBcO8q1y9G9go
+ 0HjEJueZRZXPu42KJUzcw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ih1cCx4mvQs=;YUZ32KxwuX2/VI1IRWIFzO3MTbc
+ By3MfDCzoQqzLVBu9uTze7Z9CH+RmxuN+jMqr+/tHaufbNTCFt0NT/moKAq8H37ye3UU12WVT
+ YWpyKrV787FZpBuzQ5AgKLhFpXkB290xjBT91dn3HWTRXCXR+m/74IUBj9uO1hblKWHAVTDso
+ ax5r9ibo1PXOm0H8zEx+48xMaUtXGsaADdUz7bXxEoEowEDfmTS6UhI9l4iAwkfadrVs+veP0
+ B57L1Cevc//pRWxNYuQ9+AmkeNcNk9HHNpa0D/dJfos5zVbDzbiA3qkHGmBK0Mm50/6QcgOyq
+ iFw+7wrWAQU14iKQmhSYp2TauVKdFxdoEdfu4hY+hQjLFVSESdCWYJelzGYuxKsugwYKX/nSU
+ q61kuugQvIOer/Q9EmBqBd304I2ml2G8NYgP8jXOmegGMr3NfsJvv6kGyj3o9P5xaRwFZrH11
+ JbIbDE8sCcS6LTpBB2kKxJRO193aTobAmp9v8lh67JIrx4F21jNHe+9L4ou5pMr93HfhjdEJN
+ OkDYal/3+BnYNrm/0CoE+nrqHgGZ0fIeVestfkpLIbSPy4fknmBmlMg2LwzL/1oRLQfRKuTYY
+ lMTnz7Tm9p2MI+ABpP3m3VbMZcVPPGNXx8sI4huPPQrv4dCPTymeAArOQTZ8t3YnOSgpV1eWg
+ O11N1Ab+fF7YdDWgAkpfbbsG2V2RTZnxrxTnBe53y5u4l9CtSl7ZVCsNNZdysRK9ibZgv9C++
+ 2rxo7aUoWwsKEOFTgHej2rDUAdz4FV4RowUxu4/tj4aa1+er68EKIWB8k9WEa7mGGanS87rSr
+ Lpy7Kq0RXD67yvbhZ86UCagN9w1XC1CI2TQyL2KovvWWaavYKee1xacx0uf9zzHH6cvz9WeaP
+ UeFIz/gjJJcaowkPP2h9fP6tgN563dBJCMsc9tQ0xqFSZsod/ZEkWYRKghH5IPHN0FboBXO30
+ fHmhz7g8pBe3m6BFDhOB9Rk8CXTVV0CwKg6a/uoNX7C4DmfHXSMVCNL2HHz2fvYj8Wd9u7tc2
+ tqk/vSJTjJIdg22Gt+eMxqUfJSOyQts5IeFABjqnlXG0qq+Xdnzni0mA17Ko8pdw07cR7vDN1
+ D3u9DIRYuJmg/Z590iATz7/N1i8MY7PKSlTDwDYujF6//QlE7q4pEDaxR6K3m6X6i+JL+RYKo
+ Pco9PFsuMyyy5cbe+/bKy8KZrAq1JICk/Znbj6TKWJRJsu71mKYYWPItIvro2HNHadh8QGa8W
+ EyuAPEcTikUCiSO8M+9Mtcl9ASjvUEFHewVOtGYzz97LnyqdOWmfposdEKvZ1jxdpWyuX9Qoo
+ 0yJNY7l6/sJhuXfQyfqIQ7EkFErHkiW3mGSFkrK0Ayi0rAae7dTrw7dNerYAv5ZYW3oPZQwvb
+ N/BAcxTx16+cNsZqx6EKLHUZIx5wE11oSmmkFtExDM0Agyn+9AP9zlyuC2
 
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3DUTF=
--8">
-  </head>
-  <body>
-    <p>Hi Maciej,<br>
-    </p>
-    <div class=3D"moz-cite-prefix">On 2025/3/1 00:01, Maciej W. Rozycki
-      wrote:<span style=3D"white-space: pre-wrap">
-</span><span style=3D"white-space: pre-wrap">
-</span></div>
-    <blockquote type=3D"cite"
-      cite=3D"mid:alpine.DEB.2.21.2502220019210.65342@angie.orcam.me.uk">=
 
-      <pre wrap=3D"" class=3D"moz-quote-pre"> Up to commit 8f99a16265353 =
-("MIPS: Tracing: Add IRQENTRY_EXIT section for=20
-MIPS") `do_IRQ' used to be a macro, that's why.  At the time `do_IRQ' was=
-=20
-converted to a macro `dec_irq_dispatch' was created and previously this=20
-place used to call `do_IRQ' too.
 
- It's always good finding out why things are as they are so as to make=20
-sure you haven't been missing something.  This cleanup should have been=20
-made along with commit 8f99a16265353, so it's pretty old a technical debt=
-=20
-being sorted here.
+=E5=9C=A8 2025/3/3 13:12, Haoxiang Li =E5=86=99=E9=81=93:
+> Add btrfs_free_chunk_map() to free the memory allocated
+> by btrfs_alloc_chunk_map() if btrfs_add_chunk_map() fails.
+>
+> Fixes: 7dc66abb5a47 ("btrfs: use a dedicated data structure for chunk ma=
+ps")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
 
- Please add these findings to your commit description in v2.
-</pre>
-    </blockquote>
-    <p>Alright, thank you for the correction.</p>
-    <p>I do see that this commit has already been applied to mips-next.</=
-p>
-    <p>=C2=A0If it's alright with you and Thomas, I'm happy to send a pat=
-ch
-      v2 to include these details soon.</p>
-    <blockquote type=3D"cite"
-      cite=3D"mid:alpine.DEB.2.21.2502220019210.65342@angie.orcam.me.uk">=
+Reviewed-by: Qu Wenruo <wqu@suse.com>
 
-      <pre wrap=3D"" class=3D"moz-quote-pre">
- NB I'm off on holiday starting from tomorrow and I had issues with DEC=20
-hardware in my lab (now sorted, required a visit on site) so I couldn't=20
-get to your stuff sooner and also I won't be able to verify any of this=20
-until I'm back mid-March.
+And the fixes tag is also correct, before that commit, add_extent_map()
+will increase the ref if tree_insert() succeeded, thus if it failed the
+unconditional free_extent_map() will just free the no longer utilized em.
 
-  Maciej
-</pre>
-    </blockquote>
-    <p><span style=3D"white-space: pre-wrap">It's a pity I don't have DEC=
- hardware myself, therefore I'm limited to using cross-compilation to val=
-idate compilation issues.</span></p>
-    <p><span style=3D"white-space: pre-wrap">Nevertheless, have a fantast=
-ic holiday!
-</span></p>
-    <p><span style=3D"white-space: pre-wrap">Thanks,
-</span></p>
-    <div class=3D"moz-signature">-- <br>
-      WangYuli<b><br>
-      </b></div>
-  </body>
-</html>
+But at that commit, we no longer has that feature, thus has to manually
+cleanup the map.
 
---------------qVwLyZwqZC4S0TSExECJBtOy--
+Thanks,
+Qu
 
---------------VWdM82tDfrgrrAVtP6lrC0RP
-Content-Type: application/pgp-keys; name="OpenPGP_0xC5DA1F3046F40BEE.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xC5DA1F3046F40BEE.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
+> ---
+>   fs/btrfs/volumes.c | 1 +
+>   1 file changed, 1 insertion(+)
+>
+> diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+> index fb22d4425cb0..3f8afbd1ebb5 100644
+> --- a/fs/btrfs/volumes.c
+> +++ b/fs/btrfs/volumes.c
+> @@ -7155,6 +7155,7 @@ static int read_one_chunk(struct btrfs_key *key, s=
+truct extent_buffer *leaf,
+>   		btrfs_err(fs_info,
+>   			  "failed to add chunk map, start=3D%llu len=3D%llu: %d",
+>   			  map->start, map->chunk_len, ret);
+> +		btrfs_free_chunk_map(map);
+>   	}
+>
+>   	return ret;
 
------BEGIN PGP PUBLIC KEY BLOCK-----
-
-xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSK
-P+nX39DNIVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAx
-FiEEa1GMzYeuKPkgqDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMB
-AAAKCRDF2h8wRvQL7g0UAQCH3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfP
-bwD/SrncJwwPAL4GiLPEC4XssV6FPUAY0rA68eNNI9cJLArOOARmgSyJEgorBgEE
-AZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7VTL0dvPDofBTjFYDAQgHwngE
-GBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIbDAAKCRDF2h8wRvQL
-7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkUo9ERi7qS
-/hbUdUgtitI89efbY0TVetgDsyeQiwU=3D
-=3DBlkq
------END PGP PUBLIC KEY BLOCK-----
-
---------------VWdM82tDfrgrrAVtP6lrC0RP--
-
---------------Dr8oZ0Svb2l280lRAcsbpviW--
-
---------------cpzNAlvaVuHJSvSPikjQO7we
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wnsEABYIACMWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZ8UusQUDAAAAAAAKCRDF2h8wRvQL7tDp
-AQDeXbKIvClZphmjWsTVAvytlWgwVr8RgDUeDlo9r9vDOgEAgihKfOgFduggtNFdn006Xf1MoXv7
-R2Lv+968xgdMRw0=
-=3ama
------END PGP SIGNATURE-----
-
---------------cpzNAlvaVuHJSvSPikjQO7we--
 
