@@ -1,161 +1,220 @@
-Return-Path: <linux-kernel+bounces-541946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D82D0A4C3A9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:42:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79FDBA4C3AC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:43:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C96421885CB6
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:42:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E77916E909
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:42:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7292F53365;
-	Mon,  3 Mar 2025 14:42:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NIy4xSra"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91C69213E62;
+	Mon,  3 Mar 2025 14:42:42 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 240A5204081
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 14:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C8C2139D2
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 14:42:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741012954; cv=none; b=IyVACtfi8mHlVTeTBdUyb/LsNAjqXMt6wAOmO0oITI81+Za2E4snFZP/N0J5FOwoMP7ksqk0x+0VVtpbkQufpYvor1Fd7wCmlB/SHlNXd82C05zWMDPh/zOF6J7Oz+ffEVdTWsGry24uK7d3zRfm4iGqoZaqrNBoQ5704tioBes=
+	t=1741012962; cv=none; b=JUrw6IqYELmKjEOBKmUulaH5hriAvc9SDEIKy0wrFy+B7diR5qGknGm6KK+tOE8xUWUBfzD8RKGxXSnCJS1+R607Z0YgBHQgvtI0gui9ixk8E4f2ypHF09HRXeSGLJa7zla5E7hacwMy6Chs03zbLmz2VROtPFRE/e/PxEGXHoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741012954; c=relaxed/simple;
-	bh=ZTyfGZXWIcBxfTMJAaH9bSkoaURGlhqbEorrWHDOuNI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tpMzzm98jESUc4+T6jpxM68b9J9aoUe1qxKhCTU4r/nERY5ddbTxXIWkKIWbcW9xwl/Mhfj9qQeViiatq1cN8BIrHqrs71ftzyUcb5fAbViTNHdb0KQw6rmefatuRNMsMmCI9EnrTqN4j3/SkJ26STUURSmnoYN4DP47cwbgbGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NIy4xSra; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741012952;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fEfF1MW0qkcpRK3ia9ugAr2LLeu9A931qY1MeuqBiiA=;
-	b=NIy4xSrabtrGQRzEb54JVU1ACeVzjkDVZ5LbyR8bHYuPENaaIcsg4+DgotvB08mA/mU0Yl
-	N5rO1Ss1ohSWaLuONYmFHWCf4m+dSaqJZ0OiVaHMUI0fTK3ifsjf0Zd15LYC3NvrTNRXwY
-	sWLLvJ7Gub3ELuqBGqPRtlXI4N610vc=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-99-hjqVtFg6Pn-cr3lNnv500Q-1; Mon, 03 Mar 2025 09:42:26 -0500
-X-MC-Unique: hjqVtFg6Pn-cr3lNnv500Q-1
-X-Mimecast-MFC-AGG-ID: hjqVtFg6Pn-cr3lNnv500Q_1741012945
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-abf78df3bbcso119668266b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 06:42:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741012945; x=1741617745;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fEfF1MW0qkcpRK3ia9ugAr2LLeu9A931qY1MeuqBiiA=;
-        b=qiFlm3UNeCJAVY6Bgb4EeyBZya/0iZngfuZLul8f3jKVNZEYJ9VqEhIheWXUtxKqQw
-         qqGLqel8ExQtmAcpbia2gOQYm9f9nXmAoa4jeEfDAd6ESDt3gBQaA1OT7XrsXT20KQ/+
-         j+vtx3TNK+Qacqgg5kVf2Hc6Ui/QBV00StGWMzHX2VTv/C3X/gvUjpZ/DTrsXxwkTQpd
-         lPyI9wDWnCfwxojnZZKlukFbQgZLZgZDy255JxD1mrqp2iT9tsJi3BfR0tHnXJFnNgtO
-         vCuYgeJQLsvPMtYr1WgAjObMC4OUx5MaCjQcq+ng1D8vZpD3k6gvZhdk77k7n9fnkXBj
-         3+Xw==
-X-Forwarded-Encrypted: i=1; AJvYcCWNPiyknE/Vdf4xWWt+ZV6eOXm3/NNMQC2NApJIN7BGeQMB2Oe0nPQeYrAF8vQGbwjx+otWiqGK2CztU4c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+SkiDVD6hH8meI478qNb3As8Qu3m6yTGHzRgCogddPNK1LbkS
-	NaFt5uA5jSNkogMUi+14wS2/zC8Z+IzGyiIKXTaAEp5AOL2QHTfACGIdfooFpvMz2ksWniJ1j9B
-	HObhD21xjWvFouFdwdktHrL6Ea2AdKkxHun3y30DxRx7rTKNIFRfuCmoxIRUZbw==
-X-Gm-Gg: ASbGncuDdberyIrzlzM7UCgfj5CQUrxuJaLcTM6DqGVIcAZ+8GLLWs1wbo3DmVKmGRV
-	VMIVpxDpZTFiUnATAofXm89tZQPCNINw4YMlj2x9RSd5BJZXFDLzb7UQPoA2kUwItgLUnJFjbzS
-	d6glD84iGsJPIOFA3Kw+IkpmASkNeVCIYsc81/+kQk/7UxddDEnAxW7EdEUL1L5RqGAj40JqAN6
-	Z1ZEGi83b1x6ri+kDE1lmrpS0PDTva/QmwWIfTgnLJ9ECaa2g5Cg8depbu9XgNhfXyDaOeDeemI
-	R3QSbV3iEHQUHPjjm3c=
-X-Received: by 2002:a05:6402:1d49:b0:5e4:9726:7779 with SMTP id 4fb4d7f45d1cf-5e4d6aca16amr13035761a12.2.1741012944668;
-        Mon, 03 Mar 2025 06:42:24 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE3qq/rh3zRJKlvQz3UjeYwOEwrZ3UItCTwtP6Pp9xgjIYkSO4ge+XIYy3c1OhWO9ecYtX1sA==
-X-Received: by 2002:a05:6402:1d49:b0:5e4:9726:7779 with SMTP id 4fb4d7f45d1cf-5e4d6aca16amr13035735a12.2.1741012944295;
-        Mon, 03 Mar 2025 06:42:24 -0800 (PST)
-Received: from [10.40.98.122] ([78.108.130.194])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e4c3b6cfc4sm6927183a12.18.2025.03.03.06.42.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Mar 2025 06:42:23 -0800 (PST)
-Message-ID: <ec2c7bec-2519-4716-8e9e-ff86b41ebb20@redhat.com>
-Date: Mon, 3 Mar 2025 15:42:22 +0100
+	s=arc-20240116; t=1741012962; c=relaxed/simple;
+	bh=f5hEZ5Vpy+rTyOoxKrjCP/8O20T2PKrNAaGBJMa8gag=;
+	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=qG9s0c170PR804SJu7I7TwERG5VjXnPE2tLF6oCHER3vRLy6N1Y43sjCxJdT43BhgUa+qeBBDlyBAHnapnjDDe0P7/QWrvKeddpRDLReDFpNL9K32Npxq53KgXZwcWrbj4ygb6xZneTQvqnQDxnad76UD9xByvdlrPnLdHLKhyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Z61fM48jHzCs7q;
+	Mon,  3 Mar 2025 22:39:07 +0800 (CST)
+Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7A0071401F0;
+	Mon,  3 Mar 2025 22:42:36 +0800 (CST)
+Received: from [10.67.121.177] (10.67.121.177) by
+ kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Mon, 3 Mar 2025 22:42:35 +0800
+CC: <catalin.marinas@arm.com>, <will@kernel.org>, <sudeep.holla@arm.com>,
+	<tglx@linutronix.de>, <peterz@infradead.org>, <mpe@ellerman.id.au>,
+	<linux-arm-kernel@lists.infradead.org>, <mingo@redhat.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <pierre.gondois@arm.com>,
+	<dietmar.eggemann@arm.com>, <yangyicong@hisilicon.com>,
+	<linuxppc-dev@lists.ozlabs.org>, <x86@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <morten.rasmussen@arm.com>,
+	<msuchanek@suse.de>, <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
+	<jonathan.cameron@huawei.com>, <prime.zeng@hisilicon.com>,
+	<linuxarm@huawei.com>, <xuwei5@huawei.com>, <sshegde@linux.ibm.com>
+Subject: Re: [PATCH v11 3/4] arm64: topology: Support SMT control on ACPI
+ based system
+To: Hanjun Guo <guohanjun@huawei.com>
+References: <20250218141018.18082-1-yangyicong@huawei.com>
+ <20250218141018.18082-4-yangyicong@huawei.com>
+ <92193a09-271e-895e-f77f-d3952bdfdf49@huawei.com>
+From: Yicong Yang <yangyicong@huawei.com>
+Message-ID: <5f56d0fc-7ca8-cc52-9747-aec981e42bdc@huawei.com>
+Date: Mon, 3 Mar 2025 22:42:34 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/5] media: uvcvideo: Do not turn on the camera for
- some ioctls
-To: Ricardo Ribalda <ribalda@chromium.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-References: <20250226-uvc-granpower-ng-v4-0-3ec9be906048@chromium.org>
- <20250226-uvc-granpower-ng-v4-5-3ec9be906048@chromium.org>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20250226-uvc-granpower-ng-v4-5-3ec9be906048@chromium.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <92193a09-271e-895e-f77f-d3952bdfdf49@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemd200014.china.huawei.com (7.221.188.8)
 
-Hi Ricardo,
-
-On 26-Feb-25 15:23, Ricardo Ribalda wrote:
-> There are some ioctls that do not need to turn on the camera. Do not
-> call uvc_pm_get in those cases.
+On 2025/2/25 14:08, Hanjun Guo wrote:
+> On 2025/2/18 22:10, Yicong Yang wrote:
+>> From: Yicong Yang <yangyicong@hisilicon.com>
+>>
+>> For ACPI we'll build the topology from PPTT and we cannot directly
+>> get the SMT number of each core. Instead using a temporary xarray
+>> to record the heterogeneous information (from ACPI_PPTT_ACPI_IDENTICAL)
+>> and SMT information of the first core in its heterogeneous CPU cluster
+>> when building the topology. Then we can know the largest SMT number
+>> in the system. If a homogeneous system's using ACPI 6.2 or later,
+>> all the CPUs should be under the root node of PPTT. There'll be
+>> only one entry in the xarray and all the CPUs in the system will
+>> be assumed identical.
+>>
+>> The core's SMT control provides two interface to the users [1]:
+>> 1) enable/disable SMT by writing on/off
+>> 2) enable/disable SMT by writing thread number 1/max_thread_number
+>>
+>> If a system have more than one SMT thread number the 2) may
+>> not handle it well, since there're multiple thread numbers in the
+>> system and 2) only accept 1/max_thread_number. So issue a warning
+>> to notify the users if such system detected.
+>>
+>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/ABI/testing/sysfs-devices-system-cpu#n542
+>>
+>> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+>> Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
+>> ---
+>>   arch/arm64/kernel/topology.c | 66 ++++++++++++++++++++++++++++++++++++
+>>   1 file changed, 66 insertions(+)
+>>
+>> diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
+>> index 1a2c72f3e7f8..6eba1ac091ee 100644
+>> --- a/arch/arm64/kernel/topology.c
+>> +++ b/arch/arm64/kernel/topology.c
+>> @@ -15,8 +15,10 @@
+>>   #include <linux/arch_topology.h>
+>>   #include <linux/cacheinfo.h>
+>>   #include <linux/cpufreq.h>
+>> +#include <linux/cpu_smt.h>
+>>   #include <linux/init.h>
+>>   #include <linux/percpu.h>
+>> +#include <linux/xarray.h>
+>>     #include <asm/cpu.h>
+>>   #include <asm/cputype.h>
+>> @@ -37,17 +39,28 @@ static bool __init acpi_cpu_is_threaded(int cpu)
+>>       return !!is_threaded;
+>>   }
+>>   +struct cpu_smt_info {
+>> +    unsigned int thread_num;
+>> +    int core_id;
+>> +};
+>> +
+>>   /*
+>>    * Propagate the topology information of the processor_topology_node tree to the
+>>    * cpu_topology array.
+>>    */
+>>   int __init parse_acpi_topology(void)
+>>   {
+>> +    unsigned int max_smt_thread_num = 0;
+>> +    struct cpu_smt_info *entry;
+>> +    struct xarray hetero_cpu;
+>> +    unsigned long hetero_id;
+>>       int cpu, topology_id;
+>>         if (acpi_disabled)
+>>           return 0;
+>>   +    xa_init(&hetero_cpu);
+>> +
+>>       for_each_possible_cpu(cpu) {
+>>           topology_id = find_acpi_cpu_topology(cpu, 0);
+>>           if (topology_id < 0)
+>> @@ -57,6 +70,34 @@ int __init parse_acpi_topology(void)
+>>               cpu_topology[cpu].thread_id = topology_id;
+>>               topology_id = find_acpi_cpu_topology(cpu, 1);
+>>               cpu_topology[cpu].core_id   = topology_id;
+>> +
+>> +            /*
+>> +             * In the PPTT, CPUs below a node with the 'identical
+>> +             * implementation' flag have the same number of threads.
+>> +             * Count the number of threads for only one CPU (i.e.
+>> +             * one core_id) among those with the same hetero_id.
+>> +             * See the comment of find_acpi_cpu_topology_hetero_id()
+>> +             * for more details.
+>> +             *
+>> +             * One entry is created for each node having:
+>> +             * - the 'identical implementation' flag
+>> +             * - its parent not having the flag
+>> +             */
+>> +            hetero_id = find_acpi_cpu_topology_hetero_id(cpu);
+>> +            entry = xa_load(&hetero_cpu, hetero_id);
+>> +            if (!entry) {
+>> +                entry = kzalloc(sizeof(*entry), GFP_KERNEL);
+>> +                WARN_ON_ONCE(!entry);
+>> +
+>> +                if (entry) {
+>> +                    entry->core_id = topology_id;
+>> +                    entry->thread_num = 1;
+>> +                    xa_store(&hetero_cpu, hetero_id,
+>> +                         entry, GFP_KERNEL);
+>> +                }
+>> +            } else if (entry->core_id == topology_id) {
+>> +                entry->thread_num++;
+>> +            }
+>>           } else {
+>>               cpu_topology[cpu].thread_id  = -1;
+>>               cpu_topology[cpu].core_id    = topology_id;
+>> @@ -67,6 +108,31 @@ int __init parse_acpi_topology(void)
+>>           cpu_topology[cpu].package_id = topology_id;
+>>       }
+>>   +    /*
+>> +     * This should be a short loop depending on the number of heterogeneous
+>> +     * CPU clusters. Typically on a homogeneous system there's only one
+>> +     * entry in the XArray.
+>> +     */
+>> +    xa_for_each(&hetero_cpu, hetero_id, entry) {
+>> +        if (entry->thread_num != max_smt_thread_num && max_smt_thread_num)
+>> +            pr_warn_once("Heterogeneous SMT topology is partly supported by SMT control\n");
+>> +
+>> +        max_smt_thread_num = max(max_smt_thread_num, entry->thread_num);
+>> +        xa_erase(&hetero_cpu, hetero_id);
+>> +        kfree(entry);
+>> +    }
+>> +
+>> +    /*
+>> +     * Notify the CPU framework of the SMT support. Initialize the
+>> +     * max_smt_thread_num to 1 if no SMT support detected. A thread
+>> +     * number of 1 can be handled by the framework so we don't need
+>> +     * to check max_smt_thread_num to see we support SMT or not.
+>> +     */
+>> +    if (!max_smt_thread_num)
+>> +        max_smt_thread_num = 1;
+>> +
+>> +    cpu_smt_set_num_threads(max_smt_thread_num, max_smt_thread_num);
+>> +    xa_destroy(&hetero_cpu);
+>>       return 0;
+>>   }
+>>   #endif
 > 
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-
-Thanks, patch looks good to me:
-
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-
-Regards,
-
-Hans
-
-
-
-> ---
->  drivers/media/usb/uvc/uvc_v4l2.c | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
+> Looks good to me,
 > 
-> diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
-> index 6af93e00b304..de8d26164996 100644
-> --- a/drivers/media/usb/uvc/uvc_v4l2.c
-> +++ b/drivers/media/usb/uvc/uvc_v4l2.c
-> @@ -1450,6 +1450,26 @@ static long uvc_v4l2_video_ioctl2(struct file *file,
->  {
->  	struct uvc_fh *handle = file->private_data;
->  
-> +	/* The following IOCTLs do not need to turn on the camera. */
-> +	switch (cmd) {
-> +	case VIDIOC_CREATE_BUFS:
-> +	case VIDIOC_DQBUF:
-> +	case VIDIOC_ENUM_FMT:
-> +	case VIDIOC_ENUM_FRAMEINTERVALS:
-> +	case VIDIOC_ENUM_FRAMESIZES:
-> +	case VIDIOC_ENUMINPUT:
-> +	case VIDIOC_EXPBUF:
-> +	case VIDIOC_G_FMT:
-> +	case VIDIOC_G_PARM:
-> +	case VIDIOC_G_SELECTION:
-> +	case VIDIOC_QBUF:
-> +	case VIDIOC_QUERYCAP:
-> +	case VIDIOC_REQBUFS:
-> +	case VIDIOC_SUBSCRIBE_EVENT:
-> +	case VIDIOC_UNSUBSCRIBE_EVENT:
-> +		return video_ioctl2(file, cmd, arg);
-> +	}
-> +
->  	guard(uvc_pm)(handle->stream->dev);
->  
->  	return video_ioctl2(file, cmd, arg);
+> Reviewed-by: Hanjun Guo <guohanjun@huawei.com>
 > 
+
+Thanks a lot for taking a look :)
+
 
 
