@@ -1,126 +1,101 @@
-Return-Path: <linux-kernel+bounces-542298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46A70A4C83E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:53:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBA80A4C874
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:59:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AE2A1896E0B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:52:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FE593AB621
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:53:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A91202673BE;
-	Mon,  3 Mar 2025 16:31:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E15326B2D2;
+	Mon,  3 Mar 2025 16:32:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PEh7YJUK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OH/OZcpZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10BE6266F1D;
-	Mon,  3 Mar 2025 16:31:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A7022F39C;
+	Mon,  3 Mar 2025 16:32:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741019519; cv=none; b=ngjoizi+J4QtXVMs8f3astSR8KVuTRDwBeJeXggiHgrqwPWuYkFAxbmzt2MBwmdZ93M+y+PVLjru5sK0UBwk5MDod7z7U7wsWX9Vf3/FuNyGmsbcYqB9t+XX+PWzfIT1t0hoihMGCqLq0k6LsWwWoQUxj75MWCaRg69GUbYDgGc=
+	t=1741019535; cv=none; b=YJjvK3wNLdfgnhds1MNth/zAXeuCmcTMEJHxtt2pan5Tq8GsrED22wFRnku4jChfP2/0mTZO2+U9g6OXylIT/2p3oqOvcLPyVZco7qhE+gkN93KJuApqiAnAl0QUmmkfLwSOjxLCXDwmpUGYRZPaLGDCUAIlByeKBq4b74JdeZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741019519; c=relaxed/simple;
-	bh=59vFLZvHUoSxpczTYUQZKEeXJgGnJtz5NQZHwHzt73U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rHHFxOBwoB8Q25WpwO+lO3uBjHvYxXY2Zsq80empNSZh2EpjCc4NEI0Ou3FiTWlb5J8q+KRy/CUB9jiNDqqWiGnop4MyLW/78rFEIVU9eWt2XNzL355fWfJ76kjax0uJ/GGt41Yas6GT5zVg7DtIhl3kH06GxT7WsD0x85U+gy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PEh7YJUK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5563C4CEE4;
-	Mon,  3 Mar 2025 16:31:56 +0000 (UTC)
+	s=arc-20240116; t=1741019535; c=relaxed/simple;
+	bh=OrVlZo9pvd3tNjmzU0jqNp5N6UHd0Nx5356OwLfizdU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DSPk8QkfbveoECLEGU6g4+QmGJyR+wNm51niyaFr3D9AU7N04iekfJvquajpCMRmjM3ane5EOk+MtxqnCGm5fpdrls7jdeDzli22cUUibkJg21Aiq8kNCSumhF2cksJOKT3OzIUsLsY6URPsrYIxfLNiNGmDe0r66TLmxo1z9e0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OH/OZcpZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FE1DC4CEE4;
+	Mon,  3 Mar 2025 16:32:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741019518;
-	bh=59vFLZvHUoSxpczTYUQZKEeXJgGnJtz5NQZHwHzt73U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PEh7YJUKMzh6a2Az24xFOmx2Oq5LQRsBZu1AnqQU3niJZXZgcaDhUa4umh29igLGr
-	 mwKtNrVTOddw8plCoaFuT0fWhHK+GRrjv2cK/z8MItAR+gQ42xqC8/D++OrPGsD6L0
-	 Xpyuo1XW7RDjxgJ2JNZaI5Q3JGgeJD2o5U5v6TLcn6D7QHdrGs9d063Kg/2BxCKqSd
-	 48AlqfHuQkK49q/snf3hrUnKGHOng10npw8eDZrsFNKQdPXsLvTM1Qc7jtY1BW60Kp
-	 tFPlxp9jBNcRsYaoA+ZZRKw2YP6Ktc5EET6T0dErxGIYe0ggLx8um3U8GqqcdSCcjV
-	 7DVKU18k2CusA==
-Date: Mon, 3 Mar 2025 16:31:54 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Inochi Amaoto <inochiama@gmail.com>
-Cc: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-	Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, dmaengine@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>
-Subject: Re: [PATCH] dt-bindings: dma: snps,dw-axi-dmac: Allow devices to be
- marked as noncoherent
-Message-ID: <20250303-repacking-grouped-adc43e4b602c@spud>
-References: <20250303065649.937233-1-inochiama@gmail.com>
+	s=k20201202; t=1741019534;
+	bh=OrVlZo9pvd3tNjmzU0jqNp5N6UHd0Nx5356OwLfizdU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=OH/OZcpZtGmOGnFarr0t6mlSJRI0Jz2BsmP0czoCx5vqaU8Oj1ZzvEKefXUzFPJ4U
+	 PUOwiGlPXCoes+hHLU1eElRmZoMfPPgWo9SFPMqRbMKp20O9o+nowhkz8yXaX2FtuN
+	 NyMoNK4prA5tvZUX9fORNK8wvWa/kpwZ9yyNK6cQThUmx4Uy4q+vQIU3Cj/u44SRDM
+	 CHcS7eU/bTn98tVIjaQUJ4Aka8P/uKS5oUaMHIcYjmkxWaYkXp2Oou+6BM+tAxDdxS
+	 d/pB7QMjGfczg49t7TtqFVjcP9Iof15M+VWLG5buFvpTqUiFFYpwkOsPEWug9LV9QF
+	 kJo+2aH2cMfhA==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Hector Martin <marcan@marcan.st>,
+	Mark Brown <broonie@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	shenghao-ding@ti.com,
+	kevin-lu@ti.com,
+	baojun.xu@ti.com,
+	lgirdwood@gmail.com,
+	perex@perex.cz,
+	tiwai@suse.com,
+	linux-sound@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.10 1/8] ASoC: tas2770: Fix volume scale
+Date: Mon,  3 Mar 2025 11:32:04 -0500
+Message-Id: <20250303163211.3764282-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="55R7XdofnJQSEfF1"
-Content-Disposition: inline
-In-Reply-To: <20250303065649.937233-1-inochiama@gmail.com>
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 5.10.234
+Content-Transfer-Encoding: 8bit
 
+From: Hector Martin <marcan@marcan.st>
 
---55R7XdofnJQSEfF1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+[ Upstream commit 579cd64b9df8a60284ec3422be919c362de40e41 ]
 
-On Mon, Mar 03, 2025 at 02:56:48PM +0800, Inochi Amaoto wrote:
-> A RISC-V platform can have both DMA coherent/noncoherent devices.
-> Since the RISC-V architecture is marked coherent, devices should
-> be marked as noncoherent when coherent devices exist.
->=20
-> Add dma-noncoherent property for snps,dw-axi-dmac device. It will
-> be used on SG2044, and it has other coherent devices.
->=20
-> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-> ---
-> Related discussion for this property.
->=20
-> https://lore.kernel.org/all/20250221013758.370936-1-inochiama@gmail.com/
-> ---
->  Documentation/devicetree/bindings/dma/snps,dw-axi-dmac.yaml | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/dma/snps,dw-axi-dmac.yaml =
-b/Documentation/devicetree/bindings/dma/snps,dw-axi-dmac.yaml
-> index 525f5f3932f5..935735a59afd 100644
-> --- a/Documentation/devicetree/bindings/dma/snps,dw-axi-dmac.yaml
-> +++ b/Documentation/devicetree/bindings/dma/snps,dw-axi-dmac.yaml
-> @@ -59,6 +59,8 @@ properties:
->      minimum: 1
->      maximum: 8
->=20
-> +  dma-noncoherent: true
+The scale starts at -100dB, not -128dB.
 
-I'd probably also add mutual exclusion, but I think that's something for
-dt-schema and not for individual bindings.
+Signed-off-by: Hector Martin <marcan@marcan.st>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Link: https://patch.msgid.link/20250208-asoc-tas2770-v1-1-cf50ff1d59a3@kernel.org
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ sound/soc/codecs/tas2770.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+diff --git a/sound/soc/codecs/tas2770.c b/sound/soc/codecs/tas2770.c
+index c213c8096142b..1928c1616a52d 100644
+--- a/sound/soc/codecs/tas2770.c
++++ b/sound/soc/codecs/tas2770.c
+@@ -508,7 +508,7 @@ static int tas2770_codec_probe(struct snd_soc_component *component)
+ }
+ 
+ static DECLARE_TLV_DB_SCALE(tas2770_digital_tlv, 1100, 50, 0);
+-static DECLARE_TLV_DB_SCALE(tas2770_playback_volume, -12750, 50, 0);
++static DECLARE_TLV_DB_SCALE(tas2770_playback_volume, -10050, 50, 0);
+ 
+ static const struct snd_kcontrol_new tas2770_snd_controls[] = {
+ 	SOC_SINGLE_TLV("Speaker Playback Volume", TAS2770_PLAY_CFG_REG2,
+-- 
+2.39.5
 
-> +
->    resets:
->      minItems: 1
->      maxItems: 2
-> --
-> 2.48.1
->=20
-
---55R7XdofnJQSEfF1
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ8XZegAKCRB4tDGHoIJi
-0mbTAQDWwBpU1nT5NS6U/bmm3rXSSm4aXMCwWFelufMYrmW+VwD/ZbFzEMY91XDn
-HAXfWjGCnIVXEDVN7eAgWb4qaaKb2A8=
-=GmVd
------END PGP SIGNATURE-----
-
---55R7XdofnJQSEfF1--
 
