@@ -1,159 +1,128 @@
-Return-Path: <linux-kernel+bounces-541280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E42E8A4BAE1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:35:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93842A4BAE7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:36:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 739133AC88B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:35:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B94DF168D59
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:36:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DCC11F0E57;
-	Mon,  3 Mar 2025 09:35:21 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E8CE1F0E59;
+	Mon,  3 Mar 2025 09:35:59 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3302C1EE7D3;
-	Mon,  3 Mar 2025 09:35:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B1B21EF0B6;
+	Mon,  3 Mar 2025 09:35:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740994520; cv=none; b=RozIdKeZEGnF5PqKuum/jwpZB2zZ0nRL+i5Wists13JEB8NunO6mFnxPQ1OmKFMqYFVtZmBZYf+YjjX0DHXQzq6mGg+C2riPtWDU6udCv9ToVP8Bv2MkM139A0D99qFykBRm3D7EpLpQU78tQR9ea5zVsnytTxNifRdzDbRrQS0=
+	t=1740994559; cv=none; b=h2hum4o/EJEhGIElqamU0J33Z6uIKYqJnuDY+Nf5/eAWx+QvdvJrvdvqh9ktvM6p0BDGYmUbHlKgWsixr07+vqYgC8003IKEcXo3dJVodL12wOtF7IVchBG6OsvJIvIGqx9OD1ucqRxUynoOQERCfe06GGwZICL4ZoZYTmbd8aQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740994520; c=relaxed/simple;
-	bh=gCpNNSve1jlt1V5SnYQVpGjhoChNTjthXctFbRk7RpM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jG6W0za3fTapzwPCSeztAPnSGKK8+Qsf4cFdpCRHS9f/T75/kTEj0xk7OqueGsAkxhBLBr24e9F8GJ3iUxRJvG1NCJfJvjs+S6TCR7t490Pt6HwyO3yZITG4CvRe8F/FP9PwJnyBvyIacI09068+PySqbPNPoT0YV0H93UgNWBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.55.252])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 06910342FAE;
-	Mon, 03 Mar 2025 09:35:16 +0000 (UTC)
-Date: Mon, 3 Mar 2025 09:35:06 +0000
-From: Yixun Lan <dlan@gentoo.org>
-To: Troy Mitchell <troymitchell988@gmail.com>
-Cc: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-riscv@lists.infradead.org,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, spacemit@lists.linux.dev,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH RESEND v5 1/2] dt-bindings: i2c: spacemit: add support
- for K1 SoC
-Message-ID: <20250303093506-GYA58937@gentoo>
-References: <20250303-k1-i2c-master-v5-0-21dfc7adfe37@gmail.com>
- <20250303-k1-i2c-master-v5-1-21dfc7adfe37@gmail.com>
+	s=arc-20240116; t=1740994559; c=relaxed/simple;
+	bh=8nYoOodSaWim/vrOXXM0k0eQCZlZ0YuVrf/ni5EyRYg=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SqEU9ZGrBZRw3CDj0qmxy0kOELqnesP4ju0KEN3NHK6tqOlADumHbIbDBGXC+0dlNFqg5Y4n5kMKWrEoyU/6ZGP8CnhLEOgQDjTCe4MMdYBixlxzBJSMfED7M6IFSQABnBgGXv35isRIXVS1zcUrRrvfjElb7sZT7pbx6S/QNzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Z5tqt0lX3z6L55S;
+	Mon,  3 Mar 2025 17:31:54 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9579D1400DC;
+	Mon,  3 Mar 2025 17:35:53 +0800 (CST)
+Received: from localhost (10.96.237.92) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 3 Mar
+ 2025 10:35:43 +0100
+Date: Mon, 3 Mar 2025 17:35:38 +0800
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: <shiju.jose@huawei.com>
+CC: <linux-edac@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+	<rafael@kernel.org>, <bp@alien8.de>, <tony.luck@intel.com>,
+	<lenb@kernel.org>, <mchehab@kernel.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
+	<j.williams@intel.com>, <dave@stgolabs.net>, <dave.jiang@intel.com>,
+	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
+	<ira.weiny@intel.com>, <david@redhat.com>, <Vilas.Sridharan@amd.com>,
+	<leo.duran@amd.com>, <Yazen.Ghannam@amd.com>, <rientjes@google.com>,
+	<jiaqiyan@google.com>, <Jon.Grimm@amd.com>, <dave.hansen@linux.intel.com>,
+	<naoya.horiguchi@nec.com>, <james.morse@arm.com>, <jthoughton@google.com>,
+	<somasundaram.a@hpe.com>, <erdemaktas@google.com>, <pgonda@google.com>,
+	<duenwen@google.com>, <gthelen@google.com>, <wschwartz@amperecomputing.com>,
+	<dferguson@amperecomputing.com>, <wbs@os.amperecomputing.com>,
+	<nifan.cxl@gmail.com>, <tanxiaofei@huawei.com>, <prime.zeng@hisilicon.com>,
+	<roberto.sassu@huawei.com>, <kangkang.shen@futurewei.com>,
+	<wanghuiqiang@huawei.com>, <linuxarm@huawei.com>
+Subject: Re: [PATCH linux-next 0/2] ACPI: Add support for ACPI RAS2 feature
+ table
+Message-ID: <20250303173538.000007cd@huawei.com>
+In-Reply-To: <20250228122752.2062-1-shiju.jose@huawei.com>
+References: <20250228122752.2062-1-shiju.jose@huawei.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250303-k1-i2c-master-v5-1-21dfc7adfe37@gmail.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On 13:30 Mon 03 Mar     , Troy Mitchell wrote:
-> The I2C of K1 supports fast-speed-mode and high-speed-mode,
-> and supports FIFO transmission.
+On Fri, 28 Feb 2025 12:27:48 +0000
+<shiju.jose@huawei.com> wrote:
+
+> From: Shiju Jose <shiju.jose@huawei.com>
 > 
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> Signed-off-by: Troy Mitchell <troymitchell988@gmail.com>
-> ---
->  .../devicetree/bindings/i2c/spacemit,k1-i2c.yaml   | 59 ++++++++++++++++++++++
->  1 file changed, 59 insertions(+)
+> Add support for ACPI RAS2 feature table (RAS2) defined in the ACPI 6.5
+> specification, section 5.2.21 and RAS2 HW based memory scrubbing feature.
 > 
-> diff --git a/Documentation/devicetree/bindings/i2c/spacemit,k1-i2c.yaml b/Documentation/devicetree/bindings/i2c/spacemit,k1-i2c.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..db49f1f473e6f166f534b276c86b3951d86341c3
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/i2c/spacemit,k1-i2c.yaml
-> @@ -0,0 +1,59 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/i2c/spacemit,k1-i2c.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: I2C controller embedded in SpacemiT's K1 SoC
-> +
-> +maintainers:
-> +  - Troy Mitchell <troymitchell988@gmail.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: spacemit,k1-i2c
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-..
-> +  clocks:
-> +    minItems: 2
-> +    maxItems: 2
-> +
-> +  clock-names:
-> +    minItems: 2
-> +    maxItems: 2
-I'd suggest to give a brief description and explicit clock name here,
-you can consult marvell,mv64xxx-i2c.yaml for example
+> ACPI RAS2 patches were part of the EDAC series [1].
 
-> +
-> +  clock-frequency:
-> +    description: |
-> +      K1 support three different modes which running different frequencies
-> +      standard speed mode: up to 100000 (100Hz)
-> +      fast speed mode    : up to 400000 (400Hz)
-> +      high speed mode    : up to 3300000 (3.3Mhz)
-> +    default: 400000
-> +    maximum: 3300000
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    i2c@d4010800 {
-> +        compatible = "spacemit,k1-i2c";
-> +        reg = <0xd4010800 0x38>;
-> +        interrupt-parent = <&plic>;
-> +        interrupts = <36>;
-> +        clocks = <&ccu 176>, <&ccu 90>;
-> +        clock-names = "apb", "twsi";
-9.1.4.61 TWSI0 CLOCK RESET CONTROL REGISTER(APBC_TWSI0_CLK_RST)
-https://developer.spacemit.com/documentation?token=LCrKwWDasiJuROkVNusc2pWTnEb#part594
-from above docs, there are two clocks 
-bit[1] - FNCLK, TWSI0 Functional Clock Enable/Disable
-bit[0] - APBCLK, TWSI0 APB Bus Clock Enable/Disable
+Whilst linux-next now contains the EDAC patches, we shouldn't base
+a feature submission on it.  This should be the same as you
+did for the CXL tree with a statement that it depends on 
 
-I'd suggest to name it according to the functionality, thus 'func', 'bus'
-clock, not its source.. which would make it more system wide consistent
+https://web.git.kernel.org/pub/scm/linux/kernel/git/ras/ras.git/log/?h=edac-cxl
 
-> +        clock-frequency = <100000>;
-> +    };
-> +
-> +...
+which is the immutable tag / branch Borislav provided.
+
+I doubt there is anything else hitting this code so
+shouldn't be any need to rebase (I could be wrong though!)
+
+Assuming everyone is happy with this series, who is going to pick
+it up?
+
+Borislav via ras.git, or Rafael via acpi.git?  I don't really
+have any preference other than making sure it doesn't fall down
+the cracks!
+
+Jonathan
+
 > 
-> -- 
-> 2.34.1
+> 1. https://lore.kernel.org/linux-cxl/20250212143654.1893-1-shiju.jose@huawei.com/ 
+> 
+> Shiju Jose (2):
+>   ACPI:RAS2: Add ACPI RAS2 driver
+>   ras: mem: Add memory ACPI RAS2 driver
+> 
+>  Documentation/edac/scrub.rst |  73 ++++++
+>  drivers/acpi/Kconfig         |  11 +
+>  drivers/acpi/Makefile        |   1 +
+>  drivers/acpi/ras2.c          | 417 +++++++++++++++++++++++++++++++++++
+>  drivers/ras/Kconfig          |  11 +
+>  drivers/ras/Makefile         |   1 +
+>  drivers/ras/acpi_ras2.c      | 383 ++++++++++++++++++++++++++++++++
+>  include/acpi/ras2_acpi.h     |  47 ++++
+>  8 files changed, 944 insertions(+)
+>  create mode 100755 drivers/acpi/ras2.c
+>  create mode 100644 drivers/ras/acpi_ras2.c
+>  create mode 100644 include/acpi/ras2_acpi.h
 > 
 
--- 
-Yixun Lan (dlan)
-Gentoo Linux Developer
-GPG Key ID AABEFD55
 
