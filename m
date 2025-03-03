@@ -1,144 +1,155 @@
-Return-Path: <linux-kernel+bounces-541219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E42F9A4BA2D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:03:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35D12A4BA31
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:03:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CA031885EBE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:03:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F047B16B6A5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:03:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F8E21EF376;
-	Mon,  3 Mar 2025 09:03:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D64E81F0996;
+	Mon,  3 Mar 2025 09:03:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rQmUB2lr"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Xth63yyV"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0602E1EF096
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 09:03:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC921EF099;
+	Mon,  3 Mar 2025 09:03:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740992597; cv=none; b=OFPlEhKq/XJwyFwTX/WjJ89XIvccoa8W5Hy21Dj/LzESwVpYIduil6N+XNpvvlTFbPxNU+U6L5PRBaSw7VF06UzqZGMUiUaGB81BVimuyDYVk1FU5ZKz44A+0okaC2SxeLrSq9l0jpKLBImb+bRA+fsmzmfgMLAZjw1cFTPyM90=
+	t=1740992618; cv=none; b=Eng/JlSCfC2UvGaLmMTfv8J9XJneEOCbtO2gQw6vgde77NKw+PjFoLq8S7JwoDw4cGpsyCSNThDZlH5EWzlOmkJv6IykehvT07s2wkuW8P22avx+Q9+Flnlnlcvr+0AQA1uaoYBoaUj0NXsTsjZVDzY7IpydYwmW+ukutdHCTdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740992597; c=relaxed/simple;
-	bh=idc8/NACOix78GnnSHuzlC9mQg3lcaqnvWb9GYuGSuU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UorEGdrEg/8dONsKmKZhzpg65Hfeac8PhPuBtWJG31YJ5Q7mfqr3S5I01XnsoI5rTZ5lb16g/PHd15b8WnGANNBVXr2nd+U/K6eFDO7IN67+N/vJdBbPvCl/HO38SAxKwmTh/hnbw4hn90thndcygViRa+NgBQhfqc6VJPiZL8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rQmUB2lr; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43998deed24so39411655e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 01:03:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740992594; x=1741597394; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fnE1WKL8B2Bxfl1xiklk44H12/SEhBZrUiboyYR/TqM=;
-        b=rQmUB2lrKQVVYFNovRN9Ld+5NbJ4fAYCmrH+b9kvG4tRVjMewmDD5Se4xvNJB0R6OK
-         PPU3g6yj8MN4Wy4ayLM2ZyDSlx0hBZKmb9E2Ln2ynkceZzU/j8HqnnBqJgOzy8IE8Cl7
-         wgb+EIQYNWMxjFsvM6wOQzbavJ3ohrXSAsue0DMa9cLCJr9Wpxdij7Gr8Kbz3WfKly3u
-         TVv6fAoPwVwPsNwW11oYiUZ1IBSTFujkSouU0Dl0mxz2R0xloNdJ90UY8OBPdYkpiefm
-         06b68isuSKpFBl+C+VZegnVSwZ8xUTv2joENOtaDMLCzWsyjWYdIiIf7ZylTmtsmarOJ
-         bpQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740992594; x=1741597394;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fnE1WKL8B2Bxfl1xiklk44H12/SEhBZrUiboyYR/TqM=;
-        b=nno5BbGQnZB3bpzc3Kyc7jRcY8oGoePUKtiGSAxvSbwmnDUIVXLs+uHrfT4clJuX59
-         PIZg7y9WL1MNC9/eJz8BPmPXfeXTfAtnMXSDVfb86gojsXMauvUcvnWGGakDTFdPsW5u
-         uDkGD961BVqbRnp2/p4ThSbRES3Xho7of87Iyl3MTGzD6osZEc69b7a4joyyyXiD2SM5
-         Z98kAbk168KQpCWQfhkyg3nuf1a51cEuetqVSRWYkfxpLBj9kbrgmvvJuKdInnmfyjQW
-         b0A0zGK4K9VFVq0GxTDgc1fjgTLqu+7prM9FmDxJ8ZvCNy0+8Y+Zfrq3olpAlMcwRD3Q
-         ck1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVnZzQQ590TdnMITa2uURk9qETq7wMd0H4mRI7l3ihGdwLHPfGNYCT+7YDcQNV4BJRkDv3Ws743YdnR51Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzX8bi2UAseskpaoKXdPEjX5jVCnTw4oVq4FwH40WJoqp2OopY
-	RRvgYMtXGqWxmUWtR/l36qVaeMFTmdpvwICoEQUjvqyglJqdT5o+pbQeemVBJw==
-X-Gm-Gg: ASbGncsHRTtItVJbdq113bLOpW4ZvlkT5KevHYsSCGls1t0GHlJqvhQbGiooavhjD+q
-	GvQq0YElmkP7fx8i5ZB8xFMny4uvvSgoL7DXAuCU5t5ukta0z3a0sgL3bSqlmrFxDZLamYPpevX
-	D9lhFZkAMYARQSGZmlj9B7z3pft12P1bs8H77Q/PkhkrBIFVgPu6LJDPj78/Jz0WENNXuDw34oR
-	jP7R37l0jXzrwHpBB9emnko8gTcFk6jLYX3RtaV0b9BWXFWk2tOaSagOleN1+I4dpHds/bhmKi0
-	LSLwgIvNxkcXWeidAk6ey59BzCCoNO0GX/ZlQS7W5MThDAF7cNINWVFJSsuPPOorXU19Ib9B/Mc
-	sTSwu/3svI292
-X-Google-Smtp-Source: AGHT+IGmAnvr5WwwGoSHGFphkhVZV6m70wz82I4YVRSVF548RcAtlCMZxGhqjzzDdhfLipt7qPEkPw==
-X-Received: by 2002:a05:600c:a45:b0:439:9537:e96b with SMTP id 5b1f17b1804b1-43bb60464acmr37468755e9.14.1740992593951;
-        Mon, 03 Mar 2025 01:03:13 -0800 (PST)
-Received: from google.com (105.168.195.35.bc.googleusercontent.com. [35.195.168.105])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba58713bsm186635635e9.34.2025.03.03.01.03.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 01:03:13 -0800 (PST)
-Date: Mon, 3 Mar 2025 09:03:09 +0000
-From: Vincent Donnefort <vdonnefort@google.com>
-To: Quentin Perret <qperret@google.com>
-Cc: maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
-	suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, will@kernel.org,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH 2/9] KVM: arm64: Add a range to __pkvm_host_share_guest()
-Message-ID: <Z8VwTf8nMvRNjgU_@google.com>
-References: <20250228102530.1229089-1-vdonnefort@google.com>
- <20250228102530.1229089-3-vdonnefort@google.com>
- <Z8IJRpoQUoGazLku@google.com>
+	s=arc-20240116; t=1740992618; c=relaxed/simple;
+	bh=Atf+N797ReonutHfaP/NEiyZsTvsa7qMERZI0s74rlI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=omQRzKYsUCo3kfYBIqbWEfBxBdoBM1XXZPpdlHL61jRyndyldSTf2tE+Bt/7txfiaRU9565w1fzbvsSHRRNYtBvP1SK3B9ZZbsCwpNrXPzcnSaN07VjtxIlRE9BMs3nTm1BXsTI622pEd+HcZ04ABMIHrZ/gVA5rVga2iOpT5CU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Xth63yyV; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id CB4FF433D6;
+	Mon,  3 Mar 2025 09:03:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740992613;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=srKaH+dUPNcj7myLBF3rWvtWswbd4aKF0FGqhtNPS/A=;
+	b=Xth63yyVKef/3QCJn/XXggPX9L2ePfszv42r5rzFuDUcWBvJtzlCnfsrHYL5Pdv650CCjx
+	E4I7BsxEhNCdBHSzAGiUwVm9QNILcyE8XBvDwsNH809XDY5xewyGQFCmgtvqzBWcLNqRtm
+	x8wKmQ6N1CGA7vYceLZ7GrJbVfzVWyqzvZLg6b0QIdqqDpc9f5pA2bUNxvnVizHy4qrXdU
+	+41Zt+fgTBIXyyYsJY2IEY9Ez57niUgCwxc1aAXzSVtZy8eDoIkHwKFDsgjsE12Gi5VdwJ
+	GFpRRQFVoE19X7lKYZohG3TLKNYezvYflrz7VmdcTnN4CkNn/Dzmd+Kqfe739g==
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: davem@davemloft.net,
+	Andrew Lunn <andrew@lunn.ch>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Heiner Kallweit <hkallweit1@gmail.com>
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	thomas.petazzoni@bootlin.com,
+	linux-arm-kernel@lists.infradead.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	=?UTF-8?q?K=C3=B6ry=20Maincent?= <kory.maincent@bootlin.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	Simon Horman <horms@kernel.org>,
+	Romain Gantois <romain.gantois@bootlin.com>
+Subject: [PATCH net-next v4 05/13] net: phy: phy_caps: Introduce phy_caps_valid
+Date: Mon,  3 Mar 2025 10:03:11 +0100
+Message-ID: <20250303090321.805785-6-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250303090321.805785-1-maxime.chevallier@bootlin.com>
+References: <20250303090321.805785-1-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8IJRpoQUoGazLku@google.com>
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelkeejudcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeevgedtffelffelveeuleelgfejfeevvdejhfehgeefgfffvdefteegvedutefftdenucfkphepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvpdhhvghlohepfhgvughorhgrrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvtddprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgri
+ igvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomh
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On Fri, Feb 28, 2025 at 07:06:46PM +0000, Quentin Perret wrote:
-> On Friday 28 Feb 2025 at 10:25:18 (+0000), Vincent Donnefort wrote:
-> > +int __pkvm_host_share_guest(u64 pfn, u64 gfn, u64 nr_pages, struct pkvm_hyp_vcpu *vcpu,
-> >  			    enum kvm_pgtable_prot prot)
-> >  {
-> >  	struct pkvm_hyp_vm *vm = pkvm_hyp_vcpu_to_hyp_vm(vcpu);
-> >  	u64 phys = hyp_pfn_to_phys(pfn);
-> >  	u64 ipa = hyp_pfn_to_phys(gfn);
-> >  	struct hyp_page *page;
-> > +	u64 size;
-> >  	int ret;
-> >  
-> >  	if (prot & ~KVM_PGTABLE_PROT_RWX)
-> >  		return -EINVAL;
-> >  
-> > -	ret = check_range_allowed_memory(phys, phys + PAGE_SIZE);
-> 
-> I'm not sure it is safe to drop this check here, see below.
-> 
-> > +	ret = __guest_check_transition_size(phys, ipa, nr_pages, &size);
-> >  	if (ret)
-> >  		return ret;
-> >  
-> >  	host_lock_component();
-> >  	guest_lock_component(vm);
-> >  
-> > -	ret = __guest_check_page_state_range(vcpu, ipa, PAGE_SIZE, PKVM_NOPAGE);
-> > +	ret = __guest_check_page_state_range(vm, ipa, size, PKVM_NOPAGE);
-> >  	if (ret)
-> >  		goto unlock;
-> >  
-> >  	page = hyp_phys_to_page(phys);
-> 
-> Phys really needs to be a valid memory address here for 'page' to be
-> present in the vmemma -- dereference right below. So we can't rely on
-> the check in __host_check_page_state_range() sadly ...
+With the link_capabilities array, it's trivial to validate a given mask
+againts a <speed, duplex> tuple. Create a helper for that purpose, and
+use it to replace a phy_settings lookup in phy_check_valid();
 
-Haaa you're right. Sad to have this double check. Perhaps I won't use
-__host_check_page_state_range() then.
+Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+---
+V4: No changes
 
-> 
-> > +	ret = __host_check_page_state_range(phys, size, page->host_state);
-> > +	if (ret)
-> > +		goto unlock;
-> > +
+ drivers/net/phy/phy-caps.h |  1 +
+ drivers/net/phy/phy.c      |  2 +-
+ drivers/net/phy/phy_caps.c | 19 +++++++++++++++++++
+ 3 files changed, 21 insertions(+), 1 deletion(-)
 
-[...]
+diff --git a/drivers/net/phy/phy-caps.h b/drivers/net/phy/phy-caps.h
+index a44d983eaed8..f35ede4e557d 100644
+--- a/drivers/net/phy/phy-caps.h
++++ b/drivers/net/phy/phy-caps.h
+@@ -43,6 +43,7 @@ void phy_caps_init(void);
+ size_t phy_caps_speeds(unsigned int *speeds, size_t size,
+ 		       unsigned long *linkmodes);
+ void phy_caps_linkmode_max_speed(u32 max_speed, unsigned long *linkmodes);
++bool phy_caps_valid(int speed, int duplex, const unsigned long *linkmodes);
+ 
+ 
+ #endif /* __PHY_CAPS_H */
+diff --git a/drivers/net/phy/phy.c b/drivers/net/phy/phy.c
+index 3128df03feda..8df37d221fba 100644
+--- a/drivers/net/phy/phy.c
++++ b/drivers/net/phy/phy.c
+@@ -260,7 +260,7 @@ unsigned int phy_supported_speeds(struct phy_device *phy,
+  */
+ bool phy_check_valid(int speed, int duplex, unsigned long *features)
+ {
+-	return !!phy_lookup_setting(speed, duplex, features, true);
++	return phy_caps_valid(speed, duplex, features);
+ }
+ EXPORT_SYMBOL(phy_check_valid);
+ 
+diff --git a/drivers/net/phy/phy_caps.c b/drivers/net/phy/phy_caps.c
+index 132758d2eb8d..8ce7dca1acd0 100644
+--- a/drivers/net/phy/phy_caps.c
++++ b/drivers/net/phy/phy_caps.c
+@@ -128,3 +128,22 @@ void phy_caps_linkmode_max_speed(u32 max_speed, unsigned long *linkmodes)
+ 		else
+ 			break;
+ }
++
++/**
++ * phy_caps_valid() - Validate a linkmodes set agains given speed and duplex
++ * @speed: input speed to validate
++ * @duplex: input duplex to validate. Passing DUPLEX_UNKNOWN is always not valid
++ * @linkmodes: The linkmodes to validate
++ *
++ * Returns: True if at least one of the linkmodes in @linkmodes can function at
++ *          the given speed and duplex, false otherwise.
++ */
++bool phy_caps_valid(int speed, int duplex, const unsigned long *linkmodes)
++{
++	int capa = speed_duplex_to_capa(speed, duplex);
++
++	if (capa < 0)
++		return false;
++
++	return linkmode_intersects(link_caps[capa].linkmodes, linkmodes);
++}
+-- 
+2.48.1
+
 
