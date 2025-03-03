@@ -1,170 +1,123 @@
-Return-Path: <linux-kernel+bounces-541119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39891A4B8AE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:05:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D05DA4B8B0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:06:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82A9016EED8
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:05:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71CFA3A7260
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:05:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA9D1EC016;
-	Mon,  3 Mar 2025 08:05:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A0EB1EA7CE;
+	Mon,  3 Mar 2025 08:06:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=diehl.com header.i=@diehl.com header.b="q6wpYuBZ"
-Received: from enterprise01.smtp.diehl.com (enterprise01.smtp.diehl.com [193.201.238.219])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NBhz+R/q"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39DF1E9B3C;
-	Mon,  3 Mar 2025 08:05:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.201.238.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 347031D79A3
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 08:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740989121; cv=none; b=G1kRiymyb075BWsd9nT7y7sFqWvkg4obUpyQCiTak9QDzTAFJJj4O6tJEjDYV6YRWZzTBYwklCnQ4/huD3mKxJa1KzHQOW4twuOFhtm3eZIJiWmjG6KlEdYUhtVTZUn7JSVQTYKOprRnpDHjVynMLMMplJYPrjyVxezxencijEw=
+	t=1740989165; cv=none; b=YvfH8TS9pRnhjpxPFMMuwv4YRkAEZyc4oVJXiiT7zcTmZh8j/gSXNL6pSIaD3I2QT0JzG9248IGCfdb1DuZsCRyGjRW8zpAOoop4RrBHMI7WEtKgSliz83J/ykkG1zbNYqW/rLd+uiDnItZlLbKRo5RtEbY7WfvxPwpp2/6We18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740989121; c=relaxed/simple;
-	bh=UK/tA22zmyaxSkT4eckr4JBqqqNE2ElQdzBIYYiXgYM=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=jJIYpfe/q9Epg6+Xp9kH1fDFLaboXCl/l6hPtyXCeiBjbZJlKlQUucaS2OB4xCAYkPUOiXjUsh5QHSLsaXw9GTaSrJf1X0sBjJy2qYxOfowBSexKqoB7bD8NAcQRF0OKMlbs/JBe1Iz7dJtBXjaJTajEnpkYXyVW95nLBiRMvjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=diehl.com; spf=pass smtp.mailfrom=diehl.com; dkim=pass (2048-bit key) header.d=diehl.com header.i=@diehl.com header.b=q6wpYuBZ; arc=none smtp.client-ip=193.201.238.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=diehl.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=diehl.com
+	s=arc-20240116; t=1740989165; c=relaxed/simple;
+	bh=IH4Qw4OZUiaQzCHILHMnQ5Z2BcYMRjESRbrTXR7+1/s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XBp3l0fVBTFNGb7cTRVBB7QQVRbnPKI8R1Anum8P3q2rOs+HEisC6sXPDsIuKnA3GNUC5/WEZ8gtxRs1TwMfhQxfXgJzfMm+dqlafrAP2g6UH+z0R7evDM5DhtegAmzPNA4izeptutC5KDBdXdYiQhQ16oKKQLqb0n6Dc99bw+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NBhz+R/q; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-390df942558so3241552f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 00:06:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=diehl.com; i=@diehl.com; q=dns/txt; s=default;
-  t=1740989119; x=1772525119;
-  h=from:to:cc:subject:date:message-id:
-   content-transfer-encoding:mime-version;
-  bh=UK/tA22zmyaxSkT4eckr4JBqqqNE2ElQdzBIYYiXgYM=;
-  b=q6wpYuBZwCP176LD8Nf1d8/9xU5Dud6sEMPBCofG7j7bLGka1ilNJI+D
-   vMl9QtBYxmvnlPcpMR5NJ3Hys4ePtXwudyYnyVg5dBisv2EqRf7ewwEWh
-   muRJ12G6V3i2Nu4sZ0gKCBhjL6I3WaLipS4MQHm8/2NE6M42O/Kd06jOL
-   hSG71fZzrPNE3D6ZWIxbN0qC5cfs8lz5Q0ZgYE/jacJDI2pdN1uNwbQLM
-   6UfxOwFRut9yz9K7KlzUVrXpJwvguS+KmlbLdZb4mBBpZlg6wwduvAnHd
-   9a5XRskF/MEZ+ARDIFa7KLWB/yoSYElSrlzxG5tFjTHMaiYxsjgPveO6g
-   g==;
-X-CSE-ConnectionGUID: 9bLDDy9JSmilP2KQQCS5Cw==
-X-CSE-MsgGUID: DCldqlNpSfKkBLJ6Fxr7zw==
-X-ThreatScanner-Verdict: Negative
-IronPort-Data: A9a23:3Ici+a9nbHVqbu7qVlsbDrUDg3+TJUtcMsCJ2f8bNWPcYEJGY0x3z
- GoXCG3XOfqKZzb3ed8jO4XjoR5TsMDdm9djS1FuqisxFiIbosf7XtnIdU2Y0wF+jCHgZB89s
- 59OOoGowOQcFCK0SsKFa+C5xZVE/fjWAOK6UKicZ3wZqTZMEE8JkQhkl/MynrlmiN24BxLlk
- d7pqqUzAnf8s9JPGjxSsvnrRC9H5qyo5WtD5gdmPJingXeF/5UrJMNGTU2OByugKmVkNrbSb
- /rOyri/4lTY838FYvu5kqz2e1E9WbXbOw6DkBJ+A8BOVTAb+0Teeo5iXBYtQR8/Zwehxrid+
- /0U3XCEcjrFC4WX8Agrv7u0JAklVUFO0OevzXFSKqV/xWWeG5fn660G4E3boeT0Uwu4aI1D3
- aVwFdwDUvyMr7O85J6XW7hOvcEiKPGxH7omkUo95i6MWJ7KQbibK0nLzeVz8Bx1o+lvOa2GI
- cEecyIpYBXNYxkJMVASYH48tL7wwCCiKHsD7gvO/cLb4ECKpOB1+LTgNtvOPNuRWchPmk+eq
- krK/mn5BlcRM9n3JT+tqyvw17GXxnqlMG4UPJGT8vJzhHuL/WIwCzcydwWVsePmmFHrDrqzL
- GRRoELCt5Ma+02sS9ThQxyQrXiCsxMaXdcWGOo/gCmJy6zJ80OaC3ICQzppdtMrrok1SCYs2
- 1vPmMnmbRR0rLSfTX+16LiZt3WxNDITIGtEYjULJTbp+PG6+Mdq00mJFZA6S/bdYsDJJAwcC
- gui9EAW74j/R+ZRv0ln1TgrWw6Rm6U=
-IronPort-HdrOrdr: A9a23:9tqQW6O3I1ERDcBcTjejsMiBIKoaSvp037By7TEVdfRUGvb2qy
- ncpoV+6faSskdqZJhAo6H6BEDuewK+yXcY2+Qs1NSZLXTbUQmTXeNfBOLZqlWKcREWndQy6U
- 4USchD4arLbGSS4/yX3CCIV/gK+p2/y4aD7N2us0tFfEVFQJsl1jxeICW8OSRNNXZ77NECZf
- 2hD4J81lydUGVSY8SgDHwMX+zOvMTRkpjrewQLCnccmXGzZB2TmcfHLyQ=
-X-Talos-CUID: 9a23:FMK4PGyOOQxYopXpLCnUBgVFEOQJXmyM7kzVIkuAU0VQcZauFHSPrfY=
-X-Talos-MUID: =?us-ascii?q?9a23=3AzMAKFw96bZxEDlk81xz5s+uQf+tD56i3DGYVqps?=
- =?us-ascii?q?luOOgF3JeKy3CniviFw=3D=3D?=
-X-IronPort-AV: E=Sophos;i="6.13,329,1732575600"; 
-   d="scan'208";a="114960316"
-From: Denis OSTERLAND-HEIM <denis.osterland@diehl.com>
-To: Rodolfo Giometti <giometti@enneenne.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: [PATCH] pps: fix poll support
-Thread-Topic: [PATCH] pps: fix poll support
-Thread-Index: AduMEuWWjZq5gVT8TFeQQ5VVonTADA==
-Date: Mon, 3 Mar 2025 08:05:16 +0000
-Message-ID: <1685f34c60384aadab4f87ffb3303755@diehl.com>
-Accept-Language: de-DE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-disclaimerprocessed: True
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        d=google.com; s=20230601; t=1740989162; x=1741593962; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X0iUVs2ZQh+M1rl5kLkJ/YPcqr6UkD+Cttj33+uPFnc=;
+        b=NBhz+R/qqyjfywOFffrgJ1wP0oqlZb2rYxFPhIP/O7rUgP2s43pWZena9MhiSXJo4q
+         yJ4Ow7ZdKhZz+IN1wrkCPYn1jsBNwdIts0yllsm9rg/omcslSWjV7EFxrNx31Dq2hn5Q
+         PGysDfFx1VPlU1V7Ba87UCvz4GsbwneOYxxmgK0p1pBn6xgcN6Ko63B4orX0JJeCe3gj
+         qxk+cDe8BrPdyX/yTLS9DxO0475a2af7aUIkdWbwvjhEt+bzv1nnhcbX35GPuaanE3Nm
+         y8F5LCADAa7xpM84SzXL2uLLeqN/FaSqPzBYFbU2DJFt/MehcBNf+zASY1zuP3PktDZl
+         fadg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740989162; x=1741593962;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=X0iUVs2ZQh+M1rl5kLkJ/YPcqr6UkD+Cttj33+uPFnc=;
+        b=fV5xzgDs7aBycPpqj6rVAsm1ePgbseUCDDti8DZVvxboG5/2NV1xUDp+9vmjgxq/ZX
+         Igt2BoCRnqWjk4jIbXp/MPSn7mwXmiHin71EdY4kNnh71OBd83PYHfGnlptax3UZWfo5
+         awYO3oATC7Zl/1LnCshbkoxUGz+Rad86Dz3EoZ53+ddkssrPxuzGklVvLTD7rNQn0rE+
+         Vgcpq0/NsombUsVwEWpjfU5VxtK5jehPDxxwu/7tlhaek1kekGOcpeLr/7lAvHxlEVtz
+         Cr/PzzJ6cPI3wJe77nGaU1boX3+fCn038PmnymlDToA9+97+FcsuhJP75vEOhi9gelTP
+         ygJw==
+X-Forwarded-Encrypted: i=1; AJvYcCUn70MLOPDxP8UaqYTB13juoYItC83zVyCipWg9dj4y8aJR4F5czn6qE95KoMrsc2vqX7WZhtnxQRGukBk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVPhDcZd4Bsz5PPud400lIISnpEOBQNt/ZBUl7+g4uLRj+KJOQ
+	uFd1OmxD9Uqz1XuJqFkZlWFrqg0j6rjqFW72leyu+guEIpEUNQ39yUJpZd/7ruk+IswcRZj5YAe
+	mguxUqjw/PlWUeDJGEsZZMVrecL9NaDmgKLyD
+X-Gm-Gg: ASbGncsnL2E1Y47avo3zkFyR6d60PqHlod7dgiEgE4yKFeQHV2PaFVTTKKPEy2p3gjK
+	UKfax4aqcG7MBS+4Wa5mP8zEZF91tXneT6F+BDfZ5K0vH77lwCCbG/mSLzvaBzIIENOZcspmoBy
+	QaSt+zLJ1mXngUsaA05VqwVvrLCrn6r00EwNFhA1ba2znZ/+omPo8bDsSH
+X-Google-Smtp-Source: AGHT+IEk6318AFfc1LcVsJJ84wt3g9PnbPRWzDdM7m2/xTI/OwzWoyIK3cmNaUT7+G0p9cZPZuhg9T+sy8bKgxhf/+k=
+X-Received: by 2002:a5d:5f91:0:b0:38f:3c8a:4bf4 with SMTP id
+ ffacd0b85a97d-390ec7cd27fmr9441896f8f.6.1740989162420; Mon, 03 Mar 2025
+ 00:06:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-GBS-PROC: JH31JkgOAVpzNaKNEwNMTZD10pQpBCF/FwmdsWj+MxeMaScRc3cd0m42Vjc9X9Nt
-X-GBS-PROCJOB: V0DzXfKTxAGyax/Zn/Lb7c/WcXd6SeP58GoaHo6Kh3wB/dxpQyMKb+Zx2kQ3+2Wq
+References: <20250301231602.917580-1-ojeda@kernel.org>
+In-Reply-To: <20250301231602.917580-1-ojeda@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 3 Mar 2025 09:05:49 +0100
+X-Gm-Features: AQ5f1JrxAQw0Rq7Ilhd1yFsj2dY9VjMUraWB3QJMgYSvaEWDQVWq8PuNQusYF1c
+Message-ID: <CAH5fLgjhMfk1vZCc242vKYnTN13Ss23VhVhaAjwU67Z5qhP9mA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] drm/panic: use `div_ceil` to clean Clippy warning
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Jocelyn Falempe <jfalempe@redhat.com>, =?UTF-8?Q?Thomas_B=C3=B6hler?= <witcher@wiredspace.de>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, dri-devel@lists.freedesktop.org, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-W0JVR10NCkEgdXNlciBzcGFjZSBwcm9ncmFtIHRoYXQgY2FsbHMgc2VsZWN0L3BvbGwgZ2V0IGFs
-d2F5cyBhbiBpbW1lZGlhdGUgZGF0YQ0KcmVhZHktdG8tcmVhZCByZXNwb25zZS4gQXMgYSByZXN1
-bHQgdGhlIGludGVuZGVkIHVzZSB0byB3YWl0IHVudGlsIG5leHQNCmRhdGEgYmVjb21lcyByZWFk
-eSBkb2VzIG5vdCB3b3JrLg0KDQpVc2VyIHNwYWNlIHNuaXBwZXQ6DQoNCiAgICBzdHJ1Y3QgcG9s
-bGZkIHBvbGxmZCA9IHsNCiAgICAgIC5mZCA9IG9wZW4oIi9kZXYvcHBzMCIsIE9fUkRPTkxZKSwN
-CiAgICAgIC5ldmVudHMgPSBQT0xMSU58UE9MTEVSUiwNCiAgICAgIC5yZXZlbnRzID0gMCB9Ow0K
-ICAgIHdoaWxlKDEpIHsNCiAgICAgIHBvbGwoJnBvbGxmZCwgMSwgMjAwMC8qbXMqLyk7IC8vIHJl
-dHVybnMgaW1tZWRpYXRlLCBidXQgc2hvdWxkIHdhaXQNCiAgICAgIGlmKHJldmVudHMgJiBFUE9M
-TElOKSB7IC8vIGFsd2F5cyB0cnVlDQogICAgICAgIHN0cnVjdCBwcHNfZmRhdGEgZmRhdGE7DQog
-ICAgICAgIG1lbXNldCgmZmRhdGEsIDAsIHNpemVvZihtZW1kYXRhKSk7DQogICAgICAgIGlvY3Rs
-KFBQU19GRVRDSCwgJmZkYXRhKTsgLy8gY3VycmVudGx5IGZldGNoZXMgZGF0YSBhdCBtYXggc3Bl
-ZWQNCiAgICAgIH0NCiAgICB9DQoNCltDQVVTRV0NCnBwc19jZGV2X3BvbGwoKSByZXR1cm5zIHVu
-Y29uZGl0aW9uYWxseSBFUE9MTElOLg0KDQpbRklYXQ0KUmVtZW1iZXIgdGhlIGxhc3QgZmV0Y2gg
-ZXZlbnQgY291bnRlciBhbmQgY29tcGFyZSB0aGlzIHZhbHVlIGluDQpwcHNfY2Rldl9wb2xsKCkg
-d2l0aCBtb3N0IHJlY2VudCBldmVudCBjb3VudGVyDQphbmQgcmV0dXJuIDAgaWYgdGhleSBhcmUg
-ZXF1YWwuDQoNClNpZ25lZC1vZmYtYnk6IERlbmlzIE9TVEVSTEFORC1IRUlNIDxkZW5pcy5vc3Rl
-cmxhbmRAZGllaGwuY29tPg0KQ28tZGV2ZWxvcGVkLWJ5OiBSb2RvbGZvIEdpb21ldHRpIDxnaW9t
-ZXR0aUBlbm5lZW5uZS5jb20+DQpTaWduZWQtb2ZmLWJ5OiBSb2RvbGZvIEdpb21ldHRpIDxnaW9t
-ZXR0aUBlbm5lZW5uZS5jb20+DQpGaXhlczogZWFlOWQyYmEwY2ZjICgiTGludXhQUFM6IGNvcmUg
-c3VwcG9ydCIpDQpDQzogc3RhYmxlQHZnZXIua2VybmVsLm9yZyAjIDUuNCsNCi0tLQ0KIGRyaXZl
-cnMvcHBzL3Bwcy5jICAgICAgICAgIHwgMTEgKysrKysrKysrLS0NCiBpbmNsdWRlL2xpbnV4L3Bw
-c19rZXJuZWwuaCB8ICAxICsNCiAyIGZpbGVzIGNoYW5nZWQsIDEwIGluc2VydGlvbnMoKyksIDIg
-ZGVsZXRpb25zKC0pDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL3Bwcy9wcHMuYyBiL2RyaXZlcnMv
-cHBzL3Bwcy5jDQppbmRleCA2YTAyMjQ1ZWEzNWYuLjk0NjMyMzJhZjhkMiAxMDA2NDQNCi0tLSBh
-L2RyaXZlcnMvcHBzL3Bwcy5jDQorKysgYi9kcml2ZXJzL3Bwcy9wcHMuYw0KQEAgLTQxLDYgKzQx
-LDkgQEAgc3RhdGljIF9fcG9sbF90IHBwc19jZGV2X3BvbGwoc3RydWN0IGZpbGUgKmZpbGUsIHBv
-bGxfdGFibGUgKndhaXQpDQoNCiBwb2xsX3dhaXQoZmlsZSwgJnBwcy0+cXVldWUsIHdhaXQpOw0K
-DQoraWYgKHBwcy0+bGFzdF9mZXRjaGVkX2V2ID09IHBwcy0+bGFzdF9ldikNCityZXR1cm4gMDsN
-CisNCiByZXR1cm4gRVBPTExJTiB8IEVQT0xMUkROT1JNOw0KIH0NCg0KQEAgLTE4Niw5ICsxODks
-MTEgQEAgc3RhdGljIGxvbmcgcHBzX2NkZXZfaW9jdGwoc3RydWN0IGZpbGUgKmZpbGUsDQogaWYg
-KGVycikNCiByZXR1cm4gZXJyOw0KDQotLyogUmV0dXJuIHRoZSBmZXRjaGVkIHRpbWVzdGFtcCAq
-Lw0KKy8qIFJldHVybiB0aGUgZmV0Y2hlZCB0aW1lc3RhbXAgYW5kIHNhdmUgbGFzdCBmZXRjaGVk
-IGV2ZW50ICAqLw0KIHNwaW5fbG9ja19pcnEoJnBwcy0+bG9jayk7DQoNCitwcHMtPmxhc3RfZmV0
-Y2hlZF9ldiA9IHBwcy0+bGFzdF9ldjsNCisNCiBmZGF0YS5pbmZvLmFzc2VydF9zZXF1ZW5jZSA9
-IHBwcy0+YXNzZXJ0X3NlcXVlbmNlOw0KIGZkYXRhLmluZm8uY2xlYXJfc2VxdWVuY2UgPSBwcHMt
-PmNsZWFyX3NlcXVlbmNlOw0KIGZkYXRhLmluZm8uYXNzZXJ0X3R1ID0gcHBzLT5hc3NlcnRfdHU7
-DQpAQCAtMjcyLDkgKzI3NywxMSBAQCBzdGF0aWMgbG9uZyBwcHNfY2Rldl9jb21wYXRfaW9jdGwo
-c3RydWN0IGZpbGUgKmZpbGUsDQogaWYgKGVycikNCiByZXR1cm4gZXJyOw0KDQotLyogUmV0dXJu
-IHRoZSBmZXRjaGVkIHRpbWVzdGFtcCAqLw0KKy8qIFJldHVybiB0aGUgZmV0Y2hlZCB0aW1lc3Rh
-bXAgYW5kIHNhdmUgbGFzdCBmZXRjaGVkIGV2ZW50ICAqLw0KIHNwaW5fbG9ja19pcnEoJnBwcy0+
-bG9jayk7DQoNCitwcHMtPmxhc3RfZmV0Y2hlZF9ldiA9IHBwcy0+bGFzdF9ldjsNCisNCiBjb21w
-YXQuaW5mby5hc3NlcnRfc2VxdWVuY2UgPSBwcHMtPmFzc2VydF9zZXF1ZW5jZTsNCiBjb21wYXQu
-aW5mby5jbGVhcl9zZXF1ZW5jZSA9IHBwcy0+Y2xlYXJfc2VxdWVuY2U7DQogY29tcGF0LmluZm8u
-Y3VycmVudF9tb2RlID0gcHBzLT5jdXJyZW50X21vZGU7DQpkaWZmIC0tZ2l0IGEvaW5jbHVkZS9s
-aW51eC9wcHNfa2VybmVsLmggYi9pbmNsdWRlL2xpbnV4L3Bwc19rZXJuZWwuaA0KaW5kZXggYzdh
-YmNlMjhlZDI5Li5hYWIwYWViYjUyOWUgMTAwNjQ0DQotLS0gYS9pbmNsdWRlL2xpbnV4L3Bwc19r
-ZXJuZWwuaA0KKysrIGIvaW5jbHVkZS9saW51eC9wcHNfa2VybmVsLmgNCkBAIC01Miw2ICs1Miw3
-IEBAIHN0cnVjdCBwcHNfZGV2aWNlIHsNCiBpbnQgY3VycmVudF9tb2RlOy8qIFBQUyBtb2RlIGF0
-IGV2ZW50IHRpbWUgKi8NCg0KIHVuc2lnbmVkIGludCBsYXN0X2V2Oy8qIGxhc3QgUFBTIGV2ZW50
-IGlkICovDQordW5zaWduZWQgaW50IGxhc3RfZmV0Y2hlZF9ldjsvKiBsYXN0IGZldGNoZWQgUFBT
-IGV2ZW50IGlkICovDQogd2FpdF9xdWV1ZV9oZWFkX3QgcXVldWU7LyogUFBTIGV2ZW50IHF1ZXVl
-ICovDQoNCiB1bnNpZ25lZCBpbnQgaWQ7LyogUFBTIHNvdXJjZSB1bmlxdWUgSUQgKi8NCi0tDQoy
-LjQ3LjINCkRpZWhsIE1ldGVyaW5nIEdtYkgsIERvbmF1c3RyYXNzZSAxMjAsIDkwNDUxIE51ZXJu
-YmVyZw0KU2l0eiBkZXIgR2VzZWxsc2NoYWZ0OiBBbnNiYWNoLCBSZWdpc3RlcmdlcmljaHQ6IEFu
-c2JhY2ggSFJCIDY5DQpHZXNjaGFlZnRzZnVlaHJlcjogRHIuIENocmlzdG9mIEJvc2JhY2ggKFNw
-cmVjaGVyKSwgRGlwbC4tRG9sbS4gQW5uZXR0ZSBHZXV0aGVyLCBEaXBsLi1LZm0uIFJlaW5lciBF
-ZGVsLCBKZWFuLUNsYXVkZSBMdXR0cmluZ2VyDQoNCkJpdHRlIGRlbmtlbiBTaWUgYW4gZGllIFVt
-d2VsdCwgYmV2b3IgU2llIGRpZXNlIEUtTWFpbCBkcnVja2VuLiBEaWVzZSBFLU1haWwga2FubiB2
-ZXJ0cmF1bGljaGUgSW5mb3JtYXRpb25lbiBlbnRoYWx0ZW4uIFNvbGx0ZW4gZGllIGluIGRpZXNl
-ciBFLU1haWwgZW50aGFsdGVuZW4gSW5mb3JtYXRpb25lbiBuaWNodCBmw7xyIFNpZSBiZXN0aW1t
-dCBzZWluLCBpbmZvcm1pZXJlbiBTaWUgYml0dGUgdW52ZXJ6dWVnbGljaCBkZW4gQWJzZW5kZXIg
-cGVyIEUtTWFpbCB1bmQgbG9lc2NoZW4gU2llIGRpZXNlIEUtTWFpbCBpbiBJaHJlbSBTeXN0ZW0u
-IEplZGUgdW5iZXJlY2h0aWd0ZSBGb3JtIGRlciBSZXByb2R1a3Rpb24sIEJla2FubnRnYWJlLCBB
-ZW5kZXJ1bmcsIFZlcnRlaWx1bmcgdW5kL29kZXIgUHVibGlrYXRpb24gZGllc2VyIEUtTWFpbCBp
-c3Qgc3RyZW5nc3RlbnMgdW50ZXJzYWd0LiBJbmZvcm1hdGlvbmVuIHp1bSBEYXRlbnNjaHV0eiBm
-aW5kZW4gU2llIGF1ZiB1bnNlcmVyIEhvbWVwYWdlPGh0dHBzOi8vd3d3LmRpZWhsLmNvbS9tZXRl
-cmluZy9kZS9pbXByZXNzdW0tdW5kLXJlY2h0bGljaGUtaGlud2Vpc2UvPi4NCg0KQmVmb3JlIHBy
-aW50aW5nLCB0aGluayBhYm91dCBlbnZpcm9ubWVudGFsIHJlc3BvbnNpYmlsaXR5LlRoaXMgbWVz
-c2FnZSBtYXkgY29udGFpbiBjb25maWRlbnRpYWwgaW5mb3JtYXRpb24uIElmIHlvdSBhcmUgbm90
-IGF1dGhvcml6ZWQgdG8gcmVjZWl2ZSB0aGlzIGluZm9ybWF0aW9uIHBsZWFzZSBhZHZpc2UgdGhl
-IHNlbmRlciBpbW1lZGlhdGVseSBieSByZXBseSBlLW1haWwgYW5kIGRlbGV0ZSB0aGlzIG1lc3Nh
-Z2Ugd2l0aG91dCBtYWtpbmcgYW55IGNvcGllcy4gQW55IGZvcm0gb2YgdW5hdXRob3JpemVkIHVz
-ZSwgcHVibGljYXRpb24sIHJlcHJvZHVjdGlvbiwgY29weWluZyBvciBkaXNjbG9zdXJlIG9mIHRo
-ZSBlLW1haWwgaXMgbm90IHBlcm1pdHRlZC4gSW5mb3JtYXRpb24gYWJvdXQgZGF0YSBwcm90ZWN0
-aW9uIGNhbiBiZSBmb3VuZCBvbiBvdXIgaG9tZXBhZ2U8aHR0cHM6Ly93d3cuZGllaGwuY29tL21l
-dGVyaW5nL2VuL2RhdGEtcHJvdGVjdGlvbi8+Lg0K
+On Sun, Mar 2, 2025 at 12:17=E2=80=AFAM Miguel Ojeda <ojeda@kernel.org> wro=
+te:
+>
+> Starting with the upcoming Rust 1.86.0 (to be released 2025-04-03),
+> Clippy warns:
+>
+>     error: manually reimplementing `div_ceil`
+>        --> drivers/gpu/drm/drm_panic_qr.rs:548:26
+>         |
+>     548 |         let pad_offset =3D (offset + 7) / 8;
+>         |                          ^^^^^^^^^^^^^^^^ help: consider using =
+`.div_ceil()`: `offset.div_ceil(8)`
+>         |
+>         =3D help: for further information visit https://rust-lang.github.=
+io/rust-clippy/master/index.html#manual_div_ceil
+>
+> And similarly for `stride`. Thus apply the suggestion to both.
+>
+> The behavior (and thus codegen) is not exactly equivalent [1][2], since
+> `div_ceil()` returns the right value for the values that currently
+> would overflow.
+>
+> Link: https://github.com/rust-lang/rust-clippy/issues/14333 [1]
+> Link: https://godbolt.org/z/dPq6nGnv3 [2]
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
