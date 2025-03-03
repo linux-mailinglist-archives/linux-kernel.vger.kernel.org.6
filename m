@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-541498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 343C3A4BD83
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:09:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75032A4BD8B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:10:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD0141885C47
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:08:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6BF61648B0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:08:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 691A71F4723;
-	Mon,  3 Mar 2025 11:07:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 623A11F4E49;
+	Mon,  3 Mar 2025 11:07:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="SQSdbgHf"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ZxjwzTn9"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1243A1F4616;
-	Mon,  3 Mar 2025 11:07:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F3B1EBFF0;
+	Mon,  3 Mar 2025 11:07:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741000026; cv=none; b=dt2hkvkrRXwMlt9zcKLL/03+oKwmBaOL+Glqmx1kHDo2LtTnJYtKbxEXG4BJ3leBHabD9NbRhkLgwAn+QVzDY/13fVS7fEXQqi1OLoLeOWoJ/DU3HwN3yLs71CjNS4NA56/M8+0DWN2DZlZNBkh/3G43qzkG14lyATcm+C2uQRo=
+	t=1741000040; cv=none; b=HYqvIITFm1zAwavL/ADtES4TMlibhBsWU75YpKvoj593d3bM+B9uNPRTo2YhOeE4wq/cO2AQrCge9OHcoOb00DNyTGpi6ZZtE+hCMnojvEoQORQa48OmU+zacWg2LIyHvvxgc116ZN8Bh9ivwPJtsbrZq2S9IvCFShicBoy5bOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741000026; c=relaxed/simple;
-	bh=G4hUql/r+AOpKgzvOwOid63ZNjiK3cqKnq3PjI+Um0w=;
+	s=arc-20240116; t=1741000040; c=relaxed/simple;
+	bh=ydv0dj1ouNGeLIsMSrdmifpN8XSR2k+C1xJp556epXA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HvXiYAG+8xgEvj6NNaR6Chx0YFvBEcPKVJiog9xd69n+neKO6rd9UTevANSx6gJ+lOkgLNw8q9abJqkT8VdBgrfpKK97Q5AVZBZwn1RjUcbIoKhwV4/LLv6++lbTRm1tevQRKlH56tgaF3ABOK/jJ72MJLmMEQScDTWyVCENPv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=SQSdbgHf; arc=none smtp.client-ip=148.251.105.195
+	 In-Reply-To:Content-Type; b=WfjbUYgEwox2s/9x+Z4AG6EoSw0mr3RE5UmFeoxl8K5jA+cWVHQPwF0CLGeySTArD1w6sZo1zpIjSr9IO19rpqiakVTEazJMvaV34Ox2/pSW4LwBUXZtL7kSkezhGcWXHBH+fMVIjO2b0II21Pd6P1PIj8Xgvsoq3sSmnVeLapo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ZxjwzTn9; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1741000023;
-	bh=G4hUql/r+AOpKgzvOwOid63ZNjiK3cqKnq3PjI+Um0w=;
+	s=mail; t=1741000037;
+	bh=ydv0dj1ouNGeLIsMSrdmifpN8XSR2k+C1xJp556epXA=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SQSdbgHf01wJIx6zi4vp7QuOMMVrlLciGvtFzuZKOTM2dVinlHfqCp3tU7RSAl9KU
-	 6vSUJ7fyPHcCPdiVcyi+A2eV79xnjuufeGn73YzkRkA+QtN3zSbfgrekNqmTFV/zaM
-	 ZPaXp+hpz96Dq4bD/Ejfu7mFmj8FGUKhgBGB53g77BUs7QHTqfQWCpUpuFq1cOyKCq
-	 2hm8Pl8gJBpuuBAY5R58WsmbWJqUlSEJgyZFTKDu0VwbNj+Ot/rl1jdKnzv7IK/buH
-	 QEHqkY1x/6PDlF5EmnJ7v78gzo2S1blvrBFyE9Xikup3bJVMy2pYgfxRj2uTDY0JKw
-	 qtLZ0XG4yiAHQ==
+	b=ZxjwzTn9DG1Pr5gPvxeMA7NkqV9WlwenNxppxHdRieVmqAV2Jk9E87NVFkMNauokQ
+	 huaeMbWKcT3YA7rLwlLJiJFbzNF0a+3ovxRSOLGV1eJtK0qZBWMuHgjmCfI6gBUd9P
+	 VxQkgsYGRL+Jlt9Mx8C4FkiB8sd6VonRq+tyKL6+w8RCrcN5+7Azv1SMlTOB6Ok56Y
+	 QQp4VUWFQtNz3zFr/GSyiBzuY3ZKIEsLxiSsuRKGvwJQz0cG9wVCdC/00voSEsShAy
+	 Ha5QBufSL3pb+DAL6KDcIwNr8myT0qk1dnPEouxXVhP3h7APf+wUPJIZKmR+CgMrTI
+	 RJ/J1ZWPQCv2Q==
 Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 14FD617E068F;
-	Mon,  3 Mar 2025 12:07:01 +0100 (CET)
-Message-ID: <dac1dae7-55eb-45a5-903f-afb71320361b@collabora.com>
-Date: Mon, 3 Mar 2025 12:07:01 +0100
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3820C17E0881;
+	Mon,  3 Mar 2025 12:07:16 +0100 (CET)
+Message-ID: <ddd4b401-68ff-4b6b-8335-1feb29bfc243@collabora.com>
+Date: Mon, 3 Mar 2025 12:07:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,8 +56,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 13/20] ASoC: mediatek: mt6359-accdet: Make PWM debounce
- settings internal
+Subject: Re: [PATCH v2 14/20] ASoC: mediatek: mt6359-accdet: Always use eint
+ detect mode 4
 To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
  Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -72,22 +72,26 @@ Cc: kernel@collabora.com, linux-sound@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
  linux-pm@vger.kernel.org
 References: <20250302-mt6359-accdet-dts-v2-0-5bd633ee0d47@collabora.com>
- <20250302-mt6359-accdet-dts-v2-13-5bd633ee0d47@collabora.com>
+ <20250302-mt6359-accdet-dts-v2-14-5bd633ee0d47@collabora.com>
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-In-Reply-To: <20250302-mt6359-accdet-dts-v2-13-5bd633ee0d47@collabora.com>
+In-Reply-To: <20250302-mt6359-accdet-dts-v2-14-5bd633ee0d47@collabora.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
 Il 02/03/25 17:30, Nícolas F. R. A. Prado ha scritto:
-> Instead of reading a bunch of PWM debounce settings from the Devicetree,
-> set reasonable values inside the driver that are known to work across
-> multiple boards. There are no current users of these DT properties, so
-> no backward compatibility needs to be maintained. The properties can be
-> properly introduced in the binding in the future if different boards
-> really need to override them.
+> The driver currently reads a mediatek,eint-detect-mode property from DT,
+> which determines certain register configurations. Since there are no
+> users of the property, it doesn't directly describe the hardware, and
+> the default value (4) is known to work across multiple boards, remove
+> the handling for this property and always assume mode 4 is used. The
+> property can be properly introduced in the binding in the future if
+> different boards actually need different configurations.
 > 
 > Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+
+Same as the internal resistor one, can't find usage of this property, not even
+in downstream devicetrees for dimensity chips..... so it's safe to remove.
 
 Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
