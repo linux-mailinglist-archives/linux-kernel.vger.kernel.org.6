@@ -1,54 +1,58 @@
-Return-Path: <linux-kernel+bounces-542572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECD69A4CB3A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:48:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52EE8A4CB3C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:48:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14C741896E3B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:48:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB3843AC2AA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:48:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 237F622CBE2;
-	Mon,  3 Mar 2025 18:47:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D1D822FDEA;
+	Mon,  3 Mar 2025 18:48:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UVqKo77F"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S97TeUIc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81EEC18D643
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 18:47:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D96B318D643;
+	Mon,  3 Mar 2025 18:47:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741027672; cv=none; b=EN7hZI5lfVFNQ0o0q/rZH4zkwfnamYrLXejnvKfbD/7241yG8x7559KdPQ3Ne15mgsyv5vZ6cuuPOKwnDKkdJEXFbHj58bAW9ka9ui3s0rIdxUr81shuedEmPZCvC0eAUHOJAn1bF0Iax/2IW5DNjpNMknyNeKT3Y+6tEjD9RK4=
+	t=1741027679; cv=none; b=MDANCXZTIkR0S6SGkiaQKq8vLX9dw69T9vjKYflxJ/JmtluJzDM0P3bKN1YFTV0jKbZxOwHljFj55oDw8CgGccNThvE50191VLX5H9YYn80get3+34Ab6py0Zk91doWttsYTmjwzaqGNJg8d3vQSo/twwQVunWhzr05CoAQ4KTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741027672; c=relaxed/simple;
-	bh=zA8qNblY8pt/GEGYu8CvsP0wmBr2ZcD4i21K+EPbjcI=;
+	s=arc-20240116; t=1741027679; c=relaxed/simple;
+	bh=5oWRROZqGFHuAlhA/NK9lyi0GVa5LcWNwWWm2UXCBq4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tbcPGGki7NaAJb6fqAhOI90h9PMCKkHzTf0UzDkrRSylbFzSlOs78CpN8gu9IzZqJOoEJ9GWxreUPts5OlqbIlpMN/YF/8boxBKWXJztX1mtq47J687qdx2QS6aEvUcPJ0hd3wtcEwTvWjtNILHgJgRm32MvBsW9Hiq+F3jIYKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UVqKo77F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B247C4CED6;
-	Mon,  3 Mar 2025 18:47:51 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=HLiIUuccNig2SJXMaQFDGDIFQmQ2xEB/AUfAdgFmjg5B/hnTDdCB6PF9xyLjk0Scgr07+8MdtfphszGJjPIt7ORURcj+8wfHlbuT5Qsd4Kz4i2iUYJBuLHrxG07b/M9yfKf5BfjMnWtQxdhgk4/+hRxo0CnBWxKR90zSXgborEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S97TeUIc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA237C4CED6;
+	Mon,  3 Mar 2025 18:47:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741027672;
-	bh=zA8qNblY8pt/GEGYu8CvsP0wmBr2ZcD4i21K+EPbjcI=;
+	s=k20201202; t=1741027679;
+	bh=5oWRROZqGFHuAlhA/NK9lyi0GVa5LcWNwWWm2UXCBq4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UVqKo77FBTo04fMaV6/BtP7g4FkD9TIKFz1CltxFaAtl9zYG4xkV9u58yDHaFVB6g
-	 YVfQP2Yh7NPnALjp4q1nkYkO57jpYqSg1Bgs93iyZ7/n1Al9CaVilPPjLJlZCPmhFh
-	 Oa7F4+oq7GCqArmW77xVvg6g7L3quIOechauIvehef/5tuMQWIJYUKQeOoO4lskCuF
-	 2uSMlM1CyrPSy3hsk8MvG86Uhmybu+78Zv98Dxj3Zy/7a4a4nfUW+ragMy2pY9kEii
-	 fBNjTfXGueZOAVlb4rZgXQKPzF/evd6Uy1yOLCUDjGpPsueRuTI9b2+5UibyWmom9M
-	 AAFIFCrQfqNiw==
-Date: Mon, 3 Mar 2025 11:47:48 -0700
-From: Keith Busch <kbusch@kernel.org>
-To: Qasim Ijaz <qasdev00@gmail.com>
-Cc: james.smart@broadcom.com, axboe@kernel.dk, hch@lst.de, sagi@grimberg.me,
-	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND] nvme-fc: Utilise min3() to simplify queue count
- calculation
-Message-ID: <Z8X5VJgQ7yPfVTdd@kbusch-mbp>
-References: <20250213221622.81457-1-qasdev00@gmail.com>
+	b=S97TeUIcJ8hwHDjxj8fX2DZzbpz/OFG/6qUrnIOhgE8d3DpEZOattu+XViC3jiwdj
+	 sUEJZig/GdL6quDxN/QJpPn9WRIbzpQ4zIGOy+aD3P6OwCeS1OzZxbpoBBZZkdaRNT
+	 GwBtz695kfJjufCJLAzUdPyASyLRSQ9ThXAY92kDyAJHNyIiMrqc8+E48cwa5bDKsp
+	 rUSbKvL4NlB81s2gGhwm54LRWClRIl0QW58sot0qWbIDjiTkk1oYIqWNNp1XOjbMGq
+	 pBvxaqxzU7rb3RwplSbkFV9MJ30y6+/9G8er3F+51tS3tI9ge7p+Ln5nQjvCw0gxzF
+	 4BfgvdEzyaFbw==
+Date: Mon, 3 Mar 2025 10:47:56 -0800
+From: Kees Cook <kees@kernel.org>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	linux-hardening@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/gma500: Replace deprecated strncpy() with strscpy()
+Message-ID: <202503031047.E80BD9D83@keescook>
+References: <20250225203932.334123-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,12 +61,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250213221622.81457-1-qasdev00@gmail.com>
+In-Reply-To: <20250225203932.334123-1-thorsten.blum@linux.dev>
 
-On Thu, Feb 13, 2025 at 10:16:22PM +0000, Qasim Ijaz wrote:
-> Refactor nvme_fc_create_io_queues() and nvme_fc_recreate_io_queues() to
-> use the min3() macro to find the minimum between 3 values instead of
-> multiple min()'s. This shortens the code and makes it easier to read.
+On Tue, Feb 25, 2025 at 09:39:32PM +0100, Thorsten Blum wrote:
+> strncpy() is deprecated for NUL-terminated destination buffers. Use
+> strscpy() instead and remove the manual NUL-termination.
+> 
+> Compile-tested only.
+> 
+> Link: https://github.com/KSPP/linux/issues/90
+> Cc: linux-hardening@vger.kernel.org
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 
-Thanks, applied to nvem-6.15.
+Yup, the adapter var is already zeroed out, so even if NUL padding is
+needed, it is already present.
+
+Reviewed-by: Kees Cook <kees@kernel.org>
+
+-- 
+Kees Cook
 
