@@ -1,133 +1,160 @@
-Return-Path: <linux-kernel+bounces-541110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0206A4B895
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:53:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABA16A4B89E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:54:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1106E16B394
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 07:53:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6087E18900FF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 07:54:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C0B51EBA19;
-	Mon,  3 Mar 2025 07:53:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 493D41EE00A;
+	Mon,  3 Mar 2025 07:54:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gz50eZ79"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MdDML3sc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B334C85;
-	Mon,  3 Mar 2025 07:53:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960284C85;
+	Mon,  3 Mar 2025 07:54:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740988402; cv=none; b=Vh+jwNPVrJfzmyUYg+I3+y2uUo4JO++yoO5tAjbWZerpRPYQni1XDB6mwa2RfIfpUEnyN8+If1UGoEVoj4SS28VoFP/9EHDsw+ZsVUpyqbNDomDgHa2KucXHreUnXsK4ju4z9aNDKDSc51Xrux6z+BvJbXYAxcEGhfyfgxlLENU=
+	t=1740988471; cv=none; b=F6FHXBjHx10idc/bLm8G43f4xke1Y7ihy2u3vJDeSxWpNxT3JEKSPhzc0UcpdUHgNVoql2GL7g3eSwd04tMGH8u917BC355yICo6b05SewZ3+9b6gfAoGN8M8zSi03w9deRFnxqtNBcdq7SFjaQ/WAsulSesdznOURPNmE8IouY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740988402; c=relaxed/simple;
-	bh=5Fy1JHZwgirUMzgviaoNnoeqtcdMUPjkKfMSR5S3E1U=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=CuK+X3Wr07BADokO3ayCPDCU+/EyVfJMmWY0OQCnKo4g45e4TgaMUqqI0HTTtA7BSFxMSaYxzcSwTUzqp0n4VDWKhJSt6/zyHF1jysXXbrGfrNMO8YzDqdeP/YeKb0d+kff5P6V3vlcmTvOistIYj44zpJgG1VBmZH9hKqqjdGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gz50eZ79; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 05138C4CEE4;
-	Mon,  3 Mar 2025 07:53:22 +0000 (UTC)
+	s=arc-20240116; t=1740988471; c=relaxed/simple;
+	bh=vOhkONJyWfbNZ+vuKycF4K3lBL5NoKgu121ldbo/HCA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Nvk4KUNg+XwJ7iWFqDi12o3VPynF1EeY0JbLqa6krOv6/zUHqMXdiPdFi3z6SyASRDoEHIcLO1gt5ORdv393naU5JL5/pWV3EX5tqsAFFJYVfy4QpA6DabS2ySt66WWzIzlHcQtmuPvhPYK4KwI0uFZAYZSHFaRIu3fG9SiNztU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MdDML3sc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA7BDC4CED6;
+	Mon,  3 Mar 2025 07:54:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740988402;
-	bh=5Fy1JHZwgirUMzgviaoNnoeqtcdMUPjkKfMSR5S3E1U=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=gz50eZ79yZpQQ4AlK7w5ZxlkSinjqxwbRqqnh+Ktb9l76fhDJU841cYkRnJvHgluW
-	 AK8NP3k+0DUAn8zZsjJhu3+19L3JLAYNE4qcSuFU4iMnRAsEnd5JljG503MrS5cylW
-	 iJRN7/Yt/vlGkj1TQNSy1+F75kXw4IdBzd2mjmWk9rbgVKQTiQ6gPSB0W6/0741hHo
-	 J2zzjYc7UWJCxpYXzFCj+3H8u27sizt95iE0wGym8mNqiF1FbRQZQvf3+rBY32Pz3E
-	 4Du6Ylb3icoap3+GzS173u7Nn8UXvGQac2QrRyK2+WITeIpBWY3IxQ58/p6SsU6XIC
-	 hMbI/8ku0iMXg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8269C282C5;
-	Mon,  3 Mar 2025 07:53:21 +0000 (UTC)
-From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
-Date: Mon, 03 Mar 2025 15:53:20 +0800
-Subject: [PATCH] pinctrl: meson: fix pin input property for a4
+	s=k20201202; t=1740988471;
+	bh=vOhkONJyWfbNZ+vuKycF4K3lBL5NoKgu121ldbo/HCA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=MdDML3scjcus143jtZmjir2fIgJ3pETQNcZ++JjwMMZYXCeKiq+vglTeALB4tGYJs
+	 V1W9dlanwv4Iq1m4XXLJ8sSp2OoB715AeA56NrD2Wv34Ndt0kETDTkWdHwqAkHBkYo
+	 cYM5zXbrJuEayjLmaycb+1APvgEuB8oeuFAO1TeLoHCFvS+GS42dUGJU6ppEwJwfze
+	 QV0uau3EdL6d4zavkVXGXE5Ba84BxOG/UlJX7rtTHPyftP5ZDvI/Yn/yEuDUnnW9Cb
+	 wPj6Q0jv7jW7R39Eg//NpVI9UGr9X66ISVj6uu9M8G+9ULBoqATCo8bxxLHKit6EVu
+	 vLRkjOIqRKseg==
+Message-ID: <fbd307ae-1dfa-497b-a597-d15b6baa30f4@kernel.org>
+Date: Mon, 3 Mar 2025 08:54:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: power: supply: Document Maxim MAX8971
+ charger
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250226093700.44726-1-clamor95@gmail.com>
+ <20250226093700.44726-2-clamor95@gmail.com>
+ <20250227-cherubic-mantis-from-betelgeuse-86f5ff@krzk-bin>
+ <CAPVz0n0ygR=ygsvG2+z-zST7kmJ_P3nxf29tqdgHpRs_Nw6D5Q@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <CAPVz0n0ygR=ygsvG2+z-zST7kmJ_P3nxf29tqdgHpRs_Nw6D5Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250303-fix-a4-pinctl-v1-1-6579888b4272@amlogic.com>
-X-B4-Tracking: v=1; b=H4sIAO9fxWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDYwNj3bTMCt1EE92CzLzkkhxdkyQjQ9M04zRLEwsLJaCegqJUoAKwedG
- xtbUAl0BJTl8AAAA=
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Xianwei Zhao <xianwei.zhao@amlogic.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1740988400; l=1905;
- i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
- bh=8KAlxGwDBrTjecjGM2UBSMoeZW/HVDXc337RfYbdpLs=;
- b=lSCzkCPO4V0PMaYz3RHyLMVvoDIJFa+ttEleYaHx84tqa5hPPEuIuhBgqPVQxEuCkdXP9TslC
- bIGD/OzMizrAHgH73PTjU+OBpqW5wF23nSa2kAG3qyHAmbGpcSMfPcW
-X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
- pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
-X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
- auth_id=107
-X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
-Reply-To: xianwei.zhao@amlogic.com
 
-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+On 27/02/2025 11:55, Svyatoslav Ryhel wrote:
+>>> +
 
-The register of pin input attribute means the opposite.
-value of reigster meaning is 1 for input and 0 for output.
-So fix it.
+Please kindly trim the replies from unnecessary context. It makes it
+much easier to find new content.
 
-Fixes: 6e9be3abb78c ("pinctrl: Add driver support for Amlogic SoCs")
-Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
----
- drivers/pinctrl/meson/pinctrl-amlogic-a4.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+>>> +  maxim,usb-in-current-limit-microamp:
+>>> +    description:
+>>> +      USB Input current limit
+>>> +    minimum: 100000
+>>> +    default: 500000
+>>> +    maximum: 1500000
+>>> +
+>>> +  maxim,ac-in-current-limit-microamp:
+>>> +    description:
+>>> +      AC Input current limit
+>>> +    minimum: 100000
+>>> +    default: 500000
+>>> +    maximum: 1500000
+>>
+>> Half of these properties as well are not suitable and duplicate existing
+>> sysfs interface.
+>>
+> 
+> All these properties allow configure the charger to suit the device on
+> which it is used. None of them are required but are a nice addition.
+> Why you are denying me an ability to fully utilize hardware I have and
+> tune it to the device? All those values represent hardware registers
+> which can be customized for the device, not for the end user to mess
+> with.
 
-diff --git a/drivers/pinctrl/meson/pinctrl-amlogic-a4.c b/drivers/pinctrl/meson/pinctrl-amlogic-a4.c
-index a5218e8f1e03..35d5540b8eaa 100644
---- a/drivers/pinctrl/meson/pinctrl-amlogic-a4.c
-+++ b/drivers/pinctrl/meson/pinctrl-amlogic-a4.c
-@@ -775,7 +775,7 @@ static int aml_gpio_get_direction(struct gpio_chip *chip, unsigned int gpio)
- 	if (ret)
- 		return ret;
- 
--	return BIT(bit) & val ? GPIO_LINE_DIRECTION_OUT : GPIO_LINE_DIRECTION_IN;
-+	return BIT(bit) & val ? GPIO_LINE_DIRECTION_IN : GPIO_LINE_DIRECTION_OUT;
- }
- 
- static int aml_gpio_direction_input(struct gpio_chip *chip, unsigned int gpio)
-@@ -785,7 +785,7 @@ static int aml_gpio_direction_input(struct gpio_chip *chip, unsigned int gpio)
- 
- 	aml_gpio_calc_reg_and_bit(bank, AML_REG_DIR, gpio, &reg, &bit);
- 
--	return regmap_update_bits(bank->reg_gpio, reg, BIT(bit), 0);
-+	return regmap_update_bits(bank->reg_gpio, reg, BIT(bit), BIT(bit));
- }
- 
- static int aml_gpio_direction_output(struct gpio_chip *chip, unsigned int gpio,
-@@ -796,7 +796,7 @@ static int aml_gpio_direction_output(struct gpio_chip *chip, unsigned int gpio,
- 	int ret;
- 
- 	aml_gpio_calc_reg_and_bit(bank, AML_REG_DIR, gpio, &reg, &bit);
--	ret = regmap_update_bits(bank->reg_gpio, reg, BIT(bit), BIT(bit));
-+	ret = regmap_update_bits(bank->reg_gpio, reg, BIT(bit), 0);
- 	if (ret < 0)
- 		return ret;
- 
+Because you put user-space choice or OS policy into the DT and DT is not
+for that.
 
----
-base-commit: 73e4ffb27bb8a093d557bb2dac1a271474cca99c
-change-id: 20250303-fix-a4-pinctl-4b215f3f9488
+> 
+>> And for remaining, still no battery.
+>>
+> 
+> reference to power-supply IS included, hence the battery option is
+> there as well.
+
+I don't see it being used at all and you explicitly duplicated
+properties which means that reference is redundant and should be dropped
+with such binding. So how did you solve my request to add reference
+which then you make redundant? Add reference and use it.
 
 Best regards,
--- 
-Xianwei Zhao <xianwei.zhao@amlogic.com>
-
-
+Krzysztof
 
