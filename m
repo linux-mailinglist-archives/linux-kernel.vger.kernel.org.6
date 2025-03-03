@@ -1,98 +1,111 @@
-Return-Path: <linux-kernel+bounces-544589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F657A4E3AF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:38:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F11CDA4E59E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:23:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 879AE88557C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:13:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 056484218B2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:12:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7B927C177;
-	Tue,  4 Mar 2025 15:06:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 333212D0DF7;
+	Tue,  4 Mar 2025 15:51:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="QwuxhhjI"
-Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="QD19GFDn"
+Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D08B2284B5E
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84DF92D0DEC
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:51:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.116
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741100771; cv=pass; b=VD6z6t8CAyDRRGiWl84ux+wqdbKdnmZHbpr+Hd6mP+g93EtJig2Q30iVbq2lYf0gLLLn+Rxe2wq0IYi0PURRSN50pAX+20/0ICU+RheWiLy9b4Rf1z/bjtFeRJfUjqjAza9RqZH6hv0XXjjIYc3aHkYdSEGDXD7deTzJ5PwX3b4=
+	t=1741103501; cv=pass; b=TTjMksxmIPFXfIfGFvatEXfdt9kKajuKWRBiL2vbg7+3JXCs3FcRI3BhL/NXnltz0HUWkQZKkB37wslt1bstItlHNJ7QhM5EHcrdSh/r5iHC7iHkC94+rO2Au3BafRBOWToc1/00oM7vhwnVB5fd07S1J1RW6MqDRHYp8nOu52U=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741100771; c=relaxed/simple;
-	bh=8C2lBBTuOzy/gLEQfKKi7QGhxyqvHea5OqVTrvMiUmA=;
+	s=arc-20240116; t=1741103501; c=relaxed/simple;
+	bh=n8yWBSeNdY0rOI4vvSlBkN6YAykxmLACOqUxhNgRe44=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YMF7t5cWxXIevYz/czf8X066IR0zfI+5+/HfvvKS4v92HqOTh6YxuqPkLQbJtiue/C2Mfzt/aHHKY7RztQVbRzdLi89ksyBIiOVzzeODnftpPZp+KgUbm3kLZ5QZaLMO/tyYmGd0UaHsw/2s+EnTPBp+FNX3Q3240d0/fhQXfJw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=QwuxhhjI; arc=none smtp.client-ip=10.30.226.201; arc=pass smtp.client-ip=160.75.25.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=VSZStl7WXURJ9/XqOkeycXTYl0QbgHymHp+qxEdMwq1ydEZWec2mfGUJ8opxUY9/tfPxDjHzMvpiJ44wr7ADrbSzHzH3cuQn2KfyVdGKn6NE9vWDnKvEySwmHlEABD59evDZrFOGdVaSJy6m1QFRJJHQympBmrH8MsIdpt+TqO4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=QD19GFDn; arc=none smtp.client-ip=83.149.199.84; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; arc=pass smtp.client-ip=160.75.25.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id 28E2740D0479
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:06:07 +0300 (+03)
+	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id C856A40D0C53
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:51:37 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6f8r1gHZzFyJH
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:04:12 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6g9w1X6BzG1cc
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:50:12 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id D1F344272E; Tue,  4 Mar 2025 18:04:09 +0300 (+03)
+	id 7C08C42741; Tue,  4 Mar 2025 18:50:08 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=QwuxhhjI
-X-Envelope-From: <linux-kernel+bounces-541256-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=QD19GFDn
+X-Envelope-From: <linux-kernel+bounces-541261-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=QwuxhhjI
-Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id 4E1E642A6A
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:17:06 +0300 (+03)
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id 2494D2DCE4
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:17:06 +0300 (+03)
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=QD19GFDn
+Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
+	by le2 (Postfix) with ESMTP id 97CEC42C5E
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:20:09 +0300 (+03)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by fgw1.itu.edu.tr (Postfix) with SMTP id DC9F93064C08
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:20:08 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F5A218853A9
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 09:17:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D36757A2F9F
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 09:19:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700A41F0E45;
-	Mon,  3 Mar 2025 09:16:53 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06E471F0E47;
+	Mon,  3 Mar 2025 09:19:57 +0000 (UTC)
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82D64AD27;
-	Mon,  3 Mar 2025 09:16:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC4D2E630;
+	Mon,  3 Mar 2025 09:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740993410; cv=none; b=TTK4NcdtllABfmqKGSmx+soFmF7papWDqMBQAu4aq1wEPbsWhj0cc8M+dfdB4sBxkFgc8l5A5NseWnViZbR7/b+n95nr20csfy3mcPbffyZUd7tseqROQ6T0L6cDh1lmBqg17LxRzxsG9SzVuZDmwc1h6JsOx+z158cYBCd4sGw=
+	t=1740993594; cv=none; b=oEgbW9v+QspnkOCa3fVxlSWuBN8mdB/8/Ue9VzVJTR4d3K823pXdLMt6yA4Si9+LCCoaRqPzfzuo8icCdEU7Tn2eU4AyOqzxZ16loP3L2jINB9ufs/aZ1RfUJuEQa8jGUGFa7lhtJQuXUr648sFW/SIm4DQ7S3VqRvgec247i3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740993410; c=relaxed/simple;
-	bh=8C2lBBTuOzy/gLEQfKKi7QGhxyqvHea5OqVTrvMiUmA=;
+	s=arc-20240116; t=1740993594; c=relaxed/simple;
+	bh=n8yWBSeNdY0rOI4vvSlBkN6YAykxmLACOqUxhNgRe44=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DJa5epGg/nbNdpUYRASKezJGSYaOzn0EaROpey/5G/XTLXdSoDXoU0g2Z+jauETHAReh+ygZlBMq/+91u2ClBnAVp5++LWFKZhXyzIjpJ4oktABGVRXHkXgxKXEDWsvBMO9J/pXi6UM75BMHTiQNf0g87RlJ1Rry6+eEbbSti/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=QwuxhhjI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50F66C4CED6;
-	Mon,  3 Mar 2025 09:16:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1740993409;
-	bh=8C2lBBTuOzy/gLEQfKKi7QGhxyqvHea5OqVTrvMiUmA=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=dG0XbB12fOyc2Gv7vWxexp3Bes+9hKCM22D1A+op3cMaok9NPXtQMGdj5FspGOfPwGKp2cHlkDT1zLd4dELYCC95rOP7p8Xsg77c7RgNTrNYNDK2KEdBFKvpJg6Sjz0au8ohVQ596kF6yBkkE9hD26HhqcmhlWjGlJdVOCSQ5gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=QD19GFDn; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from localhost (unknown [10.10.165.8])
+	by mail.ispras.ru (Postfix) with ESMTPSA id 8831B40777AA;
+	Mon,  3 Mar 2025 09:19:47 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 8831B40777AA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1740993587;
+	bh=yIKMCXjADGPI9vSNBDHS/nd+SYypPRjQI0Yuanov3Qo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QwuxhhjI/EWQk7boFqZGYsECDM09hqPvPD9oeDXW2xXJMFcVx+FDw9FPPT5dL7NFM
-	 d7z8+pLnWoRYqWZhx9/BS1P03UD2VTC12HY5yIa8PnlATukc7Un4T0sSIsGZEuPzjE
-	 QxdEfMQmEujHulpARR+K81sjc84jONwTNHyRHOf8=
-Date: Mon, 3 Mar 2025 10:16:46 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Miao Li <limiao870622@163.com>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Miao Li <limiao@kylinos.cn>
-Subject: Re: [PATCH] usb: quirks: Add DELAY_INIT and NO_LPM for Prolific
- PL2303 Serial Port
-Message-ID: <2025030339-morbidly-relax-80c0@gregkh>
-References: <20250303070047.153591-1-limiao870622@163.com>
+	b=QD19GFDnVVSEW2TPegnX5m+IPQD8wVX37hdWPaB/UAca3TyA7LdBSYAGiq90pL1UE
+	 1EFflh50LWMZruaNbXDPr/WkuGwxpJq8R46YRtYmvz1OM7gawDBePpqo56iGTdn0r1
+	 ldKi4jkplYJ34W28PyZRfaZniDUKOhvTrTERuJdA=
+Date: Mon, 3 Mar 2025 12:19:47 +0300
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: Gao Xiang <hsiangkao@linux.alibaba.com>
+Cc: Alexey Panov <apanov@astralinux.ru>, stable@vger.kernel.org, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Max Kellermann <max.kellermann@ionos.com>, 
+	lvc-project@linuxtesting.org, syzbot+de04e06b28cfecf2281c@syzkaller.appspotmail.com, 
+	syzbot+c8c8238b394be4a1087d@syzkaller.appspotmail.com, Chao Yu <chao@kernel.org>, linux-kernel@vger.kernel.org, 
+	Yue Hu <huyue2@coolpad.com>, syzbot+4fc98ed414ae63d1ada2@syzkaller.appspotmail.com, 
+	Jeffle Xu <jefflexu@linux.alibaba.com>, Gao Xiang <xiang@kernel.org>, linux-erofs@lists.ozlabs.org
+Subject: Re: [PATCH 6.1 1/2] erofs: handle overlapped pclusters out of
+ crafted images properly
+Message-ID: <whxlizkpoqifmcvjbxt35bnj5jpc5cx6wzy3nq47zteu5pefq3@umdsbzhl3wqm>
+References: <20250228165103.26775-1-apanov@astralinux.ru>
+ <20250228165103.26775-2-apanov@astralinux.ru>
+ <kcsbxadkk4wow7554zonb6cjvzmkh2pbncsvioloucv3npvbtt@rpthpmo7cjja>
+ <fb801c0f-105e-4aa7-80e2-fcf622179446@linux.alibaba.com>
+ <3vutme7tf24cqdfbf4wjti22u6jfxjewe6gt4ufppp4xplyb5e@xls7aozstoqr>
+ <0417518e-d02e-48a9-a9ce-8d2be53bc1bd@linux.alibaba.com>
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -100,51 +113,48 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250303070047.153591-1-limiao870622@163.com>
+In-Reply-To: <0417518e-d02e-48a9-a9ce-8d2be53bc1bd@linux.alibaba.com>
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6f8r1gHZzFyJH
+X-ITU-Libra-ESVA-ID: 4Z6g9w1X6BzG1cc
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741705491.85909@oUlEUCcdVPlNRpMKqFhLEw
+X-ITU-Libra-ESVA-Watermark: 1741708228.80399@kNCFEbEARw4iyx5Le658Bg
 X-ITU-MailScanner-SpamCheck: not spam
 
-On Mon, Mar 03, 2025 at 03:00:47PM +0800, Miao Li wrote:
-> From: Miao Li <limiao@kylinos.cn>
+On Mon, 03. Mar 08:31, Gao Xiang wrote:
+> On 2025/3/3 02:13, Fedor Pchelkin wrote:
+> > My concern was that in 6.1 and 6.6 there is still a pattern at that
+> > place, not directly related to 2080ca1ed3e4 ("erofs: tidy up
+> > `struct z_erofs_bvec`"):
+> > 
+> > 1. checking ->private against Z_EROFS_PREALLOCATED_PAGE
+> > 2. zeroing out ->private if the previous check holds true
+> > 
+> > // 6.1/6.6 fragment
+> > 
+> > 	if (page->private == Z_EROFS_PREALLOCATED_PAGE) {
+> > 		WRITE_ONCE(pcl->compressed_bvecs[nr].page, page);
+> > 		set_page_private(page, 0);
+> > 		tocache = true;
+> > 		goto out_tocache;
+> > 	}
+> > 
+> > while the upstream patch changed the situation. If it's okay then no
+> > remarks from me. Sorry for the noise..
 > 
-> When used on Huawei hisi platforms, Prolific PL2303 Serial Port which
-> the VID:PID is in 067b:2731 might fail to enumerate at boot time and
-> doesn't work well with LPM enabled, combination quirks:
-> USB_QUIRK_DELAY_INIT + USB_QUIRK_NO_LPM
-> fixed the problems.
-> 
-> Signed-off-by: Miao Li <limiao@kylinos.cn>
-> ---
->  drivers/usb/core/quirks.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/usb/core/quirks.c b/drivers/usb/core/quirks.c
-> index dfcfc142bd5e..8aca5518e003 100644
-> --- a/drivers/usb/core/quirks.c
-> +++ b/drivers/usb/core/quirks.c
-> @@ -341,6 +341,10 @@ static const struct usb_device_id usb_quirk_list[] = {
->  	{ USB_DEVICE(0x0638, 0x0a13), .driver_info =
->  	  USB_QUIRK_STRING_FETCH_255 },
->  
-> +	/* Prolific PL2303 Serial Port */
-> +	{ USB_DEVICE(0x067b, 0x2731), .driver_info = USB_QUIRK_DELAY_INIT |
-> +	  USB_QUIRK_NO_LPM },
+> Yeah, yet as I mentioned `set_page_private(page, 0);`
+> seems redundant from the codebase, I'm fine with either
+> way.
 
-But this is not the device id for a pl2303 device (or at least one that
-Linux supports), so how was this tested?
+Somehow I've written that mail without seeing your last reply there first.
+Now everything is clear.
 
-And why would this device suddenly stop working?  This chipset has been
-working with Linux for decades now, what is new about this device that
-requires this change?
+I'll kindly ask Alexey to send the v2 with minor adjustments to
+generally non-minor merge conflict resolutions and the backporter's
+comment though.
 
-thanks,
-
-greg k-h
+And again, thanks for clarifying all this.
 
 
