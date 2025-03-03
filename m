@@ -1,141 +1,119 @@
-Return-Path: <linux-kernel+bounces-541081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80E8CA4B82F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:14:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 739C6A4B83C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:19:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4A041687CB
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 07:14:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 665533AD5C9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 07:18:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C4D41E9B18;
-	Mon,  3 Mar 2025 07:14:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77B241E9B3A;
+	Mon,  3 Mar 2025 07:18:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lo5jZC3i"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y+Yt282H"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D628152532
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 07:14:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6240B12B93;
+	Mon,  3 Mar 2025 07:18:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740986054; cv=none; b=KRV2/DMRuvRMOBkdsfWjTr72BJ2StqBOlJHiLHTS/E8YRWp3Xf0EBNfS7G988niBJNoYQiBKU88pB8pBAFzGTKEe5kkD3fAqDuQCUf+T7HFVrNTbG7Fqi8OHs8ltPSCG6Co17caVxKyDUPlB6PEfoqZW7BHi1Fc9cFJlONlLmE0=
+	t=1740986332; cv=none; b=r/PWTnJKFg5sLpWJpiKAGKEhWZsxcAa05So7/OvrRZFWTVMPY9S+QwJmneMn2W4/1HTOiZrzplitiMzzfkqvnAVKtrq8yejurm8SsNMSou9856KXeVbkokCBzY+zn8zKSVAsEc825c0eX5yRHUo/Rr/BqlpmLZ6lKHzO0GlALTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740986054; c=relaxed/simple;
-	bh=Hln+g5OCHrAMOq/+1aDVAlOsgByEM+bWM9zySDltuR4=;
+	s=arc-20240116; t=1740986332; c=relaxed/simple;
+	bh=nxHbGfjDB0gEZ2Ngw7+tp2kHbTqIW5Z158k3FWhtCxI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MHYtVqA2LgE+n98yhdCz4a6qsOjVvQnaagXueQcIqqfsYbDHFydHgyPGrUWlpgM5E3/dMvyEV/mi7dF9IG4l2SFK9RxFvlFdsMKXy0c+Q8t/F8f+GUSr3hkrYS4ZsrvRgPLq9Qz8EWruCJgFAbEDhmueaMo10mhGpnYnosf9rqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lo5jZC3i; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-abec8b750ebso710486466b.0
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Mar 2025 23:14:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740986050; x=1741590850; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=8RROaO6yARYWUmuYiLttBRg0vezrYJsF0zsoMASJ+Y0=;
-        b=lo5jZC3iAcg9TiASEN+02v8tjNCnIVO65YHcjQRfQveoHu178Vz4pycEF2VX+IMf1N
-         qVjKOMdtBeG1S5LjTzJrESdeRo8xG0RwJnTyUMV5NV3DfAMSh3hUdACUGlxF7uuqzvuV
-         q1Mtm38cTmfNA3U0vbvUKUONHRBoOI+RDB4J73PWf+7ikbFfIAZVliX3S3ZJh/uBpSfQ
-         csU6x/97ZIR9KzXPZ6JMwqWZjeT8NFz6VqvWxH2fplDnXAOIEVAtR3CtiAiscZUsdZ9n
-         zwSBDpFAFoxZ3XJYliPKS/+AjC0Fs1eROjFVnqa1BAmBdok7E+48ekfPKMlPham2XFXA
-         aRvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740986050; x=1741590850;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8RROaO6yARYWUmuYiLttBRg0vezrYJsF0zsoMASJ+Y0=;
-        b=FjN6aqlc+dLJY3AFYj+gy6X+7xUXaKezIjE5lp/KxMGDQcbHcUDPeStmsPdzdC+1C5
-         r+/D9Jo5v20TEj5S3GZG3hcxev53jhFXEtjPKhyF+WD85j2CYIDyvLilMNUUZ6eCCUKR
-         AKgUGaFP/NOlJL3Z0cqBJf+gIMv9LNjhEszWcoLL8pSZ3Ew9Bh5lhch3nu2ptwIKg9nb
-         TORC3mADJ8LuVbk8g+n+M29IwnJh8QmWMqvln+mxjjP2Zofq+7NtmAJh5T2pOLxK7lZP
-         u5FpETOBOxdX5KaPVy4sSp/Omaf4z/PSfd8DwIw8qlujwuDU7Clbp4q26ptj0yfYb6EP
-         qt0g==
-X-Forwarded-Encrypted: i=1; AJvYcCXCivOsy5fmtnmsrBuj+R63gHuORVvBYIJWd1TsGMXEH7EYuDntmgoMpX4BOPkSfpdQ/nZFawscWUgKd+g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyA9Bid7zxr9dQq3Ywprnu5AxuHRemkXMgHXYJexGK5Hl2gIFc0
-	FsO0o4rM7re4ZI9Kx4XlC5932+ecDfL32hS1MEGt0jH5JAWyFyTo3QglI20/hyE=
-X-Gm-Gg: ASbGncuc9P/LGLam76AaY402qZSXKJWwKByWXBr346f5XG5rnOnl5UL1wf5THlT2ShX
-	+1zbu1mB+C0QJ4JYAvXaKDE/pa0/+U/UB7GjpW2BXZ72wZiu6UgnlJVOWHMoul6VThAt3bzdaTP
-	FsD2fXdBnoJV9SRO+nVdFbsQXdNprBWtYvjK0bhkZrYl3mOHCp8VZVc1uT8yblc3ecrIRkj0pc2
-	3W0jVjKaALE2kSKgSYfrKa7Pf+w5+1DX8crjmlXkiWlSZjhmCReciJmYzV2p67ah+kvrYPmLeg1
-	w9vIB031fWTtZtJJluY6BKUQwon4rNLT703BUXW9AWw57W0AmA==
-X-Google-Smtp-Source: AGHT+IEny668UimPZ3R6dx4axvviTs297S1IJ5VK/kkx2SxfpDGI4c5Rl/7By42IdqNYV74cMm4sFA==
-X-Received: by 2002:a17:907:980e:b0:ab7:b250:aaa with SMTP id a640c23a62f3a-abf2682f996mr1554838466b.54.1740986050266;
-        Sun, 02 Mar 2025 23:14:10 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ac1dd6fd870sm60633966b.70.2025.03.02.23.14.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Mar 2025 23:14:09 -0800 (PST)
-Date: Mon, 3 Mar 2025 10:14:06 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Markus Elfring <Markus.Elfring@web.de>, kernel-janitors@vger.kernel.org,
-	freedreno@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-arm-msm@vger.kernel.org,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Archit Taneja <architt@codeaurora.org>,
-	Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
-	Jeykumar Sankaran <jsanka@codeaurora.org>,
-	Jordan Crouse <jordan@cosmicpenguin.net>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-	Simona Vetter <simona@ffwll.ch>, Vinod Koul <vkoul@kernel.org>,
-	cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RESEND] drm/msm/dpu: Delete a variable initialisation
- before a null pointer check in two functions
-Message-ID: <29b32b0d-312d-4848-9e26-9e5e76e527a7@stanley.mountain>
-References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
- <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
- <13566308-9a80-e4aa-f64e-978c02b1406d@web.de>
- <54c30a69-71cf-4582-9086-50eb0d39f273@web.de>
- <k7un3bjavyt4ogscgc7jn7thfobegaguqqiy7gtypmq6vq7zox@l4bsevbsjrud>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nI33457buNJNCujkDL9sN9pF/cPM4oXRSMNTHLFTqPbdqcRqKp5BD15F3+DZwwtm01KJh2QRe+qYOK5Dscj+AbxFyYGv+PNuuICZY9RHRBPxgzPiWRcwd2PV7DYbQyFh9Rs1IEFrij+5qlBeyA3acrCiy5NJL/f8oH/c+qcPnqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y+Yt282H; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740986332; x=1772522332;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=nxHbGfjDB0gEZ2Ngw7+tp2kHbTqIW5Z158k3FWhtCxI=;
+  b=Y+Yt282HgRasC0nBdWvAoHffyX37x2nJ+RQXYjtOkx976iz/taMK1Ndo
+   Pmqkmb0tQyEO6RB7s0kFkz8v1gHR4jscxkGVWKneZSVkfPXZx5OrcT/Ds
+   7JcEQIj5CYmGi3N3PzYtPukHQykKg6/25RYG3Ex9baA39KEeI61j7rP0d
+   ZehsAFW+WnzBEK5DeJCn2jJJ02F2BlHlpOjtQVq+Bo6rKBROQL9endnLU
+   4OSIfnaJJMbL+H5lWy6Iu2wOYzaoU3gEIsqM4sPSGPGKr5PFz5kEHU5Ey
+   +nCr5Gma5B902BsgUVJkynbu1ttzBgO1G5p4ZSBctp0y5whJRfHvihj6H
+   w==;
+X-CSE-ConnectionGUID: rQ+z3eFLTCSDrZEmyo070Q==
+X-CSE-MsgGUID: lVqHqLXeQDuuK2Add6olpA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="41701288"
+X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
+   d="scan'208";a="41701288"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2025 23:18:51 -0800
+X-CSE-ConnectionGUID: x6YAPINcRtGFTkXKbfgDTQ==
+X-CSE-MsgGUID: a8W1VWB0Ro+pmlo0JWsHXA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
+   d="scan'208";a="123073693"
+Received: from mev-dev.igk.intel.com ([10.237.112.144])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2025 23:18:48 -0800
+Date: Mon, 3 Mar 2025 08:15:00 +0100
+From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: netdev@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
+	Brett Creeley <brett.creeley@amd.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Shannon Nelson <shannon.nelson@amd.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	kernel-janitors@vger.kernel.org, Qasim Ijaz <qasdev00@gmail.com>,
+	Natalie Vock <natalie.vock@gmx.de>
+Subject: Re: [PATCH net-next] ionic: Simplify maximum determination in
+ ionic_adminq_napi()
+Message-ID: <Z8VW9IXnN+M8KVtZ@mev-dev.igk.intel.com>
+References: <cbbc2dbd-2028-4623-8cb3-9d01be341daa@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <k7un3bjavyt4ogscgc7jn7thfobegaguqqiy7gtypmq6vq7zox@l4bsevbsjrud>
+In-Reply-To: <cbbc2dbd-2028-4623-8cb3-9d01be341daa@web.de>
 
-On Mon, Mar 03, 2025 at 01:01:40AM +0200, Dmitry Baryshkov wrote:
-> On Sun, Mar 02, 2025 at 09:56:00PM +0100, Markus Elfring wrote:
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Tue, 11 Apr 2023 18:24:24 +0200
-> > 
-> > The address of a data structure member was determined before
-> > a corresponding null pointer check in the implementation of
-> > the functions “dpu_hw_pp_enable_te” and “dpu_hw_pp_get_vsync_info”.
-> > 
-> > Thus avoid the risk for undefined behaviour by removing extra
-> > initialisations for the variable “c” (also because it was already
-> > reassigned with the same value behind this pointer check).
-
-There is no undefined behavior here.
-
-> > 
-> > This issue was detected by using the Coccinelle software.
+On Sat, Mar 01, 2025 at 11:12:31AM +0100, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 1 Mar 2025 11:01:28 +0100
 > 
-> Please don't send resends and/or new iterations in response to your
-> previous patchsets. Otherwise they have a pretty high chance to be
-> ignored by the maintainers. Use a fresh git-send-email command to send
-> new patchset.
+> Reduce nested max() calls by a single max3() call in this
+> function implementation.
 > 
-> > 
-> > Fixes: 25fdd5933e4c ("drm/msm: Add SDM845 DPU support")
+> The source code was transformed by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/net/ethernet/pensando/ionic/ionic_lif.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/pensando/ionic/ionic_lif.c b/drivers/net/ethernet/pensando/ionic/ionic_lif.c
+> index 7707a9e53c43..85c4b02bd054 100644
+> --- a/drivers/net/ethernet/pensando/ionic/ionic_lif.c
+> +++ b/drivers/net/ethernet/pensando/ionic/ionic_lif.c
+> @@ -1242,7 +1242,7 @@ static int ionic_adminq_napi(struct napi_struct *napi, int budget)
+>  	if (lif->hwstamp_txq)
+>  		tx_work = ionic_tx_cq_service(&lif->hwstamp_txq->cq, budget, !!budget);
+> 
+> -	work_done = max(max(n_work, a_work), max(rx_work, tx_work));
+> +	work_done = max3(n_work, a_work, max(rx_work, tx_work));
+>  	if (work_done < budget && napi_complete_done(napi, work_done)) {
+>  		flags |= IONIC_INTR_CRED_UNMASK;
+>  		intr->rearm_count++;
 
-Remove the Fixes tag.  This patch is fine as a clean up.
+Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
 
-> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-
-regards,
-dan carpenter
-
+> --
+> 2.48.1
 
