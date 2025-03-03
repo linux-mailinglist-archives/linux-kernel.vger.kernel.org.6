@@ -1,108 +1,175 @@
-Return-Path: <linux-kernel+bounces-541149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55F16A4B936
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:27:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83DB5A4B94B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:29:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDBEF16F0BF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:26:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3714A3B4143
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:26:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87BD91F03DA;
-	Mon,  3 Mar 2025 08:24:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F6071EF0A3;
+	Mon,  3 Mar 2025 08:24:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gMMunoU8"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AitvrlnU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5363B1EF389;
-	Mon,  3 Mar 2025 08:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9A31EF389;
+	Mon,  3 Mar 2025 08:24:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740990290; cv=none; b=JudwpvV83Ez1p6GlUuhczaneJ5/rVI5k4xO9Ur8wCrpNswE9zfYbd/IYPne8JDz3hVpYyM4PhQ1sDnEmNZXw4u1ssSWFvYd95wMTp68Myl37kJ5vOKZTv9jOn/aDNgLaicznN/bYNDy+UHr3/NxbMi4gGeTpDe2WSg9bgLMhz+8=
+	t=1740990299; cv=none; b=BZ3grjqNfFuijCbUUrUNVmLR71XdoJgJ7LX29el8m42jINd4RKoC+xgoUtzH5fj/PL+S3qW+4NElSeAJR1Ki1f8ehgGSvIWi/AMKAUC0p6KEQKM8yC3mAtyeCxUPvhYN0Krn1/b3LB8guXM0dwjIhHuoFM5fD/gC15JTMaxzDao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740990290; c=relaxed/simple;
-	bh=bHj3RuaEvw/XR9ln0JVQ+k18d+4+GPO5j9pqL9juKEo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AnQV+lzNJYE1Gwy2Gc117qrUyb7s1cCrjEh30rtcJBpkKhg/RsOTM0B7MfJfXho7S4uM1aJg0EvZFqZ9JExQMEdlbLE24sGR5m8Er845rPe1KpXHDEdJUUH/JLC6JdD1IMqpkWHjn+dinmuIdColWSahaNAWLdRtQdrf39z0zFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gMMunoU8; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740990289; x=1772526289;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=bHj3RuaEvw/XR9ln0JVQ+k18d+4+GPO5j9pqL9juKEo=;
-  b=gMMunoU8kFrHpRKyMk0K4/YlBRGxvCvwTTy0/881zvBOGQRK3J+/idO8
-   jNxV/QaC6ljCaMfUmcGlL72RZuwwuWgBrpEESX8TzfkTDuMrjBppZ5GUz
-   uRjrFtqnlJOfwcOKoWL9Srpu7dnZk/VwRmjVRefgh10h7GYNDQshEMTAW
-   Zu/yNvQkTVhie1fgrjNkFmYUYk13D1meW1U9Cc6rRQuxO8hURGX1g+5z3
-   GptPWWZRdWp/XjuaQw0tnStIoryInwmWMWcsIkqaz1//8CgGl+VThwJiQ
-   leMJtiUOIvhTCbeka2bnFkLSwMCeDAFrdgu9v9B1Tj8FW9VhtCH8pbCmj
-   w==;
-X-CSE-ConnectionGUID: u8tlR3PNRKuVHb2i92i7Zg==
-X-CSE-MsgGUID: /sK21GK/Sb2oBfrAFQbOOQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="41767624"
-X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="41767624"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 00:24:48 -0800
-X-CSE-ConnectionGUID: yPQlhLDrRXa02V5ZoXrMIg==
-X-CSE-MsgGUID: kqL2B0DfRQutGWmtbmIiaA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="118422792"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 00:24:47 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tp16R-0000000Gkma-19iC;
-	Mon, 03 Mar 2025 10:24:43 +0200
-Date: Mon, 3 Mar 2025 10:24:43 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Raag Jadav <raag.jadav@intel.com>
-Cc: lee@kernel.org, giometti@enneenne.com, gregkh@linuxfoundation.org,
-	raymond.tan@intel.com, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] mfd: intel_ehl_pse_gpio: Introduce Intel Elkhart
- Lake PSE GPIO and TIO
-Message-ID: <Z8VnSyH_DBuJpW2o@smile.fi.intel.com>
-References: <20250303044745.268964-1-raag.jadav@intel.com>
- <20250303044745.268964-2-raag.jadav@intel.com>
+	s=arc-20240116; t=1740990299; c=relaxed/simple;
+	bh=oDZLgjN7IToV0/+diks17qyXPqajN4Spi1ShjEZES1I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TlnCBB6azUxa2bn/CV5qZ9KBoiJyo2K+G0+mxEvzXbBw20Pe5VUwMHYfKFxgk3+wuR2FQYLzbp74h6wdYVTeXx69OA/W+r5PsClXMDMgqIrTowS73pQ3SnJSupfVtav33jaH2LYH106LE5jVT5mqEdCDgMnBOnG8fkQRcXzEZqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AitvrlnU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B907C4CED6;
+	Mon,  3 Mar 2025 08:24:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740990298;
+	bh=oDZLgjN7IToV0/+diks17qyXPqajN4Spi1ShjEZES1I=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=AitvrlnUrB65mhIOmclW3UtpdRhY3icPAx40PgkXb+pt5NFpLNgtfAPYolPIjqAmJ
+	 vEcZEN0K9XQ3bzeTsS5zPfIU7CPCMHy7bgRt7COHqJEE38y5feBV4CYiK+G0qJaqy3
+	 fYbCQYJOyBJzagc06mkC+Q69tD3sWkHlFiMWCgFmyXSMOKXUyOnNbcqyPMbBpZVfGu
+	 STgnDuKjXMC0/CM7rYuxPygpqfPx1N6DOpC6xeQipPfBrbSc850vg4XSfUx9MGpojM
+	 WlmySuMTY3CipB+mFWMHyQ2SGtx8h7VgZ77oN2CsDzbYnw7hD7rXqPR86M6BvNWMQg
+	 0/PJt8WqDUaSg==
+Message-ID: <f15fe8bf-1114-416c-8a3a-a0addcb0d5a7@kernel.org>
+Date: Mon, 3 Mar 2025 09:24:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250303044745.268964-2-raag.jadav@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: power: supply: Document Maxim MAX8971
+ charger
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250226093700.44726-1-clamor95@gmail.com>
+ <20250226093700.44726-2-clamor95@gmail.com>
+ <20250227-cherubic-mantis-from-betelgeuse-86f5ff@krzk-bin>
+ <CAPVz0n0ygR=ygsvG2+z-zST7kmJ_P3nxf29tqdgHpRs_Nw6D5Q@mail.gmail.com>
+ <fbd307ae-1dfa-497b-a597-d15b6baa30f4@kernel.org>
+ <CAPVz0n2no1EJnf4GKSJWfYA_8h8x6BRk_ducufie90YPZR-k3g@mail.gmail.com>
+ <0b2a76e6-ad64-4c98-b6ab-e1f41cb54684@kernel.org>
+ <CAPVz0n2+=m93MXNV-0Lvu5OQzquNSyV2EBRQPDEnpSw-AZFo+g@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <CAPVz0n2+=m93MXNV-0Lvu5OQzquNSyV2EBRQPDEnpSw-AZFo+g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 03, 2025 at 10:17:41AM +0530, Raag Jadav wrote:
-> Intel Elkhart Lake Programmable Service Engine (PSE) includes two PCI
-> devices that expose two different capabilities of GPIO and Timed I/O
-> as a single PCI function through shared MMIO.
+On 03/03/2025 09:20, Svyatoslav Ryhel wrote:
+> пн, 3 бер. 2025 р. о 10:18 Krzysztof Kozlowski <krzk@kernel.org> пише:
+>>
+>> On 03/03/2025 09:11, Svyatoslav Ryhel wrote:
+>>> пн, 3 бер. 2025 р. о 09:54 Krzysztof Kozlowski <krzk@kernel.org> пише:
+>>>>
+>>>> On 27/02/2025 11:55, Svyatoslav Ryhel wrote:
+>>>>>>> +
+>>>>
+>>>> Please kindly trim the replies from unnecessary context. It makes it
+>>>> much easier to find new content.
+>>>>
+>>>>>>> +  maxim,usb-in-current-limit-microamp:
+>>>>>>> +    description:
+>>>>>>> +      USB Input current limit
+>>>>>>> +    minimum: 100000
+>>>>>>> +    default: 500000
+>>>>>>> +    maximum: 1500000
+>>>>>>> +
+>>>>>>> +  maxim,ac-in-current-limit-microamp:
+>>>>>>> +    description:
+>>>>>>> +      AC Input current limit
+>>>>>>> +    minimum: 100000
+>>>>>>> +    default: 500000
+>>>>>>> +    maximum: 1500000
+>>>>>>
+>>>>>> Half of these properties as well are not suitable and duplicate existing
+>>>>>> sysfs interface.
+>>>>>>
+>>>>>
+>>>>> All these properties allow configure the charger to suit the device on
+>>>>> which it is used. None of them are required but are a nice addition.
+>>>>> Why you are denying me an ability to fully utilize hardware I have and
+>>>>> tune it to the device? All those values represent hardware registers
+>>>>> which can be customized for the device, not for the end user to mess
+>>>>> with.
+>>>>
+>>>> Because you put user-space choice or OS policy into the DT and DT is not
+>>>> for that.
+>>>>
+>>>
+>>> Those are NOT user-space choice or OS policy those are vendor
+>>> configuration for a specific device and are NOT and NEVER were exposed
+>>
+>> Then look at existing devices. We had these discussions in the past and
+>> these are usually exposed to user-space.
+>>
+> 
+> Provide an example, where there is same or similar configuration.
 
-...
+If you tried even a bit, you would easily find them by grep for
+timer/hours/minutes.
 
-> +INTEL GPIO MFD DRIVER
+You do not even try but put this work on maintainer.
 
-This also needs to be more precise and follow the name. We have more Intel GPIO
-drivers, and MFD doesn't ring any bell about the platform or so. Are you going
-to support all of them (existing and comining)?
+Do the homework and try a bit harder instead of pushing this on me.
 
-> +M:	Raag Jadav <raag.jadav@intel.com>
-> +S:	Supported
-> +F:	drivers/mfd/intel_ehl_pse_gpio.c
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Best regards,
+Krzysztof
 
