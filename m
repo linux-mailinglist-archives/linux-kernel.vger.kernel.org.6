@@ -1,119 +1,167 @@
-Return-Path: <linux-kernel+bounces-542487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D584A4CA51
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:51:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79B44A4CA24
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:47:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A09CB17DBC6
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:41:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D1261895EA5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:42:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F3F22DFB3;
-	Mon,  3 Mar 2025 17:35:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7026F22F154;
+	Mon,  3 Mar 2025 17:36:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="B8pE0DrF"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JEN+x6vV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62C321505F;
-	Mon,  3 Mar 2025 17:35:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05941F03FD;
+	Mon,  3 Mar 2025 17:36:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741023338; cv=none; b=eEJoO54un1dwryokCRCKF8oId615ekr/lQXxOFs/iRBsvx3beSHXJ6+Vi9pPf29u9OFrW8OZgYcX4X1GoQ8hlzJU3dDIJ57uSOceznyP3odcQUaq4Kz0lrFY9GP4wAeiM76qK86KYPBzr1hkOjrmthNKDbHmn66rAjiwPZiv6z0=
+	t=1741023405; cv=none; b=byE1XggSixOqp0zV3fPoSacl4nRelCPL/iyNRzVt+jP7V0xYewqhSQu+gctL8P9KUQO7CCX4C1bZc47Zlzc3Kx817vILAIv3tYZkem1kIKnM7DRXEHBaSBcFPGqaUoa8dzjQmehdNn5t3nwXdfnPAu9l5Y/0Ac/HoFUgqlcaL90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741023338; c=relaxed/simple;
-	bh=feivEZBZvpiPU8pRpTX6k3MSLxb7XTZQUVE5mRxjW1Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=n8PSn8SxFXEPYgalUROgxlydGKVQ+6BrvIKep9DEIEn2o1HrizriyoYbAv1ZblF675RGfOiKrdMk+E1+r4EWC41Brgxh3iHpwxjR+Qg3mX/awV3et/Ho6iAqAmixyMDpjmTAt2WUoDNUC4CfvWssFHo7HrzfGXYtYKzV/4+nqYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=B8pE0DrF; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E4CDA20470;
-	Mon,  3 Mar 2025 17:35:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1741023334;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1+B3rMYSVR03ft2KwtD71VoyHSPoRijyZQbUqoCMt0o=;
-	b=B8pE0DrFNC5cSUAeeQMp0HlRdACeO0lzkrjtJs6ARb0TutXQnTlM8PNXApUTcyjjj5tXOu
-	y2l8Py5hbgmcZsKxvI9uPkPI+wDFDqQK4ZU7hJ2GW1tB0QcC4pjeTSicuJpQJKaOElCz0R
-	wRpwl9MJoPeeaHWTqo6VCBqNMi5/VqdprD7PnF4OjaSIDJUBwEJK35Oz1h337Q+luyQqMa
-	wNBbhEwg5x/VSh6r1c/3KfHJsgcNI6YL9rjSPnGc1hzoLdfXQfoCk73ePXtsaO6sag0wqD
-	zRCeCtPHMs603ADv5fI/GRVBUINw4TnVVCdINJqnPAM0gZBRhlZoRVh4cAUoWg==
-Date: Mon, 3 Mar 2025 18:35:32 +0100
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Markus Elfring <Markus.Elfring@web.de>, Michal Swiatkowski
- <michal.swiatkowski@linux.intel.com>, netdev@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>, Ariel
- Elior <aelior@marvell.com>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Manish
- Chopra <manishc@marvell.com>, Paolo Abeni <pabeni@redhat.com>, Ram Amrani
- <Ram.Amrani@caviumnetworks.com>, Yuval Mintz
- <Yuval.Mintz@caviumnetworks.com>, cocci@inria.fr, LKML
- <linux-kernel@vger.kernel.org>
-Subject: Re: [RESEND] qed: Move a variable assignment behind a null pointer
- check in two functions
-Message-ID: <20250303183532.580eb301@kmaincent-XPS-13-7390>
-In-Reply-To: <a191bd33-6c59-45c2-9890-265ec182b39a@stanley.mountain>
-References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
-	<1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
-	<f7967bee-f3f1-54c4-7352-40c39dd7fead@web.de>
-	<6958583a-77c0-41ca-8f80-7ff647b385bb@web.de>
-	<Z8VKaGm1YqkxK4GM@mev-dev.igk.intel.com>
-	<325e67fc-48df-4571-a87e-5660a3d3968f@stanley.mountain>
-	<64725552-d915-429d-b8f8-1350c3cc17ae@web.de>
-	<a191bd33-6c59-45c2-9890-265ec182b39a@stanley.mountain>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741023405; c=relaxed/simple;
+	bh=uweCvlyD1Kz0PfsbJ4rmLentL9Z/1N5rqM4K9ou/BOU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QXqIjvg/lhnYPfjcbNqDr3qcJg/sDYYS3Z0qsUOuxaqRZ5CySrswgS7j5HiE+cDZ/TZ1OVVbZrSPDfPgIbI4YTyR5pN++6lEThnlL7VxWs9p7q5Pwy3j9QLw4v7ArUc2bcqAfnNJE6CLIDkZch+hn+cDwLfXxlmeW1GKlZJqf64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JEN+x6vV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93AECC4CED6;
+	Mon,  3 Mar 2025 17:36:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741023405;
+	bh=uweCvlyD1Kz0PfsbJ4rmLentL9Z/1N5rqM4K9ou/BOU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JEN+x6vV2g4r/5LJGJAPjrbAb4/afVgw/tkKuWN0q2bTHAV+y7zexvepRP3gbShaW
+	 GjiSqqfbsm0D2OvFNTMrOuHuPYp6qzfARg0+7hWjwFL9z68urn0Wt0kKCf6w4SeFBp
+	 ge6uLzVHkmkIEZCPX9yA8K8NdXK+No17U8Q0yHbzUoP7IaBGXTEd1eP7hWpriVT71C
+	 cvbbbbdXd7pEJ//CIaUMbuPQ7eBEPxuAs7LACYdrcZl3hIdaoLGRJLzDydC2PeDqTF
+	 fQ81GMpHhOT8OHEqtGoHxMkN4q09E6g0WSfGh7ELRT46mkKWiPJ0fAWfiRTulO3KY5
+	 F9mTdQ0r/SoaA==
+Date: Mon, 3 Mar 2025 09:36:42 -0800
+From: Kees Cook <kees@kernel.org>
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
+	Marco Elver <elver@google.com>,
+	Alexander Potapenko <glider@google.com>,
+	Tony Ambardar <tony.ambardar@gmail.com>,
+	Jan Hendrik Farr <kernel@jfarr.cc>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>
+Subject: Re: [PATCH v2] compiler.h: Introduce __must_be_noncstr()
+Message-ID: <202503030936.E7B8B4F3E@keescook>
+References: <20250228174130.it.875-kees@kernel.org>
+ <SN6PR02MB4157CA61D04CD12D7CED5E1DD4CF2@SN6PR02MB4157.namprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelleejgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthhqredtredtjeenucfhrhhomhepmfhorhihucforghinhgtvghnthcuoehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeelheehveeuvdfhgfeukeethedvheduuedvudduteehledtheelleekffelvdefheenucffohhmrghinheptghmuhdrvgguuhdpsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghlohepkhhmrghinhgtvghnthdqigfrufdqudefqdejfeeltddpmhgrihhlfhhrohhmpehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedujedprhgtphhtthhopegurghnrdgtrghrphgvnhhtvghrsehlihhnrghrohdrohhrghdprhgtphhtthhopeforghrkhhushdrgfhlfhhrihhnghesfigvsgdruggvpdhrtghpthhtohepmhhitghhrghlrdhsfihirghtkhhofihskhhisehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhto
- hepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgvrhhnvghlqdhjrghnihhtohhrshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghhpdhrtghpthhtoheprggvlhhiohhrsehmrghrvhgvlhhlrdgtohhmpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvth
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SN6PR02MB4157CA61D04CD12D7CED5E1DD4CF2@SN6PR02MB4157.namprd02.prod.outlook.com>
 
-On Mon, 3 Mar 2025 11:28:29 +0300
-Dan Carpenter <dan.carpenter@linaro.org> wrote:
+On Sat, Mar 01, 2025 at 05:46:24AM +0000, Michael Kelley wrote:
+> From: Kees Cook <kees@kernel.org> Sent: Friday, February 28, 2025 9:42 AM
+> > 
+> > In preparation for adding more type checking to the memtostr/strtomem*()
+> > helpers, introduce the ability to check for the "nonstring" attribute.
+> > This is the reverse of what was added to strscpy*() in commit 559048d156ff
+> > ("string: Check for "nonstring" attribute on strscpy() arguments").
+> > 
+> > Note that __annotated() must be explicitly tested for, as GCC added
+> > __builtin_has_attribute() after it added the "nonstring" attribute. Do
+> > so here to avoid the !__annotated() test triggering build failures
+> > when __builtin_has_attribute() was missing but __nonstring was defined.
+> > (I've opted to squash this fix into this patch so we don't end up with
+> > a possible bisection target that would leave the kernel unbuildable.)
+> > 
+> > Reported-by: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
+> > Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Reported-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> > Reported-by: Michael Kelley <mhklinux@outlook.com>
+> > Closes: https://lore.kernel.org/all/adbe8dd1-a725-4811-ae7e-76fe770cf096@linux.vnet.ibm.com/ 
+> > Signed-off-by: Kees Cook <kees@kernel.org>
+> > ---
+> >  include/linux/compiler.h       | 18 +++++++++++++++++-
+> >  include/linux/compiler_types.h |  9 ++++++---
+> >  2 files changed, 23 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+> > index 200fd3c5bc70..d5201464c5e6 100644
+> > --- a/include/linux/compiler.h
+> > +++ b/include/linux/compiler.h
+> > @@ -206,9 +206,25 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
+> >  #define __must_be_byte_array(a)
+> > 	__BUILD_BUG_ON_ZERO_MSG(!__is_byte_array(a), \
+> >  							"must be byte array")
+> > 
+> > +/*
+> > + * If the "nonstring" attribute isn't available, we have to return true
+> > + * so the __must_*() checks pass when "nonstring" isn't supported.
+> > + */
+> > +#if __has_attribute(__nonstring__) && defined(__annotated)
+> > +#define __is_cstr(a)		(!__annotated(a, nonstring))
+> > +#define __is_noncstr(a)		(__annotated(a, nonstring))
+> > +#else
+> > +#define __is_cstr(a)		(true)
+> > +#define __is_noncstr(a)		(true)
+> > +#endif
+> > +
+> >  /* Require C Strings (i.e. NUL-terminated) lack the "nonstring" attribute. */
+> >  #define __must_be_cstr(p) \
+> > -	__BUILD_BUG_ON_ZERO_MSG(__annotated(p, nonstring), "must be cstr (NUL-
+> > terminated)")
+> > +	__BUILD_BUG_ON_ZERO_MSG(!__is_cstr(p), \
+> > +				"must be C-string (NUL-terminated)")
+> > +#define __must_be_noncstr(p) \
+> > +	__BUILD_BUG_ON_ZERO_MSG(!__is_noncstr(p), \
+> > +				"must be non-C-string (not NUL-terminated)")
+> > 
+> >  #endif /* __KERNEL__ */
+> > 
+> > diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
+> > index 981cc3d7e3aa..f59393464ea7 100644
+> > --- a/include/linux/compiler_types.h
+> > +++ b/include/linux/compiler_types.h
+> > @@ -446,11 +446,14 @@ struct ftrace_likely_data {
+> >  #define __member_size(p)	__builtin_object_size(p, 1)
+> >  #endif
+> > 
+> > -/* Determine if an attribute has been applied to a variable. */
+> > +/*
+> > + * Determine if an attribute has been applied to a variable.
+> > + * Using __annotated needs to check for __annotated being available,
+> > + * or negative tests may fail when annotation cannot be checked. For
+> > + * example, see the definition of __is_cstr().
+> > + */
+> >  #if __has_builtin(__builtin_has_attribute)
+> >  #define __annotated(var, attr)	__builtin_has_attribute(var, attr)
+> > -#else
+> > -#define __annotated(var, attr)	(false)
+> >  #endif
+> > 
+> >  /*
+> > --
+> > 2.34.1
+> > 
+> 
+> Compile tested on x86 with gcc 9.4.0, and it resolves the compile
+> problem I was originally seeing with linux-next-20250226.
+> 
+> Tested-by: Michael Kelley <mhklinux@outlook.com>
 
-> On Mon, Mar 03, 2025 at 09:22:58AM +0100, Markus Elfring wrote:
-> > > The assignment:
-> > >
-> > > 	p_rx =3D &p_ll2_conn->rx_queue;
-> > >
-> > > does not dereference "p_ll2_conn".  It just does pointer math.  So the
-> > > original code works fine. =20
-> >=20
-> > Is there a need to clarify affected implementation details any more?
-> > https://wiki.sei.cmu.edu/confluence/display/c/EXP34-C.+Do+not+dereferen=
-ce+null+pointers
-> > =20
->=20
-> This is not a NULL dereference.  It's just pointer math.
->=20
-> regards,
-> dan carpenter
+Great! Thanks for testing this. :)
 
-Feel free to ignore Markus, he has a long history of sending unhelpful revi=
-ews,
-comments or patches and continues to ignore repeated requests to stop. He is
-already on the ignore lists of several maintainers.
-There is a lot of chance that he is a bot.
-
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+-- 
+Kees Cook
 
