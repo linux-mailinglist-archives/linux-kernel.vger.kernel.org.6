@@ -1,181 +1,171 @@
-Return-Path: <linuxppc-dev+bounces-6691-lists+linuxppc-dev=lfdr.de@lists.ozlabs.org>
-X-Original-To: lists+linuxppc-dev@lfdr.de
-Delivered-To: lists+linuxppc-dev@lfdr.de
-Received: from lists.ozlabs.org (lists.ozlabs.org [112.213.38.117])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E04AA4E1B9
-	for <lists+linuxppc-dev@lfdr.de>; Tue,  4 Mar 2025 15:51:15 +0100 (CET)
-Received: from boromir.ozlabs.org (localhost [127.0.0.1])
-	by lists.ozlabs.org (Postfix) with ESMTP id 4Z6dsq4N89z3bmY;
-	Wed,  5 Mar 2025 01:51:11 +1100 (AEDT)
-X-Original-To: linuxppc-dev@lists.ozlabs.org
-Authentication-Results: lists.ozlabs.org; arc=fail smtp.remote-ip=160.75.25.115
-ARC-Seal: i=2; a=rsa-sha256; d=lists.ozlabs.org; s=201707; t=1741099871;
-	cv=fail; b=jBpYvXBIMnK1VGn0uSWkjMnZsJ+fYLvUlWWtvPgoVgx5JtGnZHyci/OU8tnN+C3nlNdFg/5EB91+4/y/E8FXtBu6Dq/E9Z6OgqHRdTYHHiRWV0EXmKd4Q4c9J/NPMXD9IIUky7jBk30q06ueU9VvhZN4LCxraP0aJ+4Na6M7Il0dpSmoJfrTwumHoiU1YlJDvJXvGhlYfw6TeUdGMM8IlguGheh3novbXza9SQXZbY9e4QW7qcezVwSXlNfZyw78QAiFL6GZkoO8BL4zgJD5W7Wx703WDRfXXAE5DgkeyqzXStqOXAE8Nf5vghbjkzjF8uD0cDH//xzgXx9isQU2PA==
-ARC-Message-Signature: i=2; a=rsa-sha256; d=lists.ozlabs.org; s=201707;
-	t=1741099871; c=relaxed/relaxed;
-	bh=0xL0F9rdElvB+NQbmj2NrRU9PnlyhTsMf4tikqFVt+Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Ho77owBDFWKMHN6HCc+wX3AFPVtIwHI7/BXu6xzzhnkEzk0whEB/Y7wVi8KkH1Kexwpthr+WCmceRzSzqTeX013Fy+ur8i8FCthoTQ6sR8OejmX07H/4Oy1NBbaYzkzWiMwFwwQUcjEmkehM2CsNvxwsYefv/o0Vprolf0/Xse9oZlAsV+d85P83cNo9p49/UPYmJeK8kVGAsLUskHdhMXc3u6Lzy2Wig1BHlEueuuDaO99Lw06MFX3yy9FbKkPa6/obUEIp5WR3YSe+QQHIixhV9HJesvCKHkSvvc9osDhpPB6avKLnla/JKQAQjaHLs9601YlZTsWHPPyTbx+jGQ==
-ARC-Authentication-Results: i=2; lists.ozlabs.org; dmarc=fail (p=none dis=none) header.from=linutronix.de; dkim=fail (2048-bit key; secure) header.d=linutronix.de header.i=@linutronix.de header.a=rsa-sha256 header.s=2020 header.b=J2PnJ8Er reason="signature verification failed"; dkim=fail header.d=linutronix.de header.i=@linutronix.de header.a=ed25519-sha256 header.s=2020e header.b=GwBc4N7J reason="signature verification failed"; dkim-atps=neutral; spf=none (client-ip=160.75.25.115; helo=beeline1.cc.itu.edu.tr; envelope-from=root@cc.itu.edu.tr; receiver=lists.ozlabs.org) smtp.mailfrom=cc.itu.edu.tr
-Authentication-Results: lists.ozlabs.org; dmarc=fail (p=none dis=none) header.from=linutronix.de
-Authentication-Results: lists.ozlabs.org;
-	dkim=fail reason="signature verification failed" (2048-bit key; secure) header.d=linutronix.de header.i=@linutronix.de header.a=rsa-sha256 header.s=2020 header.b=J2PnJ8Er;
-	dkim=fail reason="signature verification failed" header.d=linutronix.de header.i=@linutronix.de header.a=ed25519-sha256 header.s=2020e header.b=GwBc4N7J;
-	dkim-atps=neutral
-Authentication-Results: lists.ozlabs.org; spf=none (no SPF record) smtp.mailfrom=cc.itu.edu.tr (client-ip=160.75.25.115; helo=beeline1.cc.itu.edu.tr; envelope-from=root@cc.itu.edu.tr; receiver=lists.ozlabs.org)
-Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+Return-Path: <linux-kernel+bounces-544459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+X-Original-To: lists+linux-kernel@lfdr.de
+Delivered-To: lists+linux-kernel@lfdr.de
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13C0AA4E170
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:44:08 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by lists.ozlabs.org (Postfix) with ESMTPS id 4Z6dsp3pkmz3bmN
-	for <linuxppc-dev@lists.ozlabs.org>; Wed,  5 Mar 2025 01:51:10 +1100 (AEDT)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C38961884B7C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:38:31 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C2327934B;
+	Tue,  4 Mar 2025 14:35:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RgEZDKtG"
+Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CAB22755E9
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:35:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.117
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741098939; cv=fail; b=AAr1km3gnXv5LVFWDx6XtPAclRCwSAtivDDSRztJu1sAOQ+lJZK5mqdzl9CHIR1M+rdv9eTfdwF1E97l52NR1SaTsEyhys9vSfXIOty4tBVToFV8jGVx8QB/SqMDkTtHAMjz9vNN6jrAXlOIns7CJIaUyXW7MDe4F8joQDXbc18=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741098939; c=relaxed/simple;
+	bh=HVUyv28NQReHHPI1uHIauID9tj/bmXEQEv/wL9E2X04=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KcfgpxWIeulGn4bC/CcL7u1uKwGLDTBobAzZdxhHxWFsmCT7Fzs+dQmlS79OjUj7k+4TQ8BJZY4JSmFbx76BPfOGKvBajHEj9/JIhJGTM6FcFBR377/RYuhcuKpKZPrtfZsLRDq2+LJyShOEg7oXmyG45sVTU3V5LJCL0Ou1W7A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RgEZDKtG reason="signature verification failed"; arc=none smtp.client-ip=209.85.222.173; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; arc=fail smtp.client-ip=160.75.25.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 3451F40D5704
-	for <linuxppc-dev@lists.ozlabs.org>; Tue,  4 Mar 2025 17:50:38 +0300 (+03)
+	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id B6E7340CF12C
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:35:36 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=linutronix.de header.i=@linutronix.de header.a=rsa-sha256 header.s=2020 header.b=J2PnJ8Er;
-	dkim=fail reason="signature verification failed" header.d=linutronix.de header.i=@linutronix.de header.a=ed25519-sha256 header.s=2020e header.b=GwBc4N7J
+	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20230601 header.b=RgEZDKtG
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dCK63pczFwNv
-	for <linuxppc-dev@lists.ozlabs.org>; Tue,  4 Mar 2025 17:21:17 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dTp0SNZzFwTX
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:33:50 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 4DBB34278D; Tue,  4 Mar 2025 17:20:58 +0300 (+03)
+	id 0D72B42739; Tue,  4 Mar 2025 17:33:35 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=J2PnJ8Er;
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GwBc4N7J
-X-Envelope-From: <linux-kernel+bounces-541541-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RgEZDKtG
+X-Envelope-From: <linux-kernel+bounces-541555-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=J2PnJ8Er;
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GwBc4N7J
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RgEZDKtG
 Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id 0982542978
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:25:07 +0300 (+03)
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id 93E8C3063EFC
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:25:07 +0300 (+03)
+	by le2 (Postfix) with ESMTP id 1DBB142685
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:23:15 +0300 (+03)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by fgw1.itu.edu.tr (Postfix) with SMTP id E9D0C305F789
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:23:14 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 282E83BD09A
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:17:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D22ED188D924
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:20:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 225271F3FCB;
-	Mon,  3 Mar 2025 11:11:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="J2PnJ8Er";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GwBc4N7J"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A4F1F3BB0;
+	Mon,  3 Mar 2025 11:17:21 +0000 (UTC)
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BCB41FBEAF;
-	Mon,  3 Mar 2025 11:11:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 512031F3BA7
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 11:17:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741000281; cv=none; b=athv0CKh7zM7vFISJQg4WlOv7FrUaI0AwztdvCYwSMSOlZQ7HzVM4Sqa4yfo7XwngoE+tlfYy+KxcGi6bUZrnxIe3oe0gNBoGvcW1q879oVKg5SBMXlhlx2OCYM1SbSWXbwY6maJWwRqIJRavzHiKZ7/vDO5ZPrfJPv9yg8GQ4E=
+	t=1741000638; cv=none; b=SycqatKLOSLPtu9YSA09IjURaOn+YmJ/oSM1LkYxNXCgEx+d42U6ngg9dYp7L08KYg/QQrRCQLY/nhbJW5/7t6vWRC86UGCZ91RZf7aFL0tHC1xqFZGGKlUHmMysbR7V0/8KQh4gMTSfs1w1oJYyqBUDlDog3qXa6ndQq27LWeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741000281; c=relaxed/simple;
-	bh=98E4VrqWtF5AW/xLBGM4T2qtKg+zPc3dVoKozXn+hFA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TIzTo9XaJwaMXRDzZQRL78CEfCNqff3GbkRC9kVMhP+8V+9E1OfEJ/PeI/Gw9kIjz0pBdwmEJFRdU59JoThUL5ClfHJB04W4Wo6Eycj/hLM7mmSN1iJ3W/Omkir9y8/3HOabtAaLyFmi4IF/7ouBVjOwBXf9tiLgVesJGU+hqSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=J2PnJ8Er; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GwBc4N7J; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741000277;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kZM1ca5Q9+J4hpNMdg9ysh15hAgKOmycAt5hVatLnOo=;
-	b=J2PnJ8ErcXhVIuRvqvkHXj7+dnNdS1EYL5YDEQZoOxgEkdIVKIFeg07b0VEIi3KThnzbt0
-	ah3FK8WH0SUuZVYvxjp9pmpwO9vjxDPFsKHVNT/DUtprc2AbKlrSe/944ut+VipnhpibNE
-	29SbO2Xuxo/jL/txmYAIO16qHVwJFP+bvw3QcgHJXU/FohbxePmQm/Y+7++xwQnw/Hws2/
-	Hfq0VCWqKAR6lbMcAGPJux4b9Ev4LSi4bIfjXBPTW28XOqHQejdiPSeTSjqNqMnc5FIwO/
-	uUO5w4RFlrbUUu8nnclDM2MIzMtXJU72CkI7ELp9NW9W5sVsPcqWIk3/EMh6Aw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741000277;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kZM1ca5Q9+J4hpNMdg9ysh15hAgKOmycAt5hVatLnOo=;
-	b=GwBc4N7JUlvmihVy8GcCVvbKSPyE3aY+zPykltsPgrrIWLNMhdZU0VqRTlm2Ku0wvazGx9
-	XnuHfIQjnht8pgCw==
-Date: Mon, 03 Mar 2025 12:11:19 +0100
-Subject: [PATCH 17/19] powerpc/vdso: Prepare introduction of struct
- vdso_clock
+	s=arc-20240116; t=1741000638; c=relaxed/simple;
+	bh=cYRg/UtQ+QTjULJEROcLmWlBc1Hr8j1abFv9RUnzzAg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kqLYrM/sj+bTgo4V0rrHu7XcG1goPX8E/bfAG/NpLLXiyryD4gLfSY8UsPqaMa4igJ2JxDWFOk//aN8ZLvAYfHC6VjMpxV77ogwsqLZq3QoaQVUTrOa30eEk27Q83hJdbjMygVZ8jZfL66mu2rs3zMOyOrRe5jAVymUH0Qr5xaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RgEZDKtG; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7c0ade6036aso506082385a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 03:17:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741000636; x=1741605436; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eB+LhY6NNcyLq6FCMk8O4Y073ty4L6CdzDqfsuEgpeY=;
+        b=RgEZDKtGv55CzjYH9SocgKALn6h0ZBO2NOMq3Kb1kE6w9iEyM5Q0DxWnM0jGcuZJ9M
+         JG9ZcyNvKKU9Ry/e4KTyxtF1eGDM3ZDy3ekm0rOCHPocccG/F2FkVGxfYWDdhbMrrsoM
+         YVWJ59jlDc/dHqiDP31ZZIhuV01LLazalVguiHvoV+IgSRIww6LxNtuDWJs1zynfT8oY
+         QEnD6G5x65kZwQ3pqZDJk79LB7/sxb0C37aqqbxay3skHFJtE0IoT0EY7Bwv7tQI9acC
+         pSqfmHdrkUKes/3IYvF8KaJxP9aOfIQTLv5cmbx4l3ZtBdRtIFAyOINdc+2MEyOLcjFr
+         RJRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741000636; x=1741605436;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eB+LhY6NNcyLq6FCMk8O4Y073ty4L6CdzDqfsuEgpeY=;
+        b=SpvZR/baTOh6ZgFB+GtttuWLaokR3sOZTBcYU9ku5cSWrphOrnOXB7+RzD0aw8fsJp
+         rVnzgDR9t4QVwC+jAB3dk4FA3gGB+g901kqi3JnhB8+GtMwbNL3qLG+JYJ4MnqIWOF8C
+         RQT0xeznTDZEEmMu8PUQq4wyW90/wzeDh4G/1AL9ee4jJtvNXimtypDQHcLb2ctVfY9t
+         0k0ldzGyJsXr+vQSol2V4MqRPodoGAJPzEFmIAV0ezxrCxscMbUiVQbo4N1WsQhZUJKn
+         WQI2ox/MgD/jM4XjM5Z/ff0Lwjb8JJOjUhuIatM7qZMVS2HBu1rv+BHXKPzMa3GfMSap
+         MkQw==
+X-Gm-Message-State: AOJu0YymyiC/X///tbRRbWrzyt+TE71pFRV+5ziYUc6ENt10BXSAloPC
+	SqinerDgTiagnlje1oMA5qlIldTEuAOThgti93Kjgc5jB04VEoMHYEhEJg==
+X-Gm-Gg: ASbGncs0Itx51Su0GYFaYOlv8jiBRdzClJLZWGJl/nBPR9e1cr9EyPx7XsVYj8auVqi
+	BMRhEFpWobEH8M36b7Z+xgBFBNPF19dPYCSOat4amKwfbeRYjGmQvSlP4/EBCGMCIOOyHMdKdTD
+	GR0tfvf7Edm0qrCslfYRqZETDNyK/6mFMn1L6eJCUhqtRM9CiAFfaVPdD5peiDMaf88yf1A9Oky
+	KgtCJSBiyQrgZ30ZjGX8dMzkygEhPxGWiPngoggnx4y0FwzfXEjJxYyrkxE4ChBjWL1g4RXCrfk
+	oQsHW+Y41jj3GpJ2WQVJ
+X-Google-Smtp-Source: AGHT+IExxBgO8Ucotj8ysaakDRBJ+gx6CiwxNw3F8tva7qbBLpnfOcN6RBjW/nocidB/DXegCw9ccA==
+X-Received: by 2002:ad4:5002:0:b0:6e8:af23:b6f1 with SMTP id 6a1803df08f44-6e8af23b74emr84913546d6.10.1741000636169;
+        Mon, 03 Mar 2025 03:17:16 -0800 (PST)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6e8972b9aa8sm52127166d6.0.2025.03.03.03.17.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 03:17:15 -0800 (PST)
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	sophgo@lists.linux.dev,
+	Yixun Lan <dlan@gentoo.org>,
+	Longbin Li <looong.bin@gmail.com>
+Subject: [PATCH 0/2] irqchip/sg2042-msi: Add the Sophgo SG2044 MSI interrupt controller
+Date: Mon,  3 Mar 2025 19:16:45 +0800
+Message-ID: <20250303111648.1337543-1-inochiama@gmail.com>
+X-Mailer: git-send-email 2.48.1
+Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-X-Mailing-List: linuxppc-dev@lists.ozlabs.org
-List-Id: <linuxppc-dev.lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev+help@lists.ozlabs.org>
-List-Owner: <mailto:linuxppc-dev+owner@lists.ozlabs.org>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Archive: <https://lore.kernel.org/linuxppc-dev/>,
-  <https://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Subscribe: <mailto:linuxppc-dev+subscribe@lists.ozlabs.org>,
-  <mailto:linuxppc-dev+subscribe-digest@lists.ozlabs.org>,
-  <mailto:linuxppc-dev+subscribe-nomail@lists.ozlabs.org>
-List-Unsubscribe: <mailto:linuxppc-dev+unsubscribe@lists.ozlabs.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Message-Id: <20250303-vdso-clock-v1-17-c1b5c69a166f@linutronix.de>
-References: <20250303-vdso-clock-v1-0-c1b5c69a166f@linutronix.de>
-In-Reply-To: <20250303-vdso-clock-v1-0-c1b5c69a166f@linutronix.de>
-To: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
- Vincenzo Frascino <vincenzo.frascino@arm.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- Anna-Maria Behnsen <anna-maria@linutronix.de>, 
- Frederic Weisbecker <frederic@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
- Madhavan Srinivasan <maddy@linux.ibm.com>, 
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
- Christophe Leroy <christophe.leroy@csgroup.eu>, 
- Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, 
- Vasily Gorbik <gor@linux.ibm.com>, 
- Alexander Gordeev <agordeev@linux.ibm.com>, 
- Christian Borntraeger <borntraeger@linux.ibm.com>, 
- Sven Schnelle <svens@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
- linux-arch@vger.kernel.org, Nam Cao <namcao@linutronix.de>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741000267; l=1274;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=J/Meo4khXD/IuyjcSchvegknYNCvt5RiCWDXgeCNEuA=;
- b=ipqT0aYN+nLJcWWGgAiulZ2z34jv+h8RZjUb8zE4PSrDBBV3fg7CNnQswUAW4p7fvphbY9V95
- iF6oxWHwSrZAnFYXR+PzpHDR0Rb2CslyLmtoDfl4dn1AAze7BQJj/Ii
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 Content-Transfer-Encoding: quoted-printable
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6dCK63pczFwNv
+X-ITU-Libra-ESVA-ID: 4Z6dTp0SNZzFwTX
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741704531.13595@FhknzOyuCPBBJy/VBb65MQ
+X-ITU-Libra-ESVA-Watermark: 1741703631.30434@+uI5QVYp8HCdjPCZETG93A
 X-ITU-MailScanner-SpamCheck: not spam
-X-Spam-Status: No, score=-0.8 required=5.0 tests=ARC_SIGNED,ARC_VALID,
-	DKIM_INVALID,DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_NONE autolearn=disabled
-	version=4.0.0
-X-Spam-Checker-Version: SpamAssassin 4.0.0 (2022-12-13) on lists.ozlabs.org
 
-From: Nam Cao <namcao@linutronix.de>
+Like Sophgo SG2042, SG2044 also uses an external interrupt controller
+to handle MSI/MSI-X. It supports more interrupt and has a different
+msi message address mapping.
 
-To support multiple PTP clocks, the VDSO data structure needs to be
-reworked. All clock specific data will end up in struct vdso_clock and in
-struct vdso_time_data there will be array of it. By now, vdso_clock is
-simply a define which maps vdso_clock to vdso_time_data.
+The patch follows Chen Wang's patch for SG2042 MSI controller [1],
+which is already merged into for-next.
 
-To prepare for the rework of the data structures, replace the struct
-vdso_time_data pointer with struct vdso_clock pointer whenever applicable=
+[1]: https://lore.kernel.org/all/cover.1740535748.git.unicorn_wang@outloo=
+k.com/
+
+Inochi Amaoto (2):
+  dt-bindings: interrupt-controller: Add Sophgo SG2044 MSI controller
+  irqchip/sg2042-msi: Add the Sophgo SG2044 MSI interrupt controller
+
+ .../sophgo,sg2042-msi.yaml                    |  4 +-
+ drivers/irqchip/irq-sg2042-msi.c              | 86 ++++++++++++++++++-
+ 2 files changed, 85 insertions(+), 5 deletions(-)
+
+--
+2.48.1
+
+
 
