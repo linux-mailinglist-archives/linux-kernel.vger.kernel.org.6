@@ -1,128 +1,158 @@
-Return-Path: <linux-kernel+bounces-541986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBDBDA4C432
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:06:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B25DA4C57A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:43:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 591561896926
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:06:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1E013A5BF7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:41:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3018A214232;
-	Mon,  3 Mar 2025 15:06:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC20A2144DC;
+	Mon,  3 Mar 2025 15:41:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N1N/zcAR"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="cFgkZnKI"
+Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1D9A213228;
-	Mon,  3 Mar 2025 15:06:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E948723F36F;
+	Mon,  3 Mar 2025 15:41:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741014366; cv=none; b=qtDla4bPZaEAm/hFx6WT6SUhJqBumyI49RIi4G7C6vc/gHxxVlONUq28KQ8ITB3AyXCcMyDDnbs0Ndgbzdn0KpPQkhaCNvhdhOe65QbUMxw5Y3u4hZ0Bh3EHIo9zAKQ9jo2nGeBMnKLnspIHw/H4KcZgS67rj6P+jKNNHBRgv1g=
+	t=1741016515; cv=none; b=cSEdH2r3gRAs/28kfsRdVGEKF2qQTZL2hmYitwVTANKPAQrJCMoAxzRZj2w1Jw1S7XVMafj3FZgEWDwVnsZ3qoRNiH2mBjgfrDFQOce0pkVb4EhuLUZkVQ0R5+1jl8LAIMz+hcGMGGrF9BrSiO3z3PRsuNlKt/86iCh8Z7Y9/AQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741014366; c=relaxed/simple;
-	bh=disuNk2jqDN9ewEpsE1y/bJZDemQDRRzm/NUW3oa98k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MLWfwSXYXn3BN274IoUC7jzW6iPzKZBP3g10b4WhzXZBwDQmduDYmOrAkWVLalNctOSHcNAt0kh0yo67bvKSzAeczFWOaKAMU9qVA+z1ez73fnF9IF67UHlYk4MRZ41SNfzpJ0ltEw1Dd7rjKCz47HqsloEFNPzBRuu+eUWqWoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N1N/zcAR; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741014365; x=1772550365;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=disuNk2jqDN9ewEpsE1y/bJZDemQDRRzm/NUW3oa98k=;
-  b=N1N/zcARdEDk6p/3um/+tRFrD5DAzsJM1NM/iuD9lAndLYPCuopO11Bl
-   Sg7xoxi3Kqph1YIlSqNADrn+ovhyjol5Z3pE3E+kB0TPWo3hCdVt/ZFRO
-   HPA8hktMyup3WfEWzt9m+cJ1oFgyrWIydSPLvrbWTRVBWwJKgUBIPxGh/
-   L+L6v6MwAmFaWczRct1DKUJYDjsNNieBbfb6DyrHSyaSk01SoTOAWYTSg
-   cd0sluRgIfShf8GHSoE9qeHUSaee5q+tY8CzqMSETc93TVeFvGS1xpbU2
-   WkquFefALeK7DxKl3tzu1QfFLgDsXj4uoas4YAyXfIIyoz8sfaj4+i+t6
-   w==;
-X-CSE-ConnectionGUID: /hulnJ8LRP24hMDl3A1fRw==
-X-CSE-MsgGUID: YDuvDCF2SkmNR871f/O+xA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="52530136"
-X-IronPort-AV: E=Sophos;i="6.13,330,1732608000"; 
-   d="scan'208";a="52530136"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 07:06:04 -0800
-X-CSE-ConnectionGUID: 1/GrhkcFRDSDSEtYNt/n8A==
-X-CSE-MsgGUID: Hsr/re+LR2utUfDgB/YJWg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="122176463"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa003.fm.intel.com with ESMTP; 03 Mar 2025 07:06:03 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tp7Mm-000Id1-1y;
-	Mon, 03 Mar 2025 15:06:00 +0000
-Date: Mon, 3 Mar 2025 23:05:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: =?iso-8859-1?B?Suly9G1l?= Pouiller <jerome.pouiller@silabs.com>,
-	linux-wireless@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Kalle Valo <kvalo@kernel.org>,
-	linux-devel@silabs.com,
-	=?iso-8859-1?B?Suly9G1l?= Pouiller <jerome.pouiller@silabs.com>
-Subject: Re: [PATCH v2 2/5] wifi: wfx: declare support for WoWLAN
-Message-ID: <202503032232.o7HgZDMO-lkp@intel.com>
-References: <20250302144731.117409-3-jerome.pouiller@silabs.com>
+	s=arc-20240116; t=1741016515; c=relaxed/simple;
+	bh=m25FjPrgYwk7MjQZxfJGTGjcn2SPVYgupnmoKPBo3ug=;
+	h=Date:From:To:Cc:Message-Id:In-Reply-To:References:Mime-Version:
+	 Content-Type:Subject; b=LgRkwj4zJS9V28slU9SGVzkirA/QBJBKNIEg+BsHhXcAWdw1K/QIjTBMz71ApSyh3JpeV0bPAWmH9WQwJwz7tR2PJeNDD6r/Bmzla9b1k78WPtm5UxCeseQQAk71027j6CeHUIk1QS/z8iw0Flhhu2AW2Dwk7suz0ZSPGw9uAT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=cFgkZnKI; arc=none smtp.client-ip=162.243.120.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
+	; s=x; h=Subject:Content-Transfer-Encoding:Mime-Version:Message-Id:Cc:To:From
+	:Date:subject:date:message-id:reply-to;
+	bh=C/mjUrCDUh8TvGQ0TNP99UWlQJSkPZIBxxqCtz4GkI0=; b=cFgkZnKIv0/ZHT36d/Zwl7IRW1
+	fW9cvHeQLM8AeK7zGY/zPOWZy9w7wMXgJkCSy5z05SlMk8da27MCzCKt29/I0lhlBw2CscACezTh4
+	2mG4q/f/ES1WSSFlTCdeu0TFqSsnFwe8mN+Gu37FBSbil4W7sh78YpEv424PPHAysC1w=;
+Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168]:56514 helo=pettiford.lan)
+	by mail.hugovil.com with esmtpa (Exim 4.92)
+	(envelope-from <hugo@hugovil.com>)
+	id 1tp7EM-0000V2-1t; Mon, 03 Mar 2025 09:57:18 -0500
+Date: Mon, 3 Mar 2025 09:57:17 -0500
+From: Hugo Villeneuve <hugo@hugovil.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner
+ <dlechner@baylibre.com>, Matti Vaittinen
+ <matti.vaittinen@fi.rohmeurope.com>, Hugo Villeneuve
+ <hvilleneuve@dimonoff.com>, Lars-Peter Clausen <lars@metafoo.de>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus
+ <sakari.ailus@linux.intel.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Danilo Krummrich <dakr@kernel.org>, Lad Prabhakar
+ <prabhakar.mahadev-lad.rj@bp.renesas.com>, Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
+ <samuel@sholland.org>, Nuno Sa <nuno.sa@analog.com>, Javier Carrasco
+ <javier.carrasco.cruz@gmail.com>, Guillaume Stols <gstols@baylibre.com>,
+ Olivier Moysan <olivier.moysan@foss.st.com>, Dumitru Ceclan
+ <mitrutzceclan@gmail.com>, Trevor Gamblin <tgamblin@baylibre.com>, Matteo
+ Martelli <matteomartelli3@gmail.com>, Alisa-Dariana Roman
+ <alisadariana@gmail.com>, Ramona Alexandra Nechita
+ <ramona.nechita@analog.com>, AngeloGioacchino Del Regno
+ <angelogioacchino.delregno@collabora.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
+Message-Id: <20250303095717.56ef5ac016b99911fc34e198@hugovil.com>
+In-Reply-To: <7c79ce3a-0dc4-4aa4-941a-e05be9a34fb8@gmail.com>
+References: <cover.1740421248.git.mazziesaccount@gmail.com>
+	<20dd0e4ea72fe39b90b611f9c08dbd4bc1d5217f.1740421248.git.mazziesaccount@gmail.com>
+	<f0d0f114-3953-46b5-b9f6-9b35537e6f8e@baylibre.com>
+	<d391b012-0a8e-40ca-af56-ca73b3fd853b@gmail.com>
+	<20250302032713.1c834448@jic23-huawei>
+	<7c79ce3a-0dc4-4aa4-941a-e05be9a34fb8@gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250302144731.117409-3-jerome.pouiller@silabs.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 70.80.174.168
+X-SA-Exim-Mail-From: hugo@hugovil.com
+X-Spam-Level: 
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	* -2.6 NICE_REPLY_A Looks like a legit reply (A)
+Subject: Re: [PATCH v4 07/10] iio: adc: ti-ads7924: Respect device tree
+ config
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
 
-Hi Jérôme,
+On Sun, 2 Mar 2025 15:10:12 +0200
+Matti Vaittinen <mazziesaccount@gmail.com> wrote:
 
-kernel test robot noticed the following build warnings:
+> On 02/03/2025 05:27, Jonathan Cameron wrote:
+> > On Wed, 26 Feb 2025 08:39:11 +0200
+> > Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+> > 
+> >> On 26/02/2025 02:09, David Lechner wrote:
+> >>> On 2/24/25 12:34 PM, Matti Vaittinen wrote:
+> >>>> The ti-ads7924 driver ignores the device-tree ADC channel specification
+> >>>> and always exposes all 4 channels to users whether they are present in
+> >>>> the device-tree or not. Additionally, the "reg" values in the channel
+> >>>> nodes are ignored, although an error is printed if they are out of range.
+> >>>>
+> >>>> Register only the channels described in the device-tree, and use the reg
+> >>>> property as a channel ID.
+> >>>>
+> >>>> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> >>>>
+> >>>> ---
+> >>>> Revision history:
+> >>>> v3 => v4:
+> >>>>    - Adapt to 'drop diff-channel support' changes to ADC-helpers
+> >>>>    - select ADC helpers in the Kconfig
+> >>>> v2 => v3: New patch
+> >>>>
+> >>>> Please note that this is potentially breaking existing users if they
+> >>>> have wrong values in the device-tree. I believe the device-tree should
+> >>>> ideally be respected, and if it says device X has only one channel, then
+> >>>> we should believe it and not register 4. Well, we don't live in the
+> >>>> ideal world, so even though I believe this is TheRightThingToDo - it may
+> >>>> cause havoc because correct device-tree has not been required from the
+> >>>> day 1. So, please review and test and apply at your own risk :)
+> >>>
+> >>> The DT bindings on this one are a little weird. Usually, if we don't
+> >>> use any extra properties from adc.yaml, we leave out the channels. In
+> >>> this case it does seem kind of like the original intention was to work
+> >>> like you are suggesting, but hard to say since the driver wasn't actually
+> >>> implemented that way. I would be more inclined to actually not make the
+> >>> breaking change here and instead relax the bindings to make channel nodes
+> >>> optional and just have the driver ignore the channel nodes by dropping
+> >>> the ads7924_get_channels_config() function completely. This would make
+> >>> the driver simpler instead of more complex like this patch does.
+> >>
+> >> I have no strong opinion on this. I see this driver says 'Supported' in
+> >> MAINTAINERS. Maybe Hugo is able to provide some insight?
+> >>
+> > This seems to be ABI breakage.  Never something we can take if there is
+> > a significant chance of anyone noticing.  Here it looks like risk
+> > is too high.
+> 
+> Ok. I'll just drop this patch then. Thanks David & Jonathan :)
 
-[auto build test WARNING on wireless-next/main]
-[also build test WARNING on wireless/main linus/master v6.14-rc5 next-20250303]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Hi Matti,
+I haven't really been able to follow all discussions, but as an
+historic note I developped this driver for a prototype that never
+materialized. So any changes would not have an impact, as far as I am
+concerned.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/J-r-me-Pouiller/wifi-wfx-align-declarations-between-bus_spi-c-and-bus_sdio-c/20250302-231700
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless-next.git main
-patch link:    https://lore.kernel.org/r/20250302144731.117409-3-jerome.pouiller%40silabs.com
-patch subject: [PATCH v2 2/5] wifi: wfx: declare support for WoWLAN
-config: hexagon-allyesconfig (https://download.01.org/0day-ci/archive/20250303/202503032232.o7HgZDMO-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250303/202503032232.o7HgZDMO-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503032232.o7HgZDMO-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/net/wireless/silabs/wfx/main.c:124:42: warning: unused variable 'wfx_wowlan_support' [-Wunused-const-variable]
-     124 | static const struct wiphy_wowlan_support wfx_wowlan_support = {
-         |                                          ^~~~~~~~~~~~~~~~~~
-   1 warning generated.
-
-
-vim +/wfx_wowlan_support +124 drivers/net/wireless/silabs/wfx/main.c
-
-   123	
- > 124	static const struct wiphy_wowlan_support wfx_wowlan_support = {
-   125		.flags = WIPHY_WOWLAN_ANY | WIPHY_WOWLAN_DISCONNECT,
-   126	};
-   127	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Hugo.
 
