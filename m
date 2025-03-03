@@ -1,117 +1,103 @@
-Return-Path: <linux-kernel+bounces-544599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFD64A4E2FA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:23:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C420A4E535
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:13:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D68AA886A7C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:15:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F98117D4F2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:06:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF9727E1DB;
-	Tue,  4 Mar 2025 15:09:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD5AF27810A;
+	Tue,  4 Mar 2025 15:47:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VuuPQ+fM";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5NZl5nNc"
-Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="jWi1jIQE"
+Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2AC127E1A7
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:09:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E7A2780F0
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:47:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.116
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741100943; cv=pass; b=UDkyj9QZj3acnmpxRt3UJhBzVyk2KeHdUVmE5jtNTKVUOoh0ykVXtzl4qxm77heuft+OLTwYg1tsS2kCQL19OMRBpxXgA89xcopsQIE7aCp7IRDxmofC1uMC2ICcksExpzmUUTx7S/DEQ1702S1zHf9ECjNA3IrgEWuGHtGReUc=
+	t=1741103247; cv=fail; b=nY/OFKp4wXjCuGOxk6sAqmmmBLul3pl9wmnrxtouJCL2KHudFAXhFKCR3x2WfXbB9tgblcioXAovV8Vtp3oYCxlwTqfSWy3jf4XJt3PS9qMZb4CoiL02/vHU5Y1kTvTkXYEaniuSHtnFPHlHmH6Xc5qBdXrp3ox9fKbv2sRDWys=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741100943; c=relaxed/simple;
-	bh=6BmY9HloQWmrIWcWlHrC1eQA/4eP0yEIEpkSTTKuxd0=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=Q/CyYj02dVHzAxjTPxrmwIBEeSizHnmD2u8TkS4/ZI6lA/+AvRe7Ma9Feao+BWhUWhpb/VNznPMUaSmpZ8PN4nagvmjZEBLO/SzN40i5ifLgthISXVUXhNvpqa6h4Ov+bsEtnymDDbXUxybVTlcFWzssfkvJeY82TSy+6j/7sjQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VuuPQ+fM; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5NZl5nNc; arc=none smtp.client-ip=193.142.43.55; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; arc=pass smtp.client-ip=160.75.25.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+	s=arc-20240116; t=1741103247; c=relaxed/simple;
+	bh=jWA6sXe3FsPzqDpu650F7Itl+1kSB6CQeyJ9sWMxq48=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WigHcv5bSLU71Bxd7y+ILgNYm7+fwk/NZY8NeSqB2um9JjBYcszIcFUKyid615W4OZ/MzW0sDZPJilZFg3iJTyjiPGBtxGr9HrrtVAqUyWlUTPohrP02wXjZgyOuGi8VBjNZf7Ql8vREoreLYCaDqDh7MeQCZprbu8TGgKcxWJA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=jWi1jIQE reason="signature verification failed"; arc=none smtp.client-ip=148.251.105.195; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; arc=fail smtp.client-ip=160.75.25.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id 28B4840CF9F5
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:09:00 +0300 (+03)
+	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id 0673D40D0515
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:47:24 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key, unprotected) header.d=linutronix.de header.i=@linutronix.de header.a=rsa-sha256 header.s=2020 header.b=VuuPQ+fM;
-	dkim=pass header.d=linutronix.de header.i=@linutronix.de header.a=ed25519-sha256 header.s=2020e header.b=5NZl5nNc
+	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=collabora.com header.i=@collabora.com header.a=rsa-sha256 header.s=mail header.b=jWi1jIQE
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6f7r6FRDzFy8D
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:03:20 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6g5M4DgpzG1GG
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:46:15 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id DCB1442721; Tue,  4 Mar 2025 18:03:18 +0300 (+03)
+	id 0BAB242740; Tue,  4 Mar 2025 18:46:09 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VuuPQ+fM;
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5NZl5nNc
-X-Envelope-From: <linux-kernel+bounces-541485-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=jWi1jIQE
+X-Envelope-From: <linux-kernel+bounces-541494-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VuuPQ+fM;
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5NZl5nNc
-Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id 4CA1F42FEE
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:06:39 +0300 (+03)
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=jWi1jIQE
+Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
+	by le2 (Postfix) with ESMTP id 91B6042989
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:08:38 +0300 (+03)
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id 232182DCE3
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:06:39 +0300 (+03)
+	by fgw1.itu.edu.tr (Postfix) with SMTP id 69C49305F789
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:08:38 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAA31188AF6D
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:04:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC36B18949FC
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:07:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F054D1F4716;
-	Mon,  3 Mar 2025 11:02:48 +0000 (UTC)
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E651F419A;
+	Mon,  3 Mar 2025 11:07:02 +0000 (UTC)
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E6151F3BAC;
-	Mon,  3 Mar 2025 11:02:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F2F1F0E28;
+	Mon,  3 Mar 2025 11:06:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740999766; cv=none; b=RJzUHXH089W1VeUnk8eKcJTQfP0tw64h5/ABrPnVuahtEtFHwki4gEEZpprLPZYvOzuFi/yxVUfA4JPmxKY/KQW+EFjdtT2cw/4MpqdXCMDuYv8Zax44BpJt5I8G2aSJYn+ovFDoTbxmKqIZMrYwDKxX/g5omq7ARrUIO67KMwA=
+	t=1741000019; cv=none; b=SsqFgv9htzU2+hJqSj4kupLISGMkQ46oAUlDfY8o7cvsbpleQ7zxpqQZ09NrMEqtUqoMNQuj45KyEHVUYmA/zFF2IDq3PrmwDLzXnjuNYCTllg33MUrUMegJALP+UjajEthxime5my8I4lsf9j4vKw7P7+x3jXQJsOr6cH292kc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740999766; c=relaxed/simple;
-	bh=6BmY9HloQWmrIWcWlHrC1eQA/4eP0yEIEpkSTTKuxd0=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=RQEqmcurbAq3MMz3jfhxCeMhLF9EuEfxnS8uvKqKM+m02qWVi2Rbgou261u16jl8Tp/TLrCON53yfqTlTcVWLG7LDul+FzL+bV4Nhxb3VZ0tzM7n3uJewV/Hq35jSFbA5NR0KVmdCTpMBQLht91LQiI3oUP8hPx5q41ERNki4yQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VuuPQ+fM; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5NZl5nNc; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 03 Mar 2025 11:02:41 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740999762;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=k00XNAJvAe2C6KjqVMcLSHnjJgrkU8rXHH4c4JwqzGQ=;
-	b=VuuPQ+fMX4u/5tMZeBAp1d26H40t+byCaCFgJUvtg0HW8QguqZG80XiBgauFp5KQF/j65D
-	hUg70kyM+BZqyjioWy5KKril+HS7pJTrm9NtJjrcR9YaKktKZJuFxho91KV5qprxh8YPaw
-	GN7exZXoexlYsy03aa7VWcmliPc+ELmk6XKCIJW5mmRpB6gkxACdvHh/SP6p3eWn08cBOY
-	Qp8KIQVEuo1rx7K/c23PYeHlyCaCTaZ4hjf57HqWXxtMNXl19OUtl0EqD5hitVnIDR3JQw
-	vKkV81dhzfKTrt8ZJWLKD5ztddO3jIvy3OxmM729xzsVJM9nE0nJJ7eddNTl/A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740999762;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=k00XNAJvAe2C6KjqVMcLSHnjJgrkU8rXHH4c4JwqzGQ=;
-	b=5NZl5nNc6azhHUVy8/SSMOwdttI648gV7CNRcNJEl4x+p59kPWgRR306biK8g+/V/DLfU8
-	Rn6UVcilh6MJVaDQ==
-From: "tip-bot2 for Josh Poimboeuf" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/asm] x86/asm: Make ASM_CALL_CONSTRAINT conditional on frame
- pointers
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Ingo Molnar <mingo@kernel.org>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Brian Gerst <brgerst@gmail.com>, "H. Peter Anvin" <hpa@zytor.com>,
- linux-kernel@vger.kernel.org, x86@kernel.org
+	s=arc-20240116; t=1741000019; c=relaxed/simple;
+	bh=7x29ALLJGLsAxdzXWmZzfzjZ0OENp/QhL5O8ZxSNDmM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A12y5HZjx+vOrncbxuBENs9TqAF8M+r8hFyXCXC7/5FhcCk/NX7xIdeN9TimuXZTEU1N/bp9rJ/lcAiBMqzDCIt+ydzEXpjy3VMAV2r8dXg44TQCmRGblSWJMM2I+SYXTN+lUeaAwnPsJj5QNtQVGY0kLLseceo7d/vQcvtmnO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=jWi1jIQE; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1741000016;
+	bh=7x29ALLJGLsAxdzXWmZzfzjZ0OENp/QhL5O8ZxSNDmM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jWi1jIQEj98Jm/972q0KLg1fmnX9nh0ecBVHUos7KYiNd2OFkRQQ8y8raJdJiYPrQ
+	 Gd8pqESSfAlbs7uBAzCz3JMJAVwf7evTwUob3kbRL4T8CYc5P0oZ0YZzZTEyhXPcKS
+	 05HEG3lGEzwjeRMY2mhkFH3xKI2ey67o3nToPYGUYuKjeauXVBOF0mz8DWzrWsKVAL
+	 C/yDk1CdFcmZIS8CuKLDUq5VZLcwS3Hf5mTT7H+leB1TbulFZzBKyZ3erhX/Z5g05F
+	 KBoWfF4530PVqNIcSbBNTbud7kJoeKo0ikrEdoVy6CUvvpixOo3Kwo3dBm1Gtt12hO
+	 KDAqbRtO0hBfg==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id C43AA17E0E8E;
+	Mon,  3 Mar 2025 12:06:54 +0100 (CET)
+Message-ID: <925415fd-0415-491c-8e32-14dbd326f2a7@collabora.com>
+Date: Mon, 3 Mar 2025 12:06:53 +0100
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -119,64 +105,52 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174099976188.10177.7153571701278544000.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 16/20] ASoC: mediatek: mt6359-accdet: Always configure
+ hardware as mic-mode 2
+To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>, Sen Chu <sen.chu@mediatek.com>,
+ Sean Wang <sean.wang@mediatek.com>, Macpaul Lin <macpaul.lin@mediatek.com>,
+ Lee Jones <lee@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>
+Cc: kernel@collabora.com, linux-sound@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-pm@vger.kernel.org
+References: <20250302-mt6359-accdet-dts-v2-0-5bd633ee0d47@collabora.com>
+ <20250302-mt6359-accdet-dts-v2-16-5bd633ee0d47@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250302-mt6359-accdet-dts-v2-16-5bd633ee0d47@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6f7r6FRDzFy8D
+X-ITU-Libra-ESVA-ID: 4Z6g5M4DgpzG1GG
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741705668.53385@hM8T8zLJ/rdOlE2s8z7RgA
+X-ITU-Libra-ESVA-Watermark: 1741707987.38339@+3R8l40kbE6X47Vhfm96+Q
 X-ITU-MailScanner-SpamCheck: not spam
 
-The following commit has been merged into the x86/asm branch of tip:
+Il 02/03/25 17:30, N=C3=ADcolas F. R. A. Prado ha scritto:
+> The driver currently reads a mediatek,mic-mode property from DT to
+> determine certain register configurations. Since there are no current
+> users of the property, the property doesn't directly reflect the
+> hardware  and the default value (2) is known to work on
+> multiple boards, remove the code handling this property and instead
+> always configure the hardware according to the known to work default.
+> This property can be properly introduced in the binding in the future
+> if it really turns out that different boards need different
+> configurations.
+>=20
+> Signed-off-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
 
-Commit-ID:     e5ff90b179d45df71373cf79f99d20c9abe229cb
-Gitweb:        https://git.kernel.org/tip/e5ff90b179d45df71373cf79f99d20c9abe229cb
-Author:        Josh Poimboeuf <jpoimboe@kernel.org>
-AuthorDate:    Sun, 02 Mar 2025 17:21:03 -08:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Mon, 03 Mar 2025 11:39:54 +01:00
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
+ora.com>
 
-x86/asm: Make ASM_CALL_CONSTRAINT conditional on frame pointers
 
-With frame pointers enabled, ASM_CALL_CONSTRAINT is used in an inline
-asm statement with a call instruction to force the compiler to set up
-the frame pointer before doing the call.
-
-Without frame pointers, no such constraint is needed.  Make it
-conditional on frame pointers.
-
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: linux-kernel@vger.kernel.org
----
- arch/x86/include/asm/asm.h | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/arch/x86/include/asm/asm.h b/arch/x86/include/asm/asm.h
-index 0d268e6..f1db9e8 100644
---- a/arch/x86/include/asm/asm.h
-+++ b/arch/x86/include/asm/asm.h
-@@ -232,7 +232,11 @@ register unsigned long current_stack_pointer asm(_ASM_SP);
-  * gets set up by the containing function.  If you forget to do this, objtool
-  * may print a "call without frame pointer save/setup" warning.
-  */
-+#ifdef CONFIG_UNWINDER_FRAME_POINTER
- #define ASM_CALL_CONSTRAINT "r" (__builtin_frame_address(0))
-+#else
-+#define ASM_CALL_CONSTRAINT
-+#endif
- 
- #endif /* __ASSEMBLY__ */
- 
 
 
