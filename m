@@ -1,184 +1,187 @@
-Return-Path: <linux-kernel+bounces-540840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31DB8A4B5AC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 01:52:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 834B6A4B5AB
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 01:51:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 866F63AE908
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 00:52:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1033A3AE94B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 00:50:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F79678F40;
-	Mon,  3 Mar 2025 00:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DBC378F30;
+	Mon,  3 Mar 2025 00:50:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RgZ3dpBx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M4Fq4bkx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D90478F26
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 00:52:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9152E401;
+	Mon,  3 Mar 2025 00:50:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740963130; cv=none; b=RasYizKw72xGCZIbidDMaUTYN8qUwEsEv3RNVWui8ilvIey3+8FAyl+TJZi4F2oKzB2wVOg0CsP92osZB13fEAxba7hflXIp1PfVy/u59Cxmn71Y7sulmFaXhHVIgGrHAE28BAtD9ieuWO7BwF63BP6S71te1WJSjzwCdAyc6Ks=
+	t=1740963057; cv=none; b=dUF02zpJMU9QIupdvIH4t/0Ssy5J+iT9NSNVPE4Y54CSuuZVRlq/GpZkEAXM9PTSGMrpB3d7A3ECcakGKegQGFvtWDK7Xmc4x8F97GWOdfIf2zwD+cZqCECmKk+g5jfFyjEFiMSd4+IXZXkRJ4AKBdiNYkSUvL9HKUDgyO8N+K0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740963130; c=relaxed/simple;
-	bh=67Myc9vHnFLpNDtsgMsjmTqZdSwRKVnxSgxvxX2NNdA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BqDAQkAjCOaorIkZxJTyux9/1LyswTbFAlbaQjm+OhlH/AL2AMAZrLP/EZFQYVLDvRmc6H7AwQ45L/QLV1SBwO6HeW7GJ++QJJmB9LJ80SurV842xyEfYHq5778jVPq8tu6LLal+J0uT02neNTGoIbpg3XXqNZ6ur0V1QJtTTPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RgZ3dpBx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C055C4CED6;
-	Mon,  3 Mar 2025 00:52:09 +0000 (UTC)
+	s=arc-20240116; t=1740963057; c=relaxed/simple;
+	bh=b3wTXScjD5iISbY67J9jQbKQ99GOi5v18IdZgphe12U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TtmucsUdbfWb1WqJ075OVP09VIgVFHGU7hhbI0tbZBaMZT0GF1nIQf1lFyOmROSTz+0YHU1JXxq9ZO7znRwR4RWislHvLswWzdNYogRs9/7kGej37AWEqUXqwY4ZstH3NzWt7yOJAS5nqqQemCz3+166ELGQI4Mqf07dDJECf3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M4Fq4bkx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE092C4CED6;
+	Mon,  3 Mar 2025 00:50:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740963129;
-	bh=67Myc9vHnFLpNDtsgMsjmTqZdSwRKVnxSgxvxX2NNdA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=RgZ3dpBxIPl86j4sAWFSmcmpueS++fGR/1ZS45Jyk50yulGm6zlENcmwtmVPE+Krv
-	 PDH6B/0Hmp8GJl4uMrd7/P4YJmnXsyPDx6g9Oq8G31qj6sSxo1euCIX7stVklnw849
-	 fUkH0GJZUJx0r3CdGixRN7G6G3CgvcCpiXeVzDDodHULDxu+JrzUX6A/EE2+I88UVd
-	 4RJ/sFJXkmIRc5+d5frEPHzzvH8TYruI2JGxTkLcVttxWz55FhyqkO0Vv4YjZzx62Q
-	 fj2i3nJ/WrZ/tJwaVNQVUoAQKOXBE9UUnVivJVgZwYykAzpCSQLAMw/+Pwd7R7rigG
-	 1a4vMBaCeTIiw==
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: x86@kernel.org
-Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	linux-kernel@vger.kernel.org,
-	Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>,
-	Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH] x86/smp: Fix mwait_play_dead() and acpi_processor_ffh_play_dead() noreturn behavior
-Date: Sun,  2 Mar 2025 16:48:51 -0800
-Message-ID: <e885c6fa9e96a61471b33e48c2162d28b15b14c5.1740962711.git.jpoimboe@kernel.org>
-X-Mailer: git-send-email 2.48.1
+	s=k20201202; t=1740963057;
+	bh=b3wTXScjD5iISbY67J9jQbKQ99GOi5v18IdZgphe12U=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=M4Fq4bkxRUOqYtDCLxgUYlWV0lZ7tP+zXHzcrRQ+hp5UA0MPMnlEuNaSrU7ybNKvf
+	 5F+Iiq5Z45f0AoBvq1gqJDyLhA+zolMGzCrw6VtoJEo0+Tl0SiJ5tBnQDqAtTzvkxB
+	 HRs1gnxd8eeEc8D5pBF7iOvb2OCrZhhJYpYU4M2Cs7EwgiwGirDHmCqmcQ3sHLSuCb
+	 +yBJWzMCQDtdi0IRErtV1uq6HpxAMiOJDZTaRvv4mhnM90oBcT/Ilex51lGCFBlz8w
+	 wAlWLhv2SmtQOgG+wN14ud88M2QEMHFKDkp0w+zgdyi/Su6Vq0SSTErEBVx6WAiPXN
+	 n6Csgr1Md570A==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 9E7EBCE04E4; Sun,  2 Mar 2025 16:50:56 -0800 (PST)
+Date: Sun, 2 Mar 2025 16:50:56 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Strforexc yn <strforexc@gmail.com>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	rcu@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: KASAN: global-out-of-bounds Read in srcu_gp_start_if_needed
+Message-ID: <13691946-f330-4a5c-baf7-3125ec97939b@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <CA+HokZrPb-oHcuZQsc=LZ6_aJfjKy9oMeCBd-tq4b_sX5EG7NQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+HokZrPb-oHcuZQsc=LZ6_aJfjKy9oMeCBd-tq4b_sX5EG7NQ@mail.gmail.com>
 
-Fix some related issues (done in a single patch to avoid introducing
-intermediate bisect warnings):
+On Mon, Mar 03, 2025 at 08:44:48AM +0800, Strforexc yn wrote:
+> Dear Maintainers, When using our customized Syzkaller to fuzz the
+> latest Linux kernel, the following crash was triggered.
+> 
+> Kernel commit: v6.14-rc4 (Commits on Feb 24, 2025)
+> Kernel Config : https://github.com/Strforexc/LinuxKernelbug/blob/main/.config
+> Kernel Log: attachment
+> 
+> I’ve encountered a KASAN-reported global-out-of-bounds read in Linux
+> kernel 6.14.0-rc4, involving the RCU subsystem and bcachefs. Here are
+> the details:
+> 
+> A global-out-of-bounds read of size 1 was detected at address
+> ffffffff8b8e8d55 in string_nocheck (lib/vsprintf.c:632), called from
+> string (lib/vsprintf.c:714). The buggy address belongs to
+> str__rcu__trace_system_name+0x815/0xb40, triggered by a kworker task.
+> 
+> The issue occurs during a bcachefs transaction commit
+> (bch2_trans_commit), which enqueues an RCU callback via
+> srcu_gp_start_if_needed. The out-of-bounds access happens in
+> string_nocheck, likely during a printk or tracepoint operation
+> (vprintk_emit), triggered by a lockdep warning (__warn_printk). The
+> variable str__rcu__trace_system_name (size 0xb40) is overrun at offset
+> 0x815, suggesting a string handling bug in RCU or bcachefs debug
+> output.
+> 
+> The bug was observed in a QEMU environment during
+> btree_interior_update_work execution in bcachefs. It may involve
+> filesystem operations (e.g., key cache dropping) under load. I don’t
+> have a precise reproducer yet but can assist with testing.
+> 
+> Could RCU or bcachefs maintainers investigate? This might be a
+> tracepoint or printk format string issue in srcu_gp_start_if_needed or
+> related code. I suspect an invalid index into
+> str__rcu__trace_system_name or a pointer corruption. Happy to provide
+> more logs or test patches.
 
-  1) The SMP version of mwait_play_dead() doesn't return, but its
-     !SMP counterpart does.  Make its calling behavior consistent by
-     resolving the !SMP version to a BUG().  It should never be called
-     anyway, this just enforces that at runtime and enables its callers
-     to be marked as __noreturn.
+If this is reproduceable, building with CONFIG_DEBUG_OBJECTS_RCU_HEAD=y
+has a decent chance of providing useful diagnostics.
 
-  2) While the SMP definition of mwait_play_dead() is annotated as
-     __noreturn, the declaration isn't.  Nor is it listed in
-     tools/objtool/noreturns.h.  Fix that.
+							Thanx, Paul
 
-  3) Similar to #1, the SMP version of acpi_processor_ffh_play_dead()
-     doesn't return but its !SMP counterpart does.  Make the !SMP
-     version a BUG().  It should never be called.
+> If you fix this issue, please add the following tag to the commit:
+> Reported-by: Zhizhuo Tang <strforexctzzchange@foxmail.com>, Jianzhou
+> Zhao <xnxc22xnxc22@qq.com>, Haoran Liu <cherest_san@163.com>
+> ------------[ cut here ]------------
+> ==================================================================
+> BUG: KASAN: global-out-of-bounds in string_nocheck lib/vsprintf.c:632 [inline]
+> BUG: KASAN: global-out-of-bounds in string+0x4b3/0x500 lib/vsprintf.c:714
+> Read of size 1 at addr ffffffff8b8e8d55 by task kworker/u10:0/28
+> 
+> CPU: 1 UID: 0 PID: 28 Comm: kworker/u10:0 Not tainted 6.14.0-rc4 #1
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+> Workqueue: btree_update btree_interior_update_work
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x116/0x1b0 lib/dump_stack.c:120
+>  print_address_description.constprop.0+0x2c/0x420 mm/kasan/report.c:408
+>  print_report+0xaa/0x270 mm/kasan/report.c:521
+>  kasan_report+0xbd/0x100 mm/kasan/report.c:634
+>  string_nocheck lib/vsprintf.c:632 [inline]
+>  string+0x4b3/0x500 lib/vsprintf.c:714
+>  vsnprintf+0x620/0x1120 lib/vsprintf.c:2843
+>  vprintk_store+0x34f/0xb90 kernel/printk/printk.c:2279
+>  vprintk_emit+0x151/0x330 kernel/printk/printk.c:2408
+>  __warn_printk+0x162/0x320 kernel/panic.c:797
+>  look_up_lock_class+0xad/0x160 kernel/locking/lockdep.c:938
+>  register_lock_class+0xb2/0xfc0 kernel/locking/lockdep.c:1292
+>  __lock_acquire+0xc3/0x16a0 kernel/locking/lockdep.c:5103
+>  lock_acquire+0x181/0x3a0 kernel/locking/lockdep.c:5851
+>  __raw_spin_trylock include/linux/spinlock_api_smp.h:90 [inline]
+>  _raw_spin_trylock+0x76/0xa0 kernel/locking/spinlock.c:138
+>  spin_lock_irqsave_sdp_contention kernel/rcu/srcutree.c:375 [inline]
+>  srcu_gp_start_if_needed+0x1a9/0x5f0 kernel/rcu/srcutree.c:1270
+>  __call_rcu fs/bcachefs/rcu_pending.c:76 [inline]
+>  __rcu_pending_enqueue fs/bcachefs/rcu_pending.c:497 [inline]
+>  rcu_pending_enqueue+0x686/0xd30 fs/bcachefs/rcu_pending.c:531
+>  bkey_cached_free+0xfd/0x170 fs/bcachefs/btree_key_cache.c:115
+>  bch2_btree_key_cache_drop+0xe7/0x770 fs/bcachefs/btree_key_cache.c:613
+>  bch2_trans_commit_write_locked.constprop.0+0x2bc6/0x3bc0
+> fs/bcachefs/btree_trans_commit.c:794
+>  do_bch2_trans_commit.isra.0+0x7a6/0x12f0 fs/bcachefs/btree_trans_commit.c:866
+>  __bch2_trans_commit+0x1018/0x18e0 fs/bcachefs/btree_trans_commit.c:1070
+>  bch2_trans_commit fs/bcachefs/btree_update.h:183 [inline]
+>  btree_update_nodes_written+0x1352/0x2210
+> fs/bcachefs/btree_update_interior.c:708
+>  btree_interior_update_work+0xda/0x100 fs/bcachefs/btree_update_interior.c:846
+>  process_one_work+0x109d/0x18c0 kernel/workqueue.c:3236
+>  process_scheduled_works kernel/workqueue.c:3317 [inline]
+>  worker_thread+0x677/0xe90 kernel/workqueue.c:3398
+>  kthread+0x3b3/0x760 kernel/kthread.c:464
+>  ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:148
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>  </TASK>
+> 
+> The buggy address belongs to the variable:
+>  str__rcu__trace_system_name+0x815/0xb40
+> 
+> The buggy address belongs to the physical page:
+> page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0xb8e8
+> flags: 0xfff00000002000(reserved|node=0|zone=1|lastcpupid=0x7ff)
+> raw: 00fff00000002000 ffffea00002e3a08 ffffea00002e3a08 0000000000000000
+> raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
+> page dumped because: kasan: bad access detected
+> page_owner info is not present (never set?)
+> 
+> Memory state around the buggy address:
+>  ffffffff8b8e8c00: f9 f9 f9 f9 00 00 00 00 03 f9 f9 f9 f9 f9 f9 f9
+>  ffffffff8b8e8c80: 00 00 00 00 00 00 01 f9 f9 f9 f9 f9 00 00 00 07
+> >ffffffff8b8e8d00: f9 f9 f9 f9 00 00 00 03 f9 f9 f9 f9 00 00 00 06
+>                                                  ^
+>  ffffffff8b8e8d80: f9 f9 f9 f9 00 00 03 f9 f9 f9 f9 f9 00 00 01 f9
+>  ffffffff8b8e8e00: f9 f9 f9 f9 00 01 f9 f9 f9 f9 f9 f9 00 00 00 00
+> ==================================================================
+> Thanks,
+> Zhizhuo Tang
 
-  4) acpi_processor_ffh_play_dead() doesn't return, but is lacking any
-     __noreturn annotations.  Fix that.
-
-This fixes the following warnings:
-
-  vmlinux.o: warning: objtool: acpi_processor_ffh_play_dead+0x67: mwait_play_dead() is missing a __noreturn annotation
-  vmlinux.o: warning: objtool: acpi_idle_play_dead+0x3c: acpi_processor_ffh_play_dead() is missing a __noreturn annotation
-
-Fixes: a7dd183f0b38 ("x86/smp: Allow calling mwait_play_dead with an arbitrary hint")
-Fixes: 541ddf31e300 ("ACPI/processor_idle: Add FFH state handling")
-Reported-by: Paul E. McKenney <paulmck@kernel.org>
-Tested-by: Paul E. McKenney <paulmck@kernel.org>
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
----
- arch/x86/include/asm/smp.h    | 4 ++--
- arch/x86/kernel/acpi/cstate.c | 2 +-
- include/acpi/processor.h      | 6 +++---
- tools/objtool/noreturns.h     | 2 ++
- 4 files changed, 8 insertions(+), 6 deletions(-)
-
-diff --git a/arch/x86/include/asm/smp.h b/arch/x86/include/asm/smp.h
-index 80f8bfd83fc7..1d3b11eba084 100644
---- a/arch/x86/include/asm/smp.h
-+++ b/arch/x86/include/asm/smp.h
-@@ -114,7 +114,7 @@ void wbinvd_on_cpu(int cpu);
- int wbinvd_on_all_cpus(void);
- 
- void smp_kick_mwait_play_dead(void);
--void mwait_play_dead(unsigned int eax_hint);
-+void __noreturn mwait_play_dead(unsigned int eax_hint);
- 
- void native_smp_send_reschedule(int cpu);
- void native_send_call_func_ipi(const struct cpumask *mask);
-@@ -166,7 +166,7 @@ static inline struct cpumask *cpu_llc_shared_mask(int cpu)
- 	return (struct cpumask *)cpumask_of(0);
- }
- 
--static inline void mwait_play_dead(unsigned int eax_hint) { }
-+static inline void __noreturn mwait_play_dead(unsigned int eax_hint) { BUG(); }
- #endif /* CONFIG_SMP */
- 
- #ifdef CONFIG_DEBUG_NMI_SELFTEST
-diff --git a/arch/x86/kernel/acpi/cstate.c b/arch/x86/kernel/acpi/cstate.c
-index 86c87c01d23d..d25584255ab8 100644
---- a/arch/x86/kernel/acpi/cstate.c
-+++ b/arch/x86/kernel/acpi/cstate.c
-@@ -206,7 +206,7 @@ int acpi_processor_ffh_cstate_probe(unsigned int cpu,
- }
- EXPORT_SYMBOL_GPL(acpi_processor_ffh_cstate_probe);
- 
--void acpi_processor_ffh_play_dead(struct acpi_processor_cx *cx)
-+void __noreturn acpi_processor_ffh_play_dead(struct acpi_processor_cx *cx)
- {
- 	unsigned int cpu = smp_processor_id();
- 	struct cstate_entry *percpu_entry;
-diff --git a/include/acpi/processor.h b/include/acpi/processor.h
-index 63a37e72b721..d0eccbd920e5 100644
---- a/include/acpi/processor.h
-+++ b/include/acpi/processor.h
-@@ -280,7 +280,7 @@ int acpi_processor_ffh_cstate_probe(unsigned int cpu,
- 				    struct acpi_processor_cx *cx,
- 				    struct acpi_power_register *reg);
- void acpi_processor_ffh_cstate_enter(struct acpi_processor_cx *cstate);
--void acpi_processor_ffh_play_dead(struct acpi_processor_cx *cx);
-+void __noreturn acpi_processor_ffh_play_dead(struct acpi_processor_cx *cx);
- #else
- static inline void acpi_processor_power_init_bm_check(struct
- 						      acpi_processor_flags
-@@ -301,9 +301,9 @@ static inline void acpi_processor_ffh_cstate_enter(struct acpi_processor_cx
- {
- 	return;
- }
--static inline void acpi_processor_ffh_play_dead(struct acpi_processor_cx *cx)
-+static inline void __noreturn acpi_processor_ffh_play_dead(struct acpi_processor_cx *cx)
- {
--	return;
-+	BUG();
- }
- #endif
- 
-diff --git a/tools/objtool/noreturns.h b/tools/objtool/noreturns.h
-index b2174894f9f7..5a4aec4c4639 100644
---- a/tools/objtool/noreturns.h
-+++ b/tools/objtool/noreturns.h
-@@ -16,6 +16,7 @@ NORETURN(__tdx_hypercall_failed)
- NORETURN(__ubsan_handle_builtin_unreachable)
- NORETURN(__x64_sys_exit)
- NORETURN(__x64_sys_exit_group)
-+NORETURN(acpi_processor_ffh_play_dead)
- NORETURN(arch_cpu_idle_dead)
- NORETURN(bch2_trans_in_restart_error)
- NORETURN(bch2_trans_restart_error)
-@@ -34,6 +35,7 @@ NORETURN(kunit_try_catch_throw)
- NORETURN(machine_real_restart)
- NORETURN(make_task_dead)
- NORETURN(mpt_halt_firmware)
-+NORETURN(mwait_play_dead)
- NORETURN(nmi_panic_self_stop)
- NORETURN(panic)
- NORETURN(panic_smp_self_stop)
--- 
-2.48.1
 
 
