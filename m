@@ -1,111 +1,109 @@
-Return-Path: <linux-kernel+bounces-545324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD7DDA4EC85
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:57:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0433AA4E7AA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:08:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C2138C512E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:26:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4ED0D1896B61
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:02:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D0E2857C2;
-	Tue,  4 Mar 2025 18:17:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C11E82853E2;
+	Tue,  4 Mar 2025 16:40:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gan4tHSV"
-Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xmh2yriG"
+Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C76127BF72
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:17:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596EF284B23
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.116
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741112224; cv=fail; b=Ii2qQHn1aLPyLd1JCGrVi3i4FFHoC6NhoNM8qNJNv3NVNNqkFmHYAiFIR9Y6j53k2SZJMSIzcciqoVYS3BgswDMWZWKKDBCQVCSMlNb+U9mz90KyrRzvbJlMuvKiEW8AuCjljYXSkyT8vpaU2cB1KDEyVXAkDRiJzbSxA1jXKFo=
+	t=1741106446; cv=fail; b=mq/ezMDS9Vs9NC53pEmhlRMdRNdZUZfti4KiyDZSD3YfWnnumqk6XwA0bLlrHTMDsNJJaWQt4+T3KrhS+SfqbnBzp9kAg06ZwySzLBYGLVLWIuwE1Z3ZYF3EmBaLj8vgqAL5nzLaQ6/tls/UZeOqdPdE7adUvNZP53fF/CG+VY8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741112224; c=relaxed/simple;
-	bh=y6dWDKGFeKZwmZeh3ujFYEjNRFAP6fclRPV3N/W/44I=;
+	s=arc-20240116; t=1741106446; c=relaxed/simple;
+	bh=LVabYZomEpnCbYbmFgXGyXraMnw5YSX2oabMVB8A8Cw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JnrsQf5XmQ2U5pxCqmVPYopDXgCp9cP14iTAXu7pABdquWlevEQpAtWnSBETVS17YPE2bIAWXooqmn5gGH2pa6mus/b8t5tKIGfxhYSMtbBnxooG6zXs8c77lxVAPO0JNABlk3e3Cuj1mh0sFtZE2lxJXGX2jXH2Nu7pAptqmic=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gan4tHSV reason="signature verification failed"; arc=none smtp.client-ip=192.198.163.14; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; arc=fail smtp.client-ip=160.75.25.117
+	 MIME-Version; b=t2KtUH8OMtFXyQNdGi2ym/9XqzIINdOWVPXbl/+iyEee9Gk6ZrnFt4CyXNeRrwDJWBnl4QQugcbH1/pOluDMgWx2gzxAv8EwZXUx2tD55LSonsDYPE5n6Cm8scDSzMoGyHWp90whuI/3/QRApfZxjHfDElTqHfEDP4WOl+i5fGM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xmh2yriG reason="signature verification failed"; arc=none smtp.client-ip=192.198.163.14; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; arc=fail smtp.client-ip=160.75.25.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id 8F04240D00D9
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 21:17:00 +0300 (+03)
+	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id 75A994089523
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:40:42 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
-Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=gan4tHSV
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dfm4CC7zFxGT
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:41:36 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6hGM6zwNzG3tv
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:39:07 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 87D3242736; Tue,  4 Mar 2025 17:41:19 +0300 (+03)
+	id 53C7E4276B; Tue,  4 Mar 2025 19:38:53 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gan4tHSV
-X-Envelope-From: <linux-kernel+bounces-541187-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xmh2yriG
+X-Envelope-From: <linux-kernel+bounces-541195-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gan4tHSV
-Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id 29B3342106
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:49:13 +0300 (+03)
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id D3A693063EFC
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:49:12 +0300 (+03)
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xmh2yriG
+Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
+	by le2 (Postfix) with ESMTP id E52B542891
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:51:49 +0300 (+03)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by fgw2.itu.edu.tr (Postfix) with SMTP id 7AA3A2DCE0
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:51:49 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E46161611ED
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 08:49:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70EB13AAEF5
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 08:51:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C591D1F1307;
-	Mon,  3 Mar 2025 08:47:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E591F419E;
+	Mon,  3 Mar 2025 08:47:46 +0000 (UTC)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0BC1EE00F;
-	Mon,  3 Mar 2025 08:47:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D6D1F237A;
+	Mon,  3 Mar 2025 08:47:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740991654; cv=none; b=e5AuKdHOJgFVLzcQIDtTK/iiZXp1bHEFwwiluLIySDcABfASFFESXmXjGDxsMHJUhqTSlRdu7e/yvSXQoQQVW6LFrgMrONlTk5O8jkczJ3vE+n2FOo4iTiyFeIqnOMQ/mGYv92AY20/ys3rwRuFYfPKl/rCFUBptStSzQ7Yp8IU=
+	t=1740991662; cv=none; b=hOUOxfYL6a6J1YhCui4S66mnW9BMlsSyHTGsr68YQYcdVNSaP2FpSKDVt3tBWbg+XcqChfDFB5GelNxRXc6KE4PixdlXXIMo9zfvCyUx+kxvATfgIVMKe4PFvwtXRySIGWikkVpNUHDdGVVVKdzt8FoH2oxp6kleK/jvD0nyqNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740991654; c=relaxed/simple;
-	bh=8AO2hJSnLaCRd/8HtMcdHOYwB/zSpBOSifH5FW9w0Ms=;
+	s=arc-20240116; t=1740991662; c=relaxed/simple;
+	bh=nu1yNk8S8EgSrO+ZHhQ4Hl0iMXbUsnYxF38CaLmoAAI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JD4aeToMkDrhgxT6FCVdYBxdAMWAWoo+ARpT2QXoYcnpVeO4GcShktLUN/O7aonXnAh+EItv0ViaBXtmsCkIvjn1hSL7pE3a4sA4EfKEp3iGU+skVTJAWOZxipaUXoUL9AW7q5Zd/tJML6L7Q9nFmsM1Ivn5ok+xF3WH6xPoELQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gan4tHSV; arc=none smtp.client-ip=192.198.163.14
+	 MIME-Version; b=OgTGFxuMEZWaM5SevubScAIvw4nG369C/CGnuZGO0k4fVtUR01/PJn7xJquauIiitxGaWhMFs1IWr2bytXbMxTvQ68Mskrlv1ttPqtVLyN1mt8aaEkHggmOsWEXcJrt34DZmDHZVhr/44KMiJrWvxpp/986FlHpS4u+iLP2oa2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xmh2yriG; arc=none smtp.client-ip=192.198.163.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740991653; x=1772527653;
+  t=1740991661; x=1772527661;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=8AO2hJSnLaCRd/8HtMcdHOYwB/zSpBOSifH5FW9w0Ms=;
-  b=gan4tHSVnCuj8lqnKmX5E/1n3my8hT0Zw5/bADXPkrUryoDavj6WLCOI
-   mbVa9tmuKD0GaSJC2veKaU6DsbhzFNJHyk/RDIgTbfVA4x59f5h1luenD
-   XjezXiC46RX1JLtJU/8werS9emAtE336PO96o8kuyGeY/9Hm1lGJVE8XW
-   xao8UyK9xbXGxZBtkTglN9iyufUA4ath69zbLrgNZSLA7iGR0/gHo6YIB
-   VT+Htil/Qe2WB3GnYybofwUHb5a7HvCibiVtsohmBybK0dubU+bP+9JXf
-   RZSlvXMU5+HA3wxvjf2k+ZEc1x8ohO+KrAl+75C5k2LSLsRrVbbzEddQ9
-   A==;
-X-CSE-ConnectionGUID: KmQn2fHnSh+jqrjvkhzpiQ==
-X-CSE-MsgGUID: QjfLb+f3TPqFcO0lrNIlTA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="42111881"
+  bh=nu1yNk8S8EgSrO+ZHhQ4Hl0iMXbUsnYxF38CaLmoAAI=;
+  b=Xmh2yriGF7OjL/FJ2HoQZA3h45RXDKYzh1gfHn1lE26hllCvmEEf+nph
+   oCYSmkl2VAZU1X9/D9U+4JTM9Bt7dMwxN/QBnEQ9H+hOqfvCXi11s8qiv
+   B9GHn1d7kNnBn0M23imNcbGcjvm2w0lr3L11OfDfRf7ZGdL1yBRlSzu6Z
+   NWowBC74Q5+nyzhXAac6Vsnc1h1vgliWZA/Ft81kNo9UYk4dIBf8UQuWz
+   5fdbu0Cpc4XqPnbBjneT/FYitPxg8KluYbk8tvg5mbt5+oKIUpXswxIki
+   z6MgVi+LqDoalg8jJcgWpyw3xY+ZR6LG7f0RG6jYBQyIcBWuQ89NgAJT8
+   g==;
+X-CSE-ConnectionGUID: Ln02oyqhQBSt7iOCzC1ARg==
+X-CSE-MsgGUID: IbQV5mGvSaqHL/dNgajwmg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="42111991"
 X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="42111881"
+   d="scan'208";a="42111991"
 Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 00:47:29 -0800
-X-CSE-ConnectionGUID: SLQFcck9SfqnDM3/EV2iXg==
-X-CSE-MsgGUID: STpS0GyCTU2r/TCFjJpTcg==
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 00:47:39 -0800
+X-CSE-ConnectionGUID: RcBRVQJHThmfzPKoFFz43Q==
+X-CSE-MsgGUID: Mf9Syfb0RG6aEdF/ZVQZAQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="118426771"
+   d="scan'208";a="118426822"
 Received: from jf5300-b11a338t.jf.intel.com ([10.242.51.115])
-  by fmviesa010.fm.intel.com with ESMTP; 03 Mar 2025 00:47:27 -0800
+  by fmviesa010.fm.intel.com with ESMTP; 03 Mar 2025 00:47:36 -0800
 From: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
 To: linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
@@ -129,9 +127,9 @@ To: linux-kernel@vger.kernel.org,
 Cc: wajdi.k.feghali@intel.com,
 	vinodh.gopal@intel.com,
 	kanchana.p.sridhar@intel.com
-Subject: [PATCH v8 03/14] crypto: iaa - Add an acomp_req flag CRYPTO_ACOMP_REQ_POLL to enable async mode.
-Date: Mon,  3 Mar 2025 00:47:13 -0800
-Message-Id: <20250303084724.6490-4-kanchana.p.sridhar@intel.com>
+Subject: [PATCH v8 11/14] crypto: iaa - Fix for "deflate_generic_tfm" global being accessed without locks.
+Date: Mon,  3 Mar 2025 00:47:21 -0800
+Message-Id: <20250303084724.6490-12-kanchana.p.sridhar@intel.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20250303084724.6490-1-kanchana.p.sridhar@intel.com>
 References: <20250303084724.6490-1-kanchana.p.sridhar@intel.com>
@@ -144,94 +142,81 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6dfm4CC7zFxGT
+X-ITU-Libra-ESVA-ID: 4Z6hGM6zwNzG3tv
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741716906.79864@PYGKGGliCWPvY7H1ohPUjw
+X-ITU-Libra-ESVA-Watermark: 1741711160.05027@qUFOKvXJ+DM/2HZ0c8YdcA
 X-ITU-MailScanner-SpamCheck: not spam
 
-If the iaa_crypto driver has async_mode set to true, and use_irq set to
-false, it can still be forced to use synchronous mode by turning off the
-CRYPTO_ACOMP_REQ_POLL flag in req->flags.
+The mainline implementation of "deflate_generic_decompress" has a bug in
+the usage of this global variable:
 
-In other words, all three of the following need to be true for a request
-to be processed in fully async poll mode:
+static struct crypto_comp *deflate_generic_tfm;
 
- 1) async_mode should be "true"
- 2) use_irq should be "false"
- 3) req->flags & CRYPTO_ACOMP_REQ_POLL should be "true"
+The "deflate_generic_tfm" is allocated at module init time, and freed
+during module cleanup. Any calls to software decompress, for instance, if
+descriptor allocation fails or job submission fails, will trigger this bu=
+g
+in the deflate_generic_decompress() procedure. The problem is the
+unprotected access of "deflate_generic_tfm" in this procedure. While
+stress testing workloads under high memory pressure, with 1 IAA device
+and "deflate-iaa" as the compressor, the descriptor allocation times out
+and the software fallback route is taken. With multiple processes calling=
+:
 
-Suggested-by: Herbert Xu <herbert@gondor.apana.org.au>
+        ret =3D crypto_comp_decompress(deflate_generic_tfm,
+                                     src, req->slen, dst, &req->dlen);
+
+we end up with data corruption, that results in req->dlen being larger
+than PAGE_SIZE. zswap_decompress() subsequently raises a kernel bug.
+
+This bug can manifest under high contention and memory pressure situation=
+s
+with high likelihood. This has been resolved by adding a mutex, which is
+locked before accessing "deflate_generic_tfm" and unlocked after the
+crypto_comp call is done.
+
 Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
 ---
- drivers/crypto/intel/iaa/iaa_crypto_main.c | 11 ++++++++++-
- include/crypto/acompress.h                 |  5 +++++
- 2 files changed, 15 insertions(+), 1 deletion(-)
+ drivers/crypto/intel/iaa/iaa_crypto_main.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
 diff --git a/drivers/crypto/intel/iaa/iaa_crypto_main.c b/drivers/crypto/=
 intel/iaa/iaa_crypto_main.c
-index c3776b0de51d..d7983ab3c34a 100644
+index 7503fafca279..2a994f307679 100644
 --- a/drivers/crypto/intel/iaa/iaa_crypto_main.c
 +++ b/drivers/crypto/intel/iaa/iaa_crypto_main.c
-@@ -1520,6 +1520,10 @@ static int iaa_comp_acompress(struct acomp_req *re=
-q)
- 		return -EINVAL;
- 	}
+@@ -105,6 +105,7 @@ static struct iaa_compression_mode *iaa_compression_m=
+odes[IAA_COMP_MODES_MAX];
 =20
-+	/* If the caller has requested no polling, disable async. */
-+	if (!(req->flags & CRYPTO_ACOMP_REQ_POLL))
-+		disable_async =3D true;
+ LIST_HEAD(iaa_devices);
+ DEFINE_MUTEX(iaa_devices_lock);
++DEFINE_MUTEX(deflate_generic_tfm_lock);
+=20
+ /* If enabled, IAA hw crypto algos are registered, unavailable otherwise=
+ */
+ static bool iaa_crypto_enabled;
+@@ -1407,6 +1408,9 @@ static int deflate_generic_decompress(struct acomp_=
+req *req)
+ 	int ret;
+=20
+ 	req->dlen =3D PAGE_SIZE;
 +
- 	cpu =3D get_cpu();
- 	wq =3D wq_table_next_wq(cpu);
- 	put_cpu();
-@@ -1712,6 +1716,7 @@ static int iaa_comp_adecompress(struct acomp_req *r=
-eq)
- {
- 	struct crypto_tfm *tfm =3D req->base.tfm;
- 	dma_addr_t src_addr, dst_addr;
-+	bool disable_async =3D false;
- 	int nr_sgs, cpu, ret =3D 0;
- 	struct iaa_wq *iaa_wq;
- 	struct device *dev;
-@@ -1727,6 +1732,10 @@ static int iaa_comp_adecompress(struct acomp_req *=
-req)
- 		return -EINVAL;
- 	}
-=20
-+	/* If the caller has requested no polling, disable async. */
-+	if (!(req->flags & CRYPTO_ACOMP_REQ_POLL))
-+		disable_async =3D true;
++	mutex_lock(&deflate_generic_tfm_lock);
 +
- 	if (!req->dst)
- 		return iaa_comp_adecompress_alloc_dest(req);
+ 	src =3D kmap_local_page(sg_page(req->src)) + req->src->offset;
+ 	dst =3D kmap_local_page(sg_page(req->dst)) + req->dst->offset;
 =20
-@@ -1775,7 +1784,7 @@ static int iaa_comp_adecompress(struct acomp_req *r=
-eq)
- 		req->dst, req->dlen, sg_dma_len(req->dst));
+@@ -1416,6 +1420,8 @@ static int deflate_generic_decompress(struct acomp_=
+req *req)
+ 	kunmap_local(src);
+ 	kunmap_local(dst);
 =20
- 	ret =3D iaa_decompress(tfm, req, wq, src_addr, req->slen,
--			     dst_addr, &req->dlen, false);
-+			     dst_addr, &req->dlen, disable_async);
- 	if (ret =3D=3D -EINPROGRESS)
- 		return ret;
++	mutex_unlock(&deflate_generic_tfm_lock);
++
+ 	update_total_sw_decomp_calls();
 =20
-diff --git a/include/crypto/acompress.h b/include/crypto/acompress.h
-index 147f184b6bea..afadf84f236d 100644
---- a/include/crypto/acompress.h
-+++ b/include/crypto/acompress.h
-@@ -14,6 +14,11 @@
- #include <linux/crypto.h>
-=20
- #define CRYPTO_ACOMP_ALLOC_OUTPUT	0x00000001
-+/*
-+ * If set, the driver must have a way to submit the req, then
-+ * poll its completion status for success/error.
-+ */
-+#define CRYPTO_ACOMP_REQ_POLL		0x00000002
- #define CRYPTO_ACOMP_DST_MAX		131072
-=20
- /**
+ 	return ret;
 --=20
 2.27.0
 
