@@ -1,164 +1,179 @@
-Return-Path: <linux-kernel+bounces-541676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 635F8A4BFE9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:11:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 308D5A4BFF5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:13:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 772F27A5BC2
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:10:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08CE03ADA20
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:11:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF7820E32A;
-	Mon,  3 Mar 2025 12:11:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02B4820E71D;
+	Mon,  3 Mar 2025 12:11:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="BiUE35rv"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6C041F542A;
-	Mon,  3 Mar 2025 12:10:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2TUodsjn";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wIxtRb2H"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7B5020E6E2;
+	Mon,  3 Mar 2025 12:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741003863; cv=none; b=jJNJECSQlKAsksUGVSpbKByD61CC+0fV0Y3K3YACwoVuPJkDu9sqlYlIAdmfdQ9e9eai37yp1DUvk43VQZZn6/DB+DZ7UBbhOYjYBJrSD4U6UEhgN75mKzvJRyhEIFCTZa2AsH7NL1eUU05RCQu/pDSg0Crd8f5SrTyGrFe9am0=
+	t=1741003867; cv=none; b=Xq9XOUu0cq2txIsVn3kdqbHjdt2YT2BsWNuQPQbh9pnYDJHHQwiD4zsiTwfiDxt1H4xZI4uEop1VOQBe54Z4HFUf4ii+TVOAg15jbLngQ8CqwLiP2LbiktCatHy5doJF9giMgo89FBullx2Fjt3lLpiN/bFLXPV0u1PHA7p4KH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741003863; c=relaxed/simple;
-	bh=b7aImQFO+vv4AEKqKZKWMgzQwLwslHy4AIvR8oe7et8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oGROunNhUDgVHUXnHm1GpMJvMlweXNxzweyTB/iMTjlY0A5IT7FV5yhZooSXZ1oXqN65iFt5bRsnA9lDlUu+lJKuBclt2PQxBsazahNzIOsYvRCrumMEmhopXV9Cy5t9dvdCCQjYhsbiSkoKKJdlWBnmowEg+8/fGoOrVyQ2d0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=BiUE35rv; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=xGRwi
-	//d5mFSgNiOHp/4i7d4yZJCrVYLvCULn3+cKsg=; b=BiUE35rvVON2Dk1gnLPCS
-	Kfr3GJYbaGs4bh4Hk2QuuSdzwq7QOt8kwhzX1x9G1TfK5utYuyo5DRcoeGb+iJrA
-	Ox/4SjEK6woFve2fGRhNkzUS62ypj1aqoWaYWe+044LS4Kc6Q1mQZI+t8NYj2VoJ
-	Gwdh+kt+aUVORXHDAOlSrc=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wAH3eEinMVni5QpPQ--.16783S2;
-	Mon, 03 Mar 2025 20:10:12 +0800 (CST)
-From: Hans Zhang <18255117159@163.com>
-To: tglx@linutronix.de
-Cc: manivannan.sadhasivam@linaro.org,
-	kw@linux.com,
-	kwilczynski@kernel.org,
-	bhelgaas@google.com,
-	Frank.Li@nxp.com,
-	cassel@kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Hans Zhang <18255117159@163.com>
-Subject: [v4] genirq/msi: Add the address and data that show MSI/MSIX
-Date: Mon,  3 Mar 2025 20:10:08 +0800
-Message-Id: <20250303121008.309265-1-18255117159@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1741003867; c=relaxed/simple;
+	bh=svQsuqvzeMABmYhAHLDMNTSCvoheTvuxeLM+VbPPpew=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=iJRWL5LBfjpY5eWf/XbK5c6du/fYBk/CzS0CazFqmGlaRYQC3sHf9K3Q2DN6o+Hrlzqt8XxQpMpp/gWThCWaNjc0qZwzhRQJhcnzqZuh3S8MmrQo90Y1mKzX76akNkiag9j/kbok/dQu5Ikfap32aM259ykwxVkV4O2/0F4NqWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2TUodsjn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wIxtRb2H; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 03 Mar 2025 12:11:01 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741003862;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BgVdqIxVtV58B5lqYfeHWLWWTg0ElzpE/QlzEqveNw0=;
+	b=2TUodsjnXtS8YlZbxVLWb7FbwGEhlY7EBGsQr12viXOICA7rJ9ynUgAVWUdtTHc7NPwUp7
+	3Ct1IMGgddmQSB7CNOX8RDnO/FFz+FeSVm6QyBLO+ohwGWRF31bFDRXJY82X6TZCypAIzy
+	Yh8w3v/W6BYWpk+KSpf8eekbK+xSNaJB9opGhKH7SOrQN6fSYgc/ZNH3/faaXBtWm5rZg1
+	ncc6Hboxt9ojBq6RatUmX9qtK/WRnjeJ7/2+xldF6qI7P12apy+PbOydqQBj1mIsCMTLSe
+	99GVVHfZMhwZV41Enzphz21gDw51XH4rQs02SVVrcQCOHuHD2rUgTbNxD1mE+g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741003862;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BgVdqIxVtV58B5lqYfeHWLWWTg0ElzpE/QlzEqveNw0=;
+	b=wIxtRb2Hg+tfXM1TFMwzFuXdvUx6iEaOyBCnq6MIrS+a316yxTrryODg8Ldg+Dp+DPhcea
+	YHP5essQUnS74iDQ==
+From: "tip-bot2 for Breno Leitao" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/bugs] x86/bugs: Make spectre user default depend on
+ MITIGATION_SPECTRE_V2
+Cc: Breno Leitao <leitao@debian.org>, Ingo Molnar <mingo@kernel.org>,
+ Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ David Kaplan <David.Kaplan@amd.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20241031-x86_bugs_last_v2-v2-2-b7ff1dab840e@debian.org>
+References: <20241031-x86_bugs_last_v2-v2-2-b7ff1dab840e@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wAH3eEinMVni5QpPQ--.16783S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxJF45Ww1fKrWDtryDZF43ZFb_yoW5KrWkpF
-	Z0kF47Wr43Jr1UWa1xC3W7u345Ka95tF4Uu3s3uw1fArWDKryvyF1vgFW29FyayFyUKw1U
-	A3ZFgF1DuFyDAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zE1CJDUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbBDwwFo2fFm0wbuQAAsy
+Message-ID: <174100386189.10177.5924997296106103360.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-The debug_show() callback function is implemented in the MSI core code.
-And assign it to the domain ops::debug_show() creation.
+The following commit has been merged into the x86/bugs branch of tip:
 
-When debugging MSI-related hardware issues (e.g., interrupt delivery
-failures), developers currently need to either:
-1. Recompile kernel with dynamic debug for tracing msi_desc.
-2. Manually read device registers through low-level tools.
+Commit-ID:     98fdaeb296f51ef08e727a7cc72e5b5c864c4f4d
+Gitweb:        https://git.kernel.org/tip/98fdaeb296f51ef08e727a7cc72e5b5c864c4f4d
+Author:        Breno Leitao <leitao@debian.org>
+AuthorDate:    Thu, 31 Oct 2024 04:06:17 -07:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Mon, 03 Mar 2025 12:48:41 +01:00
 
-Both approaches become challenging in production environments where
-dynamic debugging is often disabled.
+x86/bugs: Make spectre user default depend on MITIGATION_SPECTRE_V2
 
-This patch proposes to expose MSI address_hi/address_lo and msg_data in
-`/sys/kernel/debug/irq/irqs/<msi_irq_num>`. These fields are critical to:
-- Verify if MSI configuration matches hardware programming
-- Diagnose interrupt routing errors (e.g., mismatched destination ID)
-- Validate remapping behavior in virtualized environments
+Change the default value of spectre v2 in user mode to respect the
+CONFIG_MITIGATION_SPECTRE_V2 config option.
 
-The information is already maintained in msi_desc and irq_data structures.
-By surfacing it through debugfs:
-- We create a unified place for runtime IRQ diagnostics
-- Enable debugging without kernel rebuilds or special tools
-- Align with existing exposure of IRQ chip/type/affinity data
+Currently, user mode spectre v2 is set to auto
+(SPECTRE_V2_USER_CMD_AUTO) by default, even if
+CONFIG_MITIGATION_SPECTRE_V2 is disabled.
 
-Sample output:
-  address_hi: 0x00000000
-  address_lo: 0xfe670040
-  msg_data:   0x00000001
+Set the spectre_v2 value to auto (SPECTRE_V2_USER_CMD_AUTO) if the
+Spectre v2 config (CONFIG_MITIGATION_SPECTRE_V2) is enabled, otherwise
+set the value to none (SPECTRE_V2_USER_CMD_NONE).
 
-Signed-off-by: Hans Zhang <18255117159@163.com>
+Important to say the command line argument "spectre_v2_user" overwrites
+the default value in both cases.
+
+When CONFIG_MITIGATION_SPECTRE_V2 is not set, users have the flexibility
+to opt-in for specific mitigations independently. In this scenario,
+setting spectre_v2= will not enable spectre_v2_user=, and command line
+options spectre_v2_user and spectre_v2 are independent when
+CONFIG_MITIGATION_SPECTRE_V2=n.
+
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Reviewed-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Acked-by: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: David Kaplan <David.Kaplan@amd.com>
+Link: https://lore.kernel.org/r/20241031-x86_bugs_last_v2-v2-2-b7ff1dab840e@debian.org
 ---
-Changes since v2-v3:
-https://lore.kernel.org/linux-pci/20250301123953.291675-1-18255117159@163.com/
-https://lore.kernel.org/linux-pci/20250302020328.296523-1-18255117159@163.com/
+ Documentation/admin-guide/kernel-parameters.txt |  2 ++
+ arch/x86/kernel/cpu/bugs.c                      | 10 +++++++---
+ 2 files changed, 9 insertions(+), 3 deletions(-)
 
-- Fix implicit declaration of function 'seq_printf'.
-- Fix 'const struct irq_domain_ops' has no member named 'debug_show'.
-- The patch commit message were modified.
-- Removes the display that is not currently an MSI/MSIX interrupt.
-
-Changes since v1:
-https://lore.kernel.org/linux-pci/20250227162821.253020-1-18255117159@163.com/
-
-- According to Thomas(tglx), the debug_show() callback should be added
-  to the MSI core code.
----
- kernel/irq/msi.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
-
-diff --git a/kernel/irq/msi.c b/kernel/irq/msi.c
-index 396a067a8a56..adcc7c638295 100644
---- a/kernel/irq/msi.c
-+++ b/kernel/irq/msi.c
-@@ -15,6 +15,7 @@
- #include <linux/mutex.h>
- #include <linux/pci.h>
- #include <linux/slab.h>
-+#include <linux/seq_file.h>
- #include <linux/sysfs.h>
- #include <linux/types.h>
- #include <linux/xarray.h>
-@@ -756,12 +757,30 @@ static int msi_domain_translate(struct irq_domain *domain, struct irq_fwspec *fw
- 	return info->ops->msi_translate(domain, fwspec, hwirq, type);
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index fb8752b..274b71a 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -6582,6 +6582,8 @@
+ 
+ 			Selecting 'on' will also enable the mitigation
+ 			against user space to user space task attacks.
++			Selecting specific mitigation does not force enable
++			user mitigations.
+ 
+ 			Selecting 'off' will disable both the kernel and
+ 			the user space protections.
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 346bebf..4386aa6 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -1308,9 +1308,13 @@ static __ro_after_init enum spectre_v2_mitigation_cmd spectre_v2_cmd;
+ static enum spectre_v2_user_cmd __init
+ spectre_v2_parse_user_cmdline(void)
+ {
++	enum spectre_v2_user_cmd mode;
+ 	char arg[20];
+ 	int ret, i;
+ 
++	mode = IS_ENABLED(CONFIG_MITIGATION_SPECTRE_V2) ?
++		SPECTRE_V2_USER_CMD_AUTO : SPECTRE_V2_USER_CMD_NONE;
++
+ 	switch (spectre_v2_cmd) {
+ 	case SPECTRE_V2_CMD_NONE:
+ 		return SPECTRE_V2_USER_CMD_NONE;
+@@ -1323,7 +1327,7 @@ spectre_v2_parse_user_cmdline(void)
+ 	ret = cmdline_find_option(boot_command_line, "spectre_v2_user",
+ 				  arg, sizeof(arg));
+ 	if (ret < 0)
+-		return SPECTRE_V2_USER_CMD_AUTO;
++		return mode;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(v2_user_options); i++) {
+ 		if (match_option(arg, ret, v2_user_options[i].option)) {
+@@ -1333,8 +1337,8 @@ spectre_v2_parse_user_cmdline(void)
+ 		}
+ 	}
+ 
+-	pr_err("Unknown user space protection option (%s). Switching to AUTO select\n", arg);
+-	return SPECTRE_V2_USER_CMD_AUTO;
++	pr_err("Unknown user space protection option (%s). Switching to default\n", arg);
++	return mode;
  }
  
-+#ifdef CONFIG_GENERIC_IRQ_DEBUGFS
-+static void msi_domain_debug_show(struct seq_file *m, struct irq_domain *d,
-+				  struct irq_data *irqd, int ind)
-+{
-+	struct msi_desc *desc = irq_get_msi_desc(irqd->irq);
-+
-+	if (!desc)
-+		return;
-+
-+	seq_printf(m, "\n%*saddress_hi: 0x%08x", ind + 1, "", desc->msg.address_hi);
-+	seq_printf(m, "\n%*saddress_lo: 0x%08x", ind + 1, "", desc->msg.address_lo);
-+	seq_printf(m, "\n%*smsg_data:   0x%08x\n", ind + 1, "", desc->msg.data);
-+}
-+#endif
-+
- static const struct irq_domain_ops msi_domain_ops = {
- 	.alloc		= msi_domain_alloc,
- 	.free		= msi_domain_free,
- 	.activate	= msi_domain_activate,
- 	.deactivate	= msi_domain_deactivate,
- 	.translate	= msi_domain_translate,
-+#ifdef CONFIG_GENERIC_IRQ_DEBUGFS
-+	.debug_show     = msi_domain_debug_show,
-+#endif
- };
- 
- static irq_hw_number_t msi_domain_ops_get_hwirq(struct msi_domain_info *info,
-
-base-commit: 76544811c850a1f4c055aa182b513b7a843868ea
--- 
-2.25.1
-
+ static inline bool spectre_v2_in_ibrs_mode(enum spectre_v2_mitigation mode)
 
