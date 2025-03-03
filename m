@@ -1,84 +1,95 @@
-Return-Path: <linux-kernel+bounces-545158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FF07A4E9BF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:47:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 83E0AA4E8B3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:29:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDA4E165C53
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:43:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6E9F421D48
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:23:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ED4C253B5E;
-	Tue,  4 Mar 2025 17:18:17 +0000 (UTC)
-Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C426A265639;
+	Tue,  4 Mar 2025 17:00:14 +0000 (UTC)
+Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66E5294F1D
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94FE6259CB2
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.115
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741108696; cv=pass; b=MXgoIaZcan7Q4Ch6GQsgONmHUx6slqiX66RtJHVoXGVxsYCurjMgo7iZ4rSXHi1gaLWZo+ZS9yv8K0VbS6TT+jM68TBg27PDN5LhefGGk6hpmWa7Jyrc7xhYh05Z2xm2vlHBNd2GrjprvCniFwWi7W/kLjXquluN/fkFoKzzByI=
+	t=1741107614; cv=fail; b=WO0xQTKlvrl0l0y7cDHhDSIymNQrIqZY6rVcJKo3m3/GQcUKLvnM/WP8s3V5UCCN6QapfjnhvrdPu5f9Tt/cD+njDgb1wYUFIoAFZBXaEkxBxpC9GgxF4kGZ0d4zqltJnTGKeBhxyjrEl5ORatZGzoiGykO9R4lQeMxh6EsbbiM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741108696; c=relaxed/simple;
-	bh=qKYQ/RpHnPPi0xz+U1dihMeF/+HcwhhzvfPtYWgkvCg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=neeizPvpQR/jetk+/PlXXYKLrOVZHYru+yDoAPv5js1vu9CaGy606o4k6BQcbIxnBc1ZxiAd6TmfWUPFGVz8IJ1P2fhRbwZOTrDUzXECvG8wXl/17MDG9zYmsmVlU/2R+s0tuw/AEztmsHeqztxL51N0yi6IqiL269S5ZueTo34=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=cc.itu.edu.tr; arc=none smtp.client-ip=217.140.110.172; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=pass smtp.client-ip=160.75.25.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+	s=arc-20240116; t=1741107614; c=relaxed/simple;
+	bh=CdYtl5r0Do1A/pRmLSyGLYHM6m+tpjACuP/am8t3oXg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=I0G2vuu707l1Ig74KwJVJcPCZdlj1QDd0p/EI7rO2eGqkjj/eotzEU5+F8EgaNeB13czBI4sDJXEPt9uiDU1l4E1+vYIbOSit0anycj2t+ztrYd7ZoSjbIedJVOGtyLan4kPWg8UVvc/BWK8LkX1s+PHp5WzNPqNIsUu87OYxYs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=none smtp.mailfrom=cc.itu.edu.tr; arc=none smtp.client-ip=222.66.158.135; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=fail smtp.client-ip=160.75.25.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id DE5F0408B65E
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:18:12 +0300 (+03)
+	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 1631240D977F
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:00:10 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6fj61VGlzG0MF
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:28:42 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6fRl52K0zG00V
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:17:07 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id E9A054272E; Tue,  4 Mar 2025 18:28:31 +0300 (+03)
-X-Envelope-From: <linux-kernel+bounces-541454-bozkiru=itu.edu.tr@vger.kernel.org>
-Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id 7526B41F10
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:57:45 +0300 (+03)
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id 26FA4305F789
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:57:45 +0300 (+03)
+	id C7B934273C; Tue,  4 Mar 2025 18:16:58 +0300 (+03)
+X-Envelope-From: <linux-kernel+bounces-541443-bozkiru=itu.edu.tr@vger.kernel.org>
+Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
+	by le2 (Postfix) with ESMTP id 630D9426FD
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:55:43 +0300 (+03)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by fgw2.itu.edu.tr (Postfix) with SMTP id 39A0A2DCDE
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:55:43 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C676172641
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:57:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A5581894137
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:55:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C9371F9F64;
-	Mon,  3 Mar 2025 10:53:45 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C80FC1F8AE2;
-	Mon,  3 Mar 2025 10:53:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C95B71F3BA7;
+	Mon,  3 Mar 2025 10:53:33 +0000 (UTC)
+Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0B51F2C5B
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 10:53:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740999223; cv=none; b=AChXIWWbSGvoKjtkDj36sZe1V6IVHEXjDCU06bRvarqzxI7jMptQvjk6RkpOUPX/PUIJLp/XVYqU+vDQf2mWm/Fg5OTo5YPYzbxTURBlVDZUSJzSQ+17sIRE93zfRAQvIHf659gbBk9P6cWftLdGlvtBcV6gilgJql8bh7BCoF8=
+	t=1740999211; cv=none; b=ABlruTjvfhNB1cau7Zo80wHogBJp6VuzLQSZE3p2xt+ZldMGQ3wak6BvriXm7vvm1ixYqNdJvyy9WnZG8PtJ+L1hv1MXWj6hTjl7lLMe1K2X0lE97NmyHQHMPM0JqawjSAKn3RrEqc3rXgSZ8zrStKh84LRPgjHlEGDWaRx+zLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740999223; c=relaxed/simple;
-	bh=qKYQ/RpHnPPi0xz+U1dihMeF/+HcwhhzvfPtYWgkvCg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=H+ivxV4DBbdDdINjB7PqEYgBjbfdqKGRJdq6+Ok/g2ok+c28Sv+aNk6wy2/ZOtFwIuHj0YaCjZKOa9VeT7Nmj7VGFtGEZ5ZxIIa82LHMTm+gdEChnYAu5ObPCYDM1aO+O95wtT1vO1W+qqA2LwIJHYz7HqeIRYNI9bO+EPzaqcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B6B6C113E;
-	Mon,  3 Mar 2025 02:53:55 -0800 (PST)
-Received: from e133711.arm.com (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2FC6A3F673;
-	Mon,  3 Mar 2025 02:53:40 -0800 (PST)
-From: Sudeep Holla <sudeep.holla@arm.com>
-Date: Mon, 03 Mar 2025 10:51:47 +0000
-Subject: [PATCH 12/14] hwmon: (xgene-hwmon) Simplify PCC shared memory
- region handling
+	s=arc-20240116; t=1740999211; c=relaxed/simple;
+	bh=LXUxz1eAYTX+ZE8k6XJtrXpRg0wE05yu4Q6GBSQSvRI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gdKydN7ho4Mv6WpMg47A0tDaguL4Qd4psqs9jFhoXjzwWxtH56ye1QW6UFB2bxiqZSwkjm69+cPNDA2eqFCjCpHUE+acrVTmES9oiVFc4dy3EbpSSb1cB5lTVmD9sPnRCCsMdbZ6dwuRwkQb4zq911U0IHtwEMI2/0eZI4D6d60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 523ArAGR091702;
+	Mon, 3 Mar 2025 18:53:10 +0800 (+08)
+	(envelope-from Xuewen.Yan@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4Z5wX917hZz2K8nM6;
+	Mon,  3 Mar 2025 18:48:25 +0800 (CST)
+Received: from BJ10918NBW01.spreadtrum.com (10.0.73.73) by
+ BJMBX01.spreadtrum.com (10.0.64.7) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Mon, 3 Mar 2025 18:53:08 +0800
+From: Xuewen Yan <xuewen.yan@unisoc.com>
+To: <vincent.guittot@linaro.org>, <peterz@infradead.org>, <mingo@redhat.com>,
+        <juri.lelli@redhat.com>, <dietmar.eggemann@arm.com>,
+        <rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
+        <vschneid@redhat.com>
+CC: <linux-kernel@vger.kernel.org>, <ke.wang@unisoc.com>, <di.shen@unisoc.com>,
+        <xuewen.yan94@gmail.com>
+Subject: [RFC PATCH V2 0/3] sched/fair: Fix nr-running vs delayed-dequeue
+Date: Mon, 3 Mar 2025 18:52:38 +0800
+Message-ID: <20250303105241.17251-1-xuewen.yan@unisoc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -86,150 +97,45 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250303-pcc_fixes_updates-v1-12-3b44f3d134b1@arm.com>
-References: <20250303-pcc_fixes_updates-v1-0-3b44f3d134b1@arm.com>
-In-Reply-To: <20250303-pcc_fixes_updates-v1-0-3b44f3d134b1@arm.com>
-To: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Sudeep Holla <sudeep.holla@arm.com>, 
- Jassi Brar <jassisinghbrar@gmail.com>, Huisong Li <lihuisong@huawei.com>, 
- Adam Young <admiyo@os.amperecomputing.com>, 
- Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
- linux-hwmon@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3678; i=sudeep.holla@arm.com;
- h=from:subject:message-id; bh=qKYQ/RpHnPPi0xz+U1dihMeF/+HcwhhzvfPtYWgkvCg=;
- b=owEBbQKS/ZANAwAIAQBBurwxfuKYAcsmYgBnxYoiJfyJ15B7dZMCKbfDh7KWMxlk1zX1nXbFZ
- DSDENvulASJAjMEAAEIAB0WIQS6ceUSBvMeskPdk+EAQbq8MX7imAUCZ8WKIgAKCRAAQbq8MX7i
- mOOJEACk8HwhoV/kf4yQTtXA0+Bt6TAgAQcmvhIbnJbmQo6uNeuyvNtO6AJ4hp2bBhQshaQw/O5
- EJ/zNcpbsEojllwwlLTXEySe3nChK24CyD5Hz/DbGKOrZNTE6ZPI2nN7d7ids2MfY3gnpJRe+EY
- JSuME2353lxcPdMkxQD0SU5auKiZJzQJXZNsmwCII+ibzjmokrbjDIdDnmi5gG9SZ/3Z3MYOAb+
- UjqklBafICGSMLwE+zmaIYwtt1v0RZ7swQHGkNMHAc/Q6HyQCR9tM8DMeGq9ezKkV7S7cU3eApR
- bVJmjqNa7Tz2U9z59MMvtfCS5uYcSY5hNk5s0asxqgQA/sW32EdUvI1AUj9jo6jEzjqBYzSLTm7
- UbnG/UCJYSDSZqThECQuw3zhvwCdiSwC4593JGU4SIDWuZ3KxGAybmi2T4YsBgKg7FoI5YuDs7F
- 0x5PH5nD26+wtjhRIfYcvHDjZzFQJrUFcee3epOIiPYflGlKgS6Gdx8ymxUhcfIc+LXV0e0fjrv
- iFrgf7J3PAs2slBNxdLJ+VCtUxx6s147rt9O1XarZ4TDmRDTh751OhsGFsqJeF5cEK6H3Yqs7br
- PrEnT+KfL563qBk10DtcNPuQ9fTiK9gLXm1SrbF6MDC9ZdpbqwFGVtUVNzlPm0iYt1S4wgdnR0j
- Wb96Xqm4w4wZD3g==
-X-Developer-Key: i=sudeep.holla@arm.com; a=openpgp;
- fpr=7360A21742ADF5A11767C1C139CFD4755FE2D5B4
+Content-Type: text/plain
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX01.spreadtrum.com (10.0.64.7)
+X-MAIL:SHSQR01.spreadtrum.com 523ArAGR091702
+Content-Transfer-Encoding: quoted-printable
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6fj61VGlzG0MF
+X-ITU-Libra-ESVA-ID: 4Z6fRl52K0zG00V
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741713370.18034@gzKz9nT3CFkkWjQryeCDJQ
+X-ITU-Libra-ESVA-Watermark: 1741712296.41833@Msg4yLAQ++W7L4SpeowGCg
 X-ITU-MailScanner-SpamCheck: not spam
 
-The PCC driver now handles mapping and unmapping of shared memory
-areas as part of pcc_mbox_{request,free}_channel(). Without these before,
-this xgene hwmon driver did handling of those mappings like several
-other PCC mailbox client drivers.
+Delayed dequeued feature keeps a sleeping sched_entitiy enqueued until it=
+s
+lag has elapsed. As a result, it stays also visible in rq->nr_running.
+However, sometimes when using nr-running, we should not consider
+sched-delayed tasks.
+This serie fixes those by adding a helper function which return the
+number of sched-delayed tasks. And when we should get the real runnable
+tasks, we sub the nr-delayed tasks.
 
-There were redundant operations, leading to unnecessary code. Maintaining
-the consistency across these driver was harder due to scattered handling
-of shmem.
+Changes sinc v1:
+- add cover-letter
+- add helper function;
+- add more fixes
 
-Just use the mapped shmem and remove all redundant operations from this
-driver.
+Xuewen Yan (3):
+  sched/fair: Fixup-wake_up_sync-vs-DELAYED_DEQUEUE
+  sched/fair: Do not consider the sched-delayed task when yield
+  sched: Do not consider the delayed task when cpu is about to enter
+    idle
 
-Cc: Jean Delvare <jdelvare@suse.com>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: linux-hwmon@vger.kernel.org
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
----
- drivers/hwmon/xgene-hwmon.c | 40 ++++------------------------------------
- 1 file changed, 4 insertions(+), 36 deletions(-)
+ kernel/sched/core.c  |  2 +-
+ kernel/sched/fair.c  | 10 +++++++---
+ kernel/sched/sched.h |  5 +++++
+ 3 files changed, 13 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/hwmon/xgene-hwmon.c b/drivers/hwmon/xgene-hwmon.c
-index 1e3bd129a922d25ff25142d864503377773304a8..ea350d4de902c4e6fc4de1cd54a8b75edfad1119 100644
---- a/drivers/hwmon/xgene-hwmon.c
-+++ b/drivers/hwmon/xgene-hwmon.c
-@@ -102,9 +102,6 @@ struct xgene_hwmon_dev {
- 
- 	struct device		*hwmon_dev;
- 	bool			temp_critical_alarm;
--
--	phys_addr_t		comm_base_addr;
--	void			*pcc_comm_addr;
- 	u64			usecs_lat;
- };
- 
-@@ -125,7 +122,8 @@ static u16 xgene_word_tst_and_clr(u16 *addr, u16 mask)
- 
- static int xgene_hwmon_pcc_rd(struct xgene_hwmon_dev *ctx, u32 *msg)
- {
--	struct acpi_pcct_shared_memory *generic_comm_base = ctx->pcc_comm_addr;
-+	struct acpi_pcct_shared_memory __iomem *generic_comm_base =
-+							ctx->pcc_chan->shmem;
- 	u32 *ptr = (void *)(generic_comm_base + 1);
- 	int rc, i;
- 	u16 val;
-@@ -523,7 +521,8 @@ static void xgene_hwmon_rx_cb(struct mbox_client *cl, void *msg)
- static void xgene_hwmon_pcc_rx_cb(struct mbox_client *cl, void *msg)
- {
- 	struct xgene_hwmon_dev *ctx = to_xgene_hwmon_dev(cl);
--	struct acpi_pcct_shared_memory *generic_comm_base = ctx->pcc_comm_addr;
-+	struct acpi_pcct_shared_memory __iomem *generic_comm_base =
-+							ctx->pcc_chan->shmem;
- 	struct slimpro_resp_msg amsg;
- 
- 	/*
-@@ -649,7 +648,6 @@ static int xgene_hwmon_probe(struct platform_device *pdev)
- 	} else {
- 		struct pcc_mbox_chan *pcc_chan;
- 		const struct acpi_device_id *acpi_id;
--		int version;
- 
- 		acpi_id = acpi_match_device(pdev->dev.driver->acpi_match_table,
- 					    &pdev->dev);
-@@ -658,8 +656,6 @@ static int xgene_hwmon_probe(struct platform_device *pdev)
- 			goto out_mbox_free;
- 		}
- 
--		version = (int)acpi_id->driver_data;
--
- 		if (device_property_read_u32(&pdev->dev, "pcc-channel",
- 					     &ctx->mbox_idx)) {
- 			dev_err(&pdev->dev, "no pcc-channel property\n");
-@@ -685,34 +681,6 @@ static int xgene_hwmon_probe(struct platform_device *pdev)
- 			goto out;
- 		}
- 
--		/*
--		 * This is the shared communication region
--		 * for the OS and Platform to communicate over.
--		 */
--		ctx->comm_base_addr = pcc_chan->shmem_base_addr;
--		if (ctx->comm_base_addr) {
--			if (version == XGENE_HWMON_V2)
--				ctx->pcc_comm_addr = (void __force *)devm_ioremap(&pdev->dev,
--								  ctx->comm_base_addr,
--								  pcc_chan->shmem_size);
--			else
--				ctx->pcc_comm_addr = devm_memremap(&pdev->dev,
--								   ctx->comm_base_addr,
--								   pcc_chan->shmem_size,
--								   MEMREMAP_WB);
--		} else {
--			dev_err(&pdev->dev, "Failed to get PCC comm region\n");
--			rc = -ENODEV;
--			goto out;
--		}
--
--		if (!ctx->pcc_comm_addr) {
--			dev_err(&pdev->dev,
--				"Failed to ioremap PCC comm region\n");
--			rc = -ENOMEM;
--			goto out;
--		}
--
- 		/*
- 		 * pcc_chan->latency is just a Nominal value. In reality
- 		 * the remote processor could be much slower to reply.
-
--- 
-2.34.1
+--=20
+2.25.1
 
 
 
