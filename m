@@ -1,47 +1,79 @@
-Return-Path: <linux-kernel+bounces-541094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F7E3A4B85A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:31:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 242D4A4B860
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:33:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92E651640BA
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 07:31:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0FE53AFC02
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 07:33:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24AE31EA7D0;
-	Mon,  3 Mar 2025 07:31:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF9271EA7E8;
+	Mon,  3 Mar 2025 07:33:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HTzEGiFf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ho51QRC6"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CBC714AD2D;
-	Mon,  3 Mar 2025 07:31:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1B81EA7C0;
+	Mon,  3 Mar 2025 07:33:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740987092; cv=none; b=ky5TbUiFvALlMlTaKigdQDLDUk1W1AH8b/MvXagBb0Xk5b5TIUiiItID+KCOXnGO/FZcObnLbedkgXfb+ftAmS7DSkS22QklUVqV4BV6nIGoQvPJgXEgBoZ2vgEJPVqmaIh7lFxE6VDHu+fAPHnBR0ZpQyLX3HUQtBJovb9FZlI=
+	t=1740987193; cv=none; b=WD841827eWgK7swmCiLcvSn0slQRx8OOJULEZWHja5/9NtojBShyA/o6w1rwzK2xOy0ZLOPd2LhDXKDuXKzXqlVgByVqjnvZrAGiMRGfNH0wvrGlFiEOaGYwPbCMzgwykLRtx5mcgCjbUdccjfJJESp6O7XgB40Y2OGcwSC28ME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740987092; c=relaxed/simple;
-	bh=Rp+ML2bibpqktoLUGR92Bz7M855WOGJIx85KWI6GPlY=;
+	s=arc-20240116; t=1740987193; c=relaxed/simple;
+	bh=5eF7GEXxzpWu4yOg9pvtBatpJVXLkGtCFTy/RS33fx0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qs/rqmr1PCo3H0sUZ9KVUfarUOj+NsP1wfjmQLXG0WIKQaeK6qK+/w0+UQD3te/wCKDFiZbRc6rN+Yg4pTVy0sssnopchUbeRiJxphCiNlC7pclhI9TvEdcC++q8C0edegJVN+a8VOs4y6a2Ba5yl/IkOPBqx//O5BB/9CHblbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HTzEGiFf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA799C4CED6;
-	Mon,  3 Mar 2025 07:31:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740987091;
-	bh=Rp+ML2bibpqktoLUGR92Bz7M855WOGJIx85KWI6GPlY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HTzEGiFfHLV4w3wmTYdgM1MCufXU4oIQ7PNRV0iGYfH7O1AlC9I9jG8mRefk8kGMk
-	 hHaX3prwYZyBKkE9OkYkGGbfe4+xwGnXulJ7Tn+Yqhbes5R4tmKYP75jte80SDKIrX
-	 ORktdyG6hGNsc+7RzDE68WQt/m9XnfY8ftWGpyWBeQ2r/NSrTW1qY8x8VokwBvGAtf
-	 KwjwSt0LjcHRMPqtg1L3JUujWt3sRkfsY3yO5yyHWKsDWKS3aIcwN+ecSJXmqz/oNX
-	 IH1cwiQLFaJoLuhdLdx/btKuJqw+tg0teun2eDbRAcaZAqjQ2JrgstmwN5S8kQPsss
-	 7blHovP1SNM+A==
-Message-ID: <3d729159-4d13-4a61-88c7-3be992b23728@kernel.org>
-Date: Mon, 3 Mar 2025 08:31:24 +0100
+	 In-Reply-To:Content-Type; b=cX2ah5eks7PZ+DUXY9m4htQOmUtGrUTiFyJqf1VviWTkpFBVBPwi4qPVtK0v5lpQpGArHQuWxF5H6mBztw1b5DveQqWt9zUKjBm2+oYTX8VGGri0Ig5D5YaFn7b0xDKMbOWTYm/kUiRhLqrRvCyAWzYRFak6F0eFCz48P6YLJmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ho51QRC6; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-30930b0b420so34255601fa.2;
+        Sun, 02 Mar 2025 23:33:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740987189; x=1741591989; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZrfT43/ChI686f8asUl/9QZweWrcr9+CbhtUfhxyfBk=;
+        b=ho51QRC6OPKJ9x64toi81G2RUATlCM936OnIsg6d90HVpztMxGripzSodRgLYBfpfe
+         4VFvqxGWn1KNeGxE18c6FL4QNUiIUqSkaCe2I6j5mniOab/FsSn2bJLwyyNzSF++NhB2
+         GAeriIojcgYWidiVaqpdlRQdSJOcJ5MbSUR/swPTZOJhUiyBuUzloxH/ZeLfr1P4kn8o
+         xmbzVW52NlqJXDh/ny2Mvm+fZP9rVK8ZX1wm5M3V7sc2k++5GF2Vr8RXG9wcA2N1uEWh
+         XbHBZhn5mljV4Rt4NbqWlPyCVEBcNgo5pePSGSy3bPxL5VNw2VS/OhRE2AXMeWwJBveO
+         zGZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740987189; x=1741591989;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZrfT43/ChI686f8asUl/9QZweWrcr9+CbhtUfhxyfBk=;
+        b=VkCBPu6qDp8pK5yjTRuqyKTA4xOycQKoIUC8+P6GQqfxE38+S2Nnfmh+r+91wwTH3u
+         IT7IK/W6OodZAlttN+Dv/XEdTDdXefwJVlPKWUrHMwNfJTtAs3X4IbvbDlHQBSj04VJk
+         dQsy6qf1xYb2vXAxAProGYZjGRs0v8EOXdRUGC5X36K4t+nEH2VoPgZjBm+hYFmVtpM0
+         rDO4+mocapIjuTvX0PlQ2hE8rLabzhOx7TZMosDsaNnjYDSt2WVtnaW2rUqSR6kCQZ72
+         /V21K0YZBrQSnGAW2ulTm1g6XXD1S7l+3t7s7aUKNBUaMNCjmrvA+FF/gVWxuZrBOu0z
+         GX/g==
+X-Forwarded-Encrypted: i=1; AJvYcCWdVjxCWTKrXcajx+ZnsG7UFKTwpBCqg5cpezOXjwX7x9YaULlQo6C5D29pLZIWyXOURooOtpt+dqb5Sp5L@vger.kernel.org, AJvYcCWfg8mea8W93IQkkYdu/kEOhRSMeW5CIp7yqpZRfO/VUMmktYxbEKKm/Wmyzdfvkcyfnj3onzvRjN1vPbko3XgHMAw=@vger.kernel.org, AJvYcCX2ezrCP4wPBgo16Zy1AYuXHiyJIEjX4pQQvT5yKKRslanNgFnNFosy5SvgVaZBg/kWIESuJffhFku4jQ==@vger.kernel.org, AJvYcCXi0dgqld08r9XeYzRgThyn1jWnCB3mtFO8IWq7ReSzkULwvoAqhCcMMBZHvHrg0O6uRW1Zy60XfObg@vger.kernel.org, AJvYcCXyE4bbDAsyK/qphGvzJmG8olFZyperlypvGf1ZpeNnf0uigvd2YLwxBygNf53uwr7uTFPsns/F60xi@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7ZDNMM92kKzSamDJAyNjvLulNnoIslp1fsEEI6s1hUClZ4Hdx
+	dD+fGTDxCQrlpVxT9qeX/nah48tZLJ1p/OoACBpwBiBiTBB+YujP
+X-Gm-Gg: ASbGnct9JZj1gcspvn009+izO+oHIQVK5x1LQ1tkkw5VV3c2kMpOgwIDtwNN88Ex5b/
+	3HTEGqrjiov4/KSOgA3Mban4+mZDpGAWFwH3aIILr1bqW5E0+yH1lCN0sXSy8BDB/Bbca/8qEM4
+	XXjDOMo92+MJE085JSyIJTXsBHQIcSoTqQ0P2De4nCTaMOilv95ct3Yy7ZoThDCrAhdSxcExGCa
+	DVN7ZSRloJOnMz1IRtzf7SyTgMHSsMnm2vsgp1Gvl++MuXhdT3kQCRM45mcNWwsRTcgu6MTy1Gc
+	2pfDKZYo7RpC+9ffdBJZqmisvsG/gXGh8h4o885O25Tgzw5JZNsRdaJey78NnqlPQrEq/z7EBxv
+	OsatlN1DkBq6Hpa6phH8nxOyVYg==
+X-Google-Smtp-Source: AGHT+IFYoPik8tqIuOOXAJZxxEM4FjnMpyrSDbqpvuiBUw+N4rWidoyXw4/acgqr1fgBuicookECFg==
+X-Received: by 2002:a05:6512:693:b0:545:b28:2fa9 with SMTP id 2adb3069b0e04-5494c122af7mr5686831e87.16.1740987189050;
+        Sun, 02 Mar 2025 23:33:09 -0800 (PST)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5495a7d6a2csm602975e87.227.2025.03.02.23.33.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 02 Mar 2025 23:33:07 -0800 (PST)
+Message-ID: <ce2c1a21-f418-4ed9-9cd3-fe2a68f08c31@gmail.com>
+Date: Mon, 3 Mar 2025 09:33:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,169 +81,113 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] media: dt-bindings: Add dt bindings for
- m2m-deinterlace device
-To: Matthew Majewski <mattwmajewski@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>,
- "Dr. David Alan Gilbert" <linux@treblig.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Uwe Kleine-Konig <u.kleine-koenig@baylibre.com>,
- Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>, devicetree@vger.kernel.org,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250214231759.119481-1-mattwmajewski@gmail.com>
- <20250214231759.119481-2-mattwmajewski@gmail.com>
- <20250218-eggplant-skylark-of-swiftness-dcf6ba@krzk-bin>
- <69cb2e95c291f17cff42b45e7c871f30a85c060d.camel@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <69cb2e95c291f17cff42b45e7c871f30a85c060d.camel@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v4 06/10] iio: adc: ti-ads7924 Drop unnecessary function
+ parameters
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Daniel Scally <djrscally@gmail.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>,
+ Hugo Villeneuve <hvilleneuve@dimonoff.com>, Nuno Sa <nuno.sa@analog.com>,
+ David Lechner <dlechner@baylibre.com>,
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Guillaume Stols <gstols@baylibre.com>,
+ Olivier Moysan <olivier.moysan@foss.st.com>,
+ Dumitru Ceclan <mitrutzceclan@gmail.com>,
+ Trevor Gamblin <tgamblin@baylibre.com>,
+ Matteo Martelli <matteomartelli3@gmail.com>,
+ Alisa-Dariana Roman <alisadariana@gmail.com>,
+ Ramona Alexandra Nechita <ramona.nechita@analog.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev
+References: <cover.1740421248.git.mazziesaccount@gmail.com>
+ <38d39befcca110132fd4349c87fcb5d7ff51a2c8.1740421248.git.mazziesaccount@gmail.com>
+ <20250302034649.2d9ec2a4@jic23-huawei>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20250302034649.2d9ec2a4@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 26/02/2025 23:41, Matthew Majewski wrote:
-> Hi Krzysztof,
+Hi dee Ho again Jonathan (and all),
+
+On 02/03/2025 05:46, Jonathan Cameron wrote:
+> On Mon, 24 Feb 2025 20:34:01 +0200
+> Matti Vaittinen <mazziesaccount@gmail.com> wrote:
 > 
-> On Tue, 2025-02-18 at 09:30 +0100, Krzysztof Kozlowski wrote:
->> On Fri, Feb 14, 2025 at 06:17:58PM -0500, Matthew Majewski wrote:
->>> Create a new yaml schema file to describe the device tree bindings
->>> for
->>> generic m2m-deinterlace device.
->>>
->>> This device is supported on any hardware that provides a MEM_TO_MEM
+>> Device pointer is the only variable which is used by the
+>> ads7924_get_channels_config() and which is declared outside this
+>> function. Still, the function gets the iio_device and i2c_client as
+>> parameters. The sole caller of this function (probe) already has the
+>> device pointer which it can directly pass to the function.
 >>
->> Which device? I don't see here any device name/model.
-> 
-> By "device" I am referring to the m2m-deinterlace device, which I
-> explained is a quasi-virtual device. If this is confusing wording I can
-> change. 
-> 
->> I asked to provide here some examples of devices.
-> 
-> As I wrote, supported devices/hardware is anything that provides a
-> MEM_TO_MEM capable dma-controller with interleaved transfer support. I
-> did not list specific devices because the bindings are supposed to be
-> generic, as they are not describing actual silicon. But if you want me
-
-I already told you that no. Bindings are not supposed to be generic.
-
-From where did you get such information?
-
-> to list some devices which provide a compatible dma-controller, here
-> are devices I found in the current mainline kernel:
-> 
-> - TI OMAP Soc Family
-> - TI Davinci Soc Family
-> - TI Keystone Processor Family
-> - IMX27 Processor and variants
-> - Several Microchip Processors (sama5, sam9x7, sam9x60)
-
-That's too generic - you just listed SoCs, which consist of dozen or
-hundred of devices. Which hardware piece is here?
-
-Maybe this is not for a real device, but then this should be marked clearly.
-
-> 
-> As I mentioned in my original email, I have personally tested on a
-> BeagleBone Black with an AM335X OMAP processor. There are likely many
-> more devices with compatible dma-controllers that could be supported
-> with additional dmaengine driver support. 
-> 
-> 
->>> capable dma channel with interleaved trasfer support. Device tree
->>> bindings are for providing appropriate dma channel to device.
+>> Simplify code by passing the device pointer directly as a parameter
+>> instead of digging it from the iio_device's private data.
 >>
->> Don't describe what DT is, but the hardware.
->>
+>> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> Looking again at this function it doesn't seem to be doing anything
+> useful at all.  It checks the channel nodes are in range, but
+> does nothing with that data. I'd just drop it entirely.
 > 
-> Ok, will remove reference to DT.
+> Ah. I see David suggested the same.
 > 
->>> +description: |-
->>> +  A generic memory2memory device for deinterlacing video using
->>> dmaengine. It can
->>> +  convert between interlaced buffer formats and can convert
->>> interlaced to
->>> +  progressive using a simple line-doubling algorithm. This device
->>> can be used on
->>> +  any hardware that provides a MEM_TO_MEM capable dma controller
->>> that supports
->>> +  interleaved transfers.
->>
->> And how do you program that device to deinterlace? How do you signal
->> end
->> of frame/data when writing to the memory?
->>
->> It still looks all this is for driver :/
->>
-> 
-> All of the deinterlacing is handled by the dma channel. To simplify a
-> bit, m2m-deinterlace basically just translates video format information
-> into appropriate interleaved dma transfers. Everything else (and
-> everything hardware specific) is handled by the dma engine, such as
-> initiation and signaling completion of transfers. 
+> We can't really 'fix' what this was perhaps intended to do now
+> as what it does has become ABI :(
 
 
-So the device is the dma controller and maybe all this should be folded
-into that controller bindings.
+I took another look at this.
+The logic in the ads7924 driver (without this patch) is actually:
 
-> 
-> I think an appropriate analogy for m2m-deinterlace would be spi-gpio.
-> Since spi-gpio leverages gpio for bitbanging the spi protocol, the
-> bindings do not need to describe any clocks, spi-controller registers,
+ads7924_get_channels_config(...)
+{
+	device_for_each_child_node(dev, node) {
+		if (fwnode_property_read_u32(node, "reg", &pval)) ..
+			continue;
 
-Sure, SPI GPIO is Linux driver, not a device and I am asking about it
-all the time.
+		if (channel >= ADS7924_CHANNELS)
+			continue;
 
-> etc. All of the hardware specific components are abstracted away by the
-> gpio controller. But the spi-gpio bindings still exist to specify which
-> gpios are used.
+		num_channels++;
+	}
 
+if (!num_channels)
+	return -EINVAL;
+}
 
+...
 
-Best regards,
-Krzysztof
+ads7924_probe()
+{
+	ret = ads7924_get_channels_config(...);
+	if (ret < 0)
+		return dev_err_probe(...);
+}
+
+So, it still returns an error, if no channels with valid 'reg' property 
+were found from the DT. It will also fail the probe().
+
+Thus, this change is not quite as likely to cause things to break as it 
+seemed. Still, for now anything with even single valid 'channel' has 
+been Ok, even if all the rest were garbage. This new variant would fail 
+if any of the 'channel' nodes contained no or bad 'reg'. Thus this can 
+still break things.
+
+Anyways, I'll follow your suggestion and drop this patch (unless you 
+have second thoughts) - but I will keep the function so it still 
+requires at least 1 valid channel node to be found.
+
+Yours,
+	-- Matti
+
 
