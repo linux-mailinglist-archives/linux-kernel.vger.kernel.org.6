@@ -1,258 +1,187 @@
-Return-Path: <linux-kernel+bounces-542733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3FFDA4CCFD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 21:54:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48C0EA4CD04
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 21:55:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0284189728F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:54:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64161189681D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:55:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C075B23643A;
-	Mon,  3 Mar 2025 20:53:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D520523537A;
+	Mon,  3 Mar 2025 20:54:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="uOFh884x"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QX6aeBRf"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD5F7235C11
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 20:53:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C5BF215041;
+	Mon,  3 Mar 2025 20:54:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741035222; cv=none; b=SnwQvVhCGUQDlGXYhyNTCeYpf8iKcaQ22gJ04b4vZW05YYTssoxNt3HTQXQQwty7GGjQ5bMJLNLIHVF7bQHZle3giXgDDEb8FnUxUm8eNfR6VcT8dVfFWj6xszVQemDeW1A1hKGOHUCg8Nso/+nBLVegc10BaAOJnG9ZsAV3Tz8=
+	t=1741035294; cv=none; b=bp4cU52gy7tONyEP4q/lEh705q+b5F5o9srWExlsuR8lD8X7gLMYVCkzHEhIuFbd4fw5cyR5VQRqKJjhFMXFkbMbCM3qykBCfEstUKM4qBLOT1PFvI9ekBJpUk3/an2dJ5AYfv1DysyhPXRnyD6SP8npKqG5VvbZ4Q/mA5e1w7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741035222; c=relaxed/simple;
-	bh=OedX+KmRNsSP5qwD3uo/SOxs71msjzcbVQqNZ/HnSqM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qCf2cKMAJV/is/NDN8lLjK256yGiSd7tYVfwsJKNXHiW1XmWRRnWahTvu6SFB1/Rtm8reeiyQqrExoqkyImKRn4jUehUN1M4PwmepeUjfp0XMj/pfdnonPfpyizD3uTlvQ54V2Z0xUF9pvWncjuhZSlyu1fDx1bR82oWNMSllL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=uOFh884x; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-223480ea43aso122125415ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 12:53:38 -0800 (PST)
+	s=arc-20240116; t=1741035294; c=relaxed/simple;
+	bh=xVCVyhzR3znyQ+Dlc6TH1lqIzrAr9sb7OwnE/9udCog=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=MiYebNTAX8gM6Ecqlg1nVxivcj/9gjyOcAmKcJbrLR8wgsUupimlqOWc8iZ0aRmnA2trj9y6CktWNAciVDXgQqrNWMn+S7KonK0NhglY6bva3BQIDj/2BIBCGC50a41fvtgVXU6cfV1JoPhIU5IaVfvYMoqBJtcdWB3XwkOHjbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QX6aeBRf; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-aaec111762bso903503266b.2;
+        Mon, 03 Mar 2025 12:54:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1741035218; x=1741640018; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g5AQc/OecpKtLu8kT/3BCu+mfDeh9ylI+xKZIi5ekec=;
-        b=uOFh884x43VjW66KHj/ZZO5DIK3e9SL2nYv+FKMa5847kN/GmXmVs+PWlp1QTxfN/G
-         KmTY50SsLJmBQbrY73DGWjOKO8Ul+s6xPnd+GOYModSBV5WBm2Kz4WrtgYecaYBOZIoi
-         Oq7YfJTCnMZYTRvbxcsGE2WBg0EIkP1mPaGanRCHWLotjO9sZugcDrXTFNZ6tMUbj3cm
-         1avLGpHp5VA7h/Zikm2Zn6Mc2+2khEKH5Q5zqMIGldD4oaVmA/+jwxqRTdlVnhAbfWDI
-         BDRlZvsLuLuX8gJPxGLZv8ksiIDcSmt4k5Q/jg0nCuHowlOZ6QncZgcoGRhKWC+zvvO0
-         JYFw==
+        d=gmail.com; s=20230601; t=1741035291; x=1741640091; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fQhzWt7YqEgE2rzFMAAkDAkDqzJUmTO0QBEUSSYff7c=;
+        b=QX6aeBRfk64Gs1yi0Sfww4c74JRJ5lDrQgOVyMdzLV2Gev88C6/OTdW6mVccHuZ7EG
+         ezd1KN3hvdl+2j+4YFVoxXkMxV0DGvKYCtW1cvzoDp7QLv3YiLIxutGDQHqwM33YwQC9
+         qVJ7pwzbnn5jztBowzjfyOuEN0zWEnmQRRTzjMfYiYULBIwD5g1zlcwPuUJgq2SWfOkh
+         EfiqcXVvuD9/TWgC/OdNL28JTJI2tshG0x7qt89jWDYCYHHM004X5YC8mSzzeQLsCIqU
+         pL4g9xBW4h8t7zYiR4mEG8xQ+rOg35QoI+tu6sevh/890bJesF8oonYmQHJ72aVMmfN7
+         fPww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741035218; x=1741640018;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g5AQc/OecpKtLu8kT/3BCu+mfDeh9ylI+xKZIi5ekec=;
-        b=kFXMxQm3LwrAU+hwGDJLWmTPRedndBRuIjDdJCKAUCG6diDv8Dowc3HjopPSNQjnxt
-         5istf2ic19cP7TRB5dvvH9mliboMFHvLnpxF6TZW+zPgghWFijGVj5rssYPmB853j6Pb
-         7M1xJVGQZ/EKnchBIEhF6KqyVZ/7SJrMoxcPh2pc8FlJCZELKWBJAIxO8HHwOfm7tzHs
-         nwjIZWvDjoKHbm+we/w9+J3KidTllus0RYiPkMm3LXGd3kMihr63i9O0ZqvVqj2kpm05
-         0AdiqQBon0OT/6tDXbhZJEaJkapAbDUyJAC4Pb4mPFQp+aBLZtHUndI7kTct5guX1+Ci
-         z+Bg==
-X-Forwarded-Encrypted: i=1; AJvYcCUcrLEmeeBOGLJjsrP7T5eeK3BV5ELVhe45+bB6DLAQEt9vRDaNISYfsHwlUDF3IM8yM0Og7JTC+7/Gc2w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4Fwf53/+PERgyAsw9KQF1ZXI8siqqn/0Xd2o/tr2a9Vk5eg99
-	fj2uos0KGOZ77gJxVx+FaQkZ8wqlD2NTL4ASmJJHxELT48XA37kuc3BwPqrE9N/LCmfoP92l2Cb
-	/eB8N9ob+fSyjnL7VuwPts7Iez2vdFj7IykpYlg==
-X-Gm-Gg: ASbGncsr+hkPCLEw42fqScDrPmJvSRX/R6+BQGtqU9NlsfCLhneL8rtkm+Mr4Fu8JDV
-	e7sfidtK1sCJNikqDcquuC1xFyHwx0w32oCac5IZAZz97OQ7DPTPpp8J5bfG+5HJ7b9DQii/6ue
-	4nruObCcblH5BgxBss/S1Er8lG
-X-Google-Smtp-Source: AGHT+IFxmaYGsqxuWzE42pNki0QyERt8aeeJIc4FpkFS3fZJz6bTIl+8F5KKzfYsUutrBaR5UQYgO+HCr+aSIeXuR/8=
-X-Received: by 2002:a17:902:ec82:b0:21f:89e5:2712 with SMTP id
- d9443c01a7336-22369247861mr199207785ad.39.1741035217946; Mon, 03 Mar 2025
- 12:53:37 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741035291; x=1741640091;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fQhzWt7YqEgE2rzFMAAkDAkDqzJUmTO0QBEUSSYff7c=;
+        b=jHPKd06f9pGMjREoAMm5HYDFCKP31rwPBnbi4renbPNM/V6mtS0N2oquaOnhnW8Rj0
+         HgB9enzHmrPvWXTJFT0jZXiW2SpxfcO087HX4Ob5GRQHwKCkzOxASIdfax69VQNCtafo
+         J1c2x6sEqJVGD9SOEfFRgqyB41sS3RC4mcBi75cCZl94WPmpQJyzk+OgmhaJe/+orv9m
+         /ZtHkbWyHzGaTYPM94NpW2mr+zmnpHQ41Wub0JVJFfkvad85avfznkP7hynEfTmDJ2MV
+         AS1c0Y7jVp3ldqhjN2A7Fh8RU60fEaAtGvAZybhuwpCdsVj/4hfvM8wmijg9Q2my8Ioh
+         gBfA==
+X-Forwarded-Encrypted: i=1; AJvYcCUA1EsV4L+McZOvzoJifas044PJQG0Nfl2reKhCk08Okt6pdT5wr+zXNhIhCOtSnzfP5TlQUBgaxWam@vger.kernel.org, AJvYcCVcNd4QaEZUj8p/aomf4eDHbdBAagb4x7N7mHhXWT8T0WyrGJ7FmgGcqfLEUQmaaMHmDub7bSz4ZDi/1cG5@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/CB4CKJth0CM3hNQpfKmqC7Qz+YjJq09K+pIQR/2XADisSj4i
+	HEXq1G3DP91CTqj0uAFj7nc+4RXWuYjBAJf3iygrvmX+gXShSvZc
+X-Gm-Gg: ASbGncvD2RdYkvvvwcu12oG3juPduJPjXz+3MUxlFtXnBowV1HgLQI9xNNFdIVGs7TO
+	wNOffLckIRdraYocoGjIjm8XCHxcUAQr0KIpP2tf1rB90gEDFR6HTkQIENLpi/3bmWDvC7Pautq
+	e+qdPb8K5mKuGBIpqunZbZBMq3sHgV1SIIPAbjrvupisIrlHnTRFgXX5qA6zE/Fg6TuTLL5bE3e
+	F/0Q0IkTDnEiMJ0fUP0Y1O9DSg17vBLq3/LrQsPD6iALjMh+qxIVNKfJ7d/2w7sHN6CXzzQM7wO
+	icT3woiLOYwgZbOdEs+rP/G0fmbnJiIe+FN7QT3ylRNTf6Ok94a1DRBA9rzPx2c7pMnI5BnELDX
+	bchE6GqY5lRUhQM4=
+X-Google-Smtp-Source: AGHT+IGjsLpBcJ4huPnLK9kNshjLmzCr3cNTlyU/iMrHPVTnl0eG1OpQl1Ob0qh8cGft9hFa7R01SQ==
+X-Received: by 2002:a17:907:3f9a:b0:ab7:8079:78ae with SMTP id a640c23a62f3a-abf265e9bcfmr1729909866b.44.1741035290437;
+        Mon, 03 Mar 2025 12:54:50 -0800 (PST)
+Received: from hex.my.domain (83.8.122.142.ipv4.supernova.orange.pl. [83.8.122.142])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf76063ab8sm266955566b.73.2025.03.03.12.54.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 12:54:50 -0800 (PST)
+From: Artur Weber <aweber.kernel@gmail.com>
+Subject: [PATCH v3 0/6] pinctrl: bcm281xx: Add support for BCM21664 pinmux
+Date: Mon, 03 Mar 2025 21:54:45 +0100
+Message-Id: <20250303-bcm21664-pinctrl-v3-0-5f8b80e4ab51@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250226-kvm_pmu_improve-v1-0-74c058c2bf6d@rivosinc.com>
- <20250226-kvm_pmu_improve-v1-3-74c058c2bf6d@rivosinc.com> <20250227-eb9e3d8de1de2ff609ac8f64@orel>
-In-Reply-To: <20250227-eb9e3d8de1de2ff609ac8f64@orel>
-From: Atish Kumar Patra <atishp@rivosinc.com>
-Date: Mon, 3 Mar 2025 12:53:27 -0800
-X-Gm-Features: AQ5f1Jrqg0QCQLdb27_ngzuhj87U0gO9gK8_pEhgxfLHs93uJVPCudYkbQ6uAvs
-Message-ID: <CAHBxVyF=gteGvQqbCAy88heLzfAWebuUH2PXud=zvMjmxsE0YA@mail.gmail.com>
-Subject: Re: [PATCH 3/4] KVM: riscv: selftests: Change command line option
-To: Andrew Jones <ajones@ventanamicro.com>
-Cc: Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, kvm@vger.kernel.org, 
-	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABUXxmcC/23NTQrCMBCG4atI1kaSiSbWlfcQF20yaQf6R1KCU
+ np304JQ0OX7wTwzs4iBMLLbYWYBE0Ua+hzqeGC2KfsaObncDARcBAjNK9uB1PrMR+rtFFoulXX
+ GKW+uWrN8Ngb09NrIxzN3Q3Eawnv7kOS6fjHziyXJBUdjfWmLCpyq7nVXUnuyQ8dWLMEOAPkHg
+ AwYJ70AU3iUeg8sy/IBncSBSPEAAAA=
+X-Change-ID: 20250206-bcm21664-pinctrl-13cd7d3f7866
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ Stanislav Jakubek <stano.jakubek@gmail.com>, 
+ ~postmarketos/upstreaming@lists.sr.ht, 
+ Artur Weber <aweber.kernel@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1741035289; l=3492;
+ i=aweber.kernel@gmail.com; s=20231030; h=from:subject:message-id;
+ bh=xVCVyhzR3znyQ+Dlc6TH1lqIzrAr9sb7OwnE/9udCog=;
+ b=o44mWwlPUdj/Bs+98rpZroni8KRsbLqO0CiFsLgQf4GmNufT1fNciaLL9kcUepaxRJom2cryS
+ t1d1JLnE+uvBopdTdZvrp9A/GiuMXTayWWjstLeS/CzL5DMmde9PFv0
+X-Developer-Key: i=aweber.kernel@gmail.com; a=ed25519;
+ pk=RhDBfWbJEHqDibXbhNEBAnc9FMkyznGxX/hwfhL8bv8=
 
-On Thu, Feb 27, 2025 at 12:08=E2=80=AFAM Andrew Jones <ajones@ventanamicro.=
-com> wrote:
->
-> On Wed, Feb 26, 2025 at 12:25:05PM -0800, Atish Patra wrote:
-> > The PMU test commandline option takes an argument to disable a
-> > certain test. The initial assumption behind this was a common use case
-> > is just to run all the test most of the time. However, running a single
-> > test seems more useful instead. Especially, the overflow test has been
-> > helpful to validate PMU virtualizaiton interrupt changes.
-> >
-> > Switching the command line option to run a single test instead
-> > of disabling a single test also allows to provide additional
-> > test specific arguments to the test. The default without any options
-> > remains unchanged which continues to run all the tests.
-> >
-> > Signed-off-by: Atish Patra <atishp@rivosinc.com>
-> > ---
-> >  tools/testing/selftests/kvm/riscv/sbi_pmu_test.c | 40 +++++++++++++++-=
---------
-> >  1 file changed, 26 insertions(+), 14 deletions(-)
-> >
-> > diff --git a/tools/testing/selftests/kvm/riscv/sbi_pmu_test.c b/tools/t=
-esting/selftests/kvm/riscv/sbi_pmu_test.c
-> > index 284bc80193bd..533b76d0de82 100644
-> > --- a/tools/testing/selftests/kvm/riscv/sbi_pmu_test.c
-> > +++ b/tools/testing/selftests/kvm/riscv/sbi_pmu_test.c
-> > @@ -39,7 +39,11 @@ static bool illegal_handler_invoked;
-> >  #define SBI_PMU_TEST_SNAPSHOT        BIT(2)
-> >  #define SBI_PMU_TEST_OVERFLOW        BIT(3)
-> >
-> > -static int disabled_tests;
-> > +struct test_args {
-> > +     int disabled_tests;
-> > +};
-> > +
-> > +static struct test_args targs;
-> >
-> >  unsigned long pmu_csr_read_num(int csr_num)
-> >  {
-> > @@ -604,7 +608,11 @@ static void test_vm_events_overflow(void *guest_co=
-de)
-> >       vcpu_init_vector_tables(vcpu);
-> >       /* Initialize guest timer frequency. */
-> >       timer_freq =3D vcpu_get_reg(vcpu, RISCV_TIMER_REG(frequency));
-> > +
-> > +     /* Export the shared variables to the guest */
-> >       sync_global_to_guest(vm, timer_freq);
-> > +     sync_global_to_guest(vm, vcpu_shared_irq_count);
-> > +     sync_global_to_guest(vm, targs);
-> >
-> >       run_vcpu(vcpu);
-> >
-> > @@ -613,28 +621,30 @@ static void test_vm_events_overflow(void *guest_c=
-ode)
-> >
-> >  static void test_print_help(char *name)
-> >  {
-> > -     pr_info("Usage: %s [-h] [-d <test name>]\n", name);
-> > -     pr_info("\t-d: Test to disable. Available tests are 'basic', 'eve=
-nts', 'snapshot', 'overflow'\n");
-> > +     pr_info("Usage: %s [-h] [-t <test name>]\n", name);
-> > +     pr_info("\t-t: Test to run (default all). Available tests are 'ba=
-sic', 'events', 'snapshot', 'overflow'\n");
->
-> It's probably fine to drop '-d', since we don't make any claims about
-> support, but doing so does risk breaking some CI somewhere. If that
-> potential breakage is a concern, then we could keep '-d', since nothing
-> stops us from having both.
+BCM21664 is another chip from the Kona line of Broadcom SoCs, and
+its pinmux shares a lot of similarities with the BCM281xx pinmux.
 
-I don't think we have so much legacy usage with this test that we need
-to maintain both options.
-Since this was merged only a few cycles ago, I assume that it's not
-available in many CI to cause breakage.
-If somebody running CI actually shouts that it breaks their setup,
-sure. Otherwise, I feel it will be just confusing to the users.
+Add support for the BCM21664 pinmux controller to the BCM281xx driver.
 
->
-> >       pr_info("\t-h: print this help screen\n");
-> >  }
-> >
-> >  static bool parse_args(int argc, char *argv[])
-> >  {
-> >       int opt;
-> > -
-> > -     while ((opt =3D getopt(argc, argv, "hd:")) !=3D -1) {
-> > +     int temp_disabled_tests =3D SBI_PMU_TEST_BASIC | SBI_PMU_TEST_EVE=
-NTS | SBI_PMU_TEST_SNAPSHOT |
-> > +                               SBI_PMU_TEST_OVERFLOW;
-> > +     while ((opt =3D getopt(argc, argv, "h:t:n:")) !=3D -1) {
->
-> '-h' doesn't need an argument and '-n' should be introduced with the next
-> patch.
->
+This also enables pinmux support for the BCM23550, which has an
+identical pinmux config to the BCM21664 (hence they can share a
+single compatible, brcm,bcm21664-pinctrl).
 
-Yes. Thanks for catching it. I will fix it in v2.
+While we're at it - fix a bug that affected higher registers in the
+BCM281XX driver and replace bare "unsigned" with "unsigned int" to
+comply with checkpatch requirements.
 
-> >               switch (opt) {
-> > -             case 'd':
-> > +             case 't':
-> >                       if (!strncmp("basic", optarg, 5))
-> > -                             disabled_tests |=3D SBI_PMU_TEST_BASIC;
-> > +                             temp_disabled_tests &=3D ~SBI_PMU_TEST_BA=
-SIC;
-> >                       else if (!strncmp("events", optarg, 6))
-> > -                             disabled_tests |=3D SBI_PMU_TEST_EVENTS;
-> > +                             temp_disabled_tests &=3D ~SBI_PMU_TEST_EV=
-ENTS;
-> >                       else if (!strncmp("snapshot", optarg, 8))
-> > -                             disabled_tests |=3D SBI_PMU_TEST_SNAPSHOT=
-;
-> > +                             temp_disabled_tests &=3D ~SBI_PMU_TEST_SN=
-APSHOT;
-> >                       else if (!strncmp("overflow", optarg, 8))
-> > -                             disabled_tests |=3D SBI_PMU_TEST_OVERFLOW=
-;
-> > +                             temp_disabled_tests &=3D ~SBI_PMU_TEST_OV=
-ERFLOW;
-> >                       else
-> >                               goto done;
-> > +                     targs.disabled_tests =3D temp_disabled_tests;
-> >                       break;
-> >               case 'h':
-> >               default:
-> > @@ -650,25 +660,27 @@ static bool parse_args(int argc, char *argv[])
-> >
-> >  int main(int argc, char *argv[])
-> >  {
-> > +     targs.disabled_tests =3D 0;
-> > +
-> >       if (!parse_args(argc, argv))
-> >               exit(KSFT_SKIP);
-> >
-> > -     if (!(disabled_tests & SBI_PMU_TEST_BASIC)) {
-> > +     if (!(targs.disabled_tests & SBI_PMU_TEST_BASIC)) {
-> >               test_vm_basic_test(test_pmu_basic_sanity);
-> >               pr_info("SBI PMU basic test : PASS\n");
-> >       }
-> >
-> > -     if (!(disabled_tests & SBI_PMU_TEST_EVENTS)) {
-> > +     if (!(targs.disabled_tests & SBI_PMU_TEST_EVENTS)) {
-> >               test_vm_events_test(test_pmu_events);
-> >               pr_info("SBI PMU event verification test : PASS\n");
-> >       }
-> >
-> > -     if (!(disabled_tests & SBI_PMU_TEST_SNAPSHOT)) {
-> > +     if (!(targs.disabled_tests & SBI_PMU_TEST_SNAPSHOT)) {
-> >               test_vm_events_snapshot_test(test_pmu_events_snaphost);
-> >               pr_info("SBI PMU event verification with snapshot test : =
-PASS\n");
-> >       }
-> >
-> > -     if (!(disabled_tests & SBI_PMU_TEST_OVERFLOW)) {
-> > +     if (!(targs.disabled_tests & SBI_PMU_TEST_OVERFLOW)) {
-> >               test_vm_events_overflow(test_pmu_events_overflow);
-> >               pr_info("SBI PMU event verification with overflow test : =
-PASS\n");
-> >       }
-> >
-> > --
-> > 2.43.0
-> >
->
-> Otherwise,
->
-> Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+---
+By the way - while working on this patch, I noticed two things that
+are not implemented in mainline, but seem to be present in the pin
+controller regs according to the RDB[1][2]:
+
+- On both BCM21664 and BCM281XX, TRACE* pins only have two bits for
+  DRV_STR and no HYST bit. That seems like it deserves its own pin
+  type; however, since I don't know how to translate the reduced
+  DRV_STR value to a drive strength in mA, I did not implement it.
+  For now, I kept the same type for BCM21664 as for BCM281XX for these
+  pins (standard).
+
+- On both BCM21664 and BCM281XX, two SIM-related pins (SIM and SIM2
+  on BCM281XX, SIMDAT and SSPDO on BCM21664) have extra PUPM0 and PUPM1
+  offsets (bits 11 and 12 respectively). Vendor kernel does not do
+  anything with these bits, so I don't know what they do.
+
+If any Broadcom engineers could shed some light on these, I'd be
+grateful. Otherwise, neither of these are pressing issues, and this
+patchset is complete without them (they can be fixed in another
+patchset).
+
+[1] https://github.com/knuxdroid/android_kernel_samsung_baffinlite/blob/cm-12.1/arch/arm/mach-hawaii/include/mach/rdb/brcm_rdb_padctrlreg.h
+[2] https://github.com/s2plus/android_kernel_samsung_galaxys2plus/blob/cm-10.1_base-4.2/arch/arm/mach-capri/include/mach/rdb/brcm_rdb_padctrlreg.h
+
+---
+Changes in v3:
+- Rebase on latest linux-pinctrl.git for-next branch
+- Fix DT binding example for I2C pins
+- Make DT binding more strict
+- Link to v2: https://lore.kernel.org/r/20250221-bcm21664-pinctrl-v2-0-7d1f0279fe16@gmail.com
+
+Changes in v2:
+- Rebase on linux-pinctrl.git for-next branch, drop patch 2 ("pinctrl:
+  bcm281xx: Fix incorrect regmap max_registers value") as it has been
+  applied separately
+- Fix "initializer element is not a compile-time constant" warning
+- Fix unused variable warning
+- Simplify DT binding
+- Link to v1: https://lore.kernel.org/r/20250207-bcm21664-pinctrl-v1-0-e7cfac9b2d3b@gmail.com
+
+---
+Artur Weber (6):
+      dt-bindings: pinctrl: Add bindings for BCM21664 pin controller
+      pinctrl: bcm281xx: Use "unsigned int" instead of bare "unsigned"
+      pinctrl: bcm281xx: Provide pinctrl device info as OF platform data
+      pinctrl: bcm281xx: Add support for BCM21664 pinmux
+      ARM: dts: bcm2166x-common: Add pinctrl node
+      ARM: dts: bcm2166x: Add bcm2166x-pinctrl DTSI
+
+ .../bindings/pinctrl/brcm,bcm21664-pinctrl.yaml    | 152 ++++
+ arch/arm/boot/dts/broadcom/bcm2166x-common.dtsi    |   7 +
+ arch/arm/boot/dts/broadcom/bcm2166x-pinctrl.dtsi   | 297 +++++++
+ drivers/pinctrl/bcm/pinctrl-bcm281xx.c             | 849 +++++++++++++++++++--
+ 4 files changed, 1242 insertions(+), 63 deletions(-)
+---
+base-commit: 920d1159328017ef0d57cb3172160ad7d33a9709
+change-id: 20250206-bcm21664-pinctrl-13cd7d3f7866
+
+Best regards,
+-- 
+Artur Weber <aweber.kernel@gmail.com>
+
 
