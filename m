@@ -1,59 +1,45 @@
-Return-Path: <linux-kernel+bounces-540980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-540981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28FAFA4B729
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 05:28:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 54C89A4B72C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 05:34:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 358143AD364
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 04:27:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E59593ADC2E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 04:34:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 614CC1D86DC;
-	Mon,  3 Mar 2025 04:27:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 892AF1C3BEE;
+	Mon,  3 Mar 2025 04:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b="f58rg0mU";
-	dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b="f58rg0mU"
-Received: from mail.mleia.com (mleia.com [178.79.152.223])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="nCnBb+Q6"
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 298AB13C9D4;
-	Mon,  3 Mar 2025 04:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.79.152.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D3413D8B1;
+	Mon,  3 Mar 2025 04:34:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740976074; cv=none; b=dhQLAPyQ7sqFJB+R0F3d9g5H8D+JIg39e2YIwAS+pFspk5FRTxq//J5Fy0/cC2qKjyCiXEDtRKkOEp8Q0Zq8KbgCpGlXILqshGe59+GerKfzNjJkUz1fQJqQcK567nEkKXC8rfqWIEjYG89m5WqfwvYm/8woJa3lwRA1Yv4qoQA=
+	t=1740976454; cv=none; b=sgw5hIugkrvqkAN2FOKNIQJaPD/U1PuuSPPWt3GQhM7J2KNo0w7Z4K0z2tAV5DJG82RF8uiovntZepkhvbBdJFSpqWEmJNde7M6fXWKlHAuheZNHqdn4MAAoKXgrD49uSU56BHO20D8+foUvPduRvOoZIaRrmO3iP6l7GRHUAkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740976074; c=relaxed/simple;
-	bh=HNnaj8o2a9E4BdcLiTNMcgTKpVot/6Pzc4Y5SZw5i+4=;
+	s=arc-20240116; t=1740976454; c=relaxed/simple;
+	bh=Cfhu4+EFgL7/rbjrHwPakoXx6h9aDrjyMs+AGTtg7rk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ohypdMT6tCAKNg5rsDRt6J8ErShKfz7ndWSJ8sIXfR4AsLeyG+6W8hzfkW0Dvd73sehnvtnvp5NH18NhlHoc8jwUokf7J1Hzu5Gs1AwDiG5naDl4tRmFS1lr/v3/CM2kgZRB2Ba9ZblfNFGHhORCAriP8/W7lDp+IU8tGf3LDJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mleia.com; spf=none smtp.mailfrom=mleia.com; dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b=f58rg0mU; dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b=f58rg0mU; arc=none smtp.client-ip=178.79.152.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mleia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mleia.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mleia.com; s=mail;
-	t=1740976064; bh=HNnaj8o2a9E4BdcLiTNMcgTKpVot/6Pzc4Y5SZw5i+4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=f58rg0mUSJFkiF2jKMIj4qql/VpoAyyk2nXAiakanyYdo8VsxK/clVewI7yYdgPGL
-	 6FFFrqkVc68kX3g2TLDLG6iZUOLguuhahEKtCKcMOij2k+tbdhRw2XABSc2epNDFHr
-	 wggn5ZLW4bElEdFmBib62x5CgD72TiIAw/ZEBY6yK+x+0l8WDj6KAxqN+3L1911FGB
-	 5VfQEOeZOiuzFJmXSPTPaJgjKVTiHYuCcr+UwuGvaEDoZLjsYay4pG573+HOw/RQja
-	 F7sdqWyXokSgxeRnybAdxnebEu3gjfqth76/n53hWFhJR9S26reJhZTtxZ2S5+l0dp
-	 iGsdFJq2lNlSw==
-Received: from mail.mleia.com (localhost [127.0.0.1])
-	by mail.mleia.com (Postfix) with ESMTP id C6A653A627F;
-	Mon,  3 Mar 2025 04:27:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mleia.com; s=mail;
-	t=1740976064; bh=HNnaj8o2a9E4BdcLiTNMcgTKpVot/6Pzc4Y5SZw5i+4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=f58rg0mUSJFkiF2jKMIj4qql/VpoAyyk2nXAiakanyYdo8VsxK/clVewI7yYdgPGL
-	 6FFFrqkVc68kX3g2TLDLG6iZUOLguuhahEKtCKcMOij2k+tbdhRw2XABSc2epNDFHr
-	 wggn5ZLW4bElEdFmBib62x5CgD72TiIAw/ZEBY6yK+x+0l8WDj6KAxqN+3L1911FGB
-	 5VfQEOeZOiuzFJmXSPTPaJgjKVTiHYuCcr+UwuGvaEDoZLjsYay4pG573+HOw/RQja
-	 F7sdqWyXokSgxeRnybAdxnebEu3gjfqth76/n53hWFhJR9S26reJhZTtxZ2S5+l0dp
-	 iGsdFJq2lNlSw==
-Message-ID: <09acba97-70e1-448e-8453-c4e1f67a035c@mleia.com>
-Date: Mon, 3 Mar 2025 06:27:43 +0200
+	 In-Reply-To:Content-Type; b=ABkcUzQMakjsKQKS866FhqbboPB8DIwTtt+Y9Re6DG8+cRi1OFzU6NEm7HGygGRm6SOn+YZfcez97t4J/jYcaXwEYHwSlJrifKgUN63Puo+AkHKngV3QxWSvhq3ykv9fmxrNLXOrVA/FkmqPV30Za919B3P7oIRdxYyqV23o4i4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=nCnBb+Q6; arc=none smtp.client-ip=115.124.30.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1740976441; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=gFgZL4SK+vTz1A6HMCuB3ry9mqMa97WAbrHPo05jn3k=;
+	b=nCnBb+Q6xDb+yp4wPYQ5L8ZxhbS9og1BDlaCJiuaZotQAPIVGEpgVMhZ9XO2TP18TmRxmdsGT23InevpB3J7fqph0eMHxuoPp+jF7Nz0yPFXWiM1BDrf5zn4kKDY77dPIotYhEfBF1dZzy76rF7NPEMS1MFes1f8E0mtDUSceXE=
+Received: from 30.246.161.128(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WQYHNkC_1740976439 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 03 Mar 2025 12:34:00 +0800
+Message-ID: <1dea64ef-3c9f-4bff-820f-34d8f3a6a1d4@linux.alibaba.com>
+Date: Mon, 3 Mar 2025 12:33:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,131 +47,179 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] dt-bindings: interrupt-controller: Convert
- nxp,lpc3220-mic.txt to yaml format
-Content-Language: ru-RU
-To: Leonardo Felipe Takao Hirata <leo.fthirata@gmail.com>,
- tglx@linutronix.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- skhan@linuxfoundation.org, linux-kernel-mentees@lists.linuxfoundation.org
-References: <20250228034021.607135-1-leo.fthirata@gmail.com>
-From: Vladimir Zapolskiy <vz@mleia.com>
-In-Reply-To: <20250228034021.607135-1-leo.fthirata@gmail.com>
+Subject: Re: [PATCH v4 3/3] PCI/AER: Report fatal errors of RCiEP and EP if
+ link recoverd
+To: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, bhelgaas@google.com, kbusch@kernel.org
+Cc: mahesh@linux.ibm.com, oohall@gmail.com, Jonathan.Cameron@huawei.com,
+ terry.bowman@amd.com, tianruidong@linux.alibaba.com
+References: <20250217024218.1681-1-xueshuai@linux.alibaba.com>
+ <20250217024218.1681-4-xueshuai@linux.alibaba.com>
+ <8a833aaf-53aa-4e56-a560-2b84a6e9c28c@linux.intel.com>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <8a833aaf-53aa-4e56-a560-2b84a6e9c28c@linux.intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-49551924 
-X-CRM114-CacheID: sfid-20250303_042744_836100_F3D90AA7 
-X-CRM114-Status: GOOD (  11.71  )
+Content-Transfer-Encoding: 8bit
 
-Hello Leonardo.
 
-On 2/28/25 05:39, Leonardo Felipe Takao Hirata wrote:
-> Convert NXP LPC3220-MIC to DT schema.
+
+在 2025/3/3 11:43, Sathyanarayanan Kuppuswamy 写道:
 > 
-> Signed-off-by: Leonardo Felipe Takao Hirata <leo.fthirata@gmail.com>
-> ---
-> Changes in v3:
->   - Add interrupts property description
->   - Fix interrupts items descriptions
->   - Remove else condition
-> ---
+> On 2/16/25 6:42 PM, Shuai Xue wrote:
+>> The AER driver has historically avoided reading the configuration space of
+>> an endpoint or RCiEP that reported a fatal error, considering the link to
+>> that device unreliable. Consequently, when a fatal error occurs, the AER
+>> and DPC drivers do not report specific error types, resulting in logs like:
+>>
+>>    pcieport 0000:30:03.0: EDR: EDR event received
+>>    pcieport 0000:30:03.0: DPC: containment event, status:0x0005 source:0x3400
+>>    pcieport 0000:30:03.0: DPC: ERR_FATAL detected
+>>    pcieport 0000:30:03.0: AER: broadcast error_detected message
+>>    nvme nvme0: frozen state error detected, reset controller
+>>    nvme 0000:34:00.0: ready 0ms after DPC
+>>    pcieport 0000:30:03.0: AER: broadcast slot_reset message
+>>
+>> AER status registers are sticky and Write-1-to-clear. If the link recovered
+>> after hot reset, we can still safely access AER status of the error device.
+>> In such case, report fatal errors which helps to figure out the error root
+>> case.
+>>
+>> After this patch, the logs like:
+>>
+>>    pcieport 0000:30:03.0: EDR: EDR event received
+>>    pcieport 0000:30:03.0: DPC: containment event, status:0x0005 source:0x3400
+>>    pcieport 0000:30:03.0: DPC: ERR_FATAL detected
+>>    pcieport 0000:30:03.0: AER: broadcast error_detected message
+>>    nvme nvme0: frozen state error detected, reset controller
+>>    pcieport 0000:30:03.0: waiting 100 ms for downstream link, after activation
+>>    nvme 0000:34:00.0: ready 0ms after DPC
+>>    nvme 0000:34:00.0: PCIe Bus Error: severity=Uncorrectable (Fatal), type=Data Link Layer, (Receiver ID)
+>>    nvme 0000:34:00.0:   device [144d:a804] error status/mask=00000010/00504000
+>>    nvme 0000:34:00.0:    [ 4] DLP                    (First)
+>>    pcieport 0000:30:03.0: AER: broadcast slot_reset message
+> 
+> IMO, above info about device error details is more of a debug info. Since the
+> main use of this info use to understand more details about the recovered
+> DPC error. So I think is better to print with debug tag. Lets see what others
+> think.
+> 
+> Code wise, looks fine to me.
 
-<snip>
+thanks, looking forward to more feedback.
+> 
+> 
+> 
+>> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+>> ---
+>>   drivers/pci/pci.h      |  3 ++-
+>>   drivers/pci/pcie/aer.c | 11 +++++++----
+>>   drivers/pci/pcie/dpc.c |  2 +-
+>>   drivers/pci/pcie/err.c |  9 +++++++++
+>>   4 files changed, 19 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+>> index 870d2fbd6ff2..e852fa58b250 100644
+>> --- a/drivers/pci/pci.h
+>> +++ b/drivers/pci/pci.h
+>> @@ -549,7 +549,8 @@ struct aer_err_info {
+>>       struct pcie_tlp_log tlp;    /* TLP Header */
+>>   };
+>> -int aer_get_device_error_info(struct pci_dev *dev, struct aer_err_info *info);
+>> +int aer_get_device_error_info(struct pci_dev *dev, struct aer_err_info *info,
+>> +                  bool link_healthy);
+>>   void aer_print_error(struct pci_dev *dev, struct aer_err_info *info);
+>>   int pcie_read_tlp_log(struct pci_dev *dev, int where, int where2,
+>> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+>> index 508474e17183..bfb67db074f0 100644
+>> --- a/drivers/pci/pcie/aer.c
+>> +++ b/drivers/pci/pcie/aer.c
+>> @@ -1197,12 +1197,14 @@ EXPORT_SYMBOL_GPL(aer_recover_queue);
+>>    * aer_get_device_error_info - read error status from dev and store it to info
+>>    * @dev: pointer to the device expected to have a error record
+>>    * @info: pointer to structure to store the error record
+>> + * @link_healthy: link is healthy or not
+>>    *
+>>    * Return 1 on success, 0 on error.
+>>    *
+>>    * Note that @info is reused among all error devices. Clear fields properly.
+>>    */
+>> -int aer_get_device_error_info(struct pci_dev *dev, struct aer_err_info *info)
+>> +int aer_get_device_error_info(struct pci_dev *dev, struct aer_err_info *info,
+>> +                  bool link_healthy)
+>>   {
+>>       int type = pci_pcie_type(dev);
+>>       int aer = dev->aer_cap;
+>> @@ -1226,7 +1228,8 @@ int aer_get_device_error_info(struct pci_dev *dev, struct aer_err_info *info)
+>>       } else if (type == PCI_EXP_TYPE_ROOT_PORT ||
+>>              type == PCI_EXP_TYPE_RC_EC ||
+>>              type == PCI_EXP_TYPE_DOWNSTREAM ||
+>> -           info->severity == AER_NONFATAL) {
+>> +           info->severity == AER_NONFATAL ||
+>> +           (info->severity == AER_FATAL && link_healthy)) {
+>>           /* Link is still healthy for IO reads */
+>>           pci_read_config_dword(dev, aer + PCI_ERR_UNCOR_STATUS,
+>> @@ -1258,11 +1261,11 @@ static inline void aer_process_err_devices(struct aer_err_info *e_info)
+>>       /* Report all before handle them, not to lost records by reset etc. */
+>>       for (i = 0; i < e_info->error_dev_num && e_info->dev[i]; i++) {
+>> -        if (aer_get_device_error_info(e_info->dev[i], e_info))
+>> +        if (aer_get_device_error_info(e_info->dev[i], e_info, false))
+>>               aer_print_error(e_info->dev[i], e_info);
+>>       }
+>>       for (i = 0; i < e_info->error_dev_num && e_info->dev[i]; i++) {
+>> -        if (aer_get_device_error_info(e_info->dev[i], e_info))
+>> +        if (aer_get_device_error_info(e_info->dev[i], e_info, false))
+>>               handle_error_source(e_info->dev[i], e_info);
+>>       }
+>>   }
+>> diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
+>> index ea3ea989afa7..2d3dd831b755 100644
+>> --- a/drivers/pci/pcie/dpc.c
+>> +++ b/drivers/pci/pcie/dpc.c
+>> @@ -303,7 +303,7 @@ struct pci_dev *dpc_process_error(struct pci_dev *pdev)
+>>           dpc_process_rp_pio_error(pdev);
+>>       else if (reason == PCI_EXP_DPC_STATUS_TRIGGER_RSN_UNCOR &&
+>>            dpc_get_aer_uncorrect_severity(pdev, &info) &&
+>> -         aer_get_device_error_info(pdev, &info)) {
+>> +         aer_get_device_error_info(pdev, &info, false)) {
+>>           aer_print_error(pdev, &info);
+>>           pci_aer_clear_nonfatal_status(pdev);
+>>           pci_aer_clear_fatal_status(pdev);
+>> diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
+>> index 31090770fffc..462577b8d75a 100644
+>> --- a/drivers/pci/pcie/err.c
+>> +++ b/drivers/pci/pcie/err.c
+>> @@ -196,6 +196,7 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
+>>       struct pci_dev *bridge;
+>>       pci_ers_result_t status = PCI_ERS_RESULT_CAN_RECOVER;
+>>       struct pci_host_bridge *host = pci_find_host_bridge(dev->bus);
+>> +    struct aer_err_info info;
+>>       /*
+>>        * If the error was detected by a Root Port, Downstream Port, RCEC,
+>> @@ -223,6 +224,13 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
+>>               pci_warn(bridge, "subordinate device reset failed\n");
+>>               goto failed;
+>>           }
+>> +
+>> +        info.severity = AER_FATAL;
+>> +        /* Link recovered, report fatal errors of RCiEP or EP */
+>> +        if ((type == PCI_EXP_TYPE_ENDPOINT ||
+>> +             type == PCI_EXP_TYPE_RC_END) &&
+>> +            aer_get_device_error_info(dev, &info, true))
+>> +            aer_print_error(dev, &info);
+>>       } else {
+>>           pci_walk_bridge(bridge, report_normal_detected, &status);
+>>       }
+>> @@ -259,6 +267,7 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
+>>       if (host->native_aer || pcie_ports_native) {
+>>           pcie_clear_device_status(dev);
+>>           pci_aer_clear_nonfatal_status(dev);
+>> +        pci_aer_clear_fatal_status(dev);
+> 
+> Add some info about above change in the commit log.
 
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/nxp,lpc3220-mic.yaml b/Documentation/devicetree/bindings/interrupt-controller/nxp,lpc3220-mic.yaml
-> new file mode 100644
-> index 000000000000..59e8814a15b7
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/nxp,lpc3220-mic.yaml
-> @@ -0,0 +1,69 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/interrupt-controller/nxp,lpc3220-mic.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NXP LPC32xx MIC, SIC1 and SIC2 Interrupt Controllers
-> +
-> +maintainers:
-> +  - Vladimir Zapolskiy <vz@mleia.com>
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - nxp,lpc3220-mic
-> +      - nxp,lpc3220-sic
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupt-controller: true
-> +
-> +  '#interrupt-cells':
-> +    const: 2
-> +
-> +  interrupts:
+Will do.
 
-Please put here
-
-   minItems: 2
-   maxItems: 2
-
-> +    items:
-> +      - description: Regular interrupt request
-> +      - description: Fast interrupt request
-> +    description: IRQ and FIQ outputs of SIC1/SIC2 to the MIC.
-
-Having both two descriptions under 'items:' and another description is
-excessive, please leave only one of two.
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupt-controller
-> +  - '#interrupt-cells'
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: nxp,lpc3220-sic
-> +    then:
-> +      required:
-> +        - interrupts
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    mic: interrupt-controller@40008000 {
-> +        compatible = "nxp,lpc3220-mic";
-> +        reg = <0x40008000 0x4000>;
-> +        interrupt-controller;
-> +        #interrupt-cells = <2>;
-> +    };
-> +
-> +    sic1: interrupt-controller@4000c000 {
-
-Here sic1 label is not used, please remove.
-
-> +        compatible = "nxp,lpc3220-sic";
-> +        reg = <0x4000c000 0x4000>;
-> +        interrupt-controller;
-> +        #interrupt-cells = <2>;
-> +        interrupt-parent = <&mic>;
-> +        interrupts = <0 IRQ_TYPE_LEVEL_LOW>,
-> +                    <30 IRQ_TYPE_LEVEL_LOW>;
-> +    };
-
-After the fixes please feel free to add the tag:
-
-Reviewed-by: Vladimir Zapolskiy <vz@mleia.com>
-
---
-Best wishes,
-Vladimir
+Thanks.
+Shuai
 
