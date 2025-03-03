@@ -1,207 +1,217 @@
-Return-Path: <linux-kernel+bounces-541092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9184AA4B854
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:28:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F7E3A4B85A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:31:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 834F816A556
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 07:28:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92E651640BA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 07:31:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EB5F1E9B25;
-	Mon,  3 Mar 2025 07:28:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24AE31EA7D0;
+	Mon,  3 Mar 2025 07:31:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="KT0LYQir"
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HTzEGiFf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F9E1E9B3A
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 07:27:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CBC714AD2D;
+	Mon,  3 Mar 2025 07:31:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740986881; cv=none; b=pA5BTVABVfJAsrrHzXoySmQL0AWqgb97WNYfpHqh7udIBHDJF3E3Jyn8END7BKLAFJ9cz+NN0iX8+uEUVsHF+7Rrm5f60x/lOTGz3Wzh1f4oeFke6H7lr8tzQ6umjTpAUbbcwJKSt90d7MgEbT/QLrcEMm1j5H8g6LQaWW6bmug=
+	t=1740987092; cv=none; b=ky5TbUiFvALlMlTaKigdQDLDUk1W1AH8b/MvXagBb0Xk5b5TIUiiItID+KCOXnGO/FZcObnLbedkgXfb+ftAmS7DSkS22QklUVqV4BV6nIGoQvPJgXEgBoZ2vgEJPVqmaIh7lFxE6VDHu+fAPHnBR0ZpQyLX3HUQtBJovb9FZlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740986881; c=relaxed/simple;
-	bh=QhcA4whS6Un5CmsdrWExBnC2H3eBPdvl0YoTWezDvh8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hHi1G/uJbFGlhKpGrRC5rf0jawZ5tIXHBmILkNAF8UpgDJVr2f5mFBn6c+CtyBcKytm2YdVxkkMMQwrAnr7UJmSvsttgDXmtl6ynvCl4Eb6SxMP3pZPWSBWGGgscddc+xSl5ZXQNtDA2lI04oXb5mmABMgFmRtHEMl4U/ED+rXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=KT0LYQir; arc=none smtp.client-ip=209.85.210.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-72a00f1f755so25329a34.2
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Mar 2025 23:27:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1740986879; x=1741591679; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NqQf+xJ+QQAO3X5FgRqwqBs+4VjeomCIEb383qkkc70=;
-        b=KT0LYQir+x5yMcUz5o/a3jgrED+KaNUHPnNifVJGaVuG3ez5HU/nogXThg10pMchEs
-         0qx7Hs1GKpFfcs/u2Xfc+VorDJj/KNFgi8SLTe9d8eC5cRFqRPYUcVRs1lEL+OYW/U4u
-         Afb7KVsDaBHB3vQMIjOMVGOzMZBc8jKkaZ0eJ4nfARAdSzxKbFq19/iCdKvOSXdTjSAw
-         jDNl5VkCkHw+bUUC6+BjQ/NUy48AuU3w/hmg9lKnzbzUYt0R3c1Lk8fKXNfKB3hw5zAR
-         5Bc71jF/s885LoTX2S7PHwICHHcPecbJuudKANQ2sqz+srlYWFK9PyYK9CT+LtExFpJh
-         zEAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740986879; x=1741591679;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NqQf+xJ+QQAO3X5FgRqwqBs+4VjeomCIEb383qkkc70=;
-        b=T9/WXREwso1Zzq4FHvIRb3RimqDNNsE7Pe0+NUbui8yTZzcy5IN9fH83B6vDRT19Hz
-         CMGvPd+WiJsp2k+9pp5ITwibymgzmvxe4+3YQb1fxw2ITdsPL832nPaAUDTsP9Hg/YDN
-         dvNwhdDaMPVv2/SLFX2n6tXv+6oRaPCsbm0pKlVc6GodlQGekKxAL/zhKpCslwPSQjar
-         R1+9ePGls6dBi5BM8m8BGTPb1BzXLYm185uIt4/f41JlTEPSppxeWf7L1nbYLY1FVetm
-         GvhVFNeqOZplvX+M+bSPLZfIwCgmGKGsCtNhBlRYtx4vHD+y+XeN9C2vfFGsRW41OLQa
-         hl4g==
-X-Forwarded-Encrypted: i=1; AJvYcCWqNuXlL6pNwKCOenNUiN4C1l4lIWMI0KmcaNJ+rrjj9f2PkQ5bCUU0fi0n0Ba54agr5BrxTOh7cv0guok=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlpPWIolVPQsgZr8d89L6vgMOTx/hP9CXflsyUjkS1vBzbP06r
-	s0csL5nqESv+KALktypfG3r0X+Qjkk4Ibo3Ac/iDZXCScmNCr9wPtbJ8vgcd2C83ooHTgHU9P28
-	Dd5fPW8+KF4dlcSaYmEq0D1ajSH5UdQurBXg2Eg==
-X-Gm-Gg: ASbGncswFD9W+X9J9n8zkcpDLOf/S+BdkFqVGj7y+j4/i7/Kf1B/FTLVNNzGpcX4J0D
-	zJTTmYbarjPSkxSwSIWZ60nSZqnOnxZDOR9bGA8U9ceftNw/jyJ0xQOIljl9uFb3pK0bIPPSR48
-	3/x5uNMJhwxCGAGUT26/eJD4APx6ky
-X-Google-Smtp-Source: AGHT+IGdGihCdXsHvPy1HB+Hi01lhvTlT2V3S/bXdVPc4cd4/qzcouwXquivhfRUZCtj9S8/0Uw/BjeV/TL6JLeNSuQ=
-X-Received: by 2002:a05:6830:348d:b0:727:3380:66ce with SMTP id
- 46e09a7af769-728b830562fmr6634750a34.25.1740986878930; Sun, 02 Mar 2025
- 23:27:58 -0800 (PST)
+	s=arc-20240116; t=1740987092; c=relaxed/simple;
+	bh=Rp+ML2bibpqktoLUGR92Bz7M855WOGJIx85KWI6GPlY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Qs/rqmr1PCo3H0sUZ9KVUfarUOj+NsP1wfjmQLXG0WIKQaeK6qK+/w0+UQD3te/wCKDFiZbRc6rN+Yg4pTVy0sssnopchUbeRiJxphCiNlC7pclhI9TvEdcC++q8C0edegJVN+a8VOs4y6a2Ba5yl/IkOPBqx//O5BB/9CHblbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HTzEGiFf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA799C4CED6;
+	Mon,  3 Mar 2025 07:31:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740987091;
+	bh=Rp+ML2bibpqktoLUGR92Bz7M855WOGJIx85KWI6GPlY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HTzEGiFfHLV4w3wmTYdgM1MCufXU4oIQ7PNRV0iGYfH7O1AlC9I9jG8mRefk8kGMk
+	 hHaX3prwYZyBKkE9OkYkGGbfe4+xwGnXulJ7Tn+Yqhbes5R4tmKYP75jte80SDKIrX
+	 ORktdyG6hGNsc+7RzDE68WQt/m9XnfY8ftWGpyWBeQ2r/NSrTW1qY8x8VokwBvGAtf
+	 KwjwSt0LjcHRMPqtg1L3JUujWt3sRkfsY3yO5yyHWKsDWKS3aIcwN+ecSJXmqz/oNX
+	 IH1cwiQLFaJoLuhdLdx/btKuJqw+tg0teun2eDbRAcaZAqjQ2JrgstmwN5S8kQPsss
+	 7blHovP1SNM+A==
+Message-ID: <3d729159-4d13-4a61-88c7-3be992b23728@kernel.org>
+Date: Mon, 3 Mar 2025 08:31:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250201110607.34766-1-cuiyunhui@bytedance.com>
- <CAEEQ3w=uYad7UAedSU4M_L277v=RQGWHpJQwOW-p7W6=hcijsQ@mail.gmail.com>
- <CAHVXubhW9b6fw8ZvHtn7zmyRSUVt-3JjmFbE-_L42wZ9W6=vKA@mail.gmail.com>
- <CAEEQ3wmAxF=PkRt_pKFZE5-r9w1SMY7YQtco2mCyE+vus7vufg@mail.gmail.com> <CAHVXubiHhDgC4=T7xCxK9hoCG7R2KZ46LRPmS8rgYuT7EiQDcg@mail.gmail.com>
-In-Reply-To: <CAHVXubiHhDgC4=T7xCxK9hoCG7R2KZ46LRPmS8rgYuT7EiQDcg@mail.gmail.com>
-From: yunhui cui <cuiyunhui@bytedance.com>
-Date: Mon, 3 Mar 2025 15:27:48 +0800
-X-Gm-Features: AQ5f1JrsGJklPaO7yuMRDKV0ZqC70eeIlZ0wPBsVlz4-JWSVixlDQ5gxzrmW-PQ
-Message-ID: <CAEEQ3wk9MWBG_neU5Ez9if9UcSsv9Q-EMm0gA2vjt8527rUujQ@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH] riscv: print hartid on bringup
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: apatel@ventanamicro.com, atishp@rivosinc.com, paul.walmsley@sifive.com, 
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, samuel.holland@sifive.com, 
-	jassisinghbrar@gmail.com, takakura@valinux.co.jp, 
-	valentina.fernandezalanis@microchip.com, ruanjinjie@huawei.com, 
-	charlie@rivosinc.com, conor.dooley@microchip.com, haibo1.xu@intel.com, 
-	andybnac@gmail.com, ke.zhao@shingroup.cn, tglx@linutronix.de, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] media: dt-bindings: Add dt bindings for
+ m2m-deinterlace device
+To: Matthew Majewski <mattwmajewski@gmail.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>,
+ "Dr. David Alan Gilbert" <linux@treblig.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Uwe Kleine-Konig <u.kleine-koenig@baylibre.com>,
+ Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>, devicetree@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250214231759.119481-1-mattwmajewski@gmail.com>
+ <20250214231759.119481-2-mattwmajewski@gmail.com>
+ <20250218-eggplant-skylark-of-swiftness-dcf6ba@krzk-bin>
+ <69cb2e95c291f17cff42b45e7c871f30a85c060d.camel@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <69cb2e95c291f17cff42b45e7c871f30a85c060d.camel@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Alex,
+On 26/02/2025 23:41, Matthew Majewski wrote:
+> Hi Krzysztof,
+> 
+> On Tue, 2025-02-18 at 09:30 +0100, Krzysztof Kozlowski wrote:
+>> On Fri, Feb 14, 2025 at 06:17:58PM -0500, Matthew Majewski wrote:
+>>> Create a new yaml schema file to describe the device tree bindings
+>>> for
+>>> generic m2m-deinterlace device.
+>>>
+>>> This device is supported on any hardware that provides a MEM_TO_MEM
+>>
+>> Which device? I don't see here any device name/model.
+> 
+> By "device" I am referring to the m2m-deinterlace device, which I
+> explained is a quasi-virtual device. If this is confusing wording I can
+> change. 
+> 
+>> I asked to provide here some examples of devices.
+> 
+> As I wrote, supported devices/hardware is anything that provides a
+> MEM_TO_MEM capable dma-controller with interleaved transfer support. I
+> did not list specific devices because the bindings are supposed to be
+> generic, as they are not describing actual silicon. But if you want me
 
-On Fri, Feb 28, 2025 at 4:19=E2=80=AFPM Alexandre Ghiti <alexghiti@rivosinc=
-.com> wrote:
->
-> Hi Yunhui,
->
-> On Fri, Feb 28, 2025 at 7:41=E2=80=AFAM yunhui cui <cuiyunhui@bytedance.c=
-om> wrote:
-> >
-> > Hi Alex,
-> >
-> > On Wed, Feb 26, 2025 at 10:58=E2=80=AFPM Alexandre Ghiti <alexghiti@riv=
-osinc.com> wrote:
-> > >
-> > > Hi Yunhui,
-> > >
-> > > On Thu, Feb 20, 2025 at 1:54=E2=80=AFPM yunhui cui <cuiyunhui@bytedan=
-ce.com> wrote:
-> > > >
-> > > > Hi All,
-> > > >
-> > > > Gentle ping. Any comments on this patch?
-> > > >
-> > > > On Sat, Feb 1, 2025 at 7:06=E2=80=AFPM Yunhui Cui <cuiyunhui@byteda=
-nce.com> wrote:
-> > > > >
-> > > > > Firmware randomly releases cores, so CPU numbers don't linearly m=
-ap
-> > > > > to hartids. When the system has an exception, we care more about =
-hartids.
-> > > > >
-> > > > > Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
-> > > > > ---
-> > > > >  arch/riscv/kernel/smp.c     | 2 ++
-> > > > >  arch/riscv/kernel/smpboot.c | 4 ++++
-> > > > >  2 files changed, 6 insertions(+)
-> > > > >
-> > > > > diff --git a/arch/riscv/kernel/smp.c b/arch/riscv/kernel/smp.c
-> > > > > index d58b5e751286..e650dec44817 100644
-> > > > > --- a/arch/riscv/kernel/smp.c
-> > > > > +++ b/arch/riscv/kernel/smp.c
-> > > > > @@ -48,6 +48,8 @@ EXPORT_SYMBOL_GPL(__cpuid_to_hartid_map);
-> > > > >  void __init smp_setup_processor_id(void)
-> > > > >  {
-> > > > >         cpuid_to_hartid_map(0) =3D boot_cpu_hartid;
-> > > > > +
-> > > > > +       pr_info("Booting Linux on hartid %lu\n", boot_cpu_hartid)=
-;
-> > > > >  }
-> > > > >
-> > > > >  static DEFINE_PER_CPU_READ_MOSTLY(int, ipi_dummy_dev);
-> > > > > diff --git a/arch/riscv/kernel/smpboot.c b/arch/riscv/kernel/smpb=
-oot.c
-> > > > > index e36d20205bd7..beba0efb00b9 100644
-> > > > > --- a/arch/riscv/kernel/smpboot.c
-> > > > > +++ b/arch/riscv/kernel/smpboot.c
-> > > > > @@ -231,6 +231,10 @@ asmlinkage __visible void smp_callin(void)
-> > > > >         riscv_ipi_enable();
-> > > > >
-> > > > >         numa_add_cpu(curr_cpuid);
-> > > > > +
-> > > > > +       pr_info("CPU%u: Booted secondary hartid %lu\n", curr_cpui=
-d,
-> > > > > +               cpuid_to_hartid_map(curr_cpuid));
-> > > > > +
-> > > > >         set_cpu_online(curr_cpuid, true);
-> > > > >
-> > > > >         /*
-> > > > > --
-> > > > > 2.39.2
-> > > > >
-> > > >
-> > > > Thanks,
-> > > > Yunhui
-> > >
-> > > IIRC that's a debug feature when you can't reach userspace and use
-> > > cpuinfo, so what about using pr_debug() instead?
-> >
-> > Using pr_debug needs enabling #define DEBUG in
-> > arch/riscv/kernel/smpboot.c and adding loglevel=3D8 to cmdline, not
-> > convenient.
->
-> You can also use a kernel command line parameter to enable a
-> pr_debug() statement
-> https://www.kernel.org/doc/html/latest/admin-guide/dynamic-debug-howto.ht=
-ml#debug-messages-during-boot-process
+I already told you that no. Bindings are not supposed to be generic.
 
-Umm, it works. I'll update v2.
+From where did you get such information?
 
->
-> Alex
->
-> > Can't always cat /proc/cpuinfo before running in user
-> > mode.
-> > It's true that pr_info prints a large amount of information in the
-> > startup logs, especially when there are many CPU cores.
-> >
-> > Do you have a better solution?
-> >
-> >
-> > > Thanks,
-> > >
-> > > Alex
-> >
-> > Thanks,
-> > Yunhui
+> to list some devices which provide a compatible dma-controller, here
+> are devices I found in the current mainline kernel:
+> 
+> - TI OMAP Soc Family
+> - TI Davinci Soc Family
+> - TI Keystone Processor Family
+> - IMX27 Processor and variants
+> - Several Microchip Processors (sama5, sam9x7, sam9x60)
 
-Thanks,
-Yunhui
+That's too generic - you just listed SoCs, which consist of dozen or
+hundred of devices. Which hardware piece is here?
+
+Maybe this is not for a real device, but then this should be marked clearly.
+
+> 
+> As I mentioned in my original email, I have personally tested on a
+> BeagleBone Black with an AM335X OMAP processor. There are likely many
+> more devices with compatible dma-controllers that could be supported
+> with additional dmaengine driver support. 
+> 
+> 
+>>> capable dma channel with interleaved trasfer support. Device tree
+>>> bindings are for providing appropriate dma channel to device.
+>>
+>> Don't describe what DT is, but the hardware.
+>>
+> 
+> Ok, will remove reference to DT.
+> 
+>>> +description: |-
+>>> +  A generic memory2memory device for deinterlacing video using
+>>> dmaengine. It can
+>>> +  convert between interlaced buffer formats and can convert
+>>> interlaced to
+>>> +  progressive using a simple line-doubling algorithm. This device
+>>> can be used on
+>>> +  any hardware that provides a MEM_TO_MEM capable dma controller
+>>> that supports
+>>> +  interleaved transfers.
+>>
+>> And how do you program that device to deinterlace? How do you signal
+>> end
+>> of frame/data when writing to the memory?
+>>
+>> It still looks all this is for driver :/
+>>
+> 
+> All of the deinterlacing is handled by the dma channel. To simplify a
+> bit, m2m-deinterlace basically just translates video format information
+> into appropriate interleaved dma transfers. Everything else (and
+> everything hardware specific) is handled by the dma engine, such as
+> initiation and signaling completion of transfers. 
+
+
+So the device is the dma controller and maybe all this should be folded
+into that controller bindings.
+
+> 
+> I think an appropriate analogy for m2m-deinterlace would be spi-gpio.
+> Since spi-gpio leverages gpio for bitbanging the spi protocol, the
+> bindings do not need to describe any clocks, spi-controller registers,
+
+Sure, SPI GPIO is Linux driver, not a device and I am asking about it
+all the time.
+
+> etc. All of the hardware specific components are abstracted away by the
+> gpio controller. But the spi-gpio bindings still exist to specify which
+> gpios are used.
+
+
+
+Best regards,
+Krzysztof
 
