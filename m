@@ -1,121 +1,148 @@
-Return-Path: <linux-kernel+bounces-544853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB920A4E632
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:37:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16519A4E597
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:22:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D14B88C726A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:21:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F5DA165784
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:16:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE5827FE84;
-	Tue,  4 Mar 2025 16:02:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2C442836AD;
+	Tue,  4 Mar 2025 15:56:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="L8hCthpU"
-Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="urmRmFxZ"
+Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BE0F292F96
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:02:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 033F427C844
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.117
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741104169; cv=pass; b=PqvqcrlnA9IAhJaxbfvNQL4EjwQDHBns+VR5LngMUMLdaxK4V1EVWzGTwNaZeSj9WWuhx5x6jPLAr+xCcIIU7fuaXIInRxotZyZtJ/Aqa4DZ8IAsBregCR9ZhQQ4M6zBwM7uUpbydTt9dGKo7aMb6a/D0TXl/R2eiPCL8u+DnzE=
+	t=1741103776; cv=fail; b=a9+2A+8bMupfPhg/3Nfv7iSgPvpzf0GcPfxAMylMt4h00EnS86kLsM99l9TJFYonFvslrYeC7SbFtpuQgJ/MsY5hZl8vtFaTKxG9iN/Vwrs4iYoyPSBqf7LcZLrjx9Eaz9oWFmEXlLTuDsgHL7kjTeeVf565uYfVhYz2/07ipSI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741104169; c=relaxed/simple;
-	bh=jsCzTFVQjhyi34lEMooZFC2t/E5oWZlU/nOh9xu/6Hk=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c6CzOMiIhz2Q6iGobajnKN1y2RXLZRP31fYf/+5gib7nZ8aPvI7Rx7sHqnGVhJyCFysAHSJDQ7X6m4uGhj5BDv37XYkktRMfjVdAx5GqiR1DK3nZTDtUKuqp+w3uBKUWB2G2qy5tOUBklw2I2mn5uZBezDpTh50zvfx44oXieQQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=L8hCthpU; arc=none smtp.client-ip=198.47.23.235; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; arc=pass smtp.client-ip=160.75.25.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+	s=arc-20240116; t=1741103776; c=relaxed/simple;
+	bh=0xtVuIRMcJ9mrqBKv9b2M3AjxOMkL6ET0xlLfjPOm+I=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=kSCk+h7YpbemkeqVhrIPY8uk40zVgzHcmIwZRyp72onxRDYQ+SeoMa2fifZy0OZf/xtgYgNJ3bEUAXXgoyJQPQ7vV8Z3XZAU5WQ6rTiwGJqz1lzf6cWTAKwKnpj1D/NlZtNV0akCeDOvnmcxksGPQIh2778spNauOLtzFxTJsq8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=urmRmFxZ reason="signature verification failed"; arc=none smtp.client-ip=209.85.216.45; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; arc=fail smtp.client-ip=160.75.25.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 9FAF140D9765
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:02:45 +0300 (+03)
+	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id 2BD6040CEC91
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:56:13 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
-Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=pass (1024-bit key, unprotected) header.d=ti.com header.i=@ti.com header.a=rsa-sha256 header.s=ti-com-17Q1 header.b=L8hCthpU
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6gQX0yBHzG2B2
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:01:08 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6gGb71SfzG1jB
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:54:15 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 9D65D42777; Tue,  4 Mar 2025 19:00:43 +0300 (+03)
+	id 839D341898; Tue,  4 Mar 2025 18:54:10 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=L8hCthpU
-X-Envelope-From: <linux-kernel+bounces-541322-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=urmRmFxZ
+X-Envelope-From: <linux-kernel+bounces-541328-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=L8hCthpU
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=urmRmFxZ
 Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id A8E8F4329D
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:59:21 +0300 (+03)
+	by le2 (Postfix) with ESMTP id 9E39143449
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:01:43 +0300 (+03)
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id 11CEF2DCE4
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:59:20 +0300 (+03)
+	by fgw2.itu.edu.tr (Postfix) with SMTP id 30AE72DCEC
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:01:43 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 260753B275A
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 09:58:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37FCF3AA753
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:00:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B4641F1531;
-	Mon,  3 Mar 2025 09:58:21 +0000 (UTC)
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AFF51F1513;
+	Mon,  3 Mar 2025 10:00:35 +0000 (UTC)
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6A91D79A3;
-	Mon,  3 Mar 2025 09:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37EBF1F2C3B
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 10:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740995897; cv=none; b=Hp3IcXHovlfp6Srl2wER/POicwrP5ezhiPT9S5iz6/wFeZIpYr42KJhAmNP8iCEQKzveEmfd8Rl/ku6llCGKaWVPbrMCEOVwyKJ03AA/1FmKtJ3mROosHvCnufpbNr7d12YvDEYqKw19rVrF4+oi0O6/Thnp7VHUUMh2/Ca57Zs=
+	t=1740996031; cv=none; b=QQNepQ09rL3wIsuvZnqlTLCJdbHY9MakUYYFvyfMCj5OHSr5KcrVmgACirzp0acLjzZbi7OUGJ6GQMPdWoTtXiiXqPmxUVsNIesEhHBOsJ+Uxsf32cjnHzJAg19FSsgPKnoV03W5omOS7JYwsrS+SPAR7U57z/TSViRMDK3IRNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740995897; c=relaxed/simple;
-	bh=jsCzTFVQjhyi34lEMooZFC2t/E5oWZlU/nOh9xu/6Hk=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LXISjFBLVxFdSXSmuo2elTxxeICiAOLfOD8QQ+7jckqr9FKrm0HMXH8z79Us6gDUM7epih/uHxgU+Oyg/Mjd/2H9uKkbBbBRo2w6BpJJbVfachpxMikc8IEY96JfMx39fn0Xp5eU2Zu5ynfQm1RvyILCgUBRCMz9FkFmwveWFZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=L8hCthpU; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 5239wBmQ3297422
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 3 Mar 2025 03:58:11 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1740995891;
-	bh=FeggH+PeB9tjcVLtMliId21gkOc5JjsNarxCUZO3rdE=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=L8hCthpUxu1WCYVdXRZCrM6wIuSqUaWtgXiyNuTVpqPCeGIYgc+Ki+pql2Cw1Yek1
-	 mS2qw/PX4RaoHu4YN0vR0Ldu5gIz2Du8VNaDqPRPv0ACR5smAXby2tPCsxPfUDrLbA
-	 BqcvI1mzMrFdKpi5avz+DS8RD2crszeCgBXNBUw4=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 5239wBv0029201
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 3 Mar 2025 03:58:11 -0600
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 3
- Mar 2025 03:58:11 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 3 Mar 2025 03:58:11 -0600
-Received: from localhost (lcpd911.dhcp.ti.com [172.24.227.226])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 5239wA2k035790;
-	Mon, 3 Mar 2025 03:58:10 -0600
-Date: Mon, 3 Mar 2025 15:28:09 +0530
-From: Dhruva Gole <d-gole@ti.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-CC: Kamlesh Gurudasani <kamlesh@ti.com>, <vigneshr@ti.com>,
-        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <khilman@baylibre.com>
-Subject: Re: [PATCH RFC] pmdomain: core: add support for writeble power
- domain state
-Message-ID: <20250303095809.x2mmd52znicl7roy@lcpd911>
-References: <20250221-pm-debug-v1-1-e5bd815f7ca4@ti.com>
- <CAPDyKFr+P9oi-ofXOkfoBHSCLaCAREW_efjJ6TctTeo_AVCzDA@mail.gmail.com>
+	s=arc-20240116; t=1740996031; c=relaxed/simple;
+	bh=4ePiwYSbOCYH3v1SviQDg3/HbMk9bKn0Y0srxW3uClM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=bwwkvbyc405K1zOu+XcR3d2kczPqCred/y0iopMWXlfONvR/QCXJs8PJ0lsAfX6eRO1tlZUmZY7ve7M1YP/VAj3uXi2o8bPldV7xyzsYKUoEN+DCcl0+TZjlsBwyxx/iCncjlCIIkqd9EU5N470pJcsZgALxrGrrc0TBHnWuuPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=urmRmFxZ; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2fec13a4067so4269747a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 02:00:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740996029; x=1741600829; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bCtpbarqcsWFDUrFSqXD3/5LnWihrLhv2toR5uStrCc=;
+        b=urmRmFxZYbF12HuDunEnhJfhZde8ejtb3l2vNYsoImsuixO7ZPmrI1WIHeGJcVt3dl
+         2aYzQV8gOoq1KBxJKuAycUErUqsx1z5elD+4QJX7LWOcb7dHSSFtFBHwziB1ZcQJSgog
+         rp0F8t6Fle2x+FYztrnLRWowhSNMryZ9S5MfPJ800H/DmN/iBXwPQoMVMu5K7kcmdO94
+         dDbn5Qva8xzi7NZ/fOz73GA2s2jaQrqiz8rl/vps9mkbiLbpzHOFHeoyFXswtlTcP2ZE
+         8ABhtvCWlX0dLLdgiBg10kcpaahpaw03aG97Ogq9r0PIYl4hjKXTKTk4qtYKuT3GwLoZ
+         liRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740996029; x=1741600829;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bCtpbarqcsWFDUrFSqXD3/5LnWihrLhv2toR5uStrCc=;
+        b=Gf0Pz0drz2U/RzFmwDDlDyptQMIOinQ3k30Oxi+0dUhcl57PntM7cLN7RYrjFvlP23
+         r5JQ+Lr6eD4wMqbbOKwWqKl/w7dvzYkDjvIU45Uca6rzHB4Fo6Lo+cBO70s68Z6eqUpC
+         14y324pOqThUqWio6QvAhBkCPq1RRkr7wZiYYZKZDMCdSk8AYJIUr868KcfWOjDEuaqZ
+         fL81F2NwvFjsISG29Oj04Ng3uJOFkjwInO4XV2yHYO+2sohYKRphWXKckJW2hF5cvtYI
+         Il6vr6jTmgTiHtUlAYPz5ynut/bWGdA3utkCD9XSTFueHa2UAxlhyIOkq4IGvErSJDAh
+         qDMw==
+X-Forwarded-Encrypted: i=1; AJvYcCUoKah/vwEpeUb9pdp6MAHsa8B8w5Bp5hIvI0ZnGnCnqR96VZbvIHVyDLMZN8G8+iYmOvrKTtz+YvIfxKA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4NhOERgOWnPO9Av/kljzfVF7EVnw/+1L8O3EZi0jJC91J68QG
+	CzQ88gKmQr1zsbLVlE53annGLHTw+afR0f9H+ha59FmIODkuce8yuM1rEZ9Y76Y=
+X-Gm-Gg: ASbGnctPBmBZ8HZJ7au7IvQR10OA4WxeXdn01x6+BfgJzL2nomRAmlEp+16LvhEnJkG
+	NNEmVb5vfkML+UpZa7L/YSZsDKicwp4xBkcw2PjyQCYboNM9JpUQo49ewqWXUQzKsfr5G9Ypdv4
+	5285aY74jOxe7cyEeT1N/nzzp3tPPnP3f+w5F0WTISw0kA3jYmAql+MvKpD0WD0JTHKhyb89Q+e
+	qVDfmnwZOvPx71VlysN4Ih3oLGWXGjwphsMMw7fBi6fZCLjBrrR5g1pJpkNE0uy6PHZZaebSAsp
+	XRUk5fXuUSpiGsCe1BONgSNxzjnxmdeUBjS1m2Dc54grYA==
+X-Google-Smtp-Source: AGHT+IFU5ll4u6S7m0NrVB1a+FHvXW54L7A2aqExOXgrVGjy78eyLcfNYLvSU8KeXTNKCT43lKxykw==
+X-Received: by 2002:a17:90b:528b:b0:2fe:a336:fe65 with SMTP id 98e67ed59e1d1-2febab3c6f0mr20234955a91.10.1740996029494;
+        Mon, 03 Mar 2025 02:00:29 -0800 (PST)
+Received: from localhost ([122.172.84.15])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fe6ded6ebfsm13571496a91.1.2025.03.03.02.00.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 02:00:28 -0800 (PST)
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Daniel Almeida <daniel.almeida@collabora.com>
+Subject: [PATCH V3 2/2] rust: Add initial clk abstractions
+Date: Mon,  3 Mar 2025 15:28:10 +0530
+Message-Id: <023e3061cc164087b9079a9f6cb7e9fbf286794e.1740995194.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
+In-Reply-To: <cover.1740995194.git.viresh.kumar@linaro.org>
+References: <cover.1740995194.git.viresh.kumar@linaro.org>
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -123,234 +150,211 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFr+P9oi-ofXOkfoBHSCLaCAREW_efjJ6TctTeo_AVCzDA@mail.gmail.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: quoted-printable
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6gQX0yBHzG2B2
+X-ITU-Libra-ESVA-ID: 4Z6gGb71SfzG1jB
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741708895.20063@apX6qF8zxwzwebWXDOQobQ
+X-ITU-Libra-ESVA-Watermark: 1741708479.47731@fZxd9GqcFP1LGarn7cfU3Q
 X-ITU-MailScanner-SpamCheck: not spam
 
-Ulf,
+Add initial abstractions for the clk APIs. These provide the minimal
+functionality needed for common use cases, making them straightforward
+to introduce in the first iteration.
 
-On Feb 28, 2025 at 13:39:44 +0100, Ulf Hansson wrote:
-> On Fri, 21 Feb 2025 at 14:48, Kamlesh Gurudasani <kamlesh@ti.com> wrote:
-> >
-> > Add support for writeable power domain states from debugfs.
-> >
-> > Defining GENPD_ALLOW_WRITE_DEBUGFS will enable writeable pd_state
-> > node in debugfs.
-> >
-> > Signed-off-by: Kamlesh Gurudasani <kamlesh@ti.com>
-> > ---
-> > This has turn out to be really helpful when debugging SCMI protocol
-> > for power domain management.
-> >
-> > Reference has been taken from clock framework which provides similar
-> > CLOCK_ALLOW_WRITE_DEBUGFS, which helps to test clocks from debugfs.
-> > ---
-> >  drivers/pmdomain/core.c | 77 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 77 insertions(+)
-> >
-> > diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
-> > index 9b2f28b34bb5..6aba0c672da0 100644
-> > --- a/drivers/pmdomain/core.c
-> > +++ b/drivers/pmdomain/core.c
-> > @@ -1298,6 +1298,60 @@ late_initcall_sync(genpd_power_off_unused);
-> >
-> >  #ifdef CONFIG_PM_SLEEP
-> >
-> > +#ifdef GENPD_ALLOW_WRITE_DEBUGFS
-> > +/*
-> > + * This can be dangerous, therefore don't provide any real compile time
-> > + * configuration option for this feature.
-> > + * People who want to use this will need to modify the source code directly.
-> > + */
-> > +static int genpd_state_set(void *data, u64 val)
-> > +{
-> > +
-> > +       struct generic_pm_domain *genpd = data;
-> > +       int ret = 0;
-> > +
-> > +       ret = genpd_lock_interruptible(genpd);
-> > +       if (ret)
-> > +               return -ERESTARTSYS;
-> > +
-> > +       if (val == 1) {
-> > +               genpd->power_on(genpd);
-> > +               genpd->status = GENPD_STATE_ON;
-> > +       } else if (val == 0) {
-> > +               genpd->power_off(genpd);
-> > +               genpd->status = GENPD_STATE_OFF;
-> > +       }
-> > +
-> > +       genpd_unlock(genpd);
-> > +       return 0;
-> 
-> This makes the behaviour in genpd inconsistent and I am worried about
-> that, even if it's for debugging/development.
-> 
-> For example, what if there is a device hooked up to the genpd which
-> requires its PM domain to stay on? And what about child domains?
+These will be used by Rust based cpufreq / OPP layers to begin with.
 
-Thanks for taking a look.
+Tested-by: Daniel Almeida <daniel.almeida@collabora.com>
+Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ MAINTAINERS        |   1 +
+ rust/kernel/clk.rs | 134 +++++++++++++++++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs |   1 +
+ 3 files changed, 136 insertions(+)
+ create mode 100644 rust/kernel/clk.rs
 
-Agreed that there maybe some paths in genpd that this patch maybe
-ignoring and thus could break something fundamental while debugging.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 726110d3c988..96e2574f41c0 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5779,6 +5779,7 @@ F:	include/linux/clk-pr*
+ F:	include/linux/clk/
+ F:	include/linux/of_clk.h
+ F:	rust/helpers/clk.c
++F:	rust/kernel/clk.rs
+ X:	drivers/clk/clkdev.c
+=20
+ COMMON INTERNET FILE SYSTEM CLIENT (CIFS and SMB3)
+diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs
+new file mode 100644
+index 000000000000..1fa5b7298373
+--- /dev/null
++++ b/rust/kernel/clk.rs
+@@ -0,0 +1,134 @@
++// SPDX-License-Identifier: GPL-2.0
++
++//! Clock abstractions.
++//!
++//! C header: [`include/linux/clk.h`](srctree/include/linux/clk.h)
++
++use crate::{
++    bindings,
++    device::Device,
++    error::{from_err_ptr, to_result, Result},
++    prelude::*,
++};
++
++use core::{ops::Deref, ptr};
++
++/// Frequency unit.
++pub type Hertz =3D crate::ffi::c_ulong;
++
++/// A simple implementation of `struct clk` from the C code.
++#[repr(transparent)]
++pub struct Clk(*mut bindings::clk);
++
++impl Clk {
++    /// Gets clock corresponding to a device and a connection id and ret=
+urns `Clk`.
++    pub fn get(dev: &Device, name: Option<&CStr>) -> Result<Self> {
++        let con_id =3D if let Some(name) =3D name {
++            name.as_ptr() as *const _
++        } else {
++            ptr::null()
++        };
++
++        // SAFETY: It is safe to call `clk_get()` for a valid device poi=
+nter.
++        Ok(Self(from_err_ptr(unsafe {
++            bindings::clk_get(dev.as_raw(), con_id)
++        })?))
++    }
++
++    /// Obtain the raw `struct clk *`.
++    pub fn as_raw(&self) -> *mut bindings::clk {
++        self.0
++    }
++
++    /// Clock enable.
++    pub fn enable(&self) -> Result<()> {
++        // SAFETY: It is safe to call clk APIs of the C code for a clock=
+ pointer earlier returned
++        // by `clk_get()`.
++        to_result(unsafe { bindings::clk_enable(self.as_raw()) })
++    }
++
++    /// Clock disable.
++    pub fn disable(&self) {
++        // SAFETY: It is safe to call clk APIs of the C code for a clock=
+ pointer earlier returned
++        // by `clk_get()`.
++        unsafe { bindings::clk_disable(self.as_raw()) };
++    }
++
++    /// Clock prepare.
++    pub fn prepare(&self) -> Result<()> {
++        // SAFETY: It is safe to call clk APIs of the C code for a clock=
+ pointer earlier returned
++        // by `clk_get()`.
++        to_result(unsafe { bindings::clk_prepare(self.as_raw()) })
++    }
++
++    /// Clock unprepare.
++    pub fn unprepare(&self) {
++        // SAFETY: It is safe to call clk APIs of the C code for a clock=
+ pointer earlier returned
++        // by `clk_get()`.
++        unsafe { bindings::clk_unprepare(self.as_raw()) };
++    }
++
++    /// Clock prepare enable.
++    pub fn prepare_enable(&self) -> Result<()> {
++        // SAFETY: It is safe to call clk APIs of the C code for a clock=
+ pointer earlier returned
++        // by `clk_get()`.
++        to_result(unsafe { bindings::clk_prepare_enable(self.as_raw()) }=
+)
++    }
++
++    /// Clock disable unprepare.
++    pub fn disable_unprepare(&self) {
++        // SAFETY: It is safe to call clk APIs of the C code for a clock=
+ pointer earlier returned
++        // by `clk_get()`.
++        unsafe { bindings::clk_disable_unprepare(self.as_raw()) };
++    }
++
++    /// Clock get rate.
++    pub fn rate(&self) -> Hertz {
++        // SAFETY: It is safe to call clk APIs of the C code for a clock=
+ pointer earlier returned
++        // by `clk_get()`.
++        unsafe { bindings::clk_get_rate(self.as_raw()) }
++    }
++
++    /// Clock set rate.
++    pub fn set_rate(&self, rate: Hertz) -> Result<()> {
++        // SAFETY: It is safe to call clk APIs of the C code for a clock=
+ pointer earlier returned
++        // by `clk_get()`.
++        to_result(unsafe { bindings::clk_set_rate(self.as_raw(), rate) }=
+)
++    }
++}
++
++impl Drop for Clk {
++    fn drop(&mut self) {
++        // SAFETY: It is safe to call clk APIs of the C code for a clock=
+ pointer earlier returned
++        // by `clk_get()`.
++        unsafe { bindings::clk_put(self.as_raw()) };
++    }
++}
++
++/// A simple implementation of optional `Clk`.
++pub struct OptionalClk(Clk);
++
++impl OptionalClk {
++    /// Gets optional clock corresponding to a device and a connection i=
+d and returns `Clk`.
++    pub fn get(dev: &Device, name: Option<&CStr>) -> Result<Self> {
++        let con_id =3D if let Some(name) =3D name {
++            name.as_ptr() as *const _
++        } else {
++            ptr::null()
++        };
++
++        // SAFETY: It is safe to call `clk_get_optional()` for a valid d=
+evice pointer.
++        Ok(Self(Clk(from_err_ptr(unsafe {
++            bindings::clk_get_optional(dev.as_raw(), con_id)
++        })?)))
++    }
++}
++
++// Make `OptionalClk` behave like `Clk`.
++impl Deref for OptionalClk {
++    type Target =3D Clk;
++
++    fn deref(&self) -> &Clk {
++        &self.0
++    }
++}
+diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+index 496ed32b0911..324b86f127a0 100644
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -40,6 +40,7 @@
+ pub mod block;
+ #[doc(hidden)]
+ pub mod build_assert;
++pub mod clk;
+ pub mod cred;
+ pub mod device;
+ pub mod device_id;
+--=20
+2.31.1.272.g89b43f80a514
 
-Perhaps we can split this patch up and remove the state_set part till we
-figure out the right way of doing it without breaking genPD
-
-BUT, as I said in my previous response I feel that if one is enabling
-DEBUG config then anyway they are literally aware of the risk that they
-are taking, by exposing raw PD on/off operations from user space.
-Perhaps we can continue our debate on the reply I gave earlier on this
-thread...
-
-> 
-> > +}
-> > +
-> > +#define pd_state_mode  0644
-> > +
-> > +static int genpd_state_get(void *data, u64 *val)
-> > +{
-> > +
-> > +       struct generic_pm_domain *genpd = data;
-> > +       int ret = 0;
-> > +
-> > +       ret = genpd_lock_interruptible(genpd);
-> > +       if (ret)
-> > +               return -ERESTARTSYS;
-> > +
-> > +       if (genpd->status == GENPD_STATE_OFF)
-> > +               *val = 0;
-> > +       else
-> > +               *val = 1;
-> > +
-> > +       genpd_unlock(genpd);
-> > +       return ret;
-> > +}
-> > +
-> > +DEFINE_DEBUGFS_ATTRIBUTE(pd_state_fops, genpd_state_get,
-> > +                        genpd_state_set, "%llu\n");
-> > +
-> > +#endif /* GENPD_ALLOW_WRITE_DEBUGFS */
-> > +
-> >  /**
-> >   * genpd_sync_power_off - Synchronously power off a PM domain and its parents.
-> >   * @genpd: PM domain to power off, if possible.
-> > @@ -3639,6 +3693,11 @@ static void genpd_debug_add(struct generic_pm_domain *genpd)
-> >         if (genpd->set_performance_state)
-> >                 debugfs_create_file("perf_state", 0444,
-> >                                     d, genpd, &perf_state_fops);
-> > +#ifdef GENPD_ALLOW_WRITE_DEBUGFS
-> > +       debugfs_create_file("pd_state", 0644, d, genpd,
-> > +                           &pd_state_fops);
-> > +#endif /* GENPD_ALLOW_WRITE_DEBUGFS */
-> > +
-> >  }
-> >
-> >  static int __init genpd_debug_init(void)
-> > @@ -3653,6 +3712,24 @@ static int __init genpd_debug_init(void)
-> >         list_for_each_entry(genpd, &gpd_list, gpd_list_node)
-> >                 genpd_debug_add(genpd);
-> >
-> > +#ifdef GENPD_ALLOW_WRITE_DEBUGFS
-> > +       pr_warn("\n");
-> > +       pr_warn("********************************************************************\n");
-> > +       pr_warn("**     NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE           **\n");
-> > +       pr_warn("**                                                                **\n");
-> > +       pr_warn("**  WRITEABLE POWER DOMAIN STATE DEBUGFS SUPPORT HAS BEEN ENABLED **\n");
-> > +       pr_warn("**  IN THIS KERNEL                                                **\n");
-> > +       pr_warn("** This means that this kernel is built to expose pd operations   **\n");
-> > +       pr_warn("** such as enabling, disabling, etc.                              **\n");
-> > +       pr_warn("** to userspace, which may compromise security on your system.    **\n");
-> > +       pr_warn("**                                                                **\n");
-> > +       pr_warn("** If you see this message and you are not debugging the          **\n");
-> > +       pr_warn("** kernel, report this immediately to your vendor!                **\n");
-> > +       pr_warn("**                                                                **\n");
-> > +       pr_warn("**     NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE           **\n");
-> > +       pr_warn("********************************************************************\n");
-> > +#endif /* GENPD_ALLOW_WRITE_DEBUGFS */
-> > +
-> >         return 0;
-> >  }
-> >  late_initcall(genpd_debug_init);
-> >
-> > ---
-> > base-commit: d4b0fd87ff0d4338b259dc79b2b3c6f7e70e8afa
-> > change-id: 20250221-pm-debug-0824da30890f
-> >
-> > Best regards,
-> > --
-> > Kamlesh Gurudasani <kamlesh@ti.com>
-> >
-> 
-> When working with genpd and SCMI PM domains, a more robust way to
-> debug things would be to implement a slim skeleton driver for a
-> consumer device. In principle it just needs some basic runtime PM
-> support and the corresponding device hooked up to the SCMI PM domain
-> in DT. In this way, we can use the existing sysfs interface for
-
-But this will just be a per-device limited solution right? It still
-won't allow us a generic way of dealing with all possible scmi IDs  without
-having to rebuild the system... Or maybe I am misunderstanding/ missing
-something...
-
-> runtime PM, to control and debug the behaviour of the genpd/SCMI PM
-> domain.
-
-If I were to come from a user's perspective, then they will want to be able
-to get a full view of the system's power status at a glance. Today, I am
-not aware of a way how we can do that from genpd. This makes debugging
-what is _actually_ ON/OFF in the system a bit tricky..
-
-Users may not even care much for example about the kernel drivers for
-certain controllers but still want to ensure that those controller's registers are
-accessible to them to use via something like devmem2.
-Another application for the get_status part of this patch is for
-studying the overall power draw of the system by judging which all IDs
-are on/off at a glance.
-
-Hence, if you feel that for now the state_get part of this patch makes
-sense it will still help users query the status of all the pd id's in
-the system.
-
-Thinking of it... What if we modify the existing status_show() itself
-with another column that shows current status similar to runtime status?
-status_show today only does a print based off of genpd->status ... and
-never really goes and queries the firmware again if by any chance some
-other event or activity in the system may have turned ON the device.
-
-For eg. if we have another remote processor request a resource
-but genPD was unaware of this request so it just assumes that resource is still
-off-0... That's just wrong IMO.
-
-What I am proposing is can we have a get_state callback in genPD which
-would be = something like power_ops->state_get in scmi pmdomains
-today.
-This will help the core pmdomains get an up-to-date view of the system
-in the debugFS. Whether genPD decides to update it's internal
-genpd->status based on the query is another issue.
-But from what it looks like, we definitely have a requirement here to
-make sure pm_genpd_summary shows a true-to life status of the power
-domains. Not just rely on linux runtime pm or assume that linux is the
-only real software who knows and does it all.
-
-> 
-> I have a bunch of local code/drivers for this already. Even for
-> testing the SCMI perf domain with OPPs. I can share them with you, if
-> you are interested?
-
-Yes, please do share. We would love to see your ideas on this so we can
-come up with a better solutions together.
-
--- 
-Best regards,
-Dhruva Gole
-Texas Instruments Incorporated
 
 
