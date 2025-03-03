@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-542743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93054A4CD1A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 21:57:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93F4DA4CD18
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 21:57:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1781D1893592
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:57:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 628B0189592C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:57:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3194238168;
-	Mon,  3 Mar 2025 20:57:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77F9A235C04;
+	Mon,  3 Mar 2025 20:57:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=panix.com header.i=@panix.com header.b="ekIOcJeh"
-Received: from mailbackend.panix.com (mailbackend.panix.com [166.84.1.89])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BB16215041;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="WFd+7kVM"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA3A11CA9;
 	Mon,  3 Mar 2025 20:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.84.1.89
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741035428; cv=none; b=Po1UvbL/IzzrM/qdhgQHAA3uUCSoKgtk7PNg6d6vBaDyBJnq89wvHLRATgMBUAJaSnNmxLdCCja5yMw3mxvp42F/zA4oqkaF8aVfuMFcTPgX8M+JponcNKVk7FxJUPwDnDApgEiJAPf57bnKxZEdiatv1ADsdJa8wsCo9SJaInI=
+	t=1741035426; cv=none; b=jeYpJ0liGmJ1vE4D5caevM3EhV/8OGY8pUMPITOb5hRDGKCVGl6YwZpj4iqJTbe3sB0+vT5G2SFBdnyw9NLRF+rC0xjOZvav6a0r9ir/gc/aUpyIpGOODCxzYOZklZSXifHG1Fs4OkKAhafCoBF5k5hvhGZbd/AxcKi9SKaoBi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741035428; c=relaxed/simple;
-	bh=LkpixxwH6q6MHKb7xRRxpFfYub1ipaUt6GP6QhkgSrM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J0pKVQ5sVs/i2kJP+OnS9lCKgBA247BBGzKSYomDrQf2Qkb6KuwkPWYDYICkoKZnkfwCWlrsOwVRPLgfTrQM74DFZdZuy6gAOdMRCvt00lUrLLGsPXYwVDwV5QMhsd2Td3LgBFYruOvWsqx3KpaMlZhCAL72KUYCmx8+JY9YACc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=panix.com; spf=pass smtp.mailfrom=panix.com; dkim=pass (1024-bit key) header.d=panix.com header.i=@panix.com header.b=ekIOcJeh; arc=none smtp.client-ip=166.84.1.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=panix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=panix.com
-Received: from [192.168.126.122] (ip72-219-82-239.oc.oc.cox.net [72.219.82.239])
-	by mailbackend.panix.com (Postfix) with ESMTPSA id 4Z6B2R25V4z4MR5;
-	Mon,  3 Mar 2025 15:57:03 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=panix.com; s=panix;
-	t=1741035424; bh=LkpixxwH6q6MHKb7xRRxpFfYub1ipaUt6GP6QhkgSrM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=ekIOcJeh9Ssoc58bfP6BAuJI++uyeUDXpV4vuBSDEoCk2flD2+mfNgFrNFOWVQbf/
-	 +R4upKBgfknLtEOmDcdt2dTHAh8ZfYdD/bYRgToNuHIFvJqXQO7p+tQlkh0jLSn+fT
-	 xo8uS+sRefvvy/FB8GSMtH1DO3pGNfG4/GsF2wac=
-Message-ID: <244806e5-f8f9-4fad-a4aa-bf031c84748e@panix.com>
-Date: Mon, 3 Mar 2025 12:57:01 -0800
+	s=arc-20240116; t=1741035426; c=relaxed/simple;
+	bh=wkPrI5PI4gOi80WWVhId6dzA8Q9owv5JCghvbzkIVPM=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=n3JG0wtFH7R04RvBbbe2Lan+zeQvGgYpxE6cf61o7ycytzdSj80DvaQNBGewJLGpDbW5Ai8XJpHgedJ29J+KA+kDstjKoza3UENdFAuXvnEXN9Ozapd4lZSc67ZngS6Uh1WwN026hXZX+QNTRSA5bhmBfmTrswRnrjjiUhGldrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=WFd+7kVM; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [192.168.35.166] (c-24-22-154-137.hsd1.wa.comcast.net [24.22.154.137])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 860C12110483;
+	Mon,  3 Mar 2025 12:57:04 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 860C12110483
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1741035424;
+	bh=3qh+61wOXo3xnM/WVr1EaxpXDMg9Qc5SkS1wS9/KCaA=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=WFd+7kVMwb8m/yRhGu82uGV6e/HKaH3YScqYDNg3VqULYlWwhYN1W/EwkQ+KpHk2M
+	 B+UrWMeoRFcHhvu9/IkXdfvLFS9RIsO/J8jsCs0ntQiYwMGh95feOKPx7lgiJPPiC7
+	 /EfD2TyFRiTmU900qpo0PnuB9Rpe0/+ft8U6VJfk=
+Message-ID: <f0fa9bc3-159a-413f-a957-0298a55cf728@linux.microsoft.com>
+Date: Mon, 3 Mar 2025 12:57:09 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,50 +48,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: diagnosing resume failures after disconnected USB4 drives (Was:
- Re: PCI/ASPM: Fix L1SS saving (linus/master commit 7507eb3e7bfac))
-To: Lukas Wunner <lukas@wunner.de>,
- Mika Westerberg <mika.westerberg@linux.intel.com>, Me <kenny@panix.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, ilpo.jarvinen@linux.intel.com,
- Bjorn Helgaas <bhelgaas@google.com>, Jian-Hong Pan <jhp@endlessos.org>,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- Nikl??vs Ko??es??ikovs <pinkflames.linux@gmail.com>,
- Andreas Noever <andreas.noever@gmail.com>,
- Michael Jamet <michael.jamet@intel.com>,
- Yehezkel Bernat <YehezkelShB@gmail.com>, linux-usb@vger.kernel.org
-References: <21b72adf-aac6-49fa-af40-6db596c87432@panix.com>
- <20250211055722.GW3713119@black.fi.intel.com>
- <83d9302a-f743-43e4-9de2-2dd66d91ab5b@panix.com>
- <20250213135911.GG3713119@black.fi.intel.com>
- <a8d6ca75-8f50-4c46-8c67-fcf20d870dcc@panix.com>
- <20250214162948.GJ3713119@black.fi.intel.com>
- <661459dd-67d0-4e1c-bb28-9adf1417f660@panix.com>
- <20250226084404.GM3713119@black.fi.intel.com> <Z77ak-4YsdAKXbHr@wunner.de>
- <20250226091958.GN3713119@black.fi.intel.com> <Z8YKXC1IXYXctQrZ@wunner.de>
+Cc: eahariha@linux.microsoft.com, Wenjia Zhang <wenjia@linux.ibm.com>,
+ Jan Karcher <jaka@linux.ibm.com>, "D. Wythe" <alibuda@linux.alibaba.com>,
+ Tony Lu <tonylu@linux.alibaba.com>, Wen Gu <guwen@linux.alibaba.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ Pablo Neira Ayuso <pablo@netfilter.org>,
+ Jozsef Kadlecsik <kadlec@netfilter.org>, David Ahern <dsahern@kernel.org>,
+ linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netfilter-devel@vger.kernel.org, coreteam@netfilter.org
+Subject: Re: [PATCH net-next 0/3] Converge on using secs_to_jiffies() part two
+To: Jakub Kicinski <kuba@kernel.org>
+References: <20250219-netdev-secs-to-jiffies-part-2-v1-0-c484cc63611b@linux.microsoft.com>
+ <20250221162107.409ae333@kernel.org>
+From: Easwar Hariharan <eahariha@linux.microsoft.com>
 Content-Language: en-US
-From: Kenneth Crudup <kenny@panix.com>
-In-Reply-To: <Z8YKXC1IXYXctQrZ@wunner.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <20250221162107.409ae333@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
+On 2/21/2025 4:21 PM, Jakub Kicinski wrote:
+> On Wed, 19 Feb 2025 20:30:35 +0000 Easwar Hariharan wrote:
+>> The conversion is made with Coccinelle with the secs_to_jiffies() script
+>> in scripts/coccinelle/misc. Attention is paid to what the best change
+>> can be rather than restricting to what the tool provides.
+>>
+>> The non-netdev patches that include the update to secs_to_jiffies.cocci to address
+>> expressions are here: https://lore.kernel.org/all/20250203-converge-secs-to-jiffies-part-two-v2-0-d7058a01fd0e@linux.microsoft.com
+> 
+> Can the secs_to_jiffies cocci check script finally run in report mode?
+> 
+> I think that needs to be fixed first, before we start "cleaning up"
+> existing code under net.
 
+It does not, yet. I'm not ignoring this feedback, it's just taking a bit
+of wall clock time between commercial commitments. :) 
 
-On 3/3/25 12:00, Lukas Wunner wrote:
-
-> Does the below fix the issue?
-
-So far, so good! But, part of why it was so hard for me to bisect to the 
-Subject: commit was 'cause it didn't always OOPS; but I'll continue to 
-test on the most-likely failure mode (CalDigit TS4 to TB NVMe adaptor 
-connected at suspend, then nothing (or USB-C dock) on resume).
-
-But if this does indeed fix it, this will make TWO crash bugs on resume 
-squashed in less than 12 hours- gotta love Open Source Software!
-
--Kenny
-
--- 
-Kenneth R. Crudup / Sr. SW Engineer, Scott County Consulting, Orange 
-County CA
-
+Thanks,
+Easwar (he/him)
 
