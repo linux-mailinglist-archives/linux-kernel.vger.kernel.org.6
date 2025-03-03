@@ -1,146 +1,142 @@
-Return-Path: <linux-kernel+bounces-541612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62A1CA4BF39
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:48:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 248A1A4BF1B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:44:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D11203A5F8B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:44:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 337E018865C2
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:44:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4543C202C4E;
-	Mon,  3 Mar 2025 11:44:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eay5GK+5"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E0CA202C4E;
+	Mon,  3 Mar 2025 11:44:25 +0000 (UTC)
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA381FC7D7
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 11:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC9881FFC54;
+	Mon,  3 Mar 2025 11:44:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741002250; cv=none; b=YERTe57MwP00FrZdFDKHKf58WnpeeBvIrrNFZs7BlKaqReAPcw1BIMjUmCfeeQTVdOGOwyA9gF1zVN7Z6CEfraLUIEjGPSrbmwFK+4MTrKKLHrhW0jhGdEgqbJpIjymqG6tAlaPwz5EVzRvxpRGUMU+nQEbeGSFFs2KTa5Bk/zA=
+	t=1741002264; cv=none; b=O0PS8ae7HaQJuuJWYK0tjQ7sbYJDXsfPQfXN6kpCjYfASsAzDvOL8YwjQG4XZlVq+UKUqFOTWN3xGwElPUMh5XR7s4ZZNahsiMetplSkTuwDMkA6+al/IZ6+6QoHBqYKp3OXmuU0Z9/4jra76C/HD99JR0J8IH2KVCUda9fLT/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741002250; c=relaxed/simple;
-	bh=luQaXlapm+5N3MbCSgVBhzGQTHPZ+V+taACIos9pA2M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xky6AKpSTYdoO0hLHxtUmjM/tLF5OLuXX+rtjtxh4GXgedAJC/PU6HxkobHp9Wd2ux8b2pwGGjScWtBTdzsexfpsvbR5xwkFhyNSt7eNomNAyJNYI48jtU4cufeRTgse4seDacW3vsi+zomItjfjgFnyk7Eg6YBngV2fnA3mI9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eay5GK+5; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2234daaf269so48225905ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 03:44:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741002248; x=1741607048; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=/iVipZdD4W/u6xESxWCd4AYGgSc83dG/Ajr1AHkUSjs=;
-        b=eay5GK+5IUg2nQIEuL+HcdQXt6aY/71W1U7bdgeTTbeWlfeOvmrbJ69qEkHxL/V2S2
-         GOleLwYYUi40hcbZQ+Hk0bhdgJhrOhMStUUlC//QByBxlvAWK0KEJZPKd5oAixkFryfy
-         yek/Iyfe+vlMxJsPZBWVCNWDIInLhYTyx1XKF9HUPWKDnlLoFLbaCM7vzcXgldneFKSQ
-         kNNVEqBZdxOsG9Gk/dKC5P9W6uesN59f4qZ6P3aDGJ7P8XlmkMvg5/+7bfZ0qYseXWra
-         PCL9yXbel5L7q7qOApt5I3GLZD0KPBWneMTrq4rqRbZaS2uv3XpJTgLZlLwDXJ0ZvWbE
-         sVUA==
+	s=arc-20240116; t=1741002264; c=relaxed/simple;
+	bh=E6+HafXHG5+k0knqEhjQ87TeghBra0OEM7+NgUaC8pU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DY//X1Yy/5FmF7P/SOpMP3iIOyWvWShKoCRaxaPXJSrti2+CHIihenYeq4Iq3djmzIgFrppSwPhCUGd8f2pL5F7cxNr8XCoMxRARMJ9gNhi4ZnhSH2dninBTdmlpvbPpvncCIyRig60ZcaQVHU2onrWiMFRhP6+4yTCUHzHJqFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e4ad1d67bdso6800349a12.2;
+        Mon, 03 Mar 2025 03:44:22 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741002248; x=1741607048;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/iVipZdD4W/u6xESxWCd4AYGgSc83dG/Ajr1AHkUSjs=;
-        b=uRXditsEarhsLEBcRJdOOvLwTd83Fh4FsH/ii8dfEutiNqNbk9qlCt8IMoXOccIJ/i
-         7G/t95cqX6Kl5jyjFrzWKDzdYiGJmFmNMud4CjczfcWeNg3qLkTCV65P4p6u2Iig0E08
-         wic/kauhAenItxHwBBlwxzXaxVwx8P9VtUezZ/SVZV7u3Jrj1yIsQreP1WaFz+OnW4Bv
-         IKMbMwueYCxXykUvAYlV/hMXRAAW1BCiGvgr17jutYjnPy+tWv5W5nPi09ZDqsVIt0LD
-         1OmOk69tUfZTaR+6TQt1K5IbppJQ785ysHgK8xQQ7f4Sa2A78ZHnGYHc//lDAE55Ge1a
-         6xLg==
-X-Forwarded-Encrypted: i=1; AJvYcCXhwYdIb90EBduVvZKYrbUuO9faGPW20uxvy2X7XdDJCKtct5fgvN5t7Z+ehsuKCP2M/ltvLa/uqYWcfv8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0E08IAQ6wzGAQQSNYWGyyVep55f8UDvmr7Cf9buL4MlhWieSq
-	f6Oyimh9D/zcCWHrxMpQqv/7U5cERKFBR+81HshvLxhLTHk7gFZHGofier5SBrM=
-X-Gm-Gg: ASbGncv1ruIepnP0WOmQTqD4+UCNqw1oCz3e8kE+H5PjQFq33O2F1sFc/yLNRpAzroS
-	WxiCx4kkk6p46iUXCphhsa8I9VcDpDZcKgCjEa8zEbjx0gKlxWetrpPg9LEsifvWtAzOaUYhVRB
-	TOb2sgQWA+PfgZn3lt5B6LlK3/ez4zsxA8u6s7PPD5QIDQ15R+CbDSg1LFtRU3Cyvz0OjmPDnnR
-	9sdZiR6CPU4zzAuOS86nClXRaPou/OnHwJEAgaVnks1AzmDlL9ErhjqYV2F/4eBgpfIpkgkrPbg
-	qAcpkTrrE3e0gJI2Z9/eqPfA/90iFSlpTTHmcE7FlcPnUg==
-X-Google-Smtp-Source: AGHT+IHK6Lers8i6supYJLggNOwZjS+MBopT5CAeMJGX3443/hyOyrprvywUIlovcrK7G39ADGHiQA==
-X-Received: by 2002:a17:903:1d0:b0:220:bd61:a337 with SMTP id d9443c01a7336-223690ddef3mr188436085ad.23.1741002248534;
-        Mon, 03 Mar 2025 03:44:08 -0800 (PST)
-Received: from localhost ([122.172.84.15])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2235050d7ccsm75787615ad.202.2025.03.03.03.44.07
+        d=1e100.net; s=20230601; t=1741002261; x=1741607061;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AcCAGzrzj0+evLgZxNFpzXyvPT3wl6RxCmmrP8H1YRc=;
+        b=sliz4qpQSn8kE3XILIs/KafPF6HXrhsqIdmTfawjB4GmJsfvWq1mDQ0XmUZQKzrrPV
+         n1GfPNFVD/CwgJxUgGywh2sX1Z4HlaWOHtZ63LtOJya4sWmkj89aXyXkCky8uQ+TzTs5
+         /9Xrf6K/OABzDHPgxnj2WjeRA9xm6spbJnHvx9uX+SncDuirF1GzSDiD23urW1g6BLiX
+         KVa7XHB0dZpuMDm+MYZ9MI0Ny16hPzyh+pY0xP8adaejgv3nNGbKFZEhIgL9hA4lPOEb
+         a6vPpcSx3Z3S2OddjmPlTr1JNJfKqarQuHwkZT984tJh0gNXgoNU3YjUvL0+avBvatHC
+         dzUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXqEICWcq5y8s/Hi7TEsDK6P4T62sZx6v4R2cWZk2QjQO3KpgQx5gYXyYI5yqoaulfhEYx285nn1UtQfg8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmItlnh0ZfsBrPg3UXfWsJb34XCWL6XARL8Mv8znsdrg52hQuv
+	/7n01GHOR/lhIFnuT8Zj618n61mk+OkaIo4WbMlSy3B/t2LE6tEW
+X-Gm-Gg: ASbGncvEaZIWTINdZVbMyzw2mqKVnYK1LvRk3/HN3AKCfE6fSKTVCxtSHQD+y0sABI9
+	zanWGfxzbNGOPFtLVcDll7oI6pX2TEDKCfEkc848g/ImqL2HEl+vPeqoMUK7+wjL9nnOGc8uP7p
+	UlOrjIvpohE74tg0G1HMEDMvLwtWu+1VJFyZAFsVtHeBCPVB0eqVBH5WmdhX3DnWdTfKw3LcOtT
+	wJrDnHX3928H+tNVkx+zwILa7XnlpgAlRkDKCauQy5P+hLp1qPj9mYzd34ioAQNnDEtQncSxcQK
+	+xO/WwNXJsYhCmDrulKtEgDMhi2mebcC
+X-Google-Smtp-Source: AGHT+IFvl3A++wGZQ0D/UVn0AOiGAsrHdcaA+4kK5FBe45Db5g4EHwtrovrAcVXm/U5HStsT6C9rWw==
+X-Received: by 2002:a05:6402:2692:b0:5e1:dac1:fa22 with SMTP id 4fb4d7f45d1cf-5e4d6b628c9mr11901994a12.21.1741002260900;
+        Mon, 03 Mar 2025 03:44:20 -0800 (PST)
+Received: from localhost ([2a03:2880:30ff::])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e4c3bb7363sm6815232a12.46.2025.03.03.03.44.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 03:44:08 -0800 (PST)
-Date: Mon, 3 Mar 2025 17:14:06 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Daniel Almeida <daniel.almeida@collabora.com>
-Subject: Re: [PATCH V3 2/2] rust: Add initial clk abstractions
-Message-ID: <20250303114406.xbfzhw7nvxdildb2@vireshk-i7>
-References: <cover.1740995194.git.viresh.kumar@linaro.org>
- <023e3061cc164087b9079a9f6cb7e9fbf286794e.1740995194.git.viresh.kumar@linaro.org>
- <CANiq72kdWzFOZ39EoFNxEAbk4KYgzLi1OAEc1zn8BM07VpXy3g@mail.gmail.com>
+        Mon, 03 Mar 2025 03:44:19 -0800 (PST)
+From: Breno Leitao <leitao@debian.org>
+Date: Mon, 03 Mar 2025 03:44:12 -0800
+Subject: [PATCH net] netpoll: guard __netpoll_send_skb() with RCU read lock
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72kdWzFOZ39EoFNxEAbk4KYgzLi1OAEc1zn8BM07VpXy3g@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250303-netpoll_rcu_v2-v1-1-6b34d8a01fa2@debian.org>
+X-B4-Tracking: v=1; b=H4sIAAuWxWcC/x3MUQqDMBAFwKss79tAmiCWXKUU0fhsFyRKoiKId
+ xecA8yJwqwsCHIic9eic0KQVyWI/y79aHRAEDjrauutN4nrMk9Tm+PW7s6MHBrH3sb+7VEJlsx
+ Rjyf8IHHF97pusdVmIWUAAAA=
+X-Change-ID: 20250303-netpoll_rcu_v2-fed72eb0cb83
+To: "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+ Amerigo Wang <amwang@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-team@meta.com, Breno Leitao <leitao@debian.org>
+X-Mailer: b4 0.15-dev-42535
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1225; i=leitao@debian.org;
+ h=from:subject:message-id; bh=E6+HafXHG5+k0knqEhjQ87TeghBra0OEM7+NgUaC8pU=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBnxZYRcnZeDEaJOkv2dtyjAlPJ6s1NIunWSs6/X
+ eF8xlRwTXOJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCZ8WWEQAKCRA1o5Of/Hh3
+ beF/D/9+ebwAswXbXR2irz3Mkp+ze6xFiSt2WD29E0s7ZYCi8wpvgQr+O3tdI+nvB9LPMBBiUSA
+ zSqhZuVhRArXgr2AzqXMlsPy+j+7fGEpGwUrC8zc7MCRMXbGSlOrGyVm5vFQOEOTdriurCc3W7y
+ rgjeSmlZLIJtquAEZLeaLvEs382C5waYWpoCOId6v9qzDhKMrgyBZjt+7cQ9/4W9Aadvz3cxpZa
+ ocYNxWBg5lCIYYySy+LrP0Zvbp9VhzTOzDIFMCGDcePqOpSM9L6uKAUse7c9jTDvZwHMk3ZRdn5
+ oeQ5VPcStJd8r0g7yJI1rQmp7JA3OU78cR2+ggQaqHyIO1Vtub9BDRWsMiqLI6GZ/FUHnOnBPAM
+ 6RMDGDB+fZztdfZ3CgVDMWkVl6DFnsGHgvH6rHtJChwpnnRYtmYQ0IFEpSdVjaf7tztUmnP9oFt
+ vRduPpwq5rfFqjCm4q3ISert4ZY0Y0rV/1w6dzq/xq8iwHGCY/6lx/Qjv0/yYwYEhWZO6uGDGLw
+ j5w/r1MFE6ILAo12PYgJW/u9eBVQzpEy38zfcY4qMqs3OtJVVWH80u2/fnSOkp9cgEgLf1s9udy
+ FQb0manj1C+XeE1c3xEkVDcZVo9mDhOiwisKJy9dPidjYv/Hag8IRYVsM0QTcVKepzhFEJq/YQo
+ KZrFP6hH2jz01lQ==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-On 03-03-25, 11:16, Miguel Ojeda wrote:
-> On Mon, Mar 3, 2025 at 11:00 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> >
-> > +/// Frequency unit.
-> > +pub type Hertz = crate::ffi::c_ulong;
-> 
-> Do we want this to be an alias or would it make sense to take the
-> chance to make this a newtype?
+The function __netpoll_send_skb() is being invoked without holding the
+RCU read lock. This oversight triggers a warning message when
+CONFIG_PROVE_RCU_LIST is enabled:
 
-Actually Daneil did suggest to make this "Struct Hertz(c_ulong)", but then I
-looked at rust/kernel/time.rs:
+	net/core/netpoll.c:330 suspicious rcu_dereference_check() usage!
 
-pub type Jiffies = crate::ffi::c_ulong;
+	 netpoll_send_skb
+	 netpoll_send_udp
+	 write_ext_msg
+	 console_flush_all
+	 console_unlock
+	 vprintk_emit
 
-And I thought this is probably what everyone would have agreed to and did it
-this way.
+To prevent npinfo from disappearing unexpectedly, ensure that
+__netpoll_send_skb() is protected with the RCU read lock.
 
-> > +    /// Clock enable.
-> 
-> Should these be e.g. "Enable the clock." or similar?
-> 
-> Moreover, I see quite a lot of documentation about some of these
-> functions in the C side. I think we should not regress on that. Should
-> we link to the C docs, too?
+Fixes: 2899656b494dcd1 ("netpoll: take rcu_read_lock_bh() in netpoll_send_skb_on_dev()")
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+ net/core/netpoll.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Something like this (from print.rs) ?
+diff --git a/net/core/netpoll.c b/net/core/netpoll.c
+index 62b4041aae1ae..cac389105e2d1 100644
+--- a/net/core/netpoll.c
++++ b/net/core/netpoll.c
+@@ -326,6 +326,7 @@ static netdev_tx_t __netpoll_send_skb(struct netpoll *np, struct sk_buff *skb)
+ 
+ 	lockdep_assert_irqs_disabled();
+ 
++	guard(rcu)();
+ 	dev = np->dev;
+ 	npinfo = rcu_dereference_bh(dev->npinfo);
+ 
 
-/// [`pr_debug`]: https://docs.kernel.org/core-api/printk-basics.html#c.pr_debug
+---
+base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
+change-id: 20250303-netpoll_rcu_v2-fed72eb0cb83
 
-> > +pub mod clk;
-> 
-> Just to double check, do we need any `cfg`? I see some functions exist
-> even without e.g. `CONFIG_COMMON_CLK`, but I wanted to ask if you
-> tried to build it without it enabled.
-
-Yes, I was using this under `cfg` earlier, but removed that recently after
-testing this without CONFIG_HAVE_CLK. clk.h provides wrappers for cases where
-the config option isn't available.
-
+Best regards,
 -- 
-viresh
+Breno Leitao <leitao@debian.org>
+
 
