@@ -1,132 +1,116 @@
-Return-Path: <linux-kernel+bounces-544595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D546A4E305
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:24:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A8B4A4E466
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:54:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE5991899AA4
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:15:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A80C8A590E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:39:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D66ED2475CD;
-	Tue,  4 Mar 2025 15:08:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBAA1255246;
+	Tue,  4 Mar 2025 15:26:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ad9CTKT1"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="BlXvatPq"
 Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A662857CE
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CBC327C864
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:26:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.116
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741100908; cv=pass; b=MlB0FVEXTJqF7RZR1+/yW2OAlf9ytQsh4AkhOQYDULOwQCTPdppE7qlAVP2+sGRH/sah7PghMxd7T+pTP27+/6axGop1bCpFsRfFEtLzOARRClHj/V4wxVOF633/4IDcVb7JqnDZj26vzJHAFbYRvo4eMpwZ3ROvV5qaiQWoyvA=
+	t=1741101977; cv=fail; b=aZy6AIzUQegOpU/xaL2wHmDg2CudBKvbbRajRvzH5lvW9WoCXQ24lRF8DjcklXgMp6Nq5zMSkDd3veUI0uHzP4evxS9dq7Yl0PhypuZGgK4GoqjjyvipsUmjs1WgZBucZYRhlVeK3vmRGrXjM5QEdOOTnQocqDvTb4xOWXb8R48=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741100908; c=relaxed/simple;
-	bh=2KZN3ZbiL+bTV7no7mxRpvMRno5EVSR1v8XD6Lj/EcI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e/z6KxtleQAEeS9n5FKl0VuZr7VYAv8fjvOTbyyZuUCE82hkMFWDkm4WWx5DQPyz0gbh/HH439nt9dVhqXbsPjgyVOB2w0A5PWJdKEM0bfysNYohvxMM78fl9Fmsw5LaLVpPm2VqBF+WL4NtD0hEvvBBLfXDsJmlhT9T9b05KPk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ad9CTKT1; arc=none smtp.client-ip=170.10.133.124; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; arc=pass smtp.client-ip=160.75.25.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+	s=arc-20240116; t=1741101977; c=relaxed/simple;
+	bh=sN4YSNfJeXwI6mPGqMCpZpwXwEjPNNbxYaAxaMDv8MA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=d25lGrjnGePpucHOIXnODN2TLv893xAA9VMjbFBr3aoK9O0aAUHH2s5Jj2078/IZADYhHi/GABhmuXMZup4WvBzzed7WmKH8GCOXbrWzUsNbkccT8CnzSY5OQoyw+zkhJRZu8oZ+PlmS4MUW8uDlI73sgmTI0LIZgkkLQpTIvbE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=reject dis=none) header.from=bootlin.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=BlXvatPq reason="signature verification failed"; arc=none smtp.client-ip=217.70.183.193; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; arc=fail smtp.client-ip=160.75.25.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id DC49440F1CE7
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:08:24 +0300 (+03)
+	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id 7CDE540F1CE5
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:26:13 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6f3l6kgFzFyCD
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:59:47 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6fcl1jNlzG0Hv
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:24:55 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 6E784400C6; Tue,  4 Mar 2025 17:59:36 +0300 (+03)
+	id 8B1544274C; Tue,  4 Mar 2025 18:24:47 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ad9CTKT1
-X-Envelope-From: <linux-kernel+bounces-541289-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=BlXvatPq
+X-Envelope-From: <linux-kernel+bounces-541291-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ad9CTKT1
-Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id 4685641CDB
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:42:40 +0300 (+03)
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id F00593064C08
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:42:39 +0300 (+03)
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=BlXvatPq
+Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
+	by le2 (Postfix) with ESMTP id 6F153432D3
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:43:20 +0300 (+03)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by fgw2.itu.edu.tr (Postfix) with SMTP id 4C6392DCDE
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:43:20 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 530B616945B
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 09:42:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 236381892A78
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 09:43:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 217331F1506;
-	Mon,  3 Mar 2025 09:42:30 +0000 (UTC)
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2F911F1517;
+	Mon,  3 Mar 2025 09:43:06 +0000 (UTC)
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6B078F49
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 09:42:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57B151CDFCA;
+	Mon,  3 Mar 2025 09:43:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740994947; cv=none; b=Qakw7QULmsHHoMSJ8XWTMdVLs9V0icX3XKSPzGeLSiinaryFtSv0yjEEtUc0DjaS5rMRUi1KqmNfXQZ0iAldWfdYYlEeqdxBzfXcTkgvZ+YhGb5YHneculemOag2dCMJl2Xb1eeXV5cygHTQxdo6Ev4gzD1s/TEc5noKaLeLW34=
+	t=1740994983; cv=none; b=ubD85LpSwCDvu/aZez4O2pkwLHip2qBe1IOapu6YdoYkHZanbEwERTcSa1KjVQGvsYcbMNu9Qu5ac9EPxanHE+i7yy1LFMaXtdG96wHnP98baKmcOjzEH9AuLrbIjCzsik1zzfrygeO6uqjNuwCbMMfTMmGCRK4ceVg5ivRyRk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740994947; c=relaxed/simple;
-	bh=2KZN3ZbiL+bTV7no7mxRpvMRno5EVSR1v8XD6Lj/EcI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VHVtaZJghF4L5ntT8QynMJK1w5PqHga+84Rp2ERrpnu/Q8KYrZc7sWfaA11zlF0Pen0ojnJw3YDzmq8kQ9Hy8MF6kq3bCgydBuw7PXk8nqYdVpujw0enVd/qE6pUKr1aEnfezMjU8bx18KoQDnX21mqG+yRHXIwBvLPKLub/9jo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ad9CTKT1; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740994944;
+	s=arc-20240116; t=1740994983; c=relaxed/simple;
+	bh=Ef92XLEjUubEUguFoFaEsSiJbp2zpAJ3HBgHzHTie0g=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SHG6U1JJwnmoY1tYTwF/0bsQgNVuCxNpceZ98u8ilW0Liyk9EcjCQqINiObK+46GjCM7XjKc915pXYaUOP/kth8qeSXg5sxxN2QFT+xIXF9FeObePn3t6hFRnwIv8XgQOmzsvSi6fXWoltvHUfN/LxqbyflYSvl6oOzvuRUwUow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=BlXvatPq; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E476243308;
+	Mon,  3 Mar 2025 09:42:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740994979;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=MBVVdo3tOVYaEl+zgFn8dQqxk+vyBv3FmhJQbHVALgc=;
-	b=Ad9CTKT1C5RNt5mN31DOPTZzsar50zRlv0pcZ+VOnvDXxFVSIFfwwLKW856GCSZVRjwq1Q
-	GoVnG4LL8xzvN6fCFb89ZHwULgmKLciW8OCCFZc2jyQWxMmVdaWNuLzvAFKj9K0wkcvID6
-	By2DgvootjDcTylkagJrPRoYvqQk2zY=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-316-Rg-WXxCIPxCFJvMHVvxjdw-1; Mon, 03 Mar 2025 04:42:13 -0500
-X-MC-Unique: Rg-WXxCIPxCFJvMHVvxjdw-1
-X-Mimecast-MFC-AGG-ID: Rg-WXxCIPxCFJvMHVvxjdw_1740994932
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4394040fea1so20467965e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 01:42:13 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740994932; x=1741599732;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MBVVdo3tOVYaEl+zgFn8dQqxk+vyBv3FmhJQbHVALgc=;
-        b=P8StJiCU5Op81+luBB++40B8caLL76iuVFMLYhd/wajGMMWyC4zEZmwxQDv0loZnuq
-         tIykCP7oRnsW9vivuRw9OXSa3UahnPMKhbmBia+4aS9l2gwW4UijXcr/6ZgcUmfWWtg8
-         Hjv7+ixcMM8sygdi+FgXjv+6j5P+UrKxxcrSJ9Gj20pNGx2ojh1Ied84n8i3Nkb/3+cs
-         U2HOVend+7QEI2G6F1ne43x7YIjJEwuHCMvBHT22ZkYtS5SK7SDMYuMnw6fP1dYuvsPT
-         3OhXv2nnxW4RaiyVCq+RRPHR4VQLrOn1kdawHqRC5ixSezF/9hqdaCSCET7krYsPwoZN
-         fI1w==
-X-Forwarded-Encrypted: i=1; AJvYcCXn2RmQTaQH/LMeYek2zWu+QX0xiSJy+jKZoWvsqYO47IXJH1+Awn3qv6mR91+AERmJFgztazzheI51ujM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeHBg4a2I9wyYDVzEpjKZreUHaTY3flkmK3EpkAG6nL9BWZlwq
-	I1M7s2OdWHk0RvNaDl2UcF/fCVnkJRB5MU7W12/gHdJS2hBDg7FBqjaQgHOHQhVVowIVHksrIx9
-	ESVHOeFlOtACKhV/38S4pdNiRjtnWq3HZoeekBYInDSWDlx0KvcQ4bv088Iu91A==
-X-Gm-Gg: ASbGncviOvWVpyWX243gn3t1zh0O0/bX1liI4JtX5Nb6k2XrDjxkl0uR2uD6/SDXf4g
-	pqUUeFHV8xk/EZpjrWOIBeQAjuMBKaI7NvEPBS7873AIlFdoA4EjtwbUPFS+s8TsgWE+cbxC0pv
-	S3fE9PMtDvR+JpV1CvSKCpFKJe29pJPMWKsMSLaqsGYcPBq1uv0n/RUdmnWGqEPfegq8QSCMWoS
-	XSf79hIHhuZsM8iYnIEkxSTYfZwtIllwSxT71BCUe8UInILCaHM2L3R0t92uviP+Wi8TXGEpnf2
-	VlvR445auAVN9fEYbreKbiLX4nkIrp0lNziNzqHl464OOM38fGgwBE0=
-X-Received: by 2002:a05:600c:b4f:b0:43b:c638:3433 with SMTP id 5b1f17b1804b1-43bc63837a3mr9723215e9.12.1740994932380;
-        Mon, 03 Mar 2025 01:42:12 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFDYmizeCfEPwnub6ZUt8HoyBNoVBgCgnBfss7JKJMNfK/DcWCCY9SyISgPNOR5yKhrWm25LA==
-X-Received: by 2002:a05:600c:b4f:b0:43b:c638:3433 with SMTP id 5b1f17b1804b1-43bc63837a3mr9722845e9.12.1740994931899;
-        Mon, 03 Mar 2025 01:42:11 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:c:37e0:ced3:55bd:f454:e722? ([2a01:e0a:c:37e0:ced3:55bd:f454:e722])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47a6a6csm14062502f8f.30.2025.03.03.01.42.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Mar 2025 01:42:11 -0800 (PST)
-Message-ID: <739acf08-6978-41f3-a4db-724acc03ba06@redhat.com>
-Date: Mon, 3 Mar 2025 10:42:10 +0100
+	bh=aohfSAJAihchV7qkXkrdXJ9Pj4eAK1H+KH7QBBsTIk4=;
+	b=BlXvatPqxMPRvd6/D9QDvMcM6PIzd/xRBddwsU+RNRT9dt5gXyksu4odKthtnWZQjSJ6as
+	Ff7dBmKLfYCeECddGoIWPHB21IjSLaYhHMn0nlzxtRfZte7X/8IP2LnLCr7YShrA3vFXsU
+	+1KkfK2HOIT75WA3ct9BGp2vzauUUJZYQkDhPrVCc8BA8zhDVWYWDu6AtkalQWq2EoIlCu
+	pufyw2tRBwZbBklZ4LGgaaSKfYpxf6UJJXti9H66EZyJ268bAk8HESRbjPN5Xj6mFwzGSG
+	Q7Pp67li5M1vQXb8btIPoFEsF2Wt6sYts8fdmoDCt1NLX7Y6/QFcgWcp3mv9Pg==
+Date: Mon, 3 Mar 2025 10:42:56 +0100
+From: Herve Codina <herve.codina@bootlin.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Rob Herring
+ <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, Bjorn Helgaas
+ <bhelgaas@google.com>, Lizhi Hou <lizhi.hou@amd.com>,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-pci@vger.kernel.org, Allan Nielsen <allan.nielsen@microchip.com>,
+ Horatiu Vultur <horatiu.vultur@microchip.com>, Steen Hegelund
+ <steen.hegelund@microchip.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v8 2/5] PCI: of: Use device_{add,remove}_of_node() to
+ attach of_node to existing device
+Message-ID: <20250303104256.48329d89@bootlin.com>
+In-Reply-To: <20250228205855.GA67436@bhelgaas>
+References: <20250224141356.36325-3-herve.codina@bootlin.com>
+	<20250228205855.GA67436@bhelgaas>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -134,73 +118,62 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/panic: clean Clippy warning
-To: Miguel Ojeda <ojeda@kernel.org>, =?UTF-8?Q?Thomas_B=C3=B6hler?=
- <witcher@wiredspace.de>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Alex Gaynor <alex.gaynor@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org, patches@lists.linux.dev
-References: <20250303093242.1011790-1-ojeda@kernel.org>
-Content-Language: en-US, fr
-From: Jocelyn Falempe <jfalempe@redhat.com>
-In-Reply-To: <20250303093242.1011790-1-ojeda@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelkeejlecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthekredtredtjeenucfhrhhomhepjfgvrhhvvgcuvehoughinhgruceohhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeviefffeegiedtleelieeghfejleeuueevkeevteegffehledtkeegudeigffgvdenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudehpdhrtghpthhtohephhgvlhhgrggrsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghkrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsrghrrghvrghnrghksehgohhog
+ hhlvgdrtghomhdprhgtphhtthhopegshhgvlhhgrggrshesghhoohhglhgvrdgtohhmpdhrtghpthhtoheplhhiiihhihdrhhhouhesrghmugdrtghomh
+X-GND-Sasl: herve.codina@bootlin.com
+Content-Transfer-Encoding: quoted-printable
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6f3l6kgFzFyCD
+X-ITU-Libra-ESVA-ID: 4Z6fcl1jNlzG0Hv
 X-ITU-Libra-ESVA: No virus found
-X-ITU-Libra-ESVA-SpamScore: ssss
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741705215.14409@wGGlYl3hnl+2kH5vQ1UyqA
-X-ITU-MailScanner-SpamCheck: spam
+X-ITU-Libra-ESVA-Watermark: 1741706712.70316@hXbu2iibVPP6VvQIC38uEA
+X-ITU-MailScanner-SpamCheck: not spam
 
-On 03/03/2025 10:32, Miguel Ojeda wrote:
-> Clippy warns:
-> 
->      error: manual implementation of an assign operation
->         --> drivers/gpu/drm/drm_panic_qr.rs:418:25
->          |
->      418 |                         self.carry = self.carry % pow;
->          |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: replace it with: `self.carry %= pow`
->          |
->          = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#assign_op_pattern
-> 
-> Thus clean it up.
+On Fri, 28 Feb 2025 14:58:55 -0600
+Bjorn Helgaas <helgaas@kernel.org> wrote:
 
-Thanks, it looks good to me.
+> On Mon, Feb 24, 2025 at 03:13:52PM +0100, Herve Codina wrote:
+> > The commit 407d1a51921e ("PCI: Create device tree node for bridge")
+> > creates of_node for PCI devices. The newly created of_node is attache=
+d
+> > to an existing device. This is done setting directly pdev->dev.of_nod=
+e
+> > in the code.
+> >=20
+> > Even if pdev->dev.of_node cannot be previously set, this doesn't hand=
+le
+> > the fwnode field of the struct device. Indeed, this field needs to be
+> > set if it hasn't already been set.
+> >=20
+> > device_{add,remove}_of_node() have been introduced to handle this cas=
+e. =20
+>=20
+> I guess another way to say this is:
+>=20
+>   - If dev->of_node has already been set, it is an error and we want
+>     to do nothing.  The error is impossible in this case because
+>     of_pci_make_dev_node() returns early if dev->of_node has been set.
+>=20
+>   - Otherwise, we want to set dev->of_node (just as we previously
+>     did), and
+>=20
+>   - if dev->fwnode has not been set, we want to set that too.
+>=20
+> So the whole point of this is to set dev->fwnode, which we didn't do
+> before.  But has np->fwnode been set to anything?  Maybe it's buried
+> somewhere inside of_changeset_create_node(), but I didn't see it.
 
-Reviewed-by: Jocelyn Falempe <jfalempe@redhat.com>
+np->fwnode can be set by ACPI. We are at the frontier between ACPI and
+device-tree.
 
-> 
-> Fixes: dbed4a797e00 ("drm/panic: Better binary encoding in QR code")
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-> ---
->   drivers/gpu/drm/drm_panic_qr.rs | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_panic_qr.rs b/drivers/gpu/drm/drm_panic_qr.rs
-> index 62cb8a162483..3b0dd59781d4 100644
-> --- a/drivers/gpu/drm/drm_panic_qr.rs
-> +++ b/drivers/gpu/drm/drm_panic_qr.rs
-> @@ -415,7 +415,7 @@ fn next(&mut self) -> Option<Self::Item> {
->                           self.carry_len -= out_len;
->                           let pow = u64::pow(10, self.carry_len as u32);
->                           let out = (self.carry / pow) as u16;
-> -                        self.carry = self.carry % pow;
-> +                        self.carry %= pow;
->                           Some((out, NUM_CHARS_BITS[out_len]))
->                       }
->                   }
-> 
-> base-commit: c0eb65494e59d9834af7cbad983629e9017b25a1
+The ofnode is created and filled from an already existing device. This
+device can be created from information provided by the ACPI world.
+In that case, np->fwnode is set to and ACPI fwnode.
 
+Best regards,
+Herv=C3=A9
 
 
