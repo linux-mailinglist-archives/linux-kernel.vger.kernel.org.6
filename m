@@ -1,43 +1,47 @@
-Return-Path: <linux-aspeed+bounces-933-lists+linux-aspeed=lfdr.de@lists.ozlabs.org>
-X-Original-To: lists+linux-aspeed@lfdr.de
-Delivered-To: lists+linux-aspeed@lfdr.de
-Received: from lists.ozlabs.org (lists.ozlabs.org [IPv6:2404:9400:2:0:216:3eff:fee1:b9f1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43992A4E572
-	for <lists+linux-aspeed@lfdr.de>; Tue,  4 Mar 2025 17:19:05 +0100 (CET)
-Received: from boromir.ozlabs.org (localhost [127.0.0.1])
-	by lists.ozlabs.org (Postfix) with ESMTP id 4Z6gqB4Ss0z2xDD;
-	Wed,  5 Mar 2025 03:19:02 +1100 (AEDT)
-X-Original-To: linux-aspeed@lists.ozlabs.org
-Authentication-Results: lists.ozlabs.org; arc=pass smtp.remote-ip=160.75.25.116 arc.chain=subspace.kernel.org
-ARC-Seal: i=2; a=rsa-sha256; d=lists.ozlabs.org; s=201707; t=1741105142;
-	cv=pass; b=ZBOilo8RjfNobTY9+9cH4dFauSJdtWg61IGADoTfeek2TewwQCMnU7NQUx1KTDa+fVyLwExrw2uSccJVtzMfOytUVR1/Cx8lPqN7CfR29kgJLjrGRJ7piOMKGciJ8eDuW6RLnNMDz1bMe+klNjfG6naQ1LbVTDPQhTrjMFL/dUvtxMt15gsTHEY50qGzKgRuD2J7ScuPkcou3PECP1SW/j+I7VvPA+b+K//SrS2+XZaRG0zXn2m1Sfci7zCjeMUHumKcrHDFlkJuZM8kqW2mmsZtXb9kiwggm1Llp67rwpfroUm+E0U643KCYTQgiSRZCW2tMiclHqvL/cXVrIu9pQ==
-ARC-Message-Signature: i=2; a=rsa-sha256; d=lists.ozlabs.org; s=201707;
-	t=1741105142; c=relaxed/relaxed;
-	bh=lfos9Syg08SqOn+//RWYzG2n1+EfVqjsyXohmBPCw+w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OBdlcomAHv68EAJGaUpUdyLgxXFIAT0CqX4bQLvbAJByveJFTucZkg+IPjIn8PXg85A4CdlkSgo6UmRE0ahrZ8VCk0NPxK4zA6/+oltyPXBXd0iIu7nnMefCcpO5HlVASFW1VFBP72/PdyhKALZpRXmZ04M1p7dywlRLIGBFrN4UW7Hct+VxDIJj4yAliNxYo3MfbWSYMJX7gS3SOPTcwzvqMrjyebPLGUh1tKya+K9j7DukDlUq+kgVQAI2S2wBWKbaztvyaFDwNwcQU0rNEyP4KS1zpZfcfwc+R+aHSrziplQIy1fK0p5l7jOCBfAZRmpv5rfpEC01HeeptBWoqQ==
-ARC-Authentication-Results: i=2; lists.ozlabs.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; dkim=pass (2048-bit key; unprotected) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.a=rsa-sha256 header.s=20230601 header.b=NbLTLPSf; dkim-atps=neutral; spf=none (client-ip=160.75.25.116; helo=beeline2.cc.itu.edu.tr; envelope-from=root@cc.itu.edu.tr; receiver=lists.ozlabs.org) smtp.mailfrom=cc.itu.edu.tr
-Authentication-Results: lists.ozlabs.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: lists.ozlabs.org;
-	dkim=pass (2048-bit key; unprotected) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.a=rsa-sha256 header.s=20230601 header.b=NbLTLPSf;
-	dkim-atps=neutral
-Authentication-Results: lists.ozlabs.org; spf=none (no SPF record) smtp.mailfrom=cc.itu.edu.tr (client-ip=160.75.25.116; helo=beeline2.cc.itu.edu.tr; envelope-from=root@cc.itu.edu.tr; receiver=lists.ozlabs.org)
-Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+Return-Path: <linux-kernel+bounces-544912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+X-Original-To: lists+linux-kernel@lfdr.de
+Delivered-To: lists+linux-kernel@lfdr.de
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A594A4E6D2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:51:50 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by lists.ozlabs.org (Postfix) with ESMTPS id 4Z6gq93t43z2xCW
-	for <linux-aspeed@lists.ozlabs.org>; Wed,  5 Mar 2025 03:19:01 +1100 (AEDT)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39EFB462B95
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:37:58 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D8E027C873;
+	Tue,  4 Mar 2025 16:16:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="NbLTLPSf"
+Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E63627C869
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:16:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.116
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741104974; cv=pass; b=SXg7aJktyUqkLlTIA2WB+pmHgTRTohQY6NxYz8GvYZsGomsLmMpg8EMEyDhFz2Osmy/WAuPO6mPFUChJllWBQoFa6+FcjZbpbAcXAi8Ahbhp/FdsheUHlPl+O1CdiHSoBM+QS0LorpgLvbBSTIH0HLpDtszvwuTnEwzKo65KftM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741104974; c=relaxed/simple;
+	bh=vlo1sOpINhYxlANjGKB2TZCc7AQtX8YGKke1Q97h0SI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=C815uBlgbSPgr9IQzxI6UZ61agouCvzV2yDk7A340FpznhP5zvvPL1J/gLwRokCYGIs7oFi9RNQwZYj7uPYuiHrkCc5VJVbiMHKbWdk/NTmBDP8OD2KRggOBudzL+VM2eAg3MUTzPFX7ZMvJtTz8cCENt4ExPywaGK9pwIY9fbw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=NbLTLPSf; arc=none smtp.client-ip=209.85.128.51; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; arc=pass smtp.client-ip=160.75.25.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id 5AEC4408B660
-	for <linux-aspeed@lists.ozlabs.org>; Tue,  4 Mar 2025 19:18:29 +0300 (+03)
+	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id 4DBCE408B65B
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:16:11 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
+Authentication-Results: lesvatest1.cc.itu.edu.tr;
+	dkim=pass (2048-bit key, unprotected) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.a=rsa-sha256 header.s=20230601 header.b=NbLTLPSf
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6gk645z4zG2KS
-	for <linux-aspeed@lists.ozlabs.org>; Tue,  4 Mar 2025 19:14:38 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6gkC4830zG2ft
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:14:43 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
 	id D4E6042720; Tue,  4 Mar 2025 19:14:32 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
@@ -59,8 +63,6 @@ Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
 	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2464C21638A;
 	Mon,  3 Mar 2025 13:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="NbLTLPSf"
 Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
@@ -122,21 +124,11 @@ From: Bartosz Golaszewski <brgl@bgdev.pl>
 Date: Mon, 03 Mar 2025 14:18:37 +0100
 Subject: [PATCH 12/15] gpio: aspeed: use lock guards
 Precedence: bulk
+Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-X-Mailing-List: linux-aspeed@lists.ozlabs.org
-List-Id: <linux-aspeed.lists.ozlabs.org>
-List-Help: <mailto:linux-aspeed+help@lists.ozlabs.org>
-List-Owner: <mailto:linux-aspeed+owner@lists.ozlabs.org>
-List-Post: <mailto:linux-aspeed@lists.ozlabs.org>
-List-Archive: <https://lore.kernel.org/linux-aspeed/>,
-  <https://lists.ozlabs.org/pipermail/linux-aspeed/>
-List-Subscribe: <mailto:linux-aspeed+subscribe@lists.ozlabs.org>,
-  <mailto:linux-aspeed+subscribe-digest@lists.ozlabs.org>,
-  <mailto:linux-aspeed+subscribe-nomail@lists.ozlabs.org>
-List-Unsubscribe: <mailto:linux-aspeed+unsubscribe@lists.ozlabs.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
@@ -172,16 +164,11 @@ X-Developer-Signature: v=1; a=openpgp-sha256; l=10512;
 X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
  fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6gk645z4zG2KS
+X-ITU-Libra-ESVA-ID: 4Z6gkC4830zG2ft
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741709789.15031@eP90SjsqrNpcHvZ7A0eG1w
+X-ITU-Libra-ESVA-Watermark: 1741709689.08988@u9vImQz5bbQwjsiTAkVMBw
 X-ITU-MailScanner-SpamCheck: not spam
-X-Spam-Status: No, score=-1.0 required=5.0 tests=ARC_SIGNED,ARC_VALID,
-	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_NONE autolearn=disabled
-	version=4.0.0
-X-Spam-Checker-Version: SpamAssassin 4.0.0 (2022-12-13) on lists.ozlabs.org
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
