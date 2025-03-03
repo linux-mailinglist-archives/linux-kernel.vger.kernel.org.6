@@ -1,334 +1,185 @@
-Return-Path: <linux-kernel+bounces-542768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FF74A4CD6D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:21:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CA13A4CD74
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:24:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3793D1893365
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 21:22:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC6A93ACD66
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 21:24:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6866123717D;
-	Mon,  3 Mar 2025 21:21:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C97E51F03EC;
+	Mon,  3 Mar 2025 21:24:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QrCDFm39"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Cdex1G6L"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B446235BE4
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 21:21:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B358B1EE031;
+	Mon,  3 Mar 2025 21:24:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741036895; cv=none; b=Ux1PYHW9oPXZJOPyVBlx3kzZsfDbAmkCzGCe1TN5xDjJopWdo+xub/87WnINMrq3R2vcOlHEu/HiH8H/T3X3MRmqCwpZmVIj19V2VUpwPKSywXTTmjpQGUdimCRouJUPuT1wXT1UcGQtk5Cgnn4eq62lMKnHjK4r7Rr56500xCM=
+	t=1741037053; cv=none; b=hkvLbJMuuvU79h4WWHNfenMUZxrAlzCnBClfFR8zwu7xmwwTVMakK7UxI94CQaBkksSQ1P+Gep7AUs8+EF2HmmR6j6GyR+EZquTXZr8dlSxvW1S7EcUkTB2dsxtxwOiYhYVEkQvaVmT1xZ2IUmBxHox6BkK/C/FDSr+OCsPrCXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741036895; c=relaxed/simple;
-	bh=HyITMfrLvX38brwsnBLfqY6XryQdGoMR2XqVoGe7jkE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ISde+/S9uFt07eGOWE/4TJihosSHhnQYaQ6CxD6WP/HUZhfMJkhU9ZrvFhFg5myVMVlCTTFPpdU/XyrCLxBzzuqWKp0qfwp+fIW6fblYRM3RzmAjRVVsyTT2dU95XQjmv9mhytKtQvA0JpFe5K0AzeUQ7Gi5b2Pjjtzyxxhl7zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QrCDFm39; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 3 Mar 2025 21:21:27 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741036891;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kL4tjzMzQo5uwMm6YTN0FCnZCyssi5BQcb9r960YpQM=;
-	b=QrCDFm39CXH/h6DfmdEqATr6J1otV52h8hTQ+i3zgc+71cFLdP0gtJLzho/ndfwRJhDQ+r
-	n2MLTJxLk9F/xVzHyO75zhyjlz8FMduaRGENeTdfBZuPB1Dt19yyJ1gvapYh81IE23VKju
-	++Zyy+mTS73/a0gs5N+no8NgHbKZqB0=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Nhat Pham <nphamcs@gmail.com>
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, chengming.zhou@linux.dev,
-	linux-mm@kvack.org, kernel-team@meta.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] page_io: zswap: do not crash the kernel on
- decompression failure
-Message-ID: <Z8YdV4Vqju2w7hqI@google.com>
-References: <20250303200627.2102890-1-nphamcs@gmail.com>
+	s=arc-20240116; t=1741037053; c=relaxed/simple;
+	bh=9EzIsEM29laXTcbOo/8gsp0KmmdLvigmbFArzqY8T1Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=sOTomFFP1xB5qmTFzF4xRLO3kZj+TnKs1Fy9o7r8PsyR5yFRi5IPCs/xJAw8czrejyCne7UI50cpNjJZCM9hKGzeNfkZ4LngFMHFmQpJS10eftZ/nGeJj9MVw57AxsIpIZZ4Lg+lr6FjOgtnSjd5qPqfIinN2g8pk3qzTdlZ10c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Cdex1G6L; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 523AP2bf019978;
+	Mon, 3 Mar 2025 21:23:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	7ty50yskNa4pYew6F6vyuvTbJ7taysYiM7S/eCucEBE=; b=Cdex1G6Lyyx8+TYb
+	sSrzs1L/nSugkKtyoYxe3JSPFDJXiPs/4kRV4wJ11U0jiyHUcuU1CbyVvILem9RO
+	/TlFhRHdoltrCZTM00SzFqj9VMOhwglNEKlJ2Shc7kHyP1gjFhBX/6UsccXPXN4i
+	vLZQtsq1L6LYAAIg7CLG+v9rEJ8VqCs6ZICshH3ncYa8oGn8oNSMP6OJhZMWY1iK
+	j+FXiyj6rE3z54ErXmVFDKm6VcUFs0yNyJpsIbPyEVQQ/fGELLvp+pFmBMTDnwiz
+	mkp6v/14DWylOwNao9k1k+0LS4EAUYH4gFtix1c9IHgnu1c04bmHMbqgsbjVGmER
+	ntpFnA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 453t95x5vm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Mar 2025 21:23:53 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 523LNqnR001016
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 3 Mar 2025 21:23:52 GMT
+Received: from [10.110.69.79] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 3 Mar 2025
+ 13:23:51 -0800
+Message-ID: <8c0c0935-3a20-4c6a-a6fb-556e14ecedda@quicinc.com>
+Date: Mon, 3 Mar 2025 13:23:11 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250303200627.2102890-1-nphamcs@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 05/16] dt-bindings: display/msm: dp-controller: Add
+ SM8750
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Rob Clark
+	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Simona
+ Vetter" <simona@ffwll.ch>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Krishna Manikandan <quic_mkrishn@quicinc.com>,
+        Jonathan Marek
+	<jonathan@marek.ca>,
+        Kuogee Hsieh <quic_khsieh@quicinc.com>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        "Srini
+ Kandagatla" <srinivas.kandagatla@linaro.org>
+References: <20250217-b4-sm8750-display-v2-0-d201dcdda6a4@linaro.org>
+ <20250217-b4-sm8750-display-v2-5-d201dcdda6a4@linaro.org>
+ <aqpuik4zitdfuk4pahn4wyzxdvxldy4dcqjs3mhr6fqtxpoxhf@ssfzzbfce2nu>
+ <2dfe466c-ad94-4683-a2e9-a49e77a61f4f@linaro.org>
+ <h2shpen65r7v4in54avsez7qtlwojbt2cthyomqrsgs5ewprwb@bn53suqrzkac>
+ <4e82404a-0ea5-4641-829a-bba666edd352@quicinc.com>
+ <CAA8EJpoWEuqKkreUTu1gO-Pr=VFNNP_vBfNZpitJiJH728vjPA@mail.gmail.com>
+Content-Language: en-US
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <CAA8EJpoWEuqKkreUTu1gO-Pr=VFNNP_vBfNZpitJiJH728vjPA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: U0A0gXsukuszRPuGJAxn_2wPnvZt7M3G
+X-Proofpoint-GUID: U0A0gXsukuszRPuGJAxn_2wPnvZt7M3G
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-03_10,2025-03-03_04,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ phishscore=0 mlxlogscore=999 clxscore=1015 priorityscore=1501
+ lowpriorityscore=0 spamscore=0 malwarescore=0 suspectscore=0 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2503030165
 
-On Mon, Mar 03, 2025 at 12:06:27PM -0800, Nhat Pham wrote:
-> Currently, we crash the kernel when a decompression failure occurs in
-> zswap (either because of memory corruption, or a bug in the compression
-> algorithm). This is overkill. We should only SIGBUS the unfortunate
-> process asking for the zswap entry on zswap load, and skip the corrupted
-> entry in zswap writeback.
+
+
+On 2/24/2025 7:14 PM, Dmitry Baryshkov wrote:
+> On Mon, 24 Feb 2025 at 20:59, Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
+>>
+>>
+>>
+>> On 2/19/2025 9:08 AM, Dmitry Baryshkov wrote:
+>>> On Wed, Feb 19, 2025 at 06:02:20PM +0100, Krzysztof Kozlowski wrote:
+>>>> On 17/02/2025 19:58, Dmitry Baryshkov wrote:
+>>>>> On Mon, Feb 17, 2025 at 05:41:26PM +0100, Krzysztof Kozlowski wrote:
+>>>>>> Add DisplayPort controller for Qualcomm SM8750 SoC which so far looks
+>>>>>> fully compatible with earlier SM8650 variant.
+>>>>>
+>>>>> As that became a question for QCS8300, does SM8750 also support exactly
+>>>>> two MST streams?
+>>>>
+>>>> v1.5 of DP (starting from SA8775p , then SM8650 and SM8750) support 4x
+>>>> MST for DPTX0 and 2x MST for DPTX1.
+>>>>
+>>>> The DP in SM8650 and SM8750 are identical, according to datasheet (v1.5.1).
+>>>
+>>> Hmm. This also means that QCS8300 is compatible with SM8650. I'll let
+>>> Abhinav comment here.
+>>>
+>>
+>> DP version by itself is not a good measure of whether the controller can
+>> support 4 streams or not.
+>>
+>> Firstly, sm8650/sm8750 do not have a DPTX1 so we are only discussing
+>> about DP TX0.
+>>
+>> Coming to the QCS8300 Vs sm8650/sm8750, even though the DP controller
+>> version is the same, there is no HW support for more than 2 streams on
+>> sm8650/sm8750 because there are no INTF blocks to drive 4 streams.
+>>
+>> On sm8650/sm8750, only INTF_0 and INTF_3 can be used for DP. Hence 2
+>> streams.
+>>
+>> Whereas on Monaco, we have INTF_0, INTF_3, INTF_6 and INTF_7 capable of
 > 
-> See [1] for a recent upstream discussion about this.
+> No idea what Monaco is, most likely it is some platform. Please use
+> SoC names in public.
 > 
-> The zswap writeback case is relatively straightforward to fix. For the
-> zswap_load() case, we reorganize the swap read paths, having
-> swap_read_folio_zeromap() and zswap_load() return specific error codes:
+
+Monaco is indeed QCS8300. I usually do use SoC names, in this instance 
+just intuitively ended up using the internal one as I use it often.
+
+>> driving DP. Hence 4 streams.
+>>
+>> Let me know if there are more questions.
 > 
-> * 0 indicates the backend owns the swapped out content, which was
->   successfully loaded into the page.
-> * -ENOENT indicates the backend does not own the swapped out content.
-> * -EINVAL and -EIO indicate the backend own the swapped out content, but
->   the content was not successfully loaded into the page for some
->   reasons. The folio will not be marked up-to-date, which will
->   eventually cause the process requesting the page to SIGBUS (see the
->   handling of not-up-to-date folio in do_swap_page() in mm/memory.c).
+> How many stream clocks are present on those platforms? I'm asking
+> because there is a small, but not non-existing difference between 'DPs
+> are not completely compatible / the same' and 'DPs are fully
+> compatible but different DPU blocks impose different restrictions on
+> the number of MST streams'.
 > 
-> zswap decompression failures on the zswap load path are treated as an
-> -EIO error, as described above, and will no longer crash the kernel.
-> 
-> As a side effect, we require one extra zswap tree traversal in the load
-> and writeback paths. Quick benchmarking on a kernel build test shows no
-> performance difference:
-> 
-> With the new scheme:
-> real: mean: 125.1s, stdev: 0.12s
-> user: mean: 3265.23s, stdev: 9.62s
-> sys: mean: 2156.41s, stdev: 13.98s
-> 
-> The old scheme:
-> real: mean: 125.78s, stdev: 0.45s
-> user: mean: 3287.18s, stdev: 5.95s
-> sys: mean: 2177.08s, stdev: 26.52s
-> 
-> [1]: https://lore.kernel.org/all/ZsiLElTykamcYZ6J@casper.infradead.org/
-> 
-> Suggested-by: Matthew Wilcox <willy@infradead.org>
-> Suggested-by: Yosry Ahmed <yosry.ahmed@linux.dev>
-> Suggested-by: Johannes Weiner <hannes@cmpxchg.org>
-> Signed-off-by: Nhat Pham <nphamcs@gmail.com>
-> ---
->  include/linux/zswap.h |   4 +-
->  mm/page_io.c          |  35 ++++++++----
->  mm/zswap.c            | 130 ++++++++++++++++++++++++++++++------------
->  3 files changed, 120 insertions(+), 49 deletions(-)
-> 
-> diff --git a/include/linux/zswap.h b/include/linux/zswap.h
-> index d961ead91bf1..9468cb3e0878 100644
-> --- a/include/linux/zswap.h
-> +++ b/include/linux/zswap.h
-> @@ -26,7 +26,7 @@ struct zswap_lruvec_state {
->  
->  unsigned long zswap_total_pages(void);
->  bool zswap_store(struct folio *folio);
-> -bool zswap_load(struct folio *folio);
-> +int zswap_load(struct folio *folio);
->  void zswap_invalidate(swp_entry_t swp);
->  int zswap_swapon(int type, unsigned long nr_pages);
->  void zswap_swapoff(int type);
-> @@ -46,7 +46,7 @@ static inline bool zswap_store(struct folio *folio)
->  
->  static inline bool zswap_load(struct folio *folio)
 
-int?
+I have confirmed this internally. sm8650/sm8750 have only 2 stream 
+clocks and not 4.
 
->  {
-> -	return false;
-> +	return -ENOENT;
->  }
->  
->  static inline void zswap_invalidate(swp_entry_t swp) {}
-> diff --git a/mm/page_io.c b/mm/page_io.c
-> index 9b983de351f9..8a44faec3f92 100644
-> --- a/mm/page_io.c
-> +++ b/mm/page_io.c
-> @@ -511,7 +511,21 @@ static void sio_read_complete(struct kiocb *iocb, long ret)
->  	mempool_free(sio, sio_pool);
->  }
->  
-> -static bool swap_read_folio_zeromap(struct folio *folio)
-> +/*
-> + * Return: one of the following error codes:
 
-nit: 
-"Returns 0 on success, or one of the following errors on failure:"
 
-Also might as well make this a full kerneldoc?
-
-> + *
-> + *  0: the folio is zero-filled (and was populated as such and marked
-> + *  up-to-date and unlocked).
-> + *
-> + *  -ENOENT: the folio was not zero-filled.
-> + *
-> + *  -EINVAL: some of the subpages in the folio are zero-filled, but not all of
-> + *  them. This is an error because we don't currently support a large folio
-> + *  that is partially in the zeromap. The folio is unlocked, but NOT marked
-> + *  up-to-date, so that an IO error is emitted (e.g. do_swap_page() will
-> + *  sigbus).
-> + */
-> +static int swap_read_folio_zeromap(struct folio *folio)
->  {
->  	int nr_pages = folio_nr_pages(folio);
->  	struct obj_cgroup *objcg;
-> @@ -523,11 +537,13 @@ static bool swap_read_folio_zeromap(struct folio *folio)
->  	 * that an IO error is emitted (e.g. do_swap_page() will sigbus).
->  	 */
-
-This comment says "Return true", so it needs to be updated. We probably
-don't need to explain the return value anymore since it's documented
-above.
-
->  	if (WARN_ON_ONCE(swap_zeromap_batch(folio->swap, nr_pages,
-> -			&is_zeromap) != nr_pages))
-> -		return true;
-> +			&is_zeromap) != nr_pages)) {
-> +		folio_unlock(folio);
-> +		return -EINVAL;
-> +	}
->  
->  	if (!is_zeromap)
-> -		return false;
-> +		return -ENOENT;
->  
->  	objcg = get_obj_cgroup_from_folio(folio);
->  	count_vm_events(SWPIN_ZERO, nr_pages);
-> @@ -538,7 +554,8 @@ static bool swap_read_folio_zeromap(struct folio *folio)
->  
->  	folio_zero_range(folio, 0, folio_size(folio));
->  	folio_mark_uptodate(folio);
-> -	return true;
-> +	folio_unlock(folio);
-> +	return 0;
->  }
->  
->  static void swap_read_folio_fs(struct folio *folio, struct swap_iocb **plug)
-> @@ -635,13 +652,11 @@ void swap_read_folio(struct folio *folio, struct swap_iocb **plug)
->  	}
->  	delayacct_swapin_start();
->  
-> -	if (swap_read_folio_zeromap(folio)) {
-> -		folio_unlock(folio);
-> +	if (swap_read_folio_zeromap(folio) != -ENOENT)
->  		goto finish;
-
-I would split the zeromap change into a separate patch, but it's
-probably fine either way.
-
-> -	} else if (zswap_load(folio)) {
-> -		folio_unlock(folio);
-> +
-> +	if (zswap_load(folio) != -ENOENT)
->  		goto finish;
-> -	}
->  
->  	/* We have to read from slower devices. Increase zswap protection. */
->  	zswap_folio_swapin(folio);
-> diff --git a/mm/zswap.c b/mm/zswap.c
-> index 6dbf31bd2218..b67481defc6c 100644
-> --- a/mm/zswap.c
-> +++ b/mm/zswap.c
-> @@ -62,6 +62,8 @@ static u64 zswap_reject_reclaim_fail;
->  static u64 zswap_reject_compress_fail;
->  /* Compressed page was too big for the allocator to (optimally) store */
->  static u64 zswap_reject_compress_poor;
-> +/* Load or writeback failed due to decompression failure */
-> +static u64 zswap_decompress_fail;
->  /* Store failed because underlying allocator could not get memory */
->  static u64 zswap_reject_alloc_fail;
->  /* Store failed because the entry metadata could not be allocated (rare) */
-> @@ -996,11 +998,12 @@ static bool zswap_compress(struct page *page, struct zswap_entry *entry,
->  	return comp_ret == 0 && alloc_ret == 0;
->  }
->  
-> -static void zswap_decompress(struct zswap_entry *entry, struct folio *folio)
-> +static bool zswap_decompress(struct zswap_entry *entry, struct folio *folio)
->  {
->  	struct zpool *zpool = entry->pool->zpool;
->  	struct scatterlist input, output;
->  	struct crypto_acomp_ctx *acomp_ctx;
-> +	int decomp_ret, dlen;
->  	u8 *src;
->  
->  	acomp_ctx = acomp_ctx_get_cpu_lock(entry->pool);
-> @@ -1025,12 +1028,31 @@ static void zswap_decompress(struct zswap_entry *entry, struct folio *folio)
->  	sg_init_table(&output, 1);
->  	sg_set_folio(&output, folio, PAGE_SIZE, 0);
->  	acomp_request_set_params(acomp_ctx->req, &input, &output, entry->length, PAGE_SIZE);
-> -	BUG_ON(crypto_wait_req(crypto_acomp_decompress(acomp_ctx->req), &acomp_ctx->wait));
-> -	BUG_ON(acomp_ctx->req->dlen != PAGE_SIZE);
-> +	decomp_ret = crypto_wait_req(crypto_acomp_decompress(acomp_ctx->req), &acomp_ctx->wait);
-> +	dlen = acomp_ctx->req->dlen;
->  
->  	if (src != acomp_ctx->buffer)
->  		zpool_unmap_handle(zpool, entry->handle);
->  	acomp_ctx_put_unlock(acomp_ctx);
-> +
-> +	if (decomp_ret || dlen != PAGE_SIZE) {
-> +		zswap_decompress_fail++;
-> +		pr_alert_ratelimited(
-> +			"decompression failed with returned value %d on zswap entry with "
-
-nit: Decompression*
-
-I am also wondering how this looks like in dmesg? Is the line too long
-to be read? Should we add some line breaks (e.g. like
-warn_sysctl_write()), we could probably also put this in a helper to
-keep this function visually easy to follow.
-
-> +			"swap entry value %08lx, swap type %d, and swap offset %lu. "
-> +			"compression algorithm is %s. compressed size is %u bytes, and "
-> +			"decompressed size is %u bytes.\n",
-> +			decomp_ret,
-> +			entry->swpentry.val,
-> +			swp_type(entry->swpentry),
-> +			swp_offset(entry->swpentry),
-> +			entry->pool->tfm_name,
-> +			entry->length,
-> +			acomp_ctx->req->dlen);
-
-We should probably be using 'dlen' here since we're outside the lock.
-
-> +
-> +		return false;
-> +	}
-> +	return true;
->  }
->  
->  /*********************************
-[..]
-> @@ -1620,7 +1651,29 @@ bool zswap_store(struct folio *folio)
->  	return ret;
->  }
->  
-> -bool zswap_load(struct folio *folio)
-> +/**
-> + * zswap_load() - load a page from zswap
-> + * @folio: folio to load
-> + *
-> + * Return: one of the following error codes:
-
-nit: Returns 0 on success, or ..
-
-> + *
-> + *  0: if the swapped out content was in zswap and was successfully loaded.
-> + *  The folio is unlocked and marked up-to-date.
-> + *
-> + *  -EIO: if the swapped out content was in zswap, but could not be loaded
-> + *  into the page (for e.g, because there was a memory corruption, or a
-> + *  decompression bug). The folio is unlocked, but NOT marked up-to-date,
-> + *  so that an IO error is emitted (e.g. do_swap_page() will SIGBUS).
-> + *
-> + *  -EINVAL: if the swapped out content was in zswap, but the page belongs
-> + *  to a large folio, which is not supported by zswap. The folio is unlocked,
-> + *  but NOT marked up-to-date, so that an IO error is emitted (e.g.
-> + *  do_swap_page() will SIGBUS).
-> + *
-> + *  -ENOENT: if the swapped out content was not in zswap. The folio remains
-> + *  locked on return.
-> + */
-> +int zswap_load(struct folio *folio)
->  {
->  	swp_entry_t swp = folio->swap;
->  	pgoff_t offset = swp_offset(swp);
-[..]
 
