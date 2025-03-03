@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-542630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 073E1A4CBC0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:15:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB007A4CBC7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:15:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16D48170D65
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:14:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E7173A23E9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:15:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2034123A988;
-	Mon,  3 Mar 2025 19:13:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84FBC23C8A8;
+	Mon,  3 Mar 2025 19:13:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dqc5asM+";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7fe67Ojw"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="e5bgE6VF";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Vcl4z/dd"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA3C423719E;
-	Mon,  3 Mar 2025 19:13:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA3123312D;
+	Mon,  3 Mar 2025 19:13:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741029185; cv=none; b=geWICmv1k2FctIDnW0Bu4x8ywxv6B51HanE+mKcvtcFOE34FzozoE81zZnCKF08wbwePYMeKAGWqaZeIBMNhXeXymCYPs3GG72Ve3D12gfTr7pThFEXWZT5aE7Lfd7OZIzSa1qwwrheP5D6VkKvBH+pZtQ46Yc/Vs+Vt7bGQQqk=
+	t=1741029187; cv=none; b=ddK62+Se3FeTxRRR1G5nSuc/OE95r238WeMwmTUkQ8mV1YYtaLDy2mShFa0ejjUm7EAjorQx1DbbjjxuM/CBAX7JcK+nT/J0iizfPjqTTRdzZul2fv8o9TjCfcXCWB4Zuv0aM+6iMNArE6d+fq8e/F6FYX+MgsPWppgZSDu+ZCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741029185; c=relaxed/simple;
-	bh=8TrOaxFg76IClECN0wLJ5eLfpiQ9GTEJk7c1yAHjgig=;
+	s=arc-20240116; t=1741029187; c=relaxed/simple;
+	bh=NXu1J97l/SGDiclKnQ3s4pIC/BFS9dp7PCFw/qduF28=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=LDTEwHTNgKCQVlBb32cW30FitNszhiFxJJvpfaD1Rms2MwmX+6mS/hXHmgCVEkRbp8OQi31RrTaC2IQfFTyBdXSVd1yivwS6QJMDk5hTafcUeXRAseos1YDt8UKTKTf0n22NHCpBv6ULEVFroTQElP07558+IqhYls9x4oEusrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dqc5asM+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7fe67Ojw; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=r4WLywRxBsHXRPVUXBLrteJEe9whmrm0eWGylkPAFg7+RTtuMBZuq5DGhxKmQJEvONLhHOWxur/fyzOJiR3NXM/jx15wfLz+KYJ7RG9uaJLwIdX31tsVF4ODdehQRkgQLN1gxSGQKP+FNr0X8/0bKLPM3vPujnMaFZiqu1umVEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=e5bgE6VF; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Vcl4z/dd; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 03 Mar 2025 19:13:01 -0000
+Date: Mon, 03 Mar 2025 19:13:02 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741029182;
+	s=2020; t=1741029183;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=vmN8UFg+aMGVj8+TyaWzG7venv06Na8e+49PvqfTgbg=;
-	b=dqc5asM+OGb2A0y7dOf4jNcWu6t/tvqk1BWnn+4RDxP5XXfopbmdwwCjj06OXnlxWYLzr6
-	3N7WCSTTRQx/0PykCYJO5Err36hgiOqiu0L6dtcTzq41HMYXCu3dKrRDoOjzvy4ocGEVeI
-	pB7kNMDHlNjkj5y6xVFKfpgG1KlTeDBQUWwj8LEdkGZ7N0v45Hf60pjkhKqKlVduW9Nu9W
-	f2dxSq1NAX0lE9vKZyRs/yoPaXADQ5q0rx9DcTc1OIT49Fdg4EnkabVgN5cRNBhPKJLMOB
-	Kj4dgO0Bqc5rniUkv16C7n5rhj2PxicSY66XYTdrIvf1B8WX0tuhW0ALo7iW6g==
+	bh=UJWgr19P8ZgbsEEK+4ndWHkw7uLEzV1S6K5BkYPnc0M=;
+	b=e5bgE6VFBlyDdtWUvNrSW7QhLIlPn4n/xcDNqDhWBX0lesVzyQDZfjf7Wt2FPNbHH/+isa
+	aQ/vjzGfdEWKptylc1mLEUQEcIfc94TTRtEGqvoGYtN+w5KmkDIZlBp0FpwOecg6ImznBI
+	4V+sHTKRt3Tt4gbtq/iyLPtM0Z6gE7A7Qhpi0rpAT65OIspdHO//v3dTqOcOjCpr7HQVKf
+	692unaJUBk6Ci6tznqC7wWOVMiQzJgzaYBPe7aoUXkR6e+1u16tXy/o6MmA5Y6wDl8p+l9
+	iE+KUwt6/ulA6C95sB1441WIDNXpKAmgOgBOWfu9RnF/TuEXHRct5qiR6v1q0w==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741029182;
+	s=2020e; t=1741029183;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=vmN8UFg+aMGVj8+TyaWzG7venv06Na8e+49PvqfTgbg=;
-	b=7fe67Ojwgo6vS8quIJ21DV0j8Ey7LBbh704cPPeLllWcnmNlS3Pli7nEUtX3iB4+AIkCco
-	O/CARC1Edf+WdRCA==
+	bh=UJWgr19P8ZgbsEEK+4ndWHkw7uLEzV1S6K5BkYPnc0M=;
+	b=Vcl4z/ddTWvb5sD3GNxK0Zos5izQrA0v8qsE8XmNuoCnxLxbihkYRhFVvjx9clVEL66W8X
+	JTrbw4lOIyKJ+xDQ==
 From:
  tip-bot2 for Thomas =?utf-8?q?Wei=C3=9Fschuh?= <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/vdso] elf, uapi: Add types ElfXX_Verdef and ElfXX_Veraux
+Subject: [tip: timers/vdso] elf, uapi: Add type ElfXX_Versym
 Cc: thomas.weissschuh@linutronix.de, Thomas Gleixner <tglx@linutronix.de>,
  Kees Cook <kees@kernel.org>, Vincenzo Frascino <vincenzo.frascino@arm.com>,
  Shuah Khan <skhan@linuxfoundation.org>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20250226-parse_vdso-nolibc-v2-6-28e14e031ed8@linutronix.de>
-References: <20250226-parse_vdso-nolibc-v2-6-28e14e031ed8@linutronix.de>
+In-Reply-To: <20250226-parse_vdso-nolibc-v2-5-28e14e031ed8@linutronix.de>
+References: <20250226-parse_vdso-nolibc-v2-5-28e14e031ed8@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174102918199.14745.13995480879251791212.tip-bot2@tip-bot2>
+Message-ID: <174102918270.14745.96404151206587816.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -83,71 +83,50 @@ Content-Transfer-Encoding: quoted-printable
 
 The following commit has been merged into the timers/vdso branch of tip:
 
-Commit-ID:     e0d15896f5dc90f4bd36ab79c958f6eff3f7f403
-Gitweb:        https://git.kernel.org/tip/e0d15896f5dc90f4bd36ab79c958f6eff3f=
-7f403
+Commit-ID:     2c86f604f85def1be0b7889c18e055ed63591018
+Gitweb:        https://git.kernel.org/tip/2c86f604f85def1be0b7889c18e055ed635=
+91018
 Author:        Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
-AuthorDate:    Wed, 26 Feb 2025 12:44:45 +01:00
+AuthorDate:    Wed, 26 Feb 2025 12:44:44 +01:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Mon, 03 Mar 2025 20:00:12 +01:00
+CommitterDate: Mon, 03 Mar 2025 20:00:11 +01:00
 
-elf, uapi: Add types ElfXX_Verdef and ElfXX_Veraux
+elf, uapi: Add type ElfXX_Versym
 
-The types are used by tools/testing/selftests/vDSO/parse_vdso.c.
+The type is used by tools/testing/selftests/vDSO/parse_vdso.c.
 
 To be able to build the vDSO selftests without a libc dependency,
-add the types to the kernels own UAPI headers.
+add the type to the kernels own UAPI headers. As documented by elf(5).
 
 Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Kees Cook <kees@kernel.org>
 Reviewed-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
 Acked-by: Shuah Khan <skhan@linuxfoundation.org>
-Link: https://refspecs.linuxfoundation.org/LSB_5.0.0/LSB-Core-generic/LSB-Cor=
-e-generic/symversion.html#VERDEFEXTS
-Link: https://lore.kernel.org/all/20250226-parse_vdso-nolibc-v2-6-28e14e031ed=
+Link: https://lore.kernel.org/all/20250226-parse_vdso-nolibc-v2-5-28e14e031ed=
 8@linutronix.de
 ---
- include/uapi/linux/elf.h | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ include/uapi/linux/elf.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/include/uapi/linux/elf.h b/include/uapi/linux/elf.h
-index 8846fe0..49f9f90 100644
+index d040f12..8846fe0 100644
 --- a/include/uapi/linux/elf.h
 +++ b/include/uapi/linux/elf.h
-@@ -491,4 +491,34 @@ typedef struct elf64_note {
- /* Bits for GNU_PROPERTY_AARCH64_FEATURE_1_BTI */
- #define GNU_PROPERTY_AARCH64_FEATURE_1_BTI	(1U << 0)
+@@ -11,6 +11,7 @@ typedef __u16	Elf32_Half;
+ typedef __u32	Elf32_Off;
+ typedef __s32	Elf32_Sword;
+ typedef __u32	Elf32_Word;
++typedef __u16	Elf32_Versym;
 =20
-+typedef struct {
-+  Elf32_Half	vd_version;
-+  Elf32_Half	vd_flags;
-+  Elf32_Half	vd_ndx;
-+  Elf32_Half	vd_cnt;
-+  Elf32_Word	vd_hash;
-+  Elf32_Word	vd_aux;
-+  Elf32_Word	vd_next;
-+} Elf32_Verdef;
-+
-+typedef struct {
-+  Elf64_Half	vd_version;
-+  Elf64_Half	vd_flags;
-+  Elf64_Half	vd_ndx;
-+  Elf64_Half	vd_cnt;
-+  Elf64_Word	vd_hash;
-+  Elf64_Word	vd_aux;
-+  Elf64_Word	vd_next;
-+} Elf64_Verdef;
-+
-+typedef struct {
-+  Elf32_Word    vda_name;
-+  Elf32_Word    vda_next;
-+} Elf32_Verdaux;
-+
-+typedef struct {
-+  Elf64_Word    vda_name;
-+  Elf64_Word    vda_next;
-+} Elf64_Verdaux;
-+
- #endif /* _UAPI_LINUX_ELF_H */
+ /* 64-bit ELF base types. */
+ typedef __u64	Elf64_Addr;
+@@ -21,6 +22,7 @@ typedef __s32	Elf64_Sword;
+ typedef __u32	Elf64_Word;
+ typedef __u64	Elf64_Xword;
+ typedef __s64	Elf64_Sxword;
++typedef __u16	Elf64_Versym;
+=20
+ /* These constants are for the segment types stored in the image headers */
+ #define PT_NULL    0
 
