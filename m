@@ -1,157 +1,225 @@
-Return-Path: <linux-kernel+bounces-542524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CD49A4CAC9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:10:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BE42A4CACA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:10:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F05313A9371
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:02:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CAE53B2B30
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:02:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ABB422759C;
-	Mon,  3 Mar 2025 18:02:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25197228CB7;
+	Mon,  3 Mar 2025 18:02:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V/JQjJAw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OovLkFaM"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B915718991E;
-	Mon,  3 Mar 2025 18:02:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB3B721B9EC;
+	Mon,  3 Mar 2025 18:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741024948; cv=none; b=tOSWoQzrxCvKnN93Myce8TkVYfdcH74h97SCshwoZUvTotzpDIIhG3gOEZ9xSVQ/zFRkSJ7VCtED3NM1hhY+zyOhR8F8teX0cQdq5awLk2Ycm3ma59XkX44OWOhrE8CBiVRT4OecELf8Bny5MIEYkhvWHlfcVwtbeBLcuOe3hXw=
+	t=1741024964; cv=none; b=GM7D9NuIRazzXL7JgPmBs/7oWdLA1X9RV7RWNKIR4xEnqtyy3cGJkj/WiJKOsUjghBTQ1I82cTaf7mi6trUXTGJrZv/C1yPIZZYnK2t7TQAINLI4jQP4OoJuo0YJZZ+rcST/ynPUEpJKj5fJOSB/4na77l1Y7K+qgf/7+Jntjvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741024948; c=relaxed/simple;
-	bh=HyBjCKW51znBP/NaIGYxINt7nu7k359fu1BkdWNv6N0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FXh7/7AOTJ3pzsiMSC/+sO0Jo/BceVjw4/aAWewQ1HMb0deu2wVUOlfEAKRNYO8QZrwGZQFbtO74falp8OkGTZju/MqXEDQbSlza/tL1JIFdhXA6nSrEvih+FhtL4kncDDo65ijVrbIJ921zIgCdMcZqMHk15Y1MHCN89ilJBgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V/JQjJAw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE12BC4CED6;
-	Mon,  3 Mar 2025 18:02:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741024948;
-	bh=HyBjCKW51znBP/NaIGYxINt7nu7k359fu1BkdWNv6N0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V/JQjJAwBVmDdrFoRNYPOktVxiYUDPsmZ9kfYf8VTmU6j273rYEd6pejzs8tAkPwc
-	 jIrQy7BdHBLZiuLRK1uWgEq0tX0YrqUdgMdSaP84DQgon66z0A9SfnoOYSwbBf6iCl
-	 QbT8ZsZ1DSlMsMGwuYHppsDs2LPiqKhKBbPHUtIRBfXe3FzvQBKGMg+6ZY4z4YV2bV
-	 ezgIMRY0okMC1iuYO+5RRWElFqjtTn/NbARytT56JG9w7FT8GsqGb4Fk+YBUKgHVHD
-	 fgXlD+3RLoTCjjmzsfgl5A+2eSkwoCYQWEdRxQeQvobnlluJHghNHlB3aPexF+3yCj
-	 yJZGVs6tmBz2Q==
-Date: Mon, 3 Mar 2025 18:02:23 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, Andrew Lunn <andrew@lunn.ch>,
-	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, UNGLinuxDriver@microchip.com,
-	Phil Elwell <phil@raspberrypi.org>
-Subject: Re: [PATCH net-next v2 06/10] net: usb: lan78xx: Improve error
- handling in EEPROM and OTP operations
-Message-ID: <ac965de8-f320-430f-80f6-b16f4e1ba06d@sirena.org.uk>
-References: <20241204084142.1152696-1-o.rempel@pengutronix.de>
- <20241204084142.1152696-7-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1741024964; c=relaxed/simple;
+	bh=b8cpnI0t1ZGE/4GhGe0WJPPFmne1LjgPLSwPpkjCOuU=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l/Qlit8YxHYOXt+byXYq2Q6IzevtN/Ww1W05tHkWrLZVnwryIJfedDFTQvmULe3VMa9cP6AlALv0XMa9EOAWzr7TWOHRDO3QJ/1rd1qqbkxiOUJkRLN1fDytRu7mDck3TZRKm066Jgy209X1rAv7sK6OEIncofgH/N3h4YABq8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OovLkFaM; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6e897847086so35399936d6.3;
+        Mon, 03 Mar 2025 10:02:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741024961; x=1741629761; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uaH51U1EARjWt1wUptMoCo83LSnQN+HwOWnZIFYX+bw=;
+        b=OovLkFaMr6EnwYXcSIiP2SH4+CnqgQ94k7zf5Az2wqyhF2504PhpzSPehs8HsGge4f
+         iWiMRKCf/x+dt4KN7IXkjENqiPFG4BT3382PmbAWwC879/vCO1sihk0CwjSUxRKNNlgG
+         xi8nly5rbRfXs/Je/W+vrIzkWpPzNSyzCAlCjXNqKfvpZ4r/LlC6tNK6eLz/crEzy4gH
+         8hTUbJQ7q640Lt4X17eYs0y8ktWPxMDoKZyRjeLYukrBzDMaDjIDEWzMpGYfj6ltb5s5
+         89jB/hQgJ8rArjLJMGYk34KW+OV0ayCcfo6AQ7n71q2QM8ey76J1GrOr460m/jKjBp2H
+         ZZCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741024961; x=1741629761;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uaH51U1EARjWt1wUptMoCo83LSnQN+HwOWnZIFYX+bw=;
+        b=M0e0LN8EjnSWJk9nqJOOGXVf63Yrzu2D3iTj+SnqdDbdmJwCBYP1GLCly0R8IL8GOU
+         pluTM+H0bsFhR23jjFZLTrBh/Vo88vus93+Mp/msXYDn3npLMTyxTsf7aYj9rvECuGuA
+         ntYd3r0V4gV4pZgN9rAfZHzZjDa/G5/ZrIJ2aeRNRvl7/YXkipkIDAiY3WERDs7kyfNn
+         ZAd64GGKuClyWGoCIBx05ZgC4XE4S3StutNEIDEcN0l36MTcfjpxvL0Yscv3gDNQJ/Te
+         61qZbSuAS9wTsReTy/hybR9XrS0wMT0+ZF9F8yVpBVEKKYi6wbZxCWcityuM6tS7rh0z
+         en4w==
+X-Forwarded-Encrypted: i=1; AJvYcCUY2IL7I3elXvKC8C7NWZfPG8NOPrd+pR5I4JgTMTV0FpviBl3hPc1PDVDOhrB4UXwAAttuGZHHuG4MtPd5gwnnCg==@vger.kernel.org, AJvYcCVRUZyXpZzH+ZKrDKiRAqFesyj9QfEpGYEaO0GRiBkY6OkZ9ZipMecjgvroVMC4kwncyvq6YsSYKOI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeRseeT+XTjdmorcrHLN1pLs4D7GzIAkU5YPIf0PF6Dl0fTUjR
+	AfewlG415V646qbI/L2kq9iknKWR6imS2aIqFM1X/xJIwjxaWoBB
+X-Gm-Gg: ASbGncvdjAgJS3ZGKiZ9dP0cZBWlfOoNhYI4yKT9HX9SmiR7az5/tbgLlmEYMeE4ke0
+	LzveC2DNmczRhf12zidEbg4aCVX5IITHHsuDCQyfzGBWSBrvppPzUQ9gK8srWz5qW+b5WkWAotr
+	F9PiCX7Kq71VCp6jK+slmBZQ2amHRRWBLgrxeR0YXgP0+wL1JC/jtJyfu1vfWFCA+G4c6U9gcWE
+	ex38gAVmWOtm8l8H/y4J4GC8Ajl8tebNahaodB/XimEbm42OXOZckMehhZyikYEFYv6G2Np/clU
+	PpniDuqCWU5UM3aQAZfw5ge8hryNQZEvduql9wnS
+X-Google-Smtp-Source: AGHT+IHjzkfcwb10GrGN3uoaAD93gQYyAxTYz59dkNKhr3SqimWrYHhjEzDaYdTtiZWAuzKMb2Txaw==
+X-Received: by 2002:a05:6214:2aad:b0:6e8:9ac9:55ad with SMTP id 6a1803df08f44-6e8a0d94f85mr225579736d6.37.1741024960502;
+        Mon, 03 Mar 2025 10:02:40 -0800 (PST)
+Received: from debian ([2607:fb90:8e63:c2b3:5405:c8bf:c1d1:41d5])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e89763479csm55795596d6.2.2025.03.03.10.02.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 10:02:39 -0800 (PST)
+From: Fan Ni <nifan.cxl@gmail.com>
+X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
+Date: Mon, 3 Mar 2025 10:02:32 -0800
+To: Shradha Todi <shradha.t@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, manivannan.sadhasivam@linaro.org,
+	lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+	bhelgaas@google.com, jingoohan1@gmail.com,
+	Jonathan.Cameron@huawei.com, nifan.cxl@gmail.com,
+	a.manzanares@samsung.com, pankaj.dubey@samsung.com,
+	cassel@kernel.org, 18255117159@163.com, xueshuai@linux.alibaba.com,
+	renyu.zj@linux.alibaba.com, will@kernel.org, mark.rutland@arm.com
+Subject: Re: [PATCH v7 5/5] Add debugfs based statistical counter support in
+ DWC
+Message-ID: <Z8XuuNb6TRevUlHH@debian>
+References: <20250221131548.59616-1-shradha.t@samsung.com>
+ <CGME20250221132043epcas5p27fde98558b13b3311cdc467e8f246380@epcas5p2.samsung.com>
+ <20250221131548.59616-6-shradha.t@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="GNOIgpUY1yNyfstJ"
-Content-Disposition: inline
-In-Reply-To: <20241204084142.1152696-7-o.rempel@pengutronix.de>
-X-Cookie: Programming is an unnatural act.
-
-
---GNOIgpUY1yNyfstJ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250221131548.59616-6-shradha.t@samsung.com>
 
-On Wed, Dec 04, 2024 at 09:41:38AM +0100, Oleksij Rempel wrote:
-> Refine error handling in EEPROM and OTP read/write functions by:
-> - Return error values immediately upon detection.
-> - Avoid overwriting correct error codes with `-EIO`.
-> - Preserve initial error codes as they were appropriate for specific
->   failures.
-> - Use `-ETIMEDOUT` for timeout conditions instead of `-EIO`.
+On Fri, Feb 21, 2025 at 06:45:48PM +0530, Shradha Todi wrote:
+> Add support to provide statistical counter interface to userspace. This set
+> of debug registers are part of the RASDES feature present in DesignWare
+> PCIe controllers.
+> 
+One comment inline.
+> Signed-off-by: Shradha Todi <shradha.t@samsung.com>
+> ---
+>  Documentation/ABI/testing/debugfs-dwc-pcie    |  61 +++++
+>  .../controller/dwc/pcie-designware-debugfs.c  | 229 +++++++++++++++++-
+>  2 files changed, 289 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/ABI/testing/debugfs-dwc-pcie b/Documentation/ABI/testing/debugfs-dwc-pcie
+> index 6ee0897fe753..650a89b0511e 100644
+> --- a/Documentation/ABI/testing/debugfs-dwc-pcie
+> +++ b/Documentation/ABI/testing/debugfs-dwc-pcie
+> @@ -81,3 +81,64 @@ Description:	rasdes_err_inj is the directory which can be used to inject errors
+>  
+>  			<count>
+>  				Number of errors to be injected
 
-This patch (which is in Linus' tree) appears to break booting with a NFS
-root filesystem on Raspberry Pi 3B+.  There appears to be at least no
-incoming traffic seen on the device, I've not checked if there's
-anything outgoing:
+...
 
-[   19.234086] usb 1-1.1.1: new high-speed USB device number 6 using dwc2
-[   19.394134] brcmfmac: brcmf_sdio_htclk: HT Avail timeout (1000000): clkctl 0x50
-[   19.710839] lan78xx 1-1.1.1:1.0 enxb827ebea22ac: renamed from eth0
-Device /sys/class/net/enxb827ebea22ac found
-done.
-Begin: Waiting up to 180 secs for any network device to become available ... done.
-IP-Config: enxb827ebea22ac hardware address b8:27:eb:ea:22:ac mt[   20.663606] lan78xx 1-1.1.1:1.0 enxb827ebea22ac: Link is Down
-u 1500 DHCP
-[   22.708103] lan78xx 1-1.1.1:1.0 enxb827ebea22ac: Link is Up - 1Gbps/Full - flow control off
-IP-Config: no response after 2 secs - giving up
+> +
+> +static ssize_t counter_value_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
+> +{
+> +	struct dwc_pcie_rasdes_priv *pdata = file->private_data;
+> +	struct dw_pcie *pci = pdata->pci;
+> +	struct dwc_pcie_rasdes_info *rinfo = pci->debugfs->rasdes_info;
+> +	char debugfs_buf[DWC_DEBUGFS_BUF_MAX];
+> +	ssize_t pos;
+> +	u32 val;
+> +
+> +	mutex_lock(&rinfo->reg_event_lock);
+> +	set_event_number(pdata, pci, rinfo);
+> +	val = dw_pcie_readl_dbi(pci, rinfo->ras_cap_offset + RAS_DES_EVENT_COUNTER_DATA_REG);
+> +	mutex_unlock(&rinfo->reg_event_lock);
+> +	pos = scnprintf(debugfs_buf, DWC_DEBUGFS_BUF_MAX, "Counter value: %d\n", val);
+> +
+> +	return simple_read_from_buffer(buf, count, ppos, debugfs_buf, pos);
+> +}
 
-The link did look like it was up on the switch.  Full log:
+Do we need to check whether the counter is enabled or not for the event
+before retrieving the counter value?
 
-   https://lava.sirena.org.uk/scheduler/job/1158809#L965
-
-A bisect points to this commit fairly cleanly:
-
-git bisect start
-# status: waiting for both good and bad commits
-# bad: [7eb172143d5508b4da468ed59ee857c6e5e01da6] Linux 6.14-rc5
-git bisect bad 7eb172143d5508b4da468ed59ee857c6e5e01da6
-# status: waiting for good commit(s), bad commit known
-# good: [ffd294d346d185b70e28b1a28abe367bbfe53c04] Linux 6.13
-git bisect good ffd294d346d185b70e28b1a28abe367bbfe53c04
-# bad: [f1c243fc78ca94fd72e2e6e8f0f49b7360fef475] Merge tag 'iommu-updates-v6.14' of git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux
-git bisect bad f1c243fc78ca94fd72e2e6e8f0f49b7360fef475
-# good: [5f537664e705b0bf8b7e329861f20128534f6a83] cachestat: fix page cache statistics permission checking
-git bisect good 5f537664e705b0bf8b7e329861f20128534f6a83
-# bad: [7b081a74c07d9e097f6829a1749f0aa441553c5e] Merge tag 'regulator-v6.14' of git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator
-git bisect bad 7b081a74c07d9e097f6829a1749f0aa441553c5e
-# bad: [7b24f164cf005b9649138ef6de94aaac49c9f3d1] Merge tag 'ipsec-next-2025-01-09' of git://git.kernel.org/pub/scm/linux/kernel/git/klassert/ipsec-next
-git bisect bad 7b24f164cf005b9649138ef6de94aaac49c9f3d1
-# bad: [75e2c86c7b180fd1068ad271178c2820a199e7eb] net: netlink: catch attempts to send empty messages
-git bisect bad 75e2c86c7b180fd1068ad271178c2820a199e7eb
-# bad: [bf361b18d91e96dee50c5794097a80ff3594725c] net: usb: lan78xx: Fix return value handling in lan78xx_set_features
-git bisect bad bf361b18d91e96dee50c5794097a80ff3594725c
-# bad: [195c3d4631816f02071f0e01d2d2def51cf5067a] octeontx2-pf: map skb data as device writeable
-git bisect bad 195c3d4631816f02071f0e01d2d2def51cf5067a
-# good: [dcf3827cde8621d2317a7f98e069adbdc2112982] xdp, xsk: constify read-only arguments of some static inline helpers
-git bisect good dcf3827cde8621d2317a7f98e069adbdc2112982
-# good: [7a2716ac9a5b2a2dd0443b101766d3721f094ee1] Merge branch 'net-phylib-eee-cleanups'
-git bisect good 7a2716ac9a5b2a2dd0443b101766d3721f094ee1
-# bad: [18eabadd73ae60023ab05e376246bd725fb0c113] vrf: Make pcpu_dstats update functions available to other modules.
-git bisect bad 18eabadd73ae60023ab05e376246bd725fb0c113
-# bad: [8b1b2ca83b200fa46fdfb81e80ad5fe34537e6d4] net: usb: lan78xx: Improve error handling in EEPROM and OTP operations
-git bisect bad 8b1b2ca83b200fa46fdfb81e80ad5fe34537e6d4
-# good: [39aa1d620d10cdd276f4728da50f136dbe939643] net: usb: lan78xx: move functions to avoid forward definitions
-git bisect good 39aa1d620d10cdd276f4728da50f136dbe939643
-# good: [32ee0dc764505278229078e496e7b56a6d65224b] net: usb: lan78xx: Fix error handling in MII read/write functions
-git bisect good 32ee0dc764505278229078e496e7b56a6d65224b
-# first bad commit: [8b1b2ca83b200fa46fdfb81e80ad5fe34537e6d4] net: usb: lan78xx: Improve error handling in EEPROM and OTP operations
-
---GNOIgpUY1yNyfstJ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfF7q4ACgkQJNaLcl1U
-h9C4agf8Dt15Yvbnen1Fcb4o6u5NGQTwUYEAezfdVD+Sh6B+6aQuPckAw4C0BmoE
-QzQ0yGO0jgMTlUZQzp7GqY2bjbxL2hY62D9sZyQaM5gic6IKZAV+e/krXdCcYbOu
-sBObiGCN7y69TLM6fmRYTNqp0DR00ER/YIwYCQzPPORdXBkmeBPsWkLxhEfG5FmN
-O4meCDAEd+gVInZovPcnJug4PiROTL/4KWRWUPseT/rX/YSvJYLgOEiQB3safIUR
-ZYqxv9zFrBvfAU9g57RKmx+Ml061Djtyjm0g359lbzWLUodPAYQZl1GRcM41Z6rZ
-2Wv+Bsou/t67aJCu8YTcqtjEQ7Rajg==
-=6Wf3
------END PGP SIGNATURE-----
-
---GNOIgpUY1yNyfstJ--
+Fan
+> +
+>  #define dwc_debugfs_create(name)			\
+>  debugfs_create_file(#name, 0644, rasdes_debug, pci,	\
+>  			&dbg_ ## name ## _fops)
+> @@ -249,6 +436,23 @@ static const struct file_operations dwc_pcie_err_inj_ops = {
+>  	.write = err_inj_write,
+>  };
+>  
+> +static const struct file_operations dwc_pcie_counter_enable_ops = {
+> +	.open = simple_open,
+> +	.read = counter_enable_read,
+> +	.write = counter_enable_write,
+> +};
+> +
+> +static const struct file_operations dwc_pcie_counter_lane_ops = {
+> +	.open = simple_open,
+> +	.read = counter_lane_read,
+> +	.write = counter_lane_write,
+> +};
+> +
+> +static const struct file_operations dwc_pcie_counter_value_ops = {
+> +	.open = simple_open,
+> +	.read = counter_value_read,
+> +};
+> +
+>  static void dwc_pcie_rasdes_debugfs_deinit(struct dw_pcie *pci)
+>  {
+>  	struct dwc_pcie_rasdes_info *rinfo = pci->debugfs->rasdes_info;
+> @@ -258,7 +462,7 @@ static void dwc_pcie_rasdes_debugfs_deinit(struct dw_pcie *pci)
+>  
+>  static int dwc_pcie_rasdes_debugfs_init(struct dw_pcie *pci, struct dentry *dir)
+>  {
+> -	struct dentry *rasdes_debug, *rasdes_err_inj;
+> +	struct dentry *rasdes_debug, *rasdes_err_inj, *rasdes_event_counter, *rasdes_events;
+>  	struct dwc_pcie_rasdes_info *rasdes_info;
+>  	struct dwc_pcie_rasdes_priv *priv_tmp;
+>  	struct device *dev = pci->dev;
+> @@ -277,6 +481,7 @@ static int dwc_pcie_rasdes_debugfs_init(struct dw_pcie *pci, struct dentry *dir)
+>  	/* Create subdirectories for Debug, Error injection, Statistics */
+>  	rasdes_debug = debugfs_create_dir("rasdes_debug", dir);
+>  	rasdes_err_inj = debugfs_create_dir("rasdes_err_inj", dir);
+> +	rasdes_event_counter = debugfs_create_dir("rasdes_event_counter", dir);
+>  
+>  	mutex_init(&rasdes_info->reg_event_lock);
+>  	rasdes_info->ras_cap_offset = ras_cap;
+> @@ -299,6 +504,28 @@ static int dwc_pcie_rasdes_debugfs_init(struct dw_pcie *pci, struct dentry *dir)
+>  		debugfs_create_file(err_inj_list[i].name, 0200, rasdes_err_inj, priv_tmp,
+>  				    &dwc_pcie_err_inj_ops);
+>  	}
+> +
+> +	/* Create debugfs files for Statistical counter subdirectory */
+> +	for (i = 0; i < ARRAY_SIZE(event_list); i++) {
+> +		priv_tmp = devm_kzalloc(dev, sizeof(*priv_tmp), GFP_KERNEL);
+> +		if (!priv_tmp) {
+> +			ret = -ENOMEM;
+> +			goto err_deinit;
+> +		}
+> +
+> +		priv_tmp->idx = i;
+> +		priv_tmp->pci = pci;
+> +		rasdes_events = debugfs_create_dir(event_list[i].name, rasdes_event_counter);
+> +		if (event_list[i].group_no == 0 || event_list[i].group_no == 4) {
+> +			debugfs_create_file("lane_select", 0644, rasdes_events,
+> +					    priv_tmp, &dwc_pcie_counter_lane_ops);
+> +		}
+> +		debugfs_create_file("counter_value", 0444, rasdes_events, priv_tmp,
+> +				    &dwc_pcie_counter_value_ops);
+> +		debugfs_create_file("counter_enable", 0644, rasdes_events, priv_tmp,
+> +				    &dwc_pcie_counter_enable_ops);
+> +	}
+> +
+>  	return 0;
+>  
+>  err_deinit:
+> -- 
+> 2.17.1
+> 
 
