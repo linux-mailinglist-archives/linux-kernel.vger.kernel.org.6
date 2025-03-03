@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-542624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0398A4CBB4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:13:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6553A4CBBC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:14:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E9573A1784
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:13:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11092188833D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:14:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87ED223315D;
-	Mon,  3 Mar 2025 19:13:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7698223642B;
+	Mon,  3 Mar 2025 19:13:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="m0lAAmD3";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4B5HvNfg"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="s2FfjODJ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TkqgN3/h"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7846821B9CF;
-	Mon,  3 Mar 2025 19:12:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4214B23312D;
+	Mon,  3 Mar 2025 19:13:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741029180; cv=none; b=jn1ukOSDBu0Bez+2QrFR/uPP9C7hSoB4ypYoJcRb8vHDQvFOJ+qD3PaYrNoXlSpdjbxm9BKKgMiWG49czxnyOO1zAYXdAwQ8Xi2MDnTp7cfw7XjglxpyUgXC2HWgfdjV0Tg8zEYthQevARqkO/eN1k1dOkuzwoZ7vpHtZ0to1AM=
+	t=1741029182; cv=none; b=uuozomyBq82TNO0exkPbFE7RnLbSmcthM2acVfa6ycmHNbOtfvMJZxER/VZ8tIUwiD2yQcTL2CVSSv+8uBC/Ii+zeEypB/JtWCHUrTYpZKAkDKv4aQCYZyaXxblhdtF7xODvL0z0WLBeXpJ1YJ6PktknwV4coVArM21eqQ5MvIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741029180; c=relaxed/simple;
-	bh=5XEbxlzqprqkO8nDJmjBtRaCaeq3XFM0oHHaRSRBRP4=;
+	s=arc-20240116; t=1741029182; c=relaxed/simple;
+	bh=9waC7ONgc1MPXcicqMZk65GxQCg/cBhaEDQ2vMPf5tg=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=n0pyRh+14RWuM3acMJHn+X4UZiCE5xY1HLiChnXwP2pNHFLf620d7mHrdG5nhVTVQtCYFsFMMSOBd+MoSZa6QmTxi5ibciq0gGxwAemgtKTtEpYjBJlrK8Qu4vt4QBXL1qGbVL+uf+r2hhMG1idSusDIabznzMo5DQzePkdowPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=m0lAAmD3; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4B5HvNfg; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=alJsK3+U8aozekJcPsWXWfipAHZkSLn2rIal3RDcZPy7Pehp0qGEQzGNQSImJX0V5z+bR1bKIMwbKp1JDG210d0I77FK3w9ju6Rdq9PI6kIjW9xhuoZvuqdQg7xaQsQBZdDWnewj+Uw/3YcBq4QHz5pTKdq7OJ0Ue0PEjEp7O4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=s2FfjODJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TkqgN3/h; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 03 Mar 2025 19:12:57 -0000
+Date: Mon, 03 Mar 2025 19:12:58 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741029177;
+	s=2020; t=1741029179;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=R5x9YPpdhK5jdu12ii/QtikAUJoJF6zm2y7cQkvJbUE=;
-	b=m0lAAmD3GdnaPoK26MBxyoGuLbxo2ZOclM5OleFVBUVRQVYUijzXLd/XWGXUMje/1OKkjv
-	hkxgCVDzXBm0hbAmfLyGw7MSsUgi5YvSP3QxDYY6f78WFvlQDxDsQS1WeWwPku4x8rOqBs
-	lVIMhcyh51K4VRYflwdvfWm9QPrsafJojgvwZGUUYga/w+YGc8gBpBZwEfA4BTDYINmdha
-	nFtDvoSivl4k00kLa225VtzohCPRpDZ/PsSUGqc6UCnF0J0BU/4ocjl60QFOU+/psG/wLg
-	Yn1uu3Fb9OF0ruCgNEYK0ueT5EtujC57xe/uLzD91q/fRLZ82JIkjFoVV7+OZg==
+	bh=6nxCD+VCc0+poxQscNy8a3DC3G+gkgt8C7FzXcZrg4A=;
+	b=s2FfjODJSIPebca0i9zbd4mr45SEnSNiNQCe7/8QPzzSVdh8DAChfT+0ycmeyrP7has6bq
+	xEywQbn4KTguFmLN4COwKo0V4oaMdICBTWh124/gGmOwrHK5XPYJ+Sp/x59SzuKhgLOJUc
+	ofh4AhA0l/QafaOYsxM8UbY83TTDRdGZBrhcuyemyauc7wRFVvKyzUsFOodKmnn6GYjK89
+	4EzTXFPDyxPeZtQbVML1FW3ZIm0ivNnKraLt62qYOHMn/BQF4qja8AL1OEKGv2WWtBQnb7
+	RnLavbCjoneSEkLP3zQv4NNK+4WboUu39Hfi/ULJdUo4wpeiM0ZwCkaN2CP69Q==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741029177;
+	s=2020e; t=1741029179;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=R5x9YPpdhK5jdu12ii/QtikAUJoJF6zm2y7cQkvJbUE=;
-	b=4B5HvNfgBDPpPIyPZSck5Yt+oKZyVkw7rXUMQ0mCJgZhH05JRJig0aKyHzvBqwmk60uREh
-	Dntbkmuo9OioqeBw==
+	bh=6nxCD+VCc0+poxQscNy8a3DC3G+gkgt8C7FzXcZrg4A=;
+	b=TkqgN3/hpJ+V8P8Xxd/vskueB7SYxRIGim9yKK8MevzKdmpguS063YDJ5NojiEBgNAgZdB
+	+0kXzM2zjM1eqsBw==
 From:
  tip-bot2 for Thomas =?utf-8?q?Wei=C3=9Fschuh?= <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/vdso] selftests: vDSO: parse_vdso: Test __SIZEOF_LONG__
- instead of ULONG_MAX
+Subject:
+ [tip: timers/vdso] selftests: vDSO: parse_vdso: Drop vdso_init_from_auxv()
 Cc: thomas.weissschuh@linutronix.de, Thomas Gleixner <tglx@linutronix.de>,
  Vincenzo Frascino <vincenzo.frascino@arm.com>,
  Shuah Khan <skhan@linuxfoundation.org>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20250226-parse_vdso-nolibc-v2-13-28e14e031ed8@linutronix.de>
-References: <20250226-parse_vdso-nolibc-v2-13-28e14e031ed8@linutronix.de>
+In-Reply-To: <20250226-parse_vdso-nolibc-v2-11-28e14e031ed8@linutronix.de>
+References: <20250226-parse_vdso-nolibc-v2-11-28e14e031ed8@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174102917718.14745.11147449630805531673.tip-bot2@tip-bot2>
+Message-ID: <174102917850.14745.14268420233023432223.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -84,47 +84,65 @@ Content-Transfer-Encoding: quoted-printable
 
 The following commit has been merged into the timers/vdso branch of tip:
 
-Commit-ID:     032e871686483ec1bac27ce73e7094692fc76268
-Gitweb:        https://git.kernel.org/tip/032e871686483ec1bac27ce73e7094692fc=
-76268
+Commit-ID:     09dcec64707df85f5def668d4724fce832114d91
+Gitweb:        https://git.kernel.org/tip/09dcec64707df85f5def668d4724fce8321=
+14d91
 Author:        Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
-AuthorDate:    Wed, 26 Feb 2025 12:44:52 +01:00
+AuthorDate:    Wed, 26 Feb 2025 12:44:50 +01:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Mon, 03 Mar 2025 20:00:13 +01:00
+CommitterDate: Mon, 03 Mar 2025 20:00:12 +01:00
 
-selftests: vDSO: parse_vdso: Test __SIZEOF_LONG__ instead of ULONG_MAX
+selftests: vDSO: parse_vdso: Drop vdso_init_from_auxv()
 
-According to limits.h(2) ULONG_MAX is only guaranteed to expand to an
-expression, not a symbolic constant which can be evaluated by the
-preprocessor.
+There are no users left.
 
-Specifically the definition of ULONG_MAX from nolibc can not be evaluated
-by the preprocessor. To provide compatibility with nolibc, check with
-__SIZEOF_LONG__ instead, with is provided directly by the preprocessor
-and therefore always a symbolic constant.
+This also removes the usage of ElfXX_auxv_t, which is not formally
+standardized.
 
 Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
 Acked-by: Shuah Khan <skhan@linuxfoundation.org>
-Link: https://lore.kernel.org/all/20250226-parse_vdso-nolibc-v2-13-28e14e031e=
+Link: https://lore.kernel.org/all/20250226-parse_vdso-nolibc-v2-11-28e14e031e=
 d8@linutronix.de
 ---
- tools/testing/selftests/vDSO/parse_vdso.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/testing/selftests/vDSO/parse_vdso.c | 14 --------------
+ tools/testing/selftests/vDSO/parse_vdso.h |  1 -
+ 2 files changed, 15 deletions(-)
 
 diff --git a/tools/testing/selftests/vDSO/parse_vdso.c b/tools/testing/selfte=
 sts/vDSO/parse_vdso.c
-index 200c534..902b8f9 100644
+index 2fe5e98..3638fe6 100644
 --- a/tools/testing/selftests/vDSO/parse_vdso.c
 +++ b/tools/testing/selftests/vDSO/parse_vdso.c
-@@ -26,7 +26,7 @@
+@@ -297,17 +297,3 @@ void *vdso_sym(const char *version, const char *name)
 =20
- /* And here's the code. */
- #ifndef ELF_BITS
--# if ULONG_MAX > 0xffffffffUL
-+# if __SIZEOF_LONG__ >=3D 8
- #  define ELF_BITS 64
- # else
- #  define ELF_BITS 32
+ 	return 0;
+ }
+-
+-void vdso_init_from_auxv(void *auxv)
+-{
+-	ELF(auxv_t) *elf_auxv =3D auxv;
+-	for (int i =3D 0; elf_auxv[i].a_type !=3D AT_NULL; i++)
+-	{
+-		if (elf_auxv[i].a_type =3D=3D AT_SYSINFO_EHDR) {
+-			vdso_init_from_sysinfo_ehdr(elf_auxv[i].a_un.a_val);
+-			return;
+-		}
+-	}
+-
+-	vdso_info.valid =3D false;
+-}
+diff --git a/tools/testing/selftests/vDSO/parse_vdso.h b/tools/testing/selfte=
+sts/vDSO/parse_vdso.h
+index de04530..09d068e 100644
+--- a/tools/testing/selftests/vDSO/parse_vdso.h
++++ b/tools/testing/selftests/vDSO/parse_vdso.h
+@@ -26,6 +26,5 @@
+  */
+ void *vdso_sym(const char *version, const char *name);
+ void vdso_init_from_sysinfo_ehdr(uintptr_t base);
+-void vdso_init_from_auxv(void *auxv);
+=20
+ #endif
 
