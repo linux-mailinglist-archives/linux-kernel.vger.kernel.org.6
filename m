@@ -1,226 +1,341 @@
-Return-Path: <linux-kernel+bounces-541822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D32BA4C20E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:35:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3FCAA4C214
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:36:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42B101898304
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:33:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22A311895A0B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:34:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAA792139CF;
-	Mon,  3 Mar 2025 13:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=framepointer.org header.i=@framepointer.org header.b="BC8YDrCe"
-Received: from out-16.pe-b.jellyfish.systems (out-16.pe-b.jellyfish.systems [198.54.127.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA743212FAD;
+	Mon,  3 Mar 2025 13:32:45 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A42881EFFB4;
-	Mon,  3 Mar 2025 13:31:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.54.127.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 065978634C;
+	Mon,  3 Mar 2025 13:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741008702; cv=none; b=o6hsK9YYy11DnD97wF4NFW8mrXTkvnqDoLkIjGms5BUK4y4qCO7DNJ31AAj6nGjlzmGT9AA9aAoxZKKuEVDMU5BQLQHekcY/vjt2CpNPfVBtyqE+hi1r2ctbJvFFAxYBWpq4OIrsGfR5oK2nkeOWO0bJ7qLt6PVNyw59eee6VW4=
+	t=1741008765; cv=none; b=V6nh0kt+O7IV/xDlv7nNDstWEisPqS8IdKYEov977PZXIUO/cugPV7kQQGmFbDnSLhWz/mOGvD4C1h8T6b+IP3UsIyjrSCc//dbyMi7DUlzNd+AXyosTiU+6BcZEeF7vGdBJANQ3iDjz7wFVnztY1sEqXAbkXlO5BxDhs7GRQPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741008702; c=relaxed/simple;
-	bh=UnlZRIn1+XWnSfw2pYOSnNaYsdX5WURIf+Hn25tK/2k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q6RhhgY0UqBUoyD4OEUpT+/tap51H+AczqOQzJbamC62qJlJjg7Awa+K8dAk4dX5EhVNoUIovBNtXLDr2mvUqNFUZLjVBi6iCI6joDXTsbazOxlrhtL5lpXhWHAxpVgXX4zZUEar9e/I4Cq9V5lnjmhzwgdV/HeKw4aotruZ4oQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=framepointer.org; spf=pass smtp.mailfrom=framepointer.org; dkim=pass (2048-bit key) header.d=framepointer.org header.i=@framepointer.org header.b=BC8YDrCe; arc=none smtp.client-ip=198.54.127.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=framepointer.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=framepointer.org
-Received: from prod-lbout-phx.jellyfish.systems (new-01.privateemail.com [198.54.118.220])
-	by pe-b.jellyfish.systems (Postfix) with ESMTPA id 4Z608P5BGyzGpYK;
-	Mon, 03 Mar 2025 13:31:33 +0000 (UTC)
-Received: from MTA-07.privateemail.com (unknown [10.50.14.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
-	(No client certificate requested)
-	by NEW-01.privateemail.com (Postfix) with ESMTPS id 4Z608P4NQBz3hhVZ;
-	Mon,  3 Mar 2025 08:31:33 -0500 (EST)
-Received: from mta-07.privateemail.com (localhost [127.0.0.1])
-	by mta-07.privateemail.com (Postfix) with ESMTP id 4Z608P32p7z3hhV0;
-	Mon,  3 Mar 2025 08:31:33 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=framepointer.org;
-	s=default; t=1741008693;
-	bh=UnlZRIn1+XWnSfw2pYOSnNaYsdX5WURIf+Hn25tK/2k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BC8YDrCeBCA/KChWY4EPrqKy7A8fAYwy+Odi1ANXa/vnIoSfJ86AKOezwBHBlU/46
-	 gffQinnck9bZMc20Me2sACxi5KJZSUKoeY5xRqVbofOYv+xPK1EQtg8fA+6ytJlrvG
-	 N+educh4GpHUNmLKFpEHqQBRAXm7Nd8/aleKHc18EJnrvz2pkXzMhhwC+gxU8yPHqF
-	 C5Z6EFIyQBntvKoEPbXztVuQgrdjkrqf6LHsb5UkUaD5BYvQ3jwEbhG5cbPc8ZJFw2
-	 ky9QsmK4nWX4VTQ5gkTzjytiLFL0VDnM0Rvk4gUby1LYO+JQE7U4YfTQ5znWPO6pE8
-	 PaHrEAKa20zZw==
-Received: from 65YTFL3.secure.tethers.com (unknown [152.44.190.141])
-	by mta-07.privateemail.com (Postfix) with ESMTPA;
-	Mon,  3 Mar 2025 08:31:20 -0500 (EST)
-Date: Mon, 3 Mar 2025 08:31:20 -0500
-From: Sam Winchenbach <sam.winchenbach@framepointer.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, lars@metafoo.de,
-	Michael.Hennerich@analog.com, antoniu.miclaus@analog.com,
-	jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] dt-bindings: iio: filter: Add lpf/hpf freq margins
-Message-ID: <Z8WvKNcCnQI_UYZJ@65YTFL3.secure.tethers.com>
-References: <20250225134612.577022-1-sam.winchenbach@framepointer.org>
- <20250225134612.577022-2-sam.winchenbach@framepointer.org>
- <20250226-sparkling-caped-saluki-b1cbad@krzk-bin>
- <Z79K8Ag4SJYtJTtM@65YTFL3.secure.tethers.com>
- <05e56d15-059b-425b-9e55-66993d988f8d@kernel.org>
- <Z7-SojPPx3kOVa4y@65YTFL3.secure.tethers.com>
- <8fef9b19-a1de-4153-a186-1aeee87dea9d@kernel.org>
+	s=arc-20240116; t=1741008765; c=relaxed/simple;
+	bh=JVfg1N8LSE+DTYPTu0sMQmjySx4p+I4p4xIPv4FZHn4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mzMf8KA3EL5xMSikKQeuPOowlArwohaqx9ALSuKv5rDSLCur5ca7cEpuQ8SVFvER5zXtvjab6R3U+Xnxh3W9/cloUOBTD/EMnpCr32fKd++pOWITFgcV9ntemeDdAxIIoXQlbCTlhlzm7zHnvY+6yt0hlFKeElrfaL7dUCx5wJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8DADC4CED6;
+	Mon,  3 Mar 2025 13:32:41 +0000 (UTC)
+Message-ID: <6944a221-b0b4-4042-9d4a-98a0cc806116@xs4all.nl>
+Date: Mon, 3 Mar 2025 14:32:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8fef9b19-a1de-4153-a186-1aeee87dea9d@kernel.org>
-X-Virus-Scanned: ClamAV using ClamSMTP
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v17 16/17] media: uvcvideo: implement UVC v1.5 ROI
+To: Ricardo Ribalda <ribalda@chromium.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Hans de Goede <hdegoede@redhat.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Yunke Cao <yunkec@chromium.org>, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Yunke Cao <yunkec@google.com>
+References: <20250203-uvc-roi-v17-0-5900a9fed613@chromium.org>
+ <20250203-uvc-roi-v17-16-5900a9fed613@chromium.org>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Autocrypt: addr=hverkuil@xs4all.nl; keydata=
+ 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
+In-Reply-To: <20250203-uvc-roi-v17-16-5900a9fed613@chromium.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 03, 2025 at 09:13:00AM +0100, Krzysztof Kozlowski wrote:
-> On 26/02/2025 23:16, Sam Winchenbach wrote:
-> >>>>> +  adi,hpf-margin-hz:
-> >>>>> +    description:
-> >>>>> +      Sets maximum high-pass corner frequency to the frequency of rf_in minus
-> >>>>> +      this value when in auto mode.
-> >>>>
-> >>>> IIUC, these are two bounds - lower and upper - in relation to something
-> >>>> else (like rf_in frequency)? If so, make it an array (naming to be
-> >>>> discuss, I assume you know better what's that):
-> >>>
-> >>> It is true that these are both related to rf_in but both the low and high pass
-> >>> filters can operate independently. Logically, IMO, it makes more sense to have
-> >>
-> >>
-> >> You mean you can set only low or high pass and keep other as default?
-> >> But what is the default then - something from reset value or "0" means
-> >> disabled?
-> > 
-> > This value isn't setting the corner frequency of the filter, but the minimum
-> > distance the corner must be from the fundamental frequency. So, for example,
-> > if rf_in is 3.35 GHz and you set lpf-margin-hz to 0 then the corner frequency
-> > will be set to 3.35 GHz because that is an exact value supported by the device.
-> > 
-> > If lpf-margin-hz is set to 30 MHz (for example), then corner frequency would be
-> > at least 3.35 GHz + 30 MHz = 3.38 GHz.  3.49 GHz is the closest corner
-> > frequency without going below 3.38 GHz that is supported by the device, so that
-> > is what will be selected.
-> > 
-> > This prevents the situation where your fundamental frequency falls on, or close
-> > to, a corner frequency which could result in 3dB (half power) loss in your
-> > signal.
-> > 
-> > This is all completely indepent of the high-pass filter.
+Hans, Laurent, Yunke,
+
+On 03/02/2025 12:55, Ricardo Ribalda wrote:
+> From: Yunke Cao <yunkec@google.com>
 > 
-> Description is confusing a bit, because it suggests the value sets the
-> corner frequency. It explicitly says this - "sets ... corner frequency"
-> and such meaning for properties we usually associate with the property
-> doing this. Here however corner frequency will be always set to rf_in
-> and you just adjust the value.
->
-
-How about: "Sets the minimum distance (in Hz) between the fundamental
-frequency of `rf_in` and the corner frequency of the high-pass, input filter
-when operatred in 'auto' mode. The selected high-pass corner frequency will
-be less than, or equal to, `rf_in` - `hpf-margin-hz`. If not setting is found
-that satisfies this relationship the filter will be put into 'bypass'."
-
-Perhaps that is a bit more clear on the intention of this parameter?
-
-> > 
-> >>
-> >>> them as separate controls but I am happy to put them into an array if that is
-> >>> the idiomatic approach to situations like this. That said, I am having a
-> >>> difficult time getting dt_binding_check to pass when I have an array of uint64.
-> >>>
-> >>> When listing two items, as in your example below, I get the following:
-> >>> adi,admv8818.example.dtb: admv8818@0: adi,filter-margins-hz: [[0, 30000000], [0, 30000000]] is too long
-> >>
-> >> Tricky to say without seeing your code. Magic crystal ball had
-> >> malfunction today.
-> > 
-> > This is the property:
-> > 
-> >   adi,filter-margins-hz:
-> >     items:
-> >       - description: |
-> >           The minimum distance, in Hz, between rf_in and the low-pass corner
-> >           frequency when the device is used in "auto" mode. If the sum of
-> >           rf_in and this value is greater than 18.85 GHz then the low-pass
-> >           filter will be put into bypass mode, otherwise the closest corner
-> >           frequency that is greater than or equal to the sum of rf_in plus this
-> >           value will be used.
-> >         minimum: 0
-> >         maximum: 0xFFFFFFFFFFFFFFFF
-> >         default: 0
-> >       - description: |
-> >           The minimum distance, in Hz, between rf_in and the high-pass corner
-> >           frequency when the device is used in "auto" mode. If the difference
-> >           between rf_in and this value is less than 1.75 GHz then the high-pass
-> >           filter will be put into bypass mode, otherwise the closest corner
-> >           frequency that is less than or equal to the difference of rf_in and
-> >           this value will be used.
-> >         minimum: 0
-> >         maximum: 0xFFFFFFFFFFFFFFFF
-> >         default: 0
-> > 
-> > And this is the example:
-> > 
-> > examples:
-> >   - |
-> >     spi {
-> >       #address-cells = <1>;
-> >       #size-cells = <0>;
-> >       admv8818@0 {
-> >         compatible = "adi,admv8818";
-> >         reg = <0>;
-> >         spi-max-frequency = <10000000>;
-> >         clocks = <&admv8818_rfin>;
-> >         clock-names = "rf_in";
-> >         adi,filter-margins-hz = /bits/ 64 <30000000 30000000>;
+> Implement support for ROI as described in UVC 1.5:
+> 4.2.2.1.20 Digital Region of Interest (ROI) Control
 > 
+> ROI control is implemented using V4L2 control API as
+> two UVC-specific controls:
+> V4L2_CID_UVC_REGION_OF_INTEREST_RECT and
+> V4L2_CID_UVC_REGION_OF_INTEREST_AUTO.
 > 
-> foo-hz is in 32-bit, so basically you have here 4 32-bit numbers which
-> indeed reported by dtschema - property is too long. Drop 64-bit here.
+> Reviewed-by: Ricardo Ribalda <ribalda@chromium.org>
+> Signed-off-by: Yunke Cao <yunkec@google.com>
+> Reviewed-by: Yunke Cao <yunkec@google.com>
+> Tested-by: Yunke Cao <yunkec@google.com>
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>  drivers/media/usb/uvc/uvc_ctrl.c   | 81 ++++++++++++++++++++++++++++++++++++++
+>  drivers/media/usb/uvc/uvcvideo.h   |  7 ++++
+>  include/uapi/linux/usb/video.h     |  1 +
+>  include/uapi/linux/uvcvideo.h      | 13 ++++++
+>  include/uapi/linux/v4l2-controls.h |  7 ++++
+>  5 files changed, 109 insertions(+)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> index 17a7ce525f71..1906ce5b7d50 100644
+> --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> @@ -358,6 +358,24 @@ static const struct uvc_control_info uvc_ctrls[] = {
+>  		.flags		= UVC_CTRL_FLAG_GET_CUR
+>  				| UVC_CTRL_FLAG_AUTO_UPDATE,
+>  	},
+> +	/*
+> +	 * UVC_CTRL_FLAG_AUTO_UPDATE is needed because the RoI may get updated
+> +	 * by sensors.
+> +	 * "This RoI should be the same as specified in most recent SET_CUR
+> +	 * except in the case where the ‘Auto Detect and Track’ and/or
+> +	 * ‘Image Stabilization’ bit have been set."
+> +	 * 4.2.2.1.20 Digital Region of Interest (ROI) Control
+> +	 */
+> +	{
+> +		.entity		= UVC_GUID_UVC_CAMERA,
+> +		.selector	= UVC_CT_REGION_OF_INTEREST_CONTROL,
+> +		.index		= 21,
+> +		.size		= 10,
+> +		.flags		= UVC_CTRL_FLAG_SET_CUR | UVC_CTRL_FLAG_GET_CUR
+> +				| UVC_CTRL_FLAG_GET_MIN | UVC_CTRL_FLAG_GET_MAX
+> +				| UVC_CTRL_FLAG_GET_DEF
+> +				| UVC_CTRL_FLAG_AUTO_UPDATE,
+> +	},
+>  };
+>  
+>  static const u32 uvc_control_classes[] = {
+> @@ -603,6 +621,44 @@ static const struct uvc_control_mapping *uvc_ctrl_filter_plf_mapping(
+>  	return out_mapping;
+>  }
+>  
+> +static int uvc_get_rect(struct uvc_control_mapping *mapping, u8 query,
+> +			const void *uvc_in, size_t v4l2_size, void *v4l2_out)
+> +{
+> +	const struct uvc_rect *uvc_rect = uvc_in;
+> +	struct v4l2_rect *v4l2_rect = v4l2_out;
+> +
+> +	if (WARN_ON(v4l2_size != sizeof(struct v4l2_rect)))
+> +		return -EINVAL;
+> +
+> +	if (uvc_rect->left > uvc_rect->right ||
+> +	    uvc_rect->top > uvc_rect->bottom)
+> +		return -EIO;
+> +
+> +	v4l2_rect->top = uvc_rect->top;
+> +	v4l2_rect->left = uvc_rect->left;
+> +	v4l2_rect->height = uvc_rect->bottom - uvc_rect->top + 1;
+> +	v4l2_rect->width = uvc_rect->right - uvc_rect->left + 1;
+> +
+> +	return 0;
+> +}
+> +
+> +static int uvc_set_rect(struct uvc_control_mapping *mapping, size_t v4l2_size,
+> +			const void *v4l2_in, void *uvc_out)
+> +{
+> +	struct uvc_rect *uvc_rect = uvc_out;
+> +	const struct v4l2_rect *v4l2_rect = v4l2_in;
+> +
+> +	if (WARN_ON(v4l2_size != sizeof(struct v4l2_rect)))
+> +		return -EINVAL;
+> +
+> +	uvc_rect->top = min(0xffff, v4l2_rect->top);
+> +	uvc_rect->left = min(0xffff, v4l2_rect->left);
+> +	uvc_rect->bottom = min(0xffff, v4l2_rect->top + v4l2_rect->height - 1);
+> +	uvc_rect->right = min(0xffff, v4l2_rect->left + v4l2_rect->width - 1);
+> +
+> +	return 0;
+> +}
+> +
+>  static const struct uvc_control_mapping uvc_ctrl_mappings[] = {
+>  	{
+>  		.id		= V4L2_CID_BRIGHTNESS,
+> @@ -897,6 +953,28 @@ static const struct uvc_control_mapping uvc_ctrl_mappings[] = {
+>  		.selector	= UVC_PU_POWER_LINE_FREQUENCY_CONTROL,
+>  		.filter_mapping	= uvc_ctrl_filter_plf_mapping,
+>  	},
+> +	{
+> +		.id		= V4L2_CID_UVC_REGION_OF_INTEREST_RECT,
+> +		.entity		= UVC_GUID_UVC_CAMERA,
+> +		.selector	= UVC_CT_REGION_OF_INTEREST_CONTROL,
+> +		.size		= sizeof(struct uvc_rect) * 8,
+> +		.offset		= 0,
+> +		.v4l2_type	= V4L2_CTRL_TYPE_RECT,
+> +		.data_type	= UVC_CTRL_DATA_TYPE_RECT,
+> +		.get		= uvc_get_rect,
+> +		.set		= uvc_set_rect,
+> +		.name		= "Region Of Interest Rectangle",
+
+According to how titles are capitalized in english, this should be lower-case "of".
+
+> +	},
+> +	{
+> +		.id		= V4L2_CID_UVC_REGION_OF_INTEREST_AUTO,
+> +		.entity		= UVC_GUID_UVC_CAMERA,
+> +		.selector	= UVC_CT_REGION_OF_INTEREST_CONTROL,
+> +		.size		= 16,
+> +		.offset		= 64,
+> +		.v4l2_type	= V4L2_CTRL_TYPE_BITMASK,
+> +		.data_type	= UVC_CTRL_DATA_TYPE_BITMASK,
+> +		.name		= "Region Of Interest Auto Controls",
+
+Ditto.
+
+This string is also one character too long (the control description string is at
+most 31 characters). Suggested alternatives:
+
+"Region of Interest Auto Ctrls"
+"ROI Auto Controls"
+"Region Of Interest Auto Control"
+
+I can make the changes myself, but I need to know which alternative to use for
+this string.
+
+Regards,
+
+	Hans
+
+> +	},
+>  };
+>  
+>  /* ------------------------------------------------------------------------
+> @@ -1473,6 +1551,9 @@ static int __uvc_queryctrl_boundaries(struct uvc_video_chain *chain,
+>  
+>  static size_t uvc_mapping_v4l2_size(struct uvc_control_mapping *mapping)
+>  {
+> +	if (mapping->v4l2_type == V4L2_CTRL_TYPE_RECT)
+> +		return sizeof(struct v4l2_rect);
+> +
+>  	if (uvc_ctrl_mapping_is_compound(mapping))
+>  		return DIV_ROUND_UP(mapping->size, 8);
+>  
+> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+> index 6fc1cb9e99d1..b63720e21075 100644
+> --- a/drivers/media/usb/uvc/uvcvideo.h
+> +++ b/drivers/media/usb/uvc/uvcvideo.h
+> @@ -543,6 +543,13 @@ struct uvc_device_info {
+>  	u16	uvc_version;
+>  };
+>  
+> +struct uvc_rect {
+> +	u16 top;
+> +	u16 left;
+> +	u16 bottom;
+> +	u16 right;
+> +} __packed;
+> +
+>  struct uvc_status_streaming {
+>  	u8	button;
+>  } __packed;
+> diff --git a/include/uapi/linux/usb/video.h b/include/uapi/linux/usb/video.h
+> index 526b5155e23c..e1d9f5773187 100644
+> --- a/include/uapi/linux/usb/video.h
+> +++ b/include/uapi/linux/usb/video.h
+> @@ -104,6 +104,7 @@
+>  #define UVC_CT_ROLL_ABSOLUTE_CONTROL			0x0f
+>  #define UVC_CT_ROLL_RELATIVE_CONTROL			0x10
+>  #define UVC_CT_PRIVACY_CONTROL				0x11
+> +#define UVC_CT_REGION_OF_INTEREST_CONTROL		0x14
+>  
+>  /* A.9.5. Processing Unit Control Selectors */
+>  #define UVC_PU_CONTROL_UNDEFINED			0x00
+> diff --git a/include/uapi/linux/uvcvideo.h b/include/uapi/linux/uvcvideo.h
+> index f86185456dc5..cbe15bca9569 100644
+> --- a/include/uapi/linux/uvcvideo.h
+> +++ b/include/uapi/linux/uvcvideo.h
+> @@ -16,6 +16,7 @@
+>  #define UVC_CTRL_DATA_TYPE_BOOLEAN	3
+>  #define UVC_CTRL_DATA_TYPE_ENUM		4
+>  #define UVC_CTRL_DATA_TYPE_BITMASK	5
+> +#define UVC_CTRL_DATA_TYPE_RECT		6
+>  
+>  /* Control flags */
+>  #define UVC_CTRL_FLAG_SET_CUR		(1 << 0)
+> @@ -38,6 +39,18 @@
+>  
+>  #define UVC_MENU_NAME_LEN 32
+>  
+> +/* V4L2 driver-specific controls */
+> +#define V4L2_CID_UVC_REGION_OF_INTEREST_RECT	(V4L2_CID_USER_UVC_BASE + 1)
+> +#define V4L2_CID_UVC_REGION_OF_INTEREST_AUTO	(V4L2_CID_USER_UVC_BASE + 2)
+> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_EXPOSURE		(1 << 0)
+> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_IRIS			(1 << 1)
+> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_WHITE_BALANCE		(1 << 2)
+> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_FOCUS			(1 << 3)
+> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_FACE_DETECT		(1 << 4)
+> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_DETECT_AND_TRACK	(1 << 5)
+> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_IMAGE_STABILIZATION	(1 << 6)
+> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_HIGHER_QUALITY		(1 << 7)
+> +
+>  struct uvc_menu_info {
+>  	__u32 value;
+>  	__u8 name[UVC_MENU_NAME_LEN];
+> diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
+> index 974fd254e573..72e32814ea83 100644
+> --- a/include/uapi/linux/v4l2-controls.h
+> +++ b/include/uapi/linux/v4l2-controls.h
+> @@ -215,6 +215,13 @@ enum v4l2_colorfx {
+>   */
+>  #define V4L2_CID_USER_THP7312_BASE		(V4L2_CID_USER_BASE + 0x11c0)
+>  
+> +/*
+> + * The base for the uvc driver controls.
+> + * See linux/uvcvideo.h for the list of controls.
+> + * We reserve 64 controls for this driver.
+> + */
+> +#define V4L2_CID_USER_UVC_BASE			(V4L2_CID_USER_BASE + 0x11e0)
+> +
+>  /* MPEG-class control IDs */
+>  /* The MPEG controls are applicable to all codec controls
+>   * and the 'MPEG' part of the define is historical */
 > 
 
-I was hoping to keep this 64 bits seeing this is a 18 GHz+ filter. I suppose
-I could change this to MHz and just lose a bit of resolution. Does that sound
-like a better approach?
-
-> Device allows multiple LPF/HPF values to be stored in LUT tables and it
-> actually has four independent filters. Shouldn't these be included here?
-> Maybe not LUT tables, but the configuration for all filters?
->
-
-There are two filters, the input (high-pass) filter, and the output (low-pass)
-filter. Each filter has four banks, each with a different range of frequencies.
-Only one bank can be selected at a time. Each bank has 16 different possible
-cutoff/corner frequencies. That is a total of 64 distinct values for each of
-the two filters.
-
-The issue with setting the corner frequency directly is that in certain
-applications (such as software defined radios) the fundamental frequency
-is adjustable, necessitating that the corner frequencies of the filter are
-adjusted accordingly. When the filter is in "auto" mode it is notified via
-the clock system of frequency changes, so using this information it should be
-possible to select new corner frequencies if you know the minimum distance
-between your fundamental frequency and the corner.
-
-
-It is possible there is either not enough call for this feature, or it goes
-against the designs of the maintainters. If that is the case we should decline
-this patch and we will maintain it in our fork of the kernel.
-
-Thanks,
--Sam
- 
-> Best regards,
-> Krzysztof
 
