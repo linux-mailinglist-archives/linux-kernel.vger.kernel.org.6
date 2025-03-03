@@ -1,73 +1,75 @@
-Return-Path: <linux-kernel+bounces-542371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 304A8A4C914
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:18:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ADFCA4C8FC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:15:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B4B916A760
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:10:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C594188CA17
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:10:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F51E25DCE4;
-	Mon,  3 Mar 2025 16:53:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E186E25DD11;
+	Mon,  3 Mar 2025 16:53:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VwrkEWOT"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ATpBB0s5"
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2BDD25DCE2
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 16:53:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA8EE25DCF0
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 16:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741020793; cv=none; b=ubg9c9x4swcpAleRoFoXRx49OL37frUor8t+KR/RZibsoawjZsksCcPO11mOPfBBHY2BMyB+1OPDYMuUgUod6kRVGMCMJuWTny+qOQz7cTJAqQmshfZAp5Z/rEhUz+jhzle6Ijko/6QxhcNcW0hp7esf9sBCOULS7JgEglLHNSI=
+	t=1741020796; cv=none; b=RQVTPCzbrOPI2yyi942D+ihSPo3mKXF9cvOfnBTuIjlettdioDbK6d1KcKdGAU21xZy4swvIiqFdXxhyTPeRR0vf6qQHml4j8GEtuuZNgtNg/gik+m8sUweTeFUG40oInSeS3gNA0yrJpiYo4Uv7rv1Pt+pdHn7wCGvP6Sd85SA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741020793; c=relaxed/simple;
-	bh=nh7jbE8u6LWbKN97HqpSqJtJmYm/xnEKtr4eKp/8D9s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kNMPhrZQm2/c9CLu9g7c7C342y4XMIrGJeW7DNgCY5+mB0vr3QrQnE4Hj5IKpm52hVb+a6ixZsL2WSoMfxDrxkk36yg1bNsnkxGH96nCY8qzf4aU1JkudpP47gNB1sd/4GFiCirjV0atlwm9n/Cyxg3sGdGk8m8qyxlb455LKnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VwrkEWOT; arc=none smtp.client-ip=209.85.222.178
+	s=arc-20240116; t=1741020796; c=relaxed/simple;
+	bh=PiXmU6lUBB5AxY09cRXKal52ViVGG4MfYTE3SZPxqoE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=AlY1UdED31e0Ty74fOLC6j6Cx8C6QIwRcYFZK5R1TbNgVFJnILQ2Q7eK/H/ez5AL0nen0o3A7bgR7W+d5K/7n0WOEL+K2nC1Ns+IHM5kN4hrchMByl0AXES0au4BHKUZdxCy4/btM8Ns52lBvwq1ti3sG6PhCMZxktm9C3ya91o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ATpBB0s5; arc=none smtp.client-ip=209.85.219.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7c07cd527e4so426895885a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 08:53:11 -0800 (PST)
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6dd01781b56so55034586d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 08:53:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741020789; x=1741625589; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WXZMOjTfHdSZ0Fo7cW/JpFxM3Ukm8A0bcRpa5UuF7HY=;
-        b=VwrkEWOTCXCekuPtL5petw2iRCubK96IR0cqtmAlCL2/RU/B1Glqug697hJDLwvPw6
-         JnL9wGfUE0KsjOsizMXlJ3Wbt2a7F7rvinJfF19tYX9mc44v4+Fwvlz5AQaORcEqMSG9
-         Esv9QPnowRPfcWz1mZuCclZNb5kNejqKHdYISFHxJtS6C41Uvq5DZ7UROISjA0f2CXxz
-         P8FGWBd+mdJ1dMO2HtdFU34m02zzdNz8u3rMQ7shLTDfqC0W9MI+Sd7Qf4QSLGIcLhEs
-         ogyWhk5OdCYEBcGBPOeWqSm6y2/IwhZD1iMzJukssnhHVm6GggjmSs8Y4kE/KcullZXE
-         7MMw==
+        d=gmail.com; s=20230601; t=1741020792; x=1741625592; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x3glzTjf8IgiUSBtnGndwG/CjLpV6ZT+iGSPTYBmwgQ=;
+        b=ATpBB0s5xF0/1c+udxIXo9f+zN/V7gMJwZPknMHBivZVqeQgq/w8YMuWOoAMPVjoZo
+         kIWk9S/CSi1613gQv0Q0KtRLXyZmS1iVCg9b+b1UfuR2nSV9HpNvUke0hXY4wL0LHMLj
+         Zsu0lol6PlI9DnYGP0iCxHjbtfb0CC4dzOp+YUPawj8kFdmiLEndEJxJ9TaJjkZQ8udH
+         qDvSsH4D3ROdAT3AUm1keXTWPUDuRPqgvxvv86R1qkVIFTmJkBu+Rl79vnvy+Tz2Yz/V
+         ZJfmXjDEzxsBIaOijyPOUqyDmgVSyv4TeZbb0SVd0n08Cm6r7pvL5N12MHFpqdFLYDWB
+         VWEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741020789; x=1741625589;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WXZMOjTfHdSZ0Fo7cW/JpFxM3Ukm8A0bcRpa5UuF7HY=;
-        b=r+npmdb5YM72BI+241KI1ZKRd/vSC68BxYmc6wr97nDxK3+yyA9w/euz35ONUfWl31
-         mwaXWZPWpaFhGVkoJlxfhnmXVd612NjU7RcszHH6jCOFnDdSGB2VIG2dbxQQiUl+kmSH
-         wIIZ09foifim6xvvSfMJ52D13JLp6tc1OvZIOo7xLACJZkU4BMXC4H9vMSUdkMpzimvP
-         TLZFN4+CbOEyKDxtaVL83qJvlgmOuntIUnEnlokkNk+I2PPhvHF9azPL5m3RSkztCi8s
-         gSs69x1n3qv6rgR2Nu6Bz6axwGPBH2wMEE25jj7w+YMYKkXi/O9furguKFEQBwxyuEKN
-         QGJw==
-X-Gm-Message-State: AOJu0YzPL0E2rGOZ4VkWcXSLllVFg1xmonRLMCJ8JRr9m1dyS9qGWz+A
-	97RfnndTZrFvgaCI5JhdsB741qFFOKym+4Rjz7OFdVZJG1fQbMlqWNSU
-X-Gm-Gg: ASbGnctYdsCstWBuuqrtDCzQEMS8ic1/YdCVsrGzZMwMz+GHYLd2bScZLHynTZbppG2
-	xxu5C+f1pFkGE0bLDXNnpn67VqMxbLusqKDNTGP+8Kc1XHHJh18P1llBJ7VMwTp7GwXcYMupCX9
-	KXiHaea6W3nV5afQaeiHyUKnmyW6SpyEXdypANRTDDAODxlzNzwv9/GrYPufQtbs7e0CdoZi2mQ
-	sHn7KHZwDSe/LG2ZfthZw2dK4X08GWKUH6UJCTys8ONvKbu/+wWfqlEbniRwnYJLgclq5HFCRXO
-	SrpZS6RDEIGyjnYCjDvaQKfSgw==
-X-Google-Smtp-Source: AGHT+IHdrIXD6GHVaxbVyWpx/LAhFdATy0P2gAkCesSMqLmABu+o5LX5YPzeXQ7qI7aPziLPcOkHcw==
-X-Received: by 2002:a05:620a:c4a:b0:7c0:c00e:5913 with SMTP id af79cd13be357-7c39c677155mr2300119485a.48.1741020789597;
-        Mon, 03 Mar 2025 08:53:09 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741020792; x=1741625592;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=x3glzTjf8IgiUSBtnGndwG/CjLpV6ZT+iGSPTYBmwgQ=;
+        b=dfoe8LciiviF4C6agExAmmFflKyr/7fUEYFQHMb+FCrBfuvjw8/ZgSL0sTUY5tlPOF
+         56DVPF6rkMMNmR2FjmXRFxHc0I4qQXwaRx7w3aWIEOipwDEDLKHXmVhDDHfpdOOcsDbo
+         lhOcze6WKgEntrUvcFRQhidjB9k4+YpK9OJQfwgr9sMS7t13JnK8Yxe/poe6fQwwA6e8
+         3kL/BTZRQ8EILOs2xpEctMtDeo2I8VX6YN6w8Vs6uJqdC0vPH3zZLzw4kUFxdXC/QDeK
+         RX5Zt1LAOXxYivkmz79deOYdqy/Tcq6DatmS7S9jObPnSz9yNjUijSCBt0A8qpFa1IVJ
+         CNdA==
+X-Gm-Message-State: AOJu0YyS+VwHit3EginEZgmSd31rHgdYFv8tNG6SJChudbisod/NZ6Ki
+	sKuMTcWygMViRyXvxeHMFat9EyGVJK83NE/uYUB7DtRIA4lcm3EZlkO5
+X-Gm-Gg: ASbGncsSMoE5S/bj3vyqqzOMc4qteXZGlPleB2WNBKbNWXr+9yMtjc1XlJ7zHyxm9nP
+	+RW++Els8e3ZP3BU1z6f1GhfHnRdl8684OZs+Il9hYKJ1o1je7E3geLdxdJ6TY2psnBrrU0+RaT
+	U6+jA+rq3Vp+pOqjyb6uLSRXyF+Jm+H+H4d0gUwT4zkNLf4Y6YQL/MUuw9cTTnkXnExd0Vx8R/t
+	k7joIokxWL06WItVjJeMi7mX8nfyMHh3787KJkjC+T1+lolDZoefemrlcI0AlLzQFZ8p+mjixZ7
+	a0UOUoWD4LrqucUxJysT8GnG0A==
+X-Google-Smtp-Source: AGHT+IFZQ88ZlYfzX2N54kSWRFQ+paaHStvVgF3kPHPVSggP3M6SGgBSnH7+SCEx/2ZbKT/ghbDPMg==
+X-Received: by 2002:a05:6214:21e7:b0:6e4:9b59:d9ce with SMTP id 6a1803df08f44-6e8a0c7fdf6mr213591196d6.5.1741020791886;
+        Mon, 03 Mar 2025 08:53:11 -0800 (PST)
 Received: from citadel.lan ([2600:6c4a:4d3f:6d5c::1019])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8976cc9cdsm54730936d6.88.2025.03.03.08.53.07
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8976cc9cdsm54730936d6.88.2025.03.03.08.53.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 08:53:08 -0800 (PST)
+        Mon, 03 Mar 2025 08:53:10 -0800 (PST)
 From: Brian Gerst <brgerst@gmail.com>
 To: linux-kernel@vger.kernel.org,
 	x86@kernel.org
@@ -82,10 +84,12 @@ Cc: Ingo Molnar <mingo@kernel.org>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Brian Gerst <brgerst@gmail.com>
-Subject: [PATCH v3 00/11] Add a percpu subsection for cache hot data
-Date: Mon,  3 Mar 2025 11:52:35 -0500
-Message-ID: <20250303165246.2175811-1-brgerst@gmail.com>
+Subject: [PATCH v3 01/11] percpu: Introduce percpu hot section
+Date: Mon,  3 Mar 2025 11:52:36 -0500
+Message-ID: <20250303165246.2175811-2-brgerst@gmail.com>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250303165246.2175811-1-brgerst@gmail.com>
+References: <20250303165246.2175811-1-brgerst@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,82 +98,79 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a new percpu subsection for data that is frequently accessed and
-exclusive to each processor.  This replaces the pcpu_hot struct on x86,
-and is available to all architectures and the core kernel.
+Add a subsection to the percpu data for frequently accessed variables
+that should remain cached on each processor.  These varables should not
+be accessed from other processors to avoid cacheline bouncing.
 
-ffffffff834f5000 D __per_cpu_hot_start
-ffffffff834f5000 D hardirq_stack_ptr
-ffffffff834f5008 D __ref_stack_chk_guard
-ffffffff834f5008 D __stack_chk_guard
-ffffffff834f5010 D const_cpu_current_top_of_stack
-ffffffff834f5010 D cpu_current_top_of_stack
-ffffffff834f5018 D const_current_task
-ffffffff834f5018 D current_task
-ffffffff834f5020 D __x86_call_depth
-ffffffff834f5028 D this_cpu_off
-ffffffff834f5030 D __preempt_count
-ffffffff834f5034 D cpu_number
-ffffffff834f5038 D __softirq_pending
-ffffffff834f503a D hardirq_stack_inuse
-ffffffff834f503b D __per_cpu_hot_pad
-ffffffff834f5040 D __per_cpu_hot_end
+This will replace the pcpu_hot struct on x86, and open up similar
+functionality to other architectures and the kernel core.
 
-This applies to the tip/x86/asm branch.
+Signed-off-by: Brian Gerst <brgerst@gmail.com>
+---
+ include/asm-generic/vmlinux.lds.h | 11 +++++++++++
+ include/linux/percpu-defs.h       | 13 +++++++++++++
+ 2 files changed, 24 insertions(+)
 
-Changes in v3:
-- Fix typo of CACHE_HOT_DATA()
-- Move hardirq_stack_inuse to irq_64.c
-- Add __per_cpu_hot_pad to show the end of the actual data
-
-Brian Gerst (11):
-  percpu: Introduce percpu hot section
-  x86/percpu: Move pcpu_hot to percpu hot section
-  x86/preempt: Move preempt count to percpu hot section
-  x86/smp: Move cpu number to percpu hot section
-  x86/retbleed: Move call depth to percpu hot section
-  x86/softirq: Move softirq_pending to percpu hot section
-  x86/irq: Move irq stacks to percpu hot section
-  x86/percpu: Move top_of_stack to percpu hot section
-  x86/percpu: Move current_task to percpu hot section
-  x86/stackprotector: Move __stack_chk_guard to percpu hot section
-  x86/smp: Move this_cpu_off to percpu hot section
-
- arch/x86/entry/entry_32.S             |  4 +--
- arch/x86/entry/entry_64.S             |  6 ++---
- arch/x86/entry/entry_64_compat.S      |  4 +--
- arch/x86/include/asm/current.h        | 36 +++++----------------------
- arch/x86/include/asm/hardirq.h        |  4 +--
- arch/x86/include/asm/irq_stack.h      | 12 ++++-----
- arch/x86/include/asm/nospec-branch.h  | 11 ++++----
- arch/x86/include/asm/percpu.h         |  4 +--
- arch/x86/include/asm/preempt.h        | 25 ++++++++++---------
- arch/x86/include/asm/processor.h      | 16 ++++++++++--
- arch/x86/include/asm/smp.h            |  7 +++---
- arch/x86/include/asm/stackprotector.h |  2 +-
- arch/x86/kernel/asm-offsets.c         |  5 ----
- arch/x86/kernel/cpu/common.c          | 25 +++++++++++++------
- arch/x86/kernel/dumpstack_32.c        |  4 +--
- arch/x86/kernel/dumpstack_64.c        |  2 +-
- arch/x86/kernel/head_64.S             |  4 +--
- arch/x86/kernel/irq.c                 |  5 ++++
- arch/x86/kernel/irq_32.c              | 12 +++++----
- arch/x86/kernel/irq_64.c              |  7 +++---
- arch/x86/kernel/process_32.c          |  6 ++---
- arch/x86/kernel/process_64.c          |  6 ++---
- arch/x86/kernel/setup_percpu.c        |  7 ++++--
- arch/x86/kernel/smpboot.c             |  4 +--
- arch/x86/kernel/vmlinux.lds.S         |  6 ++++-
- arch/x86/lib/retpoline.S              |  2 +-
- include/asm-generic/vmlinux.lds.h     | 11 ++++++++
- include/linux/percpu-defs.h           | 13 ++++++++++
- include/linux/preempt.h               |  1 +
- kernel/bpf/verifier.c                 |  4 +--
- scripts/gdb/linux/cpus.py             |  2 +-
- 31 files changed, 146 insertions(+), 111 deletions(-)
-
-
-base-commit: 693c8502970a533363e9ece482c80bb6db0c12a5
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index 85fc0524f161..4ed0e6a013d0 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -385,6 +385,11 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
+ 	. = ALIGN(PAGE_SIZE);						\
+ 	__nosave_end = .;
+ 
++#define CACHE_HOT_DATA(align)						\
++	. = ALIGN(align);						\
++	*(SORT_BY_ALIGNMENT(.data..hot.*))				\
++	. = ALIGN(align);
++
+ #define PAGE_ALIGNED_DATA(page_align)					\
+ 	. = ALIGN(page_align);						\
+ 	*(.data..page_aligned)						\
+@@ -1064,6 +1069,11 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
+ 	. = ALIGN(PAGE_SIZE);						\
+ 	*(.data..percpu..page_aligned)					\
+ 	. = ALIGN(cacheline);						\
++	__per_cpu_hot_start = .;					\
++	*(SORT_BY_ALIGNMENT(.data..percpu..hot.*))			\
++	__per_cpu_hot_pad = .;						\
++	. = ALIGN(cacheline);						\
++	__per_cpu_hot_end = .;						\
+ 	*(.data..percpu..read_mostly)					\
+ 	. = ALIGN(cacheline);						\
+ 	*(.data..percpu)						\
+@@ -1111,6 +1121,7 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
+ 		INIT_TASK_DATA(inittask)				\
+ 		NOSAVE_DATA						\
+ 		PAGE_ALIGNED_DATA(pagealigned)				\
++		CACHE_HOT_DATA(cacheline)				\
+ 		CACHELINE_ALIGNED_DATA(cacheline)			\
+ 		READ_MOSTLY_DATA(cacheline)				\
+ 		DATA_DATA						\
+diff --git a/include/linux/percpu-defs.h b/include/linux/percpu-defs.h
+index 40d34e032d5b..0fcacb909778 100644
+--- a/include/linux/percpu-defs.h
++++ b/include/linux/percpu-defs.h
+@@ -112,6 +112,19 @@
+ #define DEFINE_PER_CPU(type, name)					\
+ 	DEFINE_PER_CPU_SECTION(type, name, "")
+ 
++/*
++ * Declaration/definition used for per-CPU variables that are frequently
++ * accessed and should be in a single cacheline.
++ *
++ * For use only by architecture and core code.  Only use scalar or pointer
++ * types to maximize density.
++ */
++#define DECLARE_PER_CPU_CACHE_HOT(type, name)				\
++	DECLARE_PER_CPU_SECTION(type, name, "..hot.." #name)
++
++#define DEFINE_PER_CPU_CACHE_HOT(type, name)				\
++	DEFINE_PER_CPU_SECTION(type, name, "..hot.." #name)
++
+ /*
+  * Declaration/definition used for per-CPU variables that must be cacheline
+  * aligned under SMP conditions so that, whilst a particular instance of the
 -- 
 2.48.1
 
