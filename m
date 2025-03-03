@@ -1,183 +1,144 @@
-Return-Path: <linux-kernel+bounces-541913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98079A4C34C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:23:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F96AA4C352
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:24:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23B457A283E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:22:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00B58188A604
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:24:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B410A139579;
-	Mon,  3 Mar 2025 14:23:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 192FD2139A4;
+	Mon,  3 Mar 2025 14:24:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VRSTMxff"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qx4mJq2d"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9192B9AA;
-	Mon,  3 Mar 2025 14:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FB4E139579;
+	Mon,  3 Mar 2025 14:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741011793; cv=none; b=dYAembzq99tRy6yd78ABLHqTwZFTCJN3Slq8PMxALveQ6gJ5n6ZGjZ2CUTBQt5/LBfvTMeDJ3/ZXTYzP0el4YBi6LrROAdNDohzac7kjigD8/NBDV65GWKQbtNfOxY/acUJXy062BxKFAkoEANGaqSU1xTcGal8+B9lCovxmlqo=
+	t=1741011865; cv=none; b=D3s4m7yFdO1hHASIY+u1SfKbJNoE4X7QMZQUDwwoI7J26zhUhh4wR8sjltahzWpFnUBnTIrmXWGEwBUn2qE67PkqsBxkQ2nypZQWiNWkLWv5t/FgmzbaFX2jyYpJF4FYMtFETnpxx/o8Oc7oTy5xaEC1fVFU4tp2j6LdPUblbyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741011793; c=relaxed/simple;
-	bh=pIJkqSLeUyRInezerfpiv4GfUMAC4on8F2v45PH/XM8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Hkrmnv2wTty4lF5Las0hBrLxV9KQLMjroNz07MGAHoldHm8tLHVJRwxD/TEZmXKc/4AJGeDzIJ852exum7JI0Pnt+5c8LF1ObciEzJP2tuvjaROStE1ctariYhkGveD+dZbEiTgYiD4urIryinLMImrzHVYugJ3IBGEvXhe32cQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VRSTMxff; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-390eb7c1024so2495428f8f.0;
-        Mon, 03 Mar 2025 06:23:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741011789; x=1741616589; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mrGT9P3YIII/ik/a4tG5c1QPCrLv8EWAGnwxrm4FLFI=;
-        b=VRSTMxff2ROwssGOVNjuDr2V8KiFfORhXqAtN7gmF2admZNGJmZRQxWLB+NKMvW8Lv
-         iGb0Wy/wlkdHPlg4SHBpQD9Pgwc3Gq45lAv3y+4k+aRHtSc4OF/vb4HmxvxXyviStFGa
-         wBWDX+S627bmG68FXSIlPYgqO3fgqXsfghkqLwB6Mjnp7LIcHb63HAWZfP5uFltwDkRP
-         eQTwYo6urlJs4TP+YZBIRrpXya+yMMVAJaeznfRhexcdSI8V7gr5NuXl1xkIn3DKi2Il
-         a/aJJfdBKBpb7O5yfKIsk3sVfJEChWpu0+xY8Mr1pm4jKlb8s0Pum/koQ1VstvJtyTsX
-         mJ2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741011789; x=1741616589;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mrGT9P3YIII/ik/a4tG5c1QPCrLv8EWAGnwxrm4FLFI=;
-        b=I/MF44qNxDxymHINaity++AZqRvnT/RUDKUy92zJq9XrE1z0WCke3DQLbSzi78tmS5
-         PSGskcAzSjDjpXfD0YwCXC3EI2i4cT/K59aJgsLQ56/6gRAJb7RaklAGo9xVZ51uBVgj
-         1sClqbffiXK3FSjmJn+rH6HNgOIspskIlKx9Z6HKir+2SdCykNgdNW1pvgRojoEUMP3X
-         bWt8heR6Pz6Wqn78TtIhZXoBz3xuxckCMQqPN2ycoskiXBiMv+K73dOU5/dA9z2B4xTV
-         dD9Sv8DQ/5I2l1G4b3VcASgdQ0eW6dwLN+SDKHVPz4Zsq3JGRx2MRXlNxJ4tR/U68564
-         H+gg==
-X-Forwarded-Encrypted: i=1; AJvYcCWbrm9hM51kPxGeyVDSqGjYjW/LH46nObrX30CTXJG/3U60p50RVT1Bey77PB0fOn+6goIfVqaGYsPuecM=@vger.kernel.org, AJvYcCXJ9eDV0rKwExHycLFbwzrRJsDTvtWrj3jego+NPZvFVLMsWrv6PA5xMSFhyTN4o7dwSb3CRliEEAaQVN1wvjw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0I6gz72TvZJvlzk2/NdE5naA3Rz8thPTOkSQ0NyMxnCfkDipq
-	cAkLnZX4m0DXOhTIUteFwWCFMRfaUrUS4XOyx3DjZEfRY9IZGrUu
-X-Gm-Gg: ASbGncs993kbXlaUipW+1foPjMybYJ+vpERGnWxlx5boxNpNexD0Ovrlq/ZFRyY1kKI
-	5qvLSGZdFF1pqZMvXaPGjLYOvf7c8k2yf4ayq/rckXjyiniM7PRzwI6sdAlCNp2FOKFRjXe6XiS
-	IkFW/KLCpsCqhBcPOlwUPNvns+0pSIyiqffBZHznen1o++/aTyKydXz1hhK1na1cE8QoToDtxlu
-	9qmx+ZGcPcpAhBpoLzF+clpdex8pYYAPi4N3tTBTYrEehPkmzJFDNBPu+9lR18x4ezAN6Hb6Nxl
-	rGFq26/WjTkG+XGPXnA9JAKQwOtVzYP2gWmwimVGVcMn2Y/FTKaO7g4j695mRvCAu+oyBKlckf2
-	cOw0OG0O0kBBl1valPSM/xlAFKoNZMe1xEyFRcpGYDCskgUnAFmsE8LiGKENV3wNXM1xc0om7/8
-	6u
-X-Google-Smtp-Source: AGHT+IHxdKpeKW+iuPDtegTXuf7HTIpCYH3Uf3Vd0h2zHZE7LvI/t8Y5S2/PEiWD4OWu/II3SjRc3g==
-X-Received: by 2002:a5d:5f4c:0:b0:390:fd7c:98be with SMTP id ffacd0b85a97d-390fd7c9b46mr6237286f8f.19.1741011789369;
-        Mon, 03 Mar 2025 06:23:09 -0800 (PST)
-Received: from ?IPV6:2003:df:bf24:2700:73f1:1935:b744:5d51? (p200300dfbf24270073f11935b7445d51.dip0.t-ipconnect.de. [2003:df:bf24:2700:73f1:1935:b744:5d51])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e4795978sm14341725f8f.3.2025.03.03.06.23.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Mar 2025 06:23:09 -0800 (PST)
-Message-ID: <daffef96-7c50-4162-bd93-e7bc20af9ee6@gmail.com>
-Date: Mon, 3 Mar 2025 15:23:08 +0100
+	s=arc-20240116; t=1741011865; c=relaxed/simple;
+	bh=DrHNOzIsPRePDm/wjoDsR7p+0haWMn2qBTkIdsFQd2s=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=D8YWT4v6DB0YsaTeZ1nTIqRjg19kD4WyEftXQ/+XCAYAlXyIOjbVCeZdUW3F6CkEdnKINPt7UorGofyMFtAIj7Qj0+vcr6stR9jP9BGMLOsXAjTBQc+3pbT3CZcfehke0EC8EbWOhhObUsj8rcRTyacLFSU9HM8H3fxG4g+srKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qx4mJq2d; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 523A2ubC005420;
+	Mon, 3 Mar 2025 14:24:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=5soQLA
+	3rzECWcYaHao77moD1krGP9rLVyf+EVXfymzk=; b=qx4mJq2dVUXJXiijYPonu9
+	8tEM12QLo1QZHhJLjXu7vzRDKgbvXGDtJ84eq5SZoltyS/H+lRR6TBmeZiNOR+lL
+	t0wuIzpuDd2h6GiUFO057bR2Z3wzZ0ABDLyvXJZvwgEBVXmbxnn03rMUi0Lcg0Um
+	d+0yieGItjbMX3A7EjIlp+0a8B59Eeeby9S0xdFhw3ebBRYk7mKzgwMXPY1lONid
+	jPK9r82nrVjEJr3oDlTPaXCJom1Ql66/wL7f4bxmkxWfZgad99f8HO32kjEcC4oF
+	b6m0aO8kk3duZ5unGBOSY2GsshHZDIcVJw79YnuYP2izl/bpM9i8nJvJhmRhh7yA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 455aapsj7f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Mar 2025 14:24:18 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 523EMIem030395;
+	Mon, 3 Mar 2025 14:24:18 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 455aapsj6q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Mar 2025 14:24:18 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 523C3XIS013720;
+	Mon, 3 Mar 2025 14:24:17 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 454e2kfu7u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Mar 2025 14:24:16 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 523EODQt17498470
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 3 Mar 2025 14:24:13 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 13A8C2004D;
+	Mon,  3 Mar 2025 14:24:13 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4707620040;
+	Mon,  3 Mar 2025 14:24:12 +0000 (GMT)
+Received: from li-ce58cfcc-320b-11b2-a85c-85e19b5285e0 (unknown [9.171.68.89])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with SMTP;
+	Mon,  3 Mar 2025 14:24:12 +0000 (GMT)
+Date: Mon, 3 Mar 2025 15:24:10 +0100
+From: Halil Pasic <pasic@linux.ibm.com>
+To: Guangguan Wang <guangguan.wang@linux.alibaba.com>
+Cc: Paolo Abeni <pabeni@redhat.com>, wenjia@linux.ibm.com, jaka@linux.ibm.com,
+        alibuda@linux.alibaba.com, tonylu@linux.alibaba.com,
+        guwen@linux.alibaba.com, davem@davemloft.net, edumazet@google.com,
+        kuba@kernel.org, horms@kernel.org, linux-rdma@vger.kernel.org,
+        linux-s390@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Alexandra Winter <wintera@linux.ibm.com>,
+        Halil Pasic <pasic@linux.ibm.com>
+Subject: Re: [PATCH net] net/smc: use the correct ndev to find pnetid by
+ pnetid table
+Message-ID: <20250303152410.31f5e3df.pasic@linux.ibm.com>
+In-Reply-To: <4eb38707-1a93-4c5c-aa65-14adfd595d14@linux.alibaba.com>
+References: <20241227040455.91854-1-guangguan.wang@linux.alibaba.com>
+	<1f4a721f-fa23-4f1d-97a9-1b27bdcd1e21@redhat.com>
+	<20250107203218.5787acb4.pasic@linux.ibm.com>
+	<908be351-b4f8-4c25-9171-4f033e11ffc4@linux.alibaba.com>
+	<20250109040429.350fdd60.pasic@linux.ibm.com>
+	<b1053a92-3a3f-4042-9be9-60b94b97747d@linux.alibaba.com>
+	<20250210145255.793e6639.pasic@linux.ibm.com>
+	<4eb38707-1a93-4c5c-aa65-14adfd595d14@linux.alibaba.com>
+Organization: IBM
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 8/9] rust: sync: lock: Add `Backend::BackendInContext`
-To: Lyude Paul <lyude@redhat.com>, rust-for-linux@vger.kernel.org,
- Thomas Gleixner <tglx@linutronix.de>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
- Waiman Long <longman@redhat.com>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- "open list:LOCKING PRIMITIVES" <linux-kernel@vger.kernel.org>
-References: <20250227221924.265259-1-lyude@redhat.com>
- <20250227221924.265259-9-lyude@redhat.com>
-Content-Language: de-AT-frami
-From: Dirk Behme <dirk.behme@gmail.com>
-In-Reply-To: <20250227221924.265259-9-lyude@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: MnLozmkxJvNEnJJwCFY4BYBYX0s8lRLG
+X-Proofpoint-GUID: O9QXNJNcB1yAxDfIhxTSvMaTixZSEB9l
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-03_07,2025-03-03_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
+ mlxscore=0 lowpriorityscore=0 clxscore=1015 priorityscore=1501 bulkscore=0
+ impostorscore=0 spamscore=0 mlxlogscore=995 malwarescore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2503030107
 
-On 27.02.25 23:10, Lyude Paul wrote:
-> From: Boqun Feng <boqun.feng@gmail.com>
+On Tue, 11 Feb 2025 11:44:32 +0800
+Guangguan Wang <guangguan.wang@linux.alibaba.com> wrote:
+
+> > Can you please help me reason about this? I'm unfortunately lacking
+> > Kubernetes skills here, and it is difficult for me to think along.  
 > 
-> `SpinLock`'s backend can be used for `SpinLockIrq`, if the interrupts
-> are disabled. And it actually provides performance gains since
-> interrupts are not needed to be disabled anymore. So add
-> `Backend::BackendInContext` to describe the case where one backend can
-> be used for another. Use the it to implement the `lock_with()` so that
+> Yes, it is also a problem that not being able to set eth0 (veth/POD)'s PNEDID from the host.
+> Even if the eth1(host) have hardware PNETID, the eth0 (veth/POD) can not search the hardware
+> PNETID. Because the eth0 (veth/POD) and eth1(host) are not in one netdev hierarchy.
+> But the two netdev hierarchies have relationship. Maybe search PNETID in all related netdev
+> hierarchies can help resolve this. For example when finding the base_ndev, if the base_ndev
+> is a netdev has relationship with other netdev(veth .etc) then jump to the related netdev
+> hierarchy through the relationship to iteratively find the base_ndev.
+> It is an idea now. I have not do any research about it yet and I am not sure if it is feasible.
 
+I did a fair amount of thinking and I've talked to Wenjia and Sandy as
+well, and now I'm fine with moving forward with a variant that
+prioritizes compatibility but makes the scenarios you have pointed out
+work by enabling taking the SW PNETID of the non-leaf netdev(s) if the
+base_dev has no PNETID (neither hw nor sw).
 
-Use the it -> Use it (drop "the")?
-
-
-> `SpinLockIrq` can avoid disabling interrupts by using `SpinLock`'s
-> backend.
-> 
-> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
->  rust/kernel/sync/lock.rs          | 26 ++++++++++++++++++--
->  rust/kernel/sync/lock/mutex.rs    |  1 +
->  rust/kernel/sync/lock/spinlock.rs | 41 +++++++++++++++++++++++++++++++
->  3 files changed, 66 insertions(+), 2 deletions(-)
-> 
-> diff --git a/rust/kernel/sync/lock.rs b/rust/kernel/sync/lock.rs
-> index e7c1fd028435e..54c77972c83f8 100644
-> --- a/rust/kernel/sync/lock.rs
-> +++ b/rust/kernel/sync/lock.rs
-> @@ -32,10 +32,15 @@
->  ///   is owned, that is, between calls to [`lock`] and [`unlock`].
->  /// - Implementers must also ensure that [`relock`] uses the same locking method as the original
->  ///   lock operation.
-> +/// - Implementers must ensure if [`BackendInContext`] is a [`Backend`], it's safe to acquire lock
-
-
-to acquire the lock (add "the")?
-
-
-> +///   under the [`Context`], the [`State`] of two backends must be the same.
->  ///
->  /// [`lock`]: Backend::lock
->  /// [`unlock`]: Backend::unlock
->  /// [`relock`]: Backend::relock
-> +/// [`BackendInContext`]: Backend::BackendInContext
-> +/// [`Context`]: Backend::Context
-> +/// [`State`]: Backend::State
->  pub unsafe trait Backend {
->      /// The state required by the lock.
->      type State;
-> @@ -49,6 +54,9 @@ pub unsafe trait Backend {
->      /// The context which can be provided to acquire the lock with a different backend.
->      type Context<'a>;
->  
-> +    /// The alternative backend we can use if a [`Context`](Backend::Context) is provided.
-> +    type BackendInContext: Sized;
-> +
->      /// Initialises the lock.
->      ///
->      /// # Safety
-> @@ -170,8 +178,22 @@ pub unsafe fn from_raw<'a>(ptr: *mut B::State) -> &'a Self {
->  impl<T: ?Sized, B: Backend> Lock<T, B> {
->      /// Acquires the lock with the given context and gives the caller access to the data protected
->      /// by it.
-> -    pub fn lock_with<'a>(&'a self, _context: B::Context<'a>) -> Guard<'a, T, B> {
-> -        todo!()
-> +    pub fn lock_with<'a>(&'a self, _context: B::Context<'a>) -> Guard<'a, T, B::BackendInContext>
-> +    where
-> +        B::BackendInContext: Backend,
-> +    {
-> +        // SAFETY: Per the safety guarantee of `Backend`, if `B::BackendIncontext` and `B` should
-> +        // have the same state, therefore the layout of the lock is the same so it's safe the
-
-the -> to (safe to convert)?
-
-Cheers,
-
-Dirk
-
+Regards,
+Halil
 
