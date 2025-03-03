@@ -1,216 +1,98 @@
-Return-Path: <linux-kernel+bounces-541717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A51C6A4C087
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:41:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87D3CA4C089
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:42:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC5B31721A6
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:41:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 123DE3A7581
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:42:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1156321018F;
-	Mon,  3 Mar 2025 12:41:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BC9D20E32A;
+	Mon,  3 Mar 2025 12:42:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BCh0EpN5"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="DUu0KZw2"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8AF51E5B78;
-	Mon,  3 Mar 2025 12:41:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B8BAD27
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 12:42:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741005694; cv=none; b=Dw0ibGYs2XtKDMioWiHlDZjEC5HIcQHs9h3zvZIkiWteCqdQ+f/06n0c/imzNfriB/ykPnWz0GRMJIOUYNq75ufyKFQ8xRa8miaTL7zGKvedw3Yst6hZqphfZfnBxuTgsihhVNmR7iEECvV41HPkGiaHH3CP/GN5vV1KzYlu/XE=
+	t=1741005772; cv=none; b=JK/0E9Zpnr/C3BkazFpWpFVY3MbO92K1S4d5LT7wMbtO6+ncUh0YwjxArxMfnqy6SF/Jw/24DNOl944Z2cAyUA+c/ysx7nSmXELj9WM2xdhrqzgeeNmCtavI2SrNRR3Fd1P1vWiqsl9MKjd1wRS34Af/IU8eKpeH9aOM0qEeiSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741005694; c=relaxed/simple;
-	bh=tieKiWfa1sevnfvQv3qDEqr93B2c4NJALDpA5GWbCFY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=I9tw+JZF2rscdkWaVqj47IzotWLifJ5COseuJi0T2opfmhcM3jYrSjr16GW6NQbkBSl3rHxt4xyU3EMLYYzO6LJQ+P7Y8ahqqKSYuLnGvFOHxvFmqqfGeHYsL9RtLjIky4+/X0lwvAdr/EbBQn5vvF6DY0WToKUna7HiBjts2kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BCh0EpN5; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5e538388dd1so1593547a12.1;
-        Mon, 03 Mar 2025 04:41:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741005691; x=1741610491; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kLW0AYaLwkO6JC1piDU5qS15yDYOQslsP1SvNrbEZfE=;
-        b=BCh0EpN5tIK1oBLaioFtekgI+vxaIGegQHb4FLsuNTy7QlQAmJ1LupdH20WO/5g9+f
-         fNkEhCCgSvAl5AgpflQmlc61Wvh1ajd2aUrEcA3kizps54FP7N/geoZ1GuvbK9Y+XJN6
-         MiHj5VbDeUb+HbY2YswCcaL3BJ8b294jxoE1JEjItqpytK/MDPAqtDJ35RM6iZjm5INa
-         ICAfeCmpZy/PoTsbRFSIupNcnkYCNkQOkcA7rCD5Sk70wOBwH/NgV/pKSznzTx3kB6r1
-         UcjV6S1bDfoLb3cKblFpxulvNurwjMRdRxuWBFcQM/gK01tGkH6wEEpcucgR2F01o/nB
-         j9eA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741005691; x=1741610491;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kLW0AYaLwkO6JC1piDU5qS15yDYOQslsP1SvNrbEZfE=;
-        b=pgujbgtbMAMF+CHR4wOsKyno5jVrvWWBdLmc7FcvWPLNzzr01hr/MvZ297NAAhmxlO
-         yF3IULHLF9KeS88JYyzPggDFJvAzihbmU+v6waqL5Fs2enjsYpFX0RTqcvWWWyZY8GZ8
-         O/mxHIj24io2GQBh8778AmyZItPm5owngLLCmpBovxwfcCflZRV46IwFR3U6XuZgRdx2
-         GPjP4eOvy58YehIwdR5gvH72/iZRqzWwPk78AMAjA81+eX/Cqo3FmWjb2y+dyges5Mkq
-         Djqcs3ts/CzTT/dYcy07NuGSGMdWOLtclYlQx58qtEgvoCgRH6TGgiUW9YO6qHNeHOH/
-         jVcA==
-X-Forwarded-Encrypted: i=1; AJvYcCUCr0hV2nZoej47LtHdw2SxV5dg56c0Tc7nvkTDoZMDyaIAt4KpTYclumZY4sI4AE4iRpi86TxXU79RWnE=@vger.kernel.org, AJvYcCUpIUzvpFGNeHJZi3m8X1HFZhMVBsOa27P3jRjdX8kwA6gI5KQzxcRptQyYrv7dNlHOuwwlWCDlVzjPZmMK@vger.kernel.org, AJvYcCV1qr0F+utL90FsmZkKo+zQu/o6RwEAwGOeM9hmMXJxNodGW+ASqTqwABlXxPPaV/5W+JrDlLrUMcXgRIfhY2U=@vger.kernel.org, AJvYcCW38iV904+Lt0CpE+AKGpvJo5B4tHgDDXnF/FWj7azbcOseBzKfzpRcY/axlvKNzlZl4BVsKPqbDJEWAPNA@vger.kernel.org, AJvYcCWSE4cuRW8QWqsh2MdxaPKQc72nAy3FYO8JT9qE8b2aO1qPe5NZ/TbvA11I1LdSwlvn04Db847sd3yn61s=@vger.kernel.org, AJvYcCWSF2SZ2kWxhNh3j5OBrj8GeWgyA3s8FCWu9MsuxsfULvQi56LIxwQq3rXKEBjNoxe0AdWmEpqD@vger.kernel.org, AJvYcCWvN5oOleyvgMaVZvjx9gpyfoafFJOXG5ZLZyRVKUKqKd02b57B3ns8dX5BHyP2YhU3uXA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpXdOPRgDv5ltNkdlpqMTfpweyQ/twLowJfO6DKU9anmxnL43q
-	pzOc/fUFjXu1X6QpDJ5qwCyZF/g9NC3aSosfLGp4CkR1tdDtKe84
-X-Gm-Gg: ASbGnctkqxAryEx+16m4xz25P4L2oTOP2KyycrntiiR67FD1CaPB/SskqofVe1wWXs8
-	yvcN8XTDxjEGdTiqMa/124Mgg07cpDYQE5Vw2Ntpw0YTtX6tyi1ZvAUKoBmShe5pab8t/L1LFeA
-	eWKPDSht3DqI09XZPWI2F3A8GhZvmM6wxF26xurgxiMV2Z919fI5890LEDMMMG/nT5nUJpqRg+/
-	/M3MiKxAguSyKmGwC7HIjvfFjAuj7HXx3wDNFUZNleh4xYP0DtC0Qjhvf4A3bW7KK6xYgdK/ljH
-	UKfUP9epbYmIOig1tZCX5h1lYXslYOqf1QMAfvS9uQDvZ5v+bX1nsI5ijSHF4YCy/VOzamv4Ucb
-	wJugEqNk=
-X-Google-Smtp-Source: AGHT+IGmsdmZpDuU64/zBFVRQ3e/o9vGnleqAFoX6F+q7Lw2p71TWS5SPeiWtsRpxGv/SLlt+kfa+w==
-X-Received: by 2002:a05:6402:2808:b0:5e4:d2d4:b4f3 with SMTP id 4fb4d7f45d1cf-5e4d6af1582mr13492784a12.14.1741005688031;
-        Mon, 03 Mar 2025 04:41:28 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e4c3fb4384sm6903702a12.49.2025.03.03.04.41.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 04:41:27 -0800 (PST)
-Date: Mon, 3 Mar 2025 12:41:25 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Kuan-Wei Chiu <visitorckw@gmail.com>
-Cc: Yury Norov <yury.norov@gmail.com>, tglx@linutronix.de, mingo@redhat.com,
- bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, jk@ozlabs.org,
- joel@jms.id.au, eajames@linux.ibm.com, andrzej.hajda@intel.com,
- neil.armstrong@linaro.org, rfoss@kernel.org,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, simona@ffwll.ch, dmitry.torokhov@gmail.com,
- mchehab@kernel.org, awalls@md.metrocast.net, hverkuil@xs4all.nl,
- miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
- louis.peens@corigine.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, pabeni@redhat.com,
- parthiban.veerasooran@microchip.com, arend.vanspriel@broadcom.com,
- johannes@sipsolutions.net, gregkh@linuxfoundation.org,
- jirislaby@kernel.org, akpm@linux-foundation.org, hpa@zytor.com,
- alistair@popple.id.au, linux@rasmusvillemoes.dk,
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, kuba@kernel.org, linux-kernel@vger.kernel.org,
- linux-fsi@lists.ozlabs.org, dri-devel@lists.freedesktop.org,
- linux-input@vger.kernel.org, linux-media@vger.kernel.org,
- linux-mtd@lists.infradead.org, oss-drivers@corigine.com,
- netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
- brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com,
- linux-serial@vger.kernel.org, bpf@vger.kernel.org, jserv@ccns.ncku.edu.tw,
- andrew.cooper3@citrix.com, Yu-Chun Lin <eleanor15x@gmail.com>
-Subject: Re: [PATCH v2 01/18] lib/parity: Add __builtin_parity() fallback
- implementations
-Message-ID: <20250303124125.4975afdc@pumpkin>
-In-Reply-To: <Z8UYOD2tyjS25gIc@visitorckw-System-Product-Name>
-References: <20250301142409.2513835-1-visitorckw@gmail.com>
-	<20250301142409.2513835-2-visitorckw@gmail.com>
-	<Z8PMHLYHOkCZJpOh@thinkpad>
-	<Z8QUsgpCB0m2qKJR@visitorckw-System-Product-Name>
-	<Z8SBBM_81wyHfvC0@thinkpad>
-	<Z8SVb4xD4tTiMEpL@visitorckw-System-Product-Name>
-	<20250302190954.2d7e068f@pumpkin>
-	<Z8UYOD2tyjS25gIc@visitorckw-System-Product-Name>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1741005772; c=relaxed/simple;
+	bh=jlc0C8rbMbqoeY8g3R7Lv7cLmPJKlL8deuN+Bm1QkIs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VMzBqgh7mgvz/NTY5QNFxBeOMXUYUKmQQvjNR2OI9D+IAyK1Q06JybggVE7Rb4RLO9i5jxSZbxGD9jYxKMJQBwwiwpcL7+NqJ+xUb0jBmVKJBGQDvplyxVDRwlowrPSsVpJ2UWvJDKYcdBHtQTa0m+LId1vp8eRG9Yl0o4LT0lE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=DUu0KZw2; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A0B5C40E0216;
+	Mon,  3 Mar 2025 12:42:42 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id F3WNkQU5fF0l; Mon,  3 Mar 2025 12:42:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1741005758; bh=gdGS48ZkBp7tPq/jrYUCtRhNMC7QldOP4oiLkMSaAug=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DUu0KZw23FzzGcPKTR0vKoqqMRQyM3m1l+N9spPfiXWUWg61TvoeVgkCE06UNDsyz
+	 f5Jlk8cK7idtmn4JKQHA208FA5TtoJU/8yTWftHzRMXEyKs+Wh9eNXgmZDr33f7l69
+	 dSlXYB7TqpSesYID+DrprR9m7UJmtwmk+/iXnBNtWlKoHy7K4Wkhx8zjzj1qkxrOwF
+	 8UOzveLc2jp6Rbjb/zs9g3U/UKc6Z3JlmFZbqWaBKz0yAJGvKMki56+k+jmPqPUKgV
+	 OjqN3R7zZZJCbH6PJLkymsdoabSLzh3947SU1b/hYAkfo/2H5hAsAkzb2OCd51ElKE
+	 XDv1lc3zSUruNOlr8YE0ms3g/ikKzHnLrvkOkJAs2li7QLbTQKQa1UB0v+oYV7BIFh
+	 BEUaqd3hHpwASwupNKVFy2KlRSkaplV7jYq/qcpkXXMhW6Roh9T0/tS0Hv0XaBX5Go
+	 IAM1tryo1ruA12/OeHCIXbTy9Yj0N0h0JikxJK7lGTZEjjwYMg2lSwqn1fStZOZF/o
+	 I2IzkzP9eExzOGheni2X4IwbeF+pWCrXe51xG/2VXSvMTGZNBF67H9kBr/EKIyjlCk
+	 VChkaDf5YvCjsFMZl6Tm6tl2rXy5Q83BUA357v0C16biUBtlYSg+zxd2WUyLWGPRfH
+	 MZBpnLHGzlNXRU+wKV79DB0w=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4383F40E01D1;
+	Mon,  3 Mar 2025 12:42:21 +0000 (UTC)
+Date: Mon, 3 Mar 2025 13:42:14 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Rik van Riel <riel@surriel.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org,
+	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
+	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
+	linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
+	jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
+	Manali.Shukla@amd.com, mingo@kernel.org
+Subject: Re: [PATCH v14 00/13] AMD broadcast TLB invalidation
+Message-ID: <20250303124214.GDZ8Wjpn7l4bOy8LYI@fat_crate.local>
+References: <20250226030129.530345-1-riel@surriel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250226030129.530345-1-riel@surriel.com>
 
-On Mon, 3 Mar 2025 10:47:20 +0800
-Kuan-Wei Chiu <visitorckw@gmail.com> wrote:
+On Tue, Feb 25, 2025 at 10:00:35PM -0500, Rik van Riel wrote:
+> Add support for broadcast TLB invalidation using AMD's INVLPGB instruction.
 
-> On Sun, Mar 02, 2025 at 07:09:54PM +0000, David Laight wrote:
-> > On Mon, 3 Mar 2025 01:29:19 +0800
-> > Kuan-Wei Chiu <visitorckw@gmail.com> wrote:
-> >   
-> > > Hi Yury,
-> > > 
-...
-> > > #define parity(val)					\
-> > > ({							\
-> > > 	__auto_type __v = (val);			\
-> > > 	bool __ret;					\
-> > > 	switch (BITS_PER_TYPE(val)) {			\
-> > > 	case 64:					\
-> > > 		__v ^= __v >> 16 >> 16;			\
-> > > 		fallthrough;				\
-> > > 	case 32:					\
-> > > 		__v ^= __v >> 16;			\
-> > > 		fallthrough;				\
-> > > 	case 16:					\
-> > > 		__v ^= __v >> 8;			\
-> > > 		fallthrough;				\
-> > > 	case 8:						\
-> > > 		__v ^= __v >> 4;			\
-> > > 		__ret =  (0x6996 >> (__v & 0xf)) & 1;	\
-> > > 		break;					\
-> > > 	default:					\
-> > > 		BUILD_BUG();				\
-> > > 	}						\
-> > > 	__ret;						\
-> > > })  
-> > 
-> > I'm seeing double-register shifts for 64bit values on 32bit systems.
-> > And gcc is doing 64bit double-register maths all the way down.
-> > 
-> > That is fixed by changing the top of the define to
-> > #define parity(val)					\
-> > ({							\
-> > 	unsigned int __v = (val);			\
-> > 	bool __ret;					\
-> > 	switch (BITS_PER_TYPE(val)) {			\
-> > 	case 64:					\
-> > 		__v ^= val >> 16 >> 16;			\
-> > 		fallthrough;				\
-> > 
-> > But it's need changing to only expand 'val' once.
-> > Perhaps:
-> > 	auto_type _val = (val);
-> > 	u32 __ret = val;
-> > and (mostly) s/__v/__ret/g
-> >  
-> I'm happy to make this change, though I'm a bit confused about how much
-> we care about the code generated by gcc. So this is the macro expected
-> in v3:
+Ok, I've got the whole thing here now:
 
-There is 'good', 'bad' and 'ugly' - it was in the 'bad' to 'ugly' area.
+https://web.git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git/log/?h=tip-x86-cpu-tlbi
 
-> 
-> #define parity(val)					\
-> ({							\
-> 	__auto_type __v = (val);			\
-> 	u32 __ret = val;				\
-> 	switch (BITS_PER_TYPE(val)) {			\
-> 	case 64:					\
->                 __ret ^= __v >> 16 >> 16;		\
-> 		fallthrough;				\
-> 	case 32:					\
-> 		__ret ^= __ret >> 16;			\
-> 		fallthrough;				\
-> 	case 16:					\
-> 		__ret ^= __ret >> 8;			\
-> 		fallthrough;				\
-> 	case 8:						\
-> 		__ret ^= __ret >> 4;			\
-> 		__ret = (0x6996 >> (__ret & 0xf)) & 1;	\
-> 		break;					\
-> 	default:					\
-> 		BUILD_BUG();				\
-> 	}						\
-> 	__ret;						\
-> })
+Lemme take it for a spin on my machines, see whether the cat catches fire...
 
-That looks like it will avoid double-register shifts on 32bit archs.
-arm64 can do slightly better (a couple of instructions) because of its
-barrel shifter.
-x86 can do a lot better because of the cpu 'parity' flag.
-But maybe it is never used anywhere that really matters.
+-- 
+Regards/Gruss,
+    Boris.
 
-	David
-
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
