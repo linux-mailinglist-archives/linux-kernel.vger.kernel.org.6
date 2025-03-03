@@ -1,166 +1,119 @@
-Return-Path: <linux-kernel+bounces-541388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB924A4BC71
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:36:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B091A4BC6B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:35:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 020E73AE374
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:33:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A54173AACF7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD9711F3BBE;
-	Mon,  3 Mar 2025 10:32:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="fN4m84i5"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A6C11F17E5;
-	Mon,  3 Mar 2025 10:32:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E9B11F3B9E;
+	Mon,  3 Mar 2025 10:32:13 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C4A41E7C32
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 10:32:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740997971; cv=none; b=It0qnx/WM10QIiKtRT+FBrIrB9C6F5DzMryZlL1VR1qeaioD4JTeHXqS6fODllX8t6/wHo6smen1sl1C5p7hp9dtEMmqagfllFD8O2v7ZV8c9vuhLJlfyEIk0MSUoM/JcHdOde0jnxkFfjA1Oc+2SmCknU+dtpDYlxJ3e0Im41c=
+	t=1740997933; cv=none; b=mRslhluF18N7rF6Iqkj9PywEIz/f3Rw5mw7GgYV0WpMrWo0i8gcS2SqHtLdqR2VWWuGGhcrr0KVrtPvjtWZcX5BLhbPfW5fxcLgrWFX11rlu7T+m2rEaH0+at3ZgltO12k/k6avcdO+ftUBIJoaSoW2YVMH/KR6KdGh+e3jvtTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740997971; c=relaxed/simple;
-	bh=fqF5ukVSFGV3EgFZXiEa4ck6u9+DJwi8aWwrJtLxWE8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LU/Bh0RbNCrQgkaHXRPMnVKZE7O9xbCBFS4TMzVpc/FpWLjtSzGWMxzxjRvp6y6H0TPzSuxw0MJRhr5KTSdS0LW/TpBT+UT87rw7jOh/hE1eCAe6NLzBwGGMSOasASn/JWJd57qm9IvAZxw2l5gzI1JVnL7zeBdm8k8x/c8YcPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=fN4m84i5; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1740997969; x=1772533969;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=fqF5ukVSFGV3EgFZXiEa4ck6u9+DJwi8aWwrJtLxWE8=;
-  b=fN4m84i5wuM2djRp1cyPu7EKug3xiDx+M3EJwEZdNsaGiZGpwpxEizut
-   50geFW1oPgkLDeivXSPrxvNJlKY2CGC4YOOmRcW2mtqgfDxsOz/z+Avtz
-   mWXpcLdjzmnUiG/zU0rRo2V92546KxR2eDmzRup85u3lSWy/tDcGJrlsA
-   SB7dacCPLDxmV3fyMY/+TN0QUCWu+/Ni2AuUnwtKVthFHtM7Hlpa3RuW3
-   izeHBkJh5n3LoOqPuhZb9nSGU/65cEY5ihzxLnrx4IyFrnYXO8Ec8Q2M4
-   DNK8adAtLTFq3iyFQvE3YdqNF9+io9njdXcrUo5XKB4lcafRLc56ViVVd
-   A==;
-X-CSE-ConnectionGUID: I/+YZuCUTEWlY9bn8j7eEA==
-X-CSE-MsgGUID: q+QHdo2+QKqpUxRb+G3ZWQ==
-X-IronPort-AV: E=Sophos;i="6.13,329,1732604400"; 
-   d="asc'?scan'208";a="38333761"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 03 Mar 2025 03:32:42 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 3 Mar 2025 03:32:33 -0700
-Received: from wendy (10.10.85.11) by chn-vm-ex01.mchp-main.com (10.10.85.143)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
- Transport; Mon, 3 Mar 2025 03:32:31 -0700
-Date: Mon, 3 Mar 2025 10:31:44 +0000
-From: Conor Dooley <conor.dooley@microchip.com>
-To: Ian Dannapel <iansdannapel@gmail.com>
-CC: Conor Dooley <conor@kernel.org>, <linux-fpga@vger.kernel.org>, Moritz
- Fischer <mdf@kernel.org>, Wu Hao <hao.wu@intel.com>, Xu Yilun
-	<yilun.xu@intel.com>, Tom Rix <trix@redhat.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, Jonathan
- Cameron <Jonathan.Cameron@huawei.com>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?=
-	<rafal@milecki.pl>, Aradhya Bhatia <a-bhatia1@ti.com>, "open list:OPEN
- FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [v4 2/3] dt-bindings: fpga: Add Efinix SPI programming bindings
-Message-ID: <20250303-imply-ferocity-bbb6d866b149@wendy>
-References: <20250228094732.54642-1-iansdannapel@gmail.com>
- <20250228094732.54642-3-iansdannapel@gmail.com>
- <20250228-copilot-trekker-72a20709e9f7@spud>
- <CAKrir7hdyP-bPKkZOpK3cFp=rvH_MJ98DLKnsRni_BWsQEg5yw@mail.gmail.com>
+	s=arc-20240116; t=1740997933; c=relaxed/simple;
+	bh=cfjZTAA3wFI4kmuYmgNO61aNSEGKpej4JaJFeqP9wPU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nXr1lvISF0TyFeYDeX6gdcefVab/U3WS0qaO+ST5+MwSKfPuZWJlbLO9CL3S6LyTt1J/1aqPUNVQ94eka8MRGSdPyBs54KyfFk4N0TdjmQ0DU6zO9BkFvq18Q66Xe/dVHN6P+pIvQshkTIwBjNujYpfHCs6sBaxMXcJWD61twhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 092C1113E;
+	Mon,  3 Mar 2025 02:32:25 -0800 (PST)
+Received: from e133081.arm.com (unknown [10.57.37.136])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9AC8F3F66E;
+	Mon,  3 Mar 2025 02:32:03 -0800 (PST)
+Date: Mon, 3 Mar 2025 10:32:01 +0000
+From: =?utf-8?Q?Miko=C5=82aj?= Lenczewski <miko.lenczewski@arm.com>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Yang Shi <yang@os.amperecomputing.com>, suzuki.poulose@arm.com,
+	catalin.marinas@arm.com, will@kernel.org, joro@8bytes.org,
+	jean-philippe@linaro.org, mark.rutland@arm.com, joey.gouly@arm.com,
+	oliver.upton@linux.dev, james.morse@arm.com, broonie@kernel.org,
+	maz@kernel.org, david@redhat.com, akpm@linux-foundation.org,
+	jgg@ziepe.ca, nicolinc@nvidia.com, mshavit@google.com,
+	jsnitsel@redhat.com, smostafa@google.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev
+Subject: Re: [PATCH v2 4/4] iommu/arm: Add BBM Level 2 smmu feature
+Message-ID: <20250303103201.GD13345@e133081.arm.com>
+References: <20250228182403.6269-2-miko.lenczewski@arm.com>
+ <20250228182403.6269-6-miko.lenczewski@arm.com>
+ <b46dc626-edc9-4d20-99d2-6cd08a01346c@os.amperecomputing.com>
+ <43732270-8fd0-4a18-abec-096e383a6a4d@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="6qSyW+QWd6cb4mh+"
-Content-Disposition: inline
-In-Reply-To: <CAKrir7hdyP-bPKkZOpK3cFp=rvH_MJ98DLKnsRni_BWsQEg5yw@mail.gmail.com>
-
---6qSyW+QWd6cb4mh+
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <43732270-8fd0-4a18-abec-096e383a6a4d@arm.com>
 
-On Mon, Mar 03, 2025 at 11:10:53AM +0100, Ian Dannapel wrote:
-> Hi Conor, thanks for the quick response.
->=20
-> On Fri, Feb 28, 2025 at 7:28=E2=80=AFPM Conor Dooley <conor@kernel.org> w=
-rote:
-> > > +description: |
-> > > +  Efinix FPGAs (Trion, Topaz, and Titanium families) support loading=
- bitstreams
-> > > +  through "SPI Passive Mode".
-> > > +  Note 1: Only bus width 1x is supported.
-> > > +  Note 2: Additional pins hogs for bus width configuration must be s=
-et
-> > > +  elsewhere, if necessary.
-> > > +  Note 3: Topaz and Titanium support is based on documentation but r=
-emains
-> > > +  untested.
-> >
-> > Points 1 and 3 here seem to be driver limitations, and shouldn't really
-> > be present in a document describing the hardware?
-> >
-> Yes, they are driver limitations and probably do not belong here.
->=20
-> > > +properties:
-> > > +  compatible:
-> > > +    enum:
-> > > +      - efinix,trion-spi
-> > > +      - efinix,titanium-spi
-> > > +      - efinix,topaz-spi
-> >
-> > > +      - efinix,fpga-spi
-> >
-> > What hardware does this device represent? Other ones are obvious matches
-> > to the families you mention, but what is this one?
+On Mon, Mar 03, 2025 at 10:17:28AM +0000, Ryan Roberts wrote:
+> On 01/03/2025 01:32, Yang Shi wrote:
+> > 
+> > 
+> > 
+> > On 2/28/25 10:24 AM, Mikołaj Lenczewski wrote:
+> >> For supporting BBM Level 2 for userspace mappings, we want to ensure
+> >> that the smmu also supports its own version of BBM Level 2. Luckily, the
+> >> smmu spec (IHI 0070G 3.21.1.3) is stricter than the aarch64 spec (DDI
+> >> 0487K.a D8.16.2), so already guarantees that no aborts are raised when
+> >> BBM level 2 is claimed.
+> >>
+> >> Add the feature and testing for it under arm_smmu_sva_supported().
+> >>
+> >> Signed-off-by: Mikołaj Lenczewski <miko.lenczewski@arm.com>
+> >> ---
+> >>   arch/arm64/kernel/cpufeature.c                  | 7 +++----
+> >>   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c | 3 +++
+> >>   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c     | 3 +++
+> >>   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h     | 4 ++++
+> >>   4 files changed, 13 insertions(+), 4 deletions(-)
+> >>
+> >> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> >> index 63f6d356dc77..1022c63f81b2 100644
+> >> --- a/arch/arm64/kernel/cpufeature.c
+> >> +++ b/arch/arm64/kernel/cpufeature.c
+> >> @@ -2223,8 +2223,6 @@ static bool has_bbml2_noabort(const struct
+> >> arm64_cpu_capabilities *caps, int sco
+> >>               if (!cpu_has_bbml2_noabort(__cpu_read_midr(cpu)))
+> >>                   return false;
+> >>           }
+> >> -
+> >> -        return true;
+> >>       } else if (scope & SCOPE_LOCAL_CPU) {
+> >>           /* We are a hot-plugged CPU, so only need to check our MIDR.
+> >>            * If we have the correct MIDR, but the kernel booted on an
+> >> @@ -2232,10 +2230,11 @@ static bool has_bbml2_noabort(const struct
+> >> arm64_cpu_capabilities *caps, int sco
+> >>            * we have an incorrect MIDR, but the kernel booted on a
+> >>            * sufficient CPU, we will not bring up this CPU.
+> >>            */
+> >> -        return cpu_has_bbml2_noabort(read_cpuid_id());
+> >> +        if (!cpu_has_bbml2_noabort(read_cpuid_id()))
+> >> +            return false;
+> >>       }
+> >>   -    return false;
+> >> +    return has_cpuid_feature(caps, scope);
+> > 
+> > Do we really need this? IIRC, it means the MIDR has to be in the allow list
+> > *AND* MMFR2 register has to be set too. AmpereOne doesn't have MMFR2 register set.
+> 
+> Miko, I think this should have been squashed into patch #1? It doesn't belong in
+> this patch.
 
-> The proposed compatible is a generic fallback for any Efinix FPGA Series.
-
-If it is a fallback, your binding should look like:
-compatible:
-  items:
-    - enum:
-        - efinix,trion-spi
-        - efinix,titanium-spi
-        - efinix,topaz-spi
-    - const: efinix,fpga-spi
-
-|+static const struct of_device_id efinix_spi_of_match[] =3D {
-|+       { .compatible =3D "efinix,trion-spi", },
-|+       { .compatible =3D "efinix,titanium-spi", },
-|+       { .compatible =3D "efinix,topaz-spi", },
-
-And these three compatibles can/should be removed from the driver, since
-the fallback is required.
-
-|+       { .compatible =3D "efinix,fpga-spi", },
-|+       {}
-|+};
-
-
---6qSyW+QWd6cb4mh+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ8WFEAAKCRB4tDGHoIJi
-0mjaAP9sKCcpox/aH/Z7wfpAn1ngc3aHe9qRSNM9Pg58kBau0gD/Z0MX38lEpA6u
-9WckYxf5O3kqdLEngN8LcxlSx/Atggs=
-=3tRF
------END PGP SIGNATURE-----
-
---6qSyW+QWd6cb4mh+--
+Yes, 100%. Missed this, will put into patch #1.
 
