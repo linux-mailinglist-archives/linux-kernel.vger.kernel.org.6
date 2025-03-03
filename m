@@ -1,39 +1,86 @@
-Return-Path: <linux-kernel+bounces-541357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1614A4BBED
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:22:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20B1AA4BBF8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:23:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E63F71893707
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:22:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 864F816BCFC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:23:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCCE81F0E40;
-	Mon,  3 Mar 2025 10:22:12 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BB7E1EDA04;
-	Mon,  3 Mar 2025 10:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2C21F236E;
+	Mon,  3 Mar 2025 10:23:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VNt3uvV1"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2601F12F8
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 10:23:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740997332; cv=none; b=K5b2jorN+bj5hFZjPHV5rThRYSqjvKWh/fq6NFbhu2M5KUG3stpALASTx6gBNpSNFENWtQireD+DcionEemvb2afRNdQhLb1/6GT+PWsr8sj7wGJpWqYFzXIqlOhypEou9oVt2+4Fg6xeTT9upERWnyxdruW6A6BIwO/s/Dww3A=
+	t=1740997392; cv=none; b=duzudS5Nv1FBhr+LXxwtz/KoGGT10pcjOVDct/NKPTJZqz01VIjODy7zw+Mw7arOISf1Ocs7QQSA7kOxO6sKSQ5/M0bsEuAotPk2z146LV71bAZyty+ixawDvQFsItIqNZ4S3XOs7Z81SLgDbLB93fJg4gguMUBwzChgoed7/1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740997332; c=relaxed/simple;
-	bh=7be/Msm+H+RtUT38wFcu4DC963JAinemIQkyzCmXDwQ=;
+	s=arc-20240116; t=1740997392; c=relaxed/simple;
+	bh=45N3CTCQyFNYATVodSXBAL+a94s2+Sf5PekV0GfAnzk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HD7eenxiEj1fvokvELJRnZgKKTrdjTC4V7eIm41p29AQC5ytivKjaSmK+EOWRaH24pqwyYxnuY5djU6bdMzMWMJ+3mHtxlLODC0x9Cuv0tbU6laTQETcP5LFG/adBHFHECkRYZPd2SDbo3OivYegV1V7GfKAHjtCXVr8RwWG4+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F08EC12FC;
-	Mon,  3 Mar 2025 02:22:23 -0800 (PST)
-Received: from [10.1.26.155] (XHFQ2J9959.cambridge.arm.com [10.1.26.155])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7EC963F66E;
-	Mon,  3 Mar 2025 02:22:07 -0800 (PST)
-Message-ID: <1ff509c7-187b-4e43-b266-db8ada33b9a2@arm.com>
-Date: Mon, 3 Mar 2025 10:22:05 +0000
+	 In-Reply-To:Content-Type; b=opL1J33DLJZLEWpjwMyU9jixegFw4i2Bj2RFjkSLp2SJDSgLhJagCQkfsBYKH1TTPdfPdyu5GDXt6U0HSfdm1dnROxa+xkTww5GseWPIcWtYE4rcfiO28Jf0oTr287ZWVSrPvPiYuqtD818ICUkSy8iXvKj5NYgFlLhq6g/k1UM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VNt3uvV1; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52300fmg001154
+	for <linux-kernel@vger.kernel.org>; Mon, 3 Mar 2025 10:23:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	GKhAMHMv9Qj1+aCKv/F3rYQfkqyHFXlh7B6Upy8lJ2c=; b=VNt3uvV1VYM+zOhx
+	a4GpvWlv3sWQkm9TJqOKwNqZ21pPhTc+0p2ybbNPcXQqSWPwMR/N1SUM6kBK5C+W
+	4wsvzev9/nqhbmeRPRnkpdCtTmw8yIs36ATAe3oO1VTqXZ8TdZhEY0IqLV8fyshG
+	Tm6Ko65Qls5jIOuy7M3HhgPzJd2N6On87zDsizwEggbGu9AtqPKTq0jfIl5RSCdJ
+	9QCEWRvj8s+sSdeHpTPkiRK6qWorTEqHe0A9NOn6KaAC06BtdmRON4P335xXO4Z8
+	bE0Sqb6S564E88peQ3qg3HO6uyMQ3ymjW/Jw5cuFpK8JRcIhcHGupaCavVDG+8lD
+	IJ3XGw==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 453tascktq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 10:23:08 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-22328fb6cbfso76901745ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 02:23:07 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740997387; x=1741602187;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GKhAMHMv9Qj1+aCKv/F3rYQfkqyHFXlh7B6Upy8lJ2c=;
+        b=lyXuAgKMIfpQXE86uoPsuiwGEJMER+NDj7N7OCh7lUSan4ClhiF0C/07fn6j2apx15
+         6LOdy1vtR7gVTto4ZrKwo1dT4QU4uyqvj6qJ1r96LR6UgOgviW99XVImqXEK2tnuHzYy
+         s/dSo/mfYqQqVjACIrjuI3hQvXMOu/HkELccYbvmVXTHNNXLWfrWXaYJtZMnvsNol5iL
+         IkHNiIrR96aoYppheqUmtCECr2Pl7z2ccQXlbavl7FmscthLb8LmlwPw4vg986J+7Ovw
+         S5MLccsvrBAJznNbljJXqYzWEiOZjP5MfKFaMNfEnixrQtlPWYemMtdLMtVwc0MRTRDc
+         qAaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU2DlYrDmp8+pJPT01Z4pvoZ+wxupwUOTF+V0xz7CZMdqoAZ9hAu5OK08NOzpyyc/BHiA2tbzsRH/knCHk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiOUNTeRT+j5ZHh0qrPOuWCHuHNkpOZGxE9mfCdZli5qcZZ9Hd
+	pUKnA/1ADdPniHULkI0wtzkqhS77B1car0xNdVHWpPdRa1MeL2y9FKMU2Kf7MUr7r9L8Ty/XH0l
+	SPRgoM/czCmyEux/0eO/KpSmZkJBOBa9puty3CMP30wiyC40DDU46/lJQROs2aDY=
+X-Gm-Gg: ASbGncttzIiQkqH7zXaDxfAGWsvg4H1qrqACa5y55zjhvt5BoGC5xbzGeqlxT0OkM38
+	zDujRk9TwZ9p9vJdYOQhp2S3zbIjipMf7BvfWX6WMDRmhQ0bsDiLi2ou3Gd6SpVuMWiBcmI+HTP
+	VbRGpcHkHhmN3k5CVtJtPM4PfEDD5ndYYYXsWe5m3cdPjdBjwhaTzUlmIDINmuzpbVqSYxEpul/
+	XY9rJN2ea4wlonojgpHMIBYGoM2GYSJjtlKt16VG1AAbTUty2F15teUo2IrGiB0i91wZHhINb7n
+	qkbcy0GweQNr7rND3c18vltZjAaX8eWzFs8PtuUXImQ6tyWpccQ1Lb3pdNA=
+X-Received: by 2002:a17:902:e54b:b0:21f:7880:8472 with SMTP id d9443c01a7336-2236924fa13mr206373605ad.35.1740997386641;
+        Mon, 03 Mar 2025 02:23:06 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEzewlI+MdkavpK5IxUd9OuTeDDFG7whKIl5HH92YgygrrZJJ+26+G+Xae6Q3us5qqTy1cWBA==
+X-Received: by 2002:a17:902:e54b:b0:21f:7880:8472 with SMTP id d9443c01a7336-2236924fa13mr206373175ad.35.1740997386280;
+        Mon, 03 Mar 2025 02:23:06 -0800 (PST)
+Received: from [192.168.1.35] ([117.236.245.126])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223505293ddsm73795215ad.229.2025.03.03.02.23.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Mar 2025 02:23:05 -0800 (PST)
+Message-ID: <8dda7af4-b318-4e39-b79d-738b6084feb3@oss.qualcomm.com>
+Date: Mon, 3 Mar 2025 15:53:00 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,115 +88,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/4] mm: Fix lazy mmu docs and usage
-Content-Language: en-GB
-To: David Hildenbrand <david@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- "David S. Miller" <davem@davemloft.net>,
- Andreas Larsson <andreas@gaisler.com>, Juergen Gross <jgross@suse.com>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-mm@kvack.org, sparclinux@vger.kernel.org,
- xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-References: <20250302145555.3236789-1-ryan.roberts@arm.com>
- <20250302145555.3236789-2-ryan.roberts@arm.com>
- <5418a661-dbd0-46e9-8ef7-b1c5a34acce3@redhat.com>
- <a9e21c14-d390-4119-ad93-b23e6ccbac15@redhat.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <a9e21c14-d390-4119-ad93-b23e6ccbac15@redhat.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH 19/23] arm64: dts: qcom: ipq6018: Add missing MSI and
+ 'global' IRQs
+To: manivannan.sadhasivam@linaro.org,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+        Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org
+Cc: linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250227-pcie-global-irq-v1-0-2b70a7819d1e@linaro.org>
+ <20250227-pcie-global-irq-v1-19-2b70a7819d1e@linaro.org>
+Content-Language: en-US
+From: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+In-Reply-To: <20250227-pcie-global-irq-v1-19-2b70a7819d1e@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: Srpdol0LP4IUxYC9Pw7zSgdAWyHCfsG2
+X-Proofpoint-ORIG-GUID: Srpdol0LP4IUxYC9Pw7zSgdAWyHCfsG2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-03_04,2025-03-03_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=601 spamscore=0 phishscore=0 mlxscore=0 priorityscore=1501
+ bulkscore=0 lowpriorityscore=0 malwarescore=0 impostorscore=0 adultscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2503030080
 
-On 03/03/2025 08:52, David Hildenbrand wrote:
-> On 03.03.25 09:49, David Hildenbrand wrote:
->> On 02.03.25 15:55, Ryan Roberts wrote:
->>> The docs, implementations and use of arch_[enter|leave]_lazy_mmu_mode()
->>> is a bit of a mess (to put it politely). There are a number of issues
->>> related to nesting of lazy mmu regions and confusion over whether the
->>> task, when in a lazy mmu region, is preemptible or not. Fix all the
->>> issues relating to the core-mm. Follow up commits will fix the
->>> arch-specific implementations. 3 arches implement lazy mmu; powerpc,
->>> sparc and x86.
->>>
->>> When arch_[enter|leave]_lazy_mmu_mode() was first introduced by commit
->>> 6606c3e0da53 ("[PATCH] paravirt: lazy mmu mode hooks.patch"), it was
->>> expected that lazy mmu regions would never nest and that the appropriate
->>> page table lock(s) would be held while in the region, thus ensuring the
->>> region is non-preemptible. Additionally lazy mmu regions were only used
->>> during manipulation of user mappings.
->>>
->>> Commit 38e0edb15bd0 ("mm/apply_to_range: call pte function with lazy
->>> updates") started invoking the lazy mmu mode in apply_to_pte_range(),
->>> which is used for both user and kernel mappings. For kernel mappings the
->>> region is no longer protected by any lock so there is no longer any
->>> guarantee about non-preemptibility. Additionally, for RT configs, the
->>> holding the PTL only implies no CPU migration, it doesn't prevent
->>> preemption.
->>>
->>> Commit bcc6cc832573 ("mm: add default definition of set_ptes()") added
->>> arch_[enter|leave]_lazy_mmu_mode() to the default implementation of
->>> set_ptes(), used by x86. So after this commit, lazy mmu regions can be
->>> nested. Additionally commit 1a10a44dfc1d ("sparc64: implement the new
->>> page table range API") and commit 9fee28baa601 ("powerpc: implement the
->>> new page table range API") did the same for the sparc and powerpc
->>> set_ptes() overrides.
->>>
->>> powerpc couldn't deal with preemption so avoids it in commit
->>> b9ef323ea168 ("powerpc/64s: Disable preemption in hash lazy mmu mode"),
->>> which explicitly disables preemption for the whole region in its
->>> implementation. x86 can support preemption (or at least it could until
->>> it tried to add support nesting; more on this below). Sparc looks to be
->>> totally broken in the face of preemption, as far as I can tell.
->>>
->>> powewrpc can't deal with nesting, so avoids it in commit 47b8def9358c
->>> ("powerpc/mm: Avoid calling arch_enter/leave_lazy_mmu() in set_ptes"),
->>> which removes the lazy mmu calls from its implementation of set_ptes().
->>> x86 attempted to support nesting in commit 49147beb0ccb ("x86/xen: allow
->>> nesting of same lazy mode") but as far as I can tell, this breaks its
->>> support for preemption.
->>>
->>> In short, it's all a mess; the semantics for
->>> arch_[enter|leave]_lazy_mmu_mode() are not clearly defined and as a
->>> result the implementations all have different expectations, sticking
->>> plasters and bugs.
->>>
->>> arm64 is aiming to start using these hooks, so let's clean everything up
->>> before adding an arm64 implementation. Update the documentation to state
->>> that lazy mmu regions can never be nested, must not be called in
->>> interrupt context and preemption may or may not be enabled for the
->>> duration of the region.
->>>
->>> Additionally, update the way arch_[enter|leave]_lazy_mmu_mode() is
->>> called in pagemap_scan_pmd_entry() to follow the normal pattern of
->>> holding the ptl for user space mappings. As a result the scope is
->>> reduced to only the pte table, but that's where most of the performance
->>> win is. While I believe there wasn't technically a bug here, the
->>> original scope made it easier to accidentally nest or, worse,
->>> accidentally call something like kmap() which would expect an immediate
->>> mode pte modification but it would end up deferred.
->>>
->>> arch-specific fixes to conform to the new spec will proceed this one.
->>>
->>> These issues were spotted by code review and I have no evidence of
->>> issues being reported in the wild.
->>>
->>
->> All looking good to me!
->>
->> Acked-by: David Hildenbrand <david@redhat.com>
->>
-> 
-> ... but I do wonder if the set_ptes change should be split from the pagemap change.
+On 2/27/2025 7:11 PM, Manivannan Sadhasivam via B4 Relay wrote:
+> From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+>
+> IPQ6018 has 8 MSI SPI interrupts and one 'global' interrupt.
+>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>   arch/arm64/boot/dts/qcom/ipq6018.dtsi | 20 ++++++++++++++++++--
+>   1 file changed, 18 insertions(+), 2 deletions(-)
 
-So set_ptes + docs changes in one patch, and pagemap change in another? I can do
-that.
+Reviewed-by: Kathiravan Thirumoorthy 
+<kathiravan.thirumoorthy@oss.qualcomm.com>
 
-I didn't actually cc stable on these, I'm wondering if I should do that? Perhaps
-for all patches except the pagemap change?
-
-Thanks for the quick review!
 
