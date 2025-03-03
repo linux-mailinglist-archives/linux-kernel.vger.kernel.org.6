@@ -1,80 +1,78 @@
-Return-Path: <linux-kernel+bounces-542386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F8E8A4C91E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:20:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C848A4C8F3
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:14:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B6F117A358
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:13:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F4587A35D5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:13:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EA2322B587;
-	Mon,  3 Mar 2025 16:54:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29087265637;
+	Mon,  3 Mar 2025 16:55:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I0vaj8kS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52112638B3;
-	Mon,  3 Mar 2025 16:54:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9F4264F9B;
+	Mon,  3 Mar 2025 16:55:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741020872; cv=none; b=rr7j9epQ91Cj5Ff4/GnKAOXA7+Ra8y8STnl3vptUbfZvyGQ5pdtXJH5KdJhNnBbwg40y7x+xQGckKW4Qenu/tC4mQ6XTHcd4dCKIreJq6OyDdlm4YeY0BPT4fmN6FYtaEkANZx9mQAORZnj/KzI2A/sy2t7yPzptOhj53ug2Adc=
+	t=1741020935; cv=none; b=Tj0cm7r8tEo6nxL/bU9dMts7vffkgRr4h0ceCLFGWdUadp4sXGaHPnPisLmRfMN5z1hkYg8s1XUbeXd+u30F/bNWJOTYUO0XSWFRGDU6sN5TQqPKTCShXFTJ5oJc6vdhK7lBnVULcQ9A9yDH69NKWwcxqdZiKQwPpEYXgBbG4pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741020872; c=relaxed/simple;
-	bh=HFWd221qYkwBkZK/Eltiz7x5I4KV8ixBTSuJsUJ8heg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rwIXt/5V12ajR6ilhCmJIPqJSMGY01iKIcXDmP3pmOM02js3pyqSShaUqhs5QenlevjFNsZstIMbgVg8msqPScXqL1ODY6i1jL0bVX4o187QwMGFrb7RR+nmOy5zVfo1qTL9VRFst4yj2epM5+UTkvgw27opjrbAQHihVv0NOB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5127EC4CED6;
-	Mon,  3 Mar 2025 16:54:30 +0000 (UTC)
-Date: Mon, 3 Mar 2025 11:55:22 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Strforexc yn <strforexc@gmail.com>
-Cc: Lai Jiangshan <jiangshanlai@gmail.com>, "Paul E. McKenney"
- <paulmck@kernel.org>, Josh Triplett <josh@joshtriplett.org>, Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>, rcu@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: KASAN: global-out-of-bounds Read in srcu_gp_start_if_needed
-Message-ID: <20250303115522.437773d7@gandalf.local.home>
-In-Reply-To: <20250303114711.12716d05@gandalf.local.home>
-References: <CA+HokZrPb-oHcuZQsc=LZ6_aJfjKy9oMeCBd-tq4b_sX5EG7NQ@mail.gmail.com>
-	<20250303114711.12716d05@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741020935; c=relaxed/simple;
+	bh=EnLfVkrNyjpIHFqxy19mP4RoR35DmExVHJ6s0CkUN9Q=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=up3xjtq+Kob00UyDSFD58GEtrdzNJn4ztTa0+0Y63xhdokLnu2+phnCD3ozxn2vyDBGhquU4lqXEjYDtA9IutwayySFKTUnpMoyag3crl2gxlpXvQYAt81nx0cyR0nkJpUK1dqZxXkYX8+NKIGnB2XPlriFhFFMKSKoldF7d3vY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I0vaj8kS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 999E6C4CED6;
+	Mon,  3 Mar 2025 16:55:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741020935;
+	bh=EnLfVkrNyjpIHFqxy19mP4RoR35DmExVHJ6s0CkUN9Q=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=I0vaj8kSKT3kpmh9/rYYAGT4xzKgcH3510BUJin2Lcp0zFOeWT91vHsH7rng/s6KE
+	 VnLtXRw/K8hlA5T8JAzFFlgVg2YgKF+nL2OlLamF7Y6R0BLFbxgjrWt4vhrUtZbWox
+	 HAV5K9uuNM0x6GqRyfGdGIw8J1A4+CuwynWqrvrSXtWLOO0LHNV0sYDopelaQJXZic
+	 y+uFucWEb1THOps7spETQeA6QXFqwpY2MxsNXlEQ/z0ZKVZV3Q46dep6vW2gIkZDuS
+	 VtVFDLfzWux7Twe+IxDx306Sma0myxT0FVIJa6S+haPmnZo6dvGuVt/VZ4A1weRir0
+	 6xKQHUpOb7W2g==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+ Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Mark Rutland <mark.rutland@arm.com>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+ Adrian Hunter <adrian.hunter@intel.com>, kan.liang@linux.intel.com, 
+ linux-perf-users@vger.kernel.org, Colin Ian King <colin.i.king@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250228090941.680226-1-colin.i.king@gmail.com>
+References: <20250228090941.680226-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH][next] perf test mmap-thread-lookup: Fix spelling
+ mistake "sythesizing" -> "synthesizing"
+Message-Id: <174102093458.2010975.16927872868230723724.b4-ty@kernel.org>
+Date: Mon, 03 Mar 2025 08:55:34 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-c04d2
 
-On Mon, 3 Mar 2025 11:47:11 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> > [   92.322619][   T28]  ? srcu_gp_start_if_needed+0x1a9/0x5f0
-> > [   92.322636][   T28]  srcu_gp_start_if_needed+0x1a9/0x5f0  
+On Fri, 28 Feb 2025 09:09:41 +0000, Colin Ian King wrote:
+> There are spelling mistakes in TEST_ASSERT_VAL messages. Fix them.
 > 
-> The lock taken is from the passed in rcu_pending pointer.
 > 
-> > [   92.322655][   T28]  rcu_pending_enqueue+0x686/0xd30
+Applied to perf-tools-next, thanks!
 
-I figured out what likely triggered the lockdep warning too. I thought
-rcu_pending_equeue() was an internal RCU function, but then when I looked
-at what directory it was in (found it in emacs so I only saw the file name
-and not the path), I see that function is internal to bcachefs.
+Best regards,
+Namhyung
 
-That function also has:
 
-	local_irq_save(flags);
-	p = this_cpu_ptr(pending->p);
-	spin_lock(&p->lock);
-
-That is a sure sign of an RT disaster waiting to happen. As in PREEMPT_RT
-that spin_lock turns into a mutex, and just before, you disable interrupts.
-
-And yes, lockdep will report that as a bug.
-
--- Steve
 
