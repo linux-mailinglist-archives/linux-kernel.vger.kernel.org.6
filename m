@@ -1,127 +1,127 @@
-Return-Path: <linux-kernel+bounces-545040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 332A4A4E863
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:21:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80E7FA4E9C4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:48:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBE7219C0881
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:14:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B394A8E5854
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:38:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F30BB29C34B;
-	Tue,  4 Mar 2025 16:51:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5FB8299B35;
+	Tue,  4 Mar 2025 17:13:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dmgxez1k"
-Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="QA+InjHe"
+Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E15293B71
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:51:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 750F425D551
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:13:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741107117; cv=pass; b=aY+0qp4vv6Sxl4vUv+x+FW1n7jbDepFTkxCEItpGVlKx0S4Q14huhe36rDAIU0QbSnzzcC6nT0oVh7u+KZx5wizGqOYLiKXFx9tvirRvNZhS/7Ab7Xl+OP8Exe8btYhxb+VX9quzbA090HOCIGboZv8HnBT1czjGUANQvprr0ss=
+	t=1741108390; cv=pass; b=bNEvirGMBeNUJUm0UNgPIBANTPpK4z7noWgWLDy15klyl0EopGz81W2Gz/fakjIZReozywTukGCq/qHIMZzSK9vSpJ4dUxKvaYVQzHonn5DFweXaRYM+tIl6sJHrmG6/D4UsiwbQVfQg5qM5OBnBNCGSser+rjyxvu5cCyVFQ9U=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741107117; c=relaxed/simple;
-	bh=SK1S7HC+F0RX5MreBPa9cOuVM4xw7HiLj2Szt7QCPUU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=PZo7bAbD43dpUCYay9Rp5rIurXIduDBVgTS23PNG8w1PbwwNT6CT5+l/BP+GTyrx197ZaP2ukw8FEwPICJdLHRfKUKsp8Cf7ufztQm77dhCcEAsQvAHaf8bXKTJLvcMKWVtis+bTcNbXc0X1gF3MC4op2pJaGgIhAVGIKf1R/mA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dmgxez1k; arc=none smtp.client-ip=198.175.65.21; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; arc=pass smtp.client-ip=160.75.25.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+	s=arc-20240116; t=1741108390; c=relaxed/simple;
+	bh=BtoQelzDR2YH4eJcJiAnN1ShwH9UMlztv91FI3QOKQM=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IKCMLPloseFiHw5t72XLEhUXby2YOWmMmDQOAW4tlxymXnPkb7DUaVnypin9l1XThrzhwbhhCqP7yhF1U1blV+N2w13qZ5ZK3l5LTkbgqRjWD2iNsp88qQjs+BjW4lHtGJeWt2oM+1qL/er7JOaPHWYA3039sUbxs/jtl95j7bw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=QA+InjHe; arc=none smtp.client-ip=68.232.154.123; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; arc=pass smtp.client-ip=160.75.25.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id BEDEB40CF11C
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:51:53 +0300 (+03)
+	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 8FB1440D977E
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:13:07 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
-Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=dmgxez1k
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6d9m1xqfzFw8h
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:19:56 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dMS1tc2zFwk5
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:28:20 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 8E5E04274D; Tue,  4 Mar 2025 17:19:44 +0300 (+03)
+	id 77A3B42751; Tue,  4 Mar 2025 17:28:06 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dmgxez1k
-X-Envelope-From: <linux-kernel+bounces-541239-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=QA+InjHe
+X-Envelope-From: <linux-kernel+bounces-541249-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dmgxez1k
-Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id 0772E426DC
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:10:35 +0300 (+03)
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=QA+InjHe
+Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
+	by le2 (Postfix) with ESMTP id 14C2541B08
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:13:53 +0300 (+03)
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id B2C1F2DCE0
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:10:35 +0300 (+03)
+	by fgw1.itu.edu.tr (Postfix) with SMTP id BD78C3063EFC
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:13:52 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DBC9168C03
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 09:09:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC81A16D49A
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 09:13:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D872E1F0E32;
-	Mon,  3 Mar 2025 09:09:27 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C3C51F09A1;
+	Mon,  3 Mar 2025 09:13:22 +0000 (UTC)
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E1FE1DF721;
-	Mon,  3 Mar 2025 09:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B1B21EFFA1;
+	Mon,  3 Mar 2025 09:13:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740992965; cv=none; b=XpwmTRzSe7SYubWx9rE5s5ktJ5Vbi5xYhNqy5WUNpIu7BBZg/fjphMGBsjejy1kQvW1yJmJgVz7vJBJwk/qXfXiq8KFIBQIs5t5RPlwyHzg/MANZuY7MugM2U09RfZX0ev3ldD6JzC84S5/qIyFkS8A3AaQFiVjYrBQ0/1SptBg=
+	t=1740993199; cv=none; b=o0N/7qweb8enTNGyOENxLnFHk2fDFVwthj+KLtuQ9PEWWyr0b4Kc7H8x4mob9RZ19pAn3+IFqRIU7dUdZk+UWI2ZbPBZdULCr1UOTPmOyaRvHaV0+gbEdWWG4WYO01lr9qi5dR+a9RT7p37nVNDPI72tL86e/Ha7/AV8uFKiRzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740992965; c=relaxed/simple;
-	bh=SK1S7HC+F0RX5MreBPa9cOuVM4xw7HiLj2Szt7QCPUU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=n4PBAXPNtsfsQBO4B0QNkvWzVLv2GPFaK7CvqEhfal4rXtsgL9/LmzK8VWURTy2FcBuq8bQgP3nAezZP1MA5jsfaiNezvPfVxTjP2T4vU9xiGEaHo7hjuyjQH+jCBJD5HNlWjAomwiL5Wbg89Q9YZ2EvCRV61iCHNaAjHWV4s50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dmgxez1k; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1740993199; c=relaxed/simple;
+	bh=BtoQelzDR2YH4eJcJiAnN1ShwH9UMlztv91FI3QOKQM=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XNnEbG0PAvQtyNLsNVSw1mCTOsgym7AWShu36czjM+IKg9iIipO0uzUXYFIbKXOuasVaCk6miIs3okpQn1vx/bQFcNpcI3vOH+M8V9/B/DelkXG+0cPvETsGW1HKg4ERvaUR1sr33FD5EOTV6bDDjnFEGw0JvoQgTMznSk6g5eY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=QA+InjHe; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740992964; x=1772528964;
-  h=from:to:cc:in-reply-to:references:subject:message-id:
-   date:mime-version:content-transfer-encoding;
-  bh=SK1S7HC+F0RX5MreBPa9cOuVM4xw7HiLj2Szt7QCPUU=;
-  b=dmgxez1k+bNXiZk3rJFilqg43r/gkMIwly0wDZIbnQf0pJ0RrojuifzF
-   n+Qy35HqLDDv79hcTJne5PYdrjjlgt57u2TAA/l1AmWb/+RvfFyWa2pgR
-   5xMQskhO/5/dDBzGPS4c+/9I0+FK+GGlH2ZLLQ/BRwzDrVZCR15EMHIis
-   7IZBpfvrie8Zka4aW5nevgb+pFXJToRyF2AAz2W7qdWci4pQLg0G3gUJl
-   AT4xCd1I5FMV9Sxyu8JgnQMpf7+jvbTh2pkAhnbXwF8CIC+tF+SSKNEp1
-   SOzVeE/MYEuGKmgltVf4KW2pej63q09cOv0f8xGKsPB3kJk8ScPjKKpX/
-   w==;
-X-CSE-ConnectionGUID: 1LuNZc6tTjO8CcGvGycE1Q==
-X-CSE-MsgGUID: bOuWak5ARBO0YDOvXuRASQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="41771196"
-X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="41771196"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 01:09:23 -0800
-X-CSE-ConnectionGUID: KI32nAl3QpW+0soO/P2K+Q==
-X-CSE-MsgGUID: iR1NtjSnRn2CkFWbNEzgVg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="117951324"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.14])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 01:09:18 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Hans de Goede <hdegoede@redhat.com>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
- Pengyu Luo <mitltlatltl@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
- linux-hwmon@vger.kernel.org
-In-Reply-To: <20250214180656.28599-1-mitltlatltl@gmail.com>
-References: <20250214180656.28599-1-mitltlatltl@gmail.com>
-Subject: Re: [PATCH v7 0/3] platform: arm64: Huawei Matebook E Go embedded
- controller
-Message-Id: <174099295441.1736.4659664887828946482.b4-ty@linux.intel.com>
-Date: Mon, 03 Mar 2025 11:09:14 +0200
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1740993198; x=1772529198;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=BtoQelzDR2YH4eJcJiAnN1ShwH9UMlztv91FI3QOKQM=;
+  b=QA+InjHeqMw2h8BtxSN9YF3NcSoHnXswe7vo071hbRu2B3hu0GyErJF8
+   WHzBdnNfIQWbP4ZtFa8Kre4bCzigVVV/0pPCiM9LO791qS6tytGw/gZJb
+   cOUkipGp0BXxHSpVSHsCoeIz5zwaqL0RZG6PIVGCeJ1nhhokXv+FuZFek
+   PdlDOm7drxezI2P9hA74gV466pI4JNPL6Y2lr7AyfZ5U4DmiUzKCzQSZA
+   rS680nSZrHQ+gu98rkzjkWGGLpPVQyWV9U5tb5nVRHTN7cVK9qUdR+mxG
+   FOqKIVzfE2GEDb3eVLEqF2jgSU9uunGlvOM3CsYPvNguo8G8rTB/5brKc
+   A==;
+X-CSE-ConnectionGUID: zipm0jdkRfKil1sH3LekQQ==
+X-CSE-MsgGUID: HgnAMhUcRYiKVH8wTkC38Q==
+X-IronPort-AV: E=Sophos;i="6.13,329,1732604400"; 
+   d="asc'?scan'208";a="205866723"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 03 Mar 2025 02:13:16 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
+ chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 3 Mar 2025 02:13:01 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex02.mchp-main.com (10.10.85.144)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
+ Transport; Mon, 3 Mar 2025 02:12:58 -0700
+Date: Mon, 3 Mar 2025 09:12:12 +0000
+From: Conor Dooley <conor.dooley@microchip.com>
+To: damon <sycamoremoon376@gmail.com>
+CC: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Paul
+ Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@outlook.com>, Alexandre Ghiti <alex@ghiti.fr>,
+	<devicetree@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <sophgo@lists.linux.dev>,
+	<chao.wei@sophgo.com>, <xiaoguang.xing@sophgo.com>
+Subject: Re: [PATCH v2] riscv: sophgo: dts: Add spi controller for SG2042
+Message-ID: <20250303-demeanor-snowstorm-d3ca34450099@wendy>
+References: <20250228-sfg-spi-v2-1-8bbf23b85d0e@gmail.com>
+ <20250228-factual-rage-0e1e1e48b009@spud>
+ <CAKyUbwXUPBceR1ArZeLLjs1VNyRW=DngZyLTUCDGPFvT9wKikw@mail.gmail.com>
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -129,50 +129,79 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="yvO2V4zUqjO1jyjY"
+Content-Disposition: inline
+In-Reply-To: <CAKyUbwXUPBceR1ArZeLLjs1VNyRW=DngZyLTUCDGPFvT9wKikw@mail.gmail.com>
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6d9m1xqfzFw8h
+X-ITU-Libra-ESVA-ID: 4Z6dMS1tc2zFwk5
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741711788.98007@xWVMkvxzw5C3/iPoPzr3JA
+X-ITU-Libra-ESVA-Watermark: 1741713091.44545@f6/PPs0Psy+BJzxVtuTf1Q
 X-ITU-MailScanner-SpamCheck: not spam
 
-On Sat, 15 Feb 2025 02:06:53 +0800, Pengyu Luo wrote:
+--yvO2V4zUqjO1jyjY
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> This adds binding, drivers and the DT support for the Huawei Matebook E Go
-> (sc8280xp-based) Embedded Controller which is also found in Huawei Matebook
-> E Go LTE (sc8180x-based), but I don't have the sc8180x one to perform
-> tests, so this series enable support for sc8280xp variant only, this series
-> provides the following features:
-> 
-> - battery and charger information report
-> - charging thresholds control
-> - FN lock (An alternative method)
-> - LID switch detection
-> - Temperature sensors
-> - USB Type-C altmode
-> - USB Type-C PD(high power)
-> 
-> [...]
+On Sat, Mar 01, 2025 at 09:41:14PM +0800, damon wrote:
+> On 25/02/28 06:22PM, Conor Dooley wrote:
+> > On Fri, Feb 28, 2025 at 08:40:23PM +0800, Zixian Zeng wrote:
 
+> > > diff --git a/arch/riscv/boot/dts/sophgo/sg2042.dtsi b/arch/riscv/boot=
+/dts/sophgo/sg2042.dtsi
+> > > index e62ac51ac55abd922b5ef796ba8c2196383850c4..500645147b1f8ed0a08ad=
+3cafb38ea79cf57d737 100644
+> > > --- a/arch/riscv/boot/dts/sophgo/sg2042.dtsi
+> > > +++ b/arch/riscv/boot/dts/sophgo/sg2042.dtsi
+> > > @@ -545,5 +545,33 @@ sd: mmc@704002b000 {
+> > >                                   "timer";
+> > >                     status =3D "disabled";
+> > >             };
+> > > +
+> > > +           spi0: spi@7040004000 {
+> > > +                   compatible =3D "snps,dw-apb-ssi";
+> >
+> > I thought were were dropping the use of "snps,dw-abp-ssi" in isolation,
+> > and starting to require soc-specific compatibles now.
+> >
+> That=E2=80=99s better, I will do it in next revision.
+> BTW, <https://lore.kernel.org/linux-riscv/20240703-garbage-explicit-bd95f=
+8deb716@wendy>
+> has similar situation,
+> those patches only create binding but not implement the compatible
+> property of "thead,th1520-spi=E2=80=9D in driver.
+> When kernel matching, it will find out there=E2=80=99s no compatible of
+> "thead,th1520-spi=E2=80=9D so fallback to "snps,dw-apb-ssi=E2=80=9D
 
-Thank you for your contribution, it has been applied to my local
-review-ilpo-next branch. Note it will show up in the public
-platform-drivers-x86/review-ilpo-next branch only once I've pushed my
-local branch there, which might take a while.
+> May I take you a few minutes for reason behind it? My understanding is
+> that using soc-specific compatible is better
+> for future maintaining, If the device actually comes with some unknown
+> quirks not present in the generic IP.
 
-The list of commits applied:
-[1/3] dt-bindings: platform: Add Huawei Matebook E Go EC
-      commit: defcf2fb30f7bf128c0be5e571f4db2b7fff66cc
-[2/3] platform: arm64: add Huawei Matebook E Go EC driver
-      commit: 7636f090d02e791918bb3c924e695880123d0c59
-[3/3] arm64: dts: qcom: gaokun3: Add Embedded Controller node
-      commit: 0b6d8f9d2df78116afb159df05bbccf13a51b758
+Yup, that's pretty much it. Those quirks could be some sort of bug etc,
+or they could be an extra feature. Sometimes the specific compatible is
+only used to enforce constraints on what properties are allowed, but
+that's more of a thing for the more configurable IPs like the dwmac.
 
---
- i.
+> And all we need to do for fixing is implementing the soc-specific
+> compatible property.
 
+Correct. You just need to add a specific compatible to the binding and
+to the dts, the driver will work just fine with the "fallback" dw one.
+
+--yvO2V4zUqjO1jyjY
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ8VyawAKCRB4tDGHoIJi
+0j1iAQCyO+C9MUu181Bphcy8Tffe1bTfr7IWlfWuccIoHjOBhAD9HxKK0VwJzs9G
+QdA5iHSPF66wWVcdBRk99lm7Oi90sAM=
+=RlN7
+-----END PGP SIGNATURE-----
+
+--yvO2V4zUqjO1jyjY--
 
 
