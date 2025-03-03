@@ -1,142 +1,148 @@
-Return-Path: <linux-kernel+bounces-542679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6CA2A4CC59
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 21:00:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCCFBA4CC5D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 21:01:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5928A3AA636
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:00:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6DDB189663A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 20:01:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42329235360;
-	Mon,  3 Mar 2025 20:00:40 +0000 (UTC)
-Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E6442356AC;
+	Mon,  3 Mar 2025 20:00:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wgesB6zs"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9059D3BBD8;
-	Mon,  3 Mar 2025 20:00:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B4A1DDA3C
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 20:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741032039; cv=none; b=iMEYImQmWOl8r0uhG67Yqk4LjjZzCkKn/e3rQ/nJqi7mfoVmHmn+38lwpeM3pwgnq17M9DhoHfWPMrN9MlmgSJ6bU9TT2K3DQ4X2f97KG7ihX83erOOcSlT47/fgunZ6QBw0jDrCn/yd+O5zGy9zXcWXDARM64RRXELITl72lhQ=
+	t=1741032054; cv=none; b=JRuy7bdZjGLbrglBcz9Xa2JWVVJFv+e07flEucPW2stIt9w+Btw04TQxxPEDAN6cTX2agmyfyMjlcnLu7PofxQaDdXnXVrC8NPCWbw4zJ7NnMp0JXGNzFv88sfroXIb5/SYuS47wDm4Ll6J7jd3RTxWpOZllSW8eYqDP26nE6ZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741032039; c=relaxed/simple;
-	bh=fuKfx+52mOKNtlZjc5ULPHxnRDn1ChhMsm0q83VOu28=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mTx1YnzX673k7x0VcIi0GlK1d5jKju+O+iOcccJYOT3CJEi1VgGdXvFOAqlkhdGgsKM/V9JTV0pC8qsNGELA8rfj5KBvLkyz11wSzmyLKS/VYMsVvyAhyTwA+6oyO5BpGOc360qGe7Wt/atd12rKiAzkUHAnzJFiO1MyJjeWz2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 8016230015867;
-	Mon,  3 Mar 2025 21:00:28 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 6792D4A3B; Mon,  3 Mar 2025 21:00:28 +0100 (CET)
-Date: Mon, 3 Mar 2025 21:00:28 +0100
-From: Lukas Wunner <lukas@wunner.de>
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Kenneth Crudup <kenny@panix.com>, Bjorn Helgaas <helgaas@kernel.org>,
-	ilpo.jarvinen@linux.intel.com, Bjorn Helgaas <bhelgaas@google.com>,
-	Jian-Hong Pan <jhp@endlessos.org>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Nikl??vs Ko??es??ikovs <pinkflames.linux@gmail.com>,
-	Andreas Noever <andreas.noever@gmail.com>,
-	Michael Jamet <michael.jamet@intel.com>,
-	Yehezkel Bernat <YehezkelShB@gmail.com>, linux-usb@vger.kernel.org
-Subject: Re: diagnosing resume failures after disconnected USB4 drives (Was:
- Re: PCI/ASPM: Fix L1SS saving (linus/master commit 7507eb3e7bfac))
-Message-ID: <Z8YKXC1IXYXctQrZ@wunner.de>
-References: <21b72adf-aac6-49fa-af40-6db596c87432@panix.com>
- <20250211055722.GW3713119@black.fi.intel.com>
- <83d9302a-f743-43e4-9de2-2dd66d91ab5b@panix.com>
- <20250213135911.GG3713119@black.fi.intel.com>
- <a8d6ca75-8f50-4c46-8c67-fcf20d870dcc@panix.com>
- <20250214162948.GJ3713119@black.fi.intel.com>
- <661459dd-67d0-4e1c-bb28-9adf1417f660@panix.com>
- <20250226084404.GM3713119@black.fi.intel.com>
- <Z77ak-4YsdAKXbHr@wunner.de>
- <20250226091958.GN3713119@black.fi.intel.com>
+	s=arc-20240116; t=1741032054; c=relaxed/simple;
+	bh=XbbJ8meiSGyYH6OwHoQ3kYQ9Z6S5UvDDWGLBxmPvAmE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=idjooaA/7onc3yKyOffIt+09zSabOByv6zeMGWEHXGZ4G3tcHgeLpDicjXHh0qfesog28hqjuNYq8EzHUBOiEVYiB8pLzkR1vev8mLIPAc81rnXZyXlCT1lO6q0tUIshXokGNfPqP3fBeqf9mysn1G3RuQhRxM+eTOhlsHBp2Ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wgesB6zs; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5439a6179a7so5005848e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 12:00:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741032050; x=1741636850; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SIobnHJoMiJmgICmS6BIagkd52MyMq9ZRNlSypEhZx0=;
+        b=wgesB6zsl2c/nwp8YgLBRW5EjpfK/i+/RPYBkc+A+ql8EZ5Ey60K3jXEUFjSGRB6Ly
+         E3rbk4Ge7WK+ZPWogj2I1uaZMQyLPMhY5rukyPNsq/k3Cq7skj9fuBSCok2sxNLTpBg/
+         gqPN7FvyK6oB74ac/Ve/iyerB69btpnLFgaLE0DwXMC45DlmuazcljMwukgd/Ungqd5O
+         gTms5km3lurkHibIQjsEaVIyIN5QCxGJgfEHpzB2NiqJfUElYXoDH0ctpytY8Vm4UYqj
+         iWbsZhdhuuW2LSvkuftVKTKtrWL4arKr1eVIt8Jy+ueeCnfPDLv6D4/NzHSMtAbs2ii6
+         hPIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741032050; x=1741636850;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SIobnHJoMiJmgICmS6BIagkd52MyMq9ZRNlSypEhZx0=;
+        b=vG4Wu6kl7EwL0ZfEv+9mrrhwYOcOV/BDRzuCTU+aRqRYMcGoqpuVzvEHwmH8HLOZtN
+         zoPhWPoRMraVyFDa1augppJiaCwCKa/U2vwsVR/Y2T2T7Kx8dHrX3d8xml8TwqzzFdyw
+         qZUm+ekwZ7vjpzBlK8SABpLmuRscNQ1tn0PYO+ymZmlwlrySuVwriRtpf36ckvy5D4ZH
+         YptYbQSWg9J9hl58rSbvsAnXxQVEL8YkXiLbkT7i+xUEucPaApVzxGOZJ3cEWJ0BWUX8
+         pWdYNw8unnZO+2KPt9diZJUsALRdi4X9yzeK8hvfT7AT4v1LcovjjhsgQw8/KJKrfQsC
+         XRJw==
+X-Forwarded-Encrypted: i=1; AJvYcCWihMIKQkimU1l7VkB0k+kfGZLsiu50MQU6HxVI9+7kJyQ2RlArXuCIl39RjImfdUHa6PO6r1NDct6veBk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyc+7jpRuai21nsWl/8yCwlKB5R3mn4/829AIM7wkHWC0mBWsGC
+	fcYK20PTsDTyLKpaK/qNiX3e5tRAghO7gTsAfgOJdQ1Bqf/V42Ne4daVCTF2M0DzUJgfXbaEkzJ
+	aLiJ3A4RB6HRwgjL7q8dfjkboMoLQldVl+ZpxDg==
+X-Gm-Gg: ASbGncus4KgNyMD+bbMrRmZaWq5yyYGLrD+/WWPNAPaVT4f1NbJvScs8pxHghJUL3Lm
+	dNqcb16nRm34NsKf70qslQp4AHXzl+l2KR739CER8XutYe/unPXPT194tSkcm9QhEh/0Xa9SnL0
+	DPAc1wE4PTWW6897dSpKXRpdllHA==
+X-Google-Smtp-Source: AGHT+IEHC8551GBjOPpUxphatF0L4EWvTZV1kdNfG9x3/0VKhOjGpHpEdRbBRyV3NGrevE8NCqhrlfkAk7EBNemkkKU=
+X-Received: by 2002:a05:6512:31c6:b0:549:39d8:51e1 with SMTP id
+ 2adb3069b0e04-549756e259cmr181874e87.16.1741032050322; Mon, 03 Mar 2025
+ 12:00:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250226091958.GN3713119@black.fi.intel.com>
+References: <20250303164928.1466246-1-andriy.shevchenko@linux.intel.com> <20250303164928.1466246-4-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20250303164928.1466246-4-andriy.shevchenko@linux.intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 3 Mar 2025 21:00:39 +0100
+X-Gm-Features: AQ5f1JqhI495QPwjnNSA_U0-FZLtnDrmj_TbAAs84iyjJp_ZDYFgar6ptgKX_Fk
+Message-ID: <CACRpkdbCfhqRGOGrCgP-e3AnK_tmHX+eUpZKjitbfemzAXCcWg@mail.gmail.com>
+Subject: Re: [PATCH net-next v2 3/3] ieee802154: ca8210: Switch to using gpiod API
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-wpan@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Alexander Aring <alex.aring@gmail.com>, Stefan Schmidt <stefan@datenfreihafen.org>, 
+	Miquel Raynal <miquel.raynal@bootlin.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Bartosz Golaszewski <brgl@bgdev.pl>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 26, 2025 at 11:19:58AM +0200, Mika Westerberg wrote:
-> On Wed, Feb 26, 2025 at 10:10:43AM +0100, Lukas Wunner wrote:
-> > On Wed, Feb 26, 2025 at 10:44:04AM +0200, Mika Westerberg wrote:
-> > >   [Meteor Lake host] <--> [TB 4 dock] <--> [TB 3 NVMe]
-> > [...]
-> > > I added "no_console_suspend" to the command line and the did sysrq-w to
-> > > get list of blocked tasks. I've attached it just in case it is needed.
-> > 
-> > This looks like the deadlock we've had for years when hot-removing
-> > nested hotplug ports.
-> > 
-> > If you attach only a single device to the host, I guess the issue
-> > does not occur, right?
-> 
-> Yes.
-> 
-> > Previous attempts to fix this:
-> > 
-> > https://lore.kernel.org/all/4c882e25194ba8282b78fe963fec8faae7cf23eb.1529173804.git.lukas@wunner.de/
-> > 
-> > https://lore.kernel.org/all/20240612181625.3604512-1-kbusch@meta.com/
-> 
-> Well, it does not happen if I revert the commit so isn't that a
-> regresssion?
+On Mon, Mar 3, 2025 at 5:49=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 
-Does the below fix the issue?
+> This updates the driver to gpiod API, and removes yet another use of
+> of_get_named_gpio().
+>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
--- >8 --
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-diff --git a/drivers/pci/hotplug/pciehp_core.c b/drivers/pci/hotplug/pciehp_core.c
-index ff458e6..b0b4d46 100644
---- a/drivers/pci/hotplug/pciehp_core.c
-+++ b/drivers/pci/hotplug/pciehp_core.c
-@@ -287,24 +287,26 @@ static int pciehp_suspend(struct pcie_device *dev)
- static bool pciehp_device_replaced(struct controller *ctrl)
- {
- 	struct pci_dev *pdev __free(pci_dev_put);
-+	u64 dsn;
- 	u32 reg;
- 
- 	pdev = pci_get_slot(ctrl->pcie->port->subordinate, PCI_DEVFN(0, 0));
- 	if (!pdev)
--		return true;
-+		return false;
- 
--	if (pci_read_config_dword(pdev, PCI_VENDOR_ID, &reg) ||
--	    reg != (pdev->vendor | (pdev->device << 16)) ||
--	    pci_read_config_dword(pdev, PCI_CLASS_REVISION, &reg) ||
--	    reg != (pdev->revision | (pdev->class << 8)))
-+	if ((pci_read_config_dword(pdev, PCI_VENDOR_ID, &reg) == 0 &&
-+	     reg != (pdev->vendor | (pdev->device << 16))) ||
-+	    (pci_read_config_dword(pdev, PCI_CLASS_REVISION, &reg) == 0 &&
-+	     reg != (pdev->revision | (pdev->class << 8))))
- 		return true;
- 
- 	if (pdev->hdr_type == PCI_HEADER_TYPE_NORMAL &&
--	    (pci_read_config_dword(pdev, PCI_SUBSYSTEM_VENDOR_ID, &reg) ||
--	     reg != (pdev->subsystem_vendor | (pdev->subsystem_device << 16))))
-+	    pci_read_config_dword(pdev, PCI_SUBSYSTEM_VENDOR_ID, &reg) == 0 &&
-+	    reg != (pdev->subsystem_vendor | (pdev->subsystem_device << 16)))
- 		return true;
- 
--	if (pci_get_dsn(pdev) != ctrl->dsn)
-+	dsn = pci_get_dsn(pdev);
-+	if ((dsn || ctrl->dsn) && dsn != ctrl->dsn)
- 		return true;
- 
- 	return false;
+But note:
+
+> @@ -632,10 +630,10 @@ static void ca8210_reset_send(struct spi_device *sp=
+i, unsigned int ms)
+>         struct ca8210_priv *priv =3D spi_get_drvdata(spi);
+>         long status;
+>
+> -       gpio_set_value(pdata->gpio_reset, 0);
+> +       gpiod_set_value(pdata->reset_gpio, 0);
+>         reinit_completion(&priv->ca8210_is_awake);
+>         msleep(ms);
+> -       gpio_set_value(pdata->gpio_reset, 1);
+> +       gpiod_set_value(pdata->reset_gpio, 1);
+
+This drives the GPIO low to assert reset, meaning it is something
+that should have GPIO_ACTIVE_LOW set in the device tree,
+and it might even have, so let's check what we can check:
+
+git grep cascoda,ca8210
+Documentation/devicetree/bindings/net/ieee802154/ca8210.txt:    -
+compatible:           Should be "cascoda,ca8210"
+Documentation/devicetree/bindings/net/ieee802154/ca8210.txt:
+ compatible =3D "cascoda,ca8210";
+drivers/net/ieee802154/ca8210.c:        {.compatible =3D "cascoda,ca8210", =
+},
+
+well ain't that typical, all users are out of tree. The example
+in the bindings file is wrong, setting ACTIVE_HIGH. Sigh, let's
+assume all those DTS files somewhere are wrong and they
+didn't set GPIO_ACTIVE_LOW in them...
+
+Maybe add a comment in the code that this is wrong and the
+driver and DTS files should be fixed.
+
+Alternatively patch Documentation/devicetree/bindings/net/ieee802154/ca8210=
+.txt
+to set GPIO_ACTIVE_LOW and fix the code to invert it both
+here and when getting the GPIO, but it could cause problems
+for outoftree users.
+
+Either way, this is good progress:
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
 
