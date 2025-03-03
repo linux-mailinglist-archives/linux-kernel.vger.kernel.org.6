@@ -1,347 +1,178 @@
-Return-Path: <linux-kernel+bounces-541233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38AD7A4BA4F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:08:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D523A4BA50
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:08:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C8123AF949
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:06:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B68316E344
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:07:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA2A1F462E;
-	Mon,  3 Mar 2025 09:03:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2519A1EFF9A;
+	Mon,  3 Mar 2025 09:05:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="TM8k0GKz"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HMQUcXLv"
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7125A1F3FC0;
-	Mon,  3 Mar 2025 09:03:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D198A1EF099
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 09:05:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740992626; cv=none; b=iZZbRXH1EbVBW6JBo6n3yuZQ91VOXSscHwzWncZu2xpw1G5956QDSSRyPenMkdztDYMdSuXMQzuuyWAdpU+63QGdG6xZ9K8U1RD1wm2H6hNBtDgESZri5dvOwwAtqfRFN3CwD0D25bFbRZUr0sauu6Ed43Qjs7bmiunZ1jl6Nww=
+	t=1740992718; cv=none; b=so78LeAoc2KiR6NWVsfIU+7yCh9y+iXls8IlNbEV+gXu3qvY5OygWDACohgPLQOkhogYfvGjhWRWrIZ75VvammAPX0wL5V6YMUjH0lmkgntrctMhYrdrprnXMtp0gjkNZ3uO2Lc9PmZs+J8s3nQQFGgNizsb+VtG7k8GWN134wk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740992626; c=relaxed/simple;
-	bh=hy84rzjS7+8uPHR7m9CHhBOJhDLwxhKnLDhbfNxfkEY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nKKqguAwYdonHVQkvU1kGxsFBFqoFUkv6SIp5TLmVjmTnHjKCvsh0tmexC0wgMtLYYdykosqug/O9Ycog5fXdkt348Rviz+IeOOZfibfz2zTuIFA1IBnelfs4ArB3BfG4qboN1pDhbDVRPTPqMruFUQZZPniQzpN+rfNtXtI8NM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=TM8k0GKz; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 9C6A444530;
-	Mon,  3 Mar 2025 09:03:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740992622;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SohpPzuxeSg5EmDhX+WiEB/PtEK9LrVBuJuK+Acd2Qs=;
-	b=TM8k0GKzioHAV1TSikAQCfuMh58lWKMWVAs9geYrbieGjilZoRxObkYWIJg7sQFA6vzLLa
-	rWo/L4G1HrL+WexXozRDsi8KdFEkfeR/cXdTBayamiBzxGusEzVxGvB4mTDhexlsTyOYG5
-	hbKzEZNN/OrxHWC0WlMhKTBnjjnEFLqO68Be/iCCeqqsNkoIvfT0SjifIXt2v7yP+rKWxs
-	2gybj+xvCB9V52JjzKBSkPWQvHXqFz2E9dSaZ2u3bTwEGASpzbaC5rTacWmE7rOqPQQgFh
-	kB3e4/BewCQvvbMeBbyJa7m//NMBsjXbCfoCMvSEGwOStV1Bcavgdy8VjAJqjA==
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: davem@davemloft.net,
-	Andrew Lunn <andrew@lunn.ch>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Heiner Kallweit <hkallweit1@gmail.com>
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	thomas.petazzoni@bootlin.com,
-	linux-arm-kernel@lists.infradead.org,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	=?UTF-8?q?K=C3=B6ry=20Maincent?= <kory.maincent@bootlin.com>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	Simon Horman <horms@kernel.org>,
-	Romain Gantois <romain.gantois@bootlin.com>
-Subject: [PATCH net-next v4 13/13] net: phy: phy_caps: Allow getting an phy_interface's capabilities
-Date: Mon,  3 Mar 2025 10:03:19 +0100
-Message-ID: <20250303090321.805785-14-maxime.chevallier@bootlin.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250303090321.805785-1-maxime.chevallier@bootlin.com>
-References: <20250303090321.805785-1-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1740992718; c=relaxed/simple;
+	bh=twAu11/PRIW6bi1GvK7p8LanMReL12MhaLWQhmhJH1M=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=WUMnjjYisLck5N5HZtVbiD5NaH1FuE/uRrXPtD676CNVmM1FI3rIt16TOjJaTgF/Hnt87qJHkC0l3tRd2Tu4QSi9zf5Gkmh+8Vog6AO/NsoqW1QLBgiRmWOByS/RID3tmf7c2x9MYDDk/+XVscymSqDb3TDJR5AxqKCGOUEhHc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HMQUcXLv; arc=none smtp.client-ip=209.85.160.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2c186270230so535464fac.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 01:05:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740992716; x=1741597516; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ayER41rrknj9o1FxD0EbDGZpUx0hR5m/9eUcKAT7z20=;
+        b=HMQUcXLvGK9aTD5kayfsomOzzeUp/fWUOtEkW1//3dkcCqF8UsMLdriw5eMyfCTUSQ
+         Yg6kVJislS7DjlIjz9+e4nQKhDhiSBOPwWWzjYi6pEPfr1u5rdG7RNXkKThDP4WRhiLz
+         UZg7NmVgzH+sybu1wYgZ08YmaVar2AM4ZorkcKook/PgoZ0hVyX0ORL2+lbNXzQrRlSp
+         ISPLYS8mzVYzrkeRRJambcj9q0iknquwZyneYhciyH53q1fEKaD8qjBSeEHeFCLXXq2I
+         ESkGukthGtOuTt3Cf3+XPqtOE13MYm/86cWCJ3izZppMwISzdUDXzdcqrbTikLYwmSlp
+         H9kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740992716; x=1741597516;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ayER41rrknj9o1FxD0EbDGZpUx0hR5m/9eUcKAT7z20=;
+        b=fg28AjoFVUdSxm/2pvb3lyYWGeeJ5nxVzQTNlkaYkQ6GHWm1AvD8ZKStPQqnv7yTjF
+         4IRRlk6L9OWrDTOu2XakI45daxlt2ALOyesBLYbB/e4Mpa7cjRtYUv/UDbQcS6AFJhho
+         hYl+PqX2z+MfHPj6BYOV6OXLEoNdfBUHpx8WlWT9dGkHmPvfJZO7ff4d5sQjdR/hyjLE
+         1QcyM3kRgI/7Rah/Y84IppFabQIhLvDtsgGIcpUxjFAe8DJBOVKHv06xSGEgPE+2ObHO
+         T/0vmYFLMlq2kPEfVvjuWOG0sggoJcTzr8Yqvvpb7drUwKxVjY+9IPpVlbc4LmD3NqQl
+         RLrw==
+X-Forwarded-Encrypted: i=1; AJvYcCUAWGmJZqOkZw/hMl/s8d0NSOPbJQzLw+E5QJLo5qoLLEFCT5X/MhUpn9c/v1HY+cxSwceulHolcnw8oSQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6rfNCtfm46n1tdEBIYHMZFOPCtYzNxEbnqSLkhR5M91g5PajW
+	a0gFDVYlEpqOfe8WOUj0lhfTVeWU/LTOMlUHs0CCTZnZrLMp9/Vu0IYyWdowNt4UqGOQM7+zsZW
+	jGnSxo28r8TUjx4Cltj3KVW3pcnS5uroEF8bm/g==
+X-Gm-Gg: ASbGncue7cIE3jAjtYM9ali7A1EJ1RjxIkwB9ovWZT7Gmeycj1uq8iuF5Ue0OX5Oe5z
+	DwxfqZrXO+vBOhhoYD1rltqpeJ+zQs2A2GzjwXMKdawj72ZZTRrLN5uJk72iN7lHeDuBm7YYFeM
+	Pdr/LLktJRo3DXPvD/oroiqhubMQ==
+X-Google-Smtp-Source: AGHT+IHVfN9jgx4mKT/i6a3ODk82fUK4vIZBFKN9C9gzcGh8SEROMDecp5xmXRXDbXe1X3i8NqgrqbC5YJg7m20YBfc=
+X-Received: by 2002:a05:6871:e413:b0:29e:719b:7837 with SMTP id
+ 586e51a60fabf-2c1783c64b7mr7043039fac.13.1740992715741; Mon, 03 Mar 2025
+ 01:05:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelkeejudcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeevgedtffelffelveeuleelgfejfeevvdejhfehgeefgfffvdefteegvedutefftdenucfkphepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgenucevlhhushhtvghrufhiiigvpeduudenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgdphhgvlhhopehfvgguohhrrgdrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvddtpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvgguuhhmr
- giivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomhdprhgtphhtthhopehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhm
-X-GND-Sasl: maxime.chevallier@bootlin.com
+From: Strforexc yn <strforexc@gmail.com>
+Date: Mon, 3 Mar 2025 17:05:04 +0800
+X-Gm-Features: AQ5f1JrwOL808TVePC2IJN5FDFbmXr24vcuElZAhmGzdFxp4XEP33LAGtFOR4y8
+Message-ID: <CA+HokZriOfJqu5btsaEvgdrHY5e7XrJEM2CmPC7fgB5R2Umn_g@mail.gmail.com>
+Subject: [BUG] UBSAN: Shift-Out-of-Bounds in befs_check_sb (BeFS) on
+ 6.14.0-rc4 - Possible Regression**
+To: Luis de Bethencourt <luisbg@kernel.org>, Salah Triki <salah.triki@gmail.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Phylink has internal code to get the MAC capabilities of a given PHY
-interface (what are the supported speed and duplex).
+Dear Linux Kernel Developers,
+I=E2=80=99ve encountered a UBSAN-reported shift-out-of-bounds issue in the
+BeFS filesystem on Linux 6.14.0-rc4 during superblock validation,
+which may indicate a regression from prior fixes. Here are the
+details:
 
-Extract that into phy_caps, but use the link_capa for conversion. Add an
-internal phylink helper for the link caps -> mac caps conversion, and
-use this in phylink_caps_to_linkmodes().
+Kernel commit: v6.14-rc4 (Commits on Feb 24, 2025)
+Kernel Config : https://github.com/Strforexc/LinuxKernelbug/blob/main/.conf=
+ig
+Kernel Log:  https://github.com/Strforexc/LinuxKernelbug/blob/main/shift-ou=
+t-of-bounds_befs_check_sb/log0
+Reproduce C: https://github.com/Strforexc/LinuxKernelbug/blob/main/shift-ou=
+t-of-bounds_befs_check_sb/repro.cprog
 
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
----
-V4: No changes
+Bug Description:
+UBSAN detects a shift-out-of-bounds in fs/befs/super.c:96:9, where a
+shift exponent of 3229888891 exceeds the 32-bit int limit in
+befs_check_sb. This occurs when mounting a BeFS filesystem with a
+potentially malformed superblock.
 
- drivers/net/phy/phy-caps.h |  4 ++
- drivers/net/phy/phy_caps.c | 92 ++++++++++++++++++++++++++++++++++++++
- drivers/net/phy/phylink.c  | 90 ++++++-------------------------------
- 3 files changed, 110 insertions(+), 76 deletions(-)
+Location: The fault occurs at (1 << befs_sb->block_shift) in
+befs_check_sb, where block_shift (a __u32) is 3229888891, exceeding
+the 32-bit shift limit (31).
 
-diff --git a/drivers/net/phy/phy-caps.h b/drivers/net/phy/phy-caps.h
-index db53f380392e..e1fe19d11e5f 100644
---- a/drivers/net/phy/phy-caps.h
-+++ b/drivers/net/phy/phy-caps.h
-@@ -8,6 +8,7 @@
- #define __PHY_CAPS_H
- 
- #include <linux/ethtool.h>
-+#include <linux/phy.h>
- 
- enum {
- 	LINK_CAPA_10HD = 0,
-@@ -32,6 +33,8 @@ enum {
- 	__LINK_CAPA_MAX,
- };
- 
-+#define LINK_CAPA_ALL	GENMASK((__LINK_CAPA_MAX - 1), 0)
-+
- struct link_capabilities {
- 	int speed;
- 	unsigned int duplex;
-@@ -45,6 +48,7 @@ size_t phy_caps_speeds(unsigned int *speeds, size_t size,
- void phy_caps_linkmode_max_speed(u32 max_speed, unsigned long *linkmodes);
- bool phy_caps_valid(int speed, int duplex, const unsigned long *linkmodes);
- void phy_caps_linkmodes(unsigned long caps, unsigned long *linkmodes);
-+unsigned long phy_caps_from_interface(phy_interface_t interface);
- 
- const struct link_capabilities *
- phy_caps_lookup_by_linkmode(const unsigned long *linkmodes);
-diff --git a/drivers/net/phy/phy_caps.c b/drivers/net/phy/phy_caps.c
-index 0a64289a161b..555daaa41d52 100644
---- a/drivers/net/phy/phy_caps.c
-+++ b/drivers/net/phy/phy_caps.c
-@@ -253,3 +253,95 @@ void phy_caps_linkmodes(unsigned long caps, unsigned long *linkmodes)
- 		linkmode_or(linkmodes, linkmodes, link_caps[capa].linkmodes);
- }
- EXPORT_SYMBOL_GPL(phy_caps_linkmodes);
-+
-+/**
-+ * phy_caps_from_interface() - Get the link capa from a given PHY interface
-+ * @interface: The PHY interface we want to get the possible Speed/Duplex from
-+ *
-+ * Returns: A bitmask of LINK_CAPA_xxx values that can be achieved with the
-+ *          provided interface.
-+ */
-+unsigned long phy_caps_from_interface(phy_interface_t interface)
-+{
-+	unsigned long link_caps = 0;
-+
-+	switch (interface) {
-+	case PHY_INTERFACE_MODE_USXGMII:
-+		link_caps |= BIT(LINK_CAPA_10000FD) | BIT(LINK_CAPA_5000FD);
-+		fallthrough;
-+
-+	case PHY_INTERFACE_MODE_10G_QXGMII:
-+		link_caps |= BIT(LINK_CAPA_2500FD);
-+		fallthrough;
-+
-+	case PHY_INTERFACE_MODE_RGMII_TXID:
-+	case PHY_INTERFACE_MODE_RGMII_RXID:
-+	case PHY_INTERFACE_MODE_RGMII_ID:
-+	case PHY_INTERFACE_MODE_RGMII:
-+	case PHY_INTERFACE_MODE_PSGMII:
-+	case PHY_INTERFACE_MODE_QSGMII:
-+	case PHY_INTERFACE_MODE_QUSGMII:
-+	case PHY_INTERFACE_MODE_SGMII:
-+	case PHY_INTERFACE_MODE_GMII:
-+		link_caps |= BIT(LINK_CAPA_1000HD) | BIT(LINK_CAPA_1000FD);
-+		fallthrough;
-+
-+	case PHY_INTERFACE_MODE_REVRMII:
-+	case PHY_INTERFACE_MODE_RMII:
-+	case PHY_INTERFACE_MODE_SMII:
-+	case PHY_INTERFACE_MODE_REVMII:
-+	case PHY_INTERFACE_MODE_MII:
-+		link_caps |= BIT(LINK_CAPA_10HD) | BIT(LINK_CAPA_10FD);
-+		fallthrough;
-+
-+	case PHY_INTERFACE_MODE_100BASEX:
-+		link_caps |= BIT(LINK_CAPA_100HD) | BIT(LINK_CAPA_100FD);
-+		break;
-+
-+	case PHY_INTERFACE_MODE_TBI:
-+	case PHY_INTERFACE_MODE_MOCA:
-+	case PHY_INTERFACE_MODE_RTBI:
-+	case PHY_INTERFACE_MODE_1000BASEX:
-+		link_caps |= BIT(LINK_CAPA_1000HD);
-+		fallthrough;
-+	case PHY_INTERFACE_MODE_1000BASEKX:
-+	case PHY_INTERFACE_MODE_TRGMII:
-+		link_caps |= BIT(LINK_CAPA_1000FD);
-+		break;
-+
-+	case PHY_INTERFACE_MODE_2500BASEX:
-+		link_caps |= BIT(LINK_CAPA_2500FD);
-+		break;
-+
-+	case PHY_INTERFACE_MODE_5GBASER:
-+		link_caps |= BIT(LINK_CAPA_5000FD);
-+		break;
-+
-+	case PHY_INTERFACE_MODE_XGMII:
-+	case PHY_INTERFACE_MODE_RXAUI:
-+	case PHY_INTERFACE_MODE_XAUI:
-+	case PHY_INTERFACE_MODE_10GBASER:
-+	case PHY_INTERFACE_MODE_10GKR:
-+		link_caps |= BIT(LINK_CAPA_10000FD);
-+		break;
-+
-+	case PHY_INTERFACE_MODE_25GBASER:
-+		link_caps |= BIT(LINK_CAPA_25000FD);
-+		break;
-+
-+	case PHY_INTERFACE_MODE_XLGMII:
-+		link_caps |= BIT(LINK_CAPA_40000FD);
-+		break;
-+
-+	case PHY_INTERFACE_MODE_INTERNAL:
-+		link_caps |= LINK_CAPA_ALL;
-+		break;
-+
-+	case PHY_INTERFACE_MODE_NA:
-+	case PHY_INTERFACE_MODE_MAX:
-+		break;
-+	}
-+
-+	return link_caps;
-+}
-+EXPORT_SYMBOL_GPL(phy_caps_from_interface);
-diff --git a/drivers/net/phy/phylink.c b/drivers/net/phy/phylink.c
-index 30f0ecb084ef..0162ce09f54d 100644
---- a/drivers/net/phy/phylink.c
-+++ b/drivers/net/phy/phylink.c
-@@ -335,6 +335,18 @@ static unsigned long phylink_caps_to_link_caps(unsigned long caps)
- 	return link_caps;
- }
- 
-+static unsigned long phylink_link_caps_to_mac_caps(unsigned long link_caps)
-+{
-+	unsigned long caps = 0;
-+	int i;
-+
-+	for (i = 0; i <  ARRAY_SIZE(phylink_caps_params); i++)
-+		if (link_caps & phylink_caps_params[i].caps_bit)
-+			caps |= phylink_caps_params[i].mask;
-+
-+	return caps;
-+}
-+
- /**
-  * phylink_caps_to_linkmodes() - Convert capabilities to ethtool link modes
-  * @linkmodes: ethtool linkmode mask (must be already initialised)
-@@ -412,86 +424,12 @@ static unsigned long phylink_get_capabilities(phy_interface_t interface,
- 					      unsigned long mac_capabilities,
- 					      int rate_matching)
- {
-+	unsigned long link_caps = phy_caps_from_interface(interface);
- 	int max_speed = phylink_interface_max_speed(interface);
- 	unsigned long caps = MAC_SYM_PAUSE | MAC_ASYM_PAUSE;
- 	unsigned long matched_caps = 0;
- 
--	switch (interface) {
--	case PHY_INTERFACE_MODE_USXGMII:
--		caps |= MAC_10000FD | MAC_5000FD;
--		fallthrough;
--
--	case PHY_INTERFACE_MODE_10G_QXGMII:
--		caps |= MAC_2500FD;
--		fallthrough;
--
--	case PHY_INTERFACE_MODE_RGMII_TXID:
--	case PHY_INTERFACE_MODE_RGMII_RXID:
--	case PHY_INTERFACE_MODE_RGMII_ID:
--	case PHY_INTERFACE_MODE_RGMII:
--	case PHY_INTERFACE_MODE_PSGMII:
--	case PHY_INTERFACE_MODE_QSGMII:
--	case PHY_INTERFACE_MODE_QUSGMII:
--	case PHY_INTERFACE_MODE_SGMII:
--	case PHY_INTERFACE_MODE_GMII:
--		caps |= MAC_1000HD | MAC_1000FD;
--		fallthrough;
--
--	case PHY_INTERFACE_MODE_REVRMII:
--	case PHY_INTERFACE_MODE_RMII:
--	case PHY_INTERFACE_MODE_SMII:
--	case PHY_INTERFACE_MODE_REVMII:
--	case PHY_INTERFACE_MODE_MII:
--		caps |= MAC_10HD | MAC_10FD;
--		fallthrough;
--
--	case PHY_INTERFACE_MODE_100BASEX:
--		caps |= MAC_100HD | MAC_100FD;
--		break;
--
--	case PHY_INTERFACE_MODE_TBI:
--	case PHY_INTERFACE_MODE_MOCA:
--	case PHY_INTERFACE_MODE_RTBI:
--	case PHY_INTERFACE_MODE_1000BASEX:
--		caps |= MAC_1000HD;
--		fallthrough;
--	case PHY_INTERFACE_MODE_1000BASEKX:
--	case PHY_INTERFACE_MODE_TRGMII:
--		caps |= MAC_1000FD;
--		break;
--
--	case PHY_INTERFACE_MODE_2500BASEX:
--		caps |= MAC_2500FD;
--		break;
--
--	case PHY_INTERFACE_MODE_5GBASER:
--		caps |= MAC_5000FD;
--		break;
--
--	case PHY_INTERFACE_MODE_XGMII:
--	case PHY_INTERFACE_MODE_RXAUI:
--	case PHY_INTERFACE_MODE_XAUI:
--	case PHY_INTERFACE_MODE_10GBASER:
--	case PHY_INTERFACE_MODE_10GKR:
--		caps |= MAC_10000FD;
--		break;
--
--	case PHY_INTERFACE_MODE_25GBASER:
--		caps |= MAC_25000FD;
--		break;
--
--	case PHY_INTERFACE_MODE_XLGMII:
--		caps |= MAC_40000FD;
--		break;
--
--	case PHY_INTERFACE_MODE_INTERNAL:
--		caps |= ~0;
--		break;
--
--	case PHY_INTERFACE_MODE_NA:
--	case PHY_INTERFACE_MODE_MAX:
--		break;
--	}
-+	caps |= phylink_link_caps_to_mac_caps(link_caps);
- 
- 	switch (rate_matching) {
- 	case RATE_MATCH_OPEN_LOOP:
--- 
-2.48.1
+Cause: No bounds check exists for block_shift before the shift
+operation, allowing garbage or malicious values from a crafted
+superblock to trigger undefined behavior.
 
+Context: Syzkaller=E2=80=99s mount of a BeFS filesystem on loop0 likely
+provided a malformed superblock.
+
+Impact: Undefined shift behavior could crash the kernel or corrupt
+memory, posing a DoS risk with malicious filesystems. UBSAN warns
+here, but production kernels may fail silently.
+
+Could BeFS maintainers investigate? This seems like a regression from
+prior superblock validation fixes. Suggested actions:
+1. Add a bounds check: if (befs_sb->block_shift > 31) { befs_error(sb,
+"invalid block_shift: %u", befs_sb->block_shift); return BEFS_ERR; }.
+2. Review historical BeFS patches to confirm if block_shift validation
+was dropped.
+
+Our knowledge of the kernel is somewhat limited, and we'd appreciate
+it if you could determine if there is such an issue. If this issue
+doesn't have an impact, please ignore it =E2=98=BA.
+If you fix this issue, please add the following tag to the commit:
+Reported-by: Zhizhuo Tang <strforexctzzchange@foxmail.com>, Jianzhou
+Zhao <xnxc22xnxc22@qq.com>, Haoran Liu <cherest_san@163.com>
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+loop0: detected capacity change from 0 to 128
+------------[ cut here ]------------
+UBSAN: shift-out-of-bounds in fs/befs/super.c:96:9
+shift exponent 3229888891 is too large for 32-bit type 'int'
+CPU: 1 UID: 0 PID: 11513 Comm: syz.0.10 Not tainted 6.14.0-rc4 #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/=
+2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x180/0x1b0 lib/dump_stack.c:120
+ ubsan_epilogue lib/ubsan.c:231 [inline]
+ __ubsan_handle_shift_out_of_bounds+0x1d2/0x350 lib/ubsan.c:468
+ befs_check_sb.cold+0x19/0x6f fs/befs/super.c:96
+ befs_fill_super+0x59f/0xcc0 fs/befs/linuxvfs.c:841
+ get_tree_bdev_flags+0x396/0x630 fs/super.c:1636
+ vfs_get_tree+0x93/0x350 fs/super.c:1814
+ do_new_mount+0x368/0x730 fs/namespace.c:3560
+ path_mount+0x4a6/0x17f0 fs/namespace.c:3887
+ do_mount fs/namespace.c:3900 [inline]
+ __do_sys_mount fs/namespace.c:4111 [inline]
+ __se_sys_mount fs/namespace.c:4088 [inline]
+ __x64_sys_mount+0x288/0x310 fs/namespace.c:4088
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcb/0x260 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fafc99ba41e
+Code: 48 c7 c0 ff ff ff ff eb aa e8 5e 20 00 00 66 2e 0f 1f 84 00 00
+00 00 00 0f 1f 40 00 f3 0f 1e fa 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d
+01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fafca8b7da8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000000000009e24 RCX: 00007fafc99ba41e
+RDX: 0000400000000100 RSI: 0000400000009e40 RDI: 00007fafca8b7e00
+RBP: 00007fafca8b7e40 R08: 00007fafca8b7e40 R09: 0000000003008001
+R10: 0000000003008001 R11: 0000000000000246 R12: 0000400000000100
+R13: 0000400000009e40 R14: 00007fafca8b7e00 R15: 00004000000001c0
+ </TASK>
+---[ end trace ]---
+
+Regards,
+Strforexc
 
