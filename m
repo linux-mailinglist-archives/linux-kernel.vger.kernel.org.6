@@ -1,148 +1,109 @@
-Return-Path: <linux-kernel+bounces-544831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16519A4E597
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:22:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB8C5A4E48F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:59:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F5DA165784
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:16:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 808B97A5432
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2C442836AD;
-	Tue,  4 Mar 2025 15:56:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 008AC298CD4;
+	Tue,  4 Mar 2025 15:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="urmRmFxZ"
-Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="n9cqp1MP"
+Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 033F427C844
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 448B2255245
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.116
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741103776; cv=fail; b=a9+2A+8bMupfPhg/3Nfv7iSgPvpzf0GcPfxAMylMt4h00EnS86kLsM99l9TJFYonFvslrYeC7SbFtpuQgJ/MsY5hZl8vtFaTKxG9iN/Vwrs4iYoyPSBqf7LcZLrjx9Eaz9oWFmEXlLTuDsgHL7kjTeeVf565uYfVhYz2/07ipSI=
+	t=1741102812; cv=fail; b=QqtDi42wBXunTt8Z8VxsM6DQA6dV2OXnlnb8zpeoE7NMIlPJI7Nm/99UTeBQERgMoIV0Me/tFVCIxBAmt5La18Uc6Pa1EPDl/cntoAQVyZyXOPvUhSeFVDkup4uXntfby5tXnsrWgnPkW7MZ8OSupyycAL8fYwtKt9VAtEtREnY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741103776; c=relaxed/simple;
-	bh=0xtVuIRMcJ9mrqBKv9b2M3AjxOMkL6ET0xlLfjPOm+I=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kSCk+h7YpbemkeqVhrIPY8uk40zVgzHcmIwZRyp72onxRDYQ+SeoMa2fifZy0OZf/xtgYgNJ3bEUAXXgoyJQPQ7vV8Z3XZAU5WQ6rTiwGJqz1lzf6cWTAKwKnpj1D/NlZtNV0akCeDOvnmcxksGPQIh2778spNauOLtzFxTJsq8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=urmRmFxZ reason="signature verification failed"; arc=none smtp.client-ip=209.85.216.45; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; arc=fail smtp.client-ip=160.75.25.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	s=arc-20240116; t=1741102812; c=relaxed/simple;
+	bh=uHWAZIPnGtPJ1xzl/wHTnNv5ycuRFrLaRDER5etlkDI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tIt1VGool6/33vfWRdrCFQElGEiw7EIeJAAgy2fJmo0HLCHjhlyzrYsWL+QuOLs8Cm2ecLp6s5PrODJR+uNYhElpegijphx/p+Z9zh/p4OrbC7RYaTMekWb4OzBYhqs/zlhiAlsF8OdOY5wnNs5N7gOZrI2KFcwaOL+OW21fvkg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=uniontech.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=n9cqp1MP reason="signature verification failed"; arc=none smtp.client-ip=54.254.200.128; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; arc=fail smtp.client-ip=160.75.25.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=uniontech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id 2BD6040CEC91
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:56:13 +0300 (+03)
+	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id 7C37440CFED0
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:40:08 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
+Authentication-Results: lesvatest1.cc.itu.edu.tr;
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=uniontech.com header.i=@uniontech.com header.a=rsa-sha256 header.s=onoh2408 header.b=n9cqp1MP
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6gGb71SfzG1jB
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:54:15 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6fvn0bmXzG07C
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:37:57 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 839D341898; Tue,  4 Mar 2025 18:54:10 +0300 (+03)
+	id 774914272F; Tue,  4 Mar 2025 18:37:51 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=urmRmFxZ
-X-Envelope-From: <linux-kernel+bounces-541328-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=n9cqp1MP
+X-Envelope-From: <linux-kernel+bounces-541325-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=urmRmFxZ
-Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id 9E39143449
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:01:43 +0300 (+03)
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id 30AE72DCEC
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:01:43 +0300 (+03)
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=n9cqp1MP
+Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
+	by le2 (Postfix) with ESMTP id 84409430B7
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:59:34 +0300 (+03)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by fgw1.itu.edu.tr (Postfix) with SMTP id D18BA3064C13
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:59:33 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37FCF3AA753
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:00:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDB277A4D6B
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 09:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AFF51F1513;
-	Mon,  3 Mar 2025 10:00:35 +0000 (UTC)
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89A581F1906;
+	Mon,  3 Mar 2025 09:59:16 +0000 (UTC)
+Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37EBF1F2C3B
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 10:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C060D1EEA27;
+	Mon,  3 Mar 2025 09:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740996031; cv=none; b=QQNepQ09rL3wIsuvZnqlTLCJdbHY9MakUYYFvyfMCj5OHSr5KcrVmgACirzp0acLjzZbi7OUGJ6GQMPdWoTtXiiXqPmxUVsNIesEhHBOsJ+Uxsf32cjnHzJAg19FSsgPKnoV03W5omOS7JYwsrS+SPAR7U57z/TSViRMDK3IRNc=
+	t=1740995952; cv=none; b=EGAClFiqdXyeZMXlYQAwJ8ORXf5eVihsjs0JpurRJ1QiPuN1QKHZgalU6tubqwu5pEfVhKGBoGp1Kyl0VaF5AI/9CA0DfOcYeJOWUmauePByz7KyYzFGoVaZtgL5H9e94/0ICrVOjmQjBkUZH53Ki0I9Gikcy0yiBLb2dK5329Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740996031; c=relaxed/simple;
-	bh=4ePiwYSbOCYH3v1SviQDg3/HbMk9bKn0Y0srxW3uClM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bwwkvbyc405K1zOu+XcR3d2kczPqCred/y0iopMWXlfONvR/QCXJs8PJ0lsAfX6eRO1tlZUmZY7ve7M1YP/VAj3uXi2o8bPldV7xyzsYKUoEN+DCcl0+TZjlsBwyxx/iCncjlCIIkqd9EU5N470pJcsZgALxrGrrc0TBHnWuuPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=urmRmFxZ; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2fec13a4067so4269747a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 02:00:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740996029; x=1741600829; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bCtpbarqcsWFDUrFSqXD3/5LnWihrLhv2toR5uStrCc=;
-        b=urmRmFxZYbF12HuDunEnhJfhZde8ejtb3l2vNYsoImsuixO7ZPmrI1WIHeGJcVt3dl
-         2aYzQV8gOoq1KBxJKuAycUErUqsx1z5elD+4QJX7LWOcb7dHSSFtFBHwziB1ZcQJSgog
-         rp0F8t6Fle2x+FYztrnLRWowhSNMryZ9S5MfPJ800H/DmN/iBXwPQoMVMu5K7kcmdO94
-         dDbn5Qva8xzi7NZ/fOz73GA2s2jaQrqiz8rl/vps9mkbiLbpzHOFHeoyFXswtlTcP2ZE
-         8ABhtvCWlX0dLLdgiBg10kcpaahpaw03aG97Ogq9r0PIYl4hjKXTKTk4qtYKuT3GwLoZ
-         liRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740996029; x=1741600829;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bCtpbarqcsWFDUrFSqXD3/5LnWihrLhv2toR5uStrCc=;
-        b=Gf0Pz0drz2U/RzFmwDDlDyptQMIOinQ3k30Oxi+0dUhcl57PntM7cLN7RYrjFvlP23
-         r5JQ+Lr6eD4wMqbbOKwWqKl/w7dvzYkDjvIU45Uca6rzHB4Fo6Lo+cBO70s68Z6eqUpC
-         14y324pOqThUqWio6QvAhBkCPq1RRkr7wZiYYZKZDMCdSk8AYJIUr868KcfWOjDEuaqZ
-         fL81F2NwvFjsISG29Oj04Ng3uJOFkjwInO4XV2yHYO+2sohYKRphWXKckJW2hF5cvtYI
-         Il6vr6jTmgTiHtUlAYPz5ynut/bWGdA3utkCD9XSTFueHa2UAxlhyIOkq4IGvErSJDAh
-         qDMw==
-X-Forwarded-Encrypted: i=1; AJvYcCUoKah/vwEpeUb9pdp6MAHsa8B8w5Bp5hIvI0ZnGnCnqR96VZbvIHVyDLMZN8G8+iYmOvrKTtz+YvIfxKA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4NhOERgOWnPO9Av/kljzfVF7EVnw/+1L8O3EZi0jJC91J68QG
-	CzQ88gKmQr1zsbLVlE53annGLHTw+afR0f9H+ha59FmIODkuce8yuM1rEZ9Y76Y=
-X-Gm-Gg: ASbGnctPBmBZ8HZJ7au7IvQR10OA4WxeXdn01x6+BfgJzL2nomRAmlEp+16LvhEnJkG
-	NNEmVb5vfkML+UpZa7L/YSZsDKicwp4xBkcw2PjyQCYboNM9JpUQo49ewqWXUQzKsfr5G9Ypdv4
-	5285aY74jOxe7cyEeT1N/nzzp3tPPnP3f+w5F0WTISw0kA3jYmAql+MvKpD0WD0JTHKhyb89Q+e
-	qVDfmnwZOvPx71VlysN4Ih3oLGWXGjwphsMMw7fBi6fZCLjBrrR5g1pJpkNE0uy6PHZZaebSAsp
-	XRUk5fXuUSpiGsCe1BONgSNxzjnxmdeUBjS1m2Dc54grYA==
-X-Google-Smtp-Source: AGHT+IFU5ll4u6S7m0NrVB1a+FHvXW54L7A2aqExOXgrVGjy78eyLcfNYLvSU8KeXTNKCT43lKxykw==
-X-Received: by 2002:a17:90b:528b:b0:2fe:a336:fe65 with SMTP id 98e67ed59e1d1-2febab3c6f0mr20234955a91.10.1740996029494;
-        Mon, 03 Mar 2025 02:00:29 -0800 (PST)
-Received: from localhost ([122.172.84.15])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fe6ded6ebfsm13571496a91.1.2025.03.03.02.00.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 02:00:28 -0800 (PST)
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-clk@vger.kernel.org,
+	s=arc-20240116; t=1740995952; c=relaxed/simple;
+	bh=Dgx0WmiWWJVJFOYXROEjC9QhshtwPpwi2bA+QbGxJUk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ogOqapcEaVGKlY/UWUPPvIZvsi+/5lrt5wzEm4p143PEcQDDUXiaL1SdIFYMvKwDYdxqiW++2clcVQeByfMPhUcQDfVpkbc04crpaZHhgvHfyOxqegLSPB5rEYbCkM7Yex/IsrISQuiFKrgGN9TCUKXx7106xjbUsKPXolSJXqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=n9cqp1MP; arc=none smtp.client-ip=54.254.200.128
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1740995930;
+	bh=K/zA0N8M3Fo/mbM8RcyqXqLjJSa3rFqpG7w6gFb91fI=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version;
+	b=n9cqp1MP7doGEOtAP3WnWF0PYRuTEodYVpDiB67uy0MA84th6NqSPsUhwEpR76aYu
+	 r6rwkHoFJZ8oHrjR8Bq7ZE//z46oYHmD52+0WT8kM0+QpWT/G6IWeiN8ytOwTXVRxd
+	 UlKW8sG4pPv5IsCzeGxAk6oOpS/JD58GMiMtof7o=
+X-QQ-mid: bizesmtpip3t1740995922t7z61pl
+X-QQ-Originating-IP: LIg0Yy8e5VUzBgFCyAYWG60yUtxBWS+LuXYa5nhA61Y=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 03 Mar 2025 17:58:40 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 1883138028751320756
+From: raoxu <raoxu@uniontech.com>
+To: mathias.nyman@intel.com,
+	gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Daniel Almeida <daniel.almeida@collabora.com>
-Subject: [PATCH V3 2/2] rust: Add initial clk abstractions
-Date: Mon,  3 Mar 2025 15:28:10 +0530
-Message-Id: <023e3061cc164087b9079a9f6cb7e9fbf286794e.1740995194.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
-In-Reply-To: <cover.1740995194.git.viresh.kumar@linaro.org>
-References: <cover.1740995194.git.viresh.kumar@linaro.org>
+	wangyuli@uniontech.com,
+	zhanjun@uniontech.com,
+	Xu Rao <raoxu@uniontech.com>
+Subject: [PATCH] From: Xu Rao <raoxu@uniontech.com> Subject: [PATCH] usb: xhci: Add debugfs support for xHCI port bandwidth
+Date: Mon,  3 Mar 2025 17:58:37 +0800
+Message-Id: <20250303095837.16332-1-raoxu@uniontech.com>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -150,211 +111,299 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz7a-0
+X-QQ-XMAILINFO: My+Y/kkztEN1lslsfqyxyrJQ7+gHxHLHtisbPtmvYATJzRQxZmsLagno
+	SIgJb1OKrwBLaU0R1UV3AHUo3YlmN+cWC3t9sLoPW2J8uCMgwL9/qxQ6Q+WjUaYz8W1NZT7
+	NXBvxCpo3yB/gypxdap220dUyoS5KlIUV9TMrLYrb0RnPPcOEKAptQ0N0p0ZsE7pzamlUbr
+	usyF5QqbJJlTXIhwaVHqdoNLBSNnBDbOWKRJi1B62+3lLksrqlAfqKKuMgdXpfzU6GYs3z2
+	K7cMPQV7BbMu4hssTlzV7nZOeFvzMSDYum8+Aro/n+ICif0hRghmN5ZrdOr0NqCzPJstXSx
+	3oE4EdRzRUcObgd9aFeiDXTTwSvKlSjhA2TTCu2UBRY8u4kFePH9QnUELGGfR8u4rJzsZhY
+	fV6dsLweTFYmHTw1u2wycrGdN+FQhJZAYmGfb1BjxL8Y8UyhVAC7U2Ez9G/Et2OjrfwNoyR
+	3gEqqjUyEPgZlVwcOxE7rMdvAfKtcThSQrR9AhlakXQ4VLLgm85RhLmxkVGkBCRTjf5Upzk
+	+m4dlbLAu4Hni5w5dQfuoO6h5VowEz0Etf/NHGdUATKrJKzEbZ+cfgqO8WUHjDd18uFe/Xr
+	xYunNk+LrCntbOi3WpKzMefsWmtlQcsvFFqEzDMh+UgxIb4wkVp5oC6rdhMu17ZPpfWu0Kx
+	KU3AHH2qkZhzr2eYvFhT70MXIfIH46exjJIR3ptEZA7dfsYGtH+KQT8xwoUh3HCPfeTK6oh
+	NDY91D6z6c3WgY3h/mWU3NOrfJE7WsgP/fc5kQmcesKuaFgZrJszaX0EKnaJB1K2QJFNn7+
+	6kz4fBMMBQhl9lpSxZJZbN4p/bFx5wMPmWpeLwzyuvzGOeLRXvZX/vrH6+HAll3JCiL4hPC
+	8+akPPLJYVm9axQrcJ5MofWN/giRz3aG59Vhe2pxC0zXIMkLhb0KEROsJLcH8uSb0Kvtawl
+	2FkpDCMURLfIRNq5puVLwxiX09bt4wIzK+wrFe1m9gQ/Wtx8Gfj4RmjEeBR7R8Y0F8025k2
+	hjxpp9ELj2UIhz/FEWMYM9+pB+KfM=
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+X-QQ-RECHKSPAM: 0
 Content-Transfer-Encoding: quoted-printable
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6gGb71SfzG1jB
+X-ITU-Libra-ESVA-ID: 4Z6fvn0bmXzG07C
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741708479.47731@fZxd9GqcFP1LGarn7cfU3Q
+X-ITU-Libra-ESVA-Watermark: 1741707497.12037@Pf9mkiUKzc6pMvhrmsLErQ
 X-ITU-MailScanner-SpamCheck: not spam
 
-Add initial abstractions for the clk APIs. These provide the minimal
-functionality needed for common use cases, making them straightforward
-to introduce in the first iteration.
+From: Xu Rao <raoxu@uniontech.com>
 
-These will be used by Rust based cpufreq / OPP layers to begin with.
+In many projects, you need to obtain the available bandwidth of the
+xhci roothub port. Refer to xhci rev1_2 and use the TRB_GET_BW
+command to obtain it.
 
-Tested-by: Daniel Almeida <daniel.almeida@collabora.com>
-Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+hardware tested:
+03:00.3 USB controller: Advanced Micro Devices, Inc. [AMD] Raven USB 3.1
+(prog-if 30 [XHCI])
+Subsystem: Huawei Technologies Co., Ltd. Raven USB 3.1
+Flags: bus master, fast devsel, latency 0, IRQ 30
+Memory at c0300000 (64-bit, non-prefetchable) [size=3D1M]
+Capabilities: [48] Vendor Specific Information: Len=3D08 <?>
+Capabilities: [50] Power Management version 3
+Capabilities: [64] Express Endpoint, MSI 00
+Capabilities: [a0] MSI: Enable- Count=3D1/8 Maskable- 64bit+
+Capabilities: [c0] MSI-X: Enable+ Count=3D8 Masked-
+Kernel driver in use: xhci_hcd
+
+test progress:
+1.cd /sys/kernel/debug/usb/xhci/0000:03:00.3
+cat port_bandwidth
+/sys/kernel/debug/usb/xhci/0000:03:00.3# cat port_bandwidth
+port[1] available bw: 79%.
+port[2] available bw: 79%.
+port[3] available bw: 79%.
+port[4] available bw: 79%.
+port[5] available bw: 90%.
+port[6] available bw: 90%.
+port[7] available bw: 90%.
+port[8] available bw: 90%.
+2.plug in usb video cammer open it
+cat port_bandwidth
+port[1] available bw: 39%.
+port[2] available bw: 39%.
+port[3] available bw: 39%.
+port[4] available bw: 39%.
+port[5] available bw: 90%.
+port[6] available bw: 90%.
+port[7] available bw: 90%.
+port[8] available bw: 90%.
+
+Signed-off-by: Xu Rao <raoxu@uniontech.com>
 ---
- MAINTAINERS        |   1 +
- rust/kernel/clk.rs | 134 +++++++++++++++++++++++++++++++++++++++++++++
- rust/kernel/lib.rs |   1 +
- 3 files changed, 136 insertions(+)
- create mode 100644 rust/kernel/clk.rs
+ drivers/usb/host/xhci-debugfs.c | 42 +++++++++++++++++++
+ drivers/usb/host/xhci-ring.c    | 14 +++++++
+ drivers/usb/host/xhci.c         | 74 +++++++++++++++++++++++++++++++++
+ drivers/usb/host/xhci.h         |  7 ++++
+ 4 files changed, 137 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 726110d3c988..96e2574f41c0 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5779,6 +5779,7 @@ F:	include/linux/clk-pr*
- F:	include/linux/clk/
- F:	include/linux/of_clk.h
- F:	rust/helpers/clk.c
-+F:	rust/kernel/clk.rs
- X:	drivers/clk/clkdev.c
-=20
- COMMON INTERNET FILE SYSTEM CLIENT (CIFS and SMB3)
-diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs
-new file mode 100644
-index 000000000000..1fa5b7298373
---- /dev/null
-+++ b/rust/kernel/clk.rs
-@@ -0,0 +1,134 @@
-+// SPDX-License-Identifier: GPL-2.0
+diff --git a/drivers/usb/host/xhci-debugfs.c b/drivers/usb/host/xhci-debu=
+gfs.c
+index 1f5ef174abea..573b6c25f3af 100644
+--- a/drivers/usb/host/xhci-debugfs.c
++++ b/drivers/usb/host/xhci-debugfs.c
+@@ -631,6 +631,46 @@ static void xhci_debugfs_create_ports(struct xhci_hc=
+d *xhci,
+ 	}
+ }
+
++static int xhci_port_bw_show(struct seq_file *s, void *unused)
++{
++	struct xhci_hcd		*xhci =3D (struct xhci_hcd *)s->private;
++	unsigned int		num_ports;
++	unsigned int		i;
++	int			ret;
++	u8			bw_table[MAX_HC_PORTS] =3D {0};
 +
-+//! Clock abstractions.
-+//!
-+//! C header: [`include/linux/clk.h`](srctree/include/linux/clk.h)
++	num_ports =3D HCS_MAX_PORTS(xhci->hcs_params1);
 +
-+use crate::{
-+    bindings,
-+    device::Device,
-+    error::{from_err_ptr, to_result, Result},
-+    prelude::*,
++	/* get roothub port bandwidth */
++	ret =3D xhci_get_port_bandwidth(xhci, bw_table);
++	if (ret)
++		return ret;
++
++	/* print all roothub ports available bandwidth */
++	for (i =3D 1; i < num_ports+1; i++)
++		seq_printf(s, "port[%d] available bw: %d%%.\n", i, bw_table[i]);
++
++	return ret;
++}
++
++static int bw_open(struct inode *inode, struct file *file)
++{
++	return single_open(file, xhci_port_bw_show, inode->i_private);
++}
++
++static const struct file_operations bw_fops =3D {
++	.open			=3D bw_open,
++	.read			=3D seq_read,
++	.llseek			=3D seq_lseek,
++	.release		=3D single_release,
 +};
 +
-+use core::{ops::Deref, ptr};
-+
-+/// Frequency unit.
-+pub type Hertz =3D crate::ffi::c_ulong;
-+
-+/// A simple implementation of `struct clk` from the C code.
-+#[repr(transparent)]
-+pub struct Clk(*mut bindings::clk);
-+
-+impl Clk {
-+    /// Gets clock corresponding to a device and a connection id and ret=
-urns `Clk`.
-+    pub fn get(dev: &Device, name: Option<&CStr>) -> Result<Self> {
-+        let con_id =3D if let Some(name) =3D name {
-+            name.as_ptr() as *const _
-+        } else {
-+            ptr::null()
-+        };
-+
-+        // SAFETY: It is safe to call `clk_get()` for a valid device poi=
-nter.
-+        Ok(Self(from_err_ptr(unsafe {
-+            bindings::clk_get(dev.as_raw(), con_id)
-+        })?))
-+    }
-+
-+    /// Obtain the raw `struct clk *`.
-+    pub fn as_raw(&self) -> *mut bindings::clk {
-+        self.0
-+    }
-+
-+    /// Clock enable.
-+    pub fn enable(&self) -> Result<()> {
-+        // SAFETY: It is safe to call clk APIs of the C code for a clock=
- pointer earlier returned
-+        // by `clk_get()`.
-+        to_result(unsafe { bindings::clk_enable(self.as_raw()) })
-+    }
-+
-+    /// Clock disable.
-+    pub fn disable(&self) {
-+        // SAFETY: It is safe to call clk APIs of the C code for a clock=
- pointer earlier returned
-+        // by `clk_get()`.
-+        unsafe { bindings::clk_disable(self.as_raw()) };
-+    }
-+
-+    /// Clock prepare.
-+    pub fn prepare(&self) -> Result<()> {
-+        // SAFETY: It is safe to call clk APIs of the C code for a clock=
- pointer earlier returned
-+        // by `clk_get()`.
-+        to_result(unsafe { bindings::clk_prepare(self.as_raw()) })
-+    }
-+
-+    /// Clock unprepare.
-+    pub fn unprepare(&self) {
-+        // SAFETY: It is safe to call clk APIs of the C code for a clock=
- pointer earlier returned
-+        // by `clk_get()`.
-+        unsafe { bindings::clk_unprepare(self.as_raw()) };
-+    }
-+
-+    /// Clock prepare enable.
-+    pub fn prepare_enable(&self) -> Result<()> {
-+        // SAFETY: It is safe to call clk APIs of the C code for a clock=
- pointer earlier returned
-+        // by `clk_get()`.
-+        to_result(unsafe { bindings::clk_prepare_enable(self.as_raw()) }=
-)
-+    }
-+
-+    /// Clock disable unprepare.
-+    pub fn disable_unprepare(&self) {
-+        // SAFETY: It is safe to call clk APIs of the C code for a clock=
- pointer earlier returned
-+        // by `clk_get()`.
-+        unsafe { bindings::clk_disable_unprepare(self.as_raw()) };
-+    }
-+
-+    /// Clock get rate.
-+    pub fn rate(&self) -> Hertz {
-+        // SAFETY: It is safe to call clk APIs of the C code for a clock=
- pointer earlier returned
-+        // by `clk_get()`.
-+        unsafe { bindings::clk_get_rate(self.as_raw()) }
-+    }
-+
-+    /// Clock set rate.
-+    pub fn set_rate(&self, rate: Hertz) -> Result<()> {
-+        // SAFETY: It is safe to call clk APIs of the C code for a clock=
- pointer earlier returned
-+        // by `clk_get()`.
-+        to_result(unsafe { bindings::clk_set_rate(self.as_raw(), rate) }=
-)
-+    }
++static void xhci_debugfs_create_bandwidth(struct xhci_hcd *xhci,
++					struct dentry *parent)
++{
++	debugfs_create_file("port_bandwidth", 0644, parent, xhci, &bw_fops);
 +}
 +
-+impl Drop for Clk {
-+    fn drop(&mut self) {
-+        // SAFETY: It is safe to call clk APIs of the C code for a clock=
- pointer earlier returned
-+        // by `clk_get()`.
-+        unsafe { bindings::clk_put(self.as_raw()) };
-+    }
+ void xhci_debugfs_init(struct xhci_hcd *xhci)
+ {
+ 	struct device		*dev =3D xhci_to_hcd(xhci)->self.controller;
+@@ -681,6 +721,8 @@ void xhci_debugfs_init(struct xhci_hcd *xhci)
+ 	xhci->debugfs_slots =3D debugfs_create_dir("devices", xhci->debugfs_roo=
+t);
+
+ 	xhci_debugfs_create_ports(xhci, xhci->debugfs_root);
++
++	xhci_debugfs_create_bandwidth(xhci, xhci->debugfs_root);
+ }
+
+ void xhci_debugfs_exit(struct xhci_hcd *xhci)
+diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+index 965bffce301e..af1cd4f8ace9 100644
+--- a/drivers/usb/host/xhci-ring.c
++++ b/drivers/usb/host/xhci-ring.c
+@@ -1867,6 +1867,8 @@ static void handle_cmd_completion(struct xhci_hcd *=
+xhci,
+ 	case TRB_NEC_GET_FW:
+ 		xhci_handle_cmd_nec_get_fw(xhci, event);
+ 		break;
++	case TRB_GET_BW:
++		break;
+ 	default:
+ 		/* Skip over unknown commands on the event ring */
+ 		xhci_info(xhci, "INFO unknown command type %d\n", cmd_type);
+@@ -4414,6 +4416,18 @@ int xhci_queue_configure_endpoint(struct xhci_hcd =
+*xhci,
+ 			command_must_succeed);
+ }
+
++/* Queue a get root hub port bandwidth command TRB */
++int xhci_queue_get_rh_port_bw(struct xhci_hcd *xhci,
++		struct xhci_command *cmd, dma_addr_t in_ctx_ptr,
++		u8 dev_speed, u32 slot_id, bool command_must_succeed)
++{
++	return queue_command(xhci, cmd, lower_32_bits(in_ctx_ptr),
++		upper_32_bits(in_ctx_ptr), 0,
++		TRB_TYPE(TRB_GET_BW) | DEV_SPEED_FOR_TRB(dev_speed) |
++		SLOT_ID_FOR_TRB(slot_id),
++		command_must_succeed);
 +}
 +
-+/// A simple implementation of optional `Clk`.
-+pub struct OptionalClk(Clk);
+ /* Queue an evaluate context command TRB */
+ int xhci_queue_evaluate_context(struct xhci_hcd *xhci, struct xhci_comma=
+nd *cmd,
+ 		dma_addr_t in_ctx_ptr, u32 slot_id, bool command_must_succeed)
+diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
+index 45653114ccd7..84092fe981e8 100644
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -3088,6 +3088,80 @@ void xhci_reset_bandwidth(struct usb_hcd *hcd, str=
+uct usb_device *udev)
+ }
+ EXPORT_SYMBOL_GPL(xhci_reset_bandwidth);
+
++/* Get the available bandwidth of the ports under the xhci roothub,
++ * including USB 2.0 port and USB 3.0 port.
++ */
++int xhci_get_port_bandwidth(struct xhci_hcd *xhci, u8 *bw_table)
++{
++	unsigned int		num_ports;
++	unsigned int		i;
++	struct xhci_command	*cmd;
++	dma_addr_t		dma_handle;
++	void			*dma_buf;
++	int			ret;
++	unsigned long		flags;
++	struct device		*dev  =3D xhci_to_hcd(xhci)->self.sysdev;
 +
-+impl OptionalClk {
-+    /// Gets optional clock corresponding to a device and a connection i=
-d and returns `Clk`.
-+    pub fn get(dev: &Device, name: Option<&CStr>) -> Result<Self> {
-+        let con_id =3D if let Some(name) =3D name {
-+            name.as_ptr() as *const _
-+        } else {
-+            ptr::null()
-+        };
++	num_ports =3D HCS_MAX_PORTS(xhci->hcs_params1);
 +
-+        // SAFETY: It is safe to call `clk_get_optional()` for a valid d=
-evice pointer.
-+        Ok(Self(Clk(from_err_ptr(unsafe {
-+            bindings::clk_get_optional(dev.as_raw(), con_id)
-+        })?)))
-+    }
++	cmd =3D xhci_alloc_command(xhci, true, GFP_KERNEL);
++	if (!cmd)
++		return -ENOMEM;
++
++	dma_buf =3D dma_alloc_coherent(dev, xhci->page_size, &dma_handle,
++					GFP_KERNEL);
++	if (!dma_buf) {
++		xhci_free_command(xhci, cmd);
++		return -ENOMEM;
++	}
++
++	/* get xhci hub usb3 port bandwidth */
++	/* refer to xhci rev1_2 protocol 4.6.15*/
++	spin_unlock_irqrestore(&xhci->lock, flags);
++	ret =3D xhci_queue_get_rh_port_bw(xhci, cmd, dma_handle, USB_SPEED_SUPE=
+R,
++					0, false);
++	if (ret < 0) {
++		spin_unlock_irqrestore(&xhci->lock, flags);
++		goto out;
++	}
++	xhci_ring_cmd_db(xhci);
++	spin_unlock_irqrestore(&xhci->lock, flags);
++
++	wait_for_completion(cmd->completion);
++
++	/* refer to xhci rev1_2 protocol 6.2.6 , byte 0 is reserved */
++	for (i =3D 1; i < num_ports+1; i++) {
++		if (((u8 *)dma_buf)[i])
++			bw_table[i] =3D ((u8 *)dma_buf)[i];
++	}
++
++	/* get xhci hub usb2 port bandwidth */
++	/* refer to xhci rev1_2 protocol 4.6.15*/
++	spin_unlock_irqrestore(&xhci->lock, flags);
++	ret =3D xhci_queue_get_rh_port_bw(xhci, cmd, dma_handle, USB_SPEED_HIGH=
+,
++					0, false);
++	if (ret < 0) {
++		spin_unlock_irqrestore(&xhci->lock, flags);
++		goto out;
++	}
++	xhci_ring_cmd_db(xhci);
++	spin_unlock_irqrestore(&xhci->lock, flags);
++
++	wait_for_completion(cmd->completion);
++
++	/* refer to xhci rev1_2 protocol 6.2.6 , byte 0 is reserved */
++	for (i =3D 1; i < num_ports+1; i++) {
++		if (((u8 *)dma_buf)[i])
++			bw_table[i] =3D ((u8 *)dma_buf)[i];
++	}
++
++out:
++	dma_free_coherent(dev, xhci->page_size, dma_buf, dma_handle);
++	xhci_free_command(xhci, cmd);
++
++	return ret;
 +}
 +
-+// Make `OptionalClk` behave like `Clk`.
-+impl Deref for OptionalClk {
-+    type Target =3D Clk;
+ static void xhci_setup_input_ctx_for_config_ep(struct xhci_hcd *xhci,
+ 		struct xhci_container_ctx *in_ctx,
+ 		struct xhci_container_ctx *out_ctx,
+diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
+index 8c164340a2c3..a137097b0404 100644
+--- a/drivers/usb/host/xhci.h
++++ b/drivers/usb/host/xhci.h
+@@ -999,6 +999,9 @@ enum xhci_setup_dev {
+ /* bits 16:23 are the virtual function ID */
+ /* bits 24:31 are the slot ID */
+
++/* bits 19:16 are the dev speed */
++#define DEV_SPEED_FOR_TRB(p)    ((p) << 16)
 +
-+    fn deref(&self) -> &Clk {
-+        &self.0
-+    }
-+}
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index 496ed32b0911..324b86f127a0 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -40,6 +40,7 @@
- pub mod block;
- #[doc(hidden)]
- pub mod build_assert;
-+pub mod clk;
- pub mod cred;
- pub mod device;
- pub mod device_id;
---=20
-2.31.1.272.g89b43f80a514
+ /* Stop Endpoint TRB - ep_index to endpoint ID for this TRB */
+ #define SUSPEND_PORT_FOR_TRB(p)		(((p) & 1) << 23)
+ #define TRB_TO_SUSPEND_PORT(p)		(((p) & (1 << 23)) >> 23)
+@@ -1907,6 +1910,10 @@ int xhci_queue_isoc_tx_prepare(struct xhci_hcd *xh=
+ci, gfp_t mem_flags,
+ int xhci_queue_configure_endpoint(struct xhci_hcd *xhci,
+ 		struct xhci_command *cmd, dma_addr_t in_ctx_ptr, u32 slot_id,
+ 		bool command_must_succeed);
++int xhci_queue_get_rh_port_bw(struct xhci_hcd *xhci,
++		struct xhci_command *cmd, dma_addr_t in_ctx_ptr,
++		u8 dev_speed, u32 slot_id, bool command_must_succeed);
++int xhci_get_port_bandwidth(struct xhci_hcd *xhci, u8 *bw_table);
+ int xhci_queue_evaluate_context(struct xhci_hcd *xhci, struct xhci_comma=
+nd *cmd,
+ 		dma_addr_t in_ctx_ptr, u32 slot_id, bool command_must_succeed);
+ int xhci_queue_reset_ep(struct xhci_hcd *xhci, struct xhci_command *cmd,
+--
+2.43.4
 
 
 
