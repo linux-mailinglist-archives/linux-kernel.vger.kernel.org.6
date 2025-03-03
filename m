@@ -1,93 +1,123 @@
-Return-Path: <linux-kernel+bounces-544714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EEAEA4E5DD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:29:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80A56A4E6F5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:54:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E413C3A39F6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:45:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E7884249DB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:48:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D4C92780FB;
-	Tue,  4 Mar 2025 15:31:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEB1F279322;
+	Tue,  4 Mar 2025 16:25:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="PRD1IODV"
 Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4264B2780F3
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80888278161
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:25:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.117
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741102306; cv=fail; b=IXpACnfTLW1w1Pb4jOMl/ak3AOozfNeYnWnWUYD+kbBF0Pudw4jKwLM5XGuVIQ94izilSlxt2DNr5Vw/9llwXX9I2iVFWXbDPhXcHT+zDnhelsOQC9VKzc9j4Za8A0K49gNca90UgV9A51gxWUvxJ6ERpHr/yDxm7FCQXhtagXs=
+	t=1741105554; cv=pass; b=ULDsFdTtnxl/6mKwNE0Z7eGu4QNBVEXlqsGG0h17Xk5X1SEayUMo+TosptjbehrpAOJXpOWZv3fUphZtT5JOZsAv29Y7ao0270J6etyaDtRUcAKBPMfVvf+HiJQqi0wh/E7mruDewfFzbcvVMZS8v23mBoZ+t8bOS9iW7XrkvsM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741102306; c=relaxed/simple;
-	bh=afaNn7bQBqwP5EyP5AoJcdnHL2DHIHUStLtpr/Prcnk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BS/9MQvTkWZV1BUXWuKcJG6mNr6kRzqGaT5lUDGi5jC5ysRQrHO2IYZtrNKc7eF++zUjFMY+/4LB3EfiAVflimBrL/9t463Bc1XFd6/SKvG1gsYGYB2WC4SUvltVBHk81tT7FfAZF0XI+KthbeI68wWYcR5BSjIUSucRJLfgJ68=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=none smtp.mailfrom=cc.itu.edu.tr; arc=none smtp.client-ip=159.226.251.84; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=fail smtp.client-ip=160.75.25.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+	s=arc-20240116; t=1741105554; c=relaxed/simple;
+	bh=1zSnC+icBKdpSfr4vWUYgocPh0mXIzh1OrfARyFoLEA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kJVXWLG95OCHp8Ns2LksO3n3UdmJd2h+Yd2HqzlVYtzxr0/EO4vAyNLajGd5pggVSBQG3Hrbx5lcZAXq+l/b+tAkPv9Tgaf8V3FdoumipklbddiZsdq1xANcgd7hkGlM8ApeOyFQJkkTdy4EBJhYolflVfulTsdMrMiFO7AEj08=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=PRD1IODV; arc=none smtp.client-ip=194.117.254.33; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; arc=pass smtp.client-ip=160.75.25.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id 73E8640CEC8D
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:31:42 +0300 (+03)
+	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id AC7B440CECB3
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:25:50 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
+Authentication-Results: lesvatest1.cc.itu.edu.tr;
+	dkim=pass (2048-bit key, unprotected) header.d=sang-engineering.com header.i=@sang-engineering.com header.a=rsa-sha256 header.s=k1 header.b=PRD1IODV
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6flR6BsXzG0b7
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:30:43 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6gxS4WP1zG2Qh
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:24:28 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 7E70C4273B; Tue,  4 Mar 2025 18:30:28 +0300 (+03)
-X-Envelope-From: <linux-kernel+bounces-541093-bozkiru=itu.edu.tr@vger.kernel.org>
-Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id 78184425A4
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:28:21 +0300 (+03)
+	id C70EA42741; Tue,  4 Mar 2025 19:24:20 +0300 (+03)
+Authentication-Results: lesva1.cc.itu.edu.tr;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=PRD1IODV
+X-Envelope-From: <linux-kernel+bounces-541096-bozkiru=itu.edu.tr@vger.kernel.org>
+Authentication-Results: lesva2.cc.itu.edu.tr;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=PRD1IODV
+Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
+	by le2 (Postfix) with ESMTP id CF8034209B
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:34:56 +0300 (+03)
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id 4F03F2DCE4
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:28:21 +0300 (+03)
+	by fgw1.itu.edu.tr (Postfix) with SMTP id A70F93064C08
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:34:56 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37FC71891758
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 07:28:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 294771891802
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 07:35:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5211EB9EF;
-	Mon,  3 Mar 2025 07:28:04 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B3941EB1B5;
+	Mon,  3 Mar 2025 07:34:44 +0000 (UTC)
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84E61E8327;
-	Mon,  3 Mar 2025 07:27:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C6A1E5B76
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 07:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740986883; cv=none; b=QkM4Y73o/TpBElBS7bMsKXzgBQzOGe1QtFn5PN162s7lpalCM5rSebA5omqnx4cJQoB9bDcYmX51HoMmpHCbYVELz+gKOtXdKU++PTSHJ/3m4sjiP0W7pZIQt4y2ajjBPwUuoRZmNss5RaeoUdzO419ib0Z8NCgKgdfVDzaf/V0=
+	t=1740987281; cv=none; b=bCPFdGqaCKScKuQOfIkLpWlDIE2qkEc9agUyafvMNvkxas7sfSEEEmJ4rZK0LFuFdNd8v/DU7P/o8QN9QpeWP6R28/XreZur5Rw7sZ3TG9sErb/8t788H29+LhH0uexmn2xn8nyObYBtIMcvAHcFdp9oNZHyY5oTV8UT5JIrD20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740986883; c=relaxed/simple;
-	bh=sS6epZ/Q0dmr2tgVut1X+sY8gavr366YXLTOVDwcdzM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=a8Tk1+AVPPfrxp0ILU2DDPo5BdTqkvN6nWbEioA8QEsBcwnk0TPkUSKQJ/APAe+hfQnhJHpzOAudLwKNXodaHWtmvQ8eVGULDQFbheaSdYHKCaCswTyg30d3702xBF27SwfxbuU923TMhbpWrrUnZe4bz0hAzcB7uNkHgaR0xUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-05 (Coremail) with SMTP id zQCowAC3vaHsWcVnWs+uEQ--.52938S2;
-	Mon, 03 Mar 2025 15:27:47 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: jckuo@nvidia.com,
-	vkoul@kernel.org,
-	kishon@kernel.org,
-	thierry.reding@gmail.com,
-	jonathanh@nvidia.com
-Cc: linux-phy@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH v2 RESEND] phy: Fix error handling in tegra_xusb_port_init
-Date: Mon,  3 Mar 2025 15:27:39 +0800
-Message-Id: <20250303072739.3874987-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1740987281; c=relaxed/simple;
+	bh=1zSnC+icBKdpSfr4vWUYgocPh0mXIzh1OrfARyFoLEA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fghwn19zNwXO8JOTWlwxcgdppJZ9lwoz0pXbH56FSdCLPWeyveAtnk9wPySpOUrHmKWrwkvrquxx2ANTIl3ic5GXi/QhmIg7exsjTB0E4Sj7jIUCU7zDT/qtbscDb0rSU0cwj5EEPovCdrwsttrwrUijODMhAqJVYY97LHpRfZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=PRD1IODV; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=1zSn
+	C+icBKdpSfr4vWUYgocPh0mXIzh1OrfARyFoLEA=; b=PRD1IODVjyetk9PkfKVn
+	I3DTQxbokjFR9CNV1k1rDupMnM/JGjzUS18352ouDZ9JIWTKQt/YS4T02t8jn9cg
+	of1ZWTrehF93/fBzYGVY8b67JkPzgi/3cKwKAH2XmuWxM4Z4JbLLPOy4LAC+qAK1
+	hoFQz3PtzrjHi6RaRPJ0wNlVWaEL/01EqeTYiiGJ7S4zyJAsYAmDM8vKs+4wWMa8
+	MqweoxK4irJeEsDphjlzn13XuWr2xkPnYZeGzj5kWZwzIgeOGRJp94FjvCA7hk5w
+	k8t7MfIgf/MhF48fHW4wTkVN+LEdaXB32gpO6kRjOJ0txyqAkDJwvfgWJogrAy10
+	kQ==
+Received: (qmail 2114209 invoked from network); 3 Mar 2025 08:34:35 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Mar 2025 08:34:35 +0100
+X-UD-Smtp-Session: l3s3148p1@EAweMGsvGLUgAwDPX0OvAM+yGPZJhv6R
+Date: Mon, 3 Mar 2025 08:34:27 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Yao Zi <ziyao@disroot.org>
+Cc: Troy Mitchell <troymitchell988@gmail.com>,
+	Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+	linux-riscv@lists.infradead.org, linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	spacemit@lists.linux.dev
+Subject: Re: [PATCH RESEND v5 2/2] i2c: spacemit: add support for SpacemiT K1
+ SoC
+Message-ID: <Z8Vbg1diEdmJLEs4@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Yao Zi <ziyao@disroot.org>,
+	Troy Mitchell <troymitchell988@gmail.com>,
+	Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+	linux-riscv@lists.infradead.org, linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	spacemit@lists.linux.dev
+References: <20250303-k1-i2c-master-v5-0-21dfc7adfe37@gmail.com>
+ <20250303-k1-i2c-master-v5-2-21dfc7adfe37@gmail.com>
+ <Z8VHaQsqAmhtQnbv@shikoro>
+ <Z8VWH-ZXv1FWQU3u@pie>
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -95,83 +125,49 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:zQCowAC3vaHsWcVnWs+uEQ--.52938S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Aw4DKFWkAF15tFW3Aw4fKrg_yoW8XFyDpa
-	1DGas8Kr9YgrWkKF4jvF409Fy5GF42k3yrur1rJ34akrn3W348tas8trWxXa4UArZ7uF4U
-	ArnxJa4kJFyUC3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUB214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
-	648v4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2
-	Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s02
-	6x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0x
-	vE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE
-	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6x
-	kF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUF0eHDUUUU
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="0aDRa5CnHJqKCDfW"
+Content-Disposition: inline
+In-Reply-To: <Z8VWH-ZXv1FWQU3u@pie>
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6flR6BsXzG0b7
+X-ITU-Libra-ESVA-ID: 4Z6gxS4WP1zG2Qh
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741707044.20002@93RBQl5iNIiaXYcInq+H2Q
+X-ITU-Libra-ESVA-Watermark: 1741710293.86401@DeIWNTdy7E/Qte2Gchj3wQ
 X-ITU-MailScanner-SpamCheck: not spam
 
-If device_add() fails, do not use device_unregister() for error
-handling. device_unregister() consists two functions: device_del() and
-put_device(). device_unregister() should only be called after
-device_add() succeeded because device_del() undoes what device_add()
-does if successful. Change device_unregister() to put_device() call
-before returning from the function.
 
-As comment of device_add() says, 'if device_add() succeeds, you should
-call device_del() when you want to get rid of it. If device_add() has
-not succeeded, use only put_device() to drop the reference count'.
+--0aDRa5CnHJqKCDfW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Found by code review.
 
-Cc: stable@vger.kernel.org
-Fixes: 53d2a715c240 ("phy: Add Tegra XUSB pad controller support")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
-Changes in v2:
-- modified the bug description as suggestions.
----
- drivers/phy/tegra/xusb.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+> Reusing existing driver has been discussed earlier[1] and the answer was
+> no. It really has been a long time.
 
-diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-index 79d4814d758d..c89df95aa6ca 100644
---- a/drivers/phy/tegra/xusb.c
-+++ b/drivers/phy/tegra/xusb.c
-@@ -548,16 +548,16 @@ static int tegra_xusb_port_init(struct tegra_xusb_p=
-ort *port,
-=20
- 	err =3D dev_set_name(&port->dev, "%s-%u", name, index);
- 	if (err < 0)
--		goto unregister;
-+		goto put_device;
-=20
- 	err =3D device_add(&port->dev);
- 	if (err < 0)
--		goto unregister;
-+		goto put_device;
-=20
- 	return 0;
-=20
--unregister:
--	device_unregister(&port->dev);
-+put_device:
-+	put_device(&port->dev);
- 	return err;
- }
-=20
---=20
-2.25.1
+Thanks for the link. I still agree to my opinion from back then :)
 
+
+--0aDRa5CnHJqKCDfW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmfFW4AACgkQFA3kzBSg
+KbaxAQ//cfKlnoUMtjtK9YaJubYHDqIemUJxUQqf0FEn+JQSFM7DQ5ojyLmCm/yi
+gQf/+MXQnWbeQdgCFLPM4QvvGBEK4xqI0o/eBajw09+jzSNBQWhjw6RbKX6O6haB
+PmDvXbOz8MiBGHPLF67V5xOMDRu+IDpOVmCBcIf66hknOdWJ5bdj5frK+FwcT3IT
+xOoxjrRRPR8GUu2Z+ZlAcINWiniH/+bIotIIfNE1AGPIWAxFeiolhTtjSw7crFaL
+1GYmD9Dli15mtEZdpkIXuCRVbJPabHN8GDClwxuDZKz4fI7N80QK4p2efnN0GvQy
+q29Tb2qB9fOne6fI1NVSgmLQd1+5G4KxLXk0z0LoSUZPI+fWrGnDudm/0WdlG5PL
+Fr4/OrZMHr+0QBK/n+ORz8pkc5jekj5FHn3jc6cDeF0csHZ3qR/QntDm/UgRAvKw
+RlGB8QOlBiNtCa70Mdm6ytd4olZbJm57lkylUY9jT9yLBrwfBQEjhJsaD+DIzDe4
+HkUREpfEE6XJi2gFm9hAqcVNfC2nPR+Fn7BvVeQ4suKQoTAFspyJisBm8wE6+NYo
+6F3JCP+ySrh4c+mWegDQBmJyd0I/6M4vMtIXG66q729nQ52DmQD9n3Xed8L0hkMQ
+snVCNLPmAtBxBwB4yMAf5tR7eSVFdQZpzV3xxDJ/54Tet8oJWSU=
+=5//C
+-----END PGP SIGNATURE-----
+
+--0aDRa5CnHJqKCDfW--
 
 
