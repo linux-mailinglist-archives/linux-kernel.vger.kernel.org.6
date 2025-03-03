@@ -1,140 +1,153 @@
-Return-Path: <linux-kernel+bounces-541099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E29ADA4B872
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:40:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 776D8A4B870
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:40:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C380C16AAA7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 07:40:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6353718917BA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 07:40:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D2B1EB5E9;
-	Mon,  3 Mar 2025 07:40:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DCAF1EB5F7;
+	Mon,  3 Mar 2025 07:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RBX5fAtO"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bZMpYrYq"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C0BA1EB192;
-	Mon,  3 Mar 2025 07:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E11121EB192
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 07:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740987641; cv=none; b=ahiNVTFV0lgSaeLc6HPoWTd8YuQYjjHahfmULAXdmV6Uz/dVeXi5G+Lpc86cQT8AULYcFeXIhR5RgOnurPq1GEFIaHdyLL969PWiPe8zzqdR7jkXmrgRtv+OTIkhBKjRxmFPFXGmsCfRyIb7H+qfIUuIkh8Jw4BleG/czX6vcTU=
+	t=1740987629; cv=none; b=IeM/8wcHCvdNaqWvXRDhLmg9LHyExyo/IpUy4xr9hH7mJxbUMQ6Iz2S3I2yIikCx08wTmC93FNVgb/LTvSiHOMXo+H9uBbqY0pqGRN2EnN8XZw/QnumnB9d1WljFt5/O+OUC6iSyWDYsJI3rxAVf5zs8feEScjxlveUsPLTarH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740987641; c=relaxed/simple;
-	bh=5+c/8dUp26rrw26JKWP2mXjUnDArpi3YPn5xzRkRfF4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QNIFSoiAq9D4wYdPSg7ZFAncTZhlxRn+o5injlLbalEsyeCMkkko9OFpCsiW1VhvwyO7Hg68BIUgUvZXOscmNgOGODJ8SWFahSrjEHbOmam1gqZmE5McT4F01fB7Jd6NJ2G75PP4jmzmqLvOIWWXyKjFUcztVL3BwwtOhglLtYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=RBX5fAtO; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 5237eP7M2626084
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 3 Mar 2025 01:40:25 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1740987625;
-	bh=GQ1xW2NPwpJqRZbwpFeIMuaFkeaa4B6mXxYKzB9+m6E=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=RBX5fAtOXtag7wzZX1/8h/+h6f5p88bKSHwRSH+/JDboHIdH52smlDBb44yPjGvQf
-	 1d8O++uq5j1eIMqsrVsrs2kgANSnAcU1hM3JNvZsyXCZVW6t+sGve7Alw1IBHuf6jF
-	 QezRUPyF0XU8eYWWRBscDC72kUm80xvHor/CPlS8=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 5237ePv9099697
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 3 Mar 2025 01:40:25 -0600
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 3
- Mar 2025 01:40:24 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 3 Mar 2025 01:40:24 -0600
-Received: from [10.24.69.250] (dhcp-10-24-69-250.dhcp.ti.com [10.24.69.250])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 5237eLjR131041;
-	Mon, 3 Mar 2025 01:40:22 -0600
-Message-ID: <3d01a502-47a6-467e-8743-392fde26e66e@ti.com>
-Date: Mon, 3 Mar 2025 13:10:21 +0530
+	s=arc-20240116; t=1740987629; c=relaxed/simple;
+	bh=IzeGHhNg9guS+bb6Xf/SXPSItFc/WQddL0VKXCsN+eU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b/qPClxHVnm3CqYqZSW8VvVu6rDzryysna0X/JGsnYSiPS/vbbEgYpFYH+8DZcnVtmSiiZ8Yg7Z/HblzBY4YHkJwx/nSZsVRzhJThmuY2ZU3SRAZAQPr9H8SjNW0Bf/vNKp4PqBvhD0O5jq11ZCGkH/EOzoE2jJbY57+Uut91XU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bZMpYrYq; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-abf52666efdso210998366b.1
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Mar 2025 23:40:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740987626; x=1741592426; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YKqqIyx+LvtkYRdOlEQ7AImwUDeztG0/r/38CZ0Vg4Q=;
+        b=bZMpYrYq8SmU+1WmTx/80imEvMa0yB74Vr6xlejw6sFZAlnT1Bl/W4GCPt63wwLOO1
+         +5UJD9ENZawuRtTCHXsNJi6TL3GHu4uy71jMDTqN2S8BIc1TEfX5KVQ7+qKEiij44G3b
+         osYyOTUC5h18vArHUU1ehxOIX6RYAw/hUIbFUCVzLi+c7L5tHmmq1Cyls2nczEyBcbqm
+         sBrLx88Yf0w8hVri1pLA+duitT81weW+fAQBmgXGL+i7/m8fRHYEp56nY0CZZub39JXc
+         r/Bbi4PfiV4YpxN4jFHBTKx/UrWqF8gMeLo2P0FwwW4Y5f6OfbsnLr1rn+/FurtpbDQj
+         d5Ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740987626; x=1741592426;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YKqqIyx+LvtkYRdOlEQ7AImwUDeztG0/r/38CZ0Vg4Q=;
+        b=VlxZTRYoIxiJASoiLjAE52M4TYUStdo4uFvHe+yXcRiZ4Ry+tQoaLi89QU8wMPBFSb
+         PoounXLIohy+tnbb9tYNnVkWuCsMDwpUcuUh+9IFlivUgZ1pfUaVdXj+yZCgMilv/CaC
+         SM5qa0PhT/j/fWzYQfaE2ZE1Mg4H+oCtPy+2o05sDrtVstC/N2O8tmF58qC+iyCRqodU
+         PCKorfYq+IrM2q3pcLrYgKlU/BjR1I3OdCxFhvAm67mDVyb+mnQJYPoY8GwiSMv0cBKc
+         8wkAvHrK5WkbRKFDZgpgP2T7WrtkGSwkLvXgdlyfu77C1+CfVs/VgMYamq2yVlTfxKDb
+         Q5JQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX8sIu98snGedlNzg7LZPwyZLP4nkHmKSrQlwsVJkSjQ/G/0A5yIF23I4tNS+6BO/PgGZqdunGmyzdXzMs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKTW7gLlyz1DVK0J3CKS8X55rY0IvctCvn4l021BBkMFSZYuSi
+	42eG0wTNCL1qJUrIAzujiuS05q5BeI3U3hDOpHoRfTMYXLMN9vbZp5PAfEX5Hbg=
+X-Gm-Gg: ASbGncvLnaVoX82j1b9ktTKAw6GcM/kLu9XmuO808wrPeAvMJcWAsFCMgIwaLmuXt/h
+	hjyux4aiRCE3EXiA00ZmI2xZj2kj7EgXQ6YzBaJmFYgQsdiV5xrpTwZp77Bj0MHNkj2qv0z2a2O
+	p5btfmAqNaNezKlUm7HumopV4tsvbwkH9/99HaMj0aPx2CIsSCunGl8tEeMZUw2GwE+VMznjran
+	6GPG9GzOJHxJsTJ5n/GHAyHnYo49zxnbq5HV6GZO6wONOsnwCDNsPlxhxf+6jX1Jn0x9PT5W0xV
+	HAx7hgCCqovDRo2YkaUXwNnK61nd6Ktd3dX8jyFrosq+GeUw7Q==
+X-Google-Smtp-Source: AGHT+IENHB++EW6cxUTVldIAQkOiV9MmVqFnw5XQy2hy0OzVOdph9rtPPbQGZ/IPOrVxn3HuLojH1Q==
+X-Received: by 2002:a17:907:7f27:b0:abf:7406:d375 with SMTP id a640c23a62f3a-abf7406d6aamr378845466b.0.1740987626156;
+        Sun, 02 Mar 2025 23:40:26 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abf0c75bfe2sm758421366b.151.2025.03.02.23.40.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Mar 2025 23:40:25 -0800 (PST)
+Date: Mon, 3 Mar 2025 10:40:22 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+Cc: Markus Elfring <Markus.Elfring@web.de>, kernel-janitors@vger.kernel.org,
+	netdev@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
+	Ariel Elior <aelior@marvell.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Manish Chopra <manishc@marvell.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Ram Amrani <Ram.Amrani@caviumnetworks.com>,
+	Yuval Mintz <Yuval.Mintz@caviumnetworks.com>, cocci@inria.fr,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RESEND] qed: Move a variable assignment behind a null
+ pointer check in two functions
+Message-ID: <325e67fc-48df-4571-a87e-5660a3d3968f@stanley.mountain>
+References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
+ <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
+ <f7967bee-f3f1-54c4-7352-40c39dd7fead@web.de>
+ <6958583a-77c0-41ca-8f80-7ff647b385bb@web.de>
+ <Z8VKaGm1YqkxK4GM@mev-dev.igk.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] arm64: dts: ti: k3-am62a-phycore-som: Add boot phase
- tags
-To: Wadim Egorov <w.egorov@phytec.de>, <nm@ti.com>, <kristo@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <upstream@lists.phytec.de>
-References: <20250228101817.865811-1-w.egorov@phytec.de>
- <20250228101817.865811-2-w.egorov@phytec.de>
-Content-Language: en-US
-From: Vignesh Raghavendra <vigneshr@ti.com>
-In-Reply-To: <20250228101817.865811-2-w.egorov@phytec.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8VKaGm1YqkxK4GM@mev-dev.igk.intel.com>
 
-Hi Wadim
+On Mon, Mar 03, 2025 at 07:21:28AM +0100, Michal Swiatkowski wrote:
+> > @@ -523,7 +524,7 @@ qed_ll2_rxq_handle_completion(struct qed_hwfn *p_hwfn,
+> >  static int qed_ll2_rxq_completion(struct qed_hwfn *p_hwfn, void *cookie)
+> >  {
+> >  	struct qed_ll2_info *p_ll2_conn = (struct qed_ll2_info *)cookie;
+> > -	struct qed_ll2_rx_queue *p_rx = &p_ll2_conn->rx_queue;
+> > +	struct qed_ll2_rx_queue *p_rx;
+> >  	union core_rx_cqe_union *cqe = NULL;
+> >  	u16 cq_new_idx = 0, cq_old_idx = 0;
+> >  	unsigned long flags = 0;
+> > @@ -532,6 +533,7 @@ static int qed_ll2_rxq_completion(struct qed_hwfn *p_hwfn, void *cookie)
+> >  	if (!p_ll2_conn)
+> >  		return rc;
+> > 
+> > +	p_rx = &p_ll2_conn->rx_queue;
+> >  	spin_lock_irqsave(&p_rx->lock, flags);
+> > 
+> >  	if (!QED_LL2_RX_REGISTERED(p_ll2_conn)) {
+> 
+> For future submission plase specify the target kernel
+> [PATCH net] for fixes, [PATCH net-next] for other.
+> 
+> Looking at the code callback is always set together with cookie (which
+> is pointing to p_ll2_conn. I am not sure if this is fixing real issue,
+> but maybe there are a cases when callback is still connected and cookie
+> is NULL.
 
-[...]
+The assignment:
 
-On 28/02/25 15:48, Wadim Egorov wrote:
-> @@ -168,6 +174,7 @@ &cpsw3g {
->  	status = "okay";
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&main_rgmii1_pins_default>;
-> +	bootph-all;
+	p_rx = &p_ll2_conn->rx_queue;
 
-One of the child nodes have bootph-all, so drop this from the parent.
+does not dereference "p_ll2_conn".  It just does pointer math.  So the
+original code works fine.
 
-BTW don't you need main_pktdma to have bootph-all to go along this for
-ETH boot support?
+The question is, did the original author write it that way intentionally?
+I've had this conversation with people before and they eventually are
+convinced that "Okay, the code works, but only by sheer chance."  In my
+experiences, most of the time, the authors of this type of code are so
+used to weirdnesses of C that they write code like this without even
+thinking about it.  It never even occurs to them how it could be
+confusing.
 
->  };
->  
->  &cpsw_port1 {
-> @@ -182,6 +189,7 @@ &cpsw3g_mdio {
->  	cpsw3g_phy1: ethernet-phy@1 {
->  		compatible = "ethernet-phy-id2000.a231", "ethernet-phy-ieee802.3-c22";
->  		reg = <1>;
-> +		bootph-all;
->  		ti,clk-output-sel = <DP83867_CLK_O_SEL_OFF>;
->  		ti,rx-internal-delay = <DP83867_RGMIIDCTL_2_00_NS>;
->  		ti,fifo-depth = <DP83867_PHYCR_FIFO_DEPTH_4_B_NIB>;
-> @@ -196,6 +204,7 @@ &main_i2c0 {
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&main_i2c0_pins_default>;
->  	clock-frequency = <400000>;
-> +	bootph-all;
->  	status = "okay";
->  
->  	pmic@30 {
-> @@ -318,6 +327,7 @@ serial_flash: flash@0 {
->  		cdns,tchsh-ns = <60>;
->  		cdns,tslch-ns = <60>;
->  		cdns,read-delay = <0>;
-> +		bootph-all;
->  	};
->  };
->  
-> @@ -326,5 +336,6 @@ &sdhci0 {
->  	pinctrl-0 = <&main_mmc0_pins_default>;
->  	disable-wp;
->  	non-removable;
-> +	bootph-all;
->  	status = "okay";
->  };
-> -- 2.34.1
+This commit message is misleading and there should not be a Fixes tag.
 
--- 
-Regards
-Vignesh
-https://ti.com/opensource
+regards,
+dan carpenter
+
 
 
