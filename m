@@ -1,379 +1,148 @@
-Return-Path: <linux-kernel+bounces-541617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13C68A4BF44
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:50:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A56EA4BF47
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:50:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C62A3A6564
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:46:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 056DF3A6A69
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:47:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9485520B7E6;
-	Mon,  3 Mar 2025 11:46:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5828D20B80A;
+	Mon,  3 Mar 2025 11:47:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="UjlK5XBF"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="oD21+jlc"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9105B20B217
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 11:46:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 633621F3BBD
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 11:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741002412; cv=none; b=KTZfWBpcYXsXKoEBOWc+m//v/4bK0PkPgnFqEftSim41FuBpn0zqeS/kFrkIwRjOTFeGv9a2R3tQxz8ZYtlEG2AvseOnnbzEOa5XFnb6t3sy6i9yrpMTo9m8JfDwUWMAqmNAF0Nh+Yk7o/V8Jqk0XIujCkgqdKpgrUFng7kOSz0=
+	t=1741002463; cv=none; b=Aj2glmbtK0oU+ZGws9HQzbzLyW6TX60qeGIgF+5pYQgh9T83auu7V7WKjs5GH8LcU/jESXlPQ/Qgb4IytGBfyeAcGMRWJksHtClbAwsAPvmMKFjzkhDWOWfpyTX/2464ABHs4DdsCj0EMgksScadvZ/pZFnlTAw6ncyI6Tue5/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741002412; c=relaxed/simple;
-	bh=iG7zva73IVuhaA4CJvZSP388loCNjve/5w5qfJZaMvE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aC04aA0ljhwpodpbKNDSSAXaGcMKWMhiIZGroBCakkXNOJseTgIBgGbfV1LawMkmuKw1o9Ds9uzOKJ3kZcZWmG7gE0s+ygjblbMGkQ7vmbPBvt7kiy148g84B9LSQtPmHg9zxHq99blqwkt1+RJOCT/G7Khvatx/6q1GjvWfMjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=UjlK5XBF; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0C00040E0214;
-	Mon,  3 Mar 2025 11:46:48 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id sY5HXBn-ZGIq; Mon,  3 Mar 2025 11:46:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1741002401; bh=lr4pcUvK1sXL+GqKzwaVriTNa+Bb+3A/phlFBzv/G+4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UjlK5XBF9v2c5iDW/9VnZni1ye/acKvQGoCAifgYZldK1P0Des3K+qzAc6QHDI4LK
-	 i1pFLLqtGr//wSL0s82NoF/fq77KLHiuhy0mYhIVrlq5LU50Ezn5NhSYC93b9TH5qg
-	 BpSG+/819cDHT525riD2WH2hRo5V6ECLqsEK44zWvYyHKZLiZYq/DS0iKiQbqTUIE+
-	 INbkjBql2HMcDh0E3CBKUgqEUr4cTsmdDGGLQk6rqmGFMr/FyzJ8jJ3JD1jsKeGT26
-	 eTtyr3D+yvJ/Wh4TE7Jp5TuvB198B17CLCPhIhzZwbMMDhskZQAzODuv9KxYLQCVvP
-	 4pgKploa4gMryO+eY0soGS8azxbm0S6E+6dnDPCo6aekM4T1n8s37a8W8TWdoYQuFu
-	 Qste/fuA+WQkiMCK8HprDFClrhRZFL/DAv8P3dmRecsfG85tai4Wc888LtS8fcb/xG
-	 xElHKPKrvc+k9ojlTingEjCQvJBQpn8WXQHCRSec36o2DRWCf8pURUpk/nrKcTRpUJ
-	 KrCorl8ujHrlN/D130SXKCRwCTmzqx31+yIsCgacuXO7udwjZVCL4A/u9mhQLG9NVD
-	 fSEKxOktE9VtnVfHuPWA4tINofflzIy7TZi8w/tfPQtMEcvlrZXBVKVZf+CgBKbdje
-	 ISx5l+IxUMX+HD9s298LLho4=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 67CF140E01D1;
-	Mon,  3 Mar 2025 11:46:24 +0000 (UTC)
-Date: Mon, 3 Mar 2025 12:46:18 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Rik van Riel <riel@surriel.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org,
-	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
-	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
-	linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
-	jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
-	Manali.Shukla@amd.com, mingo@kernel.org
-Subject: Re: [PATCH v14 11/13] x86/mm: do targeted broadcast flushing from
- tlbbatch code
-Message-ID: <20250303114618.GBZ8WWihMDjf-oy8P0@fat_crate.local>
-References: <20250226030129.530345-1-riel@surriel.com>
- <20250226030129.530345-12-riel@surriel.com>
+	s=arc-20240116; t=1741002463; c=relaxed/simple;
+	bh=MSkPPAJbz5sNa+zrMs9bZ7T61hqfW3CG2VTMkft4RA8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Runb3PJwsV+R2598ka1PY0/WMUj5FRljfQewjPOWr0xu+dDZk0pd2Opjm90f0tCWfArjYxXlWrzt2yPBjH5zf9l+boYMDJ+5YzyjKEf2DFFCYQ9GztcCmtWMmY3uGqhVenlD87O0GG3dyJon8g8C60z2YMdYwnSohchsATVhnaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=oD21+jlc; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43bc6a6aaf7so3885425e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 03:47:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1741002459; x=1741607259; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pnRzrlaHobBevveqGGX2+rs0jHyPzhsNBLXm4oRn0jQ=;
+        b=oD21+jlcwmLPSyKeif887lRSZyyFWNCilhZbWoLgHPjsoNH8PqIroWygk48zVBvVf6
+         1byNw76eIQ2Mtzr7Rew61xBjPGzjGOhUikLvC75C5cn9CBJddW633t/B0hQmh0QEGJv4
+         B4kXvYwuCVJynSlkzSZdWujVdatjJ4r4KuVRRWjZS9sbhgrL4oDq1TJm5L+sMpG2LTYg
+         CpnNdFQzpb517YHzK+vjQ83er4vU0+M8TPIyummcfVCVVcH6FEJgFGwNV2R98hpU9s6Q
+         WGhUi6WdfDmllTjsOBSm1IRx0VwgFOry1zwMxH8g6mnNS9d7y2bmgSG5g6x+3oqhLwAz
+         ucJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741002459; x=1741607259;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pnRzrlaHobBevveqGGX2+rs0jHyPzhsNBLXm4oRn0jQ=;
+        b=ZDOEdQdTJq97xs2fMHjmJS3ndymVNmGBC6Cd5DbdwIqY6YZVjdSKi65Fh663GL2pdt
+         1RIIhUjQEv8TQfi5LDlV4Lfsf5kQ7QBs/W5naIV2emTk01sRhH4wuZ38pV3zVvtSQiBo
+         D2G4hVt2wH4OFxZYpa7PIt0OODJptNT3DrxFuxXxvxdkkBkCAtGd4mBnbPsqQIaJdCdx
+         H8lvyoaGnuT38pXSPXYrydcvMJeI6LGDzKokWqFF4rkpSzURzryGIIACTb2W7A58Nxkd
+         vswuVPxY58FhV9ylDAxlHqnxCc5rBpL5Ne2nUWVGwHBIW5uNg03Ia0fFAEabWN5uqefy
+         K8qg==
+X-Forwarded-Encrypted: i=1; AJvYcCWTZeIJgbApNCDKBtBl1cVcSw3AEzjdLqX3tuED8b/9OFGs/oaLHv/4UNIjdnQV6htBHEP9RMCmzs9asj0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzf0n3KDlb697pYHsyo6Fk1jylkB8D30GlpeWu7uEv+A5rNZONM
+	/2v4KbhdlGTBn67zvvOPhOfwJyJNj4S9dtUzmEu+q13QSVW7HiNREKDzOqiCFAE=
+X-Gm-Gg: ASbGncuDsG++msdS6ozM2qNa6VKJVXvX6oSDjC3Pm/ZXWczvwyAeQdF9EoLGH87j1uK
+	PJi+G3Rkd1tTGmLQnj3ZhK/cBPplyr82b2aEw4sBzp5qKC5d3gLSFaBvkZmgslibon+rnL/n1p2
+	9IEELHH1EsTZQj6C3Bovsio/9oaeN/40bVN1Jo9py8hIZKLi85n7Q3dWkYnDi11ZC30eVRG00i7
+	x9JKf+EkAS2T19eOzpPTEd+0DT70s4jkAajtNAigIA6CQS+mq0MVAm0QDgIquvd6Bh05XS9/ovf
+	mMmAq60nWg4Az+HrO7XRJuHnbrB76B8fFzkJJPIUsPS4tOKRTObJGLcm6MtmDbdKy9CiMaDMWOR
+	6iE1hQbnEP3vOgrdPlVJIn3uRSw==
+X-Google-Smtp-Source: AGHT+IEPelpzjBXle1ODTsLIRQuhO2S9yRtlFcuYLUIVHvjJ1DhOW+bnXxMRk/r9ecJhRnBZwEE36g==
+X-Received: by 2002:a05:6000:401f:b0:38f:2ddd:a1bb with SMTP id ffacd0b85a97d-390ec7ca28cmr11111072f8f.8.1741002458633;
+        Mon, 03 Mar 2025 03:47:38 -0800 (PST)
+Received: from localhost (amontpellier-556-1-148-206.w109-210.abo.wanadoo.fr. [109.210.4.206])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e485d773sm14145068f8f.81.2025.03.03.03.47.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 03:47:38 -0800 (PST)
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Cosmin Tanislav <cosmin.tanislav@analog.com>,
+	Dumitru Ceclan <mitrutzceclan@gmail.com>,
+	Guillaume Ranquet <granquet@baylibre.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Michael Walle <michael@walle.cc>,
+	Nuno Sa <nuno.sa@analog.com>,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/8] iio: adc: ad{4130,7124,7173}: A few fixes and ad7124 calibration
+Date: Mon,  3 Mar 2025 12:46:58 +0100
+Message-ID: <20250303114659.1672695-10-u.kleine-koenig@baylibre.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250226030129.530345-12-riel@surriel.com>
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1626; i=u.kleine-koenig@baylibre.com; h=from:subject; bh=MSkPPAJbz5sNa+zrMs9bZ7T61hqfW3CG2VTMkft4RA8=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBnxZazKHwSf+ZqQIxBmP/3eFs2LnAeZXIeXldZj JXjhaC9zLmJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZ8WWswAKCRCPgPtYfRL+ TgrwCACGgKQbCedEbUOvstBuXraA6Xx0XQxYnTmj0d2elbQr/e47+ZDrQBWdFRrSUmnRzbcFKNa xgHkKiN91Hjusg86MX58tkcq1Of90geQc/1hzC1CNVy7uWdtQFSDxf60sWiBzq4XjLLtfJ3d6Fy P1NScMBAb/gpeZGMf6mAgIzlzRpIAS++4+0CcsKogjW5pD6+skvNWER3PjEyrojyIiTGEwMeHD3 WXpnB4+j5W1Ry0sMKSIWT2NWK24fBzn/K3i5bMrJlGGwfMyk+jSsnXY7Kb0Fb7HJRQpuwu8h5Nd ai1aURJMDJppAihRB9kv5UMsO8OmidANxImwCvNXfAd4mVXI
+X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 25, 2025 at 10:00:46PM -0500, Rik van Riel wrote:
-> +static inline bool cpu_need_tlbsync(void)
-> +{
-> +	return this_cpu_read(cpu_tlbstate.need_tlbsync);
-> +}
-> +
-> +static inline void cpu_write_tlbsync(bool state)
+Hello,
 
-That thing feels better like "cpu_set_tlbsync" in the code...
+v3 of this series can be found at
+https://lore.kernel.org/linux-iio/cover.1740405546.git.u.kleine-koenig@baylibre.com .
 
-> +{
-> +	this_cpu_write(cpu_tlbstate.need_tlbsync, state);
-> +}
->  #else
->  static inline u16 mm_global_asid(struct mm_struct *mm)
->  {
+The changes here are:
 
-...
+ - rebase to current iio/togreg (which required a few trivial adaptions
+   due to changes around
+   iio_device_claim_direct/iio_device_claim_direct_mode()
 
-> +static inline void tlbsync(void)
-> +{
-> +	if (!cpu_need_tlbsync())
-> +		return;
-> +	__tlbsync();
-> +	cpu_write_tlbsync(false);
-> +}
+ - patch #5 (ad4130: Adapt internal names to match official filter_type
+   ABI) is new.
 
-Easier to parse visually:
+ - refactor ad7124_write_syscalib() as suggested by Jonathan to simplify
+   code flow.
 
-static inline void tlbsync(void)
-{
-        if (cpu_need_tlbsync()) {
-                __tlbsync();
-                cpu_write_tlbsync(false);
-        }
-}
+ - Rework the two ad7124 calibration patches to grab direct mode.
+   (There is another patch series of mine that fixes two other drivers
+   in this regard. Git handles applying this series just fine on top of
+   this.)
 
-Final:
+Best regards
+Uwe
 
-From: Rik van Riel <riel@surriel.com>
-Date: Tue, 25 Feb 2025 22:00:46 -0500
-Subject: [PATCH] x86/mm: Do targeted broadcast flushing from tlbbatch code
+Uwe Kleine-König (8):
+  iio: adc: ad_sigma_delta: Disable channel after calibration
+  iio: adc: ad4130: Fix comparison of channel setups
+  iio: adc: ad7124: Fix comparison of channel configs
+  iio: adc: ad7173: Fix comparison of channel configs
+  iio: adc: ad4130: Adapt internal names to match official filter_type
+    ABI
+  iio: adc: ad_sigma_delta: Add error checking for
+    ad_sigma_delta_set_channel()
+  iio: adc: ad7124: Implement internal calibration at probe time
+  iio: adc: ad7124: Implement system calibration
 
-Instead of doing a system-wide TLB flush from arch_tlbbatch_flush(), queue up
-asynchronous, targeted flushes from arch_tlbbatch_add_pending().
+ drivers/iio/adc/ad4130.c         | 121 +++++++-----
+ drivers/iio/adc/ad7124.c         | 315 ++++++++++++++++++++++++++++---
+ drivers/iio/adc/ad7173.c         |  25 ++-
+ drivers/iio/adc/ad_sigma_delta.c |   6 +-
+ 4 files changed, 397 insertions(+), 70 deletions(-)
 
-This also allows to avoid adding the CPUs of processes using broadcast
-flushing to the batch->cpumask, and will hopefully further reduce TLB flushing
-from the reclaim and compaction paths.
 
-  [ bp:
-   - Massage
-   - :%s/\<static_cpu_has\>/cpu_feature_enabled/cgi ]
-
-Signed-off-by: Rik van Riel <riel@surriel.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Link: https://lore.kernel.org/r/20250226030129.530345-12-riel@surriel.com
----
- arch/x86/include/asm/tlb.h      | 12 ++---
- arch/x86/include/asm/tlbflush.h | 27 +++++++----
- arch/x86/mm/tlb.c               | 79 +++++++++++++++++++++++++++++++--
- 3 files changed, 100 insertions(+), 18 deletions(-)
-
-diff --git a/arch/x86/include/asm/tlb.h b/arch/x86/include/asm/tlb.h
-index 04f2c6f4cee3..b5c2005725cf 100644
---- a/arch/x86/include/asm/tlb.h
-+++ b/arch/x86/include/asm/tlb.h
-@@ -102,16 +102,16 @@ static inline void __tlbsync(void) { }
- #define INVLPGB_FINAL_ONLY		BIT(4)
- #define INVLPGB_INCLUDE_NESTED		BIT(5)
- 
--static inline void invlpgb_flush_user_nr_nosync(unsigned long pcid,
--						unsigned long addr,
--						u16 nr,
--						bool pmd_stride)
-+static inline void __invlpgb_flush_user_nr_nosync(unsigned long pcid,
-+						  unsigned long addr,
-+						  u16 nr,
-+						  bool pmd_stride)
- {
- 	__invlpgb(0, pcid, addr, nr, pmd_stride, INVLPGB_PCID | INVLPGB_VA);
- }
- 
- /* Flush all mappings for a given PCID, not including globals. */
--static inline void invlpgb_flush_single_pcid_nosync(unsigned long pcid)
-+static inline void __invlpgb_flush_single_pcid_nosync(unsigned long pcid)
- {
- 	__invlpgb(0, pcid, 0, 1, 0, INVLPGB_PCID);
- }
-@@ -131,7 +131,7 @@ static inline void invlpgb_flush_all(void)
- }
- 
- /* Flush addr, including globals, for all PCIDs. */
--static inline void invlpgb_flush_addr_nosync(unsigned long addr, u16 nr)
-+static inline void __invlpgb_flush_addr_nosync(unsigned long addr, u16 nr)
- {
- 	__invlpgb(0, 0, addr, nr, 0, INVLPGB_INCLUDE_GLOBAL);
- }
-diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
-index 8c21030269ff..cbdb86d58301 100644
---- a/arch/x86/include/asm/tlbflush.h
-+++ b/arch/x86/include/asm/tlbflush.h
-@@ -105,6 +105,9 @@ struct tlb_state {
- 	 * need to be invalidated.
- 	 */
- 	bool invalidate_other;
-+#ifdef CONFIG_BROADCAST_TLB_FLUSH
-+	bool need_tlbsync;
-+#endif
- 
- #ifdef CONFIG_ADDRESS_MASKING
- 	/*
-@@ -292,11 +295,23 @@ static inline bool mm_in_asid_transition(struct mm_struct *mm)
- 
- 	return mm && READ_ONCE(mm->context.asid_transition);
- }
-+
-+static inline bool cpu_need_tlbsync(void)
-+{
-+	return this_cpu_read(cpu_tlbstate.need_tlbsync);
-+}
-+
-+static inline void cpu_set_tlbsync(bool state)
-+{
-+	this_cpu_write(cpu_tlbstate.need_tlbsync, state);
-+}
- #else
- static inline u16 mm_global_asid(struct mm_struct *mm) { return 0; }
- static inline void mm_init_global_asid(struct mm_struct *mm) { }
- static inline void mm_assign_global_asid(struct mm_struct *mm, u16 asid) { }
- static inline bool mm_in_asid_transition(struct mm_struct *mm) { return false; }
-+static inline bool cpu_need_tlbsync(void) { return false; }
-+static inline void cpu_set_tlbsync(bool state) { }
- #endif /* CONFIG_BROADCAST_TLB_FLUSH */
- 
- #ifdef CONFIG_PARAVIRT
-@@ -346,21 +361,15 @@ static inline u64 inc_mm_tlb_gen(struct mm_struct *mm)
- 	return atomic64_inc_return(&mm->context.tlb_gen);
- }
- 
--static inline void arch_tlbbatch_add_pending(struct arch_tlbflush_unmap_batch *batch,
--					     struct mm_struct *mm,
--					     unsigned long uaddr)
--{
--	inc_mm_tlb_gen(mm);
--	cpumask_or(&batch->cpumask, &batch->cpumask, mm_cpumask(mm));
--	mmu_notifier_arch_invalidate_secondary_tlbs(mm, 0, -1UL);
--}
--
- static inline void arch_flush_tlb_batched_pending(struct mm_struct *mm)
- {
- 	flush_tlb_mm(mm);
- }
- 
- extern void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch);
-+extern void arch_tlbbatch_add_pending(struct arch_tlbflush_unmap_batch *batch,
-+					     struct mm_struct *mm,
-+					     unsigned long uaddr);
- 
- static inline bool pte_flags_need_flush(unsigned long oldflags,
- 					unsigned long newflags,
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 0efd99053c09..83ba6876adbf 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -492,6 +492,37 @@ static void finish_asid_transition(struct flush_tlb_info *info)
- 	mm_clear_asid_transition(mm);
- }
- 
-+static inline void tlbsync(void)
-+{
-+	if (cpu_need_tlbsync()) {
-+		__tlbsync();
-+		cpu_set_tlbsync(false);
-+	}
-+}
-+
-+static inline void invlpgb_flush_user_nr_nosync(unsigned long pcid,
-+						unsigned long addr,
-+						u16 nr, bool pmd_stride)
-+{
-+	__invlpgb_flush_user_nr_nosync(pcid, addr, nr, pmd_stride);
-+	if (!cpu_need_tlbsync())
-+		cpu_set_tlbsync(true);
-+}
-+
-+static inline void invlpgb_flush_single_pcid_nosync(unsigned long pcid)
-+{
-+	__invlpgb_flush_single_pcid_nosync(pcid);
-+	if (!cpu_need_tlbsync())
-+		cpu_set_tlbsync(true);
-+}
-+
-+static inline void invlpgb_flush_addr_nosync(unsigned long addr, u16 nr)
-+{
-+	__invlpgb_flush_addr_nosync(addr, nr);
-+	if (!cpu_need_tlbsync())
-+		cpu_set_tlbsync(true);
-+}
-+
- static void broadcast_tlb_flush(struct flush_tlb_info *info)
- {
- 	bool pmd = info->stride_shift == PMD_SHIFT;
-@@ -790,6 +821,8 @@ void switch_mm_irqs_off(struct mm_struct *unused, struct mm_struct *next,
- 	if (IS_ENABLED(CONFIG_PROVE_LOCKING))
- 		WARN_ON_ONCE(!irqs_disabled());
- 
-+	tlbsync();
-+
- 	/*
- 	 * Verify that CR3 is what we think it is.  This will catch
- 	 * hypothetical buggy code that directly switches to swapper_pg_dir
-@@ -966,6 +999,8 @@ void switch_mm_irqs_off(struct mm_struct *unused, struct mm_struct *next,
-  */
- void enter_lazy_tlb(struct mm_struct *mm, struct task_struct *tsk)
- {
-+	tlbsync();
-+
- 	if (this_cpu_read(cpu_tlbstate.loaded_mm) == &init_mm)
- 		return;
- 
-@@ -1633,9 +1668,7 @@ void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch)
- 	 * a local TLB flush is needed. Optimize this use-case by calling
- 	 * flush_tlb_func_local() directly in this case.
- 	 */
--	if (cpu_feature_enabled(X86_FEATURE_INVLPGB)) {
--		invlpgb_flush_all_nonglobals();
--	} else if (cpumask_any_but(&batch->cpumask, cpu) < nr_cpu_ids) {
-+	if (cpumask_any_but(&batch->cpumask, cpu) < nr_cpu_ids) {
- 		flush_tlb_multi(&batch->cpumask, info);
- 	} else if (cpumask_test_cpu(cpu, &batch->cpumask)) {
- 		lockdep_assert_irqs_enabled();
-@@ -1644,12 +1677,52 @@ void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch)
- 		local_irq_enable();
- 	}
- 
-+	/*
-+	 * If (asynchronous) INVLPGB flushes were issued, wait for them here.
-+	 * The cpumask above contains only CPUs that were running tasks
-+	 * not using broadcast TLB flushing.
-+	 */
-+	tlbsync();
-+
- 	cpumask_clear(&batch->cpumask);
- 
- 	put_flush_tlb_info();
- 	put_cpu();
- }
- 
-+void arch_tlbbatch_add_pending(struct arch_tlbflush_unmap_batch *batch,
-+					     struct mm_struct *mm,
-+					     unsigned long uaddr)
-+{
-+	u16 asid = mm_global_asid(mm);
-+
-+	if (asid) {
-+		invlpgb_flush_user_nr_nosync(kern_pcid(asid), uaddr, 1, false);
-+		/* Do any CPUs supporting INVLPGB need PTI? */
-+		if (cpu_feature_enabled(X86_FEATURE_PTI))
-+			invlpgb_flush_user_nr_nosync(user_pcid(asid), uaddr, 1, false);
-+
-+		/*
-+		 * Some CPUs might still be using a local ASID for this
-+		 * process, and require IPIs, while others are using the
-+		 * global ASID.
-+		 *
-+		 * In this corner case, both broadcast TLB invalidation
-+		 * and IPIs need to be sent. The IPIs will help
-+		 * stragglers transition to the broadcast ASID.
-+		 */
-+		if (mm_in_asid_transition(mm))
-+			asid = 0;
-+	}
-+
-+	if (!asid) {
-+		inc_mm_tlb_gen(mm);
-+		cpumask_or(&batch->cpumask, &batch->cpumask, mm_cpumask(mm));
-+	}
-+
-+	mmu_notifier_arch_invalidate_secondary_tlbs(mm, 0, -1UL);
-+}
-+
- /*
-  * Blindly accessing user memory from NMI context can be dangerous
-  * if we're in the middle of switching the current user task or
+base-commit: 9cbc49c91d2f50f47f52c458d59253c21d883560
 -- 
-2.43.0
+2.47.1
 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
