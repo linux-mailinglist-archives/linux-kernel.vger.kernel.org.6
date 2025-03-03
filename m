@@ -1,146 +1,133 @@
-Return-Path: <linux-kernel+bounces-542595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2121CA4CB6D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:55:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 395D5A4CB6F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:56:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5C1716D3A6
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:55:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DAE3188930D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:56:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBE7922F16E;
-	Mon,  3 Mar 2025 18:55:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E65522E405;
+	Mon,  3 Mar 2025 18:56:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vMlwRxtx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="M1LVSZkD"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1272C214A64;
-	Mon,  3 Mar 2025 18:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6CFE1E285A
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 18:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741028123; cv=none; b=Wi8E3G600CrdAVxzGVKgr6HpC8r2fplywOOVkFEG8jm7BEV8aq0YVOZHsB27ZM8Uk1OylcpEEaTeffvZMvf+b98zi7AFUw1SvSFxOS0eulMsf0ySURC2fh6S8u9RwVf1W7p1maOK6cGUuc1GcMZsq40MKL0IEs/9Y0ydPNgC5yo=
+	t=1741028167; cv=none; b=gFD3259/t/v2bbofzMGgE8FZ3bh7suyF4Um2iCG6I2e0rRabFHi66MkwonaNJEk1njlhpGJoP2AZdWRXZL3SInrQNiH+5M45XAu0YCDWYn7ECNgYl/ArXAm7skJDLiYrKSwQT5tLiTmNYCCjjwxPSkwe6KgbnUUo8Tw4rxjeNG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741028123; c=relaxed/simple;
-	bh=OMpsrjWjDmvSug1NBsbafCCMDIV5l3SQC3Fgc3Y2F+Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VkhYUU7C/qkqApt3EnWwh3nh7eFAcgS8UV4o9F8uo6ZBnX59ujNLsqRuxfcAIREf2lcHcvG3d5Z5b22K7a/+mbrpMqcBe+QmHnTPNzg1wC1uXi/ks4V3XC8mMydwIqgPg37Dbz/vBAxJ4Xlu6rA6raLR5iPsGa6exMgXi3RtXII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vMlwRxtx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AB73C4CED6;
-	Mon,  3 Mar 2025 18:55:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741028122;
-	bh=OMpsrjWjDmvSug1NBsbafCCMDIV5l3SQC3Fgc3Y2F+Q=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=vMlwRxtxV7o4Dp88rLSQxANUp2Oxj22jKGlRYJWhjyMjDDhkqboLkxejBEsiBRi13
-	 sxAVzMslqYio5xzBFgkOj/pfnCy1iQZGjTa6HWUBw+pIMUl+paU40QuXG4UC55IzKI
-	 i91JXmNr9T55mYae0tiu6svmUC7DtjbKlPEX5fupK9Pdx882WtAfjHg0ChNL0gBU8e
-	 ktGe3PlsElfndhrWxC1S8kKrBvFqqJzwTMESIDXg9b/rrwlSm77SwB4SUiM+dyNjGc
-	 UJ1Y7xvR++XSLfaXrB/6WFqQiEBVgJj8rai5Ju9IAT79glm/x7vvqpNvZMMs8DnnoS
-	 TT9HHfbhflv/A==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 0866BCE0444; Mon,  3 Mar 2025 10:55:22 -0800 (PST)
-Date: Mon, 3 Mar 2025 10:55:22 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Uladzislau Rezki <urezki@gmail.com>,
-	RCU <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Cheung Wall <zzqq0103.hey@gmail.com>,
-	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-Subject: Re: [PATCH v4 3/3] rcu: Use _full() API to debug synchronize_rcu()
-Message-ID: <667b6907-7ac7-4217-a3e4-0ad299267754@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <Z8H_aYBUHD2sS2Ir@pc636>
- <73724164-71f4-4671-b612-eb82a784da58@paulmck-laptop>
- <Z8IKs-I-YsOoS4uw@pc636>
- <cdab57a4-8d58-41d9-a9b5-71d425a7375e@paulmck-laptop>
- <f6803081-8243-4723-a3ba-00db351aafff@paulmck-laptop>
- <20250303001507.GA3994772@joelnvbox>
- <20250303001710.GA3997787@joelnvbox>
- <20250303170040.GA31126@joelnvbox>
- <Z8Xh0pP4xaFm0nEV@tardis>
- <5f404973-380e-4626-a2ef-8c5c44d56b83@nvidia.com>
+	s=arc-20240116; t=1741028167; c=relaxed/simple;
+	bh=40lZ1B3I0WpagjJJY3c7pknBCiXUw+PnTGKE9/WolFE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Gjmuy6qyqcQy/2YESOPWCT6I34+JHEFBYd3sg+9fAlrQNDF4J1KV0XReYR6seiE/qv0XwzVLw1fhXsZmKro7yY5XvT+FQuUihKbsZjMsQ/8QwE95v4VF9ZwNEWijZ0K2FkXYy+rq12DTsY0uUahHpnrzvLn73blmLi7tdb7//+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=M1LVSZkD; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5e4f5cc3172so5241835a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 10:56:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1741028162; x=1741632962; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=fSfhJwWsj+zXdSemjGaY4k9oeyz7B20wLL/Ct0QzSTI=;
+        b=M1LVSZkDldcz9I4LJA5X3gQprKLSrcONjSFUo36f3NJbn33ZccfEagbWcekmF3keEq
+         OzAprCqaQGLCQSISRvXNEmvydUq1eolauvf+EBwpiwtIv3V2tiQF5CP8VRxO+K6caEIq
+         bmAmgtHlFzvxH9rzPpwzaWbK3gsCPtLM7Z68c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741028162; x=1741632962;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fSfhJwWsj+zXdSemjGaY4k9oeyz7B20wLL/Ct0QzSTI=;
+        b=JolUWcFI+csa1tAGRp7LEOdZHQtGqOBd16yBq7ygiaZkwSg7ne7kPr8/SplYQoNoj7
+         bvcXizXlx07kqKkcZ+WTV0/O5pczKgyC1IBhDzfW/zKLm2gUb1Jt0Hdp8PUWE8Tat6Nz
+         5vJRmcW+lPfQtMxNj+5Ng52PghyrpwXi8LprntX1H2ZPmljhUiIN12tyZnZ+f1j0eRwl
+         JLAJ/igP5JHpq6aZNc426mw5X/Kf6v7RlVBpKZWAS9sG7/xiYS/gMeXKJWf6GqofwLSj
+         hVPR15mmJKhO39nt98Pz7/M6Q/O7emyvet7otvSTa5eKYnQstW7aHaeAA/ysEnO0eCte
+         zZXg==
+X-Forwarded-Encrypted: i=1; AJvYcCWXApsxll9lpOfRFqIHnvDum83FYls0ZQq70KvUJyZH+oOl4ppey05Bew8NWbvu/UR4VgIxaQ90jCs2PRk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywk2dMa1JIJIdZS15d6iCVWouJkWCytz3D4z9TFCkhuT3jX5RnW
+	4B4IbFXcmOTPx4RkJlr6ZZjwjq9EGDuNvFIURmnK1tabZ6SxGGucUFbGj5HqyWr8X5O53kAvi2Q
+	A658=
+X-Gm-Gg: ASbGncs2LkfU0aDMJSRaJVo0kcPiJxx15RKZ6hiIkPBWtWbIKrFcTGaCt8l+NsTB5gS
+	pAPiApta1/sx8TuN6lEWagTRn4C1EmYjj3xV/EiogAxingZY5vfHHsuCOJ1fJar1fgGwAwdmmXt
+	n+Mv0Uw3Kwc47K13o1PTFvepIXhN/sU5rsWv9xovolkR60cq4tH/9Aa64g6Q2Y2QPpBZ2PpxQgn
+	M/8rRm5wq6BQL+gI34D4w2zSSyghpbtgRR3FgIQFW8ZOn1SHUZh5X0pqOUrqsujRixVTrlUb8qF
+	5pe+qTBVZZ2VYE1qL7RJQHRi89Irmk6CMg2VYO7a9IY3qsx4FDnCqSz2p+y3YLVCMejt6blB3fC
+	fxLhbiyvYVkhf7fxzrWk=
+X-Google-Smtp-Source: AGHT+IEoifFjmxIXFF4XcdjA+yh5jZl3O06uH1519swKAX/3MYCx6Oz4B3iVpzBBy37As86cx9TNYA==
+X-Received: by 2002:a17:907:7213:b0:abf:75b8:cb38 with SMTP id a640c23a62f3a-abf75b8cc51mr641407066b.36.1741028161800;
+        Mon, 03 Mar 2025 10:56:01 -0800 (PST)
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com. [209.85.208.53])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf78023d7esm238287466b.34.2025.03.03.10.56.00
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Mar 2025 10:56:00 -0800 (PST)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e4f88ea298so5852246a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 10:56:00 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWVBSHFIt6LY+aZ8+XH4SRtl53F0p0WW2eHUm+HT6IIERVhyBUEOSRlPoWYFmMXLIxZWUIBbT8oqXSbIHw=@vger.kernel.org
+X-Received: by 2002:a17:907:6090:b0:abe:fa1a:4eab with SMTP id
+ a640c23a62f3a-abf260d496dmr1907190066b.25.1741028160310; Mon, 03 Mar 2025
+ 10:56:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5f404973-380e-4626-a2ef-8c5c44d56b83@nvidia.com>
+References: <qsehsgqnti4csvsg2xrrsof4qm4smhdhv6s4v4twspf76bp3jo@2mpz5xtqhmgt>
+ <c63cc8e8-424f-43e2-834f-fc449b24787e@amd.com> <20250227211229.GD25639@redhat.com>
+ <06ae9c0e-ba5c-4f25-a9b9-a34f3290f3fe@amd.com> <20250228143049.GA17761@redhat.com>
+ <20250228163347.GB17761@redhat.com> <03a1f4af-47e0-459d-b2bf-9f65536fc2ab@amd.com>
+ <CAGudoHHA7uAVUmBWMy4L50DXb4uhi72iU+nHad=Soy17Xvf8yw@mail.gmail.com>
+ <CAGudoHE_M2MUOpqhYXHtGvvWAL4Z7=u36dcs0jh3PxCDwqMf+w@mail.gmail.com>
+ <741fe214-d534-4484-9cf3-122aabe6281e@amd.com> <3jnnhipk2at3f7r23qb7fvznqg6dqw4rfrhajc7h6j2nu7twi2@wc3g5sdlfewt>
+ <CAHk-=whuLzj37umjCN9CEgOrZkOL=bQPFWA36cpb24Mnm3mgBw@mail.gmail.com> <CAGudoHG2PuhHte91BqrnZi0VbhLBfZVsrFYmYDVrmx4gaLUX3A@mail.gmail.com>
+In-Reply-To: <CAGudoHG2PuhHte91BqrnZi0VbhLBfZVsrFYmYDVrmx4gaLUX3A@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 3 Mar 2025 08:55:42 -1000
+X-Gmail-Original-Message-ID: <CAHk-=whVfFhEq=Hw4boXXqpnKxPz96TguTU5OfnKtCXo0hWgVw@mail.gmail.com>
+X-Gm-Features: AQ5f1JooMQOhgpSZJUgMFpU_jRsla4fjvec84mqVPfIW7QyBHFNNtlSgyObw66Y
+Message-ID: <CAHk-=whVfFhEq=Hw4boXXqpnKxPz96TguTU5OfnKtCXo0hWgVw@mail.gmail.com>
+Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still full
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: K Prateek Nayak <kprateek.nayak@amd.com>, "Sapkal, Swapnil" <swapnil.sapkal@amd.com>, 
+	Oleg Nesterov <oleg@redhat.com>, Manfred Spraul <manfred@colorfullife.com>, 
+	Christian Brauner <brauner@kernel.org>, David Howells <dhowells@redhat.com>, 
+	WangYuli <wangyuli@uniontech.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	"Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>, Neeraj.Upadhyay@amd.com, Ananth.narayan@amd.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Mar 03, 2025 at 12:30:51PM -0500, Joel Fernandes wrote:
-> 
-> 
-> On 3/3/2025 12:07 PM, Boqun Feng wrote:
-> > On Mon, Mar 03, 2025 at 12:00:40PM -0500, Joel Fernandes wrote:
-> > [...]
-> >>
-> >> I see the original patch "rcu: Fix get_state_synchronize_rcu_full() GP-start
-> >> detection" is not yet on -next. Once we are convinced about the fix, do we
-> >> want to squash the fix into this patch and have Boqun take it?
-> >>
-> > 
-> > Which "-next" are you talking about? The original patch and the fix is
-> > already in next-20250303 of linux-next:
-> > 
-> > 	https://web.git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/log/?h=next-20250303&qt=range&q=153fc45000e0058435ec0609258fb16e7ea257d2
-> I see it now during manual inspection, but I'm confused why git cherry tells me
-> otherwise.
+On Mon, 3 Mar 2025 at 08:33, Mateusz Guzik <mjguzik@gmail.com> wrote:
+>
+> The stock code already has a dedicated routine to advance the tail,
+> adding one for head (instead of an ad-hoc increment) is borderline
+> just clean up.
 
-The gitk command for the win!  ;-)
+There's currently a fair number of open-coded assignments:
 
-Or, in non-GUI environments, tig.
+    git grep -E 'pipe->((tail)|(head)).*=' fs/
 
-> I tried the following command and it shows the patch in question in the first
-> line of output. Basically the question that the command asks is "What is in
-> Paul's dev branch that is not in RCU tree's -next branch".  This question is
-> asked for the obvious raisins.
-> So I am obviously missing something in the command. Thoughts?
-> 
-> (rcugit is the RCU tree, and paul/dev is Paul's dev branch)
-> 
-> git cherry --abbrev -v rcugit/next paul/dev | grep "^+" | cut -d' ' -f2,3-
+and some of those are under specific locking rules together with other
+updates (ie the watch-queue 'note_loss' thing.
 
-I must defer to others on this one.  I must confess that I have not yet
-found a good use case for "git cherry".
+But hey, if some explicit empty/full flag is simpler, then it
+certainly does fit with our current model too, since we already do
+have those other flags (exactly like 'note_loss')
 
-							Thanx, Paul
+I do particularly hate seeing 'bool' in structures like this. On alpha
+it is either fundamentally racy, or it's 32-bit. On other
+architectures, it's typically 8 bits for a 1-bit value.
 
-> 012f47f0f806 rcu: Fix get_state_synchronize_rcu_full() GP-start detection
-> 2ada0addbdb6 tools/memory-model: Add atomic_and()/or()/xor() and add_negative
-> e176ebffc3f4 tools/memory-model: Add atomic_andnot() with its variants
-> de6f99723392 tools/memory-model: Legitimize current use of tags in LKMM macros
-> 723177d71224 tools/memory-model: Define applicable tags on operation in tools/...
-> 29279349a566 tools/memory-model: Define effect of Mb tags on RMWs in tools/...
-> d80a8e016433 MAINTAINERS: Update Joel's email address
-> fafa18068359 tools/memory-model: Switch to softcoded herd7 tags
-> dcc5197839f2 tools/memory-model: Distinguish between syntactic and semantic tags
-> fa9e35a0772a tools/memory-model/README: Fix typo
-> a2bfbf847c96 tools/memory-model: glossary.txt: Fix indents
-> 3839dbb05869 rcutorture: Make srcu_lockdep.sh check kernel Kconfig
-> b5aa1c489085 rcutorture: Make srcu_lockdep.sh check reader-conflict handling
-> 9a5720bad9ed rcu: Remove swake_up_one_online() bandaid
-> 04159042a62b Revert "rcu/nocb: Fix rcuog wake-up from offline softirq"
-> fdc37fed1c81 rcutorture: Split out beginning and end from rcu_torture_one_read()
-> 3c6b1925361e rcutorture: Make torture.sh --do-rt use CONFIG_PREEMPT_RT
-> fadc715785cc rcutorture: Add tests for SRCU up/down reader primitives
-> 90a8f490324c rcutorture: Pull rcu_torture_updown() loop body into new function
-> 5fbaa5179f6a rcutorture: Comment invocations of tick_dep_set_task()
-> 461810471faa rcutorture: Complain if an ->up_read() is delayed more than 10 seconds
-> 35e1a180319d rcutorture: Check for ->up_read() without matching ->down_read()
-> 0676ba797dfa EXP srcu: Enable Tiny SRCU On all CONFIG_SMP=n kernels
-> c8fff13fd2fd EXP rcutorture: Add SRCU-V scenario for preemptible Tiny SRCU
-> 910a5f9ebf5f EXP rcutorture: Limit callback flooding for Tiny SRCU in
-> preemptible kernels
-> 8979a891a365 EXP hrtimers: Force migrate away hrtimers queued after
-> CPUHP_AP_HRTIMERS_DYING
-> 
-> 
+But we do have holes in that structure where it slots.
+
+             Linus
 
