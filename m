@@ -1,109 +1,109 @@
-Return-Path: <linux-kernel+bounces-544437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20837A4E12D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:38:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DB506A4E0F1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:32:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 452461884BFD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:33:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13281189BA32
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:28:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10DD625F97C;
-	Tue,  4 Mar 2025 14:31:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B298920896A;
+	Tue,  4 Mar 2025 14:25:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Atf7+ptv"
-Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MNQftRj0"
+Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B1E25F793
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:31:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.115
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B931A206F0B
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:25:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.116
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741098706; cv=fail; b=JaIt/0cQLkOLGw3QMX9vL8ANRfCH5NLraqueGagc8qkKDVLoLJcUMajRMC/a7qE3hxjzn3oxS+IHfCB3yxMnrTBQQLAKw8GAr7exbnKs+lavGGIJWNffqX34NKoytH4TtFGjKz3HoZTEZEnohpZVTGg9+Y9nUchs+YXxRVu4ZBo=
+	t=1741098354; cv=fail; b=RolZXIBbM9wYugNBLu2hAHT4mYJb/bQyzYQma27prDGPp5FMZwrmkEpQizR+ATaiLd5Kk2aw/ZqI41iUQ0gQCu/YrPysnra9AMDHeaunul3d/M6eXOjeV2jloF5WOoq0oDvACbPoQO4hxMvgtZi/QHGk2YupR1eFgI3ib6b1kqE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741098706; c=relaxed/simple;
-	bh=wgwvUzcv9WZS9kUxNOhraSZ9ZOWP+CJ0pKU7K/uc37g=;
+	s=arc-20240116; t=1741098354; c=relaxed/simple;
+	bh=84q1iouiq3G4jGWQyOIwBntqQlBiZRVRs/tLvHoqLpo=;
 	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JDvB9bCXAXNIR+6DVot1/5+Kv0ybCNcV1xWj1BrACJFBODPbS5fwhzaTqzg1owQ7bMi985EmiUAk0HJvv6ItUaFBugq8E01HJlsHYCKoVvx/UjyejKVs4AEzLZGT6w2nl4CXNOcslMhs6jsszqNBk7QUUwDR+WKJqHKlAZVzhKE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Atf7+ptv reason="signature verification failed"; arc=none smtp.client-ip=198.175.65.9; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; arc=fail smtp.client-ip=160.75.25.115
+	 MIME-Version; b=EUdpQQQQP2uLZVmGzqM4UOMe+V7u2/0FwdAs/rG5sPXX/3y+7wlrb9aDk0rralTuOu1yQRNtNYk1TvnQwukxUQr8PoG6p7Fgo3QQqZuJYg+73tN3KQi9ldJ801Sk0pC127MJeebGj+5WqMmfnKzPUdZOrysiz15cHz2w99I2YZI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MNQftRj0 reason="signature verification failed"; arc=none smtp.client-ip=198.175.65.9; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; arc=fail smtp.client-ip=160.75.25.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 97B6B40CF642
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:31:42 +0300 (+03)
+	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id 34BF040F1CD9
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:25:51 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dN92LgtzFwlh
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:28:57 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dCV4m2nzFwPl
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:21:26 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 7188C42731; Tue,  4 Mar 2025 17:28:33 +0300 (+03)
+	id 32DE842734; Tue,  4 Mar 2025 17:20:59 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Atf7+ptv
-X-Envelope-From: <linux-kernel+bounces-541370-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MNQftRj0
+X-Envelope-From: <linux-kernel+bounces-541372-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Atf7+ptv
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MNQftRj0
 Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id 15AF1434E4
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:30:17 +0300 (+03)
+	by le2 (Postfix) with ESMTP id 0987643302
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:31:21 +0300 (+03)
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id A74C43064C0E
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:30:16 +0300 (+03)
+	by fgw1.itu.edu.tr (Postfix) with SMTP id 949693063EFC
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:31:21 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C59E3B4022
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:29:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D05133B50B7
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:29:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B43CF1F417D;
-	Mon,  3 Mar 2025 10:28:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C11251F460F;
+	Mon,  3 Mar 2025 10:28:21 +0000 (UTC)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 559DA1F1531;
-	Mon,  3 Mar 2025 10:28:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3BAF1F37DA;
+	Mon,  3 Mar 2025 10:28:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740997682; cv=none; b=J3EFh39Ksro3i2hphp1EYlPeWxb7FHZpEJ2pjMHpWy7Z9xvVRxWZcqsVISgIETaYwQKPfi6KqA7SZwmgvV5uX9pm5l8U81NsFcwkx6dAQ+UBhatcaBbrBHVTNAWH3/kIYYNeSVLKSCysgGaRrxCXLcZLSlUa8SzqnkJgZHg/4Ro=
+	t=1740997698; cv=none; b=MQ+x//oiRXrlMqq6SIK3LnLqKRcMKR97RBWDumSSt1ABmVLCCbwj9OC4RHjm0ndk2mPYhfMD/96UnZnpJ1aA8P6HrjH4g7yPwnmbLLy3fyNWgS5K65z14uOSBCPDevCVf/RAS6AM8qDHdN2xisc5UjCFACpfLU3o+2RImmdJsYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740997682; c=relaxed/simple;
-	bh=2Msp7YoBmanu425m0MXmljH1/c1Or8M2lkzZSA8x+50=;
+	s=arc-20240116; t=1740997698; c=relaxed/simple;
+	bh=HGUt+LUgOeRfkzIoM51QROFkB+L0gZe8jc/jc1vXwiE=;
 	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gwFL7HifRZ31pXnXgm3LCxleNcgXmlY0m7lLUK3xNokOZlMQFHRE4I2/gu6XED9xVqdzR76sBe35GuNpHgNn+t1Dkfb5KsPla5FkUZQuVmvVSrby6pfF9FDFQ5m9RLnuyekrTVFlpfAjseFJ6otX8BKn6p3nfcdeeubcOeXGxYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Atf7+ptv; arc=none smtp.client-ip=198.175.65.9
+	 MIME-Version; b=fsRXceDb4l/Db3CHJolDL7JFlSPGV55KQVUfmmPcxAk+NNCLkeZ0LzC2h/I3fUApYrbl29Whjc6CZ8DjDwflbbXe5xhg4Sgh7hCctCPGURX31ZKr5uIMx+RInfrVJTP7dvEZBGPMo5UuziDlfundmoGpuzYS7AbEhethGdYQraY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MNQftRj0; arc=none smtp.client-ip=198.175.65.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740997681; x=1772533681;
+  t=1740997696; x=1772533696;
   h=from:to:subject:date:message-id:in-reply-to:references:
    mime-version:content-transfer-encoding;
-  bh=2Msp7YoBmanu425m0MXmljH1/c1Or8M2lkzZSA8x+50=;
-  b=Atf7+ptv8dTGijcC4Y2ByFOWVgMvl16sgYfwDZeuSpxjsGwPTAfVwEOL
-   hAsv9w8r6qXw+A99LJQbL8U3aJx5MWhGuH+wFP+m6RicTowSZ+BuzPPBJ
-   FHfGLgfGAsCQ2TRrEeB3O+VoAZ0M8WOdoJvT1onD3gHGydHx4s0T0LRp/
-   JPNolp4zpFUpbV1sVF5VnH/hoxTKJmD688FapwgWfbmwP9TgFnUDYOTyo
-   o825lFYxO5q/7BdELdeQFWSygIJeQOJc96AMXdyqkf/WmXh+gJOeF1aaN
-   TQJR0InVlpsg/Dn+KfSuxwoOoPn5QvTQnkhJnyPnXh2AmZ8Pv4tVzI84q
+  bh=HGUt+LUgOeRfkzIoM51QROFkB+L0gZe8jc/jc1vXwiE=;
+  b=MNQftRj0IrnTAqZf6jCxOE02vmX5O2BOHGecfT3McIEUm8ek0Drkd0cV
+   BfMXnG0MsUEfCJtHEApnimoHL3lE2elXe9GLZrum6B76JNzSf4FTjIDAw
+   taXRTaBmch/p6UwADErEQ34TKdK7N217FF2Pv6Za+dkd4xmrrAeFn6Zaq
+   J0F/D2TdGfkKyXDtI5wv/VI52bE+zLeL9aTYycYIp4cgNgHLD55B3tacg
+   u1TEcE0NYs2aTKlHXCJtQaftl8hQ7XMCb+S0/cJXhbNS2QoKKESEuaOeV
+   HD5yMsbaJMS5+RapKmsUfGw6d85V/2U8ggXxB+465phw51M1nwHvS3tGw
    A==;
-X-CSE-ConnectionGUID: USuXoOE4SMm7+bg5rJ8cnw==
-X-CSE-MsgGUID: HzMTCOLxTdOGRmFPo6mRMQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="64310149"
+X-CSE-ConnectionGUID: xQyPQ2wWRBOcfudz7CawtQ==
+X-CSE-MsgGUID: VPTzY/uQQ52ZMs4xNH6PYQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="64310213"
 X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="64310149"
+   d="scan'208";a="64310213"
 Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 02:28:00 -0800
-X-CSE-ConnectionGUID: t9zZnSvsR46o8m5nS2uR3g==
-X-CSE-MsgGUID: DkMFzS4QTBm8OGTiacD7eQ==
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 02:28:15 -0800
+X-CSE-ConnectionGUID: H+as7IbBSZmaZqKs10xtmA==
+X-CSE-MsgGUID: F9AwFsLdTumNjSIuvJFwJA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="122569880"
+   d="scan'208";a="122569901"
 Received: from mohdfai2-ilbpg12-1.png.intel.com ([10.88.227.73])
-  by fmviesa005.fm.intel.com with ESMTP; 03 Mar 2025 02:27:53 -0800
+  by fmviesa005.fm.intel.com with ESMTP; 03 Mar 2025 02:28:08 -0800
 From: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
 To: Tony Nguyen <anthony.l.nguyen@intel.com>,
 	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
@@ -140,9 +140,9 @@ To: Tony Nguyen <anthony.l.nguyen@intel.com>,
 	linux-stm32@st-md-mailman.stormreply.com,
 	linux-arm-kernel@lists.infradead.org,
 	bpf@vger.kernel.org
-Subject: [PATCH iwl-next v7 4/9] igc: Set the RX packet buffer size for TSN mode
-Date: Mon,  3 Mar 2025 05:26:53 -0500
-Message-Id: <20250303102658.3580232-5-faizal.abdul.rahim@linux.intel.com>
+Subject: [PATCH iwl-next v7 6/9] igc: Add support to set tx-min-frag-size
+Date: Mon,  3 Mar 2025 05:26:55 -0500
+Message-Id: <20250303102658.3580232-7-faizal.abdul.rahim@linux.intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250303102658.3580232-1-faizal.abdul.rahim@linux.intel.com>
 References: <20250303102658.3580232-1-faizal.abdul.rahim@linux.intel.com>
@@ -155,89 +155,197 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6dN92LgtzFwlh
+X-ITU-Libra-ESVA-ID: 4Z6dCV4m2nzFwPl
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741703378.51624@N9ixHiq2gZin4FOfTVRmFQ
+X-ITU-Libra-ESVA-Watermark: 1741703080.72058@UcsTkGO/QugEqxOfp0RjtQ
 X-ITU-MailScanner-SpamCheck: not spam
 
-In preparation for supporting frame preemption, when entering TSN mode
-set the receive packet buffer to 16KB for the Express MAC, 16KB for
-the Preemptible MAC and 2KB for the BMC, according to the datasheet
-section 7.1.3.2.
+Add support to set tx-min-frag-size via set_mm callback in igc.
+Increase the max limit of tx-ming-frag-size in ethtool from 252 to 256
+since i225/6 value range is 64, 128, 192 and 256.
 
 Co-developed-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
 Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
 Signed-off-by: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
 ---
- drivers/net/ethernet/intel/igc/igc_defines.h |  3 +++
- drivers/net/ethernet/intel/igc/igc_tsn.c     | 13 +++++++++++--
- 2 files changed, 14 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/intel/igc/igc.h         |  1 +
+ drivers/net/ethernet/intel/igc/igc_defines.h |  1 +
+ drivers/net/ethernet/intel/igc/igc_ethtool.c |  5 +++
+ drivers/net/ethernet/intel/igc/igc_tsn.c     | 37 ++++++++++++++++++--
+ drivers/net/ethernet/intel/igc/igc_tsn.h     |  2 +-
+ net/ethtool/mm.c                             |  2 +-
+ 6 files changed, 43 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/net/ethernet/intel/igc/igc.h b/drivers/net/ethernet/=
+intel/igc/igc.h
+index d9ecb7cf80c9..4dfd133b4d6f 100644
+--- a/drivers/net/ethernet/intel/igc/igc.h
++++ b/drivers/net/ethernet/intel/igc/igc.h
+@@ -42,6 +42,7 @@ void igc_ethtool_set_ops(struct net_device *);
+=20
+ struct igc_fpe_t {
+ 	struct ethtool_mmsv mmsv;
++	u32 tx_min_frag_size;
+ };
+=20
+ enum igc_mac_filter_type {
 diff --git a/drivers/net/ethernet/intel/igc/igc_defines.h b/drivers/net/e=
 thernet/intel/igc/igc_defines.h
-index 516ef70c98e9..b19ac6f30dac 100644
+index 22db1de02964..038ee89f1e08 100644
 --- a/drivers/net/ethernet/intel/igc/igc_defines.h
 +++ b/drivers/net/ethernet/intel/igc/igc_defines.h
-@@ -402,6 +402,9 @@
+@@ -551,6 +551,7 @@
+ #define IGC_TQAVCTRL_PREEMPT_ENA	0x00000002
+ #define IGC_TQAVCTRL_ENHANCED_QAV	0x00000008
+ #define IGC_TQAVCTRL_FUTSCDDIS		0x00000080
++#define IGC_TQAVCTRL_MIN_FRAG_MASK	0x0000C000
 =20
-  /* 7KB bytes buffer for each tx queue (total 4 queues) + 4KB for BMC*/
- #define IGC_TXPBSIZE_TSN	0x041c71c7
-+/* 15KB for EXP + 15KB for BE + 2KB for BMC */
-+#define IGC_RXPBSIZE_TSN	0x0000f08f
-+#define IGC_RXPBSIZE_SIZE_MASK	0x0001FFFF
+ #define IGC_TXQCTL_QUEUE_MODE_LAUNCHT	0x00000001
+ #define IGC_TXQCTL_STRICT_CYCLE		0x00000002
+diff --git a/drivers/net/ethernet/intel/igc/igc_ethtool.c b/drivers/net/e=
+thernet/intel/igc/igc_ethtool.c
+index b64d5c6c1d20..529654ccd83f 100644
+--- a/drivers/net/ethernet/intel/igc/igc_ethtool.c
++++ b/drivers/net/ethernet/intel/igc/igc_ethtool.c
+@@ -1789,6 +1789,11 @@ static int igc_ethtool_set_mm(struct net_device *n=
+etdev,
+ 	struct igc_adapter *adapter =3D netdev_priv(netdev);
+ 	struct igc_fpe_t *fpe =3D &adapter->fpe;
 =20
- #define IGC_DTXMXPKTSZ_TSN	0x19 /* 1600 bytes of max TX DMA packet size =
-*/
- #define IGC_DTXMXPKTSZ_DEFAULT	0x98 /* 9728-byte Jumbo frames */
++	fpe->tx_min_frag_size =3D igc_fpe_get_supported_frag_size(cmd->tx_min_f=
+rag_size);
++	if (fpe->tx_min_frag_size !=3D cmd->tx_min_frag_size)
++		NL_SET_ERR_MSG_MOD(extack,
++				   "tx-min-frag-size value set is unsupported. Rounded up to support=
+ed value (64, 128, 192, 256)");
++
+ 	if (fpe->mmsv.pmac_enabled !=3D cmd->pmac_enabled) {
+ 		if (cmd->pmac_enabled)
+ 			static_branch_inc(&igc_fpe_enabled);
 diff --git a/drivers/net/ethernet/intel/igc/igc_tsn.c b/drivers/net/ether=
 net/intel/igc/igc_tsn.c
-index 1e44374ca1ff..f0213cfce07d 100644
+index 0a2c747fde2d..2ec5909bf8b0 100644
 --- a/drivers/net/ethernet/intel/igc/igc_tsn.c
 +++ b/drivers/net/ethernet/intel/igc/igc_tsn.c
-@@ -132,13 +132,17 @@ static int igc_tsn_disable_offload(struct igc_adapt=
-er *adapter)
- {
- 	u16 queue_per_tc[4] =3D { 3, 2, 1, 0 };
- 	struct igc_hw *hw =3D &adapter->hw;
--	u32 tqavctrl;
-+	u32 tqavctrl, rxpbs;
- 	int i;
+@@ -6,6 +6,12 @@
+ #include "igc_hw.h"
+ #include "igc_tsn.h"
 =20
- 	wr32(IGC_GTXOFFSET, 0);
- 	wr32(IGC_TXPBS, I225_TXPBSIZE_DEFAULT);
- 	wr32(IGC_DTXMXPKTSZ, IGC_DTXMXPKTSZ_DEFAULT);
-=20
-+	rxpbs =3D rd32(IGC_RXPBS) & ~IGC_RXPBSIZE_SIZE_MASK;
-+	rxpbs |=3D I225_RXPBSIZE_DEFAULT;
-+	wr32(IGC_RXPBS, rxpbs);
++#define MIN_MULTPLIER_TX_MIN_FRAG	0
++#define MAX_MULTPLIER_TX_MIN_FRAG	3
++/* Frag size is based on the Section 8.12.2 of the SW User Manual */
++#define TX_MIN_FRAG_SIZE		64
++#define TX_MAX_FRAG_SIZE	(TX_MIN_FRAG_SIZE * (MAX_MULTPLIER_TX_MIN_FRAG =
++ 1))
 +
- 	if (igc_is_device_id_i226(hw))
- 		igc_tsn_restore_retx_default(adapter);
+ DEFINE_STATIC_KEY_FALSE(igc_fpe_enabled);
 =20
-@@ -194,7 +198,7 @@ static int igc_tsn_enable_offload(struct igc_adapter =
-*adapter)
+ static int igc_fpe_init_smd_frame(struct igc_ring *ring,
+@@ -128,6 +134,7 @@ static const struct ethtool_mmsv_ops igc_mmsv_ops =3D=
+ {
+=20
+ void igc_fpe_init(struct igc_adapter *adapter)
+ {
++	adapter->fpe.tx_min_frag_size =3D TX_MIN_FRAG_SIZE;
+ 	ethtool_mmsv_init(&adapter->fpe.mmsv, adapter->netdev, &igc_mmsv_ops);
+ }
+=20
+@@ -278,7 +285,7 @@ static int igc_tsn_disable_offload(struct igc_adapter=
+ *adapter)
+ 	tqavctrl =3D rd32(IGC_TQAVCTRL);
+ 	tqavctrl &=3D ~(IGC_TQAVCTRL_TRANSMIT_MODE_TSN |
+ 		      IGC_TQAVCTRL_ENHANCED_QAV | IGC_TQAVCTRL_FUTSCDDIS |
+-		      IGC_TQAVCTRL_PREEMPT_ENA);
++		      IGC_TQAVCTRL_PREEMPT_ENA | IGC_TQAVCTRL_MIN_FRAG_MASK);
+=20
+ 	wr32(IGC_TQAVCTRL, tqavctrl);
+=20
+@@ -324,12 +331,34 @@ static void igc_tsn_set_retx_qbvfullthreshold(struc=
+t igc_adapter *adapter)
+ 	wr32(IGC_RETX_CTL, retxctl);
+ }
+=20
++static u8 igc_fpe_get_frag_size_mult(const struct igc_fpe_t *fpe)
++{
++	u8 mult =3D (fpe->tx_min_frag_size / TX_MIN_FRAG_SIZE) - 1;
++
++	return clamp_t(u8, mult, MIN_MULTPLIER_TX_MIN_FRAG,
++		       MAX_MULTPLIER_TX_MIN_FRAG);
++}
++
++u32 igc_fpe_get_supported_frag_size(u32 frag_size)
++{
++	const u32 supported_sizes[] =3D {64, 128, 192, 256};
++
++	/* Find the smallest supported size that is >=3D frag_size */
++	for (int i =3D 0; i < ARRAY_SIZE(supported_sizes); i++) {
++		if (frag_size <=3D supported_sizes[i])
++			return supported_sizes[i];
++	}
++
++	return TX_MAX_FRAG_SIZE; /* Should not happen, value > 256 is blocked b=
+y ethtool */
++}
++
+ static int igc_tsn_enable_offload(struct igc_adapter *adapter)
  {
  	struct igc_hw *hw =3D &adapter->hw;
  	u32 tqavctrl, baset_l, baset_h;
--	u32 sec, nsec, cycle;
-+	u32 sec, nsec, cycle, rxpbs;
+ 	u32 sec, nsec, cycle, rxpbs;
  	ktime_t base_time, systim;
++	u32 frag_size_mult;
  	int i;
 =20
-@@ -202,6 +206,11 @@ static int igc_tsn_enable_offload(struct igc_adapter=
- *adapter)
- 	wr32(IGC_DTXMXPKTSZ, IGC_DTXMXPKTSZ_TSN);
- 	wr32(IGC_TXPBS, IGC_TXPBSIZE_TSN);
+ 	wr32(IGC_TSAUXC, 0);
+@@ -501,13 +530,15 @@ static int igc_tsn_enable_offload(struct igc_adapte=
+r *adapter)
+ 	}
 =20
-+	rxpbs =3D rd32(IGC_RXPBS) & ~IGC_RXPBSIZE_SIZE_MASK;
-+	rxpbs |=3D IGC_RXPBSIZE_TSN;
-+
-+	wr32(IGC_RXPBS, rxpbs);
-+
- 	if (igc_is_device_id_i226(hw))
- 		igc_tsn_set_retx_qbvfullthreshold(adapter);
+ 	tqavctrl =3D rd32(IGC_TQAVCTRL) & ~(IGC_TQAVCTRL_FUTSCDDIS |
+-		   IGC_TQAVCTRL_PREEMPT_ENA);
+-
++		   IGC_TQAVCTRL_PREEMPT_ENA | IGC_TQAVCTRL_MIN_FRAG_MASK);
+ 	tqavctrl |=3D IGC_TQAVCTRL_TRANSMIT_MODE_TSN | IGC_TQAVCTRL_ENHANCED_QA=
+V;
 =20
+ 	if (adapter->fpe.mmsv.pmac_enabled)
+ 		tqavctrl |=3D IGC_TQAVCTRL_PREEMPT_ENA;
+=20
++	frag_size_mult =3D igc_fpe_get_frag_size_mult(&adapter->fpe);
++	tqavctrl |=3D FIELD_PREP(IGC_TQAVCTRL_MIN_FRAG_MASK, frag_size_mult);
++
+ 	adapter->qbv_count++;
+=20
+ 	cycle =3D adapter->cycle_time;
+diff --git a/drivers/net/ethernet/intel/igc/igc_tsn.h b/drivers/net/ether=
+net/intel/igc/igc_tsn.h
+index a1104326c904..6b48e0ed4341 100644
+--- a/drivers/net/ethernet/intel/igc/igc_tsn.h
++++ b/drivers/net/ethernet/intel/igc/igc_tsn.h
+@@ -14,7 +14,7 @@ enum igc_txd_popts_type {
+ DECLARE_STATIC_KEY_FALSE(igc_fpe_enabled);
+=20
+ void igc_fpe_init(struct igc_adapter *adapter);
+-u32 igc_fpe_get_supported_frag_size(u32 user_frag_size);
++u32 igc_fpe_get_supported_frag_size(u32 frag_size);
+ int igc_tsn_offload_apply(struct igc_adapter *adapter);
+ int igc_tsn_reset(struct igc_adapter *adapter);
+ void igc_tsn_adjust_txtime_offset(struct igc_adapter *adapter);
+diff --git a/net/ethtool/mm.c b/net/ethtool/mm.c
+index ad9b40034003..4c395cd949ab 100644
+--- a/net/ethtool/mm.c
++++ b/net/ethtool/mm.c
+@@ -153,7 +153,7 @@ const struct nla_policy ethnl_mm_set_policy[ETHTOOL_A=
+_MM_MAX + 1] =3D {
+ 	[ETHTOOL_A_MM_VERIFY_TIME]	=3D NLA_POLICY_RANGE(NLA_U32, 1, 128),
+ 	[ETHTOOL_A_MM_TX_ENABLED]	=3D NLA_POLICY_MAX(NLA_U8, 1),
+ 	[ETHTOOL_A_MM_PMAC_ENABLED]	=3D NLA_POLICY_MAX(NLA_U8, 1),
+-	[ETHTOOL_A_MM_TX_MIN_FRAG_SIZE]	=3D NLA_POLICY_RANGE(NLA_U32, 60, 252),
++	[ETHTOOL_A_MM_TX_MIN_FRAG_SIZE]	=3D NLA_POLICY_RANGE(NLA_U32, 60, 256),
+ };
+=20
+ static void mm_state_to_cfg(const struct ethtool_mm_state *state,
 --=20
 2.34.1
 
