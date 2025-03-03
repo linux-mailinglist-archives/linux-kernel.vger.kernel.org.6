@@ -1,136 +1,146 @@
-Return-Path: <linux-kernel+bounces-544524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 548C1A4E2AF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:16:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C348A4E66E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:42:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FBC7884F5E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:55:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62CEA1B406D7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA5B25BAB9;
-	Tue,  4 Mar 2025 14:53:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60EB827CB0A;
+	Tue,  4 Mar 2025 16:10:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GITy0Rqj"
-Received: from beeline2.cc.itu.edu.tr (beeline2.cc.itu.edu.tr [160.75.25.116])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jl/6/xcx"
+Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E09B25BAC9
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:53:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC1227BF6B
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741100002; cv=pass; b=YaXAXOmnGT1EsSg4AO/PSt9RN7pSY4meni57ZnfR5WZ2IxKFW6rKNjO5xn4IW6RrdQpTgl9MOSyHTzC2buRIIyC56LqQ8YfOc07pjfkA5PZhqMx5L0De1kRkCpW/FNQaqTYAQ2T6zwPC77kssmo0YoIOHgRieFI7yh4IScVWIL8=
+	t=1741104613; cv=pass; b=pe1V+B8lslUGn+NBeFFQXcffjGrH9t3SDUpBiBhZszbZ0ZEGjhcjUbk+Vw7nzPX9qp1OPVzNr3fneIq4VPC6kGUbICQpdJ0rg3b/aNM7vh4aYdBzk3CIa6zxQtUI4fhJCrSV64edgCFXCo5wInsXrJ9HvCfH9bT+4XTjSfp0aJI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741100002; c=relaxed/simple;
-	bh=EbucS9fypPRrxe77EUKH2Wejd1lPYl15t0UP9HZGEqM=;
+	s=arc-20240116; t=1741104613; c=relaxed/simple;
+	bh=jx3146JYbYlH5pk+ZQ9COOYht6moRMzBNf0ugU+7LZw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p2wo+9roc4wzjCx648GbWaNVTxECFvyp4V8sxt1F0GQMMM5yadk0h3kd5CrGd9S/xDhE7VCKycDSk08BX/jtV24RWeg2fY1MyIoVitR2jfaGF4Z+CH4LL2Ba/Ol/FW5IyIIKBPq/OrzhezqNfUi+2J8iRzi2hHAh5kG4XY9O7us=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GITy0Rqj; arc=none smtp.client-ip=209.85.167.43; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; arc=pass smtp.client-ip=160.75.25.116
+	 Content-Type:Content-Disposition:In-Reply-To; b=MpfTOXr+8HvXV/QvicsTnQD+sUpTjEnJAvIfZLdBowZ+E2uegPjfH/BS+3bxq17LstdW/8cYrBJ0JLx54X+3TN1HnxIsCEn2PGb3HDTebYuRbJBhoyE+VXZQqZmHzCRuMRUi4EzrdcIFWWFhnErg6hqZkSb5R1R0O69T5OtvNu0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jl/6/xcx; arc=none smtp.client-ip=209.85.167.44; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; arc=pass smtp.client-ip=160.75.25.115
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
 Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline2.cc.itu.edu.tr (Postfix) with ESMTPS id 7146B40F1CD2
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:53:19 +0300 (+03)
+	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 3F05240D974C
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:10:10 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
-Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20230601 header.b=GITy0Rqj
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dsh4Xm7zFxYJ
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:51:04 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6gbJ1x35zG25M
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:08:44 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 0C1AF41898; Tue,  4 Mar 2025 17:50:54 +0300 (+03)
+	id 5C4AD42749; Tue,  4 Mar 2025 19:08:32 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GITy0Rqj
-X-Envelope-From: <linux-kernel+bounces-541592-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jl/6/xcx
+X-Envelope-From: <linux-kernel+bounces-541596-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GITy0Rqj
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jl/6/xcx
 Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id 38DFE41A6C
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:34:42 +0300 (+03)
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id 0DF582DCE0
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:34:42 +0300 (+03)
+	by le2 (Postfix) with ESMTP id B609F42164
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:37:11 +0300 (+03)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by fgw2.itu.edu.tr (Postfix) with SMTP id 63CBD2DCE1
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:37:11 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8626A1885987
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:34:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77F291614D5
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:35:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0208D1FC7EE;
-	Mon,  3 Mar 2025 11:33:34 +0000 (UTC)
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51E5C1FCCEC;
+	Mon,  3 Mar 2025 11:35:03 +0000 (UTC)
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F23F1FBC8E;
-	Mon,  3 Mar 2025 11:33:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758741F181F;
+	Mon,  3 Mar 2025 11:34:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741001611; cv=none; b=XEdzSryMJfS+IMIG8E45F0SkyJMknDDtVe6vjzs1uNVubJULX4oiRkxkIS5JRiZVf68BsgdvR0Jj/E8aUL8UxMlOuQYzQtrfnEIZ2z5OHrbvVBg8rQtAWDBHq+//9wVLxu44pWqzbu/gcA0twv5+MdHlf1l3nOA8B/3FXeVJZK0=
+	t=1741001700; cv=none; b=QxGlS44W88z7IX2Lj38P+/1ixKVU2P4LWYtf42srMOQ75l4e8HoluKLRJPTdpb4MGzAGqwUoLm2gzCN5MSiZIsCST8Dexi42xUT4fsYNKVVIfAXgUnc+iEFTuLNbwP3bnxm3eT213AiwzXLXXOkHvO0GhxrjU4FG7gykJMjsLlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741001611; c=relaxed/simple;
-	bh=EbucS9fypPRrxe77EUKH2Wejd1lPYl15t0UP9HZGEqM=;
+	s=arc-20240116; t=1741001700; c=relaxed/simple;
+	bh=jx3146JYbYlH5pk+ZQ9COOYht6moRMzBNf0ugU+7LZw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NzdT0XVdAJ/qQ5nENs/rZe179686YmnCg/k6rI8zIO1ySOpIYkDQfygq76jEHXofYasUg6jq7/enEJNSTflVo6OHr+pJBmCNOLbW1UnqONUObM06IQ5kzYQI3Rc8pXQh1k5xEqXATXHYOBHPA/1tjEfuOYF2efZ+kNePYAEPuQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GITy0Rqj; arc=none smtp.client-ip=209.85.167.43
+	 Content-Type:Content-Disposition:In-Reply-To; b=iUE/eYtDm7429E95ZV/up8JlbiNcul7Vn9mKFXbyC7ARj4eFmHBdzduIa4J7mUlMjWu7ujoSARiI8v1zn3egCrfRQZe9Po9C8SUASrDidLGQ0an0glOcYsHSMywft26YmDy23ZVwGKtN9m1U1rfgWkSFSgGPWqwRqScog0mn0SU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jl/6/xcx; arc=none smtp.client-ip=209.85.167.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-54954fa61c9so3328581e87.1;
-        Mon, 03 Mar 2025 03:33:29 -0800 (PST)
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-54954fa61c8so2919182e87.1;
+        Mon, 03 Mar 2025 03:34:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741001607; x=1741606407; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741001697; x=1741606497; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=m9+cj8/dfHbTSNAL8XTYITukNJGo/7BX2z1hHrSetVU=;
-        b=GITy0RqjSE14XIkKTitreAvzxCGZZURIovg9KhqbArdzc6eWNrZms5tLuTLWA2WthN
-         jzx4mqBXmK4juNVL+Pagd+u/J/LwVt5utgqXzDKtBah3jrExBM6SbU9MCEqfR5/xHbP6
-         hKyFAB+u9dLlAORZe4TAuEhHJiqjRS9eO4P5tOZMp2oqkbV1Xea8HIrWHt/iQ3KPYljw
-         5byWFxmBGOmENHPFIKC+1qdL4uJ2pEsMfxmbVrZjAhzanf2LxwNVeDXUrDFe0IAdNu0u
-         IOFWBRbP+NqnOZcR67Sge8otB7Gwr4kzbMrVPaPOkGpgTxrwXbGvalVnXSJSMhv7rxs1
-         icwQ==
+        bh=vqQZzxtB3T8t2wF4cCO8ECh4fmEl1bhgAvi7y44b40I=;
+        b=Jl/6/xcxheC6u90pwHY1kyuNzjN1Bh4ZJSOS2TFaVUUbnxgMFxmq+sK3PLB/W/tm6G
+         mTzYlvOU9/QTPq5V4m2jXzuICpvORmvnr3xyg2qfG05JOTkDHdEwBItPAB1auk1ADDuX
+         i3FTu/Yj4T7U7DnjCnYO5vdybWHg/sWd3dEgJnyURikKmKMsN+6Gufjot+gDqxdb6aZu
+         d7sf1rXfinZFHeRmfNkgou3YF0F37uUVdK3gUyc6deY3tbrsrtfVswLrm+L6J/RjeEGZ
+         be7wryxb8DANbc4JErQI1/+DLLlonDla97FqZfglgJZIPhbCUO2k/EDNffKaV8WT7T1c
+         cIQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741001607; x=1741606407;
+        d=1e100.net; s=20230601; t=1741001697; x=1741606497;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=m9+cj8/dfHbTSNAL8XTYITukNJGo/7BX2z1hHrSetVU=;
-        b=Lu3xD7juGIu26r54mDQ0ZhsrNg56kLM3sNWwr1AAqzsKhW02dDVt28N7JIBAvilRB3
-         vrhFDYOVrCa+dSnKsCXaHKNskqgldhupOlkFvOFfOrTNXADdy9IqHaAE4j3j5Yfgh+sZ
-         JlB2sSNa5wup/wJIZQXTAxgobiHA0Nv6hsDcSYft2p+xwYU5/8A6T0m9Iqhc1MWVmr1Y
-         4Xt34WSAyFNSP/QpFPAZX1fCej/ozJChLee2xBnmF6A0ga0dKHXRCqzkLDp+gsXVwrR6
-         ITf48bp3RqgeeLK7J8sym+ZyRFLPAUpdaWLzbY29MZlgkw+c3j8E0Klu23spxaXevA2l
-         6+GA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0g25ZIanPQsCWaRgNy1eFja8GRfxRMvkB3eZIiK69upqsbdK6H66cJsW5opxD0v0/dUYnZo3OCeE=@vger.kernel.org, AJvYcCU9cq/UszcnNoOJZtaGJ/x+lMYM/32Y3aRFxe+mLr6dMPz+HQkeSsIJv5IRJKZ/gLykqKr97ZHvHtMri27Y@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOAnH9WkT3QWAE7lV1xcZtiDERAuI0GJTzn2Z0/dM/DqPrquiS
-	pNUVHuTPD6o5uzm54XHsGyFbS1w84XJqzXIpdDVkZCzMBDNi4Lte
-X-Gm-Gg: ASbGncsCXUXSxlfRt74SBhbeGGs6E4wbCaXREu9DSfk15gbxhpkSweMWqUscE16+82E
-	yI4ngVA8T7AjoAaVNTjKNoYCJpQVWDpwrub2IDj7KLdbjOOrfywNiJtfigh83yM8H96Yhfq7jLn
-	Q+IZ18ZaJ8kMto6frnrUyRF3vjXV3zf9O5CZuUT4iWYkpBFL3Mrj2S9rKfHfySZqUxr40I8+xJ2
-	Wzjx65wxcm4WiHIgG5ULDLblWH2cRQT3RPEhMxpNpP1olG2cdRbwDGPZ58yUlUoSGdyVCT7eX+r
-	lXWrl4X3pgTa0eP3jDY20QRO+IcJIg9d7OIcSIwtC2tG+1xQtI2KkKLwrq+u7rCsSKsyd1u6NJ9
-	+OkL8qgY6lCI=
-X-Google-Smtp-Source: AGHT+IELLGKVO/o+HmAod5MzHgf6kI4dYfAzYeQr2/x9V6T8BPVqqc3LSAZb/E1O4jjjBc626oReGg==
-X-Received: by 2002:a05:6512:3a90:b0:545:60b:f38d with SMTP id 2adb3069b0e04-5494c107f3cmr4953235e87.8.1741001607278;
-        Mon, 03 Mar 2025 03:33:27 -0800 (PST)
+        bh=vqQZzxtB3T8t2wF4cCO8ECh4fmEl1bhgAvi7y44b40I=;
+        b=Hp1wk6gCWcg3BYEInUc+22OG4gaFgNedi/8E39Q2lLB1p0dzb14sq0E0KYlVmTI43h
+         0geBp1wDg/+cxDjNFAZylzS8mWu2pBkX5Ub5ISn4grbyU9EwLpRSj8MwOr3Tykye4Z2C
+         tmoTmYNqt2stGsNS1Imi6kyRDH/3tV6pkzZhr/ugl547z4hbSM6Kp32TVQ5Pf9tEUDri
+         KL7NHuL0qkWtZu/vxrGzmGBWUAM86XiLwm9MLEOd9uS5VZvCDBBTEYFrFfrywpAjKEyk
+         M65589M2+rRX/tEBab5B9msLwNsWD8Nm5JxF2i3QD9uPtGXGgrYcIcOtn+XDU6EjDhs5
+         LJ8A==
+X-Forwarded-Encrypted: i=1; AJvYcCXKw4DAWGSJHw4LKXAsf16u7+8rmGtOqipeESFG8mOly78VG8Z/Rvkj4MOWAtOPEjHpjdTaAWt41+ii@vger.kernel.org, AJvYcCXhhwmj306LpnGVpGEhaPVs0Hd8XLPLHD1or0gLx3pC0lv4ltqcKvLWs9jD78a1dyy3ub68aqd2@vger.kernel.org, AJvYcCXroOFiRmRjD3JieFBtiU2zVqWj1XoaramuGQdQbNoCFTto7egZc5EWpTcKU0KEOlz6xFOHev12HIg8/8dQ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxcgsce0Y50ZDyzHci5QZv/9RYYJxtqUAllQ2rBBX3lDt4mQIdE
+	z/WU5YTmbNRSQMi64g3P4JJ0maQszLNLPB4TV1Uk0mt1nxtd/oOp
+X-Gm-Gg: ASbGnctcdQmyC/6jxXIJrxWvsvZqPD/T/QdaDH91Vn/fKlnkQnLXW1vQwDbqaE1PMVJ
+	rK3WTBpiSKIvy/BciLc2utptpe3lzntnXU8LG+PsVR6X4p/uognAlPLI7t78cBNe3XrTXPABdAR
+	R4CNif+i3lV8wjr5DYJUpelcMho1OgH+1L6lh93WoODHsJMjO9E3V1f9weWfqXdOGxvM8GOgPqm
+	e9z1r7THLuAO9/wX02A5vOh1qo8J26OLIo5R1LK9dcvpjiat7cCk8uHZyVR813t1te2i8GYaaDO
+	4qjEf5Z+SmyaInmbNSGVfKm7AmV+ZPNyGH8SNWGLEuijXKYp85RuO21coxr9ouc0xa9/WKS/yRW
+	dMrBbXz4PNYs=
+X-Google-Smtp-Source: AGHT+IFCXZVt+ZbxzY+RXtoZv0pBDmQxbMpqj21hJ/Pem8fsX9mZWJAC03XuPdYjwoEkBgMl3G0XcA==
+X-Received: by 2002:a05:6512:31c1:b0:545:22fe:616f with SMTP id 2adb3069b0e04-5494c3319e0mr6024804e87.24.1741001696480;
+        Mon, 03 Mar 2025 03:34:56 -0800 (PST)
 Received: from mva-rohm (mobile-access-2e8451-125.dhcp.inet.fi. [46.132.81.125])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54963b5f23esm406831e87.55.2025.03.03.03.33.25
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54962196361sm438159e87.214.2025.03.03.03.34.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 03:33:26 -0800 (PST)
-Date: Mon, 3 Mar 2025 13:33:21 +0200
+        Mon, 03 Mar 2025 03:34:55 -0800 (PST)
+Date: Mon, 3 Mar 2025 13:34:49 +0200
 From: Matti Vaittinen <mazziesaccount@gmail.com>
 To: Matti Vaittinen <mazziesaccount@gmail.com>,
 	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 06/10] iio: adc: ti-ads7924 Drop unnecessary function
- parameters
-Message-ID: <2bb4c61122eca2f3a35f6087e7d9815675013f66.1740993491.git.mazziesaccount@gmail.com>
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Claudiu Manoil <claudiu.manoil@nxp.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH RFC net-next v5 10/10] net: gianfar: Use
+ device_get_child_node_count_named()
+Message-ID: <685cd1affabe50af45b767eeed9b9002d006b0fd.1740993491.git.mazziesaccount@gmail.com>
 References: <cover.1740993491.git.mazziesaccount@gmail.com>
 Precedence: bulk
 Precedence: bulk
@@ -140,87 +150,109 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="gwlQIDs1bHgXfyTL"
+	protocol="application/pgp-signature"; boundary="hgWGIdg2nB92PWQb"
 Content-Disposition: inline
 In-Reply-To: <cover.1740993491.git.mazziesaccount@gmail.com>
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6dsh4Xm7zFxYJ
+X-ITU-Libra-ESVA-ID: 4Z6gbJ1x35zG25M
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741704677.4079@D9WxhUcB5rSOtUiRzd6LEg
+X-ITU-Libra-ESVA-Watermark: 1741709341.4214@GrkcZmBMHMPzpf6mKk7Pww
 X-ITU-MailScanner-SpamCheck: not spam
 
 
---gwlQIDs1bHgXfyTL
+--hgWGIdg2nB92PWQb
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Device pointer is the only variable which is used by the
-ads7924_get_channels_config() and which is declared outside this
-function. Still, the function gets the iio_device and i2c_client as
-parameters. The sole caller of this function (probe) already has the
-device pointer which it can directly pass to the function.
+We can avoid open-coding the loop construct which counts firmware child
+nodes with a specific name by using the newly added
+device_get_child_node_count_named().
 
-Simplify code by passing the device pointer directly as a parameter
-instead of digging it from the iio_device's private data.
+The gianfar driver has such open-coded loop. Replace it with the
+device_get_child_node_count_named().
 
+Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-
 ---
-Revision history:
-v4 =3D> No changes
+It's fair to tell the pros and cons of this patch.
+The simplification is there, but it's not a big one. It comes with a cost
+of getting the property.h included in this driver which currently uses
+exclusively the of_* APIs.
 
-This commit is compile-tested only! All further testing is appreciated.
+NOTE: This patch depends on the patch:
+[2/10] "property: Add functions to count named child nodes"
+
+Compile-tested only!
 ---
- drivers/iio/adc/ti-ads7924.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/freescale/gianfar.c | 17 ++++-------------
+ 1 file changed, 4 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/iio/adc/ti-ads7924.c b/drivers/iio/adc/ti-ads7924.c
-index 66b54c0d75aa..b1f745f75dbe 100644
---- a/drivers/iio/adc/ti-ads7924.c
-+++ b/drivers/iio/adc/ti-ads7924.c
-@@ -251,11 +251,8 @@ static const struct iio_info ads7924_info =3D {
- 	.read_raw =3D ads7924_read_raw,
- };
+diff --git a/drivers/net/ethernet/freescale/gianfar.c b/drivers/net/etherne=
+t/freescale/gianfar.c
+index 435138f4699d..dfe012a5bc0a 100644
+--- a/drivers/net/ethernet/freescale/gianfar.c
++++ b/drivers/net/ethernet/freescale/gianfar.c
+@@ -97,6 +97,7 @@
+ #include <linux/phy_fixed.h>
+ #include <linux/of.h>
+ #include <linux/of_net.h>
++#include <linux/property.h>
 =20
--static int ads7924_get_channels_config(struct i2c_client *client,
--				       struct iio_dev *indio_dev)
-+static int ads7924_get_channels_config(struct device *dev)
- {
--	struct ads7924_data *priv =3D iio_priv(indio_dev);
--	struct device *dev =3D priv->dev;
- 	struct fwnode_handle *node;
- 	int num_channels =3D 0;
+ #include "gianfar.h"
 =20
-@@ -380,7 +377,7 @@ static int ads7924_probe(struct i2c_client *client)
- 	indio_dev->num_channels =3D ARRAY_SIZE(ads7924_channels);
- 	indio_dev->info =3D &ads7924_info;
+@@ -571,18 +572,6 @@ static int gfar_parse_group(struct device_node *np,
+ 	return 0;
+ }
 =20
--	ret =3D ads7924_get_channels_config(client, indio_dev);
-+	ret =3D ads7924_get_channels_config(dev);
- 	if (ret < 0)
- 		return dev_err_probe(dev, ret,
- 				     "failed to get channels configuration\n");
+-static int gfar_of_group_count(struct device_node *np)
+-{
+-	struct device_node *child;
+-	int num =3D 0;
+-
+-	for_each_available_child_of_node(np, child)
+-		if (of_node_name_eq(child, "queue-group"))
+-			num++;
+-
+-	return num;
+-}
+-
+ /* Reads the controller's registers to determine what interface
+  * connects it to the PHY.
+  */
+@@ -654,8 +643,10 @@ static int gfar_of_init(struct platform_device *ofdev,=
+ struct net_device **pdev)
+ 		num_rx_qs =3D 1;
+ 	} else { /* MQ_MG_MODE */
+ 		/* get the actual number of supported groups */
+-		unsigned int num_grps =3D gfar_of_group_count(np);
++		unsigned int num_grps;
+=20
++		num_grps =3D device_get_child_node_count_named(&ofdev->dev,
++							     "queue-group");
+ 		if (num_grps =3D=3D 0 || num_grps > MAXGROUPS) {
+ 			dev_err(&ofdev->dev, "Invalid # of int groups(%d)\n",
+ 				num_grps);
 --=20
 2.48.1
 
 
---gwlQIDs1bHgXfyTL
+--hgWGIdg2nB92PWQb
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmfFk4EACgkQeFA3/03a
-ocWH6Qf9FyzEsyqkzgN9MZRHwDCGKzAlC9o6MXhuUysrrkV+2T4yCPFQLuJ9/riu
-EJzcbBEnnsq/IIZuK2kP1qaWku3h/BA4LtzHaEb1zvczRXJDO0PVx8lFmXRsYqho
-pjMZE/2NzEDXor3SUKgKdxbT7mqpwZiLHRAwAyACsn74cBmwNTcK8dIqP1gNapH6
-LciyxcMQ/BGnz/yECLN5gjfyJ6Ht/2P9y1tYUfUQeoD/1EntEdeUSxZn1C7K7Wfw
-Dph4I5jckTj+EfMXGg9BmBChfhG1TtJ5KHMdPSA/HiG98UG3497yG1CMx5chATPA
-T4qKyEN11pYl8IKhw0mGrPskOmJZww==
-=3FY/
+iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmfFk9kACgkQeFA3/03a
+ocUnAwf/e1WiKUHI7IJokmxjEd69tjRodEfHXip6VUhjqG9jQnkg1VF0j7ViCQLk
+O97jTcDDlEjA8XgIo1/gIWDiLWe2uBRlE5FRwfQhcTnollLbXXYOx/f3T7avRU+a
+E0kddnqufnDdJjktO1q7Bq7heVGcqAh7QP/0GP30PKbt236wSC0lGjo7iH1a1nt8
+EgOl7L+qqppWvqxzL1qoY0zYERemWmzHcS5rOjSRweCOqDF8uNoIbHVGp7LgMvq2
+ElyJ0SBwUDdMQAu8Neu/c6vB21MjarrLFaQKasbv+ZFzfjaxjlMkKL1KbixHAz2O
+LXMh5s/s+fqIyssfgy+mWitmDNyNWg==
+=nCxe
 -----END PGP SIGNATURE-----
 
---gwlQIDs1bHgXfyTL--
+--hgWGIdg2nB92PWQb--
 
 
