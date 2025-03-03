@@ -1,128 +1,192 @@
-Return-Path: <linux-kernel+bounces-542546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DD47A4CAFC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:28:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43600A4CAFE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 19:30:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3735F1750AF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:28:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DD487A8531
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:29:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB40222D7A7;
-	Mon,  3 Mar 2025 18:28:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C16E21F4C83;
+	Mon,  3 Mar 2025 18:30:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="FCFfmUKh"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="apzwFqlm"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E7422CBE2
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 18:28:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 518A984A3E
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 18:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741026513; cv=none; b=YfzZCwms3hNTqTN9PitvFU6Bdj0FJq6QxIHUtjrlEyIowCNFXWh/eF5w4xNxK4U55Gbd8/ei0Hx2ashpGfpwjjoMnrcev8JehevN2BNq9mC4bRoqZD3y3vOe3A9LFwkTZ1Xv6M5VK5/fBduvyJwj2NLC60eTZdkIs+Igrd05LfU=
+	t=1741026650; cv=none; b=WjpPiYVqVVn7Yuh82z/CGGRrq228BhmlNVxgeyfDmtNXvVYqEmLRhz6M4cAYF4QDhsqVBu5cJIH25aS8c/fjAFXtBO0uGcSbpyD44nudjVRn+hsDSHqEBeb0Esi94NrqxkA5G8bFLCd1G+jDlRs5Lhctb03CtisiQxX+zec6ijo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741026513; c=relaxed/simple;
-	bh=LJlJ9+pfOZXD2l9ILKB0AraWpZl4WF3Irkph39J2hTw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=emH+BtCoveKjFrM0HJrHHhzn3jz2nA1P314WsP2ZxU6CWXIOMbimP8hv2kxcEc+MzUk5NtT9HCUJ4plQXbz983sxKHE+8Twu0at0Tsf5HIKA+kLAZZirL2E31AXHKwdEOPYKfM3lUbcWtg9U+hPdeKLNsevct5UZ5G9v3vZLxeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=FCFfmUKh; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5e4cbade42aso7088980a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 10:28:30 -0800 (PST)
+	s=arc-20240116; t=1741026650; c=relaxed/simple;
+	bh=w1AwGc2CdmVgtBjFBQwDHJrpxA7X1qM0BdRReldzBSE=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tq1oYFXz9QaG+buESfTxgWtgzH3S9aui3USKwQXgPM8qVUiCi5zdhsOHoDeR6za7hqcHRUcpBezg4mE3gK89kIri+mgyHpElDmuPwAkpBBSO9R4cMckjUywlIZG+cfdKj77PjT0S1e++cEHJn2JnWGHqtGgrLik8du96olYaSp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=apzwFqlm; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30b9f7c4165so24334041fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 10:30:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1741026509; x=1741631309; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=PiuymdUWUCngSn51k54uj1Me9yyCCIJ/YBBpvsVy4sw=;
-        b=FCFfmUKh2NVH2XNKzWAZPsxP+FV/5dfUm118pWNPpcNA9363Wta3BkEYcI/U3gZDtA
-         1wLDXiepfxb16+5f0mcJJTzBjn/hrNt5rbyksLNQUiRLtTF0kpdUe3UV8Fk9yhi0p4oz
-         58OjtGbGXxXwFYCmpn88s8n8nXV94ZlECHs54=
+        d=gmail.com; s=20230601; t=1741026646; x=1741631446; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NDT/FI9HyG67R1pizfIc2St2pqXpHBG0RFQRvwWXMEE=;
+        b=apzwFqlmpxw2iGAk3sGvf+wE0rfQtJSsIu/Eeyq9t8cVOlAV9t682drnT5kkPGjZVz
+         pgFPYprmOMRaEBJUhVfjhGIc87aePqOa2c1OdHi/GTvQQpfpxx9l8G+kkORLNoSKphrR
+         xGsxHyqvWa1VSG9203AaCGUrPItvfOsjmE+tnZFzJ3x20FUTJNU8o2AK1uK9GmXTqJl7
+         nQCa21NfL1PQ1JvOXZltw3x7NpYZQyaNeIs2dICpJvHLE//2m9kS3WKn4Xz9XTAZTzvf
+         ZDcOGLSHdALrA36ekFx74oIhEtdo5X22wov8j0vLOtjAJ0IlmLCZy9+zqtrPyM24W2gF
+         87Wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741026509; x=1741631309;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PiuymdUWUCngSn51k54uj1Me9yyCCIJ/YBBpvsVy4sw=;
-        b=M8MnqnTjpAp51mPHWv3tNnh+ywJdpedqYbpduzrQbFAdDW2fqzJ1PmtJzee/UJTaiZ
-         2A7avbpJqnqB7087XVJ1CjI58oD6YcaB0GyDyD+bGZ+s5Tog2oFSyoA78jt9vacwvrnR
-         Q2ACriAKH790wkYTXUGHkgzWGR24ojC3Zkhts+WjrOnY4heCTR/Mb20EXDIuYU5H2lw6
-         UhpS1eJdc3BQrp6IOucsMpeVv2VJR71lzcfcwPMer9e6pPAIxwjYFkmnlq9JhNs42/qH
-         fb+OKJU7vNnlKIEegAsLRadjf3hQ+aYunjtw32n1EwU93sL49e3qnViJ0lRakEph6EO7
-         BMCw==
-X-Gm-Message-State: AOJu0YwWlUxa6yzLnfxT0/NzEmed77JlsXbsTFEGxumKkIH+xCBbAzxJ
-	OIWukFr4VgzT8Ka0LlqtDRqWUzXQ8Ad1HNmFksPCl7oH8FJteukMqlJc5qgLmzEihQQWTQeQ6qv
-	tAj8=
-X-Gm-Gg: ASbGnctXshqLoF6mdSogJOuoYikp2dA3TBEP21ZfQ5r4V4FXHYHPm1tvo833y9zTyjl
-	gsCU8gUo2ZpIzHublEjIdLxf8jzeHK/5PsTvLGpG7UJ7YUc4MorkJPg8QjlPZ2I2dMEnD2s68yg
-	F3dCJ5Ms5Qskvj7HT39Fkdi7HhpeNE4tOK9jYYU9Us7FCnEiqB8pyK/lMpjULj5JFcg0UgxSHFQ
-	Ghq2m8R8IV9dmMQM8peOtGoAC7c0ra1d4YxyrF5VMWKrm97I5rpNPh5eQBdBMGcUXAWwpFw23ch
-	MwaZ6c4Sg+h3ah8f15K/nRnU13qhECk7F9f6hCzI0afLkFHiQzwlQfMmU26BVKJR4lu4m3IFxfZ
-	LdbaNwrvE61yzK225BTg=
-X-Google-Smtp-Source: AGHT+IFn7XhPv2xwpCsBrIGrKCCp9UpVOCNk6OLPHO6v7CEqiDlrAtt6J/SD8YlLRgrjTwe1gEbP+w==
-X-Received: by 2002:a17:907:7216:b0:abf:6951:4bc2 with SMTP id a640c23a62f3a-ac1f0edc6b9mr23586166b.7.1741026509035;
-        Mon, 03 Mar 2025 10:28:29 -0800 (PST)
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf5fa63b4asm400965766b.33.2025.03.03.10.28.27
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Mar 2025 10:28:28 -0800 (PST)
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5e4cbade42aso7088914a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 10:28:27 -0800 (PST)
-X-Received: by 2002:a17:907:980e:b0:abf:6e87:5148 with SMTP id
- a640c23a62f3a-ac1f13720f7mr23433866b.23.1741026506915; Mon, 03 Mar 2025
- 10:28:26 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741026646; x=1741631446;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NDT/FI9HyG67R1pizfIc2St2pqXpHBG0RFQRvwWXMEE=;
+        b=aE2j2FpRfuyM2ShgweUlj5J59YwkfBlAXDsC460xLL6Kh6ZUdE/ptGbMbLGcfD7yKj
+         aFp0djVo2aRZj28NNbl4HG/RKAxYvl3ZOqHUuWQEXYppjoFFJJhYs4qjkPvZtNjkahgo
+         xfLTd59FJcQ/NW30UXZ9IG3WrZbDFYO4+x9LP+GoZ3SoJri/OQTb/pPyUzB/z/pssMdN
+         /7cwJfmnOXE57Yq0OigPX13rryoS16LDVkLPjnj/kGt1uTGIA773xp1DepqNQbg6sQ+i
+         +69deqerXUEeJgEOHdgyeylRfFTf+e4d6EVF2MyNqcBht+AR6/+uHbbjHfDFdVstAgzJ
+         prQw==
+X-Forwarded-Encrypted: i=1; AJvYcCWWc5POBOQ2hRrugxzOfjLl32F5zG9mWM04a3sZgLjabuEFvHjvvg+o+F+e0HNSx6i4g4M+3tGb8wmyaWk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2WXFSM5Ll3O1vJQhP6oGVs6bI0tARGwtNkHygDNspk45uuIl9
+	jYCky+U1ymKe3pPWxkw4caswurzUoppDN+Cnqcnm/haZtXioAzpB
+X-Gm-Gg: ASbGncvJWos82YiOZXo9UM9qQFQFNXlbyVF4mpj3aW+5BzNTBdGK2iJ3fF2HAy9oYNW
+	I+PIKULj/Xv8OWXPTIt+lBBDkOcZkDfbc95xqMQDOUYtO9TTcH3DAIvR60Afesc6a9lgf58KPfN
+	IrBT6MB+zzo1ECB2HHm17ukRb0CwXsF1gt9UbX0jT5Z511N0m+WCvCBXyFdwK7qb2zkJetV5FE5
+	SxQMZCnVQv+hcH7iml0tt8OMmD83U9ATgtSt+oCnv5fSIOvXIReKb2bZLP1teLlTUKH7K9jkH59
+	UXRWiznoXfo=
+X-Google-Smtp-Source: AGHT+IHNJ6M+a6taADL1+o1egBEFbGVb+GeAIKsRYROrzEot5rwJRNJap7Ha4uaDJSAQ0yBH3zWdbA==
+X-Received: by 2002:a05:6512:3d0e:b0:545:8a1:536e with SMTP id 2adb3069b0e04-5494c129f17mr4958302e87.6.1741026646003;
+        Mon, 03 Mar 2025 10:30:46 -0800 (PST)
+Received: from pc636 ([2001:9b1:d5a0:a500::800])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54963962fe4sm507952e87.240.2025.03.03.10.30.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 10:30:45 -0800 (PST)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Mon, 3 Mar 2025 19:30:43 +0100
+To: Liu Ye <liuye@kylinos.cn>
+Cc: akpm@linux-foundation.org, urezki@gmail.com, hch@infradead.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] mm/vmalloc: Remove unnecessary size ALIGN in
+ __vmalloc_node_range_noprof
+Message-ID: <Z8X1U-3f35-JZTUr@pc636>
+References: <20250303094410.437985-1-liuye@kylinos.cn>
+ <20250303094410.437985-2-liuye@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <174099976188.10177.7153571701278544000.tip-bot2@tip-bot2>
-In-Reply-To: <174099976188.10177.7153571701278544000.tip-bot2@tip-bot2>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 3 Mar 2025 08:28:10 -1000
-X-Gmail-Original-Message-ID: <CAHk-=wjSwqJhvzAT-=AY88+7QmN=U0A121cGr286ZpuNdC+yaw@mail.gmail.com>
-X-Gm-Features: AQ5f1Jp9645mgpnQPPP7_mu4D7GdZbGoQmNM73EpDQqK94X1yTpIjhLLMBkkATc
-Message-ID: <CAHk-=wjSwqJhvzAT-=AY88+7QmN=U0A121cGr286ZpuNdC+yaw@mail.gmail.com>
-Subject: Re: [tip: x86/asm] x86/asm: Make ASM_CALL_CONSTRAINT conditional on
- frame pointers
-To: linux-kernel@vger.kernel.org
-Cc: linux-tip-commits@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Ingo Molnar <mingo@kernel.org>, "Peter Zijlstra (Intel)" <peterz@infradead.org>, Brian Gerst <brgerst@gmail.com>, 
-	"H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250303094410.437985-2-liuye@kylinos.cn>
 
-On Mon, 3 Mar 2025 at 01:02, tip-bot2 for Josh Poimboeuf
-<tip-bot2@linutronix.de> wrote:
->
-> x86/asm: Make ASM_CALL_CONSTRAINT conditional on frame pointers
->
-> With frame pointers enabled, ASM_CALL_CONSTRAINT is used in an inline
-> asm statement with a call instruction to force the compiler to set up
-> the frame pointer before doing the call.
->
-> Without frame pointers, no such constraint is needed.  Make it
-> conditional on frame pointers.
+On Mon, Mar 03, 2025 at 05:44:07PM +0800, Liu Ye wrote:
+> The same operation already exists in the function __get_vm_area_node,
+> so delete the duplicate operation to simplify the code.
+> 
+> Signed-off-by: Liu Ye <liuye@kylinos.cn>
+> ---
+>  mm/vmalloc.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index dc658d4af181..20d9b9de84b1 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -3798,7 +3798,6 @@ void *__vmalloc_node_range_noprof(unsigned long size, unsigned long align,
+>  			shift = arch_vmap_pte_supported_shift(size);
+>  
+>  		align = max(real_align, 1UL << shift);
+> -		size = ALIGN(real_size, 1UL << shift);
+>  	}
+>  
+>  again:
+> -- 
+> 2.25.1
+> 
+There is a mess with:
 
-Can we please explain *why* this is done?
+ unsigned long real_size = size;
+ unsigned long real_align = align;
 
-It may not be required, but it makes the source code uglier and adds a
-conditional. What's the advantage of adding this extra logic?
+"real_size" and "real_align". Those are useless. What is about:
 
-I'm sure there is some reason for this change, but that reason should
-be explained.
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index 5c88d0e90c20..a381ffee1595 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -3771,8 +3771,6 @@ void *__vmalloc_node_range_noprof(unsigned long size, unsigned long align,
+ 	struct vm_struct *area;
+ 	void *ret;
+ 	kasan_vmalloc_flags_t kasan_flags = KASAN_VMALLOC_NONE;
+-	unsigned long real_size = size;
+-	unsigned long real_align = align;
+ 	unsigned int shift = PAGE_SHIFT;
+ 
+ 	if (WARN_ON_ONCE(!size))
+@@ -3781,7 +3779,7 @@ void *__vmalloc_node_range_noprof(unsigned long size, unsigned long align,
+ 	if ((size >> PAGE_SHIFT) > totalram_pages()) {
+ 		warn_alloc(gfp_mask, NULL,
+ 			"vmalloc error: size %lu, exceeds total pages",
+-			real_size);
++			size);
+ 		return NULL;
+ 	}
+ 
+@@ -3798,19 +3796,18 @@ void *__vmalloc_node_range_noprof(unsigned long size, unsigned long align,
+ 		else
+ 			shift = arch_vmap_pte_supported_shift(size);
+ 
+-		align = max(real_align, 1UL << shift);
+-		size = ALIGN(real_size, 1UL << shift);
++		align = max(align, 1UL << shift);
+ 	}
+ 
+ again:
+-	area = __get_vm_area_node(real_size, align, shift, VM_ALLOC |
++	area = __get_vm_area_node(size, align, shift, VM_ALLOC |
+ 				  VM_UNINITIALIZED | vm_flags, start, end, node,
+ 				  gfp_mask, caller);
+ 	if (!area) {
+ 		bool nofail = gfp_mask & __GFP_NOFAIL;
+ 		warn_alloc(gfp_mask, NULL,
+ 			"vmalloc error: size %lu, vm_struct allocation failed%s",
+-			real_size, (nofail) ? ". Retrying." : "");
++			size, (nofail) ? ". Retrying." : "");
+ 		if (nofail) {
+ 			schedule_timeout_uninterruptible(1);
+ 			goto again;
+@@ -3860,7 +3857,7 @@ void *__vmalloc_node_range_noprof(unsigned long size, unsigned long align,
+ 	    (gfp_mask & __GFP_SKIP_ZERO))
+ 		kasan_flags |= KASAN_VMALLOC_INIT;
+ 	/* KASAN_VMALLOC_PROT_NORMAL already set if required. */
+-	area->addr = kasan_unpoison_vmalloc(area->addr, real_size, kasan_flags);
++	area->addr = kasan_unpoison_vmalloc(area->addr, size, kasan_flags);
+ 
+ 	/*
+ 	 * In this function, newly allocated vm_struct has VM_UNINITIALIZED
+@@ -3878,8 +3875,6 @@ void *__vmalloc_node_range_noprof(unsigned long size, unsigned long align,
+ fail:
+ 	if (shift > PAGE_SHIFT) {
+ 		shift = PAGE_SHIFT;
+-		align = real_align;
+-		size = real_size;
+ 		goto again;
+ 	}
+ 
+?
 
-Because "we don't need it" cuts both ways. Maybe we don't need the
-ASM_CALL_CONSTRAINT, but it also didn't use to hurt us.
-
-The problems seems entirely caused by the change to use a strictly
-inferior version of ASM_CALL_CONSTRAINT.
-
-Is there really no better option? Because the new ASM_CALL_CONSTRAINT
-seems actively horrendous.
-
-                Linus
+--
+Uladzislau Rezki
 
