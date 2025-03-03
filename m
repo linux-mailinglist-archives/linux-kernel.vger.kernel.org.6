@@ -1,148 +1,103 @@
-Return-Path: <linux-kernel+bounces-542003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99F5DA4C468
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:13:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 868A8A4C467
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:12:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B6CF188201F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:13:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9C1A3AB4E9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:10:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33CF4214217;
-	Mon,  3 Mar 2025 15:13:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4457E2147FC;
+	Mon,  3 Mar 2025 15:10:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ctAxVKiT"
-Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OR6VtSZn"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBB0B212B04
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 15:12:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21249214201;
+	Mon,  3 Mar 2025 15:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741014780; cv=none; b=cjp8IX472qaGiolW2cTOeHjCtH3kwMCT7JiVjBxVBdjXlDp4BXkBRNvH0v7rot8w4kTYsrs56ywGLs03NqCB76YjLfQLrSdcgB6VaFaxxEY7XCiEs56gxVhY+jOnLf3RbDllsDbjKdJFqfDS1nizKdUWVC+L7CITnHdGcAgcFRI=
+	t=1741014606; cv=none; b=bwo3zroGM5m0mbluj2TYIrT5kSWPQ3wt3ASSQSHzJvQybNa9ywIB8zZ1IuSf1iWRbpv/EUHGAQsgK45dX6Uubkp1nnv7zvaDa5ndggHfqottc9kj9qpzuX+RALn3qYDEVRLGUVycBW0OrnGo2/xkwYla+JBAIOEz04QqfR/36Q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741014780; c=relaxed/simple;
-	bh=P9F1ofeYrCy0v/tXEp86XKR4kq6FqY1je5tQrslWrMw=;
-	h=Date:In-Reply-To:Mime-Version:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=nQ6JBV0/bEP9sAhoFKCr9AEkYdCgVkHPwLQBZVI9vnov2jkCWb+iZvyhHMBhgfFrfzOfRp8mdXBtvLCVDGtDr1RKfJOddrizCuSrHKeSZ5GR5vgKYHwOi5zgYVhJ886vTqInibW+9ibhq5LqbGop0EjIe0H5BnhY018rNaUBg7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--derkling.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ctAxVKiT; arc=none smtp.client-ip=209.85.218.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--derkling.bounces.google.com
-Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-abf597afe1fso237862666b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 07:12:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741014777; x=1741619577; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=RDvNDSBHwWtbzP2LN4FrATbN6y8fQnYjZO4RYaZIKfs=;
-        b=ctAxVKiT0tlyEXKEQfZUjfLQX7QQOUOpWPeQiUwtYrj7ZD8k1VOnUxm0FsBSItIwYx
-         UGYnN/xDVdlY0aZF49Br1+GNhMdEUUIWJXSG3ZyGovG1mfz7mBFPD+RUB+fTwhxsyLci
-         xhXAcITyCY4MufYbbThKEOk4qB6Ap6QueEDUVw1Fh1bYsQVq3xfFcJSterhyTuYbcVlJ
-         EG8KD9I/4x9BNse+p+x279WJWCUOgf6D9H3pbX70XpEuJnvTA7b2gIzzP5/1hn/+zjzz
-         c3mDInlvYp0mUvZvGJY6kxAotakQ6H/vUAx1qAX/o1tJi6AxCZO4rixk2Oa+Lgfa7qQ+
-         PF5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741014777; x=1741619577;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RDvNDSBHwWtbzP2LN4FrATbN6y8fQnYjZO4RYaZIKfs=;
-        b=QZX68mZKQ2N4xM4umr/Uko8cjI9kLukwla7SoKOiLd9sh0gqHEZCw7heAEFPGqN6hZ
-         uSYyDWEWBjAHdpykvtTUb5CBRJpCiDtSwJvkERMED7NRjERuOCsNCSXrH+xLFECfomQ+
-         omT7i39rZKQLtkXEOIQESkXtAF9kWDb7am19mw77hhFmxto3MATMQ7WFpinr168TdmzA
-         xpj0stIPjX8vTHcU+0Yw3pTPo4uZ3Fuu3vVRac0o5u7xX0I0v5S+Pn4433Df74MJ5Isc
-         N1dEAZl/NcgJI1i7IJcUoiiiA2gYoT5fqEdZzhdZz0UXgcVi0lkxFLKqace1OL1YSN5R
-         LEjw==
-X-Forwarded-Encrypted: i=1; AJvYcCWNjAvA3MviYdwD/KQBeKtAxGZp8jdOwS+mT48U6JzruNhJpH0oq1qrD05QuMTBu+ueLgKdG9rqrvDRGEg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfNv60pGSB6EBT5R2hdx8MyXsiqdy+i5Lp4z0U5Qo/8iqJcpL1
-	OyorHblBuOZUzpTv6VnzPjNSfqpWbKU265OkWDrFgo+s6go3UrE00O+loJR1CFwOazEfxcXvnTA
-	rvW4j0cqwSQ==
-X-Google-Smtp-Source: AGHT+IHoEuw10xjAFK3YffNpBzL0FGxTUI0tpeWG2zIYS0277Gf09Ura44LMHf5llA6zU5CoNjFRM4Oo2iaZhw==
-X-Received: from wmbjh6.prod.google.com ([2002:a05:600c:a086:b0:439:9558:cfae])
- (user=derkling job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:a48:b0:439:99ab:6178 with SMTP id 5b1f17b1804b1-43ba66da248mr109415265e9.6.1741014369703;
- Mon, 03 Mar 2025 07:06:09 -0800 (PST)
-Date: Mon,  3 Mar 2025 15:05:56 +0000
-In-Reply-To: 20250303141046.GHZ8W4ZrPEdWA7Hb-b@fat_crate.local
+	s=arc-20240116; t=1741014606; c=relaxed/simple;
+	bh=YcGUKagKGbtwNKLU0xV9Ao0yx82+59o5WiA+tFSfjOc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qqfNXe0FrmkqZkMVpjuqBOKA78v0s6vu8MPg9DZ6ez25PwPgHBjzpKC+IMwwCm5b2oY6BWCIwajzy7WklUCszZRiJqLtwx3X4pfhUFDpRRUmDlfUyniwybxq8o1POtp0a4K6nJUlKqznnOdqs5ZmcyKMsV7p4cZGZ9cC1+r32yU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OR6VtSZn; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741014605; x=1772550605;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=YcGUKagKGbtwNKLU0xV9Ao0yx82+59o5WiA+tFSfjOc=;
+  b=OR6VtSZnEBINRpuNhbNwftbLr5bNjTE6EM+v8EGu1NkNYMjUGrd9Qg2A
+   1vA0WDtVpnVobwmk/1EDgPF3OzaBWtkEnNWbN3MHwMo6nsbMpZAnkUIbF
+   r0XnhWrNCqbzwmWQH9+Mh5Dn1vUH2C/F3a77KPfKoqSH8jnLQZVXjIdMK
+   T2UpMgzrCmVd7BFjEyNgnRDK/Y+kKyPa8BLCzQOIXM4QIMmK4PDXAnqZc
+   1dvpl9icUulwr/PVtMKKdtkyXYe8EArOZEYnwVeWNkRxYPowUAmCR+7MC
+   NNFvtVhargyn1SdiL4Vj/0lTwhNCEsNE1EqQBlwUlT4G7cHyve20QnwTA
+   g==;
+X-CSE-ConnectionGUID: 0ryKn/LBTgCB+/J//grrpQ==
+X-CSE-MsgGUID: Tdlh0taoQB+qXmIUaXmRdQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="52099500"
+X-IronPort-AV: E=Sophos;i="6.13,330,1732608000"; 
+   d="scan'208";a="52099500"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 07:09:01 -0800
+X-CSE-ConnectionGUID: Zql8hNh0QV+HxwD6L7F8Rg==
+X-CSE-MsgGUID: G8h/nVpxSd2GXngWvwwojQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,330,1732608000"; 
+   d="scan'208";a="118739575"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa009.fm.intel.com with ESMTP; 03 Mar 2025 07:08:57 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 71D94125; Mon, 03 Mar 2025 17:08:56 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-wpan@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Cc: Alexander Aring <alex.aring@gmail.com>,
+	Stefan Schmidt <stefan@datenfreihafen.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH net-next v1 0/2] ieee802154: ca8210: Sparse fix and GPIOd conversion
+Date: Mon,  3 Mar 2025 17:07:38 +0200
+Message-ID: <20250303150855.1294188-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
-Message-ID: <20250303150557.171528-1-derkling@google.com>
-Subject: Re: [PATCH final?] x86/bugs: KVM: Add support for SRSO_MSR_FIX
-From: Patrick Bellasi <derkling@google.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Patrick Bellasi <derkling@google.com>, Sean Christopherson <seanjc@google.com>, 
-	Yosry Ahmed <yosry.ahmed@linux.dev>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Josh Poimboeuf <jpoimboe@redhat.com>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, x86@kernel.org, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Patrick Bellasi <derkling@matbug.net>, Brendan Jackman <jackmanb@google.com>, 
-	David Kaplan <David.Kaplan@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-> On Wed, Feb 26, 2025 at 06:45:40PM +0000, Patrick Bellasi wrote:
-> > +
-> > +	case SRSO_CMD_BP_SPEC_REDUCE:
-> > +		if (boot_cpu_has(X86_FEATURE_SRSO_BP_SPEC_REDUCE)) {
-> > +bp_spec_reduce:
-> > +			pr_notice("Reducing speculation to address VM/HV SRSO attack vector.\n");
->
-> Probably not needed anymore as that will be in srso_strings which is issued
-> later.
+The main part is the patch 2 that converts the driver to GPIO descriptor APIs,
+the first one is just an ad-hoc fix WRT sparse complains on the bitwise
+types misuse.
 
-Good point, the above can certainly be dropped.
+Andy Shevchenko (2):
+  ieee802154: ca8210: Use proper setter and getters for bitwise types
+  ieee802154: ca8210: Switch to using gpiod API
 
-> > +			srso_mitigation = SRSO_MITIGATION_BP_SPEC_REDUCE;
-> > +			break;
-> > +		} else {
-> > +			srso_mitigation = SRSO_MITIGATION_BP_SPEC_REDUCE_NA;
-> > +			pr_warn("BP_SPEC_REDUCE not supported!\n");
-> > +		}
-> 
-> This is the part I'm worried about: user hears somewhere "bp-spec-reduce" is
-> faster, sets it but doesn't know whether the hw even supports it. Machine
-> boots, warns which is a single line and waaay buried in dmesg and continues
-> unmitigated.
+ drivers/net/ieee802154/ca8210.c | 72 ++++++++++++---------------------
+ 1 file changed, 26 insertions(+), 46 deletions(-)
 
-That's why we are also going to detect this cases and set
-SRSO_MITIGATION_BP_SPEC_REDUCE_NA, so that we get a:
+-- 
+2.47.2
 
-  "Vulnerable: Reduced Speculation, not available"
-
-from vulnerabilities/spec_rstack_overflow, which should be the only place users
-look for to assess the effective mitigation posture, ins't it?
-
-> So *maybe* we can make this a lot more subtle and say:
-> 
-> srso=__dont_fall_back_to_ibpb_on_vmexit_if_bp_spec_reduce__
-> 
-> (joking about the name but that should be the gist of what it means)
-
-I can think about it, but this seems something different than the common
-practice, i.e. specify at cmdline what you want and be prepares on possibly
-not to get it.
-
-> and then act accordingly when that is specified along with a big fat:
-> 
-> WARN_ON(..."You should not use this as a mitigation option if you don't know
-> what you're doing")
-> 
-> along with a big fat splat in dmesg.
-> 
-> Hmmm...?
-
-After all the above already happens, e.g. if we ask for ibpb-vmexit but the
-machine has not the ucode. In this case we still have to check the
-vulnerabilities report to know that we are:
-
-  "Vulnerable: No microcode"
-
---
-#include <best/regards.h>
-
-Patrick Bellasi (derkling@)
 
