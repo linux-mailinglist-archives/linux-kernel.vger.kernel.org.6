@@ -1,123 +1,130 @@
-Return-Path: <linux-kernel+bounces-545176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5A1BA4EC46
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:47:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 537DBA4EAF8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:16:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 928278E0673
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:47:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C9AC1897915
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:11:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B997C297538;
-	Tue,  4 Mar 2025 17:25:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D9328D05E;
+	Tue,  4 Mar 2025 17:51:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YxclT3jd"
-Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PWcfLBpg"
+Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94BAC29751B
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:25:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.115
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E85382505CE
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.117
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741109125; cv=pass; b=dPz6vyJBl9vE0fl7UPLhwXdbyhpjNJa9MF2Kw07DmzfWaaiU+H0VQSjxNaah36Hnv0m6fn18odDGJvjrnIAbCDSmij+TfQ4h43vsJ1Bw3TBrxtRJu/GD61mQ1AMNXEXakJOZM5b+hzzUR3K8+5VYbvFiHSgQRzUc2hlHQE4wevQ=
+	t=1741110689; cv=pass; b=i0APczgYey9duKRdkmu8j6K+jHmVX7ouLW6QgtogZCnLKpcfIpKFYTsGnC0GWMaXn6W6ZYlz9IKKvInODI/uFo2v+sLjlP36tNAIjossjxXgHoOLlDFGKtVglRLO1fY5d2sbmPfcHafbSXREBzQwbAIHHs+x0zvCCBys7ZurDS0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741109125; c=relaxed/simple;
-	bh=C6fxWyObGgOxBCXo82lvH9o/i56NbqIQG5QaXgkKlzg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m3H/MDHIm+ENsd561zjWrZ52+gRp1ONv5GfEGbZ7UuZ93P4dLx1MAoecBOxFWg1Z5QlhQFj2RPwWBzmd9Axr0rgHwvU7AOt36/4j9UXZfxplw3JZq88uLCpBLDwtvccD/rcGwqBWAcQ967/LgdkoEh0KG5bb2h0OK3spFxRKymE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YxclT3jd; arc=none smtp.client-ip=192.198.163.9; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; arc=pass smtp.client-ip=160.75.25.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+	s=arc-20240116; t=1741110689; c=relaxed/simple;
+	bh=vexmjRShWRkr7S+O8wIzsYn1ODE9j/1sozVgI1TDUjs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=eUl5FyGzwfE1LF6GHtVnTm+2So1Am8B2fIPnNEHFzqOLXmno+VCn7ynXnSUOTYOXDsmj7vaZ/SSt1NWZaz2ktzEeCW8aD86AHSCFR6jZDgIlf2xzejVEILzitZsUUQdq3P4Kpsaosy7GL7inMG7Xjctv69kDzNQN+6cESqegYkw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PWcfLBpg; arc=none smtp.client-ip=209.85.167.53; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; arc=pass smtp.client-ip=160.75.25.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
-Received: from lesvatest1.cc.itu.edu.tr (unknown [10.146.128.1])
+Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id C090540CFB4C
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:25:21 +0300 (+03)
+	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id 1C79740CFB88
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:51:26 +0300 (+03)
 X-Envelope-From: <root@cc.itu.edu.tr>
 Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=YxclT3jd
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20230601 header.b=PWcfLBpg
 Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6gQT0NcrzG29M
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:01:05 +0300 (+03)
+	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6h930MFRzG38Y
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:34:31 +0300 (+03)
 Received: by le1 (Postfix, from userid 0)
-	id 4160B4272A; Tue,  4 Mar 2025 19:00:38 +0300 (+03)
+	id 8360442736; Tue,  4 Mar 2025 19:34:15 +0300 (+03)
 Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YxclT3jd
-X-Envelope-From: <linux-kernel+bounces-541605-bozkiru=itu.edu.tr@vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PWcfLBpg
+X-Envelope-From: <linux-kernel+bounces-541606-bozkiru=itu.edu.tr@vger.kernel.org>
 Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YxclT3jd
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PWcfLBpg
 Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id A8ADC427EA
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:39:42 +0300 (+03)
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id E923B3063EFC
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:39:41 +0300 (+03)
+	by le2 (Postfix) with ESMTP id DDE4D41D32
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:46:05 +0300 (+03)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by fgw1.itu.edu.tr (Postfix) with SMTP id 681C83063EFC
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:46:05 +0300 (+03)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CAA547A80C2
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:38:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C3193B91D9
+	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 11:40:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE89200BAA;
-	Mon,  3 Mar 2025 11:39:28 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FF58202986;
+	Mon,  3 Mar 2025 11:40:20 +0000 (UTC)
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 482BA200106;
-	Mon,  3 Mar 2025 11:39:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80CC3200BBC;
+	Mon,  3 Mar 2025 11:40:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741001965; cv=none; b=qY5U1LnEBMVwm5/T5MqtwNLCXWQKhmzz8H+VKtjAnHlf3a4mPnFeFz7VAECfy6vwGXXuKrQRE34XnrsR5O3Mkyepv0mgx69SaUBYPZTc34LP0stdu0teyn8CuVLFBjWqwPZxeYp8y7XvvmgjuBEdDji7sPBIWajBFKAKf8NDR48=
+	t=1741002017; cv=none; b=NK2DnzDkaOZeOf/mT5QmIJoLoKEj6HnGqV6+2Gbk+vktV9JHiQDZHowleyLwoKPkynJEM/7D4qjox5265EomH4IzCPv2b9YuCvM6gJbgwbAe3jDEGYMHySM59lbfYSUX5EV2MsDDLYyJ8ft6HfDlxC0VrUQWKokrGw8FZNP3Exk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741001965; c=relaxed/simple;
-	bh=C6fxWyObGgOxBCXo82lvH9o/i56NbqIQG5QaXgkKlzg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ggoMqhfCbzBSOOibzF50BgXY4u+kpczVOTvs5hVJWnkIxfmlu8f0fM4Zf7jmOsPXRxFpRr1LdfGCwkmmOm30e9Z7BIqS7hmtJMloOlT5q8qhEdaMMGkNIy/OVJCuztTBpj0Vm5J6dmRGPMAQ5pBrwZnHw1940sPONVd2gmHW5xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YxclT3jd; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741001964; x=1772537964;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=C6fxWyObGgOxBCXo82lvH9o/i56NbqIQG5QaXgkKlzg=;
-  b=YxclT3jdceOqhUFiruNrN0VP4Jiyn0siGVCQQvhDoY4Oa8wkaMT0kaSH
-   px21FCRrhZIWaTlqPiQ8OnHmgCTgRG2L5WvNe0WFx/UTyswInnX5G9UPo
-   uKULCZyQ8nupCkNO/3lY/fSJB0mMqO6c/qQjlX/IsuYgozbJgdHcRn/KO
-   OzggDaCdfgDLBbtczv/QBnkCePOyr/Qrn/HCFgCu5JtcbeDHclc8oObFu
-   hZCVVOpt8vbL4eVy3DEAVC+IVjiVkPHE1wz1Ec4HP2mcvKobnGUV97xx1
-   5SwJ/qqS7AzbgDJu4HrfjTnBGb6bS5WoR1TfPe3tVh//8lB22hJRJ2DGc
-   g==;
-X-CSE-ConnectionGUID: xcGgBrUrTrO1vQ3mUoivxA==
-X-CSE-MsgGUID: 7/IXXA48SHO6jNSoJXFWEg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="52511573"
-X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="52511573"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 03:39:21 -0800
-X-CSE-ConnectionGUID: GUnvnBbISUarGfzI0RnFjQ==
-X-CSE-MsgGUID: 0U1IS4WDQFmpPERmh+hBKA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="118530789"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 03:39:20 -0800
-Date: Mon, 3 Mar 2025 13:39:16 +0200
-From: Raag Jadav <raag.jadav@intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: lee@kernel.org, giometti@enneenne.com, gregkh@linuxfoundation.org,
-	raymond.tan@intel.com, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] mfd: intel_ehl_pse_gpio: Introduce Intel Elkhart
- Lake PSE GPIO and TIO
-Message-ID: <Z8WU5NiIsu34Gz-Z@black.fi.intel.com>
-References: <20250303044745.268964-1-raag.jadav@intel.com>
- <20250303044745.268964-2-raag.jadav@intel.com>
- <Z8VnSyH_DBuJpW2o@smile.fi.intel.com>
+	s=arc-20240116; t=1741002017; c=relaxed/simple;
+	bh=vexmjRShWRkr7S+O8wIzsYn1ODE9j/1sozVgI1TDUjs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=bp3aqvUx8Fb9JqUvHtvCbKIBubOo+WQSm/owfF7NrC6+PbJqsrkPi3/X/xiCHL1fi6fO2P52FIO+zNIFKspKjQmOqXcmU/hyrOUGpyIKof95L+wVEXtzIlU0+bdQkS/TFvcsslSuiw3JiM8yB+1sIKQPhCIBSbkNsavIMiiQWEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PWcfLBpg; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5494bc8a526so3717827e87.0;
+        Mon, 03 Mar 2025 03:40:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741002013; x=1741606813; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=a3KshhKLPc3asFmOXQnuU+ysx6yVcCHiVd9RsF7krHs=;
+        b=PWcfLBpgbyy01yn5+C0iJvUKDGS3hDiO+8ezodFzKDM1PrDwyXd9c3YpAfyRvgkVKH
+         NfJSQQmxBGLNAlvSTtpvDJgaP4lgAuSu19p66EoCpllYBqeU8uyEOLhHF5fmrajxvWdx
+         rsZTAuy/YSa46607ao7hsEPAzMlfohqa5KmicpPOViW9yhMxRCDEE6W/eQYRp7Juk/P8
+         MxXElLKztOFprUWanUNzCQ9JImc+KGSnqdDu1V5/ujSMxJpk0tzLttGcPERFqt25RT7E
+         MK74uQlOpp2Xa4BJ/yQBG99bJ3wfpLUZBIomiPfzmo6Kj+7l3UHfWhAnl1+OHnaKjKTO
+         xi1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741002013; x=1741606813;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=a3KshhKLPc3asFmOXQnuU+ysx6yVcCHiVd9RsF7krHs=;
+        b=U6j6SeiWo/CnWoQm188JMboR12+9RsAqwFLOM/C0mqlvvxckmNz0W8hhjcrk23Zj30
+         CijLWU+s/WuagumHVkGAS1IMny4EWCXI6hq2S8YJTbaIM1lvPI9LlRz/hcslvQ6l4nYY
+         pMq+LHruy+BejjAKzuYLsVg0qOQAHfkKIHAq2zYp5py0uHDX1rzAF3KgrWFkSTlj7LZ4
+         cIrL2s4+y4akda27LroKk9j4oN8KuYLTuHMfhpADRyfd9YvoSgzlRuVoFnOjzoPyOHhG
+         Zj8X7g+pzMV8AV+3wZygOXgD2UGGT1mjl7ILLlMqPsrZR1tFRFSxJ9rtEfpxRs3+M6l1
+         Hk2g==
+X-Forwarded-Encrypted: i=1; AJvYcCU5hBwdkhnMhEVjJXBUD687PCj/xZ1eagIU1AUNA4Z4UQnjRTcyedAgr4kIwBQQYYsi7BLE75Q1zwNYeok=@vger.kernel.org, AJvYcCUO3DqrszZUvOFfpOAJHD1JBYzOwnY2C2RWYaWhzOb4w1UmdeNxcamPWzY6YiErSZ/j4iUOHhAA@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGM+zXt87Cgt/hNxuGiWP2qv/7se0t6yx5hUNFP4lGs/VgHY3v
+	8j7P2IS+Bu7205aO2ssZuuA3VXpsh/rnip/QqtcdnUWJff03S0nmp4JE/50H
+X-Gm-Gg: ASbGncsyx/8rQ9Q6HUvyifVWGO0xZRQ9k0ocBwAytbpmX1B7It1WN3v+vHlmPsIH/T5
+	jlHs2DucZC7KdMbiWRdxvtZoruILHiQ6fn1BEBo35CAnv4NJwvjm1aJlHj/B9iKp9V45IEYL4l1
+	JPemHCm4q0sh6QZwC7BZisseNWexQq8GT8ITIe6HGqYkhRGuXdf0lxDniHjyix4t5Uni4fYpeE/
+	keHQGuu0e+GDWSCUeYYuXVYVHHzVFVIOPLvBKtahhhr+UYRn0z+ckIMI3VWKwYAfLThyb4eWfBb
+	WsWXpX3OksF7J9tdrULTpP6k6R2Rb/KyrniNbXZ2/XZ3UsIsCedngbwVnONTImgluTjnJEM63Jp
+	bB5j1IDUwjR3Shj4BCR6Iy7PYQZYR44nkPQY6HZRM
+X-Google-Smtp-Source: AGHT+IEbZSAS8VlrLgb63qXjtHIvC4htXmc8dPx7Hmc+Hwrr8Xjf0XYoxC/WEWCfUuOyOIo58FGCyA==
+X-Received: by 2002:ac2:4a74:0:b0:549:4e80:6dc0 with SMTP id 2adb3069b0e04-5494e806dc6mr4270805e87.0.1741002012981;
+        Mon, 03 Mar 2025 03:40:12 -0800 (PST)
+Received: from razdolb.local (static.248.157.217.95.clients.your-server.de. [95.217.157.248])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54949de706fsm1125399e87.23.2025.03.03.03.40.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 03:40:12 -0800 (PST)
+From: Mikhail Rudenko <mike.rudenko@gmail.com>
+Date: Mon, 03 Mar 2025 14:40:09 +0300
+Subject: [PATCH v4 1/2] media: videobuf2: Fix dmabuf cache sync/flush in
+ dma-contig
 Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -125,36 +132,95 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8VnSyH_DBuJpW2o@smile.fi.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250303-b4-rkisp-noncoherent-v4-1-e32e843fb6ef@gmail.com>
+References: <20250303-b4-rkisp-noncoherent-v4-0-e32e843fb6ef@gmail.com>
+In-Reply-To: <20250303-b4-rkisp-noncoherent-v4-0-e32e843fb6ef@gmail.com>
+To: Dafna Hirschfeld <dafna@fastmail.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Heiko Stuebner <heiko@sntech.de>, Tomasz Figa <tfiga@chromium.org>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Hans Verkuil <hverkuil@xs4all.nl>, 
+ Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, 
+ Mikhail Rudenko <mike.rudenko@gmail.com>, stable@vger.kernel.org
+X-Mailer: b4 0.14.2
 X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6gQT0NcrzG29M
+X-ITU-Libra-ESVA-ID: 4Z6h930MFRzG38Y
 X-ITU-Libra-ESVA: No virus found
 X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741713804.8397@pxGQ48wHyxzkU59C5KkVyw
+X-ITU-Libra-ESVA-Watermark: 1741715362.35815@ZAbEv+FvLbCcjT90khcJNQ
 X-ITU-MailScanner-SpamCheck: not spam
 
-On Mon, Mar 03, 2025 at 10:24:43AM +0200, Andy Shevchenko wrote:
-> On Mon, Mar 03, 2025 at 10:17:41AM +0530, Raag Jadav wrote:
-> > Intel Elkhart Lake Programmable Service Engine (PSE) includes two PCI
-> > devices that expose two different capabilities of GPIO and Timed I/O
-> > as a single PCI function through shared MMIO.
-> 
-> ...
-> 
-> > +INTEL GPIO MFD DRIVER
-> 
-> This also needs to be more precise and follow the name. We have more Intel GPIO
-> drivers, and MFD doesn't ring any bell about the platform or so. Are you going
-> to support all of them (existing and comining)?
+When support for V4L2_FLAG_MEMORY_NON_CONSISTENT was removed in
+commit 129134e5415d ("media: media/v4l2: remove
+V4L2_FLAG_MEMORY_NON_CONSISTENT flag"),
+vb2_dc_dmabuf_ops_{begin,end}_cpu_access() functions were made
+no-ops. Later, when support for V4L2_MEMORY_FLAG_NON_COHERENT was
+introduced in commit c0acf9cfeee0 ("media: videobuf2: handle
+V4L2_MEMORY_FLAG_NON_COHERENT flag"), the above functions remained
+no-ops, making cache maintenance for non-coherent dmabufs allocated by
+dma-contig impossible.
 
-Not that it is planned as of now but I wouldn't mind :)
+Fix this by reintroducing dma_sync_sgtable_for_{cpu,device} and
+{flush,invalidate}_kernel_vmap_range calls to
+vb2_dc_dmabuf_ops_{begin,end}_cpu_access() functions for non-coherent
+buffers.
 
-> > +M:	Raag Jadav <raag.jadav@intel.com>
-> > +S:	Supported
-> > +F:	drivers/mfd/intel_ehl_pse_gpio.c
+Fixes: c0acf9cfeee0 ("media: videobuf2: handle V4L2_MEMORY_FLAG_NON_COHERENT flag")
+Cc: stable@vger.kernel.org
+Signed-off-by: Mikhail Rudenko <mike.rudenko@gmail.com>
+---
+ .../media/common/videobuf2/videobuf2-dma-contig.c  | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-Raag
+diff --git a/drivers/media/common/videobuf2/videobuf2-dma-contig.c b/drivers/media/common/videobuf2/videobuf2-dma-contig.c
+index a13ec569c82f6da2d977222b94af32e74c6c6c82..d41095fe5bd21faf815d6b035d7bc888a84a95d5 100644
+--- a/drivers/media/common/videobuf2/videobuf2-dma-contig.c
++++ b/drivers/media/common/videobuf2/videobuf2-dma-contig.c
+@@ -427,6 +427,17 @@ static int
+ vb2_dc_dmabuf_ops_begin_cpu_access(struct dma_buf *dbuf,
+ 				   enum dma_data_direction direction)
+ {
++	struct vb2_dc_buf *buf = dbuf->priv;
++	struct sg_table *sgt = buf->dma_sgt;
++
++	if (!buf->non_coherent_mem)
++		return 0;
++
++	if (buf->vaddr)
++		invalidate_kernel_vmap_range(buf->vaddr, buf->size);
++
++	dma_sync_sgtable_for_cpu(buf->dev, sgt, direction);
++
+ 	return 0;
+ }
+ 
+@@ -434,6 +445,17 @@ static int
+ vb2_dc_dmabuf_ops_end_cpu_access(struct dma_buf *dbuf,
+ 				 enum dma_data_direction direction)
+ {
++	struct vb2_dc_buf *buf = dbuf->priv;
++	struct sg_table *sgt = buf->dma_sgt;
++
++	if (!buf->non_coherent_mem)
++		return 0;
++
++	if (buf->vaddr)
++		flush_kernel_vmap_range(buf->vaddr, buf->size);
++
++	dma_sync_sgtable_for_device(buf->dev, sgt, direction);
++
+ 	return 0;
+ }
+ 
+
+-- 
+2.48.1
+
 
 
