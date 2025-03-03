@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-542504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61C90A4CA33
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:49:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57D54A4CA74
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:55:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B4AE7A4890
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:45:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B27F517714A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:47:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C4DF215169;
-	Mon,  3 Mar 2025 17:46:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 674B82153DA;
+	Mon,  3 Mar 2025 17:47:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cS+ybbp5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="he56EHiK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B57A20E706;
-	Mon,  3 Mar 2025 17:46:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B67738635B;
+	Mon,  3 Mar 2025 17:47:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741023968; cv=none; b=WkqM/nSdlnkcSlKnopNF/QCcnKN8zxDr3xVsqI45G1PhhjJE5GHwO+KZPmgofUoMFeMsdpAoCY1N5y6uMagjD67ZJP0fGKjdXqhtJBg+K6SN2wwDb4fABKUNfaa3SOcZryicnZFuA/aHFTlPE6b9l/UOSLgY3Pyt88PZCA2Av5M=
+	t=1741024025; cv=none; b=TW/8+Fm4srRvbV0QYV+PLAoSY0ceK6zKCmJbuAjlLGyWG/YDSob0uLr+E3Y03Ag6GVqtSLXnfX+KPe85yUlmcGSTUqaCG2PfL/vHdLLlcETZ1ZdjpbhGHBdrypHemqYiHXdyc9Vyv4UpibR/PYVQzyLt7krAcrKwHafTPAWosxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741023968; c=relaxed/simple;
-	bh=LFg0cQbBhx1KCS4G96feguNswXa0ogQID7bdaU1QdTQ=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=DWb/OrKRu3AjB5fOj2gkBg2rY5EEYIexlfQG9c8EpZoHryF5uSfmQwR0P45L9PNvpWxSLUQU20o8KG4GxTt1gHDNghRfpn1ogSo3uncojPMFgKuKpZ2KfvcQ7LGc1Ux7qFhv/J9849CsDEnBPNbFmgmS8y0mUoEnXXuKCTK8YgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cS+ybbp5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0379C4CED6;
-	Mon,  3 Mar 2025 17:46:03 +0000 (UTC)
+	s=arc-20240116; t=1741024025; c=relaxed/simple;
+	bh=sPD+8Ym5muk8cbhRxjVBhD4kDwe8iPxEGnSgNzK3SxY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cN37ygpwkJ7CsOCNAZfegVkF1Ci35LVC6xsJBLOWjBVlyliizHIuruih8/vSIbJOHynERjwrzLbDujTYHHCkRlxCKp6rR/WmnhljCI6jQAeQpMUbQJNgg464W7hdjuy+5qNKztaa1NELswFm/gXo0DWIy0qaG3KtgXPocJCN5io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=he56EHiK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D8EEC4CEE6;
+	Mon,  3 Mar 2025 17:47:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741023968;
-	bh=LFg0cQbBhx1KCS4G96feguNswXa0ogQID7bdaU1QdTQ=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=cS+ybbp5AlugX98w36ZHqxBNZ2Myr1Hp6RQYyvPR0/IBWMFhxQzLZbks0OBEDkcfL
-	 ldhVShIMHgCpFsBy+Uonyn1shmmsTLV1NMB9UdQowyxf9D+OyruavDqdj2bg/QwsI/
-	 UadV3Ximi/eQYLIRP+k3ec+Xx01RtAeJxPlA3554KiQPG1/6QAjRyfDIiaUYl+3uqa
-	 0QnekGNJM86+s0IXEDeCViYlWt5sdMVPbPCDhpASBnlgfKj4uEnPxUlWLgRckE3guM
-	 xH6RoiEnjMRnl05QGY+jXCyvLb+ZmPMD0k6NuOuvKVU1CzMRFo+1lGgl4qKsr18FD4
-	 XkN7Z+pKKlCCA==
-Message-ID: <ac4f8b31-2a9b-4860-a72e-379806ee9f77@kernel.org>
-Date: Mon, 3 Mar 2025 18:46:02 +0100
+	s=k20201202; t=1741024025;
+	bh=sPD+8Ym5muk8cbhRxjVBhD4kDwe8iPxEGnSgNzK3SxY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=he56EHiK8V4WZW/PG4vyFVj0IOFtutJF49Sep03//Lf7qWf5ZdfoHA98V7wiAF7aS
+	 X8Vs0C2x7puxWXsQEYK7YX34GHL0ZcLrwbBJ/kRPJhvWw/ya7h2PMKLR8Jj7DG8GSj
+	 rV0YHeHouOxvtqqh4kSYLoEoS8eaREey8r85GWjeccgDS6ptzm9iWdOhRJP4Zh3qx2
+	 hIJ8V8W3fopAAPZz9S4Ir9yErOx5AMATnfISDiOrssV63IUckn4nx1e6AW8lTLu7l5
+	 axE5ty+/BM0CvuZEnBg6tyaDxY30yPgSfcyxh9SnVootC/qJOMDq79WYruwP0Izfdy
+	 Fupc62z3oET8g==
+Message-ID: <8dcdd2ec-e4b6-4fc0-be50-12fe187cd5e0@kernel.org>
+Date: Mon, 3 Mar 2025 18:46:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,20 +49,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/4] dt-bindings: clock: thead: Add TH1520 VO clock
- controller
+Subject: Re: [PATCH v1 1/5] dt-bindings: firmware: thead,th1520: Add support
+ for firmware node
+To: Michal Wilczynski <m.wilczynski@samsung.com>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org,
+ wefu@redhat.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, alex@ghiti.fr, jszhang@kernel.org,
+ ulf.hansson@linaro.org, m.szyprowski@samsung.com
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20250303145901.446791-1-m.wilczynski@samsung.com>
+ <CGME20250303145918eucas1p10f64b2ce75e395ce208439307daa8a8f@eucas1p1.samsung.com>
+ <20250303145901.446791-2-m.wilczynski@samsung.com>
+ <edb3dd6e-8b56-42b3-8bb2-8ed7ad186b75@kernel.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Michal Wilczynski <m.wilczynski@samsung.com>, mturquette@baylibre.com,
- sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- drew@pdp7.com, guoren@kernel.org, wefu@redhat.com, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
- jszhang@kernel.org, p.zabel@pengutronix.de, m.szyprowski@samsung.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-References: <20250303143629.400583-1-m.wilczynski@samsung.com>
- <CGME20250303143635eucas1p1dbcd26d4906b962e07cbde7f5ef704bf@eucas1p1.samsung.com>
- <20250303143629.400583-2-m.wilczynski@samsung.com>
- <cf6aa8bf-d424-49f4-b6a6-b6b10fd8092f@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -107,45 +108,25 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <cf6aa8bf-d424-49f4-b6a6-b6b10fd8092f@kernel.org>
+In-Reply-To: <edb3dd6e-8b56-42b3-8bb2-8ed7ad186b75@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 03/03/2025 18:41, Krzysztof Kozlowski wrote:
-> On 03/03/2025 15:36, Michal Wilczynski wrote:
->> Add device tree bindings for the TH1520 Video Output (VO) subsystem
->> clock controller. The VO sub-system manages clock gates for multimedia
->> components including HDMI, MIPI, and GPU.
+On 03/03/2025 18:42, Krzysztof Kozlowski wrote:
+> On 03/03/2025 15:58, Michal Wilczynski wrote:
+>> The kernel communicates with the E902 core through the mailbox
+>> transport using AON firmware protocol. Add dt-bindings to document it
+>> the dt node.
 >>
->> Document the VIDEO_PLL requirements for the VO clock controller, which
->> receives its input from the AP clock controller. The VIDEO_PLL is a
->> Silicon Creations Sigma-Delta (integer) PLL typically running at 792 MHz
->> with maximum FOUTVCO of 2376 MHz.
->>
->> Add a mandatory reset property for the TH1520 VO clock controller that
->> handles the GPU clocks. This reset line controls the GPU CLKGEN reset,
->> which is required for proper GPU clock operation.
->>
->> The reset property is only required for the "thead,th1520-clk-vo"
->> compatible, as it specifically handles the GPU-related clocks.
->>
->> This binding complements the existing AP sub-system clock controller
->> which manages CPU, DPU, GMAC and TEE PLLs.
->>
->> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
->> ---
->>  .../bindings/clock/thead,th1520-clk-ap.yaml   | 33 ++++++++++++++++--
->>  .../dt-bindings/clock/thead,th1520-clk-ap.h   | 34 +++++++++++++++++++
->>  2 files changed, 64 insertions(+), 3 deletions(-)
+>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > 
 > 
-> Where is the changelog? Why is this v1? There was extensive discussion
-> for many versions, so does it mean all of it was ignored?
+> How is this possible? That's v1 and I never review outside of mailing list.
+> 
+OK, I found v5:
+https://lore.kernel.org/all/20250219140239.1378758-4-m.wilczynski@samsung.com/
 
-
-Plus this was reviewed so it is even more confusing. Where is the review
-tag? If tag was dropped, you must explain this - see submitting patches,
-which asks for that.
+so is this the same?
 
 Best regards,
 Krzysztof
