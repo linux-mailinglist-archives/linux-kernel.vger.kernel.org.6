@@ -1,318 +1,296 @@
-Return-Path: <linux-kernel+bounces-542401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0869AA4C93C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:22:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF740A4C973
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 18:29:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B724D18977DE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:17:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 254863B2E61
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 17:17:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A44E23A9AA;
-	Mon,  3 Mar 2025 17:00:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 599542153F7;
+	Mon,  3 Mar 2025 17:01:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="t7UVtoD8"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2057.outbound.protection.outlook.com [40.107.220.57])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uA+kUUFz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9431121B9EC;
-	Mon,  3 Mar 2025 17:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741021247; cv=fail; b=fuUu7iXxn+iwRbuGrtVcG9Zfo803uGz+6CD5qFc+vNT4PkfPCb+vcbca672ZIhER8ONTTYdrRBPYLhNqGlaBrZtN8hj7LKx+ppcjbzmjyuGZPLwxqoyV6ZXFBAUyswm5xDVzojDkEBar7VTgSKHHcivR5D6Al+p5ZYHpO4AiDDo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741021247; c=relaxed/simple;
-	bh=RUuHMugkIkZ09GzCdNNDeWga3HMSm9yTWIayGoiZhHo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=jBFdV/S1f+xN02JHC7IfPdl27kGrJvpLDbFJKsWPXYi7h/DnohDyLmT2c8uHNevEDlK3AOzXRnsnPFZOmh60gtoudfNBSLSOcl0cofKtXYUwh5H6usrNwULOOxfpcziIDSIy36kaIX4CXi7IJdlaLMRJX3wN0v9knDxXUwoBStM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=t7UVtoD8; arc=fail smtp.client-ip=40.107.220.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hlAE48KBO6aFn287Jr5kxWZ4Fh7t7DfAlw95jjYcszlvvplaDw3ERgHFcQNpdqmFrKIiYQDnmnCd5oiO15KCi1/sV6kIwRiinBAWu3ac83u3FjgQ/KAVyEFXfyeBTRAMy0fT6huWwL+Zp3BjrtAT0YBFQ57wpFPW7i4pTREnMXc7crIKXG9rpHAyq6S2hSG/cM2TGgIOWzeqkkpapl5qNWBt7d1FvlZCmkHF5nwwBQCcI/n/2QRxnuQq8M6JAHHThGc5oHNnAz73wYpjFpNgVsrDDXyD8Hck5ucGGSfJzZrbrDNt9i5PUzyVyT1ThYa2Ys1GjseGAKGofZ5AiuoGjg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9GFohvd3iZ0FLd3fbV6gxa8/7j1nhcexShxFVwgkzJ4=;
- b=fOj5rWYKdHLTTWQ9CFk2P2rxME5W+xIMWLYG4jlnz2g09Q6F09bMkOLjy8sCcMKrxTVCxrgFr44c5RbW4Lk2oZmHjh3S5c9Iv11bode71sEvhkNVT8e6vv/v0APxCBj+8UZG4kjWHweeJv68vBrHzpqNN1OQAGYWPxmfOxClcOGWoNSTPfGUa4WShc++5HxY5kXa4/NSQ21Uo0+o6eOLluKvxks6BOd04lbqxvTrKyZahb6+hfJYOyCE1FRf3DthxTdQb6/FY4FQU83nxaJwu35ZZwa3X/prC+b4c99JjBOmsvNg0F62CmpPdjBa723RVJLHxUg3ykNj49XGES/LAA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9GFohvd3iZ0FLd3fbV6gxa8/7j1nhcexShxFVwgkzJ4=;
- b=t7UVtoD8dzuAGkkeJsozdils4Tk/BXghcJKTyJHQzC0feGBw6b6dt1fMFWlMnGN/XOR7unx1wq7YxgDt2Cor+IWSPPfyoqd4eYjkNvZ4xzk1AW5dq7aIK1S7RtH3zD8uQn5W5JjvxgNhuQuaD54sN/SVQ+0n75VGrJsc4M35k6WV54vJ0fqC9h+NmJQX7muJ6nB34uG59GuFg6CwYGa2KWcvccJ+7zMWW0XG6UDxHP6Otca0Xr8VN+mV89QALNrZmW8CgCwF7h48aNj6zriNHu72kV3xaOsCR9tJgu+hhtPs+0tJJsysnx8C64lNeDm9yg/DfVU6K4kmeVExU8AHrw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by SJ0PR12MB7008.namprd12.prod.outlook.com (2603:10b6:a03:486::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.25; Mon, 3 Mar
- 2025 17:00:42 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%5]) with mapi id 15.20.8466.016; Mon, 3 Mar 2025
- 17:00:42 +0000
-Date: Mon, 3 Mar 2025 12:00:40 -0500
-From: Joel Fernandes <joelagnelf@nvidia.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Uladzislau Rezki <urezki@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
-	RCU <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Cheung Wall <zzqq0103.hey@gmail.com>,
-	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-Subject: Re: [PATCH v4 3/3] rcu: Use _full() API to debug synchronize_rcu()
-Message-ID: <20250303170040.GA31126@joelnvbox>
-References: <1408fc88-e2c6-4f49-b581-0e9ad5620fe0@paulmck-laptop>
- <Z8HmH85bYNU8enJ2@pc636>
- <dd15fa79-70a5-4929-9339-51a47099c916@paulmck-laptop>
- <Z8H_aYBUHD2sS2Ir@pc636>
- <73724164-71f4-4671-b612-eb82a784da58@paulmck-laptop>
- <Z8IKs-I-YsOoS4uw@pc636>
- <cdab57a4-8d58-41d9-a9b5-71d425a7375e@paulmck-laptop>
- <f6803081-8243-4723-a3ba-00db351aafff@paulmck-laptop>
- <20250303001507.GA3994772@joelnvbox>
- <20250303001710.GA3997787@joelnvbox>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250303001710.GA3997787@joelnvbox>
-X-ClientProxiedBy: BLAP220CA0009.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:208:32c::14) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88433215F58;
+	Mon,  3 Mar 2025 17:01:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741021278; cv=none; b=Kr7dtWueeJ+i/E148r17a+QhShWpi+MzBRBP/hKOyt983hoirKvJMEgFs+FCXGsRGJ1dBX6bbnZ8hWmLUBxbV4/hV5ecvVqNNm+KVrGpnLB2yYLOGO70u/98+mYF6suhCX6gbfjx72RwB74t1PIO7AjUno8oKPr5F6XugjdSu5o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741021278; c=relaxed/simple;
+	bh=cbk68TMZcZXPbVfxtAAvvisgzKDF0RnGN/M9es88iRg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c3uEi5c2v9PrGvsK2+K+k+rOJYkMaJhGdOz1WFCS08a/BVRp4DWebQ/TONJadJY9haw8ESBvnLi2nKpxgrIWfov8kXqAuMRGbibt+KcU+IaJ3pALc/7GTFvZ2Hdthlm4sxQl8GBz9tVL6ymEK3zY8Z3rV1EVw2QyYW7q3+QFSSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uA+kUUFz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6E63C4CED6;
+	Mon,  3 Mar 2025 17:01:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741021276;
+	bh=cbk68TMZcZXPbVfxtAAvvisgzKDF0RnGN/M9es88iRg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uA+kUUFzAyFJzxGo2c79X7S5ceLqIq3ldGivgBqF4tPZliJ2p7I+AGU6DP0SbHReI
+	 VE9J+isQT3+tgUvPMvsm3B8htvD5NvRP0rTjxVSecr5LF8WlAlTVUvbxWuHTeH9ArK
+	 G298QUULsxlQC31qili97454NkIz9wbLuvUYSOUVv61VffBeF/BNfAh/WAn1S4nzBK
+	 EkUVyUPxs/aT1BxvGIUlWMxl3ITOJnV4Gc4o/fa5r2U0iUYoZlwhzBwwNLCM8vtskt
+	 xPzBFPXlqEX0wl7173FoYiV7B7naKFhgd3J1PMIMwz8TeWWFO6tQAEW7YO7a0kcCf1
+	 trt2J6HjqAMug==
+Date: Mon, 3 Mar 2025 09:01:11 -0800
+From: Kees Cook <kees@kernel.org>
+To: jeffxu@chromium.org
+Cc: akpm@linux-foundation.org, jannh@google.com,
+	torvalds@linux-foundation.org, vbabka@suse.cz,
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+	adhemerval.zanella@linaro.org, oleg@redhat.com, avagin@gmail.com,
+	benjamin@sipsolutions.net, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, jorgelo@chromium.org,
+	sroettger@google.com, hch@lst.de, ojeda@kernel.org,
+	thomas.weissschuh@linutronix.de, adobriyan@gmail.com,
+	johannes@sipsolutions.net, pedro.falcato@gmail.com,
+	hca@linux.ibm.com, willy@infradead.org, anna-maria@linutronix.de,
+	mark.rutland@arm.com, linus.walleij@linaro.org, Jason@zx2c4.com,
+	deller@gmx.de, rdunlap@infradead.org, davem@davemloft.net,
+	peterx@redhat.com, f.fainelli@gmail.com, gerg@kernel.org,
+	dave.hansen@linux.intel.com, mingo@kernel.org, ardb@kernel.org,
+	mhocko@suse.com, 42.hyeyoo@gmail.com, peterz@infradead.org,
+	ardb@google.com, enh@google.com, rientjes@google.com,
+	groeck@chromium.org, mpe@ellerman.id.au,
+	aleksandr.mikhalitsyn@canonical.com, mike.rapoport@gmail.com
+Subject: Re: [PATCH v8 7/7] selftest: test system mappings are sealed.
+Message-ID: <202503030848.30D0E54E7@keescook>
+References: <20250303050921.3033083-1-jeffxu@google.com>
+ <20250303050921.3033083-8-jeffxu@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|SJ0PR12MB7008:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3d640c3b-d9dd-41df-b437-08dd5a74ee81
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?fdYridZGmYw3jJbgabSZMF6y4d9P6LolqsHKB/ctI5D9S5+pD7o4+2mHr51l?=
- =?us-ascii?Q?yAd3CtFttZBCybqf11oXtC+QHZsnDLYKW41QiQDdOcrXdOkn5IDOODF2nViP?=
- =?us-ascii?Q?PhFSrmuZrybyt6r8r05tJ2wmtCrgNgz//o/IZi1098bpSKvXIQExgfAsx7bh?=
- =?us-ascii?Q?gbUtdyHXZY5rfEXuoT815JaWMWlj1ptECl7ogVlOwFPjM9nZjFijLY40rDz6?=
- =?us-ascii?Q?K2wDivlQDLRRWpwWkRL6AUX2UF67rN2poArLpyHFQdFQNpNiFup2PCSBBoZc?=
- =?us-ascii?Q?pLRb+esUZO2hM4aBs4x1OWJuTWZTnRMAxoU+lUP9WTifuN2yRTtJpXmwDCSG?=
- =?us-ascii?Q?Z/BnZnOLGR478hUnPuHKob3qX7dWNWadB1FPaCV4FmzG3l+43kle5YOxqYtm?=
- =?us-ascii?Q?lIoRflLr+11QEiKCvM2Efs2Ci6kgO7D027j7PlDVWOM57rvM+052ySiV3iKK?=
- =?us-ascii?Q?Gi+9DSwNu0A+gsS0BnRLOGyejMLTyHXcH/PMcyUSrN3Lj4l+L7yqOi4jNvXp?=
- =?us-ascii?Q?FPVg1ENZBDR7XDfaHNcvY9bwknBSoJ7qVrYcPfxDSLWd0HGIfey+Q6GLGiwZ?=
- =?us-ascii?Q?ouGgtS4GxS5qPcv1UdN+NcfkeTOgreWT4LtkfKJE4QOD1g3ZzMrhnlVanhtZ?=
- =?us-ascii?Q?UoHv3bt/wRGX6isW5DEg6+bcAued18Z/6A5PJEF50vnpXbcbSUXPL4cXJa+Z?=
- =?us-ascii?Q?odYMz87spWYLv5h8hHFnptt6nz2/OCx10g/VVjeWHAgCTwvjb9bobY93bkna?=
- =?us-ascii?Q?qRecR3HATVOe/7VCiaAuLGzTuxCGLcB6PEwnFWneu/tRKJT8Cj/rqEmAFlkg?=
- =?us-ascii?Q?XBao7ImpokQmWi4sk8XeITn0PCONTNHVF8ogY5ThOFRCIufILNvUhEzcjUUe?=
- =?us-ascii?Q?30b23Cs0SdpFmGOZrhyXgp0d25InbZw7SvfgpPGOPo2QnfHz5ZButK7OjEXQ?=
- =?us-ascii?Q?r/iP8ZweDODt2huItg4COoahksGn+XlvnF8Xilywz4qITnvs8kPqbLNoxIzY?=
- =?us-ascii?Q?0XEnfd4PqdMW+EyK2ntOy0H+mXRGaPAGSu/NMxSUbFGF6Psdmw+QWGe0VPmW?=
- =?us-ascii?Q?01c3rVCAzlYxYr/XnNd44H6VaQXwxTHdOKLGT473i4Y0HAkQWpTHexdmJa0V?=
- =?us-ascii?Q?jvRp61Jf/It9t4eJnAYgxKEOLiTbttgTGRrwAQSVCZCWlT83a6DKZCEoOE8t?=
- =?us-ascii?Q?kk4E+eI7iZNAH23mkmFV3S2HznkWgTOb/XFnLfX/5mrNcHUJSqBycz1mDXXW?=
- =?us-ascii?Q?BmFq3mDBkcuD5yUcOcfllToeoVU7IRkT+aJblo78TzbjDzmFmuVPlXKePpP0?=
- =?us-ascii?Q?xtSEujaezWQTTztJmMpQGygjZdubtK77gB0nD7etd+ad3tE21u7teTqsGk0T?=
- =?us-ascii?Q?cIREfAD99a9S4zXAYz63I8TbQQn2?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?SfjRqpikFUOHtNKOaKZq8SidoAIOCRmXaKZd9P+UCci25Znz0+sP1E5N+EdP?=
- =?us-ascii?Q?zgasUnTlzlz1AOxgzT0AiPH+cOa4JK6sou71LA9rTfm/We0OlL6SPKXLnZiq?=
- =?us-ascii?Q?qR+HlYp2qDhyUCSKMtxbbAXubZ8QeWV1f6oaBQxqOudRrlwuSKWGM5SwWBv6?=
- =?us-ascii?Q?gE4khl2V7wfbSlnyUudtvJSVXGX75w31U311a3J3jLsGCFHu3IRDM//gInQO?=
- =?us-ascii?Q?RUS+5mTARY7jMwBA7XQF9KoeeKOnsMdkfhFmIYBdt7/b/GO9KjO2/lCoBAHv?=
- =?us-ascii?Q?ogh5DVtgAh3iuTrzJ5e6O7Eg5cC165BBXhldag7nl3/KZ6i0Fp5Pgn68KBqA?=
- =?us-ascii?Q?HUwqt8dunYqHEQuqp6zpDWh1jHaWK2DfuHpwBQCbO0qc46U26Jf/mgK8IOGo?=
- =?us-ascii?Q?pQEXlPqsSo+5RxJHrhZG/74R5Gh2mhdjfmypXCoYSDaDYnaiqhDwcjDRBhYJ?=
- =?us-ascii?Q?LCnaFsKdk8fFx3038yyJeNFbLJeGtkseVJU+bA84VO7fPSm2xXR/H/u3fYrc?=
- =?us-ascii?Q?AHMgeSHvltbp1i+yoQAkvQ4oJ0OeCvMRKjaK9Vl+2hwE4x352v8TQ8loUx8J?=
- =?us-ascii?Q?xuvZk9nfFNRFchouvxEfdiL+gvYQNruUiS5Cp7BjuqhrT7hOH4w/Ud02R5fA?=
- =?us-ascii?Q?jRujx27fuaBwfZOtuniccsgBpZBEWQK5W/0mtwU7ikYbIuOQElmW2a8r7MV5?=
- =?us-ascii?Q?2ekftZxkRv75mn3B5yZ+ppor3UJeYLDw4z/73wXCF/XlLaaelhM0PlJc59vx?=
- =?us-ascii?Q?N4P+7iW3tQUDljS/vhRNWcKv1lotq9Y3K3ByvwaHkFxRsjuGWL20ExwAm2j/?=
- =?us-ascii?Q?lvum5GDywOed80tiXTQtMHWcwwxaZ1mJ8wuEZCj3kVYyRDJHb4gIkLtFOKRp?=
- =?us-ascii?Q?/C+A33dgO6jiRj5+IQTwZQ1my5Ik94ott4D64xCLx4Xci1sq4kgJNBvZyUzi?=
- =?us-ascii?Q?owCN283q623IodsCXppCMnaTQ6kVx7x6KUwcOmYYFb+DFP24RN2ftjmHZUc+?=
- =?us-ascii?Q?mfQ+hYZ616LxFfg+dbl2Ab3NeOLuGcmwBRNRroXmEKjRCaTwlukN9AFeGr/c?=
- =?us-ascii?Q?foPKvBVEzqPNVKInQxHssXBl8uIJOUsYsGtdA4BWkjaSUbWf4volJiZf/RMY?=
- =?us-ascii?Q?yJzh+7v6b1LHDFcW2HPuSDRKfSvMWq6Y1lHHJelRhAe9KNUOpHMOdXSoBMhl?=
- =?us-ascii?Q?fRcqdszQYVkaHaRLeAKwcrhiCy6qnN9jQSvEm4TW6GToeA3uSHt1cN3y4rC6?=
- =?us-ascii?Q?FNGl+Pb++hK/dnxsz3ySgAyHvWZIJ8jIWUOVsdQAetl+4x9R6BK8dD+YmLj4?=
- =?us-ascii?Q?+Kv8n7w76g7HsX2YcjpkvqK2sPJ0Vt/lZMcHli4HTjaS7toGy7TBnaZu+YaE?=
- =?us-ascii?Q?xO/NUKZ9v5IJHTNgFD4viWhB3JOQikeYTOlBQJtPqiZqC5yTadxwDy31Jy18?=
- =?us-ascii?Q?OPSJqDyPx7BoG4W5aVXMhnsyVUSuofm/OgBf6y911j/hCxGlFK5cwHccUV+L?=
- =?us-ascii?Q?Dkt5Qzw1K35ezhSX52+cNivX891MmpVF/NAaXWPBnh7E0XKfzrFByO812Mdx?=
- =?us-ascii?Q?31SuoY0XrENhZouDSEJO8Q1VybSi8ZtA3CtY6pSu?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3d640c3b-d9dd-41df-b437-08dd5a74ee81
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2025 17:00:42.2293
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9buRfMUwE+pBV8jEkXUlFwe4lkkdGRwkzIIKPDzeTD9GhOiRVsUizysLOJUdMnSN3EZeCL6gfOwn5YkcuQO7vQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB7008
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250303050921.3033083-8-jeffxu@google.com>
 
-On Sun, Mar 02, 2025 at 07:17:10PM -0500, Joel Fernandes wrote:
-> On Sun, Mar 02, 2025 at 07:15:07PM -0500, Joel Fernandes wrote:
-> > On Fri, Feb 28, 2025 at 05:08:49PM -0800, Paul E. McKenney wrote:
-> > > On Fri, Feb 28, 2025 at 11:59:55AM -0800, Paul E. McKenney wrote:
-> > > > On Fri, Feb 28, 2025 at 08:12:51PM +0100, Uladzislau Rezki wrote:
-> > > > > Hello, Paul!
-> > > > > 
-> > > > > > > > > > 
-> > > > > > > > > > Except that I got this from overnight testing of rcu/dev on the shared
-> > > > > > > > > > RCU tree:
-> > > > > > > > > > 
-> > > > > > > > > > WARNING: CPU: 5 PID: 14 at kernel/rcu/tree.c:1636 rcu_sr_normal_complete+0x5c/0x80
-> > > > > > > > > > 
-> > > > > > > > > > I see this only on TREE05.  Which should not be too surprising, given
-> > > > > > > > > > that this is the scenario that tests it.  It happened within five minutes
-> > > > > > > > > > on all 14 of the TREE05 runs.
-> > > > > > > > > > 
-> > > > > > > > > Hm.. This is not fun. I tested this on my system and i did not manage to
-> > > > > > > > > trigger this whereas you do. Something is wrong.
-> > > > > > > > 
-> > > > > > > > If you have a debug patch, I would be happy to give it a go.
-> > > > > > > > 
-> > > > > > > I can trigger it. But.
-> > > > > > > 
-> > > > > > > Some background. I tested those patches during many hours on the stable
-> > > > > > > kernel which is 6.13. On that kernel i was not able to trigger it. Running
-> > > > > > > the rcutorture on the our shared "dev" tree, which i did now, triggers this
-> > > > > > > right away.
-> > > > > > 
-> > > > > > Bisection?  (Hey, you knew that was coming!)
-> > > > > > 
-> > > > > Looks like this: rcu: Fix get_state_synchronize_rcu_full() GP-start detection
-> > > > > 
-> > > > > After revert in the dev, rcutorture passes TREE05, 16 instances.
-> > > > 
-> > > > Huh.  We sure don't get to revert that one...
-> > > > 
-> > > > Do we have a problem with the ordering in rcu_gp_init() between the calls
-> > > > to rcu_seq_start() and portions of rcu_sr_normal_gp_init()?  For example,
-> > > > do we need to capture the relevant portion of the list before the call
-> > > > to rcu_seq_start(), and do the grace-period-start work afterwards?
-> > > 
-> > > I tried moving the call to rcu_sr_normal_gp_init() before the call to
-> > > rcu_seq_start() and got no failures in a one-hour run of 200*TREE05.
-> > > Which does not necessarily mean that this is the correct fix, but I
-> > > figured that it might at least provide food for thought.
-> > > 
-> > >                                           Thanx, Paul
-> > > 
-> > > ------------------------------------------------------------------------
-> > > 
-> > > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> > > index 48384fa2eaeb8..d3efeff7740e7 100644
-> > > --- a/kernel/rcu/tree.c
-> > > +++ b/kernel/rcu/tree.c
-> > > @@ -1819,10 +1819,10 @@ static noinline_for_stack bool rcu_gp_init(void)
-> > >  
-> > >        /* Advance to a new grace period and initialize state. */
-> > >        record_gp_stall_check_time();
-> > > +      start_new_poll = rcu_sr_normal_gp_init();
-> > >        /* Record GP times before starting GP, hence rcu_seq_start(). */
-> > >        rcu_seq_start(&rcu_state.gp_seq);
-> > >        ASSERT_EXCLUSIVE_WRITER(rcu_state.gp_seq);
-> > > -      start_new_poll = rcu_sr_normal_gp_init();
-> > >        trace_rcu_grace_period(rcu_state.name, rcu_state.gp_seq, TPS("start"));
-> > 
-> > Oh... so the bug is this? Good catch...
-> > 
-> > 
-> > CPU 0                                           CPU 1
-> > 
-> >                                                 rcu_gp_init()
-> >                                                       rcu_seq_start(rcu_state.gp_seq)
-> > sychronize_rcu_normal()
-> >       rs.head.func
-> >       	= (void *) get_state_synchronize_rcu();
-> >                    // save rcu_state.gp_seq
-> >       rcu_sr_normal_add_req() ->
-> >             llist_add(rcu_state.srs_next)
-> >       (void) start_poll_synchronize_rcu();
-> > 
-> > 
-> >                                                       sr_normal_gp_init()
-> >                                                             llist_add(wait_head, &rcu_state.srs_next);
-> > 							    // pick up the
-> > 							    // injected WH
-> >                                                             rcu_state.srs_wait_tail = wait_head;
-> > 
-> >                                                 rcu_gp_cleanup()
-> >                                                       rcu_seq_end(&rcu_state.gp_seq);
-> >                                                       sr_normal_complete()
-> >                                                             WARN_ONCE(IS_ENABLED(CONFIG_PROVE_RCU) &&
-> >                                                             !poll_state_synchronize_rcu(oldstate),
-> > 
-> > Where as reordering sr_normal_gp_init() prevents this:
-> > 
-> >                                                 rcu_gp_init()
-> > 
-> >                                                       sr_normal_gp_init()
-> > 							    // WH has not
-> > 							    // been injected
-> > 							    // so nothing to
-> > 							    // wait on
-> > 
-> >                                                       rcu_seq_start(rcu_state.gp_seq)
-> > sychronize_rcu_normal()
-> >       rs.head.func
-> >       	= (void *) get_state_synchronize_rcu();
-> >                    // save rcu_state.gp_seq
-> >       rcu_sr_normal_add_req() ->
-> >             llist_add(rcu_state.srs_next)
-> >       (void) start_poll_synchronize_rcu();
-> > 
-> >                                                 rcu_gp_cleanup()
-> >                                                       rcu_seq_end(&rcu_state.gp_seq);
-> >                                                       // sr_normal_complete()
-> > 						      // wont do anything so
-> > 						      // no warning
-> > 
-> > Did I get that right?
-> > 
-> > I think this is a real bug AFAICS, hoping all the memory barriers are in
-> > place to make sure the code reordering also correctly orders the accesses.
-> > I'll double check that.
-> > 
-> > I also feel its 'theoretical', because as long as rcu_gp_init() and
-> > rcu_gp_cleanup() are properly ordered WRT pre-existing readers, then
-> > synchronize_rcu_normal() still waits for pre-existing readers even though its
-> > a bit confused about the value of the cookies.
-> > 
-> > For the fix,
-> > Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+On Mon, Mar 03, 2025 at 05:09:21AM +0000, jeffxu@chromium.org wrote:
+> From: Jeff Xu <jeffxu@chromium.org>
 > 
-> Oops, this should be:
+> Add sysmap_is_sealed.c to test system mappings are sealed.
 > 
-> Reviewed-by: Joel Fernandes <joelagnelf@nvidia.com>
+> Note: CONFIG_MSEAL_SYSTEM_MAPPINGS must be set, as indicated in
+> config file.
+> 
+> Signed-off-by: Jeff Xu <jeffxu@chromium.org>
+> ---
+>  .../mseal_system_mappings/.gitignore          |   2 +
+>  .../selftests/mseal_system_mappings/Makefile  |   6 +
+>  .../selftests/mseal_system_mappings/config    |   1 +
+>  .../mseal_system_mappings/sysmap_is_sealed.c  | 113 ++++++++++++++++++
+>  4 files changed, 122 insertions(+)
+>  create mode 100644 tools/testing/selftests/mseal_system_mappings/.gitignore
+>  create mode 100644 tools/testing/selftests/mseal_system_mappings/Makefile
+>  create mode 100644 tools/testing/selftests/mseal_system_mappings/config
+>  create mode 100644 tools/testing/selftests/mseal_system_mappings/sysmap_is_sealed.c
+> 
+> diff --git a/tools/testing/selftests/mseal_system_mappings/.gitignore b/tools/testing/selftests/mseal_system_mappings/.gitignore
+> new file mode 100644
+> index 000000000000..319c497a595e
+> --- /dev/null
+> +++ b/tools/testing/selftests/mseal_system_mappings/.gitignore
+> @@ -0,0 +1,2 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +sysmap_is_sealed
+> diff --git a/tools/testing/selftests/mseal_system_mappings/Makefile b/tools/testing/selftests/mseal_system_mappings/Makefile
+> new file mode 100644
+> index 000000000000..2b4504e2f52f
+> --- /dev/null
+> +++ b/tools/testing/selftests/mseal_system_mappings/Makefile
+> @@ -0,0 +1,6 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +CFLAGS += -std=c99 -pthread -Wall $(KHDR_INCLUDES)
+> +
+> +TEST_GEN_PROGS := sysmap_is_sealed
+> +
+> +include ../lib.mk
+> diff --git a/tools/testing/selftests/mseal_system_mappings/config b/tools/testing/selftests/mseal_system_mappings/config
+> new file mode 100644
+> index 000000000000..675cb9f37b86
+> --- /dev/null
+> +++ b/tools/testing/selftests/mseal_system_mappings/config
+> @@ -0,0 +1 @@
+> +CONFIG_MSEAL_SYSTEM_MAPPINGS=y
+> diff --git a/tools/testing/selftests/mseal_system_mappings/sysmap_is_sealed.c b/tools/testing/selftests/mseal_system_mappings/sysmap_is_sealed.c
+> new file mode 100644
+> index 000000000000..c1e93794a58b
+> --- /dev/null
+> +++ b/tools/testing/selftests/mseal_system_mappings/sysmap_is_sealed.c
+> @@ -0,0 +1,113 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * test system mappings are sealed when
+> + * KCONFIG_MSEAL_SYSTEM_MAPPINGS=y
+> + */
+> +
+> +#define _GNU_SOURCE
+> +#include <stdio.h>
+> +#include <errno.h>
+> +#include <unistd.h>
+> +#include <string.h>
+> +#include <stdbool.h>
+> +
+> +#include "../kselftest.h"
+> +#include "../kselftest_harness.h"
+> +
+> +#define VDSO_NAME "[vdso]"
+> +#define VVAR_NAME "[vvar]"
+> +#define VVAR_VCLOCK_NAME "[vvar_vclock]"
+> +#define UPROBES_NAME "[uprobes]"
+> +#define SIGPAGE_NAME "[sigpage]"
+> +#define VECTORS_NAME "[vectors]"
 
-I see the original patch "rcu: Fix get_state_synchronize_rcu_full() GP-start
-detection" is not yet on -next. Once we are convinced about the fix, do we
-want to squash the fix into this patch and have Boqun take it?
+These are only ever used once, and it feels like having them spelled out
+right in the variant definitions would be more readable, but I'm not
+sure I feel strongly enough about it to say it should be changed.
+They're available via "variant->name" as well, which makes it unlikely
+the macros will be used anywhere in the future? Maybe you have plans for
+them. :)
 
-Yet another idea is to apply it for 6.15-rc cycle if more time is needed.
+> +#define VMFLAGS "VmFlags:"
 
-Alternatively, we could squash it and I queue it for 6.16 instead of 6.15.
+This one gets a strlen() on it, so it feels better to have a macro.
 
-And I'm guessing Vlad's series is also for 6.16.
+> +#define MSEAL_FLAGS "sl"
+> +#define MAX_LINE_LEN 512
+> +
+> +bool has_mapping(char *name, FILE *maps)
+> +{
+> +	char line[MAX_LINE_LEN];
+> +
+> +	while (fgets(line, sizeof(line), maps)) {
+> +		if (strstr(line, name))
+> +			return true;
+> +	}
+> +
+> +	return false;
+> +}
+> +
+> +bool mapping_is_sealed(char *name, FILE *maps)
+> +{
+> +	char line[MAX_LINE_LEN];
+> +
+> +	while (fgets(line, sizeof(line), maps)) {
+> +		if (!strncmp(line, VMFLAGS, strlen(VMFLAGS))) {
+> +			if (strstr(line, MSEAL_FLAGS))
+> +				return true;
+> +
+> +			return false;
+> +		}
+> +	}
+> +
+> +	return false;
+> +}
+> +
+> +FIXTURE(basic) {
+> +	FILE *maps;
+> +};
+> +
+> +FIXTURE_SETUP(basic)
+> +{
+> +	self->maps = fopen("/proc/self/smaps", "r");
+> +	if (!self->maps)
+> +		SKIP(return, "Could not open /proc/self/smap, errno=%d",
+> +			errno);
 
-thanks,
+Good SKIP usage, though I wonder if not having /proc should be a full
+blown failure?
 
- - Joel
+> +};
+> +
+> +FIXTURE_TEARDOWN(basic)
+> +{
+> +	if (self->maps)
+> +		fclose(self->maps);
+> +};
+> +
+> +FIXTURE_VARIANT(basic)
+> +{
+> +	char *name;
+> +};
+> +
+> +FIXTURE_VARIANT_ADD(basic, vdso) {
+> +	.name = VDSO_NAME,
+> +};
+> +
+> +FIXTURE_VARIANT_ADD(basic, vvar) {
+> +	.name = VVAR_NAME,
+> +};
+> +
+> +FIXTURE_VARIANT_ADD(basic, vvar_vclock) {
+> +	.name = VVAR_VCLOCK_NAME,
+> +};
+> +
+> +FIXTURE_VARIANT_ADD(basic, sigpage) {
+> +	.name = SIGPAGE_NAME,
+> +};
+> +
+> +FIXTURE_VARIANT_ADD(basic, vectors) {
+> +	.name = VECTORS_NAME,
+> +};
+> +
+> +FIXTURE_VARIANT_ADD(basic, uprobes) {
+> +	.name = UPROBES_NAME,
+> +};
 
+I love seeing variants used in the test harness. :)
+
+> +
+> +TEST_F(basic, is_sealed)
+> +{
+> +	if (!has_mapping(variant->name, self->maps)) {
+> +		SKIP(return, "could not found the mapping, %s",
+
+typo nit: "find" instead of "found"
+
+> +			variant->name);
+> +	}
+> +
+> +	EXPECT_TRUE(mapping_is_sealed(variant->name, self->maps));
+> +};
+
+This is a good "positive" test, but I'd like to see a negative test
+added as well. (This adds robustness against something going "all wrong"
+or "all right", like imagine that someone adds a VmFlags string named
+"slow", suddenly this test will always pass due to matching "sl". With
+a negative test added, it will fail when it finds "sl" when it's not
+expected.) For example, also check "[stack]" and "[heap]" and expect
+them NOT to be sealed.
+
+You could update the variant as:
+
+FIXTURE_VARIANT(basic)
+{
+	char *name;
+	bool sealed;
+};
+
+FIXTURE_VARIANT_ADD(basic, vdso) {
+	.name = "[vdso]",
+	.sealed = true,
+};
+
+FIXTURE_VARIANT_ADD(basic, stack) {
+	.name = "[stack]",
+	.sealed = false,
+};
+
+And then update the is_sealed test to:
+
+	EXPECT_EQ(variant->sealed, mapping_is_sealed(variant->name, self->maps));
+
+-- 
+Kees Cook
 
