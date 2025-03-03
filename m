@@ -1,194 +1,133 @@
-Return-Path: <linux-kernel+bounces-541147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3727EA4B93B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:27:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9F1FA4B942
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:28:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFE923ADFE4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:25:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19A2B3B3A1E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C9071EFF8E;
-	Mon,  3 Mar 2025 08:23:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBA161E98FF;
+	Mon,  3 Mar 2025 08:24:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nVDm6mrH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZQ1W/RQ5"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 449631EF370;
-	Mon,  3 Mar 2025 08:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501E01E1A31
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 08:24:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740990224; cv=none; b=YeNpwptjQ6U6jfGrrQ4F8XoyNBWy3PsMWutDR1se33zfZVIgbrkhMRjxQjE2s0yC8eBNKg4kI8lgGWvU1Svgm6PGXyLvo2EbQLqdk3Y/9oLtT2fWC42+zzkdkUvVGtsNmUMaB8oILDEk34m2hehRcrn+otTCC4vApBeTspbKlZ0=
+	t=1740990274; cv=none; b=NgFSNUFod+jy083OWw8UP7+9U1TI4/FJ1iy7OzMPtKV6L62Gy4siEFNpVTdmaBazjEPXEMv83+0GJEYJ/4r6/y6k/TkbPJa1VHy5ZmQfRuelyrkXSnqM1uHa+QZnH3IWc1eJgPGJsFwPSc27m9sCPF9BA/prdPRLKdvzamQ0f3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740990224; c=relaxed/simple;
-	bh=JBYtPPedySIRtCIdRicfOKbQHdjbOfdWis8gttwCsKI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B6FvrZqC+W6V46yPb7Ff2eN6i0EMkbFPh34rTayNVUaJgabFpd/9qkyZsX5igcK8kk7b5IP01g/jrDjs/5peB0zUHk8qGYjbKeAAdZgbNKy79DCn6UcbgKQEMW8H4wXjlxSm3ptd4fV21BO1C2a1EY/2vKaJegxgi4BaEieV08Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nVDm6mrH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCC04C4CED6;
-	Mon,  3 Mar 2025 08:23:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740990223;
-	bh=JBYtPPedySIRtCIdRicfOKbQHdjbOfdWis8gttwCsKI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nVDm6mrH12QLK3/qUGEVPT3+GKwhphezMCb3UYIFD2ammHyvoXLfegpFXS35yl7wP
-	 iXAtbjJ81a3G3cAnJPMh2gX7ThMNXotuiezB1R2iwBozQKUtI/az9KcGpGrKa0hbfX
-	 sxIFGSWyqRiLFmiKd/sTiAynk6ZlSoW0DEPRoCOz6hRNJiNqnkJO8N8YaYaj9VEbrL
-	 I+RMLenU3E2DKzLx13fWN3rbKamCKZf30X6qYN21gC7d4+1b1HheP+KW4go/pQ8uTh
-	 pzlUSNBjBBx3Y1gdu86czAZdr9zQiESi4E2sLVt5KZcR86KqZIs6zji4qpoCidL2Gn
-	 GrbFt881OjQNQ==
-Message-ID: <a091f085-a7f0-4aaa-997d-cd478764c18a@kernel.org>
-Date: Mon, 3 Mar 2025 09:23:38 +0100
+	s=arc-20240116; t=1740990274; c=relaxed/simple;
+	bh=hSBIYLscn2H9J+MqRxZlM/7jQNfEuoPNFDdWWYwe6ss=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bEXOBSOV3AFkmiDbEOsb6kkT8Ll1QJ+DZuY+1VGKKgIP7tf+Q0IUuPU52qH0QYtV8sg5BZpWZg/a+WN5rqzVyI4UxxW59FXxvW6LQSvI/hE8uaFFAwZtLqXFKzjUlqQ9/Sv+zO68KTfD1Mig5J/dluDQGJU1MYBo3YJ1kpOCgTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZQ1W/RQ5; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aaeec07b705so664445366b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 00:24:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740990270; x=1741595070; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=RaZ/CcmeFoBTR8ddNDuQVJv3AT8EACnAOxQQ2V8mS5A=;
+        b=ZQ1W/RQ5pKHe6TuSfXOOT8Y1/PkFTG7ziIuqCfIBuPCyOp5tNnH1ufGf9RtfhRcTGh
+         1M76XPwwFhZLx3vuuIWLTXaC0F+nLB4dwcXcIwomg6E9VBPNJdyKw251zXFlkxJOIK0g
+         aSzJrZlR7Eanw6I82ZLVXkksb3VXsx8SCU30MNrIJMrV9chLYs3a2wzboY5gTtRsZBTy
+         iqxnfXUG89mZwhF9E0Q8mPMSA2CdkWuM5nK67He+MWYzkm47y2wGu28LBrnKFi73Wrlz
+         OMXrXhBsJHaIjUsvI08nypKwfYvs0Ze0r676YLdW/ELE8/11cd/B4x8WI1swGZOFjZMV
+         ndgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740990270; x=1741595070;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RaZ/CcmeFoBTR8ddNDuQVJv3AT8EACnAOxQQ2V8mS5A=;
+        b=tMiRrGx+YDrvZ2fDFT5nae58MfBoqWRQ2B8XykKsrkmsFG68wPnwS2iZLX3thahMEV
+         5pNADOZ6JqKRLY8in3e+CF3HI8ZNcNubu7ahvmBm2YVwhGV7R115odpv081nvz8ogbf+
+         fRlCOQfQ1w5j2Txm/Cj3UxKB3y+jhWPUYzwY9oxsZigGY+Ggp0irxmbWoQNq//zK7cMc
+         Kp1+55dr+BQOll/tqLK0uPG1D/hosiZoJij5OqZUmb5n2JXDgcS7unvkHom8ijFfHNLt
+         SsEZ8r0NBa6uilKmMupXqxKxC9VZW9+jzNv7Wnt90JbNXeiAbHRKoT5o54ZPvv9aFXrf
+         3l4A==
+X-Forwarded-Encrypted: i=1; AJvYcCV8zh63Z3qjMalws9sXnkMWt25g3q+4ufujpvUlT/KzQcb6Ny2zBSWNf5RzM5RlGQkUeTay8iNdEYk5xrg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuYNhjysgan5/k64/C9ar0hgACHzbJuksaPQMEieFmWuHO6tCb
+	8nwRTOLdfAfApLserB8eoTqBp4ebsK9b8iagIXQTb9RxoDWOsJ5YTtToez+OeBg=
+X-Gm-Gg: ASbGnctG5Fcq+v1WdXqY/kZ+MhzWqsxnwJ4Qm6DtLLn5nOKXJvMbA1fgnmIhFYk7n1n
+	f33K8td+VxXOqVz6tNXlZXLa/FksQ/UcqMKpn6Tm1tsph3G5SDAkuJesDPbEt1OKlBMNsh0Mnnf
+	lqO0xFYVADk08AhbLtD0GqXiFrerEYunjQPCdd46et+/hvyv0n+lOAvaiDiGN7JBqus149T1uUb
+	DXVIQo+MNWBXXEUFFZZgF2hPRqUjfMn3J8SXg9aiwUsknTFVKit2mBLujrSDhvOIu3bVVuz3RlA
+	zSym+HKPBOHs6fXyfB8F9zLf2G7neuRNEwAhikXd/YICwbrsbQ==
+X-Google-Smtp-Source: AGHT+IFy4o0lL4wbVfv25BbUZiZprY5pePIQkrVcMtYcd0n6ALHYFSnKECFQ/9k22YMwYBQpC08ZKg==
+X-Received: by 2002:a17:907:6d0c:b0:ac1:791c:1526 with SMTP id a640c23a62f3a-ac1791c1cd3mr169820066b.56.1740990270586;
+        Mon, 03 Mar 2025 00:24:30 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abf3f3bbfb3sm525674166b.77.2025.03.03.00.24.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 00:24:30 -0800 (PST)
+Date: Mon, 3 Mar 2025 11:24:26 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	freedreno@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Archit Taneja <architt@codeaurora.org>,
+	Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
+	Jeykumar Sankaran <jsanka@codeaurora.org>,
+	Jordan Crouse <jordan@cosmicpenguin.net>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+	Simona Vetter <simona@ffwll.ch>, Vinod Koul <vkoul@kernel.org>,
+	cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RESEND] drm/msm/dpu: Delete a variable initialisation before a
+ null pointer check in two functions
+Message-ID: <ce9599fb-a798-4f22-b51a-3341e690f8bc@stanley.mountain>
+References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
+ <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
+ <13566308-9a80-e4aa-f64e-978c02b1406d@web.de>
+ <54c30a69-71cf-4582-9086-50eb0d39f273@web.de>
+ <k7un3bjavyt4ogscgc7jn7thfobegaguqqiy7gtypmq6vq7zox@l4bsevbsjrud>
+ <29b32b0d-312d-4848-9e26-9e5e76e527a7@stanley.mountain>
+ <12050afd-ab60-4bac-bd25-0c3cc925b38b@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: power: supply: Document Maxim MAX8971
- charger
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250226093700.44726-1-clamor95@gmail.com>
- <20250226093700.44726-2-clamor95@gmail.com>
- <20250227-cherubic-mantis-from-betelgeuse-86f5ff@krzk-bin>
- <CAPVz0n2kfxTJUkqrtLia6xBJ8t+fwjujjsc9k=mOk-P06bJH7A@mail.gmail.com>
- <f83b2a95-e8f6-4e16-bd7f-f7dc96264c04@kernel.org>
- <CAPVz0n0KVE8baFyGSgM+0rNfY8+Y2LFZbAhHHzPWTV358gc+Bw@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CAPVz0n0KVE8baFyGSgM+0rNfY8+Y2LFZbAhHHzPWTV358gc+Bw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <12050afd-ab60-4bac-bd25-0c3cc925b38b@web.de>
 
-On 03/03/2025 09:13, Svyatoslav Ryhel wrote:
-> пн, 3 бер. 2025 р. о 09:52 Krzysztof Kozlowski <krzk@kernel.org> пише:
->>
->> On 27/02/2025 12:03, Svyatoslav Ryhel wrote:
->>> чт, 27 лют. 2025 р. о 12:45 Krzysztof Kozlowski <krzk@kernel.org> пише:
->>>>
->>>> On Wed, Feb 26, 2025 at 11:36:59AM +0200, Svyatoslav Ryhel wrote:
->>>>> +  maxim,fcharge-current-limit-microamp:
->>>>> +    description:
->>>>> +      Fast-Charge current limit
->>>>> +    minimum: 250000
->>>>> +    default: 500000
->>>>> +    maximum: 1550000
->>>>> +
->>>>> +  maxim,fcharge-timer-hours:
->>>>> +    description:
->>>>> +      Fast-Charge timer in hours. Setting this value 3 and lower or 11 and higher
->>>>> +      will disable Fast-Charge timer.
->>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>>>> +    default: 5
->>>>
->>>> You still did not answer why this is board specific. This was rejected
->>>> in the past because of that reason and nothing here changed. Nothing
-
-Where are the arguments to existing/previous decisions?
-
->>>> will change without detailed explanation, so use other interfaces if you
-
-Again, where is detailed explanation why time is determined per board,
-unlike previously agreed that it is not?
-
->>>> need user-space to configure it (see other drivers, e.g. maxim)
-
-
-
-
->>>>
->>>
->>> Btw, I have used this awesome example you have provided. Take a look
->>
->> Where did I provide this example?
->>
+On Mon, Mar 03, 2025 at 09:15:14AM +0100, Markus Elfring wrote:
+> >>> The address of a data structure member was determined before
+> >>> a corresponding null pointer check in the implementation of
+> >>> the functions “dpu_hw_pp_enable_te” and “dpu_hw_pp_get_vsync_info”.
+> >>>
+> >>> Thus avoid the risk for undefined behaviour by removing extra
+> >>> initialisations for the variable “c” (also because it was already
+> >>> reassigned with the same value behind this pointer check).
+> >
+> > There is no undefined behavior here.
+> Will any software development concerns evolve further also according to
+> undesirable null pointer dereferences?
+> https://wiki.sei.cmu.edu/confluence/display/c/EXP34-C.+Do+not+dereference+null+pointers
 > 
-> Its presence in the docs is an example on its no? You have explicitly
-> told to check other maxim devices, I did so, they all have similar set
-> of convifurations.
 
-Choose rather later or latest, not 12 YO, binding as an example.
+It's not a NULL pointer dereference.  It's just pointer math.  It was
+a common way to implement offsetof() before we had a builtin for that.
 
-> 
->>>
->>> https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/power/supply/maxim,max77693.yaml?h=v6.14-rc4
->>
->> I opened it and I do not see anything about time. Please point to
->> specific line.
->>
->> But regardless, how did I propose to use 12 year old binding? Where did
->> I suggest that one?
->>
->>>
->>> Oh, I wonder why it uses so much values which duplicate battery? I
->>> know, it lacks battery, I assume that is why?
->>
->> No. You added to DT something which is not a hardware property, but
->> user-space choice or policy.
->>
-> 
-> It is NOT a user-space choice or policy!
-Previous discussions on the lists - since you mention 12 year old
-binding, so also discussions 12 years ago - determined that they are
-closer to them than board configuration.
+samples/bpf/test_lru_dist.c
+# define offsetof(TYPE, MEMBER) ((size_t)&((TYPE *)0)->MEMBER)
 
-I already said - this was rejected in the past - so now I am repeating
-myself.
-
-You did not bring any arguments just keep repeating "no", so I suggest
-reading previous discussions and coming with arguments against them.
-
-Best regards,
-Krzysztof
+regards,
+dan carpenter
 
