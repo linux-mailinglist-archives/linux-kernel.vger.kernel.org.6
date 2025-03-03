@@ -1,138 +1,154 @@
-Return-Path: <linux-kernel+bounces-541671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F8E9A4BFD9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:07:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B805A4BFEE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 13:12:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6220716BCDD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:07:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 745C93B0EA7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:08:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1643420FAA1;
-	Mon,  3 Mar 2025 12:07:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D2920E327;
+	Mon,  3 Mar 2025 12:08:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UTV4I8d1"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JOgzba7r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B37820E70F
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 12:07:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC031FFC5D;
+	Mon,  3 Mar 2025 12:08:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741003625; cv=none; b=ay5lMGncCa7Hqv3rb3I88Txt+oX9hJ8dO2fpiZi+ANiZxNz7GzGjTgirSME7FG2A/J6uPN5VjOAT3DQYP7qVLDROXUY1iM4hjyC4U8F56uOOPpjDNhHJ2EBvJ+cvi4mHgdlULvoQUrk9q6Z6Tr2aJP7uabqUGZVs+TnhCTsO3oo=
+	t=1741003725; cv=none; b=i88IRjupga3xLFUMQZrrN6bL3P8maxJ73hwC5dP8uVQzr4rfcZkdLvg//wHprkBWicg02SSSivbftAK1tZMC1bp+Wd4F5CqsBCosKD21T/GS2vZPnhv9jndOlPUUNc0LPQ51w4gRZyk8oMNzM3kRsWZ4S7FRFDGsUNPkEhciwwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741003625; c=relaxed/simple;
-	bh=vKeWJ6PdCI0gjejVtsLlKdmx2G60m+SZ3JQZ4iCmGTs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VrlLL78yu8wpVqu6DMzM7hvk2DbZfTYFnOej8YAweZq9R+4dZW6DNcyHS4ROulS46/RCoWiVvhTKTeTPY2tDqrrERw+Vl7dgJhTRhyPhgRq+jq43Rl7bwf6LLjGNto9ajxNveEJk1mZV3pjU0FXLsoWXDeaDXdMeETk+yvDN46k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UTV4I8d1; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43bc63876f1so4328965e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 04:07:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1741003621; x=1741608421; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=u4n87D+4TYCPxOP1NMsttu/7Z4wxAKcrq67P7w2tcEU=;
-        b=UTV4I8d1YgExUBz9SyFZi2B0kKTVwJzdNYKCtP/b6+E3fQA6HC/xTnDupLFob7Ljn6
-         5wddo2QcTYqqe7GYH6KV1tuWiQeK57P1fYZsxVpQ8nO4eiZsA4mG3nm3fz0Cy5b382PD
-         YCT1oHEt322dedGzJ55C9cYw/G4xsgsaBrZ9oII7SwmbfR+BfBn/kZ3btjwCg5fC90wM
-         DscRzB5fhjsUxIYvlyI+JdFL5Fu/ZhkoHR82kWLYwmwlo+AMJ/wGLnz4o0C7CwmCHC7d
-         JawN/zyRi/iy1OlUeF6J/w9qR+qQ1LBYJ2wi28Mb71GHsslvLhLPS5z5jNVFwVRCGWNB
-         Xx7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741003621; x=1741608421;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u4n87D+4TYCPxOP1NMsttu/7Z4wxAKcrq67P7w2tcEU=;
-        b=Wnk+HS47IBCmHyfUxw85fGMB8jSnXLBfLU7OhE3HSpsRWEnMpD4IAFFBbt1vHyC61q
-         GF7UVlz/6Alxonk5rPQiTD0/AD4cmTj493iNHlWD6dzfRh41wtMFc4es077Fp21unCdV
-         7BCW+JEf2+LdRvoepRsJm6J+xKMziQQUhJzj3PoVphca97KxpUbK/KfESYqApZqn7cML
-         mkAMrNRaxk7U+lxBJwsYy5zYUjNaYrEH96bQgIoChv+26JdibU42KkOpyNIDpgHzuMVe
-         aPGggQa7Ko7lbRVKwtyupkOzW/jMp+hU9gCe4PUQXTD6dHI30H6tcCnwPcQzQHbgpyK4
-         XiVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVeHJ28Q7Yk07obffMVcOYez4qG7gGpIrnEDOWRfx5M05L+ypKuhbnOCgJB2b7unAwhpLvJNXvuytN4jUU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxp4T9+/t5LQIlD44ecMUIgGfD8moACH5Zw3xryhTwhVjnV8ZVg
-	+gWNT8MflM4Yo5F29tD90fke1LgO4k+lrE5q31OLQsZj3flvxYPR3+OywiRfcJU=
-X-Gm-Gg: ASbGnctJ5JwpQA0fkwDydAgYsQV48GdAOPKmjKUvRRsA0umBh11RbWV5K+xPrEF3mgm
-	EjLPF9PIZjH8bZJz2AdAUSDorPWs1czs46DsDMNyqaIGSTHmIqarWJSuXpwxdJ+vKxdjqAJgL8J
-	JGM/0GNaReAfwJVETmqhinZ1qD9EebIMELmWGw8dXUnGGNoA0b2iIe9wweCkw/2tRl/ZD+c9PtO
-	z6dBMUXyeuhFLjaaD2x0cA1uFR2gF/YIIEaFoReanQM+wn4VigbzPbZUei8clyKZkwgnN4K0xz+
-	pbUrK+hDuE7QcNUVhB2mb8iXxvJyUEhfhzJSlXTmDd4Nd1FKNV6WG8l6dw==
-X-Google-Smtp-Source: AGHT+IHqHfP8DjkalDmAqVAgdGb6muzuQBb7NPew5jiVs8Tdm6zb/yC1t6gsMZUxW4RNTuObE/ckQA==
-X-Received: by 2002:a05:600c:3c84:b0:439:8ada:e3b0 with SMTP id 5b1f17b1804b1-43ba697f093mr97840395e9.19.1741003621315;
-        Mon, 03 Mar 2025 04:07:01 -0800 (PST)
-Received: from localhost (109-81-85-168.rct.o2.cz. [109.81.85.168])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43b694524c6sm163268085e9.0.2025.03.03.04.07.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 04:07:01 -0800 (PST)
-Date: Mon, 3 Mar 2025 13:07:00 +0100
-From: Michal Hocko <mhocko@suse.com>
-To: ying chen <yc1082463@gmail.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/vmscan: when the swappiness is set to 0, memory
- swapping should be prohibited during the global reclaim process
-Message-ID: <Z8WbZBJFpfpue_g9@tiehlicka>
-References: <CAN2Y7hxDdATNfb=R5J1as3pqA1RsP8c8LubC4QxojK5cJS9Q9w@mail.gmail.com>
+	s=arc-20240116; t=1741003725; c=relaxed/simple;
+	bh=LGkSTeMJSL/cH0aAMd2yE3RYQtg8Y3v4p03/JAj8MYo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TtQqAUozqEZcyDm0hLoeRkht4ipFtGUFOHchKwXVNReYgTuWdkYXkpcNbYGyT0mAsxfCY59FyiSrVCMdEyEWaeEEFnftTS5u85hY1ufRV28NTO3MyzWppCC8Uii+slOwW/CvOW6TmWkpyo32GkLXeT3+womADNsjthLb+SJfRjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JOgzba7r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C457C4CEE6;
+	Mon,  3 Mar 2025 12:08:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741003725;
+	bh=LGkSTeMJSL/cH0aAMd2yE3RYQtg8Y3v4p03/JAj8MYo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=JOgzba7rumPUUt+3gteK8x9ZNSeO4vmIPUtBm/4n5NiPfAEtAv3KsduFjHVnRBvYP
+	 nOKDVlscMErtbUIi+bBI0VzMzpkAQHIPXoOECKx8/WIUGqxZYjHwUaXGqwyRABKmtM
+	 eAS3WHS5zm87hWMSDLJy8pBIbTsRIxCyZc4mNW/9375L8GqRPDA7O6X632u3avW3WR
+	 mKY8t5FIvStnQXapBFA2toErN72CMdMS0VLnkzij/l/n6irK+NXPlezBgLOXVgxuZt
+	 Uz0ZrSE9IHPnwUOuCiXFzgPgYABFL8qXwEG1xoNx3xytUjlp6eRzhIMVSUufLiP0Wz
+	 /4VIdlGyXpwzA==
+Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3f66bf7602eso261605b6e.3;
+        Mon, 03 Mar 2025 04:08:45 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWQ1/NjUNCSenugMWx7zURmhseK6c1pnsQUTNwlAm7REI0/qRhz6Fyciz5IrDn0irjWkLfeq0dobDE=@vger.kernel.org, AJvYcCWSGvc2TSWxYA01ocw0xcXIvWbuwU++B7/7L2S+Cti9ZBiQhhLZidQZo+uqJzbDYxOgI/4Ymf5t/RnD6/s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywnf84Yp9MBfH1VShA0ttlt+MHSwH5VmWAsgyi6U6ugoVjljUPI
+	A1vixVv52XlILr/GDnjutGayFnkW0meusftwDj5OTsyJn8EiNj1GvJK1sR1PyadjUKBY1fHtfSJ
+	LnQGien/BhjmoY/uMk1KCPymaqdQ=
+X-Google-Smtp-Source: AGHT+IHUr2H06n1lRN0NwMlgKxCbIFdOobcyUUosrvn5yqSQUt8nL0vKq4fIngd8cXxKK3Bb4uOrL2lghJ9judeG3LM=
+X-Received: by 2002:a05:6808:1dd9:b0:3f6:6cbc:9326 with SMTP id
+ 5614622812f47-3f66cbc9559mr1342832b6e.29.1741003724512; Mon, 03 Mar 2025
+ 04:08:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAN2Y7hxDdATNfb=R5J1as3pqA1RsP8c8LubC4QxojK5cJS9Q9w@mail.gmail.com>
+References: <13709135.uLZWGnKmhe@rjwysocki.net> <CAPDyKFoWeZNqODb5VdXfTEhxRJ0azSQPWhM3WCJ+iUeJ3rYQHw@mail.gmail.com>
+In-Reply-To: <CAPDyKFoWeZNqODb5VdXfTEhxRJ0azSQPWhM3WCJ+iUeJ3rYQHw@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 3 Mar 2025 13:08:32 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0htK3V2uPvqczirL9WW2Pgip00VP6xd8pqbOKvCUPhSbQ@mail.gmail.com>
+X-Gm-Features: AQ5f1JoHfqGi4iiLMoX4pE-Ttl2wrDwMHPv6jml-d3qFwq9ON_ye9RzblquNiDo
+Message-ID: <CAJZ5v0htK3V2uPvqczirL9WW2Pgip00VP6xd8pqbOKvCUPhSbQ@mail.gmail.com>
+Subject: Re: [PATCH v1 0/5] PM: sleep: Improvements of async suspend and
+ resume of devices
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Alan Stern <stern@rowland.harvard.edu>, 
+	Johan Hovold <johan@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Saravana Kannan <saravanak@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu 27-02-25 22:34:51, ying chen wrote:
-> When we use zram as swap disks, global reclaim may cause the memory in some
-> cgroups with memory.swappiness set to 0 to be swapped into zram. This memory
-> won't be swapped back immediately after the free memory increases. Instead,
-> it will continue to occupy the zram space, which may result in no available
-> zram space for the cgroups with swapping enabled. Therefore, I think that
-> when the vm.swappiness is set to 0, global reclaim should also refrain
-> from memory swapping, just like these cgroups.
+On Mon, Mar 3, 2025 at 1:07=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.org>=
+ wrote:
+>
+> On Tue, 25 Feb 2025 at 17:46, Rafael J. Wysocki <rjw@rjwysocki.net> wrote=
+:
+> >
+> > Hi Everyone,
+> >
+> > Initially, this was an attempt to address the problems described by
+> > Saravana related to spawning async work for any async device upfront
+> > in the resume path:
+> >
+> > https://lore.kernel.org/linux-pm/20241114220921.2529905-1-saravanak@goo=
+gle.com/
+> >
+> > but then I realized that it could be extended to the suspend path and
+> > used for speeding it up, which it really does.
+> >
+> > Overall, the idea is that instead of starting an async work item for ev=
+ery
+> > async device upfront, which is not very efficient because the majority =
+of
+> > those devices will not be able to make progress due to dependencies any=
+way,
+> > the async handling is only started upfront for the devices that are lik=
+ely
+> > to be able to make progress.  That is, devices without parents in the r=
+esume
+> > path and leaf devices (ie. devices without children or consumers) in th=
+e
+> > suspend path (the underlying observation here is that devices without p=
+arents
+> > are likely to have no suppliers too whereas devices without children th=
+at
+> > have consumers are not unheard of).  This allows to reduce the amount o=
+f
+> > processing that needs to be done to start with.
+> >
+> > Then, after processing every device ("async" or "sync"), "async" proces=
+sing
+> > is started for some devices that have been "unblocked" by it, which are=
+ its
+> > children in the resume path or its parent and its suppliers in the susp=
+end
+> > path.  This allows asynchronous handling to start as soon as it makes s=
+ense
+> > without delaying the "async" devices unnecessarily.
+> >
+> > Fortunately, the additional plumbing needed to implement this is not
+> > particularly complicated.
+>
+> Thanks for the detailed description! Overall, the approach makes
+> perfect sense to me too!
+>
+> I am certainly interested to hear Saravana's thoughts around this too.
+>
+> >
+> > The first two patches in the series are preparatory.
+>
+> For these two, feel free to add:
+>
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+>
+> >
+> > Patch [3/5] deals with the resume path for all device resume phases.
+> >
+> > Patch [4/5] optimizes the "suspend" phase which has the most visible ef=
+fect (on
+> > the systems in my office the speedup is in the 100 ms range which is ar=
+ound 20%
+> > of the total device resume time).
+> >
+> > Patch [5/5] extend this to the "suspend late" and "suspend noirq" phase=
+s.
+>
+> I will try to have a closer look at patch 3->5 later in the week.
 
-You are changing well established and understood semantic while working
-around a problem that is not really clear to me. If the zram space is
-limited then you should be using swap limits to control who can swap
-out, no?
-
-> Signed-off-by: yc1082463 <yc1082463@gmail.com>
-> ---
->  mm/vmscan.c | 9 +--------
->  1 file changed, 1 insertion(+), 8 deletions(-)
-> 
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index c767d71c43d7..bdbb0fc03412 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -2426,14 +2426,7 @@ static void get_scan_count(struct lruvec
-> *lruvec, struct scan_control *sc,
->                 goto out;
->         }
-> 
-> -       /*
-> -        * Global reclaim will swap to prevent OOM even with no
-> -        * swappiness, but memcg users want to use this knob to
-> -        * disable swapping for individual groups completely when
-> -        * using the memory controller's swap limit feature would be
-> -        * too expensive.
-> -        */
-> -       if (cgroup_reclaim(sc) && !swappiness) {
-> +       if (!swappiness) {
->                 scan_balance = SCAN_FILE;
->                 goto out;
->         }
-> --
-> 2.34.1
-
--- 
-Michal Hocko
-SUSE Labs
+Thank you and thanks for all of the other reviews!
 
