@@ -1,119 +1,327 @@
-Return-Path: <linux-kernel+bounces-541006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4758A4B75E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 06:04:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07AE7A4B760
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 06:07:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 391D73AB8A3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 05:04:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9727E16C2C0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 05:07:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B001D9346;
-	Mon,  3 Mar 2025 05:04:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 792E11B85FD;
+	Mon,  3 Mar 2025 05:07:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NxaukFGG"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="X1tkI8U5"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2053.outbound.protection.outlook.com [40.107.22.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBB52AD27;
-	Mon,  3 Mar 2025 05:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740978281; cv=none; b=QqbPcf3nP7uRcQe1KoR1t50sBI5x124m7N1YoyzGDgmVKlTzzf6vwuk95eLK0f/Okzxg81RijNkEyk5txpd81LWcPI+aGPWjSpvVdcKoKKZ1hEwPWigZqqV7KLPtboocmUxlptAoiI+Hgr5fxyzKNj2d8IspiN7YPpq+n7JbqUU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740978281; c=relaxed/simple;
-	bh=ak2JvtkXpdCXNdZWrJpngnDwqqTP4VAWI8V98k0pKL4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VCsKuTZF5w7ZWd4op+eLLBH+NblPIBpcHXfa1DSMWe8CN32M5tIOet1O2GKCrqu6QeTbPCGJ9YFzQQbtta/P605A8rdXAplnwfDL7fMiqKsnhKeIbTbk5NBtzmy5P3AGEKhiV+HVaXCsSolKEyyoXHThX0Rg557iTWyfZ6Bg6PM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NxaukFGG; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-223594b3c6dso65116655ad.2;
-        Sun, 02 Mar 2025 21:04:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740978279; x=1741583079; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0MpZ1k7dX/F+Pw+v841rvHm+uxj93+81TQIaphP5Kq8=;
-        b=NxaukFGGoHvO1DNLp8egEwqfppBVxnVDUI0vJ0CC76djtoMdpGLSeyn+n9oX0iR7OE
-         IuUybPX3ahuhlaWCutSmX7uNmXB9ZZxL0VNJwDhwxFRauuv0Dz3q3vs7hD+rdZCm0At9
-         jQbrIhQed/N1b9KZhN69sGoZhNhsBwBB/S7/sY/rCwU758et/7FRGnKrnsHZmsRbM8+N
-         Mxt/uUKYZoRQMSVyBcbTiopnUhNZ9m+Vb2neNCx/gmszmTfmullsXy1Dwk/yqZCyAjEv
-         ZAEdOMMMvP48fwiBq0+cB9zKWYsm7LCcxkxSfYaRsQpTQVLjz0aJp7g9TsadWxE5je+w
-         YX4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740978279; x=1741583079;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0MpZ1k7dX/F+Pw+v841rvHm+uxj93+81TQIaphP5Kq8=;
-        b=s9XBwG6FdQ7LjnqR/TeU0w3CK6Bj4ggSnAejHrnSUDQ5ie7/GXXHroLr4n6ZKy17Fw
-         4/2bkUKYMte/nkdy42g1oQZlC0F7D4wiTND0jPakB7JO8ggTh3X5LjfhIBD7Jo4ZsHHR
-         c4kfEi+tO6+054Oz/FnmyTj2F4LrZrKkfag907EX+1SvEpkrR2ljl2eGfLYY/QYJgZme
-         s7kPm/5bmbTPDJ2dTVnVKuWanLmIZH2pNYBlYnwj7u4yCUb3Ybzkm2yEFgWM7rZc7gxH
-         9Taw8Wl3T9+h3obuHc3NEH+JJ6OqWPHTuKcNMMejEFJbawkbsM3H1kIiQopAKrLajl7C
-         FWqg==
-X-Forwarded-Encrypted: i=1; AJvYcCVNa74SfDYUsTyF6clF5aq6xokqHeoUbTgoWLwZXLCqyjA+ueZ/B0cCKldpqGro9u//4ekVBYgW0RU=@vger.kernel.org, AJvYcCXhTPYS4WvZEhORcjdtV4lF0kLcurSbm9KC9auSvT4RtZa3nCUGQIgrO3IW13eq+0nGM2TUc5u6nrBFyO5D@vger.kernel.org
-X-Gm-Message-State: AOJu0YyR0XdRVEsEf4sSWU+P8eeyhKvSRJM6wAGrRm09AFBZX/PSEqK1
-	G8JJjX94uJ5El0GWOgqnaDgWcr/lqPdGBEApLigNJ1IVE5XIwCiPtkGYf+RBnXY=
-X-Gm-Gg: ASbGncuzvlXIF6m4aPYMaDR5p3rfYrLqig4CQ/vy6oD1UoE/pNGeeTJzS43gDQqg4pX
-	Cjes+dyR9v3mpV/SaxU1MulPnPWyhuRGhcev5Lym4/7zRvMCxvJ/HWZ0x4EoEibToOFZUj6uXG4
-	w3MsdzJPZUggauUQuIsYQ+YQPlP2sEplD8cmX2WmBBlUfT6nU2HKwbZCjdrx0hUPQJb+Toc9RYI
-	2lXpo1vth33jiQ797K2xVK6cywt+OErNlF9gGmlnYVQPrEg4OijYpdseaDw7FlXtdGMv49P8Msv
-	vpG2Xskdyv1DBjrdLPUbkTccRDrwoMdCLY7YpnsX6LBjfn4DZkb8amU=
-X-Google-Smtp-Source: AGHT+IGeK/uCwqTgR67WHW8NRryne9Z9hLT8og2opBdBcEq55fkcfoQND4y+Y5hAsll/xewqqucAhg==
-X-Received: by 2002:a17:903:3ba5:b0:223:37ec:63d3 with SMTP id d9443c01a7336-22368fa903fmr144894375ad.18.1740978278852;
-        Sun, 02 Mar 2025 21:04:38 -0800 (PST)
-Received: from localhost ([2804:30c:1f21:4300:1cf6:c485:6555:b1c5])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-73652cdcd1bsm1291152b3a.97.2025.03.02.21.04.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Mar 2025 21:04:38 -0800 (PST)
-Date: Mon, 3 Mar 2025 02:05:30 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: Saalim Quadri <danascape@gmail.com>
-Cc: marcelo.schmitt@analog.com, dragos.bogdan@analog.com,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: GSoC Proposal 2025
-Message-ID: <Z8U4mr1vO-TWz91c@debian-BULLSEYE-live-builder-AMD64>
-References: <20250228113304.63160-1-danascape@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE57AD27
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 05:07:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740978429; cv=fail; b=mHAvB2Xe5bUvkgvUV0HXVZZ3uBnSWO0rNRVO0ZDbWWC96H6XXgwMXt5kA2YvMsyK/JXHrw202J47BPa4sGA4EPtMnknLjql7yx2yV2I7XNfZtLDti/pTvWywpGSg4mGMjAUHpO7RojnO/NXjqUwmDZVFES+2qj/ubfDrqFR0TOc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740978429; c=relaxed/simple;
+	bh=nUkS7KdM/AnSdyptZRAxBLPd6M+hx8dyXDihZFKf688=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Qj2pyIVxKbhsRwy6OHvO7vDlrReCZOus5tmOfWiyaUYwsA2r+KM1EnT1SZJU0BFN0xpx7jGjqb1xFINJCl9MnqyaCUfHSC7jymcgvX8syHrvraTvD3m/aHJVh89a1Y7n6qYsVkOHDqA+1JRR/sQPjC/yPKQ1w30U9DR86HGa3Oc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=X1tkI8U5; arc=fail smtp.client-ip=40.107.22.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=uoQyy9+XsuPWny3QD1KRJm6PlYvnChUC/CHBis3wmSlpGR6yKZhsPNaTV0BeYr98FeXAv7Ca8RjkaBzGGoZ1+hWTRSBsdzkA8YJlbjMgwYAU2XQLJZBtVQJpc7HQoHZ8/++sBEzeHliDnydzV8X0Ym2YoqhMFtCSO3P/r4UQ4yp3HGOKv2X7LKRs4fkRb/A+gME8LDHaIE9K60i9lggCCf6Lp132YcuMBU8cpgqIiPIhnIvNj++Q7cKkj8phI6xu5SgRz2zK8/jyO9PImoGu6NwM+QHE7MsS+wT84UjzT47Txt3wioouCNG9MhwM2BTowZ8dROpUH1FqSHtychzU5A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1674ICgVE/zEsY9kaoK7VO7PWMsvOK2wAkhT/fB9Ulc=;
+ b=ZfZ93Vf1AezhGaFopm4adXOh5gcfEVHsILZFaUdF2wE3C5OMBfHJDi7hbVTa7TV3sl2vTZDU44e4J6orUpfA0klDSI0pGKyy92DeR9YtfU28Slt1JMA9aZYVKVNEzMoNKhfDe0ldYuO7dl3pw1VHcXAj2lyEJ+O7+hH/0ZS4RsVIQ1vhBS2kBShoVz0tvLv6optYs2u3/43WqMhmBCYkvtA8PO16n9rSHVFcpiBoCggeMw+06jcDOhYSaG4DeQWqrLGfHSN95xkMlpQb969V1xCpyzYI1j5gNnrOToYbIeuuca0eWbOXuAXX0O+uEM92maeNfdQMIiSOkhBnXcRIig==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1674ICgVE/zEsY9kaoK7VO7PWMsvOK2wAkhT/fB9Ulc=;
+ b=X1tkI8U5ZyAWzcw1XB3HDv73w6NDFnU/JlXffOfHfaC2WUr9wQluJn9LcnwgMOwUmNsgoAUkoBXncusoju4Ttxb03wTzJdTrdodCr0nii8vewsl60E2uEL5rEYvYs8nEWFKzSbdEX/dD3ZVDMGTMGcUSjAS/fT2bXFwWsqfjc99R9mVOPvWbQRYd68mmfGhlPT+CZHUWhQofqPxsB7S8bP5c+YSZpZ6MEYLrKYSRMwpcpzd5uNH6wYFMva0BTsMazs7kMHDmMViqfhs+AXqozuW3dCERbN4VmPXuuLuHKd6W7DppCAddkMGC5VJruFD66XozZS3Mo6Al9n6WLxYz0g==
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by VI1PR04MB7184.eurprd04.prod.outlook.com (2603:10a6:800:125::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.28; Mon, 3 Mar
+ 2025 05:07:04 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.8489.025; Mon, 3 Mar 2025
+ 05:07:03 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: kernel test robot <lkp@intel.com>
+CC: "oe-kbuild-all@lists.linux.dev" <oe-kbuild-all@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Bjorn
+ Andersson <andersson@kernel.org>, Mathieu Poirier
+	<mathieu.poirier@linaro.org>
+Subject: RE: drivers/remoteproc/omap_remoteproc.c:732: warning: Function
+ parameter or struct member 'is_iomem' not described in 'omap_rproc_da_to_va'
+Thread-Topic: drivers/remoteproc/omap_remoteproc.c:732: warning: Function
+ parameter or struct member 'is_iomem' not described in 'omap_rproc_da_to_va'
+Thread-Index: AQHbivhIKfgrboY4KUaSYYetbjTpHrNg3fcw
+Date: Mon, 3 Mar 2025 05:07:03 +0000
+Message-ID:
+ <PAXPR04MB84590CDADF15777AF08B426288C92@PAXPR04MB8459.eurprd04.prod.outlook.com>
+References: <202503020637.6SBId7IR-lkp@intel.com>
+In-Reply-To: <202503020637.6SBId7IR-lkp@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|VI1PR04MB7184:EE_
+x-ms-office365-filtering-correlation-id: f040afde-bdc5-4d5e-4c84-08dd5a113cc6
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|376014|38070700018|13003099007;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?xiFnAQS3sJ7+Xh9KOB3ftMrjUaEixLUq4vP0nKwrvYjiz6NI6wsPuvEJ8NQM?=
+ =?us-ascii?Q?negoQ17O4SsQJhs3uUOiKwMnbSFlG49si/cGOyf063mtMU9E4vgM+2XqaAGz?=
+ =?us-ascii?Q?ceyJC+wVjWZ6uwTASMzn6ZnQ6vXETyu7YK/C84YivQ+2/h4Sdw9B9b7rZwuZ?=
+ =?us-ascii?Q?VkoBnqMlbb+K7Q+triccBn8NPcm3+lv846Ht1nCnaSRLB5kiT24Zzdh2TLCQ?=
+ =?us-ascii?Q?m7psXam7stNRVAvQvjNEC+bVqkMLJgiGLYV23wDJMb4UOMTgNWSPOLpB8k+m?=
+ =?us-ascii?Q?akTRJmli53UbT44uXusj3nmoeHvPXPlTMb16llT5efBctAFXL+Rn6wTP7m9C?=
+ =?us-ascii?Q?UmoN0ytoX3bkUfhP062fuPdY69KFB96hbhzvPHola4t+Xhh+v9mC6zI6LtO5?=
+ =?us-ascii?Q?8Ik9bSpc0SibhnoaAVrHZg/gP7gwhDmljAFRz7f9TjmhS0c+RU7hhtd5uNtX?=
+ =?us-ascii?Q?0Vo9PFgzTSwLiksmnpxaF2K9uLYqn0z7lApzrB3onuzyt8MtvsfV5qMqaSVg?=
+ =?us-ascii?Q?M8j7oUkFt+8uQihZaCYOIvDXloI+tGSqgmiPgQ4b7Xsv09tAJoUnLLm1Pb7h?=
+ =?us-ascii?Q?GD6gb1MkIX52LpiZoG5DhKzDbRi+D0590dHes8bVJcJUTFglaAMGcrOufmfc?=
+ =?us-ascii?Q?Idn+DAdUWic4GQb1gFtv4aKxYJL1wWDtV0r6YJqPH8jvKpXNfbzgrdbN5YB4?=
+ =?us-ascii?Q?iku6Npft596wWL9EhOV+MC61J8eyNi4jNAv95p6zS+kiNFKAIEGRg7a6B0lM?=
+ =?us-ascii?Q?V3blm6+/nZwRJKpGDXoCOqbu+MkqZUVPCr3dsjuEJikrSdH6LxRhxGlfbTBW?=
+ =?us-ascii?Q?K1Z+u4Z9Qy2rGhEu3XGebJ+Ng+dT4eMUACtS2mPL5BPqw3I8F320YJVnAH10?=
+ =?us-ascii?Q?Iqt7SNv06RJeSdQ4T7/iYswaM07tWYTna5OP1WBFbd7DiHuPknrRv2u88zY5?=
+ =?us-ascii?Q?DhvoOWeONjflCx8jVXCDWN3N7RbefCK2KCvGOJ6FDzly5DiCDMyY7ASWTqCf?=
+ =?us-ascii?Q?oosirGb2EeLhcJzLcwB3Xw/8v9iZ3LrtBiFM3Zy+XO0c1W3qT5J2CpaOiqT0?=
+ =?us-ascii?Q?oegx0QX6B1LDLD+wgbQOwRkhoZ5OFmSiDLLwIUVVNu9bdIASs5CAaTec0yiZ?=
+ =?us-ascii?Q?C2x2lZMxXVAzOJcdjPu+jpZqAVJ4HbzipcvLFaK8C3qCW6t3c9Hga+k4WPuq?=
+ =?us-ascii?Q?4IEr7db5q0xmn8Zd1Ja9SqaN0usHqJw/1C/dr8Ugdpz3mmpsDtXUHLzv0vbL?=
+ =?us-ascii?Q?D9NZutbrP5RCiZd6rTerTJcCYVlDOOqJhcS0sXzwIQUKaoQq0bQaVDJZRljU?=
+ =?us-ascii?Q?vppjUIULFOKsjFoFtiZiTFVtzqfIcyzZWqoAbLPuELTf+yHe43yEuUTyNrxr?=
+ =?us-ascii?Q?7aftBqP19HnW2n5OoVHqq0qn/k9u?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018)(13003099007);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?fVJFJ0AUBMS/lu15fiTOu1/dADd1LITghQsS+rscIxGvPwlJ22e7jTtYOG1N?=
+ =?us-ascii?Q?ddp7OINxlflM/GRzKGFzn01kRwiUBN1jYf2xrySipDwRswJYWgDXAdaHZnv+?=
+ =?us-ascii?Q?OAMPzYSlE0gmL3qYH5hDMOEJlUa4c8L4h35uOgHn9wGVQi66KI5rfhNSb/gP?=
+ =?us-ascii?Q?op5aUNi5mg1jYPjNfCsa95bP2quTo0WbOCGK6jg60GNhbFU1Wgj05L1cneiJ?=
+ =?us-ascii?Q?TNtNW9MfsUY+3ZUpvD3LL2l/s2+jfSWLcvjmyYiqddS0i+umr/ngDoWaISdg?=
+ =?us-ascii?Q?tUtADs+VxoKXisBA1I3PXxylizmFtjmHmYVqEeVtbva+gy6z0XUHUe+ZNJ+J?=
+ =?us-ascii?Q?qosStvvYyCOBEOqRLpkR9z1z/LrKoW7ju8++fBtxyiXEWHvKgrKalVqkHijJ?=
+ =?us-ascii?Q?tSR0jnDlp2Yk6Cdmfy2raYbAebhCinVITbTLJQlXHHxiS0KqFXTUgrMTevZz?=
+ =?us-ascii?Q?NIttU7yzP3jz+obTCeBuDUVyi3z8z12+DqferNlIM1Z+I7jHS4tLEMtq2ivy?=
+ =?us-ascii?Q?cAjppCSHCJMV1ow4uUkpJiAsJOCRIqTSvOs2WnRm1C03ZqYTVW0QJDftmAQw?=
+ =?us-ascii?Q?mEj1CepjpqKbEicS005syaT13SP93DD+QL+IW1H+tTa1la8B1dxVdyXH7Lpl?=
+ =?us-ascii?Q?Y1+wokDMhZ7mtxROWAY7HcAdSfFrPU1G3MNWbedW+zKs+ssY37v1j57uC+fx?=
+ =?us-ascii?Q?0O5giVUIy2Hvz4ftp9NZOuDDCsAqR6oDp7bBMa5QC1O4XnbFa25PCt3uYk9W?=
+ =?us-ascii?Q?g6D3oPtYKNrQWiIu9M7QK4b0JYViluiI9OCAnP6j3MSwiHpx53/TN/9ohJR1?=
+ =?us-ascii?Q?cjCFeqlqGL6MfqaIQgjhwycQc6bmdb9HME+Nm5tBvVzBb/Ssg6wg6k3N6Lu7?=
+ =?us-ascii?Q?Joo+7b50vEM0PYRG9iHsjDqmqP9zsJkbuiDUvJLFFVrIppyo4sL2LaTQ/eIC?=
+ =?us-ascii?Q?Cgwwuq78rmGIGeKG/rZlXOn9jxffsNlqYojk/vf6UUQlsAmpBS1wTVDLtNqZ?=
+ =?us-ascii?Q?TSAC1dchwvNGxdMjc7ASgGME8sYvD1fL5Rp4A2hMey2VtZUqGX6CWJAUt9uC?=
+ =?us-ascii?Q?9GvoMm/m0f4pgYOM99Va8p4LApG1sPiDQfCGs96FzAvIUzU28Lpgcu8HK4Jv?=
+ =?us-ascii?Q?UL/FMWIk7t/gZ1tz+sCSfRIfVYekSzurlcDkS/VBcbF+QltJXHiXTDrPxYHk?=
+ =?us-ascii?Q?18HFNYFn8I+XweCSIbfz1NR5b2ESnKWFkuIn88IAb2iJJ4Q4/RxfxOCp7g9y?=
+ =?us-ascii?Q?8qWH0eN9YuYwBv/qQEIROUzhOmSG3mOXUFilJp+qsNcabIGDFesAHC9L+5OA?=
+ =?us-ascii?Q?6VPqcSBf2n/i7/jv21BQJrpoabRGCfp5+OifPT9N7CJL8ueH156o4PWpTxRl?=
+ =?us-ascii?Q?8MGa+oWX3spFS5dfhoC0i69fiv4TMjff5G6eX1nuuaViobo2SD/KQ2JdKwPu?=
+ =?us-ascii?Q?O5q2jWK4Ne+gVYSc761qf+wo9FcZD+QGlOdbZxs9DskoytVihHCaI8U6YaPk?=
+ =?us-ascii?Q?ZGC7kFnKAB3EHf1oD2hAGDmnlGjV7Kca8/0wVcqFQqW7IWHRdl6v4zvpKofh?=
+ =?us-ascii?Q?yB74MA1+o1MGhCWQlYU=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250228113304.63160-1-danascape@gmail.com>
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f040afde-bdc5-4d5e-4c84-08dd5a113cc6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2025 05:07:03.6793
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 3YaBtPZH8zglFqNqQiqd41iYpJD5iANZZqJCEjQqx2DmqltSWY6RlQxgSlEsm18QM4CMAYmd1lBHddKfjD0L2A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB7184
 
-Hello Saalim,
+> Subject: drivers/remoteproc/omap_remoteproc.c:732: warning:
+> Function parameter or struct member 'is_iomem' not described in
+> 'omap_rproc_da_to_va'
 
-On 02/28, Saalim Quadri wrote:
-> Hi everyone, I am Saalim Quadri an undergrad student at Dayananda Sagar College of Engineering, pursuing Electronics and Communications.
-> I wish to participate in the GSoC 2025 as a part of the Linux Foundation, IIO Project.
-> 
-> I have been contributing to the Linux Kernel and have more than 10 accepted patches.
-> I have also worked with Android Linux Ecosystem in the past years, and have worked on several subsystems, backports and fixes.
-> 
-> I started looking into https://wiki.linuxfoundation.org/gsoc/2025-gsoc-iio-driver and Analog Devices Inc. and I am interested in writing
-> the driver for ADE9113 ADC.
-> 
-> In that sense, I would like to know if anyone in the IIO community could provide with some suggestions for my proposal, and a positive impact.
-> Any suggestion or hint is appreciated!
+Please drop this warning, Fix has been picked up, see
+https://lore.kernel.org/all/Z7yc4vxYkTMhSWni@p14s/
 
-Well, aside from the "Tips for writing a good proposal" section in the project's
-page, I would also consider Jonathan's comments on previous proposals [1].
+Thanks,
+Peng
 
-If you are looking for a task list, see kernelnewbies IIO tasks page [2] and
-some suggested changes for IIO staging drivers [3].
-
-
-[1] https://lore.kernel.org/linux-iio/20240326185207.20f8987e@jic23-huawei/
-[2] https://kernelnewbies.org/IIO_tasks
-[3] https://lore.kernel.org/linux-iio/Z8U0lsntJpTuBzyT@debian-BULLSEYE-live-builder-AMD64/
-
-Regards,
-Marcelo
+>=20
+> Hi Peng,
+>=20
+> FYI, the error/warning still remains.
+>=20
+> tree:
+> https://eur01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2F
+> git.kernel.org%2Fpub%2Fscm%2Flinux%2Fkernel%2Fgit%2Ftorvalds%2
+> Flinux.git&data=3D05%7C02%7Cpeng.fan%40nxp.com%7C50009dcabea4
+> 4860b0c008dd590f683f%7C686ea1d3bc2b4c6fa92cd99c5c301635%7
+> C0%7C0%7C638764644912563206%7CUnknown%7CTWFpbGZsb3d8e
+> yJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsI
+> kFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=3DqoPgVy
+> Jgg36vRNE5HECHYX%2FpAc0T471cj5162D7pc0o%3D&reserved=3D0
+> master
+> head:   df87d843c6eb4dad31b7bf63614549dd3521fe71
+> commit: 40df0a91b2a5228ded8e5f75b80d28c96c6831cd remoteproc:
+> add is_iomem to da_to_va
+> date:   4 years ago
+> config: arm-randconfig-c041-20230507
+> (https://eur01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2
+> Fdownload.01.org%2F0day-
+> ci%2Farchive%2F20250302%2F202503020637.6SBId7IR-
+> lkp%40intel.com%2Fconfig&data=3D05%7C02%7Cpeng.fan%40nxp.com
+> %7C50009dcabea44860b0c008dd590f683f%7C686ea1d3bc2b4c6fa92
+> cd99c5c301635%7C0%7C0%7C638764644912581628%7CUnknown%
+> 7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMC
+> IsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C
+> %7C&sdata=3DFEvXgw%2BRm6Io1k9t9QKIdZwSqOgoQDtX9XPZtQLaWO
+> M%3D&reserved=3D0)
+> compiler: arm-linux-gnueabi-gcc (GCC) 12.4.0 reproduce (this is a W=3D1
+> build):
+> (https://eur01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2
+> Fdownload.01.org%2F0day-
+> ci%2Farchive%2F20250302%2F202503020637.6SBId7IR-
+> lkp%40intel.com%2Freproduce&data=3D05%7C02%7Cpeng.fan%40nxp.c
+> om%7C50009dcabea44860b0c008dd590f683f%7C686ea1d3bc2b4c6f
+> a92cd99c5c301635%7C0%7C0%7C638764644912593266%7CUnknow
+> n%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAw
+> MCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%
+> 7C%7C&sdata=3DiDgsV8XXWjRwQftnAuBAzWJFZDAzZyfGcwgXitoHYao%3
+> D&reserved=3D0)
+>=20
+> If you fix the issue in a separate patch/commit (i.e. not just a new
+> version of the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes:
+> |
+> https://eur01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2F
+> lore
+> | .kernel.org%2Foe-kbuild-all%2F202503020637.6SBId7IR-
+> lkp%40intel.com%2F
+> |
+> &data=3D05%7C02%7Cpeng.fan%40nxp.com%7C50009dcabea44860b0c
+> 008dd590f683f%
+> |
+> 7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C6387646449
+> 12604520%7CUnkn
+> |
+> own%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMD
+> AwMCIsIlAiOiJX
+> |
+> aW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdat
+> a=3DOOJ0eCr4Co
+> | iX2DC3nTDyKIKUGLIS8Z7Lbnm140ZB7uk%3D&reserved=3D0
+>=20
+> All warnings (new ones prefixed by >>):
+>=20
+> >> drivers/remoteproc/omap_remoteproc.c:732: warning: Function
+> parameter or struct member 'is_iomem' not described in
+> 'omap_rproc_da_to_va'
+>=20
+>=20
+> vim +732 drivers/remoteproc/omap_remoteproc.c
+>=20
+> 34ed5a33b1218e Ohad Ben-Cohen 2011-10-20  716
+> 530a1b57e8590f Suman Anna     2020-03-24  717  /**
+> 530a1b57e8590f Suman Anna     2020-03-24  718   *
+> omap_rproc_da_to_va() - internal memory translation helper
+> 530a1b57e8590f Suman Anna     2020-03-24  719   * @rproc: remote
+> processor to apply the address translation for
+> 530a1b57e8590f Suman Anna     2020-03-24  720   * @da: device
+> address to translate
+> 530a1b57e8590f Suman Anna     2020-03-24  721   * @len: length of
+> the memory buffer
+> 530a1b57e8590f Suman Anna     2020-03-24  722   *
+> 530a1b57e8590f Suman Anna     2020-03-24  723   * Custom function
+> implementing the rproc .da_to_va ops to provide address
+> 530a1b57e8590f Suman Anna     2020-03-24  724   * translation
+> (device address to kernel virtual address) for internal RAMs
+> 530a1b57e8590f Suman Anna     2020-03-24  725   * present in a DSP
+> or IPU device). The translated addresses can be used
+> 530a1b57e8590f Suman Anna     2020-03-24  726   * either by the
+> remoteproc core for loading, or by any rpmsg bus drivers.
+> 530a1b57e8590f Suman Anna     2020-03-24  727   *
+> 530a1b57e8590f Suman Anna     2020-03-24  728   * Return:
+> translated virtual address in kernel memory space on success,
+> 530a1b57e8590f Suman Anna     2020-03-24  729   *         or NULL on
+> failure.
+> 530a1b57e8590f Suman Anna     2020-03-24  730   */
+> 40df0a91b2a522 Peng Fan       2021-03-06  731  static void
+> *omap_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool
+> *is_iomem)
+> 530a1b57e8590f Suman Anna     2020-03-24 @732  {
+> 530a1b57e8590f Suman Anna     2020-03-24  733  	struct
+> omap_rproc *oproc =3D rproc->priv;
+> 530a1b57e8590f Suman Anna     2020-03-24  734  	int i;
+> 530a1b57e8590f Suman Anna     2020-03-24  735  	u32 offset;
+> 530a1b57e8590f Suman Anna     2020-03-24  736
+> 530a1b57e8590f Suman Anna     2020-03-24  737  	if (len <=3D 0)
+> 530a1b57e8590f Suman Anna     2020-03-24  738
+> 	return NULL;
+> 530a1b57e8590f Suman Anna     2020-03-24  739
+> 530a1b57e8590f Suman Anna     2020-03-24  740  	if (!oproc-
+> >num_mems)
+> 530a1b57e8590f Suman Anna     2020-03-24  741
+> 	return NULL;
+> 530a1b57e8590f Suman Anna     2020-03-24  742
+> 530a1b57e8590f Suman Anna     2020-03-24  743  	for (i =3D 0; i <
+> oproc->num_mems; i++) {
+> 530a1b57e8590f Suman Anna     2020-03-24  744  		if
+> (da >=3D oproc->mem[i].dev_addr && da + len <=3D
+> 530a1b57e8590f Suman Anna     2020-03-24  745
+> oproc->mem[i].dev_addr + oproc->mem[i].size) {
+> 530a1b57e8590f Suman Anna     2020-03-24  746
+> 	offset =3D da - oproc->mem[i].dev_addr;
+> 530a1b57e8590f Suman Anna     2020-03-24  747
+> 	/* __force to make sparse happy with type conversion */
+> 530a1b57e8590f Suman Anna     2020-03-24  748
+> 	return (__force void *)(oproc->mem[i].cpu_addr +
+> 530a1b57e8590f Suman Anna     2020-03-24  749
+> 				offset);
+> 530a1b57e8590f Suman Anna     2020-03-24  750  		}
+> 530a1b57e8590f Suman Anna     2020-03-24  751  	}
+> 530a1b57e8590f Suman Anna     2020-03-24  752
+> 530a1b57e8590f Suman Anna     2020-03-24  753  	return NULL;
+> 530a1b57e8590f Suman Anna     2020-03-24  754  }
+> 530a1b57e8590f Suman Anna     2020-03-24  755
+>=20
+> :::::: The code at line 732 was first introduced by commit
+> :::::: 530a1b57e8590f2ebbb6a35effa0efa988aabf6c remoteproc/omap:
+> Add the rproc ops .da_to_va() implementation
+>=20
+> :::::: TO: Suman Anna <s-anna@ti.com>
+> :::::: CC: Bjorn Andersson <bjorn.andersson@linaro.org>
+>=20
+> --
+> 0-DAY CI Kernel Test Service
+> https://eur01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2F
+> github.com%2Fintel%2Flkp-
+> tests%2Fwiki&data=3D05%7C02%7Cpeng.fan%40nxp.com%7C50009dcab
+> ea44860b0c008dd590f683f%7C686ea1d3bc2b4c6fa92cd99c5c30163
+> 5%7C0%7C0%7C638764644912615595%7CUnknown%7CTWFpbGZsb
+> 3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4z
+> MiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=3Dhtf
+> oNpSwSE0sF4eFyya%2FIWJTpP3HrMDmELJYuTCRiVA%3D&reserved=3D0
 
