@@ -1,266 +1,127 @@
-Return-Path: <linux-kernel+bounces-542924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A6E6A4CF6E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 00:49:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1191A4CF75
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 00:50:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6D073ACA40
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:49:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06EF11744C5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEFAD1F4163;
-	Mon,  3 Mar 2025 23:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94201F4165;
+	Mon,  3 Mar 2025 23:50:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pf8gjpBP"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qtKlThu/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4F91E991A
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 23:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0DDA1E991A;
+	Mon,  3 Mar 2025 23:50:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741045765; cv=none; b=MdYouGg8FpBd6Z4bk8/vCRPMRdz4xRQjyrXB4HXG4xBHAmKOLR/JlxP/HfAuywVlMwC2rFlFPcjcUlwh5rDwO+CBlVG3/iIlXarou4wE09tzmZsbQddFiXkoBIyoNGP8ttIrG9Pc4Q60FwQCAXzSAoB25r40Zry5JoEOZEXLlao=
+	t=1741045834; cv=none; b=aOe6dVD5mw1cMyEV8C1I8I0u9HMla0yu5GgcX0+EWGcn4/vopAJnqqxGiCaJTvJW69wneM89gOnRFxX0IdHSkl70zG/J32sysSJlHN0778GW/bqN5cX7c7ry5AsvgOr2GujODeqF2xPBPJyyq/tLVZdsriqAdieArbztQDfZAwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741045765; c=relaxed/simple;
-	bh=+PF1wsaiP8mXxpW/X8Hzgpxz5YQURxQuQQB/TUeXtco=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b1jmKYvzTDRpuDBc/4vyaaMKRX0ZAajWNYvvHGkprstnxj6jE1aP5zcvm9duFUHMM7Zhrx+9jmIjJWcv3KTRD3381YmUq0vdMYp7CHILmTQso8BmDBYQuvwJ3tH71Q0gdJEvfEfDYb5ANTOJoRuI+zXiGaDsuqiQXRUXflHjhlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pf8gjpBP; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30baa27b209so21245011fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 15:49:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741045761; x=1741650561; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TGh2Jh07iqN6b8Vz0+08UIfINMxu82nUoWOUL86HJGU=;
-        b=pf8gjpBPvCH8+uEq91T+CttdlMMnOPZ4exrQyLcSuDhV3FVFGtOvxqNa9HuF02SQDC
-         Z1wUT4oWhPTjtCvQ/8OgcNA+fcrdc0r1X2bYToNHciSOJg/jqT8l4dlPN1wYomXCnrNq
-         S4UfOSvK4N+PRf+j5Dz9K4M5JhhRpgyY9ZmGL1UIpylL2VhbblnQkpJzX83NGYqMgnb2
-         E/sTJQFCKd67/Vp1YJ1+q1/XYeWKO9/JPU6Pam+REe2hrLsfhg3Oq7/cfg/z9nMNeD0p
-         r2HIEoFHD6e8gUn7w9CVb3J9HcALyTVn8vuLrkwDnYwKRxrbZk0llyFnbLI29VdEMbeq
-         SbKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741045761; x=1741650561;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TGh2Jh07iqN6b8Vz0+08UIfINMxu82nUoWOUL86HJGU=;
-        b=wugaUV23AcWgpyOAlp19z38aR8UPhnfu3FXzymP7+NyMj/tgPmAl7rh0+3yuyIwLHw
-         Zmij1P290uqbo2Q7U/rlcCV0XJrNHO0mBNXtBcoSWDSFP4ztYS4qpblnGFlcVVez7xNG
-         Wh4B7mfs5zS4g7m++NRfm5b2JZjfJ5X/ZhgMlwMbFWwbkRky1uNhuSSdFYwQ3vLAyo+Q
-         Eis2xYVpOwB7r28nLazejC24L0MaFtbtvwyfrEfSFLdK0p4KuPeU667dQ/1BS1atjh23
-         wYL2VWv69yYAxWUut18qrpd/bge2tWORVTDgUANeF6jSXsRl8UhHfUq8f/7sXiSlBfi8
-         Aq0w==
-X-Forwarded-Encrypted: i=1; AJvYcCXS46ZPfRAn/vFiZ2IN9k6N6cXe39FVILK0lZZCKWXidBfGJ+N62popwYIHAEHW7puk/lcBftemtPt4Lbk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5OqNVA1/FiFD/C3844GE1GA67B/ilWaoJOy/3/n7t7YN+xvFP
-	CDrM4OYxlGxPYKZBD8l1RItH1saJ6UHfGGjTpO99jXx6rQG/wcdJQ6iEmQsRU0M=
-X-Gm-Gg: ASbGncubl/h9opN61zsgGYxKieRBw38y6fckKZwjHgOGYr89RaKcSY/R2zWYQsuOuIK
-	QSvatgZkfsbyMNt8x3TFidos+x20J36C4jYjbXQmzK/fAv8BphbbfxgF+iOLQ4yiC10kF/xRHxw
-	dPnAE48lwgEra4O4rvA69psVJwBiRLdyF26r5gZIvy+MIpKZwmyfLbk34qE2jvD2VS5mPWTjuu2
-	iVktpP/jTADL9CrE1SMsQw7p32vBEUZtkpU7lWb6yn+0HLOiHrb+1ls3SqGnQjCEuY3clkRexbj
-	TkG+QtEq4t2jrjyHbulqp5ml3oiil2i4rq7h825tPpa1GRf7KM+ALa4aiVG51lNjjYR/Z+zpR/9
-	6c54isC2fKHCoFSvcuaZKFWpJ
-X-Google-Smtp-Source: AGHT+IFWAkh7m/Jl/ntM6OdiF2e3PXJPllKscV8h133CwwWAxNYSo0Ra0mjbeHO46uPyn1my6qBAFw==
-X-Received: by 2002:a05:6512:6c9:b0:545:2a7f:8f79 with SMTP id 2adb3069b0e04-5494c320129mr6121961e87.16.1741045760896;
-        Mon, 03 Mar 2025 15:49:20 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54954afb00csm1069042e87.250.2025.03.03.15.49.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 15:49:19 -0800 (PST)
-Date: Tue, 4 Mar 2025 01:49:17 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jessica Zhang <quic_jesszhan@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC] drm/msm/dpu: Force modeset if new CTLs have been
- reserved
-Message-ID: <flc3cyky4wxfin7dlxhukwmhonze3napmuyhl2s6jbsgepco7a@q4l2ndh23lus>
-References: <20250303-force-modeset-hw-ctl-v1-1-9cbf6d4fbf8e@quicinc.com>
+	s=arc-20240116; t=1741045834; c=relaxed/simple;
+	bh=ZtN7Vj4cOdhdtn+xFv0fG3ppvVknVymRTUOPHeuqZzs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XYhFRL33E2RfB5Asfe4lObc7Xa52qNFod3INpwXSQ44++CVK7iB0gdCVN/0wcMKxB19o2pVpt6fyeZ2ktkDE+PaOJYe7aIDTmrxoT0kCPbo04K0gvovpGfKWn5Ltg70Bn3V2TWAy9Nlg3IIBIL32gbzeAe6AUU+MC+kxNOSnnNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qtKlThu/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71258C4CEEA;
+	Mon,  3 Mar 2025 23:50:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741045833;
+	bh=ZtN7Vj4cOdhdtn+xFv0fG3ppvVknVymRTUOPHeuqZzs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=qtKlThu/eL/B1gSFNrBKylcw7uOvXxONL9ifdr+7cy6fn6acrUK9/p0bxRAAAZQE9
+	 b697mUdPnqpRVz8Ki22OowHyXStcf6MIG5Daw4ajJyGGvwXhlK9q+7bmGze0mnGftE
+	 4sypDqoYPFa80rYGlijr9uE3fJbbA49EX9ZBwmPdmL7imlGN4/gd44bfazU/pKIaQY
+	 q/fZkWmqK/TeTBPjysd+Jpbj06IplfITOXXA0Y2pbBioAjRLLgWtGHOnYriPdWM0KV
+	 2O5D7QTKzMnkI2CVO311dw3Flc7HBsHaAra0czrxaxJ3JO6AfOJACy6if9fBNU5EJ+
+	 aTH8H1hqWpJNA==
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3d03d2bd7d2so49554425ab.0;
+        Mon, 03 Mar 2025 15:50:33 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU2LEAe9T3DEYZDxt3km8y7vai33WOARbtPLQoTbc16chQLLqLZZr0ati4P0ka5m5b9EQA=@vger.kernel.org, AJvYcCUuldPP5DVswwoDLEbdzWywcTpsQ1U8xKtgKX2tJf+iwbGarY9lUjNbigSBd+YQacXQm930179fkA==@vger.kernel.org, AJvYcCVAcgn5ik7Dg0nalzdJ7usyneLMYjxgigIv72ata49xNSHwtEGUa512Hhu02pAVrP7NuWBWV56LYL3JvW/f@vger.kernel.org, AJvYcCVWSEhmSgXL5FfzySxalNo2A2XZgXo05NUQvH+89185HOFFSfsJ9rsLNATMSpZh7AowMViX+bb3Kz2l7Uy69TFxKgezCosd@vger.kernel.org
+X-Gm-Message-State: AOJu0YwK9ZFkn+5ifHjoP0TLJwZr41hXq3/IjXvlvQvTOahXPhlnxvAj
+	1HVN9nCoGHkVzxZllr518JM5F9hxIZnWNt/ZblIJ2wH91BfSgn7zIJmAtEp/qf9P51CosvZQ+Dq
+	mS760xAR33B8P4jMQcwcSlbTQ/XI=
+X-Google-Smtp-Source: AGHT+IEa2U04jzdtqm9QOxXPelAcw7uaid5QIC7++sbi7K86r+INBEjhOLZdluQ0kal3eyQloIgjX0ZeVZ07G9aOiRo=
+X-Received: by 2002:a05:6e02:1805:b0:3d3:d163:ec84 with SMTP id
+ e9e14a558f8ab-3d3e6e7442fmr131213825ab.10.1741045832644; Mon, 03 Mar 2025
+ 15:50:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250303-force-modeset-hw-ctl-v1-1-9cbf6d4fbf8e@quicinc.com>
+References: <20250303222416.3909228-1-bboscaccy@linux.microsoft.com> <20250303222416.3909228-2-bboscaccy@linux.microsoft.com>
+In-Reply-To: <20250303222416.3909228-2-bboscaccy@linux.microsoft.com>
+From: Song Liu <song@kernel.org>
+Date: Mon, 3 Mar 2025 15:50:21 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW7RsGErn+Gy-2S6ruyo+j9WmqwxWERh2XoRrWEH7-=e1w@mail.gmail.com>
+X-Gm-Features: AQ5f1Jo2tzFzrgsbmtzBANFmzE1xKVmsW9OnQyVqM5ytF_Pbl82b-R4fsAPb2bo
+Message-ID: <CAPhsuW7RsGErn+Gy-2S6ruyo+j9WmqwxWERh2XoRrWEH7-=e1w@mail.gmail.com>
+Subject: Re: [PATCH 1/1] security: Propagate caller information in bpf hooks
+To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Yonghong Song <yonghong.song@linux.dev>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 03, 2025 at 10:28:00AM -0800, Jessica Zhang wrote:
-> If new CTLs are reserved by CRTC but atomic_enable() is skipped, the
-> encoders will configure the stale CTL instead of the newly reserved one.
+For future patches, please use git-format-patch with --subject-prefix optio=
+n and
+specify target tree (bpf vs. bpf-next vs. bpf-next) and patchset version. F=
+or
+this version of the patchset the subject prefix should be "PATCH v3 bpf-nex=
+t".
 
-The CTLs are propagates in .atomic_mode_set(), not in .atomic_enable().
-
-> 
-> Avoid this by setting mode_changed to true if new CTLs have been
-> reserved by CRTC.
-
-This looks very strange. First we reserve new CTLs when there is a
-modeset requested. Then on one of the next commits we detect that
-encoder has stale CTLs and try to upgrade the commit to full modeset
-(while the user might not have .allow_modeset set to true for whatever
-reason, e.g. because only ACTIVE is changed).
-
-Could you please check if the following change fixes the issue: in
-crtc_set_mode() replace the raw !new_crtc_state->mode_changed check with
-the drm_atomic_crtc_needs_modeset() call?
-
-> 
-> Note: This patch only adds tracking for the CTL reservation, but eventually
-> all HW blocks used by encoders (i.e. DSC, PINGPONG, CWB) should have a
-> similar check to avoid the same issue.
-> 
-> Suggested-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> Closes: https://lists.freedesktop.org/archives/freedreno/2025-February/036719.html
-> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+On Mon, Mar 3, 2025 at 2:24=E2=80=AFPM Blaise Boscaccy
+<bboscaccy@linux.microsoft.com> wrote:
+>
+> Certain bpf syscall subcommands are available for usage from both
+> userspace and the kernel. LSM modules or eBPF gatekeeper programs may
+> need to take a different course of action depending on whether or not
+> a BPF syscall originated from the kernel or userspace.
+>
+> Additionally, some of the bpf_attr struct fields contain pointers to
+> arbitrary memory. Currently the functionality to determine whether or
+> not a pointer refers to kernel memory or userspace memory is exposed
+> to the bpf verifier, but that information is missing from various LSM
+> hooks.
+>
+> Here we augment the LSM hooks to provide this data, by simply passing
+> a boolean flag indicating whether or not the call originated in the
+> kernel, in any hook that contains a bpf_attr struct that corresponds
+> to a subcommand that may be called from the kernel.
+>
+> Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
 > ---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c    | 13 +++++++++++++
->  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 12 ++++++++++++
->  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h |  1 +
->  3 files changed, 26 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> index 4073d821158c0..a1a8be8f5ab9f 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> @@ -1406,19 +1406,32 @@ int dpu_crtc_check_mode_changed(struct drm_crtc_state *old_crtc_state,
->  	struct drm_crtc *crtc = new_crtc_state->crtc;
->  	bool clone_mode_enabled = drm_crtc_in_clone_mode(old_crtc_state);
->  	bool clone_mode_requested = drm_crtc_in_clone_mode(new_crtc_state);
-> +	struct dpu_crtc_state *cstate = to_dpu_crtc_state(new_crtc_state);
-> +	uint32_t enc_ctl_mask = 0;
-> +	uint32_t crtc_ctl_mask = 0;
-> +	struct dpu_crtc_mixer *m;
->  
->  	DRM_DEBUG_ATOMIC("%d\n", crtc->base.id);
->  
-> +	for (int i = 0; i < cstate->num_mixers; i++) {
-> +		m = &cstate->mixers[i];
-> +		crtc_ctl_mask |= BIT(m->lm_ctl->idx - CTL_0);
-> +	}
-> +
->  	/* there might be cases where encoder needs a modeset too */
->  	drm_for_each_encoder_mask(drm_enc, crtc->dev, new_crtc_state->encoder_mask) {
->  		if (dpu_encoder_needs_modeset(drm_enc, new_crtc_state->state))
->  			new_crtc_state->mode_changed = true;
-> +		enc_ctl_mask |= dpu_encoder_get_ctls(drm_enc);
->  	}
->  
->  	if ((clone_mode_requested && !clone_mode_enabled) ||
->  	    (!clone_mode_requested && clone_mode_enabled))
->  		new_crtc_state->mode_changed = true;
->  
-> +	if (crtc_ctl_mask != enc_ctl_mask)
-> +		new_crtc_state->mode_changed = true;
-> +
->  	return 0;
->  }
->  
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> index a61598710acda..2f3101caeba91 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> @@ -188,6 +188,7 @@ struct dpu_encoder_virt {
->  
->  	unsigned int dsc_mask;
->  	unsigned int cwb_mask;
-> +	unsigned int ctl_mask;
->  
->  	bool intfs_swapped;
->  
-> @@ -707,6 +708,13 @@ void dpu_encoder_update_topology(struct drm_encoder *drm_enc,
->  	}
->  }
->  
-> +uint32_t dpu_encoder_get_ctls(struct drm_encoder *drm_enc)
-> +{
-> +	struct dpu_encoder_virt *dpu_enc = to_dpu_encoder_virt(drm_enc);
-> +
-> +	return dpu_enc->ctl_mask;
-> +}
-> +
->  bool dpu_encoder_needs_modeset(struct drm_encoder *drm_enc, struct drm_atomic_state *state)
->  {
->  	struct drm_connector *connector;
-> @@ -1155,6 +1163,7 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
->  	bool is_cwb_encoder;
->  	unsigned int dsc_mask = 0;
->  	unsigned int cwb_mask = 0;
-> +	unsigned int ctl_mask = 0;
->  	int i;
->  
->  	if (!drm_enc) {
-> @@ -1245,11 +1254,14 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
->  				"no ctl block assigned at idx: %d\n", i);
->  			return;
->  		}
-> +		ctl_mask |= BIT(phys->hw_ctl->idx - CTL_0);
->  
->  		phys->cached_mode = crtc_state->adjusted_mode;
->  		if (phys->ops.atomic_mode_set)
->  			phys->ops.atomic_mode_set(phys, crtc_state, conn_state);
->  	}
-> +
-> +	dpu_enc->ctl_mask = ctl_mask;
->  }
->  
->  static void _dpu_encoder_virt_enable_helper(struct drm_encoder *drm_enc)
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h
-> index ca1ca2e51d7ea..70b03743dc346 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h
-> @@ -91,6 +91,7 @@ bool dpu_encoder_needs_modeset(struct drm_encoder *drm_enc, struct drm_atomic_st
->  
->  void dpu_encoder_prepare_wb_job(struct drm_encoder *drm_enc,
->  		struct drm_writeback_job *job);
-> +uint32_t dpu_encoder_get_ctls(struct drm_encoder *drm_enc);
->  
->  void dpu_encoder_cleanup_wb_job(struct drm_encoder *drm_enc,
->  		struct drm_writeback_job *job);
-> 
-> ---
-> base-commit: 866e43b945bf98f8e807dfa45eca92f931f3a032
-> change-id: 20250228-force-modeset-hw-ctl-d02b80a2bb4c
-> prerequisite-change-id: 20241222-drm-dirty-modeset-88079bd27ae6:v2
-> prerequisite-patch-id: 0c61aabfcd13651203f476985380cbf4d3c299e6
-> prerequisite-patch-id: c6026f08011c288fd301676e9fa6f46d0cc1dab7
-> prerequisite-patch-id: b0cb06d5c88791d6e4755d879ced0d5050aa3cbf
-> prerequisite-patch-id: fd72ddde9dba0df053113bc505c213961a9760da
-> prerequisite-change-id: 20250209-dpu-c3fac78fc617:v2
-> prerequisite-patch-id: c84d2b4b06be06384968429085d1e8ebae23a583
-> prerequisite-patch-id: fb8ea7b9e7c85fabd27589c6551108382a235002
-> prerequisite-change-id: 20250211-dither-disable-b77b1e31977f:v1
-> prerequisite-patch-id: 079e04296212b4b83d51394b5a9b5eea6870d98a
-> prerequisite-change-id: 20240618-concurrent-wb-97d62387f952:v6
-> prerequisite-patch-id: b52034179741dc182aea9411fd446e270fdc69d1
-> prerequisite-patch-id: bc472765a7d5214691f3d92696cc8b0119f3252e
-> prerequisite-patch-id: c959bc480e96b04297ebaf30fea3a68bbac69da6
-> prerequisite-patch-id: f7db8449b241a41faac357d9257f8c7cb16503ec
-> prerequisite-patch-id: 7beb73131d0ab100f266fcd3c1f67c818a3263f4
-> prerequisite-patch-id: c08cbb5cf4e67e308afd61fdad6684b89429d3b6
-> prerequisite-patch-id: a4e343143b8fbe98ae4aa068cc459c750105eb9d
-> prerequisite-patch-id: 1d09edcf12ef7e7ab43547eefacae5b604b698e9
-> prerequisite-patch-id: 0008f9802bfd3c5877267666cceb7608203e5830
-> prerequisite-patch-id: 49402eb767c97915faf2378c5f5d05ced2dcfdac
-> prerequisite-patch-id: 522be2a6b5fe4e3a2d609526bb1539f9bc6f828f
-> prerequisite-patch-id: 031da00d0fffd522f74d682a551362f3ecda0c71
-> prerequisite-patch-id: 9454cec22231a8f3f01c33d52a5df3e26dd88287
-> prerequisite-patch-id: 7edbeaace3549332e581bee3183a76b0e4d18163
-> 
-> Best regards,
-> -- 
-> Jessica Zhang <quic_jesszhan@quicinc.com>
-> 
+>  include/linux/lsm_hook_defs.h                     |  6 +++---
+>  include/linux/security.h                          | 12 ++++++------
+>  kernel/bpf/syscall.c                              | 10 +++++-----
+>  security/security.c                               | 15 +++++++++------
+>  security/selinux/hooks.c                          |  6 +++---
+>  tools/testing/selftests/bpf/progs/rcu_read_lock.c |  3 ++-
+>  .../selftests/bpf/progs/test_cgroup1_hierarchy.c  |  4 ++--
+>  .../selftests/bpf/progs/test_kfunc_dynptr_param.c |  6 +++---
+>  .../testing/selftests/bpf/progs/test_lookup_key.c |  2 +-
+>  .../selftests/bpf/progs/test_ptr_untrusted.c      |  2 +-
+>  .../selftests/bpf/progs/test_task_under_cgroup.c  |  2 +-
+>  .../selftests/bpf/progs/test_verify_pkcs7_sig.c   |  2 +-
 
--- 
-With best wishes
-Dmitry
+Please put kernel changes and selftest changes in two
+patches. Other than this:
+
+Acked-by: Song Liu <song@kernel.org>
+
+>  12 files changed, 37 insertions(+), 33 deletions(-)
 
