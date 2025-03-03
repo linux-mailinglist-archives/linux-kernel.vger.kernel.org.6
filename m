@@ -1,119 +1,136 @@
-Return-Path: <linux-kernel+bounces-541385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B091A4BC6B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:35:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5275BA4BC54
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:33:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A54173AACF7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:33:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0C561894596
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E9B11F3B9E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C66231F3BAC;
 	Mon,  3 Mar 2025 10:32:13 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C4A41E7C32
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 10:32:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MPPd7/yT";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8w5dIlaS"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B93541F12E0;
+	Mon,  3 Mar 2025 10:32:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740997933; cv=none; b=mRslhluF18N7rF6Iqkj9PywEIz/f3Rw5mw7GgYV0WpMrWo0i8gcS2SqHtLdqR2VWWuGGhcrr0KVrtPvjtWZcX5BLhbPfW5fxcLgrWFX11rlu7T+m2rEaH0+at3ZgltO12k/k6avcdO+ftUBIJoaSoW2YVMH/KR6KdGh+e3jvtTM=
+	t=1740997933; cv=none; b=GRVYa9DWSPT//nKklYvLkSOnldAk6o84jRvNzvZ/KVKnavqecbZTWO7GeLX28u1p0mANC5KVoqKE4Kx7J10Xe2Aha8HZS8QrqVzVy+hCTu8dlgatu+jSWgzj/sMVI2Aal0bBEsKN1MYNBwAEERGmoRwFFPiDs3Ag732u4nwSQS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740997933; c=relaxed/simple;
-	bh=cfjZTAA3wFI4kmuYmgNO61aNSEGKpej4JaJFeqP9wPU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nXr1lvISF0TyFeYDeX6gdcefVab/U3WS0qaO+ST5+MwSKfPuZWJlbLO9CL3S6LyTt1J/1aqPUNVQ94eka8MRGSdPyBs54KyfFk4N0TdjmQ0DU6zO9BkFvq18Q66Xe/dVHN6P+pIvQshkTIwBjNujYpfHCs6sBaxMXcJWD61twhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 092C1113E;
-	Mon,  3 Mar 2025 02:32:25 -0800 (PST)
-Received: from e133081.arm.com (unknown [10.57.37.136])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9AC8F3F66E;
-	Mon,  3 Mar 2025 02:32:03 -0800 (PST)
-Date: Mon, 3 Mar 2025 10:32:01 +0000
-From: =?utf-8?Q?Miko=C5=82aj?= Lenczewski <miko.lenczewski@arm.com>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Yang Shi <yang@os.amperecomputing.com>, suzuki.poulose@arm.com,
-	catalin.marinas@arm.com, will@kernel.org, joro@8bytes.org,
-	jean-philippe@linaro.org, mark.rutland@arm.com, joey.gouly@arm.com,
-	oliver.upton@linux.dev, james.morse@arm.com, broonie@kernel.org,
-	maz@kernel.org, david@redhat.com, akpm@linux-foundation.org,
-	jgg@ziepe.ca, nicolinc@nvidia.com, mshavit@google.com,
-	jsnitsel@redhat.com, smostafa@google.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev
-Subject: Re: [PATCH v2 4/4] iommu/arm: Add BBM Level 2 smmu feature
-Message-ID: <20250303103201.GD13345@e133081.arm.com>
-References: <20250228182403.6269-2-miko.lenczewski@arm.com>
- <20250228182403.6269-6-miko.lenczewski@arm.com>
- <b46dc626-edc9-4d20-99d2-6cd08a01346c@os.amperecomputing.com>
- <43732270-8fd0-4a18-abec-096e383a6a4d@arm.com>
+	bh=kGYMUpuEe4v0OtuLM1ufIIeZ0amApqLgtKA7RXKSX5o=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=n5Aml2mh2bLbO56R8JUPnE35AShE3hYk4t/30vO92ZJ2nR4My8jpDwn08/Q2SmP543dNq9alUrt1HlDOUQgOM5+k2zvsiNxaXdUuXFv4x8tUmbGe3aC7JeS3jSOo2p+zEl4+dpjE+PFL3X+x7rMMe2Ubj+TeQKaCpPzp/xUwKNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MPPd7/yT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8w5dIlaS; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 03 Mar 2025 10:32:08 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740997929;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fP5Yte40JRLx9nLoznLYmIPBoeg9UHM3QmMQ6tutJyY=;
+	b=MPPd7/yToCuX+x1mAWGs898MYyUFZMi+pHT5T5GuJWfkaOU4DDdmouz8yGbLY2dww70Mf9
+	RriuQ4gAIJOMNIhI5fvoK0DC2/5rIweEv2lD3tCMSxM/sGatHv21tdfO9I64Pa7hBzatsp
+	oCqR4HZuBiuny90mwPFM2taM26RrsPSg0xtLsr2CMFmbNj1Cb0OLaaHXpnOy6WI3aWQpuw
+	S5bxxr6AV1Ya/KGG6k0Si4pKntScFzaV4XkEIspcau7tyz81+Yfej0lamXg0ZHC5ZZi1WW
+	apQPFKQftj4lpUWJ/T+xl7YDXBXMU9kRJ3CrwGJ3ZULSqgzFG2vPVNceooPB7Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740997929;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fP5Yte40JRLx9nLoznLYmIPBoeg9UHM3QmMQ6tutJyY=;
+	b=8w5dIlaSAuWRXCVcj45E/wWPS1UTaIGg1bMjvk7iTeCSs9WFtRK/aadrZpIqRJJlWp8iTv
+	f1yxT3Rg496kihCQ==
+From: "tip-bot2 for Saket Kumar Bhaskar" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: perf/core] perf/hw_breakpoint: Return EOPNOTSUPP for
+ unsupported breakpoint type
+Cc: Saket Kumar Bhaskar <skb99@linux.ibm.com>, Ingo Molnar <mingo@kernel.org>,
+ Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>,
+ Ian Rogers <irogers@google.com>, Frederic Weisbecker <fweisbec@gmail.com>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250303092451.1862862-1-skb99@linux.ibm.com>
+References: <20250303092451.1862862-1-skb99@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <43732270-8fd0-4a18-abec-096e383a6a4d@arm.com>
+Message-ID: <174099792896.10177.9724987016541581477.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 03, 2025 at 10:17:28AM +0000, Ryan Roberts wrote:
-> On 01/03/2025 01:32, Yang Shi wrote:
-> > 
-> > 
-> > 
-> > On 2/28/25 10:24 AM, Mikołaj Lenczewski wrote:
-> >> For supporting BBM Level 2 for userspace mappings, we want to ensure
-> >> that the smmu also supports its own version of BBM Level 2. Luckily, the
-> >> smmu spec (IHI 0070G 3.21.1.3) is stricter than the aarch64 spec (DDI
-> >> 0487K.a D8.16.2), so already guarantees that no aborts are raised when
-> >> BBM level 2 is claimed.
-> >>
-> >> Add the feature and testing for it under arm_smmu_sva_supported().
-> >>
-> >> Signed-off-by: Mikołaj Lenczewski <miko.lenczewski@arm.com>
-> >> ---
-> >>   arch/arm64/kernel/cpufeature.c                  | 7 +++----
-> >>   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c | 3 +++
-> >>   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c     | 3 +++
-> >>   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h     | 4 ++++
-> >>   4 files changed, 13 insertions(+), 4 deletions(-)
-> >>
-> >> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> >> index 63f6d356dc77..1022c63f81b2 100644
-> >> --- a/arch/arm64/kernel/cpufeature.c
-> >> +++ b/arch/arm64/kernel/cpufeature.c
-> >> @@ -2223,8 +2223,6 @@ static bool has_bbml2_noabort(const struct
-> >> arm64_cpu_capabilities *caps, int sco
-> >>               if (!cpu_has_bbml2_noabort(__cpu_read_midr(cpu)))
-> >>                   return false;
-> >>           }
-> >> -
-> >> -        return true;
-> >>       } else if (scope & SCOPE_LOCAL_CPU) {
-> >>           /* We are a hot-plugged CPU, so only need to check our MIDR.
-> >>            * If we have the correct MIDR, but the kernel booted on an
-> >> @@ -2232,10 +2230,11 @@ static bool has_bbml2_noabort(const struct
-> >> arm64_cpu_capabilities *caps, int sco
-> >>            * we have an incorrect MIDR, but the kernel booted on a
-> >>            * sufficient CPU, we will not bring up this CPU.
-> >>            */
-> >> -        return cpu_has_bbml2_noabort(read_cpuid_id());
-> >> +        if (!cpu_has_bbml2_noabort(read_cpuid_id()))
-> >> +            return false;
-> >>       }
-> >>   -    return false;
-> >> +    return has_cpuid_feature(caps, scope);
-> > 
-> > Do we really need this? IIRC, it means the MIDR has to be in the allow list
-> > *AND* MMFR2 register has to be set too. AmpereOne doesn't have MMFR2 register set.
-> 
-> Miko, I think this should have been squashed into patch #1? It doesn't belong in
-> this patch.
+The following commit has been merged into the perf/core branch of tip:
 
-Yes, 100%. Missed this, will put into patch #1.
+Commit-ID:     21d96cea578f83e43ec9016e5bba8703b290c748
+Gitweb:        https://git.kernel.org/tip/21d96cea578f83e43ec9016e5bba8703b290c748
+Author:        Saket Kumar Bhaskar <skb99@linux.ibm.com>
+AuthorDate:    Mon, 03 Mar 2025 14:54:51 +05:30
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Mon, 03 Mar 2025 11:23:15 +01:00
+
+perf/hw_breakpoint: Return EOPNOTSUPP for unsupported breakpoint type
+
+Currently, __reserve_bp_slot() returns -ENOSPC for unsupported
+breakpoint types on the architecture. For example, powerpc
+does not support hardware instruction breakpoints. This causes
+the perf_skip BPF selftest to fail, as neither ENOENT nor
+EOPNOTSUPP is returned by perf_event_open for unsupported
+breakpoint types. As a result, the test that should be skipped
+for this arch is not correctly identified.
+
+To resolve this, hw_breakpoint_event_init() should exit early by
+checking for unsupported breakpoint types using
+hw_breakpoint_slots_cached() and return the appropriate error
+(-EOPNOTSUPP).
+
+Signed-off-by: Saket Kumar Bhaskar <skb99@linux.ibm.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Marco Elver <elver@google.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Ian Rogers <irogers@google.com>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>
+Link: https://lore.kernel.org/r/20250303092451.1862862-1-skb99@linux.ibm.com
+---
+ kernel/events/hw_breakpoint.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
+index bc4a610..8ec2cb6 100644
+--- a/kernel/events/hw_breakpoint.c
++++ b/kernel/events/hw_breakpoint.c
+@@ -950,9 +950,10 @@ static int hw_breakpoint_event_init(struct perf_event *bp)
+ 		return -ENOENT;
+ 
+ 	/*
+-	 * no branch sampling for breakpoint events
++	 * Check if breakpoint type is supported before proceeding.
++	 * Also, no branch sampling for breakpoint events.
+ 	 */
+-	if (has_branch_stack(bp))
++	if (!hw_breakpoint_slots_cached(find_slot_idx(bp->attr.bp_type)) || has_branch_stack(bp))
+ 		return -EOPNOTSUPP;
+ 
+ 	err = register_perf_hw_breakpoint(bp);
 
