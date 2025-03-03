@@ -1,129 +1,179 @@
-Return-Path: <linux-kernel+bounces-541887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 868C5A4C2EB
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:11:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F247A4C2F0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:12:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30B7B163DA1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:11:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6FB13A5753
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 14:11:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 981C52135CB;
-	Mon,  3 Mar 2025 14:11:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="RWV4zZ1f"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C6111F4183;
+	Mon,  3 Mar 2025 14:11:56 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53A220E03C;
-	Mon,  3 Mar 2025 14:11:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0B320E03C
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 14:11:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741011073; cv=none; b=KxG/7/pGcVBEylmxQGV5q8i4vrMUSQoIjxW3dldi3W3OSAykoo5yQWe+bSTl0togcrP5IuHD3n6g/QWmRpA3hgHB9EnKjisRkgwZ6/54d41eXYe95VGRndORVooBROLYzMwol63UJpoGj3tyBq1rtfGGUotlBelZ96MrrnubmrE=
+	t=1741011116; cv=none; b=E2VZaoOWwmt83AOpieqBR2H+nWaHX9nVswWDFCF/7xrnTKEttSTpbFZ3qko1bRJ0XF280lfIsh9nWNif7JNQbl/kWmdOTUFXZ3Yd0/s9QaKQv4Avr/NRiLn/LYmoIoL3ocWp95ckK5ap6uC4F/vv6h1TvqwBgcWyWszNMarzdLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741011073; c=relaxed/simple;
-	bh=7Cs8+xD0eyRv5jjLhLfMj+HmulqJJeMsFqQidfj0T9o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tmvKrmywOWlxW0DLYsxHDvq4MvmmsR3DQpV2J6U8M44Ye4qZhDJd2F+dEKvzRTsH9Xl+Ao9o4o8nFvTTPDRyDrfwcVkhBxDtcEH+xWyj+h2Aszxpd+ijbUMYQwkWT4hREu56eGOWJz+mYCOAth+svK+ODXQkn0PK2ieGIIgw2C0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=RWV4zZ1f; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7373440E0216;
-	Mon,  3 Mar 2025 14:11:08 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id GDnUHKTQ8ZrC; Mon,  3 Mar 2025 14:11:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1741011064; bh=4Z1HILAtOOSuw4f8u0TuP4N4mKWHdFYqQRdroELwqAA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RWV4zZ1fQc16+fz4gY0XAhbqJbDgyYexDEzCsnztJHL0C7CklpquuRcKK3WyemQCj
-	 +PTVkUFWXIBLbG6EPlcWiD4jvDUHpgBtqBVzOZd7G55cwo912sNUAW3M7lT5k6Zafk
-	 yS0H2MkwJekqJD2hEFTFh8gWgGuABGtxvohaJGdfy59NeDmUOKoRfbZHvGtcz8FK2n
-	 RJ022mX6FbsuDg7Fem5oaj3vsRx4VSEptDLXcs/dOco7CH+NMtT1ruCUWiXSOkmSS5
-	 6kPWn3pXXku5onTI9lCUrGlLzbwLWNCwbRGBj3kwfQWa9mPHPtNI15NuMroF0yaafM
-	 eFnutA245v5BqPxuCPrNzKMaKzA66+Y6lvWnO1k046J1j1sECSAwzuPa/EduHXtJzB
-	 rMAp4sF+LligfjSGYYrK0YHMoXlZ+sNPVtsemoAGvLkarpEXYq0UE1UHQHUdxbu8aG
-	 aSwNVi1B1umgqQY1ABCGhID9fwy6Ub5qMDLYlxhu5DPZF/EQW0izmU+xeJc48B/P83
-	 LcDiCf1N0X2NKd8Mz1IrfBTNdAvOYTzbcisd/q7fLs8K94z6WULLtFBx5ht9lqrrn+
-	 YSKRcTpxJSq3g0bbHenlgB+DtBynbj5yzeQWbJtcdmSJnwfomqmGzFOtaaJGAQidg9
-	 tuKEIMCceB0P7PgyJyuobaec=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0E3C740E01D1;
-	Mon,  3 Mar 2025 14:10:51 +0000 (UTC)
-Date: Mon, 3 Mar 2025 15:10:46 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Patrick Bellasi <derkling@google.com>
-Cc: Sean Christopherson <seanjc@google.com>,
-	Yosry Ahmed <yosry.ahmed@linux.dev>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, x86@kernel.org,
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Patrick Bellasi <derkling@matbug.net>,
-	Brendan Jackman <jackmanb@google.com>,
-	David Kaplan <David.Kaplan@amd.com>
-Subject: Re: [PATCH final?] x86/bugs: KVM: Add support for SRSO_MSR_FIX
-Message-ID: <20250303141046.GHZ8W4ZrPEdWA7Hb-b@fat_crate.local>
-References: <20250226184540.2250357-1-derkling@google.com>
+	s=arc-20240116; t=1741011116; c=relaxed/simple;
+	bh=TwF2pTLqqEsz20krfTZy/53qq9E4RvgxcRYYsxlGEws=;
+	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=m8hNq7/9DlqmsN6G0cdI3Pijcp/c9g5oaO3rUfZuCuQTSaJYMzOWPkdQdVdvKqEA87QFP4IIyTMpbd1PHvrMxBqPGn7f84HqYOfoCzE9DKFzPImnSAaD9ZIc0QvrNtKTj9LOUjOpbu5aHhYW2HjSd0VeL/DO1JmAOXSwvfFJuEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Z60zH45dbz9wFB;
+	Mon,  3 Mar 2025 22:08:43 +0800 (CST)
+Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
+	by mail.maildlp.com (Postfix) with ESMTPS id AEBEC1800E5;
+	Mon,  3 Mar 2025 22:11:50 +0800 (CST)
+Received: from [10.67.121.177] (10.67.121.177) by
+ kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Mon, 3 Mar 2025 22:11:49 +0800
+CC: <yangyicong@hisilicon.com>, <catalin.marinas@arm.com>, <will@kernel.org>,
+	<tglx@linutronix.de>, <peterz@infradead.org>, <mpe@ellerman.id.au>,
+	<linux-arm-kernel@lists.infradead.org>, <mingo@redhat.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <pierre.gondois@arm.com>,
+	<dietmar.eggemann@arm.com>, <linuxppc-dev@lists.ozlabs.org>,
+	<x86@kernel.org>, <linux-kernel@vger.kernel.org>, <morten.rasmussen@arm.com>,
+	<msuchanek@suse.de>, <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
+	<jonathan.cameron@huawei.com>, <prime.zeng@hisilicon.com>,
+	<linuxarm@huawei.com>, <xuwei5@huawei.com>, <guohanjun@huawei.com>,
+	<sshegde@linux.ibm.com>
+Subject: Re: [PATCH v11 2/4] arch_topology: Support SMT control for OF based
+ system
+To: Sudeep Holla <sudeep.holla@arm.com>
+References: <20250218141018.18082-1-yangyicong@huawei.com>
+ <20250218141018.18082-3-yangyicong@huawei.com> <Z8HAFftf7rAdc_MC@bogus>
+From: Yicong Yang <yangyicong@huawei.com>
+Message-ID: <e6942ad5-e6dd-362a-a27e-ef722b8d30a7@huawei.com>
+Date: Mon, 3 Mar 2025 22:11:48 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250226184540.2250357-1-derkling@google.com>
+In-Reply-To: <Z8HAFftf7rAdc_MC@bogus>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemd200014.china.huawei.com (7.221.188.8)
 
-On Wed, Feb 26, 2025 at 06:45:40PM +0000, Patrick Bellasi wrote:
-> +
-> +	case SRSO_CMD_BP_SPEC_REDUCE:
-> +		if (boot_cpu_has(X86_FEATURE_SRSO_BP_SPEC_REDUCE)) {
-> +bp_spec_reduce:
-> +			pr_notice("Reducing speculation to address VM/HV SRSO attack vector.\n");
+On 2025/2/28 21:54, Sudeep Holla wrote:
+> On Tue, Feb 18, 2025 at 10:10:16PM +0800, Yicong Yang wrote:
+>> From: Yicong Yang <yangyicong@hisilicon.com>
+>>
+>> On building the topology from the devicetree, we've already
+>> gotten the SMT thread number of each core. Update the largest
+>> SMT thread number and enable the SMT control by the end of
+>> topology parsing.
+>>
+>> The core's SMT control provides two interface to the users [1]:
+>> 1) enable/disable SMT by writing on/off
+>> 2) enable/disable SMT by writing thread number 1/max_thread_number
+>>
+>> If a system have more than one SMT thread number the 2) may
+>> not handle it well, since there're multiple thread numbers in the
+>> system and 2) only accept 1/max_thread_number. So issue a warning
+>> to notify the users if such system detected.
+>>
+>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/ABI/testing/sysfs-devices-system-cpu#n542
+>>
+>> Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
+>> ---
+>>  drivers/base/arch_topology.c | 27 +++++++++++++++++++++++++++
+>>  1 file changed, 27 insertions(+)
+>>
+>> diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
+>> index 3ebe77566788..23f425a9d77a 100644
+>> --- a/drivers/base/arch_topology.c
+>> +++ b/drivers/base/arch_topology.c
+>> @@ -11,6 +11,7 @@
+>>  #include <linux/cleanup.h>
+>>  #include <linux/cpu.h>
+>>  #include <linux/cpufreq.h>
+>> +#include <linux/cpu_smt.h>
+>>  #include <linux/device.h>
+>>  #include <linux/of.h>
+>>  #include <linux/slab.h>
+>> @@ -506,6 +507,10 @@ core_initcall(free_raw_capacity);
+>>  #endif
+>>  
+>>  #if defined(CONFIG_ARM64) || defined(CONFIG_RISCV)
+>> +
+>> +/* Maximum SMT thread number detected used to enable the SMT control */
+>> +static unsigned int max_smt_thread_num;
+>> +
+>>  /*
+>>   * This function returns the logic cpu number of the node.
+>>   * There are basically three kinds of return values:
+>> @@ -565,6 +570,16 @@ static int __init parse_core(struct device_node *core, int package_id,
+>>  		i++;
+>>  	} while (1);
+>>  
+>> +	/*
+>> +	 * If max_smt_thread_num has been initialized and doesn't match
+>> +	 * the thread number of this entry, then the system has
+>> +	 * heterogeneous SMT topology.
+>> +	 */
+>> +	if (max_smt_thread_num && max_smt_thread_num != i)
+>> +		pr_warn_once("Heterogeneous SMT topology is partly supported by SMT control\n");
+>> +
+> 
+> May be we need to make it more conditional as we may have to support
+> systems with few cores that are single threaded ? I think Dietmar's
+> comment is about that.
+> 
 
-Probably not needed anymore as that will be in srso_strings which is issued
-later.
+it thought of ignoring the cores with single thread in one previous discussion
+as replied in Dietmar's thread.
 
-> +			srso_mitigation = SRSO_MITIGATION_BP_SPEC_REDUCE;
-> +			break;
-> +		} else {
-> +			srso_mitigation = SRSO_MITIGATION_BP_SPEC_REDUCE_NA;
-> +			pr_warn("BP_SPEC_REDUCE not supported!\n");
-> +		}
+>> +	max_smt_thread_num = max_t(unsigned int, max_smt_thread_num, i);
+>> +
+>>  	cpu = get_cpu_for_node(core);
+>>  	if (cpu >= 0) {
+>>  		if (!leaf) {
+>> @@ -677,6 +692,18 @@ static int __init parse_socket(struct device_node *socket)
+>>  	if (!has_socket)
+>>  		ret = parse_cluster(socket, 0, -1, 0);
+>>  
+>> +	/*
+>> +	 * Notify the CPU framework of the SMT support. Initialize the
+>> +	 * max_smt_thread_num to 1 if no SMT support detected or failed
+>> +	 * to parse the topology. A thread number of 1 can be handled by
+>> +	 * the framework so we don't need to check max_smt_thread_num to
+>> +	 * see we support SMT or not.
+>> +	 */
+>> +	if (!max_smt_thread_num || ret)
+>> +		max_smt_thread_num = 1;
+>> +
+> 
+> For the failed parsing of topology, reset_cpu_topology() gets called.
+> I suggest resetting max_smt_thread_num to 1 belongs there.
 
-This is the part I'm worried about: user hears somewhere "bp-spec-reduce" is
-faster, sets it but doesn't know whether the hw even supports it. Machine
-boots, warns which is a single line and waaay buried in dmesg and continues
-unmitigated.
+this is only used by ARM64 || RISCV for using arch_topology to parse
+the CPU topology, but the reset_cpu_topology() is also shared by arm/parisc.
+Should we move it there and add some ARM64 || RISCV protection macro?
 
-So *maybe* we can make this a lot more subtle and say:
-
-srso=__dont_fall_back_to_ibpb_on_vmexit_if_bp_spec_reduce__
-
-(joking about the name but that should be the gist of what it means)
-
-and then act accordingly when that is specified along with a big fat:
-
-WARN_ON(..."You should not use this as a mitigation option if you don't know
-what you're doing")
-
-along with a big fat splat in dmesg.
-
-Hmmm...?
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+> 
+> And if you start with max_smt_thread_num, we don't need to update it to
+> 1 explicitly here. So I would like to get rid of above check completely.
+> 
+> --
+> Regards,
+> Sudeep
+> 
+> .
+> 
 
