@@ -1,404 +1,215 @@
-Return-Path: <linux-kernel+bounces-542090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B309FA4C582
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:44:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17F73A4C589
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 16:45:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78580165A9F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:44:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1583B188C645
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 15:45:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B852144C3;
-	Mon,  3 Mar 2025 15:44:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73874214A70;
+	Mon,  3 Mar 2025 15:45:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bbsn5pvP"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s1zlH7O0"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582EF2139AF
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 15:44:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C7B2144DC
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 15:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741016643; cv=none; b=E2js6mm5U4owXhmCsQREEYUv/zQAY8uf0KZkJMd/IpJyFshwJQU3S56oLz+oLkQNygl7I0bvrGR9ifpibNyjkpNho1vAXj3V+xGmoLXG4LuWv1czAgq2DHiokdO26BszbXkgW2R4eWacTfCThT5ZSLVIoLDDVJwO1eVEAAzVMSs=
+	t=1741016708; cv=none; b=pYNCG/L2KMnBjCXJA2fWpUM6YXQNaNnjQyy5m38px3lPFuoVno5CWBai6oGCi/5ZCngq1dgOjZZWZ/XFZO17maP+/uioU6aQDhHfrIQCXy9zdFA4RdUrwb+Og6xHbK6Nhc2pFfAtwe0qgC+rDozLrJ9VElNSr5kNpGNQqtlnf20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741016643; c=relaxed/simple;
-	bh=cgLIn6Vi8l6YHgOvHn4WESJXdJstmdBTRnpwj4gE/u8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nhQML/1avLlGVgcy87j+KAk5CzA6Go+P16v+gsoqJhZyNOpvE4dxaTXXdGvTYHCsRxTdr04fjm3/RYy9FrXV6HO3TdSEOP5PSFW7nIkgKSxYjkNbcEHr5GGixs0SfyEpYBIuPeWTBjSg2JcMvBxswt/zF3tFAO08IG14w6RCR5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bbsn5pvP; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741016640;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yS1bTZI7Ld1FbjeovSjVfqwcM/6nHOuroLM80Ys20ls=;
-	b=bbsn5pvPH7oZj6h1JbMWHualUX03HeafmDZeB2MQc8vZcT2tDzT8YBKsXSbdU6OKl4RcK/
-	U7NumhQ/c2CtpI0yXpRzCtvAgCrtymVEmie1W384ZHExUH9O0vZrG+Tq4gbFaGG86KyfjC
-	32j4b8BiXseHTShgofF0iEm+xZC3KYI=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-626-YRAWoDdhMvqh4ghk9j-1yQ-1; Mon, 03 Mar 2025 10:43:53 -0500
-X-MC-Unique: YRAWoDdhMvqh4ghk9j-1yQ-1
-X-Mimecast-MFC-AGG-ID: YRAWoDdhMvqh4ghk9j-1yQ_1741016632
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-abf497da6c4so311649566b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 07:43:53 -0800 (PST)
+	s=arc-20240116; t=1741016708; c=relaxed/simple;
+	bh=TvEt7HL2f2+ZiPYpZgA9Wv//CyB2sGr83sClfxce/Js=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ciJO+sPUU0vpN8Zd52Ph4peptJcriERWxWEKwB5JYX8aV4uA4vvC0ILQPbhCh7xHUb8nRCc7Rqc8VDYQAvyGSnE7WQbbHYaYOcRr9rfBjqC3dTMwK7eYjA2R7BDvz64QNTyxAtlzdry4r3YZTaMaIQnFRPc8M+oy8uPfO/aZhvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s1zlH7O0; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-439ac3216dcso31762025e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 07:45:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741016704; x=1741621504; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3kow4xuk+1mNeQ4oexSjSmUNlEIdhe4RIwb0wGDmCC8=;
+        b=s1zlH7O0h915hMWBG4aPJ0ZiB9mvsECjZ+YtIAz5FaT00pxSVz9vLtf4tnOISz7YmK
+         qP2sFtt76VC2xdOkapqpeGY3RDX9ABhuvnD+K8sSpypE6cDyexjy9yajNNgmAfXJ5i2c
+         CvpDFeRW999FXUN6ebuHHw+hA/IIlKZrOvDqN5h2CLee1ZoX+kcA/QjldpIx1Ev2owjy
+         dOrfSrtC/9m2lZ6uN1cBDH8tpTm06ymFFmozowsX/yw7VVHmYQ06CvHGFhxFEQU6KaGD
+         NM8QCoKGeKNzM5Z64x+LzlZdUpaC9avyb3/FOXCtohL/fdisgyv+9rMQ0V/jxKkF1y5v
+         4lBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741016632; x=1741621432;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yS1bTZI7Ld1FbjeovSjVfqwcM/6nHOuroLM80Ys20ls=;
-        b=mmXpXafBtA9nQy6ajgYqTzxQr3EMuIl7sbcXjAwVCu0A3FXJJY37gxk18m6Q9mAcLo
-         bkDn5uovyoSi1zwnIFnxBWjTryWIHeBXz+CCKofyQF+qJMVtS7lucV4eLhWlcxJCxVHn
-         TJj5fixwrs8uyJq1/X9PsN8xQ8HdUfBHzTsU24fnNYW9c+VIZKrL0VG7DE7urYvLWMsT
-         LPYSI7Hg6s8QbDV5VtM0wZP7nNEi09cX79S86SmVmRsh4lCYfRTV77GNyAa8PHyn3BFv
-         Ro0IfqPOkkVL3qbh8PnJsYTkphJ0SwgEvCwrHFAEtKkRGSAW3sAeld29A/2iQfPZ7OGT
-         TA9w==
-X-Forwarded-Encrypted: i=1; AJvYcCUe8/3S7kkyZw/sUPfe54hPqOo/SIx/tjUxXH+e+4bqXBaep4aLPJFVwMio9ZCpSh1OStUsF+ML2+BSJ8A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxt5+/VfLOdeq6+Ej8md9rXRQ/KzyC9601rXC1HduyMuoeVWZ3L
-	86dvF/Tv8/5qGTmh1Ak647e+6Tst2GUhqlVDTm3QhYJfI9hNn4eOWtFEbI/aG+sLxT5SYl7NIFO
-	s06GjEAEiJ0MNdEuqAfIeewhVy8lFSROcAsm+8SXxIVQHksd0YHww6ce66OF1LA==
-X-Gm-Gg: ASbGncuuC5uHA6WrnQeS2vxwFT9SyHbVcRun8Ag1a4uDbJi5FpfmakJqsA6yeK9haG9
-	itTjNFR+QH2fTXTNtvZgPFvCCVfxWgiinQjhmYMEi1UG8aAx/tByY5d3RNOsE63FTDSN0UUJyOr
-	dz1MR/ZHD+W9FSPPmqKP9nmCWInNXHZpYv3ig+ItN+dPtaZUn7AmmuzpMi0JUlzxNIkQGJi6GOm
-	guvNJ6H3aPnyTN3KxADrQvEAw8eGMTTOkb4ceB8rX2NsLDd4Reo4Tl2JSPqSMisDmN1tXO8zWqu
-	35JyPg7bp1hHZxC2p1s=
-X-Received: by 2002:a17:906:6a09:b0:ab7:f096:61d8 with SMTP id a640c23a62f3a-abf2621812fmr1663905566b.29.1741016632306;
-        Mon, 03 Mar 2025 07:43:52 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE2TN/9pE+LsA9mzXJ+6QHhCbHSEE7+HJRnCy9fkYYOcYoUIpNdPsKj0Bmn1yPtSwgeIH9K6Q==
-X-Received: by 2002:a17:906:6a09:b0:ab7:f096:61d8 with SMTP id a640c23a62f3a-abf2621812fmr1663903166b.29.1741016631846;
-        Mon, 03 Mar 2025 07:43:51 -0800 (PST)
-Received: from [10.40.98.122] ([78.108.130.194])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf3e117114sm593499566b.147.2025.03.03.07.43.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Mar 2025 07:43:51 -0800 (PST)
-Message-ID: <1436dc95-68a6-456d-ab5d-117c7791ec48@redhat.com>
-Date: Mon, 3 Mar 2025 16:43:50 +0100
+        d=1e100.net; s=20230601; t=1741016704; x=1741621504;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3kow4xuk+1mNeQ4oexSjSmUNlEIdhe4RIwb0wGDmCC8=;
+        b=YM6pLmmHEcv+6EzJf54bCeApfE8bYU+AjzLBJ/ZonctJFGmDOmw7Ope8auNTJ0MFVf
+         oIrCcVtXckV/wZfviuZO3qBz4yULSGVrya9FkSLn80E6xxi27jSDGerDjRsoVS9WIwsa
+         TodS56RZ6mtBEj0VZNh9uRiHfV59OJ/qzFEtDw66SxWBw9lIq9SHo2kaVcuUussVYwyD
+         DHeNRxSgPEkGy56+gpyCErIATIscQPGCfskm32dNDKiMCoj9JvE9eSBA2iOFsMWJoovz
+         jerpzwEMZyjLL9gSMIyVTqx3ayeo6IhwsKFitNvG2bFECWWwlE7xBVPbbmu4PFT4nVuC
+         fJFw==
+X-Forwarded-Encrypted: i=1; AJvYcCUS/mREsE7XASOxko8lf6A+wJxnJZ1VUzzFFgWDhX4T4GyWnfX7XjsmYh9rNwNCTOCmYiG4fJJJ05lZmfk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhXZobJC0LFPZVnOiB1Z2l9ZKtPOHM9TC8UFC2P8rXKzc5prTG
+	ZJroK4cd5q+0kPnteR5awPoLuKRThnSlcDef8i2PzTTCwFvWw34ndHi8vFvEdELFP/d80VirXX9
+	y9zhQJZvZo40bYwvk9iSqsXw292FzWBZRe0k+
+X-Gm-Gg: ASbGncs+rYl7VpFThPFGl/I4xoaVQGSWziJSRwbBoRbe4F1SjC7xq6vPQMl7BsFu1rc
+	jmf88BzPw8D4x2LmZi4TVjolmGI+7q05jaqdJiOmylal7LukZxKDeuw3pTcvNcYj3MMxr/yjEIL
+	LbqEXy3+ewRhbUdZlvxwPYkWJYRhQL59DQh2fY4qTvMg9taU6QL3PTvO7w
+X-Google-Smtp-Source: AGHT+IHXXQ7buQBEorS4efQ1j2iNuWmeS1bZKP0/m94hhxiT8OFf6H7yU2EGk9/SwAGsuWxPOOcRN2PU93WYRcIT0a8=
+X-Received: by 2002:a05:6000:270f:b0:390:dfe0:1320 with SMTP id
+ ffacd0b85a97d-390ec9c1bddmr8951802f8f.33.1741016704234; Mon, 03 Mar 2025
+ 07:45:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: uvcvideo: Enable full UVC metadata for all devices
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Ricardo Ribalda <ribalda@chromium.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250226-uvc-metadata-v1-1-6cd6fe5ec2cb@chromium.org>
- <c6ab8640-d96c-4a71-929a-a4ad6bb2647d@redhat.com>
- <20250303151346.GC32048@pendragon.ideasonboard.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20250303151346.GC32048@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250224115007.2072043-1-abdiel.janulgue@gmail.com>
+ <20250224115007.2072043-3-abdiel.janulgue@gmail.com> <6dea7b6a-1534-47e7-94d2-d67417c3d4c1@proton.me>
+ <tnwDK3QN_Xr0Yoa3U8HVxS5OqjvxIhgmmO_ifTGJR_EtIzjoxawOHtnbOJ9yChsUWXyFPcU9beIdrgbpfGZI8w==@protonmail.internalid>
+ <3202F69F-397E-4BC4-8DD8-E2D4B0AB056F@collabora.com> <87bjuil15w.fsf@kernel.org>
+ <t4HxdvR7WBX_861hiTXo72jqC9F9oRpIzgA_dD2yhcSuLISEkC-shMfSgllrFPpnkSZXGfRcc47keudMooNiIQ==@protonmail.internalid>
+ <CAH5fLgg5MuUu=TX8mMsPf5RcLhMLHSU4Vct=h8rFX6Z7HjPxeA@mail.gmail.com> <87ikoqjg1n.fsf@kernel.org>
+In-Reply-To: <87ikoqjg1n.fsf@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 3 Mar 2025 16:44:51 +0100
+X-Gm-Features: AQ5f1JpQwVPMNAtyLQEi5zozvB7zbblDDYl0-W2nDZDSA_G1jc6Lh4mO8DNqPys
+Message-ID: <CAH5fLgh6ubawHh76wq7JPbcuBCWhm91m7Rc01MVsX-a3C6qaVA@mail.gmail.com>
+Subject: Re: [PATCH v12 2/3] rust: add dma coherent allocator abstraction.
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Daniel Almeida <daniel.almeida@collabora.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Abdiel Janulgue <abdiel.janulgue@gmail.com>, dakr@kernel.org, robin.murphy@arm.com, 
+	rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Trevor Gross <tmgross@umich.edu>, Valentin Obst <kernel@valentinobst.de>, linux-kernel@vger.kernel.org, 
+	Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, airlied@redhat.com, 
+	iommu@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Mon, Mar 3, 2025 at 4:21=E2=80=AFPM Andreas Hindborg <a.hindborg@kernel.=
+org> wrote:
+>
+> "Alice Ryhl" <aliceryhl@google.com> writes:
+>
+> > On Mon, Mar 3, 2025 at 2:00=E2=80=AFPM Andreas Hindborg <a.hindborg@ker=
+nel.org> wrote:
+> >>
+> >> "Daniel Almeida" <daniel.almeida@collabora.com> writes:
+> >>
+> >> > Hi Benno,
+> >> >
+> >>
+> >> [...]
+> >>
+> >> >>> +    /// Writes data to the region starting from `offset`. `offset=
+` is in units of `T`, not the
+> >> >>> +    /// number of bytes.
+> >> >>> +    ///
+> >> >>> +    /// # Examples
+> >> >>> +    ///
+> >> >>> +    /// ```
+> >> >>> +    /// # fn test(alloc: &mut kernel::dma::CoherentAllocation<u8>=
+) -> Result {
+> >> >>> +    /// let somedata: [u8; 4] =3D [0xf; 4];
+> >> >>> +    /// let buf: &[u8] =3D &somedata;
+> >> >>> +    /// alloc.write(buf, 0)?;
+> >> >>> +    /// # Ok::<(), Error>(()) }
+> >> >>> +    /// ```
+> >> >>> +    pub fn write(&self, src: &[T], offset: usize) -> Result {
+> >> >>> +        let end =3D offset.checked_add(src.len()).ok_or(EOVERFLOW=
+)?;
+> >> >>> +        if end >=3D self.count {
+> >> >>> +            return Err(EINVAL);
+> >> >>> +        }
+> >> >>> +        // SAFETY:
+> >> >>> +        // - The pointer is valid due to type invariant on `Coher=
+entAllocation`
+> >> >>> +        // and we've just checked that the range and index is wit=
+hin bounds.
+> >> >>> +        // - `offset` can't overflow since it is smaller than `se=
+lfcount` and we've checked
+> >> >>> +        // that `self.count` won't overflow early in the construc=
+tor.
+> >> >>> +        unsafe {
+> >> >>> +            core::ptr::copy_nonoverlapping(src.as_ptr(), self.cpu=
+_addr.add(offset), src.len())
+> >> >>
+> >> >> Why are there no concurrent write or read operations on `cpu_addr`?
+> >> >
+> >> > Sorry, can you rephrase this question?
+> >>
+> >> This write is suffering the same complications as discussed here [1].
+> >> There are multiple issues with this implementation.
+> >>
+> >> 1) `write` takes a shared reference and thus may be called concurrentl=
+y.
+> >> There is no synchronization, so `copy_nonoverlapping` could be called
+> >> concurrently on the same address. The safety requirements for
+> >> `copy_nonoverlapping` state that the destination must be valid for
+> >> write. Alice claims in [1] that any memory area that experience data
+> >> races are not valid for writes. So the safety requirement of
+> >> `copy_nonoverlapping` is violated and this call is potential UB.
+> >>
+> >> 2) The destination of this write is DMA memory. It could be concurrent=
+ly
+> >> modified by hardware, leading to the same issues as 1). Thus the
+> >> function cannot be safe if we cannot guarantee hardware will not write
+> >> to the region while this function is executing.
+> >>
+> >> Now, I don't think that these _should_ be issues, but according to our
+> >> Rust language experts they _are_.
+> >>
+> >> I really think that copying data through a raw pointer to or from a
+> >> place that experiences data races, should _not_ be UB if the data is n=
+ot
+> >> interpreted in any way, other than moving it.
+> >>
+> >>
+> >> Best regards,
+> >> Andreas Hindborg
+> >
+> > We need to make progress on this series, and it's starting to get late
+> > in the cycle. I suggest we:
+>
+> There is always another cycle.
+>
+> >
+> > 1. Delete as_slice, as_slice_mut, write, and skip_drop.
+> > 2. Change field_read/field_write to use a volatile read/write.
+>
+> Volatile reads/writes that race are OK?
 
-On 3-Mar-25 16:13, Laurent Pinchart wrote:
-> On Mon, Mar 03, 2025 at 03:47:51PM +0100, Hans de Goede wrote:
->> On 26-Feb-25 14:00, Ricardo Ribalda wrote:
->>> The UVC driver provides two metadata types V4L2_META_FMT_UVC, and
->>> V4L2_META_FMT_D4XX. The only difference between the two of them is that
->>> V4L2_META_FMT_UVC only copies PTS, SCR, size and flags, and
->>> V4L2_META_FMT_D4XX copies the whole metadata section.
->>>
->>> Now we only enable V4L2_META_FMT_D4XX for the Intel D4xx family of
->>> devices, but it is useful for any device where vendors include other
->>> metadata, such as the one described by Microsoft:
->>> - https://learn.microsoft.com/en-us/windows-hardware/drivers/stream/mf-capture-metadata
->>>
->>> This patch removes the UVC_INFO_META macro and enables
->>> V4L2_META_FMT_D4XX for every device. It also updates the documentation
->>> to reflect the change.
->>>
->>> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
->>
->> Thanks, patch looks good to me:
->>
->> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-> 
-> I don't quite agree, sorry.
-> 
-> The reason why the current mechanism has been implemented this way is to
-> ensure we have documentation for the metadata format of devices that
-> expose metadata to userspace.
-> 
-> If you want to expose the MS metadata, you can create a new metadata
-> format for that, and enable it on devices that implement it.
+I will not give a blanket yes to that. If you read their docs, you
+will find that they claim to not allow it. But they are the correct
+choice for DMA memory, and there's no way in practice to get
+miscompilations on memory locations that are only accessed with
+volatile operations, and never have references to them created.
 
-Looking at the long list of quirks this removes just for the D4xx
-cameras I do not believe that having quirked based relaying of
-which metadata fmt is used to userspace is something which scales
-on the long term. Given the large amount of different UVC cameras
-I really think we should move the USB VID:PID -> metadata format
-mapping out of the kernel.
+In general, this will fall into the exception that we've been given
+from the Rust people. In cases such as this where the Rust language
+does not give us the operation we want, do it like you do in C. Since
+Rust uses LLVM which does not miscompile the C part of the kernel, it
+should not miscompile the Rust part either.
 
-I do agree that using V4L2_META_FMT_D4XX for every device is
-probably not the best idea. So my suggestion would be to add
-a new V4L2_META_FMT_CUSTOM metadata fmt and for index 1
-metadata fmt use V4L2_META_FMT_D4XX for the currently quirked
-cams and use V4L2_META_FMT_CUSTOM for other cameras.
+> > This will let us make progress now and sidestep this discussion. The
+> > deleted methods can happen in a follow-up.
+>
+> `item_from_index`, the `dma_read` and `dma_write` macros as well, I would=
+ think?
 
-This can then be combined with a udev-rule + hwdb to provide
-info of what V4L2_META_FMT_CUSTOM should be mapped to in userspace,
-moving further VID:PID -> extended-metadata fmt mappings out of
-the kernel.
+Those are necessary to use field_read/field_write, so I think it's
+fine to keep those.
 
-Regards,
-
-Hans
-
-
-
-> 
->>> ---
->>>  .../userspace-api/media/v4l/metafmt-d4xx.rst       | 19 +++--
->>>  .../userspace-api/media/v4l/metafmt-uvc.rst        |  6 +-
->>>  drivers/media/usb/uvc/uvc_driver.c                 | 83 ----------------------
->>>  drivers/media/usb/uvc/uvc_metadata.c               | 15 ++--
->>>  drivers/media/usb/uvc/uvcvideo.h                   |  1 -
->>>  5 files changed, 23 insertions(+), 101 deletions(-)
->>>
->>> diff --git a/Documentation/userspace-api/media/v4l/metafmt-d4xx.rst b/Documentation/userspace-api/media/v4l/metafmt-d4xx.rst
->>> index 0686413b16b2..1b18ef056934 100644
->>> --- a/Documentation/userspace-api/media/v4l/metafmt-d4xx.rst
->>> +++ b/Documentation/userspace-api/media/v4l/metafmt-d4xx.rst
->>> @@ -6,12 +6,23 @@
->>>  V4L2_META_FMT_D4XX ('D4XX')
->>>  *******************************
->>>  
->>> -Intel D4xx UVC Cameras Metadata
->>> +UVC Full Payload Header Data (formerly known as Intel D4xx UVC Cameras
->>> +Metadata).
->>>  
->>>  
->>>  Description
->>>  ===========
->>>  
->>> +V4L2_META_FMT_D4XX buffers follow the metadata buffer layout of
->>> +V4L2_META_FMT_UVC with the only difference, that it also includes proprietary
->>> +payload header data. It was originally implemented for Intel D4xx cameras, and
->>> +thus the name, but now it can be used by any UVC device, when userspace wants
->>> +full access to the UVC Metadata.
->>> +
->>> +
->>> +Intel D4xx Metadata
->>> +===================
->>> +
->>>  Intel D4xx (D435, D455 and others) cameras include per-frame metadata in their UVC
->>>  payload headers, following the Microsoft(R) UVC extension proposal [1_]. That
->>>  means, that the private D4XX metadata, following the standard UVC header, is
->>> @@ -21,10 +32,8 @@ types are MetadataId_CaptureStats (ID 3), MetadataId_CameraExtrinsics (ID 4),
->>>  and MetadataId_CameraIntrinsics (ID 5). For their description see [1_]. This
->>>  document describes proprietary metadata types, used by D4xx cameras.
->>>  
->>> -V4L2_META_FMT_D4XX buffers follow the metadata buffer layout of
->>> -V4L2_META_FMT_UVC with the only difference, that it also includes proprietary
->>> -payload header data. D4xx cameras use bulk transfers and only send one payload
->>> -per frame, therefore their headers cannot be larger than 255 bytes.
->>> +D4xx cameras use bulk transfers and only send one payload per frame, therefore
->>> +their headers cannot be larger than 255 bytes.
->>>  
->>>  This document implements Intel Configuration version 3 [9_].
->>>  
->>> diff --git a/Documentation/userspace-api/media/v4l/metafmt-uvc.rst b/Documentation/userspace-api/media/v4l/metafmt-uvc.rst
->>> index 784346d14bbd..a3aae580e89e 100644
->>> --- a/Documentation/userspace-api/media/v4l/metafmt-uvc.rst
->>> +++ b/Documentation/userspace-api/media/v4l/metafmt-uvc.rst
->>> @@ -6,7 +6,7 @@
->>>  V4L2_META_FMT_UVC ('UVCH')
->>>  *******************************
->>>  
->>> -UVC Payload Header Data
->>> +UVC Partial Payload Header Data (formerly known as UVC Payload Header Data).
->>>  
->>>  
->>>  Description
->>> @@ -44,7 +44,9 @@ Each individual block contains the following fields:
->>>          them
->>>      * - :cspan:`1` *The rest is an exact copy of the UVC payload header:*
->>>      * - __u8 length;
->>> -      - length of the rest of the block, including this field
->>> +      - length of the rest of the block, including this field (please note that
->>> +        regardless of this value, the driver will never copy more than 12
->>> +        bytes).
->>>      * - __u8 flags;
->>>        - Flags, indicating presence of other standard UVC fields
->>>      * - __u8 buf[];
->>> diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
->>> index deadbcea5e22..f19dcd4a7ac6 100644
->>> --- a/drivers/media/usb/uvc/uvc_driver.c
->>> +++ b/drivers/media/usb/uvc/uvc_driver.c
->>> @@ -2488,8 +2488,6 @@ static const struct uvc_device_info uvc_quirk_force_y8 = {
->>>  };
->>>  
->>>  #define UVC_INFO_QUIRK(q) (kernel_ulong_t)&(struct uvc_device_info){.quirks = q}
->>> -#define UVC_INFO_META(m) (kernel_ulong_t)&(struct uvc_device_info) \
->>> -	{.meta_format = m}
->>>  
->>>  /*
->>>   * The Logitech cameras listed below have their interface class set to
->>> @@ -3107,87 +3105,6 @@ static const struct usb_device_id uvc_ids[] = {
->>>  	  .bInterfaceSubClass	= 1,
->>>  	  .bInterfaceProtocol	= 0,
->>>  	  .driver_info		= UVC_INFO_QUIRK(UVC_QUIRK_DISABLE_AUTOSUSPEND) },
->>> -	/* Intel D410/ASR depth camera */
->>> -	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
->>> -				| USB_DEVICE_ID_MATCH_INT_INFO,
->>> -	  .idVendor		= 0x8086,
->>> -	  .idProduct		= 0x0ad2,
->>> -	  .bInterfaceClass	= USB_CLASS_VIDEO,
->>> -	  .bInterfaceSubClass	= 1,
->>> -	  .bInterfaceProtocol	= 0,
->>> -	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
->>> -	/* Intel D415/ASRC depth camera */
->>> -	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
->>> -				| USB_DEVICE_ID_MATCH_INT_INFO,
->>> -	  .idVendor		= 0x8086,
->>> -	  .idProduct		= 0x0ad3,
->>> -	  .bInterfaceClass	= USB_CLASS_VIDEO,
->>> -	  .bInterfaceSubClass	= 1,
->>> -	  .bInterfaceProtocol	= 0,
->>> -	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
->>> -	/* Intel D430/AWG depth camera */
->>> -	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
->>> -				| USB_DEVICE_ID_MATCH_INT_INFO,
->>> -	  .idVendor		= 0x8086,
->>> -	  .idProduct		= 0x0ad4,
->>> -	  .bInterfaceClass	= USB_CLASS_VIDEO,
->>> -	  .bInterfaceSubClass	= 1,
->>> -	  .bInterfaceProtocol	= 0,
->>> -	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
->>> -	/* Intel RealSense D4M */
->>> -	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
->>> -				| USB_DEVICE_ID_MATCH_INT_INFO,
->>> -	  .idVendor		= 0x8086,
->>> -	  .idProduct		= 0x0b03,
->>> -	  .bInterfaceClass	= USB_CLASS_VIDEO,
->>> -	  .bInterfaceSubClass	= 1,
->>> -	  .bInterfaceProtocol	= 0,
->>> -	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
->>> -	/* Intel D435/AWGC depth camera */
->>> -	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
->>> -				| USB_DEVICE_ID_MATCH_INT_INFO,
->>> -	  .idVendor		= 0x8086,
->>> -	  .idProduct		= 0x0b07,
->>> -	  .bInterfaceClass	= USB_CLASS_VIDEO,
->>> -	  .bInterfaceSubClass	= 1,
->>> -	  .bInterfaceProtocol	= 0,
->>> -	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
->>> -	/* Intel D435i depth camera */
->>> -	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
->>> -				| USB_DEVICE_ID_MATCH_INT_INFO,
->>> -	  .idVendor		= 0x8086,
->>> -	  .idProduct		= 0x0b3a,
->>> -	  .bInterfaceClass	= USB_CLASS_VIDEO,
->>> -	  .bInterfaceSubClass	= 1,
->>> -	  .bInterfaceProtocol	= 0,
->>> -	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
->>> -	/* Intel D405 Depth Camera */
->>> -	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
->>> -				| USB_DEVICE_ID_MATCH_INT_INFO,
->>> -	  .idVendor		= 0x8086,
->>> -	  .idProduct		= 0x0b5b,
->>> -	  .bInterfaceClass	= USB_CLASS_VIDEO,
->>> -	  .bInterfaceSubClass	= 1,
->>> -	  .bInterfaceProtocol	= 0,
->>> -	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
->>> -	/* Intel D455 Depth Camera */
->>> -	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
->>> -				| USB_DEVICE_ID_MATCH_INT_INFO,
->>> -	  .idVendor		= 0x8086,
->>> -	  .idProduct		= 0x0b5c,
->>> -	  .bInterfaceClass	= USB_CLASS_VIDEO,
->>> -	  .bInterfaceSubClass	= 1,
->>> -	  .bInterfaceProtocol	= 0,
->>> -	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
->>> -	/* Intel D421 Depth Module */
->>> -	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
->>> -				| USB_DEVICE_ID_MATCH_INT_INFO,
->>> -	  .idVendor		= 0x8086,
->>> -	  .idProduct		= 0x1155,
->>> -	  .bInterfaceClass	= USB_CLASS_VIDEO,
->>> -	  .bInterfaceSubClass	= 1,
->>> -	  .bInterfaceProtocol	= 0,
->>> -	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
->>>  	/* Generic USB Video Class */
->>>  	{ USB_INTERFACE_INFO(USB_CLASS_VIDEO, 1, UVC_PC_PROTOCOL_UNDEFINED) },
->>>  	{ USB_INTERFACE_INFO(USB_CLASS_VIDEO, 1, UVC_PC_PROTOCOL_15) },
->>> diff --git a/drivers/media/usb/uvc/uvc_metadata.c b/drivers/media/usb/uvc/uvc_metadata.c
->>> index 82de7781f5b6..5c44e6cdb83c 100644
->>> --- a/drivers/media/usb/uvc/uvc_metadata.c
->>> +++ b/drivers/media/usb/uvc/uvc_metadata.c
->>> @@ -60,18 +60,16 @@ static int uvc_meta_v4l2_try_format(struct file *file, void *fh,
->>>  				    struct v4l2_format *format)
->>>  {
->>>  	struct v4l2_fh *vfh = file->private_data;
->>> -	struct uvc_streaming *stream = video_get_drvdata(vfh->vdev);
->>> -	struct uvc_device *dev = stream->dev;
->>>  	struct v4l2_meta_format *fmt = &format->fmt.meta;
->>> -	u32 fmeta = fmt->dataformat;
->>> +	u32 fmeta = fmt->dataformat == V4L2_META_FMT_D4XX ?
->>> +		    V4L2_META_FMT_D4XX : V4L2_META_FMT_UVC;
->>>  
->>>  	if (format->type != vfh->vdev->queue->type)
->>>  		return -EINVAL;
->>>  
->>>  	memset(fmt, 0, sizeof(*fmt));
->>>  
->>> -	fmt->dataformat = fmeta == dev->info->meta_format
->>> -			? fmeta : V4L2_META_FMT_UVC;
->>> +	fmt->dataformat = fmeta;
->>>  	fmt->buffersize = UVC_METADATA_BUF_SIZE;
->>>  
->>>  	return 0;
->>> @@ -110,19 +108,16 @@ static int uvc_meta_v4l2_enum_formats(struct file *file, void *fh,
->>>  				      struct v4l2_fmtdesc *fdesc)
->>>  {
->>>  	struct v4l2_fh *vfh = file->private_data;
->>> -	struct uvc_streaming *stream = video_get_drvdata(vfh->vdev);
->>> -	struct uvc_device *dev = stream->dev;
->>>  	u32 index = fdesc->index;
->>>  
->>> -	if (fdesc->type != vfh->vdev->queue->type ||
->>> -	    index > 1U || (index && !dev->info->meta_format))
->>> +	if (fdesc->type != vfh->vdev->queue->type || index > 1U)
->>>  		return -EINVAL;
->>>  
->>>  	memset(fdesc, 0, sizeof(*fdesc));
->>>  
->>>  	fdesc->type = vfh->vdev->queue->type;
->>>  	fdesc->index = index;
->>> -	fdesc->pixelformat = index ? dev->info->meta_format : V4L2_META_FMT_UVC;
->>> +	fdesc->pixelformat = index ? V4L2_META_FMT_D4XX : V4L2_META_FMT_UVC;
->>>  
->>>  	return 0;
->>>  }
->>> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
->>> index 5e388f05f3fc..cc2092ae9987 100644
->>> --- a/drivers/media/usb/uvc/uvcvideo.h
->>> +++ b/drivers/media/usb/uvc/uvcvideo.h
->>> @@ -534,7 +534,6 @@ static inline u32 uvc_urb_index(const struct uvc_urb *uvc_urb)
->>>  
->>>  struct uvc_device_info {
->>>  	u32	quirks;
->>> -	u32	meta_format;
->>>  	u16	uvc_version;
->>>  };
->>>  
->>>
->>> ---
->>> base-commit: d98e9213a768a3cc3a99f5e1abe09ad3baff2104
->>> change-id: 20250226-uvc-metadata-2e7e445966de
-> 
-
+Alice
 
