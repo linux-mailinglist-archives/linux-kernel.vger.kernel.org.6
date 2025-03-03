@@ -1,149 +1,153 @@
-Return-Path: <linux-kernel+bounces-541121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B46C1A4B8D8
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:09:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03C02A4B8DB
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:11:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8707188B507
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:09:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B8997A4FCF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 08:10:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD8861EDA33;
-	Mon,  3 Mar 2025 08:09:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8EF51EE7D3;
+	Mon,  3 Mar 2025 08:11:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=crpt.ru header.i=@crpt.ru header.b="cVRnCZE2"
-Received: from mail.crpt.ru (mail.crpt.ru [91.236.205.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bdDhTQiw"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BBF813A3F7;
-	Mon,  3 Mar 2025 08:09:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.236.205.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8183D13A3F7;
+	Mon,  3 Mar 2025 08:11:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740989378; cv=none; b=ebhlCpCPfQpfGzDxgSTyYtKUxTMM2UpTGNl3Z30US178+dsGLAAIkvu2eOLWxcu8HP6/3RecQdh19km/r9VRIILtojffhePjHEZxvtCOA6+ErstbJbmR1cSctKnu7CJ6tplDR26Z140TT6RLOO4puzpFQrq4M/ENjylh9pH8tkQ=
+	t=1740989499; cv=none; b=OP6yFFZ+2Mf0mmCElmm/sg/zP/FpnNevyj2ii/xPUW5YZXKMzM1BlPXOrtTffWfLCM5eGZiBd6GXu2LcersdObrHjCYY/163l26d+MdUt6psxJjNlGjWD+kjHnsfrUWyrQ/R8pM/SWfqF7i8WadPYW4umIVzZO2ll5Q36No2Vx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740989378; c=relaxed/simple;
-	bh=dlzlgK1uuPwJmnwi9znbAsJgAX3BfyutzQnKO6E48gM=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=SIFMNuRyKXtPel8BoEZWHTlIuvhtZiJMGDKfkt6lSsDSkFox6djV3uxbpcQYz9xfBh0RHGLHWBAaG9MqiG0jqWdqi1tOr7LyVIak6/cDHr3VgyKcQ8VFT2gU7eSYeJA5Xlt8rB1YrrZMzKvdd7nqm/rs5ERdC0SVITVqZg4YjzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crpt.ru; spf=pass smtp.mailfrom=crpt.ru; dkim=pass (2048-bit key) header.d=crpt.ru header.i=@crpt.ru header.b=cVRnCZE2; arc=none smtp.client-ip=91.236.205.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crpt.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crpt.ru
-Received: from mail.crpt.ru ([192.168.60.3])
-	by mail.crpt.ru  with ESMTP id 52388PGD020784-52388PGF020784
-	(version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=OK);
-	Mon, 3 Mar 2025 11:08:25 +0300
-Received: from EX1.crpt.local (192.168.60.3) by ex1.crpt.local (192.168.60.3)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Mon, 3 Mar
- 2025 11:08:25 +0300
-Received: from EX1.crpt.local ([192.168.60.3]) by EX1.crpt.local
- ([192.168.60.3]) with mapi id 15.01.2507.044; Mon, 3 Mar 2025 11:08:25 +0300
-From: =?koi8-r?B?98HUz9LP0MnOIOHOxNLFyg==?= <a.vatoropin@crpt.ru>
-To: Johannes Berg <johannes@sipsolutions.net>
-CC: =?koi8-r?B?98HUz9LP0MnOIOHOxNLFyg==?= <a.vatoropin@crpt.ru>, Jeff Johnson
-	<jjohnson@kernel.org>, Pradeep Kumar Chitrapu <quic_pradeepc@quicinc.com>,
-	Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>, Govindaraj Saminathan
-	<quic_gsamin@quicinc.com>, Bhagavathi Perumal S <bperumal@codeaurora.org>,
-	Rajkumar Manoharan <rmanohar@codeaurora.org>,
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-	"ath11k@lists.infradead.org" <ath11k@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>
-Subject: [PATCH] ath11k: fix overflow in tx stats calculation
-Thread-Topic: [PATCH] ath11k: fix overflow in tx stats calculation
-Thread-Index: AQHbjBNwlu6FEnv6mkuda429t7F2NQ==
-Date: Mon, 3 Mar 2025 08:08:25 +0000
-Message-ID: <20250303080819.48872-1-a.vatoropin@crpt.ru>
-Accept-Language: ru-RU, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-kse-serverinfo: EX1.crpt.local, 9
-x-kse-antivirus-interceptor-info: scan successful
-x-kse-antivirus-info: Clean, bases: 2/17/2025 9:52:00 AM
-x-kse-attachment-filter-triggered-rules: Clean
-x-kse-attachment-filter-triggered-filters: Clean
-x-kse-bulkmessagesfiltering-scan-result: protection disabled
-Content-Type: text/plain; charset="koi8-r"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1740989499; c=relaxed/simple;
+	bh=zlZxtHRu5ehzldwLK+ya5zBWIS/wU4//85x3BEtkIbk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IRykvujfcRBSe74FWQ4hGfB+vUnO4+M/pz93kZxTV/4DS1+ErLPfwCnHDev9VjVROBbQ+84zK0FJa1PQKWvW1lKB3HZ/2FDFWCq+SUt/3B7VjABFepb6gsIpu6b4fTEmrFGVkvDw2VNGqJmTkGMUbvTqWt8+U0Dv11uARfXSO0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bdDhTQiw; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-38a8b17d7a7so2390729f8f.2;
+        Mon, 03 Mar 2025 00:11:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740989496; x=1741594296; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9z6L/MI7GjiBeau82X34Q0GZ550CnqYRZsnAOUnmcj4=;
+        b=bdDhTQiwiBg3q00cxaeK6asZRDv2VBYyx7m1hLaUqqsZDR/F1qMWirMGM6/OKFH+BI
+         ZznqBdCXbvwsUk6PNek4trjbuPl38j+vLlBjS9ZEnpVGH4ICgAu6HXNRz+IklxDep6V4
+         ePzh/Mmb0UOWtzujmtslrYp8M3dFJhF1XjDowMpjfJg7blWDkqebWV51VTFt0Q9bh5Jy
+         YTq+Ygfs1ZpFEafPuRWmldCZnDVMWTGbrsL93Vf6KTpXIf71GUt7Vh4x6wSIrbXEpWUo
+         dgbrNKffcmKKHyQhSEihgyBruw0m6x+kodSXFghdpjgUT6gJCj1ueVF3KY+LBePhckyt
+         2qUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740989496; x=1741594296;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9z6L/MI7GjiBeau82X34Q0GZ550CnqYRZsnAOUnmcj4=;
+        b=BkLVKVznKDGrxi4bC0I8VRUZaQuAyZrFqkcNt7aCZOH1c+fDWV9s3pNC5nPBxp6z1M
+         6feX6EAAjRDlPVAzef8W5FhPaZw8g3X8Q8+GCTVe/M4md6EsCJrTnSXh/DABI/xApHN+
+         xh1fpYP0Nh417No1HswE6AzZvXV/rlEsdO4lqhxgwOZRXrV9C4JtzOZ3RjJGJGqf2W5J
+         6xGfFKrpw8/ZLXYy8sYuGvZyb/YXIZ8cB53bYMQpIOqlZ+dD3dDq7hiBzERfbjsGcpv/
+         Z1clOlzzAZLJSYHksUpCwH+p3fZrT1oqTrC37Bh97X7M1QQqFXyV/za6nAdnyHWvQwSX
+         v+6w==
+X-Forwarded-Encrypted: i=1; AJvYcCUSsZ3cpPV8wRLKSJaahkwmXa2ryzHPGUt8MOdo/stJrmfjEx0qjuYIQxYr8KNJdZAvaJtzDCYnIFZnA4xS@vger.kernel.org, AJvYcCUXLeJOBryZSYY+I+Lpf+gwkrTUgigLuT7xqIbCNdAiX9lThUrgyA44+M+fq9msY9GTohU3rtR2ZYU=@vger.kernel.org, AJvYcCWTBalb7c9O9D60I/WJeA/XH4KxuUFIVJ56Ub8c5SASs1AxTLRRQaPBvO3Hi841fJAinKGG40MWAvP9@vger.kernel.org
+X-Gm-Message-State: AOJu0YxW0a7L6RUcqeN7fIc9CbNREV4uDWM/c9//kLUJnI9w3TJysm3e
+	OWhqkB+BzFHg/jdS7OgOgel30TMLg4i7hZeYf+5UnlbrQf96cwuLCGoITRiu6krWSNDnu0QY7zi
+	/zjuYwTZlB6tO5wA1inAGx2xvdxuF8II8
+X-Gm-Gg: ASbGncuazgm6fRto6nQpyT9hw3k1c2Fi3bjAa1S7TITUmUjTmPG1yZ+GRlxILHQRwnK
+	6Is+CYMqSDVNBoeBTxfrlhUK0bzj9QaFF+UEpodPyzBc+8uETSGLhV9cC0SSJHp2AubvibJmfET
+	oGzifrryLHr9G3rqlKdc9gJ7tSmR8=
+X-Google-Smtp-Source: AGHT+IGRLxKuQltzk3e4B+3XcQJpDonfFrlVdMJszjPJ8OA7ttLmcIax9Y8G7xZMscwBZ1g5e59TEwWWWUyrUN4P1E4=
+X-Received: by 2002:a05:6000:1aca:b0:391:10f9:f3aa with SMTP id
+ ffacd0b85a97d-39110f9f4ccmr650449f8f.9.1740989494135; Mon, 03 Mar 2025
+ 00:11:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-FEAS-Client-IP: 192.168.60.3
-X-FE-Policy-ID: 2:4:0:SYSTEM
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; d=crpt.ru; s=crpt.ru; c=relaxed/relaxed;
- h=from:to:cc:subject:date:message-id:content-type:mime-version;
- bh=GXCR2/qllsmPA+9VDf1WpC/D25nO4d0B9V4QL8xXBpM=;
- b=cVRnCZE2yRwZueFBHy4v+SikDM43pylMgfh911GYqPN0IIt3BSzNGN8ZlKb4vq/dq6CY2qpD4sfg
-	8kRyBybkjfO93Vpxt0HV5zMAGEIcdTOmls/gMqxjyK9DRaPFWd8FWIq+bAPIMDLC72Pq0ZafQrM/
-	xkJKWHQtjde+9Y/OdG/WYtLulJ6X7ojMB1n/zUWXkKLUcTvhw0XU4H6EdBz9kmGEvuV5vTpSZH0Y
-	/8kTPSblVtkLGX1AiybAcIR7naqN66Q8716J6HMQGkYdY7HPAzKtmKWHaS7Fy3/hb18+hHkhSGsA
-	qTQuNNn92yGO2ALB9srRBlcPXvw5W4B2bqxLzg==
+References: <20250226093700.44726-1-clamor95@gmail.com> <20250226093700.44726-2-clamor95@gmail.com>
+ <20250227-cherubic-mantis-from-betelgeuse-86f5ff@krzk-bin>
+ <CAPVz0n0ygR=ygsvG2+z-zST7kmJ_P3nxf29tqdgHpRs_Nw6D5Q@mail.gmail.com> <fbd307ae-1dfa-497b-a597-d15b6baa30f4@kernel.org>
+In-Reply-To: <fbd307ae-1dfa-497b-a597-d15b6baa30f4@kernel.org>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Mon, 3 Mar 2025 10:11:21 +0200
+X-Gm-Features: AQ5f1JpF_3CGGZHse1vw-xjEiqhgLaEu4i7B8BPiRRXnSBWrzMGYDYQBdUdMgQ8
+Message-ID: <CAPVz0n2no1EJnf4GKSJWfYA_8h8x6BRk_ducufie90YPZR-k3g@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: power: supply: Document Maxim MAX8971 charger
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Andrey Vatoropin <a.vatoropin@crpt.ru>
+=D0=BF=D0=BD, 3 =D0=B1=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 09:54 Krzys=
+ztof Kozlowski <krzk@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On 27/02/2025 11:55, Svyatoslav Ryhel wrote:
+> >>> +
+>
+> Please kindly trim the replies from unnecessary context. It makes it
+> much easier to find new content.
+>
+> >>> +  maxim,usb-in-current-limit-microamp:
+> >>> +    description:
+> >>> +      USB Input current limit
+> >>> +    minimum: 100000
+> >>> +    default: 500000
+> >>> +    maximum: 1500000
+> >>> +
+> >>> +  maxim,ac-in-current-limit-microamp:
+> >>> +    description:
+> >>> +      AC Input current limit
+> >>> +    minimum: 100000
+> >>> +    default: 500000
+> >>> +    maximum: 1500000
+> >>
+> >> Half of these properties as well are not suitable and duplicate existi=
+ng
+> >> sysfs interface.
+> >>
+> >
+> > All these properties allow configure the charger to suit the device on
+> > which it is used. None of them are required but are a nice addition.
+> > Why you are denying me an ability to fully utilize hardware I have and
+> > tune it to the device? All those values represent hardware registers
+> > which can be customized for the device, not for the end user to mess
+> > with.
+>
+> Because you put user-space choice or OS policy into the DT and DT is not
+> for that.
+>
 
-Size of variable peer_stats->succ_bytes equals four bytes.
-Size of variable peer_stats->retry_bytes equals four bytes.
+Those are NOT user-space choice or OS policy those are vendor
+configuration for a specific device and are NOT and NEVER were exposed
+to user configurations EVER. User messing with those may lead to
+device breaking.
 
-The expression peer_stats->succ_bytes+peer_stats->retry_bytes is currently
-being evaluated using 32-bit arithmetic. So during the addition an
-overflow may occur.
+> >
+> >> And for remaining, still no battery.
+> >>
+> >
+> > reference to power-supply IS included, hence the battery option is
+> > there as well.
+>
+> I don't see it being used at all and you explicitly duplicated
+> properties which means that reference is redundant and should be dropped
+> with such binding. So how did you solve my request to add reference
+> which then you make redundant? Add reference and use it.
+>
 
-Since a value of type 'u64' is used to store the eventual he, it is
-necessary to perform the 64-bit arithmetic to avoid overflow during the
-multiplication.
+Which properties I have duplicated?
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
-      =20
-Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
-Signed-off-by: Andrey Vatoropin <a.vatoropin@crpt.ru>
----
- drivers/net/wireless/ath/ath11k/debugfs_sta.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/net/wireless/ath/ath11k/debugfs_sta.c b/drivers/net/wi=
-reless/ath/ath11k/debugfs_sta.c
-index f56a24b6c8da..982a7add6ea6 100644
---- a/drivers/net/wireless/ath/ath11k/debugfs_sta.c
-+++ b/drivers/net/wireless/ath/ath11k/debugfs_sta.c
-@@ -69,26 +69,26 @@ void ath11k_debugfs_sta_add_tx_stats(struct ath11k_sta =
-*arsta,
-=20
- 		if (txrate->flags & RATE_INFO_FLAGS_HE_MCS) {
- 			STATS_OP_FMT(AMPDU).he[0][mcs] +=3D
--			peer_stats->succ_bytes + peer_stats->retry_bytes;
-+			peer_stats->succ_bytes + (u64)peer_stats->retry_bytes;
- 			STATS_OP_FMT(AMPDU).he[1][mcs] +=3D
- 			peer_stats->succ_pkts + peer_stats->retry_pkts;
- 		} else if (txrate->flags & RATE_INFO_FLAGS_MCS) {
- 			STATS_OP_FMT(AMPDU).ht[0][mcs] +=3D
--			peer_stats->succ_bytes + peer_stats->retry_bytes;
-+			peer_stats->succ_bytes + (u64)peer_stats->retry_bytes;
- 			STATS_OP_FMT(AMPDU).ht[1][mcs] +=3D
- 			peer_stats->succ_pkts + peer_stats->retry_pkts;
- 		} else {
- 			STATS_OP_FMT(AMPDU).vht[0][mcs] +=3D
--			peer_stats->succ_bytes + peer_stats->retry_bytes;
-+			peer_stats->succ_bytes + (u64)peer_stats->retry_bytes;
- 			STATS_OP_FMT(AMPDU).vht[1][mcs] +=3D
- 			peer_stats->succ_pkts + peer_stats->retry_pkts;
- 		}
- 		STATS_OP_FMT(AMPDU).bw[0][bw] +=3D
--			peer_stats->succ_bytes + peer_stats->retry_bytes;
-+			peer_stats->succ_bytes + (u64)peer_stats->retry_bytes;
- 		STATS_OP_FMT(AMPDU).nss[0][nss] +=3D
--			peer_stats->succ_bytes + peer_stats->retry_bytes;
-+			peer_stats->succ_bytes + (u64)peer_stats->retry_bytes;
- 		STATS_OP_FMT(AMPDU).gi[0][gi] +=3D
--			peer_stats->succ_bytes + peer_stats->retry_bytes;
-+			peer_stats->succ_bytes + (u64)peer_stats->retry_bytes;
- 		STATS_OP_FMT(AMPDU).bw[1][bw] +=3D
- 			peer_stats->succ_pkts + peer_stats->retry_pkts;
- 		STATS_OP_FMT(AMPDU).nss[1][nss] +=3D
---=20
-2.43.0
+> Best regards,
+> Krzysztof
 
