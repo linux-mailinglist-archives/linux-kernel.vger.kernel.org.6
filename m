@@ -1,127 +1,186 @@
-Return-Path: <linux-kernel+bounces-541599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C51B7A4BEE3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:37:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E74B8A4BEE0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 12:37:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47FDA1645B3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:36:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5171F7A11D5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 11:36:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7165A1FECD1;
-	Mon,  3 Mar 2025 11:36:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82ADD1FF1D0;
+	Mon,  3 Mar 2025 11:37:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GRcLFa+M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GK5kaHtU"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3FB11FECB7;
-	Mon,  3 Mar 2025 11:36:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C27C1FF1C6
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 11:37:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741001799; cv=none; b=EX1+ZCGHv4brTOozLYPYXc6Mz3tb6Mqkg0VsCRIOqzPw9yR0w40fc2MgjyOQDvfhYr3xpLMN9QKlBJcdJWnyAB5l4+82rVM+QD02qjl3/cgBVDM7PnliJE4hXoxSIFlXXtQIzReJpReKTz+A10b/KtBokXAW3frQkjv1DYuBFAY=
+	t=1741001837; cv=none; b=hMeTVnBYOn0rFw/awPTMmBaI88sB4p3AfDvz74fdDPVZEI3FmrFAuGGcIKpmpXXHSfp5KchVAbcTl6HrNpupXBo7TD5ibeVWiKPg9r1TWhRjbC+Ky/Qr6K4WHL9d9ii3hzazgU3BRstbM/u/j0UKcD8yZ5mJRBB9Tz74FGdx5fI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741001799; c=relaxed/simple;
-	bh=oxy8wLZwAvzCBTshcjUjn9QK4TuRPy4wmav3InvNr/k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PIJpmIdZJHJsyXxmWvVx2iOLZfQchDUiLpH+RmwV5Bp3hSLQUUiMONu7oVIdvr9xqu/qjb/N1nmJmaCGVe+s/cI3DCeslD5yJS4Cm/Zrk/S2hmSV+ZqFSqT0WavMmMd7qsHTqz+pLnaAcCNl8DDwdSIFR6Ww6rTzGYPH9UhBB34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GRcLFa+M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 582CDC4CEE6;
-	Mon,  3 Mar 2025 11:36:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741001799;
-	bh=oxy8wLZwAvzCBTshcjUjn9QK4TuRPy4wmav3InvNr/k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GRcLFa+Mpabf6+pbkyr10Ra5IK8V4bILG4Rva4xFV6VgVb8o+EbvTix1rprH51VIg
-	 Phj7PxIc/M9EQNvNPkl8zp7WreY9yDMohpFXDjnBkAymeYT8QzWOCHrLpFjaxYlj9r
-	 eriXHp+zOUP2S11tIBcunE93qYXfw8GZS+nW9QytV5yFW+8tqxRxVI3XFymwGCzhhy
-	 M3KRq0pq/qxOaHmdwSBBWzSmpTcGvWwKNWBWpgnb1el6qoSWmYyLW06sjUvIddudbg
-	 t+wNaPz9lfRUAgFh+3LD4G03Wni5QjhljWN+c98LdCoFbI7dRaGvNRl22Vzb4726Bw
-	 htb3h5i4LuDkQ==
-Message-ID: <9cf0f5cf-1287-485c-a75d-1a4333c6e457@kernel.org>
-Date: Mon, 3 Mar 2025 12:36:32 +0100
+	s=arc-20240116; t=1741001837; c=relaxed/simple;
+	bh=gSmqjl48I2bftmg98TgvWKfCxzYiI8y99YYV12eiWM4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GSsoLjvVWdhcfeTlErDMMDnGQaMBilxD8v94Gigi0q8tKRmADqXv4BHlvVukWoC58Ww0kBsPUgkzXWJ3LgkUVhZeBppzKuYbrwuBcnTMIdsdQOA5ZsAn6tgaf+pT/JEfd83u7wdCN+BIqwP46PEXpOgr+Y5fgCE3HS33BlP+RB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GK5kaHtU; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e60aef2711fso2206845276.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 03:37:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741001835; x=1741606635; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=VZdcPlKGwSUQ1/c/x0IEBqiGcJoStRQT2SaVJ9Y6HOg=;
+        b=GK5kaHtUi355ItY4ZtFQZHjzfQM9dQ/O8+wFfAlJtSJtfA+6d504PRieJb7idYbzIw
+         WaKxOnqCHKib9Xo1vw3S5hQ8KFtiTaNi9ydDkMvAoTJjaTFJWvM6YeooujfMT0hu0TxE
+         RFsxE8bXf9Xbiy1S5qMDCpjRUlyruwjM6iK3ZdpWuW5hp8eUjVw738BJErki1eWHztbw
+         BzOvM+sxwJZeLQyyJB4ZArWpAsxcJWaUYeafzJ5RBXFZDAW5qjrdlzVNtJLgzbTNJPdJ
+         dJkretoVTEUgbUjvdDKMwhmZziScCtnsmMO+1K//AmCMRCnN1SdKbEQSjoQVwtAlV7Ie
+         xBrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741001835; x=1741606635;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VZdcPlKGwSUQ1/c/x0IEBqiGcJoStRQT2SaVJ9Y6HOg=;
+        b=CxpoahdlBqqZD75VVFs9yGXcWybQ7F9+I5ATual+iFTvhZzg0kctHX+CiuP1B9YSEe
+         ObRLaS9ha2BruEXxMdzErbWPESj2vUkaUGbZljHObMXI0FeXdr9xriIIF9w2sWmelFYx
+         28wsIjiVLoPT8jwJ89/Dzl84OphQE/1eOjuDoeViiB+xGCB9tW+XC0ijrmbEHZ/w8n9B
+         QPnhYGFKAVk3H8rrI01WPGB4NQUoxOO2esu5wA4IfM2FpbQR2211r/OVM19ACY9u7NG7
+         moEYZ0F1Y6ZFFsOij6dT7cWztxhPrWFLQ7hnUhrn0un9QrvdDsqRI8XYxi4qZ0Qrxfj5
+         yoQw==
+X-Forwarded-Encrypted: i=1; AJvYcCUX0lN+qfITlIDVo8JwNKeHCB7SOlNh9kmBCRAcaUwbdaZHzRnFY1olUl+kqIsu+RYkevRHU3cRR+DtJ9s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7z1eXUFXU4YGHsf7QupzYpAoqWfsDZfrbJ3XRYZ1W74PIF2CB
+	6x2PispRdF4YXkjdwvFix3I+/Q4McpcKNZfZQuXZ+CMKCkQPoCbiNTWYvB1Lil7v4lxUuPLPmTv
+	Sd6CFbKaq5SMN3VsHBSkR/PHjHLI6n2N+x5Nlmw==
+X-Gm-Gg: ASbGncv55YCIF1B87kEOrMedJOY1ML4NNaoObvUKSY10mzYZH80saoM0nHauR7MQdYf
+	FeoHQ7p5G3hWq81mDSpkgVNziD57SKd28nMjgkR4hBxgjsGrE9ttIDblIq8SjtDOH8eFm3dAHRf
+	ptB/WteCQP5S8JZUSrqjbBcGZcBU4=
+X-Google-Smtp-Source: AGHT+IHrccx3eeYx7Ph57lcw3jkpDa9UoiqwNC12MOXPb6LaFAIEcFkZzSIkizPiqpdEw1ZhtDOIw4oKutTggiYjUA4=
+X-Received: by 2002:a05:690c:3001:b0:6fd:44a5:5b68 with SMTP id
+ 00721157ae682-6fd4a100420mr180752197b3.35.1741001835219; Mon, 03 Mar 2025
+ 03:37:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: sc7280: drop video decoder and encoder
- nodes
-To: Vikash Garodia <quic_vgarodia@quicinc.com>,
- cros-qcom-dts-watchers@chromium.org, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250303-b4-media-v1-1-ddc5c81cc2b3@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250303-b4-media-v1-1-ddc5c81cc2b3@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <12620037.O9o76ZdvQC@rjwysocki.net>
+In-Reply-To: <12620037.O9o76ZdvQC@rjwysocki.net>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 3 Mar 2025 12:36:39 +0100
+X-Gm-Features: AQ5f1JoM9bXFkjeEORxBmtsj4iFuLmWabqtiwT-NoP3RpdVWmI2bcHKAnUHgW7Q
+Message-ID: <CAPDyKFqdD760Tn5nHghXK1DgSQ6K=hv7D32m9w0-jgi+nA7-gw@mail.gmail.com>
+Subject: Re: [PATCH v2] PM: runtime: Unify error handling during suspend and resume
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Alan Stern <stern@rowland.harvard.edu>, Oliver Neukum <oneukum@suse.com>, 
+	Ajay Agarwal <ajayagarwal@google.com>, Brian Norris <briannorris@google.com>, 
+	Raag Jadav <raag.jadav@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 03/03/2025 12:01, Vikash Garodia wrote:
-> Decoder and encoder nodes are already deprecated from bindings. Update
+On Tue, 25 Feb 2025 at 18:06, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+>
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> There is a confusing difference in error handling between rpm_suspend()
+> and rpm_resume() related to the special way in which -EAGAIN and -EBUSY
+> error values are treated by the former.  Also, converting -EACCES coming
+> from the callback to I/O error, which it quite likely is not, may
+> confuse runtime PM users.
+>
+> To address the above, modify rpm_callback() to convert -EACCES coming
+> from the driver to -EAGAIN and to set power.runtime_error only if the
+> return value is not -EAGAIN or -EBUSY.
+>
+> This will cause the error handling in rpm_resume() and rpm_suspend() to
+> work consistently, so drop the no longer needed -EAGAIN or -EBUSY
+> special case from the latter and make it retry autosuspend if
+> power.runtime_error is unset.
+>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Deprecated since when? commit or release.
+Seems reasonable to me!
 
-> the venus node to align with bindings.
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Since which release kernel does not rely on these?
+Kind regards
+Uffe
 
-> 
-> Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
+
 > ---
->  arch/arm64/boot/dts/qcom/sc7280.dtsi | 8 --------
->  1 file changed, 8 deletions(-)
-
-Best regards,
-Krzysztof
+>
+> v1 -> v2: Add comment explaining the -EACCES error code conversion (Raag)
+>
+> ---
+>  drivers/base/power/runtime.c |   40 ++++++++++++++++++++++++----------------
+>  1 file changed, 24 insertions(+), 16 deletions(-)
+>
+> --- a/drivers/base/power/runtime.c
+> +++ b/drivers/base/power/runtime.c
+> @@ -448,8 +448,19 @@
+>                 retval = __rpm_callback(cb, dev);
+>         }
+>
+> -       dev->power.runtime_error = retval;
+> -       return retval != -EACCES ? retval : -EIO;
+> +       /*
+> +        * Since -EACCES means that runtime PM is disabled for the given device,
+> +        * it should not be returned by runtime PM callbacks.  If it is returned
+> +        * nevertheless, assume it to be a transient error and convert it to
+> +        * -EAGAIN.
+> +        */
+> +       if (retval == -EACCES)
+> +               retval = -EAGAIN;
+> +
+> +       if (retval != -EAGAIN && retval != -EBUSY)
+> +               dev->power.runtime_error = retval;
+> +
+> +       return retval;
+>  }
+>
+>  /**
+> @@ -725,21 +736,18 @@
+>         dev->power.deferred_resume = false;
+>         wake_up_all(&dev->power.wait_queue);
+>
+> -       if (retval == -EAGAIN || retval == -EBUSY) {
+> -               dev->power.runtime_error = 0;
+> +       /*
+> +        * On transient errors, if the callback routine failed an autosuspend,
+> +        * and if the last_busy time has been updated so that there is a new
+> +        * autosuspend expiration time, automatically reschedule another
+> +        * autosuspend.
+> +        */
+> +       if (!dev->power.runtime_error && (rpmflags & RPM_AUTO) &&
+> +           pm_runtime_autosuspend_expiration(dev) != 0)
+> +               goto repeat;
+> +
+> +       pm_runtime_cancel_pending(dev);
+>
+> -               /*
+> -                * If the callback routine failed an autosuspend, and
+> -                * if the last_busy time has been updated so that there
+> -                * is a new autosuspend expiration time, automatically
+> -                * reschedule another autosuspend.
+> -                */
+> -               if ((rpmflags & RPM_AUTO) &&
+> -                   pm_runtime_autosuspend_expiration(dev) != 0)
+> -                       goto repeat;
+> -       } else {
+> -               pm_runtime_cancel_pending(dev);
+> -       }
+>         goto out;
+>  }
+>
+>
+>
+>
 
