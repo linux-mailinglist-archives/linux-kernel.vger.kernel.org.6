@@ -1,102 +1,91 @@
-Return-Path: <linux-kernel+bounces-542859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B39E9A4CEA2
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:43:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0706A4CEA8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:45:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FE1416AA5A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:43:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C440A7A1F45
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 22:44:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D57DA238D45;
-	Mon,  3 Mar 2025 22:43:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C49271F12EE;
+	Mon,  3 Mar 2025 22:45:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="sCxrpcyQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p36ZhGwX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132D51F03C7;
-	Mon,  3 Mar 2025 22:43:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8ADEC4;
+	Mon,  3 Mar 2025 22:45:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741041814; cv=none; b=RXr1vd/U1dpWr7u1WmLQ/Khdbx/GgK8owh4iqHw/X3zZIOAa5q3D/1H5x4FjvbRVxbVLMuuNfppO97FhLTzfkFcGVfYEtjKCt109V0gjQY/DC3d5MJKw0jji6js6FG/XZ7l1T7nvSAOygQVvj67y9wZrlndi0y2/zp7SDdnosto=
+	t=1741041951; cv=none; b=pvKYpS1Gv2zC5E2IalCB2ZlEdrkRBNOvop7166k0R41+f0oMHWAA72nQ9pLS2V84oaoRtoMzacJ8rhmM+6yiiv2HS3oRFXtEP+AeT2hTWe57orC+DmtPCKo3SvC9qn4i/O8Ys0yLuvCkKY3EvRf5qekcHbiVAtROxifVZ/QPh4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741041814; c=relaxed/simple;
-	bh=Ye4xOllgSwhjXuDnyBuAKIEjHgB7tBT2sx0Mlr/Fn7g=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=AKk5Hnm3NKwRqF27fGpH3tW4rQkl6m2QpYd4ZvXsGuhZiWsevcGH+93apDMkJarFkQr8s+UhHjgW49Esxo6YVQvuiA/OTugyXxQtZRFBwXWobOsdLp5COpzLFXtdkPEFivbcXMI7uz/5mD/KN5ChrUU2A3uOV0sO+kv3n2dXedQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=sCxrpcyQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2066C4CED6;
-	Mon,  3 Mar 2025 22:43:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1741041813;
-	bh=Ye4xOllgSwhjXuDnyBuAKIEjHgB7tBT2sx0Mlr/Fn7g=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=sCxrpcyQEg5yYBT2gW7pbCgt0yG3N/wlf3mWDI4OGJqicQA+KFPrU8gmIwdRlmZrE
-	 Vhrdglv/yHorwkHx/4JsNBgWrl1E0iQkC9p/QSt42U6PomymhGBg6FCQ8eRXM/ovjp
-	 aWQwvj44KHZCQUuPyIcdXIrEvPMbBDKjvUujtAhM=
-Date: Mon, 3 Mar 2025 14:43:32 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- cgroups@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- linux-api@vger.kernel.org, "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>, Johannes
- Weiner <hannes@cmpxchg.org>, Michal =?ISO-8859-1?Q?Koutn=FD?=
- <mkoutny@suse.com>, Jonathan Corbet <corbet@lwn.net>, Andy Lutomirski
- <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
- <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, Muchun Song <muchun.song@linux.dev>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes
- <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Jann Horn
- <jannh@google.com>
-Subject: Re: [PATCH v3 00/20] mm: MM owner tracking for large folios
- (!hugetlb) + CONFIG_NO_PAGE_MAPCOUNT
-Message-Id: <20250303144332.4cb51677966b515ee0c89a44@linux-foundation.org>
-In-Reply-To: <20250303163014.1128035-1-david@redhat.com>
-References: <20250303163014.1128035-1-david@redhat.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741041951; c=relaxed/simple;
+	bh=HRCtB39QEYB0RXLZEtY3FMWatuIIo1+rC3OO0u6DFUA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=em4ExfZBA46B37E3GpvlVGTJONbk82Kx7IkHtGMggZCbNXpRetzysuKK/Sit2HECA5VJcObivI5T+zjUIadyDhceNw1UOAm4Qhcpd3M93m3mPyr1Q0dEO5SF0H4zkBnqx1oMQWqrwZ1+0BIr2jX60b5aTHkesxcm3DQum/zCcZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p36ZhGwX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36281C4CED6;
+	Mon,  3 Mar 2025 22:45:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741041950;
+	bh=HRCtB39QEYB0RXLZEtY3FMWatuIIo1+rC3OO0u6DFUA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=p36ZhGwXpGfPRHuyNwPo9GIViC6Bx7LN8jM2bsfFRcOZ6Yitmwscfb/g+rKmqm4hv
+	 qXglpDxJ4DiK/K+hbdR6YwIcrEYPq+Nz8O+ErHfwwtxJa+gB2CUSm+2pc8k1QfmcFm
+	 vWawBQyyA4QbLgvk2gb6jad0G+J5NiKgu+BBzTnYr8CzRxGRmcYVU/YCN6ncdmaxpp
+	 7glnmy5BgtoBbulJ5FOvoU4NGCGmKgUin1JlJPhbfbxMA7hneUpxNFMQ69tiaC0GWJ
+	 qfKb5eBjKczAQSaNo88ow0SKSU17FFfbHJ8EfOI3vG8YYEC2wzDhQsm+eekPtfgnjr
+	 lk1TpUoKvGLvQ==
+Date: Mon, 3 Mar 2025 14:45:48 -0800
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-kernel@vger.kernel.org,
+	tip-bot2 for Josh Poimboeuf <tip-bot2@linutronix.de>,
+	linux-tip-commits@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Brian Gerst <brgerst@gmail.com>, x86@kernel.org
+Subject: Re: [tip: x86/asm] x86/asm: Make ASM_CALL_CONSTRAINT conditional on
+ frame pointers
+Message-ID: <20250303224548.pghzo2j4hdww7nxt@jpoimboe>
+References: <174099976188.10177.7153571701278544000.tip-bot2@tip-bot2>
+ <C77024F6-3087-40A3-8AFB-A642EECAFF4E@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <C77024F6-3087-40A3-8AFB-A642EECAFF4E@zytor.com>
 
-On Mon,  3 Mar 2025 17:29:53 +0100 David Hildenbrand <david@redhat.com> wrote:
-
-> Some smaller change based on Zi Yan's feedback (thanks!).
+On Mon, Mar 03, 2025 at 02:31:50PM -0800, H. Peter Anvin wrote:
+> >+#ifdef CONFIG_UNWINDER_FRAME_POINTER
+> > #define ASM_CALL_CONSTRAINT "r" (__builtin_frame_address(0))
+> >+#else
+> >+#define ASM_CALL_CONSTRAINT
+> >+#endif
+> > 
+> > #endif /* __ASSEMBLY__ */
+> > 
 > 
-> 
-> Let's add an "easy" way to decide -- without false positives, without
-> page-mapcounts and without page table/rmap scanning -- whether a large
-> folio is "certainly mapped exclusively" into a single MM, or whether it
-> "maybe mapped shared" into multiple MMs.
-> 
-> Use that information to implement Copy-on-Write reuse, to convert
-> folio_likely_mapped_shared() to folio_maybe_mapped_share(), and to
-> introduce a kernel config option that let's us not use+maintain
-> per-page mapcounts in large folios anymore.
-> 
-> ...
->
-> The goal is to make CONFIG_NO_PAGE_MAPCOUNT the default at some point,
-> to then slowly make it the only option, as we learn about real-life
-> impacts and possible ways to mitigate them.
+> Wait, why was this changed? I actually tested this form at least once
+> and found that it didn't work under all circumstances...
 
-I expect that we'll get very little runtime testing this way, and we
-won't hear about that testing unless there's a failure.
+Do you have any more details about where this didn't work?  I tested
+with several configs and it seems to work fine.  Objtool will complain
+if it doesn't work.
 
-Part of me wants to make it default on right now, but that's perhaps a
-bit mean to linux-next testers.
+See here for the justification (the previous version was producing crap
+code in Clang):
 
-Or perhaps default-off for now and switch to default-y for 6.15-rcX?
+  https://lore.kernel.org/dbea2ae2fb39bece21013f939ddeb15507baa7d3.1740964309.git.jpoimboe@kernel.org
 
-I suggest this just to push things along more aggressively - we may
-choose to return to default-off after a few weeks of -rcX.
-
+-- 
+Josh
 
