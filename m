@@ -1,99 +1,91 @@
-Return-Path: <linux-kernel+bounces-541050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7814FA4B7D2
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 07:19:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98A2DA4B7D4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 07:20:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80799188D723
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 06:19:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB6F8188D8F7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 06:20:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0F051E3762;
-	Mon,  3 Mar 2025 06:18:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="o4i/l6LA"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A19FA3398A;
-	Mon,  3 Mar 2025 06:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDE411E3DEB;
+	Mon,  3 Mar 2025 06:20:20 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8D53398A;
+	Mon,  3 Mar 2025 06:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740982735; cv=none; b=J22mAL1DzH+sSM2KqlAx1CE93qiiQJnVEf27ZpvSyEeW3v99GdgKNJ4lCmd9xhIGbTUgGc5HVAOUDl+nFIFeRjbRhlgLc3gWstaJMwlpL2r9gYJlmEMLRVybsLRtuBVyU6LBYYbovyjQHtxHHrQ3i2kcmrWZgeIwBXvFxi3Fjc4=
+	t=1740982820; cv=none; b=SKPDhh7i6fNyhZ08XG+ryBQKzdHjbVlvVF4tlLDghMj5DI+sRiyb/TBu5LeLCijSJkFdKiZZv5GAzzJU0VGL9ZQWfKeMz+CMVLosE1RdBbScK2oAS3sI3tw3WYTI11AIVsHAhngeuvCxuIs+4kutOnjbTMbciClHf5FT5eJCa78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740982735; c=relaxed/simple;
-	bh=BGuzGmklWCwWu9HoCDFiqOtossYHhBZKWQ1cTQEhELE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=noQvphR/F4coWLjRE4yKwVM2F73xk5weJ91ADvy9C8bmdqHMmZ3oe1BNZgM01sMuyed/bF4PRKq8nN1MNAjBV8kSLSGBwCRQJKrL+9od5L5Kw84oaJG/23eMd0ZpQRhu8qMNWlf+Mk7E9gBYDPLLCVssDXwGoPOUAc4g+Oi45qI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=o4i/l6LA reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=c7wgwg7trkS2FEbermFL5uZykFzbYFprUh1vZsPcxAQ=; b=o
-	4i/l6LAsls14OIcmvtqwwOM4Ex0xrFvPBFf5MGMz0Eq9wk3/SUITXGV1+IEVLCjN
-	NzZgqff57nxwW40y0t2X8iVPvNU1auHQzK30CfapTI2VEmITd7NRc79C32nUiscC
-	/WSexSSVSihNMlz3yKp9cH/z/L/seSW/G+69ExL+Es=
-Received: from andyshrk$163.com ( [58.22.7.114] ) by
- ajax-webmail-wmsvr-40-100 (Coremail) ; Mon, 3 Mar 2025 14:17:50 +0800 (CST)
-Date: Mon, 3 Mar 2025 14:17:50 +0800 (CST)
-From: "Andy Yan" <andyshrk@163.com>
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: hjc@rock-chips.com, krzk+dt@kernel.org, devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, derek.foreman@collabora.com,
-	detlev.casanova@collabora.com, daniel@fooishbar.org, robh@kernel.org,
-	sebastian.reichel@collabora.com,
-	"Andy Yan" <andy.yan@rock-chips.com>,
-	"Michael Riesch" <michael.riesch@wolfvision.net>
-Subject: Re:Re: [PATCH v15 07/13] drm/rockchip: vop2: Register the primary
- plane and overlay plane separately
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <2759797.BddDVKsqQX@diego>
-References: <20250218112744.34433-1-andyshrk@163.com>
- <20250218112744.34433-8-andyshrk@163.com> <2759797.BddDVKsqQX@diego>
-X-NTES-SC: AL_Qu2fAvWTvU4s5iaaZOkfmkcVgOw9UcO5v/Qk3oZXOJF8jCrp+T4yXHBTF1zd3fCDBzi2nQiHVRZJ0dhgcY1zcacMWFawtM+gPlh8AAO8w94NRQ==
+	s=arc-20240116; t=1740982820; c=relaxed/simple;
+	bh=YPC0l9fpFGIz1o3+5Xb6xsb0PhkgrUAnN4Ofjmfa0dY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Sb+UpPUcmKNEbNwCAoiO8JCjQtmo7kC5LMLztGR3uUtO/ie5zPwgrGvovphMMupubv+Ceabpe7G+oywfpw2+eU6UoVexP24/Ksu1hciseRdV0PRLhAgYKb01eKdM6RhIOBU0AYM0WkdMVVI+dn4Jajh7KEXjtuXh0aSInqjKzIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Z5pVL0zR1zvWqJ;
+	Mon,  3 Mar 2025 14:16:26 +0800 (CST)
+Received: from kwepemd500010.china.huawei.com (unknown [7.221.188.84])
+	by mail.maildlp.com (Postfix) with ESMTPS id A5A0118007F;
+	Mon,  3 Mar 2025 14:20:12 +0800 (CST)
+Received: from kwepemd500012.china.huawei.com (7.221.188.25) by
+ kwepemd500010.china.huawei.com (7.221.188.84) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Mon, 3 Mar 2025 14:20:12 +0800
+Received: from kwepemd500012.china.huawei.com ([7.221.188.25]) by
+ kwepemd500012.china.huawei.com ([7.221.188.25]) with mapi id 15.02.1258.034;
+ Mon, 3 Mar 2025 14:20:12 +0800
+From: lizetao <lizetao1@huawei.com>
+To: Caleb Sander Mateos <csander@purestorage.com>
+CC: "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jens Axboe
+	<axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>
+Subject: RE: [PATCH] io_uring/rsrc: include io_uring_types.h in rsrc.h
+Thread-Topic: [PATCH] io_uring/rsrc: include io_uring_types.h in rsrc.h
+Thread-Index: AQHbitlAv6dO9f+qAEamcK3Qvj/SnrNg8tUg
+Date: Mon, 3 Mar 2025 06:20:12 +0000
+Message-ID: <b2c805442bec4b03817d5a36ba96efb1@huawei.com>
+References: <20250301183612.937529-1-csander@purestorage.com>
+In-Reply-To: <20250301183612.937529-1-csander@purestorage.com>
+Accept-Language: en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <1c3ed06d.5e89.1955aa75521.Coremail.andyshrk@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:ZCgvCgDHjF6OScVn0j4aAA--.17223W
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiqBwFXmfFRICUNwADsp
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-CkhpIEhlaWtvLAoKQXQgMjAyNS0wMy0wMyAwMjo1Nzo1MCwgIkhlaWtvIFN0w7xibmVyIiA8aGVp
-a29Ac250ZWNoLmRlPiB3cm90ZToKPkhpIEFuZHksCj4KPkFtIERpZW5zdGFnLCAxOC4gRmVicnVh
-ciAyMDI1LCAxMjoyNzozNCBNRVogc2NocmllYiBBbmR5IFlhbjoKPj4gRnJvbTogQW5keSBZYW4g
-PGFuZHkueWFuQHJvY2stY2hpcHMuY29tPgo+PiAKPj4gSW4gdGhlIHVwY29taW5nIFZPUCBvZiBy
-azM1NzYsIGEgV2luZG93IGNhbm5vdCBhdHRhY2ggdG8gYWxsIFZpZGVvIFBvcnRzLAo+PiBzbyBt
-YWtlIHN1cmUgYWxsIFZQIGZpbmQgaXQncyBzdWl0YWJsZSBwcmltYXJ5IHBsYW5lLCB0aGVuIHJl
-Z2lzdGVyIHRoZQo+PiByZW1haW4gd2luZG93cyBhcyBvdmVybGF5IHBsYW5lIHdpbGwgbWFrZSBj
-b2RlIGVhc2llci4KPj4gCj4+IFNpZ25lZC1vZmYtYnk6IEFuZHkgWWFuIDxhbmR5LnlhbkByb2Nr
-LWNoaXBzLmNvbT4KPj4gVGVzdGVkLWJ5OiBNaWNoYWVsIFJpZXNjaCA8bWljaGFlbC5yaWVzY2hA
-d29sZnZpc2lvbi5uZXQ+ICMgb24gUkszNTY4Cj4+IFRlc3RlZC1ieTogRGV0bGV2IENhc2Fub3Zh
-IDxkZXRsZXYuY2FzYW5vdmFAY29sbGFib3JhLmNvbT4KPj4gCj4+IC0tLQo+Cj5wYXRjaGVzIDct
-OSBsb29rIGdvb2QgdG8gZ28sIGJ1dCAuLi4KPgo+dGhpcyBuZWVkcyBhIHJlYmFzZSB0byBhZGFw
-dCB0bwo+ImRybS9yb2NrY2hpcDogdm9wMjogQ29uc2lzdGVudGx5IHVzZSBkZXZfZXJyX3Byb2Jl
-KCkiIFswXQo+Cj5bMF0gaHR0cHM6Ly9naXRsYWIuZnJlZWRlc2t0b3Aub3JnL2RybS9taXNjL2tl
-cm5lbC8tL2NvbW1pdC9iMDZkMWVmMzM1NTU3MTM4M2NkYjQ2M2NmMDE5NWI3YTAyZWZkZmJmCgoK
-VGhhbmsgeW91LgpJIHNlbnQgVjE2IHdpdGggdGhlIHJlbWFpbmluZyBwYXRjaGVzIHJlYmFzZWQg
-b24gZHJtLW1pc2MtbmV4dCwgYW5kIGZpeCB0aGUgc3R5bGUgaXNzdWVzLgoKCj4KPgo+PiAtCQlp
-ZiAod2luLT50eXBlID09IERSTV9QTEFORV9UWVBFX1BSSU1BUlkpIHsKPj4gLQkJCXZwID0gZmlu
-ZF92cF93aXRob3V0X3ByaW1hcnkodm9wMik7Cj4+IC0JCQlpZiAodnApIHsKPj4gKwkJCWlmICh2
-b3AyX2lzX21pcnJvcl93aW4od2luKSkKPj4gKwkJCQljb250aW51ZTsKPj4gKwo+PiArCQkJaWYg
-KHdpbi0+dHlwZSA9PSBEUk1fUExBTkVfVFlQRV9QUklNQVJZKSB7Cj4+ICAJCQkJcG9zc2libGVf
-Y3J0Y3MgPSBCSVQobnZwKTsKPj4gIAkJCQl2cC0+cHJpbWFyeV9wbGFuZSA9IHdpbjsKPj4gKwkJ
-CQlyZXQgPSB2b3AyX3BsYW5lX2luaXQodm9wMiwgd2luLCBwb3NzaWJsZV9jcnRjcyk7Cj4+ICsJ
-CQkJaWYgKHJldCkgewo+PiArCQkJCQlkcm1fZXJyKHZvcDItPmRybSwgImZhaWxlZCB0byBpbml0
-IHByaW1hcnkgcGxhbmUgJXM6ICVkXG4iLAo+PiArCQkJCQkJd2luLT5kYXRhLT5uYW1lLCByZXQp
-Owo+Cj5zaG91bGQgYWxzbyB1c2UgZGV2X2Vycl9wcm9iZQo+Cj4KPkhlaWtvCj4KPgo=
+SGksDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQ2FsZWIgU2FuZGVy
+IE1hdGVvcyA8Y3NhbmRlckBwdXJlc3RvcmFnZS5jb20+DQo+IFNlbnQ6IFN1bmRheSwgTWFyY2gg
+MiwgMjAyNSAyOjM2IEFNDQo+IFRvOiBKZW5zIEF4Ym9lIDxheGJvZUBrZXJuZWwuZGs+OyBQYXZl
+bCBCZWd1bmtvdiA8YXNtbC5zaWxlbmNlQGdtYWlsLmNvbT4NCj4gQ2M6IENhbGViIFNhbmRlciBN
+YXRlb3MgPGNzYW5kZXJAcHVyZXN0b3JhZ2UuY29tPjsgaW8tDQo+IHVyaW5nQHZnZXIua2VybmVs
+Lm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0OiBbUEFUQ0hdIGlv
+X3VyaW5nL3JzcmM6IGluY2x1ZGUgaW9fdXJpbmdfdHlwZXMuaCBpbiByc3JjLmgNCj4gDQo+IGlv
+X3VyaW5nL3JzcmMuaCB1c2VzIHNldmVyYWwgdHlwZXMgZnJvbSBpbmNsdWRlL2xpbnV4L2lvX3Vy
+aW5nX3R5cGVzLmguDQo+IEluY2x1ZGUgaW9fdXJpbmdfdHlwZXMuaCBleHBsaWNpdGx5IGluIHJz
+cmMuaCB0byBhdm9pZCBkZXBlbmRpbmcgb24gdXNlcnMgb2YNCj4gcnNyYy5oIGluY2x1ZGluZyBp
+b191cmluZ190eXBlcy5oIGZpcnN0Lg0KPiANCj4gU2lnbmVkLW9mZi1ieTogQ2FsZWIgU2FuZGVy
+IE1hdGVvcyA8Y3NhbmRlckBwdXJlc3RvcmFnZS5jb20+DQo+IC0tLQ0KPiAgaW9fdXJpbmcvcnNy
+Yy5oIHwgMSArDQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKykNCj4gDQo+IGRpZmYg
+LS1naXQgYS9pb191cmluZy9yc3JjLmggYi9pb191cmluZy9yc3JjLmggaW5kZXggOGY5MTJhYTZi
+Y2M5Li5mMTBhMTI1MmIzZTkNCj4gMTAwNjQ0DQo+IC0tLSBhL2lvX3VyaW5nL3JzcmMuaA0KPiAr
+KysgYi9pb191cmluZy9yc3JjLmgNCj4gQEAgLTEsOSArMSwxMCBAQA0KPiAgLy8gU1BEWC1MaWNl
+bnNlLUlkZW50aWZpZXI6IEdQTC0yLjANCj4gICNpZm5kZWYgSU9VX1JTUkNfSA0KPiAgI2RlZmlu
+ZSBJT1VfUlNSQ19IDQo+IA0KPiArI2luY2x1ZGUgPGxpbnV4L2lvX3VyaW5nX3R5cGVzLmg+DQo+
+ICAjaW5jbHVkZSA8bGludXgvbG9ja2RlcC5oPg0KPiANCj4gIGVudW0gew0KPiAgCUlPUklOR19S
+U1JDX0ZJTEUJCT0gMCwNCj4gIAlJT1JJTkdfUlNSQ19CVUZGRVIJCT0gMSwNCj4gLS0NCj4gMi40
+NS4yDQo+IA0KDQpSZXZpZXdlZC1ieTogTGkgWmV0YW8gPGxpemV0YW8xQGh1YXdlaS5jb20+DQoN
+Ci0tLQ0KTGkgWmV0YW8NCg0K
 
