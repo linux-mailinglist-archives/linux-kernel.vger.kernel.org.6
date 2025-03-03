@@ -1,120 +1,108 @@
-Return-Path: <linux-kernel+bounces-541291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C81CAA4BB03
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:43:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08A05A4BB07
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:44:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8367F166C7A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:43:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E8BA164709
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:44:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 734D81F130F;
-	Mon,  3 Mar 2025 09:43:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D21DC1F0E5F;
+	Mon,  3 Mar 2025 09:44:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="BlXvatPq"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YgabHr7/"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57B151CDFCA;
-	Mon,  3 Mar 2025 09:43:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D96402E630;
+	Mon,  3 Mar 2025 09:44:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740994983; cv=none; b=ubD85LpSwCDvu/aZez4O2pkwLHip2qBe1IOapu6YdoYkHZanbEwERTcSa1KjVQGvsYcbMNu9Qu5ac9EPxanHE+i7yy1LFMaXtdG96wHnP98baKmcOjzEH9AuLrbIjCzsik1zzfrygeO6uqjNuwCbMMfTMmGCRK4ceVg5ivRyRk0=
+	t=1740995042; cv=none; b=lX8UV8vKQNG7+3djQT8atIjwuF9zhB3Q6FysJHWmlw1XZs7ZgzWm4SruxelCTROgt9zJb2g5y49hazLDKz/udtPLNFRFLt5xza6AaxX/kDqgaHHd+qjbyXWRfnqq4uz/BaEdfqCZ8H6ju9pDVhmFxHWlRI/PKnz57sDMIUcxu1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740994983; c=relaxed/simple;
-	bh=Ef92XLEjUubEUguFoFaEsSiJbp2zpAJ3HBgHzHTie0g=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SHG6U1JJwnmoY1tYTwF/0bsQgNVuCxNpceZ98u8ilW0Liyk9EcjCQqINiObK+46GjCM7XjKc915pXYaUOP/kth8qeSXg5sxxN2QFT+xIXF9FeObePn3t6hFRnwIv8XgQOmzsvSi6fXWoltvHUfN/LxqbyflYSvl6oOzvuRUwUow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=BlXvatPq; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E476243308;
-	Mon,  3 Mar 2025 09:42:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740994979;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aohfSAJAihchV7qkXkrdXJ9Pj4eAK1H+KH7QBBsTIk4=;
-	b=BlXvatPqxMPRvd6/D9QDvMcM6PIzd/xRBddwsU+RNRT9dt5gXyksu4odKthtnWZQjSJ6as
-	Ff7dBmKLfYCeECddGoIWPHB21IjSLaYhHMn0nlzxtRfZte7X/8IP2LnLCr7YShrA3vFXsU
-	+1KkfK2HOIT75WA3ct9BGp2vzauUUJZYQkDhPrVCc8BA8zhDVWYWDu6AtkalQWq2EoIlCu
-	pufyw2tRBwZbBklZ4LGgaaSKfYpxf6UJJXti9H66EZyJ268bAk8HESRbjPN5Xj6mFwzGSG
-	Q7Pp67li5M1vQXb8btIPoFEsF2Wt6sYts8fdmoDCt1NLX7Y6/QFcgWcp3mv9Pg==
-Date: Mon, 3 Mar 2025 10:42:56 +0100
-From: Herve Codina <herve.codina@bootlin.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Rob Herring
- <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, Bjorn Helgaas
- <bhelgaas@google.com>, Lizhi Hou <lizhi.hou@amd.com>,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-pci@vger.kernel.org, Allan Nielsen <allan.nielsen@microchip.com>,
- Horatiu Vultur <horatiu.vultur@microchip.com>, Steen Hegelund
- <steen.hegelund@microchip.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v8 2/5] PCI: of: Use device_{add,remove}_of_node() to
- attach of_node to existing device
-Message-ID: <20250303104256.48329d89@bootlin.com>
-In-Reply-To: <20250228205855.GA67436@bhelgaas>
-References: <20250224141356.36325-3-herve.codina@bootlin.com>
-	<20250228205855.GA67436@bhelgaas>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1740995042; c=relaxed/simple;
+	bh=1hCSFxQz82ukf4pKy8zODFP4fsvaa4QP7NWW1sjEYv0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t27Djto6bOXD8s3CmKcAhLUhi1KfTgOMMj96EUICQtenpIL0gWg2q130QbkM5PrGRWlUAqO710vsEi1xNermVoNekxJSfmB3cSBfNt6/vsvSME5k8YKgUnIhvqPy/ts70n4lrRaAzAVIijkztQC32A84nRKcC4dzEBzJFkBx+P4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YgabHr7/; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=BCxbXGJuOatYE31YJyZ7ETjf1diwgG9cuKGYi97GPs0=; b=YgabHr7/zzhdzSMKkpAUuVfOuS
+	9Y/teNhFo5DfjuTTY3yqaflkemntAFad+DOVuw/INUoLQ8Ud6aI33QLq1OJhxwoH0Q7jkZ9PhKqF3
+	OhE1R77QkusPkd2Wm7PG3CEejBEt70QecUicyW2Z7Lpfz79E6urqRtpBDVgdCBq2F5APGLQX6ZJpU
+	KNMFwA6H2FIpFnJBt9HQgr29XM4sV5GPJWcmS5RkdvnoYYv2OfOOFi2TPZfY1cKK+myuTieZm2idY
+	+v6BXxd+gxy97V014M0vq5BPK1xbRjossyTOZVGX1FO4JxUX5EAUwqy6YeWD7qPoy53xyQe7f5tZ8
+	SuqH3k/Q==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tp2L8-0000000BQ8x-2eEC;
+	Mon, 03 Mar 2025 09:43:58 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 3B6EC30049D; Mon,  3 Mar 2025 10:43:58 +0100 (CET)
+Date: Mon, 3 Mar 2025 10:43:58 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: kernel test robot <lkp@intel.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, x86@kernel.org,
+	Ingo Molnar <mingo@kernel.org>, Kees Cook <kees@kernel.org>
+Subject: Re: [tip:x86/core 16/17] vmlinux.o: warning: objtool: do_jit+0x276:
+ relocation to !ENDBR: .noinstr.text+0x6a60
+Message-ID: <20250303094358.GK5880@noisy.programming.kicks-ass.net>
+References: <202503030704.H9KFysNS-lkp@intel.com>
+ <20250303092459.GI5880@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelkeejlecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthekredtredtjeenucfhrhhomhepjfgvrhhvvgcuvehoughinhgruceohhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeviefffeegiedtleelieeghfejleeuueevkeevteegffehledtkeegudeigffgvdenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudehpdhrtghpthhtohephhgvlhhgrggrsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghkrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsrghrrghvrghnrghksehgohhog
- hhlvgdrtghomhdprhgtphhtthhopegshhgvlhhgrggrshesghhoohhglhgvrdgtohhmpdhrtghpthhtoheplhhiiihhihdrhhhouhesrghmugdrtghomh
-X-GND-Sasl: herve.codina@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250303092459.GI5880@noisy.programming.kicks-ass.net>
 
-On Fri, 28 Feb 2025 14:58:55 -0600
-Bjorn Helgaas <helgaas@kernel.org> wrote:
-
-> On Mon, Feb 24, 2025 at 03:13:52PM +0100, Herve Codina wrote:
-> > The commit 407d1a51921e ("PCI: Create device tree node for bridge")
-> > creates of_node for PCI devices. The newly created of_node is attached
-> > to an existing device. This is done setting directly pdev->dev.of_node
-> > in the code.
+On Mon, Mar 03, 2025 at 10:24:59AM +0100, Peter Zijlstra wrote:
+> On Mon, Mar 03, 2025 at 07:47:57AM +0800, kernel test robot wrote:
+> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/core
+> > head:   dfebe7362f6f461d771cdb9ac2c5172a4721f064
+> > commit: 0c92385dc05ee9637c04372ea95a11bbf6e010ff [16/17] x86/ibt: Implement FineIBT-BHI mitigation
+> > config: x86_64-randconfig-071-20250303 (https://download.01.org/0day-ci/archive/20250303/202503030704.H9KFysNS-lkp@intel.com/config)
+> > compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
+> > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250303/202503030704.H9KFysNS-lkp@intel.com/reproduce)
 > > 
-> > Even if pdev->dev.of_node cannot be previously set, this doesn't handle
-> > the fwnode field of the struct device. Indeed, this field needs to be
-> > set if it hasn't already been set.
+> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> > the same patch/commit), kindly add following tags
+> > | Reported-by: kernel test robot <lkp@intel.com>
+> > | Closes: https://lore.kernel.org/oe-kbuild-all/202503030704.H9KFysNS-lkp@intel.com/
 > > 
-> > device_{add,remove}_of_node() have been introduced to handle this case.  
+> > All warnings (new ones prefixed by >>):
+> > 
+> > >> vmlinux.o: warning: objtool: do_jit+0x276: relocation to !ENDBR: .noinstr.text+0x6a60
 > 
-> I guess another way to say this is:
+> Thanks, below seems to cure it for me.
 > 
->   - If dev->of_node has already been set, it is an error and we want
->     to do nothing.  The error is impossible in this case because
->     of_pci_make_dev_node() returns early if dev->of_node has been set.
+> ---
+> Subject: x86/ibt: Make cfi_bhi a constant for FINEIBT_BHI=n
+> From: Peter Zijlstra <peterz@infradead.org>
+> Date: Mon Mar 3 10:21:47 CET 2025
 > 
->   - Otherwise, we want to set dev->of_node (just as we previously
->     did), and
+> Robot yielded a .config that tripped:
 > 
->   - if dev->fwnode has not been set, we want to set that too.
+>   vmlinux.o: warning: objtool: do_jit+0x276: relocation to !ENDBR: .noinstr.text+0x6a60
 > 
-> So the whole point of this is to set dev->fwnode, which we didn't do
-> before.  But has np->fwnode been set to anything?  Maybe it's buried
-> somewhere inside of_changeset_create_node(), but I didn't see it.
+> This is the result of using __bhi_args[1] in unreachable code; make
+> sure the compiler is able to determine this is unreachable and trigger
+> DCE.
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202503030704.H9KFysNS-lkp@intel.com/
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
-np->fwnode can be set by ACPI. We are at the frontier between ACPI and
-device-tree.
-
-The ofnode is created and filled from an already existing device. This
-device can be created from information provided by the ACPI world.
-In that case, np->fwnode is set to and ACPI fwnode.
-
-Best regards,
-Hervé
+Durr, doesn't build with FINEIBT && FINEIBT_BHI=n, let me cure that.
 
