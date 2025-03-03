@@ -1,223 +1,106 @@
-Return-Path: <linux-kernel+bounces-541320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-541321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A0BAA4BB70
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:58:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B2FFA4BB7B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 10:58:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C018188DC88
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:57:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE2163A9712
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 09:58:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7671F152E;
-	Mon,  3 Mar 2025 09:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ev+4igjO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7975E1F1531;
+	Mon,  3 Mar 2025 09:58:04 +0000 (UTC)
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD7661F130B
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 09:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0FFF1F0E51;
+	Mon,  3 Mar 2025 09:58:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740995858; cv=none; b=iVbApv8JIDIXsGMRfmI9hBVZH02GcdLg3MjN+LdpR76nVpwzptknskUNW3N+OkufDoFfR2PiZbjAylAMq0WXPSkeX/j8f4zOtsTVKk/J0H3JSMpErWFPVFBir4JnNhmbclRlKHWMRwxNPuN9AN2z1GIMRETBqJspvnkWpUrhW0c=
+	t=1740995884; cv=none; b=Aaes6+GryAT9WNizHM8XtGZjNY3mPX7G77AMcMsS8lz4db2AweYsR2BGkCoG3ZOSELPkWfB1LNzcQKUSxZ0qCNAeZpkJtRKKxu4J8dlh1BBkVJ1BdDjfDZTtq99+e6u6qNtNKC3lyWzx+dy+ly78+w8OKN/kXTDM15DGZxg/6GE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740995858; c=relaxed/simple;
-	bh=OlfOKlRc1CiBZb5Ud3wlY9YTANw9SXSmmOkIniwxfkk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I/NbPMbWctVa0XnjlNSTlq4Pa1IG/CTQrgu+BKjxzkf95C1NFGaDiHeR/79vXzCKLZaSyWskQjJhjMRprOw9iW1oSRgplVUWXGRnG4TQgWv/t1HaUsxySwDrRIk/1RuigJSHmbJltTCUerpOJ4oWlJMrAvl7FqOO4j5dSGcrXSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ev+4igjO; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740995855;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ykua7q7gnustm8lPrA9ZG6NARq70FXycw/3eNBtt0hs=;
-	b=Ev+4igjOAV2dZVTkYAenuccUQUPIn7GAD2BN8FUqVIdvUYxQs7Ouv4iPEphnkz4RBhGn5+
-	k0Mipjdj++jEWS62Jl4ZhLyFRsHF1hFmnocDHb/UP85BAptmEPeY/UKed7Z3VlIw9PF/iG
-	tj/zSukQMVkLahR8ClOjfago7lQPJuk=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-83-N8lCu01ZPf-MWkL6NsmAGw-1; Mon, 03 Mar 2025 04:57:24 -0500
-X-MC-Unique: N8lCu01ZPf-MWkL6NsmAGw-1
-X-Mimecast-MFC-AGG-ID: N8lCu01ZPf-MWkL6NsmAGw_1740995844
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4393e89e910so23893615e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 01:57:24 -0800 (PST)
+	s=arc-20240116; t=1740995884; c=relaxed/simple;
+	bh=TZLG/R8bGC8pJs6/i0iV/BOlb/PBnn3wUcBmOH1Zj2Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cUQV8D5sOVxfBJlZGab08GfYyKgr0HjqxumeS7JyTOV/a0rdwUvBfFoVx0wjCFY0knopwvFn8HfVy0OqwU5Qjk4iF4tOlCi/5cI2kPH/9uT2wnq7gymE3bgI1tH7u+gOFq7Z78ypJZbSxt14j0Z1D8IpHrOf4hK1bAUT6rjk0Mo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2238d965199so20862245ad.2;
+        Mon, 03 Mar 2025 01:58:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740995843; x=1741600643;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ykua7q7gnustm8lPrA9ZG6NARq70FXycw/3eNBtt0hs=;
-        b=DkQVaghL2BwaQ/ajLPoz7c6Oh58HbCi693P/JeifOTDfFYsyupBG7fJLsC6lmvcYis
-         wkw0y5Wq5YDeod0B4g2B6zQZDZEJFj9qWKTw1RVo3okDDaL5wTJPFgleoz+YPb/ZeFsn
-         qOMk5fJ+j/30fb9I3n8jySr2QcFutaF0rXidsa15K2Eje6oYttGDUBYLtbQYzm2lj+YJ
-         AURphv+ZcH4LgxIHAs1ZPZxw3q+kGQgw5Kwj9+BNryE4dC6uJxcPaD1EDWKraWufbK2Z
-         YaYKimNoMZPvwFF+fW/+dQPlzKKn43UnFKpxaZivJ/+DiFHJ2U9L8J9gL0hn+vmJF0xG
-         7q1g==
-X-Forwarded-Encrypted: i=1; AJvYcCW9Sd6GIM8sArYbq2kR6Zw/2LhN8xiZwXYBM4H0A6Y0GLI4CAcj8mWyIlbnmsHuX77I4uGROq/4seO3mtk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgHWzlk8fPJ0pROjRXnX5mhTF/LmCYRFA3zecnn+Ts1F1OX7CO
-	XE/DJHx/sy7iiZUC6KfBKMeJtuTom9sJaFDMJSErgVwSjGMhTDvxqNK1FcjGRToVYGOSTJLD+OM
-	4EwP72s1qY+VHqfKp50MC0jMSbveopWSa4MNXFnw3FfhlqjqdICK+33hL1N2Y1g==
-X-Gm-Gg: ASbGnctr23P6bm1f90OHVzo/BV1/+wMCwjdX/8dttzswHfuEOjNmyqdsPcbHqsR+2C2
-	Kv5pdrBVkMKs5sJZOzVbcDtoWn/6jsw0f/L7sn+zi0wYZKyZbyhr9PjKjUeA0XdClLYwtwewXXN
-	c5NhSoEzTi0jsh/hdzc8GViIoMOpcBaNgVZlAOAlf1EWzO/fjQ56tdqNaESQ1/8SmnSKBLS/Nsn
-	IxRnhRolMeNZPJZk3QLSrhYW/XPJYiNZswX4XiPSVOyfz9uFGUHp5x1qd6VJW9QHcct8zzLf5TR
-	hiDtmvHi73wTa6avn951G5t23GalfVLSUa3XGW6zAkQulAYNslijiQdRtJQBIavR4Xh5DMxB5sj
-	MUF9X0VbD0M0YkDoDStiw+3tPvl9s1Xcl9po/XJh+qoE=
-X-Received: by 2002:a05:6000:178b:b0:390:e7c1:59d3 with SMTP id ffacd0b85a97d-390ec7c6abamr9721388f8f.2.1740995843582;
-        Mon, 03 Mar 2025 01:57:23 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHyA1rt+UhzjYjejJGIWpt5BNfcz7BL9jMerlSYdXlUaUi7HhGoy2uwdvEypDw3lLTiKoqZLw==
-X-Received: by 2002:a05:6000:178b:b0:390:e7c1:59d3 with SMTP id ffacd0b85a97d-390ec7c6abamr9721350f8f.2.1740995843219;
-        Mon, 03 Mar 2025 01:57:23 -0800 (PST)
-Received: from ?IPV6:2003:cb:c734:9600:af27:4326:a216:2bfb? (p200300cbc7349600af274326a2162bfb.dip0.t-ipconnect.de. [2003:cb:c734:9600:af27:4326:a216:2bfb])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e4795da5sm14193732f8f.15.2025.03.03.01.57.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Mar 2025 01:57:22 -0800 (PST)
-Message-ID: <7e987f17-ffcb-45e0-8588-2d569d90f776@redhat.com>
-Date: Mon, 3 Mar 2025 10:57:21 +0100
+        d=1e100.net; s=20230601; t=1740995882; x=1741600682;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R1Lit5pOCGG3QItR5zE1LQ2pbl2xqPND2IQxLjzVPDw=;
+        b=t5ASFc+UZ3NRevbJAbuaDFSG5fcFv2NvLcFbWJGSRXIy40W1h07IadPcQU8CgJZ1uU
+         ptJOLNPcJrixn5nrAxTQ8P2ZMUfc5qHuVFM+q6r0Ygwm3wHudyqp2uVWjo51zTUpPnCU
+         Vb+PiZazoj0i376j73GEFWKu4fwU4pLw+BBVA603t7nvnw805SqMzgWoOlb5LQHbAl20
+         yu9bagr1wfLWJ1fj3fQoe0/WnaaSiDRjamWNhxZVyGTk+Z+c0q+HjHaFzW2O2l6SUQh+
+         WUkGu29Xt1t7rnlBU79EaH80Z1olcf2rICmzyllwUUga96Z1mjm4j+aFqq12KvpEgO6N
+         8Pqg==
+X-Forwarded-Encrypted: i=1; AJvYcCV3wh92Wia1ZFOvE0tUVRHv7GxFU9Ul+ZYUwHkxPkMuexY8E8uk5FQlwFI+bNyugMSFCXNoBtAYmGLf@vger.kernel.org, AJvYcCVHHij//WY58pMBnxvmHtuqS+1rHiaV0DPDhnV/zKynGWYAsQZSrOzYfjUqpz/hTseBjvacTYfPEFfvUb+G@vger.kernel.org, AJvYcCVs0Hc/gyfEURyy5sQB1/N6X+QyWIK1SM+qnNcJRsjq2QwGkpW5htvG9Wgxdr1GzWPsufj5fxqDTgLx@vger.kernel.org
+X-Gm-Message-State: AOJu0YxozdKt13BhXkUZABkxODw+BUcPDaK98p9PwiNIZxU4hdnq6xzM
+	FgXAXzkBcQMszYTV9cLMfbsQQJ4xdtky8hk7LOAoEi1Z7roaG6NV
+X-Gm-Gg: ASbGnctIoJb4CPendjBtI4zgQtMZf+jR6Om40C3WOCuFYJxft1WAgGZDNQEyvElpGAl
+	B08sIrMjJf4N39uFN70qn6w/cu4Kidih/A9L4ZFgWFiTQOBeeT6HNvn6fOTAXyWm+3A8+cLRcKj
+	BWvC/SC8Tg1L29FT5KpcjfK4yoElUxoOwg6wdJ2jd2T2c7vdYNgoduZmEQmXs4bdgnmYsKGtb4u
+	7WJf3R8ES2Pm2nywvx8Q6fPoWmuChWHGr89zAsf69giVt2mH+MvPL+IfVrnxq6DpGAxwGyoALtJ
+	tPdFDdThopPK4yuCAj7XlD2a6ELFdCw4gyMRUMyt2W6qpumjYFgIC1JZ8ji2TgfdxtbIZW+KS/n
+	zbSY=
+X-Google-Smtp-Source: AGHT+IGWSAIDCC0xaqtS7Ex77F/Miw148JL0f7j6rhJtrFrKkae4GeKC5Pc3phsRqp/mOzIOw7p+Ow==
+X-Received: by 2002:a05:6a00:4650:b0:736:450c:fa56 with SMTP id d2e1a72fcca58-736450cffadmr5417450b3a.5.1740995881981;
+        Mon, 03 Mar 2025 01:58:01 -0800 (PST)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7349fe2a668sm8468422b3a.30.2025.03.03.01.58.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 01:58:01 -0800 (PST)
+Date: Mon, 3 Mar 2025 18:58:00 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org,
+	manivannan.sadhasivam@linaro.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	michal.simek@amd.com, bharat.kumar.gogada@amd.com,
+	jingoohan1@gmail.com
+Subject: Re: [PATCH v15 3/3] PCI: amd-mdb: Add AMD MDB Root Port driver
+Message-ID: <20250303095800.GC1065658@rocinante>
+References: <20250228093351.923615-1-thippeswamy.havalige@amd.com>
+ <20250228093351.923615-4-thippeswamy.havalige@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] arm64/mm: Elide tlbi in contpte_convert() under
- BBML2
-To: =?UTF-8?Q?Miko=C5=82aj_Lenczewski?= <miko.lenczewski@arm.com>
-Cc: ryan.roberts@arm.com, suzuki.poulose@arm.com,
- yang@os.amperecomputing.com, catalin.marinas@arm.com, will@kernel.org,
- joro@8bytes.org, jean-philippe@linaro.org, mark.rutland@arm.com,
- joey.gouly@arm.com, oliver.upton@linux.dev, james.morse@arm.com,
- broonie@kernel.org, maz@kernel.org, akpm@linux-foundation.org, jgg@ziepe.ca,
- nicolinc@nvidia.com, mshavit@google.com, jsnitsel@redhat.com,
- smostafa@google.com, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, iommu@lists.linux.dev
-References: <20250228182403.6269-2-miko.lenczewski@arm.com>
- <20250228182403.6269-5-miko.lenczewski@arm.com>
- <f270bb5d-aa54-45d3-89ed-2b757ab3a4b0@redhat.com>
- <20250303094947.GB13345@e133081.arm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250303094947.GB13345@e133081.arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250228093351.923615-4-thippeswamy.havalige@amd.com>
 
-On 03.03.25 10:49, Mikołaj Lenczewski wrote:
-> Hi David,
-> 
-> Thanks for taking the time to review.
-> 
-> On Mon, Mar 03, 2025 at 10:17:12AM +0100, David Hildenbrand wrote:
->> On 28.02.25 19:24, Mikołaj Lenczewski wrote:
->>> If we support bbml2 without conflict aborts, we can avoid the final
->>> flush and have hardware manage the tlb entries for us. Avoiding flushes
->>> is a win.
->>>
->>> Signed-off-by: Mikołaj Lenczewski <miko.lenczewski@arm.com>
->>> Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
->>> ---
->>>    arch/arm64/mm/contpte.c | 3 ---
->>>    1 file changed, 3 deletions(-)
->>>
->>> diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
->>> index 145530f706a9..77ed03b30b72 100644
->>> --- a/arch/arm64/mm/contpte.c
->>> +++ b/arch/arm64/mm/contpte.c
->>> @@ -72,9 +72,6 @@ static void contpte_convert(struct mm_struct *mm, unsigned long addr,
->>>    		__flush_tlb_range(&vma, start_addr, addr, PAGE_SIZE, true, 3);
->>>    	__set_ptes(mm, start_addr, start_ptep, pte, CONT_PTES);
->>> -
->>> -	if (system_supports_bbml2_noabort())
->>> -		__flush_tlb_range(&vma, start_addr, addr, PAGE_SIZE, true, 3);
->>>    }
->>>    void __contpte_try_fold(struct mm_struct *mm, unsigned long addr,
->>
->> What's the point of not squashing this into #2? :)
->>
->> If this split was requested during earlier review, at least seeing patch #2
->> on its own confused me.
-> 
-> This split is a holdover from an earlier patchset, where it was still
-> unknown whether the removal of the second flush was permitted with
-> BBML2. Partly this was due to us being worried about conflict aborts
-> after the removal, and partly this was because the "delay" is a separate
-> optimisation that we could apply even if it turned out the final patch
-> was not architecturally sound.
-> 
-> Now that we do not handle conflict aborts (preferring only systems that
-> handle BBML2 without ever raising aborts), the first issue is not a
-> problem. The reasoning behind the second patch is also a little bit
-> outdated, but I can see the logical split between a tlbi reorder, and
-> the removal of the tlbi. If this is truly redundant though, I would be
-> happy to squash the two into a single patch.
+Hello,
 
-Thanks for the information.
+[...]
+> +		err = devm_request_irq(dev, irq, amd_mdb_pcie_intr_handler,
+> +				       IRQF_NO_THREAD, intr_cause[i].sym, pcie);
+> +		if (err) {
+> +			dev_err(dev, "Failed to request IRQ %d\n", irq);
+> +			return err;
+> +		}
+> +	}
 
-Does patch #2 (reordering the tlbi) have any benefit on its own? I read 
-"other threads will not see an invalid pagetable entry", but I am not 
-sure that is correct. A concurrent HW page table walker would still find 
-the invalid PTE? It's just a matter of TLB state.
+Out of curiosity: would exposing error values be of any benefit to the
+users of the driver?  So, perhaps:
 
-If there is no benefit in having patch #2 independently, I'd just squash 
-them. Reordering to then remove is more complicated than just removing 
-it IMHO.
+  if (err) {
+  	dev_err(dev, "Failed to request IRQ %d, err=%d\n", irq, err);
+  	return err;
+  }
 
--- 
-Cheers,
+Thoughts?
 
-David / dhildenb
-
+	Krzysztof
 
