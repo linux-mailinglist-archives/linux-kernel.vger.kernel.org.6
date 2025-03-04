@@ -1,115 +1,257 @@
-Return-Path: <linux-kernel+bounces-544291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03B32A4DFCD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:53:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCE81A4DFDA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:55:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84D473A86D7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:53:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 230B5188DAC2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:55:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C12420485B;
-	Tue,  4 Mar 2025 13:53:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55E6F204594;
+	Tue,  4 Mar 2025 13:54:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="NUefgo7k"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="d3rtytCx"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2040.outbound.protection.outlook.com [40.107.243.40])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF4E2204594
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 13:53:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741096429; cv=none; b=VVS8hsEo5+Gj9jlOo7E6OT9VRP7rTZEkzg/NljYiawpSmeqY/R4lxlot8L2uyqM5Z44t0FnlBc+AnnBpGAMnpVV5xG7mXsn4X+7/KVWPo2Q0CeoOAd5oej3gUFL0O7ujnAr3MybeXA2xLv7IhS5Eb3frIvcVTtKPUDa+hN8gibY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741096429; c=relaxed/simple;
-	bh=bPfPD93l7XWp4K+A8697cOeG4hODBPIveR4prBwHvnk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=My2EUBVeKYwhnRw81G54Vo12TT0DSALB4Tgaqga3j1/cG0Odi5Y331P7JHSxtg3lgEQ9yOo4KioJ0bYV6Mb2sKCavHLdqf+oLkhDoWW6s2yS+uBTWw7A9f1k+FnmW5KaUtwOmX9Y1jCIEf7cfaD4eIS4YJiDHUhGKrDvlVZo7QE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=NUefgo7k; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-30795988ebeso61131411fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 05:53:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1741096426; x=1741701226; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bPfPD93l7XWp4K+A8697cOeG4hODBPIveR4prBwHvnk=;
-        b=NUefgo7kHIk+4aFdgqDgTSFip5L2P1BdbtbOiVnb3neDYbdirwG3e5bniKbKaXoXxR
-         27t5+yl4cui/jMEdOSG9BbdcxZO3elc2PGVV9E9oVfjpMmiFZiCWaeQZGV4D5Caq81nT
-         Emjl0DNvlnBMrZVOT7eeu1tva+AKNl2jyodvwtmUftGwiZPBpi4MONrp93tEhGYBeS5b
-         267Ccd2QT1/j8Wwbp74DGwzcTdWIG1sAbxESyFVhNwh2Tx87aAkHu30v/yHGmiAoGG6F
-         L1Rzr3Ej5/YOG9wD/wuOn5VW2W6A3shmWcd1aHjUN1286LXfHq9SuOBCpOrjFs/jtNE/
-         jUgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741096426; x=1741701226;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bPfPD93l7XWp4K+A8697cOeG4hODBPIveR4prBwHvnk=;
-        b=iCqQY/gGSDpTcftVGSKzlM9LttHYbh+LHOP3pE2N10H6RdXA+aJgkbO7bZ7DuM6zbi
-         pmvThr8Idpnyd+8ln09K+iAR8NOzcyW5RGZWh972Mo0BXJafNl9rOr+UjXHkpJsPi/Yg
-         MBMRQxvKFlyA0RmRsB924jzu2v/7mFlaNL9FyMmY/hUuWb56KiHS4nVIlbH8BlzIEFQc
-         QZngLDpnj0Jqn5tGmitQ1/wjNpIN3pSKJDImiDl+OHv36woFADHWOLr+z+vyrWpj+Boj
-         9R5l+363s82GxKvTz915y1Q8kjqiq98gi6qJZOyplSsxU6eyHEOCuMNhQ6aJMF0dhvsc
-         mnlA==
-X-Forwarded-Encrypted: i=1; AJvYcCUiZl2uXB5vGXNQ1UJnloysllallCJb71+iCbr22MGDTv7XTd5wriEqYUvvXl4ZmnrxCtTFerC4UgelZeQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwX7kbhjw8ZAHA84Fylf+98lQmAQz2jLOS6SpUwI+zDmybfnsH8
-	ZIvQxwMo5pEMLQxX9yFkrb9kInZw/0XJTr9T0x7N8YbvenzR5W8zGAE2IbCX34/9H20YoAj4SEZ
-	2o9FTlBX4BB9sqmlVMZWW6TzzaTN6bCgP6RmmMqmOTQvI6cBt
-X-Gm-Gg: ASbGnct8vCuTBZhmwZCJJnSbBjE1WKTJKmNqGQcBrHR+iMsVLZ2//PSdXLEIA+4+PfH
-	ETSRrSuEwETSwBNiy9tcOnjX8wfTPMS0frUNSEt+I2t4DvdX+ViF3EHlNO/jr8bYgkOIlITE8a9
-	fQCbQ9G2rczWn7/mECIJY2X1q/djjOKsOdyerkiDxaAqUTOKt2NfZkZOewew==
-X-Google-Smtp-Source: AGHT+IH0S2v41EEsvJXTKAOj3SfZ26o8r//LfcPgvdTehENLascdrE2cLJn81POKQEF9iSB4U34UjDsa7ZB3cfqLe1Q=
-X-Received: by 2002:a2e:b8d1:0:b0:308:eb58:6581 with SMTP id
- 38308e7fff4ca-30b9310e789mr74920241fa.0.1741096425972; Tue, 04 Mar 2025
- 05:53:45 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B004A204685;
+	Tue,  4 Mar 2025 13:54:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741096494; cv=fail; b=glvpum4LzkRT29JhhAKdwPWT8eLlsT7NSfNpwbpXtg3O5lPQGdsJYEA84DixZTJJaKah8AE9yB4XzqtLfuyy/cyLOwELMEc2EZ/w6QEkPbaJc9hJ1Q0ETL3q0S2sV/wowknCoubEu8zdO+HQ9833979Wny8TMGcnH6qD98V9Qsg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741096494; c=relaxed/simple;
+	bh=u/ORszvO0ycaj3B0db6Zn9qSV9aZxHwfwF8AYbLQxyM=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=NFhfpSzF2aoy2mtIa3oqMQA5RjnyuasJzEsjUHBQqDJYO2C0zX8XyXA5UmTC5kkZcM3us5aJkltiSFrC3MRPbuY7np3YGi5AP2cvb0ALmRQkexYdSEDxP9frm4PActaei9XbWrET2T2fa3rBkEDHT3S+DXBb0BjwNbqzyIXnQfE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=d3rtytCx; arc=fail smtp.client-ip=40.107.243.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RluN3+Z4dGJ/NhvEzsKCDnu4DIzK8HvuqzhoDnZ2bjfOyl8WXZvwtD/6PBX1CqxYt8ZEi94ldXgy/z6HQm2tVrQttquH8qZGak6c+snpZpNsYKiv7B1EKtEzGrIifdiBYcXH69enLc1kTrjZmWVk9P00gWGZo6aRI4EO7L0qxelldN43bj3hlxn2/Yqkpy+lRFyDYSsS8bAC8zagxkw7pr3M17XW3GMyrvkrG0XU7fMp0Kcax6SVyDYcIKhMuY60DYcKKn2weiQ2nFN4N52NLBwqqDufXK4QWvo6lP0pwv5i1am2/2YS1Y3T/9op5eHejNG1RSLO6W3uCPWAFtjvjw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0tEH+uLjg2fcFEU6XgXZwyWVnS/4TS91LIoizRIz5cc=;
+ b=OaMhtK2RrZ5Dn3dHhDcxRt4KIA+2uJkznwumz1JRY25g8GuK4mCvt0EPcCjCz0wbxbvcTQxmYupSeOCC4aQlIqCdCkzdheoFlNeJpPITq87t6JCip0cOQg8NfQkgqbwQlJkXaCbnQPMGsWPiowWYvKyQgvSUZW0MIvd+DqskDDMmLZ5ioF8499I2/AWYVdiW9JEsilFSt9dIbSxxa8jgj2X0A1SDcqh6UAk64QasxBGLjfku41+10m+p98qE/Tw9TdxPHh52iEHbppfwssdcw32P/YlCZbuOv8MIYMQv0JE4nya4O+2lrLotnS1TYtdUgUQAh2aCvx+PwM3nrzvsHw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0tEH+uLjg2fcFEU6XgXZwyWVnS/4TS91LIoizRIz5cc=;
+ b=d3rtytCxPNWqSHdGZzx2v472us300pPk8pfqxZTQ5zaGvbrDcdm6rU7jUOL0q3lNhMydDN2Dhlf6VHzfhqJNJaKop00BK8hdU65OdKvchboLGTetXA5pQVQtjo4P2pFhK6b0W1+1G/LY9u9X65eCRiM+WVv2scFCkxeDfjN2njlrdUoVyzlwNtxrUzzAL0YyK5dtX/M+LOAakTvFk2RBgG7ZQjbJtmwyK799a4ZIls0kvS0KAweE1SAvv33mbYA5dxLvpbvAQac/sJ5W6L64j3y97iK2yQmnY9UyWeKDCmcORd4/Ef16sB/VCvFHD9dpsVzeH894r1mkmhLnvA5mAA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from MN2PR12MB3997.namprd12.prod.outlook.com (2603:10b6:208:161::11)
+ by DS0PR12MB7874.namprd12.prod.outlook.com (2603:10b6:8:141::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.25; Tue, 4 Mar
+ 2025 13:54:49 +0000
+Received: from MN2PR12MB3997.namprd12.prod.outlook.com
+ ([fe80::d161:329:fdd3:e316]) by MN2PR12MB3997.namprd12.prod.outlook.com
+ ([fe80::d161:329:fdd3:e316%6]) with mapi id 15.20.8489.025; Tue, 4 Mar 2025
+ 13:54:48 +0000
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: [RFC PATCH v2 0/5] gpu: nova-core: register definitions and basic
+ timer and falcon devices
+Date: Tue, 04 Mar 2025 22:53:56 +0900
+Message-Id: <20250304-nova_timer-v2-0-8fb13f3f8cff@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPQFx2cC/03MQQrDIBCF4auEWdeiNkbTVe9RQhGdNLOIBg3SE
+ nL32kChy//B+zbImAgzXJsNEhbKFEMNeWrATTY8kZGvDZJLxaXoWIjFPlaaMTHX9e2FC9OOqoV
+ 6WBKO9Dqw+1B7orzG9D7sIr7rj9H/TBGMM22csg6l742+hUKe7NnFGYZ93z8NP0oYpQAAAA==
+X-Change-ID: 20250216-nova_timer-c69430184f54
+To: Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>, 
+ John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>, 
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <benno.lossin@proton.me>, 
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>, Simona Vetter <simona@ffwll.ch>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+ nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+ Alexandre Courbot <acourbot@nvidia.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: TYCP286CA0086.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:2b3::12) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250227-multi_waitq_scm-v5-0-16984ea97edf@oss.qualcomm.com> <20250227-multi_waitq_scm-v5-1-16984ea97edf@oss.qualcomm.com>
-In-Reply-To: <20250227-multi_waitq_scm-v5-1-16984ea97edf@oss.qualcomm.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 4 Mar 2025 14:53:34 +0100
-X-Gm-Features: AQ5f1Jo4X3PGLBSfl3KtFivfqe8YrWZi-sunmx5ghXII1IKVvNqLLxFv_MJbJ_I
-Message-ID: <CAMRc=Md=QY-HdA0Tdpd3rh1pma8cCtdde0mv91TtG0ML8Ej_pQ@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] firmware: qcom_scm: Add API to get waitqueue IRQ info
-To: Unnathi Chalicheemala <unnathi.chalicheemala@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel@oss.qualcomm.com, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
-	Prasad Sodagudi <prasad.sodagudi@oss.qualcomm.com>, 
-	Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>, Trilok Soni <quic_tsoni@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR12MB3997:EE_|DS0PR12MB7874:EE_
+X-MS-Office365-Filtering-Correlation-Id: ceec0699-8ce4-4674-a785-08dd5b24173b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|10070799003|366016|7416014|376014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?S3JRanpSWks3YzNyeXFvNStLelBnT2lDdVpxS1hYY1d1V0JFdnJDc0lsLzR2?=
+ =?utf-8?B?RitmZ0pUUnhkRy9wTm5TZUg1WVFDdGhaN3hQenZsSTdQNlZjb0VEVWNkMllL?=
+ =?utf-8?B?d2x6NDNXdnMwc1NHNjZ4RzAxbWorc0ZybXZBM0Evd3hEemlzZlNkQnN6Y0xY?=
+ =?utf-8?B?K3lhNm5LTVdPdWtXcUhySEN5RGxnODRGeTdydVYvNlhPY1VwdUx6QVJ5RmNu?=
+ =?utf-8?B?dEdLQXovVGY2OGtmRHBtQUgwMk14Q29zTzFFMjlBWkNnRmVqQXNxMThnWS9D?=
+ =?utf-8?B?Mkp4N2ltTlVWdHpjRFpQa25KSXQ4c0VlRlFPdjU4Lzh5Y3MvM3M3a3F3cWlR?=
+ =?utf-8?B?aDE4dS9wZ0dZYXpCbDdralNONlFHS3hDU1BHZ1N4b2VERG1TaEFFeFE0NXA1?=
+ =?utf-8?B?WXhNenBOeklFaGxVVTNtTVg2TWtJSW5adFMwOEFkQjlwNkpleVlnK3hsOExr?=
+ =?utf-8?B?Q0F5OHNBSExtMTBqYVR1YkR6SThwL3h5NW5HMklJMitqL3BjMG9CZkNnQWpm?=
+ =?utf-8?B?eGpVVFVuazdITXhyd2gwcFJLbWVDemw0SWhib3VOK1F2UjVFM0FoTmJDU3VZ?=
+ =?utf-8?B?T3JjckFld3NUV0cxTmpkdE9XZlROeTgwYlJSRHhqNnVhdkYwZHI5ZGhCT3hC?=
+ =?utf-8?B?M3A2amxqWkFVNkpJUUNwQ0d4dzc2blNvVk1LazNINUp0OXRsVHJZUjhCcFI1?=
+ =?utf-8?B?VTBLTHNjdFdzTXBtUHVOOUtlQ09aNUpqZFZHQjVkeUxhVVdld3ZpTWFZbUl2?=
+ =?utf-8?B?V3Z4Rk85RkpUWHFuanhHakxFY1AyVVFNS3dHL2NvMk52a1BqdDhHWW9NSFhO?=
+ =?utf-8?B?dlorU3lwZGlOUlYxeldtT1laYkViNitEMTR0UFZ5N2Qwc2pmTUZCdVU2Mi9q?=
+ =?utf-8?B?dk5ESjY1Y1V1aFhGaHJXTjM5cU1OcGxQeFA1c1Y3K2tXb3JFclQ1SVpqd3NQ?=
+ =?utf-8?B?Y0tpeEozaE5lR2hYdVVRcVRBRXFmL29NdjgzQlNEdHdvWjdOSDlIVnREc09X?=
+ =?utf-8?B?b0oxb1lTc0R1M3Erd3lwZEg0NlhHZWQ0d0hmY3pJZ2FETEF4K0FSUFJEb3h5?=
+ =?utf-8?B?YXJZY1pTZk5FanJuUE9vNThFQWtSQzNycW1NNmhKSTJhN0l2V25WbndQT216?=
+ =?utf-8?B?TFB4QUp3c2c2LzBZMld2cU5McWl3SDlxZmxhQWlqK0F6ckdMRFJWNTVsU1NO?=
+ =?utf-8?B?RlU3SEZzcGhKNFpUSGkrS25WU2szcmRSdG1PNEYwaVU5ZGNVaWtXZ3Y4UVhG?=
+ =?utf-8?B?UlZPTllSbUR4MUdWM3U2MGVKNk9SaHpiZUZjSWlMZll3a0RBRHZOU1hiTjVB?=
+ =?utf-8?B?K3BuS0FaN0VVNzV0c3FTakpmb2hmUzFwNVBSUm9sYkxOQUx5bW0xay9uSTlM?=
+ =?utf-8?B?MWowejlIZG0rUXRZaCtXbmFJcERxVnJQc1ozODQwbk9nQW9OWlk5V21TT1Y2?=
+ =?utf-8?B?R3NJMmk5Q0ZCZkJrdjlHVFRzcW9rd0tpYk5Ick41TUU1RmpIeElwUGtEcFA5?=
+ =?utf-8?B?dnpJcFVaZHp6L090WGplcVc0eXlJbWFpNmdXTld5MUJ0NHZwaWIzRUhXMUV0?=
+ =?utf-8?B?bXJuck9FYWdxZUdlUnFseWxJMVBGM1paWk5mNmZPTHpJY2pDT3NNSEM3TGEr?=
+ =?utf-8?B?dWsyL1FIU29HaGZqcVFRU3JrVWp0akEzYUliS1E2Qlh4bXc0MXNmRnBtTmZI?=
+ =?utf-8?B?elVtaHlzWDNXRDl3eko2TU1nWVpoWnBhcytwMWQ5STRaSExiNnIvczdIdGUr?=
+ =?utf-8?B?YmRsWlVLYTd2dzNFcE5SeEx5b2pTNUI1UXBHVEJtU0wvU0ZyWTFVMHJ6T0hO?=
+ =?utf-8?B?RGpMMjhHclFxQVlJT1BZb2FUK1pRdXdmSnk4M2ZJR3I4Q2x1TEhoUzM1VUF6?=
+ =?utf-8?B?b0NXN1UyYVpoZ3l5ZnVEQXFpdkZiM2FSbFpiMW1DU1FUMU16dHh5alBJc2NL?=
+ =?utf-8?Q?SiA915Pi+7g=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3997.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(10070799003)(366016)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?YjRjTzd6NkE2Z2ZNMmRCaWUwRWF5VzJKV1ZTM1Z3enh2b2tqb0JlL0xwaUZu?=
+ =?utf-8?B?ekVoNGxjbVpQV1FXZDNpclV5QVZrL1hiSDEzaWNqRnk4SUV1UTFXZ0xZU21X?=
+ =?utf-8?B?M2xXV1NQRzVZZFlGbi9qYS9LQkx4VEVXZ01VbTJZYXdnOXpvbE56UW9rWTFH?=
+ =?utf-8?B?bFdJNFh0aVhvTEVMektXRjcybWRFVlQyQXd5MlB0VENGVUdNNGZZVkl3TUs2?=
+ =?utf-8?B?VUxKRGZNRm0xV1NUSk96MTRkKzhpR3cwUFZxQnFNTEx0Vk1Gblp4eWpkb2Qw?=
+ =?utf-8?B?Wm9wR0lRc2RUL1ZLek9ST3AzUk9xbTk2eE14QXFVNnBTS0pid3gxaWwvSEUr?=
+ =?utf-8?B?YXB5VFlnQzZBeHluUEQ1MzVGYit3TGl0RHQ1T0c5QkVsNUFDV25aTUpCb0Fa?=
+ =?utf-8?B?UzF6S01vK2FPU1JjVXN2YWpOU2l6OFNNQjRsS1pjd1psSDZMeVQwSnVrRVp1?=
+ =?utf-8?B?TEtKQWJEWHlJLzE4UzJ0cnFOOUNlMldJd0J2WEdwVmoyRGQ1UHh0UmRNYmRX?=
+ =?utf-8?B?aytrN1pFc1dGM2U0MU41NmNJZ3N5b0gvSmR5WUtuNmRmZHBwSDJOZnFkcVUv?=
+ =?utf-8?B?bUVOVm9vQm9pZWNPd21pNVJRZEpQK2c1QmpINEU5emk4VXVHUUp4N3dWS2RX?=
+ =?utf-8?B?cFhMeEZwQTRwNDhMYkpLdklDVmJXMmhYY3dpOVhBMis0ei9CTjJJTkM2RnZ2?=
+ =?utf-8?B?Nmdhb0Z4T2JLNXJoUnlaUmdWbUg4azhudUNzUjJPRjNQdTlDUGdFOHg2M3RV?=
+ =?utf-8?B?YzZJTzhVdXFjdXhtcTR3amRNMnowRVNwWnQ4MFRpa1NNRXRzQ2lJUkZ5MXhS?=
+ =?utf-8?B?a3krRW1aZEMrcDNTTTkxMUZ0TC9lb0txR2FVbE9QZlR6dmJvcklkUnhKZUxu?=
+ =?utf-8?B?Mk1Gd3Q4c3MyMGlXc2FidW02cEJHVG9vWXRwRU9adUtPNm9WRlVNSitrQjF5?=
+ =?utf-8?B?VFFoUGNpQVliaWM3SmxadytYQVlBKzlYVnd4OFQzS1ZYTnA1RjhiRHVsTnkw?=
+ =?utf-8?B?aGdNQ2RKSHN3NFBVeE5haDRMb1FOZXhMTEtWYUw3dzB5VmV0bzU0cVBWaEgx?=
+ =?utf-8?B?MU1YbEVuL1RjQzlRdXN4VjloYWhjUVQzTHVLOVUybldsakZkYjhEVktycVBj?=
+ =?utf-8?B?V0RYdVZkY2VRVHJYOXo2N2taQjRDTFh2TGpKQ1FZaUlaU3hEcFZFY0JPWUwr?=
+ =?utf-8?B?a0ZNOEJYc3c2endoUmJpSVBFZWNhQWpCcWlNTmtuTDY0SzdmSUltaFlFaDd1?=
+ =?utf-8?B?eCs1UFBBT2lvbUVwbU42YkFOSXIvV1I5dzFkMUR5WmFxVkRLRndDVnRnN0FH?=
+ =?utf-8?B?OVpxR3pYN3dVMHJtZ3RsMUdFMVpxZkZadlZtRHNUL3RmcHFiVDlwbjlUc0Y4?=
+ =?utf-8?B?R3Q0cVVMNEwrc2FadkFpaGdxVSthWlVmNVROWmJGYTBLTGM0dVlTeWZ5SzZq?=
+ =?utf-8?B?VXllWEl1b3lXak12UTJpWkFqdDN4V3gvMHM1ZmFpaTVCOFR4VWhRWDhJRGVB?=
+ =?utf-8?B?WmNWS0ZuQW1NMy96bVdWWGYzMnpIZnhKc0hyQlJzVS8xZkJDUkRKUVRMZy9a?=
+ =?utf-8?B?Ym92ZjhDR0ZFQlVYQkpGaTNsODY2Z0tJYjFHbG9MNm5RSmd5RkVKdnN5cWdZ?=
+ =?utf-8?B?UHAvNUF1ZFlIMnE3MmQ3enk3S29PR1JUUHRjV0pybW5xR09YdjVkTVA2RGVj?=
+ =?utf-8?B?QVZPNTNpOVl2bzJYdnRQMFc2Z1ZPdUt2cnZpbmlJWXpIT1VCbWQ3Zm04RVNm?=
+ =?utf-8?B?WkFZQ1YwSjNLWjNNaENvb1dpVHh1MGlhUFNqbXh2QzdGaWFBTVNFZ1p2bmRj?=
+ =?utf-8?B?VGtoc0JudWZ5a2x1OTJCRFhTYk1EcXcwd0NOMDl1bVVVQkVySWczZkVBV1Rj?=
+ =?utf-8?B?aXFTVWJPMWtZcWtoQkFMdlFURU9RK2RlZmVXRWhHb1IyN1NaQXVIN2V1NjFM?=
+ =?utf-8?B?ZitsZVJ6eWQwaUZkMEtnUXF6SWxaVlFVOWdaK0swcUg3S1RnWm9TdWJ0bFd0?=
+ =?utf-8?B?RTg2QmE5OGM5NGpoZ2p3ZDdVbDYvOG9KQWN5eHFJT0JYK2l0ekhoaVBKTExl?=
+ =?utf-8?B?Z2QxTDhTWnRwaFhSc3llKzJMY0xobUtzSGJMZkF0NmNmUVZITWhjekFNQ2wr?=
+ =?utf-8?B?WDliVjVCdVZTbFNscm13ZVg1UEVhR2x0YlA0WC9rZEcxSEFxcHBPbVBPNmpJ?=
+ =?utf-8?Q?pi53NydaIzkg1ouQmItqfV82sO4UT19z6Bc5yHkJLpiN?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ceec0699-8ce4-4674-a785-08dd5b24173b
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2025 13:54:48.7553
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +BYQSBn9LghilzmOCkwecWVuADrYgC2A+0yROq/6Fd416XRR6ftDvOCcPSOIehrKIeUi1ZXatojvRd+TLkv0Eg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7874
 
-On Fri, Feb 28, 2025 at 6:40=E2=80=AFAM Unnathi Chalicheemala
-<unnathi.chalicheemala@oss.qualcomm.com> wrote:
->
-> Bootloader and firmware for SM8650 and older chipsets expect node
-> name as "qcom_scm", in order to patch the wait queue IRQ information.
-> However, DeviceTree uses node name "scm" and this mismatch prevents
-> firmware from correctly identifying waitqueue IRQ information. Waitqueue
-> IRQ is used for signaling between secure and non-secure worlds.
->
-> To resolve this, introduce qcom_scm_get_waitq_irq() that'll get the
-> hardware IRQ number to be used from firmware instead of relying on data
-> provided by devicetree, thereby bypassing the DeviceTree node name
-> mismatch.
->
-> This hardware IRQ number is converted to a Linux IRQ number using newly
-> defined fill_irq_fwspec_params(). This Linux IRQ number is then supplied
-> to the threaded_irq call.
->
-> Signed-off-by: Unnathi Chalicheemala <unnathi.chalicheemala@oss.qualcomm.=
-com>
-> ---
+Hi everyone,
 
-Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+This RFC is based on top of Danilo's initial driver stub series
+v4 [1] and adds very basic support for the Timer and Falcon devices, in
+order to see and "feel" the proposed register access abstractions and
+discuss them before moving forward with GSP initialization.
+
+It is kept simple and short on purpose, to avoid bumping into a wall
+with much more device code because my assumptions were incorrect.
+
+The main addition is the nv_reg!() register definition macro, which aims
+at providing safe and convenient access to all useful registers and
+their fields. I elaborate on its definition in the patch that introduces
+it ; it is also probably better to look at all the register definitions
+to understand how it can be used, and the services it provides. Right
+now it provides accessors and builders for all the fields of a register.
+It will probably need to be extended with more operations as we deem
+them useful.
+
+The timer device has not changed much from v1, with the exception of
+having its own Timestamp type to easily obtain Durations between two
+samples.
+
+The falcon implementation is still super incomplete, and just designed
+to illustrate how the register macros can be used. I have more progress
+in a private branch, but want to keep the focus on the nv_reg!() macro
+for this review since the rest will ultimately depend on it.
+
+It would be charitable to say that my Rust macro skills are lacking ; so
+please point out any deficiency in its definition. I am also not
+entirely sure about the syntax for register definition - I would like to
+keep things simple and close to OpenRM (notably for the mask
+definitions) to make it easier to port definition from it into Nova.
+
+[1] https://lore.kernel.org/nouveau/20250226175552.29381-1-dakr@kernel.org/T/
+
+Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+---
+Changes in v2:
+- Don't hold the Bar guard in methods that can sleep.
+- Added a Timestamp type for Timer to safely and easily get durations
+  between two measurements.
+- Added a macro to make register definitions easier.
+- Added a very basic falcon implementation to define more registers and
+  exercise the register definition macro.
+- Link to v1: https://lore.kernel.org/r/20250217-nova_timer-v1-0-78c5ace2d987@nvidia.com
+
+---
+Alexandre Courbot (5):
+      rust: add useful ops for u64
+      rust: make ETIMEDOUT error available
+      gpu: nova-core: add register definition macro
+      gpu: nova-core: add basic timer device
+      gpu: nova-core: add falcon register definitions and probe code
+
+ drivers/gpu/nova-core/driver.rs    |   4 +-
+ drivers/gpu/nova-core/falcon.rs    | 124 +++++++++++++++
+ drivers/gpu/nova-core/gpu.rs       |  70 ++++++++-
+ drivers/gpu/nova-core/nova_core.rs |   2 +
+ drivers/gpu/nova-core/regs.rs      | 311 ++++++++++++++++++++++++++++++++-----
+ drivers/gpu/nova-core/timer.rs     | 124 +++++++++++++++
+ rust/kernel/error.rs               |   1 +
+ rust/kernel/lib.rs                 |   1 +
+ rust/kernel/num.rs                 |  43 +++++
+ 9 files changed, 639 insertions(+), 41 deletions(-)
+---
+base-commit: 3ac10b625b709d59556cd2c1bf8a009c2bfdbefc
+change-id: 20250216-nova_timer-c69430184f54
+
+Best regards,
+-- 
+Alexandre Courbot <acourbot@nvidia.com>
+
 
