@@ -1,245 +1,256 @@
-Return-Path: <linux-kernel+bounces-545364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 254E5A4ECCD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:08:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D33A8A4EEA2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:44:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 830B18C676C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:37:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D2007A534D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:43:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0848527D789;
-	Tue,  4 Mar 2025 18:31:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B7A1D7E35;
+	Tue,  4 Mar 2025 20:44:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bIi1zgf0"
-Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
+	dkim=pass (1024-bit key) header.d=Enflame.partner.onmschina.cn header.i=@Enflame.partner.onmschina.cn header.b="Raa+L0IP"
+Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2101.outbound.protection.partner.outlook.cn [139.219.17.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B08C27C86B
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A75761E8329;
+	Tue,  4 Mar 2025 20:44:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.101
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741113103; cv=fail; b=I+oZehnNe021DWzYMTO/1cScbAQcll7oaaAIInqEMivI1XvFTNz+mW4c6XFn4kWvfrTyocUkwZzlE8FyNypPVN3qpams9gF5QX/3+YwCzscDMCAoCVt/i4TisIuLjFxjP3FUbzYN5oCyZbWdZ8Yh1kgApnMeThWLJZ6KXsaAsTU=
+	t=1741121084; cv=fail; b=Vlj+jyCmlZ/qX+jE9bB9fXbe3IJdkaoSSlR75KR8oD98QZvw5WGHqQrkHDb9BhNh0DE/DF78PDwgc30VcyXzzvPNPCynfVUqoyKktsqiglvNK6XzxXG3UX1V+/6fFRe58Oz8ADYuQbgIklVNw4F6ikhwENHIgnOETXjUhNP37uk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741113103; c=relaxed/simple;
-	bh=1wWLqFg+ZyNjFPCGyIlupF+qKBORmMv346TSXZEK9lM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VFgtJgFVMuyiu7ZYNNTBCbQZWpk/Ph7ywU5KFnbcfRIiDfchsPWVoNqhENpOcSZ3s78kJjRvchLqaNdtjw3EqVHCnFkrpb8ARaJsLtSLnFrhuUWf11fuZXgz5pGRQjTbUc//QwN3uOl0zzrK8LRA8O8j8fNf+sYsD8V0ixglXiw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=quicinc.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bIi1zgf0 reason="signature verification failed"; arc=none smtp.client-ip=205.220.180.131; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; arc=fail smtp.client-ip=160.75.25.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
-Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
-	(No client certificate requested)
-	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id ED74440D0531
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 21:31:39 +0300 (+03)
-X-Envelope-From: <root@cc.itu.edu.tr>
-Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dsJ3px7zFxnS
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:50:44 +0300 (+03)
-Received: by le1 (Postfix, from userid 0)
-	id 9345442726; Tue,  4 Mar 2025 17:50:27 +0300 (+03)
-Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bIi1zgf0
-X-Envelope-From: <linux-kernel+bounces-541719-bozkiru=itu.edu.tr@vger.kernel.org>
-Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bIi1zgf0
-Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id 3808341F6A
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 15:44:25 +0300 (+03)
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id C3CA9305F789
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 15:44:24 +0300 (+03)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCC203AC499
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 12:44:09 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD4A520F09F;
-	Mon,  3 Mar 2025 12:44:05 +0000 (UTC)
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDE4520370D;
-	Mon,  3 Mar 2025 12:44:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741005842; cv=none; b=BfeV5lXJOkPebDbyCfbVwp58NAumw2u32k7Gdp49aXMPQvnjc8vk3YoA3RW4IM08+3hHRQABjNpuDSx2+UHx0Amxeq2Nkx9JD7SHHHa8fwxx6DXZueatMzdzu9ynrjj2IORBkFRyuYjHiZmkeF+k3058/3LZencVuxGENjAFFm0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741005842; c=relaxed/simple;
-	bh=z0vKUUCdNa2rmQq2Z2iFgz2YDU2r+7vSZIUk6XA/E9s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rMsK9+BH4r1iLWsIZ4nAPLNE6Q1DZRpzcpAUupzc9OZsoIVjyC31KNCZDwuvIsttRyEaekwoV4Ki+wfSy7CGTDBW6m6yHVWWp55vWGeZyvIeLek6JFX6tuw6G/Mc857BgEtDzP3tDcHv167SR3PcSwmd+XxYLjkxIpZeAcv0yzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bIi1zgf0; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 523AWrUY032012;
-	Mon, 3 Mar 2025 12:43:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=MK0vw10NOYxKduj5K3PP71gYo/6Fn4XUgQa
-	fNDnU340=; b=bIi1zgf0IKHuDffXqJe+BTNnjIpMa/oXpmZ6UFYmpbpCdVTQO6N
-	0/7UuYEf48fTK5ILMVA6eYUgufadlKKzsSME2xSdNJVi57rPkxg8AQZQETI0cW/t
-	tBoXYru+qcdKZenh41FWmA+Dau0mdm+qttww5hXG6Gdm1uk2KtRp0Qn3eEV08a2C
-	NrgEqaV6e08w2+AIVPivVhgtcxRd2bMYwEdebTK3gsLU+46uVhHg/L9mvcttFjpI
-	SPzh+ad2p/MtmYRRz6PUMNNCs0gZ168VfEBs+PmHHeIDlybywP9iWNSTmIEr9GOo
-	Zr0gATLBJFAFrLNwQj2EYw/HZB238oQqA6w==
-Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 453t95vxvt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Mar 2025 12:43:55 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 523Chqat015065;
-	Mon, 3 Mar 2025 12:43:52 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 453uakx542-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Mar 2025 12:43:52 +0000
-Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 523Chqgu015058;
-	Mon, 3 Mar 2025 12:43:52 GMT
-Received: from hu-devc-hyd-u22-c.qualcomm.com ([10.213.97.252])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 523ChpGF015057
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Mar 2025 12:43:52 +0000
-Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 4047106)
-	id 368F653B; Mon,  3 Mar 2025 18:13:51 +0530 (+0530)
-From: Viken Dadhaniya <quic_vdadhani@quicinc.com>
-To: andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, gregkh@linuxfoundation.org, jirislaby@kernel.org,
-        broonie@kernel.or, andersson@kernel.org, konradybcio@kernel.org,
-        johan+linaro@kernel.org, dianders@chromium.org, agross@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-spi@vger.kernel.org
-Cc: quic_msavaliy@quicinc.com, quic_anupkulk@quicinc.com,
-        Viken Dadhaniya <quic_vdadhani@quicinc.com>
-Subject: [PATCH v3 0/9] Add support to load QUP SE firmware from
-Date: Mon,  3 Mar 2025 18:13:40 +0530
-Message-Id: <20250303124349.3474185-1-quic_vdadhani@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-Precedence: bulk
+	s=arc-20240116; t=1741121084; c=relaxed/simple;
+	bh=WAHC7QID1LIft4Ndg0HNki/KHcSw8p6UggfSTkspDHM=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=fpZ0Vbdn4LhheIE7UK3PyjgOvC69R3Y+crZNBOvslvjTAwVg7DxfhqTXZKhytvVJqc2q/G5/8lsWDXJYdXPLqdZ1XW36YDO6yFVbibjTHocDhHKMaH/baUvJR13IrzbOgb122XIsQ7msebTmvrL4w6itj/tzEd0QidIZBtEuWLc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enflame-tech.com; spf=pass smtp.mailfrom=enflame-tech.com; dkim=pass (1024-bit key) header.d=Enflame.partner.onmschina.cn header.i=@Enflame.partner.onmschina.cn header.b=Raa+L0IP; arc=fail smtp.client-ip=139.219.17.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enflame-tech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enflame-tech.com
+Received: from BJXPR01MB0839.CHNPR01.prod.partner.outlook.cn (10.43.36.140) by
+ SH0PR01MB0844.CHNPR01.prod.partner.outlook.cn (10.43.106.138) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8489.15; Tue, 4 Mar 2025 18:11:34 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=DmwmqHZk6PPD+KS3e1ivy1Zu4E/Lga7053bBCVFxRsYFeCbHygGTU/Cjb2l/jV4LM9NvxhD71pVST0nieI7qn/9W/uDnTGmn+WT0VbrlkAqzsUHIrvgYMtWBydEvci0ZC3gG1gUP24S6oQmG5fGvcQXKH1YezWsGMcoLRZfi/SsPWdlyyXT4EZX+RP28UPhavrHYx0lcAnCyccG8515lUS4QSoZna2QGAG2pgDnmaC948gO9kDbDqnm2oozBOIFlgqguWptD2uui18gegz1J9i7G76hhHzIfmNzQqmWv4GGM6TRDGFjLddxHnLApcM9NY8LTMROPD4Ge95RSgFCO/g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Crv9CQ4Ux9sMJKasrKodGTKeVvSHxTIJp+VaSJowfdI=;
+ b=DwPNT5jfX0tKtigZoOcKnRWa1ZvRdweAhjHnSom7kKP510N/PMm+xJE/4bQbpp5uDohyuYiilps0IJWHd/2/c1GKS4X9ufk1CmHzWj4X5LVT08lzsOkMwQjNTKXkiXZrBNcuxFt3VQkYkxDo3tZ4cnfzQk5s3qaKGowCFxeW1XdwCxOZvMJvGtcygVpe3+iH7CrZr3YCNVWC5Fa1K8IP5zwzhl7o5wCEcE8NKYdTaaxyH9Ybr5Yl2X6aPRkZ9xkDutP5e/g8xPndPKT1i6GXt8WLTE/kqJ2p1ymsAGqZNZ00BrpSe9KlYS86ih19E+DNS3FfRWuBuGRUlCn0kXesug==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=enflame-tech.com; dmarc=pass action=none
+ header.from=enflame-tech.com; dkim=pass header.d=enflame-tech.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=Enflame.partner.onmschina.cn; s=selector1-Enflame-partner-onmschina-cn;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Crv9CQ4Ux9sMJKasrKodGTKeVvSHxTIJp+VaSJowfdI=;
+ b=Raa+L0IPMI5MUapjQ3nzfhFP8jI+MKHrT3aaNuUDbVEMr+hziu6ej7qg8R+Tbea/4rRs7f00YU2A2TjedLm3KPtCVfCYwy8HjgiUMMBGqQWAISm9Tarmet75R/mBV9uhGV/tWRS3TIOA8xPWakRn1QMdBT3G1yLbJ4pFJegYNGg=
+Received: from BJXPR01MB0614.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c211:14::23) by BJXPR01MB0839.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c211:1a::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.11; Tue, 4 Mar
+ 2025 07:07:05 +0000
+Received: from BJXPR01MB0614.CHNPR01.prod.partner.outlook.cn
+ ([fe80::5b17:45cb:d82e:e7b9]) by
+ BJXPR01MB0614.CHNPR01.prod.partner.outlook.cn ([fe80::5b17:45cb:d82e:e7b9%6])
+ with mapi id 15.20.8489.028; Tue, 4 Mar 2025 07:07:05 +0000
+From: =?gb2312?B?y+/A+7HzX0Rpbw==?= <dio.sun@enflame-tech.com>
+To: "mahesh@linux.ibm.com" <mahesh@linux.ibm.com>, "oohall@gmail.com"
+	<oohall@gmail.com>, "bhelgaas@google.com" <bhelgaas@google.com>,
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC: =?gb2312?B?wt6wsl9Bbg==?= <an.luo@enflame-tech.com>,
+	=?gb2312?B?uvq7tF9GZXJuYW5kbw==?= <fernando.hu@enflame-tech.com>,
+	=?gb2312?B?zuLwqe6jX0JpbGw=?= <bill.wu@enflame-tech.com>,
+	=?gb2312?B?zfX2zl9YaW4=?= <xin.wang@enflame-tech.com>
+Subject: [PATCH] AER: PCIE CTO recovery handle fix
+Thread-Topic: [PATCH] AER: PCIE CTO recovery handle fix
+Thread-Index: AduM0OzqFOcTufgFSYi2gnnVja5sWw==
+Date: Tue, 4 Mar 2025 07:07:05 +0000
+Message-ID:
+ <BJXPR01MB0614C01A9523786117B1F1CBCEC8A@BJXPR01MB0614.CHNPR01.prod.partner.outlook.cn>
+Accept-Language: en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=enflame-tech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic:
+	BJXPR01MB0614:EE_|BJXPR01MB0839:EE_|SH0PR01MB0844:EE_
+x-ms-office365-filtering-correlation-id: 0cc6d9d8-3a93-4b91-5979-08dd5aeb2b96
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|41320700013|366016|38070700018|4053099003;
+x-microsoft-antispam-message-info:
+ U+IbM/Jpfaz3k1AvqHODlJGb4V5DJXxhQVmZ7Ezf26QHLNzAVZuSv16hiuraGKERf/JKetm2+3VRY5OEB8as78SlkW2q0sb985FMpadveC0VRgSGy13PKEV3mKfLni7ObYug4nEeBODCOr8ZAqrRFtq/Znq2GTFJIoDD1ny6zqgJemYN5qbJwJ1AO7+4iXIiPimeUyhe4Qf7/H5qqBb+xValYDLvIYZnXqERKHIsMLoSQtYvpdfFR06hO+sg/TUWRKfI1IyT2E+97t7Xo62ggXCCVqnNhaTrmBBbO4WonGglWv6alzyweuhaMOe+dr+vMQKMq3QWKuzQWzOIKHxkr6FkBCMURjLcMzXWAHWxu76t12PjqXAr1qr1cBACgml76NZCHNMfRJFYa+m2LOEdZqs0cbNCNXkFsmohnXcyGsq7+GuKVQgGGFsohSPANP/jxZEcl4htXorhBpPi/drjaMPbX4w50hab5tMxueB3B2FqIBmismbnpEforzixOv9CDJwodNIKa3wTYFD+Uamhoi1EuiEOH8S3nsTraWsTl/ttGXknGRtIGtpHmBPW7sEbGeBsmifCL2Oja8g+/t6cZQ==
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BJXPR01MB0614.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(41320700013)(366016)(38070700018)(4053099003);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?gb2312?B?KzFScVBhREtma1FBRlZBemx6NzVPSzhuRnFvditKcGxQLzQ4NjRLUWxRdDRJ?=
+ =?gb2312?B?S3MveWd4ZTNQZWxncStOdU93SnRVL0xncVpiRDhXL2M0Mjd2aGpaVmFnTmNL?=
+ =?gb2312?B?c2JXdGkzTTJqcXRldEFWWndYUTBCM0hpRUh6LzVyczdPTWFlaWZoeWVjV1Fs?=
+ =?gb2312?B?eWx1MFRHNmIyNFJrK1M4OGNoRkZMUWJWTmhqdytKVTZjWEo3UzNOWjBsdUVm?=
+ =?gb2312?B?SVdwRCtObzJjcjE0RWdhVDhWTnZXcmpSMEVRQkFXMkxPL2VacmNOZXNiUTVV?=
+ =?gb2312?B?TEt6QVFjTE0wUlZMK1lOOXRmVzEybTVaY3RVdlFJR3ppVzZlOFdzY3ZvMG1n?=
+ =?gb2312?B?YkNCbXg0RWUwUU5jbWx6UE9maHpnSUVjbHE2NVdkOGxVMnVWYWhlc01Pd1Fi?=
+ =?gb2312?B?TDk3T09xWHFveWJTZnUxOUptTWpzYjlHaWZHOVM4bWVPTVVvZHpINFAzZ3BX?=
+ =?gb2312?B?RFBVY3R2UWkxeTV6MlBjMU5Qa3JGSVdXdERQRUpXRkMyZm05eWdoUlpYRDAx?=
+ =?gb2312?B?aStNUzgwT0xMNGZ1UzU3REgrby9EYjB5cThqU0JCVVEwUmxGclFHMHRqemtq?=
+ =?gb2312?B?OUxsTGhlL0YxZG9qTXB6TWFvcWFna3pEZFJNVUNqUTZuUEJBaVZUdG1hTzJk?=
+ =?gb2312?B?MVQzK3c2SUdwMWZxeW10MzBQS1VzWUluWkorNk0vazRhNnRVZVl2Zm1BYk9w?=
+ =?gb2312?B?bktUWllJWGZkbFN5Q3YyNHFrN0w2K2lMTXYrR2Jtb1VTZXI3T2hBMGppbmRF?=
+ =?gb2312?B?VkhGNjNyZjdyZ0h3SnlZME84VnJvbGJRc1BZZkljY3pMR3RJbUhDS2RCZXRX?=
+ =?gb2312?B?M1JHRnpUY0pJeE5PTDMyRjJTNlQybStSZVg5NFIrTm5VY1NOenNacGZXL09n?=
+ =?gb2312?B?VllTUlJEK1dVM0pFSy9FVkd1WS9TNkl5elRGTlY2YXVVRzI3UHJFQ1pUa0lT?=
+ =?gb2312?B?RjQ2Q3pOMmdVdGM4WDBIaE1hQWMrdERQNFpadnNORzVQK2FlZkZCdnZrUlBL?=
+ =?gb2312?B?TlFMa2JJZDZzVFZ0VzhNYnZkZjBTYUwvR1hCN0czSFFXVXdqNStlUWswdWUz?=
+ =?gb2312?B?UDhRV2ZRUGp0ZTFtd2daWjR3RE5SMmFGWkE5NkFEZjE5bWxMcUs4NkMrTEhU?=
+ =?gb2312?B?dkc0bTFWeUY3aTUrMEZSQmthNnhvdG1maUh5T25XLzM2NTZnVnlPUXRYTUZv?=
+ =?gb2312?B?dTNZbkk3U0xqcVBpNFRaT3pLbXF5b0J4RFB4bktZVmllN2dxZ2lmVVR5WUpw?=
+ =?gb2312?B?WXBIUmlkYXpUY2xoRi9rMkl6TkkxTVppZUU3dEYzblZuL0F6Q1p4aHJib0NK?=
+ =?gb2312?B?VUhyaHVwK3B4Y3d6L2hUV3NQMW9wOXZzMnR0SndINlV1UkpxMkFNQ3JCeWh4?=
+ =?gb2312?B?dExTNE5YdmsxVElXKzQ4cDhqSzlVa3d4MEFXbWZWQ1UvaWVhdERUVnFMYUlN?=
+ =?gb2312?B?T0VVZ2ltd3gwb0U1bzBxd0dnZ2dpZVhtcXprdG1STGNOMVNEcmk5ZytSYWhi?=
+ =?gb2312?B?M2o3V2wza2ZOdlJhZHBXNWtBL0FjcG5SSEJNcEQvS3ZrQWdHMGthYjJJRDdM?=
+ =?gb2312?B?Tk5PUWhqbkJnc0doVXFEL2xScDdyNUIzN1RicnM4VUJacFJ3a24rSVdCcVY1?=
+ =?gb2312?B?aWRYLytaQ2tRYUw4dEhtK05TZ2hURmlSOFFxNGxtSC9ZRnhSdFQwQ2piUTU2?=
+ =?gb2312?B?QVI2V2o1YkZjK1JHSlBxOUplZ3VjS3dJcXIvdFQvQ3p5djhyOHhDakVuZEpn?=
+ =?gb2312?B?TjN0TlZRRkhHYTdFTkh1V09RSkt5N1pUdU5ha1NLMDErK1JUbzBHUHV6VHNF?=
+ =?gb2312?B?WG52Vmo0cStYNU9VSEdWQzFTVDV4UTkzOXNBekxuU1R6RnB3WWNJaDRaMzQ4?=
+ =?gb2312?B?Z0RnNHVpa2ZseXZMc2RmMU0zU2RhSHV0c2gvZFFlS3dGeG53MDlGZWwwK3pq?=
+ =?gb2312?B?MGxjZi9Jb1NUakVKVEhqYmVTYnhkQUdUL1drSFIydi9FTGg5S1laaUpJY2Jo?=
+ =?gb2312?B?VkJkT3VySTRCRndkMnZBL0VxbXFCY1VtR2FoYlEra1hQMEU1QUo3ZHNjdCt2?=
+ =?gb2312?B?YkZHNjc3S0JYTDNDaFJkRDZ2dE5PVHFXbUljYTJiR0N5QWhoME9RWDY2RjVw?=
+ =?gb2312?Q?sovXvFtrNYA4jEQbp0xZAaWQ0?=
+Content-Type: multipart/mixed;
+	boundary="_002_BJXPR01MB0614C01A9523786117B1F1CBCEC8ABJXPR01MB0614CHNP_"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: syYd2GGAT3Kb_houxUQJ1SvMwz4CEISA
-X-Proofpoint-GUID: syYd2GGAT3Kb_houxUQJ1SvMwz4CEISA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-03_07,2025-03-03_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
- phishscore=0 mlxlogscore=999 clxscore=1015 priorityscore=1501
- lowpriorityscore=0 spamscore=0 malwarescore=0 suspectscore=0 adultscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2503030098
-Content-Transfer-Encoding: quoted-printable
-X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6dsJ3px7zFxnS
-X-ITU-Libra-ESVA: No virus found
-X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741717789.97147@veMqO3M4oZsW9kS4dlJztw
-X-ITU-MailScanner-SpamCheck: not spam
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BJXPR01MB0614.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0cc6d9d8-3a93-4b91-5979-08dd5aeb2b96
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Mar 2025 07:07:05.1547
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 39d6d270-c813-4e78-90db-1de0de08f579
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: hrQlK+uEmGpSwK4sVzsbdrgIlgkCu20h9sRQAQEvRfLMi+QApQsuQF++ZH9y+rfVS5bXXqGuv+kf9wb0425070AiWujvVQK9HZfaueZ1/rw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BJXPR01MB0839
+X-OriginatorOrg: enflame-tech.com
 
-In Qualcomm SoCs, firmware loading for Serial Engines (SE) in the QUP
-hardware has traditionally been managed by TrustZone (TZ). This setup
-handled Serial Engines(SE) assignments and access control permissions,
-ensuring a high level of security but limiting flexibility and
-accessibility.
-=20
-This limitation poses a significant challenge for developers who need mor=
-e
-flexibility to enable any protocol on any of the SEs within the QUP
-hardware.
-=20
-To address this, we are introducing a change that opens the firmware
-loading mechanism to the Linux environment. This enhancement increases
-flexibility and allows for more streamlined and efficient management. We
-can now handle SE assignments and access control permissions directly
-within Linux, eliminating the dependency on TZ.
-=20
-We propose an alternative method for firmware loading and SE
-ownership/transfer mode configuration based on device tree configuration.
-This method does not rely on other execution environments, making it
-accessible to all developers.
-=20
-For SEs used prior to the kernel, their firmware will be loaded by the
-respective image drivers (e.g., Debug UART, Secure or trusted SE).
-Additionally, the GSI firmware, which is common to all SEs per QUPV3 core=
-,
-will not be loaded by Linux driver but TZ only. At the kernel level, only
-the SE protocol driver should load the respective protocol firmware.
----
-v2 -> v3:
+--_002_BJXPR01MB0614C01A9523786117B1F1CBCEC8ABJXPR01MB0614CHNP_
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 
-- Add a new YAML file for QUP peripheral-specific properties for I2C, SPI=
-, and SERIAL buses.
-- Drop the 'qcom,xfer-mode' property and add the 'qcom,gsi-dma-allowed' p=
-roperty in protocol-specific YAML.
-- Add a reference for the QUP peripheral shared YAML to protocol-specific=
- YAML.
-- Enhance error handling and remove redundant if conditions in the qcom-g=
-eni-se.c driver.
-- Remove the ternary operator in the qup_fw_load function.
-- Update function descriptions and use imperative mood in qcom-geni-se.c
-- Load firmware during probe only if the protocol is invalid.
+W0VYVEVSTkFMIEVNQUlMXQ0KDQpGcm9tIDVmYzdiMWE5ZTBmMGJjZmExNDA2OGM2MzU4MDE5ZWQx
+ZTNmZmM2YzYgTW9uIFNlcCAxNyAwMDowMDowMCAyMDAxDQpGcm9tOiAiZGlvLnN1biIgPGRpby5z
+dW5AZW5mbGFtZS10ZWNoLmNvbT4NCkRhdGU6IFdlZCwgMjYgRmViIDIwMjUgMDg6NTQ6NDkgKzAw
+MDANClN1YmplY3Q6IFtQQVRDSF0gQUVSOiBQQ0lFIENUTyByZWNvdmVyeSBoYW5kbGUgZml4DQoN
+CiAtIE5vbi1mYXRhbCBQQ0llIENUTyBpcyByZXBvcnR0ZWQgdG8gUENJRSBSQyBhbmQgaXQgd2ls
+bCBiZSBjb252ZXJ0dGVkIHRvDQogICBBZHZOb25GYXRhbEVyciBhdXRvbWF0aWNhbGx5DQogLSBh
+Y2NvcmRpbmcgdG8gUENJRSBTUEVDIDYuMi4zLjIuNC40IFJlcXVlc3RlciB3aXRoIENvbXBsZXRp
+b24gVGltZW91dCgNCiAgIElmIHRoZSBzZXZlcml0eSBvZiB0aGUgQ1RPIGlzIG5vbi1mYXRhbCwg
+YW5kIHRoZSBSZXF1ZXN0ZXIgZWxlY3RzIHRvDQogICBhdHRlbXB0IHJlY292ZXJ5IGJ5IGlzc3Vp
+bmcgYSBuZXcgcmVxdWVzdCwgdGhlIFJlcXVlc3RlciBtdXN0DQogICBmaXJzdCBoYW5kbGUgdGhl
+IGN1cnJlY250IGVycm9yIGNhc2UgYXMgYW4gQWR2aXNvcnkgTm9uLUZhdGFsIEVycm9yLikuDQog
+LSBDdXJyZW50IEtlcm5lbCBjb2RlIGRvZXMgbm90aGluZyB3aGVuIHJlY2VpdmluZyBhbiBBZHZO
+b25GYXRhbEVycigNCiAgIENvcnJlY3RhYmxlIEVycm9yKSBhbmQgdGhlIGRldmljZSBkcml2ZXIg
+aGFzIG5vIGNoYW5jZSB0byBoYW5kbGUgdGhpcw0KICAgZXJyb3IuDQogLSBVbmRlciB0aGlzIHNp
+dHVhdGlvbiwgc29tZXRpbWVzIHN5c3RlbSB3aWxsIGhhbmcgd2hlbiBtb3JlDQogICBBZHZOb25G
+YXRhbEVyciBjb21pbmcuDQoNClNpZ25lZC1vZmYtYnk6IGRpby5zdW4gPGRpby5zdW5AZW5mbGFt
+ZS10ZWNoLmNvbT4NCi0tLQ0KZHJpdmVycy9wY2kvcGNpZS9hZXIuYyB8IDE2ICsrKysrKysrKysr
+KysrKy0NCiAxIGZpbGUgY2hhbmdlZCwgMTUgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQ0K
+DQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9wY2kvcGNpZS9hZXIuYyBiL2RyaXZlcnMvcGNpL3BjaWUv
+YWVyLmMNCmluZGV4IDUwODQ3NGUxNzE4My4uNWRkYzk5MGM2ZjQyIDEwMDY0NA0KLS0tIGEvZHJp
+dmVycy9wY2kvcGNpZS9hZXIuYw0KKysrIGIvZHJpdmVycy9wY2kvcGNpZS9hZXIuYw0KQEAgLTEx
+NTQsNyArMTE1NCwyMSBAQCBzdGF0aWMgdm9pZCBhZXJfcmVjb3Zlcl93b3JrX2Z1bmMoc3RydWN0
+IHdvcmtfc3RydWN0ICp3b3JrKQ0KICAgICAgICAgICAgICAgIGdoZXNfZXN0YXR1c19wb29sX3Jl
+Z2lvbl9mcmVlKCh1bnNpZ25lZCBsb25nKWVudHJ5LnJlZ3MsDQogICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgIHNpemVvZihzdHJ1Y3QgYWVyX2NhcGFiaWxpdHlfcmVn
+cykpOw0KDQotICAgICAgICAgICAgICAgaWYgKGVudHJ5LnNldmVyaXR5ID09IEFFUl9OT05GQVRB
+TCkNCisgICAgICAgICAgICAgICBpZiAoZW50cnkuc2V2ZXJpdHkgPT0gQUVSX0NPUlJFQ1RBQkxF
+KSB7DQorICAgICAgICAgICAgICAgICAgICAgICBpZiAoZW50cnkucmVncy0+Y29yX3N0YXR1cyAm
+IFBDSV9FUlJfQ09SX0FEVl9ORkFUKSB7DQorICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+IHBjaV9lcnIocGRldiwgIiUwNHg6JTAyeDolMDJ4OiV4IGFkdmlzb3J5IG5vbi1mYXRhbCBlcnJv
+clxuIiwNCisgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGVu
+dHJ5LmRvbWFpbiwgZW50cnkuYnVzLCBQQ0lfU0xPVChlbnRyeS5kZXZmbiksDQorICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBQQ0lfRlVOQyhlbnRyeS5kZXZm
+bikpOw0KKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBpZiAoZW50cnkucmVncy0+dW5j
+b3Jfc3RhdHVzICYgUENJX0VSUl9VTkNfQ09NUF9USU1FKSB7DQorICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgcGNpX2VycihwZGV2LCAiJTA0eDolMDJ4OiUwMng6JXggY29t
+cGxldGlvbiB0aW1lb3V0XG4iLA0KKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICBlbnRyeS5kb21haW4sIGVudHJ5LmJ1cywNCisgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgUENJX1NMT1QoZW50
+cnkuZGV2Zm4pLA0KKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICBQQ0lfRlVOQyhlbnRyeS5kZXZmbikpOw0KKyAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIHBjaWVfZG9fcmVjb3ZlcnkocGRldiwgcGNpX2NoYW5uZWxfaW9f
+ZnJvemVuLA0KKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgIGFlcl9yb290X3Jlc2V0KTsNCisgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgfQ0KKyAgICAgICAgICAgICAgICAgICAgICAgfQ0KKyAgICAgICAg
+ICAgICAgIH0gZWxzZSBpZiAoZW50cnkuc2V2ZXJpdHkgPT0gQUVSX05PTkZBVEFMKQ0KICAgICAg
+ICAgICAgICAgICAgICAgICAgcGNpZV9kb19yZWNvdmVyeShwZGV2LCBwY2lfY2hhbm5lbF9pb19u
+b3JtYWwsDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGFlcl9yb290
+X3Jlc2V0KTsNCiAgICAgICAgICAgICAgICBlbHNlIGlmIChlbnRyeS5zZXZlcml0eSA9PSBBRVJf
+RkFUQUwpDQotLQ0KMi4zNy4zDQoNCg==
 
-v2 Link: https://lore.kernel.org/linux-kernel/20250124105309.295769-1-qui=
-c_vdadhani@quicinc.com/=20
-=20
-v1 -> v2:
+--_002_BJXPR01MB0614C01A9523786117B1F1CBCEC8ABJXPR01MB0614CHNP_
+Content-Type: application/octet-stream;
+	name="0001-AER-PCIE-CTO-recovery-handle-fix.patch"
+Content-Description: 0001-AER-PCIE-CTO-recovery-handle-fix.patch
+Content-Disposition: attachment;
+	filename="0001-AER-PCIE-CTO-recovery-handle-fix.patch"; size=2116;
+	creation-date="Tue, 04 Mar 2025 07:06:36 GMT";
+	modification-date="Tue, 04 Mar 2025 07:07:05 GMT"
+Content-Transfer-Encoding: base64
 
-- Drop the qcom,load-firmware property.
-- Remove the fixed firmware path.
-- Add the 'firmware-name' property in the QUP common driver.
-- Add logic to read the firmware path from the device tree.
-- Resolve kernel test robot warnings.
-- Update the 'qcom,xfer-mode' property description.
+RnJvbSA1ZmM3YjFhOWUwZjBiY2ZhMTQwNjhjNjM1ODAxOWVkMWUzZmZjNmM2IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiAiZGlvLnN1biIgPGRpby5zdW5AZW5mbGFtZS10ZWNoLmNvbT4K
+RGF0ZTogV2VkLCAyNiBGZWIgMjAyNSAwODo1NDo0OSArMDAwMApTdWJqZWN0OiBbUEFUQ0hdIEFF
+UjogUENJRSBDVE8gcmVjb3ZlcnkgaGFuZGxlIGZpeAoKIC0gTm9uLWZhdGFsIFBDSWUgQ1RPIGlz
+IHJlcG9ydHRlZCB0byBQQ0lFIFJDIGFuZCBpdCB3aWxsIGJlIGNvbnZlcnR0ZWQgdG8KICAgQWR2
+Tm9uRmF0YWxFcnIgYXV0b21hdGljYWxseQogLSBhY2NvcmRpbmcgdG8gUENJRSBTUEVDIDYuMi4z
+LjIuNC40IFJlcXVlc3RlciB3aXRoIENvbXBsZXRpb24gVGltZW91dCgKICAgSWYgdGhlIHNldmVy
+aXR5IG9mIHRoZSBDVE8gaXMgbm9uLWZhdGFsLCBhbmQgdGhlIFJlcXVlc3RlciBlbGVjdHMgdG8K
+ICAgYXR0ZW1wdCByZWNvdmVyeSBieSBpc3N1aW5nIGEgbmV3IHJlcXVlc3QsIHRoZSBSZXF1ZXN0
+ZXIgbXVzdAogICBmaXJzdCBoYW5kbGUgdGhlIGN1cnJlY250IGVycm9yIGNhc2UgYXMgYW4gQWR2
+aXNvcnkgTm9uLUZhdGFsIEVycm9yLikuCiAtIEN1cnJlbnQgS2VybmVsIGNvZGUgZG9lcyBub3Ro
+aW5nIHdoZW4gcmVjZWl2aW5nIGFuIEFkdk5vbkZhdGFsRXJyKAogICBDb3JyZWN0YWJsZSBFcnJv
+cikgYW5kIHRoZSBkZXZpY2UgZHJpdmVyIGhhcyBubyBjaGFuY2UgdG8gaGFuZGxlIHRoaXMKICAg
+ZXJyb3IuCiAtIFVuZGVyIHRoaXMgc2l0dWF0aW9uLCBzb21ldGltZXMgc3lzdGVtIHdpbGwgaGFu
+ZyB3aGVuIG1vcmUKICAgQWR2Tm9uRmF0YWxFcnIgY29taW5nLgoKU2lnbmVkLW9mZi1ieTogZGlv
+LnN1biA8ZGlvLnN1bkBlbmZsYW1lLXRlY2guY29tPgotLS0KIGRyaXZlcnMvcGNpL3BjaWUvYWVy
+LmMgfCAxNiArKysrKysrKysrKysrKystCiAxIGZpbGUgY2hhbmdlZCwgMTUgaW5zZXJ0aW9ucygr
+KSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGNpL3BjaWUvYWVyLmMgYi9k
+cml2ZXJzL3BjaS9wY2llL2Flci5jCmluZGV4IDUwODQ3NGUxNzE4My4uNWRkYzk5MGM2ZjQyIDEw
+MDY0NAotLS0gYS9kcml2ZXJzL3BjaS9wY2llL2Flci5jCisrKyBiL2RyaXZlcnMvcGNpL3BjaWUv
+YWVyLmMKQEAgLTExNTQsNyArMTE1NCwyMSBAQCBzdGF0aWMgdm9pZCBhZXJfcmVjb3Zlcl93b3Jr
+X2Z1bmMoc3RydWN0IHdvcmtfc3RydWN0ICp3b3JrKQogCQlnaGVzX2VzdGF0dXNfcG9vbF9yZWdp
+b25fZnJlZSgodW5zaWduZWQgbG9uZyllbnRyeS5yZWdzLAogCQkJCQkgICAgc2l6ZW9mKHN0cnVj
+dCBhZXJfY2FwYWJpbGl0eV9yZWdzKSk7CiAKLQkJaWYgKGVudHJ5LnNldmVyaXR5ID09IEFFUl9O
+T05GQVRBTCkKKwkJaWYgKGVudHJ5LnNldmVyaXR5ID09IEFFUl9DT1JSRUNUQUJMRSkgeworCQkJ
+aWYgKGVudHJ5LnJlZ3MtPmNvcl9zdGF0dXMgJiBQQ0lfRVJSX0NPUl9BRFZfTkZBVCkgeworCQkJ
+CXBjaV9lcnIocGRldiwgIiUwNHg6JTAyeDolMDJ4OiV4IGFkdmlzb3J5IG5vbi1mYXRhbCBlcnJv
+clxuIiwKKwkJCQkJCWVudHJ5LmRvbWFpbiwgZW50cnkuYnVzLCBQQ0lfU0xPVChlbnRyeS5kZXZm
+biksCisJCQkJCQlQQ0lfRlVOQyhlbnRyeS5kZXZmbikpOworCQkJCWlmIChlbnRyeS5yZWdzLT51
+bmNvcl9zdGF0dXMgJiBQQ0lfRVJSX1VOQ19DT01QX1RJTUUpIHsKKwkJCQkJcGNpX2VycihwZGV2
+LCAiJTA0eDolMDJ4OiUwMng6JXggY29tcGxldGlvbiB0aW1lb3V0XG4iLAorCQkJCQkJCWVudHJ5
+LmRvbWFpbiwgZW50cnkuYnVzLAorCQkJCQkJCVBDSV9TTE9UKGVudHJ5LmRldmZuKSwKKwkJCQkJ
+CQlQQ0lfRlVOQyhlbnRyeS5kZXZmbikpOworCQkJCQlwY2llX2RvX3JlY292ZXJ5KHBkZXYsIHBj
+aV9jaGFubmVsX2lvX2Zyb3plbiwKKwkJCQkJCQkJCSBhZXJfcm9vdF9yZXNldCk7CisJCQkJfQor
+CQkJfQorCQl9IGVsc2UgaWYgKGVudHJ5LnNldmVyaXR5ID09IEFFUl9OT05GQVRBTCkKIAkJCXBj
+aWVfZG9fcmVjb3ZlcnkocGRldiwgcGNpX2NoYW5uZWxfaW9fbm9ybWFsLAogCQkJCQkgYWVyX3Jv
+b3RfcmVzZXQpOwogCQllbHNlIGlmIChlbnRyeS5zZXZlcml0eSA9PSBBRVJfRkFUQUwpCi0tIAoy
+LjM3LjMKCg==
 
-v1 Link: https://lore.kernel.org/linux-kernel/20241204150326.1470749-1-qu=
-ic_vdadhani@quicinc.com/=20
----
-Viken Dadhaniya (9):
-  dt-bindings: qcom: geni-se: Add 'firmware-name' property for firmware
-    loading
-  dt-bindings: qcom: se-common: Add QUP Peripheral-specific properties
-    for I2C, SPI, and SERIAL bus
-  dt-bindings: i2c: qcom,i2c-geni: document qcom,gsi-dma-allowed
-  spi: dt-bindings: document qcom,gsi-dma-allowed
-  dt-bindings: serial: document qcom,gsi-dma-allowed
-  soc: qcom: geni-se: Add support to load QUP SE Firmware via Linux
-    subsystem
-  i2c: qcom-geni: Load i2c qup Firmware from linux side
-  spi: geni-qcom: Load spi qup Firmware from linux side
-  serial: qcom-geni: Load UART qup Firmware from linux side
-
- .../bindings/i2c/qcom,i2c-geni-qcom.yaml      |   3 +
- .../serial/qcom,serial-geni-qcom.yaml         |   3 +
- .../bindings/soc/qcom/qcom,geni-se.yaml       |   5 +
- .../soc/qcom/qcom,se-common-props.yaml        |  26 ++
- .../bindings/spi/qcom,spi-geni-qcom.yaml      |   3 +
- drivers/i2c/busses/i2c-qcom-geni.c            |   8 +-
- drivers/soc/qcom/qcom-geni-se.c               | 423 ++++++++++++++++++
- drivers/spi/spi-geni-qcom.c                   |   6 +
- drivers/tty/serial/qcom_geni_serial.c         |   8 +-
- include/linux/soc/qcom/geni-se.h              |  18 +
- include/linux/soc/qcom/qup-fw-load.h          | 179 ++++++++
- 11 files changed, 680 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,se-co=
-mmon-props.yaml
- create mode 100644 include/linux/soc/qcom/qup-fw-load.h
-
---=20
-2.34.1
-
-
+--_002_BJXPR01MB0614C01A9523786117B1F1CBCEC8ABJXPR01MB0614CHNP_--
 
