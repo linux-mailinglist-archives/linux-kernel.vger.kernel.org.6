@@ -1,219 +1,221 @@
-Return-Path: <linux-kernel+bounces-543631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14612A4D7AE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:16:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC047A4D7BD
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:18:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 317631646E5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:16:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFA293AC1AF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:17:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E976E1F4CB0;
-	Tue,  4 Mar 2025 09:16:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E92E1FCCF8;
+	Tue,  4 Mar 2025 09:17:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e8Snu2zC"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fuxu++ZY"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6293823B0
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 09:16:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD44F1E7C20
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 09:17:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741079775; cv=none; b=BSNwN8QxFGujMSZo9sGi5QBrPfSwuZ9/pflkDj46YwIXyxfpLkAPDqrP6EQ8Otghr5+Vv8AVyvRR74wHNSAioWwnwM5yYjobw8JcLiM6id4rcTd03FDG0nN3jJVZAlCHapNdbA6k+m/ingJORnIWphHrI3Q8djFtwLdGSKSCyLw=
+	t=1741079873; cv=none; b=WjH/jm3uksQcFiVL8P/RJR8bGF4sk/aD8NgasXSGVK7t3QGiwoy0T1zDGiV5xnT9PnAWJHC34HMefg9/qTVVnsp7A1XibJENkZnv6zlPTUeOhPorfJDx3UtYsuQ0zB6uH6ib1+vb8uCmpU9JnSo55P4/ws3B0WznaJBkSHlDyV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741079775; c=relaxed/simple;
-	bh=fzMnd7M6rwCyOtB8q34CUuM6FNDauTxpaDL9Z6xCCYE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hJMks9OzYPuANFITbqAZCt6fWT7TbHxkuU5x70kcvow3LZ2LaC7H0/QGz5WimO7sVi2+UqKS8iIINxOXnBcERXeOzdO+mw6jp8RFyTWodIzpDPvi2uMrPcltojcVJ/at0XdBg3rJsEVs8D1wcaI4NiFxxnQG82XBDEfDizHpj1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e8Snu2zC; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741079772;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=twbfMmYGP3kHV1qPJcf6r3dyxEQU/j00LNN32qJ4mH4=;
-	b=e8Snu2zCbQ4yb9eapmEZNo3w+kFhjzaxjHc8JW01xlyHBUR7xIfkJxZr2qCsUfTWyj8N+H
-	IVmZ6d6XkMI7vqMFdxI7ii2SBUDhHUlMqsYSN5r+E5kssRQzzK3HaA7ulXx00op27evvqM
-	AlPNRF5nlm2sbJ6pQLu72EFfEjPogIo=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-629-kRKi8jfLM5qSvaIjwVAklQ-1; Tue, 04 Mar 2025 04:16:06 -0500
-X-MC-Unique: kRKi8jfLM5qSvaIjwVAklQ-1
-X-Mimecast-MFC-AGG-ID: kRKi8jfLM5qSvaIjwVAklQ_1741079765
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7bb849aa5fbso1480411585a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 01:16:06 -0800 (PST)
+	s=arc-20240116; t=1741079873; c=relaxed/simple;
+	bh=EYwd2Jf8ZA0KU9xC36aNCIR5lDQhcFK0j7Q6bTeAt5o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aGkIqEw9ctL6xmAEn59Yp0h+PebzhmTLr5DvHXOmhQ9GMVxPVZJ8Pe63/oEPN7hv4W//smq/RGaBU6+FeIIZYrkmkpatlvQTCXdPani5omrsi8Hr6NJg7Bzli0NUD3Vv+iP2yLHqV/BA4CimqDuecp8uK87II4x1zEAPdsJMMcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fuxu++ZY; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5e5491eb37dso3459041a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 01:17:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1741079869; x=1741684669; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=U7nVbwpLU0+lp6Hc0ee6jvbH0Pu/dJ0Otg1V1qw972I=;
+        b=fuxu++ZYVsqoY3xjWsoTqcXMgLBOCtHww6PZHUOFjz5ZCu+QqJYXzitd9nUrbOXdjP
+         vlId1tD1GAFFDUCt4mtRLBehfFm2IgtoWyfO8hYTXTsnU1JseV1C8hw5Zamf3QEi8Pl6
+         +DMmdH4u8snN/q8RavL3eaoQBoqjPBE2cz4VWdIrhOaXchpJgr6lSoBlL7nkBCv5wouJ
+         unrymmFLGE0qhL/SferbZsj0JrR51NjppLcZExBfAWFN9AzRFpF4I31CILKK8ufUUOIs
+         fnDizfeEvpw7uJNhqMuJSL8Lucj8/ma28e/HsVdlu4Gq2Z/5XQ2dljW3BkNmPVPbf9pa
+         EZXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741079763; x=1741684563;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1741079869; x=1741684669;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=twbfMmYGP3kHV1qPJcf6r3dyxEQU/j00LNN32qJ4mH4=;
-        b=Z5SZNyvloC9nGGdgVxMZ47OqNx/kMSS3DPAUC5oRyhGGDJ/BMhNYKAwHrqxzxSicFl
-         h5LtNGYLhtGHJxv52nWYzzaXVh3JtDoR+HK+iXvGLd5gA+PrKMOoLa2CWRg1My1r9wpY
-         Oy1XbqmDBo1biwJvsWSB9NqpSdtrBjdPAErU2PwUuOj+DHG4acdT+icV/SsoIzVcpljy
-         wGtcYFFZBmCRbLwoz9KrrQw6dM0oVqwhgZfMJIEy0+Q2C/uhuQ2/nfJbGWB1MSLtT7O2
-         BFm1+7F6mZXLnOAxs1J/gGRyztoF/sDRQGdUqym9oiwdorY0h0ERHS8a71+BJBsVF7lH
-         K1EA==
-X-Forwarded-Encrypted: i=1; AJvYcCVUi12TnKv7TByiwwQDu2MVhYa3NTLyo4vUmp3VjfAsOC+pt1fLrix21cVITLItoIMexSIR96KKgzYNzjA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQvYMu47VEhRU1aaA4+lSTDF/f4UlUxa4/RmzHiwTsnsQcyn5Q
-	AD8MhPkZaMlibmuR9bdgRHgV96XNR2zsUjm8TbxfMtvyncYhButiEt4M1djbSHyQw8VNhuOnb91
-	3gfovDEq+otuaUVyrXnSeL4kpKa9+Cla87wWCW3J7Jo9Ivwd9hyxajlRVn4e02m19fZz26c2b
-X-Gm-Gg: ASbGncs2+40PgFhytp1gMJ3vvJaUoicCG0vgPO9qWtzt26WhVOzvvwq7G4Fa5VuqBUf
-	+xO01zNKstMpkHrjsye2Xiv1Xm0cFy8XcyKvN70gROx1BSFCS1be0PoBNW9gKVyt3o4SSnwvWa2
-	U+Gb6RrjBckZwBSAtJa1YbjA+L3PdIFSee0faEuz32GC1cE71KeGasQrX9etxSAIipRq8ow9Jy4
-	QZlPBCEAnP49B3SN4ytwcYnpJ6Ez2UjlYwmi+e649aqd+PkA2Vj2k5AmA7pQ6fzYVW3YtIgfSnK
-	dUOxs9B1Sa0BpE7WLlSLO4DMSLxAj31wNg30StXaICueXMROfY1ESbavgS+bb1A1EzVhA6C+psy
-	vkzDS
-X-Received: by 2002:a05:620a:3902:b0:7c0:6419:8bd3 with SMTP id af79cd13be357-7c39c4b678bmr2271034385a.22.1741079761453;
-        Tue, 04 Mar 2025 01:16:01 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHENlR8nCjhV94d1R8ys7ThN2NQzinSvDAG1fi5LyI/AFJRlI8nAiJwrzKnAO3Hrp6y5e7WgQ==
-X-Received: by 2002:a05:620a:3902:b0:7c0:6419:8bd3 with SMTP id af79cd13be357-7c39c4b678bmr2271031685a.22.1741079761188;
-        Tue, 04 Mar 2025 01:16:01 -0800 (PST)
-Received: from jlelli-thinkpadt14gen4.remote.csb (host-89-240-117-139.as13285.net. [89.240.117.139])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c3d30cc5fdsm18304985a.72.2025.03.04.01.15.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 01:16:00 -0800 (PST)
-Date: Tue, 4 Mar 2025 09:15:55 +0000
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Harshit Agarwal <harshit@nutanix.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	linux-kernel@vger.kernel.org, Jon Kohler <jon@nutanix.com>,
-	Gauri Patwardhan <gauri.patwardhan@nutanix.com>,
-	Rahul Chunduru <rahul.chunduru@nutanix.com>,
-	Will Ton <william.ton@nutanix.com>, stable@vger.kernel.org
-Subject: Re: [PATCH v3] sched/rt: Fix race in push_rt_task
-Message-ID: <Z8bEyxZCf8Y_JReR@jlelli-thinkpadt14gen4.remote.csb>
-References: <20250225180553.167995-1-harshit@nutanix.com>
+        bh=U7nVbwpLU0+lp6Hc0ee6jvbH0Pu/dJ0Otg1V1qw972I=;
+        b=SXvGcQjWI44/M2ZR+lr9gRDSIesSGb5Awg4yhuzohWowqQNpInsOrHV0sxigMP15xu
+         c7rzp/8dKKqJpCWm1GUku4/uWWvnvzGNpfnLUsqEl9mD/9/PTIxybWf+ga1gLxq7tBDc
+         52Fyxe1HaqliVyANFFCLr6MC0jugD4GjJNqvatPKgxy63Mak6z7cRtE98FwIU+3JCxCY
+         eHlJfD2cdOlLmuwJBjguumeGETI1iJpsAaBHbRuCiQ8MVp/SOxf4Vs7IF/Ei6oS05iqa
+         E/MrPdW07mwNjm6VTzD+8qsYzy2bYRlFsLmAl9mUSXnhsOrlRt9exb5GLxHB+vaFeF71
+         PJaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWrB0XwCQZvNmZhwRM7COJjyFBdGKoQF0l0DW3MWiQ5vvpRrj/V7pEXXg0597b1/m+F+YKpMKat+NJ8m7Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5OMSGObjf0s2LLWTYekzI33b3itldVji1n7O3gv/JCwJviG7r
+	su5cXaNITDVS8hzFNylIIcspkSkZhZVSpDXzbt7+Q5iPdBArUdQEJt6x/AtCqko=
+X-Gm-Gg: ASbGncvPVUJ9ywK49IriDs9jqf0GWa4yBGSzZbSyDepIWHpvAh92CfVFoYsNUcd9YW7
+	yJmH84UPCZu3gHOGsL5pBf1X/K6m+z2G76esQ5WrRrfrmujyncsPmMm90ao++bCBP7YGWNBLMr9
+	VCZmHl3QO/mkMcxTnZRDPb1Mo1u8bUnA0ovwwgdcY+IcTUUXvbXHIea732NGMF9ck1HjlFkwCgd
+	onR8BL6QtKBTTzmIGLh65PUprplxnHmiJf7oPJNVzmhEB5xXLheT3yBTFIKZ9I92qUQ8JP9+ilr
+	hoDZgkSROTM4q/kARum/frRqFsM4etpTQWB06oj8znH0FSBe+q3inir5THovY7bh/p1n5CP3
+X-Google-Smtp-Source: AGHT+IFEBbxQyaP0/2DWYOKB8ElC0B8gdpp7QbNW8c37nqwtwNfKPMEljUeKpMeGoOykV8PZYEcmVQ==
+X-Received: by 2002:a05:6402:2789:b0:5e0:52df:d569 with SMTP id 4fb4d7f45d1cf-5e4d6b852d0mr16127811a12.28.1741079868692;
+        Tue, 04 Mar 2025 01:17:48 -0800 (PST)
+Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223501f9dd8sm90968655ad.57.2025.03.04.01.17.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Mar 2025 01:17:48 -0800 (PST)
+Message-ID: <6f4017dc-2b3d-4b1a-b819-423acb42d999@suse.com>
+Date: Tue, 4 Mar 2025 19:47:34 +1030
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225180553.167995-1-harshit@nutanix.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm: alloc_pages_bulk: remove assumption of populating
+ only NULL elements
+To: Yunsheng Lin <linyunsheng@huawei.com>, Yishai Hadas <yishaih@nvidia.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>,
+ Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+ Kevin Tian <kevin.tian@intel.com>,
+ Alex Williamson <alex.williamson@redhat.com>, Chris Mason <clm@fb.com>,
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+ Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
+ Yue Hu <zbestahu@gmail.com>, Jeffle Xu <jefflexu@linux.alibaba.com>,
+ Sandeep Dhavale <dhavale@google.com>, Carlos Maiolino <cem@kernel.org>,
+ "Darrick J. Wong" <djwong@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Trond Myklebust <trondmy@kernel.org>,
+ Anna Schumaker <anna@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
+ Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
+ Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+ Tom Talpey <tom@talpey.com>
+Cc: Luiz Capitulino <luizcap@redhat.com>,
+ Mel Gorman <mgorman@techsingularity.net>, Dave Chinner
+ <david@fromorbit.com>, kvm@vger.kernel.org, virtualization@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+ linux-erofs@lists.ozlabs.org, linux-xfs@vger.kernel.org, linux-mm@kvack.org,
+ netdev@vger.kernel.org, linux-nfs@vger.kernel.org
+References: <20250228094424.757465-1-linyunsheng@huawei.com>
+Content-Language: en-US
+From: Qu Wenruo <wqu@suse.com>
+Autocrypt: addr=wqu@suse.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
+ FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
+ Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
+ fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
+ 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
+ V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
+ rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
+ rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
+ Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
+ E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
+ vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
+ g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
+ AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
+ cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
+ qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
+ /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
+ o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
+ JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
+In-Reply-To: <20250228094424.757465-1-linyunsheng@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Harshit,
 
-On 25/02/25 18:05, Harshit Agarwal wrote:
-> Overview
-> ========
-> When a CPU chooses to call push_rt_task and picks a task to push to
-> another CPU's runqueue then it will call find_lock_lowest_rq method
-> which would take a double lock on both CPUs' runqueues. If one of the
-> locks aren't readily available, it may lead to dropping the current
-> runqueue lock and reacquiring both the locks at once. During this window
-> it is possible that the task is already migrated and is running on some
-> other CPU. These cases are already handled. However, if the task is
-> migrated and has already been executed and another CPU is now trying to
-> wake it up (ttwu) such that it is queued again on the runqeue
-> (on_rq is 1) and also if the task was run by the same CPU, then the
-> current checks will pass even though the task was migrated out and is no
-> longer in the pushable tasks list.
 
-...
-
-> ---
->  kernel/sched/rt.c | 54 +++++++++++++++++++++++------------------------
->  1 file changed, 26 insertions(+), 28 deletions(-)
+在 2025/2/28 20:14, Yunsheng Lin 写道:
+> As mentioned in [1], it seems odd to check NULL elements in
+> the middle of page bulk allocating, and it seems caller can
+> do a better job of bulk allocating pages into a whole array
+> sequentially without checking NULL elements first before
+> doing the page bulk allocation for most of existing users.
 > 
-> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-> index 4b8e33c615b1..4762dd3f50c5 100644
-> --- a/kernel/sched/rt.c
-> +++ b/kernel/sched/rt.c
-> @@ -1885,6 +1885,27 @@ static int find_lowest_rq(struct task_struct *task)
->  	return -1;
->  }
->  
-> +static struct task_struct *pick_next_pushable_task(struct rq *rq)
-> +{
-> +	struct task_struct *p;
-> +
-> +	if (!has_pushable_tasks(rq))
-> +		return NULL;
-> +
-> +	p = plist_first_entry(&rq->rt.pushable_tasks,
-> +			      struct task_struct, pushable_tasks);
-> +
-> +	BUG_ON(rq->cpu != task_cpu(p));
-> +	BUG_ON(task_current(rq, p));
-> +	BUG_ON(task_current_donor(rq, p));
-> +	BUG_ON(p->nr_cpus_allowed <= 1);
-> +
-> +	BUG_ON(!task_on_rq_queued(p));
-> +	BUG_ON(!rt_task(p));
-> +
-> +	return p;
-> +}
-> +
->  /* Will lock the rq it finds */
->  static struct rq *find_lock_lowest_rq(struct task_struct *task, struct rq *rq)
->  {
-> @@ -1915,18 +1936,16 @@ static struct rq *find_lock_lowest_rq(struct task_struct *task, struct rq *rq)
->  			/*
->  			 * We had to unlock the run queue. In
->  			 * the mean time, task could have
-> -			 * migrated already or had its affinity changed.
-> -			 * Also make sure that it wasn't scheduled on its rq.
-> +			 * migrated already or had its affinity changed,
-> +			 * therefore check if the task is still at the
-> +			 * head of the pushable tasks list.
->  			 * It is possible the task was scheduled, set
->  			 * "migrate_disabled" and then got preempted, so we must
->  			 * check the task migration disable flag here too.
->  			 */
-> -			if (unlikely(task_rq(task) != rq ||
-> +			if (unlikely(is_migration_disabled(task) ||
->  				     !cpumask_test_cpu(lowest_rq->cpu, &task->cpus_mask) ||
-> -				     task_on_cpu(rq, task) ||
-> -				     !rt_task(task) ||
-> -				     is_migration_disabled(task) ||
-> -				     !task_on_rq_queued(task))) {
-> +				     task != pick_next_pushable_task(rq))) {
->  
->  				double_unlock_balance(rq, lowest_rq);
->  				lowest_rq = NULL;
-> @@ -1946,27 +1965,6 @@ static struct rq *find_lock_lowest_rq(struct task_struct *task, struct rq *rq)
->  	return lowest_rq;
->  }
->  
-> -static struct task_struct *pick_next_pushable_task(struct rq *rq)
-> -{
-> -	struct task_struct *p;
-> -
-> -	if (!has_pushable_tasks(rq))
-> -		return NULL;
-> -
-> -	p = plist_first_entry(&rq->rt.pushable_tasks,
-> -			      struct task_struct, pushable_tasks);
-> -
-> -	BUG_ON(rq->cpu != task_cpu(p));
-> -	BUG_ON(task_current(rq, p));
-> -	BUG_ON(task_current_donor(rq, p));
-> -	BUG_ON(p->nr_cpus_allowed <= 1);
-> -
-> -	BUG_ON(!task_on_rq_queued(p));
-> -	BUG_ON(!rt_task(p));
-> -
-> -	return p;
-> -}
-> -
+> Through analyzing of bulk allocation API used in fs, it
+> seems that the callers are depending on the assumption of
+> populating only NULL elements in fs/btrfs/extent_io.c and
+> net/sunrpc/svc_xprt.c while erofs and btrfs don't, see:
+> commit 91d6ac1d62c3 ("btrfs: allocate page arrays using bulk page allocator")
 
-As usual, we have essentially the same in deadline.c, do you think we
-should/could implement the same fix proactively in there as well? Steve?
+If you want to change the btrfs part, please run full fstests with 
+SCRATCH_DEV_POOL populated at least.
+
+[...]
+> diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+> index f0a1da40d641..ef52cedd9873 100644
+> --- a/fs/btrfs/extent_io.c
+> +++ b/fs/btrfs/extent_io.c
+> @@ -623,13 +623,26 @@ int btrfs_alloc_page_array(unsigned int nr_pages, struct page **page_array,
+>   			   bool nofail)
+>   {
+>   	const gfp_t gfp = nofail ? (GFP_NOFS | __GFP_NOFAIL) : GFP_NOFS;
+> -	unsigned int allocated;
+> +	unsigned int allocated, ret;
+>   
+> -	for (allocated = 0; allocated < nr_pages;) {
+> -		unsigned int last = allocated;
+> +	/* Defragment page_array so pages can be bulk allocated into remaining
+> +	 * NULL elements sequentially.
+> +	 */
+> +	for (allocated = 0, ret = 0; ret < nr_pages; ret++) {
+> +		if (page_array[ret]) {
+
+You just prove how bad the design is.
+
+All the callers have their page array members to initialized to NULL, or 
+do not care and just want alloc_pages_bulk() to overwrite the 
+uninitialized values.
+
+The best example here is btrfs_encoded_read_regular().
+Now your code will just crash encoded read.
+
+Read the context before doing stupid things.
+
+I find it unacceptable that you just change the code, without any 
+testing, nor even just check all the involved callers.
+
+> +			page_array[allocated] = page_array[ret];
+> +			if (ret != allocated)
+> +				page_array[ret] = NULL;
+> +
+> +			allocated++;
+> +		}
+> +	}
+>   
+> -		allocated = alloc_pages_bulk(gfp, nr_pages, page_array);
+> -		if (unlikely(allocated == last)) {
+> +	while (allocated < nr_pages) {
+> +		ret = alloc_pages_bulk(gfp, nr_pages - allocated,
+> +				       page_array + allocated);
+
+I see the new interface way worse than the existing one.
+
+All btrfs usage only wants a simple retry-until-all-fulfilled behavior.
+
+NACK for btrfs part, and I find you very unresponsible not even bother 
+running any testsuit and just submit such a mess.
+
+Just stop this, no one will ever take you serious anymore.
 
 Thanks,
-Juri
+Qu
 
 
