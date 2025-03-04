@@ -1,58 +1,55 @@
-Return-Path: <linux-kernel+bounces-544157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A044A4DE08
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:34:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13DCBA4DE0D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:35:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F8AD7A549A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:33:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8716A1892065
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:35:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 710E8202F92;
-	Tue,  4 Mar 2025 12:34:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3C7720408E;
+	Tue,  4 Mar 2025 12:34:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kp7FvLQj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ufl9pv9Z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D373C1FDE05
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 12:34:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 399EE20408C;
+	Tue,  4 Mar 2025 12:34:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741091641; cv=none; b=GDi+swR3Sk8/NC/HoUJ3lgvQTdWThgl0eUptB85JZlyNorpcdI4xlHFaQw5FCfwznD26xG2IF1LMaHTmGvm8YMugDE6WXFfUnTE8WB6binUTLxEXG8/14y0WgLVUYrRw/I+clKo0TeVkHqvYi21f1kodysb5bT70XDyuD4JhM+A=
+	t=1741091648; cv=none; b=ZI8es/FakR2br/8/X2ytthF3TmrsCQPiP6PtjUMLDWirQMs0xwzuQpPOsp+yNbIKobPKJaBWQSarssvA7qDCaFbs7rTDQs79fMbh6ZpVgGbiGsw5t+qHWH9hNjEQdVW1lWqVKaGd7mqN6599flKpplCNbqR8zqOhtp3jlTlHaaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741091641; c=relaxed/simple;
-	bh=+Oq4qborciN3DUoZ8cclX0JGNzd0VTbYzFALe57YoB8=;
+	s=arc-20240116; t=1741091648; c=relaxed/simple;
+	bh=zTHWmApFgJPW07OqgetEzjrUkVWnD4jFsoH2YVPS7cM=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=JpWU4rJoC9Hg/R1wmyhkrx9uvt3bDmkc61yEzjEJ+E7rG5OS1v7/ZISSB+EP0IvDqiR8lVu6U/pfQRy0wLPncTRfHwGB6j8KZM/wfSqe0OiiSh6x0eLpnxt34SnMmPuoUy6WgoG2+yFyzHn1KpezDjpQo7KV3lVuAzq6gMZckfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kp7FvLQj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97FDDC4CEE5;
-	Tue,  4 Mar 2025 12:33:59 +0000 (UTC)
+	 MIME-Version:Content-Type; b=nDfqYpIeXr1pHvHgNsFM2XobNwsZFeNgalzB2oK4/unR6x5ceyLnNZDmv2p9LqZUyafkwuNpCl/BCVGIKYTH7sLMVl0jID9aAGErOiFszXBR9mlPtHCK4rOtnQGCNQ4XFLHcTv4dpmQBfYObaloq//a93nnvYJRdwRaWmXVi/hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ufl9pv9Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9854FC4CEE7;
+	Tue,  4 Mar 2025 12:34:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741091641;
-	bh=+Oq4qborciN3DUoZ8cclX0JGNzd0VTbYzFALe57YoB8=;
+	s=k20201202; t=1741091647;
+	bh=zTHWmApFgJPW07OqgetEzjrUkVWnD4jFsoH2YVPS7cM=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=kp7FvLQjCHpKoC4yJGp5A0Z75h7ahSVZHdI7ezCoSQK4lPylNsVISWczDD4LMDWQo
-	 OjuZUerP9DyqG7uQKmKpSK0F2cB3tM6l0lMrDuzKlKAbUMMxnBsQliXdpGUDmkQLuP
-	 Oub/btjTWLBn+XOc2AI3WejQEXZBKi9mPc62hWDRuwqkninUAOx79vkyfKbegh+eke
-	 FxAnAiRoCCYVcv238BKwIrwNseCyNI20aSFCPbdYr8rv1zw+aJaRtjIoQ1/lTPzL9J
-	 09pTu7J3OULxC7IphGgdJmbYjUTAN9gH+EPqTHUQ4SBhhTKSfhf2gv8vruktadHhHF
-	 /Lvzrdam09usQ==
+	b=Ufl9pv9Zvkj2t9gabq44ETpZFsS8ICkeYA5tMCRVXZeumQJUecaFqAF42fcwdeXuy
+	 Rpwjan7npCFZfydLy5hoUAb69rKCmbeE2dSKqxe6tXRad6Nkb4jjqkwGjoApiZOXBt
+	 GHkVC7Ja/AcwX+xhYtgkdg7csYXFR90iryllzQEx0yZ5cIf9TahMcYkqc+pjKorOVo
+	 iH9ZreU0KappLbyeUqFOfMbE1+DGAK5wbxl02GdaNx+czuO/JTvgOx6J8viZuZOpBm
+	 Qdp17OexetG315+tecsPG82Mj5TH9aPZ1kLp8VQ+eKgunf0YwrIEMX489l6+y/3zQ3
+	 Ft2aTNHkkaTqw==
 From: Mark Brown <broonie@kernel.org>
-To: linux-arm-kernel@lists.infradead.org, 
- Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, 
- Frieder Schrempf <frieder@fris.de>
-Cc: Frieder Schrempf <frieder.schrempf@kontron.de>, 
- Bo Liu <liubo03@inspur.com>, Frank Li <Frank.Li@nxp.com>, 
- Joy Zou <joy.zou@nxp.com>, Robin Gong <yibin.gong@nxp.com>
-In-Reply-To: <20250303132258.50204-1-frieder@fris.de>
-References: <20250303132258.50204-1-frieder@fris.de>
-Subject: Re: [RESEND PATCH v3] regulator: pca9450: Handle hardware with
- fixed SD_VSEL for LDO5
-Message-Id: <174109163933.26710.17795041039558652228.b4-ty@kernel.org>
-Date: Tue, 04 Mar 2025 12:33:59 +0000
+To: linux-spi@vger.kernel.org, Conor Dooley <conor@kernel.org>
+Cc: Conor Dooley <conor.dooley@microchip.com>, stable@vger.kernel.org, 
+ Daire McNamara <daire.mcnamara@microchip.com>, linux-kernel@vger.kernel.org
+In-Reply-To: <20250114-easiness-pregame-d1d2d4b57e7b@spud>
+References: <20250114-easiness-pregame-d1d2d4b57e7b@spud>
+Subject: Re: [PATCH] spi: microchip-core: prevent RX overflows when
+ transmit size > FIFO size
+Message-Id: <174109164637.27220.10404431321397753624.b4-ty@kernel.org>
+Date: Tue, 04 Mar 2025 12:34:06 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,26 +60,24 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-1b0d6
 
-On Mon, 03 Mar 2025 14:22:54 +0100, Frieder Schrempf wrote:
-> There are two ways to set the output voltage of the LD05
-> regulator. First by writing to the voltage selection registers
-> and second by toggling the SD_VSEL signal.
+On Tue, 14 Jan 2025 17:13:49 +0000, Conor Dooley wrote:
+> When the size of a transfer exceeds the size of the FIFO (32 bytes), RX
+> overflows will be generated and receive data will be corrupted and
+> warnings will be produced. For example, here's an error generated by a
+> transfer of 36 bytes:
 > 
-> Usually board designers connect SD_VSEL to the VSELECT signal
-> controlled by the USDHC controller, but in some cases the
-> signal is hardwired to a fixed low level (therefore selecting
-> 3.3V as initial value for allowing to boot from the SD card).
+>   spi_master spi0: mchp_corespi_interrupt: RX OVERFLOW: rxlen: 4, txlen: 0
 > 
 > [...]
 
 Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
 Thanks!
 
-[1/1] regulator: pca9450: Handle hardware with fixed SD_VSEL for LDO5
-      commit: c8c1ab2c5cb797fe455aa18b4ab7bf39897627f6
+[1/1] spi: microchip-core: prevent RX overflows when transmit size > FIFO size
+      commit: 91cf42c63f2d8a9c1bcdfe923218e079b32e1a69
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
