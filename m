@@ -1,157 +1,125 @@
-Return-Path: <linux-kernel+bounces-545444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F136A4ED39
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:24:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C8E6A4ED40
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:24:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CE9916B5BA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:24:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DD3A7A9FEE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:23:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496C12620D4;
-	Tue,  4 Mar 2025 19:23:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AF7725F78A;
+	Tue,  4 Mar 2025 19:24:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wuCdzSfa";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jxlMmXlU"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qHPVMeTA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3278125C6FF;
-	Tue,  4 Mar 2025 19:23:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91790259CAC;
+	Tue,  4 Mar 2025 19:24:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741116224; cv=none; b=QWUE2GNLgDdxnw9h6XDMcseopt5q1P2SHfrJs96/42QK0H3KqCgHx9nKf1g6RDDhV6ti6SR0FH8dWheqJ8ImGedS1/UGK6SKbhniKxduDgZCKH7TpzIYR96zTHunj0uxJY2Orbp3ZyOsrLHCZuBMgmzY6VSYIRwrvLHrlchyhTY=
+	t=1741116270; cv=none; b=W/v/mTBRMKdPMLpzvWo0Q6rIF5VskdNrt7YJnoKToXh1/H9h1PgW4sKg9M74dnzc2CSDgQJNoFuFEXwyRgZm1fOYljy52UwJQbMUXHhoT/vJKkZHnopP9fS9cnFAS8kDRjwBeUi0YJ2rIKXMhhpI6PFEKha1+AQkRoVtd8bXnno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741116224; c=relaxed/simple;
-	bh=4P3Tmn5qjIJGpGjyVRAMZneNBRRknbI10NwFZ7+sCbk=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=KhHiiQQiDrbzb7Mk+n01cxGXT/mtEiHPNHfYvyLVFCZcmlPDlgO2nx6T2qwtCIuaPwDdVbTkJqxf5N4ef99hHAkFYFNP18YTfUT6Q4oIlrfxe1Kdwdc4MMW5OAe7/p01hc8y8F7LZUdT02PLiK0Ij9SMPsBs1agQNnCOS7bZG3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wuCdzSfa; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jxlMmXlU; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 04 Mar 2025 19:23:40 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741116221;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5DlvDfgGwZ9DuZNLBpRjFkqsIdpmytFmhzqtuKTBNwg=;
-	b=wuCdzSfaIiHv4xQ3jepmZ5+jiN/wYdyOvaZKWK6B0bovH38a3mEZDug3B2+VtTGG4P55SR
-	cvYlJ3kKgkHVd90HFV8DLWhgxEPYHFCpaf1EZ0EeWMhhw+t5ii0dO74st1dt+fUDjRl9CM
-	Ox2JUbSpyaek/ECWZL1jAuesKZrfHHcqIbFeuo+rvcbCEyaGRRCnuXZ7yRmaewgWCIW/tV
-	wWdh1u1qBOAKEcqbhAlVPEz8Zb6q76TKvWgTUQz3S3KKr1HJgWsdl9HzYNeAPpNwLtZ3AQ
-	9GAd3BZP0o+PPc2M1+q3GIbIgyhRwJvNrR/K1JdGlyZD8NJ1jEZ8oAUpQx+k5Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741116221;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5DlvDfgGwZ9DuZNLBpRjFkqsIdpmytFmhzqtuKTBNwg=;
-	b=jxlMmXlUBLMU1pnjsj5i+BqUD5+Abm002vkfQACQE6Cfkd3QHbvWsJI+kJOmD2uy7IGgnJ
-	pTljgnMlvswM/YAw==
-From: "tip-bot2 for Uros Bizjak" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/asm] x86/irq/32: Use named operands in inline asm
-Cc: Uros Bizjak <ubizjak@gmail.com>, Ingo Molnar <mingo@kernel.org>,
- Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
- "H. Peter Anvin" <hpa@zytor.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250303155446.112769-1-ubizjak@gmail.com>
-References: <20250303155446.112769-1-ubizjak@gmail.com>
+	s=arc-20240116; t=1741116270; c=relaxed/simple;
+	bh=sqOoP6qtQH+z0V252rI4cc0trTllwqKtMaxYZTrbQlQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=a0kT7PHgsGq0q8nVYK4gD7A6rxlKPTH0esJTT/SicjMYhBY11Obl6phUxmpYgc6HeP3YTAdXeMz6U4MUWckaKinFiks3oxgPghbgM7hWf4ceoKauxWUEfXxGhDamx1JQvNO3AuPOruzi5d9rQTUKEtVwCwRLUoPfuP+xW85T92o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qHPVMeTA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCD1FC4CEEA;
+	Tue,  4 Mar 2025 19:24:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741116269;
+	bh=sqOoP6qtQH+z0V252rI4cc0trTllwqKtMaxYZTrbQlQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=qHPVMeTAVw+KBNx4Plw7imddYR3bWWUXTpHl9KC8vEtXc/paFXOfKnvO+pdtTx3SY
+	 RGB9X4j/NEmlI8CXQKgZsK98pLO4caCzemMWDgIxAf2HiabWlbndSc9WH35hla/DnQ
+	 8J26Qm1AXhhWTB48XmGi/E2Zqvxoyav9hg8+hsb2KQjhXaq+ZpsoGA81E/2un2SNTZ
+	 /0cnYHLFvpfEoISDGqEBL1ecxTbrDNQVolhjOSct3/G/yaeZbwGqhv86/zmFqQkldo
+	 MY8KgTpMLm02RhfQlBmZwKXSAH+9eDOAsy7+oreZeCyf4B7d9whBGtCY37v/upkvcp
+	 1+FZE/Nm0g+8g==
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5495e926364so2951221e87.3;
+        Tue, 04 Mar 2025 11:24:29 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUJ9ihNN2sU2pe38keUL4B6qyjqcinm84fVJaKb1+cyZlOu9JSwN9xeudkqQumtW+dVUN4qIRjwzXas6cv8@vger.kernel.org, AJvYcCWsDOfQxuHkt7lIFPRnrGXrJ4Ki6CYiS1Kp8Pc56jSVAE3ADzSNODrZr2iFNsVZ6reYBXVNbyzwzJ2Z7tF1@vger.kernel.org, AJvYcCWuK/kHFUwTiwXJpt7KyoG7oIb3XAzB3L/URnY2qn2bKuEXppQXXCDGiVluV/65DGuKMXMO+7BCt+xkudiaaIuH@vger.kernel.org, AJvYcCXFJGE40YxR2WzqLUA0ew2+NCxSN9BnDzSsgzuEum5nBaCV4mesdgij5YpDGoFHJpphXiZLk85AhQk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOh0Ql8C4CtMIEPQzdatns9eJ/soci1SxuxXCGha4Yxr8yUXbg
+	c9g0k9Ih7tfg/yeqq9c9rBGfHg5/g7T1G/ySvgBaRxuLBEHdiv6AeYDw1sblRz0OZgNWy3AzYgM
+	YSgM0UwWI9SmhXlqloamg2FvmUWM=
+X-Google-Smtp-Source: AGHT+IET8vj/yG3AdG8e8f1Ip4fbT+3bL2YrcsjlWbBKdOpoUun8nHQlHQPie5a4pPWBe/Qdno00in9upo3HUiJQTc4=
+X-Received: by 2002:a05:6512:489:b0:545:aa5:d44f with SMTP id
+ 2adb3069b0e04-5497d35811fmr121961e87.30.1741116268516; Tue, 04 Mar 2025
+ 11:24:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174111622080.14745.8460888388605912001.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <20250217-kunit-kselftests-v1-0-42b4524c3b0a@linutronix.de> <20250217-kunit-kselftests-v1-1-42b4524c3b0a@linutronix.de>
+In-Reply-To: <20250217-kunit-kselftests-v1-1-42b4524c3b0a@linutronix.de>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 5 Mar 2025 04:23:51 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQ6U9ZSRHW+6J1PjwuefQPFFUwdjRdaLQT9NtRBkEGUAQ@mail.gmail.com>
+X-Gm-Features: AQ5f1Jqnsz9EeEagDtG-j1LU-LhgsPAPKhnZ99QZ8tUu3o8tPV8yMe6vSpykRME
+Message-ID: <CAK7LNAQ6U9ZSRHW+6J1PjwuefQPFFUwdjRdaLQT9NtRBkEGUAQ@mail.gmail.com>
+Subject: Re: [PATCH 01/12] kconfig: implement CONFIG_HEADERS_INSTALL for
+ Usermode Linux
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Andrew Morton <akpm@linux-foundation.org>, Willy Tarreau <w@1wt.eu>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	Rae Moar <rmoar@google.com>, Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the x86/asm branch of tip:
+On Mon, Feb 17, 2025 at 8:00=E2=80=AFPM Thomas Wei=C3=9Fschuh
+<thomas.weissschuh@linutronix.de> wrote:
+>
+> userprogs sometimes need access to UAPI headers.
+> This is currently not possible for Usermode Linux, as UM is only
+> a pseudo architecture built on top of a regular architecture and does
+> not have its own UAPI.
+> Instead use the UAPI headers from the underlying regular architecture.
+>
+> Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
 
-Commit-ID:     0ec914707c3ed052ed26eb88f9300109030a7fb2
-Gitweb:        https://git.kernel.org/tip/0ec914707c3ed052ed26eb88f9300109030a7fb2
-Author:        Uros Bizjak <ubizjak@gmail.com>
-AuthorDate:    Mon, 03 Mar 2025 16:54:21 +01:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Tue, 04 Mar 2025 20:12:40 +01:00
+Applied to linux-kbuild with the subject prefix fixed.
 
-x86/irq/32: Use named operands in inline asm
 
-Also use inout "+" constraint modifier where appropriate.
+What concerned me was that this patch creates
+multiple paths to visit the same directory.
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: https://lore.kernel.org/r/20250303155446.112769-1-ubizjak@gmail.com
----
- arch/x86/kernel/irq_32.c | 20 +++++++++-----------
- 1 file changed, 9 insertions(+), 11 deletions(-)
 
-diff --git a/arch/x86/kernel/irq_32.c b/arch/x86/kernel/irq_32.c
-index dc1049c..c4719c4 100644
---- a/arch/x86/kernel/irq_32.c
-+++ b/arch/x86/kernel/irq_32.c
-@@ -54,12 +54,11 @@ static inline void print_stack_overflow(void) { }
- 
- static void call_on_stack(void *func, void *stack)
- {
--	asm volatile("xchgl	%%ebx,%%esp	\n"
-+	asm volatile("xchgl %[sp], %%esp\n"
- 		     CALL_NOSPEC
--		     "movl	%%ebx,%%esp	\n"
--		     : "=b" (stack)
--		     : "0" (stack),
--		       [thunk_target] "D"(func)
-+		     "movl %[sp], %%esp"
-+		     : [sp] "+b" (stack)
-+		     : [thunk_target] "D" (func)
- 		     : "memory", "cc", "edx", "ecx", "eax");
- }
- 
-@@ -71,7 +70,7 @@ static inline void *current_stack(void)
- static inline int execute_on_irq_stack(int overflow, struct irq_desc *desc)
- {
- 	struct irq_stack *curstk, *irqstk;
--	u32 *isp, *prev_esp, arg1;
-+	u32 *isp, *prev_esp;
- 
- 	curstk = (struct irq_stack *) current_stack();
- 	irqstk = __this_cpu_read(pcpu_hot.hardirq_stack_ptr);
-@@ -94,12 +93,11 @@ static inline int execute_on_irq_stack(int overflow, struct irq_desc *desc)
- 	if (unlikely(overflow))
- 		call_on_stack(print_stack_overflow, isp);
- 
--	asm volatile("xchgl	%%ebx,%%esp	\n"
-+	asm volatile("xchgl %[sp], %%esp\n"
- 		     CALL_NOSPEC
--		     "movl	%%ebx,%%esp	\n"
--		     : "=a" (arg1), "=b" (isp)
--		     :  "0" (desc),   "1" (isp),
--			[thunk_target] "D" (desc->handle_irq)
-+		     "movl %[sp], %%esp"
-+		     : "+a" (desc), [sp] "+b" (isp)
-+		     : [thunk_target] "D" (desc->handle_irq)
- 		     : "memory", "cc", "ecx");
- 	return 1;
- }
+[1]
+ARCH=3Dum archheaders
+  -> ARCH=3Dx86 archheaders
+    -> arch/x86/entry/syscalls/
+
+[2]
+ARCH=3Dum headers
+  -> ARCH=3Dx86 headers
+    -> depends on ARCH=3Dx86 archheaders
+      -> arch/x86/entry/syscalls/
+
+
+After carefully reviewing the code, I was convinced that
+this is not a race condition.
+(I am particularly cautious about race conditions in parallel builds
+and try my best to avoid such code.)
+
+
+
+
+
+
+
+
+--
+Best Regards
+Masahiro Yamada
 
