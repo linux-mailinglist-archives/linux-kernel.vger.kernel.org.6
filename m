@@ -1,271 +1,440 @@
-Return-Path: <linux-kernel+bounces-545009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 763DDA4E7F7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:12:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 53156A4E7F0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:12:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2B0146000D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:04:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDFBB461161
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:06:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5672428D043;
-	Tue,  4 Mar 2025 16:42:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91E32292F86;
+	Tue,  4 Mar 2025 16:44:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="YRSOYs3a"
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2044.outbound.protection.outlook.com [40.107.212.44])
+	dkim=pass (2048-bit key) header.d=timsurber.de header.i=@timsurber.de header.b="q8NbtrPz"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98CEF1FF7CA;
-	Tue,  4 Mar 2025 16:42:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741106530; cv=fail; b=a8vOWgEPqwjn56aluyBaKqXUGg174k0VrD3Qeoc0LdRMwnCqo9/0I9QgZw+exGF9fMvmyhqcHJKjjwFCIwzy+qS7ds3FJ90FPNza2wUTPCWWTWZuzyE9eUewEfd3hI739pcDYiXa0roMCwO9Vd5hKY8pKOcZ5WnZ1+YXqWqDPeI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741106530; c=relaxed/simple;
-	bh=DPobDQOQxMzEBoht30BWjKQSj9H1oj0vIZOGs6YyS/c=;
-	h=Date:From:To:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=SreCgf0Sd/KQ5chPS1BFVLyjpA34U/agRr/Bm/M10Hf9pLfyjVy3t2bcDtmW59QZl4kEgE74m7Urz14XQingOOBA80x1RhbORGeRNyjCD9shPqy2RrCyh/6beutKUuT03o1lknmlTLx2ZFLW2WNXPmxr67W7JVZXkJdYougMy2c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=YRSOYs3a; arc=fail smtp.client-ip=40.107.212.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MoYTlXh0PF5NuDrqVhwLZ8I4zQ69yvUFwpgiMDcThcKeIuwmxZCioE/AxRUT4tlj+wXQ3krm/unZXA/w3dGoVVQob5SIcBJfGK0Uk7BA0ohWUzei82nq4uljimnh2qCFcVqSELzmMhE9cPndfqEm9NxndcoUHFvMOSM0vp1yRk9nE0Jt/BJujQq9WZFnKKz+bn7YiaM/yY9uuAHdyJunViujMEACi2Gu511Yn4ZKQiOzaXIJWh8tAUbBEX+xlFNDTaTfWhzueJcp07BJqSOGkTupWm+HJ5sM+rjL8xS6AfvaXqa24dSX7uDFsLDhMNO2mWm01BUqcU4Y2+zcitvKDQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MPpxj+oNPkeZPFZ4tV7Pd4jX1p8fL2IFLsju0NH38Oc=;
- b=lTmxD4Rrwfeo7sp8s6Ok9lloIOSqMKBGK8+WebYFjQrtJySy1200kBL0mIfUjUgVu/qCJqAvOOts4LkYSVmPoC/yn5rtWkbJiCe8dX3sbxgIdbz2Nm2a8UKtmDdKmTPOkEtQOyzayCJ6TI5xAS7ixnou7kpcnkJnWGGYYYmyhiPaLT1Wd2ip7gm3mC31eE7DiaPt/cUSOh4SnR4+NEAOL+yYaD78jsj9hFuB0w4mCfVOtaQEOeBnkvHR2yGjjXXY2u61TE/BbnSJy7rnqQj5CcQmsxwNv8I3ivEV+Go332C75C3x59sM1wnA1mG7/5eOiyJOn3eNhzZ7J53G97hPgw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MPpxj+oNPkeZPFZ4tV7Pd4jX1p8fL2IFLsju0NH38Oc=;
- b=YRSOYs3akfVQ9UF+cR28Ae6yDqu1OiZ3cOz4VdE1GnXxlDVQ4MPloNMxuFIUrZYSE8Fw0vpzMipK/+wcrpcVlD5V2VG6QvS2V9JrLtd/i49lj7XeWAyomDz6iWRcr4dPtcugsOrGMuHwv/yAmDou0RSnvYQkZwRKfGbqORvj8Swg4JXlCjpiD4tsZpFVPvzbt7Jzu+o+o10wtKOd5rZ66cEU//qJae5ztjTc1WDYUV2JDqnclPwNzmEQvUgPCnwOkx1ajCJaPYu9yDGxJtHoES2Ee6vuHklvV4pXTB8QfAF/JguKEBXMQGUKSE1lPtVT7d2fGiTz5P12xmCK8QwQkw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by IA0PR12MB7773.namprd12.prod.outlook.com (2603:10b6:208:431::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.25; Tue, 4 Mar
- 2025 16:42:03 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8489.025; Tue, 4 Mar 2025
- 16:42:02 +0000
-Date: Tue, 4 Mar 2025 12:42:01 -0400
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: John Hubbard <jhubbard@nvidia.com>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Alexandre Courbot <acourbot@nvidia.com>,
-	Dave Airlie <airlied@gmail.com>, Gary Guo <gary@garyguo.net>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Ben Skeggs <bskeggs@nvidia.com>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	paulmck@kernel.org
-Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
- implementation
-Message-ID: <20250304164201.GN133783@nvidia.com>
-References: <20250226004916.GB4959@nvidia.com>
- <Z75riltJo0WvOsS5@cassiopeiae>
- <20250226172120.GD28425@nvidia.com>
- <Z7-IHgcVVS8XBurW@cassiopeiae>
- <20250226234730.GC39591@nvidia.com>
- <2025022644-fleshed-petite-a944@gregkh>
- <D82UB3V6NZ55.3OEPPW2W8MFZV@nvidia.com>
- <Z8GViQzZJVFPxfNd@phenom.ffwll.local>
- <20250228184013.GF39591@nvidia.com>
- <Z8cmBWB8rl97-zSG@phenom.ffwll.local>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8cmBWB8rl97-zSG@phenom.ffwll.local>
-X-ClientProxiedBy: BN9PR03CA0566.namprd03.prod.outlook.com
- (2603:10b6:408:138::31) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF60A290BB0;
+	Tue,  4 Mar 2025 16:44:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741106655; cv=none; b=p18PpQ174Sj75A0BCebZ0a6h5gNPPksg8SKGG0v8mlPbYdMbvakc+A6pgQT/Vqpx+9Ksc4rSRmGpHIj6GevoftkqH6nb5+aaIdSEhaOmCrf3EiuoNvLgjmYN33Sz9KP4wpXq6T/mWB77GGSLTjGyx7qNbSwJudrns4eyHWOXdeM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741106655; c=relaxed/simple;
+	bh=Kfb+W0WDiVkZVyulV9gbdwERifPyoO7MqIesvfXP2pM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JR4WkGYAEUhnzme7xwCdyEx1gnhktg/c3ffw4ASuxr6VQRIbEhCWobqqoWQM46s9bPpPGxUpT/WOHqcrEb51lnRNN7XVpf0RWZfxfkBlnAy5gby9Yt1lkXWRP8rncoXfuI6bjR+iiNqIsaLGatIK2IFIwa6RwEYQE2VsV3HclqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=timsurber.de; spf=pass smtp.mailfrom=timsurber.de; dkim=pass (2048-bit key) header.d=timsurber.de header.i=@timsurber.de header.b=q8NbtrPz; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=timsurber.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=timsurber.de
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4Z6hN10cJvz9srJ;
+	Tue,  4 Mar 2025 17:44:01 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=timsurber.de;
+	s=MBO0001; t=1741106641;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MIOeVDLWE/rEhFAHwAstOitrUGow7kLH1PpjIy7M/mc=;
+	b=q8NbtrPz8scVpykDVYSvP4c+5g5eWyCVZyGEm2WRJ8u6xqgtjkE5uW+vKWIi4nc7Bti7J3
+	OsSOCi03egF/KXQOCb9MKCTtQpp0poKR88t9cCMHkgiEnLSDE94slJl9EYL0IJ2Y3Y6OyD
+	mi4O7KJ+mObWrdZurFAk3UWdvriuahxTCEJDxeGM02U5nTRsDFrIPLwyUvH7ABcuiKXujU
+	5tHGIxHVfaWXfw5xAxDQr5pFZ9qm2FFDoRWp4ZwZt1+YA20QqCasFna+7zdfsJXX601Uxt
+	fwDtkL9VQ4+AV8u0OUVFGckEnp+h4sNR8bhX+ERmdarTdiAJmcA15cmIvXT/+Q==
+Message-ID: <78ff36f6-01a7-4df4-b653-c4509fb93af4@timsurber.de>
+Date: Tue, 4 Mar 2025 17:43:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|IA0PR12MB7773:EE_
-X-MS-Office365-Filtering-Correlation-Id: cf477202-ba55-47ef-7a1e-08dd5b3b7da9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?M/Q6ghid9cZXurpGYllQrCpdpe3RHN0uxBdfw/pWxC3aVQrUG9YUCIi+djzR?=
- =?us-ascii?Q?aI0v7S51o1tYva+6fn1m3X7Ts0Dj3XwnZlXc0aAvxaw8GQgr/ZNkzxzJj9tf?=
- =?us-ascii?Q?9qKdA7KNmqlDmSdW3Rro8eHf/Y+frYwnqxhUgWosUVEoocjFccEtgQYa3rP4?=
- =?us-ascii?Q?4RbzoKDhxKP7xIDgPUP5pHYL9ptTKxDUmJWdvxOMECibGiUUSTgiLJ/+eWl2?=
- =?us-ascii?Q?NNZ6+fCn1i/amb1RBNrI1GVaJrFQSEYHkSZTTmucrjnW8SxjE3a/1mVfl5EM?=
- =?us-ascii?Q?zH+pzUEXR+YzuLPCr55OXecp+GVoRIwMeb3ZBSOfh47BMDpIKQsngBtgVE2i?=
- =?us-ascii?Q?6IVVG5VcnrT9tMKNX0ZtdnXLlD/pBI9OfiXMmoBw8cNdyPXQ6qEe8BIJlbJc?=
- =?us-ascii?Q?1gAa21vR4AusbQPzxvm8caF3Cr3ZKL3zfORI0JSxb6XUcGH9EBp9wETtolXC?=
- =?us-ascii?Q?J0yiEaJtCiWW7DhFSDk2OfQTdhnzVT3DpVqfhpslYI2isROaNtdngEXAwhTS?=
- =?us-ascii?Q?LKiAxMpryt7wXlCGoPms7ghSH+mezUOlJHFFtFTWULObyaYXcpUXGXK9GhrL?=
- =?us-ascii?Q?2Od8akQXF4hnEd43/Wq+rRMwqqob/0d0btVCmkmPmaGGryDJ3i1vyqUt+SUM?=
- =?us-ascii?Q?Upd95x+pdVhAHjguB3t+EUlMVXk5Inct3aKDelAURs+T+DzIj+Ib8lyenuEV?=
- =?us-ascii?Q?nH2lS5SmXC4NgpSek05A2FlnecKPJCT8cTT+qmJV0TnSm0D8cFhTmIseHUak?=
- =?us-ascii?Q?Do1IFOG2oXNmb8OT7JcewXFCzENX79awGQ70mYoF9Nk34rOFk8gpfILicU2E?=
- =?us-ascii?Q?Fc2HyD3pdPgO+w4L7j35FcAsK25l8SPbLXUiYDUqbnXWlH2mWKcPzkao1dGw?=
- =?us-ascii?Q?orEniFtk2th/GF+tg9I/e5peSQFTUpPrbfCaj25mHSIwymuKRIvuppVCHPjl?=
- =?us-ascii?Q?TiwSMiHWmCErMNKj8XN7idC7TrMV89uiLXwT6Mcq7Aiivsz4zdXIynoP7TF3?=
- =?us-ascii?Q?g8FBaQQBnsOYTzyANtnO52dcXwVriIsfjlOXdC12589lfPcMsI0kWy/n1CQI?=
- =?us-ascii?Q?JappNIpJK+M7lO1lu5jNNrabP7/2fBcp7/YyXhwo1lTzdj6sCsA+jhOof3lw?=
- =?us-ascii?Q?3hq9q7NZG01/Ih14jKCsFmFb/u8zVeLs2btryWTxWGYn1CMYmGjWvKSNHDJU?=
- =?us-ascii?Q?cbQj1neloRK+FwhYG6nENiATnBdR2Yr7oLPHijs31USh0GsccdWhQkmzXIzw?=
- =?us-ascii?Q?zI2O/UlklTdhwgLma4qFwVIu/xE3h7+MDnbRLe1wYfHNf2s30ZOLsqc+2iI1?=
- =?us-ascii?Q?iKRuI0ytG8MEk89AHJnUgFvukLkNbum3+Tp76F3h+Q3jucrZtgWeBHQrwdb0?=
- =?us-ascii?Q?zGSqb0AN4fUgvM6mRFOLm4kL2e3fKbiRskhhPSQjnG4Xar25NvT+gd93Af0r?=
- =?us-ascii?Q?7G+6Saa1Rdw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?/tKvdZoFiXEIwY7BD39OXAFVhtBmxCb/MK0cVrb9o3bC/syZAiGXIdNMZWb5?=
- =?us-ascii?Q?ASp9PEFGrSkleiys3HdTUHJXbzhAc4pnzrgQiCc7LvWzuQGvixr7e1yxVgvv?=
- =?us-ascii?Q?838bNguh7KCUQHU8+lJ0+k71Dzv/yvE/McUNIRhQkcfK1MeKTlY6rnM5NWvM?=
- =?us-ascii?Q?ZZaYJABmH3M4vW0ZV58+F+bV6a6AITFOQt+5KntUiNcUFPhTXlab5ao3+0ug?=
- =?us-ascii?Q?A9NZ9InYnJPaaUJ5SJgpz7vFevq5Ou0xlDqzYnBnKfQ0AZzK9K8pRtlXpDcL?=
- =?us-ascii?Q?+dvaj//rW/yklS9e8zDKE8YIIUWOtvZHttmQYH6Os6IrnNvzLRLB1mqITkCF?=
- =?us-ascii?Q?p4cq8pD8TqcaaFTjzA8buvDT9NmY+J8hIkzHkU6Ettida9cKFf6zJ/Fb8z+x?=
- =?us-ascii?Q?B37L1RKk4rXVIM58TAi6ppg2qSOrmnYfAgLG7RFnMEO1k6sF21GWVr0KDmct?=
- =?us-ascii?Q?33e8ZFWsv2CsbebcVSJ35m0jS60LubqmAHwOjkAAaZiObs6u2FqWLuFUoYam?=
- =?us-ascii?Q?ADLDZTs/OASoVb4TctotYJsNy/vH9CAs7Gyl8OadI8lf0S+23tGHnKH9d7vq?=
- =?us-ascii?Q?8TsOXQYgm+vnGvQdeoR106kgVLAnfKUauxo1CMx5Q7kN4HCbzDKp/l+locNC?=
- =?us-ascii?Q?X4FsRp62BfXPNb2z/PhsVS2u5eRMgbAkWdizEWgQwAmRvyl/K6kpdME0Sb77?=
- =?us-ascii?Q?wpv1IGMPlR8UJ7rzRDFTuNhSs3WTwqiGaoE1BNNe23IfiqV1dcfGj4J/Tq6t?=
- =?us-ascii?Q?Wdc0DGX+St1WnJB185EDgF+UoUU/R9TQi3UADSpMN6bt9zbdT9E30vzZJUCE?=
- =?us-ascii?Q?Rb/ZkYbaLk/aPGJ+QX1hmYiUVDFOa/nIlvJGf+Ae6bofTaEXpkV9/eIdTye+?=
- =?us-ascii?Q?9LdFIkeKsGgBU+ULXoja1iT7Rfz+lRSwyjH5l+W++vbB/BodgzWEuRfzBeVR?=
- =?us-ascii?Q?DqR8qZufDSEvOR1RDD6WTqlUI0vQXVE/jjPoWX6dPGFbIM81UCV1Mq4I1zra?=
- =?us-ascii?Q?/ty0nwKfWEIhWKoBId/5m/KOaM6Z+mJe+C9IweP0xXnjkyBvUCJFn/JPlSyl?=
- =?us-ascii?Q?Au7YmaKvCbCDnsbn0ZWWeIBn0G9xpFywO4+Qj3UT7/C5imL2lT4QCfzpYR4m?=
- =?us-ascii?Q?Eq98+gCRMAZj8t7cDFNqKRt93qNdaFKRM5SkZh6PVBFIkpdqfyDjzBREuqY7?=
- =?us-ascii?Q?FogZROusqxLCdDj0DvzXe4Uu+fxFOgvAhPNqRWST9Zm/iW97mMi9nGY7n3/T?=
- =?us-ascii?Q?sCSNycAFEdg0tMW13+WOId18cZeX4OPKoGi+gO5GtemGCUSc03c8m37TP3bN?=
- =?us-ascii?Q?EOmHQselQhy+JWxJ9xjSoxDoRxW2QlE4r3AtSQwIE1O+cSlYrLhOrTS6stHB?=
- =?us-ascii?Q?DmDzNNDBnYWPi9osOU0frxijRaqTdQtf23fNewoH81tBmdvHfoxqYpB1bZrT?=
- =?us-ascii?Q?/ynW7gKTm/ohEOPp9yskiKCfFJX+rVyv1ogskImX/sUXd5Jjn/tjTc34TaL/?=
- =?us-ascii?Q?jzAEnx+tdaa5ML6YalWqEwHkGb4lN2Mgb2Dd8U5Wr/18P0ZRheJjummFAgbW?=
- =?us-ascii?Q?WjhzERVHDEhWohBGgMk=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cf477202-ba55-47ef-7a1e-08dd5b3b7da9
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2025 16:42:02.8455
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CTaL36z32RkblZ3mv6z8ymMWQvbodujlTIqlc3poe3TG/TX/pDMEkmVEvUhkzQzx
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7773
+Subject: Re: [PATCH v13 0/6] Add Synopsys DesignWare HDMI RX Controller
+To: Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+ Shreeya Patel <shreeya.patel@collabora.com>, Heiko Stuebner
+ <heiko@sntech.de>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Hans Verkuil <hverkuil@xs4all.nl>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, jose.abreu@synopsys.com, nelson.costa@synopsys.com,
+ shawn.wen@rock-chips.com, nicolas.dufresne@collabora.com,
+ Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: kernel@collabora.com, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Diederik de Haas <didi.debian@cknow.org>
+References: <20250304085819.108067-1-dmitry.osipenko@collabora.com>
+Content-Language: en-US
+From: Tim Surber <me@timsurber.de>
+In-Reply-To: <20250304085819.108067-1-dmitry.osipenko@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 4Z6hN10cJvz9srJ
 
-On Tue, Mar 04, 2025 at 05:10:45PM +0100, Simona Vetter wrote:
-> On Fri, Feb 28, 2025 at 02:40:13PM -0400, Jason Gunthorpe wrote:
-> > On Fri, Feb 28, 2025 at 11:52:57AM +0100, Simona Vetter wrote:
-> > 
-> > > - Nuke the driver binding manually through sysfs with the unbind files.
-> > > - Nuke all userspace that might beholding files and other resources open.
-> > > - At this point the module refcount should be zero and you can unload it.
-> > > 
-> > > Except developers really don't like the manual unbind step, and so we're
-> > > missing try_module_get() in a bunch of places where it really should be.
-> > 
-> > IMHO they are not missing, we just have a general rule that if a
-> > cleanup function, required to be called prior to module exit, revokes
-> > any .text pointers then you don't need to hold the module refcount.
-> > 
-> > file_operations doesn't have such a cleanup function which is why it
-> > takes the refcount.
-> > 
-> > hrtimer does have such a function which is why it doesn't take the
-> > refcount.
+Hi Dmitry,
+
+it took a while to get my test setup going again. Sadly it does still 
+not sync with AppleTV Device (which should be a standard-compliant 
+HDMI-Device). In a few hours I will post a timing comparision with the 
+vendor kernel. I don't know if this should block the merge or this 
+should be fixed later.
+
+Best regards
+Tim
+
+On 3/4/25 09:58, Dmitry Osipenko wrote:
+> Note RE the MAINTAINERS patch:
+>    Shreeya is currently busy and will be maintaining driver later on.
+>    I'm helping to upstream the driver meantime.
 > 
-> I was talking about a bunch of other places, where it works like
-> file_operations, except we don't bother with the module reference count.
-> I've seen patches fly by where people "fix" these things because module
-> unload is "broken".
-
-Sure, but there are only two correct API approaches, either you
-require the user to make a cancel call that sanitizes the module
-references, or you manage them internally.
-
-Hope and pray isn't an option :)
-
-> gpu drivers can hog console_lock (yes we're trying to get away from that
-> as much as possible), at that point a cavalier attitude of "you can just
-> wait" isn't very appreciated.
-
-What are you trying to solve here? If the system is already stuck
-infinitely on the console lock why is module remove even being
-considered?
-
-module remove shouldn't be a remedy for a crashed driver...
-
-> > But so is half removing the driver while it is doing *anything* and
-> > trying to mitigate that with a different kind of hard to do locking
-> > fix. *shrug*
+> This series implements support for the Synopsys DesignWare
+> HDMI RX Controller, being compliant with standard HDMI 1.4b
+> and HDMI 2.0.
 > 
-> The thing is that rust helps you enormously with implementing revocable
-> resources and making sure you're not cheating with all the bail-out paths.
-
-Assuming a half alive driver with MMIO and interrupts ripped away
-doesn't lock up.
-
-Assuming all your interrupt triggered sleeps have gained a shootdown
-mechanism.
-
-Assuming all the new extra error paths this creates don't corrupt the
-internal state of the driver and cause it to lockup.
-
-Meh. It doesn't seem like such an obvious win to me. Personally I'm
-terrified of the idea of a zombie driver half sitting around in a
-totally untestable configuration working properly..
-
-> It cannot help you with making sure you have interruptible/abortable
-> sleeps in all the right places. 
-
-:(
-
-> > Like, I see a THIS_MODULE in driver->fops == amdgpu_driver_kms_fops ?
+> Features that are currently supported by the HDMI RX driver
+> have been tested on rock5b board using a HDMI to micro-HDMI cable.
+> It is recommended to use a good quality cable as there were
+> multiple issues seen during testing the driver.
 > 
-> Yeah it's there, except only for the userspace references and not for the
-> kernel internal ones. Because developers get a bit prickle about adding
-> those unfortunately due to "it breaks module unload". Maybe we just should
-> add them, at least for rust.
+> Please note the below information :-
+> * HDMIRX driver now only works with the opensource TF-A.
+> * We have tested the working of OBS studio with HDMIRX driver and
+> there were no issues seen.
+> * We tested and verified the support for interlaced video.
+> * We tested capturing of YUV formats.
+> 
+> To test the HDMI RX Controller driver, following example commands can be used :-
+> 
+> root@debian-rockchip-rock5b-rk3588:~#  v4l2-ctl --stream-mmap \
+> --stream-count=100 --stream-to=/home/hdmiin4k.raw
+> 
+> root@debian-rockchip-rock5b-rk3588:~# ffmpeg -f rawvideo -vcodec rawvideo \
+> -s 1920x1080 -r 60 -pix_fmt bgr24 -i /home/hdmiin4k.raw output.mkv
+> 
+> CEC compliance test results :-
+> 
+> * https://gitlab.collabora.com/-/snippets/380
+> * https://gitlab.collabora.com/-/snippets/381
+> 
+> Following is the v4l2-compliance test result :-
+> 
+> root@debian-rockchip-rock5b-rk3588:~# v4l2-compliance -d /dev/video1
+> v4l2-compliance 1.29.0-5326, 64 bits, 64-bit time_t
+> v4l2-compliance SHA: 77f5df419204 2025-02-07 08:59:59
+> 
+> Compliance test for snps_hdmirx device /dev/video1:
+> 
+> Driver Info:
+>          Driver name      : snps_hdmirx
+>          Card type        : snps_hdmirx
+>          Bus info         : platform:fdee0000.hdmi_receiver
+>          Driver version   : 6.14.0
+>          Capabilities     : 0x84201000
+>                  Video Capture Multiplanar
+>                  Streaming
+>                  Extended Pix Format
+>                  Device Capabilities
+>          Device Caps      : 0x04201000
+>                  Video Capture Multiplanar
+>                  Streaming
+>                  Extended Pix Format
+> 
+> Required ioctls:
+>          test VIDIOC_QUERYCAP: OK
+>          test invalid ioctls: OK
+> 
+> Allow for multiple opens:
+>          test second /dev/video1 open: OK
+>          test VIDIOC_QUERYCAP: OK
+>          test VIDIOC_G/S_PRIORITY: OK
+>          test for unlimited opens: OK
+> 
+> Debug ioctls:
+>          test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+>          test VIDIOC_LOG_STATUS: OK
+> 
+> Input ioctls:
+>          test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+>          test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+>          test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+>          test VIDIOC_ENUMAUDIO: OK (Not Supported)
+>          test VIDIOC_G/S/ENUMINPUT: OK
+>          test VIDIOC_G/S_AUDIO: OK (Not Supported)
+>          Inputs: 1 Audio Inputs: 0 Tuners: 0
+> 
+> Output ioctls:
+>          test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+>          test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+>          test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+>          test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+>          test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+>          Outputs: 0 Audio Outputs: 0 Modulators: 0
+> 
+> Input/Output configuration ioctls:
+>          test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+>          test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK
+>          test VIDIOC_DV_TIMINGS_CAP: OK
+>          test VIDIOC_G/S_EDID: OK
+> 
+> Control ioctls (Input 0):
+>          test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+>          test VIDIOC_QUERYCTRL: OK
+>          test VIDIOC_G/S_CTRL: OK
+>          test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+>          test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+>          test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+>          Standard Controls: 4 Private Controls: 0
+> 
+> Format ioctls (Input 0):
+>          test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+>          test VIDIOC_G/S_PARM: OK
+>          test VIDIOC_G_FBUF: OK (Not Supported)
+>          test VIDIOC_G_FMT: OK
+>          test VIDIOC_TRY_FMT: OK
+>          test VIDIOC_S_FMT: OK
+>          test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+>          test Cropping: OK (Not Supported)
+>          test Composing: OK (Not Supported)
+>          test Scaling: OK (Not Supported)
+> 
+> Codec ioctls (Input 0):
+>          test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+>          test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+>          test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+> 
+> Buffer ioctls (Input 0):
+>          test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+>          test CREATE_BUFS maximum buffers: OK
+>          test VIDIOC_REMOVE_BUFS: OK
+>          test VIDIOC_EXPBUF: OK
+>          test Requests: OK (Not Supported)
+>          test blocking wait: OK
+> 
+> Test input 0:
+> 
+> Streaming ioctls:
+>          test read/write: OK (Not Supported)
+>          test MMAP (no poll, REQBUFS): OK
+>          test MMAP (select, REQBUFS): OK
+>          test MMAP (epoll, REQBUFS): OK
+>          test MMAP (no poll, CREATE_BUFS): OK
+>          test MMAP (select, CREATE_BUFS): OK
+>          test MMAP (epoll, CREATE_BUFS): OK
+>          test USERPTR (no poll): OK (Not Supported)
+>          test USERPTR (select): OK (Not Supported)
+>          test DMABUF: Cannot test, specify --expbuf-device
+> 
+> Total for snps_hdmirx device /dev/video1: 57, Succeeded: 57, Failed: 0, Warnings: 0
+> 
+> ---
+> 
+> InfoFrame debugfs example output:-
+> 
+> # edid-decode -c -I /sys/kernel/debug/v4l2/fdee0000.hdmi_receiver/infoframes/avi
+> edid-decode InfoFrame (hex):
+> 
+> 82 02 0d b1 12 28 84 00 00 00 00 00 00 00 00 00
+> 00
+> 
+> ----------------
+> 
+> HDMI InfoFrame Checksum: 0xb1
+> 
+> AVI InfoFrame
+>    Version: 2
+>    Length: 13
+>    Y: Color Component Sample Format: RGB
+>    A: Active Format Information Present: Yes
+>    B: Bar Data Present: Bar Data not present
+>    S: Scan Information: Composed for an underscanned display
+>    C: Colorimetry: No Data
+>    M: Picture Aspect Ratio: 16:9
+>    R: Active Portion Aspect Ratio: 8
+>    ITC: IT Content: IT Content (CN is valid)
+>    EC: Extended Colorimetry: xvYCC601
+>    Q: RGB Quantization Range: Limited Range
+>    SC: Non-Uniform Picture Scaling: No Known non-uniform scaling
+>    YQ: YCC Quantization Range: Limited Range
+>    CN: IT Content Type: Graphics
+>    PR: Pixel Data Repetition Count: 0
+>    Line Number of End of Top Bar: 0
+>    Line Number of Start of Bottom Bar: 0
+>    Pixel Number of End of Left Bar: 0
+>    Pixel Number of Start of Right Bar: 0
+> 
+> ----------------
+> 
+> edid-decode 1.29.0-5326
+> edid-decode SHA: 77f5df419204 2025-02-07 08:59:59
+> 
+> AVI InfoFrame conformity: PASS
+> 
+> ---
+> 
+> Changes in v13 :-
+> - Removed CEC adapter notifier as it's not used by this driver
+> 
+> Changes in v12 :-
+> - Removed legacy wait_finish/prepare() callbacks from vb2_ops,
+>    tested that driver works without them.
+> - Updated and extended driver Kconfig description RE the
+>    LOAD_DEFAULT_EDID option.
+> - Made minor cosmetical improvements to the code
+> 
+> Changes in v11 :-
+> - Reverted back defconfig patch by removing LOAD_DEFAULT_EDID=y option
+> - Removed CEC notifier since it's not needed for this driver
+> - Replaced video_unregister_device() with vb2_video_unregister_device()
+> - Added more clarifying comments to the code and updated the timing
+>    sanity-check, borrowing it from a newer downstream driver version.
+> 
+> Changes in v10 :-
+> - Replaced cec_unregister_adapter() with cec_notifier_cec_adap_unregister()
+>    in the error unwinding code path of the driver probe, tested that it works
+>    properly.
+> - Changed CEC registration code to propagate original error code to the
+>    driver's probe-failure code path on the CEC registration failure.
+> - Enabled LOAD_DEFAULT_EDID=y in the defconfig patch
+> 
+> Changes in v9 :-
+> - Added devm_add_action_or_reset() to free reserved memory properly
+>    on driver probe error
+> - Extra minor code cleanups
+> 
+> Changes in v8 :-
+> - Changed HPD logic as was requested by Hans Verkuil. HPD handling
+>    is now decoupled from HDMI plugin/out events and works independently
+>    from 5v status.
+> - Bumped number of EDID blocks from 2 to 4 as was requested by
+>    Hans Verkuil and verified that reading 3/4 EDID blocks from transmitter
+>    works properly.
+> - Made few extra minor cleanup/improvements to the driver code
+> 
+> Changes in v7 :-
+> - Changed InfoFrame debugfs to return truncated payload data
+> - Updated cover-letter example stream capture cmdline with a minimized
+>    and cleaned version of the cmdline
+> - Added AVI InfoFrame example output to the cover-letter
+> 
+> Changes in v6 :-
+> - Driver now keeps HPD low instead of zeroing EDID when EDID-clearing is
+>    invoked and when default EDID usage is disabled in the kernel config
+> - Added InfoFrame debugfs support
+> - Added another code comment clarifying validation of timing values
+> - Rebased on top of recent media-next tree
+> 
+> Changes in v5 :-
+> - Fix the interrupt IRQ number in the dt-bindings and device tree
+> - Add alignment property to ensure hdmi-receiver-cma
+>    starts at a 64KB-aligned address
+> - Change the MODULE_DESCRIPTION
+> - Add VIDEO_SYNOPSYS_HDMIRX as prefix to the default edid config
+> - Drop the enabling of default edid in the Kconfig
+> - Replace the default EDID with hdmi-4k-300mhz EDID produced
+>    by v4l2-ctl tool for better compatibility with various HDMI
+>    cables and adapters
+> - Rework the write_edid and set_edid functions
+> - During format change, retrieve the current pixel format,
+>    color depth, and AVI infoframe details instead of only
+>    detecting the format
+> - Improve the logging mechanism and delays in the
+>    hdmirx_wait_signal_lock function
+> - Fix the 4K@60 capturing for RGB format
+> - Document what hdmirx_check_timing_valid function does
+> - Rework the hdmirx_get_detected_timings function
+> - Fix the NV16/24 size image value
+> - Add the implementation from Benjamin Hoff to expose the
+>    ITC type to v4l2
+> - Remove all the firmware related code
+> 
+> Changes in v4 :-
+> - Remove DTS changes included in the device tree patch
+> - Remove the hdmi rx pin info as it's already present
+> in the rk3588-base-pinctrl.dtsi
+> - Create a separate config option for selecting the EDID
+> and enable it by default
+> - Improve the comment related to DV timings and move it
+> to the side of hdmirx_get_detected_timings
+> - Add 100ms delay before pulling the HPD high
+> - Do not return the detected timings from VIDIOC_G_DV_TIMINGS
+> - Drop the bus info from hdmirx_querycap
+> - If *num_planes != 0 then return 0 in hdmirx_queue_setup
+> - Set queue->min_queued_buffers to 1
+> - Drop q->allow_cache_hints = 0; as it's always 0 by default
+> - Add a comment for q->dma_attrs = DMA_ATTR_FORCE_CONTIGUOUS;
+> - Drop .read = vb2_fop_read as it's not supported by driver
+> - Remove redundant edid_init_data_600M
+> - Make HPD low when driver is loaded
+> - Add support for reading AVI Infoframe
+> - Remove msg_len checks from hdmirx_cec_transmit
+> - Add info about the CEC compliance test in the cover letter
+> - Add arbitration lost status
+> - Validate the physical address inside the EDID
+> 
+> Changes in v3 :-
+> - Use v4l2-common helpers in the HDMIRX driver
+> - Rename cma node and phandle names
+> - Elaborate the comment to explain 160MiB calculation
+> - Move &hdmi_receiver_cma to the rock5b dts file
+> - Add information about interlaced video testing in the
+> cover-letter
+> 
+> Changes in v2 :-
+> - Fix checkpatch --strict warnings
+> - Move the dt-binding include file changes in a separate patch
+> - Add a description for the hardware in the dt-bindings file
+> - Rename resets, vo1 grf and HPD properties
+> - Add a proper description for grf and vo1-grf phandles in the
+> bindings
+> - Rename the HDMI RX node name to hdmi-receiver
+> - Include gpio header file in binding example to fix the
+> dt_binding_check failure
+> - Move hdmirx_cma node to the rk3588.dtsi file
+> - Add an entry to MAINTAINERS file for the HDMIRX driver
+> 
+> Sebastian Reichel (2):
+>    arm64: dts: rockchip: Enable HDMI receiver on rock-5b
+>    arm64: defconfig: Enable Synopsys HDMI receiver
+> 
+> Shreeya Patel (4):
+>    MAINTAINERS: Add entry for Synopsys DesignWare HDMI RX Driver
+>    dt-bindings: media: Document bindings for HDMI RX Controller
+>    media: platform: synopsys: Add support for HDMI input driver
+>    arm64: dts: rockchip: Add device tree support for HDMI RX Controller
+> 
+>   .../bindings/media/snps,dw-hdmi-rx.yaml       |  132 +
+>   MAINTAINERS                                   |    8 +
+>   .../dts/rockchip/rk3588-base-pinctrl.dtsi     |   14 +
+>   .../arm64/boot/dts/rockchip/rk3588-extra.dtsi |   57 +
+>   .../boot/dts/rockchip/rk3588-rock-5b.dts      |   18 +
+>   arch/arm64/configs/defconfig                  |    1 +
+>   drivers/media/platform/Kconfig                |    1 +
+>   drivers/media/platform/Makefile               |    1 +
+>   drivers/media/platform/synopsys/Kconfig       |    3 +
+>   drivers/media/platform/synopsys/Makefile      |    2 +
+>   .../media/platform/synopsys/hdmirx/Kconfig    |   35 +
+>   .../media/platform/synopsys/hdmirx/Makefile   |    4 +
+>   .../platform/synopsys/hdmirx/snps_hdmirx.c    | 2750 +++++++++++++++++
+>   .../platform/synopsys/hdmirx/snps_hdmirx.h    |  394 +++
+>   .../synopsys/hdmirx/snps_hdmirx_cec.c         |  275 ++
+>   .../synopsys/hdmirx/snps_hdmirx_cec.h         |   43 +
+>   16 files changed, 3738 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/media/snps,dw-hdmi-rx.yaml
+>   create mode 100644 drivers/media/platform/synopsys/Kconfig
+>   create mode 100644 drivers/media/platform/synopsys/Makefile
+>   create mode 100644 drivers/media/platform/synopsys/hdmirx/Kconfig
+>   create mode 100644 drivers/media/platform/synopsys/hdmirx/Makefile
+>   create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
+>   create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx.h
+>   create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx_cec.c
+>   create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx_cec.h
+> 
 
-Yeah, I think such obviously wrong things should be pushed back
-against. We don't want EAF bugs in the kernel, we want security...
-
-> You've missed the "it will upset developers part". I've seen people remove
-> module references that are needed, to "fix" driver unloading.
-
-When done properly the module can be unloaded. Most rdma driver
-modules are unloadable, live, while FDs are open.
-
-> The third part is that I'm not aware of anything in rust that would
-> guarantee that the function pointer and the module reference actually
-> belong to each another. Which means another runtime check most likely, and
-> hence another thing that shouldn't fail which kinda can now.
-
-I suspect it has to come from the C code API contracts, which leak
-into the binding design.
-
-If the C API handles module refcounting internally then rust is fine
-so long as it enforces THIS_MODULE.
-
-If the C API requires cancel then rust is fine so long as the binding
-guarantees cancel before module unload.
-
-Jason
 
