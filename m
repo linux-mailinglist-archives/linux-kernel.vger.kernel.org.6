@@ -1,124 +1,133 @@
-Return-Path: <linux-kernel+bounces-545266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DEBEA4ECC7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:07:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D886A4ECCB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:07:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E0BA8C426F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:11:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1EA28E5470
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:13:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA3FB28FFC0;
-	Tue,  4 Mar 2025 17:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="hs0x47Gu"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C8024C060;
+	Tue,  4 Mar 2025 17:55:02 +0000 (UTC)
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2E2727F4D9
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:51:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54DB01EDA1F;
+	Tue,  4 Mar 2025 17:55:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741110702; cv=none; b=azv6BDLzH+IvuBdsvsVGbPM0u/4Jdz5IXeh4L9++YVlkOlqC2e77Eq5iD8BTOXkc9bFmqhskc9j1oXEgZgzv+4NI812ptKR5+tQ8mx72wJq07MnV/PTS8U5yO+k/aMWA6P55lQ/IhA71obiTWH0+YQ6NlHiGoNl66jyjPBulAys=
+	t=1741110901; cv=none; b=c1cPXyZI2LHFQ7ZNAHzGelmVuQ4cBi/u8c000RvElfd6/Vld538/Y3c7IGJDer8H9YwX/ioK3Adu7OSgKl9ZzSpS8YVTr/zC/plIDPMEfgunfrIhbPxF+9FrF8++6C+lThIen3lpufD2wmYNPj6oi0p7fi7tgYbNHBrfq3WiWsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741110702; c=relaxed/simple;
-	bh=t79luk5gNIukJyh6i+Wv7Arv97K595rpQf5m8ULc0FM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rDqSYTdO5npuzPXVtpeIyVZXJMDRV25WT1GO+k+N8dS6MFtrC8M9YXTNNsfX41VYMJL0jGUEx5grsG1J+MGDBfePukw6g6U41vRKoz7+dza27i3bR/ySSerALLfDkjgesstCXrs5AzS4UkzHohaPgV8V/LWci8qXuaSykL2LuV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=hs0x47Gu; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-abf4802b242so669273866b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 09:51:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1741110698; x=1741715498; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=8ar6zXTooC+qWyNjyHLe77JrEoGxqI/5v2vCc8JEkak=;
-        b=hs0x47Gul7wkkgoNw8UV9Eo+PRgIP/cj/hrkEJAWykijoFB8N9VfIFGUXiolky58i+
-         gmrWPIK6MmLFbg8olu0uVhb5KxBvmLfEe+ETq+pXI8KSc6SeIzhb9p6VF+oTG+YRlA1a
-         MrKgWiaQpU1aXaGLcB0HU/WS+728JO4+FJVcM=
+	s=arc-20240116; t=1741110901; c=relaxed/simple;
+	bh=DUjiYTnLxlhv8wDbjX4gEl2kqFYHHOYRD6BpYAzTA+k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p97WLbYQ2RxLP0WgzV+2ISVip7N4OhA2XXU2p8oyxEjgqQlj6iMd+/+z2uXu5cJdqrDQdz+9V7an6ofGxmsvMH2d7ADDKZCg1/ow7+56AawOrlv8/Smwo34DLQueaClH8ojAJye0YVayoCAyeq3VkacmSyfScMk/Q/ye3RDl/YQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2232aead377so116857885ad.0;
+        Tue, 04 Mar 2025 09:55:00 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741110698; x=1741715498;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8ar6zXTooC+qWyNjyHLe77JrEoGxqI/5v2vCc8JEkak=;
-        b=ZrwEPxsweC300hxQ2UKVb1bmt5fmLycp70vFMWJ4coKyCFTKoDwEPxRN3+mTiA3lVW
-         QbPCpyu8mYIFwURvhgrzMjSWek4keTRBOLgr9ZjzxBFlFF5tCeSEQ+OvIRoGRs9NOyGT
-         rUHUNlP6ZL5nfUnqKGGNnvoWhWFdavC4paYt/2ABuRSxu2kIldThjA51H+wKTldaiORo
-         dYeUygl2X29u9luAxlDeOwTL/8yQnNZt+KhgcSCOhuAiW/mQp4GW2YQFGYOItKrh9N+i
-         aScTsOSYe0oNfXjgScHe216PT0fM6DzhbU5b7gpv3aXsTxE8fr8EajieS6vxoddZyRrF
-         Pxmg==
-X-Gm-Message-State: AOJu0YzMrh/Bu1Ae5v64yLiQFJ6XBnt1G7kRU+aKeexSqrbplaHN+piO
-	BPt7Ush61l79f2Ezoq5l329Cw6y389xemkC22scry6NtFCwC8tc4AMug+gYuKoKADC2fmKCfqSb
-	Iuo0=
-X-Gm-Gg: ASbGncs5JVeX+WE4sH4gxd1dV7RPFEqJmR0gSi74OvUuYpJ0G/7EtTPrag414ct+XJf
-	Cx9o4tck+I/2fbiWLU5RM2dITCq9PSR0KlKgKuIB1zTDlbSd+Cg+EydW4N6KxdIr9VKbX0t8Z8P
-	Znp6M6b7ZZq96FiiosMuZGUmeXhjezqItOEpD86u4Xtka6837D6vlljcj+9YLy8wBYIq7A9kYe8
-	og1iIfN+Fc0KqMXBEeJuTrVX/AX8FWm/52Lm4ZFyO47RI3Y5HHpf58H6EwfYG98z7VZ7h0Aq5Qv
-	Yk8ceKaPOvKbHtAQKMZ8F8+Y/pb8ZrcQ5oRIvwf3+sZyX+Cljr4noq+MiN3uvESQ49En8txi4Tx
-	JRsNbpa5qvOCe2phfba4=
-X-Google-Smtp-Source: AGHT+IH5yuJLav8ZkeIxi6sRAByJcYTEzwTvgXpSICn3CvWD/j7SFxcQA9mG1Tj6LNYLotyk316QFA==
-X-Received: by 2002:a17:907:7211:b0:abf:62a4:14ef with SMTP id a640c23a62f3a-ac20d8470c6mr18003966b.9.1741110697867;
-        Tue, 04 Mar 2025 09:51:37 -0800 (PST)
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com. [209.85.218.53])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac1ff5b36ecsm84276166b.179.2025.03.04.09.51.37
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Mar 2025 09:51:37 -0800 (PST)
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-aaec111762bso1087726566b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 09:51:37 -0800 (PST)
-X-Received: by 2002:a17:907:3d88:b0:abf:52e1:2615 with SMTP id
- a640c23a62f3a-ac20d844784mr16705166b.7.1741110696701; Tue, 04 Mar 2025
- 09:51:36 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741110899; x=1741715699;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=awHUw86wmAjtFZl9KswCDV7V33b+lKzle+H1DTBoaPk=;
+        b=C7/bNEtNGE4vvKbma0bNWkEOMHxAboBCso+dDxhcNppU2wxewOLStGesdNwk+X05ZS
+         G0AMs3tDAXxK/OM3RKVBRzI088/p43gU22XVRKTjDA11UUAbRTewJEOxqNHkJGwKHJr/
+         5fnZnyMcuPdXh99nFjlr0C5dHVrz9FoStMITCt7M4+tMsrGM0QslT152yBMArbXr6q5g
+         4JxzrY5dvH/x9D/xT+SgaYLMU5CrNGnmIRFzUO47YI9I0LphyHl2jjg+mqQcExyjnSvJ
+         M6SQr+Zjy68J26nVrRPS0NWeZ6pfL1jn+XLjifp5gana54sw9wgIv5/g3McI+X8rNNuY
+         qwCA==
+X-Forwarded-Encrypted: i=1; AJvYcCUcQcu5ayjaCSHU32mUXfZM8Ao7hI/DMIB8+qETXHVLKGqNZDJzIhgMDiYigwbNArs5jnvgF8ZbQqhS@vger.kernel.org, AJvYcCXILnSiHNEfCXlPgodYDlswn30fzEfayy8IEe6tzZUPlfnU4zWH4+Nd+psHIikL7oIObPEv4//ntCAYnF0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yydp4nPQDRsSNAbkZNHdR5ekUA7oXGPHeKL0FDL8/oQotPqXccf
+	ddGYRbFay/eDcD2oOMMFe3BKhFnQBFJB68Fhnec7WuJsK8PPWO4iwRnl4HIea2A=
+X-Gm-Gg: ASbGncto+Kmid4+JZn9ET54yXVC5rQZkTFd/g36VJdzWeX0+ce4pBB1kj4lml6gRiXj
+	+jSeCPQyuerTILTD9NIQx4eDZhAnmpCfIn2V1fkHdt6qkgomF6f9qhmRHdvbANw985Chm6NU10c
+	fKDH7Lq8DcQQcEVQHxwPki/i4Kc2PjWJ8Vj8nhdV/TNshlTFygVRHFCtSmpawX6kK7FWYTdA19F
+	UiItYaoHhmpk16Ok+wlKDyijKzCYvzyzivZ/Y6+H2vxlZFPA8wRhfM9GeUx0gbxSTUW0TfyryDR
+	fua5lJEisj8B9GclKZ3MfkYuIknLrzzGEroFq5WJtdUt5ug0sotM1wQutN4NkBc0YFgnkPpLZ84
+	mqME=
+X-Google-Smtp-Source: AGHT+IEdCgobHmMRJKN0C7hzvDFvHPwBM5qCFaLu9E/6AX2zBtm2N5q46Y1Zm54WVl2Vdqx2ZXH2sQ==
+X-Received: by 2002:a05:6a00:a1e:b0:730:8ed8:6cd0 with SMTP id d2e1a72fcca58-734ac42ed49mr28645877b3a.16.1741110899547;
+        Tue, 04 Mar 2025 09:54:59 -0800 (PST)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-73659b81cb1sm3982091b3a.169.2025.03.04.09.54.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 09:54:58 -0800 (PST)
+Date: Wed, 5 Mar 2025 02:54:56 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Jim Quinlan <james.quinlan@broadcom.com>, linux-pci@vger.kernel.org,
+	Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Cyril Brulebois <kibi@debian.org>,
+	Stanimir Varbanov <svarbanov@suse.de>,
+	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 4/8] PCI: brcmstb: Fix error path upon call of
+ regulator_bulk_get()
+Message-ID: <20250304175456.GE2310180@rocinante>
+References: <20250214173944.47506-1-james.quinlan@broadcom.com>
+ <20250214173944.47506-5-james.quinlan@broadcom.com>
+ <20250304150313.ey4fky35bu6dbtxd@thinkpad>
+ <CA+-6iNyuQskVNjAuX1QcLTPetbfhogGYUTOA01QwNw9YcwAdNQ@mail.gmail.com>
+ <20250304170735.x25c65azfpd7xmwv@thinkpad>
+ <CA+-6iNzvqnZB=7kRqUm5ie6245AM5ObeVmMNQ_S4AtMLD0jKQw@mail.gmail.com>
+ <20250304173209.bq2lpijsea7aufpu@thinkpad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <174099976188.10177.7153571701278544000.tip-bot2@tip-bot2>
- <CAHk-=wjSwqJhvzAT-=AY88+7QmN=U0A121cGr286ZpuNdC+yaw@mail.gmail.com> <Z8a66_DbMbP-V5mi@gmail.com>
-In-Reply-To: <Z8a66_DbMbP-V5mi@gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 4 Mar 2025 07:51:19 -1000
-X-Gmail-Original-Message-ID: <CAHk-=wjRsMfndBGLZzkq7DOU7JOVZLsUaXnfjFvOcEw_Kd6h5g@mail.gmail.com>
-X-Gm-Features: AQ5f1JpAuV2PR2wWFAAmrlYAziJXOcwJeCn_7ccTAn4I_8dDZz982GJ7tyN4tkY
-Message-ID: <CAHk-=wjRsMfndBGLZzkq7DOU7JOVZLsUaXnfjFvOcEw_Kd6h5g@mail.gmail.com>
-Subject: Re: [tip: x86/asm] x86/asm: Make ASM_CALL_CONSTRAINT conditional on
- frame pointers
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, "Peter Zijlstra (Intel)" <peterz@infradead.org>, 
-	Brian Gerst <brgerst@gmail.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250304173209.bq2lpijsea7aufpu@thinkpad>
 
-On Mon, 3 Mar 2025 at 22:33, Ingo Molnar <mingo@kernel.org> wrote:
->
-> So Josh forgot to Cc: lkml in this 5-patch series:
+Hello,
 
-Honestly, this all seems to be complete garbage.
+[...]
+> > > > > > -                     dev_info(dev, "No regulators for downstream device\n");
+> > > > > > +                     dev_info(dev, "Did not get regulators; err=%d\n", ret);
+> > > > >
+> > > > > Why is this dev_info() instead of dev_err()?
+> > > >
+> > > > I will change this.
 
-Yes, so Josh found a problem with the thing that has worked for years.
+I can update this directly on the branch if you want.
 
-Then Josh did it another way AND THAT HAD EVEN MORE PROBLEMS.
+> > > > >
+> > > > > > +                     pcie->sr = NULL;
+> > > > >
+> > > > > Why can't you set 'pcie->sr' after successfull regulator_bulk_get()?
+> > > >
+> > > > Not sure I understand -- it is already set before a  successful
+> > > > regulator_bulk_get() call.
+> > >
+> > > Didn't I say 'after'?
+> > 
+> > Sorry, I misinterpreted your question.  I can change it but it would
+> > just be churn because a new commit is going to refactor this function.
+> > However,
+> > I can set  pcie->num_regulators "after" in the new commit.
+> > 
+> 
+> If a new patch is going to change the beahvior, then I'm fine with it for now.
+> After all, this series is already merged.
 
-So now it's trying to fix up all of *those* problems instead, making
-the code uglier and more fragile.
+There is still time if a follow-up patch would be of benefit there.
 
-And I'm not at all convinced that the new model works at all. It's a
-random "this happens to work around it on the compiler versions I have
-tested", rather than some obvious fix.
+Same goes for
 
-Put another way: the old code has years of testing and is
-significantly simpler. The new code is new and untested and more
-complicated and has already caused known new problems, never mind any
-unknown ones.
-
-It really doesn't sound like a good trade-off to me.
-
-                   Linus
+	Krzysztof
 
