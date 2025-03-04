@@ -1,218 +1,229 @@
-Return-Path: <linux-kernel+bounces-543483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BF94A4D633
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:24:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1C63A4D62C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:24:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D3BF3A99DD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:24:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC4BD18970B7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:24:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AFE81FBE9D;
-	Tue,  4 Mar 2025 08:24:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8AC31FBC99;
+	Tue,  4 Mar 2025 08:23:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bLOc3JW8"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="aeT0v531"
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2068.outbound.protection.outlook.com [40.107.241.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCAD843172
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 08:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741076661; cv=none; b=oW/okyfcVr142dP2qXCPipFKZVq/pQiP/yHxxUM8OoX2TbDAsUiZqoB1UgY+q1VKjkbimEUSgWQOOLvYo73PXJ+PAex2DJupwrp8a75Mu7pGFa959ydrVGr5L5c4Q5YBk3SEW+Re/dCkZWEQZHjNP/Pn9xFO+ScRmWzXfItfN28=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741076661; c=relaxed/simple;
-	bh=NAd+1izxe+eaSjF3MUUZH/SoL/xIWiIHI04ae61ywag=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r2FKvJlrf0W5b3IV9gU4GhnXdmUf4Fz/zjr2wqcy8n3mnkBH8GyUXw/fK5BTg1ijYHMtv0jByt9Qlxy8ncp391DPm5nZ16fdPDq6YwV2wKiHDS6R+0eukYTWlGAADU2xxtTNkahmzfussDuzoz8NAt8ToWvyG0mFejDbCVp/akI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bLOc3JW8; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-abf64aa2a80so450811666b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 00:24:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741076657; x=1741681457; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ilSMtdNdsliGxA9UF1qUw5o9oqOJ+G3vMgmcwIAvt+E=;
-        b=bLOc3JW8fsj9CxU/mkclDQTbp6JDqiwM9JAD+dD4xzrSkv5V0oIgudZTj/CNVlpg9c
-         PSQYwJWPFd64RFhuvzVdRBXu7Ia+WT5C//xsrQnjXfrqwATZt95z+LWYpSkhEhkC0Jlq
-         9fNngg7coN65hRP4kcpCWYfdiHWu0TmNiZaFbCj8B0p3tiC9/YMl9L3NqDrdDLAmKxGJ
-         vdeqrEYlrv/PtXUvJNcUAWXhjx9nxj2T3yIJOQLkHMK5YA3ykPhs3zCMw4xNH9K+Vkn1
-         nJnEV5vUWiSoeZ3sUQVUE+wVhDOtgA+bogpQp7POIaQEV1NBcxH+fLAHxDmm8gKMliPb
-         I/dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741076657; x=1741681457;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ilSMtdNdsliGxA9UF1qUw5o9oqOJ+G3vMgmcwIAvt+E=;
-        b=cKsmvrro0bv92leMxVByLv83tBBpVKlz3iHHH3FQLLCwhAiMf4Q/7dF/GtCurfJc3a
-         Le2Wm4q6h0r3Z1gsvlTwLV54FEid4lMxSqrsZ1H2jjYrpuVAGJG8D1lqbL0oH5aHI1lr
-         uqF+Kf+6hYHHBmgxxlqABodOGVupQiN70dCNNc1OkUm6bIeciUynhNWofOzajw0dPZnV
-         PZG26LD2/EXNur5OJj6tUSPSTZZ7SiB7HpAc5maJCNDJTDX+foodaXZYeW5PnxLFIIJf
-         ItZTLSbK61wkwREQmz5mKFbFkZR3coLNqArBTmAzZgWiXDGQcFIqITs2xLx5ilr+NPlf
-         4x6g==
-X-Forwarded-Encrypted: i=1; AJvYcCXEOvNkS92zQF0qmmLEF9+3I0UOoq44iCDqkFpEnglFrqj+MRtOSGD5Fj5ol/Kia1DuSP6GP5iHsvUq+Ks=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykZAZttlvI6JMtOhA6/UQ0opVp7cDArFylJoE9tmXaUlaC2QMi
-	7cB/4/MzaNSBdjrG4vK50O7xg0vfYHswtHzWZmnBv9gWHEl3PMGg
-X-Gm-Gg: ASbGncsaKi000PPhCFaK/M50XyDdvFNecRQ+Ei8He7D9NY7jtKkW6Br2TcIiwK+cjWe
-	v9MVEzQEboajTGBNzusRf+Ut9Ecfv1HEvXq3rLBt02GYYbOhc4q+6Z1EVzTO2V55w88CMqCSqnw
-	+W+MVy20nTl/x8Rk3ORzDsmxbM9qNbg07+thm/yz2OmUJwN1QX0+hdVJQAutlscnnnngtp3h2E4
-	vawAL+HBZd0gBHIcKbrGyDoOpcbSB3UVUm3iwPkuFtvk15aIrcFM9+K0QBWHFazsjyRdMF+QPwN
-	DiF1aY5MpyKGIj5Go0ENhb1PbQgX5/bXx0KgmzggvH2fYo6Q
-X-Google-Smtp-Source: AGHT+IGAek1A6P3Ha+7ueQirgdhy2Ux6efWtUdnbiEC7nzfgGCERjiuz9cfsSyk1cpCIt1yMr4fXCw==
-X-Received: by 2002:a17:907:3545:b0:abf:44b1:22e4 with SMTP id a640c23a62f3a-abf44b12416mr1228115966b.11.1741076656579;
-        Tue, 04 Mar 2025 00:24:16 -0800 (PST)
-Received: from localhost ([2a02:587:860d:d0f9:2a79:b9e6:e503:40e9])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abf3f3bbfb3sm675248866b.77.2025.03.04.00.24.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 00:24:16 -0800 (PST)
-Date: Tue, 4 Mar 2025 10:24:15 +0200
-From: Lilith Gkini <lilithpgkini@gmail.com>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, harry.yoo@oracle.com
-Subject: Re: [PATCH] slub: Fix Off-By-One in the While condition in
- on_freelist()
-Message-ID: <Z8a4r2mnIzTD2cZa@Arch>
-References: <Z8Sc4DEIVs-lDV1J@Arch>
- <b951acd4-5510-4d03-8f1e-accf38d909b6@suse.cz>
- <Z8XbomV9WCabATIM@Arch>
- <8cabcf70-d887-471d-9277-ef29aca1216b@suse.cz>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A671F8EFF;
+	Tue,  4 Mar 2025 08:23:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741076633; cv=fail; b=pxRb834xp1ni6FjDU8E25VAR8sWHtWRtCnyBkK8Hv2Mzqcx1pYIu0DDgPFzvkoQ4RAqCKeNG2xnyvP1bRBMrk9wA5M6w6LmW5/ZzpV4eZwU9YgxoUl07S6HSC3spwbqBzC0TXKMgB8ANEzX8WDagma8lMhLgJMIdWlLiaKOK4CA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741076633; c=relaxed/simple;
+	bh=+RKXLeQwAbMm5aXNOIjYlof6vkg2RGNX1ljoxCAGDqA=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=Ag4bXMx1hsPERr+eO5sz2MNltl+ZW4ZA2foVUReizYQo1ns9MCa4kgrBWL5qfteCRexOrLaASOfl1Wqod8Muv0k+v4NR/Z4Bipc/G95rh2XwuRMF8QrBs7Xz6SLFdxoNMyWDzZ2d2OuCUv3NapECb2aJx2UpcXvauoUxZkg9gP4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=aeT0v531; arc=fail smtp.client-ip=40.107.241.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HlvppSbLGB91k2+wXzUMBnkQzyUBw9L2MSldjrmBmwJz2rwS3NjRJO6xenuU7t1UetvWoU4fD9jAEZ+uFwP/AQcccWvkLf/cEH8nkJHoVzcqdwILblyfdRtJDouWM9oTErQvtfg8lQdG8OT7bZHxeDNg3n82V0ato1+Y47UUkBbH5PB6v2hnirlIP9KKXxAu24tHU3Qf7+M7HP6oequdxlDpzt+0MdfA7fmklJ4tyBff6GMaNdwKN7e0vhIjimFzoSnsgnOStPZ34tZ6dPw4etkGtCOk3WvZWhM6jSh7LGocU9UK92k/aKoI9La/qUdZDQo2d0i/z8B3lIoHgTVogA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=w4Jm7+1/bMXeSHR72Kk85JSPA7j7pmFZWvbFtx+nkgk=;
+ b=n7OV2OCHiHuQYIcLX12IXGuYjvQKgF/aZicfOULiDNBMVwFjxa1rLchy9BzkOuYm/wz7oXInlp4ISz6/WONZLOytzam0ywC+8iPPCkZwh2Uk1sh54cjbZlXPwGBqrd0AXYD5z8QFGZg7V26/qmE/kL+Xb1bqOjeWHBFYffoWQVwCaZW31Af224HGJDyNPe2m8DDTHTTeYqLl7R1o/lURetLJDUl5Aow8MMeYCEI3COqByre495sMriXH724VEYwa+E79j4RFwtwa3jTlt1QkV7+dM5gn5s7b2v9RvfNm2VRi9tezDk6u0sc3v6q/Yc0ZFlctlimJroyDEwtDPPlYLQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=w4Jm7+1/bMXeSHR72Kk85JSPA7j7pmFZWvbFtx+nkgk=;
+ b=aeT0v531BJf0ddjsFmNnD0CVifVmRCAgl0TNu1ogEU0zRzoJgWivXUNSb903VlR2ey6inh7V0XWT/QeMKtsYwUqESG8vvjFFW52dGE+SHlPywoZWrEVtYLeKZA0aFxsN2j0QMHv+CrSV7Y2lp8yvhCmArTOe3W77Zs2ZtfVqog5jKMl2j6i0rd9FC2wzs12avueOJ3dedbpoz1XNGlSUuKe18mK+AWtnhLBL4XhD56dkx0Ag8QWeUJj8dcXyllymG6YmyBXWCK7yEUr0JP3dnuYkikksg8PTe5MuvnFanLR71CUiL948Ia1NAPR8dye7QT03QxH2uZNIJ2gkacbvpw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by PA2PR04MB10311.eurprd04.prod.outlook.com (2603:10a6:102:413::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.25; Tue, 4 Mar
+ 2025 08:23:48 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90%3]) with mapi id 15.20.8489.025; Tue, 4 Mar 2025
+ 08:23:47 +0000
+From: Liu Ying <victor.liu@nxp.com>
+To: devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	victor.liu@nxp.com,
+	andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org,
+	rfoss@kernel.org,
+	Laurent.pinchart@ideasonboard.com,
+	jonas@kwiboo.se,
+	jernej.skrabec@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	peng.fan@nxp.com,
+	alexander.stein@ew.tq-group.com
+Subject: [PATCH v5 0/2] drm/bridge: imx: Add i.MX93 parallel display format configuration support
+Date: Tue,  4 Mar 2025 16:24:32 +0800
+Message-Id: <20250304082434.834031-1-victor.liu@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SGAP274CA0006.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b6::18)
+ To AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8cabcf70-d887-471d-9277-ef29aca1216b@suse.cz>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|PA2PR04MB10311:EE_
+X-MS-Office365-Filtering-Correlation-Id: 73fe2333-5186-4428-cc73-08dd5af5e2cc
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|1800799024|366016|376014|7416014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+ =?us-ascii?Q?4w9NOPyTM7SyGKgjY3hw7J4URfBSpOvmMyiQojfjwq59otZ4xLLyin0R/zrF?=
+ =?us-ascii?Q?yMuhtnA9A6+CVMOG8pzvL/mOyYN7QFBpdmyPLEeSeoUPV2VTQ1veSRn5ldOh?=
+ =?us-ascii?Q?6V+iCLb4ZIG4Vs8nMKgsvDXJI2G8VZQVybRbzT9/dwVPCFsQ+o4876biZk9a?=
+ =?us-ascii?Q?96wPyk9jGisoWoJzp3oXqvfzLPFGtPXzdJz7Xr4VMYuQtb/iCg3Hl4gHLB9+?=
+ =?us-ascii?Q?zUiPPGeKq9xgaCQFQdQcvWiBxvAp5BMQhprorw9tg+ccd1Oz5BsYxamm9dhw?=
+ =?us-ascii?Q?JZAMNsTRm6Pld8gBmcf2FcG9vn3FueEaB8ySqwEy5NsldlLz+mqJ8zoxe21/?=
+ =?us-ascii?Q?p5DRbmvDgiJjwJd8xrs3PEPygVqraSSGhHYZkFAR5hl7Vu81in+kNmXBdFic?=
+ =?us-ascii?Q?t/blcakaEbrjyNkNPQl/NvFQBIZk1AvNX03Qt/WgejBtYebdYTq+rKECBAjX?=
+ =?us-ascii?Q?frWCEDVx5/igLLCA2direvyGDDvQ1qZ6J+Eufhszu/bgiFEVwMzcuIdYrn8z?=
+ =?us-ascii?Q?i5TlOlWXoMIlRCHo/KmQMANdrwOIVmYAUUm4l8rnW3wJqQXKR7oLVZJ7xZpC?=
+ =?us-ascii?Q?9oHu55BSzDNCMpRpbdnODRX7LNfL/l3wxJ+Tp2617NY1FmezenaJ4oEeFmqC?=
+ =?us-ascii?Q?uVv+EKeJUcz2xvCZsWB/Fwt0B/n/i9BZ8z2PEU3y0pURSYDtXkV0emY0jD85?=
+ =?us-ascii?Q?pqRa6IUDUvWrDe8ToQ7/RsGf8wJqjnoz4yH3AbxG8b1Ek6bsIWPaPW/BEw4s?=
+ =?us-ascii?Q?piaeXexBXx3Gzg01bnyxXCV8CcObeqwRzymz5/EfzuXoJoJ+QnZicmW2gpLp?=
+ =?us-ascii?Q?JddjI5IgtelAl6snR1mVelzJjfGgzDGe0sTq4CQZQ3INt7GZJE0FpduTozC0?=
+ =?us-ascii?Q?CJQUOSa2LId/wLn248fjSB4Is1ozxAes6mLqDljN+gztjKIR3QS90dTfaRZo?=
+ =?us-ascii?Q?nY/BJMC0lPee58QDq/t6ZBTcsoZNdYsKSvL8sbfhdsJsd8ot3y8CxYzlPLZJ?=
+ =?us-ascii?Q?shwa6AAfNxTA8SpsSrFdOsPjGF5Kh44LFtSD1pvox8OraqOugwMq4E3B+qog?=
+ =?us-ascii?Q?r5c0Zgi3sj+02WZyN4mSXE9vGMS3Nipz7YVyJLZ+swrRMV8czwZKvQwDCxHE?=
+ =?us-ascii?Q?D5mbRB1tEOYZNd5nkg/Q966KG/UAnTutzJ7UHgkWxzE6z2hSHJ8dSkZpcNGh?=
+ =?us-ascii?Q?aI+LHo6NrGTvOpQf4OtbHKKLLawd/nRH4p/KMkg2iMpmdOqkIBNu6WRJdO4h?=
+ =?us-ascii?Q?5gYdjWjvuH+zT5RhWUdPKunu5GwKIj+JKEOEVyzuzZensbpV593rvM+6PheD?=
+ =?us-ascii?Q?utJVu/ISwWayI8zgSCUdcJse/DE79+TnrbUojpXWqqSO6FL3lLmsl8sdeBRF?=
+ =?us-ascii?Q?aLdJplb3woxUaKJuUgPbFrHg+LY61GDIIOqlO3EqL7fJ6UkzSHRATSRiRcPw?=
+ =?us-ascii?Q?l5nvgJosJu1ZUQVDhJlUTdOCCPQlAMTW?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?us-ascii?Q?RczLTn1TUd7J/93smoQghDOLJ7JQWMbmAhncvyYblErTGpkd59ikWKwuEq33?=
+ =?us-ascii?Q?ygtDrHmAHNFnpYtquZt4fCMq/NMaZuT+HR9UVl13swY6WlW2m3CH6Kwlh28Z?=
+ =?us-ascii?Q?OkFYprUDhqoFR6hjmIPtucP84/Ni21bMwY/gOMwxZsTI18gDXLo1xOUvZJpk?=
+ =?us-ascii?Q?73I72qejRC1/clx1jQwHDY44ML6bxeZ2+E7PinDbBwd33CEQVVB5wDdQ/2b9?=
+ =?us-ascii?Q?qzbNeH1T6wMrzaZbLBUBeKcH0Imzg6r3AeL2N/8F4wR42P6PQO6AQdSdjy9/?=
+ =?us-ascii?Q?Erbtf50hpzZE2RIywNXMRY9f5C4X8sJnOsLq061hFnyKqcldU+BALnWGI6pZ?=
+ =?us-ascii?Q?5G4pBxfGHFp0Cs/LUTsTmnMHmia/0ZbcRB3vpwEfdjn+CoATnhKBOSxqMkHz?=
+ =?us-ascii?Q?Sy3z02YjjY7zvaTjtKwnzNTsl4KljFgREXlZwXdVAopRCDfM2zs0hZuii1ya?=
+ =?us-ascii?Q?OIkHMxFFxKvZPDlwkyTvjXOdtxqlpBEqufC5o2q6/ZsiVKYI6RlDuawUpU0u?=
+ =?us-ascii?Q?+B9INdWMEcFtl3e2lz4tP7L7s7twKKdr8TqR2ZkHnN9MjQ/4ccY3EJK1wqhY?=
+ =?us-ascii?Q?ykAuprALQU31xGJ1m1s0JDnsP75KkqqH3e0OpiyvXsKXRo91Gqz+gBl/5Y/D?=
+ =?us-ascii?Q?2jlC3GTN4FqqzH/RbOkqH5We8WuAkiFzlvYwThSAoKSmE/EFqDsRA1SKVm33?=
+ =?us-ascii?Q?vGX7cQkPQt3KymKpI9+WfY9TXF+TfbKd6ppET0CUJVM113AgMo+VeX6N9m1H?=
+ =?us-ascii?Q?4+lnNCfYN4BrctNqi/c7rcL1oyRyeVj0lEmjH7GyoMtge2ceAde3FVthdtk3?=
+ =?us-ascii?Q?Q3S7+69TbuQeAURXvFp3ZJe1O12GcKduK9eWxg/Atv8Kp5iAd/8cXBWyisYS?=
+ =?us-ascii?Q?WlX4hN4U4wzCjljeD2sUjWWjkLyCfTc9oHrXzYu1GJ/N+mkFVnlI/ThdkdQU?=
+ =?us-ascii?Q?feyvmjaZ5s4XRQR6t8iHhFOhD5/0oYNaeD2jzAVEV66LK7p3CPrbyp3RxEnO?=
+ =?us-ascii?Q?kCvf+5MJ4QZ/q7min4QtpWUKKxlGL3Moo2F4wnUZEQC7Ns+7MrxdWpo62eQk?=
+ =?us-ascii?Q?KQrtvGofKnKjF0+VgntrCHqSIMHQaWaOojGBwo8kNAL9oqqPddn3kpviqO8k?=
+ =?us-ascii?Q?Y/qMil47hBtLE9axY/eTJB21uEcg5iZDImDQ51B+i2zvDpCfcBUgxGboK8wh?=
+ =?us-ascii?Q?SWtCu07j0DN7uv/h6SJqSjO+lE+ZZhUHmwuLvJ1oc1JH/yCDen5MCdpQqmew?=
+ =?us-ascii?Q?kYwcYo6jcnwCHisWlgLhsdDT4yJceDXA5gI44d/WTlpms3XZmJSErjFJdW6Y?=
+ =?us-ascii?Q?9IPzHZDBdUXAiQtAlK77uULszT9CPvsnG8BcG5ORI+Xb4vNZStw39DiigSUm?=
+ =?us-ascii?Q?UEyjY895+zEV4iLoERtRw8ZSLbigf3+gdYkpqDpvJ0GNN0ALybqbbrwKkLHN?=
+ =?us-ascii?Q?9HSqVZ1e+t0TsU3Co27MNXuhtdadmk8Uv/yss/0CUfmd78lacHB2KJl4WE0W?=
+ =?us-ascii?Q?0skDnIrZjn8tdLlc/ZmswRP9tjb3xImoidcJmGPZk8CqHCRqnnNoEbPxRDE0?=
+ =?us-ascii?Q?Agu9mLbJCnPBZJ67oP84gW7spTKuv8o//SRb1y5p?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 73fe2333-5186-4428-cc73-08dd5af5e2cc
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2025 08:23:47.7457
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: k1M3Ylc9ECq3vF2RgeSukjxuSIUoq4AP8+NE5c4RF8rpsTx4WM5fAmdMOU8OybxWBoawio6Wqbzij52Cfjv08w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA2PR04MB10311
 
-On Mon, Mar 03, 2025 at 08:06:32PM +0100, Vlastimil Babka wrote:
-> On 3/3/25 17:41, Lilith Gkini wrote:
-> > On Mon, Mar 03, 2025 at 12:06:58PM +0100, Vlastimil Babka wrote:
-> >> On 3/2/25 19:01, Lilith Persefoni Gkini wrote:
-> >> > If the `search` pattern is not found in the freelist then the function
-> >> > should return `fp == search` where fp is the last freepointer from the
-> >> > while loop.
-> >> > 
-> >> > If the caller of the function was searching for NULL and the freelist is
-> >> > valid it should return True (1), otherwise False (0).
-> >> 
-> >> This suggests we should change the function return value to bool :)
-> >> 
-> > 
-> > Alright, If you want to be more technical it's
-> > `1 (true), otherwise 0 (false).`
-> > Its just easier to communicate with the true or false concepts, but in C
-> > we usually don't use bools cause its just 1s or 0s.
-> 
-> Yeah, I think bools were not used initially int the kernel, but we're fine
-> with them now and changing a function for other reasons is a good
-> opportunity to modernize. There are some guidelines in
-> Documentation/process/coding-style.rst about this (paragraphs 16 and 17).
-> int is recommended if 0 means success and -EXXX for error, bool for simple
-> true/false which is the case here.
+Hi,
 
-Oh! because of the emote I thought you were being sarcastic that I didnt
-report it properly.
-Thank you for clarifying! That should be an easy fix!
+This patch set aims to add NXP i.MX93 parallel display format configuration
+DRM bridge driver support. i.MX93 mediamix blk-ctrl contains one
+DISPLAY_MUX register which configures parallel display format by using
+the "PARALLEL_DISP_FORMAT" field. i.MX93 LCDIF display controller's
+parallel output connects with this piece of small logic to configure
+parallel display format.
 
-> >> I think there's a problem that none of this will fix or even report the
-> >> situation properly. Even worse we'll set slab->inuse to 0 and thus pretend
-> >> all objects are free. This goes contrary to the other places that respond to
-> >> slab corruption by setting all objects to used and trying not to touch the
-> >> slab again at all.
-> >> 
-> >> So I think after the while loop we could determine there was a cycle if (nr
-> >> == slab->objects && fp != NULL), right? In that case we could perform the
-> >> same report and fix as in the "Freepointer corrupt" case?
-> > 
-> > True! We could either add an if check after the while as you said to
-> > replicate the "Freepointer corrupt" behavior...
-> > Or...
-> > 
-> > I hate to say it, or we could leave the while condition with the equal
-> > sign intact, as it was, and change that `if` check from
-> > `if (!check_valid_pointer(s, slab, fp)) {`
-> > to
-> > `if (!check_valid_pointer(s, slab, fp) || nr == slab->objects) {`
-> 
-> You're right!
-> 
-> > When it reaches nr == slab->objects and we are still in the while loop
-> > it means that fp != NULL and therefore the freelist is corrupted (note
-> > that nr starts from 0).
-> > 
-> > This would add fewer lines of code and there won't be any repeating
-> > code.
-> > It will enter in the "Freechain corrupt" branch and set the tail of 
-> > the freelist to NULL, inform us of the error and it won't get a chance
-> > to do the nr++ part, leaving nr == slab->objects in that particular 
-> > case, because it breaks of the loop afterwards.
-> > 
-> > But it will not Null-out the freelist and set inuse to objects like you
-> > suggested. If that is the desired behavior instead then we could do
-> > something like you suggested.
-> 
-> We could change if (object) to if (object && nr != slab->objects) to force
-> it into the "Freepointer corrupt" variant which is better. But then the
+Patch 1/2 adds NXP i.MX93 parallel display format configuration subnode
+in i.MX93 mediamix blk-ctrl dt-binding.
 
-We could add a ternary operator in addition to you suggestion.
-Changing this:
-`slab_err(s, slab, "Freepointer corrupt");`
+Patch 2/2 adds NXP i.MX93 parallel display format configuration DRM bridge
+driver support.
 
-to this (needs adjusting for the proper formating ofc...):
-`slab_err(s, slab, (nr == slab->objects) ? "Freelist cycle detected" : "Freepointer corrupt");`
+v4->v5:
+* Rebase the patch set upon next-20250303.  This causes the drop of .remove_new
+  from patch 2/2 by using devm_drm_bridge_add().  Also, this causes API change
+  for imx93_pdfc_bridge_atomic_enable() in patch 2/2.
+* Update year of copyright in patch 2/2.
 
-But this might be too much voodoo...
+v3->v4:
+* Use dev_err_probe() in imx93_pdfc_bridge_probe() in patch 2/2. (Krzysztof)
+* Drop MODULE_ALIAS() in patch 2/2. (Krzysztof)
+* Update year of Copyright in patch 2/2.
 
-> message should be also adjusted depending on nr... it should really report
+v2->v3:
+* Define i.MX93 parallel display format configuration subnode in
+  i.MX93 mediamix blk-ctrl dt-binding. (Rob)
+* Resend with Conor's R-b tag on patch 1/2 and with the patch set rebased
+  upon v6.11-rc1.
 
-I m not sure what you have in mind about the adjusting the message on
-nr. Do we really need to report the nr in the error? Do we need to
-mention anything besides "Freelist cycle detected" like you mentioned?
+v1->v2:
+* Set *num_input_fmts to zero in case
+  imx93_pdfc_bridge_atomic_get_input_bus_fmts() returns NULL in patch 2/2.
+* Replace .remove callback with .remove_new callback in
+  imx93_pdfc_bridge_driver in patch 2/2.
 
-> "Freelist cycle detected", but that's adding too many conditions just to
-> reuse the cleanup code so maybe it's more readable to check that outside of
-> the while loop after all.
+Liu Ying (2):
+  dt-bindings: soc: imx93-media-blk-ctrl: Add PDFC subnode to schema and
+    example
+  drm/bridge: imx: Add i.MX93 parallel display format configuration
+    support
 
-If the ternary operator is too unreadable we could do something like you
-suggested
+ .../soc/imx/fsl,imx93-media-blk-ctrl.yaml     |  68 +++++++
+ drivers/gpu/drm/bridge/imx/Kconfig            |   8 +
+ drivers/gpu/drm/bridge/imx/Makefile           |   1 +
+ drivers/gpu/drm/bridge/imx/imx93-pdfc.c       | 186 ++++++++++++++++++
+ 4 files changed, 263 insertions(+)
+ create mode 100644 drivers/gpu/drm/bridge/imx/imx93-pdfc.c
 
-```
-if (fp != NULL && nr == slab->objects) {
-	slab_err(s, slab, "Freelist cycle detected");
-	slab->freelist = NULL;
-	slab->inuse = slab->objects;
-	slab_fix(s, "Freelist cleared");
-	return false;
-}
-```
+-- 
+2.34.1
 
-What more would you like to add in the error message?
-
-In a previous email you mentioned this
-
-> >> I think there's a problem that none of this will fix or even report the
-> >> situation properly. Even worse we'll set slab->inuse to 0 and thus pretend
-> >> all objects are free. This goes contrary to the other places that respond to
-> >> slab corruption by setting all objects to used and trying not to touch the
-> >> slab again at all.
-
-If nuking it is how we should hangle corrupted freelists shouldn't we
-also do the same in the "Freechain corrupt" branch? Otherwise it
-wouldn't be consistent. Instead the code now just sets the tail to NULL.
-
-In that case we'll need to do a lot more rewriting, but it might help
-out with avoiding the reuse of cleanup code.
 
