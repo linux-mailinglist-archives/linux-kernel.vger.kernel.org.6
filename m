@@ -1,146 +1,179 @@
-Return-Path: <linux-kernel+bounces-544195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7829A4DE79
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:56:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F342A4DE7D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:56:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 810673AECC9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:55:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4061217659B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:56:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64FEB203714;
-	Tue,  4 Mar 2025 12:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NRcGU9tD"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A685202F8F;
+	Tue,  4 Mar 2025 12:56:29 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29478202960;
-	Tue,  4 Mar 2025 12:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 454111EA7CE
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 12:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741092939; cv=none; b=iDQJzYu13zyWJ9oyNOulFTPptnhmOHKgNGTw6SnD6r2XoJSbVvhCNLx6a7XRWG4nGC/yXe8lfW8LH/2peI9STugjtt9hUQkDCq/GNgiqCYZ2MvaPTi1egXboqHFh05fY4XYyUoo77OeQy7A5BKLfi7qNMsx7Lmv3GSqtvb59N2s=
+	t=1741092988; cv=none; b=clEGJ4Nq9W5z3ErOAbRE1JiCoQLYxfPxn8So7q4dH2Ygo/ajUrN3eZA5ZplfwFWpRRTKqt/tKxwdZvdnIofdifydDjS+0UeukaFAcRDYN2RVQGKjip2SA85F4yXr3u7iKIskK4sPv9FatKrs2QJn3aXLsae2gnoLBW3yiSWhY6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741092939; c=relaxed/simple;
-	bh=DmjwCKwsD93HO73VrBgBAQWDy8GDmDWgK3GfYhS4AJ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HDAxWGlruGLvIlbsZt8yLCF9LgpopZVCjjPLcMv2kTTFNfkl5E4ls3ou1fTIHfQHIpRQlHIms80MTGl1qnsgOqaLE9YLErGZV/8Ur3K4as6VMCR3ZOHikVnoptMUrAUOcAb7rkA9vak3a/aWol5e8FkkOVhVpLutJgzMg/JsZhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NRcGU9tD; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ZOOYa20v84BFJHD1ayfwn3RBGuxwB4d68Xr0Wae/NAo=; b=NRcGU9tDBhoqGCIPbQGfFWXxKw
-	RWjX7cPHBFk715BfPa7+c4U0pkvE2rlQvhrS5bwrgs6nXifwyYdsAyGI7UZ6kyLR9Ljx68sBkonBF
-	dKdqrkAFi9nGHT5oQDFToz1VDbU5JNvHXZZ6Kzj8q6oy91t+BUKIvBbsXwVBmIlfc63kXhiOlYN0V
-	4L4Px2wPqvym2Icjfet6mKLyn3t8Buzxg825uarwxAg2f27pqaQJpHSRifnuT6BIZtLDrAXCQvlX0
-	4fXl8ITe0RdCSeDq3ofNrMlIGpeo1g5vpp6QVAJhsBjf7N9aSjC4Ez69+RHslFlbri5YYzDKwx1Rv
-	GILKGJug==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tpRnp-000000002P6-1xXA;
-	Tue, 04 Mar 2025 12:55:17 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id B29BB30057E; Tue,  4 Mar 2025 13:55:16 +0100 (CET)
-Date: Tue, 4 Mar 2025 13:55:16 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Marco Elver <elver@google.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Alexander Potapenko <glider@google.com>,
-	Arnd Bergmann <arnd@arndb.de>, Bart Van Assche <bvanassche@acm.org>,
-	Bill Wendling <morbo@google.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Ingo Molnar <mingo@kernel.org>, Jann Horn <jannh@google.com>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
-	Kentaro Takeda <takedakn@nttdata.co.jp>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
-	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, rcu@vger.kernel.org,
-	linux-crypto@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: Re: [PATCH v2 06/34] cleanup: Basic compatibility with capability
- analysis
-Message-ID: <20250304125516.GF11590@noisy.programming.kicks-ass.net>
-References: <20250304092417.2873893-1-elver@google.com>
- <20250304092417.2873893-7-elver@google.com>
+	s=arc-20240116; t=1741092988; c=relaxed/simple;
+	bh=tFV+w7TWY7jo9482abo8pztgev2gIXyeuH5xdFjXKnk=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=p/oTCYE3GIfcJmbkMIdGF1NsBQc3RHEMzJK1TDVuAoXdNxOFmIDsbp7HLT05gy1K486GfgSmg1bA2nY1lTc1+eS+E0ZIlPkoKG69/VfANc79mCD5/aYOk4qfghS61oB8rMXopZ7BlA/UOjK0R8D80/kaQJDaYfFoAbHQDEDkeKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3d2b3882febso44709605ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 04:56:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741092986; x=1741697786;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=N2glMWByL/wI47Kll6g78vVHjREEEW+lOAunp+n8NgQ=;
+        b=Xtg1HRcoCqgLvK8fm9x5RQnhi+EeoNEGPdvOGO8hBeAqyj/mVdRY7Do+DHjZVohUzU
+         vwPLmu14LnKHX4WBzvdlGKui/0M9hWfEBNGWq5eUq1uxqxJgoiKl5sLRSSxkRKC9mFNh
+         inQtwo+gasE2wDha8kZRxOpKLiEimrJ6HN/xOaDGIaM91YrqAfmWOoqldKJGRyztLzU+
+         atRj4nJmA/Y9AOcPenw7nD/e+Ucl+0dVvZlcxL0oRkdZBa9a3vaoDcsrN7jf5Ts7zjDv
+         sxiwNG+SnuN0en/cvZaO6vjZV+BT1XYbCMyWl6jSvCUg5Im8cDMpREkooJ0CT/MBwc4p
+         OOsw==
+X-Forwarded-Encrypted: i=1; AJvYcCU3jhLcHsaPddDEFb4MiLuXrS/PxuU4LkzP7eAHUUylzd4q95VB07S7nUPAdYUJQMY4VcM9uMP4wJgtqEw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXzpzCZhKvhWGhLqWjXiTQzg/EhPRFVTmMEgnqcJxGxcKAOpSi
+	rLqXJM8vLaJqOVdiypTIUNjtDT/f1RV8IgzuEQA2s5c+HOaMEFk1KPqUppdyLBFDM5OuFLYRkVE
+	ozNhTrlM9HU1Ih0oTNi8jYM3g4NTSx85gvJF7Olieg4G5UdwUCTHXiik=
+X-Google-Smtp-Source: AGHT+IF2jahUempvW1wu7ZIejgAVLOLZLgZrMkuLxbA3N/OvkxxGK22tiHRSkjSvxi30/ndNea4vJ+QS5K+ODMDv9qxfVCzReviO
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250304092417.2873893-7-elver@google.com>
+X-Received: by 2002:a05:6e02:10:b0:3d0:47cf:869c with SMTP id
+ e9e14a558f8ab-3d3e6f639a8mr165107455ab.19.1741092986385; Tue, 04 Mar 2025
+ 04:56:26 -0800 (PST)
+Date: Tue, 04 Mar 2025 04:56:26 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67c6f87a.050a0220.38b91b.0147.GAE@google.com>
+Subject: [syzbot] [net?] WARNING: bad unlock balance in __rtnl_unlock
+From: syzbot <syzbot+3f18ef0f7df107a3f6a0@syzkaller.appspotmail.com>
+To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
+	horms@kernel.org, kuba@kernel.org, kuniyu@amazon.com, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Mar 04, 2025 at 10:21:05AM +0100, Marco Elver wrote:
-> Due to the scoped cleanup helpers used for lock guards wrapping
-> acquire/release around their own constructors/destructors that store
-> pointers to the passed locks in a separate struct, we currently cannot
-> accurately annotate *destructors* which lock was released. While it's
-> possible to annotate the constructor to say which lock was acquired,
-> that alone would result in false positives claiming the lock was not
-> released on function return.
-> 
-> Instead, to avoid false positives, we can claim that the constructor
-> "asserts" that the taken lock is held. This will ensure we can still
-> benefit from the analysis where scoped guards are used to protect access
-> to guarded variables, while avoiding false positives. The only downside
-> are false negatives where we might accidentally lock the same lock
-> again:
-> 
-> 	raw_spin_lock(&my_lock);
-> 	...
-> 	guard(raw_spinlock)(&my_lock);  // no warning
-> 
-> Arguably, lockdep will immediately catch issues like this.
-> 
-> While Clang's analysis supports scoped guards in C++ [1], there's no way
-> to apply this to C right now. Better support for Linux's scoped guard
-> design could be added in future if deemed critical.
+Hello,
 
-Would definitely be nice to have.
+syzbot found the following issue on:
+
+HEAD commit:    3424291dd242 Merge branch 'ipv4-fib-convert-rtm_newroute-a..
+git tree:       net-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=17140697980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1770b825960d3ae8
+dashboard link: https://syzkaller.appspot.com/bug?extid=3f18ef0f7df107a3f6a0
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=117ce464580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=157ce464580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/94c5b9f4e9a5/disk-3424291d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/2c19be66773b/vmlinux-3424291d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/5defd4d4c3bb/bzImage-3424291d.xz
+
+The issue was bisected to:
+
+commit 1dd2af7963e95df90590fe40425fe1bdf982ae8f
+Author: Kuniyuki Iwashima <kuniyu@amazon.com>
+Date:   Fri Feb 28 04:23:28 2025 +0000
+
+    ipv4: fib: Convert RTM_NEWROUTE and RTM_DELROUTE to per-netns RTNL.
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15581464580000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=17581464580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=13581464580000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+3f18ef0f7df107a3f6a0@syzkaller.appspotmail.com
+Fixes: 1dd2af7963e9 ("ipv4: fib: Convert RTM_NEWROUTE and RTM_DELROUTE to per-netns RTNL.")
+
+netlink: 'syz-executor245': attribute type 11 has an invalid length.
+=====================================
+WARNING: bad unlock balance detected!
+6.14.0-rc4-syzkaller-00873-g3424291dd242 #0 Not tainted
+-------------------------------------
+syz-executor245/5836 is trying to release lock (rtnl_mutex) at:
+[<ffffffff89d0e38c>] __rtnl_unlock+0x6c/0xf0 net/core/rtnetlink.c:142
+but there are no more locks to release!
+
+other info that might help us debug this:
+no locks held by syz-executor245/5836.
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 5836 Comm: syz-executor245 Not tainted 6.14.0-rc4-syzkaller-00873-g3424291dd242 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_unlock_imbalance_bug+0x25b/0x2d0 kernel/locking/lockdep.c:5289
+ __lock_release kernel/locking/lockdep.c:5518 [inline]
+ lock_release+0x47e/0xa30 kernel/locking/lockdep.c:5872
+ __mutex_unlock_slowpath+0xec/0x800 kernel/locking/mutex.c:891
+ __rtnl_unlock+0x6c/0xf0 net/core/rtnetlink.c:142
+ lwtunnel_valid_encap_type+0x38a/0x5f0 net/core/lwtunnel.c:169
+ lwtunnel_valid_encap_type_attr+0x113/0x270 net/core/lwtunnel.c:209
+ rtm_to_fib_config+0x949/0x14e0 net/ipv4/fib_frontend.c:808
+ inet_rtm_newroute+0xf6/0x2a0 net/ipv4/fib_frontend.c:917
+ rtnetlink_rcv_msg+0x791/0xcf0 net/core/rtnetlink.c:6919
+ netlink_rcv_skb+0x206/0x480 net/netlink/af_netlink.c:2534
+ netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
+ netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1339
+ netlink_sendmsg+0x8de/0xcb0 net/netlink/af_netlink.c:1883
+ sock_sendmsg_nosec net/socket.c:709 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:724
+ ____sys_sendmsg+0x53a/0x860 net/socket.c:2564
+ ___sys_sendmsg net/socket.c:2618 [inline]
+ __sys_sendmsg+0x269/0x350 net/socket.c:2650
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f09df9913e9
+Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffd5288a738 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007ffd5288a908 RCX: 00007f09df9913e9
+RDX: 0000000000000000 RSI: 0000400000000000 RDI: 0000000000000003
+RBP: 00007f09dfa04610 R08: 0000000000000000 R09: 00007ffd5288a908
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007ffd5288a8f8 R14: 0000000000000001 R15: 0000000000000001
 
 
-> @@ -383,6 +387,7 @@ static inline void *class_##_name##_lock_ptr(class_##_name##_t *_T)	\
->  
->  #define __DEFINE_LOCK_GUARD_1(_name, _type, _lock)			\
->  static inline class_##_name##_t class_##_name##_constructor(_type *l)	\
-> +	__no_capability_analysis __asserts_cap(l)			\
->  {									\
->  	class_##_name##_t _t = { .lock = l }, *_T = &_t;		\
->  	_lock;								\
-> @@ -391,6 +396,7 @@ static inline class_##_name##_t class_##_name##_constructor(_type *l)	\
->  
->  #define __DEFINE_LOCK_GUARD_0(_name, _lock)				\
->  static inline class_##_name##_t class_##_name##_constructor(void)	\
-> +	__no_capability_analysis					\
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Does this not need __asserts_cal(_lock) or somesuch?
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-GUARD_0 is the one used for RCU and preempt, rather sad if it doesn't
-have annotations at all.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
