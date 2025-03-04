@@ -1,86 +1,105 @@
-Return-Path: <linux-kernel+bounces-544165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE83DA4DE1F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:39:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1FD5A4DDFE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:33:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80A701738EA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:38:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E2F43B2BEB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0AE02036E8;
-	Tue,  4 Mar 2025 12:38:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D56B2202C32;
+	Tue,  4 Mar 2025 12:33:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="VkRhwj8h"
-Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e9sEC6s2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3160D2036F5;
-	Tue,  4 Mar 2025 12:38:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D5FA1F63E1;
+	Tue,  4 Mar 2025 12:33:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741091914; cv=none; b=KAbyjrBZNZEpZq60LKvdXC3eJKT2Sgf04sQhtZZVCMsLYZQaSC15wZkCWOAnlEBfPCbl7P+yYwcru2akAYixdGOlgOQYS3fZw+oWYDaILVGrLu4FqE/f6jGCGVg5Adz4BjbHzjOdSjEfKFv4/RuCPJOvf+o6YnUhXN3KOBdCfAs=
+	t=1741091622; cv=none; b=D14ona6vL4+r23k77ROGD7AqdGxBzogCbaJxac+I48hQSmdRkgBrbkVLAg+r7le7TowTr+EB5WikF2A8ESgOPxoPmfaUJCWjnViKBhkdGfJ9vAYHlQX7J7g3jxQrAFrmZmdUjbBlATmY1vf0+2+RVPRKQHZ07g4nL6yqu+sUVcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741091914; c=relaxed/simple;
-	bh=3YlAxAE2YbWWJgC7s273kR+6UMcvkOwkPhMJ4M16UsE=;
-	h=From:To:Subject:Mime-Version:Content-Type:Date:Message-ID; b=uDgQvbzzdNz/T0MwWq+jOu0ekdGCLCagZoMZ/zZw+277yeHgnI4iBB0Px4tWB0a96gpCCecjHE7jn2iRWECQd3lIcy6+aZ35dearHvRNS+vSF28uKK/VUflasmIidW+mThRL9b2zrx8pCdWJcyX7pBir2nER/jMOBkAAiqhPsrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=VkRhwj8h; arc=none smtp.client-ip=162.62.58.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1741091600; bh=3YlAxAE2YbWWJgC7s273kR+6UMcvkOwkPhMJ4M16UsE=;
-	h=From:To:Subject:Date;
-	b=VkRhwj8hdle73Ia6fl9FIHsXLKzfF7fp+jafQxL0qpROXw3zr5T3ymctRVYhqsFau
-	 8yjpWLf6xgAYhNp6EkSYDu4X/xcHvux5ovVoOydu/UUEICqgsCxMSgW8E+vxZ2UiKI
-	 zEvEpFUx7w0ZYtNpMFVgZb8C4/sGVo8K96SJ8Yms=
-X-QQ-FEAT: oHWrrGTW1dCni6VLWI7Xi3lwP5c1dnPf
-X-QQ-SSF: 00000000000000F0000000000000
-X-QQ-XMRINFO: MFuljud3PUW4EHVQZqpniSQ=
-X-QQ-XMAILINFO: N6tmAlkxtqcd1RYE7ZiLzY7Lw6tRdpXhVk9+Hz77o1EVYTKrnqC6hUqHe2CZh1
-	 C6Zrom9b5pps1iDsmsJpAVXvUET82apKru9S7YqrNm4/BMD5dt85BFCjuFno+IqKTfLYl/U1dAX/R
-	 +TcrQCxibq1CvqQFcy8WPooIbI9eCvANi3rwO7h0baIgtrfHauNVltdQ0us2Q0ETeMAF8spFJGQUj
-	 I2STjzrQXTwgNqNrEKWZluMA92/4CjrUKIFNvUMO/i69YJHk/tf0T3RexRirrIbRYRxhEDsAjPDn+
-	 gB0OagWGkRAC2YIl1ZSdRSIaMuiI+mChGsCWLO1Tn/sSRXD6mu0Xs7AiPJs395Dth/WcIzgG50PFd
-	 ocACv4SI7+38GhFyXJmLMpwRVPaPE3+IIivtxZF5ErKldVEf63hInfI9HWwFQi7RPEyuBjexcFZE0
-	 E4cRIlfg2UBE0OCgLDdxm1O3IVqx64q2DIoa2iYrOkOyidCXTveOMvpaW6uMHXcaVaUiHnpgKeRDh
-	 LSqCkmvQQnxxIED+7s9U83K+y+yR29tcMs+80DHMOAh0zI3q+8OuzhkunmHArLXL7w+D21APrDfqJ
-	 tYeHrO9fJEbTFX7/+BT2mMo0kdcrIfioGUCUWxgEhRVO4yufczcvwPI8YkeUlhFK+lPb9UVTKKuxd
-	 fG/JSPtEMUZNO/G/HON8EpenWq+57LVDFsUU0Ko8KOZ51SVAReIP0xNiis5npZrq/ch2XdovuftlJ
-	 2ecEdDrFlkVaWMAsnMNHnkV1yYB96KTob31lYLg+StQ2asByiITbbb2l5mulMuOACyVIwgvHk1UTw
-	 ECwW/U3AbcOJyWHNcgS9101KDr5SJURCfVwGL56ff+heovlB6FW0y0HjdTT1HeWWTkpvMDH6rn+Si
-	 1dRJZTUOkbQKvTQJRCnjSwdJL2LLkkQarZ9mQfBjCAC69Mmo0J59x5GJquSdeOaaQvLhnvnMZUQTO
-	 wQxKDTI2jtpsfh5PpLaGx78mfmOUTg+fi6hNhEgDH2RydK2i3gLlqkVFRsUdA=
-X-HAS-ATTACH: no
-X-QQ-BUSINESS-ORIGIN: 2
-X-QQ-STYLE: 
-X-QQ-mid: webmail284t1741091598t3256532
-From: "=?gb18030?B?ZmZoZ2Z2?=" <744439878@qq.com>
-To: "=?gb18030?B?d2Vuamlh?=" <wenjia@linux.ibm.com>, "=?gb18030?B?amFrYQ==?=" <jaka@linux.ibm.com>, "=?gb18030?B?YWxpYnVkYQ==?=" <alibuda@linux.alibaba.com>, "=?gb18030?B?dG9ueWx1?=" <tonylu@linux.alibaba.com>, "=?gb18030?B?Z3V3ZW4=?=" <guwen@linux.alibaba.com>, "=?gb18030?B?ZGF2ZW0=?=" <davem@davemloft.net>, "=?gb18030?B?ZWR1bWF6ZXQ=?=" <edumazet@google.com>, "=?gb18030?B?a3ViYQ==?=" <kuba@kernel.org>, "=?gb18030?B?cGFiZW5p?=" <pabeni@redhat.com>, "=?gb18030?B?aG9ybXM=?=" <horms@kernel.org>, "=?gb18030?B?bGludXgtcmRtYQ==?=" <linux-rdma@vger.kernel.org>, "=?gb18030?B?bGludXgtczM5MA==?=" <linux-s390@vger.kernel.org>, "=?gb18030?B?bmV0ZGV2?=" <netdev@vger.kernel.org>, "=?gb18030?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>
-Subject: =?gb18030?B?QWRkaXRpb25hbCBkZXNjcmlwdGlvbiBhYm91dCBi?=
- =?gb18030?B?dWc6IKGwS0FTQU46IG51bGwtcHRyLWRlcmVmIFJl?=
- =?gb18030?B?YWQgaW4gc21jX3RjcF9zeW5fcmVjdl9zb2NrobE=?=
+	s=arc-20240116; t=1741091622; c=relaxed/simple;
+	bh=dqZtGwJUtXDmZoMfVHnN7AcR4HjJLjiW+lGh8hxZgPk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=PLOj/fZYpLlx8NMBtrZTWGv8bwCmrTMFuP82wUa7He7+3TteeFguvqUK36EUkkHCtHOmUIXbcUDViKkI3dlkaU0Pxle9KK1AmifZkm6trFXZziZiA1qZYvjCUCqwE8fu6WVWhKsQP0otZNhEe9n+L/XZMFxLuVyQlVhtx08ZhWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e9sEC6s2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3845FC4CEE7;
+	Tue,  4 Mar 2025 12:33:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741091621;
+	bh=dqZtGwJUtXDmZoMfVHnN7AcR4HjJLjiW+lGh8hxZgPk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=e9sEC6s2WExXlMgenn1JeA31Ur0QDQVfiTXL+Flkg2OyNlnf5u9pUh2ANP/IVVVxN
+	 jOhNcnHmLO+rXLPUr7EtwO7OxkQdE+K9GLWtalKa9MuG4qSBzWisefhbJWCej87GSR
+	 6cNgK/dXT8q2eIadA2VIAVSORMRV6NeWKAdeq6CPzY9O9Vopmvt2m0FBjkaofDYtGO
+	 NEfTz4afJE6UqH1RqCi0o1Ps2989x9T1d44/la80iBgsL0Qimu/Ct/guv/mbtkQrUn
+	 7mUQakTdpQ5D6/AgAysnbXFckiCQ6JOXZeKtWEBl4wHPeCoa9UWwtzqNOhUpCD7d9n
+	 v42cQlhNTEGhw==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, 
+ Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, 
+ Bard Liao <yung-chuan.liao@linux.intel.com>, 
+ Ranjani Sridharan <ranjani.sridharan@linux.intel.com>, 
+ Daniel Baluta <daniel.baluta@nxp.com>, 
+ Kai Vehmanen <kai.vehmanen@linux.intel.com>, 
+ Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Peter Zijlstra <peterz@infradead.org>, 
+ Thorsten Blum <thorsten.blum@linux.dev>
+Cc: sound-open-firmware@alsa-project.org, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250223202547.1795-2-thorsten.blum@linux.dev>
+References: <20250223202547.1795-2-thorsten.blum@linux.dev>
+Subject: Re: [PATCH] ASoC: SOF: Intel: hda-dai: Remove unnecessary bool
+ conversion
+Message-Id: <174109161795.25452.18341311547791859737.b4-ty@kernel.org>
+Date: Tue, 04 Mar 2025 12:33:37 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="gb18030"
-Content-Transfer-Encoding: base64
-Date: Tue, 4 Mar 2025 07:33:18 -0500
-X-Priority: 3
-Message-ID: <tencent_DB489820B9DDDC69F6AFCC12649BDADE7808@qq.com>
-X-QQ-MIME: TCMime 1.0 by Tencent
-X-Mailer: QQMail 2.x
-X-QQ-Mailer: QQMail 2.x
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-1b0d6
 
-U29ycnkgYWJvdXQgdGhlIGJ1ZzogobBLQVNBTjogbnVsbC1wdHItZGVyZWYgUmVhZCBpbiBz
-bWNfdGNwX3N5bl9yZWN2X3NvY2uhsCBpbiBteSBsYXN0IGVtYWlsIGFib3V0IHRoZSBidWcn
-cyBzdWJzeXN0ZW0gZGVzY3JpcHRpb24gZXJyb3IgKG1pc3Rha2VubHkgd3JpdHRlbiBhcyBi
-Y2FjaGVmcyBmaWxlIHN5c3RlbSksIGl0IHNob3VsZCBhY3R1YWxseSBiZSByZWxhdGVkIHRv
-IHRoZSBTTUMgc3Vic3lzdGVtLg==
+On Sun, 23 Feb 2025 21:25:45 +0100, Thorsten Blum wrote:
+> Remove the unnecessary bool conversion and simplify the code.
+> 
+> 
+
+Applied to
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: SOF: Intel: hda-dai: Remove unnecessary bool conversion
+      commit: feb849404a8b677aa6760d1539acf597e4574337
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
