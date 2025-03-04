@@ -1,90 +1,115 @@
-Return-Path: <linux-kernel+bounces-544767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B421A4E69A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:46:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE5B8A4E661
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:41:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 134CC888212
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:59:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B273588378E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:00:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B97C291F87;
-	Tue,  4 Mar 2025 15:41:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A7A291F8C;
+	Tue,  4 Mar 2025 15:42:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="V11NaW9z"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mM6ty0yc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE674286294;
-	Tue,  4 Mar 2025 15:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40DBE28F94A;
+	Tue,  4 Mar 2025 15:42:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741102893; cv=none; b=Y66rxyDMGaF9aUbuyYzPh49Sua+1Hztb3+1iyVNMjawqD8D9SJ9EFIcZlp1HH9m5Qwwhri5mjUeVO/8PMKuDZH3HZxOtnuzmXxOLMz+gotFOChoaSQZkpdBLl7FyxnPqE250JeFNjIO9pCL9Z6/L/Oy40VdfNSoP1DERff76dwQ=
+	t=1741102962; cv=none; b=UqwagCLRSCjC0joRrzztU8wNt2O9fGPvayHFaKthqVj2ZNMm0Tph2n8u7rj/LObjGLlb9soYjhDlOyLJpO2ceUlZ90UikTMg9Edx+byUmSx94zdQ2qQJbipkKPbRuKHIsAncHee8eqrVP4Z8961XopoRmnr1QR2Elj9W5Bw9g88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741102893; c=relaxed/simple;
-	bh=mvBrY6YFvpRg5GjXOhGlre9ckKrCJg9/70l8HVzjw/w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iMpo5K/ckG9xNluRlBzduSAFbHuai13T48eYQBfWnBPwmNsnf4pggNIDgMQMpuyt3Z0f808uOHk30JsRuPkSP1DDdw7NGaU54puJXTKXxRDShtMwgrfwrcX2J6yAjrOynnZ5iPKqeSpR/HZ/O8H3MsAoMe6CoFByQPGL2Ahfd9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=V11NaW9z; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1741102889;
-	bh=mvBrY6YFvpRg5GjXOhGlre9ckKrCJg9/70l8HVzjw/w=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=V11NaW9zfoFsYpy57yvhtH/jd6XnQ6HuD2gTqWIGoy3d7dZeymCxcnGTWVD/QoCRg
-	 a5q8Gzn8tMjaTPeAua9SFilwR9UoLGPObKAQeMURsrPZdaN/sVvK58PVlyHS7ABiQU
-	 kbQOqIrn4CxpB73Hv0btZ58rhadhw9jkvSziHEDMZ884paz59U9988ObhjcKI8uozx
-	 SZPTPUHtEaL5P/vvKfPK8nI04c7lZJCmm4Wm6Whis0bVZfvgz8gspSnTCNoIJrXZA9
-	 RDh1phsRPMPg3W6DImkTlO+/5ppOw5kEdP3mJbHz+3N80U2PX3i1EyaLeSFY+yZF2Y
-	 P9hnwl8/3zmYg==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id A7A5A17E087E;
-	Tue,  4 Mar 2025 16:41:28 +0100 (CET)
-Message-ID: <f9fad64b-963f-4059-9b80-7d1c877525a8@collabora.com>
-Date: Tue, 4 Mar 2025 16:41:28 +0100
+	s=arc-20240116; t=1741102962; c=relaxed/simple;
+	bh=54cw3ZsEsDqGaWMwifys1UxImGLZAucBvesS78YvsZc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YkRz9SrFBjXbekxrWjXsUJS3v20Lo1Puy+aoMkIOHvv87XRaHG9PYsD+oCFgovqtfQWzlR7vm53FPxpW6+RzEuYKocGGz7HmWhY/L6R7/z27JYguLAKstVJdJN0IIWYl9B5OQSI0tufMSj//J4AR2evU49y3xm0hQKJIv4dQhkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mM6ty0yc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 876A3C4CEE5;
+	Tue,  4 Mar 2025 15:42:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741102961;
+	bh=54cw3ZsEsDqGaWMwifys1UxImGLZAucBvesS78YvsZc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mM6ty0ycLjzDp5PBT5OUCIgMNa0sVGhucEz2xIftlfLjEbpsrB9SusnLojl6Mf3C8
+	 3mljRiSznlb9s6f9Dviq5oXD+21DG21o/uq0EsZIvFDmbAKb/PMCFdRlDIatBGJLkj
+	 kz91wnm0ybBJ10uYVD+Hi6iJ7w8wGNP8HqCrwyi0/d+B2vE+zjDvbdJk24I5JQ8gyh
+	 sC8xFqudDB35xlJA7leYqQMTOyVSgIPdr4wx1Ex48DN3ZW/mOFF36EHPlkcBU6AeEK
+	 LDj/UFxguLHGfrfUwNJHU6j9MlawV5d+PRjmRSg/oD/19F/91tBWd6wqJvCnJiyhOu
+	 qGEaKFu0g61Kg==
+Date: Tue, 4 Mar 2025 15:42:36 +0000
+From: Simon Horman <horms@kernel.org>
+To: Jiayuan Chen <jiayuan.chen@linux.dev>
+Cc: kuba@kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org,
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	pabeni@redhat.com, ricardo@marliere.net, viro@zeniv.linux.org.uk,
+	dmantipov@yandex.ru, aleksander.lobakin@intel.com,
+	linux-ppp@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mrpre@163.com, Paul Mackerras <paulus@samba.org>,
+	syzbot+853242d9c9917165d791@syzkaller.appspotmail.com
+Subject: Re: [PATCH net-next v5] ppp: Fix KMSAN uninit-value warning with bpf
+Message-ID: <20250304154236.GE3666230@kernel.org>
+References: <20250228141408.393864-1-jiayuan.chen@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 02/20] dt-bindings: mfd: mediatek: mt6397: Add accdet
- subnode
-To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>, Sen Chu <sen.chu@mediatek.com>,
- Sean Wang <sean.wang@mediatek.com>, Macpaul Lin <macpaul.lin@mediatek.com>,
- Lee Jones <lee@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>
-Cc: kernel@collabora.com, linux-sound@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-pm@vger.kernel.org
-References: <20250304-mt6359-accdet-dts-v3-0-5b0eafc29f5b@collabora.com>
- <20250304-mt6359-accdet-dts-v3-2-5b0eafc29f5b@collabora.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250304-mt6359-accdet-dts-v3-2-5b0eafc29f5b@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250228141408.393864-1-jiayuan.chen@linux.dev>
 
-Il 04/03/25 16:15, Nícolas F. R. A. Prado ha scritto:
-> Describe the accdet as a possible subnode of the MT6359 PMIC.
+On Fri, Feb 28, 2025 at 10:14:08PM +0800, Jiayuan Chen wrote:
+> Syzbot caught an "KMSAN: uninit-value" warning [1], which is caused by the
+> ppp driver not initializing a 2-byte header when using socket filter.
 > 
-> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> The following code can generate a PPP filter BPF program:
+> '''
+> struct bpf_program fp;
+> pcap_t *handle;
+> handle = pcap_open_dead(DLT_PPP_PPPD, 65535);
+> pcap_compile(handle, &fp, "ip and outbound", 0, 0);
+> bpf_dump(&fp, 1);
+> '''
+> Its output is:
+> '''
+> (000) ldh [2]
+> (001) jeq #0x21 jt 2 jf 5
+> (002) ldb [0]
+> (003) jeq #0x1 jt 4 jf 5
+> (004) ret #65535
+> (005) ret #0
+> '''
+> Wen can find similar code at the following link:
+> https://github.com/ppp-project/ppp/blob/master/pppd/options.c#L1680
+> The maintainer of this code repository is also the original maintainer
+> of the ppp driver.
+> 
+> As you can see the BPF program skips 2 bytes of data and then reads the
+> 'Protocol' field to determine if it's an IP packet. Then it read the first
+> byte of the first 2 bytes to determine the direction.
+> 
+> The issue is that only the first byte indicating direction is initialized
+> in current ppp driver code while the second byte is not initialized.
+> 
+> For normal BPF programs generated by libpcap, uninitialized data won't be
+> used, so it's not a problem. However, for carefully crafted BPF programs,
+> such as those generated by syzkaller [2], which start reading from offset
+> 0, the uninitialized data will be used and caught by KMSAN.
+> 
+> [1] https://syzkaller.appspot.com/bug?extid=853242d9c9917165d791
+> [2] https://syzkaller.appspot.com/text?tag=ReproC&x=11994913980000
+> 
+> Cc: Paul Mackerras <paulus@samba.org>
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Reported-by: syzbot+853242d9c9917165d791@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/bpf/000000000000dea025060d6bc3bc@google.com/
+> Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
+Reviewed-by: Simon Horman <horms@kernel.org>
 
 
