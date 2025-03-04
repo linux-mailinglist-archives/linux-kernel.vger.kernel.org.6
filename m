@@ -1,62 +1,42 @@
-Return-Path: <linux-kernel+bounces-543129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5225A4D1D3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 03:44:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43597A4D1D6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 03:48:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E7093AB994
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 02:44:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C291171BA9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 02:48:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EF0318A6D4;
-	Tue,  4 Mar 2025 02:44:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BoYuzYUl"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42818179BD;
+	Tue,  4 Mar 2025 02:48:50 +0000 (UTC)
+Received: from n169-114.mail.139.com (n169-114.mail.139.com [120.232.169.114])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1F1D13AC1;
-	Tue,  4 Mar 2025 02:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A0F13BAF1;
+	Tue,  4 Mar 2025 02:48:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=120.232.169.114
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741056255; cv=none; b=YYMmUVkaZB3sO1T91T3mfJ6aI1HkJBm8kQWEVc1yYVcr+6RtsT1rK9gMX/Sc3OZglNxHGpRX82TL8WlU33EgBYR9GAdvaJYjwbDEYp6ZEme7EvcgRkp54gbFigy9SNZomluLXwO8OYAWJlxCM0SDvamdFCyLcHm8A4KEoRynGe0=
+	t=1741056529; cv=none; b=XPz/5vN33iE7ThNeeDXHPtr29iIP/pKgo3NG+C5WGDsZ6qzv8OUzKtyoqlznJpRXMGVNFYzHgDC5MkomS4pDo8hUYYISt5tEUTsVasdD+bvYYZcO8JBXSFpyfrwPGpLL8gaFm1QRHRwMRX+BgdZ3qVRtZnIdYhBFry6UFwrYG7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741056255; c=relaxed/simple;
-	bh=q1fJ/iaYrx2kNNcC1f+pb205MUGA2z+Nh54R599ASLs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=eCKEqJfoy6PmnrK3kFmNAPsg7FwiIO9aKDsNJ2zZtCn3rv2wa7LrVq8hgsmDMHqlYtBfEOuUcDoM23HA6htHbp4CdVKcDiE+vXnuyp8dwyrASf1RZk5BzD8LdHDtoYrGmJB53aPJP2HiuKPZWxPYEqWQGYyre3Gg+Y0Cog01sCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BoYuzYUl; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 523NX4aI027319;
-	Tue, 4 Mar 2025 02:44:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	94+vXBH51Km6KKl1kDuJYxTRcajgAtcBcKL0PidU6j4=; b=BoYuzYUlTgjsR7dm
-	MRWttYIO8Ikzfh1p9dlJfGyhZn+CtJEICdlw4DGCxaamvAf2DqcisUxSSTKyoUh+
-	HkrwujS0LeEErz+kXqzd07cyXv5VT4frTblE+iRP92zdtlgddeGYIqutTGLDo4Rf
-	ICdlx6ORFGKaVayJBRDWPlFAJH9F5ZuQR8SffHFYJqav+n9Qj8o8hV9TKycWVWXH
-	bC6xgroPYWhpPTTin+IAvi6rexWdenZeN+rv4sCyioefMTmzMQ4zbhPxxt1d1+Zp
-	Ca2cV2mUBM2qNVseyht1XjPkcPPjkgg7Q0214KLMK9rnuakVy03aoaEvr0pl1kfL
-	LwDc8A==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 455p6ugbma-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Mar 2025 02:44:03 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5242i3G0016937
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 4 Mar 2025 02:44:03 GMT
-Received: from [10.134.70.212] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 3 Mar 2025
- 18:44:02 -0800
-Message-ID: <4bb1d4a7-dd0b-4565-8d5d-ff8fd4cda20a@quicinc.com>
-Date: Mon, 3 Mar 2025 18:44:01 -0800
+	s=arc-20240116; t=1741056529; c=relaxed/simple;
+	bh=GlGhSKtWweNbJZVAgn7q6HCo+dUeVMyy/L/JejjCF1w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YJL8UU++IDdEQQrkr1tysMD3FyaEhPpsKuTlw1lU21Gy5ejzLUrkS6SF/dZEJAAixufhFwIuC7nw3GR4Y8kGV3B6RJWNeIlh8PmR6tFDBIZKJz82xmNOECboepKUy/8odepDzQWxu1R2hJapqhltBHO7oLWs/1YjN3tbKhv8VeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=139.com; spf=pass smtp.mailfrom=139.com; arc=none smtp.client-ip=120.232.169.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=139.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=139.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM:                                                                                        
+X-RM-SPAM-FLAG:00000000
+Received:from [10.103.133.35] (unknown[123.114.236.251])
+	by rmsmtp-lg-appmail-43-12057 (RichMail) with SMTP id 2f1967c66945b21-2bde8;
+	Tue, 04 Mar 2025 10:45:28 +0800 (CST)
+X-RM-TRANSID:2f1967c66945b21-2bde8
+Message-ID: <5a033664-4290-4327-8417-3148e4bc1704@139.com>
+Date: Tue, 4 Mar 2025 10:45:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,249 +44,54 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] drm/msm/dpu: Force modeset if new CTLs have been
- reserved
+Subject: Re: [PATCH v11] platform/x86:lenovo-wmi-hotkey-utilities.c:Support
+ for mic and audio mute LEDs
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ hdegoede@redhat.com
+Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ kuurtb@gmail.com, W_Armin@gmx.de, dongeg1@lenovo.com,
+ Mark Pearson <mpearson-lenovo@squebb.ca>
+References: <20250222114532.4105-1-xy-jackie@139.com>
+ <174101234673.8641.771885577184828253.b4-ty@linux.intel.com>
 Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        "Marijn
- Suijten" <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-References: <20250303-force-modeset-hw-ctl-v1-1-9cbf6d4fbf8e@quicinc.com>
- <flc3cyky4wxfin7dlxhukwmhonze3napmuyhl2s6jbsgepco7a@q4l2ndh23lus>
-From: Jessica Zhang <quic_jesszhan@quicinc.com>
-In-Reply-To: <flc3cyky4wxfin7dlxhukwmhonze3napmuyhl2s6jbsgepco7a@q4l2ndh23lus>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: LjzRBfY6pMnxmhKGnCbDtvkFAY7Xee4M
-X-Authority-Analysis: v=2.4 cv=H40hw/Yi c=1 sm=1 tr=0 ts=67c668f3 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=P-IC7800AAAA:8 a=e5mUnYsNAAAA:8 a=COk6AnOGAAAA:8
- a=9iKsdXAdIPTtafYJARkA:9 a=QEXdDO2ut3YA:10 a=QOpKv_Gl0K8A:10 a=d3PnA9EDa4IxuAV0gXij:22 a=Vxmtnl_E_bksehYqCbjh:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: LjzRBfY6pMnxmhKGnCbDtvkFAY7Xee4M
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-04_01,2025-03-03_04,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
- impostorscore=0 clxscore=1015 malwarescore=0 priorityscore=1501 mlxscore=0
- lowpriorityscore=0 phishscore=0 suspectscore=0 spamscore=0 mlxlogscore=999
- classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2503040022
+From: Jackie Dong <xy-jackie@139.com>
+In-Reply-To: <174101234673.8641.771885577184828253.b4-ty@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-
-
-On 3/3/2025 3:49 PM, Dmitry Baryshkov wrote:
-> On Mon, Mar 03, 2025 at 10:28:00AM -0800, Jessica Zhang wrote:
->> If new CTLs are reserved by CRTC but atomic_enable() is skipped, the
->> encoders will configure the stale CTL instead of the newly reserved one.
+On 3/3/25 22:32, Ilpo Järvinen wrote:
+> On Sat, 22 Feb 2025 19:45:31 +0800, Jackie Dong wrote:
 > 
-> The CTLs are propagates in .atomic_mode_set(), not in .atomic_enable().
-
-Hi Dmitry,
-
-Yes, sorry mixed up the two function ops here and in my reply in the CWB 
-thread.
-
+>> Implement Lenovo utility data WMI calls needed to make LEDs
+>> work on Ideapads that support this GUID.
+>> This enables the mic and audio LEDs to be updated correctly.
+>>
+>> Tested on below samples.
+>> ThinkBook 13X Gen4 IMH
+>> ThinkBook 14 G6 ABP
+>> ThinkBook 16p Gen4-21J8
+>> ThinkBook 16 G8 IRL
+>> ThinkBook 16 G7+ ASP
+>>
+>> [...]
 > 
->>
->> Avoid this by setting mode_changed to true if new CTLs have been
->> reserved by CRTC.
 > 
-> This looks very strange. First we reserve new CTLs when there is a
-> modeset requested. Then on one of the next commits we detect that
-> encoder has stale CTLs and try to upgrade the commit to full modeset
-> (while the user might not have .allow_modeset set to true for whatever
-> reason, e.g. because only ACTIVE is changed).
-
-Ah I see what you mean. I think this is an issue with how/when we're 
-calling dpu_rm_reserve(). Since RM reservation is tied to 
-atomic_check(), we aren't able to force a modeset based on HW block 
-reservation. The only reason we were able to avoid this issue with 
-needs_cdm is because needs_cdm didn't depend on the CDM HW block index.
-
-I think there's not really a good way to avoid this other than flipping 
-the order of the msm_atomic_check to drm_helper_atomic_check -> 
-dpu_kms.check_mode_changed -> drm_atomic_helper_check_modeset().
-
-What do you think? It seems to be valid given the examples in the DRM 
-docs [1]
-
-[1] 
-https://elixir.bootlin.com/linux/v6.13.5/source/drivers/gpu/drm/drm_atomic_helper.c#L610
-
+> Thank you for your contribution, it has been applied to my local
+> review-ilpo-next branch. Note it will show up in the public
+> platform-drivers-x86/review-ilpo-next branch only once I've pushed my
+> local branch there, which might take a while.
 > 
-> Could you please check if the following change fixes the issue: in
-> crtc_set_mode() replace the raw !new_crtc_state->mode_changed check with
-> the drm_atomic_crtc_needs_modeset() call?
-
-This also fixes the DPMS failures. IIRC Abhinav had suggested a similar 
-change to fix a different issue [2] and you gave some feedback on 
-avoiding mode_set() for enable/disable calls which don't have mode_changed.
-
-Also, while this may fix the CWB CI failures, wouldn't the issue still 
-remain regarding how to force modeset for changes in HW block reservation?
-
-[2] https://gitlab.freedesktop.org/drm/msm/-/issues/59
-
-Thanks,
-
-Jessica Zhang
-
+> The list of commits applied:
+> [1/1] platform/x86:lenovo-wmi-hotkey-utilities.c: Support for mic and audio mute LEDs
+>        commit: 61250669eaa9fd480e0f1c3cec107924b6a06b46
 > 
->>
->> Note: This patch only adds tracking for the CTL reservation, but eventually
->> all HW blocks used by encoders (i.e. DSC, PINGPONG, CWB) should have a
->> similar check to avoid the same issue.
->>
->> Suggested-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
->> Closes: https://lists.freedesktop.org/archives/freedreno/2025-February/036719.html
->> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
->> ---
->>   drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c    | 13 +++++++++++++
->>   drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 12 ++++++++++++
->>   drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h |  1 +
->>   3 files changed, 26 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
->> index 4073d821158c0..a1a8be8f5ab9f 100644
->> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
->> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
->> @@ -1406,19 +1406,32 @@ int dpu_crtc_check_mode_changed(struct drm_crtc_state *old_crtc_state,
->>   	struct drm_crtc *crtc = new_crtc_state->crtc;
->>   	bool clone_mode_enabled = drm_crtc_in_clone_mode(old_crtc_state);
->>   	bool clone_mode_requested = drm_crtc_in_clone_mode(new_crtc_state);
->> +	struct dpu_crtc_state *cstate = to_dpu_crtc_state(new_crtc_state);
->> +	uint32_t enc_ctl_mask = 0;
->> +	uint32_t crtc_ctl_mask = 0;
->> +	struct dpu_crtc_mixer *m;
->>   
->>   	DRM_DEBUG_ATOMIC("%d\n", crtc->base.id);
->>   
->> +	for (int i = 0; i < cstate->num_mixers; i++) {
->> +		m = &cstate->mixers[i];
->> +		crtc_ctl_mask |= BIT(m->lm_ctl->idx - CTL_0);
->> +	}
->> +
->>   	/* there might be cases where encoder needs a modeset too */
->>   	drm_for_each_encoder_mask(drm_enc, crtc->dev, new_crtc_state->encoder_mask) {
->>   		if (dpu_encoder_needs_modeset(drm_enc, new_crtc_state->state))
->>   			new_crtc_state->mode_changed = true;
->> +		enc_ctl_mask |= dpu_encoder_get_ctls(drm_enc);
->>   	}
->>   
->>   	if ((clone_mode_requested && !clone_mode_enabled) ||
->>   	    (!clone_mode_requested && clone_mode_enabled))
->>   		new_crtc_state->mode_changed = true;
->>   
->> +	if (crtc_ctl_mask != enc_ctl_mask)
->> +		new_crtc_state->mode_changed = true;
->> +
->>   	return 0;
->>   }
->>   
->> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
->> index a61598710acda..2f3101caeba91 100644
->> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
->> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
->> @@ -188,6 +188,7 @@ struct dpu_encoder_virt {
->>   
->>   	unsigned int dsc_mask;
->>   	unsigned int cwb_mask;
->> +	unsigned int ctl_mask;
->>   
->>   	bool intfs_swapped;
->>   
->> @@ -707,6 +708,13 @@ void dpu_encoder_update_topology(struct drm_encoder *drm_enc,
->>   	}
->>   }
->>   
->> +uint32_t dpu_encoder_get_ctls(struct drm_encoder *drm_enc)
->> +{
->> +	struct dpu_encoder_virt *dpu_enc = to_dpu_encoder_virt(drm_enc);
->> +
->> +	return dpu_enc->ctl_mask;
->> +}
->> +
->>   bool dpu_encoder_needs_modeset(struct drm_encoder *drm_enc, struct drm_atomic_state *state)
->>   {
->>   	struct drm_connector *connector;
->> @@ -1155,6 +1163,7 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
->>   	bool is_cwb_encoder;
->>   	unsigned int dsc_mask = 0;
->>   	unsigned int cwb_mask = 0;
->> +	unsigned int ctl_mask = 0;
->>   	int i;
->>   
->>   	if (!drm_enc) {
->> @@ -1245,11 +1254,14 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
->>   				"no ctl block assigned at idx: %d\n", i);
->>   			return;
->>   		}
->> +		ctl_mask |= BIT(phys->hw_ctl->idx - CTL_0);
->>   
->>   		phys->cached_mode = crtc_state->adjusted_mode;
->>   		if (phys->ops.atomic_mode_set)
->>   			phys->ops.atomic_mode_set(phys, crtc_state, conn_state);
->>   	}
->> +
->> +	dpu_enc->ctl_mask = ctl_mask;
->>   }
->>   
->>   static void _dpu_encoder_virt_enable_helper(struct drm_encoder *drm_enc)
->> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h
->> index ca1ca2e51d7ea..70b03743dc346 100644
->> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h
->> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h
->> @@ -91,6 +91,7 @@ bool dpu_encoder_needs_modeset(struct drm_encoder *drm_enc, struct drm_atomic_st
->>   
->>   void dpu_encoder_prepare_wb_job(struct drm_encoder *drm_enc,
->>   		struct drm_writeback_job *job);
->> +uint32_t dpu_encoder_get_ctls(struct drm_encoder *drm_enc);
->>   
->>   void dpu_encoder_cleanup_wb_job(struct drm_encoder *drm_enc,
->>   		struct drm_writeback_job *job);
->>
->> ---
->> base-commit: 866e43b945bf98f8e807dfa45eca92f931f3a032
->> change-id: 20250228-force-modeset-hw-ctl-d02b80a2bb4c
->> prerequisite-change-id: 20241222-drm-dirty-modeset-88079bd27ae6:v2
->> prerequisite-patch-id: 0c61aabfcd13651203f476985380cbf4d3c299e6
->> prerequisite-patch-id: c6026f08011c288fd301676e9fa6f46d0cc1dab7
->> prerequisite-patch-id: b0cb06d5c88791d6e4755d879ced0d5050aa3cbf
->> prerequisite-patch-id: fd72ddde9dba0df053113bc505c213961a9760da
->> prerequisite-change-id: 20250209-dpu-c3fac78fc617:v2
->> prerequisite-patch-id: c84d2b4b06be06384968429085d1e8ebae23a583
->> prerequisite-patch-id: fb8ea7b9e7c85fabd27589c6551108382a235002
->> prerequisite-change-id: 20250211-dither-disable-b77b1e31977f:v1
->> prerequisite-patch-id: 079e04296212b4b83d51394b5a9b5eea6870d98a
->> prerequisite-change-id: 20240618-concurrent-wb-97d62387f952:v6
->> prerequisite-patch-id: b52034179741dc182aea9411fd446e270fdc69d1
->> prerequisite-patch-id: bc472765a7d5214691f3d92696cc8b0119f3252e
->> prerequisite-patch-id: c959bc480e96b04297ebaf30fea3a68bbac69da6
->> prerequisite-patch-id: f7db8449b241a41faac357d9257f8c7cb16503ec
->> prerequisite-patch-id: 7beb73131d0ab100f266fcd3c1f67c818a3263f4
->> prerequisite-patch-id: c08cbb5cf4e67e308afd61fdad6684b89429d3b6
->> prerequisite-patch-id: a4e343143b8fbe98ae4aa068cc459c750105eb9d
->> prerequisite-patch-id: 1d09edcf12ef7e7ab43547eefacae5b604b698e9
->> prerequisite-patch-id: 0008f9802bfd3c5877267666cceb7608203e5830
->> prerequisite-patch-id: 49402eb767c97915faf2378c5f5d05ced2dcfdac
->> prerequisite-patch-id: 522be2a6b5fe4e3a2d609526bb1539f9bc6f828f
->> prerequisite-patch-id: 031da00d0fffd522f74d682a551362f3ecda0c71
->> prerequisite-patch-id: 9454cec22231a8f3f01c33d52a5df3e26dd88287
->> prerequisite-patch-id: 7edbeaace3549332e581bee3183a76b0e4d18163
->>
->> Best regards,
->> -- 
->> Jessica Zhang <quic_jesszhan@quicinc.com>
->>
+> --
+>   i.
 > 
-> -- 
-> With best wishes
-> Dmitry
+Hi Ilpo,
+   Thanks for your confirmation and help for this patch.
+
+   Best Regards,
+   Jackie Dong
 
 
