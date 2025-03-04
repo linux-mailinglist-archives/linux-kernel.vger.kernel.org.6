@@ -1,79 +1,93 @@
-Return-Path: <linux-kernel+bounces-543414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3319BA4D553
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:49:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05689A4D56C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:54:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D32881894603
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:46:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70D167A9399
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:53:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D9F01F9428;
-	Tue,  4 Mar 2025 07:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cvs40gUE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BDBE1F8736;
+	Tue,  4 Mar 2025 07:54:28 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED2B1F8BC9;
-	Tue,  4 Mar 2025 07:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB081F55F8;
+	Tue,  4 Mar 2025 07:54:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741074367; cv=none; b=b8vjl9aNzSV6oDxQpD9/ugYUun1i8pJ0nVL4MauG444iJ9ZZmsOdgZGiML4L9iGP3NpKrpfjGWX/9uS7RT9eV8hgXMjS7hm5RxgOk16HOqIC5YpSqy4GrLOVJCg9Ijhvz2xaEqs2USZzqXsi79QixEs6ADiDP4CmKn3x4iqjBNQ=
+	t=1741074867; cv=none; b=nRDowyNGOkUpAYBYJK8fSZrmnSWQKRUAsGO7txFVg6wSmwuYYq9QvD0IT2MbiVqiVw8hdyJ4uGElFKK9mC7kyeRvfPdD5Gaz9wjJCKgmnM8YZQTGXVJqW7JfVxUKAD0cJ+inHH8WhZW+n7Tn+tWc6WPJ6qEe85ya6ZtGvjFZiew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741074367; c=relaxed/simple;
-	bh=fUi7irrO/Msp0XYZH+52BjNdyYaZGzh2oyrpCmkcRR4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MUntHVoQY3UeXf9EZuOu2IFf0BSG4tlYorIWcQMnRxJjEE7oeGxqZOuEvm27gelPFNR8S24qXAvuWNSD+zEbcQoxaSa3so2oMQmfKQCnNFBwMx87QDiajtapAqFYHmGtOT0S8XrRzTkVu3NsyL6ycb8tJHEyn/xYNmaKtpZrlsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cvs40gUE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 164E3C4CEEA;
-	Tue,  4 Mar 2025 07:46:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741074366;
-	bh=fUi7irrO/Msp0XYZH+52BjNdyYaZGzh2oyrpCmkcRR4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Cvs40gUEns0ZXfI/qnJCK3C4bGP8ybjlCE4p5nrZNhdZiRybkiA/Mc/r3ANdx0q+G
-	 UhpZ9Qp6hvoi/7Bik/ViG+5bAzHAvUL8Ebxu28Jp751IdhmBYV6Gu2V7Aqplp0cqP2
-	 P0LoCyBQML0ve09O0a/PyD1WZeRucAm/+RsEVUFu+JtARdhG4pB401rV5l65gOaESt
-	 x/Fy2FoKBHpMCF8QNrJvDnq9myoh6QOhJiyr3xeu/9er3PZVMLvYjAIATqoSiSohNa
-	 H+oBvBEqLFta0+FyMvw+cO/5r2zlI2Bri0rzKV547+bO9pPk8kHUrk6ixaY4yBdHox
-	 RJG1BoeMYuwuQ==
-Date: Tue, 4 Mar 2025 08:46:02 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Saalim Quadri <danascape@gmail.com>
-Cc: jic23@kernel.org, lars@metafoo.de, Michael.Hennerich@analog.com, 
-	gregkh@linuxfoundation.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-staging@lists.linux.dev, 21cnbao@gmail.com, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2] dt-bindings: iio: accel: add binding documentation
- for ADIS16203
-Message-ID: <20250304-chubby-amusing-loon-ac7e3b@krzk-bin>
-References: <20250303235930.68731-1-danascape@gmail.com>
+	s=arc-20240116; t=1741074867; c=relaxed/simple;
+	bh=iRL1xqpVHtKl17cWCTJwB5wPeu43QyomPaKN1qB2UTE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UTyu8fM2NDtTLmoFaXuRMDURJf7Ys7VqkPD4NAVq59t8aA1WZeZGTpFSjA6GR+CrBX0HqwJYv+uCv59r4SM8kyvuXH/NovlQHoAkMHSt8Oxdry5mtIk1/GjFGeTeLiYktkvZl3P5VkVlQ8/i9+6dnUd2hPMH5gJtSzaY6mYQzZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Z6SWw4SsYz1dyjv;
+	Tue,  4 Mar 2025 15:50:04 +0800 (CST)
+Received: from dggemv703-chm.china.huawei.com (unknown [10.3.19.46])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6E1821A0188;
+	Tue,  4 Mar 2025 15:54:16 +0800 (CST)
+Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
+ dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 4 Mar 2025 15:54:16 +0800
+Received: from localhost.localdomain (10.90.30.45) by
+ kwepemn100009.china.huawei.com (7.202.194.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 4 Mar 2025 15:54:15 +0800
+From: Huisong Li <lihuisong@huawei.com>
+To: <linux@roeck-us.net>, <jdelvare@suse.com>
+CC: <linux-hwmon@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<zhanjie9@hisilicon.com>, <zhenglifeng1@huawei.com>,
+	<liuyonglong@huawei.com>, <lihuisong@huawei.com>
+Subject: [PATCH] hwmon: Fix the missing of 'average' word in hwmon_power_attr_templates
+Date: Tue, 4 Mar 2025 15:46:40 +0800
+Message-ID: <20250304074640.2770353-1-lihuisong@huawei.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250303235930.68731-1-danascape@gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemn100009.china.huawei.com (7.202.194.112)
 
-On Tue, Mar 04, 2025 at 05:29:30AM +0530, Saalim Quadri wrote:
-> This patch add device tree binding documentation for ADIS16203.
-> 
-> Signed-off-by: Saalim Quadri <danascape@gmail.com>
-> ---
-> Changes:
-> V1 - V2: change compatible property from enum to const
-> 
+The string "power%d_interval_max" and "power%d_interval_min" in the
+hwmon_power_attr_templates[] are corresponding to the sysfs interface name
+of hwmon_power_average_interval_max and hwmon_power_average_interval_min.
+But the 'average' word is missing in two strings. Fortunately, there is
+no driver to use it yet.
 
-Please kindly test your patch before posting, instead of using community
-as a testing service.
+Signed-off-by: Huisong Li <lihuisong@huawei.com>
+---
+ drivers/hwmon/hwmon.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/hwmon/hwmon.c b/drivers/hwmon/hwmon.c
+index 9703d60e9bbf..1688c210888a 100644
+--- a/drivers/hwmon/hwmon.c
++++ b/drivers/hwmon/hwmon.c
+@@ -646,8 +646,8 @@ static const char * const hwmon_power_attr_templates[] = {
+ 	[hwmon_power_enable] = "power%d_enable",
+ 	[hwmon_power_average] = "power%d_average",
+ 	[hwmon_power_average_interval] = "power%d_average_interval",
+-	[hwmon_power_average_interval_max] = "power%d_interval_max",
+-	[hwmon_power_average_interval_min] = "power%d_interval_min",
++	[hwmon_power_average_interval_max] = "power%d_average_interval_max",
++	[hwmon_power_average_interval_min] = "power%d_average_interval_min",
+ 	[hwmon_power_average_highest] = "power%d_average_highest",
+ 	[hwmon_power_average_lowest] = "power%d_average_lowest",
+ 	[hwmon_power_average_max] = "power%d_average_max",
+-- 
+2.33.0
 
 
