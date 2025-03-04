@@ -1,212 +1,188 @@
-Return-Path: <linux-kernel+bounces-543179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 093C4A4D286
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 05:20:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E221A4D287
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 05:20:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 052EB1886FF5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 04:20:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BB73173475
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 04:20:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963C619E83E;
-	Tue,  4 Mar 2025 04:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F55156F3C;
+	Tue,  4 Mar 2025 04:20:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mT/AWOtu"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gm7LoIFj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4514225D6
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 04:20:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D7637160
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 04:20:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741062030; cv=none; b=aW9HQXTiIK2209nPDow1NjEWjo+2NgkR4DkbvDqVTHYg3LZPJ2X4P3grrCi0PaqyOPf0VGuRt0XGUEZE5qUS4fRC+gkmvpSvPjmedyTtwXjlzxvG+PI2XpG9YwbNAiRm9LVi5e+N2K5pYsVaZQx67L2HKKgmuBJie9Suo0kzgN0=
+	t=1741062037; cv=none; b=S4tcwA4VVE8Uy3fLPOfPDISrnOdbpLYp1PDR4RN3MPt+lVcYXDg/am9p+BA4hgPeJVARXc1AIQlCyJ9OhVdG0XCRIdMIWyJFOxy0RoxD7wFKaLnvmf4A4aK+6LjWZkWps8KfPl9wj9kvrFJkQY3ETRJvHYr7A+QPilovyLny4qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741062030; c=relaxed/simple;
-	bh=TD19AqOwybxteNKHP4UozEUrL7K9NT10hzXj7YTILY4=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=kC1ekJGSXpsH+jCxOLaaxbnqTKO7hR+cc/havZLhtN71qLYmnX3z3MLVLFBFtfj7hke/msTxsdf1vNLTfeCv09qI65enuOkUuWAgh3/AcmUD5OioRNUrCXa4Xrf+PClN5rjxMER2TtW1Fnz2HGgClxn4ovlDHJIub+Ebqa0SZWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mT/AWOtu; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741062029; x=1772598029;
-  h=date:from:to:cc:subject:message-id;
-  bh=TD19AqOwybxteNKHP4UozEUrL7K9NT10hzXj7YTILY4=;
-  b=mT/AWOtu9iFrrSttOyhTCPfS6x1O5IoQGiTUwg9XYa16ZqUCCDwbEzy4
-   m13O/IVSgru3MB0BdRG6pfhuGAEx1ewmkwEjTswt3oPM7HMbeid3KRB+p
-   SE7qGz8svh7ut+VV1Uf0y76xpfkxZPXGl7uW6NM/9WnX+7cj/Xr0Zo7AM
-   pWRvsIqXeFWqyY0wt9AoG6N2vwBUUF1uJFBoYX15DAuSKY6eeXQebQMP9
-   bhmYSk/Ljivt9iW0X1unsREOcAdHFcYMvZr2uWqioTEpCWbC6IOxtTeTH
-   INW/dZvZs/JPzXDc+5oqvGllAqiq36mwB3PUQfy+UFWr7feQ3tXA+XeXx
-   w==;
-X-CSE-ConnectionGUID: MDkcMDPaSQaqHso97VNrjQ==
-X-CSE-MsgGUID: 6zxr4oV4TMOQLCcau7o7WA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="59510127"
-X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
-   d="scan'208";a="59510127"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 20:20:28 -0800
-X-CSE-ConnectionGUID: twYo+Z4OTMexiTFqc22+Vw==
-X-CSE-MsgGUID: MUjljUmZTZ2e9mxNSvNwRQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
-   d="scan'208";a="118229425"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa007.fm.intel.com with ESMTP; 03 Mar 2025 20:20:27 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tpJlW-000JG2-1k;
-	Tue, 04 Mar 2025 04:20:23 +0000
-Date: Tue, 04 Mar 2025 12:19:23 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/cpu] BUILD SUCCESS
- aa909169d8fbce74f77df1cc3e722673599fa945
-Message-ID: <202503041218.50PwRLuc-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1741062037; c=relaxed/simple;
+	bh=4WvJQJNdJoTNKt5ltUO+3gTtnOgNAYVCaYW6DAjFMBE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iOAIsSkqPSXH2n7Rg/n5EtIdV7JjSzwWEBP5uLjyxqxnKWK3broagwK4/efnigGzGS/8aBprQVUeKBH5M+X/PhKcEnvlf7S5UhfCEdXrnFKjWsFb9b+SGmYAcmuQTeY7I/3nnT6x3s/MxGdiwXwEmqvV1dcBOFYAfRQrMPiEemE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gm7LoIFj; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741062033;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H8QNG9Tzo6lIVKKqIyvnewf5NhMdnqlRqTf63SVtc9A=;
+	b=gm7LoIFj78RJ7HOliEuZWC7OFY6JnwGWUDZ1cSmJ0aWBTLX1fQkLsbc7/6r0s6wK5tzQ9K
+	PthaBvl6ThRxIxdydig8b0gbpbWlUK6xjPGlzqFtPqTaA+tSuQMBqoI9Uqmc36IORHKVhn
+	cwA9QdTi3r0qIqi8ky6n3Td4hzvOLL8=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-562-C1m5irFeO22yySSrr7fZHg-1; Mon,
+ 03 Mar 2025 23:20:27 -0500
+X-MC-Unique: C1m5irFeO22yySSrr7fZHg-1
+X-Mimecast-MFC-AGG-ID: C1m5irFeO22yySSrr7fZHg_1741062026
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5581E1800264;
+	Tue,  4 Mar 2025 04:20:26 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.52])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BD28519560AA;
+	Tue,  4 Mar 2025 04:20:23 +0000 (UTC)
+Date: Tue, 4 Mar 2025 12:20:18 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Donald Dutile <ddutile@redhat.com>,
+	David Hildenbrand <david@redhat.com>, Jiri Bohac <jbohac@suse.cz>
+Cc: Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
+	kexec@lists.infradead.org, Philipp Rudo <prudo@redhat.com>,
+	Pingfan Liu <piliu@redhat.com>, Tao Liu <ltao@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	David Hildenbrand <dhildenb@redhat.com>,
+	Michal Hocko <mhocko@suse.cz>
+Subject: Re: [PATCH v2 0/5] kdump: crashkernel reservation from CMA
+Message-ID: <Z8Z/gnbtiXT9QAZr@MiWiFi-R3L-srv>
+References: <Z7dc9Cd8KX3b_brB@dwarf.suse.cz>
+ <04904e86-5b5f-4aa1-a120-428dac119189@redhat.com>
+ <427fec88-2a74-471e-aeb6-a108ca8c4336@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <427fec88-2a74-471e-aeb6-a108ca8c4336@redhat.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/cpu
-branch HEAD: aa909169d8fbce74f77df1cc3e722673599fa945  x86/smp: Fix mwait_play_dead() and acpi_processor_ffh_play_dead() noreturn behavior
+On 03/03/25 at 09:17am, Donald Dutile wrote:
+> 
+> 
+> On 3/3/25 3:25 AM, David Hildenbrand wrote:
+> > On 20.02.25 17:48, Jiri Bohac wrote:
+> > > Hi,
+> > > 
+> > > this series implements a way to reserve additional crash kernel
+> > > memory using CMA.
+> > > 
+> > > Link to the v1 discussion:
+> > > https://lore.kernel.org/lkml/ZWD_fAPqEWkFlEkM@dwarf.suse.cz/
+> > > See below for the changes since v1 and how concerns from the
+> > > discussion have been addressed.
+> > > 
+> > > Currently, all the memory for the crash kernel is not usable by
+> > > the 1st (production) kernel. It is also unmapped so that it can't
+> > > be corrupted by the fault that will eventually trigger the crash.
+> > > This makes sense for the memory actually used by the kexec-loaded
+> > > crash kernel image and initrd and the data prepared during the
+> > > load (vmcoreinfo, ...). However, the reserved space needs to be
+> > > much larger than that to provide enough run-time memory for the
+> > > crash kernel and the kdump userspace. Estimating the amount of
+> > > memory to reserve is difficult. Being too careful makes kdump
+> > > likely to end in OOM, being too generous takes even more memory
+> > > from the production system. Also, the reservation only allows
+> > > reserving a single contiguous block (or two with the "low"
+> > > suffix). I've seen systems where this fails because the physical
+> > > memory is fragmented.
+> > > 
+> > > By reserving additional crashkernel memory from CMA, the main
+> > > crashkernel reservation can be just large enough to fit the
+> > > kernel and initrd image, minimizing the memory taken away from
+> > > the production system. Most of the run-time memory for the crash
+> > > kernel will be memory previously available to userspace in the
+> > > production system. As this memory is no longer wasted, the
+> > > reservation can be done with a generous margin, making kdump more
+> > > reliable. Kernel memory that we need to preserve for dumping is
+> > > never allocated from CMA. User data is typically not dumped by
+> > > makedumpfile. When dumping of user data is intended this new CMA
+> > > reservation cannot be used.
+> > 
+> > 
+> > Hi,
+> > 
+> > I'll note that your comment about "user space" is currently the case, but will likely not hold in the long run. The assumption you are making is that only user-space memory will be allocated from MIGRATE_CMA, which is not necessarily the case. Any movable allocation will end up in there.
+> > 
+> > Besides LRU folios (user space memory and the pagecache), we already support migration of some kernel allocations using the non-lru migration framework. Such allocations (which use __GFP_MOVABLE, see __SetPageMovable()) currently only include
+> > * memory balloon: pages we never want to dump either way
+> > * zsmalloc (->zpool): only used by zswap (-> compressed LRU pages)
+> > * z3fold (->zpool): only used by zswap (-> compressed LRU pages)
+> > 
+> > Just imagine if we support migration of other kernel allocations, such as user page tables. The dump would be missing important information.
+> > 
+> IOMMUFD is a near-term candidate for user page tables with multi-stage iommu support with going through upstream review atm.
+> Just saying, that David's case will be a norm in high-end VMs with performance-enhanced guest-driven iommu support (for GPUs).
 
-elapsed time: 1028m
+Thank both for valuable inputs, David and Don. I agree that we may argue
+not every system have ballon or enabling swap for now, while future
+extending of migration on other kernel allocation could become obstacle
+we can't detour.
 
-configs tested: 120
-configs skipped: 3
+If we have known for sure this feature could be a bad code, we may need
+to stop it in advance.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Thoughts, Jiri?
 
-tested configs:
-alpha                             allnoconfig    gcc-14.2.0
-alpha                            allyesconfig    gcc-14.2.0
-arc                              allmodconfig    gcc-13.2.0
-arc                               allnoconfig    gcc-13.2.0
-arc                              allyesconfig    gcc-13.2.0
-arc                        nsimosci_defconfig    gcc-13.2.0
-arc                   randconfig-001-20250303    gcc-13.2.0
-arc                   randconfig-002-20250303    gcc-13.2.0
-arm                              allmodconfig    gcc-14.2.0
-arm                               allnoconfig    clang-17
-arm                              allyesconfig    gcc-14.2.0
-arm                          ep93xx_defconfig    clang-21
-arm                          ixp4xx_defconfig    gcc-14.2.0
-arm                   randconfig-001-20250303    clang-15
-arm                   randconfig-002-20250303    gcc-14.2.0
-arm                   randconfig-003-20250303    gcc-14.2.0
-arm                   randconfig-004-20250303    clang-17
-arm64                            allmodconfig    clang-18
-arm64                             allnoconfig    gcc-14.2.0
-arm64                 randconfig-001-20250303    clang-21
-arm64                 randconfig-002-20250303    clang-19
-arm64                 randconfig-003-20250303    gcc-14.2.0
-arm64                 randconfig-004-20250303    clang-19
-csky                              allnoconfig    gcc-14.2.0
-csky                  randconfig-001-20250303    gcc-14.2.0
-csky                  randconfig-002-20250303    gcc-14.2.0
-hexagon                          allmodconfig    clang-21
-hexagon                           allnoconfig    clang-21
-hexagon                          allyesconfig    clang-18
-hexagon               randconfig-001-20250303    clang-21
-hexagon               randconfig-002-20250303    clang-21
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250303    gcc-12
-i386        buildonly-randconfig-002-20250303    clang-19
-i386        buildonly-randconfig-003-20250303    clang-19
-i386        buildonly-randconfig-004-20250303    gcc-12
-i386        buildonly-randconfig-005-20250303    gcc-12
-i386        buildonly-randconfig-006-20250303    clang-19
-i386                                defconfig    clang-19
-loongarch                        allmodconfig    gcc-14.2.0
-loongarch                         allnoconfig    gcc-14.2.0
-loongarch             randconfig-001-20250303    gcc-14.2.0
-loongarch             randconfig-002-20250303    gcc-14.2.0
-m68k                             allmodconfig    gcc-14.2.0
-m68k                              allnoconfig    gcc-14.2.0
-m68k                             allyesconfig    gcc-14.2.0
-m68k                       m5208evb_defconfig    gcc-14.2.0
-microblaze                       allmodconfig    gcc-14.2.0
-microblaze                        allnoconfig    gcc-14.2.0
-microblaze                       allyesconfig    gcc-14.2.0
-mips                              allnoconfig    gcc-14.2.0
-mips                       bmips_be_defconfig    gcc-14.2.0
-mips                           ip30_defconfig    gcc-14.2.0
-nios2                             allnoconfig    gcc-14.2.0
-nios2                 randconfig-001-20250303    gcc-14.2.0
-nios2                 randconfig-002-20250303    gcc-14.2.0
-openrisc                          allnoconfig    gcc-14.2.0
-openrisc                         allyesconfig    gcc-14.2.0
-parisc                           allmodconfig    gcc-14.2.0
-parisc                            allnoconfig    gcc-14.2.0
-parisc                           allyesconfig    gcc-14.2.0
-parisc                randconfig-001-20250303    gcc-14.2.0
-parisc                randconfig-002-20250303    gcc-14.2.0
-powerpc                          allmodconfig    gcc-14.2.0
-powerpc                           allnoconfig    gcc-14.2.0
-powerpc                          allyesconfig    clang-16
-powerpc                   bluestone_defconfig    clang-21
-powerpc                      ep88xc_defconfig    gcc-14.2.0
-powerpc                   lite5200b_defconfig    clang-21
-powerpc                 mpc837x_rdb_defconfig    gcc-14.2.0
-powerpc                     mpc83xx_defconfig    clang-21
-powerpc               randconfig-001-20250303    clang-15
-powerpc               randconfig-002-20250303    clang-21
-powerpc               randconfig-003-20250303    clang-21
-powerpc64             randconfig-002-20250303    gcc-14.2.0
-powerpc64             randconfig-003-20250303    clang-21
-riscv                            allmodconfig    clang-21
-riscv                             allnoconfig    gcc-14.2.0
-riscv                            allyesconfig    clang-21
-riscv                 randconfig-001-20250303    gcc-14.2.0
-riscv                 randconfig-002-20250303    gcc-14.2.0
-s390                             alldefconfig    gcc-14.2.0
-s390                             allmodconfig    clang-19
-s390                              allnoconfig    clang-15
-s390                             allyesconfig    gcc-14.2.0
-s390                  randconfig-001-20250303    clang-18
-s390                  randconfig-002-20250303    clang-16
-sh                               allmodconfig    gcc-14.2.0
-sh                                allnoconfig    gcc-14.2.0
-sh                               allyesconfig    gcc-14.2.0
-sh                         ecovec24_defconfig    gcc-14.2.0
-sh                    randconfig-001-20250303    gcc-14.2.0
-sh                    randconfig-002-20250303    gcc-14.2.0
-sh                           se7619_defconfig    gcc-14.2.0
-sh                           sh2007_defconfig    gcc-14.2.0
-sparc                            allmodconfig    gcc-14.2.0
-sparc                             allnoconfig    gcc-14.2.0
-sparc                 randconfig-001-20250303    gcc-14.2.0
-sparc                 randconfig-002-20250303    gcc-14.2.0
-sparc64               randconfig-001-20250303    gcc-14.2.0
-sparc64               randconfig-002-20250303    gcc-14.2.0
-um                               allmodconfig    clang-21
-um                                allnoconfig    clang-18
-um                               allyesconfig    gcc-12
-um                    randconfig-001-20250303    gcc-12
-um                    randconfig-002-20250303    clang-21
-x86_64                            allnoconfig    clang-19
-x86_64                           allyesconfig    clang-19
-x86_64      buildonly-randconfig-001-20250303    clang-19
-x86_64      buildonly-randconfig-002-20250303    gcc-12
-x86_64      buildonly-randconfig-003-20250303    clang-19
-x86_64      buildonly-randconfig-004-20250303    gcc-12
-x86_64      buildonly-randconfig-005-20250303    gcc-12
-x86_64      buildonly-randconfig-006-20250303    clang-19
-x86_64                              defconfig    gcc-11
-xtensa                            allnoconfig    gcc-14.2.0
-xtensa                randconfig-001-20250303    gcc-14.2.0
-xtensa                randconfig-002-20250303    gcc-14.2.0
+> 
+> > Once that happens, it will become a lot harder to judge whether CMA can be used or not. At least, the kernel could bail out/warn for these kernel configs.
+> > 
+> I don't think the aforementioned focus is to use CMA, but given its performance benefits, it won't take long to be the next perf improvement step taken.
+> 
+> > > 
+> > > There are five patches in this series:
+> > > 
+> > > The first adds a new ",cma" suffix to the recenly introduced generic
+> > > crashkernel parsing code. parse_crashkernel() takes one more
+> > > argument to store the cma reservation size.
+> > > 
+> > > The second patch implements reserve_crashkernel_cma() which
+> > > performs the reservation. If the requested size is not available
+> > > in a single range, multiple smaller ranges will be reserved.
+> > > 
+> > > The third patch updates Documentation/, explicitly mentioning the
+> > > potential DMA corruption of the CMA-reserved memory.
+> > > 
+> > > The fourth patch adds a short delay before booting the kdump
+> > > kernel, allowing pending DMA transfers to finish.
+> > 
+> > 
+> > What does "short" mean? At least in theory, long-term pinning is forbidden for MIGRATE_CMA, so we should not have such pages mapped into an iommu where DMA can happily keep going on for quite a while.
+> > 
+> Hmmm, in the case I mentioned above, should there be a kexec hook in multi-stage IOMMU support for the hypervisor/VMM to invalidate/shut-off stage 2 mappings asap (a multi-microsecond process) so
+> DMA termination from VMs is stunted ?  is that already done today (due to 'simple', single-stage, device assignment in a VM)?
+> 
+> > But that assumes that our old kernel is not buggy, and doesn't end up mapping these pages into an IOMMU where DMA will just continue. I recall that DRM might currently be a problem, described here [1].
+> > 
+> > If kdump starts not working as expected in case our old kernel is buggy, doesn't that partially destroy the purpose of kdump (-> debug bugs in the old kernel)?
+> > 
+> > 
+> > [1] https://lore.kernel.org/all/Z6MV_Y9WRdlBYeRs@phenom.ffwll.local/T/#u
+> > 
+> 
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
