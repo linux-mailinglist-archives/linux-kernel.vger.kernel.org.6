@@ -1,79 +1,78 @@
-Return-Path: <linux-kernel+bounces-543607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0993A4D77A
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 826BAA4D778
 	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:09:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B198F188A893
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:05:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7412D188AC77
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852E31FDE37;
-	Tue,  4 Mar 2025 08:59:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E0E3202C4F;
+	Tue,  4 Mar 2025 08:59:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jwoBmjc8"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="AL2XNqTy"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FC781FC7FD;
-	Tue,  4 Mar 2025 08:59:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52011FDE2D
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 08:59:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741078743; cv=none; b=t2+W05cPlSUPI0T/glR1sgVtFsgb12OrQfWmSaTkWi3SasIjH+zGushf/OgweBZj2zXpGA9tj0TYWmoQuPc/MDnhFAu+WygKeOou+Zp+1NrxR28HDaU4A92xBAaP/93jNGFohRRtacwyG6JlzOrm0bzh9mrLlkPl7Uj9yajxaD0=
+	t=1741078744; cv=none; b=tbVnxz0HDUIcEoqe4xbV/qiJZ8ZbUV82FKicLRE+HilpiTog7DusjapI5cmUq+edFVKMUt7myBOBRlf4JWpU2v9g/+VEp4IlksBlFHIo7hy3zyw8asjEUyJ4lacHi7GiEdLD7EWfv/8i0WPRyA5AOC9BAh4fMTOycgVFakW3w/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741078743; c=relaxed/simple;
-	bh=GRs8DmVV8Q0Rqg68kkllhDnXL0SPxEdTvmczIygoWyY=;
+	s=arc-20240116; t=1741078744; c=relaxed/simple;
+	bh=HSILkVA5vBIiizFYSmaF6BrUL10+HFIpOlfWfW+K+44=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cYE9weGIW6tjDrypHENa336jkpBFGCcTWwv33JKBqECi9Ij7IiWj67/q7WJh815XKza21kN7GdmcHQlzWZsGzv0/lYjD8T+6rALMuuFru0wsDKu5cceZwMlOH3kSNKHdBlbnpLQIjSvSIRHbHOQ77rb0bI35rQN44o4h9POwS5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jwoBmjc8; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-3061513d353so55170081fa.2;
-        Tue, 04 Mar 2025 00:59:00 -0800 (PST)
+	 In-Reply-To:Content-Type; b=cT2Bjzr27uy6E3tXKRxrEY2QQM9wcFTHrI7OUt7ik1dIHJFDF4MhqLeQ3LQVKmevpOW7w9EE4FWoNjl/ieTFe1KfyflNeoor83Kx/GU5Da4TXj4TRw+tO/Zw2egMrnhYdQwbF2FWppC13GhE0GwBKA5mAL7/3XCYCAm890KPeao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=AL2XNqTy; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-390edaee0cfso2889798f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 00:59:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741078739; x=1741683539; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
+        d=tuxon.dev; s=google; t=1741078741; x=1741683541; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=IpLvosOPTODge75ZhJwO92ZOn1A2PUQkW7JVgLvP6v8=;
-        b=jwoBmjc8Dsu5KozbT+haPlx1u/cDTHDvW8NcRh0S8qckDRX7EaCDZynDnZ4IXfmqFF
-         7iunV5ChsNsUTXuM8x32A8XBvET6z5EjbNDaVu40QfWr+9UKzs7yWSBlLsmPi0q9w1PP
-         LFVNmEWDw8eAJPHVfSrmv55mHQvEoK33IfVQT95OnbQ5mdI38PTIgzwlTrDwdENPUf+m
-         /N1ZdvMN9lVxOk5GtM2T0eFluoXSsBfeTq0lLKPm5jZrBt6JsOch7rTrqIus/zw4HAIK
-         43K9sbMcDCRvQfy6CyJ5BeymlmmV5Phts37fk+BkUK6j0vvcQnaw5s9oVl/4X8Jy8KTY
-         B6rw==
+        bh=fqP3ahwggB+Ec4UF+o8yzis0/YWb9Mn4LNCx06esETg=;
+        b=AL2XNqTyEqpvqxJdMsPnVcHHbnptPqPa9Ld/TXA+le0iKCLZTThVFE5yuMkmeDcczl
+         8XTMBCUyTZntsyDvCWirv4W8jue2pixtWs8150XqBO9yi4LSrYhlr9j922DInlFc0Nvl
+         ovQkwG+pZNMCrXZ1dB/g9MqunpzFIheLJUKnWRGIKEiLTgHiBZMJB5qMiT9HTqs4PM2k
+         qLvIwDDu/TfvtGGIu2+6ic4glNE4wCrVedYkiYMVdD99cmyjCejc+gFdWraHY2x+1onw
+         XUsfQ7Dd5OGyljUR+oI/X7XeG4vwxrfz+MOsLhMwp2ZViW1UWH68nLiMx2O88aSpx6Zw
+         wP+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741078739; x=1741683539;
-        h=content-transfer-encoding:in-reply-to:from:content-language
+        d=1e100.net; s=20230601; t=1741078741; x=1741683541;
+        h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IpLvosOPTODge75ZhJwO92ZOn1A2PUQkW7JVgLvP6v8=;
-        b=MQuG65F5fdwt2z3QPjvCpolY5yEYNp/QiNQgIhCdB/k6t/E0ZV99k1GUs/FyQ8Uv6o
-         8FZs7l+Cv9JI2A8JZbMipo8316WP3IUbABOYJRAEdI4zoofIlwe3XgMcUmh8UINd2vdq
-         XslbFqCb9C4Wyk4pccbeT8BXW6CZAGMRHW6DL92dUbqJaD1P+IC/nNPT1D/UQXAcbuSH
-         yqe6WSDcWE13W02Uxa1PSxNU8acqkLyCgjfkCYi+2qmFiwVhLfCBLsiSGeNqIK2fUDO1
-         OFVBCzoVcHZviu60blTV4R23dDL7267Xbyx4pMOhwWBYaw9FTO7ob6Z+43CnQls0dceY
-         mNWw==
-X-Forwarded-Encrypted: i=1; AJvYcCWQj8FtDcgOLiKOpBbD7s+mKufGssraUhdtkwafEJtqr6ZOlOrfRTuHxORGB5eeDDka3KM5RI2PEydpwzw=@vger.kernel.org, AJvYcCX2t1PMPgD11P/x4fvLONmXr/0KnPJQPOidchgDs9xxchHPA+qbSMcsc4x/1ZXl/5ODCpfNhQlfhDsHPYp1Y8A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywp9CONk72bkA3KBZ/Jz/gstlyVL6VSzD0tdhk0MOkwe93V2HHI
-	BNofuNFRFCyI4CoeuDQ9rgzeci8vkD3V3XzSjypVhSteFfVSBbUx
-X-Gm-Gg: ASbGncuiWr5AXApiaOK4fZnW4q8n2Dw5AfHSmMph25QgalNwcwPlW0AliSNjiC9Ykou
-	THdimQjYnT+1WHLcQ9rGHFohQbw9leSXZD/GI8/6gfYIuCPm4EoAaBHyEUNBR1AhgYLNRa/kQ3e
-	vL8NJdhDqYmLPdjzuhRO2kOqb86agTxHuv0kaJxZFgALk9MUmzWRCjhK2NITDW95VMWi7GY8FhZ
-	RnVMR+n0gDX98jbjZsIUoteNE7vgz9V+qTG75z50OjOxAPSvZLPRn3X9hu8lc1dDSBdaLuF7EJL
-	8Zkc9ZN4W0KkiSzIGI2+pRXWNJnvga8hfV7J5dAf0gSeDWsFOpcNVdPRa2ZPPtw2O+R09THkLHt
-	rQLC/L+4a3vUgGmqpD4AE8g==
-X-Google-Smtp-Source: AGHT+IFMgqZCbWR5mRoy9EQCtE3Z96nLi59uYRRUqwLOmodMoMI3drMHKTbl7nN9ffI6EtqpyEJVAQ==
-X-Received: by 2002:a05:651c:210c:b0:30b:c36c:ba9f with SMTP id 38308e7fff4ca-30bc36cbd5dmr20830681fa.14.1741078738757;
-        Tue, 04 Mar 2025 00:58:58 -0800 (PST)
-Received: from [192.168.1.146] (dsl-hkibng22-54f8dc-251.dhcp.inet.fi. [84.248.220.251])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30bc1b1c4fasm4745901fa.18.2025.03.04.00.58.57
+        bh=fqP3ahwggB+Ec4UF+o8yzis0/YWb9Mn4LNCx06esETg=;
+        b=D6Tn0s67/XOPNbZY4pk5Q/26eZ6XUF2Vp+B7nslEN7+mrAvULMRCYgP+ON1rmfXKBz
+         UdMqlae13tP9a50Y87c9QB5y5M+5uctQHaIwGUjedwaHY7PSxxz5mUC1SGDl9jVY7WJh
+         5Abmc2h6ntb9MUYNvn8y5qwVfvaOQ/q75cVWHHMswbRkNeFY2kDf3AYsAHwwFM9AjjSq
+         QjLSQSpyyAxrtdfZz9sXkFy0NXCpI/ULKfZyU/r3ZbSpvf/EnJLgB/uRQA+UgHtznqrL
+         blT64cWhtbRLeYlTB+eK6JuWa57PY1YNvUqyYsv4nkNY8KOiKWg61Ew9gqME948I2O+u
+         9mvA==
+X-Forwarded-Encrypted: i=1; AJvYcCV2bNbq6541h5jc5VnVCMlkDNbntpTUW5wWov/P0HqH5xjsrgQnBzBi999iFVpt4mQkh8km9VCzs+YhfPM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqhittJ6ztir/6gq7wmFh22q4LDdqE7u/XNH9lMatuxolDTnGP
+	2DcnZMV99h5ZE3NTbpHSe0f4HCBKZ4zzzPxalXvAxbUi5wq/ynUwf270L5VI/io=
+X-Gm-Gg: ASbGnctGcFL8nGsCcf8l7gE0F7d56n7P7W2FSsWSaK2HELzwGon4qfeAxqkLVKN0TB0
+	+uHcEEhpmrJHfsOt6De1eRH5zegrCm4pB4U2FR4OuCbIrpBFZnRMrYO/KO3ai5M/B05l3ja7Off
+	pREnCiUGaNcfR7vi4RDjE9HvbzssLI8h4166Q0T3yhfV2giD6LOkLrVxJF2Y0PKyDOeyBh2hpCP
+	oijIjsY5vMhdyXRrnSHFuS7I/4tg4KNBLUi6ln28TfLSMfXYrBh+LDY7jIz+Es3xaOfwA6G+uzv
+	gyfAXgBVyYAmjr7XECZSxqR0L2Tpr6JeNqedzQYRceLR6AFnsg761Q==
+X-Google-Smtp-Source: AGHT+IEEccYK+D24g35rR7y+28h/qCLlvYXo70nHWkcjc7tufX7M7+n3T60EL+5hB1uyjzyEXD8y5g==
+X-Received: by 2002:a5d:6d0e:0:b0:390:ff25:79c8 with SMTP id ffacd0b85a97d-390ff257cccmr7156094f8f.20.1741078740828;
+        Tue, 04 Mar 2025 00:59:00 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.138])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e479608fsm17236647f8f.14.2025.03.04.00.58.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Mar 2025 00:58:57 -0800 (PST)
-Message-ID: <80f31377-f897-4881-b294-87f13f75acd4@gmail.com>
-Date: Tue, 4 Mar 2025 10:58:56 +0200
+        Tue, 04 Mar 2025 00:59:00 -0800 (PST)
+Message-ID: <1100c663-362a-433c-9c70-8435807b29ac@tuxon.dev>
+Date: Tue, 4 Mar 2025 10:58:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,108 +80,75 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 2/3] rust: add dma coherent allocator abstraction.
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: aliceryhl@google.com, dakr@kernel.org, robin.murphy@arm.com,
- daniel.almeida@collabora.com, rust-for-linux@vger.kernel.org,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>, Trevor Gross <tmgross@umich.edu>,
- Valentin Obst <kernel@valentinobst.de>, linux-kernel@vger.kernel.org,
- Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>,
- airlied@redhat.com, iommu@lists.linux.dev
-References: <20250224115007.2072043-1-abdiel.janulgue@gmail.com>
- <k3GMnfXzzvUVOgSnuMlEq3eVRyq1qjcf_tDtILRbOwj08EIQpwQ4bGtGhwWufr8lUn-VlHnNjP8FxIA48Jv-Ug==@protonmail.internalid>
- <20250224115007.2072043-3-abdiel.janulgue@gmail.com>
- <87h64al5c6.fsf@kernel.org>
+Subject: Re: [PATCH v3 1/2] iio: adc: rzg2l_adc: Open a devres group
+To: prabhakar.mahadev-lad.rj@bp.renesas.com, jic23@kernel.org, lars@metafoo.de
+Cc: linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20250224120608.1769039-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250224120608.1769039-2-claudiu.beznea.uj@bp.renesas.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 Content-Language: en-US
-From: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-In-Reply-To: <87h64al5c6.fsf@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <20250224120608.1769039-2-claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
+Hi, Jonathan,
 
+On 24.02.2025 14:06, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> On all systems where the rzg2l_adc driver is used, the ADC clocks are part
+> of a PM domain. The code that implements the PM domains support is in
+> drivers/clk/renesas/rzg2l-cpg.c, the functions of interest for this commit
+> being rzg2l_cpg_attach_dev() and rzg2l_cpg_deattach_dev(). The PM
+> domains support is registered with GENPD_FLAG_PM_CLK which, according to
+> the documentation, instructs genpd to use the PM clk framework while
+> powering on/off attached devices.
+> 
+> During probe, the ADC device is attached to the PM domain
+> controlling the ADC clocks. Similarly, during removal, the ADC device is
+> detached from the PM domain.
+> 
+> The detachment call stack is as follows:
+> 
+> device_driver_detach() ->
+>   device_release_driver_internal() ->
+>     __device_release_driver() ->
+>       device_remove() ->
+>         platform_remove() ->
+>           dev_pm_domain_detach()
+> 
+> During driver unbind, after the ADC device is detached from its PM domain,
+> the device_unbind_cleanup() function is called, which subsequently invokes
+> devres_release_all(). This function handles devres resource cleanup.
+> 
+> If runtime PM is enabled via devm_pm_runtime_enable(), the cleanup process
+> triggers the action or reset function for disabling runtime PM. This
+> function is pm_runtime_disable_action(), which leads to the following call
+> stack of interest when called:
+> 
+> pm_runtime_disable_action() ->
+>   pm_runtime_dont_use_autosuspend() ->
+>     __pm_runtime_use_autosuspend() ->
+>       update_autosuspend() ->
+>         rpm_idle()
+> 
+> The rpm_idle() function attempts to runtime resume the ADC device. However,
+> at the point it is called, the ADC device is no longer part of the PM
+> domain (which manages the ADC clocks). Since the rzg2l_adc runtime PM
+> APIs directly modifies hardware registers, the
+> rzg2l_adc_pm_runtime_resume() function is invoked without the ADC clocks
+> being enabled. This is because the PM domain no longer resumes along with
+> the ADC device. As a result, this leads to system aborts.
+> 
+> Open a devres group in the driver probe and release it in the driver
+> remove. This ensures the runtime PM is disabled (though the devres group)
+> after the rzg2l_adc_remove() finishes its execution avoiding the described
+> scenario.
 
-On 03/03/2025 13:30, Andreas Hindborg wrote:
-> "Abdiel Janulgue" <abdiel.janulgue@gmail.com> writes:
-> 
->> Add a simple dma coherent allocator rust abstraction. Based on
->> Andreas Hindborg's dma abstractions from the rnvme driver, which
->> was also based on earlier work by Wedson Almeida Filho.
->>
->> Nacked-by: Christoph Hellwig <hch@lst.de>
->> Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-> [...]
-> 
->> diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
->> index 0640b7e115be..8f3808c8b7fe 100644
->> --- a/rust/helpers/helpers.c
->> +++ b/rust/helpers/helpers.c
->> @@ -13,6 +13,7 @@
->>   #include "build_bug.c"
->>   #include "cred.c"
->>   #include "device.c"
->> +#include "dma.c"
->>   #include "err.c"
->>   #include "fs.c"
->>   #include "io.c"
->> diff --git a/rust/kernel/dma.rs b/rust/kernel/dma.rs
->> new file mode 100644
->> index 000000000000..b4dd5d411711
->> --- /dev/null
->> +++ b/rust/kernel/dma.rs
->> @@ -0,0 +1,421 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +
->> +//! Direct memory access (DMA).
->> +//!
->> +//! C header: [`include/linux/dma-mapping.h`](srctree/include/linux/dma-mapping.h)
->> +
->> +use crate::{
->> +    bindings, build_assert,
->> +    device::Device,
->> +    error::code::*,
->> +    error::Result,
->> +    transmute::{AsBytes, FromBytes},
->> +    types::ARef,
->> +};
->> +
->> +/// Inform the kernel about the device's DMA addressing capabilities. This will set the mask for
->> +/// both streaming and coherent APIs together.
->> +pub fn dma_set_mask_and_coherent(dev: &Device, mask: u64) -> i32 {
->> +    // SAFETY: device pointer is guaranteed as valid by invariant on `Device`.
->> +    unsafe { bindings::dma_set_mask_and_coherent(dev.as_raw(), mask) }
->> +}
->> +
->> +/// Same as `dma_set_mask_and_coherent`, but set the mask only for streaming mappings.
->> +pub fn dma_set_mask(dev: &Device, mask: u64) -> i32 {
->> +    // SAFETY: device pointer is guaranteed as valid by invariant on `Device`.
->> +    unsafe { bindings::dma_set_mask(dev.as_raw(), mask) }
->> +}
-> 
-> I'm rebasing some of the dma pool code I'm using for NVMe on top of
-> these patches, and I notice that these methods in the original code from
-> way back (besides being on Device) has these methods return `Result`:
-> 
->      pub fn dma_set_mask(&self, mask: u64) -> Result {
->          let dev = self.as_raw();
->          let ret = unsafe { bindings::dma_set_mask(dev as _, mask) };
->          if ret != 0 {
->              Err(Error::from_errno(ret))
->          } else {
->              Ok(())
->          }
->      }
-> 
-> Is there a reason for not returning a `Result` in this series?
-> 
+Can you please let me know if you consider this approach acceptable?
 
-Hi Andreas, the original dma_set_mask function got lost to me for some 
-reason. But yes, this is indeed a better approach!
-
-Regards,
-Abdiel
-
-
+Thank you,
+Claudiu
 
