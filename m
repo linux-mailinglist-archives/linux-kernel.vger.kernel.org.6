@@ -1,125 +1,127 @@
-Return-Path: <linux-kernel+bounces-545778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC4C8A4F148
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:16:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36BF7A4F14A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:16:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08DFC3A900E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:16:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A28F188DC1D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:16:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D688278115;
-	Tue,  4 Mar 2025 23:15:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68AAE278112;
+	Tue,  4 Mar 2025 23:16:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="EoRZKUy3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cFnmBLVg"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F86D2620EF
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 23:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A4BD1F4720;
+	Tue,  4 Mar 2025 23:16:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741130157; cv=none; b=InqyYcRC2wKY4zD7DM8rKF44ImTyxMp9HxuIm89Q4MMyaTEn8l3qaOtE/k1qb2NOjX1QGZBxiHs/vqhSZRt1vDtRk6sggwxPcoIHYnLh+rUGfOjxMP122MIzetIhPLMetZHFrQxQG+akE85yjOOlhL9wIcEOsGHzVy+d3Fh+ay8=
+	t=1741130199; cv=none; b=aYUo23dJtGXLScFxbjTYfv5JgmZKQBp2twrG2Nzah3Y2EJxiLtOys0nF7ccBk63lR4vub04/rC9GmivFExVg6141d1yf9tl9PTckBiKw/JefnZsgGB2L2haFTPPNKesNsc8C/L8dTksrPWvhI3HAPYnyfJcFATFuGCHccKjRb8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741130157; c=relaxed/simple;
-	bh=2txhcLgzVWb+dW/4Gd1kiuD+BIpXnIJ+gXwCmx8kpbw=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=l9bcAinHJsN0AwfNs9yIPfXIzOzD5WF8BkanwO2ryajSlgUGGdrnLPurMcIljaeihsLVUMWPdy825bGYJ6iIgFo1IB31KVqt282waoTY/p+N5fzfBZyyGlj3esUdeSSdEtBlwhG0vFyXSqvRPq52Q2Gqq0+UpIKXdtCn8yJFSz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=EoRZKUy3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFDE1C4CEE5;
-	Tue,  4 Mar 2025 23:15:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1741130157;
-	bh=2txhcLgzVWb+dW/4Gd1kiuD+BIpXnIJ+gXwCmx8kpbw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=EoRZKUy3ieMDVjUy7tnt+KDs52VME2kCRbAxOpC4ExjSHbisnmDrTHAuBRzgo82F1
-	 /IyLQoUqyhrFkltu7mwDqNrP/sCP0Nf1l927hQ1+BOlhzrsfcbKhQwajGY+ku3CXFA
-	 7fVCKdZaPpjStmn6PTfoTXv62HqD3uBumWXCXPts=
-Date: Tue, 4 Mar 2025 15:15:56 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R . Howlett"
- <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Jann Horn
- <jannh@google.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/7] mm/mremap: initial refactor of move_vma()
-Message-Id: <20250304151556.635d9041a7ca36f1960fe664@linux-foundation.org>
-In-Reply-To: <Z8d0d9N26JBGwi8N@google.com>
-References: <cover.1740911247.git.lorenzo.stoakes@oracle.com>
-	<b4e64684d6ac753d5a66c0da0da5f4b94d033859.1740911247.git.lorenzo.stoakes@oracle.com>
-	<Z8d0d9N26JBGwi8N@google.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741130199; c=relaxed/simple;
+	bh=cb9OSta6wF5whj/MA918wbXvOH75hCeZNhIQYP08PEU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SIkOKDA78jyX/rOlAMOWuw02sQ+YWyndeUP+BIdk6w0+RqA/XBvodpCF2WcFwuaUIbf9bWJ15IG98W3+97pN9KwUvSYKdwuoGFaTxOkpp+Akxooo/w4wXFrpPbasmIgDa4l6D7G6FWI9nFQ8RD102DbkNPB8F9iJV7SioEo8qJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cFnmBLVg; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2f9b8ef4261so1623176a91.1;
+        Tue, 04 Mar 2025 15:16:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741130198; x=1741734998; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RkzGzrZgrbl+n5aUkotTUf87Rh6O+fNtBv0KfcpAk8E=;
+        b=cFnmBLVgdGU4Z6o703obx/5LR+MF80YLavPZelTOxvMfz7+jYvv5Jcx5Rcy0+yBm6I
+         b9AZWOsSG5hN6HM2rr2b0ojHOs6MdXyK212iIHcdPQXsa3XWLj71/pmmPzHgwxaV7vCB
+         lwZ4mBEXO2OzIy/VsxCn3hspBFNVtBVCwaq2VCsMeE6u5rJg7eiPIe58y1rsdiCDst2G
+         ZPCi4AAa8RMmlTb+QJqjRX7x9wmOPlqMmd30nlgDJTchJQK6ou/xCcgsyH4so7cN3Vo3
+         H+0BRyN3yE2nkOjl3zkFMJvrISrCzFHhL8YZEfewgCDyB3Z+IKxeK/arsWyuWK/tUyxP
+         owpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741130198; x=1741734998;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RkzGzrZgrbl+n5aUkotTUf87Rh6O+fNtBv0KfcpAk8E=;
+        b=rvUoP2SC1zlMXsFyTm6/IZqlHMuXj8eter83RG34cifF+IDg55dra2PiX7cTTX9YVG
+         5Dj9Xm6Cgf1ocJNwEGKb0AkK23j1KAodcPRKs1CNo7m/ObWccJPO28IV8+ZzLeo4MAFX
+         tekga/6SqDlkkfOSJmUqvN+Ah08x7Skgx5IxFnp9Xlmad3JC5qhiowzMyH5XgWM7B2RH
+         6RLHBD0LCVyqFIQKw7XXTOh9TTZ6ejC84l5y1y1+Mc97yJsnOhDxfM8XhBZMZKDfh4AR
+         H/MYqlKicCdOai0zCDPtQKbwnymb0b+ilydhX9pP4Tm69RAQ/qO5VJcSxZhzM7+lCZaP
+         Q+ng==
+X-Forwarded-Encrypted: i=1; AJvYcCUkaqEAHBm1cZlcnApVXGteJpZbiaffTXQDoqTMh7WQPkOT2RMKYzDoeUKFAEIp478RkIiH8E8pyI+yJnsykgHOSE21mKlt@vger.kernel.org, AJvYcCUnTTz2dRQXb7S0p8N/DQCVGZ938jGQ/YFtDNMZWttzp4vZk2Z+A2KXI0aSJt7Sxdo57G7MmZiAouXpwkk=@vger.kernel.org, AJvYcCX1BBHUAeCzcPxk3v15ujlS/JrAX1vDUiYKq1KeNIirB3SU8TshNqshVgwzkvqKEtolSnraHFTKHyrv1eDfWGc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw29W1BdporbKAgGl6cuquG9x4BLOccFG37+K+Mz2zJrqH8R3/v
+	AnKxh4+BCd3zVm32MH21RnWkHZ6eSPGSne46Dnb7HApqq0/Ak53PU8EMsG+Cl2OBuL2LCLV03l4
+	sE6/auvmB6AZc3gKNLAw6AiBZnSI=
+X-Gm-Gg: ASbGnctZx59M9R8OPxmV8GE85/vvQ1q6RiXCOXYH2/TTKBeKUIsAxwvPpYLE+dF8FIJ
+	eDivCVi3dzq2pdH63TYMGn1leSog/iuQa4ED/JHFMO1PIdVM04gQfbqgORSEI4ORTHKDp0fvF3b
+	OtUCkzm8lvwQCt7+cDe5gt36xCTA==
+X-Google-Smtp-Source: AGHT+IHW0Mlhxk0bv+5F7LLd/ZgwlqGpqgiebP8yIolkA5CTewQSv22twBSnzC50H8c/gL5JZsFsDcBwzD4LEPfXaMg=
+X-Received: by 2002:a17:90b:4d05:b0:2fe:b77a:2eba with SMTP id
+ 98e67ed59e1d1-2ff49718182mr722680a91.1.1741130197642; Tue, 04 Mar 2025
+ 15:16:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <20250303-inline-securityctx-v1-1-fb7b9b641fdf@google.com>
+ <CAHC9VhSo3aGsJVd=a3MTeakgU66oTN86oh5sZE8P4ghSk8Rx2g@mail.gmail.com>
+ <CANiq72=n_cGmrb6+6CH1AbGePy5dRMMFyzAFv6O1VEp8EgKR8w@mail.gmail.com> <CAHC9VhT3DqOeYbC+GCQRgH3NNUiOk6Sh=6fzsFaiHk2LEFbi2g@mail.gmail.com>
+In-Reply-To: <CAHC9VhT3DqOeYbC+GCQRgH3NNUiOk6Sh=6fzsFaiHk2LEFbi2g@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 5 Mar 2025 00:16:25 +0100
+X-Gm-Features: AQ5f1JrkwHqBIjbP7TRgugbmpbgtur5VfMYkLdAY_NvdioIDeBMjT02OOPGYXig
+Message-ID: <CANiq72=SZv7UPvcZ1NgBtbM72n42b8GqS+rTVjccVZmn4z3SVg@mail.gmail.com>
+Subject: Re: [PATCH] lsm: rust: mark SecurityCtx methods inline
+To: Paul Moore <paul@paul-moore.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 4 Mar 2025 21:45:27 +0000 Yosry Ahmed <yosry.ahmed@linux.dev> wrote:
+On Tue, Mar 4, 2025 at 10:57=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
+>
+> Thanks.  Yes, I've seen the summary and the recent threads around Rust
+> in the Linux kernel.  I don't want to drag all of that up here, but I
+> will simply say that from the perspective of the LSM framework we're
+> happy to work with the Rust devs to ensure that the LSM framework is
+> well supported with Rust bindings.  However, I will add that my own
+> Rust related efforts are going to be very limited as my understanding
+> of Rust is still frustratingly low; until that improves I'll be
+> reliant on others like Alice and you to submit patches for
+> discussion/acceptance when there are issues.  Thankfully that has
+> proven to work fairly well over the past few months and I would like
+> to see that continue.
+>
+> As far as the mechanics of which tree to merge code, I'll probably
+> continue to ask in most cases simply so we are all clear on where the
+> patches will land and how they get up to Linus.  From my perspective
+> there is no harm in asking, and I *really* want to encourage
+> cross-subsystem communication as much as I can; I've been seeing an
+> increasing trend towards compartmentalization across subsystems and I
+> believe the best way to push back against that is to talk a bit more,
+> even if it is just a mundane "my tree or yours?".
 
-> On Mon, Mar 03, 2025 at 11:08:34AM +0000, Lorenzo Stoakes wrote:
-> > Update move_vma() to use the threaded VRM object, de-duplicate code and
-> > separate into smaller functions to aid readability and debug-ability.
-> > 
-> > This in turn allows further simplification of expand_vma() as we can simply
-> > thread VRM through the function.
-> > 
-> > We also take the opportunity to abstract the account charging page count
-> > into the VRM in order that we can correctly thread this through the
-> > operation.
-> > 
-> > We additionally do the same for tracking mm statistics - exec_vm, stack_vm,
-> > data_vm, and locked_vm.
-> > 
-> > As part of this change, we slightly modify when locked pages statistics are
-> > counted for in mm_struct statistics. However this should cause no issues,
-> > as there is no chance of underflow, nor will any rlimit failures occur as a
-> > result.
-> > 
-> > This is an intermediate step before a further refactoring of move_vma() in
-> > order to aid review.
-> > 
-> > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> > ---
-> [..]
-> > +/*
-> > + * Perform checks  before attempting to write a VMA prior to it being
-> > + * moved.
-> > + */
-> > +static unsigned long prep_move_vma(struct vma_remap_struct *vrm,
-> > +				   unsigned long *vm_flags_ptr)
-> > +{
-> > +	unsigned long err;
-> 
-> I am getting a warning on mm-unstable because 'err' is sometimes used
-> uninitialized, I think here:
-> 
->         if (vma->vm_ops && vma->vm_ops->may_split) {
->                 if (vma->vm_start != old_addr)
->                         err = vma->vm_ops->may_split(vma, old_addr);
->                 if (!err && vma->vm_end != old_addr + old_len)
->                         err = vma->vm_ops->may_split(vma, old_addr + old_len);
->                 if (err)
->                         return err;
->         }
+Definitely agreed on talking more and encouraging more communication,
+so if deciding based on a case-by-case is best for you, I think that
+is good.
 
-yep, thanks.  I added this:
+And thanks for helping us here in whatever way you can!
 
---- a/mm/mremap.c~mm-mremap-initial-refactor-of-move_vma-fix
-+++ a/mm/mremap.c
-@@ -892,7 +892,7 @@ static void vrm_stat_account(struct vma_
- static unsigned long prep_move_vma(struct vma_remap_struct *vrm,
- 				   unsigned long *vm_flags_ptr)
- {
--	unsigned long err;
-+	unsigned long err = 0;
- 	struct vm_area_struct *vma = vrm->vma;
- 	unsigned long old_addr = vrm->addr;
- 	unsigned long old_len = vrm->old_len;
-_
-
+Cheers,
+Miguel
 
