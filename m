@@ -1,100 +1,116 @@
-Return-Path: <linux-kernel+bounces-545615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4918A4EF4E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:19:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84400A4EF50
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:19:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00A1C188E8EC
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:19:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0608172A8C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:19:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C775624EAB5;
-	Tue,  4 Mar 2025 21:18:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DE2325F979;
+	Tue,  4 Mar 2025 21:19:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="cxQDVDs0"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GM2e7ceG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D2B42AAF;
-	Tue,  4 Mar 2025 21:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6783D202C53;
+	Tue,  4 Mar 2025 21:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741123136; cv=none; b=N+Oytkjja80m9zSpKn+BJQcGKOJeCZbiT9jDK4VpZG0kLqsYPsHZUrRCjTNBOjtqCqhSWuZoiDbolyhgb+I7RDDx4Yo0uPL1mT4XOJOMzZVpotlvmx697aZ9BQrfkZiegQRLgI7L6bbh+GssjAaWjIpZjyThu2FAp/DDoyLMh/U=
+	t=1741123157; cv=none; b=sfE4tMtvEiD5y6rVkUGwUrChYeWx9zZqqm1JyvyYvZSPTkoBdp8/okdz4PBxnkT/uimOTQaMPGIL0E3ibiNNrkx0z0oGQArpLX9M13hs12pN+3woTsfmVG+etPzlIIqonunLHNLVr9eK1BofKLA1cLRzWVwvrmWSZj/TiqwuZWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741123136; c=relaxed/simple;
-	bh=AzJUr29Vb/g/ONtu+stDA7K2X/Y7sJl2D+LA2zgMqJw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=POBGFXp9KMFtsXbAh4r8bkAg3V95KnmveSx/1wXzlAPhKy0TehlNXx0sS/YpP/MuR9lCVLJFL3RkgdAMrS8U/Zx11EE+Zbv2kKq9w4XANav0sy76Rw0XmzR9R2XWmSoPS95XdUCRlkfT+99+sG2IHMMLu7v8yYkjCRoF/686piw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=cxQDVDs0; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1741123129;
-	bh=ZOZV7PQq7LpOKHuzyq+rk1zxKQLdyN9tUCZcLHIl18I=;
-	h=Date:From:To:Cc:Subject:From;
-	b=cxQDVDs0G8YAciBCDwP6gjoSQ4EuI5LfrlU2G8Vmcdu6MF81Pzmu9uAulowtOD1Ae
-	 yuVrsJczXBFczLBo2O/IxveoH/sMwpzt/c9Dozpmb1ijsASsSk0BZnHCy7orAsN/YL
-	 rb3cRB+cC5dbYIPOSdxEnvLTh8X+t9hhzvuhEoH0oMs2hHxB67FjVXLBdn+PhfwkpB
-	 doHWKWY+Z8StCPC9gznZOo6sCRopSfI7dJ06sWAXTxDoQ/nEoW6N9KWiWIvLKVGVeH
-	 jSOgBR9576tN2ouHMZT2McHLPUGNsLoNDjJVrFnCTthu4ckx4TwAwEhs2VGL+nhQFY
-	 kUXOaLcpKuCSQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Z6pT508Pgz4wcw;
-	Wed,  5 Mar 2025 08:18:48 +1100 (AEDT)
-Date: Wed, 5 Mar 2025 08:18:48 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires
- <benjamin.tissoires@redhat.com>
-Cc: Tomasz =?UTF-8?B?UGFrdcWCYQ==?= <tomasz.pakula.oficjalny@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the hid tree
-Message-ID: <20250305081848.4f3023e9@canb.auug.org.au>
+	s=arc-20240116; t=1741123157; c=relaxed/simple;
+	bh=vX02kc1a3L/e3wLRY5G+48R1DF8rMoBAD1qr+V7KmLs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ji9Gz/gcSAUK0IEmozq7anXv0OIMMudhMU6p9Prh7hdkwlHY5cvIdNoVsXUyL7CkipKcnQO53WqjU/1RSlKQ+q8gf63sGs/uTJvLGa1ZqPwA4RdqUOymF8Vlj76Ok+9IKnb8Wq+23+wgXfESmjHfUMZB8ZxWLPrPVQHyQTh1ApM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GM2e7ceG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6307C4CEE5;
+	Tue,  4 Mar 2025 21:19:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741123156;
+	bh=vX02kc1a3L/e3wLRY5G+48R1DF8rMoBAD1qr+V7KmLs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=GM2e7ceG1u1x75TI8kzbLFCehMSFdYJP/dMe4nLeRhezgFMjCWxgrM9DfeyNEVJpq
+	 muUYAfkC1Hq6iAiE0ijwq5U+BfSmXdG7DPWUMESs2PQtR5l7SfKHxGA0HFQNGmhgWJ
+	 Cb6AWS5As73tyNc+wiAf3KBwYemSGzMRZINE3vPE75sShPeUIF4l7SEG2+SmbZtuRB
+	 jQs5PoGLH3FxcW6Vnb/0SQn0kLa98zXLfb6JSPl+95KcmOwtx09S/Zkwx42SZLMQCY
+	 HedVYTEfWsdxnEvpeQ70GEkDaPB+k3662deL/LUgjm2xfCtcQRfZM+CG8l0SVMVhWb
+	 bWIybjFWam0Pw==
+From: SeongJae Park <sj@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	damon@lists.linux.dev,
+	kernel-team@meta.com,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [PATCH 0/9] mm/damon: make allow filters after reject filters useful and intuitive
+Date: Tue,  4 Mar 2025 13:19:04 -0800
+Message-Id: <20250304211913.53574-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/ifSJV46aY/lY305b1AB+X/T";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/ifSJV46aY/lY305b1AB+X/T
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+DAMOS filters do allow or reject elements of memory for given DAMOS
+scheme only if those match the filter criterias.  For elements that
+don't match any DAMOS filter, 'allowing' is the default behavior.  This
+makes allow-filters that don't have any reject-filter after them
+meaningless sources of overhead.  The decision was made to keep the
+behavior consistent with that before the introduction of allow-filters.
+This, however, makes usage of DAMOS filters confusing and inefficient.
+It is more intuitive and still consistent behavior to reject by default
+unless there is no filter at all or the last filter is a reject filter.
+Update the filtering logic in the way and update documents to clarify
+the behavior.
 
-Hi all,
+Note that this is changing the old behavior.  But the old behavior for
+the problematic filter combination was definitely confusing, inefficient
+and anyway useless.  Also, the behavior has relatively recently
+introduced.  It is difficult to anticipate any user that depends on the
+behavior.  Hence this is not a user-breaking behavior change but an
+obvious improvement.
 
-Commits
+Changes from RFC v2
+(https://lore.kernel.org/20250227015754.38789-1-sj@kernel.org)
+- Wordsmith commit messages
+- Rebase on latest mm-unstable
 
-  e2fa0bdf08a7 ("HID: pidff: Fix set_device_control()")
-  f98ecedbeca3 ("HID: pidff: Fix 90 degrees direction name North -> East")
+Changes from RFC v1
+(https://lore.kernel.org/20250220193509.36379-1-sj@kernel.org)
+- Set default behavior on core layer filtering stage as allow if any ops
+  layer filter exists.
+- Wordsmith commit messages
+- Rebase on latest mm-unstable
 
-are missing a Signed-off-by from their authors.
+SeongJae Park (9):
+  mm/damon/core: introduce damos->ops_filters
+  mm/damon/paddr: support ops_filters
+  mm/damon/core: support committing ops_filters
+  mm/damon/core: put ops-handled filters to damos->ops_filters
+  mm/damon/paddr: support only damos->ops_filters
+  mm/damon: add default allow/reject behavior fields to struct damos
+  mm/damon/core: set damos_filter default allowance behavior based on
+    installed filters
+  mm/damon/paddr: respect ops_filters_default_reject
+  Docs/mm/damon/design: update for changed filter-default behavior
 
---=20
-Cheers,
-Stephen Rothwell
+ Documentation/mm/damon/design.rst | 10 ++--
+ include/linux/damon.h             | 11 ++++
+ mm/damon/core.c                   | 90 +++++++++++++++++++++++++++++--
+ mm/damon/paddr.c                  |  8 +--
+ 4 files changed, 105 insertions(+), 14 deletions(-)
 
---Sig_/ifSJV46aY/lY305b1AB+X/T
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfHbjgACgkQAVBC80lX
-0Gz9HAf/Wcsin4ruwqpRLWNvvnbkzhpCd8vE9Pp2wiKl0UM9Jbbkrl8ZlgVZdPb1
-D03i2TDGo2gLHcHBub2WcpukfHjCVEe6HNLCKHnNYLZUPze6rfNJyw+gf2BS8LlS
-fUbUwKG8OkxaEjlrArgYDjw9pDwoWi0D9WYPgQLc721JXcoo89B8dQbb1hVsEDy6
-bjvmEZSZTk3iud8xNjejSTFV4FZub39oTB4ynQWsAQv7Yt9WD6bfkBogbaicb/KJ
-CJfRsBmitTXEutJkfdwyjUn4xalCPoTRi1J9CZD3zvqbaWJgp6+XX1G6mFU9nJQA
-s42sbJmQCBBVIIFbakDqYhCmy5g5RA==
-=TCMm
------END PGP SIGNATURE-----
-
---Sig_/ifSJV46aY/lY305b1AB+X/T--
+base-commit: 2f0a33016d6d4f184f2d3341af17a360b83e2ee2
+-- 
+2.39.5
 
