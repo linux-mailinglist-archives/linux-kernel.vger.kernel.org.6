@@ -1,151 +1,111 @@
-Return-Path: <linux-kernel+bounces-543111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 992B6A4D1A3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 03:28:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 112CCA4D1A4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 03:28:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C54C716DBDA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 02:28:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE1BC16DD06
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 02:28:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75288189BB1;
-	Tue,  4 Mar 2025 02:28:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E0CC190052;
+	Tue,  4 Mar 2025 02:28:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="D/R9uZMY"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iqc56+vm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E50BA53;
-	Tue,  4 Mar 2025 02:28:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D76CE17E8E2;
+	Tue,  4 Mar 2025 02:28:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741055310; cv=none; b=KMZOewEpgY8E1YMekktF1K1SXdhH2RmwPSZLmo2PHABpck/p1mZ7eyl20CHD+crdW80GzNVkZxj7Sktdu8kx6J8KY8xfwlR/909hSRIf0w46ryp+VaWiIFwy8HK9hXwhMEOBfSNfjMtbyhjYwqXTaHPzL6D1b75NtB3y2UQrJJM=
+	t=1741055319; cv=none; b=e7MmMHT0ZwU3HqX4kEExwf5vLXyFA2wZPpR1NPUMavQLTvylE4Aj0OkybvFkZJ/dIXalBtF21a9iiMPaPhgrsqwNJa0rTLpB7OpzxBYgsUdGej9WZ90wUGTEKiRm7T3BGci899BP2NQ9H9IW9jisPnyruIDAetM2tQCzDZVbl6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741055310; c=relaxed/simple;
-	bh=wEOPtRRxf6p1QmPNUT6vDxD0fpeu17iexEgGvp352lk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=qClDzTHyl/CuKr3VKcuRdJmNixZMNSwqfjMWTt+CMZ9k2uYi9w0eFOeJXF2rh/7JXtzaLwwERUMpyvAUhaTI17xF4qjuwjEYgqKhRmHVLXDPdklBXQRNtfuQoDdOZJtSTI/QS4MEbo6+h1vEayWfV7vOQrZqF93GjRsEU856Wa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=D/R9uZMY; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1741055303;
-	bh=UpDfHMCQWat93MmqHEH2Tupl0KeF0UdAgJVgxUJeq5I=;
-	h=Date:From:To:Cc:Subject:From;
-	b=D/R9uZMYDwuXq7irvLAHb2670XcSPAA9QG6hunfPHl9nfWy1BCXC6la7Sl3lhC/dn
-	 cIIO25wwLpwbMx9Y4L/FfEwLeYqo8e78SoZj/r/VMRf9Su7fkpNiGWNnUv+MzwKXJp
-	 C5OnxUYRNgzEK8STRUQl/yc5Kl3CT3Eks7MewfHjoJ6RsgwMoprJUV7AmOddph76QA
-	 rxJV35ccyjYt/XIhAy5GfPHbFPJELa7YHZzkWIrSn2LK3zBSL+wY0m9wPFRUurQIP8
-	 lxqNGJMaxUm5QZeilq/d+cec5D7fR+iI8z63pR9yjkgrTcn4sckvhgrWUPIzdLVl1q
-	 v+mR+4OhEsWLw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Z6KNk4YrKz4x3S;
-	Tue,  4 Mar 2025 13:28:22 +1100 (AEDT)
-Date: Tue, 4 Mar 2025 13:28:21 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Miquel Raynal <miquel.raynal@bootlin.com>, Boris Brezillon
- <boris.brezillon@collabora.com>
-Cc: Cheng Ming Lin <chengminglin@mxic.com.tw>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the nand tree
-Message-ID: <20250304132821.57c8d996@canb.auug.org.au>
+	s=arc-20240116; t=1741055319; c=relaxed/simple;
+	bh=rwCfUW7C4HY0wbpATaOXx9/rv2Bnood6YgX7DTIdI4U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hLm1qZ1F3WtDjEH1PbeCzriNWEcCymLAX0qUH1yulBlUgka0lSCMKbnlFl4gzDXWu2sbx38oVkesotLnCEyiInhrByEZ8C6lchG22WzUYM4O7G7hadmwYvee3GHZmDq1Qhabb8h8nm3nJwlPb2+7v33hPO4t56BaSZ/KUa5snHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iqc56+vm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECF4CC4CEE4;
+	Tue,  4 Mar 2025 02:28:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741055318;
+	bh=rwCfUW7C4HY0wbpATaOXx9/rv2Bnood6YgX7DTIdI4U=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Iqc56+vmPbMmJuES27Kxh8lTq/HhlmzJl17Jzgzx8Bmo3mZo/l2vgmV+AoAkGOkch
+	 TmNluSpckRkBHuRbwXsq+7gNHkUwe30jhn508DXXp77ivicUvOPIg8T21MTHm2dqmS
+	 nHvZoZT0m+kVGuFJUOhvR/Er+nKStCViwX38Z9SMOQKTxIkizEamNCUruwQf0rHGFZ
+	 mfCCUcwk66sn96MxWUoXQzo93mJSqyptjRT1RlUGwqsFOdV4N8dDllXHbbsKuElTnr
+	 FKuhxtDGYO/ckG29Mb4dFpuPGuPtk6hO/SCic/4XwLITaXgRt8hXYfdFOTuCV2AfMo
+	 yGlFDP3gZFP1Q==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH v2 0/6] perf test: Small improvements
+Date: Mon,  3 Mar 2025 18:28:31 -0800
+Message-ID: <20250304022837.1877845-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/J2jPlfBFIARaMe9NeZuorPU";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/J2jPlfBFIARaMe9NeZuorPU
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-Hi all,
+This is an assorted list of changes in the perf test.
 
-After merging the nand tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+I've added perf stat --metric-only test and perf trace record and replay.
+And other changes to skip privileged tests for non-root and simplify
+data symbol test.
 
-In file included from drivers/mtd/nand/spi/macronix.c:11:
-drivers/mtd/nand/spi/macronix.c:190:63: error: expected expression before '=
-,' token
-  190 |                      SPINAND_CONT_READ(macronix_set_cont_read),
-      |                                                               ^
-include/linux/mtd/spinand.h:541:17: note: in definition of macro 'SPINAND_I=
-NFO'
-  541 |                 __VA_ARGS__                                        =
-     \
-      |                 ^~~~~~~~~~~
-drivers/mtd/nand/spi/macronix.c:203:63: error: expected expression before '=
-,' token
-  203 |                      SPINAND_CONT_READ(macronix_set_cont_read),
-      |                                                               ^
-include/linux/mtd/spinand.h:541:17: note: in definition of macro 'SPINAND_I=
-NFO'
-  541 |                 __VA_ARGS__                                        =
-     \
-      |                 ^~~~~~~~~~~
-drivers/mtd/nand/spi/macronix.c:331:63: error: expected expression before '=
-,' token
-  331 |                      SPINAND_CONT_READ(macronix_set_cont_read),
-      |                                                               ^
-include/linux/mtd/spinand.h:541:17: note: in definition of macro 'SPINAND_I=
-NFO'
-  541 |                 __VA_ARGS__                                        =
-     \
-      |                 ^~~~~~~~~~~
-drivers/mtd/nand/spi/macronix.c:381:63: error: expected expression before '=
-,' token
-  381 |                      SPINAND_CONT_READ(macronix_set_cont_read),
-      |                                                               ^
-include/linux/mtd/spinand.h:541:17: note: in definition of macro 'SPINAND_I=
-NFO'
-  541 |                 __VA_ARGS__                                        =
-     \
-      |                 ^~~~~~~~~~~
-drivers/mtd/nand/spi/macronix.c:427:63: error: expected expression before '=
-,' token
-  427 |                      SPINAND_CONT_READ(macronix_set_cont_read),
-      |                                                               ^
-include/linux/mtd/spinand.h:541:17: note: in definition of macro 'SPINAND_I=
-NFO'
-  541 |                 __VA_ARGS__                                        =
-     \
-      |                 ^~~~~~~~~~~
+v2 changes)
+* fix shellcheck errors
+* simplify datasym test with timeout
 
-Caused by commit
+Thanks,
+Namhyung
 
-  da3558d940c6 ("mtd: spi-nand: macronix: Add support for read retry")
 
-The SPINAND_CONT_READ() macro already ends with a ','.
+Namhyung Kim (6):
+  perf test: Add --metric-only to perf stat output tests
+  perf test: Skip perf probe tests when running as non-root
+  perf test: Skip perf trace tests when running as non-root
+  perf test: Add trace record and replay test
+  perf test: Add timeout to datasym workload
+  perf test: Simplify data symbol test
 
-I have used the nand tree from next-20250303 for today.
+ .../tests/shell/lib/perf_json_output_lint.py  |  7 ++++++
+ tools/perf/tests/shell/lib/stat_output.sh     |  8 +++++++
+ .../tests/shell/perftool-testsuite_probe.sh   |  1 +
+ tools/perf/tests/shell/probe_vfs_getname.sh   |  1 +
+ .../shell/record+probe_libc_inet_pton.sh      |  1 +
+ .../shell/record+script_probe_vfs_getname.sh  |  1 +
+ tools/perf/tests/shell/stat+csv_output.sh     |  2 ++
+ tools/perf/tests/shell/stat+json_output.sh    |  9 ++++++++
+ tools/perf/tests/shell/stat+std_output.sh     |  8 +++++++
+ tools/perf/tests/shell/test_data_symbol.sh    | 15 ++----------
+ .../shell/test_uprobe_from_different_cu.sh    | 11 ++++-----
+ .../tests/shell/trace+probe_vfs_getname.sh    |  1 +
+ tools/perf/tests/shell/trace_btf_enum.sh      |  1 +
+ tools/perf/tests/shell/trace_btf_general.sh   |  1 +
+ tools/perf/tests/shell/trace_exit_race.sh     |  1 +
+ tools/perf/tests/shell/trace_record_replay.sh | 21 +++++++++++++++++
+ tools/perf/tests/workloads/datasym.c          | 23 +++++++++++++++++--
+ 17 files changed, 91 insertions(+), 21 deletions(-)
+ create mode 100755 tools/perf/tests/shell/trace_record_replay.sh
 
---=20
-Cheers,
-Stephen Rothwell
+-- 
+2.48.1.711.g2feabab25a-goog
 
---Sig_/J2jPlfBFIARaMe9NeZuorPU
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfGZUUACgkQAVBC80lX
-0GyMoQgAiYu8MKKTpvPQKKvIioskkrM+CEyxRTsT1TwwED5vU1eIFRGHIx2bYdKU
-HVYP/oV+0TMDltNrRagTjhII+s9japQGG8yUv1bpjXiIBk9pee2RULvKgvRl7CSP
-9nXIs1Eal43+ot1Z7NP3kV3Nilrw70z701IVK4za5H3YPuXVEJzABW5i2AOhOyRC
-bWe86v3kU3rJopzkrLgLH/FOzqTzoRuk5IFacnZKiUH+rpk3Z4zn+2mrFNzSSKEu
-Cb+kud8ctxKhgLafa7/+BSGFKLGa1oahpnXIld/UtmrA1scKKwCXHoCb9Mjeq0ZV
-m/M4Ewf7OVr9GYk0hbgp+ZM2svuOaw==
-=54EM
------END PGP SIGNATURE-----
-
---Sig_/J2jPlfBFIARaMe9NeZuorPU--
 
