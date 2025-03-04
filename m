@@ -1,163 +1,339 @@
-Return-Path: <linux-kernel+bounces-543798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3B12A4DA02
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:19:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64EFBA4DA1A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:21:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3EA4171D96
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:19:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61569189A846
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:21:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E330E1FDE3A;
-	Tue,  4 Mar 2025 10:19:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47BAB1FF7A1;
+	Tue,  4 Mar 2025 10:20:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Cu+DxP4E"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ckPQ3EDn"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68DE41FC107;
-	Tue,  4 Mar 2025 10:19:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 992051FC107;
+	Tue,  4 Mar 2025 10:20:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741083575; cv=none; b=HX6iLhOKeCy2t3dcN8RWTq+dsjUqcxjJugZ3JgA50T+lEZku1Qg6HPETz+Yw94Z1rzaPb0IKzDyzJRMhtvWoeETW15MvAEy5hMvljeQ6ZA8BBpOdNiogjBVnbQo0hv3CLi8e7+H20iM+KJJR/VilHHOI+52vlOSTdxaVkYoHbQs=
+	t=1741083648; cv=none; b=o5zd35rBrJFtjAKHvML2IMeTMsRlSEA5jRhLjQn5VWfEPEVRwUhNisLt0GcIgnCnz5R2zyC13xBE35vd9UIj0xusKDN0fxqK0PS5Hml29Z4X9BvNrjjoBB8OZ120+2zpf/JLvq43CG+HDzrQhYO9SD7Y16+yZXWJUt7CLfRf3Y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741083575; c=relaxed/simple;
-	bh=0LjOy3ExptYlSDWc+R79hQzLs5Ver27PeTWoOSJuVcU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h7XvWxq+YS5wBLwuv75Qe8HvGo/OlfW96ARnpnbBd7WDKPp9SXlLqj7WG3UaYer3+df/xT2K8DihDtQGJps2ClSV/L3vHG5p272NIWei72wmXSS2Y2arFdqAtyR3oo2i/2bc/48b8Ga36nk3eLfP4Ipi9UY41yT5bDHTtjFDC88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Cu+DxP4E; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.202] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 524AIqSq2089857
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Tue, 4 Mar 2025 02:18:52 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 524AIqSq2089857
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025021701; t=1741083534;
-	bh=3zxn+WrUBS8g5foCUUkpMpybK/Hi5/TPDqiPyN+NjBM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Cu+DxP4EQneH3TSWDP624/zH+OMfC7h5DGNGi6a0668Ux0qW1Pvgj+klioKCGuD1p
-	 uM4s+8Kj79AjXwRo8ofkq3lErebXXq+ecKLc+BcbTCd8B7Rs2Yrr0Ikh6ZYyaXBiLD
-	 ZV9pCeqBRYFJ7vv9oTbAqqIsJ7y2MT+9gH+/ibxCk62k+vn6xojnPpWGgz2EKkaIId
-	 rBjm7LkVHvKF+H61e8SC2WdfBaUFK+BjyY8J2OWC0fueLxF8u2/mdyJEL/ofDaQG6n
-	 6QEskWE8SVb9sssE+UCmHO0CjqGixeWD7rxvK+VscVBxnogbD1I+c0nw3sMsAjD7vS
-	 eD10gMEryXoCg==
-Message-ID: <8e4e1723-321a-4e8e-bbac-e2e5d8b08bfc@zytor.com>
-Date: Tue, 4 Mar 2025 02:18:51 -0800
+	s=arc-20240116; t=1741083648; c=relaxed/simple;
+	bh=1UfyHCwYphGAP1ni7IxzGtwqfYTFvPRRDii1jM7Kje8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=lnYaOp/u7kkTvRbWNuDiXIbv0X4m9Ln6C0m5q02DXMOQyGmyILTJJbzi3l4Hs5eMgA/Rv6xptB6ouiLo1IgQ74+cCWL+N1hxxm9j2Hq9oHSgg9OTYXFF/hm7iUlt0VxmIDsIXP/vvyItFVB5sUOWELYz/FxSYvTX6/7X9RBcQDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ckPQ3EDn; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B973D432BC;
+	Tue,  4 Mar 2025 10:20:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741083644;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=I+IR/EUFFn44uz8yBvIwrvhs6+0W0jOSwoxjqvZa9Hw=;
+	b=ckPQ3EDnZ5jaXlCdrRvKHUjg0YmkjcH4ZIqMVAmZjxhpFgJbimPdL4fYsuFrFV88UBn1ly
+	tARaO4dmLXjeqra94jV6b+SIYGkDAs2+FL4b2KabUi0vdov17m6LwOnnhVjW6FuLLAWoWy
+	tnxfuFVBITKTzfAbsDRVyxBk9INPruARIZHUKSeZ8bnkIuGTGmaF7h64ln2XTeeAsspeiU
+	iQjd7lYqybQcpSOHgi/sSscY5crsOz/wvLwR4LYsOD+ggRDI1/ucOlWgk4LbBVIJb0hIJu
+	rERIA+32ck8NrFTVz+5tUwCaG7T2ELl30RUFbbEI99aI3BsjsCLiJrnHEypWIQ==
+From: Kory Maincent <kory.maincent@bootlin.com>
+Date: Tue, 04 Mar 2025 11:18:52 +0100
+Subject: [PATCH net-next v6 03/12] net: pse-pd: tps23881: Add support for
+ PSE events and interrupts
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/5] x86/cpufeatures: Generate a feature mask header
- based on build config
-To: Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: "Aithal, Srikanth" <sraithal@amd.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        dave.hansen@linux.intel.com, x86@kernel.org, will@kernel.org,
-        peterz@infradead.org, yury.norov@gmail.com, akpm@linux-foundation.org,
-        acme@kernel.org, namhyung@kernel.org, brgerst@gmail.com,
-        andrew.cooper3@citrix.com, nik.borisov@suse.com
-References: <20250228082338.73859-1-xin@zytor.com>
- <20250228082338.73859-4-xin@zytor.com>
- <7c3b4623-45ea-4340-ac47-334071c1d15f@amd.com>
- <D03DAFD2-5EC9-4D16-BA66-FDA4B51F45DD@zytor.com>
- <20250303132505.GEZ8WtsXqFpuMOpDjT@fat_crate.local>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <20250303132505.GEZ8WtsXqFpuMOpDjT@fat_crate.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250304-feature_poe_port_prio-v6-3-3dc0c5ebaf32@bootlin.com>
+References: <20250304-feature_poe_port_prio-v6-0-3dc0c5ebaf32@bootlin.com>
+In-Reply-To: <20250304-feature_poe_port_prio-v6-0-3dc0c5ebaf32@bootlin.com>
+To: Andrew Lunn <andrew@lunn.ch>, Oleksij Rempel <o.rempel@pengutronix.de>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Jonathan Corbet <corbet@lwn.net>, Donald Hunter <donald.hunter@gmail.com>, 
+ Rob Herring <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+ Simon Horman <horms@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org, 
+ linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>, 
+ Dent Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de, 
+ Maxime Chevallier <maxime.chevallier@bootlin.com>, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ "Kory Maincent (Dent Project)" <kory.maincent@bootlin.com>
+X-Mailer: b4 0.15-dev-8cb71
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutddujeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthejredtredtjeenucfhrhhomhepmfhorhihucforghinhgtvghnthcuoehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeevgfdvgfektefgfefggeekudfggffhtdfffedtueetheejtddvledvvdelhedtveenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduvdejrddtrddurddungdpmhgrihhlfhhrohhmpehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvjedprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhrtghpthhtoheptghorhgsvghtsehlfihnrdhnvghtpdhrtghpthhtoheplhhgihhrugifohhougesghhmrghilhdrtghomhdprhgtphhtthhopeguvghnthhprhhojhgvtghtsehlihhnuhigf
+ hhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgvrhhnvghlsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthh
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On 3/3/2025 5:25 AM, Borislav Petkov wrote:
-> On Mon, Mar 03, 2025 at 04:05:54AM -0800, H. Peter Anvin wrote:
->> "make headers" on an unconfigured tree should presumably only produce the uapi headers, not kernel-internal ones, one could surmise?
-> 
-> Well, that's kinda a question for you guys:
-> 
-> cfc7686900a87   (H. Peter Anvin (Intel) 2025-02-28 00:23:36 -0800       281)archheaders: $(out)/$(featuremasks_hdr)
-> 1f57d5d85ba7f   (Ingo Molnar    2015-06-03 18:36:41 +0200       282)    $(Q)$(MAKE) $(build)=arch/x86/entry/syscalls all
-> 
-> and the headers target has
-> 
-> headers: $(version_h) scripts_unifdef uapi-asm-generic archheaders archscripts
-> 
-> as its prereq.
-> 
-> Judging by
-> 
-> 59b2bd05f5f4 ("kbuild: add 'headers' target to build up uapi headers in usr/include")
+From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
 
-It seems that 'archprepare' works, however I'm not sure if it's the best
-choice.  Any suggestion?
+Add support for PSE event reporting through interrupts. Set up the newly
+introduced devm_pse_irq_helper helper to register the interrupt. Events are
+reported for over-current and over-temperature conditions.
 
-diff --git a/arch/x86/Makefile b/arch/x86/Makefile
-index 60583987d320..2db535958b8d 100644
---- a/arch/x86/Makefile
-+++ b/arch/x86/Makefile
-@@ -276,9 +276,9 @@ $(out)/$(featuremasks_hdr): $(featuremasks_awk) 
-$(cpufeatures_hdr) $(KCONFIG_CON
-	$(shell mkdir -p $(out))
-	$(call if_changed,gen_featuremasks)
+Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Signed-off-by: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+---
 
--targets += $(out)/$(featuremasks_hdr)
-+archprepare: $(out)/$(featuremasks_hdr)
+Change in v4:
+- Small rename of a function.
 
--archheaders: $(out)/$(featuremasks_hdr)
-+archheaders:
-	$(Q)$(MAKE) $(build)=arch/x86/entry/syscalls all
+Change in v3:
+- Loop over interruption register to be sure the interruption pin is
+  freed before exiting the interrupt handler function.
+- Add exist variable to not report event for undescribed PIs.
+- Used helpers to convert the chan number to the PI port number.
 
-  ###
+Change in v2:
+- Remove support for OSS pin and TPC23881 specific port priority management
+---
+ drivers/net/pse-pd/tps23881.c | 178 +++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 177 insertions(+), 1 deletion(-)
 
-> 
-> it sure looks like "make headers" should be for uapi headers only.
-> 
-> Oh, and it should be documented in "make help" output btw.
+diff --git a/drivers/net/pse-pd/tps23881.c b/drivers/net/pse-pd/tps23881.c
+index 5e9dda2c0eac7..1226667192977 100644
+--- a/drivers/net/pse-pd/tps23881.c
++++ b/drivers/net/pse-pd/tps23881.c
+@@ -17,6 +17,13 @@
+ 
+ #define TPS23881_MAX_CHANS 8
+ 
++#define TPS23881_REG_IT		0x0
++#define TPS23881_REG_IT_MASK	0x1
++#define TPS23881_REG_IT_IFAULT	BIT(5)
++#define TPS23881_REG_IT_SUPF	BIT(7)
++#define TPS23881_REG_FAULT	0x7
++#define TPS23881_REG_SUPF_EVENT	0xb
++#define TPS23881_REG_TSD	BIT(7)
+ #define TPS23881_REG_PW_STATUS	0x10
+ #define TPS23881_REG_OP_MODE	0x12
+ #define TPS23881_OP_MODE_SEMIAUTO	0xaaaa
+@@ -24,6 +31,7 @@
+ #define TPS23881_REG_DET_CLA_EN	0x14
+ #define TPS23881_REG_GEN_MASK	0x17
+ #define TPS23881_REG_NBITACC	BIT(5)
++#define TPS23881_REG_INTEN	BIT(7)
+ #define TPS23881_REG_PW_EN	0x19
+ #define TPS23881_REG_2PAIR_POL1	0x1e
+ #define TPS23881_REG_PORT_MAP	0x26
+@@ -51,6 +59,7 @@ struct tps23881_port_desc {
+ 	u8 chan[2];
+ 	bool is_4p;
+ 	int pw_pol;
++	bool exist;
+ };
+ 
+ struct tps23881_priv {
+@@ -782,8 +791,10 @@ tps23881_write_port_matrix(struct tps23881_priv *priv,
+ 		hw_chan = port_matrix[i].hw_chan[0] % 4;
+ 
+ 		/* Set software port matrix for existing ports */
+-		if (port_matrix[i].exist)
++		if (port_matrix[i].exist) {
+ 			priv->port[pi_id].chan[0] = lgcl_chan;
++			priv->port[pi_id].exist = true;
++		}
+ 
+ 		/* Initialize power policy internal value */
+ 		priv->port[pi_id].pw_pol = -1;
+@@ -1017,6 +1028,165 @@ static int tps23881_flash_sram_fw(struct i2c_client *client)
+ 	return 0;
+ }
+ 
++/* Convert interrupt events to 0xff to be aligned with the chan
++ * number.
++ */
++static u8 tps23881_irq_export_chans_helper(u16 reg_val, u8 field_offset)
++{
++	u8 val;
++
++	val = (reg_val >> (4 + field_offset) & 0xf0) |
++	      (reg_val >> field_offset & 0x0f);
++
++	return val;
++}
++
++/* Convert chan number to port number */
++static void tps23881_set_notifs_helper(struct tps23881_priv *priv,
++				       u8 chans,
++				       unsigned long *notifs,
++				       unsigned long *notifs_mask,
++				       enum ethtool_pse_events event)
++{
++	u8 chan;
++	int i;
++
++	if (!chans)
++		return;
++
++	for (i = 0; i < TPS23881_MAX_CHANS; i++) {
++		if (!priv->port[i].exist)
++			continue;
++		/* No need to look at the 2nd channel in case of PoE4 as
++		 * both registers are set.
++		 */
++		chan = priv->port[i].chan[0];
++
++		if (BIT(chan) & chans) {
++			*notifs_mask |= BIT(i);
++			notifs[i] |= event;
++		}
++	}
++}
++
++static void tps23881_irq_event_over_temp(struct tps23881_priv *priv,
++					 u16 reg_val,
++					 unsigned long *notifs,
++					 unsigned long *notifs_mask)
++{
++	int i;
++
++	if (reg_val & TPS23881_REG_TSD) {
++		for (i = 0; i < TPS23881_MAX_CHANS; i++) {
++			if (!priv->port[i].exist)
++				continue;
++
++			*notifs_mask |= BIT(i);
++			notifs[i] |= ETHTOOL_PSE_EVENT_OVER_TEMP;
++		}
++	}
++}
++
++static void tps23881_irq_event_over_current(struct tps23881_priv *priv,
++					    u16 reg_val,
++					    unsigned long *notifs,
++					    unsigned long *notifs_mask)
++{
++	u8 chans;
++
++	chans = tps23881_irq_export_chans_helper(reg_val, 0);
++	if (chans)
++		tps23881_set_notifs_helper(priv, chans, notifs, notifs_mask,
++					   ETHTOOL_PSE_EVENT_OVER_CURRENT);
++}
++
++static int tps23881_irq_event_handler(struct tps23881_priv *priv, u16 reg,
++				      unsigned long *notifs,
++				      unsigned long *notifs_mask)
++{
++	struct i2c_client *client = priv->client;
++	int ret;
++
++	/* The Supply event bit is repeated twice so we only need to read
++	 * the one from the first byte.
++	 */
++	if (reg & TPS23881_REG_IT_SUPF) {
++		ret = i2c_smbus_read_word_data(client, TPS23881_REG_SUPF_EVENT);
++		if (ret < 0)
++			return ret;
++		tps23881_irq_event_over_temp(priv, ret, notifs, notifs_mask);
++	}
++
++	if (reg & (TPS23881_REG_IT_IFAULT | TPS23881_REG_IT_IFAULT << 8)) {
++		ret = i2c_smbus_read_word_data(client, TPS23881_REG_FAULT);
++		if (ret < 0)
++			return ret;
++		tps23881_irq_event_over_current(priv, ret, notifs, notifs_mask);
++	}
++
++	return 0;
++}
++
++static int tps23881_irq_handler(int irq, struct pse_controller_dev *pcdev,
++				unsigned long *notifs,
++				unsigned long *notifs_mask)
++{
++	struct tps23881_priv *priv = to_tps23881_priv(pcdev);
++	struct i2c_client *client = priv->client;
++	int ret, it_mask;
++
++	/* Get interruption mask */
++	ret = i2c_smbus_read_word_data(client, TPS23881_REG_IT_MASK);
++	if (ret < 0)
++		return ret;
++	it_mask = ret;
++
++	/* Read interrupt register until it frees the interruption pin. */
++	while (true) {
++		ret = i2c_smbus_read_word_data(client, TPS23881_REG_IT);
++		if (ret < 0)
++			return ret;
++
++		/* No more relevant interruption */
++		if (!(ret & it_mask))
++			return 0;
++
++		ret = tps23881_irq_event_handler(priv, (u16)ret, notifs,
++						 notifs_mask);
++		if (ret)
++			return ret;
++	}
++	return 0;
++}
++
++static int tps23881_setup_irq(struct tps23881_priv *priv, int irq)
++{
++	struct i2c_client *client = priv->client;
++	struct pse_irq_desc irq_desc = {
++		.name = "tps23881-irq",
++		.map_event = tps23881_irq_handler,
++	};
++	int ret;
++	u16 val;
++
++	val = TPS23881_REG_IT_IFAULT | TPS23881_REG_IT_SUPF;
++	val |= val << 8;
++	ret = i2c_smbus_write_word_data(client, TPS23881_REG_IT_MASK, val);
++	if (ret)
++		return ret;
++
++	ret = i2c_smbus_read_word_data(client, TPS23881_REG_GEN_MASK);
++	if (ret < 0)
++		return ret;
++
++	val = (u16)(ret | TPS23881_REG_INTEN | TPS23881_REG_INTEN << 8);
++	ret = i2c_smbus_write_word_data(client, TPS23881_REG_GEN_MASK, val);
++	if (ret < 0)
++		return ret;
++
++	return devm_pse_irq_helper(&priv->pcdev, irq, 0, &irq_desc);
++}
++
+ static int tps23881_i2c_probe(struct i2c_client *client)
+ {
+ 	struct device *dev = &client->dev;
+@@ -1097,6 +1267,12 @@ static int tps23881_i2c_probe(struct i2c_client *client)
+ 				     "failed to register PSE controller\n");
+ 	}
+ 
++	if (client->irq) {
++		ret = tps23881_setup_irq(priv, client->irq);
++		if (ret)
++			return ret;
++	}
++
+ 	return ret;
+ }
+ 
 
-Want me to add it btw?
-
-Thanks!
-     Xin
-
+-- 
+2.34.1
 
 
