@@ -1,135 +1,123 @@
-Return-Path: <linux-kernel+bounces-543235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55833A4D30F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:39:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C058CA4D312
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:39:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82133188CB44
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 05:39:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DE523AE194
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 05:39:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16A431F0990;
-	Tue,  4 Mar 2025 05:38:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2837D1F4720;
+	Tue,  4 Mar 2025 05:39:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N4YhKpkn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KI4+xIvh"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0841E155335
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 05:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E8771DDA1E;
+	Tue,  4 Mar 2025 05:39:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741066738; cv=none; b=nu5cx9ecM6SNZgharZzvR3zYpn94OCUAYGa13AJQyQoAYIxBV4ZZEBxces5f8ijTJl+bZRDoIOQXBHyfDNq6E3bBvgVBPd4uO6ZxH45Xw5TXWMtRaKFCxwBF35WwAt0qSWXNxtFyzPLEfWz+1JqJ9b48b5EAcuhZxWYeeZs9Rn0=
+	t=1741066762; cv=none; b=W2ir8RstyfNKdvFsdddKhV162vFhSwtRpBYR7IJbpHB9BeDStTb5kseXK24N6aOgwHwLEGD1I+46QKAwMmMk96iy1t3+8oMGKb3Co88iSoQO80geHzy7Sr4+0dqytZ1E0t9GhEzvTzEiNtdWeC9OoK5Oe2ckoct7yFqvhzirHlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741066738; c=relaxed/simple;
-	bh=bq1rEvMgUCO+z9mqMh3toWqnhddFvqq5Jt040KPfC+8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iEldMEGctHGOetwYZzVOhrr+Z6F2KDDOd1feBzWZQeHPBxcrH4045YNMTrRqBlYCn08b7NWAcrwisY/8TgOS2Xwkne/9yaz8sRuu1r3JyXF26M8b3uNbzW8x3EbFFTzknyAeYg1C1Icp/U1MSmDi0vWbYpVSgh5pDPZPndPyWDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N4YhKpkn; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741066735;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rhnvguDUl9b0lKjHpwaAt3YEx23OG5Tvc8nGcNEISp4=;
-	b=N4YhKpkn7RpyiX2ystlmN7saIPLp9BlaPv56TSpcROEZ4LLgIbzAE6NNOelAfoIZxKzG1n
-	1HIVvojy3PNymCRmGI4ixm29RzNMEMamacJk6VepOpPKpUQgLWDBn5VqpNgYyiyJY9sgVR
-	B3t72xkhxHCTzIdWAX1d8dArdn68htc=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-694--tZ0h7BqPFOAut1GaX7AQw-1; Tue, 04 Mar 2025 00:38:37 -0500
-X-MC-Unique: -tZ0h7BqPFOAut1GaX7AQw-1
-X-Mimecast-MFC-AGG-ID: -tZ0h7BqPFOAut1GaX7AQw_1741066717
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2fe9527c041so10496817a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 21:38:37 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741066717; x=1741671517;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rhnvguDUl9b0lKjHpwaAt3YEx23OG5Tvc8nGcNEISp4=;
-        b=DeCeQdCl/O9QYH7JyZ60ASara7KHIQDAq6rIQHuQKgVQ3uiMERlOhiKCY8MImxnScw
-         SbZAB4nUAv0f1uvoXiAsOXa/+gQ1ag9xp4Lca6cgUG/zvuUQtjozzewau6q3IeryoYT+
-         i8/fgRIaRMe4M8389wxRsJOzYJajfWhyXeyw0hq2J6SdXUmsck8lCSIjnzg/ftbJYeMr
-         YEXVB9TA+ZCNLJA0jwRgJYo6CD34ERq6MhuFVQ1/3Mad2ysKczkN3ZGydnTRfD41pWcq
-         O8NSR5laCLyIkLD/PgrCHIHEbLTiqNnyy877oDfcIhb9y0ijpbUbdXbMUCqttAuakd1S
-         HqKA==
-X-Forwarded-Encrypted: i=1; AJvYcCVwhNmw4OSYoD552/f7lw86sAR8wuX1+5mhC6sNQ6CoFtqbJzOx7Yi0gPSu9GZ32fcnMHECoPXCTCGPjD8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBKm7BJP3/Zs1Pg7gatqwSLWGDyFKdWzQ7ZEqKgnyWMlcBoc2H
-	dCa4YhGZ1l4O7yd+kNpGpcZJEP3oLr/fyP5QKZ/vSgEMcFxl1f0P53eb/9zMA4u3yK7QI+3IN2x
-	s5iPHSqfTYSSRblexnGFHsI7HiyZ63Bqce5g0EKTt3jeF14wmfbhdl+ebHV1jgw==
-X-Gm-Gg: ASbGnctm86D1jWraBz6mueFb1+m4RXoEk5E8aoroNSGp2TKgb4xW2hCEDyh/0ZMJYuw
-	Q3xi8lNu+D5JWNXUo+kiBznvy7dE0Y2+JCqhFSDE54TireomSVXm47RmsCD7J7HGtU2v6srrjSN
-	C05vYzJeGsgj2mMpiApM4UqFgMKzTdaVGSQD919sVEknS4/xuAyJxvFcVzWrK6HhESsWacSvSDu
-	Y+QqYNvVf2V3Y1WNeg2WMmruIf/wxvW+jT8dAHZU8gYgDyhhuAMUWbv+UqOUxufxZyLAK8pz+ld
-	uU0jJEItEEEO62qM7Q==
-X-Received: by 2002:a17:90b:2f8d:b0:2fa:228d:5af2 with SMTP id 98e67ed59e1d1-2febab6c68emr25331692a91.15.1741066716883;
-        Mon, 03 Mar 2025 21:38:36 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF612ZxdojGbx89Aqh0mhvbM65hIZPcepIXHF98wxNJcpuaTGS26LwyEfOvsNmDG1/FgXRbOg==
-X-Received: by 2002:a17:90b:2f8d:b0:2fa:228d:5af2 with SMTP id 98e67ed59e1d1-2febab6c68emr25331658a91.15.1741066716552;
-        Mon, 03 Mar 2025 21:38:36 -0800 (PST)
-Received: from [192.168.68.55] ([180.233.125.164])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2235050d7c1sm87354825ad.198.2025.03.03.21.38.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Mar 2025 21:38:35 -0800 (PST)
-Message-ID: <5008db08-c153-48c0-90b3-39fa0297ba1e@redhat.com>
-Date: Tue, 4 Mar 2025 15:38:27 +1000
+	s=arc-20240116; t=1741066762; c=relaxed/simple;
+	bh=2vz+NB5tMxF1OWCpg7OqhukUuWLyPzvtudHFIO52pkY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZUhzUVB/qcI3u9lp4y1iVdu1oMeWDoke3gEmo+fphn9zHcQ3zAbHl0O1ZPIv4d+qcelmO+ZLNlob+t+oLIJWeILeIRvVb42YWD7aXo9EKA62dNx15c3HpzBlOpQV49R/OA2GXDWpEXd2y50vceZ6x5iCkHHm+ry9U+PH0x8btTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KI4+xIvh; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=asZ89NjLYjHfpBcFWEra+PaQAUWjYIbeIoGtB844wqU=; b=KI4+xIvhaN+WFJ+4I3OIv62vvW
+	vvKgZwD3kEbvhNNJATfeF6I4m7fCegtkQTp8i3I5SFGvEv22YX6iMKoMOWHX5z3Unsddyi1zYtIjs
+	VqpSz/ZPd87FpUk6SIFQNqJ17zkZY/z6aRtPQD0GG1Fo97OC0zO6ggAu9bWDyvwuYlb/MswaYJMTF
+	hdy+/BECalKSARmBXTkt402mzuu0FtAnoEx1A/bGYuEz3ASzKn+7niILzVlIGB7at291z8Vl2OGOA
+	C+RP/g7y2QM60NNY2k5KwYcSh7hX3SKzJTGqbTPDUlVToDMf/ozWe2RfhMAe2wJAemg8eg3+xq7gh
+	OLKQnWFA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tpKzZ-00000000FmI-2xOE;
+	Tue, 04 Mar 2025 05:38:57 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 8ED6630049D; Tue,  4 Mar 2025 06:38:53 +0100 (CET)
+Date: Tue, 4 Mar 2025 06:38:53 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Menglong Dong <menglong8.dong@gmail.com>
+Cc: rostedt@goodmis.org, mark.rutland@arm.com, alexei.starovoitov@gmail.com,
+	catalin.marinas@arm.com, will@kernel.org, mhiramat@kernel.org,
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+	martin.lau@linux.dev, eddyz87@gmail.com, yonghong.song@linux.dev,
+	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
+	jolsa@kernel.org, davem@davemloft.net, dsahern@kernel.org,
+	mathieu.desnoyers@efficios.com, nathan@kernel.org,
+	nick.desaulniers+lkml@gmail.com, morbo@google.com,
+	samitolvanen@google.com, kees@kernel.org, dongml2@chinatelecom.cn,
+	akpm@linux-foundation.org, riel@surriel.com, rppt@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	netdev@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH v4 1/4] x86/ibt: factor out cfi and fineibt offset
+Message-ID: <20250304053853.GA7099@noisy.programming.kicks-ass.net>
+References: <20250303132837.498938-1-dongml2@chinatelecom.cn>
+ <20250303132837.498938-2-dongml2@chinatelecom.cn>
+ <20250303165454.GB11590@noisy.programming.kicks-ass.net>
+ <CADxym3aVtKx_mh7aZyZfk27gEiA_TX6VSAvtK+YDNBtuk_HigA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 24/45] KVM: arm64: Handle Realm PSCI requests
-To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
- kvmarm@lists.linux.dev
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun
- <alpergun@google.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
-References: <20250213161426.102987-1-steven.price@arm.com>
- <20250213161426.102987-25-steven.price@arm.com>
-Content-Language: en-US
-From: Gavin Shan <gshan@redhat.com>
-In-Reply-To: <20250213161426.102987-25-steven.price@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CADxym3aVtKx_mh7aZyZfk27gEiA_TX6VSAvtK+YDNBtuk_HigA@mail.gmail.com>
 
-On 2/14/25 2:14 AM, Steven Price wrote:
-> The RMM needs to be informed of the target REC when a PSCI call is made
-> with an MPIDR argument. Expose an ioctl to the userspace in case the PSCI
-> is handled by it.
+On Tue, Mar 04, 2025 at 09:10:12AM +0800, Menglong Dong wrote:
+> Hello, sorry that I forgot to add something to the changelog. In fact,
+> I don't add extra 5-bytes anymore, which you can see in the 3rd patch.
 > 
-> Co-developed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
-> Changes since v6:
->   * Use vcpu_is_rec() rather than kvm_is_realm(vcpu->kvm).
->   * Minor renaming/formatting fixes.
-> ---
->   arch/arm64/include/asm/kvm_rme.h |  3 +++
->   arch/arm64/kvm/arm.c             | 25 +++++++++++++++++++++++++
->   arch/arm64/kvm/psci.c            | 30 ++++++++++++++++++++++++++++++
->   arch/arm64/kvm/rme.c             | 14 ++++++++++++++
->   4 files changed, 72 insertions(+)
+> The thing is that we can't add extra 5-bytes if CFI is enabled. Without
+> CFI, we can make the padding space any value, such as 5-bytes, and
+> the layout will be like this:
 > 
+> __align:
+>   nop
+>   nop
+>   nop
+>   nop
+>   nop
+> foo: -- __align +5
+> 
+> However, the CFI will always make the cfi insn 16-bytes aligned. When
+> we set the FUNCTION_PADDING_BYTES to (11 + 5), the layout will be
+> like this:
+> 
+> __cfi_foo:
+>   nop (11)
+>   mov $0x12345678, %reg
+>   nop (16)
+> foo:
+> 
+> and the padding space is 32-bytes actually. So, we can just select
+> FUNCTION_ALIGNMENT_32B instead, which makes the padding
+> space 32-bytes too, and have the following layout:
+> 
+> __cfi_foo:
+>   mov $0x12345678, %reg
+>   nop (27)
+> foo:
 
-Reviewed-by: Gavin Shan <gshan@redhat.com>
+*blink*, wtf is clang smoking.
+
+I mean, you're right, this is what it is doing, but that is somewhat
+unexpected. Let me go look at clang source, this is insane.
 
 
