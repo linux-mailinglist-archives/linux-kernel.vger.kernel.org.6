@@ -1,116 +1,93 @@
-Return-Path: <linux-kernel+bounces-545722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6691A4F0B9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:47:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB071A4F0BF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:50:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1464188D4D9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:48:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17D3A1717D5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:50:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2974624C06A;
-	Tue,  4 Mar 2025 22:47:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 714C22620E6;
+	Tue,  4 Mar 2025 22:50:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="UAdTo2rc"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r5G5hRTz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CFF91F4E27;
-	Tue,  4 Mar 2025 22:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB1171F7561;
+	Tue,  4 Mar 2025 22:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741128467; cv=none; b=dG2xHZVC7CvgEWyTNjOtxhmPo04uSRVlOXwrXykpNkbLZqQf3V9wpdpajQhe41f68hXbZYbE2/jK+p+V+dlnxFqbgFTklCVA2A066oxcixIarJ0v54Qzlf2cgCMySz05KBYzwYeoJCqLBeJ9EwobaOWQmV8bRDCsaxBqoIacIqw=
+	t=1741128612; cv=none; b=gwdHfJmoPN3UZlO/7JjEJkeYjNwZXmBxyDu7tC3gsxySvap+xdYvl7KyFH71YuMgtFXZAUSO1bOp9esyoq/dEY6AF0hacliJg1Bl3I2xSWyGC+GbzUdNo0miODa+TFOC2fSMJQRcE1wRe/4abS8xtZja8RW8wNKr0XGg4gIIoT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741128467; c=relaxed/simple;
-	bh=/SzcalMI3t0LsJj6KZ7r7qT0ul13zHtUpIDY55MySVg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XwkU6HLc43Fg8D+BTuFutF7bI6he+WCVU/avKtJqwvyKfNPNDo7V1kyRkofdrYwBuMxWns4ECLEsLG5uQS/E/M9fCoEb6uDT1LmP3waKYoJBlLkeX6W9sCF89R4RUUDlB+8BSyKWCvX8encxjhEsTz80FhqnRCU0HyxnR+3UolI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=UAdTo2rc; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1741128459;
-	bh=Kunaup0/Z/RDWuE8m1XF+pBbJyUM9wJARV/5ypUpfcU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=UAdTo2rceMFks30Z2lFfq07IK+OuxXX/eYUQTuX3TmIEvvw9RrW/4nRRNmVL3KtX7
-	 lJr+PPcGFx0zIgFnG+7UXl3ujnHY80d8ALnLxnf83tNhB6ggUm5A7jFg7WaJY6xbLN
-	 uO0z079LKC15IZGmChuOiuUVB1quZ5Vn1ecmHnYwiK9u6owMNpzvw0DElGvF42WlJK
-	 GJEa9xpEyG6RjN7OI4lyTyReIpxlPR3fdS8EaTtHkWuw7YGMG8v3D5hC5Zpdglrg4R
-	 HMzTRubZKYhmgaXFTDe8KKQRfPJA+oxXulGiMvQ9zs/9V0qDsEMxJXc19D36hhAR7/
-	 9Bs5tPaZeRp+Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Z6rRb289Fz4wj2;
-	Wed,  5 Mar 2025 09:47:39 +1100 (AEDT)
-Date: Wed, 5 Mar 2025 09:47:38 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Brendan Jackman
- <jackmanb@google.com>, Andrew Morton <akpm@linux-foundation.org>, lkml
- <linux-kernel@vger.kernel.org>, Linux Memory Management List
- <linux-mm@kvack.org>
-Subject: Re: next-20250304 build failure
-Message-ID: <20250305094738.6cffb432@canb.auug.org.au>
-In-Reply-To: <81fa7a0d-ed4b-44cd-b2e1-779a42401cbe@oss.qualcomm.com>
-References: <81fa7a0d-ed4b-44cd-b2e1-779a42401cbe@oss.qualcomm.com>
+	s=arc-20240116; t=1741128612; c=relaxed/simple;
+	bh=lmqAu2pRTyzGtngpjLwnclpVd2w+T2QccFoyTGwIxFQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=Oxw1Dw7Sir8JivfJEu32wE0mc+aXH4eabd6UCWvhe7r7WarsxXxuFYM6E0/q8SWRdeu5u/g3ziRcACzjWy7q/7bf3Wj+zQvDHNeZnPLd//ROwA2m3dbyWWhVYcjVnd3rd29YLXg8eFkju0Fnn92eHJCtV+N+fVla+wFe18W43ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r5G5hRTz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1702EC4CEE5;
+	Tue,  4 Mar 2025 22:50:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741128612;
+	bh=lmqAu2pRTyzGtngpjLwnclpVd2w+T2QccFoyTGwIxFQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=r5G5hRTzpFf4wTBKkZXFATErnzRhl19ONjZy63rzu4qr0Y4XFVtk8yhQnZ63azrZ4
+	 jEjaUMOJiqUPj0Y54iLW7dVTcv/ixR52Su0f009pkAq7XWrRnjaPYFFBH4C/L2XU5o
+	 2JvKL/d+l0F/QNZYaRzTyYzWzPmeOaP0HjM4t0N8SkOndszxMSIppQahIW10/ZVy5R
+	 yZraBgpLwa4QkzT0F0lhQedwTLAmsMLFUiZtqrr0QZ/S34ThAkVp3KBdVWRSI+cytk
+	 hLH6D3ZDEvriifnLw+icXgmMAXC8ruDdHu79c69pWe/U1xpIiKVu+iyikVyuMoxMmZ
+	 77uQnBw92eCgQ==
+Date: Tue, 4 Mar 2025 16:50:10 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Yi Lai <yi1.lai@intel.com>
+Cc: ilpo.jarvinen@linux.intel.com, shuah@kernel.org, bhelgaas@google.com,
+	Jonathan.Cameron@huawei.com, linux-pci@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests/pcie_bwctrl: Add "set_pcie_speed.sh" to
+ TEST_PROGS
+Message-ID: <20250304225010.GA261848@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/rGjjH7nWAs=Z9aM1abWaSPh";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8FfK8rN30lKzvVV@ly-workstation>
 
---Sig_/rGjjH7nWAs=Z9aM1abWaSPh
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Feb 28, 2025 at 03:00:59PM +0800, Yi Lai wrote:
+> The test shell script "set_pcie_speed.sh" is not installed in
+> INSTALL_PATH. Attempting to execute set_pcie_cooling_state.sh shows
+> warning:
+> 
+> "
+> ./set_pcie_cooling_state.sh: line 119: ./set_pcie_speed.sh: No such file or directory
+> "
+> 
+> Add "set_pcie_speed.sh" to TEST_PROGS.
+> 
+> Fixes: 838f12c3d551 ("selftests/pcie_bwctrl: Create selftests")
+> Signed-off-by: Yi Lai  <yi1.lai@intel.com>
 
-Hi Konrad,
+Applied to pci/bwctrl for v6.15, thanks!
 
-On Tue, 4 Mar 2025 21:35:04 +0100 Konrad Dybcio <konrad.dybcio@oss.qualcomm=
-.com> wrote:
->
-> Hi, I'm getting this build failure:
->=20
-> mm/page_alloc.c:424:3: error: call to undeclared function 'in_mem_hotplug=
-'; ISO C99 and later do not support implicit function declarations [-Wimpli=
-cit-function-declaration]
->   424 |                 in_mem_hotplug() ||
->=20
->=20
-> building next-20250304 on arm64
->=20
-> Caused by=20
->=20
-> b4cfcc26f507 ("mm/page_alloc: add lockdep assertion for pageblock type ch=
-ange")
-
-Thanks.  That commit has been removed from the mm tree for next-20250305.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/rGjjH7nWAs=Z9aM1abWaSPh
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfHgwoACgkQAVBC80lX
-0GwklAf/fJfyevj41pPukCy77hAn8P/JnqSRR5VPmfNPkMqG8sJRjHC13t7Q9E9T
-bpFIb1Dy4FUW5pJGRfj7XYRvoN6rZdQ9qqGFf/oBs3lCkawhyRwOrHIwuKAoFAlT
-pHE2xAb8oiGKDV/5DR4iAhPhv7eeAdfjz5sBDdn7uEqKqiboexa8q54D+mtm80zQ
-HOLw7dy/+IfwYBNfRGfCGuYEAhrnJ6Mv1sJgje53a2Q+BKa6YBEFwwc3/NoY+I0d
-kGIcmvIp05kDsd/NNl+Lidp/1S7XayXZLV3qCdzffC+ixhf7NIXLhXNkXDYJH9fB
-VXxMdu7UmVS7FAFn3ir1BXB6w6Vs0Q==
-=UyqH
------END PGP SIGNATURE-----
-
---Sig_/rGjjH7nWAs=Z9aM1abWaSPh--
+> ---
+>  tools/testing/selftests/pcie_bwctrl/Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/pcie_bwctrl/Makefile b/tools/testing/selftests/pcie_bwctrl/Makefile
+> index 3e84e26341d1..48ec048f47af 100644
+> --- a/tools/testing/selftests/pcie_bwctrl/Makefile
+> +++ b/tools/testing/selftests/pcie_bwctrl/Makefile
+> @@ -1,2 +1,2 @@
+> -TEST_PROGS = set_pcie_cooling_state.sh
+> +TEST_PROGS = set_pcie_cooling_state.sh set_pcie_speed.sh
+>  include ../lib.mk
+> -- 
+> 2.39.2
+> 
 
