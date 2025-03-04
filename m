@@ -1,115 +1,147 @@
-Return-Path: <linux-kernel+bounces-544261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A8A2A4DF6F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:39:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04592A4DF73
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:40:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8702F3B2976
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:39:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D5E5189C701
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:41:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F7F2045B0;
-	Tue,  4 Mar 2025 13:39:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3BE02045B0;
+	Tue,  4 Mar 2025 13:40:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ua8SHcs2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rBCjxfOX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5457726ACD;
-	Tue,  4 Mar 2025 13:39:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E70426ACD;
+	Tue,  4 Mar 2025 13:40:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741095555; cv=none; b=OB7vNyStTfoGrYP5gd5HOZLpYgavKtgN9yQJX3levXWJvPPTec+gcsMKP3Ffe9Ophv6VOO4vojiFLR4YWJa/obgMG+iLlCd7wD9ieArWd5h+B23G4bvP3JX2PeOh2EP6ej2qZK8p6Nr4PfTzskgUrgG7aKwLNEMrBfhaBWQxZzA=
+	t=1741095645; cv=none; b=Vc17GWZWlEl210FioWwPBp09VMzt3pobaOWiaPJImS6B5T8SRe6QUvJZYYB5N7VKu1LxfJl9VaJavGJNorSst1er5V9JR5GSfg94mWwSA/Q41WqDShG2sfc6OIwAD/FPDJsMoC8MaPnM2PO+prv6uV0swrGjJ/p+52reWepBWC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741095555; c=relaxed/simple;
-	bh=pGtzFJx1ZV7VYljEhRmiQEQlXe0gsXcMJU8mlXh5y94=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=mj4J4SD3zkIpf1wcKafCJGV8pLMPOSeZkl9TMw3+wgwi5V5exOdn7zKQ+tgzecNHrMBSiPKsR0xd5ylDAmNcXQunpf3OP4vtfxG2PDxJijC64XYI6FYu7U+r44qIt8Z7HwTWst4HX0d+ZJhBp2ciPLDnPY/yVCJ4nldgjfiQzfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ua8SHcs2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FF77C4CEE5;
-	Tue,  4 Mar 2025 13:39:09 +0000 (UTC)
+	s=arc-20240116; t=1741095645; c=relaxed/simple;
+	bh=pVYyIl+Em1VOzg0o3IBtnAjWx3tLPRO85bYqrADD6zA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sAVomNxQRew2co6qLV6A50sq4u0Ymu8Nn1aH4jFjEqZwvALEuHLD7JXYarE0VkK7/aaZnyhWc07uHwd6oSnZz8FQhuIrOss0KyBoXSpCCtOA7rrXmK0ryPXM2v94Gadvyx5BuoGCcxn8xnT2knmDlJiIwZiKg+a8ouk9Eby/8Z0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rBCjxfOX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E507C4CEE5;
+	Tue,  4 Mar 2025 13:40:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741095554;
-	bh=pGtzFJx1ZV7VYljEhRmiQEQlXe0gsXcMJU8mlXh5y94=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=ua8SHcs2SV+iodmZpHr+I2lQNiL7Q8nx/hQsIFpPEkKsI+ThVMPFCwdcB9dXNAXZG
-	 uDap1cIyhLgPtqblVuCjxNze/7l9dmvSqwi/YH+JrW5GDyBdS8w05gmF8oM9eH81nN
-	 q9agxYpZqTqHX39z63T5Rut22F0blaOW2rDVTjm12934Wpx5LmmEbVvP6DqbvBL992
-	 Glb4vhxmvUsYQzGUkdFCvs//6EkFyZ28dIJeEec9HsE/IuuHkCpC22loh/gwmGk1tY
-	 SKzG5n0zQhOoAftlwossYjeDu/mrz2X451FvKhwgfWrXP7AzxbfX6WExThpjAnakjD
-	 5NlRxTA3zPalQ==
-From: Mark Brown <broonie@kernel.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Arnd Bergmann <arnd@arndb.de>, Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, patrice.chotard@foss.st.com
-Cc: linux-spi@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- christophe.kerello@foss.st.com
-In-Reply-To: <20250219080059.367045-1-patrice.chotard@foss.st.com>
-References: <20250219080059.367045-1-patrice.chotard@foss.st.com>
-Subject: Re: (subset) [PATCH v5 0/8] Add STM32MP25 SPI NOR support
-Message-Id: <174109554967.53872.7193131885074327926.b4-ty@kernel.org>
-Date: Tue, 04 Mar 2025 13:39:09 +0000
+	s=k20201202; t=1741095644;
+	bh=pVYyIl+Em1VOzg0o3IBtnAjWx3tLPRO85bYqrADD6zA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=rBCjxfOX9sFkfFCkReuO76NXo1mEZV4M/qu4bTWUi20ZcJfVQJibbqqC1Rx6vk879
+	 i4rmBvIZns4sQUX1RuXDWzzS0N7Gi+3u5/HO6sN5A9JlIBS8IJrinykKB1z26C0Tqu
+	 aOFVejDDDdEX8z2pI1lM7mwPPtVlAzLjivG4y35bKHkRB/A7m74CObzHpObwDJy+OR
+	 oSPkkCpSnranu7lwEvomjVasifIERkFJDPJK5kD/L4ySNd5k+D6Te9LFlq5I6uOZ9b
+	 LxARyP5f579Ut6NUYXmJG1W4nffdoELv5huE2vm5bjPkwODQ7HkI9vtcD5Nr1RLbwt
+	 1DrMJJ52vC1iw==
+Date: Tue, 4 Mar 2025 13:40:33 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Lothar Rubusch <l.rubusch@gmail.com>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ eraretuya@gmail.com
+Subject: Re: [PATCH v3 11/15] iio: accel: adxl345: add g-range configuration
+Message-ID: <20250304134033.656e4a6a@jic23-huawei>
+In-Reply-To: <20250220104234.40958-12-l.rubusch@gmail.com>
+References: <20250220104234.40958-1-l.rubusch@gmail.com>
+	<20250220104234.40958-12-l.rubusch@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-1b0d6
 
-On Wed, 19 Feb 2025 09:00:51 +0100, patrice.chotard@foss.st.com wrote:
-> This series adds SPI NOR support for STM32MP25 SoCs from STMicroelectronics.
+On Thu, 20 Feb 2025 10:42:30 +0000
+Lothar Rubusch <l.rubusch@gmail.com> wrote:
+
+> Introduce means to configure and work with the available g-ranges
+> keeping the precision of 13 digits.
 > 
-> On STM32MP25 SoCs family, an Octo Memory Manager block manages the muxing,
-> the memory area split, the chip select override and the time constraint
-> between its 2 Octo SPI children.
+> This is in preparation for the activity/inactivity feature.
+
+I'm not really following why adding range control is anything
+much to do with that. Mostly we do this to improve accuracy for
+low accelerations.
+
 > 
-> Due to these depedencies, this series adds support for:
->   - Octo Memory Manager driver.
->   - Octo SPI driver.
->   - yaml schema for Octo Memory Manager and Octo SPI drivers.
-> 
-> [...]
+> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
 
-Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+> @@ -483,12 +518,48 @@ static int adxl345_set_odr(struct adxl345_state *st, enum adxl345_odr odr)
+>  	return 0;
+>  }
+>  
+> +static int adxl345_find_range(struct adxl345_state *st, int val, int val2,
+> +			      enum adxl345_range *range)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(adxl345_fullres_range_tbl); i++)
+> +		if (val == adxl345_fullres_range_tbl[i][0] &&
+> +		    val2 == adxl345_fullres_range_tbl[i][1])
+> +			break;
+Similar to case in earlier patch, maybe set *range and return in here
+so that any finish of the loop is an error.
+> +
+> +	if (i == ARRAY_SIZE(adxl345_fullres_range_tbl))
+> +		return -EINVAL;
+> +
+> +	*range = i;
+> +
+> +	return 0;
+> +}
+> +
+> +static int adxl345_set_range(struct adxl345_state *st, enum adxl345_range range)
+> +{
+> +	int ret;
+> +
+> +	ret = regmap_update_bits(st->regmap, ADXL345_REG_DATA_FORMAT,
+> +				 ADXL345_DATA_FORMAT_RANGE,
+> +				 FIELD_PREP(ADXL345_DATA_FORMAT_RANGE, range));
+> +	if (ret)
+> +		return ret;
+> +
 
-Thanks!
+return regmap_update_bits() unless this gets more complex in later patch.
 
-[1/8] dt-bindings: spi: Add STM32 OSPI controller
-      commit: bed97e35786a7d0141d1ecaaace03c46b5435d75
-[2/8] spi: stm32: Add OSPI driver
-      commit: 79b8a705e26c08f8f09dd55f1dd56f2375973d2d
+> +	return 0;
+> +}
+> +
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+> @@ -558,6 +634,7 @@ static int adxl345_write_raw(struct iio_dev *indio_dev,
+>  			     int val, int val2, long mask)
+>  {
+>  	struct adxl345_state *st = iio_priv(indio_dev);
+> +	enum adxl345_range range;
+>  	enum adxl345_odr odr;
+>  	int ret;
+>  
+> @@ -581,6 +658,12 @@ static int adxl345_write_raw(struct iio_dev *indio_dev,
+>  			return ret;
+>  		ret = adxl345_set_odr(st, odr);
+>  		break;
+> +	case IIO_CHAN_INFO_SCALE:
+> +		ret = adxl345_find_range(st, val, val2,	&range);
+> +		if (ret)
+> +			return ret;
+> +		ret = adxl345_set_range(st, range);
+as in previous I'd have the 	
+		if (ret)
+			return ret;
+here for consistency with the other one immediately above this.
+> +		break;
+>  	default:
+>  		return -EINVAL;
+>  	}
 
 
