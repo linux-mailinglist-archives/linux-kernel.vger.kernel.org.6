@@ -1,164 +1,101 @@
-Return-Path: <linux-kernel+bounces-543141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0A65A4D1F7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 04:13:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6D61A4D1FA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 04:16:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE9061885E7F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 03:13:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E98F3AD8B3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 03:16:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5067F1E9907;
-	Tue,  4 Mar 2025 03:13:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lyfgLJYb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C1A1AAE17;
+	Tue,  4 Mar 2025 03:16:28 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE53194080;
-	Tue,  4 Mar 2025 03:13:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F91EB640;
+	Tue,  4 Mar 2025 03:16:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741058000; cv=none; b=sFyNAsgc01rx2vhYQSJn41KC9bDJ1ONhs57c0J/BsYzsyvcPQFuKV0M3qRy3BqqMNndn157cm5QA5uG3rXWMRYUaBnvtLwtW366gnO7UTZZK3bmOro83afQdo+0gJFAbMFQjL+obJdlbwus+KBNbKhvebOx05rpy/+xMvEdPZNk=
+	t=1741058188; cv=none; b=nvhY5stlQ+uKNY+zzoUBtNsCVDFpYqn0qsyUrDkdgul1dR+8eENc1J1Et/rCljS+FaKNqlVzGk9stmZOvSiuM2s3luj2kFYEkRT+5JI/0Ws/luoXEKdOiwcgK5J9OxELIOWfeBv2IhrzK4ISaObgULjbzQp+ncfapHayB2TkBro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741058000; c=relaxed/simple;
-	bh=JIj+/tr9TcRP5XhO/iLdeKqe04P1XWqfEvK8p1Y3Nm4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QbX9JEbR1VAYeGl+4fqkizAuJ5GE4FN6qREr5PDKCQsDHTwLS7DbJsacaPDTLJndS+WxlwgDyHhieb21/dCaQnwMg/DdRYlSAQ6CVA+nBeJ86LtVX4jUtP2J3SqBMvyX7ZOEMWEY8qpv+RgXoM42ZIl1dtv6Wbw+x7UDBqsGVYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lyfgLJYb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7D16C4CEE8;
-	Tue,  4 Mar 2025 03:13:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741058000;
-	bh=JIj+/tr9TcRP5XhO/iLdeKqe04P1XWqfEvK8p1Y3Nm4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lyfgLJYbuEuCn3kETuOm0igYrIuR8EE55vkdXqL0wHQSrw5doOIzySdMPam3sIzwr
-	 pmVXGFQHDe9dLnAlOE8fnr/SarDaMIwzu4zv6Uwz1CNYsIYnuowUhZKkVzto2yq6A3
-	 oTHeo4sXq4zDIibz53K1gEXj9HsAlvrI7sxUM4goe3g/Ch1U/0tUi3RbKbObbabRCu
-	 XeDajTZ9dyXjGHxz/TT7TiSB29JmmZ8pBQPGBRNdQYx/zSwSalUBCWy26s3l7RXe9Y
-	 dB1roGm1Fh7Hz/VAUO1ZOxhqncLkQfYFcTt65Qq4QvuJKSBGhtWHSnxmAVd0Fnwm4u
-	 TSuI4vrvx2Xsg==
-Date: Mon, 3 Mar 2025 21:13:16 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Felipe Balbi <balbi@kernel.org>, Wesley Cheng <quic_wcheng@quicinc.com>, 
-	Saravana Kannan <saravanak@google.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Frank Li <Frank.li@nxp.com>, 
-	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 5/7] usb: dwc3: qcom: Snapshot driver for backwards
- compatibilty
-Message-ID: <zr6qdi3gtjaj3gyalpspzej33q356bs5ynchcmtr73765gjel5@c5ijv7czkhqt>
-References: <20250226-dwc3-refactor-v4-0-4415e7111e49@oss.qualcomm.com>
- <20250226-dwc3-refactor-v4-5-4415e7111e49@oss.qualcomm.com>
- <20250304000527.ybxfdjx5xzypcals@synopsys.com>
- <20250304003913.bsn5sucnofq6d6jo@synopsys.com>
+	s=arc-20240116; t=1741058188; c=relaxed/simple;
+	bh=21uArsIzvAZGYIRg4tZeOsYknK6I+/gWgmKNVK2IuXk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RMPZ/y+c4DaB7VxwCuuZ0N935cVM0PqfG4r7CJmny+5XmOkeCPGOeoS3VyC20mcj0cUpjP0dpnFoWqh57T3WdFvUlcwMkWt0RCHHggISwaxQFHMBcVeQOoSar3C34MkYpUJbIPALcde7OXGtqeIBHSOOmj54RW3aIyMsYnASJrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [124.16.141.245])
+	by APP-01 (Coremail) with SMTP id qwCowABHT9ODcMZnbqs4Eg--.8591S2;
+	Tue, 04 Mar 2025 11:16:20 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: stf_xl@wp.pl,
+	kvalo@kernel.org
+Cc: linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Wentao Liang <vulab@iscas.ac.cn>
+Subject: [PATCH] iwlegacy/4965: Cancel deferred work on device init failure
+Date: Tue,  4 Mar 2025 11:16:03 +0800
+Message-ID: <20250304031603.1989-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.42.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250304003913.bsn5sucnofq6d6jo@synopsys.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowABHT9ODcMZnbqs4Eg--.8591S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Cw13Xr17GFW5WrykKr4fAFb_yoW8GFy8pr
+	srta4jkry5Ga1UWayDJay2yF1Yqa1Fy39xGFs5Aw4Y93ZYqryrZF4aqay5ta4rGrWkZ3W3
+	Zr1jy3W7Grn8JrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkC14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
+	1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+	6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
+	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v2
+	6r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrV
+	AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCI
+	c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267
+	AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_
+	Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUehL0UU
+	UUU
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBgwLA2fGHmnwjAAAso
 
-On Tue, Mar 04, 2025 at 12:39:12AM +0000, Thinh Nguyen wrote:
-> On Tue, Mar 04, 2025, Thinh Nguyen wrote:
-> > On Wed, Feb 26, 2025, Bjorn Andersson wrote:
-> > > In order to more tightly integrate the Qualcomm glue driver with the
-> > > dwc3 core the driver is redesigned to avoid splitting the implementation
-> > > using the driver model. But due to the strong coupling to the Devicetree
-> > > binding needs to be updated as well.
-> > > 
-> > > Various ways to provide backwards compatibility with existing Devicetree
-> > > blobs has been explored, but migrating the Devicetree information
-> > > between the old and the new binding is non-trivial.
-> > > 
-> > > For the vast majority of boards out there, the kernel and Devicetree are
-> > > generated and handled together, which in practice means that backwards
-> > > compatibility needs to be managed across about 1 kernel release.
-> > > 
-> > > For some though, such as the various Snapdragon laptops, the Devicetree
-> > > blobs live a life separate of the kernel. In each one of these, with the
-> > > continued extension of new features, it's recommended that users would
-> > > upgrade their Devicetree somewhat frequently.
-> > > 
-> > > With this in mind, simply carrying a snapshot/copy of the current driver
-> > > is simpler than creating and maintaining the migration code.
-> > > 
-> > > The driver is kept under the same Kconfig option, to ensure that Linux
-> > > distributions doesn't drop USB support on these platforms.
-> > > 
-> > > The driver, which is going to be refactored to handle the newly
-> > > introduced qcom,snps-dwc3 compatible, is updated to temporarily not
-> > > match against any compatible.
-> > > 
-> > > This driver should be removed after 2 LTS releases.
-> > > 
-> > > Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-> > > ---
-> > >  drivers/usb/dwc3/Makefile           |   1 +
-> > >  drivers/usb/dwc3/dwc3-qcom-legacy.c | 934 ++++++++++++++++++++++++++++++++++++
-> > >  drivers/usb/dwc3/dwc3-qcom.c        |   1 -
-> > >  3 files changed, 935 insertions(+), 1 deletion(-)
-> > > 
-> > 
-> > This is a bit concerning if there's no matching compatible string. ie.
-> > we don't have user for the new driver without downstream dependencies
-> > (or some workaround in the driver binding).
-> 
-> Ignore the comment above, I missed the "temporarily" in your log
-> above. However, the comment below still stands.
-> 
-> > 
-> > While I understand the intention, I'm afraid we may have to support and
-> > maintain this much longer than the proposed 2 LTS releases (as seen with
-> > anything tagged with "legacy" in the upstream kernel).
+In __il4965_up(), deferred work is not canceled in time when device
+initialization fails. This is harmless if the device has not started.
+However, in il4965_bg_restart(), if the device remains operational
+in any state other than S_FW_ERROR or S_EXIT_PENDING, a dereference
+operation needs to be performed when __il4965_up() fails.
 
-There are no products shipping today using dwc3-qcom where Devicetree is
-considered firmware. The primary audience for a longer transition is
-users of the various laptops with Qualcomm-chip in them. But given the
-rapid development in a variety of functional areas, these users will be
-highly compelled to update their DTBs within 2 years.
+Add il4965_cancel_deferred_work() to the failure path of
+__il4965_up() to prevent potential errors. Even if the current code
+does not exhibit the described issues, adding this change can prevent
+future problems at minimal cost, improving the robustness of the code.
 
-The other obvious user group is to make sure us upstream developers
-don't loose USB when things get out of sync.
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+---
+ drivers/net/wireless/intel/iwlegacy/4965-mac.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
+diff --git a/drivers/net/wireless/intel/iwlegacy/4965-mac.c b/drivers/net/wireless/intel/iwlegacy/4965-mac.c
+index 05c4af41bdb9..3b21bd79f3a9 100644
+--- a/drivers/net/wireless/intel/iwlegacy/4965-mac.c
++++ b/drivers/net/wireless/intel/iwlegacy/4965-mac.c
+@@ -5591,6 +5591,8 @@ __il4965_up(struct il_priv *il)
+ 	__il4965_down(il);
+ 	clear_bit(S_EXIT_PENDING, &il->status);
+ 
++	il4965_cancel_deferred_work(il);
++
+ 	/* tried to restart and config the device for as long as our
+ 	 * patience could withstand */
+ 	IL_ERR("Unable to initialize device after %d attempts.\n", i);
+-- 
+2.42.0.windows.2
 
-That said, if the model defined here is to be followed in other cases
-(or my other vendors) where Devicetree is treated as firmware, your
-concerns are valid - and it might be worth taking the cost of managing
-the live-migration code.
-
-> > If possible, I'd
-> > prefer the complications of maintenance of the migration code be handled
-> > downstream.
-> > 
-
-I'm sorry, but here it sounds like you're saying that you don't want any
-migration code upstream at all? This is not possible, as this will break
-USB for developers and users short term. We can of course discuss the 2
-LTS though, if you want a shorter life span for this migration.
-
-
-In my view, setting a flag date when the dwc3-qcom-legacy.c will be
-removed will provide upstream users a transition period, at a very low
-additional cost (934 lines of already tested code). If someone
-downstream after that flag date wants to retain support for qcom,dwc3
-they can just revert the removal of dwc3-qcom-legacy.c.
-
-The alternative is that I try to get the migration code suggested in v3
-to a state where it can be merged (right now it's 6x larger) and then
-keep investing indefinitely in making sure it's not bit-rotting
-(although Rob Herring did request a flag date of the migration code in
-v3 as well...).
-
-Regards,
-Bjorn
 
