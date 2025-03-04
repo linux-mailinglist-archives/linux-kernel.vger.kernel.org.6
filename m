@@ -1,135 +1,130 @@
-Return-Path: <linux-kernel+bounces-544005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17667A4DC54
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:21:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97539A4DC4F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:20:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11AAD3A7DF1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:18:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 388A1179783
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:18:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7051FFC66;
-	Tue,  4 Mar 2025 11:14:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56363201023;
+	Tue,  4 Mar 2025 11:15:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="O2Eo/dig"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b="ZeV8A67R"
+Received: from ksmg02.maxima.ru (ksmg02.maxima.ru [81.200.124.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2AB1FDE1A;
-	Tue,  4 Mar 2025 11:14:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB7B200BA1;
+	Tue,  4 Mar 2025 11:15:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741086851; cv=none; b=ithq7v9F+DMaZh0p1MrrM/AcipCdNy+23sc9QMv5JBStzbEsPpXRB+QFz+LY4v1AYPRtNuPjMGZHoFdJwt6NpdFxEO3AvRrmju/tktT/7/rqQR8Dtc+NkKrO0eTRK4Cb3z8W1qRFIUQDtswFbwzE2CzsjiguWkAPXgTOgU6NhvY=
+	t=1741086931; cv=none; b=TjClcRBDzPKATGHwJgb3cKhvAiuTuim56eMRPF5bCQJXUFgoGDKypLqAm3h0KGi8QBuFjxgH1PVvI8ah/6+dEdnNYQnt/oAnOLxd3tAjPVSc7cCURgZwmResWc9igy9Tk0M4KA5Wo+rIwxFgnpBQGLInYl331wSlh4W8sKNkfGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741086851; c=relaxed/simple;
-	bh=XOdBksz8Vf2+lJNphsoE9ZmVFjju/xls/RhmovDo7d0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jVqkKFo5STfg2RhlqieYZMVtM5h0vpZ2yyuGxTkpqGShn+p76pc50jfJovHpdwC41P9UauksDgQLXPA9PKW7um/L26Ac/y9EU9M1yPQ7byUAngVkkFwHfHDn/7mlVSH6F3fpNStYZ0u7sbIIg/vP6qxtpaUDXK+FK4FEm7N4WS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=O2Eo/dig; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id A114CA028B;
-	Tue,  4 Mar 2025 12:14:05 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=/mDRp4/mkuaV1Yy1R0fV
-	mKQrTdpMwxGr5IRopCnt1VA=; b=O2Eo/diglpqOv6fh4s2gELtN/AllTdGKIItn
-	ImtH3HyMZhCZ6Xan9Stww5iUxYWZCP1k8w2zigOw1zl0h64hBtqjR07B9YtIyW2E
-	za9el3NCgabIWOEDlZr46F5pvo3BvH+sc05eYO76kx7N8Sj69LzLYWQfpvpRPsZL
-	ezZuQqgP0Prd9us6q4wv/+7uDpC/eZfoOvdzEJ3tMmSzED4uIsvq/i5aW0OwvzLz
-	KUQCo5g5rgLduUQS4l9bPMSdHlX9HSjryd6b62ahtQ686AhPXYdw6zEDjaSYQXAu
-	NoR7bYMu2YCwd9dOaanQLXTThuDJcOmVEQpHpI0qvTZYVUIw6e3UFq4kMuqGrp9K
-	1sc47k1o7D3+6Vx4C4YMTfJd3e0copso+vuyNlpY82edA6crKSAaRZTVbZf/re80
-	5xG9POmujLgAe/vPeDkW+M5cKuh/m+AJnDjLLgz+v+VQyLllMf4uk9yeDgpBfT5q
-	PG3DqdWZSDxSFU//zDaq6dpe4qH9BOFCLnddiM3x+Wlw8eiN+Uq6M6TZtWZC01/L
-	PCmqwv99/kv9XYS7pzoZyroV/garfmCY+I+Z9VzNMWPRoNT7yoXEHlh5W5UlvOI/
-	k2uaO1wP0+irRhZlgkI+R+95yfu4mJIfRNFxFTADwsMZkJ187nsXXcVo4Qjnku60
-	85dx7EA=
-Message-ID: <8cf056d7-22d0-4bf2-8dd6-79a45977bfc1@prolan.hu>
-Date: Tue, 4 Mar 2025 12:14:04 +0100
+	s=arc-20240116; t=1741086931; c=relaxed/simple;
+	bh=5BDM17uom/O82sIHy0lmhsXIKxXEb/ZX3iY6CW+R5N0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JtT9tDZXKFrdbR8C2YB/opdl9H673y9ryX+fnjEVCiBB0+0HpOMuslhFJFzpkgy83fNHoEmp1Hl+yeqVC3NcncgwT0shKuQKp6Sk/ml2O89MbDmo9LEU1BHL9DCtQD5LHsC1gKE0oxKot8/9PS4JNc6vUxc9qdzqrdLUSoKzTYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru; spf=pass smtp.mailfrom=mt-integration.ru; dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b=ZeV8A67R; arc=none smtp.client-ip=81.200.124.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt-integration.ru
+Received: from ksmg02.maxima.ru (localhost [127.0.0.1])
+	by ksmg02.maxima.ru (Postfix) with ESMTP id BCE2D1E0002;
+	Tue,  4 Mar 2025 14:15:18 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg02.maxima.ru BCE2D1E0002
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt-integration.ru;
+	s=sl; t=1741086918; bh=Z0V0m8DolYfni7Yo+BrJEX6IjWmZXrYC9lZZ7A+VISI=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=ZeV8A67RJAaKq5uMY6QB4vEkrOzD53rwqBg3xirIe1Jf5IgKgAcBj5CoR6Y58h//J
+	 dvvPUQg3oSGEIOSs/BIYgzdAnpt20plmHD1C0JPz8mCZpdwTJVglf4ivOt/F+4Necd
+	 6UySDoYZ3O7TV0hrbcB/DQTKRd1EU6Iyj0l6jfmqtXsKcbR7yWhLHhJEx0zYMmjq9K
+	 6XH/evsqndVLuWqyqYq0Ah4VvD8wGSZbuflD8qj3QDftVbuGwr+DPam/Xmfp76KIu6
+	 sgmsrx7Yw8U7rraxsYovpjoO3UsvkCUWgLg3EUCtbzSDjhBfw2vEAVEu/JLJZpg5VC
+	 yG4RXMKBzQK2w==
+Received: from ksmg02.maxima.ru (mail.maxima.ru [81.200.124.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
+	by ksmg02.maxima.ru (Postfix) with ESMTPS;
+	Tue,  4 Mar 2025 14:15:18 +0300 (MSK)
+Received: from GS-NOTE-190.mt.ru (10.0.247.85) by mmail-p-exch02.mt.ru
+ (81.200.124.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1544.4; Tue, 4 Mar 2025
+ 14:15:16 +0300
+From: Murad Masimov <m.masimov@mt-integration.ru>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+CC: Zheyu Ma <zheyuma97@gmail.com>, Laurent Pinchart
+	<laurent.pinchart+renesas@ideasonboard.com>, Murad Masimov
+	<m.masimov@mt-integration.ru>, "Rob Herring (Arm)" <robh@kernel.org>, Wolfram
+ Sang <wsa+renesas@sang-engineering.com>, Heiner Kallweit
+	<hkallweit1@gmail.com>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
+	<u.kleine-koenig@pengutronix.de>, Fred Richter <frichter@hauppauge.com>,
+	Michael Ira Krufky <mkrufky@linuxtv.org>, Brad Love <brad@nextdimension.cc>,
+	<linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>
+Subject: [PATCH] media: lgdt3306a: handle negative SNR in lgdt3306a_calculate_snr_x100
+Date: Tue, 4 Mar 2025 14:14:53 +0300
+Message-ID: <20250304111453.1688-1-m.masimov@mt-integration.ru>
+X-Mailer: git-send-email 2.46.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/3] include: uapi: counter: Add
- microchip-tcb-capture.h
-To: William Breathitt Gray <wbg@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-iio@vger.kernel.org>, Kamel Bouhara <kamel.bouhara@bootlin.com>
-References: <20250227144023.64530-1-csokas.bence@prolan.hu>
- <20250227144023.64530-2-csokas.bence@prolan.hu> <Z8bNFjh85p2jqK9C@ishi>
-Content-Language: en-US, hu-HU
-From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
-In-Reply-To: <Z8bNFjh85p2jqK9C@ishi>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
- ATLAS.intranet.prolan.hu (10.254.0.229)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2980D94852637266
+Content-Type: text/plain
+X-ClientProxiedBy: mt-exch-01.mt.ru (91.220.120.210) To mmail-p-exch02.mt.ru
+ (81.200.124.62)
+X-KSMG-AntiPhishing: NotDetected
+X-KSMG-AntiSpam-Auth: dmarc=none header.from=mt-integration.ru;spf=none smtp.mailfrom=mt-integration.ru;dkim=none
+X-KSMG-AntiSpam-Envelope-From: m.masimov@mt-integration.ru
+X-KSMG-AntiSpam-Info: LuaCore: 51 0.3.51 68896fb0083a027476849bf400a331a2d5d94398, {rep_avail}, {Tracking_from_domain_doesnt_match_to}, mt-integration.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;ksmg02.maxima.ru:7.1.1;127.0.0.199:7.1.2;81.200.124.62:7.1.2, FromAlignment: s, ApMailHostAddress: 81.200.124.62
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiSpam-Lua-Profiles: 191453 [Mar 04 2025]
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Version: 6.1.1.11
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/03/04 09:41:00 #27591543
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 7
 
-Hi,
+The lgdt3306a_calculate_snr_x100() function returns value of type u32.
+However it is possible that the calculated SNR value is negative, which
+may affect the behaviour of the driver. E.g. lgdt3306a_read_snr() assumes
+SNR (x10) can be represented as a value of type u16 so passing negative
+32-bit values would result in garbage there.
 
-On 2025. 03. 04. 10:51, William Breathitt Gray wrote:
-> On Thu, Feb 27, 2025 at 03:40:18PM +0100, Bence Csókás wrote:
->> Add UAPI header for the microchip-tcb-capture.c driver.
->> This header will hold the various event channels, component numbers etc.
->> used by this driver.
->>
->> Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
-> 
-> Oops, I almost missed this one! Make sure I'm included in the To field
-> for the next revision. ;-)
-> 
-> By the way, b4 is a nifty tool that can save you some work and help you
-> prep patch series for submission.[^1]
+Since the dvb-frontends API only allows unsigned SNR values,
+lgdt3306a_calculate_snr_x100() should return 0 if SNR is negative.
+The same way calculate_snr() returns 0 on negative SNR in lgdt330x driver.
 
-Yes, I have considered it, but unfortunately it still has quite a few 
-bugs, for example [1], which has mangled my tags before, when a 
-maintainer using it tried to apply one of my patches with it.
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-[1] https://github.com/mricon/b4/issues/52
+Fixes: b63b36fa44d0 ("[media] DVB: add support for LG Electronics LGDT3306A ATSC/QAM-B Demodulator")
+Signed-off-by: Murad Masimov <m.masimov@mt-integration.ru>
+---
+ drivers/media/dvb-frontends/lgdt3306a.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
->> +/*
->> + * The driver defines the following components:
->> + *
->> + * Count 0
->> + * \__  Synapse 0 -- Signal 0 (Channel A, i.e. TIOA)
->> + * \__  Synapse 1 -- Signal 1 (Channel B, i.e. TIOB)
->> + */
->> +
->> +enum counter_mchp_signals {
->> +	COUNTER_MCHP_SIG_TIOA,
->> +	COUNTER_MCHP_SIG_TIOB,
->> +};
-> 
-> Are these meant to be used to identify the Signals in the
-> microchip-tcb-capture.c file. You should set the the counter_signal id
-> members to these enum constants then. However, this enum doesn't need to
-> be exposed to userspace in that case.
+diff --git a/drivers/media/dvb-frontends/lgdt3306a.c b/drivers/media/dvb-frontends/lgdt3306a.c
+index 6ab9d4de65ce..e6c3b65157e5 100644
+--- a/drivers/media/dvb-frontends/lgdt3306a.c
++++ b/drivers/media/dvb-frontends/lgdt3306a.c
+@@ -1500,6 +1500,9 @@ static u32 lgdt3306a_calculate_snr_x100(struct lgdt3306a_state *state)
+ 	snr_x100 = log10_x1000((pwr * 10000) / mse) - 3000;
+ 	dbg_info("mse=%u, pwr=%u, snr_x100=%d\n", mse, pwr, snr_x100);
 
-The thought was to let userspace figure out which 
-`signal%d_action_component_id` to read, but now I see that this is not 
-the way to go.
++	if ((s32)snr_x100 < 0)
++		return 0;
++
+ 	return snr_x100;
+ }
 
-> If that is the only purpose of enum counter_mchp_signals, then we can
-> omit this patch from the series and you won't need to send it in the
-> next revision.
-
-Alright, I'll drop this enum. Then this header will be empty at the 
-start, save for the block comment. I hope that will be alright.
-
-> William Breathitt Gray
-> 
-> [^1] https://b4.docs.kernel.org/en/latest/
-
-Bence
+--
+2.39.2
 
 
