@@ -1,351 +1,129 @@
-Return-Path: <linux-kernel+bounces-544409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07B16A4E105
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:34:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07EC0A4E12E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:38:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D65AD3A7E8D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:27:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52D703A3CFB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:28:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE3A62080C2;
-	Tue,  4 Mar 2025 14:25:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5667F24113E;
+	Tue,  4 Mar 2025 14:26:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="NsyYfudN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PWxEua8/";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="NsyYfudN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PWxEua8/"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oR9vO6Z1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 203352063F2
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:25:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A78BB23F415;
+	Tue,  4 Mar 2025 14:26:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741098330; cv=none; b=A4LB2NXN52ecwMXPUZIAR2usGl9ZXVuFCHaLE6tFTC1Pb9alduRfPBVjEuD5k1GyykbaSo4FmJZKt2uVb7WCoWGqzx2a+ZibRqU+2Sdagd/yU2skk3Qw+RFmrklntSZNXDaSlxInOQCE+gwY/Rbs5jTNEte0dyGXEKVOiGLwDXU=
+	t=1741098385; cv=none; b=Snj+XRxhW3gO5csylhLNdIQn76/1f3MBFPIAhSVFmqOPMT917ixmOWn8ZR55ndIugQApsOlk0Fi0BTAkmyGji6o1nBfD6+4kzkQ7VUWohkbWFz8ZGfuTB/CbKkEyAMRIcapeqGJepq7pbFSRPpdFcv7447YxEtJmckU6cOq8Z/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741098330; c=relaxed/simple;
-	bh=GHvYhF6mhNS8Xc5SlOXHmfIdiVTGU7d1If0qxTFNczU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pKPSgRgpT8IqVOCARyveAMOP+uiTtunLiIaKdf6pf5a4N0LjyQ8L5+25b7BqYTGZsUB1zXYUVQqLHaBC6LErCpdPFML0x4VlO0fJgWNentKBRhvYtu3AB5lKB9eQGBjMPixaNGSQuXxMIwzUoXirW7UaMckiBmjewVOc0DamMuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=NsyYfudN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PWxEua8/; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=NsyYfudN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PWxEua8/; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 2357A21170;
-	Tue,  4 Mar 2025 14:25:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741098327; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=21R63puFBhLrbr9hO90cmJ3hCPSZdL7Adv8+v03JTpA=;
-	b=NsyYfudNY9FvF1DL3njfH8UJz/mC7PaFYt4sJHkItzjHknJ/lyBc//bIUhmBTwymukq0SC
-	wej+vQVwkTB1AnPXJYsidSrKE1YmqNjSIc0h8/qvuapxRtn6ulH//Lu+c59sUQOePJn4F+
-	xhPTrRt2AOOV+lD++9nc9oNZCeUHsyQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741098327;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=21R63puFBhLrbr9hO90cmJ3hCPSZdL7Adv8+v03JTpA=;
-	b=PWxEua8/DYaf0TaSvOdTf1d0fUsUZls/1sdlh/pe7g8t/wlQL17tO9K9WBtZv+2B07Rp4s
-	Q49fLmhD94CZglDA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=NsyYfudN;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="PWxEua8/"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741098327; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=21R63puFBhLrbr9hO90cmJ3hCPSZdL7Adv8+v03JTpA=;
-	b=NsyYfudNY9FvF1DL3njfH8UJz/mC7PaFYt4sJHkItzjHknJ/lyBc//bIUhmBTwymukq0SC
-	wej+vQVwkTB1AnPXJYsidSrKE1YmqNjSIc0h8/qvuapxRtn6ulH//Lu+c59sUQOePJn4F+
-	xhPTrRt2AOOV+lD++9nc9oNZCeUHsyQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741098327;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=21R63puFBhLrbr9hO90cmJ3hCPSZdL7Adv8+v03JTpA=;
-	b=PWxEua8/DYaf0TaSvOdTf1d0fUsUZls/1sdlh/pe7g8t/wlQL17tO9K9WBtZv+2B07Rp4s
-	Q49fLmhD94CZglDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 17F521393C;
-	Tue,  4 Mar 2025 14:25:27 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 3evSBVcNx2ejMAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 04 Mar 2025 14:25:27 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id CD815A0912; Tue,  4 Mar 2025 15:25:26 +0100 (CET)
-Date: Tue, 4 Mar 2025 15:25:26 +0100
-From: Jan Kara <jack@suse.cz>
-To: Tang Yizhou <yizhou.tang@shopee.com>
-Cc: tj@kernel.org, jack@suse.cz, brauner@kernel.org, willy@infradead.org, 
-	akpm@linux-foundation.org, rostedt@goodmis.org, mhiramat@kernel.org, ast@kernel.org, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND 1/2] writeback: Let trace_balance_dirty_pages()
- take struct dtc as parameter
-Message-ID: <tko35tkqszdwi5ibkzjnt5cxyuoppkfymnrotaqte2lbo5of26@4vo44czqtirp>
-References: <20250303100617.223677-1-yizhou.tang@shopee.com>
- <20250303100617.223677-2-yizhou.tang@shopee.com>
+	s=arc-20240116; t=1741098385; c=relaxed/simple;
+	bh=enEki/g6nl9PIJYhlE2BFdEBA9YEqGtw5SW96Ta6j1g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=F1g0VKjH5UeHGtuup/5Lku/BUxMf4LtQ9Z0l/KDhvG1T1tg+I70Vaf8aWAflhss3j+5kAiXH7+6rvi5zMT/SfPR2EnTWH4oEqd+kCgUblTcjI6xHJzGp2i/KFG0XN5/WLUjeiQCgM4MGuOvAi4LX9Rvedk9uECjsnAM2PbmekO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oR9vO6Z1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 593FBC4CEE5;
+	Tue,  4 Mar 2025 14:26:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741098385;
+	bh=enEki/g6nl9PIJYhlE2BFdEBA9YEqGtw5SW96Ta6j1g=;
+	h=From:To:Cc:Subject:Date:From;
+	b=oR9vO6Z1bsWemGUZZIk4ol62qrF1+H251dpkpmyvJjePYQV+IFvGwtCHS2kbDQIPT
+	 b3qAEeWHtRQq1fBflTojTrwZ6LoDIA0w9v6XOawiwV3mmlQGpcciKskd98TGsnYJw4
+	 RdwH7hovdUmYs5ixY5wAq7REWCr9h3Kt56UISHQq36v7lFzFgfc4ZazaVHFYwXJ4ti
+	 +JJQKf0gZyNyY6FpaHD2TpJibwJXsF16yWBiPE3GOKuswFzY0AIFLRxx7n2UYRH83n
+	 CQ8on728rBv0r+tIrcjrc9e3YQX9CUK+W26TmP8MDsz/HTwPw9VI+h9l2oirfFEIvE
+	 tT2MMG71ACVjA==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Kailang Yang <kailang@realtek.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Simon Trimmer <simont@opensource.cirrus.com>,
+	Joshua Grisham <josh@joshuagrisham.com>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] snd: hda: realtek: fix incorrect IS_REACHABLE() usage
+Date: Tue,  4 Mar 2025 15:25:55 +0100
+Message-Id: <20250304142620.582191-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250303100617.223677-2-yizhou.tang@shopee.com>
-X-Rspamd-Queue-Id: 2357A21170
-X-Spam-Score: -4.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
 
-On Mon 03-03-25 18:06:16, Tang Yizhou wrote:
-> From: Tang Yizhou <yizhou.tang@shopee.com>
-> 
-> Currently, trace_balance_dirty_pages() already has 12 parameters. In the
-> next patch, I initially attempted to introduce an additional parameter.
-> However, in include/linux/trace_events.h, bpf_trace_run12() only supports
-> up to 12 parameters and bpf_trace_run13() does not exist.
-> 
-> To reduce the number of parameters in trace_balance_dirty_pages(), we can
-> make it accept a pointer to struct dirty_throttle_control as a parameter.
-> To achieve this, we need to move the definition of struct
-> dirty_throttle_control from mm/page-writeback.c to
-> include/linux/writeback.h.
-> 
-> By the way, rename bdi_setpoint and bdi_dirty in the tracepoint to
-> wb_setpoint and wb_dirty, respectively. These changes were omitted by
-> Tejun in the cgroup writeback patchset.
-> 
-> Signed-off-by: Tang Yizhou <yizhou.tang@shopee.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-Looks good. Feel free to add:
+The alternative path leads to a build error after a recent change:
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+sound/pci/hda/patch_realtek.c: In function 'alc233_fixup_lenovo_low_en_micmute_led':
+include/linux/stddef.h:9:14: error: called object is not a function or function pointer
+    9 | #define NULL ((void *)0)
+      |              ^
+sound/pci/hda/patch_realtek.c:5041:49: note: in expansion of macro 'NULL'
+ 5041 | #define alc233_fixup_lenovo_line2_mic_hotkey    NULL
+      |                                                 ^~~~
+sound/pci/hda/patch_realtek.c:5063:9: note: in expansion of macro 'alc233_fixup_lenovo_line2_mic_hotkey'
+ 5063 |         alc233_fixup_lenovo_line2_mic_hotkey(codec, fix, action);
 
-								Honza
+Using IS_REACHABLE() is somewhat questionable here anyway since it
+leads to the input code not working when the HDA driver is builtin
+but input is in a loadable module. Replace this with a hard compile-time
+dependency on CONFIG_INPUT. In practice this won't chance much
+other than solve the compiler error because it is rare to require
+sound output but no input support.
 
-> ---
->  include/linux/writeback.h        | 23 +++++++++++++++++++++
->  include/trace/events/writeback.h | 28 +++++++++++--------------
->  mm/page-writeback.c              | 35 ++------------------------------
->  3 files changed, 37 insertions(+), 49 deletions(-)
-> 
-> diff --git a/include/linux/writeback.h b/include/linux/writeback.h
-> index d11b903c2edb..32095928365c 100644
-> --- a/include/linux/writeback.h
-> +++ b/include/linux/writeback.h
-> @@ -313,6 +313,29 @@ static inline void cgroup_writeback_umount(struct super_block *sb)
->  /*
->   * mm/page-writeback.c
->   */
-> +/* consolidated parameters for balance_dirty_pages() and its subroutines */
-> +struct dirty_throttle_control {
-> +#ifdef CONFIG_CGROUP_WRITEBACK
-> +	struct wb_domain	*dom;
-> +	struct dirty_throttle_control *gdtc;	/* only set in memcg dtc's */
-> +#endif
-> +	struct bdi_writeback	*wb;
-> +	struct fprop_local_percpu *wb_completions;
-> +
-> +	unsigned long		avail;		/* dirtyable */
-> +	unsigned long		dirty;		/* file_dirty + write + nfs */
-> +	unsigned long		thresh;		/* dirty threshold */
-> +	unsigned long		bg_thresh;	/* dirty background threshold */
-> +
-> +	unsigned long		wb_dirty;	/* per-wb counterparts */
-> +	unsigned long		wb_thresh;
-> +	unsigned long		wb_bg_thresh;
-> +
-> +	unsigned long		pos_ratio;
-> +	bool			freerun;
-> +	bool			dirty_exceeded;
-> +};
-> +
->  void laptop_io_completion(struct backing_dev_info *info);
->  void laptop_sync_completion(void);
->  void laptop_mode_timer_fn(struct timer_list *t);
-> diff --git a/include/trace/events/writeback.h b/include/trace/events/writeback.h
-> index a261e86e61fa..3046ca6b08ea 100644
-> --- a/include/trace/events/writeback.h
-> +++ b/include/trace/events/writeback.h
-> @@ -629,11 +629,7 @@ TRACE_EVENT(bdi_dirty_ratelimit,
->  TRACE_EVENT(balance_dirty_pages,
->  
->  	TP_PROTO(struct bdi_writeback *wb,
-> -		 unsigned long thresh,
-> -		 unsigned long bg_thresh,
-> -		 unsigned long dirty,
-> -		 unsigned long bdi_thresh,
-> -		 unsigned long bdi_dirty,
-> +		 struct dirty_throttle_control *dtc,
->  		 unsigned long dirty_ratelimit,
->  		 unsigned long task_ratelimit,
->  		 unsigned long dirtied,
-> @@ -641,7 +637,7 @@ TRACE_EVENT(balance_dirty_pages,
->  		 long pause,
->  		 unsigned long start_time),
->  
-> -	TP_ARGS(wb, thresh, bg_thresh, dirty, bdi_thresh, bdi_dirty,
-> +	TP_ARGS(wb, dtc,
->  		dirty_ratelimit, task_ratelimit,
->  		dirtied, period, pause, start_time),
->  
-> @@ -650,8 +646,8 @@ TRACE_EVENT(balance_dirty_pages,
->  		__field(unsigned long,	limit)
->  		__field(unsigned long,	setpoint)
->  		__field(unsigned long,	dirty)
-> -		__field(unsigned long,	bdi_setpoint)
-> -		__field(unsigned long,	bdi_dirty)
-> +		__field(unsigned long,	wb_setpoint)
-> +		__field(unsigned long,	wb_dirty)
->  		__field(unsigned long,	dirty_ratelimit)
->  		__field(unsigned long,	task_ratelimit)
->  		__field(unsigned int,	dirtied)
-> @@ -664,16 +660,16 @@ TRACE_EVENT(balance_dirty_pages,
->  	),
->  
->  	TP_fast_assign(
-> -		unsigned long freerun = (thresh + bg_thresh) / 2;
-> +		unsigned long freerun = (dtc->thresh + dtc->bg_thresh) / 2;
->  		strscpy_pad(__entry->bdi, bdi_dev_name(wb->bdi), 32);
->  
->  		__entry->limit		= global_wb_domain.dirty_limit;
->  		__entry->setpoint	= (global_wb_domain.dirty_limit +
->  						freerun) / 2;
-> -		__entry->dirty		= dirty;
-> -		__entry->bdi_setpoint	= __entry->setpoint *
-> -						bdi_thresh / (thresh + 1);
-> -		__entry->bdi_dirty	= bdi_dirty;
-> +		__entry->dirty		= dtc->dirty;
-> +		__entry->wb_setpoint	= __entry->setpoint *
-> +						dtc->wb_thresh / (dtc->thresh + 1);
-> +		__entry->wb_dirty	= dtc->wb_dirty;
->  		__entry->dirty_ratelimit = KBps(dirty_ratelimit);
->  		__entry->task_ratelimit	= KBps(task_ratelimit);
->  		__entry->dirtied	= dirtied;
-> @@ -689,7 +685,7 @@ TRACE_EVENT(balance_dirty_pages,
->  
->  	TP_printk("bdi %s: "
->  		  "limit=%lu setpoint=%lu dirty=%lu "
-> -		  "bdi_setpoint=%lu bdi_dirty=%lu "
-> +		  "wb_setpoint=%lu wb_dirty=%lu "
->  		  "dirty_ratelimit=%lu task_ratelimit=%lu "
->  		  "dirtied=%u dirtied_pause=%u "
->  		  "paused=%lu pause=%ld period=%lu think=%ld cgroup_ino=%lu",
-> @@ -697,8 +693,8 @@ TRACE_EVENT(balance_dirty_pages,
->  		  __entry->limit,
->  		  __entry->setpoint,
->  		  __entry->dirty,
-> -		  __entry->bdi_setpoint,
-> -		  __entry->bdi_dirty,
-> +		  __entry->wb_setpoint,
-> +		  __entry->wb_dirty,
->  		  __entry->dirty_ratelimit,
->  		  __entry->task_ratelimit,
->  		  __entry->dirtied,
-> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-> index eb55ece39c56..e980b2aec352 100644
-> --- a/mm/page-writeback.c
-> +++ b/mm/page-writeback.c
-> @@ -120,29 +120,6 @@ EXPORT_SYMBOL(laptop_mode);
->  
->  struct wb_domain global_wb_domain;
->  
-> -/* consolidated parameters for balance_dirty_pages() and its subroutines */
-> -struct dirty_throttle_control {
-> -#ifdef CONFIG_CGROUP_WRITEBACK
-> -	struct wb_domain	*dom;
-> -	struct dirty_throttle_control *gdtc;	/* only set in memcg dtc's */
-> -#endif
-> -	struct bdi_writeback	*wb;
-> -	struct fprop_local_percpu *wb_completions;
-> -
-> -	unsigned long		avail;		/* dirtyable */
-> -	unsigned long		dirty;		/* file_dirty + write + nfs */
-> -	unsigned long		thresh;		/* dirty threshold */
-> -	unsigned long		bg_thresh;	/* dirty background threshold */
-> -
-> -	unsigned long		wb_dirty;	/* per-wb counterparts */
-> -	unsigned long		wb_thresh;
-> -	unsigned long		wb_bg_thresh;
-> -
-> -	unsigned long		pos_ratio;
-> -	bool			freerun;
-> -	bool			dirty_exceeded;
-> -};
-> -
->  /*
->   * Length of period for aging writeout fractions of bdis. This is an
->   * arbitrarily chosen number. The longer the period, the slower fractions will
-> @@ -1962,11 +1939,7 @@ static int balance_dirty_pages(struct bdi_writeback *wb,
->  		 */
->  		if (pause < min_pause) {
->  			trace_balance_dirty_pages(wb,
-> -						  sdtc->thresh,
-> -						  sdtc->bg_thresh,
-> -						  sdtc->dirty,
-> -						  sdtc->wb_thresh,
-> -						  sdtc->wb_dirty,
-> +						  sdtc,
->  						  dirty_ratelimit,
->  						  task_ratelimit,
->  						  pages_dirtied,
-> @@ -1991,11 +1964,7 @@ static int balance_dirty_pages(struct bdi_writeback *wb,
->  
->  pause:
->  		trace_balance_dirty_pages(wb,
-> -					  sdtc->thresh,
-> -					  sdtc->bg_thresh,
-> -					  sdtc->dirty,
-> -					  sdtc->wb_thresh,
-> -					  sdtc->wb_dirty,
-> +					  sdtc,
->  					  dirty_ratelimit,
->  					  task_ratelimit,
->  					  pages_dirtied,
-> -- 
-> 2.25.1
-> 
+Fixes: f603b159231b ("ALSA: hda/realtek - add supported Mic Mute LED for Lenovo platform")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ sound/pci/hda/Kconfig         | 1 +
+ sound/pci/hda/patch_realtek.c | 5 -----
+ 2 files changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/sound/pci/hda/Kconfig b/sound/pci/hda/Kconfig
+index 9f68cb73b54f..fb955a205d50 100644
+--- a/sound/pci/hda/Kconfig
++++ b/sound/pci/hda/Kconfig
+@@ -222,6 +222,7 @@ comment "Set to Y if you want auto-loading the side codec driver"
+ 
+ config SND_HDA_CODEC_REALTEK
+ 	tristate "Build Realtek HD-audio codec support"
++	depends on INPUT
+ 	select SND_HDA_GENERIC
+ 	select SND_HDA_GENERIC_LEDS
+ 	select SND_HDA_SCODEC_COMPONENT
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index ebf54ef5877a..697a38e41e16 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -4927,7 +4927,6 @@ static void alc298_fixup_samsung_amp_v2_4_amps(struct hda_codec *codec,
+ 		alc298_samsung_v2_init_amps(codec, 4);
+ }
+ 
+-#if IS_REACHABLE(CONFIG_INPUT)
+ static void gpio2_mic_hotkey_event(struct hda_codec *codec,
+ 				   struct hda_jack_callback *event)
+ {
+@@ -5036,10 +5035,6 @@ static void alc233_fixup_lenovo_line2_mic_hotkey(struct hda_codec *codec,
+ 		spec->kb_dev = NULL;
+ 	}
+ }
+-#else /* INPUT */
+-#define alc280_fixup_hp_gpio2_mic_hotkey	NULL
+-#define alc233_fixup_lenovo_line2_mic_hotkey	NULL
+-#endif /* INPUT */
+ 
+ static void alc269_fixup_hp_line1_mic1_led(struct hda_codec *codec,
+ 				const struct hda_fixup *fix, int action)
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.39.5
+
 
