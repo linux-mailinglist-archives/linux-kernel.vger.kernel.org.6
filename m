@@ -1,78 +1,79 @@
-Return-Path: <linux-kernel+bounces-544281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15877A4DFAC
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:50:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F8D4A4DFAE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:50:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7083F3B2252
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:50:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70A57189CEE4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:50:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 619E22046B5;
-	Tue,  4 Mar 2025 13:50:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BA6B204875;
+	Tue,  4 Mar 2025 13:50:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HDilSD43"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MgoUqlXl"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0849204685
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 13:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270942046A0
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 13:50:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741096217; cv=none; b=NGzSy142q9oE1WBOveoybPW9ou7amZfQQgEWbf+MKKV0NW2C/OQodftmQSXv7vK/3fvKLQPuMjLEXKOfYrS7cPu162G8mLXX2Rw1Kylqn6URW59ds73llfxK8E4/DesFLRxMeVXbAVwa4+BBJ64IpnuLcbWqd8hZfP9KCyoQ5RQ=
+	t=1741096218; cv=none; b=XG7lZ78Lrxj9+SAQITMC5/vErREnn7D9L/+lhCLGizUAzdY/4NyxJ899AULSgQKhAdQVS8YOcohMeevDgWIVmYpKFx/gH/Bxkdldao+Gioko0bDRhzFsqC8Dbo9faSBWgDNYf0HpzX8fwSeuPHlOMDiJhqUj1U0GfmdL8Hx+QDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741096217; c=relaxed/simple;
-	bh=VIqcZfiOk0OaZ2h4QCbBt4ZSsIFKt9GBkYKdO7Qnc0c=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=NcDzzW/TTD1gBUrx9GnSjxMbBwz618rB1ffKGhGYPcpeMU0p9pdCTqlFC6pUH8+U4PysyWWmm1p2zSohltSwYOulLszZtmjyY3/Z/B9p501wMPGQxhgI4zpiHKnZ85kZtfkqWt97C5ONQ2hVqoxN2Sr/4ncIPDnrMCwJtwqQllk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HDilSD43; arc=none smtp.client-ip=209.85.128.52
+	s=arc-20240116; t=1741096218; c=relaxed/simple;
+	bh=fotnUl6mFVw6Lu0WmVlkseT+Ib5u0hL9bJOrBpjvm3M=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=UoWQwdkwzLM9lJl/QRxduOJEENuo/5l26k+B8tcIyVJGyby328IQROqFbFSVVFhgc+Z5SpV4kWwf02sVLwrVlLJhJs0JX2CpoTyupBgDDCjpwnvQd4Mp+LekfT7Fb+vwYARF5M5h5PzNazrOL22pSHAu7g8XrDd5/mUMHny9YdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MgoUqlXl; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43bc31227ecso13813435e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 05:50:15 -0800 (PST)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4393dc02b78so36713495e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 05:50:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741096214; x=1741701014; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GF053zzKXV4TcXq6EZaCYpeQukmq+2ermGWSI6/DtXs=;
-        b=HDilSD43tNNGNcQVdTKt90SYKEr3jWLnTGKnX5W/GhfMawuDA/jsz5RHAUc5JHbOVf
-         DEIa3RheQ9u6CA/Cy9JbNfDhtJGRa3DBEO8/BmYvIv/JohWjnIMuLX6wGC8YqPd8u1Wg
-         C8apHrjamlbIs5bDJwXTQFQzIYvjxgJMTN02LrTqE3/RiEE3a9vKHnF1VFNF+QHKtbl7
-         dXw6M7PDwpR8ETD3s7GlQqRQBBgcloawZPFQoyNLNg4feEqeAl8qg4m0ji7ykLb8epjG
-         0FcLsyyR0UvWpynFyHPr4ZcHUK6GGLrzT6xMWuGrCfpKvi+uaEozUvSDv+9K5LGnSSNI
-         Ul7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741096214; x=1741701014;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1741096215; x=1741701015; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=GF053zzKXV4TcXq6EZaCYpeQukmq+2ermGWSI6/DtXs=;
-        b=FzuV93Nv+kWKlGS5soac63lUAk70uIKNhEmnSWSVZ7x7a3pvb48m/3cGAGd7YBx6RK
-         ck6rNs/rSUmmmSYqlYrzEGF3FXmDU665YBmsaNrhcCIv08WNmG8ufFLrGFJ3zW5wrbBe
-         /1hHuDGxLIn25ht+AUjnjNyW6k2N3U9BQXIxEcSxUgWoONwlT4JqRsJvNGlWpuK9OhRd
-         oNWovHm6XLsBWxlUAi0dYRB37iyMOECRRs8TIZCX6PJOWLJzdlwNp3LvwLcNgbw2AgmM
-         NZzZTTExJimQo3cr9pB1r2bCmrYTIZpjCUqTKavGztEwyhr2tPfMCzKxje/00O6MpHqt
-         gK+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV1gO0Ty85+c8GY9XQnpWb6J8MS3plxJoSw3K+3IcSxF8YuP46l4CiXrtKhYxhfQuuhooSgqIiu0Y5/1qA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVpVARnzaYr9sqY86GmClzkL1o5TjNdmPppeX3YewKNzotuZaK
-	2yqUI0LyByQiAzjtpOhEoQVmxrSU1RuSXKnlubbasKRbuxZnzJu7WqW4K8uMLMI=
-X-Gm-Gg: ASbGncvD12XDv9m7qMr2+aeVAEXMku4q94FXqSI57jb/aJwsEAXxn9yy/0pjfPwqeh5
-	VnTmdH5NcsRZSc7aHlu7yyhL7vkfL5qa9T9AcVI9frsNIYVzTdJqjElUe2uaFOSjOIDhdKZ+euw
-	EqzaknV7hcIWioI+qrP0JnYDDy/WxGxAAYjFGi0M0BR9UB8EECmvqNymplru0emLRmIssWRkLfp
-	O42ZdaVgl/QescEMyRgB+mycElc5h9hTcWv/Swke0kj8GRqBQKriFVaa+hRhu8QFAL5iuZpQM6b
-	wSHN6YQyfF2aC1ey52Q0RLS0X/8sS8u+ZWvxEbwedd/jr7G8
-X-Google-Smtp-Source: AGHT+IGbdm2bSX/GRgVRkuVD6qCgZWkLZAlu4OLR1FMdBVqYgxPW5Ql3R1YZzWMUfz3c/ALaXTMdpw==
-X-Received: by 2002:a05:600c:3b1b:b0:43b:cc3c:60ca with SMTP id 5b1f17b1804b1-43bcc3c61ccmr18071935e9.21.1741096213994;
-        Tue, 04 Mar 2025 05:50:13 -0800 (PST)
+        bh=Oyc+dQeRJPZgGXdSbanHL1FEsriyRzJPurWdjKL7aTU=;
+        b=MgoUqlXlA24ZC4OtijXioBT2X6yZ/uiWw8LkanFnRiBomSeTX+wc0soGJkbbl7YxrL
+         tVXkajRqwTWALbvu4xxC5wk8jVn7jY8/s+uZjWYoqBPhMN4gP5qR6u0JlVkVDa203BGG
+         LonKvRWFuXt8el74b+jwMChuvpyTyCgCfymBPi309bhpyzd956linHwmHmOjrx/Dr6Rk
+         B3tRPMTjhJHfrPvWw5XATVp+WkV0jIMA449HWjxD/xg7oCw3M64JfJ6aMNU+miZmZRjK
+         D+zC+KHYUCZyDJeXnj8rDxljP1KvbluMQsOOiywvJQ/5jiHumdTI65i+lSjrI//OFI7u
+         J/dQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741096215; x=1741701015;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Oyc+dQeRJPZgGXdSbanHL1FEsriyRzJPurWdjKL7aTU=;
+        b=ih2UU6GVreo3Ro9wbGtsKk50Qneu11Smt55NUkO7aSmj/bFaKQT/+TEh1z9sIHM3Xc
+         DvQEeulTpVVm0ov197msKBfpm8ADfHq2LBhbpe6R8bz9vYb/3Gf04xqobUIhjPkokIKr
+         OEO4fAMnmOJgq8XcojOg79wybAwdyo3nn/D02/5yaemNIEFN0ApWJ4Y8tj2jqDRzhXld
+         ZLf0zUWIKWtCaJT4xkOwS5Va3CRABdXEtYU4ojZa+ah9jHv2sGKcYXpuTEN6PhMLRqmi
+         2VpRS/vzAUTX0qqB7/Kv/SJUVEb9ZQOw19y4QvNJ07MDFWDoKTX4ELHMVve4zyNgLz1A
+         RP9A==
+X-Forwarded-Encrypted: i=1; AJvYcCWkmsIDRhB2Is43l+Ob1Aji6Bb0VAxG/1jBcibyQe41oprPvknaodDLO4lOp4NWneFL9NVu9WCf5iT7cXY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8Yu4XuFj0TvZkg4cZk6toLKcU2lF8Gyqr2AUQjMJX4LG+fje+
+	mXvLtqFGhwK1Z77kELIM0Cp0aWL7ZsaI8nB4mOIGdQvqjRqbvxZerP91KUos97k=
+X-Gm-Gg: ASbGnctBDYBMaeImLSvWJfLHojujFNWgdpGkJyiPCS53uYO9nvMUdpFqc7GXh5+u0PH
+	h2mZuCkQCwVdbg/OzQYYpSyxTnBF4CmFJyaSAjE5RnUPp7cqeVzx39bbX3AvKL7IWtvrpbBx+L7
+	811XK1Y7Y90s3TOwp0JGSxpY7L6/SNonjqBDvPJ2fASaUXM4RN5Sj8KSeDbVD5puZSbCFYhExiK
+	zEG25lUeay9iTVo2TI6OV5O7rcKMT4oskI+XpGmwvwCzp5cXbABXj0R5tSZK6clME8Gjnpj3ZIs
+	6M0/4VIg2qls4RK7AkVOefBwHd3yrF7GcmvCJ6U+GZvrtJmJ
+X-Google-Smtp-Source: AGHT+IEuxLuB2VKvMIgoNJYYZcq8eunqDiuuEPPOKwodqE83YBs5enQUed7C/k5mduwZC+ZQXinvcg==
+X-Received: by 2002:a5d:5f84:0:b0:38f:28dc:db58 with SMTP id ffacd0b85a97d-390ec7c70fcmr15776645f8f.10.1741096215355;
+        Tue, 04 Mar 2025 05:50:15 -0800 (PST)
 Received: from pop-os.lan ([209.198.129.225])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b7cf2sm18096697f8f.59.2025.03.04.05.50.12
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b7cf2sm18096697f8f.59.2025.03.04.05.50.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 05:50:13 -0800 (PST)
+        Tue, 04 Mar 2025 05:50:14 -0800 (PST)
 From: James Clark <james.clark@linaro.org>
-Subject: [PATCH 0/3] perf list: Collapse similar events across PMUs
-Date: Tue, 04 Mar 2025 13:49:12 +0000
-Message-Id: <20250304-james-perf-hybrid-list-v1-0-a363ffac283c@linaro.org>
+Date: Tue, 04 Mar 2025 13:49:13 +0000
+Subject: [PATCH 1/3] perf list: Order events by event name before PMU name
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,9 +82,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIANgEx2cC/x3MSQqAMAxA0atI1gZaByheRVxUTTXiRCKiiHe3u
- HyL/x9QEiaFKnlA6GTlbY2waQLd6NeBkPtoyExWmtwUOPmFFHeSgOPdCvc4sx5obeuc60KRlx5
- ivAsFvv5x3bzvB472/5doAAAA
+Message-Id: <20250304-james-perf-hybrid-list-v1-1-a363ffac283c@linaro.org>
+References: <20250304-james-perf-hybrid-list-v1-0-a363ffac283c@linaro.org>
+In-Reply-To: <20250304-james-perf-hybrid-list-v1-0-a363ffac283c@linaro.org>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
  Arnaldo Carvalho de Melo <acme@kernel.org>, 
  Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
@@ -95,81 +96,49 @@ Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
  James Clark <james.clark@linaro.org>
 X-Mailer: b4 0.14.0
 
-Some changes related to the discussion here [1] about deduplication of
-PMUs. This change stands on its own right now, but it may not go far
-enough. This can either be dropped for now or applied and improved
-later. Extra ideas are as follows.
+In order to be able to show a single line for the same events on
+different PMUs, they need to be grouped by event name. This is because
+deduplication relies on similar items being adjacent in the list.
 
-Treating alphanumeric suffixes as duplicate has been slightly
-problematic due to marketing strings having looks-like-but-not-actually
-alphanumeric suffixes. For example 'cpum_cf' and now the one digit
-longer than before 'cortex-a720'. The easy fix is to increase the
-minimum length considered for deduplication as suggested [1], but as
-also mentioned, the current mrvl_ddr_pmu PMU names don't zero pad the
-address, meaning that > 2 alphanumeric suffixes are already technically
-not enough to deduplicate the same PMUs. They could have only a 2 digit
-alphanumeric address suffix. Increasing the minimum digits feels a bit
-like kicking the can down the road and it places awkward limitations on
-marketing names which we have no control over. Also I'm not sure helps
-the following much:
+Even without the following changes this would arguably be better
+grouping because it's easier to find events in a topic alphabetically
+by name, rather than in separate PMU blocks.
 
-The problem is that arm_cmn_[n] PMUs have a numeric suffix, but they can
-have different events. Even if we were adding this PMU today, keeping
-the suffix rule in mind, it would be difficult to come up with a suffix
-that differentiates the different ones. Flavour words might work, but
-that complicates the kernel which would have to group them and come up
-with flavours rather than just doing an i++. Deduplicating too
-aggressively on only PMU name suffix means only arm_cmn_1's events get
-listed, missing other events, and it's hard to see which events relate
-to which PMU.
-
-Therefore in addition to the changes in this patchset I'd like to look
-into:
-
- * Collapsing duplicate PMU names into ranges, for example
-   arm_pmu_v3_[0-4], rather than simply concatenating names as done in
-   this patchset
- * Deduplicate uncore based on the contents of events/ rather than just
-   the suffix
-
-As some background, the original commit for deduplication, commit
-3241d46f5f54 ("perf pmus: Sort/merge/aggregate PMUs like mrvl_ddr_pmu")
-mentions reducing the number of duplicate PMUs, and is presumably
-motivated by usability. But there are also other commits mentioning
-reducing openat()s, for example lazily loading formats 504026412162
-("perf pmu: Make the loading of formats lazy"). Deduplicating based on
-the contents of the events/ folder is somewhat in contention with this
-reduction, but could be done along side some more lazy loading (like of
-the terms) and hashing the result of readdir() without opening any of
-the contents. JSON tables can have event name hashes calculated at build
-time if we want to consider them for deduplication too.
-
-Then with the events hash, PMU's can be sorted based on this and the
-'Unit:' string can be constructed with a set of values that collapses
-adjacent suffixes to display as ranges. I believe that could remove the
-need for any further changes to duplication based on suffix, but still
-avoids over deduplication.
-
-[1]: https://lore.kernel.org/linux-perf-users/CAP-5=fW_Sq4iFxoWPWuixz9fMLBPyPUO0RG0KPbYa-5T0DZbTA@mail.gmail.com/
-
+Signed-off-by: James Clark <james.clark@linaro.org>
 ---
-James Clark (3):
-      perf list: Order events by event name before PMU name
-      perf list: Collapse similar events across PMUs
-      perf list: Don't deduplicate core PMUs when listing events
+ tools/perf/util/pmus.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
- tools/perf/builtin-list.c      |  2 +
- tools/perf/util/pmu.c          |  5 ++-
- tools/perf/util/pmu.h          |  2 +
- tools/perf/util/pmus.c         | 95 ++++++++++++++++++++++++++++++++++--------
- tools/perf/util/print-events.h |  1 +
- 5 files changed, 86 insertions(+), 19 deletions(-)
----
-base-commit: 7788ad59d1d9617792037a83513be5b1dd14150f
-change-id: 20250304-james-perf-hybrid-list-11b888cf435a
+diff --git a/tools/perf/util/pmus.c b/tools/perf/util/pmus.c
+index dd7c2ffdab38..4d60bac2d2b9 100644
+--- a/tools/perf/util/pmus.c
++++ b/tools/perf/util/pmus.c
+@@ -445,15 +445,15 @@ static int cmp_sevent(const void *a, const void *b)
+ 	if (a_iscpu != b_iscpu)
+ 		return a_iscpu ? -1 : 1;
+ 
+-	/* Order by PMU name. */
+-	if (as->pmu != bs->pmu) {
+-		ret = strcmp(as->pmu_name ?: "", bs->pmu_name ?: "");
+-		if (ret)
+-			return ret;
+-	}
+-
+ 	/* Order by event name. */
+-	return strcmp(as->name, bs->name);
++	ret = strcmp(as->name, bs->name);
++	if (ret)
++		return ret;
++
++	/* Order by PMU name. */
++	if (as->pmu == bs->pmu)
++		return 0;
++	return strcmp(as->pmu_name ?: "", bs->pmu_name ?: "");
+ }
+ 
+ static bool pmu_alias_is_duplicate(struct sevent *a, struct sevent *b)
 
-Best regards,
 -- 
-James Clark <james.clark@linaro.org>
+2.34.1
 
 
