@@ -1,109 +1,254 @@
-Return-Path: <linux-kernel+bounces-545573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05274A4EEC0
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:49:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F282A4EEC9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:51:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 589283AB7F8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:48:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D0481752B0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EA9925FA0A;
-	Tue,  4 Mar 2025 20:49:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE0882641F4;
+	Tue,  4 Mar 2025 20:51:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I23iwB+X"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U2gC63my"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AF70156C76;
-	Tue,  4 Mar 2025 20:49:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B6C25FA14;
+	Tue,  4 Mar 2025 20:51:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741121342; cv=none; b=m8uXFvjymt7h0g0oQFv/H1Fukv4e2QRRmSBupAXhQtEk1I4SIRzkcwiYrwpGXeG4qcQ8lhKXFeTjga856XW99GxAHdrKkjvq6eVNQgKOaA9kKUGITqQoALN7pQ45468cgAzUg6Cjula/t9wG7D4z846xoBZWYVdNQ5ohID59XTk=
+	t=1741121491; cv=none; b=lq7AO9FZNiUMMdY0SvZjI0cNpy7AfcgBCvtZwAA1Jz+crbA0eZAWfqck9cq9uv5RDGvDTOJbgbGjHycpxumdQ+XjghGlHgsa3T3mmORhnex+LySBB9bPKMfF96pnVaI+Fro9l/D49Mlhk2+7KKGMN8wo1kFc+7nyeyy7gRuwBBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741121342; c=relaxed/simple;
-	bh=CUppMgeXCcbvhjP4sIZRp8yG7EIGuQhXET7WZdvw2UM=;
-	h=From:Message-ID:Subject:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=sWiP0USw1ocw2HE+mAhHW5mTe38gO9+3Wx2nCtVOlv0KRGmcz1pYMFQuqqB9HZon14laeSsGSfKSgYfCJBobQXbEcMSL8a0rvj/cijunDovXxvBs8gy6m5dKK1Zb7bThUE0sFi4Og8SjVN6CklZTwhMunHaw3sylCDU7MQw4M00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I23iwB+X; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5dc89df7eccso9984108a12.3;
-        Tue, 04 Mar 2025 12:49:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741121339; x=1741726139; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:subject:message-id:from:sender:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CUppMgeXCcbvhjP4sIZRp8yG7EIGuQhXET7WZdvw2UM=;
-        b=I23iwB+XP4KKL+LKVeqHM2MliAsplaR8vjpJuw+N936jzezFEqkTQpjubWrG1EU+Ai
-         cQyk1546ZpuNXybaPLdkVs8DLpj0qlmA8lVS+f5AQrnJY1Mg/e0oFQ6oZQDjL/ib/vpo
-         n/jdzDs0wN5bqcwR8fRfA+aV3wR9Z8y/uCBaffjvDpjzb/8MQjW9SGHsJCR5ocCMFWwe
-         mSSwmDzm/8HPYB5E7wuqLaK2tBVcxaGp4a+J3vR15I6BAo6/HwkEG/M2gV9W+z6sZ69G
-         j48mNxSrXRV9zb5sZn7cV+B9O2EXf51yJ9ANz+4QhHo3N6f/IBz7ewx2zoDVfivpITbb
-         Uv6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741121339; x=1741726139;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:subject:message-id:from:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CUppMgeXCcbvhjP4sIZRp8yG7EIGuQhXET7WZdvw2UM=;
-        b=jzSM0qrlO/+UyD0Uia4ZTGcP5rn4Pq5f+AY0FUk4yJ0129HFPUgm0agNEaUZDYdCrv
-         VjMO/oWLl0wUokCb8yPyaDGBYQrVO0FDodnc5Zd/Ae/G6sEn2XbD1ltchEkwijYOQGlr
-         x2XT2/nDwSZ+y177KirSnMn3/lb0kC6CuDyZKzxJmRwYC2JYIZmXHCQ5QnlOZZaOZQzn
-         Jx0U41oOtzROmwlaofonb7dqKHK23biR8VPTrem+4SDJdCWH6ndUuIwqkigLr4h1LWU+
-         Yvs1Va33fwaZmwx0Xy5BqnjAQrTDDZInjz4jN8zUtqGMuBejaJ5xui+qginZXKiRP2or
-         Tw/A==
-X-Forwarded-Encrypted: i=1; AJvYcCVo+YFsJTzxNURRrVHoTm9FSEtaihsOHF6ykKzcmhfzdmu0ln1DhvIkcT+lSHpNdi9FkvyfF9ENb0N4M4M=@vger.kernel.org, AJvYcCXvX8rkDaPElDmJjkda1/Gef6ywl27eIZbyNizInMvWF6ZrdmLZxrl0B2p6+IwjzKuKhH+ScL94RSMxdJzpQvol@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyck9a8heMr1P84JeCUlsbrzMX1e9NXLEhnqPMgY10lbaiGy5fy
-	/JGzcxe7eFi/4bNX5se1rX4WpG0O7YNwAqboGciM2fqVrBXa2dZ9
-X-Gm-Gg: ASbGncvS1SQgCrETGNY8/hTAKqtrGbvrXwCGTtpj7L0gzUpPOzO01fptimtfSdYuSNP
-	Qyez8xlY+ZoUQHS5ciyIHLVVIu3Yzqiu83doFgQcEGgOCF6RrUN+1jfMGW22Lwcvjxn4mCUkT7Y
-	fQj8nJTYwpI+4DCM2PoT99ITOb6Vh9Yz9+b5pdOjob4DCn7zcLJFlzDVAknuT7wXdP+ugCosao9
-	o37dtz1u5FRq3PBm3LYU/cY2C1hNyggBJjbHKn7bHGFO0+QVYpCYHcBCbHhcdbtIaLrGPz/lNFn
-	tzzUpj4cYK2L/GWAXaWB4m6rLP3qP16ljZmDgkxXJHWXxydney57YjUPrAC5V2LfTm2ecQz2Il/
-	KAVFD
-X-Google-Smtp-Source: AGHT+IEji5cWLEG6+WPz4fVMoGqVE2U2DolxQZ2CJG7SEYeTQhuxwpLYPullgKwW2yLV1aczXXbTGA==
-X-Received: by 2002:a05:6402:90a:b0:5de:ecbe:5b9e with SMTP id 4fb4d7f45d1cf-5e59f38a962mr477306a12.11.1741121338795;
-        Tue, 04 Mar 2025 12:48:58 -0800 (PST)
-Received: from [192.168.178.193] (g171115.upc-g.chello.nl. [80.57.171.115])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e4c3fb5927sm8543988a12.53.2025.03.04.12.48.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 12:48:57 -0800 (PST)
-Sender: Armin M <arminmahdilou@gmail.com>
-From: Armin Mahdilou <armin.mahdilou@gmail.com>
-X-Google-Original-From: Armin Mahdilou <Armin.Mahdilou@gmail.com>
-Message-ID: <17b1db9bbc54fbb36e7e4c75e13d0087f038d6dd.camel@gmail.com>
-Subject: Re: [PATCH] selftests: proofreading bpf module
-To: shuah@kernel.org
-Cc: armin.mahdilou@gmail.com, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Tue, 04 Mar 2025 21:48:56 +0100
-In-Reply-To: <20250210030455.284568-1-Armin.Mahdilou@gmail.com>
-References: <20250210030455.284568-1-Armin.Mahdilou@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.2 
+	s=arc-20240116; t=1741121491; c=relaxed/simple;
+	bh=zEuJDSdpagweCAj4noxSIPPno5NwiCCQ7YIhPEIpUBQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ht3Pl/kVQyb/ApGJ5hJubBmz3Wv7sFeo1NCl866Ut8ex6iMJXkqAYrPwKzXbMDaZVOJD3Wpq0bimucXctYG3hAOv3DsXpcEFUFcrm3/Qy8KZlGZhlkYOgLkxbm1ICy4GfFOgoueUiWSgI00hIHz0DejPvYn/cInVLWExYEUB7P4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U2gC63my; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A1FAC4CEE9;
+	Tue,  4 Mar 2025 20:51:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741121490;
+	bh=zEuJDSdpagweCAj4noxSIPPno5NwiCCQ7YIhPEIpUBQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=U2gC63myUGZYLS5xD7W1svkHmz81fCSW4LR5miX5cTLQp0UZIGQxSuDHxBRuXvkvT
+	 WoTJS+3CM3V3FmemOWYNyjbsZkqmqd8+a1LPUpuSWfkWIJUpQBLlpX3i643MzPdVka
+	 dHME1B3ULfngXsg0Cued2tq964veSWIMy6iJ4aXzLIrdkkJmrvJuXlD7fmaYUQa7of
+	 yOozumFrP2rNSYc9HO8YrNcF/vplYcyhaE8Ds+J6Rg6YfC/BNTLdxsFsa1LKrUC21U
+	 CFDc1o9Yh4SUrDVpdPb7x0UFBsais9a2IU0HgMGoYLE3zVDZx1nCkR3Jyy4rhLbOMG
+	 2gY/rCp3lZjLQ==
+From: Eric Biggers <ebiggers@kernel.org>
+To: x86@kernel.org
+Cc: linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Ben Greear <greearb@candelatech.com>,
+	Xiao Liang <shaw.leon@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>
+Subject: [RFC PATCH v2] x86/fpu: make kernel-mode FPU reliably usable in softirqs
+Date: Tue,  4 Mar 2025 12:49:54 -0800
+Message-ID: <20250304204954.3901-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, 2025-02-10 at 04:04 +0100, Armin wrote:
-> Fixed multiple spelling issues in the kselftests bpf modules.
->=20
-> Signed-off-by: Armin <Armin.Mahdilou@gmail.com>
-> ---
+From: Eric Biggers <ebiggers@google.com>
 
-Hi,
+Currently kernel-mode FPU is not always usable in softirq context on
+x86, since softirqs can nest inside a kernel-mode FPU section in task
+context, and nested use of kernel-mode FPU is not supported.
 
-Just a kind reminder about this patch.
-Thanks in advance.
+Therefore, x86 SIMD-optimized code that can be called in softirq context
+has to sometimes fall back to non-SIMD code.  There are two options for
+the fallback, both of which are pretty terrible:
 
-Regards,
-Armin
+  (a) Use a scalar fallback.  This can be 10-100x slower than vectorized
+      code because it cannot use specialized instructions like AES, SHA,
+      or carryless multiplication.
+
+  (b) Execute the request asynchronously using a kworker.  In other
+      words, use the "crypto SIMD helper" in crypto/simd.c.
+
+Currently most of the x86 en/decryption code (skcipher and aead
+algorithms) uses option (b), since this avoids the slow scalar fallback
+and it is easier to wire up.  But option (b) is still really bad for its
+own reasons:
+
+  - Punting the request to a kworker is bad for performance too.
+
+  - It forces the algorithm to be marked as asynchronous
+    (CRYPTO_ALG_ASYNC), preventing it from being used by crypto API
+    users who request a synchronous algorithm.  That's another huge
+    performance problem, which is especially unfortunate for users who
+    don't even do en/decryption in softirq context.
+
+  - It makes all en/decryption operations take a detour through
+    crypto/simd.c.  That involves additional checks and an additional
+    indirect call, which slow down en/decryption for *everyone*.
+
+Fortunately, the skcipher and aead APIs are only usable in task and
+softirq context in the first place.  Thus, if kernel-mode FPU were to be
+reliably usable in softirq context, no fallback would be needed.
+Indeed, other architectures such as arm, arm64, and riscv have already
+done this.
+
+Therefore, this patch updates x86 accordingly to reliably support
+kernel-mode FPU in softirqs.
+
+This is done by just disabling softirq processing in kernel-mode FPU
+sections (when hardirqs are not already disabled), as that prevents the
+nesting that was problematic.
+
+This will delay some softirqs slightly, but only ones that would have
+otherwise been nested inside a task context kernel-mode FPU section.
+Any such softirqs would have taken the slow fallback path before if they
+tried to do any en/decryption.  Now these softirqs will just run at the
+end of the task context kernel-mode FPU section (since local_bh_enable()
+runs pending softirqs) and will no longer take the slow fallback path.
+
+Alternatives considered:
+
+- Make kernel-mode FPU sections fully preemptible.  This would require
+  growing task_struct by another struct fpstate which is more than 2K.
+
+- Make softirqs save/restore the kernel-mode FPU state to a per-CPU
+  struct fpstate when nested use is detected.  Somewhat interesting, but
+  seems unnecessary when a simpler solution exists.
+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+
+Changed in v2:
+    - Retain support for kernel-mode FPU when hardirqs are disabled
+      (needed for system suspend and resume)
+    - Send the x86 patch as a standalone patch.
+
+ arch/x86/include/asm/fpu/api.h | 17 +++++++----------
+ arch/x86/kernel/fpu/core.c     | 17 +++++++++++++----
+ 2 files changed, 20 insertions(+), 14 deletions(-)
+
+diff --git a/arch/x86/include/asm/fpu/api.h b/arch/x86/include/asm/fpu/api.h
+index f86ad3335529d..f42de5f05e7eb 100644
+--- a/arch/x86/include/asm/fpu/api.h
++++ b/arch/x86/include/asm/fpu/api.h
+@@ -14,14 +14,13 @@
+ 
+ #include <asm/fpu/types.h>
+ 
+ /*
+  * Use kernel_fpu_begin/end() if you intend to use FPU in kernel context. It
+- * disables preemption so be careful if you intend to use it for long periods
+- * of time.
+- * If you intend to use the FPU in irq/softirq you need to check first with
+- * irq_fpu_usable() if it is possible.
++ * disables preemption and softirq processing, so be careful if you intend to
++ * use it for long periods of time.  Kernel-mode FPU cannot be used in all
++ * contexts -- see irq_fpu_usable() for details.
+  */
+ 
+ /* Kernel FPU states to initialize in kernel_fpu_begin_mask() */
+ #define KFPU_387	_BITUL(0)	/* 387 state will be initialized */
+ #define KFPU_MXCSR	_BITUL(1)	/* MXCSR will be initialized */
+@@ -48,25 +47,23 @@ static inline void kernel_fpu_begin(void)
+ 	kernel_fpu_begin_mask(KFPU_387 | KFPU_MXCSR);
+ #endif
+ }
+ 
+ /*
+- * Use fpregs_lock() while editing CPU's FPU registers or fpu->fpstate.
+- * A context switch will (and softirq might) save CPU's FPU registers to
+- * fpu->fpstate.regs and set TIF_NEED_FPU_LOAD leaving CPU's FPU registers in
+- * a random state.
++ * Use fpregs_lock() while editing CPU's FPU registers or fpu->fpstate, or while
++ * using the FPU in kernel mode.  A context switch will (and softirq might) save
++ * CPU's FPU registers to fpu->fpstate.regs and set TIF_NEED_FPU_LOAD leaving
++ * CPU's FPU registers in a random state.
+  *
+  * local_bh_disable() protects against both preemption and soft interrupts
+  * on !RT kernels.
+  *
+  * On RT kernels local_bh_disable() is not sufficient because it only
+  * serializes soft interrupt related sections via a local lock, but stays
+  * preemptible. Disabling preemption is the right choice here as bottom
+  * half processing is always in thread context on RT kernels so it
+  * implicitly prevents bottom half processing as well.
+- *
+- * Disabling preemption also serializes against kernel_fpu_begin().
+  */
+ static inline void fpregs_lock(void)
+ {
+ 	if (!IS_ENABLED(CONFIG_PREEMPT_RT))
+ 		local_bh_disable();
+diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
+index 1209c7aebb211..f937329d1aa9c 100644
+--- a/arch/x86/kernel/fpu/core.c
++++ b/arch/x86/kernel/fpu/core.c
+@@ -58,13 +58,20 @@ DEFINE_PER_CPU(struct fpu *, fpu_fpregs_owner_ctx);
+ bool irq_fpu_usable(void)
+ {
+ 	if (WARN_ON_ONCE(in_nmi()))
+ 		return false;
+ 
+-	/* In kernel FPU usage already active? */
+-	if (this_cpu_read(in_kernel_fpu))
++	/*
++	 * In kernel FPU usage already active?  This detects any explicitly
++	 * nested usage in task or softirq context, which is unsupported.  It
++	 * also detects attempted usage in a hardirq that has interrupted a
++	 * kernel-mode FPU section.
++	 */
++	if (this_cpu_read(in_kernel_fpu)) {
++		WARN_ON_FPU(!in_hardirq());
+ 		return false;
++	}
+ 
+ 	/*
+ 	 * When not in NMI or hard interrupt context, FPU can be used in:
+ 	 *
+ 	 * - Task context except from within fpregs_lock()'ed critical
+@@ -418,11 +425,12 @@ int fpu_copy_uabi_to_guest_fpstate(struct fpu_guest *gfpu, const void *buf,
+ EXPORT_SYMBOL_GPL(fpu_copy_uabi_to_guest_fpstate);
+ #endif /* CONFIG_KVM */
+ 
+ void kernel_fpu_begin_mask(unsigned int kfpu_mask)
+ {
+-	preempt_disable();
++	if (!irqs_disabled())
++		fpregs_lock();
+ 
+ 	WARN_ON_FPU(!irq_fpu_usable());
+ 	WARN_ON_FPU(this_cpu_read(in_kernel_fpu));
+ 
+ 	this_cpu_write(in_kernel_fpu, true);
+@@ -446,11 +454,12 @@ EXPORT_SYMBOL_GPL(kernel_fpu_begin_mask);
+ void kernel_fpu_end(void)
+ {
+ 	WARN_ON_FPU(!this_cpu_read(in_kernel_fpu));
+ 
+ 	this_cpu_write(in_kernel_fpu, false);
+-	preempt_enable();
++	if (!irqs_disabled())
++		fpregs_unlock();
+ }
+ EXPORT_SYMBOL_GPL(kernel_fpu_end);
+ 
+ /*
+  * Sync the FPU register state to current's memory register state when the
+
+base-commit: 0ad2507d5d93f39619fc42372c347d6006b64319
+-- 
+2.48.1
+
 
