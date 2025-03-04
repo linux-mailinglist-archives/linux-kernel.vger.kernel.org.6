@@ -1,109 +1,112 @@
-Return-Path: <linux-kernel+bounces-543221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6659A4D2E8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:20:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E67FEA4D2E7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:20:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 104673AE245
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 05:20:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E80317108B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 05:20:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42FE31F4723;
-	Tue,  4 Mar 2025 05:20:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA3511F4282;
+	Tue,  4 Mar 2025 05:20:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dsqv8id0"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="Z9TSs+Oh"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6C61F4703
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 05:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDDB61DC985;
+	Tue,  4 Mar 2025 05:19:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741065605; cv=none; b=A3W3lz9YISmtswxP87AEiHyDPFYFdgQlPsf2U14Nmbio4LttAelyXqkiVeOl/H8bPLSHj1W5BxyWFaT47PzYvTHKplfQDJhzeeTQU96XeM0yBVHHRG0XiRZgzwUvJB/MuMb9BdcNh6s8BI2ykS2geHyAnvWmcKGwHybHCz7lkNE=
+	t=1741065601; cv=none; b=LO65/rvx4mVTMQtTQSonzQDSU1if5QY7kl18AJRBPJmIYm2oCoehrgIa4JRXgfI42SizJpbzNGi7HWQww76EVanbo7DbeSqZSc0m3xPlV9friCViH+anqnp+w3xM+GLS1HoW/2vl0QvwYPreyS4A8jxow943124j/kcau2nmdPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741065605; c=relaxed/simple;
-	bh=mYJSSAXw5nF44zGFCWonQB1kAY5wPI7TG1wREGSaH9g=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CIDsYtISAg01UlaemxaVzL/dqh87uUB++LQmo5SLG7ZZKPpwGryFCwNabd2LG0uZWDsT29qDfGzk/fK5+5tY55zp/Lii/kZAdT0jAbA3cK9aBkXLNrOpY+XoEIrgurujIDlbepFchbiDvC1XkDNYKMOBibpTHvuiQSFh2vyZLFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dsqv8id0; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741065604; x=1772601604;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=mYJSSAXw5nF44zGFCWonQB1kAY5wPI7TG1wREGSaH9g=;
-  b=dsqv8id0k6+n1AUN0nMj/bo6L51VJBgXDwCaLbHAEwURFw4YL5ehxAx+
-   6IS9Mc64H/zlg/BnFaXJAcIQpI3sffpqRqVAF5+//lFZUhr7H3EKGaKLv
-   N2e2Agq6G2lnj8O3BVbiCYk32Be+RVvwFa6CFqzwtPZRvsDk+f//wHoXb
-   Y1Ju6nznswdRIr1aY7la2SdaJW+V1pn1nuqCtgzASTVn8/Xpb1JOEj9QM
-   /wkMYPKUjb9/kdUGQtrcD3/XuHBGFwWygW82ebuyTrV7dnWRhWZWPbQ8b
-   C8k1rDbd8aqQbr4VPZBG6qCj1bPmijMsuUCxfnkV5nV9XpTum4vPLvNH3
-   w==;
-X-CSE-ConnectionGUID: 4EDFA+OjSGaSWpWdWBwzEA==
-X-CSE-MsgGUID: iGBPCCtmTuCwpoIywmRBGQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="41876077"
-X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
-   d="scan'208";a="41876077"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 21:20:03 -0800
-X-CSE-ConnectionGUID: l7KH9WSOR8Kxo3Ufvv3x1Q==
-X-CSE-MsgGUID: vWkbHxZ0Q/mLbqKSjwepNg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
-   d="scan'208";a="118424428"
-Received: from 9cc2c43eec6b.jf.intel.com ([10.54.77.44])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 21:20:02 -0800
-From: Zide Chen <zide.chen@intel.com>
-To: linux-kernel@vger.kernel.org
-Cc: peterz@infradead.org,
-	artem.bityutskiy@linux.intel.com,
-	rui.zhang@intel.com,
-	Zhenyu Wang <zhenyuw.linux@gmail.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Zide Chen <zide.chen@intel.com>
-Subject: [PATCH] perf/x86/intel/cstate: Add Clearwater Forest support
-Date: Mon,  3 Mar 2025 21:16:18 -0800
-Message-Id: <20250304051618.79198-1-zide.chen@intel.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1741065601; c=relaxed/simple;
+	bh=LrU1y8Yk/oZhM5YIACdZYLM99zyWeHAhmfmSrvfD8IQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J6X5efFygVPf6BQMq3nHvqWedlVez2ev/Ypx4VLzhUg1je5HEUdWU/WbTpblVlbLJd/AbnLzySnBS9+w1zjdAJaOx+CIUGsOMFCUNuFJRcKm/ixPO74mMYRBIQfmUgi8ENjTwjMClYXBd+hFawnsLiT+FHexTiKg1qkiUdvpumE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=Z9TSs+Oh; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=sTB7OSG/jPKCsZcpm18gwfMQ6rv4CO/v9UhqKKSFcP4=; b=Z9TSs+Oha0afGDaZXLt5NJNPpi
+	K6nfiV4QEDPMp8IBscvfsrZEPZzf/poZz8rY3Ba2gxv0NkTYlqujzUTcH1kIERwlksmB+LjAtQnes
+	IIg0v0ER05zyDYBEfYoqrfeTA1jhuD7C/xKcgEqJ45XANnUUksiUBCDSdpvbVRuVa74dxzWBqYOX0
+	TF6KWRH9WwgI0oKPy1ys+KCtlaRDxOiODr2yeb/++ZojxDTQnvTXgsjQvHxhgG65Z/RFrcIjPWyma
+	ylLuSvH35X6nSgX0+Cb4VhD1sDzrFjlnrbzeNqzLaAH1M8Oomm52ZMaGh8TCsPKm8lDLkkl7W+5i6
+	nHjweGFg==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1tpKgl-003VMD-1r;
+	Tue, 04 Mar 2025 13:19:32 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 04 Mar 2025 13:19:31 +0800
+Date: Tue, 4 Mar 2025 13:19:31 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org,
+	yosry.ahmed@linux.dev, nphamcs@gmail.com, chengming.zhou@linux.dev,
+	usamaarif642@gmail.com, ryan.roberts@arm.com, 21cnbao@gmail.com,
+	ying.huang@linux.alibaba.com, akpm@linux-foundation.org,
+	linux-crypto@vger.kernel.org, davem@davemloft.net,
+	clabbe@baylibre.com, ardb@kernel.org, ebiggers@google.com,
+	surenb@google.com, kristen.c.accardi@intel.com,
+	wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
+Subject: Re: [PATCH v7 01/15] crypto: acomp - Add synchronous/asynchronous
+ acomp request chaining.
+Message-ID: <Z8aNY5TFj_-os4Fd@gondor.apana.org.au>
+References: <20250228100024.332528-1-kanchana.p.sridhar@intel.com>
+ <20250228100024.332528-2-kanchana.p.sridhar@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250228100024.332528-2-kanchana.p.sridhar@intel.com>
 
-From: Zhenyu Wang <zhenyuw.linux@gmail.com>
+On Fri, Feb 28, 2025 at 02:00:10AM -0800, Kanchana P Sridhar wrote:
+>
+>  Step 2: Process the request chain using the specified compress/decompress
+>          "op":
+> 
+>   2.a) Synchronous: the chain of requests is processed in series:
+> 
+>        int acomp_do_req_chain(struct acomp_req *req,
+>                               int (*op)(struct acomp_req *req));
+> 
+>   2.b) Asynchronous: the chain of requests is processed in parallel using a
+>        submit-poll paradigm:
+> 
+>        int acomp_do_async_req_chain(struct acomp_req *req,
+>                                     int (*op_submit)(struct acomp_req *req),
+>                                     int (*op_poll)(struct acomp_req *req));
+> 
+> Request chaining will be used in subsequent patches to implement
+> compress/decompress batching in the iaa_crypto driver for the two supported
+> IAA driver sync_modes:
+> 
+>   sync_mode = 'sync' will use (2.a),
+>   sync_mode = 'async' will use (2.b).
 
-Clearwater Forest is based on Darkmont Atom microarchitecture.  From
-the C-states residency profiling's perspetive, it supports the same
-residency counters as Sierra Forrest: CC1/CC6, PC2/PC6 and MC6.
+There shouldn't be any sync/async toggle.  The whole zswap code is
+synchronous only and it makes zero sense to expose this to the user.
+Just do whatever is the fastest from the driver's point of view.
 
-Cc: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
-Signed-off-by: Zhenyu Wang <zhenyuw.linux@gmail.com>
-Signed-off-by: Zide Chen <zide.chen@intel.com>
----
- arch/x86/events/intel/cstate.c | 1 +
- 1 file changed, 1 insertion(+)
+I've actually implemented acomp chaining in my tree and I will be
+reposting soon.
 
-diff --git a/arch/x86/events/intel/cstate.c b/arch/x86/events/intel/cstate.c
-index ae4ec16156bb..028557210e23 100644
---- a/arch/x86/events/intel/cstate.c
-+++ b/arch/x86/events/intel/cstate.c
-@@ -627,6 +627,7 @@ static const struct x86_cpu_id intel_cstates_match[] __initconst = {
- 	X86_MATCH_VFM(INTEL_ATOM_GRACEMONT,	&adl_cstates),
- 	X86_MATCH_VFM(INTEL_ATOM_CRESTMONT_X,	&srf_cstates),
- 	X86_MATCH_VFM(INTEL_ATOM_CRESTMONT,	&grr_cstates),
-+	X86_MATCH_VFM(INTEL_ATOM_DARKMONT_X,	&srf_cstates),
- 
- 	X86_MATCH_VFM(INTEL_ICELAKE_L,		&icl_cstates),
- 	X86_MATCH_VFM(INTEL_ICELAKE,		&icl_cstates),
+Cheers,
 -- 
-2.34.1
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
