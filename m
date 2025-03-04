@@ -1,136 +1,110 @@
-Return-Path: <linux-kernel+bounces-543897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CDC7A4DB2E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:46:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B664A4DB57
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:49:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CAEB57A35B2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:45:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9616D3B3B57
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:46:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAA2C200BB5;
-	Tue,  4 Mar 2025 10:43:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22093200BA8;
+	Tue,  4 Mar 2025 10:44:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N3N0Pn0T"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=0x0f.com header.i=@0x0f.com header.b="fOVEFEYP"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F0961FCCF1
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 10:42:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97FC21FDE29
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 10:43:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741084981; cv=none; b=I24KaxcsVbg6eaE1GqZXv36NKw2ZHmCOF53dOnUoSEtFoFJSTZGTlifBYX3W0fjIFD3EqYnFU4wLvmuMVyfn2COBbDyE+4jdFcX3ijhd40PkBgcIx/asOEOiN38L0KOYEqCKIyI5O9IM9DFqPMtcqHOQdoTgHO2pJmlxQv4hbbQ=
+	t=1741085039; cv=none; b=W3hgDBDnzl9XPauxO/VAEo6FKwvn7lj/FLTayrB+0i6t3rZvY9iRIEpgF+ezxid6E9D/r4zp8RwYlBLH2ymv9JXvhPwEyQErYZUbmGIxXoPWAO1vE/HiMLBWFyHpH5k4qCewWBp+zC5fXlEU1MAldTSYVx/JU7E+HFwS/imxOUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741084981; c=relaxed/simple;
-	bh=AAUmVn2f+OJGl5++4TDAcy/d2xI+fSp6H+1SWf1N1kE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=OCsES/4su4dPf6CWo3bzjpcyAOCWffV/fZ9bSn6t0yiYcSFd1LMWPMHoaHXVsX1PPZsQHIqYAVPELm/Dk7EjvgcnZKyl52KaXDbE8p0O7FmwLt7PG8OB83a5YQ0ZGP5BlHxmuwd/2OIDqPLjFliJbtfhxZeFrVb4arYuBuKDugE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N3N0Pn0T; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741084980; x=1772620980;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=AAUmVn2f+OJGl5++4TDAcy/d2xI+fSp6H+1SWf1N1kE=;
-  b=N3N0Pn0ThMUJYITdmWg/cwJajIkkIT1XVQKsGBEhHqEq2DieQnZ9Dx5C
-   gpKQqKHG8DLx5CE1OzldQtFYArhnmBCPD4HnDjrZzP2mTmAHTHRedlAxy
-   vleDbp0o4ABzZkcZerrQHOzHK4dzoCgHI7aSkQBslZ7N/o/mImR+b50TZ
-   N20yvujAs1MrU1/mXFYzz7wHZtdqZmVP64c2Q5YO7KQ+XUyeTFBGmukTZ
-   P67jiKiq5BuBI0ziuI4tZ4zy+4MDowbiCVBiOm5oG0J6GM03IIobRzWJM
-   CWINWzqXBYY9mXm7CVXu/lBSTBFVj8GW5Cq/4znpxu+QKbjJ+Dt0yND9B
-   Q==;
-X-CSE-ConnectionGUID: 8EqK1BW6Rrqcegr5Tkex2g==
-X-CSE-MsgGUID: Vmtpp6qOSTm2aquv/i/3qw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="53390798"
-X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
-   d="scan'208";a="53390798"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 02:42:58 -0800
-X-CSE-ConnectionGUID: RRpphfkFQdaIgE+9o57zZA==
-X-CSE-MsgGUID: CKZ0dbezRhiyjX2wyXbDEA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
-   d="scan'208";a="119028097"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa009.fm.intel.com with ESMTP; 04 Mar 2025 02:42:56 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tpPjh-000JcV-2P;
-	Tue, 04 Mar 2025 10:42:53 +0000
-Date: Tue, 4 Mar 2025 18:42:16 +0800
-From: kernel test robot <lkp@intel.com>
-To: Peter Xu <peterx@redhat.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>
-Subject: mm/gup.c:778:15: sparse: sparse: cast to non-scalar
-Message-ID: <202503041858.tK5Q1vkP-lkp@intel.com>
+	s=arc-20240116; t=1741085039; c=relaxed/simple;
+	bh=amQpJWz961G9i8FxpA0xFOpFzhTcMDLimCTtZwpNAk8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FWhQCDuLj3hqwFjhxdiWVeNYXSGlfQe2MRDcZslALrI79+daasueXsBpPxkTQUdQbpqDTKl/jNHYBAeN8OyzMIamDxJio1t9p7R7umKjtN5f7Rb2F1uFzoDr5pYjrJeZIbPAmbqeETIijoSTCEvbLkc+LKq9/ISi6gJXHx7u+Uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0x0f.com; spf=pass smtp.mailfrom=0x0f.com; dkim=pass (1024-bit key) header.d=0x0f.com header.i=@0x0f.com header.b=fOVEFEYP; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0x0f.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0x0f.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-22349bb8605so104372355ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 02:43:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=0x0f.com; s=google; t=1741085036; x=1741689836; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=amQpJWz961G9i8FxpA0xFOpFzhTcMDLimCTtZwpNAk8=;
+        b=fOVEFEYPm+QV33iE0IW+3GrB5IYDKiwJFbYzNIq2ngpFllzDj9pPo39mVwKuGTzc8M
+         t70oDkECTorTEAl+dmAHEfxBV2vvkOKoGkkx+cS6ASGtSYAk6BsvKYufAzcjR2wjTsV+
+         1JET+wb6HETGcjhYggCkK/6g6MCKQy5xZlQUs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741085036; x=1741689836;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=amQpJWz961G9i8FxpA0xFOpFzhTcMDLimCTtZwpNAk8=;
+        b=e8d2gkAkAQ1KzXHQAiu6ceX6NcmNw1ZInXS59bGmoX+q8D0XZ7D+uKsFBBmVWf/zh5
+         t+QLXqJgtVL0E/L0NLpccQu8a6r+rsZ8ZfZjQHaTNjzDeMnitH17CescfYMMC2W1GoJa
+         Qd766Cmke+Vc6yDfA4U4AFWk5qUB778mIaY3QXlUZoD4h9WXNx+wEZRVcQIjvXcStqrS
+         dXpZWKFJIK2x+Svx0dGDCQpx5RBOFDlIX8P1SZHMEQR4TbWKnwElIPJ5tnwMbr+fQmCb
+         Z7BKTb3d2P1PMBbOPRHGkgPV1o1XO7L9EAfYy2JFo22yIIIrLrZpMXbzXxipYEfk+9Gm
+         dmRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW6Q/kqBuklmrpoXfRXiDoBPYPnMeMa+ike6fwmULvPwDEw4g5Nq3awloQoJ1Jnl748XxtAvXiNCnPZ1js=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykHKAM8rLiHOIy+lAY/++lv7+wlAFigi1+Pk41piQwIRAxMzgV
+	jxSnr4iip5mMtzeMxP37o4FzbHC03i/EIfAGduWNsjjNDg0bIpqYueuX8fhykYn8xEEbIaYoGoi
+	NFNTuxwxjUFeGUrYMsu38Fv2XxZSkYvftanVBOQ==
+X-Gm-Gg: ASbGnctSwduQlE01/6jcFclLHg20uBTr91Y5dGQc8HSpiWVutI0yrCOJGFzHNHc/n3e
+	OYv6prwbQLRRvPL0D3qEXIzeTLBT83sXkPHUNMTNOPVfmHLSJoQFseX5e1uTHphWwt6rJzYag3e
+	lIGwy8Fcq47TTqrHWVXEsftlrNjFRPZTZ2wG/bI+lLFCGWf2HlvW7aBC9lowyq
+X-Google-Smtp-Source: AGHT+IFO7ecXy741NtL0I6Bknif1mhVYH09bLzARVHy05PDJewQLqqW5mxJi8Ja12tOhLHjlqqbqvh81sfRC5OXcmc0=
+X-Received: by 2002:a17:902:fc8d:b0:223:44dc:3f36 with SMTP id
+ d9443c01a7336-2236925eef4mr279799845ad.43.1741085035767; Tue, 04 Mar 2025
+ 02:43:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20250105071433.3943289-1-daniel@0x0f.com> <291d1541-e026-cc50-6a55-42c11c64b6eb@linux-m68k.org>
+ <CAFr9PXm4kTWF27GPMNDb5=W8vZRQia418xOQDF_X1yo0vwn6hA@mail.gmail.com>
+ <4eb796cc-b178-8394-0149-03600f1caaed@linux-m68k.org> <B5B5D58B-D111-431F-9701-44FCBB67D11E@gmail.com>
+ <b33b072e-f44a-9450-cbe9-52300ab971a3@linux-m68k.org>
+In-Reply-To: <b33b072e-f44a-9450-cbe9-52300ab971a3@linux-m68k.org>
+From: Daniel Palmer <daniel@0x0f.com>
+Date: Tue, 4 Mar 2025 19:43:44 +0900
+X-Gm-Features: AQ5f1JpSY7K1FkOyRmqKHCL8vF9tnRQSANhYqoMuATNBZDnqfwF4WOLBi9qLGtw
+Message-ID: <CAFr9PXmXsW=RqJsWPCUDvQO+vst-wSj__Fi3nuxCo7ZRAi0wOA@mail.gmail.com>
+Subject: Re: Bootloaders, was Re: [RFC PATCH 0/3] m68k goes DT
+To: Finn Thain <fthain@linux-m68k.org>
+Cc: Josh Juran <jjuran@gmail.com>, geert@linux-m68k.org, linux-m68k@lists.linux-m68k.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   99fa936e8e4f117d62f229003c9799686f74cebc
-commit: e6fd5564c07c3c749ff3d1b2aa35540b4047e395 mm/gup: cache p4d in follow_p4d_mask()
-date:   10 months ago
-config: alpha-randconfig-r123-20250304 (https://download.01.org/0day-ci/archive/20250304/202503041858.tK5Q1vkP-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 14.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20250304/202503041858.tK5Q1vkP-lkp@intel.com/reproduce)
+Hi Finn,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503041858.tK5Q1vkP-lkp@intel.com/
+On Tue, 7 Jan 2025 at 09:57, Finn Thain <fthain@linux-m68k.org> wrote:
+> Some of those bugs and missing features apply to EMILE as well. IMHO, what
+> EMILE really needs is a MacOS GUI like Penguin. So my advice to
+> prospective mac bootloader developers is, add a GUI to EMILE rather than
+> try to maintain both packages.
 
-sparse warnings: (new ones prefixed by >>)
->> mm/gup.c:778:15: sparse: sparse: cast to non-scalar
->> mm/gup.c:778:15: sparse: sparse: cast from non-scalar
-   mm/gup.c: note: in included file (through include/linux/mm.h):
-   include/linux/pgtable.h:315:16: sparse: sparse: cast to non-scalar
-   include/linux/pgtable.h:315:16: sparse: sparse: cast from non-scalar
-   include/linux/pgtable.h:315:16: sparse: sparse: cast to non-scalar
-   include/linux/pgtable.h:315:16: sparse: sparse: cast from non-scalar
-   mm/gup.c: note: in included file (through include/linux/mmzone.h, include/linux/gfp.h, include/linux/mm.h):
-   include/linux/page-flags.h:241:46: sparse: sparse: self-comparison always evaluates to false
-   mm/gup.c:682:9: sparse: sparse: context imbalance in 'follow_page_pte' - unexpected unlock
-   mm/gup.c: note: in included file (through include/linux/mm.h):
-   include/linux/pgtable.h:322:16: sparse: sparse: cast to non-scalar
-   include/linux/pgtable.h:322:16: sparse: sparse: cast from non-scalar
-   include/linux/pgtable.h:315:16: sparse: sparse: cast to non-scalar
-   include/linux/pgtable.h:315:16: sparse: sparse: cast from non-scalar
-   mm/gup.c:911:18: sparse: sparse: context imbalance in 'get_gate_page' - unexpected unlock
+FWIW I have started to move EMILE over to using meson to build (so
+it's easier to build on modern systems) and fixing up some of the
+issues it has with building with recent GCC.
+I have it working enough to boot HEAD on a LC475 and on QEMUs Q800
+machine. While the penguin ui is nice EMILE seems to work well enough
+and it can be used to generate bootable CDs.
+I have a setup now that can generate a bootable CD with the kernel and
+a buildroot based userland that I can drop on the SD card for my
+bluescsi and boot into Linux without any macos intervention.
 
-vim +778 mm/gup.c
+So basically, for 68k mac I think EMILE is the way to go.
 
-   769	
-   770	static struct page *follow_p4d_mask(struct vm_area_struct *vma,
-   771					    unsigned long address, pgd_t *pgdp,
-   772					    unsigned int flags,
-   773					    struct follow_page_context *ctx)
-   774	{
-   775		p4d_t *p4dp, p4d;
-   776	
-   777		p4dp = p4d_offset(pgdp, address);
- > 778		p4d = READ_ONCE(*p4dp);
-   779		if (p4d_none(p4d))
-   780			return no_page_table(vma, flags);
-   781		BUILD_BUG_ON(p4d_huge(p4d));
-   782		if (unlikely(p4d_bad(p4d)))
-   783			return no_page_table(vma, flags);
-   784	
-   785		return follow_pud_mask(vma, address, p4dp, flags, ctx);
-   786	}
-   787	
+Cheers,
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Daniel
 
