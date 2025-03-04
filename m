@@ -1,240 +1,138 @@
-Return-Path: <linux-kernel+bounces-543763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0269A4D9B6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:03:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5F39A4D9B0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:02:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5076D3B1C66
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:01:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FEA016AC52
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:02:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5E001FECBB;
-	Tue,  4 Mar 2025 10:01:23 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A5731FDE01
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 10:01:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 634751FDA8E;
+	Tue,  4 Mar 2025 10:02:40 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55FE2C2D1
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 10:02:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741082483; cv=none; b=nhzDkCRkEv3AZ1rlUSZALCsXUWJMO+KWLbOeqJbHogdi53u1nglhJhOgHHAdsijIyaB0mlm2nczTSFe8V+nhyx3y0dm1t0ty9hEam5jkotCNEseEszCYLqVXIV72Y3wZZxuPSSkxwwmy5DZN6rPdX8Q2S0n74V/jjiqobrr3dEc=
+	t=1741082560; cv=none; b=BA3u/iwpHrIvYvK8ppivxMD4Sof35JNtg4YuoCl4UlnZdUFv6k26zmon3haaDckvNn2fBx58ShIJganbe7rsuViZsX87I9xO+gwCFJ5MtPKadnSjZqPoDOYoiRDd0NXcbOEVcnv8G1mxE1OoUknhx7yZwBkwC0MF7NfVcL+Ys6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741082483; c=relaxed/simple;
-	bh=I9P5Gtso5RQYpPJYahKfjtEqCDNVQAB1DE0d7nvma+s=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=TmyTHfRBTLYZH9/sm2KksQS8WYdB6G38xHbC5ih1X48pEP3R4fzpWN8lny1Q2La5Xi5zesQlJnRnZZo3VmyaAdBr4tFhgl7Hk2TwP+aN1EWh8aa4C8iw0pNM6iSFoFx3vfBFl/DbtjezuQvSycS6OncmfofXoRpdLERKQUG422o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3d2a40e470fso49990955ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 02:01:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741082480; x=1741687280;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FefLW67sQmVsLR2sFGg0Kb+iinVxl/v0+h0mH51OFOQ=;
-        b=GSMRweHtR6On0hNwDI9o8Zi3fZAnoye8JfgETdZCiNspry6acmTUH/LnVXhDowqf5q
-         qoCbOcSwMBI+50aoU1VVn+AtLPWBLqsyoo2NsjnWDxhOga2xmKE1Jjr0lJ+7ZbZF0vqS
-         dJyGqQfuEfm9doxsRdYcaHsZeWayiEGTMe+6kgM70+pGuP/uYkFw8dE8OJnS87gwJpYD
-         cHrzzszjX2VU8PFhGwwREJ4Rb6LXJOlW6GHpchvHX7evUoqPSYXevtUVqb3GHmt5jCpR
-         IPrDDFMlnuBy77+X2THJtNEKt1INtRRM1OCyAopJkcbos4UMa/4X4+V1Yp5QG3xRwz0X
-         XNOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVAixPszVkzUTgoOTC2ksUpaEehIMfvymu5afXdb0F8dPMsDZOM9W+KDMS90KiRbQA6IR2dLpkUv+FeuFw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEOPseYOIJFymWyMEY4a1WQTYLKld64ULJ9IjwyN/MZL/WmB8u
-	C5Og1OKvYUvCyxm84ZwkneFPKvv8nRR9WJapCrCff6V45/Q5ssZZX8y82Q65fix02TQSyCI8vbM
-	uIhrvMI9mg2V4Iiq2K4XrTvUI/FShjxQSg/iWbIUN/pwzj9sxlvM//6U=
-X-Google-Smtp-Source: AGHT+IGQ993vW6XPMpeApP3BoP89HZot5k8gHVZJvitbCAfQdQgYbqS4hKG76YhmnyCFdoTAh07GTwmLpgtbWEwRn1xAzj2aGxBS
+	s=arc-20240116; t=1741082560; c=relaxed/simple;
+	bh=hY1vWYRwPgCvMe1QGLaM9IUuuNEez24H64MwjGeL+7Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CaL7K9BPfLqhvR2Sb52cjd/7Xz+E7l5jVSp876cqHp8BevQTUKuz7fsZX9YA9jqyZwaHWpoh7AlIkJ4cGaIbCkn5EwBZ+OXDVvMI5nEAuLuSc3k8SWxAxUBLOe1Ag/aAyhxBr5OQueAvsgUnFIB7qhc9aIwsJHRpysiaL+rgdFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 25F28FEC;
+	Tue,  4 Mar 2025 02:02:51 -0800 (PST)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2C0923F5A1;
+	Tue,  4 Mar 2025 02:02:33 -0800 (PST)
+Date: Tue, 4 Mar 2025 10:02:30 +0000
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Pierre Gondois <pierre.gondois@arm.com>
+Cc: Yicong Yang <yangyicong@huawei.com>, <yangyicong@hisilicon.com>,
+	Sudeep Holla <sudeep.holla@arm.com>, <catalin.marinas@arm.com>,
+	<will@kernel.org>, <tglx@linutronix.de>, <peterz@infradead.org>,
+	<mpe@ellerman.id.au>, <linux-arm-kernel@lists.infradead.org>,
+	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
+	<dietmar.eggemann@arm.com>, <linuxppc-dev@lists.ozlabs.org>,
+	<x86@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<morten.rasmussen@arm.com>, <msuchanek@suse.de>,
+	<gregkh@linuxfoundation.org>, <rafael@kernel.org>,
+	<jonathan.cameron@huawei.com>, <prime.zeng@hisilicon.com>,
+	<linuxarm@huawei.com>, <xuwei5@huawei.com>, <guohanjun@huawei.com>,
+	<sshegde@linux.ibm.com>
+Subject: Re: [PATCH v11 3/4] arm64: topology: Support SMT control on ACPI
+ based system
+Message-ID: <Z8bPtsO7dEV0lq2M@bogus>
+References: <20250218141018.18082-1-yangyicong@huawei.com>
+ <20250218141018.18082-4-yangyicong@huawei.com>
+ <Z8HAkZiHYRjj97M7@bogus>
+ <336e9c4e-cd9c-4449-ba7b-60ee8774115d@arm.com>
+ <20250228190641.q23vd53aaw42tcdi@bogus>
+ <a52972c7-aadd-4a77-a292-057fa5f8372d@arm.com>
+ <Z8WPiOweOjFZqTwN@bogus>
+ <32e572d6-dedd-d8a3-13be-6de02303a64d@huawei.com>
+ <2fdea4f6-db98-4dc7-947f-e19ee54d2c3c@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2218:b0:3d3:d965:62c4 with SMTP id
- e9e14a558f8ab-3d3e6e39e4emr152868435ab.10.1741082480341; Tue, 04 Mar 2025
- 02:01:20 -0800 (PST)
-Date: Tue, 04 Mar 2025 02:01:20 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67c6cf70.050a0220.15b4b9.0009.GAE@google.com>
-Subject: [syzbot] [net?] [bcachefs?] INFO: trying to register non-static key
- in sock_def_readable
-From: syzbot <syzbot+76de817a3d28a3e50c60@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	kent.overstreet@linux.dev, kuba@kernel.org, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2fdea4f6-db98-4dc7-947f-e19ee54d2c3c@arm.com>
 
-Hello,
+On Tue, Mar 04, 2025 at 09:25:02AM +0100, Pierre Gondois wrote:
+>
+>
+> On 3/3/25 15:40, Yicong Yang wrote:
+> > On 2025/3/3 19:16, Sudeep Holla wrote:
+> > > On Mon, Mar 03, 2025 at 10:56:12AM +0100, Pierre Gondois wrote:
+> > > > On 2/28/25 20:06, Sudeep Holla wrote:
+> > > > > > >
+> > > > > > > Ditto as previous patch, can get rid if it is default 1.
+> > > > > > >
+> > > > > >
+> > > > > > On non-SMT platforms, not calling cpu_smt_set_num_threads() leaves
+> > > > > > cpu_smt_num_threads uninitialized to UINT_MAX:
+> > > > > >
+> > > > > > smt/active:0
+> > > > > > smt/control:-1
+> > > > > >
+> > > > > > If cpu_smt_set_num_threads() is called:
+> > > > > > active:0
+> > > > > > control:notsupported
+> > > > > >
+> > > > > > So it might be slightly better to still initialize max_smt_thread_num.
+> > > > > >
+> > > > >
+> > > > > Sure, what I meant is to have max_smt_thread_num set to 1 by default is
+> > > > > that is what needed anyways and the above code does that now.
+> > > > >
+> > > > > Why not start with initialised to 1 instead ?
+> > > > > Of course some current logic needs to change around testing it for zero.
+> > > > >
+> > > >
+> > > > I think there would still be a way to check against the default value.
+> > > > If we have:
+> > > > unsigned int max_smt_thread_num = 1;
+> > > >
+> > > > then on a platform with 2 threads, the detection condition would trigger:
+> > > > xa_for_each(&hetero_cpu, hetero_id, entry) {
+> > > >      if (entry->thread_num != max_smt_thread_num && max_smt_thread_num)     <---- (entry->thread_num=2) and (max_smt_thread_num=1)
+> > > >          pr_warn_once("Heterogeneous SMT topology is partly
+> > > >                        supported by SMT control\n");
+> > > >
+> > > > so we would need an additional variable:
+> > > > bool is_initialized = false;
+> > >
+> > > Sure, we could do that or skip the check if max_smt_thread_num == 1 ?
+> > >
+> > > I mean
+> > > 	if (entry->thread_num != max_smt_thread_num && max_smt_thread_num != 1)
+> > >
+>
+> I think it will be problematic if we parse:
+> - first a CPU with 1 thread
+> - then a CPU with 2 threads
+>
+> in that case we should detect the 'Heterogeneous SMT topology',
+> but we cannot because we don't know whether max_smt_thread_num=1
+> because 1 is the default value or we found a CPU with one thread.
 
-syzbot found the following issue on:
+Right, but as per Dietmar's and my previous response, it may be a valid
+case. See latest response from Dietmar which is explicitly requesting
+support for this. It may need some special handling if we decide to support
+that.
 
-HEAD commit:    99fa936e8e4f Merge tag 'affs-6.14-rc5-tag' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15e7e464580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2040405600e83619
-dashboard link: https://syzkaller.appspot.com/bug?extid=76de817a3d28a3e50c60
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13b858b7980000
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-99fa936e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ef04f83d96f6/vmlinux-99fa936e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/583a7eea5c8e/bzImage-99fa936e.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/d211587a515f/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+76de817a3d28a3e50c60@syzkaller.appspotmail.com
-
-INFO: trying to register non-static key.
-The code is fine but needs lockdep annotation, or maybe
-you didn't initialize this object before use?
-turning off the locking correctness validator.
-CPU: 0 UID: 0 PID: 5470 Comm: syz-executor Not tainted 6.14.0-rc5-syzkaller-00013-g99fa936e8e4f #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- assign_lock_key+0x241/0x280 kernel/locking/lockdep.c:983
- register_lock_class+0x1cf/0x980 kernel/locking/lockdep.c:1297
- __lock_acquire+0xf3/0x2100 kernel/locking/lockdep.c:5103
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5851
- __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
- _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
- __wake_up_common_lock+0x25/0x1e0 kernel/sched/wait.c:105
- sock_def_readable+0x20f/0x5a0 net/core/sock.c:3493
- __netlink_sendskb net/netlink/af_netlink.c:1258 [inline]
- netlink_sendskb+0x9e/0x140 net/netlink/af_netlink.c:1264
- netlink_unicast+0x39d/0x990 net/netlink/af_netlink.c:1353
- netlink_rcv_skb+0x294/0x480 net/netlink/af_netlink.c:2539
- netlink_unicast_kernel net/netlink/af_netlink.c:1312 [inline]
- netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1338
- netlink_sendmsg+0x8de/0xcb0 net/netlink/af_netlink.c:1882
- sock_sendmsg_nosec net/socket.c:718 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:733
- __sys_sendto+0x363/0x4c0 net/socket.c:2187
- __do_sys_sendto net/socket.c:2194 [inline]
- __se_sys_sendto net/socket.c:2190 [inline]
- __x64_sys_sendto+0xde/0x100 net/socket.c:2190
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f3d27d8effc
-Code: 2a 5f 02 00 44 8b 4c 24 2c 4c 8b 44 24 20 89 c5 44 8b 54 24 28 48 8b 54 24 18 b8 2c 00 00 00 48 8b 74 24 10 8b 7c 24 08 0f 05 <48> 3d 00 f0 ff ff 77 34 89 ef 48 89 44 24 08 e8 70 5f 02 00 48 8b
-RSP: 002b:00007ffcb9983030 EFLAGS: 00000293 ORIG_RAX: 000000000000002c
-RAX: ffffffffffffffda RBX: 00007f3d28ad4620 RCX: 00007f3d27d8effc
-RDX: 0000000000000040 RSI: 00007f3d28ad4670 RDI: 0000000000000003
-RBP: 0000000000000000 R08: 00007ffcb9983084 R09: 000000000000000c
-R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000003
-R13: 0000000000000000 R14: 00007f3d28ad4670 R15: 0000000000000000
- </TASK>
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 0 UID: 0 PID: 5470 Comm: syz-executor Not tainted 6.14.0-rc5-syzkaller-00013-g99fa936e8e4f #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:__wake_up_common_lock+0xcf/0x1e0 kernel/sched/wait.c:106
-Code: fb 0f 84 d1 00 00 00 8b 6c 24 04 eb 13 48 ba 00 00 00 00 00 fc ff df 4c 39 fb 0f 84 b8 00 00 00 49 89 de 48 89 d8 48 c1 e8 03 <80> 3c 10 00 74 12 4c 89 f7 e8 13 3f 8f 00 48 ba 00 00 00 00 00 fc
-RSP: 0018:ffffc9000293f6d0 EFLAGS: 00010046
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000001
-RDX: dffffc0000000000 RSI: 0000000000000004 RDI: ffffc9000293f5a0
-RBP: 0000000000000001 R08: 0000000000000003 R09: fffff52000527eb4
-R10: dffffc0000000000 R11: fffff52000527eb4 R12: 1ffff11009ce1230
-R13: ffff88803b3d3040 R14: 0000000000000000 R15: ffff88803b3d3080
-FS:  0000555577b71500(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fb8921d2000 CR3: 000000005450e000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- sock_def_readable+0x20f/0x5a0 net/core/sock.c:3493
- __netlink_sendskb net/netlink/af_netlink.c:1258 [inline]
- netlink_sendskb+0x9e/0x140 net/netlink/af_netlink.c:1264
- netlink_unicast+0x39d/0x990 net/netlink/af_netlink.c:1353
- netlink_rcv_skb+0x294/0x480 net/netlink/af_netlink.c:2539
- netlink_unicast_kernel net/netlink/af_netlink.c:1312 [inline]
- netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1338
- netlink_sendmsg+0x8de/0xcb0 net/netlink/af_netlink.c:1882
- sock_sendmsg_nosec net/socket.c:718 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:733
- __sys_sendto+0x363/0x4c0 net/socket.c:2187
- __do_sys_sendto net/socket.c:2194 [inline]
- __se_sys_sendto net/socket.c:2190 [inline]
- __x64_sys_sendto+0xde/0x100 net/socket.c:2190
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f3d27d8effc
-Code: 2a 5f 02 00 44 8b 4c 24 2c 4c 8b 44 24 20 89 c5 44 8b 54 24 28 48 8b 54 24 18 b8 2c 00 00 00 48 8b 74 24 10 8b 7c 24 08 0f 05 <48> 3d 00 f0 ff ff 77 34 89 ef 48 89 44 24 08 e8 70 5f 02 00 48 8b
-RSP: 002b:00007ffcb9983030 EFLAGS: 00000293 ORIG_RAX: 000000000000002c
-RAX: ffffffffffffffda RBX: 00007f3d28ad4620 RCX: 00007f3d27d8effc
-RDX: 0000000000000040 RSI: 00007f3d28ad4670 RDI: 0000000000000003
-RBP: 0000000000000000 R08: 00007ffcb9983084 R09: 000000000000000c
-R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000003
-R13: 0000000000000000 R14: 00007f3d28ad4670 R15: 0000000000000000
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__wake_up_common_lock+0xcf/0x1e0 kernel/sched/wait.c:106
-Code: fb 0f 84 d1 00 00 00 8b 6c 24 04 eb 13 48 ba 00 00 00 00 00 fc ff df 4c 39 fb 0f 84 b8 00 00 00 49 89 de 48 89 d8 48 c1 e8 03 <80> 3c 10 00 74 12 4c 89 f7 e8 13 3f 8f 00 48 ba 00 00 00 00 00 fc
-RSP: 0018:ffffc9000293f6d0 EFLAGS: 00010046
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000001
-RDX: dffffc0000000000 RSI: 0000000000000004 RDI: ffffc9000293f5a0
-RBP: 0000000000000001 R08: 0000000000000003 R09: fffff52000527eb4
-R10: dffffc0000000000 R11: fffff52000527eb4 R12: 1ffff11009ce1230
-R13: ffff88803b3d3040 R14: 0000000000000000 R15: ffff88803b3d3080
-FS:  0000555577b71500(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fb8921d2000 CR3: 000000005450e000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	fb                   	sti
-   1:	0f 84 d1 00 00 00    	je     0xd8
-   7:	8b 6c 24 04          	mov    0x4(%rsp),%ebp
-   b:	eb 13                	jmp    0x20
-   d:	48 ba 00 00 00 00 00 	movabs $0xdffffc0000000000,%rdx
-  14:	fc ff df
-  17:	4c 39 fb             	cmp    %r15,%rbx
-  1a:	0f 84 b8 00 00 00    	je     0xd8
-  20:	49 89 de             	mov    %rbx,%r14
-  23:	48 89 d8             	mov    %rbx,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	80 3c 10 00          	cmpb   $0x0,(%rax,%rdx,1) <-- trapping instruction
-  2e:	74 12                	je     0x42
-  30:	4c 89 f7             	mov    %r14,%rdi
-  33:	e8 13 3f 8f 00       	call   0x8f3f4b
-  38:	48                   	rex.W
-  39:	ba 00 00 00 00       	mov    $0x0,%edx
-  3e:	00 fc                	add    %bh,%ah
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+--
+Regards,
+Sudeep
 
