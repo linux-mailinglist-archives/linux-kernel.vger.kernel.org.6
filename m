@@ -1,141 +1,122 @@
-Return-Path: <linux-kernel+bounces-545811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83980A4F1CA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:50:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDBAEA4F1D0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:52:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEFC216E0CE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:50:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10F6A188C75A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:53:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 132B0200BA3;
-	Tue,  4 Mar 2025 23:49:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37D862780F3;
+	Tue,  4 Mar 2025 23:52:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kwnpQNQI"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="4sw8nYkh"
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC191253F18
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 23:49:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19130BA2D;
+	Tue,  4 Mar 2025 23:52:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741132192; cv=none; b=pWyrmj35D2WkL/IOSmW78StcWCTSeehwdhrQEptSU3Zg8l5jky0MogTn+ekWy5n6t8zj9cTH8ifHGrRX7QC65AcnkZeAQrYhFUD/PGksHhefHOqv9REuhtSFQM23lG1tLP5Zyz+EgegWBZuGHOwvBYLK+88KRW2OIHAAj1jrhYM=
+	t=1741132367; cv=none; b=cUmgiM7hA9VVPUnBzikhFxZPtOYR9/MqDUiXiArkhrfTsmxrCYky+ZzsukjADT2OEZlSuhIh4TKhhSZCYKt6m+8NHIX6P0vRYOOmzY9xLWpg7oWQGZcjwmVmcaRY3mup3omnogd+aYj+6wc9KfooOCWcBY5wHNM2dKvCGNPzqUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741132192; c=relaxed/simple;
-	bh=MzcidAAA2WDoz1FnZ6+miMSEMDiaMfaQvBPMDPcM/yU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JUiKGCx/q/jttDBfh35iQKwaOADW2E68Yd7y0YM4C9sFEa1YGXgDH0zQGq2N90jFdosq0HPCo9pgNlal/Kew+/eywd+GxgmNbsrvbyCcg4Yv/NTzksU6F+boxip46fwXAZiqHMp3GPrjexP7vAzbeut+mz2JKsHL9pRngwfWqIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kwnpQNQI; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5e4ce6e3b8cso455165a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 15:49:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741132189; x=1741736989; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VVZNT78n/RwxkIy8ddgo9iaNgzKgJM/Nw92joYKvL9E=;
-        b=kwnpQNQIp+fc1KI0NHh6PiC2eKdBgiCIBUZAy2vpysA49q/sFm4FkajH46lOkGYr13
-         AIfHcvR23V3nxfl0VLEUNsBBlPTVq00JcBVv/bxUQsvfh0lgY0DJa6GKvcvI7YoxGRMW
-         k+zK49MBdHwfEBv5i0HW2JazI2zLTjROv/bJy2IgT0hPhiUoIbJ6HRE30mcOOyBbqtP7
-         k7Sy9/7AsHQ0kQn1n3NwDnHXGQOawNfujCNtPeI0JvSKMKUI9BZPDuS+oiKpEopN/yw9
-         eud5R7tkh0qXHQWLrzNa/cJW+Y+nHCttJ6VH/rResGn7VAxr+S/OMDasxDg9Lo34h4QA
-         acGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741132189; x=1741736989;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VVZNT78n/RwxkIy8ddgo9iaNgzKgJM/Nw92joYKvL9E=;
-        b=tvwrjZenyjskKOEPudnKwY/mccaFjqwV8EFTRSWrlBzALVwpI5W3TMYVvM83/ktn0o
-         0ekprGakJmYyquTMhrHw726vMSEiw2IynvPDg8pZA3eyw9rgdNBOSr0LM+SuZ5nbTdXM
-         nOQPSNBVmFPYyU1isy0qHZkrUhLp1Tqy20+ysHk3Ey1Zkcu/hGbnm2ZbuCo3JZSFDZgZ
-         mxDUrImGufaKx1ew/SW8MmUpU76vF545HTtSgLV6sj+IA/51CD2UXTpEnDsSRvmzmqSJ
-         fBTOTqhJ0pJMhZcatuXJpFxghKi42u5jJeTCjUQZDv4oaET09BoDUGWQ0I4fPlEixtKP
-         BRFg==
-X-Forwarded-Encrypted: i=1; AJvYcCWY1SRSSMNMeGWYHmsIVdtKlB6Kqq1hynipF2lkBKfQwetQ8/1FBW/o2C9fAGNu3bRCO8zynKDuRh2bF3o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+C84OM698Os3C47LmIlYobr93ttxiFQdozsmkhYg3bp1/q65b
-	U9Phkr7M6bLHBkFxM7ofXAnav2OC765yUIr7lPfiifzl08SLs1zHPmQvLvSphMQKW55PszOKqnP
-	ysCEnxcVGmNjMJtwj2aORMDTeRjh00spuPYg=
-X-Gm-Gg: ASbGncueUmr1iNMk/OjYm6u9wf45ppF89EymqbgN7hh39F4v39wy5wtp5h89ww+sKYE
-	MmKCZQqlyPf9jGxIT0VVNGkf/1QHLoHujdqZ2doKNuCPoWzQKoVO3ttJth+H0rwCSp/Dw9UwzI3
-	aIdcz+/JqWXE9NeoLpUBIkmKBR
-X-Google-Smtp-Source: AGHT+IGFo/Sv81tvQjD58rJ+dQxi5hq9JKqVQ6plnq2gJfUDvHXejgBD63df7MTBLJWwFZOZepeeSlaXpQl3pvnMZbY=
-X-Received: by 2002:a05:6402:4309:b0:5e4:d52b:78a2 with SMTP id
- 4fb4d7f45d1cf-5e584f51077mr5077232a12.15.1741132188550; Tue, 04 Mar 2025
- 15:49:48 -0800 (PST)
+	s=arc-20240116; t=1741132367; c=relaxed/simple;
+	bh=GzAWcRX8mnhoy6yRVM2yOlxSf1S1oVBL6EeNjpBBZXg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YjGocBPxpAG8rOqyC6jwNmWKW6awpIvjaaWbRjf1uJwpgwEt034jVK9VngWpqyvHDdzIKDF5Hynsx102LjK3fvNK3JDWmChi+hiGfe6wJYHhJSZNqAB1StLqcE+DQuD2riWAmASaIexNkhyHhk7c2SfMSxHSuCz1CYlMRWKiHus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=4sw8nYkh; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4Z6stj0T4SzlgrvY;
+	Tue,  4 Mar 2025 23:52:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1741132359; x=1743724360; bh=GMUyDP6N1T2OZYC0PjNUXiLu
+	v++Na4Olt6GZl9AIPwU=; b=4sw8nYkhaUEoGORzhJxVvAjHU1kyb2RGNRxtDfQw
+	c+G7yier0o5K0TbZh73+BUqMRzG397oIgrZTzi0NmPRT96cSuBn4yKGGihJQp3BF
+	tKPlSFgLHNERJ53xf9piyxjULnOXdrbJgMDbCTu+/JoBDxNfs9L5WavRIfQ5VLWU
+	a6HM5S1iFwFXqwgn2f9s98tdd3GRKkHHcTu94WJVQJguR77pEkSwuh0lsD6kuz8T
+	CEMVlwLJOjwbc5F52M0pQ8SKtnAX5qYTjGvxj9wS9xF5Jfuq6pN83z3fOIYe2aAN
+	I/8Pqi23m9B/8+ScDhKPflojL8YU8I0FetyfvYvWIlf42g==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id f2biFBQdsyo0; Tue,  4 Mar 2025 23:52:39 +0000 (UTC)
+Received: from [172.20.1.83] (unknown [192.80.0.138])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4Z6st14hQLzlgrtN;
+	Tue,  4 Mar 2025 23:52:08 +0000 (UTC)
+Message-ID: <41a14b09-9f09-4abe-8caa-89cfe2687562@acm.org>
+Date: Tue, 4 Mar 2025 15:52:07 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250123190747.745588-1-brgerst@gmail.com> <20250123190747.745588-5-brgerst@gmail.com>
- <tns2rrzk7vs3linnjevr24qyg4sm6hakndsgqvqsowqwwlrdcj@zus5wu6u3ju3> <56A91DC4-1A8C-4134-976E-BBCBF9BC784F@zytor.com>
-In-Reply-To: <56A91DC4-1A8C-4134-976E-BBCBF9BC784F@zytor.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 5 Mar 2025 00:49:36 +0100
-X-Gm-Features: AQ5f1Jr2g0eVXvOjRYArMqCEjJGFae3onDkhLpqPm8pnj09is18RjkzduriLMpI
-Message-ID: <CAGudoHEQbBEbjXKfPR6+ktxj5GzBpQ+CjMXi+G7wqR-UQmW9Fw@mail.gmail.com>
-Subject: Re: [PATCH v6 04/15] x86/pvh: Use fixed_percpu_data for early boot GSBASE
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Brian Gerst <brgerst@gmail.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
-	Ard Biesheuvel <ardb@kernel.org>, Uros Bizjak <ubizjak@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 03/34] compiler-capability-analysis: Add test stub
+To: Marco Elver <elver@google.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+ "Paul E. McKenney" <paulmck@kernel.org>,
+ Alexander Potapenko <glider@google.com>, Arnd Bergmann <arnd@arndb.de>,
+ Bill Wendling <morbo@google.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Dmitry Vyukov <dvyukov@google.com>, Eric Dumazet <edumazet@google.com>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Herbert Xu <herbert@gondor.apana.org.au>, Ingo Molnar <mingo@kernel.org>,
+ Jann Horn <jannh@google.com>, Jiri Slaby <jirislaby@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>, Jonathan Corbet <corbet@lwn.net>,
+ Josh Triplett <josh@joshtriplett.org>, Justin Stitt
+ <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
+ Kentaro Takeda <takedakn@nttdata.co.jp>, Mark Rutland
+ <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+ Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>,
+ Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+ Thomas Gleixner <tglx@linutronix.de>, Uladzislau Rezki <urezki@gmail.com>,
+ Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
+ kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev, rcu@vger.kernel.org, linux-crypto@vger.kernel.org,
+ linux-serial@vger.kernel.org
+References: <20250304092417.2873893-1-elver@google.com>
+ <20250304092417.2873893-4-elver@google.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250304092417.2873893-4-elver@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Mar 5, 2025 at 12:45=E2=80=AFAM H. Peter Anvin <hpa@zytor.com> wrot=
-e:
->
-> On March 4, 2025 2:26:20 PM PST, Mateusz Guzik <mjguzik@gmail.com> wrote:
-> >On Thu, Jan 23, 2025 at 02:07:36PM -0500, Brian Gerst wrote:
-> >> Instead of having a private area for the stack canary, use
-> >> fixed_percpu_data for GSBASE like the native kernel.
-> >>
-> >> Signed-off-by: Brian Gerst <brgerst@gmail.com>
-> >> Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
-> >> ---
-> >>  arch/x86/platform/pvh/head.S | 15 +++++++++------
-> >>  1 file changed, 9 insertions(+), 6 deletions(-)
-> >>
-> >> diff --git a/arch/x86/platform/pvh/head.S b/arch/x86/platform/pvh/head=
-.S
-> >> index 4733a5f467b8..fa0072e0ca43 100644
-> >> --- a/arch/x86/platform/pvh/head.S
-> >> +++ b/arch/x86/platform/pvh/head.S
-> >> @@ -173,10 +173,15 @@ SYM_CODE_START(pvh_start_xen)
-> >>  1:
-> >>      UNWIND_HINT_END_OF_STACK
-> >>
-> >> -    /* Set base address in stack canary descriptor. */
-> >> -    mov $MSR_GS_BASE,%ecx
-> >> -    leal canary(%rip), %eax
-> >> -    xor %edx, %edx
-> >> +    /*
-> >> +     * Set up GSBASE.
-> >> +     * Note that, on SMP, the boot cpu uses init data section until
-> >> +     * the per cpu areas are set up.
-> >> +     */
-> >> +    movl $MSR_GS_BASE,%ecx
-> >> +    leaq INIT_PER_CPU_VAR(fixed_percpu_data)(%rip), %rdx
-> >> +    movq %edx, %eax
-> >
-> >       movl
-> >
-> >I'm bisecting perf breakage and landing on this commit breaks the build.
->
-> Breaks the build how?
+On 3/4/25 1:21 AM, Marco Elver wrote:
+> +#include <linux/build_bug.h>
+> +
+> +/*
+> + * Test that helper macros work as expected.
+> + */
+> +static void __used test_common_helpers(void)
+> +{
+> +	BUILD_BUG_ON(capability_unsafe(3) != 3); /* plain expression */
+> +	BUILD_BUG_ON(capability_unsafe((void)2; 3;) != 3); /* does not swallow semi-colon */
+> +	BUILD_BUG_ON(capability_unsafe((void)2, 3) != 3); /* does not swallow commas */
+> +	capability_unsafe(do { } while (0)); /* works with void statements */
+> +}
 
-  AS      arch/x86/platform/pvh/head.o
-arch/x86/platform/pvh/head.S: Assembler messages:
-arch/x86/platform/pvh/head.S:183: Error: incorrect register `%eax'
-used with `q' suffix
+Is it guaranteed that <linux/build_bug.h> includes the header file that
+defines capability_unsafe() or should that header file perhaps be
+included explicitly?
 
-Per the above, I presume it was meant to be a movl.
---=20
-Mateusz Guzik <mjguzik gmail.com>
+Thanks,
+
+Bart.
 
