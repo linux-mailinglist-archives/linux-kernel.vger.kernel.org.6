@@ -1,103 +1,89 @@
-Return-Path: <linux-kernel+bounces-543960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DD64A4DBD9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:07:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6832A4DBDA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:08:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30D407A3281
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:06:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44C2716567F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:08:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 823E91FF1A7;
-	Tue,  4 Mar 2025 11:07:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01FD21F3FC6;
+	Tue,  4 Mar 2025 11:08:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b="GBFpSHDl"
-Received: from gimli.kloenk.de (gimli.kloenk.de [49.12.72.200])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="dIY/tIcJ"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C46901FCF60;
-	Tue,  4 Mar 2025 11:07:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.72.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB32D1F76CA
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 11:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741086463; cv=none; b=d/eKV7dy4FFN6FGskje4fAxy1U+ABbn5B9/aIgl0T7ybkBWQlPHO+JCkBtjDGOBnNePts+n2D4WtSWgURmbEYUKeuwJG2IK0tGB2c73CwSNOLqZw5L2z+TA8X9HY03MLXH0fgaqbnbLxV4fX1jWrwZ/HfDs5V8BqI9raJnJ68b0=
+	t=1741086486; cv=none; b=GYYe/PDnf95LwJKVPNQi1tOF2eXDFqFwcy9tOsSNVRitupEiQvqZVVojLpRvHtnocw6CvUfEIhxUxfwcvhnbitj+VE0K1TLD2gia2P5UEiNriIWBE7oNDZ9u1Ge02EZAm7A7zYzIl/Eo47QrDzz7/TPN16SwcwyfitEbzcB+Tl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741086463; c=relaxed/simple;
-	bh=Du7MZsOIDKOjbNlXu3JaKpDxFRTp/orNDFob1H41r7g=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=TdUA6hjhbW692/9mXhqDJvmR8E42oIC5Qe4sRthf+uC3hb0bQkxfl2hGByDtRJ00oKQAU3O3eV9n+VR9nwOQzP0Xz1rC9WMPMHiTfvCfTHetilqSLVErOUEajaVqUA0PU6gvDc7Dv9IBUNq9B/tDTTLqmrgOczeLT+Zl+OP513Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev; spf=pass smtp.mailfrom=kloenk.dev; dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b=GBFpSHDl; arc=none smtp.client-ip=49.12.72.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kloenk.dev
-From: Fiona Behrens <me@kloenk.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kloenk.dev; s=mail;
-	t=1741086451; bh=oONgIxzK+8/o9sj2P7jZLoDOLJDTkcQZb3hUnWfl6o0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date;
-	b=GBFpSHDlAydUtZbG7niyZVHYfKk1RE4ABbCLC8z6ePratb2mJcWn3n9TILykbIc/K
-	 FU1XBlHDiuNqmkebnV4r8iZiR1ca6Exl3D5emEVuv48LGV/B1M+sqj4aJPwBf/DKbs
-	 GcnfjBssl2cvihZLjtj2NULV6LoITCCOt9POX59k=
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>,  Alex Gaynor <alex.gaynor@gmail.com>,
-  Boqun Feng <boqun.feng@gmail.com>,  Gary Guo <gary@garyguo.net>,
-  =?utf-8?Q?Bj=C3=B6rn?=
- Roy Baron <bjorn3_gh@protonmail.com>,  Benno Lossin
- <benno.lossin@proton.me>,  Alice Ryhl <aliceryhl@google.com>,  Masahiro
- Yamada <masahiroy@kernel.org>,  Nathan Chancellor <nathan@kernel.org>,
-  Nicolas Schier <nicolas@fjasle.eu>,  Luis Chamberlain
- <mcgrof@kernel.org>,  Trevor Gross <tmgross@umich.edu>,  Adam
- Bratschi-Kaye <ark.email@gmail.com>,  rust-for-linux@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  linux-kbuild@vger.kernel.org,  Petr Pavlu
- <petr.pavlu@suse.com>,  Sami Tolvanen <samitolvanen@google.com>,  Daniel
- Gomez <da.gomez@samsung.com>,  Simona Vetter <simona.vetter@ffwll.ch>,
-  Greg KH <gregkh@linuxfoundation.org>,  Daniel Almeida
- <daniel.almeida@collabora.com>,  linux-modules@vger.kernel.org
-Subject: Re: [PATCH v8 1/7] rust: str: implement `PartialEq` for `BStr`
-In-Reply-To: <20250227-module-params-v3-v8-1-ceeee85d9347@kernel.org> (Andreas
-	Hindborg's message of "Thu, 27 Feb 2025 15:38:07 +0100")
-References: <20250227-module-params-v3-v8-0-ceeee85d9347@kernel.org>
-	<20250227-module-params-v3-v8-1-ceeee85d9347@kernel.org>
-Date: Tue, 04 Mar 2025 12:07:29 +0100
-Message-ID: <m2o6yhjbpq.fsf@kloenk.dev>
+	s=arc-20240116; t=1741086486; c=relaxed/simple;
+	bh=h1r0EJAwdE5SF6M1FD+XQ0W/N3IZkFVXUmHO+s9yT1U=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=CzWmypjjHIv7KombLbxmmNDjuoc6lm4y5PWSVSe559pJQv2tUKTxtY41eSCe8lP6yIGMOlUR/ndWBeUC6Cibcts8aWwDmppgeYSr0+gZFC4rLthrdaq0o+ya2gSaOFJVm+0pL6WOZs3bUz+jT4/7y7GbkuxUk6X5QnGdoC7AJy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=dIY/tIcJ; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 9D67A42FF1;
+	Tue,  4 Mar 2025 11:08:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741086482;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x8PHBPyVcVGACAsLJJbh1k3kLjnnIG01sREfq4tZ7nE=;
+	b=dIY/tIcJd7TrWrVoAtPaqW5eJaAlepxXeIILc5whI078rHRl+YK93K4gGxkCIUq83ture0
+	mkAqE+ev3l3itIxUqXyCAkRovqY+87wGR2Acu5NkoZlQrCUepexmi49tonh/8pP33D+sKS
+	gdrxWCCigw9qnIKsMxwscZeJqkxbfTNxt2UgwcSUPQZyMrIGn9zV3znj6JulTojupPd8gf
+	HD+MUtKNrXoD0+Ta1miaS7SLyHdxBiFIulWFDUZetT6Ubp4uty/2QwOQgIxDXNcexDS0xl
+	SphfiC29r/gkQUmxy04gxIo1LfniOBcAFq6d26HCLQZiZfElxMKlHS4NdWkF+Q==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: richard@nod.at, vigneshr@ti.com, Wentao Liang <vulab@iscas.ac.cn>
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250303145223.1748-1-vulab@iscas.ac.cn>
+References: <20250303145223.1748-1-vulab@iscas.ac.cn>
+Subject: Re: [PATCH] mtd: Fix error handling in mtd_device_parse_register()
+ error path
+Message-Id: <174108648055.2291907.15045418587875568653.b4-ty@bootlin.com>
+Date: Tue, 04 Mar 2025 12:08:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev
+X-GND-State: clean
+X-GND-Score: 0
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutddukeejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecunecujfgurhephffvvegjfhfukfffgggtgffosehtkeertdertdejnecuhfhrohhmpefoihhquhgvlhcutfgrhihnrghluceomhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepheeifffhueelgfdtleetgfelvefggfehudelvdehuddulefgheelgfehieevvdegnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludelvddrudeikedrgedvrdegiegnpdhmrghilhhfrhhomhepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohephedprhgtphhtthhopehvihhgnhgvshhhrhesthhirdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhitghhrghrugesnhhougdrrghtpdhrtghpthhtohepvhhulhgrsgesihhstggrshdrrggtrdgtnhdprhgtphhtthhopehlihhnuhigqdhmthgusehlihhsthhsrdhinhhfrhgruggvrggurdhorhhg
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-Andreas Hindborg <a.hindborg@kernel.org> writes:
+On Mon, 03 Mar 2025 22:52:23 +0800, Wentao Liang wrote:
+> Check and log del_mtd_device() failures. Print an error message
+> with pr_err() to prevent silent failures, but preserve the original
+> error code instead of propagating the secondary error since
+> del_mtd_device() is already in an error handling path.
+> 
+> 
 
-> Implement `PartialEq` for `BStr` by comparing underlying byte slices.
->
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Reviewed-by: Gary Guo <gary@garyguo.net>
-> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
-> Tested-by: Daniel Almeida <daniel.almeida@collabora.com>
-> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+Applied to mtd/next, thanks!
 
-Reviewed-by: Fiona Behrens <me@kloenk.dev>
+[1/1] mtd: Fix error handling in mtd_device_parse_register() error path
+      commit: 2a6a44555f0727070643fdde7ffac6571e41327a
 
-> ---
->  rust/kernel/str.rs | 6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
-> index 28e2201604d6..002dcddf7c76 100644
-> --- a/rust/kernel/str.rs
-> +++ b/rust/kernel/str.rs
-> @@ -108,6 +108,12 @@ fn deref(&self) -> &Self::Target {
->      }
->  }
->  
-> +impl PartialEq for BStr {
-> +    fn eq(&self, other: &Self) -> bool {
-> +        self.deref().eq(other.deref())
-> +    }
-> +}
-> +
->  /// Creates a new [`BStr`] from a string literal.
->  ///
->  /// `b_str!` converts the supplied string literal to byte string, so non-ASCII
+Patche(s) should be available on mtd/linux.git and will be
+part of the next PR (provided that no robot complains by then).
+
+Kind regards,
+Miquèl
+
 
