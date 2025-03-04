@@ -1,148 +1,112 @@
-Return-Path: <linux-kernel+bounces-544423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F421A4E152
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:41:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 659BAA4DEA4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:06:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E5F53BD9B4
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:29:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AD301899A6F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:06:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CAA4212FAB;
-	Tue,  4 Mar 2025 14:28:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1FDA2045BD;
+	Tue,  4 Mar 2025 13:05:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="yWADDRKw"
-Received: from beeline3.cc.itu.edu.tr (beeline3.cc.itu.edu.tr [160.75.25.117])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nIDq6pa8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01EE620A5C4
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:28:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=160.75.25.117
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741098489; cv=pass; b=A0hSH9t/vm4QSxsKI1FnLryMnp9nozKAhKv6Dusq82FKQRhB9fhvXZak9ans6UEVUrbHXLOw15G/wEX6FHbdw/xIm5rhWf3/SUG9RealMgvxtsMlLRqgbKCntvYqP9aD1QsS1CJnmdqhF21w92Sr+cJm+fD5yzwSHhpoPW+2uwM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741098489; c=relaxed/simple;
-	bh=Bz1lkAIfe6XJhf3eq5SVjSBSproAa10eY3/wDj27F2w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jsFaVFGYmLSpw+sqYDJ9fdPMdC5jbiuvJLzN0Hyl9nASLUfcE5JCUaqvorhxtS9G/+yJCXs53A2d2ZYeeKRX4hbFRUXQePFJE4+Y7UD0sFgm7mP44cIykYg9R8GouaFx+my8wcuLnf8fzgOBdUrYkH7OvVDJ/f6Uy/tskbCOWIQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=yWADDRKw; arc=none smtp.client-ip=198.137.202.133; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; arc=pass smtp.client-ip=160.75.25.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
-Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
-	(No client certificate requested)
-	by beeline3.cc.itu.edu.tr (Postfix) with ESMTPS id 4D15A40CEC80
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:28:06 +0300 (+03)
-X-Envelope-From: <root@cc.itu.edu.tr>
-Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dJz6fjZzFwfK
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:26:11 +0300 (+03)
-Received: by le1 (Postfix, from userid 0)
-	id EFB6042756; Tue,  4 Mar 2025 17:26:04 +0300 (+03)
-Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=yWADDRKw
-X-Envelope-From: <linux-kernel+bounces-541884-bozkiru=itu.edu.tr@vger.kernel.org>
-Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=yWADDRKw
-Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id 1197B41AE7
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 17:09:50 +0300 (+03)
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id 9AC3C2DCDE
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 17:09:49 +0300 (+03)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B37713A9CC1
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:09:08 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFD612139CE;
-	Mon,  3 Mar 2025 14:09:07 +0000 (UTC)
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12E4C13C816;
-	Mon,  3 Mar 2025 14:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2A720459C;
+	Tue,  4 Mar 2025 13:05:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741010945; cv=none; b=pFvCipalJp2tkXPBgcXg/4zfwNSwbWpMhA3KxAST5p2y0KXjQUtubtsNAO0vQ6l/nKUigqtvcl+0CRc3WwyBBQEzzqyfiG8x45GQeXRPHFE3o/wiBqxpS/VU4L7nVQXv6y7Nhkh1KcU2b8CwH0wmNQyfsggQIbF3xXUf77JlZMs=
+	t=1741093540; cv=none; b=gAeDsJfdT7dxfT5kw0NOb0FUa2eyCMsMfYaq0HiQRNm6JLAYgDPlXfSN2Itw/JZesJATty/1Ife1L+fVpWLjgspP2N7Ub4aSCzjhZ7HEA5Y6KeYVsGO+zGBHqvrM/ieZeoUwNbC40pwpbaS+E0Ajol4GOIqqXO8Uc7JFbH7FYW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741010945; c=relaxed/simple;
-	bh=Bz1lkAIfe6XJhf3eq5SVjSBSproAa10eY3/wDj27F2w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z7hXsMQO6SBP1bEAnvmWUDa6NVJA8pDCuAhDrTl5zUZCgDJrK64pBGXjE+h2taHFhFjjKrbRv41UUH3cgxR4936udKJRkd/+kYAL3UM+p80xcWRhBgrOe3nggc31yKB7oiPDCz4ayxEBBv9sb1+DdFA9sjWJ9MNC21gorNnkK80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=yWADDRKw; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=da6DZJIEZngOU636aAML7UreXiQIbQlvEAqAV9JlA8Q=; b=yWADDRKwjkLdCq/W/PQvaik30N
-	0WruLQPGjrswfXxDKwxx+1WQMUfx750OQAM24RECp2kOZAgjevytteVQNn6PqpP6PzdEr/9U6QUag
-	vyXBq7/jum9t2mJcqHLd/9LNFAFluSZRdJobILmJEl4zK83osoYeKSi39U77Qns7TxoZy1an00tYG
-	Zfdw/l3rd48uH+2izKyhVKLaHpE1zN+463MrOqLdWHqZwZmt6FEJxtFR3gACrbktm/mV2tKxoqRmb
-	HXr3zbkSOn3EExsPDiUAD3ff6bvEwSB87pfzvqHNQxZXyzzqHxeP2RGHJ0PjReJnvraPYRPSnhJbm
-	u7ADZJQA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tp6TY-000000011yk-1M1Z;
-	Mon, 03 Mar 2025 14:08:56 +0000
-Date: Mon, 3 Mar 2025 06:08:56 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Jinliang Zheng <alexjlzheng@gmail.com>
-Cc: cem@kernel.org, djwong@kernel.org, dchinner@redhat.com,
-	alexjlzheng@tencent.com, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] xfs: don't allow log recover IO to be throttled
-Message-ID: <Z8W3-Jni2k_MqmZs@infradead.org>
-References: <20250303112301.766938-1-alexjlzheng@tencent.com>
-Precedence: bulk
+	s=arc-20240116; t=1741093540; c=relaxed/simple;
+	bh=/hYyrQ2sE0sxso9ZZN/O7DYTDmYaM4mWwlCH1iQvqws=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=QHzmZQsRX4YwkALhBX5SiAYzgVyhrGz56ECLf9fEpTkWQQOA7vW52bdLE4nSKWoJErvaN5KVQ+eMo1nQaeKqj10AI6GugMz/xntXT3esTp9he1SLUY0tgJMtJKrSbgQXvahBteuyWyXYUDc6AWOUSzZn+g1sPf1eLdtXSjg1PB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nIDq6pa8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 074A3C4CEEB;
+	Tue,  4 Mar 2025 13:05:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741093539;
+	bh=/hYyrQ2sE0sxso9ZZN/O7DYTDmYaM4mWwlCH1iQvqws=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=nIDq6pa8MRk0px2SVcAOx9n0irgTb92yYTyl22RmnidnY8CCSTF80e+j0Q4TYAznq
+	 0DgKmkqzDP8mxxYNm6sel3GfCe1NreOrUgbryMvkUz/Hx10N3Hnv7syRwXyrD1OtAd
+	 fFNMzNlNB39r+5/169v3WKyu3sYxrNkFJaST4e9BTmgavLDy/WleBdtnbwcuRP0gjv
+	 YFW6JNNAJF623ozF8gMtIhpHwjlctoHyoojANYT7SZLbPrUWkOvexz4ELIP+EIwmVT
+	 OKWSDwUiOTNvM3bBCx2Mne5Q1lwU5NaYh+i3sqfytVOVLc6MwbUoHoXxh7rUeReCo9
+	 YXnOedeMNZXVg==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Daniel Almeida" <daniel.almeida@collabora.com>
+Cc: "Christian Schrefl" <chrisi.schrefl@gmail.com>,  <ojeda@kernel.org>,
+  <alex.gaynor@gmail.com>,  <boqun.feng@gmail.com>,  <gary@garyguo.net>,
+  <bjorn3_gh@protonmail.com>,  <benno.lossin@proton.me>,
+  <tmgross@umich.edu>,  <rust-for-linux@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>,  "Alice Ryhl" <aliceryhl@google.com>
+Subject: Re: [PATCH v2] rust: irq: add support for request_irq()
+In-Reply-To: <30401DE8-53DA-4CF3-9D97-1511015BCD4D@collabora.com> (Daniel
+	Almeida's message of "Thu, 23 Jan 2025 13:27:35 -0300")
+References: <20250122163932.46697-1-daniel.almeida@collabora.com>
+	<8a2bac6e-1989-41d8-a5f6-3bb518a9f139@gmail.com>
+	<nq_iZCUO9wlw_7XpnwruhxrOfFrbYH67DXh28uk52uNdDzLayvIYZTMBCvKask7cZsNMwl61CATm40xjmeqTPA==@protonmail.internalid>
+	<30401DE8-53DA-4CF3-9D97-1511015BCD4D@collabora.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Tue, 04 Mar 2025 14:05:23 +0100
+Message-ID: <87o6yhgd4c.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250303112301.766938-1-alexjlzheng@tencent.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6dJz6fjZzFwfK
-X-ITU-Libra-ESVA: No virus found
-X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741703183.13623@Xsp8gOtWUMv75GezGAeCsg
-X-ITU-MailScanner-SpamCheck: not spam
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 03, 2025 at 07:23:01PM +0800, Jinliang Zheng wrote:
-> When recovering a large filesystem, avoid log recover IO being
-> throttled by rq_qos_throttle().
+"Daniel Almeida" <daniel.almeida@collabora.com> writes:
 
-Why?  Do you have numbers or a bug report?
+> Hi Christian,
+>
+>> On 23 Jan 2025, at 13:00, Christian Schrefl <chrisi.schrefl@gmail.com> w=
+rote:
+>>
+>> On 22.01.25 5:39 PM, Daniel Almeida wrote:
+>>> Add support for registering IRQ handlers in Rust.
 
-> diff --git a/fs/xfs/xfs_bio_io.c b/fs/xfs/xfs_bio_io.c
-> index fe21c76f75b8..259955f2aeb2 100644
-> --- a/fs/xfs/xfs_bio_io.c
-> +++ b/fs/xfs/xfs_bio_io.c
-> @@ -22,12 +22,15 @@ xfs_rw_bdev(
->  	unsigned int		left = count;
->  	int			error;
->  	struct bio		*bio;
-> +	blk_opf_t		opf = op | REQ_META | REQ_SYNC;
->  
->  	if (is_vmalloc && op == REQ_OP_WRITE)
->  		flush_kernel_vmap_range(data, count);
->  
-> -	bio = bio_alloc(bdev, bio_max_vecs(left), op | REQ_META | REQ_SYNC,
-> -			GFP_KERNEL);
-> +	if (op == REQ_OP_WRITE)
-> +		opf |= REQ_IDLE;
+[...]
 
-And there's really no need to do any games with the op here.  Do it in
-the caller and document why it's done there.
+>>> +/// The flags that can be used when registering an IRQ handler.
+>>> +pub mod flags {
+>>
+>> Maybe move flags into a separate file?
+>> You even have a directory for irq.
+>
+> Why? Most flags are defined in the same file. See alloc::flags, for examp=
+le.
+>
+> I am not against this, but since this is merely aesthetic in nature, we s=
+hould maybe
+> wait for input from more people.
+
+I would prefer them in another file as well. Not a hard requirement though.
+
+[...]
+
+>>> +///     // This will run (in a separate kthread) iff `handle_irq` retu=
+rns
+>> typo iff
+>
+> I mean the acronym for =E2=80=9Cif and only if=E2=80=9D.
+
+Since it is not immediately obvious to all readers, prefer "if and only
+if". I think we discussed this at pin-init patches a long while ago.
+
+
+Best regards,
+Andreas Hindborg
 
 
 
