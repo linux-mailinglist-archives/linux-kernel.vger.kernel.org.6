@@ -1,302 +1,180 @@
-Return-Path: <linux-kernel+bounces-544355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30CA1A4E054
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:12:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05D5DA4E058
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:12:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D0AA1793A3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:10:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E022C1799C1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:10:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B2E9206F1B;
-	Tue,  4 Mar 2025 14:08:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 145FB205AC7;
+	Tue,  4 Mar 2025 14:08:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WiSY7ixg";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="l4QxbnnT"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GY2Lystw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72317206F14
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:08:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F0717583;
+	Tue,  4 Mar 2025 14:08:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741097297; cv=none; b=tjrI1wDUupvrHZtZpVeN8i7Ge67wq5MIAqfE//POSsLEKhSnz0QNpth+J19jj1oahE/gGE5/BauCAQdu6zwLpJe9HD1bv/0FFNj8Yoa91Bf4GM3geoDw6ezPsr15fa22syD2aNVjOvWbhZ83FkPpsMqwkuLWD/SLymJc+EQldHQ=
+	t=1741097337; cv=none; b=fjMD/5JCQ5zp1qIobc+FdCHjLZ2D8pwrEGs5ae8EecDfBAvaB8DCWcg6hmVqgrB7HY+E4b1DqfVCyBgsV8rbZ56xBuy0HwlVs1LbSviZ5j37/0z+RUMdJi+vTw45ZdTG4YXS9O/H/MbxyTqjV76s/o3HU8THjucxeHj4mz1BJ6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741097297; c=relaxed/simple;
-	bh=E+xWwTR1Aqli+zBLMjHkAMyWovGIKrBuamaEmQ6Uun8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Yonho8RRi7bezoZXCQkxUAxJ/ka5yOF2NdbPgpGhSZuZLMFtr4dyr1pjxomhrcDv7jFEhbIN+Fo2RMA4LwG5NuB5tkPECGXAV1nKMs094PD6cGzauxNLVoJBt+9KEPJBy4TEppK/wQahTGtagBCLceLBCU760h4LbLh2a51WPoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WiSY7ixg; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=l4QxbnnT; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741097293;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=auTU3+uFQNm0dQ1wwFy4iWqBlKhStGiG/cF56W5BvSg=;
-	b=WiSY7ixgd7qFmx0CNimT82B2gnUyIlI27nBQnQ1wo+gIJDzZovxMeKungdpkSqkSp8PEwG
-	sLe/0q1iS1xihz1s38VQ/0Jct2UnMNvl5uUFlSidCGgPZkmECcyankeXf97z89Vd/Yf4k0
-	b10jp4hdWP6tZLXwfPewX54/eO8lsnHbL71FI1Ke3NiBQZ5u0cHdubmxTwLdMmdkQCu3ef
-	Y2xuWcwuvx0UXAUo0W/htA+dLDQy4EAWWZK74EPCwGMoodC9lW2/mlrU2VzDXHojrCZKFy
-	bHaBpDJXeaOwbS6Qq3G69gcXw0TZDs0l1rQV3vKfF8q6lK3gT73jkzq41/446Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741097293;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=auTU3+uFQNm0dQ1wwFy4iWqBlKhStGiG/cF56W5BvSg=;
-	b=l4QxbnnT1zNyWdk+9uM4v+kXI3Zp8oSsU9u8A97gmJ/Ji8YpxeDnoQauzvFahBv8KXHM/c
-	ZwU11hr0nbKwAgCg==
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker
- <frederic@kernel.org>, Benjamin Segall <bsegall@google.com>, Eric Dumazet
- <edumazet@google.com>, Andrey Vagin <avagin@openvz.org>, Pavel Tikhomirov
- <ptikhomirov@virtuozzo.com>, Peter Zijlstra <peterz@infradead.org>
-Subject: [patch V2a 09/17] posix-timers: Make lock_timer() use guard()
-In-Reply-To: <20250302193627.480949005@linutronix.de>
-References: <20250302185753.311903554@linutronix.de>
- <20250302193627.480949005@linutronix.de>
-Date: Tue, 04 Mar 2025 15:08:13 +0100
-Message-ID: <875xko7usy.ffs@tglx>
+	s=arc-20240116; t=1741097337; c=relaxed/simple;
+	bh=FFaXfiYouNPiW/BtNV6Qmzgm6qPvTQ+bB7wLiJRdIcQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qC39boMv4TvCJTfxsj9m+lcHF0uk1mjHpAeH1C14fxnl3f1wZ4wqa94BOUcYcR0vT56Oo105fLeI4RyhcJyqV1pFtfSPEJJALRil+js5J9J6fvBOdL0/9j1ZS4YNHkGskM3A1FfyQMLKT8jSpZ5lZlakWhabei6lP0lukw0f2ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GY2Lystw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8050C4CEEC;
+	Tue,  4 Mar 2025 14:08:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741097336;
+	bh=FFaXfiYouNPiW/BtNV6Qmzgm6qPvTQ+bB7wLiJRdIcQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=GY2LystwnorpL8dP/sFJRQx6aUFNOrPHQ/UoDO677cvDGMM5WldzYt2wer6itlpAB
+	 Q7FDeOgxBbl5emPjpQVxDGm/VJU3uKySNjC0UrITeSK5tiM9v3qCsFBxi94Ac60jJo
+	 1BvXASdqHL+KeGOBi0xUQqQX2RG7zw1ONcAwtMF9yNsU+fEEWw9nzlPKWxiQkRoDTD
+	 uQ3wGTysxcyRF18FGa8tGc0eo1H950nJrhAkZf8trsBnVsmNGqadBoxdBlzv8Da3TZ
+	 ihklEBs7UBlzteGPYHWt/5Lzz/uJeVaJux3Un4SnutiPCYUl4KbucqwLGieTgquGEh
+	 tJehGnP8xJ7iA==
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-72a0c41e049so1254421a34.2;
+        Tue, 04 Mar 2025 06:08:56 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUWr+O9BKL/9vyxMu/Ty9BvSO8rSk4cYXUG+CvPKRoueQbt7kXTWjkCJp+2asg+E88cROG/6ZemCFfAJrCV@vger.kernel.org, AJvYcCUaFFgufImhzkFwhPf8qjnCBqFg0N1lhv9pYXP9xIAxm4WavZMmPJsMUEEfHH+DXvwGbIjN/9tL7+2N66899Khwl+2zTA==@vger.kernel.org, AJvYcCXRaa05ppqG5m9BxIpgxE7+sCmub+e8rm/wn8GLAJMqazVl039y+ZhDTgG8+6GmDHFfEr8VVsE26De0@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPye+Ii+50UTuVINihHwUGoLQ0h/I/+vE4dEB/LJTVIBASCd2U
+	eIUPTT28jKYiGQwEi4S7J+vtqYu+9VF/Zgxwk9HSQX7bTD3A+0VRUcTQzzDzjnePY0CuWAWNA9l
+	1EMdXQkhD8Ff9arct3KrpUXolViM=
+X-Google-Smtp-Source: AGHT+IHxUPi7QDl9YORcAoX5Q4QPTAef7rjqM9Z9bAU/V4Qg+QA43MqYaCMOwQlJ1psX0BhpUmLxGp/mzB/Npid83pI=
+X-Received: by 2002:a05:6830:6c8c:b0:72a:10ec:35f7 with SMTP id
+ 46e09a7af769-72a10ec36b0mr2511201a34.13.1741097335957; Tue, 04 Mar 2025
+ 06:08:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250304064745.1073770-1-superm1@kernel.org> <20250304064745.1073770-2-superm1@kernel.org>
+ <CAGwozwHniWGQ7qK6FYD_WK5zNjkro7-Q1nTcFPAuWDt9UQ+noA@mail.gmail.com> <23d6c735-e94f-4d43-87b0-ff119941fcac@kernel.org>
+In-Reply-To: <23d6c735-e94f-4d43-87b0-ff119941fcac@kernel.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 4 Mar 2025 15:08:44 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0geaYYRQm0Hs2M4ak_8AZoWLJS-v0jqyrsaVjmXk267rA@mail.gmail.com>
+X-Gm-Features: AQ5f1Jo_wCJPyQkVLSUxNxTbB9yN8I8me4jy7lvSe9m6OVWdW4gx6lKckEx-g40
+Message-ID: <CAJZ5v0geaYYRQm0Hs2M4ak_8AZoWLJS-v0jqyrsaVjmXk267rA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] ACPI: platform_profile: Treat quiet and low power
+ the same
+To: Mario Limonciello <superm1@kernel.org>
+Cc: Antheas Kapenekakis <lkml@antheas.dev>, Kurt Borja <kuurtb@gmail.com>, 
+	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, "Rafael J . Wysocki" <rafael@kernel.org>, 
+	Hans de Goede <hdegoede@redhat.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	"Luke D . Jones" <luke@ljones.dev>, Mark Pearson <mpearson-lenovo@squebb.ca>, 
+	"open list:AMD PMF DRIVER" <platform-driver-x86@vger.kernel.org>, 
+	open list <linux-kernel@vger.kernel.org>, 
+	"open list:ACPI" <linux-acpi@vger.kernel.org>, "Derek J . Clark" <derekjohn.clark@gmail.com>, 
+	me@kylegospodneti.ch, Denis Benato <benato.denis96@gmail.com>, 
+	Mario Limonciello <mario.limonciello@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Mar 4, 2025 at 1:49=E2=80=AFPM Mario Limonciello <superm1@kernel.or=
+g> wrote:
+>
+> On 3/4/25 02:38, Antheas Kapenekakis wrote:
+> > On Tue, 4 Mar 2025 at 07:48, Mario Limonciello <superm1@kernel.org> wro=
+te:
+> >>
+> >> From: Mario Limonciello <mario.limonciello@amd.com>
+> >>
+> >> When two drivers don't support all the same profiles the legacy interf=
+ace
+> >> only exports the common profiles.
+> >>
+> >> This causes problems for cases where one driver uses low-power but ano=
+ther
+> >> uses quiet because the result is that neither is exported to sysfs.
+> >>
+> >> If one platform profile handler supports quiet and the other
+> >> supports low power treat them as the same for the purpose of
+> >> the sysfs interface.
+> >>
+> >> Fixes: 688834743d67 ("ACPI: platform_profile: Allow multiple handlers"=
+)
+> >> Reported-by: Antheas Kapenekakis <lkml@antheas.dev>
+> >> Closes: https://lore.kernel.org/platform-driver-x86/e64b771e-3255-42ad=
+-9257-5b8fc6c24ac9@gmx.de/T/#mc068042dd29df36c16c8af92664860fc4763974b
+> >> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> >> ---
+> >>   drivers/acpi/platform_profile.c | 38 ++++++++++++++++++++++++++++++-=
+--
+> >>   1 file changed, 35 insertions(+), 3 deletions(-)
+> >>
+> >> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_p=
+rofile.c
+> >> index 2ad53cc6aae53..d9a7cc5891734 100644
+> >> --- a/drivers/acpi/platform_profile.c
+> >> +++ b/drivers/acpi/platform_profile.c
+> >> @@ -73,8 +73,20 @@ static int _store_class_profile(struct device *dev,=
+ void *data)
+> >>
+> >>          lockdep_assert_held(&profile_lock);
+> >>          handler =3D to_pprof_handler(dev);
+> >> -       if (!test_bit(*bit, handler->choices))
+> >> -               return -EOPNOTSUPP;
+> >> +       if (!test_bit(*bit, handler->choices)) {
+> >> +               switch (*bit) {
+> >> +               case PLATFORM_PROFILE_QUIET:
+> >> +                       *bit =3D PLATFORM_PROFILE_LOW_POWER;
+> >> +                       break;
+> >> +               case PLATFORM_PROFILE_LOW_POWER:
+> >> +                       *bit =3D PLATFORM_PROFILE_QUIET;
+> >> +                       break;
+> >> +               default:
+> >> +                       return -EOPNOTSUPP;
+> >> +               }
+> >> +               if (!test_bit(*bit, handler->choices))
+> >> +                       return -EOPNOTSUPP;
+> >> +       }
+> >>
+> >>          return handler->ops->profile_set(dev, *bit);
+> >>   }
+> >> @@ -252,8 +264,16 @@ static int _aggregate_choices(struct device *dev,=
+ void *data)
+> >>          handler =3D to_pprof_handler(dev);
+> >>          if (test_bit(PLATFORM_PROFILE_LAST, aggregate))
+> >>                  bitmap_copy(aggregate, handler->choices, PLATFORM_PRO=
+FILE_LAST);
+> >> -       else
+> >> +       else {
+> >> +               /* treat quiet and low power the same for aggregation =
+purposes */
+> >> +               if (test_bit(PLATFORM_PROFILE_QUIET, handler->choices)=
+ &&
+> >> +                   test_bit(PLATFORM_PROFILE_LOW_POWER, aggregate))
+> >> +                       set_bit(PLATFORM_PROFILE_QUIET, aggregate);
+> >> +               else if (test_bit(PLATFORM_PROFILE_LOW_POWER, handler-=
+>choices) &&
+> >> +                        test_bit(PLATFORM_PROFILE_QUIET, aggregate))
+> >> +                       set_bit(PLATFORM_PROFILE_LOW_POWER, aggregate)=
+;
+> >>                  bitmap_and(aggregate, handler->choices, aggregate, PL=
+ATFORM_PROFILE_LAST);
+> >> +       }
+> >
+> > So you end up showing both? If that's the case, isn't it equivalent to
+> > just make amd-pmf show both quiet and low-power?
+> >
+> > I guess it is not ideal for framework devices. But if asus devices end
+> > up showing both, then it should be ok for framework devices to show
+> > both.
+> >
+> > I like the behavior of the V1 personally.
+>
+> No; this doesn't cause it to show both.  It only causes one to show up.
 
-From: Peter Zijlstra <peterz@infradead.org>
+Which may not be the one that was shown before IIUC and that's not good.
 
-The lookup and locking of posix timers requires the same repeating pattern
-at all usage sites:
-
-   tmr = lock_timer(tiner_id);
-   if (!tmr)
-   	return -EINVAL;
-   ....
-   unlock_timer(tmr);
-
-Solve this with a guard implementation, which works in most places out of
-the box except for those, which need to unlock the timer inside the guard
-scope.
-
-Though the only places where this matters are timer_delete() and
-timer_settime(). In both cases the timer pointer needs to be preserved
-across the end of the scope, which is solved by storing the pointer in a
-variable outside of the scope.
-
-timer_settime() also has to protect the timer with RCU before unlocking,
-which obviously can't use guard(rcu) before leaving the guard scope as that
-guard is cleaned up before the unlock. Solve this by providing the RCU
-protection open coded.
-
-[ tglx: Made it work and added change log ]
-
-Signed-off-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by-yet: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20250224162103.GD11590@noisy.programming.kicks-ass.net
----
-V2a: Make unlock conditional - 0day
-V2: New patch
----
- include/linux/cleanup.h    |   22 ++++++----
- kernel/time/posix-timers.c |   94 +++++++++++++++++----------------------------
- 2 files changed, 51 insertions(+), 65 deletions(-)
-
---- a/include/linux/cleanup.h
-+++ b/include/linux/cleanup.h
-@@ -291,11 +291,21 @@ static inline class_##_name##_t class_##
- #define __DEFINE_CLASS_IS_CONDITIONAL(_name, _is_cond)	\
- static __maybe_unused const bool class_##_name##_is_conditional = _is_cond
- 
--#define DEFINE_GUARD(_name, _type, _lock, _unlock) \
-+#define __DEFINE_GUARD_LOCK_PTR(_name, _exp) \
-+	static inline void * class_##_name##_lock_ptr(class_##_name##_t *_T) \
-+	{ return (void *)(__force unsigned long)*(_exp); }
-+
-+#define DEFINE_CLASS_IS_GUARD(_name) \
- 	__DEFINE_CLASS_IS_CONDITIONAL(_name, false); \
-+	__DEFINE_GUARD_LOCK_PTR(_name, _T)
-+
-+#define DEFINE_CLASS_IS_COND_GUARD(_name) \
-+	__DEFINE_CLASS_IS_CONDITIONAL(_name, true); \
-+	__DEFINE_GUARD_LOCK_PTR(_name, _T)
-+
-+#define DEFINE_GUARD(_name, _type, _lock, _unlock) \
- 	DEFINE_CLASS(_name, _type, if (_T) { _unlock; }, ({ _lock; _T; }), _type _T); \
--	static inline void * class_##_name##_lock_ptr(class_##_name##_t *_T) \
--	{ return (void *)(__force unsigned long)*_T; }
-+	DEFINE_CLASS_IS_GUARD(_name)
- 
- #define DEFINE_GUARD_COND(_name, _ext, _condlock) \
- 	__DEFINE_CLASS_IS_CONDITIONAL(_name##_ext, true); \
-@@ -375,11 +385,7 @@ static inline void class_##_name##_destr
- 	if (_T->lock) { _unlock; }					\
- }									\
- 									\
--static inline void *class_##_name##_lock_ptr(class_##_name##_t *_T)	\
--{									\
--	return (void *)(__force unsigned long)_T->lock;			\
--}
--
-+__DEFINE_GUARD_LOCK_PTR(_name, &_T->lock)
- 
- #define __DEFINE_LOCK_GUARD_1(_name, _type, _lock)			\
- static inline class_##_name##_t class_##_name##_constructor(_type *l)	\
---- a/kernel/time/posix-timers.c
-+++ b/kernel/time/posix-timers.c
-@@ -63,9 +63,18 @@ static struct k_itimer *__lock_timer(tim
- 
- static inline void unlock_timer(struct k_itimer *timr)
- {
--	spin_unlock_irq(&timr->it_lock);
-+	if (likely((timr)))
-+		spin_unlock_irq(&timr->it_lock);
- }
- 
-+#define scoped_timer_get_or_fail(_id)					\
-+	scoped_cond_guard(lock_timer, return -EINVAL, _id)
-+
-+#define scoped_timer				(scope)
-+
-+DEFINE_CLASS(lock_timer, struct k_itimer *, unlock_timer(_T), __lock_timer(id), timer_t id);
-+DEFINE_CLASS_IS_COND_GUARD(lock_timer);
-+
- static int hash(struct signal_struct *sig, unsigned int nr)
- {
- 	return hash_32(hash32_ptr(sig) ^ nr, HASH_BITS(posix_timers_hashtable));
-@@ -675,18 +684,10 @@ void common_timer_get(struct k_itimer *t
- 
- static int do_timer_gettime(timer_t timer_id,  struct itimerspec64 *setting)
- {
--	struct k_itimer *timr;
--	int ret = 0;
--
--	timr = lock_timer(timer_id);
--	if (!timr)
--		return -EINVAL;
--
- 	memset(setting, 0, sizeof(*setting));
--	timr->kclock->timer_get(timr, setting);
--
--	unlock_timer(timr);
--	return ret;
-+	scoped_timer_get_or_fail(timer_id)
-+		scoped_timer->kclock->timer_get(scoped_timer, setting);
-+	return 0;
- }
- 
- /* Get the time remaining on a POSIX.1b interval timer. */
-@@ -740,17 +741,8 @@ SYSCALL_DEFINE2(timer_gettime32, timer_t
-  */
- SYSCALL_DEFINE1(timer_getoverrun, timer_t, timer_id)
- {
--	struct k_itimer *timr;
--	int overrun;
--
--	timr = lock_timer(timer_id);
--	if (!timr)
--		return -EINVAL;
--
--	overrun = timer_overrun_to_int(timr);
--	unlock_timer(timr);
--
--	return overrun;
-+	scoped_timer_get_or_fail(timer_id)
-+		return timer_overrun_to_int(scoped_timer);
- }
- 
- static void common_hrtimer_arm(struct k_itimer *timr, ktime_t expires,
-@@ -868,12 +860,9 @@ int common_timer_set(struct k_itimer *ti
- 	return 0;
- }
- 
--static int do_timer_settime(timer_t timer_id, int tmr_flags,
--			    struct itimerspec64 *new_spec64,
-+static int do_timer_settime(timer_t timer_id, int tmr_flags, struct itimerspec64 *new_spec64,
- 			    struct itimerspec64 *old_spec64)
- {
--	int ret;
--
- 	if (!timespec64_valid(&new_spec64->it_interval) ||
- 	    !timespec64_valid(&new_spec64->it_value))
- 		return -EINVAL;
-@@ -881,36 +870,28 @@ static int do_timer_settime(timer_t time
- 	if (old_spec64)
- 		memset(old_spec64, 0, sizeof(*old_spec64));
- 
--	for (;;) {
--		struct k_itimer *timr = lock_timer(timer_id);
-+	for (; ; old_spec64 = NULL) {
-+		struct k_itimer *timr;
- 
--		if (!timr)
--			return -EINVAL;
-+		scoped_timer_get_or_fail(timer_id) {
-+			timr = scoped_timer;
- 
--		if (old_spec64)
--			old_spec64->it_interval = ktime_to_timespec64(timr->it_interval);
-+			if (old_spec64)
-+				old_spec64->it_interval = ktime_to_timespec64(timr->it_interval);
- 
--		/* Prevent signal delivery and rearming. */
--		timr->it_signal_seq++;
--
--		ret = timr->kclock->timer_set(timr, tmr_flags, new_spec64, old_spec64);
--		if (ret != TIMER_RETRY) {
--			unlock_timer(timr);
--			break;
--		}
-+			/* Prevent signal delivery and rearming. */
-+			timr->it_signal_seq++;
- 
--		/* Read the old time only once */
--		old_spec64 = NULL;
--		/* Protect the timer from being freed after the lock is dropped */
--		guard(rcu)();
--		unlock_timer(timr);
--		/*
--		 * timer_wait_running() might drop RCU read side protection
--		 * so the timer has to be looked up again!
--		 */
-+			int ret = timr->kclock->timer_set(timr, tmr_flags, new_spec64, old_spec64);
-+			if (ret != TIMER_RETRY)
-+				return ret;
-+
-+			/* Protect the timer from being freed when leaving the lock scope */
-+			rcu_read_lock();
-+		}
- 		timer_wait_running(timr);
-+		rcu_read_unlock();
- 	}
--	return ret;
- }
- 
- /* Set a POSIX.1b interval timer */
-@@ -1021,13 +1002,12 @@ static void posix_timer_delete(struct k_
- /* Delete a POSIX.1b interval timer. */
- SYSCALL_DEFINE1(timer_delete, timer_t, timer_id)
- {
--	struct k_itimer *timer = lock_timer(timer_id);
--
--	if (!timer)
--		return -EINVAL;
-+	struct k_itimer *timer;
- 
--	posix_timer_delete(timer);
--	unlock_timer(timer);
-+	scoped_timer_get_or_fail(timer_id) {
-+		timer = scoped_timer;
-+		posix_timer_delete(timer);
-+	}
- 	/* Remove it from the hash, which frees up the timer ID */
- 	posix_timer_unhash_and_free(timer);
- 	return 0;
+What actually is the problem with the previous version?
 
