@@ -1,351 +1,242 @@
-Return-Path: <linux-kernel+bounces-544529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70195A4E2DE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:21:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 368E7A4E24D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:06:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 839CC3B9C15
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:56:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E18816CA71
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:58:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA50F276D3B;
-	Tue,  4 Mar 2025 14:54:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32E4A27E1BA;
+	Tue,  4 Mar 2025 14:55:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tn2bxgIQ"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fde/bJwf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D694125FA13
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:54:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6463025FA2C;
+	Tue,  4 Mar 2025 14:55:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741100093; cv=none; b=nRUG8vFVawMkVCj/FjZFoulHGBTZFg/KK43S7KOwIbsDuiMFFQZyc6oIOprDHWNccHqRapgoH9AzVIegz85dwLsIjJKz3hNAHe77tqjEJ1JbJWUMEfwAetd7FeSVZdNzRd+qoCcRUeXL4e5CCx5IXQRFlZ9qWD0+plTdEWIdrjo=
+	t=1741100134; cv=none; b=HQjKGuJpWg9X3T6jOJ+cCQ+ousf4Izqi4RTF7k7qLxPR09lyzVwv65oMz555FvNdfy26u97ZUgoa6sx+FRB1/Yh6gR5QBbvFdtxHCE24KO6+gHVMho0VMkd6//ZuvP9dPCSqkj46QCfuyvT0UQJlIO9QK2sxYJs7cVgSsipXn9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741100093; c=relaxed/simple;
-	bh=8yHg5tBfBmtNyenEJkPq4eR/E4LeKV4kTBltstp7tKc=;
+	s=arc-20240116; t=1741100134; c=relaxed/simple;
+	bh=21/+tTReVZYvj3YaSc8NqoDvZVmfhekN36NcOLoxLwk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FY+QeTQIiqCZw4bw/KHGjT3Nb/Sd0+TQGtb0EjMNUluv2nU5Qh7xiox1ADWUr3tVUx0KP13JztJ/nLy+J922njZHvxtT1uj4K+fzrwVykTx0hQLsa/AnI637AJ3oXOJ6SajOvN+/UMRQ9qjSuUI2dSHA17rNuyHewE++i057gt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tn2bxgIQ; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43995b907cfso37151335e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 06:54:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741100090; x=1741704890; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=i74ylUYul443xP2JQWweLVkWow7t0ukLS/STJNyyPWA=;
-        b=Tn2bxgIQALmgv6TDgQH4PMMh0O0u9Oye54YrsUp1P2Ip/BgIRRDKkqZXOnuRh+mtWs
-         8Vsn8dP9sy8c2PA1Lb56zXejG/wrnoYPHvil41yBsojA6JlSfIOyfv4Kgklvv2lGlJfA
-         A87kXbLEIkpsrfrnCkmYE8HlMNesG9vr8cYEwtJcgGqevZ9gxXtQwcKsyisMsiuade2+
-         ePZZDdNwHGtOOsHRw3aXZjwrI+GWX9TqY5RFeHsP2buX14BogbnlaHf9Vfb//hN6JOBV
-         yhiABZsx8Fp+HZjX2g3AVhjCDKFCNYThcyLy/WRvor/SotYjZ2HlZym+7SCwiorrmjw7
-         IIWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741100090; x=1741704890;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=i74ylUYul443xP2JQWweLVkWow7t0ukLS/STJNyyPWA=;
-        b=lSaNPuhcc188IaHvN7N1xnzzoM8ZIiuzBpc0b3A0Pe3YsPtzr5N6ed1ma9yDDkyTpd
-         wOHb9wBa3AdoDSyV6S8TfLNQCmzpT1R/ZiJ21UH2fzHxa3m5Jjtde7Xv3lu98EDJBgOW
-         tdVJvft+qNolizaUkPyCEKRqCTS6QQvVyyMczeYCwSrzcco9WgEjwQLZmie6OOSvwYYW
-         0UqdidnhyBiMDSDGJ7GuvhsxTDa7FBtUXvGDg4tzdSEyDYkDhp9SXXaa1inHfmKaTcxy
-         z89KOmvRBq7Q4ztaJO7IClXxlbjewoE+3v9RHZ3EBSJblfGC9hb5PkZsmH3KuzaR1aBs
-         oriQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXeRy7j654QaPQ1TSerADZvouIhW6DotscwZdYJ+c19f1LuXEEIv64ViMpgkdUBd8bPEg6q4Q/yEvoUtps=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSB623fVpJux/4mvsEhKIWRlwWfC2GeaeqhucNiAno70wrnehJ
-	0T0/KfZ//WvROfsA3i2jgZWUK4umwbJobyximvplEVUyhWMmOZAR
-X-Gm-Gg: ASbGncs4kVO0PlbsWfqiQ5YCd2ZMXkix/PE1MnI+Dwg3upMVpLimemZC02jPTEW7s0r
-	4QXj1l6v18RBXVHYkliqOFh2Du2YmhI1QybQizj3zmHHmaTdKDlCbAHsX5MLLy85X61HYOBqbgO
-	3IgZch/ds/vAUEgr6Kwy5HSuKEhBRtjIaS6Du/Zo6vjvmktOn4Ip81zpk7Lmtcb/zl5Sds5A+R9
-	XhohSVlTS9mMUcwQvGsPs/OZJt9IxSP0LVGIrA+bBYvWN1cn41SU02DmSjqtt1m84BIOHlYGSoD
-	LIsp1xQ99plDHLfVg4XSjJHeuqJoTSM2nPFc/T40ORLd
-X-Google-Smtp-Source: AGHT+IFAEYC+yD2ohSsBl2DHWVS6qkCmJlXjLiKt8/TekXbuu8bmQNv7syDLOzq0161JH0zj+UkAzw==
-X-Received: by 2002:a05:600c:4693:b0:439:a1ad:6851 with SMTP id 5b1f17b1804b1-43ba675d773mr135841085e9.23.1741100089804;
-        Tue, 04 Mar 2025 06:54:49 -0800 (PST)
-Received: from fedora ([213.94.27.232])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e479596dsm17870059f8f.7.2025.03.04.06.54.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 06:54:49 -0800 (PST)
-Date: Tue, 4 Mar 2025 15:54:47 +0100
-From: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
-To: Louis Chauvet <louis.chauvet@bootlin.com>
-Cc: hamohammed.sa@gmail.com, simona@ffwll.ch, melissa.srw@gmail.com,
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	tzimmermann@suse.de, airlied@gmail.com,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 03/16] drm/vkms: Allow to configure multiple planes
- via configfs
-Message-ID: <Z8cUN8Q4L0VE-bVm@fedora>
-References: <20250225175936.7223-1-jose.exposito89@gmail.com>
- <20250225175936.7223-4-jose.exposito89@gmail.com>
- <52bc3f15-28da-4b40-917f-981f1f10d9b8@bootlin.com>
- <Z8VtPMzuZOYqjraQ@fedora>
- <e813ac5b-298c-4863-b0b6-e9ac7fec1da0@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nDiCdsqW9t/ZEr8DlEJboarYtfSxKlpsRVwdntLNH+HVMkw4w70LAhcxl7LStFVd5XS32+VUgWNMibMIz+Cttn9vp2DbNkhwuFErWVBCxs2xR6+1qtuAZzmcjziwG7dc/IP0imsDOqxpkHNEKMgMGDPc0rSRn9Bfi5CFg1cUdNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fde/bJwf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D395EC4CEE5;
+	Tue,  4 Mar 2025 14:55:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741100133;
+	bh=21/+tTReVZYvj3YaSc8NqoDvZVmfhekN36NcOLoxLwk=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=fde/bJwfid4Bvg9Rf1K+unyrTTS4ahPqPaVQaw+O4gR7RTjOtx0kHnb+w7XhwNI/0
+	 2uJzM4oX/4e811tBSQlgF+KA+VQjZpsVRfZQwbEQSfQEX6J0vF01yDmwt+dAg6XvSA
+	 cNIe+c5DcIFY1cgk5zn/c4dFhlQgSJyo80hrDtiHlQH1fw8bw4yhBNtijapcp6B4zK
+	 cTweeFAgoSbbJAvXmispCWHDG3muyms8yoEuQ+7qO4Xj2sW5AJbfFOFrbIoR/YemZF
+	 ntNuJmSlcG/rWGWgFTXsoh1WKKrRExceq+iZfsPojEf6iQiWt6dUtxC+lllxido3bQ
+	 dPNhqrHpanUkw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 70480CE12E4; Tue,  4 Mar 2025 06:55:33 -0800 (PST)
+Date: Tue, 4 Mar 2025 06:55:33 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>, linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>, RCU <rcu@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>,
+	stable@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Keith Busch <kbusch@kernel.org>
+Subject: Re: [PATCH v1 2/2] mm/slab/kvfree_rcu: Switch to WQ_MEM_RECLAIM wq
+Message-ID: <14b61981-35ae-4f87-8341-b8d484123e56@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250228121356.336871-1-urezki@gmail.com>
+ <20250228121356.336871-2-urezki@gmail.com>
+ <20250303160824.GA22541@joelnvbox>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e813ac5b-298c-4863-b0b6-e9ac7fec1da0@bootlin.com>
+In-Reply-To: <20250303160824.GA22541@joelnvbox>
 
-Hi Louis,
-
-On Mon, Mar 03, 2025 at 11:34:50AM +0100, Louis Chauvet wrote:
-> 
-> 
-> Le 03/03/2025 à 09:50, José Expósito a écrit :
-> > Hi Louis,
+On Mon, Mar 03, 2025 at 11:08:24AM -0500, Joel Fernandes wrote:
+> On Fri, Feb 28, 2025 at 01:13:56PM +0100, Uladzislau Rezki (Sony) wrote:
+> > Currently kvfree_rcu() APIs use a system workqueue which is
+> > "system_unbound_wq" to driver RCU machinery to reclaim a memory.
 > > 
-> > On Fri, Feb 28, 2025 at 03:43:25PM +0100, Louis Chauvet wrote:
-> > > 
-> > > 
-> > > Le 25/02/2025 à 18:59, José Expósito a écrit :
-> > > > Create a default subgroup at /config/vkms/planes to allow to create as
-> > > > many planes as required.
-> > > > 
-> > > > Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> > > > Co-developed-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> > > > Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> > > > Signed-off-by: José Expósito <jose.exposito89@gmail.com>
-> > > > [...]
-> > > > diff --git a/drivers/gpu/drm/vkms/vkms_configfs.c b/drivers/gpu/drm/vkms/vkms_configfs.c
-> > > > index 92512d52ddae..4f9d3341e6c0 100644
-> > > > --- a/drivers/gpu/drm/vkms/vkms_configfs.c
-> > > > +++ b/drivers/gpu/drm/vkms/vkms_configfs.c
-> > > > [...]
-> > > > +static void plane_release(struct config_item *item)
-> > > > +{
-> > > > +	struct vkms_configfs_plane *plane;
-> > > > +	struct mutex *lock;
-> > > > +
-> > > > +	plane = plane_item_to_vkms_configfs_plane(item);
-> > > > +	lock = &plane->dev->lock;
-> > > > +
-> > > > +	guard(mutex)(lock);
-> > > > +	vkms_config_destroy_plane(plane->config);
-> > > > +	kfree(plane);
-> > > > +}
-> > > 
-> > > I just found a flaw in our work: there is currently no way to forbid the
-> > > deletion of item/symlinks...
-> > > 
-> > > If you do:
-> > > 
-> > > modprobe vkms
-> > > cd /sys/kernel/config/vkms/
-> > > mkdir DEV
-> > > mkdir DEV/connectors/CON
-> > > mkdir DEV/planes/PLA
-> > > mkdir DEV/crtcs/CRT
-> > > mkdir DEV/encoders/ENC
-> > > ln -s DEV/crtcs/CRT DEV/planes/PLA/possible_crtcs/
-> > > ln -s DEV/crtcs/CRT DEV/encoders/ENC/possible_crtcs
-> > > ln -s DEV/encoders/ENC DEV/connectors/CON/possible_encoders
-> > > echo 1 > DEV/planes/PLA/type
-> > > tree
-> > > echo 1 > DEV/enabled
-> > > modetest -M vkms
-> > > => everything fine
-> > > 
-> > > rm DEV/connectors/CON/possible_encoders/ENC
-> > > rmdir DEV/connectors/CON
-> > > modetest -M vkms
-> > > => BUG: KASAN: slab-use-after-free
-
-I'm trying to reproduce this issue, but those commands don't show any BUG
-in dmesg. This is my Kasan .config:
-
-    CONFIG_HAVE_ARCH_KASAN=y
-    CONFIG_HAVE_ARCH_KASAN_VMALLOC=y
-    CONFIG_CC_HAS_KASAN_GENERIC=y
-    CONFIG_CC_HAS_KASAN_SW_TAGS=y
-    CONFIG_CC_HAS_WORKING_NOSANITIZE_ADDRESS=y
-    CONFIG_KASAN=y
-    CONFIG_CC_HAS_KASAN_MEMINTRINSIC_PREFIX=y
-    CONFIG_KASAN_GENERIC=y
-    # CONFIG_KASAN_OUTLINE is not set
-    CONFIG_KASAN_INLINE=y
-    CONFIG_KASAN_STACK=y
-    CONFIG_KASAN_VMALLOC=y
-    # CONFIG_KASAN_KUNIT_TEST is not set
-    CONFIG_KASAN_EXTRA_INFO=y
-
-I tryed to delete even more items:
-
-    root@kernel-dev:/sys/kernel/config/vkms# tree
-    .
-    └── DEV
-        ├── connectors
-        ├── crtcs
-        ├── enabled
-        ├── encoders
-        └── planes
-
-    root@kernel-dev:/sys/kernel/config/vkms# cat DEV/enabled 
-    1
-
-And I still don't see any errors. Is it possible that we are running different
-branches? Asking because of the failing IGT tests you reported. There seems to
-be a difference in our code or setup that is creating these differences.
-
-Best wishes,
-Jose
-
-> > > I see two solutions:
-> > > - we don't care and keep as is: if the device is enabled, and you delete
-> > > link/groups, it is your fault. As shown above: it can crash the kernel, so
-> > > it is a no-go.
+> > Recently, it has been noted that the following kernel warning can
+> > be observed:
 > > 
-> > I was aware of this limitation and, since the configfs is clear about
-> > deleting items: [1]
+> > <snip>
+> > workqueue: WQ_MEM_RECLAIM nvme-wq:nvme_scan_work is flushing !WQ_MEM_RECLAIM events_unbound:kfree_rcu_work
+> >   WARNING: CPU: 21 PID: 330 at kernel/workqueue.c:3719 check_flush_dependency+0x112/0x120
+> >   Modules linked in: intel_uncore_frequency(E) intel_uncore_frequency_common(E) skx_edac(E) ...
+> >   CPU: 21 UID: 0 PID: 330 Comm: kworker/u144:6 Tainted: G            E      6.13.2-0_g925d379822da #1
+> >   Hardware name: Wiwynn Twin Lakes MP/Twin Lakes Passive MP, BIOS YMM20 02/01/2023
+> >   Workqueue: nvme-wq nvme_scan_work
+> >   RIP: 0010:check_flush_dependency+0x112/0x120
+> >   Code: 05 9a 40 14 02 01 48 81 c6 c0 00 00 00 48 8b 50 18 48 81 c7 c0 00 00 00 48 89 f9 48 ...
+> >   RSP: 0018:ffffc90000df7bd8 EFLAGS: 00010082
+> >   RAX: 000000000000006a RBX: ffffffff81622390 RCX: 0000000000000027
+> >   RDX: 00000000fffeffff RSI: 000000000057ffa8 RDI: ffff88907f960c88
+> >   RBP: 0000000000000000 R08: ffffffff83068e50 R09: 000000000002fffd
+> >   R10: 0000000000000004 R11: 0000000000000000 R12: ffff8881001a4400
+> >   R13: 0000000000000000 R14: ffff88907f420fb8 R15: 0000000000000000
+> >   FS:  0000000000000000(0000) GS:ffff88907f940000(0000) knlGS:0000000000000000
+> >   CR2: 00007f60c3001000 CR3: 000000107d010005 CR4: 00000000007726f0
+> >   PKRU: 55555554
+> >   Call Trace:
+> >    <TASK>
+> >    ? __warn+0xa4/0x140
+> >    ? check_flush_dependency+0x112/0x120
+> >    ? report_bug+0xe1/0x140
+> >    ? check_flush_dependency+0x112/0x120
+> >    ? handle_bug+0x5e/0x90
+> >    ? exc_invalid_op+0x16/0x40
+> >    ? asm_exc_invalid_op+0x16/0x20
+> >    ? timer_recalc_next_expiry+0x190/0x190
+> >    ? check_flush_dependency+0x112/0x120
+> >    ? check_flush_dependency+0x112/0x120
+> >    __flush_work.llvm.1643880146586177030+0x174/0x2c0
+> >    flush_rcu_work+0x28/0x30
+> >    kvfree_rcu_barrier+0x12f/0x160
+> >    kmem_cache_destroy+0x18/0x120
+> >    bioset_exit+0x10c/0x150
+> >    disk_release.llvm.6740012984264378178+0x61/0xd0
+> >    device_release+0x4f/0x90
+> >    kobject_put+0x95/0x180
+> >    nvme_put_ns+0x23/0xc0
+> >    nvme_remove_invalid_namespaces+0xb3/0xd0
+> >    nvme_scan_work+0x342/0x490
+> >    process_scheduled_works+0x1a2/0x370
+> >    worker_thread+0x2ff/0x390
+> >    ? pwq_release_workfn+0x1e0/0x1e0
+> >    kthread+0xb1/0xe0
+> >    ? __kthread_parkme+0x70/0x70
+> >    ret_from_fork+0x30/0x40
+> >    ? __kthread_parkme+0x70/0x70
+> >    ret_from_fork_asm+0x11/0x20
+> >    </TASK>
+> >   ---[ end trace 0000000000000000 ]---
+> > <snip>
 > > 
-> >      Important:
-> >      drop_item() is void, and as such cannot fail. When rmdir(2) is called,
-> >      configfs WILL remove the item from the filesystem tree (assuming that
-> >      it has no children to keep it busy).
-> >      The subsystem is responsible for responding to this. [...]
-> 
-> Thanks for pointing out. I read it and I think you're right, they clearly
-> want the user space to be able to delete any item at any time.
-> 
-> > I decided to follow this approach, i.e., allowing the user to delete the items.
-> 
-> I think a simple fix would be to have something like that:
-> 
-> int device_enabled_store(...) {
-> 	if enabled == True:
-> 		for item in configfs_items:
-> 			configfs_get_item(item);
-> 		vkms_device_enable(...)
-> 	else:
-> 		vkms_device_disable(...)
-> 		for item in configfs_items:
-> 			configfs_put_item(item)
-> }
-> 
-> void device_release(...) {
-> 	if enable == True:
-> 		vkms_device_disable(...)
-> 		for item in configfs_items:
-> 			configfs_put_item(item)
-> }
-> 
-> This way:
-> - no change in VKMS code
-> - no ConfigFS change
-> - we never have use-after-free (at least in my head)
-> - we never "lose" a DRM device
-> 
-> I did not test it, there is maybe some issue in this implementation (the
-> "for item in configfs_items" may be a bit complex to write for example).
-> 
-> > However, that use-after-free is a bug I need to fix. I was wondering how I didn't
-> > catch it with IGT... Turns out, I didn't enable Kasan in my QEMU .config (ops!).
+> > To address this switch to use of independent WQ_MEM_RECLAIM
+> > workqueue, so the rules are not violated from workqueue framework
+> > point of view.
 > > 
-> > Do you agree on folowing this solution? If so, I'll send v3 fixing the memory
-> > issues.
-> 
-> Indeed yes! If possible, I would like to avoid "complex" refcount/mutex in
-> vkms_config structure, but if my proposition does not work, feel free to add
-> whatever you think relevant!
-> 
-> Thanks a lot,
-> Louis Chauvet
-> 
-> > Best wishes,
-> > Jose
+> > Apart of that, since kvfree_rcu() does reclaim memory it is worth
+> > to go with WQ_MEM_RECLAIM type of wq because it is designed for
+> > this purpose.
 > > 
-> > [1] https://docs.kernel.org/filesystems/configfs.html
-> > 
-> > > - we care and we don't want to touch configfs: we need to implement a kind
-> > > of refcount for all vkms_config elements. Issue: non-trivial work, may allow
-> > > memory leaks/use after free...
-> > > 
-> > > - we care and we want to touch configfs: see my two patches (they apply on
-> > > the v1 of this series). This solution allows adding a check before removing
-> > > configfs item/group/link. I found it cleaner and way easier to understand.
-> > > 
-> > > What do you think about my proposition? Do you have another idea?
-> > > 
-> > > > +static struct configfs_item_operations plane_item_operations = {
-> > > > +	.release	= &plane_release,
-> > > > +};
-> > > > +
-> > > > +static const struct config_item_type plane_item_type = {
-> > > > +	.ct_item_ops	= &plane_item_operations,
-> > > > +	.ct_owner	= THIS_MODULE,
-> > > > +};
-> > > > +
-> > > > +static struct config_group *make_plane_group(struct config_group *group,
-> > > > +					     const char *name)
-> > > > +{
-> > > > +	struct vkms_configfs_device *dev;
-> > > > +	struct vkms_configfs_plane *plane;
-> > > > +
-> > > > +	dev = child_group_to_vkms_configfs_device(group);
-> > > > +
-> > > > +	guard(mutex)(&dev->lock);
-> > > > +
-> > > > +	if (dev->enabled)
-> > > > +		return ERR_PTR(-EBUSY);
-> > > > +
-> > > > +	plane = kzalloc(sizeof(*plane), GFP_KERNEL);
-> > > > +	if (!plane)
-> > > > +		return ERR_PTR(-ENOMEM);
-> > > > +
-> > > > +	plane->dev = dev;
-> > > > +
-> > > > +	plane->config = vkms_config_create_plane(dev->config);
-> > > > +	if (IS_ERR(plane->config)) {
-> > > > +		kfree(plane);
-> > > > +		return ERR_CAST(plane->config);
-> > > > +	}
-> > > > +
-> > > > +	config_group_init_type_name(&plane->group, name, &plane_item_type);
-> > > > +
-> > > > +	return &plane->group;
-> > > > +}
-> > > > +
-> > > > +static struct configfs_group_operations planes_group_operations = {
-> > > > +	.make_group	= &make_plane_group,
-> > > > +};
-> > > > +
-> > > > +static const struct config_item_type plane_group_type = {
-> > > > +	.ct_group_ops	= &planes_group_operations,
-> > > > +	.ct_owner	= THIS_MODULE,
-> > > > +};
-> > > > +
-> > > >    static ssize_t device_enabled_show(struct config_item *item, char *page)
-> > > >    {
-> > > >    	struct vkms_configfs_device *dev;
-> > > > @@ -125,6 +208,10 @@ static struct config_group *make_device_group(struct config_group *group,
-> > > >    	config_group_init_type_name(&dev->group, name, &device_item_type);
-> > > >    	mutex_init(&dev->lock);
-> > > > +	config_group_init_type_name(&dev->planes_group, "planes",
-> > > > +				    &plane_group_type);
-> > > > +	configfs_add_default_group(&dev->planes_group, &dev->group);
-> > > > +
-> > > >    	return &dev->group;
-> > > >    }
-> > > 
-> > > -- 
-> > > Louis Chauvet, Bootlin
-> > > Embedded Linux and Kernel engineering
-> > > https://bootlin.com
-> > > 
+> > Cc: <stable@vger.kernel.org>
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Cc: Keith Busch <kbusch@kernel.org>
+> > Closes: https://www.spinics.net/lists/kernel/msg5563270.html
+> > Fixes: 6c6c47b063b5 ("mm, slab: call kvfree_rcu_barrier() from kmem_cache_destroy()"),
+> > Reported-by: Keith Busch <kbusch@kernel.org>
+> > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
 > 
-> -- 
-> Louis Chauvet, Bootlin
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
+> BTW, there is a path in RCU-tasks that involves queuing work on system_wq
+> which is !WQ_RECLAIM. While I don't anticipate an issue such as the one fixed
+> by this patch, I am wondering if we should move these to their own WQ_RECLAIM
+> queues for added robustness since otherwise that will result in CB invocation
+> (And thus memory freeing delays). Paul?
+
+For RCU Tasks, the memory traffic has been much lower.  But maybe someday
+someone will drop a million trampolines all at once.  But let's see that
+problem before we fix some random problem that we believe will happen,
+but which proves to be only slightly related to the problem that actually
+does happen.  ;-)
+
+							Thanx, Paul
+
+> kernel/rcu/tasks.h:       queue_work_on(cpuwq, system_wq, &rtpcp_next->rtp_work);
+> kernel/rcu/tasks.h:       queue_work_on(cpuwq, system_wq, &rtpcp_next->rtp_work);
+> 
+> For this patch:
+> Reviewed-by: Joel Fernandes <joelagnelf@nvidia.com>
+> 
+> thanks,
+> 
+>  - Joel
+> 
+> 
+> > ---
+> >  mm/slab_common.c | 14 ++++++++++----
+> >  1 file changed, 10 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/mm/slab_common.c b/mm/slab_common.c
+> > index 4030907b6b7d..4c9f0a87f733 100644
+> > --- a/mm/slab_common.c
+> > +++ b/mm/slab_common.c
+> > @@ -1304,6 +1304,8 @@ module_param(rcu_min_cached_objs, int, 0444);
+> >  static int rcu_delay_page_cache_fill_msec = 5000;
+> >  module_param(rcu_delay_page_cache_fill_msec, int, 0444);
+> >  
+> > +static struct workqueue_struct *rcu_reclaim_wq;
+> > +
+> >  /* Maximum number of jiffies to wait before draining a batch. */
+> >  #define KFREE_DRAIN_JIFFIES (5 * HZ)
+> >  #define KFREE_N_BATCHES 2
+> > @@ -1632,10 +1634,10 @@ __schedule_delayed_monitor_work(struct kfree_rcu_cpu *krcp)
+> >  	if (delayed_work_pending(&krcp->monitor_work)) {
+> >  		delay_left = krcp->monitor_work.timer.expires - jiffies;
+> >  		if (delay < delay_left)
+> > -			mod_delayed_work(system_unbound_wq, &krcp->monitor_work, delay);
+> > +			mod_delayed_work(rcu_reclaim_wq, &krcp->monitor_work, delay);
+> >  		return;
+> >  	}
+> > -	queue_delayed_work(system_unbound_wq, &krcp->monitor_work, delay);
+> > +	queue_delayed_work(rcu_reclaim_wq, &krcp->monitor_work, delay);
+> >  }
+> >  
+> >  static void
+> > @@ -1733,7 +1735,7 @@ kvfree_rcu_queue_batch(struct kfree_rcu_cpu *krcp)
+> >  			// "free channels", the batch can handle. Break
+> >  			// the loop since it is done with this CPU thus
+> >  			// queuing an RCU work is _always_ success here.
+> > -			queued = queue_rcu_work(system_unbound_wq, &krwp->rcu_work);
+> > +			queued = queue_rcu_work(rcu_reclaim_wq, &krwp->rcu_work);
+> >  			WARN_ON_ONCE(!queued);
+> >  			break;
+> >  		}
+> > @@ -1883,7 +1885,7 @@ run_page_cache_worker(struct kfree_rcu_cpu *krcp)
+> >  	if (rcu_scheduler_active == RCU_SCHEDULER_RUNNING &&
+> >  			!atomic_xchg(&krcp->work_in_progress, 1)) {
+> >  		if (atomic_read(&krcp->backoff_page_cache_fill)) {
+> > -			queue_delayed_work(system_unbound_wq,
+> > +			queue_delayed_work(rcu_reclaim_wq,
+> >  				&krcp->page_cache_work,
+> >  					msecs_to_jiffies(rcu_delay_page_cache_fill_msec));
+> >  		} else {
+> > @@ -2120,6 +2122,10 @@ void __init kvfree_rcu_init(void)
+> >  	int i, j;
+> >  	struct shrinker *kfree_rcu_shrinker;
+> >  
+> > +	rcu_reclaim_wq = alloc_workqueue("kvfree_rcu_reclaim",
+> > +			WQ_UNBOUND | WQ_MEM_RECLAIM, 0);
+> > +	WARN_ON(!rcu_reclaim_wq);
+> > +
+> >  	/* Clamp it to [0:100] seconds interval. */
+> >  	if (rcu_delay_page_cache_fill_msec < 0 ||
+> >  		rcu_delay_page_cache_fill_msec > 100 * MSEC_PER_SEC) {
+> > -- 
+> > 2.39.5
+> > 
 > 
 
