@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-544311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A287A4DFFE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:59:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79717A4E001
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:00:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F9457A732C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:58:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FCEA1897666
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:59:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 688EA204C13;
-	Tue,  4 Mar 2025 13:58:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C69C320551E;
+	Tue,  4 Mar 2025 13:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A7wXgql1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kd8Yw7Lw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C066A2054FB
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 13:58:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FF12204C3F
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 13:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741096716; cv=none; b=WKoe/jmEK53bLoHYGUT30UsEyN/c1XvbtfqXaZfI9JDHFUukz/BVTY108S+Y+aN10Y+o+N9MyTvj0pas72Ok7tVZZXhS9Ds2kcj3m9gEKxQAxOo7tJZECsoU8t9/H+b5xFvjBaIKmd1y3lRk4oQ5zSSKyOiSamGaOTylzhenkeY=
+	t=1741096720; cv=none; b=B+Xg5jJXkqLKNq2cgKBNwqglkelDQsd2jFhtbCmeua0dHa+sS1bKfQJsUl6zQutImuhMnQqxcx6G9A42FlxoEpjLkXEgCjEbSeRub4885KwIrEIyHCJ8vM5RJqvYyRqes5xdwJa4ztm1ynEJjkgl+r1F9qrQWxXvjkOQlnil+X0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741096716; c=relaxed/simple;
-	bh=SCBkxqxjfa8HkA0BTRuWWUnRPjL2osKJM/O5wsn1zgg=;
+	s=arc-20240116; t=1741096720; c=relaxed/simple;
+	bh=txoN3V9rWwXFEyWDRXIoMCIFbMoUCiBnnRfSGjS9m3M=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MKl0ULndkvn1T3Mb7VvWpwxO5ioOHzVT6box4gQXSl/NGWRQEn54pBX51RmLIu27lMZP6EIIf4C6rWYBRqu4igOcak7P4d+My98QEKV2EBDHxiDtxw50qX2My/Gpk2DDv3GGsWl7xOpZZbCakfPtZqlG8iZ1iehxkeACGqFL938=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A7wXgql1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A76C2C4CEE9;
-	Tue,  4 Mar 2025 13:58:33 +0000 (UTC)
+	 MIME-Version; b=qNHpd4kZVQnoIx5PsB7AsbwEKZ6x5k1+7CYYMOmv4FVuw9ZVIGSWMzUkd7+x8wQRL6HbeXNwe/8m6qrFq5yaVI6Se7lAWEdJGVfs8yt/u9APF6SVjledYa7LfFNWhvfEPNqNNnCHV4s8lSa7U4DgEn2w0n8q9HcOSrA+uTkKS5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kd8Yw7Lw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 174FDC4CEE5;
+	Tue,  4 Mar 2025 13:58:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741096716;
-	bh=SCBkxqxjfa8HkA0BTRuWWUnRPjL2osKJM/O5wsn1zgg=;
+	s=k20201202; t=1741096720;
+	bh=txoN3V9rWwXFEyWDRXIoMCIFbMoUCiBnnRfSGjS9m3M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=A7wXgql127OzEvUasxqBMsRN6H4aOQJkUBD9QFFp0MlWYDxeAMoemW1MSkD4DdFqs
-	 Y+dzSoFejSn2qTJdDM/MMYQzqDcJHWXSkBLHFhvyJlXZnqTc+q9qU4EfWlJiPxNMri
-	 4Ub42ppW+HYV/33X/CNhXK9xRzE0lEcRMQ2a+lFHZggSFPa8OWGKesGc7na8LhUotY
-	 13TM2ptAtVMkYvywbkYqXhdYkHXtIFNDSsoD1E3T7O4ctYWFvG24yllC8qH3EJqjd5
-	 ScPHoLs5KpaTir7CU2nrRL173YHIC5U/nkdibqRywUCjXPphsc/MxLuXvYg+Gj3Uqi
-	 61rZwEDraemlg==
+	b=kd8Yw7Lwr4sjOpYWFXwXQSEC5xzprBOCIBE7bXwYr8GTXC+xFDjpLzy06CmfMPBne
+	 u6ZdRClLHEfy/M+wAKbra6zqvNXfIiC4v94rdgan9Rd1Z/UVXIeuRLeQOB0w8w0Xlu
+	 5D8xfVyMQnYo7qU7qdPIZZsF1BViGBgk33U39jmiZdbrGUj9z3t4C8bt3CBSbFT5l9
+	 /2r7w6F9gxN5CfJM9sClY0EMsUCrLtI0k6as50Bjxm6gCLyKhbZy2BdTMpSEFVRycd
+	 o0c3oY9PoYlFvhAh3shml2NRuxEbfXoD8Rlj1YvT24ywiz2F33RnzIx9Taqe6dint8
+	 rD4d7P/Jk/CkA==
 From: Borislav Petkov <bp@kernel.org>
 To: riel@surriel.com
 Cc: Manali.Shukla@amd.com,
@@ -56,9 +56,9 @@ Cc: Manali.Shukla@amd.com,
 	x86@kernel.org,
 	zhengqi.arch@bytedance.com,
 	Borislav Petkov <bp@alien8.de>
-Subject: [PATCH v15 04/11] x86/mm: Use INVLPGB for kernel TLB flushes
-Date: Tue,  4 Mar 2025 14:58:09 +0100
-Message-ID: <20250304135816.12356-5-bp@kernel.org>
+Subject: [PATCH v15 05/11] x86/mm: Use broadcast TLB flushing in page reclaim
+Date: Tue,  4 Mar 2025 14:58:10 +0100
+Message-ID: <20250304135816.12356-6-bp@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250304135816.12356-1-bp@kernel.org>
 References: <20250304135816.12356-1-bp@kernel.org>
@@ -72,100 +72,35 @@ Content-Transfer-Encoding: 8bit
 
 From: Rik van Riel <riel@surriel.com>
 
-Use broadcast TLB invalidation for kernel addresses when available.
-Remove the need to send IPIs for kernel TLB flushes.
+Page reclaim tracks only the CPU(s) where the TLB needs to be flushed, rather
+than all the individual mappings that may be getting invalidated.
 
-   [ bp: Integrate dhansen's comments additions, merge the
-     flush_tlb_all() change into this one too. ]
+Use broadcast TLB flushing when that is available.
+
+  [ bp: Massage commit message. ]
 
 Signed-off-by: Rik van Riel <riel@surriel.com>
 Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Link: https://lore.kernel.org/r/20250226030129.530345-5-riel@surriel.com
+Link: https://lore.kernel.org/r/20250226030129.530345-7-riel@surriel.com
 ---
- arch/x86/mm/tlb.c | 48 +++++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 44 insertions(+), 4 deletions(-)
+ arch/x86/mm/tlb.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index dbcb5c968ff9..8cd084bc3d98 100644
+index 8cd084bc3d98..76b4a88afb56 100644
 --- a/arch/x86/mm/tlb.c
 +++ b/arch/x86/mm/tlb.c
-@@ -1064,7 +1064,6 @@ void flush_tlb_mm_range(struct mm_struct *mm, unsigned long start,
- 	mmu_notifier_arch_invalidate_secondary_tlbs(mm, start, end);
- }
- 
--
- static void do_flush_tlb_all(void *info)
- {
- 	count_vm_tlb_event(NR_TLB_REMOTE_FLUSH_RECEIVED);
-@@ -1074,7 +1073,32 @@ static void do_flush_tlb_all(void *info)
- void flush_tlb_all(void)
- {
- 	count_vm_tlb_event(NR_TLB_REMOTE_FLUSH);
--	on_each_cpu(do_flush_tlb_all, NULL, 1);
-+
-+	/* First try (faster) hardware-assisted TLB invalidation. */
-+	if (cpu_feature_enabled(X86_FEATURE_INVLPGB))
-+		invlpgb_flush_all();
-+	else
-+		/* Fall back to the IPI-based invalidation. */
-+		on_each_cpu(do_flush_tlb_all, NULL, 1);
-+}
-+
-+/* Flush an arbitrarily large range of memory with INVLPGB. */
-+static void invlpgb_kernel_range_flush(struct flush_tlb_info *info)
-+{
-+	unsigned long addr, nr;
-+
-+	for (addr = info->start; addr < info->end; addr += nr << PAGE_SHIFT) {
-+		nr = (info->end - addr) >> PAGE_SHIFT;
-+
-+		/*
-+		 * INVLPGB has a limit on the size of ranges it can
-+		 * flush. Break up large flushes.
-+		 */
-+		nr = clamp_val(nr, 1, invlpgb_count_max);
-+
-+		invlpgb_flush_addr_nosync(addr, nr);
-+	}
-+	__tlbsync();
- }
- 
- static void do_kernel_range_flush(void *info)
-@@ -1087,6 +1111,22 @@ static void do_kernel_range_flush(void *info)
- 		flush_tlb_one_kernel(addr);
- }
- 
-+static void kernel_tlb_flush_all(struct flush_tlb_info *info)
-+{
-+	if (cpu_feature_enabled(X86_FEATURE_INVLPGB))
-+		invlpgb_flush_all();
-+	else
-+		on_each_cpu(do_flush_tlb_all, NULL, 1);
-+}
-+
-+static void kernel_tlb_flush_range(struct flush_tlb_info *info)
-+{
-+	if (cpu_feature_enabled(X86_FEATURE_INVLPGB))
-+		invlpgb_kernel_range_flush(info);
-+	else
-+		on_each_cpu(do_kernel_range_flush, info, 1);
-+}
-+
- void flush_tlb_kernel_range(unsigned long start, unsigned long end)
- {
- 	struct flush_tlb_info *info;
-@@ -1097,9 +1137,9 @@ void flush_tlb_kernel_range(unsigned long start, unsigned long end)
- 				  TLB_GENERATION_INVALID);
- 
- 	if (info->end == TLB_FLUSH_ALL)
--		on_each_cpu(do_flush_tlb_all, NULL, 1);
-+		kernel_tlb_flush_all(info);
- 	else
--		on_each_cpu(do_kernel_range_flush, info, 1);
-+		kernel_tlb_flush_range(info);
- 
- 	put_flush_tlb_info();
- }
+@@ -1320,7 +1320,9 @@ void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch)
+ 	 * a local TLB flush is needed. Optimize this use-case by calling
+ 	 * flush_tlb_func_local() directly in this case.
+ 	 */
+-	if (cpumask_any_but(&batch->cpumask, cpu) < nr_cpu_ids) {
++	if (cpu_feature_enabled(X86_FEATURE_INVLPGB)) {
++		invlpgb_flush_all_nonglobals();
++	} else if (cpumask_any_but(&batch->cpumask, cpu) < nr_cpu_ids) {
+ 		flush_tlb_multi(&batch->cpumask, info);
+ 	} else if (cpumask_test_cpu(cpu, &batch->cpumask)) {
+ 		lockdep_assert_irqs_enabled();
 -- 
 2.43.0
 
