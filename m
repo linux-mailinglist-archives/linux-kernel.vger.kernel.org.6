@@ -1,190 +1,347 @@
-Return-Path: <linux-kernel+bounces-544968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C99FA4E765
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:02:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09D14A4E734
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:58:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92A964243DE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:51:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E704E19C5010
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:53:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F9429CB3C;
-	Tue,  4 Mar 2025 16:30:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9BD727BF92;
+	Tue,  4 Mar 2025 16:31:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZQDiBMWJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E51xbQYb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0356F29CB35
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2217627BF90;
+	Tue,  4 Mar 2025 16:31:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741105833; cv=none; b=eE0pb1iYBAgg8iPxQF3S/BxoZ+RmVxP7+OEnkhPxeDWE6pecq4TIC7Nfd0pyelibdqVzaNQo5z6gGHvc8vykbKj7qW0Cp5c4nbNs/a3MSERPafnnxg/aXyb6Ex+vsr+akAaKwQdruBmdLprrYSoxWva0qTMkAF8kICLQjQzZvjM=
+	t=1741105875; cv=none; b=golZGGEuQ2soIciPKuiT/3CqFU0pzxhSa5I/RLqD0zl6AhTb9XpVkpW8SOFmWMQ14aAn9hzLmcBzZNZB2O/zoIY3wQKIL/pQ4nOyxj3V9uSfpctoOlvQIGh869OoAcoxx8FfrKJHqiO+/GF++9UEWsFC7ryVA3SkyhMAumUs/Ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741105833; c=relaxed/simple;
-	bh=1peCX6R7h30DTJOxD1LU6DMIih5rffyXOoAucAoALe0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=vCZ79V36DkUzHzunAsZhR//Gq/wP0/L10qBbux+Dv0IVgypcnS1c5NJ/HBGfUW2FrR3Dj0LIVV0rOXRM+ci1R9lqHo1DRBQye9Rwba0Y2oq75Aqen3RTB3EF9HFHl+M+feQjlaXf1T7vuEtjvkFEa1IxHAVOArz6jkOLAH3kH9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZQDiBMWJ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741105830;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=uPv451Hu7Di4D/sapxzf/F2GAAzWxvqZ/lL0oqguUyU=;
-	b=ZQDiBMWJSe3c3tu4fgcAHA4fSsBngTUV314HkVIbTQtRI2aSaAb5t+wpUa8s73JU0rlJE9
-	Z7GrLZVuH0kwnr02Q+PprXgsVE0HFQrXXmN9u9fliT/x+3MU0ve77ShFJ436+Qxa4IYkJP
-	pYuEK52cNaK5hBKQ9SL/PxqXC3HOTog=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-421-cJtD5uTSNymyu3fSiwrJRA-1; Tue,
- 04 Mar 2025 11:30:26 -0500
-X-MC-Unique: cJtD5uTSNymyu3fSiwrJRA-1
-X-Mimecast-MFC-AGG-ID: cJtD5uTSNymyu3fSiwrJRA_1741105825
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A3FEE1801A10;
-	Tue,  4 Mar 2025 16:30:24 +0000 (UTC)
-Received: from jbrnak-thinkpadx1carbongen9.tpbc.com (unknown [10.44.33.176])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 26D23300018D;
-	Tue,  4 Mar 2025 16:30:18 +0000 (UTC)
-From: Jakub Brnak <jbrnak@redhat.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	kan.liang@linux.intel.com,
-	mpetlan@redhat.com,
-	tglozar@redhat.com,
-	jbrnak@redhat.com
-Subject: [PATCH] perf tests probe_vfs_getname: Skip if no suitable line detected
-Date: Tue,  4 Mar 2025 17:30:15 +0100
-Message-ID: <20250304163015.969720-1-jbrnak@redhat.com>
+	s=arc-20240116; t=1741105875; c=relaxed/simple;
+	bh=/YJ9yPU9Qot21uQi+eiSh1qLYYbIQ5QG7UZGe0XhN0E=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=r57hZ/aqzHPGsstulHc2SFbWYZs3yO/Hyn8P0cpkB3g376w5M6EsgEOD1DIBZrlFde/4ql6SqIf8QoUDiw8on506PqHYdwAaDR0IzKnd5oXkZ6j4KkeycGFZlYSODlM6JBgqrDIc9355EscvNEgGyhm+ExV16AbZhsW1Vf5tpok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E51xbQYb; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741105874; x=1772641874;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=/YJ9yPU9Qot21uQi+eiSh1qLYYbIQ5QG7UZGe0XhN0E=;
+  b=E51xbQYb9DZDoLod9sYltkDs4VxZWH0Bi+BVViPMsJnmot4UMvN9lu0L
+   riyoSgksmJQD125D8hHHWDTROCKss+zSBQ5QwXDrhPdR0krRJYsDV+Whx
+   /W21pmbdsqH+l8B4fYV8wwCbHnM9TnobhpB1DGG69tFPOHZ2bxgCuX/Jo
+   cDhgv08pO3O1ZHeHO5113jWkHX5KKfes8QDfw1lg2XfYIUxQC7lARzGN4
+   chFjy+K0D8VB2ezpDZQWwWF7R31dqLTnksMwTFnDt6KA/qy3iQPOSfrq9
+   YYCC6fAK32viOl4OYgyVZecGtQm/Ks0cKAoetmB74jxKbL5URQyB7XF6C
+   g==;
+X-CSE-ConnectionGUID: Ib266fKyQ7S++eHPqx5Tzg==
+X-CSE-MsgGUID: h1Zo8rVVR1emVVPgsK1kWQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="41745790"
+X-IronPort-AV: E=Sophos;i="6.14,220,1736841600"; 
+   d="scan'208";a="41745790"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 08:31:13 -0800
+X-CSE-ConnectionGUID: U6WujrHUTP6r995x93RaWQ==
+X-CSE-MsgGUID: LeDlO4+iTVeu+Qc+YjpJDA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,220,1736841600"; 
+   d="scan'208";a="123349493"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.220])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 08:31:09 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 4 Mar 2025 18:31:06 +0200 (EET)
+To: Kurt Borja <kuurtb@gmail.com>
+cc: Armin Wolf <W_Armin@gmx.de>, platform-driver-x86@vger.kernel.org, 
+    Hans de Goede <hdegoede@redhat.com>, Dell.Client.Kernel@dell.com, 
+    LKML <linux-kernel@vger.kernel.org>, Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH v2 07/10] platform/x86: alienware-wmi-wmax: Add HWMON
+ support
+In-Reply-To: <D87MG1SMP0WA.1EXT0WKP65DQR@gmail.com>
+Message-ID: <93a4ce49-1d16-4569-8b4b-554bf26a002a@linux.intel.com>
+References: <20250225222500.23535-1-kuurtb@gmail.com> <20250225222500.23535-8-kuurtb@gmail.com> <a85825d5-7718-93f4-e837-849323ef4387@linux.intel.com> <D87MG1SMP0WA.1EXT0WKP65DQR@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: multipart/mixed; boundary="8323328-1823786508-1741105866=:931"
 
-In some cases when calling function add_probe_vfs_getname, line number
-can't be detected by perf probe -L getname_flags:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-  78         atomic_set(&result->refcnt, 1);
+--8323328-1823786508-1741105866=:931
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-	     // one of the following lines should have line number
-	     // but sometimes it does not because of optimization
-	     result->uptr = filename;
-             result->aname = NULL;
+On Tue, 4 Mar 2025, Kurt Borja wrote:
 
-  81         audit_getname(result);
+> On Tue Mar 4, 2025 at 10:53 AM -05, Ilpo J=C3=A4rvinen wrote:
+> > On Tue, 25 Feb 2025, Kurt Borja wrote:
+> >
+> >> All models with the "AWCC" WMAX device support monitoring fan speed an=
+d
+> >> temperature sensors. Expose this feature through the HWMON interface.
+> >>=20
+> >> Sensor readings are cached for 1 second before refreshing them to
+> >> mitigate the performance cost of calling WMI methods.
+> >>=20
+> >> Cc: Guenter Roeck <linux@roeck-us.net>
+> >> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+> >> ---
+> >>  drivers/platform/x86/dell/Kconfig             |   1 +
+> >>  .../platform/x86/dell/alienware-wmi-wmax.c    | 403 +++++++++++++++++=
++
+> >>  2 files changed, 404 insertions(+)
+> >>=20
+> >> diff --git a/drivers/platform/x86/dell/Kconfig b/drivers/platform/x86/=
+dell/Kconfig
+> >> index f8a0dffcaab7..85a57c01aaad 100644
+> >> --- a/drivers/platform/x86/dell/Kconfig
+> >> +++ b/drivers/platform/x86/dell/Kconfig
+> >> @@ -43,6 +43,7 @@ config ALIENWARE_WMI_WMAX
+> >>  =09bool "Alienware WMAX WMI device driver"
+> >>  =09default y
+> >>  =09depends on ALIENWARE_WMI
+> >> +=09depends on HWMON
+> >>  =09select ACPI_PLATFORM_PROFILE
+> >>  =09help
+> >>  =09 Alienware WMI driver with AlienFX LED, HDMI, amplifier, deep slee=
+p and
+> >> diff --git a/drivers/platform/x86/dell/alienware-wmi-wmax.c b/drivers/=
+platform/x86/dell/alienware-wmi-wmax.c
+> >> index bbe87f91fcb6..818023a5b205 100644
+> >> --- a/drivers/platform/x86/dell/alienware-wmi-wmax.c
+> >> +++ b/drivers/platform/x86/dell/alienware-wmi-wmax.c
+> >> @@ -9,10 +9,13 @@
+> >>  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> >> =20
+> >>  #include <linux/bitfield.h>
+> >> +#include <linux/bitmap.h>
+> >>  #include <linux/bits.h>
+> >>  #include <linux/dmi.h>
+> >> +#include <linux/hwmon.h>
+> >>  #include <linux/moduleparam.h>
+> >>  #include <linux/platform_profile.h>
+> >> +#include <linux/units.h>
+> >>  #include <linux/wmi.h>
+> >>  #include "alienware-wmi.h"
+> >> =20
+> >> @@ -25,6 +28,7 @@
+> >>  #define WMAX_METHOD_BRIGHTNESS=09=09=090x3
+> >>  #define WMAX_METHOD_ZONE_CONTROL=09=090x4
+> >> =20
+> >> +#define AWCC_METHOD_GET_FAN_SENSORS=09=090x13
+> >>  #define AWCC_METHOD_THERMAL_INFORMATION=09=090x14
+> >>  #define AWCC_METHOD_THERMAL_CONTROL=09=090x15
+> >>  #define AWCC_METHOD_GAME_SHIFT_STATUS=09=090x25
+> >> @@ -38,6 +42,10 @@
+> >>  /* Arbitrary limit based on supported models */
+> >>  #define AWCC_MAX_RES_COUNT=09=09=0916
+> >> =20
+> >> +static bool force_hwmon;
+> >> +module_param_unsafe(force_hwmon, bool, 0);
+> >> +MODULE_PARM_DESC(force_hwmon, "Force probing for HWMON support withou=
+t checking if the WMI backend is available");
+> >> +
+> >>  static bool force_platform_profile;
+> >>  module_param_unsafe(force_platform_profile, bool, 0);
+> >>  MODULE_PARM_DESC(force_platform_profile, "Forces auto-detecting therm=
+al profiles without checking if WMI thermal backend is available");
+> >> @@ -47,16 +55,19 @@ module_param_unsafe(force_gmode, bool, 0);
+> >>  MODULE_PARM_DESC(force_gmode, "Forces G-Mode when performance profile=
+ is selected");
+> >> =20
+> >>  struct awcc_quirks {
+> >> +=09bool hwmon;
+> >>  =09bool pprof;
+> >>  =09bool gmode;
+> >>  };
+> >> =20
+> >>  static struct awcc_quirks g_series_quirks =3D {
+> >> +=09.hwmon =3D true,
+> >>  =09.pprof =3D true,
+> >>  =09.gmode =3D true,
+> >>  };
+> >> =20
+> >>  static struct awcc_quirks generic_quirks =3D {
+> >> +=09.hwmon =3D true,
+> >>  =09.pprof =3D true,
+> >>  =09.gmode =3D false,
+> >>  };
+> >> @@ -154,9 +165,18 @@ static const struct dmi_system_id awcc_dmi_table[=
+] __initconst =3D {
+> >>  =09},
+> >>  };
+> >> =20
+> >> +enum AWCC_GET_FAN_SENSORS_OPERATIONS {
+> >> +=09AWCC_OP_GET_TOTAL_FAN_TEMPS=09=09=3D 0x01,
+> >> +=09AWCC_OP_GET_FAN_TEMP_ID=09=09=09=3D 0x02,
+> >> +};
+> >> +
+> >>  enum AWCC_THERMAL_INFORMATION_OPERATIONS {
+> >>  =09AWCC_OP_GET_SYSTEM_DESCRIPTION=09=09=3D 0x02,
+> >>  =09AWCC_OP_GET_RESOURCE_ID=09=09=09=3D 0x03,
+> >> +=09AWCC_OP_GET_TEMPERATURE=09=09=09=3D 0x04,
+> >> +=09AWCC_OP_GET_FAN_RPM=09=09=09=3D 0x05,
+> >> +=09AWCC_OP_GET_FAN_MIN_RPM=09=09=09=3D 0x08,
+> >> +=09AWCC_OP_GET_FAN_MAX_RPM=09=09=09=3D 0x09,
+> >>  =09AWCC_OP_GET_CURRENT_PROFILE=09=09=3D 0x0B,
+> >>  };
+> >> =20
+> >> @@ -179,6 +199,12 @@ enum AWCC_SPECIAL_THERMAL_CODES {
+> >>  =09AWCC_SPECIAL_PROFILE_GMODE=09=09=3D 0xAB,
+> >>  };
+> >> =20
+> >> +enum AWCC_TEMP_SENSOR_TYPES {
+> >> +=09AWCC_TEMP_SENSOR_CPU=09=09=09=3D 0x01,
+> >> +=09AWCC_TEMP_SENSOR_GPU=09=09=09=3D 0x06,
+> >> +=09AWCC_TEMP_SENSOR_LAST
+> >> +};
+> >> +
+> >>  enum awcc_thermal_profile {
+> >>  =09AWCC_PROFILE_USTT_BALANCED,
+> >>  =09AWCC_PROFILE_USTT_BALANCED_PERFORMANCE,
+> >> @@ -215,6 +241,15 @@ struct wmax_u32_args {
+> >>  =09u8 arg3;
+> >>  } __packed;
+> >> =20
+> >> +struct awcc_fan_data {
+> >> +=09unsigned long *related_temps;
+> >> +=09unsigned long *auto_channels_temp;
+> >> +=09u32 total_temps;
+> >> +=09u32 min_rpm;
+> >> +=09u32 max_rpm;
+> >> +=09u8 id;
+> >> +};
+> >> +
+> >>  struct awcc_priv {
+> >>  =09struct wmi_device *wdev;
+> >>  =09union {
+> >> @@ -230,6 +265,11 @@ struct awcc_priv {
+> >> =20
+> >>  =09struct device *ppdev;
+> >>  =09u8 supported_profiles[PLATFORM_PROFILE_LAST];
+> >> +
+> >> +=09struct device *hwdev;
+> >> +=09struct awcc_fan_data **fan_data;
+> >> +=09unsigned int temp_sensors_size;
+> >> +=09unsigned long *temp_sensors;
+> >>  };
+> >> =20
+> >>  static const enum platform_profile_option awcc_mode_to_platform_profi=
+le[AWCC_PROFILE_LAST] =3D {
+> >> @@ -494,6 +534,19 @@ static int __awcc_wmi_command(struct wmi_device *=
+wdev, u32 method_id,
+> >>  =09return 0;
+> >>  }
+> >> =20
+> >> +static inline int awcc_get_fan_sensors(struct wmi_device *wdev, u8 op=
+eration,
+> >> +=09=09=09=09       u8 fan_id, u8 index, u32 *out)
+> >> +{
+> >> +=09struct wmax_u32_args args =3D {
+> >> +=09=09.operation =3D operation,
+> >> +=09=09.arg1 =3D fan_id,
+> >> +=09=09.arg2 =3D index,
+> >> +=09=09.arg3 =3D 0,
+> >> +=09};
+> >> +
+> >> +=09return __awcc_wmi_command(wdev, AWCC_METHOD_GET_FAN_SENSORS, &args=
+, out);
+> >> +}
+> >> +
+> >>  static inline int awcc_thermal_information(struct wmi_device *wdev, u=
+8 operation,
+> >>  =09=09=09=09=09   u8 arg, u32 *out)
+> >>  {
+> >> @@ -564,6 +617,343 @@ static inline int awcc_op_get_resource_id(struct=
+ wmi_device *wdev, u8 index, u32
+> >>  =09return __awcc_wmi_command(wdev, AWCC_METHOD_THERMAL_INFORMATION, &=
+args, out);
+> >>  }
+> >> =20
+> >> +/*
+> >> + * HWMON
+> >> + *  - Provides temperature and fan speed monitoring as well as manual=
+ fan
+> >> + *    control
+> >> + */
+> >> +static umode_t awcc_hwmon_is_visible(const void *drvdata, enum hwmon_=
+sensor_types type,
+> >> +=09=09=09=09     u32 attr, int channel)
+> >> +{
+> >> +=09const struct awcc_priv *priv =3D drvdata;
+> >> +
+> >> +=09switch (type) {
+> >> +=09case hwmon_temp:
+> >> +=09=09if (channel < priv->temp_count)
+> >> +=09=09=09return 0444;
+> >> +
+> >> +=09=09break;
+> >
+> > IMO, these could be written as:
+> > =09=09return channel < priv->temp_count ? 0444 : 0;
+>=20
+> Ack.
+>=20
+> >
+> >> +=09case hwmon_fan:
+> >> +=09=09if (channel < priv->fan_count)
+> >> +=09=09=09return 0444;
+> >> +
+> >> +=09=09break;
+> >> +=09case hwmon_pwm:
+> >> +=09=09if (channel < priv->fan_count)
+> >> +=09=09=09return 0444;
+> >> +
+> >> +=09=09break;
+> >> +=09default:
+> >> +=09=09break;
+> >> +=09}
+> >> +
+> >> +=09return 0;
+> >> +}
+> >> +
+> >> +static int awcc_hwmon_read(struct device *dev, enum hwmon_sensor_type=
+s type,
+> >> +=09=09=09   u32 attr, int channel, long *val)
+> >> +{
+> >> +=09struct awcc_priv *priv =3D dev_get_drvdata(dev);
+> >> +=09struct awcc_fan_data *fan;
+> >> +=09u32 state;
+> >> +=09int ret;
+> >> +=09u8 temp;
+> >> +
+> >> +=09switch (type) {
+> >> +=09case hwmon_temp:
+> >> +=09=09temp =3D find_nth_bit(priv->temp_sensors, U8_MAX, channel);
+> >> +=09=09if (temp >=3D U8_MAX)
+> >
+> > It cannot be larger than as its type is u8??
+>=20
+> Thanks, I forgot to change this! U8_MAX should be replaced with
+> priv->temp_sensors_size.
 
-To prevent false failures, skip the affected tests
-if no suitable line numbers can be detected.
+I recall seeing another similar line somewhere else in the file so please=
+=20
+take a look at that as well.
 
-Signed-off-by: Jakub Brnak <jbrnak@redhat.com>
----
- tools/perf/tests/shell/lib/probe_vfs_getname.sh           | 8 +++++++-
- tools/perf/tests/shell/probe_vfs_getname.sh               | 8 +++++++-
- tools/perf/tests/shell/record+script_probe_vfs_getname.sh | 8 +++++++-
- tools/perf/tests/shell/trace+probe_vfs_getname.sh         | 8 +++++++-
- 4 files changed, 28 insertions(+), 4 deletions(-)
+> Thank you for reviewing this set! :)
+>=20
+>=20
 
-diff --git a/tools/perf/tests/shell/lib/probe_vfs_getname.sh b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
-index 5c33ec7a5a63..89f72a4c818c 100644
---- a/tools/perf/tests/shell/lib/probe_vfs_getname.sh
-+++ b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
-@@ -19,8 +19,14 @@ add_probe_vfs_getname() {
- 			result_aname_re="[[:space:]]+([[:digit:]]+)[[:space:]]+result->aname = NULL;"
- 			line=$(perf probe -L getname_flags 2>&1 | grep -E "$result_aname_re" | sed -r "s/$result_aname_re/\1/")
- 		fi
-+
-+		if [ -z "$line" ] ; then
-+			echo "Could not find probeable line"
-+			return 2
-+		fi
-+
- 		perf probe -q       "vfs_getname=getname_flags:${line} pathname=result->name:string" || \
--		perf probe $add_probe_verbose "vfs_getname=getname_flags:${line} pathname=filename:ustring"
-+		perf probe $add_probe_verbose "vfs_getname=getname_flags:${line} pathname=filename:ustring" || return 1
- 	fi
- }
- 
-diff --git a/tools/perf/tests/shell/probe_vfs_getname.sh b/tools/perf/tests/shell/probe_vfs_getname.sh
-index 0c5aacc446b3..9e99647fc61a 100755
---- a/tools/perf/tests/shell/probe_vfs_getname.sh
-+++ b/tools/perf/tests/shell/probe_vfs_getname.sh
-@@ -12,7 +12,13 @@ skip_if_no_perf_probe || exit 2
- # shellcheck source=lib/probe_vfs_getname.sh
- . "$(dirname $0)"/lib/probe_vfs_getname.sh
- 
--add_probe_vfs_getname || skip_if_no_debuginfo
-+add_probe_vfs_getname
- err=$?
-+
-+if [[ $err -ne 0 && $err -ne 2 ]]; then
-+    skip_if_no_debuginfo
-+    err=$?
-+fi
-+
- cleanup_probe_vfs_getname
- exit $err
-diff --git a/tools/perf/tests/shell/record+script_probe_vfs_getname.sh b/tools/perf/tests/shell/record+script_probe_vfs_getname.sh
-index 5940fdc1df37..2724adc23e8f 100755
---- a/tools/perf/tests/shell/record+script_probe_vfs_getname.sh
-+++ b/tools/perf/tests/shell/record+script_probe_vfs_getname.sh
-@@ -34,8 +34,14 @@ perf_script_filenames() {
- 	grep -E " +touch +[0-9]+ +\[[0-9]+\] +[0-9]+\.[0-9]+: +probe:vfs_getname[_0-9]*: +\([[:xdigit:]]+\) +pathname=\"${file}\""
- }
- 
--add_probe_vfs_getname || skip_if_no_debuginfo
-+add_probe_vfs_getname
- err=$?
-+
-+if [[ $err -ne 0 && $err -ne 2 ]]; then
-+    skip_if_no_debuginfo
-+    err=$?
-+fi
-+
- if [ $err -ne 0 ] ; then
- 	exit $err
- fi
-diff --git a/tools/perf/tests/shell/trace+probe_vfs_getname.sh b/tools/perf/tests/shell/trace+probe_vfs_getname.sh
-index 708a13f00635..f5cc59225cf1 100755
---- a/tools/perf/tests/shell/trace+probe_vfs_getname.sh
-+++ b/tools/perf/tests/shell/trace+probe_vfs_getname.sh
-@@ -25,8 +25,14 @@ trace_open_vfs_getname() {
- }
- 
- 
--add_probe_vfs_getname || skip_if_no_debuginfo
-+add_probe_vfs_getname
- err=$?
-+
-+if [[ $err -ne 0 && $err -ne 2 ]]; then
-+    skip_if_no_debuginfo
-+    err=$?
-+fi
-+
- if [ $err -ne 0 ] ; then
- 	exit $err
- fi
--- 
-2.48.1
+--=20
+ i.
 
+--8323328-1823786508-1741105866=:931--
 
