@@ -1,332 +1,457 @@
-Return-Path: <linux-kernel+bounces-544292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD3CAA4DFD0
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:54:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C5A1A4DFE6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:56:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89A4B188A42E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:54:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1EC4189D01B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC0CD204685;
-	Tue,  4 Mar 2025 13:54:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42241204C1C;
+	Tue,  4 Mar 2025 13:55:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E+hIQATt"
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ezMSoVjg"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2081.outbound.protection.outlook.com [40.107.237.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364BC202F79;
-	Tue,  4 Mar 2025 13:54:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741096445; cv=none; b=Xm2l7KkJ053wG1+G3a0QUsCIntcScpkd9rUzdWvmktbCe0eGt8BsbGM4ohtonk+d72AQ6QALcFbxigQSNnCmEfs3DOK3nMAWYUEMfFyC8IncjzyI6jJigA8APLJLubwWRXd6sIedvgnNhju95FrhNMaABEAfO9rs9an+B1IcsfM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741096445; c=relaxed/simple;
-	bh=fqkgvHjPswFAMvaE5kReX52SACWPZ9WhJfUporlkjBs=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=saSR2Cn1VMsaECMTTIaDry47oafx76uvDm5S63Mbxy2D6si+VDbymAbS+bVfIg0DE/HbcyC/JPGekpjdu1J9zc15G8PGi0vPIX9JF6w+wQYhwDFCWGiDljsUjUBVUAJPnJV+cFLnjeofhXGAR/i6Bko9K4oaTUgGcTxmWKFivyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E+hIQATt; arc=none smtp.client-ip=209.85.222.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-86b0899ad8bso2177117241.0;
-        Tue, 04 Mar 2025 05:54:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741096443; x=1741701243; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D1lRAoDM8LwgraF/afnpgCSOZyx5bcbveUqB2scrlYM=;
-        b=E+hIQATtLp/+pVbQhWI6kVtK+1V0qP9IgbabgwjkTmOCKqkqYPv2w6qV2wbI2BA1zK
-         qkPPXGqRwqAjoSYCbDBzH/BTygkxZOSIC6rIqoJgpUdDEF7RmC8RUOMpt1p9P5rSx0en
-         1fkDtheZwsv9XVpwpj3GMD/rsyT3VAmQEe6P9Eh6IBTwMiC3uKxvkhY5KQIw4bKgM97I
-         XQ5zDkQQTyZpPnrETidOO0gnqncTNEkXHuEZqMzQ/U+yMKJ2xU8x9sucOjZ4BJSDLRnW
-         8DGrsqJa1SNvVxbdCaeaPaYvgVBWuqWRsfBH3GR6tin7gXXvvCkBGN7kSPHTyhMkkxFu
-         8YGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741096443; x=1741701243;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=D1lRAoDM8LwgraF/afnpgCSOZyx5bcbveUqB2scrlYM=;
-        b=L0ARj/kZ3F09rNhAd46ZZ0hj8rqXldmDW7RabMhl82zSQ4KG9DeMtN2D0G7LHNqYSH
-         XN17cLExSZJp0kcEYQuQ9IdTkajpN7WuSe7fo7FLHSdgaIZhoG+w3/E+hVqfayK2UyHg
-         LU3T39QlIdv6U1ohFh4JW0ESOugOKzF9u2KlPU4yr9SRpAme0aMWqY3w7JKrfz9DoDRG
-         qcD+e7jZxXqPE6S9U5IdAKYa6JVClf1LGo5tDjbLztaFXmhg2z0QydjPcUnlh1j+u/pQ
-         pkLzlPFF1vPkvWOSS3QHskx2/OUdr9XlkpYkgDOkdXlwW5ACBYIIFrt54KKxhWKGdK4D
-         trIA==
-X-Forwarded-Encrypted: i=1; AJvYcCUerqb1VH762E5I80HoLxKmWIlxz+gmgDR6gLmkhPgxg/KL/ne/USiaEMY0P1g9XBCMUOAj1hwZyc3C@vger.kernel.org, AJvYcCUewhO7t1JBBugBeafZzLxcr0kUjR6ReRKfxcWqbie3nxe7po60seWmJ7i05wdfy7VHG/tvYS7XcEmZLh67BzR55zcM7g==@vger.kernel.org, AJvYcCUyO1t4QKTbZBx+9f6q6fI9GRWVLwa8eaHKghToV15EUVm20k71kDc3ktLwpidgc4//MbCDh5kk2Tr3ugp7@vger.kernel.org
-X-Gm-Message-State: AOJu0YwG+OfPjDmjE2sRTyIZX+P3rl58RtoySmixSUiJSNocSPMVkJ/b
-	tLOTjX3ieuFvOJlgd5m6rRSp9jepyV8OjF6kSV+QAaYAxoF9v72C
-X-Gm-Gg: ASbGnctkdII8S9nD4H122Nq0HvZpJEAaALjf8mtsgbL2Yy8QENdJuKRpvK0iA0OSlQP
-	XxZPGFrS2W1IxbckDebwsL0sAfQxDacx783DTQcmhPJa7NXO/+5SH8Sw8FIYqGOvX2PplvgMaW9
-	q3bsStIU/Hq4FpFFR29nafnDwMeYulQhTfrWrQhekpjgHkQrIJxmJAp9RO/C9OpTNK8BjQ3+9E3
-	XuB+F18QEoE65+nxo+WHC3ZQ9Ei6kwNV6c5zGKW/gBPEUSLgxtSFcavkr5gVNYqBCPkGOa8TO1R
-	evbG5G/YAiL1yfAs5wRlhkMKdnZvQ6/rjqk3
-X-Google-Smtp-Source: AGHT+IEmOSsLfZwMbSUmujd2VobQKPKffA1MxlWqFJZua7YydsrISWQUTjDBmQQVurvETyeZkh4MsQ==
-X-Received: by 2002:a05:6102:918:b0:4c1:9536:523c with SMTP id ada2fe7eead31-4c195365578mr5207709137.24.1741096442934;
-        Tue, 04 Mar 2025 05:54:02 -0800 (PST)
-Received: from localhost ([2800:bf0:82:3d2:9e61:1a62:1a8c:3e62])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-86b3dd048f6sm1928400241.21.2025.03.04.05.54.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Mar 2025 05:54:02 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24305204C13;
+	Tue,  4 Mar 2025 13:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741096510; cv=fail; b=njgVdp2nE2u1mPs89+FdW6xm1ARSDgFoCYlVfpdC9Vcnb749/DRMK0ZFAEezg5bUxs0QCjuzm8/qlBv5xF67ZJqU45nmTazmGVFmI21AxA86eVSup4BIMMBEkUDQ8W72S8g9zhpCfAGw4pwGJKZ4MpqgByS7Xb7mWrBLmeukzbU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741096510; c=relaxed/simple;
+	bh=APSX1iCOupFUrWwINapmLCCsyfB1qJUlpHaXXVICks4=;
+	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
+	 To:Cc:MIME-Version; b=hoNwC7TdTvlPe4lnD+JTFYEpEQRzL6+SOK9D1DFECPI6zXlGrLxWoyk2Vc6n8L+SxrriXPKGrzs+sbFJ6IzXvvGEwImyFJL2uiHLxuKZuydEOf4EPesQ2rmQQPYbWRFeV1VjVS6gCTPc/afyQizgDQCZrZBaXjRZrxwDPizvCpY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ezMSoVjg; arc=fail smtp.client-ip=40.107.237.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bo+SHqn9Tws/HU4dU1w6Vpa+TDVhisauiN31Vd0UBFUDHVrL5jfsYoZXgyHpW4DwuU8UoZUM8Aewm2RbT7R2RQJohE8CtVN76fKPZWYmr3ZKngp44fou3AaiH4fcmN6UhloxCsrC3900OTGy4D0KxHfz/VYL2PKd7MTJlsT23eyhM6UOyVGHl/5qdOTIlD3ypQKMXkaG8m27/IOLQeQyglgDmLWLY3ELomqp7laEq5M82vY5elN8AMy4V33gmqLFggHcbIOHAurih4gEkpVV6JyqOcO37iNInBd/EDfh0DO7Kqm+rbbwGXrcxJDZszEk/G7AjA78vppPJeEqGat08A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XgW2OlT414OYt9eoVnnxSyIHem8CaSZ9N6r8fJ5Rwy4=;
+ b=foGCrWF+9R9/MmHBMBZ234od4/MzpWCQQ7mKgMDIkXTN056+9w8fdWsM4PJzes6XxyY4C3f2rVgMoTBY/Jv+Ul8BsH+lcnhj+tG1IgfjHbXN2XUsI+bLw5b8e902zzp1Ax+sAziPgCgybVbI0FbSZg5qfdF65RgwiKZ+aDl6a3B6bVu3GOIJTNdT7gB5t2FNhgyolIwbe+WHrHhNrXkQO1oE5CY4EsGD1msqo0v9r5VGZ3x916PKOCOMsliSgWDDtLJ2N3R6u67OA3r19nuaMDAJfg6119lgh/9JbHwz7rwjlhTxOEq8TsQ1h4/Bv8jJSBiQMJ9BzuDTZPgWHy8DXg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XgW2OlT414OYt9eoVnnxSyIHem8CaSZ9N6r8fJ5Rwy4=;
+ b=ezMSoVjgLerTG2ovicXG+5viiU4foITxMa+koRzyGbFHL4uwrhVncuyFhyha/Ocm7L5pBf+To6/2P81jjjRRb3cvsnEkyfg6Ww1KBaDyE08oA7pPGFRznEWfOveOB9QHPLMJFDpLi8NmEYBJ8Kb9Tu9EoRtFmFuV64qD7UrXXC2XNKClFjcit/Q39k1/Cd+nnYdJiTwvbFnmjMqPTKd11B7W43pjJP/du1LDO0BBdmlGrSWO1EO/HO3aEaSU16Ebm7tHf9iPkOvkLges3R4/vPjqnla3V/0fA90RROXRMBUeteMdxGZLE5wBeDzN4NJhJ9Qm1XXAJIvHYD3th7g6jQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from MN2PR12MB3997.namprd12.prod.outlook.com (2603:10b6:208:161::11)
+ by DS0PR12MB7874.namprd12.prod.outlook.com (2603:10b6:8:141::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.25; Tue, 4 Mar
+ 2025 13:55:02 +0000
+Received: from MN2PR12MB3997.namprd12.prod.outlook.com
+ ([fe80::d161:329:fdd3:e316]) by MN2PR12MB3997.namprd12.prod.outlook.com
+ ([fe80::d161:329:fdd3:e316%6]) with mapi id 15.20.8489.025; Tue, 4 Mar 2025
+ 13:55:02 +0000
+From: Alexandre Courbot <acourbot@nvidia.com>
+Date: Tue, 04 Mar 2025 22:53:59 +0900
+Subject: [PATCH RFC v2 3/5] gpu: nova-core: add register definition macro
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250304-nova_timer-v2-3-8fb13f3f8cff@nvidia.com>
+References: <20250304-nova_timer-v2-0-8fb13f3f8cff@nvidia.com>
+In-Reply-To: <20250304-nova_timer-v2-0-8fb13f3f8cff@nvidia.com>
+To: Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>, 
+ John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>, 
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <benno.lossin@proton.me>, 
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>, Simona Vetter <simona@ffwll.ch>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+ nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+ Alexandre Courbot <acourbot@nvidia.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: TY2PR02CA0014.apcprd02.prod.outlook.com
+ (2603:1096:404:56::26) To MN2PR12MB3997.namprd12.prod.outlook.com
+ (2603:10b6:208:161::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 04 Mar 2025 08:53:59 -0500
-Message-Id: <D87J6E7DFLS0.1BY00BAZFWEH7@gmail.com>
-From: "Kurt Borja" <kuurtb@gmail.com>
-To: "Antheas Kapenekakis" <lkml@antheas.dev>
-Cc: "Mario Limonciello" <superm1@kernel.org>, "Shyam Sundar S K"
- <Shyam-sundar.S-k@amd.com>, "Rafael J . Wysocki" <rafael@kernel.org>, "Hans
- de Goede" <hdegoede@redhat.com>, =?utf-8?q?Ilpo_J=C3=A4rvinen?=
- <ilpo.jarvinen@linux.intel.com>, "Luke D . Jones" <luke@ljones.dev>, "Mark
- Pearson" <mpearson-lenovo@squebb.ca>, "open list:AMD PMF DRIVER"
- <platform-driver-x86@vger.kernel.org>, "open list"
- <linux-kernel@vger.kernel.org>, "open list:ACPI"
- <linux-acpi@vger.kernel.org>, "Derek J . Clark"
- <derekjohn.clark@gmail.com>, <me@kylegospodneti.ch>, "Denis Benato"
- <benato.denis96@gmail.com>, "Mario Limonciello" <mario.limonciello@amd.com>
-Subject: Re: [PATCH v2 1/1] ACPI: platform_profile: Treat quiet and low
- power the same
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250304064745.1073770-1-superm1@kernel.org>
- <20250304064745.1073770-2-superm1@kernel.org>
- <CAGwozwHniWGQ7qK6FYD_WK5zNjkro7-Q1nTcFPAuWDt9UQ+noA@mail.gmail.com>
- <23d6c735-e94f-4d43-87b0-ff119941fcac@kernel.org>
- <D87ILMWSRUPG.3FHTWG38N2IFJ@gmail.com>
- <CAGwozwHXd6frhGCOrm8_tg2=M4sHCu_JBmqodWdKUF+AuL2TNw@mail.gmail.com>
-In-Reply-To: <CAGwozwHXd6frhGCOrm8_tg2=M4sHCu_JBmqodWdKUF+AuL2TNw@mail.gmail.com>
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR12MB3997:EE_|DS0PR12MB7874:EE_
+X-MS-Office365-Filtering-Correlation-Id: ca6a5628-8c05-423a-944a-08dd5b2428f5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|10070799003|366016|7416014|376014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aDdQNm5LbURsK0FIRGw2NDU0TytVRXhqTXhrWk43NTIrbzNUOWo0MTVCS0hs?=
+ =?utf-8?B?ZzI5eStyanB1SThDVFVsVTNUck1pc3NtcTRGZkpidzViZGJxamtxZWVRQ3VZ?=
+ =?utf-8?B?VDR0aE5qLzRzR0lGOFdVSGtoUGJtYUxjYWZ5bjY3UG4vMmhTU1JFazhlMkEv?=
+ =?utf-8?B?cTkzOVVLQzB3NjVWNEpRcTl1Y0s3YUdsbEFyc3NqekdybFdiM1pIODFoM05P?=
+ =?utf-8?B?WFRoM2EyNDB5MHBmTFVES2RDTW9hTUNPOHRzODdNWnc3QXo0ZWRhRnUyWlF6?=
+ =?utf-8?B?WTZ4QlRZeldrSkJaNzBTci8zV0ZCUGhVOFVSYkRnSnlvWkQ5eDcvUWdJcXg1?=
+ =?utf-8?B?bWZDbWF1bktwZHIrdEQycWhwQUpzZjZqcWRrYW5ka2ZSNVRKaEFCWnJsKzFm?=
+ =?utf-8?B?Q0JKbTVpZjBLcU4rUlNyZTIvY2tLcmNpbHBUK2ovTVYvWFA1cWRKemVOczB1?=
+ =?utf-8?B?d29XakZuM1VuNWEySGZjMVRUOWRtYlZwT2VFS1ZOeTlvVzJvdzd1TVNJNjR0?=
+ =?utf-8?B?MDg5Z1FlcU5ncy9aUm1sblBrVVJjMVF4NDluSkZOSHJDcm1DN2daUDduTGRp?=
+ =?utf-8?B?SlRab2EremthWDNRVVBHK3JUUkM0OHJjTjcxdVFpbmZsblp4NTBWRUNmaHY0?=
+ =?utf-8?B?azg4TnUxamJRZk9SZjRqcm9GUzVFQmRmZHJRMlVhbndiVVdNck81U1ZxQ3Nj?=
+ =?utf-8?B?RzZMV0NUOHl0VUJwZ2krRG5pQlptZWN2Tnp3UWFBNjByd2Vwd3c5WVVSck1Y?=
+ =?utf-8?B?Q0YyZ0FVSklCbU8yVmswUFpqR1RCUE9ndTNvNHJzOGlSdWhtWlZDMWRWQzgz?=
+ =?utf-8?B?eTMrTkdEOEgxcTA4L0ljdEVYVjRhWkR4RERPYkpjVzB2UWtDVmx1d2NJZy9X?=
+ =?utf-8?B?UzJocW1rZ2FzNXRrVDVXb1NNcUc0eUVXRDgyd3NWaVlyL1lGUndOdHR1RytX?=
+ =?utf-8?B?NVU5SmV6cDUyQUpiUDVBNEc5SjdRYnJqOXRLSjdWMEIraHkvb2FhOEwwNG1V?=
+ =?utf-8?B?blpKb0o5bzRyZGxiVDBiWnoxc1FoWWRpSFMxbU1oUzIzU1pJVThTb1lyNzNX?=
+ =?utf-8?B?cFhGazE5d0NhTVBrYWVpdkZpZ1Fad3NwQ3dqTC9CY3ozTEYyOHNtVkFFRmRx?=
+ =?utf-8?B?QkZpWmlQQWNBNEl5WVNOczE3L0prZXFXOUxPa2hrVkw3K3p4TnpEUlpFbEMx?=
+ =?utf-8?B?a1hOUDNJZGtiVzV2cjVyUjk1U1BDQlRMdVBqNGc2dDNsZC82Z1E1OVlZMFpW?=
+ =?utf-8?B?V1luTUV4OWNhTzV3OFpoS1dEd0NlS3loU3hZdlVZcHVIU0V6NnFlaW54ZXdt?=
+ =?utf-8?B?OVhXcGEwYnlsbWxmVHMxNWt1bnBxVVgwWGExdERHcTlncFdoLzVLTTY4Zzha?=
+ =?utf-8?B?VmRBd1h6WS9IclNiclI5NXA0NVNBcE1vRDNGcWo2VGdqY09JNUdhVHp5ckpN?=
+ =?utf-8?B?eU1ncFEwNFBXK0VYWE96MmY0TU9ueTNIUm9XY3VENlYwSFNnWDNRR1NXTjF0?=
+ =?utf-8?B?T0dEQ0YzTmp1cmdiallkdFlvcmpFZlJLQVRxZEFSWUJydW8yZ2VWeE16Vlgr?=
+ =?utf-8?B?NHR2SE5BekxvWm9sZUNlOExEVUZGc2tpZVVuODFVRWhEcEUxNHlHNEtxMUto?=
+ =?utf-8?B?RnlISE11SDhiTnRBTkhLMDRlT1VEMFhZaTJyR25xMTNFUUZRd3JFU2hmVnhQ?=
+ =?utf-8?B?em9ZMXRwbkx4Y2p0UXVRdlA4ODdqaUp3WUxpSlc2ck50SWlkS0NDRXh2djJH?=
+ =?utf-8?B?aFJaKzVseitxM2YvT04zVlJPU0p6clcrZ1cya1E1ZEllaXk3dlVaWUNCVUM5?=
+ =?utf-8?B?VUhDQmxyNjd4eklNNE44UHlNZnlkU2NlU1l0S2pHSEE4OW44RXlPbXh1YjNx?=
+ =?utf-8?B?R2hpRk1NRmlaZktZQ1QwZ3Ria2p3d2tOR3FnQkhtc3Q1RDdxemFZNmIxb2VO?=
+ =?utf-8?Q?ciBdX6OGy3M=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3997.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(10070799003)(366016)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cXp5aCt5eVZQei9QSCtCbG5aaExJeEcvdUJDY01aSWI0VG5POVVsUUxaeVZD?=
+ =?utf-8?B?V1hZUDkyQ1lidUtKWWVpZ1JjZTd5RXdiRTRSdlA5dWYyT21RZ1FidHRUZGJz?=
+ =?utf-8?B?UzgyS1BnNGczaUFxaDhoL29UKzFmT2JkZnQxQ2g4ZnVlbHdzZi9JNFpBR3ha?=
+ =?utf-8?B?aXlpR3ZtY1RTN0RzUTcrT0ErVENwY1FjbDE1M0RCQ2FNeVJtMHlWMlEyYnJC?=
+ =?utf-8?B?bHE4d1orNU5pejZJL3FVVGswTEdEVkVxS2RNbjFmM2YybVdWZDB0K3d5WEhO?=
+ =?utf-8?B?ZHZWcGtkcEFyVWxCSUFkYW5LS0d5bGNTZVFsdGJDRDhOV3V0WTgxckthNDRV?=
+ =?utf-8?B?QXh4dXhmQnNIekg0QkRad2FtcjBhdHIxRkhyVmFtVXRuRmNzSVR5cm9YUHlH?=
+ =?utf-8?B?N2x5bWxyWmJJVTNkemh5a01PdFVKOG5OT2hRZkwrWWg4anVVbFRNSmN1UEcv?=
+ =?utf-8?B?dzJ5MGI3SVh2MkRCa0dMaG4yWUJmdnF1RUtQRi8zL3NrdXZPR2d4MDJWK1Zh?=
+ =?utf-8?B?UFV3dThBSU1QcDZqZThSa2g3aG03TTBDVDZIUkxuRUdOQ1BDbGRwa05FR1ZN?=
+ =?utf-8?B?d3JwSjZ4WjhwV2NlYXdOVXJVdzRoeHh5a3dzVzIza3NQc0gvbWJpMzRzOE83?=
+ =?utf-8?B?ZjU1SjkyZFJaOHd2c1dxUjlnMjNwWGZGTXVzam41NDVETHp3K0NwbUZnaHZG?=
+ =?utf-8?B?eXpEVW9TdVdsSlFTTHBrS1QybW1sSnBMd3ZLZGwzdVFLZ3pLenc5VXpBY0Nw?=
+ =?utf-8?B?cjIxQ3dET1Vwbk04ZWZnU2Y2RUY0cHJNYWtNNWo2Nlh0YngyWGZjaGZxcTRi?=
+ =?utf-8?B?Z2wwZnZCdmtCZldPcG9xTkxrY3hHUXdaQ2tjY21QNzRBOWI3Snk5N0hGa2Nt?=
+ =?utf-8?B?UzJyYjZsOTY5ZTBER01XVkpySndwMFJxWmt6dGR3Rmp0ZTE5R1VoYUNLU0Ev?=
+ =?utf-8?B?VThqbnh1b0IrWWhvWlNUTTNJTThGWUMyQ3YyK3JWcUJRSExJR3paTjlkYmpz?=
+ =?utf-8?B?OHhzbUFsODJGbU9lbkdHcGVoWTRGSGgxU3RsUTJGVExLRVF4aVRvZ2ZDemRL?=
+ =?utf-8?B?N2VGaFNpZ2hzTkd3T2lxaEo5UzEyMkhDN1JoeFZ2WTViaGIwWWFNaVFpOTJp?=
+ =?utf-8?B?RE1MMFY3OW1VRGg0Mzl5clFnUWllTldMY2Q1TE1TcWtKMmp5SFRubTNndVJQ?=
+ =?utf-8?B?a01XTXhaUXQwWUJmbU1FaDlvbURta3JON01jRzhOSE9VdE5DTHZzblFQMEY2?=
+ =?utf-8?B?UWhOWFRKbzQ3WTdURkd0UG5jNE0xa0lnTHFNRDlJUGx6Mk1BOXZJNUZRRjVl?=
+ =?utf-8?B?dTAwT1QrRlcwVFRNb04wUkEzOURBUE9RWEZkT3ltQnZiaCtHeUhmYUFVNzVV?=
+ =?utf-8?B?WHpUQjVkeE9Ia3E5SEFUb3R2TlFrVmZsbGQ5UUZLOHBIQ3JOMFdlNWZ1Kzkv?=
+ =?utf-8?B?TlBrRE81c2xuclNvaHNCbm8wU25mM2M5eEZKOVNsL0s5OXdsbXpBQlpVOVZu?=
+ =?utf-8?B?SGIxQTJSNnV5d1VvS3Q4c0RlT2R5dElFcGZTc0svNjlWakZnc213dHNYR1Zh?=
+ =?utf-8?B?OG52VkJ4MHRwT1ZOZzNPRXh0dkt6NkovZjhLOXNwc2tqMXR5YlpFZU5ybjVK?=
+ =?utf-8?B?ZTlyencyc1oxNmpkQ2RLTFdNV09mRjUzUW5lQW5yTm5TODFXQlMrRnVBTTZU?=
+ =?utf-8?B?VEtXVG5IZ1BNd2ZPdkF0QmU1VUdQd29qTEM0NGMvT3JlWDV1bGJncGxaRHBZ?=
+ =?utf-8?B?TmgvbjJBVWR2eVF6M1B4L3R0cjZxaG1lSzgzSFhEbE1id1g5bWU5N3laS2VI?=
+ =?utf-8?B?UklEMDluOEp5T0hnTEV4YVFCbTh4a1NsOVlXdDdNUFN6bSs5UDdpcXJEZjZH?=
+ =?utf-8?B?dDNtSHBTYlVKOWhEU0pUelltR0RyR3NFL0JIYXY2Y0NHL09LTDRibCs1WFNz?=
+ =?utf-8?B?cE11cWtxb0F1aWhwSzJDNFJOMnlkcDdZZWc3OEFXZW9HaGZ2ZDQvUHJ5RGo2?=
+ =?utf-8?B?K1lZNDUyMld5M3JvTzVFclhDZEd2MjdKN2J5Z1p1SmN0QWIrMHQyRGJjRW1P?=
+ =?utf-8?B?cEhCVUdHRTNPSmtTTHVtbWpOQnJ1VjZzbjdMcHZ4ZHE1bjhXcDF4ekV3VE8w?=
+ =?utf-8?B?Q0dyYnQreHVZRVJIdFRpYmgwaTUvRGZjYnd0WjNoNXpYcG5RR245S01Ra2tV?=
+ =?utf-8?Q?2mbMCb4ZFISoUrnTtpB5HjHEtXEFS5xwto6d+RNQh9oc?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ca6a5628-8c05-423a-944a-08dd5b2428f5
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3997.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2025 13:55:02.1724
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: k3P2nmZm+dZ1a98Ha/GzW3nCTzWYFw+l2nP74asoZHufV1GoNl334t/8yGNs94OVAg/uwSXnI5ax/NtmQ4tWRw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7874
 
-On Tue Mar 4, 2025 at 8:32 AM -05, Antheas Kapenekakis wrote:
-> On Tue, 4 Mar 2025 at 14:28, Kurt Borja <kuurtb@gmail.com> wrote:
->>
->> Hi all,
->>
->> On Tue Mar 4, 2025 at 7:49 AM -05, Mario Limonciello wrote:
->> >
->> >
->> > On 3/4/25 02:38, Antheas Kapenekakis wrote:
->> >> On Tue, 4 Mar 2025 at 07:48, Mario Limonciello <superm1@kernel.org> w=
-rote:
->> >>>
->> >>> From: Mario Limonciello <mario.limonciello@amd.com>
->> >>>
->> >>> When two drivers don't support all the same profiles the legacy inte=
-rface
->> >>> only exports the common profiles.
->> >>>
->> >>> This causes problems for cases where one driver uses low-power but a=
-nother
->> >>> uses quiet because the result is that neither is exported to sysfs.
->> >>>
->> >>> If one platform profile handler supports quiet and the other
->> >>> supports low power treat them as the same for the purpose of
->> >>> the sysfs interface.
->> >>>
->> >>> Fixes: 688834743d67 ("ACPI: platform_profile: Allow multiple handler=
-s")
->> >>> Reported-by: Antheas Kapenekakis <lkml@antheas.dev>
->> >>> Closes: https://lore.kernel.org/platform-driver-x86/e64b771e-3255-42=
-ad-9257-5b8fc6c24ac9@gmx.de/T/#mc068042dd29df36c16c8af92664860fc4763974b
->> >>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
->> >>> ---
->> >>>   drivers/acpi/platform_profile.c | 38 +++++++++++++++++++++++++++++=
-+---
->> >>>   1 file changed, 35 insertions(+), 3 deletions(-)
->> >>>
->> >>> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform=
-_profile.c
->> >>> index 2ad53cc6aae53..d9a7cc5891734 100644
->> >>> --- a/drivers/acpi/platform_profile.c
->> >>> +++ b/drivers/acpi/platform_profile.c
->> >>> @@ -73,8 +73,20 @@ static int _store_class_profile(struct device *de=
-v, void *data)
->> >>>
->> >>>          lockdep_assert_held(&profile_lock);
->> >>>          handler =3D to_pprof_handler(dev);
->> >>> -       if (!test_bit(*bit, handler->choices))
->> >>> -               return -EOPNOTSUPP;
->> >>> +       if (!test_bit(*bit, handler->choices)) {
->> >>> +               switch (*bit) {
->> >>> +               case PLATFORM_PROFILE_QUIET:
->> >>> +                       *bit =3D PLATFORM_PROFILE_LOW_POWER;
->> >>> +                       break;
->> >>> +               case PLATFORM_PROFILE_LOW_POWER:
->> >>> +                       *bit =3D PLATFORM_PROFILE_QUIET;
->> >>> +                       break;
->> >>> +               default:
->> >>> +                       return -EOPNOTSUPP;
->> >>> +               }
->> >>> +               if (!test_bit(*bit, handler->choices))
->> >>> +                       return -EOPNOTSUPP;
->> >>> +       }
->> >>>
->> >>>          return handler->ops->profile_set(dev, *bit);
->> >>>   }
->> >>> @@ -252,8 +264,16 @@ static int _aggregate_choices(struct device *de=
-v, void *data)
->> >>>          handler =3D to_pprof_handler(dev);
->> >>>          if (test_bit(PLATFORM_PROFILE_LAST, aggregate))
->> >>>                  bitmap_copy(aggregate, handler->choices, PLATFORM_P=
-ROFILE_LAST);
->> >>> -       else
->> >>> +       else {
->> >>> +               /* treat quiet and low power the same for aggregatio=
-n purposes */
->> >>> +               if (test_bit(PLATFORM_PROFILE_QUIET, handler->choice=
-s) &&
->> >>> +                   test_bit(PLATFORM_PROFILE_LOW_POWER, aggregate))
->> >>> +                       set_bit(PLATFORM_PROFILE_QUIET, aggregate);
->> >>> +               else if (test_bit(PLATFORM_PROFILE_LOW_POWER, handle=
-r->choices) &&
->> >>> +                        test_bit(PLATFORM_PROFILE_QUIET, aggregate)=
-)
->> >>> +                       set_bit(PLATFORM_PROFILE_LOW_POWER, aggregat=
-e);
->> >>>                  bitmap_and(aggregate, handler->choices, aggregate, =
-PLATFORM_PROFILE_LAST);
->> >>> +       }
->> >>
->> >> So you end up showing both? If that's the case, isn't it equivalent t=
-o
->> >> just make amd-pmf show both quiet and low-power?
->> >>
->> >> I guess it is not ideal for framework devices. But if asus devices en=
-d
->> >> up showing both, then it should be ok for framework devices to show
->> >> both.
->> >>
->> >> I like the behavior of the V1 personally.
->> >
->> > No; this doesn't cause it to show both.  It only causes one to show up=
-.
->> > I confirmed it with a contrived situation on my laptop that forced
->> > multiple profile handlers that supported a mix.
->> >
->> >
->> > # cat /sys/firmware/acpi/platform_profile*
->> > low-power
->> > low-power balanced performance
->> >
->> > # cat /sys/class/platform-profile/platform-profile-*/profile
->> > quiet
->> > quiet
->> > quiet
->> > quiet
->> > quiet
->> > quiet
->> > quiet
->> > quiet
->> > quiet
->> > quiet
->> > quiet
->> > quiet
->> > quiet
->> > quiet
->> > quiet
->> > quiet
->> > quiet
->> > quiet
->> > quiet
->> > quiet
->> > quiet
->> > quiet
->> > quiet
->> > quiet
->> > low-power
->> >
->> >>
->> >>>          return 0;
->> >>>   }
->> >>> @@ -305,6 +325,13 @@ static int _aggregate_profiles(struct device *d=
-ev, void *data)
->> >>>          if (err)
->> >>>                  return err;
->> >>>
->> >>> +       /* treat low-power and quiet as the same */
->> >>> +       if ((*profile =3D=3D PLATFORM_PROFILE_LOW_POWER &&
->> >>> +            val =3D=3D PLATFORM_PROFILE_QUIET) ||
->> >>> +           (*profile =3D=3D PLATFORM_PROFILE_QUIET &&
->> >>> +            val =3D=3D PLATFORM_PROFILE_LOW_POWER))
->> >>> +               *profile =3D val;
->> >>> +
->> >>>          if (*profile !=3D PLATFORM_PROFILE_LAST && *profile !=3D va=
-l)
->> >>>                  *profile =3D PLATFORM_PROFILE_CUSTOM;
->> >>>          else
->> >>> @@ -531,6 +558,11 @@ struct device *platform_profile_register(struct=
- device *dev, const char *name,
->> >>>                  dev_err(dev, "Failed to register platform_profile c=
-lass device with empty choices\n");
->> >>>                  return ERR_PTR(-EINVAL);
->> >>>          }
->> >>> +       if (test_bit(PLATFORM_PROFILE_QUIET, pprof->choices) &&
->> >>> +           test_bit(PLATFORM_PROFILE_LOW_POWER, pprof->choices)) {
->> >>> +               dev_err(dev, "Failed to register platform_profile cl=
-ass device with both quiet and low-power\n");
->> >>> +               return ERR_PTR(-EINVAL);
->> >>> +       }
->> >>
->> >> Can you avoid failing here? It caused a lot of issues in the past (th=
-e
->> >> WMI driver bails). a dev_err should be enough. Since you do not fail
->> >> maybe it can be increased to dev_crit.
->> >>
->> >> There is at least one driver that implements both currently, and a fi=
-x
->> >> would have to precede this patch.
->> >
->> > Oh, acer-wmi?  Kurt; can you please comment?  Are both simultaneous?
->>
->> There are a few laptops supported by alienware-wmi that definitely have
->> both (including mine). The acer-wmi and the samsung-galaxybook drivers
->> also probe for available choices dynamically, so some of those devices
->> may be affected by this too.
->>
->> So yes, we shouldn't fail registration here.
->>
->> Anyway, I like this approach more than v1. What do you think about
->> constraining this fix to the legacy interface?
->
-> AFAIK new interface is ok and should not be modified. None of the
-> previous solutions touched it (well, changing quiet to low-power did).
-> But I still expect the legacy interface to work the same way on 6.14.
+Register data manipulation is one of the error-prone areas of a kernel
+driver. It is particularly easy to mix addresses of registers, masks and
+shifts of fields, and to proceed with invalid values.
 
-This patch also permanently alias quiet and low-power for the new
-interface, if either one is not available.
+This patch introduces the nv_reg!() macro, which creates a safe type
+definition for a given register, along with field accessors and
+value builder. The macro is designed to type the same field ranges as
+the NVIDIA OpenRM project, to facilitate porting its register
+definitions to Nova.
 
->
-> What happens if there is one handler that does low-power and one that
-> does quiet? Is one choice preferred? And then are writes accepted in
-> both?
->
-> I cannot have the same device requiring low-power and quiet depending
-> on kernel version or boot. I do tdp controls per manufacturer.
+Here is for instance the definition of the Boot0 register:
 
-I'm not sure what you mean here.
+  nv_reg!(Boot0@0x00000000, "Basic revision information about the GPU";
+      3:0     minor_rev as (u8), "minor revision of the chip";
+      7:4     major_rev as (u8), "major revision of the chip";
+      25:20   chipset try_into (Chipset), "chipset model"
+  );
 
---=20
- ~ Kurt
+This definition creates a Boot0 type that includes read() and write()
+methods that will automatically use the correct register offset (0x0 in
+this case).
 
->
->> --
->>  ~ Kurt
->>
->> >
->> >>
->> >>>
->> >>>          guard(mutex)(&profile_lock);
->> >>>
->> >>> --
->> >>> 2.43.0
->> >>>
->>
+Creating a type for each register lets us leverage the type system to
+make sure register values don't get mix up.
+
+It also allows us to create register-specific field extractor methods
+(here minor_rev(), major_rev(), and chipset()) that present each field
+in a convenient way and validate its data if relevant. The chipset()
+accessor, in particular, uses the TryFrom<u32> implementation of Chipset
+to build a Chipset instance and returns its associated error type if the
+conversion has failed because of an invalid value.
+
+The ending string at the end of each line is optional, and expands to
+doc comments for the type itself, or each of the field accessors.
+
+Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+---
+ drivers/gpu/nova-core/gpu.rs  |   2 +-
+ drivers/gpu/nova-core/regs.rs | 195 ++++++++++++++++++++++++++++++++++--------
+ 2 files changed, 158 insertions(+), 39 deletions(-)
+
+diff --git a/drivers/gpu/nova-core/gpu.rs b/drivers/gpu/nova-core/gpu.rs
+index 7693a5df0dc11f208513dc043d8c99f85c902119..58b97c7f0b2ab1edacada8346b139f6336b68272 100644
+--- a/drivers/gpu/nova-core/gpu.rs
++++ b/drivers/gpu/nova-core/gpu.rs
+@@ -164,7 +164,7 @@ fn new(bar: &Devres<Bar0>) -> Result<Spec> {
+         let boot0 = regs::Boot0::read(&bar);
+ 
+         Ok(Self {
+-            chipset: boot0.chipset().try_into()?,
++            chipset: boot0.chipset()?,
+             revision: Revision::from_boot0(boot0),
+         })
+     }
+diff --git a/drivers/gpu/nova-core/regs.rs b/drivers/gpu/nova-core/regs.rs
+index 50aefb150b0b1c9b73f07fca3b7a070885785485..a874cb2fa5bedee258a60e5c3b471f52e5f82469 100644
+--- a/drivers/gpu/nova-core/regs.rs
++++ b/drivers/gpu/nova-core/regs.rs
+@@ -1,55 +1,174 @@
+ // SPDX-License-Identifier: GPL-2.0
+ 
++use core::{fmt::Debug, marker::PhantomData, ops::Deref};
++
+ use crate::driver::Bar0;
++use crate::gpu::Chipset;
+ 
+-// TODO
+-//
+-// Create register definitions via generic macros. See task "Generic register
+-// abstraction" in Documentation/gpu/nova/core/todo.rst.
++pub(crate) struct Builder<T>(T, PhantomData<T>);
+ 
+-const BOOT0_OFFSET: usize = 0x00000000;
++impl<T> From<T> for Builder<T> {
++    fn from(value: T) -> Self {
++        Builder(value, PhantomData)
++    }
++}
+ 
+-// 3:0 - chipset minor revision
+-const BOOT0_MINOR_REV_SHIFT: u8 = 0;
+-const BOOT0_MINOR_REV_MASK: u32 = 0x0000000f;
++impl<T: Default> Default for Builder<T> {
++    fn default() -> Self {
++        Self(Default::default(), PhantomData)
++    }
++}
+ 
+-// 7:4 - chipset major revision
+-const BOOT0_MAJOR_REV_SHIFT: u8 = 4;
+-const BOOT0_MAJOR_REV_MASK: u32 = 0x000000f0;
++impl<T> Deref for Builder<T> {
++    type Target = T;
+ 
+-// 23:20 - chipset implementation Identifier (depends on architecture)
+-const BOOT0_IMPL_SHIFT: u8 = 20;
+-const BOOT0_IMPL_MASK: u32 = 0x00f00000;
++    fn deref(&self) -> &Self::Target {
++        &self.0
++    }
++}
+ 
+-// 28:24 - chipset architecture identifier
+-const BOOT0_ARCH_MASK: u32 = 0x1f000000;
++macro_rules! nv_reg_common {
++    ($name:ident $(, $type_comment:expr)?) => {
++        $(
++        #[doc=concat!($type_comment)]
++        )?
++        #[derive(Clone, Copy, Default)]
++        pub(crate) struct $name(u32);
+ 
+-// 28:20 - chipset identifier (virtual register field combining BOOT0_IMPL and
+-//         BOOT0_ARCH)
+-const BOOT0_CHIPSET_SHIFT: u8 = BOOT0_IMPL_SHIFT;
+-const BOOT0_CHIPSET_MASK: u32 = BOOT0_IMPL_MASK | BOOT0_ARCH_MASK;
++        // TODO: should we display the raw hex value, then the value of all its fields?
++        impl Debug for $name {
++            fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
++                f.debug_tuple(stringify!($name))
++                    .field(&format_args!("0x{0:x}", &self.0))
++                    .finish()
++            }
++        }
+ 
+-#[derive(Copy, Clone)]
+-pub(crate) struct Boot0(u32);
++        impl core::ops::BitOr for $name {
++            type Output = Self;
+ 
+-impl Boot0 {
+-    #[inline]
+-    pub(crate) fn read(bar: &Bar0) -> Self {
+-        Self(bar.readl(BOOT0_OFFSET))
+-    }
++            fn bitor(self, rhs: Self) -> Self::Output {
++                Self(self.0 | rhs.0)
++            }
++        }
+ 
+-    #[inline]
+-    pub(crate) fn chipset(&self) -> u32 {
+-        (self.0 & BOOT0_CHIPSET_MASK) >> BOOT0_CHIPSET_SHIFT
+-    }
++        #[allow(dead_code)]
++        impl $name {
++            /// Returns a new builder for the register. Individual fields can be set by the methods
++            /// of the builder, and the current value obtained by dereferencing it.
++            #[inline]
++            pub(crate) fn new() -> Builder<Self> {
++                Default::default()
++            }
++        }
++    };
++}
+ 
+-    #[inline]
+-    pub(crate) fn minor_rev(&self) -> u8 {
+-        ((self.0 & BOOT0_MINOR_REV_MASK) >> BOOT0_MINOR_REV_SHIFT) as u8
+-    }
++macro_rules! nv_reg_field_accessor {
++    ($hi:tt:$lo:tt $field:ident $(as ($as_type:ty))? $(as_bit ($bit_type:ty))? $(into ($type:ty))? $(try_into ($try_type:ty))? $(, $comment:expr)?) => {
++        $(
++        #[doc=concat!("Returns the ", $comment)]
++        )?
++        #[inline]
++        pub(crate) fn $field(self) -> $( $as_type )? $( $bit_type )? $( $type )? $( core::result::Result<$try_type, <$try_type as TryFrom<u32>>::Error> )? {
++            const MASK: u32 = ((((1 << $hi) - 1) << 1) + 1) - ((1 << $lo) - 1);
++            const SHIFT: u32 = MASK.trailing_zeros();
++            let field = (self.0 & MASK) >> SHIFT;
+ 
+-    #[inline]
+-    pub(crate) fn major_rev(&self) -> u8 {
+-        ((self.0 & BOOT0_MAJOR_REV_MASK) >> BOOT0_MAJOR_REV_SHIFT) as u8
++            $( field as $as_type )?
++            $(
++            // TODO: it would be nice to throw a compile-time error if $hi != $lo as this means we
++            // are considering more than one bit but returning a bool...
++            (if field != 0 { true } else { false }) as $bit_type
++            )?
++            $( <$type>::from(field) )?
++            $( <$try_type>::try_from(field) )?
++        }
+     }
+ }
++
++macro_rules! nv_reg_field_builder {
++    ($hi:tt:$lo:tt $field:ident $(as ($as_type:ty))? $(as_bit ($bit_type:ty))? $(into ($type:ty))? $(try_into ($try_type:ty))? $(, $comment:expr)?) => {
++        $(
++        #[doc=concat!("Sets the ", $comment)]
++        )?
++        #[inline]
++        pub(crate) fn $field(mut self, value: $( $as_type)? $( $bit_type )? $( $type )? $( $try_type)? ) -> Self {
++            const MASK: u32 = ((((1 << $hi) - 1) << 1) + 1) - ((1 << $lo) - 1);
++            const SHIFT: u32 = MASK.trailing_zeros();
++
++            let value = ((value as u32) << SHIFT) & MASK;
++            self.0.0 = self.0.0 | value;
++            self
++        }
++    };
++}
++
++macro_rules! nv_reg {
++    (
++        $name:ident@$offset:expr $(, $type_comment:expr)?;
++        $($hi:tt:$lo:tt $field:ident $(as ($as_type:ty))? $(as_bit ($bit_type:ty))? $(into ($type:ty))? $(try_into ($try_type:ty))? $(, $field_comment:expr)?);* $(;)?
++    ) => {
++        nv_reg_common!($name);
++
++        #[allow(dead_code)]
++        impl $name {
++            #[inline]
++            pub(crate) fn read(bar: &Bar0) -> Self {
++                Self(bar.readl($offset))
++            }
++
++            #[inline]
++            pub(crate) fn write(self, bar: &Bar0) {
++                bar.writel(self.0, $offset)
++            }
++
++            $(
++            nv_reg_field_accessor!($hi:$lo $field $(as ($as_type))? $(as_bit ($bit_type))? $(into ($type))? $(try_into ($try_type))? $(, $field_comment)?);
++            )*
++        }
++
++        #[allow(dead_code)]
++        impl Builder<$name> {
++            $(
++            nv_reg_field_builder!($hi:$lo $field $(as ($as_type))? $(as_bit ($bit_type))? $(into ($type))? $(try_into ($try_type))? $(, $field_comment)?);
++            )*
++        }
++    };
++    (
++        $name:ident@+$offset:expr $(, $type_comment:expr)?;
++        $($hi:tt:$lo:tt $field:ident $(as ($as_type:ty))? $(as_bit ($bit_type:ty))? $(into ($type:ty))? $(try_into ($try_type:ty))? $(, $field_comment:expr)?);* $(;)?
++    ) => {
++        nv_reg_common!($name);
++
++        #[allow(dead_code)]
++        impl $name {
++            #[inline]
++            pub(crate) fn read(bar: &Bar0, base: usize) -> Self {
++                Self(bar.readl(base + $offset))
++            }
++
++            #[inline]
++            pub(crate) fn write(self, bar: &Bar0, base: usize) {
++                bar.writel(self.0, base + $offset)
++            }
++
++            $(
++            nv_reg_field_accessor!($hi:$lo $field $(as ($as_type))? $(as_bit ($bit_type))? $(into ($type))? $(try_into ($try_type))? $(, $field_comment)?);
++            )*
++        }
++
++        #[allow(dead_code)]
++        impl Builder<$name> {
++            $(
++            nv_reg_field_builder!($hi:$lo $field $(as ($as_type))? $(as_bit ($bit_type))? $(into ($type))? $(try_into ($try_type))? $(, $field_comment)?);
++            )*
++        }
++    };
++}
++
++nv_reg!(Boot0@0x00000000, "Basic revision information about the GPU";
++    3:0     minor_rev as (u8), "minor revision of the chip";
++    7:4     major_rev as (u8), "major revision of the chip";
++    25:20   chipset try_into (Chipset), "chipset model"
++);
+
+-- 
+2.48.1
 
 
