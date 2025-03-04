@@ -1,70 +1,77 @@
-Return-Path: <linux-kernel+bounces-544170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA197A4DE34
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:45:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DC90A4DE38
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:47:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 127491683D1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:45:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 782EB3ABAC9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:47:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 793B6202C4E;
-	Tue,  4 Mar 2025 12:44:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90C4C201262;
+	Tue,  4 Mar 2025 12:47:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="alw6DETQ"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Qz7SmdlT";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Qz7SmdlT"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B2A202F70
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 12:44:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D26F1FC7FD
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 12:47:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741092289; cv=none; b=lUKwL7E/CMcV80zkAMh9TrfwLmBaVIpGIRrnYa8SAHOrZd3e2uThrP0c9UgkevD7HaMCYMA8OikMD25w2oXgcHvsUjM0D0+3KMr46zHo9LXKA/1Mz/d+67Q0MJIiEn6b5OjndR2YQZbXlURGB0TD8wLZhx/I1aw1mGwE2hUZdAg=
+	t=1741092434; cv=none; b=hRaavEnWuiENZPpaLUFRYVRpfDWw2mXmM70R6Yk0YlZ8dQ39sH1XgIe6dvAEoTDaCZrFzZkAeGzX1Mb5CgSW6+93zoGzAAvMXRBTW6fGGuoZzheUL+gjrxusozG7v0AhzkDmMDJ/i7nnA9MXSP23SuW2SerM5y91FYYxc2YI5Ww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741092289; c=relaxed/simple;
-	bh=p52caFVCC/RT99Rzjhd4LQTnNLGIz2zKYYi5cQiWnjc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cPre/VOJ8pL/ymBEY0EWEOC+iMuiPWk2ttQSd320Xt/3yNJm56t2MAUE6PFxyHP5z0tXoUMYPJuJznUuA6dop3LSZRY9ldl1X/MWuispUqorwJ2FA4sZyahbCt3QFKjd2OBV3xZt09TKzA/g+wkGDrEnkjWNVuUCmdVqiPWLZqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=alw6DETQ; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Pu83Mb40jejkNbJKC2LIx4LiblmoRe/j7LFnThEkjwI=; b=alw6DETQckRTX6x5yzyqCZGAtw
-	xutdjeey1EdrIAPe7clsn6m3TkcERsyoV34D7JZPUXNyjH1MQnbLdMBvIHpUpQhstvKYa+DA/Ak8B
-	UR426//s+1PaxuglwwVtNKIjGdqmPaECqhzW0EqAaTPrKLlaO2vy3LYVf3CWl7NddNQgpEnvyfhY1
-	r90kNSu54aPsaJZKtJ7/zVIk4g/1crhNaNh4fNkzoh33FB4+AbXxGVSNswi/6zHZzGzB1kllq+EhE
-	jCsKHhVvVlAq7yadddewH7twf3gdM80aV6jNv2vKSFy8bK4KBIB/aIloNYqgV2L6Uf5Ez+RMKcoap
-	q09asTsg==;
-Received: from i53875a38.versanet.de ([83.135.90.56] helo=phil..)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tpRdS-0003B0-MR; Tue, 04 Mar 2025 13:44:34 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: heiko@sntech.de
-Cc: andy.yan@rock-chips.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
+	s=arc-20240116; t=1741092434; c=relaxed/simple;
+	bh=ErhgQClLYZeW777Cfg1S+MjPfgTOaig3pW5nhvGLGxc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M7LqngQ1dK3soyFAMtWTU1DwiCJyR5isLjdDc4/GFyXcVkHniCTqLVrz+BPR4U29w1ASOGVSLzZexIIG+0k5kgzJ2D2xdN3jSD+Mmn0ajqmP4hxHBhxyPlv4b/NlXrVSa4puy/4pCZCdenW5BB77Ou7y6q8uwstibZAsTdviLhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Qz7SmdlT; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Qz7SmdlT; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 306B21F393;
+	Tue,  4 Mar 2025 12:47:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1741092430; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=JH6fHSlYvmwz91Y2uwvaZTyrBFuPhL2lwni0hhoA3Vg=;
+	b=Qz7SmdlTiLlMIB6/z1i89zASe8MqEdtDar+shkrKTMOKHOtTDXe+2lO/BmPm1cfUCjERPR
+	xg6S1lZZPSINFadUZrimNLNofeSpbjeTD2mlV/uHveZRNUc9E2L1SmVEU0BeJAWcRrBaG1
+	9md95k5XS3rcxeWz4Xo3DRcay/XTuvA=
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1741092430; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=JH6fHSlYvmwz91Y2uwvaZTyrBFuPhL2lwni0hhoA3Vg=;
+	b=Qz7SmdlTiLlMIB6/z1i89zASe8MqEdtDar+shkrKTMOKHOtTDXe+2lO/BmPm1cfUCjERPR
+	xg6S1lZZPSINFadUZrimNLNofeSpbjeTD2mlV/uHveZRNUc9E2L1SmVEU0BeJAWcRrBaG1
+	9md95k5XS3rcxeWz4Xo3DRcay/XTuvA=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2858D1393C;
+	Tue,  4 Mar 2025 12:47:10 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id z1bTCU72xme+EAAAD6G6ig
+	(envelope-from <dsterba@suse.com>); Tue, 04 Mar 2025 12:47:10 +0000
+From: David Sterba <dsterba@suse.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: David Sterba <dsterba@suse.com>,
 	linux-kernel@vger.kernel.org,
-	quentin.schulz@cherry.de,
-	Heiko Stuebner <heiko.stuebner@cherry.de>
-Subject: [PATCH v3 3/3] drm/rockchip: lvds: lower log severity for missing pinctrl settings
-Date: Tue,  4 Mar 2025 13:44:18 +0100
-Message-ID: <20250304124418.111061-4-heiko@sntech.de>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250304124418.111061-1-heiko@sntech.de>
-References: <20250304124418.111061-1-heiko@sntech.de>
+	linux-crypto@vger.kernel.org,
+	Nick Terrell <terrelln@fb.com>
+Subject: [PATCH] MAINTAINERS: add myself to co-maintain ZSTD
+Date: Tue,  4 Mar 2025 13:46:58 +0100
+Message-ID: <20250304124700.24574-1-dsterba@suse.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,41 +79,57 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.com:mid];
+	RCVD_TLS_ALL(0.00)[]
+X-Spam-Score: -2.80
+X-Spam-Flag: NO
 
-From: Heiko Stuebner <heiko.stuebner@cherry.de>
+Recently the ZSTD tree has been removed from linux-next due to lack of
+updates for last year [1]. As there are several users of ZSTD in kernel
+we need to keep the code maintained and updated. I'll act as a backup to
+get the ZSTD upstream to linux, Nick is OK with that [2].
 
-While missing lvds pinctrl is unexpected and is reported, we nevertheless
-don't fail setting up the device and instead continue without explicit
-pinctrl handling. So lower the log-level from error to warning to reflect
-that.
+[1] https://lore.kernel.org/all/20250216224200.50b9dd6a@canb.auug.org.au/
+[2] https://github.com/facebook/zstd/issues/4262#issuecomment-2691527952
 
-Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
+CC: Nick Terrell <terrelln@fb.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 ---
- drivers/gpu/drm/rockchip/rockchip_lvds.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_lvds.c b/drivers/gpu/drm/rockchip/rockchip_lvds.c
-index bfebe42a0331..a673779de3d2 100644
---- a/drivers/gpu/drm/rockchip/rockchip_lvds.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_lvds.c
-@@ -464,14 +464,14 @@ static int rk3288_lvds_probe(struct platform_device *pdev,
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8e0736dc2ee0..b50c0eff3606 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -26274,6 +26274,7 @@ F:	mm/zsmalloc.c
  
- 	lvds->pins->p = devm_pinctrl_get(lvds->dev);
- 	if (IS_ERR(lvds->pins->p)) {
--		dev_err(lvds->dev, "no pinctrl handle\n");
-+		dev_warn(lvds->dev, "no pinctrl handle\n");
- 		devm_kfree(lvds->dev, lvds->pins);
- 		lvds->pins = NULL;
- 	} else {
- 		lvds->pins->default_state =
- 			pinctrl_lookup_state(lvds->pins->p, "lcdc");
- 		if (IS_ERR(lvds->pins->default_state)) {
--			dev_err(lvds->dev, "no default pinctrl state\n");
-+			dev_warn(lvds->dev, "no default pinctrl state\n");
- 			devm_kfree(lvds->dev, lvds->pins);
- 			lvds->pins = NULL;
- 		}
+ ZSTD
+ M:	Nick Terrell <terrelln@fb.com>
++M:	David Sterba <dsterba@suse.com>
+ S:	Maintained
+ B:	https://github.com/facebook/zstd/issues
+ T:	git https://github.com/terrelln/linux.git
 -- 
-2.47.2
+2.47.1
 
 
