@@ -1,99 +1,90 @@
-Return-Path: <linux-kernel+bounces-543323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCBA4A4D446
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:08:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AC8EA4D447
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:08:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 320BD3A81BB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:08:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C388B3A93B6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:08:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 786541F5858;
-	Tue,  4 Mar 2025 07:08:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12DC1F76A8;
+	Tue,  4 Mar 2025 07:08:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="oXJsnOAX"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F216F073;
-	Tue,  4 Mar 2025 07:08:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G+ovV/tt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2B96F073;
+	Tue,  4 Mar 2025 07:08:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741072101; cv=none; b=FTVL3yw3lbPyxFoXauN4h3tDyaVJzCm+SEdDi7Itvb5e0qLwc//tsg2cugJITtHvX+mVDCxY13NA9qWn5Qp/A1TaYWz+4c9DJ9YGO6iv7mU7EcbTDXhzaD5ecJyUa4p9hkIeeSjmUAi4exImOCFh2OwG34oSb/j+Qe3WfDiRJNc=
+	t=1741072106; cv=none; b=aqTgmcz+KVn0Ei9iR11NI0boFRyFrjRML0g8DZQ7QWBs07DKh2Rl9Vyji02wQtR/S9VmZjWGpc+yb/cG3oHWNyLxY0NHuVkJwNBvelc7AdltIvWTBWg9SpZlRHOlPK3FwPz2NgVFyy1SYbybcIIy902o0hCTrylyJQiKycvsZ78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741072101; c=relaxed/simple;
-	bh=USVXMeSsekJD4VOJ1drsoFiahkXCWTLMPjYjAm3Cgkw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=sblBcEZLbovRD2+Mt3vMIz0uKimMlBqFEfCpO2Mvv7UqJyeLFJlbWEcJp7ITgMgDvtojkgyG833HyIbiCsbWYgxZbRAfBsdf8xmCAKL9r6ufunJKRHs7uZUfyXqA7R2Wqy5ZPTPqUH+H7RJgzLJ+e6wugTBYq7bGjOa9JQQ71Cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=oXJsnOAX; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=2d9Zh
-	TJKyQ4yvIa5T3TbMOiDeepc3m5G65R+hcVoNJw=; b=oXJsnOAX/Q/MVQ5lPsW8c
-	9/RgPhNR4nCqVsAw0Xcfjr4FhskeQBylxFNl2vnmx5ZX00litKTs8+YvPx9WJyoc
-	+WhkXgvbLoknO8FW6IazfF+rJ7yDPVV++/a3avGi7ZGem6hiS5jTQwlPLwxxfGlQ
-	f6u/y2y8srjdVNcBU4ZqZI=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wAH+S7QpsZnQuqYQA--.28406S2;
-	Tue, 04 Mar 2025 15:08:00 +0800 (CST)
-From: Miao Li <limiao870622@163.com>
-To: gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	limiao870622@163.com,
-	Miao Li <limiao@kylinos.cn>
-Subject: [PATCH V2] usb: quirks: Add DELAY_INIT and NO_LPM for Prolific Mass Storage Card Reader
-Date: Tue,  4 Mar 2025 15:07:57 +0800
-Message-Id: <20250304070757.139473-1-limiao870622@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250303070047.153591-1-limiao870622@163.com>
-References: <20250303070047.153591-1-limiao870622@163.com>
+	s=arc-20240116; t=1741072106; c=relaxed/simple;
+	bh=2ojdVaJ4G76tqTc/qqQChnWRj6JmQQElqU5o4AQFH7s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jca+UAStQqmEm2Q6AOO7NNsIRCNSeuLRKcCPrx8+6CwxAQeLm5xWyaIHEjulN7b5w3Ct3LzDOtbu+TlVktSDt/xCQjk0IEmNPOZlKR6muUUTP0GvkBmafAEEFTUZG1CDBj87REuv5BKk1LILIb0lzd+jWvfJ0rrLzxA82Jc7wwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G+ovV/tt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F119C4CEE5;
+	Tue,  4 Mar 2025 07:08:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741072105;
+	bh=2ojdVaJ4G76tqTc/qqQChnWRj6JmQQElqU5o4AQFH7s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G+ovV/ttnXAPC/wyP4rwOjCuqHCbXC4A2U2SnoAqVdWj91nMEqjbTEP/TQmZVqg9h
+	 /rKTfvG+wylQijMYyaa3DwiDEAeZN6V4RAfMgKlIZNY7VUkGT8ZCH0wQ+ZkStYZzOj
+	 1so1lDBqXes236aR6nO5kg0Ww5n0Z/EI5VtgtuMoNxTxPkh1FEJ0QxZ0yfzKib5R9t
+	 sQmydH0+0erhD3LwXiweB754p8nk4SQz8DTUnn2zRnEcMZQpQDpsA4YR6gU2hcDIef
+	 NaYChZSZIHhL5Eij3GaFzoi6ZmfBxM2v0KUEhetIHG5jfAnDjYwYGmJ3hIUlmwkYVm
+	 kOFK+hBC296PA==
+Date: Tue, 4 Mar 2025 09:08:12 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH] x86/ftrace: fix boot time slowdown
+Message-ID: <Z8am3EgVK9qADIgJ@kernel.org>
+References: <20241124140705.2883-1-rppt@kernel.org>
+ <Z07KnNk5AK_Jq6CU@kernel.org>
+ <20241210230056.185826cd@batman.local.home>
+ <20250303172427.1ae6c924@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wAH+S7QpsZnQuqYQA--.28406S2
-X-Coremail-Antispam: 1Uf129KBjvdXoW7XFykXr1kJF4UuFW7Kw1Dtrb_yoWkXrgEkr
-	1UWa93u3W8GFWktr1vva1fZrWkKw4I9ryv9Fyqqa43Ja15urs5JF4xCrWjvr1UGry8tF4D
-	tF4ku345Zr1xujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRiAwI5UUUUU==
-X-CM-SenderInfo: 5olpxtbryxiliss6il2tof0z/1tbiEQ0GzWfGYoco9QADsN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250303172427.1ae6c924@gandalf.local.home>
 
-From: Miao Li <limiao@kylinos.cn>
+On Mon, Mar 03, 2025 at 05:24:27PM -0500, Steven Rostedt wrote:
+> On Tue, 10 Dec 2024 23:00:56 -0500
+> Steven Rostedt <rostedt@goodmis.org> wrote:
+> 
+> > On Tue, 3 Dec 2024 11:08:44 +0200
+> > Mike Rapoport <rppt@kernel.org> wrote:
+> > 
+> > > Gentle ping  
+> > 
+> > I'll take this if nobody else will.
+> 
+> I guess I'll take this for the next merge window.
 
-When used on Huawei hisi platforms, Prolific Mass Storage Card Reader
-which the VID:PID is in 067b:2731 might fail to enumerate at boot time
-and doesn't work well with LPM enabled, combination quirks:
-USB_QUIRK_DELAY_INIT + USB_QUIRK_NO_LPM
-fixed the problems.
-
-Signed-off-by: Miao Li <limiao@kylinos.cn>
----
-V1 -> V2: Change device description information
----
- drivers/usb/core/quirks.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/usb/core/quirks.c b/drivers/usb/core/quirks.c
-index dfcfc142bd5e..8efbacc5bc34 100644
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -341,6 +341,10 @@ static const struct usb_device_id usb_quirk_list[] = {
- 	{ USB_DEVICE(0x0638, 0x0a13), .driver_info =
- 	  USB_QUIRK_STRING_FETCH_255 },
+It's not relevant anymore, the commit that changed text_poke_early() to
+text_poke() is now reverted in tip tree.
  
-+	/* Prolific Single-LUN Mass Storage Card Reader */
-+	{ USB_DEVICE(0x067b, 0x2731), .driver_info = USB_QUIRK_DELAY_INIT |
-+	  USB_QUIRK_NO_LPM },
-+
- 	/* Saitek Cyborg Gold Joystick */
- 	{ USB_DEVICE(0x06a3, 0x0006), .driver_info =
- 			USB_QUIRK_CONFIG_INTF_STRINGS },
--- 
-2.25.1
+> -- Steve
 
+-- 
+Sincerely yours,
+Mike.
 
