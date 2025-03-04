@@ -1,62 +1,54 @@
-Return-Path: <linux-kernel+bounces-543698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B68ACA4D8E1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:42:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F20BDA4D8BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:39:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F2543A4AAF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:37:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E8E4173084
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:37:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0F871FF1A0;
-	Tue,  4 Mar 2025 09:33:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 370741FCFE5;
+	Tue,  4 Mar 2025 09:35:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mXmQ0X2N"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="owCgTfZu"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E26E21FE461;
-	Tue,  4 Mar 2025 09:33:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99601FBCAD;
+	Tue,  4 Mar 2025 09:35:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741080830; cv=none; b=u7Q12Bo0B60/bQ6oc4Pbk82G3vPf+zbVIctSMYQ8k6LxgY5OVbHHAzyaCJgJK7e3Q9p4Bk+Fw/uZbZr0ugAR3fC9EiPXwr9gSFV/xMTnFFZARwGVyoSKwIteG6yj/4ImmHnZPsf6nnSYsr6b55S+IslJwZ3n1TA6Qw9XFR8HpTg=
+	t=1741080936; cv=none; b=hgIjOHsX9G4a0CW5157/emJwLfKnkSOq/jaZPx7DH7xGFeph0lKNZgp2bRvpHOxFleEois9NhHsrjtdw+9NCPqRG6j3FFYomtBXdGwjgo/1olD4KR70Ix5thTgMLtfTw+4HxxniOGfckhXN3PkdCw60pa60yh+buCh4bUrAgOH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741080830; c=relaxed/simple;
-	bh=sCMxdWqWBgT7wcDnVU1vXE/zXMg835gttAWrQN4HdMI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=T0TXh7YNFD4a0Rp/O0jFBi4D0XPe+hrBYpu1/1PCAtd2/tHBDud5tUlftu90KVL5XbmUOcTgmut402ro6v3meeAAr40+BGIrvWFzO7NYTqU8HGFjRhwB/swLo55FG+sl/hGCg8HjMBgJghvPnoTV42CTIu06mGcw/9pJsxJq0Kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mXmQ0X2N; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 523NX1QJ006039;
-	Tue, 4 Mar 2025 09:33:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	hRWCWD7/cNz1+Wdyv1WgxPLPyPdC5uDrIIUSEyacE4w=; b=mXmQ0X2NzaxIpTjW
-	T7fExqCw6dklMz6rbZrVL0mJnKBa8tSHMLVOgsqpDrS4wsydT5VoN24vIn4AR8oc
-	sbPZnlGBQbVrLnKNqSyhhgN80EveKlKJBeJV10FlKB1be3F9nYEVX4HW1NKO+XAh
-	NOpcIH4c2X10IrqP93pkH9TwMDkLVXkYEexY3MYIXKTTwYY/nAm9DGNSLricXMeH
-	KPk9uqQFyodv/i/Y0ELZhb+6+ymHXTc3Le0rECGGvDgGWcwWyNSOGFV7OI0U/K8/
-	8OCdF7rDRTOZQ874B5InKxBC7q4UAwFcaaSgVhk7cnsbpZXapMiNHvCh7mqSogtT
-	ctlBng==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 455p6thcbw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Mar 2025 09:33:44 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5249Xhqh019872
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 4 Mar 2025 09:33:43 GMT
-Received: from [10.216.44.43] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 4 Mar 2025
- 01:33:39 -0800
-Message-ID: <3e326578-ab46-4d7e-ad1e-3d572613498b@quicinc.com>
-Date: Tue, 4 Mar 2025 15:03:36 +0530
+	s=arc-20240116; t=1741080936; c=relaxed/simple;
+	bh=5J3RCvW8I/AvYVkLawf1nfGsr7tulDAIHBWxPLYvq1A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sBHkS1EMe3dImk6NdFO8+5aW+5nBnuPE4h1KG9gZ1qjtrD1h7S7iql1NeWp2oyZ91pMKHTTYOVCNFjlzZ4L5YDid0gZ18XID7TjaAkhqWT1BF8Lns+vE/7h+QOm3rDVX+4oNv49w7swxPMyYih4/RZmSs1Fp5ZfNECU8Fk3iFCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=owCgTfZu; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1741080933;
+	bh=5J3RCvW8I/AvYVkLawf1nfGsr7tulDAIHBWxPLYvq1A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=owCgTfZuYvHdiCtMekSe4va90H4jc/rJkzQnWkBlm3uAn8SpeyTuN9tRrZvUR2nU8
+	 2smnVSWVBc0Eki9A7tT5rcg78qn85Hn7hb+JBdN2+p/34LEpPkm4R83k14lXPqhAQe
+	 I+R4CFLdvVN+owGce33sePsnqHwTaZrZ3Zo9C0JO85T5LGb+ziDCQD7SgDj6eXQAEN
+	 i05nACIW9LxJDMR72jUixCt8G27A3/hYnhBz5sBsKNqcRohgDua1l7ZOgYfZLptC5J
+	 asqXkAUT7/7Ex0KPX1JMwYcpRLSH2qh4BnJIg5F9BefxtqmsakhzPmrlytPNxDRyft
+	 z+DOsT2m25NGA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 22C2317E0607;
+	Tue,  4 Mar 2025 10:35:32 +0100 (CET)
+Message-ID: <581fc075-25d8-4104-a4ee-8c97e1a017e6@collabora.com>
+Date: Tue, 4 Mar 2025 10:35:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,59 +56,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 2/2] mailbox: tmelite-qmp: Introduce TMEL QMP mailbox
- driver
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <jassisinghbrar@gmail.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <andersson@kernel.org>, <konradybcio@kernel.org>,
-        <manivannan.sadhasivam@linaro.org>
-References: <20250228045356.3527662-1-quic_srichara@quicinc.com>
- <20250228045356.3527662-3-quic_srichara@quicinc.com>
- <lakoxihaqlu3vq42eoqtlip23ggdieizotyzax5up5n6ndbwsi@ddqyzvsdtmkv>
- <1359984c-2ace-450b-a3ff-bac0b9fb5cc9@quicinc.com>
- <2xpu26pu4ovnchumwx7xzlp2gldpfgsurnhuqaioygb4a6xmsp@ygmpk6furqs6>
+Subject: Re: [PATCH v4 4/8] soc: mediatek: mtk-cmdq: Add pa_base parsing for
+ unsupported subsys ID hardware
+To: Jason-JH Lin <jason-jh.lin@mediatek.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+ Nancy Lin <nancy.lin@mediatek.com>, Singo Chang <singo.chang@mediatek.com>,
+ Moudy Ho <moudy.ho@mediatek.com>, Xavier Chang <xavier.chang@mediatek.com>,
+ Xiandong Wang <xiandong.wang@mediatek.com>,
+ Sirius Wang <sirius.wang@mediatek.com>, Fei Shao <fshao@chromium.org>,
+ Pin-yen Lin <treapking@chromium.org>,
+ Project_Global_Chrome_Upstream_Group@mediatek.com,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+References: <20250218054405.2017918-1-jason-jh.lin@mediatek.com>
+ <20250218054405.2017918-5-jason-jh.lin@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-In-Reply-To: <2xpu26pu4ovnchumwx7xzlp2gldpfgsurnhuqaioygb4a6xmsp@ygmpk6furqs6>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+In-Reply-To: <20250218054405.2017918-5-jason-jh.lin@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=HZbuTjE8 c=1 sm=1 tr=0 ts=67c6c8f8 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=YG1pY_6daD2ShUQ-MVQA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: qVg67mCIES3UR4jTgMAQyGDR6K4_NGmO
-X-Proofpoint-ORIG-GUID: qVg67mCIES3UR4jTgMAQyGDR6K4_NGmO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-04_04,2025-03-03_04,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- adultscore=0 mlxscore=0 spamscore=0 clxscore=1015 phishscore=0 bulkscore=0
- priorityscore=1501 impostorscore=0 suspectscore=0 malwarescore=0
- mlxlogscore=642 classifier=spam authscore=0 adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2502100000 definitions=main-2503040081
 
-
-
-On 3/3/2025 6:34 PM, Dmitry Baryshkov wrote:
-> On Mon, Mar 03, 2025 at 03:58:42PM +0530, Sricharan Ramabadhran wrote:
->>
->>
->> On 2/28/2025 12:03 PM, Dmitry Baryshkov wrote:
->>> On Fri, Feb 28, 2025 at 10:23:56AM +0530, Sricharan R wrote:
+Il 18/02/25 06:41, Jason-JH Lin ha scritto:
+> When GCE executes instructions, the corresponding hardware register
+> can be found through the subsys ID. For hardware that does not support
+> subsys ID, its subsys ID will be set to invalid value and its physical
+> address needs to be used to generate GCE instructions.
 > 
->>>> +		dev_err(dev, "Failed with status: %d\n", msg.resp.status);
->>>> +		ret = msg.resp.status;
->>>
->>> return msg.resp.status (is it really errno?)
->>>
->> ok, yes error.
+> This commit adds a pa_base parsing flow to the cmdq_client_reg structure
+> for these unsupported subsys ID hardware.
 > 
-> The question was if it is an errno, not if it is an error.
-status != 0 is an error always.
 
-Regards,
-  Sricharan
+Does this work only for the MMINFRA located GCEs, or does this work also for
+the legacy ones in MT8173/83/88/92/95 // MT6795/6893/etc?
+
+In order to actually review and decide, I do need to know :-)
+
+Thanks,
+Angelo
+
+
 
