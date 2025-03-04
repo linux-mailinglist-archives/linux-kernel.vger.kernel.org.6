@@ -1,173 +1,140 @@
-Return-Path: <linux-kernel+bounces-545477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCE0AA4EDA2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:42:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 294FEA4EDA7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:44:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1774173122
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:41:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5453A172876
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:44:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90D4525FA0A;
-	Tue,  4 Mar 2025 19:41:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A690B25F7AC;
+	Tue,  4 Mar 2025 19:43:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Dp0ostl+"
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XAZLExen";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="r40VNe6Q"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F8921D7E35
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:41:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0AF92E3391;
+	Tue,  4 Mar 2025 19:43:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741117306; cv=none; b=Y7i5bU6tsPi/7riwX9Opt6dj8gAoyPAmCRC2aMY4Rxn/XGQqiKFEqTbeMbwJDmNp4xtrS12kAvboROzwRsOy+K0VKxchlYJQkjNtTR6mZoAS+jDvZEI4kwPJIFgCFnz3K6qNOdjMQD9lcu7E2XHZqrsxRx3h2eOro8Hci2JZ0Vw=
+	t=1741117434; cv=none; b=vB38vA9WTVE1idqDX9gLP0p+Bln2Q5/0wLVcfgDWN+QtIq/gqek7Rop7SxOQCav2YMkYHF4zDVeZPWArrSPtSWNkQeMOOHzqoTkToyyw8708Jyu7yQtz8P0Rmjt/AgPmzQ2Pi6z6wj6WEtStoTQnuEQUqtmkvlOY6Fez8uR99fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741117306; c=relaxed/simple;
-	bh=Z1Dr2H1wZQma+yJxOpXVs8NcHO1DKsOkb0OPlMDP+XE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H+DMF76GYWW+Jz0USb5u5o3UE2nVB4GBFluP5OqegcFGEtwuHFvr5qFypPXOEk5SYHtk/NgR3X/T28dAGlfRqkdR215lu9MWfqmNuiPAncw3EzL7Brbk7fuclBsjyc4Id5muLemf1Wl9t2YvckfTgbCSCb7/r5Kp74zxWDVq70I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=Dp0ostl+; arc=none smtp.client-ip=209.85.219.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6e86b92d3b0so45119856d6.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 11:41:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1741117302; x=1741722102; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hniMK4SB1u1F2OOA4rSYd4xqdAr8kGaAFH0sJ2S5DiI=;
-        b=Dp0ostl+XTTjDEM3m1SzD6qZL0bKvFcGaXEQHgrUtJ+Mr5RonLJYQ3jcyInnuALtSd
-         UEQn/OvkSo7/odNgS8TUNQrB+7GyZTVNKZjqzVBHfy9OzsDd1h9s0XyMdiKLLsZT+uck
-         7VtQLP+Xh6czvHWQ4t6pKXbWPVr72SisFtfcZ/UuXrO5S1Y+4JJE6M3tcrGPWGftPD66
-         nWx6U7SZAhx/oZ40QYh47Dd8tHzuVDhY+RHrYlBAvVhnY96hm8+rFAtjUVBzm0zokP3j
-         SImSxPHMkasmx0/sPaU0h96q9GXQza8442rT7xUw8HKjvYKQBwf8pZpq1DnC1gLbBPjh
-         OifQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741117302; x=1741722102;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hniMK4SB1u1F2OOA4rSYd4xqdAr8kGaAFH0sJ2S5DiI=;
-        b=TFVoSrWnvzFbyE7YZLaGg+z/DbkvF+3rnl9eeTfmsP/hRAn93JpHp1IADJ0WJOkyrY
-         LHGGWmHHYhZlFbhrRmCOS5nCD/OX/Ku+7V51zYE8MjkGAJ3aqVC8gkzQt7aHl6TwRidK
-         Af0/Q/H3hKA0GvVR3+gvrQWHlDhDK0fgpSz6r6xBdil0rHszHryGth1hC4dHsBfqhRpe
-         KMHG5pmTw5LZzbkOntJmv5sflkvnSQS4yYdmiTKriXiqN8ZtteGVWr0iJLeTJn+2cGh6
-         BrD6bFylnExFB6wUANCEaxCliddoD39glba0LC0Dkp2r8qPmQ7b8Q0q1Bg4wj27G52B2
-         WiPw==
-X-Forwarded-Encrypted: i=1; AJvYcCVqQjlFaKg8NLsxnKZQ0KmalkRGUTeCBjXFJaV14u3KQiEaPWuSEimXU2hbkHXY1TL3bAw8UGP+C+8Xokw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNFBV3UlfAzIaUTtOxfYzrGvnrHPtZhkZarC1vhMK2h8DpZgdX
-	DdVhhkpF4/JMATWaGaZp099xYUDYiy9S4seVcNp3SoZB8o3FRGWCV6uFFMOWInI=
-X-Gm-Gg: ASbGncv1/t+DnOKzf7heNu7WEussKcTktpKFPHbZ6VnQxy2P+nj6X0HQvIBTIytgPSd
-	mM52y13YrjWJSsWEjd4MsXhULurh5nRJjKd5W41VPSSNB1trV6E5eY8VbdCNLRPx5fvb7rRDII5
-	XsEiXeby0LO1KmDF9J3E/wm4G79kK1OJFsNScYVMdwEXICfnTluwt9jPWXGr8wRDZDkR3iUoXBW
-	1MXl1qpx2o3DTDRLsZ/vLRSkcZ5thJQhZKDhyRUSh2uAtSM8BJc+ZAPPj1p83TlLAsiwu1m/T5F
-	8EOWfACGnj16co3nn53/Vo3a+Q277aROSR61naxJoFd3ighgdEQDSB6of4UIlZV/GfNH1dF0liQ
-	FMWkYm3Ses006f2ydew==
-X-Google-Smtp-Source: AGHT+IEVAKGzcENzw+iAKzItxzizgLoOPdiHsjgb9KK/h/j44uEdoziCKUzFRD74zSh7p4AQOUAf1A==
-X-Received: by 2002:a05:6214:e67:b0:6e8:89bd:2b50 with SMTP id 6a1803df08f44-6e8e6cc6b6emr9042306d6.7.1741117300888;
-        Tue, 04 Mar 2025 11:41:40 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8976ec1f8sm70616526d6.121.2025.03.04.11.41.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 11:41:40 -0800 (PST)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1tpY95-00000001J4e-2w8n;
-	Tue, 04 Mar 2025 15:41:39 -0400
-Date: Tue, 4 Mar 2025 15:41:39 -0400
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Long Li <longli@microsoft.com>
-Cc: Ratheesh Kannoth <rkannoth@marvell.com>,
-	"longli@linuxonhyperv.com" <longli@linuxonhyperv.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Konstantin Taranov <kotaranov@microsoft.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>
-Subject: Re: [EXTERNAL] Re: [Patch rdma-next] RDMA/mana_ib: handle net event
- for pointing to the current netdev
-Message-ID: <20250304194139.GE5011@ziepe.ca>
-References: <1740782519-13485-1-git-send-email-longli@linuxonhyperv.com>
- <20250304063940.GA2702870@maili.marvell.com>
- <SA6PR21MB423174BA15D8A909CB2A6950CEC82@SA6PR21MB4231.namprd21.prod.outlook.com>
+	s=arc-20240116; t=1741117434; c=relaxed/simple;
+	bh=Fr+6TVjkqNlHZj4oVGI/5hVk0MY9E/et8UcABbDyo3Q=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=MCCEPkjw5BnubNl50OnYd4LOLON3K9BUz4U5XwZWqDXO1Q2kmZnX1QRV/r3GwvPo3g6AZwN0jlumHhrC5kSwBRxEF0bqNJ7ZI36no94gYqKX3q7PA4FBT4mHw9KIhlDDrRz+YRSAOFkrvkB8YaVsa9eE3MJTUFFsDn2/HyxsrwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XAZLExen; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=r40VNe6Q; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 04 Mar 2025 19:43:50 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741117431;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CQNEB3FKuBLVkVRBUXyLia8f3JFS/l1cUQsvBp1q9QE=;
+	b=XAZLExenvD+SckXLsoasZERXl/RWeboPPyZvuGBI5EwPkNOasB9PgZAW3jv2GAaR3WmEuR
+	fR85D4QoEDWAADQLc22/IiDu3+2bYeHn3wAZgNcCmtfi/QTLFwkm+foZtUtFg2Dw+tNBfM
+	R5R114mRa+jIgALgWcCQgILlcR2HqHS9o2C+0h1IsYhJN+m6jPvhOpDmiYmo5DJuGmJIPw
+	JUNQ/HwQVppEMcpO1df8czJVjr3p0gox6L6c1wmEHP+Okv4jvQCd2L1ZTil5QM5L1YMHyM
+	vnSPWFIAXUbwLqAEWMRd4VcHXVqUG8TNPsORJqL3zPxBoH+NLwBHrrN2i0Wvfw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741117431;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CQNEB3FKuBLVkVRBUXyLia8f3JFS/l1cUQsvBp1q9QE=;
+	b=r40VNe6QI8tcmlnHDiWXAD0jaIA57PIfp97EK1Z8i3Hs7W9weSctxanQ5z9LBT6FcZh7Mi
+	qbG9Hh9T015jcMCg==
+From: "tip-bot2 for Uros Bizjak" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/core] x86/percpu: Fix __per_cpu_hot_end marker
+Cc: Ingo Molnar <mingo@kernel.org>, Uros Bizjak <ubizjak@gmail.com>,
+ Brian Gerst <brgerst@gmail.com>, x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250304173455.89361-1-ubizjak@gmail.com>
+References: <20250304173455.89361-1-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SA6PR21MB423174BA15D8A909CB2A6950CEC82@SA6PR21MB4231.namprd21.prod.outlook.com>
+Message-ID: <174111743016.14745.17638610905298562615.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 04, 2025 at 06:26:03PM +0000, Long Li wrote:
-> > On 2025-03-01 at 04:11:59, longli@linuxonhyperv.com
-> > (longli@linuxonhyperv.com) wrote:
-> > > From: Long Li <longli@microsoft.com>
-> > >
-> > > When running under Hyper-V, the master device to the RDMA device is
-> > > always bonded to this RDMA device if it's present in the kernel. This
-> > > is not user-configurable.
-> > >
-> > > The master device can be unbind/bind from the kernel. During those
-> > > events, the RDMA device should set to the current netdev to relect the
-> > > change of master device from those events.
-> > >
-> > > Signed-off-by: Long Li <longli@microsoft.com>
-> > > ---
-> > >  drivers/infiniband/hw/mana/device.c  | 35
-> > > ++++++++++++++++++++++++++++  drivers/infiniband/hw/mana/mana_ib.h |
-> > > 1 +
-> > >  2 files changed, 36 insertions(+)
-> > >
-> > > diff --git a/drivers/infiniband/hw/mana/device.c
-> > > b/drivers/infiniband/hw/mana/device.c
-> > > index 3416a85f8738..3e4f069c2258 100644
-> > > --- a/drivers/infiniband/hw/mana/device.c
-> > > +++ b/drivers/infiniband/hw/mana/device.c
-> > > @@ -51,6 +51,37 @@ static const struct ib_device_ops mana_ib_dev_ops = {
-> > >                          ib_ind_table),  };
-> > >
-> > > +static int mana_ib_netdev_event(struct notifier_block *this,
-> > > +                             unsigned long event, void *ptr) {
-> > > +     struct mana_ib_dev *dev = container_of(this, struct mana_ib_dev, nb);
-> > > +     struct net_device *event_dev = netdev_notifier_info_to_dev(ptr);
-> > > +     struct gdma_context *gc = dev->gdma_dev->gdma_context;
-> > > +     struct mana_context *mc = gc->mana.driver_data;
-> > > +     struct net_device *ndev;
-> > > +
-> > > +     if (event_dev != mc->ports[0])
-> > > +             return NOTIFY_DONE;
-> > > +
-> > > +     switch (event) {
-> > > +     case NETDEV_CHANGEUPPER:
-> > > +             rcu_read_lock();
-> > > +             ndev = mana_get_primary_netdev_rcu(mc, 0);
-> > > +             rcu_read_unlock();
-> > ...
-> > > +
-> > > +             /*
-> > > +              * RDMA core will setup GID based on updated netdev.
-> > > +              * It's not possible to race with the core as rtnl lock is being
-> > > +              * held.
-> > > +              */
-> > > +             ib_device_set_netdev(&dev->ib_dev, ndev, 1);
-> > rcu_read_unlock() should be here, right ?
-> 
-> It can't.  ib_device_set_netdev() is calling alloc_port_data() and may sleep.
-> 
-> I think this locking is okay. This event only comes in when:
-> 1. the master device has changed to netvsc. In this case ndev is guaranteed to be valid as this notification is triggered by netvsc.
-> 2. the master device has changed to itself (the ethernet device parent for the IB device).  In this case, ndev is valid because mana_ib is an auxiliary device to ndev and it can't unload itself at this time.
+The following commit has been merged into the x86/core branch of tip:
 
+Commit-ID:     6d536cad0d55e71442b6d65500f74eb85544269e
+Gitweb:        https://git.kernel.org/tip/6d536cad0d55e71442b6d65500f74eb85544269e
+Author:        Uros Bizjak <ubizjak@gmail.com>
+AuthorDate:    Tue, 04 Mar 2025 18:34:36 +01:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Tue, 04 Mar 2025 20:30:33 +01:00
 
-Why not return with the netdev refcount held so you don't need this
-weirdo rcu thing?
+x86/percpu: Fix __per_cpu_hot_end marker
 
-Jason
+Make __per_cpu_hot_end marker point to the end of the percpu cache
+hot data, not to the end of the percpu cache hot section.
+
+This fixes CONFIG_MPENTIUM4 case where X86_L1_CACHE_SHIFT
+is set to 7 (128 bytes).
+
+Also update assert message accordingly.
+
+Reported-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Brian Gerst <brgerst@gmail.com>
+Link: https://lore.kernel.org/r/20250304173455.89361-1-ubizjak@gmail.com
+
+Closes: https://lore.kernel.org/lkml/Z8a-NVJs-pm5W-mG@gmail.com/
+---
+ arch/x86/kernel/vmlinux.lds.S     | 2 +-
+ include/asm-generic/vmlinux.lds.h | 3 +--
+ 2 files changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
+index 31f9102..ccdc45e 100644
+--- a/arch/x86/kernel/vmlinux.lds.S
++++ b/arch/x86/kernel/vmlinux.lds.S
+@@ -331,7 +331,7 @@ SECTIONS
+ 	}
+ 
+ 	PERCPU_SECTION(L1_CACHE_BYTES)
+-	ASSERT(__per_cpu_hot_end - __per_cpu_hot_start <= 64, "percpu cache hot section too large")
++	ASSERT(__per_cpu_hot_end - __per_cpu_hot_start <= 64, "percpu cache hot data too large")
+ 
+ 	RUNTIME_CONST_VARIABLES
+ 	RUNTIME_CONST(ptr, USER_PTR_MAX)
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index c4e8fac..4925441 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -1072,9 +1072,8 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
+ 	. = ALIGN(cacheline);						\
+ 	__per_cpu_hot_start = .;					\
+ 	*(SORT_BY_ALIGNMENT(.data..percpu..hot.*))			\
+-	__per_cpu_hot_pad = .;						\
+-	. = ALIGN(cacheline);						\
+ 	__per_cpu_hot_end = .;						\
++	. = ALIGN(cacheline);						\
+ 	*(.data..percpu..read_mostly)					\
+ 	. = ALIGN(cacheline);						\
+ 	*(.data..percpu)						\
 
