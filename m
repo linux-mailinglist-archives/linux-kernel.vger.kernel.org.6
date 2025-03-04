@@ -1,92 +1,111 @@
-Return-Path: <linux-kernel+bounces-545802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66CB3A4F1B6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:44:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72A24A4F1BA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:45:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94C6716DDC8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:44:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A900E188C4F6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:45:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA9A124DFE1;
-	Tue,  4 Mar 2025 23:43:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3B324EAA8;
+	Tue,  4 Mar 2025 23:45:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="n5Dvx1am"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="TMoN8n6D"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1643F1FF7BF;
-	Tue,  4 Mar 2025 23:43:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9504FBA2D
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 23:45:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741131835; cv=none; b=WH/yE+AYW5vUBWdh80R0Ir7q8OYMarX9FYykdR1PRFwa0ZNv7PNqymFnzGLmthSjSAEwpOQAXJcGC2WAMJct+Bh8j8odnBr/7GIh2Jrtq5ods6oiLGizWAGYwRMYfD52J5ChP6c7bL7mmSiprXd6TqfYsl5SYwMlDP6Tv54geqE=
+	t=1741131927; cv=none; b=oAcc7egwStH0b+EcU9rHg2HehzRX3cdTs6bY+CAV0TpxIZFWw1Gy2tRRR9lcNw7e7AJbR8/Y3RSWy/UVVESFRGDB3/OfTPa1GGTXMZVkKv4vJ3wHUkrpvJ/8/dGK/c965uCqf7ra3kz8oM1ESM+EIM5pxtbUmsHUTZb1grmMFr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741131835; c=relaxed/simple;
-	bh=KJTrKAUFeXqKd7gJGLa34anESOCeXSsRQo75HdiIUuc=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=XpaLSYNzo88AblanvK3NfjcNDXBuKrRCZI/YjAP6B1JnsffowIrMw57p8xjWTmqdERSqOQdISRXcE6SZaptmXRtUudbe7vVcnpV1QmImvmQVvTCpkDlvEdllJ9LQVmMKkfoimRURC+Ny68uAQa1cbqmSEBG9MpzLmigGqyQlDwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=n5Dvx1am; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3185BC4CEE5;
-	Tue,  4 Mar 2025 23:43:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1741131834;
-	bh=KJTrKAUFeXqKd7gJGLa34anESOCeXSsRQo75HdiIUuc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=n5Dvx1amUKlj7tZ5ib0hANnaD0kL4bR5H++aFlnZlMavfGt2NvSv6biQs+v5UsvXU
-	 qTBHf4/fEDaPUrfNWTEj2itQHGutHHiZOgCv7mvYnRX1j2oTx9CSeqItjR3GkL8Kqz
-	 5OpDEIdQBk+dgK8S/UPygPvRVQMGSres/aTiqcsk=
-Date: Tue, 4 Mar 2025 15:43:53 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Baoquan He <bhe@redhat.com>
-Cc: "Kirill A. Shutemov" <kirill@shutemov.name>, ebiederm@xmission.com,
- kexec@lists.infradead.org, Yan Zhao <yan.y.zhao@intel.com>,
- linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev, x86@kernel.org,
- rick.p.edgecombe@intel.com, kirill.shutemov@linux.intel.com
-Subject: Re: [PATCH v2 0/1] Accept unaccepted kexec segments' destination
- addresses
-Message-Id: <20250304154353.a79c330bffb4d21dce2dad9c@linux-foundation.org>
-In-Reply-To: <Z4T1G4dwzo7qdwSP@MiWiFi-R3L-srv>
-References: <20241213094930.748-1-yan.y.zhao@intel.com>
-	<xgycziy2o56hnom3oau7sbqed3meoni3razc6njj7ujatldnmm@s7odbl4splbn>
-	<Z4T1G4dwzo7qdwSP@MiWiFi-R3L-srv>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741131927; c=relaxed/simple;
+	bh=QqhJlTNnMoAeVLhqzPLAoY0nmNxjc32pntxc2kXlZWA=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=GC2y9ertfT3lbfVh50tP8CMGsZq3sFLiH8HLrVc6nw8yvOSlaE3fgdfOR9ZkQx80hPkBSov6OFsfzQkpV/c5Z/Zual4YXbp9/qTOtsVPBr3DT6xEJ4xHwYDzEZ1HBUaRFHC71W1JNfXcCqysAjRMu9ZHbOQjBLBiM3Ew8hAzWIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=TMoN8n6D; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 524Nin1D2696278
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Tue, 4 Mar 2025 15:44:49 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 524Nin1D2696278
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025021701; t=1741131890;
+	bh=iK6Bh3n2sEyZmKvIXWrYnLSJrvYOsJRs96K0ZZ9Vtg0=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=TMoN8n6DQAV7HRt4bBwuPff4zjK3Vy7GEF+zgsjhsSyPkbX99Vh6OgwdJf4jQn5uW
+	 LMJdQKbbPSgrNdwADhdyDjph6k37JEAWm3oFyu1oeeiN15npQky5l+mkgOod3V0qx/
+	 GUBEAN51zxxiY2fzk/hsAjiq5zHuTrWiEqK75vWXWPbkptgpF1wAoGWKFKtq5RJ/Yw
+	 ibv2h1keE2LlcB1BZIVG86n290nuO21wH4rqF3FMMq66PbXciIs0xJDxkzM8oAyJqr
+	 bRFv02CNfp43HDia34+05ffoPFcoiHipdPZaAQIF3jFL/xJTG+nWhknEQH1vS+FjIC
+	 0GsK85ZplBVZw==
+Date: Tue, 04 Mar 2025 15:44:47 -0800
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Mateusz Guzik <mjguzik@gmail.com>, Brian Gerst <brgerst@gmail.com>
+CC: linux-kernel@vger.kernel.org, x86@kernel.org,
+        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>, Ard Biesheuvel <ardb@kernel.org>,
+        Uros Bizjak <ubizjak@gmail.com>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v6_04/15=5D_x86/pvh=3A_Use_fi?=
+ =?US-ASCII?Q?xed=5Fpercpu=5Fdata_for_early_boot_GSBASE?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <tns2rrzk7vs3linnjevr24qyg4sm6hakndsgqvqsowqwwlrdcj@zus5wu6u3ju3>
+References: <20250123190747.745588-1-brgerst@gmail.com> <20250123190747.745588-5-brgerst@gmail.com> <tns2rrzk7vs3linnjevr24qyg4sm6hakndsgqvqsowqwwlrdcj@zus5wu6u3ju3>
+Message-ID: <56A91DC4-1A8C-4134-976E-BBCBF9BC784F@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 13 Jan 2025 19:12:27 +0800 Baoquan He <bhe@redhat.com> wrote:
+On March 4, 2025 2:26:20 PM PST, Mateusz Guzik <mjguzik@gmail=2Ecom> wrote:
+>On Thu, Jan 23, 2025 at 02:07:36PM -0500, Brian Gerst wrote:
+>> Instead of having a private area for the stack canary, use
+>> fixed_percpu_data for GSBASE like the native kernel=2E
+>>=20
+>> Signed-off-by: Brian Gerst <brgerst@gmail=2Ecom>
+>> Reviewed-by: Ard Biesheuvel <ardb@kernel=2Eorg>
+>> ---
+>>  arch/x86/platform/pvh/head=2ES | 15 +++++++++------
+>>  1 file changed, 9 insertions(+), 6 deletions(-)
+>>=20
+>> diff --git a/arch/x86/platform/pvh/head=2ES b/arch/x86/platform/pvh/hea=
+d=2ES
+>> index 4733a5f467b8=2E=2Efa0072e0ca43 100644
+>> --- a/arch/x86/platform/pvh/head=2ES
+>> +++ b/arch/x86/platform/pvh/head=2ES
+>> @@ -173,10 +173,15 @@ SYM_CODE_START(pvh_start_xen)
+>>  1:
+>>  	UNWIND_HINT_END_OF_STACK
+>> =20
+>> -	/* Set base address in stack canary descriptor=2E */
+>> -	mov $MSR_GS_BASE,%ecx
+>> -	leal canary(%rip), %eax
+>> -	xor %edx, %edx
+>> +	/*
+>> +	 * Set up GSBASE=2E
+>> +	 * Note that, on SMP, the boot cpu uses init data section until
+>> +	 * the per cpu areas are set up=2E
+>> +	 */
+>> +	movl $MSR_GS_BASE,%ecx
+>> +	leaq INIT_PER_CPU_VAR(fixed_percpu_data)(%rip), %rdx
+>> +	movq %edx, %eax
+>
+>	movl
+>
+>I'm bisecting perf breakage and landing on this commit breaks the build=
+=2E
 
-> On 01/13/25 at 12:01pm, Kirill A. Shutemov wrote:
-> > On Fri, Dec 13, 2024 at 05:49:30PM +0800, Yan Zhao wrote:
-> > > Hi Eric,
-> > > 
-> > > This is a repost of the patch "kexec_core: Accept unaccepted kexec
-> > > destination addresses" [1], rebased to v6.13-rc2.
-> > 
-> > Can we get this patch applied?
-> 
-> This looks good to me. In v1, we have analyzed all other possible
-> solutions, however change in this patch seems the simplest and most
-> accepatable one. 
-> 
-> If Eric has no objection, maybe Andrew can help pick this into his tree.
-
-OK, but that patch is the only thing in the world which is older than me.
-
-Yan, can you please refresh, retest and resend?
-
-Also, please consolidate the changelogging into a single email -
-a single-patch series with a coverletter is just weird.
-
-Putting the [0/n] info into the singleton patch's changelog is more
-reader-friendly, and that's what counts, no?
-
-Thanks.
+Breaks the build how?
 
