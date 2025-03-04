@@ -1,136 +1,221 @@
-Return-Path: <linux-kernel+bounces-544107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0A8CA4DD70
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:04:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06BF1A4DD73
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:05:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67EE13A4205
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:04:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 271DD169299
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:05:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 322BB202C23;
-	Tue,  4 Mar 2025 12:04:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5BB91F3BAD;
+	Tue,  4 Mar 2025 12:05:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="AjVbo8kd"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="YkV2XnKS"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97CE41FDA78
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 12:04:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1F31FAC50
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 12:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741089863; cv=none; b=fR+X/1BKLcVcJnV3kByCY/+pxz544TxY5weRQgfr1fSAfpZi71wTKs6GdpUsQVTgeFz8z9U0aacFkmh45OwgPia/jitJn59BlgiBrqnNz9wM6ZhxXAp2C4zazG71cI0nouiL8Dmr9pLV/EGPTmxTaQF5zhb0f5jJun75E/m11/0=
+	t=1741089923; cv=none; b=Y8+hxqaeExaOYcX2ZTqgJfGP1x62oYH9KJf9G7AmYE8h4sCThUFwOpT1O7rkGTGjDzuLMDPVS9UFvBQUhThQMs3BNHrw54Tsx4lZess2mKzGIXnRR+NbfYpx9+NJ4Jhz4TqlwZ6Je/ccTmeZ2R+morUs1Viff0OvMER2O4yKPsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741089863; c=relaxed/simple;
-	bh=7VUHnquwE/QdFs1qoBO1l/34onrJ8q7S6w5kpFpcMcw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iva6DaKLOE+2RxUZreqYIgDXhw+RCO/XRzdckAyXZ2N5mnqhQNBH9x1P+MavOo93++sjtZ1RQnkCcRpOLgFNoaIlBVJhhywN8bJxHT1dMlCDI8XpDvHskNvWDez1jlQNafLIGHjslQcqMnmGQb0C9uyPjk5TsrktwcLbp/NeY28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=AjVbo8kd; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1741089859;
-	bh=7VUHnquwE/QdFs1qoBO1l/34onrJ8q7S6w5kpFpcMcw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=AjVbo8kdonHW6j6x9ddScTYnIJPHdmtbEdjH1VWVWapBKzQgU2yynW2nq7HtcWffb
-	 Td5IvOxQBuDOgt0xFmEIXEl2EknaG5wnlkB/2cFHQ7Q6ghm+qMSxBPE270+dX+DpKt
-	 UizZbUXAs9QmKoMY8S4ju5GHl4GnNhSg3IsxI6Ll/QmeFHwZ2euB128jYledwU3gTR
-	 xTNm+ghilHPByK7Jyh1bOp4NtD7TOfuLOSRrcrj5x4oz6RjTiVkUBWlK1A4V58mUGT
-	 v+1vjUTxrlU3ySKguUjwUPT4Z1BkO1Acf5xesQ2V2mtkeywwfCiN7SWvAcEP+OASpV
-	 NVFz6VQR3IWJw==
-Received: from [192.168.1.90] (unknown [188.27.58.83])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	s=arc-20240116; t=1741089923; c=relaxed/simple;
+	bh=UHb4GMe3UFbd/knaN71Hr8P4eZRibZS8A1+p1T/CccM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B7eRDC6w87X4bSuOCChEZykzn4YIhVzOjsEaz42bGaovIFEk20Qo4XcWyQp3aMbPCIw9EeCYnbg4S4wcX/MwMMToPFWBTcQ7TpyCBLRynMnQwdNSI1twFky1BTUJgl98stqqxZo3GfiabPGGQn0Ufc6FTgFJdhCS5Vk78xi4jtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=YkV2XnKS; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 399D240E0214;
+	Tue,  4 Mar 2025 12:05:18 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 5rp5czbxZx6k; Tue,  4 Mar 2025 12:05:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1741089913; bh=vSIowNyCqsQ3yQ5qd5aOdrOx5Br2Nf7cQMl4V4s4NFI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YkV2XnKSHaOiTk0OF/6kS1haFPLjq46gR2peMMrngiX5KptleErgGxN7RdJDPwS/r
+	 fwhb3x/TgfIs4Ltw0iYNEcI6u6dMrGREsPGBm8yU6WAz2yTr/Nbv5Ce93dChg8Bu9E
+	 zr1rZ9EMJUm7f0GMSL8jLDW9NugrajFtvE1nsabCTDVlY0YMDPFwoazzh9+CUjccTv
+	 1I3UsSET6YQAirEMobmLphjdu7feNel210HJo3PCmt8iLSu7N7aUd7o16kLVFX6vPW
+	 0RdLGpmI8P1mF/tpPWor+7UGOnqcCUXGSgQd9ll1DGuZYK5vZLzQi5VcF+xTEZ2Vof
+	 Ue2bOkZSoR+STn136u5TbpR+HJWpVhEQojVRoXnwkMN1rvB9u1gk6KaVhPnGTICqnx
+	 6trVSM/EbI2l1nenGrzj5ILDE3KQp25YRYO12mXGFsp0UhjtrGDala/iO27dBS+nO9
+	 cqsMnPeWS28m6g0iWzGE2UCFhluYB+sPu9zzVbgHDWr775MKGOhEhvyU/ug/W+Q2Aq
+	 jlsNgAIBpIEpWY1QGuj27dKFA3qjnfjo5k54a3CTfymqPxpj2ucS6zJZD+v55mPLZ/
+	 HssgeyVzhT37H7dvbkndyYyVDup2GevoqLgPGigHiqzWSY4nPzIwvsd7K2r2I0RItg
+	 iN2DAPM99F4Co7lFRstS1XcY=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 325F217E0A4E;
-	Tue,  4 Mar 2025 13:04:19 +0100 (CET)
-Message-ID: <155f609f-994f-4140-8453-7e38a5e6deef@collabora.com>
-Date: Tue, 4 Mar 2025 14:04:18 +0200
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3DF8240E020E;
+	Tue,  4 Mar 2025 12:04:56 +0000 (UTC)
+Date: Tue, 4 Mar 2025 13:04:49 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Rik van Riel <riel@surriel.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org,
+	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
+	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
+	linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
+	jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
+	Manali.Shukla@amd.com, mingo@kernel.org
+Subject: [PATCH] x86/mm: Always set the ASID valid bit for the INVLPGB
+ instruction
+Message-ID: <20250304120449.GHZ8bsYYyEBOKQIxBm@fat_crate.local>
+References: <20250226030129.530345-1-riel@surriel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 03/12] phy: rockchip: samsung-hdptx: Fix clock ratio
- setup
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Algea Cao <algea.cao@rock-chips.com>, Sandor Yu <Sandor.yu@nxp.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, kernel@collabora.com,
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-References: <20250304-phy-sam-hdptx-bpc-v4-0-8657847c13f7@collabora.com>
- <20250304-phy-sam-hdptx-bpc-v4-3-8657847c13f7@collabora.com>
- <20250304-small-mindful-mongrel-bd6f8b@houat>
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250304-small-mindful-mongrel-bd6f8b@houat>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250226030129.530345-1-riel@surriel.com>
 
-Hi Maxime,
+On Tue, Feb 25, 2025 at 10:00:35PM -0500, Rik van Riel wrote:
+> Add support for broadcast TLB invalidation using AMD's INVLPGB instruction.
 
-On 3/4/25 10:13 AM, Maxime Ripard wrote:
-> Hi,
-> 
-> On Tue, Mar 04, 2025 at 03:44:02AM +0200, Cristian Ciocaltea wrote:
->> The switch from 1/10 to 1/40 clock ratio must happen when exceeding the
->> 340 MHz rate limit of HDMI 1.4, i.e. when entering the HDMI 2.0 domain,
->> and not before.
->>
->> While at it, introduce a define for this rate limit constant.
->>
->> Fixes: 553be2830c5f ("phy: rockchip: Add Samsung HDMI/eDP Combo PHY driver")
->> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
->> ---
->>  drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
->> index f88369864c50e4563834ccbb26f1f9f440e99271..cf2c3a46604cb9d8c26fe5ec8346904e0b62848f 100644
->> --- a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
->> +++ b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
->> @@ -320,6 +320,7 @@
->>  #define LN3_TX_SER_RATE_SEL_HBR2_MASK	BIT(3)
->>  #define LN3_TX_SER_RATE_SEL_HBR3_MASK	BIT(2)
->>  
->> +#define HDMI14_MAX_RATE			340000000
->>  #define HDMI20_MAX_RATE			600000000
->>  
->>  enum dp_link_rate {
->> @@ -1072,7 +1073,7 @@ static int rk_hdptx_ropll_tmds_mode_config(struct rk_hdptx_phy *hdptx,
->>  
->>  	regmap_write(hdptx->regmap, LNTOP_REG(0200), 0x06);
->>  
->> -	if (rate >= 3400000) {
->> +	if (rate > HDMI14_MAX_RATE / 100) {
-> 
-> The rate seems to come from rk_hdptx_phy_power_on and eventually from
-> tmds_char_rate in the PHY config options, so its rate is in Hertz.
+One more patch ontop from Tom.
 
-The rate coming from rk_hdptx_phy_power_on() is in hHz, since it passed
-via dw_hdmi_qp_rockchip_encoder_enable() as
+Now lemme test this a bit again...
 
-  phy_set_bus_width(hdmi->phy, div_u64(rate, 100));
+From: Tom Lendacky <thomas.lendacky@amd.com>
+Date: Tue, 4 Mar 2025 12:59:56 +0100
+Subject: [PATCH] x86/mm: Always set the ASID valid bit for the INVLPGB instruction
 
-> HDMI14_MAX_RATE and HDMI20_MAX_RATE are both defined in Hertz as well.
-> It seems super odd to mee that you then convert HDMI14_MAX_RATE to hHz?
+When executing the INVLPGB instruction on a bare-metal host or hypervisor, if
+the ASID valid bit is not set, the instruction will flush the TLB entries that
+match the specified criteria for any ASID, not just the those of the host. If
+virtual machines are running on the system, this may result in inadvertent
+flushes of guest TLB entries.
 
-This stems from the ropll_tmds_cfg table containing the configuration
-params for the supported rates which requires the search keys to be
-provided in hHz rather than Hz.
+When executing the INVLPGB instruction in a guest and the INVLPGB instruction is
+not intercepted by the hypervisor, the hardware will replace the requested ASID
+with the guest ASID and set the ASID valid bit before doing the broadcast
+invalidation. Thus a guest is only able to flush its own TLB entries.
 
-I agree this is nothing but confusing, that's why I fixed this up in
-"phy: rockchip: samsung-hdptx: Avoid Hz-hHz unit conversion overhead"
+So to limit the host TLB flushing reach, always set the ASID valid bit using an
+ASID value of 0 (which represents the host/hypervisor). This will will result in
+the desired effect in both host and guest.
 
-Thanks for reviewing!
+Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+---
+ arch/x86/include/asm/tlb.h | 58 +++++++++++++++++++++-----------------
+ 1 file changed, 32 insertions(+), 26 deletions(-)
 
-Regards,
-Cristian
+diff --git a/arch/x86/include/asm/tlb.h b/arch/x86/include/asm/tlb.h
+index e8561a846754..56fe331fb797 100644
+--- a/arch/x86/include/asm/tlb.h
++++ b/arch/x86/include/asm/tlb.h
+@@ -33,6 +33,27 @@ enum addr_stride {
+ 	PMD_STRIDE = 1
+ };
+ 
++/*
++ * INVLPGB can be targeted by virtual address, PCID, ASID, or any combination
++ * of the three. For example:
++ * - FLAG_VA | FLAG_INCLUDE_GLOBAL: invalidate all TLB entries at the address
++ * - FLAG_PCID:			    invalidate all TLB entries matching the PCID
++ *
++ * The first is used to invalidate (kernel) mappings at a particular
++ * address across all processes.
++ *
++ * The latter invalidates all TLB entries matching a PCID.
++ */
++#define INVLPGB_FLAG_VA			BIT(0)
++#define INVLPGB_FLAG_PCID		BIT(1)
++#define INVLPGB_FLAG_ASID		BIT(2)
++#define INVLPGB_FLAG_INCLUDE_GLOBAL	BIT(3)
++#define INVLPGB_FLAG_FINAL_ONLY		BIT(4)
++#define INVLPGB_FLAG_INCLUDE_NESTED	BIT(5)
++
++/* The implied mode when all bits are clear: */
++#define INVLPGB_MODE_ALL_NONGLOBALS	0UL
++
+ #ifdef CONFIG_BROADCAST_TLB_FLUSH
+ /*
+  * INVLPGB does broadcast TLB invalidation across all the CPUs in the system.
+@@ -40,14 +61,20 @@ enum addr_stride {
+  * The INVLPGB instruction is weakly ordered, and a batch of invalidations can
+  * be done in a parallel fashion.
+  *
+- * The instruction takes the number of extra pages to invalidate, beyond
+- * the first page, while __invlpgb gets the more human readable number of
+- * pages to invalidate.
++ * The instruction takes the number of extra pages to invalidate, beyond the
++ * first page, while __invlpgb gets the more human readable number of pages to
++ * invalidate.
+  *
+  * The bits in rax[0:2] determine respectively which components of the address
+  * (VA, PCID, ASID) get compared when flushing. If neither bits are set, *any*
+  * address in the specified range matches.
+  *
++ * Since it is desired to only flush TLB entries for the ASID that is executing
++ * the instruction (a host/hypervisor or a guest), the ASID valid bit should
++ * always be set. On a host/hypervisor, the hardware will use the ASID value
++ * specified in EDX[15:0] (which should be 0). On a guest, the hardware will
++ * use the actual ASID value of the guest.
++ *
+  * TLBSYNC is used to ensure that pending INVLPGB invalidations initiated from
+  * this CPU have completed.
+  */
+@@ -55,9 +82,9 @@ static inline void __invlpgb(unsigned long asid, unsigned long pcid,
+ 			     unsigned long addr, u16 nr_pages,
+ 			     enum addr_stride stride, u8 flags)
+ {
+-	u32 edx = (pcid << 16) | asid;
++	u64 rax = addr | flags | INVLPGB_FLAG_ASID;
+ 	u32 ecx = (stride << 31) | (nr_pages - 1);
+-	u64 rax = addr | flags;
++	u32 edx = (pcid << 16) | asid;
+ 
+ 	/* The low bits in rax are for flags. Verify addr is clean. */
+ 	VM_WARN_ON_ONCE(addr & ~PAGE_MASK);
+@@ -87,27 +114,6 @@ static inline void __invlpgb(unsigned long asid, unsigned long pcid,
+ static inline void __tlbsync(void) { }
+ #endif
+ 
+-/*
+- * INVLPGB can be targeted by virtual address, PCID, ASID, or any combination
+- * of the three. For example:
+- * - FLAG_VA | FLAG_INCLUDE_GLOBAL: invalidate all TLB entries at the address
+- * - FLAG_PCID:			    invalidate all TLB entries matching the PCID
+- *
+- * The first is used to invalidate (kernel) mappings at a particular
+- * address across all processes.
+- *
+- * The latter invalidates all TLB entries matching a PCID.
+- */
+-#define INVLPGB_FLAG_VA			BIT(0)
+-#define INVLPGB_FLAG_PCID		BIT(1)
+-#define INVLPGB_FLAG_ASID		BIT(2)
+-#define INVLPGB_FLAG_INCLUDE_GLOBAL	BIT(3)
+-#define INVLPGB_FLAG_FINAL_ONLY		BIT(4)
+-#define INVLPGB_FLAG_INCLUDE_NESTED	BIT(5)
+-
+-/* The implied mode when all bits are clear: */
+-#define INVLPGB_MODE_ALL_NONGLOBALS	0UL
+-
+ static inline void __invlpgb_flush_user_nr_nosync(unsigned long pcid,
+ 						  unsigned long addr,
+ 						  u16 nr, bool stride)
+-- 
+2.43.0
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
