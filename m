@@ -1,432 +1,143 @@
-Return-Path: <linux-kernel+bounces-543482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67796A4D632
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:24:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F36B3A4D63B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:25:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32ACE7A9BD8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:23:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 019431897358
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:25:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 160841FBCBD;
-	Tue,  4 Mar 2025 08:24:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A8A1FBE9D;
+	Tue,  4 Mar 2025 08:25:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="DAcIK8LT"
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013022.outbound.protection.outlook.com [40.107.159.22])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="NUq8Bkte";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="xl53Kcz7"
+Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFFD21FBEA2;
-	Tue,  4 Mar 2025 08:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.22
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741076648; cv=fail; b=N565/UjG3Q0XoWj/GULlTtn572br9XKSa+Ob8rsXE8g+hNgnBG6H+iOdl11+fPU9nWTDU5DZI2MiIKFBeLbsP/WgD3sFaJjtFlGER4g8vdebEl8LxLkJ+wApQPloi6hVFRyBvM+A2dRTO/tR/hgNAhoND44mAJ5Lx8YeNQ9bfts=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741076648; c=relaxed/simple;
-	bh=26dv57lgnl2jYBwny/rENj+nUzw0YcnqqwU7WYkli7Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=GzWxks43WJ7VviJ56nEC8AIa+TxCwVuP5GPBsKkcIO4/OL/lDrF9/VLqljxY2MUPUkLyQwHjKmVm0B4DJdi4ByplOrcj4GrSQ31uCjK6aEqEcFdZL2YeC/Hmxv3gbxBPBu9wrv/JDQx4CKbSM/9zRlLWFzJ8EiF2dZyxj7d9KMA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=DAcIK8LT; arc=fail smtp.client-ip=40.107.159.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=abIIPGam456NQWNIAW8AUhq8AmJGz4K2B2GkCv4sJSJBpmzWicUlNuy1+zil3z/rzxINe95pGFVdaO/YAwGVzO4xQs4drHCm2LNT60/ntv8FO4zl5IHawoFX4LpNy1jOmyFICldxkezJ1+x5io15dLd9v7TukbSShjWQsBgk/8U9OQXzBOwu/mfPs3lV/clKH5UOmK9QO6hdNCejZK+Jjc3Jx1mcjJqTwR4TR1xJtInj48I0Tmni6Q+orWA0wUYr8Pf2Bw/viQ+XFNQCV27JznM6STj0ZkkxkW3Qqu59BaUWzu0DxsDHGJfMmep8Rll2UxetkcJtREky9PEdFUUPxg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Lx+ewCEYz5pGnVNc0ec9dUYSLkKdcarWZyqc+1qGA60=;
- b=EdaJYwjdaOgMRl3AyRLzFq6lKm+tBSN+xr59RLtqHUawSfl3aUgnxc0cMtYpTrKyMYsLnbwFZSK1jOWtmkQXlpyXUzxfPD+YQWrIHQxVG63vZjWE+bGlC34Y4ik5t0fcLpYO5I3wZ5rb8AcIx/xYk8TpgXfJTucOBjpg7ZIT95oDIHq9oi3omf6cWxGqvzbv9/N5erzGz42pUyQcAkJhfH8hJvtsmbVytiKOuEpRT1Eko/+LsRQH9vbrEA2wfOiymYxgq9MdobEJf7VfZAIGXG4c8VY1LgPEzgmuN2HC1p44ldHtbl0POQVk3HjDsrijp2sGwYUbiS2J7QW7FvBzoQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Lx+ewCEYz5pGnVNc0ec9dUYSLkKdcarWZyqc+1qGA60=;
- b=DAcIK8LTEwHpf4/dDFQ1QwglBLXn4F1pBPxtckuFXsS3QqT6GOqHMx5MCN3aHBr3AtIAQH++n2hfP1FAT8B2KN8gUwsXnHPwPQCaJvrKBNi99a9e60AIRFEiZ56acsndHiyNw3h7mMffi1LcakhNg0u1zzNEllGKb5Gl8aWZf3fd5ToklPEvtdpHp5e4o2f73rpT3/1Fvgzpx2eA45ejw6oAmTni/ywWGrb4zjT6GTjRsygRmFMJ4buQRtJE914jPjXd2FJciMHdvvSbLODMrPfgdX6CdEsPQ/VGYZBVNOkAI2eApSgFY6thRyyT84KP+pmR5W7lKqp/+pjeyni5fg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by PAWPR04MB9720.eurprd04.prod.outlook.com (2603:10a6:102:38d::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.27; Tue, 4 Mar
- 2025 08:24:02 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90%3]) with mapi id 15.20.8489.025; Tue, 4 Mar 2025
- 08:24:02 +0000
-From: Liu Ying <victor.liu@nxp.com>
-To: devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	victor.liu@nxp.com,
-	andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org,
-	Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se,
-	jernej.skrabec@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	peng.fan@nxp.com,
-	alexander.stein@ew.tq-group.com
-Subject: [PATCH v5 2/2] drm/bridge: imx: Add i.MX93 parallel display format configuration support
-Date: Tue,  4 Mar 2025 16:24:34 +0800
-Message-Id: <20250304082434.834031-3-victor.liu@nxp.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250304082434.834031-1-victor.liu@nxp.com>
-References: <20250304082434.834031-1-victor.liu@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SGAP274CA0006.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b6::18)
- To AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AE5A1F7580;
+	Tue,  4 Mar 2025 08:24:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741076701; cv=none; b=GW/JBEnYu/76g5hSWIxsP0RVC4SOVEruSlOVihPQqZB/Dq2UUHsZWGG0bGtJHl8r1XJpj3MQewtdzsQsOO4dEv1UpoojYR8HEl3ZpWAa5+nOfQ34VeXE45+ze1H9O/9L7SMyGbz+XkP/5iL2IvSmTs0426Z6xk8e2ahbw+Bh2Pg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741076701; c=relaxed/simple;
+	bh=Y27aUZUPxKEH7unyFscw2X5BcFy8avKpTq7I1tRtmds=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=EHy1ay+x3+qGHY8obkU41y7UJFZl/aAhwnjOGRZd6p18yB76Azw8K7LFqTa1gioZL7th2JC3yxfN1fpsOnnQBLK/tDA0eMX9Xnxp3JKrA1pTvMBqffJaV0T8FKaI8TL8unNl2X5FhXBi1UTR56a+IUdXxsNk3laD9ffZH9pGEB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=NUq8Bkte; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=xl53Kcz7; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfout.phl.internal (Postfix) with ESMTP id 3755A138271B;
+	Tue,  4 Mar 2025 03:24:57 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-09.internal (MEProxy); Tue, 04 Mar 2025 03:24:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1741076697;
+	 x=1741163097; bh=zM8W7tdbTUdh4T3yYERRBHG5NlNdx6XcKTrnIct3zRg=; b=
+	NUq8BkteQO6SDuLIORjsSkvajlvhU0vmiYacEBWhSW03bgh650C3v0bWKr5s46Td
+	riWSiSr0oA8W18I3RoDBz8CPAHAkyUy7yEMDGasexuzv+Ycky3MnIBGB+k33c1nw
+	nmkQ01VFlBTOfAlWhJh1IkurVsumBzOLe9LnvC/tIqix95bQBamre4ja7OdKnq9N
+	mIqKikbutblaiAgDLTuPNF2dAKHScNfnbLaa1or3d9xnbhc8ZSUoVvcbiLlo7kIb
+	mnHXXJDYdaRhl83XYWEpHjLaLTTOZj7be4UzShhBuHYlrk6PSbJXGkQBS9sB+VQv
+	FQABJrie9F0CutJk+bTR0w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741076697; x=
+	1741163097; bh=zM8W7tdbTUdh4T3yYERRBHG5NlNdx6XcKTrnIct3zRg=; b=x
+	l53Kcz7eoJFaWQ3J80H/MML1fxGTcZZVNXX6xkWLLDQc4Lmaw3N/mxQiO5vG2xRQ
+	AbF3v6GkKXcrfDs07L9QY0QfXUS86yTwVu1iy7Vvj3co519RCBsudtCAMG7xfDS1
+	yesQIgiG8Al68a3NzBAgB+1doLcgKSEv9c4wPesA5Eq7xP2bTr2iFY7NUEyz4rJt
+	iq1tp4C6z9uOiAz3DVYvdjMaAc91lceHrhRVnrHq8kRICJ2RONPEns4d8j1nlj1G
+	1dzhrvF0+U1RqlIaDU2klIdiTpFKpmE/YrgcWrpNQ12evxJ27xAZ3bD+IJRJJgKC
+	a9QtpDfwr7r6LSlqU1TVA==
+X-ME-Sender: <xms:2LjGZ2lX9OfR4lGZuLLRFZg7KDUv9_hRnViHfTziVrX3m07gNPsP3w>
+    <xme:2LjGZ92pUzSj-Ya5NUmKCsML3ldN90dsm3icq5Enp85JAb8Dgo4O-K726OPeQ6jtq
+    3R6P0iV0_XP-4Pexr0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutdduheegucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
+    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
+    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
+    udelpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegurghvvghmsegurghvvghmlh
+    hofhhtrdhnvghtpdhrtghpthhtohepjhhonhgrthhhrghnrdhlvghmohhnsehgmhgrihhl
+    rdgtohhmpdhrtghpthhtoheprhhitghhrghruggtohgthhhrrghnsehgmhgrihhlrdgtoh
+    hmpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthho
+    pehtihgrnhhfvghirdiihhgrnhhgsehinhhtvghlrdgtohhmpdhrtghpthhtoheprghrnh
+    gusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhg
+    pdhrtghpthhtohepthhhohhmrghsrdifvghishhsshgthhhuhheslhhinhhuthhrohhnih
+    igrdguvgdprhgtphhtthhopehvrgguihhmrdhfvgguohhrvghnkhhosehlihhnuhigrdgu
+    vghv
+X-ME-Proxy: <xmx:2LjGZ0o5WKeDUjYeoVcADYBT1YDKDZrZMuwPclwev2XUMqDqG5_C7Q>
+    <xmx:2LjGZ6lMJMUzvr9YtGi3OE6Aoen1JeNiEGUZ6pWqfW6_9uNCsWxcHA>
+    <xmx:2LjGZ00-ZAOpXYzNNzMAdFkk56eWG7NSDp5nwVwHwh6ujX7mxIxZNw>
+    <xmx:2LjGZxtRijeuEEYADWPTTa007tr36CMAFgbpXtJ4ipsNvinR8QLJwg>
+    <xmx:2bjGZ7uvsRHe2_21oQ-V2KHV9q2qGTbCMXAvb9jx2m2DyDUA8JruI20p>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 29A7C2220072; Tue,  4 Mar 2025 03:24:56 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|PAWPR04MB9720:EE_
-X-MS-Office365-Filtering-Correlation-Id: 67f67970-7113-4fe6-8bcc-08dd5af5eb87
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|7416014|376014|52116014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?sLq4fOiEdGPKoGwqjE6BmSJuHznt65IxwmGRbv3lT9HCQC/saY3mJ2e1lNjO?=
- =?us-ascii?Q?rXARPI9BjS4Pqfi9SkouztfJ/n919trBJM/SuNkcrDW70yCw2uIjenNr/N95?=
- =?us-ascii?Q?2ahQ5woUJozBTCZ4V6Gm/IxPOb99jA8MaZ8Q4H45E1zdEKsdpw4yClwRDqvl?=
- =?us-ascii?Q?vBJCq4J2lXlLqR7H7vm/BfYFzB61Ejv9BkhTzPe04jFBWOoFZHWchnAiXrAf?=
- =?us-ascii?Q?P0XR/TuqANqefKefPWoFjT9LB3xpWQ47X+SeSJbjAS7TSPFzoJIAPLG9ESCS?=
- =?us-ascii?Q?6fV+dodSIJIeyUuV5XJHP9JiFJudazXafIvNWjxgB1sHyCJKos2IC/HODeOy?=
- =?us-ascii?Q?KMXzv0IGdfdGwxTkTqw9odFPN4JFHbx3yGQcCUbGY/DAC7OBDwhWFEA2Z00W?=
- =?us-ascii?Q?6sMoxT+UXdJuGaLYrk5xGtBDzBucv5HEK6J8FMBejhEm1tIeKDaECUwhWF6A?=
- =?us-ascii?Q?O8EvUFG0NSMxvG1LmgCWGzoN6k12HCv8OLYq0t2UwOKCc+TQ3jfvZY4hALCx?=
- =?us-ascii?Q?nmghWP7839I3woeW6rQMPBO43BR9et3wcKPqSD8HcU6K5BArvDkkaE0igx9P?=
- =?us-ascii?Q?rERbpjLGITGw3oXeBcPZ8+/hjjXv6T4YdVjlGh0VwPOjwRq+SEXo+H6zRMiU?=
- =?us-ascii?Q?t8ireUS+uHXXGBBVpM+d6YOJ+f7uQPe/NduYaaqVASwenwF/ise5Rjd21Sfv?=
- =?us-ascii?Q?JCxx9EzS+7TzDnnlKQ0eUk+l3VOWLAlTu77J4033/3SvEHfQcctoAC3HTan/?=
- =?us-ascii?Q?6DXR9JFvN2XrDD2ZOIm2kNxN5mFcRjJCuKUJLU+Nc2FUW+P3xaekn5kpeBnh?=
- =?us-ascii?Q?Q6G5/BDtYmO2Rqs3xURlvQuX5hAV4/RUdNhYvEY4bK75bzvh4hxSYDZFdaY0?=
- =?us-ascii?Q?hxyel7o58cwTEioXZB6HWvbshguIpHaTRkjP9CKfSFuIlATOv3OGSuj7HxG5?=
- =?us-ascii?Q?xagbRYFzbJdapWhiJw+LSFu+2tV+WXplBmN1GIf6vMYax11uQjAYt6csP06P?=
- =?us-ascii?Q?CjM7WyyNOiPRqIpyXrEe/7O8hgEOwEViDfC40pugNw5x6ddmwJEK4jvj0e40?=
- =?us-ascii?Q?RAPl2CDwWhmHQEuUjDk6Pwo2LnLLQEmu69V+L4c55dyjV4FQo+e3S5wNqD02?=
- =?us-ascii?Q?58c02oimCeVtrL6Y1XtEh8ZYibrgCYlzjWqgNUzRf7S0/14GNiSfyjMXcPEt?=
- =?us-ascii?Q?QyqAON2tXU01Sf4OmUz27ja5e2R9yip1YAcJMDvLxrVTYy99Ba11CO08zxNd?=
- =?us-ascii?Q?84ZrLQh3aPWS5Xb8jxnJJDw38nNBV8+ppCzzpYfhaaVDpzWCqhwLgRj/wNDT?=
- =?us-ascii?Q?HZeNLvyMsbLv8lZ6UrR2wfg4xHvV476pjeQekpfYWYKq7Y0GmK5duTC7ve5A?=
- =?us-ascii?Q?XMiBKT3eLlrEg+kawJbmclisDA4TtG+Urs/Vb7CXgX2qILxECUGmyId68DH3?=
- =?us-ascii?Q?CKDf7fxGB1KDgWZOGMPT3UqvsbSKAJIN?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?fzPYmP9P5G8SLG26dHwnBlaVB4yLzsAyMsoMXIT2y9k0DzRDZ2uix2drLaBi?=
- =?us-ascii?Q?f7Z0WYGWon8sWKqQ1u0ojBmFIJ+j5FllWnqs7BpmpyOzLJI+C7WZEr8CRYg3?=
- =?us-ascii?Q?GNUF15Hoow+Sbh7zhqXSH7kVfDNhc+shbfH6UjYQWGAhEnFF9P6t10AdOngP?=
- =?us-ascii?Q?2Z04ZmOcMdPeKoQGSAZHQEICRr+M59CDJFD2AQb8L6qc18FTq+LX9PVhWJag?=
- =?us-ascii?Q?LQSFm1a7czWUs9UcmaPe4amJOuv88PZve831SK7/sr5CllR2R89H2qzYqoED?=
- =?us-ascii?Q?T2+diwtylKasQzSCSomrul49zLdxrxP/PQGh6qmVhVEZFQ45BY1TRpnQTRYb?=
- =?us-ascii?Q?SqYSPxqwIZMSKoRRetwHq0bBcWtNnDVFkA9qS8erOUWPkaRB7SghNbjmNyVG?=
- =?us-ascii?Q?r2wsOTAB/Ko2DsqFv0yJZ0UbrkoHw1quNRWIrPP1TlzS8TOczPuabMolk3r1?=
- =?us-ascii?Q?YKp/D0+P1Q/uVMV4X9x2KmT/RQ4eeBBg0nMXG3R1EhFhil1lCaFSzUgTNsqS?=
- =?us-ascii?Q?MZzWck4sr+R7r1nlTBo/u+RAsCul8BzqCIAvk0vEg2Git42J4sElimn+fIXJ?=
- =?us-ascii?Q?SkSGikkVAD1DbdM7rgLQA3jasfDghySYmiU5OfhjZZe7xzKYSreI3T2C62w4?=
- =?us-ascii?Q?CyBQWn5bdexF6K3sJYhCgM1zjqJrsMt000KzEj6PM6f/kdaXUg78qkhSh8UY?=
- =?us-ascii?Q?5t2uUusCQmtO0Le+cDDf/+2ole0wqGFGoVLn7+lR+ALrBwJNe6LKuM5yHIX7?=
- =?us-ascii?Q?JlnO3exdJXCwCLFf6CYf0bpvXNXkKa3ywEGsPzZuT6k6R/J+oTuyGENzTSTp?=
- =?us-ascii?Q?FaKe6xOujb1KzO8g/iDczsNeRQZHjH3G0b44dXifPLmQcKTzW5lTVsnlY8jS?=
- =?us-ascii?Q?lNL1r7FKHY2ova2jKWnNdDaeejgkT8JTfAdf4QJN/MuIFTIGjy9xgc+rPe1J?=
- =?us-ascii?Q?irh3LC5fhZ9wCvLcUww8wMob9WiGqrc0Vdw7HUUCeHHlbp2lwVc84UMv0nPe?=
- =?us-ascii?Q?LUaw/f0T3jJhFZsPPcudnun8S1PmAER5Ej9hKld5/tiBMukwxVdj75K/5siD?=
- =?us-ascii?Q?/sRb+qARc8POicK2YT4o0IXP5fAoZ/KruvA/bPe7eFcfU8PsGICVXnGegZMv?=
- =?us-ascii?Q?61ubZhFnJoPE1Ts1PuO9CK1OMLNx4h9R0soaunVU7dC1sp26jjz1mqVmwNwf?=
- =?us-ascii?Q?tXH701WsMu7jZIjfZ5XDK5YOMMpdJoblOQJQMMNHo38IyXj/qAJsGhOSSSS0?=
- =?us-ascii?Q?s1GQP3K8UnnvjlqJbqQvfY8buHH6aOvLm+Vgv9Ypm/ny4d/Q9kZh+qx0vuIR?=
- =?us-ascii?Q?46+wI0aNnQRpJCMsajHZbrzv9p2Ym4ELdXMTj3yfyLSqfMj/UF22kSCkJTGE?=
- =?us-ascii?Q?ltAHG45gkjwBARNSCT3QEXTwRVWYIlAAjyTiVDoJKc8jj4qbaew2aER3IOlV?=
- =?us-ascii?Q?oVlxF9qb6KjLQvLMecaCWPQuAiVMrfPObOocusFsncDlQVfUHUEOEe9KM7pZ?=
- =?us-ascii?Q?Dw8XMa2hstLJhRzxhtqMpATVP+UtgbD1pRAy9LuNlGux9k349usdD4t3fHCx?=
- =?us-ascii?Q?hCDgReywAW1LyH/+IafRhVC2Y08ezeTCnrI+bbZ7?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 67f67970-7113-4fe6-8bcc-08dd5af5eb87
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2025 08:24:02.3514
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: kgo+CnOONjejkm2D4NuYnrg4249Ff3J8Y6HkYmeM+/1A6uBROoYLOzFp5XHUZL8WmSPka1CT2exBhg1Q/qlFxA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR04MB9720
+Date: Tue, 04 Mar 2025 09:24:35 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Richard Cochran" <richardcochran@gmail.com>,
+ "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>
+Cc: "Arnd Bergmann" <arnd@kernel.org>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ "Andrew Lunn" <andrew+netdev@lunn.ch>,
+ "David S . Miller" <davem@davemloft.net>,
+ "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
+ "Paolo Abeni" <pabeni@redhat.com>, "Tianfei Zhang" <tianfei.zhang@intel.com>,
+ "Jonathan Lemon" <jonathan.lemon@gmail.com>,
+ "Vadim Fedorenko" <vadim.fedorenko@linux.dev>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+ "Calvin Owens" <calvin@wbinvd.org>, "Philipp Stanner" <pstanner@redhat.com>,
+ Netdev <netdev@vger.kernel.org>, linux-kernel@vger.kernel.org,
+ linux-fpga@vger.kernel.org
+Message-Id: <7fd3c712-4c31-435c-80c1-1e042c9b5999@app.fastmail.com>
+In-Reply-To: <Z8Z87mkuRqE6VOTy@hoboy.vegasvil.org>
+References: <20250227141749.3767032-1-arnd@kernel.org>
+ <Z8CDhIN5vhcSm1ge@smile.fi.intel.com> <Z8TFrPv1oajA3H4V@hoboy.vegasvil.org>
+ <Z8VfKYMGEKhvluJV@smile.fi.intel.com> <Z8Z87mkuRqE6VOTy@hoboy.vegasvil.org>
+Subject: Re: [PATCH] RFC: ptp: add comment about register access race
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-NXP i.MX93 mediamix blk-ctrl contains one DISPLAY_MUX register which
-configures parallel display format by using the "PARALLEL_DISP_FORMAT"
-field. Add a DRM bridge driver to support the display format configuration.
+On Tue, Mar 4, 2025, at 05:09, Richard Cochran wrote:
+> On Mon, Mar 03, 2025 at 09:50:01AM +0200, Andy Shevchenko wrote:
+>> Perhaps it's still good to have a comment, but rephrase it that the code is
+>> questionable depending on the HW behaviour that needs to be checked.
+>
+> IIRC both ixp4xx and the PCH are the same design and latch high reg on
+> read of low.
 
-Signed-off-by: Liu Ying <victor.liu@nxp.com>
----
-v4->v5:
-* Rebase upon next-20250303.  This causes the drop of .remove_new by using
-  devm_drm_bridge_add().  Also, this causes API change for
-  imx93_pdfc_bridge_atomic_enable().
-* Update year of copyright.
+Ok, if that's a common thing, let's assume that the drivers are
+all correct for the respective hardware and discard my patch.
 
-v3->v4:
-* Use dev_err_probe() in imx93_pdfc_bridge_probe(). (Krzysztof)
-* Drop MODULE_ALIAS(). (Krzysztof)
-* Update year of Copyright.
+With the patch I have queued up in the asm-generic tree, the
+behavior changes so ioread64_lo_hi() no longer gets turned
+into a single 64-bit access, and that is then more likely to
+be correct for both 32-bit and 64-bit architectures in case the
+device doesn't actually implement 64-bit transactions but does
+correctly latch the contents.
 
-v2->v3:
-* No change.
-* Resend with the patch rebased upon v6.11-rc1.
-
-v1->v2:
-* Set *num_input_fmts to zero in case
-  imx93_pdfc_bridge_atomic_get_input_bus_fmts() returns NULL.
-* Replace .remove callback with .remove_new callback in
-  imx93_pdfc_bridge_driver.
-
- drivers/gpu/drm/bridge/imx/Kconfig      |   8 +
- drivers/gpu/drm/bridge/imx/Makefile     |   1 +
- drivers/gpu/drm/bridge/imx/imx93-pdfc.c | 186 ++++++++++++++++++++++++
- 3 files changed, 195 insertions(+)
- create mode 100644 drivers/gpu/drm/bridge/imx/imx93-pdfc.c
-
-diff --git a/drivers/gpu/drm/bridge/imx/Kconfig b/drivers/gpu/drm/bridge/imx/Kconfig
-index 9a480c6abb85..51138d74ddfb 100644
---- a/drivers/gpu/drm/bridge/imx/Kconfig
-+++ b/drivers/gpu/drm/bridge/imx/Kconfig
-@@ -88,4 +88,12 @@ config DRM_IMX93_MIPI_DSI
- 	  Choose this to enable MIPI DSI controller found in Freescale i.MX93
- 	  processor.
- 
-+config DRM_IMX93_PARALLEL_DISP_FMT_CONFIG
-+	tristate "NXP i.MX93 parallel display format configuration"
-+	depends on OF
-+	select DRM_KMS_HELPER
-+	help
-+	  Choose this to enable parallel display format configuration
-+	  found in NXP i.MX93 processor.
-+
- endif # ARCH_MXC || COMPILE_TEST
-diff --git a/drivers/gpu/drm/bridge/imx/Makefile b/drivers/gpu/drm/bridge/imx/Makefile
-index dd5d48584806..f4ccc5cbef72 100644
---- a/drivers/gpu/drm/bridge/imx/Makefile
-+++ b/drivers/gpu/drm/bridge/imx/Makefile
-@@ -8,3 +8,4 @@ obj-$(CONFIG_DRM_IMX8QXP_PIXEL_COMBINER) += imx8qxp-pixel-combiner.o
- obj-$(CONFIG_DRM_IMX8QXP_PIXEL_LINK) += imx8qxp-pixel-link.o
- obj-$(CONFIG_DRM_IMX8QXP_PIXEL_LINK_TO_DPI) += imx8qxp-pxl2dpi.o
- obj-$(CONFIG_DRM_IMX93_MIPI_DSI) += imx93-mipi-dsi.o
-+obj-$(CONFIG_DRM_IMX93_PARALLEL_DISP_FMT_CONFIG) += imx93-pdfc.o
-diff --git a/drivers/gpu/drm/bridge/imx/imx93-pdfc.c b/drivers/gpu/drm/bridge/imx/imx93-pdfc.c
-new file mode 100644
-index 000000000000..7dfb87e64197
---- /dev/null
-+++ b/drivers/gpu/drm/bridge/imx/imx93-pdfc.c
-@@ -0,0 +1,186 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+
-+/*
-+ * Copyright 2022-2025 NXP
-+ */
-+
-+#include <linux/media-bus-format.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#include <drm/drm_atomic_state_helper.h>
-+#include <drm/drm_bridge.h>
-+#include <drm/drm_print.h>
-+
-+#define DISPLAY_MUX		0x60
-+#define  PARALLEL_DISP_FORMAT	0x700
-+
-+enum imx93_pdfc_format {
-+	RGB888_TO_RGB888 = 0x0,
-+	RGB888_TO_RGB666 = 0x1 << 8,
-+	RGB565_TO_RGB565 = 0x2 << 8,
-+};
-+
-+struct imx93_pdfc {
-+	struct drm_bridge bridge;
-+	struct drm_bridge *next_bridge;
-+	struct device *dev;
-+	struct regmap *regmap;
-+	u32 format;
-+};
-+
-+static int imx93_pdfc_bridge_attach(struct drm_bridge *bridge,
-+				    enum drm_bridge_attach_flags flags)
-+{
-+	struct imx93_pdfc *pdfc = bridge->driver_private;
-+
-+	return drm_bridge_attach(bridge->encoder, pdfc->next_bridge, bridge, flags);
-+}
-+
-+static void imx93_pdfc_bridge_atomic_enable(struct drm_bridge *bridge,
-+					    struct drm_atomic_state *state)
-+{
-+	struct imx93_pdfc *pdfc = bridge->driver_private;
-+
-+	regmap_update_bits(pdfc->regmap, DISPLAY_MUX, PARALLEL_DISP_FORMAT,
-+			   pdfc->format);
-+}
-+
-+static const u32 imx93_pdfc_bus_output_fmts[] = {
-+	MEDIA_BUS_FMT_RGB888_1X24,
-+	MEDIA_BUS_FMT_RGB666_1X18,
-+	MEDIA_BUS_FMT_RGB565_1X16,
-+	MEDIA_BUS_FMT_FIXED
-+};
-+
-+static bool imx93_pdfc_bus_output_fmt_supported(u32 fmt)
-+{
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(imx93_pdfc_bus_output_fmts); i++) {
-+		if (imx93_pdfc_bus_output_fmts[i] == fmt)
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
-+static u32 *
-+imx93_pdfc_bridge_atomic_get_input_bus_fmts(struct drm_bridge *bridge,
-+					    struct drm_bridge_state *bridge_state,
-+					    struct drm_crtc_state *crtc_state,
-+					    struct drm_connector_state *conn_state,
-+					    u32 output_fmt,
-+					    unsigned int *num_input_fmts)
-+{
-+	u32 *input_fmts;
-+
-+	*num_input_fmts = 0;
-+
-+	if (!imx93_pdfc_bus_output_fmt_supported(output_fmt))
-+		return NULL;
-+
-+	input_fmts = kmalloc(sizeof(*input_fmts), GFP_KERNEL);
-+	if (!input_fmts)
-+		return NULL;
-+
-+	switch (output_fmt) {
-+	case MEDIA_BUS_FMT_RGB888_1X24:
-+	case MEDIA_BUS_FMT_RGB565_1X16:
-+		input_fmts[0] = output_fmt;
-+		break;
-+	case MEDIA_BUS_FMT_RGB666_1X18:
-+	case MEDIA_BUS_FMT_FIXED:
-+		input_fmts[0] = MEDIA_BUS_FMT_RGB888_1X24;
-+		break;
-+	}
-+
-+	*num_input_fmts = 1;
-+
-+	return input_fmts;
-+}
-+
-+static int imx93_pdfc_bridge_atomic_check(struct drm_bridge *bridge,
-+					  struct drm_bridge_state *bridge_state,
-+					  struct drm_crtc_state *crtc_state,
-+					  struct drm_connector_state *conn_state)
-+{
-+	struct imx93_pdfc *pdfc = bridge->driver_private;
-+
-+	switch (bridge_state->output_bus_cfg.format) {
-+	case MEDIA_BUS_FMT_RGB888_1X24:
-+		pdfc->format = RGB888_TO_RGB888;
-+		break;
-+	case MEDIA_BUS_FMT_RGB666_1X18:
-+		pdfc->format = RGB888_TO_RGB666;
-+		break;
-+	case MEDIA_BUS_FMT_RGB565_1X16:
-+		pdfc->format = RGB565_TO_RGB565;
-+		break;
-+	default:
-+		DRM_DEV_DEBUG_DRIVER(pdfc->dev, "Unsupported output bus format: 0x%x\n",
-+				     bridge_state->output_bus_cfg.format);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct drm_bridge_funcs imx93_pdfc_bridge_funcs = {
-+	.attach			= imx93_pdfc_bridge_attach,
-+	.atomic_enable		= imx93_pdfc_bridge_atomic_enable,
-+	.atomic_duplicate_state	= drm_atomic_helper_bridge_duplicate_state,
-+	.atomic_destroy_state	= drm_atomic_helper_bridge_destroy_state,
-+	.atomic_get_input_bus_fmts	= imx93_pdfc_bridge_atomic_get_input_bus_fmts,
-+	.atomic_check		= imx93_pdfc_bridge_atomic_check,
-+	.atomic_reset		= drm_atomic_helper_bridge_reset,
-+};
-+
-+static int imx93_pdfc_bridge_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct imx93_pdfc *pdfc;
-+
-+	pdfc = devm_kzalloc(dev, sizeof(*pdfc), GFP_KERNEL);
-+	if (!pdfc)
-+		return -ENOMEM;
-+
-+	pdfc->regmap = syscon_node_to_regmap(dev->of_node->parent);
-+	if (IS_ERR(pdfc->regmap))
-+		return dev_err_probe(dev, PTR_ERR(pdfc->regmap),
-+				     "failed to get regmap\n");
-+
-+	pdfc->next_bridge = devm_drm_of_get_bridge(dev, dev->of_node, 1, 0);
-+	if (IS_ERR(pdfc->next_bridge))
-+		return dev_err_probe(dev, PTR_ERR(pdfc->next_bridge),
-+				     "failed to get next bridge\n");
-+
-+	pdfc->dev = dev;
-+	pdfc->bridge.driver_private = pdfc;
-+	pdfc->bridge.funcs = &imx93_pdfc_bridge_funcs;
-+	pdfc->bridge.of_node = dev->of_node;
-+
-+	return devm_drm_bridge_add(dev, &pdfc->bridge);
-+}
-+
-+static const struct of_device_id imx93_pdfc_dt_ids[] = {
-+	{ .compatible = "nxp,imx93-pdfc", },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, imx93_pdfc_dt_ids);
-+
-+static struct platform_driver imx93_pdfc_bridge_driver = {
-+	.probe	= imx93_pdfc_bridge_probe,
-+	.driver	= {
-+		.of_match_table = imx93_pdfc_dt_ids,
-+		.name = "imx93_pdfc",
-+	},
-+};
-+module_platform_driver(imx93_pdfc_bridge_driver);
-+
-+MODULE_DESCRIPTION("NXP i.MX93 parallel display format configuration driver");
-+MODULE_AUTHOR("Liu Ying <victor.liu@nxp.com>");
-+MODULE_LICENSE("GPL v2");
--- 
-2.34.1
-
+      Arnd
 
