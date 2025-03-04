@@ -1,196 +1,146 @@
-Return-Path: <linux-kernel+bounces-545756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 028A1A4F109
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:01:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30848A4F119
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:02:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EEFD1780A5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:01:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2D7E7AA7B6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C1D27CB08;
-	Tue,  4 Mar 2025 22:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 154DF278112;
+	Tue,  4 Mar 2025 23:01:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZYWF2w35"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="MhKLozmH"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F1827BF82;
-	Tue,  4 Mar 2025 22:59:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C78751F2380
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 23:01:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741129158; cv=none; b=ufbLAuy6fWqNx4yac78uHKXsHBDRcLPid2Cs7cQILN0nEl6d5kV7SohpZQ8DphvTKA8qD0Bx5rWtoctUH/UOWh74cCiqZeM1I0nYlAMG4izI9yWIHRkfi360zsFkihgDvKVlRf/c3Xnii6BrO/iXN1USE3u741gmTc86UAN2Afs=
+	t=1741129310; cv=none; b=CZLj3epJNEhQz6YVld0rExk2tEZEusTw+DjbXLebcO61fAh/adhsG6WnN5jDOA14pt6iiWVq0lmQWAgDrKLoUP2jmxMvDdZHaLUOeUukaTGfUerpyJYb8FRKHRYGlgCGm5zK6kUoBhV/eAOtN0ozDEaI1aPiLcn0hKT3TKlWWn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741129158; c=relaxed/simple;
-	bh=5fmOcMbWEYyFn1vlUabcduL1DY32zpRpBQx2RBuzbqo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=oJ6/dsXM+liRMtHHUvmcA1nr1Fgnh1hbw0gB/J5cUur5sOTjgw4zMAqgrYRtKsFdRYAEO2vYp0hwSF6o2eWB36y/AaZD9L3Goc0TLiVI+WYI9tCfu2CDajwE/08xrAukSlqYxLESiZzWToO4t+pyYWcwk28dp98t3ge7CitKECs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZYWF2w35; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93810C4CEE5;
-	Tue,  4 Mar 2025 22:59:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741129155;
-	bh=5fmOcMbWEYyFn1vlUabcduL1DY32zpRpBQx2RBuzbqo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=ZYWF2w35jdYCHsflLo1upLUHiJuYK/SSxPrqLaFOpahdwuUV0blKUlg3mfIfL3nWc
-	 mCbD/Lx+NjP0eEdJstmRDVM7WLBTmxyeS+FaAQd3puxhryfsQi1gQfcSPCeBD8Skpf
-	 QoQna5y7PE8CHR83rS6C0LJit1sei5s6eTL6upQ30KEbu25k5YrwLD9L/lsmmaIPBe
-	 K1bQCo415jf2i3vLMSrnu/DUVIX2G0lr0gidJ+abfXu/eQ1Zge9SZ2H/KZtJ45yJ9F
-	 KDXqaVtlCTekonlnx3IIwigxv+kKnQWlK+5oxqD+0rG03CmaCn678/Q1fBt6J+Yls3
-	 cJqyFkYzr9Vqw==
-Date: Tue, 4 Mar 2025 16:59:14 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Niklas Schnelle <schnelle@linux.ibm.com>
-Cc: Christoph Hellwig <hch@lst.de>,
-	Alexandra Winter <wintera@linux.ibm.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Gerd Bayer <gbayer@linux.ibm.com>,
-	Matthew Rosato <mjrosato@linux.ibm.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Thorsten Winkler <twinkler@linux.ibm.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Julian Ruess <julianr@linux.ibm.com>,
-	Halil Pasic <pasic@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH v7 0/3] vfio/pci: s390: Fix issues preventing
- VFIO_PCI_MMAP=y for s390 and enable it
-Message-ID: <20250304225914.GA263226@bhelgaas>
+	s=arc-20240116; t=1741129310; c=relaxed/simple;
+	bh=pz7Xcy2s1G01bGPyo60xMbXviZXfgdVcaLnTIVtLEiI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WVKdvS5VaKWDBkGNpDAbFgIfyGndwL/wikKYtlm4/cMYH7yOOINa54KrD5wyTS5RWsto7ux1Z4sgSTtV8yBL7mb2cn0raIs0j6hOep47hRp1Yb3dKv0gEMqShAZ47IRA1Wyn7Um96oLL7T9wD/uehFzfivXKR7Zi8QP35Wd/Zxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=MhKLozmH; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-22355618fd9so107102355ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 15:01:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1741129307; x=1741734107; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=jv+vfhFM5x+H+wKvE7Tyeh9gs1SZ0jcQcgCrZLmaD60=;
+        b=MhKLozmHFyxcnM4SjN9l8Rl0Sy0Vw9vFROlih2aRPU7ybwYtLTu+tt5czcMdyye5Sm
+         riNccAZiBgSHCERF9/wFaLdwk3Y+XJI1dxHcl5wy7mAZmpxNwaTr3OtyvIdu1LTC0Lzz
+         J6Qt73pTxiP4Irm/F+uvaHMHo/SY4xHHOtXns=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741129307; x=1741734107;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jv+vfhFM5x+H+wKvE7Tyeh9gs1SZ0jcQcgCrZLmaD60=;
+        b=aTJGBXG5+ufPXpOos8Tbdo30t5O+1uEZo5kk+y6TFy/MbsFAE0YbExhONmWmAmKjIR
+         jaxdvAlm9fNP3X1bSzRNdICGYCnJCHIVvGBTCnT51eDSmtn1jF6h5EShvUQ6pCRWQd95
+         Yo5KxfGrc3O7O7Qyx1YmH+1+4iDJCEkjGnxCBYhSyYRRvu9PQAoWkd+ZrM1QLAm2r5sz
+         MXR3jTwR29uVzPQKfB4E8j4rob/FyU/oc7skF52q8IJ0oTe+lJSrttrIkMtapaw5bXpX
+         1HUATN1QbvEj0OSsNGMox/qVD0XngxdqiGJzbXelv8Ki6+GOTRQ6Tofkp220NhA1Fl3h
+         2O2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWM0UDHXVZXZuKDz3UCOlbs+08kFZ0wsA8ebnsyMPoC6ZCu83/CBKqYSQbb/sMWrIOdYRCy6I1ACykkCBo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwesAjtidvVqyPI/5NdS+Oqunz1tkklSHMAa0xNHvpXCDVTa6Yb
+	SahfraVb6W98Fx+mmnuAvl2cihuIcS9MwzKcX0KiXViIxOEL41Gh+243H0qgoA==
+X-Gm-Gg: ASbGnctW4nQzEA5qV1byuOFFq1mZd9tkYK+InHbQNcCTXh47egFWoj94aE5tpfcp5v0
+	aO/mo/hqjrmKVYY2bw6zF6Rh37C4yLhbJWhhfA6k0uh8caE/061FInXk86CamOrOex39KUdH1PV
+	dhsC3cUTh85f+b6M30NLMXog9zxcq+hFJzwIEZUZfnPxS2YjjMZ1a5X+N8cwoIL88WkBZI/LqvJ
+	7dTcht1f2u0ZvYpb3ua5io9RI4jnSU7euEEJQm/RSX2C4CqVTj9bfqobJB1jTnbg3ynHU4jWClu
+	WFOXMvFdAJqr7zF1zwtdmGOy4AtMyU+2u81BFHDNbhiWUkCkFYS2UK58o9bQOuf9MNbgw54ASdp
+	PoLOHBRkR
+X-Google-Smtp-Source: AGHT+IHNn+vjIDK9mrUob0jsHtMuQg5cWXZnp74724DjWY9A6ekiwkcRojQCHzA59kgShLLOIYsYAA==
+X-Received: by 2002:a17:903:41cb:b0:216:3466:7414 with SMTP id d9443c01a7336-223f1d397ecmr18376645ad.44.1741129306995;
+        Tue, 04 Mar 2025 15:01:46 -0800 (PST)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223504c5cf4sm99912355ad.130.2025.03.04.15.01.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Mar 2025 15:01:46 -0800 (PST)
+Message-ID: <cb5e3a1e-39a5-4502-b99b-b7183dfaea02@broadcom.com>
+Date: Tue, 4 Mar 2025 15:01:42 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250226-vfio_pci_mmap-v7-0-c5c0f1d26efd@linux.ibm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ARM: dts: BCM5301X: Fix switch port labels of ASUS
+ RT-AC5300
+To: chester.a.unal@arinc9.com, Hauke Mehrtens <hauke@hauke-m.de>,
+ =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Tom Brautaset <tbrautaset@gmail.com>,
+ =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>,
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250303-for-broadcom-fix-rt-ac5300-switch-ports-v1-1-e058856ef4d3@arinc9.com>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20250303-for-broadcom-fix-rt-ac5300-switch-ports-v1-1-e058856ef4d3@arinc9.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 26, 2025 at 01:07:44PM +0100, Niklas Schnelle wrote:
-> With the introduction of memory I/O (MIO) instructions enbaled in commit
-> 71ba41c9b1d9 ("s390/pci: provide support for MIO instructions") s390
-> gained support for direct user-space access to mapped PCI resources.
-> Even without those however user-space can access mapped PCI resources
-> via the s390 specific MMIO syscalls. There is thus nothing fundamentally
-> preventing s390 from supporting VFIO_PCI_MMAP, allowing user-space
-> drivers to access PCI resources without going through the pread()
-> interface. To actually enable VFIO_PCI_MMAP a few issues need fixing
-> however.
+On 3/3/25 05:06, Chester A. Unal via B4 Relay wrote:
+> From: "Chester A. Unal" <chester.a.unal@arinc9.com>
 > 
-> Firstly the s390 MMIO syscalls do not cause a page fault when
-> follow_pte() fails due to the page not being present. This breaks
-> vfio-pci's mmap() handling which lazily maps on first access.
+> After using the device for a while, Tom reports that he initially described
+> the switch port labels incorrectly. Correct them.
 > 
-> Secondly on s390 there is a virtual PCI device called ISM which has
-> a few oddities. For one it claims to have a 256 TiB PCI BAR (not a typo)
-> which leads to any attempt to mmap() it fail with the following message:
-> 
->     vmap allocation for size 281474976714752 failed: use vmalloc=<size> to increase size
-> 
-> Even if one tried to map this BAR only partially the mapping would not
-> be usable on systems with MIO support enabled. So just block mapping
-> BARs which don't fit between IOREMAP_START and IOREMAP_END. Solve this
-> by keeping the vfio-pci mmap() blocking behavior around for this
-> specific device via a PCI quirk and new pdev->non_mappable_bars
-> flag.
-> 
-> As noted by Alex Williamson With mmap() enabled in vfio-pci it makes
-> sense to also enable HAVE_PCI_MMAP with the same restriction for pdev->
-> non_mappable_bars. So this is added in patch 3 and I tested this with
-> another small test program.
-> 
-> Note:
-> For your convenience the code is also available in the tagged
-> b4/vfio_pci_mmap branch on my git.kernel.org site below:
-> https://git.kernel.org/pub/scm/linux/kernel/git/niks/linux.git/
-> 
-> Thanks,
-> Niklas
-> 
-> Link: https://lore.kernel.org/all/c5ba134a1d4f4465b5956027e6a4ea6f6beff969.camel@linux.ibm.com/
-> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
-> ---
-> Changes in v7:
-> - Move all s390 changes, except for a one-lineer to set pdev->
->   non_mappable_bars for all devices, to the third patch (Bjorn)
-> - Move checks in pci-sysfs.c and proc.c to the second patch (Bjorn)
-> - Only set ARCH_GENERIC_PCI_MMAP_RESOURCES not HAVE_PCI_MMAP following
->   the recommendation for new architectures in
->   Documentation/PCI/sysfs-pci.rst. This only enables the sysfs but not
->   the proc interface.
-> - Link to v6: https://lore.kernel.org/r/20250214-vfio_pci_mmap-v6-0-6f300cb63a7e@linux.ibm.com
-> 
-> Changes in v6:
-> - Add a patch to also enable PCI resource mmap() via sysfs and proc
->   exlcluding pdev->non_mappable_bars devices (Alex Williamson)
-> - Added Acks
-> - Link to v5: https://lore.kernel.org/r/20250212-vfio_pci_mmap-v5-0-633ca5e056da@linux.ibm.com
-> 
-> Changes in v5:
-> - Instead of relying on the existing pdev->non_compliant_bars introduce
->   a new pdev->non_mappable_bars flag. This replaces the VFIO_PCI_MMAP
->   Kconfig option and makes it per-device. This is necessary to not break
->   upcoming vfio-pci use of ISM devices (Julian Ruess)
-> - Squash the removal of VFIO_PCI_MMAP into the second commit as this
->   is now where its only use goes away.
-> - Switch to using follow_pfnmap_start() in MMIO syscall page fault
->   handling to match upstream changes
-> - Dropped R-b's because the changes are significant
-> - Link to v4: https://lore.kernel.org/r/20240626-vfio_pci_mmap-v4-0-7f038870f022@linux.ibm.com
-> 
-> Changes in v4:
-> - Overhauled and split up patch 2 which caused errors on ppc due to
->   unexported __kernel_io_end. Replaced it with a minimal s390 PCI fixup
->   harness to set pdev->non_compliant_bars for ISM plus ignoring devices
->   with this flag in vfio-pci. Idea for using PCI quirks came from
->   Christoph Hellwig, thanks. Dropped R-bs for patch 2 accordingly.
-> - Rebased on v6.10-rc5 which includes the vfio-pci mmap fault handler
->   fix to the issue I stumbled over independently in v3
-> - Link to v3: https://lore.kernel.org/r/20240529-vfio_pci_mmap-v3-0-cd217d019218@linux.ibm.com
-> 
-> Changes in v3:
-> - Rebased on v6.10-rc1 requiring change to follow_pte() call
-> - Use current->mm for fixup_user_fault() as seems more common
-> - Collected new trailers
-> - Link to v2: https://lore.kernel.org/r/20240523-vfio_pci_mmap-v2-0-0dc6c139a4f1@linux.ibm.com
-> 
-> Changes in v2:
-> - Changed last patch to remove VFIO_PCI_MMAP instead of just enabling it
->   for s390 as it is unconditionally true with s390 supporting PCI resource mmap() (Jason)
-> - Collected R-bs from Jason
-> - Link to v1: https://lore.kernel.org/r/20240521-vfio_pci_mmap-v1-0-2f6315e0054e@linux.ibm.com
-> 
-> ---
-> Niklas Schnelle (3):
->       s390/pci: Fix s390_mmio_read/write syscall page fault handling
->       PCI: s390: Introduce pdev->non_mappable_bars and replace VFIO_PCI_MMAP
->       PCI: s390: Support mmap() of PCI resources except for ISM devices
-> 
->  arch/s390/Kconfig                |  4 +---
->  arch/s390/include/asm/pci.h      |  3 +++
->  arch/s390/pci/Makefile           |  2 +-
->  arch/s390/pci/pci_fixup.c        | 23 +++++++++++++++++++++++
->  arch/s390/pci/pci_mmio.c         | 18 +++++++++++++-----
->  drivers/pci/pci-sysfs.c          |  4 ++++
->  drivers/pci/proc.c               |  4 ++++
->  drivers/s390/net/ism_drv.c       |  1 -
->  drivers/vfio/pci/Kconfig         |  4 ----
->  drivers/vfio/pci/vfio_pci_core.c |  2 +-
->  include/linux/pci.h              |  1 +
->  include/linux/pci_ids.h          |  1 +
->  12 files changed, 52 insertions(+), 15 deletions(-)
+> Reported-by: Tom Brautaset <tbrautaset@gmail.com>
+> Fixes: 961dedc6b4e4 ("ARM: dts: BCM5301X: Add DT for ASUS RT-AC5300")
+> Signed-off-by: Chester A. Unal <chester.a.unal@arinc9.com>
 
-Applied to pci/resource for v6.15, thanks!
-
-I updated the subject lines to all start with "s390/pci" since that's
-where all the interesting bits are and there's only a single instance
-of "PCI: s390" in the history.
+Applied to devicetree/fixes, thanks!
+-- 
+Florian
 
