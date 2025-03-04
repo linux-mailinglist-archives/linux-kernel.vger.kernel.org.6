@@ -1,56 +1,47 @@
-Return-Path: <linux-kernel+bounces-543766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68FD9A4D9B7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:03:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCD2EA4D9C2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:05:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DC1A188E1FC
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:03:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D7E93B010E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:03:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 807EC1FDA90;
-	Tue,  4 Mar 2025 10:03:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 755E63A8C1;
+	Tue,  4 Mar 2025 10:03:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="iWPcUVrs"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XSgxmXoC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDDDB1FC7DF;
-	Tue,  4 Mar 2025 10:03:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A7C1EE7AD;
+	Tue,  4 Mar 2025 10:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741082602; cv=none; b=AncwXXvfdx74XIr5JahljVErbjOc+WjkfgIzrJ/Io2YFqWGFpN8oYQp6h9Z2hVLT3O8mzBZoU09EEG2z4bCDdbJQJgtsixNKzyr74mrKYL89HQdnNmOL3+26WRcBGht4suWFsJruxODdXVkRtRR1ZVyfrS7i1RUm8iyHYKJTM5w=
+	t=1741082633; cv=none; b=dlRXoH2y25ZepL+efL0tvk99ZZoz+ZSkhsLsXm6asxgaLJYr0NlctwJ6K2uQb8DtY4p7c1qK7wmCrqRkDJXtzemlGUh7COBUyVocDFCBoUkRBz2Q8H0JIiYoB1PHFOH2/lzVYrRq1YgH8WChrXn8pC8lKsl6XjeOxLIZFwMHsIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741082602; c=relaxed/simple;
-	bh=CVVsRwpgc5R7QK8WI97msNJewKlVvoDsd86E8Q1TE9o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Eu3peGrAVkIoaCOhXw/0YqreRJndfn7GWyNvQeiZpJBLYWyqMLZl6n5umqkesY91CnOBDq9+YjnZq5Jd+TeaAjdpDXFLVCDENGyGhSF+ZNdpPwo/md5T7XBBmYxH/ebnNyWhVKrarZJbHDT1TUbV/qXdWhotAQMyLf4wuD4m2r4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=iWPcUVrs; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id DEE8BA0B13;
-	Tue,  4 Mar 2025 11:03:18 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=yCqVZdRR3wuwl1YUaUII
-	xJGus32Wsp9w18Z1riLWvQk=; b=iWPcUVrsZN3bKc1ntgJPwKf2w5CUj56/hbM7
-	QbTM7wTdc2PqTyGXYDxpyFRuL7HKhsuf2CspjsWK3k4q8qp4JNAJr75bDJV1AruA
-	vdoxpnNJIcvDofbKCfIb0PNwk6576KEab40UnMwjxMz2U7u91Tv1apoDRSEICMmZ
-	SmtvwO8VTA9JI59X/rhTxpBuXD6bUh0vhvmaMwn8CpNre6BMQdVvKXADMNRzUR8u
-	1OOanzAIDxxVzRtK2iJZi48PcbGCGprEO25Gv/jOK4Vwk+lADW85V6J4z83WDisi
-	NgSvkeX9+imdXHFs8V9N/Rz9SOjN2EHwZY8Clwp/YiBEv7lWEOASFlh2j7iV24FV
-	PvgFtOiiEKW10TZ7ijwr+ME1L7isUDI2KX6NfZ9iaIKoS0fgcL2IGQPzgcS6bdS/
-	plgTAaobgQHr2BO6yj+PP7yxTKkZ0We+M5DmR1V48/i1470CXQTO52RDYLtICj4x
-	MxUK9JhR9tkuO+nALISyoEZasjaTYdNpxYAMc2xZWzR1z1qlzARnJ1Qd/iDuxbfW
-	YbWlN3IOTY3mCP1PEJvNkigPemD+aI2YBdEf5Ur6HfHop/QZ739Aa5CN7iTT+oWa
-	/6EMuk2MaAHIo+29qwGYPxahqlDGbcjQLbc5ab+NjxUA3C3GhwPHsVNRq4EepwX1
-	GUFKdbM=
-Message-ID: <1604dce5-7be6-4a95-a51c-0c760a6c9a76@prolan.hu>
-Date: Tue, 4 Mar 2025 11:03:17 +0100
+	s=arc-20240116; t=1741082633; c=relaxed/simple;
+	bh=LsToREarlkUcdmSK26Fybef5PG3MprJurFiNIOBywsI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DwWSdoRBx2t/BAhgraiK3gzV0wL2nnWvE/829zVHsX0NPKzn3upxdMK+xkx8Ltg0rdVYQdGuGIrHiZdHMH/eo33EKrcY8CtfawBbJt8pxq1wTl+HEb+5l6QCQ2pl5EBHrzbTDYYtpzokdrvMLy8j7vLkmP0gaPaPlR+/iBRd19U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XSgxmXoC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A361C4CEE5;
+	Tue,  4 Mar 2025 10:03:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741082633;
+	bh=LsToREarlkUcdmSK26Fybef5PG3MprJurFiNIOBywsI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=XSgxmXoCGBbnvgr05BdImhZujcHoOxFZyxgrhRI6b/HZvpluJmPBiA5S4ulk9pHig
+	 rFE8j9HxBogOYicCQioQPhK5Fvf412W+cExmU7AYkL4kesVfdynxYEEfMHlpBuN4FA
+	 WMMt3wiOssuj3cdG6iVOmWVVr3vXMzqALDgYnhBMozhuFQQfFUNJoP14+W391nMlCU
+	 B1vccsUSu4JIgQNmuWuHHsMxXNkzO4BH7ppGwthK5grruRlvupmftcgjxIHfApb0Et
+	 G+8og3oai+m/v6RHhnNoLHKsl3pBD9wxNQBTK0VA4XDDzrwy7VVEysYR6pHG3Kqn5m
+	 9S2Bc2i9YXh/Q==
+Message-ID: <9ec6c2c6-cf99-4c6e-8fc2-871716987c54@kernel.org>
+Date: Tue, 4 Mar 2025 11:03:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,74 +49,190 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/3] counter: microchip-tcb-capture: Add capture
- extensions for registers RA/RB
-To: William Breathitt Gray <wbg@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-iio@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Kamel Bouhara <kamel.bouhara@bootlin.com>
-References: <20250227144023.64530-1-csokas.bence@prolan.hu>
- <20250227144023.64530-4-csokas.bence@prolan.hu> <Z8awGBW8obpG1QPN@ishi>
-Content-Language: en-US, hu-HU
-From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
-In-Reply-To: <Z8awGBW8obpG1QPN@ishi>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Subject: Re: [PATCH v2 3/8] dt-bindings: phy: add
+ samsung,exynos2200-usbcon-phy schema file
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
+ <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Abel Vesa <abel.vesa@linaro.org>,
+ linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250223122227.725233-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250223122227.725233-4-ivo.ivanov.ivanov1@gmail.com>
+ <20250224-curly-cyber-spaniel-efdc39@krzk-bin>
+ <a4f63721-d094-4eda-b68a-6ef62ff54680@gmail.com>
+ <c8184542-5dab-4403-bee4-867810397ae4@kernel.org>
+ <4502b578-96e6-49e0-8f3b-54f6e5640c55@gmail.com>
+ <354d6100-311f-44d7-b8a5-1fd671b651e3@kernel.org>
+ <9fb63a04-5b3d-40cc-b96f-eb4f297f307e@gmail.com>
+ <027decb4-3fa9-40a5-9cf4-65f9a69b4566@kernel.org>
+ <21460de5-76a0-4576-a7e6-f4873e40de48@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <21460de5-76a0-4576-a7e6-f4873e40de48@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
- ATLAS.intranet.prolan.hu (10.254.0.229)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2980D94852637260
 
-Hi,
-
-On 2025. 03. 04. 8:47, William Breathitt Gray wrote:
-> It's cleaner to exit early on an error than to carry it to the end.
-> Instead of if (!ret), perform an if (ret) return ret to exit early on an
-> error, then simply return 0 at the end of the funtion.
-
-Ok.
-
-> The capture2 extension doesn't exist in this patch so remove this
-> comment line.
+On 04/03/2025 10:09, Ivaylo Ivanov wrote:
+> On 3/4/25 09:21, Krzysztof Kozlowski wrote:
+>> On 03/03/2025 18:18, Ivaylo Ivanov wrote:
+>>> On 3/3/25 09:24, Krzysztof Kozlowski wrote:
+>>>> On 02/03/2025 10:16, Ivaylo Ivanov wrote:
+>>>>> On 2/25/25 10:11, Krzysztof Kozlowski wrote:
+>>>>>> On 24/02/2025 11:48, Ivaylo Ivanov wrote:
+>>>>>>> On 2/24/25 10:56, Krzysztof Kozlowski wrote:
+>>>>>>>> On Sun, Feb 23, 2025 at 02:22:22PM +0200, Ivaylo Ivanov wrote:
+>>>>>>>>> The Exynos2200 SoC has a USB controller PHY, which acts as an
+>>>>>>>>> intermediary between a USB controller (typically DWC3) and other PHYs
+>>>>>>>>> (UTMI, PIPE3). Add a dt-binding schema for it.
+>>>>>>>>>
+>>>>>>>>> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+>>>>>>>>> ---
+>>>>>>>>>  .../phy/samsung,exynos2200-usbcon-phy.yaml    | 76 +++++++++++++++++++
+>>>>>>>>>  1 file changed, 76 insertions(+)
+>>>>>>>>>  create mode 100644 Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml
+>>>>>>>> You have undocumented dependencies which prevent merging this file.
+>>>>>>>> First, dependencies have to be clearly expressed.
+>>>>>>> They are, in the cover letter.
+>>>>>> Where? I read it twice. Dependencies is the most important thing and
+>>>>>> should scream at beginning of the cover letter, so if you bury them
+>>>>>> somewhere deep it also would not matter - just like they were missing.
+>>>>>>
+>>>>>>>> Second, you should
+>>>>>>>> rather decouple the code from header dependencies, otherwise this cannot
+>>>>>>>> be merged for current release (just use clocks with long names, without IDs).
+>>>>>>> Sure
+>>>>>>>>> diff --git a/Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml b/Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml
+>>>>>>>>> new file mode 100644
+>>>>>>>>> index 000000000..7d879ec8b
+>>>>>>>>> --- /dev/null
+>>>>>>>>> +++ b/Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml
+>>>>>>>>> @@ -0,0 +1,76 @@
+>>>>>>>>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>>>>>>>>> +%YAML 1.2
+>>>>>>>>> +---
+>>>>>>>>> +$id: http://devicetree.org/schemas/phy/samsung,exynos2200-usbcon-phy.yaml#
+>>>>>>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>>>>>>>> +
+>>>>>>>>> +title: Exynos2200 USB controller PHY
+>>>>>>>>> +
+>>>>>>>>> +maintainers:
+>>>>>>>>> +  - Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+>>>>>>>>> +
+>>>>>>>>> +description:
+>>>>>>>>> +  Exynos2200 USB controller PHY is an intermediary between a USB controller
+>>>>>>>>> +  (typically DWC3) and other PHYs (UTMI, PIPE3).
+>>>>>>>> Isn't this the same as usbdrd phy? see: samsung,usb3-drd-phy.yaml
+>>>>>>> It's not (I think). There's a few reasons I've decided to make this separate
+>>>>>>> from the usb3-drd-phy bindings and exynos5-usbdrd driver:
+>>>>>>>
+>>>>>>> 1. This PHY does not provide UTMI and PIPE3 on its own. There's no tuning
+>>>>>> USBDRD phy does not provide UTMI and PIPE on its own either if you look
+>>>>>> at diagram - they call it phy controller.
+>>>>> Ughm. What? So in most exynos cases, there's a combination of multiple phys?
+>>>>>>> for them, and all that is needed from it is to disable HWACG, assert/
+>>>>>>> deassert reset and force bvalid/vbusvalid. After that SNPS eUSB2
+>>>>>>> initialization can be done and USB2 works. If the USBCON phy is not set
+>>>>>>> up before the eUSB2 one, the device hangs, so there is definitely a
+>>>>>>> dependancy between them. For PIPE3 we'd need to control the pipe3
+>>>>>>> attaching/deattaching and then initialize the synopsys USBDP combophy.
+>>>>>> Does it mean there is no USB DRD phy controller as before?
+>>>>>>
+>>>>>> Anyway the problem is you have DWC3 -> PHY -> PHY. Looks one phy too many.
+>>>>> So...
+>>>>>
+>>>>> DWC3 -> USBDRD (USBCON) -> PHYs?
+>>>> No, drop last phy. You just wrote the same as me - two phys, because
+>>>> usbdrd is the phy. In all existing designs there is no such controllable
+>>>> object from the point of view of operating system.
+>>> What? Per my understanding, the phy property should refer to whatever is
+>>> is connected to dwc3 UTMI. In this case it's the so-called USBDRD phy (called
+>>> usbcon in downstream). Considering that the eUSB2 IP definitely also has UTMI
+>>> that has to be connected to something, doesn't that mean we have clearly
+>> The entire point is that eUSB2 is connected to DWC3, no? That's exactly
+>> how it is done for example on Qualcomm SoC. Otherwise you claim that
+>> DWC3 controls one phy, which controls another phy which controls UTMI...
 > 
->> @@ -30,6 +33,12 @@ enum counter_mchp_signals {
->>   	COUNTER_MCHP_SIG_TIOB,
->>   };
->>   
->> +enum counter_mchp_capture_extensions {
->> +	COUNTER_MCHP_EXCAP_RA,
->> +	COUNTER_MCHP_EXCAP_RB,
->> +	COUNTER_MCHP_EXCAP_RC,
->> +};
+> But where does the USBCON fit? Is it just a side controller? Why's it needed
+> in the first place? This is what I don't understand.
+
+I assume usbcon, so old usbdrd, is the second DWC3's phy, just like qcom
+qmpphy.
+
 > 
-> Remove COUNTER_MCHP_EXCAP_RC for the same reason as above.
+>>
+>>> separated hardware blocks? Now, I guess one could argue that this USBCON
+>>> hardware block could be classified as a syscon. But I don't see the problem
+>>> with the current binding description, nor the modelling, as it represents
+>>> how the hardware is (unless I've gotten it completely wrong).
+>> It is the first time you use argument that it represents how the
+>> hardware is and this is what we actually disagree. It is not like that.
+>> You do not have chain of phys. Just look at any USB 3.0 DRD DWC diagram
+>> from any Samsung SoC: where would you squeeze these two phys in relation
+>> to what is called there "USB 3.0 PHY" which would be the third phy (!!!).
 > 
-> Also, I would argue for these to be preprocessor defines rather than
-> enum for the same reasons as in my other review[^1].
-
-Ok.
-
-> One final comment: is RA/RB the best way to differentiate these? One of
-> the benefits of abstraction layers is that users won't need to be
-> concerned about the hardware details, and naming the capture values
-> after their respective general register hardware names feels somewhat
-> antithetic to that end.
+> Yeah, my point was that it was different from any previous design. Now,
+> I don't know if it's actually theoretically possible to design it like so. It's
+> hard to just guess how the hardware is designed without having access
+> to die shots, documentations or even just schematics.
 > 
-> I imagine there are better ways to refer to these that would communicate
-> their relationship better, such as "primary capture" and "secondary
-> capture". However at that point capture0 and capture1 would seem
-> obvious enough, in which case you might not even need to expose these to
-> userspace at all.
+> Let's make it clear now, the changes your request are to document USBCON
+> in the existing exynos binding, as well as to correct all explanations of how
+> this block functions, right?
 
-Hmm. Well, RA and RB is what it says in the datasheet, and since we 
-don't do much processing on their value, I'd say we're still closely 
-coupled to the hardware. So, if one wants to understand what they do, 
-they will have to read the datasheet anyways in which case I think it's 
-best to be consistent with it naming-wise.
+No, not necessarily. If USBCON is entirely different device than USBDRD
+(different register layout, different features), then go ahead with a
+new binding.
 
-> William Breathitt Gray
-> 
-> [^1] https://lore.kernel.org/all/Z8alaOTjZeRuXnUI@ishi/
+I was questioning your chain of PHYs and this should be investigated.
 
-Bence
 
+Best regards,
+Krzysztof
 
