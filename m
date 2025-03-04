@@ -1,127 +1,199 @@
-Return-Path: <linux-kernel+bounces-544050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D792A4DCDF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:46:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61046A4DCE6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:47:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8AB41894E56
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:46:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1317D7A3B65
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:46:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E23331FECAA;
-	Tue,  4 Mar 2025 11:46:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7AA3200BA9;
+	Tue,  4 Mar 2025 11:47:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lIFAl15s"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FabJJDm5"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E86F23D561;
-	Tue,  4 Mar 2025 11:46:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D15A1FE473;
+	Tue,  4 Mar 2025 11:47:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741088799; cv=none; b=BC3kj7zBpE/FfcnoUKwOf/l6ow594fs+tJ3GiQLqNTZL2mL3al66zYW8NR40VGGuuZNIG+xNY6eyd/XWC91b91Qf/Utu4QMkwFBuybuN46USuHfK5NsLII2aUK66wrNHD095CLLwiOreM7oqmEN/Ut3Q7itl9z5jFRqRAxmlUwk=
+	t=1741088840; cv=none; b=ALB2cAuJH/dSwPsVhA5WL2KzMBigAttxRv0OiMHP2tVwxJAxZdLWE0Qs1T4vIaUfCrRWNbCASQ0TDtKr3U9McpXaLKg5bb9OFZbd3IB7R0RL5lndgjYuM4LdR9MWP/5j70a3tT9e6eWq/CONrOXjnVKt5pwshUwpL50O6ZBGjKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741088799; c=relaxed/simple;
-	bh=DGdpbwsprKb7q5vHU7Qkn/Vh9qRIL24D4EFUl8V+ykA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bZKsSuXiTiQv4iFtjAg6BYDzTAvjuxeqOSNljHK2i4P0yffoUucvzRWO7DpMedLZEvvpyKjhyaRAtyfEzqhs6FCuhHL2hYefmoHkrx4xFJ0t1YIBophZ/Ly8ZZhLnTMS5x3qQi+sTc+TglwmwHu9rD65m32mGNYJHHPQyOD5wK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lIFAl15s; arc=none smtp.client-ip=209.85.222.174
+	s=arc-20240116; t=1741088840; c=relaxed/simple;
+	bh=0vNz5KI663r13YbDYRp/0zNc65hiKkRyDtaZBZqOEAc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mbdkJ8hX/roorqOwc97DnQwxKdJTAE7+k/rGL07Ub1dRBpNVM91M6aWH+Q3Hi7T6KXsFhIR6UhPbRQ+jK+VT+KDPjP0VE3+0XmFtIhmUGfNToYtPaBfzbpkHTb8yq5hI7yXZ7rodH/t53LgQOh9jhfOFpxDalu8y6Cn1s8taYNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FabJJDm5; arc=none smtp.client-ip=209.85.208.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7c0155af484so762935885a.0;
-        Tue, 04 Mar 2025 03:46:37 -0800 (PST)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5e4f5cc3172so6437071a12.0;
+        Tue, 04 Mar 2025 03:47:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741088797; x=1741693597; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kxl4weZ8h9bua9Xeo/sLQwpKElrEeP5OhrtstJ4mzm4=;
-        b=lIFAl15s2Gx4wsxbXCsC29ogsJBl0BrNmDmowNtO9TIl9bOFnaTHxPmKXb2+sOq5DJ
-         Llm2OQxNbl898RqQQ6H8dVr+8xHoEgkfCVuCl8E9p3kqCIHhtJtLIwGCle9Ft84v4ztJ
-         OifGDIk5PsyawSmmr7iYaL7w17R1RnxcDjpMVngs80p9hqoRaGCj2kLlCbEsU6K13UKk
-         l6cCdc9QGb/TLoX5w2H7BQujKQ6PKbSm3UAVM+qLbaxu31LSBTU/cN21o6pTZcHRm+IM
-         RnJ5JELrG9j4757l8Ex1H2gR8Fij7GPFkfBvXz8bVUH9eJ8uapadw1VQX9gZvml+gVHn
-         Tkiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741088797; x=1741693597;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1741088837; x=1741693637; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kxl4weZ8h9bua9Xeo/sLQwpKElrEeP5OhrtstJ4mzm4=;
-        b=UGxHGMIGhZk/4DMpluSSi3mmkuGRuf8Gn8Y1H9drD3UNAkWdm3oJV0q7Y2/7lshR8p
-         BD0YRyq7fXCgSueMycFIYyyS61DDvR22I3G3JFcw7IwO3ylznkGfc61+zBUu8sPjceI7
-         tGpB3bWH+0R0SiiaQ00SPoYX7Xrfoo/zAPEKRbtywEEG/3aaeTitDM2LP4k6MT7k/RHB
-         UI6lB6yCVfNNPMGKSlAAUwWixBblQAbFkRHakxvX+/IZmXFRB0g05kqSxlFhxjUDPJ0z
-         lwaMzOcRLy7mVfmj15WxPSqcT5jsq6GAy4LB6uCEA3yiVk/LAcm9t5Lgss0qkrv2l/2a
-         Fa4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUXHdmeVxgAi+/YBp9lOAgEckIQdU3pmwyuIELXklBx+kOudYpILKCsvt4P3s2Xv8rxWIKcj3Ku+gpZdw/c@vger.kernel.org, AJvYcCXOJV52qNlDFSKRn3dHZ04UKSgdLKsSo7niVB0/Aunlea4QiPCZMc+j2IrRg8qxI+TMo+le/if7Ww4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnVShnVVCsfJQnB2995ed67z86KyLDpyopRzjdtFGD7l6VDvDI
-	GQk/wyJNAGADpiPtxuQ/TF3y9bB7cVxpWFo0K8t2yJsGgA6fHFBU
-X-Gm-Gg: ASbGncsQjKeyIj/Unj3AIRAvUftRqdhC7l9LSB9xPIDOf8qLbETeM/Cd59LFgv+ja0t
-	YUSypvtAfjRdQgDWDHg+epynYHwAhyQZJz8eer3J2jdg6wG33FsJS0Qn3b4zgaprVDUpoQwdQ2D
-	xvxOggag/sUffoXHuYPh5dyjMK75Pc2OeskoP8zeceL1lqw+7cvGtQkNHHL3fDCd7nxNatpdc2T
-	bJ39EQ28cM9rr67brywmEvpJEhy8j4Pc0etWEUQWHqo7zUngvyrpfZsL/eUzd7bs28QPpPinxqV
-	3HQv1bqyop9lmjnEbkxx
-X-Google-Smtp-Source: AGHT+IHX2QBDRSDkk/0cTi0b+LBdwuu5wiKDqafVZWjNbHyGvrvU8Jiv+1GaAzAmv/hah2o/7T453w==
-X-Received: by 2002:a05:620a:1a8a:b0:7c0:c046:7c6b with SMTP id af79cd13be357-7c39c66d3a8mr2936867385a.53.1741088796817;
-        Tue, 04 Mar 2025 03:46:36 -0800 (PST)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c3bc2c38ccsm265845985a.66.2025.03.04.03.46.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 03:46:36 -0800 (PST)
-Date: Tue, 4 Mar 2025 19:46:09 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Inochi Amaoto <inochiama@gmail.com>
-Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>, 
-	Mika Westerberg <mika.westerberg@linux.intel.com>, Jan Dabros <jsd@semihalf.com>, 
-	Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>
-Subject: Re: [PATCH] i2c: designware: Add ACPI HID for DWAPB I2C controller
- on Sophgo SG2044
-Message-ID: <53dkcpiewy64hv37kpqhrvpkprr7mgg7bl6f7ofpmpl5utqbe6@yldveipvbisb>
-References: <20250304070212.350155-3-inochiama@gmail.com>
- <Z8bnX8zcY3yIxh9n@smile.fi.intel.com>
+        bh=LdKvt+9tQm2qCrt7oFiiWlWL0il6DJKlMTh/YLfvuGQ=;
+        b=FabJJDm5h/kdO8JCmXoDf4c/irqyU4+IlbNaQEMfBiXpcaxF7cn0D3tu7vv9BOvgRa
+         n49qT/KaA4kznbS0mDiW2t7+LxGBWNYaGqpALSvspNrDoq2bnSKJD0/IDeimfsCXrUa1
+         b+7UqAL215eEHDUxHd/IjISj1vf8qlM7IEwVTkrV+sWhi8qqWv/T7oPvUf5A+0OXlh0A
+         1WGNdRKvg13udsY7BJqS9wKVoandK50WdVnLqnMwVMLDEBzllv7/D8r9e60j8m46EolP
+         p9x1qWbO2z4/SpXyXfQgX1pAFZwJ6ogloj5E20gdZff5T+p/HvndTc63AwJBDypeQ3Ui
+         m0Og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741088837; x=1741693637;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LdKvt+9tQm2qCrt7oFiiWlWL0il6DJKlMTh/YLfvuGQ=;
+        b=Z55G09tDOBI2yCI50eTEV9Q2TpbjcoiAmNbg084tkMHMcB8diCr1LCjA2tgmCuHyOI
+         zBrKy7JY22vI572ePfGBlAdaEZRUdBJjHQ+CMjPjqZVfjXxv5fmAaUdvSNhH7tmH0lzQ
+         Sa6C/l2gxaDQWuXGC1OHRUN/jGz1ze9Vg058XOIZZ49Xt/6COjR2M1idMDHEbuAeliPb
+         knR7/5f5vel7Yr0vUxosUmJJRKfTRSspt1XTtDM5SI92Dtu7+3AdUI8ANQY9HfBU6ZNp
+         mkhnZBgQ0Cqr+XJZ3O78cfNuvv/A5C0G37Hto2cnV0HWFJYd5//OFFphvO9HNbEpJA68
+         +t8w==
+X-Forwarded-Encrypted: i=1; AJvYcCViGPX2SdWBDPRiyZ5I5hHKkoMzq4xVkfnMAXOFwiiGiaCKapKqVhKOTBgecOJQNrRZAwedManIz0L/@vger.kernel.org, AJvYcCWAYkDnMAEBQle+RpK8UwJEZGZUBhvjxywv+KM+Oqtvl0UptQTsjuhumOZtmdUU4lldCtnig4Y7h1/yKm2l@vger.kernel.org, AJvYcCXO8tPJUfNEiN0x2TzsAPcmyT7Z1/X6k4wdQnr3ZdvEWg889R+ExBmUq1AzyBfNVc/YmcgOiguL6S9Uyaw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3BWtkJFY4Zg4qhtHcnOHHFRnYDrhhJvFvqlxLq8ShUGQdLNzO
+	kD0FwgfZQjgzYkW0mMNvGpf71/s1cjT3dINRPDAfI0bX6eBjT879RdTxUe8etjLgV0rbc/btMTV
+	7ttYi1TeC7w9cSPzYpdsVLP0ZlbacfJi91pA=
+X-Gm-Gg: ASbGnctByFn1YqKvDP4IYSbF6CAQPN1M6wrESjxuvuSLNd+hAnFLOJ82s2IdSLHr/FN
+	2FwafVP89LJ+4/gXCrNgg94Bgl0/Q4fXfgqx4iQfejfhAw4eEOfbLpgkxizVh7U8cU1c4DL7exb
+	d6pLMyjqqyUX0WYJoTaSatXTushzk=
+X-Google-Smtp-Source: AGHT+IHeNVeHFv5jhJzVjg4LB/54QEae2d+Sjnh6QpxFmgh5nNZje3z8A3cZOjJzWmEkVq/tu0ZnH8vGN0maF/68lR0=
+X-Received: by 2002:a05:6402:348f:b0:5dc:94ce:42a6 with SMTP id
+ 4fb4d7f45d1cf-5e4d6b4b980mr19108890a12.22.1741088836597; Tue, 04 Mar 2025
+ 03:47:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8bnX8zcY3yIxh9n@smile.fi.intel.com>
+References: <20250121-loongson1-nand-v12-0-53507999de39@gmail.com>
+ <20250121-loongson1-nand-v12-2-53507999de39@gmail.com> <87tt972dt0.fsf@bootlin.com>
+In-Reply-To: <87tt972dt0.fsf@bootlin.com>
+From: Keguang Zhang <keguang.zhang@gmail.com>
+Date: Tue, 4 Mar 2025 19:46:39 +0800
+X-Gm-Features: AQ5f1JrHSph0iUHkN40CrLh0rv6H1WjLXzdy0jpcSWywGhbQqeTnmVuEIdx_gPs
+Message-ID: <CAJhJPsUw7YGKfBuFtUirOGuCA9hV6e-wjrL4L9b-5kmuVUW=ow@mail.gmail.com>
+Subject: Re: [PATCH v12 2/2] mtd: rawnand: Add Loongson-1 NAND Controller Driver
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Keguang Zhang via B4 Relay <devnull+keguang.zhang.gmail.com@kernel.org>, 
+	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-mtd@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-media@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 04, 2025 at 01:43:27PM +0200, Andy Shevchenko wrote:
-> On Tue, Mar 04, 2025 at 03:02:11PM +0800, Inochi Amaoto wrote:
-> > Add ACPI ID for DWAPB I2C controller on Sophgo SG2044 so
-> > the SoC can enumerated the device via ACPI.
-> 
-> Same as per UART:
-> 
-> ---8<---
-> 
-> This is fake ACPI ID. Please work with a vendor to issue the proper one.
-> Vendor ACPI ID registry has no records on Sophgo:
-> https://uefi.org/ACPI_ID_List?acpi_search=SophGo
-> 
-> NAK.
-> 
-> ---8<---
-> 
-> But, it might be that is already in the process of getting proper ACPI vendor
-> ID, please provide an evidence in such a case.
-> 
-> Otherwise drag the representative of the vendor to this email thread to answer
-> the question why the heck they abuse ACPI specification.
-> 
+Hello Miquel,
 
-OK, I will ask for the vendor and check whether there is some
-evidence for it. Now let's pause these patch.
+On Fri, Feb 7, 2025 at 1:17=E2=80=AFAM Miquel Raynal <miquel.raynal@bootlin=
+.com> wrote:
+>
+> Hello,
+>
+> > +static inline int ls1x_nand_check_op(struct nand_chip *chip, const
+> >  struct nand_operation *op)
+>
+> No inline function in a c file.
+>
+> > +{
+> > +     struct ls1x_nand_host *host =3D nand_get_controller_data(chip);
+> > +     const struct nand_op_instr *instr1 =3D NULL, *instr2 =3D NULL;
+> > +     int op_id;
+> > +
+> > +     for (op_id =3D 0; op_id < op->ninstrs; op_id++) {
+> > +             const struct nand_op_instr *instr =3D &op->instrs[op_id];
+> > +
+> > +             if (instr->type =3D=3D NAND_OP_CMD_INSTR) {
+> > +                     if (!instr1)
+> > +                             instr1 =3D instr;
+> > +                     else if (!instr2)
+> > +                             instr2 =3D instr;
+> > +                     else
+> > +                             break;
+> > +             }
+> > +     }
+> > +
+> > +     if (!instr1 || !instr2)
+> > +             return 0;
+>
+> Is this expected?
+>
+> > +
+> > +     if (instr1->ctx.cmd.opcode =3D=3D NAND_CMD_RNDOUT &&
+> > +         instr2->ctx.cmd.opcode =3D=3D NAND_CMD_RNDOUTSTART)
+> > +             return 0;
+> > +
+> > +     if (instr1->ctx.cmd.opcode =3D=3D NAND_CMD_READ0 &&
+> > +         instr2->ctx.cmd.opcode =3D=3D NAND_CMD_READSTART)
+> > +             return 0;
+> > +
+> > +     if (instr1->ctx.cmd.opcode =3D=3D NAND_CMD_ERASE1 &&
+> > +         instr2->ctx.cmd.opcode =3D=3D NAND_CMD_ERASE2)
+> > +             return 0;
+> > +
+> > +     if (instr1->ctx.cmd.opcode =3D=3D NAND_CMD_SEQIN &&
+> > +         instr2->ctx.cmd.opcode =3D=3D NAND_CMD_PAGEPROG)
+> > +             return 0;
+> > +
+> > +     dev_err(host->dev, "unsupported opcode sequence: %x %x",
+> > +             instr1->ctx.cmd.opcode, instr2->ctx.cmd.opcode);
+> > +
+> > +     return -EOPNOTSUPP;
+> > +}
+> > +
+> > +static int ls1x_nand_exec_op(struct nand_chip *chip,
+> > +                          const struct nand_operation *op,
+> > +                          bool check_only)
+> > +{
+> > +     int ret;
+> > +
+>
+>         if (check_only) ?
 
-Thanks for your info.
+Sorry, I'm not sure if I understand correctly.
+nand_op_parser_exec_op() only checks patterns and will skip
+pattern->exec() when check_only =3D true. Therefore,
+ls1x_nand_check_op() should handle all opcode checks in that case, and
+leave check_only =3D false to nand_op_parser_exec_op().
+Then the code will return to:
 
-Regards,
-Inochi.
+if (check_only)
+        return ls1x_nand_check_op(chip, op);
+
+return nand_op_parser_exec_op(chip, &ls1x_nand_op_parser, op, check_only);
+
+Am I right?
+
+> > +     ret =3D ls1x_nand_check_op(chip, op);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     return nand_op_parser_exec_op(chip, &ls1x_nand_op_parser, op, che=
+ck_only);
+> > +}
+> > +
+> > +static const char * const nand_ecc_algos[] =3D {
+> > +     [NAND_ECC_ALGO_UNKNOWN] =3D "none",
+> > +     [NAND_ECC_ALGO_HAMMING] =3D "hamming",
+> > +     [NAND_ECC_ALGO_BCH] =3D "bch",
+> > +};
+>
+> No way you need this in your driver :-)
+>
+> Thanks,
+> Miqu=C3=A8l
+
+
+
+--=20
+Best regards,
+
+Keguang Zhang
 
