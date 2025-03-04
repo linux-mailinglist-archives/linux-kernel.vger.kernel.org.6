@@ -1,113 +1,180 @@
-Return-Path: <linux-kernel+bounces-545414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52386A4ED44
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:25:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37440A4ECEE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:14:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8184D8A03E8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:05:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C18A16B864
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:14:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C10259CA0;
-	Tue,  4 Mar 2025 19:04:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="QF02SaKV"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C4B25523D;
+	Tue,  4 Mar 2025 19:14:06 +0000 (UTC)
+Received: from gauss.telenet-ops.be (gauss.telenet-ops.be [195.130.132.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E39224EA9B
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:04:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582BE2E337D
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741115060; cv=none; b=ffIxZxOUcvGN3NvCokkBUpkyZS5M7nx3YHtpWtYACtRYPXMNdWueMHeC2VYpl/ZlyoPa/mMOkbIjS1Vgm4AyFzvcdh7rXpMNjVW96a19p01gSj0BFUjurkBzv0RdL+UDxgwFILS12J/xuWal40hle4u0zXHBTY6DPyTYz9+ew24=
+	t=1741115646; cv=none; b=M6VoR/Cn2lrWdasHoEf4qCp/iQGOkCarxQ76rCSZfNomgPSREphTRROZh+2x57RBWcL9tOidmpyoyNfMlie+YBKG4Mg8gH2lx+pb+JbciIu/wc/hM305xOU9/mLPii5SYAWcEXsM3ZKynGfhy2c8RXXz/BEF/OFOSqjRUkwZuPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741115060; c=relaxed/simple;
-	bh=AxRo0zwXpsaIo65pvoetfqMIqPPXFYbyNGJ0gjZ0tk8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UVKLpoi/k5o34BuXyMrZM4A9yKYiB07c+6bIxWdmJ5Xp2UOoZRPYrDibC3EJfVS1O/9rcbfMOF8Vj1eLKKQr7h8irlc2qezquUeyfPRHYGsn/Klnw5w7kTy6O3guHO/96tOstZEiwMR3LJiPK8RkZMVGAw08i+9v1h09bmQX3Dk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=QF02SaKV; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ac202264f9cso117170766b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 11:04:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1741115056; x=1741719856; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=dkh2pb5EhGcPf5n6D2I0IyHjDxbdm1W1H8kQF4e+QHw=;
-        b=QF02SaKVAE0aUO5tw6dwm6MQkVtCNXucNvH1iAWeDCWY1fCSYJnLloV/e21/8SCPWO
-         dE9tcFGgcPvAqbFxZdaSkOdf5O46I6UHWBgJktsUaFUKgpBNn/4Ziv0h1L0m5R4a4w7s
-         qZ3VW1g5E8MZCPjghfHrQslg0EAJh3hK4ZIso=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741115056; x=1741719856;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dkh2pb5EhGcPf5n6D2I0IyHjDxbdm1W1H8kQF4e+QHw=;
-        b=mmqMP8/DVN6tLGyRRXCGve6scV9rGwK+ksIJpvPNhN3e4EVYWpvb6+WLs8uHAS0nYr
-         RlnrFcj350rziLYExCnnXXa2S16cUNAsdGrXHM35/AR0TuzdlO9+aBQg3l2QGfWbaOKB
-         zwb2sxecuD43WFoN7RLyfk3GezACzd6yigQGa16btr4uTw5BNyrQ98JWetFC+B+ZzeRI
-         EWFU/2fLeP4zGMBAfU1QA5LPErtT6rcf68ExjLmvHDVTwGQrictShSLAsrya+RlwoNlZ
-         NVN7UPnSHJWpdyx3iza5yf175DR60Q6HRIZANTe3bAaxQ98SZNsKgB+DVmuEBy5DwhiS
-         sa3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWDKDbL4clUm7nw5qDfmwjqvwk1OTRh+DCylLbwi2hMfa6x3WUHhHB/BTwTlP4IfHFrLk3QrUiWUqizark=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1GuxXvJSRP4Lk2kRCZP2MAbmNJYHnIyQ6M3ndf2wUotbuRGSj
-	nzqyQyDMumsw+bHfzXVfpBE4TX2w/se6n0K1rEM5t3hEs5pUPdnJ6w2KL7aOq0oZZTEt3BwnShE
-	tdk1uBQ==
-X-Gm-Gg: ASbGncuVVnaM5UAUky1W1Gm4Im2LSzUpsOHzp8DzD3ITat+mB7ZHrQih2AMErmg0zCG
-	trK7R7TOYKdCa9GwbHg5doCriXflWV00vlm0XSpfXo4E7ioBr6p1BbSC9bsKVSyIkv6EcG8AuSK
-	aIBdc1sgHsOb9krSZFh/QXajj13GjTJS3kHTI7PumcyQKy83SW6n4Ik/DYLRywTC0VJLE3C0KA8
-	uaKpa3TVmcCplPeVX3B+VWBeIiBntOvr8cyYmHzyknPYyB8JOQeIbC2EKXYtrNRWIMNncBVPjiY
-	Mt7MrBcn/gTpzBN+2tiL9Ye/FvS6I0wFsJ58LDiaz3qtd6xRYEv9MGafdto4ZlcQsGxYMvuVvp5
-	ezqcI53dymfGHMfAKtA8=
-X-Google-Smtp-Source: AGHT+IHLpOX8i3tLkVdLFwJFZ5VXPVlq0yO1/vs8VQaNZip/Tw0VOZlC+UuKvf+J/T9+KejVBr9MwA==
-X-Received: by 2002:a17:907:7da4:b0:abe:fd0c:68a8 with SMTP id a640c23a62f3a-ac20e1dd1a8mr32756166b.52.1741115056367;
-        Tue, 04 Mar 2025 11:04:16 -0800 (PST)
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf744820c3sm429833666b.31.2025.03.04.11.04.13
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Mar 2025 11:04:13 -0800 (PST)
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-abf57138cfaso638085866b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 11:04:13 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUe2jogr2FBrMvbgOHSKFKH5zYDoETkwoxP0iAi+E1F/lmSA+cv8gyB1QAq26IoaIRxfF4IwqvmWTO4ckg=@vger.kernel.org
-X-Received: by 2002:a17:907:970c:b0:abc:b8c:7b2d with SMTP id
- a640c23a62f3a-ac20dc6f379mr42747466b.32.1741115053374; Tue, 04 Mar 2025
- 11:04:13 -0800 (PST)
+	s=arc-20240116; t=1741115646; c=relaxed/simple;
+	bh=4tbOFPia/wKzXKQO2yU4Pnp1OaSxgVoeOL4F0Nofol0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Pxj8Ssr/NWS/mSpo7+YubPKzQX5OmuYOyMeB/qaer3BgXHE1D2/gm4vcv2QIO1p6nq0GkEQhrM4P9FuX86/dWLlwVbwu0UAUmGUz59G14FCqJJTfISNsx7nsHXw9/h/xKVnItp9PoWx8JKI3QPNF0/1WOWeA+1jiVVeVnRxEd6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+	by gauss.telenet-ops.be (Postfix) with ESMTPS id 4Z6lXJ2qfmz4x1Fl
+	for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 20:06:24 +0100 (CET)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:4b47:cefc:1a47:3e05])
+	by baptiste.telenet-ops.be with cmsmtp
+	id Lj6G2E00A2Gsk2z01j6Gq2; Tue, 04 Mar 2025 20:06:17 +0100
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.97)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1tpXaV-0000000CpmF-1dSc;
+	Tue, 04 Mar 2025 20:06:16 +0100
+Received: from geert by rox.of.borg with local (Exim 4.97)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1tpXaq-00000008ckx-1yKz;
+	Tue, 04 Mar 2025 20:06:16 +0100
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+Cc: linux-serial@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2] serial: sh-sci: Save and restore more registers
+Date: Tue,  4 Mar 2025 20:06:11 +0100
+Message-ID: <11c2eab45d48211e75d8b8202cce60400880fe55.1741114989.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHk-=wiA-7pdaQm2nV0iv-fihyhWX-=KjZwQTHNKoDqid46F0w@mail.gmail.com>
- <20250304135138.1278-1-kprateek.nayak@amd.com>
-In-Reply-To: <20250304135138.1278-1-kprateek.nayak@amd.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 4 Mar 2025 09:03:57 -1000
-X-Gmail-Original-Message-ID: <CAHk-=whfrgndT5Y8PJtHtFwhuef2eCEr46NUdsMD9MVEom_HXw@mail.gmail.com>
-X-Gm-Features: AQ5f1JoQsXqnCtGHgj_JQVYfx3eeBRZjtvg4HR-JParHdoIQOMiLW8mY8t0w6ig
-Message-ID: <CAHk-=whfrgndT5Y8PJtHtFwhuef2eCEr46NUdsMD9MVEom_HXw@mail.gmail.com>
-Subject: Re: [PATCH] fs/pipe: Read pipe->{head,tail} atomically outside pipe->mutex
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Oleg Nesterov <oleg@redhat.com>, Swapnil Sapkal <swapnil.sapkal@amd.com>, 
-	Alexey Gladkov <legion@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>, 
-	Mateusz Guzik <mjguzik@gmail.com>, Manfred Spraul <manfred@colorfullife.com>, 
-	David Howells <dhowells@redhat.com>, WangYuli <wangyuli@uniontech.com>, 
-	Hillf Danton <hdanton@sina.com>, "Gautham R. Shenoy" <gautham.shenoy@amd.com>, Neeraj.Upadhyay@amd.com, 
-	Ananth.narayan@amd.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, 4 Mar 2025 at 03:52, K Prateek Nayak <kprateek.nayak@amd.com> wrote:
->
-> pipe_readable(), pipe_writable(), and pipe_poll() can read "pipe->head"
-> and "pipe->tail" outside of "pipe->mutex" critical section.  [...]
+On (H)SCIF with a Baud Rate Generator for External Clock (BRG), there
+are multiple ways to configure the requested serial speed.  If firmware
+uses a different method than Linux, and if any debug info is printed
+after the Bit Rate Register (SCBRR) is restored, but before termios is
+reconfigured (which configures the alternative method), the system may
+lock-up during resume.
 
-Thanks, applied.
+Fix this by saving and restoring the contents of the BRG Frequency
+Division (SCDL) and Clock Select (SCCKS) registers as well.
 
-                Linus
+Also save and restore the HSCIF's Sampling Rate Register (HSSRR), which
+configures the sampling point, and the SCIFA/SCIFB's Serial Port Control
+and Data Registers (SCPCR/SCPDR), which configure the optional control
+flow signals.
+
+After this, all registers that are not saved/restored are either:
+  - read-only,
+  - write-only,
+  - status registers containing flags with clear-after-set semantics,
+  - FIFO Data Count Trigger registers, which do not matter much for
+    the serial console.
+
+Fixes: 22a6984c5b5df8ea ("serial: sh-sci: Update the suspend/resume support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+---
+This can be reproduced on e.g. Salvator-X(S) by enabling the debug
+prints in sci_brg_calc(), and using s2ram with no_console_suspend.
+
+Tested on systems using SCIF (Salvator-XS), HSCIF (Gray Hawk Single) and
+SCIFA (KZM-A9-GT) as the serial console.
+
+v2:
+  - Add Tested-by, Reviewed-by.
+  - Move restoring the External Baud Rate Generator (BRG) registers up,
+    to better match the initialization order in sci_set_termios(),
+  - Also save/restore HSSRR, SCPCR, and SCPDR.
+---
+ drivers/tty/serial/sh-sci.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 2db2d85003f70138..1c8480d0338ef850 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -105,10 +105,15 @@ struct plat_sci_reg {
+ };
+ 
+ struct sci_suspend_regs {
++	u16 scdl;
++	u16 sccks;
+ 	u16 scsmr;
+ 	u16 scscr;
+ 	u16 scfcr;
+ 	u16 scsptr;
++	u16 hssrr;
++	u16 scpcr;
++	u16 scpdr;
+ 	u8 scbrr;
+ 	u8 semr;
+ };
+@@ -3563,6 +3568,10 @@ static void sci_console_save(struct sci_port *s)
+ 	struct sci_suspend_regs *regs = &s->suspend_regs;
+ 	struct uart_port *port = &s->port;
+ 
++	if (sci_getreg(port, SCDL)->size)
++		regs->scdl = sci_serial_in(port, SCDL);
++	if (sci_getreg(port, SCCKS)->size)
++		regs->sccks = sci_serial_in(port, SCCKS);
+ 	if (sci_getreg(port, SCSMR)->size)
+ 		regs->scsmr = sci_serial_in(port, SCSMR);
+ 	if (sci_getreg(port, SCSCR)->size)
+@@ -3573,6 +3582,12 @@ static void sci_console_save(struct sci_port *s)
+ 		regs->scsptr = sci_serial_in(port, SCSPTR);
+ 	if (sci_getreg(port, SCBRR)->size)
+ 		regs->scbrr = sci_serial_in(port, SCBRR);
++	if (sci_getreg(port, HSSRR)->size)
++		regs->hssrr = sci_serial_in(port, HSSRR);
++	if (sci_getreg(port, SCPCR)->size)
++		regs->scpcr = sci_serial_in(port, SCPCR);
++	if (sci_getreg(port, SCPDR)->size)
++		regs->scpdr = sci_serial_in(port, SCPDR);
+ 	if (sci_getreg(port, SEMR)->size)
+ 		regs->semr = sci_serial_in(port, SEMR);
+ }
+@@ -3582,6 +3597,10 @@ static void sci_console_restore(struct sci_port *s)
+ 	struct sci_suspend_regs *regs = &s->suspend_regs;
+ 	struct uart_port *port = &s->port;
+ 
++	if (sci_getreg(port, SCDL)->size)
++		sci_serial_out(port, SCDL, regs->scdl);
++	if (sci_getreg(port, SCCKS)->size)
++		sci_serial_out(port, SCCKS, regs->sccks);
+ 	if (sci_getreg(port, SCSMR)->size)
+ 		sci_serial_out(port, SCSMR, regs->scsmr);
+ 	if (sci_getreg(port, SCSCR)->size)
+@@ -3592,6 +3611,12 @@ static void sci_console_restore(struct sci_port *s)
+ 		sci_serial_out(port, SCSPTR, regs->scsptr);
+ 	if (sci_getreg(port, SCBRR)->size)
+ 		sci_serial_out(port, SCBRR, regs->scbrr);
++	if (sci_getreg(port, HSSRR)->size)
++		sci_serial_out(port, HSSRR, regs->hssrr);
++	if (sci_getreg(port, SCPCR)->size)
++		sci_serial_out(port, SCPCR, regs->scpcr);
++	if (sci_getreg(port, SCPDR)->size)
++		sci_serial_out(port, SCPDR, regs->scpdr);
+ 	if (sci_getreg(port, SEMR)->size)
+ 		sci_serial_out(port, SEMR, regs->semr);
+ }
+-- 
+2.43.0
+
 
