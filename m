@@ -1,121 +1,123 @@
-Return-Path: <linux-kernel+bounces-543710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40420A4D8DD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:41:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92D0EA4D8E3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:42:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3BC916E6E0
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:39:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 627211888DA5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:41:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C42DB200B96;
-	Tue,  4 Mar 2025 09:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE33F1FECD8;
+	Tue,  4 Mar 2025 09:39:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VjYjxXYs";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="n3hw6eGG"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="vE7b76Iv"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44ADC1FF605;
-	Tue,  4 Mar 2025 09:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF5F21FECAA
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 09:39:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741081045; cv=none; b=MuLQxByTIElkHkWnZf+njz7c2WD0f1WjHB2ekTPbU8MMTW2sDhVR42HsP4+ynlPQjHbTBtXGntOEQVxHkSY9WB/BRZk1RXXRKHhQ07uWyzUK+S5CaqYh92ftMnjneCi9+WFdVdcHkWCmRF/6EieepBPWyTI+cMntHigCj+Z/s/8=
+	t=1741081180; cv=none; b=itw3d04PalnHILup7tdgfwpc50tWpICe9bo0QQyyZPbSeKCnQ10LtZ9hpMs1ILtoKH+btrzZatw/OFfOGw/qtUly0k5sSlSxcXYZoo+HN860SoLtl30eohQiE/lz7HpdAfT14B9TcoPNAS0lj+82XfQA8t8u1Lx0mSCpMHqi2QE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741081045; c=relaxed/simple;
-	bh=yYHqbGlfj331PKZVuyDW+n7RB26jrczWpwf2kIPq6sQ=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=AfYZKsaQ/eHCN5CMfizEzxv4YSY4R216PcTTBc8KTYf0Pa2p7n+/D64O6/E4fa0nHXZnfHSpVXsyJJ15yfiOzSTlVCm4TrzaWOYkDCZ/C4JOk9tfKWPm+x8eeAMYmW8aw5InqW4g8JzOKVOBlkVrbIqlqneqdG/2Jql5ZpuEohs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VjYjxXYs; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=n3hw6eGG; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 04 Mar 2025 09:37:21 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741081042;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LB8EPbzDW8lT8I11GcgmwwusvK2aKBXuQBwm+3V24s8=;
-	b=VjYjxXYstSVrMwSXA01Z93T8/uR+HfozcLqc8kf7edF/Zf76+AY+fBbT4FkJvlWBEgKPfP
-	lTJXrOJuCvZKqt2wSrwW0z+hQgtZwujT9WiT4SgMP/b4EwtxT27SArgBGokr3/XtFqIrvr
-	3Jh+t2RyILaXBlOGCHYKvKJOYQtyQYrpK2T7aWAYr6N85lEThUApUO8NqITU9KzEOV5FxX
-	DJk+oX30Kz8Gtf/jyAz41jQE8sU99ahjOHUOo9widOE/sW4PCT7xSHTZGRb0Z3UArYetVp
-	gw9qCtfqQCaVhmHsqZxSIJBhgJ9O8cR5KkKgNRlbtJZtMKVsdSX2u3foTbqY6w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741081042;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LB8EPbzDW8lT8I11GcgmwwusvK2aKBXuQBwm+3V24s8=;
-	b=n3hw6eGGBXDT5tZabKTq4moRamdwLoFkPNj2ptbqyAI8RKoadx0VbrdQLAjJTUk57eCaSn
-	g3aC0BjaACHUYXBw==
-From: "tip-bot2 for Ahmed S. Darwish" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/cpu] x86/cpuid: Include <linux/build_bug.h> in <asm/cpuid.h>
-Cc: "Ahmed S. Darwish" <darwi@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250304085152.51092-5-darwi@linutronix.de>
-References: <20250304085152.51092-5-darwi@linutronix.de>
+	s=arc-20240116; t=1741081180; c=relaxed/simple;
+	bh=aOGadUaD55/7NjVi9olJnWxHY2EQr81G0BMQB3FqhzQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=sq1FALWj44HkY67aWolQGgMJziF5ekgukm7cBQzzLF/RdbmEeppOhNuaj3LkxyXPYXc/cdHm/A1J4gg0XzMsSg/HW3+eZejEuri+0VkbV2VMNMh6ZlT1tZFGkVtvsYbyIW4CheWgwJMY55d0QHW9/m4CIIMqY7WoAEJYAZwFlXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=vE7b76Iv; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43bcc04d4fcso2827955e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 01:39:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1741081176; x=1741685976; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yzSd2WWwaJ30wmCeIbpT1A/lGBwbvt5bCwq5/4oCS6I=;
+        b=vE7b76IvIy0hog7qW6HDTGl/PAw6bW7Adl2xf6+9tIfZ0V50hZffFnsnv3IKp9F1mz
+         8UVjdEGN0AndDgYH6sDggkyf9ppbwh1pp+84q7VBgmQ7nKzOZp7kBlXeXwDgfMysCooL
+         D5TbwBfv1W4OhSczgB58nzWukuQvKbLF4AytutKvRrvLuf7jzTfG28MsS6oG9gOJ3HT4
+         xiM7R3oz7ybaIGUfrX5vZmRgWOlYFjvzssNOPlXCSFrKgcACWKxPH9rvXE2ULmhgEpbS
+         Fxuj5KlTtYLw7vWj1+Fot5QLKFSS7+k6SjSg6FtT8o9QET42BZMBxkYUKeSdFuO2ushN
+         HGVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741081176; x=1741685976;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yzSd2WWwaJ30wmCeIbpT1A/lGBwbvt5bCwq5/4oCS6I=;
+        b=hqVKlsUH/9PEVcvZXoE91k1v1CsdAIT9b83tC803tAwo3CyO0xkVmviJbIzYDJMbwa
+         0OzKfeJe5JDgIJiZIko5UamTnZmcPXN7KdKLdk+LZGS7Me9SdX7kcmWJQ+8oVdIzBIO+
+         2OpfSPIW01i8cc8d8luGUq31jlOSNIsyBCFAeOPRli971xWKi5UHNcnjMgYSdkcmmwSV
+         G+QG+IX48V4y+rXN7+DfUrq0HLl8rCN+s1ckiF4lBXihJiX14N+zFatvhy+5nfIOAdnc
+         t3YuEO7bn1IQNCpfTgX2BUnMj7ECg8AcA2xiAz6LrliPyQwp8D9A9XIWCLAuTXDKdRyY
+         VB+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWKkaaZXTGz4SIrZ++AvXhOsqpVLVfgxX/UeBdo7PwWk4rYkdjsqQCkdhwD+dQDyxkGzc1sTtnTao8fSow=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9Hm3e7f87j0o6wqky9Te1oKBcdga4urcOhieev0f1lkH/+DS/
+	tfidITp+rlo7N3USencuIQo1BctJlVS9gMEkH39K9Tgn/OSxd+mHQ6J+vMwDH5s=
+X-Gm-Gg: ASbGncvfInl2Sx0N9lZdOv4zKy18Ub3n6MevULlwdj79DcdIXeBdJYvrsvevTyzgIdj
+	N7cf26wTO2/1s76KUeIl7Jr+3ThLoVua/LveptiVHLBOJZSEzoD22WOhl8uWPkR4nJOiTNNJp5b
+	W5A9UV/Y3QPN50WtnrDx2FX3TzHK9gV5GN9ZEgJzB5MqlPLOo08CWIykqgf9V45ulEkSqPbOHv0
+	X5cdOMQXQx9ouzEnUfO9t7ue1NyTIOALqwujcagj421c6Slq5QlWMqqQbBOLtxrSNEWIBVhabX0
+	tHUH80A5ST2+a84BkEQ4Vx2MUgUbBzhBi4TbVufEE4bep3bf6bHwlKFXpt3p08LLVoR56ROaMtu
+	NEpOZGQQLceg2wyW797EflUU+UTlcrYjVZQ==
+X-Google-Smtp-Source: AGHT+IHj42i+Jh0hoXFnYJNDz31oiilscLISu0w5fjYK90iskecg4D7mRgp2rynwPpr1wC+EJx98Hw==
+X-Received: by 2002:a5d:6d89:0:b0:390:f815:78ca with SMTP id ffacd0b85a97d-390f8157bf2mr8815914f8f.30.1741081176166;
+        Tue, 04 Mar 2025 01:39:36 -0800 (PST)
+Received: from [10.2.5.157] (amontpellier-556-1-148-206.w109-210.abo.wanadoo.fr. [109.210.4.206])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b7ddesm17307844f8f.57.2025.03.04.01.39.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 01:39:35 -0800 (PST)
+From: Angelo Dureghello <adureghello@baylibre.com>
+Subject: [PATCH v2 0/2] iio: ad7380: add SPI offload support
+Date: Tue, 04 Mar 2025 10:37:49 +0100
+Message-Id: <20250304-wip-bl-spi-offload-ad7380-v2-0-0fef61f2650a@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174108104168.14745.16455238640570622239.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAO3JxmcC/x2MQQqEMAwAvyI5Gyhxu4pfEQ/VJhoQW1pQofj3L
+ Xsa5jBTIHNSzjA2BRJfmjWcVahtYN3duTGqrw5kyJrOfPDWiMuBOSoGkSM4j8733WAqvr0VciR
+ 2hdrHxKLP/z3N7/sD6aD5zWsAAAA=
+X-Change-ID: 20250304-wip-bl-spi-offload-ad7380-ad675f2a2f5c
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ David Lechner <dlechner@baylibre.com>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-doc@vger.kernel.org, Angelo Dureghello <adureghello@baylibre.com>
+X-Mailer: b4 0.14.2
 
-The following commit has been merged into the x86/cpu branch of tip:
+Add SPI offload support for the ad7380 ADC. 
 
-Commit-ID:     025caf2ff96d4c605e96e495620383db518a45a3
-Gitweb:        https://git.kernel.org/tip/025caf2ff96d4c605e96e495620383db518a45a3
-Author:        Ahmed S. Darwish <darwi@linutronix.de>
-AuthorDate:    Tue, 04 Mar 2025 09:51:15 +01:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Tue, 04 Mar 2025 10:07:17 +01:00
-
-x86/cpuid: Include <linux/build_bug.h> in <asm/cpuid.h>
-
-<asm/cpuid.h> uses static_assert() at multiple locations but it does not
-include the CPP macro's definition at linux/build_bug.h.
-
-Include the needed header to make <asm/cpuid.h> self-sufficient.
-
-This gets triggered when cpuid.h is included in new C files, which is to
-be done in further commits.
-
-Fixes: 43d86e3cd9a7 ("x86/cpu: Provide cpuid_read() et al.")
-Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Link: https://lore.kernel.org/r/20250304085152.51092-5-darwi@linutronix.de
+Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
 ---
- arch/x86/include/asm/cpuid.h | 1 +
- 1 file changed, 1 insertion(+)
+Changes for v2:
+- fix return value on offload probe,
+- add documentation patch 2/2.
 
-diff --git a/arch/x86/include/asm/cpuid.h b/arch/x86/include/asm/cpuid.h
-index b2b9b4e..a92e4b0 100644
---- a/arch/x86/include/asm/cpuid.h
-+++ b/arch/x86/include/asm/cpuid.h
-@@ -6,6 +6,7 @@
- #ifndef _ASM_X86_CPUID_H
- #define _ASM_X86_CPUID_H
- 
-+#include <linux/build_bug.h>
- #include <linux/types.h>
- 
- #include <asm/string.h>
+---
+Angelo Dureghello (2):
+      iio: ad7380: add support for SPI offload
+      docs: iio: ad7380: add SPI offload support
+
+ Documentation/iio/ad7380.rst |  54 ++++-
+ drivers/iio/adc/Kconfig      |   2 +
+ drivers/iio/adc/ad7380.c     | 509 ++++++++++++++++++++++++++++++++++++++++---
+ 3 files changed, 518 insertions(+), 47 deletions(-)
+---
+base-commit: b7508a5a672275694c2a1b09a5f491ca2a56bbcf
+change-id: 20250304-wip-bl-spi-offload-ad7380-ad675f2a2f5c
+
+Best regards,
+-- 
+Angelo Dureghello <adureghello@baylibre.com>
+
 
