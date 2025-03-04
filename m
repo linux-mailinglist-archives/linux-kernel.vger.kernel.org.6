@@ -1,160 +1,105 @@
-Return-Path: <linux-kernel+bounces-544420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0699A4E101
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:34:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59C57A4E0F8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:33:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 606341888B16
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:29:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0C721733E1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:29:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFBD520A5F0;
-	Tue,  4 Mar 2025 14:27:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F7220D50E;
+	Tue,  4 Mar 2025 14:27:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="RjblS/yI"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cfy8P4FI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6559920551D;
-	Tue,  4 Mar 2025 14:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A3A20B1E8;
+	Tue,  4 Mar 2025 14:27:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741098461; cv=none; b=RU/fZlvpxPfRwxnAGJvXGFRVpzYsVgzQFX+N4rjNdnqBVXru7Zb2+WxVe0ETrM5p/iksnUMYpSzWK6zTH7oaLDFXnwUdJZY7SVuXJlw+APUqxyLuFmDQv1FFrcLaf5hRWONKI9XI6hB+5rLfXext0O4bpw72SRPbjSHeLJqRSy4=
+	t=1741098474; cv=none; b=DM6LoKJ3WByz2g+qver5QdBjgUoFLOj8Q/wUJg1LWioO2uE4VECFhPKT/IYdhhxqshiC94AAICaYQGljoeyPIXEorBSz8T8iWTMt8UykVhJmqLVD31Ira7qHHP1nJWqeunviqiHGy3wDAm5+l/nilKyr1Gx0LcRFsnXlpJ+xHxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741098461; c=relaxed/simple;
-	bh=jL5unq9yErEo8MFJrjl8ofEg7uYG5FNHf00uFXTXyHc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ze6Z64pTZ/kSocC7c2aDDfg4XuydraPbpOCKxNkWav/AwUk16+/cObygQk4/xqBvVg1HNGsjwpqb6JZ0tRznmjbPuQAlKkytJq44FRD2iYnhg8v7ImIx707RMR9h01/LrVctRCEGT9AFvkNVKc8TMZaHekgkozRuZERRGgawmwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=RjblS/yI; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 524805xg026836;
-	Tue, 4 Mar 2025 14:27:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=HOWPQU
-	NX7QomlPJQKK7TEaNAXDXHwcCY1bXmJ0RpVcg=; b=RjblS/yIsGZsrKlYx2X6uZ
-	wuo566+ilsX2qS1l84R9Ylptesikhuz6rieBZZoK/+wTBpYp+QRc8yA8ZMS3743s
-	ACEx6ASrGHTICgdMy9aDH+dtPvYfZVQP5MKNN/k0bprcOsAc4qRtHZXINKFu/TVh
-	vfDVSTymzhnX5rQYS1jCTduNJON0AmZegVDSGSO1GDWmwsE4sSEFLwyqwz+fmAX6
-	URycRK+STrocHnGk5w3UQZSbuj52pKzplCNd8eRdRsEDILjnuCZwaT/iCnFc7GAH
-	dWT7uTrPyoK4PiSyoRRMmtL7fqE8axkIM4zN0pmz5eS67MXttIictxB+boSM/kNw
-	==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 455kkpcbqq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Mar 2025 14:27:35 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 524AkF7L032216;
-	Tue, 4 Mar 2025 14:27:08 GMT
-Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 454cjsx0ga-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Mar 2025 14:27:08 +0000
-Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
-	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 524ER6RF16843458
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 4 Mar 2025 14:27:06 GMT
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 73C9E58052;
-	Tue,  4 Mar 2025 14:27:06 +0000 (GMT)
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 79BBD58056;
-	Tue,  4 Mar 2025 14:27:05 +0000 (GMT)
-Received: from [9.61.107.75] (unknown [9.61.107.75])
-	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  4 Mar 2025 14:27:05 +0000 (GMT)
-Message-ID: <d5308330-23f3-4f55-836c-0c6e884587b0@linux.ibm.com>
-Date: Tue, 4 Mar 2025 09:27:05 -0500
+	s=arc-20240116; t=1741098474; c=relaxed/simple;
+	bh=zwBkiv0jR98E/16OURLG7ddEECe4p2gZPQLDDNbkETY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Bj3xHQG7P/hWiywKxiS6nbvf3H++O4UBcf6o5tBl14dI405ditGo2bCON6Vud31bVdIShgMi9sXd+p8nGMfAsfWF796STU7Mys3swFhkkyJK3IX2cTeAHKhi+PMwlM5XjvqfPrqT3A/3kBoClZQlBUDbT14D1xu042bzu12paww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cfy8P4FI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF688C4CEE5;
+	Tue,  4 Mar 2025 14:27:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741098473;
+	bh=zwBkiv0jR98E/16OURLG7ddEECe4p2gZPQLDDNbkETY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cfy8P4FIB6sGg2BeSAzl/qCC9hAIio4DBHuGNnd823DCSYSnCPV+d96oJVXONNaWn
+	 MwuvSOC9fSqxzhieTayC0Smm4BMfDp7Xu+3YqIbnJeAdabFK2eVkP+podTPl0ktZ+B
+	 TseGs1rv78goEpg95cwc+EADppnb5uJqNtS6vioy4y3e6CXpS2eIUHmHiyrmkNl/GW
+	 R4qI0FNuFUS4qoK3lbq3CU5KcXkuHIgbaS0a0p9EzkEZIOZ+vLwWq/cKXmedIzxdaF
+	 6r+9MmTKBoZRUMiNLZB7FCgmiA0c2n8KpHd2iQbnmukZjmKUqdsg6n6hEiWzm25bRm
+	 uBvHQa2ar2Pqw==
+Date: Tue, 4 Mar 2025 14:27:42 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev,
+ linux-fbdev@vger.kernel.org, linux-iio@vger.kernel.org, Michael Hennerich
+ <michael.hennerich@analog.com>
+Subject: Re: [PATCH] MAINTAINERS: remove adi,ad7606.yaml from SEPS525
+Message-ID: <20250304142742.7ea52a67@jic23-huawei>
+In-Reply-To: <20250303-maintainers-remove-adi-ad7606-yaml-from-seps525-lcd-controller-v1-1-a4e4f1b824ab@baylibre.com>
+References: <20250303-maintainers-remove-adi-ad7606-yaml-from-seps525-lcd-controller-v1-1-a4e4f1b824ab@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1] fixup! s390/vfio-ap: Notify userspace that guest's
- AP config changed when mdev removed
-To: Rorie Reyes <rreyes@linux.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: hca@linux.ibm.com, borntraeger@de.ibm.com, agordeev@linux.ibm.com,
-        gor@linux.ibm.com, pasic@linux.ibm.com, jjherne@linux.ibm.com,
-        alex.williamson@redhat.com
-References: <20250303191158.49317-1-rreyes@linux.ibm.com>
- <4bf76371-43ea-4c1a-8a7f-500b0b0195b6@linux.ibm.com>
- <d8b34b34-1776-4bd9-bbde-8fe508166dfd@linux.ibm.com>
-Content-Language: en-US
-From: Anthony Krowiak <akrowiak@linux.ibm.com>
-In-Reply-To: <d8b34b34-1776-4bd9-bbde-8fe508166dfd@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: cWjAk7cCCobmfzFEcUtTtrQT-2HAvflo
-X-Proofpoint-ORIG-GUID: cWjAk7cCCobmfzFEcUtTtrQT-2HAvflo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-04_06,2025-03-03_04,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
- malwarescore=0 adultscore=0 impostorscore=0 bulkscore=0 mlxlogscore=999
- phishscore=0 spamscore=0 priorityscore=1501 mlxscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503040118
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Mon, 03 Mar 2025 14:39:57 +0000
+David Lechner <dlechner@baylibre.com> wrote:
 
+> Remove Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml from
+> STAGING - SEPS525 LCD CONTROLLER DRIVERS. This was likley a copy/paste
+> mistake. There is no bindings file for SEPS525 since it is only in
+> staging.
+> 
+> The removed file matches Documentation/devicetree/bindings/iio/*/adi,*
+> under ANALOG DEVICES INC IIO DRIVERS already so wasn't just misplaced.
+> 
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+I'll apply it.
 
+Jonathan
 
-On 3/4/25 9:18 AM, Rorie Reyes wrote:
->
->
-> On 3/4/25 8:36 AM, Anthony Krowiak wrote:
->>>     static void vfio_ap_mdev_update_guest_apcb(struct ap_matrix_mdev 
->>> *matrix_mdev)
->>> @@ -1870,7 +1870,6 @@ static void vfio_ap_mdev_unset_kvm(struct 
->>> ap_matrix_mdev *matrix_mdev)
->>>           get_update_locks_for_kvm(kvm);
->>>             kvm_arch_crypto_clear_masks(kvm);
->>> -        signal_guest_ap_cfg_changed(matrix_mdev);
->>>           vfio_ap_mdev_reset_queues(matrix_mdev);
->>>           kvm_put_kvm(kvm);
->>>           matrix_mdev->kvm = NULL;
->>> @@ -2057,6 +2056,14 @@ static void vfio_ap_mdev_request(struct 
->>> vfio_device *vdev, unsigned int count)
->>>         matrix_mdev = container_of(vdev, struct ap_matrix_mdev, vdev);
->>>   +    if (matrix_mdev->kvm) {
->>> +        get_update_locks_for_kvm(matrix_mdev->kvm);
->>
->> I know we talked about this prior to submission of this patch, but 
->> looking at this again I think
->> you should use the get_update_locks_for_mdev() function for two reasons:
->>
->> 1. It is safer because it will take the matrix_dev->guests_lock which 
->> will prevent the matrix_mdev->kvm
->>     field from changing before you check it
->>
-> So I'll replace *get_update_locks_for_kvm(matrix_mdev->kvm)* with 
-> *get_update_locks_for_mdev(&matrix_dev->guests_lock)*
-
-See code below:get_update_locks_for_mdev(matrix_mdev)
-That function will take the guests_lock
-
->> 2. I will eliminate the need for the else
->>
->> get_update_locks_for_mdev(matrix_mdev)
->> if (matrix_mdev->kvm) {
->>     clear the masks
->>     signal guest config changed
->> }
->> ...
->> release_update_locks_for_mdev(matrix_mdev); Sorry about not seeing 
->> this before you posted this patch.
->>> + kvm_arch_crypto_clear_masks(matrix_mdev->kvm);
->>> +        signal_guest_ap_cfg_changed(matrix_mdev);
->>> +    } else {
->>> +        mutex_lock(&matrix_dev->mdevs_lock);
->>> +    }
-> So remove the else statement that contains the mutex function
+> ---
+> This falls under FBTFT which is currently orphaned, so someone else will
+> have to volunteer to pick this up.
+> ---
+>  MAINTAINERS | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 8e0736dc2ee0e33544fa373a4978b7dae18c040c..215dbaeedced8473b5b339329b3596a2fbfd13b1 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -22512,7 +22512,6 @@ STAGING - SEPS525 LCD CONTROLLER DRIVERS
+>  M:	Michael Hennerich <michael.hennerich@analog.com>
+>  L:	linux-fbdev@vger.kernel.org
+>  S:	Supported
+> -F:	Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
+>  F:	drivers/staging/fbtft/fb_seps525.c
+>  
+>  STAGING - SILICON MOTION SM750 FRAME BUFFER DRIVER
+> 
+> ---
+> base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
+> change-id: 20250303-maintainers-remove-adi-ad7606-yaml-from-seps525-lcd-controller-b77d4c4bf54a
+> 
+> Best regards,
 
 
