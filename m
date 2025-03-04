@@ -1,237 +1,83 @@
-Return-Path: <linux-kernel+bounces-543507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A3B7A4D686
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:32:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05385A4D68A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:33:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2AEBF7A399F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:31:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE446188EAD2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:33:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC59D1FBCA9;
-	Tue,  4 Mar 2025 08:32:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29FC71FAC25;
+	Tue,  4 Mar 2025 08:33:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hNxwfRun";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="yia7avhs";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="M4P1BZlk";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ChZ1sXn/"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="mptd97tV"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A77D1F91F6
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 08:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931191DFD8B
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 08:33:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741077157; cv=none; b=YtuXRWoa1NBJIQ4n3F90i+Al6f4qwaTIRfu1s1N+f+InebVLTiXQln6xHTSTVUTvgM09iFMoQ5vfskPcog7wsDfknf8qeyKHEg19AXcoKl/q86tyYI4shVjyst3yQmFXfyoepwyM/HYpRhT1zEGqThZIpedOEDhmcPoOZF1Qv/c=
+	t=1741077215; cv=none; b=Z48n0J1jS4frK8fpcLYf7vvQGPkVVx/iy/q9vNR2ZRjw44wVhi7RplPE1gCVg6OhXOCOb5J0OmU0ElEQ78mbJdQir57g/njGL7MBrRivbIaakr+b3aEqM9sk/bFvGlO2o8QSRsmNhtZYNJhnxnROKPISLIO9qnqEU4I5cDAJhq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741077157; c=relaxed/simple;
-	bh=bTkTBr7l6nTcb4akvwbTaL+3vTIjzPW+zgzBssEWyzE=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ifDypix9sQp5yRVFVQ+PfBRzkT5oG6RRv1JOV24CUSDKBsjmE670V4xaKdnJwLdeXNW1gLVzbvR7g8yQxowqyvEDpzEKkTQcD/+yHn3kZgHduqGtXLqwkLfy+ndeBLGSK3OLi89cwn+iRqjo/pM5zbGWb9vUR1kSWvEFZeUN0s8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hNxwfRun; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=yia7avhs; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=M4P1BZlk; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ChZ1sXn/; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	s=arc-20240116; t=1741077215; c=relaxed/simple;
+	bh=D//EKwE3vi7nckqhjOFnJzSwtXNgoivMFlQTKbprxrY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M8jrZ2jeuG6AUUZnS7x2VM7BpIfxPT1l0+bdqRucbEhgArYl2xfapF5GwypGpl2G8uQllXleBE84ITmkBd3OXbXNvZX0uldKRPJgI6VhQEvgP32kkQNXW0132BgBg2w+tDkQVTEWW3jss2j2gF1Hkqi20uImvmcQO3oOa24n94M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=mptd97tV; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1741077211;
+	bh=D//EKwE3vi7nckqhjOFnJzSwtXNgoivMFlQTKbprxrY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mptd97tVcVMH7lz6HXvTpKpGWx2ewfwF7dfyrS0ie0PZWEy17pXk+58Hq0tOUHT7q
+	 i1semtKIiFJ79X8yRy9uIbg2eYzW93VftX6hhQ1oClURlgK+hquFeaHzQ1JuLufRuv
+	 hBPV/rLobz985oewby20c+HWhCNkD7ZtD5+h1UKjt0VHt9bRQ8OSILOZ1QRQzEXwyu
+	 GvJlyH6Ypxzj2PT6vLOcTRLMZKjkeBCliWw1ayUHWMpJI+xgVT3dMQ4t4daq0vPQe8
+	 bSnl+2PdaA7mgkjz9Jl6164KuY2JJ8VDhVUUxF8xfl14K+O9kfwApIs4cNyizgEtSd
+	 m+ELW4hUZAGIQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E2E4B1F387;
-	Tue,  4 Mar 2025 08:32:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741077153; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JmGXXnAiQxl2wGU8Qmfdp+ymPe+1BOtAwR9ux0MeBFE=;
-	b=hNxwfRunnrjvpB5qwse1fwuz97KDvvSC3+Lh5kSVCHO0yL1G1eLEE+Gau5AkdtOkK/oyd9
-	9qUU/fXqvGXIXRz6CLMOcZhOf0FckGJv4/9WsNphjCs6aVo8wqBwUEs5BIAY6CeXmHnMI1
-	sQRnKIlUy6AZ6kuCjm2nqjsMOC7YNo8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741077153;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JmGXXnAiQxl2wGU8Qmfdp+ymPe+1BOtAwR9ux0MeBFE=;
-	b=yia7avhs9pgQYX9LKGnksQtbFMc/heEmldJBakhjFUwFjaO1H1lAqcwNv2YI4D+ZaEH+Pb
-	cfd1RzLP/mixehCQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741077152; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JmGXXnAiQxl2wGU8Qmfdp+ymPe+1BOtAwR9ux0MeBFE=;
-	b=M4P1BZlkJcUtuYnnu6ZqU8LUNZIGS11nQOWEUHC3mDS18F85/HebCPxdpdd4ALREOVoo3+
-	PUYSB0uil2EWCI1XZk91KGM+Lyh7SjFCfx6QGnVTEytIj+5gtbbm7wg/7ixibU/erwPfoP
-	iY9Cvz+UwptGmGr0TN/qSWVEfQtZdaI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741077152;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JmGXXnAiQxl2wGU8Qmfdp+ymPe+1BOtAwR9ux0MeBFE=;
-	b=ChZ1sXn/seQ8AUk2oR+4B84AxIv+7EJ7f9HI6ysKHN3CUVyu1funrED25nyXHlTAasMwS6
-	mOs2Vhu9G1gSN6BQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A57D21393C;
-	Tue,  4 Mar 2025 08:32:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id bu3NJqC6xmdgOgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 04 Mar 2025 08:32:32 +0000
-Date: Tue, 04 Mar 2025 09:32:32 +0100
-Message-ID: <877c55ci1r.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: Pauli Virtanen <pav@iki.fi>,
-	Takashi Iwai <tiwai@suse.de>,
-	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
-	linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: Is commit 4d94f0555827 safe?
-In-Reply-To: <CABBYNZJHSoDzo7DmB84LrBw3Zi+F_QsNcD5MBJHijCo-v_KzGw@mail.gmail.com>
-References: <87a5a3ah2y.wl-tiwai@suse.de>
-	<CABBYNZJOW-YSOLS0tBdUQmxqbOmgT2n2jVheyxbvWbYmBicqyg@mail.gmail.com>
-	<877c56dub7.wl-tiwai@suse.de>
-	<CABBYNZJ6Gfmpur2by01B9+XxBX+VBzBY95v+9f5-VpiantunfQ@mail.gmail.com>
-	<87y0xmcdl4.wl-tiwai@suse.de>
-	<CABBYNZJsqXLRuY6ZMPujio7-tx82SHRZyZh=tChonVs-XiWMjw@mail.gmail.com>
-	<87tt8acbmw.wl-tiwai@suse.de>
-	<52df2ea6bac070c015987547840c78ac27538def.camel@iki.fi>
-	<CABBYNZJHSoDzo7DmB84LrBw3Zi+F_QsNcD5MBJHijCo-v_KzGw@mail.gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 4C51417E087E;
+	Tue,  4 Mar 2025 09:33:31 +0100 (CET)
+Message-ID: <7aa89f17-c2d4-4143-a84d-4e736fdc6c27@collabora.com>
+Date: Tue, 4 Mar 2025 09:33:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Score: -0.80
-X-Spamd-Result: default: False [-0.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
-	SUBJECT_ENDS_QUESTION(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] rtc: mt6397: drop unused defines
+To: alexandre.belloni@bootlin.com, Lee Jones <lee@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20250303223637.1135362-1-alexandre.belloni@bootlin.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250303223637.1135362-1-alexandre.belloni@bootlin.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, 03 Mar 2025 19:19:47 +0100,
-Luiz Augusto von Dentz wrote:
+Il 03/03/25 23:36, alexandre.belloni@bootlin.com ha scritto:
+> From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 > 
-> Hi Pauli, Takashi,
+> RTC_NUM_YEARS has never been used, the other defines are not used since
+> commit 34bbdc12d04e ("rtc: mt6359: Add RTC hardware range and add support
+> for start-year")
 > 
-> On Mon, Mar 3, 2025 at 12:47 PM Pauli Virtanen <pav@iki.fi> wrote:
-> >
-> > Hi,
-> >
-> > ma, 2025-03-03 kello 17:38 +0100, Takashi Iwai kirjoitti:
-> > > On Mon, 03 Mar 2025 17:29:58 +0100,
-> > > Luiz Augusto von Dentz wrote:
-> > > >
-> > > > Hi,
-> > > >
-> > > > On Mon, Mar 3, 2025 at 10:56 AM Takashi Iwai <tiwai@suse.de> wrote:
-> > > > >
-> > > > > On Mon, 03 Mar 2025 16:50:37 +0100,
-> > > > > Luiz Augusto von Dentz wrote:
-> > > > > >
-> > > > > > Hi Takashi,
-> > > > > >
-> > > > > > On Mon, Mar 3, 2025 at 10:10 AM Takashi Iwai <tiwai@suse.de> wrote:
-> > > > > > >
-> > > > > > > On Mon, 03 Mar 2025 15:57:16 +0100,
-> > > > > > > Luiz Augusto von Dentz wrote:
-> > > > > > > >
-> > > > > > > > Hi Takashi,
-> > > > > > > >
-> > > > > > > > Well the assumption was that because we are doing a copy of the struct
-> > > > > > > > being unregistered/freed would never cause any errors, so to trigger
-> > > > > > > > something like UAF like the comment was suggesting the function
-> > > > > > > > callback would need to be unmapped so even if the likes of iso_exit is
-> > > > > > > > called it function (e.g. iso_connect_cfm) remains in memory.
-> > > > > > >
-> > > > > > > But it doesn't guarantee that the callback function would really
-> > > > > > > work.  e.g. if the callback accesses some memory that was immediately
-> > > > > > > freed after the unregister call, it will lead to a UAF, even though
-> > > > > > > the function itself is still present on the memory.
-> > > > > > >
-> > > > > > > That said, the current situation makes hard to judge the object life
-> > > > > > > time.
-> > > > > > >
-> > > > > > > > You can find the previous version here:
-> > > > > > > >
-> > > > > > > > https://syzkaller.appspot.com/text?tag=Patch&x=100c0de8580000
-> > > > > > > >
-> > > > > > > > Problem with it was that it is invalid to unlock and relock like that.
-> > > > > > >
-> > > > > > > Thanks for the pointer!
-> > > > > > >
-> > > > > > >
-> > > > > > > BTW, I saw another patch posted to replace the mutex with spinlock
-> > > > > > > (and you replied later on that it's been already fixed).
-> > > > > > > Is it an acceptable approach at all?
-> > > > > >
-> > > > > > I don't remember if I saw that, but yeah anything that makes the issue
-> > > > > > go away, and doesn't create new problems, would probably be
-> > > > > > acceptable.
-> > > > >
-> > > > > I saw this one:
-> > > > >   https://lore.kernel.org/all/20230907122234.146449-1-william.xuanziyang@huawei.com/
-> > > >
-> > > > Ive might have missed it, we will probably need to rebase it but other
-> > > > than that it should be acceptable.
-> > >
-> > > Does it mean that you'd revert the change and apply the above one
-> > > (with rebase or modification)?  Or would you keep a part of the
-> > > current change (e.g. match callback looks neat) while applying the
-> > > similar fix using the spinlock?
-> >
-> > My current understanding of this is that the actual problem for
-> > 4d94f0555827 was incorrect RCU use at the callsite in
-> > hci_le_create_big_complete_evt(). That part was rewritten in
-> >
-> > commit 581dd2dc168f ("Bluetooth: hci_event: Fix using rcu_read_(un)lock
-> > while iterating")
-> 
-> In that case maybe we can just revert the 4d94f0555827 ("Bluetooth:
-> hci_core: Fix sleeping
-> function called from invalid context") and see if that works, might
-> need to trigger syzbot just to confirm we don't introduce the original
-> problem.
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-Fair enough, it sounds reasonable.
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
 
-thanks,
-
-Takashi
 
