@@ -1,147 +1,137 @@
-Return-Path: <linux-kernel+bounces-544350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87A82A4E049
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:10:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE8FFA4E065
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:15:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09F9C179D87
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:09:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F93A3B0B0E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:09:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1315205AAB;
-	Tue,  4 Mar 2025 14:07:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1707D2066F1;
+	Tue,  4 Mar 2025 14:08:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cE6wWxEK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="foyHauLf"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50710204F61;
-	Tue,  4 Mar 2025 14:07:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2903204C2B
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741097254; cv=none; b=c6oN83NcOUbLIMdPxiD+OUQBGvYFUYBLRCB2xcTmQs4vuJ9/oLPH6gLlnUdMmwAmF8OpDpwLSLRD2Yxpq/AOYpMjt6/qK5N7OpaLzc0CQWvvE4AXj049PVGG18e2nV00Fehd789jkYaVJpQ0iDh1cTsQAbMk/C9dLBnykAkU5pI=
+	t=1741097287; cv=none; b=kqmV+jnsr7rs8f/EI8kM1+5hMMP+7HRDDvBnvynngwnXdvg0TAwmF7fMsYV2wHRhC7o9z/Ys1UjdqXHJU2WRPGBLoavP57SrellHGCo2BKBJi0p1PEzjP6oB39nczlDVXe3OX28Dltl7ynIQtwLn6Z7zY1HNLn6/U94ldKUCFTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741097254; c=relaxed/simple;
-	bh=C/gGfqeWg7bokpKzfH+pvbxBpqr4L7FKhkYPIdnr6ik=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hjes63A94gInNlKE18xZH4XECHDchGCJNmPS79Sdw1oAQWdIJUIbL2CROgB0o6Ij3LLHdosIdPE7IM9h5OZDwGJhIQQhsyiKrzr9G/AykPCyXt9xbJN7H1S1RMpqw0PjScSwX8+44AafT4fuynfVIdIshEoL814kv2o2sNJNQSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cE6wWxEK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51371C4CEE5;
-	Tue,  4 Mar 2025 14:07:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741097253;
-	bh=C/gGfqeWg7bokpKzfH+pvbxBpqr4L7FKhkYPIdnr6ik=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cE6wWxEK4So0MmlpUJuWcqvZQkORsedvwONsszBYBeAJwsk8NmapWskpyPC8+kw4K
-	 +fjedgtuUN9TZx5J6iVzy9Eva3ZytBy/SqP+T8WKCKgPwhucMQy0sPyS+FCrDUm8L2
-	 lYrVowOr8tZLBuxRovZogephCb7fRadxrTJKVxNRpA1CYqfMLrYSGmy+6ZpiQ2g40w
-	 AQugGX7leNDinoEwNd7F4li26heKrV6pez17MfnwlZ72lZCoYXt5eVdorH28ycydrq
-	 0qFhcrFB3wkNWWwT8qZKk6ZBIZsujQGb54Y+2uES9DfW21gypY+fVjWL9CtTcjH70s
-	 fvr4sDy/GS3sg==
-Date: Tue, 4 Mar 2025 14:07:23 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- eraretuya@gmail.com
-Subject: Re: [PATCH v3 15/15] docs: iio: add documentation for adxl345
- driver
-Message-ID: <20250304140723.78e17fb3@jic23-huawei>
-In-Reply-To: <20250220104234.40958-16-l.rubusch@gmail.com>
-References: <20250220104234.40958-1-l.rubusch@gmail.com>
-	<20250220104234.40958-16-l.rubusch@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741097287; c=relaxed/simple;
+	bh=KAiXbpu15i47EAqRuiSckrsx67fq0CuxF/yuJFF2VvI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HljYyz3hPoAsOIPQerXeyNj4vYzVU4KBkFkmeJVwQNg7ifp2pQqzRCtvkO5S7W1ztUv2qzOEkVeey5IJIY7RYHz6QHsTCEFS8OOAsN4qO6zAgPdYAAe++qcoLsvK6zZDUrg8GTQjAv820LgZKJ5bYxy6vYRdM5l22dnE6h3Qv4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=foyHauLf; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741097284;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=T0duPupBbKbOBmo+V9m3H3rlnyCP4NMm3QenxG8AfDU=;
+	b=foyHauLftzeUOEzjOXI+4h3avv0/esDjc2rLlW8SbSZENiWktCjh+W1boG+MA2h3/M8VHV
+	tSiPaXbKucbSIlOroxHuHt1yVvm6zUDtPRHXNa1kW3yMuHmzFTXNVsWteKxvyJ5vJKRI9S
+	dGGR6yBYO3cqEtPRrfhGofYCTaAhQm4=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-630-9JaBw8SLPneBqvKQmQA7ig-1; Tue,
+ 04 Mar 2025 09:08:03 -0500
+X-MC-Unique: 9JaBw8SLPneBqvKQmQA7ig-1
+X-Mimecast-MFC-AGG-ID: 9JaBw8SLPneBqvKQmQA7ig_1741097282
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B874119373C4;
+	Tue,  4 Mar 2025 14:08:01 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.246])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 6C7891801768;
+	Tue,  4 Mar 2025 14:07:58 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue,  4 Mar 2025 15:07:31 +0100 (CET)
+Date: Tue, 4 Mar 2025 15:07:27 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: torvalds@linux-foundation.org, brauner@kernel.org, mingo@redhat.com,
+	peterz@infradead.org, rostedt@goodmis.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/3] pipe: drop an always true check in anon_pipe_write()
+Message-ID: <20250304140726.GD26141@redhat.com>
+References: <20250303230409.452687-1-mjguzik@gmail.com>
+ <20250303230409.452687-2-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250303230409.452687-2-mjguzik@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Thu, 20 Feb 2025 10:42:34 +0000
-Lothar Rubusch <l.rubusch@gmail.com> wrote:
+On 03/04, Mateusz Guzik wrote:
+>
+> @@ -529,10 +529,9 @@ anon_pipe_write(struct kiocb *iocb, struct iov_iter *from)
+>  
+>  			if (!iov_iter_count(from))
+>  				break;
+> -		}
+>  
+> -		if (!pipe_full(head, pipe->tail, pipe->max_usage))
+>  			continue;
+> +		}
 
-> The documentation describes the ADXL345 driver, IIO interface,
-> interface usage and configuration.
->=20
-> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
-> ---
->  Documentation/iio/adxl345.rst | 406 ++++++++++++++++++++++++++++++++++
->  1 file changed, 406 insertions(+)
->  create mode 100644 Documentation/iio/adxl345.rst
->=20
-> diff --git a/Documentation/iio/adxl345.rst b/Documentation/iio/adxl345.rst
-> new file mode 100644
-> index 000000000000..b77c97ef52e5
-> --- /dev/null
-> +++ b/Documentation/iio/adxl345.rst
-> @@ -0,0 +1,406 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +ADXL345 driver
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +This driver supports Analog Device's ADXL345/375 on SPI/I2C bus.
-> +
-> +1. Supported devices
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +* `ADXL345 <https://www.analog.com/ADXL345>`_
-> +* `ADXL375 <https://www.analog.com/ADXL375>`_
-> +
-> +The ADXL345 is a generic purpose low power, 3-axis accelerometer with se=
-lectable
-> +measurement ranges. The ADXL345 supports the =C2=B12 g, =C2=B14 g, =C2=
-=B18 g, and =C2=B116 g ranges.
-> +
-> +2. Device attributes
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +Accelerometer measurements are always provided.
-
-I'm not sure what this sentence is telling us. I'd drop it.
-
-...
+Reviewed-by: Oleg Nesterov <oleg@redhat.com>
 
 
-> +When activity and inactivity events are both enabled, the driver automat=
-ically
-> +will implement its hysteresis solution by setting link bit and autosleep=
- bit.
-> +The link bit serially links the activity and inactivity functions. On th=
-e other
-> +side, the autosleep function switches the sensor to sleep mode if the
-> +inactivity function is enabled. This will reduce current consumption to =
-the
-> +sub-12.5Hz rate.
-This makes me a little nervous as it's not particularly standard.
-However I can't immediately think of a better way to handle it so maybe the
-currently assumption of when to enable it is fine.
 
+It seems that we can also remove the unnecessary signal_pending()
+check, but I need to recheck and we need to cleanup the poll_usage
+logic first.
 
-> +A double tap event can be invalidated in three ways: If the suppress bit=
- is set,
-> +any acceleration spike above the threshold already during the latency ti=
-me
-> +invalidates the double tap detection immediately, i.e. during latence mu=
-st not
-latency in the i.e bit?=20
-> +occur spikes for double tap detection with suppress bit set.
+This will also remove the unnecessary wakeups when the writer is
+interrupted by signal/
 
-I'm finding the previous sentence hard to understand. Perhaps consider
-rewording?
+diff --git a/fs/pipe.c b/fs/pipe.c
+index b0641f75b1ba..ed55a86ca03b 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -541,12 +541,6 @@ anon_pipe_write(struct kiocb *iocb, struct iov_iter *from)
+ 				ret = -EAGAIN;
+ 			break;
+ 		}
+-		if (signal_pending(current)) {
+-			if (!ret)
+-				ret = -ERESTARTSYS;
+-			break;
+-		}
+-
+ 		/*
+ 		 * We're going to release the pipe lock and wait for more
+ 		 * space. We wake up any readers if necessary, and then
+@@ -554,10 +548,11 @@ anon_pipe_write(struct kiocb *iocb, struct iov_iter *from)
+ 		 * become empty while we dropped the lock.
+ 		 */
+ 		mutex_unlock(&pipe->mutex);
+-		if (was_empty)
++		if (was_empty || pipe->poll_usage)
+ 			wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
+ 		kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
+-		wait_event_interruptible_exclusive(pipe->wr_wait, pipe_writable(pipe));
++		if (wait_event_interruptible_exclusive(pipe->wr_wait, pipe_writable(pipe)) < 0)
++			return ret ?: -ERESTARTSYS;
+ 		mutex_lock(&pipe->mutex);
+ 		was_empty = pipe_empty(pipe->head, pipe->tail);
+ 		wake_next_writer = true;
 
-> +A double tap event is invalidated if acceleration lies above the thresho=
-ld at
-> +the start of the window time for the double tap detection.
-
-
-Thanks,
-
-Jonathan
 
