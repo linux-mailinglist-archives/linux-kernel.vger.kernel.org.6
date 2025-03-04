@@ -1,97 +1,119 @@
-Return-Path: <linux-kernel+bounces-544949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DF27A4E6B3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:49:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3987BA4E6BB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:50:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0ACBF7AAC63
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:46:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FEA97A7CE4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:47:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF0C24EAA6;
-	Tue,  4 Mar 2025 16:24:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eXUVU/Lt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D78824BBF7
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:24:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFDBF2780E9;
+	Tue,  4 Mar 2025 16:25:50 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7C22780E2;
+	Tue,  4 Mar 2025 16:25:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741105495; cv=none; b=QQTi2+j3SblUM3fkw2WiVYPghGFpWgqbK9MaJ2G4/X6mDDW5bNFOoNGkL0t8Bg6Gm9wzXgcTc/rvUTCmzBSq6U5OEpz/m5Hu2ZwAcz22u2zInJYdJgKlqaQVxQkZbbYhMe8Qw55EUF5vflsZ0UZksKwAer2Avw8itJBEL2PgT58=
+	t=1741105550; cv=none; b=gLZftnlK0Y3i/Lx4UWIwVnEuBHGOuHnfw2uacVLB91DyH/ojo97/JLC4IodKCp9zdtVxVz/NfcLJnJP8aS5+FidNZrd/fQC4YZ/tTUk0AAZRpb1wn8OInV0iNqpQz3FXBB/yjWJRHG0B9OgBumPZ8y+W834lIIEVW4OFAVsfH6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741105495; c=relaxed/simple;
-	bh=ddesxlsbSXgBMtJSMmHJZnyUOzDZhT2en8jYRDdsisg=;
+	s=arc-20240116; t=1741105550; c=relaxed/simple;
+	bh=7joMoRPYn7I+O+FHoWsTud02cmpn2zlQxRxktM9D2Kk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gbRr+LCGRkQ83ssklf9WpwH+Ig1cBBZWVhcggFlluKtqBKG6/xgXZOp60VFaIb7BH5elaUgaqwvOtx/C6TimAQdxKq/tIUe4ojYseZSpI8nOmaq2SNZemWuy3SXOMv16mZwiWypSpTRWv7+9cz1kOtK9J2MwOY1HYh5ZwXJ/sAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eXUVU/Lt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 595C1C4CEE5;
-	Tue,  4 Mar 2025 16:24:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741105494;
-	bh=ddesxlsbSXgBMtJSMmHJZnyUOzDZhT2en8jYRDdsisg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eXUVU/LtL0ifzSTu+1wU7jJ3wUAuLEdIPojoDBfdvltHr9m0Fs/XsEPMQoLSu7hXb
-	 2+LV34a/zA1hZxtKoNCdX4guYboXFoqgojyYj6vQIYpX1iJEyMogD8RT0Aqa3DOKRw
-	 erYoThQu9ThxmjLQou6Bg4URNTS9Av/EexhKyLCDv6f8FWmsRDH6ZQagowgMKfjKJX
-	 bI/WL7Q8UTO/I8rO7xSNwXmjfqEMWb8lPvXJ5VURcoqlWM8nSw7pzFF9sLp7Broi1X
-	 uo8x/qlMBgJ2LkTGPzDacD0/9jd/ssEK2xywV3wAl80aOhZdnRRq8H3gvZ8zXI6b0l
-	 6QRuwxUZqrkew==
-Date: Tue, 4 Mar 2025 16:24:50 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Zxyan Zhu <zxyan20@163.com>, rafael@kernel.org, dakr@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] regmap: debugfs: Fix name collision without atomic
- operations
-Message-ID: <1fb8c10b-6f80-4acd-8f32-f67d94583c5f@sirena.org.uk>
-References: <20250304142452.3521828-1-zxyan20@163.com>
- <2025030437-copious-irrigate-1b63@gregkh>
+	 Content-Type:Content-Disposition:In-Reply-To; b=m8z+tUhLR0QxYpCwLsed9Qg9c2Ql+pJzcwVtXUspFRRVftRQNl2iiZ/5KgP9oKSeFHzl9IEqhOYTYIiTAIdGjm9kKtgu4KpahCmIbWXeKAsUaw/ZNGsBUW1NFzDdbXAQJFmr6T7Bmx7Qr4uq+xt+QWseuOPF8hojpnFrEwiKT+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6A8CF497;
+	Tue,  4 Mar 2025 08:26:01 -0800 (PST)
+Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 09DB23F5A1;
+	Tue,  4 Mar 2025 08:25:44 -0800 (PST)
+Date: Tue, 4 Mar 2025 16:25:38 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Rob Herring <robh@kernel.org>, Will Deacon <will@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	James Clark <james.clark@linaro.org>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Leo Yan <leo.yan@arm.com>, kernel-team@android.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, kvmarm@lists.linux.dev,
+	Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v20 00/11] arm64/perf: Enable branch stack sampling
+Message-ID: <Z8cpgsxG4RrDoTKR@J2N7QTR9R3.cambridge.arm.com>
+References: <20250218-arm-brbe-v19-v20-0-4e9922fc2e8e@kernel.org>
+ <174080569248.3208873.17639032755999041028.b4-ty@kernel.org>
+ <CAL_JsqLijFG1PFkqKk7hXzC=aj70OLQsXwC280QsCO=PnCVZYg@mail.gmail.com>
+ <Z8bjEm_neWdMBNYv@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="iieIFLKZtO6gUcdO"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <2025030437-copious-irrigate-1b63@gregkh>
-X-Cookie: Do not disturb.
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z8bjEm_neWdMBNYv@arm.com>
 
+On Tue, Mar 04, 2025 at 11:25:06AM +0000, Catalin Marinas wrote:
+> On Mon, Mar 03, 2025 at 10:44:21AM -0600, Rob Herring wrote:
+> > On Sat, Mar 1, 2025 at 1:05 AM Will Deacon <will@kernel.org> wrote:
+> > > On Tue, 18 Feb 2025 14:39:55 -0600, Rob Herring (Arm) wrote:
+> > > > This series enables perf branch stack sampling support on arm64 via a
+> > > > v9.2 arch feature called Branch Record Buffer Extension (BRBE). Details
+> > > > on BRBE can be found in the Arm ARM[1] chapter D18.
+> > > >
+> > > > I've picked up this series from Anshuman. v19 and v20 versions have been
+> > > > reworked quite a bit by Mark and myself. The bulk of those changes are
+> > > > in patch 11.
+> > > >
+> > > > [...]
+> > >
+> > > Applied cleanups to will (for-next/perf), thanks!
+> > >
+> > > [01/11] perf: arm_pmuv3: Call kvm_vcpu_pmu_resync_el0() before enabling counters
+> > >         https://git.kernel.org/will/c/04bd15c4cbc3
+> > > [02/11] perf: arm_pmu: Don't disable counter in armpmu_add()
+> > >         https://git.kernel.org/will/c/dcca27bc1ecc
+> > > [03/11] perf: arm_pmuv3: Don't disable counter in armv8pmu_enable_event()
+> > >         https://git.kernel.org/will/c/4b0567ad0be5
+> > > [04/11] perf: arm_v7_pmu: Drop obvious comments for enabling/disabling counters and interrupts
+> > >         https://git.kernel.org/will/c/7a5387748215
+> > > [05/11] perf: arm_v7_pmu: Don't disable counter in (armv7|krait_|scorpion_)pmu_enable_event()
+> > >         https://git.kernel.org/will/c/7bf1001e0d91
+> > > [06/11] perf: apple_m1: Don't disable counter in m1_pmu_enable_event()
+> > >         https://git.kernel.org/will/c/c2e793da59fc
+> > > [07/11] perf: arm_pmu: Move PMUv3-specific data
+> > >         https://git.kernel.org/will/c/dc4d58a752ea
+> > 
+> > I don't know if you looked at the thread on patch 11 and said "long
+> > discussion, I'll assume a new version is coming. Next!" because that's
+> > what I would do. In this case though, there's not any changes.
+> 
+> I do this as well ;). But I think Will is waiting for Mark R to look at
+> the rest of the series.
 
---iieIFLKZtO6gUcdO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Sorry for the delay there.
 
-On Tue, Mar 04, 2025 at 05:23:02PM +0100, Greg KH wrote:
-> On Tue, Mar 04, 2025 at 10:24:52PM +0800, Zxyan Zhu wrote:
+I'm happy with the structure of this; my only remaining concern is the
+filtering logic, as it is surprisingly subtle, and when I was last
+working on that it wasn't clear to me whether we could alwways filter
+appropriately (or whether it'd be better to reject scheduling of events
+with mismatched filters).
 
-> >  		name = map->debugfs_name;
-> > -		dummy_index++;
+I'll try to page that in and properly attack that soon, but aside from
+that concern the series as a whole looks good to me.
 
-> Shouldn't you just use an idr here if there is a race condition?
-> There's a lock built into it that should solve all of these issues.
-
-Yes, that's probably the easiest thing.
-
---iieIFLKZtO6gUcdO
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfHKVEACgkQJNaLcl1U
-h9D4kwf/WD4YKK5mYS07vpQRL+9BvECoPRvMoD8E3TILnhmpBSUUx6nueZHD9h3O
-dxQ+T+CiT8fj9VIBMHPDSHPM1pX1kvPaOOJbOYGqPbS8p6lCIxWuzPTvYF10DvLJ
-vCvuW0lBIuY858fd45l371AuKIvl0BQY/TQm3Efv/2k/Q0buHn5naGGi70XBhEjm
-jrqltdF/vMGBQSLF1FezfG3UqQix9tRItCSPoIn70tsYMEpvtLcu1Z75VzYDsFZ7
-IghdZ9n3jpnvTBhJ6cthv+syanMgbUI9p6WAJRxDzXji9egA3oEhjtCWplZ3JqMM
-1qLdh2WCe4xx9PJxdElRNHbrJdPx6g==
-=KCyi
------END PGP SIGNATURE-----
-
---iieIFLKZtO6gUcdO--
+Thanks,
+Mark.
 
