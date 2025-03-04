@@ -1,235 +1,342 @@
-Return-Path: <linux-kernel+bounces-544946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94B77A4E6A2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:47:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A72B2A4E6DD
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:52:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0B517AA8F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:45:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9360616CB1B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:46:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5AEB29AAF0;
-	Tue,  4 Mar 2025 16:24:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF49129AB0D;
+	Tue,  4 Mar 2025 16:24:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F050aL2e"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G7bu+oox"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AAB6BA2E;
-	Tue,  4 Mar 2025 16:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE6CA29AAEB
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:24:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741105445; cv=none; b=TP+8kXMnPbLmZC5OgfYCd78tURNwUcL18PCwrAUB/loNBBYhgXMWRX9kd0rPvUOtQClziBZ25hphQ4ynrCRBkl+v2NcRp1UCwcJbdu+jPSr2gdhGuCVlAr450CIcgmdW/8iIRa0jpFk5HVycv8z12M9iyoZx6+nxiCHk3H/YrP8=
+	t=1741105445; cv=none; b=ifM6r0vIe40oLdG+Jz7a3emDFIHzl0vZ5g17EodhjXlJ5L1oR320+udmz9Rus9dmjoEt9kEsGiOkhA5xowWKIMp28nBcQcvyfw/U6li/9WRY9QrXLpJ5KEh6mf96fRskt51YAJFx/iMLCIbpZnW1Q//FR7ChcOwMgLYD/2uHIhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741105445; c=relaxed/simple;
-	bh=1g/E3QxFi8+f57T291+uHeqUByWPis4PZu0PV68aBXI=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=pVSdsu/horJgvyzrjbHTuiq3uszp6WZ7arKSG8Z4VXVMXFFLNusc5wBxteITvmVVjn5Vxug2+j/JGZOURYSkx75PwL2rPUYSzjiRJg3jSaP8ntlOD9WNeNTUJUpIVrWLAzNKaRVsPUEkSY3qOhFt3A/DycDmmsU1lRKyw6/KpxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F050aL2e; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741105444; x=1772641444;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version:content-id;
-  bh=1g/E3QxFi8+f57T291+uHeqUByWPis4PZu0PV68aBXI=;
-  b=F050aL2eIGP4yCYMgMl8e5ZxXRtVUZQzY99r70+JmJSxZ2UgN4PgP4mL
-   rTS1/YdmsIX5JaFRI5PPEll++P1S4Z3WgktPxxyTA69R8d+wZp2pBpdEC
-   bMgDrNP4htz4TKJEg2h9Zn2Li2GRrU/SNIGLZ6KgMQKk7HccUJA61etuG
-   wS090I7aMENF2Hxj5tlZVsZEvKkyTIOKN7sH4jfxKUHwiBqfsEESjjzAj
-   riNa8BZhZqw5/+HPLGcxEvbu+CmEyeREJhBgl1CEZnQcJ0yUDRyOvwGTl
-   pi9JE80uAsMFguw0D3BOsBSg7lg2eFtCR79F9R3M60pTb7DCwf2wCRwED
-   w==;
-X-CSE-ConnectionGUID: 3nAd31OWTw2c0oSlse1gZg==
-X-CSE-MsgGUID: 53lKW6uPRzGY4euLjlBigg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="59445033"
-X-IronPort-AV: E=Sophos;i="6.14,220,1736841600"; 
-   d="scan'208";a="59445033"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 08:24:03 -0800
-X-CSE-ConnectionGUID: qmAMMgOIRCiEcONdfDlsoQ==
-X-CSE-MsgGUID: pPUNwViDTFGOFN0AyWOFnQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="118937744"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.220])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 08:23:59 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 4 Mar 2025 18:23:54 +0200 (EET)
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-cc: Mario Limonciello <superm1@kernel.org>, 
-    Antheas Kapenekakis <lkml@antheas.dev>, Kurt Borja <kuurtb@gmail.com>, 
-    Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
-    Hans de Goede <hdegoede@redhat.com>, "Luke D . Jones" <luke@ljones.dev>, 
-    Mark Pearson <mpearson-lenovo@squebb.ca>, 
-    "open list:AMD PMF DRIVER" <platform-driver-x86@vger.kernel.org>, 
-    open list <linux-kernel@vger.kernel.org>, 
-    "open list:ACPI" <linux-acpi@vger.kernel.org>, 
-    "Derek J . Clark" <derekjohn.clark@gmail.com>, me@kylegospodneti.ch, 
-    Denis Benato <benato.denis96@gmail.com>, 
-    Mario Limonciello <mario.limonciello@amd.com>
-Subject: Re: [PATCH v2 1/1] ACPI: platform_profile: Treat quiet and low power
- the same
-In-Reply-To: <CAJZ5v0hNHFLtBwTTuPc7mNZhCKkmFJgFwgw88_BR_7nQ+rc6Cw@mail.gmail.com>
-Message-ID: <ccea4f8c-6ffe-a322-4d84-71377909dca1@linux.intel.com>
-References: <20250304064745.1073770-1-superm1@kernel.org> <20250304064745.1073770-2-superm1@kernel.org> <CAGwozwHniWGQ7qK6FYD_WK5zNjkro7-Q1nTcFPAuWDt9UQ+noA@mail.gmail.com> <23d6c735-e94f-4d43-87b0-ff119941fcac@kernel.org>
- <CAJZ5v0geaYYRQm0Hs2M4ak_8AZoWLJS-v0jqyrsaVjmXk267rA@mail.gmail.com> <71b14dc3-77e1-4fd7-b576-821e3a41ba19@kernel.org> <CAJZ5v0hNHFLtBwTTuPc7mNZhCKkmFJgFwgw88_BR_7nQ+rc6Cw@mail.gmail.com>
+	bh=4KSIt6vBOanDjBpTZgRlj0nkQkwIc/+HLRbwY34EN/o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C+O6d/o4kYdbNYrNstamJz01oA3Iki9VCr1fQpmbpXgeR9WtzYRc5wiTUFhFxNfNU9dqenYJWtt0qaafmnLCZ0jWq7vT14+sG4F+xzH4e8NRJA2ZJcg3vW11umWqB0uUtNgbI9DJciGTKTRVfd7MwqivBnrETDK52fbB8d1RwtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G7bu+oox; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3910e101d0fso1572589f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 08:24:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741105442; x=1741710242; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=uVbvDZB+IJrQpd/hNp9y18jlS3CDe75NL2VwvVRA+J0=;
+        b=G7bu+ooxhZeme6tszKDg+6mg72maBEvaHCJuf35LAWtaoHBjlBkqOSr+8A+oGylAB/
+         mjN62kJvYNJVfDCM7LqEdpIuBK2dksZIkoSDgaZkeLWOWXqtw+ezU/r+tONwgPTFJPMM
+         lxEmsMzigUUATDj/CXuJl6/3hczs89CBK3xhkzDnv9sYu5RqCotDNAUwNK8H2Hc0ZrEz
+         4N4a8VHZpTt8xtTlmNw+my30DQWwTqGlLXqOASewzG4B6Gz/4JY8zWRuIWlw0GKmEker
+         x3YbO9z/jUWoo0yx9hxTMMtW0RzSMaDrViurRHGNDJbqpbWtUQT8iKcwOpbEoH+jXt0L
+         dpsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741105442; x=1741710242;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uVbvDZB+IJrQpd/hNp9y18jlS3CDe75NL2VwvVRA+J0=;
+        b=oUi3D4ZlHO0eNk16kFMxy/Xx7m7D2PlFXQN883boo4crJTwnk53qXgY9luP6RHutSz
+         Z1WshcMdWG3meuVoEXBOaSrm38aKU5eIe9DcllYA43LKqsm7xHubJGZSo1fBRzSa9JxH
+         hmYKm19raKJ0KLTvUEbk3WeR8rJaaT8PwtRs6d++X4WchKDvDLzGOu1+2Days7vPajH3
+         zFynsAQDqihNiXwxNY3ipFYOsBKFWrrOAB3kvzojnTWlYIDGcZqGGVd4hs0TgmbH/VQ4
+         3YO18QDRsoB2pt5LCfXbmkizOdOKYlb/mz9Ho/mkY7zMFEG3DYdBjov0YC9UagazhzjC
+         nzIA==
+X-Forwarded-Encrypted: i=1; AJvYcCVSNiL7NM0oK0i1v/jdrSp+MLO0E1p7U5f7bVeRaXpWCyca16pJgAB9ERqO+IpgVCegIDWK5VJ4n+UEBHo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyj5nW/1SkWztHOQk0/vfz6bE1ijTX/ibDKmvMrai+qkU5DxgIa
+	G9lN0xF4wXiEk35PfH4iJKriQ91iANozjxZXsqegOZU8urx4nYRDl6eE6gYd
+X-Gm-Gg: ASbGnctyVPhHJKg6XUc/3Swp9qbsYP5h7VQWh917AtdkvxUVHVvKa3c8a9LbJ+nCBek
+	YlvljvE5Heco6BcG3VyhxGkThU6pWTwYWhkIgtyTJcS4D0mADZWU5Dbrfondk530rasw1OfbGJC
+	bZm5wCfsYJEsWqRe0nmbmCNdu/QeWuvs8sEG2vzRvtYoklfTtO3ayWyzUsTsommF7vAiboc7O7E
+	J4Dub7pohAFPIRhY74CY8DYdXba6K5vRwnD6fhXrKuUBO2bJz9pPJGbNU30Qe1RY5ji6tRsFg/S
+	ccEdKjUo6iMWdPpZd+5x+Y+5sXul41Zcj/QjgWD96h9P
+X-Google-Smtp-Source: AGHT+IGMIS2aLhK7uobDdnveYDLx1tS9uqOCKZtLvyb3p283SA+j2mJnpNH2NrYDBSEI26XgLy7RZw==
+X-Received: by 2002:a05:6000:178b:b0:390:e5c6:920 with SMTP id ffacd0b85a97d-390ec7ca9c5mr13454926f8f.3.1741105441832;
+        Tue, 04 Mar 2025 08:24:01 -0800 (PST)
+Received: from fedora ([213.94.27.232])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47a7850sm18402130f8f.39.2025.03.04.08.24.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 08:24:01 -0800 (PST)
+Date: Tue, 4 Mar 2025 17:23:59 +0100
+From: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
+To: Louis Chauvet <louis.chauvet@bootlin.com>
+Cc: hamohammed.sa@gmail.com, simona@ffwll.ch, melissa.srw@gmail.com,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 03/16] drm/vkms: Allow to configure multiple planes
+ via configfs
+Message-ID: <Z8cpH3twrgmR0TxI@fedora>
+References: <20250225175936.7223-1-jose.exposito89@gmail.com>
+ <20250225175936.7223-4-jose.exposito89@gmail.com>
+ <52bc3f15-28da-4b40-917f-981f1f10d9b8@bootlin.com>
+ <Z8VtPMzuZOYqjraQ@fedora>
+ <e813ac5b-298c-4863-b0b6-e9ac7fec1da0@bootlin.com>
+ <Z8cUN8Q4L0VE-bVm@fedora>
+ <fa4f4d3d-6a3e-4659-8a59-4928c2285d55@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323328-2083532595-1741105319=:931"
-Content-ID: <2aa3ead2-130a-9dd0-aed8-c4cb1d958aaa@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <fa4f4d3d-6a3e-4659-8a59-4928c2285d55@bootlin.com>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Tue, Mar 04, 2025 at 04:35:50PM +0100, Louis Chauvet wrote:
+> 
+> 
+> Le 04/03/2025 à 15:54, José Expósito a écrit :
+> > Hi Louis,
+> > 
+> > On Mon, Mar 03, 2025 at 11:34:50AM +0100, Louis Chauvet wrote:
+> > > 
+> > > 
+> > > Le 03/03/2025 à 09:50, José Expósito a écrit :
+> > > > Hi Louis,
+> > > > 
+> > > > On Fri, Feb 28, 2025 at 03:43:25PM +0100, Louis Chauvet wrote:
+> > > > > 
+> > > > > 
+> > > > > Le 25/02/2025 à 18:59, José Expósito a écrit :
+> > > > > > Create a default subgroup at /config/vkms/planes to allow to create as
+> > > > > > many planes as required.
+> > > > > > 
+> > > > > > Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> > > > > > Co-developed-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> > > > > > Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> > > > > > Signed-off-by: José Expósito <jose.exposito89@gmail.com>
+> > > > > > [...]
+> > > > > > diff --git a/drivers/gpu/drm/vkms/vkms_configfs.c b/drivers/gpu/drm/vkms/vkms_configfs.c
+> > > > > > index 92512d52ddae..4f9d3341e6c0 100644
+> > > > > > --- a/drivers/gpu/drm/vkms/vkms_configfs.c
+> > > > > > +++ b/drivers/gpu/drm/vkms/vkms_configfs.c
+> > > > > > [...]
+> > > > > > +static void plane_release(struct config_item *item)
+> > > > > > +{
+> > > > > > +	struct vkms_configfs_plane *plane;
+> > > > > > +	struct mutex *lock;
+> > > > > > +
+> > > > > > +	plane = plane_item_to_vkms_configfs_plane(item);
+> > > > > > +	lock = &plane->dev->lock;
+> > > > > > +
+> > > > > > +	guard(mutex)(lock);
+> > > > > > +	vkms_config_destroy_plane(plane->config);
+> > > > > > +	kfree(plane);
+> > > > > > +}
+> > > > > 
+> > > > > I just found a flaw in our work: there is currently no way to forbid the
+> > > > > deletion of item/symlinks...
+> > > > > 
+> > > > > If you do:
+> > > > > 
+> > > > > modprobe vkms
+> > > > > cd /sys/kernel/config/vkms/
+> > > > > mkdir DEV
+> > > > > mkdir DEV/connectors/CON
+> > > > > mkdir DEV/planes/PLA
+> > > > > mkdir DEV/crtcs/CRT
+> > > > > mkdir DEV/encoders/ENC
+> > > > > ln -s DEV/crtcs/CRT DEV/planes/PLA/possible_crtcs/
+> > > > > ln -s DEV/crtcs/CRT DEV/encoders/ENC/possible_crtcs
+> > > > > ln -s DEV/encoders/ENC DEV/connectors/CON/possible_encoders
+> > > > > echo 1 > DEV/planes/PLA/type
+> > > > > tree
+> > > > > echo 1 > DEV/enabled
+> > > > > modetest -M vkms
+> > > > > => everything fine
+> > > > > 
+> > > > > rm DEV/connectors/CON/possible_encoders/ENC
+> > > > > rmdir DEV/connectors/CON
+> > > > > modetest -M vkms
+> > > > > => BUG: KASAN: slab-use-after-free
+> > 
+> > I'm trying to reproduce this issue, but those commands don't show any BUG
+> > in dmesg. This is my Kasan .config:
+> > 
+> >      CONFIG_HAVE_ARCH_KASAN=y
+> >      CONFIG_HAVE_ARCH_KASAN_VMALLOC=y
+> >      CONFIG_CC_HAS_KASAN_GENERIC=y
+> >      CONFIG_CC_HAS_KASAN_SW_TAGS=y
+> >      CONFIG_CC_HAS_WORKING_NOSANITIZE_ADDRESS=y
+> >      CONFIG_KASAN=y
+> >      CONFIG_CC_HAS_KASAN_MEMINTRINSIC_PREFIX=y
+> >      CONFIG_KASAN_GENERIC=y
+> >      # CONFIG_KASAN_OUTLINE is not set
+> >      CONFIG_KASAN_INLINE=y
+> >      CONFIG_KASAN_STACK=y
+> >      CONFIG_KASAN_VMALLOC=y
+> >      # CONFIG_KASAN_KUNIT_TEST is not set
+> >      CONFIG_KASAN_EXTRA_INFO=y
+> > 
+> > I tryed to delete even more items:
+> > 
+> >      root@kernel-dev:/sys/kernel/config/vkms# tree
+> >      .
+> >      └── DEV
+> >          ├── connectors
+> >          ├── crtcs
+> >          ├── enabled
+> >          ├── encoders
+> >          └── planes
+> > 
+> >      root@kernel-dev:/sys/kernel/config/vkms# cat DEV/enabled
+> >      1
+> > 
+> > And I still don't see any errors. Is it possible that we are running different
+> > branches? Asking because of the failing IGT tests you reported. There seems to
+> > be a difference in our code or setup that is creating these differences.
+> 
+> I just re-applied your last vkms-config version and this series on top of
+> drm-misc-next. See [1] for the exact commits.
+> 
+> Argg sorry, I just noticed something: you need to disable the default vkms
+> device (I had this option in my kernel command line...), otherwise modetest
+> only use the first vkms gpu...
+> 
+> I will check again the igt tests, but I don't think this is the same issue
+> (it should not use the default device to test)
+> 
+> So, with [1] and the defconfig below, I have this:
+> 
+> 
+>     1  modprobe vkms create_default_dev=0
+>     2  cd /sys/kernel/config/vkms/
+>     3  mkdir DEV
+>     4  mkdir DEV/connectors/CON
+>     5  mkdir DEV/planes/PLA
+>     6  mkdir DEV/crtcs/CRT
+>     7  mkdir DEV/encoders/ENC
+>     8  ln -s DEV/crtcs/CRT DEV/planes/PLA/possible_crtcs/
+>     9  ln -s DEV/crtcs/CRT DEV/encoders/ENC/possible_crtcs
+>    10  ln -s DEV/encoders/ENC DEV/connectors/CON/possible_encoders
+>    11  echo 1 > DEV/planes/PLA/type
+>    12  tree
+>    13  echo 1 > DEV/enabled
+>    14  modetest -M vkms
+>    15  rm DEV/connectors/CON/possible_encoders/ENC
+>    16  rmdir DEV/connectors/CON
+>    17  modetest -M vkms
+> KASAN: slab-use-after-free
+> 
+> 
+> [1]:https://github.com/Fomys/linux/tree/20250225175936.7223-1-jose.exposito89%40gmail.com
 
---8323328-2083532595-1741105319=:931
-Content-Type: text/plain; CHARSET=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Content-ID: <f17d2118-68e9-267f-44c9-8ec2bbc031e5@linux.intel.com>
+Aha! Are you testing without a desktop environment running?
 
-On Tue, 4 Mar 2025, Rafael J. Wysocki wrote:
+    $ sudo systemctl isolate multi-user.target
 
-> On Tue, Mar 4, 2025 at 3:52=E2=80=AFPM Mario Limonciello <superm1@kernel.=
-org> wrote:
-> >
-> > On 3/4/2025 08:08, Rafael J. Wysocki wrote:
-> > > On Tue, Mar 4, 2025 at 1:49=E2=80=AFPM Mario Limonciello <superm1@ker=
-nel.org> wrote:
-> > >>
-> > >> On 3/4/25 02:38, Antheas Kapenekakis wrote:
-> > >>> On Tue, 4 Mar 2025 at 07:48, Mario Limonciello <superm1@kernel.org>=
- wrote:
-> > >>>>
-> > >>>> From: Mario Limonciello <mario.limonciello@amd.com>
-> > >>>>
-> > >>>> When two drivers don't support all the same profiles the legacy in=
-terface
-> > >>>> only exports the common profiles.
-> > >>>>
-> > >>>> This causes problems for cases where one driver uses low-power but=
- another
-> > >>>> uses quiet because the result is that neither is exported to sysfs=
-=2E
-> > >>>>
-> > >>>> If one platform profile handler supports quiet and the other
-> > >>>> supports low power treat them as the same for the purpose of
-> > >>>> the sysfs interface.
-> > >>>>
-> > >>>> Fixes: 688834743d67 ("ACPI: platform_profile: Allow multiple handl=
-ers")
-> > >>>> Reported-by: Antheas Kapenekakis <lkml@antheas.dev>
-> > >>>> Closes: https://lore.kernel.org/platform-driver-x86/e64b771e-3255-=
-42ad-9257-5b8fc6c24ac9@gmx.de/T/#mc068042dd29df36c16c8af92664860fc4763974b
-> > >>>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> > >>>> ---
-> > >>>>    drivers/acpi/platform_profile.c | 38 ++++++++++++++++++++++++++=
-++++---
-> > >>>>    1 file changed, 35 insertions(+), 3 deletions(-)
-> > >>>>
-> > >>>> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platfo=
-rm_profile.c
-> > >>>> index 2ad53cc6aae53..d9a7cc5891734 100644
-> > >>>> --- a/drivers/acpi/platform_profile.c
-> > >>>> +++ b/drivers/acpi/platform_profile.c
-> > >>>> @@ -73,8 +73,20 @@ static int _store_class_profile(struct device *=
-dev, void *data)
-> > >>>>
-> > >>>>           lockdep_assert_held(&profile_lock);
-> > >>>>           handler =3D to_pprof_handler(dev);
-> > >>>> -       if (!test_bit(*bit, handler->choices))
-> > >>>> -               return -EOPNOTSUPP;
-> > >>>> +       if (!test_bit(*bit, handler->choices)) {
-> > >>>> +               switch (*bit) {
-> > >>>> +               case PLATFORM_PROFILE_QUIET:
-> > >>>> +                       *bit =3D PLATFORM_PROFILE_LOW_POWER;
-> > >>>> +                       break;
-> > >>>> +               case PLATFORM_PROFILE_LOW_POWER:
-> > >>>> +                       *bit =3D PLATFORM_PROFILE_QUIET;
-> > >>>> +                       break;
-> > >>>> +               default:
-> > >>>> +                       return -EOPNOTSUPP;
-> > >>>> +               }
-> > >>>> +               if (!test_bit(*bit, handler->choices))
-> > >>>> +                       return -EOPNOTSUPP;
-> > >>>> +       }
-> > >>>>
-> > >>>>           return handler->ops->profile_set(dev, *bit);
-> > >>>>    }
-> > >>>> @@ -252,8 +264,16 @@ static int _aggregate_choices(struct device *=
-dev, void *data)
-> > >>>>           handler =3D to_pprof_handler(dev);
-> > >>>>           if (test_bit(PLATFORM_PROFILE_LAST, aggregate))
-> > >>>>                   bitmap_copy(aggregate, handler->choices, PLATFOR=
-M_PROFILE_LAST);
-> > >>>> -       else
-> > >>>> +       else {
-> > >>>> +               /* treat quiet and low power the same for aggregat=
-ion purposes */
-> > >>>> +               if (test_bit(PLATFORM_PROFILE_QUIET, handler->choi=
-ces) &&
-> > >>>> +                   test_bit(PLATFORM_PROFILE_LOW_POWER, aggregate=
-))
-> > >>>> +                       set_bit(PLATFORM_PROFILE_QUIET, aggregate)=
-;
-> > >>>> +               else if (test_bit(PLATFORM_PROFILE_LOW_POWER, hand=
-ler->choices) &&
-> > >>>> +                        test_bit(PLATFORM_PROFILE_QUIET, aggregat=
-e))
-> > >>>> +                       set_bit(PLATFORM_PROFILE_LOW_POWER, aggreg=
-ate);
-> > >>>>                   bitmap_and(aggregate, handler->choices, aggregat=
-e, PLATFORM_PROFILE_LAST);
-> > >>>> +       }
-> > >>>
-> > >>> So you end up showing both? If that's the case, isn't it equivalent=
- to
-> > >>> just make amd-pmf show both quiet and low-power?
-> > >>>
-> > >>> I guess it is not ideal for framework devices. But if asus devices =
-end
-> > >>> up showing both, then it should be ok for framework devices to show
-> > >>> both.
-> > >>>
-> > >>> I like the behavior of the V1 personally.
-> > >>
-> > >> No; this doesn't cause it to show both.  It only causes one to show =
-up.
-> > >
-> > > Which may not be the one that was shown before IIUC and that's not go=
-od.
-> > >
-> > > What actually is the problem with the previous version?
-> >
-> > Functionally?  Nothing.  This was to demonstrate the other way to do it
-> > that I preferred and get feedback on it as an alternative.
-> >
-> > If you and Ilpo are happy with v1 that's totally fine and we can go wit=
-h
-> > that.
->=20
-> I'd prefer to go for the v1 at this point because it fixes a
-> regression affecting user space that needs to be addressed before the
-> 6.14 release (and there is not too much time left) and it has been
-> checked on the affected systems.
->=20
-> Ilpo, do you agree?
->=20
+Running that (^) command before yours gives me this use after free:
 
-Yes, I'm fine with that.
+    BUG: KASAN: slab-use-after-free in vkms_connector_detect+0x61/0x70 [vkms]
 
-I would have acked those patches earlier but noticed they'd managed to in=
-=20
-the meantime come up yet another version of the fix so I waited some more.
-I've added my ack there now.
+Is the same one you are seeing? 
 
---=20
- i.
---8323328-2083532595-1741105319=:931--
+Looking at the connector_release() function in vkms_configfs.c, I see
+that I'm freeing the configuration:
+
+    vkms_config_destroy_connector(connector->config);
+
+And I don't think there is a reason to do it. vkms_config_destroy() in
+device_release() will free everything once we are done.
+
+I need to do more testing, but the solution might be that simple.
+
+Good catch, I didn't test like that and I overlooked this issue :D
+
+Jose
+
+> 
+> 
+> ===== defconfig =====
+> 
+> CONFIG_SYSVIPC=y
+> CONFIG_CGROUPS=y
+> CONFIG_KALLSYMS_ALL=y
+> CONFIG_SMP=y
+> CONFIG_HYPERVISOR_GUEST=y
+> CONFIG_PARAVIRT=y
+> # CONFIG_VIRTUALIZATION is not set
+> CONFIG_JUMP_LABEL=y
+> CONFIG_MODULES=y
+> CONFIG_MODULE_UNLOAD=y
+> CONFIG_NET=y
+> CONFIG_PACKET=y
+> # CONFIG_WIRELESS is not set
+> CONFIG_NET_9P=y
+> CONFIG_NET_9P_VIRTIO=y
+> CONFIG_PCI=y
+> CONFIG_DEVTMPFS=y
+> CONFIG_DEVTMPFS_MOUNT=y
+> CONFIG_VIRTIO_BLK=y
+> # CONFIG_INTEL_MEI is not set
+> CONFIG_NETDEVICES=y
+> CONFIG_VIRTIO_NET=y
+> # CONFIG_ETHERNET is not set
+> # CONFIG_WLAN is not set
+> CONFIG_INPUT_EVDEV=y
+> CONFIG_SERIAL_8250=y
+> CONFIG_SERIAL_8250_CONSOLE=y
+> CONFIG_VIRTIO_CONSOLE=y
+> CONFIG_HW_RANDOM_VIRTIO=m
+> CONFIG_PTP_1588_CLOCK=y
+> # CONFIG_HWMON is not set
+> CONFIG_THERMAL_GOV_USER_SPACE=y
+> CONFIG_DRM=y
+> CONFIG_DRM_KUNIT_TEST=m
+> CONFIG_DRM_VKMS=m
+> CONFIG_DRM_VKMS_KUNIT_TEST=m
+> # CONFIG_USB_SUPPORT is not set
+> CONFIG_VIRTIO_PCI=y
+> CONFIG_VIRTIO_BALLOON=y
+> CONFIG_VIRTIO_INPUT=y
+> CONFIG_VIRTIO_MMIO=y
+> CONFIG_VIRTIO_MMIO_CMDLINE_DEVICES=y
+> # CONFIG_SURFACE_PLATFORMS is not set
+> CONFIG_EXT4_FS=y
+> CONFIG_FUSE_FS=y
+> CONFIG_VIRTIO_FS=y
+> CONFIG_OVERLAY_FS=y
+> CONFIG_TMPFS=y
+> CONFIG_TMPFS_POSIX_ACL=y
+> CONFIG_CONFIGFS_FS=y
+> CONFIG_9P_FS=y
+> CONFIG_CRYPTO=y
+> CONFIG_CRYPTO_CRC32C=y
+> CONFIG_DYNAMIC_DEBUG=y
+> CONFIG_DEBUG_KERNEL=y
+> CONFIG_DEBUG_INFO_DWARF5=y
+> CONFIG_MAGIC_SYSRQ=y
+> CONFIG_DEBUG_FS=y
+> CONFIG_DEBUG_PAGEALLOC=y
+> CONFIG_DEBUG_PAGEALLOC_ENABLE_DEFAULT=y
+> CONFIG_PAGE_POISONING=y
+> CONFIG_DEBUG_OBJECTS=y
+> CONFIG_DEBUG_OBJECTS_RCU_HEAD=y
+> CONFIG_SCHED_STACK_END_CHECK=y
+> CONFIG_KASAN=y
+> CONFIG_KASAN_VMALLOC=y
+> CONFIG_KASAN_EXTRA_INFO=y
+> CONFIG_KFENCE=y
+> # CONFIG_FTRACE is not set
+> CONFIG_UNWINDER_FRAME_POINTER=y
+> CONFIG_KUNIT=y
+> CONFIG_TEST_DYNAMIC_DEBUG=m
+> 
 
