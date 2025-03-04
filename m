@@ -1,80 +1,79 @@
-Return-Path: <linux-kernel+bounces-543496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F42EA4D652
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:28:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FFF8A4D654
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:28:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0810D3AAC34
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:28:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88C2E3AB093
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:28:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AE861FCCF6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A02851FCD18;
 	Tue,  4 Mar 2025 08:27:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Fsy9rOl0";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ezjtBZRl"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="H0CmkhCL";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="6Ua/h/p4"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA0B1FC0F0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 026C01FC0FC;
 	Tue,  4 Mar 2025 08:27:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741076872; cv=none; b=FGqJFarNC5YlkQzFW8FGHkMASMCS9f9Gn5I1fyk6NqxaN0rYNC/khjTXFxIrJnYmMWmJWPMYOOiVgmesYv17BnUq4s72/EoZJUr7aW0ZCovVF/Hadk9GT/Dnt6EhYB9kpLyR6zrLYmR9m00yvsskZNRgXXayp7q38R0lsuEyc3U=
+	t=1741076872; cv=none; b=FBi4HdkpiDtYHykeoc4yRFtcqPwjJTDxBh8yOFRdHxNl35rWD7K5M8Xm9iortxe0wr6z6g1yN/JiL9stESzu5DSmS+TN80so7Q+IPujHe0qALXyYKXHoUNMhcQqHR0WjBXPlgWv75nl4OGjl8eCT8tFdtGSTCK8DAThaCC+CJbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741076872; c=relaxed/simple;
-	bh=rgblLjFwMI1dnb7hFOYpoZ4SIFxFFxEShpbdM+pDgk0=;
+	bh=40dnRwFkElToBr3KaxSa3l1HJIBcpR2X9ZPrRlpgLL8=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=tkyXY8iGqHfPfIi4wrsKxs7oYds3HrNAUSGJ3Ir34WY7R/cPT7BVzTdvomZsu7p+5zCj+MYxI/HhDk2xa6dk/AsbJhhvS33YeuPCGRoVqVbWU7rt5J9jCysA7EwvUqjpMnR1b1MELRgidwPVCPG3POhwwNcqA3DQTOmES5HYkfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Fsy9rOl0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ezjtBZRl; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=MOukvehiHdOXBilplqSNUAPJRLi/C39yDbu56OgVLdySEsDlhP+jAmvWjO2XFTtbdcbyqp2Ug6xIrP5uCXnXBDcsxmDo7XJ8hA7isumwoBc1BTUQr0p2VDFK6SPAsYGbIw/SkV3bLYR9o/cKNUp7RtgMgbpk2gqgnQtjIS2AA10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=H0CmkhCL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=6Ua/h/p4; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 04 Mar 2025 08:27:47 -0000
+Date: Tue, 04 Mar 2025 08:27:48 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741076868;
+	s=2020; t=1741076869;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=gjfR8r3zDfCDQ6HKFdR36c3Dfl5Xmp7rXkT7wSkEm34=;
-	b=Fsy9rOl0nygAseRT8wLxUpvnPMbHTiO2nNf40/FnIKTs6BYWrdDpcF/wiRLfbsNRJe8qSC
-	AaZkRB2k/cspOk9p761DY3DhYcniD4H5AdkGLbchqYRZ6XNfkPL6Hyi//btf0ps5IyAWkU
-	ksYXblOqWzP821z5tEZbIs3pmG71xRMkcwGru1ersrgN7xv5c2tqCdFuFEXfXbRDTufpkF
-	ex+e8nkfzFhuVAQU5/wRC3x99cspLWZzAza4qnYpfyzebFDqHKDfaydqwfsHt8S3+wYYlr
-	oi3XC8TvICV7KMVD71ty5RF/z+vHMb6sRatCsji8qHd03GguUPSflfssszoSFw==
+	bh=boOuo6vup+Ua8N8rJmk7VGRjOZBd09VtnSJoxp+olyc=;
+	b=H0CmkhCLJSJK7YL6svwRJxPdLMvWrJxX7bbTkbq0cicLBAlDmSJEfveWvfIi/fhwySdcqU
+	s9eZIG5r5G0FjmJ5bPXD9FK3JjHmepzj8OjYe+12PsPGFOreNhE7GijahyfLj6yXvFfSi1
+	jVzkFMYzxcWr9VtYNifUl9WsyfzJ+J1U910oo0la+dV4UBQObjSv3TNKH1OslyYY+/FD8N
+	AHQPRy39/qViJhXIlYe6RDfHb6INspftF9BDWJHe4+EGRTsyvKOjM76miaH3XYg5YiTuHk
+	1pvTNz0nmxuLanFCFSoPdW0eVFGcccGnbPJU7ZThXmmOEmgSGgiGX5DJx3CU0A==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741076868;
+	s=2020e; t=1741076869;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=gjfR8r3zDfCDQ6HKFdR36c3Dfl5Xmp7rXkT7wSkEm34=;
-	b=ezjtBZRliieUUpRtRQo3x0q6CPKiVjS1GAxQ5u8Z3ufJIJ2YpB5ZeMG2eNxCbSQg9n2YZ1
-	RgB7SMYjcNCHTUCA==
+	bh=boOuo6vup+Ua8N8rJmk7VGRjOZBd09VtnSJoxp+olyc=;
+	b=6Ua/h/p4G2U97mRzW4R26qJLw06QvG8CtcTUv4vafLXBWJTC8yS58LAuSDn4y8G1WZ3LEf
+	RGtgleS9TT/SWHDg==
 From: "tip-bot2 for Brian Gerst" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/core] x86/softirq: Move softirq_pending to percpu hot section
+Subject: [tip: x86/core] x86/smp: Move cpu number to percpu hot section
 Cc: Brian Gerst <brgerst@gmail.com>, Ingo Molnar <mingo@kernel.org>,
  Uros Bizjak <ubizjak@gmail.com>,
  Linus Torvalds <torvalds@linux-foundation.org>,
  Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20250303165246.2175811-7-brgerst@gmail.com>
-References: <20250303165246.2175811-7-brgerst@gmail.com>
+In-Reply-To: <20250303165246.2175811-5-brgerst@gmail.com>
+References: <20250303165246.2175811-5-brgerst@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174107686744.14745.578494210267739469.tip-bot2@tip-bot2>
+Message-ID: <174107686855.14745.14522514904877739770.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -84,14 +83,14 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the x86/core branch of tip:
 
-Commit-ID:     d24ec21858c6cd17c7a46222d92b06644f69b12e
-Gitweb:        https://git.kernel.org/tip/d24ec21858c6cd17c7a46222d92b06644f69b12e
+Commit-ID:     d9d755ec42d0aca4796cdcbc2177ca6844867e99
+Gitweb:        https://git.kernel.org/tip/d9d755ec42d0aca4796cdcbc2177ca6844867e99
 Author:        Brian Gerst <brgerst@gmail.com>
-AuthorDate:    Mon, 03 Mar 2025 11:52:41 -05:00
+AuthorDate:    Mon, 03 Mar 2025 11:52:39 -05:00
 Committer:     Ingo Molnar <mingo@kernel.org>
 CommitterDate: Mon, 03 Mar 2025 21:37:41 +01:00
 
-x86/softirq: Move softirq_pending to percpu hot section
+x86/smp: Move cpu number to percpu hot section
 
 No functional change.
 
@@ -100,59 +99,91 @@ Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Acked-by: Uros Bizjak <ubizjak@gmail.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: https://lore.kernel.org/r/20250303165246.2175811-7-brgerst@gmail.com
+Link: https://lore.kernel.org/r/20250303165246.2175811-5-brgerst@gmail.com
 ---
  arch/x86/include/asm/current.h | 1 -
- arch/x86/include/asm/hardirq.h | 4 ++--
- arch/x86/kernel/irq.c          | 3 +++
- 3 files changed, 5 insertions(+), 3 deletions(-)
+ arch/x86/include/asm/smp.h     | 7 ++++---
+ arch/x86/kernel/setup_percpu.c | 5 ++++-
+ kernel/bpf/verifier.c          | 4 ++--
+ 4 files changed, 10 insertions(+), 7 deletions(-)
 
 diff --git a/arch/x86/include/asm/current.h b/arch/x86/include/asm/current.h
-index 8ba2c0f..f153c77 100644
+index 46a736d..f988462 100644
 --- a/arch/x86/include/asm/current.h
 +++ b/arch/x86/include/asm/current.h
-@@ -16,7 +16,6 @@ struct pcpu_hot {
+@@ -14,7 +14,6 @@ struct task_struct;
+ 
+ struct pcpu_hot {
  	struct task_struct	*current_task;
- 	unsigned long		top_of_stack;
- 	void			*hardirq_stack_ptr;
--	u16			softirq_pending;
- #ifdef CONFIG_X86_64
- 	bool			hardirq_stack_inuse;
- #else
-diff --git a/arch/x86/include/asm/hardirq.h b/arch/x86/include/asm/hardirq.h
-index 6ffa8b7..f00c09f 100644
---- a/arch/x86/include/asm/hardirq.h
-+++ b/arch/x86/include/asm/hardirq.h
-@@ -3,7 +3,6 @@
- #define _ASM_X86_HARDIRQ_H
+-	int			cpu_number;
+ #ifdef CONFIG_MITIGATION_CALL_DEPTH_TRACKING
+ 	u64			call_depth;
+ #endif
+diff --git a/arch/x86/include/asm/smp.h b/arch/x86/include/asm/smp.h
+index 4da927e..d20a9cc 100644
+--- a/arch/x86/include/asm/smp.h
++++ b/arch/x86/include/asm/smp.h
+@@ -6,7 +6,8 @@
+ #include <linux/thread_info.h>
  
- #include <linux/threads.h>
+ #include <asm/cpumask.h>
 -#include <asm/current.h>
- 
- typedef struct {
- #if IS_ENABLED(CONFIG_KVM_INTEL)
-@@ -66,7 +65,8 @@ extern u64 arch_irq_stat_cpu(unsigned int cpu);
- extern u64 arch_irq_stat(void);
- #define arch_irq_stat		arch_irq_stat
- 
--#define local_softirq_pending_ref       pcpu_hot.softirq_pending
-+DECLARE_PER_CPU_CACHE_HOT(u16, __softirq_pending);
-+#define local_softirq_pending_ref       __softirq_pending
- 
- #if IS_ENABLED(CONFIG_KVM_INTEL)
- /*
-diff --git a/arch/x86/kernel/irq.c b/arch/x86/kernel/irq.c
-index feca4f2..83a5252 100644
---- a/arch/x86/kernel/irq.c
-+++ b/arch/x86/kernel/irq.c
-@@ -33,6 +33,9 @@
- DEFINE_PER_CPU_SHARED_ALIGNED(irq_cpustat_t, irq_stat);
- EXPORT_PER_CPU_SYMBOL(irq_stat);
- 
-+DEFINE_PER_CPU_CACHE_HOT(u16, __softirq_pending);
-+EXPORT_PER_CPU_SYMBOL(__softirq_pending);
 +
- atomic_t irq_err_count;
++DECLARE_PER_CPU_CACHE_HOT(int, cpu_number);
  
- /*
+ DECLARE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_sibling_map);
+ DECLARE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_core_map);
+@@ -134,8 +135,8 @@ __visible void smp_call_function_single_interrupt(struct pt_regs *r);
+  * This function is needed by all SMP systems. It must _always_ be valid
+  * from the initial startup.
+  */
+-#define raw_smp_processor_id()  this_cpu_read(pcpu_hot.cpu_number)
+-#define __smp_processor_id() __this_cpu_read(pcpu_hot.cpu_number)
++#define raw_smp_processor_id()  this_cpu_read(cpu_number)
++#define __smp_processor_id() __this_cpu_read(cpu_number)
+ 
+ static inline struct cpumask *cpu_llc_shared_mask(int cpu)
+ {
+diff --git a/arch/x86/kernel/setup_percpu.c b/arch/x86/kernel/setup_percpu.c
+index 1e7be94..175afc3 100644
+--- a/arch/x86/kernel/setup_percpu.c
++++ b/arch/x86/kernel/setup_percpu.c
+@@ -23,6 +23,9 @@
+ #include <asm/cpumask.h>
+ #include <asm/cpu.h>
+ 
++DEFINE_PER_CPU_CACHE_HOT(int, cpu_number);
++EXPORT_PER_CPU_SYMBOL(cpu_number);
++
+ DEFINE_PER_CPU_READ_MOSTLY(unsigned long, this_cpu_off);
+ EXPORT_PER_CPU_SYMBOL(this_cpu_off);
+ 
+@@ -161,7 +164,7 @@ void __init setup_per_cpu_areas(void)
+ 	for_each_possible_cpu(cpu) {
+ 		per_cpu_offset(cpu) = delta + pcpu_unit_offsets[cpu];
+ 		per_cpu(this_cpu_off, cpu) = per_cpu_offset(cpu);
+-		per_cpu(pcpu_hot.cpu_number, cpu) = cpu;
++		per_cpu(cpu_number, cpu) = cpu;
+ 		setup_percpu_segment(cpu);
+ 		/*
+ 		 * Copy data used in early init routines from the
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index f485951..6e604ca 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -21702,12 +21702,12 @@ patch_map_ops_generic:
+ 		if (insn->imm == BPF_FUNC_get_smp_processor_id &&
+ 		    verifier_inlines_helper_call(env, insn->imm)) {
+ 			/* BPF_FUNC_get_smp_processor_id inlining is an
+-			 * optimization, so if pcpu_hot.cpu_number is ever
++			 * optimization, so if cpu_number is ever
+ 			 * changed in some incompatible and hard to support
+ 			 * way, it's fine to back out this inlining logic
+ 			 */
+ #ifdef CONFIG_SMP
+-			insn_buf[0] = BPF_MOV64_IMM(BPF_REG_0, (u32)(unsigned long)&pcpu_hot.cpu_number);
++			insn_buf[0] = BPF_MOV64_IMM(BPF_REG_0, (u32)(unsigned long)&cpu_number);
+ 			insn_buf[1] = BPF_MOV64_PERCPU_REG(BPF_REG_0, BPF_REG_0);
+ 			insn_buf[2] = BPF_LDX_MEM(BPF_W, BPF_REG_0, BPF_REG_0, 0);
+ 			cnt = 3;
 
