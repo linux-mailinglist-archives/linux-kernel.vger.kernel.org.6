@@ -1,124 +1,161 @@
-Return-Path: <linux-kernel+bounces-544268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7238A4DF80
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:42:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14BAEA4DF82
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:42:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87168178822
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:42:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66B5C3A8222
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:42:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEED42045AB;
-	Tue,  4 Mar 2025 13:42:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAD9720468F;
+	Tue,  4 Mar 2025 13:42:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="AavPMQOw"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="j74GWCPR";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="kbWyiGTU";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="j74GWCPR";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="kbWyiGTU"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DF14204595
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 13:41:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BEBC1F5845
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 13:42:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741095720; cv=none; b=XwNTa6+7TX40EOJ771tJgdRqv38QFL9YSQw4pwrtU5MB0RrCC5wj+v1zCfsm0VarPRP+amV/y7+J9XubwBU9F21GioUthlXeitN4Q4WvF20j2QXGr+y+yjIAPQd1aq/lO9X+LtMkPv3NFbYtLI47JAjErx5/IlB+gbmvYpxIzg8=
+	t=1741095735; cv=none; b=j0yJJjRs7TIZ0t1f1u3gZE0Z1Fj2Z46ndfeINNx9HxYn7D1N+cK1f++Bu18wIcxI0yWOjjts7Fv+FPuBiVaBqiBDJafj/FbfPwiFKQyOqn1wWzkxsaty3oBRy391Q9hRypYvzcmrYvNU98FwfHI57fGOhlIEtqTNfhWk7YWSJYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741095720; c=relaxed/simple;
-	bh=qFAVCBevFGrjOj+GP0A7nWL93SYZC/TKlKr5cimR+r0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pZCtMuyn4IETKurFoNJti/V7GYkmk8JnxPlcy7kdkhddAcoO48Q8CK3nKvZIAIrynNe1bR1yiZX02j8XwPu5xcFHcIUZmbXPUerMNNJfV9QCTJPPv8afK14lWwl3TUGIdokV0MIT+VJRDh8eAYuSiPmr7W93Jcwchx8ylWhE6gU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=AavPMQOw; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43690d4605dso36581105e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 05:41:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1741095717; x=1741700517; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wn5SBFVn5PTSiaQDxaLMYYp6enRvlaDi4aBmx/czMD8=;
-        b=AavPMQOwzjKp8aF7djZ77v+CZrKJyTsJLBIbWErcwyXDzCpnXraq1MuJ7bcNrvNLiq
-         7Y/s/9XPeVnYDRtqTHUH5ZN+iarUabzudqUtOzTL1c6VCmPrMtJZxe0IhfPqRJBJCadP
-         TmkhiDrwVfHEGnQNJAXVgtka+/DIt6LOmr8uZRYpp1mmO+6ErBVL5wDGsKwax6X7Pohb
-         MKTCAsa7LKR//vyiL9mbiCvMGLIj5+++cD00a7GNRTvNfc53k8e96dG+Iv2no1FTAHM8
-         54/wQ/9pqxvu1k9yTZ85OGI4lw5QAyL9Unddh2H5b5NNE87RWh6g8q7AD+AjPW4Xe0tV
-         FD/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741095717; x=1741700517;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wn5SBFVn5PTSiaQDxaLMYYp6enRvlaDi4aBmx/czMD8=;
-        b=dUEyd15Zd6I0v2R1BrdoXYwggvmNJOaej8cTqD6pRCs/C89l7gDw2JmfSufKZW10kM
-         l8wW9n4o9iharZOLeLw7LT6nRxyjB1YhEhycfIRYdN6FAVRnZkCtDh0TRSbax/4iLvuH
-         NSoJJDay2Xe+ZdA5TpDjG64twmj7gMPc+pspyxbtuAAtKXbNizxx2P02UxKwK3T3NS06
-         583MZZ3zQ9q7dhAZSkCSJcYwuvFtIZDU7JgIiWbTa1y8ZUrhtmfTGmPpZb+FLCGH3FCA
-         vAzEHCWAbBmo0HU2XxzwA/b0C8Yncp0YFWyew2SfoQYRg6im0x5Vfb4d6iJD3Du4TBd/
-         KAQA==
-X-Forwarded-Encrypted: i=1; AJvYcCVc5IRNs8XT8x/zQwiUnP8E2Gn5MLB4dOVB+Kyes39faUnniKZrKP477/uq+T/mfy9TVlx+eJl2b91hweA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYqC+9jazEEz3JiS1lqUqbz15/aWXlay8jxF9qAxX1EZR0TIE3
-	D7aEyMdqV23Smk98nRhSHWLVqjWFnJWjDBwSgiNC/wSHFSwdWh+DGpzjrH1czCU=
-X-Gm-Gg: ASbGncvtXM6y5TtGmFz4DXAMtLn7qlydBi7eHAIITuteTX+rriiv54zUrnb6pCGB1j7
-	AtB8NjGlnCRp1kHDS7Gla3ogm2M5gGO+b+to1KR3Gqt6/xtG9ch4fB2pdPwJ8SzXSVH5E5hV2ye
-	qyEvbwbtPf10cfoPSuv1P7BZOh+vs6LOmRqyJl2N81IwDwYF7GPZGn3UjCItOE2KUQhMDj3uLGe
-	jnYo0BoZseP3/4MA2EJ76sjDXcfolbD3FsCnCqXMnnC0iNm9FEvv827z9mVnF0e1WLoBa3Nu9rI
-	ffk/oj3NqHfwJRTq7e1/7aEsdusZ/FDjm2SzZ+1170zg
-X-Google-Smtp-Source: AGHT+IEzx61klxYJlpUbSKy+UGvqsAxGMbWClRABkjxJDKokk/7WG0skF6SLttB9UBlBKQ2l2Z+X9w==
-X-Received: by 2002:a5d:598c:0:b0:390:f0ff:2c1c with SMTP id ffacd0b85a97d-390f0ff3109mr13702639f8f.18.1741095716807;
-        Tue, 04 Mar 2025 05:41:56 -0800 (PST)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:6018:7257:350d:e85e])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b7dcfsm17982026f8f.55.2025.03.04.05.41.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 05:41:56 -0800 (PST)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: linux-gpio@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Mika Westerberg <westeri@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Kent Gibson <warthog618@gmail.com>
-Subject: Re: (subset) [PATCH v1 0/3] gpiolib: Reduce 'gpio' namespace when operate over GPIOd
-Date: Tue,  4 Mar 2025 14:41:55 +0100
-Message-ID: <174109571262.102031.5467613849616675528.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250303160341.1322640-1-andriy.shevchenko@linux.intel.com>
-References: <20250303160341.1322640-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1741095735; c=relaxed/simple;
+	bh=UKqD0GvTjTS5WLgbUwb8EpI54GC7Klx6kteW/PeGvcQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iaihnYr+yE/vy/+/0J6skNkWrGeXacp10d1qUTXT955yyNFLvrH67qPcSy43FXQ/5+qZXXkGxEI1xX3wp73icISLycUVMJAXXs+ye7WovrqvblxnkDZq0TjhfkqV64PnkRU1/nXT8ILydgX3hYjX7bHbenZXWW0vn2LehZx8qFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=j74GWCPR; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=kbWyiGTU; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=j74GWCPR; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=kbWyiGTU; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id C87F71F74C;
+	Tue,  4 Mar 2025 13:42:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1741095731; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=nyc6J/gksMhLhuBouY5xml3nE5EEMor2jUfF0ZTd8DU=;
+	b=j74GWCPRpYz4zVw2x8/0H9aqWSI25IIQFAnNLLlx2WvUQlTz5Ds14UCSt3IHqvvpqKrkeI
+	B7kyL+eUFn94wRmVqdREAMQBekAYKAzQiirg1cpfNGI00qBpU/ien359JBdu2BnsPwYi3u
+	kKKyjGEehyTM2VVx0eiSc4piyoK2AZs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1741095731;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=nyc6J/gksMhLhuBouY5xml3nE5EEMor2jUfF0ZTd8DU=;
+	b=kbWyiGTU6+GQhDxR3HzAaJMzkDtXYNKGC5u1G3Si5DAnCVDqB2THNdevcJk6hI/ltfxMrT
+	moihjhh498C+XjBA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1741095731; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=nyc6J/gksMhLhuBouY5xml3nE5EEMor2jUfF0ZTd8DU=;
+	b=j74GWCPRpYz4zVw2x8/0H9aqWSI25IIQFAnNLLlx2WvUQlTz5Ds14UCSt3IHqvvpqKrkeI
+	B7kyL+eUFn94wRmVqdREAMQBekAYKAzQiirg1cpfNGI00qBpU/ien359JBdu2BnsPwYi3u
+	kKKyjGEehyTM2VVx0eiSc4piyoK2AZs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1741095731;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=nyc6J/gksMhLhuBouY5xml3nE5EEMor2jUfF0ZTd8DU=;
+	b=kbWyiGTU6+GQhDxR3HzAaJMzkDtXYNKGC5u1G3Si5DAnCVDqB2THNdevcJk6hI/ltfxMrT
+	moihjhh498C+XjBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A9D5E13967;
+	Tue,  4 Mar 2025 13:42:11 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id LmDXKDMDx2eNIgAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Tue, 04 Mar 2025 13:42:11 +0000
+From: Takashi Iwai <tiwai@suse.de>
+To: Gerd Hoffmann <kraxel@redhat.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	virtualization@lists.linux.dev,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/bochs: Fix DPMS regression
+Date: Tue,  4 Mar 2025 14:41:57 +0100
+Message-ID: <20250304134203.20534-1-tiwai@suse.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.de:mid,suse.com:url];
+	RCVD_TLS_ALL(0.00)[]
+X-Spam-Score: -2.80
+X-Spam-Flag: NO
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+The recent rewrite with the use of regular atomic helpers broke the
+DPMS unblanking on X11.  Fix it by moving the call of
+bochs_hw_blank(false) from CRTC mode_set_nofb() to atomic_enable().
 
+Fixes: 2037174993c8 ("drm/bochs: Use regular atomic helpers")
+Link: https://bugzilla.suse.com/show_bug.cgi?id=1238209
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+---
+ drivers/gpu/drm/tiny/bochs.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-On Mon, 03 Mar 2025 18:00:31 +0200, Andy Shevchenko wrote:
-> In order to reduce the 'gpio' namespace when operate over GPIO descriptor
-> rename a couple of functions.
-> 
-> The choice of the name in patch 2 is inspired by the existing
-> gpio_do_set_config() versus gpiod_set_config(). The patch 3
-> also fixes it to be gpiod_do_set_config(), so we establish
-> two namespaces here:
-> - gpiod_do_foo() for the internal APIs
-> - gpiod_foo() for the external APIs
-> for whatever foo that makes sense.
-> 
-> [...]
-
-Applied, thanks!
-
-[1/3] gpiolib: Align FLAG_* definitions in the struct gpio_desc
-      commit: a45faa2aba2cb2b12ad4c732c9f5692db1f7f12f
-
-Best regards,
+diff --git a/drivers/gpu/drm/tiny/bochs.c b/drivers/gpu/drm/tiny/bochs.c
+index 76e29950a807..c1c7d6c9e85f 100644
+--- a/drivers/gpu/drm/tiny/bochs.c
++++ b/drivers/gpu/drm/tiny/bochs.c
+@@ -323,8 +323,6 @@ static void bochs_hw_setmode(struct bochs_device *bochs, struct drm_display_mode
+ 			 bochs->xres, bochs->yres, bochs->bpp,
+ 			 bochs->yres_virtual);
+ 
+-	bochs_hw_blank(bochs, false);
+-
+ 	bochs_dispi_write(bochs, VBE_DISPI_INDEX_ENABLE,      0);
+ 	bochs_dispi_write(bochs, VBE_DISPI_INDEX_BPP,         bochs->bpp);
+ 	bochs_dispi_write(bochs, VBE_DISPI_INDEX_XRES,        bochs->xres);
+@@ -494,6 +492,9 @@ static int bochs_crtc_helper_atomic_check(struct drm_crtc *crtc,
+ static void bochs_crtc_helper_atomic_enable(struct drm_crtc *crtc,
+ 					    struct drm_atomic_state *state)
+ {
++	struct bochs_device *bochs = to_bochs_device(crtc->dev);
++
++	bochs_hw_blank(bochs, false);
+ }
+ 
+ static void bochs_crtc_helper_atomic_disable(struct drm_crtc *crtc,
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+2.43.0
+
 
