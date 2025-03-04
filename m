@@ -1,138 +1,137 @@
-Return-Path: <linux-kernel+bounces-545654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B301A4EFB0
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:58:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5529A4EFA7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:57:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 185751891B17
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:58:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16D961891A9F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:57:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6894C27811B;
-	Tue,  4 Mar 2025 21:57:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B9272780E6;
+	Tue,  4 Mar 2025 21:57:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CPGaYX0+"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="bkaC8UBe"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628301DB125;
-	Tue,  4 Mar 2025 21:57:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A00260384
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 21:57:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741125478; cv=none; b=ToUVmkempuGMEeTTYZ8BUE/MHPXvjYVcI6f0g59ATbYG6eDlcKgkFaQZ02ipUpefOmb/Bpo8rPmgQSkJC3g4UkSmLEcCXy93u/GF1vZoKpCM4o9bZvmZ+coSq+a0U1TYVYEGY1HG7nxjvlhRInJd7OpdcoTAPgMNVAJPKw6GqAo=
+	t=1741125457; cv=none; b=aDoAr2Usx1FZ5P9P02+D9ORFpo6g4Hb8NpsbPwzuXkZJVqkdVVXV639lVjZqQ87cxf86vliE6Zc6CbFDWJy4OybhdWIzEDTsrBy3JXL2uuj1CHLHJ0UE+93RgaONmRQi2TVQXA625IDrGWSI6PbJ+cw53JDBhPZFYVadmp3sF24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741125478; c=relaxed/simple;
-	bh=9DmVicPrlTPOcpmBQU75aKufZtlbrj8uKOaGgQZBasU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=Ui+r+OqZEWqQOLBmbfVuYeWz8TTfR5NXsmfFVUXZbhN01mbJOingn7Iai1xIWG8smIhdUFOJd93yXjnXdFcLd6zgii8bliDwV1W4AljWxs2aAI9SK6BIP+0r/NggJxZcgcI4AGUTLs2dlWpuwZyDDcXByZ8Zg+oIix/Hqid+Hnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CPGaYX0+; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 524Lk9vV025636;
-	Tue, 4 Mar 2025 21:57:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	TdMlUGUbtEgwTwa+QYeh/PtyBSFF35IMj3odV52+M4g=; b=CPGaYX0+gKrVCsF/
-	nanMRQud0tZZl2sBZS8wE772CsPrhgkDk2Xfys27Hl/2T7BkFNb9SQ00SNd78mS/
-	GEFeJJqP3jEa7YsAJEYPk//PiR36mz1du/Tqt/C3y9msJEYHORSORcuLmUrvvF47
-	Z9Zmes6eF7vF/zZBTBHvdwi1YTLByAvoOUKbjjY56xu65il8o0wvE703bhLDoKPq
-	yQltCas2pDwsM9dgh9CTGZsvC5Lg2QRKMOaFORo88ZpVH+swutx0OJHgzHAlMK4y
-	UJ4XVcu2r6qVFh40IjOkhzvIVBCD6SfhWVQFzROoL4uDcRR5pbD9qY1aZoWgwBty
-	X28Wog==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 455p6vb8q9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Mar 2025 21:57:42 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 524LvfHe022663
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 4 Mar 2025 21:57:41 GMT
-Received: from hu-molvera-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 4 Mar 2025 13:57:40 -0800
-From: Melody Olvera <quic_molvera@quicinc.com>
-Date: Tue, 4 Mar 2025 13:56:42 -0800
-Subject: [PATCH v2 9/9] arm64: defconfig: Add M31 eUSB2 PHY config
+	s=arc-20240116; t=1741125457; c=relaxed/simple;
+	bh=KzrIAcArmLOe3V1Ys+bs9y+LLe/XSWtbLOyhy2D+VqU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VyjI2U8azK8rpxcnPCsMi3YypoWAfHnt3nbjItni04Eb/8XFwWgR+6bKnajx/h4AfxIrIRYzwxNkMWhp80UMJYWWW/bkxMDner+CRLtpRMaT7ZvAgKeFtXZS6VNzu8DbM0oFuObF2mnomN4zJC3a0txseX9pF7my6jwXoHjWJMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=bkaC8UBe; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e549be93d5eso6648873276.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 13:57:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1741125455; x=1741730255; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fsnikvCe3hOdMVeN/xhtWmCodnyXPzUwaCFk12jXD3E=;
+        b=bkaC8UBeyV+6iTNhL7uDElTcS3201kHiMWEc1FMXzAdwMNkWYZLkHnogppVerOK81m
+         KLnoNDjYnE4rxQcyVsT/eXRXn/D9K9f2lviEodsQONjWgzj5v2JuxLYVVynRE4yEOEva
+         oiuRX7Wjl/dQ1+2v3UY7aNVL7emIikrFe161NQ5pDaD+LQ3geLqH1pJEQPmmk3nLa9i3
+         n3gS2N4e0zZr/hU1Z+dbHVEGxsPBoWusQCj0wHXIdcLVjtmmx4kDTdCQKYvUbhCYn9Gr
+         vi7ron7PpGnarKkLs+AQxaMLnckOV+Fey+ahHq0LqKistGoO46PMeaI8rT3IRG1tqE/G
+         lIow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741125455; x=1741730255;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fsnikvCe3hOdMVeN/xhtWmCodnyXPzUwaCFk12jXD3E=;
+        b=jhAJBv4y6QjjqV+sxav/A38zIQUQTK6SnnNMpJ/aWzRPsI1ptnNzvR/+qMhkJprW9+
+         XBVoY3RWzta1VYrXhOEjsmG+TMJfpaFPKQlfjRTXIV8sDdTZk1YXnMxyLpLyV0/XWpr4
+         E5od5/GjfhKWSoj6+EIHcGlqhvo90Lz0Uj84hnQgKUTABVF1t7g+XYfn2JrbqyxW7R6m
+         JFIoceX0FSgr737CbqV6CI7+uJ8n/J03sW5yqAWOgUfYnhu1XxX5+o/ziK67eMlGft0U
+         cRWU1kY4rFXVIJIXPyV4gvoM8s15LaF14BtIC8Ozh/SHbYwScSPvESlWmwjqXg0Edqd2
+         t1Ew==
+X-Forwarded-Encrypted: i=1; AJvYcCWaDXL7kKp7u2k3wuwLlbmbnPEpIoq6sgmNThgDzrkKJ1MmL5Fx2k5VDl0H1PQLQbRonRXuEAd0/hjHIOU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEoDbM3IFpgx7kzV3i1cLFxCj/CjdebarZjB7a9cBAPEX+Q18o
+	HBP5gXq3HS1E8JKPxRgpdQho0hSXsSQwDdL/xddJMiPM+4wnUeqsGq+PCmlp6vWZyU9Vv5/YFI9
+	G1Zq0s2viRz/bBxWjNJCQ+gEBv+YDSSJRpZOr
+X-Gm-Gg: ASbGncsk6uR11M1hlum4dfvoZqPGuFc9ZWzKeMJSPd0lRZWq/8N9aW35O4dcisWmt8/
+	UGUFfsexjU/dYBq0yF8rgXdWH9Y7eclUMsAABOyw0ltbxQz1pj7+OSXBB7zC/AsqWD2TwYIJHMx
+	5qVsIJZuxMVJjLCtcIXsORue4Omw==
+X-Google-Smtp-Source: AGHT+IHTuaql6CxX9+oW0vQt7zfON8FgK8oPO4Dgi10jT0f1C5KKKb1wciqXNbcYDDrBoPtRQrQnfcYSdkhYI8GxvnU=
+X-Received: by 2002:a05:6902:100f:b0:e5d:ae04:1e33 with SMTP id
+ 3f1490d57ef6-e611e18dd27mr1373344276.5.1741125454946; Tue, 04 Mar 2025
+ 13:57:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250304-sm8750_usb_master-v2-9-a698a2e68e06@quicinc.com>
-References: <20250304-sm8750_usb_master-v2-0-a698a2e68e06@quicinc.com>
-In-Reply-To: <20250304-sm8750_usb_master-v2-0-a698a2e68e06@quicinc.com>
-To: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Wesley Cheng <quic_wcheng@quicinc.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philipp Zabel
-	<p.zabel@pengutronix.de>,
-        Bjorn Andersson <andersson@kernel.org>,
-        "Konrad
- Dybcio" <konradybcio@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        "Melody
- Olvera" <quic_molvera@quicinc.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741125455; l=712;
- i=quic_molvera@quicinc.com; s=20241204; h=from:subject:message-id;
- bh=9DmVicPrlTPOcpmBQU75aKufZtlbrj8uKOaGgQZBasU=;
- b=riWdijZkG8UDSq68rGABHp7R5veaXARMgSeIHrMtf89tRjOhb7fwYjP22OSDdI0SmsqgS80ZC
- fiGZ2RMCxJFCer8vDnzNE2qEl1XETtHesRX5Bhr5tLqUh7PSb1QERxq
-X-Developer-Key: i=quic_molvera@quicinc.com; a=ed25519;
- pk=1DGLp3zVYsHAWipMaNZZTHR321e8xK52C9vuAoeca5c=
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: sHyA-6889VbNNDUFWFniAId-wV9Nu8qQ
-X-Authority-Analysis: v=2.4 cv=bPnsIO+Z c=1 sm=1 tr=0 ts=67c77756 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=3H110R4YSZwA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=75KNVkkY0apcGqszbmoA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: sHyA-6889VbNNDUFWFniAId-wV9Nu8qQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-04_09,2025-03-04_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- impostorscore=0 lowpriorityscore=0 priorityscore=1501 adultscore=0
- spamscore=0 mlxscore=0 clxscore=1011 bulkscore=0 mlxlogscore=604
- phishscore=0 classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2503040175
+References: <20250303-inline-securityctx-v1-1-fb7b9b641fdf@google.com>
+ <CAHC9VhSo3aGsJVd=a3MTeakgU66oTN86oh5sZE8P4ghSk8Rx2g@mail.gmail.com> <CANiq72=n_cGmrb6+6CH1AbGePy5dRMMFyzAFv6O1VEp8EgKR8w@mail.gmail.com>
+In-Reply-To: <CANiq72=n_cGmrb6+6CH1AbGePy5dRMMFyzAFv6O1VEp8EgKR8w@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 4 Mar 2025 16:57:24 -0500
+X-Gm-Features: AQ5f1JonifUOcpqfOyjEvG2iJEgbZmlcgciRANX9bY2EJ9_XOLCe5zh-YKF7hu8
+Message-ID: <CAHC9VhT3DqOeYbC+GCQRgH3NNUiOk6Sh=6fzsFaiHk2LEFbi2g@mail.gmail.com>
+Subject: Re: [PATCH] lsm: rust: mark SecurityCtx methods inline
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add configs for the M31 eUSB2 PHY for SM8750 USB.
+On Mon, Mar 3, 2025 at 7:04=E2=80=AFPM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+> On Mon, Mar 3, 2025 at 11:55=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
+wrote:
+> >
+> > Beyond those nitpicks, this looks okay to me based on my *extremely*
+> > limited Rust knowledge.  With the minor requested changes in place,
+> > would you prefer me to take this via the LSM tree, or would you prefer
+> > it to go up to Linus via a more Rust-y tree?
+>
+> In general, if a subsystem is willing to take Rust-related patches
+> through their tree, that is the ideal scenario! So please definitely
+> feel free to pick it up on your side (and thanks!); otherwise, I can
+> pick it up with your Acked-by.
+>
+> Some days ago I wrote a summary of the usual discussion we have around
+> this (copy-pasting here for convenience) ...
 
-Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Hi Miguel,
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 3a3706db29822036d25a7228f8936e2ad613b208..7a7187475a11206e708a5a2c6dd51736e16932e9 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1587,6 +1587,7 @@ CONFIG_PHY_QCOM_QUSB2=m
- CONFIG_PHY_QCOM_SNPS_EUSB2=m
- CONFIG_PHY_QCOM_EUSB2_REPEATER=m
- CONFIG_PHY_QCOM_M31_USB=m
-+CONFIG_PHY_QCOM_M31_EUSB=m
- CONFIG_PHY_QCOM_USB_HS=m
- CONFIG_PHY_QCOM_USB_SNPS_FEMTO_V2=m
- CONFIG_PHY_QCOM_USB_HS_28NM=m
+Thanks.  Yes, I've seen the summary and the recent threads around Rust
+in the Linux kernel.  I don't want to drag all of that up here, but I
+will simply say that from the perspective of the LSM framework we're
+happy to work with the Rust devs to ensure that the LSM framework is
+well supported with Rust bindings.  However, I will add that my own
+Rust related efforts are going to be very limited as my understanding
+of Rust is still frustratingly low; until that improves I'll be
+reliant on others like Alice and you to submit patches for
+discussion/acceptance when there are issues.  Thankfully that has
+proven to work fairly well over the past few months and I would like
+to see that continue.
 
--- 
-2.46.1
+As far as the mechanics of which tree to merge code, I'll probably
+continue to ask in most cases simply so we are all clear on where the
+patches will land and how they get up to Linus.  From my perspective
+there is no harm in asking, and I *really* want to encourage
+cross-subsystem communication as much as I can; I've been seeing an
+increasing trend towards compartmentalization across subsystems and I
+believe the best way to push back against that is to talk a bit more,
+even if it is just a mundane "my tree or yours?".
 
+--=20
+paul-moore.com
 
