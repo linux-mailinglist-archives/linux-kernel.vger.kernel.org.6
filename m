@@ -1,252 +1,146 @@
-Return-Path: <linux-kernel+bounces-544586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E684DA4E2FD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:23:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B26F8A4E2BF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:17:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72FF8881063
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:12:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FAC318835D5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:10:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A493C284B28;
-	Tue,  4 Mar 2025 15:05:26 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B82280A50
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056252862B5;
+	Tue,  4 Mar 2025 15:05:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AUAQLQPs"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80E2A25DB16
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:04:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741100726; cv=none; b=qZYoeArBfcbDG2hTbNqOCE+4M/s3HEGNxVAt07yxq9WlyiY8cfZ9J+VE/VuWzpdghhAXT29PhPmr5DsQxV0bP8mbO8E2DAeKS1PyKHMM/daWh+maQOp83IzWy27iGvKumJWWOxUW6vpY16qXi+Pg2Cm7VqwQnsjpL8tPPjKu2QM=
+	t=1741100701; cv=none; b=L36i5c9Y4BsOSgnHr84Jk4r3DKmRlZQQg+/wV+pglmPE9jP5+s8AqTMpK7bg+AluJ4FZfZjuogKgVJl3g0vQ4OzxFvHu4C/41geZuxPKATXdEL0mepQRHMbiKPz8lxyHbrpkRgfrVd9tmYVBUsik/Qey86N1qWqJeibXk/bo+5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741100726; c=relaxed/simple;
-	bh=benDfPhGkkShHApkNrKfumVgP/OOwfTmL67CJlV5DcU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OvIzxu1xQUvGtYIN69ABUtdfCeSqIoerzX7QvSC2ZxaZS8IiRupVphwQL+k60h/ul5cl9ii8kLyx0EF3PG+9VPA+e+Q8p6q+CpmwhEMkVShQYkqGW+RSmb8lMExeSfnany/H68jgCKkYzcOqrvCvihzIm/6CU+d+xX6p4++VwCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3E5CF1C25;
-	Tue,  4 Mar 2025 07:05:32 -0800 (PST)
-Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ACF063F66E;
-	Tue,  4 Mar 2025 07:05:16 -0800 (PST)
-From: Ryan Roberts <ryan.roberts@arm.com>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	David Hildenbrand <david@redhat.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Kevin Brodsky <kevin.brodsky@arm.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 11/11] arm64/mm: Batch barriers when updating kernel mappings
-Date: Tue,  4 Mar 2025 15:04:41 +0000
-Message-ID: <20250304150444.3788920-12-ryan.roberts@arm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250304150444.3788920-1-ryan.roberts@arm.com>
-References: <20250304150444.3788920-1-ryan.roberts@arm.com>
+	s=arc-20240116; t=1741100701; c=relaxed/simple;
+	bh=yy7TjOny+SHFDuA0DiXOqVBMP22iyf/J8Yd3sP3lIXk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bGQVVeZEqEIZDRy3STzZv7BSZIKdfR/QcsUaFB947pWBxJptSiuF6SuoRTlS0KMyUb1HVAmDYwgmcU08wn2b0XE4/lcIByqSxsmrIQVAP/OUyedVBxZspK7LQCcUTsfRoFnl4HCX4oNo0EO3+l8FDqkAk+OFiO4K5Y2NgQK833Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AUAQLQPs; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2ff187f027fso3503084a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 07:04:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741100697; x=1741705497; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=7wLAYT8VOg5n+EhJivIskvTTTLfV5w4lbqOOhOs3qFM=;
+        b=AUAQLQPsBTfBGY5+0EzU2IQuyFCTSn1vB9rR/lag1UmEqOCyxjgiahWpQntW6vzIb7
+         3tfb9uXRf4wUrQbSZWzjH+wZeeZb1aowS7iaACjauE8p3muRGEnDHo4Co1Nho53U7K5i
+         YsFbVVSWq3181qMlMwGaoDPVVSu+f/CiUocq5e1YAObUWX9eooRjLDaLkwoF22spH+Hs
+         VXap+aj5Ed9V0B7MzsBvcPKWRc0UT0fAMkld8qF+is+nNgs8BDSwingAI5gJioxga41y
+         dXSIzz75TbTJbbNJ99YtEDYvZpkgKA9O8ujziyTfQvgKPfEj6AQ8FhblK+VKN2iC9KHG
+         v9uQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741100697; x=1741705497;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7wLAYT8VOg5n+EhJivIskvTTTLfV5w4lbqOOhOs3qFM=;
+        b=uwdLmXdlFFApyNTxYiqG16XUBr4WYqXR+T1c3UCn8bsHXTz2WgiJOa/OzzDm/+/0hP
+         UuLKUjaG93rdWnsUNVDCLZnbDPUjwCCvqHIca8q39d/Ih+X7Z5No4nDI0mbw8RccNuXQ
+         niINEYsoCWsu/Q9SI9zrTOrwEZcGJQIkyYmuddlqFBSOVsW3KGnBPGi5PkzSY2UqYa3A
+         6lg1AQF1iHS5ZWy7NkRRPcmudyRSv+krW9JNOi66XxEEhCgm99FIT+c6TuoNskD91uT/
+         4H2Wvq5rfZTlkXfqMTtgluxVVm2Ob34Vj45YT8h6FTCdXg0ZhLaIx92k30RZtsUyhDhB
+         PeuA==
+X-Forwarded-Encrypted: i=1; AJvYcCXvbfoUx2EZeRYoUNNZeEey72ioq2MSb3jc5doYAOvME5cOG5Tu2btI6ejCO8MK6jK5fGxPJ3Bwh/Sd548=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXyZO53jnrdQPUvuRySkyqCvSLC70mjM+aPxTNVhbuegN/NyLW
+	T1DyQuyiZM9qFn5iadoYjy4v64oBZvycIaQ60mDckC9NrqFAOj+Hk8PBCDMwvQ==
+X-Gm-Gg: ASbGncu8wu/PIduRft+guasu62gU99Qsw0Kzgr/P4sKPXaOlREf+E1iIrKMMw1wlzPQ
+	fSjJumI/sC7kRTcxpxxtIIHxk00knKy4fRaTYk1+755R0fnYxFIEQsh3L0+cfdPFa2IBIP+OoUY
+	KtqIhoL4ON+6S5QO+t1QSNZw3tP5V0eeodyYCn6Lhdtf28uPqxzZunQA3kRnrmrTd3SnERTDRZx
+	F01kOFOhamHifyXEPbVihxlMGZusDJ3ox/6xD1kc3ZdVBuLM3P9p3PbQgmGOBTsdKZpbNeh1/Mm
+	6DYUTo63dK0d01dglcHXJR6tdGcLHHLzSC8hGdxp4zx7mwTocr3zojM=
+X-Google-Smtp-Source: AGHT+IF2IqujVL9FAIrlKbmlEjSg+DENq4yc4FJP79iYPxBvL+hS29J2rkPg6a94cXi9du0du7pQgA==
+X-Received: by 2002:a17:90b:5684:b0:2fb:fe21:4841 with SMTP id 98e67ed59e1d1-2ff33b937f1mr6451097a91.8.1741100696841;
+        Tue, 04 Mar 2025 07:04:56 -0800 (PST)
+Received: from thinkpad ([120.60.51.199])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fe8284f076sm13270159a91.42.2025.03.04.07.04.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 07:04:56 -0800 (PST)
+Date: Tue, 4 Mar 2025 20:34:48 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Jim Quinlan <james.quinlan@broadcom.com>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Cyril Brulebois <kibi@debian.org>,
+	Stanimir Varbanov <svarbanov@suse.de>,
+	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 5/8] PCI: brcmstb: Fix potential premature regulator
+ disabling
+Message-ID: <20250304150448.r42maovz4xggbqdx@thinkpad>
+References: <20250214173944.47506-1-james.quinlan@broadcom.com>
+ <20250214173944.47506-6-james.quinlan@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250214173944.47506-6-james.quinlan@broadcom.com>
 
-Because the kernel can't tolerate page faults for kernel mappings, when
-setting a valid, kernel space pte (or pmd/pud/p4d/pgd), it emits a
-dsb(ishst) to ensure that the store to the pgtable is observed by the
-table walker immediately. Additionally it emits an isb() to ensure that
-any already speculatively determined invalid mapping fault gets
-canceled.
+On Fri, Feb 14, 2025 at 12:39:33PM -0500, Jim Quinlan wrote:
+> Our system for enabling and disabling regulators is designed to work only
 
-We can improve the performance of vmalloc operations by batching these
-barriers until the end of a set of entry updates.
-arch_enter_lazy_mmu_mode() and arch_leave_lazy_mmu_mode() provide the
-required hooks.
+'system'? Perhaps 'logic'?
 
-vmalloc improves by up to 30% as a result.
+> on the port driver below the root complex.  The conditions to discriminate
+> for this case should be the same when we are adding or removing the bus.
+> Without this change the regulators may be disabled prematurely when a bus
+> further down the tree is removed.
+> 
+> Fixes: 9e6be018b263 ("PCI: brcmstb: Enable child bus device regulators from DT")
+> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
 
-Two new TIF_ flags are created; TIF_LAZY_MMU tells us if the task is in
-the lazy mode and can therefore defer any barriers until exit from the
-lazy mode. TIF_LAZY_MMU_PENDING is used to remember if any pte operation
-was performed while in the lazy mode that required barriers. Then when
-leaving lazy mode, if that flag is set, we emit the barriers.
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-Since arch_enter_lazy_mmu_mode() and arch_leave_lazy_mmu_mode() are used
-for both user and kernel mappings, we need the second flag to avoid
-emitting barriers unnecessarily if only user mappings were updated.
+- Mani
 
-Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
----
- arch/arm64/include/asm/pgtable.h     | 73 ++++++++++++++++++++++------
- arch/arm64/include/asm/thread_info.h |  2 +
- arch/arm64/kernel/process.c          |  9 ++--
- 3 files changed, 64 insertions(+), 20 deletions(-)
+> ---
+>  drivers/pci/controller/pcie-brcmstb.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
+> index 56b49d3cae19..e1059e3365bd 100644
+> --- a/drivers/pci/controller/pcie-brcmstb.c
+> +++ b/drivers/pci/controller/pcie-brcmstb.c
+> @@ -1440,7 +1440,7 @@ static void brcm_pcie_remove_bus(struct pci_bus *bus)
+>  	struct subdev_regulators *sr = pcie->sr;
+>  	struct device *dev = &bus->dev;
+>  
+> -	if (!sr)
+> +	if (!sr || !bus->parent || !pci_is_root_bus(bus->parent))
+>  		return;
+>  
+>  	if (regulator_bulk_disable(sr->num_supplies, sr->supplies))
+> -- 
+> 2.43.0
+> 
 
-diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index 1898c3069c43..149df945c1ab 100644
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -40,6 +40,55 @@
- #include <linux/sched.h>
- #include <linux/page_table_check.h>
- 
-+static inline void emit_pte_barriers(void)
-+{
-+	/*
-+	 * These barriers are emitted under certain conditions after a pte entry
-+	 * was modified (see e.g. __set_pte_complete()). The dsb makes the store
-+	 * visible to the table walker. The isb ensures that any previous
-+	 * speculative "invalid translation" marker that is in the CPU's
-+	 * pipeline gets cleared, so that any access to that address after
-+	 * setting the pte to valid won't cause a spurious fault. If the thread
-+	 * gets preempted after storing to the pgtable but before emitting these
-+	 * barriers, __switch_to() emits a dsb which ensure the walker gets to
-+	 * see the store. There is no guarrantee of an isb being issued though.
-+	 * This is safe because it will still get issued (albeit on a
-+	 * potentially different CPU) when the thread starts running again,
-+	 * before any access to the address.
-+	 */
-+	dsb(ishst);
-+	isb();
-+}
-+
-+static inline void queue_pte_barriers(void)
-+{
-+	if (test_thread_flag(TIF_LAZY_MMU))
-+		set_thread_flag(TIF_LAZY_MMU_PENDING);
-+	else
-+		emit_pte_barriers();
-+}
-+
-+#define  __HAVE_ARCH_ENTER_LAZY_MMU_MODE
-+static inline void arch_enter_lazy_mmu_mode(void)
-+{
-+	VM_WARN_ON(in_interrupt());
-+	VM_WARN_ON(test_thread_flag(TIF_LAZY_MMU));
-+
-+	set_thread_flag(TIF_LAZY_MMU);
-+}
-+
-+static inline void arch_flush_lazy_mmu_mode(void)
-+{
-+	if (test_and_clear_thread_flag(TIF_LAZY_MMU_PENDING))
-+		emit_pte_barriers();
-+}
-+
-+static inline void arch_leave_lazy_mmu_mode(void)
-+{
-+	arch_flush_lazy_mmu_mode();
-+	clear_thread_flag(TIF_LAZY_MMU);
-+}
-+
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
- #define __HAVE_ARCH_FLUSH_PMD_TLB_RANGE
- 
-@@ -323,10 +372,8 @@ static inline void __set_pte_complete(pte_t pte)
- 	 * Only if the new pte is valid and kernel, otherwise TLB maintenance
- 	 * has the necessary barriers.
- 	 */
--	if (pte_valid_not_user(pte)) {
--		dsb(ishst);
--		isb();
--	}
-+	if (pte_valid_not_user(pte))
-+		queue_pte_barriers();
- }
- 
- static inline void __set_pte(pte_t *ptep, pte_t pte)
-@@ -778,10 +825,8 @@ static inline void set_pmd(pmd_t *pmdp, pmd_t pmd)
- 
- 	WRITE_ONCE(*pmdp, pmd);
- 
--	if (pmd_valid(pmd)) {
--		dsb(ishst);
--		isb();
--	}
-+	if (pmd_valid(pmd))
-+		queue_pte_barriers();
- }
- 
- static inline void pmd_clear(pmd_t *pmdp)
-@@ -845,10 +890,8 @@ static inline void set_pud(pud_t *pudp, pud_t pud)
- 
- 	WRITE_ONCE(*pudp, pud);
- 
--	if (pud_valid(pud)) {
--		dsb(ishst);
--		isb();
--	}
-+	if (pud_valid(pud))
-+		queue_pte_barriers();
- }
- 
- static inline void pud_clear(pud_t *pudp)
-@@ -925,8 +968,7 @@ static inline void set_p4d(p4d_t *p4dp, p4d_t p4d)
- 	}
- 
- 	WRITE_ONCE(*p4dp, p4d);
--	dsb(ishst);
--	isb();
-+	queue_pte_barriers();
- }
- 
- static inline void p4d_clear(p4d_t *p4dp)
-@@ -1052,8 +1094,7 @@ static inline void set_pgd(pgd_t *pgdp, pgd_t pgd)
- 	}
- 
- 	WRITE_ONCE(*pgdp, pgd);
--	dsb(ishst);
--	isb();
-+	queue_pte_barriers();
- }
- 
- static inline void pgd_clear(pgd_t *pgdp)
-diff --git a/arch/arm64/include/asm/thread_info.h b/arch/arm64/include/asm/thread_info.h
-index 1114c1c3300a..1fdd74b7b831 100644
---- a/arch/arm64/include/asm/thread_info.h
-+++ b/arch/arm64/include/asm/thread_info.h
-@@ -82,6 +82,8 @@ void arch_setup_new_exec(void);
- #define TIF_SME_VL_INHERIT	28	/* Inherit SME vl_onexec across exec */
- #define TIF_KERNEL_FPSTATE	29	/* Task is in a kernel mode FPSIMD section */
- #define TIF_TSC_SIGSEGV		30	/* SIGSEGV on counter-timer access */
-+#define TIF_LAZY_MMU		31	/* Task in lazy mmu mode */
-+#define TIF_LAZY_MMU_PENDING	32	/* Ops pending for lazy mmu mode exit */
- 
- #define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
- #define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
-diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
-index 42faebb7b712..45a55fe81788 100644
---- a/arch/arm64/kernel/process.c
-+++ b/arch/arm64/kernel/process.c
-@@ -680,10 +680,11 @@ struct task_struct *__switch_to(struct task_struct *prev,
- 	gcs_thread_switch(next);
- 
- 	/*
--	 * Complete any pending TLB or cache maintenance on this CPU in case
--	 * the thread migrates to a different CPU.
--	 * This full barrier is also required by the membarrier system
--	 * call.
-+	 * Complete any pending TLB or cache maintenance on this CPU in case the
-+	 * thread migrates to a different CPU. This full barrier is also
-+	 * required by the membarrier system call. Additionally it makes any
-+	 * in-progress pgtable writes visible to the table walker; See
-+	 * emit_pte_barriers().
- 	 */
- 	dsb(ish);
- 
 -- 
-2.43.0
-
+மணிவண்ணன் சதாசிவம்
 
