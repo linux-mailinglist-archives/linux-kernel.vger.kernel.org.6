@@ -1,193 +1,272 @@
-Return-Path: <linux-kernel+bounces-543447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 834EFA4D5B0
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:05:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03669A4D5B6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:05:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 214827AA394
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:04:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2AD5188F110
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:05:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB921F91FE;
-	Tue,  4 Mar 2025 08:04:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA6C61F9428;
+	Tue,  4 Mar 2025 08:05:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MTMooLPO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gJFy/ant"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FBEB1F55ED;
-	Tue,  4 Mar 2025 08:04:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49D41F8918;
+	Tue,  4 Mar 2025 08:05:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741075495; cv=none; b=Kx5wzJ1mcOauMiMZUaCHeo0yYVuopk6HNlV8IdTtWLH8eonHvIEtZEQLjKnkSpoB6yc/Ibfs/RKG/URdW2wq+8si8FOePDBq9pxlOau+SIs0uhMGtSen3VpuFiytmiM/atHQglbjQSpnpNerK9V4CVT+IRv01157h6WlncjCniA=
+	t=1741075508; cv=none; b=auLaOW6ap3L4gMbTO1HSWDsxVCAa/dD1ajR0JTBo28xSV6o6jt3T25Io/uoOZ4XtgrIOtDxRQoEHyw6zxiktPf0b47NTA0pV4Cj+tPal8mlMfp0znF5LoEa5NcIve8B4Wchz+7ytj9oiygBXJcfgLVn0H6QezFYT/Is0hIyz8vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741075495; c=relaxed/simple;
-	bh=vIjLPcUzgSKENXMFoyq8MSR3rL6XCeonIPvrarBTHfI=;
+	s=arc-20240116; t=1741075508; c=relaxed/simple;
+	bh=/S/hdDRbQrJo2up60ogcSpBJLmTR8FQezMvSl2ll4/U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B3U28mQepnDeUKBZ3n6NMOTj1oq13K3Ud7oOpW42XburH4dZohnZurfBb24PF2hIqk3KcLpSJpsARfjv8Uq0j0wDklZMadRDHcbwIBaIV+cTjwdWnR9jpKda7Fz9W+yXl5p/GZw/YVpUpIwHCcHe3LN3VSeuo2p7w3BGDx6jYKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MTMooLPO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DCBEC4CEE5;
-	Tue,  4 Mar 2025 08:04:52 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=l8qGtHxopIEwvim0hUoF51+h91wwvZ0G3XIPdnAxqpS04uhuV113yEv+m3VIhMkT8mlcslUBTWXVKzG3hx5JJRqGnqvxLk2VnPFYD+FuH49utRbY+GEcn9qcDy34cQ6tQvkZh3e1+vAJdEeQ1U9rnnpMrv2qvYrjPotv/1+7zlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gJFy/ant; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 881E5C4CEE5;
+	Tue,  4 Mar 2025 08:05:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741075492;
-	bh=vIjLPcUzgSKENXMFoyq8MSR3rL6XCeonIPvrarBTHfI=;
+	s=k20201202; t=1741075507;
+	bh=/S/hdDRbQrJo2up60ogcSpBJLmTR8FQezMvSl2ll4/U=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MTMooLPO8Bbb2GKqdM1BuZCtLRVMLpPUiZewyqhTUOANTZEdA7zKLpNVpc2b4+pde
-	 qLxD1GPfTrr2crKHjmFBRkbsQhLcZE/wIdMSn7xP+K7vJd7ZRJEAH9qDQUxuZcs5kx
-	 PTy2NgT0nWNSVjrgvdi0A9uofQ0NxTbml1X58f1jrN3deGiad5mCcW/u5Oh/f1kNxH
-	 WkgVk5ns/TvPqpAEbTVtWOTQmUYqzcBtq42vbowT/RyyDgHhCJdC0cKAvbzxnmEotI
-	 4k4ylvc9gwaqMoZC+TRzV16b9VRVTbQY41zF+zC/l+py0e6GMwaWsk+QqwNP9zvG1O
-	 WP0yWgzyy+/YA==
-Date: Tue, 4 Mar 2025 09:04:50 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Anusha Srivatsa <asrivats@redhat.com>
-Cc: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
-	Joel Stanley <joel@jms.id.au>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
-	Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@nxp.com>, 
-	Xinliang Liu <xinliang.liu@linaro.org>, Tian Tao <tiantao6@hisilicon.com>, 
-	Xinwei Kong <kong.kongxinwei@hisilicon.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Yongqin Liu <yongqin.liu@linaro.org>, John Stultz <jstultz@google.com>, 
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Marek Vasut <marex@denx.de>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Orson Zhai <orsonzhai@gmail.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
-	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
-	Yannick Fertre <yannick.fertre@foss.st.com>, Philippe Cornu <philippe.cornu@foss.st.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Alexey Brodkin <abrodkin@synopsys.com>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Jonathan Corbet <corbet@lwn.net>, linux-aspeed@lists.ozlabs.org, 
-	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, imx@lists.linux.dev, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH RESEND 07/12] drm/sti: move to
- devm_platform_ioremap_resource() usage
-Message-ID: <20250304-astute-curvy-ladybug-f9ff15@houat>
-References: <20250225-memory-drm-misc-next-v1-0-9d0e8761107a@redhat.com>
- <20250225-memory-drm-misc-next-v1-7-9d0e8761107a@redhat.com>
- <24958ae8-6153-4798-abeb-e770d66ca8e4@foss.st.com>
- <CAN9Xe3Q8=_Tz51i6gxNM6445p-rhNiK7B5Ljcga8g_Nn676dCQ@mail.gmail.com>
+	b=gJFy/antoVkyiFQMJKZ/5j5aeF/sT4nJRyzTOcz+G02QivQvaFciX+FxRIgHQ5KYl
+	 GaxUt/4HStgZL9OEoJFr//CkyWGSzJu4jvM0A+YagjkrWayNZZlpz6z6cRlY3yQWkz
+	 0Xh2nHqNWCamu9ZspFDyBmAlTWLi/lzAdqbTymoMeljyH6E7a6NYk6eQduqbS/Dpz9
+	 27ja2gJ7zqRSB3TchxY1r8Dn8f7idlbUuNzsSnjFIz2HDAAxYimdVnsWekJHIAg3Zh
+	 EI+DZXnv1TaWhClR/83hwG9iaVdqSRib79ScOaKt9QExqSFwWWUjhlOI3czDVo2dfX
+	 irFogFnd9kHSQ==
+Date: Tue, 4 Mar 2025 09:05:03 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: songchai <quic_songchai@quicinc.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Andy Gross <agross@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 1/7] dt-bindings: arm: Add support for Coresight TGU
+ trace
+Message-ID: <20250304-certain-aboriginal-magpie-cade86@krzk-bin>
+References: <20250227092640.2666894-1-quic_songchai@quicinc.com>
+ <20250227092640.2666894-2-quic_songchai@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="3cvx2hh6lak7gb3g"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAN9Xe3Q8=_Tz51i6gxNM6445p-rhNiK7B5Ljcga8g_Nn676dCQ@mail.gmail.com>
+In-Reply-To: <20250227092640.2666894-2-quic_songchai@quicinc.com>
+
+On Thu, Feb 27, 2025 at 05:26:34PM +0800, songchai wrote:
+> From: Songwei Chai <quic_songchai@quicinc.com>
+> 
+> The Trigger Generation Unit (TGU) is designed to detect patterns or
+> sequences within a specific region of the System on Chip (SoC). Once
+> configured and activated, it monitors sense inputs and can detect a
+> pre-programmed state or sequence across clock cycles, subsequently
+> producing a trigger.
+> 
+>    TGU configuration space
+>         offset table
+>  x-------------------------x
+>  |                         |
+>  |                         |
+>  |                         |                           Step configuration
+>  |                         |                             space layout
+>  |   coresight management  |                           x-------------x
+>  |        registers        |                     |---> |             |
+>  |                         |                     |     |  reserve    |
+>  |                         |                     |     |             |
+>  |-------------------------|                     |     |-------------|
+>  |                         |                     |     | priority[3] |
+>  |         step[7]         |<--                  |     |-------------|
+>  |-------------------------|   |                 |     | priority[2] |
+>  |                         |   |                 |     |-------------|
+>  |           ...           |   |Steps region     |     | priority[1] |
+>  |                         |   |                 |     |-------------|
+>  |-------------------------|   |                 |     | priority[0] |
+>  |                         |<--                  |     |-------------|
+>  |         step[0]         |-------------------->      |             |
+>  |-------------------------|                           |  condition  |
+>  |                         |                           |             |
+>  |     control and status  |                           x-------------x
+>  |           space         |                           |             |
+>  x-------------------------x                           |Timer/Counter|
+>                                                        |             |
+> 						       x-------------x
+> TGU Configuration in Hardware
+> 
+> The TGU provides a step region for user configuration, similar
+> to a flow chart. Each step region consists of three register clusters:
+> 
+> 1.Priority Region: Sets the required signals with priority.
+> 2.Condition Region: Defines specific requirements (e.g., signal A
+> reaches three times) and the subsequent action once the requirement is
+> met.
+> 3.Timer/Counter (Optional): Provides timing or counting functionality.
+> 
+> Add a new coresight-tgu.yaml file to describe the bindings required to
+> define the TGU in the device trees.
+> 
+> Signed-off-by: Songwei Chai <quic_songchai@quicinc.com>
+> Signed-off-by: songchai <quic_songchai@quicinc.com>
+
+Don't duplicate yourself.
+
+Anyway, this is marked as v3, I cannot find previous versions, no
+changelog, no references.
+
+What happened here in this binding?
+
+> ---
+>  .../bindings/arm/qcom,coresight-tgu.yaml      | 135 ++++++++++++++++++
+>  1 file changed, 135 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/qcom,coresight-tgu.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/qcom,coresight-tgu.yaml b/Documentation/devicetree/bindings/arm/qcom,coresight-tgu.yaml
+> new file mode 100644
+> index 000000000000..a41ac68a4fe7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/qcom,coresight-tgu.yaml
+> @@ -0,0 +1,135 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +# Copyright (c) 2023-2025 Qualcomm Innovation Center, Inc. All rights reserved.
+
+2023 and 2024? Where was it published in these years?
+
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/arm/qcom,coresight-tgu.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Trigger Generation Unit - TGU
+> +
+> +description: |
+> +  The Trigger Generation Unit (TGU) is a Data Engine which can be utilized
+> +  to sense a plurality of signals and create a trigger into the CTI or
+> +  generate interrupts to processors. The TGU is like the trigger circuit
+> +  of a Logic Analyzer. The corresponding trigger logic can be realized by
+> +  configuring the conditions for each step after sensing the signal.
+> +  Once setup and enabled, it will observe sense inputs and based upon
+> +  the activity of those inputs, even over clock cycles, may detect a
+> +  preprogrammed state/sequence and then produce a trigger or interrupt.
+> +
+> +  The primary use case of the TGU is to detect patterns or sequences on a
+> +  given set of signals within some region of the SoC.
+> +
+> +maintainers:
+> +  - Mao Jinlong <quic_jinlmao@quicinc.com>
+> +  - Sam Chai <quic_songchai@quicinc.com>
+> +
+> +# Need a custom select here or 'arm,primecell' will match on lots of nodes
+> +select:
+> +  properties:
+> +    compatible:
+> +      contains:
+> +        enum:
+> +          - qcom,coresight-tgu
+> +  required:
+> +    - compatible
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: qcom,coresight-tgu
+> +      - const: arm,primecell
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  clock-names:
+> +    items:
+> +      - const: apb_pclk
+> +
+> +  qcom,tgu-steps:
+> +    description:
+> +      The trigger logic is realized by configuring each step after sensing
+> +      the signal. The parameter here is used to describe the maximum of steps
+> +      that could be configured in the current TGU.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    minimum: 1
+> +    maximum: 8
+> +
+> +  qcom,tgu-regs:
+> +    description:
+> +      There are some "groups" register clusters in each step, which are used to
+> +      configure the signal that we want to detect. Meanwhile, each group has its
+> +      own priority, and the priority increases with number of groups. For example,
+> +      group3 has a higher priority than group2, the signal configured in group3
+> +      will be sensed more preferentially than the signal which is configured in group2.
+> +      The parameter here is used to describe the signal number that each group
+> +      could be configured.
+
+And all groups are indexed by number? Or do they have names?
+
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    minimum: 1
+> +    maximum: 18
+> +
+> +  qcom,tgu-conditions:
+> +    description:
+> +      A condition sets a specific requirement for a step and defines the subsequent
+> +      action once the requirement is met. For example, in step two, if signal A is
+> +      detected three times, the process jumps back to step one. The parameter describes
+> +      the register number for each functionality, whether it is setting a specific
+> +      requirement or defining a subsequent action.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    minimum: 1
+> +    maximum: 4
+> +
+> +  qcom,tgu-timer-counters:
+> +    description:
+> +      TGU has timer and counter which are used to set some requirement on each step.
+
+Wrap according to Linux coding style, so at 80.
+
+> +      For example, we could use counter to create a trigger into CTI once TGU senses
+> +      the target signal three times.This parameter is used to describe the number of
+> +      Timers/Counters in TGU.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    minimum: 0
+
+Drop
+
+> +    maximum: 2
+> +
+> +  in-ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +    additionalProperties: false
+> +
+> +    properties:
+> +      port:
+> +        description: AXI Slave connected to another Coresight component
+
+So this TGU can be connected to anything in coresight graph, no
+restrictions?
+
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+
+Most likely you miss also: in-ports
 
 
---3cvx2hh6lak7gb3g
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH RESEND 07/12] drm/sti: move to
- devm_platform_ioremap_resource() usage
-MIME-Version: 1.0
+Best regards,
+Krzysztof
 
-On Mon, Mar 03, 2025 at 12:29:19PM -0500, Anusha Srivatsa wrote:
-> On Wed, Feb 26, 2025 at 5:19=E2=80=AFAM Raphael Gallais-Pou <
-> raphael.gallais-pou@foss.st.com> wrote:
->=20
-> >
-> > On 2/25/25 23:20, Anusha Srivatsa wrote:
-> > > Replace platform_get_resource/_byname + devm_ioremap
-> > > with just devm_platform_ioremap_resource()
-> > >
-> > > Used Coccinelle to do this change. SmPl patch:
-> > >
-> > > @rule@
-> > > identifier res;
-> > > expression ioremap;
-> > > identifier pdev;
-> > > constant mem;
-> > > expression name;
-> > > @@
-> > > -struct resource *res;
-> > > ...
-> > > -res =3D platform_get_resource_byname(pdev,mem,name);
-> > > <...
-> > > -if (!res) {
-> > > -...
-> > > -}
-> > > ...>
-> > > -ioremap =3D devm_ioremap(...);
-> > > +ioremap =3D devm_platform_ioremap_resource_byname(pdev,name);
-> > >
-> > > and
-> > > @rule_2@
-> > > identifier res;
-> > > expression ioremap;
-> > > identifier pdev;
-> > > @@
-> > > -struct resource *res;
-> > > ...
-> > > -res =3D platform_get_resource(pdev,...);
-> > > <...
-> > > -if (!res) {
-> > > -...
-> > > -}
-> > > ...>
-> > > -ioremap =3D devm_ioremap(...);
-> > > +ioremap =3D devm_platform_ioremap_resource(pdev,0);
-> > >
-> > > v2: Fix compilation error.
-> >
-> >
-> > Hi Anusha,
-> >
-> >
-> > You did not take into account my comment regarding the changelog. :-)
-> >
-> > https://www.kernel.org/doc/html/latest/process/submitting-patches.html#=
-commentary
-> >
-> > While the commit summary do not specify the version, this changelog
-> > suggests
-> > that the version of your series as been incremented.
-> > If this is a v2, then a version descriptor should be applied to the
-> > patchset.
-> >
-> > https://www.kernel.org/doc/html/latest/process/submitting-patches.html#=
-subject-line
-> >
-> > Hi  Raphael,
->=20
-> That is correct. While this patch is a v2, there is another patch or two =
-in
-> the same series that is on v4 when it got acked and reviewed. Having
-> patches belonging to the same series with different version prefixes seem=
-ed
-> odd when I sent the series. Hence added what exactly changed in the commit
-> log.
-
-This breaks a lot of tools though. If your series changes, you need to
-increase the version number, no matter how small or insignificant it
-changed compared to the previous one. resend is only meant to be used
-when you send the exact same series.
-
-Maxime
-
---3cvx2hh6lak7gb3g
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ8a0GwAKCRAnX84Zoj2+
-dvPAAX0T6CB5j6he9IlacsjKLYZXt0M1IhAKVugJHAC1WHuswlCAJSgEyELEpzS1
-ddcuQ7kBf3wXscEAe3lhr3vk0F2KVEj4r8JtBnUwxNM0o1E63auMQV7dNPG5Z5Ku
-4gxKbq/wJQ==
-=hPVI
------END PGP SIGNATURE-----
-
---3cvx2hh6lak7gb3g--
 
