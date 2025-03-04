@@ -1,128 +1,193 @@
-Return-Path: <linux-kernel+bounces-544364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11DBAA4E087
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:18:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2E56A4E063
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:14:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA8B93A67B7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:12:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E22B1886A85
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:13:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD675204F61;
-	Tue,  4 Mar 2025 14:12:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 162B6204F78;
+	Tue,  4 Mar 2025 14:13:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="iugRnl9Z"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="CL3RYKQE";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="0FuZhWqK"
+Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464481C54AA
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:12:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D311C54AA;
+	Tue,  4 Mar 2025 14:12:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741097529; cv=none; b=Gl21rhBL5Bm8MwS7Vb0o2CaCDizECBsb3WwrRP3VDvOojerr2N4nDOFwqXYCuoDdZ8s2qmsnOWHGWH504u2+7voRyoaJiyT6MO6XR6qMoOUHXCFFcx4gJlOD+mAfoyIvmsuDqoO+1Or+9jCHDGFV2irZKM49lK77jC+ZLEGZsps=
+	t=1741097582; cv=none; b=Y/13BLqd1j/iBjHHxN6gf3oq3e/uD1KUfrPTVsrjpMrqsF+G1wf608hJFR/LY9HEvIZ4iH24MeJLNU6hxKupiE2lcQi/VkRT1N3HXeDbTypELT/pPpGBA8jQ4cGuuINkN6LzzgZxaZWyb4rh1wUJBjlQAskT4WJ+7jjNcBh8W5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741097529; c=relaxed/simple;
-	bh=7MhembS568dGp1bHEbh56IGxZwsRxM06w96ZDrN1cbw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PYo8EUJ8mX3c81y3oD/62NipmBqD7U9QQ2UebpeOH0UIUbWFs0j9gVeL1ONkCvdxfNgCLwfrZ+YIcFr7BLE6GTWD/8EfMhcfyU8wsvLRN0gTfLyM5n+mtlcQRLePRt8l4Eomr4A+hivEegpRz4BIsCu6ZQxQ0uvEo3tr9imn3rU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=iugRnl9Z; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A5F0440E0176;
-	Tue,  4 Mar 2025 14:12:03 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id siwQiVlMLFkh; Tue,  4 Mar 2025 14:11:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1741097519; bh=Suj/DIf2WU/st+uHk8qJo9pIOoEFVqGLM7HCtKjnHLs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iugRnl9ZQ/qrcBIg4fF8q694UR8RRd4RRKc5G5rnJ8QQsQZIQLMjcpvu4pMINlBAp
-	 vZciO6/dh1HjuhKfAl9jz9tQW2/nvXFjyDNjvOYurYcOCOM/j6lKgPIbgKFGrtf55s
-	 rxWqJb+Af0W+qTyCFKUEDpTtm1XXGkatq0I4LPjrv1icHdGp9EL9u6cHLFp86pyEb6
-	 qjovicNNwW/Vqke2FrawqpGtmPzZB+jxe+z1WHSA/gNHFuqB5hFc9HSpv1SSKKejAH
-	 jGnGd/A6DJfo2PFQSWjowDUfA1Lp1Zv7nrl4rranJrL27h9jv5S+5gX0KzmgzJ1ChZ
-	 x4ik0YEToTzMtOAqMr42ofVwtYOyVLpb24A9Dw+w2FYtaJAeaYsC9IeQvFc0ZCvXia
-	 5GQ/okeiV5mUxrlwsNPhOrSSSXYQMPzApbdI/zS40mLXUZyKruDrM6CSh8jOgXQUat
-	 i+P+3W/FyzNa1lPOZXcujPAGBb1PIfTrM/pbWv2a8GM4gcOkmr0gLiZtpO5+0cLb4j
-	 hAJksxDkAQV/X0qBzE0ti4aDYhW0esilWxfxKlJmxSUkqy8L9MBXYhg9blYM+i6HlP
-	 IuITbTAR1FbhBMQ7z6JncfZ1aO/TmKFQuhZqF6vzZh6h68nnUGW4ZDefbY/4gSok05
-	 YHnEtxJIgmIc681L3YjwMRKA=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0B5D740E015E;
-	Tue,  4 Mar 2025 14:11:40 +0000 (UTC)
-Date: Tue, 4 Mar 2025 15:11:34 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Brendan Jackman <jackmanb@google.com>
-Cc: Dave Hansen <dave.hansen@intel.com>, Rik van Riel <riel@surriel.com>,
-	x86@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org,
-	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
-	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
-	linux-mm@kvack.org, akpm@linux-foundation.org, jannh@google.com,
-	mhklinux@outlook.com, andrew.cooper3@citrix.com,
-	Manali.Shukla@amd.com, mingo@kernel.org
-Subject: Re: [PATCH v14 11/13] x86/mm: do targeted broadcast flushing from
- tlbbatch code
-Message-ID: <20250304141134.GIZ8cKFom3W0ChHiXk@fat_crate.local>
-References: <20250226030129.530345-1-riel@surriel.com>
- <20250226030129.530345-12-riel@surriel.com>
- <20250303114618.GBZ8WWihMDjf-oy8P0@fat_crate.local>
- <7e1ca8c7-6f3e-44dc-9dd8-bd273a03a83e@intel.com>
- <Z8b3n85dpkz_-2ci@google.com>
+	s=arc-20240116; t=1741097582; c=relaxed/simple;
+	bh=lHqKosFyPgPaypbiEvaH9iehas6L5xniiZhzlH4VqRc=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=lnleMbg+bqOZ4gLiIuOoT23cifldVoblwvq+nGS12BIrrgfl6cImtUpuE6dgLe3EuPXCwJ+IwuPjlXmDN182TWI2POmSTC6LOgx4td02XOtE9AiPIud40YsczsReAYJyUaXJhN4ZDw1WdOZJD0dyu+3RB6ipSTR/2kVuQGWgmnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=CL3RYKQE; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=0FuZhWqK; arc=none smtp.client-ip=202.12.124.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfout.stl.internal (Postfix) with ESMTP id 6680B114017B;
+	Tue,  4 Mar 2025 09:12:58 -0500 (EST)
+Received: from phl-imap-10 ([10.202.2.85])
+  by phl-compute-06.internal (MEProxy); Tue, 04 Mar 2025 09:12:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1741097578;
+	 x=1741183978; bh=CupnNxId9lKKUCsY814yni/CdDwtjCpeVVEN0FS8OQE=; b=
+	CL3RYKQEmfOJrGOXMBV3R9j+P3ioLr87qr7lUXLZTyNvAHRwc33K7+6ahrCIL2LE
+	XoABVvS6JeH8Ctr/pc5LAAXGNwstmo5XmR/K8Mj4OyPLIyYJySUiyjhtTBavdYy0
+	28oV6fom29lMTeOdxUPkHruTjNgl0AOt1aL60Mk9q4wrjJ0qau6XJpDeHFlJGtPl
+	qUQwUSwiQ+4vEZpXDOAFld1CEFoIaprsI3bOV1wScB0dv/lmGsfzfZQ5KzSt6dcm
+	yzc2pU7POtqkd9nQ3f17UnkE2d3Pt1WhcnHlwXUE9Ll5dkaqS48X9y8EWJ0l/JqZ
+	UJpZKxUX/rl90a0fPA6h3Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741097578; x=
+	1741183978; bh=CupnNxId9lKKUCsY814yni/CdDwtjCpeVVEN0FS8OQE=; b=0
+	FuZhWqKhRCRvbRmX4SkW7iPko1sDKS9tiRdGJ2yVrHK38hY/+4jkF7nJYz+saodG
+	m58pBtWiL3YA9yETb9enM84yHSjEE4hZMo9D7F0wLXJqy0/92HnCTFambvFcf/l6
+	6r3+v5b1O4CByJYQWp0qE/wbe74af9/RZsjqxP9DZCjusDCranllj1jUweyI4UuW
+	3n9V7J9B2HApzckJR/QQGdNylq76SipnxCZzNv8DtD+qJWHHVeWMGFMgNbkjdPo4
+	7xSrsUlvc+BFh+bMcSVTXcygxrjQmkMgAK5ZVyURLsuk1ss5NhlK4/gZniusqKk1
+	xCy2CvrvJZCJiGlgXer/w==
+X-ME-Sender: <xms:aQrHZ9a6uOGVj1bQ10YHC3p4ZmtSbX2_QgUFjtTSn0S6E-_QN0JF2w>
+    <xme:aQrHZ0btwSwdMg6xVeG2eRPZxYkCJp3VnUOwYY2DR0CHUsFbMnmAtjePaHgzxwYsV
+    8DqNAn-FdP6U0slB9M>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutddvvdehucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedfofgrrhhkucfrvggrrhhsohhnfdcuoehmphgvrghrshhonhdqlh
+    gvnhhovhhosehsqhhuvggssgdrtggrqeenucggtffrrghtthgvrhhnpeegheduieffieek
+    vdduhfejjeefhfehfeeuhfekuefhffdvjeffuedufeetfeegtdenucffohhmrghinhepih
+    hnthgvlhdrtghomhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhl
+    fhhrohhmpehmphgvrghrshhonhdqlhgvnhhovhhosehsqhhuvggssgdrtggrpdhnsggprh
+    gtphhtthhopeduvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggrvhgvmhes
+    uggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglh
+    gvrdgtohhmpdhrtghpthhtoheprghnthhhohhnhidrlhdrnhhguhihvghnsehinhhtvghl
+    rdgtohhmpdhrtghpthhtohepphhriigvmhihshhlrgifrdhkihhtshiivghlsehinhhtvg
+    hlrdgtohhmpdhrtghpthhtohepvhhithgrlhihrdhlihhfshhhihhtshesihhnthgvlhdr
+    tghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepih
+    hnthgvlhdqfihirhgvugdqlhgrnheslhhishhtshdrohhsuhhoshhlrdhorhhgpdhrtghp
+    thhtoheprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthhdprhgtphhtthhopegrnh
+    gurhgvfieslhhunhhnrdgthh
+X-ME-Proxy: <xmx:aQrHZ_9Cp7HpzoSLKsB-ydwOhXfwIkqbG6RD4NAW-xocOSYJHkNTwQ>
+    <xmx:aQrHZ7oMYBSVVK0UUNr5N8mnmgW7Ix1lmV5NoLDJkF9jgBlVbqD9KA>
+    <xmx:aQrHZ4pLEDztSxRFVK_xijgyeRTa6M21ujEJw69S2fVMafB9tsbIxg>
+    <xmx:aQrHZxTC7Ab1Xsf0M2uwbu8G-q_yRk_jwrHd8FtByNzE_Uv-NCA0CA>
+    <xmx:agrHZ-hCUbyZQjPGRQJOKDKdmHbdxT6v-6fY0FTdrMR_Qmvh1HVGN1rK>
+Feedback-ID: ibe194615:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 8F1673C0066; Tue,  4 Mar 2025 09:12:57 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Z8b3n85dpkz_-2ci@google.com>
+Date: Tue, 04 Mar 2025 09:12:37 -0500
+From: "Mark Pearson" <mpearson-lenovo@squebb.ca>
+To: "Vitaly Lifshits" <vitaly.lifshits@intel.com>,
+ "Andrew Lunn" <andrew@lunn.ch>
+Cc: anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, intel-wired-lan@lists.osuosl.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <a2bd6964-1ec0-4bd6-ad68-7210ac3fe38b@app.fastmail.com>
+In-Reply-To: <316a020a-aa49-700e-3735-f5f810adaaed@intel.com>
+References: <mpearson-lenovo@squebb.ca>
+ <20250226194422.1030419-1-mpearson-lenovo@squebb.ca>
+ <36ae9886-8696-4f8a-a1e4-b93a9bd47b2f@lunn.ch>
+ <50d86329-98b1-4579-9cf1-d974cf7a748d@app.fastmail.com>
+ <1a4ed373-9d27-4f4b-9e75-9434b4f5cad9@lunn.ch>
+ <9f460418-99c6-49f9-ac2c-7a957f781e17@app.fastmail.com>
+ <4b5b0f52-7ed8-7eef-2467-fa59ca5de937@intel.com>
+ <698700ab-fd36-4a09-8457-a356d92f00ea@lunn.ch>
+ <24740a7d-cc50-44af-99e2-21cb838e17e5@app.fastmail.com>
+ <316a020a-aa49-700e-3735-f5f810adaaed@intel.com>
+Subject: Re: [Intel-wired-lan] [PATCH] e1000e: Link flap workaround option for false
+ IRP events
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 04, 2025 at 12:52:47PM +0000, Brendan Jackman wrote:
-> https://lore.kernel.org/all/CA+i-1C31TrceZiizC_tng_cc-zcvKsfXLAZD_XDftXnp9B2Tdw@mail.gmail.com/
+Thanks Vitaly,
 
-Lemme try to understand what you're suggesting on that subthread:
+On Tue, Mar 4, 2025, at 5:48 AM, Lifshits, Vitaly wrote:
+> On 3/3/2025 5:34 AM, Mark Pearson wrote:
+>> Hi Andrew,
+>> 
+>> On Sun, Mar 2, 2025, at 11:13 AM, Andrew Lunn wrote:
+>>> On Sun, Mar 02, 2025 at 03:09:35PM +0200, Lifshits, Vitaly wrote:
+>>>>
+>>>>
+>>>> Hi Mark,
+>>>>
+>>>>> Hi Andrew
+>>>>>
+>>>>> On Thu, Feb 27, 2025, at 11:07 AM, Andrew Lunn wrote:
+>>>>>>>>> +			e1e_rphy(hw, PHY_REG(772, 26), &phy_data);
+>>>>>>>>
+>>>>>>>> Please add some #define for these magic numbers, so we have some idea
+>>>>>>>> what PHY register you are actually reading. That in itself might help
+>>>>>>>> explain how the workaround actually works.
+>>>>>>>>
+>>>>>>>
+>>>>>>> I don't know what this register does I'm afraid - that's Intel knowledge and has not been shared.
+>>>>>>
+>>>>>> What PHY is it? Often it is just a COTS PHY, and the datasheet might
+>>>>>> be available.
+>>>>>>
+>>>>>> Given your setup description, pause seems like the obvious thing to
+>>>>>> check. When trying to debug this, did you look at pause settings?
+>>>>>> Knowing what this register is might also point towards pause, or
+>>>>>> something totally different.
+>>>>>>
+>>>>>> 	Andrew
+>>>>>
+>>>>> For the PHY - do you know a way of determining this easily? I can reach out to the platform team but that will take some time. I'm not seeing anything in the kernel logs, but if there's a recommended way of confirming that would be appreciated.
+>>>>
+>>>> The PHY is I219 PHY.
+>>>> The datasheet is indeed accessible to the public:
+>>>> https://cdrdv2-public.intel.com/612523/ethernet-connection-i219-datasheet.pdf
+>>>
+>>> Thanks for the link.
+>>>
+>>> So it is reading page 772, register 26. Page 772 is all about LPI. So
+>>> we can have a #define for that. Register 26 is Memories Power. So we
+>>> can also have an #define for that.
+>> 
+>> Yep - I'll look to add this.
+>> 
+>>>
+>>> However, that does not really help explain how this helps prevent an
+>>> interrupt. I assume playing with EEE settings was also played
+>>> with. Not that is register appears to have anything to do with EEE!
+>>>
+>> I don't think we did tried those - it was never suggested that I can recall (the original debug started 6 months+ ago). I don't know fully what testing Intel did in their lab once the issue was reproduced there.
+>> 
+>> If you have any particular recommendations we can try that - with a note that we have to run a soak for ~1 week to have confidence if a change made a difference (the issue can reproduce between 1 to 2 days).
+>
+> Personally I doubt that it is related to EEE since there was no real 
+> link flap.
+>
+> I suggest to try replacing the register read for a short delay or 
+> reading the PHY STATUS register instead.
+>
 
-> static inline void arch_start_context_switch(struct task_struct *prev)
-> {
->     arch_paravirt_start_context_switch(prev);
->     tlb_start_context_switch(prev);
-> }
+Ack - we'll try that, and collect some other debug registers in the process.
+Will update with findings - this may take a while :)
 
-This kinda makes sense to me...
-
-> Now I think about it... if we always tlbsync() before a context switch, is the
-> cant_migrate() above actually required? I think with that, even if we migrated
-> in the middle of e.g.  broadcast_kernel_range_flush(), we'd be fine? (At
-> least, from the specific perspective of the invplgb code, presumably having
-> preemption on there would break things horribly in other ways).
-
-I think we still need it because you need to TLBSYNC on the same CPU you've
-issued the INVLPGB and actually, you want all TLBs to have been synched
-system-wide.
-
-Or am I misunderstanding it?
-
-Anything else I missed?
-
-Btw, I just sent v15 - if you wanna continue commenting there...
-
-https://lore.kernel.org/r/20250304135816.12356-1-bp@kernel.org
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Thanks
+Mark
 
