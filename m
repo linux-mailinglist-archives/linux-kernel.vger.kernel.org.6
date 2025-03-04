@@ -1,151 +1,119 @@
-Return-Path: <linux-kernel+bounces-545627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37186A4EF5F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:30:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2133CA4EF5C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:21:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FC0C1728E9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:30:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F378188EDB5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:21:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17CD5200B99;
-	Tue,  4 Mar 2025 21:30:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BFCB264FBD;
+	Tue,  4 Mar 2025 21:21:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="F/htZXuH"
-Received: from smtp.smtpout.orange.fr (smtp-77.smtpout.orange.fr [80.12.242.77])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WAJlByuH"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62D97DA93;
-	Tue,  4 Mar 2025 21:30:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B323202C53;
+	Tue,  4 Mar 2025 21:21:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741123836; cv=none; b=GJyWIMEymD2W1liLkf01MEFYRhlbs1YOUlzrJz9rT/foJjAYtgPbYKz3sa+OBqp3UKVhlJNRMBpKJEk+2ZmYZRMvkQTpWM2DSn2kfzsiCV2Pq5s09HVCjl3i4UJvacdoZRilAs2aNaNimUY9G+8JwtfHmi4hngPgwSYjSxvc5/I=
+	t=1741123280; cv=none; b=G45xSYDtfhK0HcNHJ8FU60ECyuHAHAP3A5ovRiC2Xg86SQS45nk6F1PRI5F5AZTXrb1cU1sd6OI0qKfnMsVJbwmkVl29rGFBv3jouGAt+V/k599ZJQdbT/dJ8qknXNvRgudQiWTVUNF5h6TJZgFUI724US0gmRX45rOYVbQNQAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741123836; c=relaxed/simple;
-	bh=uU2YbbMZxvg5eLRNvxP4W3qaFK4o/G15pdl3NZqtIgI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=LGwsKty5viPem81dlb3S5/pvYhFoSji9HlzJneU0MwBTGq2b2233wKuzJo6I/5iDf4jCmnpa7IyqiIZCKGMLumQP7g5dJ9/Wfedj9nta7QbT97ppMErSGNMsSqr4zAq6lvCeInsf/Uofo/7XyAvMb982uz4diWo1Kzmp8Sq1F/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=F/htZXuH; arc=none smtp.client-ip=80.12.242.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id pZhEtjoYlf1j1pZhItMWBa; Tue, 04 Mar 2025 22:21:13 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1741123273;
-	bh=K+h7jsWHv3eIxLPH5dNajezN+xQFTDwe/w8/eZdR268=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=F/htZXuHwOLqrOg37Ie4xDkEu5dSoXycvKds+QJgKpHM4TF1OfVT4PgIZuJDeGsrB
-	 7qx9+ZmsUoXQ9CxklHemGcceTvS3H7LKNkR9LpBbJPyxeMj4+OhOJVX/dIbM51l0ea
-	 mSFuiORCumZyYWbbq5vwhFzOK/bETgw1Bhn9ORtyVf6YLnqItZ94mJAK5qh0IDCT51
-	 /Tw545tJjZPj9yLKoj7O2JntYzLwJiLtZvYykbYpMVGXLVw8Lt4yzIapdyNsw6aXKJ
-	 6BHl6lQXZd3Ia8praMr/qD7YfmQ0mg6MIWWvafegftXVEwL42f7yq+x1VOGvchNrqC
-	 ggVLi8D6df4mQ==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Tue, 04 Mar 2025 22:21:13 +0100
-X-ME-IP: 90.11.132.44
-Message-ID: <7ef88ec2-24a5-4aa7-a601-d605a12768ba@wanadoo.fr>
-Date: Tue, 4 Mar 2025 22:20:59 +0100
+	s=arc-20240116; t=1741123280; c=relaxed/simple;
+	bh=WXQBuvTahnb8x9uQmAs4kaSmaJWNKGYSV+qNDz+xF6A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NZIYJq+GyZzqbJDfJ/juOGs6DsJVvvDbRo4IenxPiRNs1HDJcrPI3BrBAQOMjObOJ+S3FqaCo0Pg1bMynhDCMhZKJsfKed94UPaS3JyJa1msCr5f7pOiqLkV2w/mHrkLpEsNj6ItoePhyXD8AL+MbMAI4+mGajyiXOGNPwUFres=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WAJlByuH; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741123279; x=1772659279;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=WXQBuvTahnb8x9uQmAs4kaSmaJWNKGYSV+qNDz+xF6A=;
+  b=WAJlByuHezLU6m0duPxRo3CDePax6EE2keEIDtcovdxkWN4oJMd21UQM
+   NWuQRQ8xD5xAybbWTwL4lxrmPyfqV+8PuWwnNr2GCWrXt6GAK1ZR3CNLV
+   +vTT8PSZ18I+DHYPnrq46OZWlMyt5zUNqUl/QDqdevNXypSZyxAPwYJK/
+   6d5zShixeO3E7JnnkXROicrxUzGBg75bX8dr7nsRdIQ73av5KE9Tj56Kl
+   TNHsJf9zKS/0fS4ZrgAEB0TfAh8MKQHFsIBOvwNYXHw4i31Clpth9v3X+
+   KVYX+1DX8+aRe6y9fS+nQczXkO9VmTO+SYQnjU0/OvcZrWrwCXKkOMgY1
+   Q==;
+X-CSE-ConnectionGUID: 4ndt5XqXSEOJ4ihptwjIbA==
+X-CSE-MsgGUID: 4erABeSbR+GqYQvbgfjc0w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="64506112"
+X-IronPort-AV: E=Sophos;i="6.14,221,1736841600"; 
+   d="scan'208";a="64506112"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 13:21:18 -0800
+X-CSE-ConnectionGUID: +bbhqhejTQqFjKUCKTAcyA==
+X-CSE-MsgGUID: MourMwfqSni8JykwSzE9lA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,221,1736841600"; 
+   d="scan'208";a="141740201"
+Received: from jbfryman-mobl9.amr.corp.intel.com (HELO aschofie-mobl2.lan) ([10.125.109.168])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 13:21:17 -0800
+Date: Tue, 4 Mar 2025 13:21:15 -0800
+From: Alison Schofield <alison.schofield@intel.com>
+To: "Koralahalli Channabasappa, Smita" <Smita.KoralahalliChannabasappa@amd.com>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-cxl@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Yazen Ghannam <yazen.ghannam@amd.com>,
+	Terry Bowman <terry.bowman@amd.com>
+Subject: Re: [PATCH v7 2/2] cxl/pci: Add trace logging for CXL PCIe Port RAS
+ errors
+Message-ID: <Z8duy-pPjH82Khyc@aschofie-mobl2.lan>
+References: <20250226221157.149406-1-Smita.KoralahalliChannabasappa@amd.com>
+ <20250226221157.149406-3-Smita.KoralahalliChannabasappa@amd.com>
+ <Z8dM80wy5Q8UQomz@aschofie-mobl2.lan>
+ <19fd5db5-cc52-4f05-8ecc-64a4eea3b9a1@amd.com>
+ <Z8dsM1hJm7H3ddgj@aschofie-mobl2.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] soc: aspeed: lpc-pcc: Add PCC controller support
-To: Kevin Chen <kevin_chen@aspeedtech.com>, lee@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
- andrew@codeconstruct.com.au, derek.kiernan@amd.com, dragan.cvetic@amd.com,
- arnd@arndb.de, gregkh@linuxfoundation.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
- linux-kernel@vger.kernel.org
-References: <20250304104434.481429-1-kevin_chen@aspeedtech.com>
- <20250304104434.481429-4-kevin_chen@aspeedtech.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20250304104434.481429-4-kevin_chen@aspeedtech.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8dsM1hJm7H3ddgj@aschofie-mobl2.lan>
 
-Le 04/03/2025 à 11:44, Kevin Chen a écrit :
-> Add LPC PCC controller driver to support POST code capture.
+On Tue, Mar 04, 2025 at 01:10:11PM -0800, Alison Schofield wrote:
+> On Tue, Mar 04, 2025 at 12:33:56PM -0800, Koralahalli Channabasappa, Smita wrote:
+> snip
+> > > > +TRACE_EVENT(cxl_port_aer_uncorrectable_error,
+> > > > +	TP_PROTO(struct device *dev, u32 status, u32 fe, u32 *hl),
+> > > > +	TP_ARGS(dev, status, fe, hl),
+> > > > +	TP_STRUCT__entry(
+> > > > +		__string(devname, dev_name(dev))
+> > > > +		__string(parent, dev_name(dev->parent))
+> > > 
+> > > Above devname, parent
+> > 
+> > Ok I'm planning to keep as device and parent. Let me know if wording "host"
+> > is preferred over "parent".
 > 
-> Signed-off-by: Kevin Chen <kevin_chen@aspeedtech.com>
+> Take a look at these in the same file that use memdev, 'host'.
+> Maybe you want to be similar.
+> 
+> TRACE_EVENT(cxl_aer_uncorrectable_error,
+> TRACE_EVENT(cxl_aer_correctable_error,
 
-Hi,
+BTW - I wasn't being intentionally vague. I don't know what is the
+best lingo. Do memdev's have hosts and ports have parents? If
+that's the right lingo, then go with it. 
 
-> +	init_waitqueue_head(&pcc->wq);
-> +
-> +	pcc->mdev_id = ida_alloc(&aspeed_pcc_ida, GFP_KERNEL);
 
-Missing ida_free() in therror handling path and in the rmove function?
-
-> +	if (pcc->mdev_id < 0) {
-> +		dev_err(dev, "Couldn't allocate ID\n");
-> +		return pcc->mdev_id;
-> +	}
-> +
-> +	pcc->mdev.parent = dev;
-> +	pcc->mdev.minor = MISC_DYNAMIC_MINOR;
-> +	pcc->mdev.name = devm_kasprintf(dev, GFP_KERNEL, "%s%d", DEVICE_NAME,
-> +					pcc->mdev_id);
-> +	pcc->mdev.fops = &pcc_fops;
-> +	rc = misc_register(&pcc->mdev);
-> +	if (rc) {
-> +		dev_err(dev, "Couldn't register misc device\n");
-> +		goto err_free_kfifo;
-> +	}
-> +
-> +	rc = aspeed_pcc_enable(pcc, dev);
-> +	if (rc) {
-> +		dev_err(dev, "Couldn't enable PCC\n");
-> +		goto err_dereg_mdev;
-> +	}
-> +
-> +	dev_set_drvdata(&pdev->dev, pcc);
-> +
-> +	return 0;
-> +
-> +err_dereg_mdev:
-> +	misc_deregister(&pcc->mdev);
-> +
-> +err_free_kfifo:
-> +	kfifo_free(&pcc->fifo);
-> +
-> +	return rc;
-> +}
-> +
-> +static void aspeed_pcc_remove(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct aspeed_pcc_ctrl *pcc = dev_get_drvdata(dev);
-> +
-> +	kfifo_free(&pcc->fifo);
-> +	misc_deregister(&pcc->mdev);
-> +}
-> +
-> +static const struct of_device_id aspeed_pcc_table[] = {
-> +	{ .compatible = "aspeed,ast2600-lpc-pcc" },
-> +	{ },
-
-Unneeded trailing comma after a terminator.
-
-> +};
-> +
-> +static struct platform_driver aspeed_pcc_driver = {
-> +	.driver = {
-> +		.name = "aspeed-pcc",
-> +		.of_match_table = aspeed_pcc_table,
-> +	},
-> +	.probe = aspeed_pcc_probe,
-> +	.remove = aspeed_pcc_remove,
-> +};
-
-...
-
-CJ
+> 
+> snip
+> > 
+> 
 
