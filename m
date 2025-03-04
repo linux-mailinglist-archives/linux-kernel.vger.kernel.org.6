@@ -1,147 +1,133 @@
-Return-Path: <linux-kernel+bounces-543780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25751A4D9D6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:12:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68728A4D9D8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:13:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2883C1897A4B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:12:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91D75160FAA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:13:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FBA51FCFDB;
-	Tue,  4 Mar 2025 10:12:00 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 203751FDA90;
+	Tue,  4 Mar 2025 10:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eCt5zUM1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3806225D6
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 10:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 777B6225D6;
+	Tue,  4 Mar 2025 10:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741083119; cv=none; b=nvGNJYH8L2mnDvBzqxn5vdPfkNrFKnsTwlYsIU7uTiudmfzjZCee3yRJtfgUx/QXdP6E4CK8y1vnp1XPj/JHDSCN1nyPO59szFbZutEf7O8eXYbAhm3mlxxm0DVIkNk2S11qTYF8GRQISFRegiziQeraGdzN61Ar5+O5c+kXCfY=
+	t=1741083182; cv=none; b=T8N7WKG5ktBX4yal/tcp6WmCH/nMXCtFiqu4p7ismW7NRKjn28XyxqsIBsc2sQ8nbgj9njLf8oxDhXrFe3yfOfo00gawox/wYwteEF+DPyxLakfsJOPxDV12Bm6vloqHwBm0dVxUZ88Av+2FJiuiZY6htyuKYT2HbSVy333VAbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741083119; c=relaxed/simple;
-	bh=1K2Z5TXNwJtGVBmeIdq1OM4WbcNKBN481sukzVQQoCc=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RpMOMvzV/yeU+r1sEDaEKXOWq+jN6wXHRovwWnb9TPgRcBIygwsXfSyu1MZroxWG7nfGvCeqshY+zz5Ecij4oXrTHZ0xFzdInzY27ZrMRKxM5zMe6jazRk6bDhygjWSzciL2ezU0KTNasvZG6QJbyjxo6HxIUROk5S2wEjvH7qw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Z6Wd1111qz6D8xW;
-	Tue,  4 Mar 2025 18:09:41 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3A3AF140D1D;
-	Tue,  4 Mar 2025 18:11:53 +0800 (CST)
-Received: from localhost (10.96.237.92) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 4 Mar
- 2025 11:11:50 +0100
-Date: Tue, 4 Mar 2025 18:11:46 +0800
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Yicong Yang <yangyicong@huawei.com>
-CC: <will@kernel.org>, <mark.rutland@arm.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<prime.zeng@hisilicon.com>, <linuxarm@huawei.com>,
-	<yangyicong@hisilicon.com>, <wangyushan12@huawei.com>
-Subject: Re: [PATCH 6/9] drivers/perf: hisi: Relax the event number check of
- v2 PMUs
-Message-ID: <20250304181146.000042b3@huawei.com>
-In-Reply-To: <20250218092000.41641-7-yangyicong@huawei.com>
-References: <20250218092000.41641-1-yangyicong@huawei.com>
-	<20250218092000.41641-7-yangyicong@huawei.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1741083182; c=relaxed/simple;
+	bh=Vg/RWn3guOlPu3NnhDEqa5mQyoV3f87Ql2/DgfZqpY8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I9Ik/G1o6o+g+fuO8e6G4lpG3lci69mBKGoDnVYFN+s1hYOBbix8UbpW5bLE9Zf2DJlV+DcDw/VOzeafmDLORieqL1DeEoTKXGBNVX101wSqccjeIK5LyiUbDKsGgHg8qSgTRqfzgyswOidztn6shyj6PI/w0F0ZaqFpcGFILlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eCt5zUM1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DADB1C4CEE8;
+	Tue,  4 Mar 2025 10:12:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741083182;
+	bh=Vg/RWn3guOlPu3NnhDEqa5mQyoV3f87Ql2/DgfZqpY8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=eCt5zUM1L+fL4wVKqlQDasmTPvBbpAHR5MaQcksQ0FHFTfoHjxYawj0LKdaCRFIwr
+	 a0Qz5eRCOB9l2tJDPHCar2NhuGwTftQJhpf2E7laUegwtJim9PEYpCHrymDQ4mg5DA
+	 8rmUN4KMn/udyON6eEiioxip8T99gjXOw/WYIp3irI9QanTBRjrCQQPTjWTtAs2oOZ
+	 eEj6JaSjdPFdiI8+e+nFQX8AvynPpB3n1lxzz1M8SKuNF2CBIe+tNeyRdjpKk9XwEi
+	 rjbopWZ27JLOpMRYAoYHGyK/wl+K7iKYvoZ37sSoDzzCq/8aVfB4zv+zIkMTcdOzTT
+	 Nnaaz+I6ztixQ==
+Message-ID: <f6c7feb3-e003-4bbc-8179-3a3df533d2d5@kernel.org>
+Date: Tue, 4 Mar 2025 11:12:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] arm64: dts: corstone1000: Add definitions for
+ secondary CPU cores
+To: Sudeep Holla <sudeep.holla@arm.com>,
+ Hugues KAMBA MPIANA <hugues.kambampiana@arm.com>
+Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, krzk+dt@kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ liviu.dudau@arm.com, lpieralisi@kernel.org, robh@kernel.org
+References: <Z8XSIx75B4mtcV48@bogus>
+ <20250303170012.469576-1-hugues.kambampiana@arm.com>
+ <174108287362.420865.6246087705407586774.b4-ty@arm.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <174108287362.420865.6246087705407586774.b4-ty@arm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
- frapeml500008.china.huawei.com (7.182.85.71)
 
-On Tue, 18 Feb 2025 17:19:57 +0800
-Yicong Yang <yangyicong@huawei.com> wrote:
-
-> From: Junhao He <hejunhao3@huawei.com>
+On 04/03/2025 11:08, Sudeep Holla wrote:
+> On Mon, 03 Mar 2025 17:00:12 +0000, Hugues KAMBA MPIANA wrote:
+>> Add `cpu1`, `cpu2` and `cpu3` nodes to the Corstone1000 device tree to
+>> enable support for secondary CPU cores.
+>>
+>> This update facilitates symmetric multiprocessing (SMP) support on
+>> the Corstone1000 Fixed Virtual Platform (FVP), allowing the
+>> secondary cores to be properly initialised and utilised.
+>>
+>> [...]
 > 
-> The supported event number range of each Uncore PMUs is provided by
-> each driver in hisi_pmu::check_event and out of range events
-> will be rejected. A later version with expanded event number range
-> needs to register the PMU with updated hisi_pmu::check_event
-> even if it's the only update, which means the expanded events
-> cannot be used unless the driver's updated. However the unsupported
-> events won't be counted by the hardware so we can relax the event
-> number check to allow the use the expanded events.
+> Applied to sudeep.holla/linux (for-next/juno/updates), thanks!
 > 
-> Signed-off-by: Junhao He <hejunhao3@huawei.com>
-> Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
-> ---
->  drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c | 2 +-
->  drivers/perf/hisilicon/hisi_uncore_hha_pmu.c  | 7 +++----
->  drivers/perf/hisilicon/hisi_uncore_pa_pmu.c   | 2 +-
->  drivers/perf/hisilicon/hisi_uncore_sllc_pmu.c | 3 +--
->  4 files changed, 6 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c b/drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c
-> index 26eaa6d20c00..21c494881ca0 100644
-> --- a/drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c
-> +++ b/drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c
-> @@ -53,7 +53,7 @@
->  #define DDRC_V1_PERF_CTRL_EN	0x2
->  #define DDRC_V2_PERF_CTRL_EN	0x1
->  #define DDRC_V1_NR_EVENTS	0x7
-> -#define DDRC_V2_NR_EVENTS	0x90
-> +#define DDRC_V2_NR_EVENTS	0xFF
->  
->  #define DDRC_EVENT_CNTn(base, n)	((base) + (n) * 8)
->  #define DDRC_EVENT_TYPEn(base, n)	((base) + (n) * 4)
-> diff --git a/drivers/perf/hisilicon/hisi_uncore_hha_pmu.c b/drivers/perf/hisilicon/hisi_uncore_hha_pmu.c
-> index ca609db86046..78cd6d67f209 100644
-> --- a/drivers/perf/hisilicon/hisi_uncore_hha_pmu.c
-> +++ b/drivers/perf/hisilicon/hisi_uncore_hha_pmu.c
-> @@ -47,9 +47,8 @@
->  #define HHA_SRCID_CMD		GENMASK(16, 6)
->  #define HHA_SRCID_MSK		GENMASK(30, 20)
->  #define HHA_DATSRC_SKT_EN	BIT(23)
-> -#define HHA_EVTYPE_NONE		0xff
-> +#define HHA_EVTYPE_MASK		GENMASK(7, 0)
-Using something called mask in places where we previously
-had something called nr_events seems a little odd.
+> [1/1] arm64: dts: corstone1000: Add definitions for secondary CPU cores
+>       https://git.kernel.org/sudeep.holla/c/21b9f56cec8f
 
-renaming EVTYPE_NONE to EVTYPE_MASK seems valid given the
-useage but I'd have a different define for the number
-of events and not make both changes in one patch.
+Why? Nothing improved here comparing to v1.
 
->  #define HHA_V1_NR_EVENT		0x65
-> -#define HHA_V2_NR_EVENT		0xCE
->  
->  HISI_PMU_EVENT_ATTR_EXTRACTOR(srcid_cmd, config1, 10, 0);
->  HISI_PMU_EVENT_ATTR_EXTRACTOR(srcid_msk, config1, 21, 11);
-> @@ -197,7 +196,7 @@ static void hisi_hha_pmu_write_evtype(struct hisi_pmu *hha_pmu, int idx,
->  
->  	/* Write event code to HHA_EVENT_TYPEx register */
->  	val = readl(hha_pmu->base + reg);
-> -	val &= ~(HHA_EVTYPE_NONE << shift);
-> +	val &= ~(HHA_EVTYPE_MASK << shift);
->  	val |= (type << shift);
->  	writel(val, hha_pmu->base + reg);
->  }
-> @@ -453,7 +452,7 @@ static int hisi_hha_pmu_dev_probe(struct platform_device *pdev,
->  
->  	if (hha_pmu->identifier >= HISI_PMU_V2) {
->  		hha_pmu->counter_bits = 64;
-> -		hha_pmu->check_event = HHA_V2_NR_EVENT;
-> +		hha_pmu->check_event = HHA_EVTYPE_MASK;
-To me this makes little sense.  Should be HHA_MAX_NR_EVENT
-or something like that.
+Your comment are still valid and the patch is still not correct.
 
->  		hha_pmu->pmu_events.attr_groups = hisi_hha_pmu_v2_attr_groups;
->  		hha_pmu->num_counters = HHA_V2_NR_COUNTERS;
->  	} else {
-
-Jonathan
+Best regards,
+Krzysztof
 
