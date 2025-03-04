@@ -1,104 +1,163 @@
-Return-Path: <linux-kernel+bounces-545373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB894A4EC8F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:00:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26337A4EC1C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:43:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EF2B8A4089
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:40:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A81117AEF54
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:39:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D0D24C063;
-	Tue,  4 Mar 2025 18:34:04 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F3802E338D;
+	Tue,  4 Mar 2025 18:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TZhTxO7W"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D20224C06A
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:34:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 419C424EA85;
+	Tue,  4 Mar 2025 18:35:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741113243; cv=none; b=lp+GP3Gjq2WbTkzUXZk8Azb/q1KT6bv26J1gdiW/Eacdu/EZOrWxjy1+jsL+ybHoYMYaOnIm23oNtmIluXUZ2Dqu0Q1ZKggAhnonpXLm/65tSBP/mt0GMkVlZKJ7kIowiC4TJteGkRCFfEjRuA7mneJl3pYYRjo96bLurl/sh7k=
+	t=1741113322; cv=none; b=lwjxRsQcVEXJhMXvlKMZuT0AD3hZ7DJ7dZaYTMrqIME7r8YYBlKmyUr2lR1gepvcrAK/DWMtUVf/ZNfAQaAIBBvm5ZDWMldRwdKll5hg0aA3hqtJS4CmR7WhwY+mheOoE8ySvrBKrBNRiZXlUFqTgnjZCy2UfEr/m6VbD1Rcl0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741113243; c=relaxed/simple;
-	bh=+6eY4JboCWUSqntkcOQ5NOvD3P2ZpGN+XZXY5oxz1Y0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ffgv5zkaaQcp0S5yia81WzBRbwAJHWb4uw23zckUyxRC/wBHAeyFYPEWbsHZKtxc/FHvbnXnI6aGUzVBGRwvNchVoo/Ic80ROycU4GTLkdWTb8wBhDBYimxy4NAUcz9GuWEe/JXYVwRyeH2PWy8VhTAEW879rpVrzmVFn9uktPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77286C4CEE5;
-	Tue,  4 Mar 2025 18:34:02 +0000 (UTC)
-Date: Tue, 4 Mar 2025 13:34:57 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Ayush Jain <Ayush.jain3@amd.com>
-Cc: <warthog9@eaglescrag.net>, <linux-kernel@vger.kernel.org>,
- <srikanth.aithal@amd.com>, <kalpana.shetty@amd.com>
-Subject: Re: [PATCH RESEND v1] ktest: Fix Test Failures Due to Missing
- LOG_FILE Directories
-Message-ID: <20250304133457.7e8f82a1@gandalf.local.home>
-In-Reply-To: <20250128051427.405808-1-Ayush.jain3@amd.com>
-References: <20250128051427.405808-1-Ayush.jain3@amd.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741113322; c=relaxed/simple;
+	bh=bdqLolqLrNOQTG0xL25LOQlvD9pbCT1gykmvKt6j8ik=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aLAwr6vd1olIckfN0t9Op3CdHqNUUo/+rKiLDWgRuR/eb73V+W6qsUk84cg0xAjGOSgMSQzRNzRyAIInC2W5avYC4NtbnwfEpP0OdaRg7uGWjCdB6l5z90MAJV05PkjtffcskGx51C4tm954g5+aB6IkLZjZdb0wUb0MNZgoWik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TZhTxO7W; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5dccaaca646so177740a12.0;
+        Tue, 04 Mar 2025 10:35:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741113317; x=1741718117; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=z+J95x80BXx1IFj8d9HujegeeTJ5w2Jkd/IoDuq5DfM=;
+        b=TZhTxO7Wipwuw5+6lF5hxw2Oe4HcRhEa+gh4tTH7YsxoJ9wDoPP0ctZietwcgpID+Z
+         jsAbbdq6QRgK8P5XOMGLO91faybS/espjGMVJnMNe9Fchcy3dctVUxn/vAV5M76UgH2b
+         cQ4ZTcAqCmH1jBe0yORDMPjMpmrXDpNj6Fngefqqh5tUDhS0P9c93V9DltHxAIDW7GhG
+         024QXJepMsxtWARCG2HLPIpTz2jDPkBpmTQW527Xwa6l9aibQWoRg3/EXKKz+pYCBri0
+         gAWRe9SckpJKos7q7U//ovDBD5Uq2MYJjiz65xrGgRTS3dAOmQ16ljiW4CW3QWx50N/3
+         krsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741113317; x=1741718117;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=z+J95x80BXx1IFj8d9HujegeeTJ5w2Jkd/IoDuq5DfM=;
+        b=Asbdle/CK8EM1Rqdu6JdTgnQq/cZDGW6zJZLf0h4j4HWJbcED7JsLal5Gmvi6b8UlH
+         fZE1DeU0j9/2iXFjLbXeAN89ZbBMiWdMg3IAz6s7/bKYMbj4XLKypA399sorGyM7S6ge
+         0S4THvNukmuPoAsMlh6Wvn1ESVUyDW0fUYWuBva+QrPKRNK/JuN4sH6ljEDH4zYhvvvf
+         mt9EnXPPgs60b/8KxgMmrHm5bWbj/jXHJ/7aTArOX1ilpFIV8Gr+6/GQgp0MSGVIVe1+
+         lfutKaPTqw32EGGHn6jFTpAcjhc2T7jLZ3FIE6W8LsWVY36JlKpQUyeqO+sur1TBevmj
+         Ep9A==
+X-Forwarded-Encrypted: i=1; AJvYcCWOSkPnxgMH8Z0D5FtHtnyoUjCiadpRqmkpAEvnIMfRJcxgEez0plA3s+1qKOV6VFcm70sapglVv1+WhtIU@vger.kernel.org, AJvYcCXDmWohKX912s0MJBgtTp5P1Mf9VmsqcHo8x2l7O12NeoMELNNFq55jJzpPcY78ru0oqlfijQHair7m6oCP@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+Zl3iCKzu6/PWE/SlITQ02KhEruHlpw+ixX7Aya2GorZ/VMCO
+	J5IMl5TypaosH3gPAj19XiSvVh9HFFfLH8yPvvk4OeOne0c/MjTa
+X-Gm-Gg: ASbGncsHrUF94LMdYbO8NRkGtx6hSqn/R18j1Tt2coJHM1e0fvuP5m0zMbFg98ABnNY
+	3m7VOP6PKT0ek/9GeWBNnUZqMANVmuulSG80TMgmu7lMFZ0EJ5zY64ZDKOou/t11SRfoVdRcNn9
+	5tdKibDDsH8kBwLmmZOZaYDRD1gGV4r5fmXvZG4bJt3vGWtipl/wCX2ntp6v2tJbFdwHTX0+Bmo
+	Flb0m5au/ZLYtVm021c6KQ1dxLaOKpH1ymzeymVMy0YgD5t/5CVKacURKsYEYjSvUmAS3n2aizy
+	8ylkQN24h8jG2F82Kxl+uTBmFM21BsXBKNU+t5bhwXpqb9gkIaZlL7egcGFs
+X-Google-Smtp-Source: AGHT+IE353GjHnf067W0Q1HIOLcONPZR0+KcWOC+XbHXYYPpsuBWbo4eCRqyUsKiRMpEYhT+JdgZsA==
+X-Received: by 2002:a05:6402:2742:b0:5dc:eb2:570d with SMTP id 4fb4d7f45d1cf-5e59f0dc9d3mr215888a12.2.1741113317028;
+        Tue, 04 Mar 2025 10:35:17 -0800 (PST)
+Received: from f.. (cst-prg-71-44.cust.vodafone.cz. [46.135.71.44])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e4c3bb747csm8691328a12.42.2025.03.04.10.35.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 10:35:16 -0800 (PST)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org,
+	viro@zeniv.linux.org.uk
+Cc: jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [RFC PATCH v v2 0/4] avoid the extra atomic on a ref when closing a fd
+Date: Tue,  4 Mar 2025 19:35:02 +0100
+Message-ID: <20250304183506.498724-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Tue, 28 Jan 2025 05:14:27 +0000
-Ayush Jain <Ayush.jain3@amd.com> wrote:
+The stock kernel transitioning the file to no refs held penalizes the
+caller with an extra atomic to block any increments.
 
-> Handle missing parent directories for LOG_FILE path to prevent test
-> failures. If the parent directories don't exist, create them to ensure
-> the tests proceed successfully.
-> 
+For cases where the file is highly likely to be going away this is
+easily avoidable.
 
-Sorry for the late reply. This got lost in my inbox.
+In the open+close case the win is very modest because of the following
+problems:
+- kmem and memcg having terrible performance
+- putname using an atomic (I have a wip to whack that)
+- open performing an extra ref/unref on the dentry (there are patches to
+  do it, including by Al. I mailed about them in [1])
+- creds using atomics (I have a wip to whack that)
+- apparmor using atomics (ditto, same mechanism)
 
-> Signed-off-by: Ayush Jain <Ayush.jain3@amd.com>
-> ---
->  tools/testing/ktest/ktest.pl | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/tools/testing/ktest/ktest.pl b/tools/testing/ktest/ktest.pl
-> index 8c8da966c641..be707cbc56a7 100755
-> --- a/tools/testing/ktest/ktest.pl
-> +++ b/tools/testing/ktest/ktest.pl
-> @@ -4303,6 +4303,13 @@ if (defined($opt{"LOG_FILE"})) {
->      if ($opt{"CLEAR_LOG"}) {
->  	unlink $opt{"LOG_FILE"};
->      }
-> +	if (! -e $opt{"LOG_FILE"}) {
+On top of that I have a WIP patch to dodge some of the work at lookup
+itself.
 
-First, please use the same indentation as the file. This isn't kernel code
-and doesn't use the kernel indentation.
+All in all there is several % avoidably lost here.
 
-> +		my ($dir) = $opt{"LOG_FILE"} =~ m|^(.*/)|;
+stats colected during a kernel build with:
+bpftrace -e 'kprobe:filp_close,kprobe:fput,kprobe:fput_close* { @[probe] = hist(((struct file *)arg0)->f_ref.refcnt.counter > 0); }'
 
-The above has a lot of Perl shortcuts that a normal C programmer would not
-understand. Please convert this to:
+@[kprobe:filp_close]:
+[0]                32195 |@@@@@@@@@@                                          |
+[1]               164567 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
 
-	if (! -e $opt{"LOG_FILE"} && $opt{"LOG_FILE"} =~ m,^(.*/),) {
-		my $dir = $1;
+@[kprobe:fput]:
+[0]               339240 |@@@@@@                                              |
+[1]              2888064 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
 
+@[kprobe:fput_close]:
+[0]              5116767 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+[1]               164544 |@                                                   |
 
-		if (! -d $dir) {
-		
-Thanks,
-
--- Steve
+@[kprobe:fput_close_sync]:
+[0]              5340660 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+[1]               358943 |@@@                                                 |
 
 
-> +		if ($dir && !-d $dir) {
-> +			mkpath($dir) or die "Failed to create directories '$dir': $!";
-> +			print "\nThe log directory $dir did not exist, so it was created.\n";
-> +		}
-> +	}
->      open(LOG, ">> $opt{LOG_FILE}") or die "Can't write to $opt{LOG_FILE}";
->      LOG->autoflush(1);
->  }
+0 indicates the last reference, 1 that there is more.
+
+filp_close is largely skewed because of close_on_exec.
+
+vast majority of last fputs are from remove_vma. I think that code wants
+to be patched to batch them (as in something like fput_many should be
+added -- something for later).
+
+[1] https://lore.kernel.org/linux-fsdevel/20250304165728.491785-1-mjguzik@gmail.com/T/#u
+
+v2:
+- patch filp_close
+- patch failing open
+
+Mateusz Guzik (4):
+  file: add fput and file_ref_put routines optimized for use when
+    closing a fd
+  fs: use fput_close_sync() in close()
+  fs: use fput_close() in filp_close()
+  fs: use fput_close() in path_openat()
+
+ fs/file.c                | 75 ++++++++++++++++++++++++++++++----------
+ fs/file_table.c          | 72 +++++++++++++++++++++++++++-----------
+ fs/namei.c               |  2 +-
+ fs/open.c                |  4 +--
+ include/linux/file.h     |  2 ++
+ include/linux/file_ref.h |  1 +
+ 6 files changed, 114 insertions(+), 42 deletions(-)
+
+-- 
+2.43.0
 
 
