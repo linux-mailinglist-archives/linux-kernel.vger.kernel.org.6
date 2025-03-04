@@ -1,243 +1,194 @@
-Return-Path: <linux-kernel+bounces-543010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 836FAA4D078
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 02:03:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 311FFA4D05E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:47:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA5493AD527
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:03:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 057133ADEBD
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 00:45:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB5978F59;
-	Tue,  4 Mar 2025 01:03:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E482E433C4;
+	Tue,  4 Mar 2025 00:45:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WpRV8Ng8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="sZ+CrPwn"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2075.outbound.protection.outlook.com [40.107.22.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50999BE5E
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 01:03:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741050217; cv=none; b=VetDDBFBaMOk8f5/UKLoto9AkEd+QpGwXIFTVv2xy/AtbwK92lPp1UOshZ6J12EwqQUhlzy/XSk2QaRDEDoE5cJCAp4XfP2cFyFmDtxF5ufKmUvhFjgARVCFdXO63H1vOUWCEjlw5l6NSOaCpcg3HuISzFztjzazn/tvzrqG/tQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741050217; c=relaxed/simple;
-	bh=X7vkqyMBNaheIUNkehORS3JSEiBfbHm+bdTobACrNNs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ddIBJ5XTfPCbS+ts3ZiPRQtJ0v/YLTZ05CgNrXkUpzvaUUBxYEVjuWrTIM+Js4WG6GVtlL9k5NWRWnPXll48gVARYFV2+0KrMEN0diWLxE/Ugo+znq3ZY1mv/g2EJyBTEqcNICxppP9mr6M67Pt65QghXnAD7vj8FPDxea9pknI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WpRV8Ng8; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741050214;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bnm2BczQeE+oTxQUkTu0mGWgYbP3KRiI/EZBYxWyGBw=;
-	b=WpRV8Ng8ORVkZxca2NVZyEkS+S8Sei1ppLUnm8n6UadFDO1Va+fjHocOrzpLZ/Lo0Mu1Qt
-	F7njx5BNT3wiWV3ezxdJtK6h9RIrauw82J/HwuXXhZOd/Og72hhx+2JfwITpNxqd6yhAsD
-	DMwpPZRU6rzs0/XYNg+BR7aM3NK6xHg=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-441-MoNlUajHMSS5hFC1ZHm5xQ-1; Mon, 03 Mar 2025 20:03:33 -0500
-X-MC-Unique: MoNlUajHMSS5hFC1ZHm5xQ-1
-X-Mimecast-MFC-AGG-ID: MoNlUajHMSS5hFC1ZHm5xQ_1741050212
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2feb8d29740so7643578a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 17:03:32 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741050212; x=1741655012;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bnm2BczQeE+oTxQUkTu0mGWgYbP3KRiI/EZBYxWyGBw=;
-        b=Et7/oMqQc9xUsrxk9F7/vlJMZ3HSQRaASacS0yg1c/Y0N+MbV1u9zeVXuCJeVNgQs6
-         aoGw9L0JqRpZkVfZCtfRR0qlE5ZAhirzAF31YkQP2Fo4UNxwy89ZgH1c0GjB4ewhimnx
-         Tz64scm7td8VKqnRjwD/OIRSSj5GM08X8e8V/imBzYettUR4kXlv9EBD/NZ3mWdkJ4+K
-         X1Reu46iEQE/G747sLgHbEvmJjmvZF0W7Ej7fd3+ertu+Qx2HZZRyZjN/nvJ1z8XBxBR
-         ySbsMOWqOT3kFomyYGGAH6vxN7XfT9nj42Oc4/tHOv/fpqdxJl6Tm8adpRZ/yT6Q0kYR
-         6/XQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUe1QWC+uDwtrk+XC1znEWVxFAdXcOgZHOFgMnx6d5YlymgmW3ynBKsSKjHEJ9hPtSe8eYxTq2JQF1ZCNw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEQ8eL6/A2adZgwz9vvv3Uu2fXZ7VY73PWEKs2aEL65+BXZnIA
-	Xhc48n2EihQurWCPXuhfgET0Ti/kmPh2gN1+x5DWo9OwyWqfW20QgxcFR00xQW1rxhVCsewq2mC
-	JCTV0vMmDcJN+Xhkfjwm2/dEudVbH+BIApPc9Jz148YAI9B2D69byMimFQIKurQ==
-X-Gm-Gg: ASbGncuPKcFhVvJKY0M8fj6WYANb4IBO4+BNLxMW1QChhL9LcmfP+q4LH49RMf0v35/
-	ucH9SZJT0mr5l7SxNbf1PWtiGEmnGilaJ7x0FSBNqXl6uU8GUsikBchiX8KHIJQ2apntb3LHZwA
-	kqQQqwUaxyrJUifLcPYzkgqw0f3uucZNOvLosklJsXOjW85jYx0Oz97yXoHTJ1YEv0XDwaedwAI
-	Om4B0H0aFAmagAf4SKIS++Zgx+i98oa4US/4ilCitQ5Mmi8bPwOY2JI7G0+0n3mnqXA9q8vmyTM
-	IYZAWOAAU+BsFLGfqA==
-X-Received: by 2002:a05:6a20:1594:b0:1ee:650b:ac22 with SMTP id adf61e73a8af0-1f2f4e4c8e2mr29503602637.40.1741050211925;
-        Mon, 03 Mar 2025 17:03:31 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEh6O0/XBxWNy8f6zQpOsX8TWQ/teZrvIDTKOnq0U3+AlSWoqSQsK295l3GALc1XNoc+vUz9w==
-X-Received: by 2002:a05:6a20:1594:b0:1ee:650b:ac22 with SMTP id adf61e73a8af0-1f2f4e4c8e2mr29503541637.40.1741050211560;
-        Mon, 03 Mar 2025 17:03:31 -0800 (PST)
-Received: from [192.168.68.55] ([180.233.125.164])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-aee7ddf2444sm9001374a12.3.2025.03.03.17.03.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Mar 2025 17:03:30 -0800 (PST)
-Message-ID: <80983793-5df7-4828-96e8-90540e7d9183@redhat.com>
-Date: Tue, 4 Mar 2025 11:03:21 +1000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 533862AF00;
+	Tue,  4 Mar 2025 00:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741049126; cv=fail; b=caS+r7dJWfXHgpp6naGeAf5Cv0450wzdYvK5YmaIrmqbZD6g6qdC5siF2GoKfLGV7QW0h9Xe+k5JLw2uHowodqRF4PgnySIn7PRnFKMeeWDVWDEOs5XW2p5gROveM/7GzOBsoSTGUXUfg75YNvkI5ukBsTYi/hNTXlRQrH6MzPE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741049126; c=relaxed/simple;
+	bh=fORFCeb67eswpvoGertra0R61eIBmHNVfMNmfPTCy7k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Hl/neunhgmNCVAP8K/pCDrCpoakNgKITfFBUxiXoUgG+Uc2nIyZTgngtNhB5fqnVvHAppvCVysrdeRs88j2t0MtAy6GoQrW7sr/XNoErcPyUBZLqqkmXiOcP0bRGibRPh880P8hdJ6gTJUof8dF6Zh48bGccpzT7Kr0A/Temkz4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=sZ+CrPwn; arc=fail smtp.client-ip=40.107.22.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vjjx+zzLglZxcyu2kZitpQf7UbA9xGQRDWEt2DhYRtwFAKFYzV8znxSpriI4T9MDt2d2SmxNkVdFNaS8+a0Pv/lYiAmD+9+peTO/dVlGN9lgjIKJf7oGHLQEXz7lvuFjX8cB14otQZVNSLABxC5XQnYScJ9ED1v3UOBxqV4zYJ9dmhj67/GWZuZ4k8WOc7nnlkhL5e/qN9AGNGYZgo41bjJsnbr9NRSZ98IH7EgyA+2AYxx83TwjnZzkuwixPGx62wWn4hnFyq8qGydJ9y9h9V12lbKKN8yLZCVGnpJHK8nf5xpHiU8sHw5TvRIoW1TP5lu59Jkb2iBtzM6r7AbJhA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DbAf8a59g1mC1aOiz9V7uAUztw2vQfPHPqRXnNgnczw=;
+ b=hubB++0aMMZQhRsOBViYyiVRLk37pfSS0KlZNQvsq1KPAbdJk9MCtpGWsZvUJn2Y7SmzwZb47BxExkDp2MQWASS0Hv4Qgt3JY338ujJhDUMa6RtKip16hvjM3ed8AV8q+Thb+BDILb9+F6iUiz8QbAr5S3bqgv3j4QMJZXCfwSL7vfVpx5X+KfBaDhYCiOIPHTH/SfVO8O8WrXW3FGlxmdqd+dh3Dfp0iFP0EKco6+Dw/EpuZDDjfzPwMSsCR4wyNBuMMaUfzFvgrzVf9Jhm3KiHxEvgAlXPwVEV+oyIvesFI2BKxmDKL2vqi2jRjZlq5+l4vWn043ECfOfnPeEdyA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DbAf8a59g1mC1aOiz9V7uAUztw2vQfPHPqRXnNgnczw=;
+ b=sZ+CrPwnMhNhC2s8y2L54OvT2GZEi2Zdjh66sxRK1VycxHIJrAuCRBfPY/918UEwecXF5ZgC8EXsxPMicR5wpBBAzVwUqmJF5gsIHQwuffjOtIIS7Cy33LWuHbgnD05Kdqh0AYDRYv22jRJ5oamENBhbdKW95wHjOV0QqXzMAXIcKtP6bHTSykgP2L6AlOQzm+ZsSi1eQAoNpkoNsyKXudIw0o1uUD26KX2JEWUbB1ZWmu0B+aWt0DRhkcS4SwxULaDwqkqvEvNGtfwzXXfTOKfrq8n+9064VNGFcPt277YyLgsZyS9DQEoScfDhqIDk0G7jf7cuSRHxdk9H6EywPQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by DBBPR04MB7804.eurprd04.prod.outlook.com (2603:10a6:10:1e0::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.28; Tue, 4 Mar
+ 2025 00:45:21 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.8489.025; Tue, 4 Mar 2025
+ 00:45:21 +0000
+Date: Tue, 4 Mar 2025 09:51:40 +0800
+From: Peng Fan <peng.fan@oss.nxp.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH 0/4] input: use devm_pm_set_wake_irq
+Message-ID: <20250304015140.GA24694@nxa18884-linux>
+References: <20250205-input-cleanup-v1-0-9758898ff8cb@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250205-input-cleanup-v1-0-9758898ff8cb@nxp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-ClientProxiedBy: SI2PR06CA0013.apcprd06.prod.outlook.com
+ (2603:1096:4:186::18) To PAXPR04MB8459.eurprd04.prod.outlook.com
+ (2603:10a6:102:1da::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 17/45] arm64: RME: Handle realm enter/exit
-To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
- kvmarm@lists.linux.dev
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun
- <alpergun@google.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
-References: <20250213161426.102987-1-steven.price@arm.com>
- <20250213161426.102987-18-steven.price@arm.com>
-Content-Language: en-US
-From: Gavin Shan <gshan@redhat.com>
-In-Reply-To: <20250213161426.102987-18-steven.price@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|DBBPR04MB7804:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9babd9ba-ceae-497e-c728-08dd5ab5d781
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?juV2X7HCWIpfGrFeTsnzUj4jQEmZc5phchBmCde/QFHdVUN84UIcUGhea0PB?=
+ =?us-ascii?Q?9XEwCfU6xssRIKEM8n0JmbPtzoSGpxiXekVocDXTKmCptYzFtokaU34Tslpg?=
+ =?us-ascii?Q?eqK0qs9TRW9f8rxZS03J38rNHBKONxglDuUfqwIywFGyXzGGQWbKtgj7J/NF?=
+ =?us-ascii?Q?ud2cFgl7g8WwNl413gQbEpj6xBch8evUYoXkW0RKHRPLn2xcDPuB8/JF+z8F?=
+ =?us-ascii?Q?1qipZf/5kH5bQeboZSsvdpt/At8r/YqtaM/+3V6fkO3wDS1GKSbiq+UODKzf?=
+ =?us-ascii?Q?JZnoG++EKJMDEsIQW+rC+5OE3kR/acHJURqO4kIxAOLuolXpdufEAMOVRWO2?=
+ =?us-ascii?Q?cCMOgRw546Zc13GbWkr43XvNN6Bv1BBOUKw0GCl30cevL/XZ58RYRlz4LmgO?=
+ =?us-ascii?Q?akwkYWRUQ9fKl7Xa+YeMAZNfWwNhkuueK0gSFnKxaOvxfKgM5ird32t5SSD9?=
+ =?us-ascii?Q?avIkKbxucJ936wblioHIuQ/touueNCk4kbVmdhkee76xnqlKsgW5eewsv3wD?=
+ =?us-ascii?Q?uzBHr/4+JuPm5m43vfD7Cw84oaASv0vjU5JZRuF+76jwJVPH2uI5JOnAMF+s?=
+ =?us-ascii?Q?QSfiYK3/RMJalu99uqo6qeeBOS13g3GXJwRO8v136Ofo+HfDtiMUbYj2IDr7?=
+ =?us-ascii?Q?EUYnbq5H3Nha3vrzyG/J4MC12riUHEzR4IPgPkhSFJqWu2lB4SsPafFOVtCb?=
+ =?us-ascii?Q?fpiNChmgdUROUGitGaDY+aPfmjAXO3r2E8Y/OhFI55fc+mfJH4s4bL5IL+TP?=
+ =?us-ascii?Q?UT3eMrFVUT//FrAo+oZhu+woePZ9cFnslRbMC1ufFSC5AMVCKb6vVnundiKG?=
+ =?us-ascii?Q?UBCNEtEfCJn1hES3U4yqYpiJDYhs3IvBbw1VpeMSRxHZiLaUXyqabnsuDdrl?=
+ =?us-ascii?Q?p7bT4vC1CDbbGA4G2Hp3Z9w4hJLF5stJwl45BaYV/oA3Ko1hc3bzeF6gvnVz?=
+ =?us-ascii?Q?nACLbQ+3gvreKtciTYFW7AEBWzeSGFA7dca0trZvgj5VSW6W/MZqLfwbH0q2?=
+ =?us-ascii?Q?C0L19/bicOzBeaDjAGxjzhifqjcC4FPuVytlqUEBeHJeqkEBwIhzAjtl7qk7?=
+ =?us-ascii?Q?o5o199e9rszd8cK94LkRHNApw1mRQ1HsDokOzn4KX7uxL17lw99QgDuLkCtb?=
+ =?us-ascii?Q?MReicH8RL+GwnmtRG6V2ccIks8+yCtIE+xte+VQqcu4rUpRq81UvVt10NX44?=
+ =?us-ascii?Q?cUMqTKply0+52CQ4+Dvg4kehlzOfY3BLZRV3hfRYVNeM4i795sV0qZAecpJO?=
+ =?us-ascii?Q?F8gKm5lMKApHBsH9Q+Dk757PFH1IHwYishdweatj1fJll3lVMB/HhZXyDa9A?=
+ =?us-ascii?Q?1MQ2arNyqDCBlbT7T6ovSzKcol8dzO1FpZMUt5GsJLTbhdBDqEBhve9Dvv8t?=
+ =?us-ascii?Q?LkIRrUUl6rfb6V0ShQeq3BkBdwM9E4m6uS/8v+h5KsCEck5VEw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?YhBX6fS0/DyOlujZUTumvEw58Uds/OLUBA1T8IOxeBvRtkGAxR2no7AndEh2?=
+ =?us-ascii?Q?miDc0j3U1ZM5h5A7ajOKEWLhgKWXVJ9Eekh+B0qQerH1fQnhWUkqRZL+cDYv?=
+ =?us-ascii?Q?fh9yTR2Abmq7BejLvSuePXDsWDKmSQvBkGdPFE0xpaWwOukq9Ss4mpeT/TJD?=
+ =?us-ascii?Q?HLsDFSQu9610CxyYT8iYsQPUsyU1Ca9/tiC6+p1P1FIxllJzh4AWiG2D2y9H?=
+ =?us-ascii?Q?JsOa/+Z8I/Aijg9reeYc4zuwXfKgr+eLWrXVhH8+FJlflYp/244g2J+lAJCh?=
+ =?us-ascii?Q?2Bm61i1MUv0qqO3x5PVORbOFc82Dd69ByOtBvCn11nIiSX5wLzR5bvVPTW81?=
+ =?us-ascii?Q?PhpY/7COG7K6APtIccn5VPw/NdQnWRnSr+1/z7MO90s2cZS1/jgmoH/xih4F?=
+ =?us-ascii?Q?tHeNVKJ8zQ8pX42JmH6qWWSLv80wrTL/DztRioTEh68OJ9L70Va0TCYzLaNp?=
+ =?us-ascii?Q?FEaBWHv/KzINDFqQGyTqp/Kr8/r/gZ9UcKHJ6Oke8X0nnpqW/TwsXNX+cXcX?=
+ =?us-ascii?Q?vXu76OOlaB7RqMWDYLfbSAHW0r8s2r8vkeehOxyIi4QKg9FOVZ+k9Ay+6rYQ?=
+ =?us-ascii?Q?LLYM22Ai+aoPYyoMUoSSdRWVs0SYdl8UIaRebLztiysH3kfBGiwcYimN3lzc?=
+ =?us-ascii?Q?x9G15V72v6ms230lgUY3/QBif2r2b6Mh0ty43PWYq5sjEZhB2NpxoDSZ7YxS?=
+ =?us-ascii?Q?UKB4rnKquVQ2h7jJr9TuhPyarFc2Gsnj7mdEFYnsp9A0WO9YL7Z/Pb2iADVE?=
+ =?us-ascii?Q?JyarExzyOhCTYKwuBSnGCtwJP8v+5fstQnPVSWPdTMhtrHvIs6Kx+GQLazRt?=
+ =?us-ascii?Q?4Y22bNnXIy/x9xLQwo7rni7PdZXKhTve213cGjNu3E7+zFOoFnnyNSrsadBx?=
+ =?us-ascii?Q?MSfiJTtxHIZLgugCR9D3n0qr9l1ix/4lH9CJF0JEsTJq6qRpcRc8xdQQpVvY?=
+ =?us-ascii?Q?IY338OyAaFt2ogqiCFVtKJ6lon6CR2kAroakKyfofeFUI+6e7JCZkWv02x0X?=
+ =?us-ascii?Q?uQ5JaZSZSHl3v3oLtvI0AaddSo6U0kyHv7n3kZiLA77eDE01w546yTPWDY4w?=
+ =?us-ascii?Q?f7YcTisJB4pD/vCzFl8XS8Y6GpmqrAlBHtJmUFccXW7LEoJ5WGxpQucCf9D1?=
+ =?us-ascii?Q?YX3E4sb4EWsvFcRP5ASjf2JvWcwF7z0hMLecsXJPYxkRnmJkk7Sab8kof/qz?=
+ =?us-ascii?Q?D9jkoUnU9H4KKR4l7GIjV+PsHDSRm6ADEkwHon/iPO7DVxtBJ9JwOyaO+Z39?=
+ =?us-ascii?Q?FJoG+FbQBBpJsp1ywOBQ6gIbZHRjnHxam0q4+IyzWWl3ZveriwTpQ3xZHcqN?=
+ =?us-ascii?Q?Yuj+Mm9+EhuTkBscwJ7xwgSmyiMhjgGn/YuvC+DhwRG4dm+yR6VgayyoXmHi?=
+ =?us-ascii?Q?uVK5PsDxWKh0pgnSplP+fC0KT5E50PnIsq3rglpR+4s7PPCgWvPN4eZWrZGL?=
+ =?us-ascii?Q?tETWUIrhuw8uBh67aRd8DRbyAyRiCOzGzI6geTHJvnu8vRDkQ0Tt71chUngn?=
+ =?us-ascii?Q?w0iAduI7dlSWqWG7t0DvdytpCfacMR2Y6rwBE/4gxIB2Vd4iYN/Dzr5puSGD?=
+ =?us-ascii?Q?Ikcs4WoRKTYOCkHABvBpxp/ePu2MDX7mihU/ENgg?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9babd9ba-ceae-497e-c728-08dd5ab5d781
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2025 00:45:20.9634
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ypP/qxJIROoDHV8sY6MACYfWFRDtrncm/XXsJUwJp9R0OTmsJvvgaL33e2amCRBSxpH/8Y42NA5EoyKpCuVHZg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7804
 
-On 2/14/25 2:13 AM, Steven Price wrote:
-> Entering a realm is done using a SMC call to the RMM. On exit the
-> exit-codes need to be handled slightly differently to the normal KVM
-> path so define our own functions for realm enter/exit and hook them
-> in if the guest is a realm guest.
-> 
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
-> Changes since v6:
->   * Use vcpu_err() rather than pr_err/kvm_err when there is an associated
->     vcpu to the error.
->   * Return -EFAULT for KVM_EXIT_MEMORY_FAULT as per the documentation for
->     this exit type.
->   * Split code handling a RIPAS change triggered by the guest to the
->     following patch.
-> Changes since v5:
->   * For a RIPAS_CHANGE request from the guest perform the actual RIPAS
->     change on next entry rather than immediately on the exit. This allows
->     the VMM to 'reject' a RIPAS change by refusing to continue
->     scheduling.
-> Changes since v4:
->   * Rename handle_rme_exit() to handle_rec_exit()
->   * Move the loop to copy registers into the REC enter structure from the
->     to rec_exit_handlers callbacks to kvm_rec_enter(). This fixes a bug
->     where the handler exits to user space and user space wants to modify
->     the GPRS.
->   * Some code rearrangement in rec_exit_ripas_change().
-> Changes since v2:
->   * realm_set_ipa_state() now provides an output parameter for the
->     top_iap that was changed. Use this to signal the VMM with the correct
->     range that has been transitioned.
->   * Adapt to previous patch changes.
-> ---
->   arch/arm64/include/asm/kvm_rme.h |   3 +
->   arch/arm64/kvm/Makefile          |   2 +-
->   arch/arm64/kvm/arm.c             |  19 +++-
->   arch/arm64/kvm/rme-exit.c        | 171 +++++++++++++++++++++++++++++++
->   arch/arm64/kvm/rme.c             |  19 ++++
->   5 files changed, 208 insertions(+), 6 deletions(-)
->   create mode 100644 arch/arm64/kvm/rme-exit.c
-> 
+Hi Dmitry,
 
-With below nitpicks addressed:
+On Wed, Feb 05, 2025 at 08:45:13AM +0800, Peng Fan (OSS) wrote:
+>This is a pick-up of patch 2-5 from patchset [1]
+>
+>Since devm_pm_set_wake_irq is in 6.14, so resend the input parts.
 
-Reviewed-by: Gavin Shan <gshan@redhat.com>
-
-[...]
-
-> diff --git a/arch/arm64/kvm/rme-exit.c b/arch/arm64/kvm/rme-exit.c
-> new file mode 100644
-> index 000000000000..aae1adefe1a3
-> --- /dev/null
-> +++ b/arch/arm64/kvm/rme-exit.c
-> @@ -0,0 +1,171 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2023 ARM Ltd.
-> + */
-> +
-> +#include <linux/kvm_host.h>
-> +#include <kvm/arm_hypercalls.h>
-> +#include <kvm/arm_psci.h>
-> +
-> +#include <asm/rmi_smc.h>
-> +#include <asm/kvm_emulate.h>
-> +#include <asm/kvm_rme.h>
-> +#include <asm/kvm_mmu.h>
-> +
-> +typedef int (*exit_handler_fn)(struct kvm_vcpu *vcpu);
-> +
-
-Duplicated to exit_handler_fn, defined in handle_exit.c, need move the
-definition to header file.
-
-> +static int rec_exit_reason_notimpl(struct kvm_vcpu *vcpu)
-> +{
-> +	struct realm_rec *rec = &vcpu->arch.rec;
-> +
-> +	vcpu_err(vcpu, "Unhandled exit reason from realm (ESR: %#llx)\n",
-> +		 rec->run->exit.esr);
-> +	return -ENXIO;
-> +}
-> +
-> +static int rec_exit_sync_dabt(struct kvm_vcpu *vcpu)
-> +{
-> +	return kvm_handle_guest_abort(vcpu);
-> +}
-> +
-> +static int rec_exit_sync_iabt(struct kvm_vcpu *vcpu)
-> +{
-> +	struct realm_rec *rec = &vcpu->arch.rec;
-> +
-> +	vcpu_err(vcpu, "Unhandled instruction abort (ESR: %#llx).\n",
-> +		 rec->run->exit.esr);
-> +	return -ENXIO;
-> +}
-> +
-> +static int rec_exit_sys_reg(struct kvm_vcpu *vcpu)
-> +{
-> +	struct realm_rec *rec = &vcpu->arch.rec;
-> +	unsigned long esr = kvm_vcpu_get_esr(vcpu);
-> +	int rt = kvm_vcpu_sys_get_rt(vcpu);
-> +	bool is_write = !(esr & 1);
-> +	int ret;
-> +
-> +	if (is_write)
-> +		vcpu_set_reg(vcpu, rt, rec->run->exit.gprs[0]);
-> +
-> +	ret = kvm_handle_sys_reg(vcpu);
-> +
-> +	if (ret >= 0 && !is_write)
-> +		rec->run->enter.gprs[0] = vcpu_get_reg(vcpu, rt);
-> +
-
-Unncessary blank line and the conditon isn't completely correct: kvm_handle_sys_reg()
-should return 0 if the requested emulation fails, even it always returns 1 for now.
-
-	ret = kvm_handle_sys_reg(vcpu);
-	if (ret > 0 && !is_write)
-		rec->run->enter.gprs[0] = vcpu_get_reg(vcpu, rt);
-
-> +	return ret;
-> +}
-> +
-
-[...]
+Do you have time to give a look on this patchset?
 
 Thanks,
-Gavin
+Peng
 
+>
+>[1] https://lore.kernel.org/all/CAJZ5v0jb=0c5m=FeA-W-aG30H4706Ay_xCHTsiC1S-7MuGxqTQ@mail.gmail.com/#r
+>
+>Signed-off-by: Peng Fan <peng.fan@nxp.com>
+>---
+>Peng Fan (4):
+>      input: keyboard: ep93xx_keypad: Use devm_pm_set_wake_irq
+>      input: keyboard: omap4_keypad: Use devm_pm_set_wake_irq
+>      input: misc: nxp-bbnsm-pwrkey: Use resource managed API to simplify code
+>      input: touchscreen: ti_am335x_tsc: Use resource managed API to simplify code
+>
+> drivers/input/keyboard/ep93xx_keypad.c    |  8 +-----
+> drivers/input/keyboard/omap4-keypad.c     |  8 +-----
+> drivers/input/misc/nxp-bbnsm-pwrkey.c     | 15 ++++-------
+> drivers/input/touchscreen/ti_am335x_tsc.c | 43 ++++++++++---------------------
+> 4 files changed, 21 insertions(+), 53 deletions(-)
+>---
+>base-commit: 40b8e93e17bff4a4e0cc129e04f9fdf5daa5397e
+>change-id: 20250205-input-cleanup-219afcebf38a
+>
+>Best regards,
+>-- 
+>Peng Fan <peng.fan@nxp.com>
+>
+>
 
