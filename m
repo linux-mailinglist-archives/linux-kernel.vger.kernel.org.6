@@ -1,190 +1,199 @@
-Return-Path: <linux-kernel+bounces-544864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36A4CA4E62E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:37:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C58CEA4E5F6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:32:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 752188C7FA5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:24:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BA8F1896CBB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:23:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC692512FF;
-	Tue,  4 Mar 2025 16:06:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DB1323875A;
+	Tue,  4 Mar 2025 16:05:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="mxZfu9sV"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2049.outbound.protection.outlook.com [40.107.21.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VPH4SgsN"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4967424C09B;
-	Tue,  4 Mar 2025 16:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741104402; cv=fail; b=jW30AAPWhc7xTTVNAK1jEMQI+SWJ7iaRaqcKy0E/gvZulvlIKsT35H8rXFYOP/HFeWJJwSsm2zcjEo0o8zoOLSStXAOD122klYlX2hqR6byxX2N6hntOnfBmpjKu9burE/+rqitjJbearK92RK30tjR5I/N3rlUivk966QmJIc8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741104402; c=relaxed/simple;
-	bh=FqLqJe7xJfo3M4LCDxD0irAsN+2DF27058x20KcmN0Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=NY0ulVcqNh2aO06dt14fOhq1gBNVXwb9Ku2eNuTTOHfT99PWZm6/t2ThWHluUBXcrWHlpaeV/D1l1lA1oZqBJNwb62iFlNKOC12BQ6gX5ENTU6CC9geRbaEHUgldpUcbQDn27w/UR0ACXNO1fvuIkua2ICyXx282g5CKvu8pWnE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=mxZfu9sV; arc=fail smtp.client-ip=40.107.21.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TyRBDWVnoHf8NgeoXIxVQfoVB1b2SOHHsSn9xdJ3CLgm35EvM8IWELscjqAb/Jp/+niZ52vGjW2kFyorFWr2QI5ogoIQX3SEbgbe/FWpvUj72X4KBKraqP/rY1VV/5VHPJtNKh+D70G9Ky6HTq+Mpwjyr6IDyyqJ5dwTfHNAmgzNfRv90Ci4lyQqsvPLWKDTjjt76wGYYDkvjXG0GDGaz8+13HhSUJP3LNsx/SY/eLZ5BuSstyJglqqAjrBVpb4kFauQDvA/djsorjFxlh3iDzOwPboqe7IG/XYIzgniGkGAXx5oiLEigjGGiRVtiVIYqpapSXmdMhLULIXMIsSAtA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KSj+OpK+U03lZIw2rLNM5+2Xi3O6uS2EXjdWOQtOE5Y=;
- b=kQssUJ3UEzlcOySvJbG/xtDc/s0dmXOmSN+umL8A8VnE88DUSbjCHDgUHMACLXhlV9d2tBhVxz1ISxb1Hj3iMu3fzzQXcfO/hLH3+J38FR8qN5tCKTolGZgTdWdUIY57UqRYQKfnk6wvSBln2gJkCp5fg1UjMY+cmZiM6NCKq6NXOGgvLZOg5WsG3e2SlwiGo2cdVf0EE91NBwp16QQseEcSw/ggHRzJ67s0LGW5ASe8joh6OIctuTLksOqFISwuJ8HTmpvVPDjARGPV/aN32lcnUGuo+O3vIjPw7O+fFs7KFxSyQUy0Y1O2MQQT6H5M2FQlwD+1MnNIZLx9TpBA4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KSj+OpK+U03lZIw2rLNM5+2Xi3O6uS2EXjdWOQtOE5Y=;
- b=mxZfu9sVoJChWsH/JRF3cAocQK4Vf8ZDJHI8yRVOPIH7gq/Qp5wRwzuESXCwe/ZQSBoHpvRZT49aue6JFwf8JNli5WlG6yGdI3i3iEwFJA+4hlSux33UbmFlgQdj1TP8fybEQtZH+BjjYvfvigIDEK0OE5D+LlN+nESbkzTeco/3xv6YlD7iGmXnChEs8mtyo1sI9cKPbTE7HGZ+wcgvjroTO7z2KXz8CZ1jymGPhY/C/62o+Kb2rxiKVB0CcNQj0bOVxYlGv/nVV+nymZlOw2a7DoCcSVEUFxlgG7n6o+ctCAc+Ct2W6EPh9Jftw4HoCqkmzhWOdy60hPPJEVtuqg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from AS8PR04MB8216.eurprd04.prod.outlook.com (2603:10a6:20b:3f2::22)
- by GVXPR04MB10304.eurprd04.prod.outlook.com (2603:10a6:150:1e9::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.25; Tue, 4 Mar
- 2025 16:06:36 +0000
-Received: from AS8PR04MB8216.eurprd04.prod.outlook.com
- ([fe80::f1:514e:3f1e:4e4a]) by AS8PR04MB8216.eurprd04.prod.outlook.com
- ([fe80::f1:514e:3f1e:4e4a%5]) with mapi id 15.20.8489.025; Tue, 4 Mar 2025
- 16:06:36 +0000
-From: Andrei Botila <andrei.botila@oss.nxp.com>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	s32@nxp.com,
-	Christophe Lizzi <clizzi@redhat.com>,
-	Alberto Ruiz <aruizrui@redhat.com>,
-	Enric Balletbo <eballetb@redhat.com>,
-	Andrei Botila <andrei.botila@oss.nxp.com>
-Subject: [PATCH net v2 0/2] net: phy: nxp-c45-tja11xx: add errata for TJA112XA/B
-Date: Tue,  4 Mar 2025 18:06:12 +0200
-Message-ID: <20250304160619.181046-1-andrei.botila@oss.nxp.com>
-X-Mailer: git-send-email 2.48.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: AM0PR02CA0166.eurprd02.prod.outlook.com
- (2603:10a6:20b:28d::33) To AS8PR04MB8216.eurprd04.prod.outlook.com
- (2603:10a6:20b:3f2::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34EC12080CE;
+	Tue,  4 Mar 2025 16:05:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741104315; cv=none; b=ayBbA0EP1szEwqUX0KQRGUZqnYce490ec6r8nA2j+H7MM9JgnQu+Setr8k71OvHuD4nK4AuGF+Agvc06hODvo2jOprZskvDVSRTQNko3c7iX40ffQEdeFiS1kYlWCJOzL8kZmiRA5Z2y+VToq3vZ/JbL42l4S0xs8ObnpWdfMHg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741104315; c=relaxed/simple;
+	bh=qmQU1T53T5GN1mtFIOy8ksUhihextoXGUdYB685VkTY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KJCBwm3z31iAUyIBXOUI+ECMOfftNYaZZUnVUxHJUZY54vEhJldxPmrsdAXHP2xQE7k0IgO5VCc/aTHWrIoygoU8l/Wwaltg+RLCGpbqfJRugOEM/DVOwYzCMPbEsWWS49tVtMOa/vICR+FgLzn6B+5A8X5CaUFIcdnDLe/FKew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VPH4SgsN; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-474f0fa7ab0so16918261cf.2;
+        Tue, 04 Mar 2025 08:05:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741104313; x=1741709113; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=zHCrioKP3hV6WLvKxknIWG69k/+ZiS+ZbIOOInmoRPo=;
+        b=VPH4SgsNiSblqhHqHTNWKhflbuRb+kZyjO2WpY6Xju7fUNCsPJVQiVtyS2nc0Dh7yn
+         h4NeJ+E+u7oAIYQbZPIxddL4SFACD1iVa2rVFpdMTWfT7bwC/sAcg++keXuy+w9LH+QF
+         CvO2rB8pykS/5/n6tH5wHcejBf/NrHTugH5zwPzHsOULjrV3SdAmjFFoNWPNddOsED4o
+         aWsvs2a5vGuBeASJM+tItThIruM33fCcyq9TzjgYFVP0kMgFdVo6ePSSLu+jDRwz7686
+         JJPfzSDFQrzGy8KmfIslC8XkbPavnGqb4Z6F/LV0jT7PPMSYczJXnlcdsto2vA4RK0Jv
+         gZfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741104313; x=1741709113;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zHCrioKP3hV6WLvKxknIWG69k/+ZiS+ZbIOOInmoRPo=;
+        b=dBSRwJeF3OVoAknbQ91IhAhOS76rkZxmgQFGGHQDBnNGuGIelGNuIlclavfIZNTR5W
+         OpDjVIKMoPxePe5JzI6JaLhGtUcQcpW+uN9aKp+VnLdJcFHu5Wnv82ls9w6vrexlj6jT
+         S3i5GsuW+6meZ4HXlgep0rb86hmzcDrAeQuupIycI568DQv2cQY7ceBz3r7HHIsNCqgb
+         0pdPaeY134XdhNjRgE7urXTnDEIqxb3IfZ9ZW3AWTypAIXGIJ18FVKZOudPgpcs3GSXj
+         2Wyn/3ZTBNP3XEt+WtRUHN4UM265G4Zh7PaLDqxpqUxWMkshVMUBMJkHl+tHQuOD6XdB
+         wvnw==
+X-Forwarded-Encrypted: i=1; AJvYcCUokzmOIsnOseH/GiJYxhBcQrWITsKB3tkvimCe5wPHZ888AK/7/hOBT0IIciJeSfiBU019Fc7RhTgwsGu4@vger.kernel.org, AJvYcCVtj66bmmtdVMIT3OduXco9jY9dvuVaEdcxUaVcUYaaFqz2ML8vd2n2OMDA2tD+Sk2hPfigNUzE0HSa4qvr@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyde5kyPQkkj/MUnXi9nBHaSPuXSLYVker1oGkkXy5bsgeM5vtd
+	Ld+qFbt/qhG9CmGDONLWNKRAPDvHgrP+J9zftSNvin0pHf+77MaF
+X-Gm-Gg: ASbGncu+MX1U/3UwQyZEAmt8kNGmnVmmxfeAA+upXx1EB/IqyCZq4nErBgcKFwf2c1I
+	JWuZjEMO9BRLvsFiuMdAJB+7DO7DsEvwnPf4aPDgfMNtvEBcEVm/F0DcMq6bycpGDs8XwGE1KDx
+	p297uKLwIDyZe0nxhqaRI2kQIyJT+o4MrZnKDBMP23lrkFBrnJVOqObnUJk6Krx66IxFFw8TchF
+	9VLxawaT94dVSeg1iix0pq5yKSuOR7FC0Y00eo1PhdksQpP53a6wBhoruao/7ZweZ5Ft7MQYbHR
+	Erp53/aI2syY3HYhnxxGlFj1jjLB5cp/CwcCD0qy7w==
+X-Google-Smtp-Source: AGHT+IHlsy8d354nRDfX1iDbacGcnaO0gtBTcVsAexKDeKh/I2DJ7g4vsACHZxjcd5VKjgw8sRBPNg==
+X-Received: by 2002:a05:622a:48:b0:474:efa8:3612 with SMTP id d75a77b69052e-474efa83796mr113699481cf.11.1741104312371;
+        Tue, 04 Mar 2025 08:05:12 -0800 (PST)
+Received: from localhost ([184.148.73.125])
+        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-475083eabcdsm2592811cf.13.2025.03.04.08.05.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 08:05:12 -0800 (PST)
+Date: Tue, 4 Mar 2025 11:06:12 -0500
+From: Seyediman Seyedarab <imandevel@gmail.com>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev
+Subject: Re: [PATCH] inotify: disallow watches on unsupported filesystems
+Message-ID: <5tq33ajgtu62tvaiymf3st74ctkurgskq6xpx2ax53vdbayoce@jffpxkthro3u>
+References: <20250304080044.7623-1-ImanDevel@gmail.com>
+ <CAOQ4uxiaY9cZFpj4m65SrAVXm7MqB2OFSfyH5D03hEwmdtiBVQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8216:EE_|GVXPR04MB10304:EE_
-X-MS-Office365-Filtering-Correlation-Id: a5e6c5ba-f650-4033-b5bf-08dd5b368a1a
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?6wQ5HLEMMjebjjEngkDfQ5UA0GBDiWWAf2JrVgN0kH7eaGLIFqzs9be67gTv?=
- =?us-ascii?Q?dqHjOeTxwsIbBqMarSHEIErhnK/cRhy9lLWAtufGJCAYU1AyvcJ4oJGwQseE?=
- =?us-ascii?Q?FYBTQy5Ebb+C9F2xCzZfFGWg/QaVesTXX6qne9ebpBClknFTsrvz4xIA9cDl?=
- =?us-ascii?Q?gnKe04VsU5H+vQHaZK04BL/IhbxO1XBwAymvavEwGKSu+zP8fiYbb6VQEG17?=
- =?us-ascii?Q?K2M9LiCcNBBZ9MkY7GW+jvh/UFxfnDGW4qpRR8O4apX5HjcqRL9mtWINJCmi?=
- =?us-ascii?Q?miSFjv33l+UE0rjJTrbx2AY5dj0MwBSzGmLy2tVtHBD6yZmyMZWsuqKT2G/J?=
- =?us-ascii?Q?uJmuVSGgTUYpOcKkdJQDfVSgfMGIFVkKyZGcZhcPa4r8ZlzPPpuLVN1GfDGE?=
- =?us-ascii?Q?a/UPe/6LAkFuzFyi4u8zaGBh34PKHWRm+CxJJKaPu0ZoDtYuf1gTnGygGJ+m?=
- =?us-ascii?Q?m01D3t66X7RMkhZElC0bSG0h4YNq+tumPiQhEMvGCXl7txJPWhh2XVnUA0EZ?=
- =?us-ascii?Q?mfy+BKelJmymE57565N+/iko8weNOaE7kh+GSF4KA6AuMY17BGj4sqgZHYbR?=
- =?us-ascii?Q?TVkRLkK0QaKmct0+2CzlASsaTyike5FQnUAKlEezZCSkcEtyD27iZwHhG5hv?=
- =?us-ascii?Q?PxbClLHVMfCyf0sRkEh5zktnIeb18L6E9BRorB7PUrtI86Jkvm3PdwewA1K1?=
- =?us-ascii?Q?0KIfDNuEx2zYnkjgHOgKet8s9xf62KVjrfX8jayGU7D5OqlXV/oBtnTtN+3c?=
- =?us-ascii?Q?76FRJV7ZRwHLnGf2A4rVSNnXRXs6uVZtAvHznr+3G7sz3GvnBZ0nmoWrSu8v?=
- =?us-ascii?Q?GzyEEsW0/hYsppi85jTZnlCYY5K40ii246Oy3uROiWQiYdKSnK/FoLV6SCw8?=
- =?us-ascii?Q?ULdypwODD1sbyi8Ko29BOgQTlkw5ZeIm3r9gAYdsj3iv+qPdaGgcovR4qhVW?=
- =?us-ascii?Q?mczRNOvoJ4IJjIFgf5lFRN3Fu/baLdYlvnOWeba9lRucsZjldu1q7J7gRC7n?=
- =?us-ascii?Q?Z6ChAsCnEd+F+4+u+so2JuicD1+56qxcRWPYnGEMB/DIvXrBXIbP99zAy3Vl?=
- =?us-ascii?Q?xXuMRgE3U2TJPqY5qoTX7VhkelOPv7aOOsjnsr8oy4ZBczWG5P8VAJR1vIwQ?=
- =?us-ascii?Q?w4teNImCwu7x9dgstywfR1atMxuaLCtWoNp9hY1RnAsSaFb9OQRRiIgN2ind?=
- =?us-ascii?Q?XNuZjeR2m6ruCB5X6xJ35bJVF1xnsbxPudiHEdHkW5PD/3tZdngmTGN2/G/q?=
- =?us-ascii?Q?RsJnqngXoiHBU+8TsFh7r0KhzxNcatm2DcKht7pikC4y9s18hxyLRAEm9hEk?=
- =?us-ascii?Q?CIYQmkLYh0Jl/9hAyPZVqa/YpvpbHJwageImYZ2aQZrCAMyAubKUwPjc5rXk?=
- =?us-ascii?Q?1iyfqrjVL3ajJ36/6RRXhHZpjZcM?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8216.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?par4LFpsRUyunFjfcUyIgyvIkgSnzBjCpRkyfkholrsFX/3ofsa5j+tDEuf9?=
- =?us-ascii?Q?52OWhFrskvjOZgI4NnTug9IdmhjM00jX7+KxDpabtGmoNVOJzuY308fBJNZR?=
- =?us-ascii?Q?5e9wqwLz+CWZVzsmh2GrHzrCtuGwlubfooXx3JhJdifYQnpYqJLipSdlV4a+?=
- =?us-ascii?Q?NOOBHTRcCR0PyORYbXZeOQ6Ii4BypgpOLUVcM4Q1Ok00jGoRvqY66OrfaG+d?=
- =?us-ascii?Q?QQucc8UszdS70COpC1ZCVGPnUHWUwbvdL/dsossUm3EwewVAJIwKaqG9gYqD?=
- =?us-ascii?Q?JP6nU1oqM5l+MfCQ7RoaZofF7HkQUawlBuAOMHju/ix6pip1622HbBpUjzxu?=
- =?us-ascii?Q?qSp8aakqi+cnbVe3ud2uoKZ3PkL8WXR4223UAp3sEO/lSresntfLMqoJK9Ps?=
- =?us-ascii?Q?1umlsuP1N1DFp/n57V38Zdv9HeowGa8uISrwL7bwFHHyi/N33KlEJE82BGoL?=
- =?us-ascii?Q?LzZfmsVJMX3RxmuXmDvPDyeLo9i03auuay4SSj1OqEX3HFtJdIS/JxZZHUNl?=
- =?us-ascii?Q?dRRvy7th7SnuYY0LP1XcVexr2saIANJgt4YMbD5VeKLGghLOSTLLueaQn0Kp?=
- =?us-ascii?Q?7SCceKp3xFDsZUKop4HY4BDQn8vd1dYRkN+toYGLZGF1gIpCnzbxAdc3r72z?=
- =?us-ascii?Q?QFHKggQLgfoolMnRKVugbzB1lyc9e8ZjqoUaI9pYTE8/8xGa9cjBblazEv2C?=
- =?us-ascii?Q?helReNN+B5lKv2ovN+L2tyfRN+wWccHJ72/RhNuvzLgdNzwWKna2towfay4Y?=
- =?us-ascii?Q?nquU2ejymY/dScB6sqKTn9PolAmd5jPe0d7iH12bocGmsyIIaZJU3htEpMMp?=
- =?us-ascii?Q?IgRWMPwcl6bAVJErXHjBkk+HuoQj34WT0pJUdA74IAFRttHrZAf/FLyVPsGW?=
- =?us-ascii?Q?/TnIeqsCw624ARYycZqyxDXlJnwtD4/b3hUs+nQ6fhjok/6Xv5lzGeE8hsvT?=
- =?us-ascii?Q?BzQZLeqw9VhjUhFksGsvDkCuIQ0do8+hcDMNkTvLjEYJnkSquoEm+KGm1Q63?=
- =?us-ascii?Q?S1/vduAcpP+Ps1r7C3w2WfvuAMHk5qEJbp5T9TQMPSkrZP7vsBgAkJcM4ppY?=
- =?us-ascii?Q?vznnFWAmaNIrW6gXwXd6T/oB4AmZUlOaweBD118FJK+PMoYvgtRmdpztTS0M?=
- =?us-ascii?Q?r1MtpXfjQN1l4SrRXZo+p7kHmCQPnRR1BzeZLF4Ji17A61ptPh8L83fwupnH?=
- =?us-ascii?Q?nPN50A7GYUCc4jOvB/TbmBBazMXVcK/yvSWjETtgR5jrhCN5ZxyiSAGKdHI7?=
- =?us-ascii?Q?NbKTTqYvDULscMU7/4Vg4tJRbCgNwaVwNPxYhNdgcJyBdjucN9EiBmmMB+sC?=
- =?us-ascii?Q?pWKJ3x6FvIElQs54qEsr9raEv7v50WE4DsWl1YeQWoz5XviDQ1xyZ4j9p6p8?=
- =?us-ascii?Q?RbzpAZXDl4ls669AYQfcjLoV4/YpZM652UtLjrLKd01p5AHUj0V3rBRZVoqR?=
- =?us-ascii?Q?+BYBohPXcmK4SuU7gnbUb92cwwvZ/2IK4/gp+ashCPQWE+ZDwkTvu0YHUT/e?=
- =?us-ascii?Q?7V4xaKQu4J9y8k+Xdhfzbsw98t4VYms6NYjHOWmhCQDx+1qjHiOCxLERb9sb?=
- =?us-ascii?Q?NwmN2jH3YjrC/iX1/sBPF9ucHL8VVENjJSPn1JgZ?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a5e6c5ba-f650-4033-b5bf-08dd5b368a1a
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8216.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2025 16:06:36.1069
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bt55IHnQNNaq+Pkc3+FKvqrj0iKys3WZMzvyTJ7GlQ+2H4zXPv2DbpKDiv+FMCIp2uvfvazTHPa8ewQNCQjZ3A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10304
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxiaY9cZFpj4m65SrAVXm7MqB2OFSfyH5D03hEwmdtiBVQ@mail.gmail.com>
 
-This patch series implements two errata for TJA1120 and TJA1121.
+On 25/03/04 12:57PM, Amir Goldstein wrote:
+> On Tue, Mar 4, 2025 at 8:59 AM Seyediman Seyedarab <imandevel@gmail.com> wrote:
+> >
+> > currently, inotify_add_watch() allows adding watches on filesystems
+> > where inotify does not work correctly, without returning an explicit
+> > error. This behavior is misleading and can cause confusion for users
+> > expecting inotify to work on a certain filesystem.
+> 
+> That maybe so, but it's not that inotify does not work at all,
+> in fact it probably works most of the time for those fs,
+> so there may be users setting inotify watches on those fs,
+> so it is not right to regress those users.
+> 
+> >
+> > This patch explicitly rejects inotify usage on filesystems where it
+> > is known to be unreliable, such as sysfs, procfs, overlayfs, 9p, fuse,
+> > and others.
+> 
+> Where did you get this list of fs from?
+> Why do you claim that inotify does not work on overlayfs?
+> Specifically, there are two LTP tests inotify07 and inotify08
+> that test inotify over overlayfs.
+> 
+> This makes me question other fs on your list.
 
-The first errata applicable to both RGMII and SGMII version
-of TJA1120 and TJA1121 deals with achieving full silicon performance.
-The workaround in this case is putting the PHY in managed mode and
-applying a series of PHY writes before the link gest established.
+Thanks for the review! I may have overlooked overlayfs, but these
+following discussions led me to include it in the blacklist:
+https://bugs.launchpad.net/ubuntu/+source/linux/+bug/882147
+https://github.com/libuv/libuv/issues/1201
+https://github.com/moby/moby/issues/11705
 
-The second errata applicable only to SGMII version of TJA1120 and
-TJA1121 deals with achieving a stable operation of SGMII after a
-startup event.
-The workaround puts the SGMII PCS into power down mode and back up
-after restart or wakeup from sleep.
+Apparently, things have changed in v4.10, so I may have been wrong
+about overlayfs. I can test each filesystem and provide a response
+instead of blindly relying on various bug reports. However, let's
+first discuss whether the patch is necessary in the first place.
 
-Changes in v2:
-- use phy_id_compare() in case phydev->drv->phy_id is not set
+> >
+> > By returning -EOPNOTSUPP, the limitation is made explicit, preventing
+> > users from making incorrect assumptions about inotify behavior.
+> >
+> > Signed-off-by: Seyediman Seyedarab <ImanDevel@gmail.com>
+> > ---
+> >  fs/notify/inotify/inotify_user.c | 22 ++++++++++++++++++++++
+> >  1 file changed, 22 insertions(+)
+> >
+> > diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
+> > index b372fb2c56bd..9b96438f4d46 100644
+> > --- a/fs/notify/inotify/inotify_user.c
+> > +++ b/fs/notify/inotify/inotify_user.c
+> > @@ -87,6 +87,13 @@ static const struct ctl_table inotify_table[] = {
+> >         },
+> >  };
+> >
+> > +static const unsigned long unwatchable_fs[] = {
+> > +       PROC_SUPER_MAGIC,      SYSFS_MAGIC,       TRACEFS_MAGIC,
+> > +       DEBUGFS_MAGIC,        CGROUP_SUPER_MAGIC, SECURITYFS_MAGIC,
+> > +       RAMFS_MAGIC,          DEVPTS_SUPER_MAGIC, BPF_FS_MAGIC,
+> > +       OVERLAYFS_SUPER_MAGIC, FUSE_SUPER_MAGIC,   NFS_SUPER_MAGIC
+> > +};
+> > +
+> >  static void __init inotify_sysctls_init(void)
+> >  {
+> >         register_sysctl("fs/inotify", inotify_table);
+> > @@ -690,6 +697,14 @@ static struct fsnotify_group *inotify_new_group(unsigned int max_events)
+> >  }
+> >
+> >
+> > +static inline bool is_unwatchable_fs(struct inode *inode)
+> > +{
+> > +       for (int i = 0; i < ARRAY_SIZE(unwatchable_fs); i++)
+> > +               if (inode->i_sb->s_magic == unwatchable_fs[i])
+> > +                       return true;
+> > +       return false;
+> > +}
+> 
+> This is not a good practice for black listing fs.
+> 
+> See commit 0b3b094ac9a7b ("fanotify: Disallow permission events
+> for proc filesystem") for a better practice, but again, we cannot just
+> stop supporting inotify on fs where it was supported.
 
-Andrei Botila (2):
-  net: phy: nxp-c45-tja11xx: add TJA112X PHY configuration errata
-  net: phy: nxp-c45-tja11xx: add TJA112XB SGMII PCS restart errata
+Following the same approach as 0b3b094ac9a7b ("fanotify: Disallow
+permission events for the proc filesystem") would require setting
+a specific flag for each fs that isn't supported by inotify. If this
+is more suitable, I can work on implementing it.
 
- drivers/net/phy/nxp-c45-tja11xx.c | 68 +++++++++++++++++++++++++++++++
- 1 file changed, 68 insertions(+)
+I understand why it might seem like disallowing users from monitoring
+these filesystems could break userspace in some way. BUT, programs
+work incorrectly precisely because they do not receive any information
+from the kernel, so in other words they are already broken. There is no
+way for them to know if the fs is supported or not. I mean, even we are
+not sure at the moment, then how would they know.
 
--- 
-2.48.1
+As an example, 'Waybar' is a userspace program affected by this patch.
+Since it relies on monitoring sysfs, it isn't working properly anyway.
+This is also due to the issue mentioned earlier... inotify_add_watch()
+returns without an error, so the developers haven't realized that
+inotify isn't actually supported on sysfs. There are over five
+discussions regarding this issue that you can find them here:
+https://github.com/Alexays/Waybar/pull/3474
 
+That said, I understand if this isn't the approach you're looking for.
+
+Kindest Regards,
+Seyediman
 
