@@ -1,200 +1,163 @@
-Return-Path: <linux-kernel+bounces-545413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35EF5A4ECB9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:05:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA045A4ECBE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:06:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 539FF169509
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:05:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E108A1890ED7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:06:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D72269B0B;
-	Tue,  4 Mar 2025 19:04:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 542A825D522;
+	Tue,  4 Mar 2025 19:04:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="T7HQWhU3"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BCC225BAC9;
-	Tue,  4 Mar 2025 19:04:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ATlmuVYr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CC07253347;
+	Tue,  4 Mar 2025 19:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741115048; cv=none; b=WpvpwzYbSse9QFbGb5uZCaWBSwOqB9IhXCCWtdbtS1u9ACmTN1IKn2pHXPiaXcxzjzTW4PXZG/s5irasl0th5NYpgynUxd+X+01OPZVjCmmS7QrztIBZUq8B0RkeX9KHMrNECRRmwwtr8noMEslRbuHRnP8n+KbZLT2ZOrWMcig=
+	t=1741115070; cv=none; b=WksEtqWzmT9KoLcXjrpZR7o6GIkkTFpaa/cu2TSnJPp4MiwjQU2R1Apa+NQEbdr+UNLj7Vte2F7+uq659YV9Qw9Xv25Sl7w6HAl4h1wd8Llxh897hLKJ4zw2lt149tdD22JCiUo+0z+3CvKdm99DcGY4SgJYAotzlLV5NVX28UA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741115048; c=relaxed/simple;
-	bh=ld5Rzt7U3U9kNdPpbYABrBhw8UfYLCmfCpfAmqEgxjw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gzRhoKufIcpeoAz4W3nlX+3qJlfwuEFZgd2GnnduVjkyLte1nzBU+EDoRmH0sqfHMy7efOidZgVaSdXJnXF7EtYAKuA6YEcXmTUA1b5mZfNSgVIZ9O+6TtEgViWMVvmN4DAwaZUgzvg9Gacd1lUtgy8Nqv1/48Fh/7kFDfAqre0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=T7HQWhU3; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from localhost.localdomain (unknown [167.220.59.4])
-	by linux.microsoft.com (Postfix) with ESMTPSA id EE7E9210EAFB;
-	Tue,  4 Mar 2025 11:03:58 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com EE7E9210EAFB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1741115039;
-	bh=7bpzaKJMyV3E8E00HZMPQxpAdeDwOCI+jQV79Yt99/0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=T7HQWhU3oXeIve/XuPEpI9rVt6c4VCA0J5gVMNjF5zkIri2rqUHhNsOqrqPZ6qke+
-	 z5Dagl0YGKTiyXy0EG3B/B7uYI7v1nsQgcgnI5LQSi4TcSWbjqbdlYJChjdzXpNZg7
-	 UD1WWd3Rit7W/1KNg6nq0FoV0buVSnfiH0koAUFw=
-From: steven chen <chenste@linux.microsoft.com>
-To: zohar@linux.ibm.com,
-	stefanb@linux.ibm.com,
-	roberto.sassu@huaweicloud.com,
-	roberto.sassu@huawei.com,
-	eric.snowberg@oracle.com,
-	ebiederm@xmission.com,
-	paul@paul-moore.com,
-	code@tyhicks.com,
-	bauermann@kolabnow.com,
-	linux-integrity@vger.kernel.org,
-	kexec@lists.infradead.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: madvenka@linux.microsoft.com,
-	nramas@linux.microsoft.com,
-	James.Bottomley@HansenPartnership.com,
-	bhe@redhat.com,
-	vgoyal@redhat.com,
-	dyoung@redhat.com
-Subject: [PATCH v9 7/7] ima: measure kexec load and exec events as critical data
-Date: Tue,  4 Mar 2025 11:03:51 -0800
-Message-Id: <20250304190351.96975-8-chenste@linux.microsoft.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250304190351.96975-1-chenste@linux.microsoft.com>
-References: <20250304190351.96975-1-chenste@linux.microsoft.com>
+	s=arc-20240116; t=1741115070; c=relaxed/simple;
+	bh=Qn9S4+V/97GfF3eFipo304AU6RxOjXrFfbihFVbAP94=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JnvkBngTx7TioNeXYjkE8eM2Afhl/GIDAKrU/Fo69H3JQ8xTehIDek4zTITT9JmdIcrsTlLsfBUPmpHAm14f9Q+GW1/sUJoXD1HHrw3Mp7y0F/xtijEaVjcP0VqFofqpbMsaykqdxTxFWpaO4r+u+n2u22LbaOGZA8pKldj7tRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ATlmuVYr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE1B7C4CEE8;
+	Tue,  4 Mar 2025 19:04:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741115070;
+	bh=Qn9S4+V/97GfF3eFipo304AU6RxOjXrFfbihFVbAP94=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ATlmuVYr87M1pgs/yT1CaSYvsj4kyKYlB3VQMMXsC2aWYj67Cdzz9NbEXM54f/TYJ
+	 R+zu0a73Hh3QQ02Vlrsj+rvOhoEpTfyuxYE/ujo682tOAPJMyeW8wWSNfjVh32/4gd
+	 rD9vz5xt+/ZLxRGMzF6PsTMZlVIgtE+VW1x588tx6RFVMLMG4dcQlVc8V482kcW8UG
+	 tWia6uqUujvAIArFI3mGTh1hiOkTGCcvIdz7q29mr+GDzNf2gHJoNP39Q2CG50VA3q
+	 pfALpMwXSQNYUmkezcsSCJ30TItd1Fz981UE1fAAtuLF7FY5uxNYjG9EGPJV5wGnbm
+	 qyRuiUNj66XAQ==
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-549662705ffso3060005e87.0;
+        Tue, 04 Mar 2025 11:04:29 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWxi5tVFh0IDiYP8B1lV3/OWtUw99T2Cp1JVc7waXi26V3AMYa7IDd9KlRRueW9p9Mep8Y1Rglp@vger.kernel.org, AJvYcCXE+vFrkxYzO1vRNz/s2HLTu8yWgD5ura2AAzHjqb7QR5MQnrUq/VnJaTF/3/rZ9GUGAnoI2U9YwoNb73E=@vger.kernel.org, AJvYcCXGkJ4gq8vzLNJMW5SY8TS22xb6CZul23t0qUyZtv+cN4WqPCfCmCUeA2VabqPvfOWFvPQa0cUNXUXeJ0Ft@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzUmaUGBG6j7xltysUOpveHJjUmVTyxnTfIL4a+3gy/KJbYWZ0
+	fxQzft5pFGO1WxScx6LmkzFPvMPmkL9N9Emne+P//DUpLlRDY8BeRT227Kt/i9siurIcNK7EvrP
+	LbBh0RoRldQF64elkzVciMN2/72E=
+X-Google-Smtp-Source: AGHT+IGpQbtm58WHCyoUrOTWmhWSWXoTW1SjSCbDYNUUDn/O7H6EdSr/JG96ZlnKCyZZJuOlu+UPpWaQ113YGzdow/A=
+X-Received: by 2002:a05:6512:2807:b0:545:4b0:3dce with SMTP id
+ 2adb3069b0e04-5497d3304e6mr103775e87.1.1741115068559; Tue, 04 Mar 2025
+ 11:04:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250217-kbuild-userprog-fixes-v2-1-4da179778be0@linutronix.de>
+In-Reply-To: <20250217-kbuild-userprog-fixes-v2-1-4da179778be0@linutronix.de>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 5 Mar 2025 04:03:52 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATc-a0CP_tXqwpuCmLLMHAhqnx40Dg5ouUACAdVFpHarw@mail.gmail.com>
+X-Gm-Features: AQ5f1JqwhglpY45o1CvWGoVnnF4T9ViEX1OZhwj_NTTO7J3MsENWkja9EDuvu_A
+Message-ID: <CAK7LNATc-a0CP_tXqwpuCmLLMHAhqnx40Dg5ouUACAdVFpHarw@mail.gmail.com>
+Subject: Re: [PATCH v2] kbuild: userprogs: use correct lld when linking
+ through clang
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, Sam Ravnborg <sam@ravnborg.org>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The amount of memory allocated at kexec load, even with the extra memory
-allocated, might not be large enough for the entire measurement list.  The
-indeterminate interval between kexec 'load' and 'execute' could exacerbate
-this problem.
+On Mon, Feb 17, 2025 at 4:28=E2=80=AFPM Thomas Wei=C3=9Fschuh
+<thomas.weissschuh@linutronix.de> wrote:
+>
+> The userprog infrastructure links objects files through $(CC).
+> Either explicitly by manually calling $(CC) on multiple object files or
+> implicitly by directly compiling a source file to an executable.
+> The documentation at Documentation/kbuild/llvm.rst indicates that ld.lld
+> would be used for linking if LLVM=3D1 is specified.
+> However clang instead will use either a globally installed cross linker
+> from $PATH called ${target}-ld or fall back to the system linker, which
+> probably does not support crosslinking.
+> For the normal kernel build this is not an issue because the linker is
+> always executed directly, without the compiler being involved.
+>
+> Explicitly pass --ld-path to clang so $(LD) is respected.
+> As clang 13.0.1 is required to build the kernel, this option is available=
+.
+>
+> Fixes: 7f3a59db274c ("kbuild: add infrastructure to build userspace progr=
+ams")
+> Cc: stable@vger.kernel.org # needs wrapping in $(cc-option) for < 6.9
+> Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
+> ---
 
-Define two new IMA events, 'kexec_load' and 'kexec_execute', to be 
-measured as critical data at kexec 'load' and 'execute' respectively.
-Report the allocated kexec segment size, IMA binary log size and the
-runtime measurements count as part of those events.
+Applied to linux-kbuild/fixes.
+Thanks.
 
-These events, and the values reported through them, serve as markers in
-the IMA log to verify the IMA events are captured during kexec soft
-reboot.  The presence of a 'kexec_load' event in between the last two
-'boot_aggregate' events in the IMA log implies this is a kexec soft
-reboot, and not a cold-boot. And the absence of 'kexec_execute' event
-after kexec soft reboot implies missing events in that window which
-results in inconsistency with TPM PCR quotes, necessitating a cold boot
-for a successful remote attestation.
+> Reproducer, using nolibc to avoid libc requirements for cross building:
+>
+> $ tail -2 init/Makefile
+> userprogs-always-y +=3D test-llvm
+> test-llvm-userccflags +=3D -nostdlib -nolibc -static -isystem usr/ -inclu=
+de $(srctree)/tools/include/nolibc/nolibc.h
+>
+> $ cat init/test-llvm.c
+> int main(void)
+> {
+>         return 0;
+> }
+>
+> $ make ARCH=3Darm64 LLVM=3D1 allnoconfig headers_install init/
+>
+> Validate that init/test-llvm builds and has the correct binary format.
+> ---
+> Changes in v2:
+> - Use --ld-path instead of -fuse-ld
+> - Drop already applied patch
+> - Link to v1: https://lore.kernel.org/r/20250213-kbuild-userprog-fixes-v1=
+-0-f255fb477d98@linutronix.de
+> ---
+>  Makefile | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/Makefile b/Makefile
+> index 96407c1d6be167b04ed5883e455686918c7a75ee..b41c164533d781d010ff8b252=
+2e523164dc375d0 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -1123,6 +1123,11 @@ endif
+>  KBUILD_USERCFLAGS  +=3D $(filter -m32 -m64 --target=3D%, $(KBUILD_CPPFLA=
+GS) $(KBUILD_CFLAGS))
+>  KBUILD_USERLDFLAGS +=3D $(filter -m32 -m64 --target=3D%, $(KBUILD_CPPFLA=
+GS) $(KBUILD_CFLAGS))
+>
+> +# userspace programs are linked via the compiler, use the correct linker
+> +ifeq ($(CONFIG_CC_IS_CLANG)$(CONFIG_LD_IS_LLD),yy)
+> +KBUILD_USERLDFLAGS +=3D --ld-path=3D$(LD)
+> +endif
+> +
+>  # make the checker run with the right architecture
+>  CHECKFLAGS +=3D --arch=3D$(ARCH)
+>
+>
+> ---
+> base-commit: 0ad2507d5d93f39619fc42372c347d6006b64319
+> change-id: 20250213-kbuild-userprog-fixes-4f07b62ae818
+>
+> Best regards,
+> --
+> Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
+>
+>
 
-These critical data events are displayed as hex encoded ascii in the
-ascii_runtime_measurement_list.  Verifying the critical data hash requires 
-calculating the hash of the decoded ascii string.  
 
-For example, to verify the 'kexec_load' data hash:
-
-sudo cat /sys/kernel/security/integrity/ima/ascii_runtime_measurements 
-| grep  kexec_load | cut -d' ' -f 6 | xxd -r -p | sha256sum
-
-
-To verify the 'kexec_execute' data hash:
-
-sudo cat /sys/kernel/security/integrity/ima/ascii_runtime_measurements 
-| grep kexec_execute | cut -d' ' -f 6 | xxd -r -p | sha256sum
-
-Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-Signed-off-by: steven chen <chenste@linux.microsoft.com>
-Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
----
- security/integrity/ima/ima.h       |  6 ++++++
- security/integrity/ima/ima_kexec.c | 20 ++++++++++++++++++++
- security/integrity/ima/ima_queue.c |  5 +++++
- 3 files changed, 31 insertions(+)
-
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 4428fcf42167..1452c98242a4 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -240,6 +240,12 @@ void ima_post_key_create_or_update(struct key *keyring, struct key *key,
- 				   unsigned long flags, bool create);
- #endif
- 
-+#ifdef CONFIG_IMA_KEXEC
-+void ima_measure_kexec_event(const char *event_name);
-+#else
-+static inline void ima_measure_kexec_event(const char *event_name) {}
-+#endif
-+
- /*
-  * The default binary_runtime_measurements list format is defined as the
-  * platform native format.  The canonical format is defined as little-endian.
-diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-index 9fb1bf5a592a..e40c6da4504c 100644
---- a/security/integrity/ima/ima_kexec.c
-+++ b/security/integrity/ima/ima_kexec.c
-@@ -17,6 +17,8 @@
- #include "ima.h"
- 
- #ifdef CONFIG_IMA_KEXEC
-+#define IMA_KEXEC_EVENT_LEN 256
-+
- static struct seq_file ima_kexec_file;
- static void *ima_kexec_buffer;
- static size_t kexec_segment_size;
-@@ -36,6 +38,23 @@ static void ima_free_kexec_file_buf(struct seq_file *sf)
- 	ima_reset_kexec_file(sf);
- }
- 
-+void ima_measure_kexec_event(const char *event_name)
-+{
-+	char ima_kexec_event[IMA_KEXEC_EVENT_LEN];
-+	size_t buf_size = 0;
-+	long len;
-+
-+	buf_size = ima_get_binary_runtime_size();
-+	len = atomic_long_read(&ima_htable.len);
-+
-+	int n = scnprintf(ima_kexec_event, IMA_KEXEC_EVENT_LEN,
-+					"kexec_segment_size=%lu;ima_binary_runtime_size=%lu;"
-+					"ima_runtime_measurements_count=%ld;",
-+					kexec_segment_size, buf_size, len);
-+
-+	ima_measure_critical_data("ima_kexec", event_name, ima_kexec_event, n, false, NULL, 0);
-+}
-+
- static int ima_alloc_kexec_file_buf(size_t segment_size)
- {
- 	/*
-@@ -58,6 +77,7 @@ static int ima_alloc_kexec_file_buf(size_t segment_size)
- out:
- 	ima_kexec_file.read_pos = 0;
- 	ima_kexec_file.count = sizeof(struct ima_kexec_hdr);	/* reserved space */
-+	ima_measure_kexec_event("kexec_load");
- 
- 	return 0;
- }
-diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
-index 3dfd178d4292..6afb46989cf6 100644
---- a/security/integrity/ima/ima_queue.c
-+++ b/security/integrity/ima/ima_queue.c
-@@ -241,6 +241,11 @@ static int ima_reboot_notifier(struct notifier_block *nb,
- 			       unsigned long action,
- 			       void *data)
- {
-+#ifdef CONFIG_IMA_KEXEC
-+	if (action == SYS_RESTART && data && !strcmp(data, "kexec reboot"))
-+		ima_measure_kexec_event("kexec_execute");
-+#endif
-+
- 	ima_measurements_suspend();
- 
- 	return NOTIFY_DONE;
--- 
-2.25.1
-
+--=20
+Best Regards
+Masahiro Yamada
 
