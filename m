@@ -1,118 +1,177 @@
-Return-Path: <linux-kernel+bounces-543381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 898A0A4D4E4
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:36:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4A12A4D4E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:37:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C2AE16DCF4
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:36:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4785F3AB3B3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:37:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4957B1F7914;
-	Tue,  4 Mar 2025 07:36:17 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B61D8AD24;
-	Tue,  4 Mar 2025 07:36:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA0F31F78E0;
+	Tue,  4 Mar 2025 07:37:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WFcZaR1c"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC96318A6C1;
+	Tue,  4 Mar 2025 07:37:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741073776; cv=none; b=FROmnqDnC3Mv/u1RKbUXZTf5Ewkus/iFskDVgJIPiBNhBgT8LGrjxkNvajij4I+i7T6Qoe4/T9CaUp+UvkXZEgecT/AUizJKE/lK6hJJTgzc4JDYiu9/f/hyqMG1p3xubEgiJz0UZ66FmCiF9lEtAGrbS5QE65M/fX+AFscxBd0=
+	t=1741073866; cv=none; b=QAcXQaJp/5DnM196R6EHuNHdDJS4ahxOXt9hYT6o5T9lykteIjOeIyb0GvmxFM2CHs/QDRKKmv23M/McGEg63rIlEOql/w5wNtfWC3z67BtTv275tbNlZarlbgWCFEwMDyKO58RrEVTrs+vj/sZF07QDHKI8FriBxxikhY0o4xQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741073776; c=relaxed/simple;
-	bh=+arvS/JkffmbPGhBrismVkgnXmugqIQR5d/MKbkIMJQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jisZ0V9nzku5CUaqk8g2Nx4r9AJimJEGjLQOb/ChPpyvFwVzjuL9z+mvDR182lBo7u7EywQp4+AvntnmDGtR73zl1ZUDi19sOi6Hm8B4bS/WmS/uJE2nFc5UaoKx/ImLQYXTgqGmlp/g5M7xBMqGFZC3/R7YKOpUfoKGpBskuOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [223.64.120.242])
-	by gateway (Coremail) with SMTP id _____8DxWOFprcZnUuWJAA--.39093S3;
-	Tue, 04 Mar 2025 15:36:09 +0800 (CST)
-Received: from localhost.localdomain (unknown [223.64.120.242])
-	by front1 (Coremail) with SMTP id qMiowMBxn8VcrcZnyS01AA--.1378S2;
-	Tue, 04 Mar 2025 15:36:03 +0800 (CST)
-From: WANG Rui <wangrui@loongson.cn>
-To: Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Huacai Chen <chenhuacai@kernel.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	loongson-kernel@lists.loongnix.cn,
-	WANG Rui <wangrui@loongson.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH] rust: Fix enabling Rust and building with GCC for LoongArch
-Date: Tue,  4 Mar 2025 15:35:54 +0800
-Message-ID: <20250304073554.20869-1-wangrui@loongson.cn>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741073866; c=relaxed/simple;
+	bh=3xnnjsN3RwkAoWlOZBqmc+H1qQ7bpZqY+qEGGCT/1Tw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l4Q8Lpcqv/1bVDLKpwvAkndKoGLH+QhC8dtBW3prg1hJdZ/UNu5z9OwKwXf71aafGL+cR17H+4RA+XuTp9NTQBRmfhznPF2tbQLgG8DKaaho078yg5y+yuL4GFAu45JY7QXRAPkYW5bXbs/B2CYnn7jrWo50VchLjY+TwsudSgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=WFcZaR1c; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 523LSusE022851;
+	Tue, 4 Mar 2025 07:37:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=v6Z/qv
+	q1ZKr7naDgrSX8x1r6TilBTSoJvZa+2P+2cmg=; b=WFcZaR1clkMkKM0C9GVEgw
+	MYjR0bKgyTxKP14QszNVywpQCyIQgWLo9pSpdGS9JMGXZzLb2kX/YYvFMb57DBfr
+	PBXpRcKPiFJqQGjQkeYGCVhi4w7NdD7R4++cYpRW1paN3lk9kHcS3e446c8Wr1Mc
+	AU1y/S/GX71Swv5BnwmNKxO1/tEMVJG//TRmxCUa4mRGXnjC3Aj9DKOkpDc+sJEK
+	IT7uCFfn4ejkkrYlqW1teZnCmV+Lf+tRAOQQe0Ysth7tt2PZFxYhw3EGH6hqY5gr
+	NveLHaH/B49KOZtMWe/SrXxmCsuwkjYG98LOJoWB81vPbWR3SziqEhQAoYyHqZGw
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 455dunw6m7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Mar 2025 07:37:33 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 5247Ppiq002664;
+	Tue, 4 Mar 2025 07:37:33 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 455dunw6m2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Mar 2025 07:37:33 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52452sns020788;
+	Tue, 4 Mar 2025 07:37:32 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 454esjuwy1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Mar 2025 07:37:32 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5247bUk454657420
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 4 Mar 2025 07:37:30 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id AAFE220043;
+	Tue,  4 Mar 2025 07:37:30 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4AA6920040;
+	Tue,  4 Mar 2025 07:37:30 +0000 (GMT)
+Received: from [9.152.212.236] (unknown [9.152.212.236])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  4 Mar 2025 07:37:30 +0000 (GMT)
+Message-ID: <62f8f2a2-dcd2-4c6a-882f-dfa50482ffb0@linux.ibm.com>
+Date: Tue, 4 Mar 2025 08:37:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/6] perf test: Add timeout to datasym workload
+To: Namhyung Kim <namhyung@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org,
+        Leo Yan <leo.yan@arm.com>
+References: <20250304022837.1877845-1-namhyung@kernel.org>
+ <20250304022837.1877845-6-namhyung@kernel.org>
+Content-Language: en-US
+From: Thomas Richter <tmricht@linux.ibm.com>
+Organization: IBM
+In-Reply-To: <20250304022837.1877845-6-namhyung@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMBxn8VcrcZnyS01AA--.1378S2
-X-CM-SenderInfo: pzdqw2txl6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7Zr13Gw43CFyUCryDWr1rGrX_yoW8Wr15pa
-	na9wn7GrWUArWrKw1kAr45Xa129asYg3yDuFy7Jw17KrWFkry7XFZayFZxJrW5CF15Crya
-	gr18CF9FkF4UCwbCm3ZEXasCq-sJn29KB7ZKAUJUUUUD529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUB0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
-	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1q6rW5
-	McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr4
-	1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_
-	Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67
-	AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8I
-	cVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI
-	8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v2
-	6r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU2pVbDUUUU
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: LKvehMKg1Qxr3006ungbJ61q5Sz6L5--
+X-Proofpoint-GUID: nATtTWXGvTZ8I25GgvS1qItZMkqm02jP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-04_03,2025-03-03_04,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ adultscore=0 priorityscore=1501 malwarescore=0 bulkscore=0 spamscore=0
+ suspectscore=0 mlxlogscore=999 phishscore=0 clxscore=1011 mlxscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2503040062
 
-This patch fixes a build issue on LoongArch when Rust is enabled and
-compiled with GCC by explicitly setting the bindgen target and skipping
-C flags that Clang doesn't support.
+On 3/4/25 03:28, Namhyung Kim wrote:
+> Unlike others it has an infinite loop that make it annoying to call.
+> Make it finish after 1 second and handle command-line argument to change
+> the setting.
+> 
+> Cc: Thomas Richter <tmricht@linux.ibm.com>
+> Cc: Leo Yan <leo.yan@arm.com>
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> ---
+>  tools/perf/tests/workloads/datasym.c | 23 +++++++++++++++++++++--
+>  1 file changed, 21 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/perf/tests/workloads/datasym.c b/tools/perf/tests/workloads/datasym.c
+> index 8e08fc75a973e5f7..8ddb2aa6a049e343 100644
+> --- a/tools/perf/tests/workloads/datasym.c
+> +++ b/tools/perf/tests/workloads/datasym.c
+> @@ -1,3 +1,6 @@
+> +#include <stdlib.h>
+> +#include <signal.h>
+> +#include <unistd.h>
+>  #include <linux/compiler.h>
+>  #include "../tests.h"
+>  
+> @@ -12,9 +15,25 @@ static buf buf1 = {
+>  	.reserved[0] = 1,
+>  };
+>  
+> -static int datasym(int argc __maybe_unused, const char **argv __maybe_unused)
+> +static volatile sig_atomic_t done;
+> +
+> +static void sighandler(int sig __maybe_unused)
+> +{
+> +	done = 1;
+> +}
+> +
+> +static int datasym(int argc, const char **argv)
+>  {
+> -	for (;;) {
+> +	int sec = 1;
+> +
+> +	if (argc > 0)
+> +		sec = atoi(argv[0]);
+> +
+> +	signal(SIGINT, sighandler);
+> +	signal(SIGALRM, sighandler);
+> +	alarm(sec);
+> +
+> +	while (!done) {
+>  		buf1.data1++;
+>  		if (buf1.data1 == 123) {
+>  			/*
 
-Cc: stable@vger.kernel.org
-Signed-off-by: WANG Rui <wangrui@loongson.cn>
----
- rust/Makefile | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/rust/Makefile b/rust/Makefile
-index ea3849eb78f6..2c57c624fe7d 100644
---- a/rust/Makefile
-+++ b/rust/Makefile
-@@ -232,7 +232,8 @@ bindgen_skip_c_flags := -mno-fp-ret-in-387 -mpreferred-stack-boundary=% \
- 	-mfunction-return=thunk-extern -mrecord-mcount -mabi=lp64 \
- 	-mindirect-branch-cs-prefix -mstack-protector-guard% -mtraceback=no \
- 	-mno-pointers-to-nested-functions -mno-string \
--	-mno-strict-align -mstrict-align \
-+	-mno-strict-align -mstrict-align -mdirect-extern-access \
-+	-mexplicit-relocs -mno-check-zero-division \
- 	-fconserve-stack -falign-jumps=% -falign-loops=% \
- 	-femit-struct-debug-baseonly -fno-ipa-cp-clone -fno-ipa-sra \
- 	-fno-partial-inlining -fplugin-arg-arm_ssp_per_task_plugin-% \
-@@ -246,6 +247,7 @@ bindgen_skip_c_flags := -mno-fp-ret-in-387 -mpreferred-stack-boundary=% \
- # Derived from `scripts/Makefile.clang`.
- BINDGEN_TARGET_x86	:= x86_64-linux-gnu
- BINDGEN_TARGET_arm64	:= aarch64-linux-gnu
-+BINDGEN_TARGET_loongarch	:= loongarch64-linux-gnusf
- BINDGEN_TARGET		:= $(BINDGEN_TARGET_$(SRCARCH))
- 
- # All warnings are inhibited since GCC builds are very experimental,
+Tested-by: Thomas Richter <tmricht@linux.ibm.com>
 -- 
-2.48.1
+Thomas Richter, Dept 3303, IBM s390 Linux Development, Boeblingen, Germany
+--
+IBM Deutschland Research & Development GmbH
 
+Vorsitzender des Aufsichtsrats: Wolfgang Wendt
+
+Geschäftsführung: David Faller
+
+Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
 
