@@ -1,77 +1,78 @@
-Return-Path: <linux-kernel+bounces-543599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FA0AA4D757
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:05:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 73C2AA4D75A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:06:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7651C189BCF7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:03:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1A921883988
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:03:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A188200B99;
-	Tue,  4 Mar 2025 08:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 932E6201025;
+	Tue,  4 Mar 2025 08:57:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jl3miD1h";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wZd472jg"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sEppgKTI";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="00RW7p0H"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C8D1FF7B6;
-	Tue,  4 Mar 2025 08:57:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D53DC1FFC52;
+	Tue,  4 Mar 2025 08:57:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741078629; cv=none; b=SIGlKZpmMzmANtedc+nJb0vRzrEmyfodUcW5tZZ+OBgBGQ/Nu9J5VSxzFgTMkErmO8hFprQg2s6spJCeibQv9wKo9QfJ8ALQwewS2vfwgSdhO+90ydJ/de8hbjYbWlkF+iwAIKZx3Q66RHDmKc2nIYDZw27nBYi/BseHWZcu39M=
+	t=1741078630; cv=none; b=i+fiLX2MW6JmePyz7zheX7k0dBZiQIMOhH68Rgf6SW5cwN/BMjwUjjd0g3ZffD/3/93o0xex1yj8xU1yz/JUs5Ph1lbNrY3EY5IVS5PTVBZg9IuTMKssH6aPlPtMbxuATACTfBUmt2Txes7X4N9+Zq/WJM4fqpdN6KmluxNG2fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741078629; c=relaxed/simple;
-	bh=tTLNkw9UR+Ew91hPZTxYJLMyrNyvgny45PnO1KMRiwM=;
+	s=arc-20240116; t=1741078630; c=relaxed/simple;
+	bh=3V5B9ziivIQOL/JBcPDCAg2gvSj7GBcEc2oZT2181B8=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=POhQhGnlUWZIfzE2k2XljuhXanHz4Xv3FyLedkoljDyvN4CjQMJlDdgXb9LVhjrUUUmkhCwe/XYuq1mFRICAp5kNX3ntOoBwiZM/KLGbLI/Quuepg6q3bs84aNsv+qfncdOIwHdxK+OYVz3cRDLV1orwEPIychC7mvjPaSGQsxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jl3miD1h; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wZd472jg; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=XCPXC5lcBucx7RZRQqwrA+FRXDTTdJWn5LP8TY/n/omQYX2JvYYzUfmy0APJMKZvb2TyW2Za8r7eFTaf2QZaEuIWcevE6rc9FHrqc73jAk49ly1RS1bRi1YHZiXGO4Jke7ZENsoKKJTIG5fffxT2b18fcyBC7ZQLRkG+M5HkuI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sEppgKTI; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=00RW7p0H; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 04 Mar 2025 08:57:05 -0000
+Date: Tue, 04 Mar 2025 08:57:06 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741078626;
+	s=2020; t=1741078627;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=fm7MIFN8rUstK8p3ENSxLJzP9FkW7uMauaXM6M9XaMg=;
-	b=jl3miD1hjDqERHBmvrD/o1UYGcRLOF6SACmPqtnDiNQYXf5m+md7vXsUFfwFRB+cJTVYaZ
-	lh84O7D+7y6SWNyoa7uBb26zxrBsmuckct5MYe3Vxy53mxTXydWYJPwS7kTfPQyyUV8C+W
-	MBNOHMMhygHUjngKmUhqKUEVXMi7dmj6ODMptSEK4oi4atnSFhdzk08R2MwWmLY5kUtYZq
-	a3RjKW+WopJO3CDrtEcFYVX/z2KFbbl/NdZtDvuUfLVZySheHRHBpJuOel8mjVP4OVBphZ
-	QzWHjRapmuYNMrEGqpFy8BeGSzao9H6zOEZRtEDlA2D3xjp8W4W7uRt8wHCEpw==
+	bh=T9dXrX5iygaWZD+00748sEeHXleOxiXF6TBIzRA7iI0=;
+	b=sEppgKTIFxsEls55Kk+10bVSCRLCfMbLuZ0A5D8vdTffcCt3u4TUBiYYeYuNtG5494ny2D
+	gpY+7tuEmhEaYZkR21QKEkrOH1Gs7Mj+7dJrHC6mghFI29Mt2GxoPQkqnmjke9i549cTBt
+	RWSUVKFG6QHLg2+iQhN08rlAweB0ko6Gr9QJvp0ixBlwlkRubDUl+NhgUE1fqvXDsH66Cu
+	B3asvt8w8qmQLevNTmgoxDCxoDsUi/6qDbACZW8kQDAYtWTnpSGcIEBqZDieFQQq5pFOsJ
+	eaPDv7ceOe+A/pojtjTZS5D0K22Nz3CjKBWvDLkUeK/X9Dmz5eUMNgVbQBnFWw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741078626;
+	s=2020e; t=1741078627;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=fm7MIFN8rUstK8p3ENSxLJzP9FkW7uMauaXM6M9XaMg=;
-	b=wZd472jgKDZl2E+oWWT03kceb0OcwTkZF+1bAiCECBHaKs2Stb+JAgKnys6DTcP3zXkWwK
-	c1H4CSpBGnIhJiDg==
+	bh=T9dXrX5iygaWZD+00748sEeHXleOxiXF6TBIzRA7iI0=;
+	b=00RW7p0HcXC4Ncg6feTaCtS3fNUAbdlc/G6Tlb4pq5IEURfUGb5YTtJVq9RolYSo8z/jV0
+	lLT9koLbUQDxXRBg==
 From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf/core: Simplify perf_pmu_register()
+Subject:
+ [tip: perf/core] perf/core: Simplify the perf_pmu_register() error path
 Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>,
  Ingo Molnar <mingo@kernel.org>, Ravi Bangoria <ravi.bangoria@amd.com>,
  x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241104135518.198937277@infradead.org>
-References: <20241104135518.198937277@infradead.org>
+In-Reply-To: <20241104135518.090915501@infradead.org>
+References: <20241104135518.090915501@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174107862567.14745.10433977133332362551.tip-bot2@tip-bot2>
+Message-ID: <174107862645.14745.10237580163149659787.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -81,179 +82,176 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     6c8b0b835f003647e593c08331a4dd2150d5eb0e
-Gitweb:        https://git.kernel.org/tip/6c8b0b835f003647e593c08331a4dd2150d5eb0e
+Commit-ID:     8f4c4963d28349cbf1920ab71edea8276f6ac4c5
+Gitweb:        https://git.kernel.org/tip/8f4c4963d28349cbf1920ab71edea8276f6ac4c5
 Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Mon, 04 Nov 2024 14:39:15 +01:00
+AuthorDate:    Mon, 04 Nov 2024 14:39:14 +01:00
 Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Tue, 04 Mar 2025 09:42:29 +01:00
+CommitterDate: Tue, 04 Mar 2025 09:42:26 +01:00
 
-perf/core: Simplify perf_pmu_register()
+perf/core: Simplify the perf_pmu_register() error path
 
-Using the previously introduced perf_pmu_free() and a new IDR helper,
-simplify the perf_pmu_register error paths.
+The error path of perf_pmu_register() is of course very similar to a
+subset of perf_pmu_unregister(). Extract this common part in
+perf_pmu_free() and simplify things.
+
+[ mingo: Forward ported it ]
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Acked-by: Ravi Bangoria <ravi.bangoria@amd.com>
-Link: https://lore.kernel.org/r/20241104135518.198937277@infradead.org
+Link: https://lore.kernel.org/r/20241104135518.090915501@infradead.org
 ---
- include/linux/idr.h  | 17 ++++++++++-
- kernel/events/core.c | 71 +++++++++++++++++--------------------------
- 2 files changed, 46 insertions(+), 42 deletions(-)
+ kernel/events/core.c | 67 +++++++++++++++++++------------------------
+ 1 file changed, 30 insertions(+), 37 deletions(-)
 
-diff --git a/include/linux/idr.h b/include/linux/idr.h
-index da5f5fa..cd729be 100644
---- a/include/linux/idr.h
-+++ b/include/linux/idr.h
-@@ -15,6 +15,7 @@
- #include <linux/radix-tree.h>
- #include <linux/gfp.h>
- #include <linux/percpu.h>
-+#include <linux/cleanup.h>
- 
- struct idr {
- 	struct radix_tree_root	idr_rt;
-@@ -124,6 +125,22 @@ void *idr_get_next_ul(struct idr *, unsigned long *nextid);
- void *idr_replace(struct idr *, void *, unsigned long id);
- void idr_destroy(struct idr *);
- 
-+struct __class_idr {
-+	struct idr *idr;
-+	int id;
-+};
-+
-+#define idr_null ((struct __class_idr){ NULL, -1 })
-+#define take_idr_id(id) __get_and_null(id, idr_null)
-+
-+DEFINE_CLASS(idr_alloc, struct __class_idr,
-+	     if (_T.id >= 0) idr_remove(_T.idr, _T.id),
-+	     ((struct __class_idr){
-+	     	.idr = idr,
-+		.id = idr_alloc(idr, ptr, start, end, gfp),
-+	     }),
-+	     struct idr *idr, void *ptr, int start, int end, gfp_t gfp);
-+
- /**
-  * idr_init_base() - Initialise an IDR.
-  * @idr: IDR handle.
 diff --git a/kernel/events/core.c b/kernel/events/core.c
-index ee5cdd6..215dad5 100644
+index 1b8b1c8..ee5cdd6 100644
 --- a/kernel/events/core.c
 +++ b/kernel/events/core.c
-@@ -11914,52 +11914,49 @@ static void perf_pmu_free(struct pmu *pmu)
- 	free_percpu(pmu->cpu_pmu_context);
+@@ -11675,11 +11675,6 @@ static int perf_event_idx_default(struct perf_event *event)
+ 	return 0;
  }
  
--int perf_pmu_register(struct pmu *pmu, const char *name, int type)
-+DEFINE_FREE(pmu_unregister, struct pmu *, if (_T) perf_pmu_free(_T))
+-static void free_pmu_context(struct pmu *pmu)
+-{
+-	free_percpu(pmu->cpu_pmu_context);
+-}
+-
+ /*
+  * Let userspace know that this PMU supports address range filtering:
+  */
+@@ -11885,6 +11880,7 @@ del_dev:
+ 
+ free_dev:
+ 	put_device(pmu->dev);
++	pmu->dev = NULL;
+ 	goto out;
+ }
+ 
+@@ -11906,25 +11902,38 @@ static bool idr_cmpxchg(struct idr *idr, unsigned long id, void *old, void *new)
+ 	return true;
+ }
+ 
++static void perf_pmu_free(struct pmu *pmu)
++{
++	free_percpu(pmu->pmu_disable_count);
++	if (pmu_bus_running && pmu->dev && pmu->dev != PMU_NULL_DEV) {
++		if (pmu->nr_addr_filters)
++			device_remove_file(pmu->dev, &dev_attr_nr_addr_filters);
++		device_del(pmu->dev);
++		put_device(pmu->dev);
++	}
++	free_percpu(pmu->cpu_pmu_context);
++}
 +
-+int perf_pmu_register(struct pmu *_pmu, const char *name, int type)
+ int perf_pmu_register(struct pmu *pmu, const char *name, int type)
  {
--	int cpu, ret, max = PERF_TYPE_MAX;
-+	int cpu, max = PERF_TYPE_MAX;
+ 	int cpu, ret, max = PERF_TYPE_MAX;
  
--	pmu->type = -1;
-+	struct pmu *pmu __free(pmu_unregister) = _pmu;
-+	guard(mutex)(&pmus_lock);
- 
--	mutex_lock(&pmus_lock);
--	ret = -ENOMEM;
++	pmu->type = -1;
++
+ 	mutex_lock(&pmus_lock);
+ 	ret = -ENOMEM;
  	pmu->pmu_disable_count = alloc_percpu(int);
  	if (!pmu->pmu_disable_count)
--		goto unlock;
-+		return -ENOMEM;
+ 		goto unlock;
  
--	if (WARN_ONCE(!name, "Can not register anonymous pmu.\n")) {
--		ret = -EINVAL;
--		goto free;
--	}
-+	if (WARN_ONCE(!name, "Can not register anonymous pmu.\n"))
-+		return -EINVAL;
+-	pmu->type = -1;
+ 	if (WARN_ONCE(!name, "Can not register anonymous pmu.\n")) {
+ 		ret = -EINVAL;
+-		goto free_pdc;
++		goto free;
+ 	}
  
--	if (WARN_ONCE(pmu->scope >= PERF_PMU_MAX_SCOPE, "Can not register a pmu with an invalid scope.\n")) {
--		ret = -EINVAL;
--		goto free;
--	}
-+	if (WARN_ONCE(pmu->scope >= PERF_PMU_MAX_SCOPE,
-+		      "Can not register a pmu with an invalid scope.\n"))
-+		return -EINVAL;
+ 	if (WARN_ONCE(pmu->scope >= PERF_PMU_MAX_SCOPE, "Can not register a pmu with an invalid scope.\n")) {
+ 		ret = -EINVAL;
+-		goto free_pdc;
++		goto free;
+ 	}
  
  	pmu->name = name;
+@@ -11934,24 +11943,23 @@ int perf_pmu_register(struct pmu *pmu, const char *name, int type)
  
- 	if (type >= 0)
- 		max = type;
+ 	ret = idr_alloc(&pmu_idr, NULL, max, 0, GFP_KERNEL);
+ 	if (ret < 0)
+-		goto free_pdc;
++		goto free;
  
--	ret = idr_alloc(&pmu_idr, NULL, max, 0, GFP_KERNEL);
--	if (ret < 0)
--		goto free;
-+	CLASS(idr_alloc, pmu_type)(&pmu_idr, NULL, max, 0, GFP_KERNEL);
-+	if (pmu_type.id < 0)
-+		return pmu_type.id;
+ 	WARN_ON(type >= 0 && ret != type);
  
--	WARN_ON(type >= 0 && ret != type);
-+	WARN_ON(type >= 0 && pmu_type.id != type);
- 
--	pmu->type = ret;
-+	pmu->type = pmu_type.id;
+-	type = ret;
+-	pmu->type = type;
++	pmu->type = ret;
  	atomic_set(&pmu->exclusive_cnt, 0);
  
  	if (pmu_bus_running && !pmu->dev) {
--		ret = pmu_dev_alloc(pmu);
-+		int ret = pmu_dev_alloc(pmu);
+ 		ret = pmu_dev_alloc(pmu);
  		if (ret)
--			goto free;
-+			return ret;
+-			goto free_idr;
++			goto free;
  	}
  
--	ret = -ENOMEM;
+ 	ret = -ENOMEM;
  	pmu->cpu_pmu_context = alloc_percpu(struct perf_cpu_pmu_context);
  	if (!pmu->cpu_pmu_context)
--		goto free;
-+		return -ENOMEM;
+-		goto free_dev;
++		goto free;
  
  	for_each_possible_cpu(cpu) {
  		struct perf_cpu_pmu_context *cpc;
-@@ -12000,32 +11997,22 @@ int perf_pmu_register(struct pmu *pmu, const char *name, int type)
+@@ -11992,8 +12000,10 @@ int perf_pmu_register(struct pmu *pmu, const char *name, int type)
  	/*
  	 * Now that the PMU is complete, make it visible to perf_try_init_event().
  	 */
--	if (!idr_cmpxchg(&pmu_idr, pmu->type, NULL, pmu)) {
--		ret = -EINVAL;
--		goto free;
--	}
-+	if (!idr_cmpxchg(&pmu_idr, pmu->type, NULL, pmu))
-+		return -EINVAL;
+-	if (!idr_cmpxchg(&pmu_idr, pmu->type, NULL, pmu))
+-		goto free_context;
++	if (!idr_cmpxchg(&pmu_idr, pmu->type, NULL, pmu)) {
++		ret = -EINVAL;
++		goto free;
++	}
  	list_add_rcu(&pmu->entry, &pmus);
  
--	ret = 0;
--unlock:
--	mutex_unlock(&pmus_lock);
+ 	ret = 0;
+@@ -12002,20 +12012,10 @@ unlock:
+ 
+ 	return ret;
+ 
+-free_context:
+-	free_percpu(pmu->cpu_pmu_context);
 -
--	return ret;
+-free_dev:
+-	if (pmu->dev && pmu->dev != PMU_NULL_DEV) {
+-		device_del(pmu->dev);
+-		put_device(pmu->dev);
+-	}
 -
--free:
--	if (pmu->type >= 0)
--		idr_remove(&pmu_idr, pmu->type);
--	perf_pmu_free(pmu);
--	goto unlock;
-+	take_idr_id(pmu_type);
-+	_pmu = no_free_ptr(pmu); // let it rip
-+	return 0;
+-free_idr:
+-	idr_remove(&pmu_idr, pmu->type);
+-
+-free_pdc:
+-	free_percpu(pmu->pmu_disable_count);
++free:
++	if (pmu->type >= 0)
++		idr_remove(&pmu_idr, pmu->type);
++	perf_pmu_free(pmu);
+ 	goto unlock;
  }
  EXPORT_SYMBOL_GPL(perf_pmu_register);
+@@ -12034,14 +12034,7 @@ void perf_pmu_unregister(struct pmu *pmu)
+ 	synchronize_srcu(&pmus_srcu);
+ 	synchronize_rcu();
  
- void perf_pmu_unregister(struct pmu *pmu)
- {
--	mutex_lock(&pmus_lock);
--	list_del_rcu(&pmu->entry);
--	idr_remove(&pmu_idr, pmu->type);
--	mutex_unlock(&pmus_lock);
-+	scoped_guard (mutex, &pmus_lock) {
-+		list_del_rcu(&pmu->entry);
-+		idr_remove(&pmu_idr, pmu->type);
-+	}
+-	free_percpu(pmu->pmu_disable_count);
+-	if (pmu_bus_running && pmu->dev && pmu->dev != PMU_NULL_DEV) {
+-		if (pmu->nr_addr_filters)
+-			device_remove_file(pmu->dev, &dev_attr_nr_addr_filters);
+-		device_del(pmu->dev);
+-		put_device(pmu->dev);
+-	}
+-	free_pmu_context(pmu);
++	perf_pmu_free(pmu);
+ }
+ EXPORT_SYMBOL_GPL(perf_pmu_unregister);
  
- 	/*
- 	 * We dereference the pmu list under both SRCU and regular RCU, so
 
