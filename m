@@ -1,135 +1,120 @@
-Return-Path: <linux-kernel+bounces-543056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85D9CA4D10A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 02:35:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B57AA4D102
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 02:35:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 430DF3AF0DD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:34:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22D5D17756D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:34:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA8E148838;
-	Tue,  4 Mar 2025 01:32:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8815155335;
+	Tue,  4 Mar 2025 01:33:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="XdbBZg+I"
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pQln1YOB"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA7BE7603F
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 01:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A17257603F
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 01:33:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741051977; cv=none; b=o/wq7F8scXLnTErgkgPLk+JVZenCkgV/0WFokkKiLjXV9Fm446HdVpMXS81Bn9wD5jCK+aHN3/c8EpY9uHpvgg5UaMc12RvFUFVj+XARpbQhOQrqU4+N5y/yo3Z7xIuVnzivAB5xxcxxo8veRhwDRhltity/jhDYXTVfMB8DaKY=
+	t=1741052021; cv=none; b=Jltj8ktl8DVrdFzmUNVKxqFChQIgHV8BshqD/Bkq4Kczb4cJ+KMIN7cqlYUpPLyhRwbiGnkz1BzwJ2w5A0W//TSRIfS3PdSMcwVlp+/QuJ0riJUHf7RfJ74mb03ln4cZDmbMxdpKcHwmtdT3+wd1qxg3VrBzuuRtM8v7seIOvH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741051977; c=relaxed/simple;
-	bh=v5/bYUBFt7ixahljwJAw2cD9ksUIJ1iHD9P7j1AbFLo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VsI/WJbbl0dyEn2Hn7YbuagIAdTsaQRjACBG57xOc21G1EZ5AuF+C64xz0e67WK5PJVsSLbjJkYOtOG363+LWiWYo4Qr/ptoxpYcQYFfF+DFRPGY0xpO18tpFhlEzvYH1jwqUMbSSqq6wB412DvaOXQ43DFYKqvlfiA8aM7ZiYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=XdbBZg+I; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7c0ba9825e9so369809185a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 17:32:53 -0800 (PST)
+	s=arc-20240116; t=1741052021; c=relaxed/simple;
+	bh=SIl8ho5t9EI4LTWKJyqZ5Q0RNUveM8TTZXpUMKr3JMs=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=JYZ8vXB4QXdu/ZrU5J0ocmV+IGLDPWdYUbEpdlqPbl0JtUgWFmcNraawd7mYFyIiCvXSKpoU+CCbiHjafIX8F0E4CBQJ7H2SPeGpX2tJ2S1accan7QXzd58MtP9aznx2RhWyPgdW2fhUmbRSovg5yni6OOAWdbwKmI67x6yZW+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pQln1YOB; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2feded265deso4370485a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 17:33:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1741051972; x=1741656772; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=r6xB6tZBkxBseJmMvpYQ2Hhx7HYfm01hEgI0/OHSmWI=;
-        b=XdbBZg+I9bH7LQ2/qdjfVbSKeONUcg9+3Ft3PtqlqqIQzNPuRpi4vT2heztO9Dt9Lj
-         v28fVEua0ENpzt+WOc/SIzO4GHA27iQZxgFsUk1Zt/Qf4CLuXZ18j0u7kq+AE+RcXuu1
-         802V3MDWGbsQDe4Wja6bDtSJVfEkO6JakM7/60q2St0OF7drApZi+K1tXifkM5qPRUvD
-         WJ91383hb1Z++nMsh6FKjmdBeS1QfA47FmkVrh0eYVeP50FjBsVRaVGk/+4RV3x6ivM4
-         iXANkEKovhG0ZIOZPjtJrcDkALepTt2MBGff3N3bFosVoAcS29vwKqQrGlspRelpY+Q/
-         9amQ==
+        d=google.com; s=20230601; t=1741052019; x=1741656819; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ucq5/Kd4TvXDiuBl3Q8d5rnG9vbnh5K6yq9XVdM4wcE=;
+        b=pQln1YOB5jlDl6iZ5o4p8C+V5ZWTaOltr091R7bFravLgWskdfGJdhuonW4fZ5OdLT
+         8HKuvKzt2QhtKZv63TgN+tGgVKqUruBwxZpc/RvJmiBnrWXz2DIBG7o0aJpSyLj4Hd3i
+         wupn5OaivhbcbzHz7i0jDoqMvsVuxZfVkWkZKAj20mtaYF29L7ri+XCtyAbLRvqOFGzv
+         04U+3BzHhjqiJ6HcASjrY5/W4ioBQpAwZHwgG+nXLy4zWF8C/FzOZXkrQtRz0T24H0gf
+         FLiV7dpsB2GtXBXMwlnlEbXIie632Sp9fYJ7taKKUf78YOtRJPA2DmYypME75YjwxwqQ
+         3Enw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741051972; x=1741656772;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r6xB6tZBkxBseJmMvpYQ2Hhx7HYfm01hEgI0/OHSmWI=;
-        b=ILXKBEJkFW3lCRg92lQheRhp1gCLeWyeWp+e9+g9H2XylcGWFl384MoL3sqIOy5s/5
-         mdo7dOdqFPcAnhvREeDLSJ+E5GtvLgIwng8N66XLlbBl6F6NqRsZLoGdXboafxD1tuNQ
-         obAaCQuB5JrjUmYdcRYSgac/mIPZzeI8nlaY04VfrWOwzGxDpOd2BsX8sADPgSFkmYke
-         d49MueP2FVeT0vn780cq0tPt4SCbdo7bdkTBB2l0aLIGqP/FB5eT843Jgj1wuyZJtUdQ
-         OzB+RMh2snOClj8zlM6AXY0smx7iqEXbATH5HMyXG9FuxU84IjRMmeneDEQNJB7BikUX
-         rgwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXvvk1cmBDve3JWPkWi+n0StmUGEx/o2ztn0XEK9lfyildfO5JJ9fmb+o+pgS3DqXNQxgRIgYmvkoOVSHg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKvVIKQLb6IimZ86UOKDkONlKIaDO3Sn9dU8INLzbhsie6Kz8A
-	D3WW7Jg/Fb4OjcrrfdjIHddc5fuvANIF+h4Q9TRZ7pW9r2GBdB0ZoMBcg3MVUas=
-X-Gm-Gg: ASbGncsCzwaFWTFyJqkKUjH2W8ujiRkSUdBRY2Zgn2D/1zm1ms8IoEkPxtb/9AYJ1QR
-	VX5BTZf3fOe/Zg3eiNmmjsh5Q7P9LMRnj4lU+2fWBkdj3usYRZDlpQzisZqgE4oFrK2pJHtMhhk
-	bIsAPgbeaJPbaX0FKoCmSspTiq5PmoqHQyRK1GbD7zg34U185Jf6hwPHub/3LEyzrfCorSDmLVB
-	A/nhvWtFC6Uqt7hOQ+hvcChSp6SwWXH7Zs9QoVj9FEXc1qks9Ct4J/7D7wMxZ+ZAH2Y8pxsnmJ+
-	du+lmurZq3zZHRv8IJePoRzvWeFZa1E6jCUAzcAwFhByc9xEhK1iwq0qwwbO+LTnAt5/T/wfrKc
-	2KZvdIFP+edWzSoWXSpP2ICbJ2AQ=
-X-Google-Smtp-Source: AGHT+IG4dWln+CNbJieutk1fOc0kWi4nxKmsaP4G3WEAip9vevv4K/TkpbAdj3Eb+EfbBCSu65rNPQ==
-X-Received: by 2002:a05:620a:4492:b0:7c0:9f12:2b7e with SMTP id af79cd13be357-7c39c49fa6emr2001696785a.11.1741051972460;
-        Mon, 03 Mar 2025 17:32:52 -0800 (PST)
-Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c3b7366e26sm231363985a.87.2025.03.03.17.32.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 17:32:52 -0800 (PST)
-Date: Mon, 3 Mar 2025 20:32:50 -0500
-From: Gregory Price <gourry@gourry.net>
-To: lsf-pc@lists.linux-foundation.org
-Cc: linux-mm@kvack.org, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: CXL Boot to Bash - Section 2: The Drivers
-Message-ID: <Z8ZYQqm_UxDDphSf@gourry-fedora-PF4VCD3F>
-References: <Z226PG9t-Ih7fJDL@gourry-fedora-PF4VCD3F>
- <Z6OMcLt3SrsZjgvw@gourry-fedora-PF4VCD3F>
+        d=1e100.net; s=20230601; t=1741052019; x=1741656819;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ucq5/Kd4TvXDiuBl3Q8d5rnG9vbnh5K6yq9XVdM4wcE=;
+        b=O2HMeeNTyrxOJCliHYILjuAG1/Tke/RxTlPtkej5/Xu9jE0zl/ql1matDUhw5UQ9Eq
+         1qrQ0PAI3ivPuBTTwdoyNFuwV709U2gXZkqdj+qPCoo31SBEHkwhq6GiBYGt0xxgVkzr
+         MXD5h9rxE7nZiWhWm786qV25tK6HzH+vt+i7ni1dK/jxXhvjodB0iMNO+rSroj794SGJ
+         jEFcql53dt8t36uYlLUVaerKNHPGri1kv60JTtFqUwK+uGtGyQzbdX/hNYdCkeMetkN1
+         nIoBz1cgtgeQwn0/bnMG/DsQPTBt0XSY5br6nMy87799SdXY5DXPnLrJSuVDul7NFGM6
+         09sg==
+X-Forwarded-Encrypted: i=1; AJvYcCVdXIjTxpYM+3LZtHHpIxZ6EkzTasj8c8/99hlHFY8bPeMP/iARCz7xZ6zobQkdtx8p3lM5s/M58Ox61mc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzR4UsTElnMK2HvDzc/voalydG47RbmG0ZSbwZqAL1wN+OeO7oe
+	f08aEl8K50Xc57sCNCytSDisa9T1qtLQTmsAxennRc2/4JGbicNNU/d+LJZj4y38jmTRtWU05ML
+	n/w==
+X-Google-Smtp-Source: AGHT+IEpHqEHsE2O9LE/UQmqGjjKfdFVaaCLQ3xRW5HZAI9zSYi8OXdvnTjdYVeBp8F7ytBDsguC8d+OIyY=
+X-Received: from pjbsu16.prod.google.com ([2002:a17:90b:5350:b0:2fa:24c5:36e])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:390b:b0:2ee:8e75:4aeb
+ with SMTP id 98e67ed59e1d1-2febab7864bmr28054444a91.17.1741052018927; Mon, 03
+ Mar 2025 17:33:38 -0800 (PST)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Mon,  3 Mar 2025 17:33:32 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z6OMcLt3SrsZjgvw@gourry-fedora-PF4VCD3F>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
+Message-ID: <20250304013335.4155703-1-seanjc@google.com>
+Subject: [PATCH v5 0/3] KVM: x86: Optimize "stale" EOI bitmap exiting
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Kai Huang <kai.huang@intel.com>, xuyun <xuyun_xy.xy@linux.alibaba.com>, 
+	weizijie <zijie.wei@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Feb 05, 2025 at 11:06:08AM -0500, Gregory Price wrote:
-> ---------------------------------------------------------
-> Second bit of nuanced complexity: Memory Block Alignment.
-> ---------------------------------------------------------
-> In section 1, we introduced CEDT / CFMW and how they map to iomem
-> resources.  In this section we discussed out we surface memory blocks
-> to the kernel allocators.
-> 
-> However, at no time did platform, arch code, and driver communicate
-> about the expected size of a memory block. In most cases, the size
-> of a memory block is defined by the architecture - unaware of CXL.
-> 
-> On x86, for example, the heuristic for memory block size is:
->    1) user boot-arg value
->    2) Maximize size (up to 2GB) if operating on bare metal
->    3) Use smallest value that aligns with the end of memory
-> 
-> The problem is that [SOFT RESERVED] memory is not considered in the
-> alignment calculation - and not all [SOFT RESERVED] memory *should*
-> be considered for alignment.
-> 
-> In the case of our working example (real system, btw):
-> 
->          Subtable Type : 01 [CXL Fixed Memory Window Structure]
->    Window base address : 000000C050000000
->            Window size : 0000003CA0000000
-> 
-> The base is 256MB aligned (the minimum for the CXL Spec), and the
-> window size is 512MB.  This results in a loss of almost a full memory
-> block worth of memory (~1280MB on the front, and ~512MB on the back).
-> 
-> This is a loss of ~0.7% of capacity (1.5GB) for that region (121.25GB).
-> 
+Slightly modified version of the patch (now mini-series) to optimize EOI
+bitmap exiting for "stale" routes, i.e. for the case where a vCPU has an
+in-flight IRQ when the routing changes, and needs one final EOI exit to
+deassert the IRQ.
 
-Some additional nuance adding here: Dynamic Capacity Devices will also
-have problems with this issue unless the fabric manager is aware of the
-host memory block size configuration.
+Kai, I dropped your Reviewed-by as the change was non-trivial.
 
-Variable sized or sparse memory blocks may be possible in the future,
-but as of today they are not.
+v5:
+ - Intercept EOI if and only if the IRQ is level-triggered.
+ - Add helper to consolidate logic.
+ - Tweak field name.
+ - "Reset" field to -1, immediately before scanning routes.
 
-~Gregory
+v4: https://lore.kernel.org/all/20250303052227.523411-1-zijie.wei@linux.alibaba.com
+
+Sean Christopherson (2):
+  KVM: x86: Isolate edge vs. level check in userspace I/O APIC route
+    scanning
+  KVM: x86: Add a helper to deduplicate I/O APIC EOI interception logic
+
+weizijie (1):
+  KVM: x86: Rescan I/O APIC routes after EOI interception for old
+    routing
+
+ arch/x86/include/asm/kvm_host.h |  1 +
+ arch/x86/kvm/ioapic.c           |  7 ++-----
+ arch/x86/kvm/ioapic.h           |  2 ++
+ arch/x86/kvm/irq_comm.c         | 37 ++++++++++++++++++++++++++++-----
+ arch/x86/kvm/lapic.c            |  8 +++++++
+ arch/x86/kvm/x86.c              |  1 +
+ 6 files changed, 46 insertions(+), 10 deletions(-)
+
+
+base-commit: ead22377189e55ba0e9b637a8f48578cf84f5b9c
+-- 
+2.48.1.711.g2feabab25a-goog
+
 
