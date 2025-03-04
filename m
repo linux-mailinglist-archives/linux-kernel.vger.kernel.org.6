@@ -1,119 +1,175 @@
-Return-Path: <linux-kernel+bounces-544379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5029A4E097
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:20:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EC2AA4E0A3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:21:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDE73169F0A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:17:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78F4D18879BB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26889204F73;
-	Tue,  4 Mar 2025 14:17:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C06204F6C;
+	Tue,  4 Mar 2025 14:19:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="3RVXHejn"
-Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AwL3mjOw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29513204C18
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:17:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE17249E5;
+	Tue,  4 Mar 2025 14:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741097857; cv=none; b=sW3ifABBBcnqTrjT9cXRz3aPiJWinyebfIudWH3ZsWJoEwEWx+bsuQtHXZOlKiIMsV5022qfFzgRk780IWnBJDoZWaSLg4hVvxE20tfY6BTXUWiES7AH+tFuzGjqCzfTf8GzzGv6jNxgqXct5ZYV89JEcOHrTlsnLJYH6zxqx98=
+	t=1741097976; cv=none; b=XZWQ3xUwJx7NXB+aoOrXgTg1510+VqV624dL6wWJswzGH0Msofz3wwDrlHh0Um0JpEm1Lq5hwHNZeBj71WbVkP6oYNuvoSDt2gbswkZIUKz9fFpGaLxpRy31ogX8CO9r1JoHgX/NHNs1jX0e2kHj3Lc3jZF+owL2mMuHP67B0+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741097857; c=relaxed/simple;
-	bh=u0YTEmiq/X1E0cMQ/xx/YUxa0cAemZr65/rysSkoufw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=RXgPm5kibQAZ26Oz8cqpcFDtaZmGMHxvqVzBwnuszUY6wbw4dv96fPDnFJ1dVTPI8zatz7nVTr2/eBzoZbbcyhQgcmHp0tSB3quvOrr9OG4HZRQsF7CePy4BkyiNUI9VEKQt1x/WHrCrIavjo7QKwNMqt7FqbNDrPTyHGy+VG1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=3RVXHejn; arc=none smtp.client-ip=209.85.166.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-85ae3310966so53597539f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 06:17:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1741097855; x=1741702655; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2gIDjMe8z2x3wyNv++WFZ5B8TQBT5aS6hqx9LtcIW1M=;
-        b=3RVXHejniYE77ZbChWpDhwTDcfF+EvsjAXp5GRFqTt3mw3xW97rkhvcgQvzfeTRCEP
-         vlUgJtxt5Hvl7zKSlzyz29vEUDbdEgeUFbcDIt2GjvzuFhyAqmsAt8+wrtxYnLBs+0T1
-         thCx0KLieqM8S3I7R3NX2v8QmmFMRRuNwL7Z2OIEJn1mWhRMRH5mQId9mfHABZ7miDa9
-         q0wrj9EAMaj5vK4/3+bg8UE/o9QEpbqxLjz//H1aGNBZdHaH5ROw96EwbmVO3SIL+zx1
-         jRwmOhuPsJtbhA8NbrBTwIUD6Y0L4qimc3HL0HOAyVqldSD2rirg2iZnqDpTUwJ/mucj
-         Ka5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741097855; x=1741702655;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2gIDjMe8z2x3wyNv++WFZ5B8TQBT5aS6hqx9LtcIW1M=;
-        b=lbhjnZTzih6HCec9yvIhGi5F8e1M/oTUmppMEBXw8XO2NdaH2ybY2RwujE1ngKPWSF
-         dUDjqWaMJOy2cYqePTtnw2/jaGt2r7dFvTjx7Xr9dg0di1LllQtigIpDtwt/jP7VmXl7
-         jy1yVvPwYubQZ1JZKgV/6Na3Wite+uOZKiAt9mGETb4gHHKoLbf0KUZAqla83u9/oAJL
-         6KYgZ7xafxidLoJytETZtxJW5D+Df+8toP/39tyiY2nYshLP8JIWOvIzdIq136WSnMdk
-         Ut9csQB/2OKZB/PyEXM9CMGEk4upAzgf3eqJ9Qdm2gTABby6Sy71fzWoIQ+khTDFpHIn
-         7Rgg==
-X-Forwarded-Encrypted: i=1; AJvYcCU1chBc2i+1PwMRRYwd9nyfCkiSJ1XxmZxlkWVY+NX82p1Sn5z0iUstCVU8oCBetcoSysYfGniDdHsezIQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYy1s73QeOvuIYFhctQ2VsDsax6KFJcwRNnkF3Lc2AVTfSzsX8
-	dEhD2n5f/8zKdJbZQzxP7XczuI007LLStZ0zdfzQa5zW/7FGMX0xkxnj+HNMjV8=
-X-Gm-Gg: ASbGnct/4NBp1lTq+PdiS/XmSDbizgPaXny8QhJKTLUNoHo/k+VGIoGoYQGiJcVisHl
-	dPZT5TOuGr0iMSYT6LUMPdh+OC4nqdjut9T0BXB/LGITdIilZcuD5EIQ8zlhJOhKiKAy0xRSmzg
-	Qx/gjiuBNz55LYU8b6dx/zyvWYhHhW6xH+IHGwvP4cyeeofDoKaiazApBBNVxDLjzVTtMmukwkp
-	FoqlR13rBDZsLMwm3yEWaZMXFiJ8zDLjfxo25hSaSs6XlHTS/UtNcTUBnnfHKcSR/u0NM5NXG6e
-	5nbZhHB8hz176h2a49DyzC0xunrLi6vNXFo=
-X-Google-Smtp-Source: AGHT+IHj1VKM8Q8OB31sMhasbX1Meg0uRuwSvtT5CoFwKJkLRey9eS1GljsQWWmAUoDD7oaBELgAqQ==
-X-Received: by 2002:a05:6e02:1a22:b0:3d2:6768:c4fa with SMTP id e9e14a558f8ab-3d3e6f4b145mr181382345ab.21.1741097855233;
-        Tue, 04 Mar 2025 06:17:35 -0800 (PST)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f08f4e3ae7sm1551749173.80.2025.03.04.06.17.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 06:17:34 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: Pavel Begunkov <asml.silence@gmail.com>, 
- Caleb Sander Mateos <csander@purestorage.com>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250228235916.670437-1-csander@purestorage.com>
-References: <20250228235916.670437-1-csander@purestorage.com>
-Subject: Re: [PATCH 1/5] io_uring/rsrc: split out io_free_node() helper
-Message-Id: <174109785443.2732593.9519321891162952151.b4-ty@kernel.dk>
-Date: Tue, 04 Mar 2025 07:17:34 -0700
+	s=arc-20240116; t=1741097976; c=relaxed/simple;
+	bh=8jHtcSbIl6KMW0jgkbyI/Ws4v68dSrEq5fvmCHAfE7w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f3KQhxYuVQnXvSOhT1eg6NGe0DJ8ErVh/pgGdh9J7RGCGeCIK0u87I0lanyd63gZrDO7YINdHIPTQu8RkQehpjIx0e5Ruhi5pZmPpcCMeny2Hsv4iSk/+HqmBn3m8jJBY7L8h4OFmcSXNdQprNIjyDxsyBf9heIALKwXovJUoCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AwL3mjOw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70751C4CEE5;
+	Tue,  4 Mar 2025 14:19:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741097975;
+	bh=8jHtcSbIl6KMW0jgkbyI/Ws4v68dSrEq5fvmCHAfE7w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AwL3mjOwXgWUC1OD8LtZoy5XIgAH2/zu3uezpVQKogKMMMQlEAMZmgmFuiOwlq2nb
+	 bqNAPpDmz87vwFK10kZKxU+0LJTS4pLxwBSOumM0zCLuhAO1J/UUFChIQOyvRH/i52
+	 o2aoemQsfaEJbdQbwZauG/lzaQR4cf8yt2JnLhLGVQr45SFxlbR4+BG+fNYzqGCjhV
+	 AcL/SwBCRyUwz1mFMu2Q14bBjeaLXMjdjHUm+LkeL/HtGYurU0qGzSNGRcl1nKz7g8
+	 64NLm2xxcIMSnHAmGqTEoYfeh35788XJoruCGCPRs883If2bpkDZ6NsroiXTsGY4O2
+	 1g0sWDKhHVh6A==
+Date: Tue, 4 Mar 2025 08:19:33 -0600
+From: Rob Herring <robh@kernel.org>
+To: Artur Weber <aweber.kernel@gmail.com>
+Cc: Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Stanislav Jakubek <stano.jakubek@gmail.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH v6 02/10] dt-bindings: mfd: brcm,bcm59056: Add compatible
+ for BCM59054
+Message-ID: <20250304141933.GA2543583-robh@kernel.org>
+References: <20250304-bcm59054-v6-0-ae8302358443@gmail.com>
+ <20250304-bcm59054-v6-2-ae8302358443@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-94c79
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250304-bcm59054-v6-2-ae8302358443@gmail.com>
 
-
-On Fri, 28 Feb 2025 16:59:10 -0700, Caleb Sander Mateos wrote:
-> Split the freeing of the io_rsrc_node from io_free_rsrc_node(), for use
-> with nodes that haven't been fully initialized.
+On Tue, Mar 04, 2025 at 07:20:33AM +0100, Artur Weber wrote:
+> The BCM59054 MFD is fairly similar to the BCM59056, and will use
+> the same driver. Add compatible and specify the allowed regulator
+> nodes.
 > 
+> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+> ---
+> Changes in v6:
+> - Replace mfd/brcm,bcm590xx.yaml with mfd/brcm,bcm59056.yaml
 > 
+> Changes in v5:
+> - Replace mfd/brcm,bcm59056.yaml with mfd/brcm,bcm590xx.yaml in
+>   regulator bindings description
+> 
+> Changes in v4:
+> - Fix yamllint errors (missing unevaluatedProperties)
+> - Drop comment with regulator name list
+> - Use full schema paths for $reg
+> - Change description of regulator binding to mention BCM59054
+>   explicitly
+> - Drop quotes around vbus reg name
+> - Change "Power Management IC" to "Power Management Unit" to match
+>   official Broadcom naming
+> 
+> Note that I did not end up moving the regulator refs from
+> allOf compatible matches; I explained my reasoning in [1].
+> 
+> [1] https://lore.kernel.org/lkml/ab853605-859d-44c6-8cbd-44391cd677e6@gmail.com/
+> 
+> Changes in v3:
+> - Split regulator node into separate file
+> - Removed quotes around compatible
+> ---
+>  .../devicetree/bindings/mfd/brcm,bcm59056.yaml     | 26 +++++++++-
+>  .../bindings/regulator/brcm,bcm59054.yaml          | 56 ++++++++++++++++++++++
+>  2 files changed, 80 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/brcm,bcm59056.yaml b/Documentation/devicetree/bindings/mfd/brcm,bcm59056.yaml
+> index b387ef9885c3ac524e0782545dbca9c0e81a556c..b67d7a723fc242869e5bdc6b3602785f62af45bd 100644
+> --- a/Documentation/devicetree/bindings/mfd/brcm,bcm59056.yaml
+> +++ b/Documentation/devicetree/bindings/mfd/brcm,bcm59056.yaml
+> @@ -11,7 +11,9 @@ maintainers:
+>  
+>  properties:
+>    compatible:
+> -    const: brcm,bcm59056
+> +    enum:
+> +      - brcm,bcm59054
+> +      - brcm,bcm59056
+>  
+>    reg:
+>      maxItems: 1
+> @@ -21,7 +23,6 @@ properties:
+>  
+>    regulators:
+>      type: object
+> -    $ref: /schemas/regulator/brcm,bcm59056.yaml#
 
-Applied, thanks!
+Just do:
 
-[1/5] io_uring/rsrc: split out io_free_node() helper
-      commit: 6a53541829662c8f1357f522a1d6315179442bf7
-[2/5] io_uring/rsrc: free io_rsrc_node using kfree()
-      commit: a387b96d2a9687201318826d23c770eb794c778e
-[3/5] io_uring/rsrc: call io_free_node() on io_sqe_buffer_register() failure
-      commit: 13f7f9686e928dae352972a1a95b50b2d5e80d42
-[4/5] io_uring/rsrc: avoid NULL node check on io_sqe_buffer_register() failure
-      commit: 6e5d321a08e30f746d63fc56e7ea5c46b06fbe99
-[5/5] io_uring/rsrc: skip NULL file/buffer checks in io_free_rsrc_node()
-      commit: fe21a4532ef2a6852c89b352cb8ded0d37b4745c
+additionalProperties: true
+properties:
+  compatible:
+    contains:
+      enum:
+        - brcm,bcm59056
+        - brcm,bcm59054
 
-Best regards,
--- 
-Jens Axboe
+(This patch should just add the last line)
 
+And drop the allOf below.
 
-
+>  
+>  required:
+>    - compatible
+> @@ -30,6 +31,27 @@ required:
+>  
+>  additionalProperties: false
+>  
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: brcm,bcm59054
+> +    then:
+> +      properties:
+> +        regulators:
+> +          $ref: /schemas/regulator/brcm,bcm59054.yaml#
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: brcm,bcm59056
+> +    then:
+> +      properties:
+> +        regulators:
+> +          $ref: /schemas/regulator/brcm,bcm59056.yaml#
+> +
+>  examples:
+>    - |
+>      #include <dt-bindings/interrupt-controller/arm-gic.h>
 
