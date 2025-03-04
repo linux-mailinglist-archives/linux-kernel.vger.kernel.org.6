@@ -1,247 +1,174 @@
-Return-Path: <linux-kernel+bounces-543245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 286D4A4D322
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:49:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC5D8A4D32B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:55:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D239166C4F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 05:49:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26DC33AE259
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 05:55:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D2EF156F3C;
-	Tue,  4 Mar 2025 05:49:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3291C1F463B;
+	Tue,  4 Mar 2025 05:55:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AW6Vflss"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="idbZ++H2"
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D7FE26AD9
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 05:48:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07D763D561;
+	Tue,  4 Mar 2025 05:55:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741067340; cv=none; b=H9cAizehM6PgIsCiY4S5ilCRXAJDn1Z/rpllf8JpVm/763wEn+QeOEsVETT6DeVQxLNmKe7xxDFBuTEJbeFPZQSLBUnCZFgviFI2HE89dbVfjgh/vQ+wDjMZjxIlKFu0ABZqKl6P+pVvU4CD4FgAyVRnhIGryDq9K3KkEYE2SzI=
+	t=1741067719; cv=none; b=H8rc676BD0W4mhnFYxDCdxneUSXh5vO6/7gbZD9JSkkRUs7ludWm+iPt7LShKtwNfokqDulmGh0CBA0yOPrVVwfAvf0F97b0r/3oQXlgfpaq1LXkyKoZrBgDOM9n3m5Y/sNoO/O9qhkr4kY4hkqfve00meQAtCIp4p0bolyL0fA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741067340; c=relaxed/simple;
-	bh=i8pLZi+5HRo8PRoBRhDlUuE/aOqMyDjrmWFHZbyaMRM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RFN0LhTQKAgx0hWQXwW7lLqL+a6qUPR7X0nsB8dYHRgNhPWyrxCcHV8Sn2XSm9d+tJGJ7qcvsaWFG/IpkGJgbidVICdZHFF5YZPnCvzgjydIis3FgserD3RZf4wYDaIjgssVVCRqrJcbQT+EW/HJiVj5zHLQlt4bCD5+l3fM58Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AW6Vflss; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-471f88518c8so27249061cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 21:48:58 -0800 (PST)
+	s=arc-20240116; t=1741067719; c=relaxed/simple;
+	bh=HM4DVfNkfrRlI4k3ON1o90sWtnATPXYTdEpU1u1k/S8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F5rHBLIlfP/r0hcmQPkinIqhaHbc5ApnK6SW0uEfiRcPqc3H6V18PBrNC7lqt0uNWM0ClF+KoEWo694hMzIoQLGHOGWiPolVXGnCS2+mDqWKcLzOnS3k6kcYsSX0ctHucS88KmFbLFwbsvFLU9lUDvGADkccoG426RTXvpT0luc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=idbZ++H2; arc=none smtp.client-ip=209.85.221.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-52379e9b7d2so923658e0c.1;
+        Mon, 03 Mar 2025 21:55:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741067338; x=1741672138; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aLQmW9gJfmAdRyRpGoDitlnD+ozdb0nSWTFPd64frvs=;
-        b=AW6VflssjaP4Ui6yBHM8mC8qSbcBzYwP1vRYj5cCHix9JOvSWYDRN9GprJ/RgcQDMZ
-         nSfGOxC16o+ACMlTejwQw4FpYBzv9VW1gcGL80S0pQPYo7HOAJpCPTsunJ31sP6hLr+A
-         lbIwNhnZVH6ljkYpSnVJjJYaZx1QGpGxR+46ogBV2tqjzcrizOAh36TVsNfa3KFCeKIz
-         Xviz6RNSyW3r5YhTezhArZFPEkTDaIBgJMskHX0H2zl8HnsWDWF3LCvCfWkCDCljR5vZ
-         EzaOs4g6BvFbugcoD6xGPRub3fnZPqQkiUqDquu6B6RFWaobAUFtBj242x8BaeHsBiw8
-         a/Uw==
+        d=gmail.com; s=20230601; t=1741067716; x=1741672516; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3YIX6yetjJBn5MFAQdtHY/u8Ku9kLavFSpuBk7UEr4g=;
+        b=idbZ++H25A80Wwv4GpcZrSvFqfNLlrHv6RoQqhiHSKe1HNYXpBJ8hhODkQs/c9rP4S
+         B5nhar6ER2M5XUjca75qyqePf8P5udP6r0ROQwvd4morhECobJDhzRmnXwEEg9EKBvP3
+         QgN+N+En350yqDlun/3XM93HmsMDbUkB141JguROX5Hc59+huHOYlUXzdanuroE8R73m
+         gmY37FwSBTqeaRyoAYUwwGcKjtkrvw9v7XpFTRyEdqnl3lHPX66jotUtlKrmb5RZzji5
+         e2ulijblOaDVd9t0t08f0LNH85RvdaXNgjMY6SY1i63kygD1txZDC8JMXefr5OlsjTaL
+         oM1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741067338; x=1741672138;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aLQmW9gJfmAdRyRpGoDitlnD+ozdb0nSWTFPd64frvs=;
-        b=pb3i00cqiY2UoyOdzCSuhzFrKliVpmAeY4MVFjQQc3tMgXB4EexkCQtFMOAfw/IycG
-         9f0y2F06rUvIcAEXHlJM6kL647xAN1k2QsKD7SJhdR8rrTyMTq5UZFdW6x9hJu2gNq7T
-         5VuhQ1wg4qjhjthEeT1lBb57uVyMHuBJFxVB7nBcTwyxHzafq/wr1f/PmgZYTxBKsrKe
-         RZzV9MJJ0oU8OvQgCx3Ov8gTEaYyhodq2EyEepwZ6pQSU0AXwPKY5XQvmo7seXqA8umi
-         Z9qzTBz6fkwjydPfR0nhK3+/wIljnjkiayBaTld6jk7SEHZuglNVB4N6XKKw6UgPUvvu
-         hvXg==
-X-Forwarded-Encrypted: i=1; AJvYcCVjxtMdAV3YfUg95/1yQj563f9kPdaXx+GwfKIdU1gXrAcxfZf+FI0hCbSE53dLtDubB7WPtQHTl6MQhfA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymwGnbZrn8ywXHoaMrRbXuVePIpHN1j2UrQKVh7ZEWIWMtNd1g
-	si5Pk4f00kjmKW/BBDcqRoVAJqECymjkVczZFZ7ozVpv20GxkehPCq0rD7UAYNyiAqnsS+m81Dr
-	LTpKlawoBebs8iX6gi0Mxm2ggmx8zmNXs3KdM
-X-Gm-Gg: ASbGncuFjmhbriBxv54ZRI7CNoxIkN00GA/h5FxVRW4UT2j2TmgGmAOIN+M6ROQN+gH
-	AfFZI8npX3gKap3xnD83Czn4jbQK8eXnfo31o4JnAhEfURKQP0aTrroCO+UZqKKif7ny/KXAuAa
-	NCEcaLtqbK0Z422sTwcHtz02HTbfvSGbYra+6KxvVCzkTB3sIwRBwdH2E=
-X-Google-Smtp-Source: AGHT+IHIX17v2faHonFbjv2nSVgY1AnFbcCVwrAAsJBFo8iQfxTxg33sUHVgoCLxEiuuMoEoXJ4IiutISGzUq8ei3Es=
-X-Received: by 2002:a05:622a:507:b0:471:f754:db41 with SMTP id
- d75a77b69052e-474bc0f42b9mr251411311cf.34.1741067337818; Mon, 03 Mar 2025
- 21:48:57 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741067716; x=1741672516;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3YIX6yetjJBn5MFAQdtHY/u8Ku9kLavFSpuBk7UEr4g=;
+        b=nW+2VDgAl+OUbAm1RJV5woVejdE3EHfo1z5rmcUWSHfSEGqvhgC4zCxHXxx1e5no/d
+         uq4HlY0VJVCrwCvkFlQaSE81g9LtJAwjZBCPjwJLNtNt4dOjOZYhzrWXP6LgoGSMBw2o
+         GtMvRWSWnd5PF68oco8uKNQovSzuXuJc0i+qapMJkx0W7gJ4CGR6moORGhuIEgbG8pj2
+         aMK20EHJHUstNm7foj7c6foiYGOCQd+W9ZDGLHgxLo8emqyxDc5uLSzXruxBLF1wRXWw
+         U02qs+JD7l5AT3dbPvzlstpI29PrjB301MiE20B7ZsgyiupBST0UKqKs7oAlpoP6M+bp
+         f5yw==
+X-Forwarded-Encrypted: i=1; AJvYcCUKQYlUTkA1WPgs2olw56/IiwOQi7ceniL04jZ/WCy3I8V/gMeknBB4JlYB5igIPz+izX9FnkW/BKHItgw=@vger.kernel.org, AJvYcCVMk4ZLT0bF5UXlPXBCniGqcZPQ08OA0oMEGUAZedHrGKGakH2O5ZQcwj1fm0VkQs98VuTjiVjZEJF4MmC+@vger.kernel.org, AJvYcCWc2YXnyRImbjNqj+oLvVvD3ns5dpkz+nLPoCDDK5/h1Yw/qnG5DDhJifrJivBD2Rkd/ljvF944QiI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhiTcq/N12Zb/ZziyP5o31rHYJZCU7JKTHM3aDY1LZF8AFl6bh
+	Mbae7U6YMsnZr6Wnc+dN09v8Toy9Jn1HYLh/ppJkWzI1v36V0c/R
+X-Gm-Gg: ASbGnctgel0nUG+s42Ak9XMJn6EiNfjBJuNhxduOVqBCKxk73Gx2hVhZjPgp2Q7ZFkj
+	HLmYdbSmnEYaYJgIX3EK336oaHxEsVv2+jwO9fsrAoWhAUa2pTfEvrlkOvEYDrbHBzIEyVUIPLQ
+	flIO0DD3niP4+4cdcn96n68Ey94dtgv0mHZiG62JEN5NFSDhcKLf2P/p+ytGt1+6RORUO3568h2
+	Q9dqSMJ0h0vThTMZJbpiZdWVHBmA6LQQYlXOvf0s9Swv/L5YNnMdQGd0zaiGhDg1taQ/dFHsYJN
+	V1kiOT5cUPDIEJzqkal8kuawiH5YCeKQ45fUVxyA3mA1FmtZBNzT
+X-Google-Smtp-Source: AGHT+IHAPEz+xNmNjACUxa/zmnzhr7l/KyPzJKeIISYokuv32Jl399bCDKD+k4VEeKmPk2/TXc1P3A==
+X-Received: by 2002:a05:6122:2388:b0:50b:e9a5:cd7b with SMTP id 71dfb90a1353d-5235bdaa6aamr9940941e0c.9.1741067715771;
+        Mon, 03 Mar 2025 21:55:15 -0800 (PST)
+Received: from localhost.localdomain ([2800:bf0:82:3d2:9e61:1a62:1a8c:3e62])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5237c8951absm1063791e0c.19.2025.03.03.21.55.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 21:55:14 -0800 (PST)
+From: Kurt Borja <kuurtb@gmail.com>
+To: Kurt Borja <kuurtb@gmail.com>,
+	linux-hwmon@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Jonathan Corbet <corbet@lwn.net>,
+	=?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
+Subject: [PATCH v1 1/1] hwmon: (dell-smm) Increment the number of fans
+Date: Tue,  4 Mar 2025 00:52:50 -0500
+Message-ID: <20250304055249.51940-2-kuurtb@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250303070501.2740392-1-danielsftsai@google.com> <87a5a2cwer.ffs@tglx>
-In-Reply-To: <87a5a2cwer.ffs@tglx>
-From: Tsai Sung-Fu <danielsftsai@google.com>
-Date: Tue, 4 Mar 2025 13:48:45 +0800
-X-Gm-Features: AQ5f1JrVllMma2lBhD5bLJdP1zK-LBpZv3sWJ-8dv1_-WrEkEAgiHvkMpRFDCO4
-Message-ID: <CAK7fddD4Y5CJ3hKQvppGB2Bof4ibYDX4mBK3N1y8qt-NVoBb7w@mail.gmail.com>
-Subject: Re: [PATCH] PCI: dwc: Chain the set IRQ affinity request back to the parent
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Jingoo Han <jingoohan1@gmail.com>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Andrew Chant <achant@google.com>, 
-	Brian Norris <briannorris@google.com>, Sajid Dalvi <sdalvi@google.com>, 
-	Mark Cheng <markcheng@google.com>, Ben Cheng <bccheng@google.com>, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 3, 2025 at 5:10=E2=80=AFPM Thomas Gleixner <tglx@linutronix.de>=
- wrote:
->
-> On Mon, Mar 03 2025 at 07:05, Daniel Tsai wrote:
-> > +/*
-> > + * The algo here honor if there is any intersection of mask of
-> > + * the existing MSI vectors and the requesting MSI vector. So we
-> > + * could handle both narrow (1 bit set mask) and wide (0xffff...)
-> > + * cases, return -EINVAL and reject the request if the result of
-> > + * cpumask is empty, otherwise return 0 and have the calculated
-> > + * result on the mask_to_check to pass down to the irq_chip.
-> > + */
-> > +static int dw_pci_check_mask_compatibility(struct dw_pcie_rp *pp,
-> > +                                        unsigned long ctrl,
-> > +                                        unsigned long hwirq_to_check,
-> > +                                        struct cpumask *mask_to_check)
-> > +{
-> > +     unsigned long end, hwirq;
-> > +     const struct cpumask *mask;
-> > +     unsigned int virq;
-> > +
-> > +     hwirq =3D ctrl * MAX_MSI_IRQS_PER_CTRL;
-> > +     end =3D hwirq + MAX_MSI_IRQS_PER_CTRL;
-> > +     for_each_set_bit_from(hwirq, pp->msi_irq_in_use, end) {
-> > +             if (hwirq =3D=3D hwirq_to_check)
-> > +                     continue;
-> > +             virq =3D irq_find_mapping(pp->irq_domain, hwirq);
-> > +             if (!virq)
-> > +                     continue;
-> > +             mask =3D irq_get_affinity_mask(virq);
->
-> What protects @mask against a concurrent modification?
+Some Alienware laptops that support the SMM interface, may have up to 4
+fans.
 
-We hold the &pp->lock in the dw_pci_msi_set_affinity before calling
-this function
-so that should help to protect against concurrent modification ?
+Tested on an Alienware x15 r1.
 
->
-> > +             if (!cpumask_and(mask_to_check, mask, mask_to_check))
-> > +                     return -EINVAL;
-> > +     }
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static void dw_pci_update_effective_affinity(struct dw_pcie_rp *pp,
-> > +                                          unsigned long ctrl,
-> > +                                          const struct cpumask *effect=
-ive_mask,
-> > +                                          unsigned long hwirq_to_check=
-)
-> > +{
-> > +     struct irq_desc *desc_downstream;
-> > +     unsigned int virq_downstream;
-> > +     unsigned long end, hwirq;
-> > +
-> > +     /*
-> > +      * Update all the irq_data's effective mask
-> > +      * bind to this MSI controller, so the correct
-> > +      * affinity would reflect on
-> > +      * /proc/irq/XXX/effective_affinity
-> > +      */
-> > +     hwirq =3D ctrl * MAX_MSI_IRQS_PER_CTRL;
-> > +     end =3D hwirq + MAX_MSI_IRQS_PER_CTRL;
-> > +     for_each_set_bit_from(hwirq, pp->msi_irq_in_use, end) {
-> > +             virq_downstream =3D irq_find_mapping(pp->irq_domain, hwir=
-q);
-> > +             if (!virq_downstream)
-> > +                     continue;
-> > +             desc_downstream =3D irq_to_desc(virq_downstream);
-> > +             irq_data_update_effective_affinity(&desc_downstream->irq_=
-data,
-> > +                                                effective_mask);
->
-> Same here.
+Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+---
+Hi all,
 
-We hold the &pp->lock in the dw_pci_msi_set_affinity before calling
-here, so that could help I think ?
+Guenter, if you prefer a different patch for the documentation, let me
+know.
 
->
-> > +     }
-> > +}
-> > +
-> > +static int dw_pci_msi_set_affinity(struct irq_data *d,
-> > +                                const struct cpumask *mask, bool force=
-)
-> > +{
-> > +     struct dw_pcie_rp *pp =3D irq_data_get_irq_chip_data(d);
-> > +     struct dw_pcie *pci =3D to_dw_pcie_from_pp(pp);
-> > +     int ret;
-> > +     int virq_parent;
-> > +     unsigned long hwirq =3D d->hwirq;
-> > +     unsigned long flags, ctrl;
-> > +     struct irq_desc *desc_parent;
-> > +     const struct cpumask *effective_mask;
-> > +     cpumask_var_t mask_result;
-> > +
-> > +     ctrl =3D hwirq / MAX_MSI_IRQS_PER_CTRL;
-> > +     if (!alloc_cpumask_var(&mask_result, GFP_ATOMIC))
-> > +             return -ENOMEM;
->
-> This does not work on a RT enabled kernel. Allocations with a raw spin
-> lock held are not possible.
->
+~ Kurt
 
-Even with the GFP_ATOMIC flag ? I thought that means it would be safe
-to do allocation in the atomic context ?
-Didn't work on the RT kernel before, so please enlighten me if I am
-wrong and if you don't mind.
+ Documentation/hwmon/dell-smm-hwmon.rst | 14 +++++++-------
+ drivers/hwmon/dell-smm-hwmon.c         |  5 ++++-
+ 2 files changed, 11 insertions(+), 8 deletions(-)
 
-> > +     /*
-> > +      * Loop through all possible MSI vector to check if the
-> > +      * requested one is compatible with all of them
-> > +      */
-> > +     raw_spin_lock_irqsave(&pp->lock, flags);
-> > +     cpumask_copy(mask_result, mask);
-> > +     ret =3D dw_pci_check_mask_compatibility(pp, ctrl, hwirq, mask_res=
-ult);
-> > +     if (ret) {
-> > +             dev_dbg(pci->dev, "Incompatible mask, request %*pbl, irq =
-num %u\n",
-> > +                     cpumask_pr_args(mask), d->irq);
-> > +             goto unlock;
-> > +     }
-> > +
-> > +     dev_dbg(pci->dev, "Final mask, request %*pbl, irq num %u\n",
-> > +             cpumask_pr_args(mask_result), d->irq);
-> > +
-> > +     virq_parent =3D pp->msi_irq[ctrl];
-> > +     desc_parent =3D irq_to_desc(virq_parent);
-> > +     ret =3D desc_parent->irq_data.chip->irq_set_affinity(&desc_parent=
-->irq_data,
-> > +                                                        mask_result, f=
-orce);
->
-> Again. Completely unserialized.
->
+diff --git a/Documentation/hwmon/dell-smm-hwmon.rst b/Documentation/hwmon/dell-smm-hwmon.rst
+index 74905675d71f..5a4edb6565cf 100644
+--- a/Documentation/hwmon/dell-smm-hwmon.rst
++++ b/Documentation/hwmon/dell-smm-hwmon.rst
+@@ -32,12 +32,12 @@ Temperature sensors and fans can be queried and set via the standard
+ =============================== ======= =======================================
+ Name				Perm	Description
+ =============================== ======= =======================================
+-fan[1-3]_input                  RO      Fan speed in RPM.
+-fan[1-3]_label                  RO      Fan label.
+-fan[1-3]_min                    RO      Minimal Fan speed in RPM
+-fan[1-3]_max                    RO      Maximal Fan speed in RPM
+-fan[1-3]_target                 RO      Expected Fan speed in RPM
+-pwm[1-3]                        RW      Control the fan PWM duty-cycle.
++fan[1-4]_input                  RO      Fan speed in RPM.
++fan[1-4]_label                  RO      Fan label.
++fan[1-4]_min                    RO      Minimal Fan speed in RPM
++fan[1-4]_max                    RO      Maximal Fan speed in RPM
++fan[1-4]_target                 RO      Expected Fan speed in RPM
++pwm[1-4]                        RW      Control the fan PWM duty-cycle.
+ pwm1_enable                     WO      Enable or disable automatic BIOS fan
+                                         control (not supported on all laptops,
+                                         see below for details).
+@@ -93,7 +93,7 @@ Again, when you find new codes, we'd be happy to have your patches!
+ ---------------------------
+ 
+ The driver also exports the fans as thermal cooling devices with
+-``type`` set to ``dell-smm-fan[1-3]``. This allows for easy fan control
++``type`` set to ``dell-smm-fan[1-4]``. This allows for easy fan control
+ using one of the thermal governors.
+ 
+ Module parameters
+diff --git a/drivers/hwmon/dell-smm-hwmon.c b/drivers/hwmon/dell-smm-hwmon.c
+index cd00adaad1b4..79e5606e6d2f 100644
+--- a/drivers/hwmon/dell-smm-hwmon.c
++++ b/drivers/hwmon/dell-smm-hwmon.c
+@@ -73,7 +73,7 @@
+ #define DELL_SMM_LEGACY_EXECUTE	0x1
+ 
+ #define DELL_SMM_NO_TEMP	10
+-#define DELL_SMM_NO_FANS	3
++#define DELL_SMM_NO_FANS	4
+ 
+ struct smm_regs {
+ 	unsigned int eax;
+@@ -1074,11 +1074,14 @@ static const struct hwmon_channel_info * const dell_smm_info[] = {
+ 			   HWMON_F_INPUT | HWMON_F_LABEL | HWMON_F_MIN | HWMON_F_MAX |
+ 			   HWMON_F_TARGET,
+ 			   HWMON_F_INPUT | HWMON_F_LABEL | HWMON_F_MIN | HWMON_F_MAX |
++			   HWMON_F_TARGET,
++			   HWMON_F_INPUT | HWMON_F_LABEL | HWMON_F_MIN | HWMON_F_MAX |
+ 			   HWMON_F_TARGET
+ 			   ),
+ 	HWMON_CHANNEL_INFO(pwm,
+ 			   HWMON_PWM_INPUT | HWMON_PWM_ENABLE,
+ 			   HWMON_PWM_INPUT,
++			   HWMON_PWM_INPUT,
+ 			   HWMON_PWM_INPUT
+ 			   ),
+ 	NULL
+-- 
+2.48.1
 
-The reason why we remove the desc_parent->lock protection is because
-the chained IRQ structure didn't export parent IRQ to the user space, so we
-think this call path should be the only caller. And since we have &pp->lock=
- hold
-at the beginning, so that should help to protect against concurrent
-modification here ?
-
-
-> Thanks,
->
->         tglx
-
-Sorry for the test build error, I will fix it and re-send a new patch.
-
-Thanks
 
