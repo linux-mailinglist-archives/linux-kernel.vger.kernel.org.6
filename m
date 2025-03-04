@@ -1,183 +1,139 @@
-Return-Path: <linux-kernel+bounces-544605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE2ABA4E309
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:25:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A910A4E30A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:25:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E83C619C0169
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:17:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CDE0420F36
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:18:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D91D526A0A8;
-	Tue,  4 Mar 2025 15:09:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0802524C062;
+	Tue,  4 Mar 2025 15:10:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ExPMUZPs"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eITQcMky"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 447F3239579
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:09:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA599239579
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741100998; cv=none; b=MzzFmumKRR96VylTSH9O+g5ToDpksGEmVuAOoyEhC3S64VCZzNMLxVR+4kOb6vpZKDMJ1tl9P1AK0be+ozT9vxnCLj8IjEDkpkg+NMi1Zue0/zX2LmoqN5JYA3GWYGeF8LnZEW4sTToMU1Zxx1yBDmceD0wfmdWwGrhRy1Qscfg=
+	t=1741101051; cv=none; b=ZBF3hCIDx9+2vgGjfWQwqoQPRf/5Q9c/IiSYgLoGy19n9NtHYFJAwfHdt0h6dx09drsi8CWUJ/6UNRtWrioUnj7el6WULzpwQk33AQyh+To8A7i3l9s4j25Ged9N1wJJlQR8R9Njih/GsErRDl1VlpY0I97mDVs1PqEQvjIt75c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741100998; c=relaxed/simple;
-	bh=opmnGSMl5a3rw4PfYRN77P+Mh1CbJMCOLTe7ToepzFw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GswbOJ8fB+fXv9xGkSwOaT6yTbKCWbv8gSB1c0Yp7gT6H6wL5Jeh70yLts9M8/rlV4fO0F+Pxg+zj41bcPQubK3pzPk86ZX37axMFypkMwxdyBeT5vQ8xVq6SYN4lWOk6EEit/Qb3DZIDEC8Q8hJqj6nEVZI189vw4DA65esHMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ExPMUZPs; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741100996; x=1772636996;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=opmnGSMl5a3rw4PfYRN77P+Mh1CbJMCOLTe7ToepzFw=;
-  b=ExPMUZPs754CB68mklRAaJkBgRbqgc6Ft5M5U6ZGj4gaGe7LTguWAB6y
-   zKSfLVexmHCMHMfWjkPXukeR2kzflwwFkyweZSBq4s+g/aXttoWAC2KEN
-   0LQ2cuEK/8zKxL4Ms9VDb27hMjDJTXIgWIBIbkKH37/2h4A43zqxIla3F
-   9QLiM1y8dX9IAp2RTqJ71V5J4RK0p1cGq0/VcCBeaYvEJtUoiGlt+diCH
-   nGjdS0P+WGZTzh14A46ahoNGO4iFGi+HDwwTbQIwS6g5P786FBlBli5ND
-   5PQSlzjBOSz7/suVWrtfStjOde3QKOX9zweXUsUnK2My5Pw1YpugzpEuY
-   A==;
-X-CSE-ConnectionGUID: Wy9RbGzWS2q6EG8bJXxL7Q==
-X-CSE-MsgGUID: eA7+tcrvTCiNDaaCT8jRHg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="42216272"
-X-IronPort-AV: E=Sophos;i="6.14,220,1736841600"; 
-   d="scan'208";a="42216272"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 07:09:56 -0800
-X-CSE-ConnectionGUID: Sg0R8AiqRrqT13SZRdhoQA==
-X-CSE-MsgGUID: WdUDCJMiSBafbrn400eNuQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,220,1736841600"; 
-   d="scan'208";a="118404768"
-Received: from kinlongk-desk.amr.corp.intel.com (HELO [10.125.109.94]) ([10.125.109.94])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 07:09:54 -0800
-Message-ID: <ec7247d0-0379-487d-a2d7-21b81dcd0c38@intel.com>
-Date: Tue, 4 Mar 2025 07:10:13 -0800
+	s=arc-20240116; t=1741101051; c=relaxed/simple;
+	bh=43kkvm0fDoGaY3CU2LfS1Vs/lca8x1zkYXTvuUBDxGY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JMA853adhZxGV5LB8EDwKYMx7EdvtTL+J242yxxH8fpvs7U53VN3/9VDYjUWQaLLF/EZH8PnmLm+62g0F8BkCyWwShxGZwuJ+vU3fq2rci/xkEHA8XXaNlnQJiV/+yV62NIil8gbyRq30VTBrZV1qrrBX7NvFhNUQHSGz7RjWUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eITQcMky; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2feb1d7a68fso10230008a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 07:10:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741101049; x=1741705849; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=vdhvna9uxBeu4mYpj5OPBxZhuzN87zcLw+LVQRQ7m7s=;
+        b=eITQcMkytMhZaS2gd3R9YaW6ig419DuIwvf85dd23hCf0S+5c7oqCFRXj+uFUHQ/IV
+         q7bETRmmzce7WYAxwnQBY/CADwA/7UWuOFxCYZFb/4UXQe213U3gUIqWahJB6P8hxAkJ
+         G3/WVRR2jpojmpoPcCYkZ7pMbQ5LvUAw7lsPQQKT099BprX4J2gd0NCeCpG3gA/02W+N
+         WAe2sKT1TKkcRFSwvS8/DlMWAInVA2b9eyLYhSVFbYnOw0ffhXhNMSJ7V7MO6hdBQ5P/
+         DQ12WGxSizi/Coc6YXvFmTwVhzH4xpGz/ozg/lB8f24QIRaldCNyCNWsXeyBjygyA6r/
+         SnxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741101049; x=1741705849;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vdhvna9uxBeu4mYpj5OPBxZhuzN87zcLw+LVQRQ7m7s=;
+        b=jIRAqvICNNEzM9RmHoTTKaLncKbuAclgwpDr/4OHZPBtdiJuapW1EBSEJB0aCDtRtV
+         nYgLCblW/lcO8qv/xqhQ6pNRjbdnnOdNPi46iG56LshCZQK74tKMR1mTYRwXmrcbTz1C
+         /zL43V7+n3UNSncEgajjBpDaEew3gOSw5NHvTnlsaRjTMZhLuItXf7GgYwQR0n0TMXPe
+         uGcCt+QrflcbYiZsIOuKl5giINQSVX9Qk7zg1YFlC0p7VS5uqm2O3+qwvkdDciYjVE5o
+         J/I5bUlcsoaoOvRVUCwZABIp+VIh1cqk3qgTcow8w30l3mt6vG11g5jufKZhkjaJoHVP
+         eo7w==
+X-Forwarded-Encrypted: i=1; AJvYcCUh9Ds8PGm2q+Nwzad4C7RTQVFxD8zgXTuA+K7F204jD/1oR1qD4hMFPr0MdMNONTRnbLa1YQuG7yaaMCg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0VQfWWhrA3WcMT3SdOf0zv5uxYM12QPngBOa/pzIgnkMc8WFo
+	L9rND9uR/2z6+k57lrpbabGQ0Y9yQ5PY+/2EneOTbGlx4mLU8/wEwXo09Hie8A==
+X-Gm-Gg: ASbGnct4RHOFEyciBz7xC6m4zK82XKy23w+gYfnw2i2R60jDzpAJrvUSGyJFNbD8AIM
+	IK3okDNd09p2NuZDehvSXFzOlgynYoZWvKxRzAp9KYvp9JlniSH4iggYEQhH1qjYIKhcvN5U4VB
+	PBthGlAvUD+pBW1W+5srpICfHzpJ71wJLB37/7tXgLpyVxNV9YzPXQ388mu8fhyaCsFmkYv/ZRf
+	QDKkFNsMGggWGvetfmuK/VRXK9CW/QqvsVteo3/knX8/+bNDLJL1iqu6WeBksg2kWE2PLJE61Tn
+	Qfz/142nrttijD8KPxrcUvCpKyT/wssEU3xGxgsoUk2J/Wnct52RiQE=
+X-Google-Smtp-Source: AGHT+IGfTEua5Nua/thzn0LAom+PoolH5xRKN+uIh0BTTsH6+TMAMWAEwJ3FTRgLK3drwMf2I3fVUQ==
+X-Received: by 2002:a17:90b:4ac6:b0:2fe:b8ba:62de with SMTP id 98e67ed59e1d1-2febabd9d13mr26339791a91.25.1741101049205;
+        Tue, 04 Mar 2025 07:10:49 -0800 (PST)
+Received: from thinkpad ([120.60.51.199])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223852162bcsm59170965ad.8.2025.03.04.07.10.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 07:10:48 -0800 (PST)
+Date: Tue, 4 Mar 2025 20:40:40 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Jim Quinlan <james.quinlan@broadcom.com>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Cyril Brulebois <kibi@debian.org>,
+	Stanimir Varbanov <svarbanov@suse.de>,
+	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 8/8] PCI: brcmstb: Clarify conversion of
+ irq_domain_set_info() param
+Message-ID: <20250304151022.qgp253hv5sxvxzdc@thinkpad>
+References: <20250214173944.47506-1-james.quinlan@broadcom.com>
+ <20250214173944.47506-9-james.quinlan@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v14 03/13] x86/mm: add INVLPGB support code
-To: Borislav Petkov <bp@alien8.de>
-Cc: Rik van Riel <riel@surriel.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org, peterz@infradead.org,
- dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
- nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
- linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
- jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
- Manali.Shukla@amd.com, mingo@kernel.org
-References: <20250226030129.530345-1-riel@surriel.com>
- <20250226030129.530345-4-riel@surriel.com>
- <20250228194734.GGZ8IS1iFVpPzmEyYl@fat_crate.local>
- <30c721e0-338d-4172-989c-5226d584bcbc@intel.com>
- <34b80474-a309-493b-81e9-3a7d4de8a369@intel.com>
- <20250304110032.GEZ8bdUOg2WLUrhMcm@fat_crate.local>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250304110032.GEZ8bdUOg2WLUrhMcm@fat_crate.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250214173944.47506-9-james.quinlan@broadcom.com>
 
-On 3/4/25 03:00, Borislav Petkov wrote:
-> On Mon, Mar 03, 2025 at 11:23:58AM -0800, Dave Hansen wrote:
->> Here's a plain diff if you just want to squish it in.
+On Fri, Feb 14, 2025 at 12:39:36PM -0500, Jim Quinlan wrote:
+> Just make it clear to the reader that there is a conversion happening, in
+> this case from an int type to an irq_hw_number_t, an unsigned long int.
 > 
->> diff --git a/arch/x86/include/asm/tlb.h b/arch/x86/include/asm/tlb.h
->> index 5375145eb9596..3bd617c204346 100644
->> --- a/arch/x86/include/asm/tlb.h
->> +++ b/arch/x86/include/asm/tlb.h
->> @@ -28,6 +28,11 @@ static inline void invlpg(unsigned long addr)
->>  	asm volatile("invlpg (%0)" ::"r" (addr) : "memory");
->>  }
->>  
->> +enum invlpgb_stride {
+> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+- Mani
+
+> ---
+>  drivers/pci/controller/pcie-brcmstb.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Right, this is an address stride, as the text calls it.
+> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
+> index cb897d4b2579..f790d5252e9f 100644
+> --- a/drivers/pci/controller/pcie-brcmstb.c
+> +++ b/drivers/pci/controller/pcie-brcmstb.c
+> @@ -559,7 +559,7 @@ static int brcm_irq_domain_alloc(struct irq_domain *domain, unsigned int virq,
+>  		return hwirq;
+>  
+>  	for (i = 0; i < nr_irqs; i++)
+> -		irq_domain_set_info(domain, virq + i, hwirq + i,
+> +		irq_domain_set_info(domain, virq + i, (irq_hw_number_t)hwirq + i,
+>  				    &brcm_msi_bottom_irq_chip, domain->host_data,
+>  				    handle_edge_irq, NULL, NULL);
+>  	return 0;
+> -- 
+> 2.43.0
 > 
->> +	NO_STRIDE  = 0,
->> +	PTE_STRIDE = 0,
-> 
-> Ok, so those are confusing. No stride is PTE stride so let's just zap
-> NO_STRIDE.
 
-Passing "PTE_STRIDE" to an operation that doesn't have a stride is
-pretty confusing too.
-
-...
->  /* Flush all mappings, including globals, for all PCIDs. */
-> @@ -117,21 +126,21 @@ static inline void invlpgb_flush_all(void)
->  	 * as it is cheaper.
->  	 */
->  	guard(preempt)();
-> -	__invlpgb(0, 0, 0, 1, 0, INVLPGB_INCLUDE_GLOBAL);
-> +	__invlpgb(0, 0, 0, 1, PTE_STRIDE, INVLPGB_FLAG_INCLUDE_GLOBAL);
->  	__tlbsync();
->  }
-
-This one, for example. It's not flushing PTEs an doesn't have a start
-address or nr>0.
-
-So, we could have the enum be totally divorced from the hardware type:
-
-	NO_STRIDE,
-	PTE_STRIDE,
-	PMD_STRIDE
-
-and decode it at the end:
-
-	if (stride == PMD_STRIDE)
-		foo | PMD_STRIDE_BIT;
-
+-- 
+மணிவண்ணன் சதாசிவம்
 
