@@ -1,194 +1,239 @@
-Return-Path: <linux-kernel+bounces-542999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 311FFA4D05E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:47:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A888DA4D07B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 02:05:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 057133ADEBD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 00:45:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAA4C3AC8DE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E482E433C4;
-	Tue,  4 Mar 2025 00:45:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85AC34DA04;
+	Tue,  4 Mar 2025 01:05:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="sZ+CrPwn"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2075.outbound.protection.outlook.com [40.107.22.75])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qloowQrp"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 533862AF00;
-	Tue,  4 Mar 2025 00:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.75
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741049126; cv=fail; b=caS+r7dJWfXHgpp6naGeAf5Cv0450wzdYvK5YmaIrmqbZD6g6qdC5siF2GoKfLGV7QW0h9Xe+k5JLw2uHowodqRF4PgnySIn7PRnFKMeeWDVWDEOs5XW2p5gROveM/7GzOBsoSTGUXUfg75YNvkI5ukBsTYi/hNTXlRQrH6MzPE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741049126; c=relaxed/simple;
-	bh=fORFCeb67eswpvoGertra0R61eIBmHNVfMNmfPTCy7k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Hl/neunhgmNCVAP8K/pCDrCpoakNgKITfFBUxiXoUgG+Uc2nIyZTgngtNhB5fqnVvHAppvCVysrdeRs88j2t0MtAy6GoQrW7sr/XNoErcPyUBZLqqkmXiOcP0bRGibRPh880P8hdJ6gTJUof8dF6Zh48bGccpzT7Kr0A/Temkz4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=sZ+CrPwn; arc=fail smtp.client-ip=40.107.22.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vjjx+zzLglZxcyu2kZitpQf7UbA9xGQRDWEt2DhYRtwFAKFYzV8znxSpriI4T9MDt2d2SmxNkVdFNaS8+a0Pv/lYiAmD+9+peTO/dVlGN9lgjIKJf7oGHLQEXz7lvuFjX8cB14otQZVNSLABxC5XQnYScJ9ED1v3UOBxqV4zYJ9dmhj67/GWZuZ4k8WOc7nnlkhL5e/qN9AGNGYZgo41bjJsnbr9NRSZ98IH7EgyA+2AYxx83TwjnZzkuwixPGx62wWn4hnFyq8qGydJ9y9h9V12lbKKN8yLZCVGnpJHK8nf5xpHiU8sHw5TvRIoW1TP5lu59Jkb2iBtzM6r7AbJhA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DbAf8a59g1mC1aOiz9V7uAUztw2vQfPHPqRXnNgnczw=;
- b=hubB++0aMMZQhRsOBViYyiVRLk37pfSS0KlZNQvsq1KPAbdJk9MCtpGWsZvUJn2Y7SmzwZb47BxExkDp2MQWASS0Hv4Qgt3JY338ujJhDUMa6RtKip16hvjM3ed8AV8q+Thb+BDILb9+F6iUiz8QbAr5S3bqgv3j4QMJZXCfwSL7vfVpx5X+KfBaDhYCiOIPHTH/SfVO8O8WrXW3FGlxmdqd+dh3Dfp0iFP0EKco6+Dw/EpuZDDjfzPwMSsCR4wyNBuMMaUfzFvgrzVf9Jhm3KiHxEvgAlXPwVEV+oyIvesFI2BKxmDKL2vqi2jRjZlq5+l4vWn043ECfOfnPeEdyA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DbAf8a59g1mC1aOiz9V7uAUztw2vQfPHPqRXnNgnczw=;
- b=sZ+CrPwnMhNhC2s8y2L54OvT2GZEi2Zdjh66sxRK1VycxHIJrAuCRBfPY/918UEwecXF5ZgC8EXsxPMicR5wpBBAzVwUqmJF5gsIHQwuffjOtIIS7Cy33LWuHbgnD05Kdqh0AYDRYv22jRJ5oamENBhbdKW95wHjOV0QqXzMAXIcKtP6bHTSykgP2L6AlOQzm+ZsSi1eQAoNpkoNsyKXudIw0o1uUD26KX2JEWUbB1ZWmu0B+aWt0DRhkcS4SwxULaDwqkqvEvNGtfwzXXfTOKfrq8n+9064VNGFcPt277YyLgsZyS9DQEoScfDhqIDk0G7jf7cuSRHxdk9H6EywPQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by DBBPR04MB7804.eurprd04.prod.outlook.com (2603:10a6:10:1e0::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.28; Tue, 4 Mar
- 2025 00:45:21 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.8489.025; Tue, 4 Mar 2025
- 00:45:21 +0000
-Date: Tue, 4 Mar 2025 09:51:40 +0800
-From: Peng Fan <peng.fan@oss.nxp.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH 0/4] input: use devm_pm_set_wake_irq
-Message-ID: <20250304015140.GA24694@nxa18884-linux>
-References: <20250205-input-cleanup-v1-0-9758898ff8cb@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250205-input-cleanup-v1-0-9758898ff8cb@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-ClientProxiedBy: SI2PR06CA0013.apcprd06.prod.outlook.com
- (2603:1096:4:186::18) To PAXPR04MB8459.eurprd04.prod.outlook.com
- (2603:10a6:102:1da::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E9018D
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 01:05:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741050349; cv=none; b=rNErG/vUHSKHZa7LA6+u9IBcWbFQ/BQ14aFXNO+aCGC0DtYzVt2bmOIrY9E++XAoOhO1cS7Ug7W5ciEE1gQ8wJ5PFFMOnlqrKP1TaEcRwBfXkpEWbLNrvczJ9uSMLD7wxY/V7ng5QCGmHHTZkcuxCpSh0m09JsFZR1TsF71oZ3o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741050349; c=relaxed/simple;
+	bh=I0xHb257P71zQvxrNfPXsqfTQI1QXMoZeXgVoySwPuA=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ZINKF4sXp27Syq1+crDgjj3U1CZx65fclML/Auie+7ChjPr90eG1yTslZkJ7aefmNiJURRjeAlJasmoeRuBgM7XX+6eIaZMxR7CwVxdzfKDKSHWdYZs97DT5KohHhXGxzXEzMeP+chZL1+CMG3lsrjYqGhM4RiqHEP51uRUwrI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yepeilin.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qloowQrp; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yepeilin.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2feb019b13aso14482808a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 17:05:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741050347; x=1741655147; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=9SXgAIBBHli4r2G7pcbe+vJLfoKPTcPXAN+0NYitAWQ=;
+        b=qloowQrpxIvpA/foGrCRRU1QbbZ3U+WBTD3V0nma0ytjPdH+lJbSRH/ris2WcSdkLc
+         yr074iGAq8kx70LvBfZO4MWTkr6pZizaXT5UGQz8exPFqW0uLFBn9/HfTXaa/mOiL2Mo
+         cahUwslr42jbkD0/3mWDiCqzFNk+vRmyq+yINX/jwoklDK/+h67qR/UuewL0n5aEjnpn
+         Hv9Dj9+BkA2XQG58oVlsvdZoBT2MPxrycAPm+V7I80zggLCl2CSr2duBoyjPPCENy60J
+         883PHnyemvsiNO0CrB24vrOUEYn2082OjoQi9UtvPMOgoaNTSGZEuGHlz1RjIlaxNoMB
+         +sFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741050347; x=1741655147;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9SXgAIBBHli4r2G7pcbe+vJLfoKPTcPXAN+0NYitAWQ=;
+        b=Adeoy76NPeuzZ9bzwZHL0RhZkMgCEO4E6SsLvfKFxgzNtI/kAjaHBC75GFnv8n/PjR
+         Zg2gpNySnACEqExMPgUvijaB/2kHfVe909SKLzB9pdV8pTZUAfaHGIjJ8EKVBZC3NArT
+         cy/REDi7wCvp6IxDV9t0KTSGaCKvtOiI2x5iuqMuOcEs6s5js5LSkiFzDUs9hSY7ZGxR
+         Bu8mgqhMwZqp+64NJpep7MvGXX5bmR2c3JWK6kVroO8h9vz3ebpIU92CqmrzqFRX5HNt
+         8yahzXEsqy2S8A+Ob94S1DDf1LWof/NSMj9HOYJia3uLGu3+2LLXGAvVQ+SgrnGb2+M+
+         cNmw==
+X-Forwarded-Encrypted: i=1; AJvYcCV/Y0su69QqdDHPUAD2aKw94skRqA49SVzU3AIRCn8Rlqlb9MvnUTKaWRR7wPtEZTsMtkoegyx2gVZgFdA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJiOBADNgBjA3+ShGX4KFgSaLOo79syIHhVZxTao7rcFaxeihQ
+	6P0wAnVzzs2v8/ReaA4JNbfTn0VD7vlulwhBiSnEOid3jiIoaen4t3MJQJTyHTmFDEk6WgpJGlI
+	7NrQLVnhZcg==
+X-Google-Smtp-Source: AGHT+IGGKvvuo9gbYc5M0ieWPKrOF84HlNam7skz5aDvJF3ITlWMxgAk5BpAxwurfoJIEkLnp2itpoOBy/P7ag==
+X-Received: from pjur16.prod.google.com ([2002:a17:90a:d410:b0:2fa:1fac:269c])
+ (user=yepeilin job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:90b:1805:b0:2ee:5bc9:75c3 with SMTP id 98e67ed59e1d1-2febab2ec49mr22094627a91.5.1741050347512;
+ Mon, 03 Mar 2025 17:05:47 -0800 (PST)
+Date: Tue,  4 Mar 2025 01:05:41 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|DBBPR04MB7804:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9babd9ba-ceae-497e-c728-08dd5ab5d781
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?juV2X7HCWIpfGrFeTsnzUj4jQEmZc5phchBmCde/QFHdVUN84UIcUGhea0PB?=
- =?us-ascii?Q?9XEwCfU6xssRIKEM8n0JmbPtzoSGpxiXekVocDXTKmCptYzFtokaU34Tslpg?=
- =?us-ascii?Q?eqK0qs9TRW9f8rxZS03J38rNHBKONxglDuUfqwIywFGyXzGGQWbKtgj7J/NF?=
- =?us-ascii?Q?ud2cFgl7g8WwNl413gQbEpj6xBch8evUYoXkW0RKHRPLn2xcDPuB8/JF+z8F?=
- =?us-ascii?Q?1qipZf/5kH5bQeboZSsvdpt/At8r/YqtaM/+3V6fkO3wDS1GKSbiq+UODKzf?=
- =?us-ascii?Q?JZnoG++EKJMDEsIQW+rC+5OE3kR/acHJURqO4kIxAOLuolXpdufEAMOVRWO2?=
- =?us-ascii?Q?cCMOgRw546Zc13GbWkr43XvNN6Bv1BBOUKw0GCl30cevL/XZ58RYRlz4LmgO?=
- =?us-ascii?Q?akwkYWRUQ9fKl7Xa+YeMAZNfWwNhkuueK0gSFnKxaOvxfKgM5ird32t5SSD9?=
- =?us-ascii?Q?avIkKbxucJ936wblioHIuQ/touueNCk4kbVmdhkee76xnqlKsgW5eewsv3wD?=
- =?us-ascii?Q?uzBHr/4+JuPm5m43vfD7Cw84oaASv0vjU5JZRuF+76jwJVPH2uI5JOnAMF+s?=
- =?us-ascii?Q?QSfiYK3/RMJalu99uqo6qeeBOS13g3GXJwRO8v136Ofo+HfDtiMUbYj2IDr7?=
- =?us-ascii?Q?EUYnbq5H3Nha3vrzyG/J4MC12riUHEzR4IPgPkhSFJqWu2lB4SsPafFOVtCb?=
- =?us-ascii?Q?fpiNChmgdUROUGitGaDY+aPfmjAXO3r2E8Y/OhFI55fc+mfJH4s4bL5IL+TP?=
- =?us-ascii?Q?UT3eMrFVUT//FrAo+oZhu+woePZ9cFnslRbMC1ufFSC5AMVCKb6vVnundiKG?=
- =?us-ascii?Q?UBCNEtEfCJn1hES3U4yqYpiJDYhs3IvBbw1VpeMSRxHZiLaUXyqabnsuDdrl?=
- =?us-ascii?Q?p7bT4vC1CDbbGA4G2Hp3Z9w4hJLF5stJwl45BaYV/oA3Ko1hc3bzeF6gvnVz?=
- =?us-ascii?Q?nACLbQ+3gvreKtciTYFW7AEBWzeSGFA7dca0trZvgj5VSW6W/MZqLfwbH0q2?=
- =?us-ascii?Q?C0L19/bicOzBeaDjAGxjzhifqjcC4FPuVytlqUEBeHJeqkEBwIhzAjtl7qk7?=
- =?us-ascii?Q?o5o199e9rszd8cK94LkRHNApw1mRQ1HsDokOzn4KX7uxL17lw99QgDuLkCtb?=
- =?us-ascii?Q?MReicH8RL+GwnmtRG6V2ccIks8+yCtIE+xte+VQqcu4rUpRq81UvVt10NX44?=
- =?us-ascii?Q?cUMqTKply0+52CQ4+Dvg4kehlzOfY3BLZRV3hfRYVNeM4i795sV0qZAecpJO?=
- =?us-ascii?Q?F8gKm5lMKApHBsH9Q+Dk757PFH1IHwYishdweatj1fJll3lVMB/HhZXyDa9A?=
- =?us-ascii?Q?1MQ2arNyqDCBlbT7T6ovSzKcol8dzO1FpZMUt5GsJLTbhdBDqEBhve9Dvv8t?=
- =?us-ascii?Q?LkIRrUUl6rfb6V0ShQeq3BkBdwM9E4m6uS/8v+h5KsCEck5VEw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?YhBX6fS0/DyOlujZUTumvEw58Uds/OLUBA1T8IOxeBvRtkGAxR2no7AndEh2?=
- =?us-ascii?Q?miDc0j3U1ZM5h5A7ajOKEWLhgKWXVJ9Eekh+B0qQerH1fQnhWUkqRZL+cDYv?=
- =?us-ascii?Q?fh9yTR2Abmq7BejLvSuePXDsWDKmSQvBkGdPFE0xpaWwOukq9Ss4mpeT/TJD?=
- =?us-ascii?Q?HLsDFSQu9610CxyYT8iYsQPUsyU1Ca9/tiC6+p1P1FIxllJzh4AWiG2D2y9H?=
- =?us-ascii?Q?JsOa/+Z8I/Aijg9reeYc4zuwXfKgr+eLWrXVhH8+FJlflYp/244g2J+lAJCh?=
- =?us-ascii?Q?2Bm61i1MUv0qqO3x5PVORbOFc82Dd69ByOtBvCn11nIiSX5wLzR5bvVPTW81?=
- =?us-ascii?Q?PhpY/7COG7K6APtIccn5VPw/NdQnWRnSr+1/z7MO90s2cZS1/jgmoH/xih4F?=
- =?us-ascii?Q?tHeNVKJ8zQ8pX42JmH6qWWSLv80wrTL/DztRioTEh68OJ9L70Va0TCYzLaNp?=
- =?us-ascii?Q?FEaBWHv/KzINDFqQGyTqp/Kr8/r/gZ9UcKHJ6Oke8X0nnpqW/TwsXNX+cXcX?=
- =?us-ascii?Q?vXu76OOlaB7RqMWDYLfbSAHW0r8s2r8vkeehOxyIi4QKg9FOVZ+k9Ay+6rYQ?=
- =?us-ascii?Q?LLYM22Ai+aoPYyoMUoSSdRWVs0SYdl8UIaRebLztiysH3kfBGiwcYimN3lzc?=
- =?us-ascii?Q?x9G15V72v6ms230lgUY3/QBif2r2b6Mh0ty43PWYq5sjEZhB2NpxoDSZ7YxS?=
- =?us-ascii?Q?UKB4rnKquVQ2h7jJr9TuhPyarFc2Gsnj7mdEFYnsp9A0WO9YL7Z/Pb2iADVE?=
- =?us-ascii?Q?JyarExzyOhCTYKwuBSnGCtwJP8v+5fstQnPVSWPdTMhtrHvIs6Kx+GQLazRt?=
- =?us-ascii?Q?4Y22bNnXIy/x9xLQwo7rni7PdZXKhTve213cGjNu3E7+zFOoFnnyNSrsadBx?=
- =?us-ascii?Q?MSfiJTtxHIZLgugCR9D3n0qr9l1ix/4lH9CJF0JEsTJq6qRpcRc8xdQQpVvY?=
- =?us-ascii?Q?IY338OyAaFt2ogqiCFVtKJ6lon6CR2kAroakKyfofeFUI+6e7JCZkWv02x0X?=
- =?us-ascii?Q?uQ5JaZSZSHl3v3oLtvI0AaddSo6U0kyHv7n3kZiLA77eDE01w546yTPWDY4w?=
- =?us-ascii?Q?f7YcTisJB4pD/vCzFl8XS8Y6GpmqrAlBHtJmUFccXW7LEoJ5WGxpQucCf9D1?=
- =?us-ascii?Q?YX3E4sb4EWsvFcRP5ASjf2JvWcwF7z0hMLecsXJPYxkRnmJkk7Sab8kof/qz?=
- =?us-ascii?Q?D9jkoUnU9H4KKR4l7GIjV+PsHDSRm6ADEkwHon/iPO7DVxtBJ9JwOyaO+Z39?=
- =?us-ascii?Q?FJoG+FbQBBpJsp1ywOBQ6gIbZHRjnHxam0q4+IyzWWl3ZveriwTpQ3xZHcqN?=
- =?us-ascii?Q?Yuj+Mm9+EhuTkBscwJ7xwgSmyiMhjgGn/YuvC+DhwRG4dm+yR6VgayyoXmHi?=
- =?us-ascii?Q?uVK5PsDxWKh0pgnSplP+fC0KT5E50PnIsq3rglpR+4s7PPCgWvPN4eZWrZGL?=
- =?us-ascii?Q?tETWUIrhuw8uBh67aRd8DRbyAyRiCOzGzI6geTHJvnu8vRDkQ0Tt71chUngn?=
- =?us-ascii?Q?w0iAduI7dlSWqWG7t0DvdytpCfacMR2Y6rwBE/4gxIB2Vd4iYN/Dzr5puSGD?=
- =?us-ascii?Q?Ikcs4WoRKTYOCkHABvBpxp/ePu2MDX7mihU/ENgg?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9babd9ba-ceae-497e-c728-08dd5ab5d781
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2025 00:45:20.9634
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ypP/qxJIROoDHV8sY6MACYfWFRDtrncm/XXsJUwJp9R0OTmsJvvgaL33e2amCRBSxpH/8Y42NA5EoyKpCuVHZg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7804
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
+Message-ID: <cover.1741049567.git.yepeilin@google.com>
+Subject: [PATCH bpf-next v6 0/6] Introduce load-acquire and store-release BPF instructions
+From: Peilin Ye <yepeilin@google.com>
+To: bpf@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Peilin Ye <yepeilin@google.com>, bpf@ietf.org, Alexei Starovoitov <ast@kernel.org>, 
+	Xu Kuohai <xukuohai@huaweicloud.com>, Eduard Zingerman <eddyz87@gmail.com>, 
+	David Vernet <void@manifault.com>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Puranjay Mohan <puranjay@kernel.org>, 
+	Ilya Leoshkevich <iii@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Quentin Monnet <qmo@kernel.org>, Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, 
+	Ihor Solodrai <ihor.solodrai@linux.dev>, Yingchi Long <longyingchi24s@ict.ac.cn>, 
+	Josh Don <joshdon@google.com>, Barret Rhoden <brho@google.com>, Neel Natu <neelnatu@google.com>, 
+	Benjamin Segall <bsegall@google.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Dmitry,
+Hi all!
 
-On Wed, Feb 05, 2025 at 08:45:13AM +0800, Peng Fan (OSS) wrote:
->This is a pick-up of patch 2-5 from patchset [1]
->
->Since devm_pm_set_wake_irq is in 6.14, so resend the input parts.
+This patchset adds kernel support for BPF load-acquire and store-release
+instructions (for background, please see [1]), including core/verifier
+and arm64/x86-64 JIT compiler changes, as well as selftests.  riscv64 is
+also planned to be supported.  The corresponding LLVM changes can be
+found at:
 
-Do you have time to give a look on this patchset?
+  https://github.com/llvm/llvm-project/pull/108636
+
+The first 3 patches from v4 have already been applied:
+
+  - [bpf-next,v4,01/10] bpf/verifier: Factor out atomic_ptr_type_ok()
+    https://git.kernel.org/bpf/bpf-next/c/b2d9ef71d4c9
+  - [bpf-next,v4,02/10] bpf/verifier: Factor out check_atomic_rmw()
+    https://git.kernel.org/bpf/bpf-next/c/d430c46c7580
+  - [bpf-next,v4,03/10] bpf/verifier: Factor out check_load_mem() and check_store_reg()
+    https://git.kernel.org/bpf/bpf-next/c/d38ad248fb7a
+
+Please refer to the LLVM PR and individual kernel patches for details.
+Thanks!
+
+v5: https://lore.kernel.org/all/cover.1741046028.git.yepeilin@google.com/
+v5..v6 change:
+
+  o (Alexei) avoid using #ifndef in verifier.c
+
+v4: https://lore.kernel.org/bpf/cover.1740978603.git.yepeilin@google.com/
+v4..v5 notable changes:
+
+  o (kernel test robot) for 32-bit arches: make the verifier reject
+                        64-bit load-acquires/store-releases, and fix
+                        build error in interpreter changes
+    * tested ARCH=arc build following instructions from kernel test
+      robot
+  o (Alexei) drop Documentation/ patch (v4 10/10) for now
+
+v3: https://lore.kernel.org/bpf/cover.1740009184.git.yepeilin@google.com/
+v3..v4 notable changes:
+
+  o (Alexei) add x86-64 JIT support (including arena)
+  o add Acked-by: tags from Xu
+
+v2: https://lore.kernel.org/bpf/cover.1738888641.git.yepeilin@google.com/
+v2..v3 notable changes:
+
+  o (Alexei) change encoding to BPF_LOAD_ACQ=0x100, BPF_STORE_REL=0x110
+  o add Acked-by: tags from Ilya and Eduard
+  o make new selftests depend on:
+    * __clang_major__ >= 18, and
+    * ENABLE_ATOMICS_TESTS is defined (currently this means -mcpu=v3 or
+      v4), and
+    * JIT supports load_acq/store_rel (currenty only arm64)
+  o work around llvm-17 CI job failure by conditionally define
+    __arena_global variables as 64-bit if __clang_major__ < 18, to make
+    sure .addr_space.1 has no holes
+  o add Google copyright notice in new files
+
+v1: https://lore.kernel.org/all/cover.1737763916.git.yepeilin@google.com/
+v1..v2 notable changes:
+
+  o (Eduard) for x86 and s390, make
+             bpf_jit_supports_insn(..., /*in_arena=*/true) return false
+	     for load_acq/store_rel
+  o add Eduard's Acked-by: tag
+  o (Eduard) extract LDX and non-ATOMIC STX handling into helpers, see
+             PATCH v2 3/9
+  o allow unpriv programs to store-release pointers to stack
+  o (Alexei) make it clearer in the interpreter code (PATCH v2 4/9) that
+             only W and DW are supported for atomic RMW
+  o test misaligned load_acq/store_rel
+  o (Eduard) other selftests/ changes:
+    * test load_acq/store_rel with !atomic_ptr_type_ok() pointers:
+      - PTR_TO_CTX, for is_ctx_reg()
+      - PTR_TO_PACKET, for is_pkt_reg()
+      - PTR_TO_FLOW_KEYS, for is_flow_key_reg()
+      - PTR_TO_SOCKET, for is_sk_reg()
+    * drop atomics/ tests
+    * delete unnecessary 'pid' checks from arena_atomics/ tests
+    * avoid depending on __BPF_FEATURE_LOAD_ACQ_STORE_REL, use
+      __imm_insn() and inline asm macros instead
+
+RFC v1: https://lore.kernel.org/all/cover.1734742802.git.yepeilin@google.com
+RFC v1..v1 notable changes:
+
+  o 1-2/8: minor verifier.c refactoring patches
+  o   3/8: core/verifier changes
+         * (Eduard) handle load-acquire properly in backtrack_insn()
+         * (Eduard) avoid skipping checks (e.g.,
+                    bpf_jit_supports_insn()) for load-acquires
+         * track the value stored by store-releases, just like how
+           non-atomic STX instructions are handled
+         * (Eduard) add missing link in commit message
+         * (Eduard) always print 'r' for disasm.c changes
+  o   4/8: arm64/insn: avoid treating load_acq/store_rel as
+           load_ex/store_ex
+  o   5/8: arm64/insn: add load_acq/store_rel
+         * (Xu) include Should-Be-One (SBO) bits in "mask" and "value",
+                to avoid setting fixed bits during runtime (JIT-compile
+                time)
+  o   6/8: arm64 JIT compiler changes
+         * (Xu) use emit_a64_add_i() for "pointer + offset" to optimize
+                code emission
+  o   7/8: selftests
+         * (Eduard) avoid adding new tests to the 'test_verifier' runner
+         * add more tests, e.g., checking mark_precise logic
+  o   8/8: instruction-set.rst changes
+
+[1] https://lore.kernel.org/all/20240729183246.4110549-1-yepeilin@google.com/
 
 Thanks,
-Peng
+Peilin Ye (6):
+  bpf: Introduce load-acquire and store-release instructions
+  arm64: insn: Add BIT(23) to {load,store}_ex's mask
+  arm64: insn: Add load-acquire and store-release instructions
+  bpf, arm64: Support load-acquire and store-release instructions
+  bpf, x86: Support load-acquire and store-release instructions
+  selftests/bpf: Add selftests for load-acquire and store-release
+    instructions
 
->
->[1] https://lore.kernel.org/all/CAJZ5v0jb=0c5m=FeA-W-aG30H4706Ay_xCHTsiC1S-7MuGxqTQ@mail.gmail.com/#r
->
->Signed-off-by: Peng Fan <peng.fan@nxp.com>
->---
->Peng Fan (4):
->      input: keyboard: ep93xx_keypad: Use devm_pm_set_wake_irq
->      input: keyboard: omap4_keypad: Use devm_pm_set_wake_irq
->      input: misc: nxp-bbnsm-pwrkey: Use resource managed API to simplify code
->      input: touchscreen: ti_am335x_tsc: Use resource managed API to simplify code
->
-> drivers/input/keyboard/ep93xx_keypad.c    |  8 +-----
-> drivers/input/keyboard/omap4-keypad.c     |  8 +-----
-> drivers/input/misc/nxp-bbnsm-pwrkey.c     | 15 ++++-------
-> drivers/input/touchscreen/ti_am335x_tsc.c | 43 ++++++++++---------------------
-> 4 files changed, 21 insertions(+), 53 deletions(-)
->---
->base-commit: 40b8e93e17bff4a4e0cc129e04f9fdf5daa5397e
->change-id: 20250205-input-cleanup-219afcebf38a
->
->Best regards,
->-- 
->Peng Fan <peng.fan@nxp.com>
->
->
+ arch/arm64/include/asm/insn.h                 |  12 +-
+ arch/arm64/lib/insn.c                         |  29 ++
+ arch/arm64/net/bpf_jit.h                      |  20 ++
+ arch/arm64/net/bpf_jit_comp.c                 |  86 +++++-
+ arch/s390/net/bpf_jit_comp.c                  |  14 +-
+ arch/x86/net/bpf_jit_comp.c                   |  95 ++++++-
+ include/linux/bpf.h                           |  15 +
+ include/linux/filter.h                        |   2 +
+ include/uapi/linux/bpf.h                      |   3 +
+ kernel/bpf/core.c                             |  67 ++++-
+ kernel/bpf/disasm.c                           |  12 +
+ kernel/bpf/verifier.c                         |  55 +++-
+ tools/include/uapi/linux/bpf.h                |   3 +
+ .../selftests/bpf/prog_tests/arena_atomics.c  |  66 ++++-
+ .../selftests/bpf/prog_tests/verifier.c       |   4 +
+ .../selftests/bpf/progs/arena_atomics.c       | 121 +++++++-
+ .../bpf/progs/verifier_load_acquire.c         | 197 +++++++++++++
+ .../selftests/bpf/progs/verifier_precision.c  |  49 ++++
+ .../bpf/progs/verifier_store_release.c        | 264 ++++++++++++++++++
+ 19 files changed, 1081 insertions(+), 33 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/progs/verifier_load_acquire.c
+ create mode 100644 tools/testing/selftests/bpf/progs/verifier_store_release.c
+
+-- 
+2.48.1.711.g2feabab25a-goog
+
 
