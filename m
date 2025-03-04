@@ -1,282 +1,255 @@
-Return-Path: <linux-kernel+bounces-544245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D887A4DF43
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:31:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 939FAA4DF48
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:31:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B6503A58C5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:30:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FAB4188E86E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:31:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD66D2040B3;
-	Tue,  4 Mar 2025 13:30:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11C98204683;
+	Tue,  4 Mar 2025 13:31:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rxTBHNwm"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mhrTaof2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1D8128691
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 13:30:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4329C2036F6
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 13:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741095050; cv=none; b=R8QGr8/d3/8fOYZcoNH2K/OQMhNRSVCt+REkiOnNB86VK4ClIzkCuUGMU1qj5q/MiAkbiJWsLRHIbviwu36IA3UrQMFTvWjO5H8ZTDMTO20AyQOWUb02um7HRBmIo6gKcJ12ufg2K0u72NVn/p4UW125YKs+qWG3QIbCTzQyfGQ=
+	t=1741095077; cv=none; b=TkykJSDG0zLvmxF0drGWzIdgn2Hwc1lKJ2FutX4CGTaobNSiGK83HftkN6R78C8+nwpfarGmiP8TOwfuHdJarNRFA0xVhgFu4JhKLQfq9gqcHjRCt9oUHUiM8+/gnEgBUSmOFF6TQAmYedKfyKgOexeG9PbYYvSXI3qCj/3kTDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741095050; c=relaxed/simple;
-	bh=l9lXDrDNrHAfcVmXVwpacyTM635qmGlztuUUxkTz08A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CR+bPCMAv+WjSIF1Fp9r8K5Feswh5sNtxbFw2Dd1+/aT5hr/XJ9MwhGxv14rZD4aE8QxNkEOulzRPNqcqDsmE6Zo+cb3uZCrTvVT4ERFaILecMktPQGviOwcz+9G51Qwf+Pdyx9qc7n2NApVHgpFAaXEZSjvO2gZGKwcC7OII8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rxTBHNwm; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-38a8b17d7a7so3321165f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 05:30:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741095047; x=1741699847; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Dcg5N+PdgvPQdcsjlM3pvDkqAIBRju0oFl7LWXNSYlY=;
-        b=rxTBHNwmEg49Og2ux3GeSV2CAEOKUCS8xXpLZ5VoQktMUHiqe6Pz06lvXcgoxu/M+W
-         mue5QsHjmt8w+mdgFMmc5XnKJ86nK2Nw3DR4FN2pG90QvtzzWTAFjCl99RA5dzBpMsDy
-         /EfJS3yOwiKFDTAIaln95ybtLwxQVnKXAibUZT8S3Nrbrni/ftGYa634oFd9lGLJDItz
-         wWGfMEVvQBJZ9kvEpmGc6NfdWeoHB8kRo4m3vJi9NiOUJb6wsR4m5VAx4nz3dY9jrAzC
-         1/ZSDtnG5LoEckGXwRzSQNdNMLm8qG7Foqs2GcmXcw+7WjqQ3W95SMzSAgflS3NOHyl8
-         /Dow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741095047; x=1741699847;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Dcg5N+PdgvPQdcsjlM3pvDkqAIBRju0oFl7LWXNSYlY=;
-        b=ItCk6/g4ExZGMAchNZDwOpSzsJvOz18eMEZTQAF+bKr8nMZ1h6/fUc92nVPkU4nG+u
-         q6Tl88v+IPNweS20nSCfS8gMxGYMaMHSGjrmxs1BXU6xpFBHwdYZQ5ciYdL4/u25vbBU
-         1ugpaBDiiA8W3mlR6NHIdX2+W4AYtOcql0TAPjGIeww9wcWeOCKEKn7t32cNck/KTNOT
-         avePtQU+b9IjQZq43POHa7/tk12ymKAv9lfkJ7uqrDpq9ywKGmI2SILr1uFIs5p2DJs7
-         ZfpFfrqr0OFXJmt/5kPreigs++83mMMoy2b+3Q4+AI7/gn+roAZ/vpElGTqVmTvUp7Up
-         /vyw==
-X-Forwarded-Encrypted: i=1; AJvYcCX5ktfRvgs3sVKNpmc3eQURNTRNULaBqucr/FlCO+5Saw15bEM0Lbx+41CkPe5vdOCCZWH6Sxd54seRTDM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkNF/GMWkZJJhxNfllWtzahexh4A+NAQuwhpEYl40N95rCRMai
-	1vjxQXgoy93n36490MTpP7wF33NBwtikia+L3Dl+mT34O/Z4a4ZX2M0MoC8FsMg=
-X-Gm-Gg: ASbGncvi4obkckdoinxX1raDF1RHOF+8qMFow6XPDLn7Pr7kPnJfaLWnfDo15oQVEOc
-	R3Lzy7kSMo1Cmn2RoIRouFiEXR561UL7Pvg8OKYYShxpiF836zBlNNt6oltBlh+mwG9CGONhjfd
-	V/OfX03DsN2uwcKTSbDONKs4mYJr8/EWnKDqA9Pji97Xb4W2EfeOBVUIutq+zFq2H4Tg1OBtVr1
-	hcwSol1u6j8dj93FNMHvoTr+G0KiihHn6vw1r1U1rsCJM3pDsCp3TX55EYywQsZb4Eeg1RnxZGw
-	RwLHRM2RDH/m/C3izZr0HRze1glxSZ6+zOU/VfwCnS0YIHNm85XK86t8bRh3ro+NvGo70Dt1NMu
-	F6YHFLvqkMA==
-X-Google-Smtp-Source: AGHT+IE7AebVHvoAywAZFYapD4vBmjcHVSOFlPx5VikfNNWX7mnHXDCD7bbvF9PrIS1vf2KegbOKUQ==
-X-Received: by 2002:a5d:6489:0:b0:390:f641:d8bb with SMTP id ffacd0b85a97d-390f641d990mr11651186f8f.36.1741095047165;
-        Tue, 04 Mar 2025 05:30:47 -0800 (PST)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e4795983sm17582091f8f.6.2025.03.04.05.30.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Mar 2025 05:30:46 -0800 (PST)
-Message-ID: <f7f7923e-c5ee-4f47-8eba-972bf7f08c9d@linaro.org>
-Date: Tue, 4 Mar 2025 13:30:46 +0000
+	s=arc-20240116; t=1741095077; c=relaxed/simple;
+	bh=GST5qcNeRlg7u6y0ST05fcX+0FAmxCQwqPk5rZdMmvI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Gk/M3iBiGVXw4Y56nyQh8XVlpnHUd65M/CKXKz99CavED9SiYR5VQ9kiIvo/q9S6Kh2gW+gyxLjUkLuJcAjN1rE7UVZWvPoqhXzG0OrH3ofTnfA8S9uqzq13Xqyo110GkB58fd3KTRJC9C9iimSgecrSp8cmM68WpIyurCLuAzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mhrTaof2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8055CC4CEE5;
+	Tue,  4 Mar 2025 13:31:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741095076;
+	bh=GST5qcNeRlg7u6y0ST05fcX+0FAmxCQwqPk5rZdMmvI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=mhrTaof2ZW8bzlwAkf9KYcy89ChGQ63SOkPhYVu/ouN5c7NMvCOvZsWs8VSUB4+JG
+	 ck9U5LG/RkeNsdt+GrY1IDPrpUA5NrYcFrLiCBv0SWy22AC80B3bj51PjRK45ZrGmp
+	 KiLhjfF9FTdt/jRl5VkqiqtM7+L2oZTQy/47QmvgTU1fLnVWrNKx1rk6Fh2KkXsTzk
+	 mftqLLvSYZ+BTOlGzc5TZwZOpyWVqIqNEg/S5U/uwpsT7sw0Cv6ifSqn1OuiMRxheo
+	 WDFpcC9AnmZAQcQe7UtQUc3ZQGFxWjsIBqzb7RRRcHHznrNxnifFGFnfOM0Wc7unVi
+	 HSqxROUUjs6UA==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1tpSMc-00000005rnP-1tjP;
+	Tue, 04 Mar 2025 14:31:14 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Igor Mammedov <imammedo@redhat.com>,
+	"Michael S . Tsirkin" <mst@redhat.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Shiju Jose <shiju.jose@huawei.com>,
+	qemu-arm@nongnu.org,
+	qemu-devel@nongnu.org,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Ani Sinha <anisinha@redhat.com>,
+	Dongjiu Geng <gengdongjiu1@gmail.com>,
+	Peter Maydell <peter.maydell@linaro.org>,
+	Shannon Zhao <shannon.zhaosl@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH RFC 1/3] acpi/ghes: move use_hest_addr out of acpi_build_hest()
+Date: Tue,  4 Mar 2025 14:30:56 +0100
+Message-ID: <e1abcd0e1c5b66d91a7faed5b4147951c11b2e6d.1741094512.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <cover.1741094512.git.mchehab+huawei@kernel.org>
+References: <cover.1741094512.git.mchehab+huawei@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] venus driver fixes to avoid possible OOB read
- access
-To: Vikash Garodia <quic_vgarodia@quicinc.com>,
- Vedang Nagar <quic_vnagar@quicinc.com>,
- Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250215-venus-security-fixes-v2-0-cfc7e4b87168@quicinc.com>
- <c3b27e55-f627-417c-bb62-3189f248fb99@linaro.org>
- <7bf1aeaa-e1bd-412b-90fc-eda30b5f5b37@quicinc.com>
- <19109672-2856-457f-b1f6-305abc6c4434@linaro.org>
- <ba1e7a20-2f68-15e0-bc4a-fe52bc4036cc@quicinc.com>
- <2ac68f21-cea8-400c-8a61-3638e545bac8@linaro.org>
- <e64ff5f0-8dc5-fec6-ae9b-98076016365f@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <e64ff5f0-8dc5-fec6-ae9b-98076016365f@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-On 03/03/2025 15:01, Vikash Garodia wrote:
-> 
-> On 3/3/2025 8:26 PM, Bryan O'Donoghue wrote:
->> On 03/03/2025 13:12, Vikash Garodia wrote:
->>>
->>> On 3/2/2025 9:26 PM, Bryan O'Donoghue wrote:
->>>> On 02/03/2025 11:58, Vedang Nagar wrote:
->>>>>>
->>>>>> The basic question : what is the lifetime of the data from RX interrupt to
->>>>>> consumption by another system agent, DSP, userspace, whatever ?
->>>>> As mentioned in [1], With the regular firmware, after RX interrupt the data
->>>>> can be considered as valid until next interrupt is raised, but with the rouge
->>>>> firmware, data can get invalid during the second read and our intention is to
->>>>> avoid out of bound access read because of such issues.
->>>>
->>>> This is definitely the part I don't compute.
->>>>
->>>> 1. RX interrupt
->>>> 2. Frame#0 Some amount of time data is always valid
->>> This is not correct. Its not the amount of time which determines the validity of
->>> the data, its the possibility of rogue firmware which, if incase, puts up the
->>> date in shared queue, would always be invalid, irrespective of time.
->>>
->>>> 3. RX interrupt - new data
->>>> 4. Frame#1 new data delivered into a buffer
->>>>
->>>> Are you describing a case between RX interrupts 1-3 or a case after 1-4?
->>>>
->>>> Why do we need to write code for rouge firmware anyway ?
->>> It is a way to prevent any possibility of OOB, similar to how any API does check
->>> for validity of any arguments passed to it, prior to processing.
->>>>
->>>> And the real question - if the data can be invalidated in the 1-3 window above
->>>> when is the safe time to snapshot that data ?
->>>>
->>>> We seem to have alot of submissions to deal with 'rouge' firmware without I
->>>> think properly describing the problem of the _expected_ data lifetime.
->>>>
->>>> So
->>>>
->>>> a) What is the expected data lifetime of an RX buffer between one
->>>>      RX IRQ and the next ?
->>>>      I hope the answer to this is - APSS owns the buffer.
->>>>      This is BTW usually the case in these types of asymmetric setups
->>>>      with a flag or some other kind of semaphore that indicates which
->>>>      side of the data-exchange owns the buffer.
->>>>
->>>> b) In this rouge - buggy - firmware case what is the scope of the
->>>>      potential race condition ?
->>>>
->>>>      What I'd really like to know here is why we have to seemingly
->>>>      memcpy() again and again in seemingly incongrous and not
->>>>      immediately obvious places in the code.
->>>>
->>>>      Would we not be better advised to do a memcpy() of the entire
->>>>      RX frame in the RX IRQ handler path if as you appear to me
->>>>      suggesting - the firmware can "race" with the APSS
->>>>      i.e. the data-buffer ownership flag either doesn't work
->>>>      or isn't respected by one side in the data-exchange.
->>>>
->>>> Can we please have a detailed description of the race condition here ?
->>> Below is the report which the reporter reported leading to OOB, let me know if
->>> you are unable to deduce the trail leading to OOB here.
->>>
->>> OOB read issue is in function event_seq_changed, please reference below code
->>> snippet:
->>>
->>> Buggy code snippet:
->>>
->>> static void event_seq_changed(struct venus_core *core, struct venus_inst *inst,
->>>           struct hfi_msg_event_notify_pkt *pkt)
->>> ...
->>> num_properties_changed = pkt->event_data2; //num_properties_changed is from
->>> message and is not validated.
->>> ...
->>> data_ptr = (u8 *)&pkt->ext_event_data[0];
->>> do {
->>>    ptype = *((u32 *)data_ptr);
->>>    switch (ptype) {
->>>    case HFI_PROPERTY_PARAM_FRAME_SIZE:
->>>     data_ptr += sizeof(u32);
->>>     frame_sz = (struct hfi_framesize *)data_ptr;
->>>     event.width = frame_sz->width;
->>> ...
->>>    }
->>>    num_properties_changed--;
->>> } while (num_properties_changed > 0);
->>> ```
->>> There is no validation against `num_properties_changed = pkt->event_data2`, so
->>> OOB read occurs.
->>>>
->>>> I don't doubt the new memcpy() makes sense to you but without this detailed
->>>> understanding of the underlying problem its virtually impossible to debate the
->>>> appropriate remediation - perhaps this patch you've submitted - or some other
->>>> solution.
->>>>
->>>> Sorry to dig into my trench here but, way more detail is needed.
->>>>
->>>>> [1]: https://lore.kernel.org/lkml/4cfc1fe1-2fab-4256-9ce2-
->>>>> b4a0aad1069e@linaro.org/T/#m5f1737b16e68f8b8fc1d75517356b6566d0ec619
->>>>>>
->>>>>> Why is it in this small specific window that the data can change but not
->>>>>> later ? What is the mechanism the data can change and how do the changes you
->>>>>> propose here address the data lifetime problem ?
->>>>> Currently this issue has been discovered by external researchers at this
->>>>> point, but if any such OOB issue is discovered at later point as well then we
->>>>> shall fix them as well.
->>>>
->>>> Right but, I'm looking for a detailed description of the problem.
->>>>
->>>> Can you describe from RX interrupt again what the expected data lifetime of the
->>>> RX frame is, which I hope we agree is until the next RX interrupt associated
->>>> with a given buffer with an ownership flag shared between firmware and APSS -
->>>> and then under what circumstances that "software contract" is being violated.
->>>>
->>>>> Also, with rougue firmware we cannot fix the data lifetime problem in my
->>>>> opinion, but atleast we can fix the out of bound issues.
->>>>>>
->>>>>> Without that context, I don't believe it is really possible to validate an
->>>>>> additional memcpy() here and there in the code as fixing anything.
->>>>> There is no additional memcpy() now in the v2 patch, but as part of the fix,
->>>>> we are just trying to retain the length of the packet which was being read in
->>>>> the first memcpy() to avoid the OOB read access.
->>>>
->>>> I can't make a suggestion because - personally speaking I still don't quite
->>>> understand the data-race you are describing.
->>> Go through the reports from the reporter, it was quite evident in leading upto
->>> OOB case.
->>> Putting up the sequence for you to go over the interrupt handling and message
->>> queue parsing of the packets from firmware
->>> 1.
->>> https://elixir.bootlin.com/linux/v6.14-rc4/source/drivers/media/platform/qcom/venus/hfi_venus.c#L1082
->>> 2.
->>> https://elixir.bootlin.com/linux/v6.14-rc4/source/drivers/media/platform/qcom/venus/hfi_msgs.c#L816
->>> 3. event handling (this particular case)
->>> https://elixir.bootlin.com/linux/v6.14-rc4/source/drivers/media/platform/qcom/venus/hfi_msgs.c#L658
->>> 4.
->>> https://elixir.bootlin.com/linux/v6.14-rc4/source/drivers/media/platform/qcom/venus/hfi_msgs.c#L22
->>>
->>> the "struct hfi_msg_event_notify_pkt *pkt" pkt here is having the data read from
->>> shared queue.
->>>
->>>>
->>>> I get that you say the firmware is breaking the contract but, without more
->>>> detail on _how_ it breaks that contract I don't think it's really possible to
->>>> validate your fix here, fixes anything.
->>>>
->>>> ---
->>>> bod
->>>
->>> Regards,
->>> Vikash
->>
->> I'll go through all of these links given here, thanks.
-> I would request you to go through the description putup by the reporter of this
-> OOB as well, i added in my earlier response. It provided a good background of
-> how the firmware response can led to this particular OOB, atleast that was the
-> source of OOB info for us.
-> Regards,
-> Vikash
->>
->> Whatever the result of the review, this detail needs to go into the commit log
->> so that a reviewer can reasonably read the problem description and evaluate
->> against submitted code as a fix.
->>
->> ---
->> bod
+The only reason why we're passing ags to acpi HEST table build
+is to check if migration will be used or not.
 
-Replied to the wrong patch.
+Well, we only need migration for arm, as other architectures
+will only use the new code. So, move this out of acpi_build_hest(),
+as otherwise we can't use it for x86, as the hotplug logic there
+may not initialize ags during acpi table build time.
 
-There is no memcpy() in this patch - there was in patch #1 which has 
-subsequently been dropped.
-
-Anyway I'll address my comment there.
-
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
-bod
+ hw/acpi/ghes.c           | 16 ++++++++--------
+ hw/arm/virt-acpi-build.c | 12 ++++++++----
+ include/hw/acpi/ghes.h   | 25 +++++++++++++------------
+ 3 files changed, 29 insertions(+), 24 deletions(-)
+
+diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
+index 1fd5ba941771..ea00fed75c16 100644
+--- a/hw/acpi/ghes.c
++++ b/hw/acpi/ghes.c
+@@ -243,7 +243,7 @@ ghes_gen_err_data_uncorrectable_recoverable(GArray *block,
+  * Initialize "etc/hardware_errors" and "etc/hardware_errors_addr" fw_cfg blobs.
+  * See docs/specs/acpi_hest_ghes.rst for blobs format.
+  */
+-static void build_ghes_error_table(AcpiGhesState *ags, GArray *hardware_errors,
++static void build_ghes_error_table(GArray *hardware_errors, bool use_hest_addr,
+                                    BIOSLinker *linker, int num_sources)
+ {
+     int i, error_status_block_offset;
+@@ -289,7 +289,7 @@ static void build_ghes_error_table(AcpiGhesState *ags, GArray *hardware_errors,
+                                        i * ACPI_GHES_MAX_RAW_DATA_LENGTH);
+     }
+ 
+-    if (!ags->use_hest_addr) {
++    if (!use_hest_addr) {
+         /*
+          * Tell firmware to write hardware_errors GPA into
+          * hardware_errors_addr fw_cfg, once the former has been initialized.
+@@ -372,7 +372,7 @@ static void build_ghes_v2_entry(GArray *table_data,
+ }
+ 
+ /* Build Hardware Error Source Table */
+-void acpi_build_hest(AcpiGhesState *ags, GArray *table_data,
++void acpi_build_hest(GArray *table_data, bool use_hest_addr,
+                      GArray *hardware_errors,
+                      BIOSLinker *linker,
+                      const AcpiNotificationSourceId *notif_source,
+@@ -386,7 +386,7 @@ void acpi_build_hest(AcpiGhesState *ags, GArray *table_data,
+ 
+     hest_offset = table_data->len;
+ 
+-    build_ghes_error_table(ags, hardware_errors, linker, num_sources);
++    build_ghes_error_table(hardware_errors, use_hest_addr, linker, num_sources);
+ 
+     acpi_table_begin(&table, table_data);
+ 
+@@ -398,7 +398,7 @@ void acpi_build_hest(AcpiGhesState *ags, GArray *table_data,
+ 
+     acpi_table_end(linker, &table);
+ 
+-    if (ags->use_hest_addr) {
++    if (use_hest_addr) {
+         /*
+          * Tell firmware to write into GPA the address of HEST via fw_cfg,
+          * once initialized.
+@@ -411,13 +411,13 @@ void acpi_build_hest(AcpiGhesState *ags, GArray *table_data,
+ }
+ 
+ void acpi_ghes_add_fw_cfg(AcpiGhesState *ags, FWCfgState *s,
+-                          GArray *hardware_error)
++                          bool use_hest_addr, GArray *hardware_error)
+ {
+     /* Create a read-only fw_cfg file for GHES */
+     fw_cfg_add_file(s, ACPI_HW_ERROR_FW_CFG_FILE, hardware_error->data,
+                     hardware_error->len);
+ 
+-    if (ags->use_hest_addr) {
++    if (use_hest_addr) {
+         fw_cfg_add_file_callback(s, ACPI_HEST_ADDR_FW_CFG_FILE, NULL, NULL,
+             NULL, &(ags->hest_addr_le), sizeof(ags->hest_addr_le), false);
+     } else {
+@@ -529,7 +529,7 @@ void ghes_record_cper_errors(AcpiGhesState *ags, const void *cper, size_t len,
+         return;
+     }
+ 
+-    if (!ags->use_hest_addr) {
++    if (ags->hw_error_le) {
+         get_hw_error_offsets(le64_to_cpu(ags->hw_error_le),
+                              &cper_addr, &read_ack_register_addr);
+     } else {
+diff --git a/hw/arm/virt-acpi-build.c b/hw/arm/virt-acpi-build.c
+index 154337e1a77b..71da17b652b2 100644
+--- a/hw/arm/virt-acpi-build.c
++++ b/hw/arm/virt-acpi-build.c
+@@ -964,9 +964,11 @@ void virt_acpi_build(VirtMachineState *vms, AcpiBuildTables *tables)
+         acpi_ged_state = ACPI_GED(vms->acpi_dev);
+         ags = &acpi_ged_state->ghes_state;
+         if (ags) {
++            bool use_hest_addr = ags->use_hest_addr;
++
+             acpi_add_table(table_offsets, tables_blob);
+ 
+-            if (!ags->use_hest_addr) {
++            if (!use_hest_addr) {
+                 notify = hest_ghes_notify_9_2;
+                 notify_sz = ARRAY_SIZE(hest_ghes_notify_9_2);
+             } else {
+@@ -974,7 +976,7 @@ void virt_acpi_build(VirtMachineState *vms, AcpiBuildTables *tables)
+                 notify_sz = ARRAY_SIZE(hest_ghes_notify);
+             }
+ 
+-            acpi_build_hest(ags, tables_blob, tables->hardware_errors,
++            acpi_build_hest(tables_blob, use_hest_addr, tables->hardware_errors,
+                             tables->linker, notify, notify_sz,
+                             vms->oem_id, vms->oem_table_id);
+         }
+@@ -1143,8 +1145,10 @@ void virt_acpi_setup(VirtMachineState *vms)
+     if (vms->ras) {
+         assert(vms->acpi_dev);
+         acpi_ged_state = ACPI_GED(vms->acpi_dev);
+-        acpi_ghes_add_fw_cfg(&acpi_ged_state->ghes_state,
+-                             vms->fw_cfg, tables.hardware_errors);
++        AcpiGhesState *ags = &acpi_ged_state->ghes_state;
++
++        acpi_ghes_add_fw_cfg(ags, vms->fw_cfg, ags->use_hest_addr,
++                             tables.hardware_errors);
+     }
+ 
+     build_state->rsdp_mr = acpi_add_rom_blob(virt_acpi_build_update,
+diff --git a/include/hw/acpi/ghes.h b/include/hw/acpi/ghes.h
+index df2ecbf6e4a9..eae6d4d0a562 100644
+--- a/include/hw/acpi/ghes.h
++++ b/include/hw/acpi/ghes.h
+@@ -73,31 +73,32 @@ typedef struct AcpiNotificationSourceId {
+     enum AcpiGhesNotifyType notify;
+ } AcpiNotificationSourceId;
+ 
+-/*
+- * AcpiGhesState stores GPA values that will be used to fill HEST entries.
++/**
++ * struct AcpiGhesState - GPA values that will be used to fill HEST entries
+  *
+- * When use_hest_addr is false, the GPA of the etc/hardware_errors firmware
+- * is stored at hw_error_le. This is the default on QEMU 9.x.
++ * @hest_addr_le: GPA of the HEST table. Used on QEMU 10.x and above.
++ * @hw_error_le: GPA of the etc/hardware_errors firmware.
++ *               Used only on arm64 virt-9.x to preserve compatibility
++ *               with QEMU 9.x.
++ * @use_hest_addr: True if HEST address is present. Used only on arm64,
++ *                 to identify if QEMU 9.x migration is needed.
+  *
+- * When use_hest_addr is true, the GPA of the HEST table is stored at
+- * hest_addr_le. This is the default for QEMU 10.x and above.
+- *
+- * Whe both GPA values are equal to zero means that GHES is not present.
++ * When both GPA values are equal to zero means that GHES is not present.
+  */
+ typedef struct AcpiGhesState {
+     uint64_t hest_addr_le;
+     uint64_t hw_error_le;
+-    bool use_hest_addr; /* True if HEST address is present */
++    bool use_hest_addr;
+ } AcpiGhesState;
+ 
+-void acpi_build_hest(AcpiGhesState *ags, GArray *table_data,
++void acpi_build_hest(GArray *table_data, bool use_hest_addr,
+                      GArray *hardware_errors,
+                      BIOSLinker *linker,
+                      const AcpiNotificationSourceId * const notif_source,
+                      int num_sources,
+                      const char *oem_id, const char *oem_table_id);
+-void acpi_ghes_add_fw_cfg(AcpiGhesState *vms, FWCfgState *s,
+-                          GArray *hardware_errors);
++void acpi_ghes_add_fw_cfg(AcpiGhesState *ags, FWCfgState *s,
++                          bool use_hest_addr, GArray *hardware_error);
+ int acpi_ghes_memory_errors(AcpiGhesState *ags, uint16_t source_id,
+                             uint64_t error_physical_addr);
+ void ghes_record_cper_errors(AcpiGhesState *ags, const void *cper, size_t len,
+-- 
+2.48.1
+
 
