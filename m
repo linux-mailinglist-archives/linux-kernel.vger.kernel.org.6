@@ -1,280 +1,199 @@
-Return-Path: <linux-kernel+bounces-544548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ACECA4E286
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:12:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C0DBA4E28F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:13:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC85A886B84
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:02:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B56FB881961
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:02:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6C127F4C5;
-	Tue,  4 Mar 2025 14:58:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17C1620DD4C;
+	Tue,  4 Mar 2025 14:58:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RWMkklXB";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IC2GtJeS"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wKGCzoC/";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TGyHv++q"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDAF627F4C0;
-	Tue,  4 Mar 2025 14:58:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B574B2080E3
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741100296; cv=none; b=dVHn0PBWGzBRdOpNZfshzMQCW2aJbPKkK9Q1CBxi8zk/WyJywfrd+5DfuV8O2Xo5SfxnAFXvtWOlPGGNDZbJs5wU7bThwES7hdXuITLMXdhEVekc0Q465FAO514K+oaXlNdBUFv0JdP5v+HDjcGC/N1saPHp0vYyCW7OUiPCXXc=
+	t=1741100322; cv=none; b=Bt3epNBL8xVsKQm2MmO78wj7drC3+JYElAP7o94Re+bvKKjrM3RJSxHObOL9/M2RkK8+QvEJ1R3WpfSoK9hXG04c2LgsJasin0nKTtpastN9DAxXa2Nt+HsuR9YlFbS0UXBEmzs37Z6OGfZmdODtccQQs2knJU0NBxF95xAJMI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741100296; c=relaxed/simple;
-	bh=WlwWHQo93Avh0OM5ijW/gcihTSuSzefKRniU7uzkVB8=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=VuFR79UTtd7UgoF6hZmaYOm9O2iVkmNGImzJuEwBsK+tQNP8mhKdVBguUQiNwxKdA4n/5+l3Q+bVUUEnvgx2Nu6mUBw6SNOxj8y1VoOXSIj4p4A0e+BTlQnAdM01iXQu23B/i+YTLPbgNoXWTpK2IDwYRRIOe6HES9rfcIm7QEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RWMkklXB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IC2GtJeS; arc=none smtp.client-ip=193.142.43.55
+	s=arc-20240116; t=1741100322; c=relaxed/simple;
+	bh=g2WQummvgm7z/KzihCuHyzo4A7wP35dg/zA1X0EGEK4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m31Wg6n9uKDXqRFuk5GpvBFbVHhbKOEIm1GR0BG/Bjdk9Fjx6CjewkUb8JuZmgYqta4ifEtp1AeS8anRlM0Ouh+b79ZxQT4t8SpsvJFmi7yYd8wg0G1jl/O5vAEofAiRtGFv0et+RJPGh82XXnbeF7epvg5T2iRm0YsCNwUFx8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wKGCzoC/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TGyHv++q; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 04 Mar 2025 14:58:09 -0000
+Date: Tue, 4 Mar 2025 15:58:37 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741100292;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
+	s=2020; t=1741100319;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ASUcyuidWbDClu3x8HSX2PVgWwneiw/9KsPMZPtiGF0=;
-	b=RWMkklXB6X3mFMmW3SVtR1hIqA8Lo5wiSCT/u91gQTSikVTecMpzae/Yv0X2uZF6mC2ZeI
-	0tSztRHjYiMnY4b9gpVIMxQnjqH6o3Bw0f1X3OlYMVu3Wr8RKxZZBbXGX/vYPwrsl6gov+
-	ycZxVX9L2SaIgbwuIprpQm3hor+9qT92dLKbZFqVCNhtUwlR6ErmGZmhlhQdtiajww0Mjh
-	u0FMSZ7KdBo6Hcbr9PrePm/gl2cT1DVN56z0deVqSM8s36FIRMg4oXDGtX9YCrucPk/rV1
-	anjgpTJg2Q4tXCj4FW+PJorH1fyaLDVhWKopv9HLO+qTI9qNyV1Mxyf7TW3yug==
+	bh=5cNAQCS4+kzR8Yg3DHNHimQfhzkBr+hE1muDTQw+QL8=;
+	b=wKGCzoC/2fEvOpaZ82ieJIxdwSZGMTOVuCvbm9r6nzvj0ZmdtuA3Gh4ruzDYvLjJUgryXV
+	Y1Ath/CTMXfjD+5U8wdsYlS02oePJBv+ecgwyGjBOyV9bE9jRDDM25upDv/hvxXGps9vR1
+	itJ7jJ5END79rog/9czwOoT9huXyZP4jXgwugu6CPt5FxkNuXsmQ3fweQKPO2ZztN/J4AT
+	739zcze7mrZC6NPWySuvpEKmflpsdMXUTV7ptdvchxJGFi5iIo1+DKrXnXWxy2Yj25vXpE
+	unsrqIHPnHVIImwmsxs778xFw4pd6X/hmKY0HPeanfaUjoAaY1dzTonh65jowA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741100292;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
+	s=2020e; t=1741100319;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ASUcyuidWbDClu3x8HSX2PVgWwneiw/9KsPMZPtiGF0=;
-	b=IC2GtJeSOq8EbPkETa1Buh2naSvuGFMy712XaynGzjVtSAy9RbawFMaP12NCQSn9B3p4pl
-	itKug4KHozbK86Ag==
-From: "tip-bot2 for Bartosz Golaszewski" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/drivers] irqchip/davinci-cp-intc: Remove public header
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250304131815.86549-1-brgl@bgdev.pl>
-References: <20250304131815.86549-1-brgl@bgdev.pl>
+	bh=5cNAQCS4+kzR8Yg3DHNHimQfhzkBr+hE1muDTQw+QL8=;
+	b=TGyHv++q2+hQOILE8WlVbui8L4yySKRRFuGScIh0hVxn/8/RtWCgYvkt4CfEpqwArj/jcK
+	9JiCUqxG0t7kZwAQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org,
+	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH v9 00/11] futex: Add support task local hash maps.
+Message-ID: <20250304145837.a8g07J-k@linutronix.de>
+References: <20250225170914.289358-1-bigeasy@linutronix.de>
+ <20250303105416.GY11590@noisy.programming.kicks-ass.net>
+ <20250303141753.tF-FoCm1@linutronix.de>
+ <20250303164015.HHfy1Ibj@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174110028955.14745.12031563162378541025.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250303164015.HHfy1Ibj@linutronix.de>
 
-The following commit has been merged into the irq/drivers branch of tip:
+On 2025-03-03 17:40:16 [+0100], To Peter Zijlstra wrote:
+=E2=80=A6
+> You avoided the two states by dropping refcount only there is no !new
+> pointer. That should work.
+=E2=80=A6
+> My first few tests succeeded. And I have a few RCU annotations, which I
+> post once I complete them and finish my requeue-pi tests.
 
-Commit-ID:     71cbbb7149e3de8c39dfe8a97eaa7f1cbcbff52f
-Gitweb:        https://git.kernel.org/tip/71cbbb7149e3de8c39dfe8a97eaa7f1cbcbff52f
-Author:        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-AuthorDate:    Tue, 04 Mar 2025 14:18:14 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Tue, 04 Mar 2025 15:46:59 +01:00
+get_futex_key() has this:
+|=E2=80=A6
+|         if (!fshared) {
+|=E2=80=A6
+|                 if (IS_ENABLED(CONFIG_MMU))
+|                         key->private.mm =3D mm;
+|                 else
+|                         key->private.mm =3D NULL;
+|
+|                 key->private.address =3D address;
+|
 
-irqchip/davinci-cp-intc: Remove public header
+and now __futex_hash_private() has this:
+| {
+|         if (!futex_key_is_private(key))
+|                 return NULL;
+|
+|         if (!fph)
+|                 fph =3D rcu_dereference(key->private.mm->futex_phash);
 
-There are no more users of irq-davinci-cp-intc.h (da830.c doesn't use
-any of its symbols). Remove the header and make the driver stop using the
-config structure.
+Dereferencing mm won't work on !CONFIG_MMU. We could limit private hash
+to !CONFIG_BASE_SMALL && CONFIG_MMU.
 
-[ tglx: Mop up coding style ]
+Ignoring this, I managed to crash the box on top of 49fd6b8f5d59
+("futex: Implement FUTEX2_MPOL"). I had one commit on top to make the
+prctl not blocking (make futex_hash_allocate(, false)). This is simulate
+the fork resize. The backtrace:
+| [   T8658] BUG: unable to handle page fault for address: fffffffffffffff0
+| [   T8658] #PF: supervisor read access in kernel mode
+| [   T8658] #PF: error_code(0x0000) - not-present page
+| [   T8658] PGD 2c5a067 P4D 2c5a067 PUD 2c5c067 PMD 0
+| [   T8658] Oops: Oops: 0000 [#1] PREEMPT_RT SMP NOPTI
+| [   T8658] CPU: 6 UID: 1001 PID: 8658 Comm: thread-create-l Not tainted 6=
+=2E14.0-rc4+ #188 676565269ee73396c27dead3a66b3f774bd9af57
+| [   T8658] Hardware name: Intel Corporation S2600CP/S2600CP, BIOS SE5C600=
+=2E86B.02.03.0003.041920141333 04/19/2014
+| [   T8658] RIP: 0010:plist_check_list+0xb/0xa0
+| [   T8658] Code: cc cc 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 90 90 90 90=
+ 90 90 90 90 90 90 90 90 90 90 90 90 41 54 49 89 fc 55 53 48 83 ec 10 <48> =
+8b 1f 48 8b 43 08 48 39 c7  74 27 48 8b 4f 08 50 49 89 f8 48 89
+| [   T8658] RSP: 0018:ffffc90022e27c90 EFLAGS: 00010286
+| [   T8658] RAX: 0000000000000000 RBX: ffffc90022e27e00 RCX: 0000000000000=
+000
+| [   T8658] RDX: ffff888558da02a8 RSI: ffff888558da02a8 RDI: fffffffffffff=
+ff0
+| [   T8658] RBP: 0000000000000000 R08: 0000000000000000 R09: ffff8885680dc=
+980
+| [   T8658] R10: 0000031e8e1a7200 R11: ffff888574990028 R12: fffffffffffff=
+ff0
+| [   T8658] R13: ffff888558da02a8 R14: ffffc90022e27e48 R15: ffffc90022e27=
+d38
+| [   T8658] FS:  00007f741af9e6c0(0000) GS:ffff8885a7c2b000(0000) knlGS:00=
+00000000000000
+| [   T8658] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+| [   T8658] CR2: fffffffffffffff0 CR3: 00000006d7aca005 CR4: 0000000000062=
+6f0
+| [   T8658] Call Trace:
+| [   T8658]  <TASK>
+| [   T8658]  plist_del+0x28/0x100
+| [   T8658]  __futex_unqueue+0x29/0x40
+| [   T8658]  futex_unqueue_pi+0x1f/0x40
+| [   T8658]  futex_lock_pi+0x24d/0x420
+| [   T8658]  do_futex+0x57/0x190
+| [   T8658]  __x64_sys_futex+0xfe/0x1a0
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20250304131815.86549-1-brgl@bgdev.pl
----
- arch/arm/mach-davinci/da830.c               |  1 +-
- drivers/irqchip/irq-davinci-cp-intc.c       | 57 +++++++-------------
- include/linux/irqchip/irq-davinci-cp-intc.h | 25 +---------
- 3 files changed, 21 insertions(+), 62 deletions(-)
- delete mode 100644 include/linux/irqchip/irq-davinci-cp-intc.h
+It takes about 1h+ to reproduce. And only on one particular stubborn
+box. This originates from futex_unqueue_pi() after
+futex_q_lockptr_lock(). I have another crash within
+futex_q_lockptr_lock() (in spin_lock()).
 
-diff --git a/arch/arm/mach-davinci/da830.c b/arch/arm/mach-davinci/da830.c
-index 2e49774..a044ea5 100644
---- a/arch/arm/mach-davinci/da830.c
-+++ b/arch/arm/mach-davinci/da830.c
-@@ -11,7 +11,6 @@
- #include <linux/gpio.h>
- #include <linux/init.h>
- #include <linux/io.h>
--#include <linux/irqchip/irq-davinci-cp-intc.h>
- 
- #include <clocksource/timer-davinci.h>
- 
-diff --git a/drivers/irqchip/irq-davinci-cp-intc.c b/drivers/irqchip/irq-davinci-cp-intc.c
-index f4f8e9f..d7948c5 100644
---- a/drivers/irqchip/irq-davinci-cp-intc.c
-+++ b/drivers/irqchip/irq-davinci-cp-intc.c
-@@ -11,7 +11,6 @@
- #include <linux/init.h>
- #include <linux/irq.h>
- #include <linux/irqchip.h>
--#include <linux/irqchip/irq-davinci-cp-intc.h>
- #include <linux/irqdomain.h>
- #include <linux/io.h>
- #include <linux/of.h>
-@@ -154,24 +153,20 @@ static const struct irq_domain_ops davinci_cp_intc_irq_domain_ops = {
- 	.xlate = irq_domain_xlate_onetwocell,
- };
- 
--static int __init
--davinci_cp_intc_do_init(const struct davinci_cp_intc_config *config,
--			struct device_node *node)
-+static int __init davinci_cp_intc_do_init(struct resource *res, unsigned int num_irqs,
-+					  struct device_node *node)
- {
--	unsigned int num_regs = BITS_TO_LONGS(config->num_irqs);
-+	unsigned int num_regs = BITS_TO_LONGS(num_irqs);
- 	int offset, irq_base;
- 	void __iomem *req;
- 
--	req = request_mem_region(config->reg.start,
--				 resource_size(&config->reg),
--				 "davinci-cp-intc");
-+	req = request_mem_region(res->start, resource_size(res), "davinci-cp-intc");
- 	if (!req) {
- 		pr_err("%s: register range busy\n", __func__);
- 		return -EBUSY;
- 	}
- 
--	davinci_cp_intc_base = ioremap(config->reg.start,
--				       resource_size(&config->reg));
-+	davinci_cp_intc_base = ioremap(res->start, resource_size(res));
- 	if (!davinci_cp_intc_base) {
- 		pr_err("%s: unable to ioremap register range\n", __func__);
- 		return -EINVAL;
-@@ -184,8 +179,7 @@ davinci_cp_intc_do_init(const struct davinci_cp_intc_config *config,
- 
- 	/* Disable system interrupts */
- 	for (offset = 0; offset < num_regs; offset++)
--		davinci_cp_intc_write(~0,
--			DAVINCI_CP_INTC_SYS_ENABLE_CLR(offset));
-+		davinci_cp_intc_write(~0, DAVINCI_CP_INTC_SYS_ENABLE_CLR(offset));
- 
- 	/* Set to normal mode, no nesting, no priority hold */
- 	davinci_cp_intc_write(0, DAVINCI_CP_INTC_CTRL);
-@@ -193,28 +187,25 @@ davinci_cp_intc_do_init(const struct davinci_cp_intc_config *config,
- 
- 	/* Clear system interrupt status */
- 	for (offset = 0; offset < num_regs; offset++)
--		davinci_cp_intc_write(~0,
--			DAVINCI_CP_INTC_SYS_STAT_CLR(offset));
-+		davinci_cp_intc_write(~0, DAVINCI_CP_INTC_SYS_STAT_CLR(offset));
- 
- 	/* Enable nIRQ (what about nFIQ?) */
- 	davinci_cp_intc_write(1, DAVINCI_CP_INTC_HOST_ENABLE_IDX_SET);
- 
-+	/* 4 channels per register */
-+	num_regs = (num_irqs + 3) >> 2;
- 	/* Default all priorities to channel 7. */
--	num_regs = (config->num_irqs + 3) >> 2;	/* 4 channels per register */
- 	for (offset = 0; offset < num_regs; offset++)
--		davinci_cp_intc_write(0x07070707,
--			DAVINCI_CP_INTC_CHAN_MAP(offset));
-+		davinci_cp_intc_write(0x07070707, DAVINCI_CP_INTC_CHAN_MAP(offset));
- 
--	irq_base = irq_alloc_descs(-1, 0, config->num_irqs, 0);
-+	irq_base = irq_alloc_descs(-1, 0, num_irqs, 0);
- 	if (irq_base < 0) {
--		pr_err("%s: unable to allocate interrupt descriptors: %d\n",
--		       __func__, irq_base);
-+		pr_err("%s: unable to allocate interrupt descriptors: %d\n", __func__, irq_base);
- 		return irq_base;
- 	}
- 
--	davinci_cp_intc_irq_domain = irq_domain_add_legacy(
--					node, config->num_irqs, irq_base, 0,
--					&davinci_cp_intc_irq_domain_ops, NULL);
-+	davinci_cp_intc_irq_domain = irq_domain_add_legacy(node, num_irqs, irq_base, 0,
-+							   &davinci_cp_intc_irq_domain_ops, NULL);
- 
- 	if (!davinci_cp_intc_irq_domain) {
- 		pr_err("%s: unable to create an interrupt domain\n", __func__);
-@@ -229,31 +220,25 @@ davinci_cp_intc_do_init(const struct davinci_cp_intc_config *config,
- 	return 0;
- }
- 
--int __init davinci_cp_intc_init(const struct davinci_cp_intc_config *config)
--{
--	return davinci_cp_intc_do_init(config, NULL);
--}
--
- static int __init davinci_cp_intc_of_init(struct device_node *node,
- 					  struct device_node *parent)
- {
--	struct davinci_cp_intc_config config = { };
-+	unsigned int num_irqs;
-+	struct resource res;
- 	int ret;
- 
--	ret = of_address_to_resource(node, 0, &config.reg);
-+	ret = of_address_to_resource(node, 0, &res);
- 	if (ret) {
--		pr_err("%s: unable to get the register range from device-tree\n",
--		       __func__);
-+		pr_err("%s: unable to get the register range from device-tree\n", __func__);
- 		return ret;
- 	}
- 
--	ret = of_property_read_u32(node, "ti,intc-size", &config.num_irqs);
-+	ret = of_property_read_u32(node, "ti,intc-size", &num_irqs);
- 	if (ret) {
--		pr_err("%s: unable to read the 'ti,intc-size' property\n",
--		       __func__);
-+		pr_err("%s: unable to read the 'ti,intc-size' property\n", __func__);
- 		return ret;
- 	}
- 
--	return davinci_cp_intc_do_init(&config, node);
-+	return davinci_cp_intc_do_init(&res, num_irqs, node);
- }
- IRQCHIP_DECLARE(cp_intc, "ti,cp-intc", davinci_cp_intc_of_init);
-diff --git a/include/linux/irqchip/irq-davinci-cp-intc.h b/include/linux/irqchip/irq-davinci-cp-intc.h
-deleted file mode 100644
-index 8d71ed5..0000000
---- a/include/linux/irqchip/irq-davinci-cp-intc.h
-+++ /dev/null
-@@ -1,25 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0-or-later */
--/*
-- * Copyright (C) 2019 Texas Instruments
-- */
--
--#ifndef _LINUX_IRQ_DAVINCI_CP_INTC_
--#define _LINUX_IRQ_DAVINCI_CP_INTC_
--
--#include <linux/ioport.h>
--
--/**
-- * struct davinci_cp_intc_config - configuration data for davinci-cp-intc
-- *                                 driver.
-- *
-- * @reg: register range to map
-- * @num_irqs: number of HW interrupts supported by the controller
-- */
--struct davinci_cp_intc_config {
--	struct resource reg;
--	unsigned int num_irqs;
--};
--
--int davinci_cp_intc_init(const struct davinci_cp_intc_config *config);
--
--#endif /* _LINUX_IRQ_DAVINCI_CP_INTC_ */
+This looks like the locking task was not enqueued in the hash bucket
+during the resize. This means there was a timeout and the unlocking task
+removed it while looking for the next owner. But the unlocking part
+acquired an additional reference to avoid a resize in that case. So,
+confused I am.
+I reverted to 50ca0ec83226 ("futex: Resize local futex hash table based
+on number of threads."), have the another "always resize hack" and so
+far it looks good.
+Looking at __futex_pivot_hash() there is this:
+|         if (fph) {
+|                 if (rcuref_read(&fph->users) !=3D 0) {
+|                         mm->futex_phash_new =3D new;
+|                         return false;
+|                 }
+|
+|                 futex_rehash_private(fph, new);
+|         }
+
+So we stash the new pointer as long as rcuref_read() does not return 0.
+How stable is rcuref_read()'s 0 return actually? The code says:
+
+| static inline unsigned int rcuref_read(rcuref_t *ref)
+| {
+|         unsigned int c =3D atomic_read(&ref->refcnt);
+|
+|         /* Return 0 if within the DEAD zone. */
+|         return c >=3D RCUREF_RELEASED ? 0 : c + 1;
+| }
+
+so if it got negative on its final put, the c becomes -1/ 0xff=E2=80=A6ff. =
+This
++1 will be 0 and we do a resize. But it is negative and did not reach
+RCUREF_DEAD yet so it can be bumbed back to positive. It will not be
+deconstructed because the cmpxchg in rcuref_put_slowpath() fails. So it
+will remains active. But we do a resize here and end up with to private
+hash. That is why I had the `released' member.
+
+Sebastian
 
