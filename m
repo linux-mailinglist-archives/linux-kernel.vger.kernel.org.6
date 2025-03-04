@@ -1,321 +1,125 @@
-Return-Path: <linux-kernel+bounces-544296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43982A4DFDD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:55:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CB7AA4DFF5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:57:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4E187A810F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:54:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFD93176218
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:57:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 147C1204C06;
-	Tue,  4 Mar 2025 13:54:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6856C204C22;
+	Tue,  4 Mar 2025 13:56:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YtiQIfTa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="H1hNbkL4"
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F73204C11
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 13:54:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF9C20485D;
+	Tue,  4 Mar 2025 13:56:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741096497; cv=none; b=LAzKfqJN0wmoKgg6NQK743172FyOMAbwxNFYUA6zRRRH0L3MyQ27Z/UI88B3Edaxqfdnwa3Z4cOxg0aRvTVVcbTwLqK80518MtR/rk5tl2mddRUHq6XpgHnFgQrEMzxsnbJpoOmPp2/Cr7JshcL4vMWSzF0GmhpwwEEmY6P6qD8=
+	t=1741096605; cv=none; b=EWx2fj6tPpLWhaGTPvvtuBNPOTCdub/EUfY3T5wRAYAeYXggibDhHJTY8jsdNR6d1njn+a72+kBW33MqSOyvNbbd+tsrJ5mtd9Gt9poiULSN3+WFE9zC9OBHpHk/qXK1k3elgadXVB8GkjthYfhxfxjrlIRp68BmM/qpIv82hF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741096497; c=relaxed/simple;
-	bh=E5fiLuDbpRr13rW6Uv7v30NTS664Osr9e8vAu065L2A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YdTQzz1ou5PkmzqB32xersEo/MndOIoSD19rPz44nKdm1OLluLf2ADR2OuBos7ELwNnvRVpS6J6QHFTMyyK0BownDrGPsbRnvVSE+93oZA+h+K7qEDmzMtbuPPJf0IAZRwrsKW1TDo6Vx6W8YY4t0IR78leil058oFSd/isKSTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YtiQIfTa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D212C4CEE5;
-	Tue,  4 Mar 2025 13:54:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741096496;
-	bh=E5fiLuDbpRr13rW6Uv7v30NTS664Osr9e8vAu065L2A=;
-	h=From:To:Cc:Subject:Date:From;
-	b=YtiQIfTa0QJzaT2esGnj/FtpN4uY7pR9G+Sjip7j6kjDRH8Co9RPmZxc7tOKtS+Xg
-	 4HxTmm2FMf1bWdiQnkFuPl5XNTLl7Ml8Hym6A/tPDovym7ggDu+xeK9thy/qHOcT6u
-	 7HJ/F+b+nfIZWHMUDdwAzi9XXeMZvXTYCsCS7tMugoNn2XIXszsJyQhiptqXxNLunT
-	 PXGG3xFSYwaiQwh8K9kF86+LgcTw8Da25vWrv5hHUzshY4YtdpRFV2REH8IcTLA2zw
-	 /NKNIPdGZcmSrjKJbtwUmjxuAKCYxPJV1VhPj9YbvvF5meFJ+stGBl99sfd2R/7rGm
-	 pW9oqDiBV8cJg==
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Oleg Nesterov <oleg@redhat.com>,
-	"Yi Lai" <yi1.lai@linux.intel.com>,
-	syzbot+3c4321e10eea460eb606@syzkaller.appspotmail.com
-Subject: [PATCH] perf: Fix hang while freeing sigtrap event
-Date: Tue,  4 Mar 2025 14:54:46 +0100
-Message-ID: <20250304135446.18905-1-frederic@kernel.org>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741096605; c=relaxed/simple;
+	bh=WX4kS6nIMmulr3rV6w4z+g+wZXdahcIWYzxhlj1Y5YA=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vF48xaJ2sTCtRRsPXK1Euttnajm38OBzuiCV3WXxzf57U7Rd8um6TMqDcExEMTNJXyKkPxEHMNBr11JXUVGRVpzUmSc5ruBMihda0pToqmX81q/juXngX+4d9dnqCGR+4XFShwao9Wxwm/Znc6U+0F/LE8unuvsUd7enY1UnL2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=H1hNbkL4; arc=none smtp.client-ip=67.231.152.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5244xVpU027794;
+	Tue, 4 Mar 2025 07:56:20 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=PODMain02222019; bh=fX7b0J1Hf2WyOx0n5V
+	5Uluc5WRes3j4a1QlUJSYsrDs=; b=H1hNbkL4Xy2jkShPJJJRcgDb7QcO5/nQp7
+	9NgWBpW3X08DN56sFZdV+lOOqhxAPG5CXK4RVe3vsC8ejs0sLhpGjBlwNfRax0gh
+	iHfoTdzowmC4M4Qar/pSEa9Kpqg3p0MJBtn6c/24gj5kpgGdYPWzI9Hr7a3QlFrg
+	5YEQFbES2BmS6+XpQAGAhLXDrKJvqZdO2RXr9d4KAF6NNTap6xDhtHFyjAZ39pGY
+	cp+9orqkRiEw+h0zf5tPlMgynuawJ+OtNtBxwxLQXsPnIHusYkXPCQg0Cy75yrnG
+	16CAeNC7FXRt6K7pxv+o2BADDPfQsqOk6DNcQ7Iys1nQmYvPZUpA==
+Received: from ediex02.ad.cirrus.com ([84.19.233.68])
+	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 453yhmf8qq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Mar 2025 07:56:20 -0600 (CST)
+Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 4 Mar
+ 2025 13:56:18 +0000
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
+ 15.2.1544.14 via Frontend Transport; Tue, 4 Mar 2025 13:56:18 +0000
+Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id 88481820248;
+	Tue,  4 Mar 2025 13:56:18 +0000 (UTC)
+Date: Tue, 4 Mar 2025 13:56:17 +0000
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Francesco Dolcini <francesco@dolcini.it>
+CC: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Saravana Kannan <saravanak@google.com>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        <patches@opensource.cirrus.com>,
+        Ernest Van Hoecke
+	<ernest.vanhoecke@toradex.com>,
+        <linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        "Francesco
+ Dolcini" <francesco.dolcini@toradex.com>
+Subject: Re: [PATCH v2 5/5] ASoC: wm8904: add DMIC support
+Message-ID: <Z8cGgcq4ynfeCNKp@opensource.cirrus.com>
+References: <20250224155500.52462-1-francesco@dolcini.it>
+ <20250224155500.52462-6-francesco@dolcini.it>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250224155500.52462-6-francesco@dolcini.it>
+X-Proofpoint-ORIG-GUID: 9S4_Iw2GNLbnxIUqVjjXV3AMQY-u2KCb
+X-Authority-Analysis: v=2.4 cv=UeirSLSN c=1 sm=1 tr=0 ts=67c70684 cx=c_pps a=uGhh+3tQvKmCLpEUO+DX4w==:117 a=uGhh+3tQvKmCLpEUO+DX4w==:17 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=m8ToADvmAAAA:8 a=w1d2syhTAAAA:8 a=ctNVv1JNONuTxNbLFmwA:9 a=CjuIK1q_8ugA:10
+ a=kCrBFHLFDAq2jDEeoMj9:22 a=YXXWInSmI4Sqt1AkVdoW:22
+X-Proofpoint-GUID: 9S4_Iw2GNLbnxIUqVjjXV3AMQY-u2KCb
+X-Proofpoint-Spam-Reason: safe
 
-Perf can hang while freeing a sigtrap event if a related deferred
-signal hadn't managed to be sent before the file got closed:
+On Mon, Feb 24, 2025 at 04:55:00PM +0100, Francesco Dolcini wrote:
+> From: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
+> 
+> The WM8904 codec supports both ADC and DMIC inputs.
+> 
+> Get input pin functionality from the platform data and add the necessary
+> controls depending on the possible additional routing.
+> 
+> The ADC and DMIC share the IN1L/DMICDAT1 and IN1R/DMICDAT2 pins.
+> 
+> This leads to a few scenarios requiring different DAPM routing:
+> - When both are connected to an analog input, only the ADC is used.
+> - When one line is a DMIC and the other an analog input, the DMIC source
+>   is set from the platform data and a mux is added to select whether to
+>   use the ADC or DMIC.
+> - When both are connected to a DMIC, another mux is added to this to
+>   select the DMIC source. Note that we still need to be able to select
+>   the ADC system for use with the IN2L, IN2R, IN3L and IN3R pins.
+> 
+> Signed-off-by: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
+> Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+> ---
 
-perf_event_overflow()
-   task_work_add(perf_pending_task)
+Apologies for the delay, I think this looks good to me:
 
-fput()
-   task_work_add(____fput())
+Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-task_work_run()
-    ____fput()
-        perf_release()
-            perf_event_release_kernel()
-                _free_event()
-                    perf_pending_task_sync()
-                        task_work_cancel() -> FAILED
-                        rcuwait_wait_event()
-
-Once task_work_run() is running, the list of pending callbacks is
-removed from the task_struct and from this point on task_work_cancel()
-can't remove any pending and not yet started work items, hence the
-task_work_cancel() failure and the hang on rcuwait_wait_event().
-
-Task work could be changed to remove one work at a time, so a work
-running on the current task can always cancel a pending one, however
-the wait / wake design is still subject to inverted dependencies when
-remote targets are involved, as pictured by Oleg:
-
-T1                                                      T2
----                                                    ---
-fd = perf_event_open(pid => T2->pid);                  fd = perf_event_open(pid => T1->pid);
-close(fd)                                              close(fd)
-    <IRQ>                                                  <IRQ>
-    perf_event_overflow()                                  perf_event_overflow()
-       task_work_add(perf_pending_task)                        task_work_add(perf_pending_task)
-    </IRQ>                                                 </IRQ>
-    fput()                                                 fput()
-        task_work_add(____fput())                              task_work_add(____fput())
-
-    task_work_run()                                        task_work_run()
-        ____fput()                                             ____fput()
-            perf_release()                                         perf_release()
-                perf_event_release_kernel()                            perf_event_release_kernel()
-                    _free_event()                                          _free_event()
-                        perf_pending_task_sync()                               perf_pending_task_sync()
-                            rcuwait_wait_event()                                   rcuwait_wait_event()
-
-Therefore the only option left is to acquire the event reference count
-upon queueing the perf task work and release it from the task work, just
-like it was done before 3a5465418f5f ("perf: Fix event leak upon exec and file release")
-but without the leaks it fixed.
-
-Some adjustments are necessary to make it work:
-
-* A child event might dereference its parent upon freeing. Care must be
-  taken to release the parent last.
-
-* Some places assuming the event doesn't have any reference held and
-  therefore can be freed right away must instead put the reference and
-  let the reference counting to its job.
-
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Reported-by: "Yi Lai" <yi1.lai@linux.intel.com>
-Closes: https://lore.kernel.org/all/Zx9Losv4YcJowaP%2F@ly-workstation/
-Reported-by: syzbot+3c4321e10eea460eb606@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/all/673adf75.050a0220.87769.0024.GAE@google.com/
-Fixes: 3a5465418f5f ("perf: Fix event leak upon exec and file release")
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
----
- include/linux/perf_event.h |  1 -
- kernel/events/core.c       | 64 +++++++++++---------------------------
- 2 files changed, 18 insertions(+), 47 deletions(-)
-
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 76f4265efee9..4e8970da6953 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -832,7 +832,6 @@ struct perf_event {
- 	struct irq_work			pending_disable_irq;
- 	struct callback_head		pending_task;
- 	unsigned int			pending_work;
--	struct rcuwait			pending_work_wait;
- 
- 	atomic_t			event_limit;
- 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index b2334d27511b..253791d99e21 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -5355,30 +5355,6 @@ static bool exclusive_event_installable(struct perf_event *event,
- 
- static void perf_free_addr_filters(struct perf_event *event);
- 
--static void perf_pending_task_sync(struct perf_event *event)
--{
--	struct callback_head *head = &event->pending_task;
--
--	if (!event->pending_work)
--		return;
--	/*
--	 * If the task is queued to the current task's queue, we
--	 * obviously can't wait for it to complete. Simply cancel it.
--	 */
--	if (task_work_cancel(current, head)) {
--		event->pending_work = 0;
--		local_dec(&event->ctx->nr_no_switch_fast);
--		return;
--	}
--
--	/*
--	 * All accesses related to the event are within the same RCU section in
--	 * perf_pending_task(). The RCU grace period before the event is freed
--	 * will make sure all those accesses are complete by then.
--	 */
--	rcuwait_wait_event(&event->pending_work_wait, !event->pending_work, TASK_UNINTERRUPTIBLE);
--}
--
- /* vs perf_event_alloc() error */
- static void __free_event(struct perf_event *event)
- {
-@@ -5433,7 +5409,6 @@ static void _free_event(struct perf_event *event)
- {
- 	irq_work_sync(&event->pending_irq);
- 	irq_work_sync(&event->pending_disable_irq);
--	perf_pending_task_sync(event);
- 
- 	unaccount_event(event);
- 
-@@ -5526,10 +5501,17 @@ static void perf_remove_from_owner(struct perf_event *event)
- 
- static void put_event(struct perf_event *event)
- {
-+	struct perf_event *parent;
-+
- 	if (!atomic_long_dec_and_test(&event->refcount))
- 		return;
- 
-+	parent = event->parent;
- 	_free_event(event);
-+
-+	/* Matches the refcount bump in inherit_event() */
-+	if (parent)
-+		put_event(parent);
- }
- 
- /*
-@@ -5613,11 +5595,6 @@ int perf_event_release_kernel(struct perf_event *event)
- 		if (tmp == child) {
- 			perf_remove_from_context(child, DETACH_GROUP);
- 			list_move(&child->child_list, &free_list);
--			/*
--			 * This matches the refcount bump in inherit_event();
--			 * this can't be the last reference.
--			 */
--			put_event(event);
- 		} else {
- 			var = &ctx->refcount;
- 		}
-@@ -5643,7 +5620,8 @@ int perf_event_release_kernel(struct perf_event *event)
- 		void *var = &child->ctx->refcount;
- 
- 		list_del(&child->child_list);
--		free_event(child);
-+		/* Last reference unless ->pending_task work is pending */
-+		put_event(child);
- 
- 		/*
- 		 * Wake any perf_event_free_task() waiting for this event to be
-@@ -5654,7 +5632,11 @@ int perf_event_release_kernel(struct perf_event *event)
- 	}
- 
- no_ctx:
--	put_event(event); /* Must be the 'last' reference */
-+	/*
-+	 * Last reference unless ->pending_task work is pending on this event
-+	 * or any of its children.
-+	 */
-+	put_event(event);
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(perf_event_release_kernel);
-@@ -7065,12 +7047,6 @@ static void perf_pending_task(struct callback_head *head)
- 	struct perf_event *event = container_of(head, struct perf_event, pending_task);
- 	int rctx;
- 
--	/*
--	 * All accesses to the event must belong to the same implicit RCU read-side
--	 * critical section as the ->pending_work reset. See comment in
--	 * perf_pending_task_sync().
--	 */
--	rcu_read_lock();
- 	/*
- 	 * If we 'fail' here, that's OK, it means recursion is already disabled
- 	 * and we won't recurse 'further'.
-@@ -7081,9 +7057,8 @@ static void perf_pending_task(struct callback_head *head)
- 		event->pending_work = 0;
- 		perf_sigtrap(event);
- 		local_dec(&event->ctx->nr_no_switch_fast);
--		rcuwait_wake_up(&event->pending_work_wait);
- 	}
--	rcu_read_unlock();
-+	put_event(event);
- 
- 	if (rctx >= 0)
- 		perf_swevent_put_recursion_context(rctx);
-@@ -10030,6 +10005,7 @@ static int __perf_event_overflow(struct perf_event *event,
- 		    !task_work_add(current, &event->pending_task, notify_mode)) {
- 			event->pending_work = pending_id;
- 			local_inc(&event->ctx->nr_no_switch_fast);
-+			WARN_ON_ONCE(!atomic_long_inc_not_zero(&event->refcount));
- 
- 			event->pending_addr = 0;
- 			if (valid_sample && (data->sample_flags & PERF_SAMPLE_ADDR))
-@@ -12382,7 +12358,6 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
- 	init_irq_work(&event->pending_irq, perf_pending_irq);
- 	event->pending_disable_irq = IRQ_WORK_INIT_HARD(perf_pending_disable);
- 	init_task_work(&event->pending_task, perf_pending_task);
--	rcuwait_init(&event->pending_work_wait);
- 
- 	mutex_init(&event->mmap_mutex);
- 	raw_spin_lock_init(&event->addr_filters.lock);
-@@ -13512,8 +13487,7 @@ perf_event_exit_event(struct perf_event *event, struct perf_event_context *ctx)
- 		 * Kick perf_poll() for is_event_hup();
- 		 */
- 		perf_event_wakeup(parent_event);
--		free_event(event);
--		put_event(parent_event);
-+		put_event(event);
- 		return;
- 	}
- 
-@@ -13631,13 +13605,11 @@ static void perf_free_event(struct perf_event *event,
- 	list_del_init(&event->child_list);
- 	mutex_unlock(&parent->child_mutex);
- 
--	put_event(parent);
--
- 	raw_spin_lock_irq(&ctx->lock);
- 	perf_group_detach(event);
- 	list_del_event(event, ctx);
- 	raw_spin_unlock_irq(&ctx->lock);
--	free_event(event);
-+	put_event(event);
- }
- 
- /*
--- 
-2.48.1
-
+Thanks,
+Charles
 
