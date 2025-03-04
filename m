@@ -1,104 +1,118 @@
-Return-Path: <linux-kernel+bounces-543947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4737A4DBBD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:03:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B8C2A4DBB9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:03:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4156189CE35
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:02:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2330E189C493
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:02:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE0E20124F;
-	Tue,  4 Mar 2025 11:00:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A1BF1FCCF7;
+	Tue,  4 Mar 2025 10:59:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="AE6MV5R4"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PbGttKor"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BC232010E5
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 11:00:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741086010; cv=pass; b=Q/TqXZFih8o64OcJNyxYGXVUgLVWnS1O6+sOSpET4azR8KeUKIrNBljiOR7rOS5D2qJ+sDpPrxPHiqhPMQuisiBM3eNYfI98w1bqwAtl5WnS4KzaroQpTtf7QnOD1k3TSB3AaaF7Sf7xjR0tc4o7ZLyZxuTXHMdpOGTRuNA5VDw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741086010; c=relaxed/simple;
-	bh=mt7hEnVoH9ixJLgXuCnPk+QEtURpCqfN/VDQ8rFvN+o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ul7mCQein/we6436nt8U+RhMwH7j+JAHZZKP4zLqxQKVJ48BF+Qi5TLkzVhJY10BFE/hZp015pA64FimC4fIQjx3H2qRR0ZbWf2ZMROwPuloXLa5AvFb/o6WKq9uoKYe7nbVfPVfGEegxF2yHaQT1ff6M2Hk9VbDCvqY9br9j8I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=AE6MV5R4; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1741085958; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=JgfciHxqZYyFSSfuhuv5vjVyq//D99mHx5wTVSy9RmDJQHUdgiW35c7twCWqZwXHJg5n6De5YA97iavK7rHFe4ZhbZrbqOVRu/MIFqxTAl3i8Ek8/V8XpRONF2QR1vml1jp/0laKIYlgLGG3QbMSkM3f3s5kXuhHBZoeS38vm3E=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1741085958; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Dbsr2DzMdYZQ4tGo8UWZqeyiKrIzRaj9gxDPB5xSI+M=; 
-	b=ctwWrTWsqBfu/EzXaZS6O/bRL5u2s6IExQLG1qbNHnvSx8k8iZ9bK0sE/9ULBOFKRSJTUDAon6fCTw/HUDAvSeHwoTkpAt7BNLXRQiubBqCUxdcGNrLUVG7DuzWQ8fUweLmWJVQDDXKwcBylXbhxF5UqpwIeqAY79vC5LK9HvtY=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
-	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741085958;
-	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=Dbsr2DzMdYZQ4tGo8UWZqeyiKrIzRaj9gxDPB5xSI+M=;
-	b=AE6MV5R4+ndvbYnirTlQbXoIphSwJhAjOCrPYHODCALnoq6TCaJFUpwnUQgu8B7B
-	GoVR7tT2Yh2PDT2PxyUJotLWTUnWda1TM2n6wQzgI2GQAy8Ml7LBrxMm159NK0pzL7j
-	Xn8UXuv45TdXfxx1lLGgOpgsOVxmEW8NByqxB3NI=
-Received: by mx.zohomail.com with SMTPS id 174108595555814.859596015899456;
-	Tue, 4 Mar 2025 02:59:15 -0800 (PST)
-Message-ID: <6b7d95b7-a9dd-43c9-b1db-8a636b85ad51@collabora.com>
-Date: Tue, 4 Mar 2025 13:59:09 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 007DA1FCF60;
+	Tue,  4 Mar 2025 10:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741085973; cv=none; b=ecN9rHEg635q8nn+xuQ1eI0Va/DddDA9uUpykEUvg7YSTqy6jjByw4kQIos70TM7J0e3zbVl8NGaPyb5R34rudGxkzu/46O2dhVRKsgW5tQdo9vI1+6uwgvCblHDuINfgK5lyW1M5MkaPfqgErub6oaJ8zVKEO4ubPqimRJN7WE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741085973; c=relaxed/simple;
+	bh=4DxI1dIFPwDf+w+uEy1bGnTlN2NFGh1gv21Gx3uL+VA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GMT2+mBJOB+B+4z2zydgqtvMpbc9siPqeb646Bd8vehW3k2WmldSyWAwW6PtRwMIyciNTKpv+/Cj8KUPJVdXZjrfajnyQbQVH2d+CsdBk0Dn+YzA+E4X3leXjXsqsyhseiJWfU+ptuQpes/C7pgETlBYgfx5ROk+/Tp9H0ojtK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PbGttKor; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741085972; x=1772621972;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=4DxI1dIFPwDf+w+uEy1bGnTlN2NFGh1gv21Gx3uL+VA=;
+  b=PbGttKorK3lb15+MY66vbFEpVehLkHrukzmtUrMWQ6tZsUfpAtvlpOzn
+   jkPApc+m+CHBmmkj+T2h1PHuZmJ6c6lmA6mJx8PkyDwn4xj0mzev28KS8
+   PeaHl7iN8ssqI6arjPY4IBtfAWjGu9LH1PYlu+GHUCcC94oRpMhsrJKGM
+   a77vcQphKTcckV0ePsMj/0ocEQs8RBmWhT8BEAc76UjjMvoHH8xxVM/b/
+   zliTt5hs/O5u7oihZd6fY3FDhn+3bKdLI7Te36j9YgnOqllm74IstyKus
+   GkEhADwZR4gXvXngNwb1JX42joNzA7TUvaZb0UFk1mfRkX2/CUYu2K7rO
+   A==;
+X-CSE-ConnectionGUID: EMTROi2RSpuOFfamuOqQig==
+X-CSE-MsgGUID: g/wGgtfEQNm6Y8yL9qmG7A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="52635595"
+X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
+   d="scan'208";a="52635595"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 02:59:31 -0800
+X-CSE-ConnectionGUID: kGiJ7T0uTJyij0Gw4V429Q==
+X-CSE-MsgGUID: 3IN/Yw8RQWCvBXQB+slWTQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
+   d="scan'208";a="118066666"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 02:59:29 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tpPzh-0000000H6Ax-2bbs;
+	Tue, 04 Mar 2025 12:59:25 +0200
+Date: Tue, 4 Mar 2025 12:59:25 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Mika Westerberg <westeri@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Kent Gibson <warthog618@gmail.com>
+Subject: Re: [PATCH v1 2/3] gpiolib: Rename gpio_set_debounce_timeout() to
+ gpiod_do_set_debounce()
+Message-ID: <Z8bdDQGg_xcamZv2@smile.fi.intel.com>
+References: <20250303160341.1322640-1-andriy.shevchenko@linux.intel.com>
+ <20250303160341.1322640-3-andriy.shevchenko@linux.intel.com>
+ <20250304091804.GG3713119@black.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v19 22/30] drm/shmem-helper: Add common memory shrinker
-To: Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Gerd Hoffmann <kraxel@redhat.com>,
- Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
- <olvaffe@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Qiang Yu <yuq825@gmail.com>, Steven Price <steven.price@arm.com>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Emma Anholt <emma@anholt.net>, Melissa Wen <mwen@igalia.com>
-Cc: kernel@collabora.com, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org
-References: <20240105184624.508603-1-dmitry.osipenko@collabora.com>
- <20240105184624.508603-23-dmitry.osipenko@collabora.com>
- <d1f856c7-47dd-4f1d-a124-973064dcd1f0@suse.de>
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Content-Language: en-US
-In-Reply-To: <d1f856c7-47dd-4f1d-a124-973064dcd1f0@suse.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250304091804.GG3713119@black.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 3/4/25 13:29, Thomas Zimmermann wrote:
-> Hi
+On Tue, Mar 04, 2025 at 11:18:04AM +0200, Mika Westerberg wrote:
+> On Mon, Mar 03, 2025 at 06:00:33PM +0200, Andy Shevchenko wrote:
+> > In order to reduce the 'gpio' namespace when operate over GPIO descriptor
+> > rename gpio_set_debounce_timeout() to gpiod_do_set_debounce().
 > 
-> Am 05.01.24 um 19:46 schrieb Dmitry Osipenko:
->> Introduce common drm-shmem shrinker for DRM drivers.
+> To me anything that has '_do_' in their name sounds like an internal static
+> function that gets wrapped by the actual API function(s).
 > 
-> What's the status of this patch?
+> For instance it could be 
+> 
+>   int gpio_set_debounce_timeout()
+>   {
+>   	...
+> 	gpiod_do_set_debounce()
+> 	...
+> 
+> However, gpiod_set_debounce_timeout() or gpiod_set_debounce() sounds good
+> to me.
 
-It was de-prioritized on my list a year ago as I had to move to a higher
-priority problems. Rebasing and re-testing these patches takes much
-time, it either has to be split up in a smaller parts or applied in one go.
-
-The current status is that I started to work on v20 rather long time ago
-and the patches need to be rebased and re-tested again. Heard that
-Panthor driver may want shmem shrinker more than others today.
+Then please propose the second name for gpiod_set_config_XXX to follow
+the same pattern. The series unifies naming and reduces the current
+inconsistency.
 
 -- 
-Best regards,
-Dmitry
+With Best Regards,
+Andy Shevchenko
+
+
 
