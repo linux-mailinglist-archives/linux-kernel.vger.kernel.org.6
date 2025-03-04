@@ -1,93 +1,210 @@
-Return-Path: <linux-kernel+bounces-544368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9847A4E06A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:16:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64679A4E0A0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:21:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 333B916C5F5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:14:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B11C3AA9D1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:15:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E879F204F87;
-	Tue,  4 Mar 2025 14:14:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7EC205AA1;
+	Tue,  4 Mar 2025 14:15:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VMIW/0bK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="oSmpQBwY"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49100204C0C;
-	Tue,  4 Mar 2025 14:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C462045B2;
+	Tue,  4 Mar 2025 14:15:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741097643; cv=none; b=E9dsWt/O+/CBQ2iGS+1OM9UczK76GMyg8lFcEy7TNNTlkNlJVhTLK2xfd6cVEp/Z1tsrm6dKEe2DMKO//OYevmcegbhAvbqkI/Ju1RqtcDKcrYbOWETkIoQoET7En2rxOUfEB4fbSisDe+Q6629PHgdGAfW+bDvm1ZfKvv0oHLo=
+	t=1741097717; cv=none; b=DfYzZRFHZB2Oo+mEOGHABiByFTGN8p585+N7+WNxnpo5JF1V0FpUpEW8eEJ5RGPzmUP6AnqSw+P1N1JE5jJG0DiRcrleGHLBYEQHxXycz8GJzS+SAvLaTU0rwvAM+/K1L+A7wqTox+XnGP55XKJeNtgNo6bW6FSA7zfN4Xpk31Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741097643; c=relaxed/simple;
-	bh=OV2CJNpd5RbwY36OXuv9fH3F4quuWs+tUzGPKWB+dfk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DHZIxszB74F99lUfbJc4p8xj/E37B6t9ySiwI9X4uo0v63DsCUhsNOA8dPmV2HhWq/1y0UsQx0FgRSPUdH7CIOBLLKoeFhtZKcVRdA4HSqN4TYitykzNaZe3TcPTkJZtNSasz9isg9AY4gAijeq7BOl2lRkBcCTjHQH7/vhUck8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VMIW/0bK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AE3DC4CEE5;
-	Tue,  4 Mar 2025 14:14:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741097642;
-	bh=OV2CJNpd5RbwY36OXuv9fH3F4quuWs+tUzGPKWB+dfk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VMIW/0bKjE1tZRI1Rs4ZbR6vix5C+Lkx3ktgfcBNXMYTo7IpY2nynzK3XXIcmMoJA
-	 guRel6Y8URIZeXm6QdNsdATb3Pc+sUCVkPiGk+2xSM7UiPu6PXVFbJADiEUNDnB4N9
-	 Wg45jZb1/yRt0R9ubWsPvXxDrhpYL3gdBZnuN02PbQBIiZyfcSrLr7mmqhjqslUSPb
-	 KihOCuDjdjvIdQT0ZLL8r0IC7DlY5UsPstzds7CXOK5dw1P8s2jyDcfayAtYyGt4wA
-	 OaiWrUTG1igICyRY17FzDyFKTgnzf3Uj+uzenZjOMLiwg2kxo7xLwgY5mf1DCdzBg4
-	 0WPPq+tBH0M/g==
-Date: Tue, 4 Mar 2025 08:14:01 -0600
-From: Rob Herring <robh@kernel.org>
-To: Gabriel Gonzales <semfault@disroot.org>
-Cc: linux-kernel@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] dt-bindings: arm: qcom: Add Xiaomi Redmi Note 8
-Message-ID: <20250304141401.GA2537006-robh@kernel.org>
-References: <20250304043742.9252-1-semfault@disroot.org>
+	s=arc-20240116; t=1741097717; c=relaxed/simple;
+	bh=RWVL+QE/PWRG8krCkuKmboSrFi6eKsi4L4DjJqF2A18=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=jpYbnDdE+fwVRdEEJx8IzkDZ8HSIuyKRzcQXSPL3wfLmMIwHKLX993OwI1QC3n7qg1ypGhFYSPwC5SdxqYofPocXdBhToJmp8xpoW9FbgN18LVZ4OKWUIyknC7qiIjRP7lFiGeoxzU3uTBDTtcutw9T7e5mCEyCH0MyitnuIMJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=oSmpQBwY; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5249n2xY025940;
+	Tue, 4 Mar 2025 14:15:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=jMSsk+
+	JkgIWBNZDwESlZUKU0V4aZjl605EKGO3C0ivk=; b=oSmpQBwYIs2wDnXBOlIEMp
+	PC0CDmfFIDqNk8AWVLV4Xkw+Z37d52owo2bi5XVTkH9CfVdas/idHzGe9EQ+Wfxy
+	ouVpxAW9iTFJV6jK9NcRECw9rIocB1ogS0SmDbTrI5ijN3e8TXW9Z4iToy9hCcKh
+	/Gf3E4G6uOy4Luxiv7pVOs2/G+dVYDdplRqMjKBmwGGU1c3Ik+px3tCYTQoY9KCe
+	nQ63tku1trH+Zyem2tfeyIuTHM4+qd9odu1N/NDz7Hb3WJoYQL5pxpcIuerMaz2p
+	opB5XjCRxkVXifRWqQNmIqthThkJnsAxMGW2zs/568wqFL8Hasixf+PZKIyeKk/w
+	==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 455kkpca4v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Mar 2025 14:15:02 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 524BZ6ke020936;
+	Tue, 4 Mar 2025 14:15:01 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 454djndrja-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Mar 2025 14:15:01 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 524EEv8S52822334
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 4 Mar 2025 14:14:57 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C53642004F;
+	Tue,  4 Mar 2025 14:14:57 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5E1832004D;
+	Tue,  4 Mar 2025 14:14:53 +0000 (GMT)
+Received: from smtpclient.apple (unknown [9.61.255.217])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue,  4 Mar 2025 14:14:52 +0000 (GMT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250304043742.9252-1-semfault@disroot.org>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [PATCH] perf/bench: Fix perf bench syscall XXXX loop count
+From: Athira Rajeev <atrajeev@linux.ibm.com>
+In-Reply-To: <20250304092349.2618082-1-tmricht@linux.ibm.com>
+Date: Tue, 4 Mar 2025 19:44:39 +0530
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-s390@vger.kernel.org,
+        "open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-perf-users@vger.kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, yangtiezhu@loongson.cn,
+        agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com,
+        hca@linux.ibm.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <69345A2D-EF10-4530-8C95-1E7BDC0B64F1@linux.ibm.com>
+References: <20250304092349.2618082-1-tmricht@linux.ibm.com>
+To: Thomas Richter <tmricht@linux.ibm.com>
+X-Mailer: Apple Mail (2.3776.700.51)
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: JakZI_zIw3GI_uKmjrnOjQCcHtqooOPX
+X-Proofpoint-ORIG-GUID: JakZI_zIw3GI_uKmjrnOjQCcHtqooOPX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-04_05,2025-03-03_04,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1011
+ malwarescore=0 adultscore=0 impostorscore=0 bulkscore=0 mlxlogscore=999
+ phishscore=0 spamscore=0 priorityscore=1501 mlxscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2503040110
 
-On Tue, Mar 04, 2025 at 12:37:39PM +0800, Gabriel Gonzales wrote:
-> Document the Xiaomi Redmi Note 8, which is based off the SM6125 SoC
 
-Period.
 
-Perhaps mention where ginkgo comes from. It's not clear if one looks at 
-just the commit msg or just the schema.
+> On 4 Mar 2025, at 2:53=E2=80=AFPM, Thomas Richter =
+<tmricht@linux.ibm.com> wrote:
+>=20
+> Command 'perf bench syscall fork -l 100000' offers option
+> -l to run for a specified number of iterations. However this
+> option is not always observed. The number is silently limited to
+> 10000 iterations as can be seen:
+>=20
+> Output before:
+> # perf bench syscall fork -l 100000
+> # Running 'syscall/fork' benchmark:
+> # Executed 10,000 fork() calls
+>     Total time: 23.388 [sec]
+>=20
+>    2338.809800 usecs/op
+>            427 ops/sec
+> #
+>=20
+> When explicitly specified with option -l or --loops, also observe
+> higher number of iterations:
+>=20
+> Output after:
+> # perf bench syscall fork -l 100000
+> # Running 'syscall/fork' benchmark:
+> # Executed 100,000 fork() calls
+>     Total time: 716.982 [sec]
+>=20
+>    7169.829510 usecs/op
+>            139 ops/sec
+> #
+>=20
 
-> 
-> Signed-off-by: Gabriel Gonzales <semfault@disroot.org>
+Tested-by: Athira Rajeev <atrajeev@linux.ibm.com>
+
+Thanks
+Athira
+> This patch fixes the issue for basic execve fork and getpgid.
+>=20
+> Fixes: ece7f7c0507c ("perf bench syscall: Add fork syscall benchmark")
+> Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+> Acked-by: Sumanth Korikkar <sumanthk@linux.ibm.com>
+> Cc: Tiezhu Yang <yangtiezhu@loongson.cn>
 > ---
->  Documentation/devicetree/bindings/arm/qcom.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
-> index 618a87693..52f7b217b 100644
-> --- a/Documentation/devicetree/bindings/arm/qcom.yaml
-> +++ b/Documentation/devicetree/bindings/arm/qcom.yaml
-> @@ -1020,6 +1020,7 @@ properties:
->        - items:
->            - enum:
->                - sony,pdx201
-> +              - xiaomi,ginkgo
->                - xiaomi,laurel-sprout
->            - const: qcom,sm6125
->  
-> -- 
+> tools/perf/bench/syscall.c | 22 +++++++++++++---------
+> 1 file changed, 13 insertions(+), 9 deletions(-)
+>=20
+> diff --git a/tools/perf/bench/syscall.c b/tools/perf/bench/syscall.c
+> index ea4dfc07cbd6..e7dc216f717f 100644
+> --- a/tools/perf/bench/syscall.c
+> +++ b/tools/perf/bench/syscall.c
+> @@ -22,8 +22,7 @@
+> #define __NR_fork -1
+> #endif
+>=20
+> -#define LOOPS_DEFAULT 10000000
+> -static int loops =3D LOOPS_DEFAULT;
+> +static int loops;
+>=20
+> static const struct option options[] =3D {
+> OPT_INTEGER('l', "loop", &loops, "Specify number of loops"),
+> @@ -80,6 +79,18 @@ static int bench_syscall_common(int argc, const =
+char **argv, int syscall)
+> const char *name =3D NULL;
+> int i;
+>=20
+> + switch (syscall) {
+> + case __NR_fork:
+> + case __NR_execve:
+> + /* Limit default loop to 10000 times to save time */
+> + loops =3D 10000;
+> + break;
+> + default:
+> + loops =3D 10000000;
+> + break;
+> + }
+> +
+> + /* Options -l and --loops override default above */
+> argc =3D parse_options(argc, argv, options, bench_syscall_usage, 0);
+>=20
+> gettimeofday(&start, NULL);
+> @@ -94,16 +105,9 @@ static int bench_syscall_common(int argc, const =
+char **argv, int syscall)
+> break;
+> case __NR_fork:
+> test_fork();
+> - /* Only loop 10000 times to save time */
+> - if (i =3D=3D 10000)
+> - loops =3D 10000;
+> break;
+> case __NR_execve:
+> test_execve();
+> - /* Only loop 10000 times to save time */
+> - if (i =3D=3D 10000)
+> - loops =3D 10000;
+> - break;
+> default:
+> break;
+> }
+> --=20
 > 2.47.0
-> 
+>=20
+>=20
+
 
