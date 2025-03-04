@@ -1,129 +1,178 @@
-Return-Path: <linux-kernel+bounces-545343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F07FA4ECF1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:14:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6E1BA4ED22
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:20:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63AEA8E429D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:31:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 930058E2070
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:32:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96FE1280A32;
-	Tue,  4 Mar 2025 18:23:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB6C9259CB0;
+	Tue,  4 Mar 2025 18:24:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rWcVsqAv"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b="Ek3d5AEn"
+Received: from r-passerv.ralfj.de (r-passerv.ralfj.de [109.230.236.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D67C27FE62;
-	Tue,  4 Mar 2025 18:23:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 812F82777F4;
+	Tue,  4 Mar 2025 18:24:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.230.236.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741112603; cv=none; b=YGzr6+JUXXF7BDWAhMMNsp5U4GHupeYWzI0UTpSRXVxytUtr3CVwvj5CkyoOgO3EDrf/KQlEiYX5TG0fH/TCWG4lBs6HVYUkryASnDDiMOA9weVPlXAJp0oo0Vd2ZD33C0bSy+Vaiqmj3KLOsJJgDdcxhndZ9gpbKCAJA4Ce5iE=
+	t=1741112659; cv=none; b=sVo3R/WnML4EPI2fkqz7E45o5eAawCTI4GngeXIothtE0rxnI7NgjOUgh3sI16+Vpl52rKH+RX7MaC6BrufAzsVmkrbLQkGbriy1XXRDtLuYdIaysGMKPrt9+6pdSNFy0fgZy091WB9SFPl8cvLB6+MKAMQvgZSZFyVRvvcvdyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741112603; c=relaxed/simple;
-	bh=nJxN0OF+NV+pP7a2nHlRBnE7O4eJYLZXYsG9b6RtaTI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sySyiY/8bvypovragC7xFGZMmFqqf8BGR+Ve6UtVfuAtySKZum+EjkRt70vvt7Pb4WQSQoJ0GxTpbJqunSDM2yPxzZBmxUjsmAG3JQKexAX375L9jlSNoi2h3COwfuqvLIE07sU09j76fuVVk5AV+h4aEQfHIFqFAU7/KJNUixE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rWcVsqAv; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 524GEPW1023631;
-	Tue, 4 Mar 2025 18:23:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=cHkOY2aFm4MBzD9JOYJEt0kX6l/PwwLDRWhBCbIyP
-	Jw=; b=rWcVsqAvuhYPPQMCtF3PiFidkTRiYPl5mYXOgNZY057CSSHfEVsXEHRgw
-	uQFmGj4XNgckstFTOYiUadjamqmFppjF3UAIuvgyXVwRX3FaE3ZpjpAPL+jxKsAW
-	5h5C10vpMp2NKggGYjOHXDzMWfXL2OLH5co0AYnwZFGu2yF9B/U4Ken4Ml1C4l/M
-	JTtglu/VAmo9WCmBIfuvc8eYFs57RYrAzxsyp4ax93HR/sxyj2wKExcaujUw9ISL
-	yXKHS+5xu7Kxt2Re18RzoCYOSZWsUI0mOy8U00y32h7pi9QEvooZATNvjyJxG71b
-	gWpmDxEkV1MgBrfYYus/mW1PBk83Q==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 455ku55ke7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Mar 2025 18:23:14 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 524GlFiP020800;
-	Tue, 4 Mar 2025 18:23:14 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 454esjxgmj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Mar 2025 18:23:14 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 524INA0q30737108
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 4 Mar 2025 18:23:10 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 66E8920043;
-	Tue,  4 Mar 2025 18:23:10 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9E5B120040;
-	Tue,  4 Mar 2025 18:23:09 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.171.33.201])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  4 Mar 2025 18:23:09 +0000 (GMT)
-From: Claudio Imbrenda <imbrenda@linux.ibm.com>
-To: kvm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        frankja@linux.ibm.com, borntraeger@de.ibm.com, david@redhat.com,
-        nrb@linux.ibm.com, seiden@linux.ibm.com, nsg@linux.ibm.com,
-        schlameuss@linux.ibm.com, hca@linux.ibm.com
-Subject: [PATCH v4 0/1] KVM: s390: fix a newly introduced bug
-Date: Tue,  4 Mar 2025 19:23:03 +0100
-Message-ID: <20250304182304.178746-1-imbrenda@linux.ibm.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741112659; c=relaxed/simple;
+	bh=aRrdrLOf2kIT4ORfOYXW5hYLJW9ANt36zFUYL88XoR8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FdpxgD0Zh4lo1A3rgCEPXQ0mWWj5vyzwH0GFn82A4HadfVVDJtA3O4YqeEV5Re6/+N9oLF3v3kYPxTmXLNOS8LlliFTXxXbRskLpsMYdxe1hjtHmeEXxkdBvE1ZyM0Z3U4LZSOM5AQnHCJVDF84Yf7h3kCTW+QVzW7CKLKS9wRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de; spf=pass smtp.mailfrom=ralfj.de; dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b=Ek3d5AEn; arc=none smtp.client-ip=109.230.236.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ralfj.de
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ralfj.de; s=mail;
+	t=1741112655; bh=aRrdrLOf2kIT4ORfOYXW5hYLJW9ANt36zFUYL88XoR8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Ek3d5AEn9ZSdmiVKJwAt61WVz86wtURGUckvR85lznKbN8jUMpWjLfs6XcphJxd7G
+	 SFfmHuj4a5nAkRdDzaApZtUPBIioqQ0A6Haizinno81NH+IsrmyazjiG1mDRcZcZ/L
+	 lt2IwEQc6eOBeOsGiV4B3SPsNWBbcL3YOtASla6c=
+Received: from [IPV6:2001:67c:10ec:5784:8000::87] (2001-67c-10ec-5784-8000--87.net6.ethz.ch [IPv6:2001:67c:10ec:5784:8000::87])
+	by r-passerv.ralfj.de (Postfix) with ESMTPSA id 84AAD2052D09;
+	Tue,  4 Mar 2025 19:24:15 +0100 (CET)
+Message-ID: <aab4312f-67dc-4fc8-ae5a-59b5933aa220@ralfj.de>
+Date: Tue, 4 Mar 2025 19:24:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: xu9pspZucWmZHK1_7WqZYEpn6K7X8ZOd
-X-Proofpoint-GUID: xu9pspZucWmZHK1_7WqZYEpn6K7X8ZOd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-04_07,2025-03-03_04,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- clxscore=1015 mlxscore=0 suspectscore=0 impostorscore=0 bulkscore=0
- mlxlogscore=649 lowpriorityscore=0 spamscore=0 phishscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2503040144
+User-Agent: Mozilla Thunderbird
+Subject: Re: C aggregate passing (Rust kernel policy)
+To: Ventura Jack <venturajack85@gmail.com>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+ Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Gary Guo <gary@garyguo.net>,
+ torvalds@linux-foundation.org, airlied@gmail.com, boqun.feng@gmail.com,
+ david.laight.linux@gmail.com, ej@inai.de, gregkh@linuxfoundation.org,
+ hch@infradead.org, hpa@zytor.com, ksummit@lists.linux.dev,
+ linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
+ <20250222141521.1fe24871@eugeo>
+ <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
+ <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
+ <CANiq72mdzUJocjXhPRQEEdgRXsr+TEMt99V5-9R7TjKB7Dtfaw@mail.gmail.com>
+ <lz7hsnvexoywjgdor33mcjrcztxpf7lzvw3khwzd5rifetwrcf@g527ypfkbhp2>
+ <780ff858-4f8e-424f-b40c-b9634407dce3@ralfj.de>
+ <CAFJgqgRN0zwwaNttS_9qnncTDnSA-HU5EgAXFrNHoPQ7U8fUxw@mail.gmail.com>
+ <f3a83d60-3506-4e20-b202-ef2ea99ef4dc@ralfj.de>
+ <CAFJgqgR4Q=uDKNnU=2yo5zoyFOLERG+48bFuk4Dd-c+S6x+N5w@mail.gmail.com>
+ <7edf8624-c9a0-4d8d-a09e-2eac55dc6fc5@ralfj.de>
+ <CAFJgqgS-S3ZbPfYsA-eJmCXHhMrzwaKW1-G+LegKJNqqGm31UQ@mail.gmail.com>
+ <d29ebda1-e6ca-455d-af07-ac1daf84a3d2@ralfj.de>
+ <CAFJgqgQ=dJk7Jte-aaB55_CznDEnSVcy+tEh83BwmrMVvOpUgQ@mail.gmail.com>
+ <651a087b-2311-4f70-a2d3-6d2136d0e849@ralfj.de>
+ <CAFJgqgRFEvsyf9Hej-gccSdC-Ce8DbO5DgHatLoJ-aYi1_ZcyA@mail.gmail.com>
+Content-Language: en-US, de-DE
+From: Ralf Jung <post@ralfj.de>
+In-Reply-To: <CAFJgqgRFEvsyf9Hej-gccSdC-Ce8DbO5DgHatLoJ-aYi1_ZcyA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Fix race when making a page secure (hold pte lock again)
+Hi all,
 
-This should fix the issues I have seen, which I think/hope are also the same
-issues that David found.
+>>> The time crate breaking example above does not
+>>> seem nice.
+>>
+>> The time issue is like the biggest such issue we had ever, and indeed that did
+>> not go well. We should have given the ecosystem more time to update to newer
+>> versions of the time crate, which would have largely mitigated the impact of
+>> this. A mistake was made, and a *lot* of internal discussion followed to
+>> minimize the chance of this happening again. I hope you don't take that accident
+>> as being representative of regular Rust development.
+> 
+> Was it an accident? I thought the breakage was intentional,
+> and in line with Rust's guarantees on backwards
+> compatibility, since it was related to type inference,
+> and Rust is allowed to do breaking changes for that
+> according to its guarantees as I understand it.
+> Or do you mean that it was an accident that better
+> mitigation was not done in advance, like you describe
+> with giving the ecosystem more time to update?
 
-v3->v4:
-* move and rename s390_wiggle_split_folio() to fix a compile issue when
-  KVM is not selected
-* removed obsolete reference to __() from comments
+It was an accident. We have an established process for making such changes while 
+keeping the ecosystem impact to a minimum, but mistakes were made and so the 
+ecosystem impact was beyond what we'd be willing to accept.
 
-v2->v3:
-* added check for pte_write() in make_hva_secure() [thanks David]
+The key to understand here that there's a big difference between "we do a 
+breaking change but hardly anyone notices" and "we do a breaking change and 
+everyone hears about it". The accident wasn't that some code broke, the accident 
+was that so much code broke. As you say, we have minor breaking changes fairly 
+regularly, and yet all the examples you presented of people being upset were 
+from this one case where we screwed up. I think that shows that generally, the 
+process works: we can do minor breaking changes without disrupting the 
+ecosystem, and we can generally predict pretty well whether a change will 
+disrupt the ecosystem. (In this case, we actually got the prediction and it was 
+right! It predicted significant ecosystem breakage. But then diffusion of 
+responsibility happened and nobody acted on that data.)
 
-v1->v2:
-* major refactoring
-* walk the page tables only once
-* when importing, manually fault in pages if needed
+And yes, *technically* that change was permitted as there's an exception in the 
+stability RFC for such type ambiguity changes. However, we're not trying to be 
+"technically right", we're trying to do the right thing for the ecosystem, and 
+the way this went, we clearly didn't do the right thing. If we had just waited 
+another 3 or 4 Rust releases before rolling out this change, the impact would 
+have been a lot smaller, and you likely would never have heard about this.
 
-Claudio Imbrenda (1):
-  KVM: s390: pv: fix race when making a page secure
+(I'm saying "we" here since I am, to an extent, representing the Rust project in 
+this discussion. I can't actually speak for the Rust project, so these opinions 
+are my own. I also was not involved in any part of the "time" debacle.)
 
- arch/s390/include/asm/gmap.h |   1 -
- arch/s390/include/asm/uv.h   |   3 +-
- arch/s390/kernel/uv.c        | 135 +++++++++++++++++++++++++++++++++--
- arch/s390/kvm/gmap.c         | 101 ++------------------------
- arch/s390/kvm/kvm-s390.c     |  25 ++++---
- arch/s390/mm/gmap.c          |  28 --------
- 6 files changed, 153 insertions(+), 140 deletions(-)
+> Another concern I have is with Rust editions. It is
+> a well defined way of having language "versions",
+> and it does have automated conversion tools,
+> and Rust libraries choose themselves which
+> edition of Rust that they are using, independent
+> of the version of the compiler.
+> 
+> However, there are still some significant changes
+> to the language between editions, and that means
+> that to determine the correctness of Rust code, you
+> must know which edition it is written for.
 
--- 
-2.48.1
+There exist corner cases where that is true, yes. They are quite rare. Congrats 
+on finding one! But you hardly ever see such examples in practice. As above, 
+it's important to think of these things quantitatively, not qualitatively.
+
+Kind regards,
+Ralf
+
+> 
+> For instance, does this code have a deadlock?
+> 
+>      fn f(value: &RwLock<Option<bool>>) {
+>          if let Some(x) = *value.read().unwrap() {
+>              println!("value is {x}");
+>          } else {
+>              let mut v = value.write().unwrap();
+>              if v.is_none() {
+>                  *v = Some(true);
+>              }
+>          }
+>      }
+> 
+> The answer is that it depends on whether it is
+> interpreted as being in Rust edition 2021 or
+> Rust edition 2024. This is not as such an
+> issue for upgrading, since there are automated
+> conversion tools. But having semantic
+> changes like this means that programmers must
+> be aware of the edition that code is written in, and
+> when applicable, know the different semantics of
+> multiple editions. Rust editions are published every 3
+> years, containing new semantic changes typically.
+> 
+> There are editions Rust 2015, Rust 2018, Rust 2021,
+> Rust 2024.
+> 
+> Best, VJ.
 
 
