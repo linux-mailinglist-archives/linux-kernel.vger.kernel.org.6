@@ -1,132 +1,112 @@
-Return-Path: <linux-kernel+bounces-544113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4867A4DD83
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:08:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 919EAA4DD84
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:09:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD939188FFC5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:08:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6522B1775DC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:09:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F91D201256;
-	Tue,  4 Mar 2025 12:07:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCB9D20102F;
+	Tue,  4 Mar 2025 12:09:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OjFDoHtE"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EcovBiOr"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB02A1FF61E;
-	Tue,  4 Mar 2025 12:07:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB8D1FF601;
+	Tue,  4 Mar 2025 12:09:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741090074; cv=none; b=Sm1AjrbIpSDowmvV3eQ9LyYuJWTMKMa+3iMjgttr9icUWC2BnApd6O1XRBoPzKjMM+zQi84gNyrNySXgiaIVTs14vfyN+GWf1gAdcflMuluHL3KxXOHKJWHfSFDlaPxuspy8gz0kKRq4PVytArX5kTixl/eqH8+MUy3uGAbgX/s=
+	t=1741090165; cv=none; b=VsKYHJl8/LNaLrOWDYPK4C5W2PQStZV8yNGKAOtZpXTQeO5/8r3q/DDZnOHR3rkO44H7Kt9Gpyjol3zg11sHYqZYYxhWe20o3JU/53T7COvVjDaPnXA153hAnIU8ZriC5pd6unlEOASGMr28TcnoxfO0pnbLjCh2IFJWmCD9z84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741090074; c=relaxed/simple;
-	bh=MZy0VWiaiUcAOLUZr1EitCj53YlBljkRvHR7tDzANe4=;
+	s=arc-20240116; t=1741090165; c=relaxed/simple;
+	bh=ogSYhzGCHiiIkuY69mtK2P9WMYKeISRCXFDfjwBJNHA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SZ91nflJ6+O0DuCx4XStF74lpKu/eS2FuFeJUPQR6BEa8yj7Ro3R/eWKGZ+U/f2qpOzQpk9t1PWBNNs760LgJEc8kEPaaP/U9xOpjAQK+QQbr+dPbK82bFISvMOdqpKw6gwo53lndi7ERUyirKxdJOsLV2tN56W3vfJpo24OIak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OjFDoHtE; arc=none smtp.client-ip=192.198.163.12
+	 Content-Type:Content-Disposition:In-Reply-To; b=n6TqWlFUm0ZZFnBFkqR9FFYzyxg+dJmnyczorCJqbFWLIQTy7wCfGciAL2mX3E/QLnalwYOAxX6nI6HN4AXdfznO+IBKt8lyW+Co2Uk2M/iQ3VgQco0ebDMDANGC+TmUDphknN3wmODZ7ztqVon1SkBdvlvhoagz6oBneIgOetA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EcovBiOr; arc=none smtp.client-ip=192.198.163.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741090073; x=1772626073;
+  t=1741090163; x=1772626163;
   h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=MZy0VWiaiUcAOLUZr1EitCj53YlBljkRvHR7tDzANe4=;
-  b=OjFDoHtEB8j+hYmH5eI5uYxefcf3gD3to6tJdRfi+6LB3IB4C+JNQMUf
-   zVD9O8qDmuFFhnZn3wvFyoQnkwe0Zv6rMd6de2tQ/fCYHyOnEjXNTedCd
-   7PzzLdhA+3MrdJzRZurKr0HwGnANjDAYFffSMXMXT5ea4K+QEuEQ7fpgt
-   aLIwemjZAXYL4sAgrce77s8fqaFHwLk3cTptT+iHKNhVu+pTw83xsnGDN
-   zTrzZNLXtkhlhi1uS/Wxl8pNE+NewiST3Df05uYQu3aw6wO6xaUvSmtzl
-   UHF0kbE4hlf7X9zkG9S0GaUDsQpmfgL1TA9XeVyFdRIYooICvqKKQ10X6
-   A==;
-X-CSE-ConnectionGUID: v0K3UTOQRPymv5kbKNuyoQ==
-X-CSE-MsgGUID: yv8O43eeTDydbsGhE5ahpA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="45930048"
+   mime-version:in-reply-to;
+  bh=ogSYhzGCHiiIkuY69mtK2P9WMYKeISRCXFDfjwBJNHA=;
+  b=EcovBiOrvB+KZ608w1UsFOjqluuOQkO5dkzwOWBWArY/PfICO4SIVBMA
+   1NdZ5iX2ErATgO9DpKGm/wyiMcGwiZaLnCEesEWxRuKUXqU+OAhrcKa1n
+   GJBep1tndM/QdRWQ6PXKobpHnCLYhp9f8eFauKuuUtaqRW0gfLIg5x9nR
+   6lrPDMMc30RpxWlSfPiHeyiZ66Qq0nl1lBLnb+HXIPQVSscadlrf6O1e3
+   QAEGzqTcJu8alTY1WMqQR2C4kZ71Y0YPZxjxR6I8xSXvFzmHNyHn2BM5k
+   uAfCYhOvd0cTlmHeBiWvTs+tODmwsCPNjYjrrBqovZKxm+KuGqrwJKbzO
+   Q==;
+X-CSE-ConnectionGUID: SFO+9DJpRlWZoo9d6BcJTQ==
+X-CSE-MsgGUID: DYN0kg8HSJ29MFuDX3y9fQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="41181574"
 X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
-   d="scan'208";a="45930048"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 04:07:52 -0800
-X-CSE-ConnectionGUID: LzJzP827Tnuswzqwqylwxg==
-X-CSE-MsgGUID: 40ygOT6kTlyfDKAMKfgDBw==
+   d="scan'208";a="41181574"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 04:09:22 -0800
+X-CSE-ConnectionGUID: 0p40bEkYTg+w90kV7SKWmQ==
+X-CSE-MsgGUID: YurhHa8oRCaePj3Ivnp6tQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
-   d="scan'208";a="118352213"
+   d="scan'208";a="123363786"
 Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 04:07:46 -0800
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 04:09:20 -0800
 Received: from andy by smile.fi.intel.com with local (Exim 4.98)
 	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tpR3n-0000000H7I7-1M7c;
-	Tue, 04 Mar 2025 14:07:43 +0200
-Date: Tue, 4 Mar 2025 14:07:43 +0200
+	id 1tpR5J-0000000H7J9-10sU;
+	Tue, 04 Mar 2025 14:09:17 +0200
+Date: Tue, 4 Mar 2025 14:09:17 +0200
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
-	Nuno Sa <nuno.sa@analog.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Guillaume Stols <gstols@baylibre.com>,
-	Dumitru Ceclan <mitrutzceclan@gmail.com>,
-	Trevor Gamblin <tgamblin@baylibre.com>,
-	Matteo Martelli <matteomartelli3@gmail.com>,
-	Alisa-Dariana Roman <alisadariana@gmail.com>,
-	Ramona Alexandra Nechita <ramona.nechita@analog.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH v5 03/10] iio: adc: add helpers for parsing ADC nodes
-Message-ID: <Z8btDzggD29xtaAo@smile.fi.intel.com>
-References: <cover.1740993491.git.mazziesaccount@gmail.com>
- <e71c63c2f61135f9a8c7884525aab2c48f1e84c2.1740993491.git.mazziesaccount@gmail.com>
- <CAMknhBGQaqFZJsPAoauZL4S5MYtN05EOQ-BO2vw5gH+Z2RLOhw@mail.gmail.com>
+To: Li Zhijian <lizhijian@fujitsu.com>
+Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+	ilpo.jarvinen@linux.intel.com,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Ying Huang <huang.ying.caritas@gmail.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	linux-cxl@vger.kernel.org
+Subject: Re: [PATCH] resource: Fix resource leak in get_free_mem_region()
+Message-ID: <Z8btbTohCVzq16Qb@smile.fi.intel.com>
+References: <20250304043415.610286-1-lizhijian@fujitsu.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMknhBGQaqFZJsPAoauZL4S5MYtN05EOQ-BO2vw5gH+Z2RLOhw@mail.gmail.com>
+In-Reply-To: <20250304043415.610286-1-lizhijian@fujitsu.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, Mar 04, 2025 at 10:25:03AM +0100, David Lechner wrote:
-> On Mon, Mar 3, 2025 at 12:32 PM Matti Vaittinen
-> <mazziesaccount@gmail.com> wrote:
+On Tue, Mar 04, 2025 at 12:34:15PM +0800, Li Zhijian wrote:
+> The leak is detected by the kernel memory leak detector (`kmemleak`)
+> following a `cxl create-region` failure:
+> 
+>  cxl_acpi ACPI0017:00: decoder0.0: created region2
+>  cxl region2: HPA allocation error (-34) for size:0x0000000100000000 in CXL Window 0 [mem 0xa90000000-0x1a8fffffff flags 0x200]
+>  kmemleak: 1 new suspected memory leaks (see /sys/kernel/debug/kmemleak)
+> 
+>     __kmalloc_cache_noprof+0x28c/0x350
+>     get_free_mem_region+0x45/0x380
+>     alloc_free_mem_region+0x1d/0x30
+>     size_store+0x180/0x290 [cxl_core]
 
-...
+The below lines have no importance to be present in the commit message.
+Please read Submitting Patches documentation that justifies my comment.
 
-> There are some different opinions on this, but on the last patch I did
-> introducing a new namespace,
-
-> the consensus
-
-Hmm... I may not call that "the consensus"...
-
-> seems to be that putting
-> the MODULE_IMPORT_NS() in the header file was convenient so that users
-> of the API don't have to remember to both include the header and add
-> the import macro.
-
-Which I am against because it will diminish the point of prevention of
-the APIs abuse along with a potential to have the stale headers in
-the file when the code is moved somewhere else..
-
-So, please do not do that. We have only two abusers currently:
-the PWM and SPI OFFLOAD.
+>     kernfs_fop_write_iter+0x13f/0x1e0
+>     vfs_write+0x37c/0x540
+>     ksys_write+0x68/0xe0
+>     do_syscall_64+0x6e/0x190
+>     entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
 -- 
 With Best Regards,
