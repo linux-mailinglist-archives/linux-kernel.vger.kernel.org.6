@@ -1,81 +1,80 @@
-Return-Path: <linux-kernel+bounces-543837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9008A4DA85
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:31:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AF58A4DA8B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:31:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 481963A4211
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:29:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EE47176492
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:30:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46E702040AE;
-	Tue,  4 Mar 2025 10:26:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D45F12046B3;
+	Tue,  4 Mar 2025 10:26:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zk0sKXEj";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="R2D+iOsy"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="o+3un1Ow";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FAbl5B3+"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 661C7202F64;
-	Tue,  4 Mar 2025 10:26:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F062045AE;
+	Tue,  4 Mar 2025 10:26:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741083988; cv=none; b=DhauIFhKYPX6kURD2uh6wg6PQ+mkAhntmuWCEZ3rClcpvb7ZBPWkYvt3i2o09U3oisLGwq6R7yASqnDU8GpQyFAIZ/eq4tc6u6z5MDpPKjb7hNmARBVIY48SGIX3Rqf7Cx9ZP6wVRjbf2SrUIH9d7F/OtquGjTjFURwBEMdssRo=
+	t=1741083992; cv=none; b=NqvjWyFM8aI0Hn6lHZ4/TGuBtsHDjsM+dUk9wSwUcXpF2L6DpTsdXSj5cMyaupdut13CMV+CWay93iKZ1YUlS8fieAjtOmceAYbo/TfFShgdPGRLrJhNyT8p5S6tzfNmMZ1DN90FL5Amh748Hpelyk4mTGQVZYJqoPFctguB5BE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741083988; c=relaxed/simple;
-	bh=wBex5Uiq8Bk23ijsvCbLXhcHDDlKIBE/ro+JA+OC6Y8=;
+	s=arc-20240116; t=1741083992; c=relaxed/simple;
+	bh=6uEAJ8nD7fDYMEhw/EcoWoFmQyEslDZJFKt5CsJ8GCA=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=dI56NNp+/hDnlRA9CbYXRuVOaQ6N1mlqr/cUowesr7ee9TeEqrwwEIw3p8qreEWjmPwi+sOQ6qq+th5Qo331MXluePkiLE8/2WB3SjNfgoOhWdA/QFY9gEOM3VNk7vT8vsNTWevZRluxmmc6/cs4cXdVasShYIvOs+TxyMjPcpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zk0sKXEj; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=R2D+iOsy; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=tEfBGmExVhA1b2MpjfWVJDMEnqNiR9UZVgcccHkDJAmwJDW6VvjoAjLu2EnI74TNSIL+YnTDjxV2gkb3qn+ixJB1NbaghVrJaz0lKLicihxHp/cloHLhb++7/LmAXO//944lwza7fgL8rW43aYVr80O9J3WOV1hELLBkKelJ/+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=o+3un1Ow; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FAbl5B3+; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 04 Mar 2025 10:26:24 -0000
+Date: Tue, 04 Mar 2025 10:26:25 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741083985;
+	s=2020; t=1741083988;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=qHsk3DzzTsVY2dOKWB/ZLhxwcYe0/VmQts3avk17PG0=;
-	b=zk0sKXEjVIyFcdZVwi80sIPol3ITNL9RfKIcbekap5hCJ/88Nu1U1Tgdf59mEX0BRj48FU
-	+dNfX6h76d/rF/Cw834HPMf/g/JpSxzMJENKOj7g7Z18PXsD/nH21G6wEjxIA5yzScGeYh
-	EWjvUrfnNRLuMPVchKXKqN6S5KiodMlAAiZMPkO9Uhj6R++s9oAUcldrmosAj486U5gumo
-	+1MSalLsd2BEG3/EAnuwxE/fMLRFbXsHEuI38t7JVvl8DJFtvow/Y8z8mEfLCpojBXC1Nl
-	+oI0M03BnnlQ9WObt3wNRrd7W5hS5i2kBVai50Sniw16n0EwIWIPSlAV8MiqAw==
+	bh=CHHe/QlEvJCZDxnMMZ6s6iM4BrQ+XxwIJ9j9GMaOkS4=;
+	b=o+3un1OwvZ1VKbqkwYYsnfwyhaAZwGiRofXez0ZXu6/Dd5OX6tdUa7Fnv/7T9GnLqVoQ8v
+	fVuTLk2Y10EKoELMlSCVfIM+FXEfVq9bpGJiG6S9ZfJXR/YrG9tVxzT7PnTUUYeXzzOzWD
+	fpoKWe8mo0zrr2BPCZx9Ai7f3YCpE+X+RPOf198L/Px+1ZSmVov8piHKb/qfq65niI7q0K
+	p3rjCx7UXPoE/oZHlJY2FBpIXcxLLLXAwZHNFxWhv7FhjeGzk2/hbsv8gHVOE9MB4lTgIK
+	T5K2tLEdvxgijSx4pIW7gwDWEwrqKj7Tz8ux6hFg3xQt3lVbfHtWFAyN5nl5Dw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741083985;
+	s=2020e; t=1741083988;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=qHsk3DzzTsVY2dOKWB/ZLhxwcYe0/VmQts3avk17PG0=;
-	b=R2D+iOsyUjw845WqErCBlyOG32nWzDJoFR+icPNjSlqraLMay1e95UpjbaN/JBfV90YMl5
-	PtTKYOP5okxbKfBg==
-From: "tip-bot2 for Pawan Gupta" <tip-bot2@linutronix.de>
+	bh=CHHe/QlEvJCZDxnMMZ6s6iM4BrQ+XxwIJ9j9GMaOkS4=;
+	b=FAbl5B3+qfhNANqVrP6wcNxQ4Bx8YowQDSnwKXBG9ALdQN7OgDLpxdXkqhAPa9bQdERkpA
+	GGnJ/OjPWe9tbIAA==
+From: "tip-bot2 for Josh Poimboeuf" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/cpu] x86/speculation: Add a conditional CS prefix to CALL_NOSPEC
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
- Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- Ingo Molnar <mingo@kernel.org>, Andrew Cooper <andrew.cooper3@citrix.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250228-call-nospec-v3-2-96599fed0f33@linux.intel.com>
-References: <20250228-call-nospec-v3-2-96599fed0f33@linux.intel.com>
+Subject: [tip: x86/cpu] x86/smp: Fix mwait_play_dead() and
+ acpi_processor_ffh_play_dead() noreturn behavior
+Cc: "Paul E. McKenney" <paulmck@kernel.org>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To:
+ <e885c6fa9e96a61471b33e48c2162d28b15b14c5.1740962711.git.jpoimboe@kernel.org>
+References:
+ <e885c6fa9e96a61471b33e48c2162d28b15b14c5.1740962711.git.jpoimboe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174108398437.14745.11035078945434348570.tip-bot2@tip-bot2>
+Message-ID: <174108398752.14745.6850468204610985728.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -85,74 +84,132 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the x86/cpu branch of tip:
 
-Commit-ID:     052040e34c08428a5a388b85787e8531970c0c67
-Gitweb:        https://git.kernel.org/tip/052040e34c08428a5a388b85787e8531970c0c67
-Author:        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-AuthorDate:    Fri, 28 Feb 2025 18:35:58 -08:00
+Commit-ID:     4e32645cd8f97a308300623f81c902747df6b97b
+Gitweb:        https://git.kernel.org/tip/4e32645cd8f97a308300623f81c902747df6b97b
+Author:        Josh Poimboeuf <jpoimboe@kernel.org>
+AuthorDate:    Sun, 02 Mar 2025 16:48:51 -08:00
 Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Tue, 04 Mar 2025 11:14:42 +01:00
+CommitterDate: Tue, 04 Mar 2025 11:14:25 +01:00
 
-x86/speculation: Add a conditional CS prefix to CALL_NOSPEC
+x86/smp: Fix mwait_play_dead() and acpi_processor_ffh_play_dead() noreturn behavior
 
-Retpoline mitigation for spectre-v2 uses thunks for indirect branches. To
-support this mitigation compilers add a CS prefix with
--mindirect-branch-cs-prefix. For an indirect branch in asm, this needs to
-be added manually.
+Fix some related issues (done in a single patch to avoid introducing
+intermediate bisect warnings):
 
-CS prefix is already being added to indirect branches in asm files, but not
-in inline asm. Add CS prefix to CALL_NOSPEC for inline asm as well. There
-is no JMP_NOSPEC for inline asm.
+  1) The SMP version of mwait_play_dead() doesn't return, but its
+     !SMP counterpart does.  Make its calling behavior consistent by
+     resolving the !SMP version to a BUG().  It should never be called
+     anyway, this just enforces that at runtime and enables its callers
+     to be marked as __noreturn.
 
-Reported-by: Josh Poimboeuf <jpoimboe@kernel.org>
-Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+  2) While the SMP definition of mwait_play_dead() is annotated as
+     __noreturn, the declaration isn't.  Nor is it listed in
+     tools/objtool/noreturns.h.  Fix that.
+
+  3) Similar to #1, the SMP version of acpi_processor_ffh_play_dead()
+     doesn't return but its !SMP counterpart does.  Make the !SMP
+     version a BUG().  It should never be called.
+
+  4) acpi_processor_ffh_play_dead() doesn't return, but is lacking any
+     __noreturn annotations.  Fix that.
+
+This fixes the following objtool warnings:
+
+  vmlinux.o: warning: objtool: acpi_processor_ffh_play_dead+0x67: mwait_play_dead() is missing a __noreturn annotation
+  vmlinux.o: warning: objtool: acpi_idle_play_dead+0x3c: acpi_processor_ffh_play_dead() is missing a __noreturn annotation
+
+Fixes: a7dd183f0b38 ("x86/smp: Allow calling mwait_play_dead with an arbitrary hint")
+Fixes: 541ddf31e300 ("ACPI/processor_idle: Add FFH state handling")
+Reported-by: Paul E. McKenney <paulmck@kernel.org>
+Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Andrew Cooper <andrew.cooper3@citrix.com
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: https://lore.kernel.org/r/20250228-call-nospec-v3-2-96599fed0f33@linux.intel.com
+Tested-by: Paul E. McKenney <paulmck@kernel.org>
+Link: https://lore.kernel.org/r/e885c6fa9e96a61471b33e48c2162d28b15b14c5.1740962711.git.jpoimboe@kernel.org
 ---
- arch/x86/include/asm/nospec-branch.h | 19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/smp.h    | 4 ++--
+ arch/x86/kernel/acpi/cstate.c | 2 +-
+ include/acpi/processor.h      | 6 +++---
+ tools/objtool/noreturns.h     | 2 ++
+ 4 files changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-index 1e6b915..aee26bb 100644
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -198,9 +198,8 @@
- .endm
+diff --git a/arch/x86/include/asm/smp.h b/arch/x86/include/asm/smp.h
+index 80f8bfd..1d3b11e 100644
+--- a/arch/x86/include/asm/smp.h
++++ b/arch/x86/include/asm/smp.h
+@@ -114,7 +114,7 @@ void wbinvd_on_cpu(int cpu);
+ int wbinvd_on_all_cpus(void);
  
- /*
-- * Equivalent to -mindirect-branch-cs-prefix; emit the 5 byte jmp/call
-- * to the retpoline thunk with a CS prefix when the register requires
-- * a RAX prefix byte to encode. Also see apply_retpolines().
-+ * Emits a conditional CS prefix that is compatible with
-+ * -mindirect-branch-cs-prefix.
-  */
- .macro __CS_PREFIX reg:req
- 	.irp rs,r8,r9,r10,r11,r12,r13,r14,r15
-@@ -421,11 +420,23 @@ static inline void call_depth_return_thunk(void) {}
- #ifdef CONFIG_X86_64
+ void smp_kick_mwait_play_dead(void);
+-void mwait_play_dead(unsigned int eax_hint);
++void __noreturn mwait_play_dead(unsigned int eax_hint);
  
- /*
-+ * Emits a conditional CS prefix that is compatible with
-+ * -mindirect-branch-cs-prefix.
-+ */
-+#define __CS_PREFIX(reg)				\
-+	".irp rs,r8,r9,r10,r11,r12,r13,r14,r15\n"	\
-+	".ifc \\rs," reg "\n"				\
-+	".byte 0x2e\n"					\
-+	".endif\n"					\
-+	".endr\n"
-+
-+/*
-  * Inline asm uses the %V modifier which is only in newer GCC
-  * which is ensured when CONFIG_MITIGATION_RETPOLINE is defined.
-  */
- #ifdef CONFIG_MITIGATION_RETPOLINE
--#define CALL_NOSPEC	"call __x86_indirect_thunk_%V[thunk_target]\n"
-+#define CALL_NOSPEC	__CS_PREFIX("%V[thunk_target]")	\
-+			"call __x86_indirect_thunk_%V[thunk_target]\n"
+ void native_smp_send_reschedule(int cpu);
+ void native_send_call_func_ipi(const struct cpumask *mask);
+@@ -166,7 +166,7 @@ static inline struct cpumask *cpu_llc_shared_mask(int cpu)
+ 	return (struct cpumask *)cpumask_of(0);
+ }
+ 
+-static inline void mwait_play_dead(unsigned int eax_hint) { }
++static inline void __noreturn mwait_play_dead(unsigned int eax_hint) { BUG(); }
+ #endif /* CONFIG_SMP */
+ 
+ #ifdef CONFIG_DEBUG_NMI_SELFTEST
+diff --git a/arch/x86/kernel/acpi/cstate.c b/arch/x86/kernel/acpi/cstate.c
+index 86c87c0..d255842 100644
+--- a/arch/x86/kernel/acpi/cstate.c
++++ b/arch/x86/kernel/acpi/cstate.c
+@@ -206,7 +206,7 @@ int acpi_processor_ffh_cstate_probe(unsigned int cpu,
+ }
+ EXPORT_SYMBOL_GPL(acpi_processor_ffh_cstate_probe);
+ 
+-void acpi_processor_ffh_play_dead(struct acpi_processor_cx *cx)
++void __noreturn acpi_processor_ffh_play_dead(struct acpi_processor_cx *cx)
+ {
+ 	unsigned int cpu = smp_processor_id();
+ 	struct cstate_entry *percpu_entry;
+diff --git a/include/acpi/processor.h b/include/acpi/processor.h
+index 63a37e7..d0eccbd 100644
+--- a/include/acpi/processor.h
++++ b/include/acpi/processor.h
+@@ -280,7 +280,7 @@ int acpi_processor_ffh_cstate_probe(unsigned int cpu,
+ 				    struct acpi_processor_cx *cx,
+ 				    struct acpi_power_register *reg);
+ void acpi_processor_ffh_cstate_enter(struct acpi_processor_cx *cstate);
+-void acpi_processor_ffh_play_dead(struct acpi_processor_cx *cx);
++void __noreturn acpi_processor_ffh_play_dead(struct acpi_processor_cx *cx);
  #else
- #define CALL_NOSPEC	"call *%[thunk_target]\n"
+ static inline void acpi_processor_power_init_bm_check(struct
+ 						      acpi_processor_flags
+@@ -301,9 +301,9 @@ static inline void acpi_processor_ffh_cstate_enter(struct acpi_processor_cx
+ {
+ 	return;
+ }
+-static inline void acpi_processor_ffh_play_dead(struct acpi_processor_cx *cx)
++static inline void __noreturn acpi_processor_ffh_play_dead(struct acpi_processor_cx *cx)
+ {
+-	return;
++	BUG();
+ }
  #endif
+ 
+diff --git a/tools/objtool/noreturns.h b/tools/objtool/noreturns.h
+index b217489..5a4aec4 100644
+--- a/tools/objtool/noreturns.h
++++ b/tools/objtool/noreturns.h
+@@ -16,6 +16,7 @@ NORETURN(__tdx_hypercall_failed)
+ NORETURN(__ubsan_handle_builtin_unreachable)
+ NORETURN(__x64_sys_exit)
+ NORETURN(__x64_sys_exit_group)
++NORETURN(acpi_processor_ffh_play_dead)
+ NORETURN(arch_cpu_idle_dead)
+ NORETURN(bch2_trans_in_restart_error)
+ NORETURN(bch2_trans_restart_error)
+@@ -34,6 +35,7 @@ NORETURN(kunit_try_catch_throw)
+ NORETURN(machine_real_restart)
+ NORETURN(make_task_dead)
+ NORETURN(mpt_halt_firmware)
++NORETURN(mwait_play_dead)
+ NORETURN(nmi_panic_self_stop)
+ NORETURN(panic)
+ NORETURN(panic_smp_self_stop)
 
