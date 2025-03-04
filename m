@@ -1,106 +1,122 @@
-Return-Path: <linux-kernel+bounces-543022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FBB9A4D0B7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 02:24:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B26DA4D0BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 02:25:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B7D2166022
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:24:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20A571891A74
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:25:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F861132111;
-	Tue,  4 Mar 2025 01:24:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u8LSoMnO"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0906213B58C;
+	Tue,  4 Mar 2025 01:24:55 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D489273FD;
-	Tue,  4 Mar 2025 01:24:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D8AA757F3;
+	Tue,  4 Mar 2025 01:24:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741051450; cv=none; b=kcQ7PKagwy24UELTZ/jhGmhMnuMad8ZHJncmhqJXKnMA/0tTO3CHCz1Dhiw2DlZSMiFW+5aY/svfNFkTZ4Y61qgqGFz/Vd8OwEjDANYXEb15XZ17IvEO+oCv/0aZlberJ00ZQaS9mGpdxSvKXnYxTPKsxyQ9nvn/1Gsfnd2oy6s=
+	t=1741051494; cv=none; b=uY6hz4xRC804PM9PhwVzWdek3JzlM7s7MtPFS/Y6VSQUP1vWkfvWGeEA59AMdjxDdLtCedo+zBEOXljKl7vYw3uvmUiCEYjl8d3JGlwIM2gAK9VKAv8qfGLytrx8L/3uOS+/IFp+MErBdrG7CI0A3z0KjTtV88/DMdAi4q3Aej4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741051450; c=relaxed/simple;
-	bh=E2F08/o2OSzuu8jrFvRof23F4wF1UTe9v7R9uNKJugM=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=mcgixihuHdlnr/VQT0vk2+lSM/2qwZGE2nRRqk+fpBESGxY59gR+Lz4XxLTgADvoO+xykhqzbLY+KXVD0ijjtzIRkzlUM9PqFGx0pKukNLGicp1ORQtV3K+aRZP+8jwnxZ1cQpSKyIpbJgx/6ipoQu1A6AkydaDan9vyAzWmCLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u8LSoMnO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7ED6C4CEE4;
-	Tue,  4 Mar 2025 01:24:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741051449;
-	bh=E2F08/o2OSzuu8jrFvRof23F4wF1UTe9v7R9uNKJugM=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=u8LSoMnOcd05kRsUfZGCFaY1x+Gj/801isMvowIZCnI3uz1CUHEK+dU+svd5YHEVm
-	 10Ru54utTdmBkSyqfGcfMt9vPuWCtCXQx1ieHg7CuJ22bsTMAXg3thcrZWqtHIUp56
-	 5yNxN1JeRyiaWJpla12/uHsY/+sad2oLMDntjPUSTxR5edCA6MIE6YVvLLz/pFdcfU
-	 ERmMJdAUWBRpREHjTRQEif16hFvrGg/mP9jkzXEE506Ly/BS+SEPlgEE2cheRab4sL
-	 TuoKKFKwBrb33Rt5dzPUt6yPFEPOIRt/FLWj9bkB0wS2EFIXUpzKrFURp6XpAJ6siY
-	 6kkR8/vWSfUQw==
-Date: Mon, 03 Mar 2025 19:24:08 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1741051494; c=relaxed/simple;
+	bh=gDp+keTBGkyyzkgHraj9w+WxPdTkzEvYF2R34d3mnuk=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=EJDirptP7ANmmnbmz/0Nx0sW+78FQS523B2g2NBKrgOYVGSvEU+Gli3QwThzHeS2fBRRMjhfERzTpyb8dqc5w87PLIOlz8mMeh88V+ko84t0C1S6ulfB3iUyOulWZCdJWdDEsICySUyDJL0GiGd80tgHRMo5QiECJW7sWb+VIl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 173C7C4CEE4;
+	Tue,  4 Mar 2025 01:24:54 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1tpH2Z-0000000CC4B-2zVP;
+	Mon, 03 Mar 2025 20:25:47 -0500
+Message-ID: <20250304012516.282694507@goodmis.org>
+User-Agent: quilt/0.68
+Date: Mon, 03 Mar 2025 20:25:16 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH v3 0/8] ring-buffer/tracing: Save module information in persistent memory
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Michael.Hennerich@analog.com, 
- jic23@kernel.org, linux-iio@vger.kernel.org, linux-staging@lists.linux.dev, 
- devicetree@vger.kernel.org, gregkh@linuxfoundation.org, conor+dt@kernel.org, 
- krzk+dt@kernel.org, 21cnbao@gmail.com, lars@metafoo.de
-To: Saalim Quadri <danascape@gmail.com>
-In-Reply-To: <20250303235930.68731-1-danascape@gmail.com>
-References: <20250303235930.68731-1-danascape@gmail.com>
-Message-Id: <174105144819.171181.14482923503787621828.robh@kernel.org>
-Subject: Re: [PATCH v2] dt-bindings: iio: accel: add binding documentation
- for ADIS16203
 
 
-On Tue, 04 Mar 2025 05:29:30 +0530, Saalim Quadri wrote:
-> This patch add device tree binding documentation for ADIS16203.
-> 
-> Signed-off-by: Saalim Quadri <danascape@gmail.com>
-> ---
-> Changes:
-> V1 - V2: change compatible property from enum to const
-> 
->  .../bindings/iio/accel/adi,adis16203.yaml     | 52 +++++++++++++++++++
->  1 file changed, 52 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/accel/adi,adis16203.yaml
-> 
+This updates the persistent instance to record what modules were
+loaded and what addresses they were loaded at.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+First the KASLR offset is recorded in the persistent ring buffer instead of
+a text address. This can be used to calculated the address offset.
 
-yamllint warnings/errors:
+Next the persistent memory is divided up differently so that there's
+a single global meta data for the entire buffer that can hold the
+global data, and each per CPU meta data can just hold what it needs.
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/accel/adi,adis16203.yaml: properties:compatible:const: ['adi,adis16203'] is not of type 'integer', 'string'
-	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/accel/adi,adis16203.yaml: properties:compatible:const: ['adi,adis16203'] is not of type 'string'
-	from schema $id: http://devicetree.org/meta-schemas/string-array.yaml#
-Documentation/devicetree/bindings/iio/accel/adi,adis16203.example.dtb: /example-0/spi/accelerometer@0: failed to match any schema with compatible: ['adi,adis16203']
+A scratch area can be created by the caller, in this case the tracing
+system, to store data in the persistent memory area.
 
-doc reference errors (make refcheckdocs):
+As the KASLR offset is only needed by the tracer, that data is moved
+from the ring buffer meta data into this new storage.
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250303235930.68731-1-danascape@gmail.com
+Next the modules that are loaded and where they are loaded is stored in this
+new persistent storage.
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+The module list along with the KASLR offset is now exposed in the
+last_boot_info if the buffer is from a previous boot. If it is from the
+current boot, the file will only contain:
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+   # Current
 
-pip3 install dtschema --upgrade
+in order to not leak the KASLR offset.
 
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+Finally, when new modules are loaded while the trace is active, they too
+will be added to this persistent memory. Note, if tracing is stopped, and
+then restarted, it clears the module list and will reload all the modules
+again so that it doesn't need to keep track of what is loaded or unloaded
+while no tracing is going on.
 
+Changes since v2: https://lore.kernel.org/linux-trace-kernel/20250215034301.624019422@goodmis.org/
+
+- Have the module loop be protected by RCU and not preemption disabling
+
+- Take the scratch_mutex outside of save_mod() to prevent deadlocks
+
+Changes since v1: https://lore.kernel.org/all/20250205225031.799739376@goodmis.org/
+
+- Rebased on top of the urgent branch
+
+- Allow the size of the scratch area in the persistent ring buffer to be
+  defined by the caller.
+
+- Change the output of the last_boot_info to show the kaslr instead of:
+  "Offset: <offset>" to "<offset>\t[kernel]" to make it consistent with
+  the module output.
+
+
+Steven Rostedt (8):
+      ring-buffer: Use kaslr address instead of text delta
+      ring-buffer: Add buffer meta data for persistent ring buffer
+      ring-buffer: Add ring_buffer_meta_scratch()
+      tracing: Have persistent trace instances save KASLR offset
+      module: Add module_for_each_mod() function
+      tracing: Have persistent trace instances save module addresses
+      tracing: Show module names and addresses of last boot
+      tracing: Update modules to persistent instances when loaded
+
+----
+ include/linux/module.h      |   6 +
+ include/linux/ring_buffer.h |   8 +-
+ kernel/module/main.c        |  13 +++
+ kernel/trace/ring_buffer.c  | 245 +++++++++++++++++++++++-----------------
+ kernel/trace/trace.c        | 264 ++++++++++++++++++++++++++++++++++++++++----
+ kernel/trace/trace.h        |  15 ++-
+ kernel/trace/trace_events.c |  40 +++++--
+ 7 files changed, 448 insertions(+), 143 deletions(-)
 
