@@ -1,100 +1,195 @@
-Return-Path: <linux-kernel+bounces-544622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B966BA4E324
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:27:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A15D5A4E333
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:28:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B55317F8D8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:21:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C55A3BEB99
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:20:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E96C27C17C;
-	Tue,  4 Mar 2025 15:15:23 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99EE1FFC57;
+	Tue,  4 Mar 2025 15:14:38 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B99225EFB7
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:15:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AC6A202F8F;
+	Tue,  4 Mar 2025 15:14:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741101323; cv=none; b=rkzm89+7+7JlQYNwlYCSz447CjifRp98PDGBxT/XrgL39pM2+uw/IEQkE98aOKsIHCibryICx/JfbLkPu8f46bEEqadEhjoHhElLSm9uo0ciYDa6j4uPBpk8/fUGd37J7Gkkzjf2rSdmP+9GSqNVtNnIf+EkaGjF0Nb2+T5Jvlw=
+	t=1741101278; cv=none; b=Z8f0kqeGyGdRaP78SgqT+fysve17OAkuwQ4AyxOfoL1nfVQ258+vSBcx2OtCgS2wxV3PZWBcIKZNt57u7hDDDVEx37RhglN/BDjXVt5tluEWBrJLCxM4UTkjErcw2tV2Whvl36KV2UKagNXkh7hOvy8fAaWN5zIDk5sASpGcfVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741101323; c=relaxed/simple;
-	bh=mcLZWbvX4OASqJ6TP4DsOuccHhHsTxZE1ZtN7Iwta84=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=EIoKiAYAqJs1HhuVSiGLEl+Bf/n7DJuQ6htp31LdMqutGm7YnAcbRXRSfS5pVXfAUq4zIkF3RUiSyddvt3CUxA9EGULsNvNpTtBarhrY496s8+tFOx6qs1IRZRlnLUwy5/F6Pdp4HnNHzBrS/51yzBIsRZS6/MQp21hBaEG0syg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3d2b6d933baso134301755ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 07:15:21 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741101320; x=1741706120;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xCSESAKsiqQ+IFJbEFJWlyCbShr8mBIqRgAxgCfBLE8=;
-        b=M0Z8OBRbzR8nJ7ngN/gsEYGULLky29NPwTfL3VoiUg6lftkwKC6UhYXyDVJrfmO+PE
-         HXcNW7K6KW1HFRVGiTxQEEPLczTpAxussWOfqbtwRyG7McS4pf+QAhJZTVfqXxCbNdFc
-         iaBVJ4LfPPUAV9iEB62ZLn4OW/iIB4rvQzqklnNKEJAxcYSHA0zQ9CbU2BqZIaU1atJx
-         ZD6cOvkt0q2iP0KOHffIUQgCIxC+bGOVJapsrpINKJUaCEKENXDAHQNyNn0zKwD4/5J0
-         8q6HCFe0UJNU0GQK1iXcQUILyeh9xRzsHVwCsddoUgUvuKHn01juXbzLgo0epuGNSxEp
-         8rbw==
-X-Forwarded-Encrypted: i=1; AJvYcCXflm+//WIqIH7t3ZfW9sw/PaOpPNhCOaKyNNsm3Yj990Tz+lN9Qb8K9fuIx9jqkhKanTHtucUtn5upLVg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMgBS1YLc+9eofNBjN/hU1eyU1wVkCejFiiDDKoC0AcNuNq8sb
-	LGdJHWFs2avo04f2JgiL7yn8qeeitQYowlWQ5mwTHZFdtx36wh6Co3kIcx6GsIySO1+D9PzprXT
-	Z9bmPzMHK3YgfMMk67t78qUWuWPGOxhbfgp2gguH725II4bOl1iqNOVg=
-X-Google-Smtp-Source: AGHT+IFPSuVdOkDMWbPlHI6z489JojogoUgQt+6oFcvH+IjYcYZ03ZG8x9ZGyJ2qGUlEY8tpl46mn69MJBTzEUuNU9ZXyrhahC6B
+	s=arc-20240116; t=1741101278; c=relaxed/simple;
+	bh=zWrzCGCyEtmz4bprxj0QGkAf7nnb/KqKRPqPQWMwaxY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nhySPWhB+8BYwIJCq1VwfggVgtJ7sIkl/ZWDW+nbnQtt8C8deYGAlQZA2cy8FHXs3JvwshjipQPB7npHL3bj4LnI/jqf0Xhlh9yczDjM5gQFmIDea5/vS+b+mpdMxzzhdpGNsSY/uYHByKSTJ4tYpOEt1LzhukmrsdY3GY7CscU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8BC4C4CEE5;
+	Tue,  4 Mar 2025 15:14:36 +0000 (UTC)
+Date: Tue, 4 Mar 2025 10:15:31 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Strforexc yn <strforexc@gmail.com>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>, "Paul E. McKenney"
+ <paulmck@kernel.org>, Josh Triplett <josh@joshtriplett.org>, Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>, rcu@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Kent Overstreet <kent.overstreet@linux.dev>,
+ linux-bcachefs@vger.kernel.org
+Subject: Re: KASAN: global-out-of-bounds Read in srcu_gp_start_if_needed
+Message-ID: <20250304101531.55de1072@gandalf.local.home>
+In-Reply-To: <CA+HokZrPb-oHcuZQsc=LZ6_aJfjKy9oMeCBd-tq4b_sX5EG7NQ@mail.gmail.com>
+References: <CA+HokZrPb-oHcuZQsc=LZ6_aJfjKy9oMeCBd-tq4b_sX5EG7NQ@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ca06:0:b0:3d3:d8d2:2900 with SMTP id
- e9e14a558f8ab-3d3e6d78964mr168396415ab.0.1741101320684; Tue, 04 Mar 2025
- 07:15:20 -0800 (PST)
-Date: Tue, 04 Mar 2025 07:15:20 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67c71908.050a0220.15b4b9.0010.GAE@google.com>
-Subject: [syzbot] Monthly nfc report (Mar 2025)
-From: syzbot <syzbot+list1809e16a6bbc3c9e72b9@syzkaller.appspotmail.com>
-To: krzk@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hello nfc maintainers/developers,
 
-This is a 31-day syzbot report for the nfc subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/nfc
+I just realized that the bcachefs maintainer wasn't Cc'd on this.
 
-During the period, 0 new issues were detected and 0 were fixed.
-In total, 6 issues are still open and 27 have already been fixed.
+As I believe that this is more likely a bcachefs bug than an RCU bug, I'm
+adding the bcachefs maintainer and mailing list to this.
 
-Some of the still happening issues:
 
-Ref Crashes Repro Title
-<1> 340     Yes   INFO: task hung in nfc_rfkill_set_block
-                  https://syzkaller.appspot.com/bug?extid=3e3c2f8ca188e30b1427
-<2> 275     Yes   INFO: task hung in rfkill_unregister (3)
-                  https://syzkaller.appspot.com/bug?extid=bb540a4bbfb4ae3b425d
-<3> 45      Yes   KMSAN: uninit-value in nci_ntf_packet (3)
-                  https://syzkaller.appspot.com/bug?extid=3f8fa0edaa75710cd66e
-<4> 42      Yes   INFO: task hung in rfkill_sync_work
-                  https://syzkaller.appspot.com/bug?extid=9ef743bba3a17c756174
+On Mon, 3 Mar 2025 08:44:48 +0800
+Strforexc yn <strforexc@gmail.com> wrote:
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> Dear Maintainers, When using our customized Syzkaller to fuzz the
+> latest Linux kernel, the following crash was triggered.
+>=20
+> Kernel commit: v6.14-rc4 (Commits on Feb 24, 2025)
+> Kernel Config : https://github.com/Strforexc/LinuxKernelbug/blob/main/.co=
+nfig
+> Kernel Log: attachment
+>=20
+> I=E2=80=99ve encountered a KASAN-reported global-out-of-bounds read in Li=
+nux
+> kernel 6.14.0-rc4, involving the RCU subsystem and bcachefs. Here are
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+In the future, if you see an issue between two subsystems, make sure to
+include the maintainers of both subsystems!
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
+Thanks,
 
-You may send multiple commands in a single email message.
+-- Steve
+
+
+> the details:
+>=20
+> A global-out-of-bounds read of size 1 was detected at address
+> ffffffff8b8e8d55 in string_nocheck (lib/vsprintf.c:632), called from
+> string (lib/vsprintf.c:714). The buggy address belongs to
+> str__rcu__trace_system_name+0x815/0xb40, triggered by a kworker task.
+>=20
+> The issue occurs during a bcachefs transaction commit
+> (bch2_trans_commit), which enqueues an RCU callback via
+> srcu_gp_start_if_needed. The out-of-bounds access happens in
+> string_nocheck, likely during a printk or tracepoint operation
+> (vprintk_emit), triggered by a lockdep warning (__warn_printk). The
+> variable str__rcu__trace_system_name (size 0xb40) is overrun at offset
+> 0x815, suggesting a string handling bug in RCU or bcachefs debug
+> output.
+>=20
+> The bug was observed in a QEMU environment during
+> btree_interior_update_work execution in bcachefs. It may involve
+> filesystem operations (e.g., key cache dropping) under load. I don=E2=80=
+=99t
+> have a precise reproducer yet but can assist with testing.
+>=20
+> Could RCU or bcachefs maintainers investigate? This might be a
+> tracepoint or printk format string issue in srcu_gp_start_if_needed or
+> related code. I suspect an invalid index into
+> str__rcu__trace_system_name or a pointer corruption. Happy to provide
+> more logs or test patches.
+>=20
+> If you fix this issue, please add the following tag to the commit:
+> Reported-by: Zhizhuo Tang <strforexctzzchange@foxmail.com>, Jianzhou
+> Zhao <xnxc22xnxc22@qq.com>, Haoran Liu <cherest_san@163.com>
+> ------------[ cut here ]------------
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> BUG: KASAN: global-out-of-bounds in string_nocheck lib/vsprintf.c:632 [in=
+line]
+> BUG: KASAN: global-out-of-bounds in string+0x4b3/0x500 lib/vsprintf.c:714
+> Read of size 1 at addr ffffffff8b8e8d55 by task kworker/u10:0/28
+>=20
+> CPU: 1 UID: 0 PID: 28 Comm: kworker/u10:0 Not tainted 6.14.0-rc4 #1
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/0=
+1/2014
+> Workqueue: btree_update btree_interior_update_work
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x116/0x1b0 lib/dump_stack.c:120
+>  print_address_description.constprop.0+0x2c/0x420 mm/kasan/report.c:408
+>  print_report+0xaa/0x270 mm/kasan/report.c:521
+>  kasan_report+0xbd/0x100 mm/kasan/report.c:634
+>  string_nocheck lib/vsprintf.c:632 [inline]
+>  string+0x4b3/0x500 lib/vsprintf.c:714
+>  vsnprintf+0x620/0x1120 lib/vsprintf.c:2843
+>  vprintk_store+0x34f/0xb90 kernel/printk/printk.c:2279
+>  vprintk_emit+0x151/0x330 kernel/printk/printk.c:2408
+>  __warn_printk+0x162/0x320 kernel/panic.c:797
+>  look_up_lock_class+0xad/0x160 kernel/locking/lockdep.c:938
+>  register_lock_class+0xb2/0xfc0 kernel/locking/lockdep.c:1292
+>  __lock_acquire+0xc3/0x16a0 kernel/locking/lockdep.c:5103
+>  lock_acquire+0x181/0x3a0 kernel/locking/lockdep.c:5851
+>  __raw_spin_trylock include/linux/spinlock_api_smp.h:90 [inline]
+>  _raw_spin_trylock+0x76/0xa0 kernel/locking/spinlock.c:138
+>  spin_lock_irqsave_sdp_contention kernel/rcu/srcutree.c:375 [inline]
+>  srcu_gp_start_if_needed+0x1a9/0x5f0 kernel/rcu/srcutree.c:1270
+>  __call_rcu fs/bcachefs/rcu_pending.c:76 [inline]
+>  __rcu_pending_enqueue fs/bcachefs/rcu_pending.c:497 [inline]
+>  rcu_pending_enqueue+0x686/0xd30 fs/bcachefs/rcu_pending.c:531
+>  bkey_cached_free+0xfd/0x170 fs/bcachefs/btree_key_cache.c:115
+>  bch2_btree_key_cache_drop+0xe7/0x770 fs/bcachefs/btree_key_cache.c:613
+>  bch2_trans_commit_write_locked.constprop.0+0x2bc6/0x3bc0
+> fs/bcachefs/btree_trans_commit.c:794
+>  do_bch2_trans_commit.isra.0+0x7a6/0x12f0 fs/bcachefs/btree_trans_commit.=
+c:866
+>  __bch2_trans_commit+0x1018/0x18e0 fs/bcachefs/btree_trans_commit.c:1070
+>  bch2_trans_commit fs/bcachefs/btree_update.h:183 [inline]
+>  btree_update_nodes_written+0x1352/0x2210
+> fs/bcachefs/btree_update_interior.c:708
+>  btree_interior_update_work+0xda/0x100 fs/bcachefs/btree_update_interior.=
+c:846
+>  process_one_work+0x109d/0x18c0 kernel/workqueue.c:3236
+>  process_scheduled_works kernel/workqueue.c:3317 [inline]
+>  worker_thread+0x677/0xe90 kernel/workqueue.c:3398
+>  kthread+0x3b3/0x760 kernel/kthread.c:464
+>  ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:148
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>  </TASK>
+>=20
+> The buggy address belongs to the variable:
+>  str__rcu__trace_system_name+0x815/0xb40
+>=20
+> The buggy address belongs to the physical page:
+> page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0xb8e8
+> flags: 0xfff00000002000(reserved|node=3D0|zone=3D1|lastcpupid=3D0x7ff)
+> raw: 00fff00000002000 ffffea00002e3a08 ffffea00002e3a08 0000000000000000
+> raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
+> page dumped because: kasan: bad access detected
+> page_owner info is not present (never set?)
+>=20
+> Memory state around the buggy address:
+>  ffffffff8b8e8c00: f9 f9 f9 f9 00 00 00 00 03 f9 f9 f9 f9 f9 f9 f9
+>  ffffffff8b8e8c80: 00 00 00 00 00 00 01 f9 f9 f9 f9 f9 00 00 00 07
+> >ffffffff8b8e8d00: f9 f9 f9 f9 00 00 00 03 f9 f9 f9 f9 00 00 00 06 =20
+>                                                  ^
+>  ffffffff8b8e8d80: f9 f9 f9 f9 00 00 03 f9 f9 f9 f9 f9 00 00 01 f9
+>  ffffffff8b8e8e00: f9 f9 f9 f9 00 01 f9 f9 f9 f9 f9 f9 00 00 00 00
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> Thanks,
+> Zhizhuo Tang
+
 
