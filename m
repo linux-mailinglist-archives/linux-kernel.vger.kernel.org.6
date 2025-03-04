@@ -1,137 +1,162 @@
-Return-Path: <linux-kernel+bounces-545652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E309A4EFA5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:56:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37083A4EFCF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:00:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBA013AA59D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:56:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7194516EB87
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:00:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A4FF2780F2;
-	Tue,  4 Mar 2025 21:56:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00FA727EC6F;
+	Tue,  4 Mar 2025 21:58:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="IYJN1450"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FK9QapEC"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 210C524EAA8;
-	Tue,  4 Mar 2025 21:56:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0091027C15E;
+	Tue,  4 Mar 2025 21:58:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741125404; cv=none; b=vFtoyAjzbOVlLLLBRwQOtp+wvvl1b9gUMLuNV+tyjjTw08ivSL1JURn66O0TEar8zUqh+50Eff/wYzDwV8SAGvUrVDuN2RveIByGPw5PXyABMMNldbu6wmB984aTksW6gWUZqzY5xe3Ag9FHXSKjwuN6RPHpNoK/tDvOBq5dRCk=
+	t=1741125483; cv=none; b=ddZjPsLSPkNSxRpfPdQaqtaco1Wu8WRuu10laxbQXrb6oIk1TVyMQuAtSB8eWlcAeTnkK4jZlQbu8qDta6SzeKSCj+Lt/Z9dqbh8bULFqGi1BuZsMduCbRmEf09Xt0NS/Ci9hAIwuz0pNYwJbnopsmL4v2jWDizKao8FEWPhTDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741125404; c=relaxed/simple;
-	bh=uGzPPWORNkzjJHKcH4MLXQ9q3pRn2Ha+pyfPZiUoj18=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JgZ87eyo95HALAur09ymNRdqeuDXU9uQ189cLdM0nXMLuNtI4uqrF2R9sEqoQx44ajgd0xLhNO8EtIE2Z7h4sX9Zqh893wXSOKtJsx2px1/RlZ5Wv0hlrODjAl7qEyLOzIq0CzXvepjTbPJXF1og988Wc6/nkz0k6yq4DJ9mBFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=IYJN1450; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=EonlkIdhc9iF91UeJx88CcwdpNRXjvyUfwnoMhn+ogE=; b=IYJN1450OjxNRwsw
-	AMwhNNEOU7AGUICSS8ovH8L4lhqwXTpWAXcUdg0PgE9/c1SqC5sb2M/0fDnJGLDGZJnLoL3xumOr4
-	Fd3lLpG3jYFNau3gh4ZXCqYNFJJf2BQIFWlOWXvD+48YhuR1MrqsJcnbG752Q1l4JoBBJKaFa3BAM
-	Qvu5MDlbydWnXq15IdVA/itdss6hBIHKBr8zHQtN9vjznqE8v08iO1ZBQqV/Zi5ieTRrnKODMSQOM
-	NnInLN0nRdE3uUC/0rW2s+PAQtP4I9FshPZ1eVcdgAvRIVjCDm7U45sSlUs9PYmaBWq5sIbVtPAO3
-	D4mPqKAX1Kasm8qMgQ==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1tpaFh-002fPg-1w;
-	Tue, 04 Mar 2025 21:56:37 +0000
-From: linux@treblig.org
-To: bryan-bt.tan@broadcom.com,
-	vishnu.dasa@broadcom.com,
-	jgg@ziepe.ca,
-	leon@kernel.org
-Cc: bcm-kernel-feedback-list@broadcom.com,
-	linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] RDMA/vmw_pvrdma: Remove unused pvrdma_modify_device
-Date: Tue,  4 Mar 2025 21:56:36 +0000
-Message-ID: <20250304215637.68559-1-linux@treblig.org>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741125483; c=relaxed/simple;
+	bh=BGucnQA/nifi+dsAtNA0+RmS3arEC5k4hatqtvHdVL0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=ln3BlFZypY9HBObUvsHvUX/soJQ/v06HuVt3AA/2hl6/fsoUCCo1SCBE0RsypZ9yDCnCTW/AZ5j0TvDQJuX59XEmo9qabQVi8gKkb6DTM9qqT2L9KsbUA1c/WeS9s+ztLtHAFh5j1GEEpX3Usd2Kau6LukAD+HhS7GDdFcboDdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FK9QapEC; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 524LOwde027370;
+	Tue, 4 Mar 2025 21:57:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	9eyWpJjcKKZsjzfL98Ea/THIAJG7x3RiAA7tMYh00x4=; b=FK9QapECEQztG7Qy
+	G/biM+Gse/lHmKOC1BCD7cgybnL5kYRcObUgSHBCDNEjcCcAbtiuQIGM+9Kf2WHu
+	mw3gfM2xabppaHYLC+uhRwrC8uvV2vvs6OCxDk5ii1bZDIA7HCEfZ6GpczaLfq+R
+	uyNwgA3F/2EHd7bxBHS1MLGWwGnHFE80g9lvADHg59U8XMrdRscXezgM5kPvDDUU
+	cfQeXZUg2F29RW1RVg2gGrvUR4iEMPD4uEmgiwKJ6KGSfP6QQ0TlV3gDYoCOfAvZ
+	Rg+htuH5eAgAvU0crVm3RIBNGTUv6838DPR4xk24x9KHd3YyMj0t8tzQlvZ4+NA5
+	GUK9YA==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 455p6uk9e2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Mar 2025 21:57:38 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 524LvcoQ022607
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 4 Mar 2025 21:57:38 GMT
+Received: from hu-molvera-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 4 Mar 2025 13:57:37 -0800
+From: Melody Olvera <quic_molvera@quicinc.com>
+Date: Tue, 4 Mar 2025 13:56:36 -0800
+Subject: [PATCH v2 3/9] dt-bindings: usb: qcom,dwc3: Add SM8750 compatible
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20250304-sm8750_usb_master-v2-3-a698a2e68e06@quicinc.com>
+References: <20250304-sm8750_usb_master-v2-0-a698a2e68e06@quicinc.com>
+In-Reply-To: <20250304-sm8750_usb_master-v2-0-a698a2e68e06@quicinc.com>
+To: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Wesley Cheng <quic_wcheng@quicinc.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philipp Zabel
+	<p.zabel@pengutronix.de>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Konrad
+ Dybcio" <konradybcio@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Melody Olvera
+	<quic_molvera@quicinc.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1741125455; l=1625;
+ i=quic_molvera@quicinc.com; s=20241204; h=from:subject:message-id;
+ bh=3VRlrMRUr6/y8yX0UjIm6ZNcmiF+peDcRBvTXvT0I8A=;
+ b=6n2bczcY7IXLBBmFUgFy9jfxXn1iACtrjCAgf4h3fT3BUdjGfJPU/alOeBT3pyL0T3oyPiiJB
+ Mpr0iV31/znBBcgmaUEW8HzfAW6HODl3vbK6ERP7h2cs2re8sCDiPlJ
+X-Developer-Key: i=quic_molvera@quicinc.com; a=ed25519;
+ pk=1DGLp3zVYsHAWipMaNZZTHR321e8xK52C9vuAoeca5c=
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: eYCuPl2cZhKuser9K55Kdh8uDjuWaMDp
+X-Authority-Analysis: v=2.4 cv=H40hw/Yi c=1 sm=1 tr=0 ts=67c77752 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=3H110R4YSZwA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=KKAkSRfTAAAA:8 a=NSUex2eohPAMEdQH8iAA:9
+ a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-ORIG-GUID: eYCuPl2cZhKuser9K55Kdh8uDjuWaMDp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-04_09,2025-03-04_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
+ impostorscore=0 clxscore=1015 malwarescore=0 priorityscore=1501 mlxscore=0
+ lowpriorityscore=0 phishscore=0 suspectscore=0 spamscore=0 mlxlogscore=877
+ classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2503040175
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+From: Wesley Cheng <quic_wcheng@quicinc.com>
 
-pvrdma_modify_device() was added in 2016 as part of
-commit 29c8d9eba550 ("IB: Add vmw_pvrdma driver")
-but accidentally it was never wired into the device_ops struct.
+SM8750 uses the Synopsys DWC3 controller. Add this to the compatibles list
+to utilize the DWC3 QCOM and DWC3 core framework.  Other than a revision
+bump to DWC3 controller rev2.00a, the controller on SM8750 does not add any
+additional vendor specific features compared to previous chipsets.
 
-After some discussion the best course seems to be just to remove it,
-see discussion at:
-https://lore.kernel.org/all/Z8TWF6coBUF3l_jk@gallifrey/
-
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
+Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
 ---
- .../infiniband/hw/vmw_pvrdma/pvrdma_verbs.c   | 28 -------------------
- .../infiniband/hw/vmw_pvrdma/pvrdma_verbs.h   |  2 --
- 2 files changed, 30 deletions(-)
+ Documentation/devicetree/bindings/usb/qcom,dwc3.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/infiniband/hw/vmw_pvrdma/pvrdma_verbs.c b/drivers/infiniband/hw/vmw_pvrdma/pvrdma_verbs.c
-index 9f54aa90a35a..bcd43dc30e21 100644
---- a/drivers/infiniband/hw/vmw_pvrdma/pvrdma_verbs.c
-+++ b/drivers/infiniband/hw/vmw_pvrdma/pvrdma_verbs.c
-@@ -237,34 +237,6 @@ enum rdma_link_layer pvrdma_port_link_layer(struct ib_device *ibdev,
- 	return IB_LINK_LAYER_ETHERNET;
- }
- 
--int pvrdma_modify_device(struct ib_device *ibdev, int mask,
--			 struct ib_device_modify *props)
--{
--	unsigned long flags;
--
--	if (mask & ~(IB_DEVICE_MODIFY_SYS_IMAGE_GUID |
--		     IB_DEVICE_MODIFY_NODE_DESC)) {
--		dev_warn(&to_vdev(ibdev)->pdev->dev,
--			 "unsupported device modify mask %#x\n", mask);
--		return -EOPNOTSUPP;
--	}
--
--	if (mask & IB_DEVICE_MODIFY_NODE_DESC) {
--		spin_lock_irqsave(&to_vdev(ibdev)->desc_lock, flags);
--		memcpy(ibdev->node_desc, props->node_desc, 64);
--		spin_unlock_irqrestore(&to_vdev(ibdev)->desc_lock, flags);
--	}
--
--	if (mask & IB_DEVICE_MODIFY_SYS_IMAGE_GUID) {
--		mutex_lock(&to_vdev(ibdev)->port_mutex);
--		to_vdev(ibdev)->sys_image_guid =
--			cpu_to_be64(props->sys_image_guid);
--		mutex_unlock(&to_vdev(ibdev)->port_mutex);
--	}
--
--	return 0;
--}
--
- /**
-  * pvrdma_modify_port - modify device port attributes
-  * @ibdev: the device to modify
-diff --git a/drivers/infiniband/hw/vmw_pvrdma/pvrdma_verbs.h b/drivers/infiniband/hw/vmw_pvrdma/pvrdma_verbs.h
-index 4b9edc03d73d..fd47b0b1df5c 100644
---- a/drivers/infiniband/hw/vmw_pvrdma/pvrdma_verbs.h
-+++ b/drivers/infiniband/hw/vmw_pvrdma/pvrdma_verbs.h
-@@ -356,8 +356,6 @@ int pvrdma_query_pkey(struct ib_device *ibdev, u32 port,
- 		      u16 index, u16 *pkey);
- enum rdma_link_layer pvrdma_port_link_layer(struct ib_device *ibdev,
- 					    u32 port);
--int pvrdma_modify_device(struct ib_device *ibdev, int mask,
--			 struct ib_device_modify *props);
- int pvrdma_modify_port(struct ib_device *ibdev, u32 port,
- 		       int mask, struct ib_port_modify *props);
- int pvrdma_mmap(struct ib_ucontext *context, struct vm_area_struct *vma);
+diff --git a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
+index a2b3cf625e5b3962f3acfe93de02f3cae2b6123d..916024b7bd95a11d5cc5495de0fffd3fbdca8318 100644
+--- a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
++++ b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
+@@ -55,6 +55,7 @@ properties:
+           - qcom,sm8450-dwc3
+           - qcom,sm8550-dwc3
+           - qcom,sm8650-dwc3
++          - qcom,sm8750-dwc3
+           - qcom,x1e80100-dwc3
+           - qcom,x1e80100-dwc3-mp
+       - const: qcom,dwc3
+@@ -354,6 +355,7 @@ allOf:
+               - qcom,sm8450-dwc3
+               - qcom,sm8550-dwc3
+               - qcom,sm8650-dwc3
++              - qcom,sm8750-dwc3
+     then:
+       properties:
+         clocks:
+@@ -495,6 +497,7 @@ allOf:
+               - qcom,sm8450-dwc3
+               - qcom,sm8550-dwc3
+               - qcom,sm8650-dwc3
++              - qcom,sm8750-dwc3
+     then:
+       properties:
+         interrupts:
+
 -- 
-2.48.1
+2.46.1
 
 
