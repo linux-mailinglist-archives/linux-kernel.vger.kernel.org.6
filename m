@@ -1,127 +1,89 @@
-Return-Path: <linux-kernel+bounces-543471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D672EA4D608
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:18:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C13C6A4D60C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:18:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDB6C7A96FA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:17:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BC69170BCB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:18:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 745561FA165;
-	Tue,  4 Mar 2025 08:18:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B316E1FBCBD;
+	Tue,  4 Mar 2025 08:18:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rB9WrLFk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ilwOii9P"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5ED91F5829
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 08:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2090E1F7580;
+	Tue,  4 Mar 2025 08:18:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741076306; cv=none; b=kPT4OG3OFIo+Y8+Cy7SzUIZ7xbDrf+lyjb3zA52YHW5KOZrCfoxjeJsu0fgnWKH4NDk5aI+K8a0xa4gtRMBYDpJY29Q0vzwMCVn3Kdq6wwvdi0dipArVj3zmVoe2kjBRRgrm/RRx0dXM30CX+5Ea4PYmYkdL+0d7xJOZQDpNgSI=
+	t=1741076316; cv=none; b=eSqYHnHo8q8UFUpCD3LJxT/ZrzLvisg8c/7R+nTfz/txH4ggofvMhdVVY/fKlwrGy/UOUpMdRF5E1NQZpQ7gK8/Ok6nUhYyQD1Kwk4T2cqK1seJ7Vv/aS9KT82hDW2DbmTXbaNH/8mhh+iC4FqALyL1tphjwgfilBKA4pyDH6eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741076306; c=relaxed/simple;
-	bh=K+EQRdXLdswE5q4qdxOmVemAWUmg9DNaKbmghLm+Syw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I5kO7cqmrs5OpzGbwaUNSRwu/10028MHdiBaM6feiw+GmVwPQrLTN/MK6SZkKVFgE5Gm0N3TXpHueemwBOW9TFrqgjasI0tzU4C4vMGonWR5c7e4twX4iuK/KnlHMIHdGwrh4QnAZuZ1DyTKQwCCYw1x1jvqzSSyOoxGLS90yWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rB9WrLFk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01DF5C4CEE5;
-	Tue,  4 Mar 2025 08:18:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741076306;
-	bh=K+EQRdXLdswE5q4qdxOmVemAWUmg9DNaKbmghLm+Syw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rB9WrLFkQHDOWK9Ngi9JWbm/75eJ4vcchC1p5i4LSobT3xc0fwVkyJSs8aMzsmB87
-	 a6ht+z5nFiSmLZbTEVphEZAIYgY1w0QZp+Qc0UR/4FYRDgVoo3C/8by3nlA6hJrDse
-	 bCb3HjTpv5UvfoRVf7FjaqCFrqOfH/5TcA2WOee1u3iquYQRFuaZ8dAPRBim1NG90x
-	 V1OuOHwHmFgq1NDJcnC6jFALtFH+EiqnOJVqRo1H7YB6uTFxGmGZTNTqjupOgRtxzj
-	 SQVh3VTuajtEE4VOo4hgf1+pABdhaSmalOztKYwuyJ4Nlq2CBjoj6UZ51civohdh12
-	 jBFC4tbyor9Fw==
-Date: Tue, 4 Mar 2025 09:18:23 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
-	Algea Cao <algea.cao@rock-chips.com>, Sandor Yu <Sandor.yu@nxp.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, kernel@collabora.com, linux-kernel@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v4 08/12] phy: rockchip: samsung-hdptx: Provide config
- params validation support
-Message-ID: <20250304-romantic-truthful-sambar-deaab1@houat>
-References: <20250304-phy-sam-hdptx-bpc-v4-0-8657847c13f7@collabora.com>
- <20250304-phy-sam-hdptx-bpc-v4-8-8657847c13f7@collabora.com>
+	s=arc-20240116; t=1741076316; c=relaxed/simple;
+	bh=OaCRmJhFgO/LZPmszp6nmDERYO8VveDcodtp3VEn/ZI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=n96tW/neCtb6GnLxyTUzE9Xydf6SMCOuHQfj4m8fpQflgL7AoxvfJrjGEd6RKyOVcz7pCJwO8jJpDu2sdP8rY46KresANk/9sdgMDHVsWf+wJ9AQ8Ec4qOV+Qfdb/aPeM9j3pBZu4lrEQEnbCj8TUEs/k6raxuISNUov1ZVIxc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ilwOii9P; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 6DD4E4452B;
+	Tue,  4 Mar 2025 08:18:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741076311;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OaCRmJhFgO/LZPmszp6nmDERYO8VveDcodtp3VEn/ZI=;
+	b=ilwOii9PkFC7lLiA/XgSYO1/79NeVchvKKF8WHeaAFic3fcge7g8EayPpwy6BDHurnqv+F
+	QYq457IzJxIQGd2+ABLvWTtzrBagyhw3gEJ8QnLMFrgkntssgFQAi/IjJ0anBrB/IjeKRh
+	ZV440yxVbEUMYKD0ZyCy1fSd+brqEbdJzrwfPmNIMqwuf/dKrIRj8l8Ciy+CWffxgoq0mF
+	8SF2jlNKkzozs6hJE2WJL4xGsZXQRxqdsA5ozF8SVf2gJ3WjUTynXEuPYQzp8dihXKbIdX
+	bovxGVkDCSxiv2cr7eNHWqbKW74BkrnhO1mdshfoYHqqZnYVUlwA5eQbx83K8w==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-wpan@vger.kernel.org,  netdev@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  linux-gpio@vger.kernel.org,  Alexander
+ Aring <alex.aring@gmail.com>,  Stefan Schmidt <stefan@datenfreihafen.org>,
+  Andrew Lunn <andrew+netdev@lunn.ch>,  "David S. Miller"
+ <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,  Jakub
+ Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,  Linus
+ Walleij <linus.walleij@linaro.org>,  Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH net-next v2 2/3] ieee802154: ca8210: Get platform data
+ via dev_get_platdata()
+In-Reply-To: <20250303164928.1466246-3-andriy.shevchenko@linux.intel.com>
+	(Andy Shevchenko's message of "Mon, 3 Mar 2025 18:49:09 +0200")
+References: <20250303164928.1466246-1-andriy.shevchenko@linux.intel.com>
+	<20250303164928.1466246-3-andriy.shevchenko@linux.intel.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Tue, 04 Mar 2025 09:18:29 +0100
+Message-ID: <87mse15huy.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="rn7v6jqgd3bpl5dn"
-Content-Disposition: inline
-In-Reply-To: <20250304-phy-sam-hdptx-bpc-v4-8-8657847c13f7@collabora.com>
-
-
---rn7v6jqgd3bpl5dn
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 08/12] phy: rockchip: samsung-hdptx: Provide config
- params validation support
-MIME-Version: 1.0
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutdduhedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufgjfhgffffkgggtgfesthhqredttderjeenucfhrhhomhepofhiqhhuvghlucftrgihnhgrlhcuoehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeffgefhjedtfeeigeduudekudejkedtiefhleelueeiueevheekvdeludehiedvfeenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedugedprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghnkhhosehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtoheplhhinhhugidqfihprghnsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepl
+ hhinhhugidqghhpihhosehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghlvgigrdgrrhhinhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhtvghfrghnsegurghtvghnfhhrvghihhgrfhgvnhdrohhrghdprhgtphhtthhopegrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghh
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Tue, Mar 04, 2025 at 03:44:07AM +0200, Cristian Ciocaltea wrote:
-> Implement the phy_ops.validate() callback to allow checking the PHY
-> configuration parameters without actually applying them.
->=20
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> ---
->  drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c | 23 +++++++++++++++++=
-++++++
->  1 file changed, 23 insertions(+)
->=20
-> diff --git a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c b/drivers/=
-phy/rockchip/phy-rockchip-samsung-hdptx.c
-> index 7e1d1c10758249aa5bbddbdaae0108bba04f30df..47db1395051f5d90019787169=
-4bab90ca4d6e38e 100644
-> --- a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-> +++ b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-> @@ -1482,6 +1482,17 @@ static int rk_hdptx_phy_verify_hdmi_config(struct =
-rk_hdptx_phy *hdptx,
->  	if (!hdmi->tmds_char_rate || hdmi->tmds_char_rate > HDMI20_MAX_RATE)
->  		return -EINVAL;
-> =20
-> +	u32 bit_rate =3D hdmi->tmds_char_rate / 100;
-> +	int i;
-> +
-> +	for (i =3D 0; i < ARRAY_SIZE(ropll_tmds_cfg); i++)
-> +		if (bit_rate =3D=3D ropll_tmds_cfg[i].bit_rate)
-> +			break;
-> +
-> +	if (i =3D=3D ARRAY_SIZE(ropll_tmds_cfg) &&
-> +	    !rk_hdptx_phy_clk_pll_calc(bit_rate, NULL))
-> +		return -EINVAL;
+On 03/03/2025 at 18:49:09 +02, Andy Shevchenko <andriy.shevchenko@linux.int=
+el.com> wrote:
 
-What are you calling bit_rate here? If anything, I'd expect the bit_rate
-to be a multiple of the char rate, not a divisor.
+> Access to platform data via dev_get_platdata() getter to make code cleane=
+r.
 
-Maxime
+Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
 
---rn7v6jqgd3bpl5dn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ8a3TwAKCRAnX84Zoj2+
-dvpGAX9bDdjDCQlX5ExGLNaf6qkQldDC7lWTbvEti8PUmg+VDUvIdSrkZpoAQS2+
-3dO/nzUBgNk0Ta+qCJav/lhbrS3jWgRSx4xNWdbC5Z0LX4HAFh3UxYHwRpM7ZzOI
-Pe8MOnuW4w==
-=6k8M
------END PGP SIGNATURE-----
-
---rn7v6jqgd3bpl5dn--
+Thanks,
+Miqu=C3=A8l
 
