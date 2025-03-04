@@ -1,187 +1,141 @@
-Return-Path: <linux-kernel+bounces-544566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 217C6A4E2A1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:15:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76561A4E2CC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:19:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00F1A19C4157
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:08:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E83B8879FF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:08:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BA4027EC7C;
-	Tue,  4 Mar 2025 15:02:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85E8E2066DA;
+	Tue,  4 Mar 2025 15:03:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c4DSAFHw"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yro1/law"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B6E27E1B0;
-	Tue,  4 Mar 2025 15:02:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69FFE206F0D
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:03:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741100577; cv=none; b=KedSOe9hEr2nOGrjfKWF1fZcONjIabTwdsAcS0TnqrAC9UUSbRTTXJr/dj8gz3f6us/6d8Cs827coMf+O+0MDbfMOzLFAOCKunBS47jzjyzFhFZZzZClZzOSc6Dr9Qz0MFe5+zLt4VLErZ7H4UzEnVgJguDq1tEhsLAyt6J5bMw=
+	t=1741100602; cv=none; b=OpXFoL5tv6I6lvfCKRw4MteB20VAESoNu3zVWg6beskM6xDkqB6EAnKhvawX1nKK0f4oqQfuUlvH7LsmG4C7IUrJWLVMZoFarzD1wGw2ml4nQTANktx8HCAkfIu09bSus7I1iko2cEYauAs2qdiv9dHybKDb/nS+rOyP9rFZJYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741100577; c=relaxed/simple;
-	bh=3qgC9xL3LGsrpBPDjFVjF6jeBO5A0jHAMJCZZjVjOVc=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=rHO5iiroRRvxqNXK+7+hXJPrrnYJEK7j6+Cc+bs/ONXDPiY79iHjngTeDs5QdscEfEIQXX6Wt6SONc3WaB7amB4778l1QODsw6XnFN4qDtDOPUvnjd+CVlJjbga3iNANK0fF/MFNKGsYxEX4B++n/y3dEtNFqYSI2Mbf05sZOP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c4DSAFHw; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741100576; x=1772636576;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=3qgC9xL3LGsrpBPDjFVjF6jeBO5A0jHAMJCZZjVjOVc=;
-  b=c4DSAFHwiCXXn1Gbot9nPb7hp2xVwmdtLnaTp0cqEId0fkXFILWzaDPH
-   qM2jkEWJI/mp5z5Z8fMQRNZGjCvUn137W5T7I88v7FrFG1Ks9//4ExhDS
-   Tcb1C8CMbBJsX+s2zbZQJGvWplA970xIq//6elM6KtLMWpVdZD0rOIj74
-   nU3IsVmOk8SgQmzUscgMLPPVrqbg5Jkp4n4HHEF8Ad7Qvn9sHma2QuAhZ
-   CNaH0l0nocm6c1GgBoMYs4WNNcyonF+DmWsVoQzTRsoJ3bYdpFS9Pm216
-   Rl/2ZF77/dDOxbfhX5fCrPMQxbv6veg3O1b9e4/yrhp1ZEEV4vmTPcWRf
-   g==;
-X-CSE-ConnectionGUID: wGmXT7AOTJ2a2Fj4md7+Sw==
-X-CSE-MsgGUID: H5w/wx/LQu29fvqJ777+3w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="42148301"
-X-IronPort-AV: E=Sophos;i="6.14,220,1736841600"; 
-   d="scan'208";a="42148301"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 07:02:55 -0800
-X-CSE-ConnectionGUID: CoNAUJPRSKe4HchEmuL5QA==
-X-CSE-MsgGUID: ODL7vkAqS42IsBZIMVm/iQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="118907715"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.220])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 07:02:53 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 4 Mar 2025 17:02:49 +0200 (EET)
-To: Kurt Borja <kuurtb@gmail.com>
-cc: Armin Wolf <W_Armin@gmx.de>, platform-driver-x86@vger.kernel.org, 
-    Hans de Goede <hdegoede@redhat.com>, Dell.Client.Kernel@dell.com, 
-    LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 02/10] platform/x86: alienware-wmi-wmax: Refactor
- is_awcc_thermal_mode()
-In-Reply-To: <20250225222500.23535-3-kuurtb@gmail.com>
-Message-ID: <2f8f3818-f1ba-c7b8-f3e5-148436b930f6@linux.intel.com>
-References: <20250225222500.23535-1-kuurtb@gmail.com> <20250225222500.23535-3-kuurtb@gmail.com>
+	s=arc-20240116; t=1741100602; c=relaxed/simple;
+	bh=DMOSoahjsAmBQ1EiqWmZk689I5s/gEYGitICOTngPpg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hM0/NxRn0yL7m2HVcLgK0WiIwJ3UZ7Tr/lqLgsUXQeo26HSV2MhTV6jKG1ry12Dp7c7o6qtLDinC5FYcDCyqNwOx6EdL3F1EPxSMEE4WAV/pq3AQ1yv+g0xEUWfxnu/QLyddOq+4Rvl4idoVepOSD/OLFLNLM08EcgNRSTiKcS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yro1/law; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-22382657540so61979605ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 07:03:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741100601; x=1741705401; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=sgp92zvnQjpgyBEdGrnvBKK/NiUrLp23oGoJzduBB2s=;
+        b=yro1/lawCFsW9u2I30LjL5MTOsjrGLjVXpL1ZbwQybN1Bw2Ctft2Npl5sOzOQbspQ1
+         qQxtJtcarvWSt7eF0k6GYpClR1DR9FY8sHJdFpNdDcD/gTOPj4IltlMMxBiYpXQrckHh
+         iSPpNNr9XzcIrFlOBQUnhPCJZ0bKL6zxbmRBoF9J7olmfCqHKfcmZSHxKZmil6e4oBcj
+         C5IlyBlzsN7+wuP9W14X67j1TEZrQn4AmgTp/tnUG+VF0whTQ3AbJxhyu/JvH0Io0guD
+         kz22c08vKVxvQLC3UdfDt0teGPRzzJpRTllW0lO2EjjmoCLiw5F7fZZgBXVq6GKYcwvE
+         JKxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741100601; x=1741705401;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sgp92zvnQjpgyBEdGrnvBKK/NiUrLp23oGoJzduBB2s=;
+        b=D2fG1GLT0MqkOzbNtVAYYj15ypcNbJ7gYMFqvBNn5cAaZZbR69hHwNgjJBWy/gZruL
+         ujVRzPlG/j4oAl/1aIs9+qpGVK4GAJttsH20MVVK0iXn4agb4CAlVt5Fjm5Em2ncx6Uv
+         BTMtFSzLTW/DQcnD8nG5MYhwx4qABHirmVk9O+TyyWZ5nuUGL0W/tY28gcbI9Vnpc0+T
+         q46wTEDxuA4Sv92dgxq/tpvZiqAjhUbDDRYVh8dAdcQwCdHiELL42IdY8nLd64HDNZxo
+         pNp0S+lAELPmRulfVSNvNCR76LyfsRRbFpa2cDduisxYv+oOg8ygJEht7wpesp25vNMM
+         pcmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV09f3IjlARjd+a80x6+Hy5ef7DPoRRL4VZwV65hZ6U2nyWWKLZCrCiOXQsmiB6i1/HZdGjAOpgtjBmb3g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8uwGm0AKRAXPnBpnYsNLSeW/OQftMtzk0XvjSSLzlCiasVePp
+	DW7F9DajUdhdA3TZ3vzOcNReHsNUaVcquP1WUfnEH3NggpETzOpEQTabCDANBg==
+X-Gm-Gg: ASbGncufQJtTN/JmwY2KXvNcBf9XMiZ4aKRFqVxqKmxyEeFATixOAKUh06QV/ipowj2
+	k8jB4gq6gWx6ghmu0mJe5M6jZ5mY7suJZMwMR9Lw3D8A0yU5MgvXgaTLmuwgZOzdF3Qxk0bNx2h
+	vqF98DPlP4xq47j015m5iMw1lkXl7vStblKiw2Xn1mJTTwMw2OZioMdrfO8LMj0wm+0RrYgEcMI
+	LUXwyx3qhQsadZuul1fjH7m7OYDJdl9BAP5/KKKbqcvvyUuVvIpEmhs6WRtkOm2U69nPM4iQF0O
+	ctgxF6oQR0sZd6KN7RDiTwBJ6aq0kM6NI/TcSegAy6RAHbyQKSc2tCI=
+X-Google-Smtp-Source: AGHT+IE8Rj7wGhoLcKkJr7aGFix0dNkKxSLf/uewEpInYpKi/5JDsy8IrIQcKfWAb0vRV66bAYwhQQ==
+X-Received: by 2002:a05:6a21:483:b0:1f3:4427:74ae with SMTP id adf61e73a8af0-1f34427778emr2142169637.25.1741100600658;
+        Tue, 04 Mar 2025 07:03:20 -0800 (PST)
+Received: from thinkpad ([120.60.51.199])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-aee7de1f52fsm10116872a12.32.2025.03.04.07.03.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 07:03:20 -0800 (PST)
+Date: Tue, 4 Mar 2025 20:33:13 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Jim Quinlan <james.quinlan@broadcom.com>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Cyril Brulebois <kibi@debian.org>,
+	Stanimir Varbanov <svarbanov@suse.de>,
+	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 4/8] PCI: brcmstb: Fix error path upon call of
+ regulator_bulk_get()
+Message-ID: <20250304150313.ey4fky35bu6dbtxd@thinkpad>
+References: <20250214173944.47506-1-james.quinlan@broadcom.com>
+ <20250214173944.47506-5-james.quinlan@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250214173944.47506-5-james.quinlan@broadcom.com>
 
-On Tue, 25 Feb 2025, Kurt Borja wrote:
-
-> Refactor is_awcc_thermal_mode() to use FIELD_GET() instead of bitwise
-> operations. Drop the check for BIT(8) sensor flag and rename it to
-> is_awcc_thermal_profile_id().
+On Fri, Feb 14, 2025 at 12:39:32PM -0500, Jim Quinlan wrote:
+> If regulator_bulk_get() returns an error, no regulators are created and we
+> need to set their number to zero.  If we do not do this and the PCIe
+> link-up fails, regulator_bulk_free() will be invoked and effect a panic.
 > 
-> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
-> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+> Also print out the error value, as we cannot return an error upwards as
+> Linux will WARN on an error from add_bus().
+> 
+> Fixes: 9e6be018b263 ("PCI: brcmstb: Enable child bus device regulators from DT")
+> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
 > ---
->  .../platform/x86/dell/alienware-wmi-wmax.c    | 31 ++++++++++---------
->  1 file changed, 16 insertions(+), 15 deletions(-)
+>  drivers/pci/controller/pcie-brcmstb.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/platform/x86/dell/alienware-wmi-wmax.c b/drivers/platform/x86/dell/alienware-wmi-wmax.c
-> index ed70e12d73d7..7f0aa88221d6 100644
-> --- a/drivers/platform/x86/dell/alienware-wmi-wmax.c
-> +++ b/drivers/platform/x86/dell/alienware-wmi-wmax.c
-> @@ -34,7 +34,7 @@
->  #define AWCC_FAILURE_CODE			0xFFFFFFFF
->  #define AWCC_THERMAL_TABLE_MASK			GENMASK(7, 4)
->  #define AWCC_THERMAL_MODE_MASK			GENMASK(3, 0)
-> -#define AWCC_SENSOR_ID_MASK			BIT(8)
-> +#define AWCC_RESOURCE_ID_MASK			GENMASK(7, 0)
+> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
+> index e0b20f58c604..56b49d3cae19 100644
+> --- a/drivers/pci/controller/pcie-brcmstb.c
+> +++ b/drivers/pci/controller/pcie-brcmstb.c
+> @@ -1416,7 +1416,8 @@ static int brcm_pcie_add_bus(struct pci_bus *bus)
 >  
->  static bool force_platform_profile;
->  module_param_unsafe(force_platform_profile, bool, 0);
-> @@ -168,8 +168,8 @@ enum AWCC_GAME_SHIFT_STATUS_OPERATIONS {
->  };
->  
->  enum AWCC_THERMAL_TABLES {
-> -	AWCC_THERMAL_TABLE_LEGACY		= 0x90,
-> -	AWCC_THERMAL_TABLE_USTT			= 0xA0,
-> +	AWCC_THERMAL_TABLE_LEGACY		= 0x9,
-> +	AWCC_THERMAL_TABLE_USTT			= 0xA,
->  };
->  
->  enum awcc_thermal_profile {
-> @@ -445,20 +445,18 @@ const struct attribute_group wmax_deepsleep_attribute_group = {
->   * Thermal Profile control
->   *  - Provides thermal profile control through the Platform Profile API
->   */
-> -static bool is_awcc_thermal_mode(u32 code)
-> +static bool is_awcc_thermal_profile_id(u8 code)
->  {
-> -	if (code & AWCC_SENSOR_ID_MASK)
-> -		return false;
-> +	u8 table = FIELD_GET(AWCC_THERMAL_TABLE_MASK, code);
-> +	u8 mode = FIELD_GET(AWCC_THERMAL_MODE_MASK, code);
->  
-> -	if ((code & AWCC_THERMAL_MODE_MASK) >= AWCC_PROFILE_LAST)
-> +	if (mode >= AWCC_PROFILE_LAST)
->  		return false;
->  
-> -	if ((code & AWCC_THERMAL_TABLE_MASK) == AWCC_THERMAL_TABLE_LEGACY &&
-> -	    (code & AWCC_THERMAL_MODE_MASK) >= AWCC_PROFILE_LEGACY_QUIET)
-> +	if (table == AWCC_THERMAL_TABLE_LEGACY && mode >= AWCC_PROFILE_LEGACY_QUIET)
->  		return true;
->  
-> -	if ((code & AWCC_THERMAL_TABLE_MASK) == AWCC_THERMAL_TABLE_USTT &&
-> -	    (code & AWCC_THERMAL_MODE_MASK) <= AWCC_PROFILE_USTT_LOW_POWER)
-> +	if (table == AWCC_THERMAL_TABLE_USTT && mode <= AWCC_PROFILE_USTT_LOW_POWER)
->  		return true;
->  
->  	return false;
-> @@ -548,7 +546,7 @@ static int awcc_platform_profile_get(struct device *dev,
->  		return 0;
->  	}
->  
-> -	if (!is_awcc_thermal_mode(out_data))
-> +	if (!is_awcc_thermal_profile_id(out_data))
->  		return -ENODATA;
->  
->  	out_data &= AWCC_THERMAL_MODE_MASK;
-> @@ -597,6 +595,7 @@ static int awcc_platform_profile_probe(void *drvdata, unsigned long *choices)
->  	u32 first_mode;
->  	u32 out_data;
->  	int ret;
-> +	u8 id;
->  
->  	ret = awcc_thermal_information(priv->wdev, AWCC_OP_GET_SYSTEM_DESCRIPTION,
->  				       0, (u32 *) &sys_desc);
-> @@ -615,12 +614,14 @@ static int awcc_platform_profile_probe(void *drvdata, unsigned long *choices)
->  		if (ret == -EBADRQC)
->  			break;
->  
-> -		if (!is_awcc_thermal_mode(out_data))
-> +		/* Some IDs have a BIT(8) flag that should be ignored */
+>  		ret = regulator_bulk_get(dev, sr->num_supplies, sr->supplies);
+>  		if (ret) {
+> -			dev_info(dev, "No regulators for downstream device\n");
+> +			dev_info(dev, "Did not get regulators; err=%d\n", ret);
 
-I find the place of this comment odd. If you want to keep it, it should be 
-next to the GENMASK() as in this place I'm trying to find the code that 
-implements what you commented but its nowhere near here.
+Why is this dev_info() instead of dev_err()?
 
-> +		id = FIELD_GET(AWCC_RESOURCE_ID_MASK, out_data);
-> +		if (!is_awcc_thermal_profile_id(id))
->  			continue;
->  
-> -		mode = out_data & AWCC_THERMAL_MODE_MASK;
-> +		mode = FIELD_GET(AWCC_THERMAL_MODE_MASK, id);
->  		profile = awcc_mode_to_platform_profile[mode];
-> -		priv->supported_thermal_profiles[profile] = out_data;
-> +		priv->supported_thermal_profiles[profile] = id;
->  
->  		set_bit(profile, choices);
->  	}
-> 
+> +			pcie->sr = NULL;
+
+Why can't you set 'pcie->sr' after successfull regulator_bulk_get()?
+
+- Mani
 
 -- 
- i.
-
+மணிவண்ணன் சதாசிவம்
 
