@@ -1,281 +1,170 @@
-Return-Path: <linux-kernel+bounces-544648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABE87A4E3C3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:39:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62837A4E460
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:54:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 665F717254A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:29:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DA3F8A3829
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:30:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9605D294EDA;
-	Tue,  4 Mar 2025 15:17:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF96D24EA96;
+	Tue,  4 Mar 2025 15:18:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VPIiPyHq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gBIbM/7U"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E79E527FE9D
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5605424EA93
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:18:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741101477; cv=none; b=GKlDJCvvw9V9PE19Uf2tKwQlJAE3jjzlFhUHb22eM6SeI2LKcSJ6i4No05KNDNIH6RpuuOdQA646BQKuabE5rfMYnRMHdKvzkl6n6tlE5/yxbE4TaqnoU1UHopa/rguCmDsYPvMwPEb0TCSBjXIPqQGI1ZBoZ7++qaGFgpGJCOg=
+	t=1741101507; cv=none; b=GqcL8ZemYRYTFx+TwhX6h1eJSadVypQXWpn3Wn3/ebGcp7ThDilj97d/8h2MzAoSKJ/F6PVNBSa27z+CUvC/h6X9QE+t4bBOfEJ5VFq04d7HCm2WAL55b1SU/86QOw+CvJLVX5P3FyXiTa7/6aImNQl9zqpA4j/Q//INfFu4Vwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741101477; c=relaxed/simple;
-	bh=WOkwYBJ6mURKrzAo56DfT5siukCfEs71MN6//Njmljw=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=fmY/5BoD39FRc4Hb0736UOiSkRV8t9q8f506fexwNBkRi6hcGJc+RUfJavrpYTEAk/jcaMKsLUd9idNiYRxDalSnpJO1bb+rscec9AXQFlkt6NjdmH4HGEzzUoYu/9WJIk/15+QKS7D8pWdhw6wLexj02KyqdkpMxiyucZkZFQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VPIiPyHq; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741101474;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O0lr8kKXCfO90fVf3E5CbEg1FpivAju4c8en810I8Rk=;
-	b=VPIiPyHqT4e5RjnP1Xx3jQygRHX7Vf69+SB85vUfK8ffWA8f8OygtEMdqBKmAkSd/iiQsh
-	hdcIA8YQtEKf1i4wexAqcy5zQIJjG5K5xfnxgJdAK8WXcHXsnjKuN12V8i25rHwbYqAsIp
-	ckaTnHQqZHkESTmz0Uir98xm9jb7n/E=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-601-FPUdwJQXP6aKo9_tII7l6g-1; Tue, 04 Mar 2025 10:17:48 -0500
-X-MC-Unique: FPUdwJQXP6aKo9_tII7l6g-1
-X-Mimecast-MFC-AGG-ID: FPUdwJQXP6aKo9_tII7l6g_1741101467
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6e8e171fd66so12728066d6.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 07:17:48 -0800 (PST)
+	s=arc-20240116; t=1741101507; c=relaxed/simple;
+	bh=Nfbb4Q2xiDkH6WLiFI7e76Q6PwRDTA9H9+XvuWdYO9M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JWZ80q9bPQRUjtcj5F/zt9dFUzjGtWm9/RVDh4MtJgHfvIoXTqlNvdgjXrD0Z301VGXMr2mMABWTZfFALfNVxaFKJjr8hBNC55b2mlSsAjHEe+koufw153J/IYdI8bQUkm0D8CcV49mopyISWEt1ClBo5o9WZQjDteGhHq/V8xI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gBIbM/7U; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-22349bb8605so112120495ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 07:18:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741101504; x=1741706304; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=KzhE+tdJAYWvPcPUwSdrS55NblQcSF6sK2zBz4cziEo=;
+        b=gBIbM/7UCn3d+kG8XQQpXgjv6oo4359Az4NnhRvQG+OrZfNy37HWbUI6mXw5KqCHhH
+         TN/VygfvNKNe497X57clJASH+VZQaIHPlbwaiW25ebDH9QtnXib+9HHy7Y7VFEiCJc+0
+         U6ORj5nJcfQTJnuISlGSu2QKJys2DcjF9JWIjL2ZDYXn0GW5v+baNmvKmzUWgSviPKUa
+         +pz2PZJPk1H6e0PFFtX+/9JS+ayLoZlPhgkvw7FqIaZ3vpHaioJX/BrbbMaNU3vxZUKi
+         mA7vfCrejLi428a5pJ8iKs16cicAo9+tgbEkDiktMQHaJK8sJcird1xYiJfZFyBJh/HC
+         0m9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741101467; x=1741706267;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
+        d=1e100.net; s=20230601; t=1741101504; x=1741706304;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=O0lr8kKXCfO90fVf3E5CbEg1FpivAju4c8en810I8Rk=;
-        b=m7C/3714z51KO8wgJeG2rKgko+Hn/wZzShf6hQcrq/Yci8m9CNIvrBDhJwlQGgHxuk
-         XgWOWxPPfOcFB+Qy9Q+bln82wcUrYv4hDlTjzPhTf+vr+HeBx/MV8JhJ6QgXLGR5i4tA
-         W8ybKpiByBKv93l+MZAakSyrUy5Sayn4SOJDejcx8lmbg6OuywDJNWpGGwyIt5quQJA/
-         Kl+AAb+Bj76SOtMGnydzgQx8vUGFoRLXDC8a5CxTMAkMRFpPdU6SgU2eSXsdfTi5UOM6
-         vLI1K2nfs0YfAZ5zl/4lPmElXzRPAC+uMohPNC5av/cOmi4bs9PD9BO9KfQ1COOLTw9U
-         MJZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU7u88X821xPpruhb90IY0USJp7YbLd4XBdrZp7wtXv13+lCuxnkJ3H/DFEAYB7G6oxTGSbwHnpTzOMYZM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyy4xpSTBL0divVOe7GUPvf8RmviXrNnxkiRReYENpewdBZ/lwC
-	NNGr0hMJ/QiV5wNjpSdAGa+gyxECMAfAqGvxzzUyo5waGM47XJC0fqozHNLLLSgd9FWUHg4RdGk
-	w8vSCbVlEzD4fimqvWUWAVeOdGTyZ6QMznRzmvroI/UMIkM65Z4ApOhrDHq4S8A==
-X-Gm-Gg: ASbGncvMrEoDm7Fy/BVXDx8lF4zQ94RkXMi3UhigUQ6aVBdZ7CJykZL+y2TkXCyca/R
-	+/w+/RvcwUsUttJ4JtHsX2m3ZKibR/3dU601R3wja5PcDXKkP5wfAFHUlFTy1tvcToMMpkSg35u
-	naYb94m0EKhAf1jN3VmFZpMyP7wxxvs4ORYoNB1JlJA3gPiK5GOBU7RZFi1lLGAnQlC9lsWxMoN
-	yUB/Hungv3b4kPdkwnQ1aTQSeBBnv4WK+jmPAAs/Tf4jIWmk/c3nZXs7KoWnYymyfpfo6WeOb4G
-	I2XEcUGFVJqMACq6qOmhgLIqQIwWGRxrx7hZOa642OceaN88gwgPLm71wkk=
-X-Received: by 2002:a05:6214:2462:b0:6e4:2f4c:f2d2 with SMTP id 6a1803df08f44-6e8a0d4a85dmr296961076d6.31.1741101467592;
-        Tue, 04 Mar 2025 07:17:47 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFkHDKpx95IvLlNWfMuPOgJAI9UpdVjyVUiKIhZFFUom81X7LiUCPrloV7QmTIDO56sr2LL9A==
-X-Received: by 2002:a05:6214:2462:b0:6e4:2f4c:f2d2 with SMTP id 6a1803df08f44-6e8a0d4a85dmr296960696d6.31.1741101467233;
-        Tue, 04 Mar 2025 07:17:47 -0800 (PST)
-Received: from ?IPV6:2601:188:c100:5710:627d:9ff:fe85:9ade? ([2601:188:c100:5710:627d:9ff:fe85:9ade])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e897634a8dsm67563276d6.7.2025.03.04.07.17.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Mar 2025 07:17:46 -0800 (PST)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <e78c0d2d-c5bf-41f1-9786-981c60b7b50c@redhat.com>
-Date: Tue, 4 Mar 2025 10:17:45 -0500
+        bh=KzhE+tdJAYWvPcPUwSdrS55NblQcSF6sK2zBz4cziEo=;
+        b=VuMYzVjYQsTnyySmiERlI+JPil4QmrjUfDpDgNpDpM1xI6LDGEl0Szs6wnQ0eGthFb
+         P28ek87e5K/qTVnzNrf9j4EsohaZtRrdrsZdAoaEPfGFgZgxIiO+iwP7LlckLnmm3kna
+         aA3x1pgKkwklzoinjvwGlRMB7bFIY2nuDpZ5DEFeGdO5WFvxbKpcUoGClr9yfyoxp+9R
+         C/lC/KJztXhV2kzQ72BPokMjOX6RQVUhev4P2wqMsS5f/i90kFoJxRMxgoHc/vtB3Em+
+         a60QpCRA4t422bCTc16Ix+a0gD7drTfDczDofkhfr3fc9WBVkNUNaGoVHOvCG3Dnm5YY
+         TLqg==
+X-Forwarded-Encrypted: i=1; AJvYcCW2B1aExWNwwpwjk6i2024MibJ/h96GQA1sMuSUEV1wZ8AfLn/LrtkD25Vl5AXn3rR7uzTZ7fo9gOa/Wss=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHJXJ87o8SfIefWdaWRjlxSkkxck7GbrxLMnONPQTGdafhpgJJ
+	ls3hpuKVYZNKsxxgN/LjlR3/VE8HZLS1yl84eyZNjiInPnuSn8W+NhcKbdyPJw==
+X-Gm-Gg: ASbGncvi1CszbJymOtQe0KGtyNd+zVYGKshHFyRL5K+zzSGdhP7PkiNdgIFVxvrIyw8
+	9s0ZT5OO33un95kZQ/sTox1Y2+shzOY6AIf4BNnD95Y3w0VbR/V6O7sjzqndF1kTrR90qKbl1WK
+	vbQm/KlEdmCSXnjWzpZd7h8PkYyRI6CgM9++Ufi8yzVgRwSjWDtY9dBlkSblGKASweC82yK8CQ0
+	QOxAFfQACcDC3neAOxjlR47PAHXA30WAvrZt1R0Tc1Xh9vJxSDrxtSlHhZJvhmenekEYrN1A1kk
+	A7JOKxpY8Cd8tQayGJhHtHv240K8bfCZ+YIW8Fp5SAxT28D7YnqWxok=
+X-Google-Smtp-Source: AGHT+IE5m+vrO6nNhOZDvuax+Cu982tB5v2FtygKBkyOtqqZSXWNrXN1iB/dSPoQj7bI+IrEJ3ckng==
+X-Received: by 2002:a17:902:e752:b0:21f:45d:21fb with SMTP id d9443c01a7336-22368f61965mr234071745ad.3.1741101503081;
+        Tue, 04 Mar 2025 07:18:23 -0800 (PST)
+Received: from thinkpad ([120.60.51.199])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223504db7a6sm95889145ad.160.2025.03.04.07.18.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 07:18:22 -0800 (PST)
+Date: Tue, 4 Mar 2025 20:48:14 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Fan Ni <nifan.cxl@gmail.com>,
+	Shradha Todi <shradha.t@samsung.com>, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, lpieralisi@kernel.org,
+	robh@kernel.org, bhelgaas@google.com, jingoohan1@gmail.com,
+	Jonathan.Cameron@huawei.com, a.manzanares@samsung.com,
+	pankaj.dubey@samsung.com, cassel@kernel.org, 18255117159@163.com,
+	xueshuai@linux.alibaba.com, renyu.zj@linux.alibaba.com,
+	will@kernel.org, mark.rutland@arm.com
+Subject: Re: [PATCH v7 3/5] Add debugfs based silicon debug support in DWC
+Message-ID: <20250304151814.6xu7cbpwpqrvcad5@thinkpad>
+References: <20250221131548.59616-1-shradha.t@samsung.com>
+ <CGME20250221132035epcas5p47221a5198df9bf86020abcefdfded789@epcas5p4.samsung.com>
+ <20250221131548.59616-4-shradha.t@samsung.com>
+ <Z8XrYxP_pZr6tFU8@debian>
+ <20250303194647.GC1552306@rocinante>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] sched/deadline: Rebuild root domain accounting after
- every update
-To: Juri Lelli <juri.lelli@redhat.com>, linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
- =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
- Qais Yousef <qyousef@layalina.io>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Swapnil Sapkal <swapnil.sapkal@amd.com>,
- Shrikanth Hegde <sshegde@linux.ibm.com>, Phil Auld <pauld@redhat.com>,
- luca.abeni@santannapisa.it, tommaso.cucinotta@santannapisa.it,
- Jon Hunter <jonathanh@nvidia.com>
-References: <20250304084045.62554-1-juri.lelli@redhat.com>
- <20250304084045.62554-5-juri.lelli@redhat.com>
-Content-Language: en-US
-In-Reply-To: <20250304084045.62554-5-juri.lelli@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250303194647.GC1552306@rocinante>
 
-On 3/4/25 3:40 AM, Juri Lelli wrote:
-> Rebuilding of root domains accounting information (total_bw) is
-> currently broken on some cases, e.g. suspend/resume on aarch64. Problem
-> is that the way we keep track of domain changes and try to add bandwidth
-> back is convoluted and fragile.
->
-> Fix it by simplify things by making sure bandwidth accounting is cleared
-> and completely restored after root domains changes (after root domains
-> are again stable).
->
-> Reported-by: Jon Hunter <jonathanh@nvidia.com>
-> Fixes: 53916d5fd3c0 ("sched/deadline: Check bandwidth overflow earlier for hotplug")
-> Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
-> ---
->   include/linux/sched/deadline.h |  4 ++++
->   include/linux/sched/topology.h |  2 ++
->   kernel/cgroup/cpuset.c         | 16 +++++++++-------
->   kernel/sched/deadline.c        | 16 ++++++++++------
->   kernel/sched/topology.c        |  1 +
->   5 files changed, 26 insertions(+), 13 deletions(-)
->
-> diff --git a/include/linux/sched/deadline.h b/include/linux/sched/deadline.h
-> index 6ec578600b24..a780068aa1a5 100644
-> --- a/include/linux/sched/deadline.h
-> +++ b/include/linux/sched/deadline.h
-> @@ -34,6 +34,10 @@ static inline bool dl_time_before(u64 a, u64 b)
->   struct root_domain;
->   extern void dl_add_task_root_domain(struct task_struct *p);
->   extern void dl_clear_root_domain(struct root_domain *rd);
-> +extern void dl_clear_root_domain_cpu(int cpu);
-> +
-> +extern u64 dl_cookie;
-> +extern bool dl_bw_visited(int cpu, u64 gen);
->   
->   #endif /* CONFIG_SMP */
->   
-> diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
-> index 7f3dbafe1817..1622232bd08b 100644
-> --- a/include/linux/sched/topology.h
-> +++ b/include/linux/sched/topology.h
-> @@ -166,6 +166,8 @@ static inline struct cpumask *sched_domain_span(struct sched_domain *sd)
->   	return to_cpumask(sd->span);
->   }
->   
-> +extern void dl_rebuild_rd_accounting(void);
-> +
->   extern void partition_sched_domains_locked(int ndoms_new,
->   					   cpumask_var_t doms_new[],
->   					   struct sched_domain_attr *dattr_new);
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index f87526edb2a4..f66b2aefdc04 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -954,10 +954,12 @@ static void dl_update_tasks_root_domain(struct cpuset *cs)
->   	css_task_iter_end(&it);
->   }
->   
-> -static void dl_rebuild_rd_accounting(void)
-> +void dl_rebuild_rd_accounting(void)
->   {
->   	struct cpuset *cs = NULL;
->   	struct cgroup_subsys_state *pos_css;
-> +	int cpu;
-> +	u64 cookie = ++dl_cookie;
->   
->   	lockdep_assert_held(&cpuset_mutex);
->   	lockdep_assert_cpus_held();
-> @@ -965,11 +967,12 @@ static void dl_rebuild_rd_accounting(void)
->   
->   	rcu_read_lock();
->   
-> -	/*
-> -	 * Clear default root domain DL accounting, it will be computed again
-> -	 * if a task belongs to it.
-> -	 */
-> -	dl_clear_root_domain(&def_root_domain);
-> +	for_each_possible_cpu(cpu) {
-> +		if (dl_bw_visited(cpu, cookie))
-> +			continue;
-> +
-> +		dl_clear_root_domain_cpu(cpu);
-> +	}
->   
->   	cpuset_for_each_descendant_pre(cs, pos_css, &top_cpuset) {
->   
-> @@ -996,7 +999,6 @@ partition_and_rebuild_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
->   {
->   	sched_domains_mutex_lock();
->   	partition_sched_domains_locked(ndoms_new, doms_new, dattr_new);
-> -	dl_rebuild_rd_accounting();
->   	sched_domains_mutex_unlock();
->   }
++ Geert (who reported the regression in -next)
 
-With this patch, partition_and_rebuild_sched_domains() is essentially 
-the same as partition_sched_domains(). We can remove 
-partition_and_rebuild_sched_domains() and use partition_sched_domains() 
-directly. Also we don't need to expose partition_sched_domains_locked() 
-as well as there is no more caller outside of topology.c.
+On Tue, Mar 04, 2025 at 04:46:47AM +0900, Krzysztof Wilczyński wrote:
+> Hello,
+> 
+> [...]
+> > > +int dwc_pcie_debugfs_init(struct dw_pcie *pci)
+> > > +{
+> > > +	char dirname[DWC_DEBUGFS_BUF_MAX];
+> > > +	struct device *dev = pci->dev;
+> > > +	struct debugfs_info *debugfs;
+> > > +	struct dentry *dir;
+> > > +	int ret;
+> > > +
+> > > +	/* Create main directory for each platform driver */
+> > > +	snprintf(dirname, DWC_DEBUGFS_BUF_MAX, "dwc_pcie_%s", dev_name(dev));
+> > > +	dir = debugfs_create_dir(dirname, NULL);
+> > > +	debugfs = devm_kzalloc(dev, sizeof(*debugfs), GFP_KERNEL);
+> > > +	if (!debugfs)
+> > > +		return -ENOMEM;
+> > > +
+> > > +	debugfs->debug_dir = dir;
+> > > +	pci->debugfs = debugfs;
+> > > +	ret = dwc_pcie_rasdes_debugfs_init(pci, dir);
+> > > +	if (ret)
+> > > +		dev_dbg(dev, "RASDES debugfs init failed\n");
+> > 
+> > What will happen if ret != 0? still return 0? 
+> 
+> Given that callers of dwc_pcie_debugfs_init() check for errors,
+> this probably should correctly bubble up any failure coming from
+> dwc_pcie_rasdes_debugfs_init().
+> 
+> I made updates to the code directly on the current branch, have a look:
+> 
+>   https://web.git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/commit/?h=controller/dwc&id=1ff54f4cbaed9ec6994844967c36cf7ada4cbe5e
+> 
+> Let me know if this is OK with you.
+> 
 
-Cheers,
-Longman
+If the SoC has no RASDES capability, then this call is bound to fail (which will
+break existing platforms). I'd propose to return 0 if
+dw_pcie_find_rasdes_capability() fails in addition to this change:
 
->   
-> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-> index 339434271cba..17b040c92885 100644
-> --- a/kernel/sched/deadline.c
-> +++ b/kernel/sched/deadline.c
-> @@ -166,7 +166,7 @@ static inline unsigned long dl_bw_capacity(int i)
->   	}
->   }
->   
-> -static inline bool dl_bw_visited(int cpu, u64 cookie)
-> +bool dl_bw_visited(int cpu, u64 cookie)
->   {
->   	struct root_domain *rd = cpu_rq(cpu)->rd;
->   
-> @@ -207,7 +207,7 @@ static inline unsigned long dl_bw_capacity(int i)
->   	return SCHED_CAPACITY_SCALE;
->   }
->   
-> -static inline bool dl_bw_visited(int cpu, u64 cookie)
-> +bool dl_bw_visited(int cpu, u64 cookie)
->   {
->   	return false;
->   }
-> @@ -2981,18 +2981,22 @@ void dl_clear_root_domain(struct root_domain *rd)
->   	rd->dl_bw.total_bw = 0;
->   
->   	/*
-> -	 * dl_server bandwidth is only restored when CPUs are attached to root
-> -	 * domains (after domains are created or CPUs moved back to the
-> -	 * default root doamin).
-> +	 * dl_servers are not tasks. Since dl_add_task_root_domanin ignores
-> +	 * them, we need to account for them here explicitly.
->   	 */
->   	for_each_cpu(i, rd->span) {
->   		struct sched_dl_entity *dl_se = &cpu_rq(i)->fair_server;
->   
->   		if (dl_server(dl_se) && cpu_active(i))
-> -			rd->dl_bw.total_bw += dl_se->dl_bw;
-> +			__dl_add(&rd->dl_bw, dl_se->dl_bw, dl_bw_cpus(i));
->   	}
->   }
->   
-> +void dl_clear_root_domain_cpu(int cpu)
-> +{
-> +	dl_clear_root_domain(cpu_rq(cpu)->rd);
-> +}
-> +
->   #endif /* CONFIG_SMP */
->   
->   static void switched_from_dl(struct rq *rq, struct task_struct *p)
-> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-> index b70d6002bb93..bdfda0ef1bd9 100644
-> --- a/kernel/sched/topology.c
-> +++ b/kernel/sched/topology.c
-> @@ -2796,6 +2796,7 @@ void partition_sched_domains_locked(int ndoms_new, cpumask_var_t doms_new[],
->   	ndoms_cur = ndoms_new;
->   
->   	update_sched_domain_debugfs();
-> +	dl_rebuild_rd_accounting();
->   }
->   
->   /*
+diff --git a/drivers/pci/controller/dwc/pcie-designware-debugfs.c b/drivers/pci/controller/dwc/pcie-designware-debugfs.c
+index dca1e9999113..7277a21e30d5 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-debugfs.c
++++ b/drivers/pci/controller/dwc/pcie-designware-debugfs.c
+@@ -471,7 +471,7 @@ static int dwc_pcie_rasdes_debugfs_init(struct dw_pcie *pci, struct dentry *dir)
+        ras_cap = dw_pcie_find_rasdes_capability(pci);
+        if (!ras_cap) {
+                dev_dbg(dev, "no RASDES capability available\n");
+-               return -ENODEV;
++               return 0;
+        }
+ 
+        rasdes_info = devm_kzalloc(dev, sizeof(*rasdes_info), GFP_KERNEL);
 
+This will fix the regressions like the one reported by Geert:
+
+https://lore.kernel.org/linux-pci/CAMuHMdWuCJAd-mCpCoseThureCKnnep4T-Z0h1_WJ1BOf2ZeDg@mail.gmail.com/
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
