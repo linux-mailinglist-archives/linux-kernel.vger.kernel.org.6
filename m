@@ -1,230 +1,157 @@
-Return-Path: <linux-kernel+bounces-545757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0578A4F111
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:02:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFF93A4F11D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:05:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDDCB18983FF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:02:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E05673AD85A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:05:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48C8E2641D5;
-	Tue,  4 Mar 2025 23:01:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C9CB261586;
+	Tue,  4 Mar 2025 23:05:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YVv+Memv"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ZER8gjj3"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4787E1DB125;
-	Tue,  4 Mar 2025 23:01:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E027A27935B
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 23:05:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741129308; cv=none; b=GlWzwpqX5ejLME9SlqVtaaoS7ipn8qPsNoQwBKNff1llZdMH2MNGlp49pcFq3xnzk6whxqRmZXtjTT+9OIgyECwZw2kJ3ukD2xIyIISOclJ4/mypYSkzzjs1ohezng9oPfVNkzmVGV/VCLXo1EOyaYDEdUOnQmEl7FmiPzG95jA=
+	t=1741129508; cv=none; b=DS7M+2DZsoFdq9q+0nRoZfwUJMg3AZFxKnuyQfGFnfwcAsI7J26/pr9FFFlZQGC4zXnwyMhaZmBOKLxrVAH4CZfXQx+vtNA9Rfi2LtXAzkcQoNvWU18vDg4a/YQEl0LTlFd4riysqmAZ8Mo3YGCCjGlkjqQ0RoZTsRMiezKkmpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741129308; c=relaxed/simple;
-	bh=IwFjo5xnnNo0G4mp39det8GtoWQboNWFzjSKLgwyiDE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZpvtdM8HbYPehLNKPaWsAn/BnXOgAC+F9Gyl7GiwQus21UKNE8xh3CXzr+dPtzFKTfWvnGL+e90UkR/+y896csY7xjD5aCkBraJM5I0s0yqrEAFvFZOkc370JlkL6DLDcOcHNGXCLhiVGxqBcqh1uZV3EJNM7pCkTVatNav9ZA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YVv+Memv; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741129306; x=1772665306;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=IwFjo5xnnNo0G4mp39det8GtoWQboNWFzjSKLgwyiDE=;
-  b=YVv+Memv5Hx/f/MorUAApppLj1DAdNMzjjlNhsLOGUalLZFjRZh/RbU/
-   tc2qJkTht649ZbsM3DWFRfIGOb5XXA/OtAjlRDFXTALLJYHBz041WAmFB
-   62WaTUsib/tSNXx6FvpHJYHrzS3eOPATDTiIkNhESpg6/hCIMUzuS4kCU
-   5N2zdUx7AjVZ5MuqXictzjiU79NjSmd3JgVT50lUezFL07NB/PZScwRbf
-   5iel187l9Q8gGib/KkCUt/aO+XwhUvWoTWcn9keGUUywp0ar0RZF4P8DA
-   el5MgHsQzTroT6+KITRAwHLZmYlLE05qhlOsBGs8mrAulMwj9L41K5bU8
-   Q==;
-X-CSE-ConnectionGUID: TFJi605BSZ23HzsdGltV7g==
-X-CSE-MsgGUID: VdumFJ78QPeWlVoaLaqE1g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="29658032"
-X-IronPort-AV: E=Sophos;i="6.14,221,1736841600"; 
-   d="scan'208";a="29658032"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 15:01:45 -0800
-X-CSE-ConnectionGUID: 5qIB9JHmSNaXWO1AYW3lVw==
-X-CSE-MsgGUID: PPmFtYLKQxO0sZZvAqHOdQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="155698833"
-Received: from kinlongk-mobl1.amr.corp.intel.com (HELO [10.125.109.165]) ([10.125.109.165])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 15:01:45 -0800
-Message-ID: <d6127d2e-ea95-4e52-b3db-b39203bad935@intel.com>
-Date: Tue, 4 Mar 2025 15:02:04 -0800
+	s=arc-20240116; t=1741129508; c=relaxed/simple;
+	bh=JQep0ZQ8KR7wNqUuL8Umc/S8sL+su7GsAMhW1J6fjnY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=R8yFslePD2X6rB9d3MrGDNGOBbkggtatDjwiFzf7Tii9MYVyw/QUQG1exQ1FbqAJ49gfuinm3EwG5HD2VY4VJuHZBtn92FhM4EmMTaJqZGBGwT/7TQiPVKKodqw8B4x2nbQE7lQvOCaLIcNdFgPc9B0T1vKNqWRRcKFC/2eMCxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ZER8gjj3; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 524MgR1U021617
+	for <linux-kernel@vger.kernel.org>; Tue, 4 Mar 2025 23:05:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=+k0/7n0ayENZ3P/X9hSe8bRKUyB6TgoFwbi
+	S2F0zQa0=; b=ZER8gjj3fegQ5557Mwhd/DZXTAYmWRcKH27hvsirMInc+l1YhcY
+	b6mHAHKpWNti76lytRLtG7wlMPgEsvymFab9trVlo/K/3fYRez8tFjkKF2+xnG/n
+	eLbgvKEPyv4a5EKUS9uaEKSxNk1/MI/2YBb+x3QQl16GxqDi0M8isP2e4/fMIQU9
+	qF7X1HJXXhR1D82beZ5CDWDT/uHsIu2vp6+4MHVfe/Ycs+T90upZJFn8hqJvGRgv
+	1xJnPUHBRR9akOYfL7KcTYo1L+dBqrP8L+NV7CpIkEIlsZwu8SOWGl4Obo00ap6P
+	S/8GuyMpXjZ+zkjYpel5228Vy7ZfuJueSMw==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 455p6t3fbe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 23:05:05 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-22334230880so83400195ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 15:05:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741129504; x=1741734304;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+k0/7n0ayENZ3P/X9hSe8bRKUyB6TgoFwbiS2F0zQa0=;
+        b=w5kvhoh+j7ce4e1NYVTvus7QpWJbKnJ0+30M2ZeV28AMhkE8E85GLRzgXp6VI8A0XI
+         vxs/DSG0CHVajc4RCEbq1hPoQLlVOzcVJPj9sO8kPpNWh+cPbozqbbb6CUpeBcav0QWV
+         9qGS4l6nsuBOUKzmHcEHD2K6fAGjdn9PQvW6LLTIBiz32RK//wf8HhwbKM3MSj4t49ms
+         SnlhgsW72BoRVSOahG6rgu5nFvWDh0uuypK93mBL1dRYThhQpuqHWPWPLVTSU5FeIvp+
+         /IKIcdcFDEBJeW5X1pwRgCyuTghNC/hZGsM+Zckt3M3y7ARq2DSURjIfIJEHALO+AWvS
+         0ukw==
+X-Forwarded-Encrypted: i=1; AJvYcCVZ049nNmYANFuNSm9eaTNTmF4FBrkMYl0df3XnLkjG9RnBuB1gXcPNqotYoQgr7nZyIzQn4Rzls8KGHio=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3db1DHjhCmQlNCY8EZvXpKLSAbEb3FJA7WRPJ2vfjt6uWOG0a
+	ponyI5cVRbFimbTb4vukRymYnTFTLH2jKkHvlWXL88rKoZKjmxvQwqrSRNLlm1BGC5ZTzpLExM0
+	uBo+V1qkhPQBMWE4oM6f+wWK7agB4bPn2KITWj2hTZq+yoeS6zywsBMaVrLVP/DM=
+X-Gm-Gg: ASbGncvvAAf7r8j1ny+qwilOCCRGRkPgLhlaS+Gp1J0nQ/vksv7pylHyuyOyV/Qa3Rc
+	xTl1MolRSqAvvoZ2RXVks9NY4gDlokqoVs2gMFKJEIIsQfWhsG6VNh/yNGXoKA9s4KSLtDG143C
+	vbaDBI7VPWxfY5uw1pm37k3D91PAkvG5DupaVUYqXBMleE9C7WuL1ORffEYPxXPTrJYgqe2TNiZ
+	2BS7jftl+M2HaWyW+VOd770x4zx/sV5ez8OK4K4qSRjH8UKE3160YxsUABA1wdOacCizKlNWoc0
+	yKFnyKR/P7CTha99MIAoyRyzl504byvvO6UlKxVW/Ql+YlAbm6a/p3K1W7pDShgDo4SyoUW6XiI
+	ja1U=
+X-Received: by 2002:a17:902:ea06:b0:21f:4b01:b985 with SMTP id d9443c01a7336-223f1d3a25dmr15090595ad.45.1741129504155;
+        Tue, 04 Mar 2025 15:05:04 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEnGhUpQy825/DMxvlXW2Ue+mmydLdhow3pf6c4GZU71xZ3fvsbSsXGKnIpJE8MZcF6q6FiqA==
+X-Received: by 2002:a17:902:ea06:b0:21f:4b01:b985 with SMTP id d9443c01a7336-223f1d3a25dmr15090185ad.45.1741129503766;
+        Tue, 04 Mar 2025 15:05:03 -0800 (PST)
+Received: from hu-amelende-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7349fe6cfd9sm11492793b3a.76.2025.03.04.15.05.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 15:05:03 -0800 (PST)
+From: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
+To: amitk@kernel.org, thara.gopinath@gmail.com, rafael@kernel.org,
+        daniel.lezcano@linaro.org
+Cc: rui.zhang@intel.com, lukasz.luba@arm.com, david.collins@oss.qualcomm.com,
+        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dmitry.baryshkov@linaro.org
+Subject: [PATCH v3 0/5] thermal: qcom-spmi-temp-alarm: Add support for new TEMP_ALARM subtypes
+Date: Tue,  4 Mar 2025 15:04:57 -0800
+Message-Id: <20250304230502.1470523-1-anjelique.melendez@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/6] x86/fpu/xstate: Create guest fpstate with guest
- specific config
-To: Chao Gao <chao.gao@intel.com>, tglx@linutronix.de, x86@kernel.org,
- seanjc@google.com, pbonzini@redhat.com, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org
-Cc: peterz@infradead.org, rick.p.edgecombe@intel.com, mlevitsk@redhat.com,
- weijiang.yang@intel.com, john.allen@amd.com
-References: <20241126101710.62492-1-chao.gao@intel.com>
- <20241126101710.62492-6-chao.gao@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20241126101710.62492-6-chao.gao@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=I/ufRMgg c=1 sm=1 tr=0 ts=67c78721 cx=c_pps a=JL+w9abYAAE89/QcEU+0QA==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=p-nOP-kxAAAA:8 a=Ke_cMI1aEn6YhuwJoicA:9 a=324X-CrmTo6CU4MGRt3R:22
+ a=TjNXssC_j7lpFel5tvFf:22 a=XN2wCei03jY4uMu7D0Wg:22
+X-Proofpoint-GUID: vhpkULFk6R5AYIZYVMEeWOXcZOqLc1SH
+X-Proofpoint-ORIG-GUID: vhpkULFk6R5AYIZYVMEeWOXcZOqLc1SH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-04_09,2025-03-04_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
+ spamscore=0 bulkscore=0 priorityscore=1501 lowpriorityscore=0
+ suspectscore=0 phishscore=0 malwarescore=0 mlxlogscore=999 impostorscore=0
+ clxscore=1015 classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2503040183
 
-On 11/26/24 02:17, Chao Gao wrote:
-> From: Yang Weijiang <weijiang.yang@intel.com>
-> 
-> Use fpu_guest_cfg to calculate guest fpstate settings, open code for
-> __fpstate_reset() to avoid using kernel FPU config.
-> 
-> Below configuration steps are currently enforced to get guest fpstate:
-> 1) Kernel sets up guest FPU settings in fpu__init_system_xstate().
-> 2) User space sets vCPU thread group xstate permits via arch_prctl().
-> 3) User space creates guest fpstate via __fpu_alloc_init_guest_fpstate()
->    for vcpu thread.
-> 4) User space enables guest dynamic xfeatures and re-allocate guest
->    fpstate.
-> 
-> By adding kernel dynamic xfeatures in above #1 and #2, guest xstate area
-> size is expanded to hold (fpu_kernel_cfg.default_features | kernel dynamic
-> xfeatures | user dynamic xfeatures), then host xsaves/xrstors can operate
-> for all guest xfeatures.
+Add support in the qcom-spmi-temp-alarm driver for the new PMIC
+TEMP_ALARM peripheral subtypes: GEN2 rev 2 and LITE. The GEN2 rev 2
+subtype provides greater flexibility in temperature threshold
+specification by using an independent register value to configure
+each of the three thresholds. The LITE subtype utilizes a simplified
+set of control registers to configure two thresholds: warning and
+shutdown. While at it refactor the qcom-spmi-temp-alarm driver to limit
+code reuse and if/else statements when deciphering between TEMP_ALARM 
+peripheral subtypes. 
 
-These changelogs have a lot of content, but they're honestly not helping
-my along here very much.
+Also add support to avoid a potential issue on certain versions of
+the TEMP_ALARM GEN2 subtype when automatic stage 2 partial shutdown
+is disabled.
 
->  arch/x86/kernel/fpu/core.c | 39 +++++++++++++++++++++++++++++---------
->  1 file changed, 30 insertions(+), 9 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
-> index 9e2e5c46cf28..00d7dcf45b34 100644
-> --- a/arch/x86/kernel/fpu/core.c
-> +++ b/arch/x86/kernel/fpu/core.c
-> @@ -194,8 +194,6 @@ void fpu_reset_from_exception_fixup(void)
->  }
->  
->  #if IS_ENABLED(CONFIG_KVM)
-> -static void __fpstate_reset(struct fpstate *fpstate, u64 xfd);
-> -
->  static void fpu_init_guest_permissions(struct fpu_guest *gfpu)
->  {
->  	struct fpu_state_perm *fpuperm;
-> @@ -216,25 +214,48 @@ static void fpu_init_guest_permissions(struct fpu_guest *gfpu)
->  	gfpu->perm = perm & ~FPU_GUEST_PERM_LOCKED;
->  }
->  
-> -bool fpu_alloc_guest_fpstate(struct fpu_guest *gfpu)
-> +static struct fpstate *__fpu_alloc_init_guest_fpstate(struct fpu_guest *gfpu)
->  {
->  	struct fpstate *fpstate;
->  	unsigned int size;
->  
-> -	size = fpu_user_cfg.default_size + ALIGN(offsetof(struct fpstate, regs), 64);
-> +	/*
-> +	 * fpu_guest_cfg.default_size is initialized to hold all enabled
-> +	 * xfeatures except the user dynamic xfeatures. If the user dynamic
-> +	 * xfeatures are enabled, the guest fpstate will be re-allocated to
-> +	 * hold all guest enabled xfeatures, so omit user dynamic xfeatures
-> +	 * here.
-> +	 */
-> +	size = fpu_guest_cfg.default_size + ALIGN(offsetof(struct fpstate, regs), 64);
-> +
->  	fpstate = vzalloc(size);
->  	if (!fpstate)
-> -		return false;
-> +		return NULL;
-> +	/*
-> +	 * Initialize sizes and feature masks, use fpu_user_cfg.*
-> +	 * for user_* settings for compatibility of exiting uAPIs.
-> +	 */
-> +	fpstate->size		= fpu_guest_cfg.default_size;
-> +	fpstate->xfeatures	= fpu_guest_cfg.default_features;
-> +	fpstate->user_size	= fpu_user_cfg.default_size;
-> +	fpstate->user_xfeatures	= fpu_user_cfg.default_features;
-> +	fpstate->xfd		= 0;
->  
-> -	/* Leave xfd to 0 (the reset value defined by spec) */
-> -	__fpstate_reset(fpstate, 0);
->  	fpstate_init_user(fpstate);
->  	fpstate->is_valloc	= true;
->  	fpstate->is_guest	= true;
->  
->  	gfpu->fpstate		= fpstate;
-> -	gfpu->xfeatures		= fpu_user_cfg.default_features;
-> -	gfpu->perm		= fpu_user_cfg.default_features;
-> +	gfpu->xfeatures		= fpu_guest_cfg.default_features;
-> +	gfpu->perm		= fpu_guest_cfg.default_features;
-> +
-> +	return fpstate;
-> +}
-> +
-> +bool fpu_alloc_guest_fpstate(struct fpu_guest *gfpu)
-> +{
-> +	if (!__fpu_alloc_init_guest_fpstate(gfpu))
-> +		return false;
->  
->  	/*
->  	 * KVM sets the FP+SSE bits in the XSAVE header when copying FPU state
+This patch series is a continuation of older series from 7/2024
+(https://lore.kernel.org/all/20240729231259.2122976-1-quic_amelende@quicinc.com/)
+but current series has been reworked to address the change in thermal framework to
+update .set_trip_temp() callback function variables
+(https://lore.kernel.org/all/8392906.T7Z3S40VBb@rjwysocki.net/)
 
-This series is starting to look backward to me.
+Changes since v2:
+  - Updated function name to include "gen1" in patch 2/5
+  - Added Dmitry's reviewed-by tag in patch 2/5
+Changes since v1:
+  - Remove unnecessary moving of code
+  - Added new v2 patch 3/5 add a preparation patch to v1 patch 2/5
+  - Updated temp alarm data function names to be consistently named
 
-The normal way you do these things is that you introduce new
-abstractions and refactor the code. Then you go adding features.
+Anjelique Melendez (4):
+  thermal: qcom-spmi-temp-alarm: Add temp alarm data struct based on HW
+    subtype
+  thermal: qcom-spmi-temp-alarm: Prepare to support additional Temp
+    Alarm subtypes
+  thermal: qcom-spmi-temp-alarm: add support for GEN2 rev 2 PMIC
+    peripherals
+  thermal: qcom-spmi-temp-alarm: add support for LITE PMIC peripherals
 
-For instance, this series should spend a few patches introducing
-'fpu_guest_cfg' and using it before ever introducing the concept of a
-dynamic xfeature.
+David Collins (1):
+  thermal: qcom-spmi-temp-alarm: enable stage 2 shutdown when required
+
+ drivers/thermal/qcom/qcom-spmi-temp-alarm.c | 515 ++++++++++++++++++--
+ 1 file changed, 464 insertions(+), 51 deletions(-)
+
+-- 
+2.34.1
+
 
