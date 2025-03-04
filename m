@@ -1,152 +1,147 @@
-Return-Path: <linux-kernel+bounces-544727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A6E3A4E61A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:35:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DD76A4E49A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:00:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA7C2880A45
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:49:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C817F18862B7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:50:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7601627BF97;
-	Tue,  4 Mar 2025 15:33:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D7B25F976;
+	Tue,  4 Mar 2025 15:33:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iNJliLkf"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k1OYlQ5W"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0A627BF81;
-	Tue,  4 Mar 2025 15:33:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5102925D551
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:33:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741102415; cv=none; b=BGrA9sYWCfjonY51cPmZzuu4ZlEh43yQuRUv8OO54vTYo5E2/xyU9jCUZWsnUe4Y76GiLqv7yIwkgxBAZmt9+JFg6xJci+guLlzWMHXjXNBAE0LP1GLgEOMd1hS+Z6INMf6+i4H2x6fehogTkC3eXFTikVJi1Fq1Jopn+RTqnLA=
+	t=1741102434; cv=none; b=jZnE64YQBGt9tj3zsaC3ik6dL9MxJlNZS0bAQwqrWo6AY2v528MbJCbcORNjgtX/6jf6mW2E5QhEO24QpFe1bPRVNOijtD22aGMfugDmphbwcrR+TAO+UfdPtYOo0DBAexcP+t798pQxnAjg57FTF5xm8tPxV/DBIqp+gsjZhgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741102415; c=relaxed/simple;
-	bh=cxYGbUkB0Yoz6qWbFJi8QO9m0UONprohdcSKnp399Yc=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=fSPlVXuL949Lt56lqb0UNQY+GAhxXn3XJSCAJrAizwv/Kbd7e1o3IxW3t3OX2U/em5AEy38A8KqC/ACCgxHTe4Pu/E79Wo4sz8wHBxIZh4b8VG0PKHLC3/4FidARdfEd32dImfhxRm3K8JemPhWiK08dt19svrIqJlf5k744pTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iNJliLkf; arc=none smtp.client-ip=192.198.163.10
+	s=arc-20240116; t=1741102434; c=relaxed/simple;
+	bh=Q2k3ww5ab+KTlyT+I/PhaznrIACSRlKw+mvfKBhY5g8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e7CYnuR46a0c7OsYkNCZwVEH5TehSrv0MZhRnw3Nh3BUPG5oRKRVpUSwxG4cEOcUQNgoigvM6c8f/YJhqPbJmOcFaw8FisJCPKsqrWoOW22qWKMkuchVNV4fNPFVO6E34wMH/Elyy1crEkqn3I4E1jIMH1Jza/36CyanS6nv3uM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.helo=mgamail.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k1OYlQ5W; arc=none smtp.client-ip=192.198.163.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.helo=mgamail.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741102414; x=1772638414;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=cxYGbUkB0Yoz6qWbFJi8QO9m0UONprohdcSKnp399Yc=;
-  b=iNJliLkfh+2GZhyKeuwcd6WWF9b2ET7N2Q0A6KSHKdbnwR4B2vqnfOb1
-   6y1uUSfsiSDd1dA6dEUtXshwomtAupuqw5rA+zxU+PzBNtE0UXRzuvIgy
-   ancmpaqzs/OHlAvVWUoSeVx8AhkUk9TosjN0skZtyNnZqci8tDCfNVzUP
-   9dIhLwuonrHu/SyxkjAT3oD4P/VdQxdiKoPLPIcxCjLwIGgAmBUtr3FM3
-   YLWA1TqVhYtwzd0UtR60BpU5IyyyxykG0kObJ0l/ipc2aHNLStemzyyf3
-   YIFOhEBXn/wVfda4Q1cq4D6sCVNAUcyE6tpIkVfG2t1vIxi7kEEimB25S
-   Q==;
-X-CSE-ConnectionGUID: Pfvh9izUSeq7OKSm4pS6eg==
-X-CSE-MsgGUID: 7ca2OBeWS9ic9Y40kPpopA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="53429551"
+  t=1741102433; x=1772638433;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Q2k3ww5ab+KTlyT+I/PhaznrIACSRlKw+mvfKBhY5g8=;
+  b=k1OYlQ5W0ZeAGN7NFur/D6gpjtFpfGvKIcIsNQTl5ObjTTx3Mfh7GCjw
+   1ZO+VMSufOF7X9rBgKt/ur+jZCRxqSIMiKUXY8euOrgnM+LXG0TL6WQ93
+   YmMwjn++9NrMtwSb6GZt33fDJWnzUF0INZXncj/Fln2pMMpP1sJSbsGuC
+   OuaYKzlntP8dMcLrAZOJPctyFRgxmUU8WuoDVq3YtsKSEhOiFWZnboez3
+   F0UILVZyjBjlP/PHj7uBkXmcBTGLei+QJdvoD3qgj95IRjcks6KUGv9x3
+   QjtugIsS0dQYmzHvJIfibx1e6gHvBeNOwPzxy7Lw2/7QTGPtjZaPmZCv1
+   g==;
+X-CSE-ConnectionGUID: 9s9YH5lvRA2lygDdJVDJpg==
+X-CSE-MsgGUID: 7gN29WQITPKgTG4eVw/TUQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="53429613"
 X-IronPort-AV: E=Sophos;i="6.14,220,1736841600"; 
-   d="scan'208";a="53429551"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 07:33:30 -0800
-X-CSE-ConnectionGUID: nUA5FecfRbafr5jpttdATg==
-X-CSE-MsgGUID: ojR8XYzuQaSwbmd5zaSYpw==
+   d="scan'208";a="53429613"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 07:33:52 -0800
+X-CSE-ConnectionGUID: qC0XRROISmWUx8utm6j9ww==
+X-CSE-MsgGUID: 9gzo6HUITBKlRaF9/SKNdw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.14,220,1736841600"; 
-   d="scan'208";a="119086996"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.220])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 07:33:27 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 4 Mar 2025 17:33:23 +0200 (EET)
-To: Kurt Borja <kuurtb@gmail.com>
-cc: Armin Wolf <W_Armin@gmx.de>, platform-driver-x86@vger.kernel.org, 
-    Hans de Goede <hdegoede@redhat.com>, Dell.Client.Kernel@dell.com, 
-    LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 04/10] platform/x86: alienware-wmi-wmax: Modify
- supported_thermal_profiles[]
-In-Reply-To: <20250225222500.23535-5-kuurtb@gmail.com>
-Message-ID: <55b6fd60-c82a-32f5-4639-09472745dc87@linux.intel.com>
-References: <20250225222500.23535-1-kuurtb@gmail.com> <20250225222500.23535-5-kuurtb@gmail.com>
+   d="scan'208";a="118411687"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa007.fm.intel.com with ESMTP; 04 Mar 2025 07:33:50 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 5209018F; Tue, 04 Mar 2025 17:33:49 +0200 (EET)
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kernel@vger.kernel.org,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: [PATCH, REBASED] x86/runtime-const: Add RUNTIME_CONST_PTR assembly macro
+Date: Tue,  4 Mar 2025 17:33:42 +0200
+Message-ID: <20250304153342.2016569-1-kirill.shutemov@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1247101556-1741102403=:931"
+Content-Transfer-Encoding: 8bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Add an assembly macro to refer runtime cost. It hides linker magic and
+makes assembly more readable.
 
---8323328-1247101556-1741102403=:931
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+---
+ arch/x86/include/asm/runtime-const.h | 13 +++++++++++++
+ arch/x86/lib/getuser.S               |  7 ++-----
+ 2 files changed, 15 insertions(+), 5 deletions(-)
 
-On Tue, 25 Feb 2025, Kurt Borja wrote:
+diff --git a/arch/x86/include/asm/runtime-const.h b/arch/x86/include/asm/runtime-const.h
+index 6652ebddfd02..8d983cfd06ea 100644
+--- a/arch/x86/include/asm/runtime-const.h
++++ b/arch/x86/include/asm/runtime-const.h
+@@ -2,6 +2,18 @@
+ #ifndef _ASM_RUNTIME_CONST_H
+ #define _ASM_RUNTIME_CONST_H
+ 
++#ifdef __ASSEMBLY__
++
++.macro RUNTIME_CONST_PTR sym reg
++	movq	$0x0123456789abcdef, %\reg
++	1:
++	.pushsection runtime_ptr_\sym, "a"
++	.long	1b - 8 - .
++	.popsection
++.endm
++
++#else /* __ASSEMBLY__ */
++
+ #define runtime_const_ptr(sym) ({				\
+ 	typeof(sym) __ret;					\
+ 	asm_inline("mov %1,%0\n1:\n"				\
+@@ -58,4 +70,5 @@ static inline void runtime_const_fixup(void (*fn)(void *, unsigned long),
+ 	}
+ }
+ 
++#endif /* __ASSEMBLY__ */
+ #endif
+diff --git a/arch/x86/lib/getuser.S b/arch/x86/lib/getuser.S
+index 71d8e7da4fc5..9d5654b8a72a 100644
+--- a/arch/x86/lib/getuser.S
++++ b/arch/x86/lib/getuser.S
+@@ -35,16 +35,13 @@
+ #include <asm/thread_info.h>
+ #include <asm/asm.h>
+ #include <asm/smap.h>
++#include <asm/runtime-const.h>
+ 
+ #define ASM_BARRIER_NOSPEC ALTERNATIVE "", "lfence", X86_FEATURE_LFENCE_RDTSC
+ 
+ .macro check_range size:req
+ .if IS_ENABLED(CONFIG_X86_64)
+-	movq $0x0123456789abcdef,%rdx
+-  1:
+-  .pushsection runtime_ptr_USER_PTR_MAX,"a"
+-	.long 1b - 8 - .
+-  .popsection
++	RUNTIME_CONST_PTR USER_PTR_MAX, rdx
+ 	cmp %rdx, %rax
+ 	cmova %rdx, %rax
+ .else
+-- 
+2.47.2
 
-> Rename supported_thermal_profiles[] -> supported_profiles[] and change
-> it's type to u8 because it stores AWCC thermal IDs.
->=20
-> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
-> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
-> ---
->  drivers/platform/x86/dell/alienware-wmi-wmax.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/platform/x86/dell/alienware-wmi-wmax.c b/drivers/pla=
-tform/x86/dell/alienware-wmi-wmax.c
-> index 57897a0f4296..4a8335d90b5d 100644
-> --- a/drivers/platform/x86/dell/alienware-wmi-wmax.c
-> +++ b/drivers/platform/x86/dell/alienware-wmi-wmax.c
-> @@ -212,7 +212,7 @@ struct wmax_u32_args {
->  struct awcc_priv {
->  =09struct wmi_device *wdev;
->  =09struct device *ppdev;
-> -=09enum awcc_thermal_profile supported_thermal_profiles[PLATFORM_PROFILE=
-_LAST];
-> +=09u8 supported_profiles[PLATFORM_PROFILE_LAST];
->  };
-> =20
->  static const enum platform_profile_option awcc_mode_to_platform_profile[=
-AWCC_PROFILE_LAST] =3D {
-> @@ -606,7 +606,7 @@ static int awcc_platform_profile_set(struct device *d=
-ev,
->  =09}
-> =20
->  =09return awcc_thermal_control(priv->wdev,
-> -=09=09=09=09    priv->supported_thermal_profiles[profile]);
-> +=09=09=09=09    priv->supported_profiles[profile]);
->  }
-> =20
->  static int awcc_platform_profile_probe(void *drvdata, unsigned long *cho=
-ices)
-> @@ -643,7 +643,7 @@ static int awcc_platform_profile_probe(void *drvdata,=
- unsigned long *choices)
-> =20
->  =09=09mode =3D FIELD_GET(AWCC_THERMAL_MODE_MASK, id);
->  =09=09profile =3D awcc_mode_to_platform_profile[mode];
-> -=09=09priv->supported_thermal_profiles[profile] =3D id;
-> +=09=09priv->supported_profiles[profile] =3D id;
-> =20
->  =09=09set_bit(profile, choices);
->  =09}
-> @@ -652,7 +652,7 @@ static int awcc_platform_profile_probe(void *drvdata,=
- unsigned long *choices)
->  =09=09return -ENODEV;
-> =20
->  =09if (awcc->gmode) {
-> -=09=09priv->supported_thermal_profiles[PLATFORM_PROFILE_PERFORMANCE] =3D
-> +=09=09priv->supported_profiles[PLATFORM_PROFILE_PERFORMANCE] =3D
->  =09=09=09AWCC_THERMAL_MODE_GMODE;
-> =20
->  =09=09set_bit(PLATFORM_PROFILE_PERFORMANCE, choices);
->=20
-
-Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
-
---=20
- i.
-
---8323328-1247101556-1741102403=:931--
 
