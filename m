@@ -1,230 +1,128 @@
-Return-Path: <linux-kernel+bounces-545222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CF20A4EA72
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:05:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B70AA4EA73
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:05:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD5EA19C236A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:59:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 876B417B397
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:00:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E22B7284B3A;
-	Tue,  4 Mar 2025 17:38:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1BED29617B;
+	Tue,  4 Mar 2025 17:39:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="XOx6Yb7+"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S1AETnw5"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 277C3298CC1;
-	Tue,  4 Mar 2025 17:38:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A07924C08E
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:39:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741109938; cv=none; b=VEke9novfsu5CjWmI0IT3JvgJFWuD/HJKJxpsZ5Jr4zcUWde9oVvVb2BkjTaAgAnda4BQcqu62BKd3BSaMUUnlwVzTR3d8F0UOEKb1cdf+qODM2yVwBfTOFe8CTil7jx/nism2UPgfD0WYf3jrajPd9IZQIITfnz5yG3p7s9c5I=
+	t=1741109991; cv=none; b=b8tiGVZqFpxkgY1AF8CG2eRH1u3zbbdTikpfkLcOa19hsfB58JgdHdhoIr/yuZw+Eh9EnE73PXG4HD4BrYJ3/5+f2tzQFGmM9EPfnPORxIFi18SmGtSvu/hmq6NqK0s5ay2+NWDeyr4vUvB9rgWU9bhf5wGB7zwXGv/wLduRXYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741109938; c=relaxed/simple;
-	bh=JcIEw6KHcvbGFWY/0MJdcq8fBRZHDsPWigmoQd9FeNI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tW8w+Y27hwnqzFBjwgFnmPYPhF4MK/nlTbkZK97xtqb2DYBqHjrnrsIaQilrTDV69H0oIB/lLg5w6joJ1iUEAKnRUok1hmT/UOBIN/xG64VkVW55eaO3cnax0y1M3tqywELR34YijFN7COYaiMUZUQP9EhFaUM33bG4FoZwNeO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=XOx6Yb7+; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1741109922; x=1741714722; i=markus.elfring@web.de;
-	bh=Hd9f8ED3HYtNlKnYfy25W10wkR5BfmeLn5PDLRGCvhI=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=XOx6Yb7+IjmoN5q4fcTKsJB+3gujW96dnAJ5aO8w/VuhhfToF6Yyj3OAjexSOV1z
-	 /1Y56MEQqGhbvmO6qGspVIHmG/N+bKTKCu6/uSunZGZSosyU18KCKt8nRNM8rjmBd
-	 NEr6FAOCB/ZUHA/StjNB8ZJbsHKGWDmvuJkzeSec/Binljzwqg9DBeEOV/UYygfQ7
-	 G/hYlJM4ALSxq+FZxR4IMvGYYgWHRTZTDjXisYlL+Mmx29JxLjJ3EWR22GlWe2124
-	 ekn5/GeOG8nIyLyzjJTzJfBXFbaZhdkiUA4RF0EKl27yyjd82g6ixf6y2mckMuzMU
-	 IYvzksEVziE/kjlPCQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.64]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N3oz4-1t7h213Slc-00tCqt; Tue, 04
- Mar 2025 18:38:41 +0100
-Message-ID: <df3ce733-955b-45f3-98bd-04ddb2200eca@web.de>
-Date: Tue, 4 Mar 2025 18:38:40 +0100
+	s=arc-20240116; t=1741109991; c=relaxed/simple;
+	bh=i50rufOwf6vwyAuooSNBHw4J8VhV9XZ8F0ZF8cluBGI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=EPeLMhTXH5S18Fbk9WKkt5YaZinrEiQAIot/+T++39VAQmGlz2AjiHBA0wJVVhNrHTDsPCYJjuUHKq0blKPmJKYvXJwzMkC1hSYfOkmS4NucPj1JXjdCe1zdKVR+Y80c379iAu4RKBw3oQoAzgHAxkDAjM7K57g3eE/1eqLlRI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=S1AETnw5; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-22379af38e0so61862455ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 09:39:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741109989; x=1741714789; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TI3FoVeE0Ra2glCU+l7ZrrB58ecOTFnnVt+cs3oYhCA=;
+        b=S1AETnw51w0WuOIgCd7ijY4cpBbnjkCH28O29UXQu3oR8WFMcQgAIGPsI5rVuF82U/
+         M32QftimTnv0VZWK527Xk/qCS7ON3xukIkuPSrw33nclYI9VohbEX2qQ4ZaQCTy0xa3b
+         CAXxmNBg9sG4y2bEeEoIvMDkj2zXcJ8MBqd3tULM7NO/fO2Gwlf51e5Zkkn0oenofbqE
+         mndhv5BXCt0QcgtgL+9XnTImnv1QS2EsX4uj4EuuoElioCnCTzPxqxE64C+RS2MG4zyU
+         /QuY/NkZJaGXbnPYskJ3y13LG5s4pF/OYPaScAya5ZuduK2pR/k3Crku6mo1VJ5oE3VQ
+         Dydw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741109989; x=1741714789;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TI3FoVeE0Ra2glCU+l7ZrrB58ecOTFnnVt+cs3oYhCA=;
+        b=Agjwl3YCPukBlrChhShl/GqcG1eAT2aWgS+mXb5B25DdaC0D7r/TQ44b1/TYO8JJLm
+         ESTVBT5jfpPbvfcfXMgb4r/EWmOux4DIGyX0nfPmgoT4yYldBVMMcti5/M8zLFHUJb/C
+         t3SIQHi8O2ycICEazDxzn99rq5E7cmA512PkBiycUIcSFxhA1gtlU/7EXEjlva7qRz2Q
+         8NbOuxN19nsCWECO7jr7pSyobtf7JT64dgfKjeiRJgafg0qjd+mrd9Z2OwDyXXLhow8A
+         ucSX+Dnbu8AlVywO3TBhyv4Z1f2uyQPgh5VhWgKTLMAjw5FQMtQqBqtv8WiMSGDQzWjB
+         XiKA==
+X-Forwarded-Encrypted: i=1; AJvYcCUlzhiU33AfpBLM/I9fRi1MSMoXUnaGYu19tZtnYAH65VVx5X//9olxHZ/gJ+2uMeIvRp+7/m0LEnRMAJs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywmb82Dr52j4Civtcqt2I3Jdd4m7xTzT88mAer+qBPMSmGTt1ia
+	B6yvLbwPBuU1CJPph2MHs+JCO9N8ziu3ETRGoKkycCd2UW/ZhWC19FujvKquo+p6Zkx1ZmyiJeL
+	53Q==
+X-Google-Smtp-Source: AGHT+IGZddoSY2oyJ60dCyqtZiF8YnS+v36sYEMEslkao7NI/8RRXlf38IKWdXRybiMidO4JcJg+/iNohU8=
+X-Received: from pfbfw3.prod.google.com ([2002:a05:6a00:61c3:b0:730:76c4:7144])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:734b:b0:1ee:d418:f758
+ with SMTP id adf61e73a8af0-1f2f4cdb421mr28532451637.17.1741109988705; Tue, 04
+ Mar 2025 09:39:48 -0800 (PST)
+Date: Tue, 4 Mar 2025 09:39:47 -0800
+In-Reply-To: <SN6PR02MB41576973AC66F8515F6C81F0D4C82@SN6PR02MB4157.namprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH v2] mei: Improve exception handling in mei_cl_irq_read_msg()
-To: kernel-janitors@vger.kernel.org,
- Alexander Usyskin <alexander.usyskin@intel.com>,
- Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Tomas Winkler <tomas.winkler@intel.com>
-Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
-References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
- <00589154-00ac-4ed5-2a37-60b3c6f6c523@web.de>
- <b7b6db19-055e-ace8-da37-24b4335e93b2@web.de>
- <MN2PR11MB40930A824DF68F96A93E1B7FE5859@MN2PR11MB4093.namprd11.prod.outlook.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <MN2PR11MB40930A824DF68F96A93E1B7FE5859@MN2PR11MB4093.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:J8W2iKNW1YOzbAMnhs59UwrQGwR1Hh6yGO7inTnU14zkOAupzCK
- d9+IIn2FAt4eO1oHC3z0rvCCtO76XilZNUr1lBfotSduoQwvEqx38iZzNgjRdkkhSCCTMxv
- /iCGdqvvWQaq/fp7ERjtHjiJxLxvtaIvmJyGO2Dw3iOMpzV5Vfi+jtTOFfzzhzJYbb1d6gs
- B8iVPlkbih15zmTVSCN3g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:9YBNIMP3MJY=;n42+oDqLo6wQnlInoPCWZ53JWo5
- vPe0g1v1iPVJVBX3lQZCBBo4GdaNfkkvbyNuW7p4HKVKEHhtsg5uUwbyt/Q34o1KYLvAOM1H9
- Qs0XMuEYA2IOs92Ki8qAi6MaYVo1RZpyoZ2MGNLZex+fFPatCaCne8GEdEkwFyUkhZa84lozW
- kDCIIZdyunnQcONNQKEbIHQEU/t68T0at36ufZKM2TLG6tvw1hNm7VdLpIt3w870yB+A6fucR
- 0Ql4a3Tc9QBOK4C2poBvuJtWV4zdOm6atgfQWV4Srn8tVubzf6hbgJiMWFbJdqUqw2tBmUsSI
- 0xq9uM21sbD0ZBsThh2rXqZAd9BJKHzwIO+7T8LTeOyjwu1xyy1BN4iQrLijIg/aHC4t3HhIy
- loT5cQSrxTLpBWGlZ5fXBMZvfzbLHRGpgosv/2OZb6bJGDtFJwYGzTV3tYsG6vDiHS8q43OBz
- e61SWjNma9oWJB5hjLvDJprWHuGUdet2S2I+jYZ/g8iWCE6xOBONbbY9J5AUgRzYawIsvn1Sa
- 9NmuoW2bDkCQknfp0wXVtGG4tSnJVTbzJ47sZQulpNs3EeHhfHd8kJpUEx7P2M7UcxlmOSraE
- q0BXphasgMPkrQRtb1wAc/qMDCmLGo8NnUYccIpiopb3WeICO/4Uwqd1nzXtiMYMpkgI4zJrR
- uTgLP9R79sZE1oGNu4S3GsLEQIwIkNeqjz9kWInZnoM+jIP51lMVuZUy3HVDIEWHIBRhDIs2C
- gUJWovKziPfY0zBttTcEErKPN0SIbOYie0VHIZCXU0dNPUM2Usrmf33Dfmb3Ys3qTr5f2sIvK
- Fnu47GsMyn66L2jA8uK49OVNXBE4q+KjHzwApPyGKIG0bK5grn4YZa0SdHqKXC0Rkg+a2/XQo
- dLR29QShm9g6wc4GLFsoNB6glL3+gAHei6RtWjPdFKvwJpsCETPQthDHCKSwurzXeTE9d2gfV
- skCtC0LLA3tBC20bDzN09FXfqSBVkmbZ+Ki/YOuXfW1QqyE8jtK6aZLNw0oIG+YDUsld6/9AN
- kZNr1K8giDfPH/GlcY/+Kabdcf1zn+Xw03gkAPD2vY2NVZJwxTr/WlnHBPKZxssl9oWdzHDrr
- nTXFMV1MygKQ3eB/9OqixtP/5d8YH6NUZKuSqfpIIWq+Eu40HJs1rGKnO7jXY4DmCIlJrJTGu
- RsaLoLPZjLTrnerPNNta0NOhF9KoAJYMHiPho2N114oTn5YAvrTPYt4A8dAjBckWlxHZmjT1e
- JjfSvH4Ni69m+i7AXJncxOF+E52bJi2fsJa00f1ra/wxoFa1dKAtCbb8P5F4YfxZH3F8EF3mK
- NlgGXkoILh07ipFN7p/A4ClS90MbeTm9JEzDryOuAIbO3fdDcacov46zCiD9Vbcpxg5z9PBSh
- vjpxyzEAimIMFbZmHkBmSOj+HR2dbusYfCkLyIyELEzt2eKUWZRcBB+6OxV0QDGGa2Bzq9lJm
- zM8e/nA==
+Mime-Version: 1.0
+References: <20250227021855.3257188-1-seanjc@google.com> <20250227021855.3257188-9-seanjc@google.com>
+ <SN6PR02MB41576973AC66F8515F6C81F0D4C82@SN6PR02MB4157.namprd02.prod.outlook.com>
+Message-ID: <Z8c641D3AuWNXGVB@google.com>
+Subject: Re: [PATCH v2 08/38] clocksource: hyper-v: Register sched_clock
+ save/restore iff it's necessary
+From: Sean Christopherson <seanjc@google.com>
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Juergen Gross <jgross@suse.com>, "K. Y. Srinivasan" <kys@microsoft.com>, 
+	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
+	Dexuan Cui <decui@microsoft.com>, Ajay Kaher <ajay.kaher@broadcom.com>, 
+	Jan Kiszka <jan.kiszka@siemens.com>, Andy Lutomirski <luto@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	John Stultz <jstultz@google.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"virtualization@lists.linux.dev" <virtualization@lists.linux.dev>, 
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>, 
+	"xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>, Tom Lendacky <thomas.lendacky@amd.com>, 
+	Nikunj A Dadhania <nikunj@amd.com>
+Content-Type: text/plain; charset="us-ascii"
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 4 Mar 2025 18:11:05 +0100
+On Tue, Mar 04, 2025, Michael Kelley wrote:
+> From: Sean Christopherson <seanjc@google.com> Sent: Wednesday, February 26, 2025 6:18 PM
+> > 
+> > Register the Hyper-V timer callbacks or saving/restoring its PV sched_clock
+> 
+> s/or/for/
+> 
+> > if and only if the timer is actually being used for sched_clock.
+> > Currently, Hyper-V overrides the save/restore hooks if the reference TSC
+> > available, whereas the Hyper-V timer code only overrides sched_clock if
+> > the reference TSC is available *and* it's not invariant.  The flaw is
+> > effectively papered over by invoking the "old" save/restore callbacks as
+> > part of save/restore, but that's unnecessary and fragile.
+> 
+> The Hyper-V specific terminology here isn't quite right.  There is a
+> PV "Hyper-V timer", but it is loaded by the guest OS with a specific value
+> and generates an interrupt when that value is reached.  In Linux, it is used
+> for clockevents, but it's not a clocksource and is not used for sched_clock.
+> The correct Hyper-V term is "Hyper-V reference counter" (or "refcounter"
+> for short).  The refcounter behaves like the TSC -- it's a monotonically
+> increasing value that is read-only, and can serve as the sched_clock.
+> 
+> And yes, both the Hyper-V timer and Hyper-V refcounter code is in a
+> source file with a name containing "timer" but not "refcounter". But
+> that seems to be the pattern for many of the drivers in
+> drivers/clocksource. :-)
 
-The label =E2=80=9Cdiscard=E2=80=9D was used to jump to another pointer ch=
-eck despite of
-the detail in the implementation of the function =E2=80=9Cmei_cl_irq_read_=
-msg=E2=80=9D
-that it was determined already that a corresponding variable contained
-a null pointer.
+Heh, wading through misleading naming is basically a right of passage in the kernel.
 
-* Thus use an additional label instead.
-
-* Delete a redundant check.
-
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
-
-V2:
-* The summary phrase was adjusted a bit.
-
-* The Fixes tags were omitted.
-
-* The change suggestion was rebased on source files of
-  the software =E2=80=9CLinux next-20250228=E2=80=9D.
-
-
- drivers/misc/mei/interrupt.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/misc/mei/interrupt.c b/drivers/misc/mei/interrupt.c
-index b09b79fedaba..af5f01eefea4 100644
-=2D-- a/drivers/misc/mei/interrupt.c
-+++ b/drivers/misc/mei/interrupt.c
-@@ -136,7 +136,7 @@ static int mei_cl_irq_read_msg(struct mei_cl *cl,
- 				cb->ext_hdr =3D kzalloc(sizeof(*gsc_f2h), GFP_KERNEL);
- 				if (!cb->ext_hdr) {
- 					cb->status =3D -ENOMEM;
--					goto discard;
-+					goto move_tail;
- 				}
- 				break;
- 			case MEI_EXT_HDR_NONE:
-@@ -153,7 +153,7 @@ static int mei_cl_irq_read_msg(struct mei_cl *cl,
- 		if (!vtag_hdr && !gsc_f2h) {
- 			cl_dbg(dev, cl, "no vtag or gsc found in extended header.\n");
- 			cb->status =3D -EPROTO;
--			goto discard;
-+			goto move_tail;
- 		}
- 	}
-
-@@ -163,7 +163,7 @@ static int mei_cl_irq_read_msg(struct mei_cl *cl,
- 			cl_err(dev, cl, "mismatched tag: %d !=3D %d\n",
- 			       cb->vtag, vtag_hdr->vtag);
- 			cb->status =3D -EPROTO;
--			goto discard;
-+			goto move_tail;
- 		}
- 		cb->vtag =3D vtag_hdr->vtag;
- 	}
-@@ -174,18 +174,18 @@ static int mei_cl_irq_read_msg(struct mei_cl *cl,
- 		if (!dev->hbm_f_gsc_supported) {
- 			cl_err(dev, cl, "gsc extended header is not supported\n");
- 			cb->status =3D -EPROTO;
--			goto discard;
-+			goto move_tail;
- 		}
-
- 		if (length) {
- 			cl_err(dev, cl, "no data allowed in cb with gsc\n");
- 			cb->status =3D -EPROTO;
--			goto discard;
-+			goto move_tail;
- 		}
- 		if (ext_hdr_len > sizeof(*gsc_f2h)) {
- 			cl_err(dev, cl, "gsc extended header is too big %u\n", ext_hdr_len);
- 			cb->status =3D -EPROTO;
--			goto discard;
-+			goto move_tail;
- 		}
- 		memcpy(cb->ext_hdr, gsc_f2h, ext_hdr_len);
- 	}
-@@ -193,7 +193,7 @@ static int mei_cl_irq_read_msg(struct mei_cl *cl,
- 	if (!mei_cl_is_connected(cl)) {
- 		cl_dbg(dev, cl, "not connected\n");
- 		cb->status =3D -ENODEV;
--		goto discard;
-+		goto move_tail;
- 	}
-
- 	if (mei_hdr->dma_ring)
-@@ -205,14 +205,14 @@ static int mei_cl_irq_read_msg(struct mei_cl *cl,
- 		cl_err(dev, cl, "message is too big len %d idx %zu\n",
- 		       length, cb->buf_idx);
- 		cb->status =3D -EMSGSIZE;
--		goto discard;
-+		goto move_tail;
- 	}
-
- 	if (cb->buf.size < buf_sz) {
- 		cl_dbg(dev, cl, "message overflow. size %zu len %d idx %zu\n",
- 			cb->buf.size, length, cb->buf_idx);
- 		cb->status =3D -EMSGSIZE;
--		goto discard;
-+		goto move_tail;
- 	}
-
- 	if (mei_hdr->dma_ring) {
-@@ -235,9 +235,9 @@ static int mei_cl_irq_read_msg(struct mei_cl *cl,
-
- 	return 0;
-
-+move_tail:
-+	list_move_tail(&cb->list, cmpl_list);
- discard:
--	if (cb)
--		list_move_tail(&cb->list, cmpl_list);
- 	mei_irq_discard_msg(dev, mei_hdr, length);
- 	return 0;
- }
-=2D-
-2.48.1
-
+Thanks for the reviews and testing!  I'll fixup all the changelogs.
 
