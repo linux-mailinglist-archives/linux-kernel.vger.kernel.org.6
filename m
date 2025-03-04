@@ -1,158 +1,91 @@
-Return-Path: <linux-kernel+bounces-544143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B992A4DDD7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:25:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE78FA4DDF4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:31:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E707178114
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:25:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE9A8178AEF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:31:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5E8F202C22;
-	Tue,  4 Mar 2025 12:25:33 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D10202F8F;
+	Tue,  4 Mar 2025 12:31:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="DCq+KqUO"
+Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073D8202989;
-	Tue,  4 Mar 2025 12:25:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6A8A5228
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 12:30:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741091133; cv=none; b=p6Nr5xzYFqgKIL+GUPTUQ5IlutGY2vEBM+cnbdzH+gnQzhgEdp5MziiGwj6UL0TnWAMz9tWodYJZZEWwwJ2Mt7wUm1fvkhWHQ4IEoIlFZUkOjKvRhV10qY/5Etc8C9rgXsyov7Ebp0u3QgP9SuxqB7HOIHP3UN6cIODVAVI6eag=
+	t=1741091462; cv=none; b=V+pSAsOgfrj5t2jvcFCidG8EDUvzI5qv5voqTOvezu37f2C9CQlPZ2mPQ2Co6r5hfr9IN4rjQs/eVA3Yfowjfv4C/j8toaNtIdDcyNCOeohNwsfedCHPUzxiArbL9jqEkK7F/uNPQqLolJSKa+pUT3DgZEzr/32NCq0sovZ5mMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741091133; c=relaxed/simple;
-	bh=MB1CADvdS6O0JIq3O56tt7iMaZRBTkfdTpP8VouXJEE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=G3RwJkubQOqZwrCiG2qoNn/hs9nJc7IUiy4Z7Ewe29oa2aKt5Cc+bq8gHzlRq8M5ppPkyjULoTluwhUr4mkTw384oEk3uplPFGKKu0yf6LrqgmFN5LxN4Gh5cDiAlApI4nm198/GVpTeMDrtgiN9Sp/p4XWY4ot0G6uNqcVEbX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Z6ZYg3PJYzCs78;
-	Tue,  4 Mar 2025 20:21:59 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id C9BB4140156;
-	Tue,  4 Mar 2025 20:25:28 +0800 (CST)
-Received: from [10.67.120.129] (10.67.120.129) by
- dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 4 Mar 2025 20:25:28 +0800
-Message-ID: <b67798cf-17e0-444d-be9f-00071c3e32b4@huawei.com>
-Date: Tue, 4 Mar 2025 20:25:28 +0800
+	s=arc-20240116; t=1741091462; c=relaxed/simple;
+	bh=n9iWgf5SMNp03OtwUR3CiJyjcZjrPVgAVOi5pzEkZhA=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=VPbWZL4066D9fThg5OqLBGL0eKSMXtzpdJOK+DjPCc/oNWDN28w4g7dFVbBZhLjJlFlhgRPzSE7RaWWNmrzW/dWxxr2mvtF17k85aEUrYr/2Go+Pxj0KLYRqlNOMJRqTD3q9Whq/OkPq8nbGTfSt7USHE68GnqIAxE5RBE7XcZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=DCq+KqUO; arc=none smtp.client-ip=162.62.57.252
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1741091151; bh=WCztl+HeBYJWM3ssDFTF3w6Tv1bQRSVDrElxGp+t9As=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=DCq+KqUOLLSRxl59DlLk6db/e24Qee2L49re+ecOYbZ1x7sazHBEuKopGfeGOWWGJ
+	 7123U1V4U9rRrThNtmLIh+IxBE7Qf8JWdwlv8JKK0Ls4dqsu8gyi5ThHMNr1+m5+T1
+	 wrEX7Gq9u1AP7mcejPIoFYpinhg+imSqprJR7wfs=
+Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
+	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
+	id 67138484; Tue, 04 Mar 2025 20:25:49 +0800
+X-QQ-mid: xmsmtpt1741091149tccsw8239
+Message-ID: <tencent_D86ED06EEDCC9767C7C6E012F1065F09AA06@qq.com>
+X-QQ-XMAILINFO: MYj4oRzRRyycWuy2nFsXpA6cZsbrAHK90oNry43Nzr+oWCjE8l3b8uh6ykjkrT
+	 H9ytivQ1DvRxtZx2JZ2GZSPoeL0odEj7O3d+AS7iN8P9BymIVTcvFNjfFGdEzY5Slwhz0S6BfQJR
+	 G3o25BvGx3pFdILRBxTtn4AAGkK8pYAxBiXzniq8sMyPJZh+gF0n240CC8M6LrsimFEixsBCxhrP
+	 QiBCw2XbP7Kttj/CNPeek7B1Gqn+pTRxDYT6RA4SDXmGN6EZomuhY866IfoBF9lQTw9TvNwdES7c
+	 A13KUhyA6zh1BtdIDEmyGXuBQ9vvoMEVRoAkmjbQb+pkq92PkzJDGqKfXrnIdO2wW7fNYSc6JgTw
+	 YlDJmy+cKzAFeteYCYIs/Xt8JbJzK0j0tAM9FMDTEszqQ2biBlMc7Rx/3tE04/mbUnfeMf+UmkgZ
+	 RkmJDAciPlAJZ5O6kT9GLPufOePz5+Kyq1Qe2OfKVQpY9iPETRHCXIPWvvTUrbLUKwBH6xo/1Vxq
+	 rwiQM3ZYiYZfds990dom6V7Ml2025WljGJMRv8BXQh9jfwvCqRG7o4K7MgJuSARtKm9f/HHII7TB
+	 qTgVtlCkSH4J/JDSowfTa0GYhxS8z454CmKHqxbVALYjYO4g5d9tUYHyZAlTYnR3QEwDIrC4Xsk1
+	 3jbxJCi6TvLncpko/fTjR4hZEDKNci7VCw2jFjrPkWBjfz8kdRyGH9G7rsR6YpYGP7T1+gzM9HPA
+	 AASh/9Cm1s30ckLtGth1XjEIzMpy2zx3xhJ3G7iaGee4FMP1fVTA5HuwajqHKS+XdBjwIyO/e5yf
+	 gD9BEi8+MMA2xo0Cn5AsiQbiPDzurHV/NbNnBpPBeRr+ZDS6KEs0a9qmzuZXxYJFNYv3ANGETjN/
+	 cEJqyEr0AnH9GQH96ODK34uTNo0SYJDN1YYAFzNY5Qo2u3sRKTOUQ=
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+8f9f411152c9539f4e59@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [xfs?] [mm?] WARNING: bad unlock balance in __mm_populate
+Date: Tue,  4 Mar 2025 20:25:48 +0800
+X-OQ-MSGID: <20250304122547.590658-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <67c49230.050a0220.55417.04d5.GAE@google.com>
+References: <67c49230.050a0220.55417.04d5.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v10 3/4] page_pool: support unlimited number of
- inflight pages
-To: Simon Horman <horms@kernel.org>
-CC: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<zhangkun09@huawei.com>, <liuyonglong@huawei.com>, <fanghaiqing@huawei.com>,
-	Robin Murphy <robin.murphy@arm.com>, Alexander Duyck
-	<alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>, Eric Dumazet
-	<edumazet@google.com>, Donald Hunter <donald.hunter@gmail.com>, Jesper
- Dangaard Brouer <hawk@kernel.org>, Ilias Apalodimas
-	<ilias.apalodimas@linaro.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250226110340.2671366-1-linyunsheng@huawei.com>
- <20250226110340.2671366-4-linyunsheng@huawei.com>
- <20250303175940.GW1615191@kernel.org>
-Content-Language: en-US
-From: Yunsheng Lin <linyunsheng@huawei.com>
-In-Reply-To: <20250303175940.GW1615191@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpemf200006.china.huawei.com (7.185.36.61)
+Content-Transfer-Encoding: 8bit
 
-On 2025/3/4 1:59, Simon Horman wrote:
-> On Wed, Feb 26, 2025 at 07:03:38PM +0800, Yunsheng Lin wrote:
->> Currently a fixed size of pre-allocated memory is used to
->> keep track of the inflight pages, in order to use the DMA
->> API correctly.
->>
->> As mentioned [1], the number of inflight pages can be up to
->> 73203 depending on the use cases. Allocate memory dynamically
->> to keep track of the inflight pages when pre-allocated memory
->> runs out.
->>
->> The overhead of using dynamic memory allocation is about 10ns~
->> 20ns, which causes 5%~10% performance degradation for the test
->> case of time_bench_page_pool03_slow() in [2].
->>
->> 1. https://lore.kernel.org/all/b8b7818a-e44b-45f5-91c2-d5eceaa5dd5b@kernel.org/
->> 2. https://github.com/netoptimizer/prototype-kernel
->> CC: Robin Murphy <robin.murphy@arm.com>
->> CC: Alexander Duyck <alexander.duyck@gmail.com>
->> CC: IOMMU <iommu@lists.linux.dev>
->> Fixes: f71fec47c2df ("page_pool: make sure struct device is stable")
->> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
->> ---
->>  Documentation/netlink/specs/netdev.yaml | 16 +++++
->>  include/net/page_pool/types.h           | 10 ++++
->>  include/uapi/linux/netdev.h             |  2 +
->>  net/core/page_pool.c                    | 79 ++++++++++++++++++++++++-
->>  net/core/page_pool_priv.h               |  2 +
->>  net/core/page_pool_user.c               | 39 ++++++++++--
->>  tools/net/ynl/samples/page-pool.c       | 11 ++++
->>  7 files changed, 154 insertions(+), 5 deletions(-)
-> 
-> Hi,
-> 
-> It looks like the header changes in this patch don't quite
-> correspond to the spec changes.
-> 
-> But if so, perhaps the spec update needs to change,
-> because adding values to an enum, other than at the end,
-> feels like UAPI breakage to me.
-> 
-> I see this:
-> 
-> $ ./tools/net/ynl/ynl-regen.sh -f
+#syz test
 
-Yes, It seems I only tested the tools/net/ynl/samples/page-pool, which
-doesn't seems to catch the above problem.
+diff --git a/mm/gup.c b/mm/gup.c
+index 3883b307780e..290fcdb760a1 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -2030,6 +2030,7 @@ int __mm_populate(unsigned long start, unsigned long len, int ignore_errors)
+ 		 * if the vma was already munlocked.
+ 		 */
+ 		ret = populate_vma_page_range(vma, nstart, nend, &locked);
++		printk("mm: %p, mmap lock held: %d, locked: %d, %s\n", mm, lockdep_is_held(&mm->mmap_lock), locked, __func__);
+ 		if (ret < 0) {
+ 			if (ignore_errors) {
+ 				ret = 0;
 
-Will update the spec changes to the the header changes and update
-tools/include/uapi/linux/netdev.h accordingly too.
-
-Thanks for the reporting.
-
-> $ git diff
-> diff --git a/include/uapi/linux/netdev.h b/include/uapi/linux/netdev.h
-> index 9309cbfeb8d2..9e02f6190b07 100644
-> --- a/include/uapi/linux/netdev.h
-> +++ b/include/uapi/linux/netdev.h
-> @@ -100,11 +100,11 @@ enum {
->  	NETDEV_A_PAGE_POOL_NAPI_ID,
->  	NETDEV_A_PAGE_POOL_INFLIGHT,
->  	NETDEV_A_PAGE_POOL_INFLIGHT_MEM,
-> +	NETDEV_A_PAGE_POOL_ITEM_MEM_RESIDENT,
-> +	NETDEV_A_PAGE_POOL_ITEM_MEM_USED,
->  	NETDEV_A_PAGE_POOL_DETACH_TIME,
->  	NETDEV_A_PAGE_POOL_DMABUF,
->  	NETDEV_A_PAGE_POOL_IO_URING,
-> -	NETDEV_A_PAGE_POOL_ITEM_MEM_RESIDENT,
-> -	NETDEV_A_PAGE_POOL_ITEM_MEM_USED,
->  
->  	__NETDEV_A_PAGE_POOL_MAX,
->  	NETDEV_A_PAGE_POOL_MAX = (__NETDEV_A_PAGE_POOL_MAX - 1)
-> diff --git a/tools/include/uapi/linux/netdev.h b/tools/include/uapi/linux/netdev.h
-> index 7600bf62dbdf..9e02f6190b07 100644
-> --- a/tools/include/uapi/linux/netdev.h
-> +++ b/tools/include/uapi/linux/netdev.h
-> @@ -100,6 +100,8 @@ enum {
->  	NETDEV_A_PAGE_POOL_NAPI_ID,
->  	NETDEV_A_PAGE_POOL_INFLIGHT,
->  	NETDEV_A_PAGE_POOL_INFLIGHT_MEM,
-> +	NETDEV_A_PAGE_POOL_ITEM_MEM_RESIDENT,
-> +	NETDEV_A_PAGE_POOL_ITEM_MEM_USED,
->  	NETDEV_A_PAGE_POOL_DETACH_TIME,
->  	NETDEV_A_PAGE_POOL_DMABUF,
->  	NETDEV_A_PAGE_POOL_IO_URING,
-> 
 
