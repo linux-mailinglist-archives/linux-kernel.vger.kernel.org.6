@@ -1,117 +1,235 @@
-Return-Path: <linux-kernel+bounces-544944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 229EAA4E6CE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:51:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94B77A4E6A2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:47:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EA60189F051
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:45:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0B517AA8F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:45:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCB9D294EC0;
-	Tue,  4 Mar 2025 16:23:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5AEB29AAF0;
+	Tue,  4 Mar 2025 16:24:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="xCLtv+33"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F050aL2e"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F9927EC83
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:23:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AAB6BA2E;
+	Tue,  4 Mar 2025 16:24:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741105386; cv=none; b=Qwaobti7lWeoZ1xB0XSSdw4sPLj9ligqyKZXQifHQV7bANJ43j/mPfn2faVbJgTdinZlZzEw2hbMYLsDI3ZvNw0J/guGzBrXoN3MqCKpHStOXj+qwgA7qvKCY3GT6Pc3aqzn0to9A96d2bG2S1wQc3k9M5GGMeDNWr5LsYc4xgo=
+	t=1741105445; cv=none; b=TP+8kXMnPbLmZC5OgfYCd78tURNwUcL18PCwrAUB/loNBBYhgXMWRX9kd0rPvUOtQClziBZ25hphQ4ynrCRBkl+v2NcRp1UCwcJbdu+jPSr2gdhGuCVlAr450CIcgmdW/8iIRa0jpFk5HVycv8z12M9iyoZx6+nxiCHk3H/YrP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741105386; c=relaxed/simple;
-	bh=rAjJcLnO0KyiSNHwIq9oegnuDgZQjl1pSszoUPWh8wU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DJPGr7FSr4bDmsAkRq1oZ80CqxWsmNoWicwPYQCpCxy3RP1mCWGAi/5jxHDkBa9F40iYPFgWSi2PG68QDuSw1vnFO3HchHt3vHQAjWxojvpxJdew9yWxzw1mPpEVb6rC6ZU5cgOJ0FT10XORwkQConcJhQQPLJsi2Ndkv9I23/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=xCLtv+33; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 031EEC4CEE5;
-	Tue,  4 Mar 2025 16:23:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1741105385;
-	bh=rAjJcLnO0KyiSNHwIq9oegnuDgZQjl1pSszoUPWh8wU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=xCLtv+33o4FfrOymcp1I6954RyVQMW13Ux/N22WzjTa529mKYLCQ/an2qMCQUQsmM
-	 rdc6LmxKHkbg96KhaP6X3iQ6d6E4AIyB4T02zEBU1uwZ6YxrCtjbR1shBM3OiPht72
-	 VLhxfMQpd5cmDCC6Yxln/c7h8OzjAnPkeLhQgG/k=
-Date: Tue, 4 Mar 2025 17:23:02 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Zxyan Zhu <zxyan20@163.com>
-Cc: broonie@kernel.org, rafael@kernel.org, dakr@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] regmap: debugfs: Fix name collision without atomic
- operations
-Message-ID: <2025030437-copious-irrigate-1b63@gregkh>
-References: <20250304142452.3521828-1-zxyan20@163.com>
+	s=arc-20240116; t=1741105445; c=relaxed/simple;
+	bh=1g/E3QxFi8+f57T291+uHeqUByWPis4PZu0PV68aBXI=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=pVSdsu/horJgvyzrjbHTuiq3uszp6WZ7arKSG8Z4VXVMXFFLNusc5wBxteITvmVVjn5Vxug2+j/JGZOURYSkx75PwL2rPUYSzjiRJg3jSaP8ntlOD9WNeNTUJUpIVrWLAzNKaRVsPUEkSY3qOhFt3A/DycDmmsU1lRKyw6/KpxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F050aL2e; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741105444; x=1772641444;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version:content-id;
+  bh=1g/E3QxFi8+f57T291+uHeqUByWPis4PZu0PV68aBXI=;
+  b=F050aL2eIGP4yCYMgMl8e5ZxXRtVUZQzY99r70+JmJSxZ2UgN4PgP4mL
+   rTS1/YdmsIX5JaFRI5PPEll++P1S4Z3WgktPxxyTA69R8d+wZp2pBpdEC
+   bMgDrNP4htz4TKJEg2h9Zn2Li2GRrU/SNIGLZ6KgMQKk7HccUJA61etuG
+   wS090I7aMENF2Hxj5tlZVsZEvKkyTIOKN7sH4jfxKUHwiBqfsEESjjzAj
+   riNa8BZhZqw5/+HPLGcxEvbu+CmEyeREJhBgl1CEZnQcJ0yUDRyOvwGTl
+   pi9JE80uAsMFguw0D3BOsBSg7lg2eFtCR79F9R3M60pTb7DCwf2wCRwED
+   w==;
+X-CSE-ConnectionGUID: 3nAd31OWTw2c0oSlse1gZg==
+X-CSE-MsgGUID: 53lKW6uPRzGY4euLjlBigg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="59445033"
+X-IronPort-AV: E=Sophos;i="6.14,220,1736841600"; 
+   d="scan'208";a="59445033"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 08:24:03 -0800
+X-CSE-ConnectionGUID: qmAMMgOIRCiEcONdfDlsoQ==
+X-CSE-MsgGUID: pPUNwViDTFGOFN0AyWOFnQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="118937744"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.220])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 08:23:59 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 4 Mar 2025 18:23:54 +0200 (EET)
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+cc: Mario Limonciello <superm1@kernel.org>, 
+    Antheas Kapenekakis <lkml@antheas.dev>, Kurt Borja <kuurtb@gmail.com>, 
+    Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
+    Hans de Goede <hdegoede@redhat.com>, "Luke D . Jones" <luke@ljones.dev>, 
+    Mark Pearson <mpearson-lenovo@squebb.ca>, 
+    "open list:AMD PMF DRIVER" <platform-driver-x86@vger.kernel.org>, 
+    open list <linux-kernel@vger.kernel.org>, 
+    "open list:ACPI" <linux-acpi@vger.kernel.org>, 
+    "Derek J . Clark" <derekjohn.clark@gmail.com>, me@kylegospodneti.ch, 
+    Denis Benato <benato.denis96@gmail.com>, 
+    Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH v2 1/1] ACPI: platform_profile: Treat quiet and low power
+ the same
+In-Reply-To: <CAJZ5v0hNHFLtBwTTuPc7mNZhCKkmFJgFwgw88_BR_7nQ+rc6Cw@mail.gmail.com>
+Message-ID: <ccea4f8c-6ffe-a322-4d84-71377909dca1@linux.intel.com>
+References: <20250304064745.1073770-1-superm1@kernel.org> <20250304064745.1073770-2-superm1@kernel.org> <CAGwozwHniWGQ7qK6FYD_WK5zNjkro7-Q1nTcFPAuWDt9UQ+noA@mail.gmail.com> <23d6c735-e94f-4d43-87b0-ff119941fcac@kernel.org>
+ <CAJZ5v0geaYYRQm0Hs2M4ak_8AZoWLJS-v0jqyrsaVjmXk267rA@mail.gmail.com> <71b14dc3-77e1-4fd7-b576-821e3a41ba19@kernel.org> <CAJZ5v0hNHFLtBwTTuPc7mNZhCKkmFJgFwgw88_BR_7nQ+rc6Cw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250304142452.3521828-1-zxyan20@163.com>
+Content-Type: multipart/mixed; BOUNDARY="8323328-2083532595-1741105319=:931"
+Content-ID: <2aa3ead2-130a-9dd0-aed8-c4cb1d958aaa@linux.intel.com>
 
-On Tue, Mar 04, 2025 at 10:24:52PM +0800, Zxyan Zhu wrote:
-> The `dummy_index` global variable caused debugfs file name conflicts
-> during re-entry, leading to creation failures. Use atomic operations
-> to ensure safe and unique debugfs `dummy%d` naming.
-> 
-> Changes since v1:
-> - Replaced atomic_read + atomic_inc with atomic_inc_return.
-> - Added atomic_dec in the error path to maintain index consistency.
-> - Updated the commit message to clarify the fix.
-> 
-> Signed-off-by: Zxyan Zhu <zxyan20@163.com>
-> ---
->  drivers/base/regmap/regmap-debugfs.c | 12 +++++++-----
->  1 file changed, 7 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/base/regmap/regmap-debugfs.c b/drivers/base/regmap/regmap-debugfs.c
-> index fb84cda92a75..60c8d9a673b8 100644
-> --- a/drivers/base/regmap/regmap-debugfs.c
-> +++ b/drivers/base/regmap/regmap-debugfs.c
-> @@ -20,7 +20,7 @@ struct regmap_debugfs_node {
->  	struct list_head link;
->  };
->  
-> -static unsigned int dummy_index;
-> +static atomic_t dummy_index = ATOMIC_INIT(0);
->  static struct dentry *regmap_debugfs_root;
->  static LIST_HEAD(regmap_debugfs_early_list);
->  static DEFINE_MUTEX(regmap_debugfs_early_lock);
-> @@ -549,6 +549,7 @@ void regmap_debugfs_init(struct regmap *map)
->  	struct regmap_range_node *range_node;
->  	const char *devname = "dummy";
->  	const char *name = map->name;
-> +	int index;
->  
->  	/*
->  	 * Userspace can initiate reads from the hardware over debugfs.
-> @@ -595,12 +596,13 @@ void regmap_debugfs_init(struct regmap *map)
->  
->  	if (!strcmp(name, "dummy")) {
->  		kfree(map->debugfs_name);
-> -		map->debugfs_name = kasprintf(GFP_KERNEL, "dummy%d",
-> -						dummy_index);
-> -		if (!map->debugfs_name)
-> +		index = atomic_inc_return(&dummy_index);
-> +		map->debugfs_name = kasprintf(GFP_KERNEL, "dummy%d", index);
-> +		if (!map->debugfs_name) {
-> +			atomic_dec(&dummy_index);
->  			return;
-> +		}
->  		name = map->debugfs_name;
-> -		dummy_index++;
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Shouldn't you just use an idr here if there is a race condition?
-There's a lock built into it that should solve all of these issues.
+--8323328-2083532595-1741105319=:931
+Content-Type: text/plain; CHARSET=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-ID: <f17d2118-68e9-267f-44c9-8ec2bbc031e5@linux.intel.com>
 
-thanks,
+On Tue, 4 Mar 2025, Rafael J. Wysocki wrote:
 
-greg k-h
+> On Tue, Mar 4, 2025 at 3:52=E2=80=AFPM Mario Limonciello <superm1@kernel.=
+org> wrote:
+> >
+> > On 3/4/2025 08:08, Rafael J. Wysocki wrote:
+> > > On Tue, Mar 4, 2025 at 1:49=E2=80=AFPM Mario Limonciello <superm1@ker=
+nel.org> wrote:
+> > >>
+> > >> On 3/4/25 02:38, Antheas Kapenekakis wrote:
+> > >>> On Tue, 4 Mar 2025 at 07:48, Mario Limonciello <superm1@kernel.org>=
+ wrote:
+> > >>>>
+> > >>>> From: Mario Limonciello <mario.limonciello@amd.com>
+> > >>>>
+> > >>>> When two drivers don't support all the same profiles the legacy in=
+terface
+> > >>>> only exports the common profiles.
+> > >>>>
+> > >>>> This causes problems for cases where one driver uses low-power but=
+ another
+> > >>>> uses quiet because the result is that neither is exported to sysfs=
+=2E
+> > >>>>
+> > >>>> If one platform profile handler supports quiet and the other
+> > >>>> supports low power treat them as the same for the purpose of
+> > >>>> the sysfs interface.
+> > >>>>
+> > >>>> Fixes: 688834743d67 ("ACPI: platform_profile: Allow multiple handl=
+ers")
+> > >>>> Reported-by: Antheas Kapenekakis <lkml@antheas.dev>
+> > >>>> Closes: https://lore.kernel.org/platform-driver-x86/e64b771e-3255-=
+42ad-9257-5b8fc6c24ac9@gmx.de/T/#mc068042dd29df36c16c8af92664860fc4763974b
+> > >>>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> > >>>> ---
+> > >>>>    drivers/acpi/platform_profile.c | 38 ++++++++++++++++++++++++++=
+++++---
+> > >>>>    1 file changed, 35 insertions(+), 3 deletions(-)
+> > >>>>
+> > >>>> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platfo=
+rm_profile.c
+> > >>>> index 2ad53cc6aae53..d9a7cc5891734 100644
+> > >>>> --- a/drivers/acpi/platform_profile.c
+> > >>>> +++ b/drivers/acpi/platform_profile.c
+> > >>>> @@ -73,8 +73,20 @@ static int _store_class_profile(struct device *=
+dev, void *data)
+> > >>>>
+> > >>>>           lockdep_assert_held(&profile_lock);
+> > >>>>           handler =3D to_pprof_handler(dev);
+> > >>>> -       if (!test_bit(*bit, handler->choices))
+> > >>>> -               return -EOPNOTSUPP;
+> > >>>> +       if (!test_bit(*bit, handler->choices)) {
+> > >>>> +               switch (*bit) {
+> > >>>> +               case PLATFORM_PROFILE_QUIET:
+> > >>>> +                       *bit =3D PLATFORM_PROFILE_LOW_POWER;
+> > >>>> +                       break;
+> > >>>> +               case PLATFORM_PROFILE_LOW_POWER:
+> > >>>> +                       *bit =3D PLATFORM_PROFILE_QUIET;
+> > >>>> +                       break;
+> > >>>> +               default:
+> > >>>> +                       return -EOPNOTSUPP;
+> > >>>> +               }
+> > >>>> +               if (!test_bit(*bit, handler->choices))
+> > >>>> +                       return -EOPNOTSUPP;
+> > >>>> +       }
+> > >>>>
+> > >>>>           return handler->ops->profile_set(dev, *bit);
+> > >>>>    }
+> > >>>> @@ -252,8 +264,16 @@ static int _aggregate_choices(struct device *=
+dev, void *data)
+> > >>>>           handler =3D to_pprof_handler(dev);
+> > >>>>           if (test_bit(PLATFORM_PROFILE_LAST, aggregate))
+> > >>>>                   bitmap_copy(aggregate, handler->choices, PLATFOR=
+M_PROFILE_LAST);
+> > >>>> -       else
+> > >>>> +       else {
+> > >>>> +               /* treat quiet and low power the same for aggregat=
+ion purposes */
+> > >>>> +               if (test_bit(PLATFORM_PROFILE_QUIET, handler->choi=
+ces) &&
+> > >>>> +                   test_bit(PLATFORM_PROFILE_LOW_POWER, aggregate=
+))
+> > >>>> +                       set_bit(PLATFORM_PROFILE_QUIET, aggregate)=
+;
+> > >>>> +               else if (test_bit(PLATFORM_PROFILE_LOW_POWER, hand=
+ler->choices) &&
+> > >>>> +                        test_bit(PLATFORM_PROFILE_QUIET, aggregat=
+e))
+> > >>>> +                       set_bit(PLATFORM_PROFILE_LOW_POWER, aggreg=
+ate);
+> > >>>>                   bitmap_and(aggregate, handler->choices, aggregat=
+e, PLATFORM_PROFILE_LAST);
+> > >>>> +       }
+> > >>>
+> > >>> So you end up showing both? If that's the case, isn't it equivalent=
+ to
+> > >>> just make amd-pmf show both quiet and low-power?
+> > >>>
+> > >>> I guess it is not ideal for framework devices. But if asus devices =
+end
+> > >>> up showing both, then it should be ok for framework devices to show
+> > >>> both.
+> > >>>
+> > >>> I like the behavior of the V1 personally.
+> > >>
+> > >> No; this doesn't cause it to show both.  It only causes one to show =
+up.
+> > >
+> > > Which may not be the one that was shown before IIUC and that's not go=
+od.
+> > >
+> > > What actually is the problem with the previous version?
+> >
+> > Functionally?  Nothing.  This was to demonstrate the other way to do it
+> > that I preferred and get feedback on it as an alternative.
+> >
+> > If you and Ilpo are happy with v1 that's totally fine and we can go wit=
+h
+> > that.
+>=20
+> I'd prefer to go for the v1 at this point because it fixes a
+> regression affecting user space that needs to be addressed before the
+> 6.14 release (and there is not too much time left) and it has been
+> checked on the affected systems.
+>=20
+> Ilpo, do you agree?
+>=20
+
+Yes, I'm fine with that.
+
+I would have acked those patches earlier but noticed they'd managed to in=
+=20
+the meantime come up yet another version of the fix so I waited some more.
+I've added my ack there now.
+
+--=20
+ i.
+--8323328-2083532595-1741105319=:931--
 
