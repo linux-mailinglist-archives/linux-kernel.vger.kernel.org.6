@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-544324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2621EA4E01D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:04:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C43BFA4E012
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:02:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 727443B36CC
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:02:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B54B77ABB14
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:01:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1814E204C2C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD217204F7F;
 	Tue,  4 Mar 2025 14:02:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="jOOUnhh7"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="aGY3ur5o"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3B37202F90;
-	Tue,  4 Mar 2025 14:02:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 518F5204594;
+	Tue,  4 Mar 2025 14:02:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741096922; cv=none; b=sAbfcq2s5uoXHlhFkBvpP+xqDkeO6BGAUh/TxIgS9MxlBV0LG7e2ly4ryMPdIE9nuEzsvwkt+Jx669iq9QCu5hxbH8MGJ3iw1pcB9Et6IsKEhwj4M5UGEdqO88Xh2Rzaa4h77qEqf9CYQiexjPJ1r5APp9f/szeyQq9NhD3n1wE=
+	t=1741096923; cv=none; b=WKJbDGdo0BmA22K6Dth12ua89IRyTyTOVGi++6f6Vv1uCd5YhGLkURtoKCM1x8OlW3V1Vv4mCB8XLJvEnXUI9cnleQnXaYfk2wthxNlk+VnO3SnAJmhkW2nfxzqhZf0CYr1gIcPRJbhdvzd6zo6+p0oUpn8fXzJMvy4gJiK0J8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741096922; c=relaxed/simple;
-	bh=pq3KZLjVtYgG3QJjA0gfc0ATstLTL4U024ZZLEq+S30=;
+	s=arc-20240116; t=1741096923; c=relaxed/simple;
+	bh=yt2BhK78wO3VCoBAp3bBwVbzYRTRZrZYVfmzQyD7dWY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HsyRCJAFcSY+5xc5MXgZ7XYf3iUCsu/jXWPjmlYEhkduZUAIy3WnSl7e0+ajEkq1/WlEr8Eqh4gaXmU/Oi3z7q+kLS9Z3x9qFV/dhNfz46M0rs5HUZZbF2hvFYJ/vfvwglLMjpBu8R81ukZZeJVjUiyE6gy9ni3FQEJx4opt2m0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=jOOUnhh7; arc=none smtp.client-ip=148.251.105.195
+	 In-Reply-To:To:Cc; b=uT4LVdXPA7KePWzSxeH+ggW8bw9gmmVtIRwlK9rVzZXe49z2K/D+PtFSCPS+uFOO/YU7eUwnumukimlP3fLxQ2OFKVeeWngmWf23nUPHlfPveJ5ngbuaK84FuZsiEwJezZiLkqFfxc+fnwRuBsFCQTOzVoYE5Q1qcZJOBYi+pwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=aGY3ur5o; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1741096918;
-	bh=pq3KZLjVtYgG3QJjA0gfc0ATstLTL4U024ZZLEq+S30=;
+	s=mail; t=1741096919;
+	bh=yt2BhK78wO3VCoBAp3bBwVbzYRTRZrZYVfmzQyD7dWY=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=jOOUnhh7ghUI7j0/Rzy79CJhgMGKYVh8gNeUQyN3tI+o1DY+O4FTOn2G8cbBVD3fN
-	 16B2GZdaUK9f53fxgfmB7n+bq+AWzsF74bV7UCayIDzYLfvWKZYxsv5lesh0NtjQJg
-	 eGGcPU+2mEf3C60V8JeKC0YHHxtEPt7Ovccp8hj8hkGN0priJUtbel9GJ/xkUHvFfX
-	 byrmL+bIbkRyJXjMGoYgQzCbB3GVnbO1DNSOI55K8YpIYmXnCnCH6Fn73eCYNTUm3w
-	 JYmmRFDOEXApUgTSYjx5P2Od7fRzx/h4GSXAH/aMos2nzz3EgnE7LPkXWhVTHeA9ZX
-	 gHxZUc4IfUSDw==
+	b=aGY3ur5orYmk/WCjTAXkcneoI09H5KxJrlLb+DZrfB/tuMuj2/ACtcNTMXcreakbu
+	 i+fLskyhBzDuDN0PlnYMHjOcSFrtDwvd+2lumkiu685apjng+eftIGJnyvPqMJ5Nl8
+	 jFJZY5ctoazf2mnpfECL/mPyuAQPIh1gn00z4mxiIwPRU7uv5LcPfWkMFdyKmAZepx
+	 5q/t30lC8Z2+yy5BkInhkP1GAqvAg9XkLwR9Vk+MK0/zzKUTeFqJcxcM+2QucRDc4P
+	 ocLLrzmB78MMCmdVimSF9FxPWAyj01NGQWhpQGbWAWMHpOqEzpRYlgV4rEAx9mthxf
+	 1Yo+HvCh3pimw==
 Received: from apertis-1.home (2a01cb0892F2D600C8F85cf092d4Af51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: jmassot)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id CF2EE17E0B56;
-	Tue,  4 Mar 2025 15:01:57 +0100 (CET)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 84C8E17E0F3D;
+	Tue,  4 Mar 2025 15:01:58 +0100 (CET)
 From: Julien Massot <julien.massot@collabora.com>
-Date: Tue, 04 Mar 2025 15:01:55 +0100
-Subject: [PATCH v2 1/2] arm64: dts: mediatek: mt8395-nio-12l: Prepare MIPI
- DSI port
+Date: Tue, 04 Mar 2025 15:01:56 +0100
+Subject: [PATCH v2 2/2] arm64: dts: mediatek: mt8395-radxa-nio-12l: Add
+ Radxa 8 HD panel
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,7 +59,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250304-radxa-panel-overlay-v2-1-3ee6797d3f86@collabora.com>
+Message-Id: <20250304-radxa-panel-overlay-v2-2-3ee6797d3f86@collabora.com>
 References: <20250304-radxa-panel-overlay-v2-0-3ee6797d3f86@collabora.com>
 In-Reply-To: <20250304-radxa-panel-overlay-v2-0-3ee6797d3f86@collabora.com>
 To: kernel@collabora.com, Rob Herring <robh@kernel.org>, 
@@ -72,100 +72,123 @@ Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  kernel@collabora.com, Julien Massot <julien.massot@collabora.com>
 X-Mailer: b4 0.14.2
 
-This board can use a MIPI-DSI panel on the DSI0 connector: in
-preparation for adding an overlay for the Radxa Display 8HD,
-add the backlight, and some definitions for pins available
-through the DSI0 port.
+The Radxa 8 HD touchscreen can be used with various Radxa board
+and is sold appart from the Radxa NIO 12L development kit.
+
+Add a DTS overlay for this panel.
 
 Signed-off-by: Julien Massot <julien.massot@collabora.com>
 ---
- .../boot/dts/mediatek/mt8395-radxa-nio-12l.dts     | 45 ++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
+ arch/arm64/boot/dts/mediatek/Makefile              |  2 +
+ .../mediatek/mt8395-radxa-nio-12l-8-hd-panel.dtso  | 84 ++++++++++++++++++++++
+ 2 files changed, 86 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts b/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts
-index 7184dc99296c7f5d749c7e6d378722677970b3b7..1c922e98441a1aadf0aa3cdd76583a70401a1fa3 100644
---- a/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts
-@@ -48,6 +48,18 @@ memory@40000000 {
- 		reg = <0 0x40000000 0x1 0x0>;
- 	};
+diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
+index ae1147eca9a915f117487101e2ad4acead97adfe..58484e8300632edbdef24bbda33ccf00db9df937 100644
+--- a/arch/arm64/boot/dts/mediatek/Makefile
++++ b/arch/arm64/boot/dts/mediatek/Makefile
+@@ -100,9 +100,11 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += mt8395-genio-1200-evk.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt8390-genio-700-evk.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt8395-kontron-3-5-sbc-i1200.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt8395-radxa-nio-12l.dtb
++dtb-$(CONFIG_ARCH_MEDIATEK) += mt8395-radxa-nio-12l-8-hd-panel.dtbo
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt8516-pumpkin.dtb
  
-+	backlight: backlight {
-+		compatible = "pwm-backlight";
-+		brightness-levels = <0 1023>;
-+		default-brightness-level = <576>;
-+		enable-gpios = <&pio 107 GPIO_ACTIVE_HIGH>;
-+		num-interpolated-steps = <1023>;
+ # Device tree overlays support
+ DTC_FLAGS_mt7986a-bananapi-bpi-r3 := -@
+ DTC_FLAGS_mt7986a-bananapi-bpi-r3-mini := -@
+ DTC_FLAGS_mt7988a-bananapi-bpi-r4 := -@
++DTC_FLAGS_mt8395-radxa-nio-12l := -@
+diff --git a/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l-8-hd-panel.dtso b/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l-8-hd-panel.dtso
+new file mode 100644
+index 0000000000000000000000000000000000000000..0389c9cb8581c0bb50bb38fd35d1190de13feb6e
+--- /dev/null
++++ b/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l-8-hd-panel.dtso
+@@ -0,0 +1,84 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++/*
++ * Radxa Display 8 HD touchscreen module
++ * Copyright (C) 2025 Collabora Ltd.
++ */
++
++/dts-v1/;
++/plugin/;
++
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/interrupt-controller/irq.h>
++
++&backlight {
++	status = "okay";
++};
++
++&disp_pwm0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pwm0_default_pins>;
++	status = "okay";
++};
++
++&dsi0 {
++	#address-cells = <1>;
++	#size-cells = <0>;
++	status = "okay";
++
++	panel@0 {
++		compatible = "radxa,display-8hd-ad002", "jadard,jd9365da-h3";
++		reg = <0>;
++		backlight = <&backlight>;
++		vdd-supply = <&mt6359_vcn33_2_bt_ldo_reg>;
++		vccio-supply = <&mt6360_ldo2>;
++		reset-gpios = <&pio 108 GPIO_ACTIVE_LOW>;
 +		pinctrl-names = "default";
-+		pinctrl-0 = <&dsi0_backlight_pins>;
-+		pwms = <&disp_pwm0 0 500000>;
-+		status = "disabled";
-+	};
++		pinctrl-0 = <&panel_default_pins>;
 +
- 	wifi_vreg: regulator-wifi-3v3-en {
- 		compatible = "regulator-fixed";
- 		regulator-name = "wifi_3v3_en";
-@@ -502,6 +514,13 @@ &mt6359_vsram_others_ldo_reg {
- &pio {
- 	mediatek,rsel-resistance-in-si-unit;
- 
-+	dsi0_backlight_pins: dsi0-backlight-pins {
-+		pins-backlight-en {
-+			pinmux = <PINMUX_GPIO107__FUNC_GPIO107>;
-+			output-high;
++		port {
++			dsi_panel_in: endpoint {
++				remote-endpoint = <&dsi0_out>;
++			};
 +		};
 +	};
++};
 +
- 	eth_default_pins: eth-default-pins {
- 		pins-cc {
- 			pinmux = <PINMUX_GPIO85__FUNC_GBE_TXC>,
-@@ -699,6 +718,13 @@ pins-irq {
- 		};
- 	};
- 
-+	panel_default_pins: panel-pins {
-+		pins-rst {
-+			pinmux = <PINMUX_GPIO108__FUNC_GPIO108>;
-+			bias-pull-up;
++&dsi0_out {
++	remote-endpoint = <&dsi_panel_in>;
++};
++
++&i2c4 {
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	touchscreen@14 {
++		compatible = "goodix,gt911";
++		reg = <0x14>;
++		interrupts-extended = <&pio 132 IRQ_TYPE_EDGE_RISING>;
++		irq-gpios = <&pio 132 GPIO_ACTIVE_HIGH>;
++		reset-gpios = <&pio 133 GPIO_ACTIVE_HIGH>;
++		VDDIO-supply = <&mt6359_vcn33_2_bt_ldo_reg>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&touch_pins>;
++	};
++};
++
++&mipi_tx0 {
++	status = "okay";
++};
++
++&ovl0_in {
++	remote-endpoint = <&vdosys0_ep_main>;
++};
++
++&vdosys0 {
++	port {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		vdosys0_ep_main: endpoint@0 {
++			reg = <0>;
++			remote-endpoint = <&ovl0_in>;
 +		};
 +	};
-+
- 	pcie0_default_pins: pcie0-default-pins {
- 		pins-bus {
- 			pinmux = <PINMUX_GPIO19__FUNC_WAKEN>,
-@@ -717,6 +743,12 @@ pins-bus {
- 		};
- 	};
- 
-+	pwm0_default_pins: pwm0-pins {
-+		pins-disp-pwm {
-+			pinmux = <PINMUX_GPIO97__FUNC_DISP_PWM0>;
-+		};
-+	};
-+
- 	spi1_pins: spi1-default-pins {
- 		pins-bus {
- 			pinmux = <PINMUX_GPIO136__FUNC_SPIM1_CSB>,
-@@ -737,6 +769,19 @@ pins-bus {
- 		};
- 	};
- 
-+	touch_pins: touch-pins {
-+		pins-touch-int {
-+			pinmux = <PINMUX_GPIO132__FUNC_GPIO132>;
-+			input-enable;
-+			bias-disable;
-+		};
-+
-+		pins-touch-rst {
-+			pinmux = <PINMUX_GPIO133__FUNC_GPIO133>;
-+			output-high;
-+		};
-+	};
-+
- 	uart0_pins: uart0-pins {
- 		pins-bus {
- 			pinmux = <PINMUX_GPIO98__FUNC_UTXD0>,
++};
 
 -- 
 2.48.1
