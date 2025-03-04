@@ -1,102 +1,107 @@
-Return-Path: <linux-kernel+bounces-544482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80EC6A4E176
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:44:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6192CA4E17E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:45:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DBA227A8E13
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:43:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0496D7A3D34
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:44:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D47F25DAE1;
-	Tue,  4 Mar 2025 14:43:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC0C2264603;
+	Tue,  4 Mar 2025 14:43:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Wf4K4wtZ"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R5GulmQ+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD61206F1F;
-	Tue,  4 Mar 2025 14:43:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14A4B204695;
+	Tue,  4 Mar 2025 14:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741099423; cv=none; b=ur2aXS5qMcCSqGrPczHUiE/sN5n0oDk/E8u1+wbzo0iKF5n7v8/xUq+uakholEYMFsHxU/eLWSoOX2LFMoNtqzJnkualsUDMtl4rTYMeSy/3yCCp6k0EkQl/Q3czt0GyVQFsl7/JtPhkKWpCG09AAo2cnZxR0vIivXE2laP+29M=
+	t=1741099431; cv=none; b=ly68vcM3L7LbF268FcewsgJjOCiA3LW7ULQZ26V2wxpwKJfMq0tGuDRIaUCp1FzcitSxBiADAAuo/arQx8NUtDMOUNIF+kwsMYXu6kMYzygyIQgFPYLm0aGUFoWHtrkOh2P+CIgNrH7nkxgZtbHYcFHicshaHuGLCs2oPgTuA1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741099423; c=relaxed/simple;
-	bh=/wlsvCjXB/lXANM/QCjInlVw2O2/9Yak7eLwi5z4EBw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZioRhYlGYq8xc+Ox/1zBvA8D0GXj/VAMo927N3kLJKNH9GpfpfkEIRzMUlWDHusRsyh8l49I8/KQ7oY6zMtfP4+8fqESi0vTFrMxxmgNsgmA5TbkFEp7QSUSXoalTQ8km7ZX4fsaHhOgHTLih7offHvjBYKQR375QKm4NF6T84M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Wf4K4wtZ; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1741099419;
-	bh=/wlsvCjXB/lXANM/QCjInlVw2O2/9Yak7eLwi5z4EBw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Wf4K4wtZ6/3lqk900g5ki5m7Y+8HU/IS9qxC2UQGt8wMZ7x+NgukZ8NRShY6/h+Dw
-	 aVo64/sgVCm1cctLK8IMqlZv6EbFEtOE6YMVY06RMSjBM8vrLoEVjiTh0BCqe7AB2X
-	 aXQXIZQt50BVUG9kdWPz8k/4EXzAgXU7D2M6XfF3XYp/htUbBnsP2cp5zVGAlcR4Ii
-	 sl4LUj5/SSYBiUDPOA/Zyz6T6tzPw0Uf6nAnpim4DIMaCTrl6G6n8kUmH5MpDQFg/i
-	 Zac3XAZHAoYteGZfxxrnsRcndspGwJZ7n2w97ayuz9dWKxI0FCuc2qd0wsC6M4RuId
-	 KVGj0R4e43x2w==
-Received: from notapiano (unknown [IPv6:2804:14c:1a9:53ee::1001])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7279817E0E8E;
-	Tue,  4 Mar 2025 15:43:35 +0100 (CET)
-Date: Tue, 4 Mar 2025 11:43:32 -0300
-From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: neil.armstrong@linaro.org, quic_jesszhan@quicinc.com, airlied@gmail.com,
-	simona@ffwll.ch, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel@collabora.com,
-	pablo.sun@mediatek.com, christophe.jaillet@wanadoo.fr
-Subject: Re: [PATCH v2 0/2] Add driver for Himax HX8279 DriverIC panels
-Message-ID: <93076513-3bda-46f3-baa1-51d7e02f24c3@notapiano>
-References: <20250218143952.84261-1-angelogioacchino.delregno@collabora.com>
+	s=arc-20240116; t=1741099431; c=relaxed/simple;
+	bh=XfSqRqYZsA+MUDEbRTfs5BMwtTnxrzx+0E/tO5qxzN0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=B+7S24h2bTA2uEv31j7F/L136I0jX5N5HktXaMTEvNrpZLA7gkl15ZrnZmN6v+Q0em32ZKaOV0Dt4rmrTQC8pJ5xgeHtdeGxiYG6O2iJyCZwoIehwvqomZcokTugGRU9KpEiYUBMDQM4VeWXmmEsUmXSLkSxxwpKv33HQlkjvhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R5GulmQ+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9B20C4CEED;
+	Tue,  4 Mar 2025 14:43:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741099430;
+	bh=XfSqRqYZsA+MUDEbRTfs5BMwtTnxrzx+0E/tO5qxzN0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=R5GulmQ+RL2iHOx2ATwQmKj/WdX6qgMFdeAbidKuBl8ZTCQo5UMrIKuC5y6h6MKMR
+	 bTBnvkBtU6K0yzZoSrWrCm5SSduKh/c/mYh7xFrut/IOCCdEV8H8X20YyX0/NCtBU3
+	 Mmq/613fgsVeVu52eMAUkHZ3g7THAsWyZlbf3wnKZOFG5rUgJHgjhwUzGvP1SylqDI
+	 2guAncPF+1nBF1cjhjki7w9ebw/L5Rq/K7xBYc1Y//7cMDhwX2FyiBrrpidjA/2x5n
+	 6ALc3bxyFvwHaibCCWfygsGYwxG2Bey40wnUrDu6v4eOZzlarpt9zG6PYnczEyDquj
+	 smzsF8NIBm8Yg==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>
+Cc: soc@lists.linux.dev,
+	Arnd Bergmann <arnd@arndb.de>,
+	Luke Parkin <luke.parkin@arm.com>,
+	Peng Fan <peng.fan@nxp.com>,
+	arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] firmware: arm_scmi: use ioread64() instead of ioread64_hi_lo()
+Date: Tue,  4 Mar 2025 15:43:34 +0100
+Message-Id: <20250304144346.1025658-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250218143952.84261-1-angelogioacchino.delregno@collabora.com>
 
-On Tue, Feb 18, 2025 at 03:39:50PM +0100, AngeloGioacchino Del Regno wrote:
-> Changes in v2:
->  - Removed unneeded mipi_dsi_device_unregister() call for secondary
->    DSI: as the driver is using devm, that's not necessary (CJ)
->  - Removed superfluous if branch as pointed out by CJ
-> 
-> This series adds a driver for DSI panels using the Himax HX8279 and
-> HX8279-D DriverICs, and introduces one panel using such a configuration,
-> the Startek KX070FHFID078.
-> 
-> This panel is found on the latest hardware revisions of some MediaTek
-> Genio Evaluation Kits, and specifically, at least:
->  - Genio 510 EVK
->  - Genio 700 EVK
->  - Genio 1200 EVK
-> 
-> This driver was tested on all of the aforementioned boards.
-> 
-> AngeloGioacchino Del Regno (2):
->   dt-bindings: display: panel: Add Himax HX8279/HX8279-D
->   drm: panel: Add driver for Himax HX8279 and Startek KD070FHFID078
+From: Arnd Bergmann <arnd@arndb.de>
 
-For Genio 700 EVK:
+The scmi_common_fastchannel_db_ring() function calls either ioread64()
+or ioread64_hi_lo() depending on whether it is compiler for 32-bit
+or 64-bit architectures.
 
-Tested-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+The same logic is used to define ioread64() itself in the
+linux/io-64-nonatomic-hi-lo.h header file, so the special case
+is not really needed.
 
-Thanks,
-Nícolas
+The behavior here should not change at all.
+
+Fixes: 6f9ea4dabd2d ("firmware: arm_scmi: Generalize the fast channel support")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/firmware/arm_scmi/driver.c | 10 ----------
+ 1 file changed, 10 deletions(-)
+
+diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
+index 60050da54bf2..1c75a4c9c371 100644
+--- a/drivers/firmware/arm_scmi/driver.c
++++ b/drivers/firmware/arm_scmi/driver.c
+@@ -1997,17 +1997,7 @@ static void scmi_common_fastchannel_db_ring(struct scmi_fc_db_info *db)
+ 	else if (db->width == 4)
+ 		SCMI_PROTO_FC_RING_DB(32);
+ 	else /* db->width == 8 */
+-#ifdef CONFIG_64BIT
+ 		SCMI_PROTO_FC_RING_DB(64);
+-#else
+-	{
+-		u64 val = 0;
+-
+-		if (db->mask)
+-			val = ioread64_hi_lo(db->addr) & db->mask;
+-		iowrite64_hi_lo(db->set | val, db->addr);
+-	}
+-#endif
+ }
+ 
+ /**
+-- 
+2.39.5
+
 
