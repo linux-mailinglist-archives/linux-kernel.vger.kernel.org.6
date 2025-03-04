@@ -1,105 +1,117 @@
-Return-Path: <linux-kernel+bounces-544649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D3D8A4E3B9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:38:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDACFA4E396
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:36:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AE2919C0A38
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:30:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82600886EF7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:22:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FC6724C062;
-	Tue,  4 Mar 2025 15:18:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Z92SAcY4"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D4DB294EF7;
-	Tue,  4 Mar 2025 15:18:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDCE727E1D4;
+	Tue,  4 Mar 2025 15:16:09 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE90427E1A7;
+	Tue,  4 Mar 2025 15:16:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741101482; cv=none; b=scRo+KJnMJUSOKsWx0jfsYp4JwVPL0F8in0tKR9ZFpodoxCu6B9cST0ZWZ4GbXg0y0B4roCBfknV3gFHfmkPeqnazomnRnTYxdPUiY6UHTFGoF6i3ShGuSExDaQyoS6zJWucs1m04KoK2nIdBycJYb2sWJtFnQDCH5oepl333DQ=
+	t=1741101369; cv=none; b=Mhd1OeZga/ikxRrT0G5egOagYNlUE4gjlURF26dgA0Jaz8n/2t5EK4D+VkQX411qY7TgVbbjXmRhLJ9HU5NJjwpurt43eRLIpuW6aTVoAR3aNWE+4MZP2cjOKMtLN76WVdHN6H40OmNnzW0xPAm41PN5UrtdJsvDPohN2MLZvKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741101482; c=relaxed/simple;
-	bh=SY9RMAoowz8kStVuJuN4tunjUBmeihKNe9Rk0kme8RY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bttOz9JbK9WgyB1VJ8A6pr+vz6Fs0tn0NuwIrMptREUVhPX1HUf/Z33aD/yG7dm2+e9nDhJ9p7xLk/baN1kHW61lLSEV4kPxEVqHLJ+YRQjFazbXH3sqDjLCJWBEIb9m23r80b8HHeUsKFJun0SiMyFgWAmqEkiAFcIG/A/g98w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Z92SAcY4; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1741101478;
-	bh=SY9RMAoowz8kStVuJuN4tunjUBmeihKNe9Rk0kme8RY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Z92SAcY4bic4+jlPkfFqmNjnKibjpBU0DigE/n68ef/7y9WT+bCz6sx9EDbPCkOJU
-	 fv8QYjViZjbkVMhhkNTwAlvmoSZcId47Jupzoqc1Ue0vipUGxLsM4XONcAwg9nzI1k
-	 o1ALC0v3scMS+1EIxeZH7r5p1+bzZ03z+0eJqF26VkgCtI0zVRCRf04jU2mER7l6p+
-	 d4Vqtn0L+cKOBRTW0SMPLQbJYG2ElfhVSrF+d7sngpFaj9owqUACff5xP09WuPEJ1Y
-	 SF40cvUZSujhFrYJbJX1iKeT9d7aCc5y4iYbJwv+rexx4EivLPhifwtyi6Gvu3dsqw
-	 ozOOGYTM/E2BQ==
-Received: from [192.168.0.47] (unknown [IPv6:2804:14c:1a9:53ee::1001])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id D0A0D17E0630;
-	Tue,  4 Mar 2025 16:17:53 +0100 (CET)
-From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Date: Tue, 04 Mar 2025 12:16:01 -0300
-Subject: [PATCH v3 20/20] arm64: defconfig: Enable MT6359 ACCDET
+	s=arc-20240116; t=1741101369; c=relaxed/simple;
+	bh=3vs6fa+35UNMa4PxgO1HCbpblGveRjv4ZsbbxAKpvak=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oVAAjCaxumdUtE47QMftlJUtYM2KhqaBuVGECHPRoLoYC+J81/7VEa4nkQk+feMw0adJHRqorPFjk+k5VTh3YWGgREkVkIRcQ+HENUnGikQInaevgMFn3x0ixB3s6YB14NTB3QJ7SQ22UGAK1PnEcU6MEKoETC8rquVifAbuE3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C1D3EFEC;
+	Tue,  4 Mar 2025 07:16:20 -0800 (PST)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B2BFE3F66E;
+	Tue,  4 Mar 2025 07:16:06 -0800 (PST)
+Date: Tue, 4 Mar 2025 15:16:04 +0000
+From: Leo Yan <leo.yan@arm.com>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Thomas Richter <tmricht@linux.ibm.com>
+Subject: Re: [PATCH v2 5/6] perf test: Add timeout to datasym workload
+Message-ID: <20250304151604.GB13418@e132581.arm.com>
+References: <20250304022837.1877845-1-namhyung@kernel.org>
+ <20250304022837.1877845-6-namhyung@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250304-mt6359-accdet-dts-v3-20-5b0eafc29f5b@collabora.com>
-References: <20250304-mt6359-accdet-dts-v3-0-5b0eafc29f5b@collabora.com>
-In-Reply-To: <20250304-mt6359-accdet-dts-v3-0-5b0eafc29f5b@collabora.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Sen Chu <sen.chu@mediatek.com>, Sean Wang <sean.wang@mediatek.com>, 
- Macpaul Lin <macpaul.lin@mediatek.com>, Lee Jones <lee@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: kernel@collabora.com, linux-sound@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- linux-pm@vger.kernel.org, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250304022837.1877845-6-namhyung@kernel.org>
 
-Enable support for the ACCDET block in the MT6359 PMIC, which provides
-jack detection capabilities to MediaTek platforms.
+On Mon, Mar 03, 2025 at 06:28:36PM -0800, Namhyung Kim wrote:
+> Unlike others it has an infinite loop that make it annoying to call.
+> Make it finish after 1 second and handle command-line argument to change
+> the setting.
+> 
+> Cc: Thomas Richter <tmricht@linux.ibm.com>
+> Cc: Leo Yan <leo.yan@arm.com>
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Reviewed-by: Leo Yan <leo.yan@arm.com>
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 3a3706db29822036d25a7228f8936e2ad613b208..d4a6eeec8ba0db110dd831e146716a0e50cc294f 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1066,6 +1066,7 @@ CONFIG_SND_SOC_WM8978=m
- CONFIG_SND_SOC_WSA881X=m
- CONFIG_SND_SOC_WSA883X=m
- CONFIG_SND_SOC_WSA884X=m
-+CONFIG_SND_SOC_MT6359_ACCDET=m
- CONFIG_SND_SOC_NAU8822=m
- CONFIG_SND_SOC_LPASS_WSA_MACRO=m
- CONFIG_SND_SOC_LPASS_VA_MACRO=m
-
--- 
-2.48.1
-
+> ---
+>  tools/perf/tests/workloads/datasym.c | 23 +++++++++++++++++++++--
+>  1 file changed, 21 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/perf/tests/workloads/datasym.c b/tools/perf/tests/workloads/datasym.c
+> index 8e08fc75a973e5f7..8ddb2aa6a049e343 100644
+> --- a/tools/perf/tests/workloads/datasym.c
+> +++ b/tools/perf/tests/workloads/datasym.c
+> @@ -1,3 +1,6 @@
+> +#include <stdlib.h>
+> +#include <signal.h>
+> +#include <unistd.h>
+>  #include <linux/compiler.h>
+>  #include "../tests.h"
+>  
+> @@ -12,9 +15,25 @@ static buf buf1 = {
+>  	.reserved[0] = 1,
+>  };
+>  
+> -static int datasym(int argc __maybe_unused, const char **argv __maybe_unused)
+> +static volatile sig_atomic_t done;
+> +
+> +static void sighandler(int sig __maybe_unused)
+> +{
+> +	done = 1;
+> +}
+> +
+> +static int datasym(int argc, const char **argv)
+>  {
+> -	for (;;) {
+> +	int sec = 1;
+> +
+> +	if (argc > 0)
+> +		sec = atoi(argv[0]);
+> +
+> +	signal(SIGINT, sighandler);
+> +	signal(SIGALRM, sighandler);
+> +	alarm(sec);
+> +
+> +	while (!done) {
+>  		buf1.data1++;
+>  		if (buf1.data1 == 123) {
+>  			/*
+> -- 
+> 2.48.1.711.g2feabab25a-goog
+> 
 
