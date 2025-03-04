@@ -1,311 +1,351 @@
-Return-Path: <linux-kernel+bounces-544410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12361A4E0EC
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:30:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07B16A4E105
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:34:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E8771887CE5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:27:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D65AD3A7E8D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:27:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3805D209F4A;
-	Tue,  4 Mar 2025 14:25:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE3A62080C2;
+	Tue,  4 Mar 2025 14:25:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="smv0gcA1";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="u5ksXxU2";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="smv0gcA1";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="u5ksXxU2"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="NsyYfudN";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PWxEua8/";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="NsyYfudN";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PWxEua8/"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6E12063E8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 203352063F2
 	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:25:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741098331; cv=none; b=UsWc51U8ITqG33WreeHf1uWNNGA1wEIA5sg/tWtnv+Lg7bF+rX6eqh80X/ZbHIEHk+5T3malC2HhVnFHjptYsZKXqAD9gk0dqDMCYpOrPhbgO86X3os5r+rxeFo4wHzJTNaGDMCFhNgIA9sWxXwgQ8UIz8oHkKuwrQ7Lu1Ha/hQ=
+	t=1741098330; cv=none; b=A4LB2NXN52ecwMXPUZIAR2usGl9ZXVuFCHaLE6tFTC1Pb9alduRfPBVjEuD5k1GyykbaSo4FmJZKt2uVb7WCoWGqzx2a+ZibRqU+2Sdagd/yU2skk3Qw+RFmrklntSZNXDaSlxInOQCE+gwY/Rbs5jTNEte0dyGXEKVOiGLwDXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741098331; c=relaxed/simple;
-	bh=ZUZhA0vFpgNtlTua4tc4eA3xqsNgyfMV+Sn69FlRGz8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZDAwslBmoka0flr9+Z0KQFrwMDBO1X4nV3ufqhiefW9xTHWwMHi4nmznmXuIvKxAFkyz5AGnjDAhsFlRoa6qq7eZU9eR2E3klFPrv7P6MtNc4yOcV5uijctLPyj/LY685vj0Cbx+pmE88WCK81SNdhpvE8OqXc5jTLVjREgLDq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=smv0gcA1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=u5ksXxU2; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=smv0gcA1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=u5ksXxU2; arc=none smtp.client-ip=195.135.223.131
+	s=arc-20240116; t=1741098330; c=relaxed/simple;
+	bh=GHvYhF6mhNS8Xc5SlOXHmfIdiVTGU7d1If0qxTFNczU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pKPSgRgpT8IqVOCARyveAMOP+uiTtunLiIaKdf6pf5a4N0LjyQ8L5+25b7BqYTGZsUB1zXYUVQqLHaBC6LErCpdPFML0x4VlO0fJgWNentKBRhvYtu3AB5lKB9eQGBjMPixaNGSQuXxMIwzUoXirW7UaMckiBmjewVOc0DamMuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=NsyYfudN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PWxEua8/; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=NsyYfudN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PWxEua8/; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 41D4E1F74C;
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 2357A21170;
 	Tue,  4 Mar 2025 14:25:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
 	t=1741098327; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=2VEfig/rslhLcE/d8ljBX2G4X2nHB+jopQ+zoj3WK/0=;
-	b=smv0gcA1ngw0td62EGdtAsxvYT8hTWeQSSWPcdix3H0o9F4NgYrv9UT+Gqq7YouHj7fZIt
-	M4M8Sfh+gITBKfNyiPt9AncNGt+vRz+8ZnXWqTb0yewBti5vHjJ0Nk63mj63p2Z+mxn520
-	wyGSWquyB3HPqIIKsyevWcwt+df50Ig=
+	 in-reply-to:in-reply-to:references:references;
+	bh=21R63puFBhLrbr9hO90cmJ3hCPSZdL7Adv8+v03JTpA=;
+	b=NsyYfudNY9FvF1DL3njfH8UJz/mC7PaFYt4sJHkItzjHknJ/lyBc//bIUhmBTwymukq0SC
+	wej+vQVwkTB1AnPXJYsidSrKE1YmqNjSIc0h8/qvuapxRtn6ulH//Lu+c59sUQOePJn4F+
+	xhPTrRt2AOOV+lD++9nc9oNZCeUHsyQ=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
 	s=susede2_ed25519; t=1741098327;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=2VEfig/rslhLcE/d8ljBX2G4X2nHB+jopQ+zoj3WK/0=;
-	b=u5ksXxU2qpY2IDDZLWAA2YCuCChNdJEIF8JWaIpt8zbo3NQnkKwhttpinSnPXSAxG21z2A
-	B5L/rrFxtUF30LBQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
+	 in-reply-to:in-reply-to:references:references;
+	bh=21R63puFBhLrbr9hO90cmJ3hCPSZdL7Adv8+v03JTpA=;
+	b=PWxEua8/DYaf0TaSvOdTf1d0fUsUZls/1sdlh/pe7g8t/wlQL17tO9K9WBtZv+2B07Rp4s
+	Q49fLmhD94CZglDA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=NsyYfudN;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="PWxEua8/"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
 	t=1741098327; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=2VEfig/rslhLcE/d8ljBX2G4X2nHB+jopQ+zoj3WK/0=;
-	b=smv0gcA1ngw0td62EGdtAsxvYT8hTWeQSSWPcdix3H0o9F4NgYrv9UT+Gqq7YouHj7fZIt
-	M4M8Sfh+gITBKfNyiPt9AncNGt+vRz+8ZnXWqTb0yewBti5vHjJ0Nk63mj63p2Z+mxn520
-	wyGSWquyB3HPqIIKsyevWcwt+df50Ig=
+	 in-reply-to:in-reply-to:references:references;
+	bh=21R63puFBhLrbr9hO90cmJ3hCPSZdL7Adv8+v03JTpA=;
+	b=NsyYfudNY9FvF1DL3njfH8UJz/mC7PaFYt4sJHkItzjHknJ/lyBc//bIUhmBTwymukq0SC
+	wej+vQVwkTB1AnPXJYsidSrKE1YmqNjSIc0h8/qvuapxRtn6ulH//Lu+c59sUQOePJn4F+
+	xhPTrRt2AOOV+lD++9nc9oNZCeUHsyQ=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
 	s=susede2_ed25519; t=1741098327;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=2VEfig/rslhLcE/d8ljBX2G4X2nHB+jopQ+zoj3WK/0=;
-	b=u5ksXxU2qpY2IDDZLWAA2YCuCChNdJEIF8JWaIpt8zbo3NQnkKwhttpinSnPXSAxG21z2A
-	B5L/rrFxtUF30LBQ==
+	 in-reply-to:in-reply-to:references:references;
+	bh=21R63puFBhLrbr9hO90cmJ3hCPSZdL7Adv8+v03JTpA=;
+	b=PWxEua8/DYaf0TaSvOdTf1d0fUsUZls/1sdlh/pe7g8t/wlQL17tO9K9WBtZv+2B07Rp4s
+	Q49fLmhD94CZglDA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 22F2913A53;
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 17F521393C;
 	Tue,  4 Mar 2025 14:25:27 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id bYsjCFcNx2elMAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 04 Mar 2025 14:25:27 +0000
-Message-ID: <c99235b8-3859-42dc-988b-250b3f042d00@suse.cz>
+	id 3evSBVcNx2ejMAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 04 Mar 2025 14:25:27 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id CD815A0912; Tue,  4 Mar 2025 15:25:26 +0100 (CET)
 Date: Tue, 4 Mar 2025 15:25:26 +0100
+From: Jan Kara <jack@suse.cz>
+To: Tang Yizhou <yizhou.tang@shopee.com>
+Cc: tj@kernel.org, jack@suse.cz, brauner@kernel.org, willy@infradead.org, 
+	akpm@linux-foundation.org, rostedt@goodmis.org, mhiramat@kernel.org, ast@kernel.org, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND 1/2] writeback: Let trace_balance_dirty_pages()
+ take struct dtc as parameter
+Message-ID: <tko35tkqszdwi5ibkzjnt5cxyuoppkfymnrotaqte2lbo5of26@4vo44czqtirp>
+References: <20250303100617.223677-1-yizhou.tang@shopee.com>
+ <20250303100617.223677-2-yizhou.tang@shopee.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] slub: Fix Off-By-One in the While condition in
- on_freelist()
-Content-Language: en-US
-To: Lilith Gkini <lilithpgkini@gmail.com>
-Cc: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
- David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, harry.yoo@oracle.com
-References: <Z8Sc4DEIVs-lDV1J@Arch>
- <b951acd4-5510-4d03-8f1e-accf38d909b6@suse.cz> <Z8XbomV9WCabATIM@Arch>
- <8cabcf70-d887-471d-9277-ef29aca1216b@suse.cz> <Z8a4r2mnIzTD2cZa@Arch>
- <714d353a-49c8-4cbd-88d6-e24ae8f78aaa@suse.cz> <Z8benEHigCNjqqQp@Arch>
- <c736fbe1-f3f4-49a0-b230-41f9da545fad@suse.cz> <Z8bvfiyLelfXskNw@Arch>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <Z8bvfiyLelfXskNw@Arch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250303100617.223677-2-yizhou.tang@shopee.com>
+X-Rspamd-Queue-Id: 2357A21170
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.01 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_CC(0.00)[linux.com,kernel.org,google.com,lge.com,linux-foundation.org,linux.dev,gmail.com,kvack.org,vger.kernel.org,oracle.com];
-	TAGGED_RCPT(0.00)[];
-	ARC_NA(0.00)[];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
 	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	FROM_EQ_ENVFROM(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
 	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com]
-X-Spam-Score: -2.80
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 3/4/25 13:18, Lilith Gkini wrote:
-> On Tue, Mar 04, 2025 at 12:20:03PM +0100, Vlastimil Babka wrote:
-> Thats true. I still had the return fp == search; in my mind, but with all
-
-Ah, right.
-
-> these changes we can just leave it as return search == NULL; as it was,
-> because we are handing the edge cases.
+On Mon 03-03-25 18:06:16, Tang Yizhou wrote:
+> From: Tang Yizhou <yizhou.tang@shopee.com>
 > 
-> By the time it reaches that return line it should be fine.
+> Currently, trace_balance_dirty_pages() already has 12 parameters. In the
+> next patch, I initially attempted to introduce an additional parameter.
+> However, in include/linux/trace_events.h, bpf_trace_run12() only supports
+> up to 12 parameters and bpf_trace_run13() does not exist.
+> 
+> To reduce the number of parameters in trace_balance_dirty_pages(), we can
+> make it accept a pointer to struct dirty_throttle_control as a parameter.
+> To achieve this, we need to move the definition of struct
+> dirty_throttle_control from mm/page-writeback.c to
+> include/linux/writeback.h.
+> 
+> By the way, rename bdi_setpoint and bdi_dirty in the tracepoint to
+> wb_setpoint and wb_dirty, respectively. These changes were omitted by
+> Tejun in the cgroup writeback patchset.
+> 
+> Signed-off-by: Tang Yizhou <yizhou.tang@shopee.com>
 
-True.
+Looks good. Feel free to add:
 
-> I was also thinking of fixing two lines to adhere to the "Breaking long
-> lines and strings" (2) from the coding-style.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Hm AFAIK checkpatch was adjusted to only warn at 100 lines. While the style
-document wasn't updated, we can leave such a small excess with no change.
+								Honza
 
 > ---
->  mm/slub.c | 24 +++++++++++++++++-------
->  1 file changed, 17 insertions(+), 7 deletions(-)
+>  include/linux/writeback.h        | 23 +++++++++++++++++++++
+>  include/trace/events/writeback.h | 28 +++++++++++--------------
+>  mm/page-writeback.c              | 35 ++------------------------------
+>  3 files changed, 37 insertions(+), 49 deletions(-)
 > 
-> diff --git a/mm/slub.c b/mm/slub.c
-> index 1f50129dcfb3..e06b88137705 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -1427,7 +1427,7 @@ static int check_slab(struct kmem_cache *s, struct slab *slab)
->   * Determine if a certain object in a slab is on the freelist. Must hold the
->   * slab lock to guarantee that the chains are in a consistent state.
+> diff --git a/include/linux/writeback.h b/include/linux/writeback.h
+> index d11b903c2edb..32095928365c 100644
+> --- a/include/linux/writeback.h
+> +++ b/include/linux/writeback.h
+> @@ -313,6 +313,29 @@ static inline void cgroup_writeback_umount(struct super_block *sb)
+>  /*
+>   * mm/page-writeback.c
 >   */
-> -static int on_freelist(struct kmem_cache *s, struct slab *slab, void *search)
-> +static bool on_freelist(struct kmem_cache *s, struct slab *slab, void *search)
->  {
->  	int nr = 0;
->  	void *fp;
-> @@ -1437,38 +1437,48 @@ static int on_freelist(struct kmem_cache *s, struct slab *slab, void *search)
->  	fp = slab->freelist;
->  	while (fp && nr <= slab->objects) {
->  		if (fp == search)
-> -			return 1;
-> +			return true;
->  		if (!check_valid_pointer(s, slab, fp)) {
->  			if (object) {
->  				object_err(s, slab, object,
->  					"Freechain corrupt");
->  				set_freepointer(s, object, NULL);
-> +				break;
->  			} else {
->  				slab_err(s, slab, "Freepointer corrupt");
->  				slab->freelist = NULL;
->  				slab->inuse = slab->objects;
->  				slab_fix(s, "Freelist cleared");
-> -				return 0;
-> +				return false;
->  			}
-> -			break;
->  		}
->  		object = fp;
->  		fp = get_freepointer(s, object);
->  		nr++;
->  	}
->  
-> -	max_objects = order_objects(slab_order(slab), s->size);
-> +	if (fp != NULL && nr > slab->objects) {
-
-In case nr > slab->objects we already know fp can't be NULL, no? So we don't
-have to test it?
-
-> +		slab_err(s, slab, "Freelist cycle detected");
-> +		slab->freelist = NULL;
-> +		slab->inuse = slab->objects;
-> +		slab_fix(s, "Freelist cleared");
-> +		return false;
-> +	}
+> +/* consolidated parameters for balance_dirty_pages() and its subroutines */
+> +struct dirty_throttle_control {
+> +#ifdef CONFIG_CGROUP_WRITEBACK
+> +	struct wb_domain	*dom;
+> +	struct dirty_throttle_control *gdtc;	/* only set in memcg dtc's */
+> +#endif
+> +	struct bdi_writeback	*wb;
+> +	struct fprop_local_percpu *wb_completions;
 > +
-> +	max_objects = order_objects(slab_or0der(slab), s->size);
->  	if (max_objects > MAX_OBJS_PER_PAGE)
->  		max_objects = MAX_OBJS_PER_PAGE;
+> +	unsigned long		avail;		/* dirtyable */
+> +	unsigned long		dirty;		/* file_dirty + write + nfs */
+> +	unsigned long		thresh;		/* dirty threshold */
+> +	unsigned long		bg_thresh;	/* dirty background threshold */
+> +
+> +	unsigned long		wb_dirty;	/* per-wb counterparts */
+> +	unsigned long		wb_thresh;
+> +	unsigned long		wb_bg_thresh;
+> +
+> +	unsigned long		pos_ratio;
+> +	bool			freerun;
+> +	bool			dirty_exceeded;
+> +};
+> +
+>  void laptop_io_completion(struct backing_dev_info *info);
+>  void laptop_sync_completion(void);
+>  void laptop_mode_timer_fn(struct timer_list *t);
+> diff --git a/include/trace/events/writeback.h b/include/trace/events/writeback.h
+> index a261e86e61fa..3046ca6b08ea 100644
+> --- a/include/trace/events/writeback.h
+> +++ b/include/trace/events/writeback.h
+> @@ -629,11 +629,7 @@ TRACE_EVENT(bdi_dirty_ratelimit,
+>  TRACE_EVENT(balance_dirty_pages,
 >  
->  	if (slab->objects != max_objects) {
-> -		slab_err(s, slab, "Wrong number of objects. Found %d but should be %d",
-> +		slab_err(s, slab,
-> +			 "Wrong number of objects. Found %d but should be %d",
->  			 slab->objects, max_objects);
->  		slab->objects = max_objects;
->  		slab_fix(s, "Number of objects adjusted");
->  	}
->  	if (slab->inuse != slab->objects - nr) {
-> -		slab_err(s, slab, "Wrong object count. Counter is %d but counted were %d",
-> +		slab_err(s, slab,
-> +			 "Wrong object count. Counter is %d but counted were %d",
->  			 slab->inuse, slab->objects - nr);
->  		slab->inuse = slab->objects - nr;
->  		slab_fix(s, "Object count adjusted");
+>  	TP_PROTO(struct bdi_writeback *wb,
+> -		 unsigned long thresh,
+> -		 unsigned long bg_thresh,
+> -		 unsigned long dirty,
+> -		 unsigned long bdi_thresh,
+> -		 unsigned long bdi_dirty,
+> +		 struct dirty_throttle_control *dtc,
+>  		 unsigned long dirty_ratelimit,
+>  		 unsigned long task_ratelimit,
+>  		 unsigned long dirtied,
+> @@ -641,7 +637,7 @@ TRACE_EVENT(balance_dirty_pages,
+>  		 long pause,
+>  		 unsigned long start_time),
+>  
+> -	TP_ARGS(wb, thresh, bg_thresh, dirty, bdi_thresh, bdi_dirty,
+> +	TP_ARGS(wb, dtc,
+>  		dirty_ratelimit, task_ratelimit,
+>  		dirtied, period, pause, start_time),
+>  
+> @@ -650,8 +646,8 @@ TRACE_EVENT(balance_dirty_pages,
+>  		__field(unsigned long,	limit)
+>  		__field(unsigned long,	setpoint)
+>  		__field(unsigned long,	dirty)
+> -		__field(unsigned long,	bdi_setpoint)
+> -		__field(unsigned long,	bdi_dirty)
+> +		__field(unsigned long,	wb_setpoint)
+> +		__field(unsigned long,	wb_dirty)
+>  		__field(unsigned long,	dirty_ratelimit)
+>  		__field(unsigned long,	task_ratelimit)
+>  		__field(unsigned int,	dirtied)
+> @@ -664,16 +660,16 @@ TRACE_EVENT(balance_dirty_pages,
+>  	),
+>  
+>  	TP_fast_assign(
+> -		unsigned long freerun = (thresh + bg_thresh) / 2;
+> +		unsigned long freerun = (dtc->thresh + dtc->bg_thresh) / 2;
+>  		strscpy_pad(__entry->bdi, bdi_dev_name(wb->bdi), 32);
+>  
+>  		__entry->limit		= global_wb_domain.dirty_limit;
+>  		__entry->setpoint	= (global_wb_domain.dirty_limit +
+>  						freerun) / 2;
+> -		__entry->dirty		= dirty;
+> -		__entry->bdi_setpoint	= __entry->setpoint *
+> -						bdi_thresh / (thresh + 1);
+> -		__entry->bdi_dirty	= bdi_dirty;
+> +		__entry->dirty		= dtc->dirty;
+> +		__entry->wb_setpoint	= __entry->setpoint *
+> +						dtc->wb_thresh / (dtc->thresh + 1);
+> +		__entry->wb_dirty	= dtc->wb_dirty;
+>  		__entry->dirty_ratelimit = KBps(dirty_ratelimit);
+>  		__entry->task_ratelimit	= KBps(task_ratelimit);
+>  		__entry->dirtied	= dirtied;
+> @@ -689,7 +685,7 @@ TRACE_EVENT(balance_dirty_pages,
+>  
+>  	TP_printk("bdi %s: "
+>  		  "limit=%lu setpoint=%lu dirty=%lu "
+> -		  "bdi_setpoint=%lu bdi_dirty=%lu "
+> +		  "wb_setpoint=%lu wb_dirty=%lu "
+>  		  "dirty_ratelimit=%lu task_ratelimit=%lu "
+>  		  "dirtied=%u dirtied_pause=%u "
+>  		  "paused=%lu pause=%ld period=%lu think=%ld cgroup_ino=%lu",
+> @@ -697,8 +693,8 @@ TRACE_EVENT(balance_dirty_pages,
+>  		  __entry->limit,
+>  		  __entry->setpoint,
+>  		  __entry->dirty,
+> -		  __entry->bdi_setpoint,
+> -		  __entry->bdi_dirty,
+> +		  __entry->wb_setpoint,
+> +		  __entry->wb_dirty,
+>  		  __entry->dirty_ratelimit,
+>  		  __entry->task_ratelimit,
+>  		  __entry->dirtied,
+> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+> index eb55ece39c56..e980b2aec352 100644
+> --- a/mm/page-writeback.c
+> +++ b/mm/page-writeback.c
+> @@ -120,29 +120,6 @@ EXPORT_SYMBOL(laptop_mode);
+>  
+>  struct wb_domain global_wb_domain;
+>  
+> -/* consolidated parameters for balance_dirty_pages() and its subroutines */
+> -struct dirty_throttle_control {
+> -#ifdef CONFIG_CGROUP_WRITEBACK
+> -	struct wb_domain	*dom;
+> -	struct dirty_throttle_control *gdtc;	/* only set in memcg dtc's */
+> -#endif
+> -	struct bdi_writeback	*wb;
+> -	struct fprop_local_percpu *wb_completions;
+> -
+> -	unsigned long		avail;		/* dirtyable */
+> -	unsigned long		dirty;		/* file_dirty + write + nfs */
+> -	unsigned long		thresh;		/* dirty threshold */
+> -	unsigned long		bg_thresh;	/* dirty background threshold */
+> -
+> -	unsigned long		wb_dirty;	/* per-wb counterparts */
+> -	unsigned long		wb_thresh;
+> -	unsigned long		wb_bg_thresh;
+> -
+> -	unsigned long		pos_ratio;
+> -	bool			freerun;
+> -	bool			dirty_exceeded;
+> -};
+> -
+>  /*
+>   * Length of period for aging writeout fractions of bdis. This is an
+>   * arbitrarily chosen number. The longer the period, the slower fractions will
+> @@ -1962,11 +1939,7 @@ static int balance_dirty_pages(struct bdi_writeback *wb,
+>  		 */
+>  		if (pause < min_pause) {
+>  			trace_balance_dirty_pages(wb,
+> -						  sdtc->thresh,
+> -						  sdtc->bg_thresh,
+> -						  sdtc->dirty,
+> -						  sdtc->wb_thresh,
+> -						  sdtc->wb_dirty,
+> +						  sdtc,
+>  						  dirty_ratelimit,
+>  						  task_ratelimit,
+>  						  pages_dirtied,
+> @@ -1991,11 +1964,7 @@ static int balance_dirty_pages(struct bdi_writeback *wb,
+>  
+>  pause:
+>  		trace_balance_dirty_pages(wb,
+> -					  sdtc->thresh,
+> -					  sdtc->bg_thresh,
+> -					  sdtc->dirty,
+> -					  sdtc->wb_thresh,
+> -					  sdtc->wb_dirty,
+> +					  sdtc,
+>  					  dirty_ratelimit,
+>  					  task_ratelimit,
+>  					  pages_dirtied,
+> -- 
+> 2.25.1
 > 
-> I do have to note that the last slab_err is of length 81 with my change,
-> but it looks fine. If that one extra character is unacceptable let me
-> know so I can change it to something else.
-> Or if you think it's completely unnecessary I could leave it as it was
-> in the first place.
-
-Yeah can leave it.
-
-> I just thought since we are trying to modernaze I should fix the length
-> as well.
-> 
-> Also the CHECKPATCH is complaining about the `fp != NULL` that we can
-> just check fp on it's own, which is technically true, but wouldn't make
-> readability worse?
-> I think its better as it's in my diff cause it's more obvious, but if
-> you prefer the singular fp I can change it.
-
-I think it's not necessary to test at all but in case I'm wrong, we can do
-what checkpatch suggests to be consistent with the while() condition.
-
-> If these changes are acceptable and we don't have anything further to
-> change or add I can send it as a proper commit again, But I should
-> probably break it into multiple patches.
-
-It's fine as a single patch. Thanks!
-
-> Maybe one patch for the lines and another for the rest? Or should I
-> break the bool change in it's own patch?
-
-
-
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
