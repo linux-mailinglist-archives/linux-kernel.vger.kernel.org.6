@@ -1,116 +1,244 @@
-Return-Path: <linux-kernel+bounces-543605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2283AA4D76E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:08:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CCCAA4D787
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:10:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 071801888CA1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:05:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79285189E0BF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:07:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DEB11FDE20;
-	Tue,  4 Mar 2025 08:58:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE0B21FE479;
+	Tue,  4 Mar 2025 09:01:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="IEIpI7Mr"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="Hzgt6pqh"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C630A1FDE1A
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 08:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741078700; cv=none; b=QteMDWHGzFGeYUmsIpDBmRraPxjUxddCAnIjYBBRgD0uizShP4duasRKUkJArLL/O2fe5smlNu0H1BYIhYCaArA+36kKdf9oLYff1k2QUCEAFr7u/Su0I3K/5naLQve3mUeiJCOm9j48z4L/zwOn46+WkMsksUJsuTWQDQDPWQw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741078700; c=relaxed/simple;
-	bh=+xt0a9MOKxcngTL6D0NlkBxMF5DrrijsvR0wGk0H/sc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iJOe2SLtwcmT0JMciWFFd9DIdCfCAk8/sxeHK3TW0c/+ToEDIIRsYW9N5MjJkP04z1zmFOrIQQZCLZmIsxrNpfiPTxhGkFe2knoGSXdzZYV5NGhhRSzds7bwbYMiCClb46XBCXAd4YwM6Jvns/8j1bgnRfifEb1uoPWyn3HGkbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=IEIpI7Mr; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43bcc85ba13so2714675e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 00:58:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1741078697; x=1741683497; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=+xt0a9MOKxcngTL6D0NlkBxMF5DrrijsvR0wGk0H/sc=;
-        b=IEIpI7Mrji3V5JToFgifBnmPzuPqpxdbGvSG9pgENAij336vUAkJffHrNwUihyARcL
-         0v1PXvSnhe0o1yIziQIpnZKt30TE3D7RJoIgwLK2Z6RUELd6JTt2WWS54GmnIZcE1GUs
-         czZ9fqN1WNmC/KP4yCHQLUuPqdOMofUI+weTDMvATao3TkqiK4XIqq0QEDW98V47lN4+
-         LRNICUzQmM0r/H2cq4USqOTrLdeN5Tp0lox5l7vI5YQvnGJNd2hMw9truppO1QWOXBZ4
-         kVDeb0aRqFUGAKZlMINb3D6kbPTo5b94oiBjGcrLDwJc7yWGzG+F9f7jwmD99kidVLqF
-         CqTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741078697; x=1741683497;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+xt0a9MOKxcngTL6D0NlkBxMF5DrrijsvR0wGk0H/sc=;
-        b=KtA4bWvp5k9N0S1y6cJT5zrsjE4nS0LUKckYamhCGlw2Fl892TGva7T0UxvhbUlWih
-         zYHg2y7wdm4SmBab0zeIVdPUr1hpWhKI/1RFQ352EuuSCExMac56YiB8/Mhfa/mr0kqM
-         QRuP2uWa59hIg+rvzzvS7NOLWYqELgz4vIONmUM+iRTDFlskgElmTstrDrVGZf3laP7m
-         FZapwNKLimwnLdAmrRLFSIEGbKSbb6HQ+FP+sQU9CYW/4sOJQ4P3eej0y/jbDwpIN6vx
-         Pa4WbP00+DG+g6ff6Df7gJGXFcg5f8/wYSHtP+MTRJ2Z3CUfvNuWfNPhytKM6ys1oZyC
-         kwaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV5scTLGVC7KV9iiHimxp7XuxDEG+r5enlZ6aNwvDOZYa7vTixTJRIrGXMQf8puwZf8IMctQEGUaakMClU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+NEoQ0XkKYJ4Xhffno0wk6Ayplr39ou0LZUVtzSd/8PQd0SK7
-	LEsEQ/GR3qyehknYjT7thepArwfj2EXxQVAudxdzGk4HPPTeN6rjUzO2JfEUvstappGGGJQDXLw
-	/
-X-Gm-Gg: ASbGncsULLoI1GtzynOA0PcfkB38b4n2XcXtGh4d+EuVygMRYTq9EOth+stKyQbyWro
-	Bgi/9fmNZebIJ7yZCcx9+HJcbb6T52IeSnKzRvO8nySLXfx7hB7N3uB5dV6l77gYimtzqgBDgE6
-	crZPf+3iH3IdGljxiikI0xsebPWAY4BKd70Uit6kV2peT6HGBZti1ILyy8S/2RzITKeq1zaXj7J
-	OBjYfmN5JorD3pCxRWhbYdElnaNil1DUGHaakmU5PATy/Lb8xvzXoE2w62OYgnhZL5Ml8I88TaE
-	A9VhobPxdITHXuUizCVypcrL+KRAmChL
-X-Google-Smtp-Source: AGHT+IH6MvxZS60faFjjSE/SOwTs7ArGKMS/DI+pAYNkmL1uwIQZP3dtDN6thfBALwaicYstcm9hQg==
-X-Received: by 2002:a05:600c:5111:b0:43b:ba52:bcaf with SMTP id 5b1f17b1804b1-43bba52c199mr77383595e9.5.1741078697098;
-        Tue, 04 Mar 2025 00:58:17 -0800 (PST)
-Received: from localhost ([2a02:8308:a00c:e200::688c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e485e03asm17306599f8f.95.2025.03.04.00.58.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 00:58:16 -0800 (PST)
-Date: Tue, 4 Mar 2025 09:58:15 +0100
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Atish Kumar Patra <atishp@rivosinc.com>
-Cc: Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, kvm@vger.kernel.org, 
-	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 4/4] KVM: riscv: selftests: Allow number of interrupts to
- be configurable
-Message-ID: <20250304-5a85b3a246f14f60f61a45e0@orel>
-References: <20250226-kvm_pmu_improve-v1-0-74c058c2bf6d@rivosinc.com>
- <20250226-kvm_pmu_improve-v1-4-74c058c2bf6d@rivosinc.com>
- <20250227-f7b303813dab128b5060b0c3@orel>
- <CAHBxVyGGw6Ur4Kdd8Vvwp6viKWPx64w7gNvNiUzmAGeXF2PGoA@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57BEF1FCFDC;
+	Tue,  4 Mar 2025 09:01:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741078910; cv=pass; b=FL+K+bqVEZyN8DV2wfInMz36C/SNUADlfdNDUhmKpSyYo03pSOwn2yLs9RSWbEWg8JrCdwDT06OTCeIhYr52adSugWMM3H0Ye6VONWv4zF/aNvytmOx7+WfTVnjateeD06Dz8PBXPh6GLhG7BPJ6OqWUj8cS8hDB+qYpAN9kKHk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741078910; c=relaxed/simple;
+	bh=s1ziSytSVmc8iAUI3o7CjEFR1GPcDl4EsLBgMcR8CUM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=DdM0FH20HVM1UsmXKNEL9azSddd5ao7Lbdolkb1tGXKPRsBrj3Q0BWjwJeVbppurPrZSLVY3S6f+ZHz3o3DnGGUjFFg/oRAyIw6dQTeXp8vLM6NLW7YgdV36jPfDz6IwHiKeeXoQXqq5d/5VaN+D8vKUEs7BYdZVlae+orGdneE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=Hzgt6pqh; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1741078854; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=O02jVaJkWhj+xKQJLMFvtbGftZ99GILMjb77R420M6wLjzwirAgbmp3SPGNo0pmwd3ce1glx32aU4mch9fHBEXUvaaQFYU2F0Q+KChVLDSZifEwDbM46LqCAdkuiz9bIdvZxSkX/tFrLDFsYOPffMg1iXniQG0tobepuJcveQPo=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1741078854; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=FAp90OZBq8uFu2M+L9vXUc0FUFCjHQCQSXx6G4QVIok=; 
+	b=AXoFmzYw86wAfmrBHDvm87OmOqYali80HVxivpGwh3VZOrsd1syRGtL/COMSaXtPTzStqGA/rZLLzpt5R/zK03iP6BGsp+C0HywTjDqU5Q+5mVy19a0uB9YtujZWU5jC9V7pxFc8LrAQHjVAcuQyacYUJTOP4S7KrAVtexTbX8A=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741078854;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=FAp90OZBq8uFu2M+L9vXUc0FUFCjHQCQSXx6G4QVIok=;
+	b=Hzgt6pqh5Wv5BxjxR2v6Ywvz0iIrM7s3cwiDk5u+tWsbg7zYFnFAxBKbUY2MNMSi
+	e/iwHh7Nkj5PsEZnBNpkUli0ugrtu7zdOTsjagCqvMq2Kd9ovn2QjFNnvkrcqHLuD9K
+	KNjBj0Qw0pt86tka+E3OqvaIk1oyusXyYTmx9AEo=
+Received: by mx.zohomail.com with SMTPS id 1741078852362990.3810519056143;
+	Tue, 4 Mar 2025 01:00:52 -0800 (PST)
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+To: Shreeya Patel <shreeya.patel@collabora.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	jose.abreu@synopsys.com,
+	nelson.costa@synopsys.com,
+	shawn.wen@rock-chips.com,
+	nicolas.dufresne@collabora.com,
+	Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: kernel@collabora.com,
+	linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Tim Surber <me@timsurber.de>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Diederik de Haas <didi.debian@cknow.org>
+Subject: [PATCH v13 2/6] dt-bindings: media: Document bindings for HDMI RX Controller
+Date: Tue,  4 Mar 2025 11:58:15 +0300
+Message-ID: <20250304085819.108067-3-dmitry.osipenko@collabora.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250304085819.108067-1-dmitry.osipenko@collabora.com>
+References: <20250304085819.108067-1-dmitry.osipenko@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHBxVyGGw6Ur4Kdd8Vvwp6viKWPx64w7gNvNiUzmAGeXF2PGoA@mail.gmail.com>
+X-ZohoMailClient: External
 
-On Mon, Mar 03, 2025 at 01:27:47PM -0800, Atish Kumar Patra wrote:
-> On Thu, Feb 27, 2025 at 12:16 AM Andrew Jones <ajones@ventanamicro.com> wrote:
-> >
-> > On Wed, Feb 26, 2025 at 12:25:06PM -0800, Atish Patra wrote:
-...
-> I will change the default value to 0 to avoid ambiguity for now.
-> Please let me know if you strongly think we should support -n 0.
-> We can always support it. I just don't see the point of specifying the
-> test with options to disable it anymore.
->
+From: Shreeya Patel <shreeya.patel@collabora.com>
 
-I don't mind not supporting '-n 0'.
+Document bindings for the Synopsys DesignWare HDMI RX Controller.
 
-Thanks,
-drew
+Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
+Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+---
+ .../bindings/media/snps,dw-hdmi-rx.yaml       | 132 ++++++++++++++++++
+ 1 file changed, 132 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/snps,dw-hdmi-rx.yaml
+
+diff --git a/Documentation/devicetree/bindings/media/snps,dw-hdmi-rx.yaml b/Documentation/devicetree/bindings/media/snps,dw-hdmi-rx.yaml
+new file mode 100644
+index 000000000000..510e94e9ca3a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/snps,dw-hdmi-rx.yaml
+@@ -0,0 +1,132 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++# Device Tree bindings for Synopsys DesignWare HDMI RX Controller
++
++---
++$id: http://devicetree.org/schemas/media/snps,dw-hdmi-rx.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Synopsys DesignWare HDMI RX Controller
++
++maintainers:
++  - Shreeya Patel <shreeya.patel@collabora.com>
++
++description:
++  Synopsys DesignWare HDMI Input Controller preset on RK3588 SoCs
++  allowing devices to receive and decode high-resolution video streams
++  from external sources like media players, cameras, laptops, etc.
++
++properties:
++  compatible:
++    items:
++      - const: rockchip,rk3588-hdmirx-ctrler
++      - const: snps,dw-hdmi-rx
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 3
++
++  interrupt-names:
++    items:
++      - const: cec
++      - const: hdmi
++      - const: dma
++
++  clocks:
++    maxItems: 7
++
++  clock-names:
++    items:
++      - const: aclk
++      - const: audio
++      - const: cr_para
++      - const: pclk
++      - const: ref
++      - const: hclk_s_hdmirx
++      - const: hclk_vo1
++
++  power-domains:
++    maxItems: 1
++
++  resets:
++    maxItems: 4
++
++  reset-names:
++    items:
++      - const: axi
++      - const: apb
++      - const: ref
++      - const: biu
++
++  memory-region:
++    maxItems: 1
++
++  hpd-gpios:
++    description: GPIO specifier for HPD.
++    maxItems: 1
++
++  rockchip,grf:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description:
++      The phandle of the syscon node for the general register file
++      containing HDMIRX PHY status bits.
++
++  rockchip,vo1-grf:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description:
++      The phandle of the syscon node for the Video Output GRF register
++      to enable EDID transfer through SDAIN and SCLIN.
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - interrupt-names
++  - clocks
++  - clock-names
++  - power-domains
++  - resets
++  - pinctrl-0
++  - hpd-gpios
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/rockchip,rk3588-cru.h>
++    #include <dt-bindings/gpio/gpio.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++    #include <dt-bindings/power/rk3588-power.h>
++    #include <dt-bindings/reset/rockchip,rk3588-cru.h>
++    hdmi_receiver: hdmi-receiver@fdee0000 {
++      compatible = "rockchip,rk3588-hdmirx-ctrler", "snps,dw-hdmi-rx";
++      reg = <0xfdee0000 0x6000>;
++      interrupts = <GIC_SPI 177 IRQ_TYPE_LEVEL_HIGH 0>,
++                   <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH 0>,
++                   <GIC_SPI 179 IRQ_TYPE_LEVEL_HIGH 0>;
++      interrupt-names = "cec", "hdmi", "dma";
++      clocks = <&cru ACLK_HDMIRX>,
++               <&cru CLK_HDMIRX_AUD>,
++               <&cru CLK_CR_PARA>,
++               <&cru PCLK_HDMIRX>,
++               <&cru CLK_HDMIRX_REF>,
++               <&cru PCLK_S_HDMIRX>,
++               <&cru HCLK_VO1>;
++      clock-names = "aclk",
++                    "audio",
++                    "cr_para",
++                    "pclk",
++                    "ref",
++                    "hclk_s_hdmirx",
++                    "hclk_vo1";
++      power-domains = <&power RK3588_PD_VO1>;
++      resets = <&cru SRST_A_HDMIRX>, <&cru SRST_P_HDMIRX>,
++               <&cru SRST_HDMIRX_REF>, <&cru SRST_A_HDMIRX_BIU>;
++      reset-names = "axi", "apb", "ref", "biu";
++      memory-region = <&hdmi_receiver_cma>;
++      pinctrl-0 = <&hdmim1_rx_cec &hdmim1_rx_hpdin &hdmim1_rx_scl &hdmim1_rx_sda &hdmirx_5v_detection>;
++      pinctrl-names = "default";
++      hpd-gpios = <&gpio1 22 GPIO_ACTIVE_LOW>;
++    };
+-- 
+2.48.1
+
 
