@@ -1,189 +1,126 @@
-Return-Path: <linux-kernel+bounces-543894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56E52A4DB43
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:48:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A1D0FA4DB48
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:49:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EAAA3A502E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:45:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3B553A608D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:45:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B87C1FF1C1;
-	Tue,  4 Mar 2025 10:41:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC441FF7D5;
+	Tue,  4 Mar 2025 10:42:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yxqyov7g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ezjyld/P"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 541251FCFE7;
-	Tue,  4 Mar 2025 10:41:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 081631FCFE7
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 10:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741084907; cv=none; b=X39Qs+Rd2e8Ftj1lVtlV0dRheaA5Cie9arzy8LjZi6nDR/Vr6QfoLrvKZWvg3QZ2A04uCnqSZ8tXqRTUmFRHliV13IumQ9dc7OTdZSz7K1TaQibPNWFXj4Yp5djXrlhuoZfyJmb83bMmNvPoiiBWZqPokHCj7u8t33hJr2ThwQU=
+	t=1741084927; cv=none; b=VeLz0/QnZnGSuDUvIB3Lsg4vxv6Vg6QMkh7OvIpLR88IMf/H5C32PpIh+IaZ6TY4KLPiYrkd3Qcajg1UEIf7Ok3ITCs2oDGFfcl3GyRNEFAjoSHWSkFYR20dC7fBE8uPnU+yJ5nLJZ3iTlhENVMTALuYyQ9OsilKpZjzLTae/0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741084907; c=relaxed/simple;
-	bh=fH0fOlyigILpZQf9CtDXVvcvx+MFI1+wMcAyGLpTuZ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QANVmS6Zyzqd6xqfNTWLcfMshj3PW0czHkQ1NVn9CJOZQEJPnALsX6O/+HHzfCfr19bNNmCWv8uA3us/cXHjA0EyV5WsmDHobWYKRcHm7os2/Nw+9a9EGVzOlw78nU+Cg5BtM9sUSA491BQM25jkTHocg2iONExHx3pySNF1ljY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yxqyov7g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8D39C4CEE5;
-	Tue,  4 Mar 2025 10:41:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741084907;
-	bh=fH0fOlyigILpZQf9CtDXVvcvx+MFI1+wMcAyGLpTuZ8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Yxqyov7gSZLMx3iMM3JIGSb/2W+3tDwsao7G6fNjoxAThtUWkmQ1qIqlGCXURUAR6
-	 1n1+kEJhcC4Ml0DqVVJ0WsiMWQlQVWZDAwqJ0uHOSbUPtBF6q5r1OmSwbWKlM7s97R
-	 Gj3FJzZds7GGvuuzma4ELAp9uWk+5ByUwP1A+wq4wqkYWdqXB5XHnXVVSunm79NDXk
-	 poKPLOSWhDFaNgwyf0MxAzX9YNo0mn/wiN67lC6v4X0dz0xy1VIvwlUaa4p1yiNsT3
-	 bXl/fQr97KnIG1XeMUUH+ad5d8BIbFyK4sDdYE+QWd+/o42rXSAunndJ8B8iskSUiK
-	 PGHEpYl2tMb/w==
-Date: Tue, 4 Mar 2025 11:41:44 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
-	maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch
-Subject: Re: [PATCH 5/5] drm/bridge: simple-bridge: Add next panel support
-Message-ID: <20250304-interesting-solemn-potoo-fd4c6e@houat>
-References: <20250304101530.969920-1-victor.liu@nxp.com>
- <20250304101530.969920-6-victor.liu@nxp.com>
+	s=arc-20240116; t=1741084927; c=relaxed/simple;
+	bh=oVGnr7AhMY5erBxqjABx8O/86uJFOwPvuIi+4qeKs9c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d4zLD6vzfTLjTx+x1wz5U+VFK6i46Fm9WvvPJnlVNlGpy4DiCidVQBauVo7heBoXFRUF985kxkjwDuzQV5fUhA/BTyldD53AE0i934wa+w8Zd5iG/O9cL1jwNrxToodVScsB038uFZzQjVlMoYeKX1pwsgXiSESLkhoMwrXFdkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ezjyld/P; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43bba52bc1fso2148005e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 02:42:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741084923; x=1741689723; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fRLGX0BSFbSkbyHv+vppZ4+v0T0SuHCAkvGOI/AsUU4=;
+        b=ezjyld/Po0DBBS33OGbpPq2KWd5zp0hrut2NokITOhhYkq1a2+1sHwo2pTqm9rXipB
+         fNEk6XCh9hWYsUUXkinZ6Haf27GFmHVijkdoxJ9Dv6b5EQDtIHFXQA/OjNMLKrr/H85l
+         8K5xJUpiEE9yj1N1wL8hyhz/yPVELfrhlcl1oBGVqc/71zHklWt+doZHIOQNf+/232df
+         6YSMJOF04oy2vH18VW4spWfYLE/X8HVSvVYffwcnXU4F0DeCHvA0wNC3csakqip+MZZc
+         FmHnGiOjSHnatY7VV5lQ5L0hWszK23GiwfBHIagC1S+QAi0MYAltBbRk68HWL21e4ZFX
+         WSjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741084923; x=1741689723;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fRLGX0BSFbSkbyHv+vppZ4+v0T0SuHCAkvGOI/AsUU4=;
+        b=EzIs8rX09FP1QJLRLXlbUhL41+s5emWC4BYA7wVfwl+WwA0l5gDKBFnbpH9Qywu0W+
+         AIwoEyH9l8obnoj1YhtGqWHCwOD5Cq4GrouNExejgpjWY540T975P7Ns60DDvlhB/Pz3
+         W8+5RhRXXi48W8Wdir/CD7ODFF2h3MDzP4BMFg2CP0jTW2FMYce06uzR8ajHqdJ6N3/G
+         Hp2+u2xWZfrnPZ9WCNkk0ZoV39JxGqY8dcatIawhv/srh22HON04K1F2dXE10E4Zc7C9
+         dj/nSvE2BJ83FK7DJjH6C4sGpywyl8/Pga3EXslwSvy1/FA06gsx8ZHhGHs+NJyGnSeI
+         cjyw==
+X-Forwarded-Encrypted: i=1; AJvYcCVUU//hWhV6Zi18TiSC4CdhcsefErHb30Anbiytf7W3rIJ1o75qyQ5RbtpNj9zuFlCKlnC3FGhfH6mA1N4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywdx2sJ8gNY+Xtrl7B75ybpuTov+tJXtm9PCcY0E0OQlmRT4DUv
+	UZgamcm0F/OPUpZqmkkaNdP/0eZHnyKs6nY1zprNLy3Sl2wsTU2E1qNMI/oLp1VJXeZFYY2wNXR
+	vf40=
+X-Gm-Gg: ASbGncupBIPnwWwdP/MNYZVlSKCB3fdNrShpP+e7wuDIPpB/vROUNMh1nfkOHxnOHiN
+	XvqmsFlRzaYJQ0dXwacOqLRHrDHTT55NW8VbEKPLGsBEh5/CKK9iR9WChHTVHtfG9YfzIA0qHDe
+	F2PSmtd8WjnWTOcxFz0Zk/F3mGxcAoM1Ug0VRtMUb+P5Swq8zpfeugz1B3A/vmDkGtFA5EObJM9
+	CGzNWJRIZakfXR3puBvFqj5WhXAsOWlOgQdQP3RBT2rM/UR6Pr64c5sja3liM1XuVUccZViHpt1
+	ZJ7YQ9bLZ/QC8DaGMfzmpvbzN8TxjFiCTP5ztkYH5IiIXqLHETIBU9t08ig=
+X-Google-Smtp-Source: AGHT+IFu+lUWQUJTNva4ATWrG4BJPlHZWRTzwg/XUajrbEnxSw1V0tjsJYbZeKjxr47p60rztgJf0A==
+X-Received: by 2002:a05:600c:1d86:b0:43b:c0fa:f9e5 with SMTP id 5b1f17b1804b1-43bcb969548mr7400795e9.4.1741084923281;
+        Tue, 04 Mar 2025 02:42:03 -0800 (PST)
+Received: from krzk-bin.. ([178.197.206.225])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b792asm17202257f8f.53.2025.03.04.02.42.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 02:42:02 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 1/2] arm64: dts: rockchip: Add ES8388 audio codec fallback on RK3399 ROC PC PLUS
+Date: Tue,  4 Mar 2025 11:41:59 +0100
+Message-ID: <20250304104200.76178-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="ykwvdkugqkulwx5n"
-Content-Disposition: inline
-In-Reply-To: <20250304101530.969920-6-victor.liu@nxp.com>
+Content-Transfer-Encoding: 8bit
 
+Devicetree bindings for ES8388 audio codec expect the device to be
+marked as compatible with ES8328.
 
---ykwvdkugqkulwx5n
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 5/5] drm/bridge: simple-bridge: Add next panel support
-MIME-Version: 1.0
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-On Tue, Mar 04, 2025 at 06:15:30PM +0800, Liu Ying wrote:
-> The next bridge connected to a simple bridge could be a panel, e.g.,
-> a DPI panel connected to a DPI color encoder. Add the next panel support,
-> instead of supporting non-panel next bridge only.
->=20
-> Signed-off-by: Liu Ying <victor.liu@nxp.com>
-> ---
->  drivers/gpu/drm/bridge/Kconfig         |  1 +
->  drivers/gpu/drm/bridge/simple-bridge.c | 32 ++++++++++++++++----------
->  2 files changed, 21 insertions(+), 12 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kcon=
-fig
-> index d20f1646dac2..92187dbdd32b 100644
-> --- a/drivers/gpu/drm/bridge/Kconfig
-> +++ b/drivers/gpu/drm/bridge/Kconfig
-> @@ -310,6 +310,7 @@ config DRM_SIMPLE_BRIDGE
->  	tristate "Simple DRM bridge support"
->  	depends on OF
->  	select DRM_KMS_HELPER
-> +	select DRM_PANEL_BRIDGE
->  	help
->  	  Support for non-programmable DRM bridges, such as ADI ADV7123, TI
->  	  THS8134 and THS8135 or passive resistor ladder DACs.
-> diff --git a/drivers/gpu/drm/bridge/simple-bridge.c b/drivers/gpu/drm/bri=
-dge/simple-bridge.c
-> index c0445bd20e07..4c585e5583ca 100644
-> --- a/drivers/gpu/drm/bridge/simple-bridge.c
-> +++ b/drivers/gpu/drm/bridge/simple-bridge.c
-> @@ -19,6 +19,7 @@
->  #include <drm/drm_crtc.h>
->  #include <drm/drm_edid.h>
->  #include <drm/drm_of.h>
-> +#include <drm/drm_panel.h>
->  #include <drm/drm_print.h>
->  #include <drm/drm_probe_helper.h>
-> =20
-> @@ -35,6 +36,7 @@ struct simple_bridge {
->  	const struct simple_bridge_info *info;
-> =20
->  	struct drm_bridge	*next_bridge;
-> +	struct drm_panel	*next_panel;
->  	struct regulator	*vdd;
->  	struct gpio_desc	*enable;
-> =20
-> @@ -114,6 +116,10 @@ static int simple_bridge_attach(struct drm_bridge *b=
-ridge,
->  	struct simple_bridge *sbridge =3D drm_bridge_to_simple_bridge(bridge);
->  	int ret;
-> =20
-> +	if (sbridge->next_panel)
-> +		return drm_bridge_attach(bridge->encoder, sbridge->next_bridge,
-> +					 bridge, flags);
-> +
->  	ret =3D drm_bridge_attach(bridge->encoder, sbridge->next_bridge, bridge,
->  				DRM_BRIDGE_ATTACH_NO_CONNECTOR);
->  	if (ret < 0)
-> @@ -247,7 +253,6 @@ static int simple_bridge_get_dpi_color_coding(struct =
-simple_bridge *sbridge,
->  static int simple_bridge_probe(struct platform_device *pdev)
->  {
->  	struct simple_bridge *sbridge;
-> -	struct device_node *remote;
->  	int ret;
-> =20
->  	sbridge =3D devm_kzalloc(&pdev->dev, sizeof(*sbridge), GFP_KERNEL);
-> @@ -257,17 +262,20 @@ static int simple_bridge_probe(struct platform_devi=
-ce *pdev)
->  	sbridge->info =3D of_device_get_match_data(&pdev->dev);
-> =20
->  	/* Get the next bridge in the pipeline. */
-> -	remote =3D of_graph_get_remote_node(pdev->dev.of_node, 1, -1);
-> -	if (!remote)
-> -		return -EINVAL;
-> -
-> -	sbridge->next_bridge =3D of_drm_find_bridge(remote);
-> -	of_node_put(remote);
-> -
-> -	if (!sbridge->next_bridge) {
-> -		dev_dbg(&pdev->dev, "Next bridge not found, deferring probe\n");
-> -		return -EPROBE_DEFER;
-> -	}
-> +	ret =3D drm_of_find_panel_or_bridge(pdev->dev.of_node, 1, -1,
-> +					  &sbridge->next_panel,
-> +					  &sbridge->next_bridge);
-> +	if (ret)
-> +		return dev_err_probe(&pdev->dev, ret,
-> +				     "Next panel or bridge not found\n");
-> +
-> +	if (sbridge->next_panel)
-> +		sbridge->next_bridge =3D devm_drm_panel_bridge_add(&pdev->dev,
-> +								 sbridge->next_panel);
-> +
-> +	if (IS_ERR(sbridge->next_bridge))
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(sbridge->next_bridge),
-> +				     "Next bridge not found\n");
+---
 
-This makes sense in general, but I think a better approach would be to
-use devm/drmm_of_get_bridge here.
+Changeset depends on bindings patch being accepted to ASoC:
+https://lore.kernel.org/all/20250304103808.75236-1-krzysztof.kozlowski@linaro.org/
 
-Maxime
+Please take it to the same or next merge cycle as above ASoC binding.
+---
+ arch/arm64/boot/dts/rockchip/rk3399-roc-pc-plus.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---ykwvdkugqkulwx5n
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-roc-pc-plus.dts b/arch/arm64/boot/dts/rockchip/rk3399-roc-pc-plus.dts
+index e2e9279fa267..8e3858cf988c 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-roc-pc-plus.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-roc-pc-plus.dts
+@@ -112,7 +112,7 @@ hym8563: rtc@51 {
+ 
+ &i2c1 {
+ 	es8388: es8388@11 {
+-		compatible = "everest,es8388";
++		compatible = "everest,es8388", "everest,es8328";
+ 		reg = <0x11>;
+ 		clocks = <&cru SCLK_I2S_8CH_OUT>;
+ 		#sound-dai-cells = <0>;
+-- 
+2.43.0
 
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ8bY6AAKCRAnX84Zoj2+
-dukwAYDXaQPs/ZdtTpvvPxoJ2VheWo7NhAt5NM4CP5W9+m84/PR4GEaJUqeWHctG
-eaCaTKcBfAwpXe9Lnbsr8to3t8H67azDq8SOt5WAmHm/EKzOjpWE8WW2eu9zuRGP
-Zu6gtnGcTQ==
-=KTPS
------END PGP SIGNATURE-----
-
---ykwvdkugqkulwx5n--
 
