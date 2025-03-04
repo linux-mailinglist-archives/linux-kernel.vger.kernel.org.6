@@ -1,120 +1,135 @@
-Return-Path: <linux-kernel+bounces-545533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55466A4EE40
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:22:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96633A4EE43
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:23:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 852A21890A10
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:22:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58BA47A4049
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:22:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D04141FBC8A;
-	Tue,  4 Mar 2025 20:22:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C20924C085;
+	Tue,  4 Mar 2025 20:22:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c4B4IRRC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GdiOMon1"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3358D2E3377;
-	Tue,  4 Mar 2025 20:22:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F7FA2E3377;
+	Tue,  4 Mar 2025 20:22:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741119721; cv=none; b=K8hIV+jKiPdn8urUF8TsfEEJIB3SXA4bUTlsg/oENPFNd239OcbjwyNXXx0AwC7nXM1mzL4kz8vl95cH5lN92Uo2gQsC7yEhh67As2nVmV3xRQpPVpeKi0WkTI2K+7/XaMNz+2a4E8KypvxRuhXdT7mtHhy7ZHxO0APWdS2XuyU=
+	t=1741119775; cv=none; b=N9ZANTFnt+HGoEwSvYn+gtRYT2pW7HQO1ziPeqj8CmvnOtEAiYCtU0FEaMCc+JDw8mnMUA9ICVC8KbyenD9Q+/KK8hNj1YLOtuTO4f40Kz+wA5chcJA/+eGEMzUuWBxS/M+KxqUvn5+yjEsd70GLcT3kfW9hEfsP9lxG4uEbCgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741119721; c=relaxed/simple;
-	bh=v+zXX4gxemuvYPYz9gTEXXPj3dauyXTR1ZerFpHGJeM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PWlPiXv8FshutgHqaC7yGkTL/W6BlyMSkzQbid5sXR3FP9Rpx3DmcUhHSDykbfy6zDClnEFhYbXPgvhArt7Zv7Qv1kG6VvLDJmfokGN6et79iUpRbuF7ybEkutp5pZgm/QObeLhQCsO2hvvSC4X1t49dgnravMPS8jI4eNwd1yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c4B4IRRC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DE65C4CEE5;
-	Tue,  4 Mar 2025 20:21:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741119720;
-	bh=v+zXX4gxemuvYPYz9gTEXXPj3dauyXTR1ZerFpHGJeM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c4B4IRRCcNR5JaM1MBUhTbUHG4oSAj6i2aH9q6e1OsmPPsdqLSFU77dAaqt4KsK/H
-	 AtMka3WMRkIk7Cxck41bsN5V2+8WcngCIKmnZPDW3GSUEOo1omoMLpKD8+MG/GQ1Jg
-	 F3jtHqz6UiGtH/05GlEAwTR40CPiZHv6C3r9ZNZuTA45r76IEdU0g7oJkvzA5io2YP
-	 RLGKJTXJWy7YsMMlDyxnphQYcvq22+dw3rKKdRKnIwqwc//MdZwb8LcAbOsf++kwZI
-	 QmNrhWMY4bKE9WCyanL4dufi/+Bz+D3fon5pjw9vycpryXy9lOQ5EIYlXmz/D9kLJt
-	 shh0s47V8V/Sw==
-Date: Tue, 4 Mar 2025 22:21:55 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Claudio Carvalho <cclaudio@linux.ibm.com>,
-	Peter Huewe <peterhuewe@gmx.de>, x86@kernel.org,
-	Dov Murik <dovmurik@linux.ibm.com>, linux-coco@lists.linux.dev,
-	Dionna Glaze <dionnaglaze@google.com>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Ingo Molnar <mingo@redhat.com>, Joerg Roedel <jroedel@suse.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [RFC PATCH v2 3/6] tpm: add send_recv() ops in tpm_class_ops
-Message-ID: <Z8dg46Mj81Q9Z0WV@kernel.org>
-References: <20250228170720.144739-1-sgarzare@redhat.com>
- <20250228170720.144739-4-sgarzare@redhat.com>
- <Z8Jmps6AF_geaHUw@kernel.org>
- <3p5erujbhxw7ozdnfpmresv3dqdh2xszolv6mh4khkagoy3wit@ow5qht4keh4h>
- <0e156883acf95d31b9358831550d6d675e3ce4ff.camel@kernel.org>
+	s=arc-20240116; t=1741119775; c=relaxed/simple;
+	bh=ZvZj2BVCDb3Ki+Kicw13DbZrIOHwNXmLmXf15SHHh7A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TVrYOQAWJ/kfrs4MCpKE7nADYOHbz0SdXx7/K+/AzDHAMLD1DVgk0g++hakM6R/OtE+BG6F4lOvvuphABkuqLnn54bdp+Qxiob/FMt60vReQFh0OxscmmN+MrMjSup5ixdBcT+K9aWzP54exrTqxdrgc2FLwYskHjq4Ev2c0lW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GdiOMon1; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e095d47a25so10670785a12.0;
+        Tue, 04 Mar 2025 12:22:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741119772; x=1741724572; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dZnyTf8R8WIAEBRe+U1MPXmR1flxgLlFr/IMunXCkWs=;
+        b=GdiOMon1U9pSSfMWdjsOLDgzPyRyRKBPoLaNKQexwozRsUlk+K95sAJnMgBQBRPAod
+         ocY4Eib/EB32XNKCAYzzS3CspoiR+nxDgGDOCVuz5VP6pQb35T7MwHECIxg68OzddxHw
+         AaQq4ydCG8xHK3rMqjZw5CtoHoRkyfK/62PJBAMgBrqsrd9ZbeGidbLx+8g1nCatI8yN
+         OHCKfkzD3WBGZRKo/TQ8MEOpvZhWP/u/kROQGHoSzzBudzqH3cnmHjgkx86RBYdpFsPN
+         WeBjhzPHF/z5h8I2sRuG6GUTaALSec2+d7Hxu9M8RQ9txatOfaeXBiSJeIZbNmrVNxnl
+         qVMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741119772; x=1741724572;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dZnyTf8R8WIAEBRe+U1MPXmR1flxgLlFr/IMunXCkWs=;
+        b=QA/KAgNdRY+zh6Ad4Ci0J5SG6FUowU149NXhG36NsB/6seJ4NJY/vQdoudYKxwLHNG
+         tjRcmjFqf25LKcjSiZUMU6aRXnRfi/jYwHVjFT3a7J/F1+7M0L707xHWEDwuNZWuIb39
+         /bAuWnpA4q5TJQjRHEiN45/cm6NyKKLZz3zZo5RKgFTsbOCuS1djegilX71w36l4ZxL3
+         IF66IhK7eRMN10NcOcAGsLH3TzJIXl5O/D29a9iPJmeNJLmaSobi6ERxU9thvs4qZq49
+         qu743iVaHbt/4Q7PQ48dahghBlczNcrYTXd6JR5Ll7qrMuQukjATLdMhlFnNDL9881Gp
+         tCWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVL7eGJLCPnX2HDplp0sWeTc6Axt7zEO6/BiwRQDREHEt8WC/cGtOohkHo0s377TkVvBxt7LYlh9LIq@vger.kernel.org, AJvYcCVgsPdKHo7fhH9/t1F3Uf4HEOtp/Lm/pFAFDCsOcaBMk/Zx7wyv+bEtrtztrwHb/p9JgVWQgcjrixnk@vger.kernel.org, AJvYcCXH4vOTF/uUy3PJ4LWeHK4fFPywMyMoAXop4BE0TT1ai9jzUYUaA9SDE8VVwkqxZAOmZ93lCtz74nVQ//e3@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsQTu2vstt1scPN+VbwnEyE3zGwKFXNApR8fiZtoRvH6+7mqW6
+	SV+dv5JaBnOxeY6FvAD+3G4aF2YADutponGtam8YWKBs3nqTbTrM
+X-Gm-Gg: ASbGncuzkHXRFdcs9piL5sdOa3LqzjW69wjJSNFpk1hwnDRgKTWUI4P1kwyb514y63l
+	KObXBMsazOkPVYjQFxQORxFv/454oK5vx46v/+21orFQd2OpnzHttis5IvEnJslaRinsDkYYAjL
+	lx4/Rc4YIJEqBnkvAY4CE0TQ8ioSGeG5SU4fzrrXHRLU71Hz/WsH0R0ZXcDEt1HWiW8kPR2MB7d
+	EpfAvGNqtIKPyfzfbvbUu5fdwvyDKoZhAMDwMVm/Bt/TSySL+1JzcgjiAGH2q/Jcq3A87Ji2eFM
+	4A7ZIRpB/wqWNmp/zLjJUmsQzI98VSKYHGVuX8ZxZRCUOklDTj8teXp4LUi3yfg4mT3wX02fLpg
+	cvhRuiZd1R19j2+GMdiI=
+X-Google-Smtp-Source: AGHT+IExdUuc+AfkdfGXERNmvw1J52g0YeELdssSNoIutPuyYqe/wIiIiVbJIIHsYneCx5vjT9I/YA==
+X-Received: by 2002:a17:907:948e:b0:ac1:e07b:63ca with SMTP id a640c23a62f3a-ac20dafc168mr37481266b.22.1741119772127;
+        Tue, 04 Mar 2025 12:22:52 -0800 (PST)
+Received: from [192.168.50.244] (83.8.122.142.ipv4.supernova.orange.pl. [83.8.122.142])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf7fb2eb4asm373090666b.55.2025.03.04.12.22.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Mar 2025 12:22:51 -0800 (PST)
+Message-ID: <6198559c-775f-4c83-a0e3-ea9557674ed8@gmail.com>
+Date: Tue, 4 Mar 2025 21:22:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0e156883acf95d31b9358831550d6d675e3ce4ff.camel@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/7] dt-bindings: clock: brcm,kona-ccu: Add BCM281xx
+ bus clocks
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
+ <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alex Elder <elder@kernel.org>,
+ Stanislav Jakubek <stano.jakubek@gmail.com>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht
+References: <20250303-kona-bus-clock-v2-0-a363c6a6b798@gmail.com>
+ <20250303-kona-bus-clock-v2-2-a363c6a6b798@gmail.com>
+ <20250304-fat-nebulous-meerkat-008f04@krzk-bin>
+From: Artur Weber <aweber.kernel@gmail.com>
+Content-Language: en-US
+In-Reply-To: <20250304-fat-nebulous-meerkat-008f04@krzk-bin>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 04, 2025 at 06:56:02PM +0200, Jarkko Sakkinen wrote:
-> On Mon, 2025-03-03 at 17:21 +0100, Stefano Garzarella wrote:
-> > On Sat, Mar 01, 2025 at 03:45:10AM +0200, Jarkko Sakkinen wrote:
-> > > On Fri, Feb 28, 2025 at 06:07:17PM +0100, Stefano Garzarella wrote:
-> > > > +	int (*send_recv)(struct tpm_chip *chip, u8 *buf, size_t
-> > > > buf_len,
-> > > > +			 size_t to_send);
-> > > 
-> > > Please describe the meaning and purpose of to_send.
-> > 
-> > Sure, I'll add in the commit description.
+On 4.03.2025 08:35, Krzysztof Kozlowski wrote:
+> On Mon, Mar 03, 2025 at 09:27:50PM +0100, Artur Weber wrote:
+>>     - if:
+>>         properties:
+>>           compatible:
+>> diff --git a/include/dt-bindings/clock/bcm281xx.h b/include/dt-bindings/clock/bcm281xx.h
+>> index d74ca42112e79746c513f6861a89628ee03f0f79..15449f998eb7a5a191fd847b689cfbe60b27c541 100644
+>> --- a/include/dt-bindings/clock/bcm281xx.h
+>> +++ b/include/dt-bindings/clock/bcm281xx.h
+>> @@ -34,7 +34,9 @@
+>>   #define BCM281XX_AON_CCU_HUB_TIMER		0
+>>   #define BCM281XX_AON_CCU_PMU_BSC		1
+>>   #define BCM281XX_AON_CCU_PMU_BSC_VAR		2
+>> -#define BCM281XX_AON_CCU_CLOCK_COUNT		3
 > 
-> It's always a command, right? So better be more concerete than
-> "to_send", e.g. "cmd_len".
-> 
-> I'd do instead:
-> 
-> if (!chip->send)
-> 	goto out_recv;
-> 
-> And change recv into:
-> 
-> int (*recv)(struct tpm_chip *chip, u8 *buf, size_t buf_len,
-> 	    cmd_len);
+> You cannot change defines, it is an ABI. Unless it is not an ABI... so
+> just drop all these counts in separate patch, just like we were doing
+> for other platforms.
 
-I think I went here over the top, and *if* we need a new callback
-putting send_recv would be fine. Only thing I'd take from this is to
-rename to_len as cmd_len.
+The clock count defines are not used in device trees, only in the 
+driver. Most likely clock count defines were included since the driver
+already uses clock ID defines from the DT binding header.
 
-However, I don't think there are strong enough reasons to add complexity
-to the callback interface with the basis of this single driver. You
-should deal with this internally inside the driver instead.
+I'll drop the clock count defines in the next version, and see what I
+can do to adapt the clock driver.
 
-So do something along the lines of, e.g.:
-
-1. Create dummy send() copying the command to internal
-   buffer.
-2. Create ->status() returning zero, and set req_complete_mask and
-   req_complete_val to zero.
-3. Performan transaction in recv().
-
-How you split send_recv() between send() and recv() is up to you. This
-was merely showing that we don't need send_recv() desperately.
-
-BR, Jarkko
+Best regards
+Artur
 
