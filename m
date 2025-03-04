@@ -1,62 +1,39 @@
-Return-Path: <linux-kernel+bounces-545043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22A94A4E85F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:20:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBF13A4E7D2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:10:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7D601888A21
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:14:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81E578C31AD
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:21:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48318204F76;
-	Tue,  4 Mar 2025 16:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="XBjxOJYk"
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC6C24C06C;
-	Tue,  4 Mar 2025 16:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D644F28152C;
+	Tue,  4 Mar 2025 16:02:29 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 633AD28151B
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741107196; cv=none; b=AIuTsUv0UdNiG4WbZ+XJB5WJWNZOHsAuCZj74NIFPEVn12hf/vN1MKXqbYKxIpLgPbXuBqECso7bIaLKfimPVeVvx14Ww59krnbguhx3PRk/fT2oN0SN9fxJ+w+rZcJkrzeHAXzfNSyYq9Y7bCehsasgd+C3oo0h4BvIa58BMOo=
+	t=1741104149; cv=none; b=ESkshSBNtcBZT0d50uGW8YKe4nKHGCeTWB7mWEkhjCTid9SL9phng6RLcCZS3uW5rK1kbDSGauzb6I35+o4f0ook3ozO4PcCmXkgWGCGmpFB9OVBq7oA9AllkNbIU2SWO4M448yoxBbqEDkgzcRusY7Ps/ybBA4CMUF7pD7W4jM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741107196; c=relaxed/simple;
-	bh=QOXUN+50/43sNcot85Fxk7vXxY+54HLAWMfOoMYvPHo=;
+	s=arc-20240116; t=1741104149; c=relaxed/simple;
+	bh=Ife1S2+6Gw0oW5C4+eCeVlOTVa8vt6NEV5srvuNBU6w=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WkDTzBXHLXYoUWMkNufAU5ze5eHe8gwhL4B1X1DTwgf6gqMTzHqLIqb4s7bBEZ0qfWzdcfIK/i5MEMfNtRgv1gxl12dpcbBtyM8nUEY3dUMyaWMkqQnkuVo94FRWQZsPV+4Dk0em/Etv5zzUAszQpB+UauOGiS3g//FOLMKHh6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=XBjxOJYk; arc=none smtp.client-ip=199.89.3.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4Z6hTt3BW2zlxW5R;
-	Tue,  4 Mar 2025 16:49:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1741106944; x=1743698945; bh=0yF6JFh7nuQ25sPmBfvr71pz
-	u5aA76yMnS8lXv52hsA=; b=XBjxOJYkmLxCCif1K5POATpKp8HLrLawLxHhQRtj
-	CgvuHWUl81OUmMrYBZsJN2bcXMSqquzLjxuFvZ+0oHTD6j4bSmSZDYXGAxb6YzJe
-	8snZjF1jTVQJB82do2kl4T1w3BIAgc7JXZx2Ealg4d0Y00St67QLfxDoUp+NbFNn
-	tgQiCJbpcSLntL/+Jv+/BYEHka0wKBg1hzw1ZE1yDbT2cd4PgZyQ5o10I7Jx7vmn
-	x1QtcoxfhQ4lwPjyWPAUPtadwstQBvhTVxX26XjZlVDNetVvJGhsBUywa2zN3OaY
-	pcKJ5oTNx2hR4TmwFggzPq33HjQIjDYJpU8yu1MKe1Wbmw==
-X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id PW2LVAGltcYO; Tue,  4 Mar 2025 16:49:04 +0000 (UTC)
-Received: from [172.20.1.83] (unknown [192.80.0.137])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4Z6dSD4pBLzm2Q1P;
-	Tue,  4 Mar 2025 14:32:28 +0000 (UTC)
-Message-ID: <2ca75746-c630-4a15-bf5d-e9cb10b6e83c@acm.org>
-Date: Tue, 4 Mar 2025 06:32:27 -0800
+	 In-Reply-To:Content-Type; b=bOMq9hyQz2Hg8x0gYSWewVrNlZsAXndy71/lKSJkLx+ivsFvZU6T641yy1QgJ+PCOqikbzkDpWOIuCzM/8J5ydl/LxweYaiao74shJMdiwFxpweWn9nIuD6V3xujzLarP9lVV6ZiDirio6xgtmWpZRLfPp7rSSomdTHsD0DaULw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 619542F;
+	Tue,  4 Mar 2025 08:02:40 -0800 (PST)
+Received: from [10.57.83.152] (unknown [10.57.83.152])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6C0B73F5A1;
+	Tue,  4 Mar 2025 08:02:22 -0800 (PST)
+Message-ID: <67fbe3f4-4fb6-4753-b34c-320b7897fd16@arm.com>
+Date: Tue, 4 Mar 2025 16:02:20 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,32 +41,64 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] block: factor out a helper to set logical/physical
- block size
-To: linan666@huaweicloud.com, axboe@kernel.dk, song@kernel.org,
- yukuai3@huawei.com, hare@suse.de, martin.petersen@oracle.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-raid@vger.kernel.org, yangerkun@huawei.com, zhangxiaoxu5@huawei.com,
- wanghai38@huawei.com
-References: <20250304121918.3159388-1-linan666@huaweicloud.com>
- <20250304121918.3159388-2-linan666@huaweicloud.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250304121918.3159388-2-linan666@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v2 4/4] iommu/arm: Add BBM Level 2 smmu feature
+Content-Language: en-GB
+To: Jason Gunthorpe <jgg@ziepe.ca>,
+ =?UTF-8?Q?Miko=C5=82aj_Lenczewski?= <miko.lenczewski@arm.com>
+Cc: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>,
+ "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
+ "yang@os.amperecomputing.com" <yang@os.amperecomputing.com>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "will@kernel.org" <will@kernel.org>, "joro@8bytes.org" <joro@8bytes.org>,
+ "jean-philippe@linaro.org" <jean-philippe@linaro.org>,
+ "mark.rutland@arm.com" <mark.rutland@arm.com>,
+ "joey.gouly@arm.com" <joey.gouly@arm.com>,
+ "oliver.upton@linux.dev" <oliver.upton@linux.dev>,
+ "james.morse@arm.com" <james.morse@arm.com>,
+ "broonie@kernel.org" <broonie@kernel.org>, "maz@kernel.org"
+ <maz@kernel.org>, "david@redhat.com" <david@redhat.com>,
+ "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ "nicolinc@nvidia.com" <nicolinc@nvidia.com>,
+ "mshavit@google.com" <mshavit@google.com>,
+ "jsnitsel@redhat.com" <jsnitsel@redhat.com>,
+ "smostafa@google.com" <smostafa@google.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "iommu@lists.linux.dev" <iommu@lists.linux.dev>
+References: <20250228182403.6269-2-miko.lenczewski@arm.com>
+ <20250228182403.6269-6-miko.lenczewski@arm.com>
+ <20250228193221.GM5011@ziepe.ca>
+ <b23aa37f8e864dea82a6143bece912d6@huawei.com>
+ <20250303103102.GC13345@e133081.arm.com> <20250303165255.GS5011@ziepe.ca>
+ <20250303190330.GA426248@e133081.arm.com> <20250304142634.GC5011@ziepe.ca>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20250304142634.GC5011@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 3/4/25 4:19 AM, linan666@huaweicloud.com wrote:
-> +EXPORT_SYMBOL(blk_set_block_size);
+On 04/03/2025 14:26, Jason Gunthorpe wrote:
+> On Mon, Mar 03, 2025 at 07:03:42PM +0000, Mikołaj Lenczewski wrote:
+> 
+>> For example, if we use BBML2 for kernel mappings, does that require us
+>> to repaint all kernel mappings when disabling BBML2 on smmu attach? I
+>> am not sure, but definitely something to be worked out.
+> 
+> No, it would be a per-mm_struct basis only if we did something like
+> that
+> 
+> When the SMMU driver puts a SVA on top of the mm_struct it would
+> disable BBML2 usage only for that mm_struct and it's contained VMAs.
 
-This function is exported without documenting what the requirements are
-for calling this function? Yikes.
+I guess we would need to figure out some synchonization mechanism if disabling
+BBML2 dynaically per-mm. If there was already a BBML2 operation in flight would
+want to wait for it to end. But that's a problem to solve if/when it's shown to
+be needed, I think.
 
-Is my understanding correct that it is only safe to apply changes made 
-with blk_set_block_size() by calling
-queue_limits_commit_update_frozen()?
+> 
+> Kernel mappings are never made into a SVA so are not effected.
+> Userspace only.
+> 
+> Jason
 
-Thanks,
-
-Bart.
 
