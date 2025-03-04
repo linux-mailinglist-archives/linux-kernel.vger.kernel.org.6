@@ -1,124 +1,208 @@
-Return-Path: <linux-kernel+bounces-545426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3039A4ECFE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:15:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 933B3A4ED03
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:15:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90E9216B82F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:15:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10D8E7A866B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:14:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C95BB259C9A;
-	Tue,  4 Mar 2025 19:15:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48DB0259CAA;
+	Tue,  4 Mar 2025 19:15:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wd+VYz5Z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oTq6rl92"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25CD424BCE8;
-	Tue,  4 Mar 2025 19:15:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C2F16F271;
+	Tue,  4 Mar 2025 19:15:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741115718; cv=none; b=LFGc2ewl1vLkSFdghMC4v2e3bkP9n8sMLSyFGez5CPdFuQVIfcTZb5ww8JaNvl3stjQyft74J7yLhqnUeERaMH0nI2haAuBOWMgC9hUxf9RPQ8jiKDvnlzYG73FkiMKlfw7bA1RFlZSLM8g4QC6+8UMw2glhRKPHt3F43qEK7Q0=
+	t=1741115727; cv=none; b=BCyhxqGR1YYKBkNYicE4ctylmoZvep1kEQkkq4FZfeKVUpq1fmbj4vDmhOctKwwRhU4Rw38avgKQ4uv40IKxjB2Myjwki45am+NMqw+q9X27f54B5azhbMEDZGSacU0chYkHLkJ/XoyM/c1VZ/QIj4iGi/48FyTTgfsMY64QOLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741115718; c=relaxed/simple;
-	bh=m8gpsFcvErC+OBg1crSKmlYcazdRoOwZ0xMnwbncoLg=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=NYpHjrOUrqNzU7LSwekpgEspFnLdH5wUv0RLgdySmZ6VCvjQtrzDZcJUdh548aVWv0pdxRcVRNBc+JkeWnJ52Hf+jw/JLu+6sLOzIZOx1ZgsBuBQ6wR9VpU6GSorusG7Snnefhb8+IKjE/bo4jZFPcZqTLkyI45MKl0q7KXa04g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wd+VYz5Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BA93C4CEE5;
-	Tue,  4 Mar 2025 19:15:17 +0000 (UTC)
+	s=arc-20240116; t=1741115727; c=relaxed/simple;
+	bh=NJ3TQZFfV3q3elNa2NxItYJQTy6CMZkFNGwhlIZAytw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lp47s9OdcQqvRVmDROWNsEl17OZudnzQzdZR4kZu6rY4fObYRwi/ZfwrEJotB4mG2+7L6ar/U5O4VT1INGQ+Ocr2h61IJi5ATVxHHkgtqD2GgCcGrByQDK5A7eBo6iJYwqQhVrv1MVImGqmApuaiUnLR5xw/oMVpfrHoN0++aZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oTq6rl92; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E51EC4CEE5;
+	Tue,  4 Mar 2025 19:15:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741115717;
-	bh=m8gpsFcvErC+OBg1crSKmlYcazdRoOwZ0xMnwbncoLg=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=Wd+VYz5Z5pmq6PMWBMCh4meGD69gSJjcGdaQqppo0JES4AT8CP7BglSfJgGMVA3y7
-	 UTxQvO0wRGmTbAZ1rh01lKFGskbhM75iCjZ6guHgUT/y704xVrwXatSv5etp8opAL/
-	 hMX2QJSLGU+L4BspbNuRwWw7D+P0z4vZhF8JcjMhBRoudk+xaT0kjlBU8ik1AI4bbJ
-	 /804WbtwyRXPPLHq2RrTziJNifSXLCDEj8XSDDzcF/V/DkuC7iaKTrjOhKSmKp2bfF
-	 1M63SfvUoiIkLLZzovZrXd1NTBWJJQ7O8Xg5BWl8JiUITB6tWMIjQ2m2VpPjnnVLjG
-	 opGhzPH4Pok/A==
-Date: Tue, 04 Mar 2025 13:15:15 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1741115727;
+	bh=NJ3TQZFfV3q3elNa2NxItYJQTy6CMZkFNGwhlIZAytw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oTq6rl92QjtF9LyJG1zuHCWL9z0PN3kj3ItWHL+poQ4CKCDTVvQXuMKeV7omAG079
+	 A8L0eLtHNrgS21USGn1mmEaLQdRskQobutNrEQkJLt1VnYyGM7XbC0BrHUBdTdFjC0
+	 yQUPQxUkWsaECSup+PnDHhRyV2SsB4sRbAU8GqJ7fpoI3ApW13x62Q00dqv9QyHZjX
+	 +SZ1cd+h7r1lEih4uMUidp+oChcTYTVwRsa6rGPtv4PzZviy3kVOY1yOSz67CN/wyW
+	 rQ0KSaNncpkrMJJsaBzvrm6gUnyM1F7KXHrJWmibu9KoZnIlKaibe5lzTG1Y+hkyIr
+	 2oYKxMVUDAsXA==
+Date: Tue, 4 Mar 2025 21:15:22 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: airlied@gmail.com, simona@ffwll.ch, corbet@lwn.net,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, ajanulgu@redhat.com, lyude@redhat.com,
+	pstanner@redhat.com, zhiw@nvidia.com, cjia@nvidia.com,
+	jhubbard@nvidia.com, bskeggs@nvidia.com, acurrid@nvidia.com,
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
+	gregkh@linuxfoundation.org, mcgrof@kernel.org,
+	russ.weight@linux.dev, dri-devel@lists.freedesktop.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	nouveau@lists.freedesktop.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v5 2/5] rust: firmware: introduce
+ `firmware::ModInfoBuilder`
+Message-ID: <Z8dRSp13fsvEF9HR@kernel.org>
+References: <20250304173555.2496-1-dakr@kernel.org>
+ <20250304173555.2496-3-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: tglx@linutronix.de, jic23@kernel.org, linux-iio@vger.kernel.org, 
- olivier.moysan@foss.st.com, wbg@kernel.org, linux-kernel@vger.kernel.org, 
- linux-pwm@vger.kernel.org, alexandre.torgue@foss.st.com, 
- conor+dt@kernel.org, krzk+dt@kernel.org, daniel.lezcano@linaro.org, 
- devicetree@vger.kernel.org, will@kernel.org, lee@kernel.org, 
- catalin.marinas@arm.com, ukleinek@kernel.org, 
- linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org
-To: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
-In-Reply-To: <20250304173229.3215445-2-fabrice.gasnier@foss.st.com>
-References: <20250304173229.3215445-1-fabrice.gasnier@foss.st.com>
- <20250304173229.3215445-2-fabrice.gasnier@foss.st.com>
-Message-Id: <174111571576.3307031.12348647271786435979.robh@kernel.org>
-Subject: Re: [PATCH v2 1/8] dt-bindings: mfd: stm32-lptimer: add support
- for stm32mp25
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250304173555.2496-3-dakr@kernel.org>
 
-
-On Tue, 04 Mar 2025 18:32:22 +0100, Fabrice Gasnier wrote:
-> Add a new stm32mp25 compatible to stm32-lptimer dt-bindings, to support
-> STM32MP25 SoC. Some features has been updated or added to the low-power
-> timer:
-> - new capture compare channels
-> - up to two PWM channels
-> - PWM input capture
-> - peripheral interconnect in stm32mp25 has been updated (new triggers).
-> - registers/bits has been added or revisited (IER access).
-> So introduce a new compatible to handle this diversity.
+On Tue, Mar 04, 2025 at 06:34:49PM +0100, Danilo Krummrich wrote:
+> The `firmware` field of the `module!` only accepts literal strings,
+> which is due to the fact that it is implemented as a proc macro.
 > 
-> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+> Some drivers require a lot of firmware files (such as nova-core) and
+> hence benefit from more flexibility composing firmware path strings.
+> 
+> The `firmware::ModInfoBuilder` is a helper component to flexibly compose
+> firmware path strings for the .modinfo section in const context.
+> 
+> It is meant to be used in combination with `kernel::module_firmware!`,
+> which is introduced in a subsequent patch.
+
+Ditto.
+
+> 
+> Co-developed-by: Alice Ryhl <aliceryhl@google.com>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 > ---
-> Changes in V2:
-> - Use fallback compatibles, along with stm32mp25 specific compatible
-> - trigger identifier can be up to 4 (e.g. from LPTIM1..5)
-> ---
->  .../bindings/mfd/st,stm32-lptimer.yaml        | 40 ++++++++++++++++---
->  1 file changed, 34 insertions(+), 6 deletions(-)
+>  rust/kernel/firmware.rs | 98 +++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 98 insertions(+)
+> 
+> diff --git a/rust/kernel/firmware.rs b/rust/kernel/firmware.rs
+> index c5162fdc95ff..6e6972d94597 100644
+> --- a/rust/kernel/firmware.rs
+> +++ b/rust/kernel/firmware.rs
+> @@ -115,3 +115,101 @@ unsafe impl Send for Firmware {}
+>  // SAFETY: `Firmware` only holds a pointer to a C `struct firmware`, references to which are safe to
+>  // be used from any thread.
+>  unsafe impl Sync for Firmware {}
+> +
+> +/// Builder for firmware module info.
+> +///
+> +/// [`ModInfoBuilder`] is a helper component to flexibly compose firmware paths strings for the
+> +/// .modinfo section in const context.
+> +///
+> +/// It is meant to be used in combination with [`kernel::module_firmware!`].
+> +///
+> +/// For more details and an example, see [`kernel::module_firmware!`].
+> +pub struct ModInfoBuilder<const N: usize> {
+> +    buf: [u8; N],
+> +    n: usize,
+> +    module_name: &'static CStr,
+> +}
+> +
+> +impl<const N: usize> ModInfoBuilder<N> {
+> +    /// Create an empty builder instance.
+> +    pub const fn new(module_name: &'static CStr) -> Self {
+> +        Self {
+> +            buf: [0; N],
+> +            n: 0,
+> +            module_name,
+> +        }
+> +    }
+> +
+> +    const fn push_internal(mut self, bytes: &[u8]) -> Self {
+> +        let mut j = 0;
+> +
+> +        if N == 0 {
+> +            self.n += bytes.len();
+> +            return self;
+> +        }
+> +
+> +        while j < bytes.len() {
+> +            if self.n < N {
+> +                self.buf[self.n] = bytes[j];
+> +            }
+> +            self.n += 1;
+> +            j += 1;
+> +        }
+> +        self
+> +    }
+> +
+> +    /// Push an additional path component.
+> +    ///
+> +    /// After a new [`ModInfoBuilder`] instance has been created, [`ModInfoBuilder::prepare`] must
+> +    /// be called before adding path components.
+> +    pub const fn push(self, s: &str) -> Self {
+> +        if N != 0 && self.n == 0 {
+> +            crate::build_error!("Must call prepare() before push().");
+> +        }
+> +
+> +        self.push_internal(s.as_bytes())
+> +    }
+> +
+> +    const fn prepare_module_name(self) -> Self {
+> +        let mut this = self;
+> +        let module_name = this.module_name;
+> +
+> +        if !this.module_name.is_empty() {
+> +            this = this.push_internal(module_name.as_bytes_with_nul());
+> +
+> +            if N != 0 {
+> +                // Re-use the space taken by the NULL terminator and swap it with the '.' separator.
+> +                this.buf[this.n - 1] = b'.';
+> +            }
+> +        }
+> +
+> +        this.push_internal(b"firmware=")
+> +    }
+> +
+> +    /// Prepare for the next module info entry.
+> +    ///
+> +    /// Must be called before [`ModInfoBuilder::push`] can be called.
+> +    pub const fn prepare(self) -> Self {
+> +        self.push_internal(b"\0").prepare_module_name()
+> +    }
+> +
+> +    /// Build the byte array.
+> +    pub const fn build(self) -> [u8; N] {
+> +        // Add the final NULL terminator.
+> +        let this = self.push_internal(b"\0");
+> +
+> +        if this.n == N {
+> +            this.buf
+> +        } else {
+> +            crate::build_error!("Length mismatch.");
+> +        }
+> +    }
+> +}
+> +
+> +impl ModInfoBuilder<0> {
+> +    /// Return the length of the byte array to build.
+> +    pub const fn build_length(self) -> usize {
+> +        // Compensate for the NULL terminator added by `build`.
+> +        self.n + 1
+> +    }
+> +}
+> -- 
+> 2.48.1
+> 
 > 
 
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/mfd/st,stm32-lptimer.yaml:26:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
-./Documentation/devicetree/bindings/mfd/st,stm32-lptimer.yaml:29:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
-./Documentation/devicetree/bindings/mfd/st,stm32-lptimer.yaml:67:13: [warning] wrong indentation: expected 14 but found 12 (indentation)
-./Documentation/devicetree/bindings/mfd/st,stm32-lptimer.yaml:70:13: [warning] wrong indentation: expected 14 but found 12 (indentation)
-./Documentation/devicetree/bindings/mfd/st,stm32-lptimer.yaml:87:13: [warning] wrong indentation: expected 14 but found 12 (indentation)
-./Documentation/devicetree/bindings/mfd/st,stm32-lptimer.yaml:90:13: [warning] wrong indentation: expected 14 but found 12 (indentation)
-./Documentation/devicetree/bindings/mfd/st,stm32-lptimer.yaml:103:13: [warning] wrong indentation: expected 14 but found 12 (indentation)
-./Documentation/devicetree/bindings/mfd/st,stm32-lptimer.yaml:106:13: [warning] wrong indentation: expected 14 but found 12 (indentation)
-./Documentation/devicetree/bindings/mfd/st,stm32-lptimer.yaml:120:13: [warning] wrong indentation: expected 14 but found 12 (indentation)
-./Documentation/devicetree/bindings/mfd/st,stm32-lptimer.yaml:123:13: [warning] wrong indentation: expected 14 but found 12 (indentation)
-
-dtschema/dtc warnings/errors:
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250304173229.3215445-2-fabrice.gasnier@foss.st.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+BR, Jarkko
 
