@@ -1,102 +1,149 @@
-Return-Path: <linux-kernel+bounces-545713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42D2BA4F08F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:33:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5409AA4F098
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:36:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AE94171B39
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:33:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBB0C7A72CC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:35:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED1CD1FF7BC;
-	Tue,  4 Mar 2025 22:33:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F81924EAAA;
+	Tue,  4 Mar 2025 22:36:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o6yEm8FA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lCSP7Who"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5161C2E338E;
-	Tue,  4 Mar 2025 22:33:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A541F4E27;
+	Tue,  4 Mar 2025 22:36:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741127597; cv=none; b=MdNcngkRdUEpg/4tHQU5QrSZ4+WiXsaSJi+DoRTu0pIhS+YPgEl7+LWP1ZNeu+7uNCI/6IYJYtEq+DQzLI6nxayKewvqC1j1Ko9xKZMWKKX48PpJjURaFOeFXXkX00LDaZwGC69Dr9pZNE/8D2h3HdmyQ+L604ttxCUsbTY+hA8=
+	t=1741127803; cv=none; b=E1a1Kv6WUrK6UxK106oS9b4JkX3L/y0+48t59lI9ilothhGZHwrDCTVrOsTOskui0SyKr5mY7L04Krmzpz52vu3fRp+fBm75xomXLG3dfnn4QTcjcyit+aBtk/UI41Vy9Qh5VpVOMgTSUEETRrkmf8u6Lu2EtuZNN75N/E0EUqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741127597; c=relaxed/simple;
-	bh=0MvwTVPn+rG6FROc0/0+IZOLkMjweCpzGoPWfDWsO3A=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=o6a+B2bs10zRgr9pg8NDArDutQftLB6FFMcUihAkFcPuYT+kp8ZBC93lN8OwoaF9j3FNs43dhAg+FHlG3jBQoPp6GOdXQl0DMMHVVGr6Xxe+rVeN8lIK4SyQDgZX7aQxxRIMMdEXA+uDdr6gtcwRipMZkBCWwjHr7F6UmT/3oJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o6yEm8FA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7933EC4CEE5;
-	Tue,  4 Mar 2025 22:33:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741127596;
-	bh=0MvwTVPn+rG6FROc0/0+IZOLkMjweCpzGoPWfDWsO3A=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=o6yEm8FAzwuLSIKAwPDrL7FuVDGxQt2Bn2/C49Aj50riSfzMj+3agVVAGdVuLh62b
-	 jmaa2GwAQ73gV00gEq/PBHjkbudVz29XLeHlFNSobzXn1uSq8yKoHGQWSdheDqMB5y
-	 votlEMfRbmIuVuY/TzPUMIQXe7LDIbtmi1QVL6CT6bW82WRd9i+BRsJS9os7mo4NVG
-	 Mbh4L+G6FJsQOmcsFS6vw6XgsTe0ok2mugm9aEOeMCozmnCu38uvoHk7ZTnob+O4Dn
-	 VAQD6iCebak3ARin9mnfRA1y2voHEISKXFgte9RWn1om2NWWc2LIj5ELHlhEZ1tPtv
-	 hVFVm22Sb59vA==
-Date: Tue, 04 Mar 2025 16:33:14 -0600
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1741127803; c=relaxed/simple;
+	bh=K9aip81QC8oqq3+WZcQCWiWxcprdK1rB8dP6z91UPJE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XeHiU/hfNIJxd6f9mRqYOHLMQD5ZPNK8PuGQd2PXlRHVmKcJiAID/04e6sQFCRAwZjjkKBJ9Obz00dhNOnFAyBpCVWwM3B2XEFwN9/JVCUSBPIh8ogSCX9Xa1SY+Z6V7mnR9WEeFOBkhAWWLgJiMFg03DuOm03SGaKDfnqZfPy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lCSP7Who; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741127802; x=1772663802;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=K9aip81QC8oqq3+WZcQCWiWxcprdK1rB8dP6z91UPJE=;
+  b=lCSP7WhosUpV4HAU9prBikjTsE8zRJcA3PJ1xzX4FTkkt2NUT7jo85js
+   fygsmhlOsTp19ydx8/BtTybapQMy+zJlNy5MD0RvsnXhSo+pqyWAAnD6L
+   7KqNGxZGCllHKkWqNbnJXtbcvdahPVwUfSyGwjAieAvdqfHlNxXJFXKN/
+   jPdh1VqXeZ8a8hU+vSYwuTCj1FVdyl0/rAs8fbp+xJStMnDTHOdmTAkVT
+   upBymSz25CQd/TP1Y21rQo3BNRqTM8ktDHWhBrQT1znmIaVg9TPdiu/Sw
+   erOHbbmJvDM/GSejAn3My6YG1NpjI2ByCCozTzXaTsCTmrUcU5n2TUryv
+   Q==;
+X-CSE-ConnectionGUID: KCaW/I8eQXC+nnkuHnspRg==
+X-CSE-MsgGUID: OfGCyvVNQKSWxD7rTqR3pw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="59618448"
+X-IronPort-AV: E=Sophos;i="6.14,221,1736841600"; 
+   d="scan'208";a="59618448"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 14:36:41 -0800
+X-CSE-ConnectionGUID: 0TaKNi/fRoSr45dcDwxleQ==
+X-CSE-MsgGUID: d6pTuWyfRH6iHym3ZBngFQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,221,1736841600"; 
+   d="scan'208";a="123441252"
+Received: from kinlongk-mobl1.amr.corp.intel.com (HELO [10.125.109.165]) ([10.125.109.165])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 14:36:41 -0800
+Message-ID: <21824e7a-092e-40f8-a0f0-972c92ae3900@intel.com>
+Date: Tue, 4 Mar 2025 14:37:00 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: krzk+dt@kernel.org, linux-arm-msm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, quic_rpavan@quicinc.com, andersson@kernel.org, 
- konradybcio@kernel.org, quic_sarata@quicinc.com, conor+dt@kernel.org, 
- devicetree@vger.kernel.org, quic_sharathv@quicinc.com
-To: Kaustubh Pandey <quic_kapandey@quicinc.com>
-In-Reply-To: <20250304152133.GA2763820@hu-kapandey-hyd.qualcomm.com>
-References: <20250304152133.GA2763820@hu-kapandey-hyd.qualcomm.com>
-Message-Id: <174112750057.3751450.15783784234696025160.robh@kernel.org>
-Subject: Re: [PATCH] arm64: dts: qcom: qcom6490-idp: Add IPA nodes
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/6] x86/fpu/xstate: Introduce
+ XFEATURE_MASK_KERNEL_DYNAMIC xfeature set
+To: Chao Gao <chao.gao@intel.com>, tglx@linutronix.de, x86@kernel.org,
+ seanjc@google.com, pbonzini@redhat.com, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org
+Cc: peterz@infradead.org, rick.p.edgecombe@intel.com, mlevitsk@redhat.com,
+ weijiang.yang@intel.com, john.allen@amd.com
+References: <20241126101710.62492-1-chao.gao@intel.com>
+ <20241126101710.62492-4-chao.gao@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20241126101710.62492-4-chao.gao@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+Subjects should ideally be written without large identifiers:
 
-On Tue, 04 Mar 2025 20:51:33 +0530, Kaustubh Pandey wrote:
-> Add IPA nodes for Qualcomm qcm6490 board.
-> 
-> Signed-off-by: Kaustubh Pandey <quic_kapandey@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/qcm6490-idp.dts | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
+	Subject: x86/fpu/xstate: Introduce dynamic kernel features
 
+On 11/26/24 02:17, Chao Gao wrote:
+> Remove the kernel dynamic feature from fpu_kernel_cfg.default_features
+> so that the bits in xstate_bv and xcomp_bv are cleared and xsaves/xrstors
+> can be optimized by HW for normal fpstate.
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+I'm really confused why this changelog hunk is here.
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
+Right now, all kernel XSAVE buffers have the same supervisor xfeatures.
+This introduces the idea that they can have different xfeature sets.
 
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
+The _purpose_ of this is to save space when only some FPUs need a given
+feature. This saves space in 'struct fpu'. It probably doesn't actually
+make XSAVE/XRSTOR any faster because the init optimization is very
+likely to be in place for these features.
 
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250304152133.GA2763820@hu-kapandey-hyd.qualcomm.com:
-
-arch/arm64/boot/dts/qcom/qcm6490-idp.dts:119.31-122.5: ERROR (duplicate_label): /reserved-memory/ipa-fw@8b300000: Duplicate label 'ipa_fw_mem' on /reserved-memory/ipa-fw@8b300000 and /reserved-memory/ipa-fw@8b700000
-ERROR: Input tree has errors, aborting (use -f to force output)
-make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/qcom/qcm6490-idp.dtb] Error 2
-make[2]: *** [scripts/Makefile.build:461: arch/arm64/boot/dts/qcom] Error 2
-make[2]: Target 'arch/arm64/boot/dts/qcom/qcm6490-idp.dtb' not remade because of errors.
-make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1462: qcom/qcm6490-idp.dtb] Error 2
-make: *** [Makefile:251: __sub-make] Error 2
-
-
-
-
-
+I'm not sure what point the changelog was trying to make about xstate_bv
+and xcomp_bv.  xstate_bv[12] would have been 0 if the feature was in its
+init state.
 
