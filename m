@@ -1,96 +1,127 @@
-Return-Path: <linux-kernel+bounces-545692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43D37A4F03A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:25:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DFEECA4F043
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:25:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2153D188CB52
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:25:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5CE6188D20E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:25:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 163B627C859;
-	Tue,  4 Mar 2025 22:24:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7CD3278143;
+	Tue,  4 Mar 2025 22:25:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="X+ZDZ1jY"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y0WFhpkn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB5972780EE;
-	Tue,  4 Mar 2025 22:24:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 352191F03D7;
+	Tue,  4 Mar 2025 22:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741127064; cv=none; b=Qz+TaCZ6SB9tO8yIMepS1J0zEB44a047oPmk/aWtl9piFRiXx7MQksepAZX3IzVtIwfdxiBLG4USiJfE/j4eQ2xqChqldOXYxlqE7IuqShla50VVAowVyZdDUclXWM++abpBGUTHbp4gpuRCbBCNJnPpkZi8HJlWyQTgVo7+nNI=
+	t=1741127103; cv=none; b=rc4zDm9ryxccmXJvsIrLT5cS/X4le5aCFlqGQKaD/L8ZlgZsxVSPhQPSu2hy8ACWv7EQGjQktIzmlVYExQmC/qGBe6yaP/V/DkHnWfzKNDcgJwzc+0XFBEvQNztWC4qM+nbwHaKzdadNn3nmuaOo9FwHzzrN7KaKpa2lJbo501U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741127064; c=relaxed/simple;
-	bh=7QvuPnWT0EW53TvuPMg7Nv80uhxx7F8g12MYgUeNZPA=;
+	s=arc-20240116; t=1741127103; c=relaxed/simple;
+	bh=0+/9utZ9Ftp9xnO55BpJlM6f0mOe8fIs9GJvBVmZITk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rbqX48aCJjeMHda/04FnrIVI7e5yEkcBGjdWGyYWcNU9WlM3NRGBxVOeiTYFXKvnVGG4jDqe3xKmLb+CXr/OFQE/Igpn7pSNvApk2/BSM6JLTWAg7WT3im4oirlXn982boy3PQkVUd2OsThg8GhspNH+5WzopsOUXY6+tQtLeao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=X+ZDZ1jY; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=NQspby4G75DaS/LBNhOnxLMcEKKmp/qYjXqhxLpgpJc=; b=X+ZDZ1jYxcz5VBtDKzP8p0t8nn
-	qrHqeqVx76GM2mwLBEeMYc/M3s47hIw8qlQaamEt68PbvmCnU+TTqvWHVrPLd7LNwyvKTA5Q1kD+y
-	nvE8RJm7JyFXpAZmDheUn+8K8V6cusfhtGtoDXrHt6mw/VqpPdbWWragyPXDZYvh+V/U=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tpagH-002Hg7-7E; Tue, 04 Mar 2025 23:24:05 +0100
-Date: Tue, 4 Mar 2025 23:24:05 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Mark Pearson <mpearson-lenovo@squebb.ca>
-Cc: Vitaly Lifshits <vitaly.lifshits@intel.com>, anthony.l.nguyen@intel.com,
-	przemyslaw.kitszel@intel.com, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [Intel-wired-lan] [PATCH] e1000e: Link flap workaround option
- for false IRP events
-Message-ID: <eb5b93b5-ca90-4287-b6b5-17825d79e6ea@lunn.ch>
-References: <20250226194422.1030419-1-mpearson-lenovo@squebb.ca>
- <36ae9886-8696-4f8a-a1e4-b93a9bd47b2f@lunn.ch>
- <50d86329-98b1-4579-9cf1-d974cf7a748d@app.fastmail.com>
- <1a4ed373-9d27-4f4b-9e75-9434b4f5cad9@lunn.ch>
- <9f460418-99c6-49f9-ac2c-7a957f781e17@app.fastmail.com>
- <4b5b0f52-7ed8-7eef-2467-fa59ca5de937@intel.com>
- <698700ab-fd36-4a09-8457-a356d92f00ea@lunn.ch>
- <24740a7d-cc50-44af-99e2-21cb838e17e5@app.fastmail.com>
- <316a020a-aa49-700e-3735-f5f810adaaed@intel.com>
- <a2bd6964-1ec0-4bd6-ad68-7210ac3fe38b@app.fastmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AegxbHOszA5k06k723MxcsNidFbLSkTcyPKLdhvxbvqQDk2GctRl0nyrtp+WX0MJt84GHJEWMlyrJWqBOVKqJ0Sh96PNz+2L+LdU2C0Aka69zAWvc/isqI7LVl/Ia1rGJUksHKDxLT9zjsKOKxRsdnl7NMwtbV8kjJcnJnyWeoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y0WFhpkn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A2EFC4CEE5;
+	Tue,  4 Mar 2025 22:25:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741127102;
+	bh=0+/9utZ9Ftp9xnO55BpJlM6f0mOe8fIs9GJvBVmZITk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Y0WFhpknFwe00UPXpOJYc/hs7CmG0pQXTXXpLKYxAe3NhDpNbWU9mKpO6aKD/vmIr
+	 KbBPUSgUayaNkK5jIEfWx22v4wwNfz1yhPY422ZfN+WfJHGyc5Z/uy0DCwOyLTzQIj
+	 +pfeK8SVY0SDSYCNXDxyga2WqrNyWsmCI0Q2PVGOO+9C424j1HSRoSw1qeTPCgxpne
+	 xI85EmF39tWrVpqTepxyQGCzlar3aS2yiqC/tqu6Abuq923ZoOsuz+SKiHznVDd5ej
+	 BW/aRZ4wO6sFWsTr+5vOkuoquA6rlzYX22yV/eDzXNNMrQZNySVlqUvgKMBheyCZSy
+	 m731TrXzhW6sw==
+Date: Wed, 5 Mar 2025 00:24:58 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Eric Snowberg <eric.snowberg@oracle.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
+	David Woodhouse <dwmw2@infradead.org>,
+	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	Ard Biesheuvel <ardb@kernel.org>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	"casey@schaufler-ca.com" <casey@schaufler-ca.com>,
+	Stefan Berger <stefanb@linux.ibm.com>,
+	"ebiggers@kernel.org" <ebiggers@kernel.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+Subject: Re: [RFC PATCH v3 00/13] Clavis LSM
+Message-ID: <Z8d9ulOirAeHmFJV@kernel.org>
+References: <72F52F71-C7F3-402D-8441-3D636A093FE8@oracle.com>
+ <CAHC9VhRHEw5c+drC=aX4xTqWoQJJZ+qkJ7aHUT5dcu+Q5f7BqA@mail.gmail.com>
+ <CAHC9VhSJpnaAK1efgs1Uk0Tr3CaDNR1LiDU-t_yDKDQG6J-74Q@mail.gmail.com>
+ <E20C617B-EA01-4E69-B5E2-31E9AAD6F7A2@oracle.com>
+ <506e8e58e5236a4525b18d84bafa9aae80b24452.camel@linux.ibm.com>
+ <CAHC9VhTsZntLdGBV7=4suauS+rzSQv1O4UAoGcy2vEB02wRkoA@mail.gmail.com>
+ <c580811716f550ed5d6777db5e143afe4ad06edc.camel@linux.ibm.com>
+ <CAHC9VhTz6U5rRdbJBWq0_U4BSKTsiGCsaX=LTgisNNoZXZokOA@mail.gmail.com>
+ <FD501FB8-72D2-4B10-A03A-F52FC5B67646@oracle.com>
+ <CAHC9VhR961uTFueovLXXaOf-3ZAnvQCWOTfw-wCRuAKOKPAOKw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <a2bd6964-1ec0-4bd6-ad68-7210ac3fe38b@app.fastmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhR961uTFueovLXXaOf-3ZAnvQCWOTfw-wCRuAKOKPAOKw@mail.gmail.com>
 
-> > I suggest to try replacing the register read for a short delay or 
-> > reading the PHY STATUS register instead.
+On Mon, Mar 03, 2025 at 05:40:54PM -0500, Paul Moore wrote:
+> On Fri, Feb 28, 2025 at 12:52 PM Eric Snowberg <eric.snowberg@oracle.com> wrote:
+> > > On Feb 28, 2025, at 9:14 AM, Paul Moore <paul@paul-moore.com> wrote:
+> > > On Fri, Feb 28, 2025 at 9:09 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > >> On Thu, 2025-02-27 at 17:22 -0500, Paul Moore wrote:
+> > >>>
+> > >>> I'd still also like to see some discussion about moving towards the
+> > >>> addition of keyrings oriented towards usage instead of limiting
+> > >>> ourselves to keyrings that are oriented on the source of the keys.
+> > >>> Perhaps I'm missing some important detail which makes this
+> > >>> impractical, but it seems like an obvious improvement to me and would
+> > >>> go a long way towards solving some of the problems that we typically
+> > >>> see with kernel keys.
 > >
+> > The intent is not to limit ourselves to the source of the key.  The main
+> > point of Clavis is to allow the end-user to determine what kernel keys
+> > they want to trust and for what purpose, irrespective of the originating
+> > source (.builtin_trusted, .secondary, .machine, or .platform). If we could
+> > go back in time, individual keyrings could be created that are oriented
+> > toward usage.   The idea for introducing Clavis is to bridge what we
+> > have today with kernel keys and allow them to be usage based.
 > 
-> Ack - we'll try that, and collect some other debug registers in the process.
-> Will update with findings - this may take a while :)
+> While it is unlikely that the current well known keyrings could be
+> removed, I see no reason why new usage oriented keyrings could not be
+> introduced.  We've seen far more significant shifts in the kernel over
+> the years.
 
-Please be careful with which register you choice. Because the link
-status bit in BMSR is latching, you should not be reading it and
-discarding the result.
+Could we implement such change in a way that these new imaginary
+(at this point) usage oriented keyrings would be used to create
+the "legacy" keyrings?
 
-Reading register 2 or 3 should be totally safe.
+> 
+> -- 
+> paul-moore.com
+> 
 
-Another thing to keep in mind, you cannot unconditionally read a paged
-register in this particular PHY, because the e1000e is used with a
-number of different PHYs. That register does not exist in other PHYs,
-and the action of selecting the page performs a register write, which
-for some other PHY could be destructive. So i would suggest you keep
-to registers defined in 802.3 C22.
-
-	Andrew
+BR, Jarkko
 
