@@ -1,105 +1,158 @@
-Return-Path: <linux-kernel+bounces-544435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A317A4E124
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:37:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CDF6A4E18D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:46:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CDCE188717E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:33:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA49F3BF8AD
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:33:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C9DE25C71D;
-	Tue,  4 Mar 2025 14:31:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38C96262D35;
+	Tue,  4 Mar 2025 14:32:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TTThw6LO"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="ULFskclw"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167F225CC9A;
-	Tue,  4 Mar 2025 14:31:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741098685; cv=none; b=Ws47y9uCjdrSK8pP3ELWPeQxuwE+qd8qXEPYFl9VtsIwVwYLCTR6cuGBRtrW6LZ9Cz6VjCuA811yNEqiZcS8JphVo6QkS8GnnKgKX1IrfvDc5yqzCTUW+T7vSz5YyZnJNDtnOI0BXGGZIgaMUIK49IPLTI73jjFRREE7s/C0gK0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741098685; c=relaxed/simple;
-	bh=0JUk0DCDRh3TUcCv++gk4WNLQRgMRu2NMHQHfZboClM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UMjShAHMqyD/28si4me1VI1h/yrkTgCgJ3+eZ2y4QaR0eFxFKLr1qW5riS8p0syeiox04MUa4dOEi7XOkae/vKige8nmkEZfU89rUgmxwwz5uFSuU0BZFgkX++ADk/QWR53IsOu70KozmSuDM4iAESZtBiKk3+kFgd/HEpUHDxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TTThw6LO; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741098684; x=1772634684;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=0JUk0DCDRh3TUcCv++gk4WNLQRgMRu2NMHQHfZboClM=;
-  b=TTThw6LO7+0nMaJqt2K3x3XI2tUlB0nligkotrb/kPUCj2QanhQUck6t
-   OOqnL8URsXIFSkfyvbmczQiMrkk2LhPtEUKfmQU/ZHtFBXC7cnM8HVhUj
-   w9+iKLVv4EVN00Byb9SmjYycKh81G7b5zHPwRaYIBaXd39APwOyw1FAq1
-   OxIHQ8mWKQ/1ilZEEp4SxDNsiBLLTjnIvRi3W8P4BP4v79eGeV9qRxr10
-   Ewjmg8AhvsXlEU4VeCE1Tc0ivPjqlvYkjV7+l1e+fpXfvXHB0Dkk/wcnA
-   ccOe/mYbqM8T+0FS8a5pji5/uFrRKdUJUq2sgzqqMkqczjwydg4Qm40Ac
-   A==;
-X-CSE-ConnectionGUID: r3RWjMP9TMiwdJ2bPZm7HQ==
-X-CSE-MsgGUID: SZL7kIJlTtSbBqpej2n2KA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="52662444"
-X-IronPort-AV: E=Sophos;i="6.14,220,1736841600"; 
-   d="scan'208";a="52662444"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 06:31:23 -0800
-X-CSE-ConnectionGUID: hYhul2DrSD2QjKwno/QDTA==
-X-CSE-MsgGUID: 1QWI6P1UQfepxNTrIAdXwA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,220,1736841600"; 
-   d="scan'208";a="118394499"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa006.jf.intel.com with ESMTP; 04 Mar 2025 06:31:22 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 317BF27D; Tue, 04 Mar 2025 16:31:19 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-gpio@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Mika Westerberg <westeri@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v1 1/1] gpiolib-acpi: Drop unneeded ERR_CAST() in __acpi_find_gpio()
-Date: Tue,  4 Mar 2025 16:31:19 +0200
-Message-ID: <20250304143119.1816463-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA7F26157F;
+	Tue,  4 Mar 2025 14:31:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741098719; cv=pass; b=PAwJ5mYA9xNN/GQkPy0wYgaTK8+LTaVAvnpSODSlFv/YbLY8W8DzackewrwwfNx8PC/GirbGk0OWpFqWQBssNMonsg94kZUEK/746WiNlq/rxInsnuvwMzScBNd4tlqsnlA6cdgwalI/6Cw8VPOrFeWStqfBSZEQEPykt4DXivQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741098719; c=relaxed/simple;
+	bh=C5fdCffFI+4OEo9H68+Ik5QYXGMpqzIZq8TCvbL02Zw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MlKBrTEz3u8zGV9YHCB1JcyHQRQgSQNQIQT5BIShW3CS5adydZGQMOlVcPM5O0FHk5cXsQmJMtfGy5TDSllmogbDcmbNp1M7ImXCTNVJtSMnhe7QwlRDcmFHeI8v6cFaxLeV2yA2H/XqCQU76P5OoY69u146J987MSXZfMWgS1g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=ULFskclw; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1741098703; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=mAce3bRInugDhWPhCQM6C2uCziq19ilL7/e+dDW2/FGcV1jAnkWk4bEkVhEqALuAwIKUQaz283m1L6+GjNg7wGKM/uLr6E+GmAow3mmPtDa0ZgSRfN9ymqKS30YZ8AGCmJr2RuWWgd8wjvsHdhmBFyY0T91/QvIe3g8dYbJP4AQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1741098703; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=tTAodclUAdCBU382l20ItnjkDcvqqEPMOb0qAu5ypcA=; 
+	b=Ihw5XlebV4G1xS/82TskIdALZ4f96MvsX6Qv1UmpB9tv/KyoKguhA+XkF/1QMufniyDdE93wgk/eIuvDnjR6D1YtiiCnJ42kddUTNNAhMHmMaLA94SRyyGqz/S2hLW6XmBsdXKQqLxDW9PmgC5xtmKV/QlfvUFVP7YaqrubOHcE=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741098703;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=tTAodclUAdCBU382l20ItnjkDcvqqEPMOb0qAu5ypcA=;
+	b=ULFskclwdgD84orDTDoYs2GbQMrFcN9IYWZlXv6GhiNxCMwrTweCDIby6f9Pw5PJ
+	Sc7NsYDgv8wk0GOQRn40+TOKILmhGITxhPaBgTLDybhMyj2+NFPkeXOVi1rUcGnUNB0
+	sF1qb5Z03fHMYAxI+Ugu1YrvPgvCd/7yX4yiFB0U=
+Received: by mx.zohomail.com with SMTPS id 1741098701479811.0457773113028;
+	Tue, 4 Mar 2025 06:31:41 -0800 (PST)
+Received: by venus (Postfix, from userid 1000)
+	id EB4EE180C9F; Tue, 04 Mar 2025 15:31:37 +0100 (CET)
+Date: Tue, 4 Mar 2025 15:31:37 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Heiko Stuebner <heiko@sntech.de>, 
+	Arnd Bergmann <arnd@arndb.de>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pmdomain: rockchip: add regulator dependency
+Message-ID: <2g5p6ucwp55zuisupqx6dglikmbm5rqy3yl34mqobs3giucfqe@um6uhmglxhex>
+References: <20250304142803.689201-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="6ftr5rqzgjozmvlj"
+Content-Disposition: inline
+In-Reply-To: <20250304142803.689201-1-arnd@kernel.org>
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.4.2/241.78.79
+X-ZohoMailClient: External
 
-The checked type by PTR_ERR() is the same as returned by __acpi_find_gpio().
-Hence there is no need to cast, drop it.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpiolib-acpi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--6ftr5rqzgjozmvlj
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] pmdomain: rockchip: add regulator dependency
+MIME-Version: 1.0
 
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index 2aa88ace5868..90db393377fc 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -993,7 +993,7 @@ __acpi_find_gpio(struct fwnode_handle *fwnode, const char *con_id, unsigned int
- 			desc = acpi_get_gpiod_from_data(fwnode,
- 							propname, idx, info);
- 		if (PTR_ERR(desc) == -EPROBE_DEFER)
--			return ERR_CAST(desc);
-+			return (desc);
- 
- 		if (!IS_ERR(desc))
- 			return desc;
--- 
-2.47.2
+Hi,
 
+On Tue, Mar 04, 2025 at 03:27:59PM +0100, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+>=20
+> When CONFIG_REGULATOR is disabled, this pmdomain driver fails to build:
+>=20
+> drivers/pmdomain/rockchip/pm-domains.c:653:30: error: implicit declaratio=
+n of function 'devm_of_regulator_get'; did you mean 'devm_regulator_get'? [=
+-Wimplicit-function-declaration]
+>   653 |                 pd->supply =3D devm_of_regulator_get(pmu->dev, pd=
+->node, "domain");
+>       |                              ^~~~~~~~~~~~~~~~~~~~~
+>       |                              devm_regulator_get
+> drivers/pmdomain/rockchip/pm-domains.c:653:28: error: assignment to 'stru=
+ct regulator *' from 'int' makes pointer from integer without a cast [-Wint=
+-conversion]
+>   653 |                 pd->supply =3D devm_of_regulator_get(pmu->dev, pd=
+->node, "domain");
+>       |                            ^
+>=20
+> Add a Kconfig dependency.
+>=20
+> Fixes: db6df2e3fc16 ("pmdomain: rockchip: add regulator support")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+
+Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+
+-- Sebastian
+
+>  drivers/pmdomain/rockchip/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/pmdomain/rockchip/Kconfig b/drivers/pmdomain/rockchi=
+p/Kconfig
+> index 7e4f9b628f0b..218d43186e5b 100644
+> --- a/drivers/pmdomain/rockchip/Kconfig
+> +++ b/drivers/pmdomain/rockchip/Kconfig
+> @@ -5,6 +5,7 @@ config ROCKCHIP_PM_DOMAINS
+>  	bool "Rockchip generic power domain"
+>  	depends on PM
+>  	depends on HAVE_ARM_SMCCC_DISCOVERY
+> +	depends on REGULATOR
+>  	select PM_GENERIC_DOMAINS
+>  	help
+>  	  Say y here to enable power domain support.
+> --=20
+> 2.39.5
+>=20
+
+--6ftr5rqzgjozmvlj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmfHDsEACgkQ2O7X88g7
++pp00g//aFcPbqAlUT+9ssFVmS1DZnzPVKvIpP2qpRgf3ZLhdIUUE/9ljAKaBhsB
+ibrwuSsht4nUebBiL/Ge9191zcdE/kG+oBIaOeUpRfUI1fVI5V501LzHoJAX9QJM
+nezzvh8SUWeoerVK2faqPrap0HJ/u/vkhoOpiUBoSBOOaD438GhSPbgAGV7SBH5L
+8dtv0H9PbRg0bjMWaSrUptVZKH1aOgew/ik30jvwDzXRJYGx/86Zzh4h8ryCh4LO
+lfwPZ72cq5QbpagWvO2rCznJrntpdWITqzCJ0Tg+OEjRhhcpDfSpI16krVIfFK37
+lFDhuK9/4VnA8PRmt92pDU2AfNMpUa8O1narQGFGsFTvG8ad9/h5xwxLVq9DMB5F
+r5D8Ild2hkvI1mkm1zj5Ur0aSN9p8kX91gbN5+cblCFw3GQPSRVBCe9iYQMWKOYI
+fJm46Nw4D6pbfMGAl4N4gxBwZsCUbFzVU60cqnUSDyVYVET+5sennBGpX9k/AKfk
+DBoG2efxxd0x34sq6orYAjL0+E0FLw+T/bfgcVwF6XOv6jJfYPPB7YVWREGR7EzQ
+t2ybqCXnUQIpyHe/cYSjJzcgYmfn4I5VlWhjsK5Zw4F6hSPAaDPiskS8PMqTDBGx
+GwR5n9e77eX49YHCd6frUZTZycygRe8J+vB77/bkFd1LcUNlcZI=
+=86c8
+-----END PGP SIGNATURE-----
+
+--6ftr5rqzgjozmvlj--
 
