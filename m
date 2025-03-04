@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-543552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9AEBA4D702
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:54:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF84CA4D703
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:54:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC3001749BE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:54:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F19733AF7FA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:54:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5834A1FE47C;
-	Tue,  4 Mar 2025 08:52:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79DD71FECB3;
+	Tue,  4 Mar 2025 08:52:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OBsb5RRy";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BIgxgf7m"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Qxe3EL5b";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bvNB2p5l"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA80B1FE45B
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 08:52:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3497A1FC7F5
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 08:52:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741078363; cv=none; b=UcDej3fk5RkVxZg9vXq8XaLzaZl4gjV6MqFKTXA5FLbp1cf35+ttWQyJfvn6KOjFDThOVJmaT80yXEBj+8B0kp1a5UomRpVaNTYj+6x2oIso3Yi6WZ7X8VW4ieBV6OhBpNOha0dp2KaxoQ5ZJQ9yqze+rvaACPXEDvmwbunHWmQ=
+	t=1741078366; cv=none; b=WKCSYzJE1HAqrR+rT4huqQLjS7D/u4ddLIF7j+C1uVncq4StQEnm9LrTV+QjpfeLonzHBRgFUNjca1KD+NVlZ2zz2yhWNLzj22CJJXbSKeDrFaf+sJL/eZ9rPFvzljXBlhVboC6DmU7aCu4pG30efh9/8Ff8Nr3J8NC0RS8U/+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741078363; c=relaxed/simple;
-	bh=I7lWy4oxXtM92TgxDHeDJE8J2SKPngVboSsqddFra7E=;
+	s=arc-20240116; t=1741078366; c=relaxed/simple;
+	bh=kr0XFF8MATjQQ8C5nVeTvNNWXuZKh754nmloxOWRwRU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OWCduV6LEH9gIci8M4ikqYMGd6Q0UVxVhReUZrazUjUigK4fEcaI5AIAxGUvu0QFaidMOrS4kil60uRAbuH26n44kER2x7vj4LR3P0p6L8BdpoWWrWVj+59ASorxfXdtinRdMl+NqsFxV7vZI0b8MY2ewit5d/EMI1V2IiFuRnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OBsb5RRy; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BIgxgf7m; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=dZWx5wqjQFqLwSt8M7CEh5oLk1IbzaU4cOOwAZ++gSm3LbPRkVbV/w9gZHQts7Wl7x3xrge6HamEqs6oQv2d1aOhjDEdyoExJxM0Ic2xWfZN+cctZPHOWWycQMWry8kNR6ZNHLkAdsi/nVgJirG+QXBHveMJCC5T8mvhk/Wc6CU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Qxe3EL5b; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bvNB2p5l; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: "Ahmed S. Darwish" <darwi@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741078360;
+	s=2020; t=1741078363;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Dop/qkJkK0O7Tda551vacFbdZKiU0QbyO4ChptChL2o=;
-	b=OBsb5RRyruCefHZyHXyusry/xryMJ8ZSn2DSfuPUVzc4jhy0I8367ao3MFaidff6ziINxY
-	jDK1ax9GO8XL9AXzKJfTemVDw2TrY5WLE8WyPJ0NtkaiPOe1ix6YHXXA+t8hMFoe2Y792A
-	mXytNRWBL9YT5btU9Fui6cJzogDLmSNes6DCM+AdXqx0qKjmE7silY6d6eGtAwZb/262NU
-	qN6Q4g3oyzB4FIOmChfsyxsiL7phS24R2Kj6x3T8pf8tPrc9H1d9lB+uxdGiOFhCOn+cmd
-	LLysmx3RYTSJPqdNn0F3UiwHZkh00ldnRlFd+PssQ/IcqCZXk8BEUSc/c+1Ndw==
+	bh=ZetDRpn0NcCndrg1Y0AubvUguUN9OJwsJpVg/UfAF+0=;
+	b=Qxe3EL5bbQMYBElxFRalaAWvamj7kuDM/ifC2mi0lhqSsq0A5J6mXLng5XaF4x9q/HuAs0
+	YA5oU6K8m5OYL1BMQKvxnA2KBNs5Bm4DTw2OVaeUesD0FjegXbij26fPsYTw/+GQqCjy7h
+	O+Zux/+MLxpnfuxiz8YHVkOcP/UiVXJNhFU+aap2nxIygyfIuetWqq5x16L3/mOn415lAO
+	i41yRARrnUYIwtGJm27XqCFyTHWA0cDlS8K91wpUlnLNZxI9IRtMvZVvtc7ePO3wxyVldi
+	dllRxvn8BagojKn75A4rfhArvfz6EXEYjjY+GQmnZH50OZJJNqUVXJd3fenaXA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741078360;
+	s=2020e; t=1741078363;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Dop/qkJkK0O7Tda551vacFbdZKiU0QbyO4ChptChL2o=;
-	b=BIgxgf7mVuYP57mgI/v5ygZis/MiYYkq2XTWLTy6pZP8QddV1ETA0aU9IWZO38Kkedcc4U
-	zxvjv0vJYYqnf/Bw==
+	bh=ZetDRpn0NcCndrg1Y0AubvUguUN9OJwsJpVg/UfAF+0=;
+	b=bvNB2p5lGRYEUh/arP4vpio5KpMEmxqA+ANr08oz8KulnxWhTp1CHVHOeG0/8U1Jt6OSrE
+	ji2OKTPXZP3pqQCA==
 To: Borislav Petkov <bp@alien8.de>,
 	Ingo Molnar <mingo@redhat.com>,
 	Dave Hansen <dave.hansen@linux.intel.com>
@@ -64,9 +64,9 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
 	x86-cpuid@lists.linux.dev,
 	LKML <linux-kernel@vger.kernel.org>,
 	"Ahmed S. Darwish" <darwi@linutronix.de>
-Subject: [PATCH v1 09/40] x86/cpu: Remove unused TLB strings
-Date: Tue,  4 Mar 2025 09:51:20 +0100
-Message-ID: <20250304085152.51092-10-darwi@linutronix.de>
+Subject: [PATCH v1 10/40] x86/cpu: Remove leaf 0x2 parsing loop and add helpers
+Date: Tue,  4 Mar 2025 09:51:21 +0100
+Message-ID: <20250304085152.51092-11-darwi@linutronix.de>
 In-Reply-To: <20250304085152.51092-1-darwi@linutronix.de>
 References: <20250304085152.51092-1-darwi@linutronix.de>
 Precedence: bulk
@@ -77,132 +77,159 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Thomas Gleixner <tglx@linutronix.de>
+Leaf 0x2 output includes a "query count" byte where it was supposed to
+specify the number of repeated cpuid leaf 0x2 subleaf 0 queries needed
+to extract all of the hardware's cache and TLB descriptors.
 
-commit e0ba94f14f74 ("x86/tlb_info: get last level TLB entry number of
-CPU") added the TLB table for parsing CPUID(0x4) including strings
-describing them. The string entry in the table was never used.
+Per current Intel manuals, all CPUs supporting this leaf "will always"
+return an iteration count of 1.
 
-Convert it to a comment.
+Remove the leaf 0x2 query count loop and just query the hardware once.
+Parse the output with C99 bitfields instead of ugly bitwise operations.
+Provide leaf 0x2 parsing helpers at asm/cpuid/types.h to do all that.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Use the new leaf 0x2 parsing helpers at x86/cpu intel.c.  Further
+commits will also use them for x86/cacheinfo.
+
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
 ---
- arch/x86/kernel/cpu/cpu.h   |  8 ----
- arch/x86/kernel/cpu/intel.c | 80 ++++++++++++++++++++-----------------
- 2 files changed, 43 insertions(+), 45 deletions(-)
+ arch/x86/include/asm/cpuid/types.h | 79 ++++++++++++++++++++++++++++++
+ arch/x86/kernel/cpu/intel.c        | 24 +++------
+ 2 files changed, 85 insertions(+), 18 deletions(-)
+ create mode 100644 arch/x86/include/asm/cpuid/types.h
 
-diff --git a/arch/x86/kernel/cpu/cpu.h b/arch/x86/kernel/cpu/cpu.h
-index 1beccefbaff9..51deb60a9d26 100644
---- a/arch/x86/kernel/cpu/cpu.h
-+++ b/arch/x86/kernel/cpu/cpu.h
-@@ -33,14 +33,6 @@ struct cpu_dev {
- #endif
- };
- 
--struct _tlb_table {
--	unsigned char descriptor;
--	char tlb_type;
--	unsigned int entries;
--	/* unsigned int ways; */
--	char info[128];
--};
--
- #define cpu_dev_register(cpu_devX) \
- 	static const struct cpu_dev *const __cpu_dev_##cpu_devX __used \
- 	__section(".x86_cpu_dev.init") = \
-diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-index 905f39fce375..cfd492cf9c3b 100644
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -657,44 +657,50 @@ static unsigned int intel_size_cache(struct cpuinfo_x86 *c, unsigned int size)
-  */
- #define TLB_0x63_2M_4M_ENTRIES	32
- 
-+struct _tlb_table {
-+	unsigned char descriptor;
-+	char tlb_type;
-+	unsigned int entries;
+diff --git a/arch/x86/include/asm/cpuid/types.h b/arch/x86/include/asm/cpuid/types.h
+new file mode 100644
+index 000000000000..50f6046a57b9
+--- /dev/null
++++ b/arch/x86/include/asm/cpuid/types.h
+@@ -0,0 +1,79 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_X86_CPUID_TYPES_H
++#define _ASM_X86_CPUID_TYPES_H
++
++#include <linux/types.h>
++
++#include <asm/cpuid.h>
++
++/*
++ * CPUID(0x2) parsing helpers
++ * Check for_each_leaf_0x2_desc() documentation.
++ */
++
++struct leaf_0x2_reg {
++		u32		: 31,
++			invalid	: 1;
 +};
 +
- static const struct _tlb_table intel_tlb_table[] = {
--	{ 0x01, TLB_INST_4K,		32,	" TLB_INST 4 KByte pages, 4-way set associative" },
--	{ 0x02, TLB_INST_4M,		2,	" TLB_INST 4 MByte pages, full associative" },
--	{ 0x03, TLB_DATA_4K,		64,	" TLB_DATA 4 KByte pages, 4-way set associative" },
--	{ 0x04, TLB_DATA_4M,		8,	" TLB_DATA 4 MByte pages, 4-way set associative" },
--	{ 0x05, TLB_DATA_4M,		32,	" TLB_DATA 4 MByte pages, 4-way set associative" },
--	{ 0x0b, TLB_INST_4M,		4,	" TLB_INST 4 MByte pages, 4-way set associative" },
--	{ 0x4f, TLB_INST_4K,		32,	" TLB_INST 4 KByte pages" },
--	{ 0x50, TLB_INST_ALL,		64,	" TLB_INST 4 KByte and 2-MByte or 4-MByte pages" },
--	{ 0x51, TLB_INST_ALL,		128,	" TLB_INST 4 KByte and 2-MByte or 4-MByte pages" },
--	{ 0x52, TLB_INST_ALL,		256,	" TLB_INST 4 KByte and 2-MByte or 4-MByte pages" },
--	{ 0x55, TLB_INST_2M_4M,		7,	" TLB_INST 2-MByte or 4-MByte pages, fully associative" },
--	{ 0x56, TLB_DATA0_4M,		16,	" TLB_DATA0 4 MByte pages, 4-way set associative" },
--	{ 0x57, TLB_DATA0_4K,		16,	" TLB_DATA0 4 KByte pages, 4-way associative" },
--	{ 0x59, TLB_DATA0_4K,		16,	" TLB_DATA0 4 KByte pages, fully associative" },
--	{ 0x5a, TLB_DATA0_2M_4M,	32,	" TLB_DATA0 2-MByte or 4 MByte pages, 4-way set associative" },
--	{ 0x5b, TLB_DATA_4K_4M,		64,	" TLB_DATA 4 KByte and 4 MByte pages" },
--	{ 0x5c, TLB_DATA_4K_4M,		128,	" TLB_DATA 4 KByte and 4 MByte pages" },
--	{ 0x5d, TLB_DATA_4K_4M,		256,	" TLB_DATA 4 KByte and 4 MByte pages" },
--	{ 0x61, TLB_INST_4K,		48,	" TLB_INST 4 KByte pages, full associative" },
--	{ 0x63, TLB_DATA_1G_2M_4M,	4,	" TLB_DATA 1 GByte pages, 4-way set associative"
--						" (plus 32 entries TLB_DATA 2 MByte or 4 MByte pages, not encoded here)" },
--	{ 0x6b, TLB_DATA_4K,		256,	" TLB_DATA 4 KByte pages, 8-way associative" },
--	{ 0x6c, TLB_DATA_2M_4M,		128,	" TLB_DATA 2 MByte or 4 MByte pages, 8-way associative" },
--	{ 0x6d, TLB_DATA_1G,		16,	" TLB_DATA 1 GByte pages, fully associative" },
--	{ 0x76, TLB_INST_2M_4M,		8,	" TLB_INST 2-MByte or 4-MByte pages, fully associative" },
--	{ 0xb0, TLB_INST_4K,		128,	" TLB_INST 4 KByte pages, 4-way set associative" },
--	{ 0xb1, TLB_INST_2M_4M,		4,	" TLB_INST 2M pages, 4-way, 8 entries or 4M pages, 4-way entries" },
--	{ 0xb2, TLB_INST_4K,		64,	" TLB_INST 4KByte pages, 4-way set associative" },
--	{ 0xb3, TLB_DATA_4K,		128,	" TLB_DATA 4 KByte pages, 4-way set associative" },
--	{ 0xb4, TLB_DATA_4K,		256,	" TLB_DATA 4 KByte pages, 4-way associative" },
--	{ 0xb5, TLB_INST_4K,		64,	" TLB_INST 4 KByte pages, 8-way set associative" },
--	{ 0xb6, TLB_INST_4K,		128,	" TLB_INST 4 KByte pages, 8-way set associative" },
--	{ 0xba, TLB_DATA_4K,		64,	" TLB_DATA 4 KByte pages, 4-way associative" },
--	{ 0xc0, TLB_DATA_4K_4M,		8,	" TLB_DATA 4 KByte and 4 MByte pages, 4-way associative" },
--	{ 0xc1, STLB_4K_2M,		1024,	" STLB 4 KByte and 2 MByte pages, 8-way associative" },
--	{ 0xc2, TLB_DATA_2M_4M,		16,	" TLB_DATA 2 MByte/4MByte pages, 4-way associative" },
--	{ 0xca, STLB_4K,		512,	" STLB 4 KByte pages, 4-way associative" },
-+	{ 0x01, TLB_INST_4K,		32},	/* TLB_INST 4 KByte pages, 4-way set associative */
-+	{ 0x02, TLB_INST_4M,		2},	/* TLB_INST 4 MByte pages, full associative */
-+	{ 0x03, TLB_DATA_4K,		64},	/* TLB_DATA 4 KByte pages, 4-way set associative */
-+	{ 0x04, TLB_DATA_4M,		8},	/* TLB_DATA 4 MByte pages, 4-way set associative */
-+	{ 0x05, TLB_DATA_4M,		32},	/* TLB_DATA 4 MByte pages, 4-way set associative */
-+	{ 0x0b, TLB_INST_4M,		4},	/* TLB_INST 4 MByte pages, 4-way set associative */
-+	{ 0x4f, TLB_INST_4K,		32},	/* TLB_INST 4 KByte pages */
-+	{ 0x50, TLB_INST_ALL,		64},	/* TLB_INST 4 KByte and 2-MByte or 4-MByte pages */
-+	{ 0x51, TLB_INST_ALL,		128},	/* TLB_INST 4 KByte and 2-MByte or 4-MByte pages */
-+	{ 0x52, TLB_INST_ALL,		256},	/* TLB_INST 4 KByte and 2-MByte or 4-MByte pages */
-+	{ 0x55, TLB_INST_2M_4M,		7},	/* TLB_INST 2-MByte or 4-MByte pages, fully associative */
-+	{ 0x56, TLB_DATA0_4M,		16},	/* TLB_DATA0 4 MByte pages, 4-way set associative */
-+	{ 0x57, TLB_DATA0_4K,		16},	/* TLB_DATA0 4 KByte pages, 4-way associative */
-+	{ 0x59, TLB_DATA0_4K,		16},	/* TLB_DATA0 4 KByte pages, fully associative */
-+	{ 0x5a, TLB_DATA0_2M_4M,	32},	/* TLB_DATA0 2-MByte or 4 MByte pages, 4-way set associative */
-+	{ 0x5b, TLB_DATA_4K_4M,		64},	/* TLB_DATA 4 KByte and 4 MByte pages */
-+	{ 0x5c, TLB_DATA_4K_4M,		128},	/* TLB_DATA 4 KByte and 4 MByte pages */
-+	{ 0x5d, TLB_DATA_4K_4M,		256},	/* TLB_DATA 4 KByte and 4 MByte pages */
-+	{ 0x61, TLB_INST_4K,		48},	/* TLB_INST 4 KByte pages, full associative */
-+	{ 0x63, TLB_DATA_1G_2M_4M,	4},	/* TLB_DATA 1 GByte pages, 4-way set associative
-+						 * (plus 32 entries TLB_DATA 2 MByte or 4 MByte pages, not encoded here) */
-+	{ 0x6b, TLB_DATA_4K,		256},	/* TLB_DATA 4 KByte pages, 8-way associative */
-+	{ 0x6c, TLB_DATA_2M_4M,		128},	/* TLB_DATA 2 MByte or 4 MByte pages, 8-way associative */
-+	{ 0x6d, TLB_DATA_1G,		16},	/* TLB_DATA 1 GByte pages, fully associative */
-+	{ 0x76, TLB_INST_2M_4M,		8},	/* TLB_INST 2-MByte or 4-MByte pages, fully associative */
-+	{ 0xb0, TLB_INST_4K,		128},	/* TLB_INST 4 KByte pages, 4-way set associative */
-+	{ 0xb1, TLB_INST_2M_4M,		4},	/* TLB_INST 2M pages, 4-way, 8 entries or 4M pages, 4-way entries */
-+	{ 0xb2, TLB_INST_4K,		64},	/* TLB_INST 4KByte pages, 4-way set associative */
-+	{ 0xb3, TLB_DATA_4K,		128},	/* TLB_DATA 4 KByte pages, 4-way set associative */
-+	{ 0xb4, TLB_DATA_4K,		256},	/* TLB_DATA 4 KByte pages, 4-way associative */
-+	{ 0xb5, TLB_INST_4K,		64},	/* TLB_INST 4 KByte pages, 8-way set associative */
-+	{ 0xb6, TLB_INST_4K,		128},	/* TLB_INST 4 KByte pages, 8-way set associative */
-+	{ 0xba, TLB_DATA_4K,		64},	/* TLB_DATA 4 KByte pages, 4-way associative */
-+	{ 0xc0, TLB_DATA_4K_4M,		8},	/* TLB_DATA 4 KByte and 4 MByte pages, 4-way associative */
-+	{ 0xc1, STLB_4K_2M,		1024},	/* STLB 4 KByte and 2 MByte pages, 8-way associative */
-+	{ 0xc2, TLB_DATA_2M_4M,		16},	/* TLB_DATA 2 MByte/4MByte pages, 4-way associative */
-+	{ 0xca, STLB_4K,		512},	/* STLB 4 KByte pages, 4-way associative */
- 	{ 0x00, 0, 0 }
- };
++union leaf_0x2_regs {
++	struct leaf_0x2_reg	reg[4];
++	u32			regv[4];
++	u8			desc[16];
++};
++
++/**
++ * get_leaf_0x2_regs() - Return sanitized leaf 0x2 register output
++ * @regs:	Output parameter
++ *
++ * Get leaf 0x2 register output and store it in @regs.  Invalid byte
++ * descriptors returned by the hardware will be force set to zero (the
++ * NULL cache/TLB descriptor) before returning them to the caller.
++ */
++static inline void get_leaf_0x2_regs(union leaf_0x2_regs *regs)
++{
++	cpuid_leaf(0x2, regs);
++
++	/*
++	 * All Intel CPUs must report an iteration count of 1.  In case
++	 * of bogus hardware, treat all returned descriptors as NULL.
++	 */
++	if (regs->desc[0] != 0x01) {
++		for (int i = 0; i < 4; i++)
++			regs->regv[i] = 0;
++		return;
++	}
++
++	/*
++	 * The most significant bit (MSB) of each register must be clear.
++	 * If a register is invalid, replace its descriptors with NULL.
++	 */
++	for (int i = 0; i < 4; i++) {
++		if (regs->reg[i].invalid)
++			regs->regv[i] = 0;
++	}
++}
++
++/**
++ * for_each_leaf_0x2_desc() - Iterator for leaf 0x2 descriptors
++ * @regs:	Leaf 0x2 register output, as returned by get_leaf_0x2_regs()
++ * @desc:	Pointer to the returned descriptor for each iteration
++ *
++ * Loop over the 1-byte descriptors in the passed leaf 0x2 output registers
++ * @regs.  Provide each descriptor through @desc.
++ *
++ * Sample usage::
++ *
++ *	union leaf_0x2_regs regs;
++ *	u8 *desc;
++ *
++ *	get_leaf_0x2_regs(&regs);
++ *	for_each_leaf_0x2_desc(regs, desc) {
++ *		// Handle *desc value
++ *	}
++ */
++#define for_each_leaf_0x2_desc(regs, desc)				\
++	/* Skip the first byte as it is not a descriptor */		\
++	for (desc = &(regs).desc[1]; desc < &(regs).desc[16]; desc++)
++
++#endif /* _ASM_X86_CPUID_TYPES_H */
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index cfd492cf9c3b..57e170ffe3ba 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -15,6 +15,7 @@
+ #include <asm/cpu_device_id.h>
+ #include <asm/cpufeature.h>
+ #include <asm/cpu.h>
++#include <asm/cpuid/types.h>
+ #include <asm/hwcap2.h>
+ #include <asm/intel-family.h>
+ #include <asm/microcode.h>
+@@ -778,28 +779,15 @@ static void intel_tlb_lookup(const unsigned char desc)
  
+ static void intel_detect_tlb(struct cpuinfo_x86 *c)
+ {
+-	int i, j, n;
+-	unsigned int regs[4];
+-	unsigned char *desc = (unsigned char *)regs;
++	union leaf_0x2_regs regs;
++	u8 *desc;
+ 
+ 	if (c->cpuid_level < 2)
+ 		return;
+ 
+-	/* Number of times to iterate */
+-	n = cpuid_eax(2) & 0xFF;
+-
+-	for (i = 0 ; i < n ; i++) {
+-		cpuid(2, &regs[0], &regs[1], &regs[2], &regs[3]);
+-
+-		/* If bit 31 is set, this is an unknown format */
+-		for (j = 0 ; j < 4 ; j++)
+-			if (regs[j] & (1 << 31))
+-				regs[j] = 0;
+-
+-		/* Byte 0 is level count, not a descriptor */
+-		for (j = 1 ; j < 16 ; j++)
+-			intel_tlb_lookup(desc[j]);
+-	}
++	get_leaf_0x2_regs(&regs);
++	for_each_leaf_0x2_desc(regs, desc)
++		intel_tlb_lookup(*desc);
+ }
+ 
+ static const struct cpu_dev intel_cpu_dev = {
 -- 
 2.48.1
 
