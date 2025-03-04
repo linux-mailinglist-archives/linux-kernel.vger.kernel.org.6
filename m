@@ -1,180 +1,152 @@
-Return-Path: <linux-kernel+bounces-544357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05D5DA4E058
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:12:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 432EEA4E073
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:17:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E022C1799C1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:10:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A508A3B6CD9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:10:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 145FB205AC7;
-	Tue,  4 Mar 2025 14:08:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368CE204F65;
+	Tue,  4 Mar 2025 14:09:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GY2Lystw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Po5U6bei"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F0717583;
-	Tue,  4 Mar 2025 14:08:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC24204F62
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:09:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741097337; cv=none; b=fjMD/5JCQ5zp1qIobc+FdCHjLZ2D8pwrEGs5ae8EecDfBAvaB8DCWcg6hmVqgrB7HY+E4b1DqfVCyBgsV8rbZ56xBuy0HwlVs1LbSviZ5j37/0z+RUMdJi+vTw45ZdTG4YXS9O/H/MbxyTqjV76s/o3HU8THjucxeHj4mz1BJ6c=
+	t=1741097394; cv=none; b=mskopGIxHF3J55zPTrH+imGddslL6ue/GQ3Yr6Y4/CqG95KEQMeW+5uTDzoloHh8smrrLfs+1uGMuJ043n/U13VMyouyOIQErBvY4ydnbwnaORiRbNoQ0nktum8B8U0MKSPNowAgaVTY46apPt+xz9u096m4s0uvRN8377OWzXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741097337; c=relaxed/simple;
-	bh=FFaXfiYouNPiW/BtNV6Qmzgm6qPvTQ+bB7wLiJRdIcQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qC39boMv4TvCJTfxsj9m+lcHF0uk1mjHpAeH1C14fxnl3f1wZ4wqa94BOUcYcR0vT56Oo105fLeI4RyhcJyqV1pFtfSPEJJALRil+js5J9J6fvBOdL0/9j1ZS4YNHkGskM3A1FfyQMLKT8jSpZ5lZlakWhabei6lP0lukw0f2ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GY2Lystw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8050C4CEEC;
-	Tue,  4 Mar 2025 14:08:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741097336;
-	bh=FFaXfiYouNPiW/BtNV6Qmzgm6qPvTQ+bB7wLiJRdIcQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=GY2LystwnorpL8dP/sFJRQx6aUFNOrPHQ/UoDO677cvDGMM5WldzYt2wer6itlpAB
-	 Q7FDeOgxBbl5emPjpQVxDGm/VJU3uKySNjC0UrITeSK5tiM9v3qCsFBxi94Ac60jJo
-	 1BvXASdqHL+KeGOBi0xUQqQX2RG7zw1ONcAwtMF9yNsU+fEEWw9nzlPKWxiQkRoDTD
-	 uQ3wGTysxcyRF18FGa8tGc0eo1H950nJrhAkZf8trsBnVsmNGqadBoxdBlzv8Da3TZ
-	 ihklEBs7UBlzteGPYHWt/5Lzz/uJeVaJux3Un4SnutiPCYUl4KbucqwLGieTgquGEh
-	 tJehGnP8xJ7iA==
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-72a0c41e049so1254421a34.2;
-        Tue, 04 Mar 2025 06:08:56 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUWr+O9BKL/9vyxMu/Ty9BvSO8rSk4cYXUG+CvPKRoueQbt7kXTWjkCJp+2asg+E88cROG/6ZemCFfAJrCV@vger.kernel.org, AJvYcCUaFFgufImhzkFwhPf8qjnCBqFg0N1lhv9pYXP9xIAxm4WavZMmPJsMUEEfHH+DXvwGbIjN/9tL7+2N66899Khwl+2zTA==@vger.kernel.org, AJvYcCXRaa05ppqG5m9BxIpgxE7+sCmub+e8rm/wn8GLAJMqazVl039y+ZhDTgG8+6GmDHFfEr8VVsE26De0@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPye+Ii+50UTuVINihHwUGoLQ0h/I/+vE4dEB/LJTVIBASCd2U
-	eIUPTT28jKYiGQwEi4S7J+vtqYu+9VF/Zgxwk9HSQX7bTD3A+0VRUcTQzzDzjnePY0CuWAWNA9l
-	1EMdXQkhD8Ff9arct3KrpUXolViM=
-X-Google-Smtp-Source: AGHT+IHxUPi7QDl9YORcAoX5Q4QPTAef7rjqM9Z9bAU/V4Qg+QA43MqYaCMOwQlJ1psX0BhpUmLxGp/mzB/Npid83pI=
-X-Received: by 2002:a05:6830:6c8c:b0:72a:10ec:35f7 with SMTP id
- 46e09a7af769-72a10ec36b0mr2511201a34.13.1741097335957; Tue, 04 Mar 2025
- 06:08:55 -0800 (PST)
+	s=arc-20240116; t=1741097394; c=relaxed/simple;
+	bh=pzDdAjfIYZzOdK4dw8r3huxzvxorzalfIll9yJWmUiQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=IT/Rs568S73i16BLhJFjwl+RuZ2K96tsrKC6hIxdAU9z6xZGkzyrHkI4EK9zELWGzbms0VcwISK2t1Jg2Ifo2feOXSR77As99oP0USsmv1tGpjfxLGwskbWofYytAU52Wt/hjxVRVQby5YDk8phV41cw1XpPZGPpbTaDXpH9CfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Po5U6bei; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741097393; x=1772633393;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=pzDdAjfIYZzOdK4dw8r3huxzvxorzalfIll9yJWmUiQ=;
+  b=Po5U6beiPv6OgdrzL9cFWZsWzPfNzFElTIhznwx1LSItwND2SuNd1MM0
+   phNQikzgsDP24It0o7jq+ec4W1Q+zhvVMURLPqpwPe7LebTkrOCJNZGA3
+   21Sf3mvADnWhbe8SDKpjacKc4Ux18CoFjcbazrl6Oltc+8i2yTWOojUiz
+   9foO0Tt4oWH2VUGKYGEiYplknInKFjch+qiDzp3wmrZs518t6mKJU47Rj
+   QxZzeBfPBXDWVMxxCVahe5tCv1zpFHLROAul5Lq5Nx9L0EF/iehLZMvh/
+   wJkEm5ELfe1xq/HpGYmlLihVZf6JSrbVYZe+IdSJSUg+u2EnQ/6pHtlnq
+   Q==;
+X-CSE-ConnectionGUID: CmUyw9C0RRewcwwUq6Jwnw==
+X-CSE-MsgGUID: UasWIam2SWWltdieinkn+w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="42263281"
+X-IronPort-AV: E=Sophos;i="6.14,220,1736841600"; 
+   d="scan'208";a="42263281"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 06:09:52 -0800
+X-CSE-ConnectionGUID: lUtOcMvlTsGUZX96/AjNfg==
+X-CSE-MsgGUID: UChttDzwSpKePN1KQX3C/Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,220,1736841600"; 
+   d="scan'208";a="149169477"
+Received: from bergbenj-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.192])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 06:09:48 -0800
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Nathan Chancellor <nathan@kernel.org>, Aun-Ali Zaidi <admin@kodeit.net>,
+ Aditya Garg <gargaditya08@live.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Atharva Tiwari <evepolonium@gmail.com>, Kerem Karabay
+ <kekrby@gmail.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, patches@lists.linux.dev, Nathan Chancellor
+ <nathan@kernel.org>
+Subject: Re: [PATCH] drm/appletbdrm: Fix format specifier for size_t variables
+In-Reply-To: <20250304-appletbdrm-fix-size_t-specifier-v1-1-94fe1d2c91f8@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250304-appletbdrm-fix-size_t-specifier-v1-1-94fe1d2c91f8@kernel.org>
+Date: Tue, 04 Mar 2025 16:09:44 +0200
+Message-ID: <87h648zy3b.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250304064745.1073770-1-superm1@kernel.org> <20250304064745.1073770-2-superm1@kernel.org>
- <CAGwozwHniWGQ7qK6FYD_WK5zNjkro7-Q1nTcFPAuWDt9UQ+noA@mail.gmail.com> <23d6c735-e94f-4d43-87b0-ff119941fcac@kernel.org>
-In-Reply-To: <23d6c735-e94f-4d43-87b0-ff119941fcac@kernel.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 4 Mar 2025 15:08:44 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0geaYYRQm0Hs2M4ak_8AZoWLJS-v0jqyrsaVjmXk267rA@mail.gmail.com>
-X-Gm-Features: AQ5f1Jo_wCJPyQkVLSUxNxTbB9yN8I8me4jy7lvSe9m6OVWdW4gx6lKckEx-g40
-Message-ID: <CAJZ5v0geaYYRQm0Hs2M4ak_8AZoWLJS-v0jqyrsaVjmXk267rA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] ACPI: platform_profile: Treat quiet and low power
- the same
-To: Mario Limonciello <superm1@kernel.org>
-Cc: Antheas Kapenekakis <lkml@antheas.dev>, Kurt Borja <kuurtb@gmail.com>, 
-	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, "Rafael J . Wysocki" <rafael@kernel.org>, 
-	Hans de Goede <hdegoede@redhat.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	"Luke D . Jones" <luke@ljones.dev>, Mark Pearson <mpearson-lenovo@squebb.ca>, 
-	"open list:AMD PMF DRIVER" <platform-driver-x86@vger.kernel.org>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"open list:ACPI" <linux-acpi@vger.kernel.org>, "Derek J . Clark" <derekjohn.clark@gmail.com>, 
-	me@kylegospodneti.ch, Denis Benato <benato.denis96@gmail.com>, 
-	Mario Limonciello <mario.limonciello@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Tue, Mar 4, 2025 at 1:49=E2=80=AFPM Mario Limonciello <superm1@kernel.or=
-g> wrote:
+On Tue, 04 Mar 2025, Nathan Chancellor <nathan@kernel.org> wrote:
+> When building for a 32-bit platform, there are some warnings (or errors
+> with CONFIG_WERROR=y) due to an incorrect specifier for 'size_t'
+> variables, which is typedef'd as 'unsigned int' for these architectures:
 >
-> On 3/4/25 02:38, Antheas Kapenekakis wrote:
-> > On Tue, 4 Mar 2025 at 07:48, Mario Limonciello <superm1@kernel.org> wro=
-te:
-> >>
-> >> From: Mario Limonciello <mario.limonciello@amd.com>
-> >>
-> >> When two drivers don't support all the same profiles the legacy interf=
-ace
-> >> only exports the common profiles.
-> >>
-> >> This causes problems for cases where one driver uses low-power but ano=
-ther
-> >> uses quiet because the result is that neither is exported to sysfs.
-> >>
-> >> If one platform profile handler supports quiet and the other
-> >> supports low power treat them as the same for the purpose of
-> >> the sysfs interface.
-> >>
-> >> Fixes: 688834743d67 ("ACPI: platform_profile: Allow multiple handlers"=
-)
-> >> Reported-by: Antheas Kapenekakis <lkml@antheas.dev>
-> >> Closes: https://lore.kernel.org/platform-driver-x86/e64b771e-3255-42ad=
--9257-5b8fc6c24ac9@gmx.de/T/#mc068042dd29df36c16c8af92664860fc4763974b
-> >> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> >> ---
-> >>   drivers/acpi/platform_profile.c | 38 ++++++++++++++++++++++++++++++-=
---
-> >>   1 file changed, 35 insertions(+), 3 deletions(-)
-> >>
-> >> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_p=
-rofile.c
-> >> index 2ad53cc6aae53..d9a7cc5891734 100644
-> >> --- a/drivers/acpi/platform_profile.c
-> >> +++ b/drivers/acpi/platform_profile.c
-> >> @@ -73,8 +73,20 @@ static int _store_class_profile(struct device *dev,=
- void *data)
-> >>
-> >>          lockdep_assert_held(&profile_lock);
-> >>          handler =3D to_pprof_handler(dev);
-> >> -       if (!test_bit(*bit, handler->choices))
-> >> -               return -EOPNOTSUPP;
-> >> +       if (!test_bit(*bit, handler->choices)) {
-> >> +               switch (*bit) {
-> >> +               case PLATFORM_PROFILE_QUIET:
-> >> +                       *bit =3D PLATFORM_PROFILE_LOW_POWER;
-> >> +                       break;
-> >> +               case PLATFORM_PROFILE_LOW_POWER:
-> >> +                       *bit =3D PLATFORM_PROFILE_QUIET;
-> >> +                       break;
-> >> +               default:
-> >> +                       return -EOPNOTSUPP;
-> >> +               }
-> >> +               if (!test_bit(*bit, handler->choices))
-> >> +                       return -EOPNOTSUPP;
-> >> +       }
-> >>
-> >>          return handler->ops->profile_set(dev, *bit);
-> >>   }
-> >> @@ -252,8 +264,16 @@ static int _aggregate_choices(struct device *dev,=
- void *data)
-> >>          handler =3D to_pprof_handler(dev);
-> >>          if (test_bit(PLATFORM_PROFILE_LAST, aggregate))
-> >>                  bitmap_copy(aggregate, handler->choices, PLATFORM_PRO=
-FILE_LAST);
-> >> -       else
-> >> +       else {
-> >> +               /* treat quiet and low power the same for aggregation =
-purposes */
-> >> +               if (test_bit(PLATFORM_PROFILE_QUIET, handler->choices)=
- &&
-> >> +                   test_bit(PLATFORM_PROFILE_LOW_POWER, aggregate))
-> >> +                       set_bit(PLATFORM_PROFILE_QUIET, aggregate);
-> >> +               else if (test_bit(PLATFORM_PROFILE_LOW_POWER, handler-=
->choices) &&
-> >> +                        test_bit(PLATFORM_PROFILE_QUIET, aggregate))
-> >> +                       set_bit(PLATFORM_PROFILE_LOW_POWER, aggregate)=
-;
-> >>                  bitmap_and(aggregate, handler->choices, aggregate, PL=
-ATFORM_PROFILE_LAST);
-> >> +       }
-> >
-> > So you end up showing both? If that's the case, isn't it equivalent to
-> > just make amd-pmf show both quiet and low-power?
-> >
-> > I guess it is not ideal for framework devices. But if asus devices end
-> > up showing both, then it should be ok for framework devices to show
-> > both.
-> >
-> > I like the behavior of the V1 personally.
+>   drivers/gpu/drm/tiny/appletbdrm.c:171:17: error: format specifies type 'unsigned long' but the argument has type 'size_t' (aka 'unsigned int') [-Werror,-Wformat]
+>     170 |                 drm_err(drm, "Actual size (%d) doesn't match expected size (%lu)\n",
+>         |                                                                             ~~~
+>         |                                                                             %zu
+>     171 |                         actual_size, size);
+>         |                                      ^~~~
+>   ...
+>   drivers/gpu/drm/tiny/appletbdrm.c:212:17: error: format specifies type 'unsigned long' but the argument has type 'size_t' (aka 'unsigned int') [-Werror,-Wformat]
+>     211 |                 drm_err(drm, "Actual size (%d) doesn't match expected size (%lu)\n",
+>         |                                                                             ~~~
+>         |                                                                             %zu
+>     212 |                         actual_size, size);
+>         |                                      ^~~~
 >
-> No; this doesn't cause it to show both.  It only causes one to show up.
+> Use '%zu' as suggested, clearing up the warnings.
+>
+> Fixes: 0670c2f56e45 ("drm/tiny: add driver for Apple Touch Bars in x86 Macs")
+> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
 
-Which may not be the one that was shown before IIUC and that's not good.
+Just sent an identical patch [1]. :)
 
-What actually is the problem with the previous version?
+You have a better commit message, let's go with this. With Aditya's ack
+from the other thread,
+
+Reviewed-by: Jani Nikula <jani.nikula@intel.com>
+Acked-by: Aditya Garg <gargaditya08@live.com>
+
+[1] https://lore.kernel.org/r/20250304135456.429407-1-jani.nikula@intel.com
+
+> ---
+>  drivers/gpu/drm/tiny/appletbdrm.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/tiny/appletbdrm.c b/drivers/gpu/drm/tiny/appletbdrm.c
+> index f5d177e234e4..394c8f9bd41a 100644
+> --- a/drivers/gpu/drm/tiny/appletbdrm.c
+> +++ b/drivers/gpu/drm/tiny/appletbdrm.c
+> @@ -167,7 +167,7 @@ static int appletbdrm_send_request(struct appletbdrm_device *adev,
+>  	}
+>  
+>  	if (actual_size != size) {
+> -		drm_err(drm, "Actual size (%d) doesn't match expected size (%lu)\n",
+> +		drm_err(drm, "Actual size (%d) doesn't match expected size (%zu)\n",
+>  			actual_size, size);
+>  		return -EIO;
+>  	}
+> @@ -208,7 +208,7 @@ static int appletbdrm_read_response(struct appletbdrm_device *adev,
+>  	}
+>  
+>  	if (actual_size != size) {
+> -		drm_err(drm, "Actual size (%d) doesn't match expected size (%lu)\n",
+> +		drm_err(drm, "Actual size (%d) doesn't match expected size (%zu)\n",
+>  			actual_size, size);
+>  		return -EBADMSG;
+>  	}
+>
+> ---
+> base-commit: 95a5c9d197bb22a506913acb330a926d4e51aa95
+> change-id: 20250304-appletbdrm-fix-size_t-specifier-d3c547522379
+>
+> Best regards,
+
+-- 
+Jani Nikula, Intel
 
