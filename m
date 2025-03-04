@@ -1,107 +1,109 @@
-Return-Path: <linux-kernel+bounces-543537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FD40A4D6E7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:46:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FE11A4D6EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:47:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C2111886233
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:46:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D6D916F7B0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:47:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 544381FC0FD;
-	Tue,  4 Mar 2025 08:45:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 855111FC111;
+	Tue,  4 Mar 2025 08:47:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bKShz5m8"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tC5yp1rO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A23190468
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 08:45:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F5E18A6A9;
+	Tue,  4 Mar 2025 08:47:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741077958; cv=none; b=Yffs5hGVO16qHz+NR4NoPonT3DjX+Mb7UZiK+ue3Q6JqThZGKYyhFVfdYSdx307+RqOHYFduzCx5XWMs7+eboeigPXgSsvrmME0dldMBRTmO4E51F/Yo766t8mkHJ/B+7B0vJru5mi4864WVSWsvrcjFgJlJAdtaaKfdYUWUTUE=
+	t=1741078045; cv=none; b=QBbtx5XKFAO4v4ThwA0X7vPyAEOQWC9G05/4wENOgwSu4TDzbNyTn8rBwW1LCdah6JFBtsWL9ypDshUehu5BnIg1mb6ZE3CMV91SU0Z+FOzPWVYR0Ey0d+fEUCmJ5JbKc/INFUOzxGvLxvexQ1F7MX3caeKIS/wOBJI7bUh0iH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741077958; c=relaxed/simple;
-	bh=/0SJkcPrDcWFOUGtF0J/DGFOTXNav/MeYdDkxX2pjFM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EJWO4UeQeeYxmXtMrqkn17aJENdBNQ93+oPMgZG5eMqNpWvdUC1aAVhcK7tLMnZqO7qQs/+ZOQaNcoIdDG+yrfbYtm7xyLPeqHsEPE7FiPyk+sntJkKrre/8MSglZ7dP/fAdWKRMsgGvqxUSoq6FHnHt0fZ6wVdjpjvWpnQsd58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bKShz5m8; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5493b5bc6e8so6318507e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 00:45:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741077954; x=1741682754; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/0SJkcPrDcWFOUGtF0J/DGFOTXNav/MeYdDkxX2pjFM=;
-        b=bKShz5m81i3KkHbzcyXPBe4Pjl5YJrkLhMFFvQI8K7kmMdOzSC+uB/NOUN4WPEalua
-         ClFDTUB+RiGkXa9HHi8JsxvDDkzd0WLtderAUzCnFHXKqhouHp/KtIS2+fm/zhcGhTfl
-         iwNl3/h7T1ONhryTk3HEJrGOd+OcnSukGwHG7SMRcJe2Bcb1IQI+zDzECuwyepNMOxlU
-         YjiVIcJgmZuui+1vXa5wM1E4m8ZLd/z+ri5Z4ObakGdpK1+PtOg7FuKHuhoBmk47cg+h
-         lTnBQhxzbMLUzZ18DcKewvWMEv0z/O4iJjBxQ1KtG3dwbzBF4LTbr8o5pJFpJWLpedy4
-         MbNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741077954; x=1741682754;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/0SJkcPrDcWFOUGtF0J/DGFOTXNav/MeYdDkxX2pjFM=;
-        b=iku6Y5oFSwDSirvNR/6JTW4chexGLAqV+07dvpwYPUOuG+juU1mFaJNYbXoDISY0lj
-         A/kj3+GNl183FBp8NgOizb5OuLrRgEpu6gFTd+I7OZFO/tyJZ5Z/F0z487lWXrexxrx7
-         m8MWlwqTxcKNs166BmrDjkzssuCi7x4braA8ilSyV6+gvtazbsoQvcUIG6abbHg6VJ7I
-         +RAYsOC96fVyf/O3kg8N4NVS2cHGU1kHIUuD6U4ie/zreAEgAxPhfO+12s6AXeRMmV+v
-         6FI5jtSi762zRWM7H1J5v5/oVO7gtrcRQ/hW54LaZXDvrQ7rzka0uJVe1KeBl5EAWnxI
-         ZqRg==
-X-Forwarded-Encrypted: i=1; AJvYcCUERufEqqYCVYrv1b8eX4NvqE20PKPCwf3WwQogqpXJBmpsbt+D+fSagya+3DuMIyu/nCPh9uUchs9Uvjk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUEAoZ4myWKPp5L/EgMKHy8Crkx5BobJTBJuwTmbH9Pggxf5sp
-	K8cAe+YvvKiyIDLmYXoBYg1PHKGxMuGXV+vkAkWs0fg1LDOZab034QlwOt+XQgGzv7kGDh4g+HC
-	Lmc8KFp1bhz0f36yDlKVEp0D6YyNlkuSM+/D8oQ==
-X-Gm-Gg: ASbGnctArcNbAxcMJBTuev6WF6aU8i29RBED+x5pySU/8tYuZUud9GdmixIzkf9dlQ0
-	QeOCI5HKltZPGOjivhOsQTvqApQ22WyvaQcu429PEdFqqYQRtJ/N5clbCIYoMHMtyP+bo8MRey4
-	CalX3G5JqnHK5jj4nIgBS2tQC/CQ==
-X-Google-Smtp-Source: AGHT+IHsVxclGliNqaEX2rQGkMgJ98ubJoLnko5L4jIGDJ4jURzN0K+jt3I2W3bQVmw/PNLGXa3fvCQ+389PMRa318A=
-X-Received: by 2002:a05:6512:128e:b0:545:958:180d with SMTP id
- 2adb3069b0e04-5494c37d98cmr5919737e87.38.1741077954243; Tue, 04 Mar 2025
- 00:45:54 -0800 (PST)
+	s=arc-20240116; t=1741078045; c=relaxed/simple;
+	bh=LJssublaZF16iNMJ5WdKqWXeSC4uPRdKNU0G/ZLZXvM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hMbY701BEGrS/D4UxUqu6oRD6JLjpZ91k84SOAB8zmvYq0nCZcm8eSozbTgPCtITHlhQ4c/HITNTnTY/zrhfEldqHus9argpfCeObfIAoEZ7gw7pp/U7QdEEdolQdNZKp+BwVy6bkJGtHou71SOQY92qLlG0Sp4rwIlv4X2qznE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tC5yp1rO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CC59C4CEE8;
+	Tue,  4 Mar 2025 08:47:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741078044;
+	bh=LJssublaZF16iNMJ5WdKqWXeSC4uPRdKNU0G/ZLZXvM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=tC5yp1rOPuFzVA+shdX1QoFQ56/twvdPTBHD7hqYgd/igv+x3WsjWujkhbA79xjcT
+	 Zw0ESOnLYvJ2s2xT93/GqXC87aglrTxct+CF3N465nwgEMARs+/3EZtODxLuE+Q02w
+	 N3E9iJWTLpEvCVBvL5bTqmo1UVrKWTukp9zaApJTbSdAYF/YVdfHCbW36B+OpzcmoU
+	 ANpe9IMsSxNtg6c/6tee6D/OWBsaCQiJwGY2jSmkOxQR7Qau1rIiBFb5yjxBfv+rQy
+	 tq5415eJmvge/tnjoSMmramBBthP9VgPKfx0VIZMeZWXi2mIK2bgheOnni91rvlSEE
+	 KNsqulmkAGIKQ==
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>,
+	peterz@infradead.org
+Cc: Christian Brauner <brauner@kernel.org>,
+	oleg@redhat.com,
+	mingo@redhat.com,
+	rostedt@goodmis.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	torvalds@linux-foundation.org
+Subject: Re: [PATCH 0/3] some pipe + wait stuff
+Date: Tue,  4 Mar 2025 09:46:46 +0100
+Message-ID: <20250304-respekt-zuwider-dfe23f0f5027@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250303230409.452687-1-mjguzik@gmail.com>
+References: <20250303230409.452687-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250303160341.1322640-1-andriy.shevchenko@linux.intel.com>
- <20250303160341.1322640-4-andriy.shevchenko@linux.intel.com> <Z8XUMRAlR3H13zha@smile.fi.intel.com>
-In-Reply-To: <Z8XUMRAlR3H13zha@smile.fi.intel.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 4 Mar 2025 09:45:43 +0100
-X-Gm-Features: AQ5f1JrkaHhT1A9qOrQA_wrC0Y5xjg5i_-rTm_Muy8k7fJlbX2FpNCXPxucoweQ
-Message-ID: <CACRpkdaxnCK6arrYBi7j7qBQXqxYma8owb4kZj--y4BNQmfD=g@mail.gmail.com>
-Subject: Re: [PATCH v1 3/3] gpiolib: Rename gpio_do_set_config() --> gpiod_do_set_config()
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-gpio@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Mika Westerberg <westeri@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Kent Gibson <warthog618@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1577; i=brauner@kernel.org; h=from:subject:message-id; bh=LJssublaZF16iNMJ5WdKqWXeSC4uPRdKNU0G/ZLZXvM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQf2yda4Hj2WNblIzXhl3/LMU3Z3X365afLnzZFBKrkN HoyBKpe6yhlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZgI8z2Gf6bSse1tnofLhMK8 bzuxfmOKlxD59WUxQ7bAPUsNRwvzfIa/QhHaR5L6vV8HTgtimVguc3WH9ot0bjuzhn8SnHkW1Tu 4AA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 3, 2025 at 5:09=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
-> On Mon, Mar 03, 2025 at 06:00:34PM +0200, Andy Shevchenko wrote:
-> > In order to reduce the 'gpio' namespace when operate over GPIO descript=
-or
-> > rename gpio_do_set_config() to gpiod_do_set_config().
->
-> This change was made against my custom tree and I forgot about that.
-> I will wait for the overall response to this series and if okay I
-> may issue the correct patch.
+On Tue, 04 Mar 2025 00:04:06 +0100, Mateusz Guzik wrote:
+> As a side effect of looking at the pipe hang I came up with 3 changes to
+> consider for -next.
+> 
+> The first one is a trivial clean up which I wont mind if it merely gets
+> folded into someone else's change for pipes.
+> 
+> The second one reduces page alloc/free calls for the backing area (60%
+> less during a kernel build in my testing). I already posted this, but
+> the cc list was not proper.
+> 
+> [...]
 
-For the correct patch, with the same idea:
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+This looks sane to me.
+Would be good to get an Ack from Peter on the wait change.
 
-Yours,
-Linus Walleij
+---
+
+Applied to the vfs-6.15.pipe branch of the vfs/vfs.git tree.
+Patches in the vfs-6.15.pipe branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.15.pipe
+
+[1/3] pipe: drop an always true check in anon_pipe_write()
+      https://git.kernel.org/vfs/vfs/c/a40cd5849dab
+[2/3] pipe: cache 2 pages instead of 1
+      https://git.kernel.org/vfs/vfs/c/46af8e2406c2
+[3/3] wait: avoid spurious calls to prepare_to_wait_event() in ___wait_event()
+      https://git.kernel.org/vfs/vfs/c/84654c7f4730
 
