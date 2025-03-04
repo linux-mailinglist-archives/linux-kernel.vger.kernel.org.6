@@ -1,114 +1,176 @@
-Return-Path: <linux-kernel+bounces-543432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81746A4D57E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:58:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ECFAA4D583
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:59:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8E2C188D503
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:58:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91D4317319B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:59:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C298A1F8AD3;
-	Tue,  4 Mar 2025 07:57:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09EA11F8ACA;
+	Tue,  4 Mar 2025 07:59:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="h0bS78ux"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	dkim=pass (1024-bit key) header.d=kragniz.eu header.i=@kragniz.eu header.b="YJ64afzg"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F4181C84D7
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 07:57:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 299471F4720
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 07:59:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741075077; cv=none; b=GlUzJejVocRcAzQOfE131sg+DusprYZ1+n8cNLqepODOVeNhYeQjd5i8hfIiZBXrzPyFniRVTIk49N/l9N+JyNkKP0Sb91aiJIzZzP/vxqe/xU2MwDAvXU7hyBOlMexkc+MszZF4LjGo5RTOyG6CqHDXlw5MjAoxvPTnE1T97Tc=
+	t=1741075157; cv=none; b=jZE9aoxwgDRpX3bC4FIWEjAcMpjc1fmSdFr7UaI0yfrVHMcuooQdRkPxDiNWTUv220nrnZ2+WT/xYqmmztew/QF/tZRo6rFbUxv0ghBeOS60s0WX8aLDhrTxd3QKFq/StoySkH6ijxvzDvLzrSJAO6FMstT8TBgVvp4xN60IJJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741075077; c=relaxed/simple;
-	bh=uFSrwfAZqk41LBtysZsC0obSOGXPJGDgnLsmqfIMDK4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D+LjR9fDvtRteewD9cMleZod52DxPvF0esUuXaabdfLPkGT5QlWFJIZauM2HUWkooEbiis/OIK7R99y09pDkIt75UhvCXgWhkee27jUwi75RCS863bef+v4gBW/Ey9BNZUAtEuQZ+FP5lcY0gF/PmBC/KWdkNBEtis48l/3Hctk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=h0bS78ux; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30baa27b209so23962441fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 23:57:55 -0800 (PST)
+	s=arc-20240116; t=1741075157; c=relaxed/simple;
+	bh=CTRIoMGUhL6gYhD9n7OZD5t3HqwCo+j4dvhypyF3ink=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UpBEEopSSrx31scqWefTu+KTjLsgNXXLGl7m7wGp0Rmf06LAK05vNDMzNapeC0+v2Gk4n8jLzw5cttjBwwTJw76Rm13XLNxwIRKD1ePfWdq/UBxI10x6E733lIt8stvi2pWg/YoeZc3psM2Y028HNAFDWxx2aY5ky/j6dgZNxoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kragniz.eu; spf=none smtp.mailfrom=kragniz.eu; dkim=pass (1024-bit key) header.d=kragniz.eu header.i=@kragniz.eu header.b=YJ64afzg; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kragniz.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=kragniz.eu
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3910f525165so1274163f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 23:59:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741075073; x=1741679873; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uFSrwfAZqk41LBtysZsC0obSOGXPJGDgnLsmqfIMDK4=;
-        b=h0bS78uxQEHqrlGBbWDNyWhOnfXHwswmQNb6X5XQwuRPExDKrGn+gxQEPfssC3JprW
-         Rh1Bs9nvtLHa3P6gZmBaf08mgbG0PD5+DvogS0CYjuy1f8rbNDd74z2s+xioGRU6m8ED
-         w7emGgmBeK/po3vvXx0Var4PqInQjhuOrtBl12lAlrLL21HS+VeWXpSRYmIFgfoxKEXk
-         vFWWqSnE9wS3gUVUznZc6icn0x2mzC+sSbm+F162ykEcyEyCsRXRzbCvmQIczKFOWr2W
-         CZi/t8vO+QhSpOb11QKHcWEawqIzNRGgJeM4osiucVIWWYEh+eyNJ2jUkCaW++h6oWcI
-         iqOw==
+        d=kragniz.eu; s=google; t=1741075153; x=1741679953; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LEKpyMCCo3m2x0BF+c71o+pahMCFOq7W/z6rphmoY+E=;
+        b=YJ64afzgObdjLDumJZrVw6SFZGUwluuMeeaAuYyozLU49vB/cfIBGhyY6cyo07ynpN
+         k1nwdLjgYuwUCmhAJJ89N8aWQuqB6x49iRk/tohx9TpPwNqrNE1S30GFAAxrcc1XKMZD
+         cLhcnQMNnCE3EintLTjwsmqkRxpAvE9VELrDw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741075073; x=1741679873;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uFSrwfAZqk41LBtysZsC0obSOGXPJGDgnLsmqfIMDK4=;
-        b=wwOnVpY/WICpos/i4qAXWhZYCOJO1h8Fu++Vbs3E/izZBj6wFphgxJXf2RHAJ4FTjw
-         uPHb0tnb5x+fCrkb5jb1CdF5Sqg7EzbyDaazi+J4fpJeLGfixfioYpUjYDibDOBtNpyk
-         iKFpla44nEdoU183i+pp5w+uvBIeTT881SbIbIr0ojHb7B+UyXwg6HVXybpxfdZwUDkL
-         fVBLYXgAUtbk7AV11QyTgp3CF7+netIuuS8Eg6Ljp+t7T6VKsBLAxHnVn4umt1t1gxHQ
-         TWF4W5a+LUA9LZEIzto6/sQSmT55IPO10G42F2xN9UMQFyBHFR7zhAzMQA0QzHNZYiwH
-         8oEA==
-X-Forwarded-Encrypted: i=1; AJvYcCWgCSXuuKn6S5u7uSS18dQbyaJXXVPttOpPNcGvH0zSplwdf56oRN//pIN3e0vgoJNMor6reSgS2HtNFhY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLkXE1nDDST0zaWoeQsLxu+Q1obz6+Tt3PqQ4a+L2s74uW5V4h
-	XlRlM1jnOq7Tg5hlGsPo55Mm7JjdU+lC4PO3HrIM2+mS9Czt/N0UYCCjVWn1oIoDWXecH+CaXf2
-	jU9pFFsgF2YoMT2DDToM048fA8DQykEN6vVOvSw==
-X-Gm-Gg: ASbGncuX9HqBCEFvRasrSa00bSocR8jpWE3G6P++Ev41QmGtxRDi3ChhTrdK4k7q2gM
-	XF9+pvrOKbR6Sj+D83GS11H5wE71HE/vAfizjLzp8THgL1inJzhDJDxUgM8jvssimBxGDiZmhJV
-	WkSwlxEGZg9X6bc7BAsw9lOuqX0Q==
-X-Google-Smtp-Source: AGHT+IFUItRedI2YhId4MQjoRhsnzWgBSgpMCiIIbrX/B01VKJvMgvQpYNmla4BoPUJ/iCM2iebgjYU/iv6QgkwIA2I=
-X-Received: by 2002:a05:651c:556:b0:30b:c83e:721f with SMTP id
- 38308e7fff4ca-30bc83e77a3mr14176531fa.15.1741075073573; Mon, 03 Mar 2025
- 23:57:53 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741075153; x=1741679953;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LEKpyMCCo3m2x0BF+c71o+pahMCFOq7W/z6rphmoY+E=;
+        b=Z1e5w77aEpKLLKDBRRJIfBL7+E+ff4H7TxYVcs6HqYDkZhakzQvh6Sm/V/q5igZGob
+         zmK+jQ2Dx2qKhoJ6GcYwDm7l3WWo35p3uwp8NqW/KMYOvY+xsoGNmkXWW9QcW1ghEcpg
+         C1wgx25PTt8RWTFLOHbZxOzzOvTKHn1eqr3AegYluBb+BZY9ERRuafEDBf9lwbKAG1Xn
+         8/ztN2FbfQqmJfFUqkvpp9tgKU26gCQKsCCjvgehCjD8ITkdGl4WSG+xzKW0e8KpP6EZ
+         pXfTsjXCnEkyL2gFP4krKUdVrKBic9+dKvKh0wv9AsXEdKWX2yAxUsX6BJNU95lhL00/
+         3FWg==
+X-Forwarded-Encrypted: i=1; AJvYcCULf5ZirpeVCZopojbsG1mRHKub8zKSe+tXl5UJtzmMKOJ8B2mUD3Mm7ecJfLIpvj/HJY4A7CSzoN1r/Ig=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYNXgCY2QpJo1hvtyJIPgs4Ehh7Z/CIpe30Tql9bykkT2p4SFE
+	hUpRqEVzfNDPg/WdG5PLIimls8cluAXe+IW1Vd02bzuIfQzLwrNInsaalXYfw7k=
+X-Gm-Gg: ASbGncu5FAos+KrJsXpmMgC08aZrHej8DbSNglULRcqfoCzU9sye9lSXFmCEppo6txa
+	1xiNAm6DkddsJIGmONvNWiP+KQTaEU8LynnjKzWfIcLOs3YUfRVnDECudT+Z54pcNCl57un3Oqz
+	tW2nucN0ksCDH7iQWAWtO1U/jtE6CbEo1u/snuo0J88xA9eE0Ax9GhAtnfpHsPsJhSnxJLRbDKv
+	hilQf14za0Vn06jK+F8O301/VcwcFFfK5boWqbqJz1RljwF/VQ+EtB7NP8MVJxjlS/7gdWY5nSD
+	z1v1HarVy0DCBnV9P9aGqu/NRmeP7RqZusvTxOUiCYm1zMG8Mz62HWrCwn22hJHH9DN7992czJJ
+	mO/KCAQ==
+X-Google-Smtp-Source: AGHT+IFnNvCJilidd2smenyhU8L+bYAQ4nimUKT3meVLiJdDM1dM9JKxUKglyvi4KEyJi72ujcATwA==
+X-Received: by 2002:a05:6000:20c4:b0:38d:c627:f634 with SMTP id ffacd0b85a97d-390eca63fbbmr9557704f8f.50.1741075153406;
+        Mon, 03 Mar 2025 23:59:13 -0800 (PST)
+Received: from localhost.localdomain (161.26.169.217.in-addr.arpa. [217.169.26.161])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e4796517sm16618101f8f.5.2025.03.03.23.59.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 23:59:13 -0800 (PST)
+From: Louis Taylor <louis@kragniz.eu>
+To: Willy Tarreau <w@1wt.eu>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+	Shuah Khan <shuah@kernel.org>
+Cc: Louis Taylor <louis@kragniz.eu>,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH v2 1/5] tools/nolibc: add support for openat(2)
+Date: Tue,  4 Mar 2025 07:58:15 +0000
+Message-ID: <20250304075846.66563-1-louis@kragniz.eu>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1740745270.git.mazziesaccount@gmail.com> <fe08d70938b63206421dd39ab71cdedd5dc458a1.1740745270.git.mazziesaccount@gmail.com>
-In-Reply-To: <fe08d70938b63206421dd39ab71cdedd5dc458a1.1740745270.git.mazziesaccount@gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 4 Mar 2025 08:57:42 +0100
-X-Gm-Features: AQ5f1JqqwwSDIbZMqDw_-etGHDDKdPgc4Hf7zcm5pk30Rfl1B9ZP_8HFgo8U7Rk
-Message-ID: <CACRpkdYjfvSywb2=ppopk5W57jCbe8fj-HK4HJFS_cMLopJ9YA@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] gpio: Hide valid_mask from direct assignments
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Geert Uytterhoeven <geert@linux-m68k.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Feb 28, 2025 at 1:36=E2=80=AFPM Matti Vaittinen
-<mazziesaccount@gmail.com> wrote:
+openat is useful to avoid needing to construct relative paths, so expose
+a wrapper for using it directly.
 
-> The valid_mask member of the struct gpio_chip is unconditionally written
-> by the GPIO core at driver registration. Current documentation does not
-> mention this but just says the valid_mask is used if it's not NULL. This
-> lured me to try populating it directly in the GPIO driver probe instead
-> of using the init_valid_mask() callback. It took some retries with
-> different bitmaps and eventually a bit of code-reading to understand why
-> the valid_mask was not obeyed. I could've avoided this trial and error if
-> the valid_mask was hidden in the struct gpio_device instead of being a
-> visible member of the struct gpio_chip.
->
-> Help the next developer who decides to directly populate the valid_mask
-> in struct gpio_chip by hiding the valid_mask in struct gpio_device and
-> keep it internal to the GPIO core.
->
-> Suggested-by: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+Signed-off-by: Louis Taylor <louis@kragniz.eu>
+---
+ tools/include/nolibc/sys.h                   | 25 ++++++++++++++++++++
+ tools/testing/selftests/nolibc/nolibc-test.c | 21 ++++++++++++++++
+ 2 files changed, 46 insertions(+)
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+diff --git a/tools/include/nolibc/sys.h b/tools/include/nolibc/sys.h
+index 8f44c33b1213..3cd938f9abda 100644
+--- a/tools/include/nolibc/sys.h
++++ b/tools/include/nolibc/sys.h
+@@ -765,6 +765,31 @@ int mount(const char *src, const char *tgt,
+ 	return __sysret(sys_mount(src, tgt, fst, flags, data));
+ }
+ 
++/*
++ * int openat(int dirfd, const char *path, int flags[, mode_t mode]);
++ */
++
++static __attribute__((unused))
++int sys_openat(int dirfd, const char *path, int flags, mode_t mode)
++{
++	return my_syscall4(__NR_openat, dirfd, path, flags, mode);
++}
++
++static __attribute__((unused))
++int openat(int dirfd, const char *path, int flags, ...)
++{
++	mode_t mode = 0;
++
++	if (flags & O_CREAT) {
++		va_list args;
++
++		va_start(args, flags);
++		mode = va_arg(args, mode_t);
++		va_end(args);
++	}
++
++	return __sysret(sys_openat(dirfd, path, flags, mode));
++}
+ 
+ /*
+  * int open(const char *path, int flags[, mode_t mode]);
+diff --git a/tools/testing/selftests/nolibc/nolibc-test.c b/tools/testing/selftests/nolibc/nolibc-test.c
+index 79c3e6a845f3..2a1629938dd6 100644
+--- a/tools/testing/selftests/nolibc/nolibc-test.c
++++ b/tools/testing/selftests/nolibc/nolibc-test.c
+@@ -1028,6 +1028,26 @@ int test_rlimit(void)
+ 	return 0;
+ }
+ 
++static int test_openat(void)
++{
++	int dev;
++	int null;
++
++	dev = openat(AT_FDCWD, "/dev", O_DIRECTORY);
++	if (dev < 0)
++		return -1;
++
++	null = openat(dev, "null", 0);
++	if (null < 0) {
++		close(dev);
++		return -1;
++	}
++
++	close(dev);
++	close(null);
++
++	return 0;
++}
+ 
+ /* Run syscall tests between IDs <min> and <max>.
+  * Return 0 on success, non-zero on failure.
+@@ -1116,6 +1136,7 @@ int run_syscall(int min, int max)
+ 		CASE_TEST(mmap_munmap_good);  EXPECT_SYSZR(1, test_mmap_munmap()); break;
+ 		CASE_TEST(open_tty);          EXPECT_SYSNE(1, tmp = open("/dev/null", 0), -1); if (tmp != -1) close(tmp); break;
+ 		CASE_TEST(open_blah);         EXPECT_SYSER(1, tmp = open("/proc/self/blah", 0), -1, ENOENT); if (tmp != -1) close(tmp); break;
++		CASE_TEST(openat_dir);        EXPECT_SYSNE(1, test_openat(), -1); break;
+ 		CASE_TEST(pipe);              EXPECT_SYSZR(1, test_pipe()); break;
+ 		CASE_TEST(poll_null);         EXPECT_SYSZR(1, poll(NULL, 0, 0)); break;
+ 		CASE_TEST(poll_stdout);       EXPECT_SYSNE(1, ({ struct pollfd fds = { 1, POLLOUT, 0}; poll(&fds, 1, 0); }), -1); break;
+-- 
+2.45.2
 
-Yours,
-Linus Walleij
 
