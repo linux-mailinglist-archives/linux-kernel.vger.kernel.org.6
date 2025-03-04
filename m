@@ -1,144 +1,179 @@
-Return-Path: <linux-kernel+bounces-543419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8839A4D55E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:51:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3308A4D562
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:53:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2150C171D58
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:51:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E660171CA2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:53:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B4331F8922;
-	Tue,  4 Mar 2025 07:51:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF9381F8917;
+	Tue,  4 Mar 2025 07:52:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IZyU+aaq"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="adrHId7U"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0411E2847;
-	Tue,  4 Mar 2025 07:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7D3B2AE8D
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 07:52:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741074707; cv=none; b=NYD11xwUnkteZKpz5tBp+KfPKBQPKMQ4BIEGKWrIXd8HoJDtOrrZhxkdWF6fbT9NL1OJ8O5VwB1zcwqUOnYISGuvKdh40zifhFfzcA6ahggHZ/c4+7eRjVXPKLCRH8mzu9BpPZGUZqQwW/FoNm96uxC9X6KwZSXOGCV961mEK4w=
+	t=1741074775; cv=none; b=r3OfO1Kv8tvmHug6PeA294AH4sKlWSyagTHF8S6zAgAAtj03QLtCaO/tsRwYeWu/RgEdPEeMIQow/NTOBWbHrP+G5uIGpN/D8+RPQEJMuFhG6ql7W4htB9rSQ2dEQECh+DdS8av4B4FTNHbJoqAT446ucFXA1QdHXBndj7wMhO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741074707; c=relaxed/simple;
-	bh=3TpNgotXXXws56CMvycct3iSNi0ygaBLcIYxqa2zBRM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=dVzyC36olOUMHCXTUu/QKftTJMJ5FE25P8fcuP1y84YHOSgaEcmOGNUNEnaJtarg7rMN7kyoN2Db1Ka+1Pe8rU3v+BwBm9+uNlI5cvv0QEWavqyg99eh3b+c/FXX/C6KxHEv0u0JOfFec1lDp0Kuc7P3rwc6mwEoNYkNM9noUyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IZyU+aaq; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aaec111762bso973016966b.2;
-        Mon, 03 Mar 2025 23:51:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741074704; x=1741679504; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ejFSo8OEvE0ZO3UcRk2jROT18Sr7YS00DdCsHMeAq4U=;
-        b=IZyU+aaqNkFkc/lMJInMBpBN0PP9CYW4NARoci/QGuvo/UMJGol+ogzh9r2H/w8GZN
-         SKRoGTsSth6Lm/XvHb0Y6qOt29nj0gcJLw5mdvxZLiVIx0qTZfdBvS08WWCYMzGyBlkc
-         sLEBdgX9zuKh91wrEWAyl4cdyUQPPRMZIw432s44goFF4T5LFgtT8gubBCqHAC48cMmu
-         2n4v6Z2HNX/8dGM1y9eDNAB6bRaeJTXi3NkkShsFPpU3oXexSzBLhS0SnSHhP702I6bM
-         9S5Tb4vPmqyWDtTa0URq522QgWiM8g77eLdt9FWyEYRmQFoOGfrGJ070lPdxRQfUUWyE
-         +82w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741074704; x=1741679504;
-        h=content-transfer-encoding:mime-version:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ejFSo8OEvE0ZO3UcRk2jROT18Sr7YS00DdCsHMeAq4U=;
-        b=guZZCq2Gw3XEtTPDGXyVLQMCve5w+HEYz+CcdEDU77CVJTlrhDd8K6DkCj42G4MRLF
-         CL2JsKzZWh40taFzU5Lc5401yp/Qo1WNx/8fAjzQf6m77Uk00Xmb0isSrRTWXftjwz0N
-         En7MFjeO+0RAgCvKGeejEidP96K87los2Ph8t/zX9ReY+4/XFjmM+XVewwJtRRKO1aoK
-         QD331aU+2b4Lgwcg1tTbbWiLyuUx4X3W38dkYH8LMw/Eh2O3O75jEfGYa32gAhVWEAzq
-         WRo3rIpn81Qd8Mjt/FLV9NbF6TrmrDl4GhoCAQw0RDR2lUMnfncJLy4ZOgJoU+Y55Vvn
-         vfHA==
-X-Forwarded-Encrypted: i=1; AJvYcCXcD6wQAfB8k3RXFSmR5XGx4YNhbY24lsXI657eXCul8Y+ZTcK1FlUBtln0pB4teK5TSQvhrWcAiWDdMto=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLNKOxZPGji3JJNPzJUt8mllsNdHtnUcYGTJb6IrjhY88iohYo
-	vJ8hlQKlbFPWa0PgrVr7ZP+PjnNEBvVMzKqKuzNZFY+QY8opYfdu
-X-Gm-Gg: ASbGncs9inAc+wbPn7NxACZ0Dm/2645luUZxulNvD63TrB9dP4x+EvP6NtkypZjiZQZ
-	+ToaeCDUEXVjkeiulp/EMs+9yGtnAH5ABENmvYMegr8upjDo+HG66lEQeyUyNOEcgiS6bNayrfv
-	vGdAqMVWCRDH2uGkjGIUv5njNcCiHMgXsGMrbkU7BiUG5t3187D2bK9Z1esWwc56rX+M9BxRYAG
-	dUhnIIZGPU5HB+P/mwIrZbIOEJf7ChugZcSHte7SuwMLzrw65EehPP7xQg0bZa4uQC9Wo90+Ysa
-	ajk/zdIHO7bVSp7j1LMnSh/gNTCY8dFmsBMxg0mBHIgLDpQWr6PY0z8xnDC4PQ==
-X-Google-Smtp-Source: AGHT+IEU6uOxnBzRpc2rr8JL/GPBOrFpD7dFy2K738H0sIbKWD7Az+d9BbDPL4ebRRymRAZugOLWcQ==
-X-Received: by 2002:a17:907:7b8c:b0:ac1:d878:f87d with SMTP id a640c23a62f3a-ac1d878fbbemr501062666b.56.1741074703641;
-        Mon, 03 Mar 2025 23:51:43 -0800 (PST)
-Received: from foxbook (adts246.neoplus.adsl.tpnet.pl. [79.185.230.246])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf58fe64f5sm525816466b.133.2025.03.03.23.51.42
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Mon, 03 Mar 2025 23:51:43 -0800 (PST)
-Date: Tue, 4 Mar 2025 08:51:39 +0100
-From: Michal Pecio <michal.pecio@gmail.com>
-To: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] usb: xhci: Fix host controllers "dying" after suspend and
- resume
-Message-ID: <20250304085139.4610e8ff@foxbook>
+	s=arc-20240116; t=1741074775; c=relaxed/simple;
+	bh=Pdi9LiPW2XDqWccj0IQnT0WEQyNxj1rc9Fh524oc0Gg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=t+m7oLBWdw+Eu26tDjaeKnOXiVizvgtS+zgOtyIII3AAFNcBdER9nbKwb6Jd1SHztre4WSoMrCJviK/+lk9xeyy+SpAXcUYh3Z00/cfQf5BPFdeQIbQG94h4DDl8Rfd69x3FLOWJrN6ERBDoYxwo7GfIVthGwJpHq2HRRQ6nMWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=adrHId7U; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250304075250euoutp017ee1ebf5a841e967e3bc807d05d537b1~pikdkdXb53171331713euoutp01A
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 07:52:50 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250304075250euoutp017ee1ebf5a841e967e3bc807d05d537b1~pikdkdXb53171331713euoutp01A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1741074770;
+	bh=lea+ualRj8bz1DmBFIqvryrAEtTAwUiOAMc/0EqaREQ=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=adrHId7UICeA7/DFlY7GUV1AoEnJjFAoDq05EhUfKMMwLS20bS1fsiFByUDhQQri6
+	 LYjDCmonE+4dvus6BOC1a/wq3k8RrYnEDEsvAGwOLJVQliFYXDN1dYgzekgLYkK3D2
+	 yW+sKKLwOabTXRG3ZIRVS6pEzELHBObb7jy4E1Og=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20250304075249eucas1p233c07fd6fccde4cb2074a8ea69813087~pikdEUWMq0502905029eucas1p2-;
+	Tue,  4 Mar 2025 07:52:49 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id 59.A8.20821.151B6C76; Tue,  4
+	Mar 2025 07:52:49 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250304075248eucas1p193463e8d646ef3fcda680ca785579934~pikcZBp7w0034500345eucas1p1g;
+	Tue,  4 Mar 2025 07:52:48 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250304075248eusmtrp195ba42f7a1a1786cab2e20ffc929430a~pikcX6xRy0401204012eusmtrp1E;
+	Tue,  4 Mar 2025 07:52:48 +0000 (GMT)
+X-AuditID: cbfec7f2-b09c370000005155-7a-67c6b151ec14
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 33.DC.19920.051B6C76; Tue,  4
+	Mar 2025 07:52:48 +0000 (GMT)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250304075247eusmtip19a6fe9a7de8dd05807269c046561fe49~pikbfaLZv2935529355eusmtip1O;
+	Tue,  4 Mar 2025 07:52:47 +0000 (GMT)
+Message-ID: <08e5ffb9-2187-42b6-8090-9922b349fe2a@samsung.com>
+Date: Tue, 4 Mar 2025 08:52:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/5] dt-bindings: firmware: thead,th1520: Add support
+ for firmware node
+To: Krzysztof Kozlowski <krzk@kernel.org>, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org,
+	wefu@redhat.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, alex@ghiti.fr, jszhang@kernel.org,
+	ulf.hansson@linaro.org, m.szyprowski@samsung.com
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, Krzysztof
+	Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+In-Reply-To: <377951ad-341f-4e19-a582-a534567dc466@kernel.org>
 Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrIKsWRmVeSWpSXmKPExsWy7djP87qBG4+lG6x/KWfx7M5XVoutv2ex
+	W6zZe47JYv6Rc6wW9y5tYbJ4sbeRxaL52Ho2i5ez7rFZnD+/gd1i7+ut7BaXd81hs/jce4TR
+	YtvnFjaLtUfuslu8vNzDbNE2i9/i/54d7BbH14ZbtOyfwuIg7PHm5UsWj8MdX9g97p2Yxuqx
+	aVUnm8eda3vYPDYvqfdoWXuMyeP9vqtsHn1bVjF6XGq+zu7xeZNcAHcUl01Kak5mWWqRvl0C
+	V8aTiWYFM7gqPrzzbmBcytHFyMkhIWAi8arrPUsXIxeHkMAKRonFhy6zQzhfGCVmzj7DDFIl
+	JPCZUeL33xyYjhtzXzBDFC1nlJjW8RKq/S2jxJ7ui2xdjBwcvAJ2EvPuqoI0sAioSMx48oAN
+	xOYVEJQ4OfMJC4gtKiAvcf/WDHYQW1ggQeL2+SawoSICO5gkrrzZA+YwC2xklFh39DVYB7OA
+	uMStJ/OZQGw2ASOJB8vns4LYnEDLLh/9xQZRIy+x/e0csGYJgVecEtObH4JdJCHgInFxswXE
+	C8ISr45vYYewZSROT+5hgbDzJR5s/cQMYddI7Ow5DmVbS9w59wtsDLOApsT6XfoQYUeJCa/b
+	mCCm80nceCsIcQGfxKRt05khwrwSHW1CENVqElN7euGWnluxjWkCo9IspFCZheTHWUh+mYWw
+	dwEjyypG8dTS4tz01GLDvNRyveLE3OLSvHS95PzcTYzAVHn63/FPOxjnvvqod4iRiYPxEKME
+	B7OSCO+t9qPpQrwpiZVVqUX58UWlOanFhxilOViUxHkX7W9NFxJITyxJzU5NLUgtgskycXBK
+	NTDFGf6VjeLucM/6Vcn0d3GywORVvWonz/dzbvkat0Okb9vxyf165pbO+QEBDcab+c6uefr/
+	osFhezmpQ0sny6n6xkhOXPX77hdjac5Sfq65//p14/ss6tKE7p1vmiS24xmrTTzf04qNpkav
+	Jm2SSJmceiNy5fad+lt651kLLOaZP+H35++KFXe/7l52XnEyz03h67NehvotLdhbuO65yjzm
+	LrNT/7YZBx66KNaxL3+nKtcCvcVRdyInFv3rOfRY3/20W+bd6wLT2gStRK1rt3Vv5DI8qv+y
+	qcbg5pVzv7n2aWZlNt/Zo3HZQeLsCxXFhdN73ksK5C3wuCQzUVWoZwsPn8JELU7zai5mx72y
+	stVKLMUZiYZazEXFiQAm+R8GBAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmplleLIzCtJLcpLzFFi42I5/e/4Xd2AjcfSDT7MNLR4ducrq8XW37PY
+	LdbsPcdkMf/IOVaLe5e2MFm82NvIYtF8bD2bxctZ99gszp/fwG6x9/VWdovLu+awWXzuPcJo
+	se1zC5vF2iN32S1eXu5htmibxW/xf88Odovja8MtWvZPYXEQ9njz8iWLx+GOL+we905MY/XY
+	tKqTzePOtT1sHpuX1Hu0rD3G5PF+31U2j74tqxg9LjVfZ/f4vEkugDtKz6Yov7QkVSEjv7jE
+	Vina0MJIz9DSQs/IxFLP0Ng81srIVEnfziYlNSezLLVI3y5BL+PJRLOCGVwVH955NzAu5ehi
+	5OSQEDCRuDH3BXMXIxeHkMBSRomZi5YwQyRkJK51v2SBsIUl/lzrYoMoes0o8XvdZtYuRg4O
+	XgE7iXl3VUFqWARUJGY8ecAGYvMKCEqcnPkErFdUQF7i/q0Z7CC2sECCxO3zTWDLRAR2MEkc
+	7dsBNpRZYCOjxMLvu9ghNsxgljhxbg1YO7OAuMStJ/OZQGw2ASOJB8vns4LYnECbLx/9xQZy
+	BbOAusT6eUIQ5fIS29/OYZ7AKDQLySGzkEyahdAxC0nHAkaWVYwiqaXFuem5xYZ6xYm5xaV5
+	6XrJ+bmbGIHpYduxn5t3MM579VHvECMTB+MhRgkOZiUR3lvtR9OFeFMSK6tSi/Lji0pzUosP
+	MZoCA2Mis5Rocj4wQeWVxBuaGZgamphZGphamhkrifO6XT6fJiSQnliSmp2aWpBaBNPHxMEp
+	1cDEXyi9bJfB3SubL27/eXgeX+ONvfUub1bFWNSvuxG+97F5aWDXUrWZJxZkZxi/+9nt8Xju
+	3J/GTIEmDBNXc7au3r6jfXpXZ8PRuRv9Vk8xeOTTf/Km5PI9V7Lzr5i3da5fdPVqsabX27AT
+	u3vf2hst28lz693U+uTYVVYrgp54xnWG8MRc2iEQzZDx9cd9aQ7fg5PyWo/GiJ40Wx3/Znav
+	cmP7knstR46FvA9WOpdsvObne5WrPjuFtzG+4nu2TzZA/eK5a+4uRtNd3npzvbrwOvT4xynJ
+	NldEmouaXNaHe6xIOhG2tTL9x8mVs7csv2qsyHBAq9d+boTamk8LxGKijCWnvdSUuPf+rJj9
+	zOnL5yixFGckGmoxFxUnAgBoKA+fmAMAAA==
+X-CMS-MailID: 20250304075248eucas1p193463e8d646ef3fcda680ca785579934
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250303145918eucas1p10f64b2ce75e395ce208439307daa8a8f
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20250303145918eucas1p10f64b2ce75e395ce208439307daa8a8f
+References: <20250303145901.446791-1-m.wilczynski@samsung.com>
+	<CGME20250303145918eucas1p10f64b2ce75e395ce208439307daa8a8f@eucas1p1.samsung.com>
+	<20250303145901.446791-2-m.wilczynski@samsung.com>
+	<edb3dd6e-8b56-42b3-8bb2-8ed7ad186b75@kernel.org>
+	<8dcdd2ec-e4b6-4fc0-be50-12fe187cd5e0@kernel.org>
+	<99fcf36f-7fed-43e8-a94f-47563ab00fc6@samsung.com>
+	<377951ad-341f-4e19-a582-a534567dc466@kernel.org>
 
-A recent cleanup went a bit too far and dropped clearing the cycle bit
-of link TRBs, so it stays different from the rest of the ring half of
-the time. Then a race occurs: if the xHC reaches such link TRB before
-more commands are queued, the link's cycle bit uintentionally matches
-the xHC's cycle so it follows the link and waits for further commands.
-If more commands are queued before the xHC gets there, inc_enq() flips
-the bit so the xHC later sees a mismatch and stops executing commands.
 
-This function is called before suspend and 50% of times after resuming
-the xHC is doomed to get stuck sooner or later. Then some Stop Endpoint
-command fails to complete in 5 seconds and this shows up
 
-xhci_hcd 0000:00:10.0: xHCI host not responding to stop endpoint command
-xhci_hcd 0000:00:10.0: xHCI host controller not responding, assume dead
-xhci_hcd 0000:00:10.0: HC died; cleaning up
+On 3/4/25 08:45, Krzysztof Kozlowski wrote:
+> On 04/03/2025 08:43, Michal Wilczynski wrote:
+>>
+>>
+>> On 3/3/25 18:46, Krzysztof Kozlowski wrote:
+>>> On 03/03/2025 18:42, Krzysztof Kozlowski wrote:
+>>>> On 03/03/2025 15:58, Michal Wilczynski wrote:
+>>>>> The kernel communicates with the E902 core through the mailbox
+>>>>> transport using AON firmware protocol. Add dt-bindings to document it
+>>>>> the dt node.
+>>>>>
+>>>>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>>>
+>>>>
+>>>> How is this possible? That's v1 and I never review outside of mailing list.
+>>>>
+>>> OK, I found v5:
+>>> https://lore.kernel.org/all/20250219140239.1378758-4-m.wilczynski@samsung.com/
+>>>
+>>> so is this the same?
+>>
+>> Yeah, I thought by splitting the patchset and creating new sub-series I
+>> should start versioning from v1 again, and leave that bigger patchset as
+> 
+> What was unclear in my "keep versioning and keep changelog"? How this
+> can lead to "start new versioning"?
 
-followed by loss of all USB decives on the affected bus. That's if you
-are lucky, because if Set Deq gets stuck instead, the failure is silent. 
+OK, my bad misunderstood you. I don't want to spam too much so maybe I
+should wait if there will be any comments before re-sending with the proper
+changelog and version.
 
-Likely responsible for kernel bug 219824. I found this while searching
-for possible causes of that regression and reproduced it locally before
-hearing back from the reporter. To repro, simply wait for link cycle to
-become set (debugfs), then suspend, resume and wait. To accelerate the
-failure I used a script which repeatedly starts and stops a UVC camera.
-
-Some HCs get fully reinitialized on resume and they are not affected.
-
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=219824
-Fixes: 36b972d4b7ce ("usb: xhci: improve xhci_clear_command_ring()")
-Cc: stable@vger.kernel.org
-Signed-off-by: Michal Pecio <michal.pecio@gmail.com>
----
- drivers/usb/host/xhci.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
-index 45653114ccd7..0099f504c86a 100644
---- a/drivers/usb/host/xhci.c
-+++ b/drivers/usb/host/xhci.c
-@@ -780,8 +780,12 @@ static void xhci_clear_command_ring(struct xhci_hcd *xhci)
- 	struct xhci_segment *seg;
- 
- 	ring = xhci->cmd_ring;
--	xhci_for_each_ring_seg(ring->first_seg, seg)
-+	xhci_for_each_ring_seg(ring->first_seg, seg) {
-+		/* erase all TRBs before the link */
- 		memset(seg->trbs, 0, sizeof(union xhci_trb) * (TRBS_PER_SEGMENT - 1));
-+		/* clear link cycle bit */
-+		seg->trbs[TRBS_PER_SEGMENT - 1].link.control &= cpu_to_le32(~TRB_CYCLE);
-+	}
- 
- 	xhci_initialize_ring_info(ring);
- 	/*
--- 
-2.48.1
+> 
+>> a reference, I've linked it in each cover letter for each sub-series.
+> 
+> Best regards,
+> Krzysztof
+> 
 
