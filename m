@@ -1,177 +1,304 @@
-Return-Path: <linux-kernel+bounces-544302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44F30A4DFF4
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:57:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74868A4DFF6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:57:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E43F6189CCD5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:56:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A8F83B5108
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:56:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC9B204C25;
-	Tue,  4 Mar 2025 13:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QxiPpaI1"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED236204F73;
+	Tue,  4 Mar 2025 13:56:30 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82BD2204876;
-	Tue,  4 Mar 2025 13:56:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BACA920485B
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 13:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741096588; cv=none; b=YMkuYAkx7i/49wz855ZSSKCzqVUG/rrz2t5N4rnsGektsgCObDX3bE5UglZqwST6AlB7rg4PKfW4jZ/PVHLfvmpcFoBDh2A6QnpjmIlRQJSb8X88MstZ21Gvt7py960CNFkaHtP7fBNcTsnD5w8qsQOKBHilmZUadGcjM/b7oZc=
+	t=1741096590; cv=none; b=ToAPFMrBEUx++vcjQZSHHr1B04D1XbCI8gBS+svOc/DXq2O1cDMGz+18NOtaS/7cRXWq+ccki3xnA5L6Jd0yLaVu6oxqxViNFb+U0pbvNQYltt8r3QPVkI2UNgZpeB6y6Lrm326TX0m0n+t2EzIBiW+kdWK1EFlr6BKsvhrA3D0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741096588; c=relaxed/simple;
-	bh=BYE1PMNXLmh6humc1AIGM9TE2xmShRPk4wpB/+IC4Io=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=A/PfCbpsBtyF9I4kh/DSW84NGAXZJSJjTj4bCC6DzPnj3yHxEPHm1FawcKrevyNXZn3aPMzP2wljhwTFnfVWoBDOjN0M2ylZzvMRhbG6H2I9Xzv/Xqqr/+7q7SIQP/Eg7nJ7rGJ8mVF3401Hb3ke9A3pBRi4pwtA1G9Pd+HB7x4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=QxiPpaI1; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1741096584;
-	bh=BYE1PMNXLmh6humc1AIGM9TE2xmShRPk4wpB/+IC4Io=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=QxiPpaI1gQj9880lB5GeSnWv9GwWvx/teUExUau16QIQy3E8IMXe8lO3CUGrKPZSb
-	 sT6kj9+chBIcxXE6lH7noxnJNI9fpSMcyWDY8ftrWXqfUWMePf4KpMwCuPS0h5ijZ3
-	 +6AdX+R+qk02CTJ0728+othIa2MD/3gHvbK957DJXY/5BBNqSFsZ7m/jQoK8LAcG0W
-	 U4zu+zm2sfC8zHXMlCH3vL7MsAM1cWpZXSMjmN6J2GDProNFX28/mPwXbJmRMEXJnT
-	 ILO9AkVOAj41TIoqlWK5qnuiQQsTzSRxiHL1D1k9etwNqBqdN8Enfg/uO2KrQrsY9i
-	 KVYwqaSaj+fhw==
-Received: from apertis-1.home (2a01cb0892f2D600C8f85Cf092d4af51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: jmassot)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0038A17E086B;
-	Tue,  4 Mar 2025 14:56:23 +0100 (CET)
-Message-ID: <3ee575154a95627b7ecaf33b2f52b6fa0ce4a352.camel@collabora.com>
-Subject: Re: [PATCH 1/2] arm64: dts: mediatek: mt8395-nio-12l: Prepare MIPI
- DSI port
-From: Julien Massot <julien.massot@collabora.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	kernel@collabora.com, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
-	 <matthias.bgg@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Date: Tue, 04 Mar 2025 14:56:23 +0100
-In-Reply-To: <fc0a9471-da47-4f4f-a471-1b20f344ad22@collabora.com>
-References: <20250226-radxa-panel-overlay-v1-0-9e8938dfbead@collabora.com>
-	 <20250226-radxa-panel-overlay-v1-1-9e8938dfbead@collabora.com>
-	 <fc0a9471-da47-4f4f-a471-1b20f344ad22@collabora.com>
-Organization: Collabora Ltd.
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1741096590; c=relaxed/simple;
+	bh=B1HhjIwvey1c5ezYoPA1l5ZccU/01rKBuPoMwstDUJ8=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=mRaH3ZGIVC6qP6xIzMPHcQtqZw1r1pbSRC+GSxEnDwf3/wmHmHt3rhQUwQQEJZaQKPq2CtHmAGVEhD3rI2pcwNiN3juHFE0GEDu30KnXxQraPQ3lk2ofm0yKFYfyE5Uvxo+kJXXx3Li1thThLA/pOW8RYzZXyW5HOpMid/bakLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Z6cXz4wvlzwXNs;
+	Tue,  4 Mar 2025 21:51:31 +0800 (CST)
+Received: from kwepemj200003.china.huawei.com (unknown [7.202.194.15])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0C7131400CD;
+	Tue,  4 Mar 2025 21:56:25 +0800 (CST)
+Received: from [10.67.120.170] (10.67.120.170) by
+ kwepemj200003.china.huawei.com (7.202.194.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 4 Mar 2025 21:56:24 +0800
+Message-ID: <de7966bb-dbf1-4f41-9e25-561ab8c3afc0@huawei.com>
+Date: Tue, 4 Mar 2025 21:56:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] dma-mapping: benchmark: add support for dma_map_sg
+From: Qinxin Xia <xiaqinxin@huawei.com>
+To: Barry Song <21cnbao@gmail.com>
+CC: yangyicong <yangyicong@huawei.com>, "hch@lst.de" <hch@lst.de>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>, Jonathan Cameron
+	<jonathan.cameron@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>,
+	"fanghao (A)" <fanghao11@huawei.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+References: <20250212022718.1995504-1-xiaqinxin@huawei.com>
+ <20250212022718.1995504-3-xiaqinxin@huawei.com>
+ <CAGsJ_4yDBT4rJyG4-Ow4T3xLq8VujBjG+-uxjnWUm_vW1nzT_A@mail.gmail.com>
+ <43618c9167654c68945ec5e7d9bf69d5@huawei.com>
+ <CAGsJ_4zNTYsMkeBav7z=AKdm5CjB=Y73P1QBzq+9FS--z9t9Cw@mail.gmail.com>
+ <66470ea1-668a-418a-bcf6-c8702be799ce@huawei.com>
+In-Reply-To: <66470ea1-668a-418a-bcf6-c8702be799ce@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemj200003.china.huawei.com (7.202.194.15)
 
-Hi Angelo,
 
-On Mon, 2025-03-03 at 12:32 +0100, AngeloGioacchino Del Regno wrote:
-> Il 26/02/25 15:35, Julien Massot ha scritto:
-> > This board can use a MIPI-DSI panel on the DSI0 connector: in
-> > preparation for adding an overlay for the Radxa Display 8HD,
-> > add a pipeline connecting VDOSYS0 components to DSI0.
-> >=20
-> > Also add the backlight, and some pin definitions available
-> > through the DSI0 port.
-> >=20
-> > Signed-off-by: Julien Massot <julien.massot@collabora.com>
-> > ---
-> > =C2=A0 .../boot/dts/mediatek/mt8395-radxa-nio-12l.dts=C2=A0=C2=A0=C2=A0=
-=C2=A0 | 60 ++++++++++++++++++++++
-> > =C2=A0 1 file changed, 60 insertions(+)
-> >=20
-> > diff --git a/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts
-> > b/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts
-> > index 7184dc99296c7f5d749c7e6d378722677970b3b7..65c77e43d1cd4913b6741e2=
-5130febd746ff753c 100644
-> > --- a/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts
-> > +++ b/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts
-> > @@ -48,6 +48,17 @@ memory@40000000 {
-> > =C2=A0=C2=A0		reg =3D <0 0x40000000 0x1 0x0>;
-> > =C2=A0=C2=A0	};
-> > =C2=A0=20
-> > +	backlight: backlight {
-> > +		compatible =3D "pwm-backlight";
-> > +		brightness-levels =3D <0 1023>;
-> > +		default-brightness-level =3D <576>;
-> > +		enable-gpios =3D <&pio 107 GPIO_ACTIVE_HIGH>;
-> > +		num-interpolated-steps =3D <1023>;
-> > +		pinctrl-names =3D "default";
-> > +		pinctrl-0 =3D <&dsi0_backlight_pins>;
-> > +		pwms =3D <&disp_pwm0 0 500000>;
->=20
-> This should be disabled, unless there is a display connected to the DSI c=
-onnector.
->=20
-> If there's no display, there's no point in enabling any backlight, as tha=
-t pin
-> may be reused somehow (with hardware hacks, maybe, yes, but still configu=
-ring
-> the PWM IP and the pin as PWM while unused is at least a waste of energy)=
-.
->=20
-Yes, I will keep it disabled in the board dts.
+在 2025/3/4 21:49, Qinxin Xia 写道:
+>
+> 在 2025/2/22 14:36, Barry Song 写道:
+>> On Fri, Feb 21, 2025 at 4:16 PM xiaqinxin <xiaqinxin@huawei.com> wrote:
+>>>
+>>>
+>>> -----邮件原件-----
+>>> 发件人: Barry Song <21cnbao@gmail.com>
+>>> 发送时间: 2025年2月18日 4:59
+>>> 收件人: xiaqinxin <xiaqinxin@huawei.com>
+>>> 抄送: chenxiang66@hisilicon.com; yangyicong <yangyicong@huawei.com>; 
+>>> hch@lst.de; iommu@lists.linux.dev; Jonathan Cameron 
+>>> <jonathan.cameron@huawei.com>; Zengtao (B) 
+>>> <prime.zeng@hisilicon.com>; fanghao (A) <fanghao11@huawei.com>; 
+>>> linux-kernel@vger.kernel.org
+>>> 主题: Re: [PATCH 2/3] dma-mapping: benchmark: add support for 
+>>> dma_map_sg
+>>>
+>>> On Wed, Feb 12, 2025 at 3:27 PM Qinxin Xia <xiaqinxin@huawei.com> 
+>>> wrote:
+>>>> Support for dma scatter-gather mapping and is intended for testing
+>>>> mapping performance. It achieves by introducing the dma_sg_map_param
+>>>> structure and related functions, which enable the implementation of
+>>>> scatter-gather mapping preparation, mapping, and unmapping operations.
+>>>> Additionally, the dma_map_benchmark_ops array is updated to include
+>>>> operations for scatter-gather mapping. This commit aims to provide a
+>>>> wider range of mapping performance test  to cater to different 
+>>>> scenarios.
+>>> This benchmark is mainly designed to debug contention issues, such 
+>>> as IOMMU TLB flushes or IOMMU driver bottlenecks. I don't fully 
+>>> understand how SG or single will impact the evaluation of the IOMMU 
+>>> driver, making it unclear if the added complexity is justified.
+>>>
+>>> Can you add some explanation on why single mode is not sufficient 
+>>> for profiling and improving IOMMU drivers?
+>>>
+>>> Hello Barry ! 😊
+>>> Currently, the HiSilicon accelerator service uses the dma_map_sg 
+>>> interface. We want to evaluate the performance of the entire DMA map 
+>>> process. (including not only the iommu, but also the map framework). 
+>>> In addition, for scatterlist, __iommu_map is executed for each nent. 
+>>> This increases the complexity and time overhead of mapping. The 
+>>> effect of this fragmentation is not obvious in dma_map_single, which 
+>>> only handles a single contiguous block of memory.
+>>>
+>> Thanks!
+>> Please update your editor to ensure it doesn't respond with such long 
+>> sentences
+>> without line breaks in the future :-)
+>
+> Hello Barry !
+>
+> Thank you for your advice, I will I'll pay attention. Leon
 
-> > +	};
-> > +
-> > =C2=A0=C2=A0	wifi_vreg: regulator-wifi-3v3-en {
-> > =C2=A0=C2=A0		compatible =3D "regulator-fixed";
-> > =C2=A0=C2=A0		regulator-name =3D "wifi_3v3_en";
-> > @@ -499,9 +510,20 @@ &mt6359_vsram_others_ldo_reg {
-> > =C2=A0=C2=A0	regulator-max-microvolt =3D <750000>;
-> > =C2=A0 };
-> > =C2=A0=20
-> > +&ovl0_in {
-> > +	remote-endpoint =3D <&vdosys0_ep_main>;
-> > +};
-> > +
->=20
-> This goes to the overlay that enables the DSI display.
-Ok
+A little mistake, sorry for it...
 
->=20
-> > @@ -912,6 +960,18 @@ &ssusb2 {
-> > =C2=A0=C2=A0	status =3D "okay";
-> > =C2=A0 };
-> > =C2=A0=20
-> > +&vdosys0 {
-> > +	port {
-> > +		#address-cells =3D <1>;
-> > +		#size-cells =3D <0>;
-> > +
-> > +		vdosys0_ep_main: endpoint@0 {
-> > +			reg =3D <0>;
-> > +			remote-endpoint =3D <&ovl0_in>;
-> > +		};
-> > +	};
-> > +};
->=20
-> If you enable this path, in the event that the DSI display overlay is not=
- added,
-> the mediatek-drm driver will fail probing: even if a second path is enabl=
-ed and
-> that will succeed regardless of the first one failing, I don't see a reas=
-on why
-> whoever doesn't have a DSI display attached should see a miserable failur=
-e in the
-> kernel log :-)
->=20
-> Besides, mediatek-drm failing will also slow down boot for no reason.... =
-etc etc.
->=20
-> Please move the display path setup to the DSI display overlay.
-Sure will move the display path setup to the display overlay.
+I will I'll pay attention. Leon  ==> I will pay attention.
 
-Thank you,
-Julien
+>
+>> Can you provide concrete examples or data showing how the newly added 
+>> mode
+>> improves profiling of the entire DMA map process? For instance, what 
+>> limitations
+>> exist without this mode? What performance issues cannot be identified 
+>> without
+>> it?
+>
+> You can see this patch 
+> :https://lore.kernel.org/all/cover.1738765879.git.leonro@nvidia.com/
+>
+> Leon provides new interface for scatterlist scenarios to improve 
+> performance and gives some
+>
+> application instance in rdma and vfio. Users can use dma_map_sg 
+> benchmark to measure
+>
+> the performance improvement of the optimized interface compared with 
+> the previous one.
+>
+> Thanks!
+>
+>>
+>>>> Signed-off-by: Qinxin Xia <xiaqinxin@huawei.com>
+>>>> ---
+>>>>   include/linux/map_benchmark.h |   1 +
+>>>>   kernel/dma/map_benchmark.c    | 102 
+>>>> ++++++++++++++++++++++++++++++++++
+>>>>   2 files changed, 103 insertions(+)
+>>>>
+>>>> diff --git a/include/linux/map_benchmark.h
+>>>> b/include/linux/map_benchmark.h index 054db02a03a7..a9c1a104ba4f
+>>>> 100644
+>>>> --- a/include/linux/map_benchmark.h
+>>>> +++ b/include/linux/map_benchmark.h
+>>>> @@ -17,6 +17,7 @@
+>>>>
+>>>>   enum {
+>>>>          DMA_MAP_SINGLE_MODE,
+>>>> +       DMA_MAP_SG_MODE,
+>>>>          DMA_MAP_MODE_MAX
+>>>>   };
+>>>>
+>>>> diff --git a/kernel/dma/map_benchmark.c b/kernel/dma/map_benchmark.c
+>>>> index d8ec0ce058d8..b5828eeb3db7 100644
+>>>> --- a/kernel/dma/map_benchmark.c
+>>>> +++ b/kernel/dma/map_benchmark.c
+>>>> @@ -17,6 +17,7 @@
+>>>>   #include <linux/module.h>
+>>>>   #include <linux/pci.h>
+>>>>   #include <linux/platform_device.h>
+>>>> +#include <linux/scatterlist.h>
+>>>>   #include <linux/slab.h>
+>>>>   #include <linux/timekeeping.h>
+>>>>
+>>>> @@ -111,8 +112,109 @@ static struct map_benchmark_ops 
+>>>> dma_single_map_benchmark_ops = {
+>>>>          .do_unmap = dma_single_map_benchmark_do_unmap,
+>>>>   };
+>>>>
+>>>> +struct dma_sg_map_param {
+>>>> +       struct sg_table sgt;
+>>>> +       struct device *dev;
+>>>> +       void **buf;
+>>>> +       u32 npages;
+>>>> +       u32 dma_dir;
+>>>> +};
+>>>> +
+>>>> +static void *dma_sg_map_benchmark_prepare(struct map_benchmark_data
+>>>> +*map) {
+>>>> +       struct scatterlist *sg;
+>>>> +       int i = 0;
+>>>> +
+>>>> +       struct dma_sg_map_param *mparam __free(kfree) = 
+>>>> kzalloc(sizeof(*mparam), GFP_KERNEL);
+>>>> +       if (!mparam)
+>>>> +               return NULL;
+>>>> +
+>>>> +       mparam->npages = map->bparam.granule;
+>>>> +       mparam->dma_dir = map->bparam.dma_dir;
+>>>> +       mparam->dev = map->dev;
+>>>> +       mparam->buf = kmalloc_array(mparam->npages, 
+>>>> sizeof(*mparam->buf),
+>>>> +                                   GFP_KERNEL);
+>>>> +       if (!mparam->buf)
+>>>> +               goto err1;
+>>>> +
+>>>> +       if (sg_alloc_table(&mparam->sgt, mparam->npages, GFP_KERNEL))
+>>>> +               goto err2;
+>>>> +
+>>>> +       for_each_sgtable_sg(&mparam->sgt, sg, i) {
+>>>> +               mparam->buf[i] = (void *)__get_free_page(GFP_KERNEL);
+>>>> +               if (!mparam->buf[i])
+>>>> +                       goto err3;
+>>>> +
+>>>> +               if (mparam->dma_dir != DMA_FROM_DEVICE)
+>>>> +                       memset(mparam->buf[i], 0x66, PAGE_SIZE);
+>>>> +
+>>>> +               sg_set_buf(sg, mparam->buf[i], PAGE_SIZE);
+>>>> +       }
+>>>> +
+>>>> +       return_ptr(mparam);
+>>>> +
+>>>> +err3:
+>>>> +       while (i-- > 0)
+>>>> +               free_page((unsigned long)mparam->buf[i]);
+>>>> +
+>>>> +       pr_err("dma_map_sg failed get free page on %s\n", 
+>>>> dev_name(mparam->dev));
+>>>> +       sg_free_table(&mparam->sgt);
+>>>> +err2:
+>>>> +       pr_err("dma_map_sg failed alloc sg table on %s\n", 
+>>>> dev_name(mparam->dev));
+>>>> +       kfree(mparam->buf);
+>>>> +err1:
+>>>> +       pr_err("dma_map_sg failed alloc mparam buf on %s\n", 
+>>>> dev_name(mparam->dev));
+>>>> +       return NULL;
+>>>> +}
+>>>> +
+>>>> +static void dma_sg_map_benchmark_unprepare(void *arg) {
+>>>> +       struct dma_sg_map_param *mparam = arg;
+>>>> +       int i;
+>>>> +
+>>>> +       for (i = 0; i < mparam->npages; i++)
+>>>> +               free_page((unsigned long)mparam->buf[i]);
+>>>> +
+>>>> +       sg_free_table(&mparam->sgt);
+>>>> +
+>>>> +       kfree(mparam->buf);
+>>>> +       kfree(mparam);
+>>>> +}
+>>>> +
+>>>> +static int dma_sg_map_benchmark_do_map(void *arg) {
+>>>> +       struct dma_sg_map_param *mparam = arg;
+>>>> +
+>>>> +       int sg_mapped = dma_map_sg(mparam->dev, mparam->sgt.sgl,
+>>>> +                                  mparam->npages, mparam->dma_dir);
+>>>> +       if (!sg_mapped) {
+>>>> +               pr_err("dma_map_sg failed on %s\n", 
+>>>> dev_name(mparam->dev));
+>>>> +               return -ENOMEM;
+>>>> +       }
+>>>> +
+>>>> +       return 0;
+>>>> +}
+>>>> +
+>>>> +static int dma_sg_map_benchmark_do_unmap(void *arg) {
+>>>> +       struct dma_sg_map_param *mparam = arg;
+>>>> +
+>>>> +       dma_unmap_sg(mparam->dev, mparam->sgt.sgl, mparam->npages,
+>>>> +                    mparam->dma_dir);
+>>>> +
+>>>> +       return 0;
+>>>> +}
+>>>> +
+>>>> +static struct map_benchmark_ops dma_sg_map_benchmark_ops = {
+>>>> +       .prepare = dma_sg_map_benchmark_prepare,
+>>>> +       .unprepare = dma_sg_map_benchmark_unprepare,
+>>>> +       .do_map = dma_sg_map_benchmark_do_map,
+>>>> +       .do_unmap = dma_sg_map_benchmark_do_unmap, };
+>>>> +
+>>>>   static struct map_benchmark_ops 
+>>>> *dma_map_benchmark_ops[DMA_MAP_MODE_MAX] = {
+>>>>          [DMA_MAP_SINGLE_MODE] = &dma_single_map_benchmark_ops,
+>>>> +       [DMA_MAP_SG_MODE] = &dma_sg_map_benchmark_ops,
+>>>>   };
+>>>>
+>>>>   static int map_benchmark_thread(void *data)
+>>>> -- 
+>>>> 2.33.0
+>>>>
+>> Thanks
+>> Barry
 
