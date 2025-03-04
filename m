@@ -1,196 +1,164 @@
-Return-Path: <linux-kernel+bounces-543308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B99B7A4D41B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:52:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8F30A4D41D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:52:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DB223ADE49
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:51:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E048A1896EA1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:52:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CDFE1F4E4F;
-	Tue,  4 Mar 2025 06:51:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82E271F5404;
+	Tue,  4 Mar 2025 06:52:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aF/Xk+hK"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HqOox4c1"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F7913C67C
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 06:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488FF13C67C;
+	Tue,  4 Mar 2025 06:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741071116; cv=none; b=Nfh9gr4lYYQ7qvIzMFJFSMVqia6Mcg48KnFvZGYnDuvd/6xPLTV55rIzvFPpuObbCALJPSKZtmWs1f8r9FHzSX2A4g1I0e/JoPQIIntBhf6jT0MCrZFQWRW+3ZPY3xXL2w8mjPmqmzcAGnXwQQJft9BWGX0Mu0Crxhs3KMbKKEA=
+	t=1741071151; cv=none; b=bG4OZPgbAzuEG3HXrSIeR/PxJVt6L5JKaSY/RbhuQ/uXY8B10g/DbpwzoRZwsSzXYtdZNtN6aMCJSY4z8J3DYxxGXvtLssQjd/M/EfKUksLpczoVmbSLylRZJ6X5Kra5Oa8XCvdtFz17oUMaNfNejnI/C0+VAMuLHusTwMdGDPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741071116; c=relaxed/simple;
-	bh=B8pwLAH5PRmaaLqV4s0UhtVNmaChZZBxuDzE6LonftQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=OiaZuKZ5ZPreVRx6IQJT8y4xIb/nNIKE77UwaQOTYhajzb4PmksewQ+YdqDveAGBkGkC/S98Zd81zfj2+WCCX3j74VXqoO56ZaUEZ3sP54+CHk2ILot6jK2o4OtMd/6FHtb5kjhsYdsnAhHtxDSTRU8Vio5A2FCkRbPUMMJJ3Tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aF/Xk+hK; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741071115; x=1772607115;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=B8pwLAH5PRmaaLqV4s0UhtVNmaChZZBxuDzE6LonftQ=;
-  b=aF/Xk+hKjhiAf5zwVgzA4JZEx/SFvQEgezK1/QMu9azg/avMWooycIAr
-   H/ECzKLMUwY1e1YEouWTXykfqnKKP+nzIw4Nk+iJxvwWclMcmkAHUZnLV
-   RFWwntc+/TfVaQzDcuHIE1YrRYQsciscFKxWEelB1BryXSeIX+uWsYlS9
-   ZiBZpvoUs39qWz1syuz98FgNejwdNwnkuvaEeH5qNiSaBgN1PL4w9pnMU
-   ghzgCjvE+QTI+VXbTT9DHlqYQcSHhowwjGX+8DLAGpxYW2jA5+2bZQp6i
-   kuUaTlOr7NevgQtD//sDAXfTpJqATfmZvL6AffeJrLXkJxkImQCTLHnef
-   g==;
-X-CSE-ConnectionGUID: GQxvA0Z6RZ2BsvC5dqqRLg==
-X-CSE-MsgGUID: Q2FyopADTaCByZZ3KlaXkw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="53368480"
-X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
-   d="scan'208";a="53368480"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 22:51:53 -0800
-X-CSE-ConnectionGUID: Oe6jlvS/S3WYUXEfNPDdUg==
-X-CSE-MsgGUID: IteWVqepSrWNR7Uvrq7aBA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
-   d="scan'208";a="118768560"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa010.fm.intel.com with ESMTP; 03 Mar 2025 22:51:51 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tpM7p-000JNW-0X;
-	Tue, 04 Mar 2025 06:51:37 +0000
-Date: Tue, 4 Mar 2025 14:51:22 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mark Pearson <markpearson@lenovo.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Hans de Goede <hdegoede@redhat.com>
-Subject: drivers/platform/x86/think-lmi.c:758:51: warning: '%s' directive
- argument is null
-Message-ID: <202503041429.NcONo2Xk-lkp@intel.com>
+	s=arc-20240116; t=1741071151; c=relaxed/simple;
+	bh=uCJH4LgvbpYu+bgfhR7Xd1uT5mKWrAQGIbTGlA28vZg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BRO44CV+SJ+wz+5vQpN6pq3k5NJtWKLwQonD6MQRPBruvLYy9bNRfY1+OH9vUeh0gN4eJy0U8T7Q5vxgQF6R/UxS+BflVA950skEr/wanetpZvCOfGWynVZsth/IIqNGQiu4/ZNQnJrs74KFTLg3PYVMHGYCjKW+fZKa9FH7SMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HqOox4c1; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5e033c2f106so6079963a12.3;
+        Mon, 03 Mar 2025 22:52:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741071148; x=1741675948; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7gqvPATBpXryjGxb/fOnenuIg3PJ2BiF+tgAUytlmv4=;
+        b=HqOox4c1+YlrvKSJ0f7ZaaDDH4VrBQlOG8ocMxtKu7nsySICayPoxHKslXLSLKxUxc
+         COyvFkRgYBxJTFHNjAAyaXMx9E+PGQxeS9C5HQ43hl0oynUwJ3LPNqGptN8UFQbFkvik
+         Ipw3kkARZhCEPkfau3FR9momvI4h7IQRCsjDx7C+i8j9oibyVkvWaS5dpVIuVgmfIGjD
+         kwJF9nBTY+uDJJF0HtewQtU7A7MD7lCqq60q0dC9S0b1pyyDnHZDyhUvRaL1WyhYW6MA
+         cYi0cqTBHWajYCyY3JbqETnsYdjLP4SboOqqiuJaPpJvhaaMnMnckrLehejh71u6WgRa
+         1r1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741071148; x=1741675948;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7gqvPATBpXryjGxb/fOnenuIg3PJ2BiF+tgAUytlmv4=;
+        b=GAsaTgTXbhEbTlVDO4j+rREyQ1hzHkAayNi4B4ZXzsVvivSUzUYFi5ZzhWo9avtw7h
+         WvVa6xuEnZryMw9s6Lph/N1l2FI61hP4dUiezfqPXhj8PxhZ4zYI3sowm4n4xZLeGQ+O
+         meePRwD2mmFrz2OBY7IqpHGQOKqTDW5ivjl8cAiBns/pQQyNRmndp/a7iwu5CtxPzYDC
+         FnMPRDAvSk6u6KFga+oXeWoIymhdo1UYYG3JwO0Uj2FvP4a6iD/H3bD3xSs4cYdGptOt
+         pdbJXZnhmgJRVIpIO8D6/QYe3hak509kUB989i44RLtNwShOTxOvkpvp7+GEYY1M1f/K
+         0dqw==
+X-Forwarded-Encrypted: i=1; AJvYcCV8TXl4A32QjIuV9rKF6a+MUeiMoD8046Z3Wk+VTpyCfJ+NQlJ6W3+YuOw7juUxi62OLwM2x4cnIUNhbuk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhDX27Ir1Doy3I5ID1v6t0dCgrkY2GQVML/VpYb+P6c+eWqhhT
+	9VCib4/FEUtXH0KgzeIrz+JwkZj/R4IjHxRow5y/4tzF6mkyzHTox4c5cu9gwRLfHhvJNXMEiLe
+	B+fhaMJMsAmGAGnkX4Aqql/StMVk=
+X-Gm-Gg: ASbGncuIWExX3xr9C685zvqRDbYEXOT3AEqKLHWrndymrp3N1prGELol2P70FUbdHcg
+	n945b8qwOHtv4n9QtCVftpTwKZIik53aDuMo1tDTyS5nyMTtbTZqdCUTndgWxDivB94nGecLtuv
+	QT8Qlzj5AsJmttfxt+tSmJB1PVxw==
+X-Google-Smtp-Source: AGHT+IEoEgoewhNzbrocvPAgQEJRFCpSWbb0viTio+R2IaeI6ydmAhu05tIqy0cYx2sId9e5nBM5ugzJxlTNtDSCyPM=
+X-Received: by 2002:a05:6402:1d4a:b0:5de:dfde:c8b1 with SMTP id
+ 4fb4d7f45d1cf-5e4d6ac536emr37983231a12.4.1741071148207; Mon, 03 Mar 2025
+ 22:52:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20250304035447.3138221-1-adamsimonelli@gmail.com> <20250304035447.3138221-4-adamsimonelli@gmail.com>
+In-Reply-To: <20250304035447.3138221-4-adamsimonelli@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 4 Mar 2025 08:51:52 +0200
+X-Gm-Features: AQ5f1JrjwVMGYuo4mncDNMG2zmDdlxKpJ9E0m4MaDvLRULtrFcJaHkUZADWwYh0
+Message-ID: <CAHp75VftQASqajiG_z-==CmVMu5Orv_Q8QMj-7W=sxsJPq6bJw@mail.gmail.com>
+Subject: Re: [PATCH v6 3/3] tty: Change order of ttynull to be linked sooner
+ if enabled as a console.
+To: adamsimonelli@gmail.com
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jiri Slaby <jirislaby@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, John Ogness <john.ogness@linutronix.de>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, Petr Mladek <pmladek@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Mark,
+On Tue, Mar 4, 2025 at 5:55=E2=80=AFAM <adamsimonelli@gmail.com> wrote:
+>
+> From: Adam Simonelli <adamsimonelli@gmail.com>
+>
+> If CONFIG_NULL_TTY_DEFAULT_CONSOLE is enabled, and CONFIG_VT is disabled,
+> ttynull will become the default primary console device, based on the link
+> order.
+>
+> Many distributions ship with CONFIG_VT enabled. On tested desktop hardwar=
+e
+> if CONFIG_VT is disabled, the default console device falls back to
+> /dev/ttyS0 instead of /dev/tty.
+>
+> This could cause issues in user space, and hardware problems:
+>
+> 1. The user space issues include the case where  /dev/ttyS0 is
+> disconnected, and the TCGETS ioctl, which some user space libraries use
+> as a probe to determine if a file is a tty, is called on /dev/console and
+> fails. Programs that call isatty() on /dev/console and get an incorrect
+> false value may skip expected logging to /dev/console
 
-FYI, the error/warning still remains.
+Missing period at the end.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   99fa936e8e4f117d62f229003c9799686f74cebc
-commit: b49f72e7f96d4ed147447428f2ae5b4cea598ca7 platform/x86: think-lmi: Certificate authentication support
-date:   3 years ago
-config: x86_64-randconfig-161-20230920 (https://download.01.org/0day-ci/archive/20250304/202503041429.NcONo2Xk-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250304/202503041429.NcONo2Xk-lkp@intel.com/reproduce)
+> 2. The hardware issues include the case if a user has a science instrumen=
+t
+> or other device connected to the /dev/ttyS0 port, and they were to upgrad=
+e
+> to a kernel that is disabling the CONFIG_VT option, kernel logs will then=
+ be
+> sent to the device connected to /dev/ttyS0 unless they edit their kernel
+> command line manually.
+>
+> The new CONFIG_NULL_TTY_CONSOLE option will give users and distribution
+> maintainers an option to avoid this. Disabling CONFIG_VT and enabling
+> CONFIG_NULL_TTY_CONSOLE will ensure the default kernel console behavior
+> is not dependant on hardware configuration by default, and avoid
+> unexpected new behavior on devices connected to the /dev/ttyS0 serial
+> port.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503041429.NcONo2Xk-lkp@intel.com/
+...
 
-All warnings (new ones prefixed by >>):
+>  obj-y                          +=3D vt/
 
-   drivers/platform/x86/think-lmi.c: In function 'certificate_store':
->> drivers/platform/x86/think-lmi.c:758:51: warning: '%s' directive argument is null [-Wformat-overflow=]
-     758 |                 auth_str = kasprintf(GFP_KERNEL, "%s,%s",
-         |                                                   ^~
++ blank line.
 
+> +# If ttynull is configured to be a console by default, ensure that it is=
+ linked
+> +# earlier before a real one is selected.
+> +obj-$(CONFIG_NULL_TTY_DEFAULT_CONSOLE) \
+> +                               +=3D ttynull.o
 
-vim +758 drivers/platform/x86/think-lmi.c
+Here is the question: are you sure that all console drivers that exist
+in the kernel happen to be here? Have you grepped the source tree for
+checking this?
 
-   727	
-   728	static ssize_t certificate_store(struct kobject *kobj,
-   729					  struct kobj_attribute *attr,
-   730					  const char *buf, size_t count)
-   731	{
-   732		struct tlmi_pwd_setting *setting = to_tlmi_pwd_setting(kobj);
-   733		char *auth_str, *new_cert;
-   734		char *guid;
-   735		int ret;
-   736	
-   737		if (!capable(CAP_SYS_ADMIN))
-   738			return -EPERM;
-   739	
-   740		if (!tlmi_priv.certificate_support)
-   741			return -EOPNOTSUPP;
-   742	
-   743		new_cert = kstrdup(buf, GFP_KERNEL);
-   744		if (!new_cert)
-   745			return -ENOMEM;
-   746		/* Strip out CR if one is present */
-   747		strip_cr(new_cert);
-   748	
-   749		/* If empty then clear installed certificate */
-   750		if (new_cert[0] == '\0') { /* Clear installed certificate */
-   751			kfree(new_cert);
-   752	
-   753			/* Check that signature is set */
-   754			if (!setting->signature || !setting->signature[0])
-   755				return -EACCES;
-   756	
-   757			/* Format: 'serial#, signature' */
- > 758			auth_str = kasprintf(GFP_KERNEL, "%s,%s",
-   759					dmi_get_system_info(DMI_PRODUCT_SERIAL),
-   760					setting->signature);
-   761			if (!auth_str)
-   762				return -ENOMEM;
-   763	
-   764			ret = tlmi_simple_call(LENOVO_CLEAR_BIOS_CERT_GUID, auth_str);
-   765			kfree(auth_str);
-   766			if (ret)
-   767				return ret;
-   768	
-   769			kfree(setting->certificate);
-   770			setting->certificate = NULL;
-   771			return count;
-   772		}
-   773	
-   774		if (setting->cert_installed) {
-   775			/* Certificate is installed so this is an update */
-   776			if (!setting->signature || !setting->signature[0]) {
-   777				kfree(new_cert);
-   778				return -EACCES;
-   779			}
-   780			guid = LENOVO_UPDATE_BIOS_CERT_GUID;
-   781			/* Format: 'Certificate,Signature' */
-   782			auth_str = kasprintf(GFP_KERNEL, "%s,%s",
-   783					new_cert, setting->signature);
-   784		} else {
-   785			/* This is a fresh install */
-   786			if (!setting->valid || !setting->password[0]) {
-   787				kfree(new_cert);
-   788				return -EACCES;
-   789			}
-   790			guid = LENOVO_SET_BIOS_CERT_GUID;
-   791			/* Format: 'Certificate,Admin-password' */
-   792			auth_str = kasprintf(GFP_KERNEL, "%s,%s",
-   793					new_cert, setting->password);
-   794		}
-   795		if (!auth_str) {
-   796			kfree(new_cert);
-   797			return -ENOMEM;
-   798		}
-   799	
-   800		ret = tlmi_simple_call(guid, auth_str);
-   801		kfree(auth_str);
-   802		if (ret) {
-   803			kfree(new_cert);
-   804			return ret;
-   805		}
-   806	
-   807		kfree(setting->certificate);
-   808		setting->certificate = new_cert;
-   809		return count;
-   810	}
-   811	
+...
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> +# If ttynull is enabled, but not as a boot console, it is linked and use=
+d later
+> +# after the real ones.
+> +ifneq ($(CONFIG_NULL_TTY_DEFAULT_CONSOLE),y)
+
+Also can be written as
+ifeq ($(...),)
+but it might be less explicit. Up to you.
+
+>  obj-$(CONFIG_NULL_TTY)         +=3D ttynull.o
+> +endif
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
