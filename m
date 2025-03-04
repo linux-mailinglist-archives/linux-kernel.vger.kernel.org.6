@@ -1,138 +1,126 @@
-Return-Path: <linux-kernel+bounces-544732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11724A4E5B1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:24:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0367A4E436
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:51:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2934B8C0014
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:50:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 584E57A374A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:50:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7297A27CCE5;
-	Tue,  4 Mar 2025 15:34:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB96C27E1B1;
+	Tue,  4 Mar 2025 15:35:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XARYIuYr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DifDLZQq"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B733927CCD5;
-	Tue,  4 Mar 2025 15:34:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9910B27D79C;
+	Tue,  4 Mar 2025 15:35:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741102472; cv=none; b=XxfxMgWSNc4KYhio+RgndxOSsiZ+4xfww7m2FejtlHvXGkfRAxDx9SH9BKMDirMnmMjOKnMHmrM0tbpor11bbNhMXPIElVyBcMWRZDrioMvyPCVoX1IX1PDQWR37PHlL6iBylZSU6re0OL+alQCU97TOltBTVxeJZ9jCRJsOVkc=
+	t=1741102505; cv=none; b=Kao5lHliollAKpGNhu1/NAmnBYI2YIaSMYBbjVrga76VIzFAnX2dcA9FD08ZEVVowzBJ8jl3NLwngMEWNBjV6pbJLhSCT9y4t5w3rnb9gdpDJPfF7zzZ+pNM0vbw8Sq/4OX6C3eB8prL8NhOAuwcFuvSuc1NvyMzZkoSLzFfkRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741102472; c=relaxed/simple;
-	bh=H0Nu6AdoApme9k39syzCONUq4pJUthJi+iBb+eyJkVw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=YbZLWaTxmNS3oRDm76RGLU3mHMWCmwiRh4C5VFx8axXgX5DG1mPigYGckaKbgikGC3WGr6bfLQMuWuihcVzFvlPpg6gNJsniHIt4BpIuDVs8hdOiWo/AMkoATHVcTLuHuQmc4z04hP2/kyivUb26tjqMCH07G4pkI0/6vE84MVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XARYIuYr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 240DAC4CEE5;
-	Tue,  4 Mar 2025 15:34:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741102472;
-	bh=H0Nu6AdoApme9k39syzCONUq4pJUthJi+iBb+eyJkVw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=XARYIuYrlWgJj9dDrgvYD8z5gwOWHAfuk0TYWmZ4rk6MywSTNvvaw/Qw52GRiuEiq
-	 834Mjaxz8P8Zw2d+EPgnWHySwkrmhRAS+yIokkz8FLXvg+tZ4CY/t2V0Fxxw68E5TH
-	 RaK0NTPszIwgnLNaoc+OtrGataycbcmOu9A9bseptM77Ryq0g4EBc/Ii/RqGx0IG+b
-	 jKb1uzgeAJZiTOMMCkfwQTHh8QPp3fpabbVxXmm4eccGza7kldl7+szXRSkcgXl6di
-	 B4p3VxTXGHvxOVOgGX3oPEWCzcTbZezWWVzMFWnfGdgRjYl0N5Kaa3irUwvQVtNpsH
-	 4yziXr8n8LJlA==
-Date: Tue, 4 Mar 2025 09:34:30 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: kernel test robot <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-pci@vger.kernel.org,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Christian =?utf-8?B?S8O2bmln?= <ckoenig.leichtzumerken@gmail.com>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH v2 1/2] PCI: Avoid pointless capability searches
-Message-ID: <20250304153430.GA227597@bhelgaas>
+	s=arc-20240116; t=1741102505; c=relaxed/simple;
+	bh=O5BPl3Fu5wJkHXKEYtyH4ta5yhgbg1I1X4DpIIkIPh4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MNSEiQb0mSM24hR+XIg4ATtsCNx39MAbWcEA/tivSaqzpEIFcbcmvkybkEh3croLlO42BG+o7vEG/BAJWfXHHoutPuAOhmQ4ifcTb+s51NVSEpA/TdRXNGBbSzA3YjtjGY4h+xm/3H+GtzXaJubyEQypE0Jrv6mFiC9Ejib1bkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DifDLZQq; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-abbd96bef64so908810766b.3;
+        Tue, 04 Mar 2025 07:35:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741102502; x=1741707302; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XwZWXvpRlzaapz6M25h0ltLJIX9XFgudqnE1z2aOvDw=;
+        b=DifDLZQqmuk/rICdGfbZqKus8gIQF0RsDlXWsCQA2tcgRyjxN229DOKlb9Ix/nKkc8
+         xnZz0CaoMN0JeLRHv3Fgi2ymtg/ym7c1YUG6Yq2vt7sV3sXKxuhYnWQqWzWJ77yMBkmj
+         vve/ORUY1TWmCAQMipJOFouP6ucnMFNLVYBucYO9HanRBIo9NUFAUy3YdV68hNbC5Xco
+         nOwug+sR9sRaNUw351cv9gVGznzuo/0vbYnnFQ0iz0viUCBJ+bEu47X2jv6EfoQUsXYv
+         5UxEiTc1obwPgDqXm59N2X5yUugn5EcBoJYXQaaOPOMxMi2pZ3Niq1C4VJDmWM98yZIx
+         WO0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741102502; x=1741707302;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XwZWXvpRlzaapz6M25h0ltLJIX9XFgudqnE1z2aOvDw=;
+        b=kxVGH9fjKcogfMWt6+ecolEqbGyho2L895tAe/vywFete1hRLm4tnP6/tM+oV+gpcA
+         jsCVouyxJXFKaS9KdMi2DbY86NqVlWXClGFFpKlhc1XyyTFYiCt9OdA3PW6Ba28hW2GZ
+         lKr0PuG0U5JQwW8jXr+yNTyE+kOa7GXm5IjryE3of0xvKP+MgCm9LLlOfcODRWIRmHpv
+         jSCvsb0F/Z7K7xJLmT3jSXhDAMe+CHURICh4gcLGXVc/oNlY6n0lEOV14le+BixBRcMV
+         lm2BFoZ0DrtWZ+w9cA4JXwLOt6SYisAvQsLXacQ3T9xVfGSLRcIWa1F3QpTnnJRDVdO3
+         P+eg==
+X-Forwarded-Encrypted: i=1; AJvYcCUJHvON/LGHLNvs/tKtskjkTjF+3LuYn8+fiRAewCN6D8jSBoBbNUoB3ZJFVW5RjkCRRsZAR7GGJeKb@vger.kernel.org, AJvYcCVCvw5CtI4paRtg1QiklfZYJUtWkzxKJ1hlbir/3NrT5GxhWYbd/GInBORufuUdVRgG2Y98IMO3Ho2Lz4kH@vger.kernel.org, AJvYcCVSGRLW1AlYipcpkNWLCJmOjKvH0qgJ3h1UILSL7UDetkUSz1ynDS3pMXavFTKoFKFJiId845iNXGZV@vger.kernel.org
+X-Gm-Message-State: AOJu0YzON4oqPqDdx/dLkSEyDpDdEn9ked41/dD+bKAFGNHEwuqBF2lI
+	ZkD8L/sH5rxEH/7VROz/OGXKuCjbWZ3S/WhtTt3wJqK9oSoeZdqd
+X-Gm-Gg: ASbGnct78r5lKFy1osokgTGJTytw0CxdOb6Etd1VdEMtMf0KCjhYAgsvQ19sJddFciV
+	NeeEeQhQcvj4+t2drXRrPM7GyOksBvEeTi2X1PBlxrvUhlyfwTfcwbWOv8yXA0Upn8cePGyu0jO
+	iqWR0p2eYrfybcvhOt0DbfPVZvehxm/D1wJWbY2ZtvMSLv/AuXwIvhtklwSoFX0qNIycMP+7kKa
+	EtFV9QmpmxrGqF/bMLWhmdqbgCPSJRTtRL6nkXsfXswtI5e1HobEx9SnVTKnWVrBw7g02SHV+7k
+	fyE0LihdS1LAopES8k0k9rI+3bIhTPK2I/Zm06fzMS+9tfbAqbeUj6+9lq8vghp6GxdvbO6Faw=
+	=
+X-Google-Smtp-Source: AGHT+IGYG9XakyW+UdqNNLCDXpKkxXWG7Y4hV03XJnaZ6z+kf+TWlmY7SAdaNuPfFRb4w3Wi/uqpzw==
+X-Received: by 2002:a17:907:988:b0:ab7:da56:af9f with SMTP id a640c23a62f3a-abf26859581mr2151760166b.49.1741102501551;
+        Tue, 04 Mar 2025 07:35:01 -0800 (PST)
+Received: from [192.168.1.132] ([82.79.237.110])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf74e85fbfsm404613066b.15.2025.03.04.07.35.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Mar 2025 07:35:01 -0800 (PST)
+Message-ID: <09aba9f8-354d-4987-9026-37eb3ca26d6f@gmail.com>
+Date: Tue, 4 Mar 2025 17:34:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202503042124.7627f722-lkp@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/4] clk: imx8mp: fix parents of AUDIOMIX DSP/OCRAM_A
+To: Abel Vesa <abel.vesa@linaro.org>, Abel Vesa <abelvesa@kernel.org>,
+ Peng Fan <peng.fan@nxp.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Marek Vasut <marex@denx.de>, Stephen Boyd <sboyd@kernel.org>,
+ Shengjiu Wang <shengjiu.wang@nxp.com>, Adam Ford <aford173@gmail.com>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
+ linux-clk@vger.kernel.org, imx@lists.linux.dev, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250226164513.33822-1-laurentiumihalcea111@gmail.com>
+ <174102305899.2928950.8837177294161174759.b4-ty@linaro.org>
+ <Z8Xn7f6vXg0aM4zx@linaro.org>
+Content-Language: en-US
+From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+In-Reply-To: <Z8Xn7f6vXg0aM4zx@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 04, 2025 at 10:12:48PM +0800, kernel test robot wrote:
-> kernel test robot noticed "last_state.booting" on:
-> 
-> commit: c8a9382e172ac80bc96820b3ec758e35cdc05c06 ("[PATCH v2 1/2] PCI: Avoid pointless capability searches")
-> url: https://github.com/intel-lab-lkp/linux/commits/Bjorn-Helgaas/PCI-Avoid-pointless-capability-searches/20250215-080525
-> base: https://git.kernel.org/cgit/linux/kernel/git/pci/pci.git next
-> patch link: https://lore.kernel.org/all/20250215000301.175097-2-helgaas@kernel.org/
-> patch subject: [PATCH v2 1/2] PCI: Avoid pointless capability searches
 
-This patch was dropped in next-20250224.
 
-> in testcase: xfstests
-> version: xfstests-x86_64-8467552f-1_20241215
-> with following parameters:
-> 
-> 	disk: 4HDD
-> 	fs: ext2
-> 	test: generic-holetest
-> 
-> 
-> 
-> config: x86_64-rhel-9.4-func
-> compiler: gcc-12
-> test machine: 4 threads Intel(R) Core(TM) i5-6500 CPU @ 3.20GHz (Skylake) with 32G memory
-> 
-> (please refer to attached dmesg/kmsg for entire log/backtrace)
-> 
-> 
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <oliver.sang@intel.com>
-> | Closes: https://lore.kernel.org/oe-lkp/202503042124.7627f722-lkp@intel.com
-> 
-> 
-> The kernel config and materials to reproduce are available at:
-> https://download.01.org/0day-ci/archive/20250304/202503042124.7627f722-lkp@intel.com
-> 
-> 
-> 
-> [   62.784123][  T284] LKP: waiting for network...
-> [   62.784128][  T284] 
-> [   63.218408][  T284] ls /sys/class/net
-> [   63.218417][  T284] 
-> [   63.224484][  T284] lo
-> [   63.224490][  T284] 
-> [   64.076175][    T1] watchdog: watchdog0: watchdog did not stop!
-> [   64.157917][    T1] watchdog: watchdog0: watchdog did not stop!
-> [   64.196710][    T1] sd 1:0:0:0: [sdb] Synchronizing SCSI cache
-> [   64.202659][    T1] sd 0:0:0:0: [sda] Synchronizing SCSI cache
-> [   64.969888][    T1] pcieport 0000:00:01.0: VC0 negotiation stuck pending
-> [   64.977342][    T1] ACPI: PM: Preparing to enter system sleep state S5
-> [   64.986446][    T1] kvm: exiting hardware virtualization
-> reboot: Restarting system
-> 
-> 
-> there is no more useful information, seems our test machine just reboot here.
-> this is not observed on the parent commit, c71f7bbc5d794, which chosen as the
-> base by bot.
-> 
-> * a234e07a63859 (linux-review/Bjorn-Helgaas/PCI-Avoid-pointless-capability-searches/20250215-080525) PCI: Cache offset of Resizable BAR capability
-> * c8a9382e172ac PCI: Avoid pointless capability searches
-> *   c71f7bbc5d794 Merge branch 'pci/endpoint'
-> 
-> c71f7bbc5d794984 c8a9382e172ac80bc96820b3ec7
-> ---------------- ---------------------------
->        fail:runs  %reproduction    fail:runs
->            |             |             |
->            :6          100%           6:6     last_state.booting
-> 
-> 
-> -- 
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
-> 
+On 3/3/2025 7:33 PM, Abel Vesa wrote:
+> On 25-03-03 19:30:58, Abel Vesa wrote:
+>> On Wed, 26 Feb 2025 11:45:09 -0500, Laurentiu Mihalcea wrote:
+>>> Correct the parent of the AUDIOMIX DSP and OCRAM_A clock gates by setting
+>>> it to AUDIO_AXI_CLK_ROOT, instead of AUDIO_AHB_CLK_ROOT. Additionally, set
+>>> the frequency of AUDIO_AXI_CLK_ROOT to 800MHz instead of the current
+>>> 400MHz.
+>>>
+>> Applied, thanks!
+>>
+>> [1/4] dt-bindings: clock: imx8mp: add axi clock
+>>       commit: 2471a101938b0d1835b1983df08daeb98eef1205
+>> [2/4] clk: clk-imx8mp-audiomix: fix dsp/ocram_a clock parents
+>>       commit: 91be7d27099dedf813b80702e4ca117d1fb38ce6
+>> [3/4] arm64: dts: imx8mp: add AUDIO_AXI_CLK_ROOT to AUDIOMIX block
+>>       (no commit info)
+>> [4/4] arm64: dts: imx8mp: change AUDIO_AXI_CLK_ROOT freq. to 800MHz
+>>       (no commit info)
+> Applied only patches 1 and 2.
+>
+> My b4 setup messed up. Sorry.
+would it be possible to also have patch no. 3 merged via the IMX CLK tree? I'd like to at least keep the first 3 patches together as they all fix the issue of OCRAM_A/DSP clocks having the wrong parent. if not, Shawn would you mind picking up patches 3 and 4? Thanks!
 
