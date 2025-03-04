@@ -1,117 +1,137 @@
-Return-Path: <linux-kernel+bounces-544984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 294A6A4E78D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:06:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EF367A4E7B8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:09:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4053420531
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:56:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AA01422C42
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:58:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5656727F4CC;
-	Tue,  4 Mar 2025 16:35:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB628285416;
+	Tue,  4 Mar 2025 16:36:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j7hQIFxO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Eyoho5pw"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C35264A91;
-	Tue,  4 Mar 2025 16:35:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6E43284B22;
+	Tue,  4 Mar 2025 16:36:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741106126; cv=none; b=I8kKy91XM3nYALhz4xEeaBVC9er2mISSqs/DNZ1PobzbUbnGBTkwbLKyOEaGE4JbtfFxCkQRkvKKalCmVX1PPnIQ9f3/MEwyZE1Ql8Gf7AsB5EyOQuQELWpK96Gl+h53fEym0TqW1wbhcEMKoQMjK0Ipkxi6bWbbNNyc8hKMlnQ=
+	t=1741106206; cv=none; b=cXBZXkT8NArNNMNr/Dc2X2eyU6LYRODBDMjMv3PpyhKhE8hkpQGR0zwxzsMIT2FFO12QEPr9d1YUHvIWPtgGK0cXRPVAHkC6WUHkCfmoCwbSPGp98PniKnlUeFlhYR0mePRskX8arqswii+o1QmKaiK2kLbsQsQkD066x55EoxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741106126; c=relaxed/simple;
-	bh=uTZtAcGD27ys5mwl7TA1zFMFkvyG6nq684nffzW7D+0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lTs13lHMFnWoIcuyZnLsV8JQaJu27xWQ6fw105kPEytb2HZGDgr6KsGh8s/ezZr4iwuQOxYPDGZ+d4Y7kzLrH+bhR4SqDi5FI1tummcsJdswrTv/wqYcS5WA8ybXFxPllORfl3WlYdF9o77CzBELR9moMxDUrDm++DNYffuGfss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j7hQIFxO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E38F0C4CEE5;
-	Tue,  4 Mar 2025 16:35:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741106126;
-	bh=uTZtAcGD27ys5mwl7TA1zFMFkvyG6nq684nffzW7D+0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=j7hQIFxOQbVS5TqOYMymW+CSIlJL61wC45Uupjdl3+yzYs5Si4DmYm3zhhYiKmvNk
-	 Du9i+KeqqUG6B5c8UEmr9CzuW/j1eaeEufIMYE2c+WhGLu/EShCtUJuPJ4ex4ZLU5g
-	 XJH/0ypQ8gM6O7oIAFMqPB50BXkSCcrdAQtVW1g4sbnxXz5xmAKgd9CNQkP3QXks90
-	 dHkJZL+n1xuu9rlnAOPWkbFyM0TEupuonsmsycbmnWUcy6u7N8DKfS4yFCG7mxX/y/
-	 shhNPv22SIQEZsKTi7ohoOYETJl+TnnciBHA5z9wmyKoqhts9k9PuLyyYesElH1oTH
-	 KSxJnVonW+v+Q==
-Date: Tue, 4 Mar 2025 08:35:24 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Paolo Abeni <pabeni@redhat.com>, Christoph Hellwig <hch@lst.de>, Marek
- Szyprowski <m.szyprowski@samsung.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Rasesh Mody <rmody@marvell.com>,
- GR-Linux-NIC-Dev@marvell.com, Andrew Lunn <andrew+netdev@lunn.ch>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>
-Subject: Re: [PATCH net v1 1/1] bnx2: Fix unused data compilation warning
-Message-ID: <20250304083524.3fe2ced4@kernel.org>
-In-Reply-To: <Z8cC_xMScZ9rq47q@smile.fi.intel.com>
-References: <20250228100538.32029-1-andriy.shevchenko@linux.intel.com>
-	<20250303172114.6004ef32@kernel.org>
-	<Z8bcaR9MS7dk8Q0p@smile.fi.intel.com>
-	<5ec0a2cc-e5f6-42dd-992c-79b1a0c1b9f5@redhat.com>
-	<Z8bq6XJGJNbycmJ9@smile.fi.intel.com>
-	<Z8cC_xMScZ9rq47q@smile.fi.intel.com>
+	s=arc-20240116; t=1741106206; c=relaxed/simple;
+	bh=/VwNv+f8CqDK8yhQ9iAAKbwqtOiBwJEN6Hd2TghtFZ0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NBjtrVdTxvaPWv0eL2qpXBMS6IKmSGJJgE7sElyh+7nEjc0Mkp9GjjM2rhNmex5WOMyKlz6Pn1/0yW8Si62lftpLkks3OjVqH+E1rqMeJJVUzNeuJf68CuzMw2fkYUq4Iimpxgk4LZmLdDjxlrk9UTcG1I2m9QYE0HgniZlE9D0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Eyoho5pw; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5e0373c7f55so9020813a12.0;
+        Tue, 04 Mar 2025 08:36:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741106203; x=1741711003; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4x36SfgwH4a6mzeRo5RiBu0YGb1BD/4sIrjIFpJZWhg=;
+        b=Eyoho5pwkWIdGz3ptBiLZSaEZ8UzhsEn2ofB94ISVijqT9p/xjCQjWrv0Ng0st1QPM
+         BtLuYelJIJM7NMffEPOxB3Ow6hCF+cXjhLp4LDCXbLZcoAtPi2FEzanK/iiGALLCURdu
+         pk2feG+VGNfUh0PzMljcD47D9ZFuzMnFJdrfmPW8l8kbWCHclgz5cHMosISeBCT9Um4F
+         z5iRypUM+4vPEcv+Cd4QqakkVkYYKo0zBhfrJ7Lr1TQx3BfbvRPjc5hL9K+p1q8r/U43
+         3E7vCJHSG/YvWwyk8UAYFY42YTL0HtKr01hbcu5W2zOtx2vfljlzkwTVQIslc2+wR2Nz
+         FEqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741106203; x=1741711003;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4x36SfgwH4a6mzeRo5RiBu0YGb1BD/4sIrjIFpJZWhg=;
+        b=ratG4jhGdAYh2i1Af2vLhpAUt9bZnBDRILlHQeG5lcAp192HLjVO3B3iTulWCZdhlU
+         7xbs4OcjwyNIod3knn40qiYrRNFaF1jnVU3TFYj8w+CVEJS2RDDTjqxF42R+QHe97be0
+         PjA4fFXW6VIS46XSSanPp3NgXUk7LCLyOz19mx6V9K3v6Kw2tpvCovkH+VudmgvKG4io
+         15FC8GzMu3YrDt5EjchfG0BxkLB7vyedGMPZEd5P6gJsehEcWJalBfoRSQwDCU0iTZZb
+         +J8QrYt7eGpiuoYg4A6i6lQCp0WWlAuZY4F/EtJ5QJLCSh8XWeNm+8z0EZ8JctDsgrvY
+         6exg==
+X-Forwarded-Encrypted: i=1; AJvYcCUR/0NsVC+F2SIUak9lfKhHGQzS7PAm5qFblVEDq1vmKxRLC7YnPhOG3H++C/43a8kG1RgYDC77rCdXWfuo@vger.kernel.org, AJvYcCXH+TI4UDu+pWDrOo2y8r79egdkDo5rw9JopwifnmuIBJpVGaY4mRWRz9BJbk7oNWTM/dCKS3fxyHj34lky@vger.kernel.org
+X-Gm-Message-State: AOJu0YzW3+cLBUo8H4i4ZJeCT2dt5M5TqwhBMja1ajjmgrGJCZODJL9J
+	rDU8Ba1YCcsL7/ds0k2LHqUlTerPHLOuzwHxXSzwQaCN6uCxPpYf
+X-Gm-Gg: ASbGncthR+62crUGCWCfBPczuayt/bQJiOqCNzXol5Ntu4cXb0qUETUgvQCscEq9F7v
+	UEKP8+Xy/rJcH5VjqOpZjs5zsE7a1NCLrFX69edAqBTHlLYXaK9HD4hM/RTrqa+ORpL55wzz1/P
+	bzATHocnt8xc6sHNysYC1nfMUQJicsGTBTBH53TVmYLg+wa1kczIFMLUqh0AR37Ryf9oaOvBFc2
+	5lTY60G8KcJ6M3gK2E3uWdvl8SqodLANskDqbtaQbvsz8LdDMKn5Ksc7PJo5fb7z/mU1Ju75ZSu
+	hud4/51DAV18/ZQnAS9/hoJA/eIqnaw3JcqKYZj1wj8g0xo9pbAnml8nBh75
+X-Google-Smtp-Source: AGHT+IH0ZLeSdC9t0mplrw5KelaqsUA2cuiAMNaazjh3v6eX2ezqTG1WJ11/Rv4ofHjtx2jZS+qoeQ==
+X-Received: by 2002:a05:6402:27d4:b0:5e4:c522:51cd with SMTP id 4fb4d7f45d1cf-5e4d6b691cbmr18558642a12.20.1741106202474;
+        Tue, 04 Mar 2025 08:36:42 -0800 (PST)
+Received: from f.. (cst-prg-71-44.cust.vodafone.cz. [46.135.71.44])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e4c43a663fsm8246202a12.68.2025.03.04.08.36.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 08:36:41 -0800 (PST)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [RFC PATCH 0/2] avoid the extra atomic on a ref when closing a fd
+Date: Tue,  4 Mar 2025 17:36:29 +0100
+Message-ID: <20250304163631.490769-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Tue, 4 Mar 2025 15:41:19 +0200 Andy Shevchenko wrote:
-> > > diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-> > > index b79925b1c433..927884f10b0f 100644
-> > > --- a/include/linux/dma-mapping.h
-> > > +++ b/include/linux/dma-mapping.h
-> > > @@ -629,7 +629,7 @@ static inline int dma_mmap_wc(struct device *dev,
-> > >  #else
-> > >  #define DEFINE_DMA_UNMAP_ADDR(ADDR_NAME)
-> > >  #define DEFINE_DMA_UNMAP_LEN(LEN_NAME)
-> > > -#define dma_unmap_addr(PTR, ADDR_NAME)           (0)
-> > > +#define dma_unmap_addr(PTR, ADDR_NAME)           (((PTR)->ADDR_NAME), 0)
-> > >  #define dma_unmap_addr_set(PTR, ADDR_NAME, VAL)  do { } while (0)
-> > >  #define dma_unmap_len(PTR, LEN_NAME)             (0)
-> > >  #define dma_unmap_len_set(PTR, LEN_NAME, VAL)    do { } while (0)
-> > > ---
-> > > 
-> > > Would that work?  
-> 
-> Actually it won't work because the variable is under the same ifdeffery.
-> What will work is to spreading the ifdeffery to the users, but it doesn't any
-> better than __maybe_unsused, which is compact hack (yes, I admit that it is not
-> the nicest solution, but it's spread enough in the kernel).
+The stock kernel transitioning the file to no refs held penalizes the
+caller with an extra atomic to block any increments.
 
-I meant something more like (untested):
+For cases where the file is highly likely to be going away this is
+easily avoidable.
 
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index b79925b1c433..a7ebcede43f6 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -629,10 +629,10 @@ static inline int dma_mmap_wc(struct device *dev,
- #else
- #define DEFINE_DMA_UNMAP_ADDR(ADDR_NAME)
- #define DEFINE_DMA_UNMAP_LEN(LEN_NAME)
--#define dma_unmap_addr(PTR, ADDR_NAME)           (0)
--#define dma_unmap_addr_set(PTR, ADDR_NAME, VAL)  do { } while (0)
--#define dma_unmap_len(PTR, LEN_NAME)             (0)
--#define dma_unmap_len_set(PTR, LEN_NAME, VAL)    do { } while (0)
-+#define dma_unmap_addr(PTR, ADDR_NAME)           ({ typeof(PTR) __p __maybe_unused = PTR; 0; )}
-+#define dma_unmap_addr_set(PTR, ADDR_NAME, VAL)  do { typeof(PTR) __p __maybe_unused = PTR; } while (0)
-+#define dma_unmap_len(PTR, LEN_NAME)             ({ typeof(PTR) __p __maybe_unused = PTR; 0; )}
-+#define dma_unmap_len_set(PTR, LEN_NAME, VAL)    do { typeof(PTR) __p __maybe_unused = PTR; } while (0)
- #endif
- 
- #endif /* _LINUX_DMA_MAPPING_H */
+The obvious place is the close() system call, patched in 2/2.
 
+But part from that possible callers (to be evaluated):
+- clean up after failed open (common)
+- close_range
+- close on exec
+- process exit
 
-I just don't know how much code out there depends on PTR not
-existing if !CONFIG_NEED_DMA_MAP_STATE
+So 1/1 adds some routines and 2/2 uses one of them. The rest can be
+tackled on later or I can send a v2 with more places sorted out.
+
+In the open+close case the win is very modest because of the following
+problems:
+- kmem and memcg having terrible performance
+- putname using an atomic (I have a wip to whack that)
+- open performing an extra ref/unref on the dentry (there are patches to
+  do it, including by Al. I'll be mailing about it separately)
+- creds using atomics (I have a wip to whack that)
+- apparmor using atomics (ditto, same mechanism)
+
+On top of that I have a WIP patch to dodge some of the work at lookup
+itself.
+
+All in all there is several % avoidably lost here.
+
+Mateusz Guzik (2):
+  file: add fput and file_ref_put routines optimized for use when
+    closing a fd
+  fs: use fput_close() in close()
+
+ fs/file.c                | 75 ++++++++++++++++++++++++++++++----------
+ fs/file_table.c          | 72 +++++++++++++++++++++++++++-----------
+ fs/open.c                |  2 +-
+ include/linux/file.h     |  2 ++
+ include/linux/file_ref.h |  1 +
+ 5 files changed, 112 insertions(+), 40 deletions(-)
+
+-- 
+2.43.0
+
 
