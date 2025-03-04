@@ -1,113 +1,118 @@
-Return-Path: <linux-kernel+bounces-544187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C557A4DE5D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:52:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6149A4DE5E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:53:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AFE31765C3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:52:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE01C1886C7B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:53:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03658202F7E;
-	Tue,  4 Mar 2025 12:52:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878C51FFC74;
+	Tue,  4 Mar 2025 12:52:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LcYabeHE"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pZTVjlAI"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE48378F33
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 12:52:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8D4202F96
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 12:52:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741092772; cv=none; b=Vl/6qByJ7oPqRKhKjvNtCXiR8vf50fut9EsIluiUJdIre5SSyJCESJ/S4NufWnrFDLELWQ/4nEZ5hZT2uZyoUfBXy4/xke2VhbFHee4TBVUilojxXSu48V6wo/zNMfVwDx6pi83+gA8ARehhijYOCx9kB9hxXBlRjp5oPwLcHxs=
+	t=1741092775; cv=none; b=LF/OiMConbRt2Ytqz36s8gMXgqR0uyj1awAbEHc6Do2vAktLZnSwFRAdXsK8gHs+l4MJ7XzxJ+WnVvRsW1O0OMWYHtrxXT7xZ7mPizLW30qGlYVX1a166rx7mcG0VzdwvGXfF+uoSVlxvE+ONaykzik71wwH4BLZ5/FSbsLysNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741092772; c=relaxed/simple;
-	bh=ALWRKSn7pxndeFLCSOuIBaCpYtG4Dadln+BoUEbDQyg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Oikx3Y3aGJnbK1BcWbzpd7TxgapXpjz5QpKyOS2leeJ+pqBVCW45rP/s0Ifv268YFQCYyQ6Fo0GcBMqrtQ95HHn01kJTA9raNqMRKS6YXruVhHNM2LF1Sao/AJusG0iSgW6pzFFtrs3E/0e6zL1Qf68YFaTrLVkY8EAovzy6VtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LcYabeHE; arc=none smtp.client-ip=209.85.128.51
+	s=arc-20240116; t=1741092775; c=relaxed/simple;
+	bh=SJXxPUs13IRqlByKgT0V2/LliPxpQNBHnmyeRj7UDLs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GcNPm4Zh9b1qz30s7imGEmhDgZUZ+zjCRGsFqlf8Q5TpOcwwicqIVHg1nSniWgv3duve+GZYKFEornXOClhsPGABy6zXUmzXF12B5IkYWiPcI3K+ROsVPRInqHKwHrXZueo0l7elx4F/FGA3YeWDIK8WAF2sNM+9es728PkrnXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pZTVjlAI; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43bcc85ba13so4838915e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 04:52:50 -0800 (PST)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43ba8a87643so55015e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 04:52:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741092769; x=1741697569; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L6F1Vqzh2iiYxExSW2EazjOovfAMhC+8b5qQWzgilmg=;
-        b=LcYabeHEcnd/6ga87Sx/3hSMdsWII/z++rnpanwRgXk3zcc69QWe75zd+tHdk/7p3i
-         sPV6xlS9ODiwLLgjA+gUoQLjzct0b4TKx0RVqZaJzbjmrphhVCn9FZuC8YtQTLdhUqdD
-         JBx3Nxik7yFtuPFmJgufg2Y05tct8KhIg/J2DzE2Q1IUUgU3ZjLMJ9JSIhS5dtcQekwJ
-         2wKiKhrz25FG8i9M4cSmZTgDeukCcFP/xQjj/DDvd3oAEgb7St5qK0CTDqcwgrgHnfA4
-         9AcoSw5DMBO7GARIAI1AValgR/qCpBXrUWihTFcGr8t/0B6sycgWrR3cbdvxrOCoRqMH
-         xpEQ==
+        d=google.com; s=20230601; t=1741092772; x=1741697572; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ORxBw0PzcDq8GlEftap7G0yXu9YcrPKoI2IIyzWUg2w=;
+        b=pZTVjlAI064MEOQoO2H5DgpHKBN6Ye5VqGmZlBg3dYgNm++XMWRZUzgMC0WUbNOUOq
+         hZV1evWYACDCG8gFA36trf8nDqISxj2Lm5ztqt6r3LUnULX2dEu91FcoehcX2eDO1giT
+         gIYoEOS+kpK4O9/3EeG6iupncwghWpKoo+ElniiMrRHTn9Pyaf9wAUwPRj4zxZfQUsCx
+         qP/OZ6caFlkYJy0Ommxqgjz32+LaNmaKH7qQDbVpL4CAXAxpKCMfHSBnk1tTJHeCScs1
+         iNnkL3I18vP4lI/8Z/VRzVxZxrxJK8T5cBHWcTXkS38piqa4F9vZz6rq3MwuuWmJLSRl
+         2e3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741092769; x=1741697569;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=L6F1Vqzh2iiYxExSW2EazjOovfAMhC+8b5qQWzgilmg=;
-        b=HIt71GrxagwfBjT/DEphUBSIDXQru3alutzXIC8o8NFYtlizKNxz6oHamtGMJTf4Xu
-         VIywCV0lqxF6efHkOKsgmG46VXw8yWAYkqqrCn+IUm7oqTl6Pwi14c4BYeJLFSN/QuFv
-         /eqSYX//2J3G76LiJD/66bwHAm1AzZLfuo6vBL1L4/wqcppiQIIVE5TSzT9d44WiT7wU
-         vX4QcLRyaGxlLLwQEIx/Eg5fZZJQymvIKS7WzSmU5/qbxArSklqVqqg7ReKyyC/NnZNF
-         16igjl2gw4vRO6OTzZYVWil5iLJx45mZj9nZlX4H4zampjsxuuk5+tcIHz389Eoo3vAw
-         tLXw==
-X-Forwarded-Encrypted: i=1; AJvYcCUsN6Xmmec9tXu/bhqTKwE5ccbCFiswjKHCqEwUfKeaGs9IA7v2hFIl1f5fFfYi3HzrGCvsxET10HVGiYs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxB3r9mD54DKY7UrxG2VS+RQb4FCoehtbZhevoeC+g9pHreqmfJ
-	jY54UnceyMhJG9hZYukylViZwfnPrsiw1AT1gjh3e618vrVEeWsTebo3wX9Qw5eBIan8bZuYsGG
-	ms1cB/Nfj8XPGpKbEtR6BlLyV9S0t/qEVV+37
-X-Gm-Gg: ASbGncugqLDNtSehFtsMmZONGeUzEY4dDUMIOPuBAR5GxEFe7tP3WG38OBIl8fXAPqe
-	SqDTtftmlw8QVp/lgYuOdbwTlxjkwq0UEpiZQSJcYc6TuT0DEOp8sOYUNSfQBifm960rqGEmPfK
-	e2x82C3Jx/IvThN1F+3LOQSDU3gTUFrgvKAxoF2TGGiawe/DNxCsToOVs=
-X-Google-Smtp-Source: AGHT+IFz0XZWemVYrwSqVdPFNHTago/cSo3IMoNalbeFzohYR2RyW1OejnNhIa8IQnj2+uMzuaWcUi6z4VKcxHbpjOI=
-X-Received: by 2002:a05:600c:a594:b0:43b:cd15:2ec6 with SMTP id
- 5b1f17b1804b1-43bcd15341cmr15395105e9.14.1741092769040; Tue, 04 Mar 2025
- 04:52:49 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741092772; x=1741697572;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ORxBw0PzcDq8GlEftap7G0yXu9YcrPKoI2IIyzWUg2w=;
+        b=MJX4vTcK+jEBIQO62secuKrRYQjIoqGcCDLM/P2XvURveTf3SJ15QUfz8LH67NrU8E
+         EYYI2DLtoOiEKFs0uxYBlyNwu1c3Qn6QNg6HbASBhX5o4nV32z7kVjaAeYeNMb5AxSUF
+         V8YpfYhJaaol4Jv1jHDxwVBBb/pHGy5FYxbqbC8K3/69PnPAoUuCgdJoDwp7n4Z/hb3n
+         ETAoMn+ITVMOTJKyYAqaIe9byHJAligFQ1DUTssqHAGCIcrBoNZLx6XRxCYQQkYSwkUw
+         N0/KTdfc2zmLWO1Ne4szdDemuvjYN7DEyi58u1C8Ebu494TRQi/8ViuXdGtIpHmU7DPO
+         unFA==
+X-Forwarded-Encrypted: i=1; AJvYcCUk3TcfmrsEkxQU3Vd2GovMurSJB+uIw+LdFmHa3SGm1oXlllLSTzifJWuuJuAy1oMYQE6rJaYUHLrqvAk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1s5KS3lny1u3Wo/YAIWHrIiv42cd7xdVCI4Hxb0+ruNwNrDfQ
+	RwFoP5xQb6cUNe5srEIy4cB8bWOQVOabPhNjConFblvS7jyl/CTkbWTELdephS1i4wYutFt/5kV
+	MBL8O
+X-Gm-Gg: ASbGncuqONc1jVnvZWOo1eX70NQX6+OwrOZ1oOeK7xiLGzcTLsFyZ3QAiL/LNTrMyWZ
+	pD+IZ/YHXeDkf9hfrPkm9hLG8R0ORUsN4Bu0h5dZh9pSMvGS0Ug14wJ1DXUsvAeCXMwCW9htOLc
+	YhYzyE/LHXRWyr3+uQOBERvLzDU3tBToZhdukVvNLyjuD/QEgMNreuFyHOH2KPyug88Zms2Lunn
+	d+D6wxrUUpCNMUWLDUCTORQY3J4Fhg4WbVO9mx9DKq7sd0MzhbwBahMKHDecUFYIQBsFVHZl8V4
+	FqlpuSkkXhKvKC6/CEEcx8hEnzj/3OkgB2V/Bjf/ZcK1IZ0Iv//lyaxHiPSo1t/WSW7I/snkf6N
+	cy+f0
+X-Google-Smtp-Source: AGHT+IHmOuSlJRLEt9nfeW0/RxV6Q5K3gZHdZus2MWdEAqPnJ+xAmtrsdSBktkrjD4il5L0UWkyemQ==
+X-Received: by 2002:a05:600c:4791:b0:43b:bf3f:9664 with SMTP id 5b1f17b1804b1-43bcbe28d25mr958045e9.5.1741092771539;
+        Tue, 04 Mar 2025 04:52:51 -0800 (PST)
+Received: from google.com (44.232.78.34.bc.googleusercontent.com. [34.78.232.44])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b6ce3sm17286057f8f.43.2025.03.04.04.52.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 04:52:51 -0800 (PST)
+Date: Tue, 4 Mar 2025 12:52:47 +0000
+From: Brendan Jackman <jackmanb@google.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Borislav Petkov <bp@alien8.de>, Rik van Riel <riel@surriel.com>,
+	x86@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org,
+	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
+	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
+	linux-mm@kvack.org, akpm@linux-foundation.org, jannh@google.com,
+	mhklinux@outlook.com, andrew.cooper3@citrix.com,
+	Manali.Shukla@amd.com, mingo@kernel.org
+Subject: Re: [PATCH v14 11/13] x86/mm: do targeted broadcast flushing from
+ tlbbatch code
+Message-ID: <Z8b3n85dpkz_-2ci@google.com>
+References: <20250226030129.530345-1-riel@surriel.com>
+ <20250226030129.530345-12-riel@surriel.com>
+ <20250303114618.GBZ8WWihMDjf-oy8P0@fat_crate.local>
+ <7e1ca8c7-6f3e-44dc-9dd8-bd273a03a83e@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250223174205.48404-1-trintaeoitogc@gmail.com> <20250223174205.48404-2-trintaeoitogc@gmail.com>
-In-Reply-To: <20250223174205.48404-2-trintaeoitogc@gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Tue, 4 Mar 2025 13:52:37 +0100
-X-Gm-Features: AQ5f1JoeBO3HU2bge1uvQlyWGWT1s_dV6Cf8tHwBQjm5wZuGAhS_S5rJjhk3_sE
-Message-ID: <CAH5fLgjDt0aDw6RwCVixsJZGJRi2-_ygOs+CPHGE-pvJVVHhcA@mail.gmail.com>
-Subject: Re: [PATCH V6 1/2] rust: module: change author to an array
-To: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
-Cc: a.hindborg@kernel.org, alex.gaynor@gmail.com, apw@canonical.com, 
-	arnd@arndb.de, aswinunni01@gmail.com, axboe@kernel.dk, benno.lossin@proton.me, 
-	bhelgaas@google.com, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, 
-	dakr@kernel.org, dwaipayanray1@gmail.com, ethan.twardy@gmail.com, 
-	fujita.tomonori@gmail.com, gary@garyguo.net, gregkh@linuxfoundation.org, 
-	joe@perches.com, lukas.bulwahn@gmail.com, ojeda@kernel.org, 
-	pbonzini@redhat.com, tmgross@umich.edu, walmeida@microsoft.com, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7e1ca8c7-6f3e-44dc-9dd8-bd273a03a83e@intel.com>
 
-On Sun, Feb 23, 2025 at 6:42=E2=80=AFPM Guilherme Giacomo Simoes
-<trintaeoitogc@gmail.com> wrote:
->
-> In the module! macro, the author field is currently of type String.
-> Since modules can have multiple authors, this limitation prevents
-> specifying more than one.
-> Change the author field to Option<Vec<String>> to allow creating modules
-> with multiple authors. Additionally, rename the field from author to
-> authors to make it explicit that it can refer to multiple authors.  In
-> modules that use the author field, update its value to an array of
-> strings, and also rename it from author to authors.
->
-> Suggested-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-> Link: https://github.com/Rust-for-Linux/linux/issues/244
-> Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+On Mon, Mar 03, 2025 at 01:47:42PM -0800, Dave Hansen wrote:
+> >  static void broadcast_tlb_flush(struct flush_tlb_info *info)
+> >  {
+> >  	bool pmd = info->stride_shift == PMD_SHIFT;
+> > @@ -790,6 +821,8 @@ void switch_mm_irqs_off(struct mm_struct *unused, struct mm_struct *next,
+> >  	if (IS_ENABLED(CONFIG_PROVE_LOCKING))
+> >  		WARN_ON_ONCE(!irqs_disabled());
+> >  
+> > +	tlbsync();
+> 
+> This one is in dire need of comments.
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+I have been advocating to move this to a place where it's clearer. I
+also think it needs comments:
+
+https://lore.kernel.org/all/CA+i-1C31TrceZiizC_tng_cc-zcvKsfXLAZD_XDftXnp9B2Tdw@mail.gmail.com/
 
