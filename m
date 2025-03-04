@@ -1,142 +1,182 @@
-Return-Path: <linux-kernel+bounces-543521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB4AAA4D6B8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:40:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E89C1A4D6C0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:41:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3D80188DA2D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:40:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 552F63AB1C8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:41:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7264B1FC0FB;
-	Tue,  4 Mar 2025 08:40:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94B31FC0ED;
+	Tue,  4 Mar 2025 08:41:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bUF6CQwe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dib75eaW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97CA11F582F;
-	Tue,  4 Mar 2025 08:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD641FA854
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 08:41:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741077631; cv=none; b=c+moDzVKkVqPFek8qyugA9Lmvr7qMSrttF8fAgKC2IrTcoIMBG+UJqQbpt4obK50F4k57kRX6bZdkNNbO4dtlq2igt/SC1H8wYEXaSEQt1vNfMF7Kqt5lr13DRHlHdWJlZgy2dRv57DqM2Dl4WZU8PkPVKHsM7c4XwenEX/NSbw=
+	t=1741077681; cv=none; b=XtMFX0noWbQCUXxpMyBiqoPsEQQFSE+8iqv5IVsEDYISzc2b1t/HtPkoj1BHd3F2s8BDgTcIzkJ3q94e2NJZz+7tX3Fczr5XQUbGMgTpT2UdnDYN0aros6714s8JSPs6PDAAodBqEXGA1hz61Gef/PNQE1Qdean5L4Jk9eS0JGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741077631; c=relaxed/simple;
-	bh=lTb9kj/VYq2+/Onyib1ardpDWG1lE263WpaogE2OBmM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lE9hOq/QhVC7xGndxOo7fZVhLCaI2jFzJVwhjFp8LOLQKTixxxaLqIvQaqIa6C/Ia9qlY7aazn209cjuB05XFKxW6w/W6CGIxN0tdo3HuMUikrk+JMoStYaDsI/k+4wRNnUbDIEsP12PlsIIjIE0cXlt14jcpZ31P3MYRgduPIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bUF6CQwe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2FFBC4CEE5;
-	Tue,  4 Mar 2025 08:40:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741077631;
-	bh=lTb9kj/VYq2+/Onyib1ardpDWG1lE263WpaogE2OBmM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bUF6CQwe9uXUIF+57L1KVwUOYWIOF0x/ymyn8yEMLfZYBk3tmeA9zpBdzbqrcsW9b
-	 m2j0qx+XZ7Xihr0JYloW9zcg2mkirP4yOGqG2l1ejxKD1PRirXW/0pe2o47bsfISaD
-	 R+AKuk0RDwz1iEGspcxZNPftbM7eut00UDS98qOlqJYx7ytMUDasgAC0ZbgRRt2fkc
-	 ca192Iy17X1kmvk8M/NIN7DtzPzHQWoNe8ie4XI99XLSYj2e16fkQy4UwiszmMtWmC
-	 qcGG4lmksPdi1u5oYdWX+i5i6gCDOGaav2Wo7m1hWrB8MFEFh9+4mhbkosnMpQjdkL
-	 /Ww31JDQ8qJPA==
-Message-ID: <baae2a56-5299-486f-acf1-14fe13fd2f81@kernel.org>
-Date: Tue, 4 Mar 2025 09:40:21 +0100
+	s=arc-20240116; t=1741077681; c=relaxed/simple;
+	bh=TLYb6ifcofavLxHlAL0UmIuoJWOOBMKLI8mICFqhYCw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qJhugUmeQQBYSF2fcrNqW/lH28d3/32l7j4WX79/z/pIWLZLkuFK+OlaPoYjYB7WyY8ulJNjop1HRwHuOyq2WnGc7yiUSnGSJAu7UED9FKwbugx7IKmZRFOHQzNqKLiI2O0F80rjawpGiglEZXcCHL8TTWdiqRWfvaVORK57JNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dib75eaW; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741077677;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Z3fYeTIzRI1z2TyRGuHxMSN4hiWg6QuoQU8pwKzI3WI=;
+	b=dib75eaWqEi1WzdZ0F9Ck/IT3jCf0nwoX+JidvRCOry+a2J01tIlbu3Voc9GIdDKvilUz9
+	DYNKt66mw0J9yYW+iMMW6VdIehgvO0D02ClrK7/417A3MgyktOqP5IBaqcWii3aeRx6fBG
+	tDS/60ioBUawTYwDYSNgRZYt0hMlsfU=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-575-pellPiVnNoKxkocAUGLiyw-1; Tue, 04 Mar 2025 03:41:11 -0500
+X-MC-Unique: pellPiVnNoKxkocAUGLiyw-1
+X-Mimecast-MFC-AGG-ID: pellPiVnNoKxkocAUGLiyw_1741077671
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c0a71aaf9fso799395885a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 00:41:11 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741077666; x=1741682466;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Z3fYeTIzRI1z2TyRGuHxMSN4hiWg6QuoQU8pwKzI3WI=;
+        b=MSSoXyWlGna/r4la71g/8tXRelc2+XfgPVB7Sfbj5Xgg86qtLFB/HGc1Mm1plcN2Ud
+         jR4mSbL4NAmK+mYYVDv68/o1IqNJcNY9UKSblDUxOWUppHBV896VNsu2HjFY71yIBT2L
+         3iiVWrbmHAfaGEO6fePtqwWw5Lc+pS9IhyekVvWURIEYTRWBj/ZpFrtstszBP/DNiKFu
+         Sy0H7ODQNCSJwL0Z1eZGsAHgukcOo2xt+0c3E6i1AScwK8OS0rsA2BqleSdigMirRv+M
+         PVNglFxMkFrkOBVpQ9vpF/maRqEjzD4yEdCoAWygob7vJdLLpoiNFpsNDX2O+iRe7hYN
+         bQIw==
+X-Gm-Message-State: AOJu0Yyf2fHjAGOpCClxyeN/B+EeK0UDOLXQHwOtl5HrqEXTY1Vh4gim
+	LrWu098xXan78F1QniiPHWP2Ia4dR26dFGRUsIIlIL96Pxk8aNQLW3fIf9IMjGEgzcSGs1BRkkM
+	ymM0XvmYL5WIP/W4PNaPR/MZ9o6rYueuHLyR5QYEimqm30wvEQWjwsrgSK4tv/ZOt3e1fTvpqPN
+	hYtLgL6dQO/3DJSX/K954yL+sBCiFW+sE+caZUlby7hxHc4tSKjWxMJQ==
+X-Gm-Gg: ASbGncsBcb7mac1y69BhniVy26iqPXvOKKjeWOBXBKeKjLA0BnzdB+Gosk01acxIvJL
+	30dMfGZ69dTmkqrRVO6Iyy2T8BrXdJdA9U8uxWsvWjlNPbTRgU4q85VRsESm0Uc4Iw6a/ppUk/4
+	yf+HPVMl4EGx61zCst9IIV+qPlGYKZuBfdeZzN/3i150kt34uEKuHoqOCirSOynuJa3vZZTFqKQ
+	5h5HitB9NvyAUhW6X3e3KP0PgYbBuwDOKi8CLKRD+gFJigqpF94UmQXOez/kQfP8YVPcSF+Esvv
+	K0JOrsRF9kLCe+0yvPwEvItAFyb5x9eOoe0ike9hjpd06I/nocL4UqWVB7sVQjte6wK1HU3yOtu
+	CSCWK
+X-Received: by 2002:a05:620a:f04:b0:7c0:a28e:4970 with SMTP id af79cd13be357-7c39c4c6cfbmr2293012885a.29.1741077666105;
+        Tue, 04 Mar 2025 00:41:06 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHh1Ar/3n2takoeAU9NBJEIshtRgWQMbkT9RWqfadPHDzU4n7cEE/uqENKwYoR4DzRsJlBuRA==
+X-Received: by 2002:a05:620a:f04:b0:7c0:a28e:4970 with SMTP id af79cd13be357-7c39c4c6cfbmr2293008685a.29.1741077665729;
+        Tue, 04 Mar 2025 00:41:05 -0800 (PST)
+Received: from jlelli-thinkpadt14gen4.remote.csb (host-89-240-117-139.as13285.net. [89.240.117.139])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c3c0a94fbbsm218395285a.1.2025.03.04.00.41.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 00:41:04 -0800 (PST)
+From: Juri Lelli <juri.lelli@redhat.com>
+To: linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org
+Cc: Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>,
+	Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
+	Qais Yousef <qyousef@layalina.io>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Swapnil Sapkal <swapnil.sapkal@amd.com>,
+	Shrikanth Hegde <sshegde@linux.ibm.com>,
+	Phil Auld <pauld@redhat.com>,
+	luca.abeni@santannapisa.it,
+	tommaso.cucinotta@santannapisa.it,
+	Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH 0/5] Fix SCHED_DEADLINE bandwidth accounting during suspend
+Date: Tue,  4 Mar 2025 08:40:40 +0000
+Message-ID: <20250304084045.62554-1-juri.lelli@redhat.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v14 2/2] arm64: dts: qcom:
- qcs6490-rb3gen2-vision-mezzanine: Add vision mezzanine
-To: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>
-Cc: Vikram Sharma <quic_vikramsa@quicinc.com>, rfoss@kernel.org,
- todor.too@gmail.com, bryan.odonoghue@linaro.org, mchehab@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- andersson@kernel.org, konradybcio@kernel.org, hverkuil-cisco@xs4all.nl,
- cros-qcom-dts-watchers@chromium.org, catalin.marinas@arm.com,
- will@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Konrad Dybcio <konrad.dybcio@linaro.org>
-References: <20250208225143.2868279-1-quic_vikramsa@quicinc.com>
- <20250208225143.2868279-3-quic_vikramsa@quicinc.com>
- <ca8e6569-b466-4f83-83af-38c51891d395@kernel.org> <Z8a7cMmxJuHIhgjo@trex>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <Z8a7cMmxJuHIhgjo@trex>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 04/03/2025 09:36, Jorge Ramirez wrote:
-> On 03/03/25 18:13:20, Krzysztof Kozlowski wrote:
->> On 08/02/2025 23:51, Vikram Sharma wrote:
->>> The Vision Mezzanine for the Qualcomm RB3 Gen 2 ships with an imx577
->>> camera sensor. Enable IMX577 on the vision mezzanine.
->>>
->>> An example media-ctl pipeline for the imx577 is:
->>>
->>> media-ctl --reset
->>> media-ctl -V '"imx577 '17-001a'":0[fmt:SRGGB10/4056x3040 field:none]'
->>
->> AFAIU, camss does not support SRGGB10, but only SRGGB10P.
->>
->> Based on tests reported on IRC I think this might not have been tested
->> correctly.
-> 
-> I acquired SRGGB10P (10 bit packed) frames from the camera despite the
-> pipeline being set to SRGGB10 (16 bit) samples.
-> 
-> so something does not add up.
+Hello!
 
-Then the commands are actually correct, just the camss or media behave
-here a bit unexpected?
+Jon reported [1] a suspend regression on a Tegra board configured to
+boot with isolcpus and bisected it to commit 53916d5fd3c0
+("sched/deadline: Check bandwidth overflow earlier for hotplug").
 
-Best regards,
-Krzysztof
+Root cause analysis pointed out that we are currently failing to
+correctly clear and restore bandwidth accounting on root domains after
+changes that initiate from partition_sched_domains(), as it is the case
+for suspend operations on that board.
+
+The way we currently make sure that accounting properly follows root
+domain changes is quite convoluted and was indeed missing some corner
+cases. So, instead of adding yet more fragile operations, I thought we
+could simplify things by always clearing and rebuilding bandwidth
+information on all domains after an update is complete. Also, we should
+be ignoring DEADLINE special tasks when doing so (e.g. sugov), since we
+ignore them already for runtime enforcement and admission control
+anyway.
+
+The following implements the approach by:
+
+- 01/05: filter out DEADLINE special tasks
+- 02/05: preparatory wrappers to be able to grab sched_domains_mutex on
+         UP
+- 03/05: generalize unique visiting of root domains so that we can
+         re-use the mechanism elsewhere
+- 04/05: the bulk of the approach, clean and rebuild after changes
+- 05/05: clean up a now redundant call
+
+Please test and review. The set is also available at
+
+git@github.com:jlelli/linux.git upstream/deadline/domains-suspend
+
+Waiman, could you please double check this doesn't break the cpuset
+kselftest? It returns PASS on my end, but you never know.
+
+Best,
+Juri
+
+1 - https://lore.kernel.org/lkml/ba51a43f-796d-4b79-808a-b8185905638a@nvidia.com/
+
+Juri Lelli (5):
+  sched/deadline: Ignore special tasks when rebuilding domains
+  sched/topology: Wrappers for sched_domains_mutex
+  sched/deadline: Generalize unique visiting of root domains
+  sched/deadline: Rebuild root domain accounting after every update
+  sched/topology: Remove redundant dl_clear_root_domain call
+
+ include/linux/sched.h          |  2 ++
+ include/linux/sched/deadline.h |  7 +++++++
+ include/linux/sched/topology.h |  2 ++
+ kernel/cgroup/cpuset.c         | 20 ++++++++++---------
+ kernel/sched/core.c            |  4 ++--
+ kernel/sched/deadline.c        | 36 ++++++++++++++++++++--------------
+ kernel/sched/debug.c           |  8 ++++----
+ kernel/sched/rt.c              |  2 ++
+ kernel/sched/sched.h           |  2 +-
+ kernel/sched/topology.c        | 33 +++++++++++++++----------------
+ 10 files changed, 68 insertions(+), 48 deletions(-)
+
+
+base-commit: d082ecbc71e9e0bf49883ee4afd435a77a5101b6
+-- 
+2.48.1
+
 
