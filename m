@@ -1,81 +1,129 @@
-Return-Path: <linux-kernel+bounces-545544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F210A4EE5D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:30:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADF77A4EE66
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:32:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F49C1893840
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:31:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FF317A8CEF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:30:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEF5E1FBE9E;
-	Tue,  4 Mar 2025 20:30:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F211E25F997;
+	Tue,  4 Mar 2025 20:31:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="5gTZG1K7"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88DF51F76A8;
-	Tue,  4 Mar 2025 20:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="XPOvUKPQ"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4B3E1F8BCC;
+	Tue,  4 Mar 2025 20:31:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741120248; cv=none; b=bUdYpT2GyEU1C+kl5TEPZfRjDJclu6PZcBaLOtceteD95yREYlujxZXblvDz5KCKTqnOHAldOc359xxtWVw1qnx0XpwInBvxOyUv3GczWbWlJhBmDemCAZ6GZbZUfU8zsKRmmdHVp9HtO2PaNbdCOAcug7vhncjMaakgRTBhsgo=
+	t=1741120301; cv=none; b=MHnmmcxeBJSsGqfm42Kqeuq48WxjcDHUQgoSTcXFaE3LfeBXbAlKDB8rOwPbY7QJ5h4k4m0x1F50SMASbHecfVYNa/YaVU2a7LBVjR15o61RtLXhUAsbhpa8TpN8DbMQdD2KnEsVLHUJrW/yzmELzYm/aM4DVDso9WHg9N0CufU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741120248; c=relaxed/simple;
-	bh=sxNbMdW/Iwem01aQj7BDy124mpTa0wLwsYtG42s4gFw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mFW0PoLqJDGp3Db4Ql4FVvn9OD/GlBm4lKr+mZil1t3w5Kd9iQNFwLwL/bHZ6C+rprW5UBIXpxtGm8kupp23n0YjAkqf3W8P7jG/JnEXMTIbr7GTnFaGF+O2nrhuBokuXf91IpCODbSGtfzPfmOY1tl6sYPQQre1i+ED/L10yuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=5gTZG1K7; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=fDJUnsSxZUnWvgAeUJYgf3CYEraX7n7Xpw2M9p7RPCw=; b=5gTZG1K7DjvFhN2kFzi03FICr/
-	I0mRUDdV6TBh8AL+f8V3/JVzqKawTtCV2ipDnjvMCHHNVUsMqPmLu+t2xc0Vv6SAkwtn/cLohau7k
-	vLkg7wMW7i3TOA4RBd8/9+r/mCadLFwRCEdchoZLqEeSJ8duqz6TQB4cbGrKGZmrsEAk=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tpYuP-002G8S-IC; Tue, 04 Mar 2025 21:30:33 +0100
-Date: Tue, 4 Mar 2025 21:30:33 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: dimitri.fedrau@liebherr.com
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dimitri Fedrau <dima.fedrau@gmail.com>, Marek Vasut <marex@denx.de>,
-	Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: Re: [PATCH net-next v2 1/2] net: phy: tja11xx: add support for
- TJA1102S
-Message-ID: <b7fce5eb-4d85-4ce8-ae78-6dbd942d5f2c@lunn.ch>
-References: <20250304-tja1102s-support-v2-0-cd3e61ab920f@liebherr.com>
- <20250304-tja1102s-support-v2-1-cd3e61ab920f@liebherr.com>
+	s=arc-20240116; t=1741120301; c=relaxed/simple;
+	bh=tkxBDC72eU9MCONsFx4EJyrx8Yqu/GC847nibNDT1No=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=l57qzY2wd/otuZquMkThYoEJdCib8W+RqtG4BoDMgAQISV+HKsJnK6DAO/OcyeK5urD4PnBpvlNPd9H930dMP702saEKpYTkc8pV9B3qEq4hWniPRnMco+yKa5pMQiPQP9TukK76aLj7lf40NFBIH6mYMv5rAIMHKVHBcmnTDEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=XPOvUKPQ; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from narnia.corp.microsoft.com (unknown [167.220.2.28])
+	by linux.microsoft.com (Postfix) with ESMTPSA id D577C210EAF0;
+	Tue,  4 Mar 2025 12:31:32 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D577C210EAF0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1741120299;
+	bh=+5dln2CDLel2QrL5bi52WY7oDDb4ZKz6Vy7qsxHDPVQ=;
+	h=From:To:Subject:Date:From;
+	b=XPOvUKPQzaFkhGBpmdtBZxuyP8g5ZnF5rEirhMBUB9x231bt6/MNtJSnUfe7DiasU
+	 ije1dsOtNENEybY1JejkjPmD6YbcQv3zui3YoZ74Wv8XaoDkKIefpPpAkmfN3BySjR
+	 st9RsPIGK2l4EkB8pMmzBf7dgKJ/JMeYg33zndAA=
+From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+To: Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	selinux@vger.kernel.org,
+	bboscaccy@linux.microsoft.com
+Subject: [PATCH v4 bpf-next 0/2] security: Propagate caller information in bpf hooks
+Date: Tue,  4 Mar 2025 12:30:48 -0800
+Message-ID: <20250304203123.3935371-1-bboscaccy@linux.microsoft.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250304-tja1102s-support-v2-1-cd3e61ab920f@liebherr.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 04, 2025 at 07:37:26PM +0100, Dimitri Fedrau via B4 Relay wrote:
-> From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-> 
-> NXPs TJA1102S is a single PHY version of the TJA1102 in which one of the
-> PHYs is disabled.
-> 
-> Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+Hello,
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+While trying to implement an eBPF gatekeeper program, we ran into an
+issue whereas the LSM hooks are missing some relevant data.
 
-    Andrew
+Certain subcommands passed to the bpf() syscall can be invoked from
+either the kernel or userspace. Additionally, some fields in the
+bpf_attr struct contain pointers, and depending on where the
+subcommand was invoked, they could point to either user or kernel
+memory. One example of this is the bpf_prog_load subcommand and its
+fd_array. This data is made available and used by the verifier but not
+made available to the LSM subsystem. This patchset simply exposes that
+information to applicable LSM hooks.
+
+Change list:
+- v3 -> v4
+  - split out selftest changes into a separate patch
+- v2 -> v3
+  - reorder params so that the new boolean flag is the last param
+  - fixup function signatures in bpf selftests
+- v1 -> v2
+  - Pass a boolean flag in lieu of bpfptr_t
+
+Revisions:
+- v3
+  https://lore.kernel.org/bpf/20250303222416.3909228-1-bboscaccy@linux.microsoft.com/
+- v2
+  https://lore.kernel.org/bpf/20250228165322.3121535-1-bboscaccy@linux.microsoft.com/
+- v1
+  https://lore.kernel.org/bpf/20250226003055.1654837-1-bboscaccy@linux.microsoft.com/
+
+
+Blaise Boscaccy (2):
+  security: Propagate caller information in bpf hooks
+  selftests/bpf: Add is_kernel parameter to LSM/bpf test programs
+
+ include/linux/lsm_hook_defs.h                     |  6 +++---
+ include/linux/security.h                          | 12 ++++++------
+ kernel/bpf/syscall.c                              | 10 +++++-----
+ security/security.c                               | 15 +++++++++------
+ security/selinux/hooks.c                          |  6 +++---
+ tools/testing/selftests/bpf/progs/rcu_read_lock.c |  3 ++-
+ .../selftests/bpf/progs/test_cgroup1_hierarchy.c  |  4 ++--
+ .../selftests/bpf/progs/test_kfunc_dynptr_param.c |  6 +++---
+ .../testing/selftests/bpf/progs/test_lookup_key.c |  2 +-
+ .../selftests/bpf/progs/test_ptr_untrusted.c      |  2 +-
+ .../selftests/bpf/progs/test_task_under_cgroup.c  |  2 +-
+ .../selftests/bpf/progs/test_verify_pkcs7_sig.c   |  2 +-
+ 12 files changed, 37 insertions(+), 33 deletions(-)
+
+-- 
+2.48.1
+
 
