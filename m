@@ -1,60 +1,53 @@
-Return-Path: <linux-kernel+bounces-543326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41C9FA4D44B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:10:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C226A4D44C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:11:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 741D818908F7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:10:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6902A1890927
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:11:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83D961F584D;
-	Tue,  4 Mar 2025 07:09:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="TCs02IXk"
-Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BFA21F5847;
+	Tue,  4 Mar 2025 07:11:04 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C35194080;
-	Tue,  4 Mar 2025 07:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D819194080
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 07:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741072196; cv=none; b=SCbcqokwu4a8/SyBueNRzsHQUcDSpEMoWl1h3JHvjiiSCAEpb9nwOE0LSAZQymDTpqex+QQEpjI8gpCyAzHaqRdM4fDB54wW6urOWnc0jK4n71bRKTASNDdkp4oPfx+9aldyvUxRIrfQBF1EtY9YeWK9okKdAsxin+h0IMXsrYI=
+	t=1741072263; cv=none; b=pIdoBP/uuxU9UiXJQIiMBaEiM+0sAks+Du+SgkT6bbh6VH2nU25ZZqeITB+7TO7XrCaNoZzfh17t4Z1k9n2RQ6esTt0yff5V5QkJULsQgzjNlEoHE4aBE7I00ueo73umbaUO0P+hIAeE6MPANWGAv1rt80Vx1CaDX+ttuqHPgrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741072196; c=relaxed/simple;
-	bh=ZlF2kx2Q5sqKKFm415Ur7QAC3/HP58PNS0TRB5CgCbk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=T8easJf2rXxHUPNJNsLeNUyMYJBiCA5i5/q6NLGi1uULVBVW7ARi6pgCXLCfnXb3jncxSCNy2nTD1Q9F13yQfVIUqrf9Chg/hGuBZwkmmpHWqjV1m9IYI1Uoo8/z7Uyqdr8KsJrjf0mIvOoLE+N8mU661VlWVP4FxxAs5eP8sos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=TCs02IXk; arc=none smtp.client-ip=54.204.34.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1741072163;
-	bh=ZlF2kx2Q5sqKKFm415Ur7QAC3/HP58PNS0TRB5CgCbk=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version;
-	b=TCs02IXkEnZZoqgpaJft5j6NWDpRCWB4PATyWdlKdzNNKDlgGSbvuNmcBHqUzfe/R
-	 yGbKH3C92BarpiWns5Pq+GfhftdNAEduE/1uMBTV2mgTI29g79GFKnwHZxe5ytpe1J
-	 zaajVgAfPFGZbnwr7rikuDzavTP0QK1sAupgQ5aI=
-X-QQ-mid: bizesmtpip2t1741072157t3v2ohi
-X-QQ-Originating-IP: eRUQvbqFAYXE6BgAqDTDhjTKolsBh1jbfbLkNXCXaUw=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 04 Mar 2025 15:09:15 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 7794148530895262856
-From: raoxu <raoxu@uniontech.com>
-To: mathias.nyman@intel.com,
-	gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org,
+	s=arc-20240116; t=1741072263; c=relaxed/simple;
+	bh=2abKyYZj3dPzLLW86axJgj4Tbg9s3rK4r9mLG2cT5lU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J2NrLp6D4I9qtH75b3MEKqBSxqqmtjxbEwMAjFVtCWvgwU4xyBnSyFFMNwPUbYigGg9nXkcv50cFcZqyPnxO1romDWiUDeJ/ME8gvfCSuU7vDM0h4HiLz1qdcSLMdLlEwB3UQQXfZiBur4s7eys/5wrr2te0D6zo8iwNXghbyNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [124.16.141.245])
+	by APP-05 (Coremail) with SMTP id zQCowADHz8t5p8ZnAcjuEQ--.11326S2;
+	Tue, 04 Mar 2025 15:10:51 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: kenneth.feng@amd.com,
+	alexander.deucher@amd.com,
+	christian.koenig@amd.com,
+	Xinhui.Pan@amd.com,
+	airlied@gmail.com,
+	simona@ffwll.ch
+Cc: sunil.khatri@amd.com,
+	Jun.Ma2@amd.com,
+	lijo.lazar@amd.com,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
-	wangyuli@uniontech.com,
-	zhanjun@uniontech.com
-Subject: Re:[PATCH V2] usb: xhci: Add debugfs support for xHCI port bandwidth
-Date: Tue,  4 Mar 2025 15:09:14 +0800
-Message-Id: <20250304070914.3991-1-raoxu@uniontech.com>
-X-Mailer: git-send-email 2.20.1
+	Wentao Liang <vulab@iscas.ac.cn>
+Subject: [PATCH] drm/amdgpu: handle amdgpu_cgs_create_device() errors in amd_powerplay_create()
+Date: Tue,  4 Mar 2025 15:10:30 +0800
+Message-ID: <20250304071030.2166-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.42.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,37 +55,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz7a-0
-X-QQ-XMAILINFO: M613wnTrQKZbdlxMU2WwYGfKYkS0fOqpZZXCs88GDx6z80J76Q+Z5mr3
-	vrLgy0kVPE2QK/AvO7AlY2G4Ly6T6bllmcReDp7Ya1w3mzlx+O9bbYnhWDNV1G0sn2bFM7I
-	NAZaRI7HDxmvl1jG6lkR0QvHfEF9iv38UAonhDrAgvp/gbG23+TYd+1gLAtbzqO5Fks7+in
-	5nGvnx62XLnCYG/iDbgH7C8nXmLDBjNJAgDnSJqLk0Mk9ihPC5QJe4vdvt65GEZ8Jr/6ipW
-	Wb+QJN299x/GfMaa63vHW9XOmzstKYgI+kW0QIj5Mue9gL87hLAly+pfyK+ow+QdS9dbXVk
-	fZNaihNM5NNBE9rnOXjsjnWuBdD6vNmzwcRBIFfSM87siEMgYw7rNKx7Uhe9Bz8m7rribOv
-	TWM9TZzJ1Q4Trupt0DE/g1DhVd4yPhDzYE1UjyXY7gDB8w9xMjKvruq9IOKxcEJM+pGUih9
-	LrcWlP83L+gN1/F5GEDG7i16FdWk/jD1WHOMB8NxJvJb39QG4lJ/37wTLo/oSc5ll2V7OU9
-	l+9QBviapTeoW7G1sRBkWjxJae0KbX6Bb13BZZhGZH/aV6igxLEarc8OEcYfyDZGtsKY4Pw
-	yLmxvRsKKTsRPti+8xefQjIOPEVn9Ujdu73O7SecxiQf0GunlTIZd+2i9D7CqMEvHSvtoC9
-	6gKoyq9FDGqyxO9cWBHarUD6dWPVXueOnxr9RMKXy3xI1FxkYVdswQTQdUPhS3xs5ge7kIB
-	xyqy37MRW9XbTEYaLHNTwlwLWj6h8cIgAUOlt4/0cCcQEjPdGfTndbxml7styL/+r14F6si
-	05cdbF1B6sj1tam9vvn+4pg6m22azFb8wRKUuWHS5aTtN8Jx7R60SG0d31qXTaMIaXSyPb2
-	QpxYtNuzmZRE9q8/8YRG3CXYN7w4l7iNp62g8m8G2qlNBggyRkcYBBfzNFlAWmz6s8CSMd+
-	Fvoipd3kQtXzgEpteBKXxx7hsUQAP10XKfxqnYx6S/Fy5So9g5xZIW0dq4kJ2GLQPfFbETJ
-	0m4FuTYAlNJUUPJBF+DX2r/Rh2WDLH+MfhPYUsYIObLSSGin1n7+RKdbGkExA=
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-X-QQ-RECHKSPAM: 0
+X-CM-TRANSID:zQCowADHz8t5p8ZnAcjuEQ--.11326S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrZr1DtFWrtr1xtr1xtFWxXrb_yoWDuwcEka
+	1rJr1Sqr1UKFn8AwnrArs8Zryqyr4a9rWrGr12gwnayrnrJ3srXFyjgry7uF1ruayIgF98
+	uF1j9F4rAF97GjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUba8FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+	Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
+	1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+	6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr
+	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
+	8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFV
+	Cjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWl
+	x4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r
+	1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_
+	JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcS
+	sGvfC2KfnxnUUI43ZEXa7VUb8hL5UUUUU==
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBgoLA2fGdHuqjAAAsM
 
-On 2025/3/3 18:36, greg k-h wrote:
+Add error handling to propagate amdgpu_cgs_create_device() failures
+to the caller. When amdgpu_cgs_create_device() fails, immediately
+return -EINVAL to stop further processing and prevent null pointer
+dereference.
 
->
->The subject line is very odd, can you please fix that up and resend a v2
->patch?
->
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+---
+ drivers/gpu/drm/amd/pm/powerplay/amd_powerplay.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-I have sent v2 patch, No code changes were made, only the subject was changed.
+diff --git a/drivers/gpu/drm/amd/pm/powerplay/amd_powerplay.c b/drivers/gpu/drm/amd/pm/powerplay/amd_powerplay.c
+index 26624a716fc6..2cb05614466f 100644
+--- a/drivers/gpu/drm/amd/pm/powerplay/amd_powerplay.c
++++ b/drivers/gpu/drm/amd/pm/powerplay/amd_powerplay.c
+@@ -51,6 +51,8 @@ static int amd_powerplay_create(struct amdgpu_device *adev)
+ 	hwmgr->adev = adev;
+ 	hwmgr->not_vf = !amdgpu_sriov_vf(adev);
+ 	hwmgr->device = amdgpu_cgs_create_device(adev);
++	if (!hwmgr->device)
++		return -EINVAL;
+ 	mutex_init(&hwmgr->msg_lock);
+ 	hwmgr->chip_family = adev->family;
+ 	hwmgr->chip_id = adev->asic_type;
+-- 
+2.42.0.windows.2
 
-thanks,
-
-raoxu
 
