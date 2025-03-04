@@ -1,105 +1,177 @@
-Return-Path: <linux-kernel+bounces-543770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79268A4D9C5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:05:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02395A4D9C8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:06:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50CBD3A97A8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:04:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CAAC188EA14
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:07:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6DE21FDA90;
-	Tue,  4 Mar 2025 10:04:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 529411FDE1E;
+	Tue,  4 Mar 2025 10:06:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bit-philosophy.net header.i=@bit-philosophy.net header.b="zhCCNJHG"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WG6cHXVE";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ka0+TJv1"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D4BA3A8C1
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 10:04:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 309C61FC107;
+	Tue,  4 Mar 2025 10:06:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741082665; cv=none; b=hwU7eY/Sd8b4w22AmLsCXD15u3qzrYMl6oEJcnKRziCEZK3sWedvHrd8HRz1A5/Li2BNEv/tL4+44zNNMhye70pzSEo2q43gH0QojXGoxppQNkJAdqyKWfkUdZ0Mm8qYQsNR7MZvHS0QjuJc0uWMPW0qBKa76e6b2mri3ZHIsWw=
+	t=1741082808; cv=none; b=jJ/lkhgzP/Qp0Jpakmh3UEyQq/0mnGoVxYFZa+0qQ8/3WWuUj0pwfFwcWU/BWgKeivYqK4bCZDTDtiUtiIhAp3oKsi7Wu7SF8DO6PB6YjD/E6dDWr+6r65MqItr1m04X7/RNDs5PRK8hFkMMuA4mSrznRgNyhvNSNSUdNA9Uuv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741082665; c=relaxed/simple;
-	bh=yWE4NFMb32ymbKXzAyjZlypfhbndF2yWyE0Gz8lHqIs=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=ZxDil10jvSy9t3T4ropRHkEXZSNPr5w6kXotVYbZNRL6T6NaVqz0yIb89/4QkWkrg9zN3bV16o5QhxQRTth7KjGyNNaFEKb3dA/DE1StHiZsvfVuQJHdlvvW9wYK62RE04CbeBso23mb/4vayzKrF2P9QL/5J9fFgmvhYxxosdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-philosophy.net; spf=pass smtp.mailfrom=bit-philosophy.net; dkim=pass (2048-bit key) header.d=bit-philosophy.net header.i=@bit-philosophy.net header.b=zhCCNJHG; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-philosophy.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bit-philosophy.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=bit-philosophy.net; s=ds202411; h=Content-Transfer-Encoding:Content-Type:
-	Subject:From:To:MIME-Version:Date:Message-ID:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=uHUrptMcdZZF1KssGBJPZ8Qv5tqsSlJAZquM8l8ckrE=; b=zhCCNJHGH9c14yApVl0YiNM36J
-	dGiGa7rlOO+lz2/31tzSSPvoIvLa4Z9X6QZG1avKi2dbUfQV0oo11fMN+/K5mlbeG7/oMUWLZtpHG
-	NkZEl/doM76AEiSMGAdlLm239mto0IqhikS+O/XSEAx2ii3xWads3AFwx1Ng4yaQdY+2oGhHJ8hGi
-	VGMqZKJzhq/CkWXn6rDDz9MhuwpsM7VFIcn33Z1MWaQ0HKfCzqtTlvghBcptom6/KEAt85u72fxz3
-	J0nhTX45XWV3N2yfuZOUe5mizi7dbyU1a3YZAVMyjRcfUpdebgEzgTkOSSpsCjiH6hzARfU6orSw9
-	eNcqtt+A==;
-Received: from smtp
-	by smtp.domeneshop.no with esmtpsa (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	id 1tpP8G-005yS6-GU
-	for linux-kernel@vger.kernel.org;
-	Tue, 04 Mar 2025 11:04:12 +0100
-Message-ID: <0de29311-c614-4c5a-a08b-98ecb7541472@bit-philosophy.net>
-Date: Tue, 4 Mar 2025 11:04:10 +0100
+	s=arc-20240116; t=1741082808; c=relaxed/simple;
+	bh=V+0k3ap4pEsJ9phQ1LirPoFzCxQS4oVm+quEJL3uxuo=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=HmkOMkPDIdtYXoD3iGhwv12djgWP8mNzUSG2DyPqwbQjzWPUINUufpvcJ+nPTJfpzr5GTyfugYxg5bF4X854Aw24VneAnb2ex2eAQrtD6uxDc4tNlDB19A5byKEK7fEa2RbCzT8k5IkRUtOZkRwHF8aOEjkQbPpOZVJuivBd7bE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WG6cHXVE; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ka0+TJv1; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 04 Mar 2025 10:06:44 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741082805;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TPDkM61JudjWYNGH5Ruo2eS6qC/15jC7wlMHe+Qfte0=;
+	b=WG6cHXVEfbbCOr1s/T6j9qeJRPXLPmbnvCub6vWr8kB2shKdfn/CPN9s0QhxthB/y+QoY2
+	dZeDrowjPtLCe2l8WJHx+aIiszvejaelRvO9v6Rg+gR7+nkfqCU/8GWMRQqKlA8EeEex5b
+	v5R8psjXIa0nw8/wFKPHsIUxxH8fdEr5AJBYcMkBboSBmZSy9HZqsWcw4GrlICf6yXJbQ4
+	nlPMtwjTBu1FOzHT3ElWla3Nsy+k6i16Hb4hS4P4ndVkiFRM/cqy5Vox/o+uA6zdvrUELE
+	KbK3NQSRab4AIxTilOCStIZr7mcx2oerpGmsqGHvHd4Hafg8QIGXXrYqcMfNCg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741082805;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TPDkM61JudjWYNGH5Ruo2eS6qC/15jC7wlMHe+Qfte0=;
+	b=Ka0+TJv14GrMR8PNc6CHGViIdDdhLbzpqI5heOqzGrvQLVBL8UgX/MZdnOqRFg1efbw5U6
+	mqe3Ucl63yxvmsCw==
+From: "tip-bot2 for Uros Bizjak" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/asm] x86/irq/32: Change some static functions to bool
+Cc: Uros Bizjak <ubizjak@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+ Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250303155446.112769-5-ubizjak@gmail.com>
+References: <20250303155446.112769-5-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-kernel@vger.kernel.org
-From: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywe@bit-philosophy.net>
-Subject: Wayland Vulkan X Graphics Kawai Etc.
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Message-ID: <174108280432.14745.17696566794303241130.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Light.
+The following commit has been merged into the x86/asm branch of tip:
 
-I thought I'd share also some thoughts on Wayland, Vulkan X, Graphics, 
-Kawai etc.
+Commit-ID:     45f6469225e8da92ff1e5ec1027431053ba397c0
+Gitweb:        https://git.kernel.org/tip/45f6469225e8da92ff1e5ec1027431053ba397c0
+Author:        Uros Bizjak <ubizjak@gmail.com>
+AuthorDate:    Mon, 03 Mar 2025 16:54:25 +01:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Tue, 04 Mar 2025 10:53:52 +01:00
 
-Wayland has become rumoured a big thing. It uses a W symbol. Compared to 
-X, X is a good symbol for GUI design and exposed APIs.
+x86/irq/32: Change some static functions to bool
 
-Such as in Bit X, where Bit is how to design inner loop, related kernel 
-constructs etc.
+The return values of these functions is 0/1, but they use an int
+type instead of bool:
 
-I now also added a Kawai O with I in it, as symbol for Bit X.
+  check_stack_overflow()
+  execute_on_irq_stack()
 
-Shouldn´t it be best and symbolworld wise, to keep the X, and rather 
-integrate the other efforts?
+Change the type of these function to bool and adjust their return
+values and affected helper variables.
 
-I also hear one "timestamps" each frame here. To allow recording of 
-streams etc. Would it not be better to allow producernode to determine 
-if one should record or not?
+[ mingo: Rewrote the changelog ]
 
-With jitter below 200uS one does not really need timestamping.
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: https://lore.kernel.org/r/20250303155446.112769-5-ubizjak@gmail.com
+---
+ arch/x86/kernel/irq_32.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-If the intention was to reduce jitter, or codeobscurity I agree with 
-that. Not if it increases jitter or obscurity in general.
-
-Kawai has become a big thing in games. I think this is good, and I do 
-not agree with gunviolence in games aswell (questioning american 
-gunlobbies who point to muslos as the problem), preferring the Kawai style.
-
-One can also refer the prophet Ilyas for Kawai, Graphics APIs etc, for a 
-complete and tight version of things.
-
-This is fair pay compliant, (as my discussions often are about) and 
-recommended.
-
-Light,
-https://bit-philosophy.net/
-
-
+diff --git a/arch/x86/kernel/irq_32.c b/arch/x86/kernel/irq_32.c
+index 2428d66..566a93d 100644
+--- a/arch/x86/kernel/irq_32.c
++++ b/arch/x86/kernel/irq_32.c
+@@ -29,7 +29,7 @@
+ int sysctl_panic_on_stackoverflow __read_mostly;
+ 
+ /* Debugging check for stack overflow: is there less than 1KB free? */
+-static int check_stack_overflow(void)
++static bool check_stack_overflow(void)
+ {
+ 	unsigned long sp = current_stack_pointer & (THREAD_SIZE - 1);
+ 
+@@ -45,7 +45,7 @@ static void print_stack_overflow(void)
+ }
+ 
+ #else
+-static inline int check_stack_overflow(void) { return 0; }
++static inline bool check_stack_overflow(void) { return false; }
+ static inline void print_stack_overflow(void) { }
+ #endif
+ 
+@@ -65,7 +65,7 @@ static inline void *current_stack(void)
+ 	return (void *)(current_stack_pointer & ~(THREAD_SIZE - 1));
+ }
+ 
+-static inline int execute_on_irq_stack(int overflow, struct irq_desc *desc)
++static inline bool execute_on_irq_stack(bool overflow, struct irq_desc *desc)
+ {
+ 	struct irq_stack *curstk, *irqstk;
+ 	u32 *isp, *prev_esp;
+@@ -80,7 +80,7 @@ static inline int execute_on_irq_stack(int overflow, struct irq_desc *desc)
+ 	 * current stack (which is the irq stack already after all)
+ 	 */
+ 	if (unlikely(curstk == irqstk))
+-		return 0;
++		return false;
+ 
+ 	isp = (u32 *) ((char *)irqstk + sizeof(*irqstk));
+ 
+@@ -98,7 +98,7 @@ static inline int execute_on_irq_stack(int overflow, struct irq_desc *desc)
+ 		     : [thunk_target] "D" (desc->handle_irq)
+ 		       COMMA(ASM_CALL_CONSTRAINT)
+ 		     : "memory", "cc", "edx", "ecx");
+-	return 1;
++	return true;
+ }
+ 
+ /*
+@@ -147,7 +147,7 @@ void do_softirq_own_stack(void)
+ 
+ void __handle_irq(struct irq_desc *desc, struct pt_regs *regs)
+ {
+-	int overflow = check_stack_overflow();
++	bool overflow = check_stack_overflow();
+ 
+ 	if (user_mode(regs) || !execute_on_irq_stack(overflow, desc)) {
+ 		if (unlikely(overflow))
 
