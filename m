@@ -1,379 +1,169 @@
-Return-Path: <linux-kernel+bounces-545456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46A15A4ED65
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:33:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 699D0A4ED67
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:33:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2AF87A89ED
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:32:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26B017A9841
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:32:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D478277014;
-	Tue,  4 Mar 2025 19:32:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E7A24C081;
+	Tue,  4 Mar 2025 19:33:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="Y6vRqh4L"
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LeQAr1zO"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AF68260384;
-	Tue,  4 Mar 2025 19:32:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969181F4722
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:33:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741116749; cv=none; b=m1lsRBBGLRRDWbaI8WLnoOyD6GdbNYFKlOy1DI+Zw4s3H0AVa/zvvzRtGaMi9HH2/QixuGBmuDON59oe51+D4H/AsTjiEKGKaS1Wlb9Xm9OluaQkre3a4mbqyPHLszU+qMAbwZNgJ5prcQ/7TT9mr0mGWfSM19nPydgMH9qQUpY=
+	t=1741116817; cv=none; b=A12YCNYQTzMp4IlADmIEcLOtCMSGJazEscW62xMSbizBhFRyoXZCpROGRR/Rg/fKn0KF8Bi/7qlBWn9MMo4sBE+gjN3AgEstWVBva/zDnKSCL3VmpYNXilpgKMJyCzXOuAPUUHnZUeEx2IXVQX5Ocik5zwuLWaJQtbPnkQMFJBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741116749; c=relaxed/simple;
-	bh=yq0FNK2cRC707WXhZqTcNMaGYykukvLuH96mp4sMtns=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tMkiD8XlD9NjjatRqYhWr62ZHLyc9S9+kwSLAa19ohk2oT8W5xpppqQvgpj96pgA0+/xCme9SR068Aaly0S3pZMk5esY/wiDVU3YC+dYnmMFCCb0FaCtNyDgKt7vr3B15eXSs0UV2EZ1qB4vdZiVU8ruP763/S0RnfMy9V1hUc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=Y6vRqh4L; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-Received: from [192.168.1.78] (unknown [45.136.247.92])
-	by mail.mainlining.org (Postfix) with ESMTPSA id A316CBBEE8;
-	Tue,  4 Mar 2025 19:32:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
-	s=psm; t=1741116745;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ckPssTrKMktRUpJ0aj4vrjrbuYXucVZeA/vL65l1sN0=;
-	b=Y6vRqh4LGdEKdfRW3oQmhP2qS7E1lJXoTNimK24gFieFiU3bb2SYdVTpneEtaP64jygAaR
-	qEHwUM8mnj9WN6wSnpYa3Rs/vPNe1EHI4h2XMNsAbjzyKd9YGyPQCPGf7tnU7sAMFsHfHp
-	dT5A5xLH9dPJ5gWGKr7kw4284Tlgiq2HiC+p+c5OAdm8wozNNh0liTOohBMP1eRDbh93gm
-	QLNirJgNYsR23hm3rUMh5y43ucJO2fsI4A0g8x6UDr7FE878c3tHZTRNXkaVH49Cf+NgD/
-	tH2NEL4JlJ8CstsOTQjbtjmd0oJgvejZPipK6WSKpoGYSSxHhfdRPVEoTTq/aw==
-From: Vasiliy Doylov <nekocwd@mainlining.org>
-Date: Tue, 04 Mar 2025 22:32:20 +0300
-Subject: [PATCH v2 3/3] media: i2c: Add driver for LC898217XC VCM
+	s=arc-20240116; t=1741116817; c=relaxed/simple;
+	bh=Fyz3JfHHOvuotSLhbCETLSUbx3X7uzkobiKMeoVFgUY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JkoZZ6dRFU/MVFeuPNzA3FdBnbzGd8E8Tf7BXPXlqLpveGFVVfq1YhVk2AT/DWSpBc6kXpeM9bfXFqkerV4oPSJFZWCMZb8NpPy4wXevDjhgwvq0Ib/jk2+JOkIBFK6KVfGDaVSCjD4y7ViovQ2MnqcQTWbPbVL9zmHejdUq/Kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LeQAr1zO; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2235025322fso11899295ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 11:33:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741116815; x=1741721615; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wtIegLy+r+GMqADIrfnswa2mJO1assc6TIqGWvq1Thk=;
+        b=LeQAr1zOXY79/K+1GB1zwA75oVdJUTnL4Vmo7XyEVQ1SIo6Ji4MrA1vafhsat044ym
+         8UHWqL4leldfY1K332XOQVtV1B9CEGBaWvYo45TMb5AIKkFzixzC+pAqQ0zH4gZg/wS3
+         87P2Wdf8wPI2zQ+fG80t18F6kxx52ixVcStiS817fauMo+IRTSZQD1zSFRa/ywrwIl78
+         cif2teozPeN0o/rEK7hHaViHG+BsoYBya0OzI0nytY4GXSOsiFlHfF9rIUEKlIJj6piM
+         lzAFIYG1WddQvhD08o3fhpSRRw21SoARrg+wLqW9bL3eRnkuTrpikDllTfxfx2YBHYFC
+         tjTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741116815; x=1741721615;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wtIegLy+r+GMqADIrfnswa2mJO1assc6TIqGWvq1Thk=;
+        b=e2pB9X0AmZk17BRDcxolrcFTzfw0s89KaxS8iTXCD3vsWJNznfLvy2HKm0QvXtDsf+
+         Exp1A1dDJNuJcMsYbgzXg67b71/mwGcU7CHQFWvXlHHZ1Sk64WNShNc7liexne31R73h
+         PyWCwi/Ug82QE+DYO7Dkq0QEdrzu+pr0kBz27xUPVVdxmayFRcl/I39AyEvo8wmHmRJk
+         RXU1bHkY8Ul6VgItZn4TO1mVv6oFZ31IX8dqxiFrXT3X4mk1E8048kCSlKKpGwdUEzzy
+         0JAJSd/s9VnPzQnsY2SFd/ksOu/gri5A7GxXhx0UdohjuUP4iV18dQueBoETwV0f0jRk
+         y46g==
+X-Forwarded-Encrypted: i=1; AJvYcCVIAcYYwgMEUMEm3hMWL3gkitGyhsepl4mR3l8qiqTEquJhSOG4oNAFt9f1/BkpfJLZHABZDUjfTk1b4oA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNyDnkxM36bYTb6iXS4cxzrgCbe2/rbXFt7NWDIRMbDUq1k7Da
+	a0H4lHMqefCN9CNuCfBUSrq3fqrH8+UTOa5cJVAPoB3P5XpZGE9z
+X-Gm-Gg: ASbGncucR4WrbXgbnomN/CnbqXsBUXRw61vwH/jhZ8YXPVUrkhBoYFLSa8Sr0uZx9xw
+	zxqdmFKLZk/np1n8BrY2QCTa/JqlSvlEU5ujlVG/1za4ajpGlN6AVtGbQ9NJvGoPQnZvaC56ARQ
+	pqD44efufjTpkd5ehVMvYQ7Zt4huz/RnnLXCjb/LPVzG4CEyInfOpwQ3CuSWSUS9aUtzDfNrJtp
+	mgvok9Ns1gMM/OewqCzanTR1SUYb0slpcHmyM38/L2nJfqC+hhNPeupEa8+rgQscHcbQqslgQR6
+	/HYDy8KDkFo5EORFzhubhlFHduNkWpBG2zWyvpunAHg1oS8wfo3jVqk/31R5uJ4m3X6DuiXKorI
+	=
+X-Google-Smtp-Source: AGHT+IGOO8Q+oMRYcQBpw0l9B2qNi9FXTCKn0LBXiMRpfwxOYA9XY/0EpSQI8e4oPMFBQPO2/mpoiw==
+X-Received: by 2002:a17:902:ea05:b0:215:8721:30b7 with SMTP id d9443c01a7336-223f1d33a9dmr2163445ad.11.1741116814849;
+        Tue, 04 Mar 2025 11:33:34 -0800 (PST)
+Received: from debian-BULLSEYE-live-builder-AMD64 ([2802:8012:1f:3200:f1d1:c186:ba5b:8f06])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-734a003dd19sm11660791b3a.131.2025.03.04.11.33.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 11:33:34 -0800 (PST)
+Date: Tue, 4 Mar 2025 16:33:09 -0300
+From: Gaston Gonzalez <gascoar@gmail.com>
+To: linux-staging@lists.linux.dev
+Cc: dpenkler@gmail.com, gregkh@linuxfoundation.org, 
+	dan.carpenter@linaro.org, arnd@arndb.de, niharchaithanya@gmail.com, 
+	jiapeng.chong@linux.alibaba.com, linux-kernel@vger.kernel.org, gascoar@gmail.com
+Subject: Re: [PATCH 3/4] staging: gpib: fix kernel-doc section for
+ usb_gpib_line_status() function
+Message-ID: <mcagpfhzrwlvys76ketpo33l5yn2ij2csshrzz3tgufrdr5lg3@i4nmisbi3l6f>
+References: <20250304192603.40565-1-gascoar@gmail.com>
+ <20250304192603.40565-7-gascoar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250304-media-i2c-lc898217xc-initial-driver-v2-3-6a463cef3ea8@mainlining.org>
-References: <20250304-media-i2c-lc898217xc-initial-driver-v2-0-6a463cef3ea8@mainlining.org>
-In-Reply-To: <20250304-media-i2c-lc898217xc-initial-driver-v2-0-6a463cef3ea8@mainlining.org>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux@mainlining.org, linux-kernel@vger.kernel.org, 
- linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
- phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
- Vitalii Skorkin <nikroks@mainlining.org>, 
- Antonio Rische <nt8r@protonmail.com>, 
- Vasiliy Doylov <nekocwd@mainlining.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8861;
- i=nekocwd@mainlining.org; h=from:subject:message-id;
- bh=yq0FNK2cRC707WXhZqTcNMaGYykukvLuH96mp4sMtns=;
- b=owGbwMvMwCW2fZ/SFZeSpU2Mp9WSGNKPh7rMEnvfeP3mlqrq+Srn5EoWZ4vtLnXUXr8k2/nyn
- dz2UDG+jlIWBjEuBlkxRRabjR6zxfLDJSdNe6oAM4eVCWQIAxenAEzkJDfDX6mqHEGXLNaus0eM
- zsRblf93OsZzSS0v/5ZXntfkcLMTGgz/DPldJ1Z5Pz4ft/v7xyALdZvGqyby+v+K3jyTfbNASEO
- DDQA=
-X-Developer-Key: i=nekocwd@mainlining.org; a=openpgp;
- fpr=3CB1489B166F57199296E520B7BE22D44474A582
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250304192603.40565-7-gascoar@gmail.com>
 
-LC898217XC is a 11 bit DAC, designed for linear control
-of voice coil motor. This driver creates a V4L2 subdevice
-and provides control to set the desired focus.
+On Tue, Mar 04, 2025 at 04:25:41PM -0300, Gaston Gonzalez wrote:
+> The function name field in the kernel-doc section for the
+> usb_gpib_line_status() is defined as 'line_status'. In addition, after
+> the kernel-doc section, there are three macro definition instead of the
+> function definition.
+> 
+> These issues trigger the warning:
+> 
+> warning: expecting prototype for line_status(). Prototype was for WQT()
+> instead.
+> 
+> Fix the warning by renaming the function in the kernel-doc section and
+> by moving the macros at the beginning of the file with the rest of
+> macros definition.
+> 
+> Signed-off-by: Gaston Gonzalez <gascoar@gmail.com>
+> ---
+>  drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c b/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
+> index 090857824d07..f7dd0809b06c 100644
+> --- a/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
+> +++ b/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
+> @@ -78,6 +78,10 @@ module_param(debug, int, 0644);
+>  			dev_dbg(board->gpib_dev, format, ## __VA_ARGS__); } \
+>  	while (0)
+>  
+> +#define WQT wait_queue_entry_t
+> +#define WQH head
+> +#define WQE entry
+> +
+>  /* standard and extended command sets of the usb-gpib adapter */
+>  
+>  #define USB_GPIB_ON	 "\nIB\n"
+> @@ -131,6 +135,7 @@ module_param(debug, int, 0644);
+>  
+>  #define INBUF_SIZE 128
+>  
+> +
 
-Tested on Oneplus 6 (oneplus-enchilada)
+Please disregard this patch. I noticed this blank line after I sent the
+patch.
 
-Signed-off-by: Vasiliy Doylov <nekocwd@mainlining.org>
----
- drivers/media/i2c/Kconfig      |  11 ++
- drivers/media/i2c/Makefile     |   1 +
- drivers/media/i2c/lc898217xc.c | 240 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 252 insertions(+)
+Will resend.
 
-diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-index 85ecb2aeefdbfff744c8de86866560518abeace1..aa16d4729ba914e774da2ada228b00cfd2462080 100644
---- a/drivers/media/i2c/Kconfig
-+++ b/drivers/media/i2c/Kconfig
-@@ -794,6 +794,17 @@ config VIDEO_DW9807_VCM
- 	  capability. This is designed for linear control of
- 	  voice coil motors, controlled via I2C serial interface.
- 
-+config VIDEO_LC898217XC
-+	tristate "LC898217XC lens voice coil support"
-+	depends on I2C && VIDEO_DEV
-+	select MEDIA_CONTROLLER
-+	select VIDEO_V4L2_SUBDEV_API
-+	select V4L2_ASYNC
-+	help
-+	  This is a driver for the LC898217XC camera lens voice coil.
-+	  LC898217XC is a 11 bit DAC with 110mA output current sink
-+	  capability. This is designed for linear control of
-+	  voice coil motors, controlled via I2C serial interface.
- endmenu
- 
- menu "Flash devices"
-diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
-index fbb988bd067a1b8b577248811f18a15671eb8932..514b61a7e8769457c2e831df4cbe3c4aabc6ed1c 100644
---- a/drivers/media/i2c/Makefile
-+++ b/drivers/media/i2c/Makefile
-@@ -62,6 +62,7 @@ obj-$(CONFIG_VIDEO_IMX415) += imx415.o
- obj-$(CONFIG_VIDEO_IR_I2C) += ir-kbd-i2c.o
- obj-$(CONFIG_VIDEO_ISL7998X) += isl7998x.o
- obj-$(CONFIG_VIDEO_KS0127) += ks0127.o
-+obj-$(CONFIG_VIDEO_LC898217XC) += lc898217xc.o
- obj-$(CONFIG_VIDEO_LM3560) += lm3560.o
- obj-$(CONFIG_VIDEO_LM3646) += lm3646.o
- obj-$(CONFIG_VIDEO_M52790) += m52790.o
-diff --git a/drivers/media/i2c/lc898217xc.c b/drivers/media/i2c/lc898217xc.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..86afbf88e72a078da131a26ac0bc89ec2a2c92ff
---- /dev/null
-+++ b/drivers/media/i2c/lc898217xc.c
-@@ -0,0 +1,240 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+// Copyright (c) 2025 Vasiliy Doylov <nekocwd@mainlining.org>
-+
-+#include <linux/delay.h>
-+#include <linux/i2c.h>
-+#include <linux/module.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/regulator/consumer.h>
-+#include <media/v4l2-async.h>
-+#include <media/v4l2-ctrls.h>
-+#include <media/v4l2-device.h>
-+#include <media/v4l2-fwnode.h>
-+#include <media/v4l2-subdev.h>
-+#include <media/v4l2-event.h>
-+
-+#define LC898217XC_NAME "lc898217xc"
-+/* Actuator has 11 bit resolution */
-+#define LC898217XC_MAX_FOCUS_POS (2048 - 1)
-+#define LC898217XC_MIN_FOCUS_POS 0
-+#define LC898217XC_FOCUS_STEPS 1
-+
-+#define LC898217XC_MSB_ADDR 132
-+
-+static const char *const lc898217xc_supply_names[] = {
-+	"vcc",
-+};
-+
-+struct lc898217xc {
-+	struct regulator_bulk_data supplies[ARRAY_SIZE(lc898217xc_supply_names)];
-+	struct v4l2_ctrl_handler ctrls;
-+	struct v4l2_ctrl *focus;
-+	struct v4l2_subdev sd;
-+};
-+
-+static inline struct lc898217xc *sd_to_lc898217xc(struct v4l2_subdev *subdev)
-+{
-+	return container_of(subdev, struct lc898217xc, sd);
-+}
-+
-+static int lc898217xc_set_dac(struct lc898217xc *lc898217xc, u16 val)
-+{
-+	struct i2c_client *client = v4l2_get_subdevdata(&lc898217xc->sd);
-+
-+	return i2c_smbus_write_word_swapped(client, LC898217XC_MSB_ADDR, val);
-+}
-+
-+static int __maybe_unused lc898217xc_runtime_suspend(struct device *dev)
-+{
-+	struct v4l2_subdev *sd = dev_get_drvdata(dev);
-+	struct lc898217xc *lc898217xc = sd_to_lc898217xc(sd);
-+
-+	regulator_bulk_disable(ARRAY_SIZE(lc898217xc_supply_names),
-+			       lc898217xc->supplies);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused lc898217xc_runtime_resume(struct device *dev)
-+{
-+	struct v4l2_subdev *sd = dev_get_drvdata(dev);
-+	struct lc898217xc *lc898217xc = sd_to_lc898217xc(sd);
-+	int ret;
-+
-+	ret = regulator_bulk_enable(ARRAY_SIZE(lc898217xc_supply_names),
-+				    lc898217xc->supplies);
-+
-+	if (ret < 0) {
-+		dev_err(dev, "failed to enable regulators\n");
-+		return ret;
-+	}
-+
-+	usleep_range(8000, 10000);
-+
-+	return ret;
-+}
-+
-+static int lc898217xc_set_ctrl(struct v4l2_ctrl *ctrl)
-+{
-+	struct lc898217xc *lc898217xc =
-+		container_of(ctrl->handler, struct lc898217xc, ctrls);
-+
-+	if (ctrl->id == V4L2_CID_FOCUS_ABSOLUTE)
-+		return lc898217xc_set_dac(lc898217xc, ctrl->val);
-+
-+	return 0;
-+}
-+
-+static const struct v4l2_ctrl_ops lc898217xc_ctrl_ops = {
-+	.s_ctrl = lc898217xc_set_ctrl,
-+};
-+
-+static int lc898217xc_open(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
-+{
-+	return pm_runtime_resume_and_get(sd->dev);
-+}
-+
-+static int lc898217xc_close(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
-+{
-+	pm_runtime_mark_last_busy(sd->dev);
-+	pm_runtime_put_autosuspend(sd->dev);
-+
-+	return 0;
-+}
-+
-+static const struct v4l2_subdev_internal_ops lc898217xc_int_ops = {
-+	.open = lc898217xc_open,
-+	.close = lc898217xc_close,
-+};
-+
-+static const struct v4l2_subdev_core_ops lc898217xc_core_ops = {
-+	.log_status = v4l2_ctrl_subdev_log_status,
-+	.subscribe_event = v4l2_ctrl_subdev_subscribe_event,
-+	.unsubscribe_event = v4l2_event_subdev_unsubscribe,
-+};
-+
-+static const struct v4l2_subdev_ops lc898217xc_ops = {
-+	.core = &lc898217xc_core_ops,
-+};
-+
-+static int lc898217xc_init_controls(struct lc898217xc *lc898217xc)
-+{
-+	struct v4l2_ctrl_handler *hdl = &lc898217xc->ctrls;
-+	const struct v4l2_ctrl_ops *ops = &lc898217xc_ctrl_ops;
-+
-+	v4l2_ctrl_handler_init(hdl, 1);
-+
-+	lc898217xc->focus = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_FOCUS_ABSOLUTE,
-+					      LC898217XC_MIN_FOCUS_POS,
-+					      LC898217XC_MAX_FOCUS_POS,
-+					      LC898217XC_FOCUS_STEPS, 0);
-+
-+	if (hdl->error)
-+		return hdl->error;
-+
-+	lc898217xc->sd.ctrl_handler = hdl;
-+
-+	return 0;
-+}
-+
-+static int lc898217xc_probe(struct i2c_client *client)
-+{
-+	struct device *dev = &client->dev;
-+	struct lc898217xc *lc898217xc;
-+	unsigned int i;
-+	int ret;
-+
-+	lc898217xc = devm_kzalloc(dev, sizeof(*lc898217xc), GFP_KERNEL);
-+	if (!lc898217xc)
-+		return -ENOMEM;
-+
-+	/* Initialize subdev */
-+	v4l2_i2c_subdev_init(&lc898217xc->sd, client, &lc898217xc_ops);
-+
-+	for (i = 0; i < ARRAY_SIZE(lc898217xc_supply_names); i++)
-+		lc898217xc->supplies[i].supply = lc898217xc_supply_names[i];
-+
-+	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(lc898217xc_supply_names),
-+				      lc898217xc->supplies);
-+
-+	if (ret) {
-+		dev_err(dev, "failed to get regulators\n");
-+		return ret;
-+	}
-+
-+	/* Initialize controls */
-+	ret = lc898217xc_init_controls(lc898217xc);
-+	if (ret)
-+		goto err_free_handler;
-+
-+	/* Initialize subdev */
-+	lc898217xc->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE |
-+				V4L2_SUBDEV_FL_HAS_EVENTS;
-+	lc898217xc->sd.internal_ops = &lc898217xc_int_ops;
-+
-+	ret = media_entity_pads_init(&lc898217xc->sd.entity, 0, NULL);
-+	if (ret < 0)
-+		goto err_free_handler;
-+
-+	lc898217xc->sd.entity.function = MEDIA_ENT_F_LENS;
-+
-+	pm_runtime_enable(dev);
-+	ret = v4l2_async_register_subdev(&lc898217xc->sd);
-+
-+	if (ret < 0) {
-+		dev_err(dev, "failed to register V4L2 subdev: %d", ret);
-+		goto err_power_off;
-+	}
-+
-+	pm_runtime_set_autosuspend_delay(dev, 1000);
-+	pm_runtime_use_autosuspend(dev);
-+	pm_runtime_idle(dev);
-+
-+	return 0;
-+
-+err_power_off:
-+	pm_runtime_disable(dev);
-+	media_entity_cleanup(&lc898217xc->sd.entity);
-+err_free_handler:
-+	v4l2_ctrl_handler_free(&lc898217xc->ctrls);
-+
-+	return ret;
-+}
-+
-+static void lc898217xc_remove(struct i2c_client *client)
-+{
-+	struct v4l2_subdev *sd = i2c_get_clientdata(client);
-+	struct lc898217xc *lc898217xc = sd_to_lc898217xc(sd);
-+	struct device *dev = &client->dev;
-+
-+	v4l2_async_unregister_subdev(&lc898217xc->sd);
-+	v4l2_ctrl_handler_free(&lc898217xc->ctrls);
-+	media_entity_cleanup(&lc898217xc->sd.entity);
-+	pm_runtime_disable(dev);
-+}
-+
-+static const struct of_device_id lc898217xc_of_table[] = {
-+	{ .compatible = "onnn,lc898217xc" },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, lc898217xc_of_table);
-+
-+static const struct dev_pm_ops lc898217xc_pm_ops = {
-+	SET_RUNTIME_PM_OPS(lc898217xc_runtime_suspend,
-+			   lc898217xc_runtime_resume, NULL)
-+};
-+
-+static struct i2c_driver lc898217xc_i2c_driver = {
-+	.driver = {
-+		.name = LC898217XC_NAME,
-+		.pm = &lc898217xc_pm_ops,
-+		.of_match_table = lc898217xc_of_table,
-+	},
-+	.probe = lc898217xc_probe,
-+	.remove = lc898217xc_remove,
-+};
-+module_i2c_driver(lc898217xc_i2c_driver);
-+
-+MODULE_AUTHOR("Vasiliy Doylov <nekocwd@mainlining.org>");
-+MODULE_DESCRIPTION("Onsemi LC898217XC VCM driver");
-+MODULE_LICENSE("GPL");
+Gaston
 
--- 
-2.48.1
 
+>  struct char_buf {		/* used by one_char() routine */
+>  	char *inbuf;
+>  	int last;
+> @@ -644,17 +649,12 @@ static void usb_gpib_interface_clear(gpib_board_t *board, int assert)
+>  }
+>  
+>  /**
+> - * line_status() - Read the status of the bus lines.
+> + * usb_gpib_line_status() - Read the status of the bus lines.
+>   *
+>   *  @board:    the gpib_board data area for this gpib interface
+>   *
+>   *    We can read all lines.
+>   */
+> -
+> -#define WQT wait_queue_entry_t
+> -#define WQH head
+> -#define WQE entry
+> -
+>  static int usb_gpib_line_status(const gpib_board_t *board)
+>  {
+>  	int buffer;
+> -- 
+> 2.49.0.rc0
+> 
 
