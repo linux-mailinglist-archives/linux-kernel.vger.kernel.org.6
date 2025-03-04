@@ -1,314 +1,279 @@
-Return-Path: <linux-kernel+bounces-545782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D07F4A4F152
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:19:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DFFBA4F156
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:20:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE5CA188B48E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:19:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91B3C188B1AB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:20:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2B252780E1;
-	Tue,  4 Mar 2025 23:19:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACFB4278170;
+	Tue,  4 Mar 2025 23:19:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="Ny8tYnQd"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AY+qot5n"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FDF325FA19
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 23:19:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7FCC1FAC4C;
+	Tue,  4 Mar 2025 23:19:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741130380; cv=none; b=Mf16lWF2wV7aZ1strQLM8QIB3NUKjNfLpQCGsamuAKH5cQjZ/a0ybvKQTHlqZhexkwg5t3cNlXyHln+1XZxykSFdM4QsZN3XAZaSg1q0BtuXQWet4fdsNXGmVmq3fg+U5UZ1OWTPhHqVwWcS4VAHD1GXUDdd/p3pGjgYTnpeJI0=
+	t=1741130393; cv=none; b=KxvyRRvWsBuGxG6VcW8BPkiSt7EGQPiYDBKIVzA5dz9yyvWHJBa6rkAUH2983Mtyof9UrsInREUhWl7CXErfWqcsPnuWM16vd/qPeIsIy9pRM5qHZ/d2REY2pw/vbS+AaOSj1+cE8kmO46NKUldUeMi6YdpGsDu0mzZpKCxfQMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741130380; c=relaxed/simple;
-	bh=Pg+j0w08LFQvvhKXGAGSv3WfAYhVXVP5qvtsyQZ1KhI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tUzKU8rtVNLVxzxHm/csqDYsFbv8ttS05jE7OuREnPa1x279OD+NieT14WfxPLTKpwaZ04YEphpWy+9ukkiI6E3Ep+Zgc3MVlma6Zg39i/Hg83n1r91JLApphKkzmdHjohp0kHWY5y0Ro0eHhlOBt30qd+SuuIwsdxy6aXaPFf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=Ny8tYnQd; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5e04064af07so11530138a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 15:19:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=openvpn.net; s=google; t=1741130376; x=1741735176; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hi1tDJofCuitzWIascvhhVcUILEUWxoEMLUbwJHwkNk=;
-        b=Ny8tYnQdKSaTzVrBxwNx77PBL0rB/Ime4oJkiDCpNqurs1yZZzb0qx52Q9j1ZGazBs
-         y6W9O4P84EGTGXcQZpUx0gqfaW1mJLCDztTyeNRPye+HIL3W7OoRUUAliWOrxqq3lviV
-         KDNebyHcfRNZV/pbtc470WYYAW5njsmOuS2gMtkrJInPreOsFDTEY7uD9VBYOsLG6zrl
-         w1r+Wd9zHtb1+1GEnyaf8c+YGiJDXfhR3p37+dTC7S8yAAbpAzpKA7OJuXWMJy0qBQkg
-         cP9hZlV42IGwGqpjt40Br5by+Tn4R5RUCcIGm7wMew2mMsoHFQpCAu3CgOuL/yUzKS1r
-         kaJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741130376; x=1741735176;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Hi1tDJofCuitzWIascvhhVcUILEUWxoEMLUbwJHwkNk=;
-        b=H9KrqdHB9YIqoKh6Xttnxw32KLTvnTwq+YPGlUu8/ZI8Cn5dIE5FYgY1m5XnGSoRvE
-         nWs8ix2UKo6LgcD1mwJ13+Y0tMFk8kpjqROLE3n7zvAsqyETX+DojOmT+zp/7Rp0uwJH
-         764acpOKU7l3lC7AJxjpJEUpqniA5yg0mEnyK2/a3pk49Z6jVGcoWM2y4NedzsvCX7nH
-         KI50LAHFGFTnwoigNd+aIIukxvgyFJjAwb4+UfTvcktbQylek0ljnYJVqPKAWFbaY4LF
-         dhMlVnUoZhG43Q3WxI4fpkvj5cyCfJ1X2XkFRGyAKXuhQTCJsXLE8CDzDWv7pjwXrjcK
-         1PeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXbZabkJqrDfwU8OeTCQLsmVqhWRAcgGJRiqc6q2A2RGz0efzU3bk6EQp85glU97/nWSllPv99oWvbsh5s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIpNe0P0vLYb26X6XEjs3R+rDH7yxgeVpNsaf/cquSCjUIM813
-	Q7U4ivZeQx/cbzQ34HmdLBYCWgw/Td6zMjDpvF+MulFxWWtVy0USo903Eje5/lE=
-X-Gm-Gg: ASbGncsdMcwX5WQU9/QJQaWf13L8+Od5u8OKMs8WELIBFepwKmkNlyAG4CnfZh65SJU
-	qWOXn90SzGNWEiIVKYlMfD030sBmAXnMj7jUJTRfP+PYslRq+8IB/TizxcyEt1CMXGxzhz8vi+P
-	aGsP+u5XPcgZ8JpZu6TFD3gmbWZP/KcEip9i2hqTw+wg4TcdoxYltHcbvZKuJSVnAEunExskuHJ
-	Tf5V66sfKwgeudbbP9PoKbcjWCZooXqa5KBk+/AfJn4ury6ALIN3i+QJ9UUqHgaAr5L30RcCO5D
-	SzP4DiqzEgeb0BzaNI4KF54LHhOUa0vbTPzBCcWlXQYrbkuPLoh58SWsUMN0hSykWmfBVBICL4X
-	j05lJnMk=
-X-Google-Smtp-Source: AGHT+IGSWBBLLOEgGm5d12Y0VLhxBPzcA+VG2L+2ZEf6ixg9c/BHEGiY5ClxGVzJJS5exDVTZ77Ceg==
-X-Received: by 2002:a05:6402:2351:b0:5e4:9a0e:38a3 with SMTP id 4fb4d7f45d1cf-5e59f3c5f22mr765296a12.17.1741130375762;
-        Tue, 04 Mar 2025 15:19:35 -0800 (PST)
-Received: from ?IPV6:2001:67c:2fbc:1:2107:3d4f:958a:fa5f? ([2001:67c:2fbc:1:2107:3d4f:958a:fa5f])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e4c3b4aad0sm8840121a12.2.2025.03.04.15.19.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Mar 2025 15:19:34 -0800 (PST)
-Message-ID: <9c919407-fb91-48d7-bf2d-8437c2f3f4da@openvpn.net>
-Date: Wed, 5 Mar 2025 00:19:32 +0100
+	s=arc-20240116; t=1741130393; c=relaxed/simple;
+	bh=i8SL8gO+OIlTYJRgMlSgO0oRB4ZwIsNjVvyGrMEu5PU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VWbQh73zwySNUvBm13SzwdZfUDMCugBQWt1S0EVo2oxiXffyhBLzTwvJmN0y0msLVaKh737GRCfIHqXdPtNht5EpZrx50OtgeUws45CMTdhVhnmeIql87PjOGOWTUONLXSlPwlkUGW60vP3rpeCgQzSA9kjYWGcXKONeKE6jH5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AY+qot5n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A93F8C4CEE9;
+	Tue,  4 Mar 2025 23:19:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741130393;
+	bh=i8SL8gO+OIlTYJRgMlSgO0oRB4ZwIsNjVvyGrMEu5PU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=AY+qot5nFtHrn4nfwbaT/9+XzyaPP3sz6wnmahpRr6nx4Lg4r8ULLdhC2pW7vPIKc
+	 SAN5iKmwuY8Ehva6O/0G5T3Jmla2ulnwlznXlsE2ubnwa16pMxFurqwa+POlXenbLS
+	 YGQetWtRCHyRo22oijRH+9yC+3o6sz+QaVORQn9awssYzCDw2HmgpF0Fd/kPqt5hiK
+	 R7/CQCLhleU3NJ3Gz7XQF56QUqvbUrY4sKsGPFPyg5U1ICiGkNO1Uu4FwixN6AajBL
+	 B3urex3lv4tzyqVTku8dJmOGZwp7XEGST+1c5nCTgAs0PAzIemkPbPR89RpIGY9L/a
+	 xQfC5rzyBwUuA==
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3d2af701446so50769375ab.2;
+        Tue, 04 Mar 2025 15:19:53 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUH1ZeXXnmLbbv6kRLBYy5u9G2a5Vw02YjDKLzX9e75W2QgmZryC/LdSBZD1kXpJBwKgtlZu2kWe8YDxsS3wUpHlsLilcMm@vger.kernel.org, AJvYcCUst5HlRkSFL9s/KF3oClPJhEgIK1rCvy2s54HxSLuWHdzmFxHokeuoehtmzDCzQHx8YzU=@vger.kernel.org, AJvYcCV6QXtGQmqPtqe1zLU60tWRRzNH30nJOvyaZCxh5uJCj0UY4sYDnk3/KHc3eFFwWBPETGmRJTZEVg==@vger.kernel.org, AJvYcCWY8aDyz/U/vgs1hRZcAHUyhy6Bz49ZWUbLWqFG0HYkwq9WZf4Xrvx8/BpjhOnUPv9cOaSN6GCc1beYWuPL@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsqEfvpWU/vsA2C3jDKv2D7Jj6Ao9cfI/g51ow1VgwT/m3+5yj
+	n/CnRl5+G3Ipus6pPERZNgVFyBKbZn3db4uRIbUkjP7l7bi4rD9LytCHVCSDjLl8lcjXB3VCuCb
+	32d5lpkaa+TalHZDNMVwfvwyRF0Q=
+X-Google-Smtp-Source: AGHT+IGms9dqXKMXqsx3hVWMrs+Z8rdj1LzypWR2n2n7rHwNxaraGVvP4jdONEO1NrkicQNJScsH92+aLsVP1+7xLc0=
+X-Received: by 2002:a05:6e02:3f8a:b0:3d3:ce83:527c with SMTP id
+ e9e14a558f8ab-3d42b879d19mr16194865ab.1.1741130392941; Tue, 04 Mar 2025
+ 15:19:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v21 18/24] ovpn: add support for peer floating
-To: Sabrina Dubroca <sd@queasysnail.net>
-Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Donald Hunter <donald.hunter@gmail.com>, Shuah Khan <shuah@kernel.org>,
- ryazanov.s.a@gmail.com, Andrew Lunn <andrew+netdev@lunn.ch>,
- Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>
-References: <20250304-b4-ovpn-tmp-v21-0-d3cbb74bb581@openvpn.net>
- <20250304-b4-ovpn-tmp-v21-18-d3cbb74bb581@openvpn.net> <Z8dIXjwZ3QmiEcd-@hog>
-Content-Language: en-US
-From: Antonio Quartulli <antonio@openvpn.net>
-Autocrypt: addr=antonio@openvpn.net; keydata=
- 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
-Organization: OpenVPN Inc.
-In-Reply-To: <Z8dIXjwZ3QmiEcd-@hog>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250304203123.3935371-1-bboscaccy@linux.microsoft.com> <20250304203123.3935371-3-bboscaccy@linux.microsoft.com>
+In-Reply-To: <20250304203123.3935371-3-bboscaccy@linux.microsoft.com>
+From: Song Liu <song@kernel.org>
+Date: Tue, 4 Mar 2025 15:19:41 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW5HJuRYPucfvDbs25un7_D8JJnt=7zNUJ1utY3O_VMeSw@mail.gmail.com>
+X-Gm-Features: AQ5f1Jo9WUD2lq83UkjMIXC2XZlbrUncq1aeaThvdFPiq6BN9fGcI0gy7DMvJMs
+Message-ID: <CAPhsuW5HJuRYPucfvDbs25un7_D8JJnt=7zNUJ1utY3O_VMeSw@mail.gmail.com>
+Subject: Re: [PATCH v4 bpf-next 2/2] selftests/bpf: Add is_kernel parameter to
+ LSM/bpf test programs
+To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Yonghong Song <yonghong.song@linux.dev>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 04/03/2025 19:37, Sabrina Dubroca wrote:
-> 2025-03-04, 01:33:48 +0100, Antonio Quartulli wrote:
->> A peer connected via UDP may change its IP address without reconnecting
->> (float).
-> 
-> Should that trigger a reset of the peer->dst_cache? And same when
-> userspace updates the remote address? Otherwise it seems we could be
-> stuck with a cached dst that cannot reach the peer.
+On Tue, Mar 4, 2025 at 12:31=E2=80=AFPM Blaise Boscaccy
+<bboscaccy@linux.microsoft.com> wrote:
+>
+> The security_bpf LSM hook now contains a boolean parameter specifying
+> whether an invocation of the bpf syscall originated from within the
+> kernel. Here, we update the function signature of relevant test
+> programs to include that new parameter.
+>
+> Signed-off-by: Blaise Boscaccy bboscaccy@linux.microsoft.com
+^^^ The email address is broken.
 
-Yeah, that make sense, otherwise ovpn_udpX_output would just try over 
-and over to re-use the cached source address (unless it becomes 
-unavailable).
+> ---
+>  tools/testing/selftests/bpf/progs/rcu_read_lock.c           | 3 ++-
+>  tools/testing/selftests/bpf/progs/test_cgroup1_hierarchy.c  | 4 ++--
+>  tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c | 6 +++---
+>  tools/testing/selftests/bpf/progs/test_lookup_key.c         | 2 +-
+>  tools/testing/selftests/bpf/progs/test_ptr_untrusted.c      | 2 +-
+>  tools/testing/selftests/bpf/progs/test_task_under_cgroup.c  | 2 +-
+>  tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c   | 2 +-
+>  7 files changed, 11 insertions(+), 10 deletions(-)
 
-> 
-> 
->> +void ovpn_peer_endpoints_update(struct ovpn_peer *peer, struct sk_buff *skb)
->> +{
->> +	struct hlist_nulls_head *nhead;
->> +	struct sockaddr_storage ss;
->> +	const u8 *local_ip = NULL;
->> +	struct sockaddr_in6 *sa6;
->> +	struct sockaddr_in *sa;
->> +	struct ovpn_bind *bind;
->> +	size_t salen = 0;
->> +
->> +	spin_lock_bh(&peer->lock);
->> +	bind = rcu_dereference_protected(peer->bind,
->> +					 lockdep_is_held(&peer->lock));
->> +	if (unlikely(!bind))
->> +		goto unlock;
->> +
->> +	switch (skb->protocol) {
->> +	case htons(ETH_P_IP):
->> +		/* float check */
->> +		if (unlikely(!ovpn_bind_skb_src_match(bind, skb))) {
->> +			if (bind->remote.in4.sin_family == AF_INET)
->> +				local_ip = (u8 *)&bind->local;
-> 
-> If I'm reading this correctly, we always reuse the existing local
-> address when we have to re-create the bind, even if it doesn't match
-> the skb? The "local endpoint update" chunk below is doing that, but
-> only if we're keeping the same remote? It'll get updated the next time
-> we receive a packet and call ovpn_peer_endpoints_update.
-> 
-> That might irritate the RPF check on the other side, if we still use
-> our "old" source to talk to the new dest?
-> 
->> +			sa = (struct sockaddr_in *)&ss;
->> +			sa->sin_family = AF_INET;
->> +			sa->sin_addr.s_addr = ip_hdr(skb)->saddr;
->> +			sa->sin_port = udp_hdr(skb)->source;
->> +			salen = sizeof(*sa);
->> +			break;
+It appears you missed a few of these?
 
-I think the issue is simply this 'break' above - by removing it, 
-everything should work as expected.
+tools/testing/selftests/bpf/progs/rcu_read_lock.c:SEC("?lsm.s/bpf")
+tools/testing/selftests/bpf/progs/test_cgroup1_hierarchy.c:SEC("lsm/bpf")
+tools/testing/selftests/bpf/progs/test_cgroup1_hierarchy.c:SEC("lsm.s/bpf")
+tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c:SEC("?lsm.s/bpf=
+")
+tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c:SEC("?lsm.s/bpf=
+")
+tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c:SEC("lsm.s/bpf"=
+)
+tools/testing/selftests/bpf/progs/test_libbpf_get_fd_by_id_opts.c:SEC("lsm/=
+bpf_map")
+tools/testing/selftests/bpf/progs/test_lookup_key.c:SEC("lsm.s/bpf")
+tools/testing/selftests/bpf/progs/test_ptr_untrusted.c:SEC("lsm.s/bpf")
+tools/testing/selftests/bpf/progs/test_task_under_cgroup.c:SEC("lsm.s/bpf")
+tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c:SEC("lsm.s/bpf")
+tools/testing/selftests/bpf/progs/token_lsm.c:SEC("lsm/bpf_token_capable")
+tools/testing/selftests/bpf/progs/token_lsm.c:SEC("lsm/bpf_token_cmd")
+tools/testing/selftests/bpf/progs/verifier_global_subprogs.c:SEC("?lsm/bpf"=
+)
+tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bpf")
+tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bpf")
+tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bpf")
+tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bpf")
+tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bpf")
+tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bpf")
+tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bpf")
 
-I thin this is a leftover from when float check and endpoint update were 
-two different functions/switch blocks.
-
->> +		}
->> +
->> +		/* local endpoint update */
->> +		if (unlikely(bind->local.ipv4.s_addr != ip_hdr(skb)->daddr)) {
->> +			net_dbg_ratelimited("%s: learning local IPv4 for peer %d (%pI4 -> %pI4)\n",
->> +					    netdev_name(peer->ovpn->dev),
->> +					    peer->id, &bind->local.ipv4.s_addr,
->> +					    &ip_hdr(skb)->daddr);
->> +			bind->local.ipv4.s_addr = ip_hdr(skb)->daddr;
->> +		}
->> +		break;
-> 
-> [...]
->> +	if (peer->ovpn->mode == OVPN_MODE_MP) {
->> +		spin_lock_bh(&peer->ovpn->lock);
->> +		spin_lock_bh(&peer->lock);
->> +		bind = rcu_dereference_protected(peer->bind,
->> +						 lockdep_is_held(&peer->lock));
->> +		if (unlikely(!bind)) {
->> +			spin_unlock_bh(&peer->lock);
->> +			spin_unlock_bh(&peer->ovpn->lock);
->> +			return;
->> +		}
->> +
->> +		/* his function may be invoked concurrently, therefore another
-> 
-> typo:
->                     ^ This
-
-ACK
-
-> 
-> 
-> [...]
->> -/* variable name __tbl2 needs to be different from __tbl1
->> - * in the macro below to avoid confusing clang
->> - */
->> -#define ovpn_get_hash_slot(_tbl, _key, _key_len) ({	\
->> -	typeof(_tbl) *__tbl2 = &(_tbl);			\
->> -	jhash(_key, _key_len, 0) % HASH_SIZE(*__tbl2);	\
->> -})
->> -
->> -#define ovpn_get_hash_head(_tbl, _key, _key_len) ({		\
->> -	typeof(_tbl) *__tbl1 = &(_tbl);				\
->> -	&(*__tbl1)[ovpn_get_hash_slot(*__tbl1, _key, _key_len)];\
->> -})
->> -
->>   /**
->>    * ovpn_peer_get_by_vpn_addr4 - retrieve peer by its VPN IPv4 address
->>    * @ovpn: the openvpn instance to search
->> @@ -522,51 +694,6 @@ static void ovpn_peer_remove(struct ovpn_peer *peer,
->>   	llist_add(&peer->release_entry, release_list);
->>   }
->>   
->> -/**
->> - * ovpn_peer_update_local_endpoint - update local endpoint for peer
->> - * @peer: peer to update the endpoint for
->> - * @skb: incoming packet to retrieve the destination address (local) from
->> - */
->> -void ovpn_peer_update_local_endpoint(struct ovpn_peer *peer,
->> -				     struct sk_buff *skb)
->> -{
->> -	struct ovpn_bind *bind;
->> -
->> -	rcu_read_lock();
->> -	bind = rcu_dereference(peer->bind);
->> -	if (unlikely(!bind))
->> -		goto unlock;
->> -
->> -	spin_lock_bh(&peer->lock);
->> -	switch (skb->protocol) {
->> -	case htons(ETH_P_IP):
->> -		if (unlikely(bind->local.ipv4.s_addr != ip_hdr(skb)->daddr)) {
->> -			net_dbg_ratelimited("%s: learning local IPv4 for peer %d (%pI4 -> %pI4)\n",
->> -					    netdev_name(peer->ovpn->dev),
->> -					    peer->id, &bind->local.ipv4.s_addr,
->> -					    &ip_hdr(skb)->daddr);
->> -			bind->local.ipv4.s_addr = ip_hdr(skb)->daddr;
->> -		}
->> -		break;
->> -	case htons(ETH_P_IPV6):
->> -		if (unlikely(!ipv6_addr_equal(&bind->local.ipv6,
->> -					      &ipv6_hdr(skb)->daddr))) {
->> -			net_dbg_ratelimited("%s: learning local IPv6 for peer %d (%pI6c -> %pI6c\n",
->> -					    netdev_name(peer->ovpn->dev),
->> -					    peer->id, &bind->local.ipv6,
->> -					    &ipv6_hdr(skb)->daddr);
->> -			bind->local.ipv6 = ipv6_hdr(skb)->daddr;
->> -		}
->> -		break;
->> -	default:
->> -		break;
->> -	}
->> -	spin_unlock_bh(&peer->lock);
->> -
->> -unlock:
->> -	rcu_read_unlock();
->> -}
-> 
-> I guess you could squash this and the previous patch into one to
-> reduce the churn (and get a little bit closer to the 15-patch limit :))
-
-Hehe I can see you're getting familiar with the code :-)
-Will do!
-
-Thanks!
-
-> 
-
--- 
-Antonio Quartulli
-OpenVPN Inc.
-
+>
+> diff --git a/tools/testing/selftests/bpf/progs/rcu_read_lock.c b/tools/te=
+sting/selftests/bpf/progs/rcu_read_lock.c
+> index ab3a532b7dd6d..f85d0e282f2ae 100644
+> --- a/tools/testing/selftests/bpf/progs/rcu_read_lock.c
+> +++ b/tools/testing/selftests/bpf/progs/rcu_read_lock.c
+> @@ -242,7 +242,8 @@ int inproper_sleepable_helper(void *ctx)
+>  }
+>
+>  SEC("?lsm.s/bpf")
+> -int BPF_PROG(inproper_sleepable_kfunc, int cmd, union bpf_attr *attr, un=
+signed int size)
+> +int BPF_PROG(inproper_sleepable_kfunc, int cmd, union bpf_attr *attr, un=
+signed int size,
+> +            bool is_kernel)
+>  {
+>         struct bpf_key *bkey;
+>
+> diff --git a/tools/testing/selftests/bpf/progs/test_cgroup1_hierarchy.c b=
+/tools/testing/selftests/bpf/progs/test_cgroup1_hierarchy.c
+> index 44628865fe1d4..0e741262138f2 100644
+> --- a/tools/testing/selftests/bpf/progs/test_cgroup1_hierarchy.c
+> +++ b/tools/testing/selftests/bpf/progs/test_cgroup1_hierarchy.c
+> @@ -51,13 +51,13 @@ static int bpf_link_create_verify(int cmd)
+>  }
+>
+>  SEC("lsm/bpf")
+> -int BPF_PROG(lsm_run, int cmd, union bpf_attr *attr, unsigned int size)
+> +int BPF_PROG(lsm_run, int cmd, union bpf_attr *attr, unsigned int size, =
+bool is_kernel)
+>  {
+>         return bpf_link_create_verify(cmd);
+>  }
+>
+>  SEC("lsm.s/bpf")
+> -int BPF_PROG(lsm_s_run, int cmd, union bpf_attr *attr, unsigned int size=
+)
+> +int BPF_PROG(lsm_s_run, int cmd, union bpf_attr *attr, unsigned int size=
+, bool is_kernel)
+>  {
+>         return bpf_link_create_verify(cmd);
+>  }
+> diff --git a/tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c =
+b/tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c
+> index cd4d752bd089c..ce36a55ba5b8b 100644
+> --- a/tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c
+> +++ b/tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c
+> @@ -36,7 +36,7 @@ char _license[] SEC("license") =3D "GPL";
+>
+>  SEC("?lsm.s/bpf")
+>  __failure __msg("cannot pass in dynptr at an offset=3D-8")
+> -int BPF_PROG(not_valid_dynptr, int cmd, union bpf_attr *attr, unsigned i=
+nt size)
+> +int BPF_PROG(not_valid_dynptr, int cmd, union bpf_attr *attr, unsigned i=
+nt size, bool is_kernel)
+>  {
+>         unsigned long val;
+>
+> @@ -46,7 +46,7 @@ int BPF_PROG(not_valid_dynptr, int cmd, union bpf_attr =
+*attr, unsigned int size)
+>
+>  SEC("?lsm.s/bpf")
+>  __failure __msg("arg#0 expected pointer to stack or const struct bpf_dyn=
+ptr")
+> -int BPF_PROG(not_ptr_to_stack, int cmd, union bpf_attr *attr, unsigned i=
+nt size)
+> +int BPF_PROG(not_ptr_to_stack, int cmd, union bpf_attr *attr, unsigned i=
+nt size, bool is_kernel)
+>  {
+>         unsigned long val =3D 0;
+>
+> @@ -55,7 +55,7 @@ int BPF_PROG(not_ptr_to_stack, int cmd, union bpf_attr =
+*attr, unsigned int size)
+>  }
+>
+>  SEC("lsm.s/bpf")
+> -int BPF_PROG(dynptr_data_null, int cmd, union bpf_attr *attr, unsigned i=
+nt size)
+> +int BPF_PROG(dynptr_data_null, int cmd, union bpf_attr *attr, unsigned i=
+nt size, bool is_kernel)
+>  {
+>         struct bpf_key *trusted_keyring;
+>         struct bpf_dynptr ptr;
+> diff --git a/tools/testing/selftests/bpf/progs/test_lookup_key.c b/tools/=
+testing/selftests/bpf/progs/test_lookup_key.c
+> index c73776990ae30..c46077e01a4ca 100644
+> --- a/tools/testing/selftests/bpf/progs/test_lookup_key.c
+> +++ b/tools/testing/selftests/bpf/progs/test_lookup_key.c
+> @@ -23,7 +23,7 @@ extern struct bpf_key *bpf_lookup_system_key(__u64 id) =
+__ksym;
+>  extern void bpf_key_put(struct bpf_key *key) __ksym;
+>
+>  SEC("lsm.s/bpf")
+> -int BPF_PROG(bpf, int cmd, union bpf_attr *attr, unsigned int size)
+> +int BPF_PROG(bpf, int cmd, union bpf_attr *attr, unsigned int size, bool=
+ is_kernel)
+>  {
+>         struct bpf_key *bkey;
+>         __u32 pid;
+> diff --git a/tools/testing/selftests/bpf/progs/test_ptr_untrusted.c b/too=
+ls/testing/selftests/bpf/progs/test_ptr_untrusted.c
+> index 2fdc44e766248..21fce1108a21d 100644
+> --- a/tools/testing/selftests/bpf/progs/test_ptr_untrusted.c
+> +++ b/tools/testing/selftests/bpf/progs/test_ptr_untrusted.c
+> @@ -7,7 +7,7 @@
+>  char tp_name[128];
+>
+>  SEC("lsm.s/bpf")
+> -int BPF_PROG(lsm_run, int cmd, union bpf_attr *attr, unsigned int size)
+> +int BPF_PROG(lsm_run, int cmd, union bpf_attr *attr, unsigned int size, =
+bool is_kernel)
+>  {
+>         switch (cmd) {
+>         case BPF_RAW_TRACEPOINT_OPEN:
+> diff --git a/tools/testing/selftests/bpf/progs/test_task_under_cgroup.c b=
+/tools/testing/selftests/bpf/progs/test_task_under_cgroup.c
+> index 7e750309ce274..18ad24a851c6c 100644
+> --- a/tools/testing/selftests/bpf/progs/test_task_under_cgroup.c
+> +++ b/tools/testing/selftests/bpf/progs/test_task_under_cgroup.c
+> @@ -49,7 +49,7 @@ int BPF_PROG(tp_btf_run, struct task_struct *task, u64 =
+clone_flags)
+>  }
+>
+>  SEC("lsm.s/bpf")
+> -int BPF_PROG(lsm_run, int cmd, union bpf_attr *attr, unsigned int size)
+> +int BPF_PROG(lsm_run, int cmd, union bpf_attr *attr, unsigned int size, =
+bool is_kernel)
+>  {
+>         struct cgroup *cgrp =3D NULL;
+>         struct task_struct *task;
+> diff --git a/tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c b/=
+tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c
+> index 12034a73ee2d2..135665f011c7e 100644
+> --- a/tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c
+> +++ b/tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c
+> @@ -37,7 +37,7 @@ struct {
+>  char _license[] SEC("license") =3D "GPL";
+>
+>  SEC("lsm.s/bpf")
+> -int BPF_PROG(bpf, int cmd, union bpf_attr *attr, unsigned int size)
+> +int BPF_PROG(bpf, int cmd, union bpf_attr *attr, unsigned int size, bool=
+ is_kernel)
+>  {
+>         struct bpf_dynptr data_ptr, sig_ptr;
+>         struct data *data_val;
+> --
+> 2.48.1
+>
 
