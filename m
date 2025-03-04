@@ -1,83 +1,71 @@
-Return-Path: <linux-kernel+bounces-544330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B9D4A4E035
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:07:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 742E7A4E028
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:06:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D82AC3AF6A2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:04:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDCED1766CB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:05:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9234204C18;
-	Tue,  4 Mar 2025 14:04:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2601A204C35;
+	Tue,  4 Mar 2025 14:05:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A7Bi7GN3"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="QlpmWMyK"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2161FDE3A;
-	Tue,  4 Mar 2025 14:04:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01624204F65;
+	Tue,  4 Mar 2025 14:05:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741097062; cv=none; b=B4iYJVf2PXdDqkFULNpBlUKVGZLzgh0EZZyZyPet2jyxbQncOkWR3D2BnTmfKrLD9os3TLDTMS4A67bS4gp0ZUC6UaxiFdo1c7hCHFiETj9isM+dvsoiVjeBCUFf4tPhPLr+MDpvnO+9O+4yaMi/soSWpKIhRGhd0PxXyDB5fSA=
+	t=1741097138; cv=none; b=rJWzLhodLf3qm47mBRY1MQxZ8CdjIRNzagjsRZL5S2sNreB+ESqG8Ktv9j/ySG8jwbLxFuqEcIGJsuLhIyxyBcKsQhuvVTe/QL03jvNHbuWW6CTlOr7UymqRKSSK8o7MhGuAi7cad74FgLJwF8x6dK4rW5jeACIuMNIKtMtbAgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741097062; c=relaxed/simple;
-	bh=Cu0vRhc2l1pNNOB1DIImUKRxHQPlGsWExbF+PZhgDHI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fQSyNBm89bA2sPqH79wy55F8DGXRdp4bxRlvz+j7jAGXBmIn5NMUKIo27ft6S4xijegqnGIRA3yrXC/LdoudPeeJJ+k7cnc6gAIdmKeO9llW2DSQHjXskD6S5FbgBLvlOS2fCs818i1txKbyAhVBC/6WiM6P9R0dD4KgN99ULlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A7Bi7GN3; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-abf4b376f2fso550273166b.3;
-        Tue, 04 Mar 2025 06:04:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741097059; x=1741701859; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yGHWVfgFpYsOixf8HC1qT+TlcUPnq+D1bDVJISImCiE=;
-        b=A7Bi7GN3g0ZEoo1dtb7ML/h4D5DgUfIAkJaj0PFbZwO6Q8VBWsFPhAP5WOGzTXa+u3
-         YmPeT3cc+r/HS0hVoK1knT+FXdFRgh3zFdwEZvZu20yWFd/0jkPRqX7KFjr6s7+KW5dG
-         ijQwvxXlWlummGQ0tpwcChQ0VY1Q5SPXrYm9rlMvp6KfLwOD25J2XRNaH+b8Mu44ouZY
-         UMtVmhgAsDRVqqF+uByy/BCaAFFtcuC6zM5h+Wd0OE8ZcTzTWtGv+FyoImd0gZzJ0Qwi
-         b4zcNkbNCq3/1MfWw9Fh/V72TMFUuhbqDTDbZWS53g+PWbmSQ3lP94/+TuUv3motmcd9
-         3qmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741097059; x=1741701859;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yGHWVfgFpYsOixf8HC1qT+TlcUPnq+D1bDVJISImCiE=;
-        b=Rq3iSZPUI+hhjs4oZSD6Y+OJYRM1I+p2jaQa90YBsO9poclAOW5GheaYqII6FbCkP5
-         IO2MxtRCXCAkUruV1Svt0Jdj6FF2KswHLbxAxWh3zPlZMu/z1/h2fu+bTfYHVvkQmRAt
-         MAW/gfN6BZYcamtIMp9mC81KszVamlc8IoLSSjNucTarZuOWNcZf6B3IBnXR9O8Rkv9a
-         rYARrYgqjEf7e1OqlPGgcjlV/YFo4OsXjXUEAuHpvWFBZVZcFdKZYxe5ayR+dh2eXvyb
-         g9GR3WcQKrfFnzYj1XofnIMtfnsUMw6BVBiffO1R1d3VALVNFF+9rM7e2d+bjnS5UEWA
-         i4nQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU5+YMIX+VqvlQ05vLDUzvBk0MiU7o+OTOhqWCam6E9hCvKjSJ/D3jrsezUKkaq0v97aEXWJQ/zz1YlJTw=@vger.kernel.org, AJvYcCVSnX97MRNIxAQ0hTFokrQdruzksP5KYzRT/X0e23C9PNMS7MCl3HTigPh87dQon/E+2hQtHg/P@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTcE0JK8re5gLvEfAHhIrTbuw5y3we9G/DKJzmnmn4ChR1ez5M
-	uxxGO+t0s8x+SpnTg91BvsIL3QjNc7QxCK/GpdE5OMJ2M9TvyayN
-X-Gm-Gg: ASbGncudwrmk322/vbIhC9AqlFBDbZwuOLIepXm5786AAOpB7ucgy/IrDSPIWU0wQ8g
-	3fiVSNEh2LZfOB1L/tDLjSivnsb7vEeU6gIoFOis2zziViFfrMAVlEhDVMuTqUitGdNyXG9H3ss
-	EXp8gTvIrNyddEOPOqnlyrveswf5KMruv9n+isFP9yJkE5aCt4rWu+GfKCuYNhNwzz6yBMO6FHm
-	fgnU04Gmi0r46Cp4whbmFWS3MgasYtZkxR9m8SAI3RpkGPsAFrGwt4ucU5LVRmv10946kWDj4Yt
-	ca5zVbuD2jujp4PYNZqZm2Y4ssW1ztlZIGkKf37y8LxeUA==
-X-Google-Smtp-Source: AGHT+IF+L/wf0isDYX6j5oD3HXuFl+JS6RCLB7/lspL/L4jaoEz/L3cXMrsjf5dIytwv+VfNog5ipQ==
-X-Received: by 2002:a17:906:6a1b:b0:ac1:e889:c2a with SMTP id a640c23a62f3a-ac1e8891834mr512462466b.11.1741097058504;
-        Tue, 04 Mar 2025 06:04:18 -0800 (PST)
-Received: from qasdev.Home ([2a02:c7c:6696:8300:8e4b:863e:7e57:3c84])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac1e6a5c13bsm201987966b.132.2025.03.04.06.04.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 06:04:17 -0800 (PST)
-From: Qasim Ijaz <qasdev00@gmail.com>
-To: leon@kernel.org,
-	jgg@ziepe.ca
-Cc: linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH] RDMA/mlx5: Prevent UB from shifting negative signed value
-Date: Tue,  4 Mar 2025 14:02:46 +0000
-Message-Id: <20250304140246.205919-1-qasdev00@gmail.com>
+	s=arc-20240116; t=1741097138; c=relaxed/simple;
+	bh=zE+d/+YbMn+E1MaNQHNyEjFzrPqRPonzhnB+jFeyXPI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ikwQP6nUtCJRI5uxG/4xFuwtty4C+HUoFJU1rEYORMIwqKa91Q5nILizb8qXi9BMmQjPteW+9GTblWiNUNNrKe+Xim2/YB7q+1HWA1F3FI7bcEMxaYJnMdRNUnvTAQsAlV9/tzAa4nkVaFdUdIMn2H2vg5lh8GybBBgYCiwr/Q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=QlpmWMyK; arc=none smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52472HMu003809;
+	Tue, 4 Mar 2025 08:05:19 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=PODMain02222019; bh=KtwMozvYxMFAOFnL
+	cAT1vAz7BXbWszWHx8Ha3yEd45w=; b=QlpmWMyKYbe+qRgWf8TlRR3/6e3JzXKE
+	J0u9TzijbmVh9BYEZRb6soXN9g3GwSBs+Xadr/C+p/gNeOljgrEt9s6BqyPbMGZE
+	AcAhnquRO+gAHUv9HUTW3gYpVBOwB/gnBzoB9hVPaPCPp8y0g+4Do9f/GtfB70Dp
+	w4MvfeSuMvxogwDTtNOWTQW+B9O1pV4nyJb/doYpkLta+GKVhL+E5aC2PigVQ6Q5
+	MnZYPGo22arcmtIJsZKVKuVKOm6dqiZOpBC5CIkZs7qg+InS3cLbgZkEq1I10chL
+	kd/aaidR2y78D7cNjvC2+PTLNj+KWujOVrl1S9U3GltoQVb4qMvwDw==
+Received: from ediex02.ad.cirrus.com ([84.19.233.68])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 455fyyj0ts-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Mar 2025 08:05:15 -0600 (CST)
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 4 Mar
+ 2025 14:05:00 +0000
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
+ 15.2.1544.14 via Frontend Transport; Tue, 4 Mar 2025 14:05:00 +0000
+Received: from ediswws07.ad.cirrus.com (ediswws07.ad.cirrus.com [198.90.208.14])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 1DFBB820248;
+	Tue,  4 Mar 2025 14:05:00 +0000 (UTC)
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: <broonie@kernel.org>
+CC: <lgirdwood@gmail.com>, <peda@axentia.se>, <andrei.simion@microchip.com>,
+        <nuno.sa@analog.com>, <paul@crapouillou.net>, <oder_chiou@realtek.com>,
+        <kiseok.jo@irondevice.com>, <shenghao-ding@ti.com>, <kevin-lu@ti.com>,
+        <baojun.xu@ti.com>, <srinivas.kandagatla@linaro.org>,
+        <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <patches@opensource.cirrus.com>
+Subject: [PATCH v3 00/13] Tidy up ASoC VALUE control macros
+Date: Tue, 4 Mar 2025 14:04:47 +0000
+Message-ID: <20250304140500.976127-1-ckeepax@opensource.cirrus.com>
 X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -86,90 +74,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: OShuCjXSsmqIw-mee-f4leNhwL7W7MBR
+X-Proofpoint-ORIG-GUID: OShuCjXSsmqIw-mee-f4leNhwL7W7MBR
+X-Authority-Analysis: v=2.4 cv=DaftqutW c=1 sm=1 tr=0 ts=67c7089d cx=c_pps a=uGhh+3tQvKmCLpEUO+DX4w==:117 a=uGhh+3tQvKmCLpEUO+DX4w==:17 a=Vs1iUdzkB0EA:10 a=pzkeEdGVe-7zqstrry8A:9
+X-Proofpoint-Spam-Reason: safe
 
-In function create_ib_ah() the following line attempts 
-to left shift the return value of mlx5r_ib_rate() by 4 
-and store it in the stat_rate_sl member of av:
+Tidy up the ASoC control value macros. Fix some drivers that should be
+using core macros that aren't, combine the existing core macros to be
+a little more consistent in style, and update the core macros to use
+each other where possible.
 
-		ah->av.stat_rate_sl = (mlx5r_ib_rate(dev, rdma_ah_get_static_rate(ah_attr)) << 4);
-		
-However the code overlooks the fact that mlx5r_ib_rate() 
-may return -EINVAL if the rate passed to it is less than 
-IB_RATE_2_5_GBPS or greater than IB_RATE_800_GBPS.
+Change since v2:
+ - Fix typo in SOC_DOUBLE_RANGE_TLV refactor
 
-Because of this, the code may invoke undefined behaviour when
-shifting a signed negative value when doing "-EINVAL << 4".
+Changes since v1:
+ - Add the missing first patch that I managed to forget in v1. This was
+   stopping the series applying, as it was only in my tree.
 
-To fix this check for errors before assigning stat_rate_sl and
-propagate any error value to the callers.
+Thanks,
+Charles
 
-Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
-Fixes: c534ffda781f ("RDMA/mlx5: Fix AH static rate parsing")
-Cc: stable@vger.kernel.org
----
- drivers/infiniband/hw/mlx5/ah.c | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+Charles Keepax (13):
+  ASoC: Remove unused helper macro
+  ASoC: rt715: Remove duplicate SOC_DOUBLE_R_EXT() helper macro
+  ASoC: sma1307: Use SOC_SINGLE_EXT() helper macro
+  ASoC: tas2562: Use SOC_SINGLE_EXT_TLV() helper macro
+  ASoC: wcd938x: Use SOC_SINGLE_EXT_TLV() helper macro
+  ASoC: wm9712: Use SOC_SINGLE_EXT() helper macro
+  ASoC: wm9713: Use SOC_DOUBLE_EXT() helper macro
+  ASoC: wsa881x: Use SOC_SINGLE_EXT_TLV() helper macro
+  ASoC: atmel: tse850-pcm5142: Use SOC_SINGLE_EXT() helper macro
+  ASoC: dapm: Add missing SOC_DAPM_DOUBLE_R_TLV() helper
+  ASoC: dapm: Use ASoC control macros where possible
+  ASoC: Tidy up SOC_DOUBLE_R_* helpers
+  ASoC: Tidy up SOC_DOUBLE_* and SOC_SINGLE_* helpers
 
-diff --git a/drivers/infiniband/hw/mlx5/ah.c b/drivers/infiniband/hw/mlx5/ah.c
-index 99036afb3aef..6bccd9ce4538 100644
---- a/drivers/infiniband/hw/mlx5/ah.c
-+++ b/drivers/infiniband/hw/mlx5/ah.c
-@@ -50,11 +50,12 @@ static __be16 mlx5_ah_get_udp_sport(const struct mlx5_ib_dev *dev,
- 	return sport;
- }
- 
--static void create_ib_ah(struct mlx5_ib_dev *dev, struct mlx5_ib_ah *ah,
-+static int create_ib_ah(struct mlx5_ib_dev *dev, struct mlx5_ib_ah *ah,
- 			 struct rdma_ah_init_attr *init_attr)
- {
- 	struct rdma_ah_attr *ah_attr = init_attr->ah_attr;
- 	enum ib_gid_type gid_type;
-+	int rate_val;
- 
- 	if (rdma_ah_get_ah_flags(ah_attr) & IB_AH_GRH) {
- 		const struct ib_global_route *grh = rdma_ah_read_grh(ah_attr);
-@@ -67,8 +68,10 @@ static void create_ib_ah(struct mlx5_ib_dev *dev, struct mlx5_ib_ah *ah,
- 		ah->av.tclass = grh->traffic_class;
- 	}
- 
--	ah->av.stat_rate_sl =
--		(mlx5r_ib_rate(dev, rdma_ah_get_static_rate(ah_attr)) << 4);
-+	rate_val = mlx5r_ib_rate(dev, rdma_ah_get_static_rate(ah_attr));
-+	if (rate_val < 0)
-+		return rate_val;
-+	ah->av.stat_rate_sl = rate_val << 4;
- 
- 	if (ah_attr->type == RDMA_AH_ATTR_TYPE_ROCE) {
- 		if (init_attr->xmit_slave)
-@@ -89,6 +92,8 @@ static void create_ib_ah(struct mlx5_ib_dev *dev, struct mlx5_ib_ah *ah,
- 		ah->av.fl_mlid = rdma_ah_get_path_bits(ah_attr) & 0x7f;
- 		ah->av.stat_rate_sl |= (rdma_ah_get_sl(ah_attr) & 0xf);
- 	}
-+
-+	return 0;
- }
- 
- int mlx5_ib_create_ah(struct ib_ah *ibah, struct rdma_ah_init_attr *init_attr,
-@@ -99,6 +104,7 @@ int mlx5_ib_create_ah(struct ib_ah *ibah, struct rdma_ah_init_attr *init_attr,
- 	struct mlx5_ib_ah *ah = to_mah(ibah);
- 	struct mlx5_ib_dev *dev = to_mdev(ibah->device);
- 	enum rdma_ah_attr_type ah_type = ah_attr->type;
-+	int ret;
- 
- 	if ((ah_type == RDMA_AH_ATTR_TYPE_ROCE) &&
- 	    !(rdma_ah_get_ah_flags(ah_attr) & IB_AH_GRH))
-@@ -121,7 +127,10 @@ int mlx5_ib_create_ah(struct ib_ah *ibah, struct rdma_ah_init_attr *init_attr,
- 			return err;
- 	}
- 
--	create_ib_ah(dev, ah, init_attr);
-+	ret = create_ib_ah(dev, ah, init_attr);
-+	if (ret)
-+		return ret;
-+
- 	return 0;
- }
- 
+ include/sound/soc-dapm.h         | 59 ++++++++------------
+ include/sound/soc.h              | 96 +++++++++++---------------------
+ sound/soc/atmel/tse850-pcm5142.c | 11 +---
+ sound/soc/codecs/adau17x1.c      | 10 ++--
+ sound/soc/codecs/jz4760.c        | 32 ++---------
+ sound/soc/codecs/jz4770.c        | 40 ++-----------
+ sound/soc/codecs/rt715-sdca.c    |  8 ---
+ sound/soc/codecs/rt715.c         |  8 ---
+ sound/soc/codecs/sma1307.c       | 11 +---
+ sound/soc/codecs/tas2562.c       | 14 +----
+ sound/soc/codecs/wcd938x.c       |  9 +--
+ sound/soc/codecs/wm9712.c        | 10 +---
+ sound/soc/codecs/wm9713.c        | 10 +---
+ sound/soc/codecs/wsa881x.c       |  9 +--
+ 14 files changed, 92 insertions(+), 235 deletions(-)
+
 -- 
 2.39.5
 
