@@ -1,164 +1,122 @@
-Return-Path: <linux-kernel+bounces-543309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8F30A4D41D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:52:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68694A4D41F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:54:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E048A1896EA1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:52:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96B493AE07B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:54:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82E271F5404;
-	Tue,  4 Mar 2025 06:52:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C35A1F55ED;
+	Tue,  4 Mar 2025 06:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HqOox4c1"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="JSDZh5my"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488FF13C67C;
-	Tue,  4 Mar 2025 06:52:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 522E813C67C;
+	Tue,  4 Mar 2025 06:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741071151; cv=none; b=bG4OZPgbAzuEG3HXrSIeR/PxJVt6L5JKaSY/RbhuQ/uXY8B10g/DbpwzoRZwsSzXYtdZNtN6aMCJSY4z8J3DYxxGXvtLssQjd/M/EfKUksLpczoVmbSLylRZJ6X5Kra5Oa8XCvdtFz17oUMaNfNejnI/C0+VAMuLHusTwMdGDPI=
+	t=1741071292; cv=none; b=mXOLdzyQsJ1sSV8Ix0+WTpKyr2JBRW7lRcN9bBBstJBWOYrxXxcy03q/6DURIhzXmmaM9PJDbjjds37/bUE+RJygmScym6x3mQguV8v3qfW74S9n9ArqSJItm0utJjRgCUuInFv6NSHit8bDdD2ELiIv5kYFvExckhJ2D8w0aDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741071151; c=relaxed/simple;
-	bh=uCJH4LgvbpYu+bgfhR7Xd1uT5mKWrAQGIbTGlA28vZg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BRO44CV+SJ+wz+5vQpN6pq3k5NJtWKLwQonD6MQRPBruvLYy9bNRfY1+OH9vUeh0gN4eJy0U8T7Q5vxgQF6R/UxS+BflVA950skEr/wanetpZvCOfGWynVZsth/IIqNGQiu4/ZNQnJrs74KFTLg3PYVMHGYCjKW+fZKa9FH7SMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HqOox4c1; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5e033c2f106so6079963a12.3;
-        Mon, 03 Mar 2025 22:52:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741071148; x=1741675948; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7gqvPATBpXryjGxb/fOnenuIg3PJ2BiF+tgAUytlmv4=;
-        b=HqOox4c1+YlrvKSJ0f7ZaaDDH4VrBQlOG8ocMxtKu7nsySICayPoxHKslXLSLKxUxc
-         COyvFkRgYBxJTFHNjAAyaXMx9E+PGQxeS9C5HQ43hl0oynUwJ3LPNqGptN8UFQbFkvik
-         Ipw3kkARZhCEPkfau3FR9momvI4h7IQRCsjDx7C+i8j9oibyVkvWaS5dpVIuVgmfIGjD
-         kwJF9nBTY+uDJJF0HtewQtU7A7MD7lCqq60q0dC9S0b1pyyDnHZDyhUvRaL1WyhYW6MA
-         cYi0cqTBHWajYCyY3JbqETnsYdjLP4SboOqqiuJaPpJvhaaMnMnckrLehejh71u6WgRa
-         1r1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741071148; x=1741675948;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7gqvPATBpXryjGxb/fOnenuIg3PJ2BiF+tgAUytlmv4=;
-        b=GAsaTgTXbhEbTlVDO4j+rREyQ1hzHkAayNi4B4ZXzsVvivSUzUYFi5ZzhWo9avtw7h
-         WvVa6xuEnZryMw9s6Lph/N1l2FI61hP4dUiezfqPXhj8PxhZ4zYI3sowm4n4xZLeGQ+O
-         meePRwD2mmFrz2OBY7IqpHGQOKqTDW5ivjl8cAiBns/pQQyNRmndp/a7iwu5CtxPzYDC
-         FnMPRDAvSk6u6KFga+oXeWoIymhdo1UYYG3JwO0Uj2FvP4a6iD/H3bD3xSs4cYdGptOt
-         pdbJXZnhmgJRVIpIO8D6/QYe3hak509kUB989i44RLtNwShOTxOvkpvp7+GEYY1M1f/K
-         0dqw==
-X-Forwarded-Encrypted: i=1; AJvYcCV8TXl4A32QjIuV9rKF6a+MUeiMoD8046Z3Wk+VTpyCfJ+NQlJ6W3+YuOw7juUxi62OLwM2x4cnIUNhbuk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhDX27Ir1Doy3I5ID1v6t0dCgrkY2GQVML/VpYb+P6c+eWqhhT
-	9VCib4/FEUtXH0KgzeIrz+JwkZj/R4IjHxRow5y/4tzF6mkyzHTox4c5cu9gwRLfHhvJNXMEiLe
-	B+fhaMJMsAmGAGnkX4Aqql/StMVk=
-X-Gm-Gg: ASbGncuIWExX3xr9C685zvqRDbYEXOT3AEqKLHWrndymrp3N1prGELol2P70FUbdHcg
-	n945b8qwOHtv4n9QtCVftpTwKZIik53aDuMo1tDTyS5nyMTtbTZqdCUTndgWxDivB94nGecLtuv
-	QT8Qlzj5AsJmttfxt+tSmJB1PVxw==
-X-Google-Smtp-Source: AGHT+IEoEgoewhNzbrocvPAgQEJRFCpSWbb0viTio+R2IaeI6ydmAhu05tIqy0cYx2sId9e5nBM5ugzJxlTNtDSCyPM=
-X-Received: by 2002:a05:6402:1d4a:b0:5de:dfde:c8b1 with SMTP id
- 4fb4d7f45d1cf-5e4d6ac536emr37983231a12.4.1741071148207; Mon, 03 Mar 2025
- 22:52:28 -0800 (PST)
+	s=arc-20240116; t=1741071292; c=relaxed/simple;
+	bh=PZJOo2jkFpPSOOKfCsW24Q9wdMm475xu7XZoTyOtQFc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dhYJrwCD6RuLeBKC3Q6ZhDqN3fbh4Cqb1PHAnQZ2jWbbwYINBeqtfOKExqmft/T6qKC1OEKT8aKXUMkasSL5Fu0ZrJY1Ah7nc4dL1I/c6WJrZD78vxbcAf1Fa4HPlP57WF4TOuYLcmkneLq4UAlERyZfoID9zei7lhMjbdTve0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=JSDZh5my; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+From: Dragan Simic <dsimic@manjaro.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1741071288;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=aafKtHHkAEBbntAJUzxVz9PQQQFksdjYPmu3KZGEX7E=;
+	b=JSDZh5my1bMySMxF4bjjZPMeUVbWTp5KROw2uazUDj/AYP1Tmw5hi0KRvnY0zXOoln182G
+	xoGAgbwWnoau1kWPRRLwXkk58sNrDw++Z9y3m0lSFuS1vrMwb3gibz6yGcJT7UCjChA+Sz
+	ftOxQJ/bfFNH7RkNsd15di98ZQr+P4XO7H0RhcjewPjgpEXp+FVrCmMaAoaWtmSC4j1bGV
+	53EMXt8TSiRkHjhI2evWATQTlEFjz0oNJSCocoXT1yihkqC4mXSWW/KfJfbn737o5F5Aro
+	kYdYWpNRPCrnu4UIqimOMcmD/rPYyZ8Vw1a2hr8DVeHjcSlXo63KOuYIBVCuig==
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: heiko@sntech.de,
+	dsimic@manjaro.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] docs: dt-bindings: Specify ordering for properties within groups
+Date: Tue,  4 Mar 2025 07:54:42 +0100
+Message-Id: <09d6f2fc111b3d6e58987336944f93ec36b65118.1741071107.git.dsimic@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250304035447.3138221-1-adamsimonelli@gmail.com> <20250304035447.3138221-4-adamsimonelli@gmail.com>
-In-Reply-To: <20250304035447.3138221-4-adamsimonelli@gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 4 Mar 2025 08:51:52 +0200
-X-Gm-Features: AQ5f1JrjwVMGYuo4mncDNMG2zmDdlxKpJ9E0m4MaDvLRULtrFcJaHkUZADWwYh0
-Message-ID: <CAHp75VftQASqajiG_z-==CmVMu5Orv_Q8QMj-7W=sxsJPq6bJw@mail.gmail.com>
-Subject: Re: [PATCH v6 3/3] tty: Change order of ttynull to be linked sooner
- if enabled as a console.
-To: adamsimonelli@gmail.com
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jiri Slaby <jirislaby@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, John Ogness <john.ogness@linutronix.de>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Petr Mladek <pmladek@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On Tue, Mar 4, 2025 at 5:55=E2=80=AFAM <adamsimonelli@gmail.com> wrote:
->
-> From: Adam Simonelli <adamsimonelli@gmail.com>
->
-> If CONFIG_NULL_TTY_DEFAULT_CONSOLE is enabled, and CONFIG_VT is disabled,
-> ttynull will become the default primary console device, based on the link
-> order.
->
-> Many distributions ship with CONFIG_VT enabled. On tested desktop hardwar=
-e
-> if CONFIG_VT is disabled, the default console device falls back to
-> /dev/ttyS0 instead of /dev/tty.
->
-> This could cause issues in user space, and hardware problems:
->
-> 1. The user space issues include the case where  /dev/ttyS0 is
-> disconnected, and the TCGETS ioctl, which some user space libraries use
-> as a probe to determine if a file is a tty, is called on /dev/console and
-> fails. Programs that call isatty() on /dev/console and get an incorrect
-> false value may skip expected logging to /dev/console
+When it comes to ordering the individual properties inside each property
+group, applying alphanumerical ordering can result in more logical and more
+usable lists of properties, just like it's already the case with the
+alphanumerical ordering of the nodes without unit addresses.
 
-Missing period at the end.
+Let's have this clearly specified in the DTS coding style.  Also expand the
+provided example a bit, to actually show the alphanumerical ordering.
 
-> 2. The hardware issues include the case if a user has a science instrumen=
-t
-> or other device connected to the /dev/ttyS0 port, and they were to upgrad=
-e
-> to a kernel that is disabling the CONFIG_VT option, kernel logs will then=
- be
-> sent to the device connected to /dev/ttyS0 unless they edit their kernel
-> command line manually.
->
-> The new CONFIG_NULL_TTY_CONSOLE option will give users and distribution
-> maintainers an option to avoid this. Disabling CONFIG_VT and enabling
-> CONFIG_NULL_TTY_CONSOLE will ensure the default kernel console behavior
-> is not dependant on hardware configuration by default, and avoid
-> unexpected new behavior on devices connected to the /dev/ttyS0 serial
-> port.
+Applying strict alphabetical ordering can result in property lists that are
+far from optimal from the usability standpoint.  For the provided example,
+which stems from a real-world DT, [1][2][3] applying the strict alphabetical
+ordering produces this undesirable result:
 
-...
+  vdd-0v9-supply = <&board_vreg1>;
+  vdd-12v-supply = <&board_vreg3>;
+  vdd-1v8-supply = <&board_vreg4>;
+  vdd-3v3-supply = <&board_vreg2>;
 
->  obj-y                          +=3D vt/
+Obviously, having the properties sorted by their associated voltages in the
+ascending order, which the alphanumerical ordering produces, is more logical,
+more usable and more consistent.
 
-+ blank line.
+[1] https://lore.kernel.org/linux-rockchip/b39cfd7490d8194f053bf3971f13a43472d1769e.1740941097.git.dsimic@manjaro.org/
+[2] https://lore.kernel.org/linux-rockchip/174104113599.8946.16805724674396090918.b4-ty@sntech.de/
+[3] https://lore.kernel.org/linux-rockchip/757afa87255212dfa5abf4c0e31deb08@manjaro.org/
 
-> +# If ttynull is configured to be a console by default, ensure that it is=
- linked
-> +# earlier before a real one is selected.
-> +obj-$(CONFIG_NULL_TTY_DEFAULT_CONSOLE) \
-> +                               +=3D ttynull.o
+Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+---
+ Documentation/devicetree/bindings/dts-coding-style.rst | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-Here is the question: are you sure that all console drivers that exist
-in the kernel happen to be here? Have you grepped the source tree for
-checking this?
-
-...
-
-> +# If ttynull is enabled, but not as a boot console, it is linked and use=
-d later
-> +# after the real ones.
-> +ifneq ($(CONFIG_NULL_TTY_DEFAULT_CONSOLE),y)
-
-Also can be written as
-ifeq ($(...),)
-but it might be less explicit. Up to you.
-
->  obj-$(CONFIG_NULL_TTY)         +=3D ttynull.o
-> +endif
-
---=20
-With Best Regards,
-Andy Shevchenko
+diff --git a/Documentation/devicetree/bindings/dts-coding-style.rst b/Documentation/devicetree/bindings/dts-coding-style.rst
+index 8a68331075a0..079d079f1ad9 100644
+--- a/Documentation/devicetree/bindings/dts-coding-style.rst
++++ b/Documentation/devicetree/bindings/dts-coding-style.rst
+@@ -133,6 +133,10 @@ The above-described ordering follows this approach:
+ 3. Status is the last information to annotate that device node is or is not
+    finished (board resources are needed).
+ 
++The above-described ordering specifies the preferred ordering of property
++groups, while the individual properties inside each group shall be ordered
++alpha-numerically by the property name.
++
+ Example::
+ 
+ 	/* SoC DTSI */
+@@ -158,7 +162,10 @@ Example::
+ 	/* Board DTS */
+ 
+ 	&device_node {
+-		vdd-supply = <&board_vreg1>;
++		vdd-0v9-supply = <&board_vreg1>;
++		vdd-1v8-supply = <&board_vreg4>;
++		vdd-3v3-supply = <&board_vreg2>;
++		vdd-12v-supply = <&board_vreg3>;
+ 		status = "okay";
+ 	}
+ 
 
