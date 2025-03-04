@@ -1,103 +1,237 @@
-Return-Path: <linux-kernel+bounces-544198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00102A4DE98
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:02:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E737A4DE9C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:03:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F30617673F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:02:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 984CB3B3926
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:03:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E056D2036F5;
-	Tue,  4 Mar 2025 13:02:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F04BF204592;
+	Tue,  4 Mar 2025 13:03:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B1hz5R9Z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="b4dMPjBQ"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43DBA442C;
-	Tue,  4 Mar 2025 13:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B24FF2040BC
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 13:03:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741093359; cv=none; b=ZpJ4r8pH2KrIHBvpgP+uvYw50Sh5jiEUaog8Wt1Vt4PyDybhE6fFGFJeup/tpYvcM3wxe6GrX6l40x+Q+jNxtVoht1wHVs5mfHrdtcP3hHbJ2kCvPGiLt6nlHAZYCv8UZfnRCDUyTQHUcG1QFA3O2xuZxUFfgM/Qw6vzfUVC3HQ=
+	t=1741093415; cv=none; b=DDCHE/NkV8v7MrvmK/UQJvrhiSDE8rHXdvVMdADsZqGse0DciecnmIq6ORX6S2jLcC2hBfiA/UFmHw9qkJfNYJLDinGUlce5gEG8tOBUeDWo8xMxDHhOIISFybT/l1nyEWSG/2WkE5GSw62oyYgWNeSzPW7mcloJdfHphtC3baA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741093359; c=relaxed/simple;
-	bh=eE95+Tp6lrhCL7Wgvg8bxpKKxUsq4uLUnMAe+fyZ1Vg=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=sbF0/NI+/rnzi5dUs3DGCglO3nWMA8iwr2iBtsWzrCDwYX8f1Mj2tYTS5YEdE2NvKjTPUDev1E/Bwnii5HXFuhl8xhtgYDQM42GD7bFfZxIEC5Ul7pkhP3fOODBjza9BiMmZAjaYQf/InLe/EB/v0IUSytk/GDN02BatKEgjToU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B1hz5R9Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89144C4CEE5;
-	Tue,  4 Mar 2025 13:02:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741093358;
-	bh=eE95+Tp6lrhCL7Wgvg8bxpKKxUsq4uLUnMAe+fyZ1Vg=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=B1hz5R9Z1lIRlwCXeC9DVfP6YESVcTw57KCH3dGZ0AlzlF1uAzyCFV42EM0duNMEF
-	 hSQulJW8ST//yjNX6KVjLXZOkHcZtOkrmGiljpmhsfuVyJ2YivKYp7sUibZh21SeQg
-	 4e9V1bIV4vRBWOp8jUAGzDeS4kRWOxidug9odiCA5mQ1N/WRuLzs9Qe4lygK+IMzTL
-	 FD8ddnhjJpC1l/Mu8AKWvVloihm9DRitZ7++RtxY+TZu1fBFxhX1zUh4/q5srGKAVu
-	 vSrv2+thQrsr4/V6ON4NVAiyGDvs06qHErejc+TaN075nhJ+sY4SpKfWDK50r/B/Du
-	 reQF1KP97OGHw==
-Date: Tue, 04 Mar 2025 07:02:36 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1741093415; c=relaxed/simple;
+	bh=//MDk5wWskWjueusVk95MJOIjgSL8ySlz6rRD25g/rI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=U49ILvfJAdZNUxb4j5dFrEZC87nNevVQH+dIjvWyBeSzDVnLYmTVZCmLHuBG2XuMWLEnY7hjonzS+y3lnp3dBnIralg8iDTJcjhoulZdG2R7qCzWU0hWSI4a6TlwljN+c5McKahr9zj28ZK6LTVrCdqoFzVfzOzqSnOCQ3P8XZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=b4dMPjBQ; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5243jdmZ021463;
+	Tue, 4 Mar 2025 13:03:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=euZ8Dx
+	MSMx6rmx4z/sWvOjZi0F8HZrbTAT1UZpVcZXo=; b=b4dMPjBQRyameE4rF8mKf9
+	et2qG8CXHgvJArptNEdFVliYIlKyEhYDAidEiza2vceUP+IP7yhajmtgdeov8bfK
+	Hf/aBEiVGWHjsN4JXS546XFaCl4zcrUnAqILPh4IhhAvtnKBzBhU4Vb0Z8/z2hWG
+	PL3ZqbubCc14mnSYraR7IAqVRaIVcWGkoQGX5iyh8sGsK3Q8D4FVDQWi4WfICdnv
+	8fVVwz02yk8ZVcmOHdzPVfogF0md4lgzEcK2WYDxfPyXDKNfgWDTHEFUPy12icTW
+	HBo7h7pUpDQULnapOsHO6vMNdQWtWmC0qQq/GTYIIPWhssuYEIimzTisiUm2UZQA
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 455sw7jh39-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Mar 2025 13:03:14 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 524BogVu013805;
+	Tue, 4 Mar 2025 13:03:13 GMT
+Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 454e2knc3x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Mar 2025 13:03:13 +0000
+Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
+	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 524D3CBp26477256
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 4 Mar 2025 13:03:13 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id AF33B58054;
+	Tue,  4 Mar 2025 13:03:12 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9A01C5805E;
+	Tue,  4 Mar 2025 13:03:10 +0000 (GMT)
+Received: from [9.204.204.161] (unknown [9.204.204.161])
+	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  4 Mar 2025 13:03:10 +0000 (GMT)
+Message-ID: <988cb994-d8b1-4688-b926-66507ebe90df@linux.ibm.com>
+Date: Tue, 4 Mar 2025 18:33:08 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Konrad Dybcio <konradybcio@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-To: Gabriel Gonzales <semfault@disroot.org>
-In-Reply-To: <20250304043742.9252-1-semfault@disroot.org>
-References: <20250304043742.9252-1-semfault@disroot.org>
-Message-Id: <174109297242.2409472.3701477490914835311.robh@kernel.org>
-Subject: Re: [PATCH v1 1/2] dt-bindings: arm: qcom: Add Xiaomi Redmi Note 8
+User-Agent: Mozilla Thunderbird
+Subject: Re: Build Warnings at arch/powerpc/
+Content-Language: en-GB
+To: Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Michael Ellerman <mpe@ellerman.id.au>
+References: <8c4c3fc2-2bd7-4148-af68-2f504d6119e0@linux.ibm.com>
+ <47aa8b75-96b6-4e37-bb62-ad758b414076@linux.ibm.com>
+ <8ba544e7-cf2a-4807-a056-683115805721@csgroup.eu>
+ <bfcce9ce-bc26-4088-8d27-0797fc0d22d3@linux.ibm.com>
+ <fe937273-d81a-4f6c-9eba-b96b711b4644@linux.ibm.com>
+From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+In-Reply-To: <fe937273-d81a-4f6c-9eba-b96b711b4644@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: Vdhte9sQSbjrloT_IM0X_9W0ET2oJPF5
+X-Proofpoint-GUID: Vdhte9sQSbjrloT_IM0X_9W0ET2oJPF5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-04_05,2025-03-03_04,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ phishscore=0 mlxlogscore=999 mlxscore=0 adultscore=0 bulkscore=0
+ malwarescore=0 lowpriorityscore=0 suspectscore=0 clxscore=1011 spamscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2503040106
 
 
-On Tue, 04 Mar 2025 12:37:39 +0800, Gabriel Gonzales wrote:
-> Document the Xiaomi Redmi Note 8, which is based off the SM6125 SoC
-> 
-> Signed-off-by: Gabriel Gonzales <semfault@disroot.org>
-> ---
->  Documentation/devicetree/bindings/arm/qcom.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
+On 04/03/25 6:08 pm, Madhavan Srinivasan wrote:
+>
+> On 3/4/25 4:58 PM, Madhavan Srinivasan wrote:
+>>
+>> On 3/4/25 2:26 PM, Christophe Leroy wrote:
+>>>
+>>> Le 04/03/2025 à 07:13, Madhavan Srinivasan a écrit :
+>>>>
+>>>> On 3/4/25 10:42 AM, Venkat Rao Bagalkote wrote:
+>>>>> Greetings!!
+>>>>>
+>>>>>
+>>>>> Observing build warnings with linux-next and powerpc repo's. Issue is currently not seen on mainline yet.
+>>>>>
+>>>>> PPC Repo: https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgit.kernel.org%2Fpub%2Fscm%2Flinux%2Fkernel%2Fgit%2Fpowerpc%2Flinux.git&data=05%7C02%7Cchristophe.leroy2%40cs-soprasteria.com%7C8e0f8501f09c48dbb43608dd5ae3c9bf%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638766656585342184%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=e5BrJzcrtlITkLF31KltGExQ5Qe8fDVTMV6VfR4w9o8%3D&reserved=0 merge branch
+>>>>>
+>>>>> PPC Kernel Version: 6.14.0-rc4-g1304f486dbf1
+>>>>> next Repo: https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgit.kernel.org%2Fpub%2Fscm%2Flinux%2Fkernel%2Fgit%2Fnext%2Flinux-next.git&data=05%7C02%7Cchristophe.leroy2%40cs-soprasteria.com%7C8e0f8501f09c48dbb43608dd5ae3c9bf%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638766656585355246%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=meQyZfB75HhJFCL6AX93slsyVwnogGPYFabDXl%2FLzDA%3D&reserved=0 master branch
+>>>>>
+>>>>> next Kernel Version: 6.14.0-rc5-next-20250303
+>>>>>
+>>>>>
+>>>>> On linux-next kernel issue got introduced b/w next-20250227 and next-20250303
+>>>>>
+>>>>>
+>>>>> Build Warnings:
+>>>>>
+>>>>> arch/powerpc/kvm/book3s_hv_rmhandlers.o: warning: objtool: .text+0xe84: intra_function_call not a direct call
+>>>>> arch/powerpc/crypto/ghashp8-ppc.o: warning: objtool: .text+0x22c: unannotated intra-function call
+>>>>> arch/powerpc/kernel/switch.o: warning: objtool: .text+0x4: intra_function_call not a direct call
+>>>>>
+>>>>>
+>>>> Can you please specific the compiler and compiler version you found this issue with
+>>>>
+>>> Can you also tell which defconfig you are using or provide your .config
+>>>
+>>> It might also be helpfull if you can provide a disassembly of the three file.o around the warned address.
+>> I could recreate the issue with gcc 11.4.1 20231218 with today's linux-next (but could not recreate with gcc 14 or gcc 11.3.0)
+>>
+>> (20d5c66e1810 (HEAD -> master, tag: next-20250304, origin/master, origin/HEAD) Add linux-next specific files for 20250304)
+>>
+>> warning for one of the switch.S file :
+>>
+>>    CC      arch/powerpc/kernel/syscalls.o
+>>    AS      arch/powerpc/kernel/switch.o
+>> arch/powerpc/kernel/switch.o: warning: objtool: .text+0x4: intra_function_call not a direct call
+> I guess this is becos, for bl .+4, we recently added in the arch_decode_instruction (decode.c) to set the type as INSN_OTHER
+>
+>          case 18: /* b[l][a] */
+>                  if (ins == 0x48000005)  /* bl .+4 */
+>                          typ = INSN_OTHER;
+>
+> Which I think is the issue here, changing it to INSN_CALL from INSN_OTHER fixes the warning
+>
+> diff --git a/tools/objtool/arch/powerpc/decode.c b/tools/objtool/arch/powerpc/decode.c
+> index 26d5050424a9..ffd63a61a585 100644
+> --- a/tools/objtool/arch/powerpc/decode.c
+> +++ b/tools/objtool/arch/powerpc/decode.c
+> @@ -56,7 +56,7 @@ int arch_decode_instruction(struct objtool_file *file, const struct section *sec
+>          switch (opcode) {
+>          case 18: /* b[l][a] */
+>                  if (ins == 0x48000005)  /* bl .+4 */
+> -                       typ = INSN_OTHER;
+> +                       typ = INSN_CALL;
+>                  else if (ins & 1)       /* bl[a] */
+>                          typ = INSN_CALL;
+>                  else            /* b[a] */
+>
+>
+> Maddy
+>
+Maddy,
 
+I changed the code manually and gave it a try. The Proposed fix, 
+partially fixes the issue. It gets rid of two of the warnings, but below 
+warning still persists.
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+arch/powerpc/crypto/ghashp8-ppc.o: warning: objtool: .text+0x22c: 
+unannotated intra-function call
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
+>>    CC      arch/powerpc/kernel/irq.o
+>>    CC      arch/powerpc/kernel/align.o
+>>    CC      arch/powerpc/kernel/signal_64.o
+>>
+>> Objdump of switch.o:
+>> arch/powerpc/kernel/switch.o:     file format elf64-powerpcle
+>>
+>> Disassembly of section .text:
+>>
+>> 0000000000000000 <flush_branch_caches>:
+>>         0:	a6 02 28 7d 	mflr    r9
+>>         4:	05 00 00 48 	bl      8 <flush_branch_caches+0x8>
+>>         8:	05 00 00 48 	bl      c <flush_branch_caches+0xc>
+>>         c:	05 00 00 48 	bl      10 <flush_branch_caches+0x10>
+>>        10:	05 00 00 48 	bl      14 <flush_branch_caches+0x14>
+>>        14:	05 00 00 48 	bl      18 <flush_branch_caches+0x18>
+>>        18:	05 00 00 48 	bl      1c <flush_branch_caches+0x1c>
+>>        1c:	05 00 00 48 	bl      20 <flush_branch_caches+0x20>
+>>        20:	05 00 00 48 	bl      24 <flush_branch_caches+0x24>
+>>        24:	05 00 00 48 	bl      28 <flush_branch_caches+0x28>
+>>        28:	05 00 00 48 	bl      2c <flush_branch_caches+0x2c>
+>>
+>>
+>> arch/powerpc/kernel/switch.S failing src section:
+>>
+>> .balign 32
+>> .global flush_branch_caches
+>> flush_branch_caches:
+>>          /* Save LR into r9 */
+>>          mflr    r9
+>>
+>>          // Flush the link stack
+>>          .rept 64
+>>          ANNOTATE_INTRA_FUNCTION_CALL
+>>          bl      .+4
+>>          .endr
+>>          b       1f
+>>          nops    6
+>>
+>> Maddy
+>>
+>>
+>>> Christophe
+>>
+>
+Regards,
 
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250304043742.9252-1-semfault@disroot.org:
-
-arch/arm64/boot/dts/qcom/sm6125-xiaomi-ginkgo.dtb: geniqup@4ac0000: #address-cells: 2 was expected
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,geni-se.yaml#
-arch/arm64/boot/dts/qcom/sm6125-xiaomi-ginkgo.dtb: geniqup@4ac0000: #size-cells: 2 was expected
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,geni-se.yaml#
-arch/arm64/boot/dts/qcom/sm6125-xiaomi-ginkgo.dtb: geniqup@4cc0000: #address-cells: 2 was expected
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,geni-se.yaml#
-arch/arm64/boot/dts/qcom/sm6125-xiaomi-ginkgo.dtb: geniqup@4cc0000: #size-cells: 2 was expected
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,geni-se.yaml#
-
-
-
-
+Venkat.
 
 
