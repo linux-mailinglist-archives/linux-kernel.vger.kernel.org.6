@@ -1,39 +1,54 @@
-Return-Path: <linux-kernel+bounces-543695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F23CFA4D8B2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:38:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78B1AA4D8DB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:41:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA1B61783C6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:36:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 447443B31D2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:36:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D89561FECAB;
-	Tue,  4 Mar 2025 09:32:23 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD061FE476
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 09:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0D62010E6;
+	Tue,  4 Mar 2025 09:33:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="qjoOe41T"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29B01FC7C2;
+	Tue,  4 Mar 2025 09:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741080743; cv=none; b=mSaYVbd47o9laC6s1SAiczubvWMEInBKEVW/9aHescTdLy1KCsPXuxE3DrE2SlyOs98+hO1KiuCmuiiFssxzIRaZ9JhMvJxG06ecc10RW04eLT0gfMbkcFb5A8OGT6bNUuDEVrzUKY83xHVXJBTsW9fdRYqAjr+K2ZQzLVL+yng=
+	t=1741080785; cv=none; b=tZQpr/ANWgeFDUtlKHjqL1etVuP978i1hbKXRPR5cYJjbw26DPTnpYzVh11NtdyO8cIc2QMFrfTXKVTLlhcCv+y5fxNSneT5Kr4pAE3coPO4tKat7oQ1Oj91riiy71OWOuDPMsC4wcSMB7EkLiWgxkb/PXuMKHdRWND1SPV5Dhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741080743; c=relaxed/simple;
-	bh=k+0h5dWOOQAv81QboClgzsSj9ftKZm5LSxf1fJK/uvg=;
+	s=arc-20240116; t=1741080785; c=relaxed/simple;
+	bh=JF9sxbEEccR/pwV4UWR6bRzWcVi7LBjHmtUPbTE7LOg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OQQjlMi9Mhv4pBWoShs0Hp/x6tsQaCi2VI/ljpSixc0rjO7+0886IwKgggANPvZiuQOUy4NGIEuMy4QLBgwoMPuYcJa0zBJPoJgt9j1h9Yg+Bv06g5hQh2IpdY+xzouF1FIdFhMav6sF9XSoFOPpVaKDBYYiwOU/w/r9M/rNv1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 59B18FEC;
-	Tue,  4 Mar 2025 01:32:32 -0800 (PST)
-Received: from [192.168.178.71] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E86613F66E;
-	Tue,  4 Mar 2025 01:32:14 -0800 (PST)
-Message-ID: <5435fd87-6209-4896-84cc-27a35ef3cea4@arm.com>
-Date: Tue, 4 Mar 2025 10:32:13 +0100
+	 In-Reply-To:Content-Type; b=rnPDOz7zIPpLpam60WrNnHug5MW/Kk9meuT7lXucpXyxcFz5yUN9GNLq9jJ9rWFIpaB0d3HHzlv1GWksCGxZwrUNyvmYiNF1MaFyfpLrka8G1RxIkO8+HrfkqxAezw/ARYHzfOpalP59PN56A3O5mvZvVQyujl4cySg5npkIdhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=qjoOe41T; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1741080780;
+	bh=JF9sxbEEccR/pwV4UWR6bRzWcVi7LBjHmtUPbTE7LOg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qjoOe41TanW4TxwLEeCxJSMLuyej+aEG/K2EWazvTSV+2UZgG50JfJiJNtqJCwsY4
+	 l3TLqRS1ZSpZtnZPtNYQGpbhJFD0XXoAQE3jeC84LdiMxZZ1WsGcEieBCKdChIglWf
+	 aH9lS8ka0ynZjepKUvLtKeuHB2zUh2AdC33uV4Fq47LC3SZs9dFv97Z1+rk/TUngMh
+	 JX1sNGvPV099kGdv4HiBCMNPAqjRDjtbtIT+DVJ+yqy6mxevk78rNkMbXTYd/kmTwv
+	 vDbz0hIprjf2A5y7Si0+YUiqcC+MrcZVEubjxJAyPOC8QAN3DV2ll879Lz5YIhEe9J
+	 K1y4rNxCd5lbA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8808917E065A;
+	Tue,  4 Mar 2025 10:32:59 +0100 (CET)
+Message-ID: <652e435c-563b-496a-a4c3-c2e2b665abcf@collabora.com>
+Date: Tue, 4 Mar 2025 10:32:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,130 +56,315 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 2/4] arch_topology: Support SMT control for OF based
- system
-To: Yicong Yang <yangyicong@huawei.com>, sudeep.holla@arm.com,
- pierre.gondois@arm.com
-Cc: dave.hansen@linux.intel.com, bp@alien8.de, mingo@redhat.com,
- linux-arm-kernel@lists.infradead.org, mpe@ellerman.id.au,
- peterz@infradead.org, tglx@linutronix.de, will@kernel.org,
- catalin.marinas@arm.com, yangyicong@hisilicon.com,
- linuxppc-dev@lists.ozlabs.org, x86@kernel.org, linux-kernel@vger.kernel.org,
- morten.rasmussen@arm.com, msuchanek@suse.de, gregkh@linuxfoundation.org,
- rafael@kernel.org, jonathan.cameron@huawei.com, prime.zeng@hisilicon.com,
- linuxarm@huawei.com, xuwei5@huawei.com, guohanjun@huawei.com,
- sshegde@linux.ibm.com
-References: <20250218141018.18082-1-yangyicong@huawei.com>
- <20250218141018.18082-3-yangyicong@huawei.com>
- <8a9aedef-08d7-445f-9b67-85e74ec6bd50@arm.com>
- <21e74021-fb68-0003-f0f4-7f54dd674b9d@huawei.com>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Subject: Re: [PATCH v4 3/8] mailbox: mtk-cmdq: Add driver data to support for
+ MT8196
+To: Jason-JH Lin <jason-jh.lin@mediatek.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+ Nancy Lin <nancy.lin@mediatek.com>, Singo Chang <singo.chang@mediatek.com>,
+ Moudy Ho <moudy.ho@mediatek.com>, Xavier Chang <xavier.chang@mediatek.com>,
+ Xiandong Wang <xiandong.wang@mediatek.com>,
+ Sirius Wang <sirius.wang@mediatek.com>, Fei Shao <fshao@chromium.org>,
+ Pin-yen Lin <treapking@chromium.org>,
+ Project_Global_Chrome_Upstream_Group@mediatek.com,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+References: <20250218054405.2017918-1-jason-jh.lin@mediatek.com>
+ <20250218054405.2017918-4-jason-jh.lin@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-In-Reply-To: <21e74021-fb68-0003-f0f4-7f54dd674b9d@huawei.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20250218054405.2017918-4-jason-jh.lin@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 03/03/2025 15:03, Yicong Yang wrote:
-> On 2025/2/28 19:11, Dietmar Eggemann wrote:
->> On 18/02/2025 15:10, Yicong Yang wrote:
->>> From: Yicong Yang <yangyicong@hisilicon.com>
-
-[...]
-
->>> If a system have more than one SMT thread number the 2) may
->>
->> s/have/has
->>
->>> not handle it well, since there're multiple thread numbers in the
->>
->> multiple thread numbers other than 1, right?
+Il 18/02/25 06:41, Jason-JH Lin ha scritto:
+> MT8196 has 3 new hardware configuration compared with the previous SoC,
+> which correspond to the 3 new driver data:
 > 
-> according to the pr_warn_once() we implemented below it also includes the case
-> where the system have one type of SMT cores and non-SMT cores (the thread number is 1):
-> - 1 thread
-> - X (!= 1) threads
+> 1. mminfra_offset: For GCE data plane control
+>     Since GCE has been moved into mminfra, GCE needs to append the
+>     mminfra offset to the DRAM address when accessing the DRAM.
 > 
-> Discussion made in [1] and I thought we have agreement (hope I understood correctly)
-> that all the asymmetric cases need to notify. Do you and Sudeep think we should not
-> warn in such case?
+> 2. gce_vm: For GCE hardware virtualization
+>     Currently, the first version of the mt8196 mailbox controller only
+>     requires setting the VM-related registers to enable the permissions
+>     of a host VM.
 
-Systems with non-SMT and SMT-2 cores are IMHO a special case since for
-them the '/sys/devices/system/cpu/smt' interface still works correctly.
-And on X86 those systems do exist today.
+I think that the GCE VM changes should go to a different commit, as that
+looks like being something not critical for basic functionality of the
+MMINFRA GCE.
 
-IMHO, it would be awkward to see the message 'Heterogeneous SMT topology
-is partly supported by SMT control' on arm64 but not on x86 on such a
-system.
+I really like seeing support for that, but please split the basic stuff
+from the extra functionality :-)
 
-I do understand that this message is more tailored to theoretically
-possible 'multiple SMT-X (X>1) core' systems (e.g. 1,2,4).
+> 
+> 3. dma_mask_bit: For dma address bit control
+>     In order to avoid the hardware limitations of MT8196 accessing DRAM,
+>     GCE needs to configure the DMA address to be less than 35 bits.
+> 
+> Signed-off-by: Jason-JH Lin <jason-jh.lin@mediatek.com>
+> ---
+>   drivers/mailbox/mtk-cmdq-mailbox.c       | 90 +++++++++++++++++++++---
+>   include/linux/mailbox/mtk-cmdq-mailbox.h |  2 +
+>   2 files changed, 84 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c b/drivers/mailbox/mtk-cmdq-mailbox.c
+> index d186865b8dce..0abe10a7fef9 100644
+> --- a/drivers/mailbox/mtk-cmdq-mailbox.c
+> +++ b/drivers/mailbox/mtk-cmdq-mailbox.c
+> @@ -43,6 +43,17 @@
+>   #define GCE_CTRL_BY_SW				GENMASK(2, 0)
+>   #define GCE_DDR_EN				GENMASK(18, 16)
+>   
+> +#define GCE_VM_ID_MAP0			0x5018
+> +#define GCE_VM_MAP0_ALL_HOST			GENMASK(29, 0)
+> +#define GCE_VM_ID_MAP1			0x501c
+> +#define GCE_VM_MAP1_ALL_HOST			GENMASK(29, 0)
+> +#define GCE_VM_ID_MAP2			0x5020
+> +#define GCE_VM_MAP2_ALL_HOST			GENMASK(29, 0)
+> +#define GCE_VM_ID_MAP3			0x5024
+> +#define GCE_VM_MAP3_ALL_HOST			GENMASK(5, 0)
+> +#define GCE_VM_CPR_GSIZE		0x50c4
+> +#define GCE_VM_CPR_GSIZE_HSOT			GENMASK(3, 0)
 
-And here we cannot issue a '2 > ./control' since
-cpu_smt_num_threads_valid() only returns true for 1 or 4.
+typo: GSIZE_HOST....
 
-IMHO, I would remove the warning and state clearly in the patch that for
-systems with multiple SMT-X (X>1) cores, this interface only support SMT
-completely on or off.
+...but also, if you could add some brief description of what the VMIDs are used for
+and what the GSIZE is... that'd be very much appreciated from whoever is reading
+this.
 
-Example Arm64 DT:
+The GCE stuff isn't even properly described in datasheets - I do (probably!)
+understand what those are for, but asking people to get years of experience on
+MediaTek to understand what's going on would be a bit rude, wouldn't it? :-D
 
-cpu-map {
-        cluster0 {
-                core0 {
-                        thread0 {
-                                cpu = <&A53_0>;
-                        };
-                };
-                core1 {
-                        thread0 {
-                                cpu = <&A53_1>;
-                        };
-                };
-                core2 {
-                        thread0 {
-                                cpu = <&A53_2>;
-                        };
-                        thread1 {
-                                cpu = <&A53_3>;
-                        };
-                };
-                core3 {
-                        thread0 {
-                                cpu = <&A53_4>;
-                        };
-                        thread1 {
-                                cpu = <&A53_5>;
-                        };
-                        thread2 {
-                                cpu = <&A53_6>;
-                        };
-                        thread3 {
-                                cpu = <&A53_7>;
-                        };
-                };
-        };
-};
+> +
+>   #define CMDQ_THR_ACTIVE_SLOT_CYCLES	0x3200
+>   #define CMDQ_THR_ENABLED		0x1
+>   #define CMDQ_THR_DISABLED		0x0
+> @@ -87,11 +98,24 @@ struct cmdq {
+>   struct gce_plat {
+>   	u32 thread_nr;
+>   	u8 shift;
+> +	dma_addr_t mminfra_offset;
 
-# cat /proc/cpuinfo | grep ^processor
-processor	: 0
-processor	: 1
-processor	: 2
-processor	: 3
-processor	: 4
-processor	: 5
-processor	: 6
-processor	: 7
+It looks like this is exactly the DRAM's iostart... at least, I can see that in the
+downstream devicetree that's where it starts.
 
-/sys/devices/system/cpu/smt# echo 1 >control
+	memory: memory@80000000 {
+		device_type = "memory";
+		reg = <0 0x80000000 0 0x40000000>;
+	};
 
-# cat /proc/cpuinfo | grep ^processor
-processor	: 0
-processor	: 1
-processor	: 2
-processor	: 4
+It doesn't really look like being a coincidence, but, for the sake of asking:
+is this just a coincidence? :-)
 
-/sys/devices/system/cpu/smt# echo 2 >control
--bash: echo: write error: Invalid argument
+>   	bool control_by_sw;
+>   	bool sw_ddr_en;
+> +	bool gce_vm;
+> +	u32 dma_mask_bit;
+>   	u32 gce_num;
+>   };
+>   
+> +static inline u32 cmdq_reg_shift_addr(dma_addr_t addr, const struct gce_plat *pdata)
+> +{
+> +	return ((addr + pdata->mminfra_offset) >> pdata->shift);
+> +}
+> +
+> +static inline u32 cmdq_reg_revert_addr(dma_addr_t addr, const struct gce_plat *pdata)
+> +{
+> +	return ((addr << pdata->shift) - pdata->mminfra_offset);
+> +}
 
-[...]
+I'm not sure that you really need those two functions... probably it's simply
+cleaner and easier to just write that single line every time... and I'm
+saying that especially for how you're using those functions, with some readl()
+passed directly as param, decreasing human readability by "a whole lot" :-)
+
+> +
+>   static void cmdq_sw_ddr_enable(struct cmdq *cmdq, bool enable)
+>   {
+>   	WARN_ON(clk_bulk_enable(cmdq->pdata->gce_num, cmdq->clocks));
+> @@ -112,6 +136,30 @@ u8 cmdq_get_shift_pa(struct mbox_chan *chan)
+>   }
+>   EXPORT_SYMBOL(cmdq_get_shift_pa);
+>   
+> +dma_addr_t cmdq_get_offset_pa(struct mbox_chan *chan)
+> +{
+> +	struct cmdq *cmdq = container_of(chan->mbox, struct cmdq, mbox);
+> +
+> +	return cmdq->pdata->mminfra_offset;
+> +}
+> +EXPORT_SYMBOL(cmdq_get_offset_pa);
+
+I think I remember this get_offset_pa from the old times, then CK removed it (and I
+was really happy about that disappearing), or am I confusing this with something
+else?
+
+(of course, this wasn't used for mminfra, but for something else!)
+
+> +
+> +bool cmdq_addr_need_offset(struct mbox_chan *chan, dma_addr_t addr)
+> +{
+> +	struct cmdq *cmdq = container_of(chan->mbox, struct cmdq, mbox);
+> +
+> +	if (cmdq->pdata->mminfra_offset == 0)
+> +		return false;
+> +
+> +	/*
+> +	 * mminfra will recognize the addr that greater than the mminfra_offset
+> +	 * as a transaction to DRAM.
+> +	 * So the caller needs to append mminfra_offset for the true case.
+> +	 */
+> +	return (addr >= cmdq->pdata->mminfra_offset);
+
+
+/**
+  * cmdq_is_mminfra_gce() - Brief description
+  * @args.....
+  *
+  * The MMINFRA GCE will recognize an address greater than DRAM iostart as a
+  * DRAM transaction instead of ....xyz
+  *
+  * In order for callers to perform (xyz) transactions through the CMDQ, those
+  * need to know if they are using a GCE located in MMINFRA.
+  */
+bool cmdq_is_mminfra_gce(...)
+{
+	return cmdq->pdata->mminfra_offset &&
+	       (addr >= cmdq->pdata->mminfra_offset)
+
+> +}
+> +EXPORT_SYMBOL(cmdq_addr_need_offset);
+> +
+
+...but then, is there really no way of just handling the GCE being in MMINFRA
+transparently from the callers? Do the callers really *need* to know that they're
+using a new GCE?!
+
+Another way of saying: can't we just handle the address translation in here instead
+of instructing each and every driver about how to communicate with the new GCE?!
+
+
+Cheers,
+Angelo
+
+>   static int cmdq_thread_suspend(struct cmdq *cmdq, struct cmdq_thread *thread)
+>   {
+>   	u32 status;
+> @@ -143,6 +191,17 @@ static void cmdq_init(struct cmdq *cmdq)
+>   	u32 gctl_regval = 0;
+>   
+>   	WARN_ON(clk_bulk_enable(cmdq->pdata->gce_num, cmdq->clocks));
+> +
+> +	if (cmdq->pdata->gce_vm) {
+> +		/* config cpr size for host vm */
+> +		writel(GCE_VM_CPR_GSIZE_HSOT, cmdq->base + GCE_VM_CPR_GSIZE);
+> +		/* config CPR_GSIZE before setting VM_ID_MAP to avoid data leakage */
+> +		writel(GCE_VM_MAP0_ALL_HOST, cmdq->base + GCE_VM_ID_MAP0);
+> +		writel(GCE_VM_MAP1_ALL_HOST, cmdq->base + GCE_VM_ID_MAP1);
+> +		writel(GCE_VM_MAP2_ALL_HOST, cmdq->base + GCE_VM_ID_MAP2);
+> +		writel(GCE_VM_MAP3_ALL_HOST, cmdq->base + GCE_VM_ID_MAP3);
+> +	}
+> +
+>   	if (cmdq->pdata->control_by_sw)
+>   		gctl_regval = GCE_CTRL_BY_SW;
+>   	if (cmdq->pdata->sw_ddr_en)
+> @@ -199,7 +258,7 @@ static void cmdq_task_insert_into_thread(struct cmdq_task *task)
+>   				prev_task->pkt->cmd_buf_size, DMA_TO_DEVICE);
+>   	prev_task_base[CMDQ_NUM_CMD(prev_task->pkt) - 1] =
+>   		(u64)CMDQ_JUMP_BY_PA << 32 |
+> -		(task->pa_base >> task->cmdq->pdata->shift);
+> +		cmdq_reg_shift_addr(task->pa_base, task->cmdq->pdata);
+>   	dma_sync_single_for_device(dev, prev_task->pa_base,
+>   				   prev_task->pkt->cmd_buf_size, DMA_TO_DEVICE);
+>   
+> @@ -264,7 +323,7 @@ static void cmdq_thread_irq_handler(struct cmdq *cmdq,
+>   	else
+>   		return;
+>   
+> -	curr_pa = readl(thread->base + CMDQ_THR_CURR_ADDR) << cmdq->pdata->shift;
+> +	curr_pa = cmdq_reg_shift_addr(readl(thread->base + CMDQ_THR_CURR_ADDR), cmdq->pdata);
+>   
+>   	list_for_each_entry_safe(task, tmp, &thread->task_busy_list,
+>   				 list_entry) {
+> @@ -416,9 +475,9 @@ static int cmdq_mbox_send_data(struct mbox_chan *chan, void *data)
+>   		 */
+>   		WARN_ON(cmdq_thread_reset(cmdq, thread) < 0);
+>   
+> -		writel(task->pa_base >> cmdq->pdata->shift,
+> +		writel(cmdq_reg_shift_addr(task->pa_base, cmdq->pdata),
+>   		       thread->base + CMDQ_THR_CURR_ADDR);
+> -		writel((task->pa_base + pkt->cmd_buf_size) >> cmdq->pdata->shift,
+> +		writel(cmdq_reg_shift_addr(task->pa_base + pkt->cmd_buf_size, cmdq->pdata),
+>   		       thread->base + CMDQ_THR_END_ADDR);
+>   
+>   		writel(thread->priority, thread->base + CMDQ_THR_PRIORITY);
+> @@ -426,10 +485,10 @@ static int cmdq_mbox_send_data(struct mbox_chan *chan, void *data)
+>   		writel(CMDQ_THR_ENABLED, thread->base + CMDQ_THR_ENABLE_TASK);
+>   	} else {
+>   		WARN_ON(cmdq_thread_suspend(cmdq, thread) < 0);
+> -		curr_pa = readl(thread->base + CMDQ_THR_CURR_ADDR) <<
+> -			cmdq->pdata->shift;
+> -		end_pa = readl(thread->base + CMDQ_THR_END_ADDR) <<
+> -			cmdq->pdata->shift;
+> +		curr_pa = cmdq_reg_revert_addr(readl(thread->base + CMDQ_THR_CURR_ADDR),
+> +					       cmdq->pdata);
+> +		end_pa = cmdq_reg_revert_addr(readl(thread->base + CMDQ_THR_END_ADDR),
+> +					      cmdq->pdata);
+>   		/* check boundary */
+>   		if (curr_pa == end_pa - CMDQ_INST_SIZE ||
+>   		    curr_pa == end_pa) {
+> @@ -663,6 +722,9 @@ static int cmdq_probe(struct platform_device *pdev)
+>   	if (err)
+>   		return err;
+>   
+> +	if (cmdq->pdata->dma_mask_bit)
+> +		dma_set_coherent_mask(dev, DMA_BIT_MASK(cmdq->pdata->dma_mask_bit));
+> +
+>   	cmdq->mbox.dev = dev;
+>   	cmdq->mbox.chans = devm_kcalloc(dev, cmdq->pdata->thread_nr,
+>   					sizeof(*cmdq->mbox.chans), GFP_KERNEL);
+> @@ -782,6 +844,17 @@ static const struct gce_plat gce_plat_mt8195 = {
+>   	.gce_num = 2
+>   };
+>   
+> +static const struct gce_plat gce_plat_mt8196 = {
+> +	.thread_nr = 32,
+> +	.shift = 3,
+> +	.mminfra_offset = 0x80000000, /* 2GB */
+> +	.control_by_sw = true,
+> +	.sw_ddr_en = true,
+> +	.gce_vm = true,
+> +	.dma_mask_bit = 35,
+> +	.gce_num = 2
+> +};
+> +
+>   static const struct of_device_id cmdq_of_ids[] = {
+>   	{.compatible = "mediatek,mt6779-gce", .data = (void *)&gce_plat_mt6779},
+>   	{.compatible = "mediatek,mt8173-gce", .data = (void *)&gce_plat_mt8173},
+> @@ -790,6 +863,7 @@ static const struct of_device_id cmdq_of_ids[] = {
+>   	{.compatible = "mediatek,mt8188-gce", .data = (void *)&gce_plat_mt8188},
+>   	{.compatible = "mediatek,mt8192-gce", .data = (void *)&gce_plat_mt8192},
+>   	{.compatible = "mediatek,mt8195-gce", .data = (void *)&gce_plat_mt8195},
+> +	{.compatible = "mediatek,mt8196-gce", .data = (void *)&gce_plat_mt8196},
+>   	{}
+>   };
+>   MODULE_DEVICE_TABLE(of, cmdq_of_ids);
+> diff --git a/include/linux/mailbox/mtk-cmdq-mailbox.h b/include/linux/mailbox/mtk-cmdq-mailbox.h
+> index a8f0070c7aa9..79398bf95f8d 100644
+> --- a/include/linux/mailbox/mtk-cmdq-mailbox.h
+> +++ b/include/linux/mailbox/mtk-cmdq-mailbox.h
+> @@ -79,5 +79,7 @@ struct cmdq_pkt {
+>   };
+>   
+>   u8 cmdq_get_shift_pa(struct mbox_chan *chan);
+> +dma_addr_t cmdq_get_offset_pa(struct mbox_chan *chan);
+> +bool cmdq_addr_need_offset(struct mbox_chan *chan, dma_addr_t addr);
+>   
+>   #endif /* __MTK_CMDQ_MAILBOX_H__ */
+
 
