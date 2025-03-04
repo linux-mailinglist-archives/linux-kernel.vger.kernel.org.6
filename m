@@ -1,143 +1,126 @@
-Return-Path: <linux-kernel+bounces-545557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A35E5A4EE8E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:40:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 611F3A4EE90
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:40:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CE421895285
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:40:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D47E16616C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:40:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2527A25F997;
-	Tue,  4 Mar 2025 20:40:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C180E25F997;
+	Tue,  4 Mar 2025 20:40:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eqqwCDia"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ayf9ZlxL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75063215F7D;
-	Tue,  4 Mar 2025 20:40:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28C8825290A;
+	Tue,  4 Mar 2025 20:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741120819; cv=none; b=ImVdbQbKvODPkKzwQNKYGgdCT6P7gmqCcxljmlZ4y/MV2Bnzr0i+HxCcrMEDa43d1wAi6TcdYtX4uVZGk2ZWKiM23iC9XtvlYy6Uj5oFs+gaeNvMOZhvOJoKqlyxj5BNgcXZFoemYyXXOxHnB2s+dE01s8bNdKAIX7/66hC/Bkw=
+	t=1741120831; cv=none; b=ROF5vqBLxxsASfym6iT/0zSWl11LhToLpKIF5vWdMW0WyooJPOf0qgr/4yd3bIADwh2aLcIU3MbLYV2hWXttjoRUcHHVDQoFNx9pi2sh+dwFs8kaME3bQSlWfHuOFbc1zFdl6dkz/eHxmkHZx7pfPsdFGLa9OkztDWhxh2Ly1M8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741120819; c=relaxed/simple;
-	bh=rffQqLzv4LKuSkCZS6yB0zZhXvs8756vRKQ1Bz8ZERc=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=uWmNnumWqsPxn6a61lXmA7twMmm7h9Z85CyarKiR7gnNbcwJY0Fwld/bZvS4+NXalKkLCxqaicWmdmisPsfq7CU24L85hMEvJbFGrg1zlrNXfrImFql08zBfEMI7AElWq0l8zjB4o8CjPXTujasix1CB+0Yyq8OwWrM9THZeFrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eqqwCDia; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 828FBC4CEE5;
-	Tue,  4 Mar 2025 20:40:18 +0000 (UTC)
+	s=arc-20240116; t=1741120831; c=relaxed/simple;
+	bh=uYP7mj7qSPBcCxpr8OPM5qt366XPadgekuwnWrQgxb0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qzhfumuaw6kDH135ncI47/D6GYr/bRR7OOIsAXiZI/n4O7AunQ7NMySN5ysy4STyBlVURLKORmHkzRsnKWMnWcOKVu0H30NShAAiOna+9rzK3BgErZD5F1+mMOk3RflYtcD9RQ2aYpRsRaTHcksgYXjTHcER9mW984zSGtY9qLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ayf9ZlxL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A9B6C4CEEB;
+	Tue,  4 Mar 2025 20:40:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741120818;
-	bh=rffQqLzv4LKuSkCZS6yB0zZhXvs8756vRKQ1Bz8ZERc=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=eqqwCDianugNOSXzq8fzjefzgm+LlbOmTo+E+OTZ/dWrFEYzv3hYt0Azt9fPLh5I4
-	 9ReSWdcx8BI/aq+KZqAM2H1+TaY/y8neBojDc4gKLAqayn+81HTppa04GL7XkX/PkS
-	 a4GvgEh93F+Z66EJfSMidmsoyOC/62if5HbCGgM3cu3mjndmJWlKEZuYomDjsVNeSV
-	 xZdM1lRA6nCLPDSzLNCGb45pASLIBg5HjQ9h8Pc0p1MxV+s+ZaN20V3PBg8NglPwjG
-	 ZNXUPquCbaPJ7INrjRAX4wOjL51QjYuE8Rk2QSOevEw69rJKsPI+3lNWIrPPJa98a6
-	 mVUpOgnIQW42A==
-Date: Tue, 4 Mar 2025 21:40:16 +0100 (CET)
-From: Jiri Kosina <jikos@kernel.org>
-To: Daniil Dulov <d.dulov@aladdin.ru>
-cc: Benjamin Tissoires <bentiss@kernel.org>, linux-input@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org, 
-    stable@vger.kernel.org
-Subject: Re: [PATCH] HID: appleir: Fix potential NULL dereference at raw
- event handle
-In-Reply-To: <20250224173031.496048-1-d.dulov@aladdin.ru>
-Message-ID: <8oqsp1p4-4nr8-4nq4-2483-9r6n5r05881s@xreary.bet>
-References: <20250224173031.496048-1-d.dulov@aladdin.ru>
+	s=k20201202; t=1741120830;
+	bh=uYP7mj7qSPBcCxpr8OPM5qt366XPadgekuwnWrQgxb0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ayf9ZlxLzvWJz3iEb+2grPf84eQiqHgTsMu1UW3jZcKUOIqyA4TLh3xShr6eOdLcJ
+	 0GK2ILttOshvvXKYfqwLUK4fViKZMEFj8XDjkA/WSmzd/80AwW6Y1kC+7XN4L4xJgo
+	 zzQ2ha5slVdDhHHo8Op5LpV2PgMtOIu2THelBHfnO5NWqDDi16IkAG7Shku9FmeNzg
+	 cbqQsL9kZo4IZ0CEAIPSANVy8KLDmP3u09B74inPtB1F/ISJyhnZVwIayGk98C31nL
+	 6tDQJaNVZ/YKHq/rUzmsFGkbfdhb536Epz0ejLK9LcoNDDqToXxYgyUTCkKaXz/mZq
+	 W0vjFcj8wOFpQ==
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aaf0f1adef8so1128673766b.3;
+        Tue, 04 Mar 2025 12:40:30 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVTLyUKdq9lhkZMSYiGorWa53DRC6dCH9e8vY/IL0fDStyh/d8nsUyVLtAm/cryDS15k/B17HuomYsx@vger.kernel.org, AJvYcCXOM7Iu0k/omg5PCOMog6VsuDxJwkP456c1+SBq2wvF9p7HsWdENSxQdSJoJQJP6YWOcZstRT1eZOrWRal7@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVAvjrjkIVUOxEgxy2IBAGdwzaTvWweZiB4sn2fix+31O+SAzo
+	77Pmx9depFJKZPc5L5E7ObSA1g9w2RJgN4vxTcdo78N0gSPLEQWXFI8XATyRQtU9Db9UPxjF3j8
+	v0+isMgOBLpbx4h5Yj/3dvOi0pg==
+X-Google-Smtp-Source: AGHT+IHpC7vQAEBl+RVwSZdBZTP875fHqIHXh+UlFq6qH4uze+X3a7pNBnsJ0k1OnI/x7vczZytg/dt8Oe5JxOfF88I=
+X-Received: by 2002:a17:907:9687:b0:abf:75b8:cb38 with SMTP id
+ a640c23a62f3a-ac20da87899mr69490566b.36.1741120828958; Tue, 04 Mar 2025
+ 12:40:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20250304102306.2977836-1-c-vankar@ti.com> <20250304102306.2977836-2-c-vankar@ti.com>
+ <20250304153959.GA2654372-robh@kernel.org> <66283781-69d6-4d0a-ada4-3a6bf4744a37@ti.com>
+In-Reply-To: <66283781-69d6-4d0a-ada4-3a6bf4744a37@ti.com>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 4 Mar 2025 14:40:17 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq++DUv5_LHg7sPNXDJZ84JtS94Rwr-WAb9hDWp6rJqZLQ@mail.gmail.com>
+X-Gm-Features: AQ5f1JpkJYj0hTvhVDOsV4QKBZ_hEtjJaTF846fPcP96SKLQbxBGQ3BrCLs5a_o
+Message-ID: <CAL_Jsq++DUv5_LHg7sPNXDJZ84JtS94Rwr-WAb9hDWp6rJqZLQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 1/2] devicetree: bindings: mux: reg-mux: Update
+ bindings for reg-mux for new property
+To: "Vankar, Chintan" <c-vankar@ti.com>
+Cc: Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Peter Rosin <peda@axentia.se>, s-vadapalli@ti.com, danishanwar@ti.com, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	Vignesh Raghavendra <vigneshr@ti.com>, Nishanth Menon <nm@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 24 Feb 2025, Daniil Dulov wrote:
+On Tue, Mar 4, 2025 at 1:03=E2=80=AFPM Vankar, Chintan <c-vankar@ti.com> wr=
+ote:
+>
+> Hello Rob,
+>
+> On 3/4/2025 9:09 PM, Rob Herring wrote:
+> > On Tue, Mar 04, 2025 at 03:53:05PM +0530, Chintan Vankar wrote:
+> >> DT-binding of reg-mux is defined in such a way that one need to provid=
+e
+> >> register offset and mask in a "mux-reg-masks" property and correspondi=
+ng
+> >> register value in "idle-states" property. This constraint forces to de=
+fine
+> >> these values in such a way that "mux-reg-masks" and "idle-states" must=
+ be
+> >> in sync with each other. This implementation would be more complex if
+> >> specific register or set of registers need to be configured which has
+> >> large memory space. Introduce a new property "mux-reg-masks-state" whi=
+ch
+> >> allow to specify offset, mask and value as a tuple in a single propert=
+y.
+> >
+> > Maybe in hindsight that would have been better, but having 2 ways to
+> > specify the same thing that we have to maintain forever is not an
+> > improvement.
+> >
+> > No one is making you use this binding. If you have a large number of
+> > muxes, then maybe you should use a specific binding.
+> >
+>
+> Thank you for reviewing the patch. The reason behind choosing mux
+> subsystem is working and implementation of mmio driver. As we can see
+> that implementing this new property in mux-controller is almost
+> identical to mmio driver, and it would make it easier to define and
+> extend mux-controller's functionality. If we introduce the new driver
+> than that would be most likely a clone of mmio driver.
 
-> Syzkaller reports a NULL pointer dereference issue in input_event().
-> 
-> BUG: KASAN: null-ptr-deref in instrument_atomic_read include/linux/instrumented.h:68 [inline]
-> BUG: KASAN: null-ptr-deref in _test_bit include/asm-generic/bitops/instrumented-non-atomic.h:141 [inline]
-> BUG: KASAN: null-ptr-deref in is_event_supported drivers/input/input.c:67 [inline]
-> BUG: KASAN: null-ptr-deref in input_event+0x42/0xa0 drivers/input/input.c:395
-> Read of size 8 at addr 0000000000000028 by task syz-executor199/2949
-> 
-> CPU: 0 UID: 0 PID: 2949 Comm: syz-executor199 Not tainted 6.13.0-rc4-syzkaller-00076-gf097a36ef88d #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-> Call Trace:
->  <IRQ>
->  __dump_stack lib/dump_stack.c:94 [inline]
->  dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
->  kasan_report+0xd9/0x110 mm/kasan/report.c:602
->  check_region_inline mm/kasan/generic.c:183 [inline]
->  kasan_check_range+0xef/0x1a0 mm/kasan/generic.c:189
->  instrument_atomic_read include/linux/instrumented.h:68 [inline]
->  _test_bit include/asm-generic/bitops/instrumented-non-atomic.h:141 [inline]
->  is_event_supported drivers/input/input.c:67 [inline]
->  input_event+0x42/0xa0 drivers/input/input.c:395
->  input_report_key include/linux/input.h:439 [inline]
->  key_down drivers/hid/hid-appleir.c:159 [inline]
->  appleir_raw_event+0x3e5/0x5e0 drivers/hid/hid-appleir.c:232
->  __hid_input_report.constprop.0+0x312/0x440 drivers/hid/hid-core.c:2111
->  hid_ctrl+0x49f/0x550 drivers/hid/usbhid/hid-core.c:484
->  __usb_hcd_giveback_urb+0x389/0x6e0 drivers/usb/core/hcd.c:1650
->  usb_hcd_giveback_urb+0x396/0x450 drivers/usb/core/hcd.c:1734
->  dummy_timer+0x17f7/0x3960 drivers/usb/gadget/udc/dummy_hcd.c:1993
->  __run_hrtimer kernel/time/hrtimer.c:1739 [inline]
->  __hrtimer_run_queues+0x20a/0xae0 kernel/time/hrtimer.c:1803
->  hrtimer_run_softirq+0x17d/0x350 kernel/time/hrtimer.c:1820
->  handle_softirqs+0x206/0x8d0 kernel/softirq.c:561
->  __do_softirq kernel/softirq.c:595 [inline]
->  invoke_softirq kernel/softirq.c:435 [inline]
->  __irq_exit_rcu+0xfa/0x160 kernel/softirq.c:662
->  irq_exit_rcu+0x9/0x30 kernel/softirq.c:678
->  instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline]
->  sysvec_apic_timer_interrupt+0x90/0xb0 arch/x86/kernel/apic/apic.c:1049
->  </IRQ>
->  <TASK>
->  asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
->  __mod_timer+0x8f6/0xdc0 kernel/time/timer.c:1185
->  add_timer+0x62/0x90 kernel/time/timer.c:1295
->  schedule_timeout+0x11f/0x280 kernel/time/sleep_timeout.c:98
->  usbhid_wait_io+0x1c7/0x380 drivers/hid/usbhid/hid-core.c:645
->  usbhid_init_reports+0x19f/0x390 drivers/hid/usbhid/hid-core.c:784
->  hiddev_ioctl+0x1133/0x15b0 drivers/hid/usbhid/hiddev.c:794
->  vfs_ioctl fs/ioctl.c:51 [inline]
->  __do_sys_ioctl fs/ioctl.c:906 [inline]
->  __se_sys_ioctl fs/ioctl.c:892 [inline]
->  __x64_sys_ioctl+0x190/0x200 fs/ioctl.c:892
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->  </TASK>
-> 
-> This happens due to the malformed report items sent by the emulated device
-> which results in a report, that has no fields, being added to the report list.
-> Due to this appleir_input_configured() is never called, hidinput_connect()
-> fails which results in the HID_CLAIMED_INPUT flag is not being set. However,
-> it  does not make appleir_probe() fail and lets the event callback to be
-> called without the associated input device.
-> 
-> Thus, add a check for the HID_CLAIMED_INPUT flag and leave the event hook
-> early if the driver didn't claim any input_dev for some reason. Moreover,
-> some other hid drivers accessing input_dev in their event callbacks do have
-> similar checks, too.
-> 
-> Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
-> 
-> Fixes: 9a4a5574ce42 ("HID: appleir: add support for Apple ir devices")
+I'm talking about the binding, not the driver. They are independent.
+Generic drivers are great. I love them. Generic bindings, not so much.
 
-Applied, thanks.
+> Let me know if implementation would be accepted by adding a new
+> compatible for it.
 
--- 
-Jiri Kosina
-SUSE Labs
+Adding a new compatible to the mmio driver? Certainly. That happens
+all the time.
 
+I also didn't say don't use this binding as-is. That's fine too.
+
+Rob
 
