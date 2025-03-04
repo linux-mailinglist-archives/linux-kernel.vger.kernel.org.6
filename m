@@ -1,54 +1,53 @@
-Return-Path: <linux-kernel+bounces-544118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64190A4DD96
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:12:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08247A4DD99
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:13:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B1A918975FA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:12:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2196B1895CBD
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:13:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53817201110;
-	Tue,  4 Mar 2025 12:12:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FE6B202960;
+	Tue,  4 Mar 2025 12:13:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="W+6OkqBw"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="m8DaGVaq"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12A71FC7E5
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 12:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E4951FCFF8;
+	Tue,  4 Mar 2025 12:13:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741090343; cv=none; b=YQ2EWjE0ggpocrsaJcvsjqO4vlsAiQbO0mabnMXCZN7cRzRsDDVUsLGUqv1xczsaiHNiLnZEa91rNSYVh0mvstz7bYoBz5uLmxVYLCb/1HRusg8orvcr0ZQitXEBpe3Dnk8lfQfUFUwvQQT46T7GdFOw7WmGFF778HfxemGmv84=
+	t=1741090412; cv=none; b=jGstIcfOhhmR3+m7ZOpv+rwSjLX30UL9mTeWFcBYkTzxZ6bW+S861ZDryOABkZ6OGjNeCSzyiRhTAr9+jdPIRvP5Z6Eg/ueg1KM30rrtTqNy1zJHFZui+77NJEztZAIPXcX8xrm8HqfvzZFIkfA0GZZzrFG19idKFt4gjatSr68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741090343; c=relaxed/simple;
-	bh=2EWvYx/k/x8mpI0CYKajuJPigLOs0dmymMDl3QAd2hI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JYQUPjBhXEA0E+5P6XZO4lxdbCumuW0iCre1baw9OtUcFa8/C/7hmXsHWEGkFLnp8dp55/po/S2eewuyI70uKSFAOCB6qA3tMLNrci7p0v+KLfJQFG+FoAYQs0Io3CMxQywX3sYb/tjly1B4x4WbN/zuVqfMaJ98wrU3JZgBHnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=W+6OkqBw; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1741090339;
-	bh=2EWvYx/k/x8mpI0CYKajuJPigLOs0dmymMDl3QAd2hI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=W+6OkqBwc1A2NIjP3nnNr7SLiC2ThlRzqbIbKrsXKeVfwlMZkAVMHWVarX/ftESaD
-	 azit1IA/HORWSZH+Go4Otd0cdd2BMMaD8OqDHUjep7Hm4HwqaNUTscOPG81+0wqwAr
-	 ZK5LqjpUDxo7mfQQhJXbVQURC5TtNjv9kLQDkLSAcdYS51LXhmmniVV0r9z0yjN8RL
-	 ICGBkOJuBBvjtijxGyre0v16L0um9ChpIIOOhJXFPIElpeRC58f5NUXZhEJXg7sjm4
-	 /aDMPAC5SQl8N7TC6NuW9f3WTH0ZyBwYpNd/sMQbeOpLO648CItB42rFi1QGHSwQip
-	 YrWkTlxCGJTOQ==
-Received: from [192.168.1.90] (unknown [188.27.58.83])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7B9DC17E088C;
-	Tue,  4 Mar 2025 13:12:19 +0100 (CET)
-Message-ID: <ddf4c3c9-849c-4d96-a073-966bb19a6047@collabora.com>
-Date: Tue, 4 Mar 2025 14:12:19 +0200
+	s=arc-20240116; t=1741090412; c=relaxed/simple;
+	bh=7ST/V5T4ufxfAK6zfRrOh7zOoHPojg42a5i8W4jN7d4=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=GevOanvOmpRauPLpdDL8NnOmrZt2Xo4jMP3fTNAXjOnb8QeHKYEA/eQo4TPtULWWtmh4JYDovHIpZWGMkz+K/UDpKvoyBgQFUk9NcBSG7mOeaRijYtYT3H01cZFk6a0xqkLQ1jAbaLxWcjt4KYIFj1HQJy/751aamooG/JpJjGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=m8DaGVaq; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1741090405; x=1741695205; i=markus.elfring@web.de;
+	bh=8jLjvIsrxt1ztOb88CQZSdoEqMwJ+liiQTGsFG0knkg=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=m8DaGVaqUR1LtPhqrf1AwI4q/Paf4BbEkZ/0RJ1p7izz9zjemsm41mUIOFArfEeB
+	 dRutbmbaAPP2jbZs+NZ/sTJDfQSmSYb4G3J0KC8m04gDc2BBo+5QtLwjDBMhRSI/w
+	 2jhmvzyVA+b7GNTCJQItAdBQJrnAfzcXIraTZd74MQ2OPxk3mgElaP+9SmQXYZ3XT
+	 a6QBqEH7xgLk/dsOK7bIyawoVFueN0wJ7U21p/uZcn7g+E77o1JrWrn7hNOTkhMOt
+	 Ez2K25lNPZMfRPkvFHEwoahP2iU0iLYDMZPoj/rP81olT1wPknW7AuA0ocOE9I93c
+	 UVO/kjqj47ltPe++Ng==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.64]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N45xz-1t7TWu2fgX-00tTfp; Tue, 04
+ Mar 2025 13:13:25 +0100
+Message-ID: <5b73ab68-fab6-417a-a410-69efc1f7b97b@web.de>
+Date: Tue, 4 Mar 2025 13:13:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,91 +55,88 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 07/12] phy: rockchip: samsung-hdptx: Setup TMDS char
- rate via phy_configure_opts_hdmi
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Algea Cao <algea.cao@rock-chips.com>, Sandor Yu <Sandor.yu@nxp.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, kernel@collabora.com,
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-References: <20250304-phy-sam-hdptx-bpc-v4-0-8657847c13f7@collabora.com>
- <20250304-phy-sam-hdptx-bpc-v4-7-8657847c13f7@collabora.com>
- <20250304-turtle-of-serious-aurora-2b0bae@houat>
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250304-turtle-of-serious-aurora-2b0bae@houat>
+To: linux-perf-users@vger.kernel.org, Adrian Hunter
+ <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>,
+ Ingo Molnar <mingo@redhat.com>, James Clark <james.clark@linaro.org>,
+ Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
+ Mark Rutland <mark.rutland@arm.com>, Namhyung Kim <namhyung@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Gaosheng Cui <cuigaosheng1@huawei.com>,
+ Jing Zhang <renyu.zj@linux.alibaba.com>, John Garry
+ <john.g.garry@oracle.com>, Kajol Jain <kjain@linux.ibm.com>,
+ Ravi Bangoria <ravi.bangoria@amd.com>, Rob Herring <robh@kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] perf pmu: Improve exception handling in perf_pmu__lookup()
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:0OubccCHVQhlmpwYMG5xgA/CpBovpnSMBDhgzGtKvcLodpvCVjd
+ VqbpdJSMLP727VOxVDRFqTa7ieI3lWFBqdLirfvGSDsXjpeqeZSzddm+wkoQno+V1oR5Do5
+ Bazzdp8/wrunUSWLQzG/tbbr2v47fUW1nEyuVByHstsBDwTmSIKWr9dy/oZUwHx5a6otk3C
+ BieYAzx5syD0OIo7dY9gA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:wGbjeNQv/YQ=;IGWOgLk/VsQNZnnrc02749sWvfa
+ RBmVLo188gAN3iXeOtKsuvoP6j0/VTAsyBYaHEaofzpwMjjRe6pegkMnYVsIs2BM46mCVDQbJ
+ XEAqGS1gMhXix76bwPn9FXT+aVDPh3ZJ8SWoyxC/H7CKfd+bu3GREk0HSW4F48G/uh07VBLLN
+ 6BBp02djnUI5OuNwxP/3LnQzOpNKvjN23l2BDr/ghdXu1WWn/L0fuo9IHUfNvrTuZ1fjlIMnC
+ 204T1ZC5wJO12AEtH3WSi/Uiclt7VIdKxT2IUryrMdpX3wh9TcSIhbBYBmJVBWvWrmoWez0a+
+ 0YYMZLprLm53rIChiZE7RpF9qGBh2wfQkWByczIiRpaRd7F4tuM4w3lziTMSv6ubeUXCTSk4v
+ 9z6Il+n/fZMFBzbfs4PK1ZCRdjoI8Eliv/hfpXVos2lyKf+KeAAEevn7BFrRTDuVXo3CN/YGr
+ 1djPxLr14h2CToLIUl36W9kKgYtt8575cud/WtYpNFZCV9TTVPnbG1UhZKxHE3n1DaTJ4A0Bs
+ f87wUGHYXtkXUAglGXL4H7IqwcCCsxRHpWciQN0WBpVsa6dcl8P4xb7DXgjgEiym7pc4vHAnv
+ O5Z5rFDpfEHBRfCVcK/2pEcrUwasMhVhadI8g8wUDQDPE5LNvPeHENfcHIVWIvshJPrIBiL2I
+ tDzUl42tsCBVDxq8lkvn6zoGl0Jj1v1c0viAYvKakwhYUQs1i/Nuo6Dr30TIoEn9idN//sTKq
+ nBvCIFC6M/viJYz0TbMABFMyR+X88qhtoWTVUWMhhTIQyQ+8l983Ll4IQetzvdcIuJIK8Pw/w
+ vu8IV6/NSecArB7d5vtkrGBN+7+qzzWXQHLBbLjlXemnqtE/757bR59p+EfcMZix5Ki5hETr7
+ 6NJLduv7dw4E4yDUXVZ9xtkCa8szJWqkf/YI8OMOPAY3EaVsuuXGohcTLanr4Fr5QoR8/JdV7
+ iUoMJ50D58iupu3qkdJICV0o2JGYb6g9sfOCrae1ieC3qe4ytSPyLO65b8T167oNZHFAo/pcV
+ wGE9CsQCXeq2Z+fzLMn/5U3ppBO+8+06oVr2UNkjDcVHAqyjr8HHombdDJT6OUMCY38PiywuM
+ IWDLVkj2IP1fETmqr2QN/1k25gA5bQjlMHMkulsc0WKPBP6gzN9WPWpQtXo0MUKlHZdqheS8+
+ In27X3uDIIT2qyru+Lg9XIXtoHJBR3Yf6u7qfxkSrv+ZTYuUtt+sDQjiqIAKc21nsi9LNjSQ+
+ donvfUyvD2IBBu9sbIWPuAQ7+PL1nLmhUpF82R8OlQcePXxQ6CDj50b4+Zd6UvpaszA1pLMGv
+ RiRag6MVOK3ZQZ89fkTKuzPVehk3cwSUQQC4WkIdSplhcQB8Cl8suGC/6WWHRK1Yp7qLuIq4l
+ 9W0XTjf3DE5D37lTnKRXpwqDGN7wLZvEZNlyb9TpoMbERmcK9jHsELBM7OF4FSgykglErvBjy
+ uCLpMZAToikZ4pKccUDE0YCYnlSM=
 
-On 3/4/25 10:15 AM, Maxime Ripard wrote:
-> On Tue, Mar 04, 2025 at 03:44:06AM +0200, Cristian Ciocaltea wrote:
->> The current workaround to setup the TMDS character rate relies on the
->> unconventional usage of phy_set_bus_width().
->>
->> Make use of the recently introduced HDMI PHY configuration API to
->> properly handle the setup.  The workaround will be dropped as soon as
->> the switch has been completed on both ends.
->>
->> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
->> ---
->>  drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c | 54 ++++++++++++++++-------
->>  1 file changed, 38 insertions(+), 16 deletions(-)
->>
->> diff --git a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
->> index 2bf525514c1991a1299265d12e1e85f66333c604..7e1d1c10758249aa5bbddbdaae0108bba04f30df 100644
->> --- a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
->> +++ b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
->> @@ -394,6 +394,7 @@ struct rk_hdptx_phy {
->>  
->>  	int phy_id;
->>  	struct phy *phy;
->> +	struct phy_configure_opts_hdmi hdmi_cfg;
->>  	struct clk_bulk_data *clks;
->>  	int nr_clks;
->>  	struct reset_control_bulk_data rsts[RST_MAX];
->> @@ -1409,19 +1410,25 @@ static int rk_hdptx_dp_aux_init(struct rk_hdptx_phy *hdptx)
->>  static int rk_hdptx_phy_power_on(struct phy *phy)
->>  {
->>  	struct rk_hdptx_phy *hdptx = phy_get_drvdata(phy);
->> -	int bus_width = phy_get_bus_width(hdptx->phy);
->>  	enum phy_mode mode = phy_get_mode(phy);
->> +	unsigned int rate = 0;
->>  	int ret, lane;
->>  
->> -	/*
->> -	 * FIXME: Temporary workaround to pass pixel_clk_rate
->> -	 * from the HDMI bridge driver until phy_configure_opts_hdmi
->> -	 * becomes available in the PHY API.
->> -	 */
->> -	unsigned int rate = bus_width & 0xfffffff;
->> -
->> -	dev_dbg(hdptx->dev, "%s bus_width=%x rate=%u\n",
->> -		__func__, bus_width, rate);
->> +	if (mode != PHY_MODE_DP) {
->> +		if (!hdptx->hdmi_cfg.tmds_char_rate) {
->> +			/*
->> +			 * FIXME: Temporary workaround to setup TMDS char rate
->> +			 * from the RK DW HDMI QP bridge driver.
->> +			 * Will be removed as soon the switch to the HDMI PHY
->> +			 * configuration API has been completed on both ends.
->> +			 */
->> +			rate = phy_get_bus_width(hdptx->phy) & 0xfffffff;
->> +			hdptx->hdmi_cfg.tmds_char_rate = rate * 100;
->> +		} else {
->> +			rate = hdptx->hdmi_cfg.tmds_char_rate / 100;
->> +		}
->> +		dev_dbg(hdptx->dev, "%s rate=%u\n", __func__, rate);
->> +	}
-> 
-> Some story here, I can't make sense of a variable in hHz. If it's
-> actually needed and not a bug, this should be very explictly documented.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 4 Mar 2025 12:55:05 +0100
 
-Not a bug - as explained earlier, phy_set_bus_width() on the other end
-passes this in hHz.  I agree it should have been properly documented,
-but eventually we got this cleaned up in the last patch of the series.
+A zfree() call is not helpful after a failed strdup(name) call in
+this function implementation.
+Thus use an other jump target instead.
 
-Thanks,
-Cristian
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ tools/perf/util/pmu.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+index 57450c73fb63..74eb46390233 100644
+=2D-- a/tools/perf/util/pmu.c
++++ b/tools/perf/util/pmu.c
+@@ -1107,7 +1107,7 @@ struct perf_pmu *perf_pmu__lookup(struct list_head *=
+pmus, int dirfd, const char
+
+ 	pmu->name =3D strdup(name);
+ 	if (!pmu->name)
+-		goto err;
++		goto free_pmu;
+
+ 	/*
+ 	 * Read type early to fail fast if a lookup name isn't a PMU. Ensure
+@@ -1155,6 +1155,7 @@ struct perf_pmu *perf_pmu__lookup(struct list_head *=
+pmus, int dirfd, const char
+ 	return pmu;
+ err:
+ 	zfree(&pmu->name);
++free_pmu:
+ 	free(pmu);
+ 	return NULL;
+ }
+=2D-
+2.48.1
+
 
