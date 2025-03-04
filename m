@@ -1,111 +1,160 @@
-Return-Path: <linux-kernel+bounces-544320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16E48A4E010
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:02:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFA8EA4E00A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:02:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A46E3B6428
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:00:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E11947ABC23
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:00:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96CDC204C11;
-	Tue,  4 Mar 2025 13:59:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28660205AB3;
+	Tue,  4 Mar 2025 14:00:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EY3yfec7";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Oi3kjdkT"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oCiV58v8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA5932036E9
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 13:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF3E204695;
+	Tue,  4 Mar 2025 14:00:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741096796; cv=none; b=NTydMWZLdbgGSOpSqiT1zy4s6qLtG97GxJ8GtEeJmXu+/Mkvt4CpXKCFPJlvDqJJJjciGY3eHjWI5rKzr6msZ9EsuO1i9Egcjmrc4YQUkUpY/MWgrouez9P7qhPQNa/D7J/MaAz5xIqtRXxM2pTbGXTM+5b1Po1lM6KtbpD6Rio=
+	t=1741096846; cv=none; b=Mbcs4kkZMSIt29RAbAcODvCU5GsFijY2I0JiJez9Ipo7AltzprfzPY1NZkNz5+y4mv0iJ5QIUJ4AhktSE3nZqpXmeCr6c6DliSXSYaljVridR9JXcTcnGnYq02KalsY92WRADgHWU0yiDH7LbIuW0DipOQjZgB4niH5UZewSadE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741096796; c=relaxed/simple;
-	bh=QKqzclx7vyvEXdb8FIs/X9WNp7zoMBpg2QvGJE5UpqU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=YAN9M6nth3uZ22Vo43/gM2arbzYqQGLhgubRoWXOEMFu2F4fl5jKWIXUcUZI6lmadCdy8OqzZxD0BxXvpYn6v+NYi/m9VpDyh4+4bEmkEcUjKDnN17QliTyOdAFjKPQYnY8FQwZBZwnobdFNCDuJ8pnusUUm3Zf2CQodlKSUpMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EY3yfec7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Oi3kjdkT; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741096792;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jPEg1gU8jsF4TvlTeMBD+//bwSjW/iMFwJE56K1FiQ4=;
-	b=EY3yfec7C5Scw3xNRLzIXZl70LOI1yPCk4M7epZMRyegeZ107RFeeqvtq3QhXr7eh3KWVV
-	HDD6K71KnhKX4TR/zGgMRJZljgpk9w0bPTc8370op4jH1YRoMkNmt8jt9i+UonUrGdqRlC
-	Bw5n3fx3dNuXduHaHh/QMV+x0fK+tC3Q/g0d8CpVlQh+gxhCgfua5+3ITTSvffEhcUFafN
-	gwmPJzHkoHPEQY7vNozgmEfJCVoOdqbriKUkIvhNpajfDSJ3//RbzSa1bib4i7gMMzgL68
-	5h2xP+ZInWbX3mMocXfFklK5aEfTvK6vdaKAeHH+shmdMSXzvjYkrddu8rf9qA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741096792;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jPEg1gU8jsF4TvlTeMBD+//bwSjW/iMFwJE56K1FiQ4=;
-	b=Oi3kjdkTYmO/gSv59d+h7n70S/Ifb80Z5w3X55Dd9oQXA8A3OtXuoOSxfGTeEer6pInghk
-	8J0Tr29xzL8zIKAA==
-To: Petr Mladek <pmladek@suse.com>
-Cc: Donghyeok Choe <d7271.choe@samsung.com>, linux-kernel@vger.kernel.org,
- takakura@valinux.co.jp, youngmin.nam@samsung.com, hajun.sung@samsung.com,
- seungh.jung@samsung.com, jh1012.choi@samsung.com
-Subject: Re: printk: selective deactivation of feature ignoring non panic
- cpu's messages
-In-Reply-To: <Z8b-ljGnw57GpJb0@pathway>
-References: <CGME20250226031756epcas2p3674cccc82687effb40575aa5fa2956e0@epcas2p3.samsung.com>
- <20250226031628.GB592457@tiffany> <84ikoxxrfy.fsf@jogness.linutronix.de>
- <Z78eGNIuG_-CVOGl@pathway.suse.cz> <8434fytakt.fsf@jogness.linutronix.de>
- <Z8b-ljGnw57GpJb0@pathway>
-Date: Tue, 04 Mar 2025 15:05:52 +0106
-Message-ID: <84ikoorj53.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1741096846; c=relaxed/simple;
+	bh=iOf/Btd00TVbhUUPH7qKnM1gAcJ9dD7LIZMQq0bBGOA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fv2XEikB9MyEAAbVijT7Jl+bSr60P73mEQcmiUxo1xgGh9mU0ABIJbZjZe3LwvePaDjSZHYmqMBAwLiDY+sC0tquRsosWp5xrXmfcsbPvhdjTOpbg9m7ib/Va5nty8McwzBE71yiGEwZV7/OXXDc/RThj+Qn7BL4V2NocLlk6Gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oCiV58v8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA4AAC4CEE7;
+	Tue,  4 Mar 2025 14:00:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741096845;
+	bh=iOf/Btd00TVbhUUPH7qKnM1gAcJ9dD7LIZMQq0bBGOA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=oCiV58v8EKD9fbf6RJJ84xkHHP0cyJ6kpYnTV3hbiQeDBMFuJka+DR6/TIyAU8XHG
+	 voTacVP2wbLrRZPinrWGWnPIswT6op/wpkDOjncQ0v1T8AxmRllVlGArM04mr05fly
+	 nNLE5fkl9EqOeBAQ/4oiABfG/+vRXfU23ct75+7JxEIuCSa0SGTBTYOxKQiJrBq9zJ
+	 vVi3l2v5SZBnXu4mmMjA2PjT+DyqXIAxUKkxzy+Dxt6oP3tBIlthQGHE/BURS5NEZw
+	 MvNk5AZSgPJtQhtHMe1fDfWg53wfahLVcJlJLf7xoLpXmFZ94HwB5zaUIJbsnQr+X9
+	 gQeCJlanbfPww==
+Message-ID: <6f7fea59-310d-4a7e-94f7-2483363012ba@kernel.org>
+Date: Tue, 4 Mar 2025 15:00:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/8] media: dt-bindings: Document SC8280XP/SM8350 Venus
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Johan Hovold <johan+linaro@kernel.org>
+References: <20250304-b4-linux-media-comitters-sc8280xp-venus-v1-0-279c7ea55493@linaro.org>
+ <20250304-b4-linux-media-comitters-sc8280xp-venus-v1-1-279c7ea55493@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20250304-b4-linux-media-comitters-sc8280xp-venus-v1-1-279c7ea55493@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 2025-03-04, Petr Mladek <pmladek@suse.com> wrote:
-> I mean something like:
->
-> --- a/kernel/printk/printk_ringbuffer.c
-> +++ b/kernel/printk/printk_ringbuffer.c
-> @@ -2143,7 +2143,9 @@ static bool _prb_read_valid(struct printk_ringbuffer *rb, u64 *seq,
->  			 * But it would have the sequence number returned
->  			 * by "prb_next_reserve_seq() - 1".
->  			 */
-> -			if (this_cpu_in_panic() && ((*seq + 1) < prb_next_reserve_seq(rb)))
-> +			if (this_cpu_in_panic() &&
-> +			    (!printk_debug_non_panic_cpus || legacy_allow_panic_sync) &&
-> +			    ((*seq + 1) < prb_next_reserve_seq(rb)))
->  				(*seq)++;
->  			else
->  				return false;
+On 04/03/2025 14:07, Bryan O'Donoghue wrote:
+> From: Konrad Dybcio <konradybcio@kernel.org>
+> 
+> Both of these SoCs implement an IRIS2 block, with SC8280XP being able
+> to clock it a bit higher.
+> 
+> Document it.
+> 
+> Signed-off-by: Konrad Dybcio <konradybcio@kernel.org>
+> Link: https://lore.kernel.org/r/20230731-topic-8280_venus-v1-1-8c8bbe1983a5@linaro.org
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> [ bod: dropped dts video-encoder/video-decoder ]
+> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> ---
 
-Ah, OK. Thanks for the clarification
 
-> OK, I propose the following changes:
->
->   + rename the option to "printk_debug_non_panic_cpus"
->
->   + do not skip the messages in _prb_read_valid() when this option
->     is used before the non-panic CPUs are stopped.
+If this is the same version, then please implement previous feedback.
 
-And of course:
+If this is a new version, then please mark it as v2 and provide
+changelog. This is what b4 gave me:
 
-    + allow non-panic CPUs in panic to store messages when this option
-      is set
+b4 diff
+'<20250304-b4-linux-media-comitters-sc8280xp-venus-v1-1-279c7ea55493@linaro.org>'
+Grabbing thread from
+lore.kernel.org/all/20250304-b4-linux-media-comitters-sc8280xp-venus-v1-1-279c7ea55493@linaro.org/t.mbox.gz
+Breaking thread to remove parents of
+20250304-b4-linux-media-comitters-sc8280xp-venus-v1-0-279c7ea55493@linaro.org
+---
+Analyzing 9 messages in the thread
+Could not find lower series to compare against.
 
-I would also keep the dump_stack_lvl() implementation as it is, even if
-it could lead to interweaving of backtraces. Anyone using
-printk_debug_non_panic_cpus should have CONFIG_PRINTK_CALLER enabled.
+...
 
-John
+> +
+> +        operating-points-v2 = <&venus_opp_table>;
+> +        iommus = <&apps_smmu 0x2100 0x400>;
+> +        memory-region = <&pil_video_mem>;
+> +
+> +        status = "disabled";
+
+So it is the same...
+
+Same comments apply, same review.
+
+Best regards,
+Krzysztof
 
