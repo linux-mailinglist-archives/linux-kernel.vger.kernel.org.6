@@ -1,223 +1,203 @@
-Return-Path: <linux-kernel+bounces-543473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 991E3A4D616
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0778A4D617
 	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:20:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D5AF3A969A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:18:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C462165155
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:20:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA881FC0FE;
-	Tue,  4 Mar 2025 08:18:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BB631FAC33;
+	Tue,  4 Mar 2025 08:19:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="PKq+Px3F"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mclj8waM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212271FBEAA
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 08:18:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741076320; cv=none; b=sDY4rCv97y+ulfRTdoSvY1IZtjji/E1tzMWnYnn0h/myx5fk/5w1BRcHh3E4PfobuPb2lK8pniVx6WGB561bqkJI6E7lDDqO8SXUfTX5con6tPVfUKeYMhFTMfr5a61QiQkTdqK2hFmyWNTd02TFJXmExtcQZoyF3ENDb/83gvY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741076320; c=relaxed/simple;
-	bh=MZcygyW82kCp7u9tCYmO6hhj2Hxe6B9gWadL8462is8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gapBpDvKHrMmf7pm6MvlX2CXotsXQZGMqAmboddfMOFFf7VzCt4pU/kg+vsLIzKfMU2vGOEoj8dsDGK5gI4d1pIqWOQcLzWyC9ICHzkq6iQlPE1sGz1WCQY+EboAfpWTaZuAGlHUpkE6Pato52EE2lJs/b1cAoOmfd0sQ5EKBiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=PKq+Px3F; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2fe98d173daso8500749a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 00:18:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1741076317; x=1741681117; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Gc0xsYnTUQhvWodmw2ejFo3Ab0lc47BeE7G2ofWx65Q=;
-        b=PKq+Px3FNLwRkTOBwFJY58aZWZvV11Sn6sMDKdm902vRcOmgS4qetFZAK02QlQa3yV
-         +JNfVNuFSME4LwW0sUrTrp2lheqfsnWRgA8iuM1buaYkBtG1J+1OksVXyPAJFvMuc7gy
-         mhr0Gj6k5sxAHYB6uHOCGqIdHB8j7qatdlwcLlZZE3sKBIStbUh1k+yuCn+HQTygdmgN
-         8YWUsL/BoOUWRqBFPJIsEtwaDpaKGKwD1qRYQ1nuamuKVtE4vaB2RmOnMMGTxOtZTG4T
-         XwiUNNz2S8+P2Ny7RcqXuUj6clfZ5d6+x2GjeEKpZucDaA2eessGC7AXn5o8BubjFZys
-         c+zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741076317; x=1741681117;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Gc0xsYnTUQhvWodmw2ejFo3Ab0lc47BeE7G2ofWx65Q=;
-        b=RrZxUYSzDVKij/8T0fEpCHeQUwS8RxZYd4vCINchGp0/72X3M4p6en0oe8R/xmAvXZ
-         VC9GnkYem0J/2isyKGzCWXvKVfwHT6I7tJ15Che2cbhc5zyy4XhMv2L+2rO2X104kxOn
-         naFt8HjE3hU+sXwn2lKhmd+UnSn1/7KtbjgQcWGQEXt7k2loAGSHLVU5MFgO9aMbRxod
-         lm7EEgLUGR7IvbmEvMSZFTPiQpS+/Mjf6A0vcMqzWahiN0TALLD0YBV58i116PnQ5+7w
-         WM4zkfLJ6UQuVuuy/mL/FF2y3E60tBz5C5EuJycMGdqu8lUOqGRxuRgXm83MxMsQMqmP
-         JN8g==
-X-Forwarded-Encrypted: i=1; AJvYcCXxT4CLvJTBI7Q+acaj23xf8SsDmrR5Jwv6GxvoheMl6qEjV03LdqpxqfmhyTIaT6tXHacYR/IJExZZnr8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmZQs42nhVD4BFZJu0vmEOnuVuDzDwHwdURxayFij6nebAmmya
-	mgP6OJjhZj3OeacHeH+E7+1XA9cu3pF/jNSYk4rM1oZXGs08NFOkoQwNSPBHm4s=
-X-Gm-Gg: ASbGncvaL8i3Url/U/aBfp2Jdhp9fy0RhvAOTKyp4tnFsXv1ULB9IGco+L3ig0XzHrj
-	aPtBfPCeiaUT+2HUOs8W9HkIRsWUnE8Ww2H1qhitgz7DO5/1LAyQHFypCRkmB54vhSY6FO1nf41
-	3FkwCZ0HeYP7Z8LBYDooLiR5b9LK4Z3aaYzZ5hR+ueXY6NFB+VvnBfXiUWcCGDPLl8VR5BXIuZi
-	TPWVYY4Nckc1epwwfel4nXWVItSfznwsCYNajcbVUg/dkD3rj1jSPluUR9YGW7gZ20GpzjulAXq
-	xD6ujuvQmq2cFXrHvlX4WfDdMaIfwK+iY1b3E8J9teC+9GFDA14xoDKY6HzIcphXMKeSFp3maCV
-	G9FNX9BusC8zpWgb+tmGI
-X-Google-Smtp-Source: AGHT+IFtDzCgImtuz8L9+GYRCY4LVCLrXbK0Bo8kgf88DL3yFokQ0qmw0lddBixblhsY0xBrKZj7tQ==
-X-Received: by 2002:a05:6a20:734a:b0:1ee:c390:58ad with SMTP id adf61e73a8af0-1f2f4e014f9mr29817034637.34.1741076317276;
-        Tue, 04 Mar 2025 00:18:37 -0800 (PST)
-Received: from dread.disaster.area (pa49-186-89-135.pa.vic.optusnet.com.au. [49.186.89.135])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-aee7de19d3fsm9497416a12.18.2025.03.04.00.18.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 00:18:36 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1tpNU1-00000008fSI-4AHP;
-	Tue, 04 Mar 2025 19:18:34 +1100
-Date: Tue, 4 Mar 2025 19:18:33 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Yunsheng Lin <linyunsheng@huawei.com>
-Cc: Yishai Hadas <yishaih@nvidia.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>, Gao Xiang <xiang@kernel.org>,
-	Chao Yu <chao@kernel.org>, Yue Hu <zbestahu@gmail.com>,
-	Jeffle Xu <jefflexu@linux.alibaba.com>,
-	Sandeep Dhavale <dhavale@google.com>,
-	Carlos Maiolino <cem@kernel.org>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-	Luiz Capitulino <luizcap@redhat.com>,
-	Mel Gorman <mgorman@techsingularity.net>, kvm@vger.kernel.org,
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-btrfs@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-	linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-	netdev@vger.kernel.org, linux-nfs@vger.kernel.org
-Subject: Re: [PATCH v2] mm: alloc_pages_bulk: remove assumption of populating
- only NULL elements
-Message-ID: <Z8a3WSOrlY4n5_37@dread.disaster.area>
-References: <20250228094424.757465-1-linyunsheng@huawei.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F2FD1F55FA
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 08:19:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741076398; cv=fail; b=UfH64VIj9rZYYuIHmViOHivGNfrAmlbiBUzbcK7ZpnrkLvEDjIuXMm6iZkIYZAnX5E298vIBIJhNN+DmCjnqP/B08LJmk72DRq+3QL53xVAdIxENJTaPjUGEEN+xeu4T1JOt4lotlgrL6p7vH3McpQwbm210j8pFyUax3ETJmZY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741076398; c=relaxed/simple;
+	bh=LOh79029OpX7HTOxwq7dg9LFpN/gmVD3ra3R/MbMd2U=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=lPJQ5tGExAwqAo+rhr0B8W9fE1hm7fzkaohTo+BKtp+Hw3UZ3TlPbUPLN87/KraChYaGZckkhX3PaBABbXcWvIscirGYSGyWuWclAhnEEKmJmZCZWqD9QJIyHhhwiJgm2a9S7UJluEoF6dvmVWCpd/0y8HdJSaF+7uLyXk6/3pM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mclj8waM; arc=fail smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741076398; x=1772612398;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=LOh79029OpX7HTOxwq7dg9LFpN/gmVD3ra3R/MbMd2U=;
+  b=mclj8waMJm2Pa4ifjiWfZQhHcsowHOUlKDPqbtagTnLZtLhPiVsi577A
+   v4kUTrIngs90VXXUKRsY0DOmtc/MFpo5R1NvmGbP1gGZdtPrRAixVOE9H
+   KlZIXk0KTJE9MOdJVS34W4xBTm7XrbO5AmyuVqIUJKC8lxFASmyccKb5s
+   i9r+Y4f8lspSqnpmlMzOhXddKD9BJUogLqRTpDRhGNMlUW47/5G/Qc/ua
+   JEd5VsU1SnS4r7r0KPTu54V7J4bxURyUjZX+oPGIP4OvUAyBpQGLisFgi
+   SHGRQcSqmg6gKGy9HJC+f1rO1YmNFb/uYddhlUcUi4CDzRBSSMtxI9PnY
+   A==;
+X-CSE-ConnectionGUID: Cx1oH30DQpm/3OXNG+Kz3Q==
+X-CSE-MsgGUID: BXDPZFh/Rf6B3mYLnWM3Kw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="41891484"
+X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
+   d="scan'208";a="41891484"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 00:19:57 -0800
+X-CSE-ConnectionGUID: qM79Yib+SSCydu0tuYEFXA==
+X-CSE-MsgGUID: wclggYtjRoq8LkQgHordFw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
+   d="scan'208";a="123424874"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 00:19:56 -0800
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Tue, 4 Mar 2025 00:19:55 -0800
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Tue, 4 Mar 2025 00:19:55 -0800
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.41) by
+ edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Tue, 4 Mar 2025 00:19:55 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=K9LacSSgGF6PQMNr/AJi5QJRYSzGmcI97kknwm7yEypPDC1Argw9blRurhI7a443lq1jGXJbIvkcU4F1XOOMD/VqonHX5joF8wJCR9ZJeZkWENttQK7nf50vwYjX/ZNvhHBEW8uG5sAkM/33nrKcoUncPlTz2Z2ejZUUNmFj5NgDqv4JupxjRhZNiYsHhsjvhPgsSGPgnP0CZTOw6OUjX2tVgFV+u+8j6vV/JgSetoeV9Or1oVfhssPgnQx7lhm+TmgK4AfUpRDLhZyepXb6mH/oyGmNs5bnN2VXztJzma829W0Dvbmc4kkf5G40kqlAqPXJElcco8s1BjNQp57PYA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LOh79029OpX7HTOxwq7dg9LFpN/gmVD3ra3R/MbMd2U=;
+ b=P08p6mj6+6vuMH44ZhyTKpRzBek7D5Kia9KDqs45HiD/2EMcNOG+1xIg1UfZIoi5BrqAjkJirBVmR6liqG7lq2bf2z7l4Z5Bc9gNws/aFYq8RyBs+YXX9by9NftVOKKlWDpgabsjbiYivQVfNJMQ1nqxO9dPzG5zc3sxPkEJQ2SmUPBThMtaxCzf7vLv8MLDeYpjJfaEEDkYdHeP2PdMwDAhY+IEJleNlVMbRYmo+tNkv3/kS5fVMgj702rniiodm2MHQn4wqnPsCpqBH2+FF3CSIuaYMgDph8Ah8UD6iT2iHslHqsMM0rPNODhXRc0HvIdaOI9FO21QM3y3rZH8AQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
+ by IA1PR11MB6171.namprd11.prod.outlook.com (2603:10b6:208:3e9::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.28; Tue, 4 Mar
+ 2025 08:19:53 +0000
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1%6]) with mapi id 15.20.8511.015; Tue, 4 Mar 2025
+ 08:19:52 +0000
+From: "Tian, Kevin" <kevin.tian@intel.com>
+To: Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, "Will
+ Deacon" <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, "Jason
+ Gunthorpe" <jgg@ziepe.ca>
+CC: "Jiang, Dave" <dave.jiang@intel.com>, Vinod Koul <vkoul@kernel.org>,
+	Fenghua Yu <fenghuay@nvidia.com>, Zhangfei Gao <zhangfei.gao@linaro.org>,
+	Zhou Wang <wangzhou1@hisilicon.com>, "iommu@lists.linux.dev"
+	<iommu@lists.linux.dev>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v3 05/12] iommu/vt-d: Move PRI enablement in probe path
+Thread-Topic: [PATCH v3 05/12] iommu/vt-d: Move PRI enablement in probe path
+Thread-Index: AQHbicLiHSmkjwLikkGgRHi0bBGkY7NiqJwQ
+Date: Tue, 4 Mar 2025 08:19:52 +0000
+Message-ID: <BN9PR11MB52763398A77DF773335BA0AE8CC82@BN9PR11MB5276.namprd11.prod.outlook.com>
+References: <20250228092631.3425464-1-baolu.lu@linux.intel.com>
+ <20250228092631.3425464-6-baolu.lu@linux.intel.com>
+In-Reply-To: <20250228092631.3425464-6-baolu.lu@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|IA1PR11MB6171:EE_
+x-ms-office365-filtering-correlation-id: cd0a16f4-713e-4042-8683-08dd5af556f6
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?IjP3vijBAHosRRj45pYE4yUWL5FVsU7KHszvuExLUCHnHs7yI5xT5080SGI1?=
+ =?us-ascii?Q?8OOlQyv1PZ7CmEExyvX6gXHPG7KmmjcrjQUmomohjsYTHD3WCiI6KU5blPPc?=
+ =?us-ascii?Q?Tt1I6PGH5vqelXOxx0InPjqAWSkv71jFWInVbHGQ+X7icWyu7COY2Av6ikJR?=
+ =?us-ascii?Q?BqECuzhukDz9lju5n+tR6ggZowRfb0Z+RFbJ+7M/U06BRh1M1jWiJrspsxzn?=
+ =?us-ascii?Q?+jRl79Ux4VtOAELsVudu+s2mVLKSQP8Fwp3VGxo7m5yYxV8q7pQh+FfAUZLR?=
+ =?us-ascii?Q?dI+MNQd9Dn2dvu0aGODGSiCN1ZtpUaWF0NscNSCBCoWnD48ZStpaU4cn91CT?=
+ =?us-ascii?Q?ag+c/jcZ87IqpKammrbXr9u26Bs05zUUrmvknU3/XPEnGQngJIpHlhaCsmuS?=
+ =?us-ascii?Q?1nBmDCEY9YBPhcHCMomHtjlzZqaFWjVuXx3f3jqH2OspnV4DnR7bqDL88vLt?=
+ =?us-ascii?Q?Fd/63PjqT8c6toVsKh/geW7H1ZxtdYk/wItXX2KqCR3YySIpEjy0m1tI9xhO?=
+ =?us-ascii?Q?W+/l876E2Y4t5QAnEuNEnE10DlfFl6uwFsnNpYsA+YFNTSW5Jko4qhzFhOYr?=
+ =?us-ascii?Q?zv+R50vYJLeNQHEaF5BMF/h3kL5sHP7YbvNXukkjR6CldbHEv7+fhCfjGKWR?=
+ =?us-ascii?Q?KyXlFpzlsR0u762NDy4044d4l+k09JeZyBVZ3lfFqnEDVORgUTNdLV4PT7so?=
+ =?us-ascii?Q?yvykMe4cr9BXfyQczIWGLmOgxCt6E/Fpuuq5/K5taLvaFvPoW8nH/D3YjMpy?=
+ =?us-ascii?Q?9Vb+6erIimWojZy1qKHGZh4455sVHTddyXiEx9Vr0AD8Uiip5l6OicZTlBt5?=
+ =?us-ascii?Q?IQXdketVjw6ig4gwug3SI7jsqikJfHYrNAgwYbOzAX8V50ZollawjyFNL9pR?=
+ =?us-ascii?Q?sx49mqFz/8BWoxYeWI0Q2hAiuWkparOf7IAKd4+d0DMwtADpDGTVusNzse/X?=
+ =?us-ascii?Q?WAHf+2fL9o1uA+zjhj7HQHTtVDyzUAHpX866NDeE0dpyjve+s+QBRup+bgvr?=
+ =?us-ascii?Q?RZSmmAYMDVcwXadAwYUtY5tWg4aaiB4doCuoD0T5ir0JNfH3WAOUFnWmpIYq?=
+ =?us-ascii?Q?t2hIFtRBgDCHKeUfwS30IWrNmlQurY3yhCUg4l14S7Be40AphlmGStflnIY5?=
+ =?us-ascii?Q?D9a7Z/JmOKJ/GRbhJucvEfkKFcdECD0cjZc+RE2sB9XnHi1pY6pGEq058jOJ?=
+ =?us-ascii?Q?hsqtQqPWhqx7quSlFZU7Zp3T3erP3AbS5l3KaRjeF6lcc8cFIBCPch+84e0y?=
+ =?us-ascii?Q?asB/hJ/fbvbKeFK/vj15xPF4kTydI+3W2WXFC8Sk5xNjp1L0T/Fmn5rwo+H3?=
+ =?us-ascii?Q?JZ9qhwiGFQdYaya3HL9QQF+3Wx4oyfLxp3x6Uh3D0XingckX9s5rD31o+E3s?=
+ =?us-ascii?Q?yB3P5KA6XPGiZ2J6otOEZ+A+e6j3KcWDUh6CMPeNwikyMheIAFFIP2k58AvZ?=
+ =?us-ascii?Q?6tXDMOQBWPWJlMy72mlBCha4tS51E9mt?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?D9EoQ0wZIcjbgNtXl5eW1Vog2FwzuhMITHx58wtZIGtxrOfalZmHom+Slfoy?=
+ =?us-ascii?Q?o3l8TOrWje0MkHJ4TeHrAQY/lnx8vpRppv7OEwWIC9tmCkZMWfIQEbifNsK5?=
+ =?us-ascii?Q?I39vcr40kovFatcSny4XBtHtmyAvYUzkCrOVOuTPpslnSluU0gvdcPtF5tv1?=
+ =?us-ascii?Q?VuTJPAvRKx0r3vnytxn+7gwCjpiyYMpkO/5yaLwdcld7xguljXCI3xDAHmk5?=
+ =?us-ascii?Q?97YHZWZOuPJaMVuCnjCA5AL/4gYYZ1Tp5/anIayhMCzThMYO36HT8uMQOuTP?=
+ =?us-ascii?Q?zQlHFycgFQoXosuiQszDVkadbQFZpApXDsKzU5AJIfKK28YSQ7NgQPmvIbTM?=
+ =?us-ascii?Q?UEozk+iGxdsoTVO2S6JmXgA4YaF7YCsEONk4UQ2IuvkVmRbXTJCmmw1ltZ2G?=
+ =?us-ascii?Q?PriiwXqCsW7MWIilD3r/5qKWYcvFa61CLsQrNymRu8wNQe2SKOX4akuZ98pr?=
+ =?us-ascii?Q?M6fKOLIuS3se+SdfXQRHwQFQbRhoxdd45Dw52Wmcxonrdefz6qcvLnN0QFrA?=
+ =?us-ascii?Q?mqyqBUQhBfrmSZdeKQ0UDCtyvUzwX7r4Iw/xyNdeYnHTK8CoBt0BJaZ8l7ml?=
+ =?us-ascii?Q?lnitBbUkCZcvIB3QE/SuvUusOoqvstwYkj6FGpSG/Z+2MgVJH4MkuGPpYMxw?=
+ =?us-ascii?Q?SEde5O9yZOXNHhkIc/5yt1XzGlFNyCTTpZFPnreAubVKmT1rI/VYRV4gv9Ha?=
+ =?us-ascii?Q?x9/DSc1nrCsIy3q+7ooTa79bm7FzdLQy0FQmFvMK+bQefnmlQ3TkgCEVqf63?=
+ =?us-ascii?Q?sOXXp0dn3cGz/04Xo2wJhE170QrAt/FwfOctPSMgok4VI6IasCfsngl8yJTg?=
+ =?us-ascii?Q?NqvRgHkHzNa6PMzjuqGcjZKUbw0e/NBjd+nLS3Mc6JQ4IF+LKD32MYrP6tj7?=
+ =?us-ascii?Q?X6wg5YoVTvvupoRZ5ELDSzuR9mhDF2goRO7Gq+IaeMIbKQ4g1NhA0LVUaSfR?=
+ =?us-ascii?Q?Nzh3DPlBbFCvJEdk7YemkC3ZOpv5abe8dr5FD1wmgJkFRVsHYlBQD5tYpn2J?=
+ =?us-ascii?Q?XptaaBhbM2OMOl3x6YLbqm8Zz5SIe8ksNobAeuCpPQuLt32v/BEk4sgRlek+?=
+ =?us-ascii?Q?+wYVfxJmAkurZ0/M93DJJtU8Up/89gI3lFR109bNPsOmuhyoreAu5iYGj5p1?=
+ =?us-ascii?Q?mcFpHOcmbrPWsZkbBaBbT5d1WOharGKP2YOJVCTYtiLPrU63ucSug1UNOg6w?=
+ =?us-ascii?Q?6xpILZtrLUmyA7iTf6Y7451l+3vCi6VKnv3ZEhOEt68avPKggV4cl3hAz2bS?=
+ =?us-ascii?Q?PXIm3QTODTBYs9iWO+Q1hBe/UbHeWsNuF2PWVoJFWDIlmZZoBqJplkI7yQYU?=
+ =?us-ascii?Q?8oNHLEnq3d/L/W/oybf67zL5JlsiC95O0kmw0dAG2TWYI8Eql8H9PeMKmZTD?=
+ =?us-ascii?Q?spTsoR0QDSas5v9Xw/653CgAcTou/EOZ/WovPxjpA1r14ThYepNd0i2nn0vs?=
+ =?us-ascii?Q?PgS7oG6j090FRQ+p8HQS9+7wbAo7C7qgUKfTHDB/aJyV7xIUdQEYSPq8KkH0?=
+ =?us-ascii?Q?L3JReMC0/AaWpQTl11AZRiBrkDNvy+m9WFesHOMBxJ8aPufE7vqjHrNEgWye?=
+ =?us-ascii?Q?7743s2XImVvmE9GnXU33dEHyMGooRg6c4XyZKBXD?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250228094424.757465-1-linyunsheng@huawei.com>
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cd0a16f4-713e-4042-8683-08dd5af556f6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Mar 2025 08:19:52.8485
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ncwDNLx4/ltpsZnuO+NgNI/3ngd00BK+dH1/9rny0jCkcLYm86ii8C2XTzFpti0N3cMAq1rTH1+dXFe8rEZgWA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB6171
+X-OriginatorOrg: intel.com
 
-On Fri, Feb 28, 2025 at 05:44:20PM +0800, Yunsheng Lin wrote:
-> As mentioned in [1], it seems odd to check NULL elements in
-> the middle of page bulk allocating, and it seems caller can
-> do a better job of bulk allocating pages into a whole array
-> sequentially without checking NULL elements first before
-> doing the page bulk allocation for most of existing users.
-> 
-> Through analyzing of bulk allocation API used in fs, it
-> seems that the callers are depending on the assumption of
-> populating only NULL elements in fs/btrfs/extent_io.c and
-> net/sunrpc/svc_xprt.c while erofs and btrfs don't, see:
-> commit 91d6ac1d62c3 ("btrfs: allocate page arrays using bulk page allocator")
-> commit d6db47e571dc ("erofs: do not use pagepool in z_erofs_gbuf_growsize()")
-> commit c9fa563072e1 ("xfs: use alloc_pages_bulk_array() for buffers")
-> commit f6e70aab9dfe ("SUNRPC: refresh rq_pages using a bulk page allocator")
-> 
-> Change SUNRPC and btrfs to not depend on the assumption.
-> Other existing callers seems to be passing all NULL elements
-> via memset, kzalloc, etc.
-> 
-> Remove assumption of populating only NULL elements and treat
-> page_array as output parameter like kmem_cache_alloc_bulk().
-> Remove the above assumption also enable the caller to not
-> zero the array before calling the page bulk allocating API,
-> which has about 1~2 ns performance improvement for the test
-> case of time_bench_page_pool03_slow() for page_pool in a
-> x86 vm system, this reduces some performance impact of
-> fixing the DMA API misuse problem in [2], performance
-> improves from 87.886 ns to 86.429 ns.
+> From: Lu Baolu <baolu.lu@linux.intel.com>
+> Sent: Friday, February 28, 2025 5:26 PM
+>=20
+> +static void iommu_enable_pci_pri(struct device_domain_info *info)
+> +static void iommu_disable_pci_pri(struct device_domain_info *info)
 
-How much slower did you make btrfs and sunrpc by adding all the
-defragmenting code there?
+no need to have '_pci_'
 
-> 
-> 1. https://lore.kernel.org/all/bd8c2f5c-464d-44ab-b607-390a87ea4cd5@huawei.com/
-> 2. https://lore.kernel.org/all/20250212092552.1779679-1-linyunsheng@huawei.com/
-> CC: Jesper Dangaard Brouer <hawk@kernel.org>
-> CC: Luiz Capitulino <luizcap@redhat.com>
-> CC: Mel Gorman <mgorman@techsingularity.net>
-> CC: Dave Chinner <david@fromorbit.com>
-> CC: Chuck Lever <chuck.lever@oracle.com>
-> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-> Acked-by: Jeff Layton <jlayton@kernel.org>
-> ---
-> V2:
-> 1. Drop RFC tag and rebased on latest linux-next.
-> 2. Fix a compile error for xfs.
-
-And you still haven't tested the code changes to XFS, because
-this patch is also broken.
-
-> diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
-> index 5d560e9073f4..b4e95b2dd0f0 100644
-> --- a/fs/xfs/xfs_buf.c
-> +++ b/fs/xfs/xfs_buf.c
-> @@ -319,16 +319,17 @@ xfs_buf_alloc_pages(
->  	 * least one extra page.
->  	 */
->  	for (;;) {
-> -		long	last = filled;
-> +		long	alloc;
->  
-> -		filled = alloc_pages_bulk(gfp_mask, bp->b_page_count,
-> -					  bp->b_pages);
-> +		alloc = alloc_pages_bulk(gfp_mask, bp->b_page_count - filled,
-> +					 bp->b_pages + filled);
-> +		filled += alloc;
->  		if (filled == bp->b_page_count) {
->  			XFS_STATS_INC(bp->b_mount, xb_page_found);
->  			break;
->  		}
->  
-> -		if (filled != last)
-> +		if (alloc)
->  			continue;
-
-alloc_pages_bulk() now returns the number of pages allocated in the
-array. So if we ask for 4 pages, then get 2, filled is now 2. Then
-we loop, ask for another 2 pages, get those two pages and it returns
-4. Now filled is 6, and we continue.
-
-Now we ask alloc_pages_bulk() for -2 pages, which returns 4 pages...
-
-Worse behaviour: second time around, no page allocation succeeds
-so it returns 2 pages. Filled is now 4, which is the number of pages
-we need, so we break out of the loop with only 2 pages allocated.
-There's about to be kernel crashes occur.....
-
-Once is a mistake, twice is compeltely unacceptable.  When XFS stops
-using alloc_pages_bulk (probably 6.15) I won't care anymore. But
-until then, please stop trying to change this code.
-
-NACK.
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Reviewed-by: Kevin Tian <kevin.tian@intel.com>
 
