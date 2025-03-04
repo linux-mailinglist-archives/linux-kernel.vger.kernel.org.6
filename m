@@ -1,78 +1,94 @@
-Return-Path: <linux-kernel+bounces-544411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8A49A4E103
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:34:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12361A4E0EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:30:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC66E3AA07E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:27:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E8771887CE5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:27:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B65C20ADF9;
-	Tue,  4 Mar 2025 14:25:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3805D209F4A;
+	Tue,  4 Mar 2025 14:25:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AI1pm/+3"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="smv0gcA1";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="u5ksXxU2";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="smv0gcA1";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="u5ksXxU2"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAAD8207A25
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:25:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6E12063E8
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:25:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741098332; cv=none; b=X8SxfQT/9/tj/Yrq9R3L+r3xj5UVP18LoJMyo0KcsSNQrI5lqQfK9OHq33EzVLkUwtnZ14hDtvURn5KpW+kmNaLgLsuB0nxiZs9h2cls4pNLAjpTwVXH3sgqUtz3INodFqbyIhG7CYhHHn6LQW8wxRaxWjpeJN6y1gyZH1D7SJ0=
+	t=1741098331; cv=none; b=UsWc51U8ITqG33WreeHf1uWNNGA1wEIA5sg/tWtnv+Lg7bF+rX6eqh80X/ZbHIEHk+5T3malC2HhVnFHjptYsZKXqAD9gk0dqDMCYpOrPhbgO86X3os5r+rxeFo4wHzJTNaGDMCFhNgIA9sWxXwgQ8UIz8oHkKuwrQ7Lu1Ha/hQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741098332; c=relaxed/simple;
-	bh=ujz9v1TX3Nc4XTXIke+2tQHY+Eu+Ye3qdsfhSar0qgw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=uQK56MhKQYENiiVjLuzGBxUID0Q5f43jHBKnK5NgoM1HGWc+e6D7QKGuJ3SxwCiKdANGV/PBp3eoyvDmOXuZsUe5hriR9CZlK8e8zOloLM7sA0Z/0KFkcj8NGavF7pZjG2JVyxXznVcquiejJQHMb7UauDuJATZ1Vm4+JYAK5Xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AI1pm/+3; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43ba8bbeae2so5231635e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 06:25:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741098328; x=1741703128; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+bLOuvI3LiklO1AEtCigx8K9DH5XZ+IuqwfMAm3GpGE=;
-        b=AI1pm/+3luOaFaemLg4qnvg4FWNlZhSgktqf97M+9H/se8vnmxzu0UH9qAnfzHm2u0
-         58V4edJ+0ZZ1VwOOiQ9VVP3DdQZa7msvJiHlUofllNBlSqwcUpJhYx+C0SjtIdqZjM2/
-         UMjxHxWhB1m6QATP7q2mjWwbqI36XjvSS9pWElGyCY9RlYba55pXusNZSkULqheMbU0t
-         g0/FbH8tQZdvEWEWB823GE1/gk1bLljRpDVvH11XoYMa+a7GJgc8Yto/FsIcAeF4MpeW
-         ImEYILtOybL2Hk6eWEGspUiwqpTCOsThYwDtACge/RRlKm1/gmTZNinKQoA1eNp1RRYa
-         VBKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741098328; x=1741703128;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+bLOuvI3LiklO1AEtCigx8K9DH5XZ+IuqwfMAm3GpGE=;
-        b=TYfHI1ME30mGxN5JDPAsuWuIea8qbasnHheyiofVGJrOHGa0JGDlW+ZSf7UQzn/Ows
-         wlDKrT1pI2mDgFhCNfxXgOQr21cm/rkXxd4D4WZDUZ008Gx/vskGmkTdMkKJQiaQTkOC
-         iMoSiSMxJn3utmYLz9AEq/X5zlDCOKTN2GgtE8cJIFncz3IbH10uBQGEKDfky7YS9LHr
-         qSB1TSnwJc+AMDj8uyLxW0Ybcu8/9u02/YsrNSeWqhj8V8pOk7y5maqP2s20FEDNiSuh
-         igClYrJn9YgZKsqjF+ZcOUPrlyNYnsgnFMfQcz13h6Kd03HFGqpVxV/aKmO2PuuPI7PF
-         JDiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWDgR+lpdDzsjUCluGPczK0Q6AtDxfUicqVvADreBvOyg6uj6O6ZxuLrCrxbxP1eIW59Bo4gcKfo7A49N4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx41a+ffcQ7IK1CXaSfShvFeO6zi4XfZ23s1MamQmj7aJ9DIMtc
-	KEfvjpfKDTKqlTr/HSjZrsuyyFW+97cr3sucXs4l5Do2Pb5pcQxSs5o3s/rafTQ=
-X-Gm-Gg: ASbGncvbDu/8dyQZeoP8rT4yjX1x3RA6gVgO7mRZVQkEvbuTwsj/V7K/SZloS+JQGIH
-	4ejV1KOf8KdIgJkJJd0nw1EFqcorLS6kqd43GbNSQf4kQ8/JWsSdJUIZGWMoxyBXzyP6byNhrL3
-	CunsKsFTzXgu0k7Tc5KXrAUgwT4HAyL4GyJU2kQjFetEKau0NxuCAiNC6uOys8b9y2idjqN0uaQ
-	jef4C6WkHJMsm0nbQxVzH0I7N/rjzInIEwudxjNVCAdB/VN9VH7HUtYC/2RFMxX5wjIOw9GPf+5
-	ofAdedDlrsPhG3wVAvoDq7MEpV7AJqEmry66g1WR8Evf6hh++uFULoPzunmWDwQ+
-X-Google-Smtp-Source: AGHT+IFgyOmLhLikpKp5N8eKIBSRJawsxNl26KKF3wSiDL0Iv9HobJOAB2sCN6zFy0EWNUnPM86RFw==
-X-Received: by 2002:a05:600c:1c9a:b0:43b:c844:a4ba with SMTP id 5b1f17b1804b1-43bc844a704mr21199545e9.3.1741098328217;
-        Tue, 04 Mar 2025 06:25:28 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.206.225])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bc9c10f6dsm42069505e9.24.2025.03.04.06.25.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Mar 2025 06:25:26 -0800 (PST)
-Message-ID: <2b8f2c5c-eb06-462a-8fbc-9eb28866f49c@linaro.org>
-Date: Tue, 4 Mar 2025 15:25:25 +0100
+	s=arc-20240116; t=1741098331; c=relaxed/simple;
+	bh=ZUZhA0vFpgNtlTua4tc4eA3xqsNgyfMV+Sn69FlRGz8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZDAwslBmoka0flr9+Z0KQFrwMDBO1X4nV3ufqhiefW9xTHWwMHi4nmznmXuIvKxAFkyz5AGnjDAhsFlRoa6qq7eZU9eR2E3klFPrv7P6MtNc4yOcV5uijctLPyj/LY685vj0Cbx+pmE88WCK81SNdhpvE8OqXc5jTLVjREgLDq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=smv0gcA1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=u5ksXxU2; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=smv0gcA1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=u5ksXxU2; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 41D4E1F74C;
+	Tue,  4 Mar 2025 14:25:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741098327; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=2VEfig/rslhLcE/d8ljBX2G4X2nHB+jopQ+zoj3WK/0=;
+	b=smv0gcA1ngw0td62EGdtAsxvYT8hTWeQSSWPcdix3H0o9F4NgYrv9UT+Gqq7YouHj7fZIt
+	M4M8Sfh+gITBKfNyiPt9AncNGt+vRz+8ZnXWqTb0yewBti5vHjJ0Nk63mj63p2Z+mxn520
+	wyGSWquyB3HPqIIKsyevWcwt+df50Ig=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741098327;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=2VEfig/rslhLcE/d8ljBX2G4X2nHB+jopQ+zoj3WK/0=;
+	b=u5ksXxU2qpY2IDDZLWAA2YCuCChNdJEIF8JWaIpt8zbo3NQnkKwhttpinSnPXSAxG21z2A
+	B5L/rrFxtUF30LBQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741098327; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=2VEfig/rslhLcE/d8ljBX2G4X2nHB+jopQ+zoj3WK/0=;
+	b=smv0gcA1ngw0td62EGdtAsxvYT8hTWeQSSWPcdix3H0o9F4NgYrv9UT+Gqq7YouHj7fZIt
+	M4M8Sfh+gITBKfNyiPt9AncNGt+vRz+8ZnXWqTb0yewBti5vHjJ0Nk63mj63p2Z+mxn520
+	wyGSWquyB3HPqIIKsyevWcwt+df50Ig=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741098327;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=2VEfig/rslhLcE/d8ljBX2G4X2nHB+jopQ+zoj3WK/0=;
+	b=u5ksXxU2qpY2IDDZLWAA2YCuCChNdJEIF8JWaIpt8zbo3NQnkKwhttpinSnPXSAxG21z2A
+	B5L/rrFxtUF30LBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 22F2913A53;
+	Tue,  4 Mar 2025 14:25:27 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id bYsjCFcNx2elMAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 04 Mar 2025 14:25:27 +0000
+Message-ID: <c99235b8-3859-42dc-988b-250b3f042d00@suse.cz>
+Date: Tue, 4 Mar 2025 15:25:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,78 +96,216 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] arm64: dts: rockchip: Add ES8388 audio codec fallback
- on RK3399 ROC PC PLUS
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250304104200.76178-1-krzysztof.kozlowski@linaro.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] slub: Fix Off-By-One in the While condition in
+ on_freelist()
 Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20250304104200.76178-1-krzysztof.kozlowski@linaro.org>
+To: Lilith Gkini <lilithpgkini@gmail.com>
+Cc: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+ David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, harry.yoo@oracle.com
+References: <Z8Sc4DEIVs-lDV1J@Arch>
+ <b951acd4-5510-4d03-8f1e-accf38d909b6@suse.cz> <Z8XbomV9WCabATIM@Arch>
+ <8cabcf70-d887-471d-9277-ef29aca1216b@suse.cz> <Z8a4r2mnIzTD2cZa@Arch>
+ <714d353a-49c8-4cbd-88d6-e24ae8f78aaa@suse.cz> <Z8benEHigCNjqqQp@Arch>
+ <c736fbe1-f3f4-49a0-b230-41f9da545fad@suse.cz> <Z8bvfiyLelfXskNw@Arch>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <Z8bvfiyLelfXskNw@Arch>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_CC(0.00)[linux.com,kernel.org,google.com,lge.com,linux-foundation.org,linux.dev,gmail.com,kvack.org,vger.kernel.org,oracle.com];
+	TAGGED_RCPT(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com]
+X-Spam-Score: -2.80
+X-Spam-Flag: NO
 
-On 04/03/2025 11:41, Krzysztof Kozlowski wrote:
-> Devicetree bindings for ES8388 audio codec expect the device to be
-> marked as compatible with ES8328.
+On 3/4/25 13:18, Lilith Gkini wrote:
+> On Tue, Mar 04, 2025 at 12:20:03PM +0100, Vlastimil Babka wrote:
+> Thats true. I still had the return fp == search; in my mind, but with all
+
+Ah, right.
+
+> these changes we can just leave it as return search == NULL; as it was,
+> because we are handing the edge cases.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
+> By the time it reaches that return line it should be fine.
+
+True.
+
+> I was also thinking of fixing two lines to adhere to the "Breaking long
+> lines and strings" (2) from the coding-style.
+
+Hm AFAIK checkpatch was adjusted to only warn at 100 lines. While the style
+document wasn't updated, we can leave such a small excess with no change.
+
 > ---
+>  mm/slub.c | 24 +++++++++++++++++-------
+>  1 file changed, 17 insertions(+), 7 deletions(-)
 > 
-> Changeset depends on bindings patch being accepted to ASoC:
-> https://lore.kernel.org/all/20250304103808.75236-1-krzysztof.kozlowski@linaro.org/
+> diff --git a/mm/slub.c b/mm/slub.c
+> index 1f50129dcfb3..e06b88137705 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -1427,7 +1427,7 @@ static int check_slab(struct kmem_cache *s, struct slab *slab)
+>   * Determine if a certain object in a slab is on the freelist. Must hold the
+>   * slab lock to guarantee that the chains are in a consistent state.
+>   */
+> -static int on_freelist(struct kmem_cache *s, struct slab *slab, void *search)
+> +static bool on_freelist(struct kmem_cache *s, struct slab *slab, void *search)
+>  {
+>  	int nr = 0;
+>  	void *fp;
+> @@ -1437,38 +1437,48 @@ static int on_freelist(struct kmem_cache *s, struct slab *slab, void *search)
+>  	fp = slab->freelist;
+>  	while (fp && nr <= slab->objects) {
+>  		if (fp == search)
+> -			return 1;
+> +			return true;
+>  		if (!check_valid_pointer(s, slab, fp)) {
+>  			if (object) {
+>  				object_err(s, slab, object,
+>  					"Freechain corrupt");
+>  				set_freepointer(s, object, NULL);
+> +				break;
+>  			} else {
+>  				slab_err(s, slab, "Freepointer corrupt");
+>  				slab->freelist = NULL;
+>  				slab->inuse = slab->objects;
+>  				slab_fix(s, "Freelist cleared");
+> -				return 0;
+> +				return false;
+>  			}
+> -			break;
+>  		}
+>  		object = fp;
+>  		fp = get_freepointer(s, object);
+>  		nr++;
+>  	}
+>  
+> -	max_objects = order_objects(slab_order(slab), s->size);
+> +	if (fp != NULL && nr > slab->objects) {
+
+In case nr > slab->objects we already know fp can't be NULL, no? So we don't
+have to test it?
+
+> +		slab_err(s, slab, "Freelist cycle detected");
+> +		slab->freelist = NULL;
+> +		slab->inuse = slab->objects;
+> +		slab_fix(s, "Freelist cleared");
+> +		return false;
+> +	}
+> +
+> +	max_objects = order_objects(slab_or0der(slab), s->size);
+>  	if (max_objects > MAX_OBJS_PER_PAGE)
+>  		max_objects = MAX_OBJS_PER_PAGE;
+>  
+>  	if (slab->objects != max_objects) {
+> -		slab_err(s, slab, "Wrong number of objects. Found %d but should be %d",
+> +		slab_err(s, slab,
+> +			 "Wrong number of objects. Found %d but should be %d",
+>  			 slab->objects, max_objects);
+>  		slab->objects = max_objects;
+>  		slab_fix(s, "Number of objects adjusted");
+>  	}
+>  	if (slab->inuse != slab->objects - nr) {
+> -		slab_err(s, slab, "Wrong object count. Counter is %d but counted were %d",
+> +		slab_err(s, slab,
+> +			 "Wrong object count. Counter is %d but counted were %d",
+>  			 slab->inuse, slab->objects - nr);
+>  		slab->inuse = slab->objects - nr;
+>  		slab_fix(s, "Object count adjusted");
 > 
-> Please take it to the same or next merge cycle as above ASoC binding.
+> I do have to note that the last slab_err is of length 81 with my change,
+> but it looks fine. If that one extra character is unacceptable let me
+> know so I can change it to something else.
+> Or if you think it's completely unnecessary I could leave it as it was
+> in the first place.
 
-Binding was accepted by Mark to ASoC, so this can go for this cycle as well.
+Yeah can leave it.
 
-Best regards,
-Krzysztof
+> I just thought since we are trying to modernaze I should fix the length
+> as well.
+> 
+> Also the CHECKPATCH is complaining about the `fp != NULL` that we can
+> just check fp on it's own, which is technically true, but wouldn't make
+> readability worse?
+> I think its better as it's in my diff cause it's more obvious, but if
+> you prefer the singular fp I can change it.
+
+I think it's not necessary to test at all but in case I'm wrong, we can do
+what checkpatch suggests to be consistent with the while() condition.
+
+> If these changes are acceptable and we don't have anything further to
+> change or add I can send it as a proper commit again, But I should
+> probably break it into multiple patches.
+
+It's fine as a single patch. Thanks!
+
+> Maybe one patch for the lines and another for the rest? Or should I
+> break the bool change in it's own patch?
+
+
+
 
