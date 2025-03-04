@@ -1,243 +1,102 @@
-Return-Path: <linux-kernel+bounces-544483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00F0AA4E1DB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:54:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80EC6A4E176
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:44:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70CA23BF961
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:44:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DBA227A8E13
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:43:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F035C263C6E;
-	Tue,  4 Mar 2025 14:43:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D47F25DAE1;
+	Tue,  4 Mar 2025 14:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OjlSumgP"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Wf4K4wtZ"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A005B209F33;
-	Tue,  4 Mar 2025 14:43:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD61206F1F;
+	Tue,  4 Mar 2025 14:43:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741099425; cv=none; b=FHRVoDGQtXSePJiaPbn3pyPS0Na65a9GuaGr+ec2KgYLIWUdGcHufZyo0QwVDJ8/RJvtPB5V+cZv/W/OC6HXUMMuw8rC/T0mA0AX7yqLTzxa+jMDDeo112UYKsAxfElFm2uQmTKeV86TSUKZVTrkmEgV4bm7XlR+4UBKx+YQnis=
+	t=1741099423; cv=none; b=ur2aXS5qMcCSqGrPczHUiE/sN5n0oDk/E8u1+wbzo0iKF5n7v8/xUq+uakholEYMFsHxU/eLWSoOX2LFMoNtqzJnkualsUDMtl4rTYMeSy/3yCCp6k0EkQl/Q3czt0GyVQFsl7/JtPhkKWpCG09AAo2cnZxR0vIivXE2laP+29M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741099425; c=relaxed/simple;
-	bh=ZJX8wjGzix2xk7xk08CSns6KEJr/SMpC4Cca0Yiw5Xo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IKlGZA7Pfn69Tvu0JVLW0uXZLqbFmt3Wdwbz9/cvsNHBOIAQ6VxQhLXiNmN2y/kakxeXNZIVhoL8tntbVBsTgD5N4NGCHss9kphg4mxJrebEG9YqBQpl1lnyelFx3NnkfXztxfbskOD+YPvyYYHYqxyl/FVJwCB6gI1ankIfUK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OjlSumgP; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E11F544283;
-	Tue,  4 Mar 2025 14:43:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1741099415;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iRe8bA5fq5Dnerb6IrVuapdeqPHeVXv9pFZzkEkJmRo=;
-	b=OjlSumgPR+Di0+R/SqIfwlocmtXNUmeGujQ9eyffd0YzGCom6RZHDLNRLH3fVl+T3moCWQ
-	x1FdbSetA4zu0h48UeLxbePp0CAVyEd/3nW55E6OyfiNkqLm1KDucpqXd/4J+0kFmbSoDG
-	SqJuGnZb8WOarIlXMEbCPWxqeyDpj2+VKmoK3mmEv5rAliUA2/cjRp5U3CY+086H8YNC4i
-	ANWB9ISfQYUa9hITU4YO345eDP7GXn+mkG8pD1NrUerrOpCRZYc6ygkuNW8mLqaIBADplB
-	xSp9wanjT23HIIF8glPrOBPJ1bxOKdqbVLBqsYDNeIwX1zVwMIUXe7T/8eXDjg==
-Date: Tue, 4 Mar 2025 15:43:30 +0100
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
- <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>, Heiner Kallweit
- <hkallweit1@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
- Christophe Leroy <christophe.leroy@csgroup.eu>, Herve Codina
- <herve.codina@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>,
- Vladimir Oltean <vladimir.oltean@nxp.com>, =?UTF-8?B?S8O2cnk=?= Maincent
- <kory.maincent@bootlin.com>, Oleksij Rempel <o.rempel@pengutronix.de>,
- Simon Horman <horms@kernel.org>, Romain Gantois
- <romain.gantois@bootlin.com>
-Subject: Re: [PATCH net-next v4 09/13] net: phylink: Use phy_caps_lookup for
- fixed-link configuration
-Message-ID: <20250304154330.6e00961b@fedora.home>
-In-Reply-To: <20250303090321.805785-10-maxime.chevallier@bootlin.com>
-References: <20250303090321.805785-1-maxime.chevallier@bootlin.com>
-	<20250303090321.805785-10-maxime.chevallier@bootlin.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1741099423; c=relaxed/simple;
+	bh=/wlsvCjXB/lXANM/QCjInlVw2O2/9Yak7eLwi5z4EBw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZioRhYlGYq8xc+Ox/1zBvA8D0GXj/VAMo927N3kLJKNH9GpfpfkEIRzMUlWDHusRsyh8l49I8/KQ7oY6zMtfP4+8fqESi0vTFrMxxmgNsgmA5TbkFEp7QSUSXoalTQ8km7ZX4fsaHhOgHTLih7offHvjBYKQR375QKm4NF6T84M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Wf4K4wtZ; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1741099419;
+	bh=/wlsvCjXB/lXANM/QCjInlVw2O2/9Yak7eLwi5z4EBw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Wf4K4wtZ6/3lqk900g5ki5m7Y+8HU/IS9qxC2UQGt8wMZ7x+NgukZ8NRShY6/h+Dw
+	 aVo64/sgVCm1cctLK8IMqlZv6EbFEtOE6YMVY06RMSjBM8vrLoEVjiTh0BCqe7AB2X
+	 aXQXIZQt50BVUG9kdWPz8k/4EXzAgXU7D2M6XfF3XYp/htUbBnsP2cp5zVGAlcR4Ii
+	 sl4LUj5/SSYBiUDPOA/Zyz6T6tzPw0Uf6nAnpim4DIMaCTrl6G6n8kUmH5MpDQFg/i
+	 Zac3XAZHAoYteGZfxxrnsRcndspGwJZ7n2w97ayuz9dWKxI0FCuc2qd0wsC6M4RuId
+	 KVGj0R4e43x2w==
+Received: from notapiano (unknown [IPv6:2804:14c:1a9:53ee::1001])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7279817E0E8E;
+	Tue,  4 Mar 2025 15:43:35 +0100 (CET)
+Date: Tue, 4 Mar 2025 11:43:32 -0300
+From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: neil.armstrong@linaro.org, quic_jesszhan@quicinc.com, airlied@gmail.com,
+	simona@ffwll.ch, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel@collabora.com,
+	pablo.sun@mediatek.com, christophe.jaillet@wanadoo.fr
+Subject: Re: [PATCH v2 0/2] Add driver for Himax HX8279 DriverIC panels
+Message-ID: <93076513-3bda-46f3-baa1-51d7e02f24c3@notapiano>
+References: <20250218143952.84261-1-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutddvfedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeevledtvdevueehhfevhfelhfekveeftdfgiedufeffieeltddtgfefuefhueeknecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehfvgguohhrrgdrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudelpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtoheplhhin
- hhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomhdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250218143952.84261-1-angelogioacchino.delregno@collabora.com>
 
-Hi,
-
-On Mon,  3 Mar 2025 10:03:15 +0100
-Maxime Chevallier <maxime.chevallier@bootlin.com> wrote:
-
-> When phylink creates a fixed-link configuration, it finds a matching
-> linkmode to set as the advertised, lp_advertising and supported modes
-> based on the speed and duplex of the fixed link.
+On Tue, Feb 18, 2025 at 03:39:50PM +0100, AngeloGioacchino Del Regno wrote:
+> Changes in v2:
+>  - Removed unneeded mipi_dsi_device_unregister() call for secondary
+>    DSI: as the driver is using devm, that's not necessary (CJ)
+>  - Removed superfluous if branch as pointed out by CJ
 > 
-> Use the newly introduced phy_caps_lookup to get these modes instead of
-> phy_lookup_settings(). This has the side effect that the matched
-> settings and configured linkmodes may now contain several linkmodes (the
-> intersection of supported linkmodes from the phylink settings and the
-> linkmodes that match speed/duplex) instead of the one from
-> phy_lookup_settings().
+> This series adds a driver for DSI panels using the Himax HX8279 and
+> HX8279-D DriverICs, and introduces one panel using such a configuration,
+> the Startek KX070FHFID078.
 > 
-> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-> ---
-
-Maybe before anything goes further with this patch, I'd like to get
-some feedback from it on a particular point. This changes the linkmodes
-that are reported on fixed-link interfaces. Instead of reporting one
-single mode, we report all modes supported by the fixed-link' speed and
-duplex settings.
-
-The following example is a before/after of the "ethtool ethX" output on
-a 1G fixed link :
-
-Before this patch :
-
-	Settings for eth0:
-	Supported ports: [ MII ]
-	Supported link modes:   1000baseT/Full 
-	Supported pause frame use: Symmetric
-	Supports auto-negotiation: Yes
-	Supported FEC modes: Not reported
-	Advertised link modes:  Not reported
-	Advertised pause frame use: No
-	Advertised auto-negotiation: No
-	Advertised FEC modes: Not reported
-	Speed: Unknown!
-	Duplex: Half
-	Port: MII
-	PHYAD: 0
-	Transceiver: internal
-	Auto-negotiation: off
-	Supports Wake-on: d
-	Wake-on: d
-	Link detected: no
-
-After :
-
-	Supported ports: [ MII ]
-	Supported link modes:   1000baseT/Full 
-	                        1000baseKX/Full 
-	                        1000baseX/Full 
-	                        1000baseT1/Full 
-	Supported pause frame use: Symmetric
-	Supports auto-negotiation: Yes
-	Supported FEC modes: Not reported
-	Advertised link modes:  Not reported
-	Advertised pause frame use: No
-	Advertised auto-negotiation: No
-	Advertised FEC modes: Not reported
-	Speed: Unknown!
-	Duplex: Half
-	Port: MII
-	PHYAD: 0
-	Transceiver: internal
-	Auto-negotiation: off
-	Supports Wake-on: d
-	Wake-on: d
-	Link detected: no
-
-The fixed-link in question is for the CPU port of a DSA switch.
-
-In my opinion, this is OK as the linkmodes expressed here don't match
-physical linkmodes on an actual wire, but as this is a user visible
-change, I'd like to make sure this is OK. Any comment here is more than
-welcome.
-
-Maxime
-
-> V4: Remove unnecessary linklmode_zero in phylink_set_fixed_link(),
-> follwing Russell's comment
+> This panel is found on the latest hardware revisions of some MediaTek
+> Genio Evaluation Kits, and specifically, at least:
+>  - Genio 510 EVK
+>  - Genio 700 EVK
+>  - Genio 1200 EVK
 > 
->  drivers/net/phy/phylink.c | 27 +++++++++++++++------------
->  1 file changed, 15 insertions(+), 12 deletions(-)
+> This driver was tested on all of the aforementioned boards.
 > 
-> diff --git a/drivers/net/phy/phylink.c b/drivers/net/phy/phylink.c
-> index 6c67d5c9b787..0b9585cb508e 100644
-> --- a/drivers/net/phy/phylink.c
-> +++ b/drivers/net/phy/phylink.c
-> @@ -805,9 +805,10 @@ static int phylink_validate(struct phylink *pl, unsigned long *supported,
->  static int phylink_parse_fixedlink(struct phylink *pl,
->  				   const struct fwnode_handle *fwnode)
->  {
-> +	__ETHTOOL_DECLARE_LINK_MODE_MASK(match) = { 0, };
->  	__ETHTOOL_DECLARE_LINK_MODE_MASK(mask) = { 0, };
-> +	const struct link_capabilities *c;
->  	struct fwnode_handle *fixed_node;
-> -	const struct phy_setting *s;
->  	struct gpio_desc *desc;
->  	u32 speed;
->  	int ret;
-> @@ -879,8 +880,10 @@ static int phylink_parse_fixedlink(struct phylink *pl,
->  	linkmode_copy(pl->link_config.advertising, pl->supported);
->  	phylink_validate(pl, pl->supported, &pl->link_config);
->  
-> -	s = phy_lookup_setting(pl->link_config.speed, pl->link_config.duplex,
-> -			       pl->supported, true);
-> +	c = phy_caps_lookup(pl->link_config.speed, pl->link_config.duplex,
-> +			    pl->supported, true);
-> +	if (c)
-> +		linkmode_and(match, pl->supported, c->linkmodes);
->  
->  	linkmode_set_bit(ETHTOOL_LINK_MODE_Pause_BIT, mask);
->  	linkmode_set_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT, mask);
-> @@ -889,9 +892,10 @@ static int phylink_parse_fixedlink(struct phylink *pl,
->  
->  	phylink_set(pl->supported, MII);
->  
-> -	if (s) {
-> -		__set_bit(s->bit, pl->supported);
-> -		__set_bit(s->bit, pl->link_config.lp_advertising);
-> +	if (c) {
-> +		linkmode_or(pl->supported, pl->supported, match);
-> +		linkmode_or(pl->link_config.lp_advertising,
-> +			    pl->link_config.lp_advertising, match);
->  	} else {
->  		phylink_warn(pl, "fixed link %s duplex %dMbps not recognised\n",
->  			     pl->link_config.duplex == DUPLEX_FULL ? "full" : "half",
-> @@ -1879,21 +1883,20 @@ static int phylink_register_sfp(struct phylink *pl,
->  int phylink_set_fixed_link(struct phylink *pl,
->  			   const struct phylink_link_state *state)
->  {
-> -	const struct phy_setting *s;
-> +	const struct link_capabilities *c;
->  	unsigned long *adv;
->  
->  	if (pl->cfg_link_an_mode != MLO_AN_PHY || !state ||
->  	    !test_bit(PHYLINK_DISABLE_STOPPED, &pl->phylink_disable_state))
->  		return -EINVAL;
->  
-> -	s = phy_lookup_setting(state->speed, state->duplex,
-> -			       pl->supported, true);
-> -	if (!s)
-> +	c = phy_caps_lookup(state->speed, state->duplex,
-> +			    pl->supported, true);
-> +	if (!c)
->  		return -EINVAL;
->  
->  	adv = pl->link_config.advertising;
-> -	linkmode_zero(adv);
-> -	linkmode_set_bit(s->bit, adv);
-> +	linkmode_and(adv, pl->supported, c->linkmodes);
->  	linkmode_set_bit(ETHTOOL_LINK_MODE_Autoneg_BIT, adv);
->  
->  	pl->link_config.speed = state->speed;
+> AngeloGioacchino Del Regno (2):
+>   dt-bindings: display: panel: Add Himax HX8279/HX8279-D
+>   drm: panel: Add driver for Himax HX8279 and Startek KD070FHFID078
 
+For Genio 700 EVK:
+
+Tested-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+
+Thanks,
+Nícolas
 
