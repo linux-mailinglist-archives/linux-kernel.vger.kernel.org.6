@@ -1,127 +1,106 @@
-Return-Path: <linux-kernel+bounces-544077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B80BA4DD1F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:56:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6422A4DDB3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:20:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54B143ABA36
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:55:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0768E1773C9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:20:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D58F8201100;
-	Tue,  4 Mar 2025 11:54:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2DE202985;
+	Tue,  4 Mar 2025 12:19:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X/3bW/hH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="KSywNIe4"
+Received: from out162-62-63-194.mail.qq.com (out162-62-63-194.mail.qq.com [162.62.63.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0534202F67;
-	Tue,  4 Mar 2025 11:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABEDC200BA1;
+	Tue,  4 Mar 2025 12:19:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.63.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741089241; cv=none; b=roR35ELbwdxmLh5AMZMhbLYLp52lUdpXdY2A+0Dm6mwnEdggdczId4QmtXefBDHjh7m1XUhxORBSV7oo+VasWvpHjOvroWq5jeSeGXLni4qD0XJ55khAsIoFcBtZo1yVZ4pmJGnx3mOYECKHJ+9yNvznC8U9Wox6A7oFwtswDyI=
+	t=1741090798; cv=none; b=GTeokQMHcKL/nsfmTN4W1twcLCBBe7Tmh6Z3Ww1dK1Y2MeUQr3oBy3OZzxsH+0I2LEH90SwyUHU1Z2euVHUQXHCISGex3vMjD7GFPmanRSm3n8RtIER39U5vD1M/zhP+xqt8W1DClCuLwBtEG7hEwLgZE8mDuxdnnJyM9jCq73s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741089241; c=relaxed/simple;
-	bh=qq7TZvcZSktmWVe6C6ZIq89UVbAqUNI01Xhm1mJcWnQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LLOLeDwyTW/uKEF8+e8xAMlqhU5mW3ZhwwE3qJoSoRaubCTOR7JT3sehVCJK1tLvMnF1OnQAj+k/mdNv1cfOwA/v2mzagBpPGEgJtlk2aPKH1M3wA5Pe4dAY7+BL2h9qsJ7iQjfnY3Xta07jHqJIO87Di96HYMgGdy4L6V23lwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X/3bW/hH; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741089240; x=1772625240;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qq7TZvcZSktmWVe6C6ZIq89UVbAqUNI01Xhm1mJcWnQ=;
-  b=X/3bW/hHMzh84AXdHNCDWKw289GLJn5Xfcwt2zALu902zSNI03kSI947
-   /baNtvRDY3degselOQuuigYc0nM5a9qoFf/RrU4W3jsvGcB34WG5Ek9Wx
-   KvcgQqh++g0Uoi5vXK157AvlbHEwh8RxW6G+sJ+GEi0WFA9wXnFbuaS0C
-   Nf2pYTT8LC4HFKNjep5whmhB73BYtop66j1G+GeoRRC7ZxhXlb2BxP3ZW
-   P2lCXjdFxvyyYOOzwjRv9eVjLawIrZdKRnso1AS5I8iGJS/6bgMAbiGut
-   afwWI+IhTgrpin0zi3zRlfywW4YCE2ySdU3xd5qbZbuhvmVhARhEEhCrZ
-   w==;
-X-CSE-ConnectionGUID: gzcVkUZpTICISUgYBbqPRg==
-X-CSE-MsgGUID: tDsEVoA8SEeZHxjL/zyhyw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="52639899"
-X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
-   d="scan'208";a="52639899"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 03:53:59 -0800
-X-CSE-ConnectionGUID: /IUV9+TERLOqCL7vV5ZhRw==
-X-CSE-MsgGUID: 19jezb68TVK8GAei3XrfqQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="122484442"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 03:53:57 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tpQqQ-0000000H76x-24PC;
-	Tue, 04 Mar 2025 13:53:54 +0200
-Date: Tue, 4 Mar 2025 13:53:54 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Inochi Amaoto <inochiama@gmail.com>
-Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Jan Dabros <jsd@semihalf.com>, Andi Shyti <andi.shyti@kernel.org>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>
-Subject: Re: [PATCH] i2c: designware: Add ACPI HID for DWAPB I2C controller
- on Sophgo SG2044
-Message-ID: <Z8bp0qRvE0CzF6S_@smile.fi.intel.com>
-References: <20250304070212.350155-3-inochiama@gmail.com>
- <Z8bnX8zcY3yIxh9n@smile.fi.intel.com>
- <53dkcpiewy64hv37kpqhrvpkprr7mgg7bl6f7ofpmpl5utqbe6@yldveipvbisb>
+	s=arc-20240116; t=1741090798; c=relaxed/simple;
+	bh=f4q1bLH6w2xXVfUvn0kD0zQt/FFHG3JSjA1XiDVThds=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=KKS0VJzTg2Ws5leF5weAK7GtTkGQooow6wtDHIwQ1NrhB3lyQJtFnF4TLjvXc9lbNDcLf4N2xJHkzSVWM+REh6FqDIXMyx+G1ZtWcNCb8glnAQKTWU0Thkc6qyWO6oxOgNs8M7DAgFyldgYPoUgx5AImYEmxglcK3GMQ0qNcU3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=KSywNIe4; arc=none smtp.client-ip=162.62.63.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1741090789;
+	bh=HKuwXFlWJWE+SLBn93S8kQVjGWyXEl0tFhvXRtckQ0s=;
+	h=From:To:Cc:Subject:Date;
+	b=KSywNIe4okjXeljKsM2mZdjWKxsxleihfHliCRJMtK4jhzKXM24Vgxmv6lg0bTue7
+	 kFe0D2ZmwfqxHujtMkoVP5muh9dts9fjqIpsS2U8ljsM/5R1vjCdyIlnx5Eog9Ep/3
+	 jsy1syGWs4CTcP1xvIKOzUGQlgLddYSNt5siMk2k=
+Received: from ubuntu.. ([2409:8a28:c41:ff91:d5aa:18f1:22ed:606f])
+	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
+	id D68250FA; Tue, 04 Mar 2025 19:53:40 +0800
+X-QQ-mid: xmsmtpt1741089220tumkwg40z
+Message-ID: <tencent_4E7B1F143E8051530C21FCADF4E014DCBB06@qq.com>
+X-QQ-XMAILINFO: MRMtjO3A6C9XfZq0lcI5Mm0OtEj6DxF4Q4QKBl9lQS6x1/Oz5ug/Hguxrc8jYx
+	 kdeu5Y7qXIEhFewIla8I4jA6jsHDV0iURcqfcwny+hCW+f78hxsAQHaFT6YoR6WjIr3tZEVOtZZz
+	 nIJ5+oIYs2cSMc5uiIl+114fsVnU4KSydGRjLavuRaC8R5Xf4M8I7pLl2YMpfzyBgVORtn2iLPw8
+	 0aOtIrGWjKRn4NufILJUYY3Ezdu/sX9op+o2/+wTKau8l+XR+UpX7tq3NOXfGAIR07/99Uwh3NFB
+	 vmfkGchcjiZd8TvSZiH9UNoyXsjRwm7vJVKfQzQVs3FLrIxHAQTj6DTerkgIXyPvzpmIqUkH/Epm
+	 iMUFxvjsoJ6ZvzADAtEPlB1b+sCu1XlPPLwyoft8N8FQma3yJUgZjml44DnlHNb7XjxA+AWCYD9T
+	 t1jvOThUOatc7J2jA9UDGyGXVLi8iyzCjc3sBJVSDVFMG6hy6G4KkWARHLRswbU9UHTCvCsMFUFX
+	 j/k1Pj4+dtfgG5WuGWABuYQRV/tz219gHru6PL7VZNSoFiGqUPe5NmvvALM2vVqj5F7AuhpTDsc9
+	 /jun4KM71uW23t1uLhGys6BEAUGEpZmZYUL9ScukykW9U00v6aD1kFZp5+OEUCzzuF44vGzQXeqP
+	 TfvpMRCPlF0LbR5nr4BYTU4Oe8Sn4o8Z86fLycrTtrCIrjrNg37KoKuxrBTSKROb8azVodrVsKno
+	 l3B3Y9OIqfSylVfK+tbwmRSNThjv9LDqVlN+4H5Q61EsvF1ECL8eZzTXnHz2UVFYw1jJdROIEDEl
+	 RW9LJxCnw67HMLx9rhNtjl2wgbi76garqo3guSs6ohfajkfG+1XGTIycmGVwfb5tWq/MkokGBh51
+	 secM+PezFUb2AYwJ+ELK+kcPOxm6AeGQl92IaCm9IRGvLdVl7cqsPcEj+RuQlUrDvM3WbU95LGao
+	 SmEKK9v/duSEMvy54xjNT0ZFoiEzGsddWKVRgoCfJ+hTjFgwr7mw2p1LkDbfFhwtN/X3ULEVtbUW
+	 zrGK22Hv2BGYQOD4Y8
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+From: Aiden Ma <jiaheng.ma@foxmail.com>
+To: corbet@lwn.net
+Cc: brauner@kernel.org,
+	sforshee@kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Aiden Ma <jiaheng.ma@foxmail.com>
+Subject: [RESEND] doc: correcting two prefix errors in idmappings.rst
+Date: Tue,  4 Mar 2025 19:54:01 +0800
+X-OQ-MSGID: <20250304115401.105754-1-jiaheng.ma@foxmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <53dkcpiewy64hv37kpqhrvpkprr7mgg7bl6f7ofpmpl5utqbe6@yldveipvbisb>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 04, 2025 at 07:46:09PM +0800, Inochi Amaoto wrote:
-> On Tue, Mar 04, 2025 at 01:43:27PM +0200, Andy Shevchenko wrote:
-> > On Tue, Mar 04, 2025 at 03:02:11PM +0800, Inochi Amaoto wrote:
-> > > Add ACPI ID for DWAPB I2C controller on Sophgo SG2044 so
-> > > the SoC can enumerated the device via ACPI.
-> > 
-> > Same as per UART:
-> > 
-> > ---8<---
-> > 
-> > This is fake ACPI ID. Please work with a vendor to issue the proper one.
-> > Vendor ACPI ID registry has no records on Sophgo:
-> > https://uefi.org/ACPI_ID_List?acpi_search=SophGo
-> > 
-> > NAK.
-> > 
-> > ---8<---
-> > 
-> > But, it might be that is already in the process of getting proper ACPI vendor
-> > ID, please provide an evidence in such a case.
-> > 
-> > Otherwise drag the representative of the vendor to this email thread to answer
-> > the question why the heck they abuse ACPI specification.
-> 
-> OK, I will ask for the vendor and check whether there is some
-> evidence for it. Now let's pause these patch.
-> 
-> Thanks for your info.
+Add the 'k' prefix to id 21000. And id `u1000` in the third
+idmapping should be mapped to `k31000`, not `u31000`.
 
-You're welcome! As I already replied in another mail, feel free to contact me
-or give my contacts to the vendor in order to help them to follow the process.
-I will be glad to help.
+Signed-off-by: Aiden Ma <jiaheng.ma@foxmail.com>
+---
+ Documentation/filesystems/idmappings.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/Documentation/filesystems/idmappings.rst b/Documentation/filesystems/idmappings.rst
+index 90b24b6..58e46f9 100644
+--- a/Documentation/filesystems/idmappings.rst
++++ b/Documentation/filesystems/idmappings.rst
+@@ -63,8 +63,8 @@ what id ``k11000`` corresponds to in the second or third idmapping. The
+ straightforward algorithm to use is to apply the inverse of the first idmapping,
+ mapping ``k11000`` up to ``u1000``. Afterwards, we can map ``u1000`` down using
+ either the second idmapping mapping or third idmapping mapping. The second
+-idmapping would map ``u1000`` down to ``21000``. The third idmapping would map
+-``u1000`` down to ``u31000``.
++idmapping would map ``u1000`` down to ``k21000``. The third idmapping would map
++``u1000`` down to ``k31000``.
+ 
+ If we were given the same task for the following three idmappings::
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.43.0
 
 
