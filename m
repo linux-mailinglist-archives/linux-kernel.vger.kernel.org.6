@@ -1,335 +1,506 @@
-Return-Path: <linux-kernel+bounces-543650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0B45A4D81C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:26:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41C26A4D854
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:30:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61040188813A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:26:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBAD0188AE42
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:29:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 038241FE47C;
-	Tue,  4 Mar 2025 09:25:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3405E202C36;
+	Tue,  4 Mar 2025 09:25:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="H8jehxoa"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rphXP1ni"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE9F1FDE03
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 09:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4EAB20126A;
+	Tue,  4 Mar 2025 09:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741080320; cv=none; b=QpdikpQdCgoAmFs3JJ/ATHjEKuBm6Mb2hoeNO3zpxD7Hrr3/GSb4AGrM4eqo28o2sf6WiSh+5EXjjG3gGJOiUlE0QqpxMTwT+7qc1Mo6hGy5uEfd7PN1pTWrt00KE4EKI/DP4kEeXPC27mI3xEOCK9JzsZbcKAtmiWWBZKtq2Ww=
+	t=1741080353; cv=none; b=KVJLw5e47tPZhPZ9eSOBGJddPsIwqp9blrTEfF2aWSKtrjKXasuYOA7Hwe1Oe38FC7fXG7+FDm7I0U8eeKoB8aOe1tJ1RhXGZpfgapZjJTrxT4T7EWRLJIiZIoJSjAZ13fYnOlSWK/wrroGiT/h9EFwQYyb4d+WpZNebqzjYMQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741080320; c=relaxed/simple;
-	bh=xRC63YN3+rHHCv+C8M4xBY81AdOzVX+WwK/6KZrNcDs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gn1/+p3MBd8O1d9NU67ACnYaSht/+hKC8mEdaizUaLI1hNJSyFVfD2K0pEpwlSqAJJEOwjNtnNi9nSJPMtXcofzktKGWEOqxNiIIEJW8SCCAWNa4xPhUwA+pEpajmbJ5AGUQBsbDW4oclyOTZL6UkHyFlQKKXVsETNGXAjEWUHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=H8jehxoa; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-30bb184ab24so21841181fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 01:25:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1741080315; x=1741685115; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WNHGZZAfC/OeouxLYsdw1LTwRghW2GqRfwvXDc9ArBc=;
-        b=H8jehxoaGE94GBwzsL2Jg+wwXvOwmQ79qqLwyyCfZkfIgEAPLg0xuq0Tr/DfO+azFS
-         6Uz1OFtDbhSK/+3iNWPeFr8fusAE0uP5BRTBi3E1pG7eQ1OzoWZ0+7oAuT+tLZe1bBC0
-         i3ijAKjGQikQGwZaxW1LsnB9n4A1nDwP1VkFXg6vDrOE9qPPm6MCoIzLsTok3N7oTIar
-         OZCtRy5rAyKjc4PD6OSarw1qKtR88tQNlq++7CidnoYzev7/2uIu2bB87veuAYDgxvna
-         oOw4h+DOYbA2HrdRVI3xW4+XqPVaABCiaDd1o/6QLxbEvS06M3l3K8BtQKWfCFm+Pxpk
-         LyyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741080315; x=1741685115;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WNHGZZAfC/OeouxLYsdw1LTwRghW2GqRfwvXDc9ArBc=;
-        b=T1QUBBCThaiy7okUL5uSTi5q/weSe74zetYBdYyXdsCUCXYVy5uDBN6TIymNgsFeCI
-         e88ijI/mFqgu3tsCzAp3EsqC0eayCOBz35+h25+agA7bP7a9Ng2hQUVvqBJZIIALy2OY
-         MM/UQHBMPGiQa2Zn64fLFhr360Y2u8KHBquYPdF9DomLBUrFh//hieSM9eMTd9tMqcHA
-         fvmrdc6Xk7S6bxxH153DjBcZKI5dOsQZv1o/eL8kboK4TQmRA70CiTmYI0pYB+K/Pkut
-         FtQOU35lzjyi90q3X7oWHgR2jA9BiUIL3O1bXkMGXJaj2y0L07dN7kuOmGZY5sglBKFT
-         qyRA==
-X-Forwarded-Encrypted: i=1; AJvYcCXqvwloSGltr0lufDDDEQbckLAeG11JIr6MeLC38S6Al2wmBagxACLaQwKwhyUdGGK7/zw3gFfAZIqt9Xo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzmrVRPt+Pn+r+kOtvWL+9FClqs8L9paPGEuq3kakzHI9ffcW1
-	yEFiwkZzhW3xhLwX9XRCH4sRmvhpeLVjM6uMIpwvzX6sM4zyauRhCAqjOAqR2rbFqEhCO2ZRUFu
-	5KkQWNcdRbMCWYMYYVvf42rUY0x02pgSeqRP3ZD0IdfydqUS9vK74fMVU
-X-Gm-Gg: ASbGncuh8KOvqiqiPYIHmschPjW/cXoqtgPoL/m4lCaeJErdjQbNQ3S0qXJDfAOaHlw
-	dMTNO6O2VCJwe3T3pdcCRn79f7KKshVr2rpUJCMwn+qeyXE8/I0jdeIFS2s3DxqV3z032ABqq0X
-	O7hCqWwVEXCnq2dpTo8MggIPoQDg==
-X-Google-Smtp-Source: AGHT+IGBR2saDF3QQilBjubdBkLz9GIwt81EvLWpbxtqjDwEqBVukkswrlVo60Wa8sQgAwNowo9qt17F/oOZ+WCjClQ=
-X-Received: by 2002:a2e:9c92:0:b0:308:e803:1180 with SMTP id
- 38308e7fff4ca-30b9344cee6mr42882981fa.31.1741080315257; Tue, 04 Mar 2025
- 01:25:15 -0800 (PST)
+	s=arc-20240116; t=1741080353; c=relaxed/simple;
+	bh=IYGGzd2iv7ffriZYtqfCxV0m2FT/feC0iBGQEH0feac=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Th8/zrwEGRzJ70ubpOZrgKrCJBsrsmkNMtxHTHDS0NHiQ1FYgAJBEGnp19mk0YZ9ay68JE4Y137QM5GDO0UUpPnjCvQjVumcrI4MyvILa6jJ7qE55DeaSSh8o5btb4ca2dPsqHSgB5hZM3qZdAKSCXVd0e3NHEdTSarEU3vk+sA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rphXP1ni; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81DEEC4CEEF;
+	Tue,  4 Mar 2025 09:25:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741080352;
+	bh=IYGGzd2iv7ffriZYtqfCxV0m2FT/feC0iBGQEH0feac=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=rphXP1niKEtij+m65KQ/s0IEFyhpQy7BEQU6Y98xxVrnbyUZ6EABXhz0rFZ/DlvrL
+	 2+7woXJRBTK6uJsYWhuMWeehX+r+8StvWU7bir4Oes2HhTbBKlrCBzrZK1dvYp2qBY
+	 Djk4UpyiTv8FoaYGmN1AQNAu+ISKiqzXVfl05JGLO9lr0+q8s7SxhwrJw4VsOFqlWk
+	 yrKEV2riVjDpHMXavpZZiWa5SSzsdx0p0RF21CzmPiay63ha9sZ+ivMEI1NwNjKLfR
+	 NVzk1TgMznSLa08iovVUPYGXmQ5uUrM+Ujbl4iG1ZRnpNecdXTyec/mvnzZ7YgOlvk
+	 AT+ip6OUfYrkg==
+Message-ID: <d3c7d421-566f-4007-b272-650294edd019@kernel.org>
+Date: Tue, 4 Mar 2025 10:25:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1740993491.git.mazziesaccount@gmail.com> <e71c63c2f61135f9a8c7884525aab2c48f1e84c2.1740993491.git.mazziesaccount@gmail.com>
-In-Reply-To: <e71c63c2f61135f9a8c7884525aab2c48f1e84c2.1740993491.git.mazziesaccount@gmail.com>
-From: David Lechner <dlechner@baylibre.com>
-Date: Tue, 4 Mar 2025 10:25:03 +0100
-X-Gm-Features: AQ5f1JpLki6dbkM9Ig67nt3sfSzm1pr_ewW2yyuU-GO1iNjarygbWgXgDim39ws
-Message-ID: <CAMknhBGQaqFZJsPAoauZL4S5MYtN05EOQ-BO2vw5gH+Z2RLOhw@mail.gmail.com>
-Subject: Re: [PATCH v5 03/10] iio: adc: add helpers for parsing ADC nodes
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Jonathan Cameron <jic23@kernel.org>, 
-	Lars-Peter Clausen <lars@metafoo.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Hugo Villeneuve <hvilleneuve@dimonoff.com>, Nuno Sa <nuno.sa@analog.com>, 
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>, Guillaume Stols <gstols@baylibre.com>, 
-	Dumitru Ceclan <mitrutzceclan@gmail.com>, Trevor Gamblin <tgamblin@baylibre.com>, 
-	Matteo Martelli <matteomartelli3@gmail.com>, Alisa-Dariana Roman <alisadariana@gmail.com>, 
-	Ramona Alexandra Nechita <ramona.nechita@analog.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v10 3/4] page_pool: support unlimited number of
+ inflight pages
+To: Yunsheng Lin <linyunsheng@huawei.com>, davem@davemloft.net,
+ kuba@kernel.org, pabeni@redhat.com
+Cc: zhangkun09@huawei.com, liuyonglong@huawei.com, fanghaiqing@huawei.com,
+ Robin Murphy <robin.murphy@arm.com>,
+ Alexander Duyck <alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>,
+ Eric Dumazet <edumazet@google.com>, Simon Horman <horms@kernel.org>,
+ Donald Hunter <donald.hunter@gmail.com>,
+ Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-team <kernel-team@cloudflare.com>,
+ Yan Zhai <yan@cloudflare.com>
+References: <20250226110340.2671366-1-linyunsheng@huawei.com>
+ <20250226110340.2671366-4-linyunsheng@huawei.com>
+Content-Language: en-US
+From: Jesper Dangaard Brouer <hawk@kernel.org>
+In-Reply-To: <20250226110340.2671366-4-linyunsheng@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 3, 2025 at 12:32=E2=80=AFPM Matti Vaittinen
-<mazziesaccount@gmail.com> wrote:
->
-> There are ADC ICs which may have some of the AIN pins usable for other
-> functions. These ICs may have some of the AIN pins wired so that they
-> should not be used for ADC.
->
-> (Preferred?) way for marking pins which can be used as ADC inputs is to
-> add corresponding channels@N nodes in the device tree as described in
-> the ADC binding yaml.
->
-> Add couple of helper functions which can be used to retrieve the channel
-> information from the device node.
->
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
->
+(comments requesting changes inlined below)
+
+On 26/02/2025 12.03, Yunsheng Lin wrote:
+> Currently a fixed size of pre-allocated memory is used to
+> keep track of the inflight pages, in order to use the DMA
+> API correctly.
+> 
+> As mentioned [1], the number of inflight pages can be up to
+> 73203 depending on the use cases. Allocate memory dynamically
+> to keep track of the inflight pages when pre-allocated memory
+> runs out.
+> 
+> The overhead of using dynamic memory allocation is about 10ns~
+> 20ns, which causes 5%~10% performance degradation for the test
+> case of time_bench_page_pool03_slow() in [2].
+> 
+> 1. https://lore.kernel.org/all/b8b7818a-e44b-45f5-91c2-d5eceaa5dd5b@kernel.org/
+> 2. https://github.com/netoptimizer/prototype-kernel
+> CC: Robin Murphy <robin.murphy@arm.com>
+> CC: Alexander Duyck <alexander.duyck@gmail.com>
+> CC: IOMMU <iommu@lists.linux.dev>
+> Fixes: f71fec47c2df ("page_pool: make sure struct device is stable")
+> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
 > ---
-> Revision history:
-> v4 =3D> v5:
-> - Inline iio_adc_device_num_channels()
-> - Fix Indenting function parameters
-> - Combine the max channel ID checks.
-> v3 =3D> v4:
->  - Drop diff-channel support
->  - Drop iio_adc_device_channels_by_property()
->  - Add IIO_DEVICE namespace
->  - Move industrialio-adc.o to top of the Makefile
->  - Some styling as suggested by Andy
->  - Re-consider included headers
-> v2 =3D> v3: Mostly based on review comments by Jonathan
->  - Support differential and single-ended channels
->  - Rename iio_adc_device_get_channels() as
->    iio_adc_device_channels_by_property()
->  - Improve spelling
->  - Drop support for cases where DT comes from parent device's node
->  - Decrease loop indent by reverting node name check conditions
->  - Don't set 'chan->indexed' by number of channels to keep the
->    interface consistent no matter how many channels are connected.
->  - Fix ID range check and related comment
-> RFC v1 =3D> v2:
->  - New patch
-> ---
->  drivers/iio/adc/Kconfig            |  3 ++
->  drivers/iio/adc/Makefile           |  2 +
->  drivers/iio/adc/industrialio-adc.c | 82 ++++++++++++++++++++++++++++++
->  include/linux/iio/adc-helpers.h    | 27 ++++++++++
->  4 files changed, 114 insertions(+)
->  create mode 100644 drivers/iio/adc/industrialio-adc.c
->  create mode 100644 include/linux/iio/adc-helpers.h
->
-> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-> index 849c90203071..37b70a65da6f 100644
-> --- a/drivers/iio/adc/Kconfig
-> +++ b/drivers/iio/adc/Kconfig
-> @@ -6,6 +6,9 @@
->
->  menu "Analog to digital converters"
->
-> +config IIO_ADC_HELPER
-> +       tristate
+>   Documentation/netlink/specs/netdev.yaml | 16 +++++
+>   include/net/page_pool/types.h           | 10 ++++
+>   include/uapi/linux/netdev.h             |  2 +
+>   net/core/page_pool.c                    | 79 ++++++++++++++++++++++++-
+>   net/core/page_pool_priv.h               |  2 +
+>   net/core/page_pool_user.c               | 39 ++++++++++--
+>   tools/net/ynl/samples/page-pool.c       | 11 ++++
+>   7 files changed, 154 insertions(+), 5 deletions(-)
+> 
+> diff --git a/Documentation/netlink/specs/netdev.yaml b/Documentation/netlink/specs/netdev.yaml
+> index 36f1152bfac3..7c121d0a5d15 100644
+> --- a/Documentation/netlink/specs/netdev.yaml
+> +++ b/Documentation/netlink/specs/netdev.yaml
+> @@ -162,6 +162,20 @@ attribute-sets:
+>           type: uint
+>           doc: |
+>             Amount of memory held by inflight pages.
+> +      -
+> +        name: item_mem_resident
+> +        type: uint
+> +        doc: |
+> +          Amount of actual memory allocated to track inflight pages.
+> +          memory fragmentation ratio for item memory can be calculated
+> +          using item_mem_resident / item_mem_used.
+> +      -
+> +        name: item_mem_used
+> +        type: uint
+> +        doc: |
+> +          Amount of actual memory used to track inflight pages.
+> +          memory fragmentation ratio for item memory can be calculated
+> +          using item_mem_resident / item_mem_used.
+>         -
+>           name: detach-time
+>           type: uint
+> @@ -602,6 +616,8 @@ operations:
+>               - detach-time
+>               - dmabuf
+>               - io-uring
+> +            - item_mem_resident
+> +            - item_mem_used
+>         dump:
+>           reply: *pp-reply
+>         config-cond: page-pool
+> diff --git a/include/net/page_pool/types.h b/include/net/page_pool/types.h
+> index c131e2725e9a..c8c47ca67f4b 100644
+> --- a/include/net/page_pool/types.h
+> +++ b/include/net/page_pool/types.h
+> @@ -103,6 +103,7 @@ struct page_pool_params {
+>    * @waive:	pages obtained from the ptr ring that cannot be added to
+>    *		the cache due to a NUMA mismatch
+>    * @item_fast_empty: pre-allocated item cache is empty
+> + * @item_slow_failed: failed to allocate memory for item_block
+>    */
+>   struct page_pool_alloc_stats {
+>   	u64 fast;
+> @@ -112,6 +113,7 @@ struct page_pool_alloc_stats {
+>   	u64 refill;
+>   	u64 waive;
+>   	u64 item_fast_empty;
+> +	u64 item_slow_failed;
+>   };
+>   
+>   /**
+> @@ -159,9 +161,16 @@ struct page_pool_item {
+>   struct page_pool_item_block {
+>   	struct page_pool *pp;
+>   	struct list_head list;
+> +	unsigned int flags;
+> +	refcount_t ref;
+>   	struct page_pool_item items[];
+>   };
+>   
+> +struct page_pool_slow_item {
+> +	struct page_pool_item_block *block;
+> +	unsigned int next_to_use;
+> +};
 > +
->  config AB8500_GPADC
->         bool "ST-Ericsson AB8500 GPADC driver"
->         depends on AB8500_CORE && REGULATOR_AB8500
-> diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
-> index ee19afba62b7..1c410f483029 100644
-> --- a/drivers/iio/adc/Makefile
-> +++ b/drivers/iio/adc/Makefile
-> @@ -3,6 +3,8 @@
->  # Makefile for IIO ADC drivers
->  #
->
-> +obj-$(CONFIG_IIO_ADC_HELPER) +=3D industrialio-adc.o
-> +
->  # When adding new entries keep the list in alphabetical order
->  obj-$(CONFIG_AB8500_GPADC) +=3D ab8500-gpadc.o
->  obj-$(CONFIG_AD_SIGMA_DELTA) +=3D ad_sigma_delta.o
-> diff --git a/drivers/iio/adc/industrialio-adc.c b/drivers/iio/adc/industr=
-ialio-adc.c
-> new file mode 100644
-> index 000000000000..7bdae5330224
-> --- /dev/null
-> +++ b/drivers/iio/adc/industrialio-adc.c
-> @@ -0,0 +1,82 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Helpers for parsing common ADC information from a firmware node.
-> + *
-> + * Copyright (c) 2025 Matti Vaittinen <mazziesaccount@gmail.com>
-> + */
-> +
-> +#include <linux/device.h>
-> +#include <linux/errno.h>
-> +#include <linux/export.h>
-> +#include <linux/module.h>
-> +#include <linux/property.h>
-> +#include <linux/types.h>
-> +
-> +#include <linux/iio/adc-helpers.h>
-> +#include <linux/iio/iio.h>
-> +
-> +/**
-> + * devm_iio_adc_device_alloc_chaninfo_se - allocate and fill iio_chan_sp=
-ec for ADC
-> + *
-> + * Scan the device node for single-ended ADC channel information. Channe=
-l ID is
-> + * expected to be found from the "reg" property. Allocate and populate t=
-he
-> + * iio_chan_spec structure corresponding to channels that are found. The=
- memory
-> + * for iio_chan_spec structure will be freed upon device detach.
-> + *
-> + * @dev:               Pointer to the ADC device.
-> + * @template:          Template iio_chan_spec from which the fields of a=
-ll
-> + *                     found and allocated channels are initialized.
-> + * @max_chan_id:       Maximum value of a channel ID. Use -1 if no check=
-ing
-> + *                     is required.
-> + * @cs:                        Location where pointer to allocated iio_c=
-han_spec
-> + *                     should be stored.
-> + *
-> + * Return:     Number of found channels on succes. Negative value to ind=
-icate
-
-s/succes/success/
-
-> + *             failure.
-> + */
-> +int devm_iio_adc_device_alloc_chaninfo_se(struct device *dev,
-> +                                         const struct iio_chan_spec *tem=
-plate,
-> +                                         int max_chan_id,
-> +                                         struct iio_chan_spec **cs)
+>   /* Ensure the offset of 'pp' field for both 'page_pool_item_block' and
+>    * 'netmem_item_block' are the same.
+>    */
+> @@ -191,6 +200,7 @@ struct page_pool {
+>   	int cpuid;
+>   	u32 pages_state_hold_cnt;
+>   	struct llist_head hold_items;
+> +	struct page_pool_slow_item slow_items;
+>   
+>   	bool has_init_callback:1;	/* slow::init_callback is set */
+>   	bool dma_map:1;			/* Perform DMA mapping */
+> diff --git a/include/uapi/linux/netdev.h b/include/uapi/linux/netdev.h
+> index 7600bf62dbdf..9309cbfeb8d2 100644
+> --- a/include/uapi/linux/netdev.h
+> +++ b/include/uapi/linux/netdev.h
+> @@ -103,6 +103,8 @@ enum {
+>   	NETDEV_A_PAGE_POOL_DETACH_TIME,
+>   	NETDEV_A_PAGE_POOL_DMABUF,
+>   	NETDEV_A_PAGE_POOL_IO_URING,
+> +	NETDEV_A_PAGE_POOL_ITEM_MEM_RESIDENT,
+> +	NETDEV_A_PAGE_POOL_ITEM_MEM_USED,
+>   
+>   	__NETDEV_A_PAGE_POOL_MAX,
+>   	NETDEV_A_PAGE_POOL_MAX = (__NETDEV_A_PAGE_POOL_MAX - 1)
+> diff --git a/net/core/page_pool.c b/net/core/page_pool.c
+> index d927c468bc1b..dc9574bd129b 100644
+> --- a/net/core/page_pool.c
+> +++ b/net/core/page_pool.c
+> @@ -64,6 +64,7 @@ static const char pp_stats[][ETH_GSTRING_LEN] = {
+>   	"rx_pp_alloc_refill",
+>   	"rx_pp_alloc_waive",
+>   	"rx_pp_alloc_item_fast_empty",
+> +	"rx_pp_alloc_item_slow_failed",
+>   	"rx_pp_recycle_cached",
+>   	"rx_pp_recycle_cache_full",
+>   	"rx_pp_recycle_ring",
+> @@ -98,6 +99,7 @@ bool page_pool_get_stats(const struct page_pool *pool,
+>   	stats->alloc_stats.refill += pool->alloc_stats.refill;
+>   	stats->alloc_stats.waive += pool->alloc_stats.waive;
+>   	stats->alloc_stats.item_fast_empty += pool->alloc_stats.item_fast_empty;
+> +	stats->alloc_stats.item_slow_failed += pool->alloc_stats.item_slow_failed;
+>   
+>   	for_each_possible_cpu(cpu) {
+>   		const struct page_pool_recycle_stats *pcpu =
+> @@ -144,6 +146,7 @@ u64 *page_pool_ethtool_stats_get(u64 *data, const void *stats)
+>   	*data++ = pool_stats->alloc_stats.refill;
+>   	*data++ = pool_stats->alloc_stats.waive;
+>   	*data++ = pool_stats->alloc_stats.item_fast_empty;
+> +	*data++ = pool_stats->alloc_stats.item_slow_failed;
+>   	*data++ = pool_stats->recycle_stats.cached;
+>   	*data++ = pool_stats->recycle_stats.cache_full;
+>   	*data++ = pool_stats->recycle_stats.ring;
+> @@ -431,6 +434,7 @@ static void page_pool_item_uninit(struct page_pool *pool)
+>   					 struct page_pool_item_block,
+>   					 list);
+>   		list_del(&block->list);
+> +		WARN_ON(refcount_read(&block->ref));
+>   		put_page(virt_to_page(block));
+>   	}
+>   }
+> @@ -514,10 +518,42 @@ static struct page_pool_item *page_pool_fast_item_alloc(struct page_pool *pool)
+>   	return llist_entry(first, struct page_pool_item, lentry);
+>   }
+>   
+> +static struct page_pool_item *page_pool_slow_item_alloc(struct page_pool *pool)
 > +{
-> +       struct iio_chan_spec *chan_array, *chan;
-> +       int num_chan =3D 0, ret;
+> +	if (unlikely(!pool->slow_items.block ||
+> +		     pool->slow_items.next_to_use >= ITEMS_PER_PAGE)) {
+> +		struct page_pool_item_block *block;
+> +		struct page *page;
 > +
-> +       num_chan =3D iio_adc_device_num_channels(dev);
-> +       if (num_chan < 1)
-> +               return num_chan;
-> +
-> +       chan_array =3D devm_kcalloc(dev, num_chan, sizeof(*chan_array),
-> +                                 GFP_KERNEL);
-> +       if (!chan_array)
-> +               return -ENOMEM;
-> +
-> +       chan =3D &chan_array[0];
-> +
-> +       device_for_each_child_node_scoped(dev, child) {
-> +               u32 ch;
-> +
-> +               if (!fwnode_name_eq(child, "channel"))
-> +                       continue;
-> +
-> +               ret =3D fwnode_property_read_u32(child, "reg", &ch);
-> +               if (ret)
-> +                       return ret;
-> +
-> +               if (max_chan_id !=3D -1 && ch > max_chan_id)
-> +                       return -ERANGE;
-> +
+> +		page = alloc_pages_node(pool->p.nid, GFP_ATOMIC | __GFP_NOWARN |
+> +					__GFP_ZERO, 0);
+> +		if (!page) {
+> +			alloc_stat_inc(pool, item_slow_failed);
+> +			return NULL;
+> +		}
 
-Should we use return dev_err_probe() on these to help with debugging a bad =
-dtb?
+I'm missing a counter that I can use to monitor the rate of page
+allocations for these "item" block's.
+In production want to have a metric that shows me a sudden influx of
+that cause code to hit this "item_slow_alloc" case (inflight_slow_alloc)
 
-> +               *chan =3D *template;
-> +               chan->channel =3D ch;
-> +               chan++;
-> +       }
-> +
-> +       *cs =3D chan_array;
-> +
-> +       return num_chan;
-> +}
-> +EXPORT_SYMBOL_NS_GPL(devm_iio_adc_device_alloc_chaninfo_se, "IIO_DRIVER"=
-);
+BTW should this be called "inflight_block" instead of "item_block"?
 
-We can make this less verbose by setting #define
-DEFAULT_SYMBOL_NAMESPACE at the start of the file. Then we can just do
-EXPORT_SYMBOL_GPL() throughout the rest of the file.
-
-Also, I would prefer if the namespace matched config name (IIO_ADC_HELPER).
 
 > +
-> +MODULE_LICENSE("GPL");
-> +MODULE_AUTHOR("Matti Vaittinen <mazziesaccount@gmail.com>");
-> +MODULE_DESCRIPTION("IIO ADC fwnode parsing helpers");
-> diff --git a/include/linux/iio/adc-helpers.h b/include/linux/iio/adc-help=
-ers.h
-> new file mode 100644
-> index 000000000000..403a70b109ec
-> --- /dev/null
-> +++ b/include/linux/iio/adc-helpers.h
-> @@ -0,0 +1,27 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +		block = page_address(page);
+> +		block->pp = pool;
+> +		block->flags |= PAGE_POOL_SLOW_ITEM_BLOCK_BIT;
+> +		refcount_set(&block->ref, ITEMS_PER_PAGE);
+> +		pool->slow_items.block = block;
+> +		pool->slow_items.next_to_use = 0;
 > +
-> +/*
-> + * The industrial I/O ADC firmware property parsing helpers
-> + *
-> + * Copyright (c) 2025 Matti Vaittinen <mazziesaccount@gmail.com>
-> + */
+> +		spin_lock_bh(&pool->item_lock);
+> +		list_add(&block->list, &pool->item_blocks);
+> +		spin_unlock_bh(&pool->item_lock);
+> +	}
 > +
-> +#ifndef _INDUSTRIAL_IO_ADC_HELPERS_H_
-> +#define _INDUSTRIAL_IO_ADC_HELPERS_H_
-> +
-> +#include <linux/property.h>
-> +
-> +struct device;
-> +struct iio_chan_spec;
-> +
-> +static inline int iio_adc_device_num_channels(struct device *dev)
-> +{
-> +       return device_get_child_node_count_named(dev, "channel");
+> +	return &pool->slow_items.block->items[pool->slow_items.next_to_use++];
 > +}
 > +
-> +int devm_iio_adc_device_alloc_chaninfo_se(struct device *dev,
-> +                                         const struct iio_chan_spec *tem=
-plate,
-> +                                         int max_chan_id,
-> +                                         struct iio_chan_spec **cs);
+>   static bool page_pool_set_item_info(struct page_pool *pool, netmem_ref netmem)
+>   {
+>   	struct page_pool_item *item = page_pool_fast_item_alloc(pool);
+>   
+> +	if (unlikely(!item))
+> +		item = page_pool_slow_item_alloc(pool);
 > +
+>   	if (likely(item)) {
+>   		item->pp_netmem = netmem;
+>   		page_pool_item_set_used(item);
+> @@ -527,6 +563,37 @@ static bool page_pool_set_item_info(struct page_pool *pool, netmem_ref netmem)
+>   	return !!item;
+>   }
+>   
+> +static void __page_pool_slow_item_free(struct page_pool *pool,
+> +				       struct page_pool_item_block *block)
+> +{
+> +	spin_lock_bh(&pool->item_lock);
+> +	list_del(&block->list);
+> +	spin_unlock_bh(&pool->item_lock);
+> +
+> +	put_page(virt_to_page(block));
 
-There are some different opinions on this, but on the last patch I did
-introducing a new namespace, the consensus seems to be that putting
-the MODULE_IMPORT_NS() in the header file was convenient so that users
-of the API don't have to remember to both include the header and add
-the import macro.
+Here again I'm missing a counter that I can use to monitor the rate of
+page free events.
 
-> +#endif /* _INDUSTRIAL_IO_ADC_HELPERS_H_ */
-> --
-> 2.48.1
->
+In production I want a metric (e.g inflight_slow_free_block) that
+together with "item_slow_alloc" (perhaps named
+inflight_slow_alloc_block), show me if this code path is creating churn,
+that I can correlate/explain some other influx event on the system.
+
+BTW subtracting these (alloc - free) counters gives us the memory used.
+
+> +}
+> +
+> +static void page_pool_slow_item_drain(struct page_pool *pool)
+> +{
+> +	struct page_pool_item_block *block = pool->slow_items.block;
+> +
+> +	if (!block || pool->slow_items.next_to_use >= ITEMS_PER_PAGE)
+> +		return;
+> +
+> +	if (refcount_sub_and_test(ITEMS_PER_PAGE - pool->slow_items.next_to_use,
+> +				  &block->ref))
+> +		__page_pool_slow_item_free(pool, block);
+> +}
+> +
+> +static void page_pool_slow_item_free(struct page_pool *pool,
+> +				     struct page_pool_item_block *block)
+> +{
+> +	if (likely(!refcount_dec_and_test(&block->ref)))
+> +		return;
+> +
+> +	__page_pool_slow_item_free(pool, block);
+> +}
+> +
+>   static void page_pool_fast_item_free(struct page_pool *pool,
+>   				     struct page_pool_item *item)
+>   {
+> @@ -536,13 +603,22 @@ static void page_pool_fast_item_free(struct page_pool *pool,
+>   static void page_pool_clear_item_info(struct page_pool *pool, netmem_ref netmem)
+>   {
+>   	struct page_pool_item *item = netmem_get_pp_item(netmem);
+> +	struct page_pool_item_block *block;
+>   
+>   	DEBUG_NET_WARN_ON_ONCE(item->pp_netmem != netmem);
+>   	DEBUG_NET_WARN_ON_ONCE(page_pool_item_is_mapped(item));
+>   	DEBUG_NET_WARN_ON_ONCE(!page_pool_item_is_used(item));
+>   	page_pool_item_clear_used(item);
+>   	netmem_set_pp_item(netmem, NULL);
+> -	page_pool_fast_item_free(pool, item);
+> +
+> +	block = page_pool_item_to_block(item);
+> +	if (likely(!(block->flags & PAGE_POOL_SLOW_ITEM_BLOCK_BIT))) {
+> +		DEBUG_NET_WARN_ON_ONCE(refcount_read(&block->ref));
+> +		page_pool_fast_item_free(pool, item);
+> +		return;
+> +	}
+> +
+> +	page_pool_slow_item_free(pool, block);
+>   }
+>   
+>   /**
+> @@ -1390,6 +1466,7 @@ void page_pool_destroy(struct page_pool *pool)
+>   
+>   	page_pool_disable_direct_recycling(pool);
+>   	page_pool_free_frag(pool);
+> +	page_pool_slow_item_drain(pool);
+>   
+>   	if (!page_pool_release(pool))
+>   		return;
+> diff --git a/net/core/page_pool_priv.h b/net/core/page_pool_priv.h
+> index a5df5ab14ead..37adfc766c12 100644
+> --- a/net/core/page_pool_priv.h
+> +++ b/net/core/page_pool_priv.h
+> @@ -7,6 +7,8 @@
+>   
+>   #include "netmem_priv.h"
+>   
+> +#define PAGE_POOL_SLOW_ITEM_BLOCK_BIT		BIT(0)
+> +
+>   extern struct mutex page_pools_lock;
+>   
+>   s32 page_pool_inflight(const struct page_pool *pool, bool strict);
+> diff --git a/net/core/page_pool_user.c b/net/core/page_pool_user.c
+> index c82a95beceff..0dc0090257ae 100644
+> --- a/net/core/page_pool_user.c
+> +++ b/net/core/page_pool_user.c
+> @@ -33,7 +33,7 @@ DEFINE_MUTEX(page_pools_lock);
+>    *    - user.list: unhashed, netdev: unknown
+>    */
+>   
+> -typedef int (*pp_nl_fill_cb)(struct sk_buff *rsp, const struct page_pool *pool,
+> +typedef int (*pp_nl_fill_cb)(struct sk_buff *rsp, struct page_pool *pool,
+>   			     const struct genl_info *info);
+>   
+>   static int
+> @@ -111,7 +111,7 @@ netdev_nl_page_pool_get_dump(struct sk_buff *skb, struct netlink_callback *cb,
+>   }
+>   
+>   static int
+> -page_pool_nl_stats_fill(struct sk_buff *rsp, const struct page_pool *pool,
+> +page_pool_nl_stats_fill(struct sk_buff *rsp, struct page_pool *pool,
+>   			const struct genl_info *info)
+>   {
+>   #ifdef CONFIG_PAGE_POOL_STATS
+> @@ -212,8 +212,36 @@ int netdev_nl_page_pool_stats_get_dumpit(struct sk_buff *skb,
+>   	return netdev_nl_page_pool_get_dump(skb, cb, page_pool_nl_stats_fill);
+>   }
+>   
+> +static int page_pool_nl_fill_item_mem_info(struct page_pool *pool,
+> +					   struct sk_buff *rsp)
+> +{
+> +	struct page_pool_item_block *block;
+> +	size_t resident = 0, used = 0;
+> +	int err;
+> +
+> +	spin_lock_bh(&pool->item_lock);
+> +
+> +	list_for_each_entry(block, &pool->item_blocks, list) {
+> +		resident += PAGE_SIZE;
+> +
+> +		if (block->flags & PAGE_POOL_SLOW_ITEM_BLOCK_BIT)
+> +			used += (PAGE_SIZE - sizeof(struct page_pool_item) *
+> +				 refcount_read(&block->ref));
+> +		else
+> +			used += PAGE_SIZE;
+> +	}
+> +
+> +	spin_unlock_bh(&pool->item_lock);
+
+Holding a BH spin_lock can easily create production issues.
+I worry how long time it will take to traverse these lists.
+
+We (Cc Yan) are currently hunting down a number of real production issue
+due to different cases of control-path code querying the kernel that
+takes a _bh lock to read data, hurting the data-path processing.
+
+If we had the stats counters, then this would be less work, right?
+
+
+> +
+> +	err = nla_put_uint(rsp, NETDEV_A_PAGE_POOL_ITEM_MEM_RESIDENT, resident);
+> +	if (err)
+> +		return err;
+> +
+> +	return nla_put_uint(rsp, NETDEV_A_PAGE_POOL_ITEM_MEM_USED, used);
+> +}
+> +
+>   static int
+> -page_pool_nl_fill(struct sk_buff *rsp, const struct page_pool *pool,
+> +page_pool_nl_fill(struct sk_buff *rsp, struct page_pool *pool,
+>   		  const struct genl_info *info)
+>   {
+>   	size_t inflight, refsz;
+> @@ -251,6 +279,9 @@ page_pool_nl_fill(struct sk_buff *rsp, const struct page_pool *pool,
+>   	if (pool->mp_ops && pool->mp_ops->nl_fill(pool->mp_priv, rsp, NULL))
+>   		goto err_cancel;
+>   
+> +	if (page_pool_nl_fill_item_mem_info(pool, rsp))
+> +		goto err_cancel;
+> +
+>   	genlmsg_end(rsp, hdr);
+>   
+>   	return 0;
+> @@ -259,7 +290,7 @@ page_pool_nl_fill(struct sk_buff *rsp, const struct page_pool *pool,
+>   	return -EMSGSIZE;
+>   }
+>   
+> -static void netdev_nl_page_pool_event(const struct page_pool *pool, u32 cmd)
+> +static void netdev_nl_page_pool_event(struct page_pool *pool, u32 cmd)
+>   {
+>   	struct genl_info info;
+>   	struct sk_buff *ntf;
+> diff --git a/tools/net/ynl/samples/page-pool.c b/tools/net/ynl/samples/page-pool.c
+> index e5d521320fbf..16c48b6d3c2c 100644
+> --- a/tools/net/ynl/samples/page-pool.c
+> +++ b/tools/net/ynl/samples/page-pool.c
+> @@ -16,6 +16,7 @@ struct stat {
+>   	struct {
+>   		unsigned int cnt;
+>   		size_t refs, bytes;
+> +		size_t item_mem_resident, item_mem_used;
+>   	} live[2];
+>   
+>   	size_t alloc_slow, alloc_fast, recycle_ring, recycle_cache;
+> @@ -52,6 +53,12 @@ static void count(struct stat *s, unsigned int l,
+>   		s->live[l].refs += pp->inflight;
+>   	if (pp->_present.inflight_mem)
+>   		s->live[l].bytes += pp->inflight_mem;
+> +
+> +	if (pp->_present.item_mem_resident)
+> +		s->live[l].item_mem_resident += pp->item_mem_resident;
+> +
+> +	if (pp->_present.item_mem_used)
+> +		s->live[l].item_mem_used += pp->item_mem_used;
+>   }
+>   
+>   int main(int argc, char **argv)
+> @@ -127,6 +134,10 @@ int main(int argc, char **argv)
+>   		       s->live[1].refs, s->live[1].bytes,
+>   		       s->live[0].refs, s->live[0].bytes);
+>   
+> +		printf("\t\titem_mem_resident: %zu item_mem_used: %zu (item_mem_resident: %zu item_mem_used: %zu)\n",
+> +		       s->live[1].item_mem_resident, s->live[1].item_mem_used,
+> +		       s->live[0].item_mem_resident, s->live[0].item_mem_used);
+> +
+>   		/* We don't know how many pages are sitting in cache and ring
+>   		 * so we will under-count the recycling rate a bit.
+>   		 */
 
