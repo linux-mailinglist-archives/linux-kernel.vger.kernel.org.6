@@ -1,109 +1,250 @@
-Return-Path: <linux-kernel+bounces-543609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0A6AA4D77E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:09:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF341A4D785
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:10:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B57DE188C6F1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:06:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97810163245
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:08:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A5371FCCEB;
-	Tue,  4 Mar 2025 09:00:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF39F1FF1AB;
+	Tue,  4 Mar 2025 09:02:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="HoZUHGFH"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="PH22NjZs"
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1605D1EA7CE
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 09:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F25031FF1B3
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 09:02:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741078845; cv=none; b=RtAKQcHcUl946wSRNarDmu4Id+REa8tFIQEvt8SzknSmQ2Y93sv62dk/0bjv5jvMypyWrUQBoyWeWpZy4bd8uJYIXuabgk4Dp+CUj0esH5Jvh+w5K9KoPmx7ycDk1rXwT6UNkr5EeTBx/Fp0EIS73hLp1n8eOCqWzivq9cmlvdU=
+	t=1741078948; cv=none; b=qMoKcun8PjDb9gZjV36S/tJXQWQwduff8ploTgEweyeGY2h2Jt+0N71AcFF/CTH9CHLc7rCKdREppFkG4BBiTkY9Up/vcxC5Jy8QHd0cfbSowrLYdXV59Vyrs8nWfkGu2Uw+mOIPibEOl9GNnt5cFKddiP3pFDWywKJ2fXmvzps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741078845; c=relaxed/simple;
-	bh=C5ZHUydAfD7qIPC2fugkdbL/7ZQbv9+E48hf7fmVHuI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZBNBW+OqiD8xEWYxc+mNbGz1Y6ZAfYhuHHFGOYW272FBHrxCKY1lOkLZCBWKd+dfwHAG9CBvWLVnA1ax4k0qUu6uhj+ZKxFqN0PPYG/Liyr1hhy8wQ/61n60+/05b5OcKHm7FECTcbZz9tS6emt24D2sHMWgsFQLN566Y64ONAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=HoZUHGFH; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43948f77f1aso34642335e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 01:00:43 -0800 (PST)
+	s=arc-20240116; t=1741078948; c=relaxed/simple;
+	bh=QXF17IR28nkhTtqi+FHFKr/fCmzJnqgNwQQgg3meDNs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IxeNDZLPJUKXIjQmM2hMTQXXdRFAYasPnweTJX3AjXE6gUftmDSnHeYaPWvJT/E9uQrm1Hp5eWdK++/oyJqLQmBdCaoyuiQJI3Xn2VuWFFUjxgj2QDP1n0iCc+MX22ddc/Z2Gr76dz+glEFBFGF+1Of5aw5IWJDRLTuDuw5ecbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=PH22NjZs; arc=none smtp.client-ip=209.85.221.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-52384afabdeso2063878e0c.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 01:02:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1741078842; x=1741683642; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5UP7DmGMGEllBfFdaot9026+FUs+6/ByI4Mfm7p9ZUY=;
-        b=HoZUHGFH3Y3FTWhwkHDQQUy4JseQKHJd+NaXAIQ5OId1VHbF6srGTfUWL4YPG9UU6t
-         9OuRn+3XADWpRHOI/g7l9J+52arW586qdZvgBhfCMBlaE0P4Y32HnL9A55y/kA/LygU2
-         QLAFLzP+hw15qhUlx+v7gJXMXdycytGcpQy3cMiEwrSVjnlKCur0jKKGoJ/Bmh5RvL72
-         wCukzIqEB8iZTsvvm/H0yy1enT8OrcBWc9UGcVK7h+05c3b5r2TmsUSH5H9t6K4yJrHf
-         V+rHcKmRSsU7DWv/JJMNRxnl5SRe8seaabn8A3pcz4DXhK6XPoG68ge2jV0iqLSG7fXI
-         YyTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741078842; x=1741683642;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=sifive.com; s=google; t=1741078945; x=1741683745; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5UP7DmGMGEllBfFdaot9026+FUs+6/ByI4Mfm7p9ZUY=;
-        b=T+i708+VGeXYdZazrcN6hy4UxXd4s0UH9C5FpqRyaPFSbda8X6x0POhKuPUebTQGOU
-         b292BfIHOHB2q4/GWCP6LsZFM6/sxslFM3VPytcp5eANh78oNIe5QGYozGnNUANnmI06
-         yQDKFFXwekcUzECRnPO64gj85NYaZjpp9/irEBMPzJDmmi0HXBtOMlNdGAlhuy7y1II+
-         qOKZ1u/atXjFo4Pr4qZ2PN7V3fPEIiSLCrZ8OHKCQy8MwTv2xkFxo7UKqMo8JA7YUxF5
-         RfMfxXHaB+QibSfdi5Ux827TC6JQ6Txz2ezk+m7s8hYRiDnv51yjf63WsfoRC+lQJoOr
-         u+tg==
-X-Forwarded-Encrypted: i=1; AJvYcCUSROT+cH6n1U4v23yuAPqP3Ept//9+bmfUdI7SJH3zyBnFZn7pgTuJERP5uPMJWztHJ1YRTfGGypojmgA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKBEal1mB3w2bp+m231qY/iXVZGLEKiy50DF/2X3ra2KZcu6o7
-	Rp0m+E9zBKsDgPEMmlFnmxepT5w5lCijqiYD2pd7P4ULQOkbwbKgo7ar+FcQBXA=
-X-Gm-Gg: ASbGnctKXiwZwvNEYaZfoiljzISKykDcB++9S0/TZPErgqI88CfBtRyD3JL+zC4JJaE
-	AUzyyFIRvwFcseLTqy2oQ7ffgCbb850nv8lGm+4sVmTIl/Qep36f4OBZpgDCqSJM9bdhh7HEIkX
-	h6fgYdLnRofktMfAWhOqpcVi5oEKkw8nHuOEkyLHjHXN6F6e8uv8ojyy7y7UGZBlwFuVFlqA5UA
-	3mIiGRKB3SIqE2qLANbDWP8FJ1m/ZNnA+EX03w7QbudXgrgFr6kHy53A7T/bVtBSN5PRoM+YMyU
-	xom/MCMEvmKjmPxkJO47bP89x3WPHymI
-X-Google-Smtp-Source: AGHT+IE98Wtw/qck2RNdbUy35iBZdcuCmo9BHlXLPhcqJEgVkq5LxR8GTapjzExbGuStv6PALsyUfQ==
-X-Received: by 2002:a05:600c:3b23:b0:439:98b0:f8ce with SMTP id 5b1f17b1804b1-43ba66e60f5mr143195855e9.7.1741078842210;
-        Tue, 04 Mar 2025 01:00:42 -0800 (PST)
-Received: from localhost ([2a02:8308:a00c:e200::688c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bbf2edf84sm75715855e9.40.2025.03.04.01.00.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 01:00:41 -0800 (PST)
-Date: Tue, 4 Mar 2025 10:00:41 +0100
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Atish Patra <atishp@rivosinc.com>
-Cc: Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, kvm@vger.kernel.org, 
-	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] KVM: riscv: selftests: Allow number of interrupts
- to be configurable
-Message-ID: <20250304-bb96798e9a1fd292430df3e8@orel>
-References: <20250303-kvm_pmu_improve-v2-0-41d177e45929@rivosinc.com>
- <20250303-kvm_pmu_improve-v2-4-41d177e45929@rivosinc.com>
+        bh=kHhfxt/F9VYJEMZWHBt7TIGLZbK9Gj/o15ch1mv6/fM=;
+        b=PH22NjZs+MXc9xPCgd2NurOjCwl7Lj9yx8D8HTQylYJt906xtqrZBakrrDudIBrU+j
+         X0HPVwWakvDqQHhhTQ8lq4kUD74pbtjCmGrpTcvoFEx+ue1x/7nYlT3Tvts7LiCNJ0kk
+         vs+8iq0muE/TG59w5wRJCqZI2CU3FYgFtLKYQKUd8tjvOMMYdHPcmy1D4GPEg9UIoIfA
+         6EGSza4GrXSyJznNb78ZFfV4bSQWK76oqSHtKMazoyi9Uy/ol+kJrSoruLTUnAs32ON5
+         90Mt4YMASShJZtrQdwObcU4wzbOjdinXjws3zKD0AFhHJAG5NuE+XDpKSAKJwFHLQEGg
+         iztg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741078945; x=1741683745;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kHhfxt/F9VYJEMZWHBt7TIGLZbK9Gj/o15ch1mv6/fM=;
+        b=R8CAEtVDr4qaqe7FFVKQUw4VjqM4Q1jHRUXwrP9sHraHD3qHXG9P4gf6gZwC4IBSIu
+         1ilLUwkJy/l5pTBiHfrJTveOlgGMbd7bSnk5bMK4FHoK/gb7H9tYYDd7X4msagRDE2ee
+         IFAMJAL7btYowoKJ650xqWLuI6sIaJ4WHyXDLGjjnuS+CKaQqXLC4Z2yAZCkFv9kVNTP
+         h1JmmEoZfPeTasrzJkL+K1tAWOQtEufWYjilMEyGS0zb0pAWRi0erq68jmw9/cIy9Wq2
+         KqUYidJGLdOMLwFK001X2um9A02+1MemkOH63EZ3tcol14cl4UQGxeEMP3zGHL3ekUzB
+         2UWg==
+X-Gm-Message-State: AOJu0Yw6W1PaL8JipOTbi2nl5ggK4o+DgfMxzoShs0+MRE8+2W8dgTNW
+	8ipLUGPuo6q/819SeXSPPY0ATCKwWti3MUpPtl0ISDCVSqnulMGRYnDkO1TgUEYuEBhroi95GYY
+	+41AskCuFT89Ccqink7qF6nuzXmDyTWahtY5caQ==
+X-Gm-Gg: ASbGnctKT7m2OUYiu+eYbAfCQ7g9fNZF49y5PUAQYdzlVbPb2TMklO8tEzxxBeSVtyG
+	+oFsLfpJJ60Jfoj0b5xIFJWMhUWzpHKUPQ47RtvEVmk81ak1fttX+/7dIbckRuQi0YseM/NmC24
+	05nMKv7v+/VlEIS1hj4iL4tEPsI48W
+X-Google-Smtp-Source: AGHT+IE+NGonMa9x6tx3hTAC6JJ2acGmU95KDumJyPPEYsvv1984PUWQmP4MK//XiwgrQPqZuV+47KFn1mDTkh4WWnY=
+X-Received: by 2002:a05:6102:3f4a:b0:4c0:3349:cc4 with SMTP id
+ ada2fe7eead31-4c0448efd2emr11486700137.3.1741078944773; Tue, 04 Mar 2025
+ 01:02:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250303-kvm_pmu_improve-v2-4-41d177e45929@rivosinc.com>
+References: <20241224093902.1632627-1-nylon.chen@sifive.com>
+ <zqkx7cx5nalslfmxeoxdnsjbvrvzajrjybsmsyeyc65a64sntr@gpc5qp6aoyp7>
+ <CAHh=Yk-_0rKB=FG6Voif2MDjtRxzUA5vXDP2J-o5=8ru1ewt0w@mail.gmail.com>
+ <CAHh=Yk-TosOmwEughfK9mMx-=DgzWK5H_bf6H641SGh1ue8BrA@mail.gmail.com>
+ <zneb3qwgf52zitcbq4wz76shnmhwfkabbsts3sussjpc5s5tsz@uneaxdfp4m2f>
+ <CAHh=Yk_oTdURhkna_saF6mrA9gDY=+v_j5NoY_7jTDLuZ=EXtg@mail.gmail.com>
+ <7bcnckef23w6g47ll5l3bktygedrcfvr7fk3qjuq2swtoffhec@zs4w4tuh6qvm>
+ <5robb7ipl346daf3lqaqnsi3fcgj3wzmch5dqit2dczdyeknmv@dqft77bhwryg> <CAHh=Yk-p69ppWWspEzzznhDnuk3i6dRGKzUaqZCwg_uAxB3FVA@mail.gmail.com>
+In-Reply-To: <CAHh=Yk-p69ppWWspEzzznhDnuk3i6dRGKzUaqZCwg_uAxB3FVA@mail.gmail.com>
+From: Nylon Chen <nylon.chen@sifive.com>
+Date: Tue, 4 Mar 2025 17:02:13 +0800
+X-Gm-Features: AQ5f1Jp7DGsp1Vyy94pQwTGcyJhhurEJDZS278bFkBXavKP5rDxyvxdNjmgaOc0
+Message-ID: <CAHh=Yk8kC1+D4dPQ7iAtn1WSPSk+OU6vwEyGF9VZAS5o5gPHmA@mail.gmail.com>
+Subject: Re: [PATCH v10 0/3] Change PWM-controlled LED pin active mode and algorithm
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	devicetree@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Samuel Holland <samuel.holland@sifive.com>, linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 03, 2025 at 02:53:09PM -0800, Atish Patra wrote:
-> It is helpful to vary the number of the LCOFI interrupts generated
-> by the overflow test. Allow additional argument for overflow test
-> to accommodate that. It can be easily cross-validated with
-> /proc/interrupts output in the host.
-> 
-> Signed-off-by: Atish Patra <atishp@rivosinc.com>
-> ---
->  tools/testing/selftests/kvm/riscv/sbi_pmu_test.c | 38 +++++++++++++++++++-----
->  1 file changed, 31 insertions(+), 7 deletions(-)
+Nylon Chen <nylon.chen@sifive.com> =E6=96=BC 2025=E5=B9=B41=E6=9C=8823=E6=
+=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8A=E5=8D=888:20=E5=AF=AB=E9=81=93=EF=BC=9A
 >
+> Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com> =E6=96=BC 2025=E5=B9=
+=B41=E6=9C=8822=E6=97=A5 =E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=887:44=E5=AF=AB=
+=E9=81=93=EF=BC=9A
+> >
+> > Hello Nylon,
+> >
+> > I took another look in the driver and found another problem:
+> Hi Uwe, Thank you for the information.
+>
+> I'll need some time to verify and understand these details, as well as
+> conduct the relevant tests
+> >
+> > On Tue, Jan 21, 2025 at 07:12:10PM +0100, Uwe Kleine-K=C3=B6nig wrote:
+> > > On Tue, Jan 21, 2025 at 04:47:46PM +0800, Nylon Chen wrote:
+> > > > Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com> =E6=96=BC 2025=
+=E5=B9=B41=E6=9C=8821=E6=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8B=E5=8D=883:47=E5=
+=AF=AB=E9=81=93=EF=BC=9A
+> > > > >
+> > > > > Hello,
+> > > > >
+> > > > > On Sun, Jan 19, 2025 at 03:03:16PM +0800, Nylon Chen wrote:
+> > > > > > I ran some basic tests by changing the period and duty cycle in=
+ both
+> > > > > > decreasing and increasing sequences (see the script below).
+> > > > >
+> > > > > What is clk_get_rate(ddata->clk) for you?
+> > > > 130 MHz
+> > >
+> > > OK, so the possible period lengths are
+> > >
+> > >       (1 << (16 + scale)) / (130 MHz)
+> > >
+> > > for scale in [0, .. 15], right? That's
+> > >
+> > >       2^scale * 504123.07692307694 ns
+> > >
+> > > So testing period in the range between 5000 ns and 15000 ns isn't
+> > > sensible? Did I get something wrong? If the above is right, switching
+> > > between period=3D1008246 ns and 1008247 ns is likely to trigger a
+> > > warning.
+> >
+> > The possible periods are of the form
+> >
+> >         2^scale * A
+> >
+> > where A is constant and only depends on the input clock rate. scale
+> > ranges over [0, ... 15]. (If I got it right in my last mail, we have A =
+=3D
+> > 504123.07692307694 ns.)
+> >
+> > If you request say:
+> >
+> >         .period =3D 3.9 * A
+> >         .duty_cycle =3D 1.9 * A
+> >
+> > the period actually emitted by the PWM will be 2 * A. But to calculate
+> > frac the originally requested period (i.e. 3.9 * A) is used. So frac
+> > becomes 31927 resulting in .duty_cycle being ~0.974 A. A better value
+> > would be frac =3D 62259 which results in .duty_cycle =E2=89=85 1.9 * A.
+> > (Depending on A the values for frac might be off by one due to rounding
+> > differences.)
+> >
+> > So I would expect that PWM_DEBUG is angry with you if you go from
+> >
+> >         .period =3D 2 * A
+> >         .duty_cycle =3D 1.9 * A
+> >
+> > to
+> >
+> >         .period =3D 3.9 * A
+> >         .duty_cycle =3D 1.9 * A
+> >
+> > .
+> >
+> > Best regards
+> > Uwe
 
-Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+Hi Uwe, Based on your suggestions, I conducted relevant tests and
+corrected algorithm errors.
+
+According to this test program, I can make the system generate related
+error messages on v10's patchset.
+
+e.g.
+[ 75.043652] pwm-sifive 10021000.pwm: .apply is supposed to round down
+duty_cycle (requested: 360/504000, applied: 361/504124)
+[ 75.055042] pwm-sifive 10021000.pwm: .apply is supposed to round down
+period (requested: 504000, applied: 504124)
+
+PWMCHIP=3D1
+PWMCHANNEL=3D0
+PERIOD=3D504000
+STEP=3D1
+MAX_DUTY=3D504000
+
+echo 0 > /sys/class/pwm/pwmchip${PWMCHIP}/export
+
+echo $PERIOD > /sys/class/pwm/pwmchip${PWMCHIP}/pwm${PWMCHANNEL}/period
+echo "Set period to $PERIOD ns (scale=3D0 region)"
+
+COUNT=3D$((MAX_DUTY / STEP))
+echo "Testing duty-cycle from 0 to $MAX_DUTY in step of $STEP..."
+echo "Total steps (forward): $((COUNT+1))"
+
+
+CURRENT=3D0
+while [ $CURRENT -le $MAX_DUTY ]; do
+    echo $CURRENT > /sys/class/pwm/pwmchip${PWMCHIP}/pwm${PWMCHANNEL}/duty_=
+cycle
+    CURRENT=3D$((CURRENT + STEP))
+done
+
+echo "Now do a backward test from $MAX_DUTY down to 0 in step of $STEP..."
+echo "Total steps (backward): $((COUNT+1))"
+
+
+CURRENT=3D$MAX_DUTY
+while [ $CURRENT -ge 0 ]; do
+    echo $CURRENT > /sys/class/pwm/pwmchip${PWMCHIP}/pwm${PWMCHANNEL}/duty_=
+cycle
+    CURRENT=3D$((CURRENT - STEP))
+done
+
+
+echo 0 > /sys/class/pwm/pwmchip${PWMCHIP}/pwm${PWMCHANNEL}/enable
+echo ${PWMCHANNEL} > /sys/class/pwm/pwmchip${PWMCHIP}/unexport
+
+echo "Done!"
+
+Based on your previous suggestions, I have made the following related
+modifications, and now I'm able to fix the relevant errors.
+
+But I want to make sure my understanding aligns with your suggestions,
+so I'd like to discuss with you first before sending the patch.
+
+- In .apply, use "round down" for calculations to ensure the value
+doesn't exceed what the user requested. (Never set a duty cycle higher
+than what the user requested.)
+pwm_sifive_apply() {
+    - frac =3D DIV64_U64_ROUND_CLOSEST(num, state->period);
+    +frac =3D num / state->period;
+}
+- When converting hardware values back to duty_cycle in .get_state,
+use "round up" to compensate for the errors introduced by .apply.()
+pwm_sifive_get_state() {
+    - state->duty_cycle =3D (u64)duty * ddata->real_period >> PWM_SIFIVE_CM=
+PWIDTH;
+    + state->duty_cycle =3D DIV_ROUND_UP_ULL((u64)duty *
+ddata->real_period, (1U << PWM_SIFIVE_CMPWIDTH));
+}
 
