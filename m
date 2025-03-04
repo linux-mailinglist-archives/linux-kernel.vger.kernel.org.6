@@ -1,116 +1,113 @@
-Return-Path: <linux-kernel+bounces-545535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B54CA4EE45
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:23:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C159A4EE47
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:23:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D774189077C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:23:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7CB316C803
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:23:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94FE524C096;
-	Tue,  4 Mar 2025 20:23:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 758E024C096;
+	Tue,  4 Mar 2025 20:23:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="WNPh3e5p"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EcW9W9An"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A34A1FA178;
-	Tue,  4 Mar 2025 20:23:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0FF81FAC34;
+	Tue,  4 Mar 2025 20:23:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741119807; cv=none; b=SYwgia0E0Zi9YPU6ZUSEqlSGvSSuTNpmgIVYerlV58CnHJzGiptA/9sLjsHI4xKcNdXsvQoZ4VDMq5PmavmmdaGwtAjPhyfIS09AR/lwVq9u59rqGQKFj+2WjGjybsOenkuN0+CdXYYGiWuCh8+aWloIQnVwohrcZ4sO1zbvPj0=
+	t=1741119821; cv=none; b=swXg+VKJaW6BmbN0EaIMn4NAHShXBywyQWxas505vhQGF8k6SFv1TejtMgNRlfWyJmOPD6lhlROVMZci7OzdXLc1Eglva4rmcTnks77J/r5yIgepJj3gnwXhpnojuZ3HT+EmQCjYaqPkm8NUFtGFfN3p2QEJd6UvrCiKUuxY4Uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741119807; c=relaxed/simple;
-	bh=nGGYL3cDvTVN8v68H4alhERUircqCGV/HD6MPfzPqx8=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=dVmKxHPc8V9qaJ01F4608QWsn+65PdDEggskgic4H5yn6W2OBRNHWqHK+lu53tBjhj+vfIofucEHObq01pz00VJhZw/++L9IBccx5eEMAezUEUkLk0QqgPEPVhAzO5ZksA3/1p8okLUHeYmsOe3lPba+WMCpW5qY7CiUnA/T2hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=WNPh3e5p; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1741119821; c=relaxed/simple;
+	bh=g789kfaQQHuo8kTSk/c93II7xSW10weQSTmmIUy/3U4=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Uqso9pdpWQBcqwuvC3P+ipNI/vRablaYeSgY9SH2gd7uI8ZhwbWy9Que0VqfXRdBJ4KsrlMrxrhljfzKUeyhwechOIGF+PSBbzE3raW6viAk1FTCueSn5WFv2nwetCRm1T/fhFQUqrhLQZwDIzCkX8PGBwGN8iw15zVe/J1xdjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EcW9W9An; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41DCCC4CEE5;
+	Tue,  4 Mar 2025 20:23:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741119821;
+	bh=g789kfaQQHuo8kTSk/c93II7xSW10weQSTmmIUy/3U4=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=EcW9W9AnrJDv/H0Z0CwTnNLWDwqkpQaptMqLhQFf3E67zhkcaTE9j2mupXVyYuUQO
+	 tiduBhr6E4zDJgWwhtQLIQ/JolA7Sw2IjvAV3ploV+zL64dhLA8Bp48tXjIjQO8Wvk
+	 mIIZLG+WMnHDpsYhqcE4s4XAQ3PXlpcp5LrwI4KUVq1urMMu61YFCXVq3ReYvwyOso
+	 JYNSJgwSihaT0jveyjFw+h+CxRBhngtRUSDJQYQeca5soQXm9JcISym+inMRtzBq0o
+	 VpBSn+WlInOyfHAsyPdCi8PSL6sarQr4Quh4BlAj9acxebwhzhISmBQCgFSe1dMUHi
+	 MIu7U55nBxDjg==
+Date: Tue, 4 Mar 2025 21:23:38 +0100 (CET)
+From: Jiri Kosina <jikos@kernel.org>
+To: Aditya Garg <gargaditya08@live.com>
+cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>, 
+    "bentiss@kernel.org" <bentiss@kernel.org>, 
+    Alex Henrie <alexhenrie24@gmail.com>, 
+    "jose.exposito89@gmail.com" <jose.exposito89@gmail.com>, 
+    "bruners@gmail.com" <bruners@gmail.com>, 
+    "seobrien@chromium.org" <seobrien@chromium.org>, 
+    Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+    "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
+Subject: Re: [PATCH v2 1/4] HID: apple: Use common table for MacBook Pro fn
+ mapping
+In-Reply-To: <CEFE855F-CC63-4361-8ABD-875BD5662294@live.com>
+Message-ID: <sp111ppn-q3pn-20rp-92n0-rqn0p2s7s7n5@xreary.bet>
+References: <CEFE855F-CC63-4361-8ABD-875BD5662294@live.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1741119802;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=U2sqEAxGJv2uGZqDwGrSnxcuM3qMt5QnCoz/T7iEsGY=;
-	b=WNPh3e5psK966rm8ClScI8cegZulUjpiLwARCd4gpgUwa6Zx6B1/pufdZQy6A+HJHxL2vI
-	dRT/9TzI6o24gv79nwK6r6q4uEhck3xgSAzyO15jYeukAy2cwig1FWFJfRV8Lp64xwLJF+
-	miqoRz6zokio8gKJzZFyQhlPKPyTLr9JUkWAF8goplg75vvp+q7piNvWsxCoHoSviskbVe
-	4U0fUGu2Sp3NVOpcETTE/39mSmEu3REBFj9EGJ5Qu/biUJaHkYMJoEFpgSmps3Nrf453nF
-	s1GDjeIDJbNheYF8ATNdjkCLHZDCDBc2/5XKEP4pVcR0PLiwTn/naS1h3cp0dQ==
-Date: Tue, 04 Mar 2025 21:23:21 +0100
-From: Dragan Simic <dsimic@manjaro.org>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Heiko Stuebner <heiko@sntech.de>,
- Sebastian Reichel <sebastian.reichel@collabora.com>, Arnd Bergmann
- <arnd@arndb.de>, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pmdomain: rockchip: add regulator dependency
-In-Reply-To: <20250304142803.689201-1-arnd@kernel.org>
-References: <20250304142803.689201-1-arnd@kernel.org>
-Message-ID: <57dc1e1b8a3f1134c5eed050a81de1b7@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII
 
-Hello Arnd,
+On Fri, 14 Feb 2025, Aditya Garg wrote:
 
-On 2025-03-04 15:27, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+> From: Aditya Garg <gargaditya08@live.com>
 > 
-> When CONFIG_REGULATOR is disabled, this pmdomain driver fails to build:
+> The only difference between the fn mapping of the MacBook Pros with esc key
+> and those without is of the presence of KEY_GRAVE in the translation table.
 > 
-> drivers/pmdomain/rockchip/pm-domains.c:653:30: error: implicit
-> declaration of function 'devm_of_regulator_get'; did you mean
-> 'devm_regulator_get'? [-Wimplicit-function-declaration]
->   653 |                 pd->supply = devm_of_regulator_get(pmu->dev,
-> pd->node, "domain");
->       |                              ^~~~~~~~~~~~~~~~~~~~~
->       |                              devm_regulator_get
-> drivers/pmdomain/rockchip/pm-domains.c:653:28: error: assignment to
-> 'struct regulator *' from 'int' makes pointer from integer without a
-> cast [-Wint-conversion]
->   653 |                 pd->supply = devm_of_regulator_get(pmu->dev,
-> pd->node, "domain");
->       |                            ^
+> We can easily use a flag instead of writing the whole table again to omit
+> it from the models that have an esc key.
 > 
-> Add a Kconfig dependency.
+> Additionally, APPLE_IGNORE_MOUSE quirk was unused in this driver, so has
+> been removed in this commit.
 > 
-> Fixes: db6df2e3fc16 ("pmdomain: rockchip: add regulator support")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Aditya Garg <gargaditya08@live.com>
 > ---
->  drivers/pmdomain/rockchip/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
+> drivers/hid/hid-apple.c | 72 ++++++++++++++++-------------------------
+> 1 file changed, 27 insertions(+), 45 deletions(-)
 > 
-> diff --git a/drivers/pmdomain/rockchip/Kconfig
-> b/drivers/pmdomain/rockchip/Kconfig
-> index 7e4f9b628f0b..218d43186e5b 100644
-> --- a/drivers/pmdomain/rockchip/Kconfig
-> +++ b/drivers/pmdomain/rockchip/Kconfig
-> @@ -5,6 +5,7 @@ config ROCKCHIP_PM_DOMAINS
->  	bool "Rockchip generic power domain"
->  	depends on PM
->  	depends on HAVE_ARM_SMCCC_DISCOVERY
-> +	depends on REGULATOR
->  	select PM_GENERIC_DOMAINS
->  	help
->  	  Say y here to enable power domain support.
+> diff --git a/drivers/hid/hid-apple.c b/drivers/hid/hid-apple.c
+> index 49812a76b..e31c9e8e8 100644
+> --- a/drivers/hid/hid-apple.c
+> +++ b/drivers/hid/hid-apple.c
+> @@ -30,7 +30,7 @@
+> #include "hid-ids.h"
+> 
+> #define APPLE_RDESC_JIS		BIT(0)
+> -#define APPLE_IGNORE_MOUSE	BIT(1)
+> +/* BIT(1) reserved, was: APPLE_IGNORE_MOUSE */
+> #define APPLE_HAS_FN		BIT(2)
+> /* BIT(3) reserved, was: APPLE_HIDDEV */
+> #define APPLE_ISO_TILDE_QUIRK	BIT(4)
+> @@ -43,7 +43,8 @@
+> #define APPLE_IS_NON_APPLE	BIT(11)
+> #define APPLE_MAGIC_BACKLIGHT	BIT(12)
 
-Looking good to me, thanks for this patch.
+This patch is corrupt -- the context lines are missing the leading space. 
+For some reason, it's only the 1/4 which is corrupted, the rest is fine.
 
-Reviewed-by: Dragan Simic <dsimic@manjaro.org>
+Can you please look into this and resubmit?
+
+Thanks,
+
+-- 
+Jiri Kosina
+SUSE Labs
+
 
