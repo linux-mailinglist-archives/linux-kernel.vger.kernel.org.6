@@ -1,170 +1,135 @@
-Return-Path: <linux-kernel+bounces-542932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2B2BA4CF8D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 00:59:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31B03A4CF92
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:01:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF8BF188846A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Mar 2025 23:59:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37A1D3A2DF6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 00:01:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC2001F418B;
-	Mon,  3 Mar 2025 23:59:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 541B511CAF;
+	Tue,  4 Mar 2025 00:01:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Eb4BMwjL"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="nd6yLpHJ"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF29DF9E6;
-	Mon,  3 Mar 2025 23:59:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC2E2111
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 00:01:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741046380; cv=none; b=Z1tUFaLLa7W1ZMrjp3Id/L/sFyz66zQ7rJgKXxeGPa6EYMZRrPlrcA8GR/ziTtiKtDhyNt52h98u6zDkA+wDjlLtZELdHyYIT2fksYoCeyxOwVPPtd/E6u0DAtBAlKOE+4qg2DT4pT3Px867Xr3ujflA6daY8UsB1KN9ue7Jc1Q=
+	t=1741046487; cv=none; b=gbj6GVPipt1+VG9qgNdDUuza+RowbZfK4HYiXhpeE7ZeWxBUFS9/JwTAEbclnU2LysMNxu0vyGYGD/iyucFeE740xpSf0o0ymrjvbAJMeBOigIuO1RBpyu2jilE5hINuthYaCviwuocYO9N5JGYWIUcsx0/ZnNrwueW17XkEG6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741046380; c=relaxed/simple;
-	bh=04bpoOcPW4nahyQoGffhYfeUl/7cvNwek56IxXN5nLE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZOJQnHDOlOhGV9QeE1uKD7UCn4dLjPDEwmkwAkS1AFPR0/d+R2iMhymtt/3NKgaoN+TWN2nBwuN2JQUOoMdEfSYBhTsuLX6pB3N1FqsD2VkzwJuMPVmxO53mOzLjw6VhbTMQkW8P57fXbGRuUUR3UkWR5F+A0fqREu4yOY4qd4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Eb4BMwjL; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2239aa5da08so33309705ad.3;
-        Mon, 03 Mar 2025 15:59:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741046378; x=1741651178; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+Nl5k4lX8ykAjaBSh+OFtZkq9yFs9ZO8ZZS3/cchBXs=;
-        b=Eb4BMwjLNVgxGLZxkvHkNoIp0NdzIsYMeH0xT4a4aApjEPMVBM1HYzX8pKRoMkaJRQ
-         Af80Pv+i0WL8lxpr7EwIYVg6hIa1JaaEAXzTV4UVL7nPNIQiRNEs8zH3yHaBx86uPtr0
-         G37EDMVlrhOXMx2SZWLzqTRPPSDHrJSziLZuu+7oyf7/v4cEkoPF4T9PL2Es6wqEIS9Q
-         NBfXkaONCft1aDPTt37CCHzrcjYJzMy0L2nlw3yFwpMZdjUm0qcYRX5iGDt62PTXaBAm
-         F5dgB03vPr6WcvP/keuxHDamJQQEOCp0Q4rAm1kL49psc+rpTTgJLUbY0dj7cQodQK3w
-         sC/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741046378; x=1741651178;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+Nl5k4lX8ykAjaBSh+OFtZkq9yFs9ZO8ZZS3/cchBXs=;
-        b=T72s71oiL89FOGswB3aKhXZ5ZFyhVQGDpM7z0Sqr85eJB06TyGSvne2J5vmqCxBnPq
-         yIJQxq+d/DRfaZXpsjS/M66B5sH4pLY1lLZVXWb0xP5ZtcMt5fZDLfkDprUlXy78svDM
-         kDqG3EO3d3vss/4tbddCZT2ScaN8h0pYdvMRmecMuGDv6F3D8IDDEYar6ShdxxlIrKcc
-         9fReFXwmWjCwL2xGZhyk4OaZ5TAFzIuaJKvweSHBI7fza4xuuEnmb22mciZ/gSYsYjGB
-         EgPFWvij/q+pNcgKiFpbq0P2K3xdQFP1etKpozzKNnXIYJcyFjF2ouZUI9DXQpBEUI+f
-         ppBw==
-X-Forwarded-Encrypted: i=1; AJvYcCUU03s1U68wOjAfeH6QXLZ2P6DbmK/vFl2hBNHzOL1nHP8BjQgmG1dV36DvPgw6ZB2q8RmdWaVzuPMF@vger.kernel.org, AJvYcCUWzPLGNU8xVMS3196Q9qiYIu9ulGaO7GxHA2RYxKJmPoZNHz40BCtT9ci8y7XzMJIiySLUzzj9m68G@vger.kernel.org, AJvYcCUuQMXTdoYNgCMEt7XCvcbOAr3Q+YHdFOz6e6Fo1m2pinzFm7a2R2VFSo0e5xnwprm1go2qwTs3ZIPJX+9F@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKFPin54UOk7AP/GxDPpK25ehZJFgzv7q70ISGJqm6sfq5gsia
-	sI2Jk5UxCr4sxO+ZJgfjuCh3VXvSZx2khQAPQn/tD4bfSG09wVoY
-X-Gm-Gg: ASbGnctB3eAmQy8JNRpvysWFETF8vjDlpobkuU8CyjNoj3CguoFl7LDDwSMX0FGr1lk
-	8mpKKE/+xCLCp0J1ROmASsWOuGf17KujpyrMxIY6hqhffkr9psEy/rff2S+Qn6xS4QPNrDmTlOX
-	n7yZHLrEirbtKT25NFYdNorA3yLtBY4fNEHZm4AWl1YONJmJbRhR/Sulz6TWqqswJU6w+LS8Yb+
-	S2S6BB29GtE1kp8RuIrpuIAVk6YYmC64HXplyoGlQMq+BAYzRZBDHQNuZJZdnDfg5jWCq4GJu+E
-	9CAURcOtt5KGm1tzX9gyfMbzT+Me8ywwKBo3RFe9KLy08ZK+dig9KU3xWqL7skBHv6UG
-X-Google-Smtp-Source: AGHT+IGk+zORULG18C0l/CqE4lIgOVZvq9u81/ReypCKT4mvBK1lYyGlpNr3ONZlH2rHl5CMFl/KhA==
-X-Received: by 2002:a17:902:ce91:b0:223:64bb:f657 with SMTP id d9443c01a7336-2236922352bmr222799545ad.46.1741046377894;
-        Mon, 03 Mar 2025 15:59:37 -0800 (PST)
-Received: from danascape.tail34aafc.ts.net ([2402:e280:218d:2e5:7b03:1e42:d492:fb71])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22350531e1asm83591775ad.240.2025.03.03.15.59.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 15:59:37 -0800 (PST)
-From: Saalim Quadri <danascape@gmail.com>
-To: jic23@kernel.org
-Cc: lars@metafoo.de,
-	Michael.Hennerich@analog.com,
-	gregkh@linuxfoundation.org,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	21cnbao@gmail.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	Saalim Quadri <danascape@gmail.com>
-Subject: [PATCH v2] dt-bindings: iio: accel: add binding documentation for ADIS16203
-Date: Tue,  4 Mar 2025 05:29:30 +0530
-Message-Id: <20250303235930.68731-1-danascape@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1741046487; c=relaxed/simple;
+	bh=P5R/RgIqeP/KfKRnjVtKEA58e26ppdUp1KhNDaJxaDY=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=dKrLDL/DUsC9au2klDAdgTawUcb53ltgjxJk85c8BTsFbY9RHGLVRIiA0TJl2n02Cnqz3N2ZmaGtezyjCulkMCBGgwU4+TnaPdHQ/ZmR6tV02xp8cprIp7UkHA5Kya1vwcWqqu2O82HPtyVCUUxx+J62SgLmp5tNvnG13HRVUy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=nd6yLpHJ; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 524010NI1811612
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Mon, 3 Mar 2025 16:01:01 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 524010NI1811612
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025021701; t=1741046461;
+	bh=lJdD/YUi/+OsqJgKys0xBxpQPcp02FkByxHMRB72V3o=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=nd6yLpHJJET+Oqz+KefAH9K7U314x9HVXuylxERZw7z62DOEyfsk1kt+0AzFis0V5
+	 5uf0QMn0kW27Oul/qCpzVJtnGkBnBfB5fqt0NTM057FyjJVjNJks3qu3F48vNcdgpj
+	 tLxqbVN8Vh/3Qgg/K1Ur25gPCWPSUw369X0Bb+iU9HudQuVm4x35yiSC3Fcmqm3PBG
+	 1jnsoKFrZz8DRUS3E0n8FtJSRUVFnhsUkHadfomZ1oiHBgaRw40CtFXX1YeGRboLaC
+	 Ay43DiWkksXFJY3oB5f/3fYIj3EIctWBofacmmpstIhHSiK/2xine5CjPYvLDujlVn
+	 qJ6ATe+lA7xuQ==
+Date: Mon, 03 Mar 2025 16:01:00 -0800
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Brian Gerst <brgerst@gmail.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org
+CC: Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>
+Subject: Re: [PATCH] x86/asm: Merge KSTK_ESP() implementations
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20250303183111.2245129-1-brgerst@gmail.com>
+References: <20250303183111.2245129-1-brgerst@gmail.com>
+Message-ID: <9FC474C9-284D-4EB5-BF8A-7B938247E577@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-This patch add device tree binding documentation for ADIS16203.
+On March 3, 2025 10:31:11 AM PST, Brian Gerst <brgerst@gmail=2Ecom> wrote:
+>Commit 263042e4630a ("Save user RSP in pt_regs->sp on SYSCALL64
+>fastpath") simplified the 64-bit implementation of KSTK_ESP() which is
+>now identical to 32-bit=2E  Merge them into a common definition=2E
+>
+>No functional change=2E
+>
+>Signed-off-by: Brian Gerst <brgerst@gmail=2Ecom>
+>---
+> arch/x86/include/asm/processor=2Eh | 5 +----
+> arch/x86/kernel/process_64=2Ec     | 5 -----
+> 2 files changed, 1 insertion(+), 9 deletions(-)
+>
+>diff --git a/arch/x86/include/asm/processor=2Eh b/arch/x86/include/asm/pr=
+ocessor=2Eh
+>index a969bea1ed07=2E=2E55f0e48413b0 100644
+>--- a/arch/x86/include/asm/processor=2Eh
+>+++ b/arch/x86/include/asm/processor=2Eh
+>@@ -652,8 +652,6 @@ static __always_inline void prefetchw(const void *x)
+> 	=2Esysenter_cs		=3D __KERNEL_CS,				  \
+> }
+>=20
+>-#define KSTK_ESP(task)		(task_pt_regs(task)->sp)
+>-
+> #else
+> extern unsigned long __top_init_kernel_stack[];
+>=20
+>@@ -661,8 +659,6 @@ extern unsigned long __top_init_kernel_stack[];
+> 	=2Esp	=3D (unsigned long)&__top_init_kernel_stack,		\
+> }
+>=20
+>-extern unsigned long KSTK_ESP(struct task_struct *task);
+>-
+> #endif /* CONFIG_X86_64 */
+>=20
+> extern void start_thread(struct pt_regs *regs, unsigned long new_ip,
+>@@ -676,6 +672,7 @@ extern void start_thread(struct pt_regs *regs, unsign=
+ed long new_ip,
+> #define TASK_UNMAPPED_BASE		__TASK_UNMAPPED_BASE(TASK_SIZE_LOW)
+>=20
+> #define KSTK_EIP(task)		(task_pt_regs(task)->ip)
+>+#define KSTK_ESP(task)		(task_pt_regs(task)->sp)
+>=20
+> /* Get/set a process' ability to use the timestamp counter instruction *=
+/
+> #define GET_TSC_CTL(adr)	get_tsc_mode((adr))
+>diff --git a/arch/x86/kernel/process_64=2Ec b/arch/x86/kernel/process_64=
+=2Ec
+>index 4ca73ddfb30b=2E=2Ef983d2a57ac3 100644
+>--- a/arch/x86/kernel/process_64=2Ec
+>+++ b/arch/x86/kernel/process_64=2Ec
+>@@ -979,8 +979,3 @@ long do_arch_prctl_64(struct task_struct *task, int o=
+ption, unsigned long arg2)
+>=20
+> 	return ret;
+> }
+>-
+>-unsigned long KSTK_ESP(struct task_struct *task)
+>-{
+>-	return task_pt_regs(task)->sp;
+>-}
+>
+>base-commit: 693c8502970a533363e9ece482c80bb6db0c12a5
 
-Signed-off-by: Saalim Quadri <danascape@gmail.com>
----
-Changes:
-V1 - V2: change compatible property from enum to const
-
- .../bindings/iio/accel/adi,adis16203.yaml     | 52 +++++++++++++++++++
- 1 file changed, 52 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/iio/accel/adi,adis16203.yaml
-
-diff --git a/Documentation/devicetree/bindings/iio/accel/adi,adis16203.yaml b/Documentation/devicetree/bindings/iio/accel/adi,adis16203.yaml
-new file mode 100644
-index 000000000000..64370f13e1dc
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/accel/adi,adis16203.yaml
-@@ -0,0 +1,52 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/iio/accel/adi,adis16203.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Analog Devices ADIS16203 Programmable 360 Degrees Inclinometer
-+
-+maintainers:
-+  - Barry Song <21cnbao@gmail.com>
-+
-+description: |
-+  https://www.analog.com/media/en/technical-documentation/data-sheets/adis16203.pdf
-+
-+properties:
-+  compatible:
-+    const:
-+      - adi,adis16203
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  vdd-supply: true
-+
-+required:
-+  - compatible
-+  - reg
-+
-+allOf:
-+  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    spi {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        accelerometer@0 {
-+            compatible = "adi,adis16203";
-+            reg = <0>;
-+            spi-max-frequency = <2500000>;
-+            interrupt-parent = <&gpio0>;
-+            interrupts = <0 IRQ_TYPE_LEVEL_HIGH>;
-+        };
-+    };
-+...
--- 
-2.34.1
-
+Why using the macro version?
 
