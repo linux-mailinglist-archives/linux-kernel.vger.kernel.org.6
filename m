@@ -1,148 +1,126 @@
-Return-Path: <linux-kernel+bounces-543314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8588FA4D42F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:59:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34AD6A4D432
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:01:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E97523AE7C8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:59:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6104516EDE0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:01:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E3811F55ED;
-	Tue,  4 Mar 2025 06:59:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52D681F4624;
+	Tue,  4 Mar 2025 07:01:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rr+sJjfD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kFLca5Hb"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48CD1EF390;
-	Tue,  4 Mar 2025 06:59:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6D218CBF2
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 07:01:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741071588; cv=none; b=hDXgE0qAOdK9hLzNeWb92BKrGCLpwRfkCWJobd625gImM6syT5z2sLRWaP0B0efUHhgwqdeuj7LkgWzmzczNs3R88K19EpBNXIqm7CvGbmsh65HMB5w5N8WJXikGdaN4NUpNQshCskYCTdFE/aZZteYBhEeMYXRO90GOaTlEdJ8=
+	t=1741071671; cv=none; b=G7Uc65GQG5un9rCAJOUuTjZvaD21YakkX3jPut7+83l3yblNxWgntQkM3ia/m8dsZKmf/KXaBS/ByTC3o823FTLcFjn7zGm85mjsJdfvOOkGrD87cOz+DJmgwpAt/tQZhg86RbjrUzaEfnucyuc5rqRfWTHcG3lEe9iP/7f/PfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741071588; c=relaxed/simple;
-	bh=kr1MlLkUvXnJK4moIGHmKvRLo6aCdXr1p//y8n5XClo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GVYM+mBG7d+pW/5ULgeMaKpHbmV/djm91GUTMaVxJomMyr4pC7BdSLIXA+3KD5mOcslHRs0UGeaqpdf/BA4YODIZcl4MLi7G0CMIjAk8rsR913ypLN9g7KAivRGuwbX/kCNGjtSLpAwLkxT+ZtxyhbWjO5cipKm8Qg2UGZoO6q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rr+sJjfD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FDA3C4CEE9;
-	Tue,  4 Mar 2025 06:59:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741071588;
-	bh=kr1MlLkUvXnJK4moIGHmKvRLo6aCdXr1p//y8n5XClo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Rr+sJjfD3v6gYV2jfQqqdh1uAsVBkApcJKK92gXJQWF/ZN2oBHLpY0MI84409qOVI
-	 D+qo353p/ZcUZUlWry9xEHohUrpYW1MpPIK2lDoRHjec8mSpJ13DQb9Luq19xWedU0
-	 rTpUSqIMoTKphuBMmeAovoN1sdwzg+2NWB+deHgXVE5vKKBDzGvCGF/GnjtpNp0LV6
-	 vtcwucKwHx0Dr2xiDrfqViFwddweT8xCVOB2/4i5XMZxMTPWK8kc0s+rewq2kvKii6
-	 79MMBwQWZxjrMyrG0hccCTlPB8YBrHtodP/LKRjONkls18ztVzzk5uGdPwf2QzN+Re
-	 3wbFX920gIXEw==
-Message-ID: <08f39668-99e7-4d66-b3a5-b21c89934902@kernel.org>
-Date: Tue, 4 Mar 2025 07:59:42 +0100
+	s=arc-20240116; t=1741071671; c=relaxed/simple;
+	bh=WeoK4O4lNVf1jf3RL4kog/vPaezBLPVB+yX+IBUebZs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=GZkRCkEnJRfO88qn6hofQteVK8oxCj5XzkU7raq0oUDkiRfVgpfbcvCSv29T1spSftSUCwYhZTeMtGmIXLzzXYtI9d3FdB2Xc8O1DVK/Mdcx7aFU5Ik4yBqJhp58hzTXM/DbGhPwr3D9nik6q/UK58lqS2bn76sH2d3CQNJbZ7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kFLca5Hb; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-abf42913e95so523499466b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 23:01:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741071668; x=1741676468; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YSdQFiVMCrS5O9/EkwHKFfamzvbURyk8m93xw+1w4DU=;
+        b=kFLca5Hb30n3UWwFIlGhDXf1JnSJVCgZRapyX4U4p6xFm5XzpGBl29g+frv7oCXOc7
+         ta2gpOe2KP5V1EPggK0a+7F6kmNbqFylwINo3CSM0bPka3+YDtOUO+/H7ASDh5Ybusva
+         DRkowRgqE58lU/5kZWOCYTUARzc/hnwuvLuAWNhZa2TQ0RbiaT7++XaR7u/yEIMih9py
+         rscFulH1qYeIpkY5Un8kYCytSCezAOBYT5W6m2l4pHgKAvG76nlSBLOOvsXoR5he7Cw5
+         TSut2iecizCnAQton7W/GtOT/Qz0RwdHps1q0CJ5IPjmsxc4YFn5EeOKdrGEvKVD6C3O
+         suvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741071668; x=1741676468;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YSdQFiVMCrS5O9/EkwHKFfamzvbURyk8m93xw+1w4DU=;
+        b=wONQWiaQ3mFxUCm2Q/kGWtWn4n4csMrEzCfLjvf1PlTg7GBMxVyojoj2BcAcSIBVTc
+         K261aDPjJF/MX+YUyzZbiwPusPNkMuwba67geTH4ljvLqBdk8X56pWOatjWPlf4U1biJ
+         OAYf8XD68kXJ3/F69tnAVjYLUyYWUbpZ42xg5UzrSNZpWPkPurqpqXsCs+i12NlEjcpQ
+         fqWy+cc8yfRJqrQQBf1youOtpdQCriVw744BW8I9fvtE1Ixz42cNIa1qTinm/qoQ3wqK
+         Pdgh1N0XZW239zOq6uN2L/GoLrxDzmfXfe6KYv3lZToLjRe6E7gBSeQ8GwQa5NcCihu8
+         DPkA==
+X-Forwarded-Encrypted: i=1; AJvYcCXTnd3ThJv/ihENx5hn16jdrDeTTZnRJrw8kQL9LMzvqadLG7HlKb+ZCjDNU+bYqZ7/bmKrFrmgIy+3j2w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9MJRcZ7x8SGOgUzOsUByPT+M/o8c5jDppE0SRnk74hQplZ3U1
+	OhgAv2KaLYXrTgZiVLcc8Fz/Zm2KfGxJ5Wmw5TohwB5vr6DckuGEphyu7W/jKI8=
+X-Gm-Gg: ASbGnctjhr28D7HAjHaA3m+MXM0a9+0i8KA1Q8raEvOK1ckJ8EE4alh9chCYh/b+gRM
+	nouyPs88soHTtqikRYMGLgJgDX9QBrpR5NbweGDs3I45KSESd4nkIY4STMmof3Y/Mw9ZQB0WYkX
+	zU2aoyHT7YnRZWEUFr1zrJmpQRXyXSFEYlDUxJifIqLCKJ6OzVu7uV8VCGjms/uY+ioQdu1ewcH
+	VZQ94a2ekw4aa0OQnkAEePTiTdvDg6jfZ2kcvtukpGGiYgqw8HuO3lG3f2dyau3DqCTmYPGCK6T
+	wRY4XuJCD2qFW+Ks6v61z3c9p/8q+HPdWmmDKvo6kbI8JcaKzQ==
+X-Google-Smtp-Source: AGHT+IGxyBW63fSgEIDkdKmUigp27y49JS7UkTA+NZOY+d9+or8SnPNDX/CPFO1XI+oWKppLDaoD5Q==
+X-Received: by 2002:a17:907:86a9:b0:abf:6424:79fa with SMTP id a640c23a62f3a-abf6424d073mr1083370966b.28.1741071668220;
+        Mon, 03 Mar 2025 23:01:08 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abf7981482csm286996066b.122.2025.03.03.23.01.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 23:01:07 -0800 (PST)
+Date: Tue, 4 Mar 2025 10:01:04 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Ahmed Zaki <ahmed.zaki@intel.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH v2 net-next] net: Silence use after free static checker
+ warning
+Message-ID: <Z8alMHz89jH3uPJ9@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: reset: Document RZ/V2H(P) USB2PHY
- Control bindings
-To: Prabhakar <prabhakar.csengg@gmail.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- Biju Das <biju.das.jz@bp.renesas.com>,
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20250303201230.186227-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250303201230.186227-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250303201230.186227-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 03/03/2025 21:12, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> Add device tree binding document for the Renesas RZ/V2H(P) USB2PHY Control
-> Device. It mainly controls reset and power down of the USB2.0 PHY (for
-> both host and function).
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
-A nit, subject: drop second/last, redundant "bindings". The
-"dt-bindings" prefix is already stating that these are bindings.
-See also:
-https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+The cpu_rmap_put() will call kfree() when the last reference is dropped.
 
-<form letter>
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC. It might happen, that command when run on an older
-kernel, gives you outdated entries. Therefore please be sure you base
-your patches on recent Linux kernel.
+Fortunately, this is not the the last reference so it won't free it
+here.  Unfortunately, static checkers are not clever enough and they
+still warn that this could lead to a use after free on the next line.
+Flip these two statements around to silence the static checker false
+positve.
 
-Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-people, so fix your workflow. Tools might also fail if you work on some
-ancient tree (don't, instead use mainline) or work on fork of kernel
-(don't, instead use mainline). Just use b4 and everything should be
-fine, although remember about `b4 prep --auto-to-cc` if you added new
-patches to the patchset.
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ net/core/dev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-You missed at least devicetree list (maybe more), so this won't be
-tested by automated tooling. Performing review on untested code might be
-a waste of time.
+diff --git a/net/core/dev.c b/net/core/dev.c
+index 9189c4a048d7..c102349e04ee 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -7072,8 +7072,8 @@ void netif_napi_set_irq_locked(struct napi_struct *napi, int irq)
+ put_rmap:
+ #ifdef CONFIG_RFS_ACCEL
+ 	if (napi->dev->rx_cpu_rmap_auto) {
+-		cpu_rmap_put(napi->dev->rx_cpu_rmap);
+ 		napi->dev->rx_cpu_rmap->obj[napi->napi_rmap_idx] = NULL;
++		cpu_rmap_put(napi->dev->rx_cpu_rmap);
+ 		napi->napi_rmap_idx = -1;
+ 	}
+ #endif
+-- 
+2.47.2
 
-Please kindly resend and include all necessary To/Cc entries.
-</form letter>
-
-Best regards,
-Krzysztof
 
