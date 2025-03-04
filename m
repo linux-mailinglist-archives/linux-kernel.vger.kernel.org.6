@@ -1,299 +1,160 @@
-Return-Path: <linux-kernel+bounces-543900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D9EAA4DB5B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:50:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3725A4DB3D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:48:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FA093A7EA6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:46:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82E4E1883803
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:48:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED471FDE3A;
-	Tue,  4 Mar 2025 10:47:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84DC81FCF44;
+	Tue,  4 Mar 2025 10:47:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tW+jbDjU"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K4QaeHCb"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 983111FCF44;
-	Tue,  4 Mar 2025 10:46:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CFA91FC0F0
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 10:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741085219; cv=none; b=lOvmrTUeNYsDi7008wKLdOyjUxKpoaGCUenclptWM/mGeg5INQU++eobOqACHJjPd6R4zL3M+/FHkIrx5za3ot40pmqWYdxqX/0kXTs+WPY8WdGZAC4edIvM2/4nudDL3UdEd9BB90E4G1P6rCtvgMgmuLwICN4RxN4uy7k5HE4=
+	t=1741085268; cv=none; b=IsMNMsoR3yOkBZpdnrMNQ2+mflost4tIxSrwnCUluwGT7eKjghJTXG56ed+2d0rt+iCc93BKivSaxraidHkehDWCwWC03RLpqpm+QwAbtl/5NB/MB5jvfmrVJjy1MnWxyMk3BIwzw2AXMeWMrwUiv6mPLY3a43tI7GKgplli+DY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741085219; c=relaxed/simple;
-	bh=7jQ3dQAi9pd4+Bn/dBzYuI41dTi0MxA8Jyonuvuf5tI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C+OEx2mWUNw+ePSJEyzTBm0b6k6iWQfhskjlLYKqRZWYwRgwRKlhqe/aJHj+gMvfRgm3SEDwlosW8VkJmpF1i1r0Pxbjq4BC1cIDpDZIIoVLNlzac/K3NFVfSDLflQ87idfCYx7bY4/vT5UpwscAD77m+UAUrEQiYMW4G5uLZZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=tW+jbDjU; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=KbAI/iH5DKxzN8gIq1gQHZTRsqPNT6OpyGMhNKEz1DY=; b=tW+jbDjU4AcxV7pyEf4qm6bDIW
-	Q1FMvUVSqnHCdtFlK1bxd60JOVp/Uf27liCsuzYJ5Bl4AU1pIZb9bT4vh7JEvwJK98dSQCy9UW3NX
-	0N/oRLtJavJGqpTJPV5GBAHkN2Ctt8kce3D8hVtYYKNGPRNtHnaGhb0kw8D+jshXECNNq5bfohQcE
-	iVkulzPzWB5goOjLAkV7Utp0PAQ4SS3bhcCMqjuFtasHdSkeACGLF0r8Uf7zP/o5nqUo5inYBQxAQ
-	IGKJdPkSOg5jH5esdXa1e65LSLMvd/upvrmwN9tKJBbnNOsAnmdHZLNPvwbz83ngSL9lOSu1pRs9w
-	ydfDb6ug==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tpPnV-00000000gmm-0pxx;
-	Tue, 04 Mar 2025 10:46:49 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 6B25930049D; Tue,  4 Mar 2025 11:46:48 +0100 (CET)
-Date: Tue, 4 Mar 2025 11:46:48 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Kumar Kartikeya Dwivedi <memxor@gmail.com>, bpf <bpf@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Will Deacon <will@kernel.org>, Waiman Long <llong@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Martin KaFai Lau <martin.lau@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>, Tejun Heo <tj@kernel.org>,
-	Barret Rhoden <brho@google.com>, Josh Don <joshdon@google.com>,
-	Dohyun Kim <dohyunkim@google.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	Kernel Team <kernel-team@meta.com>
-Subject: Re: [PATCH bpf-next v2 00/26] Resilient Queued Spin Lock
-Message-ID: <20250304104648.GD11590@noisy.programming.kicks-ass.net>
-References: <20250206105435.2159977-1-memxor@gmail.com>
- <20250210093840.GE10324@noisy.programming.kicks-ass.net>
- <20250210104931.GE31462@noisy.programming.kicks-ass.net>
- <CAADnVQ+3wu0WB2pXs4cccxfkbTb3TK8Z+act5egytiON+qN9tA@mail.gmail.com>
- <20250211104352.GC29593@noisy.programming.kicks-ass.net>
- <CAADnVQJ=81PE19JWeNjq6aNOy+GM-wo6n7WU9StX1b6kevqCUw@mail.gmail.com>
- <20250213095918.GB28068@noisy.programming.kicks-ass.net>
- <CAADnVQJJbi-52mP6BivyAudWSk95f1mgGQXWnjD-H37b7_AtLw@mail.gmail.com>
+	s=arc-20240116; t=1741085268; c=relaxed/simple;
+	bh=GDHmLRbpTAvcpqKY9+nVbCg+pOeoBmL645S5vBz+z5o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OoAlutOpKccphYW5tv6Pm/R461weYmWGANvsvq00y3Kk3NfAl99G7qb108P/+uqG0dpEUiWTtEMjy3fO1Y40uO1zYJXYBCplei05La8W9yVC3yVgQmm8ASmol+tAD5vkOQZjJJNg4dhQDrx1Hh8l8yaGs4AXOLuQP+etCqD4quw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K4QaeHCb; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741085266;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ozWRlkVvFvj5lU4SkREoIbQWM7uBXzxDwOOcUPy61o8=;
+	b=K4QaeHCburM98vq5uCAyE6YaW8v729wmcvdBxTbjNvltNA1AjGR6XXXOfvngreXuka7XpF
+	OIHOORVXgOh6LEq/M1hKcfNIJ/75c+jdK0qaxgPUlrIS54wLwMdR7qGdNFWHgBjHVpgFGb
+	N65tSl2tQFy9Vbwyzts5kZ4AUKEIZBQ=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-491-GZtO9-IXO4qcQOQtyHapXA-1; Tue, 04 Mar 2025 05:47:44 -0500
+X-MC-Unique: GZtO9-IXO4qcQOQtyHapXA-1
+X-Mimecast-MFC-AGG-ID: GZtO9-IXO4qcQOQtyHapXA_1741085264
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-39101511442so1124388f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 02:47:44 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741085264; x=1741690064;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ozWRlkVvFvj5lU4SkREoIbQWM7uBXzxDwOOcUPy61o8=;
+        b=hUD0KGYnO+j1mScB2+Ipo7mgjb2rTqBBd+b0V7Q65zlVDWltAaH8RO3soH6nuMx33W
+         qyPRlutPT16wFNt4e96RmnIM8G92OeYFjIYcwxuTKBJtGEfYrNuHypPB4Tt3i525rYnG
+         ZyoXpUZNDyFK7ai6kSuKVIoSSQU3TqKoTp1L9QhYB6j8ZanGW/kQrq2DP5QdpND7caIL
+         0gTOtjqfTbtGboJqwmSajPqFOnFR7Rxlj9hu5hGbIkdHgeq/iBn3XwPbo/RKmyaQUp4F
+         q7mT7FLqBJm+WlAjPkYENr3UxYsD3gu1It6N2uH7HK+L/c6YzYOagf0uK+66LPCeUxJe
+         zbOw==
+X-Forwarded-Encrypted: i=1; AJvYcCVse1WcCzPm/yOdedotuXAouIXUEpCxEJtzQid0/ETbnM2H6E8QPSz2T/leGDoeG7sUtxYOzpV9ey5In+k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzukzytCvbPPnVxXDsG8NJYMBZRoB59CsE6KonSpeU18swQWC1s
+	mpau58CpMaqOahmKFcTZfeQlZxyupUVQHsK+K0nDc5TRlGJrnM4iVLCMCmT0zSfnd64R4H3zEB3
+	ryRZt7KUlclv3iL+YzYKVab5Q97ZrJ422KflEyOGzdIp4+NyVBGHm2oEmZy6KKA==
+X-Gm-Gg: ASbGncuus7NOZ8+VPHVANIIyVl2uTwwH2NepZVaCmxXdaGFDgfSySCV/6eeSOZDifnY
+	PxlhiV4RtWil/T7RgNZjsPpGnFaLOOmsYv8WYg9HyZQczrkDg3eozfJ8HACbsGH6VwFqgdPwb5f
+	7t/QWBYOCnBtIiuYHlXaTlYvgH2qhLINaw31aNixr1CAj8a5+Dh3aOpxSRvcsFuT/ITqifTCMne
+	c73BJuRf94OHfPMXFN2fLsKf3cDuT9xIIOrSLPJG5xYL8NjUOhsNTZMVROVPEU5wqRcl0efwVUU
+	KdVBLsSjoEw0Yjvnxi5NxU+p4zB3l2KDrYOAam+eKHsw7Q==
+X-Received: by 2002:a5d:59af:0:b0:38d:afc8:954e with SMTP id ffacd0b85a97d-391155fff3cmr2199360f8f.11.1741085263742;
+        Tue, 04 Mar 2025 02:47:43 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEKsGGn0f/jRHWk1XXNEVK6OtmwuK7qRmHXGvVjX+OIeWT8bbXwzK3XUIPqKMexSIXmBvuV/g==
+X-Received: by 2002:a5d:59af:0:b0:38d:afc8:954e with SMTP id ffacd0b85a97d-391155fff3cmr2199340f8f.11.1741085263363;
+        Tue, 04 Mar 2025 02:47:43 -0800 (PST)
+Received: from [192.168.88.253] (146-241-81-153.dyn.eolo.it. [146.241.81.153])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b6f22sm16984595f8f.47.2025.03.04.02.47.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Mar 2025 02:47:42 -0800 (PST)
+Message-ID: <b16a716e-69e3-406f-a0f6-1d62cfa39c42@redhat.com>
+Date: Tue, 4 Mar 2025 11:47:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAADnVQJJbi-52mP6BivyAudWSk95f1mgGQXWnjD-H37b7_AtLw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 7/8] enic : cleanup of enic wq request completion path
+To: Satish Kharat <satishkh@cisco.com>, Christian Benvenuti
+ <benve@cisco.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Nelson Escobar <neescoba@cisco.com>, John Daley <johndale@cisco.com>
+References: <20250227-enic_cleanup_and_ext_cq-v1-0-c314f95812bb@cisco.com>
+ <20250227-enic_cleanup_and_ext_cq-v1-7-c314f95812bb@cisco.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250227-enic_cleanup_and_ext_cq-v1-7-c314f95812bb@cisco.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 2/28/25 1:30 AM, Satish Kharat wrote:
+> diff --git a/drivers/net/ethernet/cisco/enic/enic_wq.c b/drivers/net/ethernet/cisco/enic/enic_wq.c
+> index 88fdc462839a8360000eb8526be64118ea35c0e2..37e8f6eeae3fabd3391b8fcacc5f3420ad091b17 100644
+> --- a/drivers/net/ethernet/cisco/enic/enic_wq.c
+> +++ b/drivers/net/ethernet/cisco/enic/enic_wq.c
+> @@ -6,8 +6,12 @@
+>  #include "enic.h"
+>  #include "enic_wq.h"
+>  
+> -static void cq_desc_dec(const struct cq_desc *desc_arg, u8 *type, u8 *color,
+> -			u16 *q_number, u16 *completed_index)
+> +#define ENET_CQ_DESC_COMP_NDX_BITS 14
+> +#define ENET_CQ_DESC_COMP_NDX_MASK GENMASK(ENET_CQ_DESC_COMP_NDX_BITS - 1, 0)
+> +
+> +static inline void enic_wq_cq_desc_dec(const struct cq_desc *desc_arg, bool ext_wq,
+> +				       u8 *type, u8 *color, u16 *q_number,
+> +				       u16 *completed_index)
 
-new posting reminded me we had this thread...
+Please avoid 'inline' function in c files.
 
-On Thu, Feb 13, 2025 at 06:37:05PM -0800, Alexei Starovoitov wrote:
+> @@ -111,7 +81,41 @@ int enic_wq_service(struct vnic_dev *vdev, struct cq_desc *cq_desc, u8 type,
+>  	}
+>  
+>  	spin_unlock(&enic->wq[q_number].lock);
+> -
+> -	return 0;
+>  }
+>  
+> +unsigned int enic_wq_cq_service(struct enic *enic, unsigned int cq_index, unsigned int work_to_do)
+> +{
+> +	u16 q_number, completed_index;
+> +	u8 type, color;
+> +	unsigned int work_done = 0;
+> +	struct vnic_cq *cq = &enic->cq[cq_index];
+> +	struct cq_desc *cq_desc = (struct cq_desc *)((u8 *)cq->ring.descs +
+> +		cq->ring.desc_size * cq->to_clean);
 
-> > > When bpf prog does bpf_rcu_read_lock() the verifier makes sure
-> > > that all execution paths from there on have bpf_rcu_read_unlock()
-> > > before program reaches the exit.
-> > > Same thing with locks.
-> >
-> > Ah, okay, this wasn't stated anywhere. This is rather crucial
-> > information.
-> 
-> This is kinda verifier 101. I don't think it needs to be in the log.
+I think the code would be more readable creating an helper to access the
+`cq->to_clean` descriptor.
 
-Right, but I didn't take that class. I'm BPF n00b. Meanwhile you're
-asking me to review this :-/
+> +
+> +	bool ext_wq = cq->ring.size > ENIC_MAX_WQ_DESCS;
 
-> > OK; how is the user supposed to handle locking two hash buckets? Does
-> > the BPF prog create some global lock to serialize the multi bucket case?
-> 
-> Not following.
-> Are you talking about patch 19 where we convert per-bucket
-> raw_spinlock_t in bpf hashmap to rqspinlock_t ?
+Please respect the revers christmas tree order for variable definition,
+and avoid empty lines in the variable definition area.
 
-I'm not sure -- see the BPF n00b thing, I don't know how this is
-supposed to be used.
+The above also applies to other patches.
 
-Like really; I have absolutely 0 clues.
+Please include the target tree name (net-next in this case) in the subj
+prefix in the next iteration.
 
-Anyway; the situation I was thinking of was something along the lines
-of: you need data from 2 buckets, so you need to lock 2 buckets, but
-since hash-table, there is no sane order, so you need a 3rd lock to
-impose order.
+Thanks,
 
-But also, see below, you've illustrated this exact case with q1,q2.
-
-> Only one bucket lock is held at a time by map update code,
-> but due to reentrance and crazy kprobes in the wrong places
-> two bucket locks of a single map can be held on the same cpu.
-> 
-> bpf_prog_A -> bpf_map_update -> res_spin_lock(bucket_A)
->   -> kprobe or tracepoint
->     -> bpf_prob_B -> bpf_map_update -> res_spin_lock(bucket_B)
-> 
-> and that's why we currently have:
-> if (__this_cpu_inc_return(*(htab->map_locked[hash])) ...
->     return -EBUSY;
-> 
-> .. workaround to prevent the most obvious AA deadlock,
-> but it's not enough.
-> People were able to hit ABBA.
-
-Right, you can create arbitrary lock chain with this; chain length is
-limited by nesting-depth*nr-cpus or somesuch.
-
-> > Anyway, I wonder. Since the verifier tracks all this, it can determine
-> > lock order for the prog. Can't it do what lockdep does and maintain lock
-> > order graph of all loaded BPF programs?
-> >
-> > This is load-time overhead, rather than runtime.
-> 
-> I wish it was possible. Locks are dynamic. They protect
-> dynamically allocated objects, so the order cannot be statically
-> verified. We pushed the limit of static analysis a lot.
-> Maybe too much.
-> For example,
-> the verifier can statically validate the following code:
->         struct node_data *n, *m, *o;
->         struct bpf_rb_node *res, *res2;
-> 
->         // here we allocate an object of type known to the verifier
->         n = bpf_obj_new(typeof(*n));
->         if (!n)
->                 return 1;
->         n->key = 41;
->         n->data = 42;
-> 
->         // here the verifier knows that glock spin_lock
->         // protect rbtree groot
->         bpf_spin_lock(&glock);
-> 
->         // here it checks that the lock is held and type of
->         // objects in rbtree matches the type of 'n'
->         bpf_rbtree_add(&groot, &n->node, less);
->         bpf_spin_unlock(&glock);
-> 
-> and all kinds of other more complex stuff,
-> but it is not enough to cover necessary algorithms.
-> 
-> Here is an example from real code that shows
-> why we cannot verify two held locks:
-> 
-> struct bpf_vqueue {
->         struct bpf_spin_lock lock;
->         int credit;
->         unsigned long long lasttime;
->         unsigned int rate;
-> };
-> 
-> struct {
->         __uint(type, BPF_MAP_TYPE_HASH);
->         __uint(max_entries, ...);
->         __type(key, int);
->         __type(value, struct bpf_vqueue);
-> } vqueue SEC(".maps");
-> 
->         q = bpf_map_lookup_elem(&vqueue, &key);
->         if (!q)
->                 goto err;
->         curtime = bpf_ktime_get_ns();
->         bpf_spin_lock(&q->lock);
->         q->lasttime = curtime;
->         q->credit -= ...;
->         credit = q->credit;
->         bpf_spin_unlock(&q->lock);
-> 
-> the above is safe, but if there are two lookups:
-> 
-> q1 = bpf_map_lookup_elem(&vqueue, &key1);
-> q2 = bpf_map_lookup_elem(&vqueue, &key2);
-> 
-> both will point to two different locks,
-> and since the key is dynamic there is no way to know
-> the order of q1->lock vs q2->lock.
-
-I still feel like I'm missing things, but while they are two dynamic
-locks, they are both locks of vqueue object. What lockdep does is
-classify locks by initialization site (by default). Same can be done
-here, classify per dynamic object.
-
-So verifier can know the above is invalid. Both locks are same class, so
-treat as A-A order (trivial case is where q1 and q2 are in fact the same
-object since the keys hash the same).
-
-Now, going back to 3rd lock, if instead you write it like:
-
-  bpf_spin_lock(&glock);
-  q1 = bpf_map_lookup_elem(&vqueue, &key1);
-  q2 = bpf_map_lookup_elem(&vqueue, &key2);
-  ...
-  bpf_spin_unlock(&glock);
-
-then (assuming q1 != q2) things are fine, since glock will serialize
-everybody taking two vqueue locks.
-
-And the above program snippet seems to imply maps are global state, so
-you can keep lock graph of maps, such that:
-
-  bpf_map_lookup_elem(&map-A, &key-A);
-  bpf_map_lookup_elem(&map-B, &key-B);
-
-vs
-
-  bpf_map_lookup_elem(&map-B, &key-B);
-  bpf_map_lookup_elem(&map-A, &key-A);
-
-trips AB-BA
-
-> So we allow only one lock at a time with
-> bare minimal operations while holding the lock,
-> but it's not enough to do any meaningful work.
-
-Yes, I can see that being a problem.
-
-> The top feature request is to allow calls
-> while holding locks (currently they're disallowed,
-> like above bpf_ktime_get_ns() cannot be done
-> while holding the lock)
-
-So bpf_ktime_get_ns() is a trivial example; it it always safe to call,
-you can simply whitelist it.
-
-> and allow grabbing more than one lock.
-> That's what res_spin_lock() is achieving.
-
-I am not at all sure how res_spin_lock is helping with the q1,q2 thing.
-That will trivially result in lock cycles.
-
-And you said any program that would trigger deadlock is invalid.
-Therefore the q1,q2 example from above is still invalid and
-res_spin_lock has not helped.
-
-> Having said all that I think the discussion is diverging into
-> all-thing-bpf instead of focusing on res_spin_lock.
-
-I disagree, all of this is needed to understand res_spin_lock.
-
-From the above, I'm not yet convinced you cannot extend the verifier
-with something lockdep like.
-
-> Just to make it clear... there is a patch 18:
-> 
->  F: kernel/bpf/
->  F: kernel/trace/bpf_trace.c
->  F: lib/buildid.c
-> +F: arch/*/include/asm/rqspinlock.h
-> +F: include/asm-generic/rqspinlock.h
-> +F: kernel/locking/rqspinlock.c
->  F: lib/test_bpf.c
->  F: net/bpf/
-> 
-> that adds maintainer entries to BPF scope.
-> 
-> We're not asking locking experts to maintain this new res_spin_lock.
-> It's not a generic kernel infra.
-> It will only be used by bpf infra and by bpf progs.
-> We will maintain it and we will fix whatever bugs
-> we introduce.
-
-While that is appreciated, the whole kernel is subject to the worst case
-behaviour of this thing. As such, I feel I need to care.
+Paolo
 
 
