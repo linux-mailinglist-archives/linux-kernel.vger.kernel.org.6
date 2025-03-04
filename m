@@ -1,146 +1,125 @@
-Return-Path: <linux-kernel+bounces-545777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E93FA4F147
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:15:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC4C8A4F148
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:16:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FEDB167BE3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:15:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08DFC3A900E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:16:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFD4B27935D;
-	Tue,  4 Mar 2025 23:15:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D688278115;
+	Tue,  4 Mar 2025 23:15:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="EoRZKUy3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6269927933B;
-	Tue,  4 Mar 2025 23:15:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F86D2620EF
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 23:15:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741130123; cv=none; b=UTLuG4cYowytoR/lFBHFDU/RJoLE4r/ZzGuk75r5DrjbAXlZUHGLw/gGvW28uMp30oo9eoUKfIrVIJKNYBpbluLSxmKBucpCFdoOS4FLejHrqTqfZyQLIQTHYOcCVCBJmYHso11DGSVWK2tpnf7fyTSSUL5VKKi79BzoEpXYi9s=
+	t=1741130157; cv=none; b=InqyYcRC2wKY4zD7DM8rKF44ImTyxMp9HxuIm89Q4MMyaTEn8l3qaOtE/k1qb2NOjX1QGZBxiHs/vqhSZRt1vDtRk6sggwxPcoIHYnLh+rUGfOjxMP122MIzetIhPLMetZHFrQxQG+akE85yjOOlhL9wIcEOsGHzVy+d3Fh+ay8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741130123; c=relaxed/simple;
-	bh=+QANBucFIezUoXX7P8kYb2sbC27r0CAnf9rNssJhRm8=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=glULuwBFJfNPGixmY2d6hRY0Uv49nMVJY0Z05Pk4x44/QrI5Y9frbAtURH362JCoW+vSHErgPONV/DbPDL+zLD8F8QlZpvvXi9RIYvJR6pHQufOliHAp7qxmSikE8eg9b2eYu/0BsNl1IVhOr0MFay9DyzytPkDDZuozkLTNAFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5F07C4CEE8;
-	Tue,  4 Mar 2025 23:15:22 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.98)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1tpbUo-0000000CSau-39dy;
-	Tue, 04 Mar 2025 18:16:18 -0500
-Message-ID: <20250304231618.602571527@goodmis.org>
-User-Agent: quilt/0.68
-Date: Tue, 04 Mar 2025 18:15:49 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 4/4] tracing: Adjust addresses for printing out fields
-References: <20250304231545.708806702@goodmis.org>
+	s=arc-20240116; t=1741130157; c=relaxed/simple;
+	bh=2txhcLgzVWb+dW/4Gd1kiuD+BIpXnIJ+gXwCmx8kpbw=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=l9bcAinHJsN0AwfNs9yIPfXIzOzD5WF8BkanwO2ryajSlgUGGdrnLPurMcIljaeihsLVUMWPdy825bGYJ6iIgFo1IB31KVqt282waoTY/p+N5fzfBZyyGlj3esUdeSSdEtBlwhG0vFyXSqvRPq52Q2Gqq0+UpIKXdtCn8yJFSz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=EoRZKUy3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFDE1C4CEE5;
+	Tue,  4 Mar 2025 23:15:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1741130157;
+	bh=2txhcLgzVWb+dW/4Gd1kiuD+BIpXnIJ+gXwCmx8kpbw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=EoRZKUy3ieMDVjUy7tnt+KDs52VME2kCRbAxOpC4ExjSHbisnmDrTHAuBRzgo82F1
+	 /IyLQoUqyhrFkltu7mwDqNrP/sCP0Nf1l927hQ1+BOlhzrsfcbKhQwajGY+ku3CXFA
+	 7fVCKdZaPpjStmn6PTfoTXv62HqD3uBumWXCXPts=
+Date: Tue, 4 Mar 2025 15:15:56 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Yosry Ahmed <yosry.ahmed@linux.dev>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R . Howlett"
+ <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Jann Horn
+ <jannh@google.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/7] mm/mremap: initial refactor of move_vma()
+Message-Id: <20250304151556.635d9041a7ca36f1960fe664@linux-foundation.org>
+In-Reply-To: <Z8d0d9N26JBGwi8N@google.com>
+References: <cover.1740911247.git.lorenzo.stoakes@oracle.com>
+	<b4e64684d6ac753d5a66c0da0da5f4b94d033859.1740911247.git.lorenzo.stoakes@oracle.com>
+	<Z8d0d9N26JBGwi8N@google.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Steven Rostedt <rostedt@goodmis.org>
+On Tue, 4 Mar 2025 21:45:27 +0000 Yosry Ahmed <yosry.ahmed@linux.dev> wrote:
 
-Add adjustments to the values of the "fields" output if the buffer is a
-persistent ring buffer to adjust the addresses to both the kernel core and
-kernel modules if they match a module in the persistent memory and that
-module is also loaded.
+> On Mon, Mar 03, 2025 at 11:08:34AM +0000, Lorenzo Stoakes wrote:
+> > Update move_vma() to use the threaded VRM object, de-duplicate code and
+> > separate into smaller functions to aid readability and debug-ability.
+> > 
+> > This in turn allows further simplification of expand_vma() as we can simply
+> > thread VRM through the function.
+> > 
+> > We also take the opportunity to abstract the account charging page count
+> > into the VRM in order that we can correctly thread this through the
+> > operation.
+> > 
+> > We additionally do the same for tracking mm statistics - exec_vm, stack_vm,
+> > data_vm, and locked_vm.
+> > 
+> > As part of this change, we slightly modify when locked pages statistics are
+> > counted for in mm_struct statistics. However this should cause no issues,
+> > as there is no chance of underflow, nor will any rlimit failures occur as a
+> > result.
+> > 
+> > This is an intermediate step before a further refactoring of move_vma() in
+> > order to aid review.
+> > 
+> > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> > ---
+> [..]
+> > +/*
+> > + * Perform checks  before attempting to write a VMA prior to it being
+> > + * moved.
+> > + */
+> > +static unsigned long prep_move_vma(struct vma_remap_struct *vrm,
+> > +				   unsigned long *vm_flags_ptr)
+> > +{
+> > +	unsigned long err;
+> 
+> I am getting a warning on mm-unstable because 'err' is sometimes used
+> uninitialized, I think here:
+> 
+>         if (vma->vm_ops && vma->vm_ops->may_split) {
+>                 if (vma->vm_start != old_addr)
+>                         err = vma->vm_ops->may_split(vma, old_addr);
+>                 if (!err && vma->vm_end != old_addr + old_len)
+>                         err = vma->vm_ops->may_split(vma, old_addr + old_len);
+>                 if (err)
+>                         return err;
+>         }
 
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/trace/trace_output.c | 38 ++++++++++++++++++++-----------------
- 1 file changed, 21 insertions(+), 17 deletions(-)
+yep, thanks.  I added this:
 
-diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
-index 3a43128e604a..aa716cf69caa 100644
---- a/kernel/trace/trace_output.c
-+++ b/kernel/trace/trace_output.c
-@@ -857,6 +857,9 @@ static void print_fields(struct trace_iterator *iter, struct trace_event_call *c
- 			 struct list_head *head)
+--- a/mm/mremap.c~mm-mremap-initial-refactor-of-move_vma-fix
++++ a/mm/mremap.c
+@@ -892,7 +892,7 @@ static void vrm_stat_account(struct vma_
+ static unsigned long prep_move_vma(struct vma_remap_struct *vrm,
+ 				   unsigned long *vm_flags_ptr)
  {
- 	struct ftrace_event_field *field;
-+	struct trace_array *tr = iter->tr;
-+	unsigned long long laddr;
-+	unsigned long addr;
- 	int offset;
- 	int len;
- 	int ret;
-@@ -893,8 +896,8 @@ static void print_fields(struct trace_iterator *iter, struct trace_event_call *c
- 		case FILTER_PTR_STRING:
- 			if (!iter->fmt_size)
- 				trace_iter_expand_format(iter);
--			pos = *(void **)pos;
--			ret = strncpy_from_kernel_nofault(iter->fmt, pos,
-+			addr = trace_adjust_address(tr, *(unsigned long *)pos);
-+			ret = strncpy_from_kernel_nofault(iter->fmt, (void *)addr,
- 							  iter->fmt_size);
- 			if (ret < 0)
- 				trace_seq_printf(&iter->seq, "(0x%px)", pos);
-@@ -903,8 +906,8 @@ static void print_fields(struct trace_iterator *iter, struct trace_event_call *c
- 						 pos, iter->fmt);
- 			break;
- 		case FILTER_TRACE_FN:
--			pos = *(void **)pos;
--			trace_seq_printf(&iter->seq, "%pS", pos);
-+			addr = trace_adjust_address(tr, *(unsigned long *)pos);
-+			trace_seq_printf(&iter->seq, "%pS", (void *)addr);
- 			break;
- 		case FILTER_CPU:
- 		case FILTER_OTHER:
-@@ -934,24 +937,25 @@ static void print_fields(struct trace_iterator *iter, struct trace_event_call *c
- 					break;
- 				}
- 
--				if (sizeof(long) == 4)
-+				addr = *(unsigned int *)pos;
-+				if (sizeof(long) == 4) {
-+					addr = trace_adjust_address(tr, addr);
- 					trace_seq_printf(&iter->seq, "%pS (%d)",
--							 *(void **)pos,
--							 *(unsigned int *)pos);
--				else
-+							 (void *)addr, (int)addr);
-+				} else {
- 					trace_seq_printf(&iter->seq, "0x%x (%d)",
--							 *(unsigned int *)pos,
--							 *(unsigned int *)pos);
-+							 (unsigned int)addr, (int)addr);
-+				}
- 				break;
- 			case 8:
--				if (sizeof(long) == 8)
-+				laddr = *(unsigned long long *)pos;
-+				if (sizeof(long) == 8) {
-+					laddr = trace_adjust_address(tr, (unsigned long)laddr);
- 					trace_seq_printf(&iter->seq, "%pS (%d)",
--							 *(void **)pos,
--							 *(unsigned long long *)pos);
--				else
--					trace_seq_printf(&iter->seq, "0x%llx (%lld)",
--							 *(unsigned long long *)pos,
--							 *(unsigned long long *)pos);
-+							 (void *)laddr, laddr);
-+				} else {
-+					trace_seq_printf(&iter->seq, "0x%llx (%lld)", laddr, laddr);
-+				}
- 				break;
- 			default:
- 				trace_seq_puts(&iter->seq, "<INVALID-SIZE>");
--- 
-2.47.2
-
+-	unsigned long err;
++	unsigned long err = 0;
+ 	struct vm_area_struct *vma = vrm->vma;
+ 	unsigned long old_addr = vrm->addr;
+ 	unsigned long old_len = vrm->old_len;
+_
 
 
