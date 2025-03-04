@@ -1,136 +1,139 @@
-Return-Path: <linux-kernel+bounces-543732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 825C2A4D91B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:48:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63D29A4D955
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:54:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7DEF7A3202
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:46:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 123AA3B7395
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:47:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E4461FCFFE;
-	Tue,  4 Mar 2025 09:47:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B09251F8AC0;
+	Tue,  4 Mar 2025 09:47:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jtNulAOm"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dUE/+jbm";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="G80lCqoU"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B30B1FCFD2
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 09:46:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E6033998;
+	Tue,  4 Mar 2025 09:47:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741081625; cv=none; b=qbVEUOIFyAHCLQB2DgKkAwLDTXTzG52OXqtIAW15fsvC1rhaEaeGXvf+TvOJjQkJpmnLpUHPtkuGitxzFbo0mYPX131QLnEdlOE3zvrbz/Kxk9scgy2PIucIJZ6S90sxmIRo/SxY5FA25O4w3a3opyCbXTStN8Kk+mSMD93Lwcw=
+	t=1741081657; cv=none; b=EVTVoCExub/ap9wGLB00RePBmKeLMzyXXaqBS5gZ5K/ATy0LNk6dEmDmc2U7RNcXmjToWmz7Fau5KMDot7fOrh0NUkSrcYRfvSK8RrIbhZ0cWymPxoG1122SHzLguC4X7FZSFPN3O7PEaWZ8sVAmClGi+QOfrPevUEh1rDfLHrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741081625; c=relaxed/simple;
-	bh=0wXdinaXSN5qy0jF6IaPQC041JouYwi+t9tdAPeFE60=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tbstBAtz0enXVeJrq63ssQW5NdTLoj9ad4YAdGMlBr4v7o3yyUI/rrvNDcZEP+PGLwRc+pwmwmEhonpxeMg/PlIoz4MKc9ii410mVrKzhwXCBRus7CmfWc2TETQMFT4zWZrS+wvjk4IOQBxbwwFAki01mquxAXgUPpxr6ZkDp2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jtNulAOm; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5494bc4d796so4824742e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 01:46:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741081618; x=1741686418; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fDostDuCz+69r2wOSDeI1fXNvVPWdirSCV/X9dfMlRE=;
-        b=jtNulAOm4OkicJuvMBovIQ6dUwezBPzo0RkLUT/Zf8rZEkQSXyatDMv/rCWuFT3qTs
-         gcby2AaFIXSxF5+ipzWxrKYUd+AOAu7cLZhnb0I4Brmka2zkzBjU4SaSEai5MYbOfO8j
-         85mdLp4nmaHy9XhNFJ87x6Tv4tH20ZhxZZGLySx6fUWI8BrMVv1bkKkt+0bq4M/x9pYi
-         dopuepHlV+/HgPwK7OqZc7p/WZhCfLMC3XiR8u42NkX04IzPbFsW81Gu1a8eD83/SQJi
-         ZhNslAouxu9j/vS10D/FhuDM0aWazBJcS7VQT4lpmZaRoqtG//M4z1/P+Fbgl1MHbM/Z
-         /Sxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741081618; x=1741686418;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fDostDuCz+69r2wOSDeI1fXNvVPWdirSCV/X9dfMlRE=;
-        b=OUVG27AfCCVG7og+D7s6vy8cyiCbpxKdpl56961gZgxluI7Tg0JBYvBRIm88xs81P/
-         hFxOg6GNYXJ+NCzY0LKua7y2tAe5lRSo+zuNVTrQnGwE4lus7r9G0QnOhMThzHAiIywr
-         u2ebLMpO1rhKqnvLvJeVXMlXYosQEvzJpVdnakR6RYMj9+XznAMiCLMFvNk9zgYdTlkJ
-         N5HNOFjHcIPq8kqci6woXXJImhnmXJWl9ucLtjt3B3UR4beQlUIq1LUf0WP/rjTk0jLK
-         Qb9txB97O9jyYJ52WCIG2hwVeU92wQ7j/k8s+2GHEvnVTiZ7YwdDqHgpYeTU7D6MvlCX
-         r1kw==
-X-Forwarded-Encrypted: i=1; AJvYcCVYp0RAx+AkjiJeG7lqJA6N5o81CqC2aRGjZWg2kwlTkW8FlJJKApQ7AVKIw8oCrFDGun3N5xxRQTEl0g8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEgb5VuS5+6aej5fh00m8L1UIueXoIPqktxPTXggeY7atGMw3K
-	Blj8Plqw+B+MyqfxpYoxkej27KJbpI93gn3tFZIPyOF7GkEgR2z5
-X-Gm-Gg: ASbGnctBvY+eKBtNgI2bYwfwl5TGzKTCmpXULQFSY3/vlZyJGag8jgGAX17kAcePo4z
-	ateu5vA0lm6gO18/fSnjh4Cy0OarID+rqzT1+9mhfUIInadY+PHxv3A+5edle4PTjAwIQtVuRd6
-	qMI94qTtJVVFr6xKtkrEDefw1s0fP7XcmgfiM/1bJDWn3zm2L3lVcMdFyq4Z2LKEJAqB5BusAoi
-	0x7kHh9iX4pDMjaHuPk38yUW5ydoH8PpoEQHkwvwaYxcTHuSSsH/6jVapwcMQwwV9SbuYumyAUu
-	d6xRDmVpX9Y=
-X-Google-Smtp-Source: AGHT+IGfzQnZ26ydI/Hp3PtQZN4UXtI5pke9feZjOxzsb0bBFWh1zSD7cQWbLYhGYm4LdjPoaqrnvg==
-X-Received: by 2002:a05:6512:6c9:b0:545:ee3:f3c5 with SMTP id 2adb3069b0e04-5494c32008amr6366824e87.17.1741081617269;
-        Tue, 04 Mar 2025 01:46:57 -0800 (PST)
-Received: from pc636 ([2001:9b1:d5a0:a500::800])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549570fc8fbsm1129701e87.80.2025.03.04.01.46.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 01:46:56 -0800 (PST)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Tue, 4 Mar 2025 10:46:54 +0100
-To: Liu Ye <liuye@kylinos.cn>
-Cc: akpm@linux-foundation.org, urezki@gmail.com, hch@infradead.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/vmalloc: Move free_vm_area(area) from the
- __vmalloc_area_node function to the __vmalloc_node_range_noprof function
-Message-ID: <Z8bMDi1TIlCaec2X@pc636>
-References: <20250303015702.319416-1-liuye@kylinos.cn>
+	s=arc-20240116; t=1741081657; c=relaxed/simple;
+	bh=H3pVIaSA4COTz09Om8jCkdsmP7dRkEU7CJxSAn4SeKI=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=A8vV/6XBrp+N9FaYgmRDhgVKYiRq4Ghw+3x4FojTZswxF79l4/hNgSrrsOb7f4kadn3E8hGuVzML2/+qavFs2wCIQHzpenBsa6G6MypKRUkLDPckwr6twFLd4+yX6FxpcpvMJwGLAA/WvBzB8yqRGZXWxNK9FSZ/g8wxkkF0BTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dUE/+jbm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=G80lCqoU; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 04 Mar 2025 09:47:32 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741081654;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=C1TygZpbyYm0j4DNXH/yYydCHYeinoKRtxGI+IH64xs=;
+	b=dUE/+jbmOvUs0DFnXCwIBApUKGCpGjiB9ju3VlL/apzvinLVYu4306u1G/iShlHa8aew2X
+	4615YuHxb+Ncz4hbGEfqqxoUF9AkS9iDnIMOielu6t4We7Ol/Y9g4+snkRpojRks5p20zz
+	KkmXaQjydRdMcd+Yg8WwmMHUmH2kyTqZNd91Th0U8sdjYmXU33VX+qQnWZUGXKe+t8gL50
+	RDS8Q+/WFD4Bx5ssY/KnRJLdB/oU6XD6xbTAv37pf52rBcDcS4kbswjJ8i+ee8e0iNNUlW
+	9eQQ/ePHWk35tysCFJV7jCrRXRdqC8DCuWxC2u4WjdvJzEf1egZY7S/OpC7I/g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741081654;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=C1TygZpbyYm0j4DNXH/yYydCHYeinoKRtxGI+IH64xs=;
+	b=G80lCqoUozPnNVWlbDz3qh84Zp9kS82zGDERISs/VSmPC/f8eJvXhwJlOXDq8zfQf/Pmna
+	LPzoJ6l5/dX7RxCQ==
+From: "tip-bot2 for Ahmed S. Darwish" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: x86/cpu] <linux/sizes.h>: Cover all possible x86 CPU cache sizes
+Cc: "Ahmed S. Darwish" <darwi@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250304085152.51092-31-darwi@linutronix.de>
+References: <20250304085152.51092-31-darwi@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250303015702.319416-1-liuye@kylinos.cn>
+Message-ID: <174108165299.14745.5733415533323964838.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 03, 2025 at 09:57:02AM +0800, Liu Ye wrote:
-> Moved free_vm_area from the __vmalloc_area_node function to the
-> __vmalloc_node_range_noprof function so that allocation and freeing
-> of the area can be paired in one function for better readability.
-> 
-> Signed-off-by: Liu Ye <liuye@kylinos.cn>
-> ---
->  mm/vmalloc.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index a6e7acebe9ad..dc658d4af181 100644
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -3651,7 +3651,6 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
->  		warn_alloc(gfp_mask, NULL,
->  			"vmalloc error: size %lu, failed to allocated page array size %lu",
->  			nr_small_pages * PAGE_SIZE, array_size);
-> -		free_vm_area(area);
->  		return NULL;
->  	}
->  
-> @@ -3844,8 +3843,10 @@ void *__vmalloc_node_range_noprof(unsigned long size, unsigned long align,
->  
->  	/* Allocate physical pages and map them into vmalloc space. */
->  	ret = __vmalloc_area_node(area, gfp_mask, prot, shift, node);
-> -	if (!ret)
-> +	if (!ret) {
-> +		free_vm_area(area);
->  		goto fail;
-> +	}
->  
->  	/*
->  	 * Mark the pages as accessible, now that they are mapped.
-> -- 
-> 2.25.1
-> 
-This one looks good to me:
+The following commit has been merged into the x86/cpu branch of tip:
 
-Reviewed-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+Commit-ID:     0d22030c49bfb2bd86ffa55c474f5f23b55e0533
+Gitweb:        https://git.kernel.org/tip/0d22030c49bfb2bd86ffa55c474f5f23b55e0533
+Author:        Ahmed S. Darwish <darwi@linutronix.de>
+AuthorDate:    Tue, 04 Mar 2025 09:51:41 +01:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Tue, 04 Mar 2025 10:34:16 +01:00
 
---
-Uladzislau Rezki
+<linux/sizes.h>: Cover all possible x86 CPU cache sizes
+
+Add size macros for 24/192/384 Kilobytes and 3/6/12/18/24 Megabytes.
+
+With that, the x86 subsystem can avoid locally defining its own macros
+for CPU cache sizes.
+
+Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Link: https://lore.kernel.org/r/20250304085152.51092-31-darwi@linutronix.de
+---
+ include/linux/sizes.h | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/include/linux/sizes.h b/include/linux/sizes.h
+index c3a00b9..4903949 100644
+--- a/include/linux/sizes.h
++++ b/include/linux/sizes.h
+@@ -23,17 +23,25 @@
+ #define SZ_4K				0x00001000
+ #define SZ_8K				0x00002000
+ #define SZ_16K				0x00004000
++#define SZ_24K				0x00006000
+ #define SZ_32K				0x00008000
+ #define SZ_64K				0x00010000
+ #define SZ_128K				0x00020000
++#define SZ_192K				0x00030000
+ #define SZ_256K				0x00040000
++#define SZ_384K				0x00060000
+ #define SZ_512K				0x00080000
+ 
+ #define SZ_1M				0x00100000
+ #define SZ_2M				0x00200000
++#define SZ_3M				0x00300000
+ #define SZ_4M				0x00400000
++#define SZ_6M				0x00600000
+ #define SZ_8M				0x00800000
++#define SZ_12M				0x00c00000
+ #define SZ_16M				0x01000000
++#define SZ_18M				0x01200000
++#define SZ_24M				0x01800000
+ #define SZ_32M				0x02000000
+ #define SZ_64M				0x04000000
+ #define SZ_128M				0x08000000
 
