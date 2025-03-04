@@ -1,180 +1,156 @@
-Return-Path: <linux-kernel+bounces-545423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37440A4ECEE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:14:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47C1EA4ED0D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:17:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C18A16B864
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:14:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED91D886AA9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:07:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C4B25523D;
-	Tue,  4 Mar 2025 19:14:06 +0000 (UTC)
-Received: from gauss.telenet-ops.be (gauss.telenet-ops.be [195.130.132.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8F424EA9B;
+	Tue,  4 Mar 2025 19:06:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cEzlNw1l"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582BE2E337D
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49145158524;
+	Tue,  4 Mar 2025 19:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741115646; cv=none; b=M6VoR/Cn2lrWdasHoEf4qCp/iQGOkCarxQ76rCSZfNomgPSREphTRROZh+2x57RBWcL9tOidmpyoyNfMlie+YBKG4Mg8gH2lx+pb+JbciIu/wc/hM305xOU9/mLPii5SYAWcEXsM3ZKynGfhy2c8RXXz/BEF/OFOSqjRUkwZuPg=
+	t=1741115200; cv=none; b=IFKIFHLKu0xu6u0wrDStP1Db62/6wZqxcegACLtkzM5s6dx4o4BCywe6iD3JxmgTfHsoMtNIwTFAtGqX+SFockfOxqjWmjOKjPaI33X6iEDJT7K4YU//A9GXo98YQy4DKPBmpRDQ13FhxP3fkcz9HGr1qkz0kdPhBL6VWZj88kU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741115646; c=relaxed/simple;
-	bh=4tbOFPia/wKzXKQO2yU4Pnp1OaSxgVoeOL4F0Nofol0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Pxj8Ssr/NWS/mSpo7+YubPKzQX5OmuYOyMeB/qaer3BgXHE1D2/gm4vcv2QIO1p6nq0GkEQhrM4P9FuX86/dWLlwVbwu0UAUmGUz59G14FCqJJTfISNsx7nsHXw9/h/xKVnItp9PoWx8JKI3QPNF0/1WOWeA+1jiVVeVnRxEd6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-	by gauss.telenet-ops.be (Postfix) with ESMTPS id 4Z6lXJ2qfmz4x1Fl
-	for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 20:06:24 +0100 (CET)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:4b47:cefc:1a47:3e05])
-	by baptiste.telenet-ops.be with cmsmtp
-	id Lj6G2E00A2Gsk2z01j6Gq2; Tue, 04 Mar 2025 20:06:17 +0100
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.97)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1tpXaV-0000000CpmF-1dSc;
-	Tue, 04 Mar 2025 20:06:16 +0100
-Received: from geert by rox.of.borg with local (Exim 4.97)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1tpXaq-00000008ckx-1yKz;
-	Tue, 04 Mar 2025 20:06:16 +0100
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-Cc: linux-serial@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] serial: sh-sci: Save and restore more registers
-Date: Tue,  4 Mar 2025 20:06:11 +0100
-Message-ID: <11c2eab45d48211e75d8b8202cce60400880fe55.1741114989.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1741115200; c=relaxed/simple;
+	bh=qgBjp+ydpJlBw52x0uUkgJn409XwUZVGlumTnsWJ3m0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CvvJj59b0UmDtx7W0zoAYMahjxJ4CGoCJPPCvudXmJmvRyo0678gh8v48Pm3HMg9pwk5pEx1Vj921vyq3YnAXCVGsbQp+Yt2sGpx3P0UhxyAX89e5v7M5ZMoPd7fQZuzeAoa6W7yiC6hfoEKcsQSRQd8b5RZHjQxJkIGRKS5omo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cEzlNw1l; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-471f686642cso54965921cf.2;
+        Tue, 04 Mar 2025 11:06:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741115198; x=1741719998; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=tA27Lf3iJciKnB0JvEl1MO3LlYSglnQEOYlC6Hgx3eQ=;
+        b=cEzlNw1lynEIgIZFQISmLeHtfKUbOmIuju6y6l3dss/GqCAgbIO77rfOVjoL7hfpfY
+         f8nziJ66ODFCa8tl0eEYdoovU/IXeU3Yqf8b3o4zwsHVW8fjOFVguTU1NJAN2fRSg7mf
+         Z1Fqw0vTADT3xlSPomFUllleXbhRL6cjqZh1unnNQGPCjKSn4eKYBIQMagBSg15tAXn3
+         +N0JHa6nDPDsX44C1gVwiITo+3BbEsq/24X7R0zm2ZePkRKUyt8CNynmXz0HZxI7H1dC
+         mKI7J6Dpu5hCUv12ND2ZygLONFJgHP8cQdII6nAELf6RLYdbQVpmSW6yrgR76khXVg/N
+         q1Pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741115198; x=1741719998;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tA27Lf3iJciKnB0JvEl1MO3LlYSglnQEOYlC6Hgx3eQ=;
+        b=fcynWkVpr0APv5mxOymmoyYit6uzMkvbJ4SNrHDBAFgkW0U8EZLKujdET+ENm6IYS7
+         Z5da7Nq9Zy+sbNZFHjyajM0xQbiiX075IN+c0t+EFqp0M7ml6Iz02PV4o634DvCYtJ07
+         u5VQGyhzKT+EXs1qYU2+8oocOa1GR3qjCBACI7uS7p65PCXvT61Lv8oNe3sJ6eclisM/
+         9kp13MKqepvar2YuwDHqm/44gBsNIbZl2zfj8PdWra2LMAWdDZZTGn3xuIzUnS1Apx3G
+         OTN19P0utH398beMkQIdlRZqtxSowzgfOJDgsiDibkyPXhB8/qU9mzazJF8j5rO+Fd8Q
+         1bZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWMy8vxVusF2SJPwDg4W/CzS7zKAM21z78/+ThW3D+8gBskwumSCcthWlVsJJBkdeKYMHxQ643FDx6ANmK+@vger.kernel.org, AJvYcCWVcVGcgtL1H0o6rsq3UkBtYBJL1r+vS9k6VJ5N2UNkGvCxoNlRONXom3RW5JSZq2/gSzrckXWjY8ev2IPJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTsyh65K6EJjIZ9q/0Y/eC3Z1I4hbVCXvhnYn9/oBX+PzA1DYQ
+	JHrkH9G5vmRpWOzVNFYWR51MfLWWPwbHlCsbYAppTMUxp/Uad73F
+X-Gm-Gg: ASbGncvwuQrD1KXc7qXxJArTEps7wL2TCUWJx/3OsT0kx/9/JzVU7m2j9OhT0kOGMoF
+	oS+ZAImPKkzjtlSc9F2K9AOPDWw57sFy1QoVu/SLiuAaDefVNgxRbRy2smiPthWRdHbgK/vgmVZ
+	5OGiNiVYzAUJtUkGSu+3/TFhKIvK9k7TNAUfpvGHFAjSI81DxkZFqcQGl1+Kt16k7vA52qquF5S
+	7hxIzoXqZQDS4ZoTUbQzcukY0PHPGarRyXa9IyhnP6h7QggotaV+ziP1SdN90rLtKPH0HbKogIS
+	1f55ZAd7azFiira1LkxThxLUk2x+O9pxaz1Sv88VzztLic6FnCx7slgtqGPVMvzYa5/2wOtMiyn
+	8
+X-Google-Smtp-Source: AGHT+IEHMACm3UtM3g8IwgX8ccOiICa/jh1pmKFAIbjW7DNmAGnXI/0lrR7EO3ZtAv/HzcyoRr3unw==
+X-Received: by 2002:a05:622a:198f:b0:472:13f8:a974 with SMTP id d75a77b69052e-4750b4c51d2mr2585531cf.41.1741115198077;
+        Tue, 04 Mar 2025 11:06:38 -0800 (PST)
+Received: from localhost (pat-199-212-65-16.resnet.yorku.ca. [199.212.65.16])
+        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-4746b5eed4fsm76428501cf.31.2025.03.04.11.06.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 11:06:37 -0800 (PST)
+Date: Tue, 4 Mar 2025 14:07:39 -0500
+From: Seyediman Seyedarab <imandevel@gmail.com>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev
+Subject: Re: [PATCH] inotify: disallow watches on unsupported filesystems
+Message-ID: <hg55e37tvfjnb76lvffuhnvozdwm4k6xuqq6nmvjgjaryjqmee@ppujm6t5y7ju>
+References: <20250304080044.7623-1-ImanDevel@gmail.com>
+ <CAOQ4uxiaY9cZFpj4m65SrAVXm7MqB2OFSfyH5D03hEwmdtiBVQ@mail.gmail.com>
+ <5tq33ajgtu62tvaiymf3st74ctkurgskq6xpx2ax53vdbayoce@jffpxkthro3u>
+ <CAOQ4uxiZfJYHrYmE2k0vWrgbLLbDQ2LTrVggYwL3pv4FUyjctQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxiZfJYHrYmE2k0vWrgbLLbDQ2LTrVggYwL3pv4FUyjctQ@mail.gmail.com>
 
-On (H)SCIF with a Baud Rate Generator for External Clock (BRG), there
-are multiple ways to configure the requested serial speed.  If firmware
-uses a different method than Linux, and if any debug info is printed
-after the Bit Rate Register (SCBRR) is restored, but before termios is
-reconfigured (which configures the alternative method), the system may
-lock-up during resume.
+On 25/03/04 05:41PM, Amir Goldstein wrote:
+> On Tue, Mar 4, 2025 at 5:05 PM Seyediman Seyedarab <imandevel@gmail.com> wrote:
+> >
+> > On 25/03/04 12:57PM, Amir Goldstein wrote:
+> > > On Tue, Mar 4, 2025 at 8:59 AM Seyediman Seyedarab <imandevel@gmail.com> wrote:
 
-Fix this by saving and restoring the contents of the BRG Frequency
-Division (SCDL) and Clock Select (SCCKS) registers as well.
+> > I understand why it might seem like disallowing users from monitoring
+> > these filesystems could break userspace in some way. BUT, programs
+> > work incorrectly precisely because they do not receive any information
+> > from the kernel, so in other words they are already broken. There is no
+> > way for them to know if the fs is supported or not. I mean, even we are
+> > not sure at the moment, then how would they know.
+> 
+> Programs not knowing is a problem that could be fixed with a new API
+> or new init flag to fanotify/inotify.
+> 
+> Existing programs that would break due to this change is unacceptable.
+> 
 
-Also save and restore the HSCIF's Sampling Rate Register (HSSRR), which
-configures the sampling point, and the SCIFA/SCIFB's Serial Port Control
-and Data Registers (SCPCR/SCPDR), which configure the optional control
-flow signals.
+Maybe something like IN_DISALLOW_REMOTE could work for now, at least
+until remote change notifications are properly implemented for those
+specific filesystems? Later, if needed, it could evolve into a new API,
+and the flag could become the default behavior when passed to that API.
 
-After this, all registers that are not saved/restored are either:
-  - read-only,
-  - write-only,
-  - status registers containing flags with clear-after-set semantics,
-  - FIFO Data Count Trigger registers, which do not matter much for
-    the serial console.
+> > As an example, 'Waybar' is a userspace program affected by this patch.
+> > Since it relies on monitoring sysfs, it isn't working properly anyway.
+> > This is also due to the issue mentioned earlier... inotify_add_watch()
+> > returns without an error, so the developers haven't realized that
+> > inotify isn't actually supported on sysfs. There are over five
+> > discussions regarding this issue that you can find them here:
+> > https://github.com/Alexays/Waybar/pull/3474
+> >
+> 
+> You need to distinguish "inotify does not work"
+> from "inotify does not notify on 'remote' changes"
+> that is changes that happen on the network fs server or inside the
+> kernel (in sysfs case) vs. changes that happen via vfs syscalls
+> on the mounted fs, be it p9, cifs, sysfs.
+> 
+> There are several discussions about supporting "remote change"
+> notifications for network filesystems - this is a more complex problem.
+> 
+> In any case, I believe performing operations on the mounted fs
+> generated inotify events for all the fs that you listed and without
+> a claim that nobody is using this facility we cannot regress this
+> behavior without an opt-in from the application.
 
-Fixes: 22a6984c5b5df8ea ("serial: sh-sci: Update the suspend/resume support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
-This can be reproduced on e.g. Salvator-X(S) by enabling the debug
-prints in sci_brg_calc(), and using s2ram with no_console_suspend.
+Understood. So this is what I should work on (correct me if anything
+seems off):
+1. Carefully list all filesystems where "remote" changes occur.
+2. Introduce a flag like FS_DISALLOW_INOTIFY_REMOTE in fs_flags
+   for these filesystems.
+3. Provide an option for userspace, such as IN_DISALLOW_REMOTE,
+   so applications can explicitly handle this behavior.
+4. (Possibly later, if it makes sense) Introduce a new syscall where
+   FS_DISALLOW_INOTIFY_REMOTE is the default behavior.
 
-Tested on systems using SCIF (Salvator-XS), HSCIF (Gray Hawk Single) and
-SCIFA (KZM-A9-GT) as the serial console.
-
-v2:
-  - Add Tested-by, Reviewed-by.
-  - Move restoring the External Baud Rate Generator (BRG) registers up,
-    to better match the initialization order in sci_set_termios(),
-  - Also save/restore HSSRR, SCPCR, and SCPDR.
----
- drivers/tty/serial/sh-sci.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
-
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 2db2d85003f70138..1c8480d0338ef850 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -105,10 +105,15 @@ struct plat_sci_reg {
- };
- 
- struct sci_suspend_regs {
-+	u16 scdl;
-+	u16 sccks;
- 	u16 scsmr;
- 	u16 scscr;
- 	u16 scfcr;
- 	u16 scsptr;
-+	u16 hssrr;
-+	u16 scpcr;
-+	u16 scpdr;
- 	u8 scbrr;
- 	u8 semr;
- };
-@@ -3563,6 +3568,10 @@ static void sci_console_save(struct sci_port *s)
- 	struct sci_suspend_regs *regs = &s->suspend_regs;
- 	struct uart_port *port = &s->port;
- 
-+	if (sci_getreg(port, SCDL)->size)
-+		regs->scdl = sci_serial_in(port, SCDL);
-+	if (sci_getreg(port, SCCKS)->size)
-+		regs->sccks = sci_serial_in(port, SCCKS);
- 	if (sci_getreg(port, SCSMR)->size)
- 		regs->scsmr = sci_serial_in(port, SCSMR);
- 	if (sci_getreg(port, SCSCR)->size)
-@@ -3573,6 +3582,12 @@ static void sci_console_save(struct sci_port *s)
- 		regs->scsptr = sci_serial_in(port, SCSPTR);
- 	if (sci_getreg(port, SCBRR)->size)
- 		regs->scbrr = sci_serial_in(port, SCBRR);
-+	if (sci_getreg(port, HSSRR)->size)
-+		regs->hssrr = sci_serial_in(port, HSSRR);
-+	if (sci_getreg(port, SCPCR)->size)
-+		regs->scpcr = sci_serial_in(port, SCPCR);
-+	if (sci_getreg(port, SCPDR)->size)
-+		regs->scpdr = sci_serial_in(port, SCPDR);
- 	if (sci_getreg(port, SEMR)->size)
- 		regs->semr = sci_serial_in(port, SEMR);
- }
-@@ -3582,6 +3597,10 @@ static void sci_console_restore(struct sci_port *s)
- 	struct sci_suspend_regs *regs = &s->suspend_regs;
- 	struct uart_port *port = &s->port;
- 
-+	if (sci_getreg(port, SCDL)->size)
-+		sci_serial_out(port, SCDL, regs->scdl);
-+	if (sci_getreg(port, SCCKS)->size)
-+		sci_serial_out(port, SCCKS, regs->sccks);
- 	if (sci_getreg(port, SCSMR)->size)
- 		sci_serial_out(port, SCSMR, regs->scsmr);
- 	if (sci_getreg(port, SCSCR)->size)
-@@ -3592,6 +3611,12 @@ static void sci_console_restore(struct sci_port *s)
- 		sci_serial_out(port, SCSPTR, regs->scsptr);
- 	if (sci_getreg(port, SCBRR)->size)
- 		sci_serial_out(port, SCBRR, regs->scbrr);
-+	if (sci_getreg(port, HSSRR)->size)
-+		sci_serial_out(port, HSSRR, regs->hssrr);
-+	if (sci_getreg(port, SCPCR)->size)
-+		sci_serial_out(port, SCPCR, regs->scpcr);
-+	if (sci_getreg(port, SCPDR)->size)
-+		sci_serial_out(port, SCPDR, regs->scpdr);
- 	if (sci_getreg(port, SEMR)->size)
- 		sci_serial_out(port, SEMR, regs->semr);
- }
--- 
-2.43.0
-
+Regards,
+Seyediman
 
