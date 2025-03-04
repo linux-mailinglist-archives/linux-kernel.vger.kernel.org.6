@@ -1,121 +1,135 @@
-Return-Path: <linux-kernel+bounces-543422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25667A4D564
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:53:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3C79A4D567
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:53:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 297F71883A44
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:53:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BA6A7A9757
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F79C1F8736;
-	Tue,  4 Mar 2025 07:53:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 272A81F8BC9;
+	Tue,  4 Mar 2025 07:53:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bzzdgt4J"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nlAD+VrT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEA6C1F7914
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 07:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A531F8918;
+	Tue,  4 Mar 2025 07:53:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741074799; cv=none; b=VfobJP8OCO44aWhypFD+0pqPXzOWrdJ2xFa3rD+zC9ufxGynmAAdRCZceyWSuSAu+qItDNjfiLBNDhfMaLUsjanRwKkj1axDORTkQquPuJOkgilR0nROfIN5wVLmPU1ZWbJgfZBugDxShnNoSZ/Li55R0QrS6OG3EEY+8cDEDQI=
+	t=1741074800; cv=none; b=iU6grsq77JjdzCVsMMSTxvKBATn/Lw51ntfQVcWTWRqC15Oagyg9m1B4hG/LsAvHoH+gyXDfDtYSo1wwha4rq1zEQlyHLwtJLLMMcsMDVlhB35d6ouTDgd/UfukJl9eiCqstx+4ccyJcv07z5NnW0xYwxFFyMrApESz1XcC7DJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741074799; c=relaxed/simple;
-	bh=BVJSFhPr+MWcVdsQvQ4e5j7EsE3f4zAOy5yVDG+t3BI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r/Hr+Ly8DvTh5tSz9TvGPvPclIg6lMaIoSDTwL3/zfa9M16tb89ns6coMiKGDEWGqAU/GpyST+h7YwbxgCXEe6AK76CCXFzWNHE/3XLmo6l7JLEFoMEvuU3seCFkjZJhhFBtV8yAhZZCP72U8yvPBJg7ed9Va3BZHQYhQEmmUrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bzzdgt4J; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5497590ffbbso755693e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 23:53:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741074795; x=1741679595; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BVJSFhPr+MWcVdsQvQ4e5j7EsE3f4zAOy5yVDG+t3BI=;
-        b=bzzdgt4Jddv57DDM9/XJp5vg22xYr//tW5r6EorBC6CtS+UtHLMdTUSoKB61L3hS3C
-         CrLFeeijxXBXKpXJPxBX9AFgLIWAAa5UYRixM3QV9ZC6oNLwVZr3Df6kpZfwXBubOdY4
-         yhBlTyYcFzjkJzmOdcUeBc75jeCSRdAVQbWAdbm5JxabjWcvOlxN1Rj3hhf9e96fX6T0
-         bW/DH/o4yRmvijclPwFvVlKJ+N9Q2yjgSTcTBD6sqQ035qQiKmivyOaVdj0W7rjFv5EP
-         YybQXmu8fPrZC1Gohb/tGjwAlXzmYWMv5UZn4Cy+/zQdkoF1VOJUXR0q7OsNuQwXPCuC
-         ZAZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741074795; x=1741679595;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BVJSFhPr+MWcVdsQvQ4e5j7EsE3f4zAOy5yVDG+t3BI=;
-        b=j+ywrbWSDBvscU7wuKMB7agduv4n2DXvpLomFKVrtsikY8BjOGHnrbv6s+6MxTFsZ5
-         W31YfZ+rVao1wGeh99t6FMkDW+DzenohtMNKoKt/6MSUdtnMG1QzHbEN8oG1U2WkeHxg
-         ZnGObnWnuSZ0Gx4Tpec/8GKodS1DOM1lFEZY4uZSB5MnLs49E6hBCg0Z+rTCtIN9xGW2
-         B3XBTY9V7w3PB7TUpjecFcd1y7H95vDTDhaCq9d+JHMiXcnSP1k47htfulJR1JS8f9O+
-         wctwnEs0QbOrn157joY5qCZSBS/U2mypNauK4NSk6WiZoZgFs9HRBKQFKXCAmRNjiUBI
-         5VHA==
-X-Forwarded-Encrypted: i=1; AJvYcCVGp09514KppMbI5nBQklnNdEhl9T/xc+OvO+boUz5Cfm4uIoVcdyXCc9NbsBcnC4+BkJQtN1MlAzXmLd8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhSRNFbHe0qRA+uN8uSM6wT6/FtLGlA0QpJ2MM5CpmS8BycNX7
-	vDMYeEeCl4nY6W1Tr/Kk1OXzpuFWYzl1wJKGU8PNvWiaoou8FzT3tO2W9DnvANzplL+nrEb+q7G
-	IOMyp02s7pwiOVixbz4/U6sUhgYjrIV/rTgTLmQ==
-X-Gm-Gg: ASbGncuAtnMeQxo84rs8Or6yQZtQLRPXyTo+Wp0JD9gsgz5IxepxlxeI1Z2WM1/9smx
-	nJbdyKAtWASEKIXGGRsPDYPjbB43NJc+hDRLtUXfpU0fbibbjoBcO3FiGTUO/qAcK1gx2Gub7y5
-	Ochb6bbiDRVBc6LjWzvV2MAh1p6g==
-X-Google-Smtp-Source: AGHT+IGo7kPW6t6mFBR3/sTMivZuqhRH0SeEyZ9ok1vnRKx+3P9ggktEPjyopRkd13VsV+wua67se3lgNpjzpez8VHk=
-X-Received: by 2002:a05:6512:1044:b0:545:2efc:745d with SMTP id
- 2adb3069b0e04-5494c3546d1mr5523229e87.46.1741074794798; Mon, 03 Mar 2025
- 23:53:14 -0800 (PST)
+	s=arc-20240116; t=1741074800; c=relaxed/simple;
+	bh=16rZxsXvQ14pNvHWwDRJ01iCVRuQesjFsZ/vK7SxrK8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QgqIZXB1dOxTnewPZ/mkVl8tcs6TE4wGh32dMaAMaV4WJu21EXDwkSyne9PbEUNNEGrxqfY6UC1+MbigTVZYXnbWgVZ8Ei1/iAijKmVN94xez2coOqLPIydmMfcZutacn99oJKsOm07WUp2NQ/LiwS9SdYXyVQ1pUa9U9Gaa1TY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nlAD+VrT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17FD0C4CEE5;
+	Tue,  4 Mar 2025 07:53:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741074799;
+	bh=16rZxsXvQ14pNvHWwDRJ01iCVRuQesjFsZ/vK7SxrK8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=nlAD+VrTJFtVxu+6xNRbVb+FjBkyKklT+otVGQQlGd1bMN/wUnfG+V7TCyvAFEaIM
+	 8PppV7wIxiAzdQ4Ug++kWeMGepmzet6Ph69Z/ASjfS3lbOKaYGQE7lN9DDWC8HDeYO
+	 NdMZgTmdE+8bmyqfOQZjNathQMS7QDr1dkbSFPP7eEiJwtY3l5Dw7cFO4ELgbzQmjg
+	 cO9YLAHjbDsqVdzH9CJxUx1jxv/KtkNMb3oMTkerQumc+L/tg0artXH/IxxYBoC6F2
+	 Jc8ofGGx6XrxB3fHgf5BlbIWu3hWpz6PiuDrWXLZ5PDYu7v86wdFtcDO1CJHue2+C/
+	 DxsE/U46bwuVw==
+Message-ID: <5390c973-6a92-4de8-b00a-cd62af347ccb@kernel.org>
+Date: Tue, 4 Mar 2025 08:53:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250219102750.38519-1-brgl@bgdev.pl>
-In-Reply-To: <20250219102750.38519-1-brgl@bgdev.pl>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 4 Mar 2025 08:53:03 +0100
-X-Gm-Features: AQ5f1JoUOBReXAYnYf9thqIoVITthD3dUEJajNI_puN1-yLNkKw6af5pX77JOew
-Message-ID: <CACRpkdYeBM6V+61-cbX1g_wLAVHvQQrtPb=5qjTdUw--+J+E4g@mail.gmail.com>
-Subject: Re: [RFC/RFT PATCH] pinctrl: bcm2835: don't -EINVAL on alternate
- funcs from get_direction()
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Stefan Wahren <wahrenst@gmx.net>, 
-	Liao Chen <liaochen4@huawei.com>, Chen-Yu Tsai <wens@csie.org>, Mark Brown <broonie@kernel.org>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, linux-gpio@vger.kernel.org, 
-	linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: iio: accel: add binding documentation for
+ ADIS16203
+To: Saalim Quadri <danascape@gmail.com>, jic23@kernel.org
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com,
+ gregkh@linuxfoundation.org, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev,
+ 21cnbao@gmail.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ devicetree@vger.kernel.org
+References: <20250303234913.66614-1-danascape@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250303234913.66614-1-danascape@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 19, 2025 at 11:27=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl=
-> wrote:
+On 04/03/2025 00:49, Saalim Quadri wrote:
+> This patch add device tree binding documentation for ADIS16203.
+> 
+> Signed-off-by: Saalim Quadri <danascape@gmail.com>
+> ---
+>  .../bindings/iio/accel/adi,adis16203.yaml     | 52 +++++++++++++++++++
+>  1 file changed, 52 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/accel/adi,adis16203.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/accel/adi,adis16203.yaml b/Documentation/devicetree/bindings/iio/accel/adi,adis16203.yaml
+> new file mode 100644
+> index 000000000000..e67e856266f5
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/accel/adi,adis16203.yaml
+> @@ -0,0 +1,52 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/accel/adi,adis16203.yaml#
 
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> Since commit 9d846b1aebbe ("gpiolib: check the return value of
-> gpio_chip::get_direction()") we check the return value of the
-> get_direction() callback as per its API contract. This driver returns
-> -EINVAL if the pin in question is set to one of the alternative
-> (non-GPIO) functions. This isn't really an error that should be
-> communicated to GPIOLIB so default to returning the "safe" value of
-> INPUT in this case. The GPIO subsystem does not have the notion of
-> "unknown" direction.
->
-> Fixes: 9d846b1aebbe ("gpiolib: check the return value of gpio_chip::get_d=
-irection()")
-> Reported-by: Mark Brown <broonie@kernel.org>
-> Closes: https://lore.kernel.org/all/Z7VFB1nST6lbmBIo@finisterre.sirena.or=
-g.uk/
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+That's identical to adi,adis16201 which already covers more than one
+device. Don't create unnecessary bindings, so this goes to existing binding.
 
-Patch applied!
-
-Yours,
-Linus Walleij
+Best regards,
+Krzysztof
 
