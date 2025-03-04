@@ -1,290 +1,246 @@
-Return-Path: <linux-kernel+bounces-543524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D56FAA4D6C3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:41:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 724F2A4D6D5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:43:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 388FA3AACCC
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:41:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCD1116CB9E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:43:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 030E61FBEA1;
-	Tue,  4 Mar 2025 08:41:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6FF21FC7D6;
+	Tue,  4 Mar 2025 08:43:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ONfA4h+e";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lE1n3adN";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ONfA4h+e";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lE1n3adN"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AIDGOeLq"
+Received: from mail-yw1-f194.google.com (mail-yw1-f194.google.com [209.85.128.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B4BE1FBEBE
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 08:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 447011FBEB1;
+	Tue,  4 Mar 2025 08:43:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741077693; cv=none; b=TdyDf0ikxjkPZSqHhV6tE0M8BEBGBaYrRTvGU3aww99UAIZ+zhyMnIDu1XrJJo6F1tqBcBdPbZC3bhJyQp4LFelFMZUMiLmqlqXlEgiyQaOKPYDtlvOcOQ1bS5BBmNevZpDFtdH5ArK8TvRACt5QjeIPA/WhcCXFcBu3lJekNNk=
+	t=1741077789; cv=none; b=rX8DGwKuE7qhVJLP0JWrNuqu408C+JugkihxNyouluUnkRQKXiJd3j9zD8T93oWrKpdwixhv2NtPHRYO7JTBEktDlO0dob+pXSzXgRqmojqaSuIbIXhSgR88I1HbJPuyIV8CL9Z47h9qCLeRedr+cUCeRXNvjs61u5UZJhwysZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741077693; c=relaxed/simple;
-	bh=q182o3gqf6yupqadBdbVD/j9y+Ok7W9ubFxiI9oEXoY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Fjn2PKItQ3SD7OPqwxMJNYZfNeJcuNI0B/azFva3Z90uvig+feUujWWT1IRwYvYBadC4Op2Ts2abzC0zG0HnC3QjCDNPt4Dx7MqngecL6S9H6jv1oHHXpBUj1jR84qdxdm106fpeANfy+FRpOh5JeEm6OjVI+T0SFUyp20quxu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ONfA4h+e; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lE1n3adN; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ONfA4h+e; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lE1n3adN; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id BF3211F387;
-	Tue,  4 Mar 2025 08:41:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741077683; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=eY48bp8QL7Jwi8pCQ+GUudIBOPIj3TGHcGdFTuIEtMg=;
-	b=ONfA4h+ek6u7ohHhT8EyldH2ZmoekiosrYMTeOrH3yCOthpMW3e3uz95C8PmMsBScyFtrT
-	nnZP4NRQdRVnxgukMUfX1/x4jB7dxfdKc1GngLxYwnzIg58VkkVbP06dLwOBV5hHDBuV/H
-	tFlk6UzQf4TJS0udBS/PXDzHYMliq9c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741077683;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=eY48bp8QL7Jwi8pCQ+GUudIBOPIj3TGHcGdFTuIEtMg=;
-	b=lE1n3adN2+vtwG9Tq4EdJ4TsZgdwKH1uty9j3jEcMr8EhvEN3ljTGja6qQ3BgIUd6Yjf9J
-	gvTYBLVU0ABgkPDw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741077683; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=eY48bp8QL7Jwi8pCQ+GUudIBOPIj3TGHcGdFTuIEtMg=;
-	b=ONfA4h+ek6u7ohHhT8EyldH2ZmoekiosrYMTeOrH3yCOthpMW3e3uz95C8PmMsBScyFtrT
-	nnZP4NRQdRVnxgukMUfX1/x4jB7dxfdKc1GngLxYwnzIg58VkkVbP06dLwOBV5hHDBuV/H
-	tFlk6UzQf4TJS0udBS/PXDzHYMliq9c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741077683;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=eY48bp8QL7Jwi8pCQ+GUudIBOPIj3TGHcGdFTuIEtMg=;
-	b=lE1n3adN2+vtwG9Tq4EdJ4TsZgdwKH1uty9j3jEcMr8EhvEN3ljTGja6qQ3BgIUd6Yjf9J
-	gvTYBLVU0ABgkPDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A4BCF1393C;
-	Tue,  4 Mar 2025 08:41:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id yyjiJ7O8xmfKPQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 04 Mar 2025 08:41:23 +0000
-Message-ID: <714d353a-49c8-4cbd-88d6-e24ae8f78aaa@suse.cz>
-Date: Tue, 4 Mar 2025 09:41:23 +0100
+	s=arc-20240116; t=1741077789; c=relaxed/simple;
+	bh=dTtL6Jur3atffX/frcpKEb7wF2vN7b/LS2OXFn6lV18=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hXGmOE7nPabjxpT1Y/cLH9X/dS6RdOICbc9ZrNG3dzB+h7kE3uwn3Iv/XS30KiPQHfBzeyOcDVvz4cz1y54vUULtzS+ger8frHOwDW2fyRSmeDTiPXXER2BgxF/4oHF9yikWpLXQo6gUcvf+8GOdCEimi12Z2s1XEtqB9Ut/Zms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AIDGOeLq; arc=none smtp.client-ip=209.85.128.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f194.google.com with SMTP id 00721157ae682-6f7031ea11cso53378687b3.2;
+        Tue, 04 Mar 2025 00:43:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741077786; x=1741682586; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H7DJBIx3iIusUVOEMB5nnJFYTmd3nur6e8lzlUxwqLk=;
+        b=AIDGOeLqtovb2yr+ZgA+DOQLDoBpM+VLZLQ6LqQLe7ezhAUiIt/zM/qgq/qYacwoAp
+         3Q8m8Hd3RboRGSrhWp5Ufsoci465g9q+/8E2trcnxrB/Ci9ZDAoITORfXJVTIhrtOvco
+         Kia003XJ9G0Ok5Nmsc7q4ugPMFfbT9cPGRXmmvKr6YqFvpg1WIIQzRJ0EbTvpOA0ehOr
+         4xXIo5CPzSshvoHiQ5gaj+5D/scYU7jNGESw+ovghUL+PC2etQ4yFaB4TeTVDKAfbHGq
+         PubAT+Aprwx/B6J4lmT0JpPKwv+IkOzdxKbuEWUMsOmt8veB2ID7uQGfElkNhV2Q0xUM
+         WA9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741077786; x=1741682586;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=H7DJBIx3iIusUVOEMB5nnJFYTmd3nur6e8lzlUxwqLk=;
+        b=n+U0UZ+EaIa8Sb27vgIcfGz7ReXhnBprW6X3ld2ZDVFpkBWWfOlSC41oiy0KE2y1Ae
+         EGaF9KT6mk6gid/UPF1Gp2A4QZuYWN2kmKYsJxelCUTynJG+sZ/3ln3Sh2pu930eu6lz
+         R/QWpDRRuhu/khajEtOTAXP3CjkIURGRg1lshCazzWJAFM/Hj9dKYv6QjDBJhNg4Vv81
+         s3XJT6J7XxdNNx4lv6fTXsHKgwTwMQ5PG2l9nw3IlcFnzT5NXuY/IONlinOuh3X99jUp
+         CQjeqQQij2hSBjVT51SsZKfBXwuMUZhi2CbM5o4IpZ/tIaCp58oKwBcxVJDkkKTMOSgS
+         NJPA==
+X-Forwarded-Encrypted: i=1; AJvYcCUEQVo23PidUQfh6JFWad3O8S4RzhMF/jlZcCJ/pUT+Y1Z7yx0GRiUP6kayTU3YeFa6Nh0=@vger.kernel.org, AJvYcCUmmj2VOOPZDRCVLXHgQq2oWipJ+Qcp4Wowv61q7Q94RV3E/wriIREPebbzx1W4lVZANgB1/y6HPuUTuuusI7NgYNVb@vger.kernel.org, AJvYcCWtbmerjTOG9ZlHCzx17spZfbkyFbnmeWDb10E963AlnC8/xaQlG94aWnbNxltv3c35c+5kZSDETyFLg/J5@vger.kernel.org, AJvYcCXfODhJq3pDxbor7egvnuhh7w81C/s4tSYweG0ffzqvWcqUPIcx4u+Z1BBZtV9PIB73BOgXg4CJ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxmefm+1N1fDeAWJhmlOETXER/fGGV6NporMvSKsWdlX80J8eeZ
+	kaHc4dWpp4UmhKwWe1PGvXTto4IxifGJhpaHCDwsr77a9Ufgk2cxRxzfr55deMMRHGZQXREqvaj
+	7QJYQLRvP7VpE8t4bkfk5RdpWhvc=
+X-Gm-Gg: ASbGnctJeFSUghaZsn1bZ8wUQsn0YP60p91M0+a6EBKtu4qQR2S8jxY2Cq5p98q7Wgf
+	3fuK4ydWBITqBG+xiCi+BC60JFgjZSzPdokyYDIps+u5kgnV90yPOdyKyB5jxNnOgNCHF1+PygX
+	I16nNOly15Nb9uFvjGkgmLqm4s/A==
+X-Google-Smtp-Source: AGHT+IFwKhleghfxmR4fo46mZcDQS529bArSvfkTfmrf2+HZom9bVtkcaUWWW29c+BaFyOYjznUloBGTXBdQLw3Z1i8=
+X-Received: by 2002:a05:690c:6303:b0:6fd:3f88:e0a9 with SMTP id
+ 00721157ae682-6fd49e2a409mr227818067b3.0.1741077786117; Tue, 04 Mar 2025
+ 00:43:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] slub: Fix Off-By-One in the While condition in
- on_freelist()
-Content-Language: en-US
-To: Lilith Gkini <lilithpgkini@gmail.com>
-Cc: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
- David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, harry.yoo@oracle.com
-References: <Z8Sc4DEIVs-lDV1J@Arch>
- <b951acd4-5510-4d03-8f1e-accf38d909b6@suse.cz> <Z8XbomV9WCabATIM@Arch>
- <8cabcf70-d887-471d-9277-ef29aca1216b@suse.cz> <Z8a4r2mnIzTD2cZa@Arch>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <Z8a4r2mnIzTD2cZa@Arch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Score: -2.80
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TAGGED_RCPT(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux.com,kernel.org,google.com,lge.com,linux-foundation.org,linux.dev,gmail.com,kvack.org,vger.kernel.org,oracle.com];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <20250303132837.498938-1-dongml2@chinatelecom.cn>
+ <20250303132837.498938-2-dongml2@chinatelecom.cn> <20250303165454.GB11590@noisy.programming.kicks-ass.net>
+ <CADxym3aVtKx_mh7aZyZfk27gEiA_TX6VSAvtK+YDNBtuk_HigA@mail.gmail.com>
+ <20250304053853.GA7099@noisy.programming.kicks-ass.net> <20250304061635.GA29480@noisy.programming.kicks-ass.net>
+ <CADxym3bS_6jpGC3vLAAyD20GsR+QZofQw0_GgKT8nN3c-HqG-g@mail.gmail.com>
+In-Reply-To: <CADxym3bS_6jpGC3vLAAyD20GsR+QZofQw0_GgKT8nN3c-HqG-g@mail.gmail.com>
+From: Menglong Dong <menglong8.dong@gmail.com>
+Date: Tue, 4 Mar 2025 16:41:29 +0800
+X-Gm-Features: AQ5f1Jq2_mS0v23bn6W1X-IWDb9MW8dDTnlwz6_dNKl9ybY4p55hAFXAjC92mhs
+Message-ID: <CADxym3bS6XdGFhKeEm5TKD-_ubEQB+yTrd=7_L_CDn4xthe-Vg@mail.gmail.com>
+Subject: Re: [PATCH v4 1/4] x86/ibt: factor out cfi and fineibt offset
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: rostedt@goodmis.org, mark.rutland@arm.com, alexei.starovoitov@gmail.com, 
+	catalin.marinas@arm.com, will@kernel.org, mhiramat@kernel.org, 
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, ast@kernel.org, 
+	daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev, 
+	eddyz87@gmail.com, yonghong.song@linux.dev, john.fastabend@gmail.com, 
+	kpsingh@kernel.org, sdf@fomichev.me, jolsa@kernel.org, davem@davemloft.net, 
+	dsahern@kernel.org, mathieu.desnoyers@efficios.com, nathan@kernel.org, 
+	nick.desaulniers+lkml@gmail.com, morbo@google.com, samitolvanen@google.com, 
+	kees@kernel.org, dongml2@chinatelecom.cn, akpm@linux-foundation.org, 
+	riel@surriel.com, rppt@kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org, netdev@vger.kernel.org, llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 3/4/25 09:24, Lilith Gkini wrote:
-> On Mon, Mar 03, 2025 at 08:06:32PM +0100, Vlastimil Babka wrote:
->> Yeah, I think bools were not used initially int the kernel, but we're fine
->> with them now and changing a function for other reasons is a good
->> opportunity to modernize. There are some guidelines in
->> Documentation/process/coding-style.rst about this (paragraphs 16 and 17).
->> int is recommended if 0 means success and -EXXX for error, bool for simple
->> true/false which is the case here.
-> 
-> Oh! because of the emote I thought you were being sarcastic that I didnt
-> report it properly.
+On Tue, Mar 4, 2025 at 3:47=E2=80=AFPM Menglong Dong <menglong8.dong@gmail.=
+com> wrote:
+>
+> On Tue, Mar 4, 2025 at 2:16=E2=80=AFPM Peter Zijlstra <peterz@infradead.o=
+rg> wrote:
+> >
+> > On Tue, Mar 04, 2025 at 06:38:53AM +0100, Peter Zijlstra wrote:
+> > > On Tue, Mar 04, 2025 at 09:10:12AM +0800, Menglong Dong wrote:
+> > > > Hello, sorry that I forgot to add something to the changelog. In fa=
+ct,
+> > > > I don't add extra 5-bytes anymore, which you can see in the 3rd pat=
+ch.
+> > > >
+> > > > The thing is that we can't add extra 5-bytes if CFI is enabled. Wit=
+hout
+> > > > CFI, we can make the padding space any value, such as 5-bytes, and
+> > > > the layout will be like this:
+> > > >
+> > > > __align:
+> > > >   nop
+> > > >   nop
+> > > >   nop
+> > > >   nop
+> > > >   nop
+> > > > foo: -- __align +5
+> > > >
+> > > > However, the CFI will always make the cfi insn 16-bytes aligned. Wh=
+en
+> > > > we set the FUNCTION_PADDING_BYTES to (11 + 5), the layout will be
+> > > > like this:
+> > > >
+> > > > __cfi_foo:
+> > > >   nop (11)
+> > > >   mov $0x12345678, %reg
+> > > >   nop (16)
+> > > > foo:
+> > > >
+> > > > and the padding space is 32-bytes actually. So, we can just select
+> > > > FUNCTION_ALIGNMENT_32B instead, which makes the padding
+> > > > space 32-bytes too, and have the following layout:
+> > > >
+> > > > __cfi_foo:
+> > > >   mov $0x12345678, %reg
+> > > >   nop (27)
+> > > > foo:
+> > >
+> > > *blink*, wtf is clang smoking.
+> > >
+> > > I mean, you're right, this is what it is doing, but that is somewhat
+> > > unexpected. Let me go look at clang source, this is insane.
+> >
+> > Bah, this is because assemblers are stupid :/
+> >
+> > There is no way to tell them to have foo aligned such that there are at
+> > least N bytes free before it.
+> >
+> > So what kCFI ends up having to do is align the __cfi symbol to the
+> > function alignment, and then stuff enough nops in to make the real
+> > symbol meet alignment.
+> >
+> > And the end result is utter insanity.
+> >
+> > I mean, look at this:
+> >
+> >       50:       2e e9 00 00 00 00       cs jmp 56 <__traceiter_initcall=
+_level+0x46>     52: R_X86_64_PLT32      __x86_return_thunk-0x4
+> >       56:       66 2e 0f 1f 84 00 00 00 00 00   cs nopw 0x0(%rax,%rax,1=
+)
+> >
+> > 0000000000000060 <__cfi___probestub_initcall_level>:
+> >       60:       90                      nop
+> >       61:       90                      nop
+> >       62:       90                      nop
+> >       63:       90                      nop
+> >       64:       90                      nop
+> >       65:       90                      nop
+> >       66:       90                      nop
+> >       67:       90                      nop
+> >       68:       90                      nop
+> >       69:       90                      nop
+> >       6a:       90                      nop
+> >       6b:       b8 b1 fd 66 f9          mov    $0xf966fdb1,%eax
+> >
+> > 0000000000000070 <__probestub_initcall_level>:
+> >       70:       2e e9 00 00 00 00       cs jmp 76 <__probestub_initcall=
+_level+0x6>      72: R_X86_64_PLT32      __x86_return_thunk-0x4
+> >
+> >
+> > That's 21 bytes wasted, for no reason other than that asm doesn't have =
+a
+> > directive to say: get me a place that is M before N alignment.
+> >
+> > Because ideally the whole above thing would look like:
+> >
+> >       50:       2e e9 00 00 00 00       cs jmp 56 <__traceiter_initcall=
+_level+0x46>     52: R_X86_64_PLT32      __x86_return_thunk-0x4
+> >       56:       66 2e 0f 1f 84          cs nopw (%rax,%rax,1)
+> >
+> > 000000000000005b <__cfi___probestub_initcall_level>:
+> >       5b:       b8 b1 fd 66 f9          mov    $0xf966fdb1,%eax
+> >
+> > 0000000000000060 <__probestub_initcall_level>:
+> >       60:       2e e9 00 00 00 00       cs jmp 76 <__probestub_initcall=
+_level+0x6>      72: R_X86_64_PLT32      __x86_return_thunk-0x4
+>
+> Hi, peter. Thank you for the testing, which is quite helpful
+> to understand the whole thing.
+>
+> I was surprised at this too. Without CALL_PADDING, the cfi is
+> nop(11) + mov; with CALL_PADDING, the cfi is mov + nop(11),
+> which is weird, as it seems that we can select CALL_PADDING if
+> CFI_CLANG to make things consistent. And I  thought that it is
+> designed to be this for some reasons :/
+>
+> Hmm......so what should we do now? Accept and bear it,
+> or do something different?
+>
+> I'm good at clang, so the solution that I can think of is how to
 
-Ah, sorry about that misunderstanding.
+*not good at*
 
-> Thank you for clarifying! That should be an easy fix!
-
-Great!
-
->> > When it reaches nr == slab->objects and we are still in the while loop
->> > it means that fp != NULL and therefore the freelist is corrupted (note
->> > that nr starts from 0).
->> > 
->> > This would add fewer lines of code and there won't be any repeating
->> > code.
->> > It will enter in the "Freechain corrupt" branch and set the tail of 
->> > the freelist to NULL, inform us of the error and it won't get a chance
->> > to do the nr++ part, leaving nr == slab->objects in that particular 
->> > case, because it breaks of the loop afterwards.
->> > 
->> > But it will not Null-out the freelist and set inuse to objects like you
->> > suggested. If that is the desired behavior instead then we could do
->> > something like you suggested.
->> 
->> We could change if (object) to if (object && nr != slab->objects) to force
->> it into the "Freepointer corrupt" variant which is better. But then the
-> 
-> We could add a ternary operator in addition to you suggestion.
-> Changing this:
-> `slab_err(s, slab, "Freepointer corrupt");`
-> 
-> to this (needs adjusting for the proper formating ofc...):
-> `slab_err(s, slab, (nr == slab->objects) ? "Freelist cycle detected" : "Freepointer corrupt");`
-> 
-> But this might be too much voodoo...
-
-Yeah it means 3 places where we check (nr == slab->objects) so it's not very
-readable.
-
->> message should be also adjusted depending on nr... it should really report
-> 
-> I m not sure what you have in mind about the adjusting the message on
-> nr. Do we really need to report the nr in the error? Do we need to
-> mention anything besides "Freelist cycle detected" like you mentioned?
-
-I meant just the Freelist cycle detected" message. As "nr" equals
-slab->objects it's not so interesting.
-
->> "Freelist cycle detected", but that's adding too many conditions just to
->> reuse the cleanup code so maybe it's more readable to check that outside of
->> the while loop after all.
-> 
-> If the ternary operator is too unreadable we could do something like you
-> suggested
-> 
-> ```
-> if (fp != NULL && nr == slab->objects) {
-> 	slab_err(s, slab, "Freelist cycle detected");
-> 	slab->freelist = NULL;
-> 	slab->inuse = slab->objects;
-> 	slab_fix(s, "Freelist cleared");
-> 	return false;
-> }
-> ```
-
-Yeah looks good.
-> 
-> What more would you like to add in the error message?
-> 
-> In a previous email you mentioned this
-> 
->> >> I think there's a problem that none of this will fix or even report the
->> >> situation properly. Even worse we'll set slab->inuse to 0 and thus pretend
->> >> all objects are free. This goes contrary to the other places that respond to
->> >> slab corruption by setting all objects to used and trying not to touch the
->> >> slab again at all.
-> 
-> If nuking it is how we should hangle corrupted freelists shouldn't we
-> also do the same in the "Freechain corrupt" branch? Otherwise it
-> wouldn't be consistent. Instead the code now just sets the tail to NULL.
-
-It sets the tail to NULL but then also breaks out of the loop (btw that
-break; could be moved to the if (object) branch to make it more obvious) to
-the code below, which should also set slab->inuse properly. So the result
-should be consistent? In that case we're able to salvage at least the
-uncorrupted part of the freelist. It's likely corrupted by a use-after-free
-of a single object overwriting the freepointer.
-
-In case of the cycle we could also in theory replace the freepointer causing
-the cycle to NULL. But we'd have to spend more effort to determine which it
-was. Cycle is also probably due to a more serious issue than single object
-overwrite - it's unlikely a random overwrite would corrupt a freepointer in
-a way that it's valid but causing a cycle. So throwing out everything seems
-the easiest.
-
-> In that case we'll need to do a lot more rewriting, but it might help
-> out with avoiding the reuse of cleanup code.
-
+> bear it :/
+>
+> According to my testing, the text size will increase:
+>
+> ~2.2% if we make FUNCTION_PADDING_BYTES 27 and select
+> FUNCTION_ALIGNMENT_16B.
+>
+> ~3.5% if we make FUNCTION_PADDING_BYTES 27 and select
+> FUNCTION_ALIGNMENT_32B.
+>
+> We don't have to select FUNCTION_ALIGNMENT_32B, so the
+> worst case is to increase ~2.2%.
+>
+> What do you think?
+>
+> Thanks!
+> Menglong Dong
+>
+> >
+> >
+> >
 
