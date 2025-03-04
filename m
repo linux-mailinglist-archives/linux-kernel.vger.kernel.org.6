@@ -1,107 +1,185 @@
-Return-Path: <linux-kernel+bounces-544105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07C5AA4DD69
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:04:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2A9DA4DD6E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:04:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3646D1670B2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:04:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9148D7A88D0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:03:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D1A1FF1C5;
-	Tue,  4 Mar 2025 12:04:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="bpQ4SNJJ"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7037202963;
+	Tue,  4 Mar 2025 12:04:15 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F2D91F1905
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 12:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF101FAC50;
+	Tue,  4 Mar 2025 12:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741089839; cv=none; b=h2BkgYNIa4nXq/nxCsiOpeFUgcko85skdTssV3QQgE9xwWLza50qTbE88gcsivm4OFhc6fTL/W97KHiIDHW4dDKGQAdEH5VPuo0KhbKiFZimP9DSWkoXwlsQG5Lz0BTZFVMuQOQvtTPS3OL1el7T7nHDidE4AwBjTrktakOVMow=
+	t=1741089855; cv=none; b=ZA06hb44Am6/O/KsheMZyDQ2FdP+l4hx3dTR+RLvwd/HcUo2pkyppvZ/EDZOp6haovVTNR6lzQadB75vGoj+tolvcDrlQDOhIqdf9OZ3Onya0xcplb8Ezxtix9BDhL0p3NpRIIENUBRUKlIuJFdaTYnY2byQswrV6BfzgKAA5g4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741089839; c=relaxed/simple;
-	bh=CR9oemOhz57B69WcQRqGOem2t60IKU+VN/UKE9p4ENU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lHEDKBKPye2hM99OTVHspkXgDNyyeNhIj9sPxrqW9HnHLV8nqoPLBvMUrgn62mctpxyrIhrM3JIewXjYsYrhNs4DmDRFaDSkRz/aDodUX0jmBrfz6g0E/MWc5LhbCQtZr7V8rjbyYrLSzjBgbah8oQZeb6mHPJj8pwOP/E2TY0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=bpQ4SNJJ; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 524C3QsV3589547
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 4 Mar 2025 06:03:26 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1741089806;
-	bh=Sx0YCaXeKShwrE/m6agNawDS0BbMWcKtDVV1e8NgZ1I=;
-	h=From:To:CC:Subject:Date;
-	b=bpQ4SNJJ5I73c5pFSrVx3egsUXZLZGRIyHzYUXwfxpfuh76M8r2ODqwdvSA9UA48j
-	 MMrBKWzzHP6oilxSnurUs9iWrWnAOFTMLKOyQlNPCW099dGcJBIHl/dqWPYk4GpIN/
-	 v81Pc4b6Lc4Pyx57xf4QnIsJfbQ7wjXjPZXSJWlc=
-Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 524C3Qva070667
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 4 Mar 2025 06:03:26 -0600
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 4
- Mar 2025 06:03:25 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 4 Mar 2025 06:03:25 -0600
-Received: from hp-z2-tower.dhcp.ti.com (hp-z2-tower.dhcp.ti.com [172.24.227.4])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 524C3K2A035887;
-	Tue, 4 Mar 2025 06:03:21 -0600
-From: Hrushikesh Salunke <h-salunke@ti.com>
-To: <catalin.marinas@arm.com>, <will@kernel.org>, <quic_bjorande@quicinc.com>,
-        <geert+renesas@glider.be>, <krzysztof.kozlowski@linaro.org>,
-        <dmitry.baryshkov@linaro.org>, <arnd@arndb.de>,
-        <nfraprado@collabora.com>, <quic_tdas@quicinc.com>,
-        <biju.das.jz@bp.renesas.com>, <javier.carrasco@wolfvision.net>,
-        <ebiggers@google.com>, <ross.burton@arm.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <h-salunke@ti.com>, <danishanwar@ti.com>, <srk@ti.com>,
-        <s-vadapalli@ti.com>
-Subject: [PATCH] arm64: defconfig: Enable config for PL2303 USB to serial adapter
-Date: Tue, 4 Mar 2025 17:33:20 +0530
-Message-ID: <20250304120320.874617-1-h-salunke@ti.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1741089855; c=relaxed/simple;
+	bh=u3ffzOOdDBdX+c9H5UtwM0oUgiysJs5s7b+QstcanWk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YEfIO/LSWwnmhWpYm347NCz30txeg+murAYlouY9lPo0GELMDlN4LIBYUo2SyajGD4yi2XIjXg6TOeBO6Ly3HOYvJvbg7sgItFlrU+BRu1NDf/fUZ7zMzpCLI3Muz638oAsF+Q8T7d5ILRkZOnZ9whlfq13xrDU1WkiIpAV6s5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Z6Z4d0yVCzvWqQ;
+	Tue,  4 Mar 2025 20:00:17 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 37B6C180116;
+	Tue,  4 Mar 2025 20:04:04 +0800 (CST)
+Received: from [10.67.120.129] (10.67.120.129) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 4 Mar 2025 20:04:03 +0800
+Message-ID: <74827bc7-ec6e-4e3a-9d19-61c4a9ba6b2c@huawei.com>
+Date: Tue, 4 Mar 2025 20:04:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm: alloc_pages_bulk: remove assumption of populating
+ only NULL elements
+To: Chuck Lever <chuck.lever@oracle.com>, Yishai Hadas <yishaih@nvidia.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Shameer Kolothum
+	<shameerali.kolothum.thodi@huawei.com>, Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>, Chris Mason <clm@fb.com>, Josef
+ Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Gao Xiang
+	<xiang@kernel.org>, Chao Yu <chao@kernel.org>, Yue Hu <zbestahu@gmail.com>,
+	Jeffle Xu <jefflexu@linux.alibaba.com>, Sandeep Dhavale <dhavale@google.com>,
+	Carlos Maiolino <cem@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>, Jesper Dangaard Brouer
+	<hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+	<horms@kernel.org>, Trond Myklebust <trondmy@kernel.org>, Anna Schumaker
+	<anna@kernel.org>, Jeff Layton <jlayton@kernel.org>, Neil Brown
+	<neilb@suse.de>, Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo
+	<Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>
+CC: Luiz Capitulino <luizcap@redhat.com>, Mel Gorman
+	<mgorman@techsingularity.net>, Dave Chinner <david@fromorbit.com>,
+	<kvm@vger.kernel.org>, <virtualization@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <linux-btrfs@vger.kernel.org>,
+	<linux-erofs@lists.ozlabs.org>, <linux-xfs@vger.kernel.org>,
+	<linux-mm@kvack.org>, <netdev@vger.kernel.org>, <linux-nfs@vger.kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>
+References: <20250228094424.757465-1-linyunsheng@huawei.com>
+ <a81f9270-8fa8-4a05-a33a-901dd777a71f@oracle.com>
+Content-Language: en-US
+From: Yunsheng Lin <linyunsheng@huawei.com>
+In-Reply-To: <a81f9270-8fa8-4a05-a33a-901dd777a71f@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-Enable support for Prolific PL2303 USB Serial single port adapter.
+On 2025/3/4 6:13, Chuck Lever wrote:
+> On 2/28/25 4:44 AM, Yunsheng Lin wrote:
+>> As mentioned in [1], it seems odd to check NULL elements in
+>> the middle of page bulk allocating, and it seems caller can
+>> do a better job of bulk allocating pages into a whole array
+>> sequentially without checking NULL elements first before
+>> doing the page bulk allocation for most of existing users.
+> 
+> Sorry, but this still makes a claim without providing any data
+> to back it up. Why can callers "do a better job"?
 
-Signed-off-by: Hrushikesh Salunke <h-salunke@ti.com>
----
-This patch is based on commit
-20d5c66e1810  Add linux-next specific files for 20250304
+What I meant "do a better job" is that callers are already keeping
+track of how many pages have been allocated, and it seems convenient
+to just pass 'page_array + nr_allocated' and 'nr_pages - nr_allocated'
+when calling subsequent page bulk alloc API so that NULL checking
+can be avoided, which seems to be the pattern I see in
+alloc_pages_bulk_interleave().
 
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+> 
+> 
+>> Through analyzing of bulk allocation API used in fs, it
+>> seems that the callers are depending on the assumption of
+>> populating only NULL elements in fs/btrfs/extent_io.c and
+>> net/sunrpc/svc_xprt.c while erofs and btrfs don't, see:
+>> commit 91d6ac1d62c3 ("btrfs: allocate page arrays using bulk page allocator")
+>> commit d6db47e571dc ("erofs: do not use pagepool in z_erofs_gbuf_growsize()")
+>> commit c9fa563072e1 ("xfs: use alloc_pages_bulk_array() for buffers")
+>> commit f6e70aab9dfe ("SUNRPC: refresh rq_pages using a bulk page allocator")
+>>
+>> Change SUNRPC and btrfs to not depend on the assumption.
+>> Other existing callers seems to be passing all NULL elements
+>> via memset, kzalloc, etc.
+>>
+>> Remove assumption of populating only NULL elements and treat
+>> page_array as output parameter like kmem_cache_alloc_bulk().
+>> Remove the above assumption also enable the caller to not
+>> zero the array before calling the page bulk allocating API,
+>> which has about 1~2 ns performance improvement for the test
+>> case of time_bench_page_pool03_slow() for page_pool in a
+>> x86 vm system, this reduces some performance impact of
+>> fixing the DMA API misuse problem in [2], performance
+>> improves from 87.886 ns to 86.429 ns.
+>>
+>> 1. https://lore.kernel.org/all/bd8c2f5c-464d-44ab-b607-390a87ea4cd5@huawei.com/
+>> 2. https://lore.kernel.org/all/20250212092552.1779679-1-linyunsheng@huawei.com/
+>> CC: Jesper Dangaard Brouer <hawk@kernel.org>
+>> CC: Luiz Capitulino <luizcap@redhat.com>
+>> CC: Mel Gorman <mgorman@techsingularity.net>
+>> CC: Dave Chinner <david@fromorbit.com>
+>> CC: Chuck Lever <chuck.lever@oracle.com>
+>> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+>> Acked-by: Jeff Layton <jlayton@kernel.org>
+>> ---
+>> V2:
+>> 1. Drop RFC tag and rebased on latest linux-next.
+>> 2. Fix a compile error for xfs.
+>> 3. Defragmemt the page_array for SUNRPC and btrfs.
+>> ---
+>>  drivers/vfio/pci/virtio/migrate.c |  2 --
+>>  fs/btrfs/extent_io.c              | 23 +++++++++++++++++-----
+>>  fs/erofs/zutil.c                  | 12 ++++++------
+>>  fs/xfs/xfs_buf.c                  |  9 +++++----
+>>  mm/page_alloc.c                   | 32 +++++--------------------------
+>>  net/core/page_pool.c              |  3 ---
+>>  net/sunrpc/svc_xprt.c             | 22 +++++++++++++++++----
+>>  7 files changed, 52 insertions(+), 51 deletions(-)
+> 
+> 52:51 is not an improvement. 1-2 ns is barely worth mentioning. The
+> sunrpc and btrfs callers are more complex and carry duplicated code.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 3a3706db2982..8b233b7ea857 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1113,6 +1113,7 @@ CONFIG_USB_ISP1760=y
- CONFIG_USB_SERIAL=m
- CONFIG_USB_SERIAL_CP210X=m
- CONFIG_USB_SERIAL_FTDI_SIO=m
-+CONFIG_USB_SERIAL_PL2303=m
- CONFIG_USB_SERIAL_OPTION=m
- CONFIG_USB_QCOM_EUD=m
- CONFIG_USB_HSIC_USB3503=y
--- 
-2.34.1
+Yes, the hard part is to find common file to place the common function
+as something as below:
 
+void defragment_pointer_array(void** array, int size) {
+    int slow = 0;
+    for (int fast = 0; fast < size; fast++) {
+        if (array[fast] != NULL) {
+            swap(&array[fast], &array[slow]);
+            slow++;
+        }
+    }
+}
+
+Or introduce a function as something like alloc_pages_refill_array()
+for the usecase of sunrpc and xfs and do the array defragment in
+alloc_pages_refill_array() before calling alloc_pages_bulk()?
+Any suggestion?
+
+> 
+> Not an outright objection from me, but it's hard to justify this change.
+
+The above should reduce the number to something like 40:51.
+
+Also, I looked more closely at other callers calling alloc_pages_bulk(),
+it seems vm_module_tags_populate() doesn't clear next_page[i] to NULL after
+__free_page() when doing 'Clean up and error out', I am not sure if
+vm_module_tags_populate() will be called multi-times as vm_module_tags->pages
+seems to be only set to all NULL once, see alloc_tag_init() -> alloc_mod_tags_mem().
+
+Cc Suren to see if there is some clarifying for the above.
 
