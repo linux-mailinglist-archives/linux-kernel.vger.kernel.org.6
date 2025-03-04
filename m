@@ -1,144 +1,254 @@
-Return-Path: <linux-kernel+bounces-543005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECAC6A4D06C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:58:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1F3FA4D06E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:58:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB165188EAEB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 00:58:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B82C9188EC1D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 00:59:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEBC12868B;
-	Tue,  4 Mar 2025 00:57:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F481C6BE;
+	Tue,  4 Mar 2025 00:58:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="AbLEo4yA"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hDn3QDnX"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72E226AAD
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 00:57:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE7635966
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 00:58:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741049875; cv=none; b=tBnbnX10PTb4gPSBTTUQH5Z35qotZKiLY3CeH+tbNsDQK2HfPtkj1+cSaSU3DvZljpv/JpYiI15vVKKfvbLcP6VBH+ztTbT/nyn9ySZxI9G1BPm1sxlQzX+Q4sW0iCESRKN99xfTzPme78DGGOqe6MPghcn4IC7fxx8czaEkeJA=
+	t=1741049931; cv=none; b=M4PrEvtsG3JXqAtc99zycYHewcuvagccxP8ne2Spg/TnvAK060J+S5/ndzOtg/xBYv2CEBYMmj9vnbP4/ppNJfsM9rGADoPoCqMT0VVEcOEWBc+xq1zdnlp72hS6XnZHG70rGsMHUOxzdpPw/Qn3BCkM5VUiwGlbzEFP9pM/FyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741049875; c=relaxed/simple;
-	bh=+YV8kS+wou6hpAo8zW+TZZb6W8xn3l1QBEQYY/I68ow=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=F5xcFQOAIE+24Y0nqU/pZf4AjggYvSn5IdhIWUN1nZEtkwUzggzkGYgh+Qdd9wQkT7vc4zXq05bkfG8TsejFFLlpk4MvgXkhMQ8+pVqnu6V0FYNqjhePH7R8BDRC4oFjg3oh6vWLPsQvxN85ZX7bQaqrVjbNk0X4/0RUVjj6r9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=AbLEo4yA; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43bbb440520so19189035e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 16:57:53 -0800 (PST)
+	s=arc-20240116; t=1741049931; c=relaxed/simple;
+	bh=46luQe9JdiPiR1kLnZ75VM4rNgoWCv+KWyG4aH7lvyU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UycJlvXowwLj+bNO4MxM+pwiaqPrnYzraN94x8ihZJwhv9wMCA893pzau9BuSmZkj0rMeaxJ1Yx2Y8HO92H672rFe1Uv/aj26n9nsxtOabO8pI5d3Ah3Chh/t/lnAJpogcLvVrQDBFOwNHyTPt1LlC1XYWzfQKcfASfXCvUwI1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hDn3QDnX; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-472098e6e75so67831cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 16:58:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1741049872; x=1741654672; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:subject:references:cc:to:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=+YV8kS+wou6hpAo8zW+TZZb6W8xn3l1QBEQYY/I68ow=;
-        b=AbLEo4yADf72hnrZfU8CLnEXFVaWcVVSmpLLbsIYLSayAakgqj9i8HwsxadXwYTxvo
-         US4rQMp/1nUQ1ZK2KunGiJWgAd5Odd78MV3pfNl1VzExLCB4xOfBXsDlNhP1tWYE3yhA
-         HK3zMlxgubMID4dTYbGIxq0HUZbETqfrwLM6Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741049872; x=1741654672;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:subject:references:cc:to:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1741049929; x=1741654729; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+YV8kS+wou6hpAo8zW+TZZb6W8xn3l1QBEQYY/I68ow=;
-        b=io2L+E5XDHp/IHudcgknZwbH7nwmmWUF38IL/DPOyi5H4BL5LtKESpzLwFne5ckPoz
-         YbLfwXo1RvNh+6B7ax67mIOtJl4m80TLMj5Kwcf2xjd+65U4CSQohvWQ0b9bX8mwMgX7
-         wBsU/sAyCKyO09d7BSEjSYIdrxYgJWxzTC1reh0+ASWqWLM1iu+rplnuKagVP3Ck8xkv
-         bOZPBon1akT6RG7loGOyTKFtLMI2teVJ0ZPGQFFxC/bLbU1+PDy0Yu4D7c3YkN949cC4
-         uaxo45cTEoTTQkEQKjOo3T/rm5tOQ4ZpzH0rk76s6ksUN6HXr7pBBcNXl4BXCBv2NSr8
-         Md2w==
-X-Forwarded-Encrypted: i=1; AJvYcCUVnRONe/ZedKYOlnNspvUweKtggx0oZVk/15OtzqO4PCptoWUpfKaiuFg6Lu5DdXuTJVv1R04KJwmOuBs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzV2tD+I5CT3QX3YOLm0Tiec7NrNqT75QKC1eLxMT8s1dpSyvXB
-	v4pHtF2bdFUwtK1GmchxGkFd8d7QqTnoZVX1pRSMHnq3royI2JtuwYWEPCDEeNY=
-X-Gm-Gg: ASbGnctMchb9AVToWaJ7ZpPJShQ7iSgyK4zV0Tm0WYgG1mIHJ4s5orGRsEPmqTiAqVL
-	OvDMi8AKIdP65KqfnxFgJoZWVKOvlRS5B3OaVCH2WWMEnxR4dQ2aGeAHo95iiaOBmeBV9BSlyRg
-	nIXfWRviwi+JTXv5S2/IeCTWQj1QHvt99qiOj0p4DYmdRUlxnvl2SPl6gar35Hw31sCrRqY1uvN
-	tD5A5IJOFklM73tOQsX7usdgLLNJa8gwWmsw21YDWPO67yFPnPRWMJga3W94Ro3JV6UOCE2qZFR
-	xHlapLKrLW9Y3AsGPp0zExSjcIOhiisS9pjWS7BWWAQzHQZfv4KetuJFw7Z+NJcSU6Oc35MNTVS
-	KaqlPCheW
-X-Google-Smtp-Source: AGHT+IEZfQIJtGPnAEyRg1Yti+2OAi2L9ZgHVvQsthk3S9iWVx2SOqpwSd6mC/uBSvOUnb8r9GKO4g==
-X-Received: by 2002:a05:600c:1c19:b0:43b:c5a3:2e12 with SMTP id 5b1f17b1804b1-43bc5a32ef1mr40582085e9.2.1741049871734;
-        Mon, 03 Mar 2025 16:57:51 -0800 (PST)
-Received: from [192.168.1.10] (host-92-26-98-202.as13285.net. [92.26.98.202])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b736f8034sm184251115e9.4.2025.03.03.16.57.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Mar 2025 16:57:51 -0800 (PST)
-Message-ID: <c7496069-2630-45ca-b6d3-c8d6b3678271@citrix.com>
-Date: Tue, 4 Mar 2025 00:57:49 +0000
+        bh=x/70wsnjQgfBMuwpjoCjlAMX9/8QFV3tye1jnlQ9360=;
+        b=hDn3QDnXwGW3nk9bC4XYZhTnEdqQLlP/CKXC0xtJ4n/Lhs7ZuazHlyljcbj5lhx9FH
+         YDCPxb/MBv2VGhx9mQRCQE8Gy7FU+QxClOZ2W3NKqbYNj6rkzry0RmqyBs2W2x+mSEtk
+         I1d+KmUblbkJA572nrrKjxCAB09ZcuT0X/DDdekwgdpLmQywJR9J8lvZ7Jj7qlw4RP89
+         DqSt/e3gRV3DTl3pFQ35yPdiWrypZpAbkBEre2Xny6S2KGRHkE1akGzmp/2xLdx2V4BX
+         2lO9nYMaXhNIyIdrfdksek/zNwXawaw48onuBxBLljOia1vjjsiOzf/MbLfmFTkODyxZ
+         3dWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741049929; x=1741654729;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=x/70wsnjQgfBMuwpjoCjlAMX9/8QFV3tye1jnlQ9360=;
+        b=mPhdIE+W9LaSKCbcop1Vx5vuE6BQHZbzlER+WuoGj9yU1C91484zYo/sCWiQo4IMZA
+         KgyPxY/jJwFlmk8SplDHYOhwQGKHYskriO9gOOTVBl6tVyxhjGkA7PDHasAk8JL0wxjG
+         f51Ozf5ZVDLLVzKECHTrYFgpaX/GgoVELf94w0kUEM0rpyaUQUxRbQsVAP6551vHdBHc
+         QO2y7haTdGkV+K73/UW2eDyhth4t5Lm4x8GTbov7lk3MLqr5HpTij2VPzAyqkR773t5m
+         rkYKrgah9ztoG9tHBDBmW1VV0JOw4FfSQcAAvIi8PfiK3FUiKwZeiSrYbX1MNt9bpoq5
+         8s8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXAcvbnkkeVZTTzCIU78QKZYTWP/dkEu9eBbGWGjhBTjcQjJKOmPWSNJ5PBNd0uUJU5Tv/TkhY1IapaB0E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMDvaSZa6BHjSYkL++/wWp2DGYFJHowUWORie3jkTl3jTCtiGP
+	on2RPZndBu/YtLYMIq+ymC/pjTWCuJN4wTNeWJvZUC8dZZqlqacQfuV646uIEVjAuQgstPKK9Ch
+	XQ709ah/MYlAocNXxL/RsivV7YH6gvAwonPfT
+X-Gm-Gg: ASbGncv0qcpXX7OkwedVoJ0bhgV2bb/DqN7zrP9MrSxa41Mw2s1ecyIa+cNTvU01JGo
+	8U9dKFoLj9hm+h6iYaZGlhnygOelzAs0Nqren4RWs30F83gWOibvgyyiUWA8fTrL+nn3J7uSYD6
+	SDSBXJmA5sTXJbycBTsogyqbkfNrEZLxhTXYaZ+2IuGH921J57PjmIiaU1bNg=
+X-Google-Smtp-Source: AGHT+IH8tSN6WogYmeFmiAzv6zZwUO7HwDNdjwYDf6A6iDplmPJLcITq4uh061ZHOieg8FkqBgAhWqTWTv1Fnw6O26Y=
+X-Received: by 2002:a05:622a:44a:b0:474:b44f:bb88 with SMTP id
+ d75a77b69052e-474fd867558mr772201cf.27.1741049928469; Mon, 03 Mar 2025
+ 16:58:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: hpa@zytor.com
-Cc: brgerst@gmail.com, jpoimboe@kernel.org, linux-kernel@vger.kernel.org,
- linux-tip-commits@vger.kernel.org, mingo@kernel.org, peterz@infradead.org,
- tip-bot2@linutronix.de, torvalds@linux-foundation.org, x86@kernel.org
-References: <28D821BB-96B5-4389-839E-5B7CB4D49F5F@zytor.com>
-Subject: Re: [tip: x86/asm] x86/asm: Make ASM_CALL_CONSTRAINT conditional on
- frame pointers
-Content-Language: en-GB
-From: Andrew Cooper <andrew.cooper3@citrix.com>
-Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
- 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
- 6+ahAA==
-In-Reply-To: <28D821BB-96B5-4389-839E-5B7CB4D49F5F@zytor.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250213211718.2406744-1-kan.liang@linux.intel.com>
+In-Reply-To: <20250213211718.2406744-1-kan.liang@linux.intel.com>
+From: Stephane Eranian <eranian@google.com>
+Date: Mon, 3 Mar 2025 16:58:36 -0800
+X-Gm-Features: AQ5f1JopnpNIFE5_C1n7nuxX7GKLwgYiYIjM7XEjGT34a9lLsyr4GF5uCFzXJ-U
+Message-ID: <CABPqkBQcKgsrVD+MLYrgiemc2_THOGKi+E1YayFw_pT4VQWGEQ@mail.gmail.com>
+Subject: Re: [PATCH V3 0/5] Support auto counter reload
+To: kan.liang@linux.intel.com
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
+	namhyung@kernel.org, irogers@google.com, adrian.hunter@intel.com, 
+	alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org, 
+	ak@linux.intel.com, dapeng1.mi@linux.intel.com, thomas.falcon@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> One more thing: if we remove ASM_CALL_CONSTRAINTS, we will not be able to use the redzone in future FRED only kernel builds.
+Hi Kan,
 
-That's easy enough to fix with "|| CONFIG_FRED_EXCLUSIVE" in some
-theoretical future when it's a feasible config to use.
 
-~Andrew
+On Thu, Feb 13, 2025 at 1:17=E2=80=AFPM <kan.liang@linux.intel.com> wrote:
+>
+> From: Kan Liang <kan.liang@linux.intel.com>
+>
+> Changes since V2:
+> - Rebase on top of several new features, e.g., counters snapshotting
+>   feature. Rewrite the code for the ACR CPUID-enumeration, configuration
+>   and late setup.
+> - Patch 1-3 are newly added for clean up.
+>
+> Changes since V1:
+> - Add a check to the reload value which cannot exceeds the max period
+> - Avoid invoking intel_pmu_enable_acr() for the perf metrics event.
+> - Update comments explain to case which the event->attr.config2 exceeds
+>   the group size
+>
+> The relative rates among two or more events are useful for performance
+> analysis, e.g., a high branch miss rate may indicate a performance
+> issue. Usually, the samples with a relative rate that exceeds some
+> threshold are more useful. However, the traditional sampling takes
+> samples of events separately. To get the relative rates among two or
+> more events, a high sample rate is required, which can bring high
+> overhead. Many samples taken in the non-hotspot area are also dropped
+> (useless) in the post-process.
+>
+> The auto counter reload (ACR) feature takes samples when the relative
+> rate of two or more events exceeds some threshold, which provides the
+> fine-grained information at a low cost.
+> To support the feature, two sets of MSRs are introduced. For a given
+> counter IA32_PMC_GPn_CTR/IA32_PMC_FXm_CTR, bit fields in the
+> IA32_PMC_GPn_CFG_B/IA32_PMC_FXm_CFG_B MSR indicate which counter(s)
+> can cause a reload of that counter. The reload value is stored in the
+> IA32_PMC_GPn_CFG_C/IA32_PMC_FXm_CFG_C.
+> The details can be found at Intel SDM (085), Volume 3, 21.9.11 Auto
+> Counter Reload.
+>
+> Example:
+>
+> Here is the snippet of the mispredict.c. Since the array has a random
+> numbers, jumps are random and often mispredicted.
+> The mispredicted rate depends on the compared value.
+>
+> For the Loop1, ~11% of all branches are mispredicted.
+> For the Loop2, ~21% of all branches are mispredicted.
+>
+> main()
+> {
+> ...
+>         for (i =3D 0; i < N; i++)
+>                 data[i] =3D rand() % 256;
+> ...
+>         /* Loop 1 */
+>         for (k =3D 0; k < 50; k++)
+>                 for (i =3D 0; i < N; i++)
+>                         if (data[i] >=3D 64)
+>                                 sum +=3D data[i];
+> ...
+>
+> ...
+>         /* Loop 2 */
+>         for (k =3D 0; k < 50; k++)
+>                 for (i =3D 0; i < N; i++)
+>                         if (data[i] >=3D 128)
+>                                 sum +=3D data[i];
+> ...
+> }
+>
+> Usually, a code with a high branch miss rate means a bad performance.
+> To understand the branch miss rate of the codes, the traditional method
+> usually samples both branches and branch-misses events. E.g.,
+> perf record -e "{cpu_atom/branch-misses/ppu, cpu_atom/branch-instructions=
+/u}"
+>                -c 1000000 -- ./mispredict
+>
+> [ perf record: Woken up 4 times to write data ]
+> [ perf record: Captured and wrote 0.925 MB perf.data (5106 samples) ]
+> The 5106 samples are from both events and spread in both Loops.
+> In the post-process stage, a user can know that the Loop 2 has a 21%
+> branch miss rate. Then they can focus on the samples of branch-misses
+> events for the Loop 2.
+>
+> With this patch, the user can generate the samples only when the branch
+> miss rate > 20%. For example,
+> perf record -e "{cpu_atom/branch-misses,period=3D200000,acr_mask=3D0x2/pp=
+u,
+>                  cpu_atom/branch-instructions,period=3D1000000,acr_mask=
+=3D0x3/u}"
+>                 -- ./mispredict
+>
+> (Two different periods are applied to branch-misses and
+> branch-instructions. The ratio is set to 20%.
+> If the branch-instructions is overflowed first, the branch-miss
+> rate < 20%. No samples should be generated. All counters should be
+> automatically reloaded.
+> If the branch-misses is overflowed first, the branch-miss rate > 20%.
+> A sample triggered by the branch-misses event should be
+> generated. Just the counter of the branch-instructions should be
+> automatically reloaded.
+>
+> The branch-misses event should only be automatically reloaded when
+> the branch-instructions is overflowed. So the "cause" event is the
+> branch-instructions event. The acr_mask is set to 0x2, since the
+> event index of branch-instructions is 1.
+>
+What is your definition of 'event index' here? Is it the position on
+the cmdline?
+
+
+> The branch-instructions event is automatically reloaded no matter which
+> events are overflowed. So the "cause" events are the branch-misses
+> and the branch-instructions event. The acr_mask should be set to 0x3.)
+>
+> [ perf record: Woken up 1 times to write data ]
+> [ perf record: Captured and wrote 0.098 MB perf.data (2498 samples) ]
+>
+>  $perf report
+>
+> Percent       =E2=94=82154:   movl    $0x0,-0x14(%rbp)
+>               =E2=94=82     =E2=86=93 jmp     1af
+>               =E2=94=82     for (i =3D j; i < N; i++)
+>               =E2=94=8215d:   mov     -0x10(%rbp),%eax
+>               =E2=94=82       mov     %eax,-0x18(%rbp)
+>               =E2=94=82     =E2=86=93 jmp     1a2
+>               =E2=94=82     if (data[i] >=3D 128)
+>               =E2=94=82165:   mov     -0x18(%rbp),%eax
+>               =E2=94=82       cltq
+>               =E2=94=82       lea     0x0(,%rax,4),%rdx
+>               =E2=94=82       mov     -0x8(%rbp),%rax
+>               =E2=94=82       add     %rdx,%rax
+>               =E2=94=82       mov     (%rax),%eax
+>               =E2=94=82    =E2=94=8C=E2=94=80=E2=94=80cmp     $0x7f,%eax
+> 100.00   0.00 =E2=94=82    =E2=94=9C=E2=94=80=E2=94=80jle     19e
+>               =E2=94=82    =E2=94=82sum +=3D data[i];
+>
+> The 2498 samples are all from the branch-misses events for the Loop 2.
+>
+> The number of samples and overhead is significantly reduced without
+> losing any information.
+>
+> Kan Liang (5):
+>   perf/x86: Add dynamic constraint
+>   perf/x86/intel: Track the num of events needs late setup
+>   perf: Extend the bit width of the arch-specific flag
+>   perf/x86/intel: Add CPUID enumeration for the auto counter reload
+>   perf/x86/intel: Support auto counter reload
+>
+>  arch/x86/events/core.c             |   3 +-
+>  arch/x86/events/intel/core.c       | 260 ++++++++++++++++++++++++++++-
+>  arch/x86/events/intel/ds.c         |   3 +-
+>  arch/x86/events/intel/lbr.c        |   2 +-
+>  arch/x86/events/perf_event.h       |  33 ++++
+>  arch/x86/events/perf_event_flags.h |  41 ++---
+>  arch/x86/include/asm/msr-index.h   |   4 +
+>  arch/x86/include/asm/perf_event.h  |   1 +
+>  include/linux/perf_event.h         |   4 +-
+>  9 files changed, 320 insertions(+), 31 deletions(-)
+>
+> --
+> 2.38.1
+>
 
