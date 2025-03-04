@@ -1,90 +1,66 @@
-Return-Path: <linux-kernel+bounces-544433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA86FA4E137
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:39:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B01FDA4E11F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:37:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF4823B920E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:32:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F3E119C08AE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:33:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2E89253B48;
-	Tue,  4 Mar 2025 14:30:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26F08253F2F;
+	Tue,  4 Mar 2025 14:30:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="O6A3Q3iA"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f54Samq2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9318D25333B;
-	Tue,  4 Mar 2025 14:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80C2B253F1B;
+	Tue,  4 Mar 2025 14:30:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741098652; cv=none; b=J7V8ZHmPlGBs9XHiX9X7Q0Y21YmW/CAxEWGPy8QM2ErPHj+j1FY8n9idCKIXp5juZD6k6+TwQ1r38M2YaMnRvYww7dt3BL96favdJiJ/3dr4FsY1tMwA9jvCPl+QYrPsMT5FJqRXZRje0MYf3SaBYoPNjAzb0cFOcIJRkc0Sq4Q=
+	t=1741098657; cv=none; b=nZ55Y2WLqXRucbGxg82dPeLShxct9o47Mxv7jhdQiU16+4Gga4135EIImth0LLnkN3zvJ6tZOZHSKZO+MA7WDUX53QHTN2YNdfjwkYVrbKpt0ZujJmuAvZvOcNVu0kA2l4v+3cj5kL0BfLuynDWn5yjTgmN6Rxi3gro8OuUit+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741098652; c=relaxed/simple;
-	bh=9VvfiKn9vnthqkbug7Ck5fZJaYFPZHMHw0rvMhQVYiM=;
+	s=arc-20240116; t=1741098657; c=relaxed/simple;
+	bh=+bcl3HGDoc9IqaZsMJSKegqvSclSq4gfCFg0kcJllNc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FwNwMnyaYAJJGIlqSKfwxFsf7AdYWSoXESAQ+h8vtOS6QjJCo4F9v0sNyBhk3T5rsfA6znhhTGqwvDKFwSXJ24igMQF58bCaVr97oJrJGQa8pxDrqoIRSL0E51CBkmiRe89jEc3w5wIn+ajQYTIhh8r/Yo88pyspTbMrHsb2tXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=O6A3Q3iA; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=9VvfiKn9vnthqkbug7Ck5fZJaYFPZHMHw0rvMhQVYiM=; b=O6A3Q3iA+uzXiB6Q0PMcUMDxQo
-	XV+JY16vUmBfQmM2B+uRgLmqShMA3uh6f8JFrnV+XiI7bR2TZgptt7gbyiuWUSQAvRx2p701xzj3d
-	kZ3++SZNDrzZNFhKzXnk8E8UxzGcTbP9HBoJjjlTThSUrLtUz6cPNxCnSW/e2VEJnUtvRXswD3nKe
-	NqJ9geRKxEURnQoRKQ82se5REGKKm/jP7sEhZpocyT93TcRZ9k64JTSpk/iNVbGnBPCkLsWQNRCIv
-	cz79tS8cXsg7goeZ8BZOfjYYeOnt5avSRu753nrk6ShXxKlRllZJxs/2Z2EUmvGXQptvg2i3DTdeV
-	za4evRtA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tpTHx-0000000037U-3a7E;
-	Tue, 04 Mar 2025 14:30:30 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 5D27A30049D; Tue,  4 Mar 2025 15:30:29 +0100 (CET)
-Date: Tue, 4 Mar 2025 15:30:29 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Marco Elver <elver@google.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Alexander Potapenko <glider@google.com>,
-	Arnd Bergmann <arnd@arndb.de>, Bart Van Assche <bvanassche@acm.org>,
-	Bill Wendling <morbo@google.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Ingo Molnar <mingo@kernel.org>, Jann Horn <jannh@google.com>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
-	Kentaro Takeda <takedakn@nttdata.co.jp>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
-	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, rcu@vger.kernel.org,
-	linux-crypto@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: Re: [PATCH v2 08/34] locking/rwlock, spinlock: Support Clang's
- capability analysis
-Message-ID: <20250304143029.GG11590@noisy.programming.kicks-ass.net>
-References: <20250304092417.2873893-1-elver@google.com>
- <20250304092417.2873893-9-elver@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gaj1V4lhm2bIfJCbhq0x2tUsG6Bu3CW5kO5eHRfW/wV7PhE/yC3rD06iuIGTgmebjISi7yhyu4A87OgFs2jSCVZXrP9MgjpwtdHP18N7rQ5liQvbHH8mBLmHqsjenGwE3wCEoOgozHIIcRpd7rhJnmD6VSaVQwrSgM3q/qkGXag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f54Samq2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3C9DC4CEE5;
+	Tue,  4 Mar 2025 14:30:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741098657;
+	bh=+bcl3HGDoc9IqaZsMJSKegqvSclSq4gfCFg0kcJllNc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=f54Samq2ENCyCzuTHGR/tYVZKiwx076XuyVyuDVLnKmBwmBZLrrFDqh/SJuc8H2A8
+	 QK/pOjMHQD2Zr1heHM8PR9WQZ9EqTc3k0MqkEQip4O0NsOspaS2Tn9LQvf1skBxKrN
+	 xLtT3Cn2+850TS7nTuTHGzQSRtU3CAqvIeCuNRcYiVNQbYsRIrOGi8IztoA9X0FxeJ
+	 JyWCMgeVgiQshwxCL02k7yH3iIhj9wr24Epn30wWdi02sU++HLb0uy1n5bZG+ArkTW
+	 a5Pkoyizp8l35EIyOFSmuLNWE16gROFxnX4oLq1YO0hUmND3VXceKOodcfD3Nkrk1R
+	 oRkGgycHf/kDQ==
+Date: Tue, 4 Mar 2025 15:30:48 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: airlied@gmail.com, simona@ffwll.ch, corbet@lwn.net,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, ajanulgu@redhat.com, lyude@redhat.com,
+	pstanner@redhat.com, zhiw@nvidia.com, cjia@nvidia.com,
+	jhubbard@nvidia.com, bskeggs@nvidia.com, acurrid@nvidia.com,
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
+	mcgrof@kernel.org, russ.weight@linux.dev,
+	dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org,
+	rust-for-linux@vger.kernel.org,
+	Nouveau <nouveau-bounces@lists.freedesktop.org>
+Subject: Re: [PATCH v4 5/6] gpu: nova-core: add initial driver stub
+Message-ID: <Z8cOmISkQNcFdcvm@cassiopeiae>
+References: <20250226175552.29381-1-dakr@kernel.org>
+ <20250226175552.29381-6-dakr@kernel.org>
+ <D87JQ69QA6F0.184YR2BTJB0IT@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,13 +69,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250304092417.2873893-9-elver@google.com>
+In-Reply-To: <D87JQ69QA6F0.184YR2BTJB0IT@nvidia.com>
 
-On Tue, Mar 04, 2025 at 10:21:07AM +0100, Marco Elver wrote:
+On Tue, Mar 04, 2025 at 11:19:49PM +0900, Alexandre Courbot wrote:
+> On Thu Feb 27, 2025 at 2:55 AM JST, Danilo Krummrich wrote:
+> 
+> > +// TODO replace with something like derive(FromPrimitive)
+> > +impl TryFrom<u32> for Chipset {
+> > +    type Error = kernel::error::Error;
+> > +
+> > +    fn try_from(value: u32) -> Result<Self, Self::Error> {
+> > +        match value {
+> > +            0x162 => Ok(Chipset::TU102),
+> > +            0x164 => Ok(Chipset::TU104),
+> > +            0x166 => Ok(Chipset::TU106),
+> > +            0x167 => Ok(Chipset::TU117),
+> > +            0x168 => Ok(Chipset::TU116),
+> > +            0x172 => Ok(Chipset::GA102),
+> > +            0x173 => Ok(Chipset::GA103),
+> > +            0x174 => Ok(Chipset::GA104),
+> > +            0x176 => Ok(Chipset::GA106),
+> > +            0x177 => Ok(Chipset::GA107),
+> > +            0x192 => Ok(Chipset::AD102),
+> > +            0x193 => Ok(Chipset::AD103),
+> > +            0x194 => Ok(Chipset::AD104),
+> > +            0x196 => Ok(Chipset::AD106),
+> > +            0x197 => Ok(Chipset::AD107),
+> > +            _ => Err(ENODEV),
+> > +        }
+> > +    }
+> > +}
+> 
+> I know this is probably temporary anyway, but since there is a macro now you can simplify this implementation by making part of it:
+> 
+> 		impl TryFrom<u32> for Chipset {
+> 				type Error = kernel::error::Error;
+> 
+> 				fn try_from(value: u32) -> Result<Self, Self::Error> {
+> 						match value {
+> 								$( $value => Ok(Chipset::$variant), )*
+> 								_ => Err(ENODEV),
+> 						}
+> 				}
+> 		}
+> 
 
-> To avoid warnings in constructors, the initialization functions mark a
-> capability as acquired when initialized before guarded variables.
+Sure, that's a good suggestion, will do.
 
-Right, took me a bit, but OMG that's a horrific hack :-)
-
+With that changed, may I add your RB? I'd like to land this series in the next
+merge window.
 
