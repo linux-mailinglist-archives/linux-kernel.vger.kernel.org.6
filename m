@@ -1,203 +1,201 @@
-Return-Path: <linux-kernel+bounces-544551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DA0FA4E27D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:11:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0101A4E2CB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:19:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D859617AEFA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:03:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35E3B8871A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:04:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A165E27F4EF;
-	Tue,  4 Mar 2025 14:59:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B9B2266B72;
+	Tue,  4 Mar 2025 14:59:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uRJTmVKU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b="Rn0dzO4l"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012016.outbound.protection.outlook.com [52.101.66.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA3126036C;
-	Tue,  4 Mar 2025 14:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741100348; cv=none; b=bdsAmrD1fp2S03KujFAuDmWl4icvDVgeq4RVSkuKkbZT5UNreIHfzp9/n+mxzOLRKLkdFW83LF1prJMeB93XPhkgcHCwH8Bgmss/ZyCNatfnWb/oQ44tWJhWUL8i+mvqbHkjsXdYuglSj4YD3bt48blSPTjNZhs5EaWxSK3r2Gc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741100348; c=relaxed/simple;
-	bh=BJioHZs7npMxT1EZrWhLh92wotTsWQ13abN3EvOE9RE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CFyXReRaLD8BsiorlGK04XTIS5KS8q/vo67wYxP19gsHQHEaRNtVaXE5G3J/PD6ZJpE0hLJjZC5jY+0zebDWEi3kd9+rn32mEURr0vpJc4k+aR88QnhNy3q69EOd0NrucwBrz1Mj1s+4I+LY1SdpeQMp4FEbbkhgvp+pwGvKWfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uRJTmVKU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52421C4CEF2;
-	Tue,  4 Mar 2025 14:59:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741100347;
-	bh=BJioHZs7npMxT1EZrWhLh92wotTsWQ13abN3EvOE9RE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=uRJTmVKUDQ70Nt7Z+2CFBjqCqUXW2AXR7ZZFQpBN6LtvhUk9WUxZNmGl3qEGdgVA8
-	 34ppa/Sm9DaMEcoD0ZhTIfBaYBZNiG08JQdqB7hQis1Inn05liKHh6JjPUnya1/DnM
-	 mVmwlOBLT+d6641L1lQkRtuRrenX0H0kCkgjzjIwBQzWja5eLAFMJln9CYS5Rk7Yjj
-	 /8qGYpuJGF+kzDKymQ4r5yqOUt2WmPZ76zV5u0ykeJEoQCrBLzJ/Vythn9FzMp7N18
-	 9VIOnrrOb7NFreHZpzuhIEY9oKPpAqSG8Xg4zu1O+WqUminhYQ9GzjBYF7wjVP5Drk
-	 GLdoqmOE4gQ8Q==
-Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5fcc45803easo1330120eaf.3;
-        Tue, 04 Mar 2025 06:59:07 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUmpQlLAh8nYuZuoIEaZ+ikq7a7vaBa3NJCHmwGTgYFHbPNV1BfGd5zYgwLN8K+sj+FckJWN2RQxQ98TnGyAzu3TLgR9g==@vger.kernel.org, AJvYcCWKUUk0GWVG5D5mFeH2PJGVJyAV7MCGvbYeUVrf0iclQl3FYmAmaa4jlUwzn38bHPGx9zmgbAyEK7mM@vger.kernel.org, AJvYcCXaQKGe0uJ+SrLDlY0dUKea3+Fq/oGZ9TULZ6tI+HtfV+5+NkmbI4IfC5hlc0JIm0B3m5OpOz5rrJikl7Al@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQQElC5qAFaRfudnnidDAjz6bTPAWN4je3wS4eTcJGHbEy6u3Y
-	JLaITwSrYM69sjpKrmcmaH4zMcSh+XsRHB5lK5QCzZBn1Zz53fxtrVDrGGXfzTti250pzzk3ZyA
-	F/QPd1r2OqQYgv6I1Zj5oUmtEBRM=
-X-Google-Smtp-Source: AGHT+IHV4OYxfCU/t1WTUxkTaNo8H8GNLQAFxAAet6Nu+4CwM7JxdLruJtd4pXXPuDqTQMQDQdHOE7tLLv9Xo98895g=
-X-Received: by 2002:a05:6820:1629:b0:5fd:b85:9b47 with SMTP id
- 006d021491bc7-5feb349ece4mr9806448eaf.1.1741100346518; Tue, 04 Mar 2025
- 06:59:06 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6475F280A20
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:59:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741100358; cv=fail; b=YfbgXXRUSqHO84iaKpMFoFMcfc2gXiOwzy/SZ5zggfLzVwbfWa0a4P0OJFRUuxK4f+4yoEO8TF+CCk/AUmOg2rWEG8SONecbInGpqgu8lIsEaxkdO3BxteGAeAlZPeriNh2uj1DR1nT43xCIKva9TcYMpBkCKsxd6GMwedxUi0k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741100358; c=relaxed/simple;
+	bh=9a9c5DT6mIAE3W5IHYof+sSKGA5GXkyIzLv5qrMfpOo=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=tbxPJe4VfvnPCpJMzH7srPOUt65S0tyoEAdEZk+I8583d5ndR2IicBoz/hEDWcfsvWJkmEd4n8iC4kpNvPSU7WR4XuU3B3fsZi+GJk6G2u41Igb2RSVyO+csriwI4cEjGx4U35hEYyIvSb6zcncgJEll8GouIpckrf8bmLZyxkA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de; spf=pass smtp.mailfrom=cherry.de; dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b=Rn0dzO4l; arc=fail smtp.client-ip=52.101.66.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cherry.de
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Dq0RHyWsbnNSZtUo9Do9JwLAvyAtBHHZTWuikaS4OzTP1uHLAG9vCns5ZCZcKCbHXqE+18ARtlaqtaegVI4NFzv9zQf+Gj3DzrYxhy7B3MEZc/7W6944NdBOhaC4SqZP04yjVBTbwO7i+M4SSRLWcUjzFEfzNYF4g3VBUhGhA+jlFVduTbCYFgKdmkdzToI0nQhi+EnbhIb/4x9ZigJFxYz3jjZiKETlK00RwQCco2id6aP7HahNJQOjwurikRSJX7oR9BEhAQLtiKNLSKju5WCKsq7TpxBb0OEaabEXJfS5CyBFyWT+YfHb0E7g3w+l4aZ344t1MulsCjAGROGX7Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+qRYErZuh/5nu8DU8GvOWimxZn4aHpAYt1U1K8bZhzY=;
+ b=wG5glbCZPhNiu1kRZPZQLBF3kngdmKmD2H8LMY/WpHZzWwNMt05Y1gEkO2HyP/4gjg7nT4vPONaiK2iMHLw94595H+6mpZ99RQgqX9DSU9kdvlnA7eQsuwvMnVRf/yj+uuXCG8VxugqO34sdXH1ePN24g6HRdCpH6lo7a2AT3GwcaE/YaYRz1nzKRuVc4G1ACS2sfcvUZRw7nH7E5tu3JDPl8Dl09mexrV7FWZEx2kGaUIsEAidFU8e37HiK0ka8E1DWI63GhkvrLubLDJjRb+hWavPsJaYIdmO8EiCf2dLZAOL1MqcgIu8faFeSIn2/qJIgUKPhY3vE9gVVcug7ig==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
+ dkim=pass header.d=cherry.de; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+qRYErZuh/5nu8DU8GvOWimxZn4aHpAYt1U1K8bZhzY=;
+ b=Rn0dzO4lIF2Z/3qEt3AcPsLhpxmX39HtdxyPp5qp6/1+p1qJoa06/DARC8dsSnChTdP81TUDSJD8IY9FHbOGVam91haFNabjy/0GKgAVlQ/G+90Aeg3+DTHswSXj8SOwuE/SsAYoNQ02yybE9skRxa1mMT+8sdgb+/T8Or9SU1I=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=cherry.de;
+Received: from AS8PR04MB8897.eurprd04.prod.outlook.com (2603:10a6:20b:42c::20)
+ by VI0PR04MB10210.eurprd04.prod.outlook.com (2603:10a6:800:245::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.26; Tue, 4 Mar
+ 2025 14:59:10 +0000
+Received: from AS8PR04MB8897.eurprd04.prod.outlook.com
+ ([fe80::35f6:bc7d:633:369a]) by AS8PR04MB8897.eurprd04.prod.outlook.com
+ ([fe80::35f6:bc7d:633:369a%6]) with mapi id 15.20.8489.025; Tue, 4 Mar 2025
+ 14:59:10 +0000
+Message-ID: <cd001ccb-41a8-4204-8945-8ea00006ef0c@cherry.de>
+Date: Tue, 4 Mar 2025 15:59:09 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/3] drm/rockchip: lvds: Hide scary error messages on
+ probe deferral
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: andy.yan@rock-chips.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Heiko Stuebner <heiko.stuebner@cherry.de>
+References: <20250304124418.111061-1-heiko@sntech.de>
+ <20250304124418.111061-3-heiko@sntech.de>
+Content-Language: en-US
+From: Quentin Schulz <quentin.schulz@cherry.de>
+In-Reply-To: <20250304124418.111061-3-heiko@sntech.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR0P281CA0059.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:49::7) To AS8PR04MB8897.eurprd04.prod.outlook.com
+ (2603:10a6:20b:42c::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250304064745.1073770-1-superm1@kernel.org> <20250304064745.1073770-2-superm1@kernel.org>
- <CAGwozwHniWGQ7qK6FYD_WK5zNjkro7-Q1nTcFPAuWDt9UQ+noA@mail.gmail.com>
- <23d6c735-e94f-4d43-87b0-ff119941fcac@kernel.org> <CAJZ5v0geaYYRQm0Hs2M4ak_8AZoWLJS-v0jqyrsaVjmXk267rA@mail.gmail.com>
- <71b14dc3-77e1-4fd7-b576-821e3a41ba19@kernel.org>
-In-Reply-To: <71b14dc3-77e1-4fd7-b576-821e3a41ba19@kernel.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 4 Mar 2025 15:58:55 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0hNHFLtBwTTuPc7mNZhCKkmFJgFwgw88_BR_7nQ+rc6Cw@mail.gmail.com>
-X-Gm-Features: AQ5f1JqiU1riY6PdY3kp9Y6wKkJOdtqDzvJA_a9LeLoMMba-AYmBjxoxf4Tpjjg
-Message-ID: <CAJZ5v0hNHFLtBwTTuPc7mNZhCKkmFJgFwgw88_BR_7nQ+rc6Cw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] ACPI: platform_profile: Treat quiet and low power
- the same
-To: Mario Limonciello <superm1@kernel.org>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Antheas Kapenekakis <lkml@antheas.dev>, Kurt Borja <kuurtb@gmail.com>, 
-	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Hans de Goede <hdegoede@redhat.com>, 
-	"Luke D . Jones" <luke@ljones.dev>, Mark Pearson <mpearson-lenovo@squebb.ca>, 
-	"open list:AMD PMF DRIVER" <platform-driver-x86@vger.kernel.org>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"open list:ACPI" <linux-acpi@vger.kernel.org>, "Derek J . Clark" <derekjohn.clark@gmail.com>, 
-	me@kylegospodneti.ch, Denis Benato <benato.denis96@gmail.com>, 
-	Mario Limonciello <mario.limonciello@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR04MB8897:EE_|VI0PR04MB10210:EE_
+X-MS-Office365-Filtering-Correlation-Id: d07d5766-f900-4413-324d-08dd5b2d1ec8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bElYWlBta0VZTkpvMGlhMjJUbmRQbEdaLzBaNWlZU3liekxZamVJQ0pQbG0v?=
+ =?utf-8?B?QmdtQWpTSy9kb1FMWGNuaDZMdSt6ZmtQMHRYQ1dRdWsvQ01SaGhIQU9XcWNE?=
+ =?utf-8?B?RDRNRFdhZDVPS1YzeVova2preUdDMFAzU3haV1c1MmQyZ3JibUFwdEdMbXlu?=
+ =?utf-8?B?RGxxdzZNdDB1QkExK0N5Tnd3ZldNeDVFTGIwZ04yamZZdzZMc2Fmb3l4VXpy?=
+ =?utf-8?B?bkIrQ0c2bmp2MVdjdjBjWkNtYnpmSUJrODNyT3R4UGFWZDh2alNqV3VJUGNE?=
+ =?utf-8?B?V0FuZ2ptVlh5dnpWNDNmaS9BUXdhMEthS1NXMEFZK3NycUV5SmU4R0Y5cE9y?=
+ =?utf-8?B?aUJ5ck91anJHSXNGNHdmbEFqeE1aTm1uRVhUT2lKY085RVJ6bHNrWklsMnMx?=
+ =?utf-8?B?ZWlFbmNFY0tBVlB3djI3N2lCUDZhV2pGWEg1Rk0xWHljb01wRmMxd0s2MGlu?=
+ =?utf-8?B?QXFEVWJjYjk0dGlmT3AxUHFDMDV3Y3d6bGgxakxIc1hhdjVJNVpjbXpLcWIz?=
+ =?utf-8?B?bTdQT0xzNDZnOFFSWG90bXJuVGEvd0pXK0o1dXFQb1pydndkWVBqNWlxKy9u?=
+ =?utf-8?B?Nis2SXBqWG9YVi9FemtLRTJGNGNCdzlEemtlcU1ENmJMOXk0TWpmdUVHMG05?=
+ =?utf-8?B?RDZ5czZvNTFVMTBzNWdpMVF4NnQ4cVlIMVFpNW9jQUtFU2l0TFRyeEpydGVS?=
+ =?utf-8?B?aGR3UEd6NWtFb0tlelpVQmpLbmJUUnpxWHQ2dzJXZjhFd0lUV1lHaFRQSHZ6?=
+ =?utf-8?B?dDE0L2ZvSzlBNW1nQ01Uei8rR0owK0w4MXptYi9iWXpvL05wbVM5Y2E5cjlS?=
+ =?utf-8?B?VnkwV0djTXh5S0RTeTlJNGl3eGpoSzdDZ1VQZm8ydm93ekNyaHdHa2F2WVNR?=
+ =?utf-8?B?dmhkajhHbERkU0h0TU5uam1UWWF4dyt6dy9OTk83N1VLa0djOUZMUzBNdHdG?=
+ =?utf-8?B?UGhVeVdpS1VMOW9NbWhKVGdacHR1blBwQXlvbkhtL1ZuTG5iN2pIeEJOaGZC?=
+ =?utf-8?B?TXRvTWRFREIyekI3Y3htTE5PR2ZORk1RZnhNajhMdjhuSGE3ZWRWWUVHbUVm?=
+ =?utf-8?B?djNoTWhMalpSVU9xUmNsR1JBdGlpSnNhRXA1SU05Tmp5K3d3SmNVSmhIYzRI?=
+ =?utf-8?B?dnpCVWwxSHZVKzdJT1d1OStWYU5mamN5eE5YNlAvRE02dVExSTcyT3ExTWJF?=
+ =?utf-8?B?b1pEZi9aVFQyVWxQb1NTTnpuSVpjS0M0NlBhVnJRS2lUQTM3VnRtYWhsWVhj?=
+ =?utf-8?B?Ky92b1ArbjhkcGJDR3dTeURwYTdCbFBzems2bE9qeWNhaHdzek1jQkkxZXdC?=
+ =?utf-8?B?d0dnVk4wZ1RzcG5mNjBpV2FWeGp0VnZnTDA0WTk4UjNXL0ZlMnpVSm5oRnVk?=
+ =?utf-8?B?ejdTL0NOeWl0YU95aEhJeWJ6VWpCUHYzblE3NGhEVllMMFQrK1BzMmxtSm91?=
+ =?utf-8?B?SVl4Y2g3bmdPaWZIa0Rva3JvSCt5UkI5dzJKaytkQU9Rem1PTkwvSUNkRTBk?=
+ =?utf-8?B?Qng1ZzNYbVdFeU1UbU15Rlg3UlF6cGh2Y2VaTE5Gd293bytnMnRiaWlpLzhv?=
+ =?utf-8?B?MFh2VldmSDg3UFlOeHFNck5peWFWK0dFaVBraWFFbUhSeGNBcWdqWDFRcy8y?=
+ =?utf-8?B?OW5KQ1I1NW51OXROMGdjYjdqTnMwVnc0anhxT2UxQzNSQ0N3Z1cySzcxU0s5?=
+ =?utf-8?B?STlOTjdvalI1eERoTTVrWGtZN0xQMnZEcmNGY0pLT0xzVzZYWVRGVi9KNkNl?=
+ =?utf-8?B?ZEZSTTE0bnhqbUxYNlpLS0JtbXJ2bzF3c21VNUl6akNYVHlxTDV5Q2JXS3p6?=
+ =?utf-8?B?RkY0NmQ3cS9zL2puVGdDSHZIemtQZklxdHdZWnBIM1ZRRnRmNkdLbTZEWEFO?=
+ =?utf-8?Q?vCq4YMf+UofDB?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8897.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UDEzZlZUNEdMb1hqSEpFMnNBQitEc0ROM1BUaFBob2l6L0xuRzJxQk5pWHJK?=
+ =?utf-8?B?b2tHb2xObitlN1gvRGQ2a1p1TFVFL2ZoZzJhdzFuUG1UVHppRjJrRzNxS2pL?=
+ =?utf-8?B?bk1xVTA3NFE2NHhFWDB5OVF3Rzhod0NVU21PMzA3cWRnajI4a2htTm5hbldT?=
+ =?utf-8?B?U2I5cTM4c05pRFBhdHNhUkQ0bVNQQnhXSVZDTmQ0NE8weFVCWGFNanFRdVdL?=
+ =?utf-8?B?M3RaU2F2MXdQYWRRbU50WkwzaWpOcVZ3am9EZTFsY1ROYllEZ25VdEk2NDhw?=
+ =?utf-8?B?M0JVSHVhR2I1T1IrVGxKYlp3dDBiYmxXZnhyYW9lYitlRXJBT2I1Zk9QNWxu?=
+ =?utf-8?B?V2JNbDN6SmtVYXpVbDd4eE9ZTDUzOStidlUvc3J4YjR3b1RUVWhrV3NuWmxL?=
+ =?utf-8?B?N09ubWlkNGhnSjFhcVhRK2RqUW91M1pmcU1kSWJSQTdleldmTHNNRUFpblNJ?=
+ =?utf-8?B?bnFUMHk4YTF6TVp2dGlNc0Z2VCtLM1RnMnNpUHlNeGtWZ04zNXl4aG5kWFpq?=
+ =?utf-8?B?RmhaR1ZaUWVPTkV1Wm16aFFBdEN0RHFhL2xpd28yN05lUDMyQ3FUSzl2dy9S?=
+ =?utf-8?B?cWtjZ2srZFFVOElLQUhNVEQ0b0RTdFNMR0JtR0tOSWZ1SGZSNVUyOTB5a0pt?=
+ =?utf-8?B?L1VzT3N1eWkyWUlmc2NLd3k0T1d1c2psc1pTelRhNE9IWkxCcU1ieXQydHlj?=
+ =?utf-8?B?SjNjMXRuTjBzYm4zRUNQNlRPeVdhUk9hM1ZlVVg2NllWUUZRUFNnS0N1cUIz?=
+ =?utf-8?B?M1piQUR5Z0VmdXo2SEprT2pXTURNT29zS2QxcmZIZlNyQk9WU0dNUTR1aGxy?=
+ =?utf-8?B?ZkE2R1BzZnFnZ0FtSFFPY3hPeElGMVJsVUFsR2tVOERhbHdWYk41T3JKVkV1?=
+ =?utf-8?B?VGZoUlFmRnVjRzBVTmFrUjZaWWxETm5rcU5LRTQ0Z20yUFNJVWlnVit2ZG5m?=
+ =?utf-8?B?YVh1YlNDOTBQZU5vMVQ5eXJrMVR1WGJDSkMrMXdCcEVFeGxOOWRGWGg4OFdX?=
+ =?utf-8?B?WG12QTlpaE0vNGxCS1V3cEoyc21JckF2MC83RGJzeElzUkYzQnVMd1M0dkxy?=
+ =?utf-8?B?bXZlYmp5SHlMT05CbjIycDNhdjVXeFh0ZFFnT1lHNnV5Q0VjY3ZhbXFQQ3gw?=
+ =?utf-8?B?TmJURURvVXN1VDhlZDJFRWczRjEwT3crL29CbGhNZDBBR0hpVjlNUElkVXRt?=
+ =?utf-8?B?Sm9QblpEaVNSM1kwSDRzSkI3Mmt2TnFOYXQ3SDBIRFlacGtjUlJKWk0yaWFC?=
+ =?utf-8?B?UnEyWEZZcjE1SjJVRk9RSFBKNW9tVHZIdjJCbkxJNVhlaFl3dnZHRmtZOTRw?=
+ =?utf-8?B?U1lHUk1Rc3h0aC9UR3JTd1pydm4zdDcxOGticnBobTVYanZZR09yZFRkSGtn?=
+ =?utf-8?B?cnRoc2lnakVCNWtYK2JDcXpJOERJWDd6SkRtU0wrQkIxSzlvRlF6YmpwbkNY?=
+ =?utf-8?B?bU1CaVJ3ZjU0Rys4dmFRanVYQ0MwajV6WmxpTEYxS3RGR2dGVVNKdlBVOHU4?=
+ =?utf-8?B?MG8yZWVQRTZ1aUR4eU0zMG12ZTZsLzFmeGljNzUxWmFBTCtPSDlaaDFyMTZJ?=
+ =?utf-8?B?NlN5N1NadSs3a3IzUFE3L0ZERXNWeGs1NnFqcDBxZnlpSG53dHd4Y0ZvaGFw?=
+ =?utf-8?B?Q0JyRG9vREFHb1BKaGRmb0MyRWhnYTc2YjhMdXVFYlZRVjJJaTVlYmZ2Qkxu?=
+ =?utf-8?B?M1hDSDUzK050bmUyeVNyOXEzY1loU0Y0UzFTeW03RmZheUs3VkNtdGw5bEVy?=
+ =?utf-8?B?OUtSbmR2ZHJxeWVUR1hKYk1zRThvV1NRMlFqbzVnNUJKVlE0R1RCV2N3NGhH?=
+ =?utf-8?B?bTVyaGRNNkRTa0c5djRsbzE5OHNQY2duZGU2enNjT2FXVVZqL1o3d2lVem1I?=
+ =?utf-8?B?NHh6SVZ3enJQV3NUUmRQejF2S2NjM3hldnZPNkFHdzRMenNNVW56ai9Ib0ZN?=
+ =?utf-8?B?YXVoMU1HS3hRTmlYQ3pmL1RZQnUyeXFwYzBJS3ZoU1lCM0pUbUlyL3MyZFd1?=
+ =?utf-8?B?Y1FITlVQOWg1ZTF2SDI3V1VMcHJHeS81Z1gvOHpDUEd6T1BjRG9uZVp2aS9k?=
+ =?utf-8?B?N3NoTzY3TmlXcFBscmNlMzRrQk5LdVBXUWJsRUUzUXZwT2JEbUhxUzc4R2FD?=
+ =?utf-8?B?d1cxNW1QV3NvTVNncDhWU0JvU3hmVEgzZjZwMzkvSHMvSFJCUTJoaVVuRFp4?=
+ =?utf-8?B?WHc9PQ==?=
+X-OriginatorOrg: cherry.de
+X-MS-Exchange-CrossTenant-Network-Message-Id: d07d5766-f900-4413-324d-08dd5b2d1ec8
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8897.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2025 14:59:10.7157
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: jeHP3RCe0DjsSw+3PIw8cjz94txdyuJFmnhdz6yJGNG280TBwzeh43tvwEvl5ngIL3JRjOPmUb9SoO5N8z1e83uAQXxBwPhJb2e9xPfr0bQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10210
 
-On Tue, Mar 4, 2025 at 3:52=E2=80=AFPM Mario Limonciello <superm1@kernel.or=
-g> wrote:
->
-> On 3/4/2025 08:08, Rafael J. Wysocki wrote:
-> > On Tue, Mar 4, 2025 at 1:49=E2=80=AFPM Mario Limonciello <superm1@kerne=
-l.org> wrote:
-> >>
-> >> On 3/4/25 02:38, Antheas Kapenekakis wrote:
-> >>> On Tue, 4 Mar 2025 at 07:48, Mario Limonciello <superm1@kernel.org> w=
-rote:
-> >>>>
-> >>>> From: Mario Limonciello <mario.limonciello@amd.com>
-> >>>>
-> >>>> When two drivers don't support all the same profiles the legacy inte=
-rface
-> >>>> only exports the common profiles.
-> >>>>
-> >>>> This causes problems for cases where one driver uses low-power but a=
-nother
-> >>>> uses quiet because the result is that neither is exported to sysfs.
-> >>>>
-> >>>> If one platform profile handler supports quiet and the other
-> >>>> supports low power treat them as the same for the purpose of
-> >>>> the sysfs interface.
-> >>>>
-> >>>> Fixes: 688834743d67 ("ACPI: platform_profile: Allow multiple handler=
-s")
-> >>>> Reported-by: Antheas Kapenekakis <lkml@antheas.dev>
-> >>>> Closes: https://lore.kernel.org/platform-driver-x86/e64b771e-3255-42=
-ad-9257-5b8fc6c24ac9@gmx.de/T/#mc068042dd29df36c16c8af92664860fc4763974b
-> >>>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> >>>> ---
-> >>>>    drivers/acpi/platform_profile.c | 38 ++++++++++++++++++++++++++++=
-++---
-> >>>>    1 file changed, 35 insertions(+), 3 deletions(-)
-> >>>>
-> >>>> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform=
-_profile.c
-> >>>> index 2ad53cc6aae53..d9a7cc5891734 100644
-> >>>> --- a/drivers/acpi/platform_profile.c
-> >>>> +++ b/drivers/acpi/platform_profile.c
-> >>>> @@ -73,8 +73,20 @@ static int _store_class_profile(struct device *de=
-v, void *data)
-> >>>>
-> >>>>           lockdep_assert_held(&profile_lock);
-> >>>>           handler =3D to_pprof_handler(dev);
-> >>>> -       if (!test_bit(*bit, handler->choices))
-> >>>> -               return -EOPNOTSUPP;
-> >>>> +       if (!test_bit(*bit, handler->choices)) {
-> >>>> +               switch (*bit) {
-> >>>> +               case PLATFORM_PROFILE_QUIET:
-> >>>> +                       *bit =3D PLATFORM_PROFILE_LOW_POWER;
-> >>>> +                       break;
-> >>>> +               case PLATFORM_PROFILE_LOW_POWER:
-> >>>> +                       *bit =3D PLATFORM_PROFILE_QUIET;
-> >>>> +                       break;
-> >>>> +               default:
-> >>>> +                       return -EOPNOTSUPP;
-> >>>> +               }
-> >>>> +               if (!test_bit(*bit, handler->choices))
-> >>>> +                       return -EOPNOTSUPP;
-> >>>> +       }
-> >>>>
-> >>>>           return handler->ops->profile_set(dev, *bit);
-> >>>>    }
-> >>>> @@ -252,8 +264,16 @@ static int _aggregate_choices(struct device *de=
-v, void *data)
-> >>>>           handler =3D to_pprof_handler(dev);
-> >>>>           if (test_bit(PLATFORM_PROFILE_LAST, aggregate))
-> >>>>                   bitmap_copy(aggregate, handler->choices, PLATFORM_=
-PROFILE_LAST);
-> >>>> -       else
-> >>>> +       else {
-> >>>> +               /* treat quiet and low power the same for aggregatio=
-n purposes */
-> >>>> +               if (test_bit(PLATFORM_PROFILE_QUIET, handler->choice=
-s) &&
-> >>>> +                   test_bit(PLATFORM_PROFILE_LOW_POWER, aggregate))
-> >>>> +                       set_bit(PLATFORM_PROFILE_QUIET, aggregate);
-> >>>> +               else if (test_bit(PLATFORM_PROFILE_LOW_POWER, handle=
-r->choices) &&
-> >>>> +                        test_bit(PLATFORM_PROFILE_QUIET, aggregate)=
-)
-> >>>> +                       set_bit(PLATFORM_PROFILE_LOW_POWER, aggregat=
-e);
-> >>>>                   bitmap_and(aggregate, handler->choices, aggregate,=
- PLATFORM_PROFILE_LAST);
-> >>>> +       }
-> >>>
-> >>> So you end up showing both? If that's the case, isn't it equivalent t=
-o
-> >>> just make amd-pmf show both quiet and low-power?
-> >>>
-> >>> I guess it is not ideal for framework devices. But if asus devices en=
-d
-> >>> up showing both, then it should be ok for framework devices to show
-> >>> both.
-> >>>
-> >>> I like the behavior of the V1 personally.
-> >>
-> >> No; this doesn't cause it to show both.  It only causes one to show up=
-.
-> >
-> > Which may not be the one that was shown before IIUC and that's not good=
-.
-> >
-> > What actually is the problem with the previous version?
->
-> Functionally?  Nothing.  This was to demonstrate the other way to do it
-> that I preferred and get feedback on it as an alternative.
->
-> If you and Ilpo are happy with v1 that's totally fine and we can go with
-> that.
+Hi Heiko,
 
-I'd prefer to go for the v1 at this point because it fixes a
-regression affecting user space that needs to be addressed before the
-6.14 release (and there is not too much time left) and it has been
-checked on the affected systems.
+On 3/4/25 1:44 PM, Heiko Stuebner wrote:
+> From: Heiko Stuebner <heiko.stuebner@cherry.de>
+> 
+> Commit 52d11c863ac9 ("drm/rockchip: lvds: do not print scary message when
+> probing defer") already started hiding scary messages that are not relevant
+> if the requested supply just returned EPROBE_DEFER, but there are more
+> possible sources - like the phy.
+> 
+> So modernize the whole logging in the probe path by replacing the
+> remaining deprecated DRM_DEV_ERROR with appropriate dev_err(_probe)
+> and drm_err calls.
+> 
+> The distinction here is that all messages talking about mishaps of the
+> lvds element use dev_err(_probe) while messages caused by interaction
+> with the main Rockchip drm-device use drm_err.
+> 
+> Reviewed-by: Andy Yan <andy.yan@rock-chips.com>
 
-Ilpo, do you agree?
+Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
+
+Thanks!
+Quentin
 
