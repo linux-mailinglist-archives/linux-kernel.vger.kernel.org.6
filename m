@@ -1,116 +1,139 @@
-Return-Path: <linux-kernel+bounces-543291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5A62A4D3EA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:30:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADE2FA4D3EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:33:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16F573AE7AF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:29:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFA741733B4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:33:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55FCF1F55FA;
-	Tue,  4 Mar 2025 06:29:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 427AD1EF390;
+	Tue,  4 Mar 2025 06:33:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JRqWU0f4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Z/LoVmCK"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9342DAD24;
-	Tue,  4 Mar 2025 06:29:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20A3B35944
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 06:33:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741069790; cv=none; b=lgEhT4nXQf9TfdfHRS2tuQ8v24+19A6LYI19Qnl6ey+nuTraakQQlHi4NhctfVu7ES+YcLd2OYFWBdSwokelT63gJNklhRGjKqpZHhiV7FBKclNq+EvvI2C6uvf7a6kYc2mpYysUYoVJn8ek/RBk4TRGWVl0OJqOaL05cPUUm38=
+	t=1741069993; cv=none; b=t4lb4loi78uegmg555ujbLPvVM03yx6WVAR6PAuCJqW9V0MBrbJwVNReuLRoEYFcPJ9TIMspZazVCgX0utmYK4E4Lqv40Xz5Qn9TbyBd/4Duo4jxcJNQ6nTzWmM2eRBFaysqglhTfziFHVXgdhIoJpJC/dmxvvmqFEce4DGaxJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741069790; c=relaxed/simple;
-	bh=ggeUjaz+1iBUN10GhZtvDVxPTZOliFQ1v5Q5mAMLo/o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pIDLfxyntAQD1q7inpMhuw/kBUQvZVM8f/SwfJ53xT8wapO1kylBjfJIboYGOUS+r/R72L0AiA/Q6cnivo8+Q8rc8Io016xbn5W8HyEkUpm+VuD80bzbGwpU60yF8tIkrIcl+rke47wx05rSYTto6oy8Y0/73/hnSeCBL/0vZrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JRqWU0f4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51F0CC4CEE5;
-	Tue,  4 Mar 2025 06:29:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741069790;
-	bh=ggeUjaz+1iBUN10GhZtvDVxPTZOliFQ1v5Q5mAMLo/o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JRqWU0f40+vX/3qLiRp+fX4HkYMIC3axTzw8LfE7ecIyHw7RNbuThDfL9MVIfqC5+
-	 zDCLrv08jtMuRpeQr/IbcMuTIdPlLLyGZd8cxRe8ttYLXPNbIB3/iHSdnBlgokitrk
-	 0hRI1Wq5hDJzvN2CrFEE38qRZSG0jQaQCosM2orxnRUvmwolzcuw8A6A2lNmSGRR6B
-	 DWMrEjUuvHcMkRug/mdZTl2Ycez3mBW0CGo+Wg8TvtSlnjzOpkMGO+4b6ezuLJ3rMU
-	 pokHCPC228ckbP9hZpgVWuxwNr02jE5NW77UOjmU31oHmof8iK1Xl178qZA8+eRx2X
-	 +R+TRQPPThqpQ==
-Date: Tue, 4 Mar 2025 07:29:46 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>, Kamal Wadhwa <quic_kamalw@quicinc.com>, 
-	Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Johan Hovold <johan@kernel.org>, 
-	Sebastian Reichel <sre@kernel.org>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Subject: Re: [PATCH v3 0/3] leds: rgb: leds-qcom-lpg: PWM fixes
-Message-ID: <lvi75asit3ati7wwnyae6rowycr3veodswu7blbnzbrq646fgi@iksn4qas3dwt>
-References: <20250303-leds-qcom-lpg-fix-max-pwm-on-hi-res-v3-0-62703c0ab76a@linaro.org>
+	s=arc-20240116; t=1741069993; c=relaxed/simple;
+	bh=VcSDZCPSlilk/nQT3SJdh7P3PWn2QylOjDn5IxXXQak=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AUwAloKZJjusfRzTQ1QRhEjG5dLo1V/wepn6eIJGfPbdRVhKlPkcTGL5q5LeqekKR2sZd6RU82eNveaaPixPWvn5cQvC5u2ddeRPZqtXCET5icsdPQvJzqL61ug+2+OX+IlDpdWRxlfQjH4PDiSifID5UAIdUUGMUsN4nLu9v4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Z/LoVmCK; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-aaec111762bso962239966b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 22:33:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1741069989; x=1741674789; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=UPfpycxRLeXPq3Vn47UB9XJqE73Xmj0YUhuOs6CYk+I=;
+        b=Z/LoVmCKLnhJb81lughFALWjqBrpilunt9GEY8b2Oc2L6dwmrPqKfb/Aia9aYOeJ5K
+         5shhzI9BRnk+YSlzKjTnYUT6xR0FMw3TWnZ2YZ3ZU/nDamenC9EZQMaQRWKtMnTYdprF
+         MUleghMGXoRFsskH6UtSDGHX0qhVzhIgamXGA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741069989; x=1741674789;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UPfpycxRLeXPq3Vn47UB9XJqE73Xmj0YUhuOs6CYk+I=;
+        b=EWiH0cbpQD9bvAVbikoJmKbnXIlYlzPn6GWhCKReVmpRoHXXSNwdAKflNE+F3mxZTQ
+         mNeYO+Aubh+uk4VY6NJ42p1m2xCKFkppK4M0rwKCh4e7/KCO4inqOPlvZElFyy+MKz4i
+         zzEkDLvGa2CNN2RGjzdXKzELX83NhYqMk6crwe0FUbIN6e7qCJOYxXk1Y1aYgwNVHNWJ
+         bqaPtJGIdLnqLSWDDU2bvQfvMp6BDHPWTj0S+UV4F/ZT1tVL6sPela2u9txUZBkt+9AB
+         hDn/Sl8/Pd7jhmCfuoZyUVGPp0vMLGOP0Xfx6D/RsnRk5omjPK5ycOhD9z6dNmzq6wys
+         KS6A==
+X-Forwarded-Encrypted: i=1; AJvYcCVfyHlEFNlOGIoA3daB7U51RHZKRiCq+ItN4I7QwuHhlrGf4dyOl84lIXIr7WukOI1kMSVceyu934jGkZQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzT7DEetYQTuR7QXPIQaGV3655Qc+hq0W/yqt+qfoWZa/nJkd7c
+	KU0ojqmm9e+Nq17nPW2kn0OcjvLquzUmW8OJ/IMcnbDbum/D76Fg4QGuDcHsHWgVwhOUbeWHa+U
+	8Tes=
+X-Gm-Gg: ASbGncuNVZi+MND7TJ74JkmYcpvkgnWv8+U1HcufWbka0oM/kIZvhg5A9M4PVZ5Tsr7
+	e1ICqHFVyK2yJTve3A5F5x35QiFNiz89ARfsh4IPL1MrGnFu8InAqJ6XQZ/GARpx2DVaBDTW7Nx
+	9FlxkbrKCaxPb9jNnLGCDf7VXmjzy45yVXzIXJEI/1P83cedAQOroVoH4GJJm0Z25L+x6ZdF3Mf
+	959r4t6RGG1rT/G3X5YIgi2+8EKgYyI6qxur33tQcRtxQlSovXQeO/ThrvBrUfIPwqYynGRvzpI
+	iTK+KYY0NMRkHBgY2xGWS8G8smUNmRJfREcIv6uJzP1F6zlk1W6mUAMV3npDgPPieBTY0kQR25C
+	4fP4PQIbhnQvLnOEEH8s=
+X-Google-Smtp-Source: AGHT+IFWEYv/9Wi2/AF7c5SJW+fJRwPtQs7r+7iY2XdE8hjqE6FbPU5Qaoh6k0qmiadVxzbLJdUHJg==
+X-Received: by 2002:a17:907:7d8c:b0:ac1:ef3c:61d4 with SMTP id a640c23a62f3a-ac1ef3c6a00mr162981366b.21.1741069989202;
+        Mon, 03 Mar 2025 22:33:09 -0800 (PST)
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com. [209.85.218.44])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac1f8d78e80sm39168766b.56.2025.03.03.22.33.06
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Mar 2025 22:33:07 -0800 (PST)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-abf4802b242so552804166b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 22:33:06 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV8OOrkDreSnU4p2ryqRKC75Nv9ivtq8i5+3ceusz3iiLT/ZNKJIrmJn7jgYXPtfHVPxmKxHC7zd0EwROA=@vger.kernel.org
+X-Received: by 2002:a17:907:d90:b0:ac1:e2be:bab8 with SMTP id
+ a640c23a62f3a-ac1e2bec4cfmr418813066b.26.1741069986218; Mon, 03 Mar 2025
+ 22:33:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wvccdsaewx7hrkb2"
-Content-Disposition: inline
-In-Reply-To: <20250303-leds-qcom-lpg-fix-max-pwm-on-hi-res-v3-0-62703c0ab76a@linaro.org>
+References: <20250228143049.GA17761@redhat.com> <20250228163347.GB17761@redhat.com>
+ <03a1f4af-47e0-459d-b2bf-9f65536fc2ab@amd.com> <CAGudoHHA7uAVUmBWMy4L50DXb4uhi72iU+nHad=Soy17Xvf8yw@mail.gmail.com>
+ <CAGudoHE_M2MUOpqhYXHtGvvWAL4Z7=u36dcs0jh3PxCDwqMf+w@mail.gmail.com>
+ <741fe214-d534-4484-9cf3-122aabe6281e@amd.com> <3jnnhipk2at3f7r23qb7fvznqg6dqw4rfrhajc7h6j2nu7twi2@wc3g5sdlfewt>
+ <CAHk-=whuLzj37umjCN9CEgOrZkOL=bQPFWA36cpb24Mnm3mgBw@mail.gmail.com>
+ <CAGudoHG2PuhHte91BqrnZi0VbhLBfZVsrFYmYDVrmx4gaLUX3A@mail.gmail.com>
+ <CAHk-=whVfFhEq=Hw4boXXqpnKxPz96TguTU5OfnKtCXo0hWgVw@mail.gmail.com>
+ <20250303202735.GD9870@redhat.com> <CAHk-=wiA-7pdaQm2nV0iv-fihyhWX-=KjZwQTHNKoDqid46F0w@mail.gmail.com>
+ <1a969884-8245-4bea-b4cc-d1727348bf50@amd.com>
+In-Reply-To: <1a969884-8245-4bea-b4cc-d1727348bf50@amd.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 3 Mar 2025 20:32:49 -1000
+X-Gmail-Original-Message-ID: <CAHk-=wh804HX8H86VRUSKoJGVG0eBe8sPz8=E3d8LHftOCSqwQ@mail.gmail.com>
+X-Gm-Features: AQ5f1JqCPbp5F6rtPDaoEtKo2cLB4OW__15FO9jOkbpgZdLjhluznTu2FTcwa9g
+Message-ID: <CAHk-=wh804HX8H86VRUSKoJGVG0eBe8sPz8=E3d8LHftOCSqwQ@mail.gmail.com>
+Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still full
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Oleg Nesterov <oleg@redhat.com>, Mateusz Guzik <mjguzik@gmail.com>, 
+	"Sapkal, Swapnil" <swapnil.sapkal@amd.com>, Manfred Spraul <manfred@colorfullife.com>, 
+	Christian Brauner <brauner@kernel.org>, David Howells <dhowells@redhat.com>, 
+	WangYuli <wangyuli@uniontech.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	"Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>, Neeraj.Upadhyay@amd.com, Ananth.narayan@amd.com
+Content-Type: text/plain; charset="UTF-8"
 
+On Mon, 3 Mar 2025 at 19:31, K Prateek Nayak <kprateek.nayak@amd.com> wrote:
+>
+]> > ENTIRELY UNTESTED, but it seems to generate ok code. It might even
+> > generate better code than what we have now.
+>
+> With the patch on top of commit aaec5a95d596 ("pipe_read: don't wake up
+> the writer if the pipe is still full"), we've not seen any hangs yet
+> with a few thousand iterations of short loops, and a few hundred
+> iterations of larger loop sizes with hackbench.
+>
+> If you can provide you S-o-b, we can send out an official patch with a
+> commit log. We'll wait for Oleg's response in case he has any concerns.
 
---wvccdsaewx7hrkb2
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 0/3] leds: rgb: leds-qcom-lpg: PWM fixes
-MIME-Version: 1.0
+Ack. With that testing background, please write a message and add my
 
-Hello,
+  Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 
-On Mon, Mar 03, 2025 at 01:52:49PM +0200, Abel Vesa wrote:
-> The PWM allow configuring the PWM resolution from 8 bits PWM
-> values up to 15 bits values, for the Hi-Res PWMs, and then either
-> 6-bit or 9-bit for the normal PWMs. The current implementation loops
-> through all possible resolutions (PWM sizes), for the PWM subtype, on top
-> of the already existing process of determining the prediv, exponent and
-> refclk.
->=20
-> The first and second issues are related to capping the computed PWM
-> value.
+and we'll get this all fixed up.
 
-I just took a very quick look. I'd say squash the first and second patch
-into a single one. Splitting a change that fixes the same issue in the
-two branches of an if condition has no benefit.
+I assume this all goes back to commit 8cefc107ca54 ("pipe: Use head
+and tail pointers for the ring, not cursor and length") back in 2019.
 
-Other than that this patch set would also benefit from what I wrote in
-the review of the other patch you send: Please mention a request where
-the result becomes wrong. This considerably simplifies understanding
-your changes.
+Or possibly 85190d15f4ea ("pipe: don't use 'pipe_wait() for basic pipe IO")?
 
-Thanks
-Uwe
+But it was all hidden by the fact that we used to just wake things up
+very aggressively and you'd never notice the race as a result, so then
+it got exposed by the more minimal wakeup changes.
 
---wvccdsaewx7hrkb2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEyBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmfGndgACgkQj4D7WH0S
-/k4E8Af0C/TTFiq7Pc0P9DdnyFVSFKtNouYJp/xbeFThs1fZ6N38gID8m7D8zOrq
-WYCHqvZWKXsw+XtrOfdq1QopMatI85dcIj6XvX8m7xk8IWGuDWvCUNcPsPVu224V
-dQd7N7KWFmoOTWoxHVMVq9TJlwF/C59vwUxZ+HFqk7mlkiBuXfhbFHftoYSlNMu5
-OHDsabnXIeeUKZznXtWQULT8T3XSZgqaTLZf+WIbe+UiQQ7+qakesiX5YG4NE9Ty
-FKf67YaOBHccLmnfNZYsRQ+SZx641sEI1HdAmxXWaTTs7hzohodTNa4qboRndbcM
-UduqTj8i59OeCAInoCvyJ+ZG++r7
-=vAjc
------END PGP SIGNATURE-----
-
---wvccdsaewx7hrkb2--
+            Linus
 
