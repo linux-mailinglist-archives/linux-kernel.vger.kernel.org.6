@@ -1,169 +1,226 @@
-Return-Path: <linux-kernel+bounces-543158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37596A4D23C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 04:55:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38463A4D23D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 04:57:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34E331896D38
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 03:55:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4804E16FB82
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 03:57:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E64811F418B;
-	Tue,  4 Mar 2025 03:55:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2260F1EEA27;
+	Tue,  4 Mar 2025 03:57:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AuSLG6pn"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="DNV/8f+S"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2054.outbound.protection.outlook.com [40.107.237.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6F9B1F4169;
-	Tue,  4 Mar 2025 03:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741060509; cv=none; b=pZhMkOJt895AyC9cOd4B2hfHDlMtUsMViTIxNIF5Q13zg4ndXi8MsNAqgkNYaoDs4JrcHfDE8Bf54zhStYBz6pMpu2YZQmHcP5OQ+6AxawW35cTemg3QLwOTOtN89oGKSzJ7ZRb1u8GVg212pUmzDebwVm0QKzyot3eW90x7tzM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741060509; c=relaxed/simple;
-	bh=K2JMcePkguomNk533rxGnSo7HEuNE+HYU/PkTSIxr0s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HwqCGEsN6fNyYBjzJXUNLO/NAUIu10Sp8QHJAOa/WjMtT8tN7jqfneMvs4djJ69525oDFuXscK20qKxqG4VcuJwMvM9eo2hdNQ5xukJn1qnQCaGz7DXesew1QnrBRgu65Reu60YQ+oLQe4B/C1gZdqaRqgyY+8HViY5dUGGX75s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AuSLG6pn; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-47220d28138so72768331cf.3;
-        Mon, 03 Mar 2025 19:55:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741060506; x=1741665306; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GdcrE3LdnQVgeO5HL+/GJUF9iIqr/dYjf5g3HkcSy6c=;
-        b=AuSLG6pn/6juVZZWf0ja6SbSZE/5t56qYuGrjV1UUsN9l3havmN35uCKug+yo8npqE
-         wqq+PSgL0cl3kFjAxnf3SvVvwktF42IF4Xnmon52WhgAvH1cbAw1SXI+cQeccnmIbj8F
-         MhfHBs1rrEb+/8C09ETQBcAd/70UxC3LYQ1nv643w7ZUp0PMn4Prfx7VS4PyXxl/92go
-         Pi8HKWzEVPTyahwrniPMscyT3+W9BvbzknQMnL06wcRjZ6yUBsn4UZDtoo76UCXv86pn
-         lR4DkgJ41lnsePLNUattMgqwolInJ/O0wRjZyRVZPHvnrokTrF+/dOmM9N3nceg4ps4G
-         YOxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741060506; x=1741665306;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GdcrE3LdnQVgeO5HL+/GJUF9iIqr/dYjf5g3HkcSy6c=;
-        b=JZv93JpSm1eqBVSLBYVl9+2wf6tMsnZwdQwLrXl1+tZVabNNf8rVs/8Vw06cZajt0v
-         /LdLUKD53jutG5dOdLx8mkQip9TpR5YVnN4KnChrJ0hUtSk5ZrA3qKX1W0h8/q40m6N0
-         LAnwz1Lsk0qRghVXJu8c+zrEa0O34UsKlpPKIHoLizAApeDjVyT6N9qWGwjkd2MwQ2l5
-         Y1dxxcX22YqJ+VL8ObfQXXVGQXl08FlAwNjprQLR8qk+SBsd35Lv2oz79s8SD9mnKOe1
-         kk1gr1WH0VT/v2flmUP02dEQ4rP3R+A8Dzh4DjA/c7GXf5cYKou4JDhoh51mIKFmy6o+
-         5VKg==
-X-Forwarded-Encrypted: i=1; AJvYcCVc0Lali7f4Wfxuvz48fpUOBCWwM6HnqdHGwxQzI5an9JSIeOurJmeSEDxApNcPljDlC70zLaBo7E5vye0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx63UgbOyaBYNR6eE07jUBQgkNd3Jtd35rjgM7CdQLWQW1Y2jxw
-	SZIsYkN4LyEU8oyhR7XggwkZWWmSBlNHn7QVyKbkxpumdj37O3krUt17f3Ee
-X-Gm-Gg: ASbGnctnzJcow6j6BQbPpWyMEkuKd+VpwFt3vu1SO4MpvWO2vMGmgL6GpVNjM/KEAUU
-	u4ZWTAo38KYu4JxEOm+7+QZJMEXnTx342qDEgDrbWVnWO02wmHq+jJ256oF5l69rD7O9Gm4gRLV
-	/eSivfjrl6INWMBqrBDJamubuEKt//q90QD2ub+NEHtvUrg094a+bSwUNR/N2AQ7Blarv8pBfeH
-	5kOXUkDAPVfJom1/DahMlwB1p/zCVtT6r/FJd6RIuzRYubw9cF5ULKEcKf8YuygbrYm5ZNQsShC
-	kksR/JgmPxzKY2h/Qlu7xBfCeXTgnj6HhF9u4hEnynPmEznScXHA280SW0xrG4igPkkgWVDnYCG
-	XlUXYm7A=
-X-Google-Smtp-Source: AGHT+IE1pAuGx7BQ7H2vAjWVPS1Ixjg3wxAx2UDJGXmnGcGGEMGV5PCvJgx27ocQocD20/K72ooAGw==
-X-Received: by 2002:ac8:7dcf:0:b0:472:6aa:d6be with SMTP id d75a77b69052e-474bc069f2fmr185735581cf.17.1741060506261;
-        Mon, 03 Mar 2025 19:55:06 -0800 (PST)
-Received: from nerdopolis2.mynetworksettings.com ([2600:4040:5e66:a800:745f:1ed4:1113:4077])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-474691a1f2csm67567041cf.13.2025.03.03.19.55.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 19:55:05 -0800 (PST)
-From: adamsimonelli@gmail.com
-To: linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Petr Mladek <pmladek@suse.com>
-Cc: Adam Simonelli <adamsimonelli@gmail.com>
-Subject: [PATCH v6 3/3] tty: Change order of ttynull to be linked sooner if enabled as a console.
-Date: Mon,  3 Mar 2025 22:54:47 -0500
-Message-ID: <20250304035447.3138221-4-adamsimonelli@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250304035447.3138221-1-adamsimonelli@gmail.com>
-References: <20250304035447.3138221-1-adamsimonelli@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0251422D8;
+	Tue,  4 Mar 2025 03:57:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741060660; cv=fail; b=aRdHYLKRTVjMRMgkag4BcDeEj3S9yyyxfQpuZadpgk+pYs+rBu1uRmHi4TowI8yqqT+aqANYFGuRdWVXxCOiCGhuyjLqUTYM90erEUFikpfOqF7vP/vIu7gnbeMtxw8kgJmyANzhniDmXKmirkf/6Jg0Qf/ecwXb1P3LkifFFRo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741060660; c=relaxed/simple;
+	bh=bwLnZKbc8bLrBJFNI5dkdkqALo15IdrKKMG8/7pCKIc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=eOiT0d0kkgoau9Y2bU96h5dLh0C/dg8bTNZcEJH0atSalihnyCV8sFJ+QQtA5CJTOkKhby1N/35xyB1X2erhRCdcL5MFPCcKVVQefPHRmOIp3csiMFdwi+SCT3aWJMNTZwMHO6JMnxXOxAR6e4XZYTwwY6YV6sHSUQmSOcym0Xc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=DNV/8f+S; arc=fail smtp.client-ip=40.107.237.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=i3Ls875SVHT5tvO/FRWvA73wi2CYUxlhXXaApcHapopxAq1zUsKK1WRlxz4eY+uJkvyUNsowAO9eCN2M09/Mjqv5gVVkWCSdY1mQFXln6Crnv1+ENZPvjPmDAAGL+TPRgYjA4bku3cXQv2x6fQCn3Zum5X7v+AyuDn3rutBkXcG2nU4Q2Ru553irxl8zTxa7yS+o+4oY7vfwCXCoIB3c41J9BOhrmy+B/WiV0zvy9zxROK08aJGhrTbNux58BugqEtJiAgnk8J4U3JSK8vXCF8sRcM4t2FxNdPzjNP1EwEnZVlwdTscjwAWSG2dY4lplihC5jo9it8TV1lz3AH3QIQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nzN78j03jlzH6OEdY991KJ811mJSdZID1onvmyndArA=;
+ b=Z5tAus7Kc2iv0u2xstApWfoSQl7eZwrzocxUl3H0Yj5RmY8CQHkOECMaRp6vCB5inAJUgFlwGTXPNueqxTAKJd9Qm32vMdo10GKDTM4zLr1GB02CqgWJ/uwyUwQtqoObh8Nyou08CXkPZBIqaD1k5KOIXWYnAlnhwfvXTWm2hAlstHMOt+a2G4ZZzgGbgQq3op8LDiL/MGGMqS6l3KBMHnRrGOkB6l3xn0ablk9SpouRFL8Q/QQchefIqjyRum2A46ULB+1OL4B/0+v5jiBMtQf3iuhz7xEr7xuW2H5yoxYGqRN36ojK2CNVCCYN9+wFa5DvclQyEYgq0aRbNbbUTQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nzN78j03jlzH6OEdY991KJ811mJSdZID1onvmyndArA=;
+ b=DNV/8f+SLUdcR3ijI225As6ZF+WK9dKDUCHcHS+z0LXwD99/x3HHnbUojBW+wn3K5DMg7bh+jAfhffk1+mK7m4p5sPI+lXCPQ6Duq/u3ldEF0lVEmOvFrFK0AjWogjbRtA6uMaKYY+Ho9KEv5A4JEWY+yvwSxo7NfhdY2eA033cPaT1DFctu7QshKKJ1q6QLQLlyoD6sbZ2t4cR+gGhkEcWm1lQHElgdh8oc7rW3nrAMp5CA3BGSdIwdAvYgxAFyaLLU8S8xKel1eQNLmFsHP9xhQllZUUjQCb/hyXdF0ZWrWxEQ/eW+6D5VBDQzNqkqIcqxL8ig6cxPDOdcU5mCSQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH7PR12MB8056.namprd12.prod.outlook.com (2603:10b6:510:269::21)
+ by SJ1PR12MB6169.namprd12.prod.outlook.com (2603:10b6:a03:45c::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.25; Tue, 4 Mar
+ 2025 03:57:34 +0000
+Received: from PH7PR12MB8056.namprd12.prod.outlook.com
+ ([fe80::5682:7bec:7be0:cbd6]) by PH7PR12MB8056.namprd12.prod.outlook.com
+ ([fe80::5682:7bec:7be0:cbd6%6]) with mapi id 15.20.8489.025; Tue, 4 Mar 2025
+ 03:57:34 +0000
+Date: Mon, 3 Mar 2025 22:57:32 -0500
+From: Joel Fernandes <joelagnelf@nvidia.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Strforexc yn <strforexc@gmail.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	rcu@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: KASAN: global-out-of-bounds Read in srcu_gp_start_if_needed
+Message-ID: <20250304035732.GA128190@joelnvbox>
+References: <CA+HokZrPb-oHcuZQsc=LZ6_aJfjKy9oMeCBd-tq4b_sX5EG7NQ@mail.gmail.com>
+ <20250303114711.12716d05@gandalf.local.home>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250303114711.12716d05@gandalf.local.home>
+X-ClientProxiedBy: BN0PR04CA0098.namprd04.prod.outlook.com
+ (2603:10b6:408:ec::13) To PH7PR12MB8056.namprd12.prod.outlook.com
+ (2603:10b6:510:269::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB8056:EE_|SJ1PR12MB6169:EE_
+X-MS-Office365-Filtering-Correlation-Id: a7986c84-fdbb-4287-e8fc-08dd5ad0b1d5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?t62lvxB3MBLS+GSYOzB5DENFCqHqDX8bE/Xb7RxD3ZIeBUfhxzYp1rQ6QRvv?=
+ =?us-ascii?Q?DWblKawaFyGqRofda3CRyhSDeIUCiOX2ctZyofo4ONSaFyGTeRp0AKLpmDuF?=
+ =?us-ascii?Q?PoWjgvArgx1ZAY4135QdFWwALlaBasjOi82glKm5gudsLrFBhnkDBlcsJ1Te?=
+ =?us-ascii?Q?sjNqzkxhPVj+165zpDLB5K+Ds4Me+EQgGZDvKrkuh3WkYEXEhyiD8l5wEcb7?=
+ =?us-ascii?Q?A8vW6oByAQ1PGGPYIaQp5hmOLEGp2l9cFRwwlvnZ+jxizIzWgJ96WCE33J8R?=
+ =?us-ascii?Q?lKoALr55TqRmXEy36wIIZaIH6sHpIcn4SFDgK56RmxuDc3m0JqE+lSHL6IDq?=
+ =?us-ascii?Q?EPIDTIVJIybs93kChtExvj4EpcD9ps7YZnVEqKxh+/GpS93cW6gUMva/Rhsd?=
+ =?us-ascii?Q?wlvhKgjVQDHx+ZlLNtBtFO83cVPK0rNcFXVCePzQKyC+5DWMr1LkzoSdo/Py?=
+ =?us-ascii?Q?l8x0bSSFYktLgj5plBQeKG4F1yMM1gRYl/gjVAYIbK3lSNlqpMtRC0itKkaW?=
+ =?us-ascii?Q?a9ahrtCEXCseRmCKqOa+LrsTiY1hGQbdzkuEu0+Ur055D26rps4oc6Wltg7d?=
+ =?us-ascii?Q?OvHVc4MILWYwntYNAV3ibZtIiuDRFYbArvDMi4iY+cVO8T3MjyhwPvAylnBP?=
+ =?us-ascii?Q?vxDoZxWVfBSUM6ld603yvYC3jKXEtEfOfPz7/mSGlizp4dH6YWN27mwozA03?=
+ =?us-ascii?Q?vM3u8WEtWSE/sF2nCNo+zW3Cc/nRWls74bGczhT2VfBhE0R+eorLSJQAr9Rr?=
+ =?us-ascii?Q?AwHSuZqUHh5iTajY9kBqW+tsScZ1cnH4oUdCu2DRIPKKnvIu5NG+3ya0Gy0m?=
+ =?us-ascii?Q?6FccIY3zuZQCjIOrxIvpY0eK3VUYvqRCJQRK6BRly1WHJMSdnWYYGBhQQ96j?=
+ =?us-ascii?Q?2wgWv/YVWS+UuMuoXbm1YT871XO3/VrlIs4KYDlo3fivw8ix9KQlIAAp8jHi?=
+ =?us-ascii?Q?kweBUaDsOG9gW0QhFg7C6hiVKtpCKYJP2uF9ecSTyM2QqgiJFtWP8ABz/ytB?=
+ =?us-ascii?Q?68XSvgY53mu3+SJ4Lb7ll2QER3+llMl8BdpaZxTCFcuelycX3bySTmROKxXB?=
+ =?us-ascii?Q?cF026tEUFfwq/HnNWsz+wroBkuZMHUI46fBRs1qhSE9U78Dh7+lyJgH5Jf6S?=
+ =?us-ascii?Q?jV1QOEdbZsV3fRNzd4ya3B6Qq+52vrAWorklZZ8JZicBAeynHASuMlvlWEiT?=
+ =?us-ascii?Q?zkDSBIueBOniiZchJ9rG+n87BHua3ppAH0WRTav6mq8DWaqdMPPNejbMYB6E?=
+ =?us-ascii?Q?+Xhn5vFP0TVDSoUe70Wl6xz4d50q+V0Lh5JL9I2vGSZgBl8LeDUoFAIwuDqF?=
+ =?us-ascii?Q?PjJpY7xi/Nq/NmCPMKt1RlizsDSX6/AWxll7JhAOGCZSQFF9GAd1LchQjPhR?=
+ =?us-ascii?Q?nnDxD98udeRMkR3ouFIkbR9OICa7?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB8056.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?YIK26Rzf0eqARUNOhOEsmxa+XvM6W3rVpX/R79BuvOF76rOSoyZO0HmCpgnH?=
+ =?us-ascii?Q?t7yq1EW/8kemLqIfmjNxD5annWVNdmv33dbhr4+TW9EmCjAL77vlAGFg3SWd?=
+ =?us-ascii?Q?udrDxdduME8ypMEXfqk7ND3M9QjunjATtE0BQ12SbcwDEB8/BRkwA9iygVi9?=
+ =?us-ascii?Q?OXqp+NS2G6FBapFyo0Enl9OcldgjDEbq+383JuPQTkTMyNfZGuQxZPfPCqNv?=
+ =?us-ascii?Q?FYbveXr3EwPPK2B1P9Me8k1l10h7INTb51npPt755mqFNXYvY8csdSfgLB1q?=
+ =?us-ascii?Q?wuLRsc1tbQBIjpRHLrxOYOXADBsts8bxA7JMw/SS9Ibr0ezLFUe1e+keuLGK?=
+ =?us-ascii?Q?XeLuBO30OAADuDHTnMajbiWV6OQGsizdxXL26YwJISi7X0y+Z+13WKTjKCFm?=
+ =?us-ascii?Q?GVYQdJFyeFiFJ1+p7SG+tkYNJrogc6qqyBZEjXFmpT+RU6VdCNDkSvFaS8tn?=
+ =?us-ascii?Q?A64F900NYm7w6wI6B7zqB7gzUUBFh/Udozsr2bsATLhOefN60s6hH54mDmE9?=
+ =?us-ascii?Q?YenVsRDJ2KrQI7vmEY4K1x2BUolTn4rjvI0AZdPAozEqkjAcy0SJjSsLT7wZ?=
+ =?us-ascii?Q?HeFx85EuxiexSpOcrRmx9MyA7Le2SXEELaXycpNPsoX7TcWIf/XsUdzs/7nB?=
+ =?us-ascii?Q?Yl9NEHQWo5Y8V1tePoJ9me0yi3gB5OwlmMrmy8F3O/c+G/zsdAcdbqu9+SW+?=
+ =?us-ascii?Q?5PuOcig4MOFABaN2r1X8IP+/bNzNWRP9Eujn5AYSsbod/hLIBrJdtTCTwryL?=
+ =?us-ascii?Q?89Re78/m5uvSVgAc4yyBJcs11so0Jsp44NZxV3AaRBO4Ovylj/4SRODkvUjb?=
+ =?us-ascii?Q?PDwDax0uP0fj3QxOneYecZDySIMfSNoOlxIAs9P0OhXI+ZxAIp+/2L5sjvrv?=
+ =?us-ascii?Q?JJGIzPSbgDUxptzHKepD9s5XZcHzsv9b3SU8jKGZ/6trJNq4R6GbDOIGt4b+?=
+ =?us-ascii?Q?82DQBbamMBXMJMnNtlAWhPFmdIwx6+YgQ1hGM9SYeT5EbNge/JKTKA3RAs0t?=
+ =?us-ascii?Q?bNwYUygXnzDIbC5F5qxDuH+tZRZKAYlSkZ2QkHrehVMf4R3J8Efzf1/IWU3X?=
+ =?us-ascii?Q?Msavg7hWh+EnN2dc07b4hB7qsozWNXDGzfNvczeyOOvc5E23Br76sSVCN78t?=
+ =?us-ascii?Q?XvaP4XPSy+Q4l58TyDXjj077TGOSUSpQBxN6w4qvHQFlT7gx0P9KtI2GKHZE?=
+ =?us-ascii?Q?bDJ9rtm4xobyt4Kf3bq6hXm/ey6RmRZi3ajX91TkFejdVSFaKUN8XQnztqc0?=
+ =?us-ascii?Q?fH/oSQhx0U8GGoaGRdKmdMFZ2/8poxsPf9+O2GBVwz0PWYwab6Rp6Kfu3nI7?=
+ =?us-ascii?Q?DN0OB6q0mExZvM3rRosYOF0JG0u6OQYy9UWe/DPdSOey9k84Rt8XLN7ncUZu?=
+ =?us-ascii?Q?eY/k2h2Htnk1b6fIPxu5wMMmgfFsV1ZkEU6+Q+QgFyamviCfhokMWRV48TvE?=
+ =?us-ascii?Q?I7jY4kWYCHPGFimVum0Vt6CKB3ru2XVnxTt+MXIkYNaMQrQcaJPeTqn7oDqX?=
+ =?us-ascii?Q?4anAlsT6RTo8GOKq15xHbJA4XMfgd5ejdO59CLcDwOGhkk1GmYV9YxkbpAdi?=
+ =?us-ascii?Q?LQa9voAeuMWNEnsBsXSt8bKc7tttEG4CIc85cpoA?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a7986c84-fdbb-4287-e8fc-08dd5ad0b1d5
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB8056.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2025 03:57:34.2275
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: jGsxNphoUJHjJ7XH0LOtO4I3T2g8v5ikSz7edfWKgW0SPArqtPJ61vkqnj/IHuWPjAXpeTDD4e+Ig1FAJJfwfw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6169
 
-From: Adam Simonelli <adamsimonelli@gmail.com>
+On Mon, Mar 03, 2025 at 11:47:11AM -0500, Steven Rostedt wrote:
+[...]
+> > [   92.322347][   T28]  register_lock_class+0xb2/0xfc0
+> > [   92.322366][   T28]  ? __lock_acquire+0xb97/0x16a0
+> > [   92.322386][   T28]  ? __pfx_register_lock_class+0x10/0x10
+> > [   92.322407][   T28]  ? do_perf_trace_lock.isra.0+0x10b/0x570
+> > [   92.322427][   T28]  __lock_acquire+0xc3/0x16a0
+> > [   92.322446][   T28]  ? __pfx___lock_release+0x10/0x10
+> > [   92.322466][   T28]  ? rcu_is_watching+0x12/0xd0
+> > [   92.322486][   T28]  lock_acquire+0x181/0x3a0
+> > [   92.322505][   T28]  ? srcu_gp_start_if_needed+0x1a9/0x5f0
+> > [   92.322522][   T28]  ? __pfx_lock_acquire+0x10/0x10
+> > [   92.322541][   T28]  ? debug_object_active_state+0x2f1/0x3f0
+> > [   92.322557][   T28]  ? do_raw_spin_trylock+0xb4/0x190
+> > [   92.322570][   T28]  ? __pfx_do_raw_spin_trylock+0x10/0x10
+> > [   92.322583][   T28]  ? __kmalloc_cache_noprof+0x1b9/0x450
+> > [   92.322604][   T28]  _raw_spin_trylock+0x76/0xa0
+> > [   92.322619][   T28]  ? srcu_gp_start_if_needed+0x1a9/0x5f0
+> > [   92.322636][   T28]  srcu_gp_start_if_needed+0x1a9/0x5f0
+> 
+> The lock taken is from the passed in rcu_pending pointer.
+> 
+> > [   92.322655][   T28]  rcu_pending_enqueue+0x686/0xd30
+> > [   92.322676][   T28]  ? __pfx_rcu_pending_enqueue+0x10/0x10
+> > [   92.322693][   T28]  ? trace_lock_release+0x11a/0x180
+> > [   92.322708][   T28]  ? bkey_cached_free+0xa3/0x170
+> > [   92.322725][   T28]  ? lock_release+0x13/0x180
+> > [   92.322744][   T28]  ? bkey_cached_free+0xa3/0x170
+> > [   92.322760][   T28]  bkey_cached_free+0xfd/0x170
+> 
+> Which has:
+> 
+> static void bkey_cached_free(struct btree_key_cache *bc,
+>                              struct bkey_cached *ck)
+> {
+>         kfree(ck->k);
+>         ck->k           = NULL;
+>         ck->u64s        = 0;
+>                 
+>         six_unlock_write(&ck->c.lock);
+>         six_unlock_intent(&ck->c.lock);
+> 
+>         bool pcpu_readers = ck->c.lock.readers != NULL;
+>         rcu_pending_enqueue(&bc->pending[pcpu_readers], &ck->rcu);
+>         this_cpu_inc(*bc->nr_pending);
+> }
+> 
+> So if that bc->pending[pcpu_readers] gets corrupted in anyway, that could trigger this.
 
-If CONFIG_NULL_TTY_DEFAULT_CONSOLE is enabled, and CONFIG_VT is disabled,
-ttynull will become the default primary console device, based on the link
-order.
+True, another thing that could corrupt it is if per-cpu global data section
+section is corrupted, because the crash is happening in this trylock per the
+above stack:
 
-Many distributions ship with CONFIG_VT enabled. On tested desktop hardware
-if CONFIG_VT is disabled, the default console device falls back to
-/dev/ttyS0 instead of /dev/tty.
+ srcu_gp_start_if_needed ->
+	spin_lock_irqsave_sdp_contention(sdp) ->
+		spin_trylock(sdp->lock)
 
-This could cause issues in user space, and hardware problems:
+	where sdp is ssp->sda and is allocated from per-cpu storage.
 
-1. The user space issues include the case where  /dev/ttyS0 is
-disconnected, and the TCGETS ioctl, which some user space libraries use
-as a probe to determine if a file is a tty, is called on /dev/console and
-fails. Programs that call isatty() on /dev/console and get an incorrect
-false value may skip expected logging to /dev/console
+So corruption of the per-cpu global data section can also trigger this, even
+if the rcu_pending pointer is intact.
 
-2. The hardware issues include the case if a user has a science instrument
-or other device connected to the /dev/ttyS0 port, and they were to upgrade
-to a kernel that is disabling the CONFIG_VT option, kernel logs will then be
-sent to the device connected to /dev/ttyS0 unless they edit their kernel
-command line manually.
+thanks,
 
-The new CONFIG_NULL_TTY_CONSOLE option will give users and distribution
-maintainers an option to avoid this. Disabling CONFIG_VT and enabling
-CONFIG_NULL_TTY_CONSOLE will ensure the default kernel console behavior
-is not dependant on hardware configuration by default, and avoid
-unexpected new behavior on devices connected to the /dev/ttyS0 serial
-port.
+ - Joel
 
-Signed-off-by: Adam Simonelli <adamsimonelli@gmail.com>
----
- drivers/tty/Makefile | 11 +++++++++++
- 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/tty/Makefile b/drivers/tty/Makefile
-index 07aca5184a55..a4caf32a2014 100644
---- a/drivers/tty/Makefile
-+++ b/drivers/tty/Makefile
-@@ -11,6 +11,11 @@ obj-$(CONFIG_N_HDLC)		+= n_hdlc.o
- obj-$(CONFIG_N_GSM)		+= n_gsm.o
- 
- obj-y				+= vt/
-+# If ttynull is configured to be a console by default, ensure that it is linked
-+# earlier before a real one is selected.
-+obj-$(CONFIG_NULL_TTY_DEFAULT_CONSOLE) \
-+				+= ttynull.o
-+
- obj-$(CONFIG_HVC_DRIVER)	+= hvc/
- obj-y				+= serial/
- obj-$(CONFIG_SERIAL_DEV_BUS)	+= serdev/
-@@ -20,7 +25,13 @@ obj-$(CONFIG_AMIGA_BUILTIN_SERIAL) += amiserial.o
- obj-$(CONFIG_MOXA_INTELLIO)	+= moxa.o
- obj-$(CONFIG_MOXA_SMARTIO)	+= mxser.o
- obj-$(CONFIG_NOZOMI)		+= nozomi.o
-+
-+# If ttynull is enabled, but not as a boot console, it is linked and used later
-+# after the real ones.
-+ifneq ($(CONFIG_NULL_TTY_DEFAULT_CONSOLE),y)
- obj-$(CONFIG_NULL_TTY)	        += ttynull.o
-+endif
-+
- obj-$(CONFIG_SYNCLINK_GT)	+= synclink_gt.o
- obj-$(CONFIG_PPC_EPAPR_HV_BYTECHAN) += ehv_bytechan.o
- obj-$(CONFIG_GOLDFISH_TTY)	+= goldfish.o
--- 
-2.45.2
 
 
