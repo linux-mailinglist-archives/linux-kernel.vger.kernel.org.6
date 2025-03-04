@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-543975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC794A4DC12
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:12:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAA42A4DC15
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:12:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E05E4188F077
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:12:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A3F01896436
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:12:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3921200B9C;
-	Tue,  4 Mar 2025 11:11:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E8F21FF1AB;
+	Tue,  4 Mar 2025 11:11:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="orvLJAFi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k4IlYg7H"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9791FF1A0
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 11:11:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E779B200BBE
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 11:11:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741086678; cv=none; b=CXoc367dn0+WAP5QgE80LFXxuhP2SDTI3Q2OTgvS31U87g3VW6DrBd4nr77T2LYYNn0RUjFbfxTGB4A0DYVA/XT2UimGx8ymQPXNMquCOnycKMgy89QNapz/d0CJalNJNI3akig7zJ/T9yWyAiFFnvD306QtB17KaoDYi8E6CNE=
+	t=1741086681; cv=none; b=rpYvHmVCqzo7NBSl59pvHPJOQkrkugE7lw8cfOBAhoyC0gvNneK7M4FQnfNI02qoxc78BVkd/XRX2qMdGbWxiQvxieexEmGRKBQYE4bguNEUvwPrr8W+Vfn5wPddB77QShsFHWoOJmwlOKOTMRk9UEIervbF772cUszEQczMBQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741086678; c=relaxed/simple;
-	bh=W1KZgJPSyJ/7ZZeebiPiFkuJP4qW6MCWO9Xt7TxeeEE=;
+	s=arc-20240116; t=1741086681; c=relaxed/simple;
+	bh=+LGiRKEcCcITA0C2Yd4YksjVY0vEpo6IKjVYAWJOpdQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=CsgAfqR5N6bNSniYkVzro9i2iB71G/0jf/N5JTDu+qOJtxV4Bs1HLvbV+PmSoiOypgB3oytCAFdr8s4sqODZZZctraQuWifqSPCcM1YGWfYHQ3RON0ndp9t3DrQxJ+DhAZ3vd5XsiZrqW2ItPLRl7HkJDMhhDA4ObDvf16JUkR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=orvLJAFi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69758C4CEEA;
-	Tue,  4 Mar 2025 11:11:16 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=bNgGx0Xi2Fvb3TTSjvXqmp0G2r8sfm6fuKJOTXDZTgni+E9Hdet5juP+5CoVb/q2jfkW/K0Aa1NMlzEvin1P7MtxyzwGDh12Or8bhtHWRV9xgCqdCTBmgM/MDeqWDfz9PIN7mYxy3scFYbcjocQaNjiVrtJhmSGEpINiSx2VZK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k4IlYg7H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1916FC4CEEA;
+	Tue,  4 Mar 2025 11:11:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741086676;
-	bh=W1KZgJPSyJ/7ZZeebiPiFkuJP4qW6MCWO9Xt7TxeeEE=;
+	s=k20201202; t=1741086679;
+	bh=+LGiRKEcCcITA0C2Yd4YksjVY0vEpo6IKjVYAWJOpdQ=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=orvLJAFi3IqjxY26li29CtOwHeOZsI+wgznmEx2TLKAcjwqKXaxJKtJxGuTVqXebs
-	 Q6n6wOCivgK64Yv2C+O0Qv/shV7CwLw/DCgV2F/7nfAwJYxkznU9Ag2o2gqvXHe7Mw
-	 QZKr2dGQ0xzbZUPqxMLCA8/qfUsVWLDqxaCf27JTiYVmiGhWdA0Z1E8ZB741DhylBk
-	 z6/Eu0qz7S/pYOkyBRa5yHpn1QLHmr798VHOMoS75ewzSvpFh0vyNFEZRs5ocoAW0c
-	 +U6rcFDs6SUp/SQCtUeBjhk0u3R/9sGoYoShom3QWIUw+Ec44guoy5unYMYGcP6y3z
-	 5ULWQRwliDPtw==
+	b=k4IlYg7HVUNa8YD4gMi8CRWURh2O4g6xpm3gjw9Tk+lHfeRXqiKCaQcE4EjJMeMSZ
+	 Hmopuh8FEfSe1rd6koB0COQJwZkV3A6T63Cy5RayC8mm1+LfsfpyIAtsutU4lckF4A
+	 gEzm2adGMEF/6Rnb2pqkgiLQJf3rcgYKKMVBFMdBrwHXATnU7Y9WMjRG7vS4K854uy
+	 MHnzZD7FpN1ObfP5GVpDdNYmFbBKouWc/RTRAtaCgJ8FYzkG0YtNxc/cWch5qUCGDm
+	 6kXNNzkXCMAj6sw/i/CRvklkzYxVe5CYDOAvraeVHpK6IEwllVm+t3/naXXyRZ0lok
+	 VbHBMidqvxSRg==
 From: Maxime Ripard <mripard@kernel.org>
-Date: Tue, 04 Mar 2025 12:10:48 +0100
-Subject: [PATCH v5 05/16] drm/tests: helpers: Create new helper to enable
- output
+Date: Tue, 04 Mar 2025 12:10:49 +0100
+Subject: [PATCH v5 06/16] drm/tests: hdmi_state_helpers: Switch to new
+ helper
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250304-bridge-connector-v5-5-aacf461d2157@kernel.org>
+Message-Id: <20250304-bridge-connector-v5-6-aacf461d2157@kernel.org>
 References: <20250304-bridge-connector-v5-0-aacf461d2157@kernel.org>
 In-Reply-To: <20250304-bridge-connector-v5-0-aacf461d2157@kernel.org>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
@@ -67,145 +67,451 @@ Cc: Herve Codina <herve.codina@bootlin.com>,
  Maxime Ripard <mripard@kernel.org>, 
  Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4286; i=mripard@kernel.org;
- h=from:subject:message-id; bh=W1KZgJPSyJ/7ZZeebiPiFkuJP4qW6MCWO9Xt7TxeeEE=;
- b=owGbwMvMwCmsHn9OcpHtvjLG02pJDOnH7u+byuEx4eeiv8qVa2s2sa9I2co8xVuY5WT7qhK3N
- hvLMvZPHVNZGIQ5GWTFFFmeyISdXt6+uMrBfuUPmDmsTCBDGLg4BWAi9yUZazjOdt2coLHRMFIv
- IfOM2ZRnXz12KdwN/x5vXir08NWVazlmSwT+B8Y7/p2y0qcgJfuzP2PD/mJdzjwO5sVHHpc35D7
- fUB4QVs327dDL/om5c/Mlls94siLr80xHnVdRT4pV1qu9XLgeAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=15615; i=mripard@kernel.org;
+ h=from:subject:message-id; bh=+LGiRKEcCcITA0C2Yd4YksjVY0vEpo6IKjVYAWJOpdQ=;
+ b=owGbwMvMwCmsHn9OcpHtvjLG02pJDOnH7u+b67rULuXx8+TYz7+/LXtdE3nNgOdP/6UW16cvt
+ Izyup+ydUxlYRDmZJAVU2R5IhN2enn74ioH+5U/YOawMoEMYeDiFICJzGBibLhst+uBM+eMxInh
+ 0x2COOIrDARXcq5rygycfn5Lw/KVO47e9dF6fHbPU7tM+emLLzodEWSsszsw6by4pp3owWNc+gc
+ vhOnw+/NOtN3oG3U0xOYCf/+zuheX1Z5fW63OoLRyHa+NZYYpAA==
 X-Developer-Key: i=mripard@kernel.org; a=openpgp;
  fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 
-We'll need the HDMI state tests light_up_connector() function in more
-tests, so let's promote it to a helper.
+We introduced a new helper that supersedes the light_up_connector()
+function in drm_hdmi_state_helper_test, so let's convert all our tests
+to it.
 
 Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Signed-off-by: Maxime Ripard <mripard@kernel.org>
 ---
- drivers/gpu/drm/tests/drm_kunit_helpers.c | 61 +++++++++++++++++++++++++++++++
- include/drm/drm_kunit_helpers.h           |  8 ++++
- 2 files changed, 69 insertions(+)
+ drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c | 158 ++++++++++++---------
+ 1 file changed, 92 insertions(+), 66 deletions(-)
 
-diff --git a/drivers/gpu/drm/tests/drm_kunit_helpers.c b/drivers/gpu/drm/tests/drm_kunit_helpers.c
-index a4eb68f0decca15988105b9d58266e3871934a8b..14ad8f0a0af18410a7129ec34635678a8120d3cb 100644
---- a/drivers/gpu/drm/tests/drm_kunit_helpers.c
-+++ b/drivers/gpu/drm/tests/drm_kunit_helpers.c
-@@ -1,9 +1,10 @@
- // SPDX-License-Identifier: GPL-2.0
+diff --git a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
+index e97efd3af9ed18e6cf8ee66b4923dfc805b34e19..7ffd666753b10bc991894e238206a3c5328d0e23 100644
+--- a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
++++ b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
+@@ -53,53 +53,10 @@ static struct drm_display_mode *find_preferred_mode(struct drm_connector *connec
+ 	mutex_unlock(&drm->mode_config.mutex);
  
- #include <drm/drm_atomic.h>
- #include <drm/drm_atomic_helper.h>
-+#include <drm/drm_atomic_uapi.h>
- #include <drm/drm_drv.h>
- #include <drm/drm_edid.h>
- #include <drm/drm_fourcc.h>
- #include <drm/drm_kunit_helpers.h>
- #include <drm/drm_managed.h>
-@@ -269,10 +270,70 @@ drm_kunit_helper_create_crtc(struct kunit *test,
- 
- 	return crtc;
+ 	return preferred;
  }
- EXPORT_SYMBOL_GPL(drm_kunit_helper_create_crtc);
  
-+/**
-+ * drm_kunit_helper_enable_crtc_connector - Enables a CRTC -> Connector output
-+ * @test: The test context object
-+ * @drm: The device to alloc the plane for
-+ * @crtc: The CRTC to enable
-+ * @connector: The Connector to enable
-+ * @mode: The display mode to configure the CRTC with
-+ * @ctx: Locking context
-+ *
-+ * This function creates an atomic update to enable the route from @crtc
-+ * to @connector, with the given @mode.
-+ *
-+ * Returns:
-+ *
-+ * A pointer to the new CRTC, or an ERR_PTR() otherwise. If the error
-+ * returned is EDEADLK, the entire atomic sequence must be restarted.
-+ */
-+int drm_kunit_helper_enable_crtc_connector(struct kunit *test,
-+					   struct drm_device *drm,
-+					   struct drm_crtc *crtc,
-+					   struct drm_connector *connector,
-+					   const struct drm_display_mode *mode,
-+					   struct drm_modeset_acquire_ctx *ctx)
-+{
-+	struct drm_atomic_state *state;
-+	struct drm_connector_state *conn_state;
-+	struct drm_crtc_state *crtc_state;
-+	int ret;
-+
-+	state = drm_kunit_helper_atomic_state_alloc(test, drm, ctx);
-+	if (IS_ERR(state))
-+		return PTR_ERR(state);
-+
-+	conn_state = drm_atomic_get_connector_state(state, connector);
-+	if (IS_ERR(conn_state))
-+		return PTR_ERR(conn_state);
-+
-+	ret = drm_atomic_set_crtc_for_connector(conn_state, crtc);
-+	if (ret)
-+		return ret;
-+
-+	crtc_state = drm_atomic_get_crtc_state(state, crtc);
-+	if (IS_ERR(crtc_state))
-+		return PTR_ERR(crtc_state);
-+
-+	ret = drm_atomic_set_mode_for_crtc(crtc_state, mode);
-+	if (ret)
-+		return ret;
-+
-+	crtc_state->enable = true;
-+	crtc_state->active = true;
-+
-+	ret = drm_atomic_commit(state);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(drm_kunit_helper_enable_crtc_connector);
-+
- static void kunit_action_drm_mode_destroy(void *ptr)
+-static int light_up_connector(struct kunit *test,
+-			      struct drm_device *drm,
+-			      struct drm_crtc *crtc,
+-			      struct drm_connector *connector,
+-			      struct drm_display_mode *mode,
+-			      struct drm_modeset_acquire_ctx *ctx)
+-{
+-	struct drm_atomic_state *state;
+-	struct drm_connector_state *conn_state;
+-	struct drm_crtc_state *crtc_state;
+-	int ret;
+-
+-	state = drm_kunit_helper_atomic_state_alloc(test, drm, ctx);
+-	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, state);
+-
+-retry:
+-	conn_state = drm_atomic_get_connector_state(state, connector);
+-	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, conn_state);
+-
+-	ret = drm_atomic_set_crtc_for_connector(conn_state, crtc);
+-	if (ret == -EDEADLK) {
+-		drm_atomic_state_clear(state);
+-		ret = drm_modeset_backoff(ctx);
+-		if (!ret)
+-			goto retry;
+-	}
+-	KUNIT_EXPECT_EQ(test, ret, 0);
+-
+-	crtc_state = drm_atomic_get_crtc_state(state, crtc);
+-	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, crtc_state);
+-
+-	ret = drm_atomic_set_mode_for_crtc(crtc_state, mode);
+-	KUNIT_EXPECT_EQ(test, ret, 0);
+-
+-	crtc_state->enable = true;
+-	crtc_state->active = true;
+-
+-	ret = drm_atomic_commit(state);
+-	KUNIT_ASSERT_EQ(test, ret, 0);
+-
+-	return 0;
+-}
+-
+ static int set_connector_edid(struct kunit *test, struct drm_connector *connector,
+ 			      const char *edid, size_t edid_len)
  {
- 	struct drm_display_mode *mode = ptr;
+ 	struct drm_atomic_helper_connector_hdmi_priv *priv =
+ 		connector_to_priv(connector);
+@@ -296,11 +253,14 @@ static void drm_test_check_broadcast_rgb_crtc_mode_changed(struct kunit *test)
+ 	preferred = find_preferred_mode(conn);
+ 	KUNIT_ASSERT_NOT_NULL(test, preferred);
  
- 	drm_mode_destroy(NULL, mode);
-diff --git a/include/drm/drm_kunit_helpers.h b/include/drm/drm_kunit_helpers.h
-index 11d59ce0bac0bbec07ae5f07ed9710cf01d73f09..1cda7281f30029e649c62fc0fd9d9ae6889d43ac 100644
---- a/include/drm/drm_kunit_helpers.h
-+++ b/include/drm/drm_kunit_helpers.h
-@@ -7,10 +7,11 @@
+ 	drm_modeset_acquire_init(&ctx, 0);
  
- #include <linux/device.h>
+-	ret = light_up_connector(test, drm, crtc, conn, preferred, &ctx);
++	ret = drm_kunit_helper_enable_crtc_connector(test, drm,
++						     crtc, conn,
++						     preferred,
++						     &ctx);
+ 	KUNIT_ASSERT_EQ(test, ret, 0);
  
- #include <kunit/test.h>
+ 	state = drm_kunit_helper_atomic_state_alloc(test, drm, &ctx);
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, state);
  
-+struct drm_connector;
- struct drm_crtc_funcs;
- struct drm_crtc_helper_funcs;
- struct drm_device;
- struct drm_plane_funcs;
- struct drm_plane_helper_funcs;
-@@ -116,10 +117,17 @@ drm_kunit_helper_create_crtc(struct kunit *test,
- 			     struct drm_plane *primary,
- 			     struct drm_plane *cursor,
- 			     const struct drm_crtc_funcs *funcs,
- 			     const struct drm_crtc_helper_funcs *helper_funcs);
+@@ -362,11 +322,14 @@ static void drm_test_check_broadcast_rgb_crtc_mode_not_changed(struct kunit *tes
+ 	preferred = find_preferred_mode(conn);
+ 	KUNIT_ASSERT_NOT_NULL(test, preferred);
  
-+int drm_kunit_helper_enable_crtc_connector(struct kunit *test,
-+					   struct drm_device *drm,
-+					   struct drm_crtc *crtc,
-+					   struct drm_connector *connector,
-+					   const struct drm_display_mode *mode,
-+					   struct drm_modeset_acquire_ctx *ctx);
-+
- struct drm_display_mode *
- drm_kunit_display_mode_from_cea_vic(struct kunit *test, struct drm_device *dev,
- 				    u8 video_code);
+ 	drm_modeset_acquire_init(&ctx, 0);
  
- #endif // DRM_KUNIT_HELPERS_H_
+-	ret = light_up_connector(test, drm, crtc, conn, preferred, &ctx);
++	ret = drm_kunit_helper_enable_crtc_connector(test, drm,
++						     crtc, conn,
++						     preferred,
++						     &ctx);
+ 	KUNIT_ASSERT_EQ(test, ret, 0);
+ 
+ 	state = drm_kunit_helper_atomic_state_alloc(test, drm, &ctx);
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, state);
+ 
+@@ -430,11 +393,14 @@ static void drm_test_check_broadcast_rgb_auto_cea_mode(struct kunit *test)
+ 	KUNIT_ASSERT_NOT_NULL(test, preferred);
+ 	KUNIT_ASSERT_NE(test, drm_match_cea_mode(preferred), 1);
+ 
+ 	drm_modeset_acquire_init(&ctx, 0);
+ 
+-	ret = light_up_connector(test, drm, crtc, conn, preferred, &ctx);
++	ret = drm_kunit_helper_enable_crtc_connector(test, drm,
++						     crtc, conn,
++						     preferred,
++						     &ctx);
+ 	KUNIT_ASSERT_EQ(test, ret, 0);
+ 
+ 	state = drm_kunit_helper_atomic_state_alloc(test, drm, &ctx);
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, state);
+ 
+@@ -487,11 +453,14 @@ static void drm_test_check_broadcast_rgb_auto_cea_mode_vic_1(struct kunit *test)
+ 
+ 	mode = drm_kunit_display_mode_from_cea_vic(test, drm, 1);
+ 	KUNIT_ASSERT_NOT_NULL(test, mode);
+ 
+ 	crtc = priv->crtc;
+-	ret = light_up_connector(test, drm, crtc, conn, mode, &ctx);
++	ret = drm_kunit_helper_enable_crtc_connector(test, drm,
++						     crtc, conn,
++						     mode,
++						     &ctx);
+ 	KUNIT_ASSERT_EQ(test, ret, 0);
+ 
+ 	state = drm_kunit_helper_atomic_state_alloc(test, drm, &ctx);
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, state);
+ 
+@@ -545,11 +514,14 @@ static void drm_test_check_broadcast_rgb_full_cea_mode(struct kunit *test)
+ 	KUNIT_ASSERT_NOT_NULL(test, preferred);
+ 	KUNIT_ASSERT_NE(test, drm_match_cea_mode(preferred), 1);
+ 
+ 	drm_modeset_acquire_init(&ctx, 0);
+ 
+-	ret = light_up_connector(test, drm, crtc, conn, preferred, &ctx);
++	ret = drm_kunit_helper_enable_crtc_connector(test, drm,
++						     crtc, conn,
++						     preferred,
++						     &ctx);
+ 	KUNIT_ASSERT_EQ(test, ret, 0);
+ 
+ 	state = drm_kunit_helper_atomic_state_alloc(test, drm, &ctx);
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, state);
+ 
+@@ -604,11 +576,14 @@ static void drm_test_check_broadcast_rgb_full_cea_mode_vic_1(struct kunit *test)
+ 
+ 	mode = drm_kunit_display_mode_from_cea_vic(test, drm, 1);
+ 	KUNIT_ASSERT_NOT_NULL(test, mode);
+ 
+ 	crtc = priv->crtc;
+-	ret = light_up_connector(test, drm, crtc, conn, mode, &ctx);
++	ret = drm_kunit_helper_enable_crtc_connector(test, drm,
++						     crtc, conn,
++						     mode,
++						     &ctx);
+ 	KUNIT_ASSERT_EQ(test, ret, 0);
+ 
+ 	state = drm_kunit_helper_atomic_state_alloc(test, drm, &ctx);
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, state);
+ 
+@@ -664,11 +639,14 @@ static void drm_test_check_broadcast_rgb_limited_cea_mode(struct kunit *test)
+ 	KUNIT_ASSERT_NOT_NULL(test, preferred);
+ 	KUNIT_ASSERT_NE(test, drm_match_cea_mode(preferred), 1);
+ 
+ 	drm_modeset_acquire_init(&ctx, 0);
+ 
+-	ret = light_up_connector(test, drm, crtc, conn, preferred, &ctx);
++	ret = drm_kunit_helper_enable_crtc_connector(test, drm,
++						     crtc, conn,
++						     preferred,
++						     &ctx);
+ 	KUNIT_ASSERT_EQ(test, ret, 0);
+ 
+ 	state = drm_kunit_helper_atomic_state_alloc(test, drm, &ctx);
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, state);
+ 
+@@ -723,11 +701,14 @@ static void drm_test_check_broadcast_rgb_limited_cea_mode_vic_1(struct kunit *te
+ 
+ 	mode = drm_kunit_display_mode_from_cea_vic(test, drm, 1);
+ 	KUNIT_ASSERT_NOT_NULL(test, mode);
+ 
+ 	crtc = priv->crtc;
+-	ret = light_up_connector(test, drm, crtc, conn, mode, &ctx);
++	ret = drm_kunit_helper_enable_crtc_connector(test, drm,
++						     crtc, conn,
++						     mode,
++						     &ctx);
+ 	KUNIT_ASSERT_EQ(test, ret, 0);
+ 
+ 	state = drm_kunit_helper_atomic_state_alloc(test, drm, &ctx);
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, state);
+ 
+@@ -787,11 +768,14 @@ static void drm_test_check_output_bpc_crtc_mode_changed(struct kunit *test)
+ 	preferred = find_preferred_mode(conn);
+ 	KUNIT_ASSERT_NOT_NULL(test, preferred);
+ 
+ 	drm_modeset_acquire_init(&ctx, 0);
+ 
+-	ret = light_up_connector(test, drm, crtc, conn, preferred, &ctx);
++	ret = drm_kunit_helper_enable_crtc_connector(test, drm,
++						     crtc, conn,
++						     preferred,
++						     &ctx);
+ 	KUNIT_ASSERT_EQ(test, ret, 0);
+ 
+ 	state = drm_kunit_helper_atomic_state_alloc(test, drm, &ctx);
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, state);
+ 
+@@ -863,11 +847,14 @@ static void drm_test_check_output_bpc_crtc_mode_not_changed(struct kunit *test)
+ 	preferred = find_preferred_mode(conn);
+ 	KUNIT_ASSERT_NOT_NULL(test, preferred);
+ 
+ 	drm_modeset_acquire_init(&ctx, 0);
+ 
+-	ret = light_up_connector(test, drm, crtc, conn, preferred, &ctx);
++	ret = drm_kunit_helper_enable_crtc_connector(test, drm,
++						     crtc, conn,
++						     preferred,
++						     &ctx);
+ 	KUNIT_ASSERT_EQ(test, ret, 0);
+ 
+ 	state = drm_kunit_helper_atomic_state_alloc(test, drm, &ctx);
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, state);
+ 
+@@ -939,11 +926,14 @@ static void drm_test_check_output_bpc_dvi(struct kunit *test)
+ 	preferred = find_preferred_mode(conn);
+ 	KUNIT_ASSERT_NOT_NULL(test, preferred);
+ 
+ 	drm_modeset_acquire_init(&ctx, 0);
+ 
+-	ret = light_up_connector(test, drm, crtc, conn, preferred, &ctx);
++	ret = drm_kunit_helper_enable_crtc_connector(test, drm,
++						     crtc, conn,
++						     preferred,
++						     &ctx);
+ 	KUNIT_ASSERT_EQ(test, ret, 0);
+ 
+ 	conn_state = conn->state;
+ 	KUNIT_ASSERT_NOT_NULL(test, conn_state);
+ 
+@@ -986,11 +976,14 @@ static void drm_test_check_tmds_char_rate_rgb_8bpc(struct kunit *test)
+ 	KUNIT_ASSERT_NOT_NULL(test, preferred);
+ 	KUNIT_ASSERT_FALSE(test, preferred->flags & DRM_MODE_FLAG_DBLCLK);
+ 
+ 	drm_modeset_acquire_init(&ctx, 0);
+ 
+-	ret = light_up_connector(test, drm, crtc, conn, preferred, &ctx);
++	ret = drm_kunit_helper_enable_crtc_connector(test, drm,
++						     crtc, conn,
++						     preferred,
++						     &ctx);
+ 	KUNIT_ASSERT_EQ(test, ret, 0);
+ 
+ 	conn_state = conn->state;
+ 	KUNIT_ASSERT_NOT_NULL(test, conn_state);
+ 
+@@ -1035,11 +1028,14 @@ static void drm_test_check_tmds_char_rate_rgb_10bpc(struct kunit *test)
+ 	KUNIT_ASSERT_NOT_NULL(test, preferred);
+ 	KUNIT_ASSERT_FALSE(test, preferred->flags & DRM_MODE_FLAG_DBLCLK);
+ 
+ 	drm_modeset_acquire_init(&ctx, 0);
+ 
+-	ret = light_up_connector(test, drm, crtc, conn, preferred, &ctx);
++	ret = drm_kunit_helper_enable_crtc_connector(test, drm,
++						     crtc, conn,
++						     preferred,
++						     &ctx);
+ 	KUNIT_ASSERT_EQ(test, ret, 0);
+ 
+ 	conn_state = conn->state;
+ 	KUNIT_ASSERT_NOT_NULL(test, conn_state);
+ 
+@@ -1084,11 +1080,14 @@ static void drm_test_check_tmds_char_rate_rgb_12bpc(struct kunit *test)
+ 	KUNIT_ASSERT_NOT_NULL(test, preferred);
+ 	KUNIT_ASSERT_FALSE(test, preferred->flags & DRM_MODE_FLAG_DBLCLK);
+ 
+ 	drm_modeset_acquire_init(&ctx, 0);
+ 
+-	ret = light_up_connector(test, drm, crtc, conn, preferred, &ctx);
++	ret = drm_kunit_helper_enable_crtc_connector(test, drm,
++						     crtc, conn,
++						     preferred,
++						     &ctx);
+ 	KUNIT_ASSERT_EQ(test, ret, 0);
+ 
+ 	conn_state = conn->state;
+ 	KUNIT_ASSERT_NOT_NULL(test, conn_state);
+ 
+@@ -1132,11 +1131,14 @@ static void drm_test_check_hdmi_funcs_reject_rate(struct kunit *test)
+ 	preferred = find_preferred_mode(conn);
+ 	KUNIT_ASSERT_NOT_NULL(test, preferred);
+ 
+ 	drm_modeset_acquire_init(&ctx, 0);
+ 
+-	ret = light_up_connector(test, drm, crtc, conn, preferred, &ctx);
++	ret = drm_kunit_helper_enable_crtc_connector(test, drm,
++						     crtc, conn,
++						     preferred,
++						     &ctx);
+ 	KUNIT_ASSERT_EQ(test, ret, 0);
+ 
+ 	/* You shouldn't be doing that at home. */
+ 	conn->hdmi.funcs = &reject_connector_hdmi_funcs;
+ 
+@@ -1206,11 +1208,14 @@ static void drm_test_check_max_tmds_rate_bpc_fallback(struct kunit *test)
+ 	rate = drm_hdmi_compute_mode_clock(preferred, 10, HDMI_COLORSPACE_RGB);
+ 	KUNIT_ASSERT_LT(test, rate, info->max_tmds_clock * 1000);
+ 
+ 	drm_modeset_acquire_init(&ctx, 0);
+ 
+-	ret = light_up_connector(test, drm, crtc, conn, preferred, &ctx);
++	ret = drm_kunit_helper_enable_crtc_connector(test, drm,
++						     crtc, conn,
++						     preferred,
++						     &ctx);
+ 	KUNIT_EXPECT_EQ(test, ret, 0);
+ 
+ 	conn_state = conn->state;
+ 	KUNIT_ASSERT_NOT_NULL(test, conn_state);
+ 
+@@ -1280,11 +1285,14 @@ static void drm_test_check_max_tmds_rate_format_fallback(struct kunit *test)
+ 	rate = drm_hdmi_compute_mode_clock(preferred, 12, HDMI_COLORSPACE_YUV422);
+ 	KUNIT_ASSERT_LT(test, rate, info->max_tmds_clock * 1000);
+ 
+ 	drm_modeset_acquire_init(&ctx, 0);
+ 
+-	ret = light_up_connector(test, drm, crtc, conn, preferred, &ctx);
++	ret = drm_kunit_helper_enable_crtc_connector(test, drm,
++						     crtc, conn,
++						     preferred,
++						     &ctx);
+ 	KUNIT_EXPECT_EQ(test, ret, 0);
+ 
+ 	conn_state = conn->state;
+ 	KUNIT_ASSERT_NOT_NULL(test, conn_state);
+ 
+@@ -1345,11 +1353,14 @@ static void drm_test_check_output_bpc_format_vic_1(struct kunit *test)
+ 	KUNIT_ASSERT_LT(test, rate, info->max_tmds_clock * 1000);
+ 
+ 	drm_modeset_acquire_init(&ctx, 0);
+ 
+ 	crtc = priv->crtc;
+-	ret = light_up_connector(test, drm, crtc, conn, mode, &ctx);
++	ret = drm_kunit_helper_enable_crtc_connector(test, drm,
++						     crtc, conn,
++						     mode,
++						     &ctx);
+ 	KUNIT_EXPECT_EQ(test, ret, 0);
+ 
+ 	conn_state = conn->state;
+ 	KUNIT_ASSERT_NOT_NULL(test, conn_state);
+ 
+@@ -1412,11 +1423,14 @@ static void drm_test_check_output_bpc_format_driver_rgb_only(struct kunit *test)
+ 	rate = drm_hdmi_compute_mode_clock(preferred, 12, HDMI_COLORSPACE_YUV422);
+ 	KUNIT_ASSERT_LT(test, rate, info->max_tmds_clock * 1000);
+ 
+ 	drm_modeset_acquire_init(&ctx, 0);
+ 
+-	ret = light_up_connector(test, drm, crtc, conn, preferred, &ctx);
++	ret = drm_kunit_helper_enable_crtc_connector(test, drm,
++						     crtc, conn,
++						     preferred,
++						     &ctx);
+ 	KUNIT_EXPECT_EQ(test, ret, 0);
+ 
+ 	conn_state = conn->state;
+ 	KUNIT_ASSERT_NOT_NULL(test, conn_state);
+ 
+@@ -1481,11 +1495,14 @@ static void drm_test_check_output_bpc_format_display_rgb_only(struct kunit *test
+ 	rate = drm_hdmi_compute_mode_clock(preferred, 12, HDMI_COLORSPACE_YUV422);
+ 	KUNIT_ASSERT_LT(test, rate, info->max_tmds_clock * 1000);
+ 
+ 	drm_modeset_acquire_init(&ctx, 0);
+ 
+-	ret = light_up_connector(test, drm, crtc, conn, preferred, &ctx);
++	ret = drm_kunit_helper_enable_crtc_connector(test, drm,
++						     crtc, conn,
++						     preferred,
++						     &ctx);
+ 	KUNIT_EXPECT_EQ(test, ret, 0);
+ 
+ 	conn_state = conn->state;
+ 	KUNIT_ASSERT_NOT_NULL(test, conn_state);
+ 
+@@ -1541,11 +1558,14 @@ static void drm_test_check_output_bpc_format_driver_8bpc_only(struct kunit *test
+ 	rate = drm_hdmi_compute_mode_clock(preferred, 12, HDMI_COLORSPACE_RGB);
+ 	KUNIT_ASSERT_LT(test, rate, info->max_tmds_clock * 1000);
+ 
+ 	drm_modeset_acquire_init(&ctx, 0);
+ 
+-	ret = light_up_connector(test, drm, crtc, conn, preferred, &ctx);
++	ret = drm_kunit_helper_enable_crtc_connector(test, drm,
++						     crtc, conn,
++						     preferred,
++						     &ctx);
+ 	KUNIT_EXPECT_EQ(test, ret, 0);
+ 
+ 	conn_state = conn->state;
+ 	KUNIT_ASSERT_NOT_NULL(test, conn_state);
+ 
+@@ -1603,11 +1623,14 @@ static void drm_test_check_output_bpc_format_display_8bpc_only(struct kunit *tes
+ 	rate = drm_hdmi_compute_mode_clock(preferred, 12, HDMI_COLORSPACE_RGB);
+ 	KUNIT_ASSERT_LT(test, rate, info->max_tmds_clock * 1000);
+ 
+ 	drm_modeset_acquire_init(&ctx, 0);
+ 
+-	ret = light_up_connector(test, drm, crtc, conn, preferred, &ctx);
++	ret = drm_kunit_helper_enable_crtc_connector(test, drm,
++						     crtc, conn,
++						     preferred,
++						     &ctx);
+ 	KUNIT_EXPECT_EQ(test, ret, 0);
+ 
+ 	conn_state = conn->state;
+ 	KUNIT_ASSERT_NOT_NULL(test, conn_state);
+ 
+@@ -1643,11 +1666,14 @@ static void drm_test_check_disable_connector(struct kunit *test)
+ 	preferred = find_preferred_mode(conn);
+ 	KUNIT_ASSERT_NOT_NULL(test, preferred);
+ 
+ 	drm = &priv->drm;
+ 	crtc = priv->crtc;
+-	ret = light_up_connector(test, drm, crtc, conn, preferred, &ctx);
++	ret = drm_kunit_helper_enable_crtc_connector(test, drm,
++						     crtc, conn,
++						     preferred,
++						     &ctx);
+ 	KUNIT_ASSERT_EQ(test, ret, 0);
+ 
+ 	state = drm_kunit_helper_atomic_state_alloc(test, drm, &ctx);
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, state);
+ 
 
 -- 
 2.48.1
