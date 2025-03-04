@@ -1,300 +1,179 @@
-Return-Path: <linux-kernel+bounces-544678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B9FDA4E3A6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:37:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 634B5A4E4C0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:02:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D52177A4125
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:36:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 896FE888220
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:36:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13583283681;
-	Tue,  4 Mar 2025 15:24:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D312C259CAF;
+	Tue,  4 Mar 2025 15:24:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ggalFGBA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XoT06eKi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8215D259CB8
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1E2259CA4;
+	Tue,  4 Mar 2025 15:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741101858; cv=none; b=LrSRx9ieXvwhJE1X9ie24T/noruFuJxGS0n+mhL/cJlNNo+eBrM0yrV/XiuhcGQQvf6gGJK4riZWjFsNre+w++qTgOacOIrAdrBcW/UjFB3RNH7leoDxZz18krRK2O1z4iJA26D1n9GdGs6u+AVT8zLfcMQtOeU6tqLie17JhFg=
+	t=1741101850; cv=none; b=uN+tasy1nUm35QUE5K4lxURLeCEMdqe9ygeXxOQSP+k0eRuapjVZArCNuvnA8r5TEpLj5hMU27Mh0rwHLCgg4mxBXepzh6CteeZVyz+g/Kwa2ysKP0xwC484+OYq4A0OVRKQVydvj5t7ZbDzSK9nEJuO6iMPzhIcqEZB8KcL5Vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741101858; c=relaxed/simple;
-	bh=9Jnaaj+MupYsXtZ5FbywLqogWLKCVBeU+mapvXdmuLU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FTNpkDM8cKNMoC5Bf0wPm/eDW7Mb0XjCXRQq2w1FjMwTGxu66QyEFkOfnWQC4XSNt4royIA/ngwZbpsrhuZbr2NGdoRo6FURdoY23hEf/Puf8lMRctF3aIrMnGFFoSiD8uwWq0xNqoVE/qt/IF5d7ySeUATG+Q1ZeqL4ToI5n1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ggalFGBA; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741101855;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QvFubViMNlvElEXntbaUBxPleCcZNXXI9ACRXmzKeq0=;
-	b=ggalFGBA1dh3bu4i1jNbTgIS+PCtrM6q8qlHlnesW+XfqLIgyYqfSky2Wt9b2I3l978p5r
-	N0fzMfiOvEjRKdEKSHLTj3TtOYv7/OSleQogquoI79X8Lw3A0pLX4pJGaKSSUyRqsUXcka
-	x0Vx+juOqaDNwfys8EOjtOnrColNLjQ=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-460-l6Q0tCCcOCiT8CxdtdNSoA-1; Tue, 04 Mar 2025 10:23:59 -0500
-X-MC-Unique: l6Q0tCCcOCiT8CxdtdNSoA-1
-X-Mimecast-MFC-AGG-ID: l6Q0tCCcOCiT8CxdtdNSoA_1741101838
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-390eb06d920so4333075f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 07:23:58 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741101838; x=1741706638;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QvFubViMNlvElEXntbaUBxPleCcZNXXI9ACRXmzKeq0=;
-        b=unE3px1GM19++2QCsg9yhLi110wLb4/T7DUxqZKj3zpQmSXQkcySKvnkmxWMOpOah5
-         qr9A2qB/bWqIiZ+glVKLIXxOCZJSN9kg0D9RYEIsyHjpRwh5H9hUf59JSaVf+IAYEFm5
-         ZTd5riW8+1nzKmbPDSw96e6u64JL7Nsh2T9EwU0UTe54bn31VGE7oqE+Lxdezxg7Wqov
-         /xRA5QXbjaw9Yw23KzaxpbuqkPsPQeaf4NsMZfscCYk7lol0JO+KTllEV6bCD8OHUtY9
-         QH6ckdlRai2HvxZDT0+5uw6UyVwyK5VZssMBJp8voGDBNWDKZphTmFt4x3Fa9neLZ8mR
-         CAxA==
-X-Forwarded-Encrypted: i=1; AJvYcCVDAr98nYklASWBeB2Aa7ANypONTAVHARFPMKbNbrjVz+3TjziCqS8Bti6FWCWn8K6z3RB6G7ZSjeaw5h0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxo8pUQPCd6wFWR3pTmijXWdZnZtu6bzeTktrddcyq2KgzJDQ+Z
-	IkHHg8Jzu+DM23Hnp7fhoPzci23at0pToh5vD2PSOpNJVpEcf/yW++ai7LVEml5UJk6srG1WiU6
-	bwmd9uQt5cWU7Csql51eDKw0BRQ0a5xvSWGYk+8LUAPfKV7DhXk5Ce6MPBKjBwA==
-X-Gm-Gg: ASbGncs/ifgfZlthhYYd/Ho0yPvhlDBR85zouLbOF4S2uzApsm3iEuSjGQ2EJZVYGbs
-	Am+qVgMvOpBWRVSI2krNBgaO19h22HAVx9oYkst6xGztlUVftAhUT5Qe5OhGEuGJd5bEiwb/NYA
-	ppVgyJ19koklioXfTWB6MXyu8FYA3LYsA2Ta0pP+Vwa+ENeiBgnWJydltpJgJgsZiVhEjIwo5oo
-	85OACy+jTNAuzNhmRxjd3sYSjdN9Q7jbR+QcFtzkCF7KBhlYDSKmJaXuGd6Da648mvrEU+mo1D8
-	SSUDoQenfQqsdrGX7Fx6S0E/pR58MyrkcJOfs0QHPOTa9sxH3Ux/LCKd1T6El3dd
-X-Received: by 2002:adf:fc11:0:b0:38c:5fbf:10ca with SMTP id ffacd0b85a97d-390eca06cf4mr15878895f8f.39.1741101837802;
-        Tue, 04 Mar 2025 07:23:57 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGXUbzP/MD3DaiOBhULX8asTjjiwbkIGLuALrZE+TAO2F//xDur+SEeYf1Lx6gpZrq9uCm1kg==
-X-Received: by 2002:adf:fc11:0:b0:38c:5fbf:10ca with SMTP id ffacd0b85a97d-390eca06cf4mr15878837f8f.39.1741101837140;
-        Tue, 04 Mar 2025 07:23:57 -0800 (PST)
-Received: from sgarzare-redhat (host-79-46-200-29.retail.telecomitalia.it. [79.46.200.29])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e485d6cdsm17907254f8f.84.2025.03.04.07.23.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 07:23:56 -0800 (PST)
-Date: Tue, 4 Mar 2025 16:23:51 +0100
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, 
-	Claudio Carvalho <cclaudio@linux.ibm.com>, Peter Huewe <peterhuewe@gmx.de>, x86@kernel.org, 
-	Dov Murik <dovmurik@linux.ibm.com>, linux-coco@lists.linux.dev, 
-	Dionna Glaze <dionnaglaze@google.com>, James Bottomley <James.Bottomley@hansenpartnership.com>, 
-	Ingo Molnar <mingo@redhat.com>, Joerg Roedel <jroedel@suse.de>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Tom Lendacky <thomas.lendacky@amd.com>, 
-	Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [RFC PATCH v2 4/6] tpm: add interface to interact with devices
- based on TCG Simulator
-Message-ID: <7dltjdc4csdao5djx2jkjnvm72ubhagjwvgrpyqrr3aeo5cicn@cxrxusjpgce7>
-References: <20250228170720.144739-1-sgarzare@redhat.com>
- <20250228170720.144739-5-sgarzare@redhat.com>
- <Z8JncxQM7Nkit0Q6@kernel.org>
+	s=arc-20240116; t=1741101850; c=relaxed/simple;
+	bh=cP+3DRtvyJVgzMQ/hPv2kyRzLaLuDzpCWL4d/5oZuyA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=RXix6IVn4ZmbAy8Puns/XjLrDpu6ZPdX5rlYdExwDmHGRdUWQGxPwECaFjcPMfrbUh9XQIByfCu3g6SURBVj1karVs7mqLML6jtwPY+ePubzyb7TX5Cq3Y1qReW5pIkqWKo56hcKj6q22zr+uE9VJVX0xaLmF3MuOWRuRniaxG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XoT06eKi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53A59C4CEE5;
+	Tue,  4 Mar 2025 15:24:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741101849;
+	bh=cP+3DRtvyJVgzMQ/hPv2kyRzLaLuDzpCWL4d/5oZuyA=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=XoT06eKiekw3s8ONYJ4Yr+xfRaxcAgPQw3z0Vrkxu7YgmI7qvVkac6Emn1JmC6Tn7
+	 9Mv6Mi2IaPQi/XlvfyWy5z92lbfsjZ/QkeZpWwvIbBLMiCyQLkAHBSuJJTDhXW0XZJ
+	 o7n9xRCun32yOxINm1DyFNNjqymwoEi4FNFQU1DLpqRK6hrEvf+i/7402Ig/YGCTIQ
+	 GQyKavvRrKUHf9BAbKeV5S7GB39iUp8GXC/iuGZJknH1QTb8icMwZfr7HT7MQRHyVc
+	 GMw5T+E58/y6wGuaakDKfWEDNfYaEKIudGHYA8OQTZ/kzzBWw5y0zBg0wj1SV44HdB
+	 YnY4g4JxoHqyA==
+Message-ID: <ebbd3d0faa939d498eb3bc67c7ba9c2ae72f3e60.camel@kernel.org>
+Subject: Re: [PATCH 4/5] nfsd: clean up if statement in
+ nfsd4_close_open_stateid()
+From: Jeff Layton <jlayton@kernel.org>
+To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, Olga
+ Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom
+ Talpey <tom@talpey.com>
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 04 Mar 2025 10:24:08 -0500
+In-Reply-To: <20250303-nfsd-cleanup-v1-4-14068e8f59c5@kernel.org>
+References: <20250303-nfsd-cleanup-v1-0-14068e8f59c5@kernel.org>
+	 <20250303-nfsd-cleanup-v1-4-14068e8f59c5@kernel.org>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <Z8JncxQM7Nkit0Q6@kernel.org>
 
-On Sat, Mar 01, 2025 at 03:48:35AM +0200, Jarkko Sakkinen wrote:
->On Fri, Feb 28, 2025 at 06:07:18PM +0100, Stefano Garzarella wrote:
->> This is primarily designed to support an enlightened driver for the
->
->The commit message is half-way cut.
->
->I.e. it lacks the explanation of "this".
->
->> AMD SVSM based vTPM, but it could be used by any TPM driver which
->> communicates with a TPM device implemented through the TCG TPM reference
->> implementation (https://github.com/TrustedComputingGroup/TPM)
->>
->> Co-developed-by: James Bottomley <James.Bottomley@HansenPartnership.com>
->> Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
->> Co-developed-by: Claudio Carvalho <cclaudio@linux.ibm.com>
->> Signed-off-by: Claudio Carvalho <cclaudio@linux.ibm.com>
->> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
->> ---
->> James, Claudio are you fine with the Cdb, Sob?
->> The code is based to what was in the initial RFC, but I removed the
->> tpm_platform module, moved some code in the header, changed some names,
->> etc.
->> For these reasons I reset the author but added C-o-b.
->> Please, let me know if this is okay or if I need to do anything
->> else (reset the author, etc.)
->> ---
->>  include/linux/tpm_tcgsim.h | 136 +++++++++++++++++++++++++++++++++++++
->>  1 file changed, 136 insertions(+)
->>  create mode 100644 include/linux/tpm_tcgsim.h
->>
->> diff --git a/include/linux/tpm_tcgsim.h b/include/linux/tpm_tcgsim.h
->> new file mode 100644
->> index 000000000000..bd5b123c393b
->> --- /dev/null
->> +++ b/include/linux/tpm_tcgsim.h
->> @@ -0,0 +1,136 @@
->> +/* SPDX-License-Identifier: GPL-2.0-only */
->> +/*
->> + * Copyright (C) 2023 James.Bottomley@HansenPartnership.com
->> + * Copyright (C) 2025 Red Hat, Inc. All Rights Reserved.
->> + *
->> + * Generic interface usable by TPM drivers interacting with devices
->> + * implemented through the TCG Simulator.
->> + */
->> +#ifndef _TPM_TCGSIM_H_
->> +#define _TPM_TCGSIM_H_
->> +
->> +#include <linux/errno.h>
->> +#include <linux/string.h>
->> +#include <linux/types.h>
->> +
->> +/*
->> + * The current TCG Simulator TPM commands we support.  The complete list is
->> + * in the TcpTpmProtocol header:
->> + *
->> + * https://github.com/TrustedComputingGroup/TPM/blob/main/TPMCmd/Simulator/include/TpmTcpProtocol.h
->
->We should not be dependent on any out-of-tree headers.
->
->> + */
->> +
->> +#define TPM_SEND_COMMAND		8
->> +#define TPM_SIGNAL_CANCEL_ON		9
->> +#define TPM_SIGNAL_CANCEL_OFF		10
->> +/*
->> + * Any platform specific commands should be placed here and should start
->> + * at 0x8000 to avoid clashes with the TCG Simulator protocol.  They should
->> + * follow the same self describing buffer format below.
->> + */
->> +
->> +#define TPM_TCGSIM_MAX_BUFFER		4096 /* max req/resp buffer size */
->> +
->> +/**
->> + * struct tpm_req - generic request header for single word command
->> + *
->> + * @cmd:	The command to send
->> + */
->> +struct tpm_req {
->> +	u32 cmd;
->> +} __packed;
->> +
->> +/**
->> + * struct tpm_resp - generic response header
->> + *
->> + * @size:	The response size (zero if nothing follows)
->> + *
->> + * Note: most TCG Simulator commands simply return zero here with no indication
->> + * of success or failure.
->> + */
->> +struct tpm_resp {
->> +	u32 size;
->> +} __packed;
->> +
->> +/**
->> + * struct tpm_send_cmd_req - Structure for a TPM_SEND_COMMAND request
->> + *
->> + * @hdr:	The request header whit the command (must be TPM_SEND_COMMAND)
->> + * @locality:	The locality
->> + * @inbuf_size:	The size of the input buffer following
->> + * @inbuf:	A buffer of size inbuf_size
->> + *
->> + * Note that TCG Simulator expects @inbuf_size to be equal to the size of the
->> + * specific TPM command, otherwise an TPM_RC_COMMAND_SIZE error is
->> + * returned.
->> + */
->> +struct tpm_send_cmd_req {
->> +	struct tpm_req hdr;
->> +	u8 locality;
->> +	u32 inbuf_size;
->> +	u8 inbuf[];
->> +} __packed;
->> +
->> +/**
->> + * struct tpm_send_cmd_req - Structure for a TPM_SEND_COMMAND response
->> + *
->> + * @hdr:	The response header whit the following size
->> + * @outbuf:	A buffer of size hdr.size
->> + */
->> +struct tpm_send_cmd_resp {
->> +	struct tpm_resp hdr;
->> +	u8 outbuf[];
->> +} __packed;
->> +
->> +/**
->> + * tpm_tcgsim_fill_send_cmd() - fill a struct tpm_send_cmd_req to be sent to the
->> + * TCG Simulator.
->> + * @req: The struct tpm_send_cmd_req to fill
->> + * @locality: The locality
->> + * @buf: The buffer from where to copy the payload of the command
->> + * @len: The size of the buffer
->> + *
->> + * Return: 0 on success, negative error code on failure.
->> + */
->> +static inline int
->> +tpm_tcgsim_fill_send_cmd(struct tpm_send_cmd_req *req, u8 locality,
->> +			 const u8 *buf, size_t len)
->> +{
->> +	if (len > TPM_TCGSIM_MAX_BUFFER - sizeof(*req))
->> +		return -EINVAL;
->> +
->> +	req->hdr.cmd = TPM_SEND_COMMAND;
->> +	req->locality = locality;
->> +	req->inbuf_size = len;
->> +
->> +	memcpy(req->inbuf, buf, len);
->> +
->> +	return 0;
->> +}
->> +
->> +/**
->> + * tpm_tcgsim_parse_send_cmd() - Parse a struct tpm_send_cmd_resp received from
->> + * the TCG Simulator
->> + * @resp: The struct tpm_send_cmd_resp to parse
->> + * @buf: The buffer where to copy the response
->> + * @len: The size of the buffer
->> + *
->> + * Return: buffer size filled with the response on success, negative error
->> + * code on failure.
->> + */
->> +static inline int
->> +tpm_tcgsim_parse_send_cmd(const struct tpm_send_cmd_resp *resp, u8 *buf,
->> +			  size_t len)
->> +{
->> +	if (len < resp->hdr.size)
->> +		return -E2BIG;
->> +
->> +	if (resp->hdr.size > TPM_TCGSIM_MAX_BUFFER - sizeof(*resp))
->> +		return -EINVAL;  // Invalid response from the platform TPM
->> +
->> +	memcpy(buf, resp->outbuf, resp->hdr.size);
->> +
->> +	return resp->hdr.size;
->> +}
->> +
->> +#endif /* _TPM_TCGSIM_H_ */
->> --
->> 2.48.1
->>
->
->This commit got me lost tbh.
+On Mon, 2025-03-03 at 12:26 -0500, Jeff Layton wrote:
+> Just set unhashed to false in the one case where we return that
+> explicitly, and drop the else.
+>=20
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/nfsd/nfs4state.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+> index a7bac93445e2fdbe743b77e66238d652094907cb..1f3e9d42fcd784ea8d101ad35=
+49702a30dfe9058 100644
+> --- a/fs/nfsd/nfs4state.c
+> +++ b/fs/nfsd/nfs4state.c
+> @@ -7644,12 +7644,11 @@ static bool nfsd4_close_open_stateid(struct nfs4_=
+ol_stateid *s)
+>  		list_for_each_entry(stp, &reaplist, st_locks)
+>  			nfs4_free_cpntf_statelist(clp->net, &stp->st_stid);
+>  		free_ol_stateid_reaplist(&reaplist);
+> -		return false;
+> -	} else {
+> -		spin_unlock(&clp->cl_lock);
+> -		free_ol_stateid_reaplist(&reaplist);
+> -		return unhashed;
+> +		unhashed =3D false;
+>  	}
+> +	spin_unlock(&clp->cl_lock);
+> +	free_ol_stateid_reaplist(&reaplist);
+> +	return unhashed;
+>  }
+> =20
+>  /*
+>=20
 
-Now I understand why you got lost, my bad!
-I checked further and these structures seem to be specific to the vTPM 
-protocol defined by AMD SVSM specification and independent of TCG TPM 
-(unless reusing some definitions like TPM_SEND_COMMAND).
+My apologies, Chuck. This patch has a bug in it. Can you drop it from
+nfsd-testing? I may or may not send a replacement.
 
-At this point I think it is best to remove this header (or move in 
-x86/sev) and move this rewrap to x86/sev to avoid confusion.
-
-I'll do in v3, sorry for the confusion.
-
-Stefano
-
+Thanks,
+--=20
+Jeff Layton <jlayton@kernel.org>
 
