@@ -1,78 +1,58 @@
-Return-Path: <linux-kernel+bounces-544047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67752A4DCD5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:43:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 485ECA4DCDE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:46:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F6163AF049
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:43:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 399D07A62C9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:45:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57CB0200B8A;
-	Tue,  4 Mar 2025 11:43:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D14E71FF1A1;
+	Tue,  4 Mar 2025 11:46:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KyRTydvW"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j415LynE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70BD81F5850;
-	Tue,  4 Mar 2025 11:43:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39A7C1F193D;
+	Tue,  4 Mar 2025 11:46:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741088614; cv=none; b=ZkltJflMgWjAeJgolte0yr/tqOBC9m+PJ2VMgpZ9YVBFzyisu7/pEH7/VIWpMni7f0utYzG9ZPAR4IyIkMicMlnJ+YOU+Yi9li6fZbaIlGYmxBJFhElFQLBtCLUkAW7r2nbgxlJohIV73I9C0hso8P54r6mu86weDjdTFFdOWVg=
+	t=1741088772; cv=none; b=gqlofmdoPYxDS6lBbXXIww6EPBqP4cxReNOrvciqL2OTvPb04bs7UDHj+jSIJ2nv4MzIEXxVJ/DnV+bD3L5Kh96Sv5euwQ1H1lbauLWKgHo9bcXNd3yqE0XWgT30YNLDuBRFYU2aH6BK5a9RaBr/Xbq81xZlEybrW++6OlAFdEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741088614; c=relaxed/simple;
-	bh=FcNzcsYCEp9nj205UUzc+DgPRS6a1O12QwDnx6WQ1y0=;
+	s=arc-20240116; t=1741088772; c=relaxed/simple;
+	bh=5y3AT23ebdCmJk0btj891bMWItHXaFcvxFbbOso/Wek=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ell4eOtUUJeddUlPzcUREgeP+DnmBG0ahn/qClXITWXoEMeboF2RrkwjkcGtcNbTtIrxgJsH/JsmG+OcsnbrdnGLWXuj7Gzzzlepoqg5Z5gDGkIAshzhsG+l57fQxalY2WMi/2h0BpFEbgIs1PVjDHcccZ7hLPVvCw6oh3BPxYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KyRTydvW; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741088613; x=1772624613;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=FcNzcsYCEp9nj205UUzc+DgPRS6a1O12QwDnx6WQ1y0=;
-  b=KyRTydvWxz89v6dN3x9K/pOVzXKv6NLGEmkR85qvPm8Z0tyjLBxoqlU4
-   x6euQikTWuBfvQcCCHwCw4a1uZaAiw03lJvhvl8vFZ97ONOpJ1PXC7WXC
-   gmIVCtjkCI/bWnhAKXyEWhGgDtCYzet9vCqcaWqVSjrcSilNQZZnTq8EG
-   Rcb6RBYsoXOTrCw1Bd3HvfuSLyiN+2f40Xvg7M6/7hixVloX3sXP23S3M
-   L737nxHQafOtL4MfUXwnsxSMzy8k29DK/xT2pDK/x4wGWL7uXqCzgKrii
-   NrYOt4SDUtgRzOeo8dw7EaGGqc7sFvAdQhIj0reWKoLaLE1ihcm5pXSi2
-   Q==;
-X-CSE-ConnectionGUID: 4+Ayx1xsT6G1aVBpT4Is0A==
-X-CSE-MsgGUID: kUDB/2nmSoCV0h+08rAevg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="41858544"
-X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
-   d="scan'208";a="41858544"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 03:43:32 -0800
-X-CSE-ConnectionGUID: Ec7/tvZsSAGefPECBu0b1Q==
-X-CSE-MsgGUID: VHM9taCqSBCl8Na4A6e60A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="123553148"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 03:43:30 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tpQgJ-0000000H6su-2sMG;
-	Tue, 04 Mar 2025 13:43:27 +0200
-Date: Tue, 4 Mar 2025 13:43:27 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Inochi Amaoto <inochiama@gmail.com>
-Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Jan Dabros <jsd@semihalf.com>, Andi Shyti <andi.shyti@kernel.org>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>
-Subject: Re: [PATCH] i2c: designware: Add ACPI HID for DWAPB I2C controller
- on Sophgo SG2044
-Message-ID: <Z8bnX8zcY3yIxh9n@smile.fi.intel.com>
-References: <20250304070212.350155-3-inochiama@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=d18hHEKqhmZ6Gytos+euzwPovev7bVumvmAMLde4liy+QXfcBvn+n60yfyC97uArlu1sZqkp4kJW6An4CwkglBJpX+Q42si5A86ZqxQI8jhfPgioKfzlavSYYdON9HS1MoB0MdzNTQ1TYsUUw2fEZitq4AdJ0n9zskkAORB8pLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j415LynE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD207C4CEE5;
+	Tue,  4 Mar 2025 11:46:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741088771;
+	bh=5y3AT23ebdCmJk0btj891bMWItHXaFcvxFbbOso/Wek=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=j415LynE3XvROLsaZHycED6qlb6CjtjfZbQWx4BtYMVBJ0oVwD3EsSzIxTPN6Ei/9
+	 yux6g7RAqXrY4NL0hMC+BqxQpFGvqGrWh6P9qa+bJTsl/3kHkWQ9q5+n/Ec82VLe3t
+	 1F9hS4L0pHgFu6g6nxtZRN3+bKAfqM5xCffSAXDSOypLMagG0aQu4E0qSEQS7Pbc9t
+	 Vqkhv0cyQUqcBXTChTopwP4J++mb+MOdvkuyhplOHlp7lKWLNF7RgMl72EvoSgNVNv
+	 vcVYUzmiCGPlbKa70NIqKxvdxUloQ4PEwgufvZsklGzwMl6a1JwXMOPhufi08vSM5m
+	 M1UBJardsUmkA==
+Date: Tue, 4 Mar 2025 11:46:06 +0000
+From: Simon Horman <horms@kernel.org>
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, andrew+netdev@lunn.ch, shenjian15@huawei.com,
+	wangpeiyang1@huawei.com, liuyonglong@huawei.com,
+	chenhao418@huawei.com, jonathan.cameron@huawei.com,
+	shameerali.kolothum.thodi@huawei.com, salil.mehta@huawei.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] net: hns3: make sure ptp clock is unregister and
+ freed if hclge_ptp_get_cycle returns an error
+Message-ID: <20250304114606.GA3666230@kernel.org>
+References: <20250228105258.1243461-1-shaojijie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,34 +61,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250304070212.350155-3-inochiama@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20250228105258.1243461-1-shaojijie@huawei.com>
 
-On Tue, Mar 04, 2025 at 03:02:11PM +0800, Inochi Amaoto wrote:
-> Add ACPI ID for DWAPB I2C controller on Sophgo SG2044 so
-> the SoC can enumerated the device via ACPI.
+On Fri, Feb 28, 2025 at 06:52:58PM +0800, Jijie Shao wrote:
+> From: Peiyang Wang <wangpeiyang1@huawei.com>
+> 
+> During the initialization of ptp, hclge_ptp_get_cycle might return an error
+> and returned directly without unregister clock and free it. To avoid that,
+> call hclge_ptp_destroy_clock to unregist and free clock if
+> hclge_ptp_get_cycle failed.
+> 
+> Fixes: 8373cd38a888 ("net: hns3: change the method of obtaining default ptp cycle")
+> Signed-off-by: Peiyang Wang <wangpeiyang1@huawei.com>
+> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
 
-Same as per UART:
-
----8<---
-
-This is fake ACPI ID. Please work with a vendor to issue the proper one.
-Vendor ACPI ID registry has no records on Sophgo:
-https://uefi.org/ACPI_ID_List?acpi_search=SophGo
-
-NAK.
-
----8<---
-
-But, it might be that is already in the process of getting proper ACPI vendor
-ID, please provide an evidence in such a case.
-
-Otherwise drag the representative of the vendor to this email thread to answer
-the question why the heck they abuse ACPI specification.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+Reviewed-by: Simon Horman <horms@kernel.org>
 
 
