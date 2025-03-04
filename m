@@ -1,147 +1,197 @@
-Return-Path: <linux-kernel+bounces-544913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2DC6A4E6B5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:49:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B32FA4E6AA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:48:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42E7619C6B81
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:38:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EA584613BF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:39:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E45EC28368F;
-	Tue,  4 Mar 2025 16:16:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="d9qtE4lK"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7C3D2857FA;
+	Tue,  4 Mar 2025 16:17:33 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F89283680
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:16:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62221205511;
+	Tue,  4 Mar 2025 16:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741104982; cv=none; b=UVOYQ1RRTd3IQ3FuG2W8j77H8ocHIVY2s2J7xxTOFOdm84fr7jEAPbg3XYsgmII5AtH8U9fmjqJiK6blmd4e4Y7MGsXsNqYbYH0La6PzdhurXnRPCrLo1CN4kPQxjYI3WdMnlGJORHVWIA+hf6GrX4lzi22xaeETp0AqFtJytHc=
+	t=1741105053; cv=none; b=sKVE8GX3w3O4/CQMute/o4y2Fk5ZvGs8hV+Fs54r0iAqyb+P4cXUsYqQp5CQRv9iD96yDMRIRoFhFXfPAUMi+W1zDhLiqmlQp8w7KdEpKrR+ZriH1494Xp48WSLCiW5VE9pbumMWcR6vimRuaCc/20AHeBx+5QMjb4SEepUj9nU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741104982; c=relaxed/simple;
-	bh=vndrgoHzO1JbxR/Uplci2S29F5Yak6PffbtWYRGDCLE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m9botLCZ9wg5NlpxfOlS7L6kHpM39AZyHSeSYcfNWa/XOZkeU0dgyP3aRpDyhOpCB2gtf6QsQrtrqmZbWdUzeZMQMPQV9aLWxNPZ4uqpEF669iZLhrpmU9uuzRNoDr88qdmZ31JmxhKu1ieyrcyk2IfnuNFmdiGDLRT6TXQOB3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=d9qtE4lK; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7c04df48a5bso588012985a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 08:16:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1741104979; x=1741709779; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IdH3AKQlJjVPXu/3oVyqdmU7Zg+wJAihXQK8/YRYybU=;
-        b=d9qtE4lK26a9aB7KbztbpPQHL7+8I5u1Y70I3fUrUktCXAhWXku95PKUcRx/GsmBl4
-         wu8uaLjZ2p838Z0sNgT2uSh/OdV3DjNokzona3tDgu+0Zuh1WVUk1xT17xGJv212OexR
-         raoYLc2FDtrcU/7SRDSCF7HnHu5WGgEMgRVOtDJysMkNazurDqp0psgPk63ERJf7ycpd
-         R8mY26r9O6G5rq/HAzy1ytBr2mAPRZkLMBMDOsai4RgH78s/ITm8K6sOLPErggRv+qDd
-         UI1lipV+ttsU0Hx85JJrCH14LW2gcsLW3GDWR4ChNs3VQWKJe+EuevB8J4ihLpR+uqwg
-         aGqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741104979; x=1741709779;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IdH3AKQlJjVPXu/3oVyqdmU7Zg+wJAihXQK8/YRYybU=;
-        b=aKrC8LwNkQAvIO1HCTp11yca5bn6OWvY/NCMUodiliq2ZWSmApZJB96hSRM5KOxSbI
-         DEbFFHqf4mXRA6i2QJOzJn9aFJo2nR4w71oAACDOtxA5ChyGV18Yhwte6zN9YBEoyhpk
-         9RROqznfwfSTQyQ9j0k0k8V9UgOzUOyvJYjJwEdVTIrym5kSaYC72ZQbSQqC5R4pZ6oK
-         4fVlrXGcn36fk5i7C2lUCTd6EWkhlIYPYXyFrSNevlCbitig5q6QfrevYVtMRjAP0sXF
-         dKBJT0dxxnqQPShSv71GbGNxjApEQs+qRi8AtmBOL/838LL5ADHJAA51RxOgB6JkNKkd
-         l+hw==
-X-Forwarded-Encrypted: i=1; AJvYcCWld1UVuAIVuAfFY78bbmshQXTHe3vNZ4yfUmovK+if/FXLkw8XfMfi9YjjUtd3HpQaPY9EgQ0ChaYMpLw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxnymw8A1WPq/Cv8TMZicbUcFmHp4vWj8LgD1SLUne5DchF2wU5
-	KqAgH0C5TWvMGxnwJyk4g76ioqB3LIwSahCk5+1/p1XFxQSkqCQ7Zu2jKnrzKzk=
-X-Gm-Gg: ASbGncuJYkk/VYMiGSjP1znIV0mKpUMBun604JdJjZqKMrwVU1nFd+y8X997obQUffC
-	kkIMDjZoGWR53ct6Xjnf2yR0+qtFqgcYwgL0ttU82egRXKCBHuDwMbzSkwbhsQDl2mICDweRpy8
-	9u7fX6HnHirxrxkRp0OXamOyZvDV/4s9MOG0K/+R77m+gfbZI7Av3lJtY8SQiddVbVYq0rhJc7Z
-	XiHmWoJKrpk/RaoWOSD/m+3i6VL/52giMq43qGl563bv9/mdPJ6i7vQe4O8NKPTRqKzSIndGp1v
-	kPSeQmIvWUxf4IwPRJfBKlCe4my6wWCqZPqSXK/AYzXnK4hpWT9WAaqXH69zGQsYBttbdfK9NVP
-	BQOEN4xt8IrWZGt8vujXYFkRrCJ0=
-X-Google-Smtp-Source: AGHT+IG+8gkxb5a4FLU8HNw0RgCDeDarhruq85hL2w5mldbW/rpOd9s+9LQfuwgtmnJwF45uXgCLwA==
-X-Received: by 2002:a05:620a:26a8:b0:7c3:d3bf:d1c0 with SMTP id af79cd13be357-7c3d3bfd3d7mr258875085a.43.1741104979239;
-        Tue, 04 Mar 2025 08:16:19 -0800 (PST)
-Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c3be1f0c05sm279200385a.102.2025.03.04.08.16.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 08:16:18 -0800 (PST)
-Date: Tue, 4 Mar 2025 11:16:16 -0500
-From: Gregory Price <gourry@gourry.net>
-To: Honggyu Kim <honggyu.kim@sk.com>
-Cc: kernel_team@skhynix.com, Joshua Hahn <joshua.hahnjy@gmail.com>,
-	harry.yoo@oracle.com, ying.huang@linux.alibaba.com,
-	gregkh@linuxfoundation.org, rakie.kim@sk.com,
-	akpm@linux-foundation.org, rafael@kernel.org, lenb@kernel.org,
-	dan.j.williams@intel.com, Jonathan.Cameron@huawei.com,
-	dave.jiang@intel.com, horen.chuang@linux.dev, hannes@cmpxchg.org,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-mm@kvack.org, kernel-team@meta.com, yunjeong.mun@sk.com
-Subject: Re: [PATCH 2/2 v6] mm/mempolicy: Don't create weight sysfs for
- memoryless nodes
-Message-ID: <Z8cnUA9WqsscbUtm@gourry-fedora-PF4VCD3F>
-References: <20250226213518.767670-1-joshua.hahnjy@gmail.com>
- <20250226213518.767670-2-joshua.hahnjy@gmail.com>
- <b8ac8654-92bd-4c08-a3fc-e28a7be5e0e6@sk.com>
- <Z8XWqQdPC7245FA2@gourry-fedora-PF4VCD3F>
- <95541985-8d40-4ded-a83e-46203c441640@sk.com>
+	s=arc-20240116; t=1741105053; c=relaxed/simple;
+	bh=AFgR0mNR/8SlLvdj/O+UVxnsCaumYfIisXWz4wTDJ0Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H4m6voI2zFL7QGVUKbqpFNpu7kJFNwhrp7oDT/kY4rT538Is/PW7XAinxSV/FCcAalETRM/C6dM9zMs3ep7q8TztjwRGX/Y41gjF9njwO99WSBIKY5WRigTR6hXN2euOdOmv7wOZtc5owonRiYZIM7Ij6beLNb0j2imGtjCz9hU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D231C4CEE5;
+	Tue,  4 Mar 2025 16:17:29 +0000 (UTC)
+Message-ID: <cade5c73-e25f-4f56-be10-7d5a06f92917@xs4all.nl>
+Date: Tue, 4 Mar 2025 17:17:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <95541985-8d40-4ded-a83e-46203c441640@sk.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 6/6] arm64: defconfig: Enable Synopsys HDMI receiver
+To: Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+ Shreeya Patel <shreeya.patel@collabora.com>, Heiko Stuebner
+ <heiko@sntech.de>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, jose.abreu@synopsys.com,
+ nelson.costa@synopsys.com, shawn.wen@rock-chips.com,
+ Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: kernel@collabora.com, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, Tim Surber <me@timsurber.de>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+References: <20250225183058.607047-1-dmitry.osipenko@collabora.com>
+ <20250225183058.607047-7-dmitry.osipenko@collabora.com>
+ <a8a6c8c8-ee3b-422a-8573-a2cbb61fc3aa@xs4all.nl>
+ <863f9c1beb7a912f94f8740b3e5095e09e49cee5.camel@collabora.com>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Autocrypt: addr=hverkuil@xs4all.nl; keydata=
+ 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
+In-Reply-To: <863f9c1beb7a912f94f8740b3e5095e09e49cee5.camel@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 04, 2025 at 10:03:22PM +0900, Honggyu Kim wrote:
-> Hi Gregory,
+On 28/02/2025 04:51, Nicolas Dufresne wrote:
+> Hi Hans,
 > 
-> > This patch may have been a bit overzealous of us, I forgot to ask
-> > whether N_MEMORY is set for nodes created but not onlined at boot. So
-> > this is a good observation.
+> Le mercredi 26 février 2025 à 09:31 +0100, Hans Verkuil a écrit :
+>> On 25/02/2025 19:30, Dmitry Osipenko wrote:
+>>> From: Sebastian Reichel <sebastian.reichel@collabora.com>
+>>>
+>>> The Rockchip RK3588 has a built-in HDMI receiver block from
+>>> Synopsys. Let's enable the driver for it.
+>>>
+>>> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+>>> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+>>> ---
+>>>  arch/arm64/configs/defconfig | 2 ++
+>>>  1 file changed, 2 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/configs/defconfig
+>>> b/arch/arm64/configs/defconfig
+>>> index cb7da4415599..3dccc9e1c4aa 100644
+>>> --- a/arch/arm64/configs/defconfig
+>>> +++ b/arch/arm64/configs/defconfig
+>>> @@ -859,6 +859,8 @@ CONFIG_VIDEO_SAMSUNG_EXYNOS_GSC=m
+>>>  CONFIG_VIDEO_SAMSUNG_S5P_JPEG=m
+>>>  CONFIG_VIDEO_SAMSUNG_S5P_MFC=m
+>>>  CONFIG_VIDEO_SUN6I_CSI=m
+>>> +CONFIG_VIDEO_SYNOPSYS_HDMIRX=m
+>>> +CONFIG_VIDEO_SYNOPSYS_HDMIRX_LOAD_DEFAULT_EDID=y
+>>
+>> I do not believe it is a good idea to default to y for this option.
+>>
+>> The EDID depends on the specific device you make, and you should
+>> think carefully about whether the default EDID fits the needs of the
+>> device.
+>>
+>> So if you want the default EDID, then you should manually select it
+>> and not have it autoselected.
 > 
-> I didn't want to make more noise but we found many issues again after
-> getting a new machine and started using it with multiple CXL memory.
+> Following up here, from the device maker perspective sure, but I'm not
+> sure this is the best choice for generic Linux distribution. As of
+> today, pretty much no userspace capture software knows about this,
+> meaning the device will not work out of the box in OBS, GStreamer,
+> Ffmpeg, Web Browsers. In comparison, if you pick any UVC HDMI capture,
+> it just work, with a default EDID that covers the range of
+> capabilities, which in this case are defined by the SoC.
+
+A UVC HDMI capture device is not a good comparison: that has it's own
+EDID that is configured for the specific hardware and USB bandwidth
+limitations. EDID handling is all internal to that device, nothing to
+do with the UVC driver.
+
+That said, this device is a bit different compared to most other
+HDMI receivers in that it also has a DMA engine. Usually HDMI receivers
+are i2c devices that connect to an SoC. In this case the hardware is
+inside the SoC. So I am OK with making LOAD_DEFAULT_EDID=y in the defconfig.
+
+So:
+
+Acked-by: Hans Verkuil <hverkuil@xs4all.nl>
+
+Note that I will merge the v13 driver (patches 1-3), since it looks good.
+
+But v11-v13 of this defconfig patch dropped the "CONFIG_VIDEO_SYNOPSYS_HDMIRX_LOAD_DEFAULT_EDID=y"
+line, so you might want to post a v14 of just patches 4-6, restoring that
+line, once I merged patches 1-3.
+
+Regards,
+
+	Hans
+
+> 
+> Whatever we make as a choice, will always be the wrong choice for
+> someone, though I expect this to be a lot easier to change for
+> "specialized" implementation. Now, since there is no reason you can't
+> do a specilized implementation on generic Linux distro, and because you
+> might disagree with me, perhaps a compromise is to also add a module
+> parameter, so that there is a run-time override to this.
+> 
+> Nicolas
+> 
+>>
+>> Regards,
+>>
+>> 	Hans
+>>
+>>>  CONFIG_VIDEO_TI_J721E_CSI2RX=m
+>>>  CONFIG_VIDEO_HANTRO=m
+>>>  CONFIG_VIDEO_IMX219=m
+>>
+>>
 > 
 
-I spent yesterday looking into how nodes are created and marked N_MEMORY
-and I think now that this patch is just not correct.
-
-N_MEMORY for a given nid is toggled:
-  1) during mm_init if any page is associated with that node (DRAM)
-  2) memory_hotplug when a memory block is onlined/offlined  (CXL)
-
-This means a CXL node which is deferred to the driver will come up as
-memoryless at boot (mm_init) but has N_MEMORY toggled on when the first
-hotplug memory block is onlined.  However, its access_coordinate data is
-reported during cxl driver probe - well prior to memory hotplug.
-
-This means we must expose a node entry for every possible node, always,
-because we can't predict what nodes will have hotplug memory.
-
-We COULD try to react to hotplug memory blocks, but this increase in
-complexity just doesn't seem worth the hassle - the hotplug callback has
-timing restrictions (callback must occur AFTER N_MEMORY is toggled).
-
-It seems better to include all nodes with reported data in the reduction.
-
-This has two downsides:
-  1) stale data may be used if hotplug occurs and the new device does
-     not have CDAT/HMAT/access_coordinate data.
-  2) any device without CDAT/HMAT/access_coordinate data will not be
-     included in the reduction by default.
-
-I think we can work around #2 by detecting this (on reduction, if data
-is missing but N_MEMORY is set, fire a warning).  We can't do much about
-#1 unless we field physical device hot-un-plug callbacks - and that
-seems like a bit much.
-
-~Gregory
 
