@@ -1,100 +1,96 @@
-Return-Path: <linux-kernel+bounces-544449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24DB3A4E19D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:48:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FD82A4E1C1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:52:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB6D13ACD22
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:36:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77CC5880CA5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:36:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A4125FA14;
-	Tue,  4 Mar 2025 14:33:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D186264618;
+	Tue,  4 Mar 2025 14:34:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ymv4C5uR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="KTdCEV/z"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A598D25F999
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:33:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E6020A5C1;
+	Tue,  4 Mar 2025 14:34:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741098829; cv=none; b=AQ37i1u31TI2FsHcQNe1lnNVaCwp+faoyGiHkNZM5WJ6e9kSoN+wzxRYfiEOFj8wpT44JjMgkFdQZsX2SQ5fpa//NvNIpYdZkRYQSeifW2VDCI6hUtREmxNPEZuqL/nLjo8+b5385IBLxi4Ur9gnnAmRxcP9jooqsVRQb1VMnVw=
+	t=1741098889; cv=none; b=didiwaKlSP8O3eHJBszwkTEMBYVuo2UR9tEgQSy4QtUtU5dWygKb/WV717ISOWS2BnoyITC6uFBeNOzFqwQN/sv6ii7M+1AG1bm6QB/53aXoMGN0fAPErKB6pFthDc4rchwg5wi8q39+Ojd2uiiGWDjp37Z3l3rCY+yYiEbxh74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741098829; c=relaxed/simple;
-	bh=A6FMm8UG2dvvc1GcMFpPZomsV45FygJOmtplYtMwMUY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GsMuRL3rF3mnoa3AkimGqI4prL3YgiETlAa8s4i1XwJFfXwwXou8ZMnt5XVptmtyP+9MipMNMpz+9M+TQs42n7ksJalyhhXZ2mhkMpAv8qxIXwYLeYIsmNSFvdYrJuGDvxxDGLnLeqVBjfjeQOBZsEftvFAECEzlrGYrt50BXfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ymv4C5uR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02E37C4CEE5;
-	Tue,  4 Mar 2025 14:33:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741098829;
-	bh=A6FMm8UG2dvvc1GcMFpPZomsV45FygJOmtplYtMwMUY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Ymv4C5uRPu2wc+/yiqdQ43mafpM0gVDxGHCXls4/g/Z/IVnyy5eMuQ0xChZTbBttu
-	 iKrWRBKMsk5EyQghnXzRaTW9ay0IxU+LUruB8DKECSQbHmiUZ5Ix5OKenE/p/MCFu1
-	 /mcdQM3UYCA1Xp0EVogCftgREzHF83zhRyxHWRwemTEV48yII5Lo5B0tPYJ7hwKmLw
-	 NA4MepQ8BDzfbh75KtCgkJb4Uw0Hk6F2Au5p4woVUl0zCi13qTw9paMfY+XIhGONSi
-	 RBXybCg+Li+I1+HzU53y8YrEIqTx4bSC0pX8QrwP6g9vjU3WOGR2DPjJFyxciY2yFq
-	 pD7p/ILs+WkcA==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] x86: coco: mark cc_mask as __maybe_unused
-Date: Tue,  4 Mar 2025 15:33:34 +0100
-Message-Id: <20250304143340.928503-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1741098889; c=relaxed/simple;
+	bh=lHCP7UG5o883B54j8Ri/yU9SpSbtzNptQnMdgCOoXo0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=j6hEEAHoesl4MC/nt9+gQTJlrEY1MBzzv9ipratB/21mSeF9C2V1bcbEcphFfK8Kfv2cKyhO4EzAw6CYG0Eya9kijssELXJl280mWwmf0llro6i5pgGRifM1ix/mX8B9TbkVj1g90DHjGJUmpw4Av0HpZ5HBrzj/wIr37553/ZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=KTdCEV/z; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=4Gqyom2Qw8VXFf3AYIpGbjCuS8c9RY7yiAyJBWvJUfc=; b=KTdCEV/zTusAeUlTIrBuBAb6SW
+	QOPuOTIm7BL/bYx2YPLJAYBFDF28jitg9fxcPZ6HfAEBuQ/bthkTDwK5mTWRX18uOq1FNvKIvh7J6
+	nTZB1nFXW3Y9YXExh4df+JzoAmiG3am5R5qRJ7iGejoN6o5z8ZsxZtlZXjVud8XaTZOA/wZPmNnTU
+	gyqZTRpr2ewIXAoPpKPAfT8rwGqDQ6/IUPt7HnGhQrwTp9dhdUv2IhbA+BD94/tn+iAIwwDt931X8
+	61QfDmBDGVaoGcaaRbJJCC8q/qOP13pFtoMMx9v14XgF/L+KL4Bq5OYk1nh6j816lZCTw6sCXW70X
+	Ucn1A1wQ==;
+Received: from i53875a38.versanet.de ([83.135.90.56] helo=phil..)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tpTM2-0003uT-SQ; Tue, 04 Mar 2025 15:34:42 +0100
+From: Heiko Stuebner <heiko@sntech.de>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH 1/2] arm64: dts: rockchip: Add ES8388 audio codec fallback on RK3399 ROC PC PLUS
+Date: Tue,  4 Mar 2025 15:34:40 +0100
+Message-ID: <174109881585.132749.2987468837584062976.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250304104200.76178-1-krzysztof.kozlowski@linaro.org>
+References: <20250304104200.76178-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-From: Arnd Bergmann <arnd@arndb.de>
 
-When extra warnings are enabled, the cc_mask definition in asm/coco.h
-causes a build failure with gcc:
+On Tue, 04 Mar 2025 11:41:59 +0100, Krzysztof Kozlowski wrote:
+> Devicetree bindings for ES8388 audio codec expect the device to be
+> marked as compatible with ES8328.
+> 
+> 
 
-arch/x86/include/asm/coco.h:28:18: error: 'cc_mask' defined but not used [-Werror=unused-const-variable=]
-   28 | static const u64 cc_mask = 0;
+Applied, thanks!
 
-Mark this one as __maybe_unused.
+[1/2] arm64: dts: rockchip: Add ES8388 audio codec fallback on RK3399 ROC PC PLUS
+      commit: d83f6c32d70f96037cb187e63785e7a58f9e751b
+[2/2] arm64: dts: rockchip: Add ES8388 audio codec fallback on RK3588 boards
+      commit: ced36c336d241eafbc812fed27e6a52908d249bb
 
-Fixes: a0a8d15a798b ("x86/tdx: Preserve shared bit on mprotect()")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/x86/include/asm/coco.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks for the heads up Krzysztof, about the asoc patches getting accepted
+for 6.15.
 
-diff --git a/arch/x86/include/asm/coco.h b/arch/x86/include/asm/coco.h
-index aa6c8f8ca958..9e9204cfca6f 100644
---- a/arch/x86/include/asm/coco.h
-+++ b/arch/x86/include/asm/coco.h
-@@ -25,7 +25,7 @@ u64 cc_mkdec(u64 val);
- void cc_random_init(void);
- #else
- #define cc_vendor (CC_VENDOR_NONE)
--static const u64 cc_mask = 0;
-+static const __maybe_unused u64 cc_mask = 0;
- 
- static inline u64 cc_mkenc(u64 val)
- {
+
+Best regards,
 -- 
-2.39.5
-
+Heiko Stuebner <heiko@sntech.de>
 
