@@ -1,288 +1,186 @@
-Return-Path: <linux-kernel+bounces-545628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CA90A4EF62
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:31:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 834CEA4EF63
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:31:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 795CA188F501
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:31:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 878D6172C60
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:31:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1135224EAB5;
-	Tue,  4 Mar 2025 21:31:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B312780FB;
+	Tue,  4 Mar 2025 21:31:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="kATGz2d5"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PKHSVMcl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 033557DA93;
-	Tue,  4 Mar 2025 21:31:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 700DC264F8C
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 21:31:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741123895; cv=none; b=rSdMZDS9T8cpalmSv9mQik9+Xg3ZF9QsjfjvyiUYERWRkZCQsovrneH0V41akEyi+WJTAHQwXsU2QIYXiqpon/N0DS4+yDaWRp0nUraRUxzFq7H3le2A2HXAxRxz98Khs2UD0gPrsDeocBG8kYCCKCmq1RBKJdcDpTEJ2r+K6vM=
+	t=1741123898; cv=none; b=hofoZrCYfj44HoGIqLYwmjAbWVXBNZN4Fnjg+2iTMixIlMqj/fMBflzVDPwIQJkmiwAJRbqb5epxHzisSmLURTfOHkG00nSIixs+QbYGjkZlPot/Rcnt0ruQWHOP0paD7KweAzIJMxpULouNeRkwUWF6WkbbQ5sP+3qwU8Gm/Sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741123895; c=relaxed/simple;
-	bh=CG0J/9mGLc+Vzz4CXR8/yLus3sQ64FZ/CFnf54+Tq8Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PX1a5TnOVJIFTYKDj++V7bTRLqe7yY8v7id5mm6WjZIjTEmb2COW92OxumPg+4k8Mrv4ahwp/xucVEhg7tN9FvtFzs6l1ui+Ne5wankKOmNV0VSvbrStkYAyMmq8Z9VP0ReOmspQP7T9ORAlwqLGHgDU/incQzaUEtamfcvYr3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=kATGz2d5; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
-	s=s31663417; t=1741123889; x=1741728689; i=quwenruo.btrfs@gmx.com;
-	bh=n7iUomUeAHSzQtCSsuvZl+AvvhUdscvITeBP/MDjCqI=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=kATGz2d5Kmm7ASZlI9KM4uMJy0dcuKSSEt/4i5n7DV5Ie9rAazUR7T7IVCHQxhOt
-	 csV5V53lFB9SIn0VHqaQDUTRAeEIs2GZxBBmE6mmnokaKLGwhu/rcpZr7TzDTNg6l
-	 DlZNn3m/MPRVVpQ+zquPnM6bN6ys4vqFDYM6oXmaCSY3V4vGN/zdgGhpD00acitiD
-	 jWW2/imTeqLUf7E5nKt8/pkmMV6eKh6HMbBoIF65EggV9+eI5C5dfPD0EQgQ85qP2
-	 m78rfIqAcOfUH/0J7pSVdVnTQnYD3pyPdFMbYYaI1WZyar1M37C1bq6S2Eu1xcMX8
-	 SG4CvLsycGg9QVQIgQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx104
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1MTRMi-1thmuL0tR6-00SAxv; Tue, 04
- Mar 2025 22:31:29 +0100
-Message-ID: <bc3446ce-347f-41da-9255-233e2e08f91c@gmx.com>
-Date: Wed, 5 Mar 2025 08:01:24 +1030
+	s=arc-20240116; t=1741123898; c=relaxed/simple;
+	bh=iZIzip/a82vX2LkJv4zSZm4C3SJDxHZJwHDvU2KQ3Lw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=obT9boisS8dNqy39HuvYJfo5mqtdiuUfha25md0FG6k1fcOyvmrV8CilNyneoFZI5qe2KrS1y7z6bo8jvy14u0xFCYkjpSZXXgiRxPX3M1dyzSnrW24Ld8kIvW+E1QS+HJUotFb+zebrH5Lc/W2xQkals29TIYXPjeZtje69c8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PKHSVMcl; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741123895;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/u+lFueGmAvUTM+DtaLsQO1A1g/BaRj/gNOIsb+910g=;
+	b=PKHSVMclxtCDIQ+ZkfTp4Q3WZXs3lReg5RD0iiLH0Wf0BegavvJbwUd0NzQsuACnny2tOe
+	noWX3jQ2acxzsdereNtHsJPGlV2ei2ASeoepzaw32JevZLJNwfC5rG3IeepOF8Iwbcd11B
+	qxjniK52Y4Z4DOCxCmnjfgC3SgXdTIw=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-499-xRlHr9LWPdikS5dTTrEJMg-1; Tue, 04 Mar 2025 16:31:34 -0500
+X-MC-Unique: xRlHr9LWPdikS5dTTrEJMg-1
+X-Mimecast-MFC-AGG-ID: xRlHr9LWPdikS5dTTrEJMg_1741123893
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-47506816e5aso15775791cf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 13:31:34 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741123893; x=1741728693;
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/u+lFueGmAvUTM+DtaLsQO1A1g/BaRj/gNOIsb+910g=;
+        b=k0xg56+ArS3KO8/7WgozwQvaQuQ8IOgdLDJjUOA9ZWA8gFhYtNAKbGw9Gk8vtKWRJ7
+         SX2Nk8wViLnZ4V3GXO68xz/LSqp/il9b0kLjXMrFK/dyUJTgYipI/bOOOaRPckXVdWLn
+         bMCMPkwSGtC5mU7GBnTKPuh7QSePyY7Kz+WdV3GqPXT2Grpsai2+y+hkz2C1+3eSC7Uu
+         FbBrTQRdt9MjwJRbIzoZHUCENOdod32IH1HupUu+TIgx5Mt1X8fugwwTCB2gNdM7uk9W
+         Y1IKHSNCCD8sulwuYtEIoEY1Jl5HI+A4XWsLham51HAlg8yfL3XprH3fGJA52qAqfu3q
+         9u+g==
+X-Forwarded-Encrypted: i=1; AJvYcCWsAeGVALbJDpsVg8bGTbKp+d/y5hx/qGcvatbO2MaPS/XK7II9Do1pea4/VWyl3KJxJCVeDMdyzOes9HA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyq8/hdT3y8ZiT66MxPuA0vihbJtoSaaNGlulVP3CyJTLFy9y8/
+	JG20iqQY1RD4PM4FVrOL1cx71b/v8sYdmVxJwgIVMO5CD7dPg1GPeRGkfzlurVS7YhxYnbM69+1
+	TDzPPtMTRRD96k1ZgSsLuOCGgFt8pdjDGFivMFwQZVJ5NLrO1hZXAVEBFIQPa5w==
+X-Gm-Gg: ASbGncsV2ouZSgYC9xf9SNeRk0sF4sn2pDjrGsLG2eVuIEjhNGy5tkuUQDDL5AfPe+w
+	YIRckGsMife8qzUQNQwJZiqLNvdYaWYM0aGwX9BJadwy5duz8rlF3KhZaoBipt0MGCaweLGrxgZ
+	69makwZqnOSzWANX/q4wWugPOk3CFREfVSRxdFjZBHhq9PQ6hYm2xrksP7DBXppy4MHq0Sj+/xE
+	2IFNdrQuQRWrOH/TP+NpBDeus8j++bAIEpsSoUAcTitBua5dJky0CXllA4Hx2n4gi5ROBtJDztG
+	G7UphZdTD1PknlY=
+X-Received: by 2002:a05:622a:60f:b0:471:be0e:e853 with SMTP id d75a77b69052e-4750b43c3d2mr11681841cf.20.1741123893528;
+        Tue, 04 Mar 2025 13:31:33 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFq3Qm8HjXWzqA8J3MceftXH5+TdpP0G/l/xsbfQtBrI9xoJPnzFc7gCJPy7NR5vHnpnooV3A==
+X-Received: by 2002:a05:622a:60f:b0:471:be0e:e853 with SMTP id d75a77b69052e-4750b43c3d2mr11681531cf.20.1741123893214;
+        Tue, 04 Mar 2025 13:31:33 -0800 (PST)
+Received: from starship ([2607:fea8:fc01:8d8d:6adb:55ff:feaa:b156])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-474e0f1e0c1sm36608431cf.47.2025.03.04.13.31.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 13:31:32 -0800 (PST)
+Message-ID: <23cfae5adcdee2c69014d18b2b19be157ef2c20d.camel@redhat.com>
+Subject: Re: QEMU's Hyper-V HV_X64_MSR_EOM is broken with split IRQCHIP
+From: Maxim Levitsky <mlevitsk@redhat.com>
+To: Vitaly Kuznetsov <vkuznets@redhat.com>, Sean Christopherson
+	 <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, Paolo Bonzini
+	 <pbonzini@redhat.com>, Peter Xu <peterx@redhat.com>, "Maciej S. Szmigiero"
+	 <maciej.szmigiero@oracle.com>
+Date: Tue, 04 Mar 2025 16:31:31 -0500
+In-Reply-To: <87cyewq2ea.fsf@redhat.com>
+References: <Z8ZBzEJ7--VWKdWd@google.com> <87ikoposs6.fsf@redhat.com>
+	 <Z8cNBTgz3YBDga3c@google.com> <87cyewq2ea.fsf@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] btrfs/defrag: implement compression levels
-To: Daniel Vacek <neelx@suse.com>, Chris Mason <clm@fb.com>,
- Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>
-Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250304171403.571335-1-neelx@suse.com>
-Content-Language: en-US
-From: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1YAUJEP5a
- sQAKCRDCPZHzoSX+qF+mB/9gXu9C3BV0omDZBDWevJHxpWpOwQ8DxZEbk9b9LcrQlWdhFhyn
- xi+l5lRziV9ZGyYXp7N35a9t7GQJndMCFUWYoEa+1NCuxDs6bslfrCaGEGG/+wd6oIPb85xo
- naxnQ+SQtYLUFbU77WkUPaaIU8hH2BAfn9ZSDX9lIxheQE8ZYGGmo4wYpnN7/hSXALD7+oun
- tZljjGNT1o+/B8WVZtw/YZuCuHgZeaFdhcV2jsz7+iGb+LsqzHuznrXqbyUQgQT9kn8ZYFNW
- 7tf+LNxXuwedzRag4fxtR+5GVvJ41Oh/eygp8VqiMAtnFYaSlb9sjia1Mh+m+OBFeuXjgGlG
- VvQFzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
- CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
- /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
- GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
- q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
- ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1gQUJEP5a0gAK
- CRDCPZHzoSX+qHGpB/kB8A7M7KGL5qzat+jBRoLwB0Y3Zax0QWuANVdZM3eJDlKJKJ4HKzjo
- B2Pcn4JXL2apSan2uJftaMbNQbwotvabLXkE7cPpnppnBq7iovmBw++/d8zQjLQLWInQ5kNq
- Vmi36kmq8o5c0f97QVjMryHlmSlEZ2Wwc1kURAe4lsRG2dNeAd4CAqmTw0cMIrR6R/Dpt3ma
- +8oGXJOmwWuDFKNV4G2XLKcghqrtcRf2zAGNogg3KulCykHHripG3kPKsb7fYVcSQtlt5R6v
- HZStaZBzw4PcDiaAF3pPDBd+0fIKS6BlpeNRSFG94RYrt84Qw77JWDOAZsyNfEIEE0J6LSR/
-In-Reply-To: <20250304171403.571335-1-neelx@suse.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:wBZt9zvV5PPnhiSVrUyVJCXovsXYdsfUoj8B+cc/wzQnJ3hEf7W
- WbVsyo9Ga85JvIGASyNe+K4k1QDjMOESLppExwcJVSjQ94YSq0mxRvV8HrFiUGRZ7pKYqNJ
- BteW8QZ9/BBoabXQLy6CRUAbszy8iGJ1L4/3LZfu055w4RgvdICCKoocpUZ4PZbBOnKwFHT
- eQnFR0ztP4hr6G4t3INFQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:OU9vcLfOa2g=;MzysRWWGRZIjET2y0Mmb4R+PJma
- Q5oTHAtXJ60P0V0X5ipucgyQzHXfURfZTspz8riOTx7C4+77KZinCTOPXeUb3y4D3/cXtpHT5
- 3ZqAvSovV6eefNzYjQn4G3URgazJM4I6lrLp31qhpIv0qIVW+U3H91dj7f4m7eqwZL4NrrM3X
- nQbLyWWjKLUX8CZC67J2zAbfc1NlZFuH8GhqvkYDwsiH7uOGpVlsSUDa7YW054oAH+9MfL98X
- yCMXszp6TuILHF8Zo2K2yBHnCyyVR8Eiv+QI3BUUHDncy3biOWWGAR6OF/JnoEkQcWSiKoOZa
- SGJFI43iXeHSmydDO5/Hmw4h4jBz4lzFAYKVycwkNG8TNKQOzIgiySRX50k5PaLhdR4DQMInL
- h67v0ljwQh8SmFSgEOsPepFMURJYhjYBMPs4cXSm4BiGON7w9+Ry6VYnVvJLNw8SD047vxrfO
- HadTjX48Fo5tLT8ei6wMl6fjoHPGMo/z8ZU2wsuVNjlDj96v0B53o4+ZhKDAizXnicq1TJLTP
- jpWXF2NWZtjDRrLZAiIbIKSK0W5sOP/Xzaolgd4FNPZkAW9sML7HBixXYjLsHTZzjiahWguEi
- BD0sB0p/wSVpBxz1LVcvj2a+UU+0sjdtCIILZ92hE8aqcxj1oM/NhslQ9fP7zQgg+1vawN7wN
- Y9aay5TPpMxHGqxcckiYrhsKfg3YEzle5EkSsyLAK8IbeC9aduZK6hlSztW6qbS5onU6PztFj
- o75XRg4rO1PXsuU5hTHPOoCOBsDUvikjeISXAbQVYgXMmsL6aAww7LTLBkZqip4CdEhCqS77V
- Gi8EmTiUOLhSLQLkIGbCMA4Ej9Pvv4jPCnkrnuTvtDTMSNZHVJc6Bf/vT10UMmwOGs6EX7wga
- fACYfWUuznv8DufTj+mJ1ou9Y8se3cziKkxGF6JlyP25LJLkby+ufQYCQPEbTVzcnXxEoOJc9
- MnUoHuWFJm6J5dALD12SUOE7QWNv3oVmhWNp9j1H917q8wEcWtUMSyXnT5DBIcVOVZseIM/EL
- +xLTK1DweP901Y5GZLuYmpKffFvHSD8VkJjYz6tCljpoZVUyQPf1zMfy/vfQ+YQSTg4DsECgK
- mjAtbZ4VSBliZlSxF2jRZWYsaJ61rTcGfV40cXQhHGVVnrlOh1FQ+2R4TniTI72yWXGZjrsqQ
- LgD8l6tlgyY6Tgx/1ri5sLvrpAl/NW/ZMf2srv7XmNgwiSPEqR9ffOZNsrJLm8FLA4uz+RjE4
- GLv6M+c4unNEf6IHrizH3be6U1kkc5mt5DwFsmzHKCcpOf8pDvDmhkUrFd76DMybcdALbQwTk
- jOVRDQgnygnUBKgRgRVHN0noxK1A09LMeyQE/5UXxP/cwOLffpa2SQafWt4CQYGtiz+ODLE+9
- HuW/Cty49H6RYDdOBKaarmJBo309QIU8kifRJvZQajVEZhWTBDJJbRMfQv
+Content-Transfer-Encoding: 7bit
 
-The feature itself looks good to me.
+On Tue, 2025-03-04 at 15:46 +0100, Vitaly Kuznetsov wrote:
+> Sean Christopherson <seanjc@google.com> writes:
+> 
+> > On Tue, Mar 04, 2025, Vitaly Kuznetsov wrote:
+> > > Sean Christopherson <seanjc@google.com> writes:
+> > > 
+> > > > FYI, QEMU's Hyper-V emulation of HV_X64_MSR_EOM has been broken since QEMU commit
+> > > > c82d9d43ed ("KVM: Kick resamplefd for split kernel irqchip"), as nothing in KVM
+> > > > will forward the EOM notification to userspace.  I have no idea if anything in
+> > > > QEMU besides hyperv_testdev.c cares.
+> > > 
+> > > The only VMBus device in QEMU besides the testdev seems to be Hyper-V
+> > > ballooning driver, Cc: Maciej to check whether it's a real problem for
+> > > it or not.
+> > > 
+> > > > The bug is reproducible by running the hyperv_connections KVM-Unit-Test with a
+> > > > split IRQCHIP.
+> > > 
+> > > Thanks, I can reproduce the problem too.
+> > > 
+> > > > Hacking QEMU and KVM (see KVM commit 654f1f13ea56 ("kvm: Check irqchip mode before
+> > > > assign irqfd") as below gets the test to pass.  Assuming that's not a palatable
+> > > > solution, the other options I can think of would be for QEMU to intercept
+> > > > HV_X64_MSR_EOM when using a split IRQCHIP, or to modify KVM to do KVM_EXIT_HYPERV_SYNIC
+> > > > on writes to HV_X64_MSR_EOM with a split IRQCHIP.
+> > > 
+> > > AFAIR, Hyper-V message interface is a fairly generic communication
+> > > mechanism which in theory can be used without interrupts at all: the
+> > > corresponding SINT can be masked and the guest can be polling for
+> > > messages, proccessing them and then writing to HV_X64_MSR_EOM to trigger
+> > > delivery on the next queued message. To support this scenario on the
+> > > backend, we need to receive HV_X64_MSR_EOM writes regardless of whether
+> > > irqchip is split or not. (In theory, we can get away without this by
+> > > just checking if pending messages can be delivered upon each vCPU entry
+> > > but this can take an undefined amount of time in some scenarios so I
+> > > guess we're better off with notifications).
+> > 
+> > Before c82d9d43ed ("KVM: Kick resamplefd for split kernel irqchip"), and without
+> > a split IRCHIP, QEMU gets notified via eventfd.  On writes to HV_X64_MSR_EOM, KVM
+> > invokes irq_acked(), i.e. irqfd_resampler_ack(), for all SINT routes.  The eventfd
+> > signal gets back to sint_ack_handler(), which invokes msg_retry() to re-post the
+> > message.
+> > 
+> > I.e. trapping HV_X64_MSR_EOM on would be a slow path relative to what's there for
+> > in-kernel IRQCHIP.
+> 
+> My understanding is that the only type of message which requires fast
+> processing is STIMER messages but we don't do stimers in userspace. I
+> guess it is possible to have a competing 'noisy neighbough' in userspace
+> draining message slots but then we are slow anyway.
+> 
 
-Although not sure if a blank commit message is fine for this case.
+Hi,
 
-=E5=9C=A8 2025/3/5 03:44, Daniel Vacek =E5=86=99=E9=81=93:
-> Signed-off-by: Daniel Vacek <neelx@suse.com>
-> ---
->   fs/btrfs/btrfs_inode.h     |  2 ++
->   fs/btrfs/defrag.c          | 22 +++++++++++++++++-----
->   fs/btrfs/fs.h              |  2 +-
->   fs/btrfs/inode.c           | 10 +++++++---
->   include/uapi/linux/btrfs.h | 10 +++++++++-
->   5 files changed, 36 insertions(+), 10 deletions(-)
->
-> diff --git a/fs/btrfs/btrfs_inode.h b/fs/btrfs/btrfs_inode.h
-> index aa1f55cd81b79..5ee9da0054a74 100644
-> --- a/fs/btrfs/btrfs_inode.h
-> +++ b/fs/btrfs/btrfs_inode.h
-> @@ -145,6 +145,7 @@ struct btrfs_inode {
->   	 * different from prop_compress and takes precedence if set.
->   	 */
->   	u8 defrag_compress;
-> +	s8 defrag_compress_level;
->
->   	/*
->   	 * Lock for counters and all fields used to determine if the inode is=
- in
-> diff --git a/fs/btrfs/defrag.c b/fs/btrfs/defrag.c
-> index 968dae9539482..03a0287a78ea0 100644
-> --- a/fs/btrfs/defrag.c
-> +++ b/fs/btrfs/defrag.c
-> @@ -1363,6 +1363,7 @@ int btrfs_defrag_file(struct inode *inode, struct =
-file_ra_state *ra,
->   	u64 last_byte;
->   	bool do_compress =3D (range->flags & BTRFS_DEFRAG_RANGE_COMPRESS);
->   	int compress_type =3D BTRFS_COMPRESS_ZLIB;
-> +	int compress_level =3D 0;
->   	int ret =3D 0;
->   	u32 extent_thresh =3D range->extent_thresh;
->   	pgoff_t start_index;
-> @@ -1376,10 +1377,19 @@ int btrfs_defrag_file(struct inode *inode, struc=
-t file_ra_state *ra,
->   		return -EINVAL;
->
->   	if (do_compress) {
-> -		if (range->compress_type >=3D BTRFS_NR_COMPRESS_TYPES)
-> -			return -EINVAL;
-> -		if (range->compress_type)
-> -			compress_type =3D range->compress_type;
-> +		if (range->flags & BTRFS_DEFRAG_RANGE_COMPRESS_LEVEL) {
-> +			if (range->compress.type >=3D BTRFS_NR_COMPRESS_TYPES)
-> +				return -EINVAL;
-> +			if (range->compress.type) {
-> +				compress_type =3D range->compress.type;
-> +				compress_level=3D range->compress.level;
-> +			}
+AFAIK, HV_X64_MSR_EOM is only one of the ways for the guest to signal that it processed the SYNIC message.
 
-I am not familiar with the compress level, but
-btrfs_compress_set_level() does extra clamping, maybe we also want to do
-that too?
-
-> +		} else {
-> +			if (range->compress_type >=3D BTRFS_NR_COMPRESS_TYPES)
-> +				return -EINVAL;
-> +			if (range->compress_type)
-> +				compress_type =3D range->compress_type;
-> +		}
->   	}
->
->   	if (extent_thresh =3D=3D 0)
-> @@ -1430,8 +1440,10 @@ int btrfs_defrag_file(struct inode *inode, struct=
- file_ra_state *ra,
->   			btrfs_inode_unlock(BTRFS_I(inode), 0);
->   			break;
->   		}
-> -		if (do_compress)
-> +		if (do_compress) {
->   			BTRFS_I(inode)->defrag_compress =3D compress_type;
-> +			BTRFS_I(inode)->defrag_compress_level =3D compress_level;
-> +		}
->   		ret =3D defrag_one_cluster(BTRFS_I(inode), ra, cur,
->   				cluster_end + 1 - cur, extent_thresh,
->   				newer_than, do_compress, &sectors_defragged,
-> diff --git a/fs/btrfs/fs.h b/fs/btrfs/fs.h
-> index be6d5a24bd4e6..2dae7ffd37133 100644
-> --- a/fs/btrfs/fs.h
-> +++ b/fs/btrfs/fs.h
-> @@ -485,7 +485,7 @@ struct btrfs_fs_info {
->   	u64 last_trans_log_full_commit;
->   	unsigned long long mount_opt;
->
-> -	unsigned long compress_type:4;
-> +	int compress_type;
->   	int compress_level;
->   	u32 commit_interval;
->   	/*
-> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-> index fa04b027d53ac..156a9d4603391 100644
-> --- a/fs/btrfs/inode.c
-> +++ b/fs/btrfs/inode.c
-> @@ -925,6 +925,7 @@ static void compress_file_range(struct btrfs_work *w=
-ork)
->   	unsigned int poff;
->   	int i;
->   	int compress_type =3D fs_info->compress_type;
-> +	int compress_level=3D fs_info->compress_level;
->
->   	inode_should_defrag(inode, start, end, end - start + 1, SZ_16K);
->
-> @@ -1007,13 +1008,15 @@ static void compress_file_range(struct btrfs_wor=
-k *work)
->   		goto cleanup_and_bail_uncompressed;
->   	}
->
-> -	if (inode->defrag_compress)
-> +	if (inode->defrag_compress) {
->   		compress_type =3D inode->defrag_compress;
-> -	else if (inode->prop_compress)
-> +		compress_level=3D inode->defrag_compress_level;
-> +	} else if (inode->prop_compress) {
->   		compress_type =3D inode->prop_compress;
-> +	}
->
->   	/* Compression level is applied here. */
-> -	ret =3D btrfs_compress_folios(compress_type, fs_info->compress_level,
-> +	ret =3D btrfs_compress_folios(compress_type, compress_level,
->   				    mapping, start, folios, &nr_folios, &total_in,
->   				    &total_compressed);
->   	if (ret)
-> diff --git a/include/uapi/linux/btrfs.h b/include/uapi/linux/btrfs.h
-> index d3b222d7af240..3540d33d6f50c 100644
-> --- a/include/uapi/linux/btrfs.h
-> +++ b/include/uapi/linux/btrfs.h
-> @@ -615,7 +615,9 @@ struct btrfs_ioctl_clone_range_args {
->    */
->   #define BTRFS_DEFRAG_RANGE_COMPRESS 1
->   #define BTRFS_DEFRAG_RANGE_START_IO 2
-> +#define BTRFS_DEFRAG_RANGE_COMPRESS_LEVEL 4
->   #define BTRFS_DEFRAG_RANGE_FLAGS_SUPP	(BTRFS_DEFRAG_RANGE_COMPRESS |		=
-\
-> +					 BTRFS_DEFRAG_RANGE_COMPRESS_LEVEL |	\
->   					 BTRFS_DEFRAG_RANGE_START_IO)
->
->   struct btrfs_ioctl_defrag_range_args {
-> @@ -643,7 +645,13 @@ struct btrfs_ioctl_defrag_range_args {
->   	 * for this defrag operation.  If unspecified, zlib will
->   	 * be used
->   	 */
-> -	__u32 compress_type;
-> +	union {
-> +		__u32 compress_type;
-> +		struct {
-> +			__u8 type;
-> +			__s8 level;
-> +		} compress;
-> +	};
->
->   	/* spare for later */
->   	__u32 unused[4];
-
-We have enough space left here, although u32 is overkilled for
-compress_type, using the unused space for a new s8/s16/s32 member should
-be fine.
+Guest can also signal that it finished processing a SYNIC message using HV_X64_MSR_EOI or even by writing to EOI
+local apic register, and I actually think that the later is what is used by at least recent Windows.
 
 
-Thanks,
-Qu
+Now KVM does intercept EOI and it even "happens" to work with both APICv and AVIC:
+
+APICv has EOI 'exiting bitmap' and SYNC interrupts are set there (see vcpu_load_eoi_exitmap).
+
+AVIC intercepts EOI write iff the interrupt was level-triggered and SYNIC interrupts happen
+to be indeed level-triggered:
+
+static int synic_set_irq(struct kvm_vcpu_hv_synic *synic, u32 sint)
+...
+	irq.shorthand = APIC_DEST_SELF;
+	irq.dest_mode = APIC_DEST_PHYSICAL;
+	irq.delivery_mode = APIC_DM_FIXED;
+	irq.vector =
+vector;
+	irq.level = 1;
+...
+
+
+Best regards,
+	Maxim Levitsky
+
+
+
 
