@@ -1,102 +1,89 @@
-Return-Path: <linux-kernel+bounces-544532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01748A4E24F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:06:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 524FAA4E256
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:07:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 919B48818EC
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:57:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 072FE883C6C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:55:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E00BC27D797;
-	Tue,  4 Mar 2025 14:55:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 417AE25C6FF;
+	Tue,  4 Mar 2025 14:53:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="HsBac2XW"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AB0oO2uJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8174720DD4C;
-	Tue,  4 Mar 2025 14:55:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9109A25EFB7;
+	Tue,  4 Mar 2025 14:53:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741100106; cv=none; b=A7YpTux/m9z2ePfWVY14hGIVKMHir1zKw8WrFZge+ZfAYVz8atXP6lfbvBnoQbuq7sptSN/EdypSUK1L6IFTMplWaDqErbqC5OCxPUginW1uE/yPDauNqBFtW+a54BvMw/TDxgrdTQczJ76zMBbTRrB2oq3GDnj8zH7b1glZvlc=
+	t=1741100001; cv=none; b=ACEgQgvZCqSw/AzDR99oJ6Ynoo7XaYdc1Uo7Lthgv9pEZzbX4csfQvpkMUNRIOeAyN5a3HwYiUlEoUyW3gKgICe6yehAh6+wy0f+qcjs3vzU6aWv2IXG26ZFQ5x4p5UjgG2vd3gW+tsMFjBEAXeXipDfqBSAKP97uL0HoP/l2dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741100106; c=relaxed/simple;
-	bh=6sXLqOGwJPjjQ1mrwjcKafFgt74IfGmcKaUYu1Vea1Y=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=KpuRLzJFAPlZRIH3Nx2wc+6QXQPteO3vUu6lM7GqxkdQiItrqakn0C90Zca2p0nLTC6F6xiVuVpyfEzLig4XaN5jjwlk1UAML97D9zptJ74INCTQDYVPO0dRlntNYfuduEGCxmoSLvsUOvxekfhApOzzLW+e06afy7uXANb38X4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=HsBac2XW; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 524Eqsmu2303478
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Tue, 4 Mar 2025 06:52:55 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 524Eqsmu2303478
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025021701; t=1741099977;
-	bh=6sXLqOGwJPjjQ1mrwjcKafFgt74IfGmcKaUYu1Vea1Y=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=HsBac2XWWG8JTb5veE6LuaAtOLLvQu+vBFWgoKJItDg2FR2nOr9Ue8lryfQJFNb5X
-	 ojvI2P5MCIyrjDnZDpX41nGdlho2yRe4glo+hru+12GUQ7NBtdvcBedZZUsuJAWMmd
-	 N1yfFPWJ9WTY4SudzJVAuXk+ooFW+J2KOOkX3rNtdkndtmyJKXCfOOPoNoEFrEvYyS
-	 l+SyUMQ+mbWmrFpz4qKD1NBiUxnxzQF3eOYkhvJKEwllwoiSYqGIWHFHl+eS6oQqxV
-	 mHa7p//gFjY/UXuPZ99CFf8KpquSyK6rWISD0Qpt03vNg4h+TUDKnvTetXzksGMPfD
-	 /cUCOphcQnqWw==
-Date: Tue, 04 Mar 2025 06:52:53 -0800
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-        Menglong Dong <menglong8.dong@gmail.com>
-CC: rostedt@goodmis.org, mark.rutland@arm.com, alexei.starovoitov@gmail.com,
-        catalin.marinas@arm.com, will@kernel.org, mhiramat@kernel.org,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, ast@kernel.org,
-        daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev,
-        eddyz87@gmail.com, yonghong.song@linux.dev, john.fastabend@gmail.com,
-        kpsingh@kernel.org, sdf@fomichev.me, jolsa@kernel.org,
-        davem@davemloft.net, dsahern@kernel.org,
-        mathieu.desnoyers@efficios.com, nathan@kernel.org,
-        nick.desaulniers+lkml@gmail.com, morbo@google.com,
-        samitolvanen@google.com, kees@kernel.org, dongml2@chinatelecom.cn,
-        akpm@linux-foundation.org, riel@surriel.com, rppt@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        netdev@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH v4 1/4] x86/ibt: factor out cfi and fineibt offset
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20250304094220.GC11590@noisy.programming.kicks-ass.net>
-References: <20250303132837.498938-1-dongml2@chinatelecom.cn> <20250303132837.498938-2-dongml2@chinatelecom.cn> <20250303165454.GB11590@noisy.programming.kicks-ass.net> <CADxym3aVtKx_mh7aZyZfk27gEiA_TX6VSAvtK+YDNBtuk_HigA@mail.gmail.com> <20250304053853.GA7099@noisy.programming.kicks-ass.net> <20250304061635.GA29480@noisy.programming.kicks-ass.net> <CADxym3bS_6jpGC3vLAAyD20GsR+QZofQw0_GgKT8nN3c-HqG-g@mail.gmail.com> <20250304094220.GC11590@noisy.programming.kicks-ass.net>
-Message-ID: <6F9EF5C3-4CAE-4C5E-B70E-F73462AC7CA0@zytor.com>
+	s=arc-20240116; t=1741100001; c=relaxed/simple;
+	bh=Kcz1xSaYCO4WuUEozjJ51lTHWmOYaqQOEgsl0gD/6wA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CvMoc34790RQZuES53d9stK/CsPnX8CGZIsSHhJx4+bmd1vpwdbgpQCUgq6K4/vFQmITlmAeTLxkfDTlTu5X2EQBh3LXlZysrzlkzgZ4cVeguWqQ6xkt8TFNk2oDbgfJIfC4GlB2vP5WLbQBHhlGfbEiYUtiZREFAjDZIHr86eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AB0oO2uJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09142C4CEE7;
+	Tue,  4 Mar 2025 14:53:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741100001;
+	bh=Kcz1xSaYCO4WuUEozjJ51lTHWmOYaqQOEgsl0gD/6wA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=AB0oO2uJ3Vj3LGVge6poAMubhQJr66E5Y4sg0ZWqrI+Ln30Icx4nQTgkzb37RJrgD
+	 m1OAcM+4DMWfea6uA+YSJn1WxXytVcDGnaCLeOeI3/k6iy7opu7AOkBu10dXQJtWBp
+	 vLFDJm6clTO4pQhxmXnnHcotvqVqcdA1IMC4wxLGBX/CyVKjZd3+oRWWICDmTj3GB6
+	 vzb1bVYJncX3Yvn9fWzhm2iw6y7dR8gxJLUzoc1hnw2PXLH1beLfVfyegB3EBnAurR
+	 9xw5EKaFhj02Mpf0lE1QLUraiHvOP1I8xfoNGMq44hAsBznOuP5Vf1T2XLaldAG2YF
+	 Yc9jkBTMxdbzA==
+Date: Tue, 4 Mar 2025 14:53:09 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, Esteban Blanc 
+ <eblanc@baylibre.com>, Michael Hennerich <michael.hennerich@analog.com>,
+ Nuno =?UTF-8?B?U8Oh?=	 <nuno.sa@analog.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] iio: adc: ad4030: fix error pointer dereference in
+ probe()
+Message-ID: <20250304145309.066aeaae@jic23-huawei>
+In-Reply-To: <3c9bfa8bd08d835e0151fb66fce443457e2f2a98.camel@gmail.com>
+References: <cc67cee7-9c65-46d2-aae3-f860fc3cc461@stanley.mountain>
+	<3c9bfa8bd08d835e0151fb66fce443457e2f2a98.camel@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On March 4, 2025 1:42:20 AM PST, Peter Zijlstra <peterz@infradead=2Eorg> wr=
-ote:
->On Tue, Mar 04, 2025 at 03:47:45PM +0800, Menglong Dong wrote:
->> We don't have to select FUNCTION_ALIGNMENT_32B, so the
->> worst case is to increase ~2=2E2%=2E
->>=20
->> What do you think?
->
->Well, since I don't understand what you need this for at all, I'm firmly
->on the side of not doing this=2E
->
->What actual problem is being solved with this meta data nonsense? Why is
->it worth blowing up our I$ footprint over=2E
->
->Also note, that if you're going to be explaining this, start from
->scratch, as I have absolutely 0 clues about BPF and such=2E
+On Fri, 28 Feb 2025 13:22:37 +0000
+Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
 
-I would appreciate such information as well=2E The idea seems dubious on t=
-he surface=2E
+> On Fri, 2025-02-28 at 12:35 +0300, Dan Carpenter wrote:
+> > The intention here was obviously to return an error if devm_regmap_init=
+()
+> > fails, but the return statement was accidentally left out.=C2=A0 This l=
+eads to
+> > an error pointer dereference when we call:
+> >=20
+> > 	ret =3D ad4030_detect_chip_info(st);
+> >=20
+> > Add the return statement.
+> >=20
+> > Fixes: ec25cf6f1ee3 ("iio: adc: ad4030: add support for ad4632-16 and a=
+d4632-
+> > 24")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > --- =20
+>=20
+> Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+Applied.
 
