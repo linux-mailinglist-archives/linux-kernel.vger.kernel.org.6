@@ -1,204 +1,153 @@
-Return-Path: <linux-kernel+bounces-542996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAB0FA4D055
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:46:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1480CA4D057
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:46:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF24C3AFB9A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 00:43:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 191CF3A899E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 00:43:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC299522A;
-	Tue,  4 Mar 2025 00:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98DC23BBC9;
+	Tue,  4 Mar 2025 00:42:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SX9ndzye"
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="BVMrPc9c"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7609978F54;
-	Tue,  4 Mar 2025 00:42:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74AED2AE97
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 00:42:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741048934; cv=none; b=n8jJK8HyUsR+yADAtcwpxUnTOGgC1jK/+QTWnBZpp8+tNDq/TxQ3qyrgUvxiRncmWBrEtl+NKiBKRtaQ/rysiMrwwoohtnodQktYr0Pm7yHt9ntUikPM7dKflwqZ/RuSDXcJuc//i1sS1Z0ZnIucUoy0DasMenjuMcRYUX5w6jY=
+	t=1741048978; cv=none; b=XSjDbYyx951lwzxkM6le3bjHp5tU4X9gA/NczmgsiUOQx29ufltZWvqu99GZ6C7rgQ4HFl/wazEH6/M5Bj8zuFqAFiYVQSCv9WaYsBcKdwnHfRjxGUSTM+8An/GBEeN7lkshq4+gkAtCAI80hhV00N2oQ0H0CB8XVQ1YRefT+8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741048934; c=relaxed/simple;
-	bh=GNfL2qC5c4jUOHJOSM6S0gz/n3qbC3I+1m4V2d8XCc8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bqHVzAa1fGjoH3g4LkEfepC+F8lcZvCUQsA3DRV61xPTvvMR9PHGeGitWwUDb1moNxUZCIDE/ZlTJFsrPRJB6PeKIsgh1w0yhtSpsIHwPdg2zDSY+Qd4RoEvEqa8swkXvhXVxwyGoHGnfw0OA7LV/K13XbVZ6BIM6HAbfp1qED4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SX9ndzye; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7c07b65efeeso460274185a.2;
-        Mon, 03 Mar 2025 16:42:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741048931; x=1741653731; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gxNe4AxjqQpAaoybhGjdA9/tvpgF72J/S4MlsUJ3y90=;
-        b=SX9ndzyetUJBqpcEuJAItYSHyBoBTO+t+R5luhHFrWpsr/RltofL1QnMdlVQhXeG45
-         xA9r7esbLer7+SiW/63kOfD9/0HRatJFPOPpUR794J7eYvq5yhiDYW0KwvMN2P7TYZvZ
-         +4u/rVBX/idZ2z1K4kldhco9QhmUq9GYqJVzgyndYvSoyQbdDxhh9dH6VrObQLP8Cu7Z
-         je10++2rkMD9Ez0bTzY3NWpsJlfFUzZRPFw4G5TyyHMjw9YTjj0Jif+/BahRHmMtAYuc
-         Jsw+fap4KsrCuaaaHrMgkpv5CmI1yRQC4/Em71TJZS1lcAfPebrzCz/e2dwLKPN7+LGq
-         phPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741048931; x=1741653731;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gxNe4AxjqQpAaoybhGjdA9/tvpgF72J/S4MlsUJ3y90=;
-        b=qlFo1OZXZ5uYCa8Ma0QyTezhp4sXZzc5wd2S2O4GaXDNhaWkxcgj51AiwEiA2kOLR5
-         gQd+TgzFUjbPrnWM5xZKTlcbyKhGN7gB72EG1hUyfSAXuE56QAbV6hvFn7fC4BJsbaTZ
-         jx1xBhwiwKyGErdfxQ71PRK27P6WY5vbwhI0Wmm5nHAYvAMC7uQko2iqUTCAoxU7rOwJ
-         vq3HEq8gL4XkgW26Nt0sRUEjfnucOCJWu78LjktfQk3fP7UXYcFuWVyGIWCTF4UTTfMa
-         pnieKq68adSYxMJItCLESqgBli/BP0iWGWl+VkiiIFB9agUfXdMybqQrDZU0Q9i5AnKl
-         ZvbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXi6SWTsfJJZUsfvjGTXNdjQmZlUWEq/95uRXTyP5OHhSwoapuV6bORcAtPOBcMaQ8zO4XXMXTg3C15@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXK9MkKyCsyIdz/NpdK4Z2HAdsBVKvDkL+N0U2suZr7Zp7P3bo
-	vUOuvamVdxQt8SSKz1mzx5oJftU5vYfBzssR2xUeocNsu0RGupOb
-X-Gm-Gg: ASbGncugfxs8ruBiygYdDo8ls3mw99GrRQo0lv+4H49Xp3CG587Hdo5hLTYWM2ynhQb
-	dLBzYvhZQEkwPNGgRwt+MKbsehfmD0GmyhjHbVxYhnsukkQxZBMEK0blSQRUmmCEsamKs7MJSRI
-	IGS3A40Yoy+FaClWdDqtIOB0gQ9pXbK6rJ+vDwlL+EPsbniYwErY5dP7GeRikCXKXPVed0lf3PQ
-	kLSZZs+apfri0BuHrdQNF+d/nPPvBgIv5F31EuNbqav36qNFpozS6eMMcC8InK/wMhdKwBULwAY
-	v85sbYJ5kgjsJntD4+Uf
-X-Google-Smtp-Source: AGHT+IHEle02VkkTCUKA++q4iryvBoKPXpR9o6rZ7Y0oiuWfh62nccflHOETM6sqmAhK1Bt/TseLOA==
-X-Received: by 2002:a05:620a:8903:b0:7c3:cd78:df38 with SMTP id af79cd13be357-7c3cd78e308mr127164285a.10.1741048931148;
-        Mon, 03 Mar 2025 16:42:11 -0800 (PST)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c36fee8abasm669532785a.7.2025.03.03.16.42.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 16:42:10 -0800 (PST)
-Date: Tue, 4 Mar 2025 08:41:44 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>, 
-	Inochi Amaoto <inochiama@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Chen Wang <unicorn_wang@outlook.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	sophgo@lists.linux.dev, Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>
-Subject: Re: [PATCH 2/2] irqchip/sg2042-msi: Add the Sophgo SG2044 MSI
- interrupt controller
-Message-ID: <757rsspeayo5yzfrlzd7pe7aqzkhiycjsow6rfgo75sqkaow5t@b3eahj6dclmb>
-References: <20250303111648.1337543-1-inochiama@gmail.com>
- <20250303111648.1337543-3-inochiama@gmail.com>
- <87y0xlc3mz.ffs@tglx>
+	s=arc-20240116; t=1741048978; c=relaxed/simple;
+	bh=kK93hzx+Jp9MaGwkTF3z7uDf6omLMmKu7tKji9PC424=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=f9zetusZpzl6m3abhlH28vDHu/Oybe9ALb5i2wQySS21IzXNw68ZJv6pfj9C266pIKYrsVZrO+IIiPhOofi8XKqRc78HkYsmcJWspmahRFBaY4HKia6O/TpEh/At7wX89QpxxLFL5LYHvcMkKZX9Zb8nHDSR1m8LScoaOW5i8Qg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=BVMrPc9c; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5240gX9C1830056
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Mon, 3 Mar 2025 16:42:33 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5240gX9C1830056
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025021701; t=1741048953;
+	bh=3X0NhR31NcEZKG9MSGxkXXSaLk1FSYUAb8qUSre46Pc=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=BVMrPc9co6sQSLX1si2dQGjfhTcO4Fr+IZzSTYAdckkY3t5ENdE9fuvGlBqhHdw5/
+	 x1vpPvndbtQ6p4887I+klL8P6hpM8OXJ3WEN3SAAJnNvMMobUB6BQFsyQf5rlJLWB2
+	 kvwkYUirNSLocRW+0NaNWHLwZxctnf42yFWdumwFN3in1zV9eH/9ehAuFhzdx/aYve
+	 rwjBlTZTaaHbPb+rICzrE1MrQUpXx2o7qT+tXKLsLjj+/eWnlTBPVWzcA1vs7BE4j3
+	 b0BeP8uvoRTo526ZPLt5lSW8YBtMH1qWPvEwCBbB2s3gSUo6iuhHrpWhWwOkEyv/cw
+	 0MO1qLs5ezOFQ==
+Date: Mon, 03 Mar 2025 16:42:33 -0800
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Brian Gerst <brgerst@gmail.com>
+CC: linux-kernel@vger.kernel.org, x86@kernel.org,
+        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>
+Subject: Re: [PATCH] x86/asm: Merge KSTK_ESP() implementations
+User-Agent: K-9 Mail for Android
+In-Reply-To: <CAMzpN2jjcBtr73iuw8QaJ6MQxnnSRzr2SqDDKhfyDVnRETzLPg@mail.gmail.com>
+References: <20250303183111.2245129-1-brgerst@gmail.com> <9FC474C9-284D-4EB5-BF8A-7B938247E577@zytor.com> <CAMzpN2jjcBtr73iuw8QaJ6MQxnnSRzr2SqDDKhfyDVnRETzLPg@mail.gmail.com>
+Message-ID: <AE2B4950-6F26-4FF8-BB61-30EC8C2619E0@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87y0xlc3mz.ffs@tglx>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 03, 2025 at 08:31:32PM +0100, Thomas Gleixner wrote:
-> On Mon, Mar 03 2025 at 19:16, Inochi Amaoto wrote:
-> > Add support for Sophgo SG2044 MSI interrupt controller.
-> 
-> This patch fails to apply on top of:
-> 
->      git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/drivers
-> 
-> Please always ensure that your patches apply against the tree/branch
-> into which they are supposed to be merged. Grabbing random patches from
-> the mailing list as base is not sufficient. It's clearly documented
-> against what you should work.
->      
+On March 3, 2025 4:25:06 PM PST, Brian Gerst <brgerst@gmail=2Ecom> wrote:
+>On Mon, Mar 3, 2025 at 7:01=E2=80=AFPM H=2E Peter Anvin <hpa@zytor=2Ecom>=
+ wrote:
+>>
+>> On March 3, 2025 10:31:11 AM PST, Brian Gerst <brgerst@gmail=2Ecom> wro=
+te:
+>> >Commit 263042e4630a ("Save user RSP in pt_regs->sp on SYSCALL64
+>> >fastpath") simplified the 64-bit implementation of KSTK_ESP() which is
+>> >now identical to 32-bit=2E  Merge them into a common definition=2E
+>> >
+>> >No functional change=2E
+>> >
+>> >Signed-off-by: Brian Gerst <brgerst@gmail=2Ecom>
+>> >---
+>> > arch/x86/include/asm/processor=2Eh | 5 +----
+>> > arch/x86/kernel/process_64=2Ec     | 5 -----
+>> > 2 files changed, 1 insertion(+), 9 deletions(-)
+>> >
+>> >diff --git a/arch/x86/include/asm/processor=2Eh b/arch/x86/include/asm=
+/processor=2Eh
+>> >index a969bea1ed07=2E=2E55f0e48413b0 100644
+>> >--- a/arch/x86/include/asm/processor=2Eh
+>> >+++ b/arch/x86/include/asm/processor=2Eh
+>> >@@ -652,8 +652,6 @@ static __always_inline void prefetchw(const void *=
+x)
+>> >       =2Esysenter_cs            =3D __KERNEL_CS,                     =
+       \
+>> > }
+>> >
+>> >-#define KSTK_ESP(task)                (task_pt_regs(task)->sp)
+>> >-
+>> > #else
+>> > extern unsigned long __top_init_kernel_stack[];
+>> >
+>> >@@ -661,8 +659,6 @@ extern unsigned long __top_init_kernel_stack[];
+>> >       =2Esp     =3D (unsigned long)&__top_init_kernel_stack,         =
+     \
+>> > }
+>> >
+>> >-extern unsigned long KSTK_ESP(struct task_struct *task);
+>> >-
+>> > #endif /* CONFIG_X86_64 */
+>> >
+>> > extern void start_thread(struct pt_regs *regs, unsigned long new_ip,
+>> >@@ -676,6 +672,7 @@ extern void start_thread(struct pt_regs *regs, uns=
+igned long new_ip,
+>> > #define TASK_UNMAPPED_BASE            __TASK_UNMAPPED_BASE(TASK_SIZE_=
+LOW)
+>> >
+>> > #define KSTK_EIP(task)                (task_pt_regs(task)->ip)
+>> >+#define KSTK_ESP(task)                (task_pt_regs(task)->sp)
+>> >
+>> > /* Get/set a process' ability to use the timestamp counter instructio=
+n */
+>> > #define GET_TSC_CTL(adr)      get_tsc_mode((adr))
+>> >diff --git a/arch/x86/kernel/process_64=2Ec b/arch/x86/kernel/process_=
+64=2Ec
+>> >index 4ca73ddfb30b=2E=2Ef983d2a57ac3 100644
+>> >--- a/arch/x86/kernel/process_64=2Ec
+>> >+++ b/arch/x86/kernel/process_64=2Ec
+>> >@@ -979,8 +979,3 @@ long do_arch_prctl_64(struct task_struct *task, in=
+t option, unsigned long arg2)
+>> >
+>> >       return ret;
+>> > }
+>> >-
+>> >-unsigned long KSTK_ESP(struct task_struct *task)
+>> >-{
+>> >-      return task_pt_regs(task)->sp;
+>> >-}
+>> >
+>> >base-commit: 693c8502970a533363e9ece482c80bb6db0c12a5
+>>
+>> Why using the macro version?
+>
+>Why call an out-of-line function?  I guess it could be an inline
+>function (along with KSK_EIP())=2E
+>
+>
+>Brian Gerst
+>
 
-Thanks for pointing that, I will check the tip tree and see what
-is conflicted. I forgot there will be something changed when
-merging patch.
-
-> > +struct sg2042_msi_of_data {
-> 
-> There is nothing specific to OF in this data structure. This structure
-> contains the chip and the MSI parent ops of each variant. So something
-> like sg204x_chip_info is way more descriptive.
-> 
-
-Yeah, chip_info it more clear than of_data. I have forgotten this
-driver is not just for dtb but also UEFI fdt.
-
-> > +	const struct irq_chip		*irqchip;
-> > +	const struct msi_parent_ops	*parent_ops;
-> > +};
-> > +
-> >  struct sg2042_msi_chipdata {
-> 
-> and rename that one to sg204x_... as it is not longer sg2042 specific.
-> 
-
-This is OK for me.
-
-> >  	void __iomem	*reg_clr;	// clear reg, see TRM, 10.1.33, GP_INTR0_CLR
-> >  
-> > @@ -29,8 +34,10 @@ struct sg2042_msi_chipdata {
-> >  	u32		irq_first;	// The vector number that MSIs starts
-> >  	u32		num_irqs;	// The number of vectors for MSIs
-> >  
-> > -	DECLARE_BITMAP(msi_map, SG2042_MAX_MSI_VECTOR);
-> > +	unsigned long	*msi_map;
-> >  	struct mutex	msi_map_lock;	// lock for msi_map
-> > +
-> > +	const struct sg2042_msi_of_data	*data;
-> 
-> Please keep the tabular formatting of this struct. See:
-> 
-> https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#coding-style-notes
-> 
-> >  };
-> >  
-> >  static int sg2042_msi_allocate_hwirq(struct sg2042_msi_chipdata *data, int num_req)
-> > @@ -81,6 +88,37 @@ static const struct irq_chip sg2042_msi_middle_irq_chip = {
-> >  	.irq_compose_msi_msg	= sg2042_msi_irq_compose_msi_msg,
-> >  };
-> >  
-> > +static void sg2044_msi_irq_ack(struct irq_data *d)
-> > +{
-> > +	struct sg2042_msi_chipdata *data = irq_data_get_irq_chip_data(d);
-> > +
-> > +	writel(0, (unsigned int *)data->reg_clr + d->hwirq);
-> > +
-> 
-> Pointless newline
-> 
-> > +	irq_chip_ack_parent(d);
-> > +}
-> > +
-> > +static void sg2044_msi_irq_compose_msi_msg(struct irq_data *d,
-> > +					   struct msi_msg *msg)
-> 
-> No line break required. Please use up to 100 characters.
-> 
-> >  static int sg2042_msi_parent_domain_alloc(struct irq_domain *domain,
-> >  					  unsigned int virq, int hwirq)
-> >  {
-> > @@ -119,7 +157,7 @@ static int sg2042_msi_middle_domain_alloc(struct irq_domain *domain,
-> >  			goto err_hwirq;
-> >  
-> >  		irq_domain_set_hwirq_and_chip(domain, virq + i, hwirq + i,
-> > -					      &sg2042_msi_middle_irq_chip, data);
-> > +					      data->data->irqchip, data);
-> 
-> The conversion of the existing code to this should be a preparatory patch
-> for ease of review and the support for the new chip built on top.
-> 
-> Also please come up with a sensible name for this new 'data' pointer.
-> 
->      data->data->
-> 
-> is horribly unintuitive. It's not the same data type. 
-> 
->      data->chip_info
-> 
-> or such makes it clear what this is about.
-> 
-
-Good, I will take care of that.
-
-Regards,
-Inochi
+Ah yes, not out of line obviously=2E
 
