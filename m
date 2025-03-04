@@ -1,147 +1,113 @@
-Return-Path: <linux-kernel+bounces-544456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 680B3A4E162
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:43:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 30363A4E16F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:43:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 610FE188A668
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:37:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AE0118951B6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:38:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABE4426FA5E;
-	Tue,  4 Mar 2025 14:35:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59EC9279339;
+	Tue,  4 Mar 2025 14:35:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="VuNzS7MB";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="uhv181ey"
-Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F6PE3cfW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 721C226E169;
-	Tue,  4 Mar 2025 14:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB47D276D3F
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:35:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741098932; cv=none; b=XpD0Eahmcgp4BgJPPqL/Fba5xMe3lOdTs194SU4eaTHq8ZLOX4XWGqx4D/L7nqeBRsLZZpzKBBLpa6RfX4Mz5tcjecolr22rJWFEXIymgOkLMFCwh9R5vQBuSdTCHrTCbDKhcQXoBV6zeiWNGHOG5EPmHsHwCUk2+uMtFvl+44U=
+	t=1741098938; cv=none; b=Q8aYgV+d/PQfI07J3W5jOASY42hOfYs8qqEwg8lUh448hGXRXkQ8Mc+3mV0h3U6FyAMnsW3rzGBtHgyOUe0yoblhP4//iNITVIiKK+swujwSmheWDs+lLp/8h24hwlFqHQhVjtCOu+zf0cWuknvNortGEC1yBxMeYZO9785oQBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741098932; c=relaxed/simple;
-	bh=YMy5gkaueEQktqoKVHPtEIDeqrmLdBspWegegQlhlwA=;
+	s=arc-20240116; t=1741098938; c=relaxed/simple;
+	bh=dCpBQhn2NwIxqsS12UTL55cRO4v4MyWfjiNFli0eHzE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EVJkfK9I6myaU27z/BpAvz7MLYFXiMVIZhosNsRT0P65VDbLpMKw9qzgH79JZM7UEmBTBuZj79st8UZiyjwqnLy23wuUkNUrRH9fRdxi+2gI3cFVqplBSeM35WTeIGU4ZnPOvVYTdrxP6WwrzbrfGXI/DV4pHA75ygrH2YJ/N98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=VuNzS7MB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=uhv181ey; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 3253B11400BC;
-	Tue,  4 Mar 2025 09:35:28 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-03.internal (MEProxy); Tue, 04 Mar 2025 09:35:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1741098928; x=
-	1741185328; bh=wRZRNLutIoBb8oF0ngDTZPa0vNaZ5AVJbj6GM4zyYs0=; b=V
-	uNzS7MBwuIfKhW8lgt3WmAlh/dEDeB9BAEpXZA0kq/kFyXTEQ6e3Eb0OYf4sbv6j
-	1XQ5JUrSGlkB28TpkUxvizOi1rwa3CSZeoxTPiGLtltlmk6DbpaVaCsH761tWRvy
-	64PByEuc4xFsKng3HBimzgv0xeTIGQ1RyqsJslnlRwCihmW6uzw22sMPgbD5BUdI
-	EwMvaf/uMGhP0Yfu6VMZcLGezNlE0r8W3yBweAJmDVr0FT5m/DJ/fVTqGnMMuh+J
-	P/6/I5QQCVJWUhwPOAiYhdggrTgYu3aowRT/n1vtWTLTyp4fuDe2Z0A+ybjSDR7w
-	oGPnBTKUz7rZexUCPWMqw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1741098928; x=1741185328; bh=wRZRNLutIoBb8oF0ngDTZPa0vNaZ5AVJbj6
-	GM4zyYs0=; b=uhv181eyF6LArvZTYb+QgVT4sGvPPkZCDqtMihzV3VZ1ZXhhGyV
-	p4YSj6jJ9XamrqG+UFCxH0oaL9qc2gw7vHZElq9Yue6TRERldW6pLnVGuDGpHb0i
-	fKYs8We9FotWJdvw/CoWosjlT3I/gieIGVQ4/Eq8O8TIDmiTuSyiTNR02n/jcD0s
-	VRb/EE36pJwO8LzBgTiQgXcA501/7tDDa1/PRoKRyhD+dfoAZfWVIOK6nQTrwWiW
-	1FINh9L1G6i9vox5bpO0vPzNBVsdLZ+XuirVPvn0Ekr7nfsQ6qnFgdn1BgUFYhDz
-	3KhrX2MiQSHKfpSTbPO4oVgdEjp3LCF0uaA==
-X-ME-Sender: <xms:rw_HZ0yOSUDvbujyVfQwEGipbyNwKEa-3YlwR4nAaZKQf6SNKDAcPQ>
-    <xme:rw_HZ4T6L9OyXdwzg29l8jZayeMWhr_wqyhMtNVWZ9S7mJojGka83Mtzb3sQPl687
-    dIYXMZNzOm2AdghMiw>
-X-ME-Received: <xmr:rw_HZ2WakGeJ-7hOIfr5eiL_vUYvmz1lK-d1_9Qld-U7PU1Wm8vz4ryZw9Ol>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutddvfedtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
-    jeenucfhrhhomhepufgrsghrihhnrgcuffhusghrohgtrgcuoehsugesqhhuvggrshihsh
-    hnrghilhdrnhgvtheqnecuggftrfgrthhtvghrnhepuefhhfffgfffhfefueeiudegtdef
-    hfekgeetheegheeifffguedvuefffefgudffnecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomhepshgusehquhgvrghshihsnhgrihhlrdhnvghtpdhn
-    sggprhgtphhtthhopedufedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghnth
-    honhhiohesohhpvghnvhhpnhdrnhgvthdprhgtphhtthhopehnvghtuggvvhesvhhgvghr
-    rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrd
-    gtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehp
-    rggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohepughonhgrlhgurdhhuhhnth
-    gvrhesghhmrghilhdrtghomhdprhgtphhtthhopehshhhurghhsehkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopehrhigriigrnhhovhdrshdrrgesghhmrghilhdrtghomhdprhgtph
-    htthhopegrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghh
-X-ME-Proxy: <xmx:rw_HZyjnRzMpCPET0Wf_HyOZ7PAV7OQyX2bABphrYL7SiS0-uaAn1A>
-    <xmx:rw_HZ2Agb3RXYN6qnR7-G0xL2-kTG2msyZxIup5-PvdhJZVpypoozA>
-    <xmx:rw_HZzKlzQPdAt8Rbp9jcErn-vs5qMD8RAIubDGwCCZwCXaCW-jOFw>
-    <xmx:rw_HZ9DTr3nx2qlyFXlQdZ0m9Br1gKwapkEoKGpg2bjO-snTP11DgQ>
-    <xmx:sA_HZywrZwyOiY_19rSz2RZ2nE-bBI55aqdOZKkchKu2upcW8fp1Z7t0>
-Feedback-ID: i934648bf:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 4 Mar 2025 09:35:27 -0500 (EST)
-Date: Tue, 4 Mar 2025 15:35:25 +0100
-From: Sabrina Dubroca <sd@queasysnail.net>
-To: Antonio Quartulli <antonio@openvpn.net>
-Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>
-Subject: Re: [PATCH v21 19/24] ovpn: implement peer add/get/dump/delete via
- netlink
-Message-ID: <Z8cPrYs0TuQfLlKX@hog>
-References: <20250304-b4-ovpn-tmp-v21-0-d3cbb74bb581@openvpn.net>
- <20250304-b4-ovpn-tmp-v21-19-d3cbb74bb581@openvpn.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hwOSds09JB++C3h2S2CANX8drbiGuenW5x6Lv+zS2TnpAHY8UB4Wt21BHFDynbDzaLHB3BFfX024Nshp7rSusIQDkinG8ND2ld5QTizf82mpuUnh9qLKsorVg6fmKxesJM6H4kkKRqTMuxgPJNz8I5l6sVQhlimevsKALXN5OBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F6PE3cfW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AE2EC4CEF1;
+	Tue,  4 Mar 2025 14:35:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741098938;
+	bh=dCpBQhn2NwIxqsS12UTL55cRO4v4MyWfjiNFli0eHzE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=F6PE3cfWbPwNwlwjPIU/QVjtNiNn3m97Fy/heyxJF/8WgGSNhwTyv26W7F47rnc2f
+	 tOksoljZ46Lpo5e2NyUsvMDQiiTII3I8Mf1Nvg5naErSH+IHACsWfalHbz1JtY3riu
+	 /XUmljcwfSnkX6nr6ZRgH0SR1ZGkrekSXR87jdgPuTT7KQXhe43XD0jJKZDONFhYza
+	 4mxEmcqfA6T7n7YlkR1BgGkwAAHaRneVKnHplkqqA8JBlwK7tklM+YjHHu0gn+XYFn
+	 A2hqpK1Rl/tQFKvaLz0oBCqCpfcxYy/NrSpr15XGrImI6dhXq7DD2H4DAOcnnU7CJv
+	 yBb/mq6770f3A==
+Date: Tue, 4 Mar 2025 14:35:34 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Zxyan Zhu <zxyan20@163.com>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, dakr@kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] regmap: debugfs: Fix name collision without atomic
+ operations
+Message-ID: <fdd5c1c2-41f2-4d74-a5e0-444c1d2a0a81@sirena.org.uk>
+References: <20250304142452.3521828-1-zxyan20@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="SU+JFWVTCzcFVpbL"
 Content-Disposition: inline
-In-Reply-To: <20250304-b4-ovpn-tmp-v21-19-d3cbb74bb581@openvpn.net>
+In-Reply-To: <20250304142452.3521828-1-zxyan20@163.com>
+X-Cookie: Do not disturb.
 
-2025-03-04, 01:33:49 +0100, Antonio Quartulli wrote:
-> @@ -1317,11 +1336,16 @@ void ovpn_peer_keepalive_work(struct work_struct *work)
->  
->  	/* prevent rearming if the interface is being destroyed */
->  	if (next_run > 0 && ovpn->registered) {
-> +		time64_t delta = next_run - now;
-> +
->  		netdev_dbg(ovpn->dev,
->  			   "scheduling keepalive work: now=%llu next_run=%llu delta=%llu\n",
-> -			   next_run, now, next_run - now);
-> +			   next_run, now, delta > 0 ? delta : 0);
-> +		/* due to the waiting above, the next_run deadline may have
-> +		 * passed: in this case we reschedule the worker immediately
-> +		 */
 
-I don't understand this bit. I don't see what waiting you're refering
-to (in particular within this patch), and I don't see how we could get
-next_run < now based on how next_run is computed in
-ovpn_peer_keepalive_work_single (next_run1/next_run2 is always set to
-now + X or something that we just tested to be > now).
+--SU+JFWVTCzcFVpbL
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Am I missing something?
+On Tue, Mar 04, 2025 at 10:24:52PM +0800, Zxyan Zhu wrote:
 
->  		schedule_delayed_work(&ovpn->keepalive_work,
-> -				      (next_run - now) * HZ);
-> +				      delta * HZ > 0 ? delta * HZ : 0);
->  	}
->  	unlock_ovpn(ovpn, &release_list);
->  }
+> Changes since v1:
+> - Replaced atomic_read + atomic_inc with atomic_inc_return.
+> - Added atomic_dec in the error path to maintain index consistency.
+> - Updated the commit message to clarify the fix.
+>=20
+> Signed-off-by: Zxyan Zhu <zxyan20@163.com>
+> ---
 
--- 
-Sabrina
+As covered in submitting-patches.rst the inter-version changelog should
+be after the ---.
+
+> -		map->debugfs_name =3D kasprintf(GFP_KERNEL, "dummy%d",
+> -						dummy_index);
+> -		if (!map->debugfs_name)
+> +		index =3D atomic_inc_return(&dummy_index);
+> +		map->debugfs_name =3D kasprintf(GFP_KERNEL, "dummy%d", index);
+> +		if (!map->debugfs_name) {
+> +			atomic_dec(&dummy_index);
+
+Adding the decrement seems racy, we could increment again between
+getting index and kasprintf() failing so might not get back to the
+starting point.  It'd be a little messy to skip a number but it doesn't
+really matter, and if we're under that much memory pressure probably
+nobody's even going to look, so I don't see any reason to decrement.
+
+--SU+JFWVTCzcFVpbL
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfHD7UACgkQJNaLcl1U
+h9CpMAf9Eqp7ZhbUPj+Sg1pmDuYzogdiKg0/hFqyk4PzeeaTNi4SvSZLbXp56emc
+q7EgVqe1fLYt6veWNRGcelA3bXHkZQuvPJy0ZvQUnMri09gnERvXftjvduueUsu1
+7cWx9zFvyb4bo6L4q97S1i58tn+bTQGJlB1pSyhJ7sTGXveEaRzHRp9mm4yYZgIE
+3K9WnFGTckiZacQWVCi1udTbDP72e8JRUkfIUupBc2V0sDPydynfWsobvi3Q1Ror
+GGPp6aPbIUjXX+Lv9W+C+bbhdqcQAvLyxaZpjELxKt8NzL+PJ5fCxEAsXkDGeAMN
+Nje1zx7nIeHPgda79owpyLSRcaaS4w==
+=jzWQ
+-----END PGP SIGNATURE-----
+
+--SU+JFWVTCzcFVpbL--
 
