@@ -1,149 +1,115 @@
-Return-Path: <linux-kernel+bounces-545331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1726A4EC8B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:59:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E35FFA4EBC4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:34:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A31668E4892
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:28:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 341E6166CBF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:29:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB2A627D78C;
-	Tue,  4 Mar 2025 18:20:04 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6290020DD4C;
+	Tue,  4 Mar 2025 18:21:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LyDJn9iT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 156C827CB25;
-	Tue,  4 Mar 2025 18:20:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50EC207A1D;
+	Tue,  4 Mar 2025 18:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741112404; cv=none; b=I/T+Z4j2KDM+wbxS22lP1ZA9VxXqdFOgdKoKzZESgRhEY6hLbL+ENlI3YMjDO1zITdKSOk56lsbImPZtP131jIOPTb7PwRfEqJ0uFQNzsi/Pju7N63eHbMEXpT5eC5/my4KQpRc3GXpUQYEPzEJ+AzePRuMHh0YKv08uN5sKnBg=
+	t=1741112494; cv=none; b=id8mSzQhEJ525oEr6t3pUDN+WfeuOMCEYON25gnX8dzICr0Ywd+WKIFTqrrygRkYwCAVjnhNsFd/hm0OppfnS1LHHE94CxM39CJd6ZD37S8euJ6nQ/wPqX9sq7kksfgRmII8JxVnOuKYd/tIhx+G+SlQs0uL3upO9IdFN8rmJVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741112404; c=relaxed/simple;
-	bh=/iUAAOt679TeIoxp6g2heJgXYc2AHhUqUX4EiIEiMWM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Ex3hKURPWf2ZcxE3xYFuKMfJURouJM30g7rSzR5HjSP6AwVWi/RNtFT6g85ttSSVMm3vRI7GHDp4IkWMP8CoPWpqhOyH6fIJvDmttQqv4yEZI7bGO4EOmgaErd6AFAig7udnjXyXlRe51mXySkg5LTHbyj0G0sb0DEp1qqv2Pfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Z6kRL2lxYz6M4J6;
-	Wed,  5 Mar 2025 02:17:02 +0800 (CST)
-Received: from frapeml100008.china.huawei.com (unknown [7.182.85.131])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6C2D61400D7;
-	Wed,  5 Mar 2025 02:19:58 +0800 (CST)
-Received: from frapeml500007.china.huawei.com (7.182.85.172) by
- frapeml100008.china.huawei.com (7.182.85.131) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 4 Mar 2025 19:19:58 +0100
-Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
- frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
- Tue, 4 Mar 2025 19:19:58 +0100
-From: Shiju Jose <shiju.jose@huawei.com>
-To: Borislav Petkov <bp@alien8.de>, Jonathan Cameron
-	<jonathan.cameron@huawei.com>
-CC: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	"rafael@kernel.org" <rafael@kernel.org>, "tony.luck@intel.com"
-	<tony.luck@intel.com>, "lenb@kernel.org" <lenb@kernel.org>,
-	"mchehab@kernel.org" <mchehab@kernel.org>, "linux-mm@kvack.org"
-	<linux-mm@kvack.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-cxl@vger.kernel.org"
-	<linux-cxl@vger.kernel.org>, "dave@stgolabs.net" <dave@stgolabs.net>,
-	"dave.jiang@intel.com" <dave.jiang@intel.com>, "alison.schofield@intel.com"
-	<alison.schofield@intel.com>, "vishal.l.verma@intel.com"
-	<vishal.l.verma@intel.com>, "ira.weiny@intel.com" <ira.weiny@intel.com>,
-	"david@redhat.com" <david@redhat.com>, "Vilas.Sridharan@amd.com"
-	<Vilas.Sridharan@amd.com>, "leo.duran@amd.com" <leo.duran@amd.com>,
-	"Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>, "rientjes@google.com"
-	<rientjes@google.com>, "jiaqiyan@google.com" <jiaqiyan@google.com>,
-	"Jon.Grimm@amd.com" <Jon.Grimm@amd.com>, "dave.hansen@linux.intel.com"
-	<dave.hansen@linux.intel.com>, "naoya.horiguchi@nec.com"
-	<naoya.horiguchi@nec.com>, "james.morse@arm.com" <james.morse@arm.com>,
-	"jthoughton@google.com" <jthoughton@google.com>, "somasundaram.a@hpe.com"
-	<somasundaram.a@hpe.com>, "erdemaktas@google.com" <erdemaktas@google.com>,
-	"pgonda@google.com" <pgonda@google.com>, "duenwen@google.com"
-	<duenwen@google.com>, "gthelen@google.com" <gthelen@google.com>,
-	"wschwartz@amperecomputing.com" <wschwartz@amperecomputing.com>,
-	"dferguson@amperecomputing.com" <dferguson@amperecomputing.com>,
-	"wbs@os.amperecomputing.com" <wbs@os.amperecomputing.com>,
-	"nifan.cxl@gmail.com" <nifan.cxl@gmail.com>, tanxiaofei
-	<tanxiaofei@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>, "Roberto
- Sassu" <roberto.sassu@huawei.com>, "kangkang.shen@futurewei.com"
-	<kangkang.shen@futurewei.com>, wanghuiqiang <wanghuiqiang@huawei.com>,
-	Linuxarm <linuxarm@huawei.com>
-Subject: RE: [PATCH linux-next 0/2] ACPI: Add support for ACPI RAS2 feature
- table
-Thread-Topic: [PATCH linux-next 0/2] ACPI: Add support for ACPI RAS2 feature
- table
-Thread-Index: AQHbidw989DsJKt5skazfuISb8i7/7NhGsIAgAAQuYCAAh5NIA==
-Date: Tue, 4 Mar 2025 18:19:58 +0000
-Message-ID: <977a011b1ede4093a8e49d9cbcf49d19@huawei.com>
-References: <20250228122752.2062-1-shiju.jose@huawei.com>
- <20250303173538.000007cd@huawei.com>
- <20250303103529.GBZ8WF8flezRahE-1h@fat_crate.local>
-In-Reply-To: <20250303103529.GBZ8WF8flezRahE-1h@fat_crate.local>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1741112494; c=relaxed/simple;
+	bh=za0SuWLRhElff/bceu6BDxVrKjWckpBw7aqLeA2sbyc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lzSGhK9y6yJ68tYTqcTvG74b8k5Ql9rbhbBsNb9h7ZQ2uKw23e200FvjjqG3uycdYGOhN06pNMc6CpQxm7AoE9InugGI4u+OkyeeOKtHr4LpvWdgjPDo387kjYYMZDLTB8Zf5lvUiai1IwedLSgttAZ6JHFYTTqdYbrww8fKQsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LyDJn9iT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E10F2C4CEE5;
+	Tue,  4 Mar 2025 18:21:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741112494;
+	bh=za0SuWLRhElff/bceu6BDxVrKjWckpBw7aqLeA2sbyc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LyDJn9iT5NK0ljlzd/CxYT+DQB6iW+kCeUfbS1tZN32EQUS8F6Icaw+hC1AqB29xV
+	 eN3mnDCjUwCz0KaGojeFIFtV81L1tXiTf5fGwtnEdIUQ56xC4X7qGOgvlKpVloKtm0
+	 cvBna7i/C5rDTgAXaskW6U03kJbuZUmx51eECwQzdwMFUdgof6f8YvKeKh8vY46OIq
+	 o5AmhhqGOAAIc+5rEUpYsW0zqrq0eWPMPCfuKnpqN+Dghyi5ebjJbjjJUd5QK6VnoW
+	 Kmakiko0MUzcBfmOPR1EzVR41A+rhgb3/dARydErKZi7kBxWl9NUWhJk3I8ZZwTmm/
+	 zQ0pD1xqJGHuQ==
+Date: Tue, 4 Mar 2025 10:21:32 -0800
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-tip-commits@vger.kernel.org,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Brian Gerst <brgerst@gmail.com>, "H. Peter Anvin" <hpa@zytor.com>,
+	x86@kernel.org
+Subject: Re: [tip: x86/asm] x86/asm: Make ASM_CALL_CONSTRAINT conditional on
+ frame pointers
+Message-ID: <20250304182132.fcn62i4ry5ndli7l@jpoimboe>
+References: <174099976188.10177.7153571701278544000.tip-bot2@tip-bot2>
+ <CAHk-=wjSwqJhvzAT-=AY88+7QmN=U0A121cGr286ZpuNdC+yaw@mail.gmail.com>
+ <Z8a66_DbMbP-V5mi@gmail.com>
+ <CAHk-=wjRsMfndBGLZzkq7DOU7JOVZLsUaXnfjFvOcEw_Kd6h5g@mail.gmail.com>
+ <CAHk-=wjc8jnsOkLq1YfmM0eQqceyTunLEcfpXcm1EBhCDaLLgg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjc8jnsOkLq1YfmM0eQqceyTunLEcfpXcm1EBhCDaLLgg@mail.gmail.com>
 
-Pi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+RnJvbTogQm9yaXNsYXYgUGV0a292IDxicEBh
-bGllbjguZGU+DQo+U2VudDogMDMgTWFyY2ggMjAyNSAxMDozNQ0KPlRvOiBKb25hdGhhbiBDYW1l
-cm9uIDxqb25hdGhhbi5jYW1lcm9uQGh1YXdlaS5jb20+DQo+Q2M6IFNoaWp1IEpvc2UgPHNoaWp1
-Lmpvc2VAaHVhd2VpLmNvbT47IGxpbnV4LWVkYWNAdmdlci5rZXJuZWwub3JnOyBsaW51eC0NCj5h
-Y3BpQHZnZXIua2VybmVsLm9yZzsgcmFmYWVsQGtlcm5lbC5vcmc7IHRvbnkubHVja0BpbnRlbC5j
-b207DQo+bGVuYkBrZXJuZWwub3JnOyBtY2hlaGFiQGtlcm5lbC5vcmc7IGxpbnV4LW1tQGt2YWNr
-Lm9yZzsgbGludXgtDQo+a2VybmVsQHZnZXIua2VybmVsLm9yZzsgbGludXgtY3hsQHZnZXIua2Vy
-bmVsLm9yZzsgai53aWxsaWFtc0BpbnRlbC5jb207DQo+ZGF2ZUBzdGdvbGFicy5uZXQ7IGRhdmUu
-amlhbmdAaW50ZWwuY29tOyBhbGlzb24uc2Nob2ZpZWxkQGludGVsLmNvbTsNCj52aXNoYWwubC52
-ZXJtYUBpbnRlbC5jb207IGlyYS53ZWlueUBpbnRlbC5jb207IGRhdmlkQHJlZGhhdC5jb207DQo+
-VmlsYXMuU3JpZGhhcmFuQGFtZC5jb207IGxlby5kdXJhbkBhbWQuY29tOyBZYXplbi5HaGFubmFt
-QGFtZC5jb207DQo+cmllbnRqZXNAZ29vZ2xlLmNvbTsgamlhcWl5YW5AZ29vZ2xlLmNvbTsgSm9u
-LkdyaW1tQGFtZC5jb207DQo+ZGF2ZS5oYW5zZW5AbGludXguaW50ZWwuY29tOyBuYW95YS5ob3Jp
-Z3VjaGlAbmVjLmNvbTsNCj5qYW1lcy5tb3JzZUBhcm0uY29tOyBqdGhvdWdodG9uQGdvb2dsZS5j
-b207IHNvbWFzdW5kYXJhbS5hQGhwZS5jb207DQo+ZXJkZW1ha3Rhc0Bnb29nbGUuY29tOyBwZ29u
-ZGFAZ29vZ2xlLmNvbTsgZHVlbndlbkBnb29nbGUuY29tOw0KPmd0aGVsZW5AZ29vZ2xlLmNvbTsg
-d3NjaHdhcnR6QGFtcGVyZWNvbXB1dGluZy5jb207DQo+ZGZlcmd1c29uQGFtcGVyZWNvbXB1dGlu
-Zy5jb207IHdic0Bvcy5hbXBlcmVjb21wdXRpbmcuY29tOw0KPm5pZmFuLmN4bEBnbWFpbC5jb207
-IHRhbnhpYW9mZWkgPHRhbnhpYW9mZWlAaHVhd2VpLmNvbT47IFplbmd0YW8gKEIpDQo+PHByaW1l
-LnplbmdAaGlzaWxpY29uLmNvbT47IFJvYmVydG8gU2Fzc3UgPHJvYmVydG8uc2Fzc3VAaHVhd2Vp
-LmNvbT47DQo+a2FuZ2thbmcuc2hlbkBmdXR1cmV3ZWkuY29tOyB3YW5naHVpcWlhbmcgPHdhbmdo
-dWlxaWFuZ0BodWF3ZWkuY29tPjsNCj5MaW51eGFybSA8bGludXhhcm1AaHVhd2VpLmNvbT4NCj5T
-dWJqZWN0OiBSZTogW1BBVENIIGxpbnV4LW5leHQgMC8yXSBBQ1BJOiBBZGQgc3VwcG9ydCBmb3Ig
-QUNQSSBSQVMyIGZlYXR1cmUNCj50YWJsZQ0KPg0KWy4uLl0NCj4NCj5Ib3dldmVyLCBqdXN0IGZy
-b20gYSBjdXJzb3J5IGxvb2ssIGl0IHdvdWxkIG5lZWQgc29tZSBzY3J1YmJpbmcuIFRoZXJlJ3Mg
-c3R1ZmYNCj5saWtlOg0KPg0KPisgICAgICAgICAgICAgICBwc19zbS0+cGFyYW1zLnJlcXVlc3Rl
-ZF9hZGRyZXNzX3JhbmdlWzBdID0gMDsNCj4rICAgICAgICAgICAgICAgcHNfc20tPnBhcmFtcy5y
-ZXF1ZXN0ZWRfYWRkcmVzc19yYW5nZVsxXSA9IDA7DQo+KyAgICAgICAgICAgICAgIHBzX3NtLT5w
-YXJhbXMuc2NydWJfcGFyYW1zX2luICY9DQo+flJBUzJfUEFUUk9MX1NDUlVCX1NDSFJTX0lOX01B
-U0s7DQo+KyAgICAgICAgICAgICAgIHBzX3NtLT5wYXJhbXMuc2NydWJfcGFyYW1zX2luIHw9DQo+
-RklFTERfUFJFUChSQVMyX1BBVFJPTF9TQ1JVQl9TQ0hSU19JTl9NQVNLLA0KPisgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHJhczJfY3R4
-LT5zY3J1Yl9jeWNsZV9ocnMpOw0KPisgICAgICAgICAgICAgICBwc19zbS0+cGFyYW1zLnBhdHJv
-bF9zY3J1Yl9jb21tYW5kID0NCj4rIFJBUzJfU1RBUlRfUEFUUk9MX1NDUlVCQkVSOw0KPg0KPg0K
-PndoaWNoIGRlZmluaXRlbHkgbmVlZHMgc2hvcnRlbmluZy4gVGhlcmUncyBubyBuZWVkIGZvciBh
-IHdob2xseSB3cml0dGVuIG91dA0KPiJyZXF1ZXN0ZWRfYWRkcmVzc19yYW5nZSIuIEkga25vdyB2
-YXJpYWJsZXMgc2hvdWxkIGhhdmUgbWVhbmluZ2Z1bGwgbmFtZXMNCj5idXQgd3JpdGluZyBmaWN0
-aW9uIHNob3VsZG4ndCBiZSBlaXRoZXIuDQoNCkhpIEJvcmlzbGF2LA0KDQpTb21lIG9mIHRoZXNl
-IHZhcmlhYmxlcywgZm9yIGUuZy4gcmVxdWVzdGVkX2FkZHJlc3NfcmFuZ2UgYXJlIG5vdCBkZWZp
-bmVkIA0KaW4gdGhpcyBwYXRjaCwgYnV0IGluIHRoZSAnaW5jbHVkZS9hY3BpL2FjdGJsMi5oJy4N
-Ck15IHVuZGVyc3RhbmRpbmcgaXMgdGhhdCB0aG9zZSBjaGFuZ2VzIHJlcXVpcmVkIHRvIHVwc3Ry
-ZWFtIGZpcnN0IHZpYQ0KaHR0cHM6Ly9naXRodWIuY29tL2FjcGljYS9hY3BpY2EgPw0KPg0KPitz
-dGF0aWMgaW50IHJhczJfYWNwaV9wYXJzZV90YWJsZShzdHJ1Y3QgYWNwaV90YWJsZV9oZWFkZXIg
-KnBBY3BpVGFibGUpDQo+DQo+WXVjaywgQ2FtZWxDYXNlPyENCkZpeGVkLg0KDQo+DQo+QW5kIEkn
-bSBwcmV0dHkgc3VyZSBpZiBJIHN0YXJ0IGxvb2tpbmcgbW9yZSwgSSdsbCBmaW5kIG1vcmUgZnVu
-a3kgc3R1ZmYuDQpXaWxsIGNoZWNrIGFuZCBmaXguDQo+DQo+SFRILg0KPg0KPi0tDQo+UmVnYXJk
-cy9HcnVzcywNCj4gICAgQm9yaXMuDQo+DQo+aHR0cHM6Ly9wZW9wbGUua2VybmVsLm9yZy90Z2x4
-L25vdGVzLWFib3V0LW5ldGlxdWV0dGUNCg0KVGhhbmtzLA0KU2hpanUNCg==
+On Tue, Mar 04, 2025 at 08:01:58AM -1000, Linus Torvalds wrote:
+> On Tue, 4 Mar 2025 at 07:51, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > Put another way: the old code has years of testing and is
+> > significantly simpler. The new code is new and untested and more
+> > complicated and has already caused known new problems, never mind any
+> > unknown ones.
+> >
+> > It really doesn't sound like a good trade-off to me.
+
+I'm utterly confused, what are these new problems you're referring to?
+
+And how specifically is this more fragile?
+
+AFAICT, there was one known bug before the patches.  Now there are zero
+known bugs.
+
+Of course, it's entirely possible the build bots will shake out new
+objtool warnings over the next weeks.  But as of now, I haven't seen
+anything.
+
+> Side note: it's not clear that we should need to do that
+> ASM_CALL_CONSTRAINT thing _at_all_ any more.
+> 
+> Iirc, the only reason we did it was for old versions of gcc, and we're
+> already in the process of switching minimum gcc versions up to past
+> where the whole thing is relevant at all. There's another tip bot
+> commit that makes the minimum gcc version be 8.1 due to the (much
+> MUCH) cleaner percpu section series.
+> 
+> And afaik, that makes all of this completely pointless.
+
+I'm excited to hear we can get rid of a lot of old GCC cruft, but this
+has nothing to do with the compiler version.
+
+It's needed for CONFIG_UNWINDER_FRAME_POINTER, for all compiler
+versions.  Otherwise the callee may skip the frame pointer setup before
+doing the call.
+
+> So tell me again - why are we making the kernel code worse?
+
+Again I don't see how this is worse, please spell it out for me...
+
+-- 
+Josh
 
