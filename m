@@ -1,139 +1,116 @@
-Return-Path: <linux-kernel+bounces-543292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADE2FA4D3EC
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:33:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B95C9A4D3EF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:33:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFA741733B4
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:33:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E65FC172F9F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:33:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 427AD1EF390;
-	Tue,  4 Mar 2025 06:33:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF9B481C4;
+	Tue,  4 Mar 2025 06:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Z/LoVmCK"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (2048-bit key) header.d=kali.org header.i=@kali.org header.b="bnqZxSVb"
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20A3B35944
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 06:33:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591791DCB24
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 06:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741069993; cv=none; b=t4lb4loi78uegmg555ujbLPvVM03yx6WVAR6PAuCJqW9V0MBrbJwVNReuLRoEYFcPJ9TIMspZazVCgX0utmYK4E4Lqv40Xz5Qn9TbyBd/4Duo4jxcJNQ6nTzWmM2eRBFaysqglhTfziFHVXgdhIoJpJC/dmxvvmqFEce4DGaxJs=
+	t=1741070013; cv=none; b=pEQ8CCkxRbVQoDHsZenfdYvPUPF0UxX8Y32orKueQjUscwGIHHGPnAajS70tLSFECslgM4imNBOFwwehpl1AUbI+qvrBK1mJ2nAnEn/FS+VeCoCCIrTNq6DZRHYOgh+VcBP39pRmqiXX4r4Fq7YHnVv0G4u6Y4HH9ryjR/QeIlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741069993; c=relaxed/simple;
-	bh=VcSDZCPSlilk/nQT3SJdh7P3PWn2QylOjDn5IxXXQak=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AUwAloKZJjusfRzTQ1QRhEjG5dLo1V/wepn6eIJGfPbdRVhKlPkcTGL5q5LeqekKR2sZd6RU82eNveaaPixPWvn5cQvC5u2ddeRPZqtXCET5icsdPQvJzqL61ug+2+OX+IlDpdWRxlfQjH4PDiSifID5UAIdUUGMUsN4nLu9v4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Z/LoVmCK; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-aaec111762bso962239966b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 22:33:10 -0800 (PST)
+	s=arc-20240116; t=1741070013; c=relaxed/simple;
+	bh=0L9jk7jDl4R7Tch+PFoZUAPpOUQGpTxhl+ZUFKtbat4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=YH1T7gXHs4y0wpeQfnY09fD6RIZNXQPSPQ/HEVA6OoTmhsCjHrDBUm0seN4U2DULmhc0Ogcx+AfNfsch6JEeL4E1IUfmvpItszHqgnFEjKWeky+jHAphql3mPjT2jTzrJ7i4OV18a85dPwG14WH6V9zhCwSoK4D5rK3oxEl1VEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kali.org; spf=pass smtp.mailfrom=kali.org; dkim=pass (2048-bit key) header.d=kali.org header.i=@kali.org header.b=bnqZxSVb; arc=none smtp.client-ip=209.85.167.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kali.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kali.org
+Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3f5507a09e6so2593264b6e.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 22:33:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1741069989; x=1741674789; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=UPfpycxRLeXPq3Vn47UB9XJqE73Xmj0YUhuOs6CYk+I=;
-        b=Z/LoVmCKLnhJb81lughFALWjqBrpilunt9GEY8b2Oc2L6dwmrPqKfb/Aia9aYOeJ5K
-         5shhzI9BRnk+YSlzKjTnYUT6xR0FMw3TWnZ2YZ3ZU/nDamenC9EZQMaQRWKtMnTYdprF
-         MUleghMGXoRFsskH6UtSDGHX0qhVzhIgamXGA=
+        d=kali.org; s=google; t=1741070011; x=1741674811; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0L9jk7jDl4R7Tch+PFoZUAPpOUQGpTxhl+ZUFKtbat4=;
+        b=bnqZxSVbDFqNV6psdfJMuqY7320OSzHiUmp+C+40y9qH6vFrEW1Ssl2+cLGfQrGruR
+         PUFWUTx/EEsgrFP60M4b8YzeoNqeiOM4bbc0OO2GdNQzkyKA8DhXKNK6DlVcPl7TtT9v
+         fMdX14sFXve2KCPt5IMx/aa+EGDgyDX3zAETAScAT7miq97JiFTqVAxQ05Lvm/+LQ2Vj
+         kDL7Fru70kaDNczmGIjVDFLa7Mkh4xrg5IVn1QMP9MS1H+xaVGv9jcbaeYZSAELWHVUu
+         mQBwfJ4v6jtcO+OdErZExycent1d0c15q5JkyPUomkW7u7GVzPuRVOO6nFR3GUUga5uS
+         I0qQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741069989; x=1741674789;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UPfpycxRLeXPq3Vn47UB9XJqE73Xmj0YUhuOs6CYk+I=;
-        b=EWiH0cbpQD9bvAVbikoJmKbnXIlYlzPn6GWhCKReVmpRoHXXSNwdAKflNE+F3mxZTQ
-         mNeYO+Aubh+uk4VY6NJ42p1m2xCKFkppK4M0rwKCh4e7/KCO4inqOPlvZElFyy+MKz4i
-         zzEkDLvGa2CNN2RGjzdXKzELX83NhYqMk6crwe0FUbIN6e7qCJOYxXk1Y1aYgwNVHNWJ
-         bqaPtJGIdLnqLSWDDU2bvQfvMp6BDHPWTj0S+UV4F/ZT1tVL6sPela2u9txUZBkt+9AB
-         hDn/Sl8/Pd7jhmCfuoZyUVGPp0vMLGOP0Xfx6D/RsnRk5omjPK5ycOhD9z6dNmzq6wys
-         KS6A==
-X-Forwarded-Encrypted: i=1; AJvYcCVfyHlEFNlOGIoA3daB7U51RHZKRiCq+ItN4I7QwuHhlrGf4dyOl84lIXIr7WukOI1kMSVceyu934jGkZQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzT7DEetYQTuR7QXPIQaGV3655Qc+hq0W/yqt+qfoWZa/nJkd7c
-	KU0ojqmm9e+Nq17nPW2kn0OcjvLquzUmW8OJ/IMcnbDbum/D76Fg4QGuDcHsHWgVwhOUbeWHa+U
-	8Tes=
-X-Gm-Gg: ASbGncuNVZi+MND7TJ74JkmYcpvkgnWv8+U1HcufWbka0oM/kIZvhg5A9M4PVZ5Tsr7
-	e1ICqHFVyK2yJTve3A5F5x35QiFNiz89ARfsh4IPL1MrGnFu8InAqJ6XQZ/GARpx2DVaBDTW7Nx
-	9FlxkbrKCaxPb9jNnLGCDf7VXmjzy45yVXzIXJEI/1P83cedAQOroVoH4GJJm0Z25L+x6ZdF3Mf
-	959r4t6RGG1rT/G3X5YIgi2+8EKgYyI6qxur33tQcRtxQlSovXQeO/ThrvBrUfIPwqYynGRvzpI
-	iTK+KYY0NMRkHBgY2xGWS8G8smUNmRJfREcIv6uJzP1F6zlk1W6mUAMV3npDgPPieBTY0kQR25C
-	4fP4PQIbhnQvLnOEEH8s=
-X-Google-Smtp-Source: AGHT+IFWEYv/9Wi2/AF7c5SJW+fJRwPtQs7r+7iY2XdE8hjqE6FbPU5Qaoh6k0qmiadVxzbLJdUHJg==
-X-Received: by 2002:a17:907:7d8c:b0:ac1:ef3c:61d4 with SMTP id a640c23a62f3a-ac1ef3c6a00mr162981366b.21.1741069989202;
-        Mon, 03 Mar 2025 22:33:09 -0800 (PST)
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com. [209.85.218.44])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac1f8d78e80sm39168766b.56.2025.03.03.22.33.06
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Mar 2025 22:33:07 -0800 (PST)
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-abf4802b242so552804166b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 22:33:06 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV8OOrkDreSnU4p2ryqRKC75Nv9ivtq8i5+3ceusz3iiLT/ZNKJIrmJn7jgYXPtfHVPxmKxHC7zd0EwROA=@vger.kernel.org
-X-Received: by 2002:a17:907:d90:b0:ac1:e2be:bab8 with SMTP id
- a640c23a62f3a-ac1e2bec4cfmr418813066b.26.1741069986218; Mon, 03 Mar 2025
- 22:33:06 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741070011; x=1741674811;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0L9jk7jDl4R7Tch+PFoZUAPpOUQGpTxhl+ZUFKtbat4=;
+        b=mJjvamq4zEHYBkIYCDSxWMbIqPF4H9NM1l45goXs3O8rndCgOFJ/hVnzu8/GWaXPzF
+         TKB1Yrn6J9EiB3WT62MxbiI/l001yEgGpFf+FM/eVoNRejvpJnFWEnQvb/Qk9zc6j0AC
+         888rKypqdb2XhWKCL3uPH1XzkAPm6m7qHXEETW6aaYTKlOB9GQiHP0DH6cRhZrWoSxKU
+         fy9vXZPgSYZALkHkHKBKT1qpY7K3wqAwE5GQc71yjOq5x+mUaR7Q5LRNRlBgVmA39HAX
+         Lto/ARSvvU/XbgHdvJy65Ks+GpMrCQO1Sj6M2LJrH2FqlKZzdi5QV+thud5czp6M4dow
+         4aJw==
+X-Forwarded-Encrypted: i=1; AJvYcCV7DJqWM86I6DXtOxYwgEL6CTm3COqYUneT9MVpbY8kiv9eTUBq44+zSLPFUnnFfaQvbHnZjzAOUcVn47w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5wiacjrIgfR5+5VQ3p4DtPjMSw4HozpaDVhFx7y902FwuklOF
+	rUwAz2FpcCapQMo3f9LoJih5mHfGK9XJMJv6C7jv1NlwJgLYHluuL2F0Hf00Ov4=
+X-Gm-Gg: ASbGncswlqmIBsUh4R42QKx3fXzxrZi5KUDM5vDRkfJnGbG0BrqXCaVJt3l6BitXHMq
+	eh5JW7p+H2V8R9BdCLIr6mSne4JZvSDGfIknh/Yq3ZJ3trasePEMrbdyI0GR2tTgglzJc4C62n+
+	TNdLtdmic5dqgq2gcDcuFonN4wrDXfVBrVRXyViPwNvQxDkZnBJJHSnqd9Pfp6KrKTMF2uqq162
+	0KTY7w6/x/lm1ErQgjf5ZzvwnANd+PV7yIJB+4vx1iZ9J9EZIM9JJL1GgJMl9X9pe100Lf2cCoz
+	uTAA1UJMbOS7VJ5LxuNAhnCozhzrpYFV7vDb4icL47hrLNes2YRgrEvl+x7p5JRNK14GgELV1CM
+	WiCQMZW9nshgj
+X-Google-Smtp-Source: AGHT+IF836u3HRurnaD3JNQQMkTOVJFkdb7saaYaAdjJKb8CcB9Uh6cD4rojnwwaZzpJu95yORRjaw==
+X-Received: by 2002:a05:6808:2e96:b0:3eb:3b69:8ff4 with SMTP id 5614622812f47-3f5585254ffmr10749480b6e.15.1741070011245;
+        Mon, 03 Mar 2025 22:33:31 -0800 (PST)
+Received: from localhost (104-48-214-220.lightspeed.snantx.sbcglobal.net. [104.48.214.220])
+        by smtp.gmail.com with UTF8SMTPSA id 5614622812f47-3f66e8449f6sm539684b6e.1.2025.03.03.22.33.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 22:33:29 -0800 (PST)
+From: Steev Klimaszewski <steev@kali.org>
+To: hzyitc@outlook.com
+Cc: ath11k@lists.infradead.org,
+	jjohnson@kernel.org,
+	johannes@sipsolutions.net,
+	linux-kernel@vger.kernel.org,
+	linux-wireless@vger.kernel.org
+Subject: Re: [PATCH 1/1] wifi: ath11k: pcic: make memory access more readable
+Date: Tue,  4 Mar 2025 00:33:28 -0600
+Message-ID: <20250304063328.33762-1-steev@kali.org>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <TYZPR01MB55566065525ADA7F71F516D4C9C92@TYZPR01MB5556.apcprd01.prod.exchangelabs.com>
+References: <TYZPR01MB55566065525ADA7F71F516D4C9C92@TYZPR01MB5556.apcprd01.prod.exchangelabs.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250228143049.GA17761@redhat.com> <20250228163347.GB17761@redhat.com>
- <03a1f4af-47e0-459d-b2bf-9f65536fc2ab@amd.com> <CAGudoHHA7uAVUmBWMy4L50DXb4uhi72iU+nHad=Soy17Xvf8yw@mail.gmail.com>
- <CAGudoHE_M2MUOpqhYXHtGvvWAL4Z7=u36dcs0jh3PxCDwqMf+w@mail.gmail.com>
- <741fe214-d534-4484-9cf3-122aabe6281e@amd.com> <3jnnhipk2at3f7r23qb7fvznqg6dqw4rfrhajc7h6j2nu7twi2@wc3g5sdlfewt>
- <CAHk-=whuLzj37umjCN9CEgOrZkOL=bQPFWA36cpb24Mnm3mgBw@mail.gmail.com>
- <CAGudoHG2PuhHte91BqrnZi0VbhLBfZVsrFYmYDVrmx4gaLUX3A@mail.gmail.com>
- <CAHk-=whVfFhEq=Hw4boXXqpnKxPz96TguTU5OfnKtCXo0hWgVw@mail.gmail.com>
- <20250303202735.GD9870@redhat.com> <CAHk-=wiA-7pdaQm2nV0iv-fihyhWX-=KjZwQTHNKoDqid46F0w@mail.gmail.com>
- <1a969884-8245-4bea-b4cc-d1727348bf50@amd.com>
-In-Reply-To: <1a969884-8245-4bea-b4cc-d1727348bf50@amd.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 3 Mar 2025 20:32:49 -1000
-X-Gmail-Original-Message-ID: <CAHk-=wh804HX8H86VRUSKoJGVG0eBe8sPz8=E3d8LHftOCSqwQ@mail.gmail.com>
-X-Gm-Features: AQ5f1JqCPbp5F6rtPDaoEtKo2cLB4OW__15FO9jOkbpgZdLjhluznTu2FTcwa9g
-Message-ID: <CAHk-=wh804HX8H86VRUSKoJGVG0eBe8sPz8=E3d8LHftOCSqwQ@mail.gmail.com>
-Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still full
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Oleg Nesterov <oleg@redhat.com>, Mateusz Guzik <mjguzik@gmail.com>, 
-	"Sapkal, Swapnil" <swapnil.sapkal@amd.com>, Manfred Spraul <manfred@colorfullife.com>, 
-	Christian Brauner <brauner@kernel.org>, David Howells <dhowells@redhat.com>, 
-	WangYuli <wangyuli@uniontech.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	"Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>, Neeraj.Upadhyay@amd.com, Ananth.narayan@amd.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, 3 Mar 2025 at 19:31, K Prateek Nayak <kprateek.nayak@amd.com> wrote:
->
-]> > ENTIRELY UNTESTED, but it seems to generate ok code. It might even
-> > generate better code than what we have now.
->
-> With the patch on top of commit aaec5a95d596 ("pipe_read: don't wake up
-> the writer if the pipe is still full"), we've not seen any hangs yet
-> with a few thousand iterations of short loops, and a few hundred
-> iterations of larger loop sizes with hackbench.
->
-> If you can provide you S-o-b, we can send out an official patch with a
-> commit log. We'll wait for Oleg's response in case he has any concerns.
+Hi Ziyang,
 
-Ack. With that testing background, please write a message and add my
+With this patch applied, on the Thinkpad X13s which has an ath11k, I am seeing
+the following:
 
-  Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+ ath11k_pci 0006:01:00.0: chip_id 0x2 chip_family 0xb board_id 0x8c soc_id 0x400c0210
+ ath11k_pci 0006:01:00.0: fw_version 0x11088c35 fw_build_timestamp 2024-04-17 08:34 fw_build_id WLAN.HSP.1.1-03125-QCAHSPSWPL_V1_V2_SILICONZ_LITE-3.6510.41
+ ath11k_pci 0006:01:00.0: firmware crashed: MHI_CB_EE_RDDM
+ ath11k_pci 0006:01:00.0: ignore reset dev flags 0xc800
+ ath11k_pci 0006:01:00.0: failed to receive control response completion, polling..
+ ath11k_pci 0006:01:00.0: ctl_resp never came in (-110)
+ ath11k_pci 0006:01:00.0: failed to connect to HTC: -110
+ ath11k_pci 0006:01:00.0: failed to start core: -110
+ failed to send QMI message
+ ath11k_pci 0006:01:00.0: failed to send wlan mode request (mode 4): -5
+ ath11k_pci 0006:01:00.0: qmi failed to send wlan mode off: -5
 
-and we'll get this all fixed up.
+I'm pretty sure this isn't supposed to happen?
 
-I assume this all goes back to commit 8cefc107ca54 ("pipe: Use head
-and tail pointers for the ring, not cursor and length") back in 2019.
-
-Or possibly 85190d15f4ea ("pipe: don't use 'pipe_wait() for basic pipe IO")?
-
-But it was all hidden by the fact that we used to just wake things up
-very aggressively and you'd never notice the race as a result, so then
-it got exposed by the more minimal wakeup changes.
-
-            Linus
+--steev
 
