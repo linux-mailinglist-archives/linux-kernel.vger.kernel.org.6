@@ -1,161 +1,161 @@
-Return-Path: <linux-kernel+bounces-545124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 215CBA4EADA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:13:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F983A4EABD
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:11:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AECD8E4854
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:34:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64A408C43F1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:34:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49398292FBB;
-	Tue,  4 Mar 2025 17:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB24B285417;
+	Tue,  4 Mar 2025 17:08:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="abSM0goa"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U/S/n5mc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C88292FA2
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:07:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11E78281520;
+	Tue,  4 Mar 2025 17:08:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741108064; cv=none; b=YPsI4p9Kv2/chl5Zr2kD958FWdHHiwyJ92BuFBl6ATpw4VwAR+NjFhYqpqGYqrksnzL95Qe67eqa2TYlK5gwugabdbHevZB2KuLOPxfXhumds2BnDb4zVcRWqUBAGCb2yhxED8jmBveEbhtXcEWRusvhWX4qNK4d55Ea9HwOj30=
+	t=1741108081; cv=none; b=JJ0M0wqEOF+kf/+sj4fpTOrhsflWm/YpTd7VatKcEhWwtpCswN7t9qsoN0pUtDMOIr8mNznv57zZYZpars+HLxcl6XyFleM/PK8AxIWmGSjgRGFSXuAFRxevjbSBMy3wpXjos5g/bNyAng4x9vdccLJWzj/+7pJjY3HaWt44lj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741108064; c=relaxed/simple;
-	bh=QHv5JCwHtgDm/Ul5VHa++1ruQ4G4MsndKdh1G1m7pDE=;
+	s=arc-20240116; t=1741108081; c=relaxed/simple;
+	bh=ExQy865opXw6DJMm2Zy8thSEQ2//ZajmzZjhLDdgip8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kiM8InTtl1IQop8BjrZxhWRue1/Upw2uG8rfFtLBe9XnrDnNeWCEGd1dxzAKZo2+vY3EIA++44vOgxGrXm5ZTw3gch2EwsFJlFoKmoXJ0QTu6IfCdx7TnInPEW5JsioJjuQvx1+ILplijXKsw/ZN7L8ki87i3oI9bB8/dYwSqK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=abSM0goa; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-223a7065ff8so67817785ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 09:07:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741108062; x=1741712862; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=LA/gKQoFR6dHj4YM+SZIs58tGSpb3MhpX5oaTo2PxFg=;
-        b=abSM0goanpsDmjrSzBLrQkIyUFXrKBoZCvyIlTeWoanmxO69DjIO3u/ev3mL63S4J3
-         1OkzZFAwZsU0ZghEFuWZD+9WR8yjBlwWKQJQnNhZYisoqCfta5fHxbkKTE89v5kgfJMB
-         moYR3Aw+CHbMW0AM8tg76pk8kNsHHnXSH6aIPJuuubElJz7e14H5iDD59wKCIF87cF3Q
-         LeDAUiFSamt+x8V34CtpflIZTihuXlf437Eus+ZQQ3N8mhYoJ//bx9kx+anrGQA5hvpB
-         lwIY3XNJzKLif1t4IMaQQIWrjDctmj0PDKBdWQsiRxEfMyy47hN8QT3FvmEZA4zx7M7/
-         dV/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741108062; x=1741712862;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LA/gKQoFR6dHj4YM+SZIs58tGSpb3MhpX5oaTo2PxFg=;
-        b=bDyGTx1Fwube6pL5ECn2T7Zs8Oz5NcYRC6AY6guO1Jii1g/jRY/zFhOehxcY/oPSJ+
-         MVtPBHVn4bOVgNyxmfk27T7wSUAuo8PZzkfHqyXSW10iQ93R/spYwXbyxooHWh0n/xpw
-         t+brmwJWXzDx0yPeSTVEXNYQPCtHY6wf1jK3BwJ7/Cvv2hOypH/FHAh2EeJrShoNTIg8
-         EwZM6yhStCrbhkFi6MCH35xajAl2EFfy9tQq5X3TVutz3/S6WOkckNBmHpScyWOznBDi
-         Bci8y+3mPGlC8/gVzoPYCTzIPwbGqohTPoAq+CkOGj7RW7IwK9NsjJGjpJEgROnyridk
-         0QxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXUZhgbyC9zzDxldFUaDz+54POFmSAeFbpFjlQDgrtjpATPfJd/Z1kl2uOCi9wmdDL/uokx2Auv4ytzM40=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKKn9tjiDvqmmHx+RvGfMTnsldmViSpVRRhy9wpTIfgoyOip2v
-	wMnZea4Ld7A1zDGa0wTQu2tAAZ9AJTCqws69co1+Z41osBnsbS/WREPLtfjUCg==
-X-Gm-Gg: ASbGncsnU89B8xDzpBBoq9+ktHrDNTsmq68JNfL2Y6IfY6iydvAenkbH98WnuV9iycO
-	ukXbaFV88rdDpVZroxWAXQf+4tGSAHDJOojdt9FDwYaePmXFgFXK3nNK0qxZgzDG3AAOPrTbR3H
-	a8NK/KwPvueEqixN759u3bcUmRIqBq8JrBBNl6/EHN8MWFr6apHwFRMQB60CLctUboAbVhzjrYO
-	wm+2bVamgReuiu/DP9JCqhFJDvUiIkvqckjKdO0LakXnUer5Bqm1cXiYBYKlcRtaprftwWB4qhf
-	OPhgVu6whWSIGkxvAB5SVaiE04Q/gf/zHHTbxev1WAHMBfsxle7btDM=
-X-Google-Smtp-Source: AGHT+IG9lPytOJ+a9BnKqGkMxxZf/h6DwbYyJiWJ/Q5mVWVtyO5FnvNkcSD22Lz3G7gAfZDKnHhRPQ==
-X-Received: by 2002:a05:6a00:1250:b0:736:5664:53f3 with SMTP id d2e1a72fcca58-73656645c9cmr11645970b3a.15.1741108062382;
-        Tue, 04 Mar 2025 09:07:42 -0800 (PST)
-Received: from thinkpad ([120.60.51.199])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-734a003fa5csm11529695b3a.145.2025.03.04.09.07.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 09:07:41 -0800 (PST)
-Date: Tue, 4 Mar 2025 22:37:35 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Jim Quinlan <james.quinlan@broadcom.com>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Cyril Brulebois <kibi@debian.org>,
-	Stanimir Varbanov <svarbanov@suse.de>,
-	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 4/8] PCI: brcmstb: Fix error path upon call of
- regulator_bulk_get()
-Message-ID: <20250304170735.x25c65azfpd7xmwv@thinkpad>
-References: <20250214173944.47506-1-james.quinlan@broadcom.com>
- <20250214173944.47506-5-james.quinlan@broadcom.com>
- <20250304150313.ey4fky35bu6dbtxd@thinkpad>
- <CA+-6iNyuQskVNjAuX1QcLTPetbfhogGYUTOA01QwNw9YcwAdNQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lNIF2diNE7S7lAZrKhXy2KLBn8+z/VbnN5MS7mW/1cOSm+tt6Q0jblth+YsJpnDOQ7HVZUOLmHUfbzK9iPae6w27UXIVqt+dGG78zB/NQhfrlHuQxr0+wxvwPYwa/p+gaAzi0lBPnIFTqorIbS1YgWS2I0O4cWeY9cBRVm35UWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U/S/n5mc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74E9FC4CEE7;
+	Tue,  4 Mar 2025 17:08:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741108080;
+	bh=ExQy865opXw6DJMm2Zy8thSEQ2//ZajmzZjhLDdgip8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=U/S/n5mcWu/UBrYJ+TCBDohmSpkaKpp3W/oYgHiI/KuhAbI9KA2kv7BZLyzpMCfOt
+	 5Wq8oedYv0QjWahN3qmeV3zxSsUGOq2uOUp/yflUURVb/OTCKj8hW7Vxnp8gBESsjC
+	 pc2HyY1m7X1gZDrLSonteoxRMWPrg7RwvOkKcEJgi/fTEGOMeFqPe+AKHrnuCe2evj
+	 4+CGuNjEonQLrRuMQXHebM9/xLHR0V2qQ/ZRWoWxw6hWG9Q2EvGTPOkbjYC976JGta
+	 kmU7BYLOeu+jvgOx9uHuREM5azgdxWj5CcwgpT/+IY6xkW5/rRoQOEqIASs706Ky6i
+	 CHiKZp8kuCXww==
+Date: Tue, 4 Mar 2025 09:07:57 -0800
+From: Kees Cook <kees@kernel.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>, llvm@lists.linux.dev,
+	linux-kbuild@vger.kernel.org, David Gow <davidgow@google.com>,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] kbuild: clang: Support building UM with SUBARCH=i386
+Message-ID: <202503040842.1177A1F15B@keescook>
+References: <20250303215240.work.379-kees@kernel.org>
+ <05a25510-ab44-4eb1-a878-71e84c8aff0d@t-8ch.de>
+ <20250304102536.GB2529736@ax162>
+ <e1a1531d-6968-4ae8-a3b5-5ea0547ec4b3@t-8ch.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+-6iNyuQskVNjAuX1QcLTPetbfhogGYUTOA01QwNw9YcwAdNQ@mail.gmail.com>
+In-Reply-To: <e1a1531d-6968-4ae8-a3b5-5ea0547ec4b3@t-8ch.de>
 
-On Tue, Mar 04, 2025 at 11:55:05AM -0500, Jim Quinlan wrote:
-> On Tue, Mar 4, 2025 at 10:03 AM Manivannan Sadhasivam
-> <manivannan.sadhasivam@linaro.org> wrote:
-> >
-> > On Fri, Feb 14, 2025 at 12:39:32PM -0500, Jim Quinlan wrote:
-> > > If regulator_bulk_get() returns an error, no regulators are created and we
-> > > need to set their number to zero.  If we do not do this and the PCIe
-> > > link-up fails, regulator_bulk_free() will be invoked and effect a panic.
-> > >
-> > > Also print out the error value, as we cannot return an error upwards as
-> > > Linux will WARN on an error from add_bus().
-> > >
-> > > Fixes: 9e6be018b263 ("PCI: brcmstb: Enable child bus device regulators from DT")
-> > > Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
-> > > ---
-> > >  drivers/pci/controller/pcie-brcmstb.c | 3 ++-
-> > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
-> > > index e0b20f58c604..56b49d3cae19 100644
-> > > --- a/drivers/pci/controller/pcie-brcmstb.c
-> > > +++ b/drivers/pci/controller/pcie-brcmstb.c
-> > > @@ -1416,7 +1416,8 @@ static int brcm_pcie_add_bus(struct pci_bus *bus)
-> > >
-> > >               ret = regulator_bulk_get(dev, sr->num_supplies, sr->supplies);
-> > >               if (ret) {
-> > > -                     dev_info(dev, "No regulators for downstream device\n");
-> > > +                     dev_info(dev, "Did not get regulators; err=%d\n", ret);
-> >
-> > Why is this dev_info() instead of dev_err()?
+On Tue, Mar 04, 2025 at 03:51:19PM +0100, Thomas Wei�schuh wrote:
+> On 2025-03-04 11:25:36+0100, Nathan Chancellor wrote:
+> > On Mon, Mar 03, 2025 at 11:29:58PM +0100, Thomas Wei�schuh wrote:
+> > > On 2025-03-03 13:52:41-0800, Kees Cook wrote:
 > 
-> I will change this.
-> >
-> > > +                     pcie->sr = NULL;
-> >
-> > Why can't you set 'pcie->sr' after successfull regulator_bulk_get()?
+> <snip>
 > 
-> Not sure I understand -- it is already set before a  successful
-> regulator_bulk_get() call.
-
-Didn't I say 'after'?
-
-> I set it to NULL after an unsuccessful result so the structure will
-> not be passed to subsequent calls.
+> > > This is also what exists in tools/testing/selftests/lib.mk.
+> > > Minus the missing CONFIG_FORTIFY_SOURCE on clang x86_32
+> > > and a failure of overflow.DEFINE_FLEX_test (clang 19.1.7).
+> > 
+> > Does Kees's other patch resolve the second issue? It'll obviously fix
+> > the first :P
+> > 
+> > https://lore.kernel.org/20250303214929.work.499-kees@kernel.org/
 > 
+> No, it doesn't.
+> 
+> Running tests with:
+> $ .kunit/linux kunit.filter_glob=overflow.DEFINE_FLEX_test kunit.enable=1 mem=1G console=tty kunit_shutdown=halt
+> [15:48:30] =================== overflow (1 subtest) ===================
+> [15:48:30] # DEFINE_FLEX_test: EXPECTATION FAILED at lib/overflow_kunit.c:1200
+> [15:48:30] Expected __builtin_dynamic_object_size(two_but_zero, 0) == expected_raw_size, but
+> [15:48:30]     __builtin_dynamic_object_size(two_but_zero, 0) == 12 (0xc)
+> [15:48:30]     expected_raw_size == 8 (0x8)
+> [15:48:30] [FAILED] DEFINE_FLEX_test
+> [15:48:30] # module: overflow_kunit
+> [15:48:30] ==================== [FAILED] overflow =====================
+> [15:48:30] ============================================================
+> [15:48:30] Testing complete. Ran 1 tests: failed: 1
+> [15:48:31] Elapsed time: 43.985s total, 0.001s configuring, 43.818s building, 0.133s running
+> 
+> If I force CONFIG_CC_HAS_COUNTED_BY=n then the test succeeds.
+> Clang 19.1.7 from the Arch Linux repos.
 
-If you set the pointer after a successful regulator_bulk_get(), you do not need
-to set it to NULL for a failure.
+I wasn't seeing with Clang 20 from git:
+ClangBuiltLinux clang version 20.0.0git (git@github.com:llvm/llvm-project.git 72901fe19eb1e55d0ee1c380ab7a9f57d2f187c5)
 
-- Mani
+But I do see the error with ToT Clang:
+ClangBuiltLinux clang version 21.0.0git (git@github.com:llvm/llvm-project.git eee3db5421040cfc3eae6e92ed714650a6f741fa)
+
+Clang 17.1: (does not support counted_by)
+
+    # DEFINE_FLEX_test: missing counted_by
+    # DEFINE_FLEX_test: sizeof(two_but_zero): 8
+    # DEFINE_FLEX_test: __struct_size(two_but_zero): 12
+    # DEFINE_FLEX_test: __member_size(two_but_zero): 12
+    # DEFINE_FLEX_test: __member_size(two_but_zero->array): 4
+
+Clang 19.1.1: (actually is _does_ support counted_by, but Linux disables it)
+
+    # DEFINE_FLEX_test: missing counted_by
+    # DEFINE_FLEX_test: sizeof(two_but_zero): 8
+    # DEFINE_FLEX_test: __struct_size(two_but_zero): 12
+    # DEFINE_FLEX_test: __member_size(two_but_zero): 12
+    # DEFINE_FLEX_test: __member_size(two_but_zero->array): 4
+
+GCC 13.3:
+
+    # DEFINE_FLEX_test: missing counted_by
+    # DEFINE_FLEX_test: sizeof(two_but_zero): 8
+    # DEFINE_FLEX_test: __struct_size(two_but_zero): 12
+    # DEFINE_FLEX_test: __member_size(two_but_zero): 12
+    # DEFINE_FLEX_test: __member_size(two_but_zero->array): 4
+
+Clang 21 (ToT):
+
+    # DEFINE_FLEX_test: has counted_by
+    # DEFINE_FLEX_test: sizeof(two_but_zero): 8
+    # DEFINE_FLEX_test: __struct_size(two_but_zero): 12
+    # DEFINE_FLEX_test: __member_size(two_but_zero): 12
+    # DEFINE_FLEX_test: __member_size(two_but_zero->array): 0
+
+GCC 15 (ToT):
+
+    # DEFINE_FLEX_test: has counted_by
+    # DEFINE_FLEX_test: sizeof(two_but_zero): 8
+    # DEFINE_FLEX_test: __struct_size(two_but_zero): 12
+    # DEFINE_FLEX_test: __member_size(two_but_zero): 12
+    # DEFINE_FLEX_test: __member_size(two_but_zero->array): 0
+
+It seems like the on-stack sizes with __bdos all agree now, regardless
+of the used compiler features. It is only the array size calculation
+that now gets masked by counted_by. (i.e. the stack size is overridden
+by the zero "count" for the array elements.)
+
+I'll send a fix for the test...
 
 -- 
-மணிவண்ணன் சதாசிவம்
+Kees Cook
 
