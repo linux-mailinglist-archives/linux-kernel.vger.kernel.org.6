@@ -1,129 +1,107 @@
-Return-Path: <linux-kernel+bounces-543429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D133A4D577
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:56:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F289EA4D579
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:57:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A34B172FE0
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:56:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DCC5188D5EF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:57:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D38AF1F8916;
-	Tue,  4 Mar 2025 07:56:40 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 448DA1F891D;
+	Tue,  4 Mar 2025 07:57:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kxAjPqaR"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FFD51C84C9
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 07:56:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1838D1F8731
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 07:57:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741075000; cv=none; b=mbOJwRJdT2hJNbgWfWdU9zr5/vDJgAJ+rhb4H8JV/FdeXFsqKWmAc2iqi5oLKlTFejh6PQTuPFoRdoZAhFQyQma49dNUxfv6Lwc5bASaXcfQTK5dG9t0FA/cbW/Eim2zrIhxa+OMBI1AEshAgDGFMDCAYCphhcb8ftVdQSOtypk=
+	t=1741075027; cv=none; b=eUCQ8I03HZX5khtjWW1xCGydYvWJsw4BfkrsB8tLazwBRminf5FmqjzrxqgWDpaN1mpHYGFgJcf67q5Q8hkWVdtIWpHs2Drbt58EtIHr1mlISjgE2Y5TU1Bb2/E5+66ehqjsBulUixCnGoCexxbNnVZc9HEIM6Yqb1GMqZahDBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741075000; c=relaxed/simple;
-	bh=VMRBgjIDZdW/DUx7Nvq3Qj0k9aCWgrwl34GD0mz0AqI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V16Mm5U6wNLtjVec3NARf1P1u+zA8PL9pwTEAkuRgFieeth6wbWZDnho2xx3J4UXTZ9qJvLi+kLQaac4cqWue6I1bu9bEeAd4fSUsFno/V1xEaxRd4Io2+WVaTlrcOPMZGLqW17DK3lkR6vVjNr/YeQkezHylyieVajSI+N5+4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tpN8b-0003qJ-4c; Tue, 04 Mar 2025 08:56:25 +0100
-Message-ID: <4175faf6-1d41-4409-89db-dd902c966dd5@pengutronix.de>
-Date: Tue, 4 Mar 2025 08:56:23 +0100
+	s=arc-20240116; t=1741075027; c=relaxed/simple;
+	bh=sW335vmvtfvYEmaka21fFYN5MW1M94pNUFyg4zfSmOE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dLTwjJEzQzFJukkGdfPcTg07kxW9lgm0cxCz7zKNkcZr6J+l9sDEnCVJWtmiOsTWSR7RdIGWJmIPzG2wNnbyJBxN1NtuMdnrnuMH5uyN9VmpvTYc4qAPzNKqR1tacYx2H4775hF8Wz2yaOKnc7kVAlfAmnKmlZaN9nfYi/fScbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kxAjPqaR; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5494bc4d796so4716458e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 23:57:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741075023; x=1741679823; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sW335vmvtfvYEmaka21fFYN5MW1M94pNUFyg4zfSmOE=;
+        b=kxAjPqaRB0bbaHR0pCFRcRQD+t1TKYz5mPoVHxw5+9FSwf60nbz8bsr9YxqycKbd+R
+         JI8YCgTARUcfnyWg4LuHqHLE5jY7nNfaClBgNpuB2q3+2SogeS7GDs7CSo64qmp1f3jc
+         OdJWMXyz8dsu2C1I1WLdfzXWBULV1UpNYVrRPduFAQ5HLT3p1C3SeSU2lyxWaxWVaQIX
+         U8ZW06XawCeUxs6giW7Xbven1Tg6UeufXKuv97JJt/BKSwSrDiie0iNWGyxzaqGnneBC
+         TykUcAujZTXPC5/K7pf2vGZbqRq9n3o66WF3WYB6d2OIDte77Iob9fsHfk6m7neSwIZ5
+         SwqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741075023; x=1741679823;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sW335vmvtfvYEmaka21fFYN5MW1M94pNUFyg4zfSmOE=;
+        b=HgWndArWhuJk6wKN2cvJdtnpxcZXEn05TPrsCtoP6bp4W3le1bPwnWlu3YUwfnB8L6
+         SlJa/2ZxzUhhQtmt4RTSH+86Afk4xx09XGYJLMmP0B+LwFfaNJ0y8YtlTgbsw+/seyzM
+         Fz5oLR9P7fI+hZS0bV+tEmosr02s+oty6kuqMQ530EcPWCHesAyYEG6+f6/paZxfFwlY
+         3CqAX06wa50lQo1V9oPlrD2DXoKfgmNagV3SRI/Z73ZUNQXAmHDH7c6P3oQa250CBMJf
+         RRAd75ney4wwTNw2ucQzfh1aqRt1PGsMzqiT4t+Jzo7vZtDxFgH7uaLNg79nY//16qwL
+         m2ug==
+X-Forwarded-Encrypted: i=1; AJvYcCW9wUqOpTP4hBodcFjdcHzBuPGiMXS4ULgW4wVO6JFKNjgp1SJ4pky3Pa2nCaS3hKuUbCjElRo/cHbnbjM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAer3oQ0QbIOIyw6PdE77qGnqmvBZSTJ/tIwXa2+t9/aGZC67F
+	RGtExBbi9qPrEzOThJ5JDwOnEfcXAa8PraKl9/ya3uwI5zmeiDG8b21TfO0I3zZTvdN1qcwkRip
+	+7Oj8bG5KW/ETlhCQ2HBWhQkVjA+nhpkWeJoJLzb86OSh/Af+mgw=
+X-Gm-Gg: ASbGncvGHs6f3vcSeG0vzvVvWd3doHBMhSHrNcV3S4G/Ag2UwbM2uwnzrSp04fhai5G
+	NSa8Nrym+03KAv0R5EccHEIHOxkhhD6O3Rlmx19mDZAEO28oDrlyPvFeJohnCLc04VHyzD6M4WX
+	FWleYBRG+fIvGEnNFcYAJlqteYyA==
+X-Google-Smtp-Source: AGHT+IEC45SEMzq1znYQylPcN1bDBXravSrfHmPZ3iZfnPgxT5XNdRhy75iGuFWtpRBT6l+L7MEoL6EyvLtuAZmNlU0=
+X-Received: by 2002:a19:ca08:0:b0:549:55df:8af6 with SMTP id
+ 2adb3069b0e04-54955df8c86mr3865824e87.53.1741075023137; Mon, 03 Mar 2025
+ 23:57:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/6] arm64: dts: freescale: imx8mp-skov: switch to
- nominal drive mode
-To: Abel Vesa <abel.vesa@linaro.org>, Abel Vesa <abelvesa@kernel.org>,
- Shawn Guo <shawnguo@kernel.org>
-Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Peng Fan <peng.fan@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Frank Li <Frank.li@nxp.com>, Pengutronix Kernel Team
- <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
- Marek Vasut <marex@denx.de>
-References: <20250218-imx8m-clk-v4-0-b7697dc2dcd0@pengutronix.de>
- <174102306220.2928950.8878245519332562153.b4-ty@linaro.org>
- <Z8XnuIIfDFykrKH8@linaro.org>
-Content-Language: en-US
-From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-In-Reply-To: <Z8XnuIIfDFykrKH8@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <cover.1740745270.git.mazziesaccount@gmail.com> <50003ead72a41672ad25e90b7a273ce48f04c8c4.1740745270.git.mazziesaccount@gmail.com>
+In-Reply-To: <50003ead72a41672ad25e90b7a273ce48f04c8c4.1740745270.git.mazziesaccount@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 4 Mar 2025 08:56:51 +0100
+X-Gm-Features: AQ5f1Jod23brmYoB5KN0x6KAMbdCsgZ468CTcmxQ4fZ2A-aCMV_-agQInBIxzjM
+Message-ID: <CACRpkdZ=64sgZuyb9sEF6+kOVxPcBdiVvkGgQSio2wO3kpeChg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] gpio: Add a valid_mask getter
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Geert Uytterhoeven <geert@linux-m68k.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Abel,
-Hello Shawn,
+On Fri, Feb 28, 2025 at 1:35=E2=80=AFPM Matti Vaittinen
+<mazziesaccount@gmail.com> wrote:
 
-On 03.03.25 18:32, Abel Vesa wrote:
-> On 25-03-03 19:31:02, Abel Vesa wrote:
->>
->> On Tue, 18 Feb 2025 19:26:40 +0100, Ahmad Fatoum wrote:
->>> Unlike the i.MX8MM and i.MX8MN SoCs added earlier, the imx8mp.dtsi
->>> configures some clocks at frequencies that are only validated for
->>> overdrive mode, i.e., when VDD_SOC is 950 mV.
->>>
->>> For the Skov i.MX8MP board, we want to run the SoC at the lower voltage of
->>> 850 mV though to reduce heat generation and power usage. For this to work,
->>> clock rates need to adhere to the limits of the nominal drive mode.
->>>
->>> [...]
->>
->> Applied, thanks!
->>
->> [1/6] dt-bindings: clock: imx8m: document nominal/overdrive properties
->>       commit: d5992f1af1550a9e11e42cfa2ca1ad2a1b7fd7f3
->> [2/6] arm64: dts: imx8mp: Add optional nominal drive mode DTSI
->>       (no commit info)
->> [3/6] arm64: dts: imx8mp: add fsl,nominal-mode property into nominal.dtsi
->>       (no commit info)
->> [4/6] arm64: dts: freescale: imx8mp-skov: configure LDB clock automatically
->>       (no commit info)
->> [5/6] arm64: dts: freescale: imx8mp-skov: operate SoC in nominal mode
->>       (no commit info)
->> [6/6] clk: imx8mp: inform CCF of maximum frequency of clocks
->>       commit: 06a61b5cb6a8638fa8823cd09b17233b29696fa2
-> 
-> Applied only patches 1 and 6.
-> 
-> My b4 setup messed up. Sorry.
+> The valid_mask member of the struct gpio_chip is unconditionally written
+> by the GPIO core at driver registration. It shouldn't be directly
+> populated by drivers. This can be prevented by moving it from the struct
+> gpio_chip to struct gpio_device, which is internal to the GPIO core.
+>
+> As a preparatory step, provide a getter function which can be used by
+> those drivers which need the valid_mask information.
+>
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
 
-Thanks for applying, Abel!
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-@Shawn, could the remainder of the patches go through your tree?
-
-Thanks!
-Ahmad
-
-> 
->>
->> Best regards,
->> -- 
->> Abel Vesa <abel.vesa@linaro.org>
->>
-> 
-
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Yours,
+Linus Walleij
 
