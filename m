@@ -1,187 +1,990 @@
-Return-Path: <linux-kernel+bounces-543711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A568A4D8E5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:42:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E542BA4D913
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:47:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51F20173ADA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:40:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C1583B77C1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:41:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38ACE1FCFE3;
-	Tue,  4 Mar 2025 09:38:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44D1A1FF5E6;
+	Tue,  4 Mar 2025 09:39:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mv2yid4H"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="P10K3Ir4"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB9E1FCCF9;
-	Tue,  4 Mar 2025 09:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54A751FECCC
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 09:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741081085; cv=none; b=ffU7H35Xxh4hLQ8miQ/qmKK7DOTj0eOund5ZoidXIzdjD2Xy7AJxtsntSsdJsNOeqVdH8d5NZIZFOpfYDHAop7HMMZzDNnvZwp3eSQLQ8UUpe4/JaEFdyO8zjsqojvbe0qdNuJKNkNxRilbNKuDkrU/SPlE1Y+nMoTru+LbpPH0=
+	t=1741081183; cv=none; b=PlVdGAS+RqbJq3P1pkD3N71GAUptLsUjCJCeI0vR6LjU4I8vfLg55djorRPT+mMxw+qtXDBfnIKIW6xe+Feol5pIFczmiCdW5l1oXmny1032kLBEdkZG+vjGXnmkSXIVFtNDuU/cxAjZkmHL7IMPu+uGKKnHVBaIRQZgBwu7ZPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741081085; c=relaxed/simple;
-	bh=LZDM2xAdf8eJxQzX+hEwCpxB5UmW0nbXtrqKHsDEjI4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PLimxkvVMCGbQZMn2k3o2D563EjAUZ6cXoWfiw05pLDa8nrxlh2ktFgFWOfU2DfiUa1h2V3t0Hg2p1O/VC5pS2z3ok6WG2Pms2YGfMi90/+mQ5MMj7EQJIK+anPqMH0qGOkKRWkAEgGjsqKhGXO753hHQ2w7jyhFd719gTq8HhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mv2yid4H; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2f74e6c6cbcso1570583a91.2;
-        Tue, 04 Mar 2025 01:38:03 -0800 (PST)
+	s=arc-20240116; t=1741081183; c=relaxed/simple;
+	bh=2slm5m9BpKKXU+a/X36HfWUI+7ujXf9i4hlS78CPhAI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=NkdY3VR/dmqG6fPVIe21S5ISksf6Q5imvnsGNfVXEyMqYHtmPODVZLk8iEv68q3e2Fk6KvB8cZxTbSJgDX7diLs9tC48grSzM2kZL1EC2FCiCO/OPee7QHWbUnvQ2R8/twfKFfh+QRPgxlUJLdaxGEMQqFtWK4RdpoicAy9AfIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=P10K3Ir4; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-390dd35c78dso3470515f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 01:39:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741081083; x=1741685883; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fw0u9DHNsaXRy0ckcD1EnqQyVRFqJOyZfyZRJh2W6bE=;
-        b=Mv2yid4HwoxYK2vC+6fcq4KMWlBai00eRgIqYrjOzmQZvdAVvDGC0A1viz/SpqTCIx
-         Zq78rNXS0nrzwkBYu61rJ9yaO8KC7BnVd83igWmR6tYxJgYGFr/cNLC66SHIGeWIEmUJ
-         Nc5IfRGZVUesEFH90L9/uOJ0gauIkJAG4XjJwrcw2LRYaKWngXr+Ul0oEL134vr+eqxP
-         /EN94OBHrZRLmgGZCFAALmSFBqoe6bXsgDgS++E5OfxOP2UWosTpF2O30nx+BdfZDApg
-         rDzXfWukPGk2gDxkVBzBJ5ldINeFyNTCKUOiC0Zt57meDA/Y79nSPSEhSsiEA4/sCc8J
-         Zh5A==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1741081177; x=1741685977; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ppg79k4Nqs5dyhQk3VANLrHFFSUqyJzAJGv/n9su4ro=;
+        b=P10K3Ir4CfsfPjwhSzXhYgX1wVY7RRvKxTLmOU2bgugDxUQv7pJG5bl1do5eGT8wxM
+         UtoFVDZvLRkix/MmygJMQC469/vHOywLUoZ9Nu3c3NAiv0kqNd+nEcfco2tcG2XBYw5l
+         o6GHCaD56RhkL+ZR24gcCtiCOwC1da6DHkoJxsDzGx7cxcU94B5wd3WlsbpsIyfa9phq
+         O8XVEJa/ez8ISA+sG9lcjxkLeJ4doN+/XUYiEj7GcyOwna01E0jJs02iWLKEYZYFOnfD
+         HFeBc+7cJy5I0/Npf4CS5XtoH78NdRnOSrfvoadgtXZVB/n12JQkRXwdNlB9Dsd04R8Q
+         cCOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741081083; x=1741685883;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1741081177; x=1741685977;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fw0u9DHNsaXRy0ckcD1EnqQyVRFqJOyZfyZRJh2W6bE=;
-        b=vnQUBUB5B3oYJLCqVfSY+AzbxrVwPcciPTNm+7YYJ4rUSo2inIUk1zXo5BNlJQOAM7
-         fJiAY8w/155m/FB5NkyxDbWJVCZTbn+WnGp/hcrbY6cL+jQafmK/65U2gBbBu7oRE/GP
-         kTYfJgNlCe4206UnBOCUGxwCazmtkGtLlCc6D52uWDBAlFVplQogp6s0xZDWMTYjN4Ee
-         uxKmmx4l25t/RPCDTsgq2M4AikCHS6UfjOhKMS6j+z7aWK64JFhxFfGvnmSdNRrSMAZw
-         c2zxwOksUZ99gXLVUDetuTYR1CB9W606iFLOBM1H2gY59bYClsQ67gv3kP5yq3C33Pm0
-         MKFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUuhItoBnlKbSa8nu2HqE7bAEa3t2bucx2Jev9hyEBAhoUaEAnLBNCrWduwXFJ6TaYyEwV7mzQ0F/cBnT7KCg8=@vger.kernel.org, AJvYcCWohkwoH7ONe9LnlAOWqmdVrXcY+kEaACfoo1wQVgAZy0Zr5rstmqf7RrjCV44fyX/mqfcb5hUcN4E=@vger.kernel.org, AJvYcCXKikmF2KOQRsHT90uicHhf7JEiUfjGRegmqWvgUPowzQmRq1WmQknrsl9kKWABdC5mmWlHbgm8UfBJ0ghj@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDkDwifJYcojxUVPY5J3+CKbpTFJmrpknPyRodOC3eW8KJSJpt
-	7DdlN5wiCNjYOk6UCRTGfwqfVsvJEdflJLPIRnmwFSpLZx0QLwmqFO51Fkmexy9AQ90xlVDOIZk
-	C8WUWI4ozgKPdEb2BZbbA3ItEhOE=
-X-Gm-Gg: ASbGncuoXmiwUyp3R0L+YmODvgyjlzbU0F9dXdRWi71hqrY8+1NS+UlQBX3OMW1k4ul
-	9h2cuE2Zx6cPG+zr/ftjMJc2TkjTY3F7cZmdmeDaFCF8Pd8xWFA2Pr/rst4HW3gBye1MBq1GWxl
-	BF1EPMnw8MB/4YcSjSLCFkV3jsHQ==
-X-Google-Smtp-Source: AGHT+IH7Bt4TfFrukBmJaN9iZdzw8qUaCn0ZZrPGUaEOJ6zpYbPCR7KXCMN07QqTGVg/55EKEonT4z00pMvEFKFCBvI=
-X-Received: by 2002:a17:90b:2251:b0:2fb:f9de:9497 with SMTP id
- 98e67ed59e1d1-2febabf4096mr10283180a91.5.1741081083151; Tue, 04 Mar 2025
- 01:38:03 -0800 (PST)
+        bh=Ppg79k4Nqs5dyhQk3VANLrHFFSUqyJzAJGv/n9su4ro=;
+        b=tlCRjJyO3kH+jQeHjkHXVf+jpWSnUphU05n6kjh+NjkBO70RdGbsNuqQwldQLbb6Cy
+         Z/+yZrnwndXI6hjlU+opFDB7gW04If7qaE+BXVN2W9ccYOAvU9jHTzcF4qp/FAzH6vbT
+         ogPlK6LCSZ4c59daKBHMtB5FpuYenVo/n+WnVoBotjWOLAWa3H6UVVRTxOA4Z+IJnoEe
+         EJzE095sQDjXjKg4pp8KlXusWDxz/S46Tt79glmQlENtzq29BSAtReLbzRHBwNz05Lul
+         86B0Z6D/T09vca7mpCtENm7p1qG0cBVSdHqpATArXlHf0W9nGT8foNP51q5sm+vFkPKu
+         AZ5A==
+X-Forwarded-Encrypted: i=1; AJvYcCVIBlEburS19tPYXF0/CiLDq7+NXiMbXhAsA3wnX85j3JavBCZslv57AcYBfhzDHqIWua9ZF+AoCh+B4PA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVPva+gQ1DLyOa6BqgBCc8l9wHbSzwiRnDj6zG0Shg0tMrbTiZ
+	scehCbRn2gPZWSWwuIASDIenzGU+Mr1K0XjJQevy1eAmYyxABa1MVNLhuiegwsM=
+X-Gm-Gg: ASbGncuH3jNB4NQzEQWlrznxp79uzbDK5QpUIGO2Jh8axclhC9uXzdskiGCcN1YNMaP
+	W6I4mluAmIrQ6P1dQJIeyBWxa1htZCI17pf9RV89RexN14dK/0v5d16BoFISOW/hH4t/8tyaHvT
+	RtT3q/bglSBoHkQMBAf0E7PKap07LQe7OHgpbBJDVxoz2/VS5SST14nEiIvuq91nw9I9DMPPVTS
+	1EXnsG5PzKyYxbMrwY0EoR8F1TibSGtDgGIAZtX0Sdh5rA8legj4eQauWHHcKOJ/+u/1LPZ6uB3
+	Dpk6j2+s2A6sDDSvAMVCzz9KCGBAVPeX45WtJC2KlWf50te5L3ioziUFjfXDGHBQyrmRBDUBbWA
+	NVKqNlEEV8da/bsGUP3i2/zRGiJatbWpAZg==
+X-Google-Smtp-Source: AGHT+IGzrC2x+eW3lKqtmNmvxi8Yw3N0w0fNWe4dQJ5JNIqHcOKJwl/5wcjsaA+G0cvhyV2oDNb6Vg==
+X-Received: by 2002:a5d:47af:0:b0:390:df83:1f22 with SMTP id ffacd0b85a97d-39115627f82mr2195463f8f.25.1741081177460;
+        Tue, 04 Mar 2025 01:39:37 -0800 (PST)
+Received: from [10.2.5.157] (amontpellier-556-1-148-206.w109-210.abo.wanadoo.fr. [109.210.4.206])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b7ddesm17307844f8f.57.2025.03.04.01.39.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 01:39:36 -0800 (PST)
+From: Angelo Dureghello <adureghello@baylibre.com>
+Date: Tue, 04 Mar 2025 10:37:50 +0100
+Subject: [PATCH v2 1/2] iio: ad7380: add support for SPI offload
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1740995194.git.viresh.kumar@linaro.org> <023e3061cc164087b9079a9f6cb7e9fbf286794e.1740995194.git.viresh.kumar@linaro.org>
- <CANiq72kdWzFOZ39EoFNxEAbk4KYgzLi1OAEc1zn8BM07VpXy3g@mail.gmail.com> <20250304085351.inrvjgixvxla4yn3@vireshk-i7>
-In-Reply-To: <20250304085351.inrvjgixvxla4yn3@vireshk-i7>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 4 Mar 2025 10:37:50 +0100
-X-Gm-Features: AQ5f1JophVTgEU33y5Gpj9LnEQeCoGu_PJHR12L4h3Bfq4OIOIBgLsVVTzFMGiA
-Message-ID: <CANiq72=sU1sHvamC5REFPEC1aOVdZw9EKdxOgkUYESTR2yh3iQ@mail.gmail.com>
-Subject: Re: [PATCH V3 2/2] rust: Add initial clk abstractions
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Daniel Almeida <daniel.almeida@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250304-wip-bl-spi-offload-ad7380-v2-1-0fef61f2650a@baylibre.com>
+References: <20250304-wip-bl-spi-offload-ad7380-v2-0-0fef61f2650a@baylibre.com>
+In-Reply-To: <20250304-wip-bl-spi-offload-ad7380-v2-0-0fef61f2650a@baylibre.com>
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ David Lechner <dlechner@baylibre.com>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-doc@vger.kernel.org, Angelo Dureghello <adureghello@baylibre.com>
+X-Mailer: b4 0.14.2
 
-On Tue, Mar 4, 2025 at 9:53=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.or=
-g> wrote:
->
-> I have tried some improvements based on your (and Alice's comments), plea=
-se see
-> if it looks any better now.
+Add support for SPI offload to the ad7380 driver. SPI offload allows
+sampling data at the max sample rate (2MSPS with one SDO line).
 
-That looks much, much better, thanks!
+This is developed and tested against the ADI example FPGA design for
+this family of ADCs [1].
 
-> +/// Frequency unit.
-> +#[derive(Copy, Clone, PartialEq, Eq, Debug)]
-> +pub struct Hertz(c_ulong);
+[1]: http://analogdevicesinc.github.io/hdl/projects/ad738x_fmc/index.html
 
-Please add a quick example for this one, e.g. constructing it and
-comparing the value with an `assert_eq!` and another line comparing
-two different `Hertz` objects for instance. After all, this one we can
-even run it easily!
+Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+---
+ drivers/iio/adc/Kconfig  |   2 +
+ drivers/iio/adc/ad7380.c | 509 +++++++++++++++++++++++++++++++++++++++++++----
+ 2 files changed, 475 insertions(+), 36 deletions(-)
 
-> +/// This structure represents the Rust abstraction for a C [`struct clk`=
-].
+diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+index 27413516216cb3f83cf1d995b9ffc22bf01776a4..c528f4632c0ef6782269d8afa89c17d2046d28a3 100644
+--- a/drivers/iio/adc/Kconfig
++++ b/drivers/iio/adc/Kconfig
+@@ -218,7 +218,9 @@ config AD7298
+ config AD7380
+ 	tristate "Analog Devices AD7380 ADC driver"
+ 	depends on SPI_MASTER
++	select SPI_OFFLOAD
+ 	select IIO_BUFFER
++	select IIO_BUFFER_DMAENGINE
+ 	select IIO_TRIGGER
+ 	select IIO_TRIGGERED_BUFFER
+ 	help
+diff --git a/drivers/iio/adc/ad7380.c b/drivers/iio/adc/ad7380.c
+index f232ad1a49634baeedc655916bc7a967604a1206..39a5e55fa7e8a6706e15750d07fa4b0fda7175eb 100644
+--- a/drivers/iio/adc/ad7380.c
++++ b/drivers/iio/adc/ad7380.c
+@@ -15,6 +15,9 @@
+  * ad7386/7/8-4 : https://www.analog.com/media/en/technical-documentation/data-sheets/ad7386-4-7387-4-7388-4.pdf
+  * adaq4370-4 : https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4370-4.pdf
+  * adaq4380-4 : https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4380-4.pdf
++ *
++ * HDL ad738x_fmc: https://analogdevicesinc.github.io/hdl/projects/ad738x_fmc/index.html
++ *
+  */
+ 
+ #include <linux/align.h>
+@@ -29,11 +32,13 @@
+ #include <linux/regmap.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/slab.h>
++#include <linux/spi/offload/consumer.h>
+ #include <linux/spi/spi.h>
+ #include <linux/units.h>
+ #include <linux/util_macros.h>
+ 
+ #include <linux/iio/buffer.h>
++#include <linux/iio/buffer-dmaengine.h>
+ #include <linux/iio/events.h>
+ #include <linux/iio/iio.h>
+ #include <linux/iio/trigger_consumer.h>
+@@ -92,6 +97,12 @@
+ #define AD7380_NUM_SDO_LINES		1
+ #define AD7380_DEFAULT_GAIN_MILLI	1000
+ 
++/*
++ * Using SPI offload, storagebits is always 32, so can't be used to compute struct
++ * spi_transfer.len. Using realbits instead.
++ */
++#define AD7380_SPI_BYTES(scan_type)	((scan_type)->realbits > 16 ? 4 : 2)
++
+ struct ad7380_timing_specs {
+ 	const unsigned int t_csh_ns;	/* CS minimum high time */
+ };
+@@ -99,6 +110,7 @@ struct ad7380_timing_specs {
+ struct ad7380_chip_info {
+ 	const char *name;
+ 	const struct iio_chan_spec *channels;
++	const struct iio_chan_spec *offload_channels;
+ 	unsigned int num_channels;
+ 	unsigned int num_simult_channels;
+ 	bool has_hardware_gain;
+@@ -111,6 +123,7 @@ struct ad7380_chip_info {
+ 	unsigned int num_vcm_supplies;
+ 	const unsigned long *available_scan_masks;
+ 	const struct ad7380_timing_specs *timing_specs;
++	u32 max_conversion_rate_hz;
+ };
+ 
+ static const struct iio_event_spec ad7380_events[] = {
+@@ -216,6 +229,91 @@ static const struct iio_scan_type ad7380_scan_type_16_u[] = {
+ 	},
+ };
+ 
++/*
++ * Defining here scan types for offload mode, since with current available HDL
++ * only a value of 32 for storagebits is supported.
++ */
++
++/* Extended scan types for 12-bit unsigned chips, offload support. */
++static const struct iio_scan_type ad7380_scan_type_12_u_offload[] = {
++	[AD7380_SCAN_TYPE_NORMAL] = {
++		.sign = 'u',
++		.realbits = 12,
++		.storagebits = 32,
++		.endianness = IIO_CPU,
++	},
++	[AD7380_SCAN_TYPE_RESOLUTION_BOOST] = {
++		.sign = 'u',
++		.realbits = 14,
++		.storagebits = 32,
++		.endianness = IIO_CPU,
++	},
++};
++
++/* Extended scan types for 14-bit signed chips, offload support. */
++static const struct iio_scan_type ad7380_scan_type_14_s_offload[] = {
++	[AD7380_SCAN_TYPE_NORMAL] = {
++		.sign = 's',
++		.realbits = 14,
++		.storagebits = 32,
++		.endianness = IIO_CPU,
++	},
++	[AD7380_SCAN_TYPE_RESOLUTION_BOOST] = {
++		.sign = 's',
++		.realbits = 16,
++		.storagebits = 32,
++		.endianness = IIO_CPU,
++	},
++};
++
++/* Extended scan types for 14-bit unsigned chips, offload support. */
++static const struct iio_scan_type ad7380_scan_type_14_u_offload[] = {
++	[AD7380_SCAN_TYPE_NORMAL] = {
++		.sign = 'u',
++		.realbits = 14,
++		.storagebits = 32,
++		.endianness = IIO_CPU,
++	},
++	[AD7380_SCAN_TYPE_RESOLUTION_BOOST] = {
++		.sign = 'u',
++		.realbits = 16,
++		.storagebits = 32,
++		.endianness = IIO_CPU,
++	},
++};
++
++/* Extended scan types for 16-bit signed_chips, offload support. */
++static const struct iio_scan_type ad7380_scan_type_16_s_offload[] = {
++	[AD7380_SCAN_TYPE_NORMAL] = {
++		.sign = 's',
++		.realbits = 16,
++		.storagebits = 32,
++		.endianness = IIO_CPU,
++	},
++	[AD7380_SCAN_TYPE_RESOLUTION_BOOST] = {
++		.sign = 's',
++		.realbits = 18,
++		.storagebits = 32,
++		.endianness = IIO_CPU,
++	},
++};
++
++/* Extended scan types for 16-bit unsigned chips, offload support. */
++static const struct iio_scan_type ad7380_scan_type_16_u_offload[] = {
++	[AD7380_SCAN_TYPE_NORMAL] = {
++		.sign = 'u',
++		.realbits = 16,
++		.storagebits = 32,
++		.endianness = IIO_CPU,
++	},
++	[AD7380_SCAN_TYPE_RESOLUTION_BOOST] = {
++		.sign = 'u',
++		.realbits = 18,
++		.storagebits = 32,
++		.endianness = IIO_CPU,
++	},
++};
++
+ #define _AD7380_CHANNEL(index, bits, diff, sign, gain) {			\
+ 	.type = IIO_VOLTAGE,							\
+ 	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |				\
+@@ -237,48 +335,123 @@ static const struct iio_scan_type ad7380_scan_type_16_u[] = {
+ 	.num_event_specs = ARRAY_SIZE(ad7380_events),				\
+ }
+ 
++#define _AD7380_OFFLOAD_CHANNEL(index, bits, diff, sign, gain) {		\
++	.type = IIO_VOLTAGE,							\
++	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |                          \
++		((gain) ? BIT(IIO_CHAN_INFO_SCALE) : 0) |			\
++		((diff) ? 0 : BIT(IIO_CHAN_INFO_OFFSET)),			\
++	.info_mask_shared_by_type = ((gain) ? 0 : BIT(IIO_CHAN_INFO_SCALE)) |   \
++		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO) |				\
++		BIT(IIO_CHAN_INFO_SAMP_FREQ),					\
++	.info_mask_shared_by_type_available =					\
++		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO) |				\
++		BIT(IIO_CHAN_INFO_SAMP_FREQ),					\
++	.indexed = 1,                                                           \
++	.differential = (diff),                                                 \
++	.channel = (diff) ? (2 * (index)) : (index),                            \
++	.channel2 = (diff) ? (2 * (index) + 1) : 0,                             \
++	.scan_index = (index),                                                  \
++	.has_ext_scan_type = 1,                                                 \
++	.ext_scan_type = ad7380_scan_type_##bits##_##sign##_offload,            \
++	.num_ext_scan_type =                                                    \
++		ARRAY_SIZE(ad7380_scan_type_##bits##_##sign##_offload),		\
++	.event_spec = ad7380_events,                                            \
++	.num_event_specs = ARRAY_SIZE(ad7380_events),                           \
++}
++
++/*
++ * Notes on the offload channels:
++ * - There is no soft timestamp since everything is done in hardware.
++ * - There is a sampling frequency attribute added. This controls the SPI
++ *   offload trigger.
++ * - The storagebits value depends on the SPI offload provider. Currently there
++ *   is only one supported provider, namely the ADI PULSAR ADC HDL project,
++ *   which always uses 32-bit words for data values, even for <= 16-bit ADCs.
++ *   So the value is just hardcoded to 32 for now.
++ */
++
+ #define AD7380_CHANNEL(index, bits, diff, sign)		\
+ 	_AD7380_CHANNEL(index, bits, diff, sign, false)
+ 
+ #define ADAQ4380_CHANNEL(index, bits, diff, sign)	\
+ 	_AD7380_CHANNEL(index, bits, diff, sign, true)
+ 
+-#define DEFINE_AD7380_2_CHANNEL(name, bits, diff, sign)	\
++#define DEFINE_AD7380_2_CHANNEL(name, bits, diff, sign) \
++static const struct iio_chan_spec name[] = {	\
++	AD7380_CHANNEL(0, bits, diff, sign),	\
++	AD7380_CHANNEL(1, bits, diff, sign),	\
++	IIO_CHAN_SOFT_TIMESTAMP(2),		\
++}
++
++#define DEFINE_AD7380_4_CHANNEL(name, bits, diff, sign) \
++static const struct iio_chan_spec name[] = {	\
++	 AD7380_CHANNEL(0, bits, diff, sign),	\
++	 AD7380_CHANNEL(1, bits, diff, sign),	\
++	 AD7380_CHANNEL(2, bits, diff, sign),	\
++	 AD7380_CHANNEL(3, bits, diff, sign),	\
++	 IIO_CHAN_SOFT_TIMESTAMP(4),		\
++}
++
++#define DEFINE_ADAQ4380_4_CHANNEL(name, bits, diff, sign) \
++static const struct iio_chan_spec name[] = {	\
++	 ADAQ4380_CHANNEL(0, bits, diff, sign),	\
++	 ADAQ4380_CHANNEL(1, bits, diff, sign),	\
++	 ADAQ4380_CHANNEL(2, bits, diff, sign),	\
++	 ADAQ4380_CHANNEL(3, bits, diff, sign),	\
++	 IIO_CHAN_SOFT_TIMESTAMP(4),		\
++}
++
++#define DEFINE_AD7380_8_CHANNEL(name, bits, diff, sign) \
++static const struct iio_chan_spec name[] = {	\
++	 AD7380_CHANNEL(0, bits, diff, sign),	\
++	 AD7380_CHANNEL(1, bits, diff, sign),	\
++	 AD7380_CHANNEL(2, bits, diff, sign),	\
++	 AD7380_CHANNEL(3, bits, diff, sign),	\
++	 AD7380_CHANNEL(4, bits, diff, sign),	\
++	 AD7380_CHANNEL(5, bits, diff, sign),	\
++	 AD7380_CHANNEL(6, bits, diff, sign),	\
++	 AD7380_CHANNEL(7, bits, diff, sign),	\
++	 IIO_CHAN_SOFT_TIMESTAMP(8),		\
++}
++
++#define AD7380_OFFLOAD_CHANNEL(index, bits, diff, sign) \
++_AD7380_OFFLOAD_CHANNEL(index, bits, diff, sign, false)
++
++#define ADAQ4380_OFFLOAD_CHANNEL(index, bits, diff, sign) \
++_AD7380_OFFLOAD_CHANNEL(index, bits, diff, sign, true)
++
++#define DEFINE_AD7380_2_OFFLOAD_CHANNEL(name, bits, diff, sign) \
+ static const struct iio_chan_spec name[] = {		\
+-	AD7380_CHANNEL(0, bits, diff, sign),		\
+-	AD7380_CHANNEL(1, bits, diff, sign),		\
+-	IIO_CHAN_SOFT_TIMESTAMP(2),			\
++	AD7380_OFFLOAD_CHANNEL(0, bits, diff, sign),	\
++	AD7380_OFFLOAD_CHANNEL(1, bits, diff, sign),	\
+ }
+ 
+-#define DEFINE_AD7380_4_CHANNEL(name, bits, diff, sign)	\
++#define DEFINE_AD7380_4_OFFLOAD_CHANNEL(name, bits, diff, sign) \
+ static const struct iio_chan_spec name[] = {		\
+-	AD7380_CHANNEL(0, bits, diff, sign),		\
+-	AD7380_CHANNEL(1, bits, diff, sign),		\
+-	AD7380_CHANNEL(2, bits, diff, sign),		\
+-	AD7380_CHANNEL(3, bits, diff, sign),		\
+-	IIO_CHAN_SOFT_TIMESTAMP(4),			\
++	AD7380_OFFLOAD_CHANNEL(0, bits, diff, sign),	\
++	AD7380_OFFLOAD_CHANNEL(1, bits, diff, sign),	\
++	AD7380_OFFLOAD_CHANNEL(2, bits, diff, sign),	\
++	AD7380_OFFLOAD_CHANNEL(3, bits, diff, sign),	\
+ }
+ 
+-#define DEFINE_ADAQ4380_4_CHANNEL(name, bits, diff, sign)	\
+-static const struct iio_chan_spec name[] = {			\
+-	ADAQ4380_CHANNEL(0, bits, diff, sign),			\
+-	ADAQ4380_CHANNEL(1, bits, diff, sign),			\
+-	ADAQ4380_CHANNEL(2, bits, diff, sign),			\
+-	ADAQ4380_CHANNEL(3, bits, diff, sign),			\
+-	IIO_CHAN_SOFT_TIMESTAMP(4),				\
++#define DEFINE_ADAQ4380_4_OFFLOAD_CHANNEL(name, bits, diff, sign) \
++static const struct iio_chan_spec name[] = {		\
++	AD7380_OFFLOAD_CHANNEL(0, bits, diff, sign),	\
++	AD7380_OFFLOAD_CHANNEL(1, bits, diff, sign),	\
++	AD7380_OFFLOAD_CHANNEL(2, bits, diff, sign),	\
++	AD7380_OFFLOAD_CHANNEL(3, bits, diff, sign),	\
+ }
+ 
+-#define DEFINE_AD7380_8_CHANNEL(name, bits, diff, sign)	\
++#define DEFINE_AD7380_8_OFFLOAD_CHANNEL(name, bits, diff, sign) \
+ static const struct iio_chan_spec name[] = {		\
+-	AD7380_CHANNEL(0, bits, diff, sign),		\
+-	AD7380_CHANNEL(1, bits, diff, sign),		\
+-	AD7380_CHANNEL(2, bits, diff, sign),		\
+-	AD7380_CHANNEL(3, bits, diff, sign),		\
+-	AD7380_CHANNEL(4, bits, diff, sign),		\
+-	AD7380_CHANNEL(5, bits, diff, sign),		\
+-	AD7380_CHANNEL(6, bits, diff, sign),		\
+-	AD7380_CHANNEL(7, bits, diff, sign),		\
+-	IIO_CHAN_SOFT_TIMESTAMP(8),			\
++	AD7380_OFFLOAD_CHANNEL(0, bits, diff, sign),	\
++	AD7380_OFFLOAD_CHANNEL(1, bits, diff, sign),	\
++	AD7380_OFFLOAD_CHANNEL(2, bits, diff, sign),	\
++	AD7380_OFFLOAD_CHANNEL(3, bits, diff, sign),	\
++	AD7380_OFFLOAD_CHANNEL(4, bits, diff, sign),	\
++	AD7380_OFFLOAD_CHANNEL(5, bits, diff, sign),	\
++	AD7380_OFFLOAD_CHANNEL(6, bits, diff, sign),	\
++	AD7380_OFFLOAD_CHANNEL(7, bits, diff, sign),	\
+ }
+ 
+ /* fully differential */
+@@ -301,6 +474,27 @@ DEFINE_AD7380_8_CHANNEL(ad7386_4_channels, 16, 0, u);
+ DEFINE_AD7380_8_CHANNEL(ad7387_4_channels, 14, 0, u);
+ DEFINE_AD7380_8_CHANNEL(ad7388_4_channels, 12, 0, u);
+ 
++/* offload channels */
++DEFINE_AD7380_2_OFFLOAD_CHANNEL(ad7380_offload_channels, 16, 1, s);
++DEFINE_AD7380_2_OFFLOAD_CHANNEL(ad7381_offload_channels, 14, 1, s);
++DEFINE_AD7380_4_OFFLOAD_CHANNEL(ad7380_4_offload_channels, 16, 1, s);
++DEFINE_AD7380_4_OFFLOAD_CHANNEL(ad7381_4_offload_channels, 14, 1, s);
++DEFINE_ADAQ4380_4_OFFLOAD_CHANNEL(adaq4380_4_offload_channels, 16, 1, s);
++
++/* pseudo differential */
++DEFINE_AD7380_2_OFFLOAD_CHANNEL(ad7383_offload_channels, 16, 0, s);
++DEFINE_AD7380_2_OFFLOAD_CHANNEL(ad7384_offload_channels, 14, 0, s);
++DEFINE_AD7380_4_OFFLOAD_CHANNEL(ad7383_4_offload_channels, 16, 0, s);
++DEFINE_AD7380_4_OFFLOAD_CHANNEL(ad7384_4_offload_channels, 14, 0, s);
++
++/* Single ended */
++DEFINE_AD7380_4_OFFLOAD_CHANNEL(ad7386_offload_channels, 16, 0, u);
++DEFINE_AD7380_4_OFFLOAD_CHANNEL(ad7387_offload_channels, 14, 0, u);
++DEFINE_AD7380_4_OFFLOAD_CHANNEL(ad7388_offload_channels, 12, 0, u);
++DEFINE_AD7380_8_OFFLOAD_CHANNEL(ad7386_4_offload_channels, 16, 0, u);
++DEFINE_AD7380_8_OFFLOAD_CHANNEL(ad7387_4_offload_channels, 14, 0, u);
++DEFINE_AD7380_8_OFFLOAD_CHANNEL(ad7388_4_offload_channels, 12, 0, u);
++
+ static const char * const ad7380_supplies[] = {
+ 	"vcc", "vlogic",
+ };
+@@ -407,28 +601,33 @@ static const int ad7380_gains[] = {
+ static const struct ad7380_chip_info ad7380_chip_info = {
+ 	.name = "ad7380",
+ 	.channels = ad7380_channels,
++	.offload_channels = ad7380_offload_channels,
+ 	.num_channels = ARRAY_SIZE(ad7380_channels),
+ 	.num_simult_channels = 2,
+ 	.supplies = ad7380_supplies,
+ 	.num_supplies = ARRAY_SIZE(ad7380_supplies),
+ 	.available_scan_masks = ad7380_2_channel_scan_masks,
+ 	.timing_specs = &ad7380_timing,
++	.max_conversion_rate_hz = 4 * MEGA,
+ };
+ 
+ static const struct ad7380_chip_info ad7381_chip_info = {
+ 	.name = "ad7381",
+ 	.channels = ad7381_channels,
++	.offload_channels = ad7381_offload_channels,
+ 	.num_channels = ARRAY_SIZE(ad7381_channels),
+ 	.num_simult_channels = 2,
+ 	.supplies = ad7380_supplies,
+ 	.num_supplies = ARRAY_SIZE(ad7380_supplies),
+ 	.available_scan_masks = ad7380_2_channel_scan_masks,
+ 	.timing_specs = &ad7380_timing,
++	.max_conversion_rate_hz = 4 * MEGA,
+ };
+ 
+ static const struct ad7380_chip_info ad7383_chip_info = {
+ 	.name = "ad7383",
+ 	.channels = ad7383_channels,
++	.offload_channels = ad7383_offload_channels,
+ 	.num_channels = ARRAY_SIZE(ad7383_channels),
+ 	.num_simult_channels = 2,
+ 	.supplies = ad7380_supplies,
+@@ -437,11 +636,13 @@ static const struct ad7380_chip_info ad7383_chip_info = {
+ 	.num_vcm_supplies = ARRAY_SIZE(ad7380_2_channel_vcm_supplies),
+ 	.available_scan_masks = ad7380_2_channel_scan_masks,
+ 	.timing_specs = &ad7380_timing,
++	.max_conversion_rate_hz = 4 * MEGA,
+ };
+ 
+ static const struct ad7380_chip_info ad7384_chip_info = {
+ 	.name = "ad7384",
+ 	.channels = ad7384_channels,
++	.offload_channels = ad7384_offload_channels,
+ 	.num_channels = ARRAY_SIZE(ad7384_channels),
+ 	.num_simult_channels = 2,
+ 	.supplies = ad7380_supplies,
+@@ -450,11 +651,13 @@ static const struct ad7380_chip_info ad7384_chip_info = {
+ 	.num_vcm_supplies = ARRAY_SIZE(ad7380_2_channel_vcm_supplies),
+ 	.available_scan_masks = ad7380_2_channel_scan_masks,
+ 	.timing_specs = &ad7380_timing,
++	.max_conversion_rate_hz = 4 * MEGA,
+ };
+ 
+ static const struct ad7380_chip_info ad7386_chip_info = {
+ 	.name = "ad7386",
+ 	.channels = ad7386_channels,
++	.offload_channels = ad7386_offload_channels,
+ 	.num_channels = ARRAY_SIZE(ad7386_channels),
+ 	.num_simult_channels = 2,
+ 	.supplies = ad7380_supplies,
+@@ -462,11 +665,13 @@ static const struct ad7380_chip_info ad7386_chip_info = {
+ 	.has_mux = true,
+ 	.available_scan_masks = ad7380_2x2_channel_scan_masks,
+ 	.timing_specs = &ad7380_timing,
++	.max_conversion_rate_hz = 4 * MEGA,
+ };
+ 
+ static const struct ad7380_chip_info ad7387_chip_info = {
+ 	.name = "ad7387",
+ 	.channels = ad7387_channels,
++	.offload_channels = ad7387_offload_channels,
+ 	.num_channels = ARRAY_SIZE(ad7387_channels),
+ 	.num_simult_channels = 2,
+ 	.supplies = ad7380_supplies,
+@@ -474,11 +679,13 @@ static const struct ad7380_chip_info ad7387_chip_info = {
+ 	.has_mux = true,
+ 	.available_scan_masks = ad7380_2x2_channel_scan_masks,
+ 	.timing_specs = &ad7380_timing,
++	.max_conversion_rate_hz = 4 * MEGA,
+ };
+ 
+ static const struct ad7380_chip_info ad7388_chip_info = {
+ 	.name = "ad7388",
+ 	.channels = ad7388_channels,
++	.offload_channels = ad7388_offload_channels,
+ 	.num_channels = ARRAY_SIZE(ad7388_channels),
+ 	.num_simult_channels = 2,
+ 	.supplies = ad7380_supplies,
+@@ -486,11 +693,13 @@ static const struct ad7380_chip_info ad7388_chip_info = {
+ 	.has_mux = true,
+ 	.available_scan_masks = ad7380_2x2_channel_scan_masks,
+ 	.timing_specs = &ad7380_timing,
++	.max_conversion_rate_hz = 4 * MEGA,
+ };
+ 
+ static const struct ad7380_chip_info ad7380_4_chip_info = {
+ 	.name = "ad7380-4",
+ 	.channels = ad7380_4_channels,
++	.offload_channels = ad7380_4_offload_channels,
+ 	.num_channels = ARRAY_SIZE(ad7380_4_channels),
+ 	.num_simult_channels = 4,
+ 	.supplies = ad7380_supplies,
+@@ -498,22 +707,26 @@ static const struct ad7380_chip_info ad7380_4_chip_info = {
+ 	.external_ref_only = true,
+ 	.available_scan_masks = ad7380_4_channel_scan_masks,
+ 	.timing_specs = &ad7380_4_timing,
++	.max_conversion_rate_hz = 4 * MEGA,
+ };
+ 
+ static const struct ad7380_chip_info ad7381_4_chip_info = {
+ 	.name = "ad7381-4",
+ 	.channels = ad7381_4_channels,
++	.offload_channels = ad7381_4_offload_channels,
+ 	.num_channels = ARRAY_SIZE(ad7381_4_channels),
+ 	.num_simult_channels = 4,
+ 	.supplies = ad7380_supplies,
+ 	.num_supplies = ARRAY_SIZE(ad7380_supplies),
+ 	.available_scan_masks = ad7380_4_channel_scan_masks,
+ 	.timing_specs = &ad7380_4_timing,
++	.max_conversion_rate_hz = 4 * MEGA,
+ };
+ 
+ static const struct ad7380_chip_info ad7383_4_chip_info = {
+ 	.name = "ad7383-4",
+ 	.channels = ad7383_4_channels,
++	.offload_channels = ad7383_4_offload_channels,
+ 	.num_channels = ARRAY_SIZE(ad7383_4_channels),
+ 	.num_simult_channels = 4,
+ 	.supplies = ad7380_supplies,
+@@ -522,11 +735,13 @@ static const struct ad7380_chip_info ad7383_4_chip_info = {
+ 	.num_vcm_supplies = ARRAY_SIZE(ad7380_4_channel_vcm_supplies),
+ 	.available_scan_masks = ad7380_4_channel_scan_masks,
+ 	.timing_specs = &ad7380_4_timing,
++	.max_conversion_rate_hz = 4 * MEGA,
+ };
+ 
+ static const struct ad7380_chip_info ad7384_4_chip_info = {
+ 	.name = "ad7384-4",
+ 	.channels = ad7384_4_channels,
++	.offload_channels = ad7384_4_offload_channels,
+ 	.num_channels = ARRAY_SIZE(ad7384_4_channels),
+ 	.num_simult_channels = 4,
+ 	.supplies = ad7380_supplies,
+@@ -535,11 +750,13 @@ static const struct ad7380_chip_info ad7384_4_chip_info = {
+ 	.num_vcm_supplies = ARRAY_SIZE(ad7380_4_channel_vcm_supplies),
+ 	.available_scan_masks = ad7380_4_channel_scan_masks,
+ 	.timing_specs = &ad7380_4_timing,
++	.max_conversion_rate_hz = 4 * MEGA,
+ };
+ 
+ static const struct ad7380_chip_info ad7386_4_chip_info = {
+ 	.name = "ad7386-4",
+ 	.channels = ad7386_4_channels,
++	.offload_channels = ad7386_4_offload_channels,
+ 	.num_channels = ARRAY_SIZE(ad7386_4_channels),
+ 	.num_simult_channels = 4,
+ 	.supplies = ad7380_supplies,
+@@ -547,11 +764,13 @@ static const struct ad7380_chip_info ad7386_4_chip_info = {
+ 	.has_mux = true,
+ 	.available_scan_masks = ad7380_2x4_channel_scan_masks,
+ 	.timing_specs = &ad7380_4_timing,
++	.max_conversion_rate_hz = 4 * MEGA,
+ };
+ 
+ static const struct ad7380_chip_info ad7387_4_chip_info = {
+ 	.name = "ad7387-4",
+ 	.channels = ad7387_4_channels,
++	.offload_channels = ad7387_4_offload_channels,
+ 	.num_channels = ARRAY_SIZE(ad7387_4_channels),
+ 	.num_simult_channels = 4,
+ 	.supplies = ad7380_supplies,
+@@ -559,11 +778,13 @@ static const struct ad7380_chip_info ad7387_4_chip_info = {
+ 	.has_mux = true,
+ 	.available_scan_masks = ad7380_2x4_channel_scan_masks,
+ 	.timing_specs = &ad7380_4_timing,
++	.max_conversion_rate_hz = 4 * MEGA,
+ };
+ 
+ static const struct ad7380_chip_info ad7388_4_chip_info = {
+ 	.name = "ad7388-4",
+ 	.channels = ad7388_4_channels,
++	.offload_channels = ad7388_4_offload_channels,
+ 	.num_channels = ARRAY_SIZE(ad7388_4_channels),
+ 	.num_simult_channels = 4,
+ 	.supplies = ad7380_supplies,
+@@ -571,11 +792,13 @@ static const struct ad7380_chip_info ad7388_4_chip_info = {
+ 	.has_mux = true,
+ 	.available_scan_masks = ad7380_2x4_channel_scan_masks,
+ 	.timing_specs = &ad7380_4_timing,
++	.max_conversion_rate_hz = 4 * MEGA,
+ };
+ 
+ static const struct ad7380_chip_info adaq4370_4_chip_info = {
+ 	.name = "adaq4370-4",
+ 	.channels = adaq4380_4_channels,
++	.offload_channels = adaq4380_4_offload_channels,
+ 	.num_channels = ARRAY_SIZE(adaq4380_4_channels),
+ 	.num_simult_channels = 4,
+ 	.supplies = adaq4380_supplies,
+@@ -584,11 +807,13 @@ static const struct ad7380_chip_info adaq4370_4_chip_info = {
+ 	.has_hardware_gain = true,
+ 	.available_scan_masks = ad7380_4_channel_scan_masks,
+ 	.timing_specs = &ad7380_4_timing,
++	.max_conversion_rate_hz = 2 * MEGA,
+ };
+ 
+ static const struct ad7380_chip_info adaq4380_4_chip_info = {
+ 	.name = "adaq4380-4",
+ 	.channels = adaq4380_4_channels,
++	.offload_channels = adaq4380_4_offload_channels,
+ 	.num_channels = ARRAY_SIZE(adaq4380_4_channels),
+ 	.num_simult_channels = 4,
+ 	.supplies = adaq4380_supplies,
+@@ -597,6 +822,12 @@ static const struct ad7380_chip_info adaq4380_4_chip_info = {
+ 	.has_hardware_gain = true,
+ 	.available_scan_masks = ad7380_4_channel_scan_masks,
+ 	.timing_specs = &ad7380_4_timing,
++	.max_conversion_rate_hz = 4 * MEGA,
++};
++
++static const struct spi_offload_config ad7380_offload_config = {
++	.capability_flags = SPI_OFFLOAD_CAP_TRIGGER |
++			    SPI_OFFLOAD_CAP_RX_STREAM_DMA,
+ };
+ 
+ struct ad7380_state {
+@@ -614,6 +845,13 @@ struct ad7380_state {
+ 	struct spi_message normal_msg;
+ 	struct spi_transfer seq_xfer[4];
+ 	struct spi_message seq_msg;
++	struct spi_transfer offload_xfer;
++	struct spi_message offload_msg;
++	struct spi_offload *offload;
++	struct spi_offload_trigger *offload_trigger;
++	unsigned long offload_trigger_hz;
++
++	int sample_freq_range[3];
+ 	/*
+ 	 * DMA (thus cache coherency maintenance) requires the transfer buffers
+ 	 * to live in their own cache lines.
+@@ -833,7 +1071,7 @@ static int ad7380_update_xfers(struct ad7380_state *st,
+ 		xfer[2].bits_per_word = xfer[3].bits_per_word =
+ 			scan_type->realbits;
+ 		xfer[2].len = xfer[3].len =
+-			BITS_TO_BYTES(scan_type->storagebits) *
++			AD7380_SPI_BYTES(scan_type) *
+ 			st->chip_info->num_simult_channels;
+ 		xfer[3].rx_buf = xfer[2].rx_buf + xfer[2].len;
+ 		/* Additional delay required here when oversampling is enabled */
+@@ -846,13 +1084,139 @@ static int ad7380_update_xfers(struct ad7380_state *st,
+ 		xfer[0].delay.value = t_convert;
+ 		xfer[0].delay.unit = SPI_DELAY_UNIT_NSECS;
+ 		xfer[1].bits_per_word = scan_type->realbits;
+-		xfer[1].len = BITS_TO_BYTES(scan_type->storagebits) *
++		xfer[1].len = AD7380_SPI_BYTES(scan_type) *
+ 			st->chip_info->num_simult_channels;
+ 	}
+ 
+ 	return 0;
+ }
+ 
++static int ad7380_set_sample_freq(struct ad7380_state *st, int val)
++{
++	struct spi_offload_trigger_config config = {
++		.type = SPI_OFFLOAD_TRIGGER_PERIODIC,
++		.periodic = {
++			.frequency_hz = val,
++		},
++	};
++	int ret;
++
++	ret = spi_offload_trigger_validate(st->offload_trigger, &config);
++	if (ret)
++		return ret;
++
++	st->offload_trigger_hz = config.periodic.frequency_hz;
++
++	return 0;
++}
++
++static int ad7380_init_offload_msg(struct ad7380_state *st,
++				   struct iio_dev *indio_dev)
++{
++	struct spi_transfer *xfer = &st->offload_xfer;
++	struct device *dev = &st->spi->dev;
++	const struct iio_scan_type *scan_type;
++	int oversampling_ratio;
++	int ret;
++
++	scan_type = iio_get_current_scan_type(indio_dev,
++					      &indio_dev->channels[0]);
++	if (IS_ERR(scan_type))
++		return PTR_ERR(scan_type);
++
++	if (st->chip_info->has_mux) {
++		int index;
++
++		ret = iio_active_scan_mask_index(indio_dev);
++		if (ret < 0)
++			return ret;
++
++		index = ret;
++		if (index == AD7380_SCAN_MASK_SEQ) {
++			ret = regmap_set_bits(st->regmap, AD7380_REG_ADDR_CONFIG1,
++					      AD7380_CONFIG1_SEQ);
++			if (ret)
++				return ret;
++
++			st->seq = true;
++		} else {
++			ret = ad7380_set_ch(st, index);
++			if (ret)
++				return ret;
++		}
++	}
++
++	ret = ad7380_get_osr(st, &oversampling_ratio);
++	if (ret)
++		return ret;
++
++	xfer->bits_per_word = scan_type->realbits;
++	xfer->offload_flags = SPI_OFFLOAD_XFER_RX_STREAM;
++	xfer->len = AD7380_SPI_BYTES(scan_type) * st->chip_info->num_simult_channels;
++
++	spi_message_init_with_transfers(&st->offload_msg, xfer, 1);
++	st->offload_msg.offload = st->offload;
++
++	ret = spi_optimize_message(st->spi, &st->offload_msg);
++	if (ret) {
++		dev_err(dev, "failed to prepare offload msg, err: %d\n",
++			ret);
++		return ret;
++	}
++
++	return 0;
++}
++
++static int ad7380_offload_buffer_postenable(struct iio_dev *indio_dev)
++{
++	struct ad7380_state *st = iio_priv(indio_dev);
++	struct spi_offload_trigger_config config = {
++		.type = SPI_OFFLOAD_TRIGGER_PERIODIC,
++		.periodic = {
++			.frequency_hz = st->offload_trigger_hz,
++		},
++	};
++	int ret;
++
++	ret = ad7380_init_offload_msg(st, indio_dev);
++	if (ret)
++		return ret;
++
++	ret = spi_offload_trigger_enable(st->offload, st->offload_trigger, &config);
++	if (ret)
++		spi_unoptimize_message(&st->offload_msg);
++
++	return ret;
++}
++
++static int ad7380_offload_buffer_predisable(struct iio_dev *indio_dev)
++{
++	struct ad7380_state *st = iio_priv(indio_dev);
++	int ret;
++
++	if (st->seq) {
++		ret = regmap_update_bits(st->regmap,
++					 AD7380_REG_ADDR_CONFIG1,
++					 AD7380_CONFIG1_SEQ,
++					 FIELD_PREP(AD7380_CONFIG1_SEQ, 0));
++		if (ret)
++			return ret;
++
++		st->seq = false;
++	}
++
++	spi_offload_trigger_disable(st->offload, st->offload_trigger);
++
++	spi_unoptimize_message(&st->offload_msg);
++
++	return 0;
++}
++
++static const struct iio_buffer_setup_ops ad7380_offload_buffer_setup_ops = {
++	.postenable = ad7380_offload_buffer_postenable,
++	.predisable = ad7380_offload_buffer_predisable,
++};
++
+ static int ad7380_triggered_buffer_preenable(struct iio_dev *indio_dev)
+ {
+ 	struct ad7380_state *st = iio_priv(indio_dev);
+@@ -983,7 +1347,7 @@ static int ad7380_read_direct(struct ad7380_state *st, unsigned int scan_index,
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	if (scan_type->storagebits > 16) {
++	if (scan_type->realbits > 16) {
+ 		if (scan_type->sign == 's')
+ 			*val = sign_extend32(*(u32 *)(st->scan_data + 4 * index),
+ 					     scan_type->realbits - 1);
+@@ -1064,6 +1428,9 @@ static int ad7380_read_raw(struct iio_dev *indio_dev,
+ 		if (ret)
+ 			return ret;
+ 
++		return IIO_VAL_INT;
++	case IIO_CHAN_INFO_SAMP_FREQ:
++		*val = st->offload_trigger_hz;
+ 		return IIO_VAL_INT;
+ 	default:
+ 		return -EINVAL;
+@@ -1075,6 +1442,8 @@ static int ad7380_read_avail(struct iio_dev *indio_dev,
+ 			     const int **vals, int *type, int *length,
+ 			     long mask)
+ {
++	struct ad7380_state *st = iio_priv(indio_dev);
++
+ 	switch (mask) {
+ 	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
+ 		*vals = ad7380_oversampling_ratios;
+@@ -1082,6 +1451,10 @@ static int ad7380_read_avail(struct iio_dev *indio_dev,
+ 		*type = IIO_VAL_INT;
+ 
+ 		return IIO_AVAIL_LIST;
++	case IIO_CHAN_INFO_SAMP_FREQ:
++		*vals = st->sample_freq_range;
++		*type = IIO_VAL_INT;
++		return IIO_AVAIL_RANGE;
+ 	default:
+ 		return -EINVAL;
+ 	}
+@@ -1151,6 +1524,10 @@ static int ad7380_write_raw(struct iio_dev *indio_dev,
+ 	int ret;
+ 
+ 	switch (mask) {
++	case IIO_CHAN_INFO_SAMP_FREQ:
++		if (val < 1)
++			return -EINVAL;
++		return ad7380_set_sample_freq(st, val);
+ 	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
+ 		if (!iio_device_claim_direct(indio_dev))
+ 			return -EBUSY;
+@@ -1380,6 +1757,53 @@ static int ad7380_init(struct ad7380_state *st, bool external_ref_en)
+ 					     AD7380_NUM_SDO_LINES));
+ }
+ 
++static int ad7380_probe_spi_offload(struct iio_dev *indio_dev,
++				    struct ad7380_state *st)
++{
++	struct spi_device *spi = st->spi;
++	struct device *dev = &spi->dev;
++	struct dma_chan *rx_dma;
++	int sample_rate, ret;
++
++	indio_dev->setup_ops = &ad7380_offload_buffer_setup_ops;
++	indio_dev->channels = st->chip_info->offload_channels;
++	/* Just removing the timestamp channel. */
++	indio_dev->num_channels--;
++
++	st->offload_trigger = devm_spi_offload_trigger_get(dev, st->offload,
++		SPI_OFFLOAD_TRIGGER_PERIODIC);
++	if (IS_ERR(st->offload_trigger))
++		return dev_err_probe(dev, PTR_ERR(st->offload_trigger),
++				     "failed to get offload trigger\n");
++
++	sample_rate = st->chip_info->max_conversion_rate_hz *
++		      AD7380_NUM_SDO_LINES / st->chip_info->num_simult_channels;
++
++	st->sample_freq_range[0] = 1; /* min */
++	st->sample_freq_range[1] = 1; /* step */
++	st->sample_freq_range[2] = sample_rate; /* max */
++
++	/*
++	 * Starting with a quite low frequency, to allow oversampling x32,
++	 * user is then reponsible to adjust the frequency for the specific case.
++	 */
++	ret = ad7380_set_sample_freq(st, sample_rate / 32);
++	if (ret)
++		return ret;
++
++	rx_dma = devm_spi_offload_rx_stream_request_dma_chan(dev, st->offload);
++	if (IS_ERR(rx_dma))
++		return dev_err_probe(dev, PTR_ERR(rx_dma),
++				     "failed to get offload RX DMA\n");
++
++	ret = devm_iio_dmaengine_buffer_setup_with_handle(dev, indio_dev,
++		rx_dma, IIO_BUFFER_DIRECTION_IN);
++	if (ret)
++		return dev_err_probe(dev, ret, "cannot setup dma buffer\n");
++
++	return 0;
++}
++
+ static int ad7380_probe(struct spi_device *spi)
+ {
+ 	struct device *dev = &spi->dev;
+@@ -1551,12 +1975,24 @@ static int ad7380_probe(struct spi_device *spi)
+ 	indio_dev->modes = INDIO_DIRECT_MODE;
+ 	indio_dev->available_scan_masks = st->chip_info->available_scan_masks;
+ 
+-	ret = devm_iio_triggered_buffer_setup(dev, indio_dev,
+-					      iio_pollfunc_store_time,
+-					      ad7380_trigger_handler,
+-					      &ad7380_buffer_setup_ops);
+-	if (ret)
+-		return ret;
++	st->offload = devm_spi_offload_get(dev, spi, &ad7380_offload_config);
++	ret = PTR_ERR_OR_ZERO(st->offload);
++	if (ret && ret != -ENODEV)
++		return dev_err_probe(dev, ret, "failed to get offload\n");
++
++	/* If no SPI offload, fall back to low speed usage. */
++	if (ret == -ENODEV) {
++		ret = devm_iio_triggered_buffer_setup(dev, indio_dev,
++						      iio_pollfunc_store_time,
++						      ad7380_trigger_handler,
++						      &ad7380_buffer_setup_ops);
++		if (ret)
++			return ret;
++	} else {
++		ret = ad7380_probe_spi_offload(indio_dev, st);
++		if (ret)
++			return ret;
++	}
+ 
+ 	ret = ad7380_init(st, external_ref_en);
+ 	if (ret)
+@@ -1619,3 +2055,4 @@ module_spi_driver(ad7380_driver);
+ MODULE_AUTHOR("Stefan Popa <stefan.popa@analog.com>");
+ MODULE_DESCRIPTION("Analog Devices AD738x ADC driver");
+ MODULE_LICENSE("GPL");
++MODULE_IMPORT_NS("IIO_DMAENGINE_BUFFER");
 
-Nit: the usual style is e.g.:
+-- 
+2.48.1
 
-    /// An instance of a PHY device.
-    ///
-    /// Wraps the kernel's [`struct phy_device`].
-
-i.e. the first line does not need to say "This structure" ... "Rust
-abstraction" etc.
-
-> +/// Instances of this type are reference-counted. Calling `get` ensures =
-that the allocation remains
-
-Please use intra-doc links (also for `OptionalClk` etc.).
-
-> +/// ## Example
-
-Nit: plural (even if there is a single example).
-
-> +///     clk.disable_unprepare();
-
-Looking at the example, a question that one may have is: should we
-have something like a scope guard or a closure-passing API for this,
-or does it not make sense in general?
-
-> +    /// Enable the clock.
-> +    #[inline]
-> +    pub fn enable(&self) -> Result {
-
-Should the users of these methods consult the C API side for the
-comments/docs? e.g. should they read
-https://docs.kernel.org/driver-api/clk.html#locking?
-
-If so, please at least provide a link to the C API or the relevant
-docs. e.g. https://docs.kernel.org/core-api/kernel-api.html#c.clk_enable.
-Otherwise, if there is something there that should be mentioned here
-directly, please do so.
-
-In other words, in general, the goal is that you can find everything
-you need in the Rust docs, even if those docs may sometimes rely on a
-link there to the C side or a Doc/ document to avoid duplication. But
-the information or the way to find that information should be there,
-if that makes sense.
-
-> +        // SAFETY: It is safe to call clk APIs of the C code for a clock=
- pointer earlier returned
-> +        // by `clk_get()`.
-
-We should probably say why we know that, i.e. due to the invariant,
-unless I am missing something.
-
-By the way, in the constructor, you should add/use an `// INVARIANT:`
-comment (please grep to see how others do it).
-
-> +///     let expected_rate =3D Hertz::new(1_000_000_000);
-
-Would it be useful for users to have constructors for a few SI
-prefixes, e.g. `Hertz::from_giga`? I see some big constants used for
-e.g. `set_rate` in the C side, so I guess it could.
-
-On top of that, would any other kind of operation make sense? For
-instance, `.inverse()` to/from time or things like that -- we don't
-need to do any of this now, of course, but it may be worth taking a
-minute to investigate how we could improve the type now that we have
-it.
-
-Thanks!
-
-Cheers,
-Miguel
 
