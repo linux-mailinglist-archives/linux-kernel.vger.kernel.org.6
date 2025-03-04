@@ -1,105 +1,106 @@
-Return-Path: <linux-kernel+bounces-544158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE644A4DE09
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:34:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A044A4DE08
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:34:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1AA41898FC7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:34:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F8AD7A549A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:33:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA39F20370B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 710E8202F92;
 	Tue,  4 Mar 2025 12:34:02 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kp7FvLQj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2139B201110;
-	Tue,  4 Mar 2025 12:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D373C1FDE05
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 12:34:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741091642; cv=none; b=M7wIUfYe1kbe1cesvxX1zrOHV5SJYZr8ABD/JgtiEe5lAye1r/5oYDZk/+tMARfwFQHlDk3ahytW0FLeLtvBd1FXR8OTAFk+2ITplHP1en+YqxeOkflqTyLW64Jq8NhR4JnPD61LDz9677ob57+rgfVsQDBH2/Wy3Q45xwhLb/M=
+	t=1741091641; cv=none; b=GDi+swR3Sk8/NC/HoUJ3lgvQTdWThgl0eUptB85JZlyNorpcdI4xlHFaQw5FCfwznD26xG2IF1LMaHTmGvm8YMugDE6WXFfUnTE8WB6binUTLxEXG8/14y0WgLVUYrRw/I+clKo0TeVkHqvYi21f1kodysb5bT70XDyuD4JhM+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741091642; c=relaxed/simple;
-	bh=wZMrCzrBLmXDpRPE3xXhK917Wn3p73CuR6VacidG2gM=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=iX3v5S4r9MHqszgu/q0h5vAnibDGS1T1ufPCn1+QogQv4id5dU40aSjGcA0d7+WY+wTB3qo3ZKd1+36CjAr9+2VJcCW0Hr9YXTSrU3N0i/ckrNYCDZs9QZj3HV/LiWWVjEd2qDuBCNgKNEFx8y2rAPOvP4lw6QhOlR679kPxFvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Z6Znb2vybz1R63X;
-	Tue,  4 Mar 2025 20:32:19 +0800 (CST)
-Received: from kwepemg500006.china.huawei.com (unknown [7.202.181.43])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0F23E1A016C;
-	Tue,  4 Mar 2025 20:33:57 +0800 (CST)
-Received: from [10.67.121.110] (10.67.121.110) by
- kwepemg500006.china.huawei.com (7.202.181.43) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 4 Mar 2025 20:33:56 +0800
-Subject: Re: [PATCH v2 0/3] update live migration configuration region
-To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>,
-	"alex.williamson@redhat.com" <alex.williamson@redhat.com>, "jgg@nvidia.com"
-	<jgg@nvidia.com>, Jonathan Cameron <jonathan.cameron@huawei.com>
-CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linuxarm@openeuler.org" <linuxarm@openeuler.org>
-References: <20250304120528.63605-1-liulongfang@huawei.com>
- <0b5399e306f841b794120e6ca91c1edd@huawei.com>
-From: liulongfang <liulongfang@huawei.com>
-Message-ID: <bcc0f7bd-8e84-3f10-9985-91741c688fd8@huawei.com>
-Date: Tue, 4 Mar 2025 20:33:55 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1741091641; c=relaxed/simple;
+	bh=+Oq4qborciN3DUoZ8cclX0JGNzd0VTbYzFALe57YoB8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=JpWU4rJoC9Hg/R1wmyhkrx9uvt3bDmkc61yEzjEJ+E7rG5OS1v7/ZISSB+EP0IvDqiR8lVu6U/pfQRy0wLPncTRfHwGB6j8KZM/wfSqe0OiiSh6x0eLpnxt34SnMmPuoUy6WgoG2+yFyzHn1KpezDjpQo7KV3lVuAzq6gMZckfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kp7FvLQj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97FDDC4CEE5;
+	Tue,  4 Mar 2025 12:33:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741091641;
+	bh=+Oq4qborciN3DUoZ8cclX0JGNzd0VTbYzFALe57YoB8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=kp7FvLQjCHpKoC4yJGp5A0Z75h7ahSVZHdI7ezCoSQK4lPylNsVISWczDD4LMDWQo
+	 OjuZUerP9DyqG7uQKmKpSK0F2cB3tM6l0lMrDuzKlKAbUMMxnBsQliXdpGUDmkQLuP
+	 Oub/btjTWLBn+XOc2AI3WejQEXZBKi9mPc62hWDRuwqkninUAOx79vkyfKbegh+eke
+	 FxAnAiRoCCYVcv238BKwIrwNseCyNI20aSFCPbdYr8rv1zw+aJaRtjIoQ1/lTPzL9J
+	 09pTu7J3OULxC7IphGgdJmbYjUTAN9gH+EPqTHUQ4SBhhTKSfhf2gv8vruktadHhHF
+	 /Lvzrdam09usQ==
+From: Mark Brown <broonie@kernel.org>
+To: linux-arm-kernel@lists.infradead.org, 
+ Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, 
+ Frieder Schrempf <frieder@fris.de>
+Cc: Frieder Schrempf <frieder.schrempf@kontron.de>, 
+ Bo Liu <liubo03@inspur.com>, Frank Li <Frank.Li@nxp.com>, 
+ Joy Zou <joy.zou@nxp.com>, Robin Gong <yibin.gong@nxp.com>
+In-Reply-To: <20250303132258.50204-1-frieder@fris.de>
+References: <20250303132258.50204-1-frieder@fris.de>
+Subject: Re: [RESEND PATCH v3] regulator: pca9450: Handle hardware with
+ fixed SD_VSEL for LDO5
+Message-Id: <174109163933.26710.17795041039558652228.b4-ty@kernel.org>
+Date: Tue, 04 Mar 2025 12:33:59 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <0b5399e306f841b794120e6ca91c1edd@huawei.com>
-Content-Type: text/plain; charset="gbk"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemg500006.china.huawei.com (7.202.181.43)
+X-Mailer: b4 0.15-dev-1b0d6
 
-On 2025/3/4 20:26, Shameerali Kolothum Thodi wrote:
+On Mon, 03 Mar 2025 14:22:54 +0100, Frieder Schrempf wrote:
+> There are two ways to set the output voltage of the LD05
+> regulator. First by writing to the voltage selection registers
+> and second by toggling the SD_VSEL signal.
 > 
+> Usually board designers connect SD_VSEL to the VSELECT signal
+> controlled by the USDHC controller, but in some cases the
+> signal is hardwired to a fixed low level (therefore selecting
+> 3.3V as initial value for allowing to boot from the SD card).
 > 
->> -----Original Message-----
->> From: liulongfang <liulongfang@huawei.com>
->> Sent: Tuesday, March 4, 2025 12:05 PM
->> To: alex.williamson@redhat.com; jgg@nvidia.com; Shameerali Kolothum
->> Thodi <shameerali.kolothum.thodi@huawei.com>; Jonathan Cameron
->> <jonathan.cameron@huawei.com>
->> Cc: kvm@vger.kernel.org; linux-kernel@vger.kernel.org;
->> linuxarm@openeuler.org; liulongfang <liulongfang@huawei.com>
->> Subject: [PATCH v2 0/3] update live migration configuration region
->>
->> On the new hardware platform, the configuration register space
->> of the live migration function is set on the PF, while on the
->> old platform, this part is placed on the VF.
->>
->> Change v1 -> v2
->> 	Delete the vf_qm_state read operation in Pre_Copy
-> 
-> If I understand correctly, previously this was discussed in your bug fix series here,
-> https://lore.kernel.org/all/fa8cd8c1cdbe4849b445ffd8f4894515@huawei.com/
-> 
-> And why we are having it here in this new hardware support series now?
-> 
-> Could we please move all the existing bug fixes in one series and support for
-> new platform in another series, please.
-> 
-> Thanks,
-> Shameer
-> 
-> .
-> 
+> [...]
 
-OK, I'll separate it out and put it in the bugfix patchset
+Applied to
 
-Thanks.
-Longfang.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+
+Thanks!
+
+[1/1] regulator: pca9450: Handle hardware with fixed SD_VSEL for LDO5
+      commit: c8c1ab2c5cb797fe455aa18b4ab7bf39897627f6
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
