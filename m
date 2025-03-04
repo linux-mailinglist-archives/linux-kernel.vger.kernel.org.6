@@ -1,136 +1,177 @@
-Return-Path: <linux-kernel+bounces-543851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E27FA4DAB8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:34:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC480A4DAC7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:36:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A3127A689D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:33:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC9881886B28
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:36:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE90F1FECAA;
-	Tue,  4 Mar 2025 10:33:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 457F71FDE06;
+	Tue,  4 Mar 2025 10:36:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g197VdAA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ta7JD2Yp";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hTEqZD6j"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 487FD1FDE35;
-	Tue,  4 Mar 2025 10:33:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C5C217BEB6;
+	Tue,  4 Mar 2025 10:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741084427; cv=none; b=I36rbJLzOBPNew81pt5sKuktwaj/RVKwDjoaGRLBu429aI8lHPYW/7IJRj7Anfnt7MfjDRiV1m382sdi6UEaOnA+67orgdyGkmgjwb8BDOh+w2umo++Usxtcg4WkyXuUqwMUT2d0uLdf920tra9J5ULbN22wxketdaRVyZn/P30=
+	t=1741084585; cv=none; b=Hqh3MikSRrCgwFjf8tQ4uEADL2bb6ZWAbiq/0dqiEDaabnaKLO3JFKSHYLmMhEZlwzYvFEyqHzea4uS97f1bZyny/ItTuKc9dg29ahN5LM+zzoRYT+ES3PbJjVPqH/8TtCm/Kp11tJUA5QK4xWCWfuY7adFZcBSt8F/1iQBSAHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741084427; c=relaxed/simple;
-	bh=oxfH1b29Jy5NXagTLRaZznTNYVx5Cxlh0iPVEkxx5ts=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TWjLuQImEMa3MCAB7q54e/8QI+GlUW2fZgtB/hW2hxB49Ugaj0mw3k6P9QNTG9iOw4K7/fYfnXiYnCN0o/2BLSy0Im4dDoSjraoUNjIPaSdcNT0D4eSCAXNbajfA1WtTWcoQRYU4lAKkPJbDMljLIZi9jOQOxEzo+cg6G8gPk78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g197VdAA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4778CC4CEE5;
-	Tue,  4 Mar 2025 10:33:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741084426;
-	bh=oxfH1b29Jy5NXagTLRaZznTNYVx5Cxlh0iPVEkxx5ts=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=g197VdAAYYTjRZKbfgFXGAvD7HV6HNzMZEtn3V+Uq4SVwSAu9q4joTn3fDjaC/4gZ
-	 QAa69KyTC+qhSiCefQwEw77zkBzKMYQZ2XrDeqoyckA5Yj6EBSlwYSy0QPSGJ25pl2
-	 Xad8txPvgBLyyShLVUlmx32yUvyahXcY+qT+fLX4p6dqpJgPLVLaUBI4WG+1DKWIaT
-	 NNq3ao2mEHd5kXSwhDKQdVJ9AhBRwiMysYB6umTjCWmB6btNVBdvsgvKFdCGQ3iH6A
-	 NDoDcGk++yJPE8OgUK1Lhdc85EUR6zIN7c9rRUS6bCZVz48MHivhnM+Nj7xGvLLUUQ
-	 UharaEHU2clxw==
-Date: Tue, 4 Mar 2025 11:33:44 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
-	maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch
-Subject: Re: [PATCH 1/5] dt-bindings: display: Document DPI color codings
-Message-ID: <20250304-deer-of-striking-pride-ff6e86@houat>
-References: <20250304101530.969920-1-victor.liu@nxp.com>
- <20250304101530.969920-2-victor.liu@nxp.com>
+	s=arc-20240116; t=1741084585; c=relaxed/simple;
+	bh=atwoKtjkq39Lgnl8VEtxY1WBRWYaCILXQ7NGoX3pOHg=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=ms3uexXc+f/RN/u7xXHcdw+uFO+W/fRKsl33m0CRX9LyKSwrPKN9RHEx/or+9uXvULGCEU2i3B2saB7jhw5lRBzpDEm7vrIAE7z+1T2BMssqyragCn1kq1toHVk2GRghRVHMteG30fVybziIXcmsKzey4q/svHkP7UOhGDeoXkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ta7JD2Yp; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hTEqZD6j; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 04 Mar 2025 10:36:21 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741084582;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cH3JP62yPqm7RPjKRzc6b5ZqKoctRZls6XQawQpr3K4=;
+	b=ta7JD2YpJECvAk4KlrIBkqIF8TGKooohyJCDXnZDGMru5k2n82kVBhLVl3EbkabPkGNpyW
+	wtwDFHoiD3UXEF+Glcuk0CcZoUot5YLRY/MqgjmDP8ealvngbaKIUT84J5e0AD4w4T1cIc
+	WpgJMa4TM5rURMvcygLWAGAWU2+p7vV7/Wd6w6MYwfV44mXQDnHDoGQWd4VQ/5NbKlePlT
+	vD1jpeZ/GmjRLRrNG8uIPq0WLEjN6USZwhZ/vlcPZdLXBeAglpF9qU6Tly5ETKeAadtSS8
+	B4/IBCl6/lNZLf5p1hEn9C3qWXdU9GxEiH8vkWfCwHBOcJQ4yEcYWHruX8kUGw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741084582;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cH3JP62yPqm7RPjKRzc6b5ZqKoctRZls6XQawQpr3K4=;
+	b=hTEqZD6jLCDv9L3XfIUU9SKcZd7IO5G2f0VZ7+D2LjZpuNkkDrGofPzDSk8hNRgXISNHta
+	0Zb28OWHH1BctLAA==
+From: "tip-bot2 for Uros Bizjak" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/asm] x86/irq/32: Change some static functions to bool
+Cc: Uros Bizjak <ubizjak@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+ Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250303155446.112769-5-ubizjak@gmail.com>
+References: <20250303155446.112769-5-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="cj2zylo7nvilgql5"
-Content-Disposition: inline
-In-Reply-To: <20250304101530.969920-2-victor.liu@nxp.com>
+Message-ID: <174108458127.14745.15826467197695209761.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
+The following commit has been merged into the x86/asm branch of tip:
 
---cj2zylo7nvilgql5
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 1/5] dt-bindings: display: Document DPI color codings
-MIME-Version: 1.0
+Commit-ID:     7b52de3a2811bf16f52b895478920113e1b39878
+Gitweb:        https://git.kernel.org/tip/7b52de3a2811bf16f52b895478920113e1b39878
+Author:        Uros Bizjak <ubizjak@gmail.com>
+AuthorDate:    Mon, 03 Mar 2025 16:54:25 +01:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Tue, 04 Mar 2025 11:21:40 +01:00
 
-On Tue, Mar 04, 2025 at 06:15:26PM +0800, Liu Ying wrote:
-> Document DPI color codings according to MIPI Alliance Standard for
-> Display Pixel Interface(DPI-2) Version 2.00(15 September 2005).
->=20
-> Signed-off-by: Liu Ying <victor.liu@nxp.com>
-> ---
->  .../bindings/display/dpi-color-coding.yaml    | 90 +++++++++++++++++++
->  1 file changed, 90 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/dpi-color-c=
-oding.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/display/dpi-color-coding.y=
-aml b/Documentation/devicetree/bindings/display/dpi-color-coding.yaml
-> new file mode 100644
-> index 000000000000..6430d6f1ddd1
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/dpi-color-coding.yaml
-> @@ -0,0 +1,90 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/dpi-color-coding.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: MIPI DPI Interface Color Coding
-> +
-> +maintainers:
-> +  - Liu Ying <victor.liu@nxp.com>
-> +
-> +description:
-> +  MIPI Alliance Standard for Display Pixel Interface(DPI-2) Version 2.00=
-(15
-> +  September 2005) specifies color codings at the DPI interface.
-> +
-> +properties:
-> +  dpi-color-coding:
-> +    enum:
-> +      - 16bit-configuration1
-> +      - 16bit-configuration2
-> +      - 16bit-configuration3
-> +      - 18bit-configuration1
-> +      - 18bit-configuration2
-> +      - 24bit
+x86/irq/32: Change some static functions to bool
 
-Do we really needs strings there? It would be much better to use an int
-plus a header
+The return values of these functions is 0/1, but they use an int
+type instead of bool:
 
-Maxime
+  check_stack_overflow()
+  execute_on_irq_stack()
 
---cj2zylo7nvilgql5
-Content-Type: application/pgp-signature; name="signature.asc"
+Change the type of these function to bool and adjust their return
+values and affected helper variables.
 
------BEGIN PGP SIGNATURE-----
+[ mingo: Rewrote the changelog ]
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ8bXBwAKCRAnX84Zoj2+
-dt1IAX9V1mlAI1Gl75oEmrf11qBXqppa8x3GWIJnJLuNlT9ukdKeaLCrQX1wn479
-eHm4Ol4BegL0L7cndLVYuxBHxQPptolpuxW4+J/3gbKcG28DPUVdqmmu2icZfev0
-HafXHYBLEg==
-=Pg8P
------END PGP SIGNATURE-----
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: https://lore.kernel.org/r/20250303155446.112769-5-ubizjak@gmail.com
+---
+ arch/x86/kernel/irq_32.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
---cj2zylo7nvilgql5--
+diff --git a/arch/x86/kernel/irq_32.c b/arch/x86/kernel/irq_32.c
+index 2428d66..566a93d 100644
+--- a/arch/x86/kernel/irq_32.c
++++ b/arch/x86/kernel/irq_32.c
+@@ -29,7 +29,7 @@
+ int sysctl_panic_on_stackoverflow __read_mostly;
+ 
+ /* Debugging check for stack overflow: is there less than 1KB free? */
+-static int check_stack_overflow(void)
++static bool check_stack_overflow(void)
+ {
+ 	unsigned long sp = current_stack_pointer & (THREAD_SIZE - 1);
+ 
+@@ -45,7 +45,7 @@ static void print_stack_overflow(void)
+ }
+ 
+ #else
+-static inline int check_stack_overflow(void) { return 0; }
++static inline bool check_stack_overflow(void) { return false; }
+ static inline void print_stack_overflow(void) { }
+ #endif
+ 
+@@ -65,7 +65,7 @@ static inline void *current_stack(void)
+ 	return (void *)(current_stack_pointer & ~(THREAD_SIZE - 1));
+ }
+ 
+-static inline int execute_on_irq_stack(int overflow, struct irq_desc *desc)
++static inline bool execute_on_irq_stack(bool overflow, struct irq_desc *desc)
+ {
+ 	struct irq_stack *curstk, *irqstk;
+ 	u32 *isp, *prev_esp;
+@@ -80,7 +80,7 @@ static inline int execute_on_irq_stack(int overflow, struct irq_desc *desc)
+ 	 * current stack (which is the irq stack already after all)
+ 	 */
+ 	if (unlikely(curstk == irqstk))
+-		return 0;
++		return false;
+ 
+ 	isp = (u32 *) ((char *)irqstk + sizeof(*irqstk));
+ 
+@@ -98,7 +98,7 @@ static inline int execute_on_irq_stack(int overflow, struct irq_desc *desc)
+ 		     : [thunk_target] "D" (desc->handle_irq)
+ 		       COMMA(ASM_CALL_CONSTRAINT)
+ 		     : "memory", "cc", "edx", "ecx");
+-	return 1;
++	return true;
+ }
+ 
+ /*
+@@ -147,7 +147,7 @@ void do_softirq_own_stack(void)
+ 
+ void __handle_irq(struct irq_desc *desc, struct pt_regs *regs)
+ {
+-	int overflow = check_stack_overflow();
++	bool overflow = check_stack_overflow();
+ 
+ 	if (user_mode(regs) || !execute_on_irq_stack(overflow, desc)) {
+ 		if (unlikely(overflow))
 
