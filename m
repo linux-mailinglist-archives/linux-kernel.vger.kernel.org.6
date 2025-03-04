@@ -1,85 +1,118 @@
-Return-Path: <linux-kernel+bounces-543380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E03F9A4D4E2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:36:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 898A0A4D4E4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:36:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E0451890AFB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:36:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C2AE16DCF4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:36:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74FDE1F76C2;
-	Tue,  4 Mar 2025 07:35:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lgot1MhF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA39BAD24;
-	Tue,  4 Mar 2025 07:35:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4957B1F7914;
+	Tue,  4 Mar 2025 07:36:17 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B61D8AD24;
+	Tue,  4 Mar 2025 07:36:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741073756; cv=none; b=nUoQoWB6AZ4rNUczs9viDBCZZRYrnQ+6LoTqbiTORrXo7yBkWKmoKPQkqGNsLYbdK0yIM+P6JN4m/0Ns6twncaLF2vryUsRSA09IAle5JkGSn9sx9svkIo/Fgj7+llVTqPZDUNxgNmMT3DTakCqK0c6oCqVZjlPW0RknBm0IEu0=
+	t=1741073776; cv=none; b=FROmnqDnC3Mv/u1RKbUXZTf5Ewkus/iFskDVgJIPiBNhBgT8LGrjxkNvajij4I+i7T6Qoe4/T9CaUp+UvkXZEgecT/AUizJKE/lK6hJJTgzc4JDYiu9/f/hyqMG1p3xubEgiJz0UZ66FmCiF9lEtAGrbS5QE65M/fX+AFscxBd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741073756; c=relaxed/simple;
-	bh=Vt14l9x1ynHXlzYwcGCpTZXEItD0wcqiGeVk9WPAuMM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UWIbH+/M6/JE6WhI91c5CDe/7IaJc+kpeJqgPJTpKznBd2AV0L+VW/jxxzQH5ClXFsiXPsYQk2EZJAox/FVYmkDbz+cixDQODr3lns1IEHPr6b8El6I9XqBprPhUOZTe64Akq1nRC7muC5ajZCFJp3QIo6CA1Tf9fNeqL2OZg24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lgot1MhF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B243C4CEE5;
-	Tue,  4 Mar 2025 07:35:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741073756;
-	bh=Vt14l9x1ynHXlzYwcGCpTZXEItD0wcqiGeVk9WPAuMM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lgot1MhF4OaA2vFC5slzJpCRF3ny1IzyKoAdOZgkun6IDVUpcN4CLnLp94l+utSIP
-	 mMTZQuWmefu1UYA2XIKrF/fuuoHsXPHnoY0wuariH2pZEXUUF08y0RFJEUC7iojkHm
-	 hGdusOMZJ2jDchmGw25+tPIFGRzBrHit2lzkKuj2/osHHRS/NbE+8DlpZ1GOY4eljz
-	 ObRG+kq+phNRsQmMk75Z0jQmmL60a1NrKgzY/vjYAg3jemU0XLxFie3fIWQQSrWQFD
-	 s2XHli1sSFjKm2b8Omlq4JYBKel2uPdyg3SvjaaR26vdzw9rhvmG65/Zp1BRZuNtEd
-	 /EeKgIGHJwNNw==
-Date: Tue, 4 Mar 2025 08:35:52 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Artur Weber <aweber.kernel@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alex Elder <elder@kernel.org>, Stanislav Jakubek <stano.jakubek@gmail.com>, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH v2 1/7] dt-bindings: clock: brcm,kona-ccu: Add BCM21664
- bus clocks
-Message-ID: <20250304-squid-of-exotic-variation-f5b19d@krzk-bin>
-References: <20250303-kona-bus-clock-v2-0-a363c6a6b798@gmail.com>
- <20250303-kona-bus-clock-v2-1-a363c6a6b798@gmail.com>
+	s=arc-20240116; t=1741073776; c=relaxed/simple;
+	bh=+arvS/JkffmbPGhBrismVkgnXmugqIQR5d/MKbkIMJQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jisZ0V9nzku5CUaqk8g2Nx4r9AJimJEGjLQOb/ChPpyvFwVzjuL9z+mvDR182lBo7u7EywQp4+AvntnmDGtR73zl1ZUDi19sOi6Hm8B4bS/WmS/uJE2nFc5UaoKx/ImLQYXTgqGmlp/g5M7xBMqGFZC3/R7YKOpUfoKGpBskuOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [223.64.120.242])
+	by gateway (Coremail) with SMTP id _____8DxWOFprcZnUuWJAA--.39093S3;
+	Tue, 04 Mar 2025 15:36:09 +0800 (CST)
+Received: from localhost.localdomain (unknown [223.64.120.242])
+	by front1 (Coremail) with SMTP id qMiowMBxn8VcrcZnyS01AA--.1378S2;
+	Tue, 04 Mar 2025 15:36:03 +0800 (CST)
+From: WANG Rui <wangrui@loongson.cn>
+To: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Huacai Chen <chenhuacai@kernel.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	loongson-kernel@lists.loongnix.cn,
+	WANG Rui <wangrui@loongson.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH] rust: Fix enabling Rust and building with GCC for LoongArch
+Date: Tue,  4 Mar 2025 15:35:54 +0800
+Message-ID: <20250304073554.20869-1-wangrui@loongson.cn>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250303-kona-bus-clock-v2-1-a363c6a6b798@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMBxn8VcrcZnyS01AA--.1378S2
+X-CM-SenderInfo: pzdqw2txl6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7Zr13Gw43CFyUCryDWr1rGrX_yoW8Wr15pa
+	na9wn7GrWUArWrKw1kAr45Xa129asYg3yDuFy7Jw17KrWFkry7XFZayFZxJrW5CF15Crya
+	gr18CF9FkF4UCwbCm3ZEXasCq-sJn29KB7ZKAUJUUUUD529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUB0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
+	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1q6rW5
+	McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr4
+	1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_
+	Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67
+	AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8I
+	cVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI
+	8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v2
+	6r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU2pVbDUUUU
 
-On Mon, Mar 03, 2025 at 09:27:49PM +0100, Artur Weber wrote:
-> diff --git a/include/dt-bindings/clock/bcm21664.h b/include/dt-bindings/clock/bcm21664.h
-> index 7c7492742f3d4ca439236f2f352e432989409570..8d3e3796c72b02eace84dfb90d6264dee0297a33 100644
-> --- a/include/dt-bindings/clock/bcm21664.h
-> +++ b/include/dt-bindings/clock/bcm21664.h
-> @@ -26,7 +26,8 @@
->  /* aon CCU clock ids */
->  
->  #define BCM21664_AON_CCU_HUB_TIMER		0
-> -#define BCM21664_AON_CCU_CLOCK_COUNT		1
+This patch fixes a build issue on LoongArch when Rust is enabled and
+compiled with GCC by explicitly setting the bindgen target and skipping
+C flags that Clang doesn't support.
 
-Same comment as other patch - this cannot change or it is not an ABI.
+Cc: stable@vger.kernel.org
+Signed-off-by: WANG Rui <wangrui@loongson.cn>
+---
+ rust/Makefile | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Best regards,
-Krzysztof
+diff --git a/rust/Makefile b/rust/Makefile
+index ea3849eb78f6..2c57c624fe7d 100644
+--- a/rust/Makefile
++++ b/rust/Makefile
+@@ -232,7 +232,8 @@ bindgen_skip_c_flags := -mno-fp-ret-in-387 -mpreferred-stack-boundary=% \
+ 	-mfunction-return=thunk-extern -mrecord-mcount -mabi=lp64 \
+ 	-mindirect-branch-cs-prefix -mstack-protector-guard% -mtraceback=no \
+ 	-mno-pointers-to-nested-functions -mno-string \
+-	-mno-strict-align -mstrict-align \
++	-mno-strict-align -mstrict-align -mdirect-extern-access \
++	-mexplicit-relocs -mno-check-zero-division \
+ 	-fconserve-stack -falign-jumps=% -falign-loops=% \
+ 	-femit-struct-debug-baseonly -fno-ipa-cp-clone -fno-ipa-sra \
+ 	-fno-partial-inlining -fplugin-arg-arm_ssp_per_task_plugin-% \
+@@ -246,6 +247,7 @@ bindgen_skip_c_flags := -mno-fp-ret-in-387 -mpreferred-stack-boundary=% \
+ # Derived from `scripts/Makefile.clang`.
+ BINDGEN_TARGET_x86	:= x86_64-linux-gnu
+ BINDGEN_TARGET_arm64	:= aarch64-linux-gnu
++BINDGEN_TARGET_loongarch	:= loongarch64-linux-gnusf
+ BINDGEN_TARGET		:= $(BINDGEN_TARGET_$(SRCARCH))
+ 
+ # All warnings are inhibited since GCC builds are very experimental,
+-- 
+2.48.1
 
 
