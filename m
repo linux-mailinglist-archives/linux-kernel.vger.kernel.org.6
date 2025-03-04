@@ -1,103 +1,93 @@
-Return-Path: <linux-kernel+bounces-543476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2FC5A4D61A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:22:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AA178A4D626
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:23:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23BE73A60B3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:22:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97C593A77E4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:23:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB681F891D;
-	Tue,  4 Mar 2025 08:22:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B131FAC4B;
+	Tue,  4 Mar 2025 08:23:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pTtO6DWO";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RZjuCsUd";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="y3mrGdx/";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="AwW4QRns"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tKLIHTuS"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE7543172
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 08:22:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758C61FAC3E
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 08:23:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741076537; cv=none; b=Nb3tsImF+MUuC7GYhqmh4cmS+M+mxNitWxZMCVs5BWxhqpS2gxR+3g3Ks0NHHWG1kS0jVgbT25h0g8OA3sRpa0yLSYFSrydEMZGkO6mX3nZGWmWTolNtayVKaA5ySoGqXc29kirL1GRiXDKmahiNxVPS7GRBrh+GSaiv09U195A=
+	t=1741076583; cv=none; b=NU1nepeSsPlGUn9qlEXqi46dOc+Zae0/0Y+bdUswJ8Uqk3AG6vzBiI773f49zIjXpmHpb6x1RoDRI1YUJkAweWEw7H57TThLYcO6jnBCj7vNNkwyIAJboywZAPWzwh+VqvgyY5N6yT2vi3jZ1lK80A2k6qVYjExRbySihYRx8u4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741076537; c=relaxed/simple;
-	bh=5oBHnXOs9QSSPIAw2gefjQYMDadCJZt5CyLNq3RF8iE=;
+	s=arc-20240116; t=1741076583; c=relaxed/simple;
+	bh=oJRocjVxvG8aocBlf5vT9fLjx9PJTOnjpaP9NfdgLoU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y+P5Kc2bc9p7FV0GhHJe3Wqq13JwD2QJNxO/sb5qgYnCorGvIl7dEm4RE0RZXYN+VMPv008tNXAhB/BiTNQA3itET0Qkomkwq2wSvnXTDRUEEr8mQJHNrH7zPvRVjzRPi43Wg5uOsPdN+hxddO8IQaTrORzfUVT3H2j2V7qBsNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=pTtO6DWO; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RZjuCsUd; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=y3mrGdx/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=AwW4QRns; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E7F952116B;
-	Tue,  4 Mar 2025 08:22:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741076533; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A1iGbelaTALv5TJMxtK+qrnTKCCp2cmpTL/B5DdK1Vs=;
-	b=pTtO6DWOv7HVdk0DopBnr7FBs8lw+CeB94qhhMw2AzEQL9sxfuWr1xxuh2gI7tyg65XGmX
-	+c42tFVFn7IWwsRc8SVNt0n6BuwUOlQWF4/M1LWtK/L9xs+DOWi6dq/FVS480S5BGvJMpy
-	eHepKA2WZaFZfy9d3+PZat0r0eCGW6o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741076533;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A1iGbelaTALv5TJMxtK+qrnTKCCp2cmpTL/B5DdK1Vs=;
-	b=RZjuCsUd4QbjDaC7142C8e/UHlSC76MGn1CSiUWw1dBFOm9j2W6ql1HL0oqVlHlbjAUNfi
-	98ackGqGs6RjQ5CA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="y3mrGdx/";
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=AwW4QRns
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741076532; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A1iGbelaTALv5TJMxtK+qrnTKCCp2cmpTL/B5DdK1Vs=;
-	b=y3mrGdx/kdMYr18Ca1TcbYYDL0goAAGV9UL34f4VsfPiCg1ZrWG8tMfXnCSZc6yw97BgqW
-	pJNuoF1opafT1K6XudP9sCdAAbsof70pwSmB1vHWdKF4Y2/KHPSKvup/sVnGsbS5NVOuhP
-	p/eBEihk36BtBbOJ4FCIKBNgEnopXOE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741076532;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A1iGbelaTALv5TJMxtK+qrnTKCCp2cmpTL/B5DdK1Vs=;
-	b=AwW4QRnsWlUItyWFe4fUIeV27z/cVT8byjaRV6l7ZXGtlYgoLGAH4lxFqGYx4BA0GOJokC
-	WyMOnHCCirCzu+Aw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 635121393C;
-	Tue,  4 Mar 2025 08:22:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id dfxzFTO4xmfRNgAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Tue, 04 Mar 2025 08:22:11 +0000
-Date: Tue, 4 Mar 2025 09:22:09 +0100
-From: Oscar Salvador <osalvador@suse.de>
-To: Zhenhua Huang <quic_zhenhuah@quicinc.com>
-Cc: anshuman.khandual@arm.com, catalin.marinas@arm.com, david@redhat.com,
-	will@kernel.org, ardb@kernel.org, ryan.roberts@arm.com,
-	mark.rutland@arm.com, joey.gouly@arm.com,
-	dave.hansen@linux.intel.com, akpm@linux-foundation.org,
-	chenfeiyang@loongson.cn, chenhuacai@kernel.org, linux-mm@kvack.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	quic_tingweiz@quicinc.com, stable@vger.kernel.org
-Subject: Re: [PATCH v9] arm64: mm: Populate vmemmap at the page level if not
- section aligned
-Message-ID: <Z8a4MWPpTKm2FAce@localhost.localdomain>
-References: <20250304072700.3405036-1-quic_zhenhuah@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VTE4Pev7Z/FPVTMTnGJrKgyo/ByEssW1BvvZtQ8le6rFPG4eLs1VB8tlo/NCcoqrYHr/Z94ArpDT4mM3M7Af2JlBTBsiJN9XaaKQvuMMHzqQXq5kdhnpfOnTRIHhipDRDkaTTNBPYp2qmBoVj9LATdZGovr8bfTCfBaVMDbzd5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tKLIHTuS; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5e535e6739bso3827161a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 00:23:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741076580; x=1741681380; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=T6vsEs0w+2fpN2o1KS8VIE9clQoUeLM/QArYwjwqcY0=;
+        b=tKLIHTuSb8EsCI1KkpfUsVKCJmmjnPjmWq6aBgxmRlJtqHk8ikuDpQ8pHQReaI2mzY
+         hSRuBoHrplNxKm+Y4AUGV9s/rpZi3ab7HTGhJPL3UL+H4U4sUbErG02SGoa5LSgQ49lJ
+         EK907gmP/2Nd2Rx9WKHHzLvL/Hayd2zCx/SsnRoV6+qLW0QbLmyVmqKpmmFIgpZi/d+P
+         oOyVrYPQC8+ZdXGCZHDzxOYUHCOpJgGTP8f8IZC2o38X08eQfmkCkksKnHW0A9U/jHsu
+         UF0pqcYRChbbFpJq4Bo5lX4ZWHo5VqiJXAXUKvRfft6HvLeJM3L4MsQVeRM6sf+t+cpL
+         Mbew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741076580; x=1741681380;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T6vsEs0w+2fpN2o1KS8VIE9clQoUeLM/QArYwjwqcY0=;
+        b=jrFGnBY4kjhv7Mkrab8WifnwC/iVCnVfJDHsC37U8H5F6LuDAkpgRaJmqwabUlj104
+         fYZOOau4T7oYQefJ5AroItOeCkuIKgNrIJM0v+b00b5fA/BGpMwgGUQ+PZSm6zDhO8hI
+         ldTNTLqZRC6DDOu8KuUxM6Uvf20zSB28SEHVmXu8cyJQR9gmjmcit5yranlp0PgEm71O
+         ZGMsrpPO3Fmr0j61nxR/TTBcxwxc7y4H4FQAbBMPOAij8zK/F8LJmCAZETaMtN5eelFt
+         semrmnd6RUmkzi7tVIQBTU5+7WofCf4BQdu0EgiVrYp7nEb5hIRPK7N4VHCsP9c5flGI
+         n9EQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXnz1iYNQ6CCL85abkO6/N7oKhWPR/W7g6ba0YzfNWIB8ZaDDZ53bOki0kOWwpTENMqD6o13msYfp0iGME=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMJsNN2OS0ubJVfw0PfBH+/SqD218j/fGUwC+8I6Bl2GnAnB/0
+	vepjWD29syIfNsnH6jeUjxUivnbi7uSV7xdPsDr6dmfSliF5uhu+sQFUW/ur4Ch2FAxgXhn0wwA
+	3
+X-Gm-Gg: ASbGncto9Y18/9ezFUHIgBENauQEhwJEy1/5s5y+M+xg3mOnQTJjrXUgtqGOj95tp+D
+	VPb5+2Zl2vRi/ArEAT9w8cghmstZFYxUHzW5lc6vLn0mOGGvUCKmIFR8+ezVVcsL2jm09ZZUqWs
+	S5mHkDo7UN/lf70UPwrQ/Rd3RHXk6Uv0iTUOYOaQ1xmrXb0x/2SLn2KWqxm7mgxqxjl7oNzGGTA
+	lZgwhs4lxY5uvAkAVOrbPuhNfo7OA7b6Pz89ZUG5ufOWKbG/SlQXrITAV8p/LNhoY0k5fCbhAvJ
+	ijtqqIMRFWdE10pMaryJzSjdto629YKV9/yRpV14SEIUf6wThVlMA7g/
+X-Google-Smtp-Source: AGHT+IH0Xb393ctWLRXZSas7YgLXGqNPTHNCJsQolq/B1J5pMVs0L4gi+m3eIifTOO2YP/AzGBdjxw==
+X-Received: by 2002:a05:6402:3891:b0:5e0:8c55:531 with SMTP id 4fb4d7f45d1cf-5e4d6af98d1mr18864132a12.14.1741076579579;
+        Tue, 04 Mar 2025 00:22:59 -0800 (PST)
+Received: from linaro.org ([2a02:2454:ff21:ef30:ea7e:cb1f:99c6:de2d])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e5925ff875sm332907a12.20.2025.03.04.00.22.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 00:22:58 -0800 (PST)
+Date: Tue, 4 Mar 2025 09:22:49 +0100
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+To: Wesley Cheng <quic_wcheng@quicinc.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, srinivas.kandagatla@linaro.org,
+	mathias.nyman@intel.com, perex@perex.cz, conor+dt@kernel.org,
+	dmitry.torokhov@gmail.com, corbet@lwn.net, broonie@kernel.org,
+	lgirdwood@gmail.com, tiwai@suse.com, krzk+dt@kernel.org,
+	pierre-louis.bossart@linux.intel.com, Thinh.Nguyen@synopsys.com,
+	robh@kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-sound@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v35 00/31] Introduce QC USB SND audio offloading support
+Message-ID: <Z8a4WYq4GqWBVNyX@linaro.org>
+References: <20250219004754.497985-1-quic_wcheng@quicinc.com>
+ <Z7W_Vz_kVDjIcp5N@linaro.org>
+ <82ce69a3-d248-494f-6ddb-098f392c78a0@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -106,71 +96,99 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250304072700.3405036-1-quic_zhenhuah@quicinc.com>
-X-Rspamd-Queue-Id: E7F952116B
-X-Spam-Score: -4.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[18];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <82ce69a3-d248-494f-6ddb-098f392c78a0@quicinc.com>
 
-On Tue, Mar 04, 2025 at 03:27:00PM +0800, Zhenhua Huang wrote:
-> On the arm64 platform with 4K base page config, SECTION_SIZE_BITS is set
-> to 27, making one section 128M. The related page struct which vmemmap
-> points to is 2M then.
-> Commit c1cc1552616d ("arm64: MMU initialisation") optimizes the
-> vmemmap to populate at the PMD section level which was suitable
-> initially since hot plug granule is always one section(128M). However,
-> commit ba72b4c8cf60 ("mm/sparsemem: support sub-section hotplug")
-> introduced a 2M(SUBSECTION_SIZE) hot plug granule, which disrupted the
-> existing arm64 assumptions.
+On Mon, Mar 03, 2025 at 06:39:52PM -0800, Wesley Cheng wrote:
 > 
-> The first problem is that if start or end is not aligned to a section
-> boundary, such as when a subsection is hot added, populating the entire
-> section is wasteful.
 > 
-> The next problem is if we hotplug something that spans part of 128 MiB
-> section (subsections, let's call it memblock1), and then hotplug something
-> that spans another part of a 128 MiB section(subsections, let's call it
-> memblock2), and subsequently unplug memblock1, vmemmap_free() will clear
-> the entire PMD entry which also supports memblock2 even though memblock2
-> is still active.
+> On 2/19/2025 3:24 AM, Stephan Gerhold wrote:
+> > On Tue, Feb 18, 2025 at 04:47:23PM -0800, Wesley Cheng wrote:
+> > > Requesting to see if we can get some Acked-By tags, and merge on usb-next.
+> > > 
+> > > Several Qualcomm based chipsets can support USB audio offloading to a
+> > > dedicated audio DSP, which can take over issuing transfers to the USB
+> > > host controller.  The intention is to reduce the load on the main
+> > > processors in the SoC, and allow them to be placed into lower power modes.
+> > > There are several parts to this design:
+> > >   1. Adding ASoC binding layer
+> > >   2. Create a USB backend for Q6DSP
+> > >   3. Introduce XHCI interrupter support
+> > >   4. Create vendor ops for the USB SND driver
+> > > 
+> > >       USB                          |            ASoC
+> > > --------------------------------------------------------------------
+> > >                                    |  _________________________
+> > >                                    | |sm8250 platform card     |
+> > >                                    | |_________________________|
+> > >                                    |         |           |
+> > >                                    |      ___V____   ____V____
+> > >                                    |     |Q6USB   | |Q6AFE    |
+> > > |     |"codec" | |"cpu"    |
+> > >                                    |     |________| |_________|
+> > >                                    |         ^  ^        ^
+> > >                                    |         |  |________|
+> > >                                    |      ___V____    |
+> > >                                    |     |SOC-USB |   |
+> > >    ________       ________               |        |   |
+> > >   |USB SND |<--->|QC offld|<------------>|________|   |
+> > >   |(card.c)|     |        |<----------                |
+> > >   |________|     |________|___     | |                |
+> > >       ^               ^       |    | |    ____________V_________
+> > >       |               |       |    | |   |APR/GLINK             |
+> > >    __ V_______________V_____  |    | |   |______________________|
+> > >   |USB SND (endpoint.c)     | |    | |              ^
+> > >   |_________________________| |    | |              |
+> > >               ^               |    | |   ___________V___________
+> > >               |               |    | |->|audio DSP              |
+> > >    ___________V_____________  |    |    |_______________________|
+> > >   |XHCI HCD                 |<-    |
+> > >   |_________________________|      |
+> > > 
+> > 
+> > As I noted on v34 [1], this version is still missing instructions and
+> > changes needed for testing this series. The device tree changes don't
+> > need to be part of the same series, but there should be at least a link
+> > provided to give other people the chance to provide Tested-by tags.
+> > 
+> > IMO we shouldn't merge this series without those instructions, otherwise
+> > we risk that this just ends up being dead code that no one can use.
+> > 
+> > Can you please share the device tree changes for a board upstream and
+> > any other changes needed to be able to test this series? E.g. for
+> > sm8250-mtp.dts, based on the examples in your cover letter.
+> > 
 > 
-> Assuming hotplug/unplug sizes are guaranteed to be symmetric. Do the
-> fix similar to x86-64: populate to pages levels if start/end is not aligned
-> with section boundary.
+> To clarify I'm testing this on sm8350 in recent times, but utilizing sm8250
+> definitions for the ASoC platform card, as the platform sound card is more
+> or less the same between the two SoCs.  Back
+> when I started this series, sm8350 was missing a bunch of dependent
+> components, such as aDSP not being loaded, and missing platform sound card
+> definition, so I had to define and enable those on my own, which required a
+> slew of new DT nodes, hence why it wasn't as straight forward to include
+> the DT definitions yet for sm8350.  Not thinking that this series would
+> take as long as it did, I was planning on separating out the DT changes in
+> a different series to enable offloading for the devices I have tested with.
+> (sm8150, sm8250 and sm8350)
 > 
-> Cc: <stable@vger.kernel.org> # v5.4+
-> Fixes: ba72b4c8cf60 ("mm/sparsemem: support sub-section hotplug")
-> Acked-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: Zhenhua Huang <quic_zhenhuah@quicinc.com>
+> There's still a pretty big chunk of dependencies missing from sm8350, so
+> those would also be handled in the follow up DT submission.  For now, its a
+> much bigger hurdle to get the main/functional changes in, and that was
+> taking a significant amount of time from my end to manage.
+> 
+> If you want, I can give you the changes I have offline to enable this for
+> sm8350, since I haven't spent time formatting/prepping the changes for
+> submission yet.
+> 
 
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
+Can you push it to a public branch somewhere (e.g. on CodeLinaro)? I was
+talking to some people from the community about testing this on some of
+the smartphones we have in upstream, so it wouldn't help if I just have
+the changes privately.
 
+It doesn't have to be perfectly clean as far as I'm concerned, as long
+as it allows to see the whole picture of the additional changes we need
+to make use of this series.
 
--- 
-Oscar Salvador
-SUSE Labs
+Thanks,
+Stephan
 
