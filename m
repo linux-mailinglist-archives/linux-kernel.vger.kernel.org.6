@@ -1,161 +1,251 @@
-Return-Path: <linux-kernel+bounces-544223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62EA3A4DF06
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:17:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B38BCA4DF09
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:18:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFF3A3A7643
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:17:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EE5F3A6360
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:18:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1265204595;
-	Tue,  4 Mar 2025 13:17:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A16204090;
+	Tue,  4 Mar 2025 13:18:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UM6wttCY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="zRI6tJ5O"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36F4480B;
-	Tue,  4 Mar 2025 13:17:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FBA02040A8
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 13:18:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741094244; cv=none; b=bP9Et7ko1+YIdTNNfXyxjfAw/SjMe5sslZRTReVEU/o8pJV/0+9qOIFlFwUkykeUjBsTaBK4MZCH8GVFiBpw/+S9RgT5Q/BiaZRqGDS8wbIOzSso9nCrjH7wFB3NJD8s4WDf5SSPk4P/obUe2LpEfMzvauEox8RhQCGcC1tW4CI=
+	t=1741094303; cv=none; b=AFeWKcG8lS1qby6NGR/uDhDR3zsgI/KwsEfqq84qZknJfozknwPY9iXXvb6N2R9Yyy/4cWNl4u+t884jgg9Jl83XpoGtu5uGvGrjFpwjEOTPMsQ0qcCrg9wFkUw10Zk4pCV88/XiA0OiIdWDT0QTTGLfEXnlAzUudJqtnziMjis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741094244; c=relaxed/simple;
-	bh=azzIv3tU6f8HE2hiKpv+s7FiEV35AFhxpECvzWmLSKo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=djsSyw3sCxNQblaD0tTal+LTQZKfa+xmqpj43TZ3QofRnnEl/nk5HctGabByucDynUePCtq77rqXCkzMFgPEvHyyD9A0dPXuSzt5oEWiioEQjKdPcNKkaw5gMZN9s/iRpvKIqCnMZuz9zBdK0ObDQCGu1fGkKGYU5FzJtaarpFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UM6wttCY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41FA5C4CEE5;
-	Tue,  4 Mar 2025 13:17:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741094243;
-	bh=azzIv3tU6f8HE2hiKpv+s7FiEV35AFhxpECvzWmLSKo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=UM6wttCYO2sGF2PduIojI9ajTigzByJl9nrcFH/n3e7XkI7anQSZ2WJ3V4DVmrnMW
-	 3/hX8lt+RyRrWBBsLp4z6wbfCNh544sA3dzZ/UHQLXEAvSJJ7TCFxVfKQz0DXTN6SU
-	 eZbG8rgJ7ZkAmC/DKDSYgmUlsAozMNdKc8sWvlJgO0fXI0XlIQv84lCjQyEEK26Omo
-	 gQS6juP3m+pSd7LhsmiVam+yJ7qf1PDiosnRFNl1LdOu6SD3q6OWUUBhN3+lmiSBx9
-	 7/s3H/k2Tcc32gWIQyA/O19kbA0Jt/gdRX0HEe3cSR7eJsdSBUvai9EltVuu280Vzc
-	 smxGucDFiUIzg==
-Date: Tue, 4 Mar 2025 13:17:08 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Robert Budai <robert.budai@analog.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Nuno Sa <nuno.sa@analog.com>, "Ramona
- Gradinariu" <ramona.gradinariu@analog.com>, Antoniu Miclaus
- <antoniu.miclaus@analog.com>, Rob Herring <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- "Jonathan Corbet" <corbet@lwn.net>, <linux-iio@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-doc@vger.kernel.org>
-Subject: Re: [RESEND PATCH v8 0/6] Add support for ADIS16550
-Message-ID: <20250304131708.1003552a@jic23-huawei>
-In-Reply-To: <20250222124030.57771b0c@jic23-huawei>
-References: <20250217105753.605465-1-robert.budai@analog.com>
-	<20250217143354.0d1c4a2d@jic23-huawei>
-	<20250222124030.57771b0c@jic23-huawei>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741094303; c=relaxed/simple;
+	bh=Eqt5zR/YJ5b+Wj94wvEYhKqOmg1PAbLn7HBDDtiqXYU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IkqvtTcp7vfMlzu6OUkGEtIyJvUgD4nP9aNItjTK51jJwMcnwmUk6E83M9/I/uzdoaNWPrQiOiDay0KyCLXoC4DdDk18lQmZbMzp4DTTwZT0o2pLQ8udu2Ni21yQGLdhjcFQ9UFx+2SF1X1G8iURyL4Q9wKEGS0kp97QDs4i+WM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=zRI6tJ5O; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43bbb440520so25033285e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 05:18:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1741094299; x=1741699099; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MW5kUntubaDIQWagA8yaVJ6BvgFmQoLHNp/d0jaynvw=;
+        b=zRI6tJ5OorvHsH+0wIorEfWcy3iaIfVdykzQG3DYWgcvwBxZcoCT/vTE6cV1/fs2mo
+         dZJuV3q3FWV5sMMTEvJuMBIhrT6jq8LDAPs0jAOkF+x2jsU7L+7bdVLOTaYdPjNcNoqb
+         Kcczfh3XIBeSaH5rfsRtRUY+chqnHDYnIgmkQhV9PfmPNiR8jwEoyxKjSLrfF+mcTL1l
+         RAJ0ZEeK/oVnN9Fyglwa5CrA1NtMgnUdczUjHghPt51M9SazOpMV+52wAzSV6CLGSQ2I
+         7zITX1Kmnq+fEvVfwB0+uN3V6+WVynh8V7Hdzzcv1kGvyFQIih2M92SaTOME8hGxH9Vh
+         XBNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741094299; x=1741699099;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MW5kUntubaDIQWagA8yaVJ6BvgFmQoLHNp/d0jaynvw=;
+        b=vKT1NnwE72wCxSKjd09cPNkxPPmGZ0jfiIeZQqqUFDw1Lhjg65tstsMrIgTpOBgu/v
+         KB3oRtGsqIkFm4qxdgqvw+Rs+fndKHpk85qb4KQ94+RftjqlcdD1MPwMHkUvstYAvs6q
+         yirMdMsYIst0y7+bjFC0Ye0OnxTcSBZQzd+dbf4Il38wzyOdJdVqxziTzbf9ODJYeQY6
+         sq5QCmF3vyPF8U+/Q7OcvCRge6uJxdqaRqoeiuB2QLZwH+li6+cMQ9uNo2q1mgO6lnnr
+         RpcukEdK/cF20CosxGSSQyYSXmVNeYtMJvvbpJxHADcYCMC3DB3zlETpRX488g+eoPqN
+         /BAA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5bzZ4WrtrcffaUWTFDDtqC9d55j5TL41ZDgaJXaWz4zJOc3bjCTYqICpx9q72IOACqKrq6b+5NYs7A9A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuliWhTQ5mNrFufVOXlOk839CrgSzDjfeMIqPHaPJimpJDLS1a
+	T8nHWZnyS2p7vNaLltKDZQDutpiHKu6nZCcgpvZWh+szpxhbNOEYOp/tRaPEhWc=
+X-Gm-Gg: ASbGnctMplUP29os8e9PYV6CO1FjDP8JymNxzmRJa+bqPRF4iv/v5fYYI9giXrhf5qv
+	zKyxUhNFBRVneGCafWcaRnSy0IRgdNTquao1xGgDFaxDBe9/viJE22A7yU/rct8BvER+/cj4C4p
+	t68yhDMgvRTvfOxvWaTX0qUJmkP5IChZpoHgkdf7F4Vv6PxYJowrwvo/f/9EIdtOSGAV0mi978c
+	7qlxyAhU1bct473OCeYSk6xA1qvPqbaoUgiUHbs0zVAjQ1I71PGkKsYdTaQmg6idUUMw+ljLD2Y
+	xKutkWkdBwcqaXzM79N6wp9jUmFjCSpg9MYUOcebzBUm
+X-Google-Smtp-Source: AGHT+IF2PB3JIwFkQ/IoI14wzgDJzP7fz9S7sdWqpHpbFlU2+2ElCaz504decofi9DRWSmcB7J4Qiw==
+X-Received: by 2002:a05:600c:4182:b0:43b:ce36:756e with SMTP id 5b1f17b1804b1-43bce3676dbmr16293955e9.12.1741094299293;
+        Tue, 04 Mar 2025 05:18:19 -0800 (PST)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:6018:7257:350d:e85e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bad347823sm144931545e9.0.2025.03.04.05.18.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 05:18:18 -0800 (PST)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Russell King <linux@armlinux.org.uk>,
+	Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH] irqchip: davinci-cp-intc: remove public header
+Date: Tue,  4 Mar 2025 14:18:14 +0100
+Message-ID: <20250304131815.86549-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Sat, 22 Feb 2025 12:40:30 +0000
-Jonathan Cameron <jic23@kernel.org> wrote:
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-> On Mon, 17 Feb 2025 14:33:54 +0000
-> Jonathan Cameron <jic23@kernel.org> wrote:
-> 
-> > On Mon, 17 Feb 2025 12:57:44 +0200
-> > Robert Budai <robert.budai@analog.com> wrote:
-> >   
-> > > The ADIS16550 is a complete inertial system that includes a triaxis gyroscope
-> > > and a triaxis accelerometer. Each inertial sensor in the ADIS16550 combines
-> > > industry leading MEMS only technology with signal conditioning that optimizes
-> > > dynamic performance. The factory calibration characterizes each sensor for
-> > > sensitivity, bias, and alignment. As a result, each sensor has its own dynamic
-> > > compensation formulas that provide accurate sensor measurements.
-> > >     
-> > Hi Robert,
-> > 
-> > The cover letter of any RESEND should always start with why you are doing so.
-> > If this was for the tiny fixup you mentioned it should have been v9 and
-> > not have been sent for a few days at least.  If everything else is fine
-> > I don't mind making that sort of fixup whilst applying anyway!  
-> 
-> With the tweaks to patch 5 and co-developed tags added as mentioned
-> in reply to that commit applied to the togreg branch of iio.git which
-> is initially pushed out as testing.
-> 
-Another tweak:
-0-day/ coccinelle reported:
-55be950cfc6031 Robert Budai 2025-02-17  1024  	.self_test_mask = BIT(1),
-55be950cfc6031 Robert Budai 2025-02-17  1025  	.self_test_reg = ADIS16550_REG_COMMAND,
-55be950cfc6031 Robert Budai 2025-02-17  1026  	.cs_change_delay = 5,
-55be950cfc6031 Robert Budai 2025-02-17  1027  	.unmasked_drdy = true,
-55be950cfc6031 Robert Budai 2025-02-17  1028  	.status_error_msgs = adis16550_status_error_msgs,
-55be950cfc6031 Robert Budai 2025-02-17 @1029  	.status_error_mask = BIT(ADIS16550_STATUS_CRC_CODE) |
-55be950cfc6031 Robert Budai 2025-02-17  1030  			BIT(ADIS16550_STATUS_CRC_CONFIG) |
-55be950cfc6031 Robert Budai 2025-02-17  1031  			BIT(ADIS16550_STATUS_FLASH_UPDATE) |
-55be950cfc6031 Robert Budai 2025-02-17  1032  			BIT(ADIS16550_STATUS_INERIAL) |
-55be950cfc6031 Robert Budai 2025-02-17  1033  			BIT(ADIS16550_STATUS_SENSOR) |
-55be950cfc6031 Robert Budai 2025-02-17  1034  			BIT(ADIS16550_STATUS_TEMPERATURE) |
-55be950cfc6031 Robert Budai 2025-02-17  1035  			BIT(ADIS16550_STATUS_SPI) |
-55be950cfc6031 Robert Budai 2025-02-17  1036  			BIT(ADIS16550_STATUS_PROCESSING) |
-55be950cfc6031 Robert Budai 2025-02-17  1037  			BIT(ADIS16550_STATUS_POWER) |
-55be950cfc6031 Robert Budai 2025-02-17  1038  			BIT(ADIS16550_STATUS_BOOT) |
-55be950cfc6031 Robert Budai 2025-02-17  1039  			BIT(ADIS16550_STATUS_WATCHDOG) |
-55be950cfc6031 Robert Budai 2025-02-17  1040  			BIT(ADIS16550_STATUS_REGULATOR) |
-55be950cfc6031 Robert Budai 2025-02-17  1041  			BIT(ADIS16550_STATUS_SENSOR_SUPPLY) |
-55be950cfc6031 Robert Budai 2025-02-17  1042  			BIT(ADIS16550_STATUS_CPU_SUPPLY) |
-55be950cfc6031 Robert Budai 2025-02-17  1043  			BIT(ADIS16550_STATUS_5V_SUPPLY) |
-55be950cfc6031 Robert Budai 2025-02-17  1044  			BIT(ADIS16550_STATUS_CRC_CODE),
+There are no more users of irq-davinci-cp-intc.h (da830.c doesn't use
+any of its symbols). Remove the header and make the driver stop using the
+config structure.
 
-this is duplicate.  I dropped this one.
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ arch/arm/mach-davinci/da830.c               |  1 -
+ drivers/irqchip/irq-davinci-cp-intc.c       | 31 ++++++++-------------
+ include/linux/irqchip/irq-davinci-cp-intc.h | 25 -----------------
+ 3 files changed, 12 insertions(+), 45 deletions(-)
+ delete mode 100644 include/linux/irqchip/irq-davinci-cp-intc.h
 
-55be950cfc6031 Robert Budai 2025-02-17  1045  	.timeouts = &adis16550_timeouts,
-55be950cfc6031 Robert Budai 2025-02-17  1046  };
-55be950cfc6031 Robert Budai 2025-02-17  1047
-
-
-> Jonathan
-> 
-> > 
-> > Jonathan
-> > 
-> >   
-> > > Robert Budai (6):
-> > >   iio: imu: adis: Add custom ops struct
-> > >   iio: imu: adis: Add reset to custom ops
-> > >   iio: imu: adis: Add DIAG_STAT register
-> > >   dt-bindings: iio: Add adis16550 bindings
-> > >   iio: imu: adis16550: add adis16550 support
-> > >   docs: iio: add documentation for adis16550 driver
-> > > 
-> > >  .../bindings/iio/imu/adi,adis16550.yaml       |   74 ++
-> > >  Documentation/iio/adis16550.rst               |  376 ++++++
-> > >  Documentation/iio/index.rst                   |    1 +
-> > >  MAINTAINERS                                   |   10 +
-> > >  drivers/iio/imu/Kconfig                       |   13 +
-> > >  drivers/iio/imu/Makefile                      |    1 +
-> > >  drivers/iio/imu/adis.c                        |   35 +-
-> > >  drivers/iio/imu/adis16550.c                   | 1149 +++++++++++++++++
-> > >  include/linux/iio/imu/adis.h                  |   34 +-
-> > >  9 files changed, 1680 insertions(+), 13 deletions(-)
-> > >  create mode 100644 Documentation/devicetree/bindings/iio/imu/adi,adis16550.yaml
-> > >  create mode 100644 Documentation/iio/adis16550.rst
-> > >  create mode 100644 drivers/iio/imu/adis16550.c
-> > >     
-> > 
-> >   
-> 
-> 
+diff --git a/arch/arm/mach-davinci/da830.c b/arch/arm/mach-davinci/da830.c
+index 2e497745b624..a044ea5cb4f1 100644
+--- a/arch/arm/mach-davinci/da830.c
++++ b/arch/arm/mach-davinci/da830.c
+@@ -11,7 +11,6 @@
+ #include <linux/gpio.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
+-#include <linux/irqchip/irq-davinci-cp-intc.h>
+ 
+ #include <clocksource/timer-davinci.h>
+ 
+diff --git a/drivers/irqchip/irq-davinci-cp-intc.c b/drivers/irqchip/irq-davinci-cp-intc.c
+index f4f8e9fadbbf..42224ca43d5e 100644
+--- a/drivers/irqchip/irq-davinci-cp-intc.c
++++ b/drivers/irqchip/irq-davinci-cp-intc.c
+@@ -11,7 +11,6 @@
+ #include <linux/init.h>
+ #include <linux/irq.h>
+ #include <linux/irqchip.h>
+-#include <linux/irqchip/irq-davinci-cp-intc.h>
+ #include <linux/irqdomain.h>
+ #include <linux/io.h>
+ #include <linux/of.h>
+@@ -155,23 +154,21 @@ static const struct irq_domain_ops davinci_cp_intc_irq_domain_ops = {
+ };
+ 
+ static int __init
+-davinci_cp_intc_do_init(const struct davinci_cp_intc_config *config,
++davinci_cp_intc_do_init(struct resource *res, unsigned int num_irqs,
+ 			struct device_node *node)
+ {
+-	unsigned int num_regs = BITS_TO_LONGS(config->num_irqs);
++	unsigned int num_regs = BITS_TO_LONGS(num_irqs);
+ 	int offset, irq_base;
+ 	void __iomem *req;
+ 
+-	req = request_mem_region(config->reg.start,
+-				 resource_size(&config->reg),
++	req = request_mem_region(res->start, resource_size(res),
+ 				 "davinci-cp-intc");
+ 	if (!req) {
+ 		pr_err("%s: register range busy\n", __func__);
+ 		return -EBUSY;
+ 	}
+ 
+-	davinci_cp_intc_base = ioremap(config->reg.start,
+-				       resource_size(&config->reg));
++	davinci_cp_intc_base = ioremap(res->start, resource_size(res));
+ 	if (!davinci_cp_intc_base) {
+ 		pr_err("%s: unable to ioremap register range\n", __func__);
+ 		return -EINVAL;
+@@ -200,12 +197,12 @@ davinci_cp_intc_do_init(const struct davinci_cp_intc_config *config,
+ 	davinci_cp_intc_write(1, DAVINCI_CP_INTC_HOST_ENABLE_IDX_SET);
+ 
+ 	/* Default all priorities to channel 7. */
+-	num_regs = (config->num_irqs + 3) >> 2;	/* 4 channels per register */
++	num_regs = (num_irqs + 3) >> 2; /* 4 channels per register */
+ 	for (offset = 0; offset < num_regs; offset++)
+ 		davinci_cp_intc_write(0x07070707,
+ 			DAVINCI_CP_INTC_CHAN_MAP(offset));
+ 
+-	irq_base = irq_alloc_descs(-1, 0, config->num_irqs, 0);
++	irq_base = irq_alloc_descs(-1, 0, num_irqs, 0);
+ 	if (irq_base < 0) {
+ 		pr_err("%s: unable to allocate interrupt descriptors: %d\n",
+ 		       __func__, irq_base);
+@@ -213,7 +210,7 @@ davinci_cp_intc_do_init(const struct davinci_cp_intc_config *config,
+ 	}
+ 
+ 	davinci_cp_intc_irq_domain = irq_domain_add_legacy(
+-					node, config->num_irqs, irq_base, 0,
++					node, num_irqs, irq_base, 0,
+ 					&davinci_cp_intc_irq_domain_ops, NULL);
+ 
+ 	if (!davinci_cp_intc_irq_domain) {
+@@ -229,31 +226,27 @@ davinci_cp_intc_do_init(const struct davinci_cp_intc_config *config,
+ 	return 0;
+ }
+ 
+-int __init davinci_cp_intc_init(const struct davinci_cp_intc_config *config)
+-{
+-	return davinci_cp_intc_do_init(config, NULL);
+-}
+-
+ static int __init davinci_cp_intc_of_init(struct device_node *node,
+ 					  struct device_node *parent)
+ {
+-	struct davinci_cp_intc_config config = { };
++	unsigned int num_irqs;
++	struct resource res;
+ 	int ret;
+ 
+-	ret = of_address_to_resource(node, 0, &config.reg);
++	ret = of_address_to_resource(node, 0, &res);
+ 	if (ret) {
+ 		pr_err("%s: unable to get the register range from device-tree\n",
+ 		       __func__);
+ 		return ret;
+ 	}
+ 
+-	ret = of_property_read_u32(node, "ti,intc-size", &config.num_irqs);
++	ret = of_property_read_u32(node, "ti,intc-size", &num_irqs);
+ 	if (ret) {
+ 		pr_err("%s: unable to read the 'ti,intc-size' property\n",
+ 		       __func__);
+ 		return ret;
+ 	}
+ 
+-	return davinci_cp_intc_do_init(&config, node);
++	return davinci_cp_intc_do_init(&res, num_irqs, node);
+ }
+ IRQCHIP_DECLARE(cp_intc, "ti,cp-intc", davinci_cp_intc_of_init);
+diff --git a/include/linux/irqchip/irq-davinci-cp-intc.h b/include/linux/irqchip/irq-davinci-cp-intc.h
+deleted file mode 100644
+index 8d71ed5b5a61..000000000000
+--- a/include/linux/irqchip/irq-davinci-cp-intc.h
++++ /dev/null
+@@ -1,25 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-or-later */
+-/*
+- * Copyright (C) 2019 Texas Instruments
+- */
+-
+-#ifndef _LINUX_IRQ_DAVINCI_CP_INTC_
+-#define _LINUX_IRQ_DAVINCI_CP_INTC_
+-
+-#include <linux/ioport.h>
+-
+-/**
+- * struct davinci_cp_intc_config - configuration data for davinci-cp-intc
+- *                                 driver.
+- *
+- * @reg: register range to map
+- * @num_irqs: number of HW interrupts supported by the controller
+- */
+-struct davinci_cp_intc_config {
+-	struct resource reg;
+-	unsigned int num_irqs;
+-};
+-
+-int davinci_cp_intc_init(const struct davinci_cp_intc_config *config);
+-
+-#endif /* _LINUX_IRQ_DAVINCI_CP_INTC_ */
+-- 
+2.45.2
 
 
