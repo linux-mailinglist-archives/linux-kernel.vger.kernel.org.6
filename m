@@ -1,140 +1,143 @@
-Return-Path: <linux-kernel+bounces-543743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E7B7A4D967
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:57:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10B03A4D965
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:56:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E6C83B3BDB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:51:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 132CE7A9505
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:55:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 181851FCFDA;
-	Tue,  4 Mar 2025 09:51:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20D6A1FDA90;
+	Tue,  4 Mar 2025 09:56:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TnukOhcE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ps19xneF"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F06A1DFD8B;
-	Tue,  4 Mar 2025 09:51:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE92A1FCFCC;
+	Tue,  4 Mar 2025 09:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741081883; cv=none; b=CF8yWl0liAbKMFgqdA2s236jC1XgD0IAoSou82B7T02w2jwxHdBq+wmccs00fCZA3GNYrMNCgTIeTimtKmPgFTsjeYOO21Zrjyllm3jbR19anPGV7i6YSIeoT4Hi6mD/eDz2Bp1PPs/OMk+vTjODF0dhRFl38uIortCgktRA+Ls=
+	t=1741082163; cv=none; b=iklqVengusQBaCe3m+vOcLg9YkfCoUT2E80OrYnJ2aP3Lg8qFn2BVslNOIa+bnwrgPViETlMnawTcX4bFmvZLCbYpyYbVBNZvZ6jheQTQ7IqD5g4U/Y03bK0ihHga4+eSZnADfAom7vruRlVvFa0EfrywA35vES25EBd3gd3xXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741081883; c=relaxed/simple;
-	bh=3AC8YGVOMopiGMhE+q/wk3R/hqs4Zk918q6dZqSrKY8=;
+	s=arc-20240116; t=1741082163; c=relaxed/simple;
+	bh=o51jYiIjJ7Hl+a6ZtvtnyQKJHKFVcGivr4VSA+BfR1A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=axXltGoguC8yYOiSsi7N874vtZrgJsRYXRwGAV+gHPwHfOlUKox8tBPlT+umJ4jxZq03qaO/kC0VNYxZVblRBmP8Rqw5mKCfPfgq2/qyFEOjOrjQVphYi3WXxn5vNjcNa5AoYXk2CM5uZHDHyQsjx4fCl5abh+C69oAjua77W+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TnukOhcE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89A97C4CEE5;
-	Tue,  4 Mar 2025 09:51:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741081882;
-	bh=3AC8YGVOMopiGMhE+q/wk3R/hqs4Zk918q6dZqSrKY8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TnukOhcELWDMHSi92I6AH2aVZA9crN168Hg83AUocvBIll0kQbw0l+fEnwj72lKJJ
-	 b3l7qDO1A6XN/OiOYGlOzZkiN2L8wkfPQtFMYX7FP0ETLgIufnIpxVK12lRO60Vwbn
-	 FOzW6bfq2OZ1q2lJp6qfDYvFRXw+uvRaFgOyophzj0eDVgP9G5AnvacAy8UsuVHExt
-	 YNdPupAKT8/17iBibqkWQVI4pWS79b9nO0nT0WeEA0TTAQa0sx00gKJ8e6J+G+PRpW
-	 sMsmCa7u4QWQ0Jo7HkcwyBjFYAzfI/zE5INB4pXxqNix5LhPtr98+WULFek4Pu9yPF
-	 sXmvtFguS0miw==
-Date: Tue, 4 Mar 2025 18:51:18 +0900
-From: William Breathitt Gray <wbg@kernel.org>
-To: Bence =?iso-8859-1?B?Q3Pza+Fz?= <csokas.bence@prolan.hu>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-iio@vger.kernel.org,
-	Kamel Bouhara <kamel.bouhara@bootlin.com>
-Subject: Re: [PATCH v6 1/3] include: uapi: counter: Add
- microchip-tcb-capture.h
-Message-ID: <Z8bNFjh85p2jqK9C@ishi>
-References: <20250227144023.64530-1-csokas.bence@prolan.hu>
- <20250227144023.64530-2-csokas.bence@prolan.hu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=X9zhnNNVz+ndTDef9LeVdLu42W2s+1YiszfFc/BzbQvFIo2yaJrcYUY/Cyf5vjNm24PNE1EsMGlaJ66zXwDQ5SETZ5hmX0GTLZtmCgts67coIHT8p6CQ6Jhn2qj/R5grOC2nS5xLqEwJ5/jYzQnkh3XIDajkJAw6hK+10ZvAkJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ps19xneF; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741082162; x=1772618162;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=o51jYiIjJ7Hl+a6ZtvtnyQKJHKFVcGivr4VSA+BfR1A=;
+  b=Ps19xneF4D3M6cdUHBwSS+SYYl53IciSEvEWKQXVYu3aCDUh3RLnS8QY
+   0pe0O5CRMl3UV8eHpPzEUhUu+tfJeALFgFxJIGaoTeuWQtmLBmAE4dhnD
+   DYqvCPd0wuXC71RAsfZ9RWeRos8j2IyewvAZSweg/kUCI7UzQeFzIJzio
+   qPfHnqhypzE3B5BAFB4A6igpEiOAWw3+eeH+M3toUZLrJAA9dpPsAKE2y
+   QyqH+RB4PuBa1LCF90TyZdk9ThVDvY+W3LiEZaWmBDtyM0yylMxsKTsJf
+   APiifh0mzdbtmMuVdy92jM8v3vq9Ymy07dHgRmD6J8I36w9YbjsNlBEvh
+   A==;
+X-CSE-ConnectionGUID: 7pgFDQdxTzmqFAFM+f8FkA==
+X-CSE-MsgGUID: FlAd9TfXS0m4fU0rJSW1lQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="45767245"
+X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
+   d="scan'208";a="45767245"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 01:56:02 -0800
+X-CSE-ConnectionGUID: 9/id7rMqQ4+3Zhh40VmpKg==
+X-CSE-MsgGUID: ljCGWTOARy6fccCifDPeXg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="118840957"
+Received: from mev-dev.igk.intel.com ([10.237.112.144])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 01:55:58 -0800
+Date: Tue, 4 Mar 2025 10:51:57 +0100
+From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+To: Leon Romanovsky <leonro@nvidia.com>
+Cc: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Saeed Mahameed <saeedm@nvidia.com>, Gal Pressman <gal@nvidia.com>,
+	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 6/6] net/mlx5e: Properly match IPsec subnet
+ addresses
+Message-ID: <Z8bNPRtzOBZ7LdGJ@mev-dev.igk.intel.com>
+References: <20250226114752.104838-1-tariqt@nvidia.com>
+ <20250226114752.104838-7-tariqt@nvidia.com>
+ <Z8aw1gn5iFNiSxd3@mev-dev.igk.intel.com>
+ <20250304080543.GD1955273@unreal>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="8INrE+XEHmoL1yAg"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250227144023.64530-2-csokas.bence@prolan.hu>
+In-Reply-To: <20250304080543.GD1955273@unreal>
 
+On Tue, Mar 04, 2025 at 10:05:43AM +0200, Leon Romanovsky wrote:
+> On Tue, Mar 04, 2025 at 08:50:46AM +0100, Michal Swiatkowski wrote:
+> > On Wed, Feb 26, 2025 at 01:47:52PM +0200, Tariq Toukan wrote:
+> > > From: Leon Romanovsky <leonro@nvidia.com>
+> > > 
+> > > Existing match criteria didn't allow to match whole subnet and
+> > > only by specific addresses only. This caused to tunnel mode do not
+> > > forward such traffic through relevant SA.
+> > > 
+> > > In tunnel mode, policies look like this:
+> > > src 192.169.0.0/16 dst 192.169.0.0/16
+> > >         dir out priority 383615 ptype main
+> > >         tmpl src 192.169.101.2 dst 192.169.101.1
+> > >                 proto esp spi 0xc5141c18 reqid 1 mode tunnel
+> > >         crypto offload parameters: dev eth2 mode packet
+> > > 
+> > > In this case, the XFRM core code handled all subnet calculations and
+> > > forwarded network address to the drivers e.g. 192.169.0.0.
+> > > 
+> > > For mlx5 devices, there is a need to set relevant prefix e.g. 0xFFFF00
+> > > to perform flow steering match operation.
+> > > 
+> > > Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+> > > Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
+> > > ---
+> > >  .../mellanox/mlx5/core/en_accel/ipsec.c       | 49 +++++++++++++++++++
+> > >  .../mellanox/mlx5/core/en_accel/ipsec.h       |  9 +++-
+> > >  .../mellanox/mlx5/core/en_accel/ipsec_fs.c    | 20 +++++---
+> > >  3 files changed, 69 insertions(+), 9 deletions(-)
+> > > 
+> > 
+> > [...]
+> > 
+> > >  
+> > > +static __be32 word_to_mask(int prefix)
+> > > +{
+> > > +	if (prefix < 0)
+> > > +		return 0;
+> > > +
+> > > +	if (!prefix || prefix > 31)
+> > > +		return cpu_to_be32(0xFFFFFFFF);
+> > > +
+> > > +	return cpu_to_be32(((1U << prefix) - 1) << (32 - prefix));
+> > 
+> > Isn't it GENMASK(31, 32 - prefix)? I don't know if it is preferable to
+> > use this macro in such place.
+> 
+> GENMASK(a, b) expects "b" to be const type, see
+> #define GENMASK_INPUT_CHECK(h, l) BUILD_BUG_ON_ZERO(const_true((l) > (h)))
+> 
 
---8INrE+XEHmoL1yAg
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sorry, I didn't know that, thanks.
 
-On Thu, Feb 27, 2025 at 03:40:18PM +0100, Bence Cs=F3k=E1s wrote:
-> Add UAPI header for the microchip-tcb-capture.c driver.
-> This header will hold the various event channels, component numbers etc.
-> used by this driver.
->=20
-> Signed-off-by: Bence Cs=F3k=E1s <csokas.bence@prolan.hu>
-
-Oops, I almost missed this one! Make sure I'm included in the To field
-for the next revision. ;-)
-
-By the way, b4 is a nifty tool that can save you some work and help you
-prep patch series for submission.[^1]
-
-> +/*
-> + * The driver defines the following components:
-> + *
-> + * Count 0
-> + * \__  Synapse 0 -- Signal 0 (Channel A, i.e. TIOA)
-> + * \__  Synapse 1 -- Signal 1 (Channel B, i.e. TIOB)
-> + */
-> +
-> +enum counter_mchp_signals {
-> +	COUNTER_MCHP_SIG_TIOA,
-> +	COUNTER_MCHP_SIG_TIOB,
-> +};
-
-Are these meant to be used to identify the Signals in the
-microchip-tcb-capture.c file. You should set the the counter_signal id
-members to these enum constants then. However, this enum doesn't need to
-be exposed to userspace in that case.
-
-Or is the purpose of this to match the parent ID of the Signal when
-you create Counter watches? That won't work safely the way you intend
-because the Counter subsystem creates the userspace parent IDs
-independent of the kernelspace counter_signal struct id member.
-
-Right now the Counter subsystem just happens to create these parent IDs
-sequentially from 0 because it was a simple way to implement it at the
-time we introduced the feature. However, there is nothing that ensures
-this will stay that way in the future, and in fact the design intention
-was exactly to allow the possibility of a future change to this area of
-code.
-
-In other words, there's no gurantee the parent ID in userspace will
-remain the same even between driver reloads. The intended way for
-userspace to behave is to first identify the desired Signals at startup
-based on their "name" sysfs attribute and then set Counter watches and
-such accordingly thereafter as desired.
-
-If that is the only purpose of enum counter_mchp_signals, then we can
-omit this patch from the series and you won't need to send it in the
-next revision.
-
-William Breathitt Gray
-
-[^1] https://b4.docs.kernel.org/en/latest/
-
---8INrE+XEHmoL1yAg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCZ8bNFgAKCRC1SFbKvhIj
-K8vtAQDQtKdqNviMCtM14inLMV9gO9XK9+zhMyb3MGIEkiBZ6AEAmowtr8SAqf6v
-JEe9IFPC1iVoe0A355hZA2t2H7E3LwE=
-=Wees
------END PGP SIGNATURE-----
-
---8INrE+XEHmoL1yAg--
+> Thanks
 
