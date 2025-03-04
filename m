@@ -1,61 +1,87 @@
-Return-Path: <linux-kernel+bounces-544060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3AC3A4DCFC
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:50:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E044A4DCFE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:51:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E283176AD4
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:50:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36FB8188490B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:51:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45E52201019;
-	Tue,  4 Mar 2025 11:50:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26DB3200BA9;
+	Tue,  4 Mar 2025 11:51:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D20TNwTK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="akczvY4S"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961861FFC68;
-	Tue,  4 Mar 2025 11:50:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A411F37D1;
+	Tue,  4 Mar 2025 11:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741089028; cv=none; b=sE6260TrivJEn3cxD6ZTbssXYXYV/W1qxINZhb9ZxwfPhsdEEUqIb2KWQ4YrW+qRQ2OUXjGl7tw0Hoc74swhQivjrwG8kZGXXWJghY0y6eQvHwUxI7mwZGoomzplCiVRHPK7rgmN0FjTha+bnUbsnE+VGcO554A4OTrkTqm4Ydc=
+	t=1741089088; cv=none; b=mJEvQ3LoFe9SqvXwlmJK6wBFKvAqCZFCqiXGZy2D/L5Ydb8Aj9AGndjEjlERHBgo4uCBn9kzPBD0l1PtNW3ccaWpf+6FLdJ6liPpB1mqIbGyMxyXDw7v1HhfGSfJyKHs3CPpX/X/bhOvrdxWbl13kFDGjN79KsZf7rnHqB7ZlZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741089028; c=relaxed/simple;
-	bh=kmomjaiI3c2VGNM7oWwROpYWTIS/k9TkBJGFHrTSAeQ=;
+	s=arc-20240116; t=1741089088; c=relaxed/simple;
+	bh=2EjWhAZbB8dUPiw0Ue+ZvoaXFP6YywEurgiLtelZNzk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kKMm/amFbSqF4JTL+HNXr8GZCkWiEttbad0MWtnDzo+G/zDV171raQ570tDedKJlDrxMgrR6nhU3gMg2XajipXA7GJk4a3LV20JY35/ASS1DmR2ekOKLFyN31M8Sl/ROQBsMoehRNaJA4VRYt95cCnJ1ketMLVnX6+i/iNLqvwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D20TNwTK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2918C4CEE5;
-	Tue,  4 Mar 2025 11:50:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741089028;
-	bh=kmomjaiI3c2VGNM7oWwROpYWTIS/k9TkBJGFHrTSAeQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D20TNwTK7KVFhQq1NmArBDPe4rQlX8/WvrpJFFgqMR0rG1pyCZibVccsp83IIzacO
-	 RstbbvOSgYHkKA68NOPU8/tqoSuceilz9wLwtZuYWNnMFrgDg5LdHkUka8M7hkyhZQ
-	 NNHND9WXIvgl6C5ouNJEwgQ2+zMulJHbIHDWLGBuWXhvWTFtV3oMuDqNao0YVT+Mue
-	 xE6Q5y/Gy1j1U9uCHuq6cusMFA3bzv+0P5F9XY2WtcRJo/Fh9FiLxEOoDi/7B+BbSc
-	 lAD0eFmwI7JFA4zgCG0LDVf1+FRPWJjBSA5GtdCmAlpyFCNmYKJY47kPLfn9zsgLxe
-	 PTtZ0XI2l4bLA==
-Date: Tue, 4 Mar 2025 11:50:23 +0000
-From: Simon Horman <horms@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH net-next v2 2/8] netconsole: Make boolean comparison
- consistent
-Message-ID: <20250304115023.GB3666230@kernel.org>
-References: <20250228-netcons_current-v2-0-f53ff79a0db2@debian.org>
- <20250228-netcons_current-v2-2-f53ff79a0db2@debian.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AG1ONamCB1EarEgIn2rZ6Rhg8ZLjkjUbDKBHEKcF35OjwOqC783OmTpSb4qZqgALgdfZlRjbKAIIjpGMn8XrZ0nSoz9xbcwb+Q3cVwcKQnNDHaZ3asU/3j0AcNl8NI46Q1o/v9eh+XexerVSiChUV7UGrO/ccdAh+guSanOiSpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=akczvY4S; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6e89959f631so43349996d6.3;
+        Tue, 04 Mar 2025 03:51:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741089086; x=1741693886; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OF6/E4alOrfhHZdSKNPX4eXV8A321bAOk8ILgmJMhj4=;
+        b=akczvY4SUmJnEGLdV+Zj7giHbV5pjkbZMZP9j+vakkULP0D64+6x0FXFc+Uz5bifxB
+         /oYHezY0X6itrXcgqEYd02YOBBAHJAEjIBw6F+Za6uapu5gHTvn5ypsW3HBE+qV1FVbX
+         bMsI0Rb7gjQXbeGehEeh/9CO591181KUX/mKvcv+IhwqqLJLNYobnZW7oFlnRvXjET93
+         5PTzVe8TqkYb0uxfmDKsaoieyn28mH8I01EGEJJBnGw7ZqWIXuDyEruoEx6OKXHVDcQK
+         uYVa0CNY2jIj46j86QLDPXEXE/GJVV9fcYdqZcJruYZCGFn5dTNrnjUecnO4x9C+46GG
+         CZ1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741089086; x=1741693886;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OF6/E4alOrfhHZdSKNPX4eXV8A321bAOk8ILgmJMhj4=;
+        b=TQTfS6MkBYNtksasDhKIrnsbI4SSyjcJ4FDWgLrfZb3A9yaMR86laOLwyd+PEs9cIC
+         r6Ik4LiYIlltFQbeqgbxcGn8L2b5JE76OE/aiAWWAtAoWkFcnSqDD93kV5RYxGUzwDSK
+         ilzF2E5sopo9x8UopU6md0badfT4hQ6pkqlMwgxKH0xzLiVeVeGJ+gG8iL7XLYCFRdye
+         ZrkvAX/1YujcoQ0BxBErjDTxhVq7bhYg56UUvq/+0aiLYKOb78qVvLHMSip4/IrdSPw7
+         WPhr2Nz4p68kH7pFOtbAJHwIT0VF66pdaUPiNWGOjmnPCuKKIvbnYQoW+5MGn3oG1enD
+         ZPrA==
+X-Forwarded-Encrypted: i=1; AJvYcCV8bQYOEyPQMhGPS7+usLARflpp5x37NgP7pccpLbbwu9UCqeukA+2/TNKke93hA25p9+tWY28cXjyLQdMF@vger.kernel.org, AJvYcCW1zlP4gp9vuUOtLYq8yvkh9DEaiNQGtiwvo4mmoxQez/kw3AlqM6vf7q6MrFrUQySzjG7q3gOcov8Tqao=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2rjkzo1OV60AEgj7oi75iLTx2n19KMEpesTxLZXoCMISsB91t
+	oobYiw22ieN0olthhPuJdghknxjICpzCmDN5pvhGwdE6c/7ZgPIC
+X-Gm-Gg: ASbGnct2+u1TIHvR2CEp7rGa+LWDN7DO1cQLE8dyHIGoyUJN5jFRImv9p7FHWdlacmL
+	KfqHhCMrprsbKlVEhP6a9lxAKoxZiWftzGPK3gBE70Ensxdx5bstlWZrY1y3X0CPQ0j1IbQDYR3
+	774ch9MUt7EVsqXe1TigkcgF2gKgfmaad2/EAIo5fmfwTTLB7OhbAAVCGk//ZZ0UoNf5rOYE4Fb
+	TJwhNrF+L0KwVgk6t+razub05qqPhQGufEIqcKC1c1gg69doHHgVgnJNB4MsOVFWX2LwtgVjF3Z
+	37hUTUthcAsD0t7539xC
+X-Google-Smtp-Source: AGHT+IEAbMT1TYNjt4RckdbjKvrPBVcpvNKU6efsYiT6EOgPRt/pMNKA7vCaFBBmL/nLL2nAV8B2lQ==
+X-Received: by 2002:a05:6214:20aa:b0:6e6:6426:8c61 with SMTP id 6a1803df08f44-6e8a0d95d02mr235238496d6.43.1741089086098;
+        Tue, 04 Mar 2025 03:51:26 -0800 (PST)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6e8976ccbe4sm65524246d6.78.2025.03.04.03.51.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 03:51:25 -0800 (PST)
+Date: Tue, 4 Mar 2025 19:50:58 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Inochi Amaoto <inochiama@gmail.com>
+Cc: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-serial@vger.kernel.org, Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>
+Subject: Re: [PATCH] serial: 8250_dw: Add ACPI ID for Sophgo SG2044 UART
+Message-ID: <zcldbfffydtok3gjjosfr2bzpatdl4vqjkuri5pfmrwbrk4krj@rivhifnbeoaz>
+References: <20250304070212.350155-1-inochiama@gmail.com>
+ <Z8blz3pAOV9by5tB@smile.fi.intel.com>
+ <Z8boqRiECAvAqy04@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,23 +90,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250228-netcons_current-v2-2-f53ff79a0db2@debian.org>
+In-Reply-To: <Z8boqRiECAvAqy04@smile.fi.intel.com>
 
-On Fri, Feb 28, 2025 at 04:50:18AM -0800, Breno Leitao wrote:
-> Convert the current state assignment to use explicit boolean conversion,
-> making the code more robust and easier to read. This change adds a
-> double-negation operator to ensure consistent boolean conversion as
-> suggested by Paolo[1].
+On Tue, Mar 04, 2025 at 01:48:57PM +0200, Andy Shevchenko wrote:
+> On Tue, Mar 04, 2025 at 01:36:47PM +0200, Andy Shevchenko wrote:
+> > On Tue, Mar 04, 2025 at 03:02:09PM +0800, Inochi Amaoto wrote:
+> > > The UART on Sophgo SG2044 can be enumerated via ACPI.
+> > > Add ACPI ID for it.
+> > 
+> > This is fake ACPI ID. Please work with a vendor to issue the proper one.
+> > Vendor ACPI ID registry has no records on Sophgo:
+> > https://uefi.org/ACPI_ID_List?acpi_search=SophGo
+> > 
+> > NAK.
 > 
-> This approach aligns with the existing pattern used in
-> sysdata_cpu_nr_enabled_show().
+> FWIW, the I2C thread has more insights and details:
+> https://lore.kernel.org/r/20250304070212.350155-3-inochiama@gmail.com
 > 
-> Link: https://lore.kernel.org/all/7309e760-63b0-4b58-ad33-2fb8db361141@redhat.com/ [1]
-> Signed-off-by: Breno Leitao <leitao@debian.org>
 
-Thanks Breno,
+Thanks for your info, I have seen the feedback.
 
-FWIIW, I 100% agree with this change.
-
-Reviewed-by: Simon Horman <horms@kernel.org>
+Regards,
+Inochi
 
