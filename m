@@ -1,353 +1,259 @@
-Return-Path: <linux-kernel+bounces-544878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40C98A4E62B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:37:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 069C5A4E6E3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:53:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 446B419C3B0C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:29:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C034B8C829C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:25:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FBDA2D3A93;
-	Tue,  4 Mar 2025 16:07:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B04A2980B7;
+	Tue,  4 Mar 2025 16:06:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="RFFM3QgT"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2043.outbound.protection.outlook.com [40.107.244.43])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="lTAHe75i"
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013067.outbound.protection.outlook.com [40.107.159.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4C529C35A;
-	Tue,  4 Mar 2025 16:07:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A946E2980AF;
+	Tue,  4 Mar 2025 16:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.67
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741104451; cv=fail; b=JOmTdaBdL3Y8V1tkv0AlwYQuuo9U3Jo8bKLlQquVFXsSklrU/aTslffCP8RLjvGMNBt4Mva2wwwDsYJqEdyJSDg6lYNDnu2CXrampd94rKklcI1xrmICxo3wz4u2VZFA+liQwRLkGVMNRlQYrxDw5k9Rg4lx10pIluwgw7lDpXM=
+	t=1741104409; cv=fail; b=OLh3IXjiDTUI8kOYf14QPE3W+pAab7Pe+rpoZvyGO8GT2SHbnJbDZ1NPiLOKBqoenS+x744rjq/d38GIz6J+Tk5DK0f9EX14JsvhDzSye2p5/6jgFu1egccFg1UfVZWitdrU90vy3VTJbc38FEPiOyP0asflrE9zAlcxd66kMpk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741104451; c=relaxed/simple;
-	bh=bYF9v5ufkwgKQiMySA56oJfPCCpSagb3eqv42UBvE0k=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fseOGjr31XoH8Y0Fmgu5SesEKkbmOr/yCyDtB2WhmoVG94UaclYMXGobM7yaP2naT8OMGmysUI5itG1CTlOeAeCaKtz3bD2opuMtx18B4zJIEI2TObNb7uiGVSEbfHuSg1PDU93iuBpdlcZOctYhxYRKHi+2cntHbrOQyDIoKKc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=RFFM3QgT; arc=fail smtp.client-ip=40.107.244.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1741104409; c=relaxed/simple;
+	bh=ySbaUpbxthsEioy/CKgD+JOY0PQgsIgKQIrzPQ+PTuI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=a8MCtMCWWPqRhVLabs/3AG8OST/x4IOOMYma7x6OkF98vhNCuNrmCxQVVRLQbsAUVOdOPYSCkxHCytYy+wu486Y6xwJK3XC7Sr7rT+dtwoecRZKKyp9AnVcVwrti6QEO/GItWxj58KVwZNr6zybl3lVtwylm9+Z7RwaXBfPzMIM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=lTAHe75i; arc=fail smtp.client-ip=40.107.159.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bkF5kzUf3N6+5r7ELtrTYzKHHgow+rdeNw5pnQzBBT1r29fRZZWX2NG9jTPDVfYp7mBXoQfHqjZpJhJgEDFbuLM6MlcB3r+SvWj2KpQjq4SXV7/cElWd27BW6f/Vzn4Ex+XeBkp56EDDktSnCnmAIySojh+Gl5HyKf7Pa86l0w8nuqK59Tlvup49dAx+cprPId0AwzvAqrMyoxMg7sP0TBKbFBYR3AQHsNpGc8/N8WthPOIlImwOLEAYHQw2ik1SS7tvyA0ynBMduofzAMaRaSqySyNebJkKxD2aDcXp7RPgV/IXYSTJZmBXuMxvgiLKk7KPCrUMzJSHahpS9A7vtw==
+ b=zJkVXy07gic7kKZ2CVGY+jMiJh3sRVRX6zhhP4fq4lwTX4y/19zHhBGq/IjBpDbj0HIIUC0efeR6BqqMhc9gErDgrO/YQ/X9q3yhRerIuvrWXc/rVpqmTEow++ue5YbFnli8AZCSvtpg1cQ6E9bUC9RUhGuPNW+SxxFFxg42VIjv2eH7ppjeOP79pigStlwEFQ0MPqh58Mm1XqH8SGVbNItKsd8I3ldg0+/XpMhBfDCUycZDHFOUG8r8Hxwf9dz8WrdYsuEHoGQxgecYuYZyULnN43zwvC3HiJxLEbn5/8kiTSaY/LrJQXwh8Jt/kDhS5PvXG5vKXUI1dOdBjwJnUg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lvoPwjk8ib197xrgN8n5iCcP8sx52JIzEywWlxn8uxw=;
- b=JlJJSlmA3eua1oIrYoUnIHVTRtm2g+r/jp8mUuuS/5wURky7XuATp/ZWuX76ZRodYuoILXMCLEuXxUn2rSo2b+80SMHEwLtC31z0P6iuX4efha5319W/77xESQOwjmUmETvukFg2SDUJsjlUT/fv8viN1ayMolk5cO2eNLiUSFPTXvXjuJ5HoSNj+wKQUPAM+dg2gmKjDBDq63nKPaEcubiCH8qJCJI0Ali5oRpvVlTq5kUQR3FzPyZG0ofJVdZA0DgZWDmu9LPudaXMuE5GFneLTjt7jhhjCidSe8ao/PYXatFNXJ5TgXYxPhb7EbY7DPHabIMu8zbQJKsEu0rxiw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=davemloft.net smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ bh=ga1m/FmnSGeSoIB9+IzXPkwkC0Qk9juZIKXubxvZ0ws=;
+ b=SSNOB73x44p9aFxYSTlUbYVSH5scnieaQ9qsPc6UISSkE3Djrlc6mteJ6dQUeDgjO7O/e6jVr0Js/s3W149bO6abd6VLj58+M9RfLPEUEf79TyVFBCswoKsHA7kspzbEGJ6VDi2S1vxZdj99zZg1EB4oJiyho0hCfcT1RGe8RHOMvXvcQ/vndI+WELi/b8LudnUD2kRc16d8DxBwjJQ4NZe5Ejjre50jrZOgc5MEry0so7BPJFXYSOOHMq7G6J/FzEFqkIYFai3EbZif3VJUD2nZBe+mwEsWWfYF7kIjBylEuXewZfSmbwiO3auLw9thPAmvDP9jhhEEK2YXitspbA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lvoPwjk8ib197xrgN8n5iCcP8sx52JIzEywWlxn8uxw=;
- b=RFFM3QgTQAAQ2OQlmONGM6+Bt6sY/wSzGwZ5utAt4gpuoOFQrqO/Y1le+p6zyNSAOe5Yj/SZHUDEkLzqYQ7UvI4b8UA4DxL2SQ7zIeHeTDJBIOxuW+h2sz/I9jmG+IM0MHD+ycLllJB5V2iT3DghgLQx3dbZqnq22H35g9+f6jj6JBOuPBZXwEeaUlaWHjG610oHkClnmNSTxMaX/i4B/7XIyf80Qaix74rs8/OJ6U71hO1/N2EK08S+xSOxxpRRGb49aqrOeAkpja0A+ec9IpDahS7ZY13qDfSjnOalwlwSUZFyF+thdhmdFcCKEdeRRIIvEGlmi3AZOgmv946HgA==
-Received: from PH7P223CA0019.NAMP223.PROD.OUTLOOK.COM (2603:10b6:510:338::20)
- by DM4PR12MB7526.namprd12.prod.outlook.com (2603:10b6:8:112::20) with
+ bh=ga1m/FmnSGeSoIB9+IzXPkwkC0Qk9juZIKXubxvZ0ws=;
+ b=lTAHe75igzZwCqfIsxq9c9iLiugbCL9tl3CVYnSYmuJKUuWS6LsVjYq3cfkW25Fe8Sr+VDq/8VO9ePFAYt9WFF2GTkBt03BjpVSn0QS/VrvZxv4onI0Q504Jx4GtSI4xR0SReYlvpP2iCJEl82RuM2vQFGOFSFaElEOKwxvFadIBWuCVGz7Iddqopn+cmLU3f0lZAagpiryRgv9fAOKJmn8hRW0P3qeg+kq4hYDI92YgIozx5nx9cGO0Q7HZout/N5pmXX57l35Z54NT6zoarDLNjTmPZRkVa+rgcUCMEIeTcxF/H986w1xn3pyc+YiEWUeSPiyG8j3/f1NkLV29Pg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
+ by AS8PR04MB7640.eurprd04.prod.outlook.com (2603:10a6:20b:297::17) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.25; Tue, 4 Mar
- 2025 16:07:26 +0000
-Received: from SN1PEPF0002529D.namprd05.prod.outlook.com
- (2603:10b6:510:338:cafe::e8) by PH7P223CA0019.outlook.office365.com
- (2603:10b6:510:338::20) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8489.29 via Frontend Transport; Tue,
- 4 Mar 2025 16:07:26 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- SN1PEPF0002529D.mail.protection.outlook.com (10.167.242.4) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8511.15 via Frontend Transport; Tue, 4 Mar 2025 16:07:25 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 4 Mar 2025
- 08:07:05 -0800
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 4 Mar
- 2025 08:07:04 -0800
-Received: from vdi.nvidia.com (10.127.8.10) by mail.nvidia.com (10.129.68.7)
- with Microsoft SMTP Server id 15.2.1544.14 via Frontend Transport; Tue, 4 Mar
- 2025 08:07:01 -0800
-From: Tariq Toukan <tariqt@nvidia.com>
-To: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>, "Andrew
- Lunn" <andrew+netdev@lunn.ch>
-CC: Saeed Mahameed <saeedm@nvidia.com>, Gal Pressman <gal@nvidia.com>, "Leon
- Romanovsky" <leonro@nvidia.com>, Michal Swiatkowski
-	<michal.swiatkowski@linux.intel.com>, Leon Romanovsky <leon@kernel.org>,
-	Tariq Toukan <tariqt@nvidia.com>, <netdev@vger.kernel.org>,
-	<linux-rdma@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH net-next V2 6/6] net/mlx5e: Properly match IPsec subnet addresses
-Date: Tue, 4 Mar 2025 18:06:20 +0200
-Message-ID: <20250304160620.417580-7-tariqt@nvidia.com>
-X-Mailer: git-send-email 2.45.0
-In-Reply-To: <20250304160620.417580-1-tariqt@nvidia.com>
-References: <20250304160620.417580-1-tariqt@nvidia.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.28; Tue, 4 Mar
+ 2025 16:06:45 +0000
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::e81:b393:ebc5:bc3d]) by DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::e81:b393:ebc5:bc3d%4]) with mapi id 15.20.8489.025; Tue, 4 Mar 2025
+ 16:06:44 +0000
+Date: Tue, 4 Mar 2025 11:06:33 -0500
+From: Frank Li <Frank.li@nxp.com>
+To: Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
+	Peng Fan <peng.fan@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux@ew.tq-group.com,
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v3 2/6] dt-bindings: soc: imx93-media-blk-ctrl: Add LDB
+ subnode into schema and example
+Message-ID: <Z8clCaPHIVFl1WX1@lizhi-Precision-Tower-5810>
+References: <20250304154929.1785200-1-alexander.stein@ew.tq-group.com>
+ <20250304154929.1785200-3-alexander.stein@ew.tq-group.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250304154929.1785200-3-alexander.stein@ew.tq-group.com>
+X-ClientProxiedBy: SJ0PR13CA0227.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c1::22) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF0002529D:EE_|DM4PR12MB7526:EE_
-X-MS-Office365-Filtering-Correlation-Id: c3196444-da0b-45b5-4387-08dd5b36a7ad
+X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|AS8PR04MB7640:EE_
+X-MS-Office365-Filtering-Correlation-Id: ddde4507-7637-4f42-9f76-08dd5b368ef4
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|7416014|376014;
+	BCL:0;ARA:13230040|376014|1800799024|7416014|52116014|366016|7053199007|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?r/hEFgYXQA326r7BSYh3N6Xf41oMr1iGk6eS3egb/M+bby9GEyH0eUguuugv?=
- =?us-ascii?Q?eUP7GKnJfMzSVrYDQctAp5Pon2DFDjSMe0iBVZf4p71hMucGtFElqbo5FY5D?=
- =?us-ascii?Q?JTCsmP4vVrfLwlkhFA9zkyzim5uCbygHn9/EKGiDHaJqAwrc5oOQXbNFSp4p?=
- =?us-ascii?Q?jQgI4YLusZPdoq5JF2zNkSzwvYQnQykmfDWT2YBgsqR3FjyeFgvVQt3IAfZR?=
- =?us-ascii?Q?L+DfQgx//yvRTn2F/JU+SNqqKEWjAqdWKhtACpQhMs/UX0XynrmTwNQbCFPA?=
- =?us-ascii?Q?VXRXPPF24aF7PaE67WDFM4VwuxLbo/8TUUsaY2vs7nTuUNDETJcB0zGh3hGI?=
- =?us-ascii?Q?/LJTNKVWKUrr1UU6y11zhjn7Sswpd1k1FlkEfeJ4HGAM/z5Rh7knzdRdxotB?=
- =?us-ascii?Q?8D7nWzGx2S4cNutIsjJ8o2J/79ioz5BuAXtyWJqp34Jx4QlhrNYSRyW/yXvV?=
- =?us-ascii?Q?VJOpzjnToUFkM5Odo9kUf+iYRztTYfhZVNTUnjF7PH6TQcWSq+EZQd/lOzMM?=
- =?us-ascii?Q?e1/SoLxy0rqHFnwUWQt1kqCsVyoAgrwISkrDfG7cL9rzQk0qgiAYWkZBq8Dn?=
- =?us-ascii?Q?8fUeaaEA/yl+/qzvSYSO1jGGEtsW6P3mNZAQ27T+u60gMbu8VzxAVJ8PXvl1?=
- =?us-ascii?Q?FKAGr0awrxTw8S4Kgo+QZPjEmpnUGdih27ZJ3wWEATwr6fgdNuzZm4ZsPvWE?=
- =?us-ascii?Q?TX8CwOi0/qEDM9DONhI27AXvDRfrIzcCAhFhsE22nUClY53YvwLam1gF2tHj?=
- =?us-ascii?Q?BrMYRPQJDuF/BEkBv3MhCmxwtzOYaolKYV5BjHLoi5TJ35umhUmhdsEzZ1bu?=
- =?us-ascii?Q?GiJu3oP3LM4SecwBLnXaSxgzGAYXHGxo6iB1zgk6jzmoSK7Uib12frhXxRZL?=
- =?us-ascii?Q?u6IfCm/EDb13MjA7vbiLBQBtF7Z48GBXVTyjoeBsgKHOz8phI8gQXvMSLTzS?=
- =?us-ascii?Q?ToozzeB2affjZfNFDE67tEPCe5F6ppkQT5JgF3LJd1+jcW/CKflhU2pGVfXc?=
- =?us-ascii?Q?fvxCww2h1yZzBMN0NGJQaZDLdaqspTvLXbqmJryMu34h4X3BMpOem5QPZYrC?=
- =?us-ascii?Q?bLPqHzmmIRz+kjX3JgMHBi/Qz2Fj6plkpULaaRkKVZd6qfIv0gTSKXxTDoCu?=
- =?us-ascii?Q?5b4GfJaTeugpNKRrmzPNlGz+OxKkY2cRpnbLSuBZMDwtl2chALKIO7o78HC/?=
- =?us-ascii?Q?h2LtBP8T5ifaUydcBPoQxLjyur/Q4ZA5FqCpUcTUE3Oc3swT9CHyD+rc3Lif?=
- =?us-ascii?Q?UsQrNrDl9uYLeTD7T/gOxbCx9SnbFVnVPsdR2wxKVu4p8IvrPHTwXJBmrxsk?=
- =?us-ascii?Q?aKdRw27jL5lzjDd9DTOY9qiRK07IT2ESbxplg3pjxpjWqQg9DMc9oTQgp94W?=
- =?us-ascii?Q?7AQk6cvUh/9poo2ilJnwIWCAnlY1HyYwhjAVrXCZUzPxHqNQS7i/vL42GCUX?=
- =?us-ascii?Q?uw9m0r8/XwD2kZWO4OxrTnbeR5Y4TMuWiTXcSFDxwehD1E0fwyR2Msgy8sDh?=
- =?us-ascii?Q?XjCIpgkSRB22VKo=3D?=
+	=?us-ascii?Q?Ytqkf7QuBp3+bHBYPGAKlP/rb+s5aaqFCfsQO1PfcJgcKaNugkBMPKuRWViD?=
+ =?us-ascii?Q?pM/Xy/Gx2qxpIHyNeu9X8TE/Mbo0SHAvAlb8Mf8msE6XFe9Ia06tlZ1LK49L?=
+ =?us-ascii?Q?0FYmWxyvHXFlXpoqdC8CjsHYrCZ3hL2FsnqvPk2NAlxN2VUy0KmCu/EN47qH?=
+ =?us-ascii?Q?g22PeBVGmJAYuHZQe72KgU5ptSfuN7JNODBTV5W8BS9YmemKKlB5dyYGbS+8?=
+ =?us-ascii?Q?WwreajDf52CJOqALEFCsMb20Y0ZZt/jrNlSjokuACdvo5uEC76RMvbsOIes1?=
+ =?us-ascii?Q?onaH3nRm3nm3P5Ney2KX/y9zAQ/TarbJEZyWdkF7wXgQVs5SSZfWKgBxS5ig?=
+ =?us-ascii?Q?wffJGV9ZD0hoqp9tP3WUqiJ0+pMXnwN5UUHM+cJ4Bjjx7YKLNZB4LdsRUexT?=
+ =?us-ascii?Q?/0r56LJPG1zdfdcPgcrI1XzY24qQ6yjMY5JdzWHPfb8iHCyJo4szdqspMe2Z?=
+ =?us-ascii?Q?5gQVFLVqAQZK9epqf/pwrFyW7vbxoo6cvKtmQbBgmoTnoGir7lDIZNppR6D8?=
+ =?us-ascii?Q?tjcvZsuV4WB+xf7gXGAO63wuJfLzGYE8Nv54JdEKBMODI/mCNWXL7RHcdzKa?=
+ =?us-ascii?Q?OAwYDdUW6R7vrxcydkT1yRL29PWiCSja2uxb1sI5NoiH03dfZO6xlzW6/b4p?=
+ =?us-ascii?Q?X2i1nlmD7kGghdEU8bmdKinRWmnTsp9Bl7MIe+2sMIZUdyt6bU+th+Iw+2vi?=
+ =?us-ascii?Q?7zQhidefVkLTCSa66lsugNiWsij+4W5bCAqueiBie/hg9tuVh50weZEQxY30?=
+ =?us-ascii?Q?LpgR+JWAv6cw5s9paykmYFRZnhQwDnnj9pSeWbPZeyAK810EmxELhEiKS/Lc?=
+ =?us-ascii?Q?RHEcYwAAPjjool+6fIdsNmr8hox8qIJWcW/3LW2x9F3j9/1L8/B42gqaAoHa?=
+ =?us-ascii?Q?k+TZOB4q/zuHUP0uXQTBg/XLLbCdi1wY9Jnsj5d3rK+G87u2RUbe8GCWzHb4?=
+ =?us-ascii?Q?ui5fdjQf4NOTz8hK4ac1/0RoOxIGVp6RciMblIGqUfMKP+o3FdXxqpqZ/ivb?=
+ =?us-ascii?Q?ejIZmyVqUaS/KYoCb2sRNXCrEgGQbrpmnZn06cr4Sfdy59FHhbOgGxQUIr+6?=
+ =?us-ascii?Q?3Q7gtbZVUgCxexSL/hsx6pODiR725246EvPAhpeEDpmxTUy2/nvWrJGcQebs?=
+ =?us-ascii?Q?keQZDGnnywiMXJc7PE7njDCAwjipz0/AHGtAvCysJ1Aspo/X2/QNsLr7GP1E?=
+ =?us-ascii?Q?zgQLd+fHSZxPCgn5lyuazJ1Tmh0gGPZ1FJ3OE/Yqd668MKLb5la0PNU+Nfcj?=
+ =?us-ascii?Q?clxMp9uFC1QJd2SGY29pwqMy0BItmFZBhmHZzB01C7nvGdK4loWkwaPnfMUU?=
+ =?us-ascii?Q?DkiqmgeM0eHFsjwd4w+AKAWXWHM2mpWXVLeTY0frbEdw/ZHV+L8FdzD78mnk?=
+ =?us-ascii?Q?WGR8OYfV6NWjlmkcQJo7QBODEDk1CeDWAN/RNve5ZYivoeqB+jjkrjgvK8RF?=
+ =?us-ascii?Q?RRIeH8haX7hvAVSyk5jeQwH/ohgJaVEG?=
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(7416014)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2025 16:07:25.5052
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(52116014)(366016)(7053199007)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?R45N8Z9sVVGbBqahemKR4i6Yrm4O+7PG4BUShY6jqkuBW9Btgm/VFpNGak36?=
+ =?us-ascii?Q?nhlc1wmDEyQSTfnNsBLUGcFohO/fRMoUl2t9Ih1GjtomqAvNNxLvwkt/OtiI?=
+ =?us-ascii?Q?tliHbDZUF9gfEp1Xosu85sRn3jMtuGSJAqj1sLRekce+kENoyfDdNJW8nvFt?=
+ =?us-ascii?Q?uxlbQHt6dILmXPiLy9UldQuI+89QVaG6d+NBDffa7Fgkd985lbUDRDUNG7Uy?=
+ =?us-ascii?Q?EptzDRhuyo8ao+qeeZWXGgsGfwjK0CYqEiMsiuL2zQSD+ChLNU1AJsJ4YxTr?=
+ =?us-ascii?Q?InmWZmqmQ3PiKyshbWkM6XeJHVfbaxC6WGtbJP0yqzgl/tBvDYK44jspxRNh?=
+ =?us-ascii?Q?oN3QVxvnI5y/BC0pHI5vEosXsg2746FKDHEluYE3dE3w6p4tWtGfBalrtLjx?=
+ =?us-ascii?Q?Qiqqf41Pzz+9ht75nS1tVBfvWNX6byCAT1qNjh0ORQburZqyJbeVff8SqcPW?=
+ =?us-ascii?Q?fGLesgzBC++J81qz6pdWSMowYHuBkCX4w3I3NVN37ijojPa0q2wfm305CKxY?=
+ =?us-ascii?Q?HSaSEvArT5M0gY/QsHTIRVE1fVqqoAsfQpv9j1mYsIfuhWknuF0uAin2lXX+?=
+ =?us-ascii?Q?qESY/dVx0VqaG53tZBqi51M2t5KLclUSJEmH1lMmfcP3axgFgiVV0pApXSXH?=
+ =?us-ascii?Q?k3KvczYItNGhEpj80AmyndyzoqrV7KMXRNdbKvhbn+Yt2u7/QZfHEMTF1k0C?=
+ =?us-ascii?Q?RCGCQ4hL/oeuMlV+jHr+js1k53FqX+Zd4EVGcZG6rIGObVCZVeLYc1hngjOk?=
+ =?us-ascii?Q?zL8zclJE0TFfUbuMF9szT5wmmAcXIQXZMEhHKavZdHf6bXkZ4a0UbeBVQtl0?=
+ =?us-ascii?Q?sfXbknNpyy2j0/tO3vP5Y7BdS3vDvEIFQBPS77snuBQOEujXOIOC3qlBRjXl?=
+ =?us-ascii?Q?qlYKkXkdUe2hmQkY1j4PXQvHNQ4Ye6eZkBJjKMtKLOb/FNAZDQtos6o134iH?=
+ =?us-ascii?Q?jNzN3mSWgrIRBQyiBHQ+nRqYmvZer7zP0FQMeXWXs0o4RhLxYvd29gg1nu9H?=
+ =?us-ascii?Q?6wehdIPAo6Z/kX8LvZCgxMiE0nb3J3jDepuqqy4YohnI1kkarsxwvTxzB5Gd?=
+ =?us-ascii?Q?p2dGPLmgfWcGOfkbkAgzsL8t+8AIYnZ6SxUr/LAi0GZ84KE2Rp22UYhFjlw7?=
+ =?us-ascii?Q?uJz/Zv5z9mXN/F91rF/3VfwPhV4Fn8WQrfwJ5Uly7dVnrfaNza8+sC4XGIsw?=
+ =?us-ascii?Q?GaLegcjkCEaeymtMA0Nd1W7/G1EoSpsdQbTXxDGNbdH17tvavNgm/VB4Ae7l?=
+ =?us-ascii?Q?LWxhYwiBCnDs+lV6SJiYAfPFCxRi4RaoqrS549aexRzzJKwvQ1Xfp4cutXaM?=
+ =?us-ascii?Q?AB/XxcP6l6kSpSzBkpdbkvH0+kP1Taz0MJKFKv1cNcWc5MpVbVDZYiOL0L3/?=
+ =?us-ascii?Q?weaneESFgmHEE7km/wD1pcuYFLyFGIuViQRrscYP/iUpd2XoIWvI9ml5GR3E?=
+ =?us-ascii?Q?L+reTJ3aamMU0wSbj/DCjYZn7EED0nhnzmyu+Aj5aAUhJQueqWjUaV61+gm+?=
+ =?us-ascii?Q?DV2IaqtP2Wmk4P51AqtwXWbTdvjpxYP9dmOLo8rF2bxdXw93s7podzR+cDSs?=
+ =?us-ascii?Q?mD0xeH++rekxigitZq/8NZE0GsRPCShUyJewama1?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ddde4507-7637-4f42-9f76-08dd5b368ef4
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2025 16:06:44.9178
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c3196444-da0b-45b5-4387-08dd5b36a7ad
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF0002529D.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7526
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: eckD7Ep/RdJVY4oeuuVbxYzas6XA2aeMy0Xbe3DHOp9zaBU8nfzxJWarvxdeTcMJp89cB5GLMzQgsFrouTlyJA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7640
 
-From: Leon Romanovsky <leonro@nvidia.com>
+On Tue, Mar 04, 2025 at 04:49:21PM +0100, Alexander Stein wrote:
+> Document the LDB bridge subnode and add the subnode into the example.
+> For the subnode to work, the block control must scan its subnodes and
+> bind drivers to them, do not misuse either simple-bus or simple-mfd
+> here.
+>
+> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> ---
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-Existing match criteria didn't allow to match whole subnet and
-only by specific addresses only. This caused to tunnel mode do not
-forward such traffic through relevant SA.
-
-In tunnel mode, policies look like this:
-src 192.169.0.0/16 dst 192.169.0.0/16
-        dir out priority 383615 ptype main
-        tmpl src 192.169.101.2 dst 192.169.101.1
-                proto esp spi 0xc5141c18 reqid 1 mode tunnel
-        crypto offload parameters: dev eth2 mode packet
-
-In this case, the XFRM core code handled all subnet calculations and
-forwarded network address to the drivers e.g. 192.169.0.0.
-
-For mlx5 devices, there is a need to set relevant prefix e.g. 0xFFFF00
-to perform flow steering match operation.
-
-Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
-Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
----
- .../mellanox/mlx5/core/en_accel/ipsec.c       | 49 +++++++++++++++++++
- .../mellanox/mlx5/core/en_accel/ipsec.h       |  9 +++-
- .../mellanox/mlx5/core/en_accel/ipsec_fs.c    | 20 +++++---
- 3 files changed, 69 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ipsec.c b/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ipsec.c
-index beb7275d721a..782f6d51434d 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ipsec.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ipsec.c
-@@ -303,6 +303,16 @@ static void mlx5e_ipsec_init_macs(struct mlx5e_ipsec_sa_entry *sa_entry,
- 	neigh_release(n);
- }
- 
-+static void mlx5e_ipsec_state_mask(struct mlx5e_ipsec_addr *addrs)
-+{
-+	/*
-+	 * State doesn't have subnet prefixes in outer headers.
-+	 * The match is performed for exaxt source/destination addresses.
-+	 */
-+	memset(addrs->smask.m6, 0xFF, sizeof(__be32) * 4);
-+	memset(addrs->dmask.m6, 0xFF, sizeof(__be32) * 4);
-+}
-+
- void mlx5e_ipsec_build_accel_xfrm_attrs(struct mlx5e_ipsec_sa_entry *sa_entry,
- 					struct mlx5_accel_esp_xfrm_attrs *attrs)
- {
-@@ -378,6 +388,7 @@ void mlx5e_ipsec_build_accel_xfrm_attrs(struct mlx5e_ipsec_sa_entry *sa_entry,
- 	       sizeof(attrs->addrs.saddr));
- 	memcpy(&attrs->addrs.daddr, x->id.daddr.a6, sizeof(attrs->addrs.daddr));
- 	attrs->addrs.family = x->props.family;
-+	mlx5e_ipsec_state_mask(&attrs->addrs);
- 	attrs->type = x->xso.type;
- 	attrs->reqid = x->props.reqid;
- 	attrs->upspec.dport = ntohs(x->sel.dport);
-@@ -1046,6 +1057,43 @@ static void mlx5e_xfrm_update_stats(struct xfrm_state *x)
- 	x->curlft.bytes += success_bytes - headers * success_packets;
- }
- 
-+static __be32 word_to_mask(int prefix)
-+{
-+	if (prefix < 0)
-+		return 0;
-+
-+	if (!prefix || prefix > 31)
-+		return cpu_to_be32(0xFFFFFFFF);
-+
-+	return cpu_to_be32(((1U << prefix) - 1) << (32 - prefix));
-+}
-+
-+static void mlx5e_ipsec_policy_mask(struct mlx5e_ipsec_addr *addrs,
-+				    struct xfrm_selector *sel)
-+{
-+	int i;
-+
-+	if (addrs->family == AF_INET) {
-+		addrs->smask.m4 = word_to_mask(sel->prefixlen_s);
-+		addrs->saddr.a4 &= addrs->smask.m4;
-+		addrs->dmask.m4 = word_to_mask(sel->prefixlen_d);
-+		addrs->daddr.a4 &= addrs->dmask.m4;
-+		return;
-+	}
-+
-+	for (i = 0; i < 4; i++) {
-+		if (sel->prefixlen_s != 32 * i)
-+			addrs->smask.m6[i] =
-+				word_to_mask(sel->prefixlen_s - 32 * i);
-+		addrs->saddr.a6[i] &= addrs->smask.m6[i];
-+
-+		if (sel->prefixlen_d != 32 * i)
-+			addrs->dmask.m6[i] =
-+				word_to_mask(sel->prefixlen_d - 32 * i);
-+		addrs->daddr.a6[i] &= addrs->dmask.m6[i];
-+	}
-+}
-+
- static int mlx5e_xfrm_validate_policy(struct mlx5_core_dev *mdev,
- 				      struct xfrm_policy *x,
- 				      struct netlink_ext_ack *extack)
-@@ -1121,6 +1169,7 @@ mlx5e_ipsec_build_accel_pol_attrs(struct mlx5e_ipsec_pol_entry *pol_entry,
- 	memcpy(&attrs->addrs.saddr, sel->saddr.a6, sizeof(attrs->addrs.saddr));
- 	memcpy(&attrs->addrs.daddr, sel->daddr.a6, sizeof(attrs->addrs.daddr));
- 	attrs->addrs.family = sel->family;
-+	mlx5e_ipsec_policy_mask(&attrs->addrs, sel);
- 	attrs->dir = x->xdo.dir;
- 	attrs->action = x->action;
- 	attrs->type = XFRM_DEV_OFFLOAD_PACKET;
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ipsec.h b/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ipsec.h
-index 37ef1e331135..a63c2289f8af 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ipsec.h
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ipsec.h
-@@ -81,11 +81,18 @@ struct mlx5e_ipsec_addr {
- 		__be32 a4;
- 		__be32 a6[4];
- 	} saddr;
--
-+	union {
-+		__be32 m4;
-+		__be32 m6[4];
-+	} smask;
- 	union {
- 		__be32 a4;
- 		__be32 a6[4];
- 	} daddr;
-+	union {
-+		__be32 m4;
-+		__be32 m6[4];
-+	} dmask;
- 	u8 family;
- };
- 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ipsec_fs.c b/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ipsec_fs.c
-index 23b63dea2f7f..98b6a3a623f9 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ipsec_fs.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_accel/ipsec_fs.c
-@@ -1488,7 +1488,9 @@ static void setup_fte_addr4(struct mlx5_flow_spec *spec,
- 			    struct mlx5e_ipsec_addr *addrs)
- {
- 	__be32 *saddr = &addrs->saddr.a4;
-+	__be32 *smask = &addrs->smask.m4;
- 	__be32 *daddr = &addrs->daddr.a4;
-+	__be32 *dmask = &addrs->dmask.m4;
- 
- 	if (!*saddr && !*daddr)
- 		return;
-@@ -1501,15 +1503,15 @@ static void setup_fte_addr4(struct mlx5_flow_spec *spec,
- 	if (*saddr) {
- 		memcpy(MLX5_ADDR_OF(fte_match_param, spec->match_value,
- 				    outer_headers.src_ipv4_src_ipv6.ipv4_layout.ipv4), saddr, 4);
--		MLX5_SET_TO_ONES(fte_match_param, spec->match_criteria,
--				 outer_headers.src_ipv4_src_ipv6.ipv4_layout.ipv4);
-+		memcpy(MLX5_ADDR_OF(fte_match_param, spec->match_criteria,
-+				    outer_headers.src_ipv4_src_ipv6.ipv4_layout.ipv4), smask, 4);
- 	}
- 
- 	if (*daddr) {
- 		memcpy(MLX5_ADDR_OF(fte_match_param, spec->match_value,
- 				    outer_headers.dst_ipv4_dst_ipv6.ipv4_layout.ipv4), daddr, 4);
--		MLX5_SET_TO_ONES(fte_match_param, spec->match_criteria,
--				 outer_headers.dst_ipv4_dst_ipv6.ipv4_layout.ipv4);
-+		memcpy(MLX5_ADDR_OF(fte_match_param, spec->match_criteria,
-+				    outer_headers.dst_ipv4_dst_ipv6.ipv4_layout.ipv4), dmask, 4);
- 	}
- }
- 
-@@ -1517,7 +1519,9 @@ static void setup_fte_addr6(struct mlx5_flow_spec *spec,
- 			    struct mlx5e_ipsec_addr *addrs)
- {
- 	__be32 *saddr = addrs->saddr.a6;
-+	__be32 *smask = addrs->smask.m6;
- 	__be32 *daddr = addrs->daddr.a6;
-+	__be32 *dmask = addrs->dmask.m6;
- 
- 	if (addr6_all_zero(saddr) && addr6_all_zero(daddr))
- 		return;
-@@ -1530,15 +1534,15 @@ static void setup_fte_addr6(struct mlx5_flow_spec *spec,
- 	if (!addr6_all_zero(saddr)) {
- 		memcpy(MLX5_ADDR_OF(fte_match_param, spec->match_value,
- 				    outer_headers.src_ipv4_src_ipv6.ipv6_layout.ipv6), saddr, 16);
--		memset(MLX5_ADDR_OF(fte_match_param, spec->match_criteria,
--				    outer_headers.src_ipv4_src_ipv6.ipv6_layout.ipv6), 0xff, 16);
-+		memcpy(MLX5_ADDR_OF(fte_match_param, spec->match_criteria,
-+				    outer_headers.src_ipv4_src_ipv6.ipv6_layout.ipv6), dmask, 16);
- 	}
- 
- 	if (!addr6_all_zero(daddr)) {
- 		memcpy(MLX5_ADDR_OF(fte_match_param, spec->match_value,
- 				    outer_headers.dst_ipv4_dst_ipv6.ipv6_layout.ipv6), daddr, 16);
--		memset(MLX5_ADDR_OF(fte_match_param, spec->match_criteria,
--				    outer_headers.dst_ipv4_dst_ipv6.ipv6_layout.ipv6), 0xff, 16);
-+		memcpy(MLX5_ADDR_OF(fte_match_param, spec->match_criteria,
-+				    outer_headers.dst_ipv4_dst_ipv6.ipv6_layout.ipv6), smask, 16);
- 	}
- }
- 
--- 
-2.45.0
-
+>  .../soc/imx/fsl,imx93-media-blk-ctrl.yaml     | 51 +++++++++++++++++++
+>  1 file changed, 51 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctrl.yaml b/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctrl.yaml
+> index b3554e7f9e76d..cd785111928bf 100644
+> --- a/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctrl.yaml
+> +++ b/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctrl.yaml
+> @@ -24,6 +24,14 @@ properties:
+>    reg:
+>      maxItems: 1
+>
+> +  ranges: true
+> +
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 1
+> +
+>    '#power-domain-cells':
+>      const: 1
+>
+> @@ -46,9 +54,20 @@ properties:
+>        - const: csi
+>        - const: dsi
+>
+> +  bridge@20:
+> +    type: object
+> +    additionalProperties: true
+> +    properties:
+> +      compatible:
+> +        contains:
+> +          const: fsl,imx93-ldb
+> +
+>  required:
+>    - compatible
+>    - reg
+> +  - ranges
+> +  - '#address-cells'
+> +  - '#size-cells'
+>    - power-domains
+>    - clocks
+>    - clock-names
+> @@ -77,4 +96,36 @@ examples:
+>                 clock-names = "apb", "axi", "nic", "disp", "cam",
+>                               "pxp", "lcdif", "isi", "csi", "dsi";
+>        #power-domain-cells = <1>;
+> +      #address-cells = <1>;
+> +      #size-cells = <1>;
+> +      ranges = <0x0 0x4ac10000 0x10000>;
+> +
+> +      bridge@20 {
+> +          compatible = "fsl,imx93-ldb";
+> +          reg = <0x20 0x4>, <0x24 0x4>;
+> +          reg-names = "ldb", "lvds";
+> +          clocks = <&clk IMX93_CLK_LVDS_GATE>;
+> +          clock-names = "ldb";
+> +
+> +          ports {
+> +              #address-cells = <1>;
+> +              #size-cells = <0>;
+> +
+> +              port@0 {
+> +                  reg = <0>;
+> +
+> +                  ldb_from_lcdif2: endpoint {
+> +                      remote-endpoint = <&lcdif2_to_ldb>;
+> +                  };
+> +              };
+> +
+> +              port@1 {
+> +                  reg = <1>;
+> +
+> +                  ldb_lvds: endpoint {
+> +                      remote-endpoint = <&ldb_to_panel>;
+> +                  };
+> +              };
+> +          };
+> +        };
+>      };
+> --
+> 2.43.0
+>
 
