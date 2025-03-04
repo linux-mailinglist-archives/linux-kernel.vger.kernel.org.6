@@ -1,256 +1,263 @@
-Return-Path: <linux-kernel+bounces-544834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 980E0A4E5DE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:29:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37F19A4E5E2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:29:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C51C188D57A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:17:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DD2F19C0769
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:17:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA64D286280;
-	Tue,  4 Mar 2025 15:57:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D47B27F4D9;
+	Tue,  4 Mar 2025 15:57:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KrNgxOAf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EE3Cjx2w"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 524D627F4C1
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:57:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741103872; cv=none; b=eBL22BTpXtEGF/IlC1tkrGcxW/bkCkYxi3RkTzDDENuvSZoMI6S44PkZ3tLBxjrIbbgCv6ogbMAbLZ5WTOyiN5iF+iJVTfDd2r2CcVLy5qsa0bTF8fOqjqxJQbhrXIoFjxrXYlIXE0D7tlhx6xugmcYSC8vojHxgy1b4GRV58CM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741103872; c=relaxed/simple;
-	bh=0A5RzxULdn6BnG/wUjI8HXWCUR1CnoyxE7bNXv0lXO0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jg/NH1vyJi29NKP2+QzFZx2bMbMAhhijUSuZo2/kzaAE9Qbi7Z82WtIQ1HunR/RA8qTJAwFEYaYsR+G5by4BIRZ14xkrKJCURqp03KxX7+iqBOpstqWrmXbIPiWZiwFhKu7z6mEQ+LIWlB5UgEXH2cnn3lzzk8U97NlDqpIAt1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KrNgxOAf; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741103869;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=I5c+TIt92FxB8qVNIe2L0vIj1KttGJBjP8IGbM1VlN8=;
-	b=KrNgxOAfXLuasfXDxMVK8GM7BfkdC2CHT9gSDKhaGt5nXHqB5jM9ARlg9ADqoWmFoFWTgN
-	oZKMMKsuQEVDuZioJGpoQsIDaNU+HdnU2LRRJjSN6QdwD+eK8ll6URLNJgeGJMOY/LC5Ct
-	kfP7kaWOpA2EdO6afSTZwf2mfaIhlDI=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-318-Xp_550LOPBas6fCGZ3iO5A-1; Tue, 04 Mar 2025 10:57:26 -0500
-X-MC-Unique: Xp_550LOPBas6fCGZ3iO5A-1
-X-Mimecast-MFC-AGG-ID: Xp_550LOPBas6fCGZ3iO5A_1741103845
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43935e09897so42263805e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 07:57:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741103845; x=1741708645;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I5c+TIt92FxB8qVNIe2L0vIj1KttGJBjP8IGbM1VlN8=;
-        b=EJ19qiaPaa7z/BE0y6EFKKywQ0DXku9bRzWyZd7wWbHVCNXROyPRuRNhLrz64ShL0T
-         dDxQlgrmVm+34oSFcWbqSLZiGJ825HXJgRfXVGeI7LZCZM2gSwps9Ad8seFL/luB4q4V
-         OIyuxEw5Jh2EP3vgfsBxU3BXltgDYuw4GT7IFU4a8EMoTUIW4pFR86C+9pOsiKo5BibK
-         bk0mLWz01jc00gKDPF765GL5DxSCmcr/QI2EbSVGUfz4v7mIJLpty0bnirwM+5+AnyHC
-         jwKKuTQFMZQsarpDYnWR9P0tbgeQMJTHhjbd+Dv+LgCxqKGIb1ld09RErcIldV2eFEhb
-         B8XA==
-X-Gm-Message-State: AOJu0YyVrEKxOWo8bPtSZ4icN431LBKvFwAe6o3jxchzQaQjw42hY+E/
-	HHDj+kVUslCozTHnr3Z2oVLVlCHzGwRD4tjpXp6LsL5znPq/YmbXsd0ZPUT4rZXFurQdG7MTjr/
-	w2hyERjvd98h4qo85Y7q5YdpE50ea+1S7+5Gfr4+lsBlFUsCC8KlZjv2atPfHlw==
-X-Gm-Gg: ASbGncv26eysA3hZvJayGcw6pBgEvofzm+aAw3XP+xiLFrr9QV/7A2LwFhUk8kqyEBW
-	fe/enDKWg0br127oaExkyWW9dYY2+omvt6NscS6nYMDEz58INlyMViZFBNPwxFDB73Il9BTp+LC
-	k5UWloxvojAu04iwBb4EZM9p9E43LFwXbT5aZmDiClQNLbPLn2A8VHUPmgSPakjYWXgF5zvihwf
-	/qqgpufgwOJ/zDFLhyaMqRl+HHFCMzXf1R3vOIGA8NrDexXoWcFIc7vszEK6N3toYJuS+ksFMqw
-	58CRiofp9gIFil5yCAF5f8raKOxSX9BZc4BZJCqC6RpBGENUmSnMj0hdhZv5s+O314eBGJTb8z7
-	e5iHh
-X-Received: by 2002:a05:600c:4f86:b0:43b:ca39:a9ca with SMTP id 5b1f17b1804b1-43bca39ac88mr48532085e9.16.1741103845271;
-        Tue, 04 Mar 2025 07:57:25 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF551Hnt03L5tmeixMOfNScnGLbQ9obdAPDfAXfF76/qxOEU3+vZ2la9fN5VW2oCHpNIfsibg==
-X-Received: by 2002:a05:600c:4f86:b0:43b:ca39:a9ca with SMTP id 5b1f17b1804b1-43bca39ac88mr48531665e9.16.1741103844801;
-        Tue, 04 Mar 2025 07:57:24 -0800 (PST)
-Received: from jlelli-thinkpadt14gen4.remote.csb (host-89-240-117-139.as13285.net. [89.240.117.139])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bcbb82074sm29324895e9.28.2025.03.04.07.57.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 07:57:24 -0800 (PST)
-Date: Tue, 4 Mar 2025 15:57:22 +0000
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Waiman Long <llong@redhat.com>
-Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>, Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Qais Yousef <qyousef@layalina.io>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Swapnil Sapkal <swapnil.sapkal@amd.com>,
-	Shrikanth Hegde <sshegde@linux.ibm.com>,
-	Phil Auld <pauld@redhat.com>, luca.abeni@santannapisa.it,
-	tommaso.cucinotta@santannapisa.it,
-	Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 2/5] sched/topology: Wrappers for sched_domains_mutex
-Message-ID: <Z8ci4jq5IhYGkxtk@jlelli-thinkpadt14gen4.remote.csb>
-References: <20250304084045.62554-1-juri.lelli@redhat.com>
- <20250304084045.62554-3-juri.lelli@redhat.com>
- <c02dd563-7cfc-404d-80d1-cec934117caf@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77889259C8F;
+	Tue,  4 Mar 2025 15:57:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741103866; cv=fail; b=SiTM1RQaiktmzqHTB/ykyidnaHk3f8KnpHeRJ3l3kTvQptJuu1P8F5lXKSOSGFpLaTdZFZTXW7NOaWk6UFxVypka2OMkG20OBkTo8yZqgzzcUDPJzPstxXwMLvqZCO9CPPGvM4nRWZFF/2m9xA7Tlx1yqkAHoaJQEUuNfXnF49E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741103866; c=relaxed/simple;
+	bh=yVRFJDUlcnZRZbDxLqHPj9yq11B0JSJ+lEWJuY67/sg=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=WLyxMPT9ug+52Uicr39oEka7tirF3NXyObKpamMJ403AgfxyaF0b2t4aI46l0Wbw8SZ9rYXwvogIcR5Gt4+f/i5S8My0bCjpAnxYdLRhe/TW4t0xfjut7c9UjbeYWYtqBStVMpPF8nsEvwFvxSAAYz/HzdUiDUKc132NCxUi4gQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EE3Cjx2w; arc=fail smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741103864; x=1772639864;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=yVRFJDUlcnZRZbDxLqHPj9yq11B0JSJ+lEWJuY67/sg=;
+  b=EE3Cjx2w4fVWmwXp5w63dGPiBs3fU0XWOXx+912jGrZo3vEO7biwwOLM
+   JS3heucb6O6UPx6/P7+z3bb2Dbo9W3BvS69c02h7mW0NuMp5jjOwaPTI7
+   Xlw6zYBBTOFZKouwXwCJN5nL4HQLUfvauPU+OY7vZ6etjtSQhN0dsyWNd
+   egEe4DZQphI5kZ69uXkUXYvh968wGbajH4pCOzeIjRhmL3WHzO6u8uWL6
+   MOZSbATJqTjwHwYdNjp+DhEY+9SDT8+lYhhVCaX4qcnVQLWv0uK/PcPHP
+   5dqQe9/k73Qu0iBQWy+tZAZCDBqb1N2Sc/u1tWH4BHMMQaSOr9MPq0moP
+   A==;
+X-CSE-ConnectionGUID: 6pyA5ZrQRTKnht8fZNsc0g==
+X-CSE-MsgGUID: G2WOeLLBTfaLYZaJtPoGqg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="42158208"
+X-IronPort-AV: E=Sophos;i="6.14,220,1736841600"; 
+   d="scan'208";a="42158208"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 07:57:44 -0800
+X-CSE-ConnectionGUID: T5vT6SDGQ2qXZ/orPAG6qQ==
+X-CSE-MsgGUID: tA98t5edTUe6O1n6ajXTBw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="118929826"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 07:57:44 -0800
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Tue, 4 Mar 2025 07:57:43 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Tue, 4 Mar 2025 07:57:43 -0800
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.42) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Tue, 4 Mar 2025 07:57:41 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=B8mYBYoy7Rkt7p74ERqfz7tbg3xhjL+kzEwyysWm7gT8rqC1d/LoS1U4CzOUuPMQPcm7zLOl2O+hT3WmJVseW3s/KbX5XdazV3Tgw6ci4LYNY6ZaLnmlkLrpTSXHHmEKvycByyTBtnu6ARDyQAFImE++VTVF1kJ3yv+Dqd5B3CVNRjLZAoth0Rg+tWNltkVXGGjtsv2XoR3RWPg9h5KGop3RjoTho2X75OiBm4obaYV94Gvw3x6faZh3badrcriStapmW9a/2ZvxrxogqdjCVoEzjo1NIHzU3aPd0DAEbXzEftZEDLn+ZvxqOxOgnXWUKtD5IwYw3Lo+rRAFSt7HEg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=R23PPa4fOsqJG920N2oExEixYmvwPYhY/88/uYyNvpk=;
+ b=n17ewJvnUpKekOSySNECJ3roa3vA7I5YcWA5AhwQsv32IQyoWWzKsiDWJ4fotJOq6KRGp1KzRHqX1Op8gIstHEq8UocJ3J85HdrHu0t9Z9AQXY97xcdY+URsRNuQysBUKUSQDSqdFlKK0nRKvF+wAC492DR1LXSo9z14dlWYP2TkvB81BmWs3ERR4LiOBNeOv73lpfWofcURYpUw2D40nX4JKeQeV6qj0VOYG73sPc9eMysuc9lzaREBAjXsE07fhw9Gw2J30mS2ZGv2qUkqpkzIx8qHkQ0aT18L1IgJRU4MX1x8qnv/BDD/siGE/r8FMl/OEgA/wpvXs5+HQqVkkA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
+ by SJ0PR11MB4847.namprd11.prod.outlook.com (2603:10b6:a03:2d9::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.25; Tue, 4 Mar
+ 2025 15:57:22 +0000
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::cf7d:9363:38f4:8c57]) by SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::cf7d:9363:38f4:8c57%5]) with mapi id 15.20.8511.015; Tue, 4 Mar 2025
+ 15:57:22 +0000
+Date: Tue, 4 Mar 2025 09:57:30 -0600
+From: Ira Weiny <ira.weiny@intel.com>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Ira Weiny
+	<ira.weiny@intel.com>
+CC: Dave Jiang <dave.jiang@intel.com>, Alejandro Lucero <alucerop@amd.com>,
+	Fan Ni <fan.ni@samsung.com>, Dan Williams <dan.j.williams@intel.com>,
+	<linux-kernel@vger.kernel.org>, <linux-cxl@vger.kernel.org>
+Subject: Re: [PATCH] cxl/Documentation: Remove 'mixed' from sysfs mode doc
+Message-ID: <67c722ea4f375_1de84629460@iweiny-mobl.notmuch>
+References: <20250224-remove-mixed-sysfs-v1-1-a329db313dac@intel.com>
+ <20250304144151.000016c3@huawei.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250304144151.000016c3@huawei.com>
+X-ClientProxiedBy: MW4PR03CA0113.namprd03.prod.outlook.com
+ (2603:10b6:303:b7::28) To SA1PR11MB6733.namprd11.prod.outlook.com
+ (2603:10b6:806:25c::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c02dd563-7cfc-404d-80d1-cec934117caf@redhat.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|SJ0PR11MB4847:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0172cc8f-4d34-47e6-af36-08dd5b354023
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?iWuZdfJUR1PVIXN14a4vJQD1YBWIt4mCLrZH/7tOJ6QLdS7ZeGPdi1Av22MS?=
+ =?us-ascii?Q?NjoGK/7xrkEFP8r9dJPNtqvh1pLL5F906wln5xUUAJOdToDoqlkZRIPmQcbl?=
+ =?us-ascii?Q?n/vbVYg4/TYME8EwZTjzYwzDlJGMWEv6zqfJiPp0fuBQ860sXrq5/HcrqP/c?=
+ =?us-ascii?Q?H0hLdjl68bE0d0g6FO+Fp+ZZ1fLqjx6+C6zJSPbsz1vd/IPfOLcD2M4he+Vi?=
+ =?us-ascii?Q?68drxSZzLPzbviRPqKxDrGMmglZDZQdO3MYP91lpvdlD/xdh+sA8HWl8R4Lm?=
+ =?us-ascii?Q?s6X9ThdhuzYauHtff+zix68GY/YtGHkfGNa9QfrBVPGDRLVRF+Yen2lOlOM4?=
+ =?us-ascii?Q?4nZmpIpfBatgljzAuJmbG6wwamd4j1iJZyIktq1cH0y3JdM/qxyjFpOmGSEH?=
+ =?us-ascii?Q?BkYTNMtXal8jkDYVRtQk/GCaygPE75UG4A0BfpTG2EZuiz7g8HGOQ3G4kA+g?=
+ =?us-ascii?Q?2DuVAil6mDNTudJLeq1928dDkO+6CqcmHDqWTTNqbBRvhCd6ejbtfmRvchH0?=
+ =?us-ascii?Q?NN7LDpVLWw0KsUV7QHu5QeQJIITGauHyRIxooTxl5/hY+eCxrXpTD7N0XFPs?=
+ =?us-ascii?Q?xIAInxu/sx0vx6YXtUThAFFoPcOTU5zYVPAQnudFapzMxNYfL1dPps1ENgfs?=
+ =?us-ascii?Q?Du3ZfVFwn/dqHRYwCA6eRlQt2iqlOPo1V1GlJhKASV2Xx2gqIb3aSAhCjuf9?=
+ =?us-ascii?Q?0kjUc8YEk12cmUML/90tq5DD2FoyYBO6XTYwekFzDSMRi35EIR98LhB4iIGf?=
+ =?us-ascii?Q?HqA6vLqtGg5WD3LcaxKliMjaigCD60K45gxMHqBGAE8KEQIXDLq7qoomgCJG?=
+ =?us-ascii?Q?a57dEHd+jqnjS7YlTQPrFxa+aDygZc+fNDzz8sJvvp86FIZFbPE/C8Ym2TQc?=
+ =?us-ascii?Q?izKG6Y312mrB/wOThKpBv5epzigROxi20RZQuk+dcJ/uP+x+7piRgthkw/xB?=
+ =?us-ascii?Q?FMnZx3tJ0SgonYEJdxBCCJZnmM9HU/cB446rkw1GndcJtsUVzFZ3b3Hq46B0?=
+ =?us-ascii?Q?dvYgA0HKMRmPVNBi6hWpllC4Y6Jc/oLdaWTVbHsgn4aW7JWehN/3fa67wgN6?=
+ =?us-ascii?Q?5Vm5UlTeFWnSbKCSEVKkpW31ovixyzfTBwwMTuINRRkmH+OR1TD7opquvxBg?=
+ =?us-ascii?Q?dLwo+PQMbrVw/6ydZ2fJVDarYQ7A/dsUiT6hNUoBv2XxdL61o0YLLg3W4Jlg?=
+ =?us-ascii?Q?BqHvjpZzVouEPHQzdS8BZd45EU268GgO5TOc8HL+M3jMk6SNLE8PHSZvAs5+?=
+ =?us-ascii?Q?wLqGkvjiyWKySym2ygxMSa2V2o/bBY3wKzeHwHHbdko56HqJ7dsjmhHZqMoj?=
+ =?us-ascii?Q?H+QBZENCuSc6dAGw/itmdisyKJDfEjz8Slyz9D6qXA8IZHWe3KQcdQUATAdD?=
+ =?us-ascii?Q?z6enr7RQujuwGIh3tca+Q6iNW6DK?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?4P5kE8U61suGQc7XS2UDUTiLxEB5zmuAKd4+EMXGAK4fIGUcnu7fxN3pcQ6s?=
+ =?us-ascii?Q?A17B7XeRpJshkc3ZwJWbZ8bEb4p6FEt1Iz6kPPb4+Ae4KhmTmZ5KEPvybUtK?=
+ =?us-ascii?Q?TbNeVcXvAmaftN/XZQV8bptlJvt0pfy9KCq+bfab7l96gPonaQKTPGkC/j1B?=
+ =?us-ascii?Q?UbzVF/H1etSghRQNoz9AfWJCppR05+ycCeq/GBFD48UGTlPO5e4bL+D9Dlet?=
+ =?us-ascii?Q?mxdjkKIjs+UuH6BfZnTa8cyW3wHYu/y2Gq/89cKSQKdJdckNNXPvQv0CrLO9?=
+ =?us-ascii?Q?8tAqNCAYnG2MsVeLzxg/3Ta2/cGV62cd11f1TxF0PjnSsRVtfbfK8IZjgx+B?=
+ =?us-ascii?Q?tu5cJC7sj2X0MwaAvvRpFuWUPwfhaNwyDbvi7QZsKv4Q8yDZmb3tUVSyjxSQ?=
+ =?us-ascii?Q?OaiFQEnAwIeA6+o+ghTOdbYQUOnIyldI/uF1YajItYDwq5fzY8Ce8DVgzX6v?=
+ =?us-ascii?Q?P5hQ82CiDoQCbdxgZ21BGOUlEqY8tGqbaxxGKkaGsrEXCR+vVntsg8oBlLWG?=
+ =?us-ascii?Q?VP7QMjtHvVlprg+/dXSl4JTA6XdRgBfYV2AlU2wu2ZYTS1BKy8dNgP2AQCDV?=
+ =?us-ascii?Q?VoGNLwqTZkdghdMqwDu3vEguR15xzHffzmxm8j+MYtmAb4Wu5M1oapUAfgM4?=
+ =?us-ascii?Q?2vyPLYnjsZJOp3GS3jjUIYrh2T0F7Td3v9bYkjPaH5kSvTUlFCnrUGf4mh4W?=
+ =?us-ascii?Q?nvX25y97xksDC4P3THD+olRnDb4HSZclNFT+Lz6ehyAOQ9JzI8g08SO9SwPl?=
+ =?us-ascii?Q?vhPDwhQxgvIBNrsEp5MqEfdEr4oOjc6Pv8qRmSEbtvs3i+qqLnPxxH+1dfJv?=
+ =?us-ascii?Q?RMDK0hi+2JOQEikh0JMR9OKRzMrlPsIvDH6gmEG2blf6lhpr90wmzXEDzqY1?=
+ =?us-ascii?Q?EWbzFpvtZC4kMEUr1klxJRESggXYh1wSxpyZE0gM9PsQc70jZDbNVH+RpRbJ?=
+ =?us-ascii?Q?t7RvDRwP8o+FZDLUXF7aAE1Y9sUjPMbbRz/8pVJ7dNLclv/Q4SNXbT/LMjVD?=
+ =?us-ascii?Q?vLYTy35Gy8wuNvq+oePkgHF9cRDXDRx9QMyorbuIBXSrGOdIHkVkEFKlKCLZ?=
+ =?us-ascii?Q?Fuz9DQrKCligDJrEBG5Ag1gj7mNUsQCKUD/V7x0l8mZisCQtVzOd2np5sB20?=
+ =?us-ascii?Q?9lD6UUZQvJImuDcXFNorkRw3yY3hOtgNKiQSvH3dYrRV9Kbk/jkajoy5O7Z9?=
+ =?us-ascii?Q?ZiEedmdIuU+LJJ7gixgrJx/nz+hi1ZZm7afOskk1TtMtvqttDZgT0RQ+KyLC?=
+ =?us-ascii?Q?Uwkd1qy6NzMytRMMrKueehWvu/ePMa+H/HldMeCnrHq35O2fXFeBkvGLCynf?=
+ =?us-ascii?Q?FGkaGZ/MH5JNopoZohB7lIcPeAE4C3hHdeFX8DEiP1VD3rbQgquz2+w5E5R2?=
+ =?us-ascii?Q?A/WBEtQOkaSZglJXxW9kCQ5byVpSxHQZGCma03N8jNuhzyZzS31HNAC9kWbD?=
+ =?us-ascii?Q?yxXnwYsN0IDM1T9pl9j8GMUBwjRzmVNauKNS2BffEVDeFQ8vB7Q/XC81jnTs?=
+ =?us-ascii?Q?D/7VuDmhT5YgUMNWtPEVzAh0m3ad9Cu3oIvJbspJsxCA8EglDMF83ZkJhtS5?=
+ =?us-ascii?Q?u+fJrXhSurJsHocDPVEg1RFmEOY9k6JbTpkdDYQi?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0172cc8f-4d34-47e6-af36-08dd5b354023
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2025 15:57:22.5904
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: DRkIUl7p59L7g99rHAuXaPESdS0c0i/Io0nXT2WX40/AuUmBPYlN9BrhrwSj3V2Ob9almF08m/tvIisbWn50tw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB4847
+X-OriginatorOrg: intel.com
 
-Hi Waiman,
-
-Thanks for the review!
-
-On 04/03/25 10:05, Waiman Long wrote:
-> On 3/4/25 3:40 AM, Juri Lelli wrote:
-> > Create wrappers for sched_domains_mutex so that it can transparently be
-> > used on both CONFIG_SMP and !CONFIG_SMP, as some function will need to
-> > do.
+Jonathan Cameron wrote:
+> On Mon, 24 Feb 2025 12:29:29 -0600
+> Ira Weiny <ira.weiny@intel.com> wrote:
+> 
+> > Commit 188e9529a606 ("cxl: Remove the CXL_DECODER_MIXED mistake")
+> > removed the mixed mode.
 > > 
-> > Reported-by: Jon Hunter <jonathanh@nvidia.com>
-> > Fixes: 53916d5fd3c0 ("sched/deadline: Check bandwidth overflow earlier for hotplug")
-> > Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
+> > Remove it from the sysfs documentation.
+> > 
+> > Fixes: 188e9529a606 ("cxl: Remove the CXL_DECODER_MIXED mistake")
+> > Cc: Dan Williams <dan.j.williams@intel.com>
+> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> Would be nice to put wrap back in text we aren't changing
+> as creates unnecessary churn / staring at text to see if
+> it is different...
+
+100% agree that the review-ability suffers.  But keeping the text
+formatted in the file makes it easier to read.  In this case that might
+not be as true but I'm just kind of particular when I format paragraphs...
+:-/
+
+I hope Dave will just take it.
+
+Thanks,
+Ira
+
+> 
+> Either way
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> 
 > > ---
-> >   include/linux/sched.h   |  2 ++
-> >   kernel/cgroup/cpuset.c  |  4 ++--
-> >   kernel/sched/core.c     |  4 ++--
-> >   kernel/sched/debug.c    |  8 ++++----
-> >   kernel/sched/topology.c | 17 +++++++++++++++--
-> >   5 files changed, 25 insertions(+), 10 deletions(-)
+> >  Documentation/ABI/testing/sysfs-bus-cxl | 15 +++++++--------
+> >  1 file changed, 7 insertions(+), 8 deletions(-)
 > > 
-> > diff --git a/include/linux/sched.h b/include/linux/sched.h
-> > index 9632e3318e0d..d5f8c161d852 100644
-> > --- a/include/linux/sched.h
-> > +++ b/include/linux/sched.h
-> > @@ -383,6 +383,8 @@ enum uclamp_id {
-> >   extern struct root_domain def_root_domain;
-> >   extern struct mutex sched_domains_mutex;
-> >   #endif
-> > +extern void sched_domains_mutex_lock(void);
-> > +extern void sched_domains_mutex_unlock(void);
+> > diff --git a/Documentation/ABI/testing/sysfs-bus-cxl b/Documentation/ABI/testing/sysfs-bus-cxl
+> > index 3f5627a1210a16aca7c18d17131a56491048a0c2..3ba551ed10e29f33b9eb873bab9b542c8afb66f0 100644
+> > --- a/Documentation/ABI/testing/sysfs-bus-cxl
+> > +++ b/Documentation/ABI/testing/sysfs-bus-cxl
+> > @@ -321,14 +321,13 @@ KernelVersion:	v6.0
+> >  Contact:	linux-cxl@vger.kernel.org
+> >  Description:
+> >  		(RW) When a CXL decoder is of devtype "cxl_decoder_endpoint" it
+> > -		translates from a host physical address range, to a device local
+> > -		address range. Device-local address ranges are further split
+> > -		into a 'ram' (volatile memory) range and 'pmem' (persistent
+> > -		memory) range. The 'mode' attribute emits one of 'ram', 'pmem',
+> > -		'mixed', or 'none'. The 'mixed' indication is for error cases
+> > -		when a decoder straddles the volatile/persistent partition
+> > -		boundary, and 'none' indicates the decoder is not actively
+> > -		decoding, or no DPA allocation policy has been set.
+> > +		translates from a host physical address range, to a device
 > 
-> If all access to sched_domains_mutex is through the wrappers, we may not
-> need to expose sched_domains_mutex at all. Also it is more efficient for the
-> non-SMP case to put the wrappers inside the CONFIG_SMP block and define the
-> empty inline functions in the else part.
+> Ideally avoid the extra diff from wrap changes in text that isn't changing.
 > 
 > 
-> >   struct sched_param {
-> >   	int sched_priority;
-> > diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> > index 0f910c828973..f87526edb2a4 100644
-> > --- a/kernel/cgroup/cpuset.c
-> > +++ b/kernel/cgroup/cpuset.c
-> > @@ -994,10 +994,10 @@ static void
-> >   partition_and_rebuild_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
-> >   				    struct sched_domain_attr *dattr_new)
-> >   {
-> > -	mutex_lock(&sched_domains_mutex);
-> > +	sched_domains_mutex_lock();
-> >   	partition_sched_domains_locked(ndoms_new, doms_new, dattr_new);
-> >   	dl_rebuild_rd_accounting();
-> > -	mutex_unlock(&sched_domains_mutex);
-> > +	sched_domains_mutex_unlock();
-> >   }
-> >   /*
-> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> > index 9aecd914ac69..7b14500d731b 100644
-> > --- a/kernel/sched/core.c
-> > +++ b/kernel/sched/core.c
-> > @@ -8424,9 +8424,9 @@ void __init sched_init_smp(void)
-> >   	 * CPU masks are stable and all blatant races in the below code cannot
-> >   	 * happen.
-> >   	 */
-> > -	mutex_lock(&sched_domains_mutex);
-> > +	sched_domains_mutex_lock();
-> >   	sched_init_domains(cpu_active_mask);
-> > -	mutex_unlock(&sched_domains_mutex);
-> > +	sched_domains_mutex_unlock();
-> >   	/* Move init over to a non-isolated CPU */
-> >   	if (set_cpus_allowed_ptr(current, housekeeping_cpumask(HK_TYPE_DOMAIN)) < 0)
-> > diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
-> > index ef047add7f9e..a0893a483d35 100644
-> > --- a/kernel/sched/debug.c
-> > +++ b/kernel/sched/debug.c
-> > @@ -292,7 +292,7 @@ static ssize_t sched_verbose_write(struct file *filp, const char __user *ubuf,
-> >   	bool orig;
-> >   	cpus_read_lock();
-> > -	mutex_lock(&sched_domains_mutex);
-> > +	sched_domains_mutex_lock();
-> >   	orig = sched_debug_verbose;
-> >   	result = debugfs_write_file_bool(filp, ubuf, cnt, ppos);
-> > @@ -304,7 +304,7 @@ static ssize_t sched_verbose_write(struct file *filp, const char __user *ubuf,
-> >   		sd_dentry = NULL;
-> >   	}
-> > -	mutex_unlock(&sched_domains_mutex);
-> > +	sched_domains_mutex_unlock();
-> >   	cpus_read_unlock();
-> >   	return result;
-> > @@ -515,9 +515,9 @@ static __init int sched_init_debug(void)
-> >   	debugfs_create_u32("migration_cost_ns", 0644, debugfs_sched, &sysctl_sched_migration_cost);
-> >   	debugfs_create_u32("nr_migrate", 0644, debugfs_sched, &sysctl_sched_nr_migrate);
-> > -	mutex_lock(&sched_domains_mutex);
-> > +	sched_domains_mutex_lock();
-> >   	update_sched_domain_debugfs();
-> > -	mutex_unlock(&sched_domains_mutex);
-> > +	sched_domains_mutex_unlock();
-> >   #endif
-> >   #ifdef CONFIG_NUMA_BALANCING
-> > diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-> > index c49aea8c1025..e2b879ec9458 100644
-> > --- a/kernel/sched/topology.c
-> > +++ b/kernel/sched/topology.c
-> > @@ -6,6 +6,19 @@
-> >   #include <linux/bsearch.h>
-> >   DEFINE_MUTEX(sched_domains_mutex);
-> > +#ifdef CONFIG_SMP
-> > +void sched_domains_mutex_lock(void)
-> > +{
-> > +	mutex_lock(&sched_domains_mutex);
-> > +}
-> > +void sched_domains_mutex_unlock(void)
-> > +{
-> > +	mutex_unlock(&sched_domains_mutex);
-> > +}
-> > +#else
-> > +void sched_domains_mutex_lock(void) { }
-> > +void sched_domains_mutex_unlock(void) { }
-> > +#endif
-> >   /* Protected by sched_domains_mutex: */
-> >   static cpumask_var_t sched_domains_tmpmask;
-> > @@ -2791,7 +2804,7 @@ void partition_sched_domains_locked(int ndoms_new, cpumask_var_t doms_new[],
-> >   void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
-> >   			     struct sched_domain_attr *dattr_new)
-> >   {
-> > -	mutex_lock(&sched_domains_mutex);
-> > +	sched_domains_mutex_lock();
-> >   	partition_sched_domains_locked(ndoms_new, doms_new, dattr_new);
-> > -	mutex_unlock(&sched_domains_mutex);
-> > +	sched_domains_mutex_unlock();
-> >   }
+> > +		local address range. Device-local address ranges are further
+> > +		split into a 'ram' (volatile memory) range and 'pmem'
+> > +		(persistent memory) range. The 'mode' attribute emits one of
 > 
-> There are two "lockdep_assert_held(&sched_domains_mutex);" statements in
-> topology.c file and one in cpuset.c. That can be problematic in the non-SMP
-> case. Maybe another wrapper to do the assert?
+> I think actual changes only happen here.
+> 
+> > +		'ram', 'pmem', or 'none'. The 'none' indicates the decoder is
+> > +		not actively decoding, or no DPA allocation policy has been
+> > +		set.
+> >  
+> >  		'mode' can be written, when the decoder is in the 'disabled'
+> >  		state, with either 'ram' or 'pmem' to set the boundaries for the
+> > 
+> > ---
+> > base-commit: 8760c1c0bf7eee63a56b5f9edb42d93737a6a378
+> > change-id: 20250224-remove-mixed-sysfs-e3baa7616bcc
+> > 
+> > Best regards,
+> 
 
-Yes, makes sense. Will modify as you suggest here and above.
-
-Best,
-Juri
 
 
