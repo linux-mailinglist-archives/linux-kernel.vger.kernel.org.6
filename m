@@ -1,155 +1,124 @@
-Return-Path: <linux-kernel+bounces-542938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F613A4CFA1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:04:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC31CA4CF9F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:04:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A98751722D1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 00:04:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C7673ACF43
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 00:04:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A147A8C1E;
-	Tue,  4 Mar 2025 00:04:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC8F249EB;
+	Tue,  4 Mar 2025 00:03:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ccMDZCAt"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u5+2RKW2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7600218D;
-	Tue,  4 Mar 2025 00:04:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4C8CC2D1;
+	Tue,  4 Mar 2025 00:03:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741046650; cv=none; b=t+GzSeRtYL1IcTJoXr504AELztPKzXq0Fl0Rhgkdzw+eIvEc4HV0DocPhrU7xr9/+b/hTVtZDbSqcw+8NKu09PRXa2TkNThGGYm32tQFZPx5Y9hMCFHgsvcdmLw5TU+MxARTflobsgJeYdOisx3cljaGsrW2K17gXOhBop2Zev4=
+	t=1741046637; cv=none; b=rEbdaBNMQasaxJudbWmFeaorLrhuaAN8tUPegRSaB3c3JfhlErM6XBvh91BbhZg/XiDcjfYrJTTX/Z1ab6qThmyaxlgnCB+q/HUtJuoSoOWTKTZDCeayzV6WVj9zywqlGzaJwEibCe8umKL/vkT2HU4o1rInoFgC2kwlFRm0EtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741046650; c=relaxed/simple;
-	bh=HXAKX2N9TbcSqNkQkYRPQn7lcR9MtlSeezsuxXMMk7w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sD+KPvwkcZKckmeMzARsaVEhEzW1lDaK9rmPecugvlZGdLmuGXvIf5fAOZTQqEjm3G4qlsb/pV9k1zZ6CGY1TcHEjUZkgr/WWQYHb1vH930bsUfncYPKUZk40LYC+NuYnWveVe7WBbdobaSak/kp+AvwkxcprIhFUjLpPM2Amp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ccMDZCAt; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2fd02536660so1129855a91.2;
-        Mon, 03 Mar 2025 16:04:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741046648; x=1741651448; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ysR28s3u8CnmgoTuBfCN0R8kYhifvtml7/f8t3uhNZU=;
-        b=ccMDZCAtVOaZf2Hig1n5VKge7TMlx4dtkdZJOLTwmiV5JqtGcA7QZtmfdOgeb6pAf2
-         0i/yLHmNc64Kvm0E7v8w6snKq++tE6GFFhlmkjQpIwcgE+6n2N14ebE9gn8HyXw2ABhw
-         63YSUyigPGIE6oSviCLcb2PphyP/gNtulB6xDJJQQK5lRaHrUNB+l7y4gTlVxuiRYbmI
-         Pe7euiGNfyc7PVSZz26Fy63Bio0Y6nINb67OFlU/vrf6f0iGW5VWgWzj/18a5EqSDF4H
-         wiNHRqrGtI8EoyCz86s8Dyy/z90kGvSdAejCmcjnLb0v6Q/NBf7BOnmk3G8zXTlW7Add
-         tLxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741046648; x=1741651448;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ysR28s3u8CnmgoTuBfCN0R8kYhifvtml7/f8t3uhNZU=;
-        b=htbHOyg7TJxwsdhMchT5+N3XS+Oeoam89XzszEV3o+au7Nzp5sfiJgFnxZZh/QbXAg
-         d/kDyuClYpIdGmcv4eUlFCVN1OEoEGr8fj1nLS1ONIUaUNCaNQXOwc9eyRoRh7OW6Ehp
-         cs5v1UkQDWOgxixne723QPZNxIdM1KAf5PdWRO6BMrHf21TEzwrn36bZQm8tWHtZbOH9
-         IBxAXB7n9KI4KUicj7MioP+vJEfpC0uwIeMr+/a6gwqMPXxV0jedC0OkRq4Ys4f5Rv9Z
-         E5BAZpYdLtvTnx3x9WbDz+4m3glQgSvrzSceqQZIv7vuM7n4kfwi2lrajuail2fe9Xnz
-         dhZA==
-X-Forwarded-Encrypted: i=1; AJvYcCUWrtb2PmCrTMlgIx5ta6yUcC2gwErB90/5jfzSWrlx0D47gnXrZoAKnsP0K/YnYmLA7Jg10wMvWy6DuzDQPC6rQSrIR1OT@vger.kernel.org, AJvYcCUntojxTX5FhwH8x46h7mIjlpPoHlRkcUyoFa9ghtpMjdlvOrMh+kS0E60fOkvM4STHgQIYvRAbqCqTjt/6kZg=@vger.kernel.org, AJvYcCVQavgiTszOJuBD++sZ7LeTUejM8BV0KRuUkXesk1zeUZ4haXPrM1LQ1mY903uRpXG4uCfPvDbVe+rwyo0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3ztj1WeNLMPjq4w/tLLlsnAfLPDQSZp3Pc9LKT18RNp5pMSil
-	omsIQpchGAqaHdKudYUHJRvPCbxu98xiBlGmHfAPWb4qTfyFH52fu94KNU72PJ7x2EgH0MOOKc6
-	TB4NQSQzmyDsbERW7EstQKruimXo=
-X-Gm-Gg: ASbGnctGrDAPRSWduKAgVclvUbdFVlKGcp6HILJxV9HwmklIKcE82uEOH6klj06DMzp
-	Rzn+V4MXB/clvzkW/u4ZKRrU2BJyrAVXaYQyvgsyQhkdYvPzWRI+nD5377klIhAx+5p6NNDWmJk
-	3Ztk6D8fbnB974lbv2dOGr9OOw1Q==
-X-Google-Smtp-Source: AGHT+IFN+xbOu5QfcgaBgtNPAK4UHIFhRFNtYHlPW6b79kAWFeZjWU+GDc72m/R3caqAAOD/IZViYriJF/YR/9zZ/iQ=
-X-Received: by 2002:a17:90b:3845:b0:2fe:8e19:bcd7 with SMTP id
- 98e67ed59e1d1-2ff3534a3c9mr422621a91.5.1741046647649; Mon, 03 Mar 2025
- 16:04:07 -0800 (PST)
+	s=arc-20240116; t=1741046637; c=relaxed/simple;
+	bh=PodGSYAN2PRqPznGy1o8bGNv8tT3sasFzN7rH8DbDzw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=M8+kggRpZLg53aLg2vGhWOlMwRZhrphgp/3G9m1cRcS9SAOVaFAG7ru1IIxUKzKy/gig9OzPDwNZQAq7dklv+voS6RNJ+54fNHDmMhk658XRJ2/LWdWxlET8ZXuS4i73ccQO81pDEWj0mgUMSoh1KBN2iy1wpm6fO09cELKfn74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u5+2RKW2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BD89C4CEE4;
+	Tue,  4 Mar 2025 00:03:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741046636;
+	bh=PodGSYAN2PRqPznGy1o8bGNv8tT3sasFzN7rH8DbDzw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=u5+2RKW275a+1qk3Btczy9vu4F6fSXqzr0EAFRS1d7exuLigQNzYleSDbBi/IXbsT
+	 L1HsXBng2OdDAYfXnknoWHQgp5zahNu96V1MlqGXbhGnKQAtMMqqfThugjTtnF8Bhn
+	 zAdJP9NATi+KyhcNlReKbCeqL78HRE6lb4Ak/mOlgMzRPQl/yOvUsX2BNcjCEtJMxn
+	 3EW07GrYaEXAmlxAiMuGQ6xExLHdAsqZSc47J5qDfNJRtgYwxkmSxm0MAdXICruF3Z
+	 rZkl3h3Ip+j0sfViQ714aKMyI/QQnV1ddrfxvPawVaJiKcbAS+3TL2pviJ1oWuIBx5
+	 Ooy619yCHvFNA==
+Date: Mon, 3 Mar 2025 16:03:55 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Joe Damato <jdamato@fastly.com>
+Cc: netdev@vger.kernel.org, mkarsten@uwaterloo.ca,
+ gerhard@engleder-embedded.com, jasowang@redhat.com,
+ xuanzhuo@linux.alibaba.com, mst@redhat.com, leiyang@redhat.com, Eugenio
+ =?UTF-8?B?UMOpcmV6?= <eperezma@redhat.com>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, "open
+ list:VIRTIO CORE AND NET DRIVERS" <virtualization@lists.linux.dev>, open
+ list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next v5 3/4] virtio-net: Map NAPIs to queues
+Message-ID: <20250303160355.5f8d82d8@kernel.org>
+In-Reply-To: <Z8X15hxz8t-vXpPU@LQ3V64L9R2>
+References: <20250227185017.206785-1-jdamato@fastly.com>
+	<20250227185017.206785-4-jdamato@fastly.com>
+	<20250228182759.74de5bec@kernel.org>
+	<Z8Xc0muOV8jtHBkX@LQ3V64L9R2>
+	<Z8XgGrToAD7Bak-I@LQ3V64L9R2>
+	<Z8X15hxz8t-vXpPU@LQ3V64L9R2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250303-inline-securityctx-v1-1-fb7b9b641fdf@google.com> <CAHC9VhSo3aGsJVd=a3MTeakgU66oTN86oh5sZE8P4ghSk8Rx2g@mail.gmail.com>
-In-Reply-To: <CAHC9VhSo3aGsJVd=a3MTeakgU66oTN86oh5sZE8P4ghSk8Rx2g@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 4 Mar 2025 01:03:54 +0100
-X-Gm-Features: AQ5f1JoZtQM3Oja3NDT-Obx7yZMvaxx2kZbpcAlTwOsQb2zyvabJdICtBU9x160
-Message-ID: <CANiq72=n_cGmrb6+6CH1AbGePy5dRMMFyzAFv6O1VEp8EgKR8w@mail.gmail.com>
-Subject: Re: [PATCH] lsm: rust: mark SecurityCtx methods inline
-To: Paul Moore <paul@paul-moore.com>
-Cc: Alice Ryhl <aliceryhl@google.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Paul,
+On Mon, 3 Mar 2025 13:33:10 -0500 Joe Damato wrote:
+> > > @@ -2880,6 +2880,13 @@ static void refill_work(struct work_struct *work)
+> > >         bool still_empty;
+> > >         int i;
+> > > 
+> > > +       spin_lock(&vi->refill_lock);
+> > > +       if (!vi->refill_enabled) {
+> > > +               spin_unlock(&vi->refill_lock);
+> > > +               return;
+> > > +       }
+> > > +       spin_unlock(&vi->refill_lock);
+> > > +
+> > >         for (i = 0; i < vi->curr_queue_pairs; i++) {
+> > >                 struct receive_queue *rq = &vi->rq[i];
+> > >  
+> > 
+> > Err, I suppose this also doesn't work because:
+> > 
+> > CPU0                       CPU1
+> > rtnl_lock                  (before CPU0 calls disable_delayed_refill) 
+> >   virtnet_close            refill_work
+> >                              rtnl_lock()
+> >   cancel_sync <= deadlock
+> > 
+> > Need to give this a bit more thought.  
+> 
+> How about we don't use the API at all from refill_work?
+> 
+> Patch 4 adds consistent NAPI config state and refill_work isn't a
+> queue resize maybe we don't need to call the netif_queue_set_napi at
+> all since the NAPI IDs are persisted in the NAPI config state and
+> refill_work shouldn't change that?
+> 
+> In which case, we could go back to what refill_work was doing
+> before and avoid the problem entirely.
+> 
+> What do you think ?
 
-On Mon, Mar 3, 2025 at 11:55=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
->
-> Beyond those nitpicks, this looks okay to me based on my *extremely*
-> limited Rust knowledge.  With the minor requested changes in place,
-> would you prefer me to take this via the LSM tree, or would you prefer
-> it to go up to Linus via a more Rust-y tree?
+Should work, I think. Tho, I suspect someone will want to add queue API
+support to virtio sooner or later, and they will run into the same
+problem with the netdev instance lock, as all of ndo_close() will then
+be covered with netdev->lock.
 
-In general, if a subsystem is willing to take Rust-related patches
-through their tree, that is the ideal scenario! So please definitely
-feel free to pick it up on your side (and thanks!); otherwise, I can
-pick it up with your Acked-by.
+More thorough and idiomatic way to solve the problem would be to cancel
+the work non-sync in ndo_close, add cancel with _sync after netdev is
+unregistered (in virtnet_remove()) when the lock is no longer held, then
+wrap the entire work with a relevant lock and check if netif_running()
+to return early in case of a race.
 
-Some days ago I wrote a summary of the usual discussion we have around
-this (copy-pasting here for convenience):
-
-    So far, what we have been doing is ask maintainers, first, if they
-    would be willing take the patches themselves -- they are the experts
-    of the subsystem, know what changes are incoming, etc. Some subsystems
-    have done this (e.g. KUnit). That is ideal, because the goal is to
-    scale and allows maintainers to be in full control.
-
-    Of course, sometimes maintainers are not fully comfortable doing that,
-    since they may not have the bandwidth, or the setup, or the Rust
-    knowledge. In those cases, we typically ask if they would be willing
-    to have a co-maintainer (i.e. in their entry, e.g. like locking did),
-    or a sub-maintainer (i.e. in a new entry, e.g. like block did), that
-    would take care of the bulk of the work from them.
-
-    I think that is a nice middle-ground -- the advantage of doing it like
-    that is that you get the benefits of knowing best what is going on
-    without too much work (hopefully), and it may allow you to get more
-    and more involved over time and confident on what is going on with the
-    Rust callers, typical issues that appear, etc. Plus the sub-maintainer
-    gets to learn more about the subsystem, its timelines, procedures,
-    etc., which you may welcome (if you are looking for new people to get
-    involved).
-
-    I think that would be a nice middle-ground. As far as I understand,
-    Andreas would be happy to commit to maintain the Rust side as a
-    sub-maintainer (for instance). He would also need to make sure the
-    tree builds properly with Rust enabled and so on. He already does
-    something similar for Jens. Would that work for you?
-
-    You could take the patches directly with his RoBs or Acked-bys, for
-    instance. Or perhaps it makes more sense to take PRs from him (on the
-    Rust code only, of course), to save you more work. Andreas does not
-    send PRs to anyone yet, but I think it would be a good time for him to
-    start learning how to apply patches himself etc.
-
-    If not, then the last fallback would be putting it in the Rust tree as
-    a sub-entry or similar.
-
-    I hope that clarifies (and thanks whatever you decide!).
-
-    https://lore.kernel.org/rust-for-linux/CANiq72mpYoig2Ro76K0E-sUtP31fW+0=
-403zYWd6MumCgFKfTDQ@mail.gmail.com/
-
-Cheers,
-Miguel
+Middle ground would be to do what you suggested above and just leave 
+a well worded comment somewhere that will show up in diffs adding queue
+API support?
 
