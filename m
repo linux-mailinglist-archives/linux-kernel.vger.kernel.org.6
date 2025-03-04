@@ -1,169 +1,138 @@
-Return-Path: <linux-kernel+bounces-544084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BCDDA4DD34
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:58:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C0BFA4DD3F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:58:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C3EC176F96
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:58:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00531177255
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:58:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F04E201017;
-	Tue,  4 Mar 2025 11:57:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAF64201017;
+	Tue,  4 Mar 2025 11:58:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GYZ0d05B"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jrhw20Qy"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2B93D561;
-	Tue,  4 Mar 2025 11:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 745461F150D;
+	Tue,  4 Mar 2025 11:58:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741089472; cv=none; b=H9LmrjhykNwZVlhn9wsy3/Ncxr2wZiXBJ4r5rOdau2x2hc7uiFoy4SYzmOzjkuPJsS8BJ3N4DkYUt7l9WoFtD7iHWQpH4R+Ylwd83Xzub0sJMcJlLZik/2PTGxaoiEv59alnRqjk25S8d5O0AlaEHT287gHvpZb8dQnkpSw6fv8=
+	t=1741089524; cv=none; b=pu/XRv1QvMcEgIe+wa5cBmsMx7DKZwmwRDybVA+gQgA6OJRpEb8BKe3++4hToTo+zc+GRS5UKb3MvFN/vNxJLd1MB67zvUWU5eAaGWSkp8WXCl8ppd5WCgqaA8zGIW0a7iF5cUaG7IsFpDoAW2hHutCaHqtRnqUfZp5p+RPEOeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741089472; c=relaxed/simple;
-	bh=7ypZWnjPrV7w6TeeTckAB6eHJ6/xsg2qkTe/LybKhEs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NcTxkiiS3kUsuCCTOqAK2UZOLK2WyZ27apyPE2Za+XEjVZW2eWLNMnYStNEovkaGcuRANxaufqjeWyhsUioYFkihUFJltrPvjv/7nop44x7G7+3f7zJcmXpqDrIVZztunfDSZmuKDrjeB2AEe5JqcZp4ktSuR1apwReFk/PrRis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GYZ0d05B; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5e538388dd1so3094210a12.1;
-        Tue, 04 Mar 2025 03:57:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741089469; x=1741694269; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oFfYVSo4B+UXub+GZI2qGn4jwqa9bMIxNlJj7fXOijE=;
-        b=GYZ0d05BQ7Rbm6godUG0RiCglK0lqr2pH6CgfQB7n+pPKa44BD3SUo6pDDt/aLqdfE
-         BPkMqQfTOT2cqoyfMwBP4eelEEqhKX3LMQRL7oTR1ipjZrtJ2sY/m3dR1/qjoB8h+Eqv
-         hsqnZZ6VFLRw+SzbL/kDuAN/dIy+xeSjZ+R/4QPssPWU/5CcJeDJKk3N1p5/ygPFdCh+
-         5FgnVyY0z7zLuXxLRWNtXh8k03DT0R/C7o8VvZrCLnLB59hCYDBp69I871VWFzi2tpTj
-         AT214sOk005Tq+Zl0luOqOTnbrLUcy75m8k3EzwKVCLFNuBR43g3NPUureJ1fiH1q7pZ
-         5YFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741089469; x=1741694269;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oFfYVSo4B+UXub+GZI2qGn4jwqa9bMIxNlJj7fXOijE=;
-        b=FDM6rszPoNsk95OQwtu6moaWDehM3s+pvEkakuRimy4OmpB+9f4Kky3vfOCQlLhgKa
-         Rx222q/kCPM7J3aD0/yBZ9h524JfSh0eRtkVWEjkDGaXMEYYX30cbVuTt92ceIE+y5Gp
-         tAFekGefj3pvFTqckC998yYHiAWj2SCOOqJWhQ1Kuba6rHRPBkCLivvwavwUXCYNImWK
-         EHyuy9nB8DqfcEKKt9VwUowUy2e5B/TWZhOGFkTlGMwW1D0izW1BuQzLqZDnxZxoGWbN
-         PIKoDAt03z6/TEb+SfhTkq8bf2lNvnQ7L30QgeJ5k11PJA2Ggqijhtklk/0nPMnIObd1
-         /eGA==
-X-Forwarded-Encrypted: i=1; AJvYcCUBldQktjgO8kLyCIjolGrazeeof9aCyoJUR1viBMYw5CLP2siAd54g5KfTBIhCfXS15uacg/dsQ3CpcFYh@vger.kernel.org, AJvYcCXXIZ44Un0U0+rSDvJenAW4qlq0qb5CC1odQXiefUzDF5cMs80IE+SrK6kt33P57iecOT0wBeLs8qH76+KU@vger.kernel.org
-X-Gm-Message-State: AOJu0YygcgT0bMUi4t17hu3zkG7mG93O8lKm25BFFGULI34dzUzFDcpF
-	ryc3q4zzL47dAW0yZidoRtQS3cXSu78OFVtRw3RjIN9acS/XFqNIZpDzpP76T4HThuppKyz/XUN
-	Se7I1N+Npqf1j0QhH7yjhh8BTJp8=
-X-Gm-Gg: ASbGncsLZNdQgy0bvXnAixFGwLEXQvAz8yQenIiA+UUQyHrQauOXrniQ311TlSQir0K
-	419lGL9B339iBI2axJY8h1q8L+UJPp8UV1/FqeMWXRzGXaHYvj1wQtGKVCKjca06KliU6KAX0cO
-	OJU5iIyXIzysR2eki6t84TnvpMsg==
-X-Google-Smtp-Source: AGHT+IG/gH8xF2QSpMAqKv1eZxLbdC2fhOMhNMkCv6JUkbQ36wboE4Ypr1n30rVoJmN+b7m089jSauZwbUd5xsRhN3g=
-X-Received: by 2002:a17:907:7fa6:b0:abf:615d:58c2 with SMTP id
- a640c23a62f3a-abf615d6016mr1192362066b.34.1741089468592; Tue, 04 Mar 2025
- 03:57:48 -0800 (PST)
+	s=arc-20240116; t=1741089524; c=relaxed/simple;
+	bh=zJsKIqxmW/ciJ/CGeURsPQPLty/XONLIcsf/+xtesFI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BPlCsvjUJrpoU4hLQkVLj3uB74ItFyqUF5LrLPIOlrf/73aOvHOsp/juZE6LUTC6QH8vrLI2BZ3ybOgDTrPtvedIdWi2zX5dmcgOJX2FsJK5lqIIhDpvf/RZ7hckkmSVhfI4e5rir+n5f838f8UmvQamn9qbyIF78lhr5/KgeCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jrhw20Qy; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741089522; x=1772625522;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zJsKIqxmW/ciJ/CGeURsPQPLty/XONLIcsf/+xtesFI=;
+  b=Jrhw20Qy4jy418BWFX8mP0aq1zoIX8nWn0ukKhs1lOtWfEiZlcE7NMKI
+   z6wKyj0zQpo0L1ozffD0aR9569KksYgUiI3mQSgxXrkbcDqFdouK2ibYk
+   3gxS7s/CmYeJ0Thlmx4t8kG1usunLc9gZTpMAVWT0/GYGyHzu2NiPVkYJ
+   X+IWf4tMhf6i5d3g3jtDkOKbkXYbw3rd/ckIA4rDpd5hEIeJtvTuqz07P
+   wj2+UkuiRX1Q9+gpPLguDHK6mMKSzsJJeIBjqa5r2KSwbRRcWRPbDYPpy
+   cNd9RL3eW58fxHyMaYOFfWiyn0lA0cWGiC5Aeehbu1SHKS8RrZTjnde2p
+   g==;
+X-CSE-ConnectionGUID: VZZiqB0KR4S+u4MVTh25jQ==
+X-CSE-MsgGUID: SV2uDMq7Q96PHy5w+WBMHQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="67371840"
+X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
+   d="scan'208";a="67371840"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 03:58:39 -0800
+X-CSE-ConnectionGUID: 42inDFCaQcmVRHWLz/Mh0w==
+X-CSE-MsgGUID: W8on7+kbS2mKhC1BWiOwHA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="149285886"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 03:58:36 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tpQuv-0000000H7B4-2FWl;
+	Tue, 04 Mar 2025 13:58:33 +0200
+Date: Tue, 4 Mar 2025 13:58:33 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Paolo Abeni <pabeni@redhat.com>, Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Rasesh Mody <rmody@marvell.com>,
+	GR-Linux-NIC-Dev@marvell.com, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>
+Subject: Re: [PATCH net v1 1/1] bnx2: Fix unused data compilation warning
+Message-ID: <Z8bq6XJGJNbycmJ9@smile.fi.intel.com>
+References: <20250228100538.32029-1-andriy.shevchenko@linux.intel.com>
+ <20250303172114.6004ef32@kernel.org>
+ <Z8bcaR9MS7dk8Q0p@smile.fi.intel.com>
+ <5ec0a2cc-e5f6-42dd-992c-79b1a0c1b9f5@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250304080044.7623-1-ImanDevel@gmail.com>
-In-Reply-To: <20250304080044.7623-1-ImanDevel@gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 4 Mar 2025 12:57:36 +0100
-X-Gm-Features: AQ5f1JoU6Vvq5Hm7n116SaG8VrOOy_nKyTWmNXwcxfBElDzY3PzC1Sz2EnC7Mxc
-Message-ID: <CAOQ4uxiaY9cZFpj4m65SrAVXm7MqB2OFSfyH5D03hEwmdtiBVQ@mail.gmail.com>
-Subject: Re: [PATCH] inotify: disallow watches on unsupported filesystems
-To: Seyediman Seyedarab <imandevel@gmail.com>
-Cc: jack@suse.cz, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kernel-mentees@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5ec0a2cc-e5f6-42dd-992c-79b1a0c1b9f5@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, Mar 4, 2025 at 8:59=E2=80=AFAM Seyediman Seyedarab <imandevel@gmail=
-.com> wrote:
->
-> currently, inotify_add_watch() allows adding watches on filesystems
-> where inotify does not work correctly, without returning an explicit
-> error. This behavior is misleading and can cause confusion for users
-> expecting inotify to work on a certain filesystem.
++ Marek/Christoph (for the clarification/commenting on the below)
 
-That maybe so, but it's not that inotify does not work at all,
-in fact it probably works most of the time for those fs,
-so there may be users setting inotify watches on those fs,
-so it is not right to regress those users.
+On Tue, Mar 04, 2025 at 12:39:40PM +0100, Paolo Abeni wrote:
+> On 3/4/25 11:56 AM, Andy Shevchenko wrote:
+> > On Mon, Mar 03, 2025 at 05:21:14PM -0800, Jakub Kicinski wrote:
+> >> On Fri, 28 Feb 2025 12:05:37 +0200 Andy Shevchenko wrote:
+> >>> In some configuration, compilation raises warnings related to unused
+> >>> data. Indeed, depending on configuration, those data can be unused.
+> >>>
+> >>> Mark those data as __maybe_unused to avoid compilation warnings.
+> >>
+> >> Will making dma_unmap_addr access the first argument instead of
+> >> pre-processing down to nothing not work?
+> > 
+> > I looked at the implementation of those macros and I have no clue
+> > how to do that in a least intrusive way. Otherwise it sounds to me
+> > quite far from the scope of the small compilation error fix that
+> > I presented here.
 
->
-> This patch explicitly rejects inotify usage on filesystems where it
-> is known to be unreliable, such as sysfs, procfs, overlayfs, 9p, fuse,
-> and others.
+> I *think* Jakub is suggesting something alike:
 
-Where did you get this list of fs from?
-Why do you claim that inotify does not work on overlayfs?
-Specifically, there are two LTP tests inotify07 and inotify08
-that test inotify over overlayfs.
+I see. Perhpas we need Marek's/Christoph's opinion on this...
 
-This makes me question other fs on your list.
-
->
-> By returning -EOPNOTSUPP, the limitation is made explicit, preventing
-> users from making incorrect assumptions about inotify behavior.
->
-> Signed-off-by: Seyediman Seyedarab <ImanDevel@gmail.com>
 > ---
->  fs/notify/inotify/inotify_user.c | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
->
-> diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify=
-_user.c
-> index b372fb2c56bd..9b96438f4d46 100644
-> --- a/fs/notify/inotify/inotify_user.c
-> +++ b/fs/notify/inotify/inotify_user.c
-> @@ -87,6 +87,13 @@ static const struct ctl_table inotify_table[] =3D {
->         },
->  };
->
-> +static const unsigned long unwatchable_fs[] =3D {
-> +       PROC_SUPER_MAGIC,      SYSFS_MAGIC,       TRACEFS_MAGIC,
-> +       DEBUGFS_MAGIC,        CGROUP_SUPER_MAGIC, SECURITYFS_MAGIC,
-> +       RAMFS_MAGIC,          DEVPTS_SUPER_MAGIC, BPF_FS_MAGIC,
-> +       OVERLAYFS_SUPER_MAGIC, FUSE_SUPER_MAGIC,   NFS_SUPER_MAGIC
-> +};
-> +
->  static void __init inotify_sysctls_init(void)
->  {
->         register_sysctl("fs/inotify", inotify_table);
-> @@ -690,6 +697,14 @@ static struct fsnotify_group *inotify_new_group(unsi=
-gned int max_events)
->  }
->
->
-> +static inline bool is_unwatchable_fs(struct inode *inode)
-> +{
-> +       for (int i =3D 0; i < ARRAY_SIZE(unwatchable_fs); i++)
-> +               if (inode->i_sb->s_magic =3D=3D unwatchable_fs[i])
-> +                       return true;
-> +       return false;
-> +}
+> diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+> index b79925b1c433..927884f10b0f 100644
+> --- a/include/linux/dma-mapping.h
+> +++ b/include/linux/dma-mapping.h
+> @@ -629,7 +629,7 @@ static inline int dma_mmap_wc(struct device *dev,
+>  #else
+>  #define DEFINE_DMA_UNMAP_ADDR(ADDR_NAME)
+>  #define DEFINE_DMA_UNMAP_LEN(LEN_NAME)
+> -#define dma_unmap_addr(PTR, ADDR_NAME)           (0)
+> +#define dma_unmap_addr(PTR, ADDR_NAME)           (((PTR)->ADDR_NAME), 0)
+>  #define dma_unmap_addr_set(PTR, ADDR_NAME, VAL)  do { } while (0)
+>  #define dma_unmap_len(PTR, LEN_NAME)             (0)
+>  #define dma_unmap_len_set(PTR, LEN_NAME, VAL)    do { } while (0)
+> ---
+> 
+> Would that work?
 
-This is not a good practice for black listing fs.
+I do not know. Not my area of expertise.
 
-See commit 0b3b094ac9a7b ("fanotify: Disallow permission events
-for proc filesystem") for a better practice, but again, we cannot just
-stop supporting inotify on fs where it was supported.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-The assumption with the commit above was that setting permission
-events on procfs is possible, but nobody (except for fuzzers) really does t=
-hat
-and if we have found out that there were actual users that do it, we
-would have needed to revert that commit.
 
-Thanks,
-Amir.
 
