@@ -1,178 +1,126 @@
-Return-Path: <linux-kernel+bounces-544403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8728BA4E0BD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:25:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A5F7A4E0D6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:28:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B2207A988E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:24:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16B7B1693A5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7974207DEB;
-	Tue,  4 Mar 2025 14:23:51 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C08AF207DF5
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:23:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31EEB208961;
+	Tue,  4 Mar 2025 14:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DeiAz6rK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064FA206F03
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741098231; cv=none; b=iAWC89oKji8+lpKGVCgBjwIyZyLCErO2tmEiQmKk7qpFxWoEGRnlJ1ceV3R/csYwo0dd592+CS4E5A+ZGwcvyilxT87hbpVt22FMeKvdnbkGgdBygL60HaEw7qy70aMQ22wXugJgmGcWsEyOfZPRdH0yGJHNK86yrn1+kfNNKn8=
+	t=1741098248; cv=none; b=n1+3sVJodJkUZkb85i5a6ZcdkSd6e6QO9w333DsgIF51CnQHxgS+SkrsFO8Uwp+Dt4GoO80StViRlV4xImH1fP1RUQmDXXRKOyTKqfVa6/f7Xdzzvl+ZLaIQ6J3/C4gINc23tokHC+RKK3gCNA3nTGIgfgObsTsYKaqJ+D+ZkxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741098231; c=relaxed/simple;
-	bh=+/4CvG4LsmN5Sf5U9c6W1i9TGVpKsEVoSEJ4l2pow9M=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=efQSGha87g25eZFguSxpdtF2776pC4rWogeJB7ka1tb3VLQx8njc4vTyPCEDQ0fXYrNLlbOz6+ye4k7rsLs0YzaE/BMhBP1Qanz9PFLcjyXv13ojyNixPMFw6Ct2QVxVBCP+jxmEStcZX8FyrhH1jHKH2vvKmq2+MAcT54c1JmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 11748FEC;
-	Tue,  4 Mar 2025 06:24:03 -0800 (PST)
-Received: from e130256.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B135F3F66E;
-	Tue,  4 Mar 2025 06:23:47 -0800 (PST)
-From: Hongyan Xia <hongyan.xia2@arm.com>
-To: Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>
-Cc: Morten Rasmussen <morten.rasmussen@arm.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Christian Loehle <christian.loehle@arm.com>,
-	Pierre Gondois <pierre.gondois@arm.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 8/8] sched/uclamp: Solve under-utilization problem
-Date: Tue,  4 Mar 2025 14:23:15 +0000
-Message-Id: <94048802c665752e92d1d354fdc38dd95ffe4a03.1741091349.git.hongyan.xia2@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1741091349.git.hongyan.xia2@arm.com>
-References: <cover.1741091349.git.hongyan.xia2@arm.com>
+	s=arc-20240116; t=1741098248; c=relaxed/simple;
+	bh=YToWRXI3ojp5Qpx1iSipk79vN6Czw/zLodfp8xVJwD8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pAKy+Z3S/X94v7+F16Nkscz1rJl9cSi4R6e33lKSm+fsLvFk35c8iexFOmX7Px2tbla2VXWMylmRJaobxLm63ehzztEGV48bdHxGBPle5Ea0J7qO/K5t+Ht4kfkDTjPyxMeQFq4M9ISNpnxaYoW7vl64Lf62DnpjVrmnGUCXd9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DeiAz6rK; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741098246;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u7Jl6RqLE4ySPh0n2/0y55XdmikJ9fMRlsEGtfokKwE=;
+	b=DeiAz6rKfjcV5NpgPmhqAEgjxxIJhfqTZNT+LI3Dl8HGWydgRJfGwmPIVM+zUpgRmFuw6i
+	ywXcsrYO20+tbGedr+1tN4mjWmTl866PvNUtcN1NqgJRKS6D2C4IkvQXZ/QzkfPjQHLTgx
+	LkJNl3T0BOyzVde/Sftow9v3uGjpIbY=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-439-PQ70ayaXOC2FD4Afy1C9aQ-1; Tue, 04 Mar 2025 09:23:44 -0500
+X-MC-Unique: PQ70ayaXOC2FD4Afy1C9aQ-1
+X-Mimecast-MFC-AGG-ID: PQ70ayaXOC2FD4Afy1C9aQ_1741098224
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4399d2a1331so28211565e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 06:23:44 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741098223; x=1741703023;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=u7Jl6RqLE4ySPh0n2/0y55XdmikJ9fMRlsEGtfokKwE=;
+        b=PtZXR6WjJDiNdVoDtbAoRqrNPlw5GSc1RI0VjlD1C8/tvD1d9DO5CjyqBLbelNFd9/
+         ed9THEtpbTNL0eBRCGNxqhZfzpV5UQzwXc2KcO/7vL6CmSgowk+J2zh3E0Qun1GaZO/Q
+         sqXYAR/ZQty1dFsJqybCm7BeT4MziWXHNxAb3J6d1iXnKr7fT4Cx/PZVihpIhdAtsUbW
+         7zpGflVjdue3WSiEg8oCeM3EHUd0T+ZPh3u3u00KSmldT3+NW4BFdfI5YfDrG2rOu7gW
+         +W5WFYkz3JdGuczxxwy5xaaCCf0valhc8e3ral/ypPKxwUuKghDafAdqzxGXrt/PCcc9
+         8uNA==
+X-Forwarded-Encrypted: i=1; AJvYcCU8Uttg9cIRY1YreQ9/5LZR7SZLOA+gPEm3hJOjp0b67cClH9hMhSWCXN5zjkiJCcf+j+/VqmI5Y+JDfy4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmsdcGPUwBqw4IHogJLtm1Uj5Jr0/3JiDwjyZcvzag4BzKSOug
+	anRzIurzSgGMk/mam+xMLOSduozEmTolcmp2Z/XF4K4F/gBgyV1NtQ83rvnKYKBbJIdqOPlslKk
+	NJ1PaAcwLRsW2ccsS+Hzk7GJqdszqxq/g7i8hKh/jBNkg3NYyi1Cbson1ZJsYhQ==
+X-Gm-Gg: ASbGncuTfLni/ZhH9Eocpa3JkRiozSrEmTNBWRlhFrb6SjZEU2aS/laqLbfCpdB52aF
+	scEBoA6Hglwv3NP3Dsuv168x8SXeCxwFzK4BL6JLlsboZ3ZBG0RvVinMO31b3/A8BAoq68r0z6l
+	3B1oQofCIz/PkIXMWllqyI/3vysU+6H/9cujul6n0/13lKHzvpDdAnU9v+Gru4dhyRsdgTXLTcl
+	ZH0aIDx/Yf7KVrzXdH8cCSGBrWr2Dz/vkKryfNt8bd8lJP9q/C0teHpwLD/+HCp4jZoykUPxc9f
+	yjEbUUNfajFPMqcqlNsJzBc+r784/GYp85XS07q2vjTSvA==
+X-Received: by 2002:a05:600c:4793:b0:43b:baf7:76e4 with SMTP id 5b1f17b1804b1-43bcae04e19mr29901235e9.1.1741098223609;
+        Tue, 04 Mar 2025 06:23:43 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF52Rx16VjlDS72aosnmdGbcCI7vGQKO/XsIiTckVodJ9P2N/4wxflyj/DJe6Sib08YfVkUAQ==
+X-Received: by 2002:a05:600c:4793:b0:43b:baf7:76e4 with SMTP id 5b1f17b1804b1-43bcae04e19mr29900945e9.1.1741098223266;
+        Tue, 04 Mar 2025 06:23:43 -0800 (PST)
+Received: from [192.168.88.253] (146-241-81-153.dyn.eolo.it. [146.241.81.153])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b736f75ebsm199915175e9.3.2025.03.04.06.23.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Mar 2025 06:23:42 -0800 (PST)
+Message-ID: <278118b1-eae8-401a-8501-e0a777852fcf@redhat.com>
+Date: Tue, 4 Mar 2025 15:23:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 5/7] netconsole: add task name to extra data
+ fields
+To: Breno Leitao <leitao@debian.org>
+Cc: Simon Horman <horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, kernel-team@meta.com
+References: <20250221-netcons_current-v1-0-21c86ae8fc0d@debian.org>
+ <20250221-netcons_current-v1-5-21c86ae8fc0d@debian.org>
+ <20250225101910.GM1615191@kernel.org>
+ <20250225-doberman-of-scientific-champagne-640c69@leitao>
+ <d0e43d0a-621d-46ee-8cb7-1e5c41e76b8c@redhat.com>
+ <20250225-bright-jasmine-butterfly-aa1bb0@leitao>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250225-bright-jasmine-butterfly-aa1bb0@leitao>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-With sum aggregation, a heavily uclamp_max-throttled task may throttle
-the whole rq, resulting in low OPP.
+On 2/25/25 2:11 PM, Breno Leitao wrote:
+> Ack. I will remove the check then, and check if the UDP stack has been
+> initialized before calling netpoll helpers.
+> 
+> What is the best way to make sure taht the UDP stack has been
+> initialized?
 
-For example, two tasks having the same priority and both tasks are
-always-running tasks. One task has no uclamp values but the other has
-uclamp_max of 1. Then, under sum aggregation, the CPU will run at 512 +
-1 = 513 OPP, which means the task without uclamp_max only gets 513 / 2 =
-256 utilization, even though the CPU still can run faster.
+[brosers!] Sorry for the latency. My statement was intended as a
+negative example: "adding such check would be as misleading as checking
+if the UDP stack has been before calling netpoll helpers". The UDP stack
+is always initialized when called from netpoll, due to the relevant
+"init" order.
 
-With this patch, we do not throttle a uclamp_max too hard such that it
-impacts other tasks. This is done by tracking the highest uclamp_factor
-and any uclamp_max tasks cannot throttle more than this factor allows.
-
-Signed-off-by: Hongyan Xia <hongyan.xia2@arm.com>
----
- kernel/sched/fair.c  | 12 ++++++++++++
- kernel/sched/pelt.c  | 33 +++++++++++++++++++++++++++++----
- kernel/sched/sched.h |  2 ++
- 3 files changed, 43 insertions(+), 4 deletions(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 944953b90297..966ca63da3fa 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -7159,6 +7159,18 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
- 	if (p) {
- 		util_bias_dequeue(rq, p);
- 		propagate_negative_bias(p);
-+		if (p->pid == rq->max_uclamp_factor_pid) {
-+			/*
-+			 * If the task with the highest uclamp_factor gets
-+			 * dequeued, the correct thing to do is to set pid and
-+			 * factor to the second highest. However, the overhead
-+			 * isn't really necessary because the second highest
-+			 * will set these fields the next time it gets updated
-+			 * anyway.
-+			 */
-+			rq->max_uclamp_factor_pid = -1;
-+			rq->max_uclamp_factor = 0;
-+		}
- 	}
- 
- 	if (rq_h_nr_queued && !rq->cfs.h_nr_queued)
-diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
-index f38abe6f0b8b..e96ca045af2e 100644
---- a/kernel/sched/pelt.c
-+++ b/kernel/sched/pelt.c
-@@ -271,8 +271,8 @@ ___update_load_avg(struct sched_avg *sa, unsigned long load)
- static void util_bias_update(struct task_struct *p)
- {
- 	unsigned int util, uclamp_min, uclamp_max;
--	struct rq *rq;
--	int old, new;
-+	struct rq *rq = task_rq(p);
-+	int old, new, clamped_util, prio = p->prio - MAX_RT_PRIO;
- 
- 	util = READ_ONCE(p->se.avg.util_avg);
- 	uclamp_min = uclamp_eff_value(p, UCLAMP_MIN);
-@@ -284,12 +284,37 @@ static void util_bias_update(struct task_struct *p)
- 	if (uclamp_max == SCHED_CAPACITY_SCALE)
- 		uclamp_max = UINT_MAX;
- 	old = READ_ONCE(p->se.avg.util_avg_bias);
--	new = (int)clamp(util, uclamp_min, uclamp_max) - (int)util;
-+	clamped_util = (int)clamp(util, uclamp_min, uclamp_max);
-+	if (p->se.on_rq && prio >= 0) {
-+		/* We only do this for fair class priorities. */
-+		u64 uclamp_factor = sched_prio_to_wmult[prio];
-+
-+		/* This has to be a 64-bit multiplication. */
-+		uclamp_factor *= clamped_util;
-+		if (rq->max_uclamp_factor_pid == p->pid) {
-+			rq->max_uclamp_factor = uclamp_factor;
-+		} else if (uclamp_factor > rq->max_uclamp_factor) {
-+			rq->max_uclamp_factor = uclamp_factor;
-+			rq->max_uclamp_factor_pid = p->pid;
-+		} else {
-+			u32 weight = sched_prio_to_weight[prio];
-+
-+			/*
-+			 * We cannot throttle too much if some other task is
-+			 * running at high utilization. We should prioritize
-+			 * giving that task enough utilization and respect
-+			 * task priority, before enforcing uclamp_max.
-+			 */
-+			uclamp_max = max(uclamp_max,
-+				(rq->max_uclamp_factor * weight) >> 32);
-+			clamped_util = (int)clamp(util, uclamp_min, uclamp_max);
-+		}
-+	}
-+	new = clamped_util - (int)util;
- 
- 	WRITE_ONCE(p->se.avg.util_avg_bias, new);
- 	if (!p->se.on_rq)
- 		return;
--	rq = task_rq(p);
- 	WRITE_ONCE(rq->cfs.avg.util_avg_bias,
- 		   READ_ONCE(rq->cfs.avg.util_avg_bias) + new - old);
- }
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 654eede62979..0dc90208ad73 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -1086,6 +1086,8 @@ struct rq {
- 	u64			nr_switches;
- 
- #ifdef CONFIG_UCLAMP_TASK
-+	u64			max_uclamp_factor;
-+	pid_t			max_uclamp_factor_pid;
- #endif
- 
- 	struct cfs_rq		cfs;
--- 
-2.34.1
+/P
 
 
