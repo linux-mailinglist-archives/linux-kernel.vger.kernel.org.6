@@ -1,131 +1,135 @@
-Return-Path: <linux-kernel+bounces-544828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA064A4E6BF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:50:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51ED9A4E5B6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:25:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23D22885712
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:15:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA3374610A4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58CF27C849;
-	Tue,  4 Mar 2025 15:54:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0108427C877;
+	Tue,  4 Mar 2025 15:55:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q6KlEHUo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67DBD1FFC70;
-	Tue,  4 Mar 2025 15:54:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5626927C844;
+	Tue,  4 Mar 2025 15:55:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741103691; cv=none; b=hjgfxjiNT1ojeXy+oMqwGMpcNbn65DXkYgH8iwIMTS9uamvfOjrK0AyrvltvFsbN++1qQ3RnCHSIjLHCDvRnNBuONkkV2noYZBClvpCBCbE1GX0hwqy2rGg00blqoFllhpKcyTSoRGYTkqcWaGaaaBgNcJztQSqQ2nov/GVnTGI=
+	t=1741103745; cv=none; b=ch2P/Gty7t267wE9HDVmOtHH01oaG4EzwRxBw/m1RMVaAXv86B07OPMtKmvmwwN4JyvRXg4dRTQqNaP2MaqPa5vQbVv5wBDVLVrYpzm2Uy9WZQ5GIutlvKD8+SQKa7jIMPutOR+ZXbt2V1ECszaxX78nG7je2KTuXG1hQRZI2Lg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741103691; c=relaxed/simple;
-	bh=M3e3CWugMIrN5o5RiqSuYopGwLjOTNaoGsTcoWwEFbU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=klYDZUFAmqzJ8ZGql5YB22s3HUHDprtR5fLqey+FGGcDpDekuRSj7WT+35p1bd6iwfk5L792QG8C+KuJxvvK3V6K5E42y0tnFUTLSGhCgQrp8LOzgp21dbP0Icyi6zgJHIMdSzDm6KeO+G+lHA9uDmGiVm/zxL0+UYl1R2J842g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C091C4CEE5;
-	Tue,  4 Mar 2025 15:54:49 +0000 (UTC)
-Message-ID: <248a3e62-bc34-4be0-b121-e74f1fb11b9c@xs4all.nl>
-Date: Tue, 4 Mar 2025 16:54:48 +0100
+	s=arc-20240116; t=1741103745; c=relaxed/simple;
+	bh=6JjWe01Fb74ikB8E5k4hcgywO/QJhek4Q9koYh3qr0c=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=kCsKG4KrNstZ4BvsNdobUWbHq9GxiimbwxCL/7iNzSycJ1lveThTHhvrLxUWSI30NCGxO/eef6IQ/iXvQZmARBTgFbSyBfT9Ewt5p1t1RB8nKk2MhQO5kafdQszhpz7zZu7FligUccXNflHkulQQD+vyVNBI/4B76T64SrUnfsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q6KlEHUo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C59DBC4CEE5;
+	Tue,  4 Mar 2025 15:55:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741103744;
+	bh=6JjWe01Fb74ikB8E5k4hcgywO/QJhek4Q9koYh3qr0c=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=q6KlEHUoDyrUti0TfKHMzxq+d7SgBDZeYljnyM0jimqCHYr8M/tZOu/vlYpQDYLtd
+	 lECwbsJRJFwyBRBL3JiIr+9Jm9e+iVapkK+Fy9ITodWFSor6OemZT+pPoFtSy1q7ne
+	 sQDOV6guhLuqZlzWvof0eTCP5gYfAQ5errXfeucgoJ6Lh8uG85FH5xTWnbytWH6XwV
+	 DM/8ObgckJ6+P7Sm6cae7ukUaGL5cWTA0eReZAtcYXCY+sj31p5M9IwqrtdtdzE2YZ
+	 Kj0P9uUhwFE2QnbgIj8RFLxkglePvXRjK5vSQqTnZIZiCOPOjtbGi+b8+U8/T5RU0I
+	 7b6EK+8miPkoA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1E91C021B8;
+	Tue,  4 Mar 2025 15:55:44 +0000 (UTC)
+From: "Chester A. Unal via B4 Relay" <devnull+chester.a.unal.arinc9.com@kernel.org>
+Date: Tue, 04 Mar 2025 15:55:36 +0000
+Subject: [PATCH] ARM: dts: BCM5301X: Fix switch port labels of ASUS
+ RT-AC3200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: gspca: Add error logging for sq905c_command() to
- prevent silent failure
-To: Wentao Liang <vulab@iscas.ac.cn>, mchehab@kernel.org
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250303152355.1897-1-vulab@iscas.ac.cn>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Autocrypt: addr=hverkuil@xs4all.nl; keydata=
- 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
-In-Reply-To: <20250303152355.1897-1-vulab@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250304-for-broadcom-fix-rt-ac3200-switch-ports-v1-1-7e249a19a13e@arinc9.com>
+X-B4-Tracking: v=1; b=H4sIAHcix2cC/x2NywrCMBAAf6Xs2YVt0oL6K+Ihj43dg92yCVUo/
+ XeDx4Fh5oDKJlzhPhxgvEsVXTuMlwHSEtYXo+TO4MjN5GnCoobRNOSkbyzyRWsYkndEWD/S0oK
+ bWquYuYwUyMd4vUGvbcbd/p8ez/P8AQpCTjx5AAAA
+X-Change-ID: 20250304-for-broadcom-fix-rt-ac3200-switch-ports-def10a03bb89
+To: Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Hauke Mehrtens <hauke@hauke-m.de>, 
+ =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Tom Brautaset <tbrautaset@gmail.com>, 
+ "Chester A. Unal" <chester.a.unal@arinc9.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1741103743; l=1391;
+ i=chester.a.unal@arinc9.com; s=arinc9; h=from:subject:message-id;
+ bh=5BwPF9flLou8o24Bv8iNZhdALbMlAOZ+jVIvmAjgycU=;
+ b=PeGf3b5jyl/AR9FiXgqhGgQx7n+rYzrkdnnzZfnJJjgmQXZMpnSVYUJsyWjdEeBXq8Hup0E0s
+ siibCPmaodZANVCthjQnH02OQqMLTxYWmU0G2MU8BQrx0p5iwFE/CRz
+X-Developer-Key: i=chester.a.unal@arinc9.com; a=ed25519;
+ pk=/g3vBAV0YSvcIpSQ052xJbid7nrPXz8ExGKhTEuc6IY=
+X-Endpoint-Received: by B4 Relay for chester.a.unal@arinc9.com/arinc9 with
+ auth_id=306
+X-Original-From: "Chester A. Unal" <chester.a.unal@arinc9.com>
+Reply-To: chester.a.unal@arinc9.com
 
-Hi Wentao Liang,
+From: "Chester A. Unal" <chester.a.unal@arinc9.com>
 
-On 03/03/2025 16:23, Wentao Liang wrote:
-> Add error handling for sq905c_command() failure in sq905c_dostream().
-> Log debug message with gspca_dbg() to prevent silent failure.
-> 
-> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
-> ---
->  drivers/media/usb/gspca/sq905c.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/usb/gspca/sq905c.c b/drivers/media/usb/gspca/sq905c.c
-> index 6ca947aef298..7bb6b24c3ed1 100644
-> --- a/drivers/media/usb/gspca/sq905c.c
-> +++ b/drivers/media/usb/gspca/sq905c.c
-> @@ -183,7 +183,9 @@ static void sq905c_dostream(struct work_struct *work)
->  quit_stream:
->  	if (gspca_dev->present) {
->  		mutex_lock(&gspca_dev->usb_lock);
-> -		sq905c_command(gspca_dev, SQ905C_CLEAR, 0);
-> +		ret = sq905c_command(gspca_dev, SQ905C_CLEAR, 0);
-> +		if (ret)
-> +			gspca_dbg(gspca_dev, D_STREAM, "Clear command failed\n");
+After using the device for a while, Tom reports that he initially described
+the switch port labels incorrectly. Apparently, ASUS's own firmware also
+describes them incorrectly. Correct them to what is seen on the chassis.
 
-Thank you for this patch, but I'm not taking it, it just adds a debug message
-for no good reason that I can see. It's a really old driver as well.
+Reported-by: Tom Brautaset <tbrautaset@gmail.com>
+Fixes: b116239094d8 ("ARM: dts: BCM5301X: Add DT for ASUS RT-AC3200")
+Signed-off-by: Chester A. Unal <chester.a.unal@arinc9.com>
+---
+ arch/arm/boot/dts/broadcom/bcm4709-asus-rt-ac3200.dts | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-If you really want it, then post the patch again and explain why you want this in.
+diff --git a/arch/arm/boot/dts/broadcom/bcm4709-asus-rt-ac3200.dts b/arch/arm/boot/dts/broadcom/bcm4709-asus-rt-ac3200.dts
+index 53cb0c58f6d0574f4f13c6aeb1d1bc5961d80379..3da2daee0c849d536df94c868849af7610cc1ded 100644
+--- a/arch/arm/boot/dts/broadcom/bcm4709-asus-rt-ac3200.dts
++++ b/arch/arm/boot/dts/broadcom/bcm4709-asus-rt-ac3200.dts
+@@ -124,19 +124,19 @@ port@0 {
+ 		};
+ 
+ 		port@1 {
+-			label = "lan1";
++			label = "lan4";
+ 		};
+ 
+ 		port@2 {
+-			label = "lan2";
++			label = "lan3";
+ 		};
+ 
+ 		port@3 {
+-			label = "lan3";
++			label = "lan2";
+ 		};
+ 
+ 		port@4 {
+-			label = "lan4";
++			label = "lan1";
+ 		};
+ 	};
+ };
 
-Regards,
+---
+base-commit: 768953614c1c13fdf771be5742f1be573eea8fa4
+change-id: 20250304-for-broadcom-fix-rt-ac3200-switch-ports-def10a03bb89
 
-	Hans
+Best regards,
+-- 
+Chester A. Unal <chester.a.unal@arinc9.com>
 
->  		mutex_unlock(&gspca_dev->usb_lock);
->  	}
->  	kfree(buffer);
 
 
