@@ -1,88 +1,100 @@
-Return-Path: <linux-kernel+bounces-545542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0733FA4EE59
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:30:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 584B7A4EE5B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:30:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A2753A949D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:30:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB62A3A9317
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:30:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1105225FA09;
-	Tue,  4 Mar 2025 20:30:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA00818CBE1;
+	Tue,  4 Mar 2025 20:30:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QChqHiPG";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nySXIn4T"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="jNP4ReSa"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01DEC1FBE9E
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:30:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1BBA1F76A8
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741120208; cv=none; b=XBOBPhP9ztXkSLEXlTFh0cHck24M4OhfCd3O37L6X3/NNHByK4KFP74bD50Aa7t98QbhPHY/e5Y0yKyIjzRgDIZ931KXVuCBI9ThuRf/il9VOmpbTPidHaQ+LwEzvhSGiVuhj5b8uYE4jZocCONWicipnw1q8bklyGppo5N23U8=
+	t=1741120227; cv=none; b=DsnuR+7rKWE09YnSI8xcRkbL0w/7QJVHhe32krQaXpe0z536yC5Fd6djL1rOe3HLloD6ey99YbFSrqgoTURHtwWKe/mupN/lGP0nKnompJ9U0wPNlMP/Fxfus0Egtqhnth9i8UGTrM3ocMMJ2eBvOY9w92QX9743PveRi6O9UQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741120208; c=relaxed/simple;
-	bh=n+XCb/mQEAvyAxQV+XgBHDE6MBmGaRcXkZI7v7tKpzk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=k8nfxPa9wNdRsVxRNUFkUa5sCDO4dPrdG6l2i6F5MJl0ucBKLtxAl3zU3NWzogJgnp+Hq3M/Mi5lNLAx2PDFx26wnVhAKT9P61arqUQAfgiq/EDuURn30i4UDR+aS4EihJI6D7toDipmUA8aldUCBNd3nMdw99r+LZNmTONZwwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QChqHiPG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nySXIn4T; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741120205;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tawQ88tVituZhPa5H5T3lpBwSfKDNHrvVgtDD+CYQI4=;
-	b=QChqHiPG+CnvjO/82iHkHr0B6rZPgzrx84YI0CN76pOtl+4UVQHEaHcxI84EgHYsN8i02V
-	IpWTawcy/nd29Ff7nK83zCdXk1/30084p2kgpqSwX3RaifwT4Uigl+pqritJ+j7Wf75Oq1
-	tzNvL2QwEZtnmFQvYpmzCiRpBu4c8t4wRng6n/Y6m956IxzwQTjncU5yqtLLGy3FuOYi+t
-	IKtxcU3YyTcDeBz4xx32gZulQa6lM5r/X/M1MTPygjXA/UC9e7CUbk/5QA9+ih/dSiWJWd
-	BJzaMAu2l5pYjTxhNIb3hntUhFgK6oG2nq3Ncc0dEu71O0CMXHE3CfE5salwyw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741120205;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tawQ88tVituZhPa5H5T3lpBwSfKDNHrvVgtDD+CYQI4=;
-	b=nySXIn4T8CjjAkp1ZzKiHZ6kL47T+Yl7S7Wo2p0xYx7ivX2Y4LfpdDAk66BqNStm0WmSUx
-	bd3KxpKcJiXzP6Ag==
-To: Cyrill Gorcunov <gorcunov@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Anna-Maria Behnsen
- <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>,
- Benjamin Segall <bsegall@google.com>, Eric Dumazet <edumazet@google.com>,
- Andrey Vagin <avagin@openvz.org>, Pavel Tikhomirov
- <ptikhomirov@virtuozzo.com>, Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [patch V2 10/17] posix-timers: Make
- signal_struct::next_posix_timer_id an atomic_t
-In-Reply-To: <Z8c-vvnMpPjYRvOn@grain>
-References: <20250302185753.311903554@linutronix.de>
- <20250302193627.543399558@linutronix.de> <Z8YPQn0UpxucZLJP@grain>
- <87sentbyer.ffs@tglx> <Z8c-vvnMpPjYRvOn@grain>
-Date: Tue, 04 Mar 2025 21:30:04 +0100
-Message-ID: <87mse05yk3.ffs@tglx>
+	s=arc-20240116; t=1741120227; c=relaxed/simple;
+	bh=Z7qAp8BgePLwDRIQEm4ooNb8/sKXNc9d4KVJ+VMNhBA=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=Z3MSJKQCGFuVA4BEhff62TNf5Vy0reFZSfqjWIa5lWPBANyi313ME+AwCqfWkixRKng0ny68n9+Wq+Ek1A1Eq67peXvkunIk4RADcC9Z3r63cf6otl4E3hlz0vCY6bLjCTOdyLbQ+CBdUV/R5qxB6Kl60OYcgHBUtmD7Oo5KB70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=jNP4ReSa; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1741120223;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=a6WzCje76QLUKJGbmYoeUe7d9zKFda9oGc8+kEK4a04=;
+	b=jNP4ReSawiAxad9womJccr4tfSjzlhZUJA6DV3kWGJXSysytY4Z8oqIOu2KElbzgCtxThe
+	Hb6obA+e0Qo/eYo2+zpV+mtx40sUxmEqUnAw4mQxJbez7q10pXKoybJIO9Uu2fYNmla3cE
+	PDPzlUbH2X+2eWAHvki/b8nLITpLoAopv5K8ASny7u2n7w253EIR3hZZPTyz/t/zEY2hvK
+	1h4mrF8gHB7qXOgkGIyyPIFUWoBghSgDu13Y9Jz18RqL63V6sJvR3FyqOKdUZrOXV6xRnT
+	RG5VgCo8Voq1kDCl3iZs+gL4BxgzMADdzke5argxV/fGYQPeGQ58inZobpDDaQ==
+Date: Tue, 04 Mar 2025 21:30:22 +0100
+From: Dragan Simic <dsimic@manjaro.org>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: andy.yan@rock-chips.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, quentin.schulz@cherry.de, Heiko Stuebner
+ <heiko.stuebner@cherry.de>
+Subject: Re: [PATCH v3 1/3] drm/rockchip: lvds: move pclk preparation in with
+ clk_get
+In-Reply-To: <20250304124418.111061-2-heiko@sntech.de>
+References: <20250304124418.111061-1-heiko@sntech.de>
+ <20250304124418.111061-2-heiko@sntech.de>
+Message-ID: <041c5f0e2371817a27577bd0989b9dca@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On Tue, Mar 04 2025 at 20:56, Cyrill Gorcunov wrote:
-> On Mon, Mar 03, 2025 at 10:24:28PM +0100, Thomas Gleixner wrote:
->> 
->> Welcome. Some quick validation with CRIU would be appreciated.
->
-> Just tested in criu: works without problem, both modes -- with new
-> prctl and without it. Note that I only have ran separate posix-timers
-> test case, probably virtuozzo team might do more deep tesing.
+Hello Heiko,
 
-Thank you very much!
+On 2025-03-04 13:44, Heiko Stuebner wrote:
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_lvds.c
+> b/drivers/gpu/drm/rockchip/rockchip_lvds.c
+> index 385cf6881504..ecfae8d5da89 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_lvds.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_lvds.c
+> @@ -448,15 +448,13 @@ struct drm_encoder_helper_funcs
+> px30_lvds_encoder_helper_funcs = {
+>  static int rk3288_lvds_probe(struct platform_device *pdev,
+>  			     struct rockchip_lvds *lvds)
+>  {
+> -	int ret;
+> -
+>  	lvds->regs = devm_platform_ioremap_resource(pdev, 0);
+>  	if (IS_ERR(lvds->regs))
+>  		return PTR_ERR(lvds->regs);
+> 
+> -	lvds->pclk = devm_clk_get(lvds->dev, "pclk_lvds");
+> +	lvds->pclk = devm_clk_get_prepared(lvds->dev, "pclk_lvds");
+>  	if (IS_ERR(lvds->pclk)) {
+> -		DRM_DEV_ERROR(lvds->dev, "could not get pclk_lvds\n");
+> +		DRM_DEV_ERROR(lvds->dev, "could not get or prepare pclk_lvds\n");
 
-      tglx
+I'm wondering why this patch isn't replacing deprecated DRM
+logging macros with their preferred successors in a couple of
+places, just like what the patch 2/3 from this series does?
 
