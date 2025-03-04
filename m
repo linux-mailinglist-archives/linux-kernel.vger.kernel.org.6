@@ -1,64 +1,55 @@
-Return-Path: <linux-kernel+bounces-543036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B06EDA4D0CA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 02:28:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5571A4D0CE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 02:30:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BA771892E4A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:28:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F1791893A81
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 952BA13AA38;
-	Tue,  4 Mar 2025 01:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="ZKQ4u0u8"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 368D4273FD
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 01:28:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8D1E13A258;
+	Tue,  4 Mar 2025 01:30:36 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 449C213AC1;
+	Tue,  4 Mar 2025 01:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741051699; cv=none; b=Wv3D7NofyBndqr3ICQ61uXmAoOVqpb7d7hbognzz31BTN9StDlZNo7LbrhCV7rLwO8lMsLKGf916Exc8Xy4pMSmh3jxFVaL/n+9dLpG9oGqYl2u3YL5fdfGbzVIo0lSka3ytdR2vc4CfvuRXO3aKPFOy9WdBdgaQpSHX6UbwMEQ=
+	t=1741051836; cv=none; b=r7bM8Mp4dmXSTMRmSYJloV6LElBLxkS+3DE2cn8QQwYNbZKS++4rJGZ1FXL5aF8Yhve154Du+iMlm2SS+XsRWtZwD/4/mYiN/0rmTxMI1Rljv5elv6gb4M7HV8JTzZ+nc+ZcoqxQbC/iIoJXw9ukos7ucrfxLZOL10fEjiyTh/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741051699; c=relaxed/simple;
-	bh=wVKPu1/TDuVoF2kUDbsKuZcJYjeaeWVZ5Qj5ArOeupc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Qy8cP8ju58TLhjywpqmX0+xoFtOvAJUsyfF4uEKESv+CSzqqp5Enyz4GFkZ+rkY7D/a5U5etcuJJ674/FRNEmFruHD5yYSs+OTqgo6tN5KOrmu59lsJTUatHN1npwvlxx9qzI6khKy7LEYhRVGhyRs9XkrQxm81qeppK7pLsml0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=ZKQ4u0u8; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=8HX/7PYovNGM5QD3NV52qDB+IT7TlNEfS8CekJi9+5Y=; b=ZKQ4u0u8MDolpvqK7ADx2gxpIx
-	IsWV0DHLPcm6Xk4jnUI5FS7nP0sRUCIPrYpOzcOrwtnU9G3JPhyPqD74QkfHUxOGWU5J/gnZzYEQt
-	Tfbdjs/fnUjVPAH/p+JCmT6CrutqTfq5ae1oFbj5914Y2RSc+x3MoO8j9fc/YEdq8Gs6lsjPFzX/v
-	I6nMaFDRb+iZ025iJwljAfhS1wDci0s8EPrA/wQfes9i1jvGAuFJjU8K+7oogGTyiQdrLshl9U9sl
-	q21MMpSwvuxwTvk63cLuBYlX3gaDPP26/xjz8R/kDiXNK8yfr2QMrcibNyRGxA5/9acbyyVRTbeCz
-	RsDCgZrw==;
-Received: from [58.29.143.236] (helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1tpH4k-003VPw-5J; Tue, 04 Mar 2025 02:28:08 +0100
-From: Changwoo Min <changwoo@igalia.com>
-To: tj@kernel.org,
-	void@manifault.com,
-	arighi@nvidia.com
-Cc: kernel-dev@igalia.com,
-	linux-kernel@vger.kernel.org,
-	Changwoo Min <changwoo@igalia.com>
-Subject: [PATCH v3 2/2] sched_ext: Add trace point to track sched_ext core events
-Date: Tue,  4 Mar 2025 10:27:40 +0900
-Message-ID: <20250304012740.35473-3-changwoo@igalia.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250304012740.35473-1-changwoo@igalia.com>
-References: <20250304012740.35473-1-changwoo@igalia.com>
+	s=arc-20240116; t=1741051836; c=relaxed/simple;
+	bh=8JoIYV2GtWQTDz4HyJ7E6QNN2hNMjfy+UxcKFO1GxDQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CBneZFGZ56eHm8sbq1omgpqO82a+87o+WEoYzS/znKqwB856F5z6coLzJYAd8YJxnwCDfw6xUuKcxqaO1U3jue0l0KpWaG6PP34fmyLKSxtih+NsT60wnKXzDVPouRMABhdCp13p1TIVg5n44ulKrr01PKmi2eHMut3x4o1XO0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4AAA9FEC;
+	Mon,  3 Mar 2025 17:30:47 -0800 (PST)
+Received: from localhost.localdomain (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 877753F673;
+	Mon,  3 Mar 2025 17:30:31 -0800 (PST)
+From: Andre Przywara <andre.przywara@arm.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 00/15] clk: sunxi-ng: add A523 clock support
+Date: Tue,  4 Mar 2025 01:27:50 +0000
+Message-ID: <20250304012805.28594-1-andre.przywara@arm.com>
+X-Mailer: git-send-email 2.46.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,93 +58,154 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add tracing support to track sched_ext core events
-(/sched_ext/sched_ext_event). This may be useful for debugging sched_ext
-schedulers that trigger a particular event.
+Hi,
 
-The trace point can be used as other trace points, so it can be used in,
-for example, `perf trace` and BPF programs, as follows:
+this is the third drop of the series introducing basic clock support for
+the Allwinner A523 family of SoCs, comprising A523, A527, T527, H728. [1]
+This fixes the issues Jernej found in his extensive and gratefully
+received review, many thanks for that, also to the other reviewers! 
+Those changes affect only details, but the rework caused more changes:
+the clock definition helper macros got reworked, and the binding turned
+out to be wrong, as it ignored the change in the source clock names
+(instead just accommodated their changed number). Shoehorning the
+differing names into the existing binding document turned out to be
+quite hard to follow, so I moved that into a separate yaml file.
+For a more detailed changelog, see below.
 
-======
-$> sudo perf trace -e sched_ext:sched_ext_event --filter 'name == "SCX_EV_ENQ_SLICE_DFL"'
-======
+*************
+Please note that the clock numbers changed compared to v1 and v2, so DTs
+from that era cannot be used anymore with this driver: you have to update
+the DTB. Just copying the binding header and recompiling the DTB should do
+the trick, since the symbols stayed mostly the same, at least as far they
+are used in the basic DTs we use today.
+*************
 
-======
-struct tp_sched_ext_event {
-	struct trace_entry ent;
-	u32 __data_loc_name;
-	s64 delta;
-};
+The SoCs contain *four* CCU components, aside from the usual main clock
+device and the PRCM clock (in the always-on-domain), there is an MCU
+clock and a CPU clock. This series just adds support for the first two,
+the other two don't seem to be required for the basic functionality.
 
-SEC("tracepoint/sched_ext/sched_ext_event")
-int rtp_add_event(struct tp_sched_ext_event *ctx)
-{
-	char event_name[128];
-	unsigned short offset = ctx->__data_loc_name & 0xFFFF;
-        bpf_probe_read_str((void *)event_name, 128, (char *)ctx + offset);
+The clock tree of each SoC has always been individual, even though the
+main clock *types* mostly remain the same. This time we see three slight
+variations: There is an MP clock without the P (shift) part, there is one
+with two dividers instead of one divider and one shift field, and certain
+clocks require an "update" bit to be set to apply any changes.
+The first three patches add support for these new clock types.
 
-	bpf_printk("name %s   delta %lld", event_name, ctx->delta);
-	return 0;
-}
-======
+Patch 04 and 05 add the DT binding description for the two CCUs, along
+with all the clock numbers already defined in the binding headers.
+Since the main CCU is massive, and contains a lot of detail, I decided
+to split this driver up into 9 patches, simply to help review. I tried
+to group them somewhat logically, although this is rather arbitrary, and
+just to make each individual patch smaller. I am happy to squash them
+all back into one patch once they have been reviewed, for the final
+merge. The PRCM CCU is comparably small, so I kept this in one patch.
 
-Signed-off-by: Changwoo Min <changwoo@igalia.com>
----
- include/trace/events/sched_ext.h | 19 +++++++++++++++++++
- kernel/sched/ext.c               |  2 ++
- 2 files changed, 21 insertions(+)
+Interestingly the Allwinner BSP has switched to using the existing sunxi
+CCU framework for modelling the clocks (they had their own way before), so
+we could theoretically use their code. However when I started working on
+this more than a year ago, their files had a GPL-3.0-only license header,
+which, according to my research, makes them incompatible for mainline
+inclusion. I thus started from "scratch" (adjusting the D1 driver, really).
+Meanwhile they seem to have changed the license, and a quick comparison
+turned up some differences, some of which seem to be bugs on their, some
+on my side, probably. I hope having such a "reference" helps the mainline
+code quality, as people can help the review by comparing code.
 
-diff --git a/include/trace/events/sched_ext.h b/include/trace/events/sched_ext.h
-index fe19da7315a9..3d04b9819548 100644
---- a/include/trace/events/sched_ext.h
-+++ b/include/trace/events/sched_ext.h
-@@ -26,6 +26,25 @@ TRACE_EVENT(sched_ext_dump,
- 	)
- );
- 
-+TRACE_EVENT(sched_ext_event,
-+	    TP_PROTO(const char *name, __u64 delta),
-+	    TP_ARGS(name, delta),
-+
-+	TP_STRUCT__entry(
-+		__string(name, name)
-+		__field(	__s64,		delta		)
-+	),
-+
-+	TP_fast_assign(
-+		__assign_str(name);
-+		__entry->delta		= delta;
-+	),
-+
-+	TP_printk("name %s delta %lld",
-+		  __get_str(name), __entry->delta
-+	)
-+);
-+
- #endif /* _TRACE_SCHED_EXT_H */
- 
- /* This part must be outside protection */
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index 686629a860f3..debcd1cf2de9 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -1554,6 +1554,7 @@ static DEFINE_PER_CPU(struct scx_event_stats, event_stats_cpu);
-  */
- #define scx_add_event(name, cnt) do {						\
- 	this_cpu_add(event_stats_cpu.name, cnt);				\
-+	trace_sched_ext_event(#name, cnt);					\
- } while(0)
- 
- /**
-@@ -1565,6 +1566,7 @@ static DEFINE_PER_CPU(struct scx_event_stats, event_stats_cpu);
-  */
- #define __scx_add_event(name, cnt) do {						\
- 	__this_cpu_add(event_stats_cpu.name, cnt);				\
-+	trace_sched_ext_event(#name, cnt);					\
- } while(0)
- 
- /**
+Given the level of detail required in CCU drivers, I am certain there are
+still some bugs in there, also many things that can be improved. But after
+starring and editing this for weeks, I feel like it's time for the
+community to have a look, so please help with the review, and also test.
+
+Based on v6.14-rc1.
+
+Cheers,
+Andre
+
+[1] https://linux-sunxi.org/A523#Family_of_sun55iw3
+
+Changelog v2 .. v3:
+- rename PLL_DDR0 to PLL_DDR
+- move bogus macro definition from PLL patch to an earlier patch
+- adding CLK_SET_RATE_PARENT flags where needed (GPU, eDP, ...)
+- remove CLK_SET_RATE_PARENT from clocks with only fixed parents
+- add support for clocks with the "update" bit (BIT(27))
+- flags IOMMU, MBUS and DRAM clocks as needing "update" bit
+- remove leftover comment about missing mux
+- fix TCON_TV parent list
+- add TCON_LCD2 clock
+- export PLL_GPU
+- describe MBUS clock properly (was copy&pasted wrongly from D1)
+- change MMC clocks to use better macro
+- mark SPI and CSI clocks as being dual-divider clocks
+- fix wrong DSP parent clock (480 instead of 400 MHz)
+- properly implement fanout clocks (describe both dividers)
+- fix MBUS gate clocks and add two new ones
+- rename dpss clock to display0 and add display1 clocks
+- drop non-existing bus_dsp_cfg_clk
+- mark r_timer clocks as having no divider
+- fix r_pwm mux width
+- move DT bindings into separate yaml file
+- describe different source clock sets correctly
+- add review tags
+- remove Chen-Yu's and Conor's tags from changed patches
+
+Changelog v1 .. v2:
+- rebase onto v6.14-rc1
+- split main CCU definition patch into 9 smaller patches
+- rename RST_BUS_VO1_TCONLCD0 to RST_BUS_TCON_LCD2
+- insert CLK_PLL_VIDEO3_xx clocks
+- add clock for 2nd EMAC
+- fix ISP clock definition
+- remove BSP comments from clocks now documented in the T527 manual
+- add Conor's binding ACKs (with thanks!)
+
+Andre Przywara (15):
+  clk: sunxi-ng: mp: introduce dual-divider clock
+  clk: sunxi-ng: mp: provide wrappers for setting feature flags
+  clk: sunxi-ng: Add support for update bit
+  dt-bindings: clk: sunxi-ng: document Allwinner A523 CCU
+  dt-bindings: clk: sunxi-ng: add compatible for the A523 PRCM-CCU
+  clk: sunxi-ng: Add support for the A523/T527 CCU PLLs
+  clk: sunxi-ng: a523: Add support for bus clocks
+  clk: sunxi-ng: a523: add video mod clocks
+  clk: sunxi-ng: a523: add system mod clocks
+  clk: sunxi-ng: a523: add interface mod clocks
+  clk: sunxi-ng: a523: add USB mod clocks
+  clk: sunxi-ng: a523: remaining mod clocks
+  clk: sunxi-ng: a523: add bus clock gates
+  clk: sunxi-ng: a523: add reset lines
+  clk: sunxi-ng: add support for the A523/T527 PRCM CCU
+
+ .../clock/allwinner,sun55i-a523-ccu.yaml      |   96 +
+ drivers/clk/sunxi-ng/Kconfig                  |   10 +
+ drivers/clk/sunxi-ng/Makefile                 |    4 +
+ drivers/clk/sunxi-ng/ccu-sun55i-a523-r.c      |  248 +++
+ drivers/clk/sunxi-ng/ccu-sun55i-a523-r.h      |   14 +
+ drivers/clk/sunxi-ng/ccu-sun55i-a523.c        | 1685 +++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun55i-a523.h        |   14 +
+ drivers/clk/sunxi-ng/ccu_common.h             |    5 +
+ drivers/clk/sunxi-ng/ccu_div.c                |    2 +
+ drivers/clk/sunxi-ng/ccu_gate.c               |    4 +
+ drivers/clk/sunxi-ng/ccu_mp.c                 |   51 +-
+ drivers/clk/sunxi-ng/ccu_mp.h                 |   58 +-
+ drivers/clk/sunxi-ng/ccu_mux.c                |    2 +
+ include/dt-bindings/clock/sun55i-a523-ccu.h   |  189 ++
+ include/dt-bindings/clock/sun55i-a523-r-ccu.h |   37 +
+ include/dt-bindings/reset/sun55i-a523-ccu.h   |   88 +
+ include/dt-bindings/reset/sun55i-a523-r-ccu.h |   25 +
+ 17 files changed, 2517 insertions(+), 15 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/allwinner,sun55i-a523-ccu.yaml
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun55i-a523-r.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun55i-a523-r.h
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun55i-a523.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun55i-a523.h
+ create mode 100644 include/dt-bindings/clock/sun55i-a523-ccu.h
+ create mode 100644 include/dt-bindings/clock/sun55i-a523-r-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun55i-a523-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun55i-a523-r-ccu.h
+
 -- 
-2.48.1
+2.46.3
 
 
