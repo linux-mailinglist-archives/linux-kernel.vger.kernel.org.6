@@ -1,174 +1,182 @@
-Return-Path: <linux-kernel+bounces-543468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 671E2A4D603
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:17:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 09E8CA4D605
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:18:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33BE63A4F5A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:17:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E8843A6DC0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:17:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E1231FAC25;
-	Tue,  4 Mar 2025 08:17:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 626A51FBC89;
+	Tue,  4 Mar 2025 08:17:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="KOne0f1l"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gzEJMXG9"
+Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6539A189528;
-	Tue,  4 Mar 2025 08:17:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E3DE1F4E49;
+	Tue,  4 Mar 2025 08:17:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741076244; cv=none; b=iMk2gLlpiPLBLpKJFOUVjYOOhwRnWXqJeAn0ln2tzNXmVXNgs+UpYIpuyxkDy96iouvyTNOJDNEquGI4jd0pCvlnnWGjdcLlTKvIeChHVHrk1HHdJ+36l+BBkLqWQkSagXxAcrEf7o2xsofGTK7EevFj4btw0rMNdStBtRR/hPs=
+	t=1741076274; cv=none; b=NA+ThwkV1kV2Q+706nuVGln9ZIGjfze519zsSZTkFBchAb/ZDXykZyMAGK5YB6Ge6u/7+VzkflGhEeVibKZMxqJyliKST8IaGcUTQzO/XBuKzOmO3D+Xc7RPdlzQETruwmTK1BpZBrlpztIlKO8nfJ8aI2Y8PabYPdnAvNKq7B0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741076244; c=relaxed/simple;
-	bh=tcxZLstVr4VNllrZF6oqSc0dUyKjiXtBl2rVpewrbDs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jhGyvYiXsJFAmh85bKuqhAv5h1Mhal8qPpRTF9BtJDIKrvRtiou/WCq73pEG78G3xXloVy+IGQPVuNVl//RFpWvIsGl1heORhu8H5Setrl9mSvZyerubp+D1INUFzIU7bhyarxnWjGijLwchVHbt5eh55GJNy4sz0h5ODq+aTvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=KOne0f1l; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 5248GiLo2912962
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Tue, 4 Mar 2025 02:16:44 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1741076204;
-	bh=Q2OXkEES7Yr0y5dN7s4KOrfkCNcFyfcQ2GugE0dZYS4=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=KOne0f1lM6G34zbctiUwbEARuKJv0K+91fthqeO66/t12qkvb6OXnnFyRptDnY3zl
-	 cUOfMsL5NjMAQTmx27bp4+xXawY4OK8LZEa5imYwoFvfkI4+nGFvxvFTWbmiS6KROw
-	 REQtOotz48bSTEBACyV23bn8cqtB3gf51+lU/8pg=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 5248GiUE096921;
-	Tue, 4 Mar 2025 02:16:44 -0600
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 4
- Mar 2025 02:16:44 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 4 Mar 2025 02:16:43 -0600
-Received: from [10.24.69.25] (danish-tpc.dhcp.ti.com [10.24.69.25])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 5248GdYe043311;
-	Tue, 4 Mar 2025 02:16:40 -0600
-Message-ID: <33c38844-4fbe-469c-bb5f-06bdb7721114@ti.com>
-Date: Tue, 4 Mar 2025 13:46:39 +0530
+	s=arc-20240116; t=1741076274; c=relaxed/simple;
+	bh=2gvZFK7B2/ygORWICSDGt1IIAH1Q/EJuv9x/GA3yxW4=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=tUGjD+qApK8CAU1nFTl3cUzavP5IljTq0m7BP8fT7A6RV6J5z+brm+SfcAFKw0FUDEzJlTctxblkJWlBkArW4pO5009q0EFkxcFtxSbW+mhyX8Lm6MKBxloxlmz/Nn7NCjNwuv7IpKEmo8PcY0pjF2+R0tBwp4OR8eLUHwKj/Lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gzEJMXG9; arc=none smtp.client-ip=209.85.167.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3f3fca560f3so1392167b6e.2;
+        Tue, 04 Mar 2025 00:17:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741076272; x=1741681072; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xJf71JyQpoB7ef3U1+KnZ33sVZVyCe8BDjmZzBJrNfo=;
+        b=gzEJMXG96s0BczBnZZqnK1W53+N7h+j/9HetrZ/cGN2t1zhUkxtRFRL9KBMMIpixEz
+         taMn4Q+1DOuXgWm0MVK00YTX9aeTep3xIqtdFuO2/MwGgcF2zEB6VTjIVH2Iz5agPP9X
+         LAHBmXtKYx01ZUrjSLCAl5W80w9LLI1OQ2in/C0Xgr7q6hJj2ZJCvUi3gdsdE7+bQjGH
+         2h0qT0a0sqWSI4fRF3LnCbAfc44P/IZ6golt5Wl6CWuYabhzHrwM3FPHsrUukDjUeF+Y
+         XnCpXR+EBKGHq6/VRqi8UMVIq6+bxTc/7tB/zGNDunkbN6rU9qTSqG0pP0E8i4sH6N3T
+         tI1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741076272; x=1741681072;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xJf71JyQpoB7ef3U1+KnZ33sVZVyCe8BDjmZzBJrNfo=;
+        b=fRQ0Jkhd5Py5gNrmSpL8z1aADpnVdr1ZevFmLk58gCL+EtlPU2DSQQXuJQJCG7FATd
+         F65aWo0UPMx/BnBg/pSD2rpMTZD/rEWAf6TYQZki6rxO8bSBUAXq5H3xEuOYNjVw96Bn
+         Ky6NM3m24gDlEkvZJBO8yASxWYqNGejOWvKbhGOOImEI4lF6V2V/pxQwGsk4v9VtrQCS
+         p/v8rQYOZ92baDd5VccCfvmIN3OgMI1+1YsmDEL6dwzK/ugHUuovHqHsX18ka6aF+QSN
+         rPI383sFgIOMm3tKX0IxpAnVWHOF6dcBJ8y5UrqoDJJk3QjETF0eSoJFrEMFzM41Txj1
+         anVg==
+X-Forwarded-Encrypted: i=1; AJvYcCUum/tKSN0BA6OMIaucv/N5QHvpuSWgz9RX8CioKy1EkJtbZHt+9McCI2vxVbpMTtOmtr7ld4ZOvKFSLuo=@vger.kernel.org, AJvYcCVtBZYmJZsHuRr74EWkycdAL2J6U5ALkV1Ec0t2X3iLZtxTG9WJiwZgNAayEvj84D9wnRXeiRD2tsD0@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6D8L0AaWghU8EetXBqwAucacqYFaXTqU1vY5VExqN/l0sClzq
+	7jBcs4syYsErLoDx41H460VBzjO92DE1BOWIMCqxWQ7FwTknvL0T
+X-Gm-Gg: ASbGnctFD8H9gepI+2SC+AU07CXgh5ZoI2t15ml4i2RUmipa2ddL1uxH6PDDrD4bVTW
+	Se463J7kCjyO1glpsKwJnjcjo35z2ub+EmmINaqJMzlVWupz8J2wT/7kX3Qi33U72Zejs4QegJs
+	k4ZzxF0OYe+sfMKO6yMCCIdliFjDW63d5QXK1fouMd4tfGlWmyMPM6OZWliyhI9WTXvdSk/iwYG
+	ofSx7sHZ0+NsOQfiWJZluP6oFiurfARItES1Ko3jwEMIL1yLlT+RaHmILOFbi/tGTOY1Gd+Axqz
+	38jWVCb1tLLQQ0lq/lEGZNWo1niwcSbhNRk+UDFSRK3B4m3bMQhSAj4=
+X-Google-Smtp-Source: AGHT+IEzPzDeanddwsgQUTJLbFlFQskBte1JTGbzjSm17M9A3zitxeIjEZa1MG20CvbmO1rnKTczyw==
+X-Received: by 2002:a05:6808:308c:b0:3f4:1912:1064 with SMTP id 5614622812f47-3f558601f19mr11817650b6e.34.1741076272226;
+        Tue, 04 Mar 2025 00:17:52 -0800 (PST)
+Received: from localhost.localdomain ([122.8.183.87])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-72a0f80b6f5sm453009a34.38.2025.03.04.00.17.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 00:17:51 -0800 (PST)
+From: Chen Wang <unicornxw@gmail.com>
+To: lpieralisi@kernel.org,
+	kw@linux.com,
+	manivannan.sadhasivam@linaro.org,
+	robh@kernel.org,
+	bhelgaas@google.com,
+	s-vadapalli@ti.com,
+	thomas.richard@bootlin.com,
+	unicorn_wang@outlook.com,
+	bwawrzyn@cisco.com,
+	wojciech.jasko-EXT@continental-corporation.com,
+	kishon@kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	sophgo@lists.linux.dev
+Subject: [PATCH] PCI: cadence: Fix NULL pointer error for ops
+Date: Tue,  4 Mar 2025 16:17:42 +0800
+Message-Id: <20250304081742.848985-1-unicornxw@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] net: ti: icssg-prueth: Add ICSSG FW Stats
-To: Jakub Kicinski <kuba@kernel.org>
-CC: Meghana Malladi <m-malladi@ti.com>, Diogo Ivo <diogo.ivo@siemens.com>,
-        Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>,
-        "David
- S. Miller" <davem@davemloft.net>,
-        Andrew Lunn <andrew+netdev@lunn.ch>, <linux-kernel@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <srk@ti.com>, Vignesh Raghavendra
-	<vigneshr@ti.com>,
-        Roger Quadros <rogerq@kernel.org>
-References: <20250227093712.2130561-1-danishanwar@ti.com>
- <20250303172543.249a4fc2@kernel.org>
-Content-Language: en-US
-From: MD Danish Anwar <danishanwar@ti.com>
-In-Reply-To: <20250303172543.249a4fc2@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: 8bit
 
+From: Chen Wang <unicorn_wang@outlook.com>
 
+ops of struct cdns_pcie may be NULL, direct use
+will result in a null pointer error.
 
-On 04/03/25 6:55 am, Jakub Kicinski wrote:
-> On Thu, 27 Feb 2025 15:07:12 +0530 MD Danish Anwar wrote:
->> +	ICSSG_PA_STATS(FW_PREEMPT_BAD_FRAG),
->> +	ICSSG_PA_STATS(FW_PREEMPT_ASSEMBLY_ERR),
->> +	ICSSG_PA_STATS(FW_PREEMPT_FRAG_CNT_TX),
->> +	ICSSG_PA_STATS(FW_PREEMPT_ASSEMBLY_OK),
->> +	ICSSG_PA_STATS(FW_PREEMPT_FRAG_CNT_RX),
-> 
-> I presume frame preemption is implemented in silicon? If yes -
-> what makes these "FW statistics"? Does the FW collect them from 
+Add checking of pcie->ops before using it.
 
-The statistics are maintained / updated by firmware and thus the name.
+Fixes: 40d957e6f9eb ("PCI: cadence: Add support to start link and verify link status")
+Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
+---
+ drivers/pci/controller/cadence/pcie-cadence-host.c | 2 +-
+ drivers/pci/controller/cadence/pcie-cadence.c      | 4 ++--
+ drivers/pci/controller/cadence/pcie-cadence.h      | 6 +++---
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
-Preemption is implemented partially in both the hardware and firmware.
-The STATE MACHINE for preemption is in the firmware. The decision to
-when to PREEMEPT / ASSEMBLE a packet is made in firmware.
+diff --git a/drivers/pci/controller/cadence/pcie-cadence-host.c b/drivers/pci/controller/cadence/pcie-cadence-host.c
+index 8af95e9da7ce..9b9d7e722ead 100644
+--- a/drivers/pci/controller/cadence/pcie-cadence-host.c
++++ b/drivers/pci/controller/cadence/pcie-cadence-host.c
+@@ -452,7 +452,7 @@ static int cdns_pcie_host_init_address_translation(struct cdns_pcie_rc *rc)
+ 	cdns_pcie_writel(pcie, CDNS_PCIE_AT_OB_REGION_PCI_ADDR1(0), addr1);
+ 	cdns_pcie_writel(pcie, CDNS_PCIE_AT_OB_REGION_DESC1(0), desc1);
+ 
+-	if (pcie->ops->cpu_addr_fixup)
++	if (pcie->ops && pcie->ops->cpu_addr_fixup)
+ 		cpu_addr = pcie->ops->cpu_addr_fixup(pcie, cpu_addr);
+ 
+ 	addr0 = CDNS_PCIE_AT_OB_REGION_CPU_ADDR0_NBITS(12) |
+diff --git a/drivers/pci/controller/cadence/pcie-cadence.c b/drivers/pci/controller/cadence/pcie-cadence.c
+index 204e045aed8c..56c3d6cdd70e 100644
+--- a/drivers/pci/controller/cadence/pcie-cadence.c
++++ b/drivers/pci/controller/cadence/pcie-cadence.c
+@@ -90,7 +90,7 @@ void cdns_pcie_set_outbound_region(struct cdns_pcie *pcie, u8 busnr, u8 fn,
+ 	cdns_pcie_writel(pcie, CDNS_PCIE_AT_OB_REGION_DESC1(r), desc1);
+ 
+ 	/* Set the CPU address */
+-	if (pcie->ops->cpu_addr_fixup)
++	if (pcie->ops && pcie->ops->cpu_addr_fixup)
+ 		cpu_addr = pcie->ops->cpu_addr_fixup(pcie, cpu_addr);
+ 
+ 	addr0 = CDNS_PCIE_AT_OB_REGION_CPU_ADDR0_NBITS(nbits) |
+@@ -120,7 +120,7 @@ void cdns_pcie_set_outbound_region_for_normal_msg(struct cdns_pcie *pcie,
+ 	}
+ 
+ 	/* Set the CPU address */
+-	if (pcie->ops->cpu_addr_fixup)
++	if (pcie->ops && pcie->ops->cpu_addr_fixup)
+ 		cpu_addr = pcie->ops->cpu_addr_fixup(pcie, cpu_addr);
+ 
+ 	addr0 = CDNS_PCIE_AT_OB_REGION_CPU_ADDR0_NBITS(17) |
+diff --git a/drivers/pci/controller/cadence/pcie-cadence.h b/drivers/pci/controller/cadence/pcie-cadence.h
+index f5eeff834ec1..436630d18fe0 100644
+--- a/drivers/pci/controller/cadence/pcie-cadence.h
++++ b/drivers/pci/controller/cadence/pcie-cadence.h
+@@ -499,7 +499,7 @@ static inline u32 cdns_pcie_ep_fn_readl(struct cdns_pcie *pcie, u8 fn, u32 reg)
+ 
+ static inline int cdns_pcie_start_link(struct cdns_pcie *pcie)
+ {
+-	if (pcie->ops->start_link)
++	if (pcie->ops && pcie->ops->start_link)
+ 		return pcie->ops->start_link(pcie);
+ 
+ 	return 0;
+@@ -507,13 +507,13 @@ static inline int cdns_pcie_start_link(struct cdns_pcie *pcie)
+ 
+ static inline void cdns_pcie_stop_link(struct cdns_pcie *pcie)
+ {
+-	if (pcie->ops->stop_link)
++	if (pcie->ops && pcie->ops->stop_link)
+ 		pcie->ops->stop_link(pcie);
+ }
+ 
+ static inline bool cdns_pcie_link_up(struct cdns_pcie *pcie)
+ {
+-	if (pcie->ops->link_up)
++	if (pcie->ops && pcie->ops->link_up)
+ 		return pcie->ops->link_up(pcie);
+ 
+ 	return true;
 
-These preemption statistics are updated by the firmware based on the
-action performed by the firmware. Driver can read these to know the
-statistics of preemption. These stats will be able used by
-ethtool_mm_stats once the support for Preemption is added in the driver.
-
-> the device or the frames are for FW? 
-> 
->> +	ICSSG_PA_STATS(FW_RX_EOF_SHORT_FRMERR),
->> +	ICSSG_PA_STATS(FW_RX_B0_DROP_EARLY_EOF),
->> +	ICSSG_PA_STATS(FW_TX_JUMBO_FRM_CUTOFF),
->> +	ICSSG_PA_STATS(FW_RX_EXP_FRAG_Q_DROP),
->> +	ICSSG_PA_STATS(FW_RX_FIFO_OVERRUN),
->> +	ICSSG_PA_STATS(FW_CUT_THR_PKT),
->> +	ICSSG_PA_STATS(FW_HOST_RX_PKT_CNT),
->> +	ICSSG_PA_STATS(FW_HOST_TX_PKT_CNT),
->> +	ICSSG_PA_STATS(FW_HOST_EGRESS_Q_PRE_OVERFLOW),
->> +	ICSSG_PA_STATS(FW_HOST_EGRESS_Q_EXP_OVERFLOW),
->>  };
->>  
->>  #endif /* __NET_TI_ICSSG_STATS_H */
->> diff --git a/drivers/net/ethernet/ti/icssg/icssg_switch_map.h b/drivers/net/ethernet/ti/icssg/icssg_switch_map.h
->> index 424a7e945ea8..d30203a0978c 100644
->> --- a/drivers/net/ethernet/ti/icssg/icssg_switch_map.h
->> +++ b/drivers/net/ethernet/ti/icssg/icssg_switch_map.h
->> @@ -231,4 +231,109 @@
->>  /* Start of 32 bits PA_STAT counters */
->>  #define PA_STAT_32b_START_OFFSET                           0x0080
->>  
->> +/* Diagnostic error counter which increments when RTU drops a locally injected
->> + * packet due to port disabled or rule violation.
->> + */
->> +#define FW_RTU_PKT_DROP		0x0088
->> +
->> +/* Tx Queue Overflow Counters */
->> +#define FW_Q0_OVERFLOW		0x0090
->> +#define FW_Q1_OVERFLOW		0x0098
->> +#define FW_Q2_OVERFLOW		0x00A0
->> +#define FW_Q3_OVERFLOW		0x00A8
->> +#define FW_Q4_OVERFLOW		0x00B0
->> +#define FW_Q5_OVERFLOW		0x00B8
->> +#define FW_Q6_OVERFLOW		0x00C0
->> +#define FW_Q7_OVERFLOW		0x00C8
->> +
->> +/* Incremented if a packet is dropped at PRU because of a rule violation */
->> +#define FW_DROPPED_PKT		0x00F8
-> 
-> Instead of adding comments here please add a file under
-> Documentation/networking/device_drivers/ with the explanations.
-> That's far more likely to be discovered by users, no?
-
-Sure I will drop these MACRO comments and create a .rst file in
-Documentation/networking/device_drivers/
-
-One question though, should I create a table for the stats and it's
-description or should I create a section for each stats?
-
-Something like this,
-
-FW_RTU_PKT_DROP
----------------
-Diagnostic error counter which increments when RTU drops a locally
-injected packet due to port being disabled or rule violation.
-
-Please let me know what do you think.
-
+base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
 -- 
-Thanks and Regards,
-Danish
+2.34.1
+
 
