@@ -1,138 +1,189 @@
-Return-Path: <linux-kernel+bounces-545490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D62EBA4EDC1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:46:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 794F9A4EDC4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:47:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01DC1174333
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:46:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B33A3A86D7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:47:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE0425F7B4;
-	Tue,  4 Mar 2025 19:45:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F80F2512F9;
+	Tue,  4 Mar 2025 19:47:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="h50HTGRH"
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rX4/M4PL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05CB31FFC5F
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:45:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 718381F5826;
+	Tue,  4 Mar 2025 19:47:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741117532; cv=none; b=joISHOVwk7wnpRR9owtRFPLFbimzDAuQeZ0Z6HSwjY6IRBB8hva0ZpuWTXrOIOGGTPKx+t0z19xMvjSex1YQ8JwzdRgdJPD2COF1nyvWCw6ImCQKdwZUJ2t1+FUuyIV+GAuMzXf2nKbUtnmPBna5UYbPJRx0M+YPIoadOIWtgqI=
+	t=1741117672; cv=none; b=KiBH0yutWQdsiwASoe01Qxtv9aidfj5Xuh8qaz3Ur66i4L6U0Ab40nbrueh/7yj2Io/pyRoeiAtXjNWIIDzCC9UfmgrbSeHrjixkT3rNbJFdBz62MQI/MnMiEQl7CREIX8Twjtw8YFyFw09A5V4CJ5XZzjgE5uIDBFYrPBHJraM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741117532; c=relaxed/simple;
-	bh=cRxreIV1tABCpL9fRZfH6KzlR/VZYK1SWoxTM7CPHC8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Mf9Ja7R1kTqWY6wkFP/VuI9TRegVXuf0HW8V+iUkYpiQRTOnpag7zOjCfW/x/A4kbp+tGYQZlFeoKJPLc/3t6oxg6Q6yuyPBOuDi6oruV9s7AwjYzBV/Pd2D/YO+gnPF1sYeaMC5HbC7XreOKgsd/olq1sBeZiUcdWNb3flvZ7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=h50HTGRH; arc=none smtp.client-ip=209.85.166.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-85afc05fc40so20069839f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 11:45:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1741117530; x=1741722330; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Wlj6wsu/JSvBM4RPZykaf7UYl5o6YxQI8N0Xp4ZZi8E=;
-        b=h50HTGRHn++xPcga7XKV7ytlYY8x5eYFCWtFqy2mTTl0YViEl/LNWPbZnXbIqB0W6o
-         lB5O/3f+Q+XNPGomBlX0EWuYtZMIPiG8JWAp72QOcGx5oN9O3iZLuUaGWOOOX2ogM9Ww
-         oajmw45dFoNY9fLkyuotzestgQh1PErUkrwlE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741117530; x=1741722330;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wlj6wsu/JSvBM4RPZykaf7UYl5o6YxQI8N0Xp4ZZi8E=;
-        b=tBBFNBIu5mPfMMGgRRbmsQg256oKqeBctF/qZnJ5CggcqilmnCY14pcHXvAUwhk7Gm
-         o60AiOxGStc0mbr5kr2+S2HoMDal8fyNXZXGFzoVEbzzHH4TRYaeJDjmxPJifIIFdBtO
-         chO2u0xVqo0hQZNC5n6NQqJWzvbvrdc4EsjcAZvZP58txmhwrnmTNws9TCHqSI93F0Zs
-         zLbOR5e4+4aBbMLJs6E9tctKta8zdRw+Ec3gCF+YXqv8YWG4lO46OZa1WzB1Byzj9RiI
-         R7SGbH8UD+z9Yuv2+mf3ncsmngkJBTcHmEBzEcCfTkk+GgJ0cDefJ11ycRcapelfNScG
-         +grQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX3t3ncQ9aXQG7BthFCx5qgHtzjTVnaGTTWe7TOrX/mRlCJxlCNy8xLeFoSiMSAFyRbA9av3z6eaLfVzfc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhoMNW57zyZEvPRBNp7bEsnY9mufgApeAiirc4++y+eZVmVso7
-	emc0kOu6JWnLDSPh7FBycp5HpVkH5boPPOxNMesIGw7b5naEjC8dH0ndhTf3mzU=
-X-Gm-Gg: ASbGncsNteGffZEgb504dFjbK/uVy9yYXy+9plSD6fMeh0gGjRBl0egoCF3VInKm/Nl
-	YqhnW1OWw31ENrCRPsgGhOQFNdm6bR3XDRLF1VayHptDnzEfhZECTPP3ZSzRhru77m+dX1klPH5
-	jUvxnz9OAwklGlFUwYFBRrrx+nch0LoNMD5/Xk8jveSv5F3HD5v4CrlBH9Z0H/6e0ztLc4XFvn6
-	xJpCsM3Rl8xY24GAsUCECxes66SWSUfionD9IHHzijiAwN30YP7wSQUsX38sGvo8f0UtMEDu3zn
-	esv/H7ZH8fpi6Og2CrrQ2jbyXKEX1MmZlN45v7JyUUalZyTlNnmo+9k=
-X-Google-Smtp-Source: AGHT+IGkXVbMrjLGRFRcGTX+Z6vuj8MvARSqYVSsiUwnZt/gjJ0RAXPrIhj1KuEyYDn119fg33fmwQ==
-X-Received: by 2002:a05:6602:b84:b0:85a:fdf4:f429 with SMTP id ca18e2360f4ac-85affb97f71mr40405939f.12.1741117529977;
-        Tue, 04 Mar 2025 11:45:29 -0800 (PST)
-Received: from [192.168.1.14] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-85afc905722sm22022339f.13.2025.03.04.11.45.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Mar 2025 11:45:29 -0800 (PST)
-Message-ID: <c49917d2-5157-4878-9866-be6053b5124d@linuxfoundation.org>
-Date: Tue, 4 Mar 2025 12:45:28 -0700
+	s=arc-20240116; t=1741117672; c=relaxed/simple;
+	bh=4St5DqIAbiz/P2oYmOp5lACJ6oS8rj1SZXkIPTZqsTM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=No1q6Ce6lfzyE30pMbqxZknbjSk5P0b6bbTF15+tSBnt0DhHV1wis2gs7/dWz3QpnxrMlNhlJATgAAB6DuuUMc1N0cfYYc8KuIR9/n9WiblMAwWPXqQLPVeRcj5aJrVb08sJi9BU6ZLcuVnTcL3Pl2/yNC7Rf+VcmU3ZxbkdHlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rX4/M4PL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90491C4CEE8;
+	Tue,  4 Mar 2025 19:47:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741117671;
+	bh=4St5DqIAbiz/P2oYmOp5lACJ6oS8rj1SZXkIPTZqsTM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rX4/M4PL+nyGTgrc5a7JjX7rR4tK/+4HRh9ZkLq4+isfw2rYU5LTKBekHIjpwchcw
+	 a2SjLWIPjkbuMaTqhpJ6OqsfMp+0u5sc08EXmRgNqUJoOIyaUUzIU8xQtBGeEqont0
+	 F6TjCVdynWVuplvcvfTYRrVqcqHRpXFSlLnxHT84Fd6hzxlF6gzr14og6WCmfpodRW
+	 DGrx//zZf6whqL7zSbOOYMT3TYP00JJiRUOHtCAkrws2B2nVvJSPcuHXW9bXHsB8ZU
+	 RcHkzqzPTdsyeReWtP6/LIKDwedOC+Jsgygg8MMusk0+JOFuvB5E+i+9X8v50r8W1D
+	 dnennUuq8OZ0g==
+Date: Tue, 4 Mar 2025 11:47:49 -0800
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-tip-commits@vger.kernel.org,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Brian Gerst <brgerst@gmail.com>, "H. Peter Anvin" <hpa@zytor.com>,
+	x86@kernel.org
+Subject: Re: [tip: x86/asm] x86/asm: Make ASM_CALL_CONSTRAINT conditional on
+ frame pointers
+Message-ID: <20250304194749.zw6jdfmrctfgxfxk@jpoimboe>
+References: <174099976188.10177.7153571701278544000.tip-bot2@tip-bot2>
+ <CAHk-=wjSwqJhvzAT-=AY88+7QmN=U0A121cGr286ZpuNdC+yaw@mail.gmail.com>
+ <Z8a66_DbMbP-V5mi@gmail.com>
+ <CAHk-=wjRsMfndBGLZzkq7DOU7JOVZLsUaXnfjFvOcEw_Kd6h5g@mail.gmail.com>
+ <CAHk-=wjc8jnsOkLq1YfmM0eQqceyTunLEcfpXcm1EBhCDaLLgg@mail.gmail.com>
+ <20250304182132.fcn62i4ry5ndli7l@jpoimboe>
+ <CAHk-=wjgGD1p2bOCOeTjikNKmyDJ9zH8Fxiv5A+ts3JYacD3fA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usbip: Fix the error limitation on max_hw_sectors for
- usbip device
-To: Zongmin Zhou <min_halo@163.com>
-Cc: valentina.manea.m@gmail.com, shuah@kernel.org, i@zenithal.me,
- gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org, Zongmin Zhou <zhouzongmin@kylinos.cn>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20250219092555.112631-1-min_halo@163.com>
- <88b2fb4b-96a4-4d29-bf92-4064d3572fa4@linuxfoundation.org>
- <5a41d6c3.8c78.195371996e0.Coremail.min_halo@163.com>
- <247c7e15-bbff-427f-8315-ca463f8b933b@linuxfoundation.org>
- <4d4035bf.26b9.19556dcc23d.Coremail.min_halo@163.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <4d4035bf.26b9.19556dcc23d.Coremail.min_halo@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjgGD1p2bOCOeTjikNKmyDJ9zH8Fxiv5A+ts3JYacD3fA@mail.gmail.com>
 
-On 3/2/25 05:37, Zongmin Zhou wrote:
-> Dear shuah,
+On Tue, Mar 04, 2025 at 08:48:29AM -1000, Linus Torvalds wrote:
+> In your own words from 8 years go in commit f5caf621ee35 ("x86/asm:
+> Fix inline asm call constraints for Clang"), just having the register
+> variable makes the problem go away:
 > 
+>     With GCC 7.2, however, GCC's behavior has changed.  It now changes its
+>     behavior based on the conversion of the register variable to a global.
+>     That somehow convinces it to *always* set up the frame pointer before
+>     inserting *any* inline asm.  (Therefore, listing the variable as an
+>     output constraint is a no-op and is no longer necessary.)
 > 
-> Yes, I agree with you.It would be better if there have a more simpler fixes than This patch.
-> 
-> I can just think of the two possible solutions that mentioned before.
+> and the whole ASM_CALL_CONSTRAINT thing is just unnecessary.
 
-What are the two possible solutions?
-> 
-> 
-> If SWIOTLB disabled,dma_max_mapping_size() return SIZE_MAX.
+I don't know if that GCC 7.2 thing from eight years ago was a fluke or
+what, but without ASM_CALL_CONSTRAINT, those "call without frame pointer
+save/setup" warnings are still very much active with recent compilers.
 
-Right when CONFIG_HAS_DMA, if not it returns 0. Perhaps we
-can ignore CONFIG_HAS_DMA=n for this for this discussion.
+Below is what I get with empty ASM_CALL_CONSTRAINT + GCC 14 + defconfig
++ CONFIG_UNWINDER_FRAME_POINTER.
 
-> 
-> Only if SWIOTLB is active and dma addressing limited will return the swiotlb max mapping size.
-> 
-> 
-> The swiotlb config seems rely on many other config options like x86_64/IOMMU_SUPPORT and so on,
-> 
-> and the configuration on host and client side only use the default at all,Like the default ubuntu release version.
-> 
-> It seems that switlb is enabled by default on most platforms.
+vmlinux.o: warning: objtool: .altinstr_replacement+0x569: call without frame pointer save/setup
+vmlinux.o: warning: objtool: cyc2ns_read_end+0x12: call without frame pointer save/setup
+vmlinux.o: warning: objtool: native_sched_clock_from_tsc+0x66: call without frame pointer save/setup
+vmlinux.o: warning: objtool: kernel_fpu_end+0x26: call without frame pointer save/setup
+vmlinux.o: warning: objtool: set_tls_desc+0x170: call without frame pointer save/setup
+vmlinux.o: warning: objtool: pfn_valid.isra.0+0x8c: call without frame pointer save/setup
+vmlinux.o: warning: objtool: __ioremap_collect_map_flags+0xf4: call without frame pointer save/setup
+vmlinux.o: warning: objtool: pfn_modify_allowed+0x13a: call without frame pointer save/setup
+vmlinux.o: warning: objtool: __virt_addr_valid+0x112: call without frame pointer save/setup
+vmlinux.o: warning: objtool: .altinstr_replacement+0xd22: call without frame pointer save/setup
+vmlinux.o: warning: objtool: .altinstr_replacement+0xd58: call without frame pointer save/setup
+vmlinux.o: warning: objtool: .altinstr_replacement+0xd62: call without frame pointer save/setup
+vmlinux.o: warning: objtool: .altinstr_replacement+0xd71: call without frame pointer save/setup
+vmlinux.o: warning: objtool: .altinstr_replacement+0xd7b: call without frame pointer save/setup
+vmlinux.o: warning: objtool: migrate_disable+0x57: call without frame pointer save/setup
+vmlinux.o: warning: objtool: down_read_trylock+0x55: call without frame pointer save/setup
+vmlinux.o: warning: objtool: down_write_trylock+0x38: call without frame pointer save/setup
+vmlinux.o: warning: objtool: pfn_valid+0xbb: call without frame pointer save/setup
+vmlinux.o: warning: objtool: class_preempt_notrace_destructor.isra.0+0x13: call without frame pointer save/setup
+vmlinux.o: warning: objtool: rcu_is_watching+0x2d: call without frame pointer save/setup
+vmlinux.o: warning: objtool: __is_module_percpu_address+0xc4: call without frame pointer save/setup
+vmlinux.o: warning: objtool: get_compat_sigevent+0x41: call without frame pointer save/setup
+vmlinux.o: warning: objtool: kprobe_busy_end+0x1e: call without frame pointer save/setup
+vmlinux.o: warning: objtool: ring_buffer_discard_commit+0x22a: call without frame pointer save/setup
+vmlinux.o: warning: objtool: ring_buffer_nest_end+0x27: call without frame pointer save/setup
+vmlinux.o: warning: objtool: saved_cmdlines_stop+0x19: call without frame pointer save/setup
+vmlinux.o: warning: objtool: .altinstr_replacement+0x124c: call without frame pointer save/setup
+vmlinux.o: warning: objtool: pfn_valid+0xbb: call without frame pointer save/setup
+vmlinux.o: warning: objtool: pfn_valid+0xbb: call without frame pointer save/setup
+vmlinux.o: warning: objtool: pfn_valid+0xbb: call without frame pointer save/setup
+vmlinux.o: warning: objtool: __pageblock_pfn_to_page+0x1cb: call without frame pointer save/setup
+vmlinux.o: warning: objtool: .altinstr_replacement+0x1722: call without frame pointer save/setup
+vmlinux.o: warning: objtool: fput+0xe6: call without frame pointer save/setup
+vmlinux.o: warning: objtool: __fput_sync+0x57: call without frame pointer save/setup
+vmlinux.o: warning: objtool: __getname_maybe_null+0x7: call without frame pointer save/setup
+vmlinux.o: warning: objtool: __d_rehash+0x7c: call without frame pointer save/setup
+vmlinux.o: warning: objtool: ___d_drop+0x84: call without frame pointer save/setup
+vmlinux.o: warning: objtool: __d_lookup_unhash+0xde: call without frame pointer save/setup
+vmlinux.o: warning: objtool: get_next_ino+0x3f: call without frame pointer save/setup
+vmlinux.o: warning: objtool: mnt_get_write_access+0x68: call without frame pointer save/setup
+vmlinux.o: warning: objtool: mnt_put_write_access+0x21: call without frame pointer save/setup
+vmlinux.o: warning: objtool: mnt_put_write_access_file+0x2b: call without frame pointer save/setup
+vmlinux.o: warning: objtool: mb_cache_entry_get+0x9d: call without frame pointer save/setup
+vmlinux.o: warning: objtool: pfn_valid+0xbb: call without frame pointer save/setup
+vmlinux.o: warning: objtool: pfn_valid+0xbb: call without frame pointer save/setup
+vmlinux.o: warning: objtool: jbd2_journal_grab_journal_head+0x5c: call without frame pointer save/setup
+vmlinux.o: warning: objtool: class_preempt_notrace_destructor.isra.0+0x13: call without frame pointer save/setup
+vmlinux.o: warning: objtool: autofs_expire_multi+0xf: call without frame pointer save/setup
+vmlinux.o: warning: objtool: ksys_msgsnd+0xa: call without frame pointer save/setup
+vmlinux.o: warning: objtool: __x64_sys_msgsnd+0x16: call without frame pointer save/setup
+vmlinux.o: warning: objtool: __ia32_sys_msgsnd+0x15: call without frame pointer save/setup
+vmlinux.o: warning: objtool: compat_ksys_msgsnd+0xf: call without frame pointer save/setup
+vmlinux.o: warning: objtool: __ia32_compat_sys_msgsnd+0x16: call without frame pointer save/setup
+vmlinux.o: warning: objtool: __x64_sys_lsm_list_modules+0x21: call without frame pointer save/setup
+vmlinux.o: warning: objtool: __ia32_sys_lsm_list_modules+0x20: call without frame pointer save/setup
+vmlinux.o: warning: objtool: blk_account_io_merge_bio.part.0+0x6c: call without frame pointer save/setup
+vmlinux.o: warning: objtool: blk_account_io_completion.part.0+0x5a: call without frame pointer save/setup
+vmlinux.o: warning: objtool: iocg_commit_bio+0x30: call without frame pointer save/setup
+vmlinux.o: warning: objtool: class_preempt_notrace_destructor.isra.0+0x13: call without frame pointer save/setup
+vmlinux.o: warning: objtool: sg_miter_stop+0x6d: call without frame pointer save/setup
+vmlinux.o: warning: objtool: .altinstr_replacement+0x1c6b: call without frame pointer save/setup
+vmlinux.o: warning: objtool: .altinstr_replacement+0x1c82: call without frame pointer save/setup
+vmlinux.o: warning: objtool: write_port+0x6f: call without frame pointer save/setup
+vmlinux.o: warning: objtool: drm_clflush_page+0x67: call without frame pointer save/setup
+vmlinux.o: warning: objtool: .altinstr_replacement+0x1fae: call without frame pointer save/setup
+vmlinux.o: warning: objtool: check_relocations+0x62: call without frame pointer save/setup
+vmlinux.o: warning: objtool: scsi_kunmap_atomic_sg+0x21: call without frame pointer save/setup
+vmlinux.o: warning: objtool: serport_ldisc_compat_ioctl+0xe: call without frame pointer save/setup
+vmlinux.o: warning: objtool: serport_ldisc_ioctl+0xf: call without frame pointer save/setup
+vmlinux.o: warning: objtool: .altinstr_replacement+0x2286: call without frame pointer save/setup
+vmlinux.o: warning: objtool: cpuidle_use_deepest_state+0x2a: call without frame pointer save/setup
+vmlinux.o: warning: objtool: cpuidle_get_driver+0x20: call without frame pointer save/setup
+vmlinux.o: warning: objtool: skb_abort_seq_read+0x28: call without frame pointer save/setup
+vmlinux.o: warning: objtool: skb_ts_finish+0x28: call without frame pointer save/setup
+vmlinux.o: warning: objtool: skb_seq_read+0x24e: call without frame pointer save/setup
+vmlinux.o: warning: objtool: xdr_terminate_string+0x55: call without frame pointer save/setup
+vmlinux.o: warning: objtool: class_preempt_notrace_destructor.isra.0+0x13: call without frame pointer save/setup
+vmlinux.o: warning: objtool: class_preempt_notrace_destructor.isra.0+0x13: call without frame pointer save/setup
+vmlinux.o: warning: objtool: find_bug+0xad: call without frame pointer save/setup
+vmlinux.o: warning: objtool: generic_bug_clear_once+0x96: call without frame pointer save/setup
+vmlinux.o: warning: objtool: delay_tsc+0x87: call without frame pointer save/setup
+vmlinux.o: warning: objtool: .altinstr_replacement+0x5f6: call without frame pointer save/setup
+vmlinux.o: warning: objtool: pfn_valid+0x81: call without frame pointer save/setup
+vmlinux.o: warning: objtool: _raw_spin_trylock+0x36: call without frame pointer save/setup
+vmlinux.o: warning: objtool: _raw_write_unlock+0x15: call without frame pointer save/setup
+vmlinux.o: warning: objtool: _raw_write_unlock_irq+0x16: call without frame pointer save/setup
+vmlinux.o: warning: objtool: _raw_write_unlock_irqrestore+0x1e: call without frame pointer save/setup
+vmlinux.o: warning: objtool: _raw_read_trylock+0x45: call without frame pointer save/setup
+vmlinux.o: warning: objtool: _raw_write_trylock+0x36: call without frame pointer save/setup
+vmlinux.o: warning: objtool: _raw_read_unlock+0x1b: call without frame pointer save/setup
+vmlinux.o: warning: objtool: _raw_read_unlock_irq+0x1c: call without frame pointer save/setup
+vmlinux.o: warning: objtool: _raw_read_unlock_irqrestore+0x24: call without frame pointer save/setup
+vmlinux.o: warning: objtool: _raw_spin_unlock+0x15: call without frame pointer save/setup
+vmlinux.o: warning: objtool: _raw_spin_unlock_irq+0x16: call without frame pointer save/setup
+vmlinux.o: warning: objtool: _raw_spin_unlock_irqrestore+0x1e: call without frame pointer save/setup
 
-If understand correctly the problem happens only when SWIOTLB
-is enabled on client or host?
-
-The following combinations are possible:
-
-SWILTLB enabled on client and disabled on host - rate limited?
-SWILTLB enabled on client and enabled on host - rate limited?
-SWILTLB disabled on client and enabled on host - rate limited?
-SWILTLB disabled on client and disabled on host - not a problem
-
-thanks,
--- Shuah
-
-
+-- 
+Josh
 
